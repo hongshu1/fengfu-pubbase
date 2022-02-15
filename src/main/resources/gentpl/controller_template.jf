@@ -1,0 +1,50 @@
+package #(targetPackageName);
+
+import com.jfinal.aop.Inject;
+import cn.jbolt.base.JBoltBaseController;
+import cn.jbolt._admin.permission.CheckPermission;
+import cn.jbolt._admin.permission.PermissionKey;
+#if(unCheckIfSystemAdmin)
+import cn.jbolt._admin.permission.UnCheckIfSystemAdmin;
+#end
+#if(usePathAnnotation)
+import com.jfinal.core.Path;
+#end
+#if(isCRUD)
+import com.jfinal.aop.Before;
+import com.jfinal.plugin.activerecord.tx.Tx;
+import cn.jbolt.common.config.Msg;
+import #(modelImport);
+#end
+
+/**
+ * #(controllerRemark??) Controller
+ * @ClassName: #(controllerName??)   
+ * @author: #(author?? 'JBolt-Generator')
+ * @date: #date()  
+ */
+#if(checkPermissionKeys)
+#setLocal( demoKey = "PermissionKey."+modelName.toUpperCase())
+@CheckPermission(#(checkPermissionKeys?? demoKey))
+#else
+@CheckPermission(demoKey)
+#end
+#if(unCheckIfSystemAdmin)
+@UnCheckIfSystemAdmin
+#end
+#if(usePathAnnotation)
+@Path(value = "#(pathValue??)", viewPath = "#(pathViewPath??)")
+#end
+public class #(controllerName??) extends JBoltBaseController {
+
+	@Inject
+	private #(serviceName??) service;
+	
+#if(methods!=null&&methods.size()>0)
+	#for(method:methods)
+	#@genControllerMethod(method,modelName,needPaginate)
+	
+	#end
+#end
+	
+}

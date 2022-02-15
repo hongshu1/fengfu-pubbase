@@ -1,0 +1,21 @@
+#redis 开发环境 配置文件 支持配置N个服务端 每个为一组
+
+#默认-主服务端 名字不要修改
+[jbolt_cache]
+enable      = true
+host        = 39.106.162.83
+port        = 6379
+password    = jbolt
+timeout     = 2000
+#database   = 0
+#clientName = clientname
+
+#扩展-电商服务端
+[mall]
+enable      = false
+host        = 39.106.162.89
+port        = 6379
+password    = jbolt
+timeout     = 2000
+#database   = 0
+#clientName = clientname

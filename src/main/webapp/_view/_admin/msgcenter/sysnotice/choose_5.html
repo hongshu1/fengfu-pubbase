@@ -1,0 +1,151 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1><i class="jbicon2 jbi-solution"></i> 选择用户</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" onsubmit="return false;" id="adminUserForm_#(pageId)" action="admin/sysnotice/users" data-pjaxsubmit  method="get">
+		<input type="hidden" name="deptId"/>
+		<input type="text" autocomplete="off"  class="form-control" placeholder="输入关键字搜索" name="keywords" value="#(keywords??)" />
+		<select class="form-control" name="sex" data-autoload data-url="admin/user/sexOptions" data-text="=性别=" ></select>
+		<select class="form-control" name="postId" data-autoload data-url="admin/post/enableOptions" data-text="=岗位=" ></select>
+		<select class="form-control" name="roleId" data-autoload data-url="admin/role/options" data-text="=角色=" ></select>
+		<button type="submit" class="btn btn-outline-secondary catdata_table_searchbtn" ><i class="fa fa-search"></i> 查询</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<script type="text/template" id="user_table_rowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}" data-text="${data.name}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.name}</td>
+<td><img data-photobtn tooltip data-title="点击查看大图"  style="width: 60px;height: 60px;border-radius:50%;" src="${data.avatar|real_image}" onerror="this.src='assets/img/avatar.jpg'"/></td>
+<td>${data.sex|sex}</td>
+<td>
+{@if data.userRoles}
+{@each data.userRoles as role,index}
+<span class="badge badge-${(+index+1)|colorClassByLevel} d-block my-1">${role.name}</span>
+{@/each}
+{@else}
+<span class="badge badge-default">未设置</span>
+{@/if}
+</td>
+<td>${data.deptSnAndName}</td>
+<td>
+{@if data.userPosts}
+{@each data.userPosts as post,index}
+<span class="badge badge-${(+index+1)|colorClassByLevel} d-block my-1">${post.name}</span>
+{@/each}
+{@else}
+<span class="badge badge-default">未设置</span>
+{@/if}
+</td>
+<td>${data.username}</td>
+</tr>
+{@/each}
+</script>
+<div class="jbolt_table_leftbox" style="width:240px;" id="admin_user_leftbox_#(pageId)">
+<div class="jb_header"><i class="fa fa-cubes"></i> <span>部门</span>
+		<div class="pull-right">
+			<a href="javascript:void(0)" tooltip data-title="刷新" onclick="refreshDeptJsTree_#(pageId)()"><i class="fa fa-refresh mr-2"></i></a>
+			<a href="javascript:void(0)"  id="deptJsTreeClearbtn_#(pageId)" class="d-none" tooltip data-title="清空选择" onclick="clearDeptJsTreeSelected_#(pageId)()"><i class="fa fa-remove text-danger"></i></a>
+		</div>
+	</div>
+	<div class="jb_body">
+	<div class="form-group">
+		    <input type="text" class="form-control" id="deptJsTreeSearchInput_#(pageId)"  aria-describedby="smallId" placeholder="关键字搜索" />
+		</div>
+		<div id="deptTree_#(pageId)"
+			data-jstree
+			data-search-input="deptJsTreeSearchInput_#(pageId)"
+			data-open-level="-1"
+			data-read-url="admin/dept/enableJsTreeDatas/"
+			data-change-handler="changeDept_#(pageId)"
+			></div>
+	</div>
+</div>
+<table class="table-center thead_font_normal"
+data-jbolttable
+id="choose_users_table_#(pageId)"
+data-ajax="true"
+data-column-prepend="1:checkbox:true"
+data-url="admin/user/sysnoticeUsers"
+data-page="user_table_page_#(pageId)"
+data-fixed-columns-left="1,2,3"
+data-rowtpl="user_table_rowtpl_#(pageId)"
+data-conditions-form="adminUserForm_#(pageId)"
+data-column-resize="true"
+data-leftbox="admin_user_leftbox_#(pageId)"
+>
+<thead>
+<tr>
+<th data-width="60">序号</th>
+<th data-width="150">姓名</th>
+<th data-width="120">头像</th>
+<th data-width="80">性别</th>
+<th data-width="100">角色</th>
+<th data-min-width="200">部门</th>
+<th data-width="100">岗位</th>
+<th >用户名</th>
+</thead>
+<tbody></tbody>
+</table>	
+</div>
+</div>
+#end
+#define js()
+<script>
+var deptTree_#(pageId)=$("#deptTree_#(pageId)");
+var adminUserForm_#(pageId)=$("#adminUserForm_#(pageId)");
+var deptClearBtn_#(pageId)=$("#deptJsTreeClearbtn_#(pageId)");
+/**
+ * 按分类查询
+ */
+function changeDept_#(pageId)(tree,treeNode){
+	deptClearBtn_#(pageId).removeClass("d-none");
+	adminUserForm_#(pageId).find("[name='deptId']").val(treeNode.id);
+	refreshJBoltTable(deptTree_#(pageId));
+}
+
+function clearDeptJsTreeSelected_#(pageId)(){
+	JSTreeUtil.clearSelected(deptTree_#(pageId));
+	adminUserForm_#(pageId).find("[name='deptId']").val("");
+	deptClearBtn_#(pageId).addClass("d-none");
+	refreshJBoltTable(deptTree_#(pageId));
+}
+
+function refreshDeptJsTree_#(pageId)(){
+	var deptId=adminUserForm_#(pageId).find("input[name='deptId']").val();
+	JSTreeUtil.refresh(deptTree_#(pageId),deptId?deptId:0);
+}
+$(function(){
+});
+</script>
+
+<script type="text/javascript">
+var _submit_ing=false;
+function submitThisForm(){
+	if(_submit_ing){
+		return false;
+	}
+	_submit_ing=true;
+	var checkedIds   = getJboltTableCheckedIds("choose_users_table_#(pageId)");
+	var checkedNames = getJboltTableCheckedTexts("choose_users_table_#(pageId)");
+	if(isOk(checkedIds)&&isOk(checkedNames)){
+		 parent.setChooseReceiverDatas(checkedIds,checkedNames);
+		 parent.layer.closeAll();
+	}
+	_submit_ing=false;
+}
+</script>
+#end
+

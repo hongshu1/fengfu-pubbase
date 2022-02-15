@@ -1,0 +1,9 @@
+[{
+	"name": "扩展数据字典Demo",
+	"modeLevel": 1,
+	"typeKey": "extend_dic_demo",
+	"dics":[
+			{"name":"字典项1","sn":"值1"},
+			{"name":"字典项2","sn":"值2"}
+	]
+}]

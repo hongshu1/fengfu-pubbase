@@ -1,0 +1,76 @@
+<script>
+needPjax=false;
+var _submit_ing=false;
+function submitThisForm(successCallback){
+	if(_submit_ing){
+		return false;
+	}
+	_submit_ing=true;
+	var formId="#(formId)";
+	var form=$("#"+formId);
+	if(FormChecker.check(form)){
+		if(window.beforeFormSubmit){
+			var ret=beforeFormSubmit();
+			if(ret==false){
+				_submit_ing=false;
+				return false;
+			}
+		}
+		var url = actionUrl(form.attr("action"));
+		LayerMsgBox.loading("正在提交...",10000);
+		form.ajaxSubmit({
+			type:"post",
+			url:url,
+			success:function(ret){
+				if(ret.state=="ok"){
+					if(window.afterFormSubmit){
+						afterFormSubmit(ret,function(){
+							LayerMsgBox.success(ret.msg,500,function(){
+								if(successCallback){
+									successCallback();
+								}
+								_submit_ing=false;
+							});
+						},function(){
+							_submit_ing=false;
+						});
+					}else{
+						LayerMsgBox.success(ret.msg,500,function(){
+							if(successCallback){
+								successCallback();
+							}
+							_submit_ing=false;
+						});
+					}
+					
+				}else{
+					if(ret.msg){
+						if(ret.msg=="jbolt_system_locked"){
+							_submit_ing=false;
+							showJboltLockSystem();
+						}else if(ret.msg=="jbolt_nologin"){
+							_submit_ing=false;
+							showReloginDialog();
+						}else{
+							_submit_ing=false;
+							LayerMsgBox.alert(ret.msg,2);
+						}
+					}else{
+						LayerMsgBox.error("操作异常",1500,function(){
+							_submit_ing=false;
+							});
+					}
+					
+				}
+			},
+			error:function(){
+				LayerMsgBox.error("发生异常",1500,function(){
+					_submit_ing=false;
+					});
+				}
+		});
+	}else{
+		_submit_ing=false;
+		}
+}
+</script>

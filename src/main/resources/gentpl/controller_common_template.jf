@@ -1,0 +1,205 @@
+#define c_index(modelName,needPaginate)
+   /**
+	* 首页
+	*/
+	public void index() {
+		render("index.html");
+	}
+  	
+  	/**
+	* 数据源
+	*/
+	public void datas() {
+		#if(needPaginate)
+		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+		#else
+		renderJsonData(service.getAdminDatas(getKeywords()));
+		#end
+	}
+#end
+
+#define c_add(modelName)
+   /**
+	* 新增
+	*/
+	public void add() {
+		render("add.html");
+	}
+#end
+
+#define c_edit(modelName)
+   /**
+	* 编辑
+	*/
+	public void edit() {#setLocal(fctucName=firstCharToLowerCase(modelName))
+		#(modelName) #(fctucName)=service.findById(get#(getIdType?? 'Int')(0)); 
+		if(#(fctucName) == null){
+			renderDialogFail(Msg.DATA_NOT_EXIST);
+			return;
+		}
+		set("#(fctucName)",#(fctucName));
+		render("edit.html");
+	}
+#end
+
+
+#define c_save(modelName)
+  /**
+	* 保存
+	*/
+	public void save() {
+		renderJson(service.save(getModel(#(modelName).class, "#(firstCharToLowerCase(modelName))")));
+	}
+#end
+
+#define c_update(modelName)
+   /**
+	* 更新
+	*/
+	public void update() {
+		renderJson(service.update(getModel(#(modelName).class, "#(firstCharToLowerCase(modelName))")));
+	}
+#end
+
+#define c_delete(modelName)
+   /**
+	* 删除
+	*/
+	public void delete() {
+		renderJson(service.delete(get#(getIdType?? 'Int')(0)));
+	}
+#end
+
+#define c_deleteByIds(modelName)
+   /**
+	* 批量删除
+	*/
+	public void deleteByIds() {
+		renderJson(service.deleteByBatchIds(get("ids")));
+	}
+#end
+
+#define c_up(modelName)
+  /**
+	* 排序 上移
+	*/
+	@Before(Tx.class)
+	public void up() {
+		renderJson(service.up(get#(getIdType?? 'Int')(0)));
+	}
+#end
+
+#define c_move(modelName)
+  /**
+	*  灵活移动排序
+	*/
+	@Before(Tx.class)
+	public void move() {
+		renderJson(service.move(get#(getIdType?? 'Int')("id"),get#(getIdType?? 'Int')("otherId")));
+	}
+#end
+
+#define c_down(modelName)
+  /**
+	* 排序 下移
+	*/
+	@Before(Tx.class)
+	public void down() {
+		renderJson(service.down(get#(getIdType?? 'Int')(0)));
+	}
+#end
+
+
+#define c_initRank(modelName)
+  /**
+	* 排序 初始化
+	*/
+	@Before(Tx.class)
+	public void initRank() {
+		renderJson(service.initRank());
+	}
+#end
+
+#define c_toggleEnable(modelName)
+  /**
+	* 切换启用状态
+	*/
+	public void toggleEnable() {
+		renderJson(service.toggleEnable(get#(getIdType?? 'Int')(0)));
+	}
+#end
+
+
+#define c_tree(modelName)
+  /**
+	* 得到树形结构数据
+	*/
+	public void tree() {
+		renderJsonData(service.getTreeDatas());
+	}
+#end
+
+
+#define c_options(modelName)
+  /**
+	* 得到树形结构数据
+	*/
+	public void options() {
+		renderJson(service.getOptionList());
+	}
+#end
+
+#define c_genToggleMethod(name,modelName)
+  /**
+	* 切换#(name)
+	*/
+	public void #(name)() {
+		renderJson(service.#(name)(get#(getIdType?? 'Int')(0)));
+	}
+#end
+
+#define c_genOtherMethod(name,modelName)
+#if(name.indexOf("toggle")!=-1)
+#@c_genToggleMethod(name,modelName)
+#else
+	public void #(name)(){
+		//TODO 请实现业务逻辑代码	
+		renderJsonSuccess();
+	}
+#end
+#end
+
+#define genControllerMethod(name,modelName,needPaginate)
+	#switch(name)
+		#case("index")
+			#@c_index(modelName,needPaginate)
+		#case("add")
+			#@c_add(modelName)	
+		#case("edit")
+			#@c_edit(modelName)
+		#case("save")
+			#@c_save(modelName)
+		#case("update")
+			#@c_update(modelName)	
+		#case("delete")
+			#@c_delete(modelName)	
+		#case("deleteByIds")
+			#@c_deleteByIds(modelName)	
+		#case("toggleEnable")
+			#@c_toggleEnable(modelName)
+		#case("up")
+			#@c_up(modelName)
+		#case("move")
+			#@c_move(modelName)
+		#case("down")
+			#@c_down(modelName)
+		#case("initRank")
+			#@c_initRank(modelName)
+		#case("tree")
+			#@c_tree(modelName)
+		#case("options")
+			#@c_options(modelName)
+		#default
+			#@c_genOtherMethod(name,modelName)				
+	#end
+#end
