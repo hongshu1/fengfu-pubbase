@@ -1,8 +1,8 @@
 package #(modelPackageName);
 
 import #(baseModelPackageName).#(tableMeta.baseModelName);
-import cn.jbolt.common.config.TableBind;
-import cn.jbolt.base.JBoltIDGenMode;
+import cn.jbolt.core.annotation.TableBind;
+import cn.jbolt.core.base.JBoltIDGenMode;
 
 /**
  * #(tableMeta.remarks??)

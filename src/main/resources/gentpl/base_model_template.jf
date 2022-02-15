@@ -1,11 +1,11 @@
 package #(baseModelPackageName);
 #if(extendsJBoltBaseModel??)
-import #(mainPkg?? "cn.jbolt").base.JBoltBaseModel;
+import #(mainPkg?? "cn.jbolt").core.model.base.JBoltBaseModel;
 #else
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.IBean;
 #end
-import cn.jbolt.common.gen.JBoltField;
+import cn.jbolt.core.gen.JBoltField;
 #if(needJSONField)
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;

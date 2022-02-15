@@ -33,9 +33,9 @@
 	 */
 	public Ret save(#(modelName) #(fctucName)) {
 		if(#(fctucName)==null || isOk(#(fctucName).#(getIdMethodName?? 'getId')())) {
-			return fail(Msg.PARAM_ERROR);
+			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		//if(exists(columnName, value)) {return fail(Msg.DATA_SAME_NAME_EXIST);}
+		//if(exists(columnName, value)) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		#if(mainLogicBean.needSort)
 		#(fctucName).setSortRank(getNextSortRank());
 		#end
@@ -58,12 +58,12 @@
 	 */
 	public Ret update(#(modelName) #(fctucName)) {
 		if(#(fctucName)==null || notOk(#(fctucName).#(getIdMethodName?? 'getId')())) {
-			return fail(Msg.PARAM_ERROR);
+			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//更新时需要判断数据存在
 		#(modelName) #(dbModelName)=findById(#(fctucName).#(getIdMethodName?? 'getId')());
-		if(#(dbModelName)==null) {return fail(Msg.DATA_NOT_EXIST);}
-		//if(exists(columnName, value, #(fctucName).#(getIdMethodName?? 'getId')())) {return fail(Msg.DATA_SAME_NAME_EXIST);}
+		if(#(dbModelName)==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
+		//if(exists(columnName, value, #(fctucName).#(getIdMethodName?? 'getId')())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=#(fctucName).update();
 		if(success) {
 			//添加日志

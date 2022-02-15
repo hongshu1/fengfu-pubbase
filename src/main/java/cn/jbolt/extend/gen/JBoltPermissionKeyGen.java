@@ -36,7 +36,7 @@ public class JBoltPermissionKeyGen {
 	/**
 	 * 模板绝对路径
 	 */
-	private final String TPL=PROJECT_PATH+SEPARATOR+"src"+SEPARATOR+"main"+SEPARATOR+"java"+SEPARATOR+"cn"+SEPARATOR+"jbolt"+SEPARATOR+"common"+SEPARATOR+"gen"+SEPARATOR+"permissionkey.tpl";
+	private final String TPL=PROJECT_PATH+SEPARATOR+"src"+SEPARATOR+"main"+SEPARATOR+"resources"+SEPARATOR+"gentpl"+SEPARATOR+"permissionkey.tpl";
 	protected DruidPlugin druidPlugin;
 	public DataSource getDataSource() {
 		druidPlugin = JBoltConfig.createDruidPlugin();
