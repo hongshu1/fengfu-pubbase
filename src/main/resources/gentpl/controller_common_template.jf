@@ -34,7 +34,7 @@
 	public void edit() {#setLocal(fctucName=firstCharToLowerCase(modelName))
 		#(modelName) #(fctucName)=service.findById(get#(getIdType?? 'Int')(0)); 
 		if(#(fctucName) == null){
-			renderDialogFail(Msg.DATA_NOT_EXIST);
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
 		set("#(fctucName)",#(fctucName));
