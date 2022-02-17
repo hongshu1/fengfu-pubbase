@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="4.14.3";
+var jbolt_admin_js_version="4.14.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -6737,17 +6737,23 @@ var RadioUtil={
 			  }
 			  var html='';
 			  if(label){
+				  var notNull = r.data("notnull");
+				  var radioRule =r.data("rule");
+				  var radioIsRequired=(radioRule&&typeof(notNull)=="undefined") || (radioRule && ( (typeof(notNull)=="boolean" && notNull==true) || (typeof(notNull)=="string" && notNull=="true")));
+				  if(radioIsRequired && radioRule=="required"){
+					  r.data("rule","radio").attr("data-rule","radio");
+				  }
 				 if(r.hasClass("row")){
 					 if(labelWidth.indexOf("px")!=-1){
-						 html= '<label class="col-auto col-form-label is_required" style="width:'+labelWidth+'">'+label+'</label>';
+						 html= '<label class="col-auto col-form-label '+(radioIsRequired?"is_required":"")+'" style="width:'+labelWidth+'">'+label+'</label>';
 					 }else{
-						 html= '<label class="'+labelWidth+' col-form-label is_required">'+label+'</label>';
+						 html= '<label class="'+labelWidth+' col-form-label '+(radioIsRequired?"is_required":"")+'">'+label+'</label>';
 					 }
 				 }else{
 					 if(labelWidth.indexOf("px")!=-1){
-						 html= '<label class="col-auto is_required" style="width:'+labelWidth+'">'+label+'</label>';
+						 html= '<label class="col-auto '+(radioIsRequired?"is_required":"")+'" style="width:'+labelWidth+'">'+label+'</label>';
 					 }else{
-						 html= '<label class="'+labelWidth+' is_required">'+label+'</label>';
+						 html= '<label class="'+labelWidth+' '+(radioIsRequired?"is_required":"")+'">'+label+'</label>';
 					 }
 				 }
 				 r.append(html);
