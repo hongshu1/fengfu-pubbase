@@ -347,6 +347,9 @@
 								|| parse(data);
 						cache.add(term, parsed);
 						success(term, parsed)
+						if(data.state=="fail"){
+							LayerMsgBox.alert(data.msg?data.msg:"数据获取异常",2);
+						}
 					}
 				})
 			} else {
