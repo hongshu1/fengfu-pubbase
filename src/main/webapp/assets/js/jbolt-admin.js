@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="4.14.5";
+var jbolt_admin_js_version="4.14.6";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -1683,13 +1683,15 @@ var JSTreeUtil={
 				tree = getRealJqueryObject(tree);
 			}
 			var readUrl=tree.data("read-url");
-			if(readUrl.indexOf("?")!=-1){
-				readUrl=readUrl+"&selectId="+selectId;
-			}else{
-				if(readUrl[readUrl.length-1]!='/'){
-					readUrl=readUrl+"/"+selectId;
+			if(selectId){
+				if(readUrl.indexOf("?")!=-1){
+					readUrl=readUrl+"&selectId="+selectId;
 				}else{
-					readUrl=readUrl+selectId;
+					if(readUrl[readUrl.length-1]!='/'){
+						readUrl=readUrl+"/"+selectId;
+					}else{
+						readUrl=readUrl+selectId;
+					}
 				}
 			}
 				
@@ -1779,6 +1781,11 @@ var JSTreeUtil={
 		_initTree:function(tree){
 			var that=this;
 			var read_url=tree.data("read-url");
+			var form = that.processConditionsForm(tree);
+			if(isOk(form)){
+				tree.data("orign-read-url",read_url).attr("data-orign-read-url",read_url);
+				read_url = urlWithFormData(read_url,form);
+			}
 			var curd=tree.data("curd");
 			if(curd==undefined||curd=="undefined"){
 				//如果没有开启curd模式 默认就是false 就是只有查询和change处理
@@ -2241,6 +2248,25 @@ var JSTreeUtil={
 			 
 			 
 			
+		},processConditionsForm:function(jstree){
+			var formId = jstree.data("conditions-form");
+			if(!formId){return;}
+			var form=$("#"+formId);
+			if(!isOk(form)){
+				LayerMsgBox.alert("树绑定data-conditions-form为找到",2);
+				return;
+			}
+			var that=this;
+			form.on("submit",function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				var orignUrl = jstree.data("orign-read-url");
+				var read_url = urlWithFormData(orignUrl,form);
+				jstree.data("read-url",read_url).attr("data-read-url",read_url);
+				that.refresh(jstree);
+				return false;
+			});
+			return form;
 		}
 }
 

@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.3.1";
+var jbolt_table_js_version="2.3.2";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -2750,16 +2750,25 @@ function masterTableTrTriggerShowSlave(ele,id,masterOtherParams,tableCallback,aj
 	if(!isOk(slave)){return false;}
 	
 	var elm,elsrcurl;
-	slave.find("[data-url][data-origin-url],[data-url][data-orign-url],[href][data-origin-url],[href][data-orign-url],[href][data-orignurl],[data-url][data-srcurl],[data-url][data-src-url],[href][data-srcurl],[href][data-src-url]").each(function(){
+	slave.find("[data-masterid],input[type='hidden'][data-masterid-hidden='true'],[data-url][data-origin-url],[data-url][data-orign-url],[href][data-origin-url],[href][data-orign-url],[href][data-orignurl],[data-url][data-srcurl],[data-url][data-src-url],[href][data-srcurl],[href][data-src-url]").each(function(){
 		elm=$(this);
-		elsrcurl=elm.data("origin-url")||elm.data("orign-url")||elm.data("orignurl")||elm.data("srcurl")||elm.data("src-url");
-		if(elsrcurl.indexOf("[masterId]")!=-1){
-			elsrcurl=elsrcurl.replaceAll("[masterId]",id);
-			if(elm.data("url")){
-				elm.data("url",elsrcurl).attr("data-url",elsrcurl);
-			}
-			if(elm.attr("href")){
-				elm.attr("href",elsrcurl);
+		if(elm.is("input") && elm.attr("type")=="hidden" && elm.data("masterid-hidden")){
+			elm.val(id);
+		}else{
+			elsrcurl=elm.data("origin-url")||elm.data("orign-url")||elm.data("orignurl")||elm.data("srcurl")||elm.data("src-url");
+			if(elsrcurl.indexOf("[masterId]")!=-1){
+				elsrcurl=elsrcurl.replaceAll("[masterId]",id);
+				if(elm.data("url")){
+					elm.data("url",elsrcurl).attr("data-url",elsrcurl);
+				}
+				if(elm.attr("href")){
+					elm.attr("href",elsrcurl);
+				}
+			}else{
+				elsrcurl = elm.data("masterid");
+				if(elsrcurl && elsrcurl == "[masterId]"){
+					elm.data("masterid",id).attr("data-masterid",id);
+				}
 			}
 		}
 	});
