@@ -1726,7 +1726,7 @@ var JSTreeUtil={
 			 switch (type) {
 			 case 'add':
 				 url=tree.data("add-url")+pid;
-				 if(pid==0){
+				 if(pid=='0' || pid==0){
 					 var cformId = tree.data("conditions-form");
 					 if(cformId){
 						 var cform=$("#"+cformId);
