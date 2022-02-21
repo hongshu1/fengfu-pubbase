@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="4.14.6";
+var jbolt_admin_js_version="4.14.7";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -13461,7 +13461,7 @@ function actionUrl(url){
 	if(url&&url.charAt(0)=='/'&&url.charAt(1)!='/') {
 		url=url.substring(1);
 	}
-	if(url.indexOf("\\")!=-1){
+	if(url&&url.indexOf("\\")!=-1){
 		url=url.replace(/\\/g,"/");
 	}
 	return url;
