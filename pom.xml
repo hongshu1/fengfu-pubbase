@@ -13,19 +13,18 @@
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<jdk.version>1.8</jdk.version>
 		<junit.version>5.8.1</junit.version>
-		<jfinal.version>4.9.17</jfinal.version>
-		<oshi.version>5.8.0</oshi.version>
-		<jna.version>5.8.0</jna.version>
-		<cos.version>2020.4</cos.version>
+		<jfinal.version>4.9.19</jfinal.version>
+		<oshi.version>6.1.2</oshi.version>
+		<jna.version>5.10.0</jna.version>
+		<cos.version>2022.2</cos.version>
 		<emoji-java.version>5.1.1</emoji-java.version>
-		<log4j.version>1.2.17</log4j.version>
-		<druid.version>1.2.6</druid.version>
-		<fastjson.version>1.2.76</fastjson.version>
-		<mysql.version>8.0.23</mysql.version>
-		<oracle.version>21.1.0.0</oracle.version>
-		<sqlserver.version>9.2.1.jre8</sqlserver.version>
-		<postgresql.version>42.2.20</postgresql.version>
-		<jsoup.version>1.13.1</jsoup.version>
+		<druid.version>1.2.8</druid.version>
+		<fastjson.version>1.2.79</fastjson.version>
+		<mysql.version>8.0.28</mysql.version>
+		<oracle.version>21.5.0.0</oracle.version>
+		<sqlserver.version>10.2.0.jre8</sqlserver.version>
+		<postgresql.version>42.3.3</postgresql.version>
+		<jsoup.version>1.14.3</jsoup.version>
 		<cron4j.version>2.2.5</cron4j.version>
 		<jfinalweixin.version>3.4</jfinalweixin.version>
 		<ehcache.version>2.6.11</ehcache.version>
@@ -33,27 +32,27 @@
 		<jedis.version>3.7.1</jedis.version>
 		<fst.version>2.57</fst.version>
 		<hutool.version>5.7.21</hutool.version>
-		<slf4j.version>1.7.32</slf4j.version>
+		<slf4j.version>1.7.36</slf4j.version>
 		<log4j2.version>2.17.1</log4j2.version>
 		<jfinalundertow.version>2.8</jfinalundertow.version>
-		<thumbnailator.version>0.4.14</thumbnailator.version>
+		<thumbnailator.version>0.4.17</thumbnailator.version>
 		<pinyin4j.version>2.5.0</pinyin4j.version>
 		<commonslang.version>3.8.1</commonslang.version>
 		<jwt.version>0.11.2</jwt.version>
 		<zxing.version>3.4.1</zxing.version>
 		<poi.version>4.1.2</poi.version>
-		<xerces.version>2.12.1</xerces.version>
-		<okhttp.version>4.9.1</okhttp.version>
+		<xerces.version>2.12.2</xerces.version>
+		<okhttp.version>4.9.3</okhttp.version>
 		<hikaricp.version>4.0.3</hikaricp.version>
 		<screw.version>1.0.5</screw.version>
-		<prettytime.version>5.0.1.Final</prettytime.version>
+		<prettytime.version>5.0.2.Final</prettytime.version>
 		<ureport.version>2.2.9</ureport.version>
 		<jackson.version>2.12.4</jackson.version>
 		<ip2region.version>1.7.2</ip2region.version>
 		<jfinalevent.version>3.1.3</jfinalevent.version>
-		<qiniu.version>7.8.0</qiniu.version>
-		<sentinel.version>1.8.2</sentinel.version>
-		<jboltcore.version>4.1.0</jboltcore.version>
+		<qiniu.version>7.9.3</qiniu.version>
+		<sentinel.version>1.8.3</sentinel.version>
+		<jboltcore.version>4.1.2</jboltcore.version>
 	</properties>
 
 	<!-- 使用阿里 maven 库 -->
