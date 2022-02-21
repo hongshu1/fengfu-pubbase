@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="4.14.7";
+var jbolt_admin_js_version="4.14.8";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -1726,6 +1726,15 @@ var JSTreeUtil={
 			 switch (type) {
 			 case 'add':
 				 url=tree.data("add-url")+pid;
+				 if(pid==0){
+					 var cformId = tree.data("conditions-form");
+					 if(cformId){
+						 var cform=$("#"+cformId);
+						 if(isOk(cform)){
+							 url = urlWithFormData(url,cform);
+						 }
+					 }
+				 }
 				 break;
 			 case 'edit':
 				 url=tree.data("edit-url")+pid;
@@ -1781,6 +1790,20 @@ var JSTreeUtil={
 		_initTree:function(tree){
 			var that=this;
 			var read_url=tree.data("read-url");
+			var openLevel=tree.data("open-level");
+			if(typeof(openLevel)=="undefined"){
+				openLevel=0;
+			}
+			if(openLevel!=0){
+				if(read_url.charAt(read_url.length-1)=='/'){
+					read_url=read_url.substring(0,read_url.length-1);
+				}
+				if(read_url.indexOf("?")!=-1){
+					read_url=read_url+"&openLevel="+openLevel;
+				}else{
+					read_url=read_url+"?openLevel="+openLevel;
+				}
+			}
 			var form = that.processConditionsForm(tree);
 			if(isOk(form)){
 				tree.data("orign-read-url",read_url).attr("data-orign-read-url",read_url);
@@ -1874,7 +1897,7 @@ var JSTreeUtil={
 						"add":{
 							"label":"创建子项",
 							"action":function(data){
-		                         var reference=data.reference;  
+		                         var reference=data.reference; 
 								 that.processCurdHandler(tree,reference,"add");
 								 return true;
 							}
@@ -1922,20 +1945,7 @@ var JSTreeUtil={
 				};*/
 			}
 				
-			var openLevel=tree.data("open-level");
-			if(typeof(openLevel)=="undefined"){
-				openLevel=0;
-			}
-			if(openLevel!=0){
-				if(read_url.charAt(read_url.length-1)=='/'){
-					read_url=read_url.substring(0,read_url.length-1);
-				}
-				if(read_url.indexOf("?")!=-1){
-					read_url=read_url+"&openLevel="+openLevel;
-				}else{
-					read_url=read_url+"?openLevel="+openLevel;
-				}
-			}
+			
 			treeOptions['plugins'].push('types');
 			var defaultTypes={
 			    "#" : {
@@ -2260,10 +2270,12 @@ var JSTreeUtil={
 			form.on("submit",function(e){
 				e.preventDefault();
 				e.stopPropagation();
-				var orignUrl = jstree.data("orign-read-url");
-				var read_url = urlWithFormData(orignUrl,form);
-				jstree.data("read-url",read_url).attr("data-read-url",read_url);
-				that.refresh(jstree);
+				if(FormChecker.check(form)){
+					var orignUrl = jstree.data("orign-read-url");
+					var read_url = urlWithFormData(orignUrl,form);
+					jstree.data("read-url",read_url).attr("data-read-url",read_url);
+					that.refresh(jstree);
+				}
 				return false;
 			});
 			return form;
