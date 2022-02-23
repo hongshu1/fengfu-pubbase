@@ -134,6 +134,13 @@ public class ProjectConfig extends JBoltProjectConfig {
 				this.scan("cn.jbolt.common");
 			}
 		});
+		me.add(new Routes() {
+			@Override
+			public void config() {
+				this.scan("cn.jbolt.school");
+				this.scan("cn.jbolt.platform");
+			}
+		});
 	}
 
 	/**
@@ -286,6 +293,7 @@ public class ProjectConfig extends JBoltProjectConfig {
 			// 配置ureport权限控制
 			configUreport(me);
 		}
+		
 		//二开配置扩展全局处理器
 		ExtendProjectConfig.configHandler(me,baseHandler);
 	}

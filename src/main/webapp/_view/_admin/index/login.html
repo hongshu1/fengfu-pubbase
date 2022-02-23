@@ -79,7 +79,7 @@
 		</div>
 	</div>
 	</div>
-	<div class="copyright eidchide"><a target="_blank" style="color:#(JBoltGlobalConfigCache.getSystemCopyrightColor('#FFFFFF'));" href="#globalConfig(GlobalConfigKey.SYSTEM_COPYRIGHT_LINK,'http://jbolt.cn')">#(JBoltGlobalConfigCache.getSystemCopyrightCompany("©JBolt(JBOLT.CN)"))</a></div>
+	<div class="copyright eidchide">#setLocal(recordInfo = JBoltGlobalConfigCache.getSystemDomainPutOnRecordInfo()) #if(recordInfo!=null)<a target="_blank" style="margin-right:6px;color:#(JBoltGlobalConfigCache.getSystemCopyrightColor('#FFFFFF'));" href="#(JBoltGlobalConfigCache.getSystemDomainPutOnRecordLink())">#(recordInfo??)</a>#end<a target="_blank" style="color:#(JBoltGlobalConfigCache.getSystemCopyrightColor('#FFFFFF'));" href="#globalConfig(GlobalConfigKey.SYSTEM_COPYRIGHT_LINK,'http://jbolt.cn')">#(JBoltGlobalConfigCache.getSystemCopyrightCompany("©JBolt(JBOLT.CN)"))</a></div>
 	<script type="text/javascript">
 var systemLoginNest="#(JBoltGlobalConfigCache.getJboltLoginNest())";
 </script>
