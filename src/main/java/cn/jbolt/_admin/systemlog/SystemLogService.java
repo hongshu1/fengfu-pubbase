@@ -35,9 +35,9 @@ public class SystemLogService extends JBoltSystemLogService {
 	 * @return
 	 */
 	private String processProjectSystemLogUrl(int targetType, Object targetId) {
-		String url = null;
 		ProjectSystemLogTargetType targetTypeEnum = JBoltEnum.getEnumObjectByValue(ProjectSystemLogTargetType.class, targetType);
-		if(targetTypeEnum == null)
+		if(targetTypeEnum == null) {return null;}
+		String url = null;
 		switch (targetTypeEnum) {
 //		case HIPRINT_TPL:
 //			url = "admin/hiprinttpl/show/" + targetId;
@@ -55,9 +55,9 @@ public class SystemLogService extends JBoltSystemLogService {
 	 * @return
 	 */
 	private String processJBoltProSystemLogUrl(int targetType, Object targetId) {
-		String url = null;
 		JBoltProSystemLogTargetType targetTypeEnum = JBoltEnum.getEnumObjectByValue(JBoltProSystemLogTargetType.class, targetType);
-		if(targetTypeEnum == null)
+		if(targetTypeEnum == null) {return null;}
+		String url = null;
 		switch (targetTypeEnum) {
 		case HIPRINT_TPL:
 			url = "admin/hiprinttpl/show/" + targetId;
