@@ -19,7 +19,6 @@ import cn.jbolt.core.cache.JBoltRoleCache;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
-import cn.jbolt.core.service.JBoltSystemLogType;
 import cn.jbolt.core.service.JBoltUserService;
 import cn.jbolt.core.util.JBoltPinYinUtil;
 /**
@@ -124,9 +123,9 @@ public class UserService extends JBoltUserService {
 		boolean success=update?user.update():user.save();
 		if(success){
 			if(update) {
-				addUpdateSystemLog(user.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_USER, user.getName());
+				addUpdateSystemLog(user.getId(), JBoltUserKit.getUserId(),user.getName());
 			}else {
-				addSaveSystemLog(user.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_USER, user.getName());
+				addSaveSystemLog(user.getId(), JBoltUserKit.getUserId(),user.getName());
 			}
 		}
 		return ret(success);
@@ -153,7 +152,7 @@ public class UserService extends JBoltUserService {
 		}
 		boolean success=user.delete();
 		if(success) {
-			addDeleteSystemLog(user.getId(), userId, JBoltSystemLogType.TARGETTYPE_USER, user.getName());
+			addDeleteSystemLog(user.getId(), userId,user.getName());
 		}
 		return ret(success);
 	}

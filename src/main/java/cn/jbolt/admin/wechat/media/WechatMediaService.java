@@ -598,6 +598,11 @@ public class WechatMediaService extends JBoltBaseService<WechatMedia> {
 		}
 		return success(wechatMedia,JBoltMsg.SUCCESS);
 	}
+	@Override
+	protected int systemLogTargetType() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
  
 
 }

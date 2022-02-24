@@ -13,8 +13,8 @@ import com.qiniu.storage.model.BucketInfo;
 import cn.jbolt.common.model.Qiniu;
 import cn.jbolt.common.model.QiniuBucket;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.JBoltSystemLogTargetType;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.service.JBoltSystemLogType;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.core.util.JBoltQiniuUtil;
 import cn.jbolt.core.util.JBoltRandomUtil;
@@ -69,7 +69,7 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 				changeIsDefaultFalse(qiniuBucket.getQiniuId(),qiniuBucket.getId());
 			}
 			//添加日志
-			addSaveSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_QINIU_BUCKET, qiniuBucket.getName());
+			addSaveSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName());
 		}
 		return ret(success);
 	}
@@ -112,7 +112,7 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 				changeIsDefaultFalse(qiniuBucket.getQiniuId(),qiniuBucket.getId());
 			}
 			//添加日志
-			addUpdateSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_QINIU_BUCKET, qiniuBucket.getName());
+			addUpdateSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName());
 		}
 		return ret(success);
 	}
@@ -134,7 +134,7 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 	 */
 	@Override
 	protected String afterDelete(QiniuBucket qiniuBucket, Kv kv) {
-		addDeleteSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_QINIU_BUCKET, qiniuBucket.getName());
+		addDeleteSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName());
 		qiniuService.updateBucketCount(qiniuBucket.getQiniuId());
 		return null;
 	}
@@ -150,13 +150,13 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 	protected String afterToggleBoolean(QiniuBucket qiniuBucket, String column, Kv kv) {
 		switch (column) {
 		case "enable":
-			addUpdateSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_QINIU_BUCKET, qiniuBucket.getName(),"的启用状态:"+qiniuBucket.getEnable());
+			addUpdateSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName(),"的启用状态:"+qiniuBucket.getEnable());
 			break;
 		case "is_default":
 			if(qiniuBucket.getIsDefault()) {
 				changeIsDefaultFalse(qiniuBucket.getQiniuId(), qiniuBucket.getId());
 			}
-			addUpdateSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_QINIU_BUCKET, qiniuBucket.getName(),"的是否默认属性:"+qiniuBucket.getIsDefault());
+			addUpdateSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName(),"的是否默认属性:"+qiniuBucket.getIsDefault());
 			break;
 
 		default:
@@ -294,6 +294,11 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 	 */
 	public QiniuBucket getQiniuBucketDefault(Object qiniuId) {
 		return findFirst(selectSql().eq("qiniu_id", qiniuId).eq("is_default", TRUE));
+	}
+
+	@Override
+	protected int systemLogTargetType() {
+		return JBoltSystemLogTargetType.QINIU_BUCKET.getValue();
 	}
 	
 }

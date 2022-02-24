@@ -10,6 +10,7 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
+import cn.jbolt.base.JBoltProSystemLogTargetType;
 import cn.jbolt.common.model.SysNotice;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDeptCache;
@@ -108,6 +109,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 		boolean success=sysNotice.save();
 		if(success) {
 			EventKit.post(sysNotice);
+			addSaveSystemLog(sysNotice.getId(), JBoltUserKit.getUserId(), sysNotice.getTitle());
 		}
 		return ret(success);
 	}
@@ -126,6 +128,9 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 		if(dbSysNotice==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		sysNotice.setUpdateUserId(JBoltUserKit.getUserId());
 		boolean success=sysNotice.update();
+		if(success) {
+			addUpdateSystemLog(sysNotice.getId(), JBoltUserKit.getUserId(), sysNotice.getTitle());
+		}
 		return ret(success);
 	}
 	
@@ -404,5 +409,10 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 			updateSysNoticeReadCount(id);
 		});	
 		return SUCCESS;
+	}
+
+	@Override
+	protected int systemLogTargetType() {
+		return JBoltProSystemLogTargetType.SYSTEM_NOTICE.getValue();
 	}
 }

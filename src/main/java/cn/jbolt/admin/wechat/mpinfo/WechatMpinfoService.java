@@ -21,7 +21,6 @@ import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Application;
 import cn.jbolt.core.model.WechatMpinfo;
-import cn.jbolt.core.service.JBoltSystemLogType;
 import cn.jbolt.core.service.JBoltWechatMpinfoService;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 
@@ -69,7 +68,7 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 		boolean success=wechatMpinfo.save();
 		if(success){
 			//添加日志
-			addSaveSystemLog(wechatMpinfo.getId(), JBoltUserKit.getUserId(),JBoltSystemLogType.TARGETTYPE_WECHAT_MPINFO, wechatMpinfo.getName());
+			addSaveSystemLog(wechatMpinfo.getId(), JBoltUserKit.getUserId(),wechatMpinfo.getName());
 			//生成对应的关注微信用户表
 			boolean createRet=wechatUserService.createTable(wechatMpinfo.getId(),dao()._getIdGenMode());
 			if(!createRet) {
@@ -100,7 +99,7 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 		boolean success=wechatMpinfo.update();
 		if(success){
 			//添加日志
-			addUpdateSystemLog(wechatMpinfo.getId(), JBoltUserKit.getUserId(),JBoltSystemLogType.TARGETTYPE_WECHAT_MPINFO, wechatMpinfo.getName());
+			addUpdateSystemLog(wechatMpinfo.getId(), JBoltUserKit.getUserId(),wechatMpinfo.getName());
 			//生成对应的关注微信用户表
 			boolean createRet=wechatUserService.createTable(wechatMpinfo.getId(),dao()._getIdGenMode());
 			if(!createRet) {
@@ -120,7 +119,7 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 		if(ret.isOk()){
 			//添加日志
 			WechatMpinfo wechatMpinfo=ret.getAs("data");
-			addDeleteSystemLog(id, JBoltUserKit.getUserId(),JBoltSystemLogType.TARGETTYPE_WECHAT_MPINFO, wechatMpinfo.getName());
+			addDeleteSystemLog(id, JBoltUserKit.getUserId(),wechatMpinfo.getName());
 		}
 		return ret;
 	}
@@ -162,7 +161,7 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 				wechatConfigService.removeOneEnableApiConfig(wechatMpinfo.getId());
 			}
 			//添加日志
-			addUpdateSystemLog(id, JBoltUserKit.getUserId(),JBoltSystemLogType.TARGETTYPE_WECHAT_MPINFO, wechatMpinfo.getName(),"的启用状态:"+wechatMpinfo.getEnable());
+			addUpdateSystemLog(id, JBoltUserKit.getUserId(),wechatMpinfo.getName(),"的启用状态:"+wechatMpinfo.getEnable());
 			return successWithData(wechatMpinfo.getEnable());
 		}
 		return ret;
@@ -179,7 +178,7 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 		if(ret.isOk()){
 			//添加日志
 			WechatMpinfo wechatMpinfo=ret.getAs("data");
-			addUpdateSystemLog(id, JBoltUserKit.getUserId(),JBoltSystemLogType.TARGETTYPE_WECHAT_MPINFO, wechatMpinfo.getName(),"的认证状态:"+wechatMpinfo.getIsAuthenticated());
+			addUpdateSystemLog(id, JBoltUserKit.getUserId(),wechatMpinfo.getName(),"的认证状态:"+wechatMpinfo.getIsAuthenticated());
 			return successWithData(wechatMpinfo.getIsAuthenticated());
 		}
 		return ret;
@@ -258,7 +257,7 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 		boolean success_wx=wechatMpinfo.update();
 		boolean success_app=application.update();
 		if(success_wx&&success_app) {
-			addUpdateSystemLog(mpId, JBoltUserKit.getUserId(),  JBoltSystemLogType.TARGETTYPE_WECHAT_MPINFO, wechatMpinfo.getName(), "的关联应用为:["+application.getName()+"("+application.getTypeName()+")]");
+			addUpdateSystemLog(mpId, JBoltUserKit.getUserId(),  wechatMpinfo.getName(), "的关联应用为:["+application.getName()+"("+application.getTypeName()+")]");
 		}
 		return ret(success_wx&&success_app);
 	}
@@ -280,7 +279,7 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 		boolean success=wechatMpinfo.update();
 		if(success) {
 			applicationService.removeLinkTarget(linkAppId);
-			addUpdateSystemLog(mpId, JBoltUserKit.getUserId(),  JBoltSystemLogType.TARGETTYPE_WECHAT_MPINFO, wechatMpinfo.getName(), " 与关联应用解除绑定");
+			addUpdateSystemLog(mpId, JBoltUserKit.getUserId(),  wechatMpinfo.getName(), " 与关联应用解除绑定");
 		}
 		return ret(success);
 	}

@@ -12,10 +12,11 @@ import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.common.model.WechatAutoreply;
 import cn.jbolt.common.model.WechatKeywords;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.JBoltSystemLogTargetType;
+import cn.jbolt.core.common.enums.JBoltSystemLogType;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.WechatMpinfo;
-import cn.jbolt.core.service.JBoltSystemLogType;
 import cn.jbolt.core.service.base.JBoltBaseService;
 
 /**  
@@ -138,7 +139,7 @@ public class WechatKeywordsService extends JBoltBaseService<WechatKeywords> {
 			//添加日志
 			Kv checkResultKv=checkRet.getAs("data");
 			String append=checkResultKv.getStr("append");
-			addSystemLog(wechatKeywords.getId(), JBoltUserKit.getUserId(), update?JBoltSystemLogType.TYPE_UPDATE:JBoltSystemLogType.TYPE_SAVE, JBoltSystemLogType.TARGETTYPE_WECHAT_KEYWORDS, wechatKeywords.getName(), append);
+			addSystemLog(wechatKeywords.getId(), JBoltUserKit.getUserId(), update?JBoltSystemLogType.UPDATE.getValue():JBoltSystemLogType.SAVE.getValue(), JBoltSystemLogTargetType.WECHAT_KEYWORDS.getValue(), wechatKeywords.getName(), append);
 		}
 		return ret(success);
 	}
@@ -169,7 +170,7 @@ public class WechatKeywordsService extends JBoltBaseService<WechatKeywords> {
 		Ret ret=deleteById(id);
 		if(ret.isOk()) {
 			Kv result=checkRet.getAs("data");
-			addSystemLog(id, JBoltUserKit.getUserId(),  JBoltSystemLogType.TYPE_DELETE, JBoltSystemLogType.TARGETTYPE_WECHAT_REPLYCONTENT, "ID:"+id, result.getStr("append"));
+			addSystemLog(id, JBoltUserKit.getUserId(),  JBoltSystemLogType.DELETE.getValue(), JBoltSystemLogTargetType.WECHAT_REPLYCONTENT.getValue(), "ID:"+id, result.getStr("append"));
 		}
 		return ret;
 	}
@@ -207,6 +208,10 @@ public class WechatKeywordsService extends JBoltBaseService<WechatKeywords> {
 		.set("type",WechatKeywords.TYPE_LIKE)
 		.set("keywords",keywords.trim());
 		return dao().templateByString(sql, data).findFirst();
+	}
+	@Override
+	protected int systemLogTargetType() {
+		return JBoltSystemLogTargetType.WECHAT_KEYWORDS.getValue();
 	}
 	 
 }

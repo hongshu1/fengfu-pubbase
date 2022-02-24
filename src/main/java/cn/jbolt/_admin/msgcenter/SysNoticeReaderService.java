@@ -38,5 +38,10 @@ public class SysNoticeReaderService extends JBoltBaseService<SysNoticeReader> {
 	public boolean existsReader(Long sysNoticeId, Long userId) {
 		return exists(selectSql().eq("sys_notice_id", sysNoticeId).eq("user_id", userId));
 	}
+	@Override
+	protected int systemLogTargetType() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

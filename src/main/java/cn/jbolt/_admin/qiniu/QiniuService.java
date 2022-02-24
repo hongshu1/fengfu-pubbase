@@ -10,10 +10,10 @@ import cn.jbolt.common.model.Qiniu;
 import cn.jbolt.common.model.QiniuBucket;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.JBoltSystemLogTargetType;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.db.sql.SqlExpress;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.service.JBoltSystemLogType;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.core.util.JBoltQiniuUtil;
@@ -98,7 +98,7 @@ public class QiniuService extends JBoltBaseService<Qiniu> {
 				changeColumnFalseByExcludedId(IS_DEFAULT,qiniu.getId());
 			}
 			//添加日志
-			addSaveSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_QINIU, qiniu.getName());
+			addSaveSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), qiniu.getName());
 		}
 		return ret(success);
 	}
@@ -131,7 +131,7 @@ public class QiniuService extends JBoltBaseService<Qiniu> {
 				changeColumnFalseByExcludedId(IS_DEFAULT,qiniu.getId());
 			}
 			//添加日志
-			addUpdateSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_QINIU, qiniu.getName());
+			addUpdateSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), qiniu.getName());
 		}
 		return ret(success);
 	}
@@ -153,7 +153,7 @@ public class QiniuService extends JBoltBaseService<Qiniu> {
 	 */
 	@Override
 	protected String afterDelete(Qiniu qiniu, Kv kv) {
-		addDeleteSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_QINIU, qiniu.getName());
+		addDeleteSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), qiniu.getName());
 		return null;
 	}
 	
@@ -190,13 +190,13 @@ public class QiniuService extends JBoltBaseService<Qiniu> {
 	protected String afterToggleBoolean(Qiniu qiniu, String column, Kv kv) {
 		switch (column) {
 			case "enable":
-				addUpdateSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_QINIU, qiniu.getName(),"的启用状态:"+qiniu.getEnable());
+				addUpdateSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), qiniu.getName(),"的启用状态:"+qiniu.getEnable());
 				break;
 			case "is_default":
 				if(qiniu.getIsDefault()) {
 					changeColumnFalseByExcludedId(IS_DEFAULT,qiniu.getId());
 				}
-				addUpdateSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_QINIU, qiniu.getName(),"的是否默认属性:"+qiniu.getIsDefault());
+				addUpdateSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), qiniu.getName(),"的是否默认属性:"+qiniu.getIsDefault());
 				break;
 	
 			default:
@@ -267,5 +267,10 @@ public class QiniuService extends JBoltBaseService<Qiniu> {
 		result.set("region",qiniuBucket.getRegion());
 		result.set("domain",domain);
 		return successWithData(result);
+	}
+
+	@Override
+	protected int systemLogTargetType() {
+		return JBoltSystemLogTargetType.QINIU.getValue();
 	}
 }

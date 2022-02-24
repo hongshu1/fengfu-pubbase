@@ -19,7 +19,6 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Application;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.JBoltApplicationService;
-import cn.jbolt.core.service.JBoltSystemLogType;
 /**
  * Api应用中心管理Service
  * @ClassName:  ApplicationService   
@@ -86,7 +85,7 @@ public class ApplicationService extends JBoltApplicationService {
 		//TODO 删除统计信息
 		//TODO 关联信息等
 		processLinkTarget(application.getLinkTargetId(),application.getType());
-		addDeleteSystemLog(application.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_APPLICATION, application.getName());
+		addDeleteSystemLog(application.getId(), JBoltUserKit.getUserId(), application.getName());
 		return null;
 	}
 	
@@ -158,7 +157,7 @@ public class ApplicationService extends JBoltApplicationService {
 		Ret ret=toggleBoolean(id, "enable");
 		if(ret.isOk()){
 			Application application=ret.getAs("data");
-			addUpdateSystemLog(id, JBoltUserKit.getUserId(),  JBoltSystemLogType.TARGETTYPE_APPLICATION, application.getName(), "的状态为["+(application.getEnable()?"启用]":"禁用]"));
+			addUpdateSystemLog(id, JBoltUserKit.getUserId(),  application.getName(), "的状态为["+(application.getEnable()?"启用]":"禁用]"));
 			return successWithData(application.getEnable());
 		}
 		return ret;
@@ -173,7 +172,7 @@ public class ApplicationService extends JBoltApplicationService {
 		Ret ret=toggleBoolean(id, "need_check_sign");
 		if(ret.isOk()){
 			Application application=ret.getAs("data");
-			addUpdateSystemLog(id, JBoltUserKit.getUserId(),  JBoltSystemLogType.TARGETTYPE_APPLICATION, application.getName(), "的属性[是否开启接口校验Signature]为["+(application.getNeedCheckSign()?"开启]":"关闭]"));
+			addUpdateSystemLog(id, JBoltUserKit.getUserId(),  application.getName(), "的属性[是否开启接口校验Signature]为["+(application.getNeedCheckSign()?"开启]":"关闭]"));
 			return successWithData(application.getNeedCheckSign());
 		}
 		return FAIL;
@@ -192,7 +191,7 @@ public class ApplicationService extends JBoltApplicationService {
 		boolean success=application.update();
 		if(success) {
 			//cache
-			addUpdateSystemLog(application.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_APPLICATION, application.getName(), "的AppSecret");
+			addUpdateSystemLog(application.getId(), JBoltUserKit.getUserId(), application.getName(), "的AppSecret");
 		}
 		return ret(success);
 	}
@@ -225,7 +224,7 @@ public class ApplicationService extends JBoltApplicationService {
 		boolean success=app.save();
 		if(success) {
 			//添加日志
-			addSaveSystemLog(app.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_APPLICATION, app.getName());
+			addSaveSystemLog(app.getId(), JBoltUserKit.getUserId(), app.getName());
 		}
 		return ret(success);
 	}
@@ -250,7 +249,7 @@ public class ApplicationService extends JBoltApplicationService {
 		boolean success=app.update();
 		if(success) {
 			//添加日志
-			addUpdateSystemLog(app.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_APPLICATION, app.getName());
+			addUpdateSystemLog(app.getId(), JBoltUserKit.getUserId(), app.getName());
 		}
 		return ret(success);
 	}
@@ -342,7 +341,7 @@ public class ApplicationService extends JBoltApplicationService {
 		application.setLinkTargetId(null);
 		boolean success=application.update();
 		if(success) {
-			addUpdateSystemLog(id, JBoltUserKit.getUserId(),  JBoltSystemLogType.TARGETTYPE_APPLICATION, application.getName(), "，解除了关联的"+application.getTypeName()+"[id:"+linkTargetId+"]");
+			addUpdateSystemLog(id, JBoltUserKit.getUserId(),  application.getName(), "，解除了关联的"+application.getTypeName()+"[id:"+linkTargetId+"]");
 		}
 		return ret(success);
 	}
@@ -374,7 +373,7 @@ public class ApplicationService extends JBoltApplicationService {
 			}
 		}
 		//添加日志
-		addSaveSystemLog(application.getId(), JBoltUserKit.getUserId(), JBoltSystemLogType.TARGETTYPE_APPLICATION, application.getName());
+		addSaveSystemLog(application.getId(), JBoltUserKit.getUserId(), application.getName());
 		return application;
 	}
 

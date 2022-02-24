@@ -16,5 +16,10 @@ public class WechatArticleService extends JBoltBaseService<WechatArticle> {
 	protected WechatArticle dao() {
 		return dao;
 	}
+	@Override
+	protected int systemLogTargetType() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

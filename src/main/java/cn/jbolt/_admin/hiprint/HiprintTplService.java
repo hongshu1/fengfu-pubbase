@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
+import cn.jbolt.base.JBoltProSystemLogTargetType;
 import cn.jbolt.common.model.HiprintTpl;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -90,6 +91,11 @@ public class HiprintTplService extends JBoltBaseService<HiprintTpl> {
 			success = tpl.update();
 		}
 		return success?successWithData(tpl):fail("打印模板提交异常");
+	}
+
+	@Override
+	protected int systemLogTargetType() {
+		return JBoltProSystemLogTargetType.HIPRINT_TPL.getValue();
 	}
 	
 

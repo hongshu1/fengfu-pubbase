@@ -829,5 +829,10 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		ret.set("data", wechatUser);
 		return ret;
 	}
+	@Override
+	protected int systemLogTargetType() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	 
 }

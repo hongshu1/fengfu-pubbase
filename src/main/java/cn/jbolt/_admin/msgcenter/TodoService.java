@@ -318,4 +318,10 @@ public class TodoService extends JBoltBaseService<Todo> {
 	public boolean existUnread(Object userId) {
 		return exists(selectSql().selectId().eq("user_id", userId).eq("is_readed", FALSE));
 	}
+
+	@Override
+	protected int systemLogTargetType() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

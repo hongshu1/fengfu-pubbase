@@ -33,11 +33,12 @@ import cn.jbolt.common.model.WechatAutoreply;
 import cn.jbolt.common.model.WechatKeywords;
 import cn.jbolt.common.model.WechatReplyContent;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.JBoltSystemLogTargetType;
+import cn.jbolt.core.common.enums.JBoltSystemLogType;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.WechatConfig;
 import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
-import cn.jbolt.core.service.JBoltSystemLogType;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 
@@ -121,7 +122,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	 * @return
 	 */
 	public Ret save( Long autoReplyId, WechatReplyContent wechatReplyContent) {
-		return submit(autoReplyId, wechatReplyContent, JBoltSystemLogType.TYPE_SAVE);
+		return submit(autoReplyId, wechatReplyContent, JBoltSystemLogType.SAVE.getValue());
 	}
 	/**
 	 *  更新
@@ -131,7 +132,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	 * @return
 	 */
 	public Ret update( Long autoReplyId, WechatReplyContent wechatReplyContent) {
-		return submit(autoReplyId, wechatReplyContent, JBoltSystemLogType.TYPE_UPDATE);
+		return submit(autoReplyId, wechatReplyContent, JBoltSystemLogType.UPDATE.getValue());
 	}
 	/**
 	 * 提交
@@ -143,7 +144,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	 */
 	public Ret submit(Long autoReplyId, WechatReplyContent wechatReplyContent,int systemLogType) {
 		if(notOk(autoReplyId)||wechatReplyContent==null||notOk(wechatReplyContent.getAutoReplyId())||notOk(wechatReplyContent.getType())
-				||(systemLogType==JBoltSystemLogType.TYPE_SAVE&&isOk(wechatReplyContent.getId()))||(systemLogType==JBoltSystemLogType.TYPE_UPDATE&&notOk(wechatReplyContent.getId()))
+				||(systemLogType==JBoltSystemLogType.SAVE.getValue()&&isOk(wechatReplyContent.getId()))||(systemLogType==JBoltSystemLogType.UPDATE.getValue()&&notOk(wechatReplyContent.getId()))
 				||autoReplyId.longValue()!=wechatReplyContent.getAutoReplyId().longValue()
 				) {
 			return fail(JBoltMsg.PARAM_ERROR);
@@ -205,7 +206,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		//强制定死了绑定的MPID autoReplyId
 		wechatReplyContent.setAutoReplyId(autoReplyId);
 		wechatReplyContent.setMpId(wechatAutoreply.getMpId());
-		if(systemLogType==JBoltSystemLogType.TYPE_SAVE) {
+		if(systemLogType==JBoltSystemLogType.SAVE.getValue()) {
 			wechatReplyContent.setSortRank(getNextSortRank(Okv.by("auto_reply_id", autoReplyId)));
 			wechatReplyContent.setEnable(false);
 			success=wechatReplyContent.save();
@@ -215,7 +216,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		if(success) {
 			processCache(mpId, wechatAutoreply.getType());
 			//添加日志
-			addSystemLog(wechatReplyContent.getId(), JBoltUserKit.getUserId(), systemLogType, JBoltSystemLogType.TARGETTYPE_WECHAT_REPLYCONTENT, "ID:"+wechatReplyContent.getId(),"所属公众平台：["+wechatMpinfo.getName()+"] 规则:["+wechatAutoreply.getType()+"]["+wechatAutoreply.getName()+"]");
+			addSystemLog(wechatReplyContent.getId(), JBoltUserKit.getUserId(), systemLogType, JBoltSystemLogTargetType.WECHAT_REPLYCONTENT.getValue(), "ID:"+wechatReplyContent.getId(),"所属公众平台：["+wechatMpinfo.getName()+"] 规则:["+wechatAutoreply.getType()+"]["+wechatAutoreply.getName()+"]");
 		}
 		return ret(success);
 	}
@@ -237,7 +238,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 			WechatReplyContent wechatReplyContent=result.getAs("wechatReplyContent");
 			//删除后需要把此数据之后的数据更新顺序
 			updateSortRankAfterDelete(Okv.by("auto_reply_id",autoReplyId),wechatReplyContent.getSortRank());
-			addSystemLog(id, JBoltUserKit.getUserId(),  JBoltSystemLogType.TYPE_DELETE, JBoltSystemLogType.TARGETTYPE_WECHAT_REPLYCONTENT, "ID:"+id, result.getStr("append"));
+			addSystemLog(id, JBoltUserKit.getUserId(),  JBoltSystemLogType.DELETE.getValue(), JBoltSystemLogTargetType.WECHAT_REPLYCONTENT.getValue(), "ID:"+id, result.getStr("append"));
 		}
 		return ret;
 	}
@@ -312,7 +313,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 			processCache(wechatAutoreply.getMpId(),wechatAutoreply.getType());
 			//添加日志
 			String append=result.getStr("append");
-			addSystemLog(id, JBoltUserKit.getUserId(),  JBoltSystemLogType.TYPE_UPDATE, JBoltSystemLogType.TARGETTYPE_WECHAT_REPLYCONTENT, "ID:"+id, "的启用状态："+wechatReplyContent.getEnable()+" "+append);
+			addSystemLog(id, JBoltUserKit.getUserId(),  JBoltSystemLogType.UPDATE.getValue(), JBoltSystemLogTargetType.WECHAT_REPLYCONTENT.getValue(), "ID:"+id, "的启用状态："+wechatReplyContent.getEnable()+" "+append);
 		}
 		return ret(success);
 	}
@@ -792,6 +793,10 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		articles.setPicurl(JBoltRealUrlUtil.getWechatImage(wechatReplyContent.getPoster(), "assets/img/defaultposter.jpg"));
 		articlesList.add(articles);
 		return articlesList;
+	}
+	@Override
+	protected int systemLogTargetType() {
+		return JBoltSystemLogTargetType.WECHAT_REPLYCONTENT.getValue();
 	}
 
 }

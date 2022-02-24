@@ -3,6 +3,7 @@ package cn.jbolt.admin.wechat.menu;
 import java.util.List;
 
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
@@ -16,7 +17,9 @@ import cn.jbolt.common.model.WechatMenu;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltWechatConfigCache;
+import cn.jbolt.core.common.enums.JBoltSystemLogTargetType;
 import cn.jbolt.core.enumutil.JBoltEnum;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.service.base.JBoltBaseService;
 
@@ -117,7 +120,7 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 			menu.setName("菜单_"+menu.getId());
 			success=menu.update();
 			if(success){
-				//TODO 添加日志
+				addSaveSystemLog(menu.getId(), JBoltUserKit.getUserId(), menu.getName());
 			}
 		}
 		return success?success(menu,JBoltMsg.SUCCESS):FAIL;
@@ -150,6 +153,9 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 			}
 		}
 		boolean success=menu.update();
+		if(success) {
+			addUpdateSystemLog(menu.getId(), JBoltUserKit.getUserId(), menu.getName());
+		}
 		return success?success(db,JBoltMsg.SUCCESS):FAIL;
 	}
 	/**
@@ -181,6 +187,11 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 			doInitRankByPid(mpId,db.getPid());
 		}
 		return result;
+	}
+	@Override
+	protected String afterDelete(WechatMenu menu, Kv kv) {
+		addDeleteSystemLog(menu.getId(), JBoltUserKit.getUserId(), menu.getName());
+		return null;
 	}
 	
 	private void doInitRankByPid(Long mpId, Long pid) {
@@ -439,6 +450,10 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 		}
 		
 		return SUCCESS;
+	}
+	@Override
+	protected int systemLogTargetType() {
+		return JBoltSystemLogTargetType.WECHAT_MENU.getValue();
 	}
 	
 

@@ -14,4 +14,10 @@ public class PrivateMessageService extends JBoltBaseService<PrivateMessage> {
 		return false;
 	}
 
+	@Override
+	protected int systemLogTargetType() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
