@@ -1,15 +1,15 @@
 [{
-	"name": "radio组件Boolean值",
+	"name": "选项_Boolean值",
 	"modeLevel": 1,
-	"typeKey": "radio_boolean",
+	"typeKey": "options_boolean",
 	"dics":[
 			{"name":"是","sn":"true"},
 			{"name":"否","sn":"false"}
 	]
 },{
-	"name": "radio组件_enable",
+	"name": "选项_enable",
 	"modeLevel": 1,
-	"typeKey": "radio_enable",
+	"typeKey": "options_enable",
 	"dics":[
 		{"name":"启用","sn":"true"},
 		{"name":"不启用","sn":"false"}
