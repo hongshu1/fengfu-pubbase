@@ -1,20 +1,36 @@
 package cn.jbolt._admin.systemlog;
 
 import cn.jbolt.base.JBoltProSystemLogTargetType;
+import cn.jbolt.base.JBoltProSystemLogType;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.service.JBoltSystemLogService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.jbolt.extend.systemlog.ProjectSystemLogType;
 
 public class SystemLogService extends JBoltSystemLogService {
 
 	@Override
 	public String targetTypeToName(int targetType) {
-		return null;
+		String name = JBoltEnum.getTextByValue(JBoltProSystemLogTargetType.class, targetType);
+		if (notOk(name)) {
+			name = JBoltEnum.getTextByValue(ProjectSystemLogTargetType.class, targetType);
+			if (notOk(name)) {
+				name = "未指定";
+			}
+		}
+		return name;
 	}
 
 	@Override
 	public String typeToName(int type) {
-		return null;
+		String name = JBoltEnum.getTextByValue(JBoltProSystemLogType.class, type);
+		if (notOk(name)) {
+			name = JBoltEnum.getTextByValue(ProjectSystemLogType.class, type);
+			if (notOk(name)) {
+				name = "未指定";
+			}
+		}
+		return name;
 	}
 	
 	/**
