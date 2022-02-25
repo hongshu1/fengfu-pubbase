@@ -12,7 +12,7 @@
 	"typeKey": "options_enable",
 	"dics":[
 		{"name":"启用","sn":"true"},
-		{"name":"不启用","sn":"false"}
+		{"name":"禁用","sn":"false"}
 	]
 },{
 	"name": "商品单位",
