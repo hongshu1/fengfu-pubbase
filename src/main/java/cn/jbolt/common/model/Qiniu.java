@@ -1,8 +1,10 @@
 package cn.jbolt.common.model;
 
 import cn.jbolt.common.model.base.BaseQiniu;
+import cn.jbolt.core.annotation.JBoltAutoCache;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.jbolt.core.cache.JBoltUserCache;
 
 /**
  * 七牛账号表
@@ -10,7 +12,14 @@ import cn.jbolt.core.base.JBoltIDGenMode;
  */
 @SuppressWarnings("serial")
 @TableBind(dataSource = "main" , table = "jb_qiniu" , primaryKey = "id" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
+@JBoltAutoCache(keyCache = true,column = "sn")
 public class Qiniu extends BaseQiniu<Qiniu> {
-
+	public String getCreateUserName() {
+		return JBoltUserCache.me.getName(getCreateUserId());
+	}
+	public String getUpdateUserName() {
+		return JBoltUserCache.me.getName(getUpdateUserId());
+	}
 }
+
 
