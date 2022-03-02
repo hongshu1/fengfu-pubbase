@@ -6,7 +6,7 @@
 #if(mainLogicBean.hasPid)
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">上级#(mainLogicBean.dataName?? '数据')</label>
-		<div class="col input-group jb_col_input_group">
+		<div class="col input-group">
 			<select class="form-control" data-refresh="true"  data-autoload data-url="替换为自己的数据源地址"  name="#(modelNameL).pid" data-refresh="true" data-rule="required" data-tips="请选择上级#(mainLogicBean.dataName?? '数据')" data-text="=请选择="  data-value="" data-select="#[[#(]]# #(modelNameL).pid #[[??)]]#"></select>
 		</div>
 	</div>
@@ -151,7 +151,7 @@
 #case("select")
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">#(col.remark?? col.name)</label>
-		<div class="col input-group jb_col_input_group">
+		<div class="col input-group">
 			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="#(modelNameL).#(col.name)" data-refresh="true" #if(col.required) data-rule="select" #end  data-tips="请选择#(col.remark?? col.name)" data-text="=请选择="  data-value="" data-select="#[[#(]]# #(modelNameL).#(col.name) #[[??)]]#"></select>
 		</div>
 	</div>
