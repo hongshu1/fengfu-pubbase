@@ -63,6 +63,8 @@ import cn.jbolt.core.enjoy.directive.RowNumberDirective;
 import cn.jbolt.core.enjoy.directive.SexDirective;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
+import cn.jbolt.core.handler.base.JBoltSaasTenantHandler;
+import cn.jbolt.core.kit.JBoltSaasTenantSnToIdProcessor;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
@@ -423,5 +425,15 @@ public class ProjectConfig extends JBoltProjectConfig {
 		
 		//二开扩展配置服务器启动后处理
 		ExtendProjectConfig.onStart();
+	}
+
+	@Override
+	protected JBoltSaasTenantSnToIdProcessor getSaasTenantSnToIdProcessor() {
+		return null;
+	}
+
+	@Override
+	protected void configSaas(Handlers me, JBoltSaasTenantHandler saasTenantHandler) {
+		
 	}
 }
