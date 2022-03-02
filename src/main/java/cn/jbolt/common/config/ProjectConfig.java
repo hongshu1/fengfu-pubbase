@@ -398,12 +398,16 @@ public class ProjectConfig extends JBoltProjectConfig {
 
 	@Override
 	public void onStop() {
+		//调用默认
+		super.onStop();
 		//二开扩展配置服务器关闭前处理
 		ExtendProjectConfig.onStop();
 	}
 	
 	@Override
 	public void onStart() {
+		//调用默认
+		super.onStart();
 		//0、自动初始化数据
 		JBoltAutoInitData.me.exe();
 		//1、自动执行一些需要升级的操作
