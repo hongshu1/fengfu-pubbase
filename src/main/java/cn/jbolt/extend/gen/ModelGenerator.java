@@ -21,7 +21,7 @@ public class ModelGenerator extends JFinalModelGenerator{
 		//指定本次运行直接生成的表名 忽略其它所有表 数组为空 表示忽略此强制设定 当需要单个指定生成时才需要这个
 		String[] tableNames = new String[] { /* "jb_user","jb_application" */};
 		//哪些前缀名的要生成
-		String[] tableNamesPrefixes = new String[] {"pl"/* "jb_","pl_" */};
+		String[] tableNamesPrefixes = new String[] {/* "jb_","pl_" */};
 		//生成Model放在哪个包下
 		String modelPackage="cn.jbolt.common.model";
 		//默认ID生成模式
