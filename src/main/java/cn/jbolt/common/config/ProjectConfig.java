@@ -64,7 +64,10 @@ import cn.jbolt.core.enjoy.directive.SexDirective;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.handler.base.JBoltSaasTenantHandler;
+import cn.jbolt.core.kit.JBoltSaasTenantIdToNameProcessor;
+import cn.jbolt.core.kit.JBoltSaasTenantIdToSnProcessor;
 import cn.jbolt.core.kit.JBoltSaasTenantSnToIdProcessor;
+import cn.jbolt.core.kit.JBoltSaasTenantSnToNameProcessor;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
@@ -435,5 +438,23 @@ public class ProjectConfig extends JBoltProjectConfig {
 	@Override
 	protected void configSaas(Handlers me, JBoltSaasTenantHandler saasTenantHandler) {
 		
+	}
+
+	@Override
+	protected JBoltSaasTenantSnToNameProcessor getSaasTenantSnToNameProcessor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected JBoltSaasTenantIdToNameProcessor getSaasTenantIdToNameProcessor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected JBoltSaasTenantIdToSnProcessor getSaasTenantIdToSnProcessor() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
