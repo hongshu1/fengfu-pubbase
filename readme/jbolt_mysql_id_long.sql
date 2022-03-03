@@ -545,14 +545,14 @@ CREATE TABLE `jb_topnav` (
   `enable` char(1) COLLATE utf8mb4_general_ci DEFAULT '0' COMMENT '是否启用',
   `sort_rank` int(11) DEFAULT NULL COMMENT '排序',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='顶部导航';
+) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='顶部导航';
 
 CREATE TABLE `jb_topnav_menu` (
   `id` bigint(20) NOT NULL COMMENT '主键ID',
   `topnav_id` bigint(20) DEFAULT NULL COMMENT '顶部导航ID',
   `permission_id` bigint(20) DEFAULT NULL COMMENT '菜单资源ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='顶部菜单对应左侧一级导航中间表';
+) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='顶部菜单对应左侧一级导航中间表';
 
 CREATE TABLE `jb_todo` (
   `id` bigint(20) NOT NULL COMMENT '主键ID',
@@ -578,7 +578,7 @@ CREATE TABLE `jb_todo` (
   `source_sys` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '来源系统',
   `is_readed` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否已读',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='待办事项';
+) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='待办事项';
 
 
 
@@ -598,7 +598,7 @@ CREATE TABLE `jb_sys_notice` (
   `files` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '附件',
   `del_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '0' COMMENT '删除标志',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='系统通知';
+) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='系统通知';
 
 CREATE TABLE `jb_sys_notice_reader` (
   `id` bigint(20) NOT NULL COMMENT '主键ID',
@@ -606,7 +606,7 @@ CREATE TABLE `jb_sys_notice_reader` (
   `user_id` bigint(20) NOT NULL COMMENT '用户ID',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='通知阅读用户关系表';
+) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='通知阅读用户关系表';
 
 CREATE TABLE `jb_private_message` (
   `id` bigint(20) NOT NULL COMMENT '主键ID',
@@ -615,7 +615,7 @@ CREATE TABLE `jb_private_message` (
   `from_user_id` bigint(20) NOT NULL COMMENT '发信人',
   `to_user_id` bigint(20) NOT NULL COMMENT '收信人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='内部私信';
+) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='内部私信';
 
 -- ----------------------------
 -- Table structure for jb_hiprint_tpl
@@ -656,7 +656,7 @@ CREATE TABLE `jb_qiniu`  (
   `create_user_id` bigint(20) NOT NULL COMMENT '创建人',
   `update_user_id` bigint(20) NOT NULL COMMENT '更新人',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '七牛账号表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '七牛账号表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for jb_qiniu_bucket
@@ -681,6 +681,23 @@ CREATE TABLE `jb_qiniu_bucket`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `region` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '地区',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '七牛bucket配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '七牛bucket配置' ROW_FORMAT = Dynamic;
 
+-- ----------------------------
+-- Table structure for jb_datasource_filter
+-- ----------------------------
+DROP TABLE IF EXISTS `jb_datasource_filter`;
+CREATE TABLE `jb_datasource_filter` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
+  `config_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '配置名称',
+  `table_name_filter` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '不需要生成的表名',
+  `table_name_contains` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '需要排除包含字符',
+  `table_name_patterns` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '需要排除符合正则的',
+  `create_user_id` bigint NOT NULL COMMENT '创建人',
+  `update_user_id` bigint NOT NULL COMMENT '更新人',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='数据源过滤配置';
 SET FOREIGN_KEY_CHECKS = 1;
