@@ -834,5 +834,9 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	@Override
+	protected String database() {
+		return dao._getDatabaseName();
+	}
 	 
 }
