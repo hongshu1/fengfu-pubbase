@@ -70,7 +70,7 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 			//添加日志
 			addSaveSystemLog(wechatMpinfo.getId(), JBoltUserKit.getUserId(),wechatMpinfo.getName());
 			//生成对应的关注微信用户表
-			boolean createRet=wechatUserService.createTable(wechatMpinfo.getId(),dao()._getIdGenMode());
+			boolean createRet=wechatUserService.createTable(wechatMpinfo.getId());
 			if(!createRet) {
 				return success("公众平台创建成功，但是表生成失败！请检查后修改此公众平台，可再次生成。");
 			}
@@ -101,7 +101,7 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 			//添加日志
 			addUpdateSystemLog(wechatMpinfo.getId(), JBoltUserKit.getUserId(),wechatMpinfo.getName());
 			//生成对应的关注微信用户表
-			boolean createRet=wechatUserService.createTable(wechatMpinfo.getId(),dao()._getIdGenMode());
+			boolean createRet=wechatUserService.createTable(wechatMpinfo.getId());
 			if(!createRet) {
 				return success("公众平台更新成功，但是表生成失败！请检查后修改此公众平台，可再次生成。");
 			}
