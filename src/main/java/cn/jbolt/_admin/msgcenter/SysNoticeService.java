@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -223,6 +224,12 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 			return deleteByIds(ids);
 		}
 		return updateDelFlagByBatchIds(ids, true);
+	}
+
+	@Override
+	protected String afterRealDelete(SysNotice sysNotice, Kv kv) {
+		sysNoticeReaderService.deleteBySysNoticeId(sysNotice.getId());
+		return null;
 	}
 	
 	/**

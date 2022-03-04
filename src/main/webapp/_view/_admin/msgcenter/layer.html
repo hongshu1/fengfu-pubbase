@@ -108,6 +108,9 @@ function changeMsgCenterTodoCountHandler(portal,htmlObj,json){
 	$("#todo_count_box").text(json.data.length);
 }
 $(function(){
-})
+	if(JBoltWS){
+		JBoltWS.sendCommand({command:"msgcenter_check_unread"});
+	}
+});
 </script>
 #end

@@ -3,7 +3,9 @@ package cn.jbolt._admin.msgcenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import cn.jbolt._admin.permission.PermissionKey;
@@ -148,6 +150,7 @@ public class SysNoticeAdminController extends JBoltBaseController {
   /**
 	* 保存
 	*/
+	@Before(Tx.class)
 	public void save() {
 		renderJson(service.save(getModel(SysNotice.class, "sysNotice")));
 	}
@@ -155,6 +158,7 @@ public class SysNoticeAdminController extends JBoltBaseController {
    /**
 	* 更新
 	*/
+	@Before(Tx.class)
 	public void update() {
 		renderJson(service.update(getModel(SysNotice.class, "sysNotice")));
 	}
@@ -162,12 +166,14 @@ public class SysNoticeAdminController extends JBoltBaseController {
 	/**
 	 * 批量删除 
 	 */
+	@Before(Tx.class)
 	public void batchDelete() {
 		renderJson(service.deleteNotices(get("ids"),false));
 	}
    /**
 	* 批量还原恢复回收站数据
 	*/
+	@Before(Tx.class)
 	public void batchRestore() {
 		renderJson(service.restoreNotices(get("ids")));
 	}

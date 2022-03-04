@@ -1,5 +1,6 @@
 package cn.jbolt._admin.msgcenter;
 
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 
 import cn.jbolt.common.model.SysNoticeReader;
@@ -40,8 +41,18 @@ public class SysNoticeReaderService extends JBoltBaseService<SysNoticeReader> {
 	}
 	@Override
 	protected int systemLogTargetType() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	
+	/**
+	 * 删除系统通知已读人
+	 * @param sysNoticeId
+	 */
+	public void deleteBySysNoticeId(Long sysNoticeId) {
+		if(notOk(sysNoticeId)) {
+			throw new RuntimeException("sysNoticeId can not be null");
+		}
+		deleteBy(Okv.by("sys_notice_id", sysNoticeId));
+	}
 }
