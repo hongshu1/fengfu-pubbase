@@ -17,7 +17,6 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Application;
-import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.JBoltApplicationService;
 /**
  * Api应用中心管理Service
@@ -345,36 +344,6 @@ public class ApplicationService extends JBoltApplicationService {
 		}
 		return ret(success);
 	}
-	/**
-	 * 检测是否存在 不存在就初始化 系统内置平台自身application
-	 */
-	public Application checkAndInitPcInnerPlatformApplication() {
-		Application application = findFirst(selectSql().eq("type", ApplicationType.PC_INNER_PLATFORM.getValue()));
-		if(application == null) {
-			User user = userService.getOneSystemAdmin();
-			application = new Application();
-			if(user != null) {
-				application.setUserId(user.getId());
-				application.setUpdateUserId(user.getId());
-			}
-			application.setEnable(true);
-			application.setBriefInfo("开发平台内置应用");
-			application.setType(ApplicationType.PC_INNER_PLATFORM.getValue());
-			application.setIsInner(true);
-			application.setNeedCheckSign(false);
-			application.setName("内置_平台自身");
-			application.setAppId(genAppId());
-			application.setAppSecret(genAppSecret());
-			application.setCreateTime(new Date());
-			application.setUpdateTime(application.getCreateTime());
-			boolean success=application.save();
-			if(!success) {
-				throw new RuntimeException("checkAndInitInnerPlatformApplication save 失败");
-			}
-		}
-		//添加日志
-		addSaveSystemLog(application.getId(), JBoltUserKit.getUserId(), application.getName());
-		return application;
-	}
+	
 
 }
