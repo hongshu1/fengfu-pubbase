@@ -1,5 +1,7 @@
 package cn.jbolt.extend.gen;
 
+import com.jfinal.plugin.activerecord.Model;
+
 import cn.jbolt.core.gen.IndexHtmlLayoutType;
 import cn.jbolt.core.gen.JBoltMainLogicBean;
 import cn.jbolt.core.gen.JBoltMainLogicGenerator;
@@ -39,11 +41,13 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		//在路由配置里的controllerKey参数 也用在生成其它URL的前缀
 		String controllerKey             = "/admin/xxx/application";
 		//生成html存放位置 从src/main/webapp根目录下开始 /作为前缀
-		String viewFolder                = "/_view/_admin/xxx/application";
+		String viewFolder                = "/_view/admin/xxx/application";
 		//生成Index.html左上角页面标题
-		String pageTitle                 = "application管理";
+		String pageTitle                 = "Application管理";
 		//在页面里使用增加 修改 删除 提示信息等用到的针对此模块操作的数据名称 例如 商品管理中是【商品】 品牌管理中是【品牌】
-		String dataName                  = "Application数据";
+		String dataName                  = "Application";
+		//生成模块用的model是哪个？
+		Class<? extends Model<?>> modelClass= Application.class;
 		//是否需要分页查询
 		boolean needPaginate             = true;
 		//index.html 是否需要启用表格的工具条 toolbar
@@ -52,24 +56,29 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		boolean checkDelete              = true;
 		//关键词查询匹配字段 多个用逗号隔开
 		String matchColumns              = "name";
-		//查询用默认排序字段
+		//查询用默认排序字段 多个用逗号隔开
 		String orderColumn               = "id";
 		//查询用默认排序方式 desc asc
 		String orderType                 = "desc";
+		//这个模块crud 等关键操作如果需要增加systemLog需要指定log类型
+		//具体类型在ProjectSystemLogTargetType.java中定义出来即可
+		String projectSystemLogTargetType   = "ProjectSystemLogTargetType.TEACHER";
+		
 		/*
 		 * 需要在Controller上方声明的@CheckPermission(PermissionKey.USER) 
 		 * 可以这样写 	String checkPermissionKeys = PermissionKey.XXX;  多个用逗号隔开
 		 * 这个XXX需要自己后台权限资源管理处定义出来 然后生成到PermissionKey.java中
 		 */
-		String checkPermissionKeys       = "PermissionKey.APPLICATION";
+		String checkPermissionKeys       = "PermissionKey.TEACHER";
 		//是否使用@path注解 就不用去配置路由了 默认false
-		boolean usePathAnnotation        = false;
+		boolean usePathAnnotation        = true;
 		//访问Controller权限是是否支持超管员不校验直接放行 默认false
 		boolean unCheckIfSystemAdmin     = true;
 		
 		//创建主逻辑生成配置Bean
-		JBoltMainLogicBean mainLogicBean = new JBoltMainLogicBean(Application.class,projectPath, packageName,controllerKey, viewFolder ,pageTitle,dataName,needPaginate,needToolbar,checkDelete,matchColumns,orderColumn,orderType,checkPermissionKeys,usePathAnnotation,unCheckIfSystemAdmin,indexHtmlLayoutType,author);
+		JBoltMainLogicBean mainLogicBean = new JBoltMainLogicBean(modelClass,projectPath, packageName,controllerKey, viewFolder ,pageTitle,dataName,needPaginate,needToolbar,checkDelete,matchColumns,orderColumn,orderType,checkPermissionKeys,usePathAnnotation,unCheckIfSystemAdmin,indexHtmlLayoutType,author);
 		
+		mainLogicBean.setProjectSystemLogTargetType(projectSystemLogTargetType);
 		//如果是crud模式 特殊处理一下 行编辑删除按钮
 		if(mainLogicBean.isCrudType()) {
 			//index.html页面表格是否需要行末尾的编辑按钮

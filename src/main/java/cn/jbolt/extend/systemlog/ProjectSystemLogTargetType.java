@@ -8,6 +8,7 @@ import cn.jbolt.core.enumutil.JBoltEnum;
  * @date:   2022年2月24日   
  */
 public enum ProjectSystemLogTargetType {
+	NONE("NONE",0),
 //	SCHOOL("学校",20001),
 //	GRADE("年级",20002),
 	;

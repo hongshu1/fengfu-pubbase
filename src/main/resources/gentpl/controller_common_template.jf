@@ -47,6 +47,7 @@
   /**
 	* 保存
 	*/
+	@Before(Tx.class)
 	public void save() {
 		renderJson(service.save(getModel(#(modelName).class, "#(firstCharToLowerCase(modelName))")));
 	}
@@ -56,6 +57,7 @@
    /**
 	* 更新
 	*/
+	@Before(Tx.class)
 	public void update() {
 		renderJson(service.update(getModel(#(modelName).class, "#(firstCharToLowerCase(modelName))")));
 	}
@@ -65,6 +67,7 @@
    /**
 	* 删除
 	*/
+	@Before(Tx.class)
 	public void delete() {
 		renderJson(service.delete(get#(getIdType?? 'Int')(0)));
 	}
@@ -74,6 +77,7 @@
    /**
 	* 批量删除
 	*/
+	@Before(Tx.class)
 	public void deleteByIds() {
 		renderJson(service.deleteByBatchIds(get("ids")));
 	}
@@ -124,6 +128,7 @@
   /**
 	* 切换启用状态
 	*/
+	@Before(Tx.class)
 	public void toggleEnable() {
 		renderJson(service.toggleEnable(get#(getIdType?? 'Int')(0)));
 	}
@@ -153,6 +158,7 @@
   /**
 	* 切换#(name)
 	*/
+	@Before(Tx.class)
 	public void #(name)() {
 		renderJson(service.#(name)(get#(getIdType?? 'Int')(0)));
 	}

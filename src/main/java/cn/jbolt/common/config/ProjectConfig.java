@@ -25,6 +25,7 @@ import com.oreilly.servlet.multipart.FileRenamePolicy;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.onlineuser.JBoltOnlineUserClearTask;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.admin.appdevcenter.AppDevCenterAdminRoutes;
@@ -136,16 +137,17 @@ public class ProjectConfig extends JBoltProjectConfig {
 		me.add(new Routes() {
 			@Override
 			public void config() {
+				this.addInterceptor(new JBoltAdminAuthInterceptor());
 				this.scan("cn.jbolt.common");
 			}
 		});
-		me.add(new Routes() {
-			@Override
-			public void config() {
-				this.scan("cn.jbolt.school");
-				this.scan("cn.jbolt.platform");
-			}
-		});
+		//添加自己的
+//		me.add(new Routes() {
+//			@Override
+//			public void config() {
+//				this.scan("cn.jbolt.xxx");
+//			}
+//		});
 	}
 
 	/**

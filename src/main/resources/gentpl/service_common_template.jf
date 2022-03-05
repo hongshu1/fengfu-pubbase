@@ -1,6 +1,6 @@
 #define s_paginateAdminDatas(modelName,mainLogicBean)
-  /**
-	 * 后台管理分页查询#(mainLogicBean!=null)
+	/**
+	 * 后台管理分页查询
 	 * @param pageNumber
 	 * @param pageSize
 	 * @param keywords
@@ -10,9 +10,23 @@
 		return paginateByKeywords("#(mainLogicBean.orderColumn?? 'id')","#(mainLogicBean.orderType?? 'desc')", pageNumber, pageSize, keywords, "#(mainLogicBean.matchColumns?? 'name')");
 	}
 #end
+#define s_systemLogTargetType(mainLogicBean)
+	/**
+	 * 设置返回二开业务所属的关键systemLog的targetType 
+	 * @return
+	 */
+	@Override
+	protected int systemLogTargetType() {
+		#if(mainLogicBean.projectSystemLogTargetType)
+		return #(mainLogicBean.ProjectSystemLogTargetType).getValue();
+		#else
+		return ProjectSystemLogTargetType.NONE.getValue();
+		#end
+	}
+#end
 
 #define s_getAdminDatas(modelName,mainLogicBean)
-  /**
+	/**
 	 * 后台管理list查询
 	 * @param keywords
 	 * @return
@@ -23,9 +37,9 @@
 #end
 
 
-#define s_save(modelName)
+#define s_save(modelName,mainLogicBean)
 #setLocal(fctucName=firstCharToLowerCase(modelName))
-  /**
+	/**
 	 * 保存
 	 * @param userId
 	 * @param #(fctucName)
@@ -35,23 +49,27 @@
 		if(#(fctucName)==null || isOk(#(fctucName).#(getIdMethodName?? 'getId')())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		//if(exists(columnName, value)) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		//if(existsName(#(fctucName).getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		#if(mainLogicBean.needSort)
 		#(fctucName).setSortRank(getNextSortRank());
 		#end
 		boolean success=#(fctucName).save();
 		if(success) {
 			//添加日志
-			//addSaveSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), SystemLog.TARGETTYPE_#(modelName.toUpperCase()), #(fctucName).getName());
+			#if(mainLogicBean.projectSystemLogTargetType && mainLogicBean.projectSystemLogTargetType!="ProjectSystemLogTargetType.NONE")
+			addSaveSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), #(fctucName).getName());
+			#else
+			//addSaveSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), #(fctucName).getName());
+			#end
 		}
 		return ret(success);
 	}
 #end
 
-#define s_update(modelName)
+#define s_update(modelName,mainLogicBean)
 #setLocal(fctucName=firstCharToLowerCase(modelName))
 #setLocal(dbModelName="db"+modelName)
-   /**
+	/**
 	 * 更新
 	 * @param #(fctucName)
 	 * @return
@@ -63,11 +81,15 @@
 		//更新时需要判断数据存在
 		#(modelName) #(dbModelName)=findById(#(fctucName).#(getIdMethodName?? 'getId')());
 		if(#(dbModelName)==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(exists(columnName, value, #(fctucName).#(getIdMethodName?? 'getId')())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		//if(existsName(#(fctucName).getName(), #(fctucName).#(getIdMethodName?? 'getId')())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=#(fctucName).update();
 		if(success) {
 			//添加日志
-			//addUpdateSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), SystemLog.TARGETTYPE_#(modelName.toUpperCase()), #(fctucName).getName());
+			#if(mainLogicBean.projectSystemLogTargetType && mainLogicBean.projectSystemLogTargetType!="ProjectSystemLogTargetType.NONE")
+			addUpdateSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), #(fctucName).getName());
+			#else
+			//addUpdateSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), #(fctucName).getName());
+			#end
 		}
 		return ret(success);
 	}
@@ -76,70 +98,31 @@
 
 #define s_deleteByIds(modelName,checkDelete)
 #setLocal(fctucName=firstCharToLowerCase(modelName))
-   /**
-	  * 删除 指定多个ID
+	/**
+	 * 删除 指定多个ID
 	 * @param ids
 	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
-		return deleteByIds(ids);
+		return deleteByIds(ids,#(checkDelete));
 	}
 #end	
 	
 #define s_delete(modelName,checkDelete)
-#setLocal(fctucName=firstCharToLowerCase(modelName))
-   /**
-	  * 删除
+	/**
+	 * 删除
 	 * @param id
 	 * @return
 	 */
 	public Ret delete(#(paramIdType?? 'Integer') id) {
 		return deleteById(id,#(checkDelete));
 	}
-	
-	/**
-	  * 删除数据后执行的回调
-	 * @param #(fctucName) 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
-	@Override
-	protected String afterDelete(#(modelName) #(fctucName), Kv kv) {
-		//addDeleteSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), SystemLog.TARGETTYPE_#(modelName.toUpperCase()), #(fctucName).getName());
-		return null;
-	}
-	
-	#if(checkDelete)
-	/**
-	  * 检测是否可以删除
-	 * @param #(fctucName) 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
-	@Override
-	public String checkCanDelete(#(modelName) #(fctucName), Kv kv) {
-		//如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
-		return checkInUse(#(fctucName), kv);
-	}
-	
-	/**
-	  * 检测是否可以删除
-	 * @param #(fctucName) model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
-	@Override
-	public String checkInUse(#(modelName) #(fctucName), Kv kv) {
-		//这里用来覆盖 检测#(modelName)是否被其它表引用
-		return null;
-	}
-	#end
 #end
 
 #define s_move(modelName)
 #setLocal(fctucName=firstCharToLowerCase(modelName))
-/**
-	  * 移动
+	/**
+	 * 移动
 	 * @param id
 	 * @param otherId
 	 * @return
@@ -160,8 +143,8 @@
 
 #define s_up(modelName)
 #setLocal(fctucName=firstCharToLowerCase(modelName))
-   /**
-	  * 上移
+	/**
+	 * 上移
 	 * @param id
 	 * @return
 	 */
@@ -192,7 +175,7 @@
 
 #define s_down(modelName)
 #setLocal(fctucName=firstCharToLowerCase(modelName))
-/**
+	/**
 	 * 下移
 	 * @param id
 	 * @return
@@ -234,8 +217,8 @@
 
 #define s_initRank(modelName)
 #setLocal(fctucName=firstCharToLowerCase(modelName))
-   /**
-	  * 初始化排序
+	/**
+	 * 初始化排序
 	 */
 	public Ret initRank(){
 		List<#(modelName)> allList=findAll();
@@ -246,43 +229,113 @@
 			batchUpdate(allList);
 		}
 		//添加日志
-		//addUpdateSystemLog(null, JBoltUserKit.getUserId(), SystemLog.TARGETTYPE_#(modelName.toUpperCase()), "所有数据", "的顺序:初始化所有");
+		#if(mainLogicBean.projectSystemLogTargetType && mainLogicBean.projectSystemLogTargetType!="ProjectSystemLogTargetType.NONE")
+		addUpdateSystemLog(null, JBoltUserKit.getUserId(), "所有数据", "的顺序:初始化所有");
+		#else
+		//addUpdateSystemLog(null, JBoltUserKit.getUserId(), "所有数据", "的顺序:初始化所有");
+		#end
 		return SUCCESS;
 	}
 #end
 
 #define s_toggleEnable(modelName)
 #setLocal(fctucName=firstCharToLowerCase(modelName))
-   /**
-	  * 切换禁用启用状态
+	/**
+	 * 切换禁用启用enable状态
 	 * @param id
 	 * @return
 	 */
 	public Ret toggleEnable(#(paramIdType?? 'Integer') id) {
-		//说明:如果需要日志处理 就解开下面部分内容 如果不需要直接删掉即可
-		Ret ret=toggleBoolean(id, "enable");
-		if(ret.isOk()){
-			//添加日志
-			//#(modelName) #(fctucName)=ret.getAs("data");
-			//addUpdateSystemLog(id, JBoltUserKit.getUserId(), SystemLog.TARGETTYPE_#(modelName.toUpperCase()), #(fctucName).getName(),"的启用状态:"+#(fctucName).getEnable());
-		} 
-		return ret;
+		return toggleBoolean(id, "enable");
 	}
 #end
 
 
 #define s_genToggleMethod(name,modelName,mainLogicBean)
-  /**
-	* 切换#(method.jboltField.name)属性
-	*/
+	/**
+	 * 切换#(method.jboltField.name)属性
+	 */
 	public Ret #(method.name)(#(paramIdType?? 'Integer') id) {
-		Ret ret=toggleBoolean(id, "#(method.jboltField.columnName)");
-		if(ret.isOk()){
-			//TODO 添加日志
-			//#(modelName) #(method.jboltField.name)=ret.getAs("data");
-			//addUpdateSystemLog(id, JBoltUserKit.getUserId(), SystemLog.TARGETTYPE_#(modelName.toUpperCase()),  #(method.jboltField.name).getName(),"的属性状态:"+ #(method.jboltField.name).getEnable());
-		} 
-		return ret;
+		return toggleBoolean(id, "#(method.jboltField.columnName)");
+	}
+#end
+
+#define s_afterToggle(modelName,mainLogicBean)
+#setLocal(fctucName=firstCharToLowerCase(modelName))
+	/**
+	 * toggle操作执行后的回调处理
+	 */
+	@Override
+	protected String afterToggleBoolean(#(modelName) #(fctucName), String column, Kv kv) {
+		#if(mainLogicBean.projectSystemLogTargetType && mainLogicBean.projectSystemLogTargetType!="ProjectSystemLogTargetType.NONE")
+		addUpdateSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), #(fctucName).getName(),"的字段["+column+"]值:"+#(fctucName).get(column));
+		#else
+		//addUpdateSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), #(fctucName).getName(),"的字段["+column+"]值:"+#(fctucName).get(column));
+		#end
+		return null;
+	}
+#end
+#define s_afterDelete(modelName,mainLogicBean)
+  #setLocal(fctucName=firstCharToLowerCase(modelName))
+	/**
+	 * 删除数据后执行的回调
+	 * @param #(fctucName) 要删除的model
+	 * @param kv 携带额外参数一般用不上
+	 * @return
+	 */
+	@Override
+	protected String afterDelete(#(modelName) #(fctucName), Kv kv) {
+		#if(mainLogicBean.projectSystemLogTargetType && mainLogicBean.projectSystemLogTargetType!="ProjectSystemLogTargetType.NONE")
+		addDeleteSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(),#(fctucName).getName());
+		#else
+		//addDeleteSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(),#(fctucName).getName());
+		#end
+		return null;
+	}
+#end
+#define s_checkCanToggle(modelName)
+  #setLocal(fctucName=firstCharToLowerCase(modelName))
+	/**
+	 * 检测是否可以toggle操作指定列
+	 * @param #(fctucName) 要toggle的model
+	 * @param column 操作的哪一列
+	 * @param kv 携带额外参数一般用不上
+	 * @return
+	 */
+	@Override
+	public String checkCanToggle(#(modelName) #(fctucName),String column, Kv kv) {
+		//没有问题就返回null  有问题就返回提示string 字符串
+		return null;
+	}
+#end
+
+#define s_checkCanDelete(modelName)
+  #setLocal(fctucName=firstCharToLowerCase(modelName))
+	/**
+	 * 检测是否可以删除
+	 * @param #(fctucName) 要删除的model
+	 * @param kv 携带额外参数一般用不上
+	 * @return
+	 */
+	@Override
+	public String checkCanDelete(#(modelName) #(fctucName), Kv kv) {
+		//如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
+		return checkInUse(#(fctucName), kv);
+	}
+#end
+
+#define s_checkInUse(modelName)
+  #setLocal(fctucName=firstCharToLowerCase(modelName))
+	/**
+	 * 检测是否可以删除
+	 * @param #(fctucName) model
+	 * @param kv 携带额外参数一般用不上
+	 * @return
+	 */
+	@Override
+	public String checkInUse(#(modelName) #(fctucName), Kv kv) {
+		//这里用来覆盖 检测#(modelName)是否被其它表引用
+		return null;
 	}
 #end
 
@@ -298,20 +351,32 @@
 #end
 #define genServiceMethod(method,modelName,mainLogicBean)
 	#switch(method.name)
+		#case("systemLogTargetType")
+			#@s_systemLogTargetType(mainLogicBean)
 		#case("paginateAdminDatas")
 			#@s_paginateAdminDatas(modelName,mainLogicBean)
 		#case("getAdminDatas")
 			#@s_getAdminDatas(modelName,mainLogicBean)
 		#case("save")
-			#@s_save(modelName)
+			#@s_save(modelName,mainLogicBean)
 		#case("update")
-			#@s_update(modelName)	
+			#@s_update(modelName,mainLogicBean)	
 		#case("delete")
 			#@s_delete(modelName,mainLogicBean.checkDelete)	
+		#case("checkCanDelete")
+			#@s_checkCanDelete(modelName)	
+		#case("checkCanToggle")
+			#@s_checkCanToggle(modelName)	
+		#case("checkInUse")
+			#@s_checkInUse(modelName)	
 		#case("deleteByIds")
 			#@s_deleteByIds(modelName,mainLogicBean.checkDelete)	
 		#case("toggleEnable")
 			#@s_toggleEnable(modelName)
+		#case("afterToggle")
+			#@s_afterToggle(modelName,mainLogicBean)
+		#case("afterDelete")
+			#@s_afterDelete(modelName,mainLogicBean)
 		#case("up")
 			#@s_up(modelName)
 		#case("move")
