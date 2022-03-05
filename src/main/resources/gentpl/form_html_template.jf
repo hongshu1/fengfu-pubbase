@@ -1,8 +1,6 @@
 #set(modelNameL=firstCharToLowerCase(modelName))
 <form onsubmit="return false;" id="#(modelNameL)Form" action="#[[#]]#(action)" method="post">
-#[[#]]#if(#(modelNameL).#(mainLogicBean.primaryKeyAttr)??)
-	<input type="hidden" name="#(modelNameL).#(mainLogicBean.primaryKeyAttr)" value="#[[#]]#(#(modelNameL).#(mainLogicBean.primaryKeyAttr))" />
-#[[#]]#end
+<input type="hidden" name="#(modelNameL).#(mainLogicBean.primaryKeyAttr)" value="#[[#]]#(#(modelNameL).#(mainLogicBean.primaryKeyAttr)??)" />
 #if(mainLogicBean.hasPid)
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">上级#(mainLogicBean.dataName?? '数据')</label>
