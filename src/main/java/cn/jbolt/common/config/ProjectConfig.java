@@ -36,32 +36,8 @@ import cn.jbolt.common.ureport.IUreportViewAuth;
 import cn.jbolt.common.ureport.JBoltUreportViewHandler;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.Interceptor.JBoltOnlineUserGlobalInterceptor;
-import cn.jbolt.core.base.JBoltGlobalConfigKey;
-import cn.jbolt.core.base.JBoltRequestType;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.base.config.JBoltProjectConfig;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
-import cn.jbolt.core.cache.JBoltGlobalConfigCache;
-import cn.jbolt.core.cache.JBoltPermissionCache;
-import cn.jbolt.core.cache.JBoltRoleCache;
-import cn.jbolt.core.cache.JBoltTopnavCache;
-import cn.jbolt.core.cache.JBoltUserCache;
-import cn.jbolt.core.cache.JBoltUserConfigCache;
-import cn.jbolt.core.common.enums.JBoltUserOnlineState;
-import cn.jbolt.core.enjoy.directive.ActionDirective;
-import cn.jbolt.core.enjoy.directive.AjaxPortalDirective;
-import cn.jbolt.core.enjoy.directive.BooleanToStrDirective;
-import cn.jbolt.core.enjoy.directive.DateTimeDirective;
-import cn.jbolt.core.enjoy.directive.EnableDirective;
-import cn.jbolt.core.enjoy.directive.GlobalConfigDirective;
-import cn.jbolt.core.enjoy.directive.JBoltAdminLogoDirective;
-import cn.jbolt.core.enjoy.directive.JsonDirective;
-import cn.jbolt.core.enjoy.directive.PermissionDirective;
-import cn.jbolt.core.enjoy.directive.PrettyTimeDirective;
-import cn.jbolt.core.enjoy.directive.RealImageDirective;
-import cn.jbolt.core.enjoy.directive.RealUrlDirective;
-import cn.jbolt.core.enjoy.directive.RowNumberDirective;
-import cn.jbolt.core.enjoy.directive.SexDirective;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.handler.base.JBoltSaasTenantHandler;
@@ -73,9 +49,6 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.plugin.JBoltActiveRecordPlugin;
-import cn.jbolt.core.util.JBoltColorUtil;
-import cn.jbolt.core.util.JBoltDateUtil;
-import cn.jbolt.core.util.JBoltRandomUtil;
 import cn.jbolt.extend.cache.CacheExtend;
 import cn.jbolt.extend.config.ExtendProjectConfig;
 import cn.jbolt.index.AdminRoutes;
@@ -156,53 +129,18 @@ public class ProjectConfig extends JBoltProjectConfig {
 	@Override
 	public void configEngines(Engine me) {
 		// 配置自定义指令
-		me.addDirective("ajaxPortal", AjaxPortalDirective.class);
-		me.addDirective("realImage", RealImageDirective.class);
-		me.addDirective("realUrl", RealUrlDirective.class);
-		me.addDirective("datetime", DateTimeDirective.class);
-		me.addDirective("prettytime", PrettyTimeDirective.class);
-		me.addDirective("permission", PermissionDirective.class);
-		me.addDirective("globalConfig", GlobalConfigDirective.class);
-		me.addDirective("sex", SexDirective.class);
-		me.addDirective("rownum", RowNumberDirective.class);
-		me.addDirective("jboltAdminLogo", JBoltAdminLogoDirective.class);
-		me.addDirective("action", ActionDirective.class);
-		me.addDirective("json", JsonDirective.class);
-		me.addDirective("boolToStr", BooleanToStrDirective.class);
-		me.addDirective("enable", EnableDirective.class);
-		me.addSharedObject("JBoltRequestType", new JBoltRequestType());
-		me.addEnum(JBoltUserOnlineState.class);
-
 		// 配置共享对象
-		me.addSharedObject("DateUtil", new JBoltDateUtil());
 		// 添加CACHE访问
 		me.addSharedObject("CACHE", CACHE.me);
-		me.addSharedObject("JBoltUserCache", JBoltUserCache.me);
-		me.addSharedObject("JBoltUserConfigCache", JBoltUserConfigCache.me);
-		me.addSharedObject("JBoltGlobalConfigCache", JBoltGlobalConfigCache.me);
-		me.addSharedObject("JBoltDictionaryCache", JBoltDictionaryCache.me);
-		me.addSharedObject("JBoltPermissionCache", JBoltPermissionCache.me);
-		me.addSharedObject("JBoltTopnavCache", JBoltTopnavCache.me);
-		me.addSharedObject("JBoltRoleCache", JBoltRoleCache.me);
 		// 添加扩展CACHE访问
 		me.addSharedObject("CacheExtend", CacheExtend.me);
-		// 添加角色、权限 静态方法
-		me.addSharedStaticMethod(JBoltUserAuthKit.class);
 		// 添加sessionKey的访问
 		me.addSharedObject("SessionKey", new SessionKey());
-		// 添加GlobalConfig的访问
-		me.addSharedObject("GlobalConfigKey", new JBoltGlobalConfigKey());
 		// 添加PermissionKey的访问
 		me.addSharedObject("PermissionKey", new PermissionKey());
-		// 添加RandomUtil的访问
-		me.addSharedObject("RandomUtil", new JBoltRandomUtil());
-		// 添加ColorUtil的访问
-		me.addSharedObject("ColorUtil", new JBoltColorUtil());
 
 		// 将枚举添加到模板里
 		JBoltEnum.addEnjoyEngineShareObject(me, WechatMpinfoType.class);
-		// 在模板里用枚举工具类
-		me.addSharedObject("JBoltEnum", new JBoltEnum());
 
 		// 配置layout共享
 		// 后台主pjax加载结构layout
