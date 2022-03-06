@@ -397,4 +397,13 @@ public class ProjectConfig extends JBoltProjectConfig {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/**
+	 * 手动管理添加 新开项目的需要给租户分表的Model
+	 */
+	@Override
+	protected void configProjectSaasSeparateTableModels() {
+		//二开业务专用的配置调用
+		ExtendProjectConfig.configProjectSaasSeparateTableModels();
+	}
 }

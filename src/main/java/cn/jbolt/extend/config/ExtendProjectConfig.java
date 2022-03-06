@@ -106,4 +106,11 @@ public class ExtendProjectConfig {
 	public static void configMainDbPlugin(DruidPlugin druidPlugin, ActiveRecordPlugin arp, Engine sqlEngine) {
 		LOG.debug("调用二开扩展配置:configMainDbPlugin");
 	}
+	
+	/**
+	 * 手动管理添加 新开项目的需要给租户分表的Model
+	 */
+	public static void configProjectSaasSeparateTableModels() {
+		LOG.debug("调用二开扩展配置:configProjectSaasSeparateTableModels");
+	}
 }

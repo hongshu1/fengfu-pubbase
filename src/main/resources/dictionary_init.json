@@ -15,6 +15,14 @@
 		{"name":"禁用","sn":"false"}
 	]
 },{
+	"name": "性别",
+	"modeLevel": 1,
+	"typeKey": "sex",
+	"dics":[
+			{"name":"男","sn":"1"},
+			{"name":"女","sn":"2"}
+	]
+},{
 	"name": "商品单位",
 	"modeLevel": 1,
 	"typeKey": "goods_unit",
