@@ -545,14 +545,14 @@ CREATE TABLE `jb_topnav` (
   `enable` char(1) COLLATE utf8mb4_general_ci DEFAULT '0' COMMENT '是否启用',
   `sort_rank` int(11) DEFAULT NULL COMMENT '排序',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='顶部导航';
+) ENGINE=InnoDB CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='顶部导航';
 
 CREATE TABLE `jb_topnav_menu` (
   `id` bigint(20) NOT NULL COMMENT '主键ID',
   `topnav_id` bigint(20) DEFAULT NULL COMMENT '顶部导航ID',
   `permission_id` bigint(20) DEFAULT NULL COMMENT '菜单资源ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='顶部菜单对应左侧一级导航中间表';
+) ENGINE=InnoDB CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='顶部菜单对应左侧一级导航中间表';
 
 CREATE TABLE `jb_todo` (
   `id` bigint(20) NOT NULL COMMENT '主键ID',
@@ -578,7 +578,7 @@ CREATE TABLE `jb_todo` (
   `source_sys` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '来源系统',
   `is_readed` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否已读',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='待办事项';
+) ENGINE=InnoDB CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='待办事项';
 
 
 
@@ -598,7 +598,7 @@ CREATE TABLE `jb_sys_notice` (
   `files` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '附件',
   `del_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '0' COMMENT '删除标志',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='系统通知';
+) ENGINE=InnoDB CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='系统通知';
 
 CREATE TABLE `jb_sys_notice_reader` (
   `id` bigint(20) NOT NULL COMMENT '主键ID',
@@ -606,7 +606,7 @@ CREATE TABLE `jb_sys_notice_reader` (
   `user_id` bigint(20) NOT NULL COMMENT '用户ID',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='通知阅读用户关系表';
+) ENGINE=InnoDB CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='通知阅读用户关系表';
 
 CREATE TABLE `jb_private_message` (
   `id` bigint(20) NOT NULL COMMENT '主键ID',
@@ -615,7 +615,7 @@ CREATE TABLE `jb_private_message` (
   `from_user_id` bigint(20) NOT NULL COMMENT '发信人',
   `to_user_id` bigint(20) NOT NULL COMMENT '收信人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARACTER CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='内部私信';
+) ENGINE=InnoDB CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='内部私信';
 
 -- ----------------------------
 -- Table structure for jb_hiprint_tpl
