@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="4.15.7";
+var jbolt_admin_js_version="4.16.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -8247,11 +8247,17 @@ function processFileUploadCallback(res,hiddeninput,filenameInput,isMultiple,file
 			if(valueAttr){
 				hiddeninput.val(res.data[valueAttr]);
 			}else{
-				hiddeninput.val(res.data.fileUrl||res.data.localUrl||res.data.url);
+				if(typeof(res.data) == "string"){
+					hiddeninput.val(res.data);
+				}else{
+					hiddeninput.val(res.data.fileUrl||res.data.localUrl||res.data.url);
+				}
 			}
 		}
-		if(filenameInput){
+		if(filenameInput && typeof(res.data) == "object"){
 			$("#"+filenameInput).val(res.data.fileName||"");
+		}else{
+			$("#"+filenameInput).val("");
 		}
 		return;
 	}
