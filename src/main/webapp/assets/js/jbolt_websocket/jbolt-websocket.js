@@ -14,14 +14,17 @@ import JBoltWebSocketHandler from './jbolt-websocket-handler.js'
 	 * @param host                  hostname:port
 	 * @param ctx                   context
 	 * @param token                 用户令牌
+	 * @param tenantSn              租户SN
 	 * @param binaryType            数据类型 'blob' or 'arraybuffer'
 	 * @param reconnInterval        重连间隔时间
 	 * @param heartbeatTimeout      心跳超时时间
 	 */
-	JBoltWS.init = function({protocol = "ws", host = "localhost", ctx,token, binaryType = 'arraybuffer', reconnInterval = 1000 , heartbeatTimeout = 10000, callback}){
+	JBoltWS.init = function({protocol = "ws", host = "localhost", ctx,token,tenantSn, binaryType = 'arraybuffer', reconnInterval = 1000 , heartbeatTimeout = 10000, callback}){
 		this.protocol              = protocol;
 		this.host                  = host;
 		this.token                 = token;
+		this.tenantSn              = tenantSn;
+		this.isTenant              = (tenantSn!=null&&tenantSn.length>0);
 		if(!ctx || ctx==='/'){
 			ctx='';
 		}else if(ctx.length > 1){
@@ -37,7 +40,11 @@ import JBoltWebSocketHandler from './jbolt-websocket-handler.js'
 			ctx='';
 		}
 		this.ctx                   = ctx;
-		this.url                   = protocol + '://' + host + ctx + '/websocket.ws/' + token;
+		if(this.isTenant){
+			this.url                   = protocol + '://' + host + ctx + '/websocket.ws/' + token + "?jbtenantsn=" + tenantSn;
+		}else{
+			this.url                   = protocol + '://' + host + ctx + '/websocket.ws/' + token;
+		}
 		this.binaryType            = binaryType;
 		this.reconnInterval        = reconnInterval;
 		this.heartbeatTimeout      = heartbeatTimeout; 
@@ -204,8 +211,9 @@ import JBoltWebSocketHandler from './jbolt-websocket-handler.js'
 	    // 判断当前浏览器是否支持WebSocket
 	    if (window.WebSocket) {
 	    	Ajax.get("admin/myToken",function(res){
-	    		let token = res.data;
+	    		let token = res.data.token;
 	    		if(token){
+	    			let tenantSn = res.data.tenantSn;
 	    			let host = window.location.host;
 	    			let protocol = window.location.protocol.split(':')[0];
 	    			if(protocol == "https"){
@@ -220,6 +228,7 @@ import JBoltWebSocketHandler from './jbolt-websocket-handler.js'
 	    				host:host,
 	    				ctx:ctx,
 	    				token:token,
+	    				tenantSn:tenantSn,
 	    				callback:callback
 	    			});
 	    			// 执行connect

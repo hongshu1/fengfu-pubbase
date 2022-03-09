@@ -2,6 +2,7 @@ package cn.jbolt._admin.websocket;
 
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Map;
 
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
@@ -18,6 +19,8 @@ import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 
 import cn.jbolt._admin.onlineuser.OnlineUserService;
+import cn.jbolt.core.base.config.JBoltConfig;
+import cn.jbolt.core.kit.JBoltSaasTenantKit;
 
 /**
  * JBolt内置websocket服务端处理
@@ -43,14 +46,25 @@ public class JBoltWebSocketServerEndpoint {
     }
 
     /**
+     * 
+     * @param session  
+     */
+    /**
      * 连接建立成功调用的方法
-     * @param session  可选的参数。session为与某个客户端的连接会话，需要通过它来给客户端发送数据
+     * @param token    令牌
+     * @param tenantSn 如果是租户 就带着租户SN
+     * @param session 可选的参数 session为与某个客户端的连接会话，需要通过它来给客户端发送数据
      */
     @OnOpen
     public void onOpen(@PathParam("token")String token,Session session){
-    	this.jbsession = new JBoltWebSocketSession(session, token);
-        JBoltWebSocketUtil.addClient(token, this);
-        LOG.debug("有新连接加入！当前在线人数为" + JBoltWebSocketUtil.getClientSize());
+    	Map<String, List<String>> params = session.getRequestParameterMap();
+    	boolean hasReqParams = params!=null&&!params.isEmpty()&&params.containsKey("jbtenantsn");
+    	List<String> values = hasReqParams?params.get("jbtenantsn"):null;
+    	boolean isTenant = values!=null&&values.size()>0;
+    	String tenantSn = isTenant?values.get(0):null;
+		this.jbsession = new JBoltWebSocketSession(session, token,tenantSn);
+        JBoltWebSocketUtil.addClient(this);
+        LOG.debug("有新连接加入！当前在线人数为" + JBoltWebSocketUtil.getAllClientSize());
     }
 
     /**
@@ -58,9 +72,9 @@ public class JBoltWebSocketServerEndpoint {
      */
     @OnClose
     public void onClose(CloseReason closeReason){
-    	JBoltWebSocketUtil.removeClient(jbsession.getToken());
+    	JBoltWebSocketUtil.removeClient(this);
     	LOG.info("websocket closeReason:"+closeReason.getCloseCode().toString());
-        LOG.debug("有一连接关闭！当前在线人数为" + JBoltWebSocketUtil.getClientSize());
+        LOG.debug("有一连接关闭！当前在线人数为" + JBoltWebSocketUtil.getAllClientSize());
     }
 
     /**
@@ -85,6 +99,10 @@ public class JBoltWebSocketServerEndpoint {
     		return;
     	}
     	inMsg.setFrom(jbsession.getToken());
+    	if(JBoltConfig.SAAS_ENABLE && jbsession.isTenant()) {
+    		JBoltSaasTenantKit.me.self(jbsession.getTenantSn());
+    		inMsg.fromTenant(jbsession.getTenantSn());
+    	}
         if(inMsg.getTo() == null) {
         	inMsg.setTo(JBoltWebSocketMsg.TO_SYSTEM);
         }
@@ -104,6 +122,9 @@ public class JBoltWebSocketServerEndpoint {
 				break;
 		}
         if(outMsg != null) {
+        	if(inMsg.isTenant()) {
+    			outMsg.toTenant(inMsg.getTenantSn());
+    		}
         	if(outMsg._isToOther()) {
         		sendMessageToUser(outMsg.getTo(),outMsg);
         	}else {
@@ -113,8 +134,22 @@ public class JBoltWebSocketServerEndpoint {
         }
       
     }
-    
     /**
+     * 发送消息给客户端
+     * @param token
+     * @param outMsg
+     */
+    public void sendMessage(String token, JBoltWebSocketMsg outMsg) {
+		JBoltWebSocketServerEndpoint client = null;
+		if(outMsg.isTenant()) {
+			client = JBoltWebSocketUtil.getTenantClient(token, outMsg.getTenantSn());
+		}else {
+			client = JBoltWebSocketUtil.getClient(token);
+		}
+		sendMessage(client, outMsg);
+	}
+
+	/**
      * 发送给其他用户
      * @param userId
      * @param outMsg
@@ -167,15 +202,6 @@ public class JBoltWebSocketServerEndpoint {
 			client.sendMessage(message);
         });
     }
-    
-    /**
-     * 发送消息
-     * @param toToken
-     * @param outMsg
-     */
-    protected void sendMessage(String toToken, JBoltWebSocketMsg outMsg){
-    	sendMessage(JBoltWebSocketUtil.getClient(toToken), outMsg);
-    }
     /**
      * 发送消息返回客户端
      * @param client
@@ -192,21 +218,18 @@ public class JBoltWebSocketServerEndpoint {
     		}else {
     			client.sendMessage(outMsg.toJson());
     		}
-    	}else{
-    		this.sendMessage("【系统消息】 不在线");
     	}
     }
     /**
      * 发送消息
      * @param toToken
+     * @param toTenantSn
      * @param message
      */
-    protected void sendMessage(String toToken, String message){
-    	JBoltWebSocketServerEndpoint me = JBoltWebSocketUtil.getClient(toToken);
+    protected void sendTenantMessage(String toToken,String toTenantSn,String message){
+    	JBoltWebSocketServerEndpoint me = JBoltWebSocketUtil.getTenantClient(toToken,toTenantSn);
     	if (me != null) {
     		me.sendMessage(message);
-		}else{
-			this.sendMessage("【系统消息】 不在线");
 		}
     }
     
@@ -248,6 +271,18 @@ public class JBoltWebSocketServerEndpoint {
     }
 	public <T> T getUserIdAs() {
 		return jbsession.getUserIdAs();
+	}
+
+	public boolean isTenant() {
+		return jbsession.isTenant();
+	}
+
+	public String getToken() {
+		return jbsession.getToken();
+	}
+
+	public String getTenantSn() {
+		return jbsession.getTenantSn();
 	}
     
 }

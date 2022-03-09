@@ -5,6 +5,8 @@ import java.io.IOException;
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
+import com.jfinal.kit.StrKit;
+
 import cn.jbolt.core.cache.JBoltOnlineUserCache;
 /**
  * JBolt平台 websocket session
@@ -19,9 +21,19 @@ public class JBoltWebSocketSession {
     private String token;
     //用户UserId
     private Object userId;
+    //租户SN 非saas模式就是null
+    private String tenantSn;
+    //是否为租户
+    private boolean isTenant;
+    
     public JBoltWebSocketSession(Session session,String token) {
+    	this(session, token, null);
+    }
+    public JBoltWebSocketSession(Session session,String token,String tenantSn) {
     	this.session = session;
     	this.token   = token;
+    	this.tenantSn   = tenantSn;
+    	this.isTenant   = StrKit.notBlank(tenantSn);
     	this.userId = JBoltOnlineUserCache.me.getUserIdBySessionId(token);
     }
 	public Session getSession() {
@@ -79,5 +91,17 @@ public class JBoltWebSocketSession {
     
     public boolean isOpen() {
 		return session==null?false:session.isOpen();
+	}
+	public String getTenantSn() {
+		return tenantSn;
+	}
+	public void setTenantSn(String tenantSn) {
+		this.tenantSn = tenantSn;
+	}
+	public boolean isTenant() {
+		return isTenant;
+	}
+	public void setTenant(boolean isTenant) {
+		this.isTenant = isTenant;
 	}
 }

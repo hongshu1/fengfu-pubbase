@@ -47,7 +47,6 @@ public class JBoltWebSocketCommandHandler {
 				outMsg = JBoltWebSocketExtendCommandHandler.me.process(inMsg, session);
 				break;
 		}
-		
 		//有消息返回给客户端 就返回JBoltWebSocketMsg 没有就null
 		return outMsg;
 	}
@@ -65,7 +64,7 @@ public class JBoltWebSocketCommandHandler {
 			TodoService todoService = Aop.get(TodoService.class);
 			needRedDot = todoService.existUnread(userId);
 			if(!needRedDot) {
-				todoService.existNeedProcess(userId);
+				needRedDot = todoService.existNeedProcess(userId);
 			}
 //			if(!needRedDot) {
 //				needRedDot = privateMessageService.existUnread(userId);

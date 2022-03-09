@@ -32,6 +32,10 @@ import cn.jbolt.admin.appdevcenter.AppDevCenterAdminRoutes;
 import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoType;
 import cn.jbolt.apitest.ApiTestRoutes;
 import cn.jbolt.base.JBoltDruidStatViewHandler;
+import cn.jbolt.common.model.PrivateMessage;
+import cn.jbolt.common.model.SysNotice;
+import cn.jbolt.common.model.SysNoticeReader;
+import cn.jbolt.common.model.Todo;
 import cn.jbolt.common.ureport.IUreportViewAuth;
 import cn.jbolt.common.ureport.JBoltUreportViewHandler;
 import cn.jbolt.common.util.CACHE;
@@ -47,6 +51,7 @@ import cn.jbolt.core.kit.JBoltSaasTenantSnToIdProcessor;
 import cn.jbolt.core.kit.JBoltSaasTenantSnToNameProcessor;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.model.base.JBoltModelConfig;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.plugin.JBoltActiveRecordPlugin;
 import cn.jbolt.extend.cache.CacheExtend;
@@ -401,8 +406,16 @@ public class ProjectConfig extends JBoltProjectConfig {
 	/**
 	 * 手动管理添加 新开项目的需要给租户分表的Model
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void configProjectSaasSeparateTableModels() {
+		//项目里不包含在jbolt_core中的需要分表的加入model
+		JBoltModelConfig.me.addProjectSeparateModels(
+				SysNotice.class,
+				SysNoticeReader.class,
+				Todo.class,
+				PrivateMessage.class
+				);
 		//二开业务专用的配置调用
 		ExtendProjectConfig.configProjectSaasSeparateTableModels();
 	}

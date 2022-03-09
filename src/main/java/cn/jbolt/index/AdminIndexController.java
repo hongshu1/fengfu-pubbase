@@ -18,6 +18,7 @@ import cn.jbolt._admin.topnav.TopnavService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltGlobalConfigKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltGlobalConfigCache;
 import cn.jbolt.core.cache.JBoltPermissionCache;
 import cn.jbolt.core.cache.JBoltUserConfigCache;
@@ -26,6 +27,7 @@ import cn.jbolt.core.consts.JBoltConst;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.kit.JBoltControllerKit;
+import cn.jbolt.core.kit.JBoltSaasTenantKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.LoginLog;
 import cn.jbolt.core.model.User;
@@ -253,6 +255,10 @@ public class AdminIndexController extends JBoltBaseController {
 	 */
 	@UnCheck
 	public void myToken(){
-		renderJsonData(JBoltUserKit.getUserSessionId());
+		Kv kv = Kv.by("token",JBoltUserKit.getUserSessionId());
+		if(JBoltConfig.SAAS_ENABLE && JBoltSaasTenantKit.me.isSelfRequest()) {
+			kv.set("tenantSn",JBoltSaasTenantKit.me.getSn());
+		}
+		renderJsonData(kv);	
 	}
 }

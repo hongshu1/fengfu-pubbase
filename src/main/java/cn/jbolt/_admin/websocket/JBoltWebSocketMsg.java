@@ -1,6 +1,10 @@
 package cn.jbolt._admin.websocket;
 
 import com.jfinal.kit.JsonKit;
+import com.jfinal.kit.StrKit;
+
+import cn.jbolt.core.base.config.JBoltConfig;
+import cn.jbolt.core.kit.JBoltSaasTenantKit;
 
 /**
  * JBolt websocket 传输消息体  abstract
@@ -43,6 +47,14 @@ public class JBoltWebSocketMsg {
 	 */
 	private Object   from;
 	/**
+	 * 是否发给租户的下的
+	 */
+	private boolean  isTenant;
+	/**
+	 * 哪个租户下
+	 */
+	private String   tenantSn;
+	/**
 	 * 到谁哪里去
 	 */
 	private Object   to;
@@ -65,6 +77,9 @@ public class JBoltWebSocketMsg {
 		this.type     = type;
 		this.command  = command;
 		this.data     = data;
+		if(JBoltConfig.SAAS_ENABLE && JBoltSaasTenantKit.me.isSelfRequest()) {
+			toTenant(JBoltSaasTenantKit.me.getSn());
+		}
 	}
 	/**
 	 * 转为指令返回值输出消息 返回给自己
@@ -72,7 +87,7 @@ public class JBoltWebSocketMsg {
 	 * @return
 	 */
 	public JBoltWebSocketMsg toCommandRetOutMsg(Object data) {
-		return new JBoltWebSocketMsg(this.from, this.from, TYPE_COMMAND_RET, this.command, data);
+		return new JBoltWebSocketMsg(this.from, this.from, TYPE_COMMAND_RET, this.command, data).toTenant(this.tenantSn);
 	}
 	/**
 	 * 转为指令返回值输出消息 返回给自己
@@ -81,7 +96,7 @@ public class JBoltWebSocketMsg {
 	 * @return
 	 */
 	public JBoltWebSocketMsg toCommandRetOutMsg(String command,Object data) {
-		return new JBoltWebSocketMsg(this.from, this.from, TYPE_COMMAND_RET, command, data);
+		return new JBoltWebSocketMsg(this.from, this.from, TYPE_COMMAND_RET, command, data).toTenant(this.tenantSn);
 	}
 	/**
 	 * 转为文本输出消息 返回给自己
@@ -89,7 +104,7 @@ public class JBoltWebSocketMsg {
 	 * @return
 	 */
 	public JBoltWebSocketMsg toTextRetOutMsg(Object data) {
-		return new JBoltWebSocketMsg(this.from, this.from, TYPE_TEXT, this.command, data);
+		return new JBoltWebSocketMsg(this.from, this.from, TYPE_TEXT, this.command, data).toTenant(this.tenantSn);
 	}
 	
 	/**
@@ -98,7 +113,7 @@ public class JBoltWebSocketMsg {
 	 * @return
 	 */
 	public JBoltWebSocketMsg toTextOutMsg(Object data) {
-		return new JBoltWebSocketMsg(this.from,this.to, TYPE_TEXT, this.command, data);
+		return new JBoltWebSocketMsg(this.from,this.to, TYPE_TEXT, this.command, data).toTenant(this.tenantSn);
 	}
 	
 	public Object getFrom() {
@@ -252,6 +267,26 @@ public class JBoltWebSocketMsg {
 		this.to = to;
 		return this;
 	}
-	
+	public String getTenantSn() {
+		return tenantSn;
+	}
+	private void setTenantSn(String tenantSn) {
+		this.tenantSn = tenantSn;
+	}
+	public JBoltWebSocketMsg toTenant(String tenantSn) {
+		setTenantSn(tenantSn);
+		setIsTenant(JBoltConfig.SAAS_ENABLE && StrKit.notBlank(tenantSn));
+		return this;
+	}
+	public JBoltWebSocketMsg fromTenant(String tenantSn) {
+		toTenant(tenantSn);
+		return this;
+	}
+	public boolean isTenant() {
+		return isTenant;
+	}
+	private void setIsTenant(boolean isTenant) {
+		this.isTenant = isTenant;
+	}
 	
 }
