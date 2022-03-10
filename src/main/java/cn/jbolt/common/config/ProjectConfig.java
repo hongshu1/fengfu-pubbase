@@ -44,7 +44,6 @@ import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.base.config.JBoltProjectConfig;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
-import cn.jbolt.core.handler.base.JBoltSaasTenantHandler;
 import cn.jbolt.core.kit.JBoltSaasTenantAccessibleProcessor;
 import cn.jbolt.core.kit.JBoltSaasTenantIdToNameProcessor;
 import cn.jbolt.core.kit.JBoltSaasTenantIdToSnProcessor;
@@ -377,7 +376,7 @@ public class ProjectConfig extends JBoltProjectConfig {
 	}
 
 	@Override
-	protected void configSaas(Handlers me, JBoltSaasTenantHandler saasTenantHandler) {
+	protected void configSaas(Handlers me, JBoltBaseHandler baseHandler) {
 		
 	}
 	/**
