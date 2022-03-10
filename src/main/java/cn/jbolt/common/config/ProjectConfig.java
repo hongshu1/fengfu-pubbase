@@ -45,7 +45,7 @@ import cn.jbolt.core.base.config.JBoltProjectConfig;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.handler.base.JBoltSaasTenantHandler;
-import cn.jbolt.core.kit.JBoltSaasTenantEnableProcessor;
+import cn.jbolt.core.kit.JBoltSaasTenantAccessibleProcessor;
 import cn.jbolt.core.kit.JBoltSaasTenantIdToNameProcessor;
 import cn.jbolt.core.kit.JBoltSaasTenantIdToSnProcessor;
 import cn.jbolt.core.kit.JBoltSaasTenantSnToIdProcessor;
@@ -409,10 +409,10 @@ public class ProjectConfig extends JBoltProjectConfig {
 		return null;
 	}
 	/**
-	 * 配置租户获得当前是否启用状态的处理器
+	 * 配置租户获得当前是否可访问的处理器
 	 */
 	@Override
-	protected JBoltSaasTenantEnableProcessor getSaasTenantEnableProcessor() {
+	protected JBoltSaasTenantAccessibleProcessor getSaasTenantAccessibleProcessor() {
 		return null;
 	}
 
