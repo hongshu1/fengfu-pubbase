@@ -52,6 +52,7 @@
 		<jfinalevent.version>3.1.3</jfinalevent.version>
 		<qiniu.version>7.9.3</qiniu.version>
 		<sentinel.version>1.8.3</sentinel.version>
+		<ttl.version>2.12.5</ttl.version>
 		<jboltcore.version>4.1.2</jboltcore.version>
 	</properties>
 
@@ -462,8 +463,12 @@
 		    <artifactId>sentinel-parameter-flow-control</artifactId>
 		    <version>${sentinel.version}</version>
 		</dependency>
-		
-	<dependency>
+		<dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>transmittable-thread-local</artifactId>
+		    <version>${ttl.version}</version>
+		</dependency>
+		<dependency>
           <groupId>cn.jbolt</groupId>
           <artifactId>jbolt_core</artifactId>
           <version>${jboltcore.version}</version>

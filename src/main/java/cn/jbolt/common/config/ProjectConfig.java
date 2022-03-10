@@ -45,6 +45,7 @@ import cn.jbolt.core.base.config.JBoltProjectConfig;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.handler.base.JBoltSaasTenantHandler;
+import cn.jbolt.core.kit.JBoltSaasTenantEnableProcessor;
 import cn.jbolt.core.kit.JBoltSaasTenantIdToNameProcessor;
 import cn.jbolt.core.kit.JBoltSaasTenantIdToSnProcessor;
 import cn.jbolt.core.kit.JBoltSaasTenantSnToIdProcessor;
@@ -376,30 +377,42 @@ public class ProjectConfig extends JBoltProjectConfig {
 	}
 
 	@Override
-	protected JBoltSaasTenantSnToIdProcessor getSaasTenantSnToIdProcessor() {
-		return null;
-	}
-
-	@Override
 	protected void configSaas(Handlers me, JBoltSaasTenantHandler saasTenantHandler) {
 		
 	}
-
+	/**
+	 * 配置租户SN转ID的转换器
+	 */
+	@Override
+	protected JBoltSaasTenantSnToIdProcessor getSaasTenantSnToIdProcessor() {
+		return null;
+	}
+	/**
+	 * 配置租户sn转name的转换器
+	 */
 	@Override
 	protected JBoltSaasTenantSnToNameProcessor getSaasTenantSnToNameProcessor() {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
+	/**
+	 * 配置租户ID转Name的转换器
+	 */
 	@Override
 	protected JBoltSaasTenantIdToNameProcessor getSaasTenantIdToNameProcessor() {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
+	/**
+	 * 配置租户ID转sn的转换器
+	 */
 	@Override
 	protected JBoltSaasTenantIdToSnProcessor getSaasTenantIdToSnProcessor() {
-		// TODO Auto-generated method stub
+		return null;
+	}
+	/**
+	 * 配置租户获得当前是否启用状态的处理器
+	 */
+	@Override
+	protected JBoltSaasTenantEnableProcessor getSaasTenantEnableProcessor() {
 		return null;
 	}
 
