@@ -36,7 +36,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 			renderJsonData("");
 			return;
 		}
-		List<Dictionary> dics = service.getListByType(typeId,getKeywords());
+		List<Dictionary> dics = service.getListByTypeId(typeId,getKeywords());
 		Kv extraData=Kv.by("typeLevel", type.getModeLevel());
 		//使用这个专门的方法 render出去
 		renderJBoltTableJsonData(dics,extraData);
@@ -46,28 +46,28 @@ public class DictionaryAdminController extends JBoltBaseController {
 	 */
 	@UnCheck
 	public void options(){
-		renderJsonData(service.getOptionListByType(get("key")));
+		renderJsonData(service.getOptionListByTypeKey(get("key")));
 	}
 	/**
 	 * 根据获取一级options
 	 */
 	@UnCheck
 	public void poptions(){
-		renderJsonData(service.getRootOptionListByType(get("key")));
+		renderJsonData(service.getRootOptionListByTypeKey(get("key")));
 	}
 	/**
 	 * 子类级别数据 根据父类ID获取数据
 	 */
 	@UnCheck
 	public void soptions(){
-		renderJsonData(service.getSonOptionListByType(get("key"),getLong("pid")));
+		renderJsonData(service.getSonOptionListByTypeKey(get("key"),getLong("pid")));
 	}
 	/**
 	 * 子类级别数据 根据父类SN获取数据
 	 */
 	@UnCheck
 	public void soptionsByPsn(){
-		renderJsonData(service.getSonOptionListByTypeAndPsn(get("key"),get("psn")));
+		renderJsonData(service.getSonOptionListByTypeKeyAndPsn(get("key"),get("psn")));
 	}
 	
 	public void checkandinit() {
@@ -95,7 +95,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 	
 	private void initMgr(DictionaryType type){
 		set("dictionaryType", type);
-		List<Dictionary> dictionaries=service.getListByType(type.getId(),null);
+		List<Dictionary> dictionaries=service.getListByTypeId(type.getId(),null);
 		set("dictionaries",dictionaries);
 		if(type.getModeLevel()==DictionaryType.MODE_LEVEL_MUTIL){
 			set("dataTotalCount", service.getCountByType(type.getId()));
@@ -123,7 +123,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 			}else{
 				Long typeId=dictionary.getTypeId();
 				set("typeId", typeId);
-				set("dataList",service.getListByType(typeId,null));
+				set("dataList",service.getListByTypeId(typeId,null));
 				set("dataTotalCount", service.getCountByType(typeId));
 				set("showId", dictionaryId);
 				//TODO #mmm 前端页面实现show效果
@@ -136,7 +136,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 	 * 除了自己以外的其它所有数据
 	 */
 	public void select(){
-		renderJsonData(service.getListByType(getLong(0),null));
+		renderJsonData(service.getListByTypeId(getLong(0),null));
 	}
 	
 	/**
@@ -276,6 +276,6 @@ public class DictionaryAdminController extends JBoltBaseController {
 	 * 清空分类下的字典数据
 	 */
 	public void clearByType(){
-		renderJson(service.clearByType(getLong("typeId")));
+		renderJson(service.clearByTypeId(getLong("typeId")));
 	}
 }
