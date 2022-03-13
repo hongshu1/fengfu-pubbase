@@ -32,7 +32,7 @@ public class HiprintAdminController extends JBoltBaseController {
 	/**
 	 * 设计器
 	 */
-	@ActionKey("/admin/hiprint/tpl/designer")
+	@ActionKey("tpl/designer")
 	public void designer() {
 		Long id = getLong(0);
 		if(notOk(id)) {
@@ -58,7 +58,7 @@ public class HiprintAdminController extends JBoltBaseController {
 	/**
 	 * 模板获取
 	 */
-	@ActionKey("/admin/hiprint/tpl/content")
+	@ActionKey("tpl/content")
 	public void tplContent() {
 		HiprintTpl tpl = tplService.getCacheByKey(get("sn"));
 		if(tpl == null) {
@@ -70,28 +70,28 @@ public class HiprintAdminController extends JBoltBaseController {
 	/**
 	 * 模板库数据
 	 */
-	@ActionKey("/admin/hiprint/tpl/datas")
+	@ActionKey("tpl/datas")
 	public void tplDatas() {
 		renderJsonData(tplService.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords(),getEnable(),"content"));
 	}
 	/**
 	 * 模板库数据
 	 */
-	@ActionKey("/admin/hiprint/tpl/jsonDataEditor")
+	@ActionKey("tpl/jsonDataEditor")
 	public void tplJsonDataEditor() {
 		render("tpl/jsondataeditor.html");
 	}
 	/**
 	 * 模板库数据加载一个
 	 */
-	@ActionKey("/admin/hiprint/tpl/load")
+	@ActionKey("tpl/load")
 	public void tplLoad() {
 		renderJsonData(tplService.findByIdLoadColumns(getLong(0), "id","name","content"));
 	}
 	/**
 	 * 模板库数据加载一个
 	 */
-	@ActionKey("/admin/hiprint/tpl/testJsonData")
+	@ActionKey("tpl/testJsonData")
 	public void tplTestJsonData() {
 		JSONObject json = new JSONObject();
 		json.put("title", "JBolt极速开发平台");
@@ -105,14 +105,14 @@ public class HiprintAdminController extends JBoltBaseController {
 	/**
 	 * 新增模板
 	 */
-	@ActionKey("/admin/hiprint/tpl/add")
+	@ActionKey("tpl/add")
 	public void tplAdd() {
 		render("tpl/add.html");
 	}
 	/**
 	 * 编辑模板
 	 */
-	@ActionKey("/admin/hiprint/tpl/edit")
+	@ActionKey("tpl/edit")
 	public void tplEdit() {
 		Long id = getLong(0);
 		if(notOk(id)) {
@@ -130,14 +130,14 @@ public class HiprintAdminController extends JBoltBaseController {
 	/**
 	 * 提交模板
 	 */
-	@ActionKey("/admin/hiprint/tpl/submit")
+	@ActionKey("tpl/submit")
 	public void submitTpl() {
 		renderJson(tplService.submitTpl(getModel(HiprintTpl.class,"tpl")));
 	}
 	/**
 	 * 删除模板
 	 */
-	@ActionKey("/admin/hiprint/tpl/delete")
+	@ActionKey("tpl/delete")
 	public void tplDelete() {
 		renderJson(tplService.deleteById(getLong(0)));
 	}
