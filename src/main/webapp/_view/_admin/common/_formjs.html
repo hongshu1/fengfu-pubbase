@@ -1,7 +1,7 @@
 <script>
 needPjax=false;
 var _submit_ing=false;
-function submitThisForm(successCallback){
+function submitThisForm#(randomFunctionName??)(successCallback){
 	if(_submit_ing){
 		return false;
 	}
@@ -9,8 +9,8 @@ function submitThisForm(successCallback){
 	var formId="#(formId)";
 	var form=$("#"+formId);
 	if(FormChecker.check(form)){
-		if(window.beforeFormSubmit){
-			var ret=beforeFormSubmit();
+		if(window.beforeFormSubmit#(randomFunctionName??)){
+			var ret=beforeFormSubmit#(randomFunctionName??)();
 			if(ret==false){
 				_submit_ing=false;
 				return false;
@@ -23,42 +23,49 @@ function submitThisForm(successCallback){
 			url:url,
 			success:function(ret){
 				if(ret.state=="ok"){
-					if(window.afterFormSubmit){
-						afterFormSubmit(ret,function(){
+					if(window.afterFormSubmit#(randomFunctionName??)){
+						afterFormSubmit#(randomFunctionName??)(ret,function(){
 							LayerMsgBox.success(ret.msg,500,function(){
+								_submit_ing=false;
 								if(successCallback){
 									successCallback();
 								}
-								_submit_ing=false;
 							});
-						},function(){
-							_submit_ing=false;
 						});
 					}else{
 						LayerMsgBox.success(ret.msg,500,function(){
+							_submit_ing=false;
 							if(successCallback){
 								successCallback();
 							}
-							_submit_ing=false;
 						});
 					}
 					
 				}else{
+					_submit_ing=false;
 					if(ret.msg){
 						if(ret.msg=="jbolt_system_locked"){
-							_submit_ing=false;
 							showJboltLockSystem();
+							return false;
 						}else if(ret.msg=="jbolt_nologin"){
-							_submit_ing=false;
 							showReloginDialog();
-						}else{
-							_submit_ing=false;
-							LayerMsgBox.alert(ret.msg,2);
+							return false;
 						}
+					}
+					if(window.afterFormSubmit#(randomFunctionName??)){
+						afterFormSubmit#(randomFunctionName??)(ret,function(){
+							if(ret.msg){
+								LayerMsgBox.alert(ret.msg,2);
+							}else{
+								LayerMsgBox.error("操作异常",1500);
+							}
+						});
 					}else{
-						LayerMsgBox.error("操作异常",1500,function(){
-							_submit_ing=false;
-							});
+						if(ret.msg){
+							LayerMsgBox.alert(ret.msg,2);
+						}else{
+							LayerMsgBox.error("操作异常",1500);
+						}
 					}
 					
 				}
