@@ -237,8 +237,6 @@ public class ProjectConfig extends JBoltProjectConfig {
 	 */
 	@Override
 	protected void configHandlers(Handlers me, JBoltBaseHandler baseHandler) {
-		// 配置baseHandler 处理页面basePath pmkey 静态资源html直接访问拦截等
-		baseHandler.unlimited("/assets/plugins/", "/admin/druid/monitor/", "/neditor/");
 		if (JBoltConfig.JBOLT_UREPORT_ENABLE) {
 			// 配置ureport权限控制
 			configUreport(me);
