@@ -154,7 +154,10 @@ public class JBoltMsgCenterAdminController extends JBoltBaseController {
 	public void userUnreadInfo() {
 		boolean needRedDot = sysNoticeService.existUnread(JBoltUserKit.getUserId());
 		if(!needRedDot) {
-			needRedDot = todoService.existNeedProcess(JBoltUserKit.getUserId());
+			needRedDot = todoService.existUnread(JBoltUserKit.getUserId());
+			if(!needRedDot) {
+				needRedDot = todoService.existNeedProcess(JBoltUserKit.getUserId());
+			}
 //			if(!needRedDot) {
 //				needRedDot = privateMessageService.existUnread(JBoltUserKit.getUserId());
 //			}

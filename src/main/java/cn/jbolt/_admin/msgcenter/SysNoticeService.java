@@ -225,7 +225,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 		}
 		return updateDelFlagByBatchIds(ids, true);
 	}
-
+	
 	@Override
 	protected String afterRealDelete(SysNotice sysNotice, Kv kv) {
 		sysNoticeReaderService.deleteBySysNoticeId(sysNotice.getId());
@@ -245,7 +245,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 	 * @return
 	 */
 	public List<SysNotice> getMsgCenterPortalDatas() {
-		Page<SysNotice> pageData = paginateUserSysNotices(1, 10, null, JBoltUserKit.getUserId(), "id", "desc", false,false,false,true,"id","title","create_time","update_time","type","priority_level");
+		Page<SysNotice> pageData = paginateUserSysNotices(1, 10, null, JBoltUserKit.getUserId(), ID, "desc", false,false,false,true,ID,"title","create_time","update_time","type","priority_level");
 		return pageData.getList();
 	}
 	/**
@@ -308,9 +308,10 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 	 * @return
 	 */
 	public boolean existUnread(Object userId) {
-		Sql sql = selectSql().selectId().first();
-		Sql notInSql = sysNoticeReaderService.selectSql().select("sys_notice_id").eq("user_id", userId);
-		sql.notInSql("id", notInSql);
+		if(notOk(userId)) {return false;}
+		User user = JBoltUserCache.me.get(Long.parseLong(userId.toString()));
+		Sql sql = getUserUnReadNoticeSql(user,null, "id", "asc", false, false,
+				false, true, ID,"");
 		return exists(sql);
 	}
 	/**
@@ -329,7 +330,16 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 	 * @return
 	 */
 	public Page<SysNotice> paginateUserSysNotices(int pageNumber,int pageSize,String keywords,Long userId,String sortColumn, String sortType,Boolean readed,boolean delFlag,boolean needProcessReadedState,Boolean columnWithOrWithout,String... columns) {
-		Sql sql = selectSql().page(pageNumber, pageSize);
+		User user = JBoltUserCache.me.get(userId);
+		Sql sql = getUserUnReadNoticeSql(user,keywords, sortColumn, sortType, readed, delFlag,
+				needProcessReadedState, columnWithOrWithout, columns).page(pageNumber, pageSize);
+		return paginate(sql);
+	}
+
+	private Sql getUserUnReadNoticeSql(User user,String keywords,String sortColumn, String sortType,
+			Boolean readed, boolean delFlag, boolean needProcessReadedState, Boolean columnWithOrWithout,
+			String... columns) {
+		Sql sql = selectSql();
 		String mainPre="";
 		String joinPre="";
 		if(needProcessReadedState) {
@@ -346,18 +356,21 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 				sql.orderBy(mainPre+sortColumn);
 			}
 		}
-		Sql subSql = sysNoticeReaderService.selectSql().select("sys_notice_id").eq("user_id", userId);
+		
+		sql.eq(mainPre+DEL_FLAG, delFlag);
+		
+		Sql subSql = sysNoticeReaderService.selectSql().select("sys_notice_id").eq("user_id", user.getId());
 		if(readed!=null) {
 			if(readed) {
-				sql.inSql(mainPre+"id", subSql);
+				sql.inSql(mainPre+ID, subSql);
 			}else {
-				sql.notInSql(mainPre+"id", subSql);
+				sql.notInSql(mainPre+ID, subSql);
 			}
 		}
-		sql.eq(mainPre+"del_flag", delFlag);
+		
 		if(needProcessReadedState) {
 			sql.leftJoin(sysNoticeReaderService.table(), "sr", "sr.sys_notice_id = sn.id");
-			sql.from(table(), "sn");
+			sql.from(table(), SN);
 			
 			if(columnWithOrWithout!=null && isOk(columns)) {
 				if(columnWithOrWithout) {
@@ -381,8 +394,80 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 				}
 			}
 		}
+		sql.bracketLeft();
+		//1、全部
+		sql.eq(mainPre+"receiver_type", 1);
 		
-		return paginate(sql);
+		//2、角色
+		String roleIds = user.getRoles();
+		if(isOk(roleIds)) {
+			String[] roleIdArray = JBoltArrayUtil.from(roleIds, ",");
+			if(isOk(roleIdArray)) {
+				sql.or();
+				
+				sql.bracketLeft();
+				
+				sql.eq(mainPre+"receiver_type", 2);
+				int i=-1;
+				int size = roleIdArray.length;
+				for(String roleId:roleIdArray) {
+					i++;
+					sql.bracketLeft();
+					sql.findInSet(roleId, mainPre+"receiver_value", true);
+					sql.bracketRight();
+					if(i<size-1) {
+						sql.or();
+					}
+				}
+				
+				sql.bracketRight();
+			}
+		}
+		
+		//3、部门
+		Long deptId = user.getDeptId();
+		if(isOk(deptId)) {
+			sql.or();
+			sql.bracketLeft();
+			sql.eq(mainPre+"receiver_type", 3);
+			sql.findInSet(deptId, mainPre+"receiver_value", true);
+			sql.bracketRight();
+		}
+		//4、岗位
+		String postIds = user.getPosts();
+		if(isOk(postIds)) {
+			String[] postIdArray = JBoltArrayUtil.from(postIds, ",");
+			if(isOk(postIdArray)) {
+				sql.or();
+				
+				sql.bracketLeft();
+				
+				sql.eq(mainPre+"receiver_type", 4);
+				int i=-1;
+				int size = postIdArray.length;
+				for(String postId:postIdArray) {
+					i++;
+					sql.bracketLeft();
+					sql.findInSet(postId, mainPre+"receiver_value", true);
+					sql.bracketRight();
+					if(i<size-1) {
+						sql.or();
+					}
+				}
+				
+				sql.bracketRight();
+			}
+		}
+		
+		//5、用户
+		sql.or();
+		sql.bracketLeft();
+		sql.eq(mainPre+"receiver_type", 5);
+		sql.findInSet(user.getId(), mainPre+"receiver_value", true);
+		sql.bracketRight();
+		
+		sql.bracketRight();
+		return sql;
 	}
 	/**
 	 * 批量处理已读
