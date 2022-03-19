@@ -101,7 +101,7 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 		if(exists("sn", qiniuBucket.getSn(), qiniuBucket.getId())) {return fail(JBoltMsg.DATA_SAME_SN_EXIST);}
 		qiniuBucket.setUpdateUserId(JBoltUserKit.getUserId());
 		qiniuBucket.remove("enable","create_user_id");
-		if(qiniuBucket.getIsDefault() != null) {
+		if(qiniuBucket.getIsDefault() == null) {
 			qiniuBucket.setIsDefault(false);
 		}
 		boolean success=qiniuBucket.update();
