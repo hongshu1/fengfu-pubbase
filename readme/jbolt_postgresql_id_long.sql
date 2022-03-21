@@ -574,13 +574,21 @@ CREATE TABLE "public"."jb_todo" (
   "state" int4 NOT NULL,
   "specified_finish_time" timestamp(6) NOT NULL,
   "type" int4 NOT NULL,
-  "url" varchar(255) COLLATE "pg_catalog"."default",
+  "url" varchar(512) COLLATE "pg_catalog"."default",
   "priority_level" int4 NOT NULL,
-  "create_time" timestamp(6) NOT NULL,
-  "update_time" timestamp(6) NOT NULL,
+  "real_finish_time" timestamp(6),
+  "cancel_time" timestamp(6),
   "create_user_id" int8 NOT NULL,
   "update_user_id" int8,
-  "real_finish_time" timestamp(6)
+  "create_time" timestamp(6) NOT NULL,
+  "update_time" timestamp(6) NOT NULL,
+  "source_msg_id" varchar(64) COLLATE "pg_catalog"."default",
+  "source_request_id" varchar(64) COLLATE "pg_catalog"."default",
+  "source_url" varchar(512) COLLATE "pg_catalog"."default",
+  "send_user_key" varchar(64) COLLATE "pg_catalog"."default",
+  "receive_user_key" varchar(64) COLLATE "pg_catalog"."default",
+  "source_sys" varchar(64) COLLATE "pg_catalog"."default",
+  "is_readed" char(1) COLLATE "pg_catalog"."default" NOT NULL DEFAULT '0'::bpchar
 )
 ;
 COMMENT ON COLUMN "public"."jb_todo"."id" IS '主键ID';
@@ -592,12 +600,20 @@ COMMENT ON COLUMN "public"."jb_todo"."specified_finish_time" IS '规定完成时
 COMMENT ON COLUMN "public"."jb_todo"."type" IS '类型 链接还是内容 还是都有';
 COMMENT ON COLUMN "public"."jb_todo"."url" IS '链接';
 COMMENT ON COLUMN "public"."jb_todo"."priority_level" IS '优先级';
-COMMENT ON COLUMN "public"."jb_todo"."create_time" IS '创建时间';
-COMMENT ON COLUMN "public"."jb_todo"."update_time" IS '更新时间';
+COMMENT ON COLUMN "public"."jb_todo"."real_finish_time" IS '完成时间';
+COMMENT ON COLUMN "public"."jb_todo"."cancel_time" IS '取消时间';
 COMMENT ON COLUMN "public"."jb_todo"."create_user_id" IS '创建人ID';
 COMMENT ON COLUMN "public"."jb_todo"."update_user_id" IS '更新人ID';
-COMMENT ON COLUMN "public"."jb_todo"."real_finish_time" IS '完成时间';
-COMMENT ON TABLE "public"."jb_todo" IS '待办事项';
+COMMENT ON COLUMN "public"."jb_todo"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."jb_todo"."update_time" IS '更新时间';
+COMMENT ON COLUMN "public"."jb_todo"."source_msg_id" IS '第三方系统消息主键';
+COMMENT ON COLUMN "public"."jb_todo"."source_request_id" IS '第三方系统流程主键';
+COMMENT ON COLUMN "public"."jb_todo"."source_url" IS '第三方url';
+COMMENT ON COLUMN "public"."jb_todo"."send_user_key" IS '发送人第三方系统标识';
+COMMENT ON COLUMN "public"."jb_todo"."receive_user_key" IS '接收人第三方系统标识';
+COMMENT ON COLUMN "public"."jb_todo"."source_sys" IS '来源系统';
+COMMENT ON COLUMN "public"."jb_todo"."is_readed" IS '是否已读';
+COMMENT ON TABLE "public"."jb_todo" IS '代办事项';
 
 -- ----------------------------
 -- Table structure for jb_topnav
