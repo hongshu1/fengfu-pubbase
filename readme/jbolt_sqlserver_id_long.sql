@@ -1816,7 +1816,7 @@ CREATE TABLE [dbo].[jb_todo] (
   [url] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [priority_level] int  NOT NULL,
   [real_finish_time] datetime  NULL,
-  [cancel_time] datetime  NOT NULL,
+  [cancel_time] datetime  NULL,
   [create_user_id] bigint  NOT NULL,
   [update_user_id] bigint  NULL,
   [create_time] datetime  NOT NULL,
