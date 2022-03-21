@@ -1815,11 +1815,19 @@ CREATE TABLE [dbo].[jb_todo] (
   [type] int  NOT NULL,
   [url] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [priority_level] int  NOT NULL,
-  [create_time] datetime  NOT NULL,
-  [update_time] datetime  NOT NULL,
+  [real_finish_time] datetime  NULL,
+  [cancel_time] datetime  NOT NULL,
   [create_user_id] bigint  NOT NULL,
   [update_user_id] bigint  NULL,
-  [real_finish_time] datetime  NULL
+  [create_time] datetime  NOT NULL,
+  [update_time] datetime  NOT NULL,
+  [source_msg_id] nvarchar(64) COLLATE Chinese_PRC_CI_AS  NULL,
+  [source_request_id] nvarchar(64) COLLATE Chinese_PRC_CI_AS  NULL,
+  [source_url] nvarchar(512) COLLATE Chinese_PRC_CI_AS  NULL,
+  [send_user_key] nvarchar(64) COLLATE Chinese_PRC_CI_AS  NULL,
+  [receive_user_key] nvarchar(64) COLLATE Chinese_PRC_CI_AS  NULL,
+  [source_sys] nvarchar(64) COLLATE Chinese_PRC_CI_AS  NULL,
+  [is_readed] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL
 )
 GO
 
@@ -1924,12 +1932,66 @@ EXEC sp_addextendedproperty
 'COLUMN', N'real_finish_time'
 GO
 
+
+EXEC sp_addextendedproperty
+'MS_Description', N'取消时间',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_todo',
+'COLUMN', N'cancel_time'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'第三方系统消息主键',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_todo',
+'COLUMN', N'source_msg_id'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'第三方系统流程主键',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_todo',
+'COLUMN', N'source_request_id'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'第三方url',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_todo',
+'COLUMN', N'source_url'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'发送人第三方系统标识',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_todo',
+'COLUMN', N'send_user_key'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'接收人第三方系统标识',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_todo',
+'COLUMN', N'receive_user_key'
+GO
+EXEC sp_addextendedproperty
+'MS_Description', N'来源系统',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_todo',
+'COLUMN', N'source_sys'
+GO
+EXEC sp_addextendedproperty
+'MS_Description', N'是否已读',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_todo',
+'COLUMN', N'is_readed'
+GO
+
 EXEC sp_addextendedproperty
 'MS_Description', N'待办事项',
 'SCHEMA', N'dbo',
 'TABLE', N'jb_todo'
 GO
-
 
 -- ----------------------------
 -- Table structure for jb_topnav
