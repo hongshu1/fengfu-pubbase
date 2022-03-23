@@ -5,14 +5,27 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 	if(_submit_ing){
 		return false;
 	}
-	_submit_ing=true;
 	var formId="#(formId)";
 	var form=$("#"+formId);
+	if(notOk(form)){
+		LayerMsgBox.alert("指定的formId无效，找不到对应表单",2);
+		return false;
+	}
+	if(form.data("submiting")){
+		return false;
+	}
+	changeParentLayerDialogOkBtnStateToSubmiting();
+	changeParentLayerAllDialogBtnStateToDisabled();
+	_submit_ing=true;
+	changeLayerDialogFormSubmiting(form);
 	if(FormChecker.check(form)){
 		if(window.beforeFormSubmit#(randomFunctionName??)){
 			var ret=beforeFormSubmit#(randomFunctionName??)();
 			if(ret==false){
 				_submit_ing=false;
+				cancelLayerDialogFormSubmiting(form);
+				cancelParentLayerDialogOkBtnStateToSubmiting();
+				cancelParentLayerAllDialogBtnStateToDisabled();
 				return false;
 			}
 		}
@@ -27,6 +40,9 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 						afterFormSubmit#(randomFunctionName??)(ret,function(){
 							LayerMsgBox.success(ret.msg,500,function(){
 								_submit_ing=false;
+								cancelLayerDialogFormSubmiting(form);
+								cancelParentLayerDialogOkBtnStateToSubmiting();
+								cancelParentLayerAllDialogBtnStateToDisabled();
 								if(successCallback){
 									successCallback();
 								}
@@ -35,6 +51,9 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 					}else{
 						LayerMsgBox.success(ret.msg,500,function(){
 							_submit_ing=false;
+							cancelLayerDialogFormSubmiting(form);
+							cancelParentLayerDialogOkBtnStateToSubmiting();
+							cancelParentLayerAllDialogBtnStateToDisabled();
 							if(successCallback){
 								successCallback();
 							}
@@ -43,17 +62,24 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 					
 				}else{
 					_submit_ing=false;
+					cancelLayerDialogFormSubmiting(form);
 					if(ret.msg){
 						if(ret.msg=="jbolt_system_locked"){
+							cancelParentLayerDialogOkBtnStateToSubmiting();
+							cancelParentLayerAllDialogBtnStateToDisabled();
 							showJboltLockSystem();
 							return false;
 						}else if(ret.msg=="jbolt_nologin"){
+							cancelParentLayerDialogOkBtnStateToSubmiting();
+							cancelParentLayerAllDialogBtnStateToDisabled();
 							showReloginDialog();
 							return false;
 						}
 					}
 					if(window.afterFormSubmit#(randomFunctionName??)){
 						afterFormSubmit#(randomFunctionName??)(ret,function(){
+							cancelParentLayerDialogOkBtnStateToSubmiting();
+							cancelParentLayerAllDialogBtnStateToDisabled();
 							if(ret.msg){
 								LayerMsgBox.alert(ret.msg,2);
 							}else{
@@ -61,6 +87,8 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 							}
 						});
 					}else{
+						cancelParentLayerDialogOkBtnStateToSubmiting();
+						cancelParentLayerAllDialogBtnStateToDisabled();
 						if(ret.msg){
 							LayerMsgBox.alert(ret.msg,2);
 						}else{
@@ -73,11 +101,16 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 			error:function(){
 				LayerMsgBox.error("发生异常",1500,function(){
 					_submit_ing=false;
+					cancelLayerDialogFormSubmiting(form);
+					cancelParentLayerDialogOkBtnStateToSubmiting();
+					cancelParentLayerAllDialogBtnStateToDisabled();
 					});
 				}
 		});
 	}else{
 		_submit_ing=false;
-		}
+		cancelLayerDialogFormSubmiting(form);
+		cancelParentLayerDialogAllBtnStateToSubmiting();
+	}
 }
 </script>
