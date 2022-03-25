@@ -16,6 +16,7 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 
@@ -27,6 +28,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
  * @date: 2019年6月20日
  */
 @UnCheckIfSystemAdmin
+@OnlySaasPlatform
 public class WechatAutoReplyAdminController extends JBoltBaseController {
 	@Inject
 	private WechatAutoReplyService service;

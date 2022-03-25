@@ -22,6 +22,7 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.WechatConfig;
 import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 
 /**   
@@ -30,7 +31,7 @@ import cn.jbolt.core.util.JBoltRealUrlUtil;
  * @author: JFinal学院-小木 QQ：909854136 
  * @date:   2019年5月12日 下午8:35:23   
  */
-
+@OnlySaasPlatform
 public class WechatConfigAdminController extends JBoltBaseController {
 	@Inject
 	private WechatMpinfoService wechatMpinfoService;

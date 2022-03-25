@@ -9,6 +9,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.model.HiprintTpl;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 /**
  * jbolt hiprint 封装
@@ -20,6 +21,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 @Path(value = "/admin/hiprint",viewPath = "/hiprint/")
 @CheckPermission(PermissionKey.HIPRINT_DESIGN)
 @UnCheckIfSystemAdmin
+@OnlySaasPlatform
 public class HiprintAdminController extends JBoltBaseController {
 	@Inject
 	private HiprintTplService tplService;

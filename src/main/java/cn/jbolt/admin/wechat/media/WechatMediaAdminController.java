@@ -17,6 +17,7 @@ import cn.jbolt.core.bean.OptionBean;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.permission.UnCheck;
 /**
  * 微信公众平台素材库管理
@@ -25,6 +26,7 @@ import cn.jbolt.core.permission.UnCheck;
  * @date:   2019年6月25日   
  */
 @CheckPermission(PermissionKey.WECHAT_MEDIA)
+@OnlySaasPlatform
 public class WechatMediaAdminController extends JBoltBaseController {
 	@Inject
 	private WechatMediaService service;

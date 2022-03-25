@@ -16,6 +16,7 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.permission.UnCheck;
 /**
  *   微信用户信息管理 公众号和小程序
@@ -24,6 +25,7 @@ import cn.jbolt.core.permission.UnCheck;
  * @date:   2019年7月20日   
  */
 @CheckPermission(PermissionKey.WECHAT_USER)
+@OnlySaasPlatform
 public class WechatUserAdminController extends JBoltBaseController {
 	@Inject
 	private WechatUserService service;

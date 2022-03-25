@@ -16,6 +16,7 @@ import cn.jbolt.core.bean.Option;
 import cn.jbolt.core.bean.OptionBean;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 /**
  * 微信公众平台自动回复规则中的触发关键词管理
  * @ClassName:  WechatKeywordsAdminController   
@@ -23,6 +24,7 @@ import cn.jbolt.core.permission.CheckPermission;
  * @date:   2019年7月1日   
  */
 @CheckPermission(PermissionKey.WECHAT_AUTOREPLY_KEYWORDS)
+@OnlySaasPlatform
 public class WechatKeywordsAdminController extends JBoltBaseController {
 	@Inject
 	private WechatAutoReplyService wechatAutoReplyService;

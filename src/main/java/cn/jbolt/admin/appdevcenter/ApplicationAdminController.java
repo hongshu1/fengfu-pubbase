@@ -11,6 +11,7 @@ import cn.jbolt.core.enumutil.JBoltEnableEnum;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.model.Application;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 /**
  * 应用开发者中心
@@ -25,6 +26,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
  */
 @CheckPermission(PermissionKey.APPLICATION)
 @UnCheckIfSystemAdmin
+@OnlySaasPlatform
 public class ApplicationAdminController extends JBoltBaseController {
 	@Inject
 	private ApplicationService service;

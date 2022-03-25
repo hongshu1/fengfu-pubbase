@@ -9,6 +9,7 @@ import cn.jbolt.core.base.JBoltPageSize;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.DictionaryType;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 
 /**
@@ -19,6 +20,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
  */
 @CheckPermission({PermissionKey.DICTIONARY})
 @UnCheckIfSystemAdmin
+@OnlySaasPlatform
 public class DictionaryTypeAdminController extends JBoltBaseController {
 	@Inject
 	private DictionaryTypeService service;

@@ -9,6 +9,7 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 
 /**   
  * 微信菜单管理
@@ -17,6 +18,7 @@ import cn.jbolt.core.permission.CheckPermission;
  * @date:   2019年5月12日 下午11:37:20   
  */
 @CheckPermission(PermissionKey.WECHAT_MENU)
+@OnlySaasPlatform
 public class WechatMenuAdminController extends JBoltBaseController {
 	@Inject
 	private WechatMpinfoService wechatMpinfoService;

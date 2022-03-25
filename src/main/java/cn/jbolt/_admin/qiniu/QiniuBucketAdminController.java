@@ -9,6 +9,7 @@ import cn.jbolt.common.model.QiniuBucket;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 
 /**
@@ -19,6 +20,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
  */
 @CheckPermission(PermissionKey.QINIU_BUCKET)
 @UnCheckIfSystemAdmin
+@OnlySaasPlatform
 public class QiniuBucketAdminController extends JBoltBaseController {
 
 	@Inject

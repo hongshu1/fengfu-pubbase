@@ -16,6 +16,7 @@ import cn.jbolt.core.enumutil.JBoltEnableEnum;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.OnlySaasPlatform;
 
 /**   
  * 微信公众平台管理
@@ -24,6 +25,7 @@ import cn.jbolt.core.permission.CheckPermission;
  * @date:   2019年5月7日 下午5:15:36   
  */
 @CheckPermission(PermissionKey.WECHAT_MPINFO)
+@OnlySaasPlatform
 public class WechatMpinfoAdminController extends JBoltBaseController {
 	@Inject
 	private WechatMpinfoService service;
