@@ -4204,7 +4204,7 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'七牛bucket配置',
+'MS_Description', N'七牛bucket配置',
 'SCHEMA', N'dbo',
 'TABLE', N'jb_qiniu_bucket'
 GO
@@ -4221,7 +4221,117 @@ GO
 -- ----------------------------
 -- Primary Key structure for table jb_qiniu_bucket
 -- ----------------------------
-ALTER TABLE [dbo].[jb_qiniu_bucket] ADD CONSTRAINT [PK__jb_qiniu__3213E83F6EB229B1] PRIMARY KEY CLUSTERED ([id])
+ALTER TABLE [dbo].[jb_qiniu_bucket] ADD CONSTRAINT [PK__jb_qiniu_bucket__3213E83F6EB229B1] PRIMARY KEY CLUSTERED ([id])
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)  
+ON [PRIMARY]
+GO
+
+
+-- ----------------------------
+-- Table structure for jb_datasource_filter
+-- ----------------------------
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'[dbo].[jb_datasource_filter]') AND type IN ('U'))
+	DROP TABLE [dbo].[jb_datasource_filter]
+GO
+
+CREATE TABLE [dbo].[jb_datasource_filter] (
+  [id] bigint NOT NULL,
+  [name] nvarchar(100) COLLATE Chinese_PRC_CI_AS  NOT NULL,
+  [config_name] nvarchar(100) COLLATE Chinese_PRC_CI_AS  NOT NULL,
+  [table_name_filter] nvarchar(max) COLLATE Chinese_PRC_CI_AS  NULL,
+  [table_name_contains] nvarchar(max) COLLATE Chinese_PRC_CI_AS  NULL,
+  [table_name_patterns] nvarchar(max) COLLATE Chinese_PRC_CI_AS  NULL,
+  [create_user_id] bigint  NOT NULL,
+  [update_user_id] bigint  NOT NULL,
+  [create_time] datetime  NOT NULL,
+  [update_time] datetime  NULL
+)
+GO
+
+ALTER TABLE [dbo].[jb_datasource_filter] SET (LOCK_ESCALATION = TABLE)
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'主键ID',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter',
+'COLUMN', N'id'
+GO
+EXEC sp_addextendedproperty
+'MS_Description', N'名称',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter',
+'COLUMN', N'name'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'配置名称',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter',
+'COLUMN', N'config_name'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'不需要生成的表名',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter',
+'COLUMN', N'table_name_filter'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'需要排除包含字符',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter',
+'COLUMN', N'table_name_contains'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'需要排除符合正则的',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter',
+'COLUMN', N'table_name_patterns'
+GO
+ 
+EXEC sp_addextendedproperty
+'MS_Description', N'创建人',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter',
+'COLUMN', N'create_user_id'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'创建时间',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter',
+'COLUMN', N'create_time'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'更新人',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter',
+'COLUMN', N'update_user_id'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'更新时间',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter',
+'COLUMN', N'update_time'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'数据源过滤规则',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_datasource_filter'
+GO
+
+
+
+-- ----------------------------
+-- Primary Key structure for table jb_datasource_filter
+-- ----------------------------
+ALTER TABLE [dbo].[jb_datasource_filter] ADD CONSTRAINT [PK__jb_datasource_filter__3213E83F6EB229B1] PRIMARY KEY CLUSTERED ([id])
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)  
 ON [PRIMARY]
 GO
