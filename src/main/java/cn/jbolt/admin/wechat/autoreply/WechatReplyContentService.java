@@ -382,7 +382,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		}
 		int max=getCount(Okv.by("auto_reply_id",autoReplyId));
 		if(rank==max){
-			return fail("已经是最后已一个");
+			return fail("已经是最后一个");
 		}
 		WechatReplyContent upWechatReplyContent=findFirst(Okv.by("sort_rank", rank+1).set("auto_reply_id", autoReplyId));
 		if(upWechatReplyContent==null){

@@ -98,7 +98,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 		List<Dictionary> dictionaries=service.getListByTypeId(type.getId(),null);
 		set("dictionaries",dictionaries);
 		if(type.getModeLevel()==DictionaryType.MODE_LEVEL_MUTIL){
-			set("dataTotalCount", service.getCountByType(type.getId()));
+			set("dataTotalCount", service.getCountByTypeId(type.getId()));
 		}else{
 			set("dataTotalCount", dictionaries.size());
 		}
@@ -124,7 +124,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 				Long typeId=dictionary.getTypeId();
 				set("typeId", typeId);
 				set("dataList",service.getListByTypeId(typeId,null));
-				set("dataTotalCount", service.getCountByType(typeId));
+				set("dataTotalCount", service.getCountByTypeId(typeId));
 				set("showId", dictionaryId);
 				//TODO #mmm 前端页面实现show效果
 				render("index.html");
