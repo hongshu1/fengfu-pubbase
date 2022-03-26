@@ -28,6 +28,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.onlineuser.JBoltOnlineUserClearTask;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt._admin.systemlog.ProjectSystemLogProcessor;
 import cn.jbolt.admin.appdevcenter.AppDevCenterAdminRoutes;
 import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoType;
 import cn.jbolt.apitest.ApiTestRoutes;
@@ -54,6 +55,7 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.model.base.JBoltModelConfig;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.plugin.JBoltActiveRecordPlugin;
+import cn.jbolt.core.service.JBoltProjectSystemLogProcessor;
 import cn.jbolt.extend.cache.CacheExtend;
 import cn.jbolt.extend.config.ExtendProjectConfig;
 import cn.jbolt.index.AdminRoutes;
@@ -428,5 +430,10 @@ public class ProjectConfig extends JBoltProjectConfig {
 				);
 		//二开业务专用的配置调用
 		ExtendProjectConfig.configProjectSaasSeparateTableModels();
+	}
+
+	@Override
+	protected JBoltProjectSystemLogProcessor getProjectSystemLogProcessor() {
+		return new ProjectSystemLogProcessor();
 	}
 }
