@@ -84,8 +84,9 @@ $(function(){
 	addParentLayerDialogBtn("全部清空","lay_danger",function(){
 		LayerMsgBox.confirm("确认清空所有顶部导航绑定的左侧导航菜单吗?",function(){
 			LayerMsgBox.loading("执行中...",10000);
-			Ajax.get("admin/topnav/menu/clearAll",function(res){
+			Ajax.get("admin/topnav/clearAllMenus",function(res){
 					LayerMsgBox.success("操作成功",500,function(){
+						parent.refreshJBoltTable();
 						parent.LayerMsgBox.closeAll();
 					});
 				});
@@ -95,8 +96,9 @@ $(function(){
 	addParentLayerDialogBtn("清空当前","lay_danger",function(){
 		LayerMsgBox.confirm("确认清空此顶部导航绑定的左侧导航菜单吗?",function(){
 			LayerMsgBox.loading("执行中...",10000);
-			Ajax.get("admin/topnav/menu/clear/#(topnavId)",function(res){
+			Ajax.get("admin/topnav/clearMenus/#(topnavId)",function(res){
 					LayerMsgBox.success("操作成功",500,function(){
+						parent.refreshJBoltTable();
 						parent.LayerMsgBox.closeAll();
 					});
 				});

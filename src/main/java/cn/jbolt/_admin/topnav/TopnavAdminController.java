@@ -9,6 +9,8 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.Topnav;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 /**
  * 
  * @ClassName: TopnavAdminController   
@@ -16,6 +18,7 @@ import cn.jbolt.core.permission.CheckPermission;
  * @date: 2020-08-28 00:48  
  */
 @CheckPermission(PermissionKey.TOPNAV)
+@UnCheckIfSystemAdmin
 public class TopnavAdminController extends JBoltBaseController {
 
 	@Inject
@@ -27,20 +30,20 @@ public class TopnavAdminController extends JBoltBaseController {
 		render("index.html");
 	}
 	
-  /**
-	* 数据源
-	*/
+	/**
+	 * 数据源
+	 */
 	public void datas() {
 		renderJsonData(service.getAdminList(getKeywords()));
 	}
-	
-   /**
+  /**
 	* options 数据源
 	*/
+	@UnCheck
 	public void options() {
 		renderJsonData(service.getOptionList());
 	}
-		
+	
   /**
 	* 新增
 	*/
@@ -64,6 +67,7 @@ public class TopnavAdminController extends JBoltBaseController {
   /**
 	* 保存
 	*/
+	@Before(Tx.class)
 	public void save() {
 		renderJson(service.save(getModel(Topnav.class, "topnav")));
 	}
@@ -71,6 +75,7 @@ public class TopnavAdminController extends JBoltBaseController {
   /**
 	* 更新
 	*/
+	@Before(Tx.class)
 	public void update() {
 		renderJson(service.update(getModel(Topnav.class, "topnav")));
 	}
@@ -78,6 +83,7 @@ public class TopnavAdminController extends JBoltBaseController {
   /**
 	* 删除
 	*/
+	@Before(Tx.class)
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
@@ -109,8 +115,22 @@ public class TopnavAdminController extends JBoltBaseController {
   /**
 	* 切换启用状态
 	*/
+	@Before(Tx.class)
 	public void toggleEnable() {
 		renderJson(service.toggleEnable(getLong(0)));
+	}
+	
+	/**
+	 * 清空一个顶部导航下的菜单配置
+	 */
+	public void clearMenus() {
+		renderJson(service.clearMenus(getLong(0)));
+	}
+	/**
+	 * 清空所有顶部导航下的菜单配置
+	 */
+	public void clearAllMenus() {
+		renderJson(service.clearAllMenus());
 	}
 	
 	
