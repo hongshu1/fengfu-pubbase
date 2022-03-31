@@ -230,9 +230,7 @@ public class CACHE extends JBoltCacheParaValidator {
 			public Object load() {
 				WechatUser wechatUser = wechatUserService.findByIdToWechatUser(mpId, id);
 				if (wechatUser != null) {
-					wechatUser.removeNullValueAttrs().remove("last_auth_time", "first_auth_time", "first_login_time",
-							"last_login_time", "checked_time", "remark", "union_id", "open_id", "group_id", "tag_ids",
-							"subscribe_scene", "qr_scene", "qr_scene_str", "check_code", "session_key", "update_time");
+					wechatUser.removeNullValueAttrs().remove("last_auth_time","first_auth_time","first_login_time","last_login_time","checked_time","remark","group_id","tag_ids","subscribe_scene","qr_scene","qr_scene_str","check_code","session_key","update_time");
 				}
 				return wechatUser;
 			}
