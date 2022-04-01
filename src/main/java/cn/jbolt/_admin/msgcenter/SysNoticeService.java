@@ -201,8 +201,9 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 		if(notOk(checkValues)) {return false;}
 		List<String> checkValueList = JBoltArrayUtil.listFrom(checkValues, ",");
 		if(notOk(checkValueList)) {return false;}
+		checkValues = "," + checkValues + ",";
 		for(String v:values) {
-			if(checkValues.contains(v)) {
+			if(checkValues.contains(","+v+",")) {
 				return true;
 			}
 		}
