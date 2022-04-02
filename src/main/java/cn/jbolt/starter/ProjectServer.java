@@ -1,5 +1,6 @@
 package cn.jbolt.starter;
 
+import com.jfinal.config.JFinalConfig;
 import com.jfinal.server.undertow.UndertowConfig;
 
 import cn.jbolt.core.server.JBoltServer;
@@ -11,10 +12,26 @@ import cn.jbolt.core.server.JBoltServer;
  *    
  */
 public class ProjectServer extends JBoltServer {
+	@Override
+	public String getProjectName() {
+		return "JBolt Platform Pro";
+	}
+
+	@Override
+	public String getProjectVersion() {
+		return "4.1.2";
+	}
+
 	protected ProjectServer(UndertowConfig undertowConfig) {
 		super(undertowConfig);
 	}
-	
-	 
+
+	public static ProjectServer create(Class<? extends JFinalConfig> jfinalConfigClass, String undertowConfig) {
+		return new ProjectServer(new UndertowConfig(jfinalConfigClass, undertowConfig));
+	}
+
+	public static ProjectServer create(String jfinalConfigClass, String undertowConfig) {
+		return new ProjectServer(new UndertowConfig(jfinalConfigClass, undertowConfig));
+	}
 
 }
