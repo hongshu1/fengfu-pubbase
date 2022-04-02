@@ -133,7 +133,6 @@ public class UserService extends JBoltUserService {
 
 	/**
 	 * 删除
-	 * @param userId
 	 * @param id
 	 * @return
 	 */

@@ -40,9 +40,7 @@ public class HiprintTplService extends JBoltBaseService<HiprintTpl> {
 
 	/**
 	 * 提交设计器里的模板保存
-	 * @param tplId
-	 * @param tplName
-	 * @param tplContent
+	 * @param tpl
 	 * @return
 	 */
 	public Ret submitTpl(HiprintTpl tpl) {
