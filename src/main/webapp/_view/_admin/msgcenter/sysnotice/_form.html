@@ -122,8 +122,10 @@ function clearChooseReceiverType_#(pageId)(){
  * 提交Form
  */
 function submitSysNoticeForm_#(pageId)(){
-	submitThisForm(function(){
-		pageBack("admin/sysnotice"); 
+	LayerMsgBox.confirm("确定提交？",function(){
+		submitThisForm(function(){
+			pageBack("admin/sysnotice");
+		});
 	});
 }
 
