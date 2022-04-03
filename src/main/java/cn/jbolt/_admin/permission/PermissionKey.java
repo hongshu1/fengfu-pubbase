@@ -5,6 +5,10 @@ package cn.jbolt._admin.permission;
  */
 public class PermissionKey {
 	/**
+	 * 空权限
+	 */
+	public static final String NONE = "NONE";
+	/**
 	 * 操作台
 	 */
 	public static final String DASHBOARD = "dashboard";

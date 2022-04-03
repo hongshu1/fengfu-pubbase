@@ -62,14 +62,15 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		String orderType                 = "desc";
 		//这个模块crud 等关键操作如果需要增加systemLog需要指定log类型
 		//具体类型在ProjectSystemLogTargetType.java中定义出来即可
-		String projectSystemLogTargetType   = "ProjectSystemLogTargetType.TEACHER";
+		String projectSystemLogTargetType   = "ProjectSystemLogTargetType.NONE";
 		
 		/*
 		 * 需要在Controller上方声明的@CheckPermission(PermissionKey.USER) 
 		 * 可以这样写 	String checkPermissionKeys = PermissionKey.XXX;  多个用逗号隔开
 		 * 这个XXX需要自己后台权限资源管理处定义出来 然后生成到PermissionKey.java中
+		 * 默认PermissionKey.NONE 空权限是不可用的 需要自己处理
 		 */
-		String checkPermissionKeys       = "PermissionKey.TEACHER";
+		String checkPermissionKeys       = "PermissionKey.NONE";
 		//是否使用@path注解 就不用去配置路由了 默认false
 		boolean usePathAnnotation        = true;
 		//访问Controller权限是是否支持超管员不校验直接放行 默认false

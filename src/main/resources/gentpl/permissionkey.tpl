@@ -1,9 +1,14 @@
 package cn.jbolt._admin.permission;
 /**
- * 由PermissionKeyGen生成的 权限定义KEY 
- * 用于在注解里使用
+ * 权限定义KEY  用于在注解里使用
+ * 举例 @CheckPermission(PermissionKey.USER)
+ * 此文件由JBoltGeneratorGUI生成 请勿手动修改
  */
 public class PermissionKey {
+    /**
+	 * 空权限
+	 */
+	public static final String NONE = "NONE";
 	#for(data:permissions)
 	/**
 	 * #(data.title)
