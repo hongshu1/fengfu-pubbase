@@ -28,7 +28,7 @@ import #(modelImport);
  * @date: #date()  
  */
 public class #(serviceName) extends JBoltBaseService<#(modelName)> {
-	private #(modelName) dao=new #(modelName)().dao();
+	private final #(modelName) dao=new #(modelName)().dao();
 	@Override
 	protected #(modelName) dao() {
 		return dao;

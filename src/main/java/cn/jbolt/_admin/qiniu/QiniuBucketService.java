@@ -25,7 +25,7 @@ import cn.jbolt.core.util.JBoltRandomUtil;
  * @date: 2021-10-14 11:27  
  */
 public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
-	private QiniuBucket dao=new QiniuBucket().dao();
+	private final QiniuBucket dao=new QiniuBucket().dao();
 	@Inject
 	private QiniuService qiniuService;
 	@Override
@@ -46,7 +46,6 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 	
   /**
 	 * 保存
-	 * @param userId
 	 * @param qiniuBucket
 	 * @return
 	 */
@@ -169,7 +168,7 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 	
 	/**
 	 * 从线上更新同步bucket信息
-	 * @param int1
+	 * @param qiniuId
 	 * @return
 	 */
 	public Ret syncFromQiniu(Long qiniuId) {
@@ -244,7 +243,7 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
  
 	/**
 	 * 将线上的转为数据库的
-	 * @param qiniuId
+	 * @param qiniu
 	 * @param bucket
 	 * @return
 	 */
