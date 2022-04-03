@@ -2,8 +2,8 @@
 
 #默认-主服务端 名字不要修改
 [jbolt_cache]
-enable      = true
-host        = 39.106.162.83
+enable      = false
+host        = 39.112.213.32
 port        = 6379
 password    = jbolt
 timeout     = 2000
@@ -13,7 +13,7 @@ timeout     = 2000
 #扩展-电商服务端
 [mall]
 enable      = false
-host        = 39.106.162.89
+host        = 39.112.213.33
 port        = 6379
 password    = jbolt
 timeout     = 2000
