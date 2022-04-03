@@ -122,7 +122,7 @@ public class SysNoticeAdminController extends JBoltBaseController {
 			if(jboltFile!=null){
 				retFiles.add(jboltFile);
 			}else {
-				errormsg.append(uploadFile.getOriginalFileName()+"上传失败;");
+				errormsg.append(uploadFile.getOriginalFileName()).append("上传失败;");
 			}
 		}
 		if(retFiles.size()==0) {

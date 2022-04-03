@@ -26,7 +26,6 @@ public class JBoltWebSocketUtil {
 	
     /**
      * 添加新客户端
-     * @param token
      * @param client
      */
     public static void addClient(JBoltWebSocketServerEndpoint client) {

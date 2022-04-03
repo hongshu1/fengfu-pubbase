@@ -52,7 +52,6 @@ public class JBoltWebSocketServerEndpoint {
     /**
      * 连接建立成功调用的方法
      * @param token    令牌
-     * @param tenantSn 如果是租户 就带着租户SN
      * @param session 可选的参数 session为与某个客户端的连接会话，需要通过它来给客户端发送数据
      */
     @OnOpen

@@ -238,7 +238,6 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	}
 	/**
 	 * 同步一个用户数据
-	 * @param userId
 	 * @param mpId
 	 * @param id
 	 * @return
@@ -289,7 +288,6 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	}
 	/**
 	 * 切换Enable状态
-	 * @param userId
 	 * @param mpId
 	 * @param id
 	 * @return
@@ -404,7 +402,8 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	/**
 	 * 保存一个新的关注用户信息
 	 * @param mpId
-	 * @param apiResult
+	 * @param mpType
+	 * @param openId
 	 */
 	private void saveOneNewWechatUserInfo(Long mpId,int mpType,String openId) {
 		Record record=genRecordByOpenId(mpId, mpType, openId);
@@ -582,7 +581,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	/**
 	 * 更新用户wx小程序登录信息
 	 * @param mpId
-	 * @param userId
+	 * @param user
 	 * @param openId
 	 * @param unionId
 	 * @param sessionKey
@@ -792,7 +791,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	/**
 	 * 公众号用户授权登录 添加一个未关注的用户信息
 	 * @param mpId
-	 * @param openId
+	 * @param wechatUserId
 	 * @param userInfo
 	 * @return
 	 */

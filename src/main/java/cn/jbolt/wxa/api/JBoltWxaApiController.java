@@ -85,7 +85,6 @@ public class JBoltWxaApiController extends JBoltApiBaseController {
 
 	/**
 	 * 获取自己的用户信息
-	 * @param param
 	 */
 	@ActionKey("/api/wxa/user/me")
 	public void myWechatUserInfo() {

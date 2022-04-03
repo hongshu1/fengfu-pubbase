@@ -137,7 +137,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	/**
 	 * 删除微信公众平台关注自动回复消息
 	 * 
-	 * @param mpId
+	 * @param appId
 	 */
 	public void removeWechcatSubscribeOutMsg(String appId) {
 		if (StrKit.notBlank(appId)) {
@@ -182,7 +182,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	 * 根据mpid和openId删除wechat用户信息 api专用
 	 * 
 	 * @param mpId
-	 * @param appId
+	 * @param openId
 	 */
 	public void removeApiWechatUserByMpOpenId(Long mpId, String openId) {
 		if (mpId != null && StrKit.notBlank(openId)) {
@@ -220,7 +220,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	/**
 	 * 从缓存里获取wechatUser
 	 * 
-	 * @param _id
+	 * @param mpId
 	 * @param id
 	 * @return
 	 */
@@ -249,7 +249,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	/**
 	 * 通过七牛账号ID 获取七牛账号
 	 * 
-	 * @param qiniuId
+	 * @param id
 	 * @return
 	 */
 	public Qiniu getQiniu(Object id) {
@@ -259,7 +259,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	/**
 	 * 通过七牛账号SN 获取七牛账号
 	 * 
-	 * @param qiniuId
+	 * @param sn
 	 * @return
 	 */
 	public Qiniu getQiniuBySn(String sn) {
@@ -269,7 +269,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	/**
 	 * 通过七牛账号ID 获取七牛Name
 	 * 
-	 * @param qiniuId
+	 * @param id
 	 * @return
 	 */
 	public String getQiniuName(Object id) {
@@ -280,7 +280,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	/**
 	 * 通过七牛账号SN 获取七牛Name
 	 * 
-	 * @param qiniuId
+	 * @param sn
 	 * @return
 	 */
 	public String getQiniuName(String sn) {
@@ -291,7 +291,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	/**
 	 * 获得bucket所在七牛账号
 	 * 
-	 * @param bucket
+	 * @param bucketSn
 	 * @return
 	 */
 	public Qiniu getQiniuByBucketSn(String bucketSn) {
@@ -301,7 +301,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	/**
 	 * 获得bucket所在七牛账号Id
 	 * 
-	 * @param bucket
+	 * @param bucketSn
 	 * @return
 	 */
 	public Object getQiniuIdByBucketSn(String bucketSn) {
@@ -341,7 +341,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	/**
 	 * 获取指定七牛账号下的默认bucket
 	 * 
-	 * @param sn
+	 * @param qiniuId
 	 * @return
 	 */
 	public QiniuBucket getQiniuDefaultBucket(Object qiniuId) {

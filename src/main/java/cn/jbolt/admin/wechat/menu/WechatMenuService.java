@@ -84,7 +84,6 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 	}
 	/**
 	 * 保存
-	 * @param userId
 	 * @param mpId
 	 * @param menu
 	 * @return
@@ -127,12 +126,11 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 	}
 	/**
 	 * 更新
-	 * @param userId
 	 * @param mpId
 	 * @param menu
 	 * @return
 	 */
-	public Ret update( Long mpId, WechatMenu menu) {
+	public Ret update(Long mpId, WechatMenu menu) {
 		if(notOk(mpId)||notOk(menu.getId())||notOk(menu.getName())){return fail(JBoltMsg.PARAM_ERROR);}
 		WechatMpinfo wechatMpinfo=wechatMpinfoService.findById(mpId);
 		if(wechatMpinfo==null){
@@ -160,7 +158,6 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 	}
 	/**
 	 * 删除
-	 * @param userId
 	 * @param mpId
 	 * @param id
 	 * @return
@@ -209,11 +206,10 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 	}
 	/**
 	 * 发布自定义菜单
-	 * @param userId
 	 * @param mpId
 	 * @return
 	 */
-	public Ret publish( Long mpId) {
+	public Ret publish(Long mpId) {
 		WechatMpinfo wechatMpinfo=wechatMpinfoService.findById(mpId);
 		if(wechatMpinfo==null){
 			return fail("微信公众平台信息不存在");
@@ -231,52 +227,52 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 				JBoltWechatMenuType menuType= JBoltEnum.getEnumObjectByValue(JBoltWechatMenuType.class, menu.getType());
 				switch (menuType) {
 				case TYPE_EVENT:
-					msg.append("{\"type\":\"click\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"key\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"click\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"key\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置key");	
 					}
 					break;
 				case TYPE_KEYWORDS:
-					msg.append("{\"type\":\"click\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"key\":\""+"keywords_"+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"click\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"key\":\"" + "keywords_").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置关键词");	
 					}
 					break;
 				case TYPE_VIEW:
-					msg.append("{\"type\":\"view\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"url\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"view\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"url\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置URL");	
 					}
 					break;
 				case TYPE_PIC_SYSPHOTO:
-					msg.append("{\"type\":\"pic_sysphoto\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"key\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"pic_sysphoto\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"key\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置事件KEY");	
 					}
 					break;
 				case TYPE_PIC_PHOTO_OR_ALBUM:
-					msg.append("{\"type\":\"pic_photo_or_album\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"key\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"pic_photo_or_album\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"key\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置事件KEY");	
 					}
 					break;
 				case TYPE_PIC_WEIXIN:
-					msg.append("{\"type\":\"pic_weixin\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"key\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"pic_weixin\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"key\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置事件KEY");	
 					}
 					break;
 				case TYPE_MINIPROGRAM:
-					msg.append("{\"type\":\"miniprogram\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"appid\":\""+menu.getAppId()+"\",");
-					msg.append("\"pagepath\":\""+menu.getPagePath()+"\",");
-					msg.append("\"url\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"miniprogram\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"appid\":\"").append(menu.getAppId()).append("\",");
+					msg.append("\"pagepath\":\"").append(menu.getPagePath()).append("\",");
+					msg.append("\"url\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getAppId())){
 						return fail(menu.getName()+"未设置跳转小程序的APPID");	
 					}
@@ -288,36 +284,36 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 					}
 					break;
 				case TYPE_LOCATION_SELECT:
-					msg.append("{\"type\":\"location_select\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"key\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"location_select\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"key\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置key");	
 					}
 					break;
 				case TYPE_MEDIA_ID:
-					msg.append("{\"type\":\"media_id\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"media_id\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"media_id\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"media_id\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置media_id");	
 					}
 					break;
 				case TYPE_SCANCODE_PUSH:
-					msg.append("{\"type\":\"scancode_push\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"key\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"scancode_push\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"key\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置Key");	
 					}
 					break;
 				case TYPE_SCANCODE_WAITMSG:
-					msg.append("{\"type\":\"scancode_waitmsg\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"key\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"scancode_waitmsg\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"key\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置Key");	
 					}
 					break;
 				case TYPE_VIEW_LIMITED:
-					msg.append("{\"type\":\"view_limited\",\"name\":\""+menu.getName()+"\",");
-					msg.append("\"url\":\""+menu.getValue()+"\"},");
+					msg.append("{\"type\":\"view_limited\",\"name\":\"").append(menu.getName()).append("\",");
+					msg.append("\"url\":\"").append(menu.getValue()).append("\"},");
 					if(notOk(menu.getValue())){
 						return fail(menu.getName()+"未设置URL");	
 					}
@@ -326,57 +322,57 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 					return fail(menu.getName()+"请添加二级微信菜单");
 				}
 			}else{
-				msg.append("{\"name\":\""+menu.getName()+"\",\"sub_button\":[");
+				msg.append("{\"name\":\"").append(menu.getName()).append("\",\"sub_button\":[");
 				for(WechatMenu menu2:level2Menus){
 					JBoltWechatMenuType menuType2= JBoltEnum.getEnumObjectByValue(JBoltWechatMenuType.class, menu2.getType());
 					switch (menuType2) {
 					case TYPE_EVENT:
-						msg.append("{\"type\":\"click\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"key\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"click\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"key\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu.getName()+"未设置key");	
 						}
 						break;
 					case TYPE_KEYWORDS:
-						msg.append("{\"type\":\"click\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"key\":\""+"keywords_"+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"click\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"key\":\"" + "keywords_").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu2.getName()+"未设置关键词");	
 						}
 						break;
 					case TYPE_VIEW:
-						msg.append("{\"type\":\"view\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"url\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"view\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"url\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu2.getName()+"未设置URL");	
 						}
 						break;
 					case TYPE_PIC_SYSPHOTO:
-						msg.append("{\"type\":\"pic_sysphoto\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"key\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"pic_sysphoto\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"key\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu2.getName()+"未设置事件KEY");	
 						}
 						break;
 					case TYPE_PIC_PHOTO_OR_ALBUM:
-						msg.append("{\"type\":\"pic_photo_or_album\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"key\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"pic_photo_or_album\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"key\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu2.getName()+"未设置事件KEY");	
 						}
 						break;
 					case TYPE_PIC_WEIXIN:
-						msg.append("{\"type\":\"pic_weixin\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"key\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"pic_weixin\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"key\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu2.getName()+"未设置事件KEY");	
 						}
 						break;
 					case TYPE_MINIPROGRAM:
-						msg.append("{\"type\":\"miniprogram\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"appid\":\""+menu2.getAppId()+"\",");
-						msg.append("\"pagepath\":\""+menu2.getPagePath()+"\",");
-						msg.append("\"url\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"miniprogram\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"appid\":\"").append(menu2.getAppId()).append("\",");
+						msg.append("\"pagepath\":\"").append(menu2.getPagePath()).append("\",");
+						msg.append("\"url\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getAppId())){
 							return fail(menu2.getName()+"未设置跳转小程序的APPID");	
 						}
@@ -388,36 +384,36 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 						}
 						break;
 					case TYPE_LOCATION_SELECT:
-						msg.append("{\"type\":\"location_select\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"key\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"location_select\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"key\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu2.getName()+"未设置key");	
 						}
 						break;
 					case TYPE_MEDIA_ID:
-						msg.append("{\"type\":\"media_id\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"media_id\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"media_id\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"media_id\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu2.getName()+"未设置media_id");	
 						}
 						break;
 					case TYPE_SCANCODE_PUSH:
-						msg.append("{\"type\":\"scancode_push\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"key\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"scancode_push\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"key\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu2.getName()+"未设置key");	
 						}
 						break;
 					case TYPE_SCANCODE_WAITMSG:
-						msg.append("{\"type\":\"scancode_waitmsg\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"key\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"scancode_waitmsg\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"key\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu2.getName()+"未设置key");	
 						}
 						break;
 					case TYPE_VIEW_LIMITED:
-						msg.append("{\"type\":\"view_limited\",\"name\":\""+menu2.getName()+"\",");
-						msg.append("\"url\":\""+menu2.getValue()+"\"},");
+						msg.append("{\"type\":\"view_limited\",\"name\":\"").append(menu2.getName()).append("\",");
+						msg.append("\"url\":\"").append(menu2.getValue()).append("\"},");
 						if(notOk(menu2.getValue())){
 							return fail(menu2.getName()+"未设置URL");	
 						}
@@ -437,7 +433,7 @@ public class WechatMenuService extends JBoltBaseService<WechatMenu> {
 			ApiConfigKit.setThreadLocalAppId(appId);
 			try {
 				ApiResult apiResult=MenuApi.createMenu(msg.toString());
-				if(apiResult.isSucceed()==false){
+				if(!apiResult.isSucceed()){
 					return fail(apiResult.getErrorMsg());
 				}
 			} catch (RuntimeException e) {

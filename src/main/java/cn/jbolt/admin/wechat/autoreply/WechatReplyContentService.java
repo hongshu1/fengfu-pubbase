@@ -90,7 +90,6 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	}
 	/**
 	 * 检测操作权
-	 * @param userId
 	 * @param autoReplyId
 	 * @return
 	 */
@@ -116,7 +115,6 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	}
 	/**
 	 * 保存
-	 * @param userId
 	 * @param autoReplyId
 	 * @param wechatReplyContent
 	 * @return
@@ -126,17 +124,15 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	}
 	/**
 	 *  更新
-	 * @param userId
 	 * @param autoReplyId
 	 * @param wechatReplyContent
 	 * @return
 	 */
-	public Ret update( Long autoReplyId, WechatReplyContent wechatReplyContent) {
+	public Ret update(Long autoReplyId, WechatReplyContent wechatReplyContent) {
 		return submit(autoReplyId, wechatReplyContent, JBoltSystemLogType.UPDATE.getValue());
 	}
 	/**
 	 * 提交
-	 * @param userId
 	 * @param autoReplyId
 	 * @param wechatReplyContent
 	 * @param systemLogType
@@ -222,12 +218,11 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	}
 	/**
 	 * 删除
-	 * @param userId
 	 * @param autoReplyId
 	 * @param id
 	 * @return
 	 */
-	public Ret delete( Long autoReplyId, Long id) {
+	public Ret delete(Long autoReplyId, Long id) {
 		Ret checkRet=checkCanOpt(autoReplyId,id);
 		if(checkRet.isFail()) {
 			return checkRet;
@@ -244,7 +239,6 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	}
 	/**
 	 * 执行删除和修改操作前 检查一下参数和数据
-	 * @param userId
 	 * @param autoReplyId
 	 * @return
 	 */
@@ -267,7 +261,6 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	}
 	/**
 	 * 执行删除和修改操作前 检查一下参数和数据
-	 * @param userId
 	 * @param autoReplyId
 	 * @param id
 	 * @return
@@ -294,12 +287,11 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	}
 	/**
 	 * 切换启用状态
-	 * @param userId
 	 * @param autoReplyId
 	 * @param id
 	 * @return
 	 */
-	public Ret toggleEnable( Long autoReplyId, Long id) {
+	public Ret toggleEnable(Long autoReplyId, Long id) {
 		Ret ret=checkCanOpt(autoReplyId,id);
 		if(ret.isFail()) {
 			return ret;
@@ -398,11 +390,10 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	}
 	/**
 	  * 初始化
-	 * @param userId
 	 * @param autoReplyId
 	 * @return
 	 */
-	public Ret doInitRank( Long autoReplyId) {
+	public Ret doInitRank(Long autoReplyId) {
 		Ret ret=checkCanOpt(autoReplyId);
 		if(ret.isFail()) {
 			return ret;
@@ -543,7 +534,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	/**
 	 * 认证的公众号 关注时候 除了返回多图文 如果还有其他类型的数据 需要调用客服接口返回
 	 * @param mpId
-	 * @param id
+	 * @param autoReplyId
 	 * @param openId
 	 * @return
 	 */

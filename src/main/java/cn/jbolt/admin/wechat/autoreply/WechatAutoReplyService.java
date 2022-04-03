@@ -82,22 +82,20 @@ public class WechatAutoReplyService extends JBoltBaseService<WechatAutoreply> {
 	}
 	/**
 	 * 保存新建规则
-	 * @param userId
 	 * @param mpId
 	 * @param type
 	 * @param wechatAutoreply
 	 * @return
 	 */
-	public Ret save( Long mpId, Integer type, WechatAutoreply wechatAutoreply) {
+	public Ret save(Long mpId, Integer type, WechatAutoreply wechatAutoreply) {
 		return submit(mpId, type, wechatAutoreply, false);
 	}
 	/**
 	 * 提交
-	 * @param userId
 	 * @param mpId
 	 * @param type
 	 * @param wechatAutoreply
-	 * @param systeLogType
+	 * @param update
 	 */
 	public Ret submit(Long mpId, Integer type, WechatAutoreply wechatAutoreply,boolean update) {
 		if(notOk(mpId)||notOk(type)||wechatAutoreply==null
@@ -156,7 +154,6 @@ public class WechatAutoReplyService extends JBoltBaseService<WechatAutoreply> {
 
 	/**
 	 * 更新规则
-	 * @param userId
 	 * @param mpId
 	 * @param type
 	 * @param wechatAutoreply
@@ -167,7 +164,6 @@ public class WechatAutoReplyService extends JBoltBaseService<WechatAutoreply> {
 	}
 	/**
 	 * 删除
-	 * @param userId
 	 * @param mpId
 	 * @param type
 	 * @param id
@@ -209,7 +205,6 @@ public class WechatAutoReplyService extends JBoltBaseService<WechatAutoreply> {
 	}
 	/**
 	 * 切换启用禁用状态
-	 * @param userId
 	 * @param mpId
 	 * @param type
 	 * @param id

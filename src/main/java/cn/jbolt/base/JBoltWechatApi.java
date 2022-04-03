@@ -49,7 +49,7 @@ public class JBoltWechatApi {
 	}
 	/**
 	 * 核心call
-	 * @param call
+	 * @param function
 	 * @return
 	 */
 	public <T> T call(Supplier<T> function) {
@@ -72,7 +72,7 @@ public class JBoltWechatApi {
 	}
 	/**
 	 * 调用微信小程序的
-	 * @param call
+	 * @param function
 	 * @return
 	 */
 	private <T> T callWxa(Supplier<T> function) {
@@ -85,7 +85,7 @@ public class JBoltWechatApi {
 	}
 	/**
 	 * 调用普通服务号 订阅号
-	 * @param call
+	 * @param function
 	 * @return
 	 */
 	private <T> T callNormal(Supplier<T> function) {
@@ -99,7 +99,7 @@ public class JBoltWechatApi {
 	
 	/**
 	 * 调用企业微信
-	 * @param call
+	 * @param function
 	 * @return
 	 */
 	private <T> T callWork(Supplier<T> function) {

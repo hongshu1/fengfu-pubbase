@@ -35,7 +35,6 @@ public class JBoltSentinelUrlBlockHandler implements UrlBlockHandler{
 	private static final String PORTAL_TPL = "<div style=\"text-align:center;font-size:16px;color:red;\">%s</div>";
 	/**
 	 * 处理请求类型
-	 * @param target 
 	 * @param request
 	 */
 	private String getJBoltRequestType(HttpServletRequest request) {

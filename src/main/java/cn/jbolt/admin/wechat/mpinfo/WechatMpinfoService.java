@@ -46,11 +46,10 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 
 	/**
 	 * 保存
-	 * @param userId
 	 * @param wechatMpinfo
 	 * @return
 	 */
-	public Ret save( WechatMpinfo wechatMpinfo) {
+	public Ret save(WechatMpinfo wechatMpinfo) {
 		if(wechatMpinfo==null||isOk(wechatMpinfo.getId())||notOk(wechatMpinfo.getName())||notOk(wechatMpinfo.getType())){
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
@@ -79,11 +78,10 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 	}
 	/**
 	 * 更新
-	 * @param userId
 	 * @param wechatMpinfo
 	 * @return
 	 */
-	public Ret update( WechatMpinfo wechatMpinfo) {
+	public Ret update(WechatMpinfo wechatMpinfo) {
 		if(wechatMpinfo==null||notOk(wechatMpinfo.getId())||notOk(wechatMpinfo.getName())||notOk(wechatMpinfo.getType())){
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
@@ -110,11 +108,10 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 	}
 	/**
 	 * 删除
-	 * @param userId
 	 * @param id
 	 * @return
 	 */
-	public Ret delete( Long id) {
+	public Ret delete(Long id) {
 		Ret ret=deleteById(id, true);
 		if(ret.isOk()){
 			//添加日志
@@ -141,11 +138,10 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 	}
 	/**
 	 * 切换启动/禁用状态
-	 * @param userId
 	 * @param id
 	 * @return
 	 */
-	public Ret toggleEnable( Long id) {
+	public Ret toggleEnable(Long id) {
 		Ret ret=toggleBoolean(id, "enable");
 		if(ret.isOk()){
 			//添加日志
@@ -169,11 +165,10 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 	 
 	/**
 	 * 切换认证状态
-	 * @param userId
 	 * @param id
 	 * @return
 	 */
-	public Ret toggleAuthenticated( Long id) {
+	public Ret toggleAuthenticated(Long id) {
 		Ret ret=toggleBoolean(id, "is_authenticated");
 		if(ret.isOk()){
 			//添加日志
@@ -208,11 +203,10 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 
 	/**
 	 * 清空配置
-	 * @param userId
 	 * @param mpId
 	 * @return
 	 */
-	public Ret clearAllConfigs( Long mpId) {
+	public Ret clearAllConfigs(Long mpId) {
 		if(JBoltConfig.DEMO_MODE) {return fail(JBoltMsg.DEMO_MODE_CAN_NOT_DELETE);}
 		//公众平台配置删除
 		wechatConfigService.deleteByMpId(mpId);
@@ -226,12 +220,11 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 	}
 	/**
 	 * 确定关联APP 操作
-	 * @param userId
 	 * @param mpId
 	 * @param appId
 	 * @return
 	 */
-	public Ret submitLinkApp( Long mpId, Long appId) {
+	public Ret submitLinkApp(Long mpId, Long appId) {
 		if(notOk(mpId)||notOk(appId)) {return fail(JBoltMsg.PARAM_ERROR);}
 		WechatMpinfo wechatMpinfo=findById(mpId);
 		if(wechatMpinfo==null) {return fail("公众平台"+JBoltMsg.DATA_NOT_EXIST);}
@@ -263,11 +256,10 @@ public class WechatMpinfoService extends JBoltWechatMpinfoService {
 	}
 	/**
 	 * 解除关联的application
-	 * @param userId
 	 * @param mpId
 	 * @return
 	 */
-	public Ret removeLinkApp( Long mpId) {
+	public Ret removeLinkApp(Long mpId) {
 		if(notOk(mpId)) {return fail(JBoltMsg.PARAM_ERROR);}
 		WechatMpinfo wechatMpinfo=findById(mpId);
 		if(wechatMpinfo==null) {return fail("公众平台"+JBoltMsg.DATA_NOT_EXIST);}

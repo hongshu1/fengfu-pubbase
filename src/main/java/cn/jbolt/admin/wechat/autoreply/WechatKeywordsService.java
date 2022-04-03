@@ -49,9 +49,7 @@ public class WechatKeywordsService extends JBoltBaseService<WechatKeywords> {
 	}
 	/**
 	 * 保存
-	 * @param userId
 	 * @param autoReplyId
-	 * @param integer 
 	 * @param wechatKeywords
 	 * @return
 	 */
@@ -60,7 +58,6 @@ public class WechatKeywordsService extends JBoltBaseService<WechatKeywords> {
 	}
 	/**
 	 * 更新
-	 * @param userId
 	 * @param autoReplyId
 	 * @param wechatKeywords
 	 * @return
@@ -92,10 +89,9 @@ public class WechatKeywordsService extends JBoltBaseService<WechatKeywords> {
 	}
 	/**
 	 * 提交
-	 * @param userId
 	 * @param autoReplyId
 	 * @param wechatKeywords
-	 * @param systemLogType
+	 * @param update
 	 * @return
 	 */
 	private Ret submit(Long autoReplyId, WechatKeywords wechatKeywords, boolean update) {
@@ -157,7 +153,6 @@ public class WechatKeywordsService extends JBoltBaseService<WechatKeywords> {
 	}
 	/**
 	 * 删除
-	 * @param userId
 	 * @param autoReplyId
 	 * @param id
 	 * @return

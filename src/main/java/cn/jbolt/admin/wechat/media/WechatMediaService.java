@@ -318,8 +318,9 @@ public class WechatMediaService extends JBoltBaseService<WechatMedia> {
 	/**
 	 * 处理一个Item
 	 * @param mpId
+	 * @param type
 	 * @param media
-	 * @param wechatMedias
+	 * @param
 	 */
 	private WechatMedia convertToMedia(Long mpId, String type,JSONObject media) {
 		String mediaId=media.getString("media_id");

@@ -66,7 +66,6 @@ public class UserService extends JBoltUserService {
 	}
 	/**
 	 * saveOrUpdate
-	 * @param userId
 	 * @param user
 	 * @return
 	 */

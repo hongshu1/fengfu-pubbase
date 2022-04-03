@@ -77,10 +77,8 @@ public class JBoltPermissionKeyGen {
 					e.printStackTrace();
 				}
 				}
-			
-			if(activeRecordPlugin!=null) {
-				activeRecordPlugin.stop();
-			}
+
+			activeRecordPlugin.stop();
 			if(druidPlugin!=null) {
 				druidPlugin.stop();
 			}

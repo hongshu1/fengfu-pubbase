@@ -112,10 +112,9 @@ public class JBoltWxaApiService extends JBoltApiBaseService{
 		return beans;
 	}
 	private JBoltApiBindUserBean covertToBindUser(String bindUser) {
-		if(StrKit.isBlank(bindUser)||bindUser.indexOf("_")==-1) {return null;}
+		if(StrKit.isBlank(bindUser)|| !bindUser.contains("_")) {return null;}
 		String[] arr=bindUser.split("_");
-		if(arr==null||arr.length==0||arr.length!=2||StrKit.isBlank(arr[0])||StrKit.isBlank(arr[1])) {return null;}
-		
+		if(arr.length != 2 || StrKit.isBlank(arr[0]) || StrKit.isBlank(arr[1])) {return null;}
 		return new JBoltApiBindUserBean(Integer.parseInt(arr[0].trim()), arr[1].trim());
 	}
 	/**

@@ -159,7 +159,6 @@ public class GlobalConfigAdminController extends JBoltBaseController {
 	
 	/**
 	 * 新增参数
-	 * @param typeId
 	 */
 	public void addCustomConfig() {
 		Long typeId=getLong(0);

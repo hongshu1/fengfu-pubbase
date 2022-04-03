@@ -29,7 +29,7 @@ public class QiniuAdminController extends JBoltBaseController {
 	private QiniuService service;
 	/**
 	 * 请求生成upload token
-	 * @param sn bucket的 sn
+	 * @param bucketSn bucket的 sn
 	 */
 	@UnCheck
 	public void uploadParas(@Para("sn")String bucketSn) {

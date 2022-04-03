@@ -90,7 +90,6 @@ public class ApplicationService extends JBoltApplicationService {
 	
 	/**
 	 * 删除关联数据
-	 * @param userId
 	 * @param linkTargetId
 	 * @param type
 	 */
@@ -148,11 +147,10 @@ public class ApplicationService extends JBoltApplicationService {
 	}
 	/**
 	 * 切换状态
-	 * @param userId
 	 * @param id
 	 * @return
 	 */
-	public Ret toggleEnable( Long id) {
+	public Ret toggleEnable(Long id) {
 		Ret ret=toggleBoolean(id, "enable");
 		if(ret.isOk()){
 			Application application=ret.getAs("data");
@@ -163,7 +161,6 @@ public class ApplicationService extends JBoltApplicationService {
 	}
 	/**
 	 * 切换接口是否NeedCheckSign
-	 * @param userId
 	 * @param id
 	 * @return
 	 */
@@ -178,11 +175,10 @@ public class ApplicationService extends JBoltApplicationService {
 	}
 	/**
 	 * 变更AppSecret
-	 * @param userId
 	 * @param id
 	 * @return
 	 */
-	public Ret changeAppSecret( Long id) {
+	public Ret changeAppSecret(Long id) {
 		if(notOk(id)) {return fail(JBoltMsg.PARAM_ERROR);}
 		Application application=findById(id);
 		if(application==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
@@ -196,7 +192,6 @@ public class ApplicationService extends JBoltApplicationService {
 	}
 	/**
 	 * 保存
-	 * @param userId
 	 * @param app
 	 * @return
 	 */
@@ -231,11 +226,10 @@ public class ApplicationService extends JBoltApplicationService {
 	
 	/**
 	 * 更新
-	 * @param userId
 	 * @param app
 	 * @return
 	 */
-	public Ret update( Application app) {
+	public Ret update(Application app) {
 		if(app==null||notOk(app.getId())||notOk(app.getName())||notOk(app.getType())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
@@ -254,7 +248,6 @@ public class ApplicationService extends JBoltApplicationService {
 	}
 	/**
 	 * 绑定微信公众平台
-	 * @param userId
 	 * @param application
 	 * @param mpId
 	 * @param mpinfoType
@@ -327,10 +320,10 @@ public class ApplicationService extends JBoltApplicationService {
 	}
 	/**
 	 * 清除关联对象 特殊情况使用 就是他关联的对象找不到了才会出
-	 * @param userId
-	 * @param linkAppId
+	 * @param id
+	 * @return
 	 */
-	public Ret removeLinkTarget( Long id) {
+	public Ret removeLinkTarget(Long id) {
 		Application application=findById(id);
 		if(application==null) {return fail(JBoltMsg.PARAM_ERROR);}
 		Long linkTargetId=application.getLinkTargetId();

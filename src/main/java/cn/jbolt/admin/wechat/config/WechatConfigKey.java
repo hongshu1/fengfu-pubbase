@@ -121,7 +121,8 @@ public class WechatConfigKey {
 	};
 	/**
 	 * 根据配置类型获得配置keys
-	 * @param type
+	 * @param configType
+	 * @param isWxa
 	 * @return
 	 */
 	public static String[] getConfigKeys(int configType,boolean isWxa) {

@@ -100,7 +100,7 @@ public class TodoService extends JBoltBaseService<Todo> {
 	}
 	/**
 	 * 标记为已读
-	 * @param todoId
+	 * @param id
 	 * @return
 	 */
 	public Ret markAsRead(Long id) {
@@ -120,7 +120,8 @@ public class TodoService extends JBoltBaseService<Todo> {
 	}
 	/**
 	 * 更新状态
-	 * @param todo
+	 * @param todoId
+	 * @param state
 	 * @return
 	 */
 	public Ret updateState(Long todoId, Integer state) {
