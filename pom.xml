@@ -28,7 +28,7 @@
 		<cron4j.version>2.2.5</cron4j.version>
 		<jfinalweixin.version>3.4</jfinalweixin.version>
 		<ehcache.version>2.6.11</ehcache.version>
-		<caffeine.version>3.0.6</caffeine.version>
+		<caffeine.version>2.9.3</caffeine.version>
 		<jedis.version>3.8.0</jedis.version>
 		<fst.version>3.0.3</fst.version>
 		<hutool.version>5.7.22</hutool.version>
@@ -50,7 +50,7 @@
 		<jackson.version>2.13.2.2</jackson.version>
 		<ip2region.version>1.7.2</ip2region.version>
 		<jfinalevent.version>3.1.3</jfinalevent.version>
-		<qiniu.version>7.8.0</qiniu.version>
+		<qiniu.version>7.9.3</qiniu.version>
 		<sentinel.version>1.8.3</sentinel.version>
 		<ttl.version>2.12.5</ttl.version>
 		<jboltcore.version>4.1.2</jboltcore.version>
