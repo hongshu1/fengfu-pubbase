@@ -1,5 +1,6 @@
 package cn.jbolt.extend.gen;
 
+import cn.jbolt.core.annotation.JBoltAutoCache;
 import cn.jbolt.core.base.JBoltIDGenMode;
 import cn.jbolt.core.gen.JBoltColumnToBuildAttrNameFunction;
 import cn.jbolt.core.gen.JBoltProjectGenConfig;
@@ -19,7 +20,7 @@ public class ModelGenerator extends JFinalModelGenerator{
 		//数据源配置名称 默认主数据源是main 其他的在extend_datasource.setting里配置的
 		String configName="main";
 		//指定本次运行直接生成的表名 忽略其它所有表 数组为空 表示忽略此强制设定 当需要单个指定生成时才需要这个
-		String[] tableNames = new String[] {/* "jb_user","jb_application" */};
+		String[] tableNames = new String[] {"jb_application"/* "jb_user","jb_application" */};
 		//哪些前缀名的要生成
 		String[] tableNamesPrefixes = new String[] {/* "jb_","pl_" */};
 		//生成Model放在哪个包下
@@ -39,7 +40,18 @@ public class ModelGenerator extends JFinalModelGenerator{
 		boolean genHtmlDataDictionary=true;
 		//生成的Model java类需要去掉的前缀 多个用逗号隔开 内置已经去掉了核心表的前缀jb_
 		String removedTableNamePrefixes="jb_,tb_";
-		
+
+		//是否开始启动缓存机制 开启后会在Model上生成@JBoltAutoCache注解
+		boolean autoCacheEnable = false;
+		//是否开启idCache策略
+		boolean idCacheEnable = true;
+		//是否开启KeyCache策略
+		boolean keyCacheEnable = false;
+		//KeyCache 使用哪个字段属性
+		String keyCacheColumn = "";
+		//KeyCache 还需额外绑定哪个属性
+		String keyCacheBindColumn = "";
+
 		//下面这个默认是null就行 自定义的数据库字段转驼峰getter属性名的策略，
 		//默认使用策略已经够用，如果你有特殊需求就在这里定义它
 		JBoltColumnToBuildAttrNameFunction columnTobuildAttrNameFun=null;
@@ -53,6 +65,8 @@ public class ModelGenerator extends JFinalModelGenerator{
 		
 		//初始化项目配置
 		JBoltProjectGenConfig.init(projectRootPath,modelPackage,genModel,idGenMode,genHtmlDataDictionary,genJBoltCoreModel,removedTableNamePrefixes,columnTobuildAttrNameFun,tableNames,tableNamesPrefixes);
+		//设置自动缓存机制
+		JBoltProjectGenConfig.setModelAutoCache(autoCacheEnable,idCacheEnable,keyCacheEnable,keyCacheColumn,keyCacheBindColumn);
 		//执行Model、BaseModel、数据字典Html的生成
 		new ModelGenerator().generate(configName,dataDictionaryVersion,dataDictionaryDescription);
 	}
