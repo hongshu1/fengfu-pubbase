@@ -7,8 +7,8 @@ import cn.jbolt.core.gen.JBoltProjectGenConfig;
 import cn.jbolt.core.gen.JFinalModelGenerator;
 
 /**
- * jfinal model Generator 主要用来生成Model和BaseModel
- * @ClassName:  JFinalModelGenerator   
+ * JFinal model Generator 主要用来生成Model和BaseModel
+ * @ClassName:  ModelGenerator
  * @author: JFinal学院-小木 QQ：909854136 
  * @date:   2021年4月11日09:24:23
  */
