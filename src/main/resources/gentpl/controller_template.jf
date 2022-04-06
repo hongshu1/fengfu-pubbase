@@ -16,15 +16,14 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import #(modelImport);
 #end
-
+#set(demoKey = "PermissionKey."+modelName.toUpperCase())
 /**
  * #(controllerRemark??) Controller
- * @ClassName: #(controllerName??)   
+ * @ClassName: #(controllerName??)
  * @author: #(author?? 'JBolt-Generator')
- * @date: #date()  
+ * @date: #date()
  */
 #if(checkPermissionKeys)
-#setLocal( demoKey = "PermissionKey."+modelName.toUpperCase())
 @CheckPermission(#(checkPermissionKeys?? demoKey))
 #else
 @CheckPermission(demoKey)

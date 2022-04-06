@@ -1,11 +1,17 @@
 package cn.jbolt.extend.gen;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.gen.SystemLogTargetType;
+import cn.jbolt.core.model.Permission;
 import com.jfinal.plugin.activerecord.Model;
 
 import cn.jbolt.core.gen.IndexHtmlLayoutType;
 import cn.jbolt.core.gen.JBoltMainLogicBean;
 import cn.jbolt.core.gen.JBoltMainLogicGenerator;
 import cn.jbolt.core.model.Application;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Controller Service html生成器
@@ -33,13 +39,13 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		 *  可选normal_crud、normal_table、master_slave 
 		 *  对应普通crud类型、普通表格查询类型、主从表
 		 */
-		IndexHtmlLayoutType indexHtmlLayoutType = IndexHtmlLayoutType.NORMAL_CRUD;
+		IndexHtmlLayoutType indexHtmlLayoutType = IndexHtmlLayoutType.NORMAL_TABLE;
 		//生成java代码里的作者信息 默认 JBolt-Generator
-		String author                    ="JBolt-Generator";
+		String author                    = "JBolt-Generator";
 		//controller service等java代码生成的报名 路径
 		String packageName               = "cn.jbolt.xxx.application";
-		//在路由配置里的controllerKey参数 也用在生成其它URL的前缀
-		String controllerKey             = "/admin/xxx/application";
+		//在路由配置里的controllerPath参数 也用在生成其它URL的前缀
+		String controllerPath            = "/admin/xxx/application";
 		//生成html存放位置 从src/main/webapp根目录下开始 /作为前缀
 		String viewFolder                = "/_view/admin/xxx/application";
 		//生成Index.html左上角页面标题
@@ -47,7 +53,7 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		//在页面里使用增加 修改 删除 提示信息等用到的针对此模块操作的数据名称 例如 商品管理中是【商品】 品牌管理中是【品牌】
 		String dataName                  = "Application";
 		//生成模块用的model是哪个？
-		Class<? extends Model<?>> modelClass= Application.class;
+		Class<? extends Model<?>> modelClass = Application.class;
 		//是否需要分页查询
 		boolean needPaginate             = true;
 		//index.html 是否需要启用表格的工具条 toolbar
@@ -61,25 +67,29 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		//查询用默认排序方式 desc asc
 		String orderType                 = "desc";
 		//这个模块crud 等关键操作如果需要增加systemLog需要指定log类型
-		//具体类型在ProjectSystemLogTargetType.java中定义出来即可
-		String projectSystemLogTargetType   = "ProjectSystemLogTargetType.NONE";
+		SystemLogTargetType projectSystemLogTargetType   = new SystemLogTargetType("TEACHER","教师",20003);
 		
 		/*
 		 * 需要在Controller上方声明的@CheckPermission(PermissionKey.USER) 
-		 * 可以这样写 	String checkPermissionKeys = PermissionKey.XXX;  多个用逗号隔开
-		 * 这个XXX需要自己后台权限资源管理处定义出来 然后生成到PermissionKey.java中
 		 * 默认PermissionKey.NONE 空权限是不可用的 需要自己处理
 		 */
-		String checkPermissionKeys       = "PermissionKey.NONE";
+		List<Permission> checkPermissions = new ArrayList<>();
+		//需要自己添加需要的权限 这里添加的Permission 数据库里如果不存在 就自动生成入库 然后PermissionKey生成
+		{
+			checkPermissions.add(new Permission().setTitle("新权限1").setPermissionKey("new_test1"));
+		}
+
 		//是否使用@path注解 就不用去配置路由了 默认false
 		boolean usePathAnnotation        = true;
 		//访问Controller权限是是否支持超管员不校验直接放行 默认false
 		boolean unCheckIfSystemAdmin     = true;
 		
 		//创建主逻辑生成配置Bean
-		JBoltMainLogicBean mainLogicBean = new JBoltMainLogicBean(modelClass,projectPath, packageName,controllerKey, viewFolder ,pageTitle,dataName,needPaginate,needToolbar,checkDelete,matchColumns,orderColumn,orderType,checkPermissionKeys,usePathAnnotation,unCheckIfSystemAdmin,indexHtmlLayoutType,author);
-		
-		mainLogicBean.setProjectSystemLogTargetType(projectSystemLogTargetType);
+		JBoltMainLogicBean mainLogicBean = new JBoltMainLogicBean(modelClass,projectPath, packageName,controllerPath, viewFolder ,pageTitle,dataName,needPaginate,needToolbar,checkDelete,matchColumns,orderColumn,orderType,usePathAnnotation,unCheckIfSystemAdmin,indexHtmlLayoutType,author);
+		//设置权限
+		mainLogicBean.setPermissions(checkPermissions);
+		//设置日志类型
+		mainLogicBean.setSystemLogTargetType(projectSystemLogTargetType);
 		//如果是crud模式 特殊处理一下 行编辑删除按钮
 		if(mainLogicBean.isCrudType()) {
 			//index.html页面表格是否需要行末尾的编辑按钮
