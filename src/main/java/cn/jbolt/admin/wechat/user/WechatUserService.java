@@ -234,6 +234,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		wechatUser.setSubscibe(true);
 		wechatUser.setSource(mpType);
 		wechatUser.set("mp_id", mpId);
+		wechatUser.autoProcessIdValue();
 		return wechatUser.toRecord();
 	}
 	/**
