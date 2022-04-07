@@ -285,7 +285,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		}
 		boolean canSync=(wechatMpinfo.getIsAuthenticated()&&wechatMpinfo.getType().intValue()!=WechatMpinfoType.XCX.getValue()&&wechatMpinfo.getType().intValue()!=WechatMpinfoType.QYWX.getValue());
 		if(!canSync) {return fail("此公众平台无调用API权限");}
-		return success(Okv.by("appId", appId).set("wechatMpinfo",wechatMpinfo), JBoltMsg.SUCCESS);
+		return success(Kv.by("appId", appId).set("wechatMpinfo",wechatMpinfo), JBoltMsg.SUCCESS);
 	}
 	/**
 	 * 切换Enable状态
