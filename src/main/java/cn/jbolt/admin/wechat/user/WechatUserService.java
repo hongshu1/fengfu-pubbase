@@ -233,7 +233,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		wechatUser.setOpenId(openId);
 		wechatUser.setSubscibe(true);
 		wechatUser.setSource(mpType);
-		wechatUser.set("mp_id", mpId);
+		wechatUser.setMpId(mpId);
 		wechatUser.autoProcessIdValue();
 		return wechatUser.toRecord();
 	}
@@ -472,7 +472,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		wechatUser.setIsChecked(false);
 		wechatUser.setOpenId(openId);
 		wechatUser.setSource(WechatMpinfoType.XCX.getValue());
-		wechatUser.set("mp_id", mpId);
+		wechatUser.setMpId(mpId);
 		wechatUser.setUnionId(unionId);
 		wechatUser.setSessionKey(sessionKey); 
 		wechatUser.setNickname("用户_"+JBoltRandomUtil.randomLowWithNumber(6));
