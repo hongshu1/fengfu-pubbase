@@ -39,7 +39,7 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		 *  可选normal_crud、normal_table、master_slave 
 		 *  对应普通crud类型、普通表格查询类型、主从表
 		 */
-		IndexHtmlLayoutType indexHtmlLayoutType = IndexHtmlLayoutType.NORMAL_TABLE;
+		IndexHtmlLayoutType indexHtmlLayoutType = IndexHtmlLayoutType.NORMAL_CRUD;
 		//生成java代码里的作者信息 默认 JBolt-Generator
 		String author                    = "JBolt-Generator";
 		//controller service等java代码生成的报名 路径
@@ -77,7 +77,7 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		List<Permission> checkPermissions = new ArrayList<>();
 		//需要自己添加需要的权限 这里添加的Permission 数据库里如果不存在 就自动生成入库 然后PermissionKey生成
 		{
-			//checkPermissions.add(new Permission().setTitle("新权限1").setPermissionKey("new_test1"));
+			//checkPermissions.add(new Permission().setTitle("新权限1").setPermissionKey("new_test1").setUrl("/admin/xxx/app"));
 		}
 
 		//是否使用@path注解 就不用去配置路由了 默认false
