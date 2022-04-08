@@ -23,20 +23,22 @@ public class ModelGenerator extends JFinalModelGenerator{
 		String[] tableNames = new String[] {/* "jb_user","jb_application" */};
 		//哪些前缀名的要生成
 		String[] tableNamesPrefixes = new String[] {/* "jb_","pl_" */};
-		//生成Model放在哪个包下
-		String modelPackage="cn.jbolt.xxx.model";
+		//生成的Model java类需要去掉的前缀 多个用逗号隔开 内置已经去掉了核心表的前缀jb_
+		String removedTableNamePrefixes="";
 		//默认ID生成模式
 		String idGenMode=JBoltIDGenMode.SNOWFLAKE;//auto|snowflake|sequence
-		//数据库字典文件版本号 自己定义
-		String dataDictionaryVersion="1.0.0";
-		//数据流字典文件的简介描述信息
-		String dataDictionaryDescription="JBolt极速开发平台"+(configName.equals("main")?"主数据源":"扩展数据源["+configName+"]")+"数据库字典";
+		//生成Model放在哪个包下
+		String modelPackage="cn.jbolt.xxx.model";
+
 		//是否生成Model和BaseModel 如果设置为false 则只判断是否生成字典文件 直接不进行model和baseModel的生成
 		boolean genModel=true;
 		//是否生成html格式数据字典
 		boolean genHtmlDataDictionary=true;
-		//生成的Model java类需要去掉的前缀 多个用逗号隔开 内置已经去掉了核心表的前缀jb_
-		String removedTableNamePrefixes="jb_,tb_";
+		//数据库字典文件版本号 自己定义
+		String dataDictionaryVersion="1.0.0";
+		//数据流字典文件的简介描述信息
+		String dataDictionaryDescription="JBolt极速开发平台"+(configName.equals("main")?"主数据源":"扩展数据源["+configName+"]")+"数据库字典";
+
 
 		//是否开始启动缓存机制 开启后会在Model上生成@JBoltAutoCache注解
 		boolean autoCacheEnable = false;
