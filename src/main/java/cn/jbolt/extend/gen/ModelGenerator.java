@@ -33,9 +33,6 @@ public class ModelGenerator extends JFinalModelGenerator{
 		String dataDictionaryDescription="JBolt极速开发平台"+(configName.equals("main")?"主数据源":"扩展数据源["+configName+"]")+"数据库字典";
 		//是否生成Model和BaseModel 如果设置为false 则只判断是否生成字典文件 直接不进行model和baseModel的生成
 		boolean genModel=true;
-		//本次执行生成 是否生成JBolt核心库 model和baseModel 一般只生成自己的业务表 就设置为false
-		//注意自己的业务表不要使用jb_开头的前缀 	
-		boolean genJBoltCoreModel=false;
 		//是否生成html格式数据字典
 		boolean genHtmlDataDictionary=true;
 		//生成的Model java类需要去掉的前缀 多个用逗号隔开 内置已经去掉了核心表的前缀jb_
@@ -64,7 +61,7 @@ public class ModelGenerator extends JFinalModelGenerator{
 //		};
 		
 		//初始化项目配置
-		JBoltProjectGenConfig.init(projectRootPath,modelPackage,genModel,idGenMode,genHtmlDataDictionary,genJBoltCoreModel,removedTableNamePrefixes,columnTobuildAttrNameFun,tableNames,tableNamesPrefixes);
+		JBoltProjectGenConfig.init(projectRootPath,modelPackage,genModel,idGenMode,genHtmlDataDictionary,false,removedTableNamePrefixes,columnTobuildAttrNameFun,tableNames,tableNamesPrefixes);
 		//设置自动缓存机制
 		JBoltProjectGenConfig.setModelAutoCache(autoCacheEnable,idCacheEnable,keyCacheEnable,keyCacheColumn,keyCacheBindColumn);
 		//执行Model、BaseModel、数据字典Html的生成
