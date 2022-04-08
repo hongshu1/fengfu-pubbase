@@ -66,9 +66,10 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		String orderColumn               = "id";
 		//查询用默认排序方式 desc asc
 		String orderType                 = "desc";
-		//这个模块crud 等关键操作如果需要增加systemLog需要指定log类型
-		SystemLogTargetType projectSystemLogTargetType   = new SystemLogTargetType("TEACHER","教师",20003);
-		
+		//这个模块crud 等关键操作如果需要增加systemLog需要指定log类型 默认是空 需要设置按照下面注释的案例设置
+		SystemLogTargetType projectSystemLogTargetType   = SystemLogTargetType.NONE;
+//		SystemLogTargetType projectSystemLogTargetType   = new SystemLogTargetType("TEACHER","教师",20003);
+
 		/*
 		 * 需要在Controller上方声明的@CheckPermission(PermissionKey.USER) 
 		 * 默认PermissionKey.NONE 空权限是不可用的 需要自己处理
@@ -76,7 +77,7 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		List<Permission> checkPermissions = new ArrayList<>();
 		//需要自己添加需要的权限 这里添加的Permission 数据库里如果不存在 就自动生成入库 然后PermissionKey生成
 		{
-			checkPermissions.add(new Permission().setTitle("新权限1").setPermissionKey("new_test1"));
+			//checkPermissions.add(new Permission().setTitle("新权限1").setPermissionKey("new_test1"));
 		}
 
 		//是否使用@path注解 就不用去配置路由了 默认false
