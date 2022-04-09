@@ -28,14 +28,10 @@
 		<!-- 内容核心区 -->
 		
 <!-- JBoltTable的数据模板定义-->
-<textarea id="jb_table_tpl_#(pageId)">
+<textarea class="jb_tpl_box" id="jb_table_tpl_#(pageId)">
 {@each datas as data,index}
 <tr>
-{@if pageSize&&pageSize>0}
-<td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
-{@else}
-<td>${+index+1}</td>
-{@/if}
+<td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.version}</td>
 <td>${data.publishTime|date_ymdhm}</td>
 <td>${data.createTime|date_ymdhm}</td>
