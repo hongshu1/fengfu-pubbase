@@ -41,7 +41,6 @@
 #setLocal(fctucName=firstCharToLowerCase(modelName))
 	/**
 	 * 保存
-	 * @param userId
 	 * @param #(fctucName)
 	 * @return
 	 */
