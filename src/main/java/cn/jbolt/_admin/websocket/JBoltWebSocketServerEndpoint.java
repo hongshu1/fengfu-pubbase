@@ -3,6 +3,7 @@ package cn.jbolt._admin.websocket;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
@@ -13,6 +14,7 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
+import cn.jbolt.core.para.JBoltParaValidator;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Aop;
 import com.jfinal.kit.StrKit;
@@ -139,6 +141,10 @@ public class JBoltWebSocketServerEndpoint {
      * @param outMsg
      */
     public void sendMessage(String token, JBoltWebSocketMsg outMsg) {
+		if(StrKit.isBlank(token)){
+			LOG.error("websocket sendMessage：param token is null");
+			return;
+		}
 		JBoltWebSocketServerEndpoint client = null;
 		if(outMsg.isTenant()) {
 			client = JBoltWebSocketUtil.getTenantClient(token, outMsg.getTenantSn());
@@ -154,8 +160,12 @@ public class JBoltWebSocketServerEndpoint {
      * @param outMsg
      */
     private void sendMessageToUser(Object userId, JBoltWebSocketMsg outMsg) {
+		if(JBoltParaValidator.notOk(userId)){
+			LOG.error("websocket sendMessageToUser：param userId is null");
+			return;
+		}
 		OnlineUserService onlineUserService = Aop.get(OnlineUserService.class);
-		List<String> tokens = onlineUserService.getSessionListByUserId((Long) userId);
+		List<String> tokens = onlineUserService.getSessionListByUserId(Long.parseLong(userId.toString()));
 		if(tokens!=null && tokens.size()>0) {
 			tokens.forEach((token)->{
 				if(StrKit.notBlank(token)) {

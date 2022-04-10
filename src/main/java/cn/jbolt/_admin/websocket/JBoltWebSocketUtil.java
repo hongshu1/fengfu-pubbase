@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.jbolt.core.para.JBoltParaValidator;
 import com.jfinal.aop.Aop;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
@@ -207,15 +208,19 @@ public class JBoltWebSocketUtil {
 	
 	/**
 	 * 发送消息
-	 * @param toToken
+	 * @param token
 	 * @param outMsg
 	 */
-	public static void sendMessage(String toToken,JBoltWebSocketMsg outMsg) {
+	public static void sendMessage(String token,JBoltWebSocketMsg outMsg) {
+		if(StrKit.isBlank(token)){
+			LOG.error("websocket sendMessage：param token is null");
+			return;
+		}
 		JBoltWebSocketServerEndpoint client = null;
 		if(outMsg.isTenant()) {
-			client = getTenantClient(outMsg.getTenantSn(),toToken);
+			client = getTenantClient(outMsg.getTenantSn(),token);
 		}else {
-			client = getClient(toToken);
+			client = getClient(token);
 		}
 		
 		if(client != null) {
@@ -233,8 +238,12 @@ public class JBoltWebSocketUtil {
      * @param outMsg
      */
     public static void sendMessageToUser(Object userId, JBoltWebSocketMsg outMsg) {
+		if(JBoltParaValidator.notOk(userId)){
+			LOG.error("websocket sendMessageToUser：param userId is null");
+			return;
+		}
 		OnlineUserService onlineUserService = Aop.get(OnlineUserService.class);
-		List<String> tokens = onlineUserService.getSessionListByUserId((Long) userId);
+		List<String> tokens = onlineUserService.getSessionListByUserId(Long.parseLong(userId.toString()));
 		if(tokens!=null && tokens.size()>0) {
 			tokens.forEach((token)->{
 				if(StrKit.notBlank(token)) {

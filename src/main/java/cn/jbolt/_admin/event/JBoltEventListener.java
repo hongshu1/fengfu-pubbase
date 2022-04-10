@@ -36,9 +36,9 @@ public class JBoltEventListener {
 		if (receiverType.intValue()!=1 && StrKit.isBlank(receiverValue)) {
 			return;
 		}
-		Integer[] values = null;
+		String[] values = null;
 		if(receiverType.intValue() != 1) {
-			values = JBoltArrayUtil.toDisInt(receiverValue, ",");
+			values = JBoltArrayUtil.from3(receiverValue, ",");
 			if (values == null || values.length == 0) {
 				return;
 			}
