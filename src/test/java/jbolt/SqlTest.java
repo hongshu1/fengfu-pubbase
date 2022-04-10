@@ -18,8 +18,7 @@ public class SqlTest{
 	private DruidPlugin druid;
 	@BeforeAll
 	protected void setUp() throws Exception {
-		druid = JBoltConfig.createDruidPlugin();
-		druid.start();
+		
 	}
 	@Test
 	public void test() {
@@ -73,6 +72,5 @@ public class SqlTest{
 	
 	@AfterAll
 	protected void tearDown() throws Exception {
-		druid.stop();
 	}
 }
