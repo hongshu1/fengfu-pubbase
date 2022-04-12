@@ -23,6 +23,8 @@ public class ModelGenerator extends JFinalModelGenerator{
 		String[] tableNames = new String[] {/* "jb_user","jb_application" */};
 		//哪些前缀名的要生成
 		String[] tableNamesPrefixes = new String[] {/* "jb_","pl_" */};
+		//是否包含数据库视图生成 默认不生
+		boolean generateView = false;
 		//生成的Model java类需要去掉的前缀 多个用逗号隔开 内置已经去掉了核心表的前缀jb_
 		String removedTableNamePrefixes="";
 		//默认ID生成模式
@@ -63,7 +65,7 @@ public class ModelGenerator extends JFinalModelGenerator{
 //		};
 		
 		//初始化项目配置
-		JBoltProjectGenConfig.init(projectRootPath,modelPackage,genModel,idGenMode,genHtmlDataDictionary,false,removedTableNamePrefixes,columnTobuildAttrNameFun,tableNames,tableNamesPrefixes);
+		JBoltProjectGenConfig.init(projectRootPath,modelPackage,genModel,idGenMode,genHtmlDataDictionary,false,removedTableNamePrefixes,columnTobuildAttrNameFun,tableNames,tableNamesPrefixes,generateView);
 		//设置自动缓存机制
 		JBoltProjectGenConfig.setModelAutoCache(autoCacheEnable,idCacheEnable,keyCacheEnable,keyCacheColumn,keyCacheBindColumn);
 		//执行Model、BaseModel、数据字典Html的生成
