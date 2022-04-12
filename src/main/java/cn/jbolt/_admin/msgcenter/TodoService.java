@@ -239,7 +239,7 @@ public class TodoService extends JBoltBaseService<Todo> {
 			if(isOk(sortType)){
 				sql.orderBy(sortColumn, sortType);
 			}else {
-				sql.orderBy(sortColumn);
+				sql.asc(sortColumn);
 			}
 		}
 		if(columnWithOrWithout != null) {

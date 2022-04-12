@@ -354,7 +354,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 			if(isOk(sortType)){
 				sql.orderBy(mainPre+sortColumn, mainPre+sortType);
 			}else {
-				sql.orderBy(mainPre+sortColumn);
+				sql.asc(mainPre+sortColumn);
 			}
 		}
 		

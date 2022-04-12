@@ -45,6 +45,7 @@ import cn.jbolt.core.util.JBoltStringUtil;
  * @date:   2019年9月28日   
  */
 public class WechatUserService extends JBoltBaseRecordTableSeparateService<WechatUser>{
+	private final WechatUser dao=new WechatUser().dao();
 	private static boolean syncing=false;
 	@Inject
 	private WechatMpinfoService wechatMpinfoService;
@@ -52,7 +53,6 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	private ApplicationService applicationService;
 	@Inject
 	private UserService userService;
-	private WechatUser dao=new WechatUser().dao();
 	@Override
 	protected WechatUser mainTableModelDao() {
 		return dao;
