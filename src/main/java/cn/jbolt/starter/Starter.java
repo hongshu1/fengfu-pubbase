@@ -115,9 +115,9 @@ public class Starter {
 	private void configSentinel(WebBuilder builder) {
 		if(!JBoltConfig.JBOLT_SENTINEL_ENABLE) {return;}
 		//配置Filter
-		builder.addFilter("sentinelFilter", "com.alibaba.csp.sentinel.adapter.servlet.CommonFilter");
-		builder.addFilterUrlMapping("sentinelFilter", "/*");
-		builder.addInitParameter(CommonFilter.WEB_CONTEXT_UNIFY, "false");
+//		builder.addFilter("sentinelFilter", "com.alibaba.csp.sentinel.adapter.servlet.CommonFilter");
+//		builder.addFilterUrlMapping("sentinelFilter", "/*");
+//		builder.addInitParameter(CommonFilter.WEB_CONTEXT_UNIFY, "false");
 	}
 	
 	/**
