@@ -1,25 +1,14 @@
 package jbolt;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import cn.jbolt.core.db.sql.Sql;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
-import com.jfinal.plugin.druid.DruidPlugin;
-
-import cn.jbolt.core.base.config.JBoltConfig;
-import cn.jbolt.core.db.sql.Sql;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class SqlTest{
-	private DruidPlugin druid;
-	@BeforeAll
-	protected void setUp() throws Exception {
-		
-	}
 	@Test
 	public void test() {
 		Sql sql;
@@ -69,8 +58,5 @@ public class SqlTest{
 		System.out.println(sql);
 		assertTrue(sql.toString().contains(SAFE_VAR));
 	}
-	
-	@AfterAll
-	protected void tearDown() throws Exception {
-	}
+
 }
