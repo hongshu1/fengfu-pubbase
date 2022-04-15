@@ -20,7 +20,7 @@
 
 
 var template =
-    '<div class="jcalculator">' +
+    '<div class="jcalculator d-none">' +
     '<span>7</span>' +
     '<span>8</span>' +
     '<span>9</span>' +
@@ -62,8 +62,8 @@ var template =
             el.after(template);
 
             this.display = el;
-            this.element = el.next();
             this.wrap = this.display.closest(".jcalculator_wrap");
+            this.element = this.wrap.find(".jcalculator");
             this.inJBoltTable = isOk(this.element.closest("table[data-editable]"));
             if(this.inJBoltTable){
             	var pos = this.display.offset();
@@ -73,6 +73,8 @@ var template =
             		left:pos.left
             	});
             }
+
+            this.element.attr("id",randomId())
 
             /**
              * Add theme
@@ -88,17 +90,27 @@ var template =
             this.clearStack = true;
 
             var that=this;
-            $('span', this.element).on('click', function() {
+            this.display.on("clear",function(){
+                self.digit = "";
+            })
+            $('span', this.element).on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation()
                 var code = $(this).text().trim();
-
+                var va=$.trim(that.display.val());
+                if(!self.v && va.length>0 && !isNaN(va) && va.charAt(0)!='-'){
+                    for(var i=0;i<va.length;i++){
+                        self.digit = va.charAt(i);
+                    }
+                }
                 if (isNaN(code)) {
                 	if(code == 'close'){
                 		if(that.inJBoltTable){
-                			$(this).closest(".jcalculator").remove();
+                			$(this).closest(".jcalculator").removeClass("d-none");
                 		}else{
-                			$(this).closest(".jcalculator").hide();
+                			$(this).closest(".jcalculator").addClass("d-none");
                 		}
-                		return;
+                		return false;
                 	}
                 	else if (code == 'C') {
                         self.digit;
@@ -122,7 +134,8 @@ var template =
 
                 } else {
 
-                    self.digit = code;
+                        self.digit = code;
+
                 }
                 /**
                  * Material ripple effect
@@ -148,6 +161,7 @@ var template =
                  */
 
                 self.options.onInput($(this), code);
+                return false;
             });
         }
         
@@ -160,7 +174,7 @@ var template =
 
 
             save: function() {
-                if (this.display.is('input')) this.display.val(this.value);
+                if (this.display.is('input')) this.display.val(this.value).change();
                 else this.display.text(this.value);
             },
 
@@ -221,6 +235,13 @@ var template =
              */
 
             set digit(d) {
+                if(d.length==0){
+                    this.clearStack = true;
+                    this.value = "";
+                    this.stack = "";
+                    this.save();
+                    return "";
+                }
             	if(this.v.toString().indexOf(".")!=-1){
             		if(d=='·'){
                 		d = '.';
@@ -266,38 +287,20 @@ var template =
         var controller;
 
         this.each(function() {
-
             controller = new Controller($(this));
-            if(this.inJBoltTable){
-            	 jboltBody.on('click', function(e) {
-                 	var tar=$(e.target);
-                 	if(isOk(tar.closest(".jcalculator_wrap"))){
-                 		if(e.className=="close"){
-                 			controller.element.hide();
-                 		}else{
-                 			controller.element.show();
-                 		}
-                 	}else{
-                 		controller.element.hide();
-                 	}
-                 });
-            }else{
-            	jboltBody.on('click', function(e) {
-                	var tar=$(e.target);
-                	if(isOk(tar.closest(".jcalculator_wrap"))){
-                		if(e.className=="close"){
-                 			controller.element.hide();
-                 		}else{
-                 			controller.element.show();
-                 		}
-                	}else{
-                		controller.element.hide();
-                	}
-                });
-            }
-             
-           
+        });
 
+
+        jboltBody.on('click', function(e) {
+            var tar=$(e.target);
+            if(isOk(tar.closest(".jcalculator_wrap")) || isOk(tar.closest(".jcalculator"))){
+                var elel = tar.parent().find(".jcalculator");
+                var idv = elel.attr("id");
+                jboltBody.find(".jcalculator:not([id='"+idv+"'])").addClass("d-none");
+                elel.removeClass("d-none");
+            }else{
+                controller.element.addClass("d-none");
+            }
         });
 
         return controller;

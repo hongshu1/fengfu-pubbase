@@ -8,7 +8,7 @@
 .jcalculator {
     font-family: Helvetica Neue, Helvetica, Arial, Verdana, sans-serif;
     width: 201px;
-    display: none;
+    display: block;
     position: absolute;
     left:0;
     text-align: center;
@@ -16,6 +16,9 @@
 	border-right: 1px solid #000000;
     border-top: 1px solid #000000;
     
+}
+.jcalculator.d-none{
+    display: none;
 }
 .jbolt_table td .jcalculator{
 	 position: fixed!important;
