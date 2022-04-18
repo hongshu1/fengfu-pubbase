@@ -3,6 +3,7 @@ package cn.jbolt._admin.dictionary;
 
 import java.util.List;
 
+import cn.jbolt.core.cache.JBoltDictionaryCache;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -48,7 +49,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 	 */
 	@UnCheck
 	public void options(){
-		renderJsonData(service.getOptionListByTypeKey(get("key")));
+		renderJsonData(JBoltDictionaryCache.me.getListByTypeKey(get("key"),true));
 	}
 	/**
 	 * 根据获取一级options
