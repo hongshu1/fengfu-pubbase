@@ -13,7 +13,7 @@
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<jdk.version>1.8</jdk.version>
 		<junit.version>5.8.1</junit.version>
-		<jfinal.version>4.9.22</jfinal.version>
+		<jfinal.version>4.9.23</jfinal.version>
 		<oshi.version>6.1.2</oshi.version>
 		<jna.version>5.10.0</jna.version>
 		<cos.version>2022.2</cos.version>
@@ -34,7 +34,7 @@
 		<hutool.version>5.7.22</hutool.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<log4j2.version>2.17.2</log4j2.version>
-		<jfinalundertow.version>2.8</jfinalundertow.version>
+		<jfinalundertow.version>2.9</jfinalundertow.version>
 		<thumbnailator.version>0.4.17</thumbnailator.version>
 		<pinyin4j.version>2.5.0</pinyin4j.version>
 		<commonslang.version>3.8.1</commonslang.version>
