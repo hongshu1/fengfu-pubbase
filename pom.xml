@@ -30,7 +30,7 @@
 		<ehcache.version>2.6.11</ehcache.version>
 		<caffeine.version>2.9.3</caffeine.version>
 		<jedis.version>3.8.0</jedis.version>
-		<fst.version>3.0.3</fst.version>
+		<fst.version>2.57</fst.version>
 		<hutool.version>5.7.22</hutool.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<log4j2.version>2.17.2</log4j2.version>
