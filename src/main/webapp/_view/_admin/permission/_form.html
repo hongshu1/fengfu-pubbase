@@ -115,7 +115,17 @@
 		<div class="form-group row" style="display:none;" id="menuOpenOptionBox">
     	<label class="col-form-label col-sm-2">组件属性配置</label>
         <div class="col-5">
-            <div class="input-group">
+			<div class="input-group iframe_option" style="display:none;">
+				<div class="input-group-prepend">
+					<span class="input-group-text" >菜单隐藏：</span>
+				</div>
+				<select class="form-control" id="option_hideLeftNav" tooltip data-title="是否隐藏左侧菜单导航区">
+					<option value="true">隐藏</option>
+					<option  value="false">不隐藏</option>
+				</select>
+
+			</div>
+            <div class="input-group jbolt_layer_dialog_option">
 			    <div class="input-group-prepend">
 			      <span class="input-group-text" >宽：</span>
 			    </div>
@@ -135,7 +145,6 @@
 			      <span class="input-group-text" >dir：</span>
 			    </div>
 			    <select class="form-control" id="option_dir" tooltip data-title="JBoltLayer组件显示位置 left or right">
-				<option  value="">请选择</option>
 				<option  value="right">right</option>
 				<option value="left">left</option>
 				</select>
@@ -143,8 +152,7 @@
 			      <span class="input-group-text" >resize：</span>
 			    </div>
 			    <select class="form-control" id="option_resize" tooltip data-title="JBoltLayer组件是否可以手动调节宽度">
-				<option  value="">请选择</option>
-				<option  value="false">否</option>
+				<option value="false">否</option>
 				<option value="true">是</option>
 				</select>
 
@@ -154,7 +162,6 @@
 			      <span class="input-group-text" >Dialog按钮：</span>
 			    </div>
 			    <select class="form-control" id="option_btn" tooltip data-title="是否显示Dialog右下角的按钮">
-				<option  value="">请选择</option>
 				<option value="true">显示</option>
 				<option  value="false">不显示</option>
 				</select>
@@ -170,20 +177,25 @@
 			 </div>
 			<div class="input-group jbolt_layer_option" style="display:none;">
 			    <div class="input-group-prepend">
-			      <span class="input-group-text" >关闭按钮：</span>
+			      <span class="input-group-text" >关闭：</span>
 			    </div>
 			    <select class="form-control" id="option_close" tooltip data-title="JBoltLayer组件是否显示关闭按钮">
-				<option value="">请选择</option>
 				<option value="true">显示</option>
 				<option value="false">不显示</option>
 				</select>
 			    <div class="input-group-prepend">
-			      <span class="input-group-text" >遮罩层：</span>
+			      <span class="input-group-text" >遮罩：</span>
 			    </div>
 			    <select class="form-control" id="option_nomask"  tooltip data-title="JBoltLayer组件是否显示背景遮罩层">
-				<option value="">请选择</option>
 				<option value="false">显示</option>
 				<option value="true">不显示</option>
+				</select>
+				<div class="input-group-prepend">
+					<span class="input-group-text" >加载方式：</span>
+				</div>
+				<select class="form-control" id="option_loadtype"  tooltip data-title="JBoltLayer组件加载方式 默认还是iframe">
+					<option value="ajaxportal">默认</option>
+					<option value="iframe">iframe</option>
 				</select>
 			</div>
             <div class="input-group  mt-1 jbolt_layer_option" style="display:none;">
@@ -225,14 +237,18 @@
 #define js()
 #include("/_view/_admin/common/_formjs.html",formId="permissionForm")
 <script type="text/javascript">
-var permissionOpenType=$("#permissionOpenType"),permissionOpenOption=$("#permissionOpenOption"),menuOpenOptionBox=$("#menuOpenOptionBox");
-var optionWidth=$("#option_width"),optionHeight=$("#option_height"),optionBtn=$("#option_btn"),optionTitle=$("#option_title"),optionTop=$("#option_top"),optionDir=$("#option_dir"),optionResize=$("#option_resize"),optionClose=$("#option_close"),optionNomask=$("#option_nomask"),
+var permissionOpenType=$("#permissionOpenType"),optionHideLeftNav=$("#option_hideLeftNav"),permissionOpenOption=$("#permissionOpenOption"),menuOpenOptionBox=$("#menuOpenOptionBox");
+var optionWidth=$("#option_width"),optionHeight=$("#option_height"),optionBtn=$("#option_btn"),optionTitle=$("#option_title"),optionTop=$("#option_top"),optionDir=$("#option_dir"),optionResize=$("#option_resize"),optionClose=$("#option_close"),optionNomask=$("#option_nomask"),optionLoadType=$("#option_loadtype")
 optionConfirm=$("#option_confirm");
 //正式提交之前要处理的逻辑
 function beforeFormSubmit(){
 	var openType=permissionOpenType.find("input[name='permission.openType']:checked").val();
 	var option="";
-	if(openType=="3"){
+	if(openType=="2"){
+		var hideLeftNav=optionHideLeftNav.val();
+		var obj={"hideLeftNav":hideLeftNav};
+		option=JSON.stringify(obj);
+	}else if(openType=="3"){
 		var width=optionWidth.val();
 		var height=optionHeight.val();
 		var title=optionTitle.val();
@@ -247,8 +263,9 @@ function beforeFormSubmit(){
 		var resize=optionResize.val();
 		var top=optionTop.val();
 		var nomask=optionNomask.val();
+		var loadType=optionLoadType.val();
 		var confirm=optionConfirm.val();
-		var obj={"width":width?width:"","height":height?height:"","dir":dir?dir:"right","resize":resize?resize:"false","close":close,"nomask":nomask,"confirm":confirm?confirm:"","top":top?top:""};
+		var obj={"width":width?width:"","height":height?height:"","dir":dir?dir:"right","resize":resize?resize:"false","close":close,"nomask":nomask,"confirm":confirm?confirm:"","top":top?top:"",loadType:loadType};
 		option=JSON.stringify(obj);
 	}
 	permissionOpenOption.val(option);
@@ -301,6 +318,7 @@ function processPermissionJBoltLayerOption(){
 		optionDir.val(obj.dir?obj.dir:"right");
 		optionResize.val(obj.resize?obj.resize:"false");
 		optionNomask.val(obj.nomask?obj.nomask:"false");
+		optionLoadType.val(obj.loadType?obj.loadType:"ajaxportal");
 		optionConfirm.val(obj.confirm?obj.confirm:"");
 		}else{
 			optionWidth.val("600");
@@ -312,15 +330,40 @@ function processPermissionJBoltLayerOption(){
 			optionDir.val("right");
 			optionResize.val("false");
 			optionNomask.val("false");
+			optionLoadType.val("ajaxportal");
 			optionConfirm.val("");
 		}
 	
+}
+
+/**
+ * 处理修改界面 填充IFrame的属性
+ */
+function processPermissionIframeOption(){
+	var json=permissionOpenOption.val();
+	if(json){
+		var obj=JSON.parse(json);
+		optionHideLeftNav.val(obj.hideLeftNav?"true":"false");
+	}else{
+		optionHideLeftNav.val("false");
+	}
+
 }
 //是否为Permissionupdate状态
 var permission_update=#(permission!=null&&permission.id!=null&&permission.id>0);
 function processMenuOpenOptions(r,v){
 	menuOpenOptionBox.find("input,select").val("");
-	if(v=="3"){
+	if(v=="2") {
+		if (permission_update) {
+			processPermissionIframeOption();
+		} else {
+			optionHideLeftNav.val("false");
+		}
+		menuOpenOptionBox.slideDown(200, function () {
+			$(".jbolt_layer_option,.dialog_option,.jbolt_layer_dialog_option").slideUp(200);
+			$(".iframe_option").slideDown(200);
+		});
+	}else if(v=="3"){
 		if(permission_update){
 			processPermissionDialogOption();
 			}else{
@@ -332,6 +375,8 @@ function processMenuOpenOptions(r,v){
 			}
 		menuOpenOptionBox.slideDown(200,function(){
 			$(".jbolt_layer_option").slideUp(200);
+			$(".jbolt_layer_dialog_option").slideDown(200);
+			$(".iframe_option").slideUp(200);
 			$(".dialog_option").slideDown(200);
 		});
 	}else if(v=="4"){
@@ -347,15 +392,20 @@ function processMenuOpenOptions(r,v){
 		optionDir.val("right");
 		optionResize.val("false");
 		optionNomask.val("false");
+			optionLoadType.val("ajaxportal");
 		optionConfirm.val("");
 		}
 		menuOpenOptionBox.slideDown(200,function(){
 			$(".jbolt_layer_option").slideDown(200);
 			$(".dialog_option").slideUp(200);
+			$(".jbolt_layer_dialog_option").slideDown(200);
+			$(".iframe_option").slideUp(200);
 		});
 	}else{
 		$(".jbolt_layer_option").slideUp(200);
 		$(".dialog_option").slideUp(200);
+		$(".jbolt_layer_dialog_option").slideUp(200);
+		$(".iframe_option").slideUp(200);
 		menuOpenOptionBox.slideUp(200);
 		
 	}
