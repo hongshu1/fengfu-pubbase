@@ -201,7 +201,7 @@ public class WechatAutoReplyService extends JBoltBaseService<WechatAutoreply> {
 		if(wechatAutoreply.getType().intValue()!=type.intValue()) {return fail("操作异常:公众平台type");}
 		WechatMpinfo wechatMpinfo=wechatMpinfoService.findById(mpId);
 		if(wechatMpinfo==null) {return fail("关联的微信公众平台"+JBoltMsg.DATA_NOT_EXIST);}
-		return success(Okv.by("wechatAutoreply", wechatAutoreply).set("wechatMpinfo",wechatMpinfo), JBoltMsg.SUCCESS);
+		return success(Kv.by("wechatAutoreply", wechatAutoreply).set("wechatMpinfo",wechatMpinfo), JBoltMsg.SUCCESS);
 	}
 	/**
 	 * 切换启用禁用状态

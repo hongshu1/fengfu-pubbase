@@ -257,7 +257,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 			return fail("关联微信公众平台不存在");
 		}
 		String append="所属公众平台：["+wechatMpinfo.getName()+"] 规则:["+wechatAutoreply.getType()+"]["+wechatAutoreply.getName()+"]";
-		return success(Okv.by("append", append).set("wechatAutoreply",wechatAutoreply), JBoltMsg.SUCCESS);
+		return success(Kv.by("append", append).set("wechatAutoreply",wechatAutoreply), JBoltMsg.SUCCESS);
 	}
 	/**
 	 * 执行删除和修改操作前 检查一下参数和数据
