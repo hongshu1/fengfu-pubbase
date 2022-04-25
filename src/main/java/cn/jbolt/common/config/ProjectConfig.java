@@ -2,6 +2,7 @@ package cn.jbolt.common.config;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.setting.Setting;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.onlineuser.JBoltOnlineUserClearTask;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -286,6 +287,12 @@ public class ProjectConfig extends JBoltProjectConfig {
 	protected void configMainDbPlugins(DruidPlugin dbPlugin, JBoltActiveRecordPlugin arp, Engine sqlEngine) {
 		//处理二开配置扩展
 		ExtendProjectConfig.configMainDbPlugin(dbPlugin,arp,sqlEngine);
+	}
+
+	@Override
+	protected void configExtendDbPlugins(DruidPlugin dbPlugin, JBoltActiveRecordPlugin arp, Engine sqlEngine, String configName, Setting dbSetting) {
+		//处理二开配置扩展
+		ExtendProjectConfig.configExtendDbPlugins(dbPlugin,arp,sqlEngine,configName,dbSetting);
 	}
 
 	/**
