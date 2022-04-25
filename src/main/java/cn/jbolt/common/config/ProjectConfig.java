@@ -1,30 +1,8 @@
 package cn.jbolt.common.config;
 
-import java.io.File;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.jfinal.config.Constants;
-import com.jfinal.config.Handlers;
-import com.jfinal.config.Interceptors;
-import com.jfinal.config.Plugins;
-import com.jfinal.config.Routes;
-import com.jfinal.ext.handler.UrlSkipHandler;
-import com.jfinal.ext.interceptor.SessionInViewInterceptor;
-import com.jfinal.kit.StrKit;
-import com.jfinal.plugin.cron4j.Cron4jPlugin;
-import com.jfinal.plugin.druid.DruidPlugin;
-import com.jfinal.plugin.druid.IDruidStatViewAuth;
-import com.jfinal.template.Engine;
-import com.jfinal.upload.OreillyCos;
-import com.oreilly.servlet.multipart.FileRenamePolicy;
-
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.setting.Setting;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.onlineuser.JBoltOnlineUserClearTask;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -45,12 +23,7 @@ import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.base.config.JBoltProjectConfig;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
-import cn.jbolt.core.kit.JBoltSaasTenantAccessibleProcessor;
-import cn.jbolt.core.kit.JBoltSaasTenantIdToNameProcessor;
-import cn.jbolt.core.kit.JBoltSaasTenantIdToSnProcessor;
-import cn.jbolt.core.kit.JBoltSaasTenantSnToIdProcessor;
-import cn.jbolt.core.kit.JBoltSaasTenantSnToNameProcessor;
-import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.kit.*;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.model.base.JBoltModelConfig;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
@@ -58,13 +31,25 @@ import cn.jbolt.core.plugin.JBoltActiveRecordPlugin;
 import cn.jbolt.core.service.JBoltProjectSystemLogProcessor;
 import cn.jbolt.extend.cache.CacheExtend;
 import cn.jbolt.extend.config.ExtendProjectConfig;
-import cn.jbolt.index.AdminRoutes;
-import cn.jbolt.index.WebRoutes;
-import cn.jbolt.index.WechatAdminRoutes;
-import cn.jbolt.index.WechatApiRoutes;
-import cn.jbolt.index.WechatRoutes;
-import cn.jbolt.index.WechatTestRoutes;
+import cn.jbolt.index.*;
+import com.jfinal.config.*;
+import com.jfinal.ext.handler.UrlSkipHandler;
+import com.jfinal.ext.interceptor.SessionInViewInterceptor;
+import com.jfinal.kit.StrKit;
+import com.jfinal.plugin.cron4j.Cron4jPlugin;
+import com.jfinal.plugin.druid.DruidPlugin;
+import com.jfinal.plugin.druid.IDruidStatViewAuth;
+import com.jfinal.template.Engine;
+import com.jfinal.upload.OreillyCos;
+import com.oreilly.servlet.multipart.FileRenamePolicy;
 import net.dreamlu.event.EventPlugin;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 此项目工程的配置类
@@ -128,6 +113,21 @@ public class ProjectConfig extends JBoltProjectConfig {
 //				this.scan("cn.jbolt.xxx");
 //			}
 //		});
+		me.add(new Routes() {
+			@Override
+			public void config() {
+				this.addInterceptor(new JBoltAdminAuthInterceptor());
+				this.scan("cn.jbolt.xxx");
+			}
+		});
+
+		me.add(new Routes() {
+			@Override
+			public void config() {
+				this.addInterceptor(new JBoltAdminAuthInterceptor());
+				this.scan("cn.jbolt.school");
+			}
+		});
 	}
 
 	/**
@@ -231,7 +231,7 @@ public class ProjectConfig extends JBoltProjectConfig {
 	 */
 	@Override
 	protected void configSentinel() {
-
+		//WebCallbackManager.setUrlBlockHandler(new JBoltSentinelUrlBlockHandler());
 	}
 
 	/**
@@ -287,6 +287,12 @@ public class ProjectConfig extends JBoltProjectConfig {
 	protected void configMainDbPlugins(DruidPlugin dbPlugin, JBoltActiveRecordPlugin arp, Engine sqlEngine) {
 		//处理二开配置扩展
 		ExtendProjectConfig.configMainDbPlugin(dbPlugin,arp,sqlEngine);
+	}
+
+	@Override
+	protected void configExtendDbPlugins(DruidPlugin dbPlugin, JBoltActiveRecordPlugin arp, Engine sqlEngine, String configName, Setting dbSetting) {
+		//处理二开配置扩展
+		ExtendProjectConfig.configExtendDbPlugins(dbPlugin,arp,sqlEngine,configName,dbSetting);
 	}
 
 	/**

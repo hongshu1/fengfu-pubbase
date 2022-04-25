@@ -1,5 +1,6 @@
 package cn.jbolt.extend.config;
 
+import cn.hutool.setting.Setting;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
 import com.jfinal.config.Interceptors;
@@ -40,8 +41,6 @@ public class ExtendProjectConfig {
 	 */
 	public static void configPlugin(Plugins me) {
 		LOG.debug("调用二开扩展配置:configPlugin");
-		//配置其它数据库 如果一个项目 使用JBolt默认数据库作为主源 还有额外其他的数据库的话需要调用下面的配置
-		JBoltExtendDatabaseConfig.me().config(me);
 		//如果需要二开 增加自己的自动调度任务
 		configCron4jPlugin(me);
 	}
@@ -105,6 +104,18 @@ public class ExtendProjectConfig {
 	 */
 	public static void configMainDbPlugin(DruidPlugin druidPlugin, ActiveRecordPlugin arp, Engine sqlEngine) {
 		LOG.debug("调用二开扩展配置:configMainDbPlugin");
+	}
+
+	/**
+	 * 扩展数据源插件配置 arp和sql模板
+	 * @param dbPlugin
+	 * @param arp
+	 * @param sqlEngine
+	 * @param configName
+	 * @param dbSetting
+	 */
+	public static void configExtendDbPlugins(DruidPlugin dbPlugin, ActiveRecordPlugin arp, Engine sqlEngine, String configName, Setting dbSetting){
+		LOG.debug("调用二开扩展配置:configExtendDbPlugins");
 	}
 	
 	/**

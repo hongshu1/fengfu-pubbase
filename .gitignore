@@ -1,3 +1,5 @@
 /target/
-.idea
-logs
+/logs/
+/.idea/
+/.svn/
+/src/main/webapp/upload/

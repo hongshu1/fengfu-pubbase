@@ -85,7 +85,7 @@ public class WechatKeywordsService extends JBoltBaseService<WechatKeywords> {
 			if(wechatKeywords.getMpId().longValue()!=mpId.longValue()) {return fail("参数异常:公众平台mpId");}
 			if(wechatKeywords.getAutoReplyId().longValue()!=autoReplyId.longValue()) {return fail("参数异常:所属规则 autoReplyId");}
 		}
-		return success(Okv.by("mpId", mpId).set("append",append),JBoltMsg.SUCCESS);
+		return success(Kv.by("mpId", mpId).set("append",append),JBoltMsg.SUCCESS);
 	}
 	/**
 	 * 提交

@@ -9,6 +9,8 @@ password    = jbolt
 timeout     = 2000
 #database   = 0
 #clientName = clientname
+#过期时间 单位 秒 -1为不设置过期
+expires     = -1
 
 #扩展-电商服务端
 [mall]
@@ -19,3 +21,5 @@ password    = jbolt
 timeout     = 2000
 #database   = 0
 #clientName = clientname
+#过期时间 单位 秒  -1为不设置过期
+expires     = -1

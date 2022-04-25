@@ -1,7 +1,7 @@
-/*********jbolt_autocomplete_js_version="1.2.2"*************/
+/*********jbolt_autocomplete_js_version="1.2.6"*************/
 /**
  * JBolt 内置 Autocomplete组件
- * 基于jQuery Autocomplete plugin 1.2.2
+ * 基于jQuery Autocomplete plugin 1.2.6
  * @param $
  * @returns
  */
@@ -139,6 +139,7 @@
 			hasFocus++
 		}).blur(function() {
 			hasFocus = 0;
+
 			if (!config.mouseDownOnSelect) {
 				hideResults()
 			}
@@ -389,6 +390,7 @@
 		resultsClass : "ac_results",
 		loadingClass : "ac_loading",
 		minChars : 1,
+		clickHeader:false,
 		delay : 400,
 		matchCase : false,
 		matchSubset : true,
@@ -541,6 +543,7 @@
 						}
 						config.mouseDownOnSelect = false
 					});
+
 			list = $("<ul/>")
 					.appendTo(element)
 					.mouseover(
@@ -553,10 +556,13 @@
 									$(target(event)).addClass(CLASSES.ACTIVE)
 								}
 							}).click(function(event) {
+					event.preventDefault();
+					event.stopPropagation();
 						$(target(event)).addClass(CLASSES.ACTIVE);
 						select();
 						if (options.inputFocus)
 							input.focus();
+
 						return false
 					}).mousedown(function() {
 						config.mouseDownOnSelect = true
@@ -634,6 +640,29 @@
 				list.bgiframe()
 		}
 		return {
+			processHeaderSpan:function(elHeader,align){
+				if(elHeader.indexOf("-")==-1){
+					html = "<span style='text-align:"+align+"'>"+elHeader+"</span>";
+				}else{
+					var harr = elHeader.split("-");
+					var width = harr[1];
+					if(typeof(width)=="undefined" || width.length == 0 || (isNaN(width) && !width.endWith("%"))){
+						width = null;
+					}else if(width.endWith("%")){
+						width = "width:"+width +";";
+					}else{
+						width = "width:"+width +"px;";
+					}
+					var isAuto=width;
+					if(harr.length == 2){
+						html = "<span "+(isAuto?"class='auto'":'')+" style='"+width+"text-align:"+align+"'>"+harr[0]+"</span>";
+					}else if(harr.length == 3){
+						var align3 = harr[2]||align;
+						html = "<span "+(isAuto?"class='auto'":'')+" style='"+width+"text-align:"+align3+"'>"+harr[0]+"</span>";
+					}
+				}
+				return html;
+			},
 			display : function(d, q) {
 				init();
 				data = d;
@@ -681,18 +710,78 @@
 					var editableTable=inTd.closest("table[data-editable='true']");
 					isTdEditor=isOk(editableTable);
 				}
-				var offset = theInput.offset();
-				element.css(
-						{
-							width : typeof options.width == "string"
-									|| options.width > 0 ? options.width+1:theInput.css("width"),
-							top : offset.top + input.offsetHeight+(isTdEditor?3:2),
-							left : offset.left-(isTdEditor?1:0)
-						}).show();
+				// var offset = theInput.offset();
+				// var eleTop = offset.top + input.offsetHeight+(isTdEditor?3:2);
+				// element.css(
+				// 		{
+				// 			width : typeof options.width == "string"
+				// 					|| options.width > 0 ? options.width+1:theInput.css("width"),
+				// 			top : eleTop,
+				// 			left : offset.left-(isTdEditor?1:0)
+				// 		}).show();
+
+
+				var offset=theInput.offset(),
+					elHeader=theInput.data("header"),
+					hasHeader = isOk(elHeader),
+					windowScrollTop=jboltWindow.scrollTop(),
+					windowScrollLeft=jboltWindow.scrollLeft(),
+					height=theInput.outerHeight(),
+					top=offset.top+height+(isTdEditor?3:2)-windowScrollTop,
+					left=offset.left-windowScrollLeft,
+					owidth = theInput.outerWidth(),
+					width=theInput.data("width")||owidth,
+					dataHeight=theInput.data("height");
+				var newWidth=jboltWindowWidth-left-20;
+				if(width>newWidth){
+					left=left+owidth-width;
+				}
+
+
+				if(offset.top+options.scrollHeight>jboltWindowHeight-25){
+					top = offset.top-options.scrollHeight-(isTdEditor?3:2)-windowScrollTop;
+				}
+				var eleoptions = {
+					"top":top+"px",
+					"left":left+"px",
+					"width":width+"px",
+					"max-width":width+"px",
+					"height":options.scrollHeight+"px",
+					"max-height":options.scrollHeight+"px"
+				};
+				var dataUlHeight = options.scrollHeight;
+				if(hasHeader){
+					var align = theInput.data("text-align")||"center";
+					var exist = element.find("div.header");
+					if(notOk(exist)){
+						var header=$("<div class='header'></div>");
+						dataUlHeight = dataUlHeight-30;
+						element.addClass("hasHeader");
+						var html="";
+
+						if(elHeader.indexOf(",")==-1){
+							html = this.processHeaderSpan(elHeader,align);
+						}else{
+							var hharr=elHeader.split(",");
+							var hhvalue;
+							for(var i in hharr){
+								hhvalue = hharr[i];
+								html+=this.processHeaderSpan(hhvalue,align);
+							}
+						}
+						header.html(html);
+						list.before(header);
+					}
+
+				}
+
+				element.css(eleoptions).show();
+
+
 				if (options.scroll) {
 					list.scrollTop(0);
 					list.css({
-						maxHeight : options.scrollHeight,
+						maxHeight : dataUlHeight,
 						overflow : 'auto'
 					});
 					if (navigator.userAgent.indexOf("MSIE") != -1
