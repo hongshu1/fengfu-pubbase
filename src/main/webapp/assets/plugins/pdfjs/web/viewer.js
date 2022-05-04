@@ -2596,22 +2596,22 @@ let validateFileURL;
   const HOSTED_VIEWER_ORIGINS = ["null", "http://mozilla.github.io", "https://mozilla.github.io"];
 
   validateFileURL = function (file) {
-    if (file === undefined) {
+    if (file === undefined || file.length == 0) {
       return;
     }
 
     try {
       const viewerOrigin = new URL(window.location.href).origin || "null";
-
       if (HOSTED_VIEWER_ORIGINS.includes(viewerOrigin)) {
         return;
       }
-
+      if(file.indexOf("http://")==-1 && file.indexOf("https://") ==-1 && file.charAt(0)!='/'){
+        file = "/" + file;
+      }
       const {
         origin,
         protocol
       } = new URL(file, window.location.href);
-
       if (origin !== viewerOrigin && protocol !== "blob:") {
         throw new Error("file origin does not match viewer's");
       }
@@ -2759,6 +2759,9 @@ let webViewerOpenFileViaURL;
 {
   webViewerOpenFileViaURL = function (file) {
     if (file && file.lastIndexOf("file:", 0) === 0) {
+      if(file.indexOf("http://")==-1 && file.indexOf("https://") ==-1 && file.charAt(0)!='/'){
+        file = "/" + file;
+      }
       PDFViewerApplication.setTitleUsingUrl(file);
       const xhr = new XMLHttpRequest();
 
@@ -2773,6 +2776,9 @@ let webViewerOpenFileViaURL;
     }
 
     if (file) {
+      if(file.indexOf("http://")==-1 && file.indexOf("https://") ==-1 && file.charAt(0)!='/'){
+        file = "/" + file;
+      }
       PDFViewerApplication.open(file);
     }
   };
