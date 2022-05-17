@@ -29,10 +29,6 @@ import cn.jbolt.core.util.JBoltPinYinUtil;
  */
 public class UserService extends JBoltUserService {
 	@Inject
-	private LoginLogService loginLogService;
-	@Inject
-	private RemoteLoginLogService remoteLoginLogService;
-	@Inject
 	private DeptService deptService;
 	@Inject
 	private OnlineUserService onlineUserService;
