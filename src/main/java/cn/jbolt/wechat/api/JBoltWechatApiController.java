@@ -1,5 +1,6 @@
 package cn.jbolt.wechat.api;
 
+import cn.jbolt.core.api.*;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Ret;
@@ -12,11 +13,6 @@ import cn.jbolt.admin.wechat.user.WechatUserService;
 import cn.jbolt.base.JBoltWechatApi;
 import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.common.util.CACHE;
-import cn.jbolt.core.api.JBoltApiBaseController;
-import cn.jbolt.core.api.JBoltApiKit;
-import cn.jbolt.core.api.JBoltApiUserBean;
-import cn.jbolt.core.api.JBoltApplyJWT;
-import cn.jbolt.core.api.UnCheckJBoltApi;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltWechatConfigCache;
 /**
@@ -48,7 +44,6 @@ public class JBoltWechatApiController extends JBoltApiBaseController {
 	 * 授权成功回调
 	 */
 	@UnCheckJBoltApi
-	@JBoltApplyJWT
 	public void authCallback(@Para("code") String code,@Para("state") String state) {
 		if(notOk(code)) {
 			renderH5PageFail("授权回调失败，没有获取到code");
@@ -85,9 +80,18 @@ public class JBoltWechatApiController extends JBoltApiBaseController {
 			return;
 		}
 		wechatUser = ret.getAs("data");
+
 		//用户存在的话 设置到threadLocal中拦截器得 用
-		JBoltApiKit.setApplyJwtUser(JBoltApiKit.processBindUser(new JBoltApiUserBean(JBoltApiKit.getApplicationId(),wechatUser.getId(), wechatUser.getNickname()),wechatUser.getBindUser()));
+		JBoltApiUser apiUser = JBoltApiKit.processBindUser(new JBoltApiUserBean(JBoltApiKit.getApplicationId(),wechatUser.getId(), wechatUser.getNickname()),wechatUser.getBindUser());
+		//创建JWT
+		String jwt = JBoltApiJwtManger.me().createJBoltApiToken(JBoltApiKit.getApplication(), apiUser, 7200000L);
+		if(notOk(jwt)){
+			renderH5PageFail("授权回调创建用户令牌失败");
+			return;
+		}
+		//将jwt放在响应里
+		set(JBoltApiJwtManger.JBOLT_API_TOKEN_KEY,jwt);
 		render("/_view/_test/wechat/authsuccess.html");
 	}
-	
+
 }
