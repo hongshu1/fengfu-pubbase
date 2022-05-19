@@ -1,8 +1,10 @@
 package cn.jbolt.extend.cache;
 
 import cn.jbolt.common.util.CACHE;
+import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltCacheKit;
 import cn.jbolt.core.cache.JBoltCacheParaValidator;
+import cn.jbolt.core.consts.JBoltConst;
 
 /**
  * 全局CACHE操作工具类
@@ -21,7 +23,7 @@ public class CacheExtend extends JBoltCacheParaValidator {
 	 */
 	@SuppressWarnings("unused")
 	private String buildCacheKey(String pre,Object value) {
-		return CACHE.JBOLT_CACHE_DEFAULT_PREFIX+pre+value.toString();
+		return JBoltConst.JBOLT_CACHE_DEFAULT_PREFIX+pre+value.toString();
 	}
 	
 	/**
@@ -30,7 +32,7 @@ public class CacheExtend extends JBoltCacheParaValidator {
 	 * @param value
 	 */
 	public void put(String key, Object value) {
-		put(CACHE.JBOLT_CACHE_NAME, key, value);
+		put(JBoltConfig.JBOLT_CACHE_NAME, key, value);
 	}
 	/**
 	 * put
@@ -49,7 +51,7 @@ public class CacheExtend extends JBoltCacheParaValidator {
 	 * @return
 	 */
 	public <T> T get(String key) {
-		return get(CACHE.JBOLT_CACHE_NAME, key);
+		return get(JBoltConfig.JBOLT_CACHE_NAME, key);
 	}
 	/**
 	 * get
