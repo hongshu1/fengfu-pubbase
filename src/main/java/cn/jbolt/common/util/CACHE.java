@@ -1,5 +1,7 @@
 package cn.jbolt.common.util;
 
+import cn.jbolt.core.base.config.JBoltConfig;
+import cn.jbolt.core.consts.JBoltConst;
 import com.jfinal.aop.Aop;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.ehcache.IDataLoader;
@@ -35,8 +37,6 @@ import cn.jbolt.core.model.User;
  */
 public class CACHE extends JBoltCacheParaValidator {
 	public static final CACHE me = new CACHE();
-	public static final String JBOLT_CACHE_NAME = "jbolt_cache";
-	public static final String JBOLT_CACHE_DEFAULT_PREFIX = "jbc_";
 	public static final String JBOLT_WECAHT_KEYWORDS_CACHE_NAME = "jbolt_cache_wechat_keywords";
 	private DictionaryService dictionaryService = Aop.get(DictionaryService.class);
 	private DictionaryTypeService dictionaryTypeService = Aop.get(DictionaryTypeService.class);
@@ -52,7 +52,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	private QiniuBucketService qiniuBucketService = Aop.get(QiniuBucketService.class);
 
 	private String buildCacheKey(String pre, Object value) {
-		return JBOLT_CACHE_DEFAULT_PREFIX + pre + value.toString();
+		return JBoltConst.JBOLT_CACHE_DEFAULT_PREFIX + pre + value.toString();
 	}
 
 	 
@@ -66,7 +66,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	 * @param value
 	 */
 	public void put(String key, Object value) {
-		JBoltCacheKit.put(JBOLT_CACHE_NAME, key, value);
+		JBoltCacheKit.put(JBoltConfig.JBOLT_CACHE_NAME, key, value);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	 * @return
 	 */
 	public <T> T get(String key) {
-		return JBoltCacheKit.get(JBOLT_CACHE_NAME, key);
+		return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, key);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class CACHE extends JBoltCacheParaValidator {
 		if (StrKit.isBlank(appId)) {
 			return null;
 		}
-		return JBoltCacheKit.get(JBOLT_CACHE_NAME, buildCacheKey("mpaureply_defaultmsg_", appId), new IDataLoader() {
+		return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, buildCacheKey("mpaureply_defaultmsg_", appId), new IDataLoader() {
 			@Override
 			public Object load() {
 				return wechatReplyContentService.getWechcatDefaultOutMsg(appId, openId);
@@ -108,7 +108,7 @@ public class CACHE extends JBoltCacheParaValidator {
 		if (StrKit.isBlank(appId)) {
 			return null;
 		}
-		return JBoltCacheKit.get(JBOLT_CACHE_NAME, buildCacheKey("mpaureply_subscribemsg_", appId), new IDataLoader() {
+		return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, buildCacheKey("mpaureply_subscribemsg_", appId), new IDataLoader() {
 			@Override
 			public Object load() {
 				return wechatReplyContentService.getWechcatSubscribeOutMsg(appId, openId);
@@ -141,7 +141,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	 */
 	public void removeWechcatSubscribeOutMsg(String appId) {
 		if (StrKit.notBlank(appId)) {
-			JBoltCacheKit.remove(JBOLT_CACHE_NAME, buildCacheKey("mpaureply_subscribemsg_", appId));
+			JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME, buildCacheKey("mpaureply_subscribemsg_", appId));
 		}
 	}
 
@@ -152,7 +152,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	 */
 	public void removeWechcatDefaultOutMsg(String appId) {
 		if (StrKit.notBlank(appId)) {
-			JBoltCacheKit.remove(JBOLT_CACHE_NAME, buildCacheKey("mpaureply_defaultmsg_", appId));
+			JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME, buildCacheKey("mpaureply_defaultmsg_", appId));
 		}
 	}
 
@@ -169,7 +169,7 @@ public class CACHE extends JBoltCacheParaValidator {
 		if (mpId == null || StrKit.isBlank(openId)) {
 			return null;
 		}
-		return JBoltCacheKit.get(JBOLT_CACHE_NAME,
+		return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME,
 				buildCacheKey("api_wechat_user_openid_", mpId.toString() + "_" + openId), new IDataLoader() {
 					@Override
 					public Object load() {
@@ -186,7 +186,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	 */
 	public void removeApiWechatUserByMpOpenId(Long mpId, String openId) {
 		if (mpId != null && StrKit.notBlank(openId)) {
-			JBoltCacheKit.remove(JBOLT_CACHE_NAME,
+			JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME,
 					buildCacheKey("api_wechat_user_openid_", mpId.toString() + "_" + openId));
 		}
 	}
@@ -225,7 +225,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	 * @return
 	 */
 	public WechatUser getApiWechatUserByApiUserId(Long mpId, Object id) {
-		return JBoltCacheKit.get(JBOLT_CACHE_NAME, "wecaht_user_" + mpId + "_" + id, new IDataLoader() {
+		return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, "wecaht_user_" + mpId + "_" + id, new IDataLoader() {
 			@Override
 			public Object load() {
 				WechatUser wechatUser = wechatUserService.findByIdToWechatUser(mpId, id);
@@ -241,7 +241,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	 * 删除wechatUser
 	 */
 	public void removeApiWechatUser(Long mpId, Object id) {
-		JBoltCacheKit.remove(JBOLT_CACHE_NAME, "wecaht_user_" + mpId + "_" + id);
+		JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME, "wecaht_user_" + mpId + "_" + id);
 	}
 
 
@@ -354,7 +354,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	 * @return
 	 */
 	public Application getPcInnerPlatformApplication() {
-		return JBoltCacheKit.get(JBOLT_CACHE_NAME, "jbolt_pc_inner_platform_app", new IDataLoader() {
+		return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, "jbolt_pc_inner_platform_app", new IDataLoader() {
 			@Override
 			public Object load() {
 				return applicationService.checkAndInitPcInnerPlatformApplication();
@@ -366,6 +366,6 @@ public class CACHE extends JBoltCacheParaValidator {
 	 * 删除平台pc内置自身app
 	 */
 	public void removePcInnerPlatformApplication() {
-		JBoltCacheKit.remove(JBOLT_CACHE_NAME, "jbolt_pc_inner_platform_app");
+		JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME, "jbolt_pc_inner_platform_app");
 	}
 }
