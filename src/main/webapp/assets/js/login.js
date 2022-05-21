@@ -153,7 +153,7 @@ function submitForm(form){
 		if(checkForm(sf)){
 			LayerMsgBox.loading("登录中...",10000);
 			Ajax.post("admin/login",sf.serialize(),function(res){
-				LayerMsgBox.success("登录成功",1000,function(){
+				LayerMsgBox.success("登录成功",300,function(){
 					var base=$("base").attr("href");
 					if(base.charAt(base.length-1)=='/'){
 						window.location.href=base+"admin";
