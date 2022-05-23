@@ -311,6 +311,9 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 	public boolean existUnread(Object userId) {
 		if(notOk(userId)) {return false;}
 		User user = JBoltUserCache.me.get(Long.parseLong(userId.toString()));
+		if(user == null){
+			return false;
+		}
 		Sql sql = getUserUnReadNoticeSql(user,null, "id", "asc", false, false,
 				false, true, ID,"");
 		return exists(sql);
