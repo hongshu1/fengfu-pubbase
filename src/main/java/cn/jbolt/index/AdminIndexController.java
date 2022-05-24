@@ -211,11 +211,13 @@ public class AdminIndexController extends JBoltBaseController {
 		//处理onlineUser
 		Kv result=onlineUserService.processUserLogin(getCheckBoxBoolean("keepLogin"),user,log);
 		if(result!=null && !result.isEmpty()) {
+			int keepLoginSeconds = result.getInt("keepLoginSeconds");
+			String sessionId = result.getStr("sessionId");
 			//设置时长根据参数配置中的值 如果没配置或者获取配置异常 就按照默认8小时
-			setCookie(JBoltConst.JBOLT_SESSIONID_KEY,result.getStr("sessionId"),result.getInt("keepLoginSeconds"),JFinal.me().getContextPath(),true);
+			setCookie(JBoltConst.JBOLT_SESSIONID_KEY,sessionId,keepLoginSeconds,JFinal.me().getContextPath(),true);
 			//设置refreshToken jwt
-			int refreshTokenLiveSeconds = result.getInt("keepLoginSeconds") + 3600;
-			setCookie(JBoltConst.JBOLT_SESSIONID_REFRESH_TOKEN,onlineUserService.genNewSessionIdRefreshToken(user,result.getStr("sessionId"),refreshTokenLiveSeconds),refreshTokenLiveSeconds,JFinal.me().getContextPath(),true);
+			int refreshTokenLiveSeconds = keepLoginSeconds + 3600;
+			setCookie(JBoltConst.JBOLT_SESSIONID_REFRESH_TOKEN,onlineUserService.genNewSessionIdRefreshToken(user,sessionId,refreshTokenLiveSeconds),refreshTokenLiveSeconds,JFinal.me().getContextPath(),true);
 		}
 		//设置用户样式配置的cookie
 		resetUserConfigCookie(user.getId());
