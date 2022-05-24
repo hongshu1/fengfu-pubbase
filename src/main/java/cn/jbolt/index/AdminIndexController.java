@@ -209,7 +209,8 @@ public class AdminIndexController extends JBoltBaseController {
 	 */
 	private void afterLogin(User user, LoginLog log) {
 		//处理onlineUser
-		Kv result=onlineUserService.processUserLogin(getCheckBoxBoolean("keepLogin"),user,log);
+		boolean keeplogin = getCheckBoxBoolean("keepLogin");
+		Kv result=onlineUserService.processUserLogin(keeplogin,user,log);
 		if(result!=null && !result.isEmpty()) {
 			int keepLoginSeconds = result.getInt("keepLoginSeconds");
 			String sessionId = result.getStr("sessionId");
@@ -218,6 +219,8 @@ public class AdminIndexController extends JBoltBaseController {
 			//设置refreshToken jwt
 			int refreshTokenLiveSeconds = keepLoginSeconds + 3600;
 			setCookie(JBoltConst.JBOLT_SESSIONID_REFRESH_TOKEN,onlineUserService.genNewSessionIdRefreshToken(user,sessionId,refreshTokenLiveSeconds),refreshTokenLiveSeconds,JFinal.me().getContextPath(),true);
+			//设置是否keepLogin
+			setCookie(JBoltConst.JBOLT_KEEPLOGIN_KEY,keeplogin?"true":"false",refreshTokenLiveSeconds,JFinal.me().getContextPath(),true);
 		}
 		//设置用户样式配置的cookie
 		resetUserConfigCookie(user.getId());
