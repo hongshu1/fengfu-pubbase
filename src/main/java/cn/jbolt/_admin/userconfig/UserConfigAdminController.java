@@ -38,10 +38,10 @@ public class UserConfigAdminController extends JBoltBaseController {
 	 */
 	private void processUserConfigCookie(Long userId,String configKey) {
 		switch (configKey) {
-		case JBoltGlobalConfigKey.JBOLT_LOGIN_FORM_STYLE_GLASS:
-			boolean glass=JBoltUserConfigCache.me.getJBoltLoginFormStyleGlass(userId);
-			setCookie("jbolt_login_glassStyle",glass+"" ,60*60*24*7*4,JFinal.me().getContextPath());
-			break;
+//		case JBoltGlobalConfigKey.JBOLT_LOGIN_FORM_STYLE_GLASS:
+//			boolean glass=JBoltUserConfigCache.me.getJBoltLoginFormStyleGlass(userId);
+//			setCookie("jbolt_login_glassStyle",glass+"" ,60*60*24*7*4,JFinal.me().getContextPath());
+//			break;
 		case JBoltGlobalConfigKey.JBOLT_LOGIN_BGIMG_BLUR:
 			boolean blur=JBoltUserConfigCache.me.getJBoltLoginBgimgBlur(userId);
 			setCookie("jbolt_login_bgimgBlur",blur+"" ,60*60*24*7*4,JFinal.me().getContextPath());
