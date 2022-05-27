@@ -18,7 +18,7 @@
 	</head>
 	<body id="renderbox">
 	### 登录表单透明玻璃风格
-	#setLocal(glassStyle=JBoltGlobalConfigCache.getJBoltLoginFormStyleGlass())
+	### setLocal(glassStyle=JBoltGlobalConfigCache.getJBoltLoginFormStyleGlass())
 	### 登录页面背景图模糊
 	#setLocal(bgimgBlur=JBoltGlobalConfigCache.getJBoltLoginBgimgBlur())
 	#setLocal(bgtype=JBoltGlobalConfigCache.getJboltLoginBgType())
@@ -32,7 +32,7 @@
 	<div class="bodybgmask #(bgimgBlur?'blur':'')" id="bgmask" style="background-image: url('#(bgimg).jpg')"></div>
 	#end
 	<div class="d-block">
-	<div class="jbolt_loginform #(glassStyle?'jbolt_bg_glass':'')" >
+	<div class="jbolt_loginform" >
 		<div class="jbolt_title animate__animated animate__fadeInDown jb_animate__faster" style="color:#(JBoltGlobalConfigCache.getSystemNameColor('#FFFFFF'));">#(JBoltGlobalConfigCache.getSystemName("JBolt极速开发平台"))</div>
 		<div class="jbolt_formbox animate__animated animate__zoomIn jb_animate__faster">
 		<form id="loginForm" method="post" onsubmit="return submitForm(this);">
