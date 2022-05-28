@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.5.1";
+var jbolt_admin_js_version="5.5.2";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -15468,8 +15468,22 @@ function jboltPageSubmitForm(pbox,pager,form,page){
 		  }
 	  }
 	  var pageSize=pages.find("#pageSize").val();
-	  form.append('<input type="hidden" name="page" value="'+page+'"/>')
-	  form.append('<input type="hidden" name="pageSize" value="'+pageSize+'"/>')
+	  form.append('<input type="hidden" name="page" value="'+page+'"/>');
+	  form.append('<input type="hidden" name="pageSize" value="'+pageSize+'"/>');
+	  var formId = form.attr("id");
+	  if(formId){
+		var table = jboltBody.find("table[data-conditions-form='"+formId+"']");
+		if(isOk(table)){
+			var tableSort = table.data("sort");
+			if(tableSort){
+				var dsarr=tableSort.split(":");
+				var sortColumn=dsarr[0];
+				var sortType=dsarr[1];
+				form.append('<input type="hidden" name="sortColumn" value="'+sortColumn+'"/>')
+				form.append('<input type="hidden" name="sortType" value="'+sortType+'"/>')
+			}
+		}
+	  }
 //	  var action=baseUrl+"?page="+page;
 //	  form.attr("action",action);
 	  form.submit();
