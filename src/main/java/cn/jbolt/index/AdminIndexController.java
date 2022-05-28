@@ -238,8 +238,8 @@ public class AdminIndexController extends JBoltBaseController {
 	private void resetUserConfigCookie(Long userId) {
 		int seconds = 31536000;
 		//365天不失效 cookie
-		boolean glass=JBoltUserConfigCache.me.getJBoltLoginFormStyleGlass(userId);
-		setCookie("jbolt_login_glassStyle",glass+"",seconds,JFinal.me().getContextPath());
+//		boolean glass=JBoltUserConfigCache.me.getJBoltLoginFormStyleGlass(userId);
+//		setCookie("jbolt_login_glassStyle",glass+"",seconds,JFinal.me().getContextPath());
 		boolean blur=JBoltUserConfigCache.me.getJBoltLoginBgimgBlur(userId);
 		setCookie("jbolt_login_bgimgBlur",blur+"" ,seconds,JFinal.me().getContextPath());
 		boolean nest=JBoltUserConfigCache.me.getJBoltLoginNest(userId);

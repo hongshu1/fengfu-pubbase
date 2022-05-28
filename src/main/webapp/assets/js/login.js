@@ -173,15 +173,15 @@ function submitForm(form){
 	 * @returns
 	 */
 	function initLoginStyle(){
-		var glassStyle=$.cookie('jbolt_login_glassStyle');
+		//var glassStyle=$.cookie('jbolt_login_glassStyle');
 		var bgimgBlur=$.cookie('jbolt_login_bgimgBlur');
 		var needNest=$.cookie('jbolt_login_nest');
 		
-		if(glassStyle&&glassStyle=="true"){
-			$(".jbolt_loginform").addClass("jbolt_bg_glass");
-		}else{
-			$(".jbolt_loginform").removeClass("jbolt_bg_glass");
-		}
+		// if(glassStyle&&glassStyle=="true"){
+		// 	$(".jbolt_loginform").addClass("jbolt_bg_glass");
+		// }else{
+		// 	$(".jbolt_loginform").removeClass("jbolt_bg_glass");
+		// }
 		if(bgimgBlur&&bgimgBlur=="true"){
 			$(".bodybgmask").addClass("blur");
 		}else{
