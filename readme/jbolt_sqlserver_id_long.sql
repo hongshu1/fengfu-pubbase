@@ -1019,7 +1019,7 @@ GO
 CREATE TABLE [dbo].[jb_permission] (
   [id] bigint  NOT NULL,
   [title] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NOT NULL,
-  [pid] bigint  NULL,
+  [pid] bigint DEFAULT 0 NOT NULL,
   [url] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [icons] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
   [sort_rank] int  NOT NULL,
