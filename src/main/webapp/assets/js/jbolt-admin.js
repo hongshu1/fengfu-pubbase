@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.5.2";
+var jbolt_admin_js_version="5.5.3";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -12003,7 +12003,7 @@ function trChangeToUp(currentTr,prevTr,jboltTable){
 					tplTr=showArr[i];
 					tplTr.removeClass("sortActive");
 				}
-			},1000)
+			},300)
 		}
 		
 		
@@ -12014,15 +12014,33 @@ function trChangeToUp(currentTr,prevTr,jboltTable){
 			currentTr.addClass("sortActive");
 			setTimeout(function(){
 				currentTr.removeClass("sortActive");
-			},1000);
+			},300);
 		} 
 	}
-	
-	if(jboltTable&&jboltTable.fixedColumnTables){
-		jboltTable.me.processColumnFixed(jboltTable);
-		setTimeout(function(){
-			jboltTable.fixedColumnTables.find("tbody>tr.sortActive").removeClass("sortActive");
-		},1000);
+	if(jboltTable){
+		if(jboltTable.fixedColumnTables){
+			jboltTable.me.processColumnFixed(jboltTable);
+			setTimeout(function(){
+				jboltTable.fixedColumnTables.find("tbody>tr.sortActive").removeClass("sortActive");
+				var sortSuccessHandler = jboltTable.data("sort-success-handler");
+				if(sortSuccessHandler){
+					var exeSortHandler=eval(sortSuccessHandler);
+					if(exeSortHandler && typeof(exeSortHandler)=="function"){
+						exeSortHandler(jboltTable);
+					}
+				}
+			},300);
+		}else{
+			var sortSuccessHandler = jboltTable.data("sort-success-handler");
+			if(sortSuccessHandler){
+				setTimeout(function(){
+					var exeSortHandler=eval(sortSuccessHandler);
+					if(exeSortHandler && typeof(exeSortHandler)=="function"){
+						exeSortHandler(jboltTable);
+					}
+				},300);
+			}
+		}
 	}
 }
 
