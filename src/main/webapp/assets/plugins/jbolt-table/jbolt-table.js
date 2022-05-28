@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.6.4";
+var jbolt_table_js_version="2.6.5";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -3415,17 +3415,35 @@ function jboltTablePageToFirst(ele){
 		}
 	}
 }
+
 /**
- * 刷新table 到最后一页
+ * 刷新table 到指定页
  * @param ele
+ * @param pageNumber
  * @returns
  */
-function jboltTablePageToLast(ele){
+function jboltTablePageTo(ele,pageNumber){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
-			jboltTable.me.jboltTablePageToLast(jboltTable);
+			jboltTable.me.jboltTablePageTo(jboltTable,pageNumber);
+		}
+	}
+}
+
+/**
+ * table 到最后一页
+ * @param ele
+ * @param backFirstPage
+ * @returns
+ */
+function jboltTablePageToLast(ele,backFirstPage){
+	var table=getJBoltTable(ele);
+	if(isOk(table)){
+		var jboltTable=table.jboltTable("inst");
+		if(jboltTable){
+			jboltTable.me.jboltTablePageToLast(jboltTable,backFirstPage);
 		}
 	}
 }
@@ -9950,11 +9968,39 @@ function getScrollBarHeight(ele){
 				}
 			}
 		},
+		//跳转到指定页
+		jboltTablePageTo:function(table,pageNumber){
+			if(!pageNumber){pageNumber = 1;}
+			if(!table){
+				var jboltTable=this.jboltTable("inst");
+				if(jboltTable.isAjax){
+					jboltTable.scrollToTop=true;
+					jboltTable.resetCellWidthAfterAjax=false;
+					jboltTable.me.readByPage(jboltTable,pageNumber);
+				}else{
+					jboltTable.me.tableSubmitForm(jboltTable,pageNumber);
+				}
+			}else{
+				if(table.isAjax){
+					table.scrollToTop=true;
+					table.resetCellWidthAfterAjax=false;
+					this.readByPage(table,pageNumber);
+				}else{
+					this.tableSubmitForm(table,pageNumber);
+				}
+			}
+		},
 		//跳转到最后页
-		jboltTablePageToLast:function(table){
+		jboltTablePageToLast:function(table,backFirstPage){
 			if(!table){
 				var jboltTable=this.jboltTable("inst");
 				var totalPage=jboltTable.data("totalpage");
+				var pagenumber=jboltTable.data("pagenumber");
+				//如果已经是最后一页 判断是否跳转第一页
+				if(backFirstPage&&totalPage&&pagenumber&&(totalPage==pagenumber)){
+					jboltTable.me.jboltTablePageToFirst(jboltTable);
+					return;
+				}
 				if(!totalPage){totalPage=1;}
 				jboltTable.data("tolastpage",true);
 				if(jboltTable.isAjax){
@@ -9966,6 +10012,12 @@ function getScrollBarHeight(ele){
 				}
 			}else{
 				var totalPage=table.data("totalpage");
+				var pagenumber=table.data("pagenumber");
+				//如果已经是最后一页 判断是否跳转第一页
+				if(backFirstPage&&totalPage&&pagenumber&&(totalPage==pagenumber)){
+					this.jboltTablePageToFirst(table);
+					return;
+				}
 				if(!totalPage){totalPage=1;}
 				table.data("tolastpage",true);
 				if(table.isAjax){
