@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.6.5";
+var jbolt_table_js_version="2.6.6";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6447,8 +6447,7 @@ function getScrollBarHeight(ele){
 			var tableFastMode = table.data("fast-mode")||false;
 			if(tableFastMode){
 				setTimeout(function(){
-					//设置其他table绑定tableId
-					that.processOtherTableBindTableId(table);
+
 					//处理单元格宽度
 					//that.processCellWidthAfterAjax(table);
 
@@ -6468,6 +6467,8 @@ function getScrollBarHeight(ele){
 
 						//处理fixed的滚动位置
 						that.reScrollFixedColumnBox(table);
+						//设置其他table绑定tableId
+						that.processOtherTableBindTableId(table);
 						setTimeout(function(){
 							//处理ajax每次读取加载完事件
 							that.processAjaxSuccessCallback(table);
@@ -6480,8 +6481,7 @@ function getScrollBarHeight(ele){
 
 				},100);
 			}else{
-					//设置其他table绑定tableId
-					that.processOtherTableBindTableId(table);
+
 					//处理单元格宽度
 					that.processCellWidthAfterAjax(table);
 
@@ -6500,6 +6500,8 @@ function getScrollBarHeight(ele){
 
 					//处理fixed的滚动位置
 					that.reScrollFixedColumnBox(table);
+					//设置其他table绑定tableId
+					that.processOtherTableBindTableId(table);
 					//处理ajax每次读取加载完事件
 					that.processAjaxSuccessCallback(table);
 					if(callback){
