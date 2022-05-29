@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.6.6";
+var jbolt_table_js_version="2.6.7";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -3433,17 +3433,48 @@ function jboltTablePageTo(ele,pageNumber){
 }
 
 /**
- * table 到最后一页
+ * 表格 跳转到下一页
  * @param ele
- * @param backFirstPage
+ * @param toFirstPageIfLast 最后一页时 是否下一页自动跳转到首页
  * @returns
  */
-function jboltTablePageToLast(ele,backFirstPage){
+function jboltTablePageToNext(ele,toFirstPageIfLast){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
-			jboltTable.me.jboltTablePageToLast(jboltTable,backFirstPage);
+			jboltTable.me.jboltTablePageToNext(jboltTable,toFirstPageIfLast);
+		}
+	}
+}
+
+/**
+ * 表格 跳转到上一页
+ * @param ele
+ * @param toLastPageIfFirst 如果已经到第一页 是否循环跳转到尾页
+ * @returns
+ */
+function jboltTablePageToPrev(ele,toLastPageIfFirst){
+	var table=getJBoltTable(ele);
+	if(isOk(table)){
+		var jboltTable=table.jboltTable("inst");
+		if(jboltTable){
+			jboltTable.me.jboltTablePageToPrev(jboltTable,toLastPageIfFirst);
+		}
+	}
+}
+
+/**
+ * table 到最后一页
+ * @param ele
+ * @returns
+ */
+function jboltTablePageToLast(ele){
+	var table=getJBoltTable(ele);
+	if(isOk(table)){
+		var jboltTable=table.jboltTable("inst");
+		if(jboltTable){
+			jboltTable.me.jboltTablePageToLast(jboltTable);
 		}
 	}
 }
@@ -9835,7 +9866,7 @@ function getScrollBarHeight(ele){
 					}
 				}else{
 					table.table_box.find("table").data("width", "auto").attr("data-width", "auto");
-					
+
 				}
 				//设置宽高数据
 				this.processTableWidthAndHeight(table);
@@ -9992,17 +10023,91 @@ function getScrollBarHeight(ele){
 				}
 			}
 		},
+		//跳转到下一页
+		jboltTablePageToNext:function(table,toFirstPageIfLast){
+			if(!table){
+				var jboltTable=this.jboltTable("inst");
+				var totalpage = jboltTable.data("totalpage")||1;
+				var pageNumber = jboltTable.data("pagenumber")||1;
+				if(!toFirstPageIfLast && pageNumber>=totalpage){
+					LayerMsgBox.alert("当前已经是最后一页",2);
+					return;
+				}
+				if(toFirstPageIfLast && pageNumber>=totalpage){
+					pageNumber = 1;
+				}
+
+				if(jboltTable.isAjax){
+					jboltTable.scrollToTop=true;
+					jboltTable.resetCellWidthAfterAjax=false;
+					jboltTable.me.readByPage(jboltTable,pageNumber);
+				}else{
+					jboltTable.me.tableSubmitForm(jboltTable,pageNumber);
+				}
+			}else{
+				var totalpage = table.data("totalpage")||1;
+				var pageNumber = table.data("pagenumber")||1;
+				if(!toFirstPageIfLast && pageNumber>=totalpage){
+					LayerMsgBox.alert("当前已经是最后一页",2);
+					return;
+				}
+				if(toFirstPageIfLast && pageNumber>=totalpage){
+					pageNumber = 1;
+				}
+				if(table.isAjax){
+					table.scrollToTop=true;
+					table.resetCellWidthAfterAjax=false;
+					this.readByPage(table,pageNumber);
+				}else{
+					this.tableSubmitForm(table,pageNumber);
+				}
+			}
+		},
+		//跳转到上一页
+		jboltTablePageToPrev:function(table,toLastPageIfFirst){
+			if(!table){
+				var jboltTable=this.jboltTable("inst");
+				var totalpage = jboltTable.data("totalpage")||1;
+				var pageNumber = jboltTable.data("pagenumber")||1;
+				if(!toLastPageIfFirst && pageNumber==1){
+					LayerMsgBox.alert("当前已经是第一页",2);
+					return;
+				}
+				if(toLastPageIfFirst && pageNumber==1&&totalpage>1){
+					pageNumber = totalpage;
+				}
+				if(jboltTable.isAjax){
+					jboltTable.scrollToTop=true;
+					jboltTable.resetCellWidthAfterAjax=false;
+					jboltTable.me.readByPage(jboltTable,pageNumber);
+				}else{
+					jboltTable.me.tableSubmitForm(jboltTable,pageNumber);
+				}
+			}else{
+				var totalpage = table.data("totalpage")||1;
+				var pageNumber = table.data("pagenumber")||1;
+				if(!toLastPageIfFirst && pageNumber==1){
+					LayerMsgBox.alert("当前已经是第一页",2);
+					return;
+				}
+				if(toLastPageIfFirst && pageNumber==1&&totalpage>1){
+					pageNumber = totalpage;
+				}
+				if(table.isAjax){
+					table.scrollToTop=true;
+					table.resetCellWidthAfterAjax=false;
+					this.readByPage(table,pageNumber);
+				}else{
+					this.tableSubmitForm(table,pageNumber);
+				}
+			}
+		},
 		//跳转到最后页
-		jboltTablePageToLast:function(table,backFirstPage){
+		jboltTablePageToLast:function(table){
 			if(!table){
 				var jboltTable=this.jboltTable("inst");
 				var totalPage=jboltTable.data("totalpage");
-				var pagenumber=jboltTable.data("pagenumber");
-				//如果已经是最后一页 判断是否跳转第一页
-				if(backFirstPage&&totalPage&&pagenumber&&(totalPage==pagenumber)){
-					jboltTable.me.jboltTablePageToFirst(jboltTable);
-					return;
-				}
+
 				if(!totalPage){totalPage=1;}
 				jboltTable.data("tolastpage",true);
 				if(jboltTable.isAjax){
@@ -10014,12 +10119,7 @@ function getScrollBarHeight(ele){
 				}
 			}else{
 				var totalPage=table.data("totalpage");
-				var pagenumber=table.data("pagenumber");
-				//如果已经是最后一页 判断是否跳转第一页
-				if(backFirstPage&&totalPage&&pagenumber&&(totalPage==pagenumber)){
-					this.jboltTablePageToFirst(table);
-					return;
-				}
+
 				if(!totalPage){totalPage=1;}
 				table.data("tolastpage",true);
 				if(table.isAjax){
