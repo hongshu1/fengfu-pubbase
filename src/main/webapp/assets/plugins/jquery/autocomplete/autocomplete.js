@@ -1,7 +1,7 @@
-/*********jbolt_autocomplete_js_version="1.2.6"*************/
+/*********jbolt_autocomplete_js_version="1.2.7"*************/
 /**
  * JBolt 内置 Autocomplete组件
- * 基于jQuery Autocomplete plugin 1.2.6
+ * 基于jQuery Autocomplete plugin
  * @param $
  * @returns
  */
@@ -626,9 +626,16 @@
 						data[i].value, term);
 				if (formatted === false)
 					continue;
-				var li = $("<li/>").html(options.highlight(formatted, term))
-						.addClass(i % 2 == 0 ? "ac_even" : "ac_odd").appendTo(
-								list)[0];
+				var li = $("<li/>");
+				var spans = $(formatted);
+				spans.each(function(i,span){
+					if($.trim(span.innerText)){
+						span.innerHTML = options.highlight(span.innerHTML, term);
+					}
+				});
+				li.html(spans)
+					.addClass(i % 2 == 0 ? "ac_even" : "ac_odd").appendTo(
+					list)[0];
 				$.data(li, "ac_data", data[i])
 			}
 			listItems = list.find("li");
