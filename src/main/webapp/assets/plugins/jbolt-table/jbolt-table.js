@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.6.9";
+var jbolt_table_js_version="2.7.0";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -7156,7 +7156,7 @@ function getScrollBarHeight(ele){
 //				keys=Object.keys(formulaValueMap);
 //				console.log(farr)
 			var tempEle,tempEleValue,haserror=false,tempKeyPre,switchBtn,switchBtnValue,checkbox,checkboxValue;
-			if(farr.length>2){
+			if(farr.length>1){
 				farr.sort(function(x,y){
 					if(x&&y){
 						return y.length - x.length;
