@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.6.7";
+var jbolt_table_js_version="2.6.8";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -7156,6 +7156,14 @@ function getScrollBarHeight(ele){
 //				keys=Object.keys(formulaValueMap);
 //				console.log(farr)
 			var tempEle,tempEleValue,haserror=false,tempKeyPre,switchBtn,switchBtnValue,checkbox,checkboxValue;
+			if(farr.length>2){
+				farr.sort(function(x,y){
+					if(x&&y){
+						return y.length - x.length;
+					}
+					return 0;
+				});
+			}
 			for(var i in farr){
 				tempKey=farr[i];
 				if(tempKey){
