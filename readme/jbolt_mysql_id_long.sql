@@ -178,7 +178,7 @@ DROP TABLE IF EXISTS `jb_permission`;
 CREATE TABLE `jb_permission`  (
   `id` bigint(20) NOT NULL COMMENT '主键ID',
   `title` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `pid` bigint(20) NULL DEFAULT 0,
+  `pid` bigint(20) NULL DEFAULT 0 NOT NULL,
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '地址',
   `icons` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图标',
   `sort_rank` int(11) NULL DEFAULT NULL COMMENT '排序',

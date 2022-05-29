@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.5.1";
+var jbolt_admin_js_version="5.5.3";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -12003,7 +12003,7 @@ function trChangeToUp(currentTr,prevTr,jboltTable){
 					tplTr=showArr[i];
 					tplTr.removeClass("sortActive");
 				}
-			},1000)
+			},300)
 		}
 		
 		
@@ -12014,15 +12014,33 @@ function trChangeToUp(currentTr,prevTr,jboltTable){
 			currentTr.addClass("sortActive");
 			setTimeout(function(){
 				currentTr.removeClass("sortActive");
-			},1000);
+			},300);
 		} 
 	}
-	
-	if(jboltTable&&jboltTable.fixedColumnTables){
-		jboltTable.me.processColumnFixed(jboltTable);
-		setTimeout(function(){
-			jboltTable.fixedColumnTables.find("tbody>tr.sortActive").removeClass("sortActive");
-		},1000);
+	if(jboltTable){
+		if(jboltTable.fixedColumnTables){
+			jboltTable.me.processColumnFixed(jboltTable);
+			setTimeout(function(){
+				jboltTable.fixedColumnTables.find("tbody>tr.sortActive").removeClass("sortActive");
+				var sortSuccessHandler = jboltTable.data("sort-success-handler");
+				if(sortSuccessHandler){
+					var exeSortHandler=eval(sortSuccessHandler);
+					if(exeSortHandler && typeof(exeSortHandler)=="function"){
+						exeSortHandler(jboltTable);
+					}
+				}
+			},300);
+		}else{
+			var sortSuccessHandler = jboltTable.data("sort-success-handler");
+			if(sortSuccessHandler){
+				setTimeout(function(){
+					var exeSortHandler=eval(sortSuccessHandler);
+					if(exeSortHandler && typeof(exeSortHandler)=="function"){
+						exeSortHandler(jboltTable);
+					}
+				},300);
+			}
+		}
 	}
 }
 
@@ -15468,8 +15486,22 @@ function jboltPageSubmitForm(pbox,pager,form,page){
 		  }
 	  }
 	  var pageSize=pages.find("#pageSize").val();
-	  form.append('<input type="hidden" name="page" value="'+page+'"/>')
-	  form.append('<input type="hidden" name="pageSize" value="'+pageSize+'"/>')
+	  form.append('<input type="hidden" name="page" value="'+page+'"/>');
+	  form.append('<input type="hidden" name="pageSize" value="'+pageSize+'"/>');
+	  var formId = form.attr("id");
+	  if(formId){
+		var table = jboltBody.find("table[data-conditions-form='"+formId+"']");
+		if(isOk(table)){
+			var tableSort = table.data("sort");
+			if(tableSort){
+				var dsarr=tableSort.split(":");
+				var sortColumn=dsarr[0];
+				var sortType=dsarr[1];
+				form.append('<input type="hidden" name="sortColumn" value="'+sortColumn+'"/>')
+				form.append('<input type="hidden" name="sortType" value="'+sortType+'"/>')
+			}
+		}
+	  }
 //	  var action=baseUrl+"?page="+page;
 //	  form.attr("action",action);
 	  form.submit();

@@ -204,28 +204,16 @@ textarea.form-control1 {
 .jbolt_loginform {
 	position: absolute;
 	top: 50%;
-	left: 50%;
-	margin-left: -330px;
-	width: 640px;
+	left: 0;
+	right:0;
+	width: 100%;
 	margin-top: -180px;
 	z-index:999;
+	padding-left:20px;
+	padding-right:20px;
 }
 
-@media screen and (max-width: 768px) and (min-width:480px) {
-    .jbolt_loginform {
-      margin-left: -230px;
-	  width: 460px;
-    }
-}
-@media screen and (max-width: 480px) {
-    .jbolt_loginform {
-      margin-left: -180px;
-	  width: 360px;
-    }
-      .jbolt_title{
-		font-size: 34px!important;
-    }
-}
+
 
 .jbolt_title {
 	display:block;
@@ -239,16 +227,41 @@ textarea.form-control1 {
 	margin-top: -60px;
 }
 
+.jbolt_loginform.style3 .jbolt_title{
+	margin-top: 0px;
+	color: #333333!important;
+	font-size: 40px!important;
+	margin-bottom: 30px!important;
+}
+
 .jbolt_formbox {
 	display: block;
-	box-shadow: 0px 10px 15px 0px rgba(0,0,0,0.2);
+	box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.12);
 	background: #FFF;
-    border-radius: 20px;
+    border-radius: 15px;
 	padding:50px;
 	margin: 50px auto 0px auto;
+	width:640px;
 }
- 
+.jbolt_loginform.style3 .jbolt_formbox{
+	padding: 30px 50px 50px 50px!important;
+	margin: 0 auto 0 auto!important;
+}
 
+
+@media screen and (max-width: 768px) and (min-width:480px) {
+	.jbolt_formbox {
+		width:400px!important;
+	}
+}
+@media screen and (max-width: 480px) {
+	.jbolt_title{
+		font-size: 34px!important;
+	}
+	.jbolt_formbox {
+		width:95%!important;;
+	}
+}
 .jbolt_bg_glass .jbolt_formbox{
 	background: rgba(0,0,0,0.4);
     border-radius: 20px 20px 40px 40px;

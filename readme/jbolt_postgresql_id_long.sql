@@ -339,7 +339,7 @@ DROP TABLE IF EXISTS "public"."jb_permission";
 CREATE TABLE "public"."jb_permission" (
   "id" int8 NOT NULL,
   "title" varchar(40) COLLATE "pg_catalog"."default" NOT NULL,
-  "pid" int8,
+  "pid" int8 DEFAULT 0 NOT NULL,
   "url" varchar(255) COLLATE "pg_catalog"."default",
   "icons" varchar(40) COLLATE "pg_catalog"."default",
   "sort_rank" int4,
