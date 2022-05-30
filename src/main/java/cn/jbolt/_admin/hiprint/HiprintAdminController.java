@@ -1,5 +1,6 @@
 package cn.jbolt._admin.hiprint;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.ActionKey;
@@ -60,6 +61,7 @@ public class HiprintAdminController extends JBoltBaseController {
 	/**
 	 * 模板获取
 	 */
+	@UnCheck
 	@ActionKey("tpl/content")
 	public void tplContent() {
 		HiprintTpl tpl = tplService.getCacheByKey(get("sn"));
