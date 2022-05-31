@@ -39,7 +39,7 @@
 <!-- JBoltTable的数据模板定义-->
 <textarea class="jb_tpl_box" id="#(modelNameL)Rowtpl_#[[#(pageId)]]#">
 {@each datas as data,index}
-<tr data-id="${data.#(mainLogicBean.primaryKeyAttr?? 'id')}">
+<tr data-id="${data.#(mainLogicBean.primaryKeyAttr?? 'id')}" #if(mainLogicBean.isMasterSlave)onclick="masterTableTrTriggerShowSlave(this,'${data.id}')"#end>
 <td>${pageNumber,pageSize,index | rownum}</td>
 #for(th:ths)
 #if(th.type=="Boolean")
