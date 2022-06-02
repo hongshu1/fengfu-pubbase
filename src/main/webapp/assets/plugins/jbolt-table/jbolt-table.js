@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.1";
+var jbolt_table_js_version="2.7.2";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -8174,6 +8174,7 @@ function getScrollBarHeight(ele){
 									handler:arrayItem.handler,
 									syncval:arrayItem.syncval
 								};
+
 								if(table.columnIndexMap){
 									colIndex=table.columnIndexMap[key];
 									if(colIndex!=undefined&&colIndex>=0){
@@ -8292,12 +8293,15 @@ function getScrollBarHeight(ele){
 						th.attr("data-removeendzero",v.removeendzero).data("removeendzero",v.removeendzero);
 						th.attr("data-roundtag",v.roundtag).data("roundtag",v.roundtag);
 						if(v.handler){
-							th.attr("data-handler",true).data("handler",true);
+							th.attr("data-handler",v.handler).data("handler",v.handler);
 							th.off("exeSummaryHandler").on("exeSummaryHandler",function(){
 								var edTh = $(this);
 								var edtr = edTh.closest("tr");
 								var thValue = edTh.data("value");
-								v.handler(table,edtr,edTh,thValue);
+								var handler=edTh.data("handler");
+								if(handler && typeof(handler)=="function"){
+									handler(table,edtr,edTh,thValue);
+								}
 							});
 						}
 						if(v.syncval){
@@ -8346,7 +8350,7 @@ function getScrollBarHeight(ele){
 							});
 						}
 						if(h.syncval){
-							td.attr("data-syncval",h.syncval).data("handler",h.syncval);
+							td.attr("data-syncval",h.syncval).data("syncval",h.syncval);
 						}
 					}
 				}
