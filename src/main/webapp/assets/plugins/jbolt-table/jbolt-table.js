@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.0";
+var jbolt_table_js_version="2.7.1";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -5238,7 +5238,6 @@ function getScrollBarHeight(ele){
 				var rightFixedCols = rightFixedColArr.join(",");
 				table.data("fixed-columns-right",rightFixedCols).attr("data-fixed-columns-right",rightFixedCols);
 			}
-
 		},
 		//初始化表格的rowTplContent
 		initRowTplContent:function(table,tableOptions){
@@ -6128,7 +6127,6 @@ function getScrollBarHeight(ele){
 						table.columnIndexMap=columnMap["columnToIndex"];
 						table.indexColumnMap=columnMap["indexToColumn"];
 						table.indexColumnTextMap=columnMap["indexToColumnText"];
-
 					}
 
 
@@ -6143,6 +6141,7 @@ function getScrollBarHeight(ele){
 				var thIndex=0;//当前th的index
 				var endIndex=0;
 				var fixedIndex=1;//处理fixed
+
 				for(var i=0;i<thLen;i++){
 					currentTh = newThs.eq(i);
 					if(processHead){
@@ -6151,18 +6150,9 @@ function getScrollBarHeight(ele){
 					if(currentTh[0].hasAttribute("colspan")){
 						var colspan=parseInt(currentTh.attr("colspan"));
 						endIndex=thIndex+colspan-1;
-						var thObj={
-							trIndex:(currentTr.index()+1),
-							startColIndex:thIndex,
-							endColIndex:endIndex,
-							processBody:processBody,
-							processHead:processHead,
-							fixedIndex:fixedIndex,
-							columnMap:columnMap
-						}
-						that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,thObj);
-						if(thObj.processBody){
-							for(var j=thObj.startColIndex;j<=thObj.endColIndex;j++){
+						that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,currentTr.index()+1,thIndex,endIndex,fixedIndex,columnMap,processHead);
+						if(processBody){
+							for(var j=thIndex;j<=endIndex;j++){
 								tbody.find("tr>td:nth-child("+(j+1)+")").data("col-index",j).attr("data-col-index",j);
 								tbody.find("tr>td:nth-child("+(j+1)+")").data("fixed-col-index",fixedIndex).attr("data-fixed-col-index",fixedIndex);
 							}
@@ -6204,43 +6194,63 @@ function getScrollBarHeight(ele){
 
 
 		},
+		getTrOkThs:function(tr,start,end){
+			var count = end-start+1;
+			var thsArray = [];
+			var hasCount=0;
+			var first=tr.find("th:not(.processed):first");
+			var ths;
+			if(first.index()==0){
+				ths=tr.find("th:lt("+count+"):not(.processed)");
+			}else{
+				ths=tr.find("th:gt("+(first.index()-1)+"):lt("+count+"):not(.processed)");
+			}
+			ths.each(function(i,th){
+				if(th.hasAttribute("colspan")){
+					hasCount = hasCount +parseInt(th.getAttribute("colspan"));
+				}else{
+					hasCount = hasCount +1;
+				}
+				if(hasCount<=count){
+					thsArray.push($(th));
+				}
+			});
+			return thsArray;
+		},
 		/**
 		 * 处理下级tr里的th
 		 */
-		processColSpanNextTrThColIndex:function(table,thead,tbody,tfoot,thObj){
-			var that=this,tr=thead.find("tr:eq("+thObj.trIndex+")");
+		processColSpanNextTrThColIndex:function(table,thead,tbody,tfoot,trIndex,startColIndex,endColIndex,fixedIndex,columnMap,processHead){
+			var that=this,tr=thead.find("tr:eq("+trIndex+")");
 			if(!isOk(tr)){return false;}
-			var ths=tr.find("th:not(.processed)");
+			var ths=this.getTrOkThs(tr,startColIndex,endColIndex);
 			if(!isOk(ths)){return false;}
-			var thIndex=0,tempTh,tempColumnTh_column;
-			for(var i=thObj.startColIndex;i<=thObj.endColIndex;i++){
-				tempTh=ths.eq(thIndex);
-				if(tempTh&&tempTh.length==1){
-					if(thObj.processHead){
-						tempTh.data("fixed-col-index",thObj.fixedIndex).attr("data-fixed-col-index",thObj.fixedIndex);
-						tempTh.addClass("processed");
+			var thIndex=0,tempTh,tempColumnTh_column,size=ths.length,i=startColIndex;
+			for(var thIndex=0;thIndex<size;thIndex++){
+				tempTh=ths[thIndex];
+				if(processHead) {
+					tempTh.data("fixed-col-index", fixedIndex).attr("data-fixed-col-index", fixedIndex);
+					tempTh.addClass("processed");
+				}
+				if(tempTh[0].hasAttribute("colspan")){
+					that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,trIndex+1,i,i+parseInt(tempTh.attr("colspan"))-1,fixedIndex,columnMap,processHead);
+					i=i+parseInt(tempTh.attr("colspan"));
+					continue;
+				}
+				if(processHead){
+					tempTh.data("col-index",i).attr("data-col-index",i);
+					tempColumnTh_column=tempTh.data("column");
+					if(tempColumnTh_column&&tempColumnTh_column!='index'&&tempColumnTh_column!='checkbox'&&tempColumnTh_column!='radio'){
+						columnMap["columnToIndex"][tempColumnTh_column]=i;
+						columnMap["indexToColumn"]["col_"+i]=tempColumnTh_column;
 					}
-					if(tempTh[0].hasAttribute("colspan")){
-						thObj.trIndex=thObj.trIndex+1;
-						thObj.startColIndex=i;
-						that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,thObj);
-						return false;
-					}else{
-						if(thObj.processHead){
-							tempTh.data("col-index",i).attr("data-col-index",i);
-							tempColumnTh_column=tempTh.data("column");
-							if(tempColumnTh_column&&tempColumnTh_column!='index'&&tempColumnTh_column!='checkbox'&&tempColumnTh_column!='radio'){
-								thObj.columnMap["columnToIndex"][tempColumnTh_column]=i;
-								thObj.columnMap["indexToColumn"]["col_"+i]=tempColumnTh_column;
-							}
-							thObj.columnMap["indexToColumnText"]["col_"+i]=$.trim(tempTh[0].innerText||("col_"+(i+1)));
-							if(isOk(tfoot)){
-								tfoot.find("tr>th:nth-child("+(i+1)+")").data("col-index",i).attr("data-col-index",i);
-							}
-						}
-						thIndex++;
+					columnMap["indexToColumnText"]["col_"+i]=$.trim(tempTh[0].innerText||("col_"+(i+1)));
+					if(isOk(tfoot)){
+						tfoot.find("tr>th:nth-child("+(i+1)+")").data("col-index",i).attr("data-col-index",i);
 					}
 				}
+				i++;
+
 			}
 		},
 		processTbodyColIndex:function(table){
