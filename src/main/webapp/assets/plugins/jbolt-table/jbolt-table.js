@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.2";
+var jbolt_table_js_version="2.7.3";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -10391,6 +10391,23 @@ function getScrollBarHeight(ele){
 			}
 		},
 		/**
+		 * 渲染之前处理数据
+		 * @param table
+		 */
+		processTableListBeforeRender:function(table){
+			if(notOk(table.tableListDatas)){
+				return;
+			}
+			var ajaxDataHandler=table.data("ajax-success-data-handler");
+			if(!ajaxDataHandler){
+				return;
+			}
+			var exeHandler = eval(ajaxDataHandler);
+			if(exeHandler&&typeof(exeHandler)=="function"){
+				exeHandler(table,table.tableListDatas);
+			}
+		},
+		/**
 		 * 添加多条数据
 		 */
 		addRowDatas:function(table,data,formData){
@@ -10411,10 +10428,12 @@ function getScrollBarHeight(ele){
 					//如果直接传数据数据 就直接渲染
 					if(isArray(datas)){
 						table.tableListDatas=this.processInsertDefaultColumnValues(table,datas);
+						this.processTableListBeforeRender(table);
 						appendHtml = juicer(tplContent,{datas:table.tableListDatas,formData:formData,extraData:extraData})
 						//appendEle.append();
 					}else if(datas.pageSize&&datas.totalRow){
 						table.tableListDatas=this.processInsertDefaultColumnValues(table,datas.list);
+						this.processTableListBeforeRender(table);
 						//说明是分页数据
 						appendHtml = juicer(tplContent,{datas:table.tableListDatas,pageNumber:datas.pageNumber,pageSize:datas.pageSize,formData:formData,extraData:extraData});
 						//appendEle.append();
@@ -10423,10 +10442,12 @@ function getScrollBarHeight(ele){
 					//如果直接传数据数据 就直接渲染
 					if(isArray(data)){
 						table.tableListDatas=this.processInsertDefaultColumnValues(table,data);
+						this.processTableListBeforeRender(table);
 						appendHtml = juicer(tplContent,{datas:table.tableListDatas,formData:formData});
 						//appendEle.append();
 					}else if(data.pageSize&&data.totalRow){
 						table.tableListDatas=this.processInsertDefaultColumnValues(table,data.list);
+						this.processTableListBeforeRender(table);
 						//说明是分页数据
 						appendHtml = juicer(tplContent,{datas:table.tableListDatas,pageNumber:data.pageNumber,pageSize:data.pageSize,formData:formData});
 						//appendEle.append();
