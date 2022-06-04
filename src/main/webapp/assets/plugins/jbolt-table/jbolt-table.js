@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.3";
+var jbolt_table_js_version="2.7.4";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6141,6 +6141,7 @@ function getScrollBarHeight(ele){
 				var thIndex=0;//当前th的index
 				var endIndex=0;
 				var fixedIndex=1;//处理fixed
+				var nextTrIndex=0,ncolspan,nrowspan=1;
 
 				for(var i=0;i<thLen;i++){
 					currentTh = newThs.eq(i);
@@ -6148,9 +6149,14 @@ function getScrollBarHeight(ele){
 						currentTh.data("fixed-col-index",fixedIndex).attr("data-fixed-col-index",fixedIndex);
 					}
 					if(currentTh[0].hasAttribute("colspan")){
-						var colspan=parseInt(currentTh.attr("colspan"));
-						endIndex=thIndex+colspan-1;
-						that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,currentTr.index()+1,thIndex,endIndex,fixedIndex,columnMap,processHead);
+						ncolspan=parseInt(currentTh.attr("colspan"));
+						if(currentTh[0].hasAttribute("rowspan")){
+							nrowspan = parseInt(currentTh.attr("rowspan"));
+						}
+						endIndex=thIndex+ncolspan-1;
+
+						nextTrIndex = currentTr.index()+nrowspan;
+						that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,nextTrIndex,thIndex,endIndex,fixedIndex,columnMap,processHead);
 						if(processBody){
 							for(var j=thIndex;j<=endIndex;j++){
 								tbody.find("tr>td:nth-child("+(j+1)+")").data("col-index",j).attr("data-col-index",j);
