@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.5.3";
+var jbolt_admin_js_version="5.5.4";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -13341,6 +13341,7 @@ Date.prototype.Format = function (fmt) {
   	}
 
   function showFormEleErrorStyle(ele,msg,noshakeAndFocus){
+	  LayerMsgBox.closeLoadingNow();
 	  if(msg&&(ele.is(":hidden")||(ele.is("input")&&ele.attr("type")=="hidden"))){
 		  LayerMsgBox.error("<span class='j_text_danger'>"+msg+"</span>",1000);
 		  return false;

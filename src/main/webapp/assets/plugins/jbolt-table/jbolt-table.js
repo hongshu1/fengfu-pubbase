@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.0";
+var jbolt_table_js_version="2.7.4";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -5238,7 +5238,6 @@ function getScrollBarHeight(ele){
 				var rightFixedCols = rightFixedColArr.join(",");
 				table.data("fixed-columns-right",rightFixedCols).attr("data-fixed-columns-right",rightFixedCols);
 			}
-
 		},
 		//初始化表格的rowTplContent
 		initRowTplContent:function(table,tableOptions){
@@ -6128,7 +6127,6 @@ function getScrollBarHeight(ele){
 						table.columnIndexMap=columnMap["columnToIndex"];
 						table.indexColumnMap=columnMap["indexToColumn"];
 						table.indexColumnTextMap=columnMap["indexToColumnText"];
-
 					}
 
 
@@ -6143,26 +6141,24 @@ function getScrollBarHeight(ele){
 				var thIndex=0;//当前th的index
 				var endIndex=0;
 				var fixedIndex=1;//处理fixed
+				var nextTrIndex=0,ncolspan,nrowspan=1;
+
 				for(var i=0;i<thLen;i++){
 					currentTh = newThs.eq(i);
 					if(processHead){
 						currentTh.data("fixed-col-index",fixedIndex).attr("data-fixed-col-index",fixedIndex);
 					}
 					if(currentTh[0].hasAttribute("colspan")){
-						var colspan=parseInt(currentTh.attr("colspan"));
-						endIndex=thIndex+colspan-1;
-						var thObj={
-							trIndex:(currentTr.index()+1),
-							startColIndex:thIndex,
-							endColIndex:endIndex,
-							processBody:processBody,
-							processHead:processHead,
-							fixedIndex:fixedIndex,
-							columnMap:columnMap
+						ncolspan=parseInt(currentTh.attr("colspan"));
+						if(currentTh[0].hasAttribute("rowspan")){
+							nrowspan = parseInt(currentTh.attr("rowspan"));
 						}
-						that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,thObj);
-						if(thObj.processBody){
-							for(var j=thObj.startColIndex;j<=thObj.endColIndex;j++){
+						endIndex=thIndex+ncolspan-1;
+
+						nextTrIndex = currentTr.index()+nrowspan;
+						that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,nextTrIndex,thIndex,endIndex,fixedIndex,columnMap,processHead);
+						if(processBody){
+							for(var j=thIndex;j<=endIndex;j++){
 								tbody.find("tr>td:nth-child("+(j+1)+")").data("col-index",j).attr("data-col-index",j);
 								tbody.find("tr>td:nth-child("+(j+1)+")").data("fixed-col-index",fixedIndex).attr("data-fixed-col-index",fixedIndex);
 							}
@@ -6204,43 +6200,63 @@ function getScrollBarHeight(ele){
 
 
 		},
+		getTrOkThs:function(tr,start,end){
+			var count = end-start+1;
+			var thsArray = [];
+			var hasCount=0;
+			var first=tr.find("th:not(.processed):first");
+			var ths;
+			if(first.index()==0){
+				ths=tr.find("th:lt("+count+"):not(.processed)");
+			}else{
+				ths=tr.find("th:gt("+(first.index()-1)+"):lt("+count+"):not(.processed)");
+			}
+			ths.each(function(i,th){
+				if(th.hasAttribute("colspan")){
+					hasCount = hasCount +parseInt(th.getAttribute("colspan"));
+				}else{
+					hasCount = hasCount +1;
+				}
+				if(hasCount<=count){
+					thsArray.push($(th));
+				}
+			});
+			return thsArray;
+		},
 		/**
 		 * 处理下级tr里的th
 		 */
-		processColSpanNextTrThColIndex:function(table,thead,tbody,tfoot,thObj){
-			var that=this,tr=thead.find("tr:eq("+thObj.trIndex+")");
+		processColSpanNextTrThColIndex:function(table,thead,tbody,tfoot,trIndex,startColIndex,endColIndex,fixedIndex,columnMap,processHead){
+			var that=this,tr=thead.find("tr:eq("+trIndex+")");
 			if(!isOk(tr)){return false;}
-			var ths=tr.find("th:not(.processed)");
+			var ths=this.getTrOkThs(tr,startColIndex,endColIndex);
 			if(!isOk(ths)){return false;}
-			var thIndex=0,tempTh,tempColumnTh_column;
-			for(var i=thObj.startColIndex;i<=thObj.endColIndex;i++){
-				tempTh=ths.eq(thIndex);
-				if(tempTh&&tempTh.length==1){
-					if(thObj.processHead){
-						tempTh.data("fixed-col-index",thObj.fixedIndex).attr("data-fixed-col-index",thObj.fixedIndex);
-						tempTh.addClass("processed");
+			var thIndex=0,tempTh,tempColumnTh_column,size=ths.length,i=startColIndex;
+			for(var thIndex=0;thIndex<size;thIndex++){
+				tempTh=ths[thIndex];
+				if(processHead) {
+					tempTh.data("fixed-col-index", fixedIndex).attr("data-fixed-col-index", fixedIndex);
+					tempTh.addClass("processed");
+				}
+				if(tempTh[0].hasAttribute("colspan")){
+					that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,trIndex+1,i,i+parseInt(tempTh.attr("colspan"))-1,fixedIndex,columnMap,processHead);
+					i=i+parseInt(tempTh.attr("colspan"));
+					continue;
+				}
+				if(processHead){
+					tempTh.data("col-index",i).attr("data-col-index",i);
+					tempColumnTh_column=tempTh.data("column");
+					if(tempColumnTh_column&&tempColumnTh_column!='index'&&tempColumnTh_column!='checkbox'&&tempColumnTh_column!='radio'){
+						columnMap["columnToIndex"][tempColumnTh_column]=i;
+						columnMap["indexToColumn"]["col_"+i]=tempColumnTh_column;
 					}
-					if(tempTh[0].hasAttribute("colspan")){
-						thObj.trIndex=thObj.trIndex+1;
-						thObj.startColIndex=i;
-						that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,thObj);
-						return false;
-					}else{
-						if(thObj.processHead){
-							tempTh.data("col-index",i).attr("data-col-index",i);
-							tempColumnTh_column=tempTh.data("column");
-							if(tempColumnTh_column&&tempColumnTh_column!='index'&&tempColumnTh_column!='checkbox'&&tempColumnTh_column!='radio'){
-								thObj.columnMap["columnToIndex"][tempColumnTh_column]=i;
-								thObj.columnMap["indexToColumn"]["col_"+i]=tempColumnTh_column;
-							}
-							thObj.columnMap["indexToColumnText"]["col_"+i]=$.trim(tempTh[0].innerText||("col_"+(i+1)));
-							if(isOk(tfoot)){
-								tfoot.find("tr>th:nth-child("+(i+1)+")").data("col-index",i).attr("data-col-index",i);
-							}
-						}
-						thIndex++;
+					columnMap["indexToColumnText"]["col_"+i]=$.trim(tempTh[0].innerText||("col_"+(i+1)));
+					if(isOk(tfoot)){
+						tfoot.find("tr>th:nth-child("+(i+1)+")").data("col-index",i).attr("data-col-index",i);
 					}
 				}
+				i++;
+
 			}
 		},
 		processTbodyColIndex:function(table){
@@ -8164,6 +8180,7 @@ function getScrollBarHeight(ele){
 									handler:arrayItem.handler,
 									syncval:arrayItem.syncval
 								};
+
 								if(table.columnIndexMap){
 									colIndex=table.columnIndexMap[key];
 									if(colIndex!=undefined&&colIndex>=0){
@@ -8282,12 +8299,15 @@ function getScrollBarHeight(ele){
 						th.attr("data-removeendzero",v.removeendzero).data("removeendzero",v.removeendzero);
 						th.attr("data-roundtag",v.roundtag).data("roundtag",v.roundtag);
 						if(v.handler){
-							th.attr("data-handler",true).data("handler",true);
+							th.attr("data-handler",v.handler).data("handler",v.handler);
 							th.off("exeSummaryHandler").on("exeSummaryHandler",function(){
 								var edTh = $(this);
 								var edtr = edTh.closest("tr");
 								var thValue = edTh.data("value");
-								v.handler(table,edtr,edTh,thValue);
+								var handler=edTh.data("handler");
+								if(handler && typeof(handler)=="function"){
+									handler(table,edtr,edTh,thValue);
+								}
 							});
 						}
 						if(v.syncval){
@@ -8336,7 +8356,7 @@ function getScrollBarHeight(ele){
 							});
 						}
 						if(h.syncval){
-							td.attr("data-syncval",h.syncval).data("handler",h.syncval);
+							td.attr("data-syncval",h.syncval).data("syncval",h.syncval);
 						}
 					}
 				}
@@ -10377,6 +10397,23 @@ function getScrollBarHeight(ele){
 			}
 		},
 		/**
+		 * 渲染之前处理数据
+		 * @param table
+		 */
+		processTableListBeforeRender:function(table){
+			if(notOk(table.tableListDatas)){
+				return;
+			}
+			var ajaxDataHandler=table.data("ajax-success-data-handler");
+			if(!ajaxDataHandler){
+				return;
+			}
+			var exeHandler = eval(ajaxDataHandler);
+			if(exeHandler&&typeof(exeHandler)=="function"){
+				exeHandler(table,table.tableListDatas);
+			}
+		},
+		/**
 		 * 添加多条数据
 		 */
 		addRowDatas:function(table,data,formData){
@@ -10397,10 +10434,12 @@ function getScrollBarHeight(ele){
 					//如果直接传数据数据 就直接渲染
 					if(isArray(datas)){
 						table.tableListDatas=this.processInsertDefaultColumnValues(table,datas);
+						this.processTableListBeforeRender(table);
 						appendHtml = juicer(tplContent,{datas:table.tableListDatas,formData:formData,extraData:extraData})
 						//appendEle.append();
 					}else if(datas.pageSize&&datas.totalRow){
 						table.tableListDatas=this.processInsertDefaultColumnValues(table,datas.list);
+						this.processTableListBeforeRender(table);
 						//说明是分页数据
 						appendHtml = juicer(tplContent,{datas:table.tableListDatas,pageNumber:datas.pageNumber,pageSize:datas.pageSize,formData:formData,extraData:extraData});
 						//appendEle.append();
@@ -10409,10 +10448,12 @@ function getScrollBarHeight(ele){
 					//如果直接传数据数据 就直接渲染
 					if(isArray(data)){
 						table.tableListDatas=this.processInsertDefaultColumnValues(table,data);
+						this.processTableListBeforeRender(table);
 						appendHtml = juicer(tplContent,{datas:table.tableListDatas,formData:formData});
 						//appendEle.append();
 					}else if(data.pageSize&&data.totalRow){
 						table.tableListDatas=this.processInsertDefaultColumnValues(table,data.list);
+						this.processTableListBeforeRender(table);
 						//说明是分页数据
 						appendHtml = juicer(tplContent,{datas:table.tableListDatas,pageNumber:data.pageNumber,pageSize:data.pageSize,formData:formData});
 						//appendEle.append();
