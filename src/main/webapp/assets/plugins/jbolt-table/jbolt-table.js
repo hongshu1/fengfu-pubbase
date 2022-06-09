@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.4";
+var jbolt_table_js_version="2.7.5";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -5398,21 +5398,26 @@ function getScrollBarHeight(ele){
 				if(isOk(table.thead)){
 					table.hasHeader=true;
 					table.thead.trs=table.thead.find("tr");
-					if(table.hasClass("thin")){
-						table.thead._height=(table.theme=="bootstrap"?32:31)*table.thead.trs.length;
-					}else if(table.hasClass("middle")){
-						table.thead._height=(table.theme=="bootstrap"?37:36)*table.thead.trs.length;
+					var tableTheadHeight = table.thead.data("height");
+					if(tableTheadHeight){
+						table.thead._height = parseInt(tableTheadHeight);
+						table.thead.css("height",table.thead._height+"px");
 					}else{
-						table.thead._height=(table.theme=="bootstrap"?42:41)*table.thead.trs.length;
-					}
-					if(table.thead.trs.length>=3){
-						if(table.data("editable")){
-							table.thead._height = table.thead._height - table.thead.trs.length;
+						if(table.hasClass("thin")){
+							table.thead._height=(table.theme=="bootstrap"?32:31)*table.thead.trs.length;
+						}else if(table.hasClass("middle")){
+							table.thead._height=(table.theme=="bootstrap"?37:36)*table.thead.trs.length;
 						}else{
-							table.thead._height = table.thead._height - table.thead.trs.length + 1 ;
+							table.thead._height=(table.theme=="bootstrap"?42:41)*table.thead.trs.length;
+						}
+						if(table.thead.trs.length>=3){
+							if(table.data("editable")){
+								table.thead._height = table.thead._height - table.thead.trs.length;
+							}else{
+								table.thead._height = table.thead._height - table.thead.trs.length + 1 ;
+							}
 						}
 					}
-
 				}else{
 					table.hasHeader=false;
 				}
@@ -5430,20 +5435,24 @@ function getScrollBarHeight(ele){
 				if(isOk(table.tfoot)){
 					table.hasFooter=true;
 					table.tfoot.trs=table.tfoot.find("tr");
-					if(table.hasClass("thin")){
-						table.tfoot._height=(table.theme=="bootstrap"?28:29)*table.tfoot.trs.length;
-					}else if(table.hasClass("middle")){
-						table.tfoot._height=(table.theme=="bootstrap"?37:36)*table.tfoot.trs.length;
-					}else{
-						table.tfoot._height=(table.theme=="bootstrap"?42:41)*table.tfoot.trs.length;
+					var tableTfootHeight = table.tfoot.data("height");
+					if(tableTfootHeight){
+						table.tfoot._height = parseInt(tableTfootHeight);
+						table.tfoot.css("height",table.tfoot._height+"px");
+					}else {
+						if (table.hasClass("thin")) {
+							table.tfoot._height = (table.theme == "bootstrap" ? 28 : 29) * table.tfoot.trs.length;
+						} else if (table.hasClass("middle")) {
+							table.tfoot._height = (table.theme == "bootstrap" ? 37 : 36) * table.tfoot.trs.length;
+						} else {
+							table.tfoot._height = (table.theme == "bootstrap" ? 42 : 41) * table.tfoot.trs.length;
+						}
 					}
 
 				}else{
 					table.hasFooter=false;
 					table.tfootFixed=false;
 				}
-
-
 
 				table.addClass("jbolt_table text-nowrap novscroll jbolt_main_table");
 				var jboltInputLayer = table.closest(".jbolt_input_layer");
@@ -6382,7 +6391,12 @@ function getScrollBarHeight(ele){
 			var topScroll=table.table_body.scrollTop();
 			table.table_box.find(".jbolt_table_header table").css("margin-left","0px");
 			table.table_box.find(".jbolt_table_footer table").css("margin-left","0px");
-			table.table_box.find(".jbolt_table_body table").css("margin-top",(0-table.thead._height)+"px");
+			var tableTheadHeight = table.thead.data("height");
+			if(tableTheadHeight) {
+				table.table_box.find(".jbolt_table_body table").css("margin-top", (0 - table.thead._height+1) + "px");
+			}else{
+				table.table_box.find(".jbolt_table_body table").css("margin-top", (0 - table.thead._height) + "px");
+			}
 			table.table_body.scrollLeft(leftScroll);
 			if(table.hasHeader){
 				table.fixed_header.table.css("margin-left",(0-leftScroll)+"px");
@@ -10951,7 +10965,12 @@ function getScrollBarHeight(ele){
 			}
 			var topScroll=table.table_body.scrollTop();
 			if(isOk(table.fixedColumnTables)){
-				table.fixedColumnTables.css("margin-top",(0-table.thead._height-topScroll)+"px");
+				var tableTheadHeight = table.thead.data("height");
+				if(tableTheadHeight) {
+					table.fixedColumnTables.css("margin-top", (0 - table.thead._height - 2 - topScroll) + "px");
+				}else{
+					table.fixedColumnTables.css("margin-top", (0 - table.thead._height - topScroll) + "px");
+				}
 			}
 		},
 		/**
@@ -11590,7 +11609,12 @@ function getScrollBarHeight(ele){
 				}
 				var topScroll=table.table_body.scrollTop();
 				if(isOk(table.fixedColumnTables)){
-					table.fixedColumnTables.css("margin-top",(0-table.thead._height-topScroll)+"px");
+					var tableTheadHeight = table.thead.data("height");
+					if(tableTheadHeight) {
+						table.fixedColumnTables.css("margin-top", (0 - table.thead._height - 2 - topScroll) + "px");
+					}else{
+						table.fixedColumnTables.css("margin-top", (0 - table.thead._height - topScroll) + "px");
+					}
 				}
 				AutocompleteUtil.hideResult();
 			}).on("resize",function(e){
@@ -13603,8 +13627,15 @@ function getScrollBarHeight(ele){
 				jboltTableHeader.append(headerTable);
 				//在原区域上方插入
 				table.table_body.before(jboltTableHeader);
-				//把原来的thead隐藏掉
-				table.css("margin-top","-"+table.thead._height+"px");
+				var tableTheadHeight = table.thead.data("height");
+				if(tableTheadHeight) {
+					//把原来的thead隐藏掉
+					table.css("margin-top","-"+(table.thead._height+1)+"px");
+				}else{
+					//把原来的thead隐藏掉
+					table.css("margin-top","-"+table.thead._height+"px");
+				}
+
 				table.table_box.addClass("fixedHeader");
 				that.processHeaderRight(table);
 				initToolTip(thead);

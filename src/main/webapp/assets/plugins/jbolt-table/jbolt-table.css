@@ -1,5 +1,5 @@
 @charset "UTF-8";
-/********jbolt_table_js_version="1.3.1"*********/
+/********jbolt_table_js_version="1.3.2"*********/
 .jbolt_table_view{
 	position: relative;
 	display: block;
@@ -1010,7 +1010,11 @@ table.jbolt_table.tbody_lh20 .jbt_edit_ele{
 	line-height: 30px;
 	border-bottom:1px solid #ededed;
 }
-
+.jbolt_table>thead.jbolt_table_thead_custom>tr>th,
+.jbolt_table>tfoot.jbolt_table_tfoot_custom>tr>th,
+.jbolt_table>tbody.jbolt_table_tbody_custom>tr>td{
+	white-space: pre-wrap;
+}
 .jbolt_table_leftbox .jb_footer,
 .jbolt_table_rightbox .jb_footer{
 	padding-top:5px;
