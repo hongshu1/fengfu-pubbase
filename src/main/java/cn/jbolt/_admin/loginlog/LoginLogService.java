@@ -2,6 +2,8 @@ package cn.jbolt._admin.loginlog;
 
 import java.util.Date;
 
+import cn.jbolt.core.bean.JBoltDateRange;
+import cn.jbolt.core.db.sql.Sql;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
@@ -17,30 +19,19 @@ import cn.jbolt.core.util.JBoltDateUtil;
  */
 public class LoginLogService extends JBoltLoginLogService{
 	/**
-	 * 更新登录日志是否是异常异地登录
-	 * @param log
-	 * @param isRemoteLogin
+	 * 登录日志管理查询
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param keywords
+	 * @param startTime
+	 * @param endTime
+	 * @return
 	 */
-	public void updateIsRemoteLogin(LoginLog log, boolean isRemoteLogin) {
-		log.setIsRemoteLogin(isRemoteLogin);
-		log.update();
-	}
-	
-	public Page<LoginLog> paginateAdminList(Integer pageNumber, Integer pageSize, String keywords, Date startTime,
-			Date endTime) {
-		Okv paras=Okv.create();
-		if(StrKit.notBlank(keywords)){
-			keywords=keywords.trim();
-			paras.set("username",columnLike(keywords));
-		}
-		if(isOk(startTime)){
-			paras.set("create_time >=",toDateTime(JBoltDateUtil.HHmmssTo000000Str(startTime)));
-		}
-		if(isOk(endTime)){
-			paras.set("create_time <=",toDateTime(JBoltDateUtil.HHmmssTo235959Str(endTime)));
-		}
-		
-		return paginate(paras, "id", "desc", pageNumber, pageSize, true);
+	public Page<LoginLog> paginateAdminList(Integer pageNumber, Integer pageSize, String keywords,Date startTime,Date endTime) {
+		Sql sql = selectSql().page(pageNumber,pageSize).bwDateTime("create_time",startTime,endTime);
+		sql.like("username",keywords);
+		sql.orderById(true);
+		return paginate(sql);
 	}
 
 }
