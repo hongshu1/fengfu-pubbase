@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.5";
+var jbolt_table_js_version="2.7.6";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -2022,9 +2022,10 @@ function jboltTableRemoveCheckedRow(ele,confirm){
 /**
  * tbody最后添加空行
  * @param ele
+ * @param forceTrChange
  * @returns
  */
-function jboltTableAppendEmptyRow(ele){
+function jboltTableAppendEmptyRow(ele,forceTrChange){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
@@ -2039,10 +2040,10 @@ function jboltTableAppendEmptyRow(ele){
 			if(!jboltTable.isEmpty){
 				var tr=jboltTable.tbody.find("tr:last");
 				if(isOk(tr)){
-					return jboltTable.me.insertEmptyRow(jboltTable,tr);
+					return jboltTable.me.insertEmptyRow(jboltTable,tr,false,forceTrChange);
 				}
 			}
-			return jboltTable.me.insertEmptyRow(jboltTable);
+			return jboltTable.me.insertEmptyRow(jboltTable,null,false,forceTrChange);
 		}
 	}
 	LayerMsgBox.alert("表格组件配置异常",2);
@@ -2052,9 +2053,10 @@ function jboltTableAppendEmptyRow(ele){
 /**
  * tbody最前添加空行
  * @param ele
+ * @param forceTrChange
  * @returns
  */
-function jboltTablePrependEmptyRow(ele){
+function jboltTablePrependEmptyRow(ele,forceTrChange){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
@@ -2069,10 +2071,10 @@ function jboltTablePrependEmptyRow(ele){
 			if(!jboltTable.isEmpty){
 				var tr=jboltTable.tbody.find("tr:first");
 				if(isOk(tr)){
-					return jboltTable.me.insertEmptyRow(jboltTable,tr,true);
+					return jboltTable.me.insertEmptyRow(jboltTable,tr,true,forceTrChange);
 				}
 			}
-			return jboltTable.me.insertEmptyRow(jboltTable);
+			return jboltTable.me.insertEmptyRow(jboltTable,null,false,forceTrChange);
 		}
 	}
 	LayerMsgBox.alert("表格组件配置异常",2);
@@ -2099,9 +2101,10 @@ function checkMasterTableId(actionEle){
  * 插入一空行
  * 默认在特定组件所在tr后面 如果没有的话 就找第一个空白tr
  * @param ele
+ * @param forceTrChange 强制行改变状态
  * @returns
  */
-function jboltTableInsertEmptyRow(ele){
+function jboltTableInsertEmptyRow(ele,forceTrChange){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
@@ -2121,7 +2124,7 @@ function jboltTableInsertEmptyRow(ele){
 					tr=jboltTable.tbody.find("tr:nth-child("+(fixTrIndex+1)+")");
 				}
 			}
-			return jboltTable.me.insertEmptyRow(jboltTable,tr);
+			return jboltTable.me.insertEmptyRow(jboltTable,tr,false,forceTrChange);
 		}
 	}
 	LayerMsgBox.alert("表格组件配置异常",2);
@@ -2133,9 +2136,10 @@ function jboltTableInsertEmptyRow(ele){
 /**
  * 选中行后插入一行
  * @param ele
+ * @param forceTrChange
  * @returns
  */
-function jboltTableInsertEmptyRowAfterChecked(ele){
+function jboltTableInsertEmptyRowAfterChecked(ele,forceTrChange){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
@@ -2149,7 +2153,7 @@ function jboltTableInsertEmptyRowAfterChecked(ele){
 						return false;
 					}
 				}
-				return jboltTable.me.insertEmptyRow(jboltTable,tr);
+				return jboltTable.me.insertEmptyRow(jboltTable,tr,false,forceTrChange);
 			}
 			return false;
 		}
@@ -2160,9 +2164,10 @@ function jboltTableInsertEmptyRowAfterChecked(ele){
 /**
  * 选中行前插入一行
  * @param ele
+ * @param forceTrChange
  * @returns
  */
-function jboltTableInsertEmptyRowBeforeChecked(ele){
+function jboltTableInsertEmptyRowBeforeChecked(ele,forceTrChange){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
@@ -2176,7 +2181,7 @@ function jboltTableInsertEmptyRowBeforeChecked(ele){
 						return false;
 					}
 				}
-				return jboltTable.me.insertEmptyRow(jboltTable,tr,true);
+				return jboltTable.me.insertEmptyRow(jboltTable,tr,true,forceTrChange);
 			}
 			return false;
 		}
@@ -2199,7 +2204,7 @@ function jboltTableInsertEmptyRowBeforeChecked(ele){
  */
 function jboltTableInsertRow(ele,data,keepId,dontProcessChange,forceTrChange){
 	if(!isOk(data)){
-		return jboltTableInsertEmptyRow(ele);
+		return jboltTableInsertEmptyRow(ele,forceTrChange);
 	}
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
@@ -2244,7 +2249,7 @@ function jboltTableInsertRow(ele,data,keepId,dontProcessChange,forceTrChange){
  */
 function jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange){
 	if(!isOk(data)){
-		return jboltTableAppendEmptyRow(ele);
+		return jboltTableAppendEmptyRow(ele,forceTrChange);
 	}
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
@@ -2286,7 +2291,7 @@ function jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange){
  */
 function jboltTablePrependRow(ele,data,keepId,dontProcessChange,forceTrChange){
 	if(!isOk(data)){
-		return jboltTablePrependEmptyRow(ele);
+		return jboltTablePrependEmptyRow(ele,forceTrChange);
 	}
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
@@ -2329,7 +2334,7 @@ function jboltTablePrependRow(ele,data,keepId,dontProcessChange,forceTrChange){
  */
 function jboltTableInsertRowAfterChecked(ele,data,keepId,dontProcessChange,forceTrChange){
 	if(!isOk(data)){
-		return jboltTableInsertEmptyRowAfterChecked(ele);
+		return jboltTableInsertEmptyRowAfterChecked(ele,forceTrChange);
 	}
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
@@ -2412,7 +2417,7 @@ function jboltTableReplaceCheckedRow(ele,data,replaceAllData,keepId,dontProcessC
  */
 function jboltTableInsertRowBeforeChecked(ele,data,keepId,dontProcessChange,forceTrChange){
 	if(!isOk(data)){
-		return jboltTableInsertEmptyRowBeforeChecked(ele);
+		return jboltTableInsertEmptyRowBeforeChecked(ele,forceTrChange);
 	}
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
@@ -4570,7 +4575,7 @@ function getScrollBarHeight(ele){
 			return id;
 		},
 		//新增 插入空行
-		insertEmptyRow:function(table,tr,insertToBefore){
+		insertEmptyRow:function(table,tr,insertToBefore,forceTrChange){
 			var canInsertTr=this.checkCanInsertNewTr(table,1);
 			if(canInsertTr){
 				//处理thead里的checkbox uncheck
@@ -4586,7 +4591,7 @@ function getScrollBarHeight(ele){
 				this.initEditableHSummarys(table,tempTr);
 				this.processTfootSummarys(table);
 				//处理change状态
-				this.processNewInsertTrEditableTdsChanged(table,tempTr,insertEmptyData);
+				this.processNewInsertTrEditableTdsChanged(table,tempTr,insertEmptyData,forceTrChange);
 				//处理新插入的行重新设置宽度
 				this.resizeTrByOldWidth(table,tempTr);
 				return tempTr;
