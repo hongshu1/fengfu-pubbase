@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.6";
+var jbolt_table_js_version="2.7.7";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -3635,6 +3635,21 @@ function getScrollBarHeight(ele){
 					return false;
 				}
 			}
+
+			if(table.editableOptions&&table.editableOptions.required){
+				if(table.isEmpty){
+					LayerMsgBox.alert("表格数据不能为空",2);
+					return false;
+				}
+				//执行item表格 每一个修改了的行里是否有必填的没有填写
+				var changeTrs = table.tbody.find("tr[data-changed='true']");
+				if(notOk(changeTrs)){
+					LayerMsgBox.alert("表格中无有效可提交数据",2);
+					return false;
+				}
+			}
+
+
 			//执行item表格 每一个修改了的行里是否有必填的没有填写
 			return this.checkEditableCellRequired(table);
 		},
