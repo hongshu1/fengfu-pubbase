@@ -1,12 +1,10 @@
 package cn.jbolt.wxa.api;
 
+import cn.jbolt.core.api.*;
+import cn.jbolt.core.api.httpmethod.JBoltHttpGet;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.ActionKey;
 
-import cn.jbolt.core.api.JBoltApiBaseController;
-import cn.jbolt.core.api.JBoltApiBindUserBean;
-import cn.jbolt.core.api.JBoltApplyJWT;
-import cn.jbolt.core.api.JBoltReApplyJWT;
 import cn.jbolt.core.api.httpmethod.JBoltHttpPost;
 import cn.jbolt.core.crossorigin.CrossOrigin;
 import cn.jbolt.core.para.JBoltPara;
@@ -31,6 +29,15 @@ public class JBoltWxaApiController extends JBoltApiBaseController {
 	public void login(String code) {
 		//调动service业务逻辑执行code转session获取openId等
 		renderJBoltApiRet(wxapApiService.login(code));
+	}
+
+	/**
+	 * 刷新jwt
+	 */
+	@JBoltApplyJWT
+	@JBoltHttpGet
+	public void refreshJwt(){
+		renderJBoltApiRet(JBoltApiJwtManger.me().refreshJwt(this));
 	}
 	/**
 	 * 解密注册用户信息
