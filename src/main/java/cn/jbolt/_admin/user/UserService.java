@@ -2,6 +2,7 @@ package cn.jbolt._admin.user;
 
 import java.util.List;
 
+import cn.jbolt.core.cache.JBoltUserCache;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.HashKit;
 import com.jfinal.kit.Ret;
@@ -78,6 +79,14 @@ public class UserService extends JBoltUserService {
 //			}
 			if (exists("username",user.getUsername(),user.getId())) {
 				return fail("用户名【"+user.getUsername()+"】已经存在，请输入其它名称");
+			}
+			User dbUser = findById(user.getId());
+			if(dbUser == null){
+				return fail(JBoltMsg.DATA_NOT_EXIST);
+			}
+			if(!dbUser.getUsername().equals(user.getUsername().trim())){
+				//说明修改了username 需要清理缓存
+				dbUser.deleteKeyCache();
 			}
 		}else {
 			if(notOk(user.getPassword())) {
