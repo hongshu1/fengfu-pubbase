@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.5.4";
+var jbolt_admin_js_version="5.5.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -10549,8 +10549,8 @@ var FileUploadUtil={
 				var removehandler=uploder.data("remove-handler");
 				if(removehandler){
 					var rhexe=eval(removehandler);
-					if(rhexe){
-						exe(uploder);
+					if(rhexe && typeof(rhexe) ==  "function"){
+						rhexe(uploder);
 					}
 				}
 			}

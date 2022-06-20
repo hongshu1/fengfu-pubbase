@@ -2,6 +2,8 @@ package cn.jbolt.apitest;
 
 import java.util.Map;
 
+import cn.jbolt.core.api.*;
+import cn.jbolt.core.api.httpmethod.JBoltHttpGet;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Clear;
 import com.jfinal.aop.Inject;
@@ -18,11 +20,6 @@ import com.jfinal.wxaapp.api.WxaPayApi;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.common.util.CACHE;
-import cn.jbolt.core.api.JBoltApiBaseController;
-import cn.jbolt.core.api.JBoltApiKit;
-import cn.jbolt.core.api.JBoltApiUserBean;
-import cn.jbolt.core.api.JBoltApplyJWT;
-import cn.jbolt.core.api.OpenAPI;
 import cn.jbolt.core.cache.JBoltWechatConfigCache;
 import cn.jbolt.core.crossorigin.CrossOrigin;
 import cn.jbolt.core.kit.JBoltControllerKit;
@@ -201,6 +198,16 @@ public class ApiTestController extends JBoltApiBaseController {
 		//模拟用户信息 这里可能是微信授权登录
 		renderJBoltApiSuccess("登录成功",Okv.by("appId", getAppId()));
 	}
+
+	/**
+	 * 刷新jwt
+	 */
+	@JBoltApplyJWT
+	@JBoltHttpGet
+	public void refreshJwt(){
+		renderJBoltApiRet(JBoltApiJwtManger.me().refreshJwt(this));
+	}
+
 	/**
 	 * API首次访问 签发JWT
 	 */

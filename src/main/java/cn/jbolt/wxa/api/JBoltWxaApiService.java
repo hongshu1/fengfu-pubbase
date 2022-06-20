@@ -88,7 +88,7 @@ public class JBoltWxaApiService extends JBoltApiBaseService{
 	 * @param bindUser
 	 * @return
 	 */
-	private JBoltApiUserBean processBindUser(JBoltApiUserBean apiUser,String bindUser) {
+	public JBoltApiUserBean processBindUser(JBoltApiUserBean apiUser,String bindUser) {
 		if(StrKit.isBlank(bindUser)) {return apiUser;}
 		apiUser.setBindUsers(convertToBindUsers(bindUser));
 		return apiUser;
