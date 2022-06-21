@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.5.5";
+var jbolt_admin_js_version="5.6.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -15804,7 +15804,7 @@ function userLogout(){
  */
 function hideParentLayerDialogBtn(index){
 	if(index==0||index==1){
-		parent.$(".layui-layer-btn .layui-layer-btn"+index).hide();
+		parent.$(".layui-layer.layui-layer-iframe:last  .layui-layer-btn"+index).hide();
 	}else{
 		hideAllParentLayerDialogBtn();
 	}
@@ -15814,7 +15814,7 @@ function hideParentLayerDialogBtn(index){
  * @returns
  */
 function hideAllParentLayerDialogBtn(){
-	parent.$(".layui-layer-btn").hide();
+	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").hide();
 }
 /**
  * 绑定一个按钮给dialog的OK btn
@@ -15828,9 +15828,9 @@ function bindKeycodeForDialogOkBtn(keycode){
 	jboltBody.on("keyup",function(e){
 		if(e.keyCode==keycode){
 			if(window.self!=window.top){
-				parent.$(".layui-layer-btn .layui-layer-btn0").click();
+				parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0").click();
 			}else{
-				$(".layui-layer-btn .layui-layer-btn0").click()
+				$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0").click()
 			}
 		}
 	});
@@ -15855,9 +15855,9 @@ function bindKeycodeForDialogCloseBtn(keycode){
 	jboltWindow.on("keyup",function(e){
 		if(e.keyCode==keycode){
 			if(window.self!=window.top){
-				parent.$(".layui-layer-btn .layui-layer-btn1").click();
+				parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1").click();
 			}else{
-				$(".layui-layer-btn .layui-layer-btn1").click();
+				$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1").click();
 			}
 			
 		}
@@ -15886,9 +15886,9 @@ function bindKeycodeForDialogBtnByBtnId(btns){
 			btn=btns[i];
 			if(btn.key==e.keyCode){
 				if(window.self!=window.top){
-					parent.$(".layui-layer-btn").find("a#"+btn.id).click();
+					parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btn.id).click();
 				}else{
-					$(".layui-layer-btn").find("a#"+btn.id).click()
+					$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btn.id).click()
 				}
 			}
 		}
@@ -15900,28 +15900,28 @@ function bindKeycodeForDialogBtnByBtnId(btns){
  * @returns
  */
 function clickLayerBtnById(btnId){
-	parent.$(".layui-layer-btn").find("a#"+btnId).click();
+	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btnId).click();
 }
 /**
  * 点击Layer ok按钮
  * @returns
  */
 function clickLayerOkBtn(){
-	parent.$(".layui-layer-btn .layui-layer-btn0").click();
+	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0").click();
 }
 /**
  * 点击Layer close按钮
  * @returns
  */
 function clickLayerCloseBtn(){
-	parent.$(".layui-layer-btn .layui-layer-btn1").click();
+	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1").click();
 }
 /**
  * 修改按钮标题
  * @returns
  */
 function changeParentLayerDialogBtnTitle(index,btnTitle){
-	parent.$(".layui-layer-btn .layui-layer-btn"+index).text(btnTitle);
+	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn"+index).text(btnTitle);
 }
 /**
  * 修改Dialog上OK按钮标题
@@ -15943,14 +15943,14 @@ function changeParentLayerDialogCancelBtnTitle(btnTitle){
  * @returns
  */
 function getParentLayerDialogBtn(index){
-	return parent.$(".layui-layer-btn .layui-layer-btn"+index);
+	return parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn"+index);
 }
 /**
  * 得到所有按钮 
  * @returns
  */
 function getParentLayerDialogBtns(){
-	  return parent.$(".layui-layer-btn>a");
+	  return parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn>a");
 }
 /**
  * 改变dialog 默认ok按钮的样式为正在提交
@@ -16041,12 +16041,13 @@ function cancelLayerDialogBtnStateToSubmiting(btn){
  */
 function changeBtnStateToSubmiting(btn){
 	if(isOk(btn)){
-		var oldText = btn.text();
-		if(oldText){
-			btn.data("old-text",oldText).attr("data-old-text",oldText);
-			btn.attr("disabled","disabled");
-			btn.text("处理中...");
+		var originText = btn.data("origin-text");
+		var text = btn.text();
+		if(!originText){
+			btn.data("origin-text",text).attr("data-origin-text",text);
 		}
+		btn.attr("disabled","disabled");
+		btn.text("处理中...");
 	}
 }
 
@@ -16057,9 +16058,9 @@ function changeBtnStateToSubmiting(btn){
 function cancelBtnStateToSubmiting(btn){
 	if(isOk(btn)){
 		btn.removeAttr("disabled");
-		var oldText = btn.data("old-text");
-		if(oldText){
-			btn.text(oldText);
+		var originText = btn.data("origin-text");
+		if(originText){
+			btn.text(originText);
 		}
 	}
 }
@@ -16079,9 +16080,9 @@ function cancelParentLayerDialogOkBtnStateToSubmiting(){
  */
 function showParentLayerDialogBtn(index){
 	  if(index){
-		  parent.$(".layui-layer-btn .layui-layer-btn"+index).show();
+		  parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn"+index).show();
 	  }else{
-		  parent.$(".layui-layer-btn").show();
+		  parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").show();
 	  }
 	  
 }
@@ -16091,7 +16092,7 @@ function showParentLayerDialogBtn(index){
  * @returns
  */
 function checkExistLayerDialogBtnById(btnId){
-	return parent.$(".layui-layer .layui-layer-btn").find("a#"+btnId);
+	return parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btnId);
 }
 /**
  * 检测是否存在相同按钮
