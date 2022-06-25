@@ -34,6 +34,8 @@ public class ExtendProjectConfig {
 	 */
 	public static void configRoute(Routes me) {
 		LOG.debug("调用二开扩展配置:configRoute");
+		//调用使用可视化生成器生成的路由配置信息
+		ProjectCodeGenRoutesConfig.config(me);
 	}
 	/**
 	 * 插件配置
