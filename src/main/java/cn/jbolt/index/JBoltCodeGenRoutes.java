@@ -1,15 +1,13 @@
 package cn.jbolt.index;
 
-import cn.jbolt._admin.codegen.CodeGenAdminController;
-import cn.jbolt._admin.codegen.modelattr.CodeGenModelAttrAdminController;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.config.Routes;
 
 /**
  * admin后台的路由配置
- * @ClassName:  AdminRoutes   
- * @author: JFinal学院-小木 QQ：909854136 
- * @date:   2019年3月26日 下午12:25:20   
+ * @ClassName:  AdminRoutes
+ * @author: JFinal学院-小木 QQ：909854136
+ * @date:   2019年3月26日 下午12:25:20
  */
 public class JBoltCodeGenRoutes extends Routes {
 
