@@ -1,0 +1,28 @@
+<div class="card jb_vflex">
+	<div class="card-header jb_vheader_card">
+		<button onclick="ajaxSubmitForm('codeGenControllerForm')" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存配置</button>
+	</div>
+	<div class="card-body jb_vbody">
+		<form class="form" onsubmit="return false;" id="codeGenControllerForm" action="admin/codegen/updateBase" method="post">
+			<input type="hidden" name="codeGen.id" value="#(codeGen.id)" autocomplete="off" />
+			<div class="form-group row">
+		 		<label class="col-sm-2 col-form-label">生成到哪个Package</label>
+		 		<div class="col-sm-4">
+		 			<input type="text" data-rule="required" placeholder="请指定Controller生成到哪个Package" data-tips="请输入Controller生成到哪个Package" class="form-control" name="codeGen.controllerPackage" value="#(codeGen.controllerPackage??)" autocomplete="off" />
+		 		</div>
+			</div>
+		 	<div class="form-group row">
+		 		<label class="col-sm-2 col-form-label">Controller Name</label>
+		 		<div class="col-sm-4">
+		 			<input type="text" data-rule="required"  data-tips="请输入Controller Name" class="form-control" name="codeGen.controllerName" value="#(codeGen.controllerName??)" autocomplete="off" />
+		 		</div>
+		 	</div>
+		 	<div class="form-group row">
+		 		<label class="col-sm-2 col-form-label">Controller Path</label>
+		 		<div class="col-sm-4">
+		 			<input type="text" data-rule="required"  data-tips="请输入Controller Path" class="form-control" name="codeGen.controllerPath" value="#(codeGen.controllerPath??)" autocomplete="off" />
+		 		</div>
+		 	</div>
+		</form>
+	</div>
+</div>

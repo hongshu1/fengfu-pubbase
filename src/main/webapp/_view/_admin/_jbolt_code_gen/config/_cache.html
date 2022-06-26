@@ -1,0 +1,115 @@
+<div class="card jb_vflex">
+	<div class="card-header jb_vheader_card">
+		<button onclick="ajaxSubmitForm('codeGenCacheConfigForm_#(pageId)')" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存配置</button>
+	</div>
+	<div class="card-body jb_vbody">
+		<form class="form" onsubmit="return false;" id="codeGenCacheConfigForm_#(pageId)" action="admin/codegen/updateBase" method="post">
+			<input type="hidden" name="codeGen.id" value="#(codeGen.id)" autocomplete="off" />
+		    <div class="form-group row" 
+				data-radio 
+				data-rule="radio"  
+				data-value="#(codeGen.isAutoCache?? 'false')" 
+				data-name="codeGen.isAutoCache" 
+				data-default="false"
+				data-handler="changeIsAutoCache_#(pageId)"
+				>
+				<label class="col-sm-2 col-form-label is_required" >是否启用自动缓存</label>
+				<div class="col"  style="padding-top: 1px;">
+					<div class="radio radio-primary  radio-inline">
+						<input  id="r_isAutoCache_true" type="radio" name="codeGen.isAutoCache"   value="true"/>
+						<label for="r_isAutoCache_true">启用</label>
+					</div>
+					
+					<div class="radio radio-primary  radio-inline">
+						<input  id="r_isAutoCache_false" type="radio" name="codeGen.isAutoCache"   value="false"/>
+						<label for="r_isAutoCache_false">关闭</label>
+					</div>
+				</div>
+	 		</div>
+	 		
+	 		<div class="form-group row auto_cache_control d-none" 
+				data-radio 
+				data-rule="radio"  
+				data-value="#(codeGen.isIdCache?? 'true')" 
+				data-name="codeGen.isIdCache" 
+				data-default="true">
+				<label class="col-sm-2 col-form-label is_required" >是否启用idCache</label>
+				<div class="col"  style="padding-top: 1px;">
+					<div class="radio radio-primary  radio-inline">
+						<input  id="r_isIdCache_true" type="radio" name="codeGen.isIdCache"   value="true"/>
+						<label for="r_isIdCache_true">启用</label>
+					</div>
+					
+					<div class="radio radio-primary  radio-inline">
+						<input  id="r_isIdCache_false" type="radio" name="codeGen.isIdCache"   value="false"/>
+						<label for="r_isIdCache_false">关闭</label>
+					</div>
+				</div>
+	 		</div>
+	 		
+	 		<div class="form-group row auto_cache_control d-none" 
+				data-radio 
+				data-rule="radio"  
+				data-value="#(codeGen.isKeyCache?? 'false')" 
+				data-name="codeGen.isKeyCache" 
+				data-handler="changeIsKeyCache_#(pageId)"
+				data-default="false">
+				<label class="col-sm-2 col-form-label is_required" >是否启用keyCache</label>
+				<div class="col"  style="padding-top: 1px;">
+					<div class="radio radio-primary  radio-inline">
+						<input  id="r_isKeyCache_true" type="radio" name="codeGen.isKeyCache"   value="true"/>
+						<label for="r_isKeyCache_true">启用</label>
+					</div>
+					
+					<div class="radio radio-primary  radio-inline">
+						<input  id="r_isKeyCache_false" type="radio" name="codeGen.isKeyCache"   value="false"/>
+						<label for="r_isKeyCache_false">关闭</label>
+					</div>
+				</div>
+	 		</div>
+	 		
+	 		<div class="form-group row key_cache_control d-none">
+		 		<label class="col-sm-2 col-form-label">KeyCache-column</label>
+		 		<div class="col-sm-4">
+		 			<input type="text" 
+		 				id="key_cache_autocomplete_#(pageId)"
+		 				data-rule="required" 
+		 				data-notnull="false" 
+		 				data-width="500" 
+		 				data-autocomplete 
+		 				data-hidden-input="keyColumnInput_#(pageId)"
+		 				data-url="admin/codegen/keyCacheColumns/#(codeGenId?? 0)" 
+		 				data-para-name="column" 
+		 				data-text-attr="colName" 
+		 				data-value-attr="colName" 
+						data-column-attr="colName-120-left,remark-200-center,javaTypeName"  
+		 				placeholder="请指定keyCache使用哪个字段"  
+		 				class="form-control" 
+		 				name="codeGen.keyCacheColumn" 
+		 				value="#(codeGen.keyCacheColumn??)" 
+		 				autocomplete="off" />
+		 				<input type="hidden" data-para-name="column" id="keyColumnInput_#(pageId)" />
+		 		</div>
+		 	</div>
+		 	
+	 		<div class="form-group row key_cache_control d-none">
+		 		<label class="col-sm-2 col-form-label">KeyCache-bindColumn</label>
+		 		<div class="col-sm-4">
+		 			<input type="text" 
+		 				data-width="500" 
+		 				data-autocomplete 
+		 				data-url="admin/codegen/keyCacheBindColumns?id=#(codeGenId?? 0)" 
+		 				data-link-para-ele="#keyColumnInput_#(pageId)" 
+		 				data-text-attr="colName" 
+						data-column-attr="colName-120-left,remark-200-center,javaTypeName"  
+		 				placeholder="请指定keyCache使用哪个bindColumn"  
+		 				class="form-control" 
+		 				name="codeGen.keyCacheBindColumn" 
+		 				value="#(codeGen.keyCacheColumn??)" 
+		 				autocomplete="off" />
+		 		</div>
+		 	</div>
+			 		
+		</form>
+	</div>
+</div>
