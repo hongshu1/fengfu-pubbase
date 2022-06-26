@@ -10,8 +10,10 @@
 #model_package=cn.jbolt.jfinalxueyuan.model 指定自动ORM的代码包
 #id_gen_mode=auto 主键生成策略 auto|snowflake|sequence
 #force_cast_all_id_gen_mode 此数据源所有表强制使用一种策略 不允许不同表设计不同策略 特殊情况才用
+#remark 分组数据源 备注信息
 
 [jfinalxueyuan]
+remark = JFinal学院库
 enable = false
 db_type = mysql
 db_name = jfinalxueyuan
@@ -23,6 +25,7 @@ id_gen_mode = auto
 model_package=cn.jbolt.jfinalxueyuan.model
 
 [meinvtu]
+remark = 美女图库
 enable = false
 db_type = mysql
 db_name = meinvtu
