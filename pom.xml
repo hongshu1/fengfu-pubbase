@@ -587,10 +587,6 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<!-- java8 保留参数名编译参数 -->
 					<compilerArgument>-parameters</compilerArgument>
-					<compilerArguments>
-						<verbose />
-						<extdirs>${project.basedir}/lib</extdirs>
-					</compilerArguments>
 				</configuration>
 			</plugin>
 

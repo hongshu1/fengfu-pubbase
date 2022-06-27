@@ -246,7 +246,7 @@ function beforeFormSubmit(){
 	var option="";
 	if(openType=="2"){
 		var hideLeftNav=optionHideLeftNav.val();
-		var obj={"hideLeftNav":hideLeftNav};
+		var obj={"hideLeftNav":(hideLeftNav=="true")};
 		option=JSON.stringify(obj);
 	}else if(openType=="3"){
 		var width=optionWidth.val();

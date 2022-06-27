@@ -1,0 +1,788 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page jb_vflex" data-key="#(pmkey)">
+	<div class="jbolt_page_content jb_vbody">
+		<div class="jbolt_tab_view jb_vflex">
+			<div class="jbolt_tab_links jb_vheader">
+			  <a class="jbolt_tab_link active"  href="#jbolt_codegen_base_#(pageId)">基础配置</a>
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_model_#(pageId)">字段属性配置</a>
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_table_#(pageId)">表格配置</a>
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_form_#(pageId)">表单配置</a>
+			  <a class="jbolt_tab_link" id="jbolt_codegen_cache_nav_#(pageId)"  href="#jbolt_codegen_cache_#(pageId)">缓存策略配置</a>
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_controller_#(pageId)">Controller</a>
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_service_#(pageId)">Service</a>
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_view_#(pageId)">View</a >
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_route_#(pageId)">路由&拦截器</a>
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_permission_#(pageId)">权限与菜单</a>
+			  #if(codeGen.style==2)
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_subtable_#(pageId)">子表配置</a>
+			  #end
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_genconfig_#(pageId)">执行生成</a>
+			</div>
+			<div class="jbolt_tab_contents jb_vbody">
+				<div class="jbolt_tab_content active overflow-auto" id="jbolt_codegen_base_#(pageId)">
+				#include("_base.html")
+				</div>
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_model_#(pageId)">
+				#include("_modelattr.html")
+				</div>
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_table_#(pageId)">
+				#include("_table.html")
+				</div>
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_form_#(pageId)">
+				#include("_form.html")
+				</div>
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_cache_#(pageId)">
+				#include("_cache.html")
+				</div>
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_controller_#(pageId)">
+				#include("_controller.html")
+				</div>
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_service_#(pageId)">
+				#include("_service.html")
+				</div>
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_view_#(pageId)">
+				#include("_view.html")
+				</div>
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_route_#(pageId)">
+				#include("_route.html")
+				</div>
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_permission_#(pageId)">
+				#include("_permission.html")
+				</div>
+				#if(codeGen.style==2)
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_subtable_#(pageId)">
+				#include("_sub_table.html")
+				</div>
+				#end
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_genconfig_#(pageId)">
+				#include("_gen.html")
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+#end
+#define js()
+<script type="text/javascript">
+//获得配置参数
+function getModelAttrEditableTableOptions_#(pageId)(){
+	var editableTableOptions={
+			trigger:"click",
+			requiredCellClass:"jb_editable_required_cell",//必填单元格默认样式
+			submit:{
+					type:"cell",//cell|all
+					url:"admin/codegen/modelattr/updateColumn"
+				},
+			//插入数据时默认属性值
+			//insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+			cols:{
+				id:{
+						submitAttr:"id",
+					}, 
+					table_label:{
+						type:"input",
+						required:true,
+						maxLength:20
+					},
+					form_label:{
+						type:"input",
+						required:true,
+						maxLength:20
+					},
+					col_format:{
+						type:"select",
+						url:"admin/dictionary/options?key=code_gen_table_col_format",
+						valueAttr:"sn"
+					},
+					search_ui_type:{
+						type:"select",
+						url:"admin/dictionary/options?key=code_gen_condition_ui_type",
+						valueAttr:"sn"
+					},
+					table_ui_type:{
+						type:"select",
+						url:"admin/dictionary/options?key=code_gen_table_ui_type",
+						valueAttr:"sn"
+					},
+					form_ui_type:{
+						type:"select",
+						url:"admin/dictionary/options?key=code_gen_form_ui_type",
+						valueAttr:"sn"
+					},
+					data_rule:{
+						type:"select",
+						url:"admin/dictionary/options?key=code_gen_form_data_rule",
+						valueAttr:"sn"
+					},
+					data_tips:{
+						type:"input",
+						maxLength:60
+					},
+					data_tips:{
+						type:"input",
+						maxLength:60
+					},
+					form_data_type:{
+						type:"select",
+						url:"admin/dictionary/options?key=code_gen_data_type",
+						htmlFormat:function(table,td,text,value,trJsonData){
+							return '<span class="badge badge-info">'+text+'</span>';
+						},
+						valueAttr:"sn",
+						handler:function(table,td,text,value,trJsonData){
+							changeDataValueColOptions_#(pageId)(td.next(),value);
+							changeDataDefaultValueColOptions_#(pageId)(td.next().next(),value,"form_data_value");
+						}
+					},
+					search_data_type:{
+						type:"select",
+						url:"admin/dictionary/options?key=code_gen_data_type",
+						htmlFormat:function(table,td,text,value,trJsonData){
+							return '<span class="badge badge-info">'+text+'</span>';
+						},
+						valueAttr:"sn",
+						handler:function(table,td,text,value,trJsonData){
+							changeDataValueColOptions_#(pageId)(td.next(),value);
+							changeDataDefaultValueColOptions_#(pageId)(td.next().next(),value,"search_data_value");
+						}
+					},
+					form_data_value:{
+						type:"auto",
+						initHandler:function(table,td,trJsonData){
+							changeDataValueColOptions_#(pageId)(td,trJsonData["formDataType"]);
+						}
+					},
+					search_data_value:{
+						type:"auto",
+						initHandler:function(table,td,trJsonData){
+							changeDataValueColOptions_#(pageId)(td,trJsonData["searchDataType"]);
+						}
+					},
+					form_default_value:{
+						type:"auto",
+						initHandler:function(table,td,trJsonData){
+							changeDataDefaultValueColOptions_#(pageId)(td,trJsonData["formDataType"],"form_data_value");
+						}
+					},
+					search_default_value:{
+						type:"auto",
+						initHandler:function(table,td,trJsonData){
+							changeDataDefaultValueColOptions_#(pageId)(td,trJsonData["searchDataType"],"search_data_value");
+						}
+					},
+					search_data_value_attr:{
+						type:"input",
+						maxLength:40
+					},
+					form_data_value_attr:{
+						type:"input",
+						maxLength:40
+					},
+					search_data_text_attr:{
+						type:"input",
+						maxLength:200
+					},
+					form_data_text_attr:{
+						type:"input",
+						maxLength:200
+					},
+					search_data_column_attr:{
+						type:"input",
+						maxLength:200
+					},
+					form_data_column_attr:{
+						type:"input",
+						maxLength:200
+					}
+					
+					
+				
+			}
+	};
+	return editableTableOptions;
+}
+
+function changeDataDefaultValueColOptions_#(pageId)(td,value,linkColumn){
+	var options = {};
+	switch(value){
+	    case "user_input":
+	    	options.type="input";
+	    	options.maxLength="200";
+	    	options.placeholder="请输入"
+	    	options.required=false;
+	    	options.editable=true;
+	        break;
+	    case "sys_dictionary":
+	    	options.type="select";
+	    	options.tooltip="请选择一个系统字典";
+	    	if(linkColumn=="search_data_value"){
+		    	options.url="admin/codegen/searchDictionaryOptions";
+			}else{
+		    	options.url="admin/codegen/formDictionaryOptions";
+			}
+	    	options.valueAttr="sn";
+	    	options.rule="select";
+	    	options.linkColumn=linkColumn;
+	    	options.required=true;
+	    	options.editable=true;
+	        break;
+	    case "action":
+	    	options.type="input";
+	    	options.maxLength="200";
+	    	options.placeholder="请输入"
+	    	options.required=false;
+	    	options.editable=true;
+	        break;
+	    case "url":
+	    	options.type="input";
+	    	options.maxLength="200";
+	    	options.placeholder="请输入"
+	    	options.required=false;
+	    	options.editable=true;
+	        break;
+	    case "option":
+	    	options.type="input";
+	    	options.maxLength="200";
+	    	options.placeholder="请输入"
+	    	options.required=false;
+	    	options.editable=true;
+	        break;
+	    case "enum":
+	    	options.type="input";
+	    	options.maxLength="200";
+	    	options.placeholder="请输入"
+	    	options.required=false;
+	    	options.editable=true;
+	        break;
+	    default:
+	    	options.type="input";
+    		options.maxLength="200";
+    		options.required=false;
+    		options.editable=false;
+	        break;
+	}
+	td.data("col-options",options).data("editable",options.editable).attr("data-editable",options.editable);
+}
+function changeDataValueColOptions_#(pageId)(td,value){
+	var options = {};
+	switch(value){
+	    case "user_input":
+	    	options.type="input";
+	    	options.maxLength="200";
+	    	options.required=false;
+	    	options.editable=true;
+	        break;
+	    case "sys_dictionary":
+	    	options.type="select";
+	    	options.tooltip="请选择一个系统字典";
+	    	options.url="admin/dictionarytype/codeGenOptions";
+	    	options.rule="select";
+	    	options.placeholder="请输入"
+	    	options.required=true;
+	    	options.editable=true;
+	        break;
+	    case "action":
+	    	options.type="input";
+	    	options.maxLength="60";
+	    	options.tooltip="请输入一个Controller里action名称";
+	    	options.placeholder="请输入"
+	    	options.required=true;
+	    	options.editable=true;
+	        break;
+	    case "url":
+	    	options.type="input";
+	    	options.maxLength="200";
+	    	options.tooltip="请输入对应url地址";
+	    	options.placeholder="请输入"
+	    	options.required=true;
+	    	options.editable=true;
+	        break;
+	    case "option":
+	    	options.type="input";
+	    	options.maxLength="200";
+	    	options.tooltip="例如：是:true,否:false 格式如： text:value,text:value";
+	    	options.placeholder="请输入"
+	    	options.required=true;
+	    	options.editable=true;
+	        break;
+	    case "enum":
+	    	options.type="select";
+	    	options.tooltip="请选择内置枚举类";
+	    	options.placeholder="请输入"
+	    	options.url="admin/codegen/enums";
+	    	options.rule="select";
+	    	options.required=true;
+	    	options.editable=true;
+	        break;
+	    default:
+	    	options.type="input";
+    		options.maxLength="200";
+    		options.placeholder="请输入"
+    		options.required=false;
+    		options.editable=false;
+	        break;
+	}
+	td.data("col-options",options).data("editable",options.editable).attr("data-editable",options.editable);
+}
+/**
+ * 切换radio 是否启用autoCache
+ */
+function changeIsAutoCache_#(pageId)(r,v){
+	var form = r.closest("form");
+	var formGroups=form.find(".auto_cache_control");
+	if(v=="true"){
+		formGroups.removeClass("d-none");
+	}else{
+		formGroups.addClass("d-none");
+	}
+	form.find("#r_isIdCache_true").click();
+	form.find("#r_isKeyCache_false").click();
+}
+
+/**
+ * 切换radio 是否启用SystemLog
+ */
+function changeIsProjectSystemLogEnable_#(pageId)(r,v){
+	changeFormControlRequiredState("#projectSystemLogTargetTypeKeyName",(v=="true"));
+	changeFormControlRequiredState("#projectSystemLogTargetTypeText",(v=="true"));
+	changeFormControlRequiredState("#projectSystemLogTargetTypeValue",(v=="true"));
+}
+
+/**
+ * 切换radio 是否启用keycache
+ */
+function changeIsKeyCache_#(pageId)(r,v){
+	var formGroups = r.closest("form").find(".key_cache_control");
+	var tempInput;
+	if(v=="true"){
+		formGroups.removeClass("d-none");
+	}else{
+		formGroups.addClass("d-none");
+	}
+	formGroups.each(function(){
+		tempInput = $(this).find("input.form-control");
+		tempInput.val("");
+	});
+	changeFormControlRequiredState("#key_cache_autocomplete_#(pageId)",(v=="true"));
+}
+
+
+function changeIsGenModel_#(pageId)(r,v){
+	var gen_model_box = r.closest("form").find(".gen_model_box");
+	changeFormControlRequiredState("#codeGenModelPackage_#(pageId)",(v=="true"));
+	if(v=="true"){
+		gen_model_box.removeClass("d-none");
+		$("#jbolt_codegen_cache_nav_#(pageId)").removeClass("active").show();
+		$("#jbolt_codegen_cache_#(pageId)").removeClass("active");
+	}else{
+		gen_model_box.addClass("d-none");
+		$("#jbolt_codegen_cache_nav_#(pageId)").removeClass("active").hide();
+		$("#jbolt_codegen_cache_#(pageId)").removeClass("active");
+		var table_record_config_box = gen_model_box.closest("form").find(".table_record_config_box");
+		var drs=table_record_config_box.find("div[data-radio]");
+		if(isOk(drs)){
+			var rra;
+			drs.each(function(){
+				rra=$(this);
+				RadioUtil.setChecked(rra,$(this).data("name"),"true");
+			});
+		}
+	}
+}
+
+function afterFormSubmit(ret,callback){
+	var form = $("#codeGenPermissionForm");
+	form.find("input[name='codeGen.permissionId']").val(ret.data);
+	ajaxSubmitForm(form,function(){
+		AjaxPortalUtil.refresh("codeGenPermissionPortal");
+	});
+}
+
+function unbindPermissionHandler(){
+	$("#codeGenPermissionForm").find("select[name='codeGen.topnavId']").val("");
+	AjaxPortalUtil.refresh("codeGenPermissionPortal");
+}
+/**
+ * 切换表格高度设置
+ */
+function changeTableWidthHandler_#(pageId)(r,v){
+	if(v=="assign"){
+		$("#tableWidthAssignInput_#(pageId)").removeAttr("readonly");
+	}else{
+		$("#tableWidthAssignInput_#(pageId)").attr("readonly","readonly");
+	}
+}
+/**
+ * 切换表格宽度设置
+ */
+function changeTableHeightHandler_#(pageId)(r,v){
+	if(v=="assign"){
+		$("#tableHeightAssignInput_#(pageId)").removeAttr("readonly");
+	}else{
+		$("#tableHeightAssignInput_#(pageId)").attr("readonly","readonly");
+	}
+}
+/**
+ * 切换表格宽度设置
+ */
+function changeIsPaginateHandler_#(pageId)(r,v){
+	if(v=="true"){
+		$("#pagesize_option_box_#(pageId)").show();
+	}else{
+		$("#pagesize_option_box_#(pageId)").hide();
+	}
+}
+/**
+ * 切换表格宽度设置
+ */
+function changeIsFormGroupRow_#(pageId)(r,v){
+	if(v=="true"){
+		$(".formGroupProportion_box").show();
+	}else{
+		$(".formGroupProportion_box").hide();
+	}
+}
+
+
+var formPreviewPortal_#(pageId) = $("#codegen_form_preview_portal_#(pageId)");
+$(function(){
+	processFormEleMoveEvent();
+	processFormEleClickEditorEvent();
+});
+
+function processFormEleMoveEvent(){
+	$("body").on("dragstart","#codegen_form_preview_portal_#(pageId)[data-edit-mode='true'] div.form_control_box div[draggable='true']",function(e){
+		var existEle = formPreviewPortal_#(pageId).find(".jb_draging_ele");
+		if(isOk(existEle)){
+			existEle.removeClass("jb_draging_ele");
+			formPreviewPortal_#(pageId).find("#JBoltFormEleEditor").remove();
+		}
+		var ele = $(this);
+		ele.addClass("jb_draging_ele");
+		formPreviewPortal_#(pageId).swapEle = ele;
+	}).on("dragend","#codegen_form_preview_portal_#(pageId)[data-edit-mode='true'] div.form_control_box div[draggable='true']",function(e){
+		var ele = $(this);
+		ele.removeClass("jb_draging_ele");
+	}).on("dragenter","#codegen_form_preview_portal_#(pageId)[data-edit-mode='true'] div.form_control_box",function(e){
+		// 阻止浏览器默认行为
+		e.preventDefault();
+		$(this).addClass("jb_waiting_drop");
+	}).on("dragover","#codegen_form_preview_portal_#(pageId)[data-edit-mode='true'] div.form_control_box",function(e){
+		// 阻止浏览器默认行为
+		e.preventDefault();
+		var box = $(this);
+		box.addClass("jb_waiting_drop");
+		var et = $(e.target);
+		var targetDraggableEle=null;
+		//如果自身就是
+		if(e.target.tagName == "DIV" && e.target.hasAttribute("draggable")){
+			targetDraggableEle = $(e.target);
+		}else{
+			targetDraggableEle = et.closest("div[draggable='true']");
+		}
+		if(isOk(targetDraggableEle)){
+			var offset = targetDraggableEle.offset();
+			var height = targetDraggableEle.height();
+			if(e.clientY>offset.top+(height/2+1)){
+				targetDraggableEle.after(formPreviewPortal_#(pageId).swapEle);
+			}else{
+				targetDraggableEle.before(formPreviewPortal_#(pageId).swapEle);
+			}
+		}
+		
+	}).on("dragleave","#codegen_form_preview_portal_#(pageId)[data-edit-mode='true'] div.form_control_box",function(e){
+		// 阻止浏览器默认行为
+		e.preventDefault();
+		var box=$(this);
+		var boxOffset = box.offset();
+		var width = box.width();
+		var height = box.height();
+		if((e.clientX < boxOffset.left || e.clientX>(boxOffset.left + width)) || (e.clientY < boxOffset.top || e.clientX>(boxOffset.top + height))){
+			box.removeClass("jb_waiting_drop");
+		}
+	}).on("drop","#codegen_form_preview_portal_#(pageId)[data-edit-mode='true'] div.form_control_box",function(e){
+		// 阻止浏览器默认行为
+		e.preventDefault();
+		$(this).removeClass("jb_waiting_drop");
+		if(isOk(formPreviewPortal_#(pageId).swapEle)){
+			var attrId = formPreviewPortal_#(pageId).swapEle.data("id");
+			if(attrId){
+				var codeGenId = formPreviewPortal_#(pageId).data("codegen-id");
+				var datas={"codeGenId":codeGenId,"id":attrId};
+				var prevAttr=formPreviewPortal_#(pageId).swapEle.prev();
+				if(isOk(prevAttr)){
+					datas["prevId"]=prevAttr.data("id");
+				}
+				var nextAttr=formPreviewPortal_#(pageId).swapEle.next();
+				if(isOk(nextAttr)){
+					datas["nextId"]=nextAttr.data("id");
+				}
+				LayerMsgBox.loading("正在更新顺序...",5000);
+				Ajax.post("admin/codegen/modelattr/move",datas,function(res){
+					LayerMsgBox.success("操作成功",500);
+				});
+			}else{
+				LayerMsgBox.alert("组件未绑定data-id",2);
+			}
+		}
+	});
+}
+
+function refreshFormPreviewPortal(){
+	changeFormPreviewMode_#(pageId)(false);
+}
+
+/**
+ * 切换可编辑模式
+ */
+function changeFormPreviewMode_#(pageId)(isEidtMode){
+	var codeGenId = "#(codeGen.id)";
+	var btn=$("#isEditModeBtn_"+isEidtMode);
+	btn.parent().find("button.btn-primary").removeClass("btn-primary").addClass("btn-secondary");
+	btn.removeClass("btn-secondary").addClass("btn-primary");
+	formPreviewPortal_#(pageId).data("edit-mode",isEidtMode).attr("data-edit-mode",isEidtMode);
+	if(isEidtMode){
+		//编辑模式
+		formPreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/formPortalEditMode/#(codeGen.id)");
+	}else{
+		formPreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/formPortal/#(codeGen.id)")
+	}
+}
+
+/**
+ * 提交一个form组件的编辑
+ */
+function submitFormEleEditor(){
+	var isEditMode = formPreviewPortal_#(pageId).data("edit-mode");
+	if(!isEditMode){LayerMsgBox.alert("请切换到编辑模式",2);return;}
+	var postDatas=formToJson("#JBoltFormEleEditorForm");
+	postDatas.id = formPreviewPortal_#(pageId).editingEle.data("id");
+	/* var JBoltFormEleEditor = formPreviewPortal_#(pageId).find("#JBoltFormEleEditor")
+	var formEleWidthRadio = formPreviewPortal_#(pageId).find("#formEleWidthRadio");
+	if(isOk(formEleWidthRadio)){
+		postDatas.formEleWidth = RadioUtil.getCheckedValue("formEleWidth",JBoltFormEleEditor);
+	}
+	var isItemInlineRadio = formPreviewPortal_#(pageId).find("#isItemInlineRadio");
+	if(isOk(isItemInlineRadio)){
+		postDatas.isItemInline = RadioUtil.getCheckedValue("isItemInline",JBoltFormEleEditor);
+	} */
+	/* postDatas.formLabel=formPreviewPortal_#(pageId).find("#formLabel").text();
+	var placeholder=formPreviewPortal_#(pageId).find("#placeholder");
+	if(isOk(placeholder)){
+		postDatas.placeholder = placeholder.val();
+	} */
+	LayerMsgBox.confirm("确定提交组件修改？",function(){
+		LayerMsgBox.loading("更新中...",5000);
+		var data = {};
+		data.attr = JSON.stringify(postDatas);
+		Ajax.post("admin/codegen/modelattr/updateFormEleConfig",data,function(res){
+			LayerMsgBox.success("操作成功",500,refreshModelAttrJBoltTable_#(pageId));
+		});
+	});
+	
+}
+function refreshModelAttrJBoltTable_#(pageId)(){
+	refreshJBoltTable("#code_gen_model_attr_table_#(pageId)");
+}
+var JBoltFormEleEditor_tpl = null;
+function processFormEleClickEditorEvent(){
+	$("body").on("click","#codegen_form_preview_portal_#(pageId)[data-edit-mode='true'] div.form_control_box div[draggable='true']",function(e){
+		var isEditMode = formPreviewPortal_#(pageId).data("edit-mode");
+		if(!isEditMode){return false;}
+		var ele = $(this);
+		var isFormGroupRow = ele.hasClass("row");
+		if(!isFormGroupRow){return false;}
+		formPreviewPortal_#(pageId).editingEle = ele;
+		if(ele.hasClass("edit_form_ele_editor_ing")){
+			return false;
+		}
+		
+		if(ele.data("stop-propagation")){
+			ele.data("stop-propagation",false);
+		  return true;
+		}
+		e.stopPropagation();
+		e.preventDefault();
+		var existEle = formPreviewPortal_#(pageId).find(".jb_draging_ele");
+		if(isOk(existEle)){
+			if(existEle.data("id")==ele.data("id")){
+				return false;
+			}
+			existEle.removeClass("jb_draging_ele");
+			formPreviewPortal_#(pageId).find("#JBoltFormEleEditor").remove();
+		}
+		
+		ele.addClass("jb_draging_ele");
+		if(!JBoltFormEleEditor_tpl){
+			JBoltFormEleEditor_tpl = g("JBoltFormEleEditor_tpl").value;
+		}
+		var widths=new Array();
+		var formControlWidth = Number(ele.data("form-control-width") || 10);
+		var formEleWidth = Number(ele.data("form-ele-width") || formControlWidth);
+		for(var i = 1;i<=formControlWidth;i++){
+			widths.push(i);
+		}
+		var isCanChangeInlineEle = ele[0].hasAttribute("data-radio")||ele[0].hasAttribute("data-checkbox");
+		var formControlIsInline = true;
+		if(isCanChangeInlineEle){
+			formControlIsInline = ele.data("inline");
+		}
+		var input = ele.find("input[data-jboltinput]");
+		var isJBoltInput = isOk(input);
+		var jboltInputType = isJBoltInput?input.data("load-type"):null;
+		var formLabel = "标题";
+		var placeholder = "";
+		var eleInput = ele.find("input");
+		if(notOk(eleInput)){
+			eleInput = ele.find("textarea");
+		}
+		var hasPlaceholder = false;
+		if(isOk(eleInput) && !isCanChangeInlineEle){
+			hasPlaceholder = true;
+			placeholder = eleInput.attr("placeholder")||"";
+		}
+		var theLabelEle = ele.find("label:first");
+		if(isOk(theLabelEle)){
+			formLabel = theLabelEle.text()||"标题";
+		}
+		var tplData = {
+				widths:widths,
+				isCanChangeInlineEle:isCanChangeInlineEle,
+				formEleWidth:formEleWidth,
+				isJBoltInput:isJBoltInput,
+				jboltInputType:jboltInputType,
+				formControlIsInline:formControlIsInline,
+				isJBoltInputFilterTree:false,
+				isJBoltInputFilterTable:false,
+				isJBoltInputJsTreeOnlyLeaf:false,
+				formLabel:formLabel,
+				placeholder:placeholder,
+				hasPlaceholder:hasPlaceholder
+				};
+		if(isJBoltInput && jboltInputType =="jstree"){
+			tplData.isJBoltInputFilterTree = input.data("filter-handler")=="filterTree";
+			tplData.isJBoltInputJsTreeCheckbox = input.data("jstree-checkbox")||false;
+			tplData.isJBoltInputJsTreeOnlyLeaf = input.data("onlyleaf")||false;
+		}
+		if(isJBoltInput && jboltInputType =="table"){
+			tplData.isJBoltInputFilterTable = input.data("filter-handler")=="filterTable";
+		}
+		ele.after(juicer(JBoltFormEleEditor_tpl,tplData))
+		var JBoltFormEleEditor= formPreviewPortal_#(pageId).find("#JBoltFormEleEditor");
+		if(isOk(JBoltFormEleEditor)){
+			RadioUtil.init(JBoltFormEleEditor);
+		}
+		return false;
+	});
+}
+function changeFormControlEleFormLabel(value){
+	if(formPreviewPortal_#(pageId).editingEle){
+		formPreviewPortal_#(pageId).editingEle.find("label:first").text(value);
+	}
+}
+function changeFormControlElePlaceholder(value){
+	if(formPreviewPortal_#(pageId).editingEle){
+		formPreviewPortal_#(pageId).editingEle.find("input,textarea").val(value);
+	}
+}
+/**
+ * 切花col长度
+ */
+function changeFormControlEleWidth(r,value){
+	if(isOk(formPreviewPortal_#(pageId).editingEle) && value){
+		var formControl = formPreviewPortal_#(pageId).editingEle.find("label.col-form-label").next();
+		if(isOk(formControl)){
+			var className = formControl.attr("class");
+			var index = className.indexOf("col");
+			var wsindex = className.indexOf(" ");
+			if(wsindex == -1){
+				formControl.attr("class","col-"+value);
+			}else{
+				className ="col-"+value + " " + className.substring(wsindex+1);
+				formControl.attr("class",className);
+			}
+		}
+	}
+}
+/**
+ * 切换radio checkbox是否inline
+ */
+function changeFormControlEleIsInline(r,value){
+	if(isOk(formPreviewPortal_#(pageId).editingEle)){
+		formPreviewPortal_#(pageId).editingEle.data("inline",value)
+		if(value=="true"){
+			formPreviewPortal_#(pageId).editingEle.find(".radio").addClass("radio-inline");
+			formPreviewPortal_#(pageId).editingEle.find(".checkbox").addClass("checkbox-inline");
+		}else{
+			formPreviewPortal_#(pageId).editingEle.find(".radio").removeClass("radio-inline");
+			formPreviewPortal_#(pageId).editingEle.find(".checkbox").removeClass("checkbox-inline");
+		}
+	}
+}
+/**
+ * 切换jboltInput是否filterTree
+ */
+function changeFormControlEleisJBoltInputFiltertree(r,value){
+	if(isOk(formPreviewPortal_#(pageId).editingEle)){
+		var input = formPreviewPortal_#(pageId).editingEle.find("input[data-jboltinput]");
+		input.val("");
+		if(value=="true"){
+			input.data("filter-handler","filterTree").removeAttr("readonly");
+		}else{
+			input.data("filter-handler","").attr("readonly","readonly").removeAttr("data-filter-handler");
+		}
+		JBoltInputUtil.processInputFilterHandler(input,(value=="true"),"filterTree");
+	}
+}
+/**
+ * 切换jboltInput是否filterTable
+ */
+function changeFormControlEleisJBoltInputFilterTable(r,value){
+	if(isOk(formPreviewPortal_#(pageId).editingEle)){
+		var input = formPreviewPortal_#(pageId).editingEle.find("input[data-jboltinput]");
+		input.val("");
+		
+		if(value=="true"){
+			input.data("filter-handler","filterTable").removeAttr("readonly");
+		}else{
+			input.data("filter-handler","").attr("readonly","readonly").removeAttr("data-filter-handler");
+		}
+		JBoltInputUtil.processInputFilterHandler(input,(value=="true"),"filterTable");
+	}
+}
+/**
+ * 切换jboltInput jstree是否checkbox
+ */
+function changeFormControlEleisJBoltInputJsTreeCheckbox(r,value){
+	if(isOk(formPreviewPortal_#(pageId).editingEle)){
+		var input = formPreviewPortal_#(pageId).editingEle.find("input[data-jboltinput]");
+		input.data("jstree-checkbox",value=="true").attr("data-jstree-checkbox",value=="true");
+		input.val("");
+		JBoltInputUtil.removeLayer(input);
+		var isJBoltInputJsTreeOnlyLeaf = formPreviewPortal_#(pageId).find("#isJBoltInputJsTreeOnlyLeaf");
+		if(isOk(isJBoltInputJsTreeOnlyLeaf)){
+			if(value=="true"){
+				isJBoltInputJsTreeOnlyLeaf.removeClass("d-none");
+			}else{
+				isJBoltInputJsTreeOnlyLeaf.addClass("d-none");
+			}
+		}
+	}
+}
+/**
+ * 切换jboltInput jstree是否onlyleaf
+ */
+function changeFormControlEleisJBoltInputJsTreeOnlyLeaf(r,value){
+	if(isOk(formPreviewPortal_#(pageId).editingEle)){
+		var input = formPreviewPortal_#(pageId).editingEle.find("input[data-jboltinput]");
+		input.data("onlyleaf",value=="true").attr("data-onlyleaf",value=="true");
+		input.val("");
+		JBoltInputUtil.removeLayer(input);
+	}
+}
+
+
+</script>
+#end

@@ -1,0 +1,225 @@
+#define c_index()
+   /**
+	* 首页
+	*/
+	public void index() {
+		render("index.html");
+	}
+#set(cons = "")
+#if(codeGen.isPaginate)
+    #set(cons = "getPageNumber(), getPageSize()")
+#end
+#if(keywordsSearchColumns)
+    #if(cons!="")
+        #set(cons = cons + ", getKeywords()")
+    #else
+        #set(cons = "getKeywords()")
+    #end
+#end
+#if(conditions)
+    #if(cons!="")
+        #set(cons = cons + ", ")
+        #for(con:conditions)
+            #set(cons = cons + "get"+con.javaTypeNameForGetPara + "(\""+con.attrName+"\")"+ (for.last?"":", "))
+        #end
+    #else
+        #for(con:conditions)
+            #set(cons = cons + "get"+con.javaTypeNameForGetPara + "(\""+con.attrName+"\")"+ (for.last?"":", "))
+        #end
+    #end
+#end
+   /**
+	* 数据源
+	*/
+	public void datas() {
+		renderJsonData(service.getAdminDatas(#(cons??)));
+	}
+#end
+
+#define c_add()
+   /**
+	* 新增
+	*/
+	public void add() {
+		render("add.html");
+	}
+#end
+
+#define c_edit()
+   /**
+	* 编辑
+	*/
+	public void edit() {#setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
+		#(codeGen.modelName) #(fctucName)=service.findById(get#(getIdType?? 'Long')(0));
+		if(#(fctucName) == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("#(fctucName)",#(fctucName));
+		render("edit.html");
+	}
+#end
+
+
+#define c_save()
+   /**
+	* 保存
+	*/
+	@Before(Tx.class)
+	public void save() {
+		renderJson(service.save(getModel(#(codeGen.modelName).class, "#(firstCharToLowerCase(codeGen.modelName))")));
+	}
+#end
+
+#define c_update()
+   /**
+	* 更新
+	*/
+	@Before(Tx.class)
+	public void update() {
+		renderJson(service.update(getModel(#(codeGen.modelName).class, "#(firstCharToLowerCase(codeGen.modelName))")));
+	}
+#end
+
+#define c_delete()
+   /**
+	* 删除
+	*/
+	@Before(Tx.class)
+	public void delete() {
+	#if(codeGen.checkCanDelete??)
+		renderJson(service.deleteById(get#(getIdType?? 'Long')(0),true));
+	#else
+		renderJson(service.deleteById(get#(getIdType?? 'Long')(0)));
+	#end
+	}
+#end
+
+#define c_deleteByIds()
+   /**
+	* 批量删除
+	*/
+	@Before(Tx.class)
+	public void deleteByIds() {
+	#if(codeGen.checkCanDelete??)
+		renderJson(service.deleteByIds(get("ids"),true));
+	#else
+		renderJson(service.deleteByIds(get("ids")));
+	#end
+	}
+#end
+
+#define c_up()
+   /**
+	* 排序 上移
+	*/
+	@Before(Tx.class)
+	public void up() {
+		renderJson(service.up(get#(getIdType?? 'Long')(0)));
+	}
+#end
+
+#define c_down()
+   /**
+	* 排序 下移
+	*/
+	@Before(Tx.class)
+	public void down() {
+		renderJson(service.down(get#(getIdType?? 'Long')(0)));
+	}
+#end
+
+
+#define c_initRank()
+   /**
+	* 排序 初始化
+	*/
+	@Before(Tx.class)
+	public void initRank() {
+		renderJson(service.initRank());
+	}
+#end
+
+#define c_toggleEnable()
+   /**
+	* 切换启用状态
+	*/
+	@Before(Tx.class)
+	public void toggleEnable() {
+		renderJson(service.toggleEnable(get#(getIdType?? 'Long')(0)));
+	}
+#end
+
+
+#define c_tree()
+   /**
+	* 得到树形结构数据
+	*/
+	public void tree() {
+		renderJsonData(service.getTreeDatas());
+	}
+#end
+
+
+#define c_options(modelName)
+   /**
+	* 得到树形结构数据
+	*/
+	public void options() {
+		renderJson(service.getOptionList());
+	}
+#end
+
+#define c_genToggleMethod(name)
+   /**
+	* 切换#(name)
+	*/
+	@Before(Tx.class)
+	public void #(name)() {
+		renderJson(service.#(name)(get#(getIdType?? 'Long')(0)));
+	}
+#end
+
+#define c_genOtherMethod(method)
+#if(method.name.indexOf("toggle")!=-1)
+#@c_genToggleMethod(method.name)
+#else
+	public void #(method.name)(){
+		//TODO 请实现业务逻辑代码	
+		renderJsonSuccess();
+	}
+#end
+#end
+
+#define genControllerMethod(method)
+	#switch(method.name)
+		#case("index")
+			#@c_index()
+		#case("add")
+			#@c_add()
+		#case("edit")
+			#@c_edit()
+		#case("save")
+			#@c_save()
+		#case("update")
+			#@c_update()
+		#case("delete")
+			#@c_delete()
+		#case("deleteByIds")
+			#@c_deleteByIds()
+		#case("toggleEnable")
+			#@c_toggleEnable()
+		#case("up")
+			#@c_up()
+		#case("down")
+			#@c_down()
+		#case("initRank")
+			#@c_initRank()
+		#case("tree")
+			#@c_tree()
+		#case("options")
+			#@c_options()
+		#default
+			#@c_genOtherMethod(method)
+	#end
+#end

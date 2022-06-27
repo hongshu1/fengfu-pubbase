@@ -1,0 +1,55 @@
+package #(codeGen.controllerPackage??);
+
+import com.jfinal.aop.Inject;
+import cn.jbolt.core.controller.base.JBoltBaseController;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt._admin.permission.PermissionKey;
+#if(permission.isSystemAdminDefault??)
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+#end
+import com.jfinal.core.Path;
+import #(codeGen.servicePackage+"."+codeGen.serviceName??);
+#if(codeGen.isCrud?? && codeGen.isNeedAdminInterceptor??)
+import com.jfinal.aop.Before;
+#end
+#if(codeGen.isNeedAdminInterceptor??)
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+#end
+#if(codeGen.isCrud??)
+import com.jfinal.plugin.activerecord.tx.Tx;
+import cn.jbolt.core.base.JBoltMsg;
+#if(codeGen.isGenModel??)
+import #(codeGen.modelPackage+"."+codeGen.modelName);
+#end
+#end
+/**
+ * #(codeGen.indexHtmlPageTitle?? (codeGen.mainTableRemark?? (codeGen.controllerName??)))
+ * @ClassName: #(codeGen.controllerName??)
+ * @author: #(codeGen.author?? 'JBolt-Generator')
+ * @date: #date()
+ */
+#if(permission)
+@CheckPermission(PermissionKey.#(permission.permissionKey.toUpperCase()))
+#end
+#if(permission.isSystemAdminDefault??)
+@UnCheckIfSystemAdmin
+#end
+#if(codeGen.isNeedAdminInterceptor??)
+@Before(JBoltAdminAuthInterceptor.class)
+#end
+#if(codeGen.isViewUsePath?? && codeGen.controllerPath??)
+@Path(value = "#(codeGen.controllerPath??)", viewPath = "#(codeGen.htmlViewPath??)")
+#end
+public class #(codeGen.controllerName??) extends JBoltBaseController {
+
+	@Inject
+	private #(codeGen.serviceName??) service;
+	
+#if(methods!=null&&methods.size()>0)
+	#for(method:methods)
+	#@genControllerMethod(method)
+	
+	#end
+#end
+	
+}
