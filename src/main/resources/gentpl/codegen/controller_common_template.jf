@@ -16,7 +16,7 @@
         #set(cons = "getKeywords()")
     #end
 #end
-#if(conditions)
+#if(conditions!=null&&conditions.size()>0)
     #if(cons!="")
         #set(cons = cons + ", ")
         #for(con:conditions)
