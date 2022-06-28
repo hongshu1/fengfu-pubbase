@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.6.0";
+var jbolt_admin_js_version="5.6.1";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -9623,10 +9623,10 @@ function processFileUploadCallback(res,hiddeninput,filenameInput,isMultiple,file
 					var pdfviewerInfo="";
 					var dialogviewerInfo="";
 					var ahref;
-					if(isImg(bfileurl) && imgviewerEnable){
+					if(isImg(tmpFilePaths) && imgviewerEnable){
 						imgviewerInfo = " data-imgviewer data-album='"+fileboxId+"' "
 						ahref=tmpFilePaths;
-					}else if(isPdf(bfileurl)  && pdfviewerEnable && pdfviewerUrl){
+					}else if(isPdf(tmpFilePaths)  && pdfviewerEnable && pdfviewerUrl){
 						if(pdfviewerUrl.indexOf("[file]")!=-1){
 							ahref =pdfviewerUrl.replace("[file]",tmpFilePaths);
 						}else{
@@ -9657,10 +9657,10 @@ function processFileUploadCallback(res,hiddeninput,filenameInput,isMultiple,file
 				var pdfviewerInfo="";
 				var dialogviewerInfo="";
 				var ahref;
-				if(isImg(bfileurl) && imgviewerEnable){
+				if(isImg(tmpFilePaths) && imgviewerEnable){
 					imgviewerInfo = " data-imgviewer data-album='"+fileboxId+"' "
 					ahref=tmpFilePaths;
-				}else if(isPdf(bfileurl)  && pdfviewerEnable && pdfviewerUrl){
+				}else if(isPdf(tmpFilePaths)  && pdfviewerEnable && pdfviewerUrl){
 					if(pdfviewerUrl.indexOf("[file]")!=-1){
 						ahref =pdfviewerUrl.replace("[file]",tmpFilePaths);
 					}else{
