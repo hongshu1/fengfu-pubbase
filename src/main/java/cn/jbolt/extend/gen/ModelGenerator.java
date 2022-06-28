@@ -26,16 +26,18 @@ public class ModelGenerator extends JFinalModelGenerator{
 		//是否包含数据库视图生成 默认不生
 		boolean generateView = false;
 		//生成的Model java类需要去掉的前缀 多个用逗号隔开 内置已经去掉了核心表的前缀jb_
-		String removedTableNamePrefixes="";
+		String removedTableNamePrefixes="jb_";
 		//默认ID生成模式
 		String idGenMode=JBoltIDGenMode.SNOWFLAKE;//auto|snowflake|sequence
 		//生成Model放在哪个包下
-		String modelPackage="cn.jbolt.xxx.model";
+		String modelPackage="cn.jbolt.common.model";
 
 		//是否生成Model和BaseModel 如果设置为false 则只判断是否生成字典文件 直接不进行model和baseModel的生成
 		boolean genModel=true;
+		//如果model已经存在是否强制覆盖重新生成model 默认不强制覆盖model 只强制覆盖baseModel
+		boolean cover =  false;
 		//是否生成html格式数据字典
-		boolean genHtmlDataDictionary=true;
+		boolean genHtmlDataDictionary=false;
 		//数据库字典文件版本号 自己定义
 		String dataDictionaryVersion="1.0.0";
 		//数据流字典文件的简介描述信息
@@ -65,7 +67,7 @@ public class ModelGenerator extends JFinalModelGenerator{
 //		};
 		
 		//初始化项目配置
-		JBoltProjectGenConfig.init(projectRootPath,modelPackage,genModel,idGenMode,genHtmlDataDictionary,false,removedTableNamePrefixes,columnTobuildAttrNameFun,tableNames,tableNamesPrefixes,generateView);
+		JBoltProjectGenConfig.init(projectRootPath,modelPackage,genModel,idGenMode,genHtmlDataDictionary,false,removedTableNamePrefixes,columnTobuildAttrNameFun,tableNames,tableNamesPrefixes,generateView,cover);
 		//设置自动缓存机制
 		JBoltProjectGenConfig.setModelAutoCache(autoCacheEnable,idCacheEnable,keyCacheEnable,keyCacheColumn,keyCacheBindColumn);
 		//执行Model、BaseModel、数据字典Html的生成

@@ -10,7 +10,7 @@
         #set(cons = "String keywords")
     #end
 #end
-#if(conditions)
+#if(conditions!=null&&conditions.size()>0)
     #if(cons!="")
         #set(cons = cons + ", ")
         #for(con:conditions)
@@ -31,7 +31,7 @@
 	 #if(keywordsSearchColumns)
 	 * @param keywords   关键词
 	 #end
-	 #if(conditions)
+	 #if(conditions!=null&&conditions.size()>0)
      #for(col:conditions)
      * @param #(col.attrName??) #(col.tableLabel?? (col.formLabel?? (col.remark??)))
      #end
@@ -41,7 +41,7 @@
 	public#if(codeGen.isPaginate) Page#else List#end<#(codeGen.modelName)> getAdminDatas(#(cons??)) {
 	    //创建sql对象
 	    Sql sql = selectSql()#if(codeGen.isPaginate).page(pageNumber,pageSize)#end;
-	    #if(conditions)
+	    #if(conditions!=null&&conditions.size()>0)
 	    //sql条件处理
         #for(con:conditions)
         #if(con.javaType=="java.lang.Boolean" && con.attrLength==1)
@@ -51,7 +51,7 @@
         #end
         #end
         #end
-        #if(keywordsSearchColumns)
+        #if(keywordsSearchColumns!=null&&keywordsSearchColumns.size()>0)
         //关键词模糊查询
         #if(keywordsSearchColumns.size()>1)
         #setLocal(likes = "")
