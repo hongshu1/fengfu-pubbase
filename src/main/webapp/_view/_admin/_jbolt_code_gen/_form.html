@@ -49,7 +49,7 @@
 		<input type="text" class="form-control" data-rule="required" maxlength="100"  readonly="readonly" value="#(tableFullName??)" />
 		#else
 			<div class="input-group">
-			<input type="text" data-refresh="true" data-limit="20" data-text-attr="fullName" data-value-attr="remark" data-column-attr="name-50%,remark-50%" data-width="400" data-text-align="left" data-link-para-ele="#dataSource" autocomplete="off" data-autocomplete  data-url="admin/codegen/tablesAutocomplete"  data-hidden-input="main_table_name,main_table_remark" class="form-control" data-rule="required" placeholder="请选择数据表"  data-tips="请选择数据表"  maxlength="40" value="#(tableFullName??)" />
+			<input type="text" data-refresh="true" data-limit="20" data-text-attr="fullName" data-value-attr="remark" data-column-attr="name-50%,remark-50%" data-width="400" data-text-align="left" data-link-para-ele="#dataSource" autocomplete="off" data-autocomplete  data-url="admin/codegen/tablesAutocomplete" data-header="表名,表注释"  data-hidden-input="main_table_name,main_table_remark,remove_prefix" class="form-control" data-rule="required" placeholder="请选择数据表"  data-tips="请选择数据表"  maxlength="40" value="#(tableFullName??)" />
 			<div class="input-group-append hand" tooltip data-title="重新读取数据库" data-loading="重新加载中"  data-link-para-ele="#dataSource" data-ajaxbtn data-url="admin/codegen/reloadTables" data-handler="processTablesReloadHandler" >
 				<span class="input-group-text"><i class="fa fa-database text-danger"></i></span>
 			</div>
@@ -63,7 +63,7 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">删除表名前缀</label>
 		<div class="col-6">
-			<input type="text" autocomplete="off"  class="form-control" placeholder="请输入表名需要删除的前缀"  maxlength="40" name="codeGen.tableRemovePrefix" value="#(codeGen.tableRemovePrefix??)" />
+			<input type="text" id="remove_prefix" data-sync-attr="prefix" autocomplete="off"  class="form-control" placeholder="请输入表名需要删除的前缀"  maxlength="40" name="codeGen.tableRemovePrefix" value="#(codeGen.tableRemovePrefix??)" />
 		</div>
 	</div>
 	
@@ -155,7 +155,7 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">开发作者</label>
 		<div class="col-6">
-			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入开发作者" data-tips="请输入开发作者" maxlength="60" name="codeGen.author" value="#(codeGen.author??)" />
+			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入开发作者" data-tips="请输入开发作者" maxlength="60" name="codeGen.author" value="#(codeGen.author?? cn.jbolt.core.kit.JBoltUserKit::getUserName())" />
 		</div>
 	</div>
 	
