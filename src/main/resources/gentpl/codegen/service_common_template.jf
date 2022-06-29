@@ -10,17 +10,24 @@
         #set(cons = "String keywords")
     #end
 #end
-#if(conditions!=null&&conditions.size()>0)
+#if(sortableColumns)
     #if(cons!="")
-        #set(cons = cons + ", ")
-        #for(con:conditions)
-            #set(cons = cons + con.javaTypeName + " " + con.attrName + (for.last?"":", "))
-        #end
+         #set(cons = cons + ", String sortColumn, String sortType")
     #else
-        #for(con:conditions)
+        #set(cons = "String sortColumn, String sortType")
+    #end
+#end
+#if(conditions!=null&&conditions.size()>0)
+     #if(cons!="")
+        #set(cons = cons + ", ")
+     #end
+     #for(con:conditions)
+        #if(con.searchUiType && con.searchUiType.startsWith("laydate_range_"))
+            #set(cons = cons + "JBoltDateRange " + con.attrName +"Range" + (for.last?"":", "))
+        #else
             #set(cons = cons + con.javaTypeName + " " + con.attrName + (for.last?"":", "))
         #end
-    #end
+     #end
 #end
 	/**
 	 * 后台管理数据查询
@@ -31,9 +38,17 @@
 	 #if(keywordsSearchColumns)
 	 * @param keywords   关键词
 	 #end
+	 #if(sortableColumns)
+	 * @param sortColumn  排序列名
+	 * @param sortType  排序方式 asc desc
+	 #end
 	 #if(conditions!=null&&conditions.size()>0)
-     #for(col:conditions)
-     * @param #(col.attrName??) #(col.tableLabel?? (col.formLabel?? (col.remark??)))
+     #for(con:conditions)
+     #if(con.searchUiType && con.searchUiType.startsWith("laydate_range_"))
+     * @param #(con.attrName??)Range #(con.tableLabel?? (con.formLabel?? (con.remark??))) 区间
+     #else
+     * @param #(con.attrName??) #(con.tableLabel?? (con.formLabel?? (con.remark??)))
+     #end
      #end
      #end
 	 * @return
@@ -46,6 +61,8 @@
         #for(con:conditions)
         #if(con.javaType=="java.lang.Boolean" && con.attrLength==1)
         sql.eqBooleanToChar("#(con.colName)",#(con.attrName));
+        #else if(con.searchUiType && con.searchUiType.startsWith("laydate_range_"))
+        sql.betweenDateRange("#(con.colName)",#(con.attrName+"Range"));
         #else
         sql.eq("#(con.colName)",#(con.attrName));
         #end
@@ -62,6 +79,15 @@
         #else
         sql.like("#(keywordsSearchColumns[0].colName)",keywords);
         #end
+        #end
+        #if(sortableColumns)
+        //排序
+        sql.orderBy(sortColumn,sortType);
+        #else
+            #if(codeGen.tableDefaultSortColumn && codeGen.tableDefaultSortType)
+        //排序
+        sql.#(codeGen.tableDefaultSortType?? 'desc')("#(codeGen.tableDefaultSortColumn?? 'id')");
+            #end
         #end
 		return#if(codeGen.isPaginate) paginate#else find#end(sql);
 	}

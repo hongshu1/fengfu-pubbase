@@ -16,15 +16,30 @@
         #set(cons = "getKeywords()")
     #end
 #end
+#if(sortableColumns)
+    #if(cons!="")
+        #if(codeGen.tableDefaultSortColumn && codeGen.tableDefaultSortType)
+         #set(cons = cons + ", getSortColumn(\""+codeGen.tableDefaultSortColumn+"\"), getSortType(\""+codeGen.tableDefaultSortType+"\")")
+        #else
+         #set(cons = cons + ", getSortColumn(), getSortType()")
+        #end
+    #else
+        #if(codeGen.tableDefaultSortColumn && codeGen.tableDefaultSortType)
+        #set(cons = "getSortColumn(\""+codeGen.tableDefaultSortColumn+"\"), getSortType(\""+codeGen.tableDefaultSortType+"\")")
+        #else
+        #set(cons = "getSortColumn(), getSortType()")
+        #end
+    #end
+#end
 #if(conditions!=null&&conditions.size()>0)
     #if(cons!="")
         #set(cons = cons + ", ")
-        #for(con:conditions)
-            #set(cons = cons + "get"+con.javaTypeNameForGetPara + "(\""+con.attrName+"\")"+ (for.last?"":", "))
-        #end
-    #else
-        #for(con:conditions)
-            #set(cons = cons + "get"+con.javaTypeNameForGetPara + "(\""+con.attrName+"\")"+ (for.last?"":", "))
+    #end
+    #for(con:conditions)
+        #if(con.searchUiType && con.searchUiType.startsWith("laydate_range_"))
+        #set(cons = cons + "getDateRange"+ "(\""+con.attrName+"\","+con.searchUIDateRangeType+")"+ (for.last?"":", "))
+        #else
+        #set(cons = cons + "get"+con.javaTypeNameForGetPara + "(\""+con.attrName+"\")"+ (for.last?"":", "))
         #end
     #end
 #end
@@ -130,13 +145,13 @@
 #end
 
 
-#define c_initRank()
+#define c_initSortRank()
    /**
 	* 排序 初始化
 	*/
 	@Before(Tx.class)
-	public void initRank() {
-		renderJson(service.initRank());
+	public void initSortRank() {
+		renderJson(service.initSortRank());
 	}
 #end
 
@@ -213,8 +228,8 @@
 			#@c_up()
 		#case("down")
 			#@c_down()
-		#case("initRank")
-			#@c_initRank()
+		#case("initSortRank")
+			#@c_initSortRank()
 		#case("tree")
 			#@c_tree()
 		#case("options")
