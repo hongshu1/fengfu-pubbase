@@ -16,7 +16,7 @@
     #if(col.formUiType == "textarea")
     <textarea style="height:100px;" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))"  data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '200')" name="#(modelName).#(col.attrName)"></textarea>
     #else
-    <input type="#(type?? 'text')"  #if(col.formUiType == "calculator")data-with-calculator#end  #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"  #end data-with-clearbtn="true" autocomplete="off"  class="form-control"  #if(col.required) data-rule="required" #end placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '40')" name="#(modelName).#(col.attrName)" />
+    <input type="#(type?? 'text')"  #if(col.formUiType == "calculator")data-with-calculator#end  #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"  #end data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '40')" name="#(modelName).#(col.attrName)" />
     #end
     #if(isFormGroupRow)
 </div>
@@ -25,7 +25,7 @@
 
 ### 根据UIType字符串 生成form-group div 开始的html
 #define genFormGroupDivStart(isFormGroupRow,formControlWidth,col,hasTagEnd)
-<div class="form-group #(isFormGroupRow?'row':'')"  data-form-ele-width="#(col.formEleWidth?? (formControlWidth?? 10))" data-form-control-width="#(formControlWidth?? 10)" draggable="true" data-id="#(col.id)" #if(hasTagEnd)>#end
+<div class="form-group #(isFormGroupRow?'row':'')" #if(!codeGenServiceMode) data-form-ele-width="#(col.formEleWidth?? (formControlWidth?? 10))" data-form-control-width="#(formControlWidth?? 10)" draggable="true" data-id="#(col.id)" #end #if(hasTagEnd)>#end
     #end
     ### 根据UIType字符串 生成html5 date input类型html
     #define genHtml5DateInputByUiTypeStr(isFormGroupRow,modelName,formControlWidth,col)
@@ -240,7 +240,7 @@
 >
 #end
 
-#define switchFormColType(isFormGroupRow,modelName,labelWidth,formControlWidth,col)
+#define switchFormColType(isFormGroupRow,modelName,labelWidth,formControlWidth,col,codeGenServiceMode)
 #switch(col.formUiType)
 #case("input","password","number","textarea","calculator")
 #@genFormGroupDivStart(isFormGroupRow,formControlWidth,col,true)
@@ -281,7 +281,9 @@
 #@genFormGroupDivStart(isFormGroupRow,formControlWidth,col,false)
 data-radio
 data-name="#(modelName).#(col.attrName)"
+#if(!codeGenServiceMode)
 data-stop-propagation="#(editMode?? false)"
+#end
 #if(col.formDataValueAttr)
 data-value-attr="#(col.formDataValueAttr)"
 #end
@@ -294,9 +296,11 @@ data-label="#(col.formLabel)"
 #if(isFormGroupRow)
 data-width="col-sm-#(labelWidth?? 2),col-#((col.formEleWidth!=null&&col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))"
 #end
-#if(col.dataRule!=null || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'radio':''))" #end
+#if(col.dataRule || col.isRequired)
+data-rule="#(col.dataRule?? (col.isRequired?'radio':''))"
 data-notnull="#(col.isRequired)"
-#if(col.dataTips)data-tips="#(col.dataTips)"#end
+data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"
+#end
 data-inline="#(col.isItemInline?? true)"
 #@formTagEnd()
 #@formDivEnd()
@@ -321,9 +325,11 @@ data-label="#(col.formLabel)"
 #if(isFormGroupRow)
 data-width="col-sm-#(labelWidth?? 2),col-#((col.formEleWidth!=null&&col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))"
 #end
-#if(col.dataRule!=null || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'radio':''))" #end
+#if(col.dataRule || col.isRequired)
+data-rule="#(col.dataRule?? (col.isRequired?'radio':''))"
 data-notnull="#(col.isRequired)"
-#if(col.dataTips)data-tips="#(col.dataTips)"#end
+data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"
+#end
 data-inline="#(col.isItemInline?? true)"
 data-item-min-width="auto"
 #@formTagEnd()

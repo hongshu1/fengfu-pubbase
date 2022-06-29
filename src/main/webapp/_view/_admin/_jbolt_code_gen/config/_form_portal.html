@@ -1,16 +1,31 @@
 #if(colDatas==null || (colDatas.size()==1 && colDatas[0].datas.size()==0))
 	<div class="alert alert-danger m-auto">未设置任何属性用表单编辑</div>
 #else
+#if(codeGenServiceMode)
+<form onsubmit="return false;" id="#(codeGen.modelName)_Form" action="#[[#(action)]]#" method="post">
+	#if(post.id??)
+	<input type="hidden" name="post.id" value="#(post.id)" />
+	#end
+#end
 <div class="row">
 #for(colData:colDatas)
 <div class="col#((colData.col!=null && colData.col>0)?('-md-'+colData.col):'')#(codeGenServiceMode?'':' form_control_box')" >
 ### 挨个判断组件类型生成对应组件
 #for(col:colData.datas)
-	#@switchFormColType?(colData.isFormGroupRow,colData.modelName,colData.labelWidth,colData.formControlWidth,col)
+	#@switchFormColType?(colData.isFormGroupRow,colData.modelName,colData.labelWidth,colData.formControlWidth,col,codeGenServiceMode)
 #end
 </div>
 #end
 </div>
+#if(codeGenServiceMode)
+</form>
+#[[#define js()]]#
+<script>
+</script>
+#[[#]]#include("/_view/_admin/common/_formjs.html",formId="#(codeGen.modelName)_Form")
+#[[#end]]#
+#end
+
 #end
 #if(editMode)
 <!-- JBoltTable的数据模板定义-->
