@@ -1,43 +1,57 @@
+#if(codeGenServiceMode??)
+#[[#@jboltLayout()]]#
+#[[#define main()]]#
+#[[#set(pageId=RandomUtil.random(6))]]#
+#end
 #if(cols==null || cols.size()==0)
 	<div class="alert alert-danger m-auto">未设置任何表格显示列属性</div>
 #else
-<div class="jbolt_page" data-key="#(pmkey)">
-<div class="jbolt_page_title">
+<div class="jbolt_page#(codeGenServiceMode?'':' jb_vflex')" data-key="#[[#(pmkey??)]]#">
+<div class="jbolt_page_title#(codeGenServiceMode?'':' jb_vheader')">
 <div class="row">
 	<div class="col-sm-auto"><h1>#if(codeGen.indexHtmlPageIcon)<i class="#(codeGen.indexHtmlPageIcon??)"></i>#end #(codeGen.indexHtmlPageTitle?? codeGen.remark)</h1></div>
 	<div class="col">
 	#if(!codeGen.isTableMultiConditionsMode)
 	<form class="form-inline" id="#(codeGen.mainTableName)_form">
-	#include("_condition.html")
+		#if(conditions!=null&&conditions.size()>0)
+		#for(col:conditions)
+		#@switchIndexColType?(col)
+		#end
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		#end
 	</form>
 	#end
 	</div>
 	<div class="col-sm-auto">
 	#if(codeGen.isTableMultiConditionsMode)<button onclick="jboltTableToggleHeadbox(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-filter"></i> 筛选条件</button>#end
-	#if(codeGen.isPageTitleAddBtn)<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="#(codeGen.controllerKey)/add" data-handler="jboltTablePageToFirst" data-area="720,600" tooltip data-title="新增数据"><i class="fa fa-plus"></i></button>#end
+	#if(codeGen.isPageTitleAddBtn)<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="#(codeGen.controllerPathWithoutFirstSlash)/add" data-handler="jboltTablePageToFirst" data-area="720,600" tooltip data-title="新增数据"><i class="fa fa-plus"></i></button>#end
 	#if(codeGen.isPageTitleRefreshBtn)<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>#end
-	#if(codeGen.isPageTitleInitRankBtn)<button data-ajaxbtn data-confirm="确认初始化顺序吗？" data-handler="refreshJBoltTable" tooltip data-title="初始化排序" data-url="#(codeGen.controllerKey)/initRank" class="btn btn-outline-info btn-sm" ><i class="fa fa-sort"></i></button>#end
-	#if(codeGen.isPageTitleImportBtn)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGen.controllerKey)/initImportExcel" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>#end
-	#if(codeGen.isPageTitleExportBtn)<button class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="#(codeGen.controllerKey)/download"><i class="fa fa-download"></i></button>#end
+	#if(codeGen.isPageTitleInitRankBtn)<button data-ajaxbtn data-confirm="确认初始化顺序吗？" data-handler="refreshJBoltTable" tooltip data-title="初始化排序" data-url="#(codeGen.controllerPathWithoutFirstSlash)/initRank" class="btn btn-outline-info btn-sm" ><i class="fa fa-sort"></i></button>#end
+	#if(codeGen.isPageTitleImportBtn)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGen.controllerPathWithoutFirstSlash)/initImportExcel" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>#end
+	#if(codeGen.isPageTitleExportBtn)<button class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="#(codeGen.controllerPathWithoutFirstSlash)/exportExcel"><i class="fa fa-download"></i></button>#end
 	</div>
 </div>
 </div>
-<div class="jbolt_page_content">
+<div class="jbolt_page_content#(codeGenServiceMode?'':' jb_vbody')">
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="#(codeGen.mainTableName)_tpl">
 {@each datas as data,index}
 <tr data-id="${data.id}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 #for(col:cols)
+#if(col.isTableSwitchbtn)
+<td><img data-switchbtn data-confirm="确定切换#(col.tableLabel?? col.remark??)？" data-value="${data.#((codeGen.isTableUseRecord&&codeGen.isTableRecordCamelCase!=null&&codeGen.isTableRecordCamelCase==false)?col.colName:col.attrName)}"  data-handler="refreshJBoltTable"  data-url="#(codeGen.controllerPathWithoutFirstSlash??)/toggle#(firstCharToUpperCase(col.attrName?? ""))/${data.id}"/></td>
+#else
 <td>${data.#((codeGen.isTableUseRecord&&codeGen.isTableRecordCamelCase!=null&&codeGen.isTableRecordCamelCase==false)?col.colName:col.attrName)}</td>
+#end
 #end
 #if(codeGen.isShowOptcol)
 <td>
-#if(codeGen.isShowOptcolEdit)<a class="jbolt_table_editbtn" href="#(codeGen.controllerKey)/edit/${data.id}" data-handler="refreshJBoltTable" data-area="720,600" data-title="编辑数据"><i class="fa fa-edit"></i></a>#end
-#if(codeGen.isShowOptcolDel)<a class="jbolt_table_delbtn" href="#(codeGen.controllerKey)/delete/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>#end
+#if(codeGen.isShowOptcolEdit)<a class="jbolt_table_editbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/${data.id}" data-handler="refreshJBoltTable" data-area="720,600" data-title="编辑数据"><i class="fa fa-edit"></i></a>#end
+#if(codeGen.isShowOptcolDel)<a class="jbolt_table_delbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/delete/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>#end
 #if(codeGen.isShowOptcolSort)
-<a href="#(codeGen.controllerKey)/up/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
-<a href="#(codeGen.controllerKey)/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+<a href="#(codeGen.controllerPathWithoutFirstSlash)/up/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+<a href="#(codeGen.controllerPathWithoutFirstSlash)/down/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
 #end
 </td>
 #end
@@ -47,9 +61,9 @@
 #if(codeGen.isToolbar)
 <div class="jbolt_table_toolbar" id="#(codeGen.mainTableName)_toolbar">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-#if(codeGen.isToolbarAddBtn)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="新增版本" data-url="demo/jbolttable/add/" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>#end
-#if(codeGen.isToolbarEditBtn)<button data-dialogbtn data-area="600,400"  data-handler="refreshJBoltTable" data-title="编辑版本" data-check-handler="jboltTableGetCheckedId" data-url="demo/jbolttable/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>#end
-#if(codeGen.isToolbarDelBtn)<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="demo/jbolttable/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>#end
+#if(codeGen.isToolbarAddBtn)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="新增版本" data-url="#(codeGen.controllerPathWithoutFirstSlash)/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>#end
+#if(codeGen.isToolbarEditBtn)<button data-dialogbtn data-area="600,400"  data-handler="refreshJBoltTable" data-title="编辑版本" data-check-handler="jboltTableGetCheckedId" data-url="#(codeGen.controllerPathWithoutFirstSlash)/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>#end
+#if(codeGen.isToolbarDelBtn)<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" data-url="#(codeGen.controllerPathWithoutFirstSlash)/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>#end
 #if(codeGen.isToolbarRefreshBtn)<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>#end
 </div>
 #if(codeGen.toolbarExtraButtonSize>0)
@@ -61,8 +75,8 @@
 #end
 #if(codeGen.isImportExcel || codeGen.isExportExcel)
 <div class="btn-group btn-group-sm float-right" role="group" aria-label="btn-group">
-#if(codeGen.isImportExcel)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="demo/jbolttable/initImportExcel" class="btn btn-outline-primary" ><i class="fa fa-upload"></i> 导入</button>#end
-#if(codeGen.isExportExcel)<button class="btn btn-outline-primary" data-downloadbtn data-form="jboltversion_JboltTableForm_ajax_#(pageId)" data-usecheckedids="true"  data-url="demo/jbolttable/download"><i class="fa fa-download"></i> 导出</button>#end
+#if(codeGen.isImportExcel)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGen.controllerPathWithoutFirstSlash)/initImportExcel" class="btn btn-outline-primary" ><i class="fa fa-upload"></i> 导入</button>#end
+#if(codeGen.isExportExcel)<button class="btn btn-outline-primary" data-downloadbtn data-form="jboltversion_JboltTableForm_ajax_#(pageId)" data-usecheckedids="true"  data-url="#(codeGen.controllerPathWithoutFirstSlash)/download"><i class="fa fa-download"></i> 导出</button>#end
 </div>
 #end
  
@@ -105,30 +119,66 @@
 </div>
 #end
 <table class="jbolt_table jbolt_main_table #if(codeGen.isTableTextCenter==null || codeGen.isTableTextCenter==true) table-center #end"
-	data-jbolttable
-	data-width="#(codeGen.tableWidth=='assign'?(codeGen.tableWidthAssign?? 'fill'):codeGen.tableWidth)"
-	data-height="#(codeGen.tableHeight=='assign'?(codeGen.tableHeightAssign?? 'fill'):codeGen.tableHeight)"
-	data-ajax="true"
-	data-conditions-form="#(codeGen.mainTableName)_form"
-	data-url="admin/codegen/tablePortalDatas/#(codeGen.id)"
-	data-rowtpl="#(codeGen.mainTableName)_tpl"
-	#if(codeGen.isPaginate)data-page="#(codeGen.mainTableName)_page"#end
-	#if(codeGen.tablePagesizeOptions)data-pagesize-options="#(codeGen.tablePagesizeOptions)"#end
-	#if(codeGen.isTableColumnResize)data-column-resize="true"#end
-	#if(codeGen.isToolbar)data-toolbar="#(codeGen.mainTableName)_toolbar"#end
-	#if(codeGen.isTablePrependColumn)data-column-prepend="#(codeGen.tablePrependColumnIndex?? 1):#(codeGen.tablePrependColumnType?? 'checkbox'):#(codeGen.isTablePrependColumnClickActive?? false):#(codeGen.isTablePrependColumnLinkparent?? false):#(codeGen.isTablePrependColumnLinkson?? false)"#end
-	#if(codeGen.tableFixedColumnLeft)data-fixed-columns-left="#(codeGen.tableFixedColumnLeft)"#end
-	#if(codeGen.tableFixedColumnRight)data-fixed-columns-right="#(codeGen.tableFixedColumnRight)"#end
-	data-copy-to-excel="#(codeGen.isCopyToExcel?? false)"
-	#if(codeGen.isHeadbox)data-headbox="#(codeGen.mainTableName)_headbox"#end
-	#if(codeGen.isFootbox)data-footbox="#(codeGen.mainTableName)_footbox"#end
-	#if(codeGen.isLeftbox)data-leftbox="#(codeGen.mainTableName)_leftbox"#end
-	#if(codeGen.isRightbox)data-rightbox="#(codeGen.mainTableName)_rightbox"#end
-#if(sortableColumns)
-	data-sortable-columns="#(sortableColumns)"
-	data-sort="#((sortColumn&&sortType)?(sortColumn+':'+sortType):'')"
-	data-default-sort-column="#(codeGen.tableDefaultSortColumn??)"
-#end
+	   data-jbolttable
+	   data-width="#(codeGen.tableWidth=='assign'?(codeGen.tableWidthAssign?? 'fill'):codeGen.tableWidth)"
+	   #if(codeGenServiceMode??)
+	   data-height="#(codeGen.tableHeight=='assign'?(codeGen.tableHeightAssign?? 'fill'):codeGen.tableHeight)"
+	   #else
+	   data-height="#(codeGen.tableHeight=='assign'?(codeGen.tableHeightAssign?? 'fill_box'):'fill_box')"
+	   #end
+	   data-ajax="true"
+	   data-conditions-form="#(codeGen.mainTableName)_form"
+	   #if(codeGenServiceMode??)
+	   data-url="#(codeGen.controllerPathWithoutFirstSlash??)/datas"
+	   #else
+	   data-url="admin/codegen/tablePortalDatas/#(codeGen.id)"
+	   #end
+	   data-rowtpl="#(codeGen.mainTableName)_tpl"
+	   data-copy-to-excel="#(codeGen.isCopyToExcel?? false)"
+	#if(codeGen.isPaginate)
+	   data-page="#(codeGen.mainTableName)_page"
+	#end
+	#if(codeGen.tablePagesizeOptions)
+	   data-pagesize-options="#(codeGen.tablePagesizeOptions)"
+	#end
+	#if(codeGen.isTableColumnResize)
+	   data-column-resize="true"
+	#end
+	#if(codeGen.isToolbar)
+	   data-toolbar="#(codeGen.mainTableName)_toolbar"
+	#end
+	#if(codeGen.isTablePrependColumn)
+	   data-column-prepend="#(codeGen.tablePrependColumnIndex?? 1):#(codeGen.tablePrependColumnType?? 'checkbox'):#(codeGen.isTablePrependColumnClickActive?? false):#(codeGen.isTablePrependColumnLinkparent?? false):#(codeGen.isTablePrependColumnLinkson?? false)"
+	#end
+	#if(codeGen.tableFixedColumnLeft)
+	   data-fixed-columns-left="#(codeGen.tableFixedColumnLeft)"
+	#end
+	#if(codeGen.tableFixedColumnRight)
+	   data-fixed-columns-right="#(codeGen.tableFixedColumnRight)"
+	#end
+	#if(codeGen.isHeadbox)
+	   data-headbox="#(codeGen.mainTableName)_headbox"
+	#end
+	#if(codeGen.isFootbox)
+	   data-footbox="#(codeGen.mainTableName)_footbox"
+	#end
+	#if(codeGen.isLeftbox)
+	   data-leftbox="#(codeGen.mainTableName)_leftbox"
+	#end
+	#if(codeGen.isRightbox)
+	   data-rightbox="#(codeGen.mainTableName)_rightbox"
+	#end
+	#if(sortableColumns)
+	   data-sortable-columns="#(sortableColumns)"
+	   #if(sortColumn&&sortType)
+	   data-sort="#((sortColumn&&sortType)?(sortColumn+':'+sortType):'')"
+	   #else
+	   data-sort="#[[#((sortColumn&&sortType)?(sortColumn+':'+sortType):'')]]#"
+	   #end
+	   #if(codeGen.tableDefaultSortColumn??)
+	   data-default-sort-column="#(codeGen.tableDefaultSortColumn??)"
+	   #end
+	#end
 >
 <thead>
 <tr>
@@ -136,11 +186,14 @@
 #for(col:cols)
 <th data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" data-column="#(col.colName)">#(col.tableLabel?? col.attrName)</th>
 #end
-#if(codeGen.isShowOptcol)<th data-width="#(codeGen.tableOptcolWidth?? 70)">操作</th>#end
+#if(codeGen.isShowOptcol??)<th data-width="#(codeGen.tableOptcolWidth?? 70)">操作</th>#end
 </tr>
 </thead>
 <tbody></tbody>
 </table>
 </div>
 </div>
+#end
+#if(codeGenServiceMode??)
+#[[#end]]#
 #end
