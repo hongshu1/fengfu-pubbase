@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.8";
+var jbolt_table_js_version="2.7.9";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6,6 +6,24 @@ function clearJBoltCurrentEditableAndKeyEventTable(){
 }
 function changeJBoltCurrentEditableAndKeyEventTable(table){
 	JBoltCurrentEditableAndKeyEventTable=table;
+}
+
+/**
+ * 处理完成可编辑表格当前正在编辑的单元格 完成回显
+ * @param tableEle
+ * @param dontProcessExtraSomthing
+ */
+function finishEditingCells(tableEle,dontProcessExtraSomthing){
+	var table=getJBoltTableInst(tableEle);
+	if(!isOk(table)){
+		LayerMsgBox.alert("表格配置异常，无法找到对应表格",2);
+		return false;
+	}
+	if(!table.editable){
+		LayerMsgBox.alert("只要可编辑表格才能使用processEditingTds",2);
+		return false;
+	}
+	return table.me.processEditingTds(table,dontProcessExtraSomthing);
 }
 
 /**
@@ -42,6 +60,8 @@ function checkEditableCellRequired(tableEle,trs) {
 		LayerMsgBox.alert("只要可编辑表格才能使用checkEditableCellRequired",2);
 		return false;
 	}
+	//处理还在编辑状态的单元格 回显
+	table.me.processEditingTds(table);
 	return table.me.checkEditableCellRequired(table,trs);
 }
 
@@ -3663,6 +3683,8 @@ function getScrollBarHeight(ele){
 			if(notOk(trs)){
 				return true;
 			}
+			//处理还在编辑状态的单元格 回显
+			this.processEditingTds(table);
 			return this.checkEditableCellRequired(table,trs);
 		},
 		/**
