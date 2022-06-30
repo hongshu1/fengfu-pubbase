@@ -7,6 +7,9 @@ import cn.jbolt._admin.permission.PermissionKey;
 #if(permission.isSystemAdminDefault??)
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 #end
+#if(hasDateRangeColumn)
+import cn.jbolt.core.bean.JBoltDateRange;
+#end
 import com.jfinal.core.Path;
 import #(codeGen.servicePackage+"."+codeGen.serviceName??);
 #if(codeGen.isCrud?? && codeGen.isNeedAdminInterceptor??)

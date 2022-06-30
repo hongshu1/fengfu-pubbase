@@ -25,6 +25,7 @@
 <td data-value="${data.colFormat}">${data.colFormatName}</td>
 <td><img data-switchbtn data-value="${data.isSearchEle}" data-url="admin/codegen/modelattr/toggleIsSearchEle/${data.id}-#(codeGenId?? 0)"/></td>
 <td><img data-switchbtn data-value="${data.isKeywordsColumn}" data-url="admin/codegen/modelattr/toggleIsKeywordsColumn/${data.id}-#(codeGenId?? 0)"/></td>
+<td><img data-switchbtn data-value="${data.isSearchRequired}" data-url="admin/codegen/modelattr/toggleIsSearchRequired/${data.id}-#(codeGenId?? 0)"/></td>
 <td data-value="${data.searchUiType}">${data.searchUITypeName}</td>
 <td data-value="${data.searchDataType}"><span class="badge badge-info">${data.searchDataTypeName}</span></td>
 <td data-value="${data.searchDataValue}">${data.searchDataValueName}</td>
@@ -32,6 +33,8 @@
 <td>${data.searchDataTextAttr}</td>
 <td>${data.searchDataValueAttr}</td>
 <td>${data.searchDataColumnAttr}</td>
+<td data-value="${data.dataRuleForSearch}">${data.dataRuleForSearchName}</td>
+<td>${data.dataTipsForSearch}</td>
 <td><img data-switchbtn data-value="${data.isFormEle}" data-url="admin/codegen/modelattr/toggleIsFormEle/${data.id}-#(codeGenId?? 0)"/></td>
 <td><img data-switchbtn data-value="${data.isRequired}" data-url="admin/codegen/modelattr/toggleIsRequired/${data.id}-#(codeGenId?? 0)"/></td>
 <td><img data-switchbtn data-value="${data.isSingleLine}" data-url="admin/codegen/modelattr/toggleIsSingleLine/${data.id}-#(codeGenId?? 0)"/></td>
@@ -71,12 +74,12 @@
 <th rowspan="3" data-width="60" data-column="attr_length">长度</th>
 <th rowspan="3" data-width="70" data-column="attr_fixed">小数点</th>
 <th rowspan="3" data-width="80" data-column="is_pkey">主键</th>
-<th colspan="16" class="bg-primary text-white">列表页配置</th>
+<th colspan="19" class="bg-primary text-white">列表页配置</th>
 <th colspan="14" rowspan="2"  class="bg-info text-white">表单内配置</th>
 </tr>
 <tr>
 <th colspan="7" class="bg-info text-white">列表页基础配置</th>
-<th colspan="9" class="bg-success text-white">查询条件配置</th>
+<th colspan="12" class="bg-success text-white">查询条件配置</th>
 </tr>
 <tr>
 <th data-width="80" data-column="is_table_col">显示</th>
@@ -88,6 +91,7 @@
 <th data-width="250" data-column="col_format">格式化</th>
 <th data-width="100" data-column="is_search_ele">查询条件</th>
 <th data-min-width="100" data-column="is_keywords_column">关键词查询</th>
+<th data-width="80" data-column="is_search_required">必填</th>
 <th data-min-width="200" data-column="search_ui_type">UI组件</th>
 <th data-width="120" data-column="search_data_type">数据源类型</th>
 <th data-width="150" data-column="search_data_value">数据源值</th>
@@ -95,6 +99,8 @@
 <th data-width="120" data-column="search_data_text_attr">data-text-attr</th>
 <th data-width="150" data-column="search_data_value_attr">data-value-attr</th>
 <th data-width="150" data-column="search_data_column_attr">data-column-attr</th>
+<th data-width="150" data-column="data_rule_for_search">校验规则</th>
+<th data-width="300" data-column="data_tips_for_search">校验提示</th>
 
 <th data-width="80" data-column="is_form_ele">编辑</th>
 <th data-width="80" data-column="is_required">必填</th>

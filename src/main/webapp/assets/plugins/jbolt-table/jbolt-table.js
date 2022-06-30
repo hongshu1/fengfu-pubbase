@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.7";
+var jbolt_table_js_version="2.7.8";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -3673,16 +3673,17 @@ function getScrollBarHeight(ele){
 		 */
 		checkEditableCellRequired:function(table,trs){
 			table.tbody.find("td.is-invalid").removeClass("is-invalid").removeClass("imgbg");
+			var assignTr = isOk(trs);
 			//执行item表格 每一个修改了的行里是否有必填的没有填写
-			trs=isOk(trs)?trs:table.tbody.find("tr[data-changed='true']");
+			trs=assignTr?trs:table.tbody.find("tr[data-changed='true']");
 			if(isOk(trs)){
 				var tds,tempTr,tempTd,tempText,hasInvalid=false,count=0,size=trs.length;
 				$.each(trs,function(i,item){
 					tempTr = $(item);
-					if(!tempTr.data("changed")){
+					if(!assignTr && !tempTr.data("changed")){
 						return true;
 					}
-					tds=tempTr.find("td[data-submitattr!=''][data-required='true'][data-value='']");
+					tds=tempTr.find("td[data-required='true'][data-value='']");
 					if(isOk(tds)){
 						tds.addClass("is-invalid");
 						if(table.requiredImgbg){
@@ -3691,7 +3692,7 @@ function getScrollBarHeight(ele){
 						hasInvalid=true;
 						count=count+tds.length;
 					}
-					tds=tempTr.find("td[data-submitattr!=''][data-required='true']:not([data-value])");
+					tds=tempTr.find("td[data-required='true']:not([data-value])");
 					if(isOk(tds)){
 						tds.each(function(){
 							tempTd=$(this);
@@ -8522,6 +8523,7 @@ function getScrollBarHeight(ele){
 									var tds = table.table_box.find("table>tbody>tr>td[data-col-index='"+colIndex+"']");
 									if(isOk(tds)){
 										tds.data("editable",true).attr("data-editable",true);
+										tds.data("required",true).attr("data-required",true);
 										requiredCellClass=colConfig.requiredCellClass||table.editableOptions.requiredCellClass;
 										if(requiredCellClass){
 											tds.addClass(requiredCellClass);
@@ -10757,6 +10759,7 @@ function getScrollBarHeight(ele){
 									var tds = table.table_box.find("table>tbody>tr>td[data-col-index='"+colIndex+"']:not([data-editable='false'])");
 									if(isOk(tds)){
 										tds.data("editable",true).attr("data-editable",true);
+										tds.data("required",true).attr("data-required",true);
 										requiredCellClass=colConfig.requiredCellClass||table.editableOptions.requiredCellClass;
 										if(requiredCellClass){
 											tds.addClass(requiredCellClass);

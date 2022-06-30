@@ -106,6 +106,7 @@ public class AdminIndexController extends JBoltBaseController {
 		//删除cookie存的sessionId
 		removeCookie(JBoltConst.JBOLT_SESSIONID_KEY);
 		removeCookie(JBoltConst.JBOLT_SESSIONID_REFRESH_TOKEN);
+		removeCookie(JBoltConst.JBOLT_KEEPLOGIN_KEY);
 		redirect(JBoltBaseHandler.processBasepath(getRequest()));
 	}
 	/**
@@ -217,7 +218,7 @@ public class AdminIndexController extends JBoltBaseController {
 			//设置时长根据参数配置中的值 如果没配置或者获取配置异常 就按照默认8小时
 			setCookie(JBoltConst.JBOLT_SESSIONID_KEY,sessionId,keepLoginSeconds,JFinal.me().getContextPath(),true);
 			//设置refreshToken jwt
-			int refreshTokenLiveSeconds = keepLoginSeconds + 3600;
+			int refreshTokenLiveSeconds = keepLoginSeconds + 28800;
 			setCookie(JBoltConst.JBOLT_SESSIONID_REFRESH_TOKEN,onlineUserService.genNewSessionIdRefreshToken(user,sessionId,refreshTokenLiveSeconds),refreshTokenLiveSeconds,JFinal.me().getContextPath(),true);
 			//设置是否keepLogin
 			setCookie(JBoltConst.JBOLT_KEEPLOGIN_KEY,keeplogin?"true":"false",refreshTokenLiveSeconds,JFinal.me().getContextPath(),true);
