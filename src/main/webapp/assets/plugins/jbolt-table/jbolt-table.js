@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.7.9";
+var jbolt_table_js_version="2.8.0";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -4344,6 +4344,10 @@ function getScrollBarHeight(ele){
 			return datas[dataIndex];
 		},
 		getCheckedEles:function(table){
+			if(table.editable){
+				//处理回显
+				this.processEditingTds(table);
+			}
 			var columnprepend=table.data("column-prepend");
 			if(!columnprepend){
 				columnprepend="checkbox";
