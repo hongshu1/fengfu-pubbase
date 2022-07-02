@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.6.1";
+var jbolt_admin_js_version="5.6.2";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -1529,6 +1529,7 @@ var CityPickerUtil={
 	             placeholder: placeholder,
 				 strict:strict,
 	             onClear:function(){
+					 that.clearHidden(setValueArr);
 	            	 if(clearHandler){
 	            		 var exeClearHandler=eval(clearHandler);
 	         			 if(exeClearHandler&&typeof(exeClearHandler)=="function"){
@@ -1605,6 +1606,11 @@ var CityPickerUtil={
 	   		 }
 		}
 		
+	},
+	clearHidden:function(setValueArr){
+		for(var i in setValueArr) {
+			$("#"+setValueArr[i][0]).val("").change();
+		}
 	},
 	selectCity:function(cp,code,name,all,setValueArr){
 		var hiddeninputId,hiddeninputName,valueAttr,inputValue,hiddenInput,len=0;

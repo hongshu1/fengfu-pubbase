@@ -32,7 +32,7 @@
 		<caffeine.version>2.9.3</caffeine.version>
 		<jedis.version>3.8.0</jedis.version>
 		<fst.version>2.57</fst.version>
-		<hutool.version>5.8.3</hutool.version>
+		<hutool.version>5.8.4</hutool.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<log4j2.version>2.17.2</log4j2.version>
 		<jfinalundertow.version>3.0</jfinalundertow.version>
@@ -56,7 +56,7 @@
 		<ttl.version>2.12.6</ttl.version>
 		<jboltcore.version>4.1.2</jboltcore.version>
 
-        <kotlin.version>1.6.21</kotlin.version>
+        <kotlin.version>1.7.0</kotlin.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <wildfly-common.version>1.6.0.Final</wildfly-common.version>
