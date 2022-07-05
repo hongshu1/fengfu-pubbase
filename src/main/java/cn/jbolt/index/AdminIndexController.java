@@ -1,9 +1,7 @@
 package cn.jbolt.index;
 
 import java.io.File;
-
 import javax.servlet.http.HttpSession;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.aop.Inject;
@@ -57,6 +55,7 @@ public class AdminIndexController extends JBoltBaseController {
 		set("hasEnableTopnav", topnavService.checkHasEnableTopnav());
 		render("index.html");
 	}
+
 	@UnCheck
 	public void menu(){
 		set("leftMenus", JBoltPermissionCache.me.getRoleMenus(JBoltUserKit.getUserRoleIds()));
