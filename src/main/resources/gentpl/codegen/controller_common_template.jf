@@ -110,6 +110,20 @@
 	}
 #end
 
+#define c_recover()
+   /**
+	* 恢复假删数据
+	*/
+	@Before(Tx.class)
+	public void recover() {
+	#if(codeGen.checkCanRecover??)
+		renderJson(service.recoverById(get#(getIdType?? 'Long')(0),true));
+	#else
+		renderJson(service.recoverById(get#(getIdType?? 'Long')(0)));
+	#end
+	}
+#end
+
 #define c_deleteByIds()
    /**
 	* 批量删除
@@ -120,6 +134,20 @@
 		renderJson(service.deleteByIds(get("ids"),true));
 	#else
 		renderJson(service.deleteByIds(get("ids")));
+	#end
+	}
+#end
+
+#define c_recoverByIds()
+   /**
+	* 批量恢复假删数据
+	*/
+	@Before(Tx.class)
+	public void recoverByIds() {
+	#if(codeGen.checkCanRecover??)
+		renderJson(service.recoverByIds(get("ids"),true));
+	#else
+		renderJson(service.recoverByIds(get("ids")));
 	#end
 	}
 #end
@@ -222,6 +250,10 @@
 			#@c_delete()
 		#case("deleteByIds")
 			#@c_deleteByIds()
+		#case("recoverByIds")
+        	#@c_recoverByIds()
+        #case("recover")
+            #@c_recover()
 		#case("toggleEnable")
 			#@c_toggleEnable()
 		#case("up")
