@@ -9,8 +9,8 @@ import cn.jbolt.core.enumutil.JBoltEnum;
  */
 public enum ProjectSystemLogTargetType {
 	NONE("NONE",0),
-//	SCHOOL("学校",20001),
-//	GRADE("年级",20002),
+	GRADE("年级",20005),
+	SCHOOL("学校",20006)
 	;
 	private String text;
 	private int value;
