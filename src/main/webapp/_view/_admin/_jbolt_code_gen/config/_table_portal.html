@@ -19,8 +19,8 @@
 		#end
 		#if(hasIsDeletedColumn)
 		<input type="hidden" name="is_deleted" value="false"/>
-		<button onclick="#(codeGen.modelName)_formSearch#if(codeGenServiceMode??)_#[[#]]#(pageId)#end('#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end',false)" id="searchBtn_#(pageId)"  type="button" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-		<button onclick="#(codeGen.modelName)_formSearch#if(codeGenServiceMode??)_#[[#]]#(pageId)#end('#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end',true)"  id="trashBtn_#(pageId)"  type="button" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 回收站</button>
+		<button onclick="#(codeGen.modelName)_formSearch#if(codeGenServiceMode??)_#[[#]]#(pageId)#end('#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end',false)" id="form_searchBtn_#(pageId)"  type="button" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button onclick="#(codeGen.modelName)_formSearch#if(codeGenServiceMode??)_#[[#]]#(pageId)#end('#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end',true)"  id="form_trashBtn_#(pageId)"  type="button" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 回收站</button>
 		#else
 		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 		#end
@@ -83,16 +83,16 @@
 <div class="jbolt_table_toolbar" id="#(codeGen.modelName)_toolbar#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 #if(codeGen.isToolbarAddBtn)
-	<button data-dialogbtn data-area="#(codeGen.formDialogArea?? '800,600')"  data-handler="jboltTablePageToFirst" data-title="新增#(codeGen.mainTableRemark??)" data-url="#(codeGen.controllerPathWithoutFirstSlash)/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="#(codeGen.formDialogArea?? '800,600')"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  data-title="新增#(codeGen.mainTableRemark??)" data-url="#(codeGen.controllerPathWithoutFirstSlash)/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
 #end
 #if(codeGen.isToolbarEditBtn)
-	<button data-dialogbtn data-area="#(codeGen.formDialogArea?? '800,600')"  data-handler="refreshJBoltTable" data-title="编辑#(codeGen.mainTableRemark??)" data-check-handler="jboltTableGetCheckedId" data-url="#(codeGen.controllerPathWithoutFirstSlash)/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-dialogbtn data-area="#(codeGen.formDialogArea?? '800,600')"  data-handler="refreshJBoltTable"  id="toolbar_editBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  data-title="编辑#(codeGen.mainTableRemark??)" data-check-handler="jboltTableGetCheckedId" data-url="#(codeGen.controllerPathWithoutFirstSlash)/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
 #end
 #if(codeGen.isToolbarDelBtn)
-	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" data-url="#(codeGen.controllerPathWithoutFirstSlash)/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end" data-url="#(codeGen.controllerPathWithoutFirstSlash)/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
 #end
 #if(hasIsDeletedColumn && codeGen.isToolbarRecoverBtn)
-	<button style="display:none;" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="recoverBtn_#(pageId)" data-url="admin/codegen/recoverByIds?ids=" data-confirm="确定还原回收站里选中数据？" class="btn btn-outline-info btn-sm" ><i class="fa fa-reply"></i> 还原</button>
+	<button style="display:none;" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_recoverBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end" data-url="admin/codegen/recoverByIds?ids=" data-confirm="确定还原回收站里选中数据？" class="btn btn-outline-info btn-sm" ><i class="fa fa-reply"></i> 还原</button>
 #end
 #if(codeGen.isToolbarRefreshBtn)<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>#end
 </div>
@@ -234,18 +234,22 @@
 		var form=$("#"+formId);
 		form.find("input[name='is_deleted']").val(isDeleted);
 		if(isDeleted){
-			$("#searchBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").removeClass("btn-primary").addClass("btn-outline-secondary");
-			$("#trashBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").removeClass("btn-outline-danger").addClass("btn-danger");
+			$("#form_searchBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").removeClass("btn-primary").addClass("btn-outline-secondary");
+			$("#form_trashBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").removeClass("btn-outline-danger").addClass("btn-danger");
 			#if(codeGen.isToolbar && codeGen.isToolbarRecoverBtn)
-			$("#recoverBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").show();
-			$("#deleteBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").hide();
+			$("#toolbar_recoverBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").show();
+			$("#toolbar_deleteBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").hide();
+			$("#toolbar_addBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").hide();
+			$("#toolbar_editBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").hide();
 			#end
 		}else{
-			$("#searchBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").removeClass("btn-outline-secondary").addClass("btn-primary");
-			$("#trashBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").removeClass("btn-danger").addClass("btn-outline-danger");
+			$("#form_searchBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").removeClass("btn-outline-secondary").addClass("btn-primary");
+			$("#form_trashBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").removeClass("btn-danger").addClass("btn-outline-danger");
 			#if(codeGen.isToolbar && codeGen.isToolbarRecoverBtn)
-			$("#recoverBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").hide();
-			$("#deleteBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").show();
+			$("#toolbar_recoverBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").hide();
+			$("#toolbar_deleteBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").show();
+			$("#toolbar_addBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").show();
+			$("#toolbar_editBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end").show();
 			#end
 		}
 		form.submit();

@@ -44,8 +44,8 @@
 					data-text="=生成状态="
 					data-value=""></select>
 
-					<button onclick="codeGenFormSearch_#(pageId)('jbolt_codegen_form_#(pageId)',false)" id="searchBtn_#(pageId)"  type="button" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-					<button onclick="codeGenFormSearch_#(pageId)('jbolt_codegen_form_#(pageId)',true)"  id="trashBtn_#(pageId)"  type="button" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 回收站</button>
+					<button onclick="codeGenFormSearch_#(pageId)('jbolt_codegen_form_#(pageId)',false)" id="toolbar_searchBtn_#(pageId)"  type="button" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+					<button onclick="codeGenFormSearch_#(pageId)('jbolt_codegen_form_#(pageId)',true)"  id="toolbar_trashBtn_#(pageId)"  type="button" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 回收站</button>
 				</form>
 			</div>
 			<div class="col-sm-auto">
@@ -87,10 +87,10 @@
 </textarea>
 <div class="jbolt_table_toolbar" id="codegen_table_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-<button data-dialogbtn data-area="1280,900"  data-handler="refreshJBoltTable" data-title="新增代码生成配置-基础" data-url="admin/codegen/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-<button data-dialogbtn data-area="1280,900"  data-handler="refreshJBoltTable" data-title="编辑代码生成配置-基础" data-check-handler="jboltTableGetCheckedId" data-url="admin/codegen/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
-<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="deleteBtn_#(pageId)" data-url="admin/codegen/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
-<button style="display:none;" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="recoverBtn_#(pageId)" data-url="admin/codegen/recoverByIds?ids=" data-confirm="确定还原回收站里选中数据？" class="btn btn-outline-info btn-sm" ><i class="fa fa-reply"></i> 还原</button>
+<button data-dialogbtn data-area="1280,900"  data-handler="refreshJBoltTable" data-title="新增代码生成配置-基础" id="toolbar_addBtn_#(pageId)" data-url="admin/codegen/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+<button data-dialogbtn data-area="1280,900"  data-handler="refreshJBoltTable" data-title="编辑代码生成配置-基础" id="toolbar_editBtn_#(pageId)" data-check-handler="jboltTableGetCheckedId" data-url="admin/codegen/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/codegen/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button style="display:none;" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_recoverBtn_#(pageId)" data-url="admin/codegen/recoverByIds?ids=" data-confirm="确定还原回收站里选中数据？" class="btn btn-outline-info btn-sm" ><i class="fa fa-reply"></i> 还原</button>
 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-secondary" ><i class="fa fa-refresh"></i> 刷新</button>
 </div>
 </div>
@@ -144,15 +144,19 @@ function codeGenFormSearch_#(pageId)(formId,isDeleted){
 	var form=$("#"+formId);
 	form.find("input[name='is_deleted']").val(isDeleted);
 	if(isDeleted){
-		$("#searchBtn_#(pageId)").removeClass("btn-primary").addClass("btn-outline-secondary");
-		$("#trashBtn_#(pageId)").removeClass("btn-outline-danger").addClass("btn-danger");
-		$("#recoverBtn_#(pageId)").show();
-		$("#deleteBtn_#(pageId)").hide();
+		$("#toolbar_searchBtn_#(pageId)").removeClass("btn-primary").addClass("btn-outline-secondary");
+		$("#toolbar_trashBtn_#(pageId)").removeClass("btn-outline-danger").addClass("btn-danger");
+		$("#toolbar_recoverBtn_#(pageId)").show();
+		$("#toolbar_deleteBtn_#(pageId)").hide();
+		$("#toolbar_addBtn_#(pageId)").hide();
+		$("#toolbar_editBtn_#(pageId)").hide();
 	}else{
-		$("#searchBtn_#(pageId)").removeClass("btn-outline-secondary").addClass("btn-primary");
-		$("#trashBtn_#(pageId)").removeClass("btn-danger").addClass("btn-outline-danger");
-		$("#recoverBtn_#(pageId)").hide();
-		$("#deleteBtn_#(pageId)").show();
+		$("#toolbar_searchBtn_#(pageId)").removeClass("btn-outline-secondary").addClass("btn-primary");
+		$("#toolbar_trashBtn_#(pageId)").removeClass("btn-danger").addClass("btn-outline-danger");
+		$("#toolbar_recoverBtn_#(pageId)").hide();
+		$("#toolbar_deleteBtn_#(pageId)").show();
+		$("#toolbar_addBtn_#(pageId)").show();
+		$("#toolbar_editBtn_#(pageId)").show();
 		}
 	form.submit();
 }
