@@ -29,6 +29,9 @@ public class CodeGenModelAttr extends BaseCodeGenModelAttr<CodeGenModelAttr> {
         if("Integer".equals(name)){
             return "Int";
         }
+        if("String".equals(name)){
+            return "Str";
+        }
         return name;
     }
     public String getFormUITypeName() {
