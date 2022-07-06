@@ -248,7 +248,7 @@
 	}
 #end
 
-#define s_afterToggleBoolean()
+#define s_afterToggleBoolean(toggleColumns)
 #setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
 	/**
 	 * toggle操作执行后的回调处理
@@ -259,6 +259,16 @@
 		addUpdateSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), #(fctucName).getName(),"的字段["+column+"]值:"+#(fctucName).get(column));
 		#else
 		//addUpdateSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(), #(fctucName).getName(),"的字段["+column+"]值:"+#(fctucName).get(column));
+		#end
+		#if(toggleColumns)
+		/**
+		switch(column){
+            #for(col:toggleColumns)
+		    case "#(col??)":
+		        break;
+		    #end
+		}
+		*/
 		#end
 		return null;
 	}
@@ -382,7 +392,7 @@
 		#case("checkInUse")
 			#@s_checkInUse()
 		#case("afterToggleBoolean")
-			#@s_afterToggleBoolean()
+			#@s_afterToggleBoolean(method.toggleColumns)
 		#case("afterDelete")
 			#@s_afterDelete()
 		#case("afterRecover")

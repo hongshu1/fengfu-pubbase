@@ -15,6 +15,7 @@ import cn.jbolt.core.db.datasource.JBoltDataSourceUtil;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -53,6 +54,16 @@ public class CodeGenAdminController extends JBoltBaseController {
 	 */
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getInt("pid"),getPageNumber(), getPageSize(), getSortColumn("update_time"), getSortType("desc"), getKeywords(), getInt("style"), getState(),getBoolean("is_deleted"),"table_name,author,remark,version_sn,version_remark"));
+	}
+
+	/**
+	 * autocomplete组件默认的demo数据源
+	 */
+	@UnCheck
+	public void autocompletedemodatas(){
+		List<Option> options = new ArrayList<>();
+		options.add(new OptionBean("demo数据，请更换地址","0"));
+		renderJsonData(options);
 	}
 	
 	/**

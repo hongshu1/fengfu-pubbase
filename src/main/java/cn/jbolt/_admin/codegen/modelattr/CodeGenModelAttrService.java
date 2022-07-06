@@ -176,11 +176,14 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		if(colLow.endsWith("_id") && !colLow.equals("create_user_id") && !colLow.equals("update_user_id") && !colLow.equals("delete_user_id")){
 			attr.setSearchUiType("autocomplete");
 			attr.setSearchDataType("url");
+			attr.setSearchDataValue("admin/codegen/autocompletedemodatas");
 			attr.setFormUiType("autocomplete");
 			attr.setFormDataType("url");
+			attr.setFormDataValue("admin/codegen/autocompletedemodatas");
 			if(isEditable){
 				attr.setTableUiType("autocomplete");
 				attr.setTableDataType("url");
+				attr.setTableDataValue("admin/codegen/autocompletedemodatas");
 			}
 		}
 
