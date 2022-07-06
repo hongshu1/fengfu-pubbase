@@ -219,7 +219,7 @@
 	*/
 	@Before(Tx.class)
 	public void #(name)() {
-	    renderJson(service.toggleBoolean(get#(getIdType?? 'Long')(0)),"#(colName??)"));
+	    renderJson(service.toggleBoolean(get#(getIdType?? 'Long')(0),"#(colName??)"));
 	}
 #end
 
