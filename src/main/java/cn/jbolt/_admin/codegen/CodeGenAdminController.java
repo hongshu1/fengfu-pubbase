@@ -294,6 +294,25 @@ public class CodeGenAdminController extends JBoltBaseController {
 			return;
 		}
 		set("editMode", false);
+		set("codeGen",service.findById(codeGenId));
+		set("colDatas", codeGenModelAttrService.getCodeGenFormColDatas(codeGenId,false));
+		render("config/_form_portal.html");
+	}
+	public void testAjax(){
+		renderJsonSuccess();
+	}
+	/**
+	 * form portal test 测试预览
+	 */
+	public void formPortalTest() {
+		Long codeGenId = getLong(0);
+		if(notOk(codeGenId)) {
+			renderAjaxPortalFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		set("editMode", false);
+		set("codeGenServiceModeTest", true);
+		set("codeGen",service.findById(codeGenId));
 		set("colDatas", codeGenModelAttrService.getCodeGenFormColDatas(codeGenId,false));
 		render("config/_form_portal.html");
 	}
@@ -315,6 +334,8 @@ public class CodeGenAdminController extends JBoltBaseController {
 		if(isOk(codeGen.getTableDefaultSortColumn())) {
 			setDefaultSortInfo(codeGen.getTableDefaultSortColumn(), codeGen.getTableDefaultSortType());
 		}
+		boolean hasIsDeletedColumn = codeGenModelAttrService.checkHasIsDeletedColumn(codeGen.getId());
+		set("hasIsDeletedColumn",hasIsDeletedColumn);
 		set("sortableColumns", codeGenModelAttrService.getSortableColumnsStr(codeGenId));
 		set("cols", codeGenModelAttrService.getCodeGenTableColumns(codeGenId));
 		set("conditions", codeGenModelAttrService.getCodeGenTableConditions(codeGenId));
