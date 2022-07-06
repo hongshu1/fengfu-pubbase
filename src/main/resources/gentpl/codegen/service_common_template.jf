@@ -73,9 +73,9 @@
         #if(keywordsSearchColumns.size()>1)
         #setLocal(likes = "")
         #for(col:keywordsSearchColumns)
-        #setLocal(likes = likes + col.colName + (for.last?"":", "))
+        #setLocal(likes = likes + "\"" + col.colName + "\"" + (for.last?"":", "))
         #end
-        sql.likeMulti(keywords,likes);
+        sql.likeMulti(keywords,#(likes?? '\"\"'));
         #else
         sql.like("#(keywordsSearchColumns[0].colName)",keywords);
         #end
