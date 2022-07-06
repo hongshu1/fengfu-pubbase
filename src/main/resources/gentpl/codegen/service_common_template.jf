@@ -281,6 +281,24 @@
 		return null;
 	}
 #end
+
+#define s_afterRecover()
+  #setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
+	/**
+	 * 恢复假删数据后执行的回调
+	 * @param #(fctucName) 要恢复的model
+	 * @return
+	 */
+	@Override
+	protected String afterDelete(#(codeGen.modelName) #(fctucName)) {
+		#if(codeGen.isProjectSystemLog && codeGen.projectSystemLogTargetTypeKeyName!="NONE")
+		addRecoverSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(),#(fctucName).getName());
+		#else
+		//addRecoverSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(),#(fctucName).getName());
+		#end
+		return null;
+	}
+#end
 #define s_checkCanToggle()
   #setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
 	/**
@@ -292,6 +310,20 @@
 	 */
 	@Override
 	public String checkCanToggle(#(codeGen.modelName) #(fctucName),String column, Kv kv) {
+		//没有问题就返回null  有问题就返回提示string 字符串
+		return null;
+	}
+#end
+
+#define s_checkCanRecover()
+  #setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
+	/**
+	 * 检测是否可以恢复假删数据
+	 * @param #(fctucName) 要恢复的model
+	 * @return
+	 */
+	@Override
+	public String checkCanRecover(#(codeGen.modelName) #(fctucName)) {
 		//没有问题就返回null  有问题就返回提示string 字符串
 		return null;
 	}
@@ -345,12 +377,16 @@
 			#@s_checkCanDelete()
 		#case("checkCanToggle")
 			#@s_checkCanToggle()
+		#case("checkCanRecover")
+        	#@s_checkCanRecover()
 		#case("checkInUse")
 			#@s_checkInUse()
 		#case("afterToggleBoolean")
 			#@s_afterToggleBoolean()
 		#case("afterDelete")
 			#@s_afterDelete()
+		#case("afterRecover")
+        	#@s_afterRecover()
 		#case("up")
 			#@s_up()
 		#case("down")

@@ -1,10 +1,11 @@
 package cn.jbolt._admin.permission;
 /**
- * 由PermissionKeyGen生成的 权限定义KEY 
- * 用于在注解里使用
+ * 权限定义KEY  用于在注解里使用
+ * 举例 @CheckPermission(PermissionKey.USER)
+ * 此文件由JBoltGeneratorGUI生成 请勿手动修改
  */
 public class PermissionKey {
-	/**
+    /**
 	 * 空权限
 	 */
 	public static final String NONE = "NONE";
@@ -20,6 +21,14 @@ public class PermissionKey {
 	 * 用户管理
 	 */
 	public static final String USER = "user";
+	/**
+	 * 部门管理
+	 */
+	public static final String DEPT = "dept";
+	/**
+	 * 岗位管理
+	 */
+	public static final String POST = "post";
 	/**
 	 * 权限配置
 	 */
@@ -49,6 +58,22 @@ public class PermissionKey {
 	 */
 	public static final String GLOBALCONFIG = "globalconfig";
 	/**
+	 * 系统通知
+	 */
+	public static final String SYS_NOTICE = "sys_notice";
+	/**
+	 * 七牛配置
+	 */
+	public static final String QINIU_CONFIG = "qiniu_config";
+	/**
+	 * 七牛账号
+	 */
+	public static final String QINIU = "qiniu";
+	/**
+	 * 七牛Bucket
+	 */
+	public static final String QINIU_BUCKET = "qiniu_bucket";
+	/**
 	 * 系统监控
 	 */
 	public static final String JBOLT_MONITOR = "jbolt_monitor";
@@ -72,6 +97,10 @@ public class PermissionKey {
 	 * 关键操作日志
 	 */
 	public static final String SYSTEMLOG = "systemlog";
+	/**
+	 * 在线用户
+	 */
+	public static final String ONLINE_USER = "online_user";
 	/**
 	 * 开发平台
 	 */
@@ -121,75 +150,11 @@ public class PermissionKey {
 	 */
 	public static final String WECHAT_CONFIG_EXTRAMGR = "wechat_config_extramgr";
 	/**
-	 * 电商平台
-	 */
-	public static final String MALL = "mall";
-	/**
-	 * 商品管理
-	 */
-	public static final String MALL_GOODS = "mall_goods";
-	/**
-	 * 商品类目_后端
-	 */
-	public static final String MALL_GOODS_BACK_CATEGORY = "mall_goods_back_category";
-	/**
-	 * 商品类目_前端
-	 */
-	public static final String MALL_GOODS_FRONT_CATEGORY = "mall_goods_front_category";
-	/**
-	 * 物流配送
-	 */
-	public static final String MALL_SHIPPING = "mall_shipping";
-	/**
-	 * 系统规格管理
-	 */
-	public static final String MALL_SPEC = "mall_spec";
-	/**
-	 * 商品类型
-	 */
-	public static final String MALL_GOODSTYPE = "mall_goodstype";
-	/**
-	 * 品牌库
-	 */
-	public static final String MALL_BRAND = "mall_brand";
-	/**
-	 * Demo与教程
-	 */
-	public static final String DEMO = "demo";
-	/**
-	 * 机构管理
-	 */
-	public static final String DEPT = "dept";
-	/**
-	 * 岗位管理
-	 */
-	public static final String POST = "post";
-	/**
-	 * 在线用户
-	 */
-	public static final String ONLINE_USER = "online_user";
-	/**
-	 * 系统通知
-	 */
-	public static final String SYS_NOTICE = "sys_notice";
-	/**
-	 * 待办事项
-	 */
-	public static final String SYS_TODO = "sys_todo";
-	/**
-	 * ureport 设计器
+	 * 报表设计器
 	 */
 	public static final String UREPORT_DESIGNER = "ureport_designer";
 	/**
-	 * 独立逻辑权限
-	 */
-	public static final String LOGIC_PERMISSION = "logic_permission";
-	/**
-	 * ureport 报表详情
-	 */
-	public static final String UREPORT_DETAIL = "ureport_detail";
-	/**
-	 * HiPrint打印
+	 * 打印设计器
 	 */
 	public static final String HIPRINT_DESIGN = "hiprint_design";
 	/**
@@ -197,15 +162,12 @@ public class PermissionKey {
 	 */
 	public static final String JBOLT_CODE_GEN = "jbolt_code_gen";
 	/**
-	 * 七牛配置
+	 * 独立逻辑权限
 	 */
-	public static final String QINIU_CONFIG = "qiniu_config";
+	public static final String LOGIC_PERMISSION = "logic_permission";
 	/**
-	 * 七牛账号
+	 * Ureport报表查看权
 	 */
-	public static final String QINIU = "qiniu";
-	/**
-	 * 七牛Bucket
-	 */
-	public static final String QINIU_BUCKET = "qiniu_bucket";
+	public static final String UREPORT_DETAIL = "ureport_detail";
+
 }

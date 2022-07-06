@@ -194,7 +194,7 @@ public class ApiTestController extends JBoltApiBaseController {
 	@JBoltApplyJWT
 	public void login() {
 		//用户存在的话 设置到threadLocal中拦截器得 这里需要开发者自行设置登录后的用户信息进去
-		JBoltApiKit.setApplyJwtUser(new JBoltApiUserBean(1,1, "zhangsan"));
+		JBoltApiKit.setApplyJwtUser(new JBoltApiUserBean("1536967936978325504","1536968835087863808", "zhangsan"));
 		//模拟用户信息 这里可能是微信授权登录
 		renderJBoltApiSuccess("登录成功",Okv.by("appId", getAppId()));
 	}
@@ -214,7 +214,7 @@ public class ApiTestController extends JBoltApiBaseController {
 	@JBoltApplyJWT
 	public void applyJwt() {
 		//用户存在的话 设置到threadLocal中拦截器得 这里需要开发者自行设置登录后的用户信息进去
-		JBoltApiKit.setApplyJwtUser(new JBoltApiUserBean(1,1, "zhangsan"));
+		JBoltApiKit.setApplyJwtUser(new JBoltApiUserBean("1536967936978325504","1536968835087863808", "zhangsan"));
 		//模拟用户信息 这里可能是微信授权登录
 		renderJBoltApiSuccess("登录成功",Okv.by("appId", getAppId()));
 	}
