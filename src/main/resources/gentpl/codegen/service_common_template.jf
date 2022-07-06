@@ -300,7 +300,7 @@
 	 * @return
 	 */
 	@Override
-	protected String afterDelete(#(codeGen.modelName) #(fctucName)) {
+	protected String afterRecover(#(codeGen.modelName) #(fctucName)) {
 		#if(codeGen.isProjectSystemLog && codeGen.projectSystemLogTargetTypeKeyName!="NONE")
 		addRecoverSystemLog(#(fctucName).#(getIdMethodName?? 'getId')(), JBoltUserKit.getUserId(),#(fctucName).getName());
 		#else
