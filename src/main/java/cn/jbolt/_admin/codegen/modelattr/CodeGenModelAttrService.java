@@ -248,8 +248,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 				attr.setFormUiType("textarea");
 			}
 		}
-
-		if(!colLow.equals("is_deleted") && (colLow.endsWith("enable") || colLow.startsWith("is_"))){
+		if(!colLow.equals("is_deleted") && (colLow.endsWith("enable") || colLow.startsWith("is_") || col.javaType.equalsIgnoreCase("java.lang.boolean"))){
 			if(isCrud){
 				attr.setFormUiType("radio");
 				attr.setFormDataType("sys_dictionary");
