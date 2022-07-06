@@ -30,7 +30,7 @@ public class CodeGenModelAttr extends BaseCodeGenModelAttr<CodeGenModelAttr> {
             return "Int";
         }
         if("String".equals(name)){
-            return "Str";
+            return "";
         }
         return name;
     }
