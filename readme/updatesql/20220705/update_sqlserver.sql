@@ -94,7 +94,7 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [is_show_optcol_recover] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [default_sort_column] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
     [default_sort_type] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
-    [table_optcol_width] int  NOT NULL,
+    [table_optcol_width] int DEFAULT 80 NOT NULL,
     [is_table_column_resize] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_table_prepend_column] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [table_prepend_column_type] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
