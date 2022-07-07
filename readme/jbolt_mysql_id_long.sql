@@ -703,7 +703,6 @@ CREATE TABLE `jb_datasource_filter` (
 
 
 
-
 -- ----------------------------
 -- Table structure for jb_code_gen
 -- ----------------------------
@@ -720,7 +719,7 @@ CREATE TABLE `jb_code_gen`  (
 `datasource_remark` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数据源说明',
 `database_type` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数据库类型',
 `is_main_datasource` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否为主数据源',
-`main_table_pkey` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '主表主键',
+`main_table_pkey` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'id' COMMENT '主表主键',
 `table_remove_prefix` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据表删除前缀',
 `main_table_idgenmode` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主表主键策略',
 `version_sn` int(11) NOT NULL COMMENT '版本序号',
