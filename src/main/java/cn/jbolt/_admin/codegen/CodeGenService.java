@@ -865,6 +865,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         Kv data = Kv.by("codeGen", codeGen);
         // 准备数据
         data.set("codeGenServiceMode", true);
+        data.set("primaryKey", codeGen.getMainTablePkey());
         data.set("editMode", false);
         data.set("colDatas", codeGenModelAttrService.getCodeGenFormColDatas(codeGen.getId(),false));
 

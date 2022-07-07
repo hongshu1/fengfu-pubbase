@@ -7,11 +7,11 @@
 <div class="jbolt_page_content">
 	<form onsubmit="return false;" id="#(codeGen.modelName)_Form" method="post">
 #end
-#if(codeGenServiceMode)
+#if(codeGenServiceMode??)
 <form onsubmit="return false;" id="#(codeGen.modelName)_Form" action="#[[#(action)]]#" method="post">
-	#if(post.id??)
-	<input type="hidden" name="post.id" value="#(post.id)" />
-	#end
+	#[[#]]#if(#(firstCharToLowerCase(codeGen.modelName)).#(primaryKey?? 'id')??)
+	<input type="hidden" name="#(firstCharToLowerCase(codeGen.modelName)).#(primaryKey?? 'id')" value="#[[#]]#(#(firstCharToLowerCase(codeGen.modelName)).#(primaryKey?? 'id')??)" />
+	#[[#]]#end
 #end
 <div class="row">
 #for(colData:colDatas)
