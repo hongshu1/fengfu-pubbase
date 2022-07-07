@@ -71,9 +71,9 @@
         #if(keywordsSearchColumns!=null&&keywordsSearchColumns.size()>0)
         //关键词模糊查询
         #if(keywordsSearchColumns.size()>1)
-        #setLocal(likes = "")
+        #set(likes = "")
         #for(col:keywordsSearchColumns)
-        #setLocal(likes = likes + "\"" + col.colName + "\"" + (for.last?"":", "))
+        #set(likes = likes + "\"" + col.colName + "\"" + (for.last?"":", "))
         #end
         sql.likeMulti(keywords,#(likes?? '\"\"'));
         #else

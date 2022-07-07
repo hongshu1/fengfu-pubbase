@@ -225,6 +225,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 			return;
 		}
 		set("codeGen", codeGen);
+		set("hasIsDeletedColumn",codeGenModelAttrService.checkHasIsDeletedColumn(codeGen.getId()));
 		set("codeGenId", codeGenId);
 		set("tableFullName", StrKit.isBlank(codeGen.getMainTableRemark())?null:(codeGen.getMainTableName()+"["+codeGen.getMainTableRemark()+"]"));
 		render("config/index.html");
@@ -334,8 +335,8 @@ public class CodeGenAdminController extends JBoltBaseController {
 		if(isOk(codeGen.getTableDefaultSortColumn())) {
 			setDefaultSortInfo(codeGen.getTableDefaultSortColumn(), codeGen.getTableDefaultSortType());
 		}
-		boolean hasIsDeletedColumn = codeGenModelAttrService.checkHasIsDeletedColumn(codeGen.getId());
-		set("hasIsDeletedColumn",hasIsDeletedColumn);
+		set("hasIsDeletedColumn",codeGenModelAttrService.checkHasIsDeletedColumn(codeGen.getId()));
+		set("codeGenServiceModel",false);
 		set("sortableColumns", codeGenModelAttrService.getSortableColumnsStr(codeGenId));
 		set("cols", codeGenModelAttrService.getCodeGenTableColumns(codeGenId));
 		set("conditions", codeGenModelAttrService.getCodeGenTableConditions(codeGenId));
