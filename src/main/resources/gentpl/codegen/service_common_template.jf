@@ -53,7 +53,7 @@
      #end
 	 * @return
 	 */
-	public#if(codeGen.isPaginate) Page#else List#end<#(codeGen.modelName)> getAdminDatas(#(cons??)) {
+	public #if(codeGen.isPaginate)Page#else List#end<#(codeGen.modelName)> getAdminDatas(#(cons??)) {
 	    //创建sql对象
 	    Sql sql = selectSql()#if(codeGen.isPaginate).page(pageNumber,pageSize)#end;
 	    #if(conditions!=null&&conditions.size()>0)
@@ -89,7 +89,7 @@
         sql.#(codeGen.tableDefaultSortType?? 'desc')("#(codeGen.tableDefaultSortColumn?? 'id')");
             #end
         #end
-		return#if(codeGen.isPaginate) paginate#else find#end(sql);
+		return #if(codeGen.isPaginate)paginate(sql)#else find(sql)#end;
 	}
 #end
 

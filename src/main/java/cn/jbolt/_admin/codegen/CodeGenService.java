@@ -708,12 +708,14 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         JBoltConsoleUtil.printMessageWithDate("正在生成Html...");
         //1、生成index.html
         genIndexHtml(codeGen, cover);
-        //2、生成add.html
-        genAddHtml(codeGen, cover);
-        //3、生成edit.html
-        genEditHtml(codeGen, cover);
-        //4、生成form.html
-        genFormHtml(codeGen, cover);
+        if(codeGen.getIsCrud()){
+            //2、生成add.html
+            genAddHtml(codeGen, cover);
+            //3、生成edit.html
+            genEditHtml(codeGen, cover);
+            //4、生成form.html
+            genFormHtml(codeGen, cover);
+        }
         //5、生成detail.html
         genDetailHtml(codeGen, cover);
     }
