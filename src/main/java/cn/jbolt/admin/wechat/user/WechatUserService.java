@@ -638,7 +638,8 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	 * @return
 	 */
 	private JBoltApiRet bindSystemUser(Application application,WechatUser wechatUser, String userName, String password) {
-		User user=userService.getUser(userName, password);
+		Ret ret= userService.getUser(userName, password);
+		User user = ret.isFail()?null:ret.getAs("data");
 		if(user==null) {
 			return JBoltApiRet.WECHAT_XCX_BINDUSER_NO_USER(application,"系统用户");
 		}
@@ -665,7 +666,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		}
 		if(needUpdate) {
 			wechatUser.setBindUser(bindUser);
-			Ret ret=update(wechatUser.getMpId(),wechatUser.toRecord());
+			ret=update(wechatUser.getMpId(),wechatUser.toRecord());
 			if(ret.isFail()) {
 				return JBoltApiRet.WECHAT_XCX_BINDUSER_UPDATE_ERROR(application,"系统用户");
 			}
