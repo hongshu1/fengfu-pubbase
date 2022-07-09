@@ -5,6 +5,7 @@ import cn.jbolt._admin.codegen.modelattr.CodeGenModelAttrService;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.model.CodeGen;
+import cn.jbolt.common.model.CodeGenModelAttr;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.bean.Option;
@@ -17,8 +18,12 @@ import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.ehcache.IDataLoader;
@@ -342,8 +347,10 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("conditions", codeGenModelAttrService.getCodeGenTableConditions(codeGenId));
 		render("config/_table_portal.html");
 	}
-	
-	
+
+	/**
+	 * table预览的demo数据
+	 */
 	public void tablePortalDatas() {
 		Long  codeGenId = getLong(0);
 		CodeGen codeGen = service.findById(codeGenId);
@@ -360,6 +367,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	/**
 	 * 初始化form元素排序
 	 */
+	@Before(Tx.class)
 	public void initSortRankInform() {
 		renderJson(codeGenModelAttrService.initSortRankInformById(getLong(0)));
 	}
@@ -390,7 +398,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	}
 	
 	/**
-	 * 
+	 * 路由列表数据
 	 */
 	public void routesOptions() {
 		Long  codeGenId = getLong(0);
@@ -431,7 +439,10 @@ public class CodeGenAdminController extends JBoltBaseController {
 		});
 		renderJsonData(options);
 	}
-	
+
+	/**
+	 * 刷新routes缓存
+	 */
 	public void refreshRoutesCache() {
 		JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME, "codeGen_routes");
 		renderJsonSuccess();
@@ -440,6 +451,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	/**
 	 * 一次性生成model、主逻辑等内容
 	 */
+	@Before(Tx.class)
 	public void genAll(){
 		renderJson(service.genAll(getLong("id"),getBoolean("cover",false)));
 	}
@@ -447,7 +459,78 @@ public class CodeGenAdminController extends JBoltBaseController {
 	/**
 	 * 一次性生成model
 	 */
+	@Before(Tx.class)
 	public void genModel(){
 		renderJson(service.genModel(getLong("id"),getBoolean("cover",false)));
+	}
+
+	/**
+	 * 模拟导出模板
+	 */
+	public void downloadTpl(){
+		Long codeGenId = getLong(0);
+		if(notOk(codeGenId)){
+			renderJsonFail("codeGenId未传");
+			return;
+		}
+		List<CodeGenModelAttr> attrs = codeGenModelAttrService.getCodeGenImportColumns(codeGenId);
+		if(notOk(attrs)){
+			renderJsonFail("此表模型属性中未设置导入列");
+			return;
+		}
+		List<JBoltExcelHeader> headers = new ArrayList<>();
+		String label;
+		for(CodeGenModelAttr attr:attrs){
+			if(isOk(attr.getTableLabel())){
+				label = attr.getTableLabel();
+			}else{
+				label = StrKit.defaultIfBlank(attr.getRemark(),attr.getAttrName());
+			}
+			headers.add(JBoltExcelHeader.create(label,15));
+		}
+		renderBytesToExcelXlsxFile(JBoltExcel.create().addSheet(JBoltExcelSheet.create("数据").setHeaders(false,headers)).setFileName("导入模板"));
+	}
+
+	/**
+	 * 模拟初始化打开导入excel的dialog
+	 */
+	public void initImportExcel(){
+		set("codeGenId",getLong(0));
+		render("config/_import_excel.html");
+	}
+
+	/**
+	 * 模拟导入成功
+	 */
+	public void importExcel(){
+		renderJsonSuccess("导入成功");
+	}
+
+	/**
+	 * 模拟导出
+	 */
+	public void exportExcel(){
+		Long codeGenId = getLong(0);
+		if(notOk(codeGenId)){
+			renderJsonFail("codeGenId未传");
+			return;
+		}
+		List<CodeGenModelAttr> attrs = codeGenModelAttrService.getCodeGenImportColumns(codeGenId);
+		if(notOk(attrs)){
+			renderJsonFail("此表模型属性中未设置导入列");
+			return;
+		}
+		List<JBoltExcelHeader> headers = new ArrayList<>();
+		String label;
+		for(CodeGenModelAttr attr:attrs){
+			if(isOk(attr.getTableLabel())){
+				label = attr.getTableLabel();
+			}else{
+				label = StrKit.defaultIfBlank(attr.getRemark(),attr.getAttrName());
+			}
+			headers.add(JBoltExcelHeader.create(attr.getAttrName(),label,15));
+		}
+		List<Okv> datas = codeGenModelAttrService.getCodeGenTableColumnsDatas(codeGenId);
+		renderBytesToExcelXlsxFile(JBoltExcel.create().addSheet(JBoltExcelSheet.create("数据").setHeaders(headers).setOkvDatas(2,datas)).setFileName("导出文件"));
 	}
 }

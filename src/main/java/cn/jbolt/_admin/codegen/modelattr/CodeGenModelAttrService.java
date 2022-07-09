@@ -211,27 +211,51 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 					}
 				}else if(col.javaType.equalsIgnoreCase("java.sql.time")){
 					attr.setFormUiType("laydate_time");
-				}else if(col.javaType.equalsIgnoreCase("java.lang.integer") && colLow.endsWith("_year")){
+				}else if(col.javaType.equalsIgnoreCase("java.lang.integer") && (colLow.endsWith("_year") || colLow.equals("year"))){
 					attr.setFormUiType("laydate_year");
-				}else if(colLow.endsWith("_month")){
+				}else if(colLow.endsWith("_month") || colLow.equals("month")){
 					attr.setFormUiType("laydate_month");
+				}else if(col.javaType.equalsIgnoreCase("java.lang.string")){
+					if(colLow.endsWith("_week") || colLow.equals("week")){
+						attr.setFormUiType("input_week");
+					}else{
+						if(attr.getAttrLength()>100){
+							attr.setFormUiType("textarea");
+						}else{
+							attr.setFormUiType("input");
+						}
+					}
+				}else if(col.javaType.equalsIgnoreCase("java.lang.integer")){
+					attr.setFormUiType("number");
 				}
 			}
 			if(isEditable){
 				if(col.javaType.equalsIgnoreCase("java.util.date")){
 					if(colLow.endsWith("_day") || colLow.endsWith("_date")){
-						attr.setTableUiType("laydate_date");
+						attr.setTableUiType("date");
 					}else if(colLow.endsWith("_time")){
-						attr.setTableUiType("laydate_datetime");
+						attr.setTableUiType("datetime");
 					}else{
-						attr.setTableUiType("laydate_date");
+						attr.setTableUiType("date");
 					}
 				}else if(col.javaType.equalsIgnoreCase("java.sql.time")){
-					attr.setTableUiType("laydate_time");
-				}else if(col.javaType.equalsIgnoreCase("java.lang.integer") && colLow.endsWith("_year")){
-					attr.setTableUiType("laydate_year");
-				}else if(colLow.endsWith("_month")){
-					attr.setTableUiType("laydate_month");
+					attr.setTableUiType("time");
+				}else if(col.javaType.equalsIgnoreCase("java.lang.integer") && (colLow.endsWith("_year") || colLow.equals("year"))){
+					attr.setTableUiType("year");
+				}else if(colLow.endsWith("_month") || colLow.equals("month")){
+					attr.setTableUiType("month");
+				}else if(col.javaType.equalsIgnoreCase("java.lang.string")){
+					if((colLow.endsWith("_week") || colLow.equals("week"))){
+						attr.setTableUiType("week");
+					}else{
+						if(attr.getAttrLength()>100){
+							attr.setTableUiType("textarea");
+						}else{
+							attr.setTableUiType("input");
+						}
+					}
+				}else if(col.javaType.equalsIgnoreCase("java.lang.integer")){
+					attr.setTableUiType("input_number");
 				}
 			}
 		}else{
@@ -822,6 +846,30 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_table_col", TRUE).orderBySortRank("sort_rank_intable"));
 	}
+	/**
+	 * 获取表格导入数据
+	 * @param codeGenId
+	 * @return
+	 */
+	public List<CodeGenModelAttr> getCodeGenImportColumns(Long codeGenId) {
+		if(notOk(codeGenId)) {
+			return new ArrayList<CodeGenModelAttr>();
+		}
+		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_import_col", TRUE).orderBySortRank("sort_rank_intable"));
+	}
+
+	/**
+	 * 获取表格导出数据
+	 * @param codeGenId
+	 * @return
+	 */
+	public List<CodeGenModelAttr> getCodeGenExportColumns(Long codeGenId) {
+		if(notOk(codeGenId)) {
+			return new ArrayList<CodeGenModelAttr>();
+		}
+		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_export_col", TRUE).orderBySortRank("sort_rank_intable"));
+	}
+
 	/**
 	 * 表格查询条件
 	 * @param codeGenId

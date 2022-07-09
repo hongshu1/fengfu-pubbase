@@ -170,10 +170,10 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setHtmlViewPath(FileUtil.normalize("/_view/" + codeGen.getControllerPath()));
         codeGen.setRoutesScanPackage(codeGen.getMainJavaPackage());
         codeGen.setIsNeedAdminInterceptor(true);
-        processCodeGenRecover(codeGen);
         boolean success = codeGen.save();
         if (success) {
             codeGenModelAttrService.genMainTableAttrs(codeGen);
+            processCodeGenRecover(codeGen);
             success = codeGen.update();
         }
         return ret(success);
@@ -732,9 +732,23 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             genEditHtml(codeGen, cover);
             //4、生成form.html
             genFormHtml(codeGen, cover);
+            //5、生成importExcel.html
+            genImportExcelHtml(codeGen, cover);
         }
         //5、生成detail.html
         genDetailHtml(codeGen, cover);
+    }
+
+    /**
+     * 生成importExcel.html
+     * @param codeGen
+     * @param cover
+     */
+    private void genImportExcelHtml(CodeGen codeGen, boolean cover) {
+        if(!codeGen.getIsImportExcel()){
+            return;
+        }
+        //TODO 生成 importExcel.html
     }
 
     private void genDetailHtml(CodeGen codeGen, boolean cover) {
