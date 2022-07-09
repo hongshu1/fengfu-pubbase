@@ -151,21 +151,18 @@ public class CodeGenAdminController extends JBoltBaseController {
 	/**
 	 * 保存基础信息
 	 */
-	@Before(Tx.class)
 	public void save() {
 		renderJson(service.save(getModel(CodeGen.class,"codeGen")));
 	}
 	/**
 	 * 更新基础信息
 	 */
-	@Before(Tx.class)
 	public void update() {
 		renderJson(service.update(getModel(CodeGen.class,"codeGen")));
 	}
 	/**
 	 * 详细配置里更新基础信息
 	 */
-	@Before(Tx.class)
 	public void updateBase() {
 		renderJson(service.updateBase(getModel(CodeGen.class,"codeGen")));
 	}
@@ -341,7 +338,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 			setDefaultSortInfo(codeGen.getTableDefaultSortColumn(), codeGen.getTableDefaultSortType());
 		}
 		set("hasIsDeletedColumn",codeGenModelAttrService.checkHasIsDeletedColumn(codeGen.getId()));
-		set("codeGenServiceModel",false);
+		set("codeGenServiceMode",false);
 		set("sortableColumns", codeGenModelAttrService.getSortableColumnsStr(codeGenId));
 		set("cols", codeGenModelAttrService.getCodeGenTableColumns(codeGenId));
 		set("conditions", codeGenModelAttrService.getCodeGenTableConditions(codeGenId));
@@ -496,6 +493,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	 */
 	public void initImportExcel(){
 		set("codeGenId",getLong(0));
+		set("coeGenServiceMode",false);
 		render("config/_import_excel.html");
 	}
 
