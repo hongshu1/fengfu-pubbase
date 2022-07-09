@@ -436,6 +436,14 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         genModel(codeGen, cover);
         //2、mainLogic
         genMainLogic(codeGen, cover);
+        if(codeGen.getState().intValue()!=CodeGenState.GENED.getValue()){
+            //3、更新生成状态
+            codeGen.setState(CodeGenState.GENED.getValue());
+            boolean success = codeGen.update();
+            if(!success){
+                return fail("代码生成异常");
+            }
+        }
         return SUCCESS;
     }
 
@@ -458,7 +466,16 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         genRoutes(codeGen);
         //6、生成html
         genHtml(codeGen, cover);
-
+        //7、更新生成状态
+        if(codeGen.getState().intValue() == CodeGenState.ONLY_MODEL_GEN.getValue()){
+            codeGen.setState(CodeGenState.GENED.getValue());
+        }else{
+            codeGen.setState(CodeGenState.ONLY_MAIN_LOGIC_GEN.getValue());
+        }
+        boolean success = codeGen.update();
+        if(!success){
+            throw new RuntimeException("更新genMainLogic状态时发生异常");
+        }
     }
 
     /**
@@ -1353,6 +1370,13 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         boolean success = new JFinalModelGenerator().generate(configName, dataDictionaryVersion, dataDictionaryDescription);
         if (success) {
             processModelPackage(codeGen);
+            //更新生成状态
+            if(codeGen.getState().intValue() == CodeGenState.ONLY_MAIN_LOGIC_GEN.getValue()){
+                codeGen.setState(CodeGenState.GENED.getValue());
+            }else{
+                codeGen.setState(CodeGenState.ONLY_MODEL_GEN.getValue());
+            }
+            success = codeGen.update();
         }
         return success ? success("Model生成成功，请刷新项目目录") : fail("Model生成异常，请检查后重试");
     }
