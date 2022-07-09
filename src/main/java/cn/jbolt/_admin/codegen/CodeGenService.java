@@ -1281,6 +1281,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
 
             if(codeGen.getIsImportExcel()){
                 genMehtods.add(new CodeGenMethod("initImportExcel"));
+                genMehtods.add(new CodeGenMethod("downloadTpl"));
                 genMehtods.add(new CodeGenMethod("importExcel"));
             }
             if(codeGen.getIsExportExcel()){
@@ -1317,6 +1318,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             }
 
             if(codeGen.getIsImportExcel()){
+                genMehtods.add(new CodeGenMethod("getImportExcelTpl"));
                 genMehtods.add(new CodeGenMethod("importExcel"));
             }
             if(codeGen.getIsExportExcel()){

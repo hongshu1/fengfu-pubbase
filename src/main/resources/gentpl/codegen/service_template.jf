@@ -28,6 +28,12 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 #end
+#if(codeGen.isImportExcel??)
+import java.io.File;
+#end
+#if(codeGen.isImportExcel || codeGen.isExportExcel)
+import cn.jbolt.core.poi.excel.*;
+#end
 import cn.jbolt.core.db.sql.Sql;
 import #(codeGen.modelPackage+"."+codeGen.modelName??);
 /**

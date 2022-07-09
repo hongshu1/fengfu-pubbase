@@ -44,4 +44,5 @@ public class JBoltUploadFolder {
 	public static final String DEMO_JBOLTTABLE_EXCEL = "demo" + SEPARATOR + "jbolttable" + SEPARATOR + "excel";
 	public static final String DEMO_APITEST_IMAGE = "demo" + SEPARATOR + "apitest" + SEPARATOR + "image";
 	public static final String SYSNOTICE_FILES = "sysnotice" + SEPARATOR + "files";
+	public static final String IMPORT_EXCEL_TEMP_FOLDER = "exceltemps";
 }

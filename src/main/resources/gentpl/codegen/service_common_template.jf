@@ -224,6 +224,113 @@
 	}
 #end
 
+#define s_exportExcel()
+#setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
+    /**
+	 * 生成要导出的Excel
+	 * @return
+	 */
+	public JBoltExcel exportExcel() {
+	return JBoltExcel
+			//创建
+			.create()
+    		//设置工作表
+    		.setSheets(
+    				//设置工作表 列映射 顺序 标题名称
+    				JBoltExcelSheet
+    				.create()
+    				//表头映射关系
+    				.setHeaders(2,
+    						JBoltExcelHeader.create("version", "版本号",16),
+    						JBoltExcelHeader.create("publish_time", "发布日期",15),
+    						JBoltExcelHeader.create("create_time", "记录时间",15),
+    						JBoltExcelHeader.create("is_new", "是否最新版",12),
+    						JBoltExcelHeader.create("user_username", "用户名",10)
+    						)
+    				//设置单元格合并区域
+    		    	.setMerges(JBoltExcelMerge.create("A","E",1, 1, "JBolt版本信息"))
+    		    	//设置导出的数据源 来自于数据库查询出来的Model List
+    		    	.setModelDatas(3,findAll())
+    		);
+	}
+#end
+
+
+#define s_importExcel()
+#setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
+    /**
+	 * 读取excel文件
+	 * @param file
+	 * @return
+	 */
+	public Ret importExcel(File file) {
+		StringBuilder errorMsg=new StringBuilder();
+		JBoltExcel jBoltExcel=JBoltExcel
+		//从excel文件创建JBoltExcel实例
+		.from(file)
+		//设置工作表信息
+		.setSheets(
+				JBoltExcelSheet.create()
+				//设置列映射 顺序 标题名称
+				.setHeaders(2,
+					JBoltExcelHeader.create("version", "版本号"),
+					JBoltExcelHeader.create("publish_time", "发布日期"),
+					JBoltExcelHeader.create("create_time", "记录时间"),
+					JBoltExcelHeader.create("is_new", "是否最新版"),
+					JBoltExcelHeader.create("user_id", "用户名")
+					)
+				//从第三行开始读取
+				.setDataStartRow(3)
+				);
+		//从指定的sheet工作表里读取数据
+		List<#(codeGen.modelName)> #(fctucName)s=JBoltExcelUtil.readModels(jBoltExcel,1, #(codeGen.modelName).class,errorMsg);
+		if(notOk(#(fctucName)s)) {
+			if(errorMsg.length()>0) {
+				return fail(errorMsg.toString());
+			}else {
+				return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+			}
+		}
+		//执行批量操作
+		boolean success=tx(new IAtom() {
+			@Override
+			public boolean run() throws SQLException {
+				batchSave(#(fctucName)s);
+				return true;
+			}
+		});
+
+		if(!success) {
+			return fail(JBoltMsg.DATA_IMPORT_FAIL);
+		}
+		return SUCCESS;
+	}
+#end
+
+#define s_getImportExcelTpl()
+	/**
+     * 生成excel导入使用的模板
+     * @return
+     */
+    public JBoltExcel getImportExcelTpl() {
+        return JBoltExcel
+                //创建
+                .create()
+                .setSheets(
+                        JBoltExcelSheet.create()
+                        //设置列映射 顺序 标题名称 不处理别名
+                        .setHeaders(2,false,
+                                JBoltExcelHeader.create("版本号",16),
+                                JBoltExcelHeader.create("发布日期",15),
+                                JBoltExcelHeader.create("记录时间",15),
+                                JBoltExcelHeader.create("是否最新版",12),
+                                JBoltExcelHeader.create("用户名",10)
+                                )
+                        .setMerges(JBoltExcelMerge.create("A","E",1, 1, "JBolt版本信息"))
+                    );
+    }
+#end
+
 
 #define s_initSortRank()
 #setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
@@ -403,6 +510,12 @@
 			#@s_down()
 		#case("initSortRank")
 			#@s_initSortRank()
+        #case("getImportExcelTpl")
+            #@s_getImportExcelTpl()
+        #case("importExcel")
+            #@s_importExcel()
+        #case("exportExcel")
+            #@s_exportExcel()
 		#case("tree")
 			#@s_tree()
 		#default
