@@ -7,7 +7,7 @@ import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Document.OutputSettings;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -42,11 +42,11 @@ import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 
-/**   
+/**
  * 自动回复内容管理Service
- * @ClassName:  WechatReplyContnet   
- * @author: JFinal学院-小木 QQ：909854136 
- * @date:   2019年5月14日 上午4:49:53   
+ * @ClassName:  WechatReplyContnet
+ * @author: JFinal学院-小木 QQ：909854136
+ * @date:   2019年5月14日 上午4:49:53
  */
 public class WechatReplyContentService extends JBoltBaseService<WechatReplyContent> {
 	private WechatReplyContent dao = new WechatReplyContent().dao();
@@ -145,17 +145,17 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 				) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		 
+
 		//检测操作权限
 		Ret ret=checkPermission(autoReplyId);
 		if(ret.isFail()) {return ret;}
-		
+
 		WechatAutoreply wechatAutoreply=ret.getAs("data");
 		Long mpId=wechatAutoreply.getMpId();
 		WechatMpinfo wechatMpinfo=wechatMpinfoService.findById(mpId);
 		if(wechatMpinfo==null) {return fail("关联微信公众平台不存在");}
-		
-		//校验输入 
+
+		//校验输入
 		boolean success=false;
 		switch (wechatReplyContent.getType()) {
 			case WechatReplyContent.TYPE_TEXT:
@@ -163,7 +163,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 					return fail("请输入描述内容");
 				}
 				OutputSettings outputSettings=new Document.OutputSettings().prettyPrint(false);
-				String content=Jsoup.clean(wechatReplyContent.getContent(),"",Whitelist.basic().removeEnforcedAttribute("a", "rel"),outputSettings);
+				String content=Jsoup.clean(wechatReplyContent.getContent(),"", Safelist.basic().removeEnforcedAttribute("a", "rel"),outputSettings);
 				wechatReplyContent.setContent(content);
 				break;
 			case WechatReplyContent.TYPE_IMG:
@@ -198,7 +198,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 				}
 				break;
 		}
-		
+
 		//强制定死了绑定的MPID autoReplyId
 		wechatReplyContent.setAutoReplyId(autoReplyId);
 		wechatReplyContent.setMpId(wechatAutoreply.getMpId());
@@ -273,7 +273,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		if(ret.isFail()) {
 			return ret;
 		}
-	 
+
 		WechatReplyContent wechatReplyContent=findById(id);
 		if(wechatReplyContent==null) {
 			return fail(JBoltMsg.DATA_NOT_EXIST);
@@ -319,7 +319,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 //			CACHE.me.removeWechcatSubscribeOutMsg(mpId);
 //			break;
 //		}
-		
+
 	}
 
 	/**
@@ -353,9 +353,9 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		processCache(wechatAutoreply.getMpId(), wechatAutoreply.getType());
 		return SUCCESS;
 	}
- 
-	
-	
+
+
+
 	/**
 	 * 下移
 	 * @param id
@@ -420,7 +420,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	/**
 	 * 得到一个公众平台配置的关注回复内容
 	 * @param appId
-	 * @param openId 
+	 * @param openId
 	 * @return
 	 */
 	public OutMsg getWechcatSubscribeOutMsg(String appId, String openId) {
@@ -452,7 +452,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 			//如果找到了 直接用它所在规则 去找返回content
 			WechatAutoreply wechatAutoreply=wechatAutoReplyService.findById(wechatKeywords.getAutoReplyId());
 			if(wechatAutoreply==null) {return null;}
-			
+
 			OutMsg outMsg=null;
 			//根据类型 返回不同outMsg
 			switch (wechatAutoreply.getReplyType().intValue()) {
@@ -482,7 +482,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	/**
 	 * 得到一个公众平台配置的回复内容
 	 * @param appId
-	 * @param openId 
+	 * @param openId
 	 * @return
 	 */
 	private OutMsg getWechcatSubscribeOrDefaultOutMsg(String appId,int type, String openId) {
@@ -493,11 +493,11 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		//得到对应的是哪个公众平台
 		WechatMpinfo wechatMpinfo=wechatMpinfoService.findById(appIdConfig.getMpId());
 		if(wechatMpinfo==null) {return null;}
-		
+
 		//然后就可以拿到自定义回复的配置了
 		WechatAutoreply wechatAutoreply=wechatAutoReplyService.getTheEnableAutoReply(appIdConfig.getMpId(),type);
 		if(wechatAutoreply==null) {return null;}
-		
+
 		OutMsg outMsg=null;
 		//根据类型 返回不同outMsg
 		switch (wechatAutoreply.getReplyType().intValue()) {
@@ -526,7 +526,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 						outMsg=getRandomWechatOutMsg(appIdConfig.getMpId(),wechatAutoreply.getId());
 					}
 				}
-				
+
 				break;
 		}
 		return outMsg;
@@ -578,7 +578,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	 *    得到一个规则下的所有可回复内容
 	 * @param mpId
 	 * @param autoReplyId
-	 * @param openId 
+	 * @param openId
 	 * @return
 	 */
 	private OutMsg sendAllWechatOutMsg(Long mpId, Long autoReplyId,String openId) {
@@ -593,7 +593,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		}
 		return null;
 	}
-	 
+
 
 	/**
 	 * 将一个replyContent 发送给指定openId的用户
@@ -622,7 +622,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 			sendMusicCustomService(openId,wechatReplyContent);
 			break;
 		}
-		
+
 	}
 	/**
 	 * 单独处理发送music
@@ -636,7 +636,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		}else {
 			System.out.println("wechatMpInfo:id:"+wechatReplyContent.getId()+" 没有配置Music_POST_MediaId");
 		}
-		
+
 	}
 
 	public List<WechatReplyContent> getListByType(Long mpId,Long autoReplyId, String type) {
