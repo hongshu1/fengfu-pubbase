@@ -1,14 +1,19 @@
-#@jboltLayout()
+#@adminSinglePageLayout(codeGen.mainTableName+"_"+(codeGen.mainTableRemark?(codeGen.mainTableRemark+"_"):'')+"详细配置、设计、代码生成")
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page jb_vflex" data-key="#(pmkey)">
+	<div class="jbolt_page_title text-center">
+		<h1><i class="jbicon2 jbi-setting"></i> #(codeGen.mainTableName+"_"+(codeGen.mainTableRemark?(codeGen.mainTableRemark+"_"):'')+"详细配置、设计、代码生成")</h1>
+	</div>
 	<div class="jbolt_page_content jb_vbody">
-		<div class="jbolt_tab_view jb_vflex">
-			<div class="jbolt_tab_links jb_vheader">
+		<div class="jbolt_tab_view jbolt_tab_border_none jb_vflex">
+			<div class="jbolt_tab_links   jb_vheader text-center">
 			  <a class="jbolt_tab_link active"  href="#jbolt_codegen_base_#(pageId)">基础配置</a>
 			  <a class="jbolt_tab_link"  href="#jbolt_codegen_model_#(pageId)">字段属性配置</a>
 			  <a class="jbolt_tab_link"  href="#jbolt_codegen_table_#(pageId)">表格配置</a>
-			  <a class="jbolt_tab_link"  href="#jbolt_codegen_form_#(pageId)">表单配置</a>
+				#if(codeGen.isCrud??)
+				<a class="jbolt_tab_link"  href="#jbolt_codegen_form_#(pageId)">表单配置</a>
+				#end
 			  <a class="jbolt_tab_link" id="jbolt_codegen_cache_nav_#(pageId)"  href="#jbolt_codegen_cache_#(pageId)">缓存策略配置</a>
 			  <a class="jbolt_tab_link"  href="#jbolt_codegen_controller_#(pageId)">Controller</a>
 			  <a class="jbolt_tab_link"  href="#jbolt_codegen_service_#(pageId)">Service</a>
@@ -30,9 +35,11 @@
 				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_table_#(pageId)">
 				#include("_table.html")
 				</div>
+				#if(codeGen.isCrud??)
 				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_form_#(pageId)">
 				#include("_form.html")
 				</div>
+				#end
 				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_cache_#(pageId)">
 				#include("_cache.html")
 				</div>

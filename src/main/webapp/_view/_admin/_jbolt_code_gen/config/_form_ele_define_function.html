@@ -14,9 +14,9 @@
 <div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
     #end
     #if(col.formUiType == "textarea")
-    <textarea style="height:100px;" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))"  data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '200')" name="#(modelName).#(col.attrName)"></textarea>
+    <textarea style="height:100px;" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))"  data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '200')" name="#(modelName).#(col.attrName)">#if(codeGenServiceMode??)#[[#]]#(#(modelName).#(col.attrName)??)#end</textarea>
     #else
-    <input type="#(type?? 'text')"  #if(col.formUiType == "calculator")data-with-calculator#end  #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"  #end data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '40')" name="#(modelName).#(col.attrName)" />
+    <input type="#(type?? 'text')"  #if(col.formUiType == "calculator")data-with-calculator#end  #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"  #end data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '40')" name="#(modelName).#(col.attrName)" #if(codeGenServiceMode??)value="#[[#]]#(#(modelName).#(col.attrName)??)"#end/>
     #end
     #if(isFormGroupRow)
 </div>
@@ -26,9 +26,11 @@
 ### 根据UIType字符串 生成form-group div 开始的html
 #define genFormGroupDivStart(isFormGroupRow,formControlWidth,col,hasTagEnd)
 <div class="form-group #(isFormGroupRow?'row':'')" #if(!codeGenServiceMode) data-form-ele-width="#(col.formEleWidth?? (formControlWidth?? 10))" data-form-control-width="#(formControlWidth?? 10)" draggable="true" data-id="#(col.id)" #end #if(hasTagEnd)>#end
-    #end
-    ### 根据UIType字符串 生成html5 date input类型html
-    #define genHtml5DateInputByUiTypeStr(isFormGroupRow,modelName,formControlWidth,col)
+#end
+
+### 根据UIType字符串 生成html5 date input类型html
+#define genHtml5DateInputByUiTypeStr(isFormGroupRow,modelName,formControlWidth,col)
+    #setLocal(type = "date")
     #switch (col.formUiType)
     #case ("input_date")
     #setLocal(type = "date")
@@ -46,11 +48,11 @@
     #if(isFormGroupRow)
     <div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
         #end
-        <input type="#(type?? 'date')" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '40')" name="#(modelName).#(col.attrName)" />
+        <input type="#(type?? 'date')" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '40')" name="#(modelName).#(col.attrName)" #if(codeGenServiceMode??)value="#[[#]]#(#(modelName).#(col.attrName)??)"#end/>
         #if(isFormGroupRow)
     </div>
     #end
-    #end
+#end
 
 ### 根据UIType字符串 生成Autocomplete类型html
 #define genFormAutocompleteByUiTypeStr(isFormGroupRow,modelName,formControlWidth,col)
@@ -80,6 +82,7 @@
            data-rule="#(col.dataRule?? (col.isRequired?'select':''))"
            data-notnull="#(col.isRequired)"
            data-tips="#(col.dataTips?? ('请选择'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"
+           #if(codeGenServiceMode??)value="#[[#]]#(#(modelName).#(col.attrName)??)"#end
            #end
            />
 #if(isFormGroupRow)
@@ -130,6 +133,7 @@
            data-rule="#(col.dataRule?? (col.isRequired?'select':''))"
            data-notnull="#(col.isRequired)"
            data-tips="#(col.dataTips?? ('请选择'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"
+           #if(codeGenServiceMode??)value="#[[#]]#(#(modelName).#(col.attrName)??)"#end
            #end
            />
 #if(isFormGroupRow)
@@ -191,7 +195,9 @@
             #if(col.formDataColumnAttr)
             data-column-attr="#(col.formDataColumnAttr)"
             #end
-            data-select="#(col.formDefaultValue??)"></select>
+            #if(codeGenServiceMode??)data-select="#[[#]]#(#(modelName).#(col.attrName)??)"#end
+            #if(!codeGenServiceMode??)data-select="#(col.formDefaultValue??)"#end
+    ></select>
 #if(isFormGroupRow)
 </div>
 #end
@@ -200,6 +206,8 @@
 
 ### 根据UIType字符串 生成laydate input类型html
 #define genFormLaydateInputByUiTypeStr(isFormGroupRow,modelName,formControlWidth,col)
+#setLocal(type = "date")
+#setLocal(fmt = "yyyy-MM-dd")
 #switch (col.formUiType)
 #case ("laydate_date")
 #setLocal(type = "date")
@@ -223,7 +231,7 @@
 #if(isFormGroupRow)
 <div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
     #end
-    <input type="text" data-date data-type="#(type?? 'date')" data-with-clearbtn="true" data-fmt="#(fmt?? 'yyyy-MM-dd')" readonly="readonly" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))"  data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '20')" name="#(modelName).#(col.attrName)" />
+    <input type="text" data-date data-type="#(type?? 'date')" data-with-clearbtn="true" data-fmt="#(fmt?? 'yyyy-MM-dd')" readonly="readonly" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))"  data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '20')" name="#(modelName).#(col.attrName)"    #if(codeGenServiceMode??)value="#[[#]]#datetime(#(modelName).#(col.attrName)??,'#(fmt??)')"#end/>
 #if(isFormGroupRow)
 </div>
 #end
@@ -295,6 +303,9 @@ data-url="#(radioUrl)"
 data-label="#(col.formLabel)"
 #if(isFormGroupRow)
 data-width="col-sm-#(labelWidth?? 2),col-#((col.formEleWidth!=null&&col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))"
+#end
+#if(codeGenServiceMode??)
+data-value="#[[#]]#(#(modelName).#(col.attrName)??)"
 #end
 #if(col.dataRule || col.isRequired)
 data-rule="#(col.dataRule?? (col.isRequired?'radio':''))"

@@ -5,6 +5,7 @@
 #db_name=jbolt_pro 数据库名称
 #db_schema = dbo 数据库架构 sqlserver专用
 #jdbc_url =xxx 数据库链接
+#is_encrypted = false 是否为加密账号和密码
 #user=root 数据库用户
 #password=root 数据库密码
 #model_package=cn.jbolt.jfinalxueyuan.model 指定自动ORM的代码包
@@ -21,6 +22,7 @@ dev_mode = true
 jdbc_url = jdbc:mysql://127.0.0.1:3306/jfinalxueyuan?characterEncoding=utf8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
 user = root
 password = root
+is_encrypted = false
 id_gen_mode = snowflake
 #force_cast_all_id_gen_mode = snowflake
 model_package=cn.jbolt.jfinalxueyuan.model
@@ -34,6 +36,7 @@ dev_mode = true
 jdbc_url = jdbc:mysql://127.0.0.1:3306/meinvtu?characterEncoding=utf8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
 user = root
 password = root
+is_encrypted = false
 id_gen_mode = snowflake
 #force_cast_all_id_gen_mode = snowflake
 model_package=cn.jbolt.meinvtu.model

@@ -213,19 +213,19 @@
 	}
 #end
 
-#define c_genToggleMethod(name)
+#define c_genToggleMethod(name,colName)
    /**
-	* 切换#(name)
+	* 切换#(colName??)
 	*/
 	@Before(Tx.class)
 	public void #(name)() {
-		renderJson(service.#(name)(get#(getIdType?? 'Long')(0)));
+	    renderJson(service.toggleBoolean(get#(getIdType?? 'Long')(0),"#(colName??)"));
 	}
 #end
 
 #define c_genOtherMethod(method)
 #if(method.name.indexOf("toggle")!=-1)
-#@c_genToggleMethod(method.name)
+#@c_genToggleMethod(method.name,method.toggleColumnName)
 #else
 	public void #(method.name)(){
 		//TODO 请实现业务逻辑代码	

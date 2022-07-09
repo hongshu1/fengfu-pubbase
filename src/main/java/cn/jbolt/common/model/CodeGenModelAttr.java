@@ -30,7 +30,7 @@ public class CodeGenModelAttr extends BaseCodeGenModelAttr<CodeGenModelAttr> {
             return "Int";
         }
         if("String".equals(name)){
-            return "Str";
+            return "";
         }
         return name;
     }
@@ -67,7 +67,11 @@ public class CodeGenModelAttr extends BaseCodeGenModelAttr<CodeGenModelAttr> {
         String dataType = getFormDataType();
         String defaultValue = getFormDefaultValue();
         if("sys_dictionary".equals(dataType) && StrKit.notBlank(defaultValue)) {
-            return JBoltDictionaryCache.me.getNameBySn(getFormDataValue(), defaultValue);
+            String typeKey = getFormDataValue();
+            if(StrKit.isBlank(typeKey)){
+                return defaultValue;
+            }
+            return JBoltDictionaryCache.me.getNameBySn(typeKey, defaultValue);
         }
         return defaultValue;
     }

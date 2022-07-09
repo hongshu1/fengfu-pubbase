@@ -1,11 +1,17 @@
 #if(colDatas==null || (colDatas.size()==1 && colDatas[0].datas.size()==0))
 	<div class="alert alert-danger m-auto">未设置任何属性用表单编辑</div>
 #else
-#if(codeGenServiceMode)
+#if(codeGenServiceModeTest)
+#@jboltLayout()
+<div class="jbolt_page">
+<div class="jbolt_page_content">
+	<form onsubmit="return false;" id="#(codeGen.modelName)_Form" method="post">
+#end
+#if(codeGenServiceMode??)
 <form onsubmit="return false;" id="#(codeGen.modelName)_Form" action="#[[#(action)]]#" method="post">
-	#if(post.id??)
-	<input type="hidden" name="post.id" value="#(post.id)" />
-	#end
+	#[[#]]#if(#(firstCharToLowerCase(codeGen.modelName)).#(primaryKey?? 'id')??)
+	<input type="hidden" name="#(firstCharToLowerCase(codeGen.modelName)).#(primaryKey?? 'id')" value="#[[#]]#(#(firstCharToLowerCase(codeGen.modelName)).#(primaryKey?? 'id')??)" />
+	#[[#]]#end
 #end
 <div class="row">
 #for(colData:colDatas)
@@ -19,11 +25,27 @@
 </div>
 #if(codeGenServiceMode)
 </form>
+#end
+#if(codeGenServiceModeTest)
+</form>
+</div>
+</div>
+#end
+#if(codeGenServiceMode)
 #[[#define js()]]#
 <script>
 </script>
 #[[#]]#include("/_view/_admin/common/_formjs.html",formId="#(codeGen.modelName)_Form")
 #[[#end]]#
+#end
+#if(codeGenServiceModeTest)
+<script>
+function submitThisForm(callback){
+	if(FormChecker.check("#(codeGen.modelName)_Form")){
+		callback();
+	}
+}
+</script>
 #end
 
 #end

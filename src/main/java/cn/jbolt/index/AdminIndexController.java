@@ -34,6 +34,8 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltLoginLogUtil;
+import com.jfinal.kit.Ret;
+
 /**
  * 系统后台主入口
  * @ClassName:  AdminIndexController   
@@ -150,12 +152,13 @@ public class AdminIndexController extends JBoltBaseController {
 			}
 		}
 		
-		User user=userService.getUser(get("username"),get("password"));
+		Ret ret=userService.getUser(get("username"),get("password"));
+		User user = ret.isFail()?null:ret.getAs("data");
 		//检测用户名密码是否正确输入并得到user
 		if(user==null){
 			log.setLoginState(JBoltLoginState.USERNAME_PWD_ERROR.getValue());
 			log.save();
-			renderJsonFail(JBoltLoginState.USERNAME_PWD_ERROR.getText());
+			renderJson(ret);
 			return;
 		}
 		

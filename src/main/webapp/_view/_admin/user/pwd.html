@@ -42,7 +42,16 @@
 <script type="text/javascript">
 function submitThisForm(){
 	var form=$("#userPwdForm");
+	LayerMsgBox.loading("提交中...",300000);
 	if(FormChecker.check(form)){
+		var oldPwd = form.find("input[type='password'][name='oldPwd']");
+		var newPwd = form.find("input[type='password'][name='newPwd']");
+		var reNewPwd = form.find("input[type='password'][name='reNewPwd']");
+		var left = randomId(2);
+		var right = randomId(3);
+		oldPwd.val(left+md5(oldPwd.val())+right);
+		newPwd.val(left+md5(newPwd.val())+right);
+		reNewPwd.val(left+md5(reNewPwd.val())+right);
 		var url=form.action;
 		form.ajaxSubmit({
 			type:"post",
@@ -53,8 +62,16 @@ function submitThisForm(){
 						refreshPjaxContainer();
 					});
 				}else{
+					oldPwd.val("");
+					newPwd.val("");
+					reNewPwd.val("");
 					LayerMsgBox.error(ret.msg);
 				}
+			},error:function (){
+				oldPwd.val("");
+				newPwd.val("");
+				reNewPwd.val("");
+				LayerMsgBox.alert("网络通信异常",2);
 			}
 		});
 	}

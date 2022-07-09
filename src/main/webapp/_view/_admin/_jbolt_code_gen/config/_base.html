@@ -102,6 +102,27 @@
 				</div>
 			</div>
 
+			#if(hasIsDeletedColumn??)
+			<div class="form-group row"
+				 data-radio
+				 data-rule="radio"
+				 data-value="#(codeGen.isCheckCanRecover?? 'false')"
+				 data-name="codeGen.isCheckCanRecover"
+				 data-default="false">
+				<label class="col-sm-2 col-form-label is_required">检测能否恢复假删数据</label>
+				<div class="col"  style="padding-top: 1px;">
+					<div class="radio radio-primary  radio-inline">
+						<input  id="r_isCheckCanRecover_true" type="radio" name="codeGen.isCheckCanRecover"   value="true"/>
+						<label for="r_isCheckCanRecover_true">检测</label>
+					</div>
+
+					<div class="radio radio-primary  radio-inline">
+						<input  id="r_isCheckCanRecover_false" type="radio" name="codeGen.isCheckCanRecover"   value="false"/>
+						<label for="r_isCheckCanRecover_false">不检测</label>
+					</div>
+				</div>
+			</div>
+			#end
 		 	<fieldset class="mt-5 gen_model_box d-none">
 			    <legend>Model生成配置</legend>
 			    	<div class="form-group row">

@@ -154,7 +154,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 
 		String colLow = col.name.toLowerCase();
 		//如果是内置的几个字段名字 就不要显示在表格里
-		if(colLow.equals("id")||colLow.equals("sort_rank")||colLow.equals("create_user_id")||colLow.equals("update_user_id") ||colLow.equals("is_deleted")){
+		if(colLow.equals("id")||colLow.equals("sort_rank")||colLow.equals("create_user_id")||colLow.equals("update_user_id") ||colLow.equals("delete_user_id") || colLow.equals("is_deleted")){
 			attr.setIsTableCol(false);
 			attr.setIsFormEle(false);
 			attr.setIsSearchEle(false);
@@ -173,14 +173,17 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			}
 			attr.setIsSearchEle(true);
 		}
-		if(colLow.endsWith("_id") && !colLow.equals("create_user_id") && !colLow.equals("update_user_id")){
+		if(colLow.endsWith("_id") && !colLow.equals("create_user_id") && !colLow.equals("update_user_id") && !colLow.equals("delete_user_id")){
 			attr.setSearchUiType("autocomplete");
 			attr.setSearchDataType("url");
+			attr.setSearchDataValue("admin/codegen/autocompletedemodatas");
 			attr.setFormUiType("autocomplete");
 			attr.setFormDataType("url");
+			attr.setFormDataValue("admin/codegen/autocompletedemodatas");
 			if(isEditable){
 				attr.setTableUiType("autocomplete");
 				attr.setTableDataType("url");
+				attr.setTableDataValue("admin/codegen/autocompletedemodatas");
 			}
 		}
 
@@ -196,7 +199,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			attr.setColFormat("time_hm");
 		}
 
-		if(!colLow.equals("id")&&!colLow.equals("create_time")&&!colLow.equals("update_time")&&!colLow.equals("create_user_id")&&!colLow.equals("update_user_id") && !colLow.equals("is_deleted")&& !colLow.equals("delete_time")){
+		if(!colLow.equals("id")&&!colLow.equals("create_time")&&!colLow.equals("update_time")&&!colLow.equals("create_user_id")&&!colLow.equals("update_user_id") &&!colLow.equals("delete_user_id")&& !colLow.equals("is_deleted")&& !colLow.equals("delete_time")){
 			if(isCrud){
 				if(col.javaType.equalsIgnoreCase("java.util.date")){
 					if(colLow.endsWith("_day") || colLow.endsWith("_date")){
@@ -245,8 +248,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 				attr.setFormUiType("textarea");
 			}
 		}
-
-		if(!colLow.equals("is_deleted") && (colLow.endsWith("enable") || colLow.startsWith("is_"))){
+		if(!colLow.equals("is_deleted") && (colLow.endsWith("enable") || colLow.startsWith("is_") || col.javaType.equalsIgnoreCase("java.lang.boolean"))){
 			if(isCrud){
 				attr.setFormUiType("radio");
 				attr.setFormDataType("sys_dictionary");

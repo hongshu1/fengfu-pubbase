@@ -11,7 +11,9 @@ import cn.jbolt.core.enumutil.JBoltEnum;
 public enum CodeGenState {
 	NONE("新创建未生成",1),
 	NOT_GEN("更新后未生成",2),
-	GENED("已执行生成",3);
+	ONLY_MODEL_GEN("更新只生成Model",3),
+	ONLY_MAIN_LOGIC_GEN("更新只生成主逻辑",4),
+	GENED("已执行全部生成",5);
 	private String text;
 	private int value;
 	private CodeGenState(String text,int value) {
