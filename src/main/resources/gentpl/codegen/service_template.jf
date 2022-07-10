@@ -30,6 +30,7 @@ import cn.jbolt.core.base.JBoltMsg;
 #end
 #if(codeGen.isImportExcel??)
 import java.io.File;
+import com.jfinal.plugin.activerecord.IAtom;
 #end
 #if(codeGen.isImportExcel || codeGen.isExportExcel)
 import cn.jbolt.core.poi.excel.*;
