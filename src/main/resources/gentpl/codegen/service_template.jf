@@ -31,6 +31,7 @@ import cn.jbolt.core.base.JBoltMsg;
 #if(codeGen.isImportExcel??)
 import java.io.File;
 import com.jfinal.plugin.activerecord.IAtom;
+import java.sql.SQLException;
 #end
 #if(codeGen.isImportExcel || codeGen.isExportExcel)
 import cn.jbolt.core.poi.excel.*;

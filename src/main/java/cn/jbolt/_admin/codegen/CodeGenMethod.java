@@ -1,12 +1,17 @@
 package cn.jbolt._admin.codegen;
 
+import cn.jbolt.common.model.CodeGenModelAttr;
 import cn.jbolt.core.util.JBoltArrayUtil;
 import com.jfinal.kit.StrKit;
+import org.apache.poi.ss.formula.functions.T;
+
+import java.util.List;
 
 public class CodeGenMethod {
     private String name;
     private String value;
     private boolean isToggle;
+    private List<CodeGenModelAttr> headers;
     private String toggleColumnName;//多个是逗号
     public String[] getToggleColumns(){
         if(isToggle && StrKit.notBlank(toggleColumnName)){
@@ -20,6 +25,10 @@ public class CodeGenMethod {
     public CodeGenMethod(String name,String value){
         this.name = name;
         this.value = value;
+    }
+    public CodeGenMethod(String name,List<CodeGenModelAttr> headers){
+        this.name = name;
+        this.headers = headers;
     }
     public CodeGenMethod(String name,boolean isToggle,String toggleColumnName){
         this.name = name;
@@ -66,4 +75,11 @@ public class CodeGenMethod {
         this.value = value;
     }
 
+    public List<CodeGenModelAttr> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(List<CodeGenModelAttr> headers) {
+        this.headers = headers;
+    }
 }

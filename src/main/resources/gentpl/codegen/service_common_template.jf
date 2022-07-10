@@ -224,39 +224,43 @@
 	}
 #end
 
-#define s_exportExcel()
+#define s_exportExcel(headers)
 #setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
     /**
 	 * 生成要导出的Excel
 	 * @return
 	 */
 	public JBoltExcel exportExcel() {
-	return JBoltExcel
-			//创建
-			.create()
-    		//设置工作表
-    		.setSheets(
+	    //准备数据
+	    List<#(codeGen.modelName)> datas = findAll();
+	    return JBoltExcel
+			    //创建
+			    .create()
+    		    //设置工作表
+    		    .setSheets(
     				//设置工作表 列映射 顺序 标题名称
     				JBoltExcelSheet
     				.create()
     				//表头映射关系
-    				.setHeaders(2,
-    						JBoltExcelHeader.create("version", "版本号",16),
-    						JBoltExcelHeader.create("publish_time", "发布日期",15),
-    						JBoltExcelHeader.create("create_time", "记录时间",15),
-    						JBoltExcelHeader.create("is_new", "是否最新版",12),
-    						JBoltExcelHeader.create("user_username", "用户名",10)
-    						)
-    				//设置单元格合并区域
-    		    	.setMerges(JBoltExcelMerge.create("A","E",1, 1, "JBolt版本信息"))
+    				 #if(headers??)
+                    .setHeaders(1,
+                            #for(header:headers)
+                            #if(for.last)
+                            JBoltExcelHeader.create("#(header.colName??)","#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))",15)
+                            #else
+                            JBoltExcelHeader.create("#(header.colName??)","#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))",15),
+                            #end
+                            #end
+                            )
+                    #end
     		    	//设置导出的数据源 来自于数据库查询出来的Model List
-    		    	.setModelDatas(3,findAll())
-    		);
+    		    	.setModelDatas(2,datas)
+    		    );
 	}
 #end
 
 
-#define s_importExcel()
+#define s_importExcel(headers)
 #setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
     /**
 	 * 读取excel文件
@@ -272,15 +276,19 @@
 		.setSheets(
 				JBoltExcelSheet.create()
 				//设置列映射 顺序 标题名称
-				.setHeaders(2,
-					JBoltExcelHeader.create("version", "版本号"),
-					JBoltExcelHeader.create("publish_time", "发布日期"),
-					JBoltExcelHeader.create("create_time", "记录时间"),
-					JBoltExcelHeader.create("is_new", "是否最新版"),
-					JBoltExcelHeader.create("user_id", "用户名")
-					)
+				 #if(headers??)
+                .setHeaders(1,
+                        #for(header:headers)
+                        #if(for.last)
+                        JBoltExcelHeader.create("#(header.colName??)","#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))")
+                        #else
+                        JBoltExcelHeader.create("#(header.colName??)","#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))"),
+                        #end
+                        #end
+                        )
+                #end
 				//从第三行开始读取
-				.setDataStartRow(3)
+				.setDataStartRow(2)
 				);
 		//从指定的sheet工作表里读取数据
 		List<#(codeGen.modelName)> #(fctucName)s=JBoltExcelUtil.readModels(jBoltExcel,1, #(codeGen.modelName).class,errorMsg);
@@ -307,7 +315,7 @@
 	}
 #end
 
-#define s_getImportExcelTpl()
+#define s_getImportExcelTpl(headers)
 	/**
      * 生成excel导入使用的模板
      * @return
@@ -319,14 +327,17 @@
                 .setSheets(
                         JBoltExcelSheet.create()
                         //设置列映射 顺序 标题名称 不处理别名
-                        .setHeaders(2,false,
-                                JBoltExcelHeader.create("版本号",16),
-                                JBoltExcelHeader.create("发布日期",15),
-                                JBoltExcelHeader.create("记录时间",15),
-                                JBoltExcelHeader.create("是否最新版",12),
-                                JBoltExcelHeader.create("用户名",10)
+                        #if(headers??)
+                        .setHeaders(1,false,
+                                #for(header:headers)
+                                #if(for.last)
+                                JBoltExcelHeader.create("#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))",15)
+                                #else
+                                JBoltExcelHeader.create("#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))",15),
+                                #end
+                                #end
                                 )
-                        .setMerges(JBoltExcelMerge.create("A","E",1, 1, "JBolt版本信息"))
+                        #end
                     );
     }
 #end
@@ -511,11 +522,11 @@
 		#case("initSortRank")
 			#@s_initSortRank()
         #case("getImportExcelTpl")
-            #@s_getImportExcelTpl()
+            #@s_getImportExcelTpl(method.headers)
         #case("importExcel")
-            #@s_importExcel()
+            #@s_importExcel(method.headers)
         #case("exportExcel")
-            #@s_exportExcel()
+            #@s_exportExcel(method.headers)
 		#case("tree")
 			#@s_tree()
 		#default

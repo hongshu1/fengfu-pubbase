@@ -1318,11 +1318,13 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             }
 
             if(codeGen.getIsImportExcel()){
-                genMehtods.add(new CodeGenMethod("getImportExcelTpl"));
-                genMehtods.add(new CodeGenMethod("importExcel"));
+                List<CodeGenModelAttr> headers = codeGenModelAttrService.getCodeGenImportColumns(codeGen.getId());
+                genMehtods.add(new CodeGenMethod("getImportExcelTpl",headers));
+                genMehtods.add(new CodeGenMethod("importExcel",headers));
             }
             if(codeGen.getIsExportExcel()){
-                genMehtods.add(new CodeGenMethod("exportExcel"));
+                List<CodeGenModelAttr> headers = codeGenModelAttrService.getCodeGenExportColumns(codeGen.getId());
+                genMehtods.add(new CodeGenMethod("exportExcel",headers));
             }
 
         }
