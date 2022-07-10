@@ -79,7 +79,7 @@
 {@else}
 <a tooltip  data-title="编辑基础信息"  href="admin/codegen/edit/${data.id}" data-handler="refreshJBoltTable" data-dialog-title="编辑[${data.mainTableName}${data.mainTableRemark?('('+data.mainTableRemark+')'):''}]基本信息" data-area="1280,900" class="jbolt_table_editbtn text-primary"><i class="fa fa-pencil"></i></a>
 {@/if}
-<a tooltip  data-title="设计详细生成配置" target="_blanmk"  href="admin/codegen/editCodeGenConfig/${data.id}"  class="mr-1 text-success"><i class="fa fa-cogs"></i></a>
+<a tooltip  data-title="设计详细生成配置" target="_blank"  href="admin/codegen/editCodeGenConfig/${data.id}"  class="mr-1 text-success"><i class="fa fa-cogs"></i></a>
 <a tooltip  data-title="删除"  href="admin/codegen/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" class="jbolt_table_delbtn text-danger"><i class="fa fa-remove"></i></a>
 </td>
 </tr>
