@@ -163,6 +163,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setIsIdCache(true);
         codeGen.setIsToolbar(false);
         codeGen.setIsShowOptcol(true);
+        codeGen.setIsShowOptcol(codeGen.getIsCrud());
         codeGen.setViewLayout("jboltLayout");
         if (isOk(codeGen.getMainTableRemark())) {
             codeGen.setIndexHtmlPageTitle(codeGen.getMainTableRemark());
@@ -305,8 +306,13 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         }
         codeGen.setUpdateUserId(JBoltUserKit.getUserId());
         codeGen.setState(CodeGenState.NOT_GEN.getValue());
-        processCodeGenRecover(codeGen);
+        if(isOk(codeGen.getIsCrud())){
+            codeGen.setIsShowOptcol(codeGen.getIsCrud());
+        }
         boolean success = codeGen.update();
+        if(success){
+            processCodeGenRecoverById(codeGen.getId());
+        }
         return ret(success);
     }
 

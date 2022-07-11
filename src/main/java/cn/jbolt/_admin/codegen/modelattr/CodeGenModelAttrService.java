@@ -644,7 +644,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	 * @return
 	 */
 	public Ret initSortRankIntableById(Long codeGenId) {
-		List<CodeGenModelAttr> attrs = find(selectSql().select("id").eq("code_gen_id", codeGenId).eq("is_table_ele", TRUE).orderById());
+		List<CodeGenModelAttr> attrs = find(selectSql().select("id").eq("code_gen_id", codeGenId).eq("is_table_col", TRUE).orderById());
 		if(isOk(attrs)) {
 			int total = attrs.size();
 			for(int i=0;i<total;i++) {

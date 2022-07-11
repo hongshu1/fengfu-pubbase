@@ -35,6 +35,7 @@
 <td>${data.searchDataColumnAttr}</td>
 <td data-value="${data.dataRuleForSearch}">${data.dataRuleForSearchName}</td>
 <td>${data.dataTipsForSearch}</td>
+#if(codeGen.isCrud)
 <td><img data-switchbtn data-value="${data.isFormEle}" data-url="admin/codegen/modelattr/toggleIsFormEle/${data.id}-#(codeGenId?? 0)"/></td>
 <td><img data-switchbtn data-value="${data.isRequired}" data-url="admin/codegen/modelattr/toggleIsRequired/${data.id}-#(codeGenId?? 0)"/></td>
 <td><img data-switchbtn data-value="${data.isSingleLine}" data-url="admin/codegen/modelattr/toggleIsSingleLine/${data.id}-#(codeGenId?? 0)"/></td>
@@ -48,6 +49,7 @@
 <td>${data.formDataColumnAttr}</td>
 <td data-value="${data.dataRule}">${data.dataRuleName}</td>
 <td>${data.dataTips}</td>
+#end
 </tr>
 {@/each}
 </textarea>
@@ -76,7 +78,9 @@
 <th rowspan="3" data-width="70" data-column="attr_fixed">小数点</th>
 <th rowspan="3" data-width="80" data-column="is_pkey">主键</th>
 <th colspan="19" class="bg-primary text-white">列表页配置</th>
-<th colspan="14" rowspan="2"  class="bg-info text-white">表单内配置</th>
+#if(codeGen.isCrud)
+<th colspan="13" rowspan="2"  class="bg-info text-white">表单内配置</th>
+#end
 </tr>
 <tr>
 <th colspan="7" class="bg-info text-white">列表页基础配置</th>
@@ -102,7 +106,7 @@
 <th data-width="150" data-column="search_data_column_attr">data-column-attr</th>
 <th data-width="150" data-column="data_rule_for_search">校验规则</th>
 <th data-width="300" data-column="data_tips_for_search">校验提示</th>
-
+#if(codeGen.isCrud)
 <th data-width="80" data-column="is_form_ele">编辑</th>
 <th data-width="80" data-column="is_required">必填</th>
 <th data-width="80" data-column="is_single_line">新行</th>
@@ -116,6 +120,7 @@
 <th data-width="150" data-column="form_data_column_attr">data-column-attr</th>
 <th data-width="150" data-column="data_rule">校验规则</th>
 <th data-width="300" data-column="data_tips">校验提示</th>
+#end
 </thead>
 <tbody></tbody>
 </table>
