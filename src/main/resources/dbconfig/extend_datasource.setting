@@ -40,15 +40,3 @@ is_encrypted = false
 id_gen_mode = snowflake
 #force_cast_all_id_gen_mode = snowflake
 model_package=cn.jbolt.meinvtu.model
-
-[mes]
-enable = true
-db_type = sqlserver
-db_name = HOMART_MES
-dev_mode = true
-jdbc_url = jdbc:sqlserver://120.24.44.82:1433; DatabaseName=HOMART_MES
-user = sa
-password = k9UPLjQq$g@9nW@RST
-id_gen_mode = snowflake
-#force_cast_all_id_gen_mode = snowflake
-model_package=cn.jbolt.meinvtu.model
