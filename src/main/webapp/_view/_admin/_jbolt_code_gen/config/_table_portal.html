@@ -30,11 +30,11 @@
 	</div>
 	<div class="col-sm-auto">
 	#if(codeGen.isTableMultiConditionsMode)<button onclick="jboltTableToggleHeadbox(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-filter"></i> 筛选条件</button>#end
-	#if(codeGen.isPageTitleAddBtn)<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/add'):('admin/codegen/formPortalTest/'+codeGen.id))" data-handler="jboltTablePageToFirst" data-area="#(codeGen.formDialogArea?? '800,600')" tooltip data-title="新增#(codeGen.mainTableRemark??)"><i class="fa fa-plus"></i></button>#end
+	#if(codeGen.isCrud && codeGen.isPageTitleAddBtn)<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/add'):('admin/codegen/formPortalTest/'+codeGen.id))" data-handler="jboltTablePageToFirst" data-area="#(codeGen.formDialogArea?? '800,600')" tooltip data-title="新增#(codeGen.mainTableRemark??)"><i class="fa fa-plus"></i></button>#end
 	#if(codeGen.isPageTitleRefreshBtn)<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>#end
-	#if(codeGen.isPageTitleInitRankBtn)<button data-ajaxbtn data-confirm="确认初始化顺序吗？" data-handler="refreshJBoltTable" tooltip data-title="初始化排序" data-url="#(codeGenServiceModel?(codeGen.controllerPathWithoutFirstSlash+'/initSortRank'):('admin/codegen/testAjax'))" class="btn btn-outline-info btn-sm" ><i class="fa fa-sort"></i></button>#end
-	#if(codeGen.isPageTitleImportBtn)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGen.controllerPathWithoutFirstSlash)/initImportExcel" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>#end
-	#if(codeGen.isPageTitleExportBtn)<button class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="#(codeGen.controllerPathWithoutFirstSlash)/exportExcel"><i class="fa fa-download"></i></button>#end
+	#if(codeGen.isCrud && codeGen.isPageTitleInitRankBtn)<button data-ajaxbtn data-confirm="确认初始化顺序吗？" data-handler="refreshJBoltTable" tooltip data-title="初始化排序" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initSortRank'):('admin/codegen/testAjax'))" class="btn btn-outline-info btn-sm" ><i class="fa fa-sort"></i></button>#end
+	#if(codeGen.isCrud && !codeGen.isToolbar&&codeGen.isImportExcel)<button data-dialogbtn data-btn="close" data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initImportExcel'):('admin/codegen/initImportExcel/'+codeGen.id))" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>#end
+	#if(!codeGen.isToolbar&&codeGen.isExportExcel)<button class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/exportExcel'):('admin/codegen/exportExcel/'+codeGen.id))"><i class="fa fa-download"></i></button>#end
 	</div>
 </div>
 </div>
@@ -57,22 +57,22 @@
 #end
 #if(codeGen.isShowOptcol)
 <td>
-#if(codeGen.isShowOptcolEdit)
+#if(codeGen.isCrud && codeGen.isShowOptcolEdit)
 	{@if data.isDeleted}
 	<a class="text-info mr-1" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/${data.id}" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="查看#(codeGen.mainTableRemark??)"><i class="fa fa-eye"></i></a>
 	{@else}
 	<a class="jbolt_table_editbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/${data.id}" data-handler="refreshJBoltTable" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="编辑#(codeGen.mainTableRemark??)"><i class="fa fa-edit"></i></a>
 	{@/if}
 #end
-#if(codeGen.isShowOptcolDel)
+#if(codeGen.isCrud && codeGen.isShowOptcolDel)
 	<a class="jbolt_table_delbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
 #end
-#if(codeGen.isShowOptcolRecover)
+#if(codeGen.isCrud && codeGen.isShowOptcolRecover)
 	{@if data.isDeleted}
 	<a class="text-info mr-1" href="#(codeGen.controllerPathWithoutFirstSlash)/recover/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-reply"></i></a>
 	{@/if}
 #end
-#if(codeGen.isShowOptcolSort)
+#if(codeGen.isCrud && codeGen.isShowOptcolSort)
 	{@if !data.isDeleted}
 	<a href="#(codeGen.controllerPathWithoutFirstSlash)/up/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
 	<a href="#(codeGen.controllerPathWithoutFirstSlash)/down/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
@@ -86,16 +86,16 @@
 #if(codeGen.isToolbar)
 <div class="jbolt_table_toolbar" id="#(codeGen.modelName)_toolbar#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-#if(codeGen.isToolbarAddBtn)
+#if(codeGen.isCrud && codeGen.isToolbarAddBtn)
 	<button data-dialogbtn data-area="#(codeGen.formDialogArea?? '800,600')"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  data-title="新增#(codeGen.mainTableRemark??)" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/add'):'admin/codegen/formPortalTest/'+codeGen.id)" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
 #end
-#if(codeGen.isToolbarEditBtn)
+#if(codeGen.isCrud && codeGen.isToolbarEditBtn)
 	<button data-dialogbtn data-area="#(codeGen.formDialogArea?? '800,600')"  data-handler="refreshJBoltTable"  id="toolbar_editBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  data-title="编辑#(codeGen.mainTableRemark??)" data-check-handler="jboltTableGetCheckedId" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/edit/'):'admin/codegen/formPortalTest/'+codeGen.id+'-')" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
 #end
-#if(codeGen.isToolbarDelBtn)
+#if(codeGen.isCrud && codeGen.isToolbarDelBtn)
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/deleteByIds?ids='):'admin/codegen/testAjax?ids=')" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
 #end
-#if(hasIsDeletedColumn && codeGen.isToolbarRecoverBtn)
+#if(codeGen.isCrud && hasIsDeletedColumn && codeGen.isToolbarRecoverBtn)
 	<button style="display:none;" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_recoverBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/recoverByIds?ids='):'admin/codegen/testAjax?ids=')"  data-confirm="确定还原回收站里选中数据？" class="btn btn-outline-info btn-sm" ><i class="fa fa-reply"></i> 还原</button>
 #end
 #if(codeGen.isToolbarRefreshBtn)<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>#end
@@ -109,8 +109,8 @@
 #end
 #if(codeGen.isImportExcel || codeGen.isExportExcel)
 <div class="btn-group btn-group-sm float-right" role="group" aria-label="btn-group">
-#if(codeGen.isImportExcel)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGen.controllerPathWithoutFirstSlash)/initImportExcel" class="btn btn-outline-primary" ><i class="fa fa-upload"></i> 导入</button>#end
-#if(codeGen.isExportExcel)<button class="btn btn-outline-primary" data-downloadbtn data-form="jboltversion_JboltTableForm_ajax#if(codeGenServiceMode??)_#[[#]]#(pageId)#end" data-usecheckedids="true"  data-url="#(codeGen.controllerPathWithoutFirstSlash)/download"><i class="fa fa-download"></i> 导出</button>#end
+#if(codeGen.isCrud && codeGen.isImportExcel)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initImportExcel'):('admin/codegen/initImportExcel/'+(codeGen.id?? 0)))" data-btn="close" class="btn btn-outline-primary" ><i class="fa fa-upload"></i> 导入</button>#end
+#if(codeGen.isExportExcel)<button class="btn btn-outline-primary" data-downloadbtn data-form="jboltversion_JboltTableForm_ajax#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/exportExcel'):('admin/codegen/exportExcel/'+(codeGen.id?? 0)))"><i class="fa fa-download"></i> 导出</button>#end
 </div>
 #end
  

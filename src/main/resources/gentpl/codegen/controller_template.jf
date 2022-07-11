@@ -1,5 +1,9 @@
 package #(codeGen.controllerPackage??);
 
+#if(codeGen.isImportExcel??)
+import cn.jbolt.common.config.JBoltUploadFolder;
+import com.jfinal.upload.UploadFile;
+#end
 import com.jfinal.aop.Inject;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;

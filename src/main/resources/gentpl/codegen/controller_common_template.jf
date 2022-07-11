@@ -182,6 +182,47 @@
 		renderJson(service.initSortRank());
 	}
 #end
+#define c_downloadTpl()
+   /**
+	* 下载导入模板
+	*/
+	public void downloadTpl() {
+		renderBytesToExcelXlsFile(service.getImportExcelTpl().setFileName("#(codeGen.mainTableRemark?? '')导入模板"));
+	}
+#end
+
+#define c_initImportExcel()
+   /**
+	* 进入import_excel.html
+	*/
+	public void initImportExcel() {
+		render("import_excel.html");
+	}
+#end
+
+#define c_importExcel()
+   /**
+	* 执行导入excel
+	*/
+	public void importExcel() {
+		String uploadPath=JBoltUploadFolder.todayFolder(JBoltUploadFolder.IMPORT_EXCEL_TEMP_FOLDER);
+        UploadFile file=getFile("file",uploadPath);
+        if(notExcel(file)){
+            renderJsonFail("请上传excel文件");
+            return;
+        }
+        renderJson(service.importExcel(file.getFile()));
+	}
+#end
+
+#define c_exportExcel()
+   /**
+	* 执行导出excel
+	*/
+	public void exportExcel() {
+		renderBytesToExcelXlsxFile(service.exportExcel().setFileName("#(codeGen.mainTableRemark?? '导出数据')"));
+	}
+#end
 
 #define c_toggleEnable()
    /**
@@ -262,6 +303,14 @@
 			#@c_down()
 		#case("initSortRank")
 			#@c_initSortRank()
+        #case("initImportExcel")
+            #@c_initImportExcel()
+        #case("downloadTpl")
+            #@c_downloadTpl()
+        #case("importExcel")
+            #@c_importExcel()
+        #case("exportExcel")
+             #@c_exportExcel()
 		#case("tree")
 			#@c_tree()
 		#case("options")

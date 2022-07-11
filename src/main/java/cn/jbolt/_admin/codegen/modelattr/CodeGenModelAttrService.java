@@ -58,6 +58,18 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	
 	/**
 	 * 为指定的主表生成modelAttrs
+	 * @param codeGenId
+	 */
+	public boolean genMainTableAttrs(Long codeGenId) {
+		CodeGen codeGen = codeGenService.findById(codeGenId);
+		if(codeGen == null) {
+			throw new RuntimeException("未找到代码生成的基础配置");
+		}
+		return genMainTableAttrs(codeGen);
+	}
+
+	/**
+	 * 为指定的主表生成modelAttrs
 	 * @param codeGen
 	 */
 	public boolean genMainTableAttrs(CodeGen codeGen) {
@@ -73,9 +85,16 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 				List<CodeGenModelAttr> attrs = new ArrayList<CodeGenModelAttr>();
 				int len = columnMetas.size();
 				ColumnMeta columnMeta;
+				CodeGenModelAttr attrTemp;
 				for(int i=0;i<len;i++) {
 					columnMeta = columnMetas.get(i);
-					attrs.add(convertModelAttr((i+1),codeGen.getId(),codeGen.getIsEditable(),codeGen.getIsCrud(),columnMeta));
+					attrTemp = convertModelAttr((i+1),codeGen.getId(),codeGen.getIsEditable(),codeGen.getIsCrud(),columnMeta);
+					if(attrTemp.getIsPkey()){
+						//设置主键为默认排序列
+						codeGen.setTableDefaultSortColumn(attrTemp.getColName());
+						codeGen.setTableDefaultSortType("desc");
+					}
+					attrs.add(attrTemp);
 					if(columnMeta.name.equalsIgnoreCase("sort_rank") || columnMeta.name.toLowerCase().indexOf("sort_rank")!=-1) {
 						codeGen.setIsShowOptcolSort(true);
 						codeGen.setTableDefaultSortColumn(columnMeta.name);
@@ -88,6 +107,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 					for(CodeGenModelAttr attr:attrs){
 						attr.save();
 					}
+					codeGen.update();
 				}
 			}
 			return true;
@@ -134,7 +154,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}else {
 			attr.setAttrLength(Integer.parseInt(len));
 		}
-		
+
 		String fixed = ColumnTypeToDirective.getFixed(col.type);
 		if(StrKit.isBlank(fixed)||fixed.equals("0")) {
 			attr.setAttrFixed(0);
@@ -211,27 +231,51 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 					}
 				}else if(col.javaType.equalsIgnoreCase("java.sql.time")){
 					attr.setFormUiType("laydate_time");
-				}else if(col.javaType.equalsIgnoreCase("java.lang.integer") && colLow.endsWith("_year")){
+				}else if(col.javaType.equalsIgnoreCase("java.lang.integer") && (colLow.endsWith("_year") || colLow.equals("year"))){
 					attr.setFormUiType("laydate_year");
-				}else if(colLow.endsWith("_month")){
+				}else if(colLow.endsWith("_month") || colLow.equals("month")){
 					attr.setFormUiType("laydate_month");
+				}else if(col.javaType.equalsIgnoreCase("java.lang.string")){
+					if(colLow.endsWith("_week") || colLow.equals("week")){
+						attr.setFormUiType("input_week");
+					}else{
+						if(attr.getAttrLength()>100){
+							attr.setFormUiType("textarea");
+						}else{
+							attr.setFormUiType("input");
+						}
+					}
+				}else if(col.javaType.equalsIgnoreCase("java.lang.integer")){
+					attr.setFormUiType("number");
 				}
 			}
 			if(isEditable){
 				if(col.javaType.equalsIgnoreCase("java.util.date")){
 					if(colLow.endsWith("_day") || colLow.endsWith("_date")){
-						attr.setTableUiType("laydate_date");
+						attr.setTableUiType("date");
 					}else if(colLow.endsWith("_time")){
-						attr.setTableUiType("laydate_datetime");
+						attr.setTableUiType("datetime");
 					}else{
-						attr.setTableUiType("laydate_date");
+						attr.setTableUiType("date");
 					}
 				}else if(col.javaType.equalsIgnoreCase("java.sql.time")){
-					attr.setTableUiType("laydate_time");
-				}else if(col.javaType.equalsIgnoreCase("java.lang.integer") && colLow.endsWith("_year")){
-					attr.setTableUiType("laydate_year");
-				}else if(colLow.endsWith("_month")){
-					attr.setTableUiType("laydate_month");
+					attr.setTableUiType("time");
+				}else if(col.javaType.equalsIgnoreCase("java.lang.integer") && (colLow.endsWith("_year") || colLow.equals("year"))){
+					attr.setTableUiType("year");
+				}else if(colLow.endsWith("_month") || colLow.equals("month")){
+					attr.setTableUiType("month");
+				}else if(col.javaType.equalsIgnoreCase("java.lang.string")){
+					if((colLow.endsWith("_week") || colLow.equals("week"))){
+						attr.setTableUiType("week");
+					}else{
+						if(attr.getAttrLength()>100){
+							attr.setTableUiType("textarea");
+						}else{
+							attr.setTableUiType("input");
+						}
+					}
+				}else if(col.javaType.equalsIgnoreCase("java.lang.integer")){
+					attr.setTableUiType("input_number");
 				}
 			}
 		}else{
@@ -278,7 +322,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return null;
 	}
-	
+
 	@Override
 	protected String afterToggleBoolean(CodeGenModelAttr attr, String column, Kv kv) {
 		if(column.equalsIgnoreCase("is_pkey") && attr.getIsPkey()) {
@@ -299,7 +343,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	public Ret toggleAttrBoolean(String column, Long id, Long codeGenId) {
 		return toggleBoolean(Kv.by("id", id).set("code_gen_id",codeGenId),id, column);
 	}
-	
+
 	/**
 	 * 获取指定表的keyCache Autocomplete下拉使用的columns
 	 * @param codeGenId
@@ -331,7 +375,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			delete(deleteSql().eq("code_gen_id", codeGenId));
 		}
 	}
-	
+
 	/**
 	 * 获取可以作为关键词查询匹配的字段列表
 	 * @param codeGenId
@@ -347,11 +391,11 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		sql.orderBySortRank();
 		return find(sql);
 	}
-	
+
 	/**
 	 * 获取form表单顺序使用的属性分列数据
 	 * @param codeGenId
-	 * @param editMode 
+	 * @param editMode
 	 * @return
 	 */
 	public List<Kv> getCodeGenFormColDatas(Long codeGenId, boolean editMode) {
@@ -415,7 +459,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 					arr[i] = 0;
 				}
 			}
-			
+
 			int startIndex = 0;
 			int endIndex = 0;
 			if(formColumnDirection.equals("v")) {
@@ -440,7 +484,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return kvs;
 	}
-	
+
 	/**
 	 * 获取指定codeGen的attrs
 	 * @param codeGenId
@@ -454,7 +498,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return find(selectSql().eq("code_gen_id", codeGenId).asc("sort_rank_inform").eq("is_form_ele", TRUE));
 	}
-	
+
 	/**
 	 * 移动交换位置顺序
 	 * @param codeGenId
@@ -543,7 +587,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * 移动到结尾
 	 * @param codeGenId
@@ -593,6 +637,24 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return SUCCESS;
 	}
+
+	/**
+	 * 初始化表格显示列元素排序
+	 * @param codeGenId
+	 * @return
+	 */
+	public Ret initSortRankIntableById(Long codeGenId) {
+		List<CodeGenModelAttr> attrs = find(selectSql().select("id").eq("code_gen_id", codeGenId).eq("is_table_col", TRUE).orderById());
+		if(isOk(attrs)) {
+			int total = attrs.size();
+			for(int i=0;i<total;i++) {
+				attrs.get(i).setSortRankIntable(i+1);
+			}
+			batchUpdate(attrs);
+		}
+		return SUCCESS;
+	}
+
 	/**
 	 *同步一个表的attrs
 	 * @param codeGenId
@@ -620,7 +682,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 							return ret;
 						}
 					}
-					
+
 				}
 			}
 		}else {
@@ -647,7 +709,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			}
 		}
 	}
-	
+
 	/**
 	 * 处理一个字段的同步
 	 * @param codeGenId
@@ -672,7 +734,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		if(!attr.getAttrName().equals(col.attrName)) {
 			attr.setAttrName(col.attrName);
 		}
-		
+
 		if(!attr.getJavaType().equals(col.javaType)) {
 			attr.setJavaType(col.javaType);
 		}
@@ -680,7 +742,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		if(!attr.getRemark().equals(rek)) {
 			attr.setRemark(rek);
 		}
-		
+
 		String len = ColumnTypeToDirective.getLength(col.type);
 		Integer attrLen = null;
 		if(StrKit.isBlank(len)||len.equals("0")) {
@@ -691,7 +753,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		if(attr.getAttrLength().intValue() != attrLen.intValue()) {
 			attr.setAttrLength(attrLen);
 		}
-		
+
 		String fixed = ColumnTypeToDirective.getFixed(col.type);
 		Integer attrFixed = null;
 		if(StrKit.isBlank(fixed)||fixed.equals("0")) {
@@ -699,11 +761,11 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}else {
 			attrFixed = Integer.parseInt(fixed);
 		}
-		
+
 		if(attr.getAttrFixed().intValue() != attrFixed.intValue()) {
 			attr.setAttrFixed(attrFixed);
 		}
-		
+
 		boolean colIsPkey = col.isPrimaryKey.equalsIgnoreCase("pri");
 		if(attr.getIsPkey().booleanValue() != colIsPkey) {
 			attr.setIsPkey(colIsPkey);
@@ -712,7 +774,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		if(attr.getIsRequired().booleanValue() != colIsRequired) {
 			attr.setIsRequired(colIsRequired);
 		}
-		
+
 		if(StrKit.isBlank(attr.getAttrDefaultValue()) && StrKit.notBlank(col.defaultValue)) {
 			if(col.javaType.equalsIgnoreCase("java.lang.boolean")) {
 				boolean isTrue = col.defaultValue.equalsIgnoreCase("true") || col.defaultValue.equalsIgnoreCase(TRUE);
@@ -727,7 +789,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 				attr.setSearchDefaultValue(col.defaultValue);
 			}
 		}
-		
+
 		attr.setSortRank(sortRank);
 		boolean success = attr.update();
 		return ret(success);
@@ -807,10 +869,10 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			attr.setIsFormJboltinputJstreeOnlyLeaf(isFormJBoltInputJstreeOnlyLeaf);
 		}
 		boolean success = attr.update();
-		
+
 		return ret(success);
 	}
-	
+
 	/**
 	 * 获取表格列数据
 	 * @param codeGenId
@@ -823,6 +885,30 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_table_col", TRUE).orderBySortRank("sort_rank_intable"));
 	}
 	/**
+	 * 获取表格导入数据
+	 * @param codeGenId
+	 * @return
+	 */
+	public List<CodeGenModelAttr> getCodeGenImportColumns(Long codeGenId) {
+		if(notOk(codeGenId)) {
+			return new ArrayList<CodeGenModelAttr>();
+		}
+		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_import_col", TRUE).orderBySortRank("sort_rank_intable"));
+	}
+
+	/**
+	 * 获取表格导出数据
+	 * @param codeGenId
+	 * @return
+	 */
+	public List<CodeGenModelAttr> getCodeGenExportColumns(Long codeGenId) {
+		if(notOk(codeGenId)) {
+			return new ArrayList<CodeGenModelAttr>();
+		}
+		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_export_col", TRUE).orderBySortRank("sort_rank_intable"));
+	}
+
+	/**
 	 * 表格查询条件
 	 * @param codeGenId
 	 * @return
@@ -833,7 +919,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_search_ele", TRUE).orderBySortRank("sort_rank_insearch"));
 	}
-	
+
 	public Page<Okv> paginateCodeGenTableColumnsDatas(Long codeGenId,Integer pageNumber,Integer pageSize) {
 		if(notOk(codeGenId)) {
 			return null;

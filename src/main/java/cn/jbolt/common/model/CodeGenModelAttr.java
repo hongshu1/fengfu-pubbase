@@ -85,7 +85,7 @@ public class CodeGenModelAttr extends BaseCodeGenModelAttr<CodeGenModelAttr> {
         if("sys_dictionary".equals(dataType)) {
             return JBoltDictionaryTypeCache.me.getNameByKey(getSearchDataValue());
         }
-        return getFormDataValue();
+        return getSearchDataValue();
     }
 
     public String getSearchDefaultValueName() {

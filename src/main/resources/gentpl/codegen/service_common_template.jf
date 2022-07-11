@@ -224,6 +224,124 @@
 	}
 #end
 
+#define s_exportExcel(headers)
+#setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
+    /**
+	 * 生成要导出的Excel
+	 * @return
+	 */
+	public JBoltExcel exportExcel() {
+	    //准备数据
+	    List<#(codeGen.modelName)> datas = findAll();
+	    return JBoltExcel
+			    //创建
+			    .create()
+    		    //设置工作表
+    		    .setSheets(
+    				//设置工作表 列映射 顺序 标题名称
+    				JBoltExcelSheet
+    				.create()
+    				//表头映射关系
+    				 #if(headers??)
+                    .setHeaders(1,
+                            #for(header:headers)
+                            #if(for.last)
+                            JBoltExcelHeader.create("#(header.colName??)","#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))",15)
+                            #else
+                            JBoltExcelHeader.create("#(header.colName??)","#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))",15),
+                            #end
+                            #end
+                            )
+                    #end
+    		    	//设置导出的数据源 来自于数据库查询出来的Model List
+    		    	.setModelDatas(2,datas)
+    		    );
+	}
+#end
+
+
+#define s_importExcel(headers)
+#setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
+    /**
+	 * 读取excel文件
+	 * @param file
+	 * @return
+	 */
+	public Ret importExcel(File file) {
+		StringBuilder errorMsg=new StringBuilder();
+		JBoltExcel jBoltExcel=JBoltExcel
+		//从excel文件创建JBoltExcel实例
+		.from(file)
+		//设置工作表信息
+		.setSheets(
+				JBoltExcelSheet.create()
+				//设置列映射 顺序 标题名称
+				 #if(headers??)
+                .setHeaders(1,
+                        #for(header:headers)
+                        #if(for.last)
+                        JBoltExcelHeader.create("#(header.colName??)","#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))")
+                        #else
+                        JBoltExcelHeader.create("#(header.colName??)","#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))"),
+                        #end
+                        #end
+                        )
+                #end
+				//从第三行开始读取
+				.setDataStartRow(2)
+				);
+		//从指定的sheet工作表里读取数据
+		List<#(codeGen.modelName)> #(fctucName)s=JBoltExcelUtil.readModels(jBoltExcel,1, #(codeGen.modelName).class,errorMsg);
+		if(notOk(#(fctucName)s)) {
+			if(errorMsg.length()>0) {
+				return fail(errorMsg.toString());
+			}else {
+				return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+			}
+		}
+		//执行批量操作
+		boolean success=tx(new IAtom() {
+			@Override
+			public boolean run() throws SQLException {
+				batchSave(#(fctucName)s);
+				return true;
+			}
+		});
+
+		if(!success) {
+			return fail(JBoltMsg.DATA_IMPORT_FAIL);
+		}
+		return SUCCESS;
+	}
+#end
+
+#define s_getImportExcelTpl(headers)
+	/**
+     * 生成excel导入使用的模板
+     * @return
+     */
+    public JBoltExcel getImportExcelTpl() {
+        return JBoltExcel
+                //创建
+                .create()
+                .setSheets(
+                        JBoltExcelSheet.create()
+                        //设置列映射 顺序 标题名称 不处理别名
+                        #if(headers??)
+                        .setHeaders(1,false,
+                                #for(header:headers)
+                                #if(for.last)
+                                JBoltExcelHeader.create("#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))",15)
+                                #else
+                                JBoltExcelHeader.create("#(header.tableLabel?? (header.remark?? (header.attrName?? (header.colName??))))",15),
+                                #end
+                                #end
+                                )
+                        #end
+                    );
+    }
+#end
+
 
 #define s_initSortRank()
 #setLocal(fctucName=firstCharToLowerCase(codeGen.modelName))
@@ -403,6 +521,12 @@
 			#@s_down()
 		#case("initSortRank")
 			#@s_initSortRank()
+        #case("getImportExcelTpl")
+            #@s_getImportExcelTpl(method.headers)
+        #case("importExcel")
+            #@s_importExcel(method.headers)
+        #case("exportExcel")
+            #@s_exportExcel(method.headers)
 		#case("tree")
 			#@s_tree()
 		#default

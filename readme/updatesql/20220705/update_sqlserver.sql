@@ -136,8 +136,6 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [is_page_title_add_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_page_title_refresh_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_page_title_init_rank_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
-    [is_page_title_import_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
-    [is_page_title_export_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_project_system_log] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [project_system_log_target_type_text] nvarchar(20) COLLATE Chinese_PRC_CI_AS  NULL,
     [project_system_log_target_type_value] nvarchar(10) COLLATE Chinese_PRC_CI_AS  NULL,
@@ -1057,20 +1055,6 @@ ALTER TABLE [dbo].[jb_code_gen] SET (LOCK_ESCALATION = TABLE)
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen',
     'COLUMN', N'is_page_title_init_rank_btn'
-    GO
-
-    EXEC sp_addextendedproperty
-    'MS_Description', N'是否启用pageTitle上的上传按钮',
-    'SCHEMA', N'dbo',
-    'TABLE', N'jb_code_gen',
-    'COLUMN', N'is_page_title_import_btn'
-    GO
-
-    EXEC sp_addextendedproperty
-    'MS_Description', N'是否启用pageTitle的下载导出按钮',
-    'SCHEMA', N'dbo',
-    'TABLE', N'jb_code_gen',
-    'COLUMN', N'is_page_title_export_btn'
     GO
 
     EXEC sp_addextendedproperty

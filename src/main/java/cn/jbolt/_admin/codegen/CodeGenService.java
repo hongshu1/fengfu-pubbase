@@ -58,6 +58,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
     private static final String routesTemplate = "/gentpl/codegen/routes_template.jf";
     private static final String indexhtmlTemplate = "/config/_table_portal.html";
     private static final String formhtmlTemplate = "/config/_form_portal.html";
+    private static final String importExcelHtmlTemplate = "/config/_import_excel.html";
     private static final String addhtmlTemplate = "/gentpl/codegen/add_html_template.jf";
     private static final String edithtmlTemplate = "/gentpl/codegen/edit_html_template.jf";
     private Engine codeGenEngine;
@@ -97,6 +98,15 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
                     .addSharedFunction("/config/_form_ele_define_function.html");
         }
         return codeGenFormHtmlEngine;
+    }
+    private Engine codeGenImportExcelHtmlEngine;
+    private Engine getCodeGenImportExcelHtmlTplEngine() {
+        if (codeGenImportExcelHtmlEngine == null) {
+            codeGenImportExcelHtmlEngine = new Engine()
+                    .setBaseTemplatePath(PathKit.getWebRootPath() + "/_view/_admin/_jbolt_code_gen")
+                    .addSharedMethod(new StrKit());
+        }
+        return codeGenImportExcelHtmlEngine;
     }
 
     /**
@@ -151,6 +161,9 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setIsTableUseRecord(false);
         codeGen.setIsTableRecordCamelCase(false);
         codeGen.setIsIdCache(true);
+        codeGen.setIsToolbar(false);
+        codeGen.setIsShowOptcol(true);
+        codeGen.setIsShowOptcol(codeGen.getIsCrud());
         codeGen.setViewLayout("jboltLayout");
         if (isOk(codeGen.getMainTableRemark())) {
             codeGen.setIndexHtmlPageTitle(codeGen.getMainTableRemark());
@@ -170,11 +183,10 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setHtmlViewPath(FileUtil.normalize("/_view/" + codeGen.getControllerPath()));
         codeGen.setRoutesScanPackage(codeGen.getMainJavaPackage());
         codeGen.setIsNeedAdminInterceptor(true);
-        processCodeGenRecover(codeGen);
         boolean success = codeGen.save();
         if (success) {
-            codeGenModelAttrService.genMainTableAttrs(codeGen);
-            success = codeGen.update();
+            codeGenModelAttrService.genMainTableAttrs(codeGen.getId());
+            processCodeGenRecoverById(codeGen.getId());
         }
         return ret(success);
     }
@@ -294,6 +306,9 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         }
         codeGen.setUpdateUserId(JBoltUserKit.getUserId());
         codeGen.setState(CodeGenState.NOT_GEN.getValue());
+        if(isOk(codeGen.getIsCrud())){
+            codeGen.setIsShowOptcol(codeGen.getIsCrud());
+        }
         boolean success = codeGen.update();
         if(success){
             processCodeGenRecoverById(codeGen.getId());
@@ -732,9 +747,48 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             genEditHtml(codeGen, cover);
             //4、生成form.html
             genFormHtml(codeGen, cover);
+            //5、生成importExcel.html
+            genImportExcelHtml(codeGen, cover);
         }
         //5、生成detail.html
         genDetailHtml(codeGen, cover);
+    }
+
+    /**
+     * 生成importExcel.html
+     * @param codeGen
+     * @param cover
+     */
+    private void genImportExcelHtml(CodeGen codeGen, boolean cover) {
+        if(!codeGen.getIsImportExcel()){
+            return;
+        }
+        String htmlFilePath = FileUtil.normalize(codeGen.getProjectPath() + "/src/main/webapp" + codeGen.getHtmlViewPath() + "/import_excel.html");
+        JBoltConsoleUtil.printMessageWithDate("正在生import_excel,路径:" + htmlFilePath);
+        if (FileUtil.exist(htmlFilePath) && !cover) {
+            JBoltConsoleUtil.printMessageWithDate("import_excel已存在,忽略生成...");
+            return;
+        }
+        //准备内容
+        String content = genImportExcelHtmlCode(codeGen);
+        //写入_form.html
+        FileUtil.writeUtf8String(content, htmlFilePath);
+    }
+
+    /**
+     * 生成import_excel.html
+     * @param codeGen
+     * @return
+     */
+    private String genImportExcelHtmlCode(CodeGen codeGen) {
+        //准备模板引擎
+        Engine engine = getCodeGenImportExcelHtmlTplEngine();
+        // 准备模板数据
+        Kv data = Kv.by("codeGen", codeGen);
+        // 准备数据
+        data.set("codeGenServiceMode", true);
+        //执行生成 返回内容
+        return engine.getTemplate(importExcelHtmlTemplate).renderToString(data);
     }
 
     private void genDetailHtml(CodeGen codeGen, boolean cover) {
@@ -1230,6 +1284,15 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             if (codeGen.getIsTreeTable()) {
                 genMehtods.add(new CodeGenMethod("tree"));
             }
+
+            if(codeGen.getIsImportExcel()){
+                genMehtods.add(new CodeGenMethod("initImportExcel"));
+                genMehtods.add(new CodeGenMethod("downloadTpl"));
+                genMehtods.add(new CodeGenMethod("importExcel"));
+            }
+            if(codeGen.getIsExportExcel()){
+                genMehtods.add(new CodeGenMethod("exportExcel"));
+            }
         }
         return genMehtods;
     }
@@ -1258,6 +1321,16 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             }
             if (codeGen.getIsTreeTable()) {
                 genMehtods.add(new CodeGenMethod("tree"));
+            }
+
+            if(codeGen.getIsImportExcel()){
+                List<CodeGenModelAttr> headers = codeGenModelAttrService.getCodeGenImportColumns(codeGen.getId());
+                genMehtods.add(new CodeGenMethod("getImportExcelTpl",headers));
+                genMehtods.add(new CodeGenMethod("importExcel",headers));
+            }
+            if(codeGen.getIsExportExcel()){
+                List<CodeGenModelAttr> headers = codeGenModelAttrService.getCodeGenExportColumns(codeGen.getId());
+                genMehtods.add(new CodeGenMethod("exportExcel",headers));
             }
 
         }
