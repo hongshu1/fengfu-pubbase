@@ -637,6 +637,24 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return SUCCESS;
 	}
+
+	/**
+	 * 初始化表格显示列元素排序
+	 * @param codeGenId
+	 * @return
+	 */
+	public Ret initSortRankIntableById(Long codeGenId) {
+		List<CodeGenModelAttr> attrs = find(selectSql().select("id").eq("code_gen_id", codeGenId).eq("is_table_ele", TRUE).orderById());
+		if(isOk(attrs)) {
+			int total = attrs.size();
+			for(int i=0;i<total;i++) {
+				attrs.get(i).setSortRankIntable(i+1);
+			}
+			batchUpdate(attrs);
+		}
+		return SUCCESS;
+	}
+
 	/**
 	 *同步一个表的attrs
 	 * @param codeGenId

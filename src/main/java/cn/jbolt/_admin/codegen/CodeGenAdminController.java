@@ -369,6 +369,13 @@ public class CodeGenAdminController extends JBoltBaseController {
 		renderJson(codeGenModelAttrService.initSortRankInformById(getLong(0)));
 	}
 	/**
+	 * 初始化form元素排序
+	 */
+	@Before(Tx.class)
+	public void initSortRankIntable() {
+		renderJson(codeGenModelAttrService.initSortRankIntableById(getLong(0)));
+	}
+	/**
 	 * form portal 编辑模式
 	 */
 	public void formPortalEditMode() {
