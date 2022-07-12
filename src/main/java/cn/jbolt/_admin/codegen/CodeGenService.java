@@ -461,14 +461,30 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         }
         return SUCCESS;
     }
-
+    /**
+     * 生成 controller service html等
+     *
+     * @param codeGenId
+     * @param cover
+     * @return
+     */
+    public Ret genMainLogic(Long codeGenId, boolean cover) {
+        if (notOk(codeGenId)) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        CodeGen codeGen = findById(codeGenId);
+        if (codeGen == null) {
+            return fail(JBoltMsg.DATA_NOT_EXIST);
+        }
+        return genMainLogic(codeGen, cover);
+    }
     /**
      * 生成 controller service html等
      *
      * @param codeGen
      * @param cover
      */
-    private void genMainLogic(CodeGen codeGen, boolean cover) {
+    private Ret genMainLogic(CodeGen codeGen, boolean cover) {
         //1、重新生成PermissionKey
         genPermissionKeys(codeGen.getProjectPath());
         //2、生成依赖的ProjectSystemNoticeTargetType
@@ -488,9 +504,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             codeGen.setState(CodeGenState.ONLY_MAIN_LOGIC_GEN.getValue());
         }
         boolean success = codeGen.update();
-        if(!success){
-            throw new RuntimeException("更新genMainLogic状态时发生异常");
-        }
+        return success ? success("主逻辑代码生成成功，请刷新项目目录") : fail("主逻辑代码生成异常，请检查后重试");
     }
 
     /**

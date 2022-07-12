@@ -469,6 +469,14 @@ public class CodeGenAdminController extends JBoltBaseController {
 	}
 
 	/**
+	 * 一次性生成mainLogic
+	 */
+	@Before(Tx.class)
+	public void genMainLogic(){
+		renderJson(service.genMainLogic(getLong("id"),getBoolean("cover",false)));
+	}
+
+	/**
 	 * 模拟导出模板
 	 */
 	public void downloadTpl(){
