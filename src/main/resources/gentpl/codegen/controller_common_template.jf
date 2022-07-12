@@ -102,7 +102,7 @@
 	*/
 	@Before(Tx.class)
 	public void delete() {
-	#if(codeGen.checkCanDelete??)
+	#if(codeGen.isCheckCanDelete??)
 		renderJson(service.deleteById(get#(getIdType?? 'Long')(0),true));
 	#else
 		renderJson(service.deleteById(get#(getIdType?? 'Long')(0)));
@@ -116,7 +116,7 @@
 	*/
 	@Before(Tx.class)
 	public void recover() {
-	#if(codeGen.checkCanRecover??)
+	#if(codeGen.isCheckCanRecover??)
 		renderJson(service.recoverById(get#(getIdType?? 'Long')(0),true));
 	#else
 		renderJson(service.recoverById(get#(getIdType?? 'Long')(0)));
@@ -130,7 +130,7 @@
 	*/
 	@Before(Tx.class)
 	public void deleteByIds() {
-	#if(codeGen.checkCanDelete??)
+	#if(codeGen.isCheckCanDelete??)
 		renderJson(service.deleteByIds(get("ids"),true));
 	#else
 		renderJson(service.deleteByIds(get("ids")));
@@ -144,7 +144,7 @@
 	*/
 	@Before(Tx.class)
 	public void recoverByIds() {
-	#if(codeGen.checkCanRecover??)
+	#if(codeGen.isCheckCanRecover??)
 		renderJson(service.recoverByIds(get("ids"),true));
 	#else
 		renderJson(service.recoverByIds(get("ids")));
