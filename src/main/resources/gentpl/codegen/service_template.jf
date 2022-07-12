@@ -22,8 +22,8 @@ import cn.jbolt.core.service.base.JBoltBaseService;
 #if(codeGen.isProjectSystemLog && codeGen.projectSystemLogTargetTypeKeyName!="NONE")
 import cn.jbolt.core.kit.JBoltUserKit;
 #end
-#if(codeGen.isCrud??)
 import com.jfinal.kit.Kv;
+#if(codeGen.isCrud??)
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
