@@ -2,7 +2,7 @@ package #(codeGen.servicePackage??);
 
 #if(codeGen.isPaginate)
 import com.jfinal.plugin.activerecord.Page;
-#if(needSort)
+#if(needSort || codeGen.isExportExcel)
 import java.util.List;
 #end
 #else
@@ -28,7 +28,7 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 #end
-#if(codeGen.isImportExcel??)
+#if(codeGen.isCrud && codeGen.isImportExcel??)
 import java.io.File;
 import com.jfinal.plugin.activerecord.IAtom;
 import java.sql.SQLException;

@@ -28,13 +28,25 @@
 	</form>
 	#end
 	</div>
-	<div class="col-sm-auto">
+	<div class="col-sm-auto text-right">
 	#if(codeGen.isTableMultiConditionsMode)<button onclick="jboltTableToggleHeadbox(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-filter"></i> 筛选条件</button>#end
 	#if(codeGen.isCrud && codeGen.isPageTitleAddBtn)<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/add'):('admin/codegen/formPortalTest/'+codeGen.id))" data-handler="jboltTablePageToFirst" data-area="#(codeGen.formDialogArea?? '800,600')" tooltip data-title="新增#(codeGen.mainTableRemark??)"><i class="fa fa-plus"></i></button>#end
 	#if(codeGen.isPageTitleRefreshBtn)<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>#end
 	#if(codeGen.isCrud && codeGen.isPageTitleInitRankBtn)<button data-ajaxbtn data-confirm="确认初始化顺序吗？" data-handler="refreshJBoltTable" tooltip data-title="初始化排序" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initSortRank'):('admin/codegen/testAjax'))" class="btn btn-outline-info btn-sm" ><i class="fa fa-sort"></i></button>#end
-	#if(codeGen.isCrud && !codeGen.isToolbar&&codeGen.isImportExcel)<button data-dialogbtn data-btn="close" data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initImportExcel'):('admin/codegen/initImportExcel/'+codeGen.id))" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>#end
-	#if(!codeGen.isToolbar&&codeGen.isExportExcel)<button class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/exportExcel'):('admin/codegen/exportExcel/'+codeGen.id))"><i class="fa fa-download"></i></button>#end
+	#if(codeGen.isCrud && !codeGen.isToolbar&&codeGen.isImportExcel)<button data-dialogbtn data-btn="close" tooltip data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initImportExcel'):('admin/codegen/initImportExcel/'+codeGen.id))" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>#end
+	#if(!codeGen.isToolbar&&codeGen.isExportExcel)
+		<div class="btn-group btn-group-sm">
+			#if(codeGen.isExportExcelByForm??)
+			<button tooltip data-title="导出Excel(查询结果)" data-form="#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/exportExcelByForm'):('admin/codegen/exportExcel/'+codeGen.id))"><i class="fa fa-download"></i></button>
+			#end
+			#if(codeGen.isExportExcelByCheckedIds??)
+			<button tooltip data-title="导出Excel(选中行数据)" data-usecheckedids="true" class="btn btn-outline-success btn-sm" data-downloadbtn data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/exportExcelByCheckedIds'):('admin/codegen/exportExcel/'+codeGen.id))"><i class="fa fa-download"></i></button>
+			#end
+			#if(codeGen.isExportExcelAll??)
+			<button tooltip data-title="导出Excel(所有数据)" class="btn btn-outline-info btn-sm" data-downloadbtn data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/exportExcelAll'):('admin/codegen/exportExcel/'+codeGen.id))"><i class="fa fa-download"></i></button>
+			#end
+		</div>
+	#end
 	</div>
 </div>
 </div>
@@ -108,9 +120,21 @@
 </div>
 #end
 #if(codeGen.isImportExcel || codeGen.isExportExcel)
-<div class="btn-group btn-group-sm float-right" role="group" aria-label="btn-group">
-#if(codeGen.isCrud && codeGen.isImportExcel)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initImportExcel'):('admin/codegen/initImportExcel/'+(codeGen.id?? 0)))" data-btn="close" class="btn btn-outline-primary" ><i class="fa fa-upload"></i> 导入</button>#end
-#if(codeGen.isExportExcel)<button class="btn btn-outline-primary" data-downloadbtn data-form="jboltversion_JboltTableForm_ajax#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/exportExcel'):('admin/codegen/exportExcel/'+(codeGen.id?? 0)))"><i class="fa fa-download"></i> 导出</button>#end
+<div class="float-right" role="group" aria-label="btn-group">
+#if(codeGen.isCrud && codeGen.isImportExcel)<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" tooltip data-title="导入Excel数据" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initImportExcel'):('admin/codegen/initImportExcel/'+(codeGen.id?? 0)))" data-btn="close" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>#end
+#if(codeGen.isExportExcel)
+	<div class="btn-group btn-group-sm">
+		#if(codeGen.isExportExcelByForm??)
+		<button tooltip data-title="导出Excel(查询结果)" data-form="#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/exportExcelByForm'):('admin/codegen/exportExcel/'+codeGen.id))"><i class="fa fa-download"></i></button>
+		#end
+		#if(codeGen.isExportExcelByCheckedIds??)
+		<button tooltip data-title="导出Excel(选中行数据)" data-usecheckedids="true" class="btn btn-outline-success btn-sm" data-downloadbtn data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/exportExcelByCheckedIds'):('admin/codegen/exportExcel/'+codeGen.id))"><i class="fa fa-download"></i></button>
+		#end
+		#if(codeGen.isExportExcelAll??)
+		<button tooltip data-title="导出Excel(所有数据)" class="btn btn-outline-info btn-sm" data-downloadbtn data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/exportExcelAll'):('admin/codegen/exportExcel/'+codeGen.id))"><i class="fa fa-download"></i></button>
+		#end
+	</div>
+#end
 </div>
 #end
  
