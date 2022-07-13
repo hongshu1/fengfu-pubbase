@@ -277,7 +277,7 @@
 	        renderJsonFail("未选择有效数据，无法导出");
         	return;
 	    }
-	    List<#(codeGen.modelName)> datas = service.getByIds(ids);
+	    List<#(codeGen.modelName)> datas = service.getListByIds(ids);
 	    if(notOk(datas)){
 	        renderJsonFail("无有效数据导出");
 	        return;

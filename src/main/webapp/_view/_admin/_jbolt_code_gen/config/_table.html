@@ -107,45 +107,6 @@
 							<div class="form-group row"
 								 data-radio
 								 data-rule="radio"
-								 data-value="#(codeGen.isImportExcel?? 'false')"
-								 data-name="codeGen.isImportExcel"
-								 data-default="false">
-								<label class="col-sm-3 col-form-label is_required" >Excel导入</label>
-								<div class="col"  style="padding-top: 1px;">
-									<div class="radio radio-primary  radio-inline">
-										<input  id="r_isImportExcel_true" type="radio" name="codeGen.isImportExcel"   value="true"/>
-										<label for="r_isImportExcel_true">启用</label>
-									</div>
-
-									<div class="radio radio-primary  radio-inline">
-										<input  id="r_isImportExcel_false" type="radio" name="codeGen.isImportExcel"   value="false"/>
-										<label for="r_isImportExcel_false">不启用</label>
-									</div>
-								</div>
-							</div>
-							<div class="form-group row"
-								 data-radio
-								 data-rule="radio"
-								 data-value="#(codeGen.isExportExcel?? 'false')"
-								 data-name="codeGen.isExportExcel"
-								 data-default="false">
-								<label class="col-sm-3 col-form-label is_required" >Excel导出</label>
-								<div class="col"  style="padding-top: 1px;">
-									<div class="radio radio-primary  radio-inline">
-										<input  id="r_isExportExcel_true" type="radio" name="codeGen.isExportExcel"   value="true"/>
-										<label for="r_isExportExcel_true">启用</label>
-									</div>
-
-									<div class="radio radio-primary  radio-inline">
-										<input  id="r_isExportExcel_false" type="radio" name="codeGen.isExportExcel"   value="false"/>
-										<label for="r_isExportExcel_false">不启用</label>
-									</div>
-								</div>
-							</div>
-
-							<div class="form-group row"
-								 data-radio
-								 data-rule="radio"
 								 data-value="#(codeGen.isTableColumnResize?? 'true')"
 								 data-name="codeGen.isTableColumnResize"
 								 data-default="true">
@@ -264,6 +225,107 @@
 										<div class="radio radio-primary  radio-inline">
 											<input  id="r_isTableMultiConditionsMode_false" type="radio" name="codeGen.isTableMultiConditionsMode"   value="false"/>
 											<label for="r_isTableMultiConditionsMode_false">简单条件</label>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+							<fieldset>
+								<legend class="text-center">Excel导入导出设置</legend>
+								<div class="form-group row"
+									 data-radio
+									 data-rule="radio"
+									 data-value="#(codeGen.isImportExcel?? 'false')"
+									 data-name="codeGen.isImportExcel"
+									 data-default="false">
+									<label class="col-sm-3 col-form-label is_required" >Excel导入</label>
+									<div class="col"  style="padding-top: 1px;">
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isImportExcel_true" type="radio" name="codeGen.isImportExcel"   value="true"/>
+											<label for="r_isImportExcel_true">启用</label>
+										</div>
+
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isImportExcel_false" type="radio" name="codeGen.isImportExcel"   value="false"/>
+											<label for="r_isImportExcel_false">不启用</label>
+										</div>
+									</div>
+								</div>
+								<div class="form-group row"
+									 data-radio
+									 data-rule="radio"
+									 data-value="#(codeGen.isExportExcel?? 'false')"
+									 data-name="codeGen.isExportExcel"
+									 data-default="false">
+									<label class="col-sm-3 col-form-label is_required" >Excel导出</label>
+									<div class="col"  style="padding-top: 1px;">
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isExportExcel_true" type="radio" name="codeGen.isExportExcel"   value="true"/>
+											<label for="r_isExportExcel_true">启用</label>
+										</div>
+
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isExportExcel_false" type="radio" name="codeGen.isExportExcel"   value="false"/>
+											<label for="r_isExportExcel_false">不启用</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="form-group row"
+									 data-radio
+									 data-rule="radio"
+									 data-value="#(codeGen.isExportExcelByForm?? 'false')"
+									 data-name="codeGen.isExportExcelByForm"
+									 data-default="false">
+									<label class="col-sm-3 col-form-label is_required" >导出<br/>表单搜索结果</label>
+									<div class="col"  style="padding-top: 1px;">
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isExportExcelByForm_true" type="radio" name="codeGen.isExportExcelByForm"   value="true"/>
+											<label for="r_isExportExcelByForm_true">启用</label>
+										</div>
+
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isExportExcelByForm_false" type="radio" name="codeGen.isExportExcelByForm"   value="false"/>
+											<label for="r_isExportExcelByForm_false">不启用</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group row"
+									 data-radio
+									 data-rule="radio"
+									 data-value="#(codeGen.isExportExcelByCheckedIds?? 'false')"
+									 data-name="codeGen.isExportExcelByCheckedIds"
+									 data-default="false">
+									<label class="col-sm-3 col-form-label is_required" >导出<br/>当前页选中行</label>
+									<div class="col"  style="padding-top: 1px;">
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isExportExcelByCheckedIds_true" type="radio" name="codeGen.isExportExcelByCheckedIds"   value="true"/>
+											<label for="r_isExportExcelByCheckedIds_true">启用</label>
+										</div>
+
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isExportExcelByCheckedIds_false" type="radio" name="codeGen.isExportExcelByCheckedIds"   value="false"/>
+											<label for="r_isExportExcelByCheckedIds_false">不启用</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group row"
+									 data-radio
+									 data-rule="radio"
+									 data-value="#(codeGen.isExportExcelAll?? 'false')"
+									 data-name="codeGen.isExportExcelAll"
+									 data-default="false">
+									<label class="col-sm-3 col-form-label is_required" >导出<br/>所有数据</label>
+									<div class="col"  style="padding-top: 1px;">
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isExportExcelAll_true" type="radio" name="codeGen.isExportExcelAll"   value="true"/>
+											<label for="r_isExportExcelAll_true">启用</label>
+										</div>
+
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isExportExcelAll_false" type="radio" name="codeGen.isExportExcelAll"   value="false"/>
+											<label for="r_isExportExcelAll_false">不启用</label>
 										</div>
 									</div>
 								</div>

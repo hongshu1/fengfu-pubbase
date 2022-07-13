@@ -981,17 +981,17 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用 导出选中行功能
 	 */
-	public M setIsExportExcelByCheckedids(java.lang.Boolean isExportExcelByCheckedids) {
-		set("is_export_excel_by_checkedids", isExportExcelByCheckedids);
+	public M setIsExportExcelByCheckedIds(java.lang.Boolean isExportExcelByCheckedIds) {
+		set("is_export_excel_by_checked_ids", isExportExcelByCheckedIds);
 		return (M)this;
 	}
 	
 	/**
 	 * 是否启用 导出选中行功能
 	 */
-	@JBoltField(name="isExportExcelByCheckedids" ,columnName="is_export_excel_by_checkedids",type="Boolean", remark="是否启用 导出选中行功能", required=true, maxLength=1, fixed=0, order=61)
-	public java.lang.Boolean getIsExportExcelByCheckedids() {
-		return getBoolean("is_export_excel_by_checkedids");
+	@JBoltField(name="isExportExcelByCheckedIds" ,columnName="is_export_excel_by_checked_ids",type="Boolean", remark="是否启用 导出选中行功能", required=true, maxLength=1, fixed=0, order=61)
+	public java.lang.Boolean getIsExportExcelByCheckedIds() {
+		return getBoolean("is_export_excel_by_checked_ids");
 	}
 
 	/**

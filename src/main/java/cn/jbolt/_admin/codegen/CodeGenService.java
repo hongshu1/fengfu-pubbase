@@ -1309,7 +1309,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             if(codeGen.getIsExportExcelByForm()){
                 genMehtods.add(new CodeGenMethod("exportExcelByForm"));
             }
-            if(codeGen.getIsExportExcelByCheckedids()){
+            if(codeGen.getIsExportExcelByCheckedIds()){
                 genMehtods.add(new CodeGenMethod("exportExcelByCheckedIds"));
             }
             if(codeGen.getIsExportExcelAll()){
