@@ -1,4 +1,4 @@
-/*********jbolt_admin_css_version="3.6.2*************/
+/*********jbolt_admin_css_version="3.6.3*************/
 html, body {
 	margin: 0px;
 	padding: 0px;
@@ -3479,11 +3479,11 @@ width:100%;
 
 
 /************常用选项卡*************/
-.jbolt_tab_view .jbolt_tab_contents{
+.jbolt_tab_view>.jbolt_tab_contents{
 	border-radius:4px;
 	position: relative;
 }
-.jbolt_tab_view .jbolt_tab_content{
+.jbolt_tab_view>.jbolt_tab_contents>.jbolt_tab_content{
 	position:absolute;
 	left:0px;
 	right:0px;
@@ -3501,21 +3501,21 @@ width:100%;
 	padding: 10px;
 	height: 100%;
 }
-.jbolt_tab_view .jbolt_tab_content.active{
+.jbolt_tab_view>.jbolt_tab_contents>.jbolt_tab_content.active{
 	visibility: visible!important;
 	z-index: 1;
 	opacity: 1;
 }
-.jbolt_tab_view .jbolt_tab_content:after{
+.jbolt_tab_view>.jbolt_tab_contents>.jbolt_tab_content:after{
 	clear: both;
 }
-.jbolt_tab_view .jbolt_tab_links{
+.jbolt_tab_view>.jbolt_tab_links{
 	height: 40px;
 	line-height: 40px;
 	border-bottom:1px solid #ededed;
 }
 
-.jbolt_tab_view .jbolt_tab_link{
+.jbolt_tab_view>.jbolt_tab_links>.jbolt_tab_link{
 	position:relative;
 	display: inline-block;
 	height: 40px;
@@ -3532,7 +3532,7 @@ width:100%;
 	margin: 0px;
 	bottom:0px;
 }
-.jbolt_tab_view:not(.jbolt_tab_border_none) .jbolt_tab_link{
+.jbolt_tab_view:not(.jbolt_tab_border_none)>.jbolt_tab_links>.jbolt_tab_link{
 	border:1px solid transparent;
 	border-bottom-color:#ededed;
 	border-radius: 4px 4px 0 0;
@@ -3542,22 +3542,22 @@ width:100%;
 	-o-transition:.3s;
 	-ms-transition:.3s;
 }
-.jbolt_tab_view:not(.jbolt_tab_border_none) .jbolt_tab_link.active{
+.jbolt_tab_view:not(.jbolt_tab_border_none)>.jbolt_tab_links>.jbolt_tab_link.active{
 	border-top-color:#ededed;
 	border-left-color:#ededed;
 	border-right-color:#ededed;
 	border-bottom-color:transparent;
 	color:#000;
 }
-.jbolt_tab_view.jbolt_tab_border_none .jbolt_tab_links{
+.jbolt_tab_view.jbolt_tab_border_none>.jbolt_tab_links>.jbolt_tab_links{
 	text-align: center;
 }
-.jbolt_tab_view.jbolt_tab_border_none .jbolt_tab_link.active{
+.jbolt_tab_view.jbolt_tab_border_none>.jbolt_tab_links>.jbolt_tab_link.active{
 	border:none;
 	border-bottom:2px solid #007bff;
 	color:#007bff;
 }
-.jbolt_tab_view.jbolt_tab_border_none .jbolt_tab_content{
+.jbolt_tab_view.jbolt_tab_border_none>.jbolt_tab_contents>.jbolt_tab_content{
 	border:none;
 }
 .layui-laydate.small .layui-laydate-main{

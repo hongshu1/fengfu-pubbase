@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.7.0";
+var jbolt_admin_js_version="5.7.1";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -16594,11 +16594,18 @@ var JBoltTabViewUtil={
 			var that=this;
 			var tabViews = parent.find(".jbolt_tab_view");
 			if(isOk(tabViews)){
-				var tv,tva,activeIndex=0;
+				var tv,tva,activeIndex=0,viewId;
 				tabViews.each(function(){
 					activeIndex=0;
 					tv=$(this);
-					tva = tv.find("jbolt_tab_links>.jbolt_tab_link.active");
+					viewId = this.id;
+					if(!viewId){
+						viewId = "jbv_"+randomId(5);
+						this.id = viewId;
+					}
+					tv.children(".jbolt_tab_links").attr("data-view-id",viewId).find(".jbolt_tab_link").attr("data-view-id",viewId);
+					tv.children(".jbolt_tab_contens").attr("data-view-id",viewId).children(".jbolt_tab_conten").attr("data-view-id",viewId);
+					tva = tv.find(".jbolt_tab_links[data-view-id='"+viewId+"']>.jbolt_tab_link.active");
 					if(!isOk(tva)){
 						//没有active的就得判断data-active-index=""
 						activeIndex=tv.data("active-index");
@@ -16611,7 +16618,7 @@ var JBoltTabViewUtil={
 			}
 			
 		},initTabLinkEvent:function(){
-			jboltBody.on("click",".jbolt_tab_view .jbolt_tab_link",function(e){
+			jboltBody.on("click",".jbolt_tab_view>.jbolt_tab_links>.jbolt_tab_link",function(e){
 				e.preventDefault();
 				var link=$(this);
 				var tabContentId=link.attr("href");
@@ -16620,7 +16627,8 @@ var JBoltTabViewUtil={
 					return false;
 				}
 				var tabView=link.closest(".jbolt_tab_view");
-				var activeLink=tabView.find(".jbolt_tab_link.active");
+				var viewId = tabView[0].id;
+				var activeLink=tabView.find(".jbolt_tab_links[data-view-id='"+viewId+"']>.jbolt_tab_link.active");
 				var handler=tabView.data("handler");
 				var exe_handler=handler?(eval(handler)):null;
 				if(isOk(activeLink)){
@@ -16643,7 +16651,7 @@ var JBoltTabViewUtil={
 				}
 			});
 		},active:function(tabView,tabIndex){
-			var tabLink=tabView.find('.jbolt_tab_links>.jbolt_tab_link:eq('+tabIndex+')');
+			var tabLink=tabView.find('.jbolt_tab_links[data-view-id="'+tabView[0].id+'"]>.jbolt_tab_link:eq('+tabIndex+')');
 			if(isOk(tabLink)){
 				tabLink.trigger("click");
 			}
