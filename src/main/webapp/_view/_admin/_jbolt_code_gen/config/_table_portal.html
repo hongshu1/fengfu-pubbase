@@ -63,6 +63,8 @@
 #for(col:cols)
 #if(col.isTableSwitchbtn)
 <td><img data-switchbtn data-confirm="确定切换#(col.tableLabel?? col.remark??)？" data-value="${data.#((codeGen.isTableUseRecord&&codeGen.isTableRecordCamelCase!=null&&codeGen.isTableRecordCamelCase==false)?col.colName:col.attrName)}"  data-handler="refreshJBoltTable"  data-url="#(codeGenServiceMode?((codeGen.controllerPathWithoutFirstSlash??)+'/toggle'+(firstCharToUpperCase(col.attrName?? ""))+'/${data.id}'):('admin/codegen/testAjax'))"/></td>
+#else if(col.colFormat??)
+<td>${data.#((codeGen.isTableUseRecord&&codeGen.isTableRecordCamelCase!=null&&codeGen.isTableRecordCamelCase==false)?col.colName:col.attrName)|#(col.colFormat??)}</td>
 #else
 <td>${data.#((codeGen.isTableUseRecord&&codeGen.isTableRecordCamelCase!=null&&codeGen.isTableRecordCamelCase==false)?col.colName:col.attrName)}</td>
 #end

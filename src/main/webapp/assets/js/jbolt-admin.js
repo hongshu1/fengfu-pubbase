@@ -18164,7 +18164,42 @@ var real_image=function(url){
 
 }
 
-
+/**
+ * 金额 保留1位
+ * @param number
+ * @returns {string|string}
+ */
+function money_1(number) {
+	var value= numberFormat(number, 1);
+	return value.toString()==="0"?"":value;
+}
+/**
+ * 金额 保留2位
+ * @param number
+ * @returns {string|string}
+ */
+function money_2(number) {
+	var value= numberFormat(number, 2);
+	return value.toString()==="0"?"":value;
+}
+/**
+ * 金额 保留3位
+ * @param number
+ * @returns {string|string}
+ */
+function money_3(number) {
+	var value= numberFormat(number, 3);
+	return value.toString()==="0"?"":value;
+}
+/**
+ * 金额 保留4位
+ * @param number
+ * @returns {string|string}
+ */
+function money_4(number) {
+	var value= numberFormat(number, 4);
+	return value.toString()==="0"?"":value;
+}
 
 /*
  * 数字格式化 清除掉小数点后的无用的0
@@ -18287,6 +18322,38 @@ function rownum(pageNumber,pageSize,index){
 	return ((pageNumber-1)*pageSize)+(+index+1);
 }
 
+/**
+ * 小数点1个
+ * @param number
+ * @returns {number|*|string|string}
+ */
+function tofixed_1(number){
+	return tofixed(number,1,false,true);
+}
+/**
+ * 小数点2个
+ * @param number
+ * @returns {number|*|string|string}
+ */
+function tofixed_2(number){
+	return tofixed(number,2,false,true);
+}
+/**
+ * 小数点3个
+ * @param number
+ * @returns {number|*|string|string}
+ */
+function tofixed_3(number){
+	return tofixed(number,3,false,true);
+}
+/**
+ * 小数点4个
+ * @param number
+ * @returns {number|*|string|string}
+ */
+function tofixed_4(number){
+	return tofixed(number,4,false,true);
+}
 /**
  * tofixed
  */
@@ -18485,11 +18552,19 @@ function initJuicer(){
 	juicer.register("number_format",numberFormat);
 	juicer.register("number_format2",numberFormat2);
 	juicer.register("number_format3",numberFormat3);
+	juicer.register("money_1",money_1);
+	juicer.register("money_2",money_2);
+	juicer.register("money_3",money_3);
+	juicer.register("money_4",money_4);
 	juicer.register("rownum",rownum);
 	juicer.register("str_join",StrUtil.join);
 	juicer.register("str_underline",StrUtil.underline);
 	juicer.register("str_camel",StrUtil.camel);
 	juicer.register("tofixed",tofixed);
+	juicer.register("tofixed_1",tofixed_1);
+	juicer.register("tofixed_2",tofixed_2);
+	juicer.register("tofixed_3",tofixed_3);
+	juicer.register("tofixed_4",tofixed_4);
 	juicer.register("removeNumberZero",removeNumberEndZero);
 	juicer.register("removeNumberEndZero",removeNumberEndZero);
 	juicer.register("removeFixedNumberAllZero",removeFixedNumberAllZero);
