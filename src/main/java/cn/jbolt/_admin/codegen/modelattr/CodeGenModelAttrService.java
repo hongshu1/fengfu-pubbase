@@ -24,8 +24,6 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.generator.ColumnMeta;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
-
-import javax.smartcardio.ATR;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.ArrayList;
