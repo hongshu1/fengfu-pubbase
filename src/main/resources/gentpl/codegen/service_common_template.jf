@@ -230,9 +230,7 @@
 	 * 生成要导出的Excel
 	 * @return
 	 */
-	public JBoltExcel exportExcel() {
-	    //准备数据
-	    List<#(codeGen.modelName)> datas = findAll();
+	public JBoltExcel exportExcel(List<#(codeGen.modelName)> datas) {
 	    return JBoltExcel
 			    //创建
 			    .create()

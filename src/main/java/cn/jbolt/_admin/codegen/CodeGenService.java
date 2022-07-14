@@ -1306,7 +1306,15 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             }
         }
         if(codeGen.getIsExportExcel()){
-            genMehtods.add(new CodeGenMethod("exportExcel"));
+            if(codeGen.getIsExportExcelByForm()){
+                genMehtods.add(new CodeGenMethod("exportExcelByForm"));
+            }
+            if(codeGen.getIsExportExcelByCheckedIds()){
+                genMehtods.add(new CodeGenMethod("exportExcelByCheckedIds"));
+            }
+            if(codeGen.getIsExportExcelAll()){
+                genMehtods.add(new CodeGenMethod("exportExcelAll"));
+            }
         }
         return genMehtods;
     }
@@ -1339,6 +1347,9 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
 
             if(codeGen.getIsImportExcel()){
                 List<CodeGenModelAttr> headers = codeGenModelAttrService.getCodeGenImportColumns(codeGen.getId());
+                if(notOk(headers)){
+                    throw new RuntimeException("表["+codeGen.getMainTableName()+"]未设置导入列");
+                }
                 genMehtods.add(new CodeGenMethod("getImportExcelTpl",headers));
                 genMehtods.add(new CodeGenMethod("importExcel",headers));
             }
@@ -1346,6 +1357,9 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         }
         if(codeGen.getIsExportExcel()){
             List<CodeGenModelAttr> headers = codeGenModelAttrService.getCodeGenExportColumns(codeGen.getId());
+            if(notOk(headers)){
+                throw new RuntimeException("表["+codeGen.getMainTableName()+"]未设置导出列");
+            }
             genMehtods.add(new CodeGenMethod("exportExcel",headers));
         }
         return genMehtods;

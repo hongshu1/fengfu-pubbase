@@ -215,12 +215,88 @@
 	}
 #end
 
-#define c_exportExcel()
+#define c_exportExcelByForm()
+#set(cons = "")
+#if(codeGen.isPaginate)
+    #set(cons = "getPageNumber(), getPageSize()")
+#end
+#if(keywordsSearchColumns)
+    #if(cons!="")
+        #set(cons = cons + ", getKeywords()")
+    #else
+        #set(cons = "getKeywords()")
+    #end
+#end
+#if(sortableColumns)
+    #if(cons!="")
+        #if(codeGen.tableDefaultSortColumn && codeGen.tableDefaultSortType)
+         #set(cons = cons + ", getSortColumn(\""+codeGen.tableDefaultSortColumn+"\"), getSortType(\""+codeGen.tableDefaultSortType+"\")")
+        #else
+         #set(cons = cons + ", getSortColumn(), getSortType()")
+        #end
+    #else
+        #if(codeGen.tableDefaultSortColumn && codeGen.tableDefaultSortType)
+        #set(cons = "getSortColumn(\""+codeGen.tableDefaultSortColumn+"\"), getSortType(\""+codeGen.tableDefaultSortType+"\")")
+        #else
+        #set(cons = "getSortColumn(), getSortType()")
+        #end
+    #end
+#end
+#if(conditions!=null&&conditions.size()>0)
+    #if(cons!="")
+        #set(cons = cons + ", ")
+    #end
+    #for(con:conditions)
+        #if(con.searchUiType && con.searchUiType.startsWith("laydate_range_"))
+        #set(cons = cons + "getDateRange"+ "(\""+con.attrName+"\","+con.searchUIDateRangeType+")"+ (for.last?"":", "))
+        #else
+        #set(cons = cons + "get"+con.javaTypeNameForGetPara + "(\""+con.attrName+"\")"+ (for.last?"":", "))
+        #end
+    #end
+#end
    /**
-	* 执行导出excel
+	* 执行导出excel 根据查询form表单
 	*/
-	public void exportExcel() {
-		renderBytesToExcelXlsxFile(service.exportExcel().setFileName("#(codeGen.mainTableRemark?? '导出数据')"));
+	public void exportExcelByForm() {
+	    Page<#(codeGen.modelName)> pageData = service.getAdminDatas(#(cons??));
+	    if(notOk(pageData.getTotalRow())){
+	        renderJsonFail("无有效数据导出");
+	        return;
+	    }
+		renderBytesToExcelXlsxFile(service.exportExcel(pageData.getList()).setFileName("#(codeGen.mainTableRemark?? '导出数据')"));
+	}
+#end
+
+#define c_exportExcelByCheckedIds()
+    /**
+	* 执行导出excel 根据表格选中数据
+	*/
+	public void exportExcelByCheckedIds() {
+	    String ids = get("ids");
+	    if(notOk(ids)){
+	        renderJsonFail("未选择有效数据，无法导出");
+        	return;
+	    }
+	    List<#(codeGen.modelName)> datas = service.getListByIds(ids);
+	    if(notOk(datas)){
+	        renderJsonFail("无有效数据导出");
+	        return;
+	    }
+		renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("#(codeGen.mainTableRemark?? '导出数据')"));
+	}
+#end
+
+#define c_exportExcelAll()
+    /**
+	* 执行导出excel 所有数据
+	*/
+	public void exportExcelAll() {
+	    List<#(codeGen.modelName)> datas = service.findAll();
+	    if(notOk(datas)){
+	        renderJsonFail("无有效数据导出");
+	        return;
+	    }
+		renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("#(codeGen.mainTableRemark?? '导出数据')"));
 	}
 #end
 
@@ -309,8 +385,12 @@
             #@c_downloadTpl()
         #case("importExcel")
             #@c_importExcel()
-        #case("exportExcel")
-             #@c_exportExcel()
+        #case("exportExcelAll")
+            #@c_exportExcelAll()
+        #case("exportExcelByForm")
+            #@c_exportExcelByForm()
+        #case("exportExcelByCheckedIds")
+            #@c_exportExcelByCheckedIds()
 		#case("tree")
 			#@c_tree()
 		#case("options")

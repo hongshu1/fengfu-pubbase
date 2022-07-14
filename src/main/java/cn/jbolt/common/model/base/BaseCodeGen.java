@@ -979,6 +979,54 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	}
 
 	/**
+	 * 是否启用 导出选中行功能
+	 */
+	public M setIsExportExcelByCheckedIds(java.lang.Boolean isExportExcelByCheckedIds) {
+		set("is_export_excel_by_checked_ids", isExportExcelByCheckedIds);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否启用 导出选中行功能
+	 */
+	@JBoltField(name="isExportExcelByCheckedIds" ,columnName="is_export_excel_by_checked_ids",type="Boolean", remark="是否启用 导出选中行功能", required=true, maxLength=1, fixed=0, order=61)
+	public java.lang.Boolean getIsExportExcelByCheckedIds() {
+		return getBoolean("is_export_excel_by_checked_ids");
+	}
+
+	/**
+	 * 是否启用导出表单查询结果功能
+	 */
+	public M setIsExportExcelByForm(java.lang.Boolean isExportExcelByForm) {
+		set("is_export_excel_by_form", isExportExcelByForm);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否启用导出表单查询结果功能
+	 */
+	@JBoltField(name="isExportExcelByForm" ,columnName="is_export_excel_by_form",type="Boolean", remark="是否启用导出表单查询结果功能", required=true, maxLength=1, fixed=0, order=62)
+	public java.lang.Boolean getIsExportExcelByForm() {
+		return getBoolean("is_export_excel_by_form");
+	}
+
+	/**
+	 * 是否启用导出所有数据
+	 */
+	public M setIsExportExcelAll(java.lang.Boolean isExportExcelAll) {
+		set("is_export_excel_all", isExportExcelAll);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否启用导出所有数据
+	 */
+	@JBoltField(name="isExportExcelAll" ,columnName="is_export_excel_all",type="Boolean", remark="是否启用导出所有数据", required=true, maxLength=1, fixed=0, order=63)
+	public java.lang.Boolean getIsExportExcelAll() {
+		return getBoolean("is_export_excel_all");
+	}
+
+	/**
 	 * 是否支持表格复制到excel
 	 */
 	public M setIsCopyToExcel(java.lang.Boolean isCopyToExcel) {
@@ -989,7 +1037,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否支持表格复制到excel
 	 */
-	@JBoltField(name="isCopyToExcel" ,columnName="is_copy_to_excel",type="Boolean", remark="是否支持表格复制到excel", required=true, maxLength=1, fixed=0, order=61)
+	@JBoltField(name="isCopyToExcel" ,columnName="is_copy_to_excel",type="Boolean", remark="是否支持表格复制到excel", required=true, maxLength=1, fixed=0, order=64)
 	public java.lang.Boolean getIsCopyToExcel() {
 		return getBoolean("is_copy_to_excel");
 	}
@@ -1005,7 +1053,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否支持从excel复制到可编辑表格
 	 */
-	@JBoltField(name="isCopyFromExcel" ,columnName="is_copy_from_excel",type="Boolean", remark="是否支持从excel复制到可编辑表格", required=true, maxLength=1, fixed=0, order=62)
+	@JBoltField(name="isCopyFromExcel" ,columnName="is_copy_from_excel",type="Boolean", remark="是否支持从excel复制到可编辑表格", required=true, maxLength=1, fixed=0, order=65)
 	public java.lang.Boolean getIsCopyFromExcel() {
 		return getBoolean("is_copy_from_excel");
 	}
@@ -1021,7 +1069,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否使用toolbar模式
 	 */
-	@JBoltField(name="isToolbar" ,columnName="is_toolbar",type="Boolean", remark="是否使用toolbar模式", required=true, maxLength=1, fixed=0, order=63)
+	@JBoltField(name="isToolbar" ,columnName="is_toolbar",type="Boolean", remark="是否使用toolbar模式", required=true, maxLength=1, fixed=0, order=66)
 	public java.lang.Boolean getIsToolbar() {
 		return getBoolean("is_toolbar");
 	}
@@ -1037,7 +1085,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否使用headbox
 	 */
-	@JBoltField(name="isHeadbox" ,columnName="is_headbox",type="Boolean", remark="是否使用headbox", required=true, maxLength=1, fixed=0, order=64)
+	@JBoltField(name="isHeadbox" ,columnName="is_headbox",type="Boolean", remark="是否使用headbox", required=true, maxLength=1, fixed=0, order=67)
 	public java.lang.Boolean getIsHeadbox() {
 		return getBoolean("is_headbox");
 	}
@@ -1053,7 +1101,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否使用leftBox
 	 */
-	@JBoltField(name="isLeftbox" ,columnName="is_leftbox",type="Boolean", remark="是否使用leftBox", required=true, maxLength=1, fixed=0, order=65)
+	@JBoltField(name="isLeftbox" ,columnName="is_leftbox",type="Boolean", remark="是否使用leftBox", required=true, maxLength=1, fixed=0, order=68)
 	public java.lang.Boolean getIsLeftbox() {
 		return getBoolean("is_leftbox");
 	}
@@ -1069,7 +1117,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否使用rightBox
 	 */
-	@JBoltField(name="isRightbox" ,columnName="is_rightbox",type="Boolean", remark="是否使用rightBox", required=true, maxLength=1, fixed=0, order=66)
+	@JBoltField(name="isRightbox" ,columnName="is_rightbox",type="Boolean", remark="是否使用rightBox", required=true, maxLength=1, fixed=0, order=69)
 	public java.lang.Boolean getIsRightbox() {
 		return getBoolean("is_rightbox");
 	}
@@ -1085,7 +1133,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否使用footbox
 	 */
-	@JBoltField(name="isFootbox" ,columnName="is_footbox",type="Boolean", remark="是否使用footbox", required=true, maxLength=1, fixed=0, order=67)
+	@JBoltField(name="isFootbox" ,columnName="is_footbox",type="Boolean", remark="是否使用footbox", required=true, maxLength=1, fixed=0, order=70)
 	public java.lang.Boolean getIsFootbox() {
 		return getBoolean("is_footbox");
 	}
@@ -1101,7 +1149,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否分页查询
 	 */
-	@JBoltField(name="isPaginate" ,columnName="is_paginate",type="Boolean", remark="是否分页查询", required=true, maxLength=1, fixed=0, order=68)
+	@JBoltField(name="isPaginate" ,columnName="is_paginate",type="Boolean", remark="是否分页查询", required=true, maxLength=1, fixed=0, order=71)
 	public java.lang.Boolean getIsPaginate() {
 		return getBoolean("is_paginate");
 	}
@@ -1117,7 +1165,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否开启移动排序功能
 	 */
-	@JBoltField(name="isTableSortableMove" ,columnName="is_table_sortable_move",type="Boolean", remark="是否开启移动排序功能", required=true, maxLength=1, fixed=0, order=69)
+	@JBoltField(name="isTableSortableMove" ,columnName="is_table_sortable_move",type="Boolean", remark="是否开启移动排序功能", required=true, maxLength=1, fixed=0, order=72)
 	public java.lang.Boolean getIsTableSortableMove() {
 		return getBoolean("is_table_sortable_move");
 	}
@@ -1133,7 +1181,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * leftbox width
 	 */
-	@JBoltField(name="leftboxWidth" ,columnName="leftbox_width",type="Integer", remark="leftbox width", required=false, maxLength=10, fixed=0, order=70)
+	@JBoltField(name="leftboxWidth" ,columnName="leftbox_width",type="Integer", remark="leftbox width", required=false, maxLength=10, fixed=0, order=73)
 	public java.lang.Integer getLeftboxWidth() {
 		return getInt("leftbox_width");
 	}
@@ -1149,7 +1197,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * right width
 	 */
-	@JBoltField(name="rightboxWidth" ,columnName="rightbox_width",type="Integer", remark="right width", required=false, maxLength=10, fixed=0, order=71)
+	@JBoltField(name="rightboxWidth" ,columnName="rightbox_width",type="Integer", remark="right width", required=false, maxLength=10, fixed=0, order=74)
 	public java.lang.Integer getRightboxWidth() {
 		return getInt("rightbox_width");
 	}
@@ -1165,7 +1213,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * headbox height
 	 */
-	@JBoltField(name="headboxHeight" ,columnName="headbox_height",type="Integer", remark="headbox height", required=false, maxLength=10, fixed=0, order=72)
+	@JBoltField(name="headboxHeight" ,columnName="headbox_height",type="Integer", remark="headbox height", required=false, maxLength=10, fixed=0, order=75)
 	public java.lang.Integer getHeadboxHeight() {
 		return getInt("headbox_height");
 	}
@@ -1181,7 +1229,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * footbox height
 	 */
-	@JBoltField(name="footboxHeight" ,columnName="footbox_height",type="Integer", remark="footbox height", required=false, maxLength=10, fixed=0, order=73)
+	@JBoltField(name="footboxHeight" ,columnName="footbox_height",type="Integer", remark="footbox height", required=false, maxLength=10, fixed=0, order=76)
 	public java.lang.Integer getFootboxHeight() {
 		return getInt("footbox_height");
 	}
@@ -1197,7 +1245,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用leftbox的footer
 	 */
-	@JBoltField(name="isLeftboxFooter" ,columnName="is_leftbox_footer",type="Boolean", remark="是否启用leftbox的footer", required=true, maxLength=1, fixed=0, order=74)
+	@JBoltField(name="isLeftboxFooter" ,columnName="is_leftbox_footer",type="Boolean", remark="是否启用leftbox的footer", required=true, maxLength=1, fixed=0, order=77)
 	public java.lang.Boolean getIsLeftboxFooter() {
 		return getBoolean("is_leftbox_footer");
 	}
@@ -1213,7 +1261,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用rightbox的footer
 	 */
-	@JBoltField(name="isRightboxFooter" ,columnName="is_rightbox_footer",type="Boolean", remark="是否启用rightbox的footer", required=true, maxLength=1, fixed=0, order=75)
+	@JBoltField(name="isRightboxFooter" ,columnName="is_rightbox_footer",type="Boolean", remark="是否启用rightbox的footer", required=true, maxLength=1, fixed=0, order=78)
 	public java.lang.Boolean getIsRightboxFooter() {
 		return getBoolean("is_rightbox_footer");
 	}
@@ -1229,7 +1277,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * leftbox footer button count
 	 */
-	@JBoltField(name="leftboxFooterButtonCount" ,columnName="leftbox_footer_button_count",type="Integer", remark="leftbox footer button count", required=false, maxLength=10, fixed=0, order=76)
+	@JBoltField(name="leftboxFooterButtonCount" ,columnName="leftbox_footer_button_count",type="Integer", remark="leftbox footer button count", required=false, maxLength=10, fixed=0, order=79)
 	public java.lang.Integer getLeftboxFooterButtonCount() {
 		return getInt("leftbox_footer_button_count");
 	}
@@ -1245,7 +1293,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * rightbox footer button count
 	 */
-	@JBoltField(name="rightboxFooterButtonCount" ,columnName="rightbox_footer_button_count",type="Integer", remark="rightbox footer button count", required=false, maxLength=10, fixed=0, order=77)
+	@JBoltField(name="rightboxFooterButtonCount" ,columnName="rightbox_footer_button_count",type="Integer", remark="rightbox footer button count", required=false, maxLength=10, fixed=0, order=80)
 	public java.lang.Integer getRightboxFooterButtonCount() {
 		return getInt("rightbox_footer_button_count");
 	}
@@ -1261,7 +1309,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * leftbox title
 	 */
-	@JBoltField(name="leftboxTitle" ,columnName="leftbox_title",type="String", remark="leftbox title", required=false, maxLength=40, fixed=0, order=78)
+	@JBoltField(name="leftboxTitle" ,columnName="leftbox_title",type="String", remark="leftbox title", required=false, maxLength=40, fixed=0, order=81)
 	public java.lang.String getLeftboxTitle() {
 		return getStr("leftbox_title");
 	}
@@ -1277,7 +1325,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * leftbox icon
 	 */
-	@JBoltField(name="leftboxIcon" ,columnName="leftbox_icon",type="String", remark="leftbox icon", required=false, maxLength=60, fixed=0, order=79)
+	@JBoltField(name="leftboxIcon" ,columnName="leftbox_icon",type="String", remark="leftbox icon", required=false, maxLength=60, fixed=0, order=82)
 	public java.lang.String getLeftboxIcon() {
 		return getStr("leftbox_icon");
 	}
@@ -1293,7 +1341,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * rightbox title
 	 */
-	@JBoltField(name="rightboxTitle" ,columnName="rightbox_title",type="String", remark="rightbox title", required=false, maxLength=40, fixed=0, order=80)
+	@JBoltField(name="rightboxTitle" ,columnName="rightbox_title",type="String", remark="rightbox title", required=false, maxLength=40, fixed=0, order=83)
 	public java.lang.String getRightboxTitle() {
 		return getStr("rightbox_title");
 	}
@@ -1309,7 +1357,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * rightbox icon
 	 */
-	@JBoltField(name="rightboxIcon" ,columnName="rightbox_icon",type="String", remark="rightbox icon", required=false, maxLength=60, fixed=0, order=81)
+	@JBoltField(name="rightboxIcon" ,columnName="rightbox_icon",type="String", remark="rightbox icon", required=false, maxLength=60, fixed=0, order=84)
 	public java.lang.String getRightboxIcon() {
 		return getStr("rightbox_icon");
 	}
@@ -1325,7 +1373,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否开启操作列排序功能
 	 */
-	@JBoltField(name="isShowOptcolSort" ,columnName="is_show_optcol_sort",type="Boolean", remark="是否开启操作列排序功能", required=true, maxLength=1, fixed=0, order=82)
+	@JBoltField(name="isShowOptcolSort" ,columnName="is_show_optcol_sort",type="Boolean", remark="是否开启操作列排序功能", required=true, maxLength=1, fixed=0, order=85)
 	public java.lang.Boolean getIsShowOptcolSort() {
 		return getBoolean("is_show_optcol_sort");
 	}
@@ -1341,7 +1389,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否开启操作列显示编辑按钮
 	 */
-	@JBoltField(name="isShowOptcolEdit" ,columnName="is_show_optcol_edit",type="Boolean", remark="是否开启操作列显示编辑按钮", required=true, maxLength=1, fixed=0, order=83)
+	@JBoltField(name="isShowOptcolEdit" ,columnName="is_show_optcol_edit",type="Boolean", remark="是否开启操作列显示编辑按钮", required=true, maxLength=1, fixed=0, order=86)
 	public java.lang.Boolean getIsShowOptcolEdit() {
 		return getBoolean("is_show_optcol_edit");
 	}
@@ -1357,7 +1405,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否开启操作列显示删除按钮
 	 */
-	@JBoltField(name="isShowOptcolDel" ,columnName="is_show_optcol_del",type="Boolean", remark="是否开启操作列显示删除按钮", required=true, maxLength=1, fixed=0, order=84)
+	@JBoltField(name="isShowOptcolDel" ,columnName="is_show_optcol_del",type="Boolean", remark="是否开启操作列显示删除按钮", required=true, maxLength=1, fixed=0, order=87)
 	public java.lang.Boolean getIsShowOptcolDel() {
 		return getBoolean("is_show_optcol_del");
 	}
@@ -1373,7 +1421,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否显示操作列
 	 */
-	@JBoltField(name="isShowOptcol" ,columnName="is_show_optcol",type="Boolean", remark="是否显示操作列", required=true, maxLength=1, fixed=0, order=85)
+	@JBoltField(name="isShowOptcol" ,columnName="is_show_optcol",type="Boolean", remark="是否显示操作列", required=true, maxLength=1, fixed=0, order=88)
 	public java.lang.Boolean getIsShowOptcol() {
 		return getBoolean("is_show_optcol");
 	}
@@ -1389,7 +1437,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否显示操作列的恢复按钮
 	 */
-	@JBoltField(name="isShowOptcolRecover" ,columnName="is_show_optcol_recover",type="Boolean", remark="是否显示操作列的恢复按钮", required=true, maxLength=1, fixed=0, order=86)
+	@JBoltField(name="isShowOptcolRecover" ,columnName="is_show_optcol_recover",type="Boolean", remark="是否显示操作列的恢复按钮", required=true, maxLength=1, fixed=0, order=89)
 	public java.lang.Boolean getIsShowOptcolRecover() {
 		return getBoolean("is_show_optcol_recover");
 	}
@@ -1405,7 +1453,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 默认排序字段
 	 */
-	@JBoltField(name="defaultSortColumn" ,columnName="default_sort_column",type="String", remark="默认排序字段", required=false, maxLength=40, fixed=0, order=87)
+	@JBoltField(name="defaultSortColumn" ,columnName="default_sort_column",type="String", remark="默认排序字段", required=false, maxLength=40, fixed=0, order=90)
 	public java.lang.String getDefaultSortColumn() {
 		return getStr("default_sort_column");
 	}
@@ -1421,7 +1469,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 默认排序方式
 	 */
-	@JBoltField(name="defaultSortType" ,columnName="default_sort_type",type="String", remark="默认排序方式", required=false, maxLength=40, fixed=0, order=88)
+	@JBoltField(name="defaultSortType" ,columnName="default_sort_type",type="String", remark="默认排序方式", required=false, maxLength=40, fixed=0, order=91)
 	public java.lang.String getDefaultSortType() {
 		return getStr("default_sort_type");
 	}
@@ -1437,7 +1485,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 长度
 	 */
-	@JBoltField(name="tableOptcolWidth" ,columnName="table_optcol_width",type="Integer", remark="长度", required=true, maxLength=10, fixed=0, order=89)
+	@JBoltField(name="tableOptcolWidth" ,columnName="table_optcol_width",type="Integer", remark="长度", required=true, maxLength=10, fixed=0, order=92)
 	public java.lang.Integer getTableOptcolWidth() {
 		return getInt("table_optcol_width");
 	}
@@ -1453,7 +1501,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格是否开启调整列宽功能
 	 */
-	@JBoltField(name="isTableColumnResize" ,columnName="is_table_column_resize",type="Boolean", remark="表格是否开启调整列宽功能", required=true, maxLength=1, fixed=0, order=90)
+	@JBoltField(name="isTableColumnResize" ,columnName="is_table_column_resize",type="Boolean", remark="表格是否开启调整列宽功能", required=true, maxLength=1, fixed=0, order=93)
 	public java.lang.Boolean getIsTableColumnResize() {
 		return getBoolean("is_table_column_resize");
 	}
@@ -1469,7 +1517,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否增加填充列
 	 */
-	@JBoltField(name="isTablePrependColumn" ,columnName="is_table_prepend_column",type="Boolean", remark="是否增加填充列", required=true, maxLength=1, fixed=0, order=91)
+	@JBoltField(name="isTablePrependColumn" ,columnName="is_table_prepend_column",type="Boolean", remark="是否增加填充列", required=true, maxLength=1, fixed=0, order=94)
 	public java.lang.Boolean getIsTablePrependColumn() {
 		return getBoolean("is_table_prepend_column");
 	}
@@ -1485,7 +1533,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格chechbox radio配置类型
 	 */
-	@JBoltField(name="tablePrependColumnType" ,columnName="table_prepend_column_type",type="String", remark="表格chechbox radio配置类型", required=false, maxLength=40, fixed=0, order=92)
+	@JBoltField(name="tablePrependColumnType" ,columnName="table_prepend_column_type",type="String", remark="表格chechbox radio配置类型", required=false, maxLength=40, fixed=0, order=95)
 	public java.lang.String getTablePrependColumnType() {
 		return getStr("table_prepend_column_type");
 	}
@@ -1501,7 +1549,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 填充列到第几列
 	 */
-	@JBoltField(name="tablePrependColumnIndex" ,columnName="table_prepend_column_index",type="Integer", remark="填充列到第几列", required=true, maxLength=10, fixed=0, order=93)
+	@JBoltField(name="tablePrependColumnIndex" ,columnName="table_prepend_column_index",type="Integer", remark="填充列到第几列", required=true, maxLength=10, fixed=0, order=96)
 	public java.lang.Integer getTablePrependColumnIndex() {
 		return getInt("table_prepend_column_index");
 	}
@@ -1517,7 +1565,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 填充列linkparent
 	 */
-	@JBoltField(name="isTablePrependColumnLinkparent" ,columnName="is_table_prepend_column_linkparent",type="Boolean", remark="填充列linkparent", required=true, maxLength=1, fixed=0, order=94)
+	@JBoltField(name="isTablePrependColumnLinkparent" ,columnName="is_table_prepend_column_linkparent",type="Boolean", remark="填充列linkparent", required=true, maxLength=1, fixed=0, order=97)
 	public java.lang.Boolean getIsTablePrependColumnLinkparent() {
 		return getBoolean("is_table_prepend_column_linkparent");
 	}
@@ -1533,7 +1581,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 填充列linkson
 	 */
-	@JBoltField(name="isTablePrependColumnLinkson" ,columnName="is_table_prepend_column_linkson",type="Boolean", remark="填充列linkson", required=true, maxLength=1, fixed=0, order=95)
+	@JBoltField(name="isTablePrependColumnLinkson" ,columnName="is_table_prepend_column_linkson",type="Boolean", remark="填充列linkson", required=true, maxLength=1, fixed=0, order=98)
 	public java.lang.Boolean getIsTablePrependColumnLinkson() {
 		return getBoolean("is_table_prepend_column_linkson");
 	}
@@ -1549,7 +1597,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 填充列表头是几行rowspan
 	 */
-	@JBoltField(name="tablePrependColumnRowspan" ,columnName="table_prepend_column_rowspan",type="Integer", remark="填充列表头是几行rowspan", required=true, maxLength=10, fixed=0, order=96)
+	@JBoltField(name="tablePrependColumnRowspan" ,columnName="table_prepend_column_rowspan",type="Integer", remark="填充列表头是几行rowspan", required=true, maxLength=10, fixed=0, order=99)
 	public java.lang.Integer getTablePrependColumnRowspan() {
 		return getInt("table_prepend_column_rowspan");
 	}
@@ -1565,7 +1613,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否点击行就切换列填充组件选中状态
 	 */
-	@JBoltField(name="isTablePrependColumnClickActive" ,columnName="is_table_prepend_column_click_active",type="Boolean", remark="是否点击行就切换列填充组件选中状态", required=true, maxLength=1, fixed=0, order=97)
+	@JBoltField(name="isTablePrependColumnClickActive" ,columnName="is_table_prepend_column_click_active",type="Boolean", remark="是否点击行就切换列填充组件选中状态", required=true, maxLength=1, fixed=0, order=100)
 	public java.lang.Boolean getIsTablePrependColumnClickActive() {
 		return getBoolean("is_table_prepend_column_click_active");
 	}
@@ -1581,7 +1629,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 左侧固定列
 	 */
-	@JBoltField(name="tableFixedColumnLeft" ,columnName="table_fixed_column_left",type="String", remark="左侧固定列", required=false, maxLength=40, fixed=0, order=98)
+	@JBoltField(name="tableFixedColumnLeft" ,columnName="table_fixed_column_left",type="String", remark="左侧固定列", required=false, maxLength=40, fixed=0, order=101)
 	public java.lang.String getTableFixedColumnLeft() {
 		return getStr("table_fixed_column_left");
 	}
@@ -1597,7 +1645,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 右侧固定列
 	 */
-	@JBoltField(name="tableFixedColumnRight" ,columnName="table_fixed_column_right",type="String", remark="右侧固定列", required=false, maxLength=40, fixed=0, order=99)
+	@JBoltField(name="tableFixedColumnRight" ,columnName="table_fixed_column_right",type="String", remark="右侧固定列", required=false, maxLength=40, fixed=0, order=102)
 	public java.lang.String getTableFixedColumnRight() {
 		return getStr("table_fixed_column_right");
 	}
@@ -1613,7 +1661,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 分页pagesize自定义设置
 	 */
-	@JBoltField(name="tablePagesizeOptions" ,columnName="table_pagesize_options",type="String", remark="分页pagesize自定义设置", required=false, maxLength=255, fixed=0, order=100)
+	@JBoltField(name="tablePagesizeOptions" ,columnName="table_pagesize_options",type="String", remark="分页pagesize自定义设置", required=false, maxLength=255, fixed=0, order=103)
 	public java.lang.String getTablePagesizeOptions() {
 		return getStr("table_pagesize_options");
 	}
@@ -1629,7 +1677,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格宽度自定义值
 	 */
-	@JBoltField(name="tableWidthAssign" ,columnName="table_width_assign",type="String", remark="表格宽度自定义值", required=false, maxLength=40, fixed=0, order=101)
+	@JBoltField(name="tableWidthAssign" ,columnName="table_width_assign",type="String", remark="表格宽度自定义值", required=false, maxLength=40, fixed=0, order=104)
 	public java.lang.String getTableWidthAssign() {
 		return getStr("table_width_assign");
 	}
@@ -1645,7 +1693,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格宽度
 	 */
-	@JBoltField(name="tableWidth" ,columnName="table_width",type="String", remark="表格宽度", required=true, maxLength=40, fixed=0, order=102)
+	@JBoltField(name="tableWidth" ,columnName="table_width",type="String", remark="表格宽度", required=true, maxLength=40, fixed=0, order=105)
 	public java.lang.String getTableWidth() {
 		return getStr("table_width");
 	}
@@ -1661,7 +1709,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格高度自定义值
 	 */
-	@JBoltField(name="tableHeightAssign" ,columnName="table_height_assign",type="String", remark="表格高度自定义值", required=false, maxLength=40, fixed=0, order=103)
+	@JBoltField(name="tableHeightAssign" ,columnName="table_height_assign",type="String", remark="表格高度自定义值", required=false, maxLength=40, fixed=0, order=106)
 	public java.lang.String getTableHeightAssign() {
 		return getStr("table_height_assign");
 	}
@@ -1677,7 +1725,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格高度
 	 */
-	@JBoltField(name="tableHeight" ,columnName="table_height",type="String", remark="表格高度", required=true, maxLength=40, fixed=0, order=104)
+	@JBoltField(name="tableHeight" ,columnName="table_height",type="String", remark="表格高度", required=true, maxLength=40, fixed=0, order=107)
 	public java.lang.String getTableHeight() {
 		return getStr("table_height");
 	}
@@ -1693,7 +1741,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格默认排序字段
 	 */
-	@JBoltField(name="tableDefaultSortColumn" ,columnName="table_default_sort_column",type="String", remark="表格默认排序字段", required=false, maxLength=60, fixed=0, order=105)
+	@JBoltField(name="tableDefaultSortColumn" ,columnName="table_default_sort_column",type="String", remark="表格默认排序字段", required=false, maxLength=60, fixed=0, order=108)
 	public java.lang.String getTableDefaultSortColumn() {
 		return getStr("table_default_sort_column");
 	}
@@ -1709,7 +1757,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格默认排序类型
 	 */
-	@JBoltField(name="tableDefaultSortType" ,columnName="table_default_sort_type",type="String", remark="表格默认排序类型", required=false, maxLength=40, fixed=0, order=106)
+	@JBoltField(name="tableDefaultSortType" ,columnName="table_default_sort_type",type="String", remark="表格默认排序类型", required=false, maxLength=40, fixed=0, order=109)
 	public java.lang.String getTableDefaultSortType() {
 		return getStr("table_default_sort_type");
 	}
@@ -1725,7 +1773,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否开启关键词查询
 	 */
-	@JBoltField(name="isKeywordsSearch" ,columnName="is_keywords_search",type="Boolean", remark="是否开启关键词查询", required=true, maxLength=1, fixed=0, order=107)
+	@JBoltField(name="isKeywordsSearch" ,columnName="is_keywords_search",type="Boolean", remark="是否开启关键词查询", required=true, maxLength=1, fixed=0, order=110)
 	public java.lang.Boolean getIsKeywordsSearch() {
 		return getBoolean("is_keywords_search");
 	}
@@ -1741,7 +1789,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 关键词匹配列
 	 */
-	@JBoltField(name="keywordsMatchColumns" ,columnName="keywords_match_columns",type="String", remark="关键词匹配列", required=false, maxLength=255, fixed=0, order=108)
+	@JBoltField(name="keywordsMatchColumns" ,columnName="keywords_match_columns",type="String", remark="关键词匹配列", required=false, maxLength=255, fixed=0, order=111)
 	public java.lang.String getKeywordsMatchColumns() {
 		return getStr("keywords_match_columns");
 	}
@@ -1757,7 +1805,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * toolbar 额外预留按钮个数
 	 */
-	@JBoltField(name="toolbarExtraButtonSize" ,columnName="toolbar_extra_button_size",type="Integer", remark="toolbar 额外预留按钮个数", required=false, maxLength=10, fixed=0, order=109)
+	@JBoltField(name="toolbarExtraButtonSize" ,columnName="toolbar_extra_button_size",type="Integer", remark="toolbar 额外预留按钮个数", required=false, maxLength=10, fixed=0, order=112)
 	public java.lang.Integer getToolbarExtraButtonSize() {
 		return getInt("toolbar_extra_button_size");
 	}
@@ -1773,7 +1821,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 删除标识
 	 */
-	@JBoltField(name="isDeleted" ,columnName="is_deleted",type="Boolean", remark="删除标识", required=true, maxLength=1, fixed=0, order=110)
+	@JBoltField(name="isDeleted" ,columnName="is_deleted",type="Boolean", remark="删除标识", required=true, maxLength=1, fixed=0, order=113)
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("is_deleted");
 	}
@@ -1789,7 +1837,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表单分几列
 	 */
-	@JBoltField(name="formColumnSize" ,columnName="form_column_size",type="Integer", remark="表单分几列", required=true, maxLength=10, fixed=0, order=111)
+	@JBoltField(name="formColumnSize" ,columnName="form_column_size",type="Integer", remark="表单分几列", required=true, maxLength=10, fixed=0, order=114)
 	public java.lang.Integer getFormColumnSize() {
 		return getInt("form_column_size");
 	}
@@ -1805,7 +1853,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表单form-group风格 左右还是上下
 	 */
-	@JBoltField(name="isFormGroupRow" ,columnName="is_form_group_row",type="Boolean", remark="表单form-group风格 左右还是上下", required=true, maxLength=1, fixed=0, order=112)
+	@JBoltField(name="isFormGroupRow" ,columnName="is_form_group_row",type="Boolean", remark="表单form-group风格 左右还是上下", required=true, maxLength=1, fixed=0, order=115)
 	public java.lang.Boolean getIsFormGroupRow() {
 		return getBoolean("is_form_group_row");
 	}
@@ -1821,7 +1869,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表单分多列 比例值
 	 */
-	@JBoltField(name="formColumnProportion" ,columnName="form_column_proportion",type="String", remark="表单分多列 比例值", required=false, maxLength=40, fixed=0, order=113)
+	@JBoltField(name="formColumnProportion" ,columnName="form_column_proportion",type="String", remark="表单分多列 比例值", required=false, maxLength=40, fixed=0, order=116)
 	public java.lang.String getFormColumnProportion() {
 		return getStr("form_column_proportion");
 	}
@@ -1837,7 +1885,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表单列排布方向 横向还是纵向
 	 */
-	@JBoltField(name="formColumnDirection" ,columnName="form_column_direction",type="String", remark="表单列排布方向 横向还是纵向", required=false, maxLength=10, fixed=0, order=114)
+	@JBoltField(name="formColumnDirection" ,columnName="form_column_direction",type="String", remark="表单列排布方向 横向还是纵向", required=false, maxLength=10, fixed=0, order=117)
 	public java.lang.String getFormColumnDirection() {
 		return getStr("form_column_direction");
 	}
@@ -1853,7 +1901,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * form-group row状态下的比例
 	 */
-	@JBoltField(name="formGroupProportion" ,columnName="form_group_proportion",type="String", remark="form-group row状态下的比例", required=false, maxLength=40, fixed=0, order=115)
+	@JBoltField(name="formGroupProportion" ,columnName="form_group_proportion",type="String", remark="form-group row状态下的比例", required=false, maxLength=40, fixed=0, order=118)
 	public java.lang.String getFormGroupProportion() {
 		return getStr("form_group_proportion");
 	}
@@ -1869,7 +1917,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用Path注解路由
 	 */
-	@JBoltField(name="isViewUsePath" ,columnName="is_view_use_path",type="Boolean", remark="是否启用Path注解路由", required=true, maxLength=1, fixed=0, order=116)
+	@JBoltField(name="isViewUsePath" ,columnName="is_view_use_path",type="Boolean", remark="是否启用Path注解路由", required=true, maxLength=1, fixed=0, order=119)
 	public java.lang.Boolean getIsViewUsePath() {
 		return getBoolean("is_view_use_path");
 	}
@@ -1885,7 +1933,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 使用布局器
 	 */
-	@JBoltField(name="viewLayout" ,columnName="view_layout",type="String", remark="使用布局器", required=true, maxLength=255, fixed=0, order=117)
+	@JBoltField(name="viewLayout" ,columnName="view_layout",type="String", remark="使用布局器", required=true, maxLength=255, fixed=0, order=120)
 	public java.lang.String getViewLayout() {
 		return getStr("view_layout");
 	}
@@ -1901,7 +1949,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否需要创建新的路由配置类
 	 */
-	@JBoltField(name="isNeedNewRoute" ,columnName="is_need_new_route",type="Boolean", remark="是否需要创建新的路由配置类", required=true, maxLength=1, fixed=0, order=118)
+	@JBoltField(name="isNeedNewRoute" ,columnName="is_need_new_route",type="Boolean", remark="是否需要创建新的路由配置类", required=true, maxLength=1, fixed=0, order=121)
 	public java.lang.Boolean getIsNeedNewRoute() {
 		return getBoolean("is_need_new_route");
 	}
@@ -1917,7 +1965,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 哪个路由配置类
 	 */
-	@JBoltField(name="routesClassName" ,columnName="routes_class_name",type="String", remark="哪个路由配置类", required=false, maxLength=255, fixed=0, order=119)
+	@JBoltField(name="routesClassName" ,columnName="routes_class_name",type="String", remark="哪个路由配置类", required=false, maxLength=255, fixed=0, order=122)
 	public java.lang.String getRoutesClassName() {
 		return getStr("routes_class_name");
 	}
@@ -1933,7 +1981,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否需要后台管理权限拦截器
 	 */
-	@JBoltField(name="isNeedAdminInterceptor" ,columnName="is_need_admin_interceptor",type="Boolean", remark="是否需要后台管理权限拦截器", required=true, maxLength=1, fixed=0, order=120)
+	@JBoltField(name="isNeedAdminInterceptor" ,columnName="is_need_admin_interceptor",type="Boolean", remark="是否需要后台管理权限拦截器", required=true, maxLength=1, fixed=0, order=123)
 	public java.lang.Boolean getIsNeedAdminInterceptor() {
 		return getBoolean("is_need_admin_interceptor");
 	}
@@ -1949,7 +1997,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 额外配置的拦截器
 	 */
-	@JBoltField(name="extraInterceptorClassName" ,columnName="extra_interceptor_class_name",type="String", remark="额外配置的拦截器", required=false, maxLength=255, fixed=0, order=121)
+	@JBoltField(name="extraInterceptorClassName" ,columnName="extra_interceptor_class_name",type="String", remark="额外配置的拦截器", required=false, maxLength=255, fixed=0, order=124)
 	public java.lang.String getExtraInterceptorClassName() {
 		return getStr("extra_interceptor_class_name");
 	}
@@ -1965,7 +2013,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格查询条件是否启用高级多条件模式
 	 */
-	@JBoltField(name="isTableMultiConditionsMode" ,columnName="is_table_multi_conditions_mode",type="Boolean", remark="表格查询条件是否启用高级多条件模式", required=true, maxLength=1, fixed=0, order=122)
+	@JBoltField(name="isTableMultiConditionsMode" ,columnName="is_table_multi_conditions_mode",type="Boolean", remark="表格查询条件是否启用高级多条件模式", required=true, maxLength=1, fixed=0, order=125)
 	public java.lang.Boolean getIsTableMultiConditionsMode() {
 		return getBoolean("is_table_multi_conditions_mode");
 	}
@@ -1981,7 +2029,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格toolbar上启用添加按钮
 	 */
-	@JBoltField(name="isToolbarAddBtn" ,columnName="is_toolbar_add_btn",type="Boolean", remark="表格toolbar上启用添加按钮", required=true, maxLength=1, fixed=0, order=123)
+	@JBoltField(name="isToolbarAddBtn" ,columnName="is_toolbar_add_btn",type="Boolean", remark="表格toolbar上启用添加按钮", required=true, maxLength=1, fixed=0, order=126)
 	public java.lang.Boolean getIsToolbarAddBtn() {
 		return getBoolean("is_toolbar_add_btn");
 	}
@@ -1997,7 +2045,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格toolbar上启用编辑按钮
 	 */
-	@JBoltField(name="isToolbarEditBtn" ,columnName="is_toolbar_edit_btn",type="Boolean", remark="表格toolbar上启用编辑按钮", required=true, maxLength=1, fixed=0, order=124)
+	@JBoltField(name="isToolbarEditBtn" ,columnName="is_toolbar_edit_btn",type="Boolean", remark="表格toolbar上启用编辑按钮", required=true, maxLength=1, fixed=0, order=127)
 	public java.lang.Boolean getIsToolbarEditBtn() {
 		return getBoolean("is_toolbar_edit_btn");
 	}
@@ -2013,7 +2061,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格toolbar上启用删除按钮
 	 */
-	@JBoltField(name="isToolbarDelBtn" ,columnName="is_toolbar_del_btn",type="Boolean", remark="表格toolbar上启用删除按钮", required=true, maxLength=1, fixed=0, order=125)
+	@JBoltField(name="isToolbarDelBtn" ,columnName="is_toolbar_del_btn",type="Boolean", remark="表格toolbar上启用删除按钮", required=true, maxLength=1, fixed=0, order=128)
 	public java.lang.Boolean getIsToolbarDelBtn() {
 		return getBoolean("is_toolbar_del_btn");
 	}
@@ -2029,7 +2077,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格toolbar上启用恢复按钮 当有is_deleted时
 	 */
-	@JBoltField(name="isToolbarRecoverBtn" ,columnName="is_toolbar_recover_btn",type="Boolean", remark="表格toolbar上启用恢复按钮 当有is_deleted时", required=true, maxLength=1, fixed=0, order=126)
+	@JBoltField(name="isToolbarRecoverBtn" ,columnName="is_toolbar_recover_btn",type="Boolean", remark="表格toolbar上启用恢复按钮 当有is_deleted时", required=true, maxLength=1, fixed=0, order=129)
 	public java.lang.Boolean getIsToolbarRecoverBtn() {
 		return getBoolean("is_toolbar_recover_btn");
 	}
@@ -2045,7 +2093,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格tolbar上启用刷新按钮
 	 */
-	@JBoltField(name="isToolbarRefreshBtn" ,columnName="is_toolbar_refresh_btn",type="Boolean", remark="表格tolbar上启用刷新按钮", required=true, maxLength=1, fixed=0, order=127)
+	@JBoltField(name="isToolbarRefreshBtn" ,columnName="is_toolbar_refresh_btn",type="Boolean", remark="表格tolbar上启用刷新按钮", required=true, maxLength=1, fixed=0, order=130)
 	public java.lang.Boolean getIsToolbarRefreshBtn() {
 		return getBoolean("is_toolbar_refresh_btn");
 	}
@@ -2061,7 +2109,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用pageTitle上的添加按钮
 	 */
-	@JBoltField(name="isPageTitleAddBtn" ,columnName="is_page_title_add_btn",type="Boolean", remark="是否启用pageTitle上的添加按钮", required=true, maxLength=1, fixed=0, order=128)
+	@JBoltField(name="isPageTitleAddBtn" ,columnName="is_page_title_add_btn",type="Boolean", remark="是否启用pageTitle上的添加按钮", required=true, maxLength=1, fixed=0, order=131)
 	public java.lang.Boolean getIsPageTitleAddBtn() {
 		return getBoolean("is_page_title_add_btn");
 	}
@@ -2077,7 +2125,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用pageTitle上的刷新按钮
 	 */
-	@JBoltField(name="isPageTitleRefreshBtn" ,columnName="is_page_title_refresh_btn",type="Boolean", remark="是否启用pageTitle上的刷新按钮", required=true, maxLength=1, fixed=0, order=129)
+	@JBoltField(name="isPageTitleRefreshBtn" ,columnName="is_page_title_refresh_btn",type="Boolean", remark="是否启用pageTitle上的刷新按钮", required=true, maxLength=1, fixed=0, order=132)
 	public java.lang.Boolean getIsPageTitleRefreshBtn() {
 		return getBoolean("is_page_title_refresh_btn");
 	}
@@ -2093,41 +2141,9 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用pageTitle上的初始化顺序按钮
 	 */
-	@JBoltField(name="isPageTitleInitRankBtn" ,columnName="is_page_title_init_rank_btn",type="Boolean", remark="是否启用pageTitle上的初始化顺序按钮", required=true, maxLength=1, fixed=0, order=130)
+	@JBoltField(name="isPageTitleInitRankBtn" ,columnName="is_page_title_init_rank_btn",type="Boolean", remark="是否启用pageTitle上的初始化顺序按钮", required=true, maxLength=1, fixed=0, order=133)
 	public java.lang.Boolean getIsPageTitleInitRankBtn() {
 		return getBoolean("is_page_title_init_rank_btn");
-	}
-
-	/**
-	 * 是否启用pageTitle上的上传按钮
-	 */
-	public M setIsPageTitleImportBtn(java.lang.Boolean isPageTitleImportBtn) {
-		set("is_page_title_import_btn", isPageTitleImportBtn);
-		return (M)this;
-	}
-	
-	/**
-	 * 是否启用pageTitle上的上传按钮
-	 */
-	@JBoltField(name="isPageTitleImportBtn" ,columnName="is_page_title_import_btn",type="Boolean", remark="是否启用pageTitle上的上传按钮", required=true, maxLength=1, fixed=0, order=131)
-	public java.lang.Boolean getIsPageTitleImportBtn() {
-		return getBoolean("is_page_title_import_btn");
-	}
-
-	/**
-	 * 是否启用pageTitle的下载导出按钮
-	 */
-	public M setIsPageTitleExportBtn(java.lang.Boolean isPageTitleExportBtn) {
-		set("is_page_title_export_btn", isPageTitleExportBtn);
-		return (M)this;
-	}
-	
-	/**
-	 * 是否启用pageTitle的下载导出按钮
-	 */
-	@JBoltField(name="isPageTitleExportBtn" ,columnName="is_page_title_export_btn",type="Boolean", remark="是否启用pageTitle的下载导出按钮", required=true, maxLength=1, fixed=0, order=132)
-	public java.lang.Boolean getIsPageTitleExportBtn() {
-		return getBoolean("is_page_title_export_btn");
 	}
 
 	/**
@@ -2141,7 +2157,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用systemLog日志
 	 */
-	@JBoltField(name="isProjectSystemLog" ,columnName="is_project_system_log",type="Boolean", remark="是否启用systemLog日志", required=true, maxLength=1, fixed=0, order=133)
+	@JBoltField(name="isProjectSystemLog" ,columnName="is_project_system_log",type="Boolean", remark="是否启用systemLog日志", required=true, maxLength=1, fixed=0, order=134)
 	public java.lang.Boolean getIsProjectSystemLog() {
 		return getBoolean("is_project_system_log");
 	}
@@ -2157,7 +2173,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 系统日志text
 	 */
-	@JBoltField(name="projectSystemLogTargetTypeText" ,columnName="project_system_log_target_type_text",type="String", remark="系统日志text", required=false, maxLength=20, fixed=0, order=134)
+	@JBoltField(name="projectSystemLogTargetTypeText" ,columnName="project_system_log_target_type_text",type="String", remark="系统日志text", required=false, maxLength=20, fixed=0, order=135)
 	public java.lang.String getProjectSystemLogTargetTypeText() {
 		return getStr("project_system_log_target_type_text");
 	}
@@ -2173,7 +2189,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 系统日志value值
 	 */
-	@JBoltField(name="projectSystemLogTargetTypeValue" ,columnName="project_system_log_target_type_value",type="String", remark="系统日志value值", required=false, maxLength=10, fixed=0, order=135)
+	@JBoltField(name="projectSystemLogTargetTypeValue" ,columnName="project_system_log_target_type_value",type="String", remark="系统日志value值", required=false, maxLength=10, fixed=0, order=136)
 	public java.lang.String getProjectSystemLogTargetTypeValue() {
 		return getStr("project_system_log_target_type_value");
 	}
@@ -2189,7 +2205,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 系统日志KeyName
 	 */
-	@JBoltField(name="projectSystemLogTargetTypeKeyName" ,columnName="project_system_log_target_type_key_name",type="String", remark="系统日志KeyName", required=false, maxLength=40, fixed=0, order=136)
+	@JBoltField(name="projectSystemLogTargetTypeKeyName" ,columnName="project_system_log_target_type_key_name",type="String", remark="系统日志KeyName", required=false, maxLength=40, fixed=0, order=137)
 	public java.lang.String getProjectSystemLogTargetTypeKeyName() {
 		return getStr("project_system_log_target_type_key_name");
 	}
@@ -2205,7 +2221,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * form表单的dialog的area属性 长宽
 	 */
-	@JBoltField(name="formDialogArea" ,columnName="form_dialog_area",type="String", remark="form表单的dialog的area属性 长宽", required=false, maxLength=20, fixed=0, order=137)
+	@JBoltField(name="formDialogArea" ,columnName="form_dialog_area",type="String", remark="form表单的dialog的area属性 长宽", required=false, maxLength=20, fixed=0, order=138)
 	public java.lang.String getFormDialogArea() {
 		return getStr("form_dialog_area");
 	}

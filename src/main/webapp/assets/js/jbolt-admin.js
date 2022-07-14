@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.7.0";
+var jbolt_admin_js_version="5.7.1";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -16594,11 +16594,18 @@ var JBoltTabViewUtil={
 			var that=this;
 			var tabViews = parent.find(".jbolt_tab_view");
 			if(isOk(tabViews)){
-				var tv,tva,activeIndex=0;
+				var tv,tva,activeIndex=0,viewId;
 				tabViews.each(function(){
 					activeIndex=0;
 					tv=$(this);
-					tva = tv.find("jbolt_tab_links>.jbolt_tab_link.active");
+					viewId = this.id;
+					if(!viewId){
+						viewId = "jbv_"+randomId(5);
+						this.id = viewId;
+					}
+					tv.children(".jbolt_tab_links").attr("data-view-id",viewId).find(".jbolt_tab_link").attr("data-view-id",viewId);
+					tv.children(".jbolt_tab_contens").attr("data-view-id",viewId).children(".jbolt_tab_conten").attr("data-view-id",viewId);
+					tva = tv.find(".jbolt_tab_links[data-view-id='"+viewId+"']>.jbolt_tab_link.active");
 					if(!isOk(tva)){
 						//没有active的就得判断data-active-index=""
 						activeIndex=tv.data("active-index");
@@ -16611,7 +16618,7 @@ var JBoltTabViewUtil={
 			}
 			
 		},initTabLinkEvent:function(){
-			jboltBody.on("click",".jbolt_tab_view .jbolt_tab_link",function(e){
+			jboltBody.on("click",".jbolt_tab_view>.jbolt_tab_links>.jbolt_tab_link",function(e){
 				e.preventDefault();
 				var link=$(this);
 				var tabContentId=link.attr("href");
@@ -16620,7 +16627,8 @@ var JBoltTabViewUtil={
 					return false;
 				}
 				var tabView=link.closest(".jbolt_tab_view");
-				var activeLink=tabView.find(".jbolt_tab_link.active");
+				var viewId = tabView[0].id;
+				var activeLink=tabView.find(".jbolt_tab_links[data-view-id='"+viewId+"']>.jbolt_tab_link.active");
 				var handler=tabView.data("handler");
 				var exe_handler=handler?(eval(handler)):null;
 				if(isOk(activeLink)){
@@ -16643,7 +16651,7 @@ var JBoltTabViewUtil={
 				}
 			});
 		},active:function(tabView,tabIndex){
-			var tabLink=tabView.find('.jbolt_tab_links>.jbolt_tab_link:eq('+tabIndex+')');
+			var tabLink=tabView.find('.jbolt_tab_links[data-view-id="'+tabView[0].id+'"]>.jbolt_tab_link:eq('+tabIndex+')');
 			if(isOk(tabLink)){
 				tabLink.trigger("click");
 			}
@@ -18156,7 +18164,42 @@ var real_image=function(url){
 
 }
 
-
+/**
+ * 金额 保留1位
+ * @param number
+ * @returns {string|string}
+ */
+function money_1(number) {
+	var value= numberFormat(number, 1);
+	return value.toString()==="0"?"":value;
+}
+/**
+ * 金额 保留2位
+ * @param number
+ * @returns {string|string}
+ */
+function money_2(number) {
+	var value= numberFormat(number, 2);
+	return value.toString()==="0"?"":value;
+}
+/**
+ * 金额 保留3位
+ * @param number
+ * @returns {string|string}
+ */
+function money_3(number) {
+	var value= numberFormat(number, 3);
+	return value.toString()==="0"?"":value;
+}
+/**
+ * 金额 保留4位
+ * @param number
+ * @returns {string|string}
+ */
+function money_4(number) {
+	var value= numberFormat(number, 4);
+	return value.toString()==="0"?"":value;
+}
 
 /*
  * 数字格式化 清除掉小数点后的无用的0
@@ -18279,6 +18322,38 @@ function rownum(pageNumber,pageSize,index){
 	return ((pageNumber-1)*pageSize)+(+index+1);
 }
 
+/**
+ * 小数点1个
+ * @param number
+ * @returns {number|*|string|string}
+ */
+function tofixed_1(number){
+	return tofixed(number,1,false,true);
+}
+/**
+ * 小数点2个
+ * @param number
+ * @returns {number|*|string|string}
+ */
+function tofixed_2(number){
+	return tofixed(number,2,false,true);
+}
+/**
+ * 小数点3个
+ * @param number
+ * @returns {number|*|string|string}
+ */
+function tofixed_3(number){
+	return tofixed(number,3,false,true);
+}
+/**
+ * 小数点4个
+ * @param number
+ * @returns {number|*|string|string}
+ */
+function tofixed_4(number){
+	return tofixed(number,4,false,true);
+}
 /**
  * tofixed
  */
@@ -18477,11 +18552,19 @@ function initJuicer(){
 	juicer.register("number_format",numberFormat);
 	juicer.register("number_format2",numberFormat2);
 	juicer.register("number_format3",numberFormat3);
+	juicer.register("money_1",money_1);
+	juicer.register("money_2",money_2);
+	juicer.register("money_3",money_3);
+	juicer.register("money_4",money_4);
 	juicer.register("rownum",rownum);
 	juicer.register("str_join",StrUtil.join);
 	juicer.register("str_underline",StrUtil.underline);
 	juicer.register("str_camel",StrUtil.camel);
 	juicer.register("tofixed",tofixed);
+	juicer.register("tofixed_1",tofixed_1);
+	juicer.register("tofixed_2",tofixed_2);
+	juicer.register("tofixed_3",tofixed_3);
+	juicer.register("tofixed_4",tofixed_4);
 	juicer.register("removeNumberZero",removeNumberEndZero);
 	juicer.register("removeNumberEndZero",removeNumberEndZero);
 	juicer.register("removeFixedNumberAllZero",removeFixedNumberAllZero);

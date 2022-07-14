@@ -1,10 +1,18 @@
 package #(codeGen.controllerPackage??);
 
-#if(codeGen.isImportExcel??)
+#if(codeGen.isImportExcel?? && codeGen.isCrud)
 import cn.jbolt.common.config.JBoltUploadFolder;
 import com.jfinal.upload.UploadFile;
 #end
-
+#if(codeGen.isExportExcel)
+import #(codeGen.modelPackage+"."+codeGen.modelName??);
+#if(codeGen.isExportExcelByForm?? && codeGen.isPaginate??)
+import com.jfinal.plugin.activerecord.Page;
+#end
+#if((codeGen.isExportExcelByForm?? && !codeGen.isPaginate??) || codeGen.isExportExcelAll?? || codeGen.isExportExcelByCheckedIds??)
+import java.util.List;
+#end
+#end
 import com.jfinal.aop.Inject;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -16,7 +24,9 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.bean.JBoltDateRange;
 #end
 import com.jfinal.core.Path;
+#if(codeGen.servicePackage!=codeGen.controllerPackage)
 import #(codeGen.servicePackage+"."+codeGen.serviceName??);
+#end
 #if(codeGen.isCrud?? || codeGen.isNeedAdminInterceptor??)
 import com.jfinal.aop.Before;
 #end
