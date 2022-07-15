@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.7.5";
+var jbolt_admin_js_version="5.7.6";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -10429,8 +10429,9 @@ var FileUploadUtil={
 				var maxSize=uploder.data("maxsize");
 				var fileValue=fileInput.val();
 				var handler=uploder.data("handler");
+				var accept = uploder.data("accept")||"file";
 				if(fileValue){
-					if(!validateFileDatas(fileDatas,"file",maxSize)){
+					if(!validateFileDatas(fileDatas,accept,maxSize)){
 						fileInput.val("");
 						return false;
 					}
