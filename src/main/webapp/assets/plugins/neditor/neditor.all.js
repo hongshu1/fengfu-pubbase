@@ -21209,7 +21209,7 @@ UE.plugins["video"] = function() {
           html.push("</tr>");
         }
         //禁止指定table-width
-        return "<table><tbody>" + html.join("") + "</tbody></table>";
+        return "<table border='1' cellpadding='0' cellspacing='0'><tbody>" + html.join("") + "</tbody></table>";
       }
 
       if (!opt) {
@@ -28468,7 +28468,7 @@ UE.ui = baidu.editor.ui = {};
       popEl.className +=
         " " + ANCHOR_CLASSES[(sideUp ? 1 : 0) * 2 + (sideLeft ? 1 : 0)];
       if (this.editor) {
-        popEl.style.zIndex = this.editor.container.style.zIndex * 1 + 10;
+        popEl.style.zIndex = this.editor.container.style.zIndex * 1 + 99999;
         baidu.editor.ui.uiUtils.getFixedLayer().style.zIndex =
           popEl.style.zIndex - 1;
       }

@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.7.3";
+var jbolt_admin_js_version="5.7.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -293,7 +293,8 @@ var jboltPlugins={
 		"webcam":{"js":['assets/plugins/webcam/jquery.webcam.min.js']},
 		"webcamjs":{"js":['assets/plugins/webcamjs/js/webcam.js','assets/plugins/webcamjs/js/cropbox.js'],"css":['assets/plugins/webcamjs/css/webcam.css']},
 		"summernote":{"js":['assets/plugins/summernote/summernote-bs4.min.js','assets/plugins/summernote/lang/summernote-zh-CN.min.js'],"css":['assets/plugins/summernote/summernote-bs4.css']},
-		"neditor":{"js":['assets/plugins/neditor/neditor.config.js','assets/plugins/neditor/neditor.all.js','assets/plugins/neditor/neditor.service.js']},
+		"tamemoji":{"js":['assets/plugins/summernote/tam-emoji/js/config.js','assets/plugins/summernote/tam-emoji/js/tam-emoji.min.js'],"css":['assets/plugins/summernote/tam-emoji/css/emoji.css']},
+		"neditor":{"js":['assets/plugins/neditor/neditor.config.js','assets/plugins/neditor/neditor.all.min.js','assets/plugins/neditor/neditor.service.js']},
 //		"fileinput":{"js":['assets/plugins/bootstrap-fileinput/js/plugins/canvas-to-blob.min.js','assets/plugins/bootstrap-fileinput/js/plugins/sortable.min.js','assets/plugins/bootstrap-fileinput/js/plugins/piexif.min.js','assets/plugins/bootstrap-fileinput/js/plugins/purify.min.js','assets/plugins/bootstrap-fileinput/js/fileinput.min.js','assets/plugins/bootstrap-fileinput/themes/fa/theme.min.js','assets/plugins/bootstrap-fileinput/themes/explorer-fa/theme.min.js','assets/plugins/bootstrap-fileinput/js/locales/zh.js'],"css":['assets/plugins/bootstrap-fileinput/css/fileinput.min.css','assets/plugins/bootstrap-fileinput/themes/explorer-fa/theme.min.css']},
 		"fileinput":{"js":['assets/plugins/bootstrap-fileinput/last/js/plugins/sortable.min.js','assets/plugins/bootstrap-fileinput/last/js/plugins/piexif.min.js','assets/plugins/bootstrap-fileinput/last/js/fileinput.min.js','assets/plugins/bootstrap-fileinput/last/themes/fa/theme.min.js','assets/plugins/bootstrap-fileinput/last/themes/explorer-fa/theme.min.js','assets/plugins/bootstrap-fileinput/last/js/locales/zh.js'],"css":['assets/plugins/bootstrap-fileinput/last/css/fileinput.min.css','assets/plugins/bootstrap-fileinput/last/themes/explorer-fa/theme.min.css']},
 		"imgviewer":{"js":['assets/plugins/viewer/js/viewer.min.js','assets/plugins/viewer/js/jquery-viewer.min.js'],"css":['assets/plugins/viewer/css/viewer.min.css']},
@@ -7263,26 +7264,40 @@ var HtmlEditorUtil={
 				// alert("请设置编辑器的id属性");
 				// return false;
 			}
+			var emoji = htmlEditor.data("emoji");
 			var toolbarTheme = htmlEditor.data("toolbar")||"normal";
 			var toolbar=null;
 			if(toolbarTheme == "normal"){
+				var insertItems=['hr','table','link', 'picture','video'];
+				if(emoji){
+					insertItems.push("emoji");
+				}
 				toolbar= [
 					['style', ['style']],
 					['font', ['bold', 'italic', 'underline', 'clear','strikethrough', 'superscript', 'subscript']],
 				    ['fontsize', ['fontsize']],
 				    ['color', ['color']],
 				    ['para', ['ul', 'ol', 'paragraph','height']],
-				    ['insert', ['hr','table','link', 'picture','video']],
+				    ['insert', insertItems],
 				    ['misc',['fullscreen','codeview','undo','redo','help']]
 				  ];
 			}else if(toolbarTheme=="simple"){
+				var insertItems = ['hr','picture'];
+				if(emoji){
+					insertItems.push("emoji");
+				}
 				toolbar= [
 					['font', ['bold', 'italic', 'underline', 'clear','strikethrough', 'superscript', 'subscript']],
-				    ['insert', ['hr','picture']],
+				    ['insert', insertItems],
 				    ['misc',['undo','redo','help']]
 				  ];
 			}else if(toolbarTheme=="none") {
-				toolbar = [];
+				if(emoji){
+					toolbar = [ ['insert', ['emoji']]];
+				}else{
+					toolbar = [];
+				}
+
 			}
 			var width=htmlEditor.data("width");
 			var height=htmlEditor.data("height")||300;
@@ -7350,10 +7365,23 @@ var HtmlEditorUtil={
 			}else{
 				summernoteOptions.height=height+"px";
 			}
-			htmlEditor.summernote(summernoteOptions);
-			var disabled=htmlEditor.data("disabled");
-			if(disabled){
-				htmlEditor.summernote("disable");
+			var goit=function(){
+				htmlEditor.summernote(summernoteOptions);
+				var disabled=htmlEditor.data("disabled");
+				if(disabled){
+					htmlEditor.summernote("disable");
+				}
+			}
+			if(emoji){
+				loadJBoltPlugin(['tamemoji'], function(){
+					var emojiType = htmlEditor.data("emoji-type")||"unicode";
+					var emojiSource = htmlEditor.data("emoji-source")||"assets/plugins/summernote/tam-emoji/img";
+					document.emojiType = emojiType; // default: image
+					document.emojiSource = emojiSource;
+					goit();
+				});
+			}else{
+				goit();
 			}
 		},initEditor:function(htmlEditor){
 			var that=this;
