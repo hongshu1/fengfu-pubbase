@@ -171,6 +171,7 @@ CREATE TABLE [dbo].[jb_dept] (
   [sn] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NOT NULL,
   [sort_rank] int  NOT NULL,
   [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
+  [dept_path] varchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [create_time] datetime  NULL,
   [update_time] datetime  NULL
 )
@@ -275,6 +276,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_dept',
 'COLUMN', N'enable'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'部门路径',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_dept',
+'COLUMN', N'dept_path'
 GO
 
 EXEC sp_addextendedproperty
@@ -2127,7 +2135,10 @@ CREATE TABLE [dbo].[jb_user] (
   [login_country] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
   [is_remote_login] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NULL,
   [dept_id] bigint  NULL,
-  [posts] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL
+  [posts] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
+  [dept_path] varchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
+  [update_time] datetime  NOT NULL,
+  [update_user_id] bigint  NOT NULL
 )
 GO
 
@@ -2286,6 +2297,27 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_user',
 'COLUMN', N'posts'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'部门路径',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'dept_path'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'更新时间',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'update_time'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'更新人ID',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'update_user_id'
 GO
 
 EXEC sp_addextendedproperty
