@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.7.1";
+var jbolt_admin_js_version="5.7.2";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -8386,9 +8386,22 @@ function getRealAccept(accept){
 	case "7z":
 		values=".7z";
 		break;
+	case "ai":
+		values=".ai";
+		break;
+	case "psd":
+		values=".psd";
+		break;
+	case "cdr":
+		values=".cdr";
+		break;
 	default:
 		if(accept.indexOf(",")==-1){
-			values=accept;
+			if(accept.indexOf("/")!=-1 || accept.startWith(".")){
+				values=accept;
+			}else{
+				values='.'+accept;
+			}
 		}else{
 			values=getRealAcceptSplit(accept);
 		}
