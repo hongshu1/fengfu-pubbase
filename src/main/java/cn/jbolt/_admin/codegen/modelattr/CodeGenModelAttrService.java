@@ -4,13 +4,16 @@ import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.codegen.CodeGenService;
 import cn.jbolt.common.model.CodeGen;
 import cn.jbolt.common.model.CodeGenModelAttr;
+import cn.jbolt.core.base.JBoltIDGenMode;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.datasource.JBoltTableMetaUtil;
+import cn.jbolt.core.db.sql.DBType;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.enjoy.directive.ColumnTypeToDirective;
 import cn.jbolt.core.model.base.JBoltBaseModel;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.service.base.JBoltBaseService;
+import com.alibaba.druid.DbType;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -21,8 +24,6 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.generator.ColumnMeta;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
-
-import javax.smartcardio.ATR;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -93,6 +94,28 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 						//设置主键为默认排序列
 						codeGen.setTableDefaultSortColumn(attrTemp.getColName());
 						codeGen.setTableDefaultSortType("desc");
+						if(columnMeta.javaType.equalsIgnoreCase("java.lang.integer")) {
+							switch (codeGen.getDatabaseType()){
+								case DBType.MYSQL:
+									codeGen.setMainTableIdgenmode(JBoltIDGenMode.AUTO);
+									break;
+								case DBType.SQLSERVER:
+									codeGen.setMainTableIdgenmode(JBoltIDGenMode.AUTO);
+									break;
+								case DBType.ORACLE:
+									codeGen.setMainTableIdgenmode(JBoltIDGenMode.SEQUENCE);
+									break;
+								case DBType.POSTGRESQL:
+									codeGen.setMainTableIdgenmode(JBoltIDGenMode.SERIAL);
+									break;
+								case DBType.DM:
+									codeGen.setMainTableIdgenmode(JBoltIDGenMode.AUTO);
+									break;
+								default:
+									codeGen.setMainTableIdgenmode(JBoltIDGenMode.AUTO);
+									break;
+							}
+						}
 					}
 					attrs.add(attrTemp);
 					if(columnMeta.name.equalsIgnoreCase("sort_rank") || columnMeta.name.toLowerCase().indexOf("sort_rank")!=-1) {

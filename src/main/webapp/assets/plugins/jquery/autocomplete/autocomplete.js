@@ -1,4 +1,4 @@
-var jbolt_autocomplete_js_version="1.2.8";
+var jbolt_autocomplete_js_version="1.3.0";
 /**
  * JBolt 内置 Autocomplete组件
  * 基于jQuery Autocomplete plugin
@@ -743,8 +743,9 @@ var jbolt_autocomplete_js_version="1.2.8";
 				if(width>newWidth){
 					left=left+owidth-width;
 				}
-
-
+				if(self!=top){
+					windowScrollTop = 0;
+				}
 				if(offset.top+options.scrollHeight>jboltWindowHeight-25){
 					top = offset.top-options.scrollHeight-(isTdEditor?3:2)-windowScrollTop;
 				}
