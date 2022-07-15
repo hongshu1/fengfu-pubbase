@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.7.2";
+var jbolt_admin_js_version="5.7.3";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -8188,7 +8188,7 @@ function validateFileMaxSize(file,maxSize){
 }
 
 //限制上传文件的类型和大小
-function validateExcel(file,maxSize){
+function validateExcel(file,maxSize,dontShowMsg){
 	  // 返回 KB，保留小数点后两位
 	  var fileName;
 	  if(isFileData(file)){
@@ -8197,7 +8197,9 @@ function validateExcel(file,maxSize){
 			fileName = file.files[0].name;
 	  }
 	  if(!/.(xls|xlsx)$/.test(fileName.toLowerCase())){
-		  LayerMsgBox.alert("文件类型必须是xls,xlsx中的一种",2);
+		  if(!dontShowMsg){
+			  LayerMsgBox.alert("文件类型必须是xls,xlsx中的一种",2);
+		  }
 		  return false;
 	  }
 	  if(validateFileMaxSize(file,maxSize)){
@@ -8206,7 +8208,7 @@ function validateExcel(file,maxSize){
 	  return true;
 }
 //限制上传文件的类型和大小
-function validateNormal(file,maxSize){
+function validateNormal(file,maxSize,dontShowMsg){
 	// 返回 KB，保留小数点后两位
 	var fileName;
 	  if(isFileData(file)){
@@ -8215,7 +8217,9 @@ function validateNormal(file,maxSize){
 			fileName = file.files[0].name;
 	  }
 	if(!/.(txt|xls|xlsx|jpg|jpeg|png|gif|bmp|rar|zip|pdf|mp4|wmv|flv|rmvb|mpg|mkv|mov|mp3|wav|ogg|midi|mac|acc|doc|docx|ppt|pptx|ppts)$/.test(fileName.toLowerCase())){
-		LayerMsgBox.alert("此文件类型不允许上传",2);
+		if(!dontShowMsg){
+			LayerMsgBox.alert("此文件类型不允许上传",2);
+		}
 		return false;
 	}
 	if(validateFileMaxSize(file,maxSize)){
@@ -8225,7 +8229,7 @@ function validateNormal(file,maxSize){
 }
 
 //限制上传文件的类型和大小
-function validateAudio(file,maxSize){
+function validateAudio(file,maxSize,dontShowMsg){
 	// 返回 KB，保留小数点后两位
 	var fileName;
 	  if(isFileData(file)){
@@ -8234,7 +8238,9 @@ function validateAudio(file,maxSize){
 			fileName = file.files[0].name;
 	  }
 	if(!/.(mp3|wav|ogg|midi|mac|acc)$/.test(fileName.toLowerCase())){
-		LayerMsgBox.alert("此文件类型不允许上传，只允许mp3|wav|ogg|midi|mac|acc",2);
+		if(!dontShowMsg){
+			LayerMsgBox.alert("此文件类型不允许上传，只允许mp3|wav|ogg|midi|mac|acc",2);
+		}
 		return false;
 	}
 	if(validateFileMaxSize(file,maxSize)){
@@ -8243,7 +8249,7 @@ function validateAudio(file,maxSize){
 	return true;
 }
 //限制上传文件的类型和大小
-function validateVideo(file,maxSize){
+function validateVideo(file,maxSize,dontShowMsg){
 	// 返回 KB，保留小数点后两位
 	var fileName;
 	  if(isFileData(file)){
@@ -8252,7 +8258,9 @@ function validateVideo(file,maxSize){
 			fileName = file.files[0].name;
 	  }
 	if(!/.(mp4|wmv|flv|rmvb|mpg|mkv|mov)$/.test(fileName.toLowerCase())){
-		LayerMsgBox.alert("此文件类型不允许上传,只允许mp4|wmv|flv|rmvb|mpg|mkv|mov",2);
+		if(!dontShowMsg){
+			LayerMsgBox.alert("此文件类型不允许上传,只允许mp4|wmv|flv|rmvb|mpg|mkv|mov",2);
+		}
 		return false;
 	}
 	if(validateFileMaxSize(file,maxSize)){
@@ -8261,7 +8269,7 @@ function validateVideo(file,maxSize){
 	return true;
 }
 //限制上传文件的类型和大小
-function validateSelfFileAccept(file,maxSize,accept){
+function validateSelfFileAccept(file,maxSize,accept,dontShowMsg){
 	  // 返回 KB，保留小数点后两位
 	var fileName;
 	  if(isFileData(file)){
@@ -8271,7 +8279,9 @@ function validateSelfFileAccept(file,maxSize,accept){
 	  }
 	  var tt=eval("/.("+accept+")$/");
 	  if(!tt.test(fileName.toLowerCase())){
-		  LayerMsgBox.alert("此文件类型不允许上传,只允许"+accept,2);
+		  if(!dontShowMsg){
+			  LayerMsgBox.alert("此文件类型不允许上传,只允许"+accept,2);
+		  }
 		  return false;
 	  }
 	  if(validateFileMaxSize(file,maxSize)){
@@ -8293,7 +8303,7 @@ function isPdf(fileName){
 	return (/.(pdf)$/.test(fileName.toLowerCase()));
 }
 //限制上传文件的类型和大小
-function validateImg(file,maxSize){
+function validateImg(file,maxSize,dontShowMsg){
     // 返回 KB，保留小数点后两位
 	var fileName;
 	if(isFileData(file)){
@@ -8302,7 +8312,9 @@ function validateImg(file,maxSize){
 		fileName = file.files[0].name;
 	}
     if(isImg(fileName)==false){
-  	  	 LayerMsgBox.alert("图片类型必须是jpg|jpeg|png|gif|bmp|webp中的一种",2);
+		if(!dontShowMsg){
+			LayerMsgBox.alert("图片类型必须是jpg|jpeg|png|gif|bmp|webp中的一种",2);
+		}
            return false;
      }
     if(validateFileMaxSize(file,maxSize)){
@@ -8480,29 +8492,65 @@ function validateFile(file,accept,maxSize){
 		}
 	  	var passValidate=true;
 	  	if(accept){
-			switch (accept) {
-			case "img":
-				passValidate=validateImg(ele,maxSize);
-				break;
-			case "excel":
-				passValidate=validateExcel(ele,maxSize);
-				break;
-			case "file":
-				passValidate=validateNormal(ele,maxSize);
-				break;
-			case "all":
-				passValidate=!validateFileMaxSize(ele,maxSize);
-				break;
-			case "video":
-				passValidate=validateVideo(ele,maxSize);
-				break;
-			case "audio":
-				passValidate=validateAudio(ele,maxSize);
-				break;
-			default:
-				passValidate=validateSelfFileAccept(ele,maxSize,accept);
-				break;
-			}
+			  if(accept.indexOf(",")==-1){
+				  //就一个
+				  switch (accept) {
+					  case "img":
+						  passValidate=validateImg(ele,maxSize);
+						  break;
+					  case "excel":
+						  passValidate=validateExcel(ele,maxSize);
+						  break;
+					  case "file":
+						  passValidate=validateNormal(ele,maxSize);
+						  break;
+					  case "all":
+						  passValidate=!validateFileMaxSize(ele,maxSize);
+						  break;
+					  case "video":
+						  passValidate=validateVideo(ele,maxSize);
+						  break;
+					  case "audio":
+						  passValidate=validateAudio(ele,maxSize);
+						  break;
+					  default:
+						  passValidate=validateSelfFileAccept(ele,maxSize,accept);
+						  break;
+				  }
+			  }else{
+				  var accarr = accept.split(",");
+				  var newacc,size = accarr.length;
+				  for(var i =0;i<size;i++){
+					  newacc = accarr[i];
+					  switch (newacc) {
+						  case "img":
+							  passValidate=validateImg(ele,maxSize,true);
+							  break;
+						  case "excel":
+							  passValidate=validateExcel(ele,maxSize,true);
+							  break;
+						  case "file":
+							  passValidate=validateNormal(ele,maxSize,true);
+							  break;
+						  case "all":
+							  passValidate=!validateFileMaxSize(ele,maxSize);
+							  break;
+						  case "video":
+							  passValidate=validateVideo(ele,maxSize,true);
+							  break;
+						  case "audio":
+							  passValidate=validateAudio(ele,maxSize,true);
+							  break;
+						  default:
+							  passValidate=validateSelfFileAccept(ele,maxSize,newacc,true);
+							  break;
+					  }
+					  if(passValidate){
+							break;
+					  }
+				  }
+			  }
+
 		}else{
 			passValidate=validateNormal(ele,maxSize);
 		}
