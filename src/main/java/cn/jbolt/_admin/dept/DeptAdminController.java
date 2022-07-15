@@ -57,7 +57,7 @@ public class DeptAdminController extends JBoltBaseController {
 	public void enableJsTreeDatas() {
 		renderJsonData(service.getEnableJsTree(getLong("selectId"),getInt("openLevel",0)));
 	}
-	
+
   /**
 	* 新增
 	*/
@@ -134,6 +134,14 @@ public class DeptAdminController extends JBoltBaseController {
 	public void initRank() {
 		renderJson(service.initRank());
 	}
-	
+
+	/**
+	 * 处理所有部门的deptPath
+	 */
+	@Before(Tx.class)
+	public void processAllDeptPath() {
+		service.processAllDeptPath();
+		renderJsonSuccess();
+	}
 	
 }

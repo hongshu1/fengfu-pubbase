@@ -1,6 +1,7 @@
 <form onsubmit="return false;" id="deptForm" action="#(action)" method="post">
 #if(dept.id??)
 	<input type="hidden" name="dept.id" value="#(dept.id)" />
+	<input type="hidden" name="dept.deptPath" value="#(dept.deptPath??)" />
 #end
 <fieldset>
     <legend>基本信息</legend>
