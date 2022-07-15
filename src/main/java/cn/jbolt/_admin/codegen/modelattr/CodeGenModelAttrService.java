@@ -197,11 +197,12 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 
 		String colLow = col.name.toLowerCase();
 		//如果是内置的几个字段名字 就不要显示在表格里
-		if(colLow.equals("id")||colLow.equals("sort_rank")||colLow.equals("create_user_id")||colLow.equals("update_user_id") ||colLow.equals("delete_user_id") || colLow.equals("is_deleted")){
+		if(colLow.equals("id")||colLow.equals("pid")||colLow.equals("sort_rank")||colLow.equals("create_user_id")||colLow.equals("update_user_id") ||colLow.equals("delete_user_id") || colLow.equals("is_deleted")){
 			attr.setIsTableCol(false);
 			attr.setIsFormEle(false);
 			attr.setIsSearchEle(false);
 		}
+
 		if(!colLow.endsWith("_id") && (colLow.contains("type") || colLow.contains("state") || colLow.contains("category"))){
 			attr.setSearchUiType("select");
 			attr.setSearchDataType("sys_dictionary");
