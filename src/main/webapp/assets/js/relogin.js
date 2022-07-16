@@ -261,7 +261,6 @@ $(function(){
 					}
 			});
 		}else{
-			changeCaptcha();
 			_submit_ing=false;
-			}
+		}
 	}

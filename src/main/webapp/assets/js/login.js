@@ -1,4 +1,4 @@
-var jbolt_login_js_version = "1.0.2";
+var jbolt_login_js_version = "1.0.4";
 /**
  * 登录页面使用
  */
@@ -358,9 +358,13 @@ function md5(string){
 	}
 	return (md5_WordToHex(a)+md5_WordToHex(b)+md5_WordToHex(c)+md5_WordToHex(d)).toLowerCase();
 }
-
+var _submit_ing=false;
 //提交登录
 function submitForm(form){
+		if(_submit_ing){
+			return false;
+		}
+		_submit_ing=true;
 		var sf=$(form);
 		if(checkForm(sf)){
 			LayerMsgBox.loading("登录中...",30000);
@@ -371,6 +375,7 @@ function submitForm(form){
 			pwdInput.val(left+md5(passwordValue)+right);
 			Ajax.post("admin/login",sf.serialize(),function(res){
 				LayerMsgBox.success("登录成功",300,function(){
+					_submit_ing=false;
 					var base=$("base").attr("href");
 					if(base.charAt(base.length-1)=='/'){
 						window.location.href=base+"admin";
@@ -379,9 +384,12 @@ function submitForm(form){
 					}
 				});
 			},function(){
+				_submit_ing=false;
 				pwdInput.val("");
 				changeCaptcha();
 			})
+		}else{
+			_submit_ing=false;
 		}
 		return false;
 	}
