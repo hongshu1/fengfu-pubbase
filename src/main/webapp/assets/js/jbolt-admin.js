@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.7.6";
+var jbolt_admin_js_version="5.7.7";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -12387,10 +12387,11 @@ var AjaxBtnUtil ={
 		},
 		 exeFun:function(action,url){
 			  var dataloading=action.data("loading");
-			  var timeout=action.data("timeout")||0;
+			  var timeout=action.data("timeout")||jboltAjaxTimeout;
+			  var success_timeout=action.data("success-time")||1000;
 			  var nomsg=action.data("nomsg");
 			  var that=this;
-			  LayerMsgBox.loading(dataloading,jboltAjaxTimeout);
+			  LayerMsgBox.loading(dataloading,timeout);
 			  var successhandler=action.data("success-handler")||action.data("handler");
 			  var failhandler=action.data("fail-handler");
 			  var failDo=function(data){
@@ -12402,7 +12403,7 @@ var AjaxBtnUtil ={
 				  if(nomsg){
 					  that.exeTheHandler(successhandler,action,data);
 				  }else{
-					  LayerMsgBox.success(data.msg?data.msg:"操作成功",600,function(){
+					  LayerMsgBox.success(data.msg?data.msg:"操作成功",success_timeout,function(){
 						  that.exeTheHandler(successhandler,action,data);
 					  });
 				  }
