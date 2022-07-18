@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.8.0";
+var jbolt_table_js_version="2.8.1";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -10350,12 +10350,12 @@ function getScrollBarHeight(ele){
 					if(pageSizeOptions.indexOf(",")!=-1){
 						options=pageSizeOptions.split(",");
 					}else{
-						options=[5,10,15,20,25,30,35,40,45,50];
+						options=[5,10,20,30,40,50,100];
 					}
 				}
 
 			}else{
-				options=[5,10,15,20,25,30,35,40,45,50];
+				options=[5,10,20,30,40,50,100];
 			}
 			var tempPageSize = table.data("pagesize");
 			var pageSize=(tempPageSize?tempPageSize:1)||10;
