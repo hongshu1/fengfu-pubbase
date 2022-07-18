@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.8.1";
+var jbolt_table_js_version="2.8.2";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -484,9 +484,9 @@ function jboltTableMenuFilter(tableEle){
 		if(!pageSize){
 			var tempPageSize  =  table.data("pagesize");
 			if(typeof(tempPageSize)=="undefined"){
-				pageSize = 10;
+				pageSize = 15;
 			}else if(tempPageSize <=0){
-				pageSize = 10;
+				pageSize = 15;
 			}else{
 				pageSize = tempPageSize;
 			}
@@ -559,9 +559,9 @@ function jboltTableMenuFilterByKeywords(tableEle,keywords,include,pageSize){
 		if(!pageSize){
 			var tempPageSize  =  table.data("pagesize");
 			if(typeof(tempPageSize)=="undefined"){
-				pageSize = 10;
+				pageSize = 15;
 			}else if(tempPageSize <= 0){
-				pageSize = 10;
+				pageSize = 15;
 			}else{
 				pageSize = tempPageSize;
 			}
@@ -10270,7 +10270,7 @@ function getScrollBarHeight(ele){
 				}
 			}
 			if(!pageSize){
-				pageSize = oldPageSize||10;
+				pageSize = oldPageSize||15;
 			}
 			var totalPage=Math.abs(parseInt(jbolt_table_pages.find("#totalPage").text()));
 			var oldPageNumber=table.data("pagenumber");
@@ -10357,8 +10357,7 @@ function getScrollBarHeight(ele){
 			}else{
 				options=[5,10,15,20,30,40,50,100];
 			}
-			var tempPageSize = table.data("pagesize");
-			var pageSize=(tempPageSize?tempPageSize:1)||10;
+			var pageSize=table.data("pagesize")||15;
 			var isMini=table.data("page-mini");
 			pageHtml=juicer(isMini?jboltTablePageTpl_mini:jboltTablePageTpl,{pageId:pageId,pageSize:pageSize,options:options});
 			var jbolt_table_pages=$(pageHtml);
@@ -11056,7 +11055,7 @@ function getScrollBarHeight(ele){
 				var pageNumber=table.data("pagenumber");
 				var pageSize=table.data("pagesize");
 				if(!pageSize){
-					pageSize=10;
+					pageSize=15;
 				}
 				if(!pageNumber){
 					pageNumber=1;
@@ -12205,7 +12204,7 @@ function getScrollBarHeight(ele){
 							cus_html = juicer(tpl,tempMenu.data);
 						}else{
 							if(tempMenu.tpl == "filterbox_page_tpl"){
-								pageSize=table.data("pagesize")||10;
+								pageSize=table.data("pagesize")||15;
 								cus_html = juicer(tpl,{pageSize:pageSize});
 							}else{
 								cus_html = juicer(tpl,{});

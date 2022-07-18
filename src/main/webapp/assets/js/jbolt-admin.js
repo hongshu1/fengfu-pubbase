@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.7.7";
+var jbolt_admin_js_version="5.7.8";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -81,7 +81,7 @@ function getSelectText(){
  * @param callback
  */
 function jboltHandleBigData(data, pageSize,callback) {
-	pageSize = pageSize || 10;
+	pageSize = pageSize || 15;
 	var totalCount = data.length; // 共多少条
 	var currentPageNumber = 1; // 当前页数
 	var totalPageNumer = Math.ceil(totalCount / pageSize); //可分多少页,就是分割为多少个小数组
@@ -1907,7 +1907,7 @@ var DownloadUtil={
 				 var withCurrentPage = btn.data("with-current-page");
 				 var jboltTable = JBoltTableUtil.getInst(btn);
 				 if(jboltTable && jboltTable.page){
-					 var pageInfo = {page:(jboltTable.data("pagenumber")||1),pageSize:(jboltTable.data("pagesize")||10)};
+					 var pageInfo = {page:(jboltTable.data("pagenumber")||1),pageSize:(jboltTable.data("pagesize")||15)};
 					 if(params){
 						 Object.assign(params,pageInfo);
 					 }else{
@@ -17617,7 +17617,7 @@ var jboltPortalPageTpl_mini='<div class="jbolt_portal_pages noselect">'+
 '<div class="pages">'+
 '<div class="mainPagination mb-1 mb-sm-0 d-block text-center" id="${pageId}"></div>'+
 '<div class="searchPage d-none">'+
-'<input type="hidden" id="pageSize" value="${pageSize?pageSize:10}" />'+
+'<input type="hidden" id="pageSize" value="${pageSize?pageSize:15}" />'+
 '</div>'+
 '</div>'+
 '<div class="clearfix"></div>'+
@@ -17765,15 +17765,14 @@ var AjaxPortalUtil={
 					if(pageSizeOptions.indexOf(",")!=-1){
 						options=pageSizeOptions.split(",");
 					}else{
-						options=[5,10,15,20,25,30,35,40,45,50];
+						options=[5,10,15,20,30,40,50,100];
 					}
 				}
 				
 			}else{
-				options=[5,10,15,20,25,30,35,40,45,50];
+				options=[5,10,15,20,30,40,50,100];
 			}
-			var tempPageSize = portal.data("pagesize");
-			var pageSize=(tempPageSize?tempPageSize:1)||10;
+			var pageSize=portal.data("pagesize")||15;
 			var isMini=portal.data("page-mini");
 			var pageHtml=juicer(isMini?jboltPortalPageTpl_mini:jboltPortalPageTpl,{pageId:pageId,pageSize:pageSize,options:options});
 			var jbolt_portal_pages=$(pageHtml);
