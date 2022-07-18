@@ -10350,12 +10350,12 @@ function getScrollBarHeight(ele){
 					if(pageSizeOptions.indexOf(",")!=-1){
 						options=pageSizeOptions.split(",");
 					}else{
-						options=[5,10,20,30,40,50,100];
+						options=[5,10,15,20,30,40,50,100];
 					}
 				}
 
 			}else{
-				options=[5,10,20,30,40,50,100];
+				options=[5,10,15,20,30,40,50,100];
 			}
 			var tempPageSize = table.data("pagesize");
 			var pageSize=(tempPageSize?tempPageSize:1)||10;
