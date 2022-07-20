@@ -51,14 +51,14 @@ public class UserAdminController extends JBoltBaseController {
 	 * 表格数据接口
 	 */
 	public void datas() {
-		renderJsonData(service.paginateAdminList(getPageNumber(),getPageSize(),getKeywords(),getInt("sex"),getLong("deptId"),getLong("postId"),getLong("roleId"),getBoolean("enable")));
+		renderJsonData(service.paginateAdminList(getPageNumber(),getPageSize(),getKeywords(),getInt("sex"),getBoolean("assignDept",true),getLong("deptId"),getLong("postId"),getLong("roleId"),getBoolean("enable")));
 	}
 
 	/**
 	 *  系统通知 可用 选择用户数据接口
 	 */
 	public void sysnoticeUsers() {
-		renderJsonData(service.paginateSysNoticeList(getPageNumber(),getPageSize(),getKeywords(),getInt("sex"),getLong("deptId"),getLong("postId"),getLong("roleId")));
+		renderJsonData(service.paginateSysNoticeList(getPageNumber(),getPageSize(),getKeywords(),getInt("sex"),getBoolean("assignDept",true),getLong("deptId"),getLong("postId"),getLong("roleId")));
 	}
 	/**
 	  * 获取用户列表 
@@ -202,18 +202,21 @@ public class UserAdminController extends JBoltBaseController {
 	/**
 	 * 保存
 	 */
+	@Before(Tx.class)
 	public void save(){
 		renderJson(service.save(getModel(User.class, "user")));
 	}
 	/**
 	 * 更新
 	 */
+	@Before(Tx.class)
 	public void update(){
 		renderJson(service.update(getModel(User.class, "user")));
 	}
 	/**
 	 * 删除
 	 */
+	@Before(Tx.class)
 	public void delete(){
 		renderJson(service.delete(getLong(0)));
 	}
@@ -227,7 +230,16 @@ public class UserAdminController extends JBoltBaseController {
 	/**
 	 * 删除角色
 	 */
+	@Before(Tx.class)
 	public void deleteRole(){
 		renderJson(service.deleteUserRole(getLong(0),getLong(1)));
+	}
+	/**
+	 * 处理deptPath
+	 */
+	@Before(Tx.class)
+	public void processAllDeptPath(){
+		service.processAllDeptPath();
+		renderJsonSuccess();
 	}
 }

@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.7.1";
+var jbolt_admin_js_version="5.7.8";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -81,7 +81,7 @@ function getSelectText(){
  * @param callback
  */
 function jboltHandleBigData(data, pageSize,callback) {
-	pageSize = pageSize || 10;
+	pageSize = pageSize || 15;
 	var totalCount = data.length; // 共多少条
 	var currentPageNumber = 1; // 当前页数
 	var totalPageNumer = Math.ceil(totalCount / pageSize); //可分多少页,就是分割为多少个小数组
@@ -293,7 +293,8 @@ var jboltPlugins={
 		"webcam":{"js":['assets/plugins/webcam/jquery.webcam.min.js']},
 		"webcamjs":{"js":['assets/plugins/webcamjs/js/webcam.js','assets/plugins/webcamjs/js/cropbox.js'],"css":['assets/plugins/webcamjs/css/webcam.css']},
 		"summernote":{"js":['assets/plugins/summernote/summernote-bs4.min.js','assets/plugins/summernote/lang/summernote-zh-CN.min.js'],"css":['assets/plugins/summernote/summernote-bs4.css']},
-		"neditor":{"js":['assets/plugins/neditor/neditor.config.js','assets/plugins/neditor/neditor.all.js','assets/plugins/neditor/neditor.service.js']},
+		"tamemoji":{"js":['assets/plugins/summernote/tam-emoji/js/config.js','assets/plugins/summernote/tam-emoji/js/tam-emoji.min.js'],"css":['assets/plugins/summernote/tam-emoji/css/emoji.css']},
+		"neditor":{"js":['assets/plugins/neditor/neditor.config.js','assets/plugins/neditor/neditor.all.min.js','assets/plugins/neditor/neditor.service.js']},
 //		"fileinput":{"js":['assets/plugins/bootstrap-fileinput/js/plugins/canvas-to-blob.min.js','assets/plugins/bootstrap-fileinput/js/plugins/sortable.min.js','assets/plugins/bootstrap-fileinput/js/plugins/piexif.min.js','assets/plugins/bootstrap-fileinput/js/plugins/purify.min.js','assets/plugins/bootstrap-fileinput/js/fileinput.min.js','assets/plugins/bootstrap-fileinput/themes/fa/theme.min.js','assets/plugins/bootstrap-fileinput/themes/explorer-fa/theme.min.js','assets/plugins/bootstrap-fileinput/js/locales/zh.js'],"css":['assets/plugins/bootstrap-fileinput/css/fileinput.min.css','assets/plugins/bootstrap-fileinput/themes/explorer-fa/theme.min.css']},
 		"fileinput":{"js":['assets/plugins/bootstrap-fileinput/last/js/plugins/sortable.min.js','assets/plugins/bootstrap-fileinput/last/js/plugins/piexif.min.js','assets/plugins/bootstrap-fileinput/last/js/fileinput.min.js','assets/plugins/bootstrap-fileinput/last/themes/fa/theme.min.js','assets/plugins/bootstrap-fileinput/last/themes/explorer-fa/theme.min.js','assets/plugins/bootstrap-fileinput/last/js/locales/zh.js'],"css":['assets/plugins/bootstrap-fileinput/last/css/fileinput.min.css','assets/plugins/bootstrap-fileinput/last/themes/explorer-fa/theme.min.css']},
 		"imgviewer":{"js":['assets/plugins/viewer/js/viewer.min.js','assets/plugins/viewer/js/jquery-viewer.min.js'],"css":['assets/plugins/viewer/css/viewer.min.css']},
@@ -1906,7 +1907,7 @@ var DownloadUtil={
 				 var withCurrentPage = btn.data("with-current-page");
 				 var jboltTable = JBoltTableUtil.getInst(btn);
 				 if(jboltTable && jboltTable.page){
-					 var pageInfo = {page:(jboltTable.data("pagenumber")||1),pageSize:(jboltTable.data("pagesize")||10)};
+					 var pageInfo = {page:(jboltTable.data("pagenumber")||1),pageSize:(jboltTable.data("pagesize")||15)};
 					 if(params){
 						 Object.assign(params,pageInfo);
 					 }else{
@@ -7263,26 +7264,40 @@ var HtmlEditorUtil={
 				// alert("请设置编辑器的id属性");
 				// return false;
 			}
+			var emoji = htmlEditor.data("emoji");
 			var toolbarTheme = htmlEditor.data("toolbar")||"normal";
 			var toolbar=null;
 			if(toolbarTheme == "normal"){
+				var insertItems=['hr','table','link', 'picture','video'];
+				if(emoji){
+					insertItems.push("emoji");
+				}
 				toolbar= [
 					['style', ['style']],
 					['font', ['bold', 'italic', 'underline', 'clear','strikethrough', 'superscript', 'subscript']],
 				    ['fontsize', ['fontsize']],
 				    ['color', ['color']],
 				    ['para', ['ul', 'ol', 'paragraph','height']],
-				    ['insert', ['hr','table','link', 'picture','video']],
+				    ['insert', insertItems],
 				    ['misc',['fullscreen','codeview','undo','redo','help']]
 				  ];
 			}else if(toolbarTheme=="simple"){
+				var insertItems = ['hr','picture'];
+				if(emoji){
+					insertItems.push("emoji");
+				}
 				toolbar= [
 					['font', ['bold', 'italic', 'underline', 'clear','strikethrough', 'superscript', 'subscript']],
-				    ['insert', ['hr','picture']],
+				    ['insert', insertItems],
 				    ['misc',['undo','redo','help']]
 				  ];
 			}else if(toolbarTheme=="none") {
-				toolbar = [];
+				if(emoji){
+					toolbar = [ ['insert', ['emoji']]];
+				}else{
+					toolbar = [];
+				}
+
 			}
 			var width=htmlEditor.data("width");
 			var height=htmlEditor.data("height")||300;
@@ -7350,10 +7365,23 @@ var HtmlEditorUtil={
 			}else{
 				summernoteOptions.height=height+"px";
 			}
-			htmlEditor.summernote(summernoteOptions);
-			var disabled=htmlEditor.data("disabled");
-			if(disabled){
-				htmlEditor.summernote("disable");
+			var goit=function(){
+				htmlEditor.summernote(summernoteOptions);
+				var disabled=htmlEditor.data("disabled");
+				if(disabled){
+					htmlEditor.summernote("disable");
+				}
+			}
+			if(emoji){
+				loadJBoltPlugin(['tamemoji'], function(){
+					var emojiType = htmlEditor.data("emoji-type")||"unicode";
+					var emojiSource = htmlEditor.data("emoji-source")||"assets/plugins/summernote/tam-emoji/img";
+					document.emojiType = emojiType; // default: image
+					document.emojiSource = emojiSource;
+					goit();
+				});
+			}else{
+				goit();
 			}
 		},initEditor:function(htmlEditor){
 			var that=this;
@@ -8188,7 +8216,7 @@ function validateFileMaxSize(file,maxSize){
 }
 
 //限制上传文件的类型和大小
-function validateExcel(file,maxSize){
+function validateExcel(file,maxSize,dontShowMsg){
 	  // 返回 KB，保留小数点后两位
 	  var fileName;
 	  if(isFileData(file)){
@@ -8197,7 +8225,9 @@ function validateExcel(file,maxSize){
 			fileName = file.files[0].name;
 	  }
 	  if(!/.(xls|xlsx)$/.test(fileName.toLowerCase())){
-		  LayerMsgBox.alert("文件类型必须是xls,xlsx中的一种",2);
+		  if(!dontShowMsg){
+			  LayerMsgBox.alert("文件类型必须是xls,xlsx中的一种",2);
+		  }
 		  return false;
 	  }
 	  if(validateFileMaxSize(file,maxSize)){
@@ -8206,7 +8236,7 @@ function validateExcel(file,maxSize){
 	  return true;
 }
 //限制上传文件的类型和大小
-function validateNormal(file,maxSize){
+function validateNormal(file,maxSize,dontShowMsg){
 	// 返回 KB，保留小数点后两位
 	var fileName;
 	  if(isFileData(file)){
@@ -8215,7 +8245,9 @@ function validateNormal(file,maxSize){
 			fileName = file.files[0].name;
 	  }
 	if(!/.(txt|xls|xlsx|jpg|jpeg|png|gif|bmp|rar|zip|pdf|mp4|wmv|flv|rmvb|mpg|mkv|mov|mp3|wav|ogg|midi|mac|acc|doc|docx|ppt|pptx|ppts)$/.test(fileName.toLowerCase())){
-		LayerMsgBox.alert("此文件类型不允许上传",2);
+		if(!dontShowMsg){
+			LayerMsgBox.alert("此文件类型不允许上传",2);
+		}
 		return false;
 	}
 	if(validateFileMaxSize(file,maxSize)){
@@ -8225,7 +8257,7 @@ function validateNormal(file,maxSize){
 }
 
 //限制上传文件的类型和大小
-function validateAudio(file,maxSize){
+function validateAudio(file,maxSize,dontShowMsg){
 	// 返回 KB，保留小数点后两位
 	var fileName;
 	  if(isFileData(file)){
@@ -8234,7 +8266,9 @@ function validateAudio(file,maxSize){
 			fileName = file.files[0].name;
 	  }
 	if(!/.(mp3|wav|ogg|midi|mac|acc)$/.test(fileName.toLowerCase())){
-		LayerMsgBox.alert("此文件类型不允许上传，只允许mp3|wav|ogg|midi|mac|acc",2);
+		if(!dontShowMsg){
+			LayerMsgBox.alert("此文件类型不允许上传，只允许mp3|wav|ogg|midi|mac|acc",2);
+		}
 		return false;
 	}
 	if(validateFileMaxSize(file,maxSize)){
@@ -8243,7 +8277,7 @@ function validateAudio(file,maxSize){
 	return true;
 }
 //限制上传文件的类型和大小
-function validateVideo(file,maxSize){
+function validateVideo(file,maxSize,dontShowMsg){
 	// 返回 KB，保留小数点后两位
 	var fileName;
 	  if(isFileData(file)){
@@ -8252,7 +8286,9 @@ function validateVideo(file,maxSize){
 			fileName = file.files[0].name;
 	  }
 	if(!/.(mp4|wmv|flv|rmvb|mpg|mkv|mov)$/.test(fileName.toLowerCase())){
-		LayerMsgBox.alert("此文件类型不允许上传,只允许mp4|wmv|flv|rmvb|mpg|mkv|mov",2);
+		if(!dontShowMsg){
+			LayerMsgBox.alert("此文件类型不允许上传,只允许mp4|wmv|flv|rmvb|mpg|mkv|mov",2);
+		}
 		return false;
 	}
 	if(validateFileMaxSize(file,maxSize)){
@@ -8261,7 +8297,7 @@ function validateVideo(file,maxSize){
 	return true;
 }
 //限制上传文件的类型和大小
-function validateSelfFileAccept(file,maxSize,accept){
+function validateSelfFileAccept(file,maxSize,accept,dontShowMsg){
 	  // 返回 KB，保留小数点后两位
 	var fileName;
 	  if(isFileData(file)){
@@ -8271,7 +8307,9 @@ function validateSelfFileAccept(file,maxSize,accept){
 	  }
 	  var tt=eval("/.("+accept+")$/");
 	  if(!tt.test(fileName.toLowerCase())){
-		  LayerMsgBox.alert("此文件类型不允许上传,只允许"+accept,2);
+		  if(!dontShowMsg){
+			  LayerMsgBox.alert("此文件类型不允许上传,只允许"+accept,2);
+		  }
 		  return false;
 	  }
 	  if(validateFileMaxSize(file,maxSize)){
@@ -8293,7 +8331,7 @@ function isPdf(fileName){
 	return (/.(pdf)$/.test(fileName.toLowerCase()));
 }
 //限制上传文件的类型和大小
-function validateImg(file,maxSize){
+function validateImg(file,maxSize,dontShowMsg){
     // 返回 KB，保留小数点后两位
 	var fileName;
 	if(isFileData(file)){
@@ -8302,7 +8340,9 @@ function validateImg(file,maxSize){
 		fileName = file.files[0].name;
 	}
     if(isImg(fileName)==false){
-  	  	 LayerMsgBox.alert("图片类型必须是jpg|jpeg|png|gif|bmp|webp中的一种",2);
+		if(!dontShowMsg){
+			LayerMsgBox.alert("图片类型必须是jpg|jpeg|png|gif|bmp|webp中的一种",2);
+		}
            return false;
      }
     if(validateFileMaxSize(file,maxSize)){
@@ -8386,9 +8426,22 @@ function getRealAccept(accept){
 	case "7z":
 		values=".7z";
 		break;
+	case "ai":
+		values=".ai";
+		break;
+	case "psd":
+		values=".psd";
+		break;
+	case "cdr":
+		values=".cdr";
+		break;
 	default:
 		if(accept.indexOf(",")==-1){
-			values=accept;
+			if(accept.indexOf("/")!=-1 || accept.startWith(".")){
+				values=accept;
+			}else{
+				values='.'+accept;
+			}
 		}else{
 			values=getRealAcceptSplit(accept);
 		}
@@ -8467,29 +8520,65 @@ function validateFile(file,accept,maxSize){
 		}
 	  	var passValidate=true;
 	  	if(accept){
-			switch (accept) {
-			case "img":
-				passValidate=validateImg(ele,maxSize);
-				break;
-			case "excel":
-				passValidate=validateExcel(ele,maxSize);
-				break;
-			case "file":
-				passValidate=validateNormal(ele,maxSize);
-				break;
-			case "all":
-				passValidate=!validateFileMaxSize(ele,maxSize);
-				break;
-			case "video":
-				passValidate=validateVideo(ele,maxSize);
-				break;
-			case "audio":
-				passValidate=validateAudio(ele,maxSize);
-				break;
-			default:
-				passValidate=validateSelfFileAccept(ele,maxSize,accept);
-				break;
-			}
+			  if(accept.indexOf(",")==-1){
+				  //就一个
+				  switch (accept) {
+					  case "img":
+						  passValidate=validateImg(ele,maxSize);
+						  break;
+					  case "excel":
+						  passValidate=validateExcel(ele,maxSize);
+						  break;
+					  case "file":
+						  passValidate=validateNormal(ele,maxSize);
+						  break;
+					  case "all":
+						  passValidate=!validateFileMaxSize(ele,maxSize);
+						  break;
+					  case "video":
+						  passValidate=validateVideo(ele,maxSize);
+						  break;
+					  case "audio":
+						  passValidate=validateAudio(ele,maxSize);
+						  break;
+					  default:
+						  passValidate=validateSelfFileAccept(ele,maxSize,accept);
+						  break;
+				  }
+			  }else{
+				  var accarr = accept.split(",");
+				  var newacc,size = accarr.length;
+				  for(var i =0;i<size;i++){
+					  newacc = accarr[i];
+					  switch (newacc) {
+						  case "img":
+							  passValidate=validateImg(ele,maxSize,true);
+							  break;
+						  case "excel":
+							  passValidate=validateExcel(ele,maxSize,true);
+							  break;
+						  case "file":
+							  passValidate=validateNormal(ele,maxSize,true);
+							  break;
+						  case "all":
+							  passValidate=!validateFileMaxSize(ele,maxSize);
+							  break;
+						  case "video":
+							  passValidate=validateVideo(ele,maxSize,true);
+							  break;
+						  case "audio":
+							  passValidate=validateAudio(ele,maxSize,true);
+							  break;
+						  default:
+							  passValidate=validateSelfFileAccept(ele,maxSize,newacc,true);
+							  break;
+					  }
+					  if(passValidate){
+							break;
+					  }
+				  }
+			  }
+
 		}else{
 			passValidate=validateNormal(ele,maxSize);
 		}
@@ -10340,8 +10429,9 @@ var FileUploadUtil={
 				var maxSize=uploder.data("maxsize");
 				var fileValue=fileInput.val();
 				var handler=uploder.data("handler");
+				var accept = uploder.data("accept")||"file";
 				if(fileValue){
-					if(!validateFileDatas(fileDatas,"file",maxSize)){
+					if(!validateFileDatas(fileDatas,accept,maxSize)){
 						fileInput.val("");
 						return false;
 					}
@@ -12297,10 +12387,11 @@ var AjaxBtnUtil ={
 		},
 		 exeFun:function(action,url){
 			  var dataloading=action.data("loading");
-			  var timeout=action.data("timeout")||0;
+			  var timeout=action.data("timeout")||jboltAjaxTimeout;
+			  var success_timeout=action.data("success-time")||1000;
 			  var nomsg=action.data("nomsg");
 			  var that=this;
-			  LayerMsgBox.loading(dataloading,jboltAjaxTimeout);
+			  LayerMsgBox.loading(dataloading,timeout);
 			  var successhandler=action.data("success-handler")||action.data("handler");
 			  var failhandler=action.data("fail-handler");
 			  var failDo=function(data){
@@ -12312,7 +12403,7 @@ var AjaxBtnUtil ={
 				  if(nomsg){
 					  that.exeTheHandler(successhandler,action,data);
 				  }else{
-					  LayerMsgBox.success(data.msg?data.msg:"操作成功",600,function(){
+					  LayerMsgBox.success(data.msg?data.msg:"操作成功",success_timeout,function(){
 						  that.exeTheHandler(successhandler,action,data);
 					  });
 				  }
@@ -17526,7 +17617,7 @@ var jboltPortalPageTpl_mini='<div class="jbolt_portal_pages noselect">'+
 '<div class="pages">'+
 '<div class="mainPagination mb-1 mb-sm-0 d-block text-center" id="${pageId}"></div>'+
 '<div class="searchPage d-none">'+
-'<input type="hidden" id="pageSize" value="${pageSize?pageSize:10}" />'+
+'<input type="hidden" id="pageSize" value="${pageSize?pageSize:15}" />'+
 '</div>'+
 '</div>'+
 '<div class="clearfix"></div>'+
@@ -17674,15 +17765,14 @@ var AjaxPortalUtil={
 					if(pageSizeOptions.indexOf(",")!=-1){
 						options=pageSizeOptions.split(",");
 					}else{
-						options=[5,10,15,20,25,30,35,40,45,50];
+						options=[5,10,15,20,30,40,50,100];
 					}
 				}
 				
 			}else{
-				options=[5,10,15,20,25,30,35,40,45,50];
+				options=[5,10,15,20,30,40,50,100];
 			}
-			var tempPageSize = portal.data("pagesize");
-			var pageSize=(tempPageSize?tempPageSize:1)||10;
+			var pageSize=portal.data("pagesize")||15;
 			var isMini=portal.data("page-mini");
 			var pageHtml=juicer(isMini?jboltPortalPageTpl_mini:jboltPortalPageTpl,{pageId:pageId,pageSize:pageSize,options:options});
 			var jbolt_portal_pages=$(pageHtml);

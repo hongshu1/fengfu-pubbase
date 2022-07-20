@@ -13,6 +13,7 @@
 		<form class="form-inline" onsubmit="return false;" id="adminUserForm_#(pageId)" action="admin/user/datas" data-pjaxsubmit  method="get">
 		#if(deptEnable)
 		<input type="hidden" name="deptId"/>
+		<input type="hidden" id="assignDept_#(pageId)" name="assignDept" value="true"/>
 		#end
 		<input type="text" autocomplete="off"  class="form-control" placeholder="输入关键字搜索" name="keywords" value="#(keywords??)" />
 		<select class="form-control" name="sex" data-autoload data-url="admin/user/sexOptions" data-text="=性别=" ></select>
@@ -77,7 +78,8 @@
 #if(deptEnable)
 <div class="jbolt_table_leftbox" style="width:240px;" id="admin_user_leftbox_#(pageId)">
 <div class="jb_header"><i class="fa fa-cubes"></i> <span>部门</span>
-		<div class="pull-right">
+	<a class="btn btn-sm btn-outline-secondary mx-1" id="notAssignDeptBtn_#(pageId)" href="javascript:void(0)" tooltip data-title="查询未分配部门的员工"  onclick="notAssignDeptSearch_#(pageId)()">无部门用户查询</a>
+	<div class="pull-right">
 			<a href="javascript:void(0)" tooltip data-title="刷新" onclick="refreshDeptJsTree_#(pageId)()"><i class="fa fa-refresh mr-2"></i></a>
 			<a href="javascript:void(0)"  id="deptJsTreeClearbtn_#(pageId)" class="d-none" tooltip data-title="清空选择" onclick="clearDeptJsTreeSelected_#(pageId)()"><i class="fa fa-remove text-danger"></i></a>
 		</div>
@@ -140,12 +142,15 @@ data-leftbox="admin_user_leftbox_#(pageId)"
 var deptTree_#(pageId)=$("#deptTree_#(pageId)");
 var adminUserForm_#(pageId)=$("#adminUserForm_#(pageId)");
 var deptClearBtn_#(pageId)=$("#deptJsTreeClearbtn_#(pageId)");
+var notAssignDeptBtn_#(pageId) = $("#notAssignDeptBtn_#(pageId)");
 /**
  * 按分类查询
  */
 function changeDept_#(pageId)(tree,treeNode){
 	deptClearBtn_#(pageId).removeClass("d-none");
 	adminUserForm_#(pageId).find("[name='deptId']").val(treeNode.id);
+	adminUserForm_#(pageId).find("[name='assignDept']").val("true");
+	notAssignDeptBtn_#(pageId).removeClass("btn-primary").addClass("btn-outline-secondary");
 	jboltTablePageToFirst(deptTree_#(pageId));
 }
 
@@ -153,6 +158,16 @@ function clearDeptJsTreeSelected_#(pageId)(){
 	JSTreeUtil.clearSelected(deptTree_#(pageId));
 	adminUserForm_#(pageId).find("[name='deptId']").val("");
 	deptClearBtn_#(pageId).addClass("d-none");
+	adminUserForm_#(pageId).find("[name='assignDept']").val("true");
+	notAssignDeptBtn_#(pageId).removeClass("btn-primary").addClass("btn-outline-secondary");
+	jboltTablePageToFirst(deptTree_#(pageId));
+}
+
+function notAssignDeptSearch_#(pageId)(){
+	JSTreeUtil.clearSelected(deptTree_#(pageId));
+	adminUserForm_#(pageId).find("[name='assignDept']").val("false");
+	deptClearBtn_#(pageId).removeClass("d-none");
+	notAssignDeptBtn_#(pageId).addClass("btn-primary").removeClass("btn-outline-secondary");
 	jboltTablePageToFirst(deptTree_#(pageId));
 }
 

@@ -1,0 +1,5 @@
+1、更新代码
+2、执行update_mysql.sql（根据自己项目数据库类型找对应）
+3、启动项目登录管理员 浏览器地址栏先后访问 一下两个地址后完成项目升级
+http://localhost/admin/dept/processAllDeptPath
+http://localhost/admin/user/processAllDeptPath

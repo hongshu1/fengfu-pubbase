@@ -1,8 +1,10 @@
 package cn.jbolt._admin.user;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.model.Dept;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.HashKit;
 import com.jfinal.kit.Ret;
@@ -124,6 +126,18 @@ public class UserService extends JBoltUserService {
 				user.setIsSystemAdmin(false);
 			}
 		}
+		//处理用户的deptPath
+		if(isOk(user.getDeptId())&&notOk(user.getDeptPath())){
+			Dept dept = deptService.findById(user.getDeptId());
+			if(dept==null){
+				return fail("指定部门数据不存在");
+			}
+			if(notOk(dept.getDeptPath())){
+				return fail("指定部门的路径数据不完整，请执行部门路径补全操作");
+			}
+			user.setDeptPath(dept.getDeptPath());
+		}
+		//保存或者更新
 		boolean success=update?user.update():user.save();
 		if(success){
 			if(update) {
@@ -166,13 +180,14 @@ public class UserService extends JBoltUserService {
 	 * @param pageSize
 	 * @param keywords
 	 * @param sex 
-	 * @param deptId 
-	 * @param postId 
+	 * @param assignDept
+	 * @param deptId
+	 * @param postId
 	 * @param roleId 
 	 * @param enable 
 	 * @return
 	 */
-	public Page<User> paginateAdminList(int pageNumber, int pageSize, String keywords, Integer sex, Long deptId, Long postId,Long roleId,Boolean enable) {
+	public Page<User> paginateAdminList(int pageNumber, int pageSize, String keywords, Integer sex,Boolean assignDept, Long deptId, Long postId,Long roleId,Boolean enable) {
 		String columns=getTableSelectColumnsWithout("password");
 		Sql sql=selectSql().page(pageNumber, pageSize);
 		sql.select(columns);
@@ -184,7 +199,7 @@ public class UserService extends JBoltUserService {
 		if(enable!=null) {
 			sql.eq("enable", enable?TRUE:FALSE);
 		}
-		if(isOk(deptId)) {
+		/*if(isOk(deptId)) {
 			List<Long> ids=deptService.processSonDeptIds(deptId);
 			if(ids.size()>0) {
 				ids.add(0,deptId);
@@ -192,7 +207,16 @@ public class UserService extends JBoltUserService {
 			}else {
 				sql.eq("dept_id", deptId);
 			}
+		}*/
+		if(assignDept!=null && assignDept){
+			//按照部门搜索
+			if(isOk(deptId)) {
+				sql.findInSet(deptId,"dept_path",true);
+			}
+		}else{
+			sql.isNull("dept_id");
 		}
+
 		if(isOk(roleId)) {
 			sql.findInSet(roleId.toString(), "roles", true);
 		}
@@ -216,12 +240,36 @@ public class UserService extends JBoltUserService {
 	 * @param pageSize
 	 * @param keywords
 	 * @param sex
+	 * @param assignDept
 	 * @param deptId
 	 * @param postId
 	 * @param roleId
 	 * @return
 	 */
-	public Page<User> paginateSysNoticeList(int pageNumber, int pageSize, String keywords, Integer sex, Long deptId, Long postId,Long roleId) {
-		return paginateAdminList(pageNumber, pageSize, keywords, sex, deptId, postId, roleId, true);
+	public Page<User> paginateSysNoticeList(int pageNumber, int pageSize, String keywords, Integer sex, Boolean assignDept,Long deptId, Long postId,Long roleId) {
+		return paginateAdminList(pageNumber, pageSize, keywords, sex,assignDept, deptId, postId, roleId, true);
+	}
+
+	/**
+	 * 处理所有用户的deptPath
+	 */
+	public void processAllDeptPath() {
+		List<User> users = new ArrayList<>();
+		dao().each(user->{
+			Dept dept = JBoltDeptCache.me.get(user.getDeptId());
+			if(dept==null){
+				throw new RuntimeException("指定部门数据不存在");
+			}
+			if(notOk(dept.getDeptPath())){
+				throw new RuntimeException("指定部门的路径数据不完整，请执行部门路径补全操作");
+			}
+			user.setDeptPath(dept.getDeptPath());
+			users.add(user);
+			return true;
+		},selectSql().select("id","dept_id").isNotNull("dept_id").toSql());
+
+		if(isOk(users)){
+			batchUpdate(users);
+		}
 	}
 }

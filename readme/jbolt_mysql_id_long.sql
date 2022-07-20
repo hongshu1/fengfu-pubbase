@@ -268,6 +268,7 @@ CREATE TABLE `jb_dept` (
   `name` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `full_name` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '全称',
   `pid` bigint(20) DEFAULT NULL COMMENT '父级ID',
+  `dept_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '部门路径',
   `type` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '类型',
   `leader` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '负责人',
   `phone` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '联系电话',
@@ -323,7 +324,10 @@ CREATE TABLE `jb_user`  (
   `login_country` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '最后登录国家',
   `is_remote_login` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否异地登录',
   `dept_id` bigint(20) DEFAULT NULL COMMENT '部门ID',
-  `posts` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '岗位IDS',
+  `dept_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '部门路径',
+  `posts` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '岗位IDS',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_user_id` bigint(20) DEFAULT NULL COMMENT '更新人ID',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户登录账户表' ROW_FORMAT = Dynamic;
 

@@ -1,6 +1,8 @@
 package #(baseModelPackageName);
 #if(extendsJBoltBaseModel??)
+#if(baseModelPackageName != "cn.jbolt.core.model.base")
 import #(mainPkg?? "cn.jbolt").core.model.base.JBoltBaseModel;
+#end
 #else
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.IBean;
