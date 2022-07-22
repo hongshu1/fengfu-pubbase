@@ -1,11 +1,20 @@
 package cn.jbolt.starter;
 
+import cn.jbolt.core.util.JBoltArrayUtil;
 import com.alibaba.csp.sentinel.adapter.servlet.CommonFilter;
 import com.jfinal.server.undertow.WebBuilder;
 
 import cn.jbolt._admin.websocket.JBoltWebSocketServerEndpoint;
 import cn.jbolt.common.config.ProjectConfig;
 import cn.jbolt.core.base.config.JBoltConfig;
+import io.undertow.server.HandlerWrapper;
+import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.DisallowedMethodsHandler;
+import io.undertow.util.HttpString;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * 项目启动器
@@ -19,12 +28,35 @@ public class Starter {
 	 * @param builder
 	 */
 	public void configFilter(WebBuilder builder) {
+		//配置不允许访问的httpMethods
+		configDisallowedHttpMethods(builder);
 		// 配置 Filter
 		//builder.addFilter("myFilter", "com.abc.MyFilter");
 		//builder.addFilterUrlMapping("myFilter", "/*");
 		//builder.addFilterInitParam("myFilter", "key", "value");
-		
 	}
+
+	/**
+	 * 配置不允许访问的httpMethods
+	 * @param builder
+	 */
+	private void configDisallowedHttpMethods(WebBuilder builder) {
+		String disallowedMethodsStr = JBoltConfig.prop.get("disallowed_http_methods","TRACE,TRACK");
+		String[] disallowedMethodsArray = JBoltArrayUtil.from3(disallowedMethodsStr);
+		if(disallowedMethodsArray!=null&& disallowedMethodsArray.length>0){
+			builder.getDeploymentInfo().addInitialHandlerChainWrapper(new HandlerWrapper() {
+				@Override
+				public HttpHandler wrap(HttpHandler handler) {
+					List<HttpString> disallowedMethods = new ArrayList<HttpString>();
+					for(String method:disallowedMethodsArray){
+						disallowedMethods.add(HttpString.tryFromString(method.toUpperCase()));
+					}
+					return new DisallowedMethodsHandler(handler,disallowedMethods.toArray(new HttpString[0]));
+				}
+			});
+		}
+	}
+
 	/**
 	 * 配置Servlet
 	 * @param builder
