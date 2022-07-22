@@ -60,6 +60,14 @@ public class CodeGenModelAttrAdminController extends JBoltBaseController {
 	public void toggleIsExportCol() {
 		renderJson(service.toggleAttrBoolean("is_export_col",getLong(0),getLong(1)));
 	}
+
+	/**
+	 * is_need_translate切换boolean
+	 */
+	@Before(Tx.class)
+	public void toggleIsNeedTranslate() {
+		renderJson(service.toggleAttrBoolean("is_need_translate",getLong(0),getLong(1)));
+	}
 	
 	/**
 	 * is_sortable切换boolean

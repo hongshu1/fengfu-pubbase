@@ -1,6 +1,6 @@
-var jbolt_admin_js_version="5.7.8";
+var jbolt_admin_js_version="5.7.9";
 //拿到window doc和body
-var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
+var jboltJsDevMode=true;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
 var jboltDocument=$(document);
 var jboltBody=$("body");
@@ -3914,6 +3914,7 @@ var AutocompleteUtil={
 		column_attr=input.data("column-attr"),
 		formatHandler=input.data("format-handler"),
 		handler=input.data("handler"),
+			matchCase=input.data("match-case")||false,
 		limit=input.data("limit");
 		if(!limit){
 			limit=100;
@@ -4002,6 +4003,7 @@ var AutocompleteUtil={
 		    autoFill: false,
 		    matchSubset:false,
 		    mustMatch:false,
+			matchCase:matchCase,
 		    dataType: 'json',
 		    max:limit,
 		    parse: function(res) {
@@ -4039,7 +4041,6 @@ var AutocompleteUtil={
 						exe_handler(input,hiddenInput,value,data);
 					}
 				}
-			  
 			  that.processJBoltTableHandler(input,data,value);
 			  
 		  }).bind("unmatch", function(){

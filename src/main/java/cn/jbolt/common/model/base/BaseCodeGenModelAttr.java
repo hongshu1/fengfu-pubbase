@@ -1037,5 +1037,69 @@ public abstract class BaseCodeGenModelAttr<M extends BaseCodeGenModelAttr<M>> ex
 		return getStr("table_data_column_attr");
 	}
 
+	/**
+	 * 是否需要翻译
+	 */
+	public M setIsNeedTranslate(java.lang.Boolean isNeedTranslate) {
+		set("is_need_translate", isNeedTranslate);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否需要翻译
+	 */
+	@JBoltField(name="isNeedTranslate" ,columnName="is_need_translate",type="Boolean", remark="是否需要翻译", required=true, maxLength=1, fixed=0, order=65)
+	public java.lang.Boolean getIsNeedTranslate() {
+		return getBoolean("is_need_translate");
+	}
+
+	/**
+	 * 翻译类型
+	 */
+	public M setTranslateType(java.lang.String translateType) {
+		set("translate_type", translateType);
+		return (M)this;
+	}
+	
+	/**
+	 * 翻译类型
+	 */
+	@JBoltField(name="translateType" ,columnName="translate_type",type="String", remark="翻译类型", required=false, maxLength=20, fixed=0, order=66)
+	public java.lang.String getTranslateType() {
+		return getStr("translate_type");
+	}
+
+	/**
+	 * 翻译用值
+	 */
+	public M setTranslateUseValue(java.lang.String translateUseValue) {
+		set("translate_use_value", translateUseValue);
+		return (M)this;
+	}
+	
+	/**
+	 * 翻译用值
+	 */
+	@JBoltField(name="translateUseValue" ,columnName="translate_use_value",type="String", remark="翻译用值", required=false, maxLength=250, fixed=0, order=67)
+	public java.lang.String getTranslateUseValue() {
+		return getStr("translate_use_value");
+	}
+
+	/**
+	 * 翻译后的列名
+	 */
+	public M setTranslateColName(java.lang.String translateColName) {
+		set("translate_col_name", translateColName);
+		return (M)this;
+	}
+	
+	/**
+	 * 翻译后的列名
+	 */
+	@JBoltField(name="translateColName" ,columnName="translate_col_name",type="String", remark="翻译后的列名", required=false, maxLength=250, fixed=0, order=68)
+	public java.lang.String getTranslateColName() {
+		return getStr("translate_col_name");
+	}
+
 }
 

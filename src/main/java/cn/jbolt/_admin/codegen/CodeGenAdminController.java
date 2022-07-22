@@ -1,42 +1,54 @@
 package cn.jbolt._admin.codegen;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ClassUtil;
 import cn.jbolt._admin.codegen.modelattr.CodeGenModelAttrService;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.model.CodeGen;
 import cn.jbolt.common.model.CodeGenModelAttr;
+import cn.jbolt.common.util.CACHE;
+import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.bean.Option;
 import cn.jbolt.core.bean.OptionBean;
+import cn.jbolt.core.cache.JBoltCache;
 import cn.jbolt.core.cache.JBoltCacheKit;
+import cn.jbolt.core.cache.JBoltDeptCache;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.db.datasource.JBoltDataSourceUtil;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.model.Permission;
+import cn.jbolt.core.model.base.JBoltBaseModel;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.service.base.JBoltBaseRecordService;
+import cn.jbolt.core.service.base.JBoltBaseService;
+import cn.jbolt.core.service.base.JBoltCommonService;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.StrKit;
+import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.ehcache.IDataLoader;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 /**
  * JBolt 开发平台 - 可视化代码生成器
- * @ClassName:  JBoltCodeGenAdminController   
- * @author: JFinal学院-小木 QQ：909854136 
- * @date:   2021年9月24日   
+ * @ClassName:  JBoltCodeGenAdminController
+ * @author: JFinal学院-小木 QQ：909854136
+ * @date:   2021年9月24日
  */
 @CheckPermission(PermissionKey.JBOLT_CODE_GEN)
 @UnCheckIfSystemAdmin
@@ -70,35 +82,106 @@ public class CodeGenAdminController extends JBoltBaseController {
 		options.add(new OptionBean("demo数据，请更换地址","0"));
 		renderJsonData(options);
 	}
-	
+
 	/**
 	 * 构建类型
 	 */
 	public void types() {
 		renderJsonData(JBoltEnum.getEnumOptionList(CodeGenType.class));
 	}
-	
+	/**
+	 * 刷新enum缓存
+	 */
+	public void refreshEnumsCache() {
+		CACHE.me.removeCodeGenEnums();
+		renderJsonSuccess();
+	}
+	/**
+	 * 内置枚举类
+	 */
+	public void enums() {
+		List<Option> options = CACHE.me.getCodeGenEnums();
+		String keywords = get("q");
+		if(isOk(options) && isOk(keywords)){
+			options = options.stream().filter(op->op.getText().toLowerCase().contains(keywords.toLowerCase())).collect(Collectors.toList());
+		}
+		renderJsonData(options);
+	}
+
+
+	/**
+	 * 刷新cache缓存
+	 */
+	public void refreshCachesCache() {
+		CACHE.me.removeCodeGenCaches();
+		renderJsonSuccess();
+	}
+
+	/**
+	 * 刷新service缓存
+	 */
+	public void refreshServicesCache() {
+		CACHE.me.removeCodeGenServices();
+		renderJsonSuccess();
+	}
+	/**
+	 * 内置cahce类
+	 */
+	public void caches() {
+		String keywords = get("q");
+		List<Option> options = null;
+		if(isOk(keywords) && keywords.contains(":")){
+			String className = keywords.substring(0,keywords.lastIndexOf(":"));
+			try {
+				Class<?> clazz = ClassUtil.loadClass(className);
+				if(clazz == null){
+					options = CACHE.me.getCodeGenCaches();
+				}else{
+					List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
+					if(isOk(methods)){
+						options = new ArrayList<>();
+						for(Method m:methods){
+							options.add(new OptionBean(className+":"+m.getName()));
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				options = CACHE.me.getCodeGenCaches();
+			}
+
+		}else{
+			options = CACHE.me.getCodeGenServices();
+		}
+		if(isOk(options) && isOk(keywords)){
+			options = options.stream().filter(op->op.getText().toLowerCase().contains(keywords.toLowerCase())).collect(Collectors.toList());
+		}
+		renderJsonData(options);
+	}
+
+
+
 	/**
 	 * 系统数据源
 	 */
 	public void datasources() {
 		renderJsonData(JBoltDataSourceUtil.me.getAllDatasource());
 	}
-	
+
 	/**
 	 * 样式类型数据源
 	 */
 	public void styles() {
 		renderJsonData(JBoltEnum.getEnumOptionList(CodeGenStyle.class));
 	}
-	
+
 	/**
 	 * 生成状态数据源
 	 */
 	public void states() {
 		renderJsonData(JBoltEnum.getEnumOptionList(CodeGenState.class));
 	}
-	
+
 	/**
 	 * 添加主配置
 	 */
@@ -126,7 +209,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("projectPath", System.getProperty("user.dir"));
 		render("add.html");
 	}
-	
+
 	/**
 	 * 编辑主配置
 	 */
@@ -147,7 +230,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("tableFullName", codeGen.getMainTableName()+(StrKit.isBlank(codeGen.getMainTableRemark())?"":("["+codeGen.getMainTableRemark()+"]")));
 		render("edit.html");
 	}
-	
+
 	/**
 	 * 保存基础信息
 	 */
@@ -173,7 +256,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
-	
+
 	/**
 	 * 删除批量
 	 */
@@ -197,10 +280,10 @@ public class CodeGenAdminController extends JBoltBaseController {
 	public void realDelete() {
 		renderJson(service.realDeleteById(getLong(0),true));
 	}
-	
-	
+
+
 	/**
-	 * 生成状态数据源
+	 * 数据源中的可选表
 	 */
 	public void tablesAutocomplete() {
 		renderJsonData(JBoltDataSourceUtil.me.getTableNameRemarkFullKvs(get("datasource"),get("q"),getInt("limit",10)));
@@ -211,7 +294,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	public void reloadTables() {
 		renderJson(JBoltDataSourceUtil.me.reloadDatasourceTables(get("datasource")));
 	}
-	
+
 	/**
 	 * 进入代码生成详细配置UI
 	 */
@@ -232,21 +315,21 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("tableFullName", StrKit.isBlank(codeGen.getMainTableRemark())?null:(codeGen.getMainTableName()+"["+codeGen.getMainTableRemark()+"]"));
 		render("config/index.html");
 	}
-	
+
 	/**
 	 * keycache column数据源
 	 */
 	public void keyCacheColumns() {
 		renderJsonData(codeGenModelAttrService.getKeyCacheColumnsAutocomplete(getLong(0),null,getInt("limit",10),get("q")));
 	}
-	
+
 	/**
 	 * keycache bindColumn数据源
 	 */
 	public void keyCacheBindColumns() {
 		renderJsonData(codeGenModelAttrService.getKeyCacheColumnsAutocomplete(getLong("id"),get("column"),getInt("limit",10),get("q")));
 	}
-	
+
 	/**
 	 * 加载权限菜单设置
 	 */
@@ -280,7 +363,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	public void unbindPermission() {
 		renderJson(service.unbindPermission(getLong(0)));
 	}
-	
+
 	/**
 	 * 可以当做关键词查询匹配列的数据
 	 */
@@ -400,7 +483,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	public void searchDictionaryOptions() {
 		renderJsonData(dictionaryService.getOptionListByTypeKey(get("searchDataValue")));
 	}
-	
+
 	/**
 	 * 路由列表数据
 	 */
@@ -437,7 +520,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 		if(isOk(keywords)) {
 			stream = stream.filter(file->file.getName().toLowerCase().indexOf(keywords.toLowerCase())!=-1);
 		}
-		
+
 		stream.forEach(file->{
 			options.add(new OptionBean(FileUtil.normalize(file.getAbsolutePath()).replace(rootPath, "").replace(File.separator, ".").replace("/", ".").replace(".java", "")));
 		});
@@ -546,4 +629,130 @@ public class CodeGenAdminController extends JBoltBaseController {
 		List<Okv> datas = codeGenModelAttrService.getCodeGenTableColumnsDatas(codeGenId);
 		renderBytesToExcelXlsxFile(JBoltExcel.create().addSheet(JBoltExcelSheet.create("数据").setHeaders(headers).setOkvDatas(2,datas)).setFileName("导出文件"));
 	}
+
+	/**
+	 * 关键词搜索静态方法 类
+	 */
+	public void staticMethodClasses(){
+		String keywords = get("q");
+		List<Option> options = null;
+		if(isOk(keywords) && keywords.contains(":")){
+			String className = keywords.substring(0,keywords.indexOf(":"));
+			try {
+				Class<?> clazz = ClassUtil.loadClass(className);
+				if(clazz == null){
+					options =getStaticMethodClasses(keywords);
+				}else{
+					List<Method> methods = new ArrayList<>();
+					Method[] marr = clazz.getDeclaredMethods();
+					if(isOk(marr)){
+						for(Method m:marr){
+							methods.add(m);
+						}
+					}
+					if(isOk(methods)){
+						options = new ArrayList<>();
+						for(Method m:methods){
+							options.add(new OptionBean(className+":"+m.getName()));
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				options = getStaticMethodClasses(keywords);
+			}
+		}else{
+			options = getStaticMethodClasses(keywords);
+		}
+		renderJsonData(options);
+	}
+
+	private List<Option> getStaticMethodClasses(String keywords) {
+		//没输入 或者没有点 直接忽略
+		if(notOk(keywords) || !keywords.contains(".")){
+			renderJsonSuccess();
+			return null;
+		}
+		//转为小写
+		String lowKeywords = keywords.toLowerCase().trim();
+		String packageName = null;
+
+		if(lowKeywords.endsWith(".")){
+			packageName = lowKeywords.substring(0,lowKeywords.length()-1);
+		}else{
+			if(lowKeywords.contains(".")){
+				packageName = lowKeywords.substring(0,lowKeywords.lastIndexOf("."));
+			}
+		}
+		List<Option> options = new ArrayList<>();
+
+		Set<Class<?>> classes = ClassUtil.scanPackage(packageName,filter->{
+			return 	!filter.isEnum() && !(filter.getSimpleName().startsWith("Base") && JBoltBaseModel.class.equals(filter.getSuperclass())) && filter.getName().toLowerCase().startsWith(lowKeywords);
+		});
+
+
+		if(classes!=null && classes.size()>0) {
+			classes.forEach(en->{
+				options.add(new OptionBean(en.getName()));
+			});
+			//排序
+			options.sort(new Comparator<Option>() {
+				@Override
+				public int compare(Option o1, Option o2) {
+					return o1.getText().compareTo(o2.getText());
+				}
+			});
+			int size = options.size();
+			if(size>20){
+				return options.subList(0,20);
+			}else{
+				return options;
+			}
+		}
+		return null;
+	}
+
+
+	/**
+	 * 关键词搜索service方法
+	 */
+	public void services(){
+		String keywords = get("q");
+		//没输入 或者没有点 直接忽略
+		if(notOk(keywords)){
+			renderJsonSuccess();
+			return;
+		}
+		List<Option> options = null;
+		if(keywords.contains(":")){
+			String className = keywords.substring(0,keywords.lastIndexOf(":"));
+			try {
+				Class<?> clazz = ClassUtil.loadClass(className);
+				if(clazz == null){
+					options = CACHE.me.getCodeGenServices();
+				}else{
+					List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
+					if(isOk(methods)){
+						options = new ArrayList<>();
+						for(Method m:methods){
+							options.add(new OptionBean(className+":"+m.getName()));
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				options = CACHE.me.getCodeGenServices();
+			}
+
+		}else{
+			options = CACHE.me.getCodeGenServices();
+		}
+
+		if(isOk(options)){
+			options = options.stream().filter(op->op.getText().toLowerCase().contains(keywords.toLowerCase())).collect(Collectors.toList());
+		}
+		renderJsonData(options);
+	}
+
+
 }
