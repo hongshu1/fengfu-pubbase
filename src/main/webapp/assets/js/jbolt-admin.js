@@ -1,6 +1,6 @@
-var jbolt_admin_js_version="5.7.9";
+var jbolt_admin_js_version="5.8.0";
 //拿到window doc和body
-var jboltJsDevMode=true;//当前模式 true是开发调试模式 影响加载插件和jboltlog
+var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
 var jboltDocument=$(document);
 var jboltBody=$("body");
@@ -17056,8 +17056,7 @@ var lockHtmlTpl='<div oncontextmenu="doNothing()" class="j_locksystem noselect" 
 '<input onkeyup="unlockSystem(event)" maxlength="40" type="password" id="unlockpwd" placeholder="输入密码 回车解锁" name="password"  autocomplete="off" /><div class="j_reloginbtn"><a onclick="showReloginDialog(false,processUnLockAndAfterLogin)" href="javascrip:void(0)">切换用户</a></div></div></div></div>';
 var lockSystemTimer=null;
 function checkLockSystem(){
-	console.log("checkLockSystem")
-	if(!lockSystemTimer){console.log("checkLockSystem lockSystemTimer");return false;}
+	if(!lockSystemTimer){return false;}
 	var j_locksystem=$("#j_locksystem");
 	if(isOk(j_locksystem)){
 		//如果已经有了 判断hidden

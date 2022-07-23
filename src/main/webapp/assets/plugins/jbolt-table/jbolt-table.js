@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.8.6";
+var jbolt_table_js_version="2.8.7";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -7562,7 +7562,7 @@ function getScrollBarHeight(ele){
 			if(colConfig.type=="auto" && colConfig.initHandler){
 				var dataIndex=td.parent().data("index");
 				var trJsonData = table.tableListDatas[dataIndex];
-				colConfig.initHandler(table,td,trJsonData);
+				colConfig.initHandler(table,td,trJsonData,deepClone(colConfig));
 			}
 		},
 		//通过colConfig配置 将td转为tdEditor
@@ -7607,6 +7607,9 @@ function getScrollBarHeight(ele){
 					tdoptions = currentTd.data("col-options");
 				}
 				colConfig = deepClone(tdoptions);
+				if(!colConfig.editable){
+					return "";
+				}
 			}else{
 				colConfig = col_config;
 			}
@@ -9755,10 +9758,10 @@ function getScrollBarHeight(ele){
 								var submitAttr=column;
 								colConfig=cols[column];
 								if(colConfig){
+									if(colConfig.submitAttr){
+										submitAttr=colConfig.submitAttr;
+									}
 									if(colConfig.editable){
-										if(colConfig.submitAttr){
-											submitAttr=colConfig.submitAttr;
-										}
 										if(typeof(colConfig.required)=="undefined"||colConfig.required=='undefined'){
 											colConfig.required=false;
 										}
