@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.8.1";
+var jbolt_admin_js_version="5.8.2";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -732,12 +732,22 @@ var JBoltInputWithCalculatorUtil={
 				input.removeClass("d-inline-block");
 			}
 			var theme = input.data("theme")||input.data("with-calculator")||"material";
+			var onResultHandler = input.data("result-handler");
+			var options = {theme:theme};
+			if(onResultHandler){
+				var extHandler = eval(onResultHandler);
+				if(extHandler && typeof(extHandler) == "function"){
+					options.onResult=function(value){
+						extHandler(input,value);
+					}
+				}
+			}
 			if(needLoadPlugin){
 				loadJBoltPlugin(['jcalculator'], function(){
-					input.calculator({theme:theme});
+					input.calculator(options);
 				});
 			}else{
-				input.calculator({theme:theme});
+				input.calculator(options);
 			}
 		}
 }
