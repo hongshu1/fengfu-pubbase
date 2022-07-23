@@ -208,6 +208,34 @@ function getModelAttrEditableTableOptions_#(pageId)(){
 						type:"input",
 						maxLength:200
 					},
+					translate_col_name:{
+						submitAttr:"translateColName",
+						type:"auto",
+						maxLength:60,
+						placeholder:"请输入",
+						tooltip:"请输入翻译后的属性名称 例如 deptName",
+						initHandler:function(table,td,trJsonData,colConfig){
+							colConfig.type="input";
+							colConfig.editable=trJsonData["isNeedTranslate"];
+							td.data("col-options",colConfig).data("editable",colConfig.editable).attr("data-editable",colConfig.editable);
+						}
+					},
+					is_need_translate:{
+						type:"switchbtn",
+						submitAttr:"isNeedTranslate",
+						editable:false,
+						handler:function(table,td,jsonData,btn,result){
+							if(jsonData.isPkey){return;}
+
+							var attrName = jsonData.attrName+"";
+							if(attrName.toLowerCase().endWith("id")){
+								attrName = attrName.substring(0,attrName.length-2);
+							}
+							var colName = attrName+"Name";
+							changeTranslateColNameColOptions_#(pageId)(table,td.next().next().next(),result,colName);
+
+						}
+					},
 					translate_type:{
 						type:"select",
 						url:"admin/dictionary/options?key=code_gen_translate_type",
@@ -356,7 +384,23 @@ function changeDataValueColOptions_#(pageId)(td,value){
 	}
 	td.data("col-options",options).data("editable",options.editable).attr("data-editable",options.editable);
 }
+function changeTranslateColNameColOptions_#(pageId)(table,td,result,colName){
+	if(td.data("value")){
+		if(result){
+			jboltTableSetCellEditable(table,td.parent(),"translate_col_name",true,false);
+		}else{
+			jboltTableSetCellEditable(table,td.parent(),"translate_col_name",false,false);
+		}
+	}else{
+		if(result){
+			jboltTableSetCell(table,td.parent(),"translate_col_name",colName,colName);
+			jboltTableSetCellEditable(table,td.parent(),"translate_col_name",true,false);
+		}else{
+			jboltTableSetCellEditable(table,td.parent(),"translate_col_name",false,true);
+		}
+	}
 
+}
 function changeTranslateUseValueColOptions_#(pageId)(td,value){
 	var options = {};
 	options.maxLength=40;
