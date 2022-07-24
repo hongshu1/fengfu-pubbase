@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.8.3";
+var jbolt_admin_js_version="5.8.4";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -378,10 +378,12 @@ var JsonEditorUtil = {
 			loadJBoltPlugin(['jsoneditor'], function(){
 				var je = new JSONEditor(editor[0], options);
 				setContent(je,editor);
+				editor.data("editor-inst",je);
 			});
 		}else{
 			var je = new JSONEditor(editor[0], options);
 			setContent(je,editor);
+			editor.data("editor-inst",je);
 		}
 	}
 }
