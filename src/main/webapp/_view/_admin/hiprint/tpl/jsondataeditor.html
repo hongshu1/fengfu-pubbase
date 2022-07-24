@@ -52,6 +52,7 @@ function readTplTestJsonData_#(pageId)(){
 		}else{
 			$("#testJsonData_#(pageId)").val(JSON.stringify(res,null,2));
 		}
+		$("#testJsonDataEditor_#(pageId)").data("editor-inst").setText($("#testJsonData_#(pageId)").val());
 
 		LayerMsgBox.success("读取成功",600);
 		
