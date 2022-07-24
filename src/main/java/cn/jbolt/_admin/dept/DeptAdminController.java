@@ -1,7 +1,14 @@
 package cn.jbolt._admin.dept;
 
+import cn.hutool.core.util.ClassUtil;
+import cn.jbolt.core.base.JBoltGlobalConfigKey;
+import cn.jbolt.core.cache.JBoltGlobalConfigCache;
+import cn.jbolt.core.common.enums.JBoltDeptMgrType;
+import cn.jbolt.core.enumutil.JBoltEnum;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Ret;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import cn.jbolt._admin.permission.PermissionKey;
@@ -28,13 +35,25 @@ public class DeptAdminController extends JBoltBaseController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		String html = "index.html";
+		JBoltDeptMgrType type = JBoltGlobalConfigCache.me.getSystemDeptMgrType();
+		if(type == JBoltDeptMgrType.JS_TREE){
+			html = "treemgr.html";
+		}
+		render(html);
 	}
 	/**
 	 * 数据源
 	 */
 	public void datas() {
 		renderJsonData(service.getTreeTableDatas());
+	}
+
+	/**
+	 * crud树的数据源
+	 */
+	public void crudJsTreeDatas() {
+		renderJsonData(service.getAllJsTreeDatas(getLong("selectId"),getInt("openLevel",0)));
 	}
 	/**
 	 * select数据源
@@ -63,6 +82,16 @@ public class DeptAdminController extends JBoltBaseController {
 	*/
 	public void add() {
 		set("pid", getLong(0,0L));
+		JBoltDeptMgrType type = JBoltGlobalConfigCache.me.getSystemDeptMgrType();
+		set("showPortalBtn",type == JBoltDeptMgrType.JS_TREE);
+		render("add.html");
+	}
+
+	/**
+	 * 新增Dialog
+	 */
+	public void addInDialog() {
+		set("pid", getLong(0,0L));
 		render("add.html");
 	}
 	
@@ -70,12 +99,18 @@ public class DeptAdminController extends JBoltBaseController {
 	* 编辑
 	*/
 	public void edit() {
-		Dept dept=service.findById(getLong(0)); 
+		JBoltDeptMgrType type = JBoltGlobalConfigCache.me.getSystemDeptMgrType();
+		Dept dept=service.findById(getLong(0));
 		if(dept == null){
-			renderDialogFail(JBoltMsg.DATA_NOT_EXIST);
+			String msg = JBoltMsg.DATA_NOT_EXIST;
+			if(type == JBoltDeptMgrType.JS_TREE){
+				msg = "请选择有效部门数据后编辑";
+			}
+			renderDialogFail(msg);
 			return;
 		}
 		set("dept",dept);
+		set("showPortalBtn",type == JBoltDeptMgrType.JS_TREE);
 		render("edit.html");
 	}
 	
@@ -84,7 +119,12 @@ public class DeptAdminController extends JBoltBaseController {
 	*/
 	@Before(Tx.class)
 	public void save() {
-		renderJson(service.save(getModel(Dept.class, "dept")));
+		Dept dept = getModel(Dept.class, "dept");
+		Ret ret = service.save(dept);
+		if(ret.isOk()){
+			ret.set("data",dept.getId());
+		}
+		renderJson(ret);
 	}
 	
   /**
@@ -92,7 +132,12 @@ public class DeptAdminController extends JBoltBaseController {
 	*/
 	@Before(Tx.class)
 	public void update() {
-		renderJson(service.update(getModel(Dept.class, "dept")));
+		Dept dept = getModel(Dept.class, "dept");
+		Ret ret = service.update(dept);
+		if(ret.isOk()){
+			ret.set("data",dept.getId());
+		}
+		renderJson(ret);
 	}
 	
   /**
@@ -142,6 +187,14 @@ public class DeptAdminController extends JBoltBaseController {
 	public void processAllDeptPath() {
 		service.processAllDeptPath();
 		renderJsonSuccess();
+	}
+
+	/**
+	 * jstree 节点move
+	 */
+	@Before(Tx.class)
+	public void move(){
+		renderJson(service.move(getLong("id"),getLong("pid"),getInt("rank")));
 	}
 	
 }

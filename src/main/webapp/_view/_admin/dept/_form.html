@@ -1,4 +1,4 @@
-<form onsubmit="return false;" id="deptForm" action="#(action)" method="post">
+<form onsubmit="return false;" id="deptForm_#(pageId)" action="#(action)" method="post">
 #if(dept.id??)
 	<input type="hidden" name="dept.id" value="#(dept.id)" />
 	<input type="hidden" name="dept.deptPath" value="#(dept.deptPath??)" />
@@ -9,11 +9,11 @@
 	<div class="form-group row">
    <label class="col-sm-2 col-form-label">上级部门</label>
        <div class="col">
-           <select class="form-control" name="dept.pid" data-select-type="select2"  
+           <select class="form-control" name="dept.pid" data-select-type="select2"
            data-url="admin/dept/options"
-           data-text-format-handler="deptTextFormatHandler"
+           data-text-format-handler="deptTextFormatHandler_#(pageId)"
            data-handler="syncAttrToOther"
-           data-sync-ele="#dept_sn"
+           data-sync-ele="#dept_sn_#(pageId)"
            data-sync-must="#(dept==null)"
            data-text="=无上级部门="  data-value="0" data-select="#(dept.pid?? (pid?? 0))" data-autoload></select>
        </div>
@@ -21,19 +21,19 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">部门名称</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true"  onblur="syncOtherInput(this.value,'#deptFullName')" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入名称" data-tips="请输入名称" maxlength="40" name="dept.name" value="#(dept.name??)">
+			<input type="text" data-with-clearbtn="true"  onblur="syncOtherInput(this.value,'#deptFullName_#(pageId)')" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入名称" data-tips="请输入名称" maxlength="40" name="dept.name" value="#(dept.name??)">
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">部门全称</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true"  id="deptFullName" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入全称" data-tips="请输入全称" maxlength="40" name="dept.fullName" value="#(dept.fullName??)">
+			<input type="text" data-with-clearbtn="true"  id="deptFullName_#(pageId)" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入全称" data-tips="请输入全称" maxlength="40" name="dept.fullName" value="#(dept.fullName??)">
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">部门代码</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true"  id="dept_sn" data-sync-attr="sn" data-sync-must="false" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入部门代码" data-tips="请输入部门代码" maxlength="40" name="dept.sn" value="#(dept.sn??)">
+			<input type="text" data-with-clearbtn="true"  id="dept_sn_#(pageId)" data-sync-attr="sn" data-sync-must="false" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入部门代码" data-tips="请输入部门代码" maxlength="40" name="dept.sn" value="#(dept.sn??)">
 		</div>
 	</div>
 	
@@ -92,13 +92,37 @@
 			<textarea style="height:100px;" class="form-control" placeholder="请输入备注信息" maxlength="255" name="dept.remark">#(dept.remark??)</textarea>
 		</div>
 	</div>
-	
+	#if(showPortalBtn??)
+	<div class="form-group text-center">
+		<button class="btn btn-primary" type="button" onclick="submitThisFormByPortalBtn_#(pageId)(this)"><i class="fa fa-check"></i> 确 认 提 交</button>
+	</div>
+	#end
 </form>
 #define js()
 <script>
-function deptTextFormatHandler(optionJsonData){
+function deptTextFormatHandler_#(pageId)(optionJsonData){
 	return "("+optionJsonData.sn+")"+optionJsonData.name;
 }
+#if(showPortalBtn??)
+var clickSubmitBtn_#(pageId) = null;
+function submitThisFormByPortalBtn_#(pageId)(btnEle){
+	clickSubmitBtn_#(pageId) = $(btnEle);
+	submitThisForm#(pageId)();
+}
+function afterFormSubmit#(pageId)(res){
+	var portal=clickSubmitBtn_#(pageId).closest("div[data-ajaxportal][data-jstree-id]");
+	if(isOk(portal)){
+		var treeId = portal.data("jstree-id");
+		JSTreeUtil.refresh(treeId,res.data);
+	}else{
+		LayerMsgBox.alert("jstree id异常",2);
+	}
+}
+#end
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="deptForm")
+#if(showPortalBtn??)
+#include("/_view/_admin/common/_formjs.html",formId="deptForm_"+pageId,randomFunctionName=pageId)
+#else
+#include("/_view/_admin/common/_formjs.html",formId="deptForm_"+pageId)
+#end
 #end

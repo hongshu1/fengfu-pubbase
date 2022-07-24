@@ -376,9 +376,24 @@ public class ProjectConfig extends JBoltProjectConfig {
 		JBoltConfig.configAssetsVersion();
 		//4、配置微信公众平台
 		JBoltConfig.configWechat();
-
+		//5、加载enums和caches services等
+		loadCodeGenTranslateUseClasses();
 		//二开扩展配置服务器启动后处理
 		ExtendProjectConfig.onStart();
+	}
+
+	/**
+	 * 加载enums和caches services等
+	 */
+	private void loadCodeGenTranslateUseClasses() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				CACHE.me.getCodeGenEnums();
+				CACHE.me.getCodeGenCaches();
+				CACHE.me.getCodeGenServices();
+			}
+		}).start();
 	}
 
 	@Override
