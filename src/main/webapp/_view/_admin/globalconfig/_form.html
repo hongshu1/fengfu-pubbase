@@ -110,8 +110,28 @@
 					<label for="number_calc_cn">数字运算型（中文）</label>
 				</div>
 			</div>
-		</div>	
-		
+		</div>
+	#elseif(globalConfig.configKey==GlobalConfigKey.JBOLT_DEPT_MGR_TYPE)
+
+	<div class="form-group"
+		 data-radio
+		 data-rule="radio"
+		 data-value="#(globalConfig.configValue??)"
+		 data-name="globalConfig.configValue"
+		 data-default="default">
+		<label>#(globalConfig.name)</label>
+		<div class="col" >
+			<div class="radio radio-primary  radio-inline">
+				<input  id="tree_table" type="radio" name="globalConfig.configValue"   value="tree_table"/>
+				<label for="tree_table">树形表格管理</label>
+			</div>
+
+			<div class="radio radio-primary  radio-inline">
+				<input  id="js_tree" type="radio" name="globalConfig.configValue"   value="js_tree"/>
+				<label for="js_tree">JS_TREE树管理</label>
+			</div>
+		</div>
+	</div>
 	#elseif(globalConfig.configKey==GlobalConfigKey.ASSETS_VERSION)
 	<div class="form-group">
 		<label>#(globalConfig.name)</label>
