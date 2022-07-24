@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.8.4";
+var jbolt_admin_js_version="5.8.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -2995,7 +2995,17 @@ var JSTreeUtil={
 				return false;
 			});
 			return form;
+		},openAll:function(jsTreeEle){
+			var jstreeObj = getRealJqueryObject(jsTreeEle);
+			if(isOk(jstreeObj)){
+				jstreeObj.jstree(true).open_all();
+			}
+		},closeAll:function(jsTreeEle){
+		var jstreeObj = getRealJqueryObject(jsTreeEle);
+		if(isOk(jstreeObj)){
+			jstreeObj.jstree(true).close_all();
 		}
+	}
 }
 
 /**
