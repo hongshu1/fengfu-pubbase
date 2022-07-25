@@ -53,7 +53,7 @@ public class DeptAdminController extends JBoltBaseController {
 	 * crud树的数据源
 	 */
 	public void crudJsTreeDatas() {
-		renderJsonData(service.getAllJsTreeDatas(getLong("selectId"),getInt("openLevel",0)));
+		renderJsonData(service.getAllCrudJsTreeDatas(getLong("selectId"),getInt("openLevel",0)));
 	}
 	/**
 	 * select数据源

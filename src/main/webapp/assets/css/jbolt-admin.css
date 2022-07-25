@@ -1,4 +1,4 @@
-/*********jbolt_admin_css_version="3.6.3*************/
+/*********jbolt_admin_css_version="3.6.4*************/
 html, body {
 	margin: 0px;
 	padding: 0px;
@@ -424,11 +424,11 @@ a:hover{
 }
 .card{
 	box-shadow: 0 0px 4px 0 rgba(0,0,0,0.05);
-	    border: 1px solid rgba(0,0,0,.09);
+	    border: 1px solid rgba(0,0,0,.09)!important;
 }
 .card-header{
-	background-color:#FEFEFE;
-	 border-bottom: 1px solid #F5F5F5;
+	background-color:#FEFEFE!important;
+	 border-bottom: 1px solid #F1F1F1!important;;
 }
 /* .card-body{
 	padding: 5px;
