@@ -919,6 +919,10 @@ CREATE TABLE `jb_code_gen_model_attr`  (
 `table_data_text_attr` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'data-text-attr',
 `table_data_value_attr` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'data-value-attr',
 `table_data_column_attr` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'data-column-attr',
+`is_need_translate` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否需要翻译',
+`translate_type` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '翻译类型',
+`translate_use_value` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '翻译用值',
+`translate_col_name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '翻译后的列名',
 PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'CodeGen模型详细设计' ROW_FORMAT = Dynamic;
 

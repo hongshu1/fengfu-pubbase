@@ -200,6 +200,21 @@
 			{"name":"枚举类","sn":"enum"}
 	]
 },{
+	"name": "codeGen_属性翻译类型",
+	"modeLevel": 1,
+	"typeKey": "code_gen_translate_type",
+	"dics":[
+		{"name":"字典_ID","sn":"sys_dic_id"},
+		{"name":"字典_SN","sn":"sys_dic_sn"},
+		{"name":"系统用户_ID","sn":"sys_user_id"},
+		{"name":"系统用户_用户名","sn":"sys_user_username"},
+		{"name":"缓存","sn":"cache"},
+		{"name":"枚举类","sn":"enum"},
+		{"name":"自定义静态 Method","sn":"static_method"},
+		{"name":"自定义Service Method","sn":"service_method"},
+		{"name":"自定义Key-Value数据","sn":"kv_data"}
+	]
+},{
 	"name": "codeGen_查询条件组件类型",
 	"modeLevel": 1,
 	"typeKey": "code_gen_condition_ui_type",

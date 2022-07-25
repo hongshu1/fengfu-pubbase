@@ -5432,20 +5432,6 @@ ALTER TABLE [dbo].[jb_code_gen] SET (LOCK_ESCALATION = TABLE)
     GO
 
     EXEC sp_addextendedproperty
-    'MS_Description', N'是否启用pageTitle上的上传按钮',
-    'SCHEMA', N'dbo',
-    'TABLE', N'jb_code_gen',
-    'COLUMN', N'is_page_title_import_btn'
-    GO
-
-    EXEC sp_addextendedproperty
-    'MS_Description', N'是否启用pageTitle的下载导出按钮',
-    'SCHEMA', N'dbo',
-    'TABLE', N'jb_code_gen',
-    'COLUMN', N'is_page_title_export_btn'
-    GO
-
-    EXEC sp_addextendedproperty
     'MS_Description', N'是否启用systemLog日志',
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen',
@@ -5558,7 +5544,11 @@ CREATE TABLE [dbo].[jb_code_gen_model_attr] (
     [search_data_column_attr] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
     [table_data_text_attr] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
     [table_data_value_attr] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
-    [table_data_column_attr] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL
+    [table_data_column_attr] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
+    [is_need_translate] COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
+    [translate_type] nvarchar(20) COLLATE Chinese_PRC_CI_AS  NULL,
+    [translate_use_value] nvarchar(250) COLLATE Chinese_PRC_CI_AS  NULL,
+    [translate_col_name] nvarchar(250) COLLATE Chinese_PRC_CI_AS  NULL
     )
     GO
 
@@ -6014,10 +6004,40 @@ ALTER TABLE [dbo].[jb_code_gen_model_attr] SET (LOCK_ESCALATION = TABLE)
     GO
 
     EXEC sp_addextendedproperty
+    'MS_Description', N'是否需要翻译',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen_model_attr',
+    'COLUMN', N'is_need_translate'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'翻译类型',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen_model_attr',
+    'COLUMN', N'translate_type'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'翻译用值',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen_model_attr',
+    'COLUMN', N'translate_use_value'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'翻译后的列名',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen_model_attr',
+    'COLUMN', N'translate_col_name'
+    GO
+
+    EXEC sp_addextendedproperty
     'MS_Description', N'CodeGen模型详细设计',
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen_model_attr'
     GO
+
+
 
 
 -- ----------------------------

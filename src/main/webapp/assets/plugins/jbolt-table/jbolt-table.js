@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.8.2";
+var jbolt_table_js_version="2.8.7";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -7562,31 +7562,31 @@ function getScrollBarHeight(ele){
 			if(colConfig.type=="auto" && colConfig.initHandler){
 				var dataIndex=td.parent().data("index");
 				var trJsonData = table.tableListDatas[dataIndex];
-				colConfig.initHandler(table,td,trJsonData);
+				colConfig.initHandler(table,td,trJsonData,deepClone(colConfig));
 			}
 		},
 		//通过colConfig配置 将td转为tdEditor
 		getTdEditorHtml:function(table,currentTd,col_config,tdValue,tdText){
 			var tpl='<div {@if tooltip} tooltip data-title="${tooltip}" {@/if} class="jbt_edit_ele ${parentCssClass}">'+
 				'{@if type==="input"}'+
-				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if jbe_id}id="${jbe_id}"{@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} autocomplete="off" type="text"  data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder }" name="${jbe_col_key}" value="${tdText}"/>'+
+				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if jbe_id}id="${jbe_id}"{@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} autocomplete="off" type="text"  data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder }" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="textarea" }'+
-				'<textarea {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" style="height:${height}px;${cssStyle}" autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder}" name="${jbe_col_key}">${tdText}</textarea>'+
+				'<textarea {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" style="height:${height}px;${cssStyle}" autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:40}" data-notnull="false" maxLength="${maxLength?maxLength:40}" placeholder ="${placeholder}" name="${jbe_col_key}">${tdText}</textarea>'+
 				'{@else if type==="input_color" }'+
-				'<input class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="color" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
+				'<input class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="color" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="input_number" }'+
-				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
+				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="input_ranger" }'+
-				'<span class="rangerText">${tdText}</span><input oninput="$(this).prev().text(this.value)" {@if readOnly}readonly="readonly"{@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="range" {@if min} min="${min}" {@/if} {@if min} min="${min}" {@/if}  {@if max} max="${max}" {@/if}  data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
+				'<span class="rangerText">${tdText}</span><input oninput="$(this).prev().text(this.value)" {@if readOnly}readonly="readonly"{@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="range" {@if min} min="${min}" {@/if} {@if min} min="${min}" {@/if}  {@if max} max="${max}" {@/if}  data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="datetime" || type==="date"  || type==="time" || type==="year" || type==="month"}'+
-				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder }" data-date data-type="${type}" data-trigger="focus" name="${jbe_col_key}" data-fmt="${pattern}" value="${tdText}"/>'+
+				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }" data-date data-type="${type}" data-trigger="focus" name="${jbe_col_key}" data-fmt="${pattern}" value="${tdText}"/>'+
 				'{@else if type==="week" }'+
-				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="week" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder }" name="${jbe_col_key}" value="${tdText}"/>'+
+				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="week" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="autocomplete" }'+
-				'<input {@if limit}data-limit="${limit}"{@/if} {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-trigger="click" data-delimiter="${delimiter}" {@if textAsValue}data-textasvalue="${textAsValue}"{@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  data-autocomplete data-hidden-input="${jbe_acpl_hiddenId}" autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder }"  value="${tdText}" data-url="${url}"  {@if textAttr}data-text-attr="${textAttr}"{@/if}  {@if width}data-width="${width}"{@/if} {@if height}data-height="${height}"{@/if}  {@if columnAttr}data-column-attr="${columnAttr}"{@/if} {@if valueAttr}data-value-attr="${valueAttr}"{@/if}/>'+
+				'<input data-mustmatch="${mustMatch}" {@if matchCase}data-match-case="${matchCase}"{@/if} {@if limit}data-limit="${limit}"{@/if} {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-trigger="click" data-delimiter="${delimiter}" {@if textAsValue}data-textasvalue="${textAsValue}"{@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  data-autocomplete data-hidden-input="${jbe_acpl_hiddenId}" autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:40}" data-notnull="false" maxLength="${maxLength?maxLength:40}" placeholder ="${placeholder }"  value="${tdText}" data-url="${url}"  {@if textAttr}data-text-attr="${textAttr}"{@/if}  {@if header}data-header="${header}"{@/if} {@if textAlign}data-text-align="${textAlign}"{@/if}   {@if width}data-width="${width}"{@/if} {@if height}data-height="${height}"{@/if}  {@if columnAttr}data-column-attr="${columnAttr}"{@/if} {@if valueAttr}data-value-attr="${valueAttr}"{@/if}/>'+
 				'<input class="jbt_editor_hidden" type="hidden" id="${jbe_acpl_hiddenId}" name="${jbe_col_key}" value="${tdValue}" />'+
 				'{@else if type==="jboltinput" }'+
-				'<input {@if onlyAttrFilter}data-onlyattrfilter="${onlyAttrFilter}"{@/if} {@if onlyleaf}data-onlyleaf="${onlyleaf?true:false}"{@/if} {@if onlytype}data-onlytype="${onlytype?true:false}"{@/if} {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if}  {@if textAsValue}data-textasvalue="${textAsValue}"{@/if}  {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}   data-jboltinput data-zero-clear="true" data-load-type="${loadType}" {@if openType} data-open-type="${openType}" {@/if} data-hidden-input="${jbe_jbi_hiddenId}" autocomplete="off" type="text" {@if contentId}data-content-id="${contentId}"{@/if} data-tips="${ruleTips}" data-rule="{@if rule}${rule};len<=${maxLength}{@/if}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder }"  value="${tdText}" {@if new_url}data-url="${new_url}"{@/if}   {@if width}data-width="${width}"{@/if} {@if height}data-height="${height}"{@/if} {@if filterHandler}data-filter-handler="${filterHandler}"{@/if} />'+
+				'<input {@if onlyAttrFilter}data-onlyattrfilter="${onlyAttrFilter}"{@/if} {@if onlyleaf}data-onlyleaf="${onlyleaf?true:false}"{@/if} {@if onlytype}data-onlytype="${onlytype?true:false}"{@/if} {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if}  {@if textAsValue}data-textasvalue="${textAsValue}"{@/if}  {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}   data-jboltinput data-zero-clear="true" data-load-type="${loadType}" {@if openType} data-open-type="${openType}" {@/if} data-hidden-input="${jbe_jbi_hiddenId}" autocomplete="off" type="text" {@if contentId}data-content-id="${contentId}"{@/if} data-tips="${ruleTips}" data-rule="{@if rule}${rule};len<=${maxLength?maxLength:20}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }"  value="${tdText}" {@if new_url}data-url="${new_url}"{@/if}   {@if width}data-width="${width}"{@/if} {@if height}data-height="${height}"{@/if} {@if filterHandler}data-filter-handler="${filterHandler}"{@/if} />'+
 				'<input class="jbt_editor_hidden" type="hidden" id="${jbe_jbi_hiddenId}" name="${jbe_col_key}" value="${tdValue}" />'+
 				'{@else if type==="select" }'+
 				'<select data-select-type="${theme}" {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} data-tips="${ruleTips}" data-rule="select{@if rule};${rule}{@/if}" data-notnull="false" name="${jbe_col_key}" data-autoload {@if refresh} data-refresh="${refresh}" {@/if} {@if onlyleaf} data-onlyleaf="${onlyleaf}" {@/if} {@if delimiter} data-delimiter="${delimiter}" {@/if} data-url="${url}" {@if textAttr} data-text-attr="${textAttr}" {@/if} {@if valueAttr} data-value-attr="${valueAttr}" {@/if}  data-text="=请选择="  data-value="" data-select="${tdValue}"></select>'+
@@ -7607,12 +7607,21 @@ function getScrollBarHeight(ele){
 					tdoptions = currentTd.data("col-options");
 				}
 				colConfig = deepClone(tdoptions);
+				if(!colConfig.editable){
+					return "";
+				}
 			}else{
 				colConfig = col_config;
 			}
 			colConfig.tdText=tdText;
 			colConfig.tdValue=tdValue||tdText;
 			this.processEditorColConfigInitByType(colConfig);
+
+			if(colConfig.type=="autocomplete"){
+				if(typeof(colConfig.mustMatch)=="undefined"){
+					colConfig.mustMatch=true;
+				}
+			}
 
 			if(colConfig.dialog){
 				colConfig.withDialog=true;
@@ -7812,8 +7821,7 @@ function getScrollBarHeight(ele){
 				return false;
 			}
 
-			if(editingTd.find(""))
-				var textHtmlFormatValue=editingTd.processValue;
+			var textHtmlFormatValue=editingTd.processValue;
 			if(typeof(textHtmlFormatValue)=="number"&&text&&!isNaN(text)){
 				if(text.length<19){
 					text = Number(text);
@@ -7956,7 +7964,16 @@ function getScrollBarHeight(ele){
 						if(exeResult){
 							text=editingInputBox.val();
 						}else{
-							text=editingInputBox.data("tdtext")||editingInputBox.val();
+							var mm = editingInputBox.data("mustmatch");
+							if(typeof(mm)=="undefined"){
+								mm=true;
+							}
+							if(mm){
+								text=editingInputBox.data("tdtext")||editingInputBox.val();
+							}else{
+								text=editingInputBox.val();
+							}
+
 						}
 					}else{
 						text=editingInputBox.val();
@@ -7974,8 +7991,17 @@ function getScrollBarHeight(ele){
 						if(editingInputBox.data("textasvalue")){
 							value=(text!=""&&text.length>0)?text:"";
 						}else{
-							text="";
-							value="";
+							var mm = editingInputBox.data("mustmatch");
+							if(typeof(mm)=="undefined"){
+								mm=true;
+							}
+							if(mm){
+								text="";
+								value="";
+							}else{
+								value=(text!=""&&text.length>0)?text:"";
+							}
+
 						}
 					}
 				}else if(editingInputBox[0].tagName=="BUTTON"){
@@ -9732,10 +9758,10 @@ function getScrollBarHeight(ele){
 								var submitAttr=column;
 								colConfig=cols[column];
 								if(colConfig){
+									if(colConfig.submitAttr){
+										submitAttr=colConfig.submitAttr;
+									}
 									if(colConfig.editable){
-										if(colConfig.submitAttr){
-											submitAttr=colConfig.submitAttr;
-										}
 										if(typeof(colConfig.required)=="undefined"||colConfig.required=='undefined'){
 											colConfig.required=false;
 										}

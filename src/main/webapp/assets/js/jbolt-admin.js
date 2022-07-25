@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.7.8";
+var jbolt_admin_js_version="5.8.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -313,8 +313,79 @@ var jboltPlugins={
 		"rangeslider":{"js":['assets/plugins/rangerslider/ion.rangeSlider.min.js'],css:['assets/plugins/rangerslider/ion.rangeSlider.min.css']},
 		"hiprint":{"js":['assets/plugins/hiprint/plugins/jspdf/canvas2image.js','assets/plugins/hiprint/plugins/jspdf/canvg.min.js','assets/plugins/hiprint/plugins/jspdf/html2canvas.min.js','assets/plugins/hiprint/plugins/jspdf/jspdf.min.js','assets/plugins/hiprint/polyfill.min.js','assets/plugins/hiprint/hiprint.bundle.js','assets/plugins/hiprint/plugins/JsBarcode.all.min.js','assets/plugins/hiprint/plugins/qrcode.js','assets/plugins/hiprint/plugins/jquery.hiwprint.js'],css:['assets/plugins/hiprint/css/hiprint.css','assets/plugins/hiprint/css/print-lock.css',{url:"assets/plugins/hiprint/css/print-lock.css",media:"print"}]},
 		"qiniu":{"js":['assets/plugins/qiniu/3.4.0/qiniu.min.js']},
-		"clipboardjs":{"js":["assets/plugins/clipboard/clipboard.min.js"]}
+		"clipboardjs":{"js":["assets/plugins/clipboard/clipboard.min.js"]},
+		"jsoneditor":{"js":["assets/plugins/jsoneditor/jsoneditor.min.js"],"css":["assets/plugins/jsoneditor/jsoneditor.min.css"]}
+
 		
+}
+
+var JsonEditorUtil = {
+	init:function(parentEle){
+		var parent=getRealParentJqueryObject(parentEle);
+		if(!isOk(parent)){return false;}
+		var editors=parent.find("div[data-jsoneditor]");
+		if(!isOk(editors)){return false;}
+		this.initJsonEditors(editors);
+	},initJsonEditors:function(editors){
+		if(!isOk(editors)){return false;}
+		var that=this;
+		loadJBoltPlugin(['jsoneditor'], function(){
+			var len=editors.length;
+			for(var i=0;i<len;i++){
+				that.initJsonEditor(editors.eq(i),false);
+			}
+		});
+	},initJsonEditor:function(editor,needLoadPlugin){
+		var that=this;
+		var inputId=editor.attr("id");
+		if(!inputId){
+			inputId=randomId();
+			editor.attr("id",inputId);
+		}
+		var hiddenInputId = editor.data("hidden-input");
+		var mode = editor.data("mode")||"code";
+		var modesStr = editor.data("modes")||"code,tree";
+		var modes = modesStr.split(",");
+		var options ={mode: mode,modes:modes};
+		if(hiddenInputId){
+			var hiddenInput = jboltBody.find("#"+hiddenInputId);
+			if(isOk(hiddenInput)){
+				options.onChangeText=function(jsonText){
+					hiddenInput.val(jsonText);
+				}
+			}
+		}
+		var setContent = function(jee,edi){
+			var jsonStr=null;
+			var jsonFuncStr = edi.data("json-func");
+			if(jsonFuncStr){
+				var jsonFunc = eval(jsonFuncStr);
+				if(jsonFunc && typeof(jsonFunc)=="function"){
+					jsonStr = jsonFunc();
+				}
+			}else{
+				jsonStr= edi.data("json");
+			}
+			if(jsonStr){
+				if(typeof(jsonStr)=="string"){
+					jee.setText(jsonStr);
+				}else{
+					jee.set(jsonStr);
+				}
+			}
+		}
+		if(needLoadPlugin){
+			loadJBoltPlugin(['jsoneditor'], function(){
+				var je = new JSONEditor(editor[0], options);
+				setContent(je,editor);
+				editor.data("editor-inst",je);
+			});
+		}else{
+			var je = new JSONEditor(editor[0], options);
+			setContent(je,editor);
+			editor.data("editor-inst",je);
+		}
+	}
 }
 /**
  * 网页剪贴板封装
@@ -663,12 +734,33 @@ var JBoltInputWithCalculatorUtil={
 				input.removeClass("d-inline-block");
 			}
 			var theme = input.data("theme")||input.data("with-calculator")||"material";
+			var onResultHandler = input.data("result-handler");
+			var onInputHandler = input.data("input-handler");
+			var options = {theme:theme};
+			if(onResultHandler){
+				var extHandler = eval(onResultHandler);
+				if(extHandler && typeof(extHandler) == "function"){
+					options.onResult=function(value){
+						extHandler(input,value);
+					}
+				}
+			}
+
+			if(onInputHandler){
+				var extInputHandler = eval(onInputHandler);
+				if(extInputHandler && typeof(extInputHandler) == "function"){
+					options.onInput=function(input,code){
+						extInputHandler(input,code);
+					}
+				}
+			}
+
 			if(needLoadPlugin){
 				loadJBoltPlugin(['jcalculator'], function(){
-					input.calculator({theme:theme});
+					input.calculator(options);
 				});
 			}else{
-				input.calculator({theme:theme});
+				input.calculator(options);
 			}
 		}
 }
@@ -2903,7 +2995,17 @@ var JSTreeUtil={
 				return false;
 			});
 			return form;
+		},openAll:function(jsTreeEle){
+			var jstreeObj = getRealJqueryObject(jsTreeEle);
+			if(isOk(jstreeObj)){
+				jstreeObj.jstree(true).open_all();
+			}
+		},closeAll:function(jsTreeEle){
+		var jstreeObj = getRealJqueryObject(jsTreeEle);
+		if(isOk(jstreeObj)){
+			jstreeObj.jstree(true).close_all();
 		}
+	}
 }
 
 /**
@@ -3914,6 +4016,7 @@ var AutocompleteUtil={
 		column_attr=input.data("column-attr"),
 		formatHandler=input.data("format-handler"),
 		handler=input.data("handler"),
+			matchCase=input.data("match-case")||false,
 		limit=input.data("limit");
 		if(!limit){
 			limit=100;
@@ -4002,6 +4105,7 @@ var AutocompleteUtil={
 		    autoFill: false,
 		    matchSubset:false,
 		    mustMatch:false,
+			matchCase:matchCase,
 		    dataType: 'json',
 		    max:limit,
 		    parse: function(res) {
@@ -4039,7 +4143,6 @@ var AutocompleteUtil={
 						exe_handler(input,hiddenInput,value,data);
 					}
 				}
-			  
 			  that.processJBoltTableHandler(input,data,value);
 			  
 		  }).bind("unmatch", function(){
@@ -8145,6 +8248,7 @@ function afterAjaxPortal(portal){
 	JBoltTreeTableUtil.init(portal);
 	JBoltTabViewUtil.initUI(portal);
 	TextareaUtil.initUI(portal);
+	JsonEditorUtil.init(portal);
 	LayerMsgBox.closeLoadNow();
 	//处理自动刷新
 	processAutoRefreshTabContent(portal);
@@ -15125,6 +15229,7 @@ var JBoltPjaxUtil={
 			JBoltTreeTableUtil.init(mainPjaxContainer);
 			JBoltTabViewUtil.initUI(mainPjaxContainer);
 			TextareaUtil.initUI(mainPjaxContainer);
+			JsonEditorUtil.init(mainPjaxContainer);
 			findRequiredAndStarIt(mainPjaxContainer);
 			
 			var topnavs=$(".jbolt_admin_main_top>ul.jbolt_admin_topnavs>li.active");
@@ -17055,8 +17160,7 @@ var lockHtmlTpl='<div oncontextmenu="doNothing()" class="j_locksystem noselect" 
 '<input onkeyup="unlockSystem(event)" maxlength="40" type="password" id="unlockpwd" placeholder="输入密码 回车解锁" name="password"  autocomplete="off" /><div class="j_reloginbtn"><a onclick="showReloginDialog(false,processUnLockAndAfterLogin)" href="javascrip:void(0)">切换用户</a></div></div></div></div>';
 var lockSystemTimer=null;
 function checkLockSystem(){
-	console.log("checkLockSystem")
-	if(!lockSystemTimer){console.log("checkLockSystem lockSystemTimer");return false;}
+	if(!lockSystemTimer){return false;}
 	var j_locksystem=$("#j_locksystem");
 	if(isOk(j_locksystem)){
 		//如果已经有了 判断hidden
@@ -19441,12 +19545,14 @@ $(function(){
 		JBoltTreeTableUtil.init();
 		JBoltTabViewUtil.initUI();
 		TextareaUtil.initUI();
+		JsonEditorUtil.init();
 		findRequiredAndStarIt();
 	}
 		//window resize处理
 		onwindowReisze();
 		mainScrollEvent();
 		JBoltClipboardUtil.init();
+
 	});
 
 function mainScrollEvent(){
@@ -20075,4 +20181,21 @@ function hideJBoltPageLoading(){
 	setTimeout(function(){
 		$("#jbolt_page_loader_main").fadeOut(200);
 	},500);
+}
+
+function isJSON(str) {
+	if (typeof str == 'string') {
+		try {
+			var obj=JSON.parse(str);
+			if(typeof obj == 'object'){
+				return true;
+			}else{
+				return false;
+			}
+		} catch(e) {
+			console.error('error：'+str+'!!!'+e);
+			return false;
+		}
+	}
+	console.error('It is not a string!')
 }

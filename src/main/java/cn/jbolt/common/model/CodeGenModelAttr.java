@@ -37,6 +37,18 @@ public class CodeGenModelAttr extends BaseCodeGenModelAttr<CodeGenModelAttr> {
     public String getFormUITypeName() {
         return JBoltDictionaryCache.me.getNameBySn("code_gen_form_ui_type", getFormUiType());
     }
+    public String getTranslateTypeName() {
+        return JBoltDictionaryCache.me.getNameBySn("code_gen_translate_type", getTranslateType());
+    }
+    public String getTranslateUseValueName() {
+        String type = getTranslateType();
+        if(StrKit.notBlank(type)){
+            if("sys_dic_id".equals(type) || "sys_dic_sn".equals(type)){
+                return JBoltDictionaryTypeCache.me.getNameByKey(getTranslateUseValue());
+            }
+        }
+        return getTranslateUseValue();
+    }
     public String getSearchUITypeName() {
         return JBoltDictionaryCache.me.getNameBySn("code_gen_condition_ui_type", getSearchUiType());
     }

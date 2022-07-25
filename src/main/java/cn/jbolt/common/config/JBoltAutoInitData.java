@@ -189,6 +189,7 @@ public class JBoltAutoInitData {
 		user.setPassword(userService.calPasswordWithSalt(password, pwdSalt));
 		user.autoProcessIdValue();
 		user.setCreateUserId(0L);
+		user.setUpdateUserId(0L);
 		boolean success=user.save();
 		LOG.debug("初始化[系统User-超管员]："+(success?"成功":"失败"));
 	}
