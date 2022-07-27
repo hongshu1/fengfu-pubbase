@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.8.6";
+var jbolt_admin_js_version="5.9.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -16056,7 +16056,10 @@ function userLogout(){
  */
 function hideParentLayerDialogBtn(index){
 	if(index==0||index==1){
-		parent.$(".layui-layer.layui-layer-iframe:last  .layui-layer-btn"+index).hide();
+		var btns = parent.$(".layui-layer.layui-layer-iframe:last  .layui-layer-btn"+index);
+		if(isOk(btns)){
+			btns.hide();
+		}
 	}else{
 		hideAllParentLayerDialogBtn();
 	}
@@ -16066,7 +16069,10 @@ function hideParentLayerDialogBtn(index){
  * @returns
  */
 function hideAllParentLayerDialogBtn(){
-	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").hide();
+	var btns = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn");
+	if(isOk(btns)){
+		btns.hide();
+	}
 }
 /**
  * 绑定一个按钮给dialog的OK btn
@@ -16080,9 +16086,15 @@ function bindKeycodeForDialogOkBtn(keycode){
 	jboltBody.on("keyup",function(e){
 		if(e.keyCode==keycode){
 			if(window.self!=window.top){
-				parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0").click();
+				var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0");
+				if(isOk(btn)){
+					btn.click();
+				}
 			}else{
-				$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0").click()
+				var btn = $(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0");
+				if(isOk(btn)){
+					btn.click()
+				}
 			}
 		}
 	});
@@ -16107,9 +16119,15 @@ function bindKeycodeForDialogCloseBtn(keycode){
 	jboltWindow.on("keyup",function(e){
 		if(e.keyCode==keycode){
 			if(window.self!=window.top){
-				parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1").click();
+				var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1");
+				if(isOk(btn)){
+					btn.click();
+				}
 			}else{
-				$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1").click();
+				var btn = $(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1");
+				if(isOk(btn)){
+					btn.click();
+				}
 			}
 			
 		}
@@ -16138,9 +16156,15 @@ function bindKeycodeForDialogBtnByBtnId(btns){
 			btn=btns[i];
 			if(btn.key==e.keyCode){
 				if(window.self!=window.top){
-					parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btn.id).click();
+					var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btn.id);
+					if(isOk(btn)){
+						btn.click();
+					}
 				}else{
-					$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btn.id).click()
+					var btn = $(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btn.id);
+					if(isOk(btn)){
+						btn.click();
+					}
 				}
 			}
 		}
@@ -16152,28 +16176,40 @@ function bindKeycodeForDialogBtnByBtnId(btns){
  * @returns
  */
 function clickLayerBtnById(btnId){
-	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btnId).click();
+	var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btnId);
+	if(isOk(btn)){
+		btn.click();
+	}
 }
 /**
  * 点击Layer ok按钮
  * @returns
  */
 function clickLayerOkBtn(){
-	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0").click();
+	var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0");
+	if(isOk(btn)){
+		btn.click();
+	}
 }
 /**
  * 点击Layer close按钮
  * @returns
  */
 function clickLayerCloseBtn(){
-	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1").click();
+	var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1");
+	if(isOk(btn)){
+		btn.click();
+	}
 }
 /**
  * 修改按钮标题
  * @returns
  */
 function changeParentLayerDialogBtnTitle(index,btnTitle){
-	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn"+index).text(btnTitle);
+	var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn"+index);
+	if(isOk(btn)){
+		btn.text(btnTitle);
+	}
 }
 /**
  * 修改Dialog上OK按钮标题
