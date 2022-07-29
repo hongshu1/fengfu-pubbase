@@ -1462,9 +1462,11 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
 //				return null;
 //			}
 //		};
+        //获取翻译设置
+        List<CodeGenModelAttr> translates = codeGenModelAttrService.getCodeGenNeedTranslateAttrs(codeGen.getId());
 
         //初始化项目配置
-        JBoltProjectGenConfig.init(projectRootPath, modelPackage, genModel, idGenMode, genHtmlDataDictionary, false, removedTableNamePrefixes, columnTobuildAttrNameFun, tableNames, tableNamesPrefixes, generateView, cover);
+        JBoltProjectGenConfig.init(projectRootPath, modelPackage, genModel, idGenMode, genHtmlDataDictionary, false, removedTableNamePrefixes, columnTobuildAttrNameFun, tableNames, tableNamesPrefixes, generateView, translates,cover);
         //设置自动缓存机制
         JBoltProjectGenConfig.setModelAutoCache(autoCacheEnable, idCacheEnable, keyCacheEnable, keyCacheColumn, keyCacheBindColumn);
         //执行Model、BaseModel、数据字典Html的生成

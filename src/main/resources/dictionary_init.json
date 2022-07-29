@@ -206,8 +206,9 @@
 	"dics":[
 		{"name":"字典_ID","sn":"sys_dic_id"},
 		{"name":"字典_SN","sn":"sys_dic_sn"},
-		{"name":"系统用户_ID","sn":"sys_user_id"},
-		{"name":"系统用户_用户名","sn":"sys_user_username"},
+		{"name":"系统用户_ID转UserName","sn":"sys_user_id_to_username"},
+		{"name":"系统用户_ID转Name","sn":"sys_user_id_to_name"},
+		{"name":"系统用户_用户名转Name","sn":"sys_user_username_to_name"},
 		{"name":"缓存","sn":"cache"},
 		{"name":"枚举类","sn":"enum"},
 		{"name":"自定义静态 Method","sn":"static_method"},

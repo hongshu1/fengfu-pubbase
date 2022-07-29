@@ -117,5 +117,51 @@ public class CodeGenModelAttr extends BaseCodeGenModelAttr<CodeGenModelAttr> {
         return "JBoltDateRange.TYPE_DATE";
     }
 
+    /**
+     * 获取翻译字段翻译后的属性名
+     * @return
+     */
+    public String getTranslateAttrName(){
+        String translateColName = getTranslateColName();
+        if(StrKit.isBlank(translateColName)){return null;}
+        if(translateColName.contains("_")){
+            return StrKit.toCamelCase(translateColName,true);
+        }
+        return translateColName;
+    }
+
+    public String getTranslateCacheMethod(){
+        String type = getTranslateType();
+        if(StrKit.isBlank(type) || !type.equals("cache")){
+            return null;
+        }
+        String uv = getTranslateUseValue();
+        if(StrKit.isBlank(uv)){
+            return null;
+        }
+        if(uv.contains(":")){
+            String[] arr = uv.split(":");
+            if(arr[0].endsWith(".me")){
+                uv = arr[0]+"."+arr[1];
+            }else{
+                uv = arr[0]+".me."+arr[1];
+            }
+        }
+        return uv;
+    }
+
+    public String getTranslateMethod(){
+        String type = getTranslateType();
+        if(StrKit.isBlank(type) || (!type.equals("static_method") && !type.equals("service_method"))){
+            return null;
+        }
+        String uv = getTranslateUseValue();
+        if(StrKit.isBlank(uv)){
+            return null;
+        }
+        uv = uv.replace(":",".");
+        return uv;
+    }
+
 }
 
