@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.8.7";
+var jbolt_table_js_version="2.8.8";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -11716,6 +11716,8 @@ function getScrollBarHeight(ele){
 			that.processFixedColumnTableTrHoverEvent(table);
 			//处理tableheader上的拖拽列宽和点击列头排序事件
 			that.processTableColWidthResizeAndColSortEvent(table);
+			//处理tablebox上的拖拽调整宽度高度事件
+			that.processTableBoxResizeEvent(table);
 			//处理columnPrepend点击事件
 			that.processTableColumnPrependEvent(table);
 			//处理fixedColumn上的滚轮事件
@@ -13166,6 +13168,73 @@ function getScrollBarHeight(ele){
 				}
 
 			}
+		},
+		//table四周box调整
+		processTableBoxResizeEvent:function(table){
+			//指定位置按下之后 处理leftbox的启动状态
+			table.leftbox.on("mousedown",".jb_header",function(e){
+				if(!table.leftbox.canResize){
+					var left = table.leftbox.offset().left;
+					var width = table.leftbox.width();
+					var right = left+width;
+					var newLeft = right-10;
+					var currentMouseLeft = e.clientX;
+					if(currentMouseLeft>=newLeft && currentMouseLeft<=right){
+						jboltBody.addClass("noselect");
+						jboltBody.css("cursor","col-resize");
+						table.leftbox.canResize = true;
+						table.leftbox.css("border-right","1px solid black");
+						table.leftbox.css("width",(currentMouseLeft-left+1)+"px");
+					}
+				}else{
+					jboltBody.css("cursor","auto");
+				}
+			});
+			table.leftbox.on("mousemove",".jb_header",function(e){
+					var left = table.leftbox.offset().left;
+					var width = table.leftbox.width();
+					var right = left+width;
+					var newLeft = right-4;
+					var currentMouseLeft = e.clientX;
+					if(currentMouseLeft>=newLeft && currentMouseLeft<=right){
+						jboltBody.css("cursor","col-resize");
+						if(table.leftbox.canResize){
+							jboltBody.addClass("noselect");
+							table.leftbox.css("width",(currentMouseLeft-left+1)+"px");
+						}
+					}
+			});
+
+			table.leftbox.on("mouseleave",".jb_header",function(e){
+				if(!table.leftbox.canResize){
+					jboltBody.removeClass("noselect");
+					jboltBody.css("cursor","auto");
+				}
+			});
+
+			jboltBody.on("mousemove",function(e){
+				if(table.leftbox.canResize){
+					var left = table.leftbox.offset().left;
+					var width = table.leftbox.width();
+					var right = left+width;
+					var newLeft = right-4;
+					var currentMouseLeft = e.clientX;
+					if(currentMouseLeft>=left){
+						jboltBody.css("cursor","col-resize");
+						jboltBody.addClass("noselect");
+						table.leftbox.css("width",(currentMouseLeft-left+1)+"px");
+					}
+				}
+			});
+
+			jboltBody.on("mouseup",function(e){
+				if(table.leftbox.canResize){
+					jboltBody.removeClass("noselect");
+					jboltBody.css("cursor","auto");
+					table.leftbox.canResize = false;
+					table.leftbox.css("border-right","1px solid #ededed");
+				}
+			});
 		},
 		processTableColWidthResizeAndColSortEvent:function(table){
 			//处理tableheader上的拖拽列宽和点击列头排序事件

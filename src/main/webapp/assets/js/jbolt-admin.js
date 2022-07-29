@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.8.5";
+var jbolt_admin_js_version="5.9.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -819,7 +819,7 @@ var JBoltInputWithClearBtnUtil={
 				if(tooltipId){
 					input.tooltip("dispose");
 				}
-				input.val("").change();
+				input.val("").change().trigger("keyup");
 				if(clearHandler){
 					if(typeof(clearHandler)=="string"&&clearHandler=="oninput"){
 						input.trigger("input");
@@ -2305,11 +2305,43 @@ var JSTreeUtil={
 				DialogUtil.openBy(btn);
 			}else if(type=="delete"){
 				this.processDeletePortal(tree,url,inst,obj);
+			}else if(type=="toggleEnable"){
+				this.processToggleEnable(tree,url,inst,obj);
 			}
+		},
+		processToggleEnable:function(tree,url,inst,obj){
+			var that=this;
+			var confirm = tree.data("toggle-enable-confirm")||"确定切换数据[启用/禁用]状态?";
+			LayerMsgBox.confirm(confirm,function(){
+				LayerMsgBox.loading("执行中...");
+				Ajax.get(url,function(res){
+					LayerMsgBox.success("切换成功",1000);
+					if(typeof(res.data)=="undefined" || typeof(res.data)!="object"){
+						JSTreeUtil.refresh(tree,obj.id);
+					}else{
+						var toggleEnableAttr = tree.data("toggle-enable-attr")||"enable";
+						var currentEnableValue = res.data[toggleEnableAttr];
+						if(typeof(currentEnableValue)=="undefined"){
+							JSTreeUtil.refresh(tree,obj.id);
+						}else{
+							if(currentEnableValue.toString()=="true"){
+								var text=obj.text;
+								text = text.replace('<span class="text-danger">禁用</span>','');
+								text = text.replace("[","").replace("]","");
+								inst.rename_node(obj,text);
+							}else{
+								inst.rename_node(obj,obj.text+'[<span class="text-danger">禁用</span>]');
+							}
+						}
+
+					}
+
+				});
+			});
 		},
 		processDeletePortal:function(tree,url,inst,obj){
 			var that=this;
-			var confirm = tree.data("confirm")||"确定删除此项?";
+			var confirm = tree.data("delete-confirm")||tree.data("confirm")||"确定删除此项?";
 			LayerMsgBox.confirm(confirm,function(){
 				LayerMsgBox.loading("执行中...");
 				Ajax.get(url,function(res){
@@ -2328,8 +2360,10 @@ var JSTreeUtil={
 			var that=this;
 			var portalId=tree.data("portalid")||tree.data("portal");
 			var portal=$("#"+portalId);
-			if(type=="delete"){
-				that.processDeletePortal(tree,url,inst,obj);
+			if(type=="delete") {
+				that.processDeletePortal(tree, url, inst, obj);
+			}else if(type=="toggleEnable"){
+					that.processToggleEnable(tree,url,inst,obj);
 			}else{
 				portal.ajaxPortal(true,url,true);
 			}
@@ -2379,7 +2413,7 @@ var JSTreeUtil={
 			 var inst = $.jstree.reference(reference),
              obj = inst.get_node(reference);
 			 var id=obj.id;
-			 if((id==0&&type=="delete")||(id==0&&type=="edit")||(id==0&&target=="dialog"&&type=="edit")){
+			 if((id==0&&type=="delete")||(id==0&&type=="toggleEnable")||(id==0&&type=="edit")||(id==0&&target=="dialog"&&type=="edit")){
 				LayerMsgBox.alert("不能操作根节点",2);
 				return false;
 			}
@@ -2421,6 +2455,9 @@ var JSTreeUtil={
 				 break;
 			 case 'delete':
 				 url=tree.data("delete-url")+pid;
+				 break;
+			 case 'toggleEnable':
+				 url=tree.data("toggle-enable-url")+pid;
 				 break;
 			}
 			 //根据target类型 处理具体事件
@@ -2513,8 +2550,10 @@ var JSTreeUtil={
 					 return false;
 				 }
 				treeOptions['plugins'].push('search');
+				 $.jstree.defaults.search.show_only_matches=true;
 			 }else if(tree.data("search-by-jboltinput")){
 				 treeOptions['plugins'].push('search');
+				 $.jstree.defaults.search.show_only_matches=true;
 			 }
 			 
 			 var checkboxEnable=tree.data("checkbox");
@@ -2625,7 +2664,18 @@ var JSTreeUtil={
 							}
 				};*/
 			}
-				
+
+			if(tree.data("toggle-enable-menu")){
+				treeOptions['contextmenu']["items"]["toggleEnable"]={
+						"label":"切换[启用/禁用]",
+						"action":function(data){
+						var reference=data.reference;
+						that.processCurdHandler(tree,reference,"toggleEnable");
+						return true;
+					}
+				}
+			}
+			console.log(treeOptions)
 			
 			treeOptions['plugins'].push('types');
 			var defaultTypes={
@@ -16006,7 +16056,10 @@ function userLogout(){
  */
 function hideParentLayerDialogBtn(index){
 	if(index==0||index==1){
-		parent.$(".layui-layer.layui-layer-iframe:last  .layui-layer-btn"+index).hide();
+		var btns = parent.$(".layui-layer.layui-layer-iframe:last  .layui-layer-btn"+index);
+		if(isOk(btns)){
+			btns.hide();
+		}
 	}else{
 		hideAllParentLayerDialogBtn();
 	}
@@ -16016,7 +16069,10 @@ function hideParentLayerDialogBtn(index){
  * @returns
  */
 function hideAllParentLayerDialogBtn(){
-	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").hide();
+	var btns = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn");
+	if(isOk(btns)){
+		btns.hide();
+	}
 }
 /**
  * 绑定一个按钮给dialog的OK btn
@@ -16030,9 +16086,15 @@ function bindKeycodeForDialogOkBtn(keycode){
 	jboltBody.on("keyup",function(e){
 		if(e.keyCode==keycode){
 			if(window.self!=window.top){
-				parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0").click();
+				var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0");
+				if(isOk(btn)){
+					btn.click();
+				}
 			}else{
-				$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0").click()
+				var btn = $(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0");
+				if(isOk(btn)){
+					btn.click()
+				}
 			}
 		}
 	});
@@ -16057,9 +16119,15 @@ function bindKeycodeForDialogCloseBtn(keycode){
 	jboltWindow.on("keyup",function(e){
 		if(e.keyCode==keycode){
 			if(window.self!=window.top){
-				parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1").click();
+				var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1");
+				if(isOk(btn)){
+					btn.click();
+				}
 			}else{
-				$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1").click();
+				var btn = $(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1");
+				if(isOk(btn)){
+					btn.click();
+				}
 			}
 			
 		}
@@ -16088,9 +16156,15 @@ function bindKeycodeForDialogBtnByBtnId(btns){
 			btn=btns[i];
 			if(btn.key==e.keyCode){
 				if(window.self!=window.top){
-					parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btn.id).click();
+					var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btn.id);
+					if(isOk(btn)){
+						btn.click();
+					}
 				}else{
-					$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btn.id).click()
+					var btn = $(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btn.id);
+					if(isOk(btn)){
+						btn.click();
+					}
 				}
 			}
 		}
@@ -16102,28 +16176,40 @@ function bindKeycodeForDialogBtnByBtnId(btns){
  * @returns
  */
 function clickLayerBtnById(btnId){
-	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btnId).click();
+	var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").find("a#"+btnId);
+	if(isOk(btn)){
+		btn.click();
+	}
 }
 /**
  * 点击Layer ok按钮
  * @returns
  */
 function clickLayerOkBtn(){
-	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0").click();
+	var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn0");
+	if(isOk(btn)){
+		btn.click();
+	}
 }
 /**
  * 点击Layer close按钮
  * @returns
  */
 function clickLayerCloseBtn(){
-	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1").click();
+	var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn1");
+	if(isOk(btn)){
+		btn.click();
+	}
 }
 /**
  * 修改按钮标题
  * @returns
  */
 function changeParentLayerDialogBtnTitle(index,btnTitle){
-	parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn"+index).text(btnTitle);
+	var btn = parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn"+index);
+	if(isOk(btn)){
+		btn.text(btnTitle);
+	}
 }
 /**
  * 修改Dialog上OK按钮标题

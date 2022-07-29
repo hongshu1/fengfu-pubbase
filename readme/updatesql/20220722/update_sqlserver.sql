@@ -1,4 +1,4 @@
-alter table [dbo].[jb_code_gen_model_attr] add [is_need_translate] COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL;
+alter table [dbo].[jb_code_gen_model_attr] add [is_need_translate] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL;
 alter table [dbo].[jb_code_gen_model_attr] add [translate_type] nvarchar(20) COLLATE Chinese_PRC_CI_AS  NULL;
 alter table [dbo].[jb_code_gen_model_attr] add [translate_use_value] nvarchar(250) COLLATE Chinese_PRC_CI_AS  NULL;
 alter table [dbo].[jb_code_gen_model_attr] add [translate_col_name] nvarchar(250) COLLATE Chinese_PRC_CI_AS  NULL;
