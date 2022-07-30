@@ -151,7 +151,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 			}
 
 		}else{
-			options = CACHE.me.getCodeGenServices();
+			options = CACHE.me.getCodeGenCaches();
 		}
 		if(isOk(options) && isOk(keywords)){
 			options = options.stream().filter(op->op.getText().toLowerCase().contains(keywords.toLowerCase())).collect(Collectors.toList());

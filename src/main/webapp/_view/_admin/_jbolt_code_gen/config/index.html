@@ -231,7 +231,12 @@ function getModelAttrEditableTableOptions_#(pageId)(){
 							if(attrName.toLowerCase().endWith("id")){
 								attrName = attrName.substring(0,attrName.length-2);
 							}
-							var colName = attrName+"Name";
+							var colName = null;
+							if(jsonData&&jsonData.translateType=="sys_user_id_to_username"){
+								colName = attrName+"UserName";
+							}else{
+								colName = attrName+"Name";
+							}
 							changeTranslateColNameColOptions_#(pageId)(table,td.next().next().next(),result,colName);
 
 						}
@@ -385,7 +390,7 @@ function changeDataValueColOptions_#(pageId)(td,value){
 	td.data("col-options",options).data("editable",options.editable).attr("data-editable",options.editable);
 }
 function changeTranslateColNameColOptions_#(pageId)(table,td,result,colName){
-	if(td.data("value")){
+	if(isOk(td.data("value"))){
 		if(result){
 			jboltTableSetCellEditable(table,td.parent(),"translate_col_name",true,false);
 		}else{
@@ -425,13 +430,19 @@ function changeTranslateUseValueColOptions_#(pageId)(td,value){
 			options.required=true;
 			options.editable=true;
 			break;
-		case "sys_user_id":
+		case "sys_user_id_to_username":
 			options.type="input";
 			options.placeholder="请输入"
 			options.required=false;
 			options.editable=false;
 			break;
-		case "sys_user_username":
+		case "sys_user_id_to_name":
+			options.type="input";
+			options.placeholder="请输入"
+			options.required=false;
+			options.editable=false;
+			break;
+		case "sys_user_username_to_name":
 			options.type="input";
 			options.placeholder="请输入"
 			options.required=false;

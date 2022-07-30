@@ -1111,6 +1111,15 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	}
 
 	/**
+	 * 获取需要翻译的列
+	 * @param codeGenId
+	 * @return
+	 */
+	public List<CodeGenModelAttr> getCodeGenNeedTranslateAttrs(Long codeGenId) {
+		return find(selectSql().eq("code_gen_id",codeGenId).eq("is_need_translate",TRUE).isNotNull("translate_type").orderBySortRank());
+	}
+
+	/**
 	 * 检测是否存在is_deleted字段
 	 * @param codeGenId
 	 * @return

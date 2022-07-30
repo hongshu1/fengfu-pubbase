@@ -438,7 +438,7 @@ public class CACHE extends JBoltCacheParaValidator {
 	private static List<Option> getJboltCodeGenCaches() {
 		Set<Class<?>> caches = ClassUtil.scanPackageBySuper("cn.jbolt.core",JBoltCache.class);
 		List<Option> options = new ArrayList<>();
-		if(caches!=null) {
+		if(caches!=null && caches.size()>0) {
 			caches.forEach(en->{
 				options.add(new OptionBean(en.getName()));
 			});
