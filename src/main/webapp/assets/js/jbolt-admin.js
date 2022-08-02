@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.0";
+var jbolt_admin_js_version="5.9.1";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -7498,6 +7498,7 @@ var HtmlEditorUtil={
 		        	  if(that.ing){
 		        		  alert("有文件正在上传，请稍后~~");
 		        	  }else{
+		        		  that.parseWord(e,htmlEditor);
 		        		  that.parseIamge(e,htmlEditor);
 		        	  }
 		        	  
@@ -7546,6 +7547,18 @@ var HtmlEditorUtil={
 			}else{
 				LayerMsgBox.alert("data-editor类型错误",2);
 			}
+		},parseWord:function(e,editor){
+			if(editor.data("word-clear-html")){
+				var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text/plain');
+				if(bufferText){
+					e.preventDefault ? e.preventDefault() : (e.returnValue = false);
+					// Firefox fix
+					setTimeout(function () {
+						document.execCommand("insertText", false, bufferText);
+					}, 10);
+				}
+			}
+
 		},parseIamge:function(e,editor){
 			 var that=this;
 			 that.ing=true; 
