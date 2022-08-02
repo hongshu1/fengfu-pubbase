@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.1";
+var jbolt_admin_js_version="5.9.2";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -3679,7 +3679,7 @@ function processEleUrlByLinkOtherParamEle(ele,url,bindChange,bindChangeEvent){
 				eleSelector=eleSelectorAll;
 			}
 			if(eleSelector){
-				eleObj=$(eleSelector);
+				eleObj=jboltBody.find(eleSelector);
 				if(isOk(eleObj)){
 					if(!eleObj.is("input") && !eleObj.is("textarea")&& !eleObj.is("select")){
 						if(eleObj[0].hasAttribute("data-radio")){
