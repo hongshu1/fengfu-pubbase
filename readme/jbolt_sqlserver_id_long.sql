@@ -4440,6 +4440,9 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [is_table_record_camel_case] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_import_excel] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_export_excel] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
+    [is_export_excel_by_checked_ids] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
+    [is_export_excel_by_form] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
+    [is_export_excel_all] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_copy_to_excel] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_copy_from_excel] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_toolbar] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
@@ -4939,6 +4942,27 @@ ALTER TABLE [dbo].[jb_code_gen] SET (LOCK_ESCALATION = TABLE)
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen',
     'COLUMN', N'is_export_excel'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否启用 导出选中行功能',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_export_excel_by_checked_ids'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否启用导出表单查询结果功能',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_export_excel_by_form'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否启用导出所有数据',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_export_excel_all'
     GO
 
     EXEC sp_addextendedproperty
