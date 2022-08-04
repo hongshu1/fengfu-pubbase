@@ -1129,6 +1129,9 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
     private String getGetIdTypeByGenMode(String idGenMode) {
         String idType = "Long";
         switch (idGenMode) {
+            case JBoltIDGenMode.AUTO:
+                idType = "Int";
+                break;
             case JBoltIDGenMode.AUTO_LONG:
                 idType = "Long";
                 break;
