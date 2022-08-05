@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.2";
+var jbolt_admin_js_version="5.9.3";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -20038,9 +20038,10 @@ function jboltTableHiprintWebPrint(btnEle,tplSn,dataUrl,isSingleLine){
  * @param tplSn
  * @param type 类型 url or json
  * @param printData 可以是一个URL接口地址 也可以是json
+ * @param directPrint 直接打印 不显示预览
  * @returns
  */
-function jboltHiprintWebPrint(tplSn,type,printData){
+function jboltHiprintWebPrint(tplSn,type,printData,directPrint){
 	if(!tplSn){
 		LayerMsgBox.alert("请指定正确的模板SN编号",2);
 		return;
@@ -20065,7 +20066,11 @@ function jboltHiprintWebPrint(tplSn,type,printData){
 				Ajax.get(printData,function(res2){
 					if(res2.data){
 						printTemplate = new hiprint.PrintTemplate({ template: JSON.parse(res.data)});
-						printTemplate.print(res2.data);
+						if(directPrint){
+							printTemplate.print2(res2.data);
+						}else{
+							printTemplate.print(res2.data);
+						}
 						LayerMsgBox.closeLoadingNow();
 					}else{
 						LayerMsgBox.alert("未读取到有效打印数据",2);
@@ -20073,7 +20078,11 @@ function jboltHiprintWebPrint(tplSn,type,printData){
 				});
 			}else{
 				printTemplate = new hiprint.PrintTemplate({ template: JSON.parse(res.data)});
-				printTemplate.print(printData);
+				if(directPrint){
+					printTemplate.print2(printData);
+				}else{
+					printTemplate.print(printData);
+				}
 				LayerMsgBox.closeLoadingNow();
 			}
 		}
@@ -20147,9 +20156,10 @@ function jboltHiprintWebRender(ele,tplSn,type,printData){
 /**
  * 使用渲染区域html打印
  * @param ele
+ * @param directPrint 是否直接打印 不显示预览
  * @returns
  */
-function jboltHiprintWebPrintByHtml(ele){
+function jboltHiprintWebPrintByHtml(ele,directPrint){
 	var renderBox=getRealJqueryObject(ele);
 	if(!isOk(renderBox)){
 		LayerMsgBox.alert("请指定正确的渲染容器ele",2);
@@ -20160,7 +20170,11 @@ function jboltHiprintWebPrintByHtml(ele){
 	if(printTemplate){
 		var printData = renderBox.data("printdata");
 		if(printData){
-			printTemplate.print(printData);
+			if(directPrint){
+				printTemplate.print2(printData);
+			}else{
+				printTemplate.print(printData);
+			}
 			LayerMsgBox.closeLoadingNow();
 		}else{
 			LayerMsgBox.alert("未读取到有效打印数据",2);
