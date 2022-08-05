@@ -4454,7 +4454,7 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [is_table_sortable_move] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [leftbox_width] int DEFAULT 220  NULL,
     [rightbox_width] int DEFAULT 220  NULL,
-    [headbox_height] int DEFAULT 40  NULL,
+    [headbox_height] int DEFAULT 60  NULL,
     [footbox_height] int DEFAULT 220  NULL,
     [is_leftbox_footer] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_rightbox_footer] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,

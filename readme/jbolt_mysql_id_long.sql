@@ -786,7 +786,7 @@ CREATE TABLE `jb_code_gen`  (
 `is_table_sortable_move` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否开启移动排序功能',
 `leftbox_width` int(11) NULL DEFAULT 220 COMMENT 'leftbox width',
 `rightbox_width` int(11) NULL DEFAULT 220 COMMENT 'right width',
-`headbox_height` int(11) NULL DEFAULT 40 COMMENT 'headbox height',
+`headbox_height` int(11) NULL DEFAULT 60 COMMENT 'headbox height',
 `footbox_height` int(11) NULL DEFAULT 220 COMMENT 'footbox height',
 `is_leftbox_footer` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '是否启用leftbox的footer',
 `is_rightbox_footer` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '是否启用rightbox的footer',

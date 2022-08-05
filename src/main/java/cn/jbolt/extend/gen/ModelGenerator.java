@@ -55,6 +55,11 @@ public class ModelGenerator extends JFinalModelGenerator{
 		//KeyCache 还需额外绑定哪个属性
 		String keyCacheBindColumn = "";
 
+		//是否在baseModel中生成所有字段的静态常量 默认生成
+		JBoltProjectGenConfig.genColConstant = true;
+		//是否在baseModel中生成所有字段的静态常量 名称默认都要转大写 默认转大写
+		JBoltProjectGenConfig.genColConstantToUpperCase = true;
+
 		//下面这个默认是null就行 自定义的数据库字段转驼峰getter属性名的策略，
 		//默认使用策略已经够用，如果你有特殊需求就在这里定义它
 		JBoltColumnToBuildAttrNameFunction columnTobuildAttrNameFun=null;
