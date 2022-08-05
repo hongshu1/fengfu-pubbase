@@ -144,7 +144,7 @@
 				 			<input type="text" data-rule="required" readonly="readonly" data-tips="请输入表对应的BaseModel Name" class="form-control"  value="#(codeGen.baseModelName??)" autocomplete="off" />
 				 		</div>
 				 	</div>
-					<fieldset>
+					<fieldset class="mt-5">
 						<legend>在baseModel中生成字段静态常量</legend>
 						<div class="form-group row"
 							 data-radio
@@ -169,18 +169,18 @@
 						<div class="form-group row"
 							 data-radio
 							 data-rule="radio"
-							 data-value="#(codeGen.isBaseModelGenColConstantTouppercase?? 'true')"
-							 data-name="codeGen.isBaseModelGenColConstantTouppercase"
+							 data-value="#(codeGen.isBaseModelGenColConstantToUppercase?? 'true')"
+							 data-name="codeGen.isBaseModelGenColConstantToUppercase"
 							 data-default="true">
 							<label class="col-sm-2 col-form-label is_required">名称转大写</label>
 							<div class="col"  style="padding-top: 1px;">
 								<div class="radio radio-primary  radio-inline">
-									<input  id="r_isBaseModelGenColConstantTouppercase_true" type="radio" name="codeGen.isBaseModelGenColConstantTouppercase"   value="true"/>
+									<input  id="r_isBaseModelGenColConstantTouppercase_true" type="radio" name="codeGen.isBaseModelGenColConstantToUppercase"   value="true"/>
 									<label for="r_isBaseModelGenColConstantTouppercase_true">转</label>
 								</div>
 
 								<div class="radio radio-primary  radio-inline">
-									<input  id="r_isBaseModelGenColConstantTouppercase_false" type="radio" name="codeGen.isBaseModelGenColConstantTouppercase"   value="false"/>
+									<input  id="r_isBaseModelGenColConstantTouppercase_false" type="radio" name="codeGen.isBaseModelGenColConstantToUppercase"   value="false"/>
 									<label for="r_isBaseModelGenColConstantTouppercase_false">不转</label>
 								</div>
 							</div>

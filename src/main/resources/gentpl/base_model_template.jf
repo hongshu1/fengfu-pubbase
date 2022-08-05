@@ -30,7 +30,7 @@ public abstract class #(tableMeta.baseModelName)<M extends #(tableMeta.baseModel
 #if(genColConstant??)
 #for(cm : tableMeta.columnMetas)
     /**#(cm.remarks??)*/
-    public static final String #if(genColConstantToUpperCase??)#(cm.name.toUpperCase())#else #(cm.name)#end = "#(cm.name)";
+    public static final String #if(genColConstantToUpperCase??)#(cm.name.toUpperCase())#else #(cm.name)#end  = "#(cm.name)";
 #end
 #end
 #set(gcs = generateChainSetter)
