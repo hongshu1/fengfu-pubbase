@@ -4505,6 +4505,7 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [is_need_admin_interceptor] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [extra_interceptor_class_name] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
     [is_table_multi_conditions_mode] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
+    [is_table_multi_conditions_btn_show_title] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_toolbar_add_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_toolbar_edit_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_toolbar_del_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
@@ -5399,6 +5400,13 @@ ALTER TABLE [dbo].[jb_code_gen] SET (LOCK_ESCALATION = TABLE)
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen',
     'COLUMN', N'is_table_multi_conditions_mode'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'表格高级查询条件切换按钮是否显示标题',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_table_multi_conditions_btn_show_title'
     GO
 
     EXEC sp_addextendedproperty
