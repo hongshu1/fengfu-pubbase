@@ -4517,7 +4517,9 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [project_system_log_target_type_text] nvarchar(20) COLLATE Chinese_PRC_CI_AS  NULL,
     [project_system_log_target_type_value] nvarchar(10) COLLATE Chinese_PRC_CI_AS  NULL,
     [project_system_log_target_type_key_name] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
-    [form_dialog_area] nvarchar(20) COLLATE Chinese_PRC_CI_AS DEFAULT '800,600' NULL
+    [form_dialog_area] nvarchar(20) COLLATE Chinese_PRC_CI_AS DEFAULT '800,600' NULL,
+    [is_base_model_gen_col_constant] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
+    [is_base_model_gen_col_constant_to_uppercase] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL
     )
     GO
 
@@ -5488,6 +5490,20 @@ ALTER TABLE [dbo].[jb_code_gen] SET (LOCK_ESCALATION = TABLE)
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen',
     'COLUMN', N'form_dialog_area'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否在baseModel中生成字段常量',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_base_model_gen_col_constant'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否在baseModel中生成的字段常量 名称转大写',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_base_model_gen_col_constant_to_uppercase'
     GO
 
     EXEC sp_addextendedproperty

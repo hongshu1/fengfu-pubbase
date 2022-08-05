@@ -544,6 +544,25 @@ function changeIsProjectSystemLogEnable_#(pageId)(r,v){
 }
 
 /**
+ * 切換radio 是否启用复杂查询条件样式
+ */
+function changeIsTableMultiConditionsMode_#(pageId)(r,v){
+	if(v=="true"){
+		var parentEle = $("#table_box_#(pageId)");
+		RadioUtil.setChecked(parentEle,"codeGen.isHeadbox","true");
+		var inputx = $("#codeGenheadboxHeight_#(pageId)");
+		var height = inputx.val();
+		if(notOk(height)){
+			inputx.val("200");
+		}else{
+			if(Number(height)==40){
+				inputx.val("200");
+			}
+		}
+	}
+}
+
+/**
  * 切换radio 是否启用keycache
  */
 function changeIsKeyCache_#(pageId)(r,v){

@@ -29,7 +29,7 @@
 	#end
 	</div>
 	<div class="col-sm-auto text-right">
-	#if(codeGen.isTableMultiConditionsMode)<button onclick="jboltTableToggleHeadbox(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-filter"></i> 筛选条件</button>#end
+	#if(codeGen.isTableMultiConditionsMode)<button onclick="jboltTableToggleHeadbox(this)" class="btn btn-outline-primary btn-sm" #if(!codeGen.isTableMultiConditionsBtnShowTitle) tooltip data-title="切换显示筛选条件"#end><i class="fa fa-filter"></i>#if(codeGen.isTableMultiConditionsBtnShowTitle??) 筛选条件#end</button>#end
 	#if(codeGen.isCrud && codeGen.isPageTitleAddBtn)<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/add'):('admin/codegen/formPortalTest/'+codeGen.id))" data-handler="jboltTablePageToFirst" data-area="#(codeGen.formDialogArea?? '800,600')" tooltip data-title="新增#(codeGen.mainTableRemark??)"><i class="fa fa-plus"></i></button>#end
 	#if(codeGen.isPageTitleRefreshBtn)<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>#end
 	#if(codeGen.isCrud && codeGen.isPageTitleInitRankBtn)<button data-ajaxbtn data-confirm="确认初始化顺序吗？" data-handler="refreshJBoltTable" tooltip data-title="初始化排序" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initSortRank'):('admin/codegen/testAjax'))" class="btn btn-outline-info btn-sm" ><i class="fa fa-sort"></i></button>#end
@@ -147,7 +147,36 @@
 </div>
 #end
 #if(codeGen.isHeadbox)
-<div style="height:#(codeGen.headboxHeight)px;" class="jbolt_table_headbox #if(codeGen.isTableMultiConditionsMode)d-none#end" id="#(codeGen.modelName)_headbox#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">headbox</div>
+<div style="height:#(codeGen.headboxHeight)px;" class="jbolt_table_headbox #if(codeGen.isTableMultiConditionsMode)d-none#end" id="#(codeGen.modelName)_headbox#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
+#if(codeGen.isTableMultiConditionsMode??)
+<form onsubmit="return false;"  id="#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
+	<div class="row">
+		<div class="col">
+			<div class="row jbolt_headbox_conditions">
+				#if(conditions!=null&&conditions.size()>0)
+				#for(col:conditions)
+				<div class="col-auto">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text">#(col.tableLabel??)</span>
+						</div>
+						#@switchIndexColType?(col)
+					</div>
+				</div>
+				#end
+				#end
+			</div>
+		</div>
+		<div class="col-auto" style="width:100px;">
+			<button  type="submit" class="btn btn-primary" ><i class="fa fa-search"></i> 查询</button>
+		</div>
+	</div>
+</form>
+#else
+headBox内容自行填写
+#end
+
+</div>
 #end
 #if(codeGen.isFootbox)
 <div style="height:#(codeGen.footboxHeight)px;" class="jbolt_table_footbox" id="#(codeGen.modelName)_footbox#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">footbox</div>
