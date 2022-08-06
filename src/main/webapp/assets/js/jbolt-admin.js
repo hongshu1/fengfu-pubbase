@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.3";
+var jbolt_admin_js_version="5.9.4";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -20272,13 +20272,18 @@ function freelyDragging(trigger,box,parent){
 	trigger.on("mousedown",function(e){
 		disposeTooltip(trigger);
 		box.draging=true;
+		var boxOffest = box.offset();
+		box.data("pointx",parseInt(Math.abs(e.clientX - boxOffest.left)));
+		box.data("pointy",parseInt(Math.abs(e.clientY - boxOffest.top)));
 		parent.addClass("noselect");
 	});
 	parent.on("mousemove",function(e){
 		if(box.draging){
+			var pointx = box.data("pointx")||10;
+			var pointy = box.data("pointy")||10;
 			box.offset({
-				top:e.clientY-30,
-				left:e.clientX-25
+				top:e.clientY-pointy,
+				left:e.clientX-pointx
 			});
 		}
 	});

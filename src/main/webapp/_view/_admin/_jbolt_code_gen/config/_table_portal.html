@@ -9,7 +9,7 @@
 <div class="jbolt_page#(codeGenServiceMode?'':' jb_vflex')" data-key="#[[#(pmkey??)]]#">
 <div class="jbolt_page_title#(codeGenServiceMode?'':' jb_vheader')">
 <div class="row">
-	<div class="col-sm-auto"><h1>#if(codeGen.indexHtmlPageIcon)<i class="#(codeGen.indexHtmlPageIcon??)"></i>#end #(codeGen.indexHtmlPageTitle?? codeGen.remark)</h1></div>
+	<div class="col-sm-auto"><h1>#if(codeGen.indexHtmlPageIcon)<i class="#(codeGen.indexHtmlPageIcon??)"></i>#end #(codeGen.indexHtmlPageTitle?? codeGen.remark)#if(editMode??)[<small class="text-danger">编辑模式</small>]#end</h1></div>
 	<div class="col">
 	#if(!codeGen.isTableMultiConditionsMode)
 	<form class="form-inline" id="#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
@@ -277,7 +277,7 @@ headBox内容自行填写
 <tr>
 <th data-width="60" data-column="index">序号</th>
 #for(col:cols)
-<th data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" data-column="#(col.colName)">#(col.tableLabel?? col.attrName)</th>
+	<th data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" data-column="#(col.colName)">#(col.tableLabel?? col.attrName)#if(editMode??)<a data-attr-id="#(col.id??)" tooltip data-title="编辑列属性值" onclick="showTableColEditor(this)" class="d-inline-block mx-1" href="javascript:void(0)"><i class="fa fa-edit text-danger"></i></a>#end</th>
 #end
 #if(codeGen.isShowOptcol??)<th data-width="#(codeGen.tableOptcolWidth?? 70)">操作</th>#end
 </tr>

@@ -168,5 +168,11 @@ public class CodeGenModelAttrAdminController extends JBoltBaseController {
 	public void updateFormEleConfig(JBoltPara para) {
 		renderJson(service.updateFormEleConfig(para));
 	}
-	
+
+	/**
+	 * 获取列编辑表单中列的json数据
+	 */
+	public void colEditorData(){
+		renderJsonData(service.findByIdLoadColumns(getLong(0),CodeGenModelAttr.ID,CodeGenModelAttr.TABLE_LABEL,CodeGenModelAttr.IS_NEED_FIXED_WIDTH,CodeGenModelAttr.TABLE_COL_WIDTH,CodeGenModelAttr.SORT_RANK_INTABLE));
+	}
 }

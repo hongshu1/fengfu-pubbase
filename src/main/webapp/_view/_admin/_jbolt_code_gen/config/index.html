@@ -72,6 +72,57 @@
 </div>
 #end
 #define js()
+<!-- JBoltTable的数据模板定义-->
+<script type="text/template" id="JBoltTableColEditor_tpl">
+	<div id="JBoltTableColEditor" class="position-fixed  bg-white shadow" style="width: 400px;z-index: 999999;display: none;">
+		<div class="card">
+		<div class="card-header text-center text-primary font-weight-bold" style="font-size: 18px;cursor: move;">表格列属性配置
+		<a href="javascript:void(0)" onclick="closeJboltTableColEditor()" class="close  d-inline-block align-content-center text-center float-right mr-1" style="width: 10px;height: 10px;line-height: 10px;"><i class="fa fa-close"></i></a>
+		</div>
+		<div class="card-body">
+		<form onsubmit="return false;" id="JBoltTableColEditor_form" method="post">
+			<input type="hidden" name="attr.id" value="${attr.id}"/>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<span class="input-group-text">标题</span>
+				</div>
+				<input type="text" autocomplete="off" data-rule="required"  data-tips="请输入列标题"  class="form-control" autocomplete="off" maxlength="30" autofocus="autofocus" value="${attr.tableLabel}"  name="attr.tableLabel" placeholder="请输入列标题"/>
+			</div>
+			<div class="input-group mt-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text">列宽</span>
+				</div>
+				<input type="number" autocomplete="off" data-rule="pint" data-notnull="false" data-tips="请输入列宽度 正整数"  class="form-control" autocomplete="off" maxlength="3"   value="${attr.tableColWidth?attr.tableColWidth:'100'}"  name="attr.tableColWidth" placeholder="请输入列宽 正整数 不填或填0 则为auto模式"/>
+			</div>
+
+
+			<div class="form-group row mt-3"
+				 data-radio
+				 data-rule="radio"
+				 data-value="${attr.isNeedFixedWidth?true:false}"
+				 data-name="attr.isNeedFixedWidth">
+				<label class="col-sm-4 col-form-label is_required">列宽使用方式</label>
+				<div class="col"  style="padding-top: 1px;">
+					<div class="radio radio-primary  radio-inline">
+						<input ${attr.isNeedFixedWidth?"checked":""} id="r_isNeedFixedWidth_true" type="radio" name="attr.isNeedFixedWidth"   value="true"/>
+						<label for="r_isNeedFixedWidth_true">固定宽度</label>
+					</div>
+
+					<div class="radio radio-primary  radio-inline">
+						<input ${attr.isNeedFixedWidth?"":"checked"} id="r_isNeedFixedWidth_false" type="radio" name="attr.isNeedFixedWidth"   value="false"/>
+						<label for="r_isNeedFixedWidth_false">作最小值处理</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group text-center my-5">
+				<button type="button" class="btn btn-primary btn-sm"><i class="fa fa-check"></i> 确认提交</button>
+				<button type="reset" class="btn btn-secondary btn-sm"><i class="fa fa-recycle"></i> 重置</button>
+			</div>
+		</form>
+		</div>
+		</div>
+	</div>
+</script>
 <script type="text/javascript">
 //获得配置参数
 function getModelAttrEditableTableOptions_#(pageId)(){
@@ -659,6 +710,7 @@ function changeIsFormGroupRow_#(pageId)(r,v){
 
 
 var formPreviewPortal_#(pageId) = $("#codegen_form_preview_portal_#(pageId)");
+var tablePreviewPortal_#(pageId) = $("#codegen_table_preview_portal_#(pageId)");
 $(function(){
 	processFormEleMoveEvent();
 	processFormEleClickEditorEvent();
@@ -751,7 +803,7 @@ function refreshFormPreviewPortal(){
  */
 function changeFormPreviewMode_#(pageId)(isEidtMode){
 	var codeGenId = "#(codeGen.id)";
-	var btn=$("#isEditModeBtn_"+isEidtMode);
+	var btn=$("#isFormEditModeBtn_"+isEidtMode);
 	btn.parent().find("button.btn-primary").removeClass("btn-primary").addClass("btn-secondary");
 	btn.removeClass("btn-secondary").addClass("btn-primary");
 	formPreviewPortal_#(pageId).data("edit-mode",isEidtMode).attr("data-edit-mode",isEidtMode);
@@ -760,6 +812,23 @@ function changeFormPreviewMode_#(pageId)(isEidtMode){
 		formPreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/formPortalEditMode/#(codeGen.id)");
 	}else{
 		formPreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/formPortal/#(codeGen.id)")
+	}
+}
+
+/**
+ * 切换可编辑模式
+ */
+function changeTablePreviewMode_#(pageId)(isEidtMode){
+	var codeGenId = "#(codeGen.id)";
+	var btn=$("#isTableEditModeBtn_"+isEidtMode);
+	btn.parent().find("button.btn-primary").removeClass("btn-primary").addClass("btn-secondary");
+	btn.removeClass("btn-secondary").addClass("btn-primary");
+	tablePreviewPortal_#(pageId).data("edit-mode",isEidtMode).attr("data-edit-mode",isEidtMode);
+	if(isEidtMode){
+		//编辑模式
+		tablePreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/tablePortalEditMode/#(codeGen.id)");
+	}else{
+		tablePreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/tablePortal/#(codeGen.id)")
 	}
 }
 
@@ -995,6 +1064,63 @@ function changeFormControlEleisJBoltInputJsTreeOnlyLeaf(r,value){
 	}
 }
 
+var jboltTableColEditor_tpl = document.getElementById("JBoltTableColEditor_tpl").innerText;
+/**
+ * 显示table列的编辑表单
+ * @param trigger
+ */
+function showTableColEditor(trigger){
+	var e=window.event || arguments.callee.caller.arguments[0];
+	e.preventDefault();
+	e.stopPropagation();
+	var ele = $(trigger);
+	var attrId = ele.data("attr-id");
+	if(!attrId){return;}
+	var jboltTableColEditor = $("#JBoltTableColEditor");
+	if(isOk(jboltTableColEditor)){
+		var editorAttrId = jboltTableColEditor.data("attr-id");
+		if(editorAttrId!=attrId){
+			jboltTableColEditor.remove();
+			jboltTableColEditor=null;
+		}
+	}
+	var offset = ele.parent().offset();
+	var left = offset.left;
+	if(left+400>jboltWindowWidth){
+		left = jboltWindowWidth-410;
+	}
+	var top  = offset.top + 43;
+	var calIt = function(editor){
+		editor.css({
+			left:left,
+			top:top
+		}).fadeIn(200);
+	}
+	if(notOk(jboltTableColEditor)){
+		var tableView = ele.closest(".jbolt_table_view");
+		createJBoltTableColEditor(tableView,attrId,calIt);
+	}else{
+		calIt(jboltTableColEditor);
+	}
+}
+
+function createJBoltTableColEditor(tableView,attrId,callback){
+	Ajax.get("admin/codegen/modelattr/colEditorData/"+attrId,function(res){
+		var html = juicer(jboltTableColEditor_tpl,{"attr":res.data});
+		tableView.prepend(html);
+		var editor = tableView.find("#JBoltTableColEditor");
+		var trigger = editor.find(".card>.card-header");
+		freelyDragging(trigger,editor,tableView);
+		callback(editor);
+	});
+}
+
+function closeJboltTableColEditor(){
+	var editor = $("#JBoltTableColEditor");
+	if(isOk(editor)){
+		editor.remove();
+	}
+}
 
 </script>
 #end
