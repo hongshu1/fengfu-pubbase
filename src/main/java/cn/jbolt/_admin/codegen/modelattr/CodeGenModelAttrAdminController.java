@@ -175,4 +175,11 @@ public class CodeGenModelAttrAdminController extends JBoltBaseController {
 	public void colEditorData(){
 		renderJsonData(service.findByIdLoadColumns(getLong(0),CodeGenModelAttr.ID,CodeGenModelAttr.TABLE_LABEL,CodeGenModelAttr.IS_NEED_FIXED_WIDTH,CodeGenModelAttr.TABLE_COL_WIDTH,CodeGenModelAttr.SORT_RANK_INTABLE));
 	}
+
+	/**
+	 * 提交单列的配置修改
+	 */
+	public void submitColConfig(){
+		renderJson(service.updateTableColConfig(getModel(CodeGenModelAttr.class,"attr")));
+	}
 }

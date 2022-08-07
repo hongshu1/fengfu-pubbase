@@ -1127,4 +1127,17 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	public boolean checkHasIsDeletedColumn(Long codeGenId) {
 		return exists(selectSql().eq("code_gen_id",codeGenId).bracketLeft().eq("col_name","is_deleted").or().eq("col_name","IS_DELETED").bracketRight());
 	}
+
+	/**
+	 * 提交表格列配置 更新
+	 * @param attr
+	 * @return
+	 */
+	public Ret updateTableColConfig(CodeGenModelAttr attr) {
+		if(attr==null || hasNotOk(attr.getId(),attr.getTableLabel(),attr.getIsNeedFixedWidth(),attr.getTableColWidth())){
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		boolean success = attr.update();
+		return ret(success);
+	}
 }

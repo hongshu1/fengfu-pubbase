@@ -77,10 +77,10 @@
 	<div id="JBoltTableColEditor" class="position-fixed  bg-white shadow" style="width: 400px;z-index: 999999;display: none;">
 		<div class="card">
 		<div class="card-header text-center text-primary font-weight-bold" style="font-size: 18px;cursor: move;">表格列属性配置
-		<a href="javascript:void(0)" onclick="closeJboltTableColEditor()" class="close  d-inline-block align-content-center text-center float-right mr-1" style="width: 10px;height: 10px;line-height: 10px;"><i class="fa fa-close"></i></a>
+		<a href="javascript:void(0)" onclick="closeJBoltTableColEditor()" class="close  d-inline-block align-content-center text-center float-right mr-1" style="width: 10px;height: 10px;line-height: 10px;"><i class="fa fa-close"></i></a>
 		</div>
 		<div class="card-body">
-		<form onsubmit="return false;" id="JBoltTableColEditor_form" method="post">
+		<form onsubmit="return false;" action="admin/codegen/modelattr/submitColConfig" id="JBoltTableColEditor_form" method="post">
 			<input type="hidden" name="attr.id" value="${attr.id}"/>
 			<div class="input-group">
 				<div class="input-group-prepend">
@@ -104,18 +104,18 @@
 				<label class="col-sm-4 col-form-label is_required">列宽使用方式</label>
 				<div class="col"  style="padding-top: 1px;">
 					<div class="radio radio-primary  radio-inline">
-						<input ${attr.isNeedFixedWidth?"checked":""} id="r_isNeedFixedWidth_true" type="radio" name="attr.isNeedFixedWidth"   value="true"/>
+						<input id="r_isNeedFixedWidth_true" ${attr.isNeedFixedWidth?"checked":""}  type="radio" name="attr.isNeedFixedWidth"   value="true"/>
 						<label for="r_isNeedFixedWidth_true">固定宽度</label>
 					</div>
 
 					<div class="radio radio-primary  radio-inline">
-						<input ${attr.isNeedFixedWidth?"":"checked"} id="r_isNeedFixedWidth_false" type="radio" name="attr.isNeedFixedWidth"   value="false"/>
+						<input id="r_isNeedFixedWidth_false" ${attr.isNeedFixedWidth?"":"checked"} type="radio" name="attr.isNeedFixedWidth"   value="false"/>
 						<label for="r_isNeedFixedWidth_false">作最小值处理</label>
 					</div>
 				</div>
 			</div>
 			<div class="form-group text-center my-5">
-				<button type="button" class="btn btn-primary btn-sm"><i class="fa fa-check"></i> 确认提交</button>
+				<button type="button" onclick="submitJBoltTableColConfigs()" class="btn btn-primary btn-sm"><i class="fa fa-check"></i> 确认提交</button>
 				<button type="reset" class="btn btn-secondary btn-sm"><i class="fa fa-recycle"></i> 重置</button>
 			</div>
 		</form>
@@ -1115,10 +1115,30 @@ function createJBoltTableColEditor(tableView,attrId,callback){
 	});
 }
 
-function closeJboltTableColEditor(){
+/**
+ * 关闭表格col配置
+ */
+function closeJBoltTableColEditor(){
 	var editor = $("#JBoltTableColEditor");
 	if(isOk(editor)){
 		editor.remove();
+	}
+}
+
+/**
+ * 提交 表格col 配置
+ */
+function submitJBoltTableColConfigs(){
+	var editor = $("#JBoltTableColEditor");
+	if(isOk(editor)){
+		LayerMsgBox.confirm("确认列配置提交本次修改？",function(){
+			var form = editor.find("#JBoltTableColEditor_form");
+			ajaxSubmitForm(form,function(){
+				editor.remove();
+				changeTablePreviewMode_#(pageId)(true);
+				refreshJBoltTable("code_gen_model_attr_table_#(pageId)");
+			});
+		});
 	}
 }
 
