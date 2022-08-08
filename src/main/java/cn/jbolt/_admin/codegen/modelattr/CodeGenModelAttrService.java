@@ -729,15 +729,43 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 
 				}
 			}
+			reprocessMainTablePrimaryKey(codeGenId);
 			initSortRankIntableByRank(codeGenId);
 		}else {
 			boolean success = genMainTableAttrs(codeGen);
 			if(success){
+				reprocessMainTablePrimaryKey(codeGenId);
 				initSortRankIntableByRank(codeGenId);
 			}
 			return ret(success);
 		}
 		return SUCCESS;
+	}
+	//重新设置mainTablePrimaryKey
+	private void reprocessMainTablePrimaryKey(Long codeGenId) {
+		CodeGen codeGen = codeGenService.findById(codeGenId);
+		if(codeGen == null) {
+			throw new RuntimeException("未找到代码生成的基础配置");
+		}
+		CodeGenModelAttr primarykeyAttr = getPrimaryKeyAttr(codeGenId);
+		if(primarykeyAttr == null){
+			throw new RuntimeException("表未设置主键！");
+		}
+
+		if(!primarykeyAttr.getColName().equalsIgnoreCase(codeGen.getMainTablePkey())){
+			codeGen.setMainTablePkey(primarykeyAttr.getColName());
+			codeGen.update();
+		}
+	}
+
+	/**
+	 * 获取主键属性
+	 * @param codeGenId
+	 * @return
+	 */
+	public CodeGenModelAttr getPrimaryKeyAttr(Long codeGenId) {
+		if(notOk(codeGenId)){return null;}
+		return findFirst(selectSql().eq("code_gen_id",codeGenId).eq("is_pkey",TRUE));
 	}
 
 	private void processSyncDeleteAttrs(List<CodeGenModelAttr> modelAttrs, List<ColumnMeta> columnMetas) {
