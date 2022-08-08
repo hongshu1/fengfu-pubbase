@@ -182,4 +182,18 @@ public class CodeGenModelAttrAdminController extends JBoltBaseController {
 	public void submitColConfig(){
 		renderJson(service.updateTableColConfig(getModel(CodeGenModelAttr.class,"attr")));
 	}
+
+	/**
+	 * 上移 在table中显示的顺序
+	 */
+	public void tableColUp(){
+		renderJson(service.tableColUp(getLong(0)));
+	}
+
+	/**
+	 * 下移 在table中显示的顺序
+	 */
+	public void tableColDown(){
+		renderJson(service.tableColDown(getLong(0)));
+	}
 }

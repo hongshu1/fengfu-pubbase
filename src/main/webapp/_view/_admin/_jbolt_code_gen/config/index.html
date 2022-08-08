@@ -818,7 +818,7 @@ function changeFormPreviewMode_#(pageId)(isEidtMode){
 /**
  * 切换可编辑模式
  */
-function changeTablePreviewMode_#(pageId)(isEidtMode){
+function changeTablePreviewMode(isEidtMode){
 	var codeGenId = "#(codeGen.id)";
 	var btn=$("#isTableEditModeBtn_"+isEidtMode);
 	btn.parent().find("button.btn-primary").removeClass("btn-primary").addClass("btn-secondary");
@@ -1135,7 +1135,7 @@ function submitJBoltTableColConfigs(){
 			var form = editor.find("#JBoltTableColEditor_form");
 			ajaxSubmitForm(form,function(){
 				editor.remove();
-				changeTablePreviewMode_#(pageId)(true);
+				changeTablePreviewMode(true);
 				refreshJBoltTable("code_gen_model_attr_table_#(pageId)");
 			});
 		});

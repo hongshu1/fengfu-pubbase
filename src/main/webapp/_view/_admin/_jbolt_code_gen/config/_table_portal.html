@@ -274,10 +274,19 @@ headBox内容自行填写
 	#end
 >
 <thead>
+#if(editMode??)
+<tr>
+	<th data-width="60" data-column="index"></th>
+	#for(col:cols)
+	<th data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)"><a data-attr-id="#(col.id??)" tooltip data-title="编辑列属性值" onclick="showTableColEditor(this)" class="d-inline-block mx-1" href="javascript:void(0)"><i class="fa fa-edit text-danger"></i></a>#if(!for.first)<a class="mx-1" tooltip data-title="左移" data-ajaxbtn href="admin/codegen/modelattr/tableColUp/#(col.id)"  data-success-time="200"  data-handler="changeTablePreviewMode(true)"><i class="fa fa-arrow-left text-primary"></i></a>#end #if(!for.last)<a class="mx-1" tooltip data-title="右移"  data-ajaxbtn href="admin/codegen/modelattr/tableColDown/#(col.id)" data-success-time="200" data-handler="changeTablePreviewMode(true)"><i class="fa fa-arrow-right text-primary"></i></a>#end</th>
+	#end
+	#if(codeGen.isShowOptcol??)<th data-width="#(codeGen.tableOptcolWidth?? 70)"></th>#end
+</tr>
+#end
 <tr>
 <th data-width="60" data-column="index">序号</th>
 #for(col:cols)
-	<th data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" data-column="#(col.colName)">#(col.tableLabel?? col.attrName)#if(editMode??)<a data-attr-id="#(col.id??)" tooltip data-title="编辑列属性值" onclick="showTableColEditor(this)" class="d-inline-block mx-1" href="javascript:void(0)"><i class="fa fa-edit text-danger"></i></a>#end</th>
+	<th data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" data-column="#(col.colName)">#(col.tableLabel?? col.attrName)</th>
 #end
 #if(codeGen.isShowOptcol??)<th data-width="#(codeGen.tableOptcolWidth?? 70)">操作</th>#end
 </tr>

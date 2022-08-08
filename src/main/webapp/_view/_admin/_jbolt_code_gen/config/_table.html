@@ -2,7 +2,7 @@
 	<div class="col-4 h-100">
 		<div class="card jb_vflex">
 			<div class="card-header jb_vheader_card">表格设置
-			<button onclick="ajaxSubmitForm('codeGenTableForm',function(res){changeTablePreviewMode_#(pageId)(false);})" class="btn btn-primary btn-sm float-right"><i class="fa fa-save"></i> 保存配置</button>
+			<button onclick="ajaxSubmitForm('codeGenTableForm',function(res){changeTablePreviewMode(false);})" class="btn btn-primary btn-sm float-right"><i class="fa fa-save"></i> 保存配置</button>
 			</div>
 			<div class="card-body jb_vbody">
 			<form class="form h-100" onsubmit="return false;" id="codeGenTableForm" action="admin/codegen/updateBase" method="post">
@@ -948,11 +948,11 @@
 		<div class="card jb_vflex">
 			<div class="card-header jb_vheader_card">
 				<span class="d-inline-block mr-5"><i class="fa fa-eye mr-1"></i>表格预览</span>
-				<button onclick="changeTablePreviewMode_#(pageId)(false)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh mr-1"></i>刷新预览区</button>
+				<button onclick="changeTablePreviewMode(false)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh mr-1"></i>刷新预览区</button>
 				<button data-ajaxbtn data-confirm="确认初始化元素表格列顺序？" data-handler="refreshPortal" data-portalid="codegen_table_preview_portal_#(pageId)" data-url="admin/codegen/initSortRankIntable/#(codeGen.id)" class="btn btn-outline-success btn-sm" ><i class="fa fa-sort mr-1"></i>初始化排序</button>
 				<div class="btn-group btn-group-sm">
-					<button id="isTableEditModeBtn_true" class="btn btn-secondary" onclick="changeTablePreviewMode_#(pageId)(true)" tooltip data-title="编辑模式"><i class="fa fa-edit"></i></button>
-					<button id="isTableEditModeBtn_false" class="btn btn-primary" onclick="changeTablePreviewMode_#(pageId)(false)" tooltip data-title="预览模式"><i class="fa fa-eye"></i></button>
+					<button id="isTableEditModeBtn_true" class="btn btn-secondary" onclick="changeTablePreviewMode(true)" tooltip data-title="编辑模式"><i class="fa fa-edit"></i></button>
+					<button id="isTableEditModeBtn_false" class="btn btn-primary" onclick="changeTablePreviewMode(false)" tooltip data-title="预览模式"><i class="fa fa-eye"></i></button>
 				</div>
 				<a tabindex="-1" data-fullscreenbtn data-target="parent.card" class="pull-right text-black-50"><i class="jbicon2 jbi-fullscreen"></i></a>
 			</div>
