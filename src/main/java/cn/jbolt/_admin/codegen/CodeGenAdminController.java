@@ -384,9 +384,30 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("colDatas", codeGenModelAttrService.getCodeGenFormColDatas(codeGenId,false));
 		render("config/_form_portal.html");
 	}
+
+	/**
+	 * 测试ajax success
+	 */
 	public void testAjax(){
 		renderJsonSuccess();
 	}
+
+
+	/**
+	 * form portal 编辑模式
+	 */
+	public void formPortalEditMode() {
+		Long  codeGenId = getLong(0);
+		if(notOk(codeGenId)) {
+			renderAjaxPortalFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		set("editMode", true);
+		set("colDatas", codeGenModelAttrService.getCodeGenFormColDatas(codeGenId,true));
+		render("config/_form_portal.html");
+	}
+
+
 	/**
 	 * form portal test 测试预览
 	 */
@@ -402,6 +423,15 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("colDatas", codeGenModelAttrService.getCodeGenFormColDatas(codeGenId,false));
 		render("config/_form_portal.html");
 	}
+
+	/**
+	 * table portal预览 编辑模式
+	 */
+	public void tablePortalEditMode() {
+		set("editMode", true);
+		tablePortal();
+	}
+
 	/**
 	 * table portal预览
 	 */
@@ -458,19 +488,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	public void initSortRankIntable() {
 		renderJson(codeGenModelAttrService.initSortRankIntableById(getLong(0)));
 	}
-	/**
-	 * form portal 编辑模式
-	 */
-	public void formPortalEditMode() {
-		Long  codeGenId = getLong(0);
-		if(notOk(codeGenId)) {
-			renderAjaxPortalFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		set("editMode", true);
-		set("colDatas", codeGenModelAttrService.getCodeGenFormColDatas(codeGenId,true));
-		render("config/_form_portal.html");
-	}
+
 	/**
 	 * 选择字典数据
 	 */

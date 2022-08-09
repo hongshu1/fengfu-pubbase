@@ -10,6 +10,7 @@ import cn.jbolt.core.db.datasource.JBoltTableMetaUtil;
 import cn.jbolt.core.db.sql.DBType;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.enjoy.directive.ColumnTypeToDirective;
+import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.model.base.JBoltBaseModel;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.service.base.JBoltBaseService;
@@ -354,9 +355,28 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			changeColumnFalse(column,attr.getId(),updateSql().eq("code_gen_id", attr.getCodeGenId()));
 		}else if(column.equalsIgnoreCase("is_keywords_column")) {
 			codeGenService.updateKeywordsMatchColumn(attr.getCodeGenId());
+		}else if(column.equalsIgnoreCase(CodeGenModelAttr.IS_TABLE_COL)) {
+			//如果切换的是isTableCol字段 就要每次重新 设置顺序
+			initSortRankIntableByRank(attr.getCodeGenId());
 		}
 		return null;
 	}
+
+	/**
+	 * 处理字段按照sortrankIntable 重新排列
+	 * @param codeGenId
+	 */
+	private void initSortRankIntableByRank(Long codeGenId) {
+		List<CodeGenModelAttr> attrs = find(selectSql().select("id").eq("code_gen_id", codeGenId).eq("is_table_col", TRUE).asc(CodeGenModelAttr.SORT_RANK_INTABLE));
+		if(isOk(attrs)) {
+			int total = attrs.size();
+			for(int i=0;i<total;i++) {
+				attrs.get(i).setSortRankIntable(i+1);
+			}
+			batchUpdate(attrs);
+		}
+	}
+
 	/**
 	 * 切换指定条件指定属性的boolean
 	 * @param column
@@ -709,11 +729,43 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 
 				}
 			}
+			reprocessMainTablePrimaryKey(codeGenId);
+			initSortRankIntableByRank(codeGenId);
 		}else {
 			boolean success = genMainTableAttrs(codeGen);
+			if(success){
+				reprocessMainTablePrimaryKey(codeGenId);
+				initSortRankIntableByRank(codeGenId);
+			}
 			return ret(success);
 		}
 		return SUCCESS;
+	}
+	//重新设置mainTablePrimaryKey
+	private void reprocessMainTablePrimaryKey(Long codeGenId) {
+		CodeGen codeGen = codeGenService.findById(codeGenId);
+		if(codeGen == null) {
+			throw new RuntimeException("未找到代码生成的基础配置");
+		}
+		CodeGenModelAttr primarykeyAttr = getPrimaryKeyAttr(codeGenId);
+		if(primarykeyAttr == null){
+			throw new RuntimeException("表未设置主键！");
+		}
+
+		if(!primarykeyAttr.getColName().equalsIgnoreCase(codeGen.getMainTablePkey())){
+			codeGen.setMainTablePkey(primarykeyAttr.getColName());
+			codeGen.update();
+		}
+	}
+
+	/**
+	 * 获取主键属性
+	 * @param codeGenId
+	 * @return
+	 */
+	public CodeGenModelAttr getPrimaryKeyAttr(Long codeGenId) {
+		if(notOk(codeGenId)){return null;}
+		return findFirst(selectSql().eq("code_gen_id",codeGenId).eq("is_pkey",TRUE));
 	}
 
 	private void processSyncDeleteAttrs(List<CodeGenModelAttr> modelAttrs, List<ColumnMeta> columnMetas) {
@@ -1126,5 +1178,65 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	 */
 	public boolean checkHasIsDeletedColumn(Long codeGenId) {
 		return exists(selectSql().eq("code_gen_id",codeGenId).bracketLeft().eq("col_name","is_deleted").or().eq("col_name","IS_DELETED").bracketRight());
+	}
+
+	/**
+	 * 提交表格列配置 更新
+	 * @param attr
+	 * @return
+	 */
+	public Ret updateTableColConfig(CodeGenModelAttr attr) {
+		if(attr==null || hasNotOk(attr.getId(),attr.getTableLabel(),attr.getIsNeedFixedWidth(),attr.getTableColWidth())){
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		boolean success = attr.update();
+		return ret(success);
+	}
+
+	public Ret tableColUp(Long id) {
+		CodeGenModelAttr attr = findById(id);
+		if (attr == null) {
+			return fail("数据不存在或已被删除");
+		}
+		Integer rank = attr.getSortRankIntable();
+		if (rank == null || rank <= 0) {
+			return fail("顺序需要初始化");
+		}
+		if (rank == 1) {
+			return fail("已经是第一个");
+		}
+		CodeGenModelAttr upAttr = findFirst(Okv.by(CodeGenModelAttr.SORT_RANK_INTABLE, rank - 1).set(CodeGenModelAttr.IS_TABLE_COL, TRUE));
+		if (upAttr == null) {
+			return fail("顺序需要初始化");
+		}
+		upAttr.setSortRankIntable(rank);
+		attr.setSortRankIntable(rank - 1);
+		upAttr.update();
+		attr.update();
+		return SUCCESS;
+	}
+
+	public Ret tableColDown(Long id) {
+		CodeGenModelAttr attr = findById(id);
+		if (attr == null) {
+			return fail("数据不存在或已被删除");
+		}
+		Integer rank = attr.getSortRankIntable();
+		if (rank == null || rank <= 0) {
+			return fail("顺序需要初始化");
+		}
+		int max = getCount(Okv.by(CodeGenModelAttr.IS_TABLE_COL, TRUE));
+		if (rank == max) {
+			return fail("已经是最后一个");
+		}
+		CodeGenModelAttr upAttr = findFirst(Okv.by(CodeGenModelAttr.SORT_RANK_INTABLE, rank + 1).set(CodeGenModelAttr.IS_TABLE_COL, TRUE));
+		if (upAttr == null) {
+			return fail("顺序需要初始化");
+		}
+		upAttr.setSortRankIntable(rank);
+		attr.setSortRankIntable(rank + 1);
+		upAttr.update();
+		attr.update();
+		return SUCCESS;
 	}
 }

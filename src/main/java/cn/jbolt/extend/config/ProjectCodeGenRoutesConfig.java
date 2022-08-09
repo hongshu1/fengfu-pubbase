@@ -8,5 +8,8 @@ import com.jfinal.config.Routes;
 public class ProjectCodeGenRoutesConfig {
     public static void config(Routes me) {
 
+		me.scan("cn.jbolt.school");
+		me.scan("cn.jbolt.kk");
+		me.scan("cn.jbolt.de");
     }
 }

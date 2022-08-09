@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.0";
+var jbolt_admin_js_version="5.9.4";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -3679,7 +3679,7 @@ function processEleUrlByLinkOtherParamEle(ele,url,bindChange,bindChangeEvent){
 				eleSelector=eleSelectorAll;
 			}
 			if(eleSelector){
-				eleObj=$(eleSelector);
+				eleObj=jboltBody.find(eleSelector);
 				if(isOk(eleObj)){
 					if(!eleObj.is("input") && !eleObj.is("textarea")&& !eleObj.is("select")){
 						if(eleObj[0].hasAttribute("data-radio")){
@@ -7498,6 +7498,7 @@ var HtmlEditorUtil={
 		        	  if(that.ing){
 		        		  alert("有文件正在上传，请稍后~~");
 		        	  }else{
+		        		  that.parseWord(e,htmlEditor);
 		        		  that.parseIamge(e,htmlEditor);
 		        	  }
 		        	  
@@ -7546,6 +7547,18 @@ var HtmlEditorUtil={
 			}else{
 				LayerMsgBox.alert("data-editor类型错误",2);
 			}
+		},parseWord:function(e,editor){
+			if(editor.data("word-clear-html")){
+				var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text/plain');
+				if(bufferText){
+					e.preventDefault ? e.preventDefault() : (e.returnValue = false);
+					// Firefox fix
+					setTimeout(function () {
+						document.execCommand("insertText", false, bufferText);
+					}, 10);
+				}
+			}
+
 		},parseIamge:function(e,editor){
 			 var that=this;
 			 that.ing=true; 
@@ -20025,9 +20038,10 @@ function jboltTableHiprintWebPrint(btnEle,tplSn,dataUrl,isSingleLine){
  * @param tplSn
  * @param type 类型 url or json
  * @param printData 可以是一个URL接口地址 也可以是json
+ * @param directPrint 直接打印 不显示预览
  * @returns
  */
-function jboltHiprintWebPrint(tplSn,type,printData){
+function jboltHiprintWebPrint(tplSn,type,printData,directPrint){
 	if(!tplSn){
 		LayerMsgBox.alert("请指定正确的模板SN编号",2);
 		return;
@@ -20052,7 +20066,11 @@ function jboltHiprintWebPrint(tplSn,type,printData){
 				Ajax.get(printData,function(res2){
 					if(res2.data){
 						printTemplate = new hiprint.PrintTemplate({ template: JSON.parse(res.data)});
-						printTemplate.print(res2.data);
+						if(directPrint){
+							printTemplate.print2(res2.data);
+						}else{
+							printTemplate.print(res2.data);
+						}
 						LayerMsgBox.closeLoadingNow();
 					}else{
 						LayerMsgBox.alert("未读取到有效打印数据",2);
@@ -20060,7 +20078,11 @@ function jboltHiprintWebPrint(tplSn,type,printData){
 				});
 			}else{
 				printTemplate = new hiprint.PrintTemplate({ template: JSON.parse(res.data)});
-				printTemplate.print(printData);
+				if(directPrint){
+					printTemplate.print2(printData);
+				}else{
+					printTemplate.print(printData);
+				}
 				LayerMsgBox.closeLoadingNow();
 			}
 		}
@@ -20134,9 +20156,10 @@ function jboltHiprintWebRender(ele,tplSn,type,printData){
 /**
  * 使用渲染区域html打印
  * @param ele
+ * @param directPrint 是否直接打印 不显示预览
  * @returns
  */
-function jboltHiprintWebPrintByHtml(ele){
+function jboltHiprintWebPrintByHtml(ele,directPrint){
 	var renderBox=getRealJqueryObject(ele);
 	if(!isOk(renderBox)){
 		LayerMsgBox.alert("请指定正确的渲染容器ele",2);
@@ -20147,7 +20170,11 @@ function jboltHiprintWebPrintByHtml(ele){
 	if(printTemplate){
 		var printData = renderBox.data("printdata");
 		if(printData){
-			printTemplate.print(printData);
+			if(directPrint){
+				printTemplate.print2(printData);
+			}else{
+				printTemplate.print(printData);
+			}
 			LayerMsgBox.closeLoadingNow();
 		}else{
 			LayerMsgBox.alert("未读取到有效打印数据",2);
@@ -20245,13 +20272,18 @@ function freelyDragging(trigger,box,parent){
 	trigger.on("mousedown",function(e){
 		disposeTooltip(trigger);
 		box.draging=true;
+		var boxOffest = box.offset();
+		box.data("pointx",parseInt(Math.abs(e.clientX - boxOffest.left)));
+		box.data("pointy",parseInt(Math.abs(e.clientY - boxOffest.top)));
 		parent.addClass("noselect");
 	});
 	parent.on("mousemove",function(e){
 		if(box.draging){
+			var pointx = box.data("pointx")||10;
+			var pointy = box.data("pointy")||10;
 			box.offset({
-				top:e.clientY-30,
-				left:e.clientX-25
+				top:e.clientY-pointy,
+				left:e.clientX-pointx
 			});
 		}
 	});

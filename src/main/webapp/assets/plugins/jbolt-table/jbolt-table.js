@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.8.8";
+var jbolt_table_js_version="2.9.2";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -2797,7 +2797,7 @@ function resetJBolttableSlaveBox(masterTable){
 	slave.find("[data-masterid],input[type='hidden'][data-masterid-hidden='true'],[data-url][data-origin-url],[data-url][data-orign-url],[href][data-origin-url],[href][data-orign-url],[href][data-orignurl],[data-url][data-srcurl],[data-url][data-src-url],[href][data-srcurl],[href][data-src-url]").each(function(){
 		elm=$(this);
 		if(elm.is("input") && elm.attr("type")=="hidden" && elm.data("masterid-hidden")){
-			elm.val(id);
+			elm.val(id).change();
 		}else{
 			elsrcurl=elm.data("origin-url")||elm.data("orign-url")||elm.data("orignurl")||elm.data("srcurl")||elm.data("src-url");
 			if(elsrcurl && elsrcurl.indexOf("[masterId]")!=-1){
@@ -2879,7 +2879,7 @@ function masterTableTrTriggerShowSlave(ele,id,masterOtherParams,tableCallback,aj
 	slave.find("[data-masterid],input[type='hidden'][data-masterid-hidden='true'],[data-url][data-origin-url],[data-url][data-orign-url],[href][data-origin-url],[href][data-orign-url],[href][data-orignurl],[data-url][data-srcurl],[data-url][data-src-url],[href][data-srcurl],[href][data-src-url]").each(function(){
 		elm=$(this);
 		if(elm.is("input") && elm.attr("type")=="hidden" && elm.data("masterid-hidden")){
-			elm.val(id);
+			elm.val(id).change();
 		}else{
 			elsrcurl=elm.data("origin-url")||elm.data("orign-url")||elm.data("orignurl")||elm.data("srcurl")||elm.data("src-url");
 			if(elsrcurl.indexOf("[masterId]")!=-1){
