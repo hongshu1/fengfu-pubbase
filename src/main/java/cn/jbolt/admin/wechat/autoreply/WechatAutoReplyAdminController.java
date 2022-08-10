@@ -3,6 +3,9 @@ package cn.jbolt.admin.wechat.autoreply;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jbolt.common.enums.WechatAutoreplyReplyType;
+import cn.jbolt.common.enums.WechatAutoreplyType;
+import cn.jbolt.core.enumutil.JBoltEnum;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -38,7 +41,7 @@ public class WechatAutoReplyAdminController extends JBoltBaseController {
 		set("title", "关注后回复");
 		Long mpId=getLong(0);
 		set("action", "/admin/wechat/autoreply/subscribeReplyMgr/"+mpId);
-		mgr(mpId, WechatAutoreply.TYPE_SUBSCRIBE, getKeywords());
+		mgr(mpId, WechatAutoreplyType.SUBSCRIBE.getValue(), getKeywords());
 	}
 	@CheckPermission(PermissionKey.WECHAT_AUTOREPLY_KEYWORDS)
 	@Before(WechatAutoReplyMgrValidator.class)
@@ -46,7 +49,7 @@ public class WechatAutoReplyAdminController extends JBoltBaseController {
 		set("title", "关键词回复");
 		Long mpId=getLong(0);
 		set("action", "/admin/wechat/autoreply/keywordsReplyMgr/"+mpId);
-		mgr(mpId, WechatAutoreply.TYPE_KEYWORDS, getKeywords());
+		mgr(mpId, WechatAutoreplyType.KEYWORDS.getValue(), getKeywords());
 	}
 	@CheckPermission(PermissionKey.WECHAT_AUTOREPLY_SUBSCRIBE)
 	@Before(WechatAutoReplyMgrValidator.class)
@@ -54,7 +57,7 @@ public class WechatAutoReplyAdminController extends JBoltBaseController {
 		set("title", "默认回复");
 		Long mpId=getLong(0);
 		set("action", "/admin/wechat/autoreply/defaultReplyMgr/"+mpId);
-		mgr(mpId, WechatAutoreply.TYPE_DEFAULT, getKeywords());
+		mgr(mpId, WechatAutoreplyType.DEFAULT.getValue(), getKeywords());
 	}
 
 	private void mgr(Long mpId, int type, String keywords) {
@@ -136,24 +139,24 @@ public class WechatAutoReplyAdminController extends JBoltBaseController {
 	
 	@UnCheck
 	public void replyTypes() {
-		List<Option> options=new ArrayList<Option>();
-		options.add(new OptionBean("随机一条", WechatAutoreply.REPLYTYPE_RANDOMONE));
-		options.add(new OptionBean("全部", WechatAutoreply.REPLYTYPE_ALL));
-		renderJsonData(options);
+		renderJsonData(JBoltEnum.getEnumOptionList(WechatAutoreplyReplyType.class));
 	}
 	private boolean checkPermission(Integer type) {
 		boolean hasPermission=false;
 		Long userId = JBoltUserKit.getUserId();
-		switch (type) {
-		case WechatAutoreply.TYPE_SUBSCRIBE:
-			hasPermission=JBoltUserAuthKit.hasPermission(userId,true, PermissionKey.WECHAT_AUTOREPLY_SUBSCRIBE);
-			break;
-		case WechatAutoreply.TYPE_KEYWORDS:
-			hasPermission=JBoltUserAuthKit.hasPermission(userId,true, PermissionKey.WECHAT_AUTOREPLY_KEYWORDS);
-			break;
-		case WechatAutoreply.TYPE_DEFAULT:
-			hasPermission=JBoltUserAuthKit.hasPermission(userId,true, PermissionKey.WECHAT_AUTOREPLY_DEFAULT);
-			break;
+		WechatAutoreplyType wechatAutoreplyType = JBoltEnum.getEnumObjectByValue(WechatAutoreplyType.class,type);
+		if(wechatAutoreplyType != null){
+			switch (wechatAutoreplyType) {
+			case SUBSCRIBE:
+				hasPermission=JBoltUserAuthKit.hasPermission(userId,true, PermissionKey.WECHAT_AUTOREPLY_SUBSCRIBE);
+				break;
+			case KEYWORDS:
+				hasPermission=JBoltUserAuthKit.hasPermission(userId,true, PermissionKey.WECHAT_AUTOREPLY_KEYWORDS);
+				break;
+			case DEFAULT:
+				hasPermission=JBoltUserAuthKit.hasPermission(userId,true, PermissionKey.WECHAT_AUTOREPLY_DEFAULT);
+				break;
+			}
 		}
 		return hasPermission;
 	}

@@ -9,10 +9,5 @@ import cn.jbolt.core.annotation.TableBind;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "main" , table = "jb_wechat_reply_content" , primaryKey = "id" , idGenMode = "snowflake")
 public class WechatReplyContent extends BaseWechatReplyContent<WechatReplyContent> {
-	public static final String TYPE_TEXT="text";
-	public static final String TYPE_IMG="image";
-	public static final String TYPE_VOICE="voice";
-	public static final String TYPE_VIDEO="video";
-	public static final String TYPE_MUSIC="music";
-	public static final String TYPE_NEWS="news";
+
 }

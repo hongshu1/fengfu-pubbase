@@ -1,18 +1,5 @@
 package cn.jbolt.admin.wechat.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.JFinal;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import com.jfinal.upload.UploadFile;
-import com.jfinal.weixin.sdk.api.ApiConfigKit;
-import com.jfinal.weixin.sdk.api.ApiResult;
-import com.jfinal.weixin.sdk.api.MediaApi;
-import com.jfinal.weixin.sdk.api.MediaApi.MediaType;
-
 import cn.hutool.core.io.FileUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
@@ -24,6 +11,19 @@ import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
+import cn.jbolt.core.wechat.WechatConfigKey;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.JFinal;
+import com.jfinal.plugin.activerecord.tx.Tx;
+import com.jfinal.upload.UploadFile;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
+import com.jfinal.weixin.sdk.api.ApiResult;
+import com.jfinal.weixin.sdk.api.MediaApi;
+import com.jfinal.weixin.sdk.api.MediaApi.MediaType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**   
  * 微信公众平台配置

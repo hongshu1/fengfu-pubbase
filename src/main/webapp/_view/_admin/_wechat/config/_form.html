@@ -2,7 +2,7 @@
 	<input type="hidden" name="configCount" value="#(configCount?? 0)" />
 	<input type="hidden" name="mpId" value="#(mpId)" />
 	#for(data:configList)
-	#if(data.configKey==cn.jbolt.admin.wechat.config.WechatConfigKey::SERVER_MSG_ENCRYPT_TYPE)
+	#if(data.configKey==WechatConfigKey.SERVER_MSG_ENCRYPT_TYPE)
  	<div class="form-group row" 
 		data-radio 
 		data-rule="radio"  
@@ -25,7 +25,7 @@
 				</div>
 			</div>
 		</div>
-	#elseif(data.configKey==cn.jbolt.admin.wechat.config.WechatConfigKey::LIMIT_PAY)
+	#elseif(data.configKey==WechatConfigKey.LIMIT_PAY)
 	<div class="form-group row" 
 		data-radio 
 		data-rule="radio"  
@@ -44,7 +44,7 @@
 				</div>
 			</div>
 		</div>
-	#elseif(data.configKey==cn.jbolt.admin.wechat.config.WechatConfigKey::RECEIPT)
+	#elseif(data.configKey==WechatConfigKey.RECEIPT)
 	<div class="form-group row" 
 		data-radio 
 		data-rule="radio"  
@@ -63,7 +63,7 @@
 				</div>
 			</div>
 		</div>
-	#elseif(data.configKey==cn.jbolt.admin.wechat.config.WechatConfigKey::SERVER_DATA_FORMAT)
+	#elseif(data.configKey==WechatConfigKey.SERVER_DATA_FORMAT)
 	<div class="form-group row" 
 		data-radio 
 		data-rule="radio"  
@@ -82,14 +82,14 @@
 				</div>
 			</div>
 		</div>
-	#elseif(data.configKey==cn.jbolt.admin.wechat.config.WechatConfigKey::SERVER_DOMAIN_URL)
+	#elseif(data.configKey==WechatConfigKey.SERVER_DOMAIN_URL)
 	<div class="form-group row">
 		<label class="col-3 col-form-label">#(data.name??):</label>
 		<div class="col-8">
 		<input type="text" readonly="readonly" autocomplete="off"  class="form-control"  maxlength="255"   value="#(data.configValue??)">
 		</div>
 	</div>
-	#elseif(data.configKey==cn.jbolt.admin.wechat.config.WechatConfigKey::MUSIC_POST_MEDIAID)
+	#elseif(data.configKey==WechatConfigKey.MUSIC_POST_MEDIAID)
 	<div class="form-group row">
 		<label class="col-3 col-form-label">#(data.name??):</label>
 		<div class="col-8">
@@ -111,7 +111,7 @@
  
 </form>
 #for(data:configList)
-#if(data.configKey==cn.jbolt.admin.wechat.config.WechatConfigKey::MUSIC_POST_MEDIAID)
+#if(data.configKey==WechatConfigKey.MUSIC_POST_MEDIAID)
 	<fieldset class="form-page-fieldset">
 	<legend>上传素材到微信服务器，获取MediaId</legend>
 	<div class="form-group text-center">

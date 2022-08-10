@@ -52,7 +52,7 @@
 	
 	<div class="form-group row  image hideEle">
 		 <div class="col offset-2"  id="imgBox">
-		 #if(wechatReplyContent!=null&&wechatReplyContent.type==cn.jbolt.common.model.WechatReplyContent::TYPE_IMG)
+		 #if(wechatReplyContent!=null&&wechatReplyContent.type==WechatReplyContentType.IMG.value)
 		 <img src="#realImage(wechatReplyContent.url??,'/assets/img/uploadimg.png')" style="max-width:500px" />
 		 #end
 		 </div>
@@ -60,7 +60,7 @@
 	</div>
 	<div class="form-group row  voice hideEle">
 		 <div class="col offset-2"  id="voiceBox">
-		 #if(wechatReplyContent!=null&&wechatReplyContent.type==cn.jbolt.common.model.WechatReplyContent::TYPE_VOICE)
+		 #if(wechatReplyContent!=null&&wechatReplyContent.type==WechatReplyContentType.VOICE.value)
 		 	<audio src="#realUrl(wechatReplyContent.url??)" controls="controls">您的浏览器不支持 audio 标签</audio>
 		 #end
 		 </div>
@@ -68,7 +68,7 @@
 	
 	<div class="form-group row  music hideEle">
 		 <div class="col offset-2"  id="musicBox">
-		 #if(wechatReplyContent!=null&&wechatReplyContent.type==cn.jbolt.common.model.WechatReplyContent::TYPE_MUSIC)
+		 #if(wechatReplyContent!=null&&wechatReplyContent.type==WechatReplyContentType.MUSIC.value)
 		 	<audio src="#(wechatReplyContent.url??)" controls="controls">您的浏览器不支持 audio 标签</audio>
 		 #end
 		 </div>

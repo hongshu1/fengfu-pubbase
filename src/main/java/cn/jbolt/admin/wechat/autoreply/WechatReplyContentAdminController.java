@@ -3,6 +3,8 @@ package cn.jbolt.admin.wechat.autoreply;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jbolt.common.enums.WechatReplyContentType;
+import cn.jbolt.core.enumutil.JBoltEnum;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.JFinal;
@@ -119,14 +121,7 @@ public class WechatReplyContentAdminController extends JBoltBaseController {
 	}
 	@UnCheck
 	public void types() {
-		List<Option> options=new ArrayList<Option>();
-		options.add(new OptionBean("图文",WechatReplyContent.TYPE_NEWS));
-		options.add(new OptionBean("文本",WechatReplyContent.TYPE_TEXT));
-		options.add(new OptionBean("视频",WechatReplyContent.TYPE_VIDEO));
-		options.add(new OptionBean("图片",WechatReplyContent.TYPE_IMG));
-		options.add(new OptionBean("语音",WechatReplyContent.TYPE_VOICE));
-		options.add(new OptionBean("音乐",WechatReplyContent.TYPE_MUSIC));
-		renderJsonData(options);
+		renderJsonData(JBoltEnum.getEnumOptionList(WechatReplyContentType.class));
 	}
 	
 	/**

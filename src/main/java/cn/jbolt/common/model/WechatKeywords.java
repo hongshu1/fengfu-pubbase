@@ -9,6 +9,5 @@ import cn.jbolt.core.annotation.TableBind;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "main" , table = "jb_wechat_keywords" , primaryKey = "id" , idGenMode = "snowflake")
 public class WechatKeywords extends BaseWechatKeywords<WechatKeywords> {
-	public static final int TYPE_LIKE=1;//模糊匹配
-	public static final int TYPE_EQUALS=2;//全匹配
+
 }

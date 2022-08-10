@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import cn.jbolt.common.enums.WechatAutoreplyReplyType;
+import cn.jbolt.common.enums.WechatAutoreplyType;
+import cn.jbolt.common.enums.WechatReplyContentType;
+import cn.jbolt.core.enumutil.JBoltEnum;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Document.OutputSettings;
@@ -100,16 +104,19 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 			}
 			boolean success=false;
 			Long userId = JBoltUserKit.getUserId();
-			switch (wechatAutoreply.getType().intValue()) {
-			case WechatAutoreply.TYPE_SUBSCRIBE:
-				success=JBoltUserAuthKit.hasPermission(userId, true, PermissionKey.WECHAT_AUTOREPLY_SUBSCRIBE);
-				break;
-			case WechatAutoreply.TYPE_KEYWORDS:
-				success=JBoltUserAuthKit.hasPermission(userId, true, PermissionKey.WECHAT_AUTOREPLY_KEYWORDS);
-				break;
-			case WechatAutoreply.TYPE_DEFAULT:
-				success=JBoltUserAuthKit.hasPermission(userId, true, PermissionKey.WECHAT_AUTOREPLY_DEFAULT);
-				break;
+			WechatAutoreplyType wechatAutoreplyType = JBoltEnum.getEnumObjectByValue(WechatAutoreplyType.class,wechatAutoreply.getType().intValue());
+			if(wechatAutoreplyType!=null){
+				switch (wechatAutoreplyType) {
+				case SUBSCRIBE:
+					success=JBoltUserAuthKit.hasPermission(userId, true, PermissionKey.WECHAT_AUTOREPLY_SUBSCRIBE);
+					break;
+				case KEYWORDS:
+					success=JBoltUserAuthKit.hasPermission(userId, true, PermissionKey.WECHAT_AUTOREPLY_KEYWORDS);
+					break;
+				case DEFAULT:
+					success=JBoltUserAuthKit.hasPermission(userId, true, PermissionKey.WECHAT_AUTOREPLY_DEFAULT);
+					break;
+				}
 			}
 			return success?success(wechatAutoreply,JBoltMsg.SUCCESS):fail(JBoltMsg.NOPERMISSION);
 	}
@@ -157,46 +164,49 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		
 		//校验输入 
 		boolean success=false;
-		switch (wechatReplyContent.getType()) {
-			case WechatReplyContent.TYPE_TEXT:
-				if(notOk(wechatReplyContent.getContent())) {
-					return fail("请输入描述内容");
-				}
-				OutputSettings outputSettings=new Document.OutputSettings().prettyPrint(false);
-				String content=Jsoup.clean(wechatReplyContent.getContent(),"",Whitelist.basic().removeEnforcedAttribute("a", "rel"),outputSettings);
-				wechatReplyContent.setContent(content);
-				break;
-			case WechatReplyContent.TYPE_IMG:
-				if(notOk(wechatReplyContent.getUrl())) {
-					return fail("请选择图片");
-				}
-				break;
-			case WechatReplyContent.TYPE_VIDEO:
-				if(notOk(wechatReplyContent.getMediaId())) {
-					return fail("请选择视频素材");
-				}
-				break;
-			case WechatReplyContent.TYPE_VOICE:
-				if(notOk(wechatReplyContent.getMediaId())) {
-					return fail("请选择语音素材");
-				}
-				break;
-			case WechatReplyContent.TYPE_MUSIC:
-				if(notOk(wechatReplyContent.getUrl())) {
-					return fail("请填写音乐地址");
-				}
-				break;
-			case WechatReplyContent.TYPE_NEWS:
-				if(notOk(wechatReplyContent.getTitle())) {
-					return fail("请填写标题");
-				}
-				if(notOk(wechatReplyContent.getContent())) {
-					return fail("请填写描述内容");
-				}
-				if(notOk(wechatReplyContent.getUrl())) {
-					return fail("请填写链接地址");
-				}
-				break;
+		WechatReplyContentType wechatReplyContentType = JBoltEnum.getEnumObjectByValue(WechatReplyContentType.class,wechatReplyContent.getType());
+		if(wechatReplyContentType!=null) {
+			switch (wechatReplyContentType) {
+				case TEXT:
+					if (notOk(wechatReplyContent.getContent())) {
+						return fail("请输入描述内容");
+					}
+					OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false);
+					String content = Jsoup.clean(wechatReplyContent.getContent(), "", Whitelist.basic().removeEnforcedAttribute("a", "rel"), outputSettings);
+					wechatReplyContent.setContent(content);
+					break;
+				case IMG:
+					if (notOk(wechatReplyContent.getUrl())) {
+						return fail("请选择图片");
+					}
+					break;
+				case VIDEO:
+					if (notOk(wechatReplyContent.getMediaId())) {
+						return fail("请选择视频素材");
+					}
+					break;
+				case VOICE:
+					if (notOk(wechatReplyContent.getMediaId())) {
+						return fail("请选择语音素材");
+					}
+					break;
+				case MUSIC:
+					if (notOk(wechatReplyContent.getUrl())) {
+						return fail("请填写音乐地址");
+					}
+					break;
+				case NEWS:
+					if (notOk(wechatReplyContent.getTitle())) {
+						return fail("请填写标题");
+					}
+					if (notOk(wechatReplyContent.getContent())) {
+						return fail("请填写描述内容");
+					}
+					if (notOk(wechatReplyContent.getUrl())) {
+						return fail("请填写链接地址");
+					}
+					break;
+			}
 		}
 		
 		//强制定死了绑定的MPID autoReplyId
@@ -424,7 +434,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	 * @return
 	 */
 	public OutMsg getWechcatSubscribeOutMsg(String appId, String openId) {
-		return getWechcatSubscribeOrDefaultOutMsg(appId, WechatAutoreply.TYPE_SUBSCRIBE,openId);
+		return getWechcatSubscribeOrDefaultOutMsg(appId, WechatAutoreplyType.SUBSCRIBE.getValue(),openId);
 	}
 	/**
 	 * 得到一个公众平台配置的关键词回复内容
@@ -454,20 +464,24 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 			if(wechatAutoreply==null) {return null;}
 			
 			OutMsg outMsg=null;
-			//根据类型 返回不同outMsg
-			switch (wechatAutoreply.getReplyType().intValue()) {
-				case WechatAutoreply.REPLYTYPE_RANDOMONE://随机一条
-					outMsg=getRandomWechatOutMsg(appIdConfig.getMpId(),wechatAutoreply.getId());
-					break;
-				case WechatAutoreply.REPLYTYPE_ALL://全部返回
-					if(wechatMpinfo.getIsAuthenticated()) {
-						//已经认证的可以启用客服消息
-						outMsg=sendAllWechatOutMsg(appIdConfig.getMpId(),wechatAutoreply.getId(),openId);
-					}else {
-						//没有认证的就随机一个
+			WechatAutoreplyReplyType wechatAutoreplyReplyType = JBoltEnum.getEnumObjectByValue(WechatAutoreplyReplyType.class,wechatAutoreply.getReplyType().intValue());
+			if(wechatAutoreplyReplyType!=null){
+				//根据类型 返回不同outMsg
+				switch (wechatAutoreplyReplyType) {
+					case RANDOMONE://随机一条
 						outMsg=getRandomWechatOutMsg(appIdConfig.getMpId(),wechatAutoreply.getId());
-					}
-					break;
+						break;
+					case ALL://全部返回
+						if(wechatMpinfo.getIsAuthenticated()) {
+							//已经认证的可以启用客服消息
+							outMsg=sendAllWechatOutMsg(appIdConfig.getMpId(),wechatAutoreply.getId(),openId);
+						}else {
+							//没有认证的就随机一个
+							outMsg=getRandomWechatOutMsg(appIdConfig.getMpId(),wechatAutoreply.getId());
+						}
+						break;
+				}
+
 			}
 			return outMsg;
 	}
@@ -477,7 +491,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	 * @return
 	 */
 	public OutMsg getWechcatDefaultOutMsg(String appId,String openId) {
-		return getWechcatSubscribeOrDefaultOutMsg(appId, WechatAutoreply.TYPE_DEFAULT,openId);
+		return getWechcatSubscribeOrDefaultOutMsg(appId, WechatAutoreplyType.DEFAULT.getValue(),openId);
 	}
 	/**
 	 * 得到一个公众平台配置的回复内容
@@ -499,13 +513,16 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		if(wechatAutoreply==null) {return null;}
 		
 		OutMsg outMsg=null;
+		WechatAutoreplyReplyType wechatAutoreplyReplyType = JBoltEnum.getEnumObjectByValue(WechatAutoreplyReplyType.class,wechatAutoreply.getReplyType().intValue());
+		if(wechatAutoreplyReplyType!=null){
+
 		//根据类型 返回不同outMsg
-		switch (wechatAutoreply.getReplyType().intValue()) {
-			case WechatAutoreply.REPLYTYPE_RANDOMONE://随机一条
+		switch (wechatAutoreplyReplyType) {
+			case RANDOMONE://随机一条
 				outMsg=getRandomWechatOutMsg(appIdConfig.getMpId(),wechatAutoreply.getId());
 				break;
-			case WechatAutoreply.REPLYTYPE_ALL://全部返回
-				if(type==WechatAutoreply.TYPE_SUBSCRIBE) {
+			case ALL://全部返回
+				if(type==WechatAutoreplyType.SUBSCRIBE.getValue()) {
 					//如果是关注 可以返回多图文
 					outMsg=processWechatSubscruibeNews(appIdConfig.getMpId(),wechatAutoreply.getId());
 					if(outMsg==null) {//如果没有图文类型的 就按照下面逻辑进行
@@ -528,6 +545,8 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 				}
 				
 				break;
+		}
+
 		}
 		return outMsg;
 	}
@@ -557,7 +576,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	 */
 	private List<WechatReplyContent> getEnableListByAutoReplyIdWithoutNews(Long autoReplyId) {
 		if(notOk(autoReplyId)) {return Collections.emptyList();}
-		return getCommonList(Okv.by("auto_reply_id =", autoReplyId).set("type <> ",WechatReplyContent.TYPE_NEWS).set("enable =",TRUE), "sort_rank", "asc",true);
+		return getCommonList(Okv.by("auto_reply_id =", autoReplyId).set("type <> ",WechatReplyContentType.NEWS.getValue()).set("enable =",TRUE), "sort_rank", "asc",true);
 	}
 	/**
 	 * 返回关注后回复的多图文
@@ -566,7 +585,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	 * @return
 	 */
 	private OutMsg processWechatSubscruibeNews(Long mpId, Long autoReplyId) {
-		Page<WechatReplyContent> page=paginate(Okv.by("mp_id", mpId).set("type",WechatReplyContent.TYPE_NEWS).set("auto_reply_id",autoReplyId).set("enable",TRUE),1,8);
+		Page<WechatReplyContent> page=paginate(Okv.by("mp_id", mpId).set("type",WechatReplyContentType.NEWS.getValue()).set("auto_reply_id",autoReplyId).set("enable",TRUE),1,8);
 		if(page.getTotalRow()==0) {
 			return null;
 		}
@@ -602,25 +621,28 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	 * @param openId
 	 */
 	private void sendOneReplyContentByCustomService(WechatReplyContent wechatReplyContent, String openId) {
-		switch (wechatReplyContent.getType()) {
-		case WechatReplyContent.TYPE_TEXT:
-			CustomServiceApi.sendText(openId, wechatReplyContent.getContent());
-			break;
-		case WechatReplyContent.TYPE_NEWS:
-			CustomServiceApi.sendNews(openId, converToCustomArticles(wechatReplyContent));
-			break;
-		case WechatReplyContent.TYPE_IMG:
-			CustomServiceApi.sendImage(openId, wechatReplyContent.getMediaId());
-			break;
-		case WechatReplyContent.TYPE_VOICE:
-			CustomServiceApi.sendVoice(openId,  wechatReplyContent.getMediaId());
-			break;
-		case WechatReplyContent.TYPE_VIDEO:
-			CustomServiceApi.sendVideo(openId,  wechatReplyContent.getMediaId(),  wechatReplyContent.getTitle(), wechatReplyContent.getContent());
-			break;
-		case WechatReplyContent.TYPE_MUSIC:
-			sendMusicCustomService(openId,wechatReplyContent);
-			break;
+		WechatReplyContentType wechatReplyContentType = JBoltEnum.getEnumObjectByValue(WechatReplyContentType.class,wechatReplyContent.getType());
+		if(wechatReplyContentType!=null) {
+			switch (wechatReplyContentType) {
+				case TEXT:
+					CustomServiceApi.sendText(openId, wechatReplyContent.getContent());
+					break;
+				case NEWS:
+					CustomServiceApi.sendNews(openId, converToCustomArticles(wechatReplyContent));
+					break;
+				case IMG:
+					CustomServiceApi.sendImage(openId, wechatReplyContent.getMediaId());
+					break;
+				case VOICE:
+					CustomServiceApi.sendVoice(openId, wechatReplyContent.getMediaId());
+					break;
+				case VIDEO:
+					CustomServiceApi.sendVideo(openId, wechatReplyContent.getMediaId(), wechatReplyContent.getTitle(), wechatReplyContent.getContent());
+					break;
+				case MUSIC:
+					sendMusicCustomService(openId, wechatReplyContent);
+					break;
+			}
 		}
 		
 	}
@@ -653,25 +675,28 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 		WechatReplyContent wechatReplyContent=getRandomOneEnableReplyContent(mpId,autoReplyId);
 		if(wechatReplyContent==null) {return null;}
 		OutMsg outMsg=null;
-		switch (wechatReplyContent.getType()) {
-		case WechatReplyContent.TYPE_TEXT:
-			outMsg=processOneTextOutMsg(wechatReplyContent);
-			break;
-		case WechatReplyContent.TYPE_NEWS:
-			outMsg=processOneNewsOutMsg(wechatReplyContent);
-			break;
-		case WechatReplyContent.TYPE_IMG:
-			outMsg=processOneImageOutMsg(wechatReplyContent);
-			break;
-		case WechatReplyContent.TYPE_VOICE:
-			outMsg=processOneVoiceOutMsg(wechatReplyContent);
-			break;
-		case WechatReplyContent.TYPE_VIDEO:
-			outMsg=processOneVideoOutMsg(wechatReplyContent);
-			break;
-		case WechatReplyContent.TYPE_MUSIC:
-			outMsg=processOneMusicOutMsg(wechatReplyContent);
-			break;
+		WechatReplyContentType wechatReplyContentType = JBoltEnum.getEnumObjectByValue(WechatReplyContentType.class,wechatReplyContent.getType());
+		if(wechatReplyContentType!=null) {
+			switch (wechatReplyContentType) {
+				case TEXT:
+					outMsg = processOneTextOutMsg(wechatReplyContent);
+					break;
+				case NEWS:
+					outMsg = processOneNewsOutMsg(wechatReplyContent);
+					break;
+				case IMG:
+					outMsg = processOneImageOutMsg(wechatReplyContent);
+					break;
+				case VOICE:
+					outMsg = processOneVoiceOutMsg(wechatReplyContent);
+					break;
+				case VIDEO:
+					outMsg = processOneVideoOutMsg(wechatReplyContent);
+					break;
+				case MUSIC:
+					outMsg = processOneMusicOutMsg(wechatReplyContent);
+					break;
+			}
 		}
 		return outMsg;
 	}
