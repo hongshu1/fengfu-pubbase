@@ -31,7 +31,13 @@
 #end
     <input id="#(modelName)_#(col.attrName)" type="hidden" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请上传'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" name="#(modelName).#(col.attrName)" #end />
     <div data-imguploader
-         data-url="#(col.formDataValue??)"
+         #if(!col.uploadToQiniu)
+         #if(codeGenServiceMode)
+         data-url="#(col.formUploadUrl??)"
+         #else
+         data-url="admin/codegen/uploadImg"
+         #end
+         #end
          data-area="#(col.formImgUploaderArea?? '200,200')"
          data-maxsize="#(col.formMaxsize?? '200')"
          #if(col.uploadToQiniu??)
