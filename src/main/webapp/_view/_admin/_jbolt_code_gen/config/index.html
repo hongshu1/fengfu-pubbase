@@ -801,7 +801,7 @@ function refreshFormPreviewPortal(){
 /**
  * 切换可编辑模式
  */
-function changeFormPreviewMode_#(pageId)(isEidtMode){
+function changeFormPreviewMode_#(pageId)(isEidtMode,callback){
 	var codeGenId = "#(codeGen.id)";
 	var btn=$("#isFormEditModeBtn_"+isEidtMode);
 	btn.parent().find("button.btn-primary").removeClass("btn-primary").addClass("btn-secondary");
@@ -809,9 +809,9 @@ function changeFormPreviewMode_#(pageId)(isEidtMode){
 	formPreviewPortal_#(pageId).data("edit-mode",isEidtMode).attr("data-edit-mode",isEidtMode);
 	if(isEidtMode){
 		//编辑模式
-		formPreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/formPortalEditMode/#(codeGen.id)");
+		formPreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/formPortalEditMode/#(codeGen.id)",false,callback);
 	}else{
-		formPreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/formPortal/#(codeGen.id)")
+		formPreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/formPortal/#(codeGen.id)",false,callback);
 	}
 }
 
@@ -859,7 +859,14 @@ function submitFormEleEditor(){
 		var data = {};
 		data.attr = JSON.stringify(postDatas);
 		Ajax.post("admin/codegen/modelattr/updateFormEleConfig",data,function(res){
-			LayerMsgBox.success("操作成功",500,refreshModelAttrJBoltTable_#(pageId));
+			LayerMsgBox.success("操作成功",500,function(){
+				refreshModelAttrJBoltTable_#(pageId)();
+				changeFormPreviewMode_#(pageId)(true,function(){
+					setTimeout(function(){
+						$("#codegen_form_preview_portal_#(pageId) .form_control_box .form-group[data-id='"+postDatas.id+"']").trigger("click");
+					},200);
+				});
+			});
 		});
 	});
 	

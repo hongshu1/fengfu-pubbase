@@ -4425,3 +4425,8 @@ form.form-inline>.btn{
     margin-right: 0;
     margin-bottom: 0;
 }
+
+.form_control_box>div.form-group:hover{
+	border: #19b2ee 1px dashed;
+	background-color: rgba(236,245,255,0.1);
+}

@@ -14,11 +14,44 @@
 <div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
     #end
     #if(col.formUiType == "textarea")
-    <textarea style="height:100px;" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))"  data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '200')" name="#(modelName).#(col.attrName)">#if(codeGenServiceMode??)#[[#]]#(#(modelName).#(col.attrName)??)#end</textarea>
+    <textarea style="height:100px;" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))"  data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="#(col.placeholder?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" maxlength="#(col.maxLength?? '200')" name="#(modelName).#(col.attrName)">#if(codeGenServiceMode??)#[[#]]#(#(modelName).#(col.attrName)??)#end</textarea>
     #else
-    <input type="#(type?? 'text')"  #if(col.formUiType == "calculator")data-with-calculator#end  #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"  #end data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '40')" name="#(modelName).#(col.attrName)" #if(codeGenServiceMode??)value="#[[#]]#(#(modelName).#(col.attrName)??)"#end/>
+    <input type="#(type?? 'text')"  #if(col.formUiType == "calculator")data-with-calculator#end  #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"  #end data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="#(col.placeholder?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" maxlength="#(col.maxLength?? '40')" name="#(modelName).#(col.attrName)" #if(codeGenServiceMode??)value="#[[#]]#(#(modelName).#(col.attrName)??)"#end/>
     #end
     #if(isFormGroupRow)
+</div>
+#end
+#end
+
+
+### 根据UIType字符串 生成imgupload类型html
+#define genFormImguploaderTypeByUiTypeStr(isFormGroupRow,modelName,formControlWidth,col)
+#if(isFormGroupRow)
+<div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
+#end
+    <input id="#(modelName)_#(col.attrName)" type="hidden" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请上传'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" name="#(modelName).#(col.attrName)" #end />
+    <div data-imguploader
+         data-url="#(col.formDataValue??)"
+         data-area="#(col.formImgUploaderArea?? '200,200')"
+         data-maxsize="#(col.formMaxsize?? '200')"
+         #if(col.uploadToQiniu??)
+         data-handler="uploadFileToQiniu"
+         #if(col.qiniuBucketSn??)
+         data-bucket-sn="#(col.qiniuBucketSn??)"
+         #end
+         data-file-key="#(col.qiniuFileKey?? '[dateTime]/[randomId]/[filename]')"
+         #else
+         data-handler="uploadFile"
+         #end
+         data-hidden-input="#(modelName)_#(col.attrName)"
+         data-remove-confirm="true"
+         #if(col.dataRule || col.isRequired)
+         data-rule="required"
+         #end
+    ></div>
+    <br/>
+    <small class="text-danger">注:上传图片尺寸比例#(col.formImgUploaderArea?? '1:1'),最大#(col.formMaxsize?? '200')KB</small>
+#if(isFormGroupRow)
 </div>
 #end
 #end
@@ -48,7 +81,7 @@
     #if(isFormGroupRow)
     <div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
         #end
-        <input type="#(type?? 'date')" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '40')" name="#(modelName).#(col.attrName)" #if(codeGenServiceMode??)value="#[[#]]#(#(modelName).#(col.attrName)??)"#end/>
+        <input type="#(type?? 'date')" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="#(col.placeholder?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" maxlength="#(col.maxLength?? '40')" name="#(modelName).#(col.attrName)" #if(codeGenServiceMode??)value="#[[#]]#(#(modelName).#(col.attrName)??)"#end/>
         #if(isFormGroupRow)
     </div>
     #end
@@ -59,7 +92,7 @@
 #if(isFormGroupRow)
 <div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
     #end
-    <input type="text" class="form-control" data-autocomplete autocomplete="off" maxlength="#(col.attrLength?? 200)" placeholder="请选择#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))"
+    <input type="text" class="form-control" data-autocomplete autocomplete="off" maxlength="#(col.attrLength?? 200)" placeholder="#(col.placeholder?? ('请选择'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"
            data-url="#(col.formDataValue??)"
            #if(col.formDataValueAttr)
            data-value-attr="#(col.formDataValueAttr)"
@@ -111,7 +144,7 @@
            data-hidden-input="#(col.attrName)_hidden"
            data-height="300"
            data-url="#(col.formDataValue??)"
-           placeholder="请选择#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))"
+           placeholder="#(col.placeholder?? ('请选择'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))"
            #if(col.formJboltinputFilterHandler??)
            data-filter-handler="#(col.formJboltinputFilterHandler)"
            #end
@@ -231,7 +264,7 @@
 #if(isFormGroupRow)
 <div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
     #end
-    <input type="text" data-date data-type="#(type?? 'date')" data-with-clearbtn="true" data-fmt="#(fmt?? 'yyyy-MM-dd')" readonly="readonly" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))"  data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))" maxlength="#(col.maxLength?? '20')" name="#(modelName).#(col.attrName)"    #if(codeGenServiceMode??)value="#[[#]]#datetime(#(modelName).#(col.attrName)??,'#(fmt??)')"#end/>
+    <input type="text" data-date data-type="#(type?? 'date')" data-with-clearbtn="true" data-fmt="#(fmt?? 'yyyy-MM-dd')" readonly="readonly" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))"  data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="#(col.placeholder?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" maxlength="#(col.maxLength?? '20')" name="#(modelName).#(col.attrName)"    #if(codeGenServiceMode??)value="#[[#]]#datetime(#(modelName).#(col.attrName)??,'#(fmt??)')"#end/>
 #if(isFormGroupRow)
 </div>
 #end
@@ -344,6 +377,11 @@ data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col
 data-inline="#(col.isItemInline?? true)"
 data-item-min-width="auto"
 #@formTagEnd()
+#@formDivEnd()
+#case("imguploader")
+#@genFormGroupDivStart(isFormGroupRow,formControlWidth,col,true)
+#@genFormGroupLabel(isFormGroupRow,labelWidth,col)
+#@genFormImguploaderTypeByUiTypeStr(isFormGroupRow,modelName,formControlWidth,col)
 #@formDivEnd()
 #default
 #@genFormGroupDivStart(isFormGroupRow,formControlWidth,col,true)
