@@ -61,7 +61,10 @@ public class JBoltPermissionKeyGen {
 		activeRecordPlugin.addMapping("jb_permission", "id", Permission.class);
 		activeRecordPlugin.start();
 		List<Permission> permissions = new Permission().dao().findAll();
-		Template template=Engine.use().getTemplate(TPL);
+		Engine engine = Engine.use();
+		engine.setStaticFieldExpression(true);
+		engine.setStaticMethodExpression(true);
+		Template template=engine.getTemplate(TPL);
 		BufferedWriter writer=FileUtil.getWriter(TARGET, "utf-8", false);
 		try {
 			writer.write(template.renderToString(Kv.by("permissions", permissions)));

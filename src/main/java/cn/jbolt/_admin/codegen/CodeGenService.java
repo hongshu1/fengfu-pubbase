@@ -66,6 +66,8 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
     private Engine getCodeGenTplEngine() {
         if (codeGenEngine == null) {
             codeGenEngine = new Engine()
+                    .setStaticFieldExpression(true)
+                    .setStaticMethodExpression(true)
                     .setToClassPathSourceFactory() // 从 class path 内读模板文件
                     .addSharedMethod(new StrKit())
                     .addSharedFunction(controllerCommonTemplate)
@@ -79,6 +81,8 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
     private Engine getCodeGenIndexHtmlTplEngine() {
         if (codeGenIndexHtmlEngine == null) {
             codeGenIndexHtmlEngine = new Engine()
+                    .setStaticFieldExpression(true)
+                    .setStaticMethodExpression(true)
                     .setBaseTemplatePath(PathKit.getWebRootPath() + "/_view/_admin/_jbolt_code_gen")
                     .addSharedMethod(new StrKit())
                     //可视化生成器 index.html专用 查询条件公用模板
@@ -92,6 +96,8 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
     private Engine getCodeGenFormHtmlTplEngine() {
         if (codeGenFormHtmlEngine == null) {
             codeGenFormHtmlEngine = new Engine()
+                    .setStaticFieldExpression(true)
+                    .setStaticMethodExpression(true)
                     .setBaseTemplatePath(PathKit.getWebRootPath() + "/_view/_admin/_jbolt_code_gen")
                     .addSharedMethod(new StrKit())
                     //可视化生成器 _form.html专用 模板
@@ -103,6 +109,8 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
     private Engine getCodeGenImportExcelHtmlTplEngine() {
         if (codeGenImportExcelHtmlEngine == null) {
             codeGenImportExcelHtmlEngine = new Engine()
+                    .setStaticFieldExpression(true)
+                    .setStaticMethodExpression(true)
                     .setBaseTemplatePath(PathKit.getWebRootPath() + "/_view/_admin/_jbolt_code_gen")
                     .addSharedMethod(new StrKit());
         }
