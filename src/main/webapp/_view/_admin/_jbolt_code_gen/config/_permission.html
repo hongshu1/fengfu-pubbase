@@ -2,7 +2,8 @@
 	<div class="card-header jb_vheader_card">
 		<button class="btn btn-outline-primary" onclick="autoSetCodeGenPermissionInfo()"><i class="fa fa-cogs"></i> 自动设置菜单</button>
 		<button onclick="submitThisForm()" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存配置</button>
-		<button class="btn btn-danger btn-sm" data-ajaxbtn data-url="admin/codegen/unbindPermission/#(codeGen.id)" data-handler="unbindPermissionHandler" data-confirm="确认清空已绑定权限菜单？"><i class="fa fa-remove"></i> 解绑权限</button>
+		<button class="btn btn-info btn-sm" data-openpage="dialog" data-area="800,400" data-title="绑定已存在的权限" data-url="admin/codegen/initBindPermission/#(codeGen.id)"><i class="fa fa-plus"></i> 绑定一个已存在权限</button>
+		<button class="btn btn-danger btn-sm" data-success-time="300" data-ajaxbtn data-url="admin/codegen/unbindPermission/#(codeGen.id)" data-handler="unbindPermissionHandler" data-confirm="确认清空已绑定权限菜单？"><i class="fa fa-remove"></i> 解绑权限</button>
 		<a class="btn btn-success btn-sm" data-openpage="dialog" data-target="parent" data-area="100%,100%" data-fs="true" data-url="admin/permission" data-btn="close"><i class="fa fa-cogs"></i>系统权限资源管理</a>
 		<a class="btn btn-info btn-sm" data-openpage="ajaxportal" data-portalid="codeGenPermissionPortal" data-url="admin/codegen/permissionPortal/#(codeGen.id)"><i class="fa fa-refresh"></i>刷新</a>
 	</div>

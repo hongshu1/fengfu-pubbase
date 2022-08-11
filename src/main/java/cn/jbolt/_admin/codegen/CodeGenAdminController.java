@@ -772,5 +772,17 @@ public class CodeGenAdminController extends JBoltBaseController {
 		renderJsonData(options);
 	}
 
+	/**
+	 * 初始化 绑定permission
+	 */
+	public void initBindPermission(){
+		set("codeGenId",getLong(0));
+		render("config/_bind_permission.html");
+	}
+
+	public void bindPermission(){
+		renderJson(service.bindPermission(getLong("codeGenId"),getLong("permissionId")));
+	}
+
 
 }
