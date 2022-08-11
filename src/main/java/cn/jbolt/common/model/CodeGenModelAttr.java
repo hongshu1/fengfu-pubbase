@@ -147,6 +147,9 @@ public class CodeGenModelAttr extends BaseCodeGenModelAttr<CodeGenModelAttr> {
                 uv = arr[0]+".me."+arr[1];
             }
         }
+        if(StrKit.notBlank(uv) && uv.startsWith("cn.jbolt.core.cache.")){
+            uv = uv.replace("cn.jbolt.core.cache.","");
+        }
         return uv;
     }
 

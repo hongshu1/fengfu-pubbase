@@ -4440,6 +4440,9 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [is_table_record_camel_case] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_import_excel] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_export_excel] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
+    [is_export_excel_by_checked_ids] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
+    [is_export_excel_by_form] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
+    [is_export_excel_all] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_copy_to_excel] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_copy_from_excel] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [is_toolbar] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
@@ -4451,7 +4454,7 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [is_table_sortable_move] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [leftbox_width] int DEFAULT 220  NULL,
     [rightbox_width] int DEFAULT 220  NULL,
-    [headbox_height] int DEFAULT 40  NULL,
+    [headbox_height] int DEFAULT 60  NULL,
     [footbox_height] int DEFAULT 220  NULL,
     [is_leftbox_footer] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_rightbox_footer] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
@@ -4502,6 +4505,7 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [is_need_admin_interceptor] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [extra_interceptor_class_name] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
     [is_table_multi_conditions_mode] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
+    [is_table_multi_conditions_btn_show_title] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_toolbar_add_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_toolbar_edit_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_toolbar_del_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
@@ -4514,7 +4518,9 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [project_system_log_target_type_text] nvarchar(20) COLLATE Chinese_PRC_CI_AS  NULL,
     [project_system_log_target_type_value] nvarchar(10) COLLATE Chinese_PRC_CI_AS  NULL,
     [project_system_log_target_type_key_name] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
-    [form_dialog_area] nvarchar(20) COLLATE Chinese_PRC_CI_AS DEFAULT '800,600' NULL
+    [form_dialog_area] nvarchar(20) COLLATE Chinese_PRC_CI_AS DEFAULT '800,600' NULL,
+    [is_base_model_gen_col_constant] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
+    [is_base_model_gen_col_constant_to_uppercase] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL
     )
     GO
 
@@ -4939,6 +4945,27 @@ ALTER TABLE [dbo].[jb_code_gen] SET (LOCK_ESCALATION = TABLE)
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen',
     'COLUMN', N'is_export_excel'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否启用 导出选中行功能',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_export_excel_by_checked_ids'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否启用导出表单查询结果功能',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_export_excel_by_form'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否启用导出所有数据',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_export_excel_all'
     GO
 
     EXEC sp_addextendedproperty
@@ -5376,6 +5403,13 @@ ALTER TABLE [dbo].[jb_code_gen] SET (LOCK_ESCALATION = TABLE)
     GO
 
     EXEC sp_addextendedproperty
+    'MS_Description', N'表格高级查询条件切换按钮是否显示标题',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_table_multi_conditions_btn_show_title'
+    GO
+
+    EXEC sp_addextendedproperty
     'MS_Description', N'表格toolbar上启用添加按钮',
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen',
@@ -5464,6 +5498,20 @@ ALTER TABLE [dbo].[jb_code_gen] SET (LOCK_ESCALATION = TABLE)
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen',
     'COLUMN', N'form_dialog_area'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否在baseModel中生成字段常量',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_base_model_gen_col_constant'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否在baseModel中生成的字段常量 名称转大写',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_base_model_gen_col_constant_to_uppercase'
     GO
 
     EXEC sp_addextendedproperty

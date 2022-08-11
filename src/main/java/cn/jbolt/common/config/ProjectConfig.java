@@ -175,12 +175,12 @@ public class ProjectConfig extends JBoltProjectConfig {
 	@Override
 	public void configPlugins(Plugins me) {
 		// 配置调度
-		configCron4jPlugin(me);
+		Cron4jPlugin cron4jPlugin = configCron4jPlugin(me);
 		// 配置JFinal Event插件
 		configJFinalEvent(me);
 
 		//二开配置扩展插件
-		ExtendProjectConfig.configPlugin(me);
+		ExtendProjectConfig.configPlugin(me,cron4jPlugin);
 	}
 
 	/**
@@ -207,12 +207,13 @@ public class ProjectConfig extends JBoltProjectConfig {
 	 * 配置自动调度插件
 	 *
 	 * @param me
+	 * @return
 	 */
-	private void configCron4jPlugin(Plugins me) {
+	private Cron4jPlugin configCron4jPlugin(Plugins me) {
 		Cron4jPlugin cron4jPlugin = new Cron4jPlugin();
 		cron4jPlugin.addTask("0-59/1 * * * *", new JBoltOnlineUserClearTask());
 		me.add(cron4jPlugin);
-
+		return cron4jPlugin;
 	}
 
 	/**

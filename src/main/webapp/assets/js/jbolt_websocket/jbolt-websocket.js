@@ -5,7 +5,7 @@ import JBoltWebSocketHandler from './jbolt-websocket-handler.js'
 	//jbolt websocket
 	let JBoltWS     = {};
 	JBoltWS.isOk = false;
-	JBoltWS.version = "0.2.0";
+	JBoltWS.version = "0.1.0";
 	//消息类型定义
 	JBoltWS.msgType = {COMMAND:1,COMMAND_RET:2,TEXT:3,FILE:4};
 	/**
@@ -19,7 +19,7 @@ import JBoltWebSocketHandler from './jbolt-websocket-handler.js'
 	 * @param reconnInterval        重连间隔时间
 	 * @param heartbeatTimeout      心跳超时时间
 	 */
-	JBoltWS.init = function({protocol = "ws", host = "localhost", ctx,token,tenantSn, binaryType = 'arraybuffer', reconnInterval = 1000 , heartbeatTimeout = 10000, callback}){
+	JBoltWS.init = function({protocol = "ws", host = "localhost", ctx='',token='',tenantSn='', binaryType = 'arraybuffer', reconnInterval = 1000 , heartbeatTimeout = 10000, callback}){
 		this.protocol              = protocol;
 		this.host                  = host;
 		this.token                 = token;

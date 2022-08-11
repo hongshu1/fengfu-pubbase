@@ -27,7 +27,12 @@ public abstract class #(tableMeta.baseModelName)<M extends #(tableMeta.baseModel
 #else
 public abstract class #(tableMeta.baseModelName)<M extends #(tableMeta.baseModelName)<M>> extends Model<M> implements IBean {
 #end
-
+#if(genColConstant??)
+#for(cm : tableMeta.columnMetas)
+    /**#(cm.remarks??)*/
+    public static final String #if(genColConstantToUpperCase??)#(cm.name.toUpperCase())#else #(cm.name)#end  = "#(cm.name)";
+#end
+#end
 #set(gcs = generateChainSetter)
 #for(cm : tableMeta.columnMetas)
 	#if (cm.remarks)

@@ -2,7 +2,7 @@
 	<div class="col-4 h-100">
 		<div class="card jb_vflex">
 			<div class="card-header jb_vheader_card">表格设置
-			<button onclick="ajaxSubmitForm('codeGenTableForm',function(res){AjaxPortalUtil.refresh('#codegen_table_preview_portal_#(pageId)');})" class="btn btn-primary btn-sm float-right"><i class="fa fa-save"></i> 保存配置</button>
+			<button onclick="ajaxSubmitForm('codeGenTableForm',function(res){changeTablePreviewMode(false);})" class="btn btn-primary btn-sm float-right"><i class="fa fa-save"></i> 保存配置</button>
 			</div>
 			<div class="card-body jb_vbody">
 			<form class="form h-100" onsubmit="return false;" id="codeGenTableForm" action="admin/codegen/updateBase" method="post">
@@ -179,6 +179,14 @@
 							</div>
 
 
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label">表单Dialog尺寸</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" placeholder="例如: 800,600" name="codeGen.formDialogArea" value="#(codeGen.formDialogArea?? '800,600')" autocomplete="off" />
+								</div>
+							</div>
+
+
 							<fieldset>
 								<legend class="text-center">默认排序配置</legend>
 								<div class="form-group row">
@@ -214,6 +222,7 @@
 									 data-rule="radio"
 									 data-value="#(codeGen.isTableMultiConditionsMode?? 'false')"
 									 data-name="codeGen.isTableMultiConditionsMode"
+									 data-handler="changeIsTableMultiConditionsMode_#(pageId)"
 									 data-default="false">
 									<label class="col-sm-3 col-form-label is_required" >条件样式</label>
 									<div class="col"  style="padding-top: 1px;">
@@ -225,6 +234,26 @@
 										<div class="radio radio-primary  radio-inline">
 											<input  id="r_isTableMultiConditionsMode_false" type="radio" name="codeGen.isTableMultiConditionsMode"   value="false"/>
 											<label for="r_isTableMultiConditionsMode_false">简单条件</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group row"
+									 data-radio
+									 data-rule="radio"
+									 data-value="#(codeGen.isTableMultiConditionsBtnShowTitle?? 'true')"
+									 data-name="codeGen.isTableMultiConditionsBtnShowTitle"
+									 data-default="true">
+									<label class="col-sm-3 col-form-label is_required" >条件切换按钮</label>
+									<div class="col"  style="padding-top: 1px;">
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isTableMultiConditionsBtnShowTitle_true" type="radio" name="codeGen.isTableMultiConditionsBtnShowTitle"   value="true"/>
+											<label for="r_isTableMultiConditionsBtnShowTitle_true">显示图标+标题</label>
+										</div>
+
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isTableMultiConditionsBtnShowTitle_false" type="radio" name="codeGen.isTableMultiConditionsBtnShowTitle"   value="false"/>
+											<label for="r_isTableMultiConditionsBtnShowTitle_false">只显示图标</label>
 										</div>
 									</div>
 								</div>
@@ -430,7 +459,7 @@
 								<div class="form-group row">
 									<label class="col-sm-3 col-form-label">高度</label>
 									<div class="col-sm-6">
-										<input type="number" data-rule="pint;>=40;" step="5" maxlength="3" data-notnull="false"  min="40" class="form-control" placeholder="请输入Headbox高度" name="codeGen.headboxHeight" value="#(codeGen.headboxHeight?? 40)" autocomplete="off" />
+										<input type="number" id="codeGenheadboxHeight_#(pageId)" data-rule="pint;>=40;" step="5" maxlength="3" data-notnull="false"  min="40" class="form-control" placeholder="请输入Headbox高度" name="codeGen.headboxHeight" value="#(codeGen.headboxHeight?? 60)" autocomplete="off" />
 									</div>
 								</div>
 							</fieldset>
@@ -919,11 +948,11 @@
 		<div class="card jb_vflex">
 			<div class="card-header jb_vheader_card">
 				<span class="d-inline-block mr-5"><i class="fa fa-eye mr-1"></i>表格预览</span>
-				<a data-url="admin/codegen/tablePortal/#(codeGen.id)" data-openpage="ajaxportal" data-portalid="codegen_table_preview_portal_#(pageId)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh mr-1"></i>刷新预览区</a> 
+				<button onclick="changeTablePreviewMode(false)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh mr-1"></i>刷新预览区</button>
 				<button data-ajaxbtn data-confirm="确认初始化元素表格列顺序？" data-handler="refreshPortal" data-portalid="codegen_table_preview_portal_#(pageId)" data-url="admin/codegen/initSortRankIntable/#(codeGen.id)" class="btn btn-outline-success btn-sm" ><i class="fa fa-sort mr-1"></i>初始化排序</button>
 				<div class="btn-group btn-group-sm">
-					<button id="isTableEditModeBtn_true" class="btn btn-secondary" onclick="changeTablePreviewMode_#(pageId)(true)" tooltip data-title="编辑模式"><i class="fa fa-edit"></i></button>
-					<button id="isTableEditModeBtn_false" class="btn btn-primary" onclick="changeTablePreviewMode_#(pageId)(false)" tooltip data-title="预览模式"><i class="fa fa-eye"></i></button>
+					<button id="isTableEditModeBtn_true" class="btn btn-secondary" onclick="changeTablePreviewMode(true)" tooltip data-title="编辑模式"><i class="fa fa-edit"></i></button>
+					<button id="isTableEditModeBtn_false" class="btn btn-primary" onclick="changeTablePreviewMode(false)" tooltip data-title="预览模式"><i class="fa fa-eye"></i></button>
 				</div>
 				<a tabindex="-1" data-fullscreenbtn data-target="parent.card" class="pull-right text-black-50"><i class="jbicon2 jbi-fullscreen"></i></a>
 			</div>

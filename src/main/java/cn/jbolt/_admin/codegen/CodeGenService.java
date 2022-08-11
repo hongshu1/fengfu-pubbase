@@ -1129,6 +1129,9 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
     private String getGetIdTypeByGenMode(String idGenMode) {
         String idType = "Long";
         switch (idGenMode) {
+            case JBoltIDGenMode.AUTO:
+                idType = "Int";
+                break;
             case JBoltIDGenMode.AUTO_LONG:
                 idType = "Long";
                 break;
@@ -1464,7 +1467,10 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
 //		};
         //获取翻译设置
         List<CodeGenModelAttr> translates = codeGenModelAttrService.getCodeGenNeedTranslateAttrs(codeGen.getId());
-
+        //设置是否生成baseModel中的字段常量
+        JBoltProjectGenConfig.genColConstant = codeGen.getIsBaseModelGenColConstant();
+        //设置字段常量的
+        JBoltProjectGenConfig.genColConstantToUpperCase = codeGen.getIsBaseModelGenColConstantToUppercase();
         //初始化项目配置
         JBoltProjectGenConfig.init(projectRootPath, modelPackage, genModel, idGenMode, genHtmlDataDictionary, false, removedTableNamePrefixes, columnTobuildAttrNameFun, tableNames, tableNamesPrefixes, generateView, translates,cover);
         //设置自动缓存机制

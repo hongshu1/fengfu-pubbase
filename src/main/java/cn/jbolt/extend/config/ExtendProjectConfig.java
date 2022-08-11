@@ -8,6 +8,7 @@ import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.cron4j.Cron4jPlugin;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.template.Engine;
 
@@ -40,19 +41,22 @@ public class ExtendProjectConfig {
 	/**
 	 * 插件配置
 	 * @param me
+	 * @param cron4jPlugin
 	 */
-	public static void configPlugin(Plugins me) {
+	public static void configPlugin(Plugins me, Cron4jPlugin cron4jPlugin) {
 		LOG.debug("调用二开扩展配置:configPlugin");
 		//如果需要二开 增加自己的自动调度任务
-		configCron4jPlugin(me);
+		configCron4jPlugin(me,cron4jPlugin);
 	}
 	
 	/**
 	 * 配置自动调度插件
 	 * @param me
+	 * @param cron4jPlugin
 	 */
-	private static void configCron4jPlugin(Plugins me) {
+	private static void configCron4jPlugin(Plugins me,Cron4jPlugin cron4jPlugin) {
 		LOG.debug("调用二开扩展配置:configCron4jPlugin");
+		//可以直接在 cron4jPlugin 中addTask 也可以自己添加新的cron4jPlugin
 //	    Cron4jPlugin cron4jPlugin = new Cron4jPlugin();
 //	    cron4jPlugin.addTask("0-59/1 * * * *", new WechatMediaDownloaTask());
 //	    me.add(cron4jPlugin);
