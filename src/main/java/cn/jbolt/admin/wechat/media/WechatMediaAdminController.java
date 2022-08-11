@@ -3,6 +3,8 @@ package cn.jbolt.admin.wechat.media;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jbolt.common.enums.WechatMediaType;
+import cn.jbolt.core.enumutil.JBoltEnum;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 
@@ -39,7 +41,7 @@ public class WechatMediaAdminController extends JBoltBaseController {
 		Long mpId=getLong(0);
 		WechatMpinfo mpinfo=wechatMpinfoService.findById(mpId);
 		if(mpinfo==null) {renderDialogFail("微信公众平台信息不存在");return;}
-		String type=get("type", WechatMedia.TYPE_NEWS);
+		String type=get("type", WechatMediaType.NEWS.getValue());
 		set("pageData", service.paginateAdminList(mpId,type,getKeywords(),getPageNumber(),getPageSize(JBoltPageSize.PAGESIZE_ADMIN_LIST_20)));
 		keepPara("keywords");
 		set("mpId", mpId);
@@ -70,12 +72,7 @@ public class WechatMediaAdminController extends JBoltBaseController {
 	}
 	@UnCheck
 	public void types() {
-		List<Option> options=new ArrayList<Option>();
-		options.add(new OptionBean("图文", WechatMedia.TYPE_NEWS));
-		options.add(new OptionBean("图片", WechatMedia.TYPE_IMG));
-		options.add(new OptionBean("语音", WechatMedia.TYPE_VOICE));
-		options.add(new OptionBean("视频", WechatMedia.TYPE_VIDEO));
-		renderJsonData(options);
+		renderJsonData(JBoltEnum.getEnumOptionList(WechatMediaType.class));
 	}
 	
 	@Before(WechatMediaMgrValidator.class)

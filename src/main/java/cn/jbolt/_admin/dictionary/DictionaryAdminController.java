@@ -4,6 +4,7 @@ package cn.jbolt._admin.dictionary;
 import java.util.List;
 
 import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.common.enums.DictionaryTypeMode;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -100,7 +101,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 		set("dictionaryType", type);
 		List<Dictionary> dictionaries=service.getListByTypeId(type.getId(),null);
 		set("dictionaries",dictionaries);
-		if(type.getModeLevel()==DictionaryType.MODE_LEVEL_MUTIL){
+		if(type.getModeLevel()== DictionaryTypeMode.LEVEL_MULTI.getValue()){
 			set("dataTotalCount", service.getCountByTypeId(type.getId()));
 		}else{
 			set("dataTotalCount", dictionaries.size());
@@ -153,7 +154,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 		}
 		set("typeId", typeId);
 		DictionaryType dictionaryType=dictionaryTypeService.findById(typeId);
-		if(dictionaryType.getModeLevel()==DictionaryType.MODE_LEVEL_MUTIL) {
+		if(dictionaryType.getModeLevel()==DictionaryTypeMode.LEVEL_MULTI.getValue()) {
 			set("needPidSelect",true);
 		}
 		render("add.html");
@@ -173,7 +174,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 			renderFormFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
-		if(dictionaryType.getModeLevel()==DictionaryType.MODE_LEVEL_MUTIL) {
+		if(dictionaryType.getModeLevel()==DictionaryTypeMode.LEVEL_MULTI.getValue()) {
 			set("needPidSelect",true);
 		}
 		set("typeId",typeId);
@@ -200,7 +201,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 			renderFormFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
-		if(dictionaryType.getModeLevel()==DictionaryType.MODE_LEVEL_MUTIL) {
+		if(dictionaryType.getModeLevel()==DictionaryTypeMode.LEVEL_MULTI.getValue()) {
 			set("needPidSelect",true);
 		}
 		set("dictionary",dictionary );
@@ -228,7 +229,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 			renderFormFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
-		if(dictionaryType.getModeLevel()==DictionaryType.MODE_LEVEL_MUTIL) {
+		if(dictionaryType.getModeLevel()==DictionaryTypeMode.LEVEL_MULTI.getValue()) {
 			set("needPidSelect",true);
 		}
 		set("typeId", typeId);

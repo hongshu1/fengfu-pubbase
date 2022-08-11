@@ -155,7 +155,7 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">开发作者</label>
 		<div class="col-6">
-			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入开发作者" data-tips="请输入开发作者" maxlength="60" name="codeGen.author" value="#(codeGen.author?? cn.jbolt.core.kit.JBoltUserKit::getUserName())" />
+			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入开发作者" data-tips="请输入开发作者" maxlength="60" name="codeGen.author" value="#(codeGen.author?? JBoltUserKit.getUserName())" />
 		</div>
 	</div>
 	

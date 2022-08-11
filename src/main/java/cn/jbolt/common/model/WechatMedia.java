@@ -9,10 +9,6 @@ import cn.jbolt.core.annotation.TableBind;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "main" , table = "jb_wechat_media" , primaryKey = "id" , idGenMode = "snowflake")
 public class WechatMedia extends BaseWechatMedia<WechatMedia> {
-	public static final String TYPE_IMG="image";
-	public static final String TYPE_NEWS="news";
-	public static final String TYPE_VIDEO="video";
-	public static final String TYPE_VOICE="voice";
 	public String getRealImgUrl() {
 		return get("realImgUrl");
 	}

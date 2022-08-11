@@ -4410,6 +4410,7 @@ form.form-inline>.btn{
 } */
 .jb_draging_ele{
 	border:rgb(25, 178, 238) 1px dashed;
+	padding: 5px 0px;
 	background-color: rgba(236, 245, 255, 0.3);
 }
 .jb_waiting_drop{
@@ -4424,4 +4425,14 @@ form.form-inline>.btn{
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
+}
+
+div[data-edit-mode="true"] .form_control_box>div.form-group:hover{
+	border: #e21740 1px dotted;
+	padding: 5px 0px;
+	background-color: rgba(245, 210, 237, 0.1);
+}
+
+.card.border-primary{
+	border-color: #007bff!important;
 }

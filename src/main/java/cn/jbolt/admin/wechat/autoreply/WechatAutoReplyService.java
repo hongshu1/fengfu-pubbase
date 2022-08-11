@@ -2,6 +2,7 @@ package cn.jbolt.admin.wechat.autoreply;
 
 import java.util.Date;
 
+import cn.jbolt.common.enums.WechatAutoreplyType;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -220,7 +221,7 @@ public class WechatAutoReplyService extends JBoltBaseService<WechatAutoreply> {
 			wechatAutoreply.setEnable(false);
 		}
 		//执行切换之前需要处理一个事儿 就是判断是否必须只能启用唯一性
-		if(type.intValue()==WechatAutoreply.TYPE_DEFAULT||type.intValue()==WechatAutoreply.TYPE_SUBSCRIBE) {
+		if(type.intValue()== WechatAutoreplyType.DEFAULT.getValue()||type.intValue()==WechatAutoreplyType.SUBSCRIBE.getValue()) {
 			if(wechatAutoreply.getEnable()==false) {
 				//关注回复和无消息默认回复 需要唯一性处理
 				changeCurrrentEnableToFalse(mpId,type);
@@ -240,7 +241,7 @@ public class WechatAutoReplyService extends JBoltBaseService<WechatAutoreply> {
 	 * @param type
 	 */
 	private void changeCurrrentEnableToFalse(Long mpId,Integer type) {
-		if(type.intValue()==WechatAutoreply.TYPE_DEFAULT||type.intValue()==WechatAutoreply.TYPE_SUBSCRIBE) {
+		if(type.intValue()==WechatAutoreplyType.DEFAULT.getValue()||type.intValue()==WechatAutoreplyType.SUBSCRIBE.getValue()) {
 			Sql sql=updateSql().set("enable", FALSE).eqQM("mp_id","enable","type");
 			update(sql,mpId,TRUE,type);
 		}

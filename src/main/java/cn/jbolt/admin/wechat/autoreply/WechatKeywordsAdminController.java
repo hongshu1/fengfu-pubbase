@@ -3,6 +3,8 @@ package cn.jbolt.admin.wechat.autoreply;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jbolt.common.enums.WechatKeywordsType;
+import cn.jbolt.core.enumutil.JBoltEnum;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -83,10 +85,7 @@ public class WechatKeywordsAdminController extends JBoltBaseController {
 	}
 	
 	public void types() {
-		List<Option> options=new ArrayList<Option>();
-		options.add(new OptionBean("模糊匹配",WechatKeywords.TYPE_LIKE));
-		options.add(new OptionBean("全等匹配",WechatKeywords.TYPE_EQUALS));
-		renderJsonData(options);
+		renderJsonData(JBoltEnum.getEnumOptionList(WechatKeywordsType.class));
 	}
 	
 	@Before(WechatKeywordsMgrValidator.class)

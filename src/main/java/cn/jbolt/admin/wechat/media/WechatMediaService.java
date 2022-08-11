@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.jbolt.common.enums.WechatMediaType;
+import cn.jbolt.core.enumutil.JBoltEnum;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -101,15 +103,15 @@ public class WechatMediaService extends JBoltBaseService<WechatMedia> {
 			return ret;
 		}
 		
-		ret = syncByType(mpId, mpinfo.getName(),WechatMedia.TYPE_IMG, apiResult.getInt("image_count"),newDatas);
+		ret = syncByType(mpId, mpinfo.getName(),WechatMediaType.IMG.getValue(), apiResult.getInt("image_count"),newDatas);
 		if (ret.isFail()) {
 			return ret;
 		}
-		ret = syncByType(mpId, mpinfo.getName(),WechatMedia.TYPE_VOICE, apiResult.getInt("voice_count"),newDatas);
+		ret = syncByType(mpId, mpinfo.getName(),WechatMediaType.VOICE.getValue(), apiResult.getInt("voice_count"),newDatas);
 		if (ret.isFail()) {
 			return ret;
 		}
-		ret = syncByType(mpId, mpinfo.getName(),WechatMedia.TYPE_VIDEO,apiResult.getInt("video_count"),newDatas);
+		ret = syncByType(mpId, mpinfo.getName(),WechatMediaType.VIDEO.getValue(),apiResult.getInt("video_count"),newDatas);
 		if (ret.isFail()) {
 			return ret;
 		}
@@ -190,7 +192,7 @@ public class WechatMediaService extends JBoltBaseService<WechatMedia> {
 		if(totalCount==0) {return SUCCESS;}
 		if(!newDatas) {
 			//清空数据
-			deleteByType(mpId,WechatMedia.TYPE_NEWS);
+			deleteByType(mpId,WechatMediaType.NEWS.getValue());
 		}
 		//分页同步
 		return syncNewsByPages(mpId,totalCount,newDatas);
@@ -379,7 +381,7 @@ public class WechatMediaService extends JBoltBaseService<WechatMedia> {
 	 */
 	private boolean checkExistNews(Long mpId,String url) {
 		Sql sql=selectSql().selectId().eqQM("mp_id","type","url").first();
-		Integer existId=queryInt(sql,mpId,WechatMedia.TYPE_NEWS,url);
+		Integer existId=queryInt(sql,mpId,WechatMediaType.NEWS,url);
 		return isOk(existId);
 	}
 	/**
@@ -396,7 +398,7 @@ public class WechatMediaService extends JBoltBaseService<WechatMedia> {
 		wechatMedia.setTitle(media.getString("title"));
 		wechatMedia.setDigest(media.getString("digest"));
 		wechatMedia.setUrl(media.getString("url"));
-		wechatMedia.setType(WechatMedia.TYPE_NEWS);
+		wechatMedia.setType(WechatMediaType.NEWS.getValue());
 		wechatMedia.setThumbMediaId(media.getString("thumb_media_id"));
 		wechatMedia.setMediaId(mediaId);
 		wechatMedia.setContentSourceUrl(media.getString("content_source_url"));
@@ -465,13 +467,13 @@ public class WechatMediaService extends JBoltBaseService<WechatMedia> {
 		}
 		ApiConfigKit.setThreadLocalAppId(appId);
 		try {
-			String mediaId=media.getType().equals(WechatMedia.TYPE_NEWS)?media.getThumbMediaId():media.getMediaId();
+			String mediaId=media.getType().equals(WechatMediaType.NEWS)?media.getThumbMediaId():media.getMediaId();
 			InputStream stream=MediaApi.getMaterial(mediaId);
 			
 			if(stream!=null) {
 				
 				String fileFolderPath=JFinal.me().getConstants().getBaseUploadPath()+"/"+JBoltUploadFolder.WECHAT_MEDIA+"/"+media.getMpId()+"/"+media.getType()+"/"+todayFolder;
-				if(media.getType().equals(WechatMedia.TYPE_VIDEO)) {
+				if(media.getType().equals(WechatMediaType.VIDEO.getValue())) {
 					String json=IOUtils.toString(stream);
 					if(StrKit.notBlank(json)&&json.indexOf("errcode")!=-1&&json.indexOf("45009")!=-1) {
 						System.out.println("永久素材下载限额已超，请登录后清零");
@@ -490,16 +492,19 @@ public class WechatMediaService extends JBoltBaseService<WechatMedia> {
 						}
 				}else {
 					String filename=null;
-					switch (media.getType()) {
-					case WechatMedia.TYPE_NEWS:
-						filename=media.getMpId()+"_"+media.getId()+"_"+mediaId+".jpg";
-						break;
-					case WechatMedia.TYPE_IMG:
-						filename=media.getMpId()+"_"+media.getId()+"_"+mediaId+".jpg";
-						break;
-					case WechatMedia.TYPE_VOICE:
-						filename=media.getMpId()+"_"+media.getId()+"_"+mediaId+".mp3";
-						break;
+					WechatMediaType wechatMediaType = JBoltEnum.getEnumObjectByValue(WechatMediaType.class,media.getType());
+					if(wechatMediaType!=null) {
+						switch (wechatMediaType) {
+							case NEWS:
+								filename = media.getMpId() + "_" + media.getId() + "_" + mediaId + ".jpg";
+								break;
+							case IMG:
+								filename = media.getMpId() + "_" + media.getId() + "_" + mediaId + ".jpg";
+								break;
+							case VOICE:
+								filename = media.getMpId() + "_" + media.getId() + "_" + mediaId + ".mp3";
+								break;
+						}
 					}
 					String filePath=fileFolderPath+"/"+filename;
 					boolean isAbs=FileUtil.isAbsolutePath(filePath);
@@ -591,9 +596,9 @@ public class WechatMediaService extends JBoltBaseService<WechatMedia> {
 		}
 		String serverUrl=wechatMedia.getServerUrl();
 		if(isOk(serverUrl)) {
-			if(wechatMedia.getType().equals(WechatMedia.TYPE_IMG)||wechatMedia.getType().equals(WechatMedia.TYPE_NEWS)) {
+			if(wechatMedia.getType().equals(WechatMediaType.IMG.getValue())||wechatMedia.getType().equals(WechatMediaType.NEWS)) {
 				wechatMedia.put("realImgUrl",JBoltRealUrlUtil.getImage(serverUrl));
-			}else if(wechatMedia.getType().equals(WechatMedia.TYPE_VOICE)) {
+			}else if(wechatMedia.getType().equals(WechatMediaType.VOICE.getValue())) {
 				wechatMedia.put("realVoiceUrl",JBoltRealUrlUtil.get(serverUrl,null));
 			}
 		}

@@ -896,7 +896,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		if(!attrJson.containsKey("id")) {
 			return fail(JBoltMsg.PARAM_ERROR + " 未提交属性ID");
 		}
-		Integer id = attrJson.getInteger("id");
+		Long id = attrJson.getLong("id");
 		boolean dbExists = existsById(id);
 		if(!dbExists) {
 			return fail(JBoltMsg.DATA_NOT_EXIST);

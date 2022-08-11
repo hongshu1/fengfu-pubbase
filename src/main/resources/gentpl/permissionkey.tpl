@@ -13,7 +13,7 @@ public class PermissionKey {
 	/**
 	 * #(data.title)
 	 */
-	public static final String #(cn.jbolt.core.util.JBoltStringUtil::toUpperCase(data.permissionKey??)) = "#(data.permissionKey)";
+	public static final String #(JBoltStringUtil.toUpperCase(data.permissionKey??)) = "#(data.permissionKey)";
 	#else
 	//数据库里未定义权限
 	#end

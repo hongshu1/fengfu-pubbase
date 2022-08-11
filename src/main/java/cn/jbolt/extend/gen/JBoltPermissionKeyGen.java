@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import cn.jbolt.core.util.JBoltStringUtil;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
@@ -61,7 +62,11 @@ public class JBoltPermissionKeyGen {
 		activeRecordPlugin.addMapping("jb_permission", "id", Permission.class);
 		activeRecordPlugin.start();
 		List<Permission> permissions = new Permission().dao().findAll();
-		Template template=Engine.use().getTemplate(TPL);
+		Engine engine = Engine.use();
+//		engine.setStaticFieldExpression(true);
+//		engine.setStaticMethodExpression(true);
+		Template template=engine.getTemplate(TPL);
+		engine.addSharedObject("JBoltStringUtil", new JBoltStringUtil());
 		BufferedWriter writer=FileUtil.getWriter(TARGET, "utf-8", false);
 		try {
 			writer.write(template.renderToString(Kv.by("permissions", permissions)));

@@ -13,7 +13,7 @@
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<jdk.version>1.8</jdk.version>
 		<junit.version>5.8.2</junit.version>
-		<jfinal.version>5.0.1-1</jfinal.version>
+		<jfinal.version>5.0.2-1</jfinal.version>
 		<oshi.version>6.1.4</oshi.version>
 		<jna.version>5.10.0</jna.version>
 		<cos.version>2022.2</cos.version>

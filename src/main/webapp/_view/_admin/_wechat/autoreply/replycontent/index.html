@@ -32,17 +32,17 @@
 <td>#(for.count)</td>
 <td>
 #switch (data.type)
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_TEXT)
+#case (WechatReplyContentType.TEXT.value)
 <label class="badge badge-warning">文本</label>
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_IMG)
+#case (WechatReplyContentType.IMG.value)
 <label class="badge badge-primary">图片</label>
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_VIDEO)
+#case (WechatReplyContentType.VIDEO.value)
 <label class="badge badge-light">视频</label>
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_VOICE)
+#case (WechatReplyContentType.VOICE.value)
 <label class="badge badge-info">语音</label>
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_MUSIC)
+#case (WechatReplyContentType.MUSIC.value)
 <label class="badge badge-success">音乐</label>
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_NEWS)
+#case (WechatReplyContentType.NEWS.value)
 <label class="badge badge-danger">图文</label>
 #default
 未设置
@@ -50,19 +50,19 @@
 </td>
 <td>
 #switch (data.type)
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_TEXT)
+#case (WechatReplyContentType.TEXT.value)
 #(data.content??)
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_IMG)
+#case (WechatReplyContentType.IMG.value)
 <img src="#realImage(data.url??,'/assets/img/uploadimg.png')" data-title="点击看大图" tooltip  data-photobtn style="max-height: 200px;"/>
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_VIDEO)
+#case (WechatReplyContentType.VIDEO.value)
 <a target="_blank" href="#(data.url??)">#(data.title)</a>
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_VOICE)
+#case (WechatReplyContentType.VOICE.value)
 <audio src="#realUrl(data.url??)" controls="controls">您的浏览器不支持 audio 标签</audio>
 <p class="text-primary text-center">#(data.title)</p>
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_MUSIC)
+#case (WechatReplyContentType.MUSIC.value)
 #(data.title)<br/>
 <audio src="#(data.url??)" controls="controls">您的浏览器不支持 audio 标签</audio>
-#case (cn.jbolt.common.model.WechatReplyContent::TYPE_NEWS)
+#case (WechatReplyContentType.NEWS.value)
 <a class="card col-8 offset-2 py-2 hand" tooltip data-title="预览文章详情" target="_blank"  href="#(data.url??)">
     <img src="#realImage(data.poster??, '/assets/img/uploadimg.png')" style="max-height:190px;" class="card-img-top">
     <div class="card-body">

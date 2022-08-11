@@ -13,7 +13,7 @@ public class #(className?? 'PermissionKey') {
 	/**
 	 * #(data.title)
 	 */
-	public static final String #(StrUtil.toUpperCase(data.permission_key??)) = "#(data.permission_key)";
+	public static final String #(JBoltStringUtil.toUpperCase(data.permission_key??)) = "#(data.permission_key)";
 	#else
 	//数据库里未定义权限
 	#end

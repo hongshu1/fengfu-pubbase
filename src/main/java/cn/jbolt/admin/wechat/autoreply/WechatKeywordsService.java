@@ -3,6 +3,7 @@ package cn.jbolt.admin.wechat.autoreply;
 import java.util.Collections;
 import java.util.List;
 
+import cn.jbolt.common.enums.WechatKeywordsType;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -186,7 +187,7 @@ public class WechatKeywordsService extends JBoltBaseService<WechatKeywords> {
 	 */
 	public WechatKeywords getEqualsTypeKeywords(Long mpId, String keywords) {
 		if(notOk(mpId)||notOk(keywords)) {return null;}
-		return findFirst(Okv.by("mp_id", mpId).set("type",WechatKeywords.TYPE_EQUALS).set("name",keywords.trim()));
+		return findFirst(Okv.by("mp_id", mpId).set("type",WechatKeywordsType.EQUALS.getValue()).set("name",keywords.trim()));
 	}
 	/**
 	 * 随机一个公众平台里配置的模糊匹配关键词
@@ -200,7 +201,7 @@ public class WechatKeywordsService extends JBoltBaseService<WechatKeywords> {
 		Kv data=Kv.create();
 		data.set("mpId", mpId)
 		.set("table",table())
-		.set("type",WechatKeywords.TYPE_LIKE)
+		.set("type", WechatKeywordsType.LIKE.getValue())
 		.set("keywords",keywords.trim());
 		return dao().templateByString(sql, data).findFirst();
 	}

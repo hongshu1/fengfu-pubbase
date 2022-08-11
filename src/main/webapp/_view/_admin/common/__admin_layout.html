@@ -149,7 +149,7 @@
 			</div>
 			</div>
 		</div>
-		<span class="d-none" id="JBOLT_ASSETS_VERSION">#(cn.jbolt.core.base.config.JBoltConfig::ASSETS_VERSION)</span>
+		<span class="d-none" id="JBOLT_ASSETS_VERSION">#(JBoltConfig.ASSETS_VERSION)</span>
 		<span class="d-none" id="JBOLT_BASE_UPLOAD_PATH_PRE">#(JBOLT_BASE_UPLOAD_PATH_PRE??)</span>
 		<span class="d-none" id="JBOLT_AUTO_LOCK_SCREEN_SECONDS">#(jboltAutoLockScreenSeconds??)</span>
 		<span class="d-none" id="JBOLT_TAB_KEEP_AFTER_RELOAD">#(jboltTabKeepAfterReload??)</span>
@@ -177,13 +177,13 @@
 		<script type="text/javascript">
 		$(function(){
 			jboltAdminLayoutInitTopNavFirst();
-			#if(!cn.jbolt.core.base.config.JBoltConfig::JBOLT_WEBSOCKET_ENABLE)
+			#if(!JBoltConfig.JBOLT_WEBSOCKET_ENABLE)
 			initReadUserMsgCenterUnreadInfo();	
 			#end
 			hideJBoltPageLoading();
 		});
 		</script>
-		#if(cn.jbolt.core.base.config.JBoltConfig::JBOLT_WEBSOCKET_ENABLE)
+		#if(JBoltConfig.JBOLT_WEBSOCKET_ENABLE)
 		<!-- 系统后台websocket js -->
 		<script type="module">
 		import JBoltWS from './assets/js/jbolt_websocket/jbolt-websocket.js'

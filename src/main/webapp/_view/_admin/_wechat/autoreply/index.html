@@ -32,7 +32,7 @@
 <table class="table table-bordered table-hover table-striped table-center">
 <thead>
 <tr><th style="width: 60px">序号</th><th>名称</th><th>回复类型</th>
-#if(type==cn.jbolt.common.model.WechatAutoreply::TYPE_KEYWORDS)
+#if(type==WechatAutoreplyType.KEYWORDS.value)
 <th>关键词</th>
 #end
 <th>回复内容</th>
@@ -46,11 +46,11 @@
 <td>#rownum(for.count,pageData.pageNumber,pageData.pageSize)</td>
 <td>#(data.name??)</td>
 <td>
-#if(data.replyType==cn.jbolt.common.model.WechatAutoreply::REPLYTYPE_RANDOMONE)随机一条#end
-#if(data.replyType==cn.jbolt.common.model.WechatAutoreply::REPLYTYPE_ALL)全部#end
+#if(data.replyType==WechatAutoreplyReplyType.RANDOMONE.value)随机一条#end
+#if(data.replyType==WechatAutoreplyReplyType.ALL.value)全部#end
 </td>
   
-#if(type==cn.jbolt.common.model.WechatAutoreply::TYPE_KEYWORDS)
+#if(type==WechatAutoreplyType.KEYWORDS.value)
 <td><a href="admin/wechat/keywords/#(data.id)" data-btn="no" data-dialogbtn data-area="850,90%" data-btn="no" data-target="parent"  data-title="关键词管理">管理</a></td>
 #end
 <td>
