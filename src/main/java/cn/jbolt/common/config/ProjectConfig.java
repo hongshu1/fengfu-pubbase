@@ -29,6 +29,7 @@ import cn.jbolt.core.model.base.JBoltModelConfig;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.plugin.JBoltActiveRecordPlugin;
 import cn.jbolt.core.service.JBoltProjectSystemLogProcessor;
+import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.core.wechat.WechatConfigKey;
 import cn.jbolt.extend.cache.CacheExtend;
 import cn.jbolt.extend.config.ExtendProjectConfig;
@@ -151,6 +152,8 @@ public class ProjectConfig extends JBoltProjectConfig {
         me.addSharedObject("JBoltConfig", new JBoltConfig());
         // 添加JBoltUserKit的访问
         me.addSharedObject("JBoltUserKit", new JBoltUserKit());
+        // 添加JBoltStringUtil的访问
+        me.addSharedObject("JBoltStringUtil", new JBoltStringUtil());
         // 将枚举添加到模板里
         JBoltEnum.addEnjoyEngineShareObject(me, WechatMpinfoType.class);
         JBoltEnum.addEnjoyEngineShareObject(me, WechatAutoreplyType.class);
