@@ -62,7 +62,7 @@ public class JBoltPermissionKeyGen {
 		activeRecordPlugin.addMapping("jb_permission", "id", Permission.class);
 		activeRecordPlugin.start();
 		List<Permission> permissions = new Permission().dao().findAll();
-		Engine engine = Engine.use();
+		Engine engine = new Engine();
 //		engine.setStaticFieldExpression(true);
 //		engine.setStaticMethodExpression(true);
 		engine.addSharedObject("JBoltStringUtil", new JBoltStringUtil());
