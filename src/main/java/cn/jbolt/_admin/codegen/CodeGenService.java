@@ -1656,4 +1656,26 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         boolean success = codeGen.update();
         return ret(success);
     }
+
+    /**
+     * 更新projectPath
+     * @param codeGenId
+     * @param projectPath
+     * @return
+     */
+    public Ret updateProjectPath(Long codeGenId, String projectPath) {
+        if(hasNotOk(codeGenId,projectPath)){
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        CodeGen codeGen = findById(codeGenId);
+        if(codeGen == null){
+            return fail("CodeGen "+JBoltMsg.DATA_NOT_EXIST);
+        }
+        if(!FileUtil.isDirectory(FileUtil.normalize(projectPath))){
+            return fail("路径："+projectPath+"不可用");
+        }
+        codeGen.setProjectPath(projectPath);
+        boolean success = codeGen.update();
+        return ret(success);
+    }
 }
