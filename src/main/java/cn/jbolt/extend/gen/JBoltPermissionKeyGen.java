@@ -65,8 +65,8 @@ public class JBoltPermissionKeyGen {
 		Engine engine = Engine.use();
 //		engine.setStaticFieldExpression(true);
 //		engine.setStaticMethodExpression(true);
-		Template template=engine.getTemplate(TPL);
 		engine.addSharedObject("JBoltStringUtil", new JBoltStringUtil());
+		Template template=engine.getTemplate(TPL);
 		BufferedWriter writer=FileUtil.getWriter(TARGET, "utf-8", false);
 		try {
 			writer.write(template.renderToString(Kv.by("permissions", permissions)));
