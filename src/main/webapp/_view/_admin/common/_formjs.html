@@ -68,14 +68,15 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 							cancelParentLayerDialogOkBtnStateToSubmiting();
 							cancelParentLayerAllDialogBtnStateToDisabled();
 							showJboltLockSystem();
-							return false;
 						}else if(ret.msg=="jbolt_nologin"){
 							cancelParentLayerDialogOkBtnStateToSubmiting();
 							cancelParentLayerAllDialogBtnStateToDisabled();
 							showReloginDialog();
-							return false;
-						}
-					}
+						}else{
+                            LayerMsgBox.alert(ret.msg,2);
+                        }
+                        return false;
+                    }
 					if(window.afterFormSubmit#(randomFunctionName??)){
 						afterFormSubmit#(randomFunctionName??)(ret,function(){
 							cancelParentLayerDialogOkBtnStateToSubmiting();
