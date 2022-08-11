@@ -41,7 +41,7 @@ public class #(tableMeta.modelName) extends #(tableMeta.baseModelName)<#(tableMe
     public String get#(firstCharToUpperCase(attr.translateAttrName))() {
     #setLocal(attrName = "get"+firstCharToUpperCase(attr.attrName)+"()")
         #if(attr.translateType == "sys_dic_id")
-        return JBoltDictionaryCache.me.getName("#(attr.translateUseValue)",#(attrName));
+        return JBoltDictionaryCache.me.getName(#(attrName));
         #else if(attr.translateType == "sys_dic_sn")
         return JBoltDictionaryCache.me.getNameBySn("#(attr.translateUseValue)",#(attrName));
         #else if(attr.translateType == "sys_user_id_to_username")
