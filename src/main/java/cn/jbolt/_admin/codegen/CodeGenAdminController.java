@@ -187,7 +187,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	 */
 	public void add() {
 		set("isSubTable", false);
-		set("projectPath", System.getProperty("user.dir"));
+		set("projectPath",FileUtil.normalize(System.getProperty("user.dir")));
 		render("add.html");
 	}
 	/**
@@ -770,6 +770,35 @@ public class CodeGenAdminController extends JBoltBaseController {
 			options = options.stream().filter(op->op.getText().toLowerCase().contains(keywords.toLowerCase())).collect(Collectors.toList());
 		}
 		renderJsonData(options);
+	}
+
+	/**
+	 * 初始化 绑定permission
+	 */
+	public void initBindPermission(){
+		set("codeGenId",getLong(0));
+		render("config/_bind_permission.html");
+	}
+
+	/**
+	 * 绑定permission
+	 */
+	public void bindPermission(){
+		renderJson(service.bindPermission(getLong("codeGenId"),getLong("permissionId")));
+	}
+
+	/**
+	 * 同步本项目地址
+	 */
+	public void syncProjectPath(){
+		renderJsonData(FileUtil.normalize(System.getProperty("user.dir")));
+	}
+
+	/**
+	 * 更新projectpath
+	 */
+	public void updateProjectPath(){
+		renderJson(service.updateProjectPath(getLong("codeGenId"),get("projectPath")));
 	}
 
 

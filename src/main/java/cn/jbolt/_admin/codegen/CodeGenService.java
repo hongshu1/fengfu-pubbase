@@ -20,6 +20,7 @@ import cn.jbolt.core.gen.JBoltInnerPermissionKeyGen;
 import cn.jbolt.core.gen.JBoltProjectGenConfig;
 import cn.jbolt.core.gen.JFinalModelGenerator;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.core.util.JBoltConsoleUtil;
@@ -1631,5 +1632,50 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             }
         }
         return modelPackageStr;
+    }
+
+    /**
+     * 绑定permission
+     * @param codeGenId
+     * @param permissionId
+     * @return
+     */
+    public Ret bindPermission(Long codeGenId, Long permissionId) {
+        if(hasNotOk(codeGenId,permissionId)){
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        CodeGen codeGen = findById(codeGenId);
+        if(codeGen == null){
+            return fail("CodeGen "+JBoltMsg.DATA_NOT_EXIST);
+        }
+        Permission permission = JBoltPermissionCache.me.get(permissionId);
+        if(permission == null){
+            return fail("权限资源 "+JBoltMsg.DATA_NOT_EXIST);
+        }
+        codeGen.setPermissionId(permissionId);
+        boolean success = codeGen.update();
+        return ret(success);
+    }
+
+    /**
+     * 更新projectPath
+     * @param codeGenId
+     * @param projectPath
+     * @return
+     */
+    public Ret updateProjectPath(Long codeGenId, String projectPath) {
+        if(hasNotOk(codeGenId,projectPath)){
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        CodeGen codeGen = findById(codeGenId);
+        if(codeGen == null){
+            return fail("CodeGen "+JBoltMsg.DATA_NOT_EXIST);
+        }
+        if(!FileUtil.isDirectory(FileUtil.normalize(projectPath))){
+            return fail("路径："+projectPath+"不可用");
+        }
+        codeGen.setProjectPath(projectPath);
+        boolean success = codeGen.update();
+        return ret(success);
     }
 }

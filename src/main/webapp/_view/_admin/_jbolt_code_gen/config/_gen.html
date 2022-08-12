@@ -1,4 +1,26 @@
 <div class="card jb_vflex">
+	<div class="card-header" style="height: 50px;">
+		<form id="projectGenPathForm" method="post" action="admin/codegen/updateProjectPath" onsubmit="return false;" >
+			<input type="hidden" name="codeGenId" value="#(codeGen.id??)"/>
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label font-weight-bold">项目当前生成根路径</label>
+				<div class="col-sm-6">
+					<div class="input-group">
+						<input class="form-control" id="gen_projectPath" type="text" name="projectPath" value="#(codeGen.projectPath??)" />
+						<div class="input-group-append">
+							<a tooltip data-title="点击获取当前运行项目的根路径" class="input-group-text" data-success-time="200" data-ajaxbtn data-handler="syncProjectPath" data-confirm="确定同步并使用本项目路径？" href="admin/codegen/syncProjectPath">
+								<i class="fa fa-refresh mr-1"></i> 同步
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-auto">
+					<button class="btn btn-primary" type="button" onclick="updateProjectPath()"><i class="fa fa-save"></i> 保存此路径</button>
+				</div>
+
+			</div>
+		</form>
+	</div>
 	<div class="card-body jb_vbody">
 		 <div class="row">
 			 <div class="col">

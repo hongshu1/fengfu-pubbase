@@ -1149,5 +1149,15 @@ function submitJBoltTableColConfigs(){
 	}
 }
 
+function syncProjectPath(action,res){
+	$("#gen_projectPath").val(res.data||"");
+}
+
+function updateProjectPath(){
+	LayerMsgBox.confirm("确定保存此项目生成根路径后,点击下方代码生成,都将基于此项目生成根路径,确定保存吗？",function(){
+		ajaxSubmitForm("projectGenPathForm");
+	});
+}
+
 </script>
 #end
