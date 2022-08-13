@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.4";
+var jbolt_admin_js_version="5.9.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -1346,17 +1346,22 @@ var JBoltInputUtil={
 			height=input.outerHeight(),
 			top=offset.top+height+4-windowScrollTop,
 			left=offset.left-windowScrollLeft,
-			width=input.outerWidth(),
+				oldWidth=input.outerWidth(),
+			width=oldWidth,
 			dataWidth=input.data("width"),
 			dataHeight=input.data("height"),
 			dataMaxHeight=input.data("max-height");
 			if(dataWidth&&dataWidth>width){
-					var newWidth=jboltWindowWidth-left-20;
-					if(newWidth<dataWidth&&newWidth>width){
-						width=newWidth;
-					}else{
-						width=dataWidth;
-					}
+					// var newWidth=jboltWindowWidth-left-20;
+					// if(newWidth<dataWidth&&newWidth>width){
+					// 	width=newWidth;
+					// }else{
+					// 	width=dataWidth;
+					// }
+				width=dataWidth;
+			}
+			if(left+width>jboltWindowWidth){
+				left = offset.left + oldWidth-width;
 			}
 			if(!dataHeight){
 				dataHeight=350;
