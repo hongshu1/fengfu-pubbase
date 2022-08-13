@@ -15,3 +15,12 @@ EXEC sp_addextendedproperty
 'TABLE', N'jb_user',
 'COLUMN', N'email'
 GO
+
+alter table [dbo].[jb_user] add [last_pwd_update_time] datetime  NULL;
+
+EXEC sp_addextendedproperty
+'MS_Description', N'最近一次密码修改时间',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'last_pwd_update_time'
+GO

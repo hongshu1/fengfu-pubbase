@@ -2139,7 +2139,8 @@ CREATE TABLE [dbo].[jb_user] (
   [posts] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [dept_path] varchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [update_time] datetime  NOT NULL,
-  [update_user_id] bigint  NOT NULL
+  [update_user_id] bigint  NOT NULL,
+  [last_pwd_update_time] datetime  NULL
 )
 GO
 
@@ -2326,6 +2327,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_user',
 'COLUMN', N'update_user_id'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'最近一次密码修改时间',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'last_pwd_update_time'
 GO
 
 EXEC sp_addextendedproperty

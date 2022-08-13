@@ -329,6 +329,7 @@ CREATE TABLE `jb_user`  (
   `posts` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '岗位IDS',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `update_user_id` bigint(20) DEFAULT NULL COMMENT '更新人ID',
+  `last_pwd_update_time` datetime DEFAULT NULL COMMENT '最近一次密码修改时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户登录账户表' ROW_FORMAT = Dynamic;
 
