@@ -837,6 +837,7 @@ CREATE TABLE `jb_code_gen`  (
 `is_need_admin_interceptor` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '是否需要后台管理权限拦截器',
 `extra_interceptor_class_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '额外配置的拦截器',
 `is_table_multi_conditions_mode` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '表格查询条件是否启用高级多条件模式',
+`is_table_multi_conditions_default_hide` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '表格查询高级模式 是否隐藏条件 默认隐藏',
 `is_table_multi_conditions_btn_show_title` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '表格高级查询条件切换按钮是否显示标题',
 `is_toolbar_add_btn` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '表格toolbar上启用添加按钮',
 `is_toolbar_edit_btn` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '表格toolbar上启用编辑按钮',

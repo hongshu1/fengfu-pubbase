@@ -1,0 +1,1 @@
+alter table `jb_code_gen` add column `is_table_multi_conditions_default_hide` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '表格查询高级模式 是否隐藏条件 默认隐藏';
