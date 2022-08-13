@@ -1,6 +1,7 @@
 package cn.jbolt._admin.user;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cn.jbolt.core.cache.JBoltUserCache;
@@ -63,6 +64,7 @@ public class UserService extends JBoltUserService {
 		
 		return saveOrUpdate(user);
 	}
+
 	/**
 	 * saveOrUpdate
 	 * @param user
@@ -137,6 +139,7 @@ public class UserService extends JBoltUserService {
 			}
 			user.setDeptPath(dept.getDeptPath());
 		}
+		user.setLastPwdUpdateTime(new Date());
 		//保存或者更新
 		boolean success=update?user.update():user.save();
 		if(success){
