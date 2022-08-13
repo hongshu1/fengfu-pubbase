@@ -11,287 +11,289 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseModel<M>{
     /**主键ID*/
-    public static final String ID= "id";
+    public static final String ID = "id";
     /**父ID*/
-    public static final String PID= "pid";
+    public static final String PID = "pid";
     /**项目根路径*/
-    public static final String PROJECT_PATH= "project_path";
+    public static final String PROJECT_PATH = "project_path";
     /**是否为子表*/
-    public static final String IS_SUB_TABLE= "is_sub_table";
+    public static final String IS_SUB_TABLE = "is_sub_table";
     /**子表的顺序*/
-    public static final String SORT_RANK= "sort_rank";
+    public static final String SORT_RANK = "sort_rank";
     /**模块类型*/
-    public static final String TYPE= "type";
+    public static final String TYPE = "type";
     /**主表名*/
-    public static final String MAIN_TABLE_NAME= "main_table_name";
+    public static final String MAIN_TABLE_NAME = "main_table_name";
     /**数据源*/
-    public static final String DATASOURCE_NAME= "datasource_name";
+    public static final String DATASOURCE_NAME = "datasource_name";
     /**数据源说明*/
-    public static final String DATASOURCE_REMARK= "datasource_remark";
+    public static final String DATASOURCE_REMARK = "datasource_remark";
     /**数据库类型*/
-    public static final String DATABASE_TYPE= "database_type";
+    public static final String DATABASE_TYPE = "database_type";
     /**是否为主数据源*/
-    public static final String IS_MAIN_DATASOURCE= "is_main_datasource";
+    public static final String IS_MAIN_DATASOURCE = "is_main_datasource";
     /**主表主键*/
-    public static final String MAIN_TABLE_PKEY= "main_table_pkey";
+    public static final String MAIN_TABLE_PKEY = "main_table_pkey";
     /**数据表删除前缀*/
-    public static final String TABLE_REMOVE_PREFIX= "table_remove_prefix";
+    public static final String TABLE_REMOVE_PREFIX = "table_remove_prefix";
     /**主表主键策略*/
-    public static final String MAIN_TABLE_IDGENMODE= "main_table_idgenmode";
+    public static final String MAIN_TABLE_IDGENMODE = "main_table_idgenmode";
     /**版本序号*/
-    public static final String VERSION_SN= "version_sn";
+    public static final String VERSION_SN = "version_sn";
     /**表备注*/
-    public static final String MAIN_TABLE_REMARK= "main_table_remark";
+    public static final String MAIN_TABLE_REMARK = "main_table_remark";
     /**功能作者*/
-    public static final String AUTHOR= "author";
+    public static final String AUTHOR = "author";
     /**样式类型*/
-    public static final String STYLE= "style";
+    public static final String STYLE = "style";
     /**是否CRUD*/
-    public static final String IS_CRUD= "is_crud";
+    public static final String IS_CRUD = "is_crud";
     /**是否可编辑表格*/
-    public static final String IS_EDITABLE= "is_editable";
+    public static final String IS_EDITABLE = "is_editable";
     /**是否为树表*/
-    public static final String IS_TREE_TABLE= "is_tree_table";
+    public static final String IS_TREE_TABLE = "is_tree_table";
     /**检测是否可以刪除数据*/
-    public static final String IS_CHECK_CAN_DELETE= "is_check_can_delete";
+    public static final String IS_CHECK_CAN_DELETE = "is_check_can_delete";
     /**检测是否可以toggle数据*/
-    public static final String IS_CHECK_CAN_TOGGLE= "is_check_can_toggle";
+    public static final String IS_CHECK_CAN_TOGGLE = "is_check_can_toggle";
     /**检测是否可以recover数据*/
-    public static final String IS_CHECK_CAN_RECOVER= "is_check_can_recover";
+    public static final String IS_CHECK_CAN_RECOVER = "is_check_can_recover";
     /**可编辑提交方式*/
-    public static final String EDITABLE_SUBMIT_TYPE= "editable_submit_type";
+    public static final String EDITABLE_SUBMIT_TYPE = "editable_submit_type";
     /**生成状态*/
-    public static final String STATE= "state";
+    public static final String STATE = "state";
     /**子表数*/
-    public static final String SUB_TABLE_COUNT= "sub_table_count";
+    public static final String SUB_TABLE_COUNT = "sub_table_count";
     /**顶部导航*/
-    public static final String TOPNAV_ID= "topnav_id";
+    public static final String TOPNAV_ID = "topnav_id";
     /**关联权限*/
-    public static final String PERMISSION_ID= "permission_id";
+    public static final String PERMISSION_ID = "permission_id";
     /**可访问角色*/
-    public static final String ROLES= "roles";
+    public static final String ROLES = "roles";
     /**创建人ID*/
-    public static final String CREATE_USER_ID= "create_user_id";
+    public static final String CREATE_USER_ID = "create_user_id";
     /**创建时间*/
-    public static final String CREATE_TIME= "create_time";
+    public static final String CREATE_TIME = "create_time";
     /**更新人ID*/
-    public static final String UPDATE_USER_ID= "update_user_id";
+    public static final String UPDATE_USER_ID = "update_user_id";
     /**更新时间*/
-    public static final String UPDATE_TIME= "update_time";
+    public static final String UPDATE_TIME = "update_time";
     /**创建后执行生成人ID*/
-    public static final String GEN_USER_ID= "gen_user_id";
+    public static final String GEN_USER_ID = "gen_user_id";
     /**创建后执行生成时间*/
-    public static final String GEN_TIME= "gen_time";
+    public static final String GEN_TIME = "gen_time";
     /**modelName*/
-    public static final String MODEL_NAME= "model_name";
+    public static final String MODEL_NAME = "model_name";
     /**baseModelName*/
-    public static final String BASE_MODEL_NAME= "base_model_name";
+    public static final String BASE_MODEL_NAME = "base_model_name";
     /**备注*/
-    public static final String REMARK= "remark";
+    public static final String REMARK = "remark";
     /**是否启用autoCache*/
-    public static final String IS_AUTO_CACHE= "is_auto_cache";
+    public static final String IS_AUTO_CACHE = "is_auto_cache";
     /**是否启用idCache*/
-    public static final String IS_ID_CACHE= "is_id_cache";
+    public static final String IS_ID_CACHE = "is_id_cache";
     /**是否启用keyCache*/
-    public static final String IS_KEY_CACHE= "is_key_cache";
+    public static final String IS_KEY_CACHE = "is_key_cache";
     /**keyCache指定Column*/
-    public static final String KEY_CACHE_COLUMN= "key_cache_column";
+    public static final String KEY_CACHE_COLUMN = "key_cache_column";
     /**keyCache指定bindColumn*/
-    public static final String KEY_CACHE_BIND_COLUMN= "key_cache_bind_column";
+    public static final String KEY_CACHE_BIND_COLUMN = "key_cache_bind_column";
     /**Controller Name*/
-    public static final String CONTROLLER_NAME= "controller_name";
+    public static final String CONTROLLER_NAME = "controller_name";
     /**controller path*/
-    public static final String CONTROLLER_PATH= "controller_path";
+    public static final String CONTROLLER_PATH = "controller_path";
     /**java主包pacakge*/
-    public static final String MAIN_JAVA_PACKAGE= "main_java_package";
+    public static final String MAIN_JAVA_PACKAGE = "main_java_package";
     /**Service Name*/
-    public static final String SERVICE_NAME= "service_name";
+    public static final String SERVICE_NAME = "service_name";
     /**Controller代码包*/
-    public static final String CONTROLLER_PACKAGE= "controller_package";
+    public static final String CONTROLLER_PACKAGE = "controller_package";
     /**Service代码包*/
-    public static final String SERVICE_PACKAGE= "service_package";
+    public static final String SERVICE_PACKAGE = "service_package";
     /**index.html标题icon*/
-    public static final String INDEX_HTML_PAGE_ICON= "index_html_page_icon";
+    public static final String INDEX_HTML_PAGE_ICON = "index_html_page_icon";
     /**index.html页面标题*/
-    public static final String INDEX_HTML_PAGE_TITLE= "index_html_page_title";
+    public static final String INDEX_HTML_PAGE_TITLE = "index_html_page_title";
     /**model 所属package*/
-    public static final String MODEL_PACKAGE= "model_package";
+    public static final String MODEL_PACKAGE = "model_package";
     /**html view path*/
-    public static final String HTML_VIEW_PATH= "html_view_path";
+    public static final String HTML_VIEW_PATH = "html_view_path";
     /**路由扫描包*/
-    public static final String ROUTES_SCAN_PACKAGE= "routes_scan_package";
+    public static final String ROUTES_SCAN_PACKAGE = "routes_scan_package";
     /**是否需要生成Model*/
-    public static final String IS_GEN_MODEL= "is_gen_model";
+    public static final String IS_GEN_MODEL = "is_gen_model";
     /**表格是否使用record*/
-    public static final String IS_TABLE_USE_RECORD= "is_table_use_record";
+    public static final String IS_TABLE_USE_RECORD = "is_table_use_record";
     /**表格列名用驼峰的attrName*/
-    public static final String IS_TABLE_RECORD_CAMEL_CASE= "is_table_record_camel_case";
+    public static final String IS_TABLE_RECORD_CAMEL_CASE = "is_table_record_camel_case";
     /**是否支持Excel导入*/
-    public static final String IS_IMPORT_EXCEL= "is_import_excel";
+    public static final String IS_IMPORT_EXCEL = "is_import_excel";
     /**是否支持Excel导出*/
-    public static final String IS_EXPORT_EXCEL= "is_export_excel";
+    public static final String IS_EXPORT_EXCEL = "is_export_excel";
     /**是否启用 导出选中行功能*/
-    public static final String IS_EXPORT_EXCEL_BY_CHECKED_IDS= "is_export_excel_by_checked_ids";
+    public static final String IS_EXPORT_EXCEL_BY_CHECKED_IDS = "is_export_excel_by_checked_ids";
     /**是否启用导出表单查询结果功能*/
-    public static final String IS_EXPORT_EXCEL_BY_FORM= "is_export_excel_by_form";
+    public static final String IS_EXPORT_EXCEL_BY_FORM = "is_export_excel_by_form";
     /**是否启用导出所有数据*/
-    public static final String IS_EXPORT_EXCEL_ALL= "is_export_excel_all";
+    public static final String IS_EXPORT_EXCEL_ALL = "is_export_excel_all";
     /**是否支持表格复制到excel*/
-    public static final String IS_COPY_TO_EXCEL= "is_copy_to_excel";
+    public static final String IS_COPY_TO_EXCEL = "is_copy_to_excel";
     /**是否支持从excel复制到可编辑表格*/
-    public static final String IS_COPY_FROM_EXCEL= "is_copy_from_excel";
+    public static final String IS_COPY_FROM_EXCEL = "is_copy_from_excel";
     /**是否使用toolbar模式*/
-    public static final String IS_TOOLBAR= "is_toolbar";
+    public static final String IS_TOOLBAR = "is_toolbar";
     /**是否使用headbox*/
-    public static final String IS_HEADBOX= "is_headbox";
+    public static final String IS_HEADBOX = "is_headbox";
     /**是否使用leftBox*/
-    public static final String IS_LEFTBOX= "is_leftbox";
+    public static final String IS_LEFTBOX = "is_leftbox";
     /**是否使用rightBox*/
-    public static final String IS_RIGHTBOX= "is_rightbox";
+    public static final String IS_RIGHTBOX = "is_rightbox";
     /**是否使用footbox*/
-    public static final String IS_FOOTBOX= "is_footbox";
+    public static final String IS_FOOTBOX = "is_footbox";
     /**是否分页查询*/
-    public static final String IS_PAGINATE= "is_paginate";
+    public static final String IS_PAGINATE = "is_paginate";
     /**是否开启移动排序功能*/
-    public static final String IS_TABLE_SORTABLE_MOVE= "is_table_sortable_move";
+    public static final String IS_TABLE_SORTABLE_MOVE = "is_table_sortable_move";
     /**leftbox width*/
-    public static final String LEFTBOX_WIDTH= "leftbox_width";
+    public static final String LEFTBOX_WIDTH = "leftbox_width";
     /**right width*/
-    public static final String RIGHTBOX_WIDTH= "rightbox_width";
+    public static final String RIGHTBOX_WIDTH = "rightbox_width";
     /**headbox height*/
-    public static final String HEADBOX_HEIGHT= "headbox_height";
+    public static final String HEADBOX_HEIGHT = "headbox_height";
     /**footbox height*/
-    public static final String FOOTBOX_HEIGHT= "footbox_height";
+    public static final String FOOTBOX_HEIGHT = "footbox_height";
     /**是否启用leftbox的footer*/
-    public static final String IS_LEFTBOX_FOOTER= "is_leftbox_footer";
+    public static final String IS_LEFTBOX_FOOTER = "is_leftbox_footer";
     /**是否启用rightbox的footer*/
-    public static final String IS_RIGHTBOX_FOOTER= "is_rightbox_footer";
+    public static final String IS_RIGHTBOX_FOOTER = "is_rightbox_footer";
     /**leftbox footer button count*/
-    public static final String LEFTBOX_FOOTER_BUTTON_COUNT= "leftbox_footer_button_count";
+    public static final String LEFTBOX_FOOTER_BUTTON_COUNT = "leftbox_footer_button_count";
     /**rightbox footer button count*/
-    public static final String RIGHTBOX_FOOTER_BUTTON_COUNT= "rightbox_footer_button_count";
+    public static final String RIGHTBOX_FOOTER_BUTTON_COUNT = "rightbox_footer_button_count";
     /**leftbox title*/
-    public static final String LEFTBOX_TITLE= "leftbox_title";
+    public static final String LEFTBOX_TITLE = "leftbox_title";
     /**leftbox icon*/
-    public static final String LEFTBOX_ICON= "leftbox_icon";
+    public static final String LEFTBOX_ICON = "leftbox_icon";
     /**rightbox title*/
-    public static final String RIGHTBOX_TITLE= "rightbox_title";
+    public static final String RIGHTBOX_TITLE = "rightbox_title";
     /**rightbox icon*/
-    public static final String RIGHTBOX_ICON= "rightbox_icon";
+    public static final String RIGHTBOX_ICON = "rightbox_icon";
     /**是否开启操作列排序功能*/
-    public static final String IS_SHOW_OPTCOL_SORT= "is_show_optcol_sort";
+    public static final String IS_SHOW_OPTCOL_SORT = "is_show_optcol_sort";
     /**是否开启操作列显示编辑按钮*/
-    public static final String IS_SHOW_OPTCOL_EDIT= "is_show_optcol_edit";
+    public static final String IS_SHOW_OPTCOL_EDIT = "is_show_optcol_edit";
     /**是否开启操作列显示删除按钮*/
-    public static final String IS_SHOW_OPTCOL_DEL= "is_show_optcol_del";
+    public static final String IS_SHOW_OPTCOL_DEL = "is_show_optcol_del";
     /**是否显示操作列*/
-    public static final String IS_SHOW_OPTCOL= "is_show_optcol";
+    public static final String IS_SHOW_OPTCOL = "is_show_optcol";
     /**是否显示操作列的恢复按钮*/
-    public static final String IS_SHOW_OPTCOL_RECOVER= "is_show_optcol_recover";
+    public static final String IS_SHOW_OPTCOL_RECOVER = "is_show_optcol_recover";
     /**默认排序字段*/
-    public static final String DEFAULT_SORT_COLUMN= "default_sort_column";
+    public static final String DEFAULT_SORT_COLUMN = "default_sort_column";
     /**默认排序方式*/
-    public static final String DEFAULT_SORT_TYPE= "default_sort_type";
+    public static final String DEFAULT_SORT_TYPE = "default_sort_type";
     /**长度*/
-    public static final String TABLE_OPTCOL_WIDTH= "table_optcol_width";
+    public static final String TABLE_OPTCOL_WIDTH = "table_optcol_width";
     /**表格是否开启调整列宽功能*/
-    public static final String IS_TABLE_COLUMN_RESIZE= "is_table_column_resize";
+    public static final String IS_TABLE_COLUMN_RESIZE = "is_table_column_resize";
     /**是否增加填充列*/
-    public static final String IS_TABLE_PREPEND_COLUMN= "is_table_prepend_column";
+    public static final String IS_TABLE_PREPEND_COLUMN = "is_table_prepend_column";
     /**表格chechbox radio配置类型*/
-    public static final String TABLE_PREPEND_COLUMN_TYPE= "table_prepend_column_type";
+    public static final String TABLE_PREPEND_COLUMN_TYPE = "table_prepend_column_type";
     /**填充列到第几列*/
-    public static final String TABLE_PREPEND_COLUMN_INDEX= "table_prepend_column_index";
+    public static final String TABLE_PREPEND_COLUMN_INDEX = "table_prepend_column_index";
     /**填充列linkparent*/
-    public static final String IS_TABLE_PREPEND_COLUMN_LINKPARENT= "is_table_prepend_column_linkparent";
+    public static final String IS_TABLE_PREPEND_COLUMN_LINKPARENT = "is_table_prepend_column_linkparent";
     /**填充列linkson*/
-    public static final String IS_TABLE_PREPEND_COLUMN_LINKSON= "is_table_prepend_column_linkson";
+    public static final String IS_TABLE_PREPEND_COLUMN_LINKSON = "is_table_prepend_column_linkson";
     /**填充列表头是几行rowspan*/
-    public static final String TABLE_PREPEND_COLUMN_ROWSPAN= "table_prepend_column_rowspan";
+    public static final String TABLE_PREPEND_COLUMN_ROWSPAN = "table_prepend_column_rowspan";
     /**是否点击行就切换列填充组件选中状态*/
-    public static final String IS_TABLE_PREPEND_COLUMN_CLICK_ACTIVE= "is_table_prepend_column_click_active";
+    public static final String IS_TABLE_PREPEND_COLUMN_CLICK_ACTIVE = "is_table_prepend_column_click_active";
     /**左侧固定列*/
-    public static final String TABLE_FIXED_COLUMN_LEFT= "table_fixed_column_left";
+    public static final String TABLE_FIXED_COLUMN_LEFT = "table_fixed_column_left";
     /**右侧固定列*/
-    public static final String TABLE_FIXED_COLUMN_RIGHT= "table_fixed_column_right";
+    public static final String TABLE_FIXED_COLUMN_RIGHT = "table_fixed_column_right";
     /**分页pagesize自定义设置*/
-    public static final String TABLE_PAGESIZE_OPTIONS= "table_pagesize_options";
+    public static final String TABLE_PAGESIZE_OPTIONS = "table_pagesize_options";
     /**表格宽度自定义值*/
-    public static final String TABLE_WIDTH_ASSIGN= "table_width_assign";
+    public static final String TABLE_WIDTH_ASSIGN = "table_width_assign";
     /**表格宽度*/
-    public static final String TABLE_WIDTH= "table_width";
+    public static final String TABLE_WIDTH = "table_width";
     /**表格高度自定义值*/
-    public static final String TABLE_HEIGHT_ASSIGN= "table_height_assign";
+    public static final String TABLE_HEIGHT_ASSIGN = "table_height_assign";
     /**表格高度*/
-    public static final String TABLE_HEIGHT= "table_height";
+    public static final String TABLE_HEIGHT = "table_height";
     /**表格默认排序字段*/
-    public static final String TABLE_DEFAULT_SORT_COLUMN= "table_default_sort_column";
+    public static final String TABLE_DEFAULT_SORT_COLUMN = "table_default_sort_column";
     /**表格默认排序类型*/
-    public static final String TABLE_DEFAULT_SORT_TYPE= "table_default_sort_type";
+    public static final String TABLE_DEFAULT_SORT_TYPE = "table_default_sort_type";
     /**是否开启关键词查询*/
-    public static final String IS_KEYWORDS_SEARCH= "is_keywords_search";
+    public static final String IS_KEYWORDS_SEARCH = "is_keywords_search";
     /**关键词匹配列*/
-    public static final String KEYWORDS_MATCH_COLUMNS= "keywords_match_columns";
+    public static final String KEYWORDS_MATCH_COLUMNS = "keywords_match_columns";
     /**toolbar 额外预留按钮个数*/
-    public static final String TOOLBAR_EXTRA_BUTTON_SIZE= "toolbar_extra_button_size";
+    public static final String TOOLBAR_EXTRA_BUTTON_SIZE = "toolbar_extra_button_size";
     /**删除标识*/
-    public static final String IS_DELETED= "is_deleted";
+    public static final String IS_DELETED = "is_deleted";
     /**表单分几列*/
-    public static final String FORM_COLUMN_SIZE= "form_column_size";
+    public static final String FORM_COLUMN_SIZE = "form_column_size";
     /**表单form-group风格 左右还是上下*/
-    public static final String IS_FORM_GROUP_ROW= "is_form_group_row";
+    public static final String IS_FORM_GROUP_ROW = "is_form_group_row";
     /**表单分多列 比例值*/
-    public static final String FORM_COLUMN_PROPORTION= "form_column_proportion";
+    public static final String FORM_COLUMN_PROPORTION = "form_column_proportion";
     /**表单列排布方向 横向还是纵向*/
-    public static final String FORM_COLUMN_DIRECTION= "form_column_direction";
+    public static final String FORM_COLUMN_DIRECTION = "form_column_direction";
     /**form-group row状态下的比例*/
-    public static final String FORM_GROUP_PROPORTION= "form_group_proportion";
+    public static final String FORM_GROUP_PROPORTION = "form_group_proportion";
     /**是否启用Path注解路由*/
-    public static final String IS_VIEW_USE_PATH= "is_view_use_path";
+    public static final String IS_VIEW_USE_PATH = "is_view_use_path";
     /**使用布局器*/
-    public static final String VIEW_LAYOUT= "view_layout";
+    public static final String VIEW_LAYOUT = "view_layout";
     /**是否需要创建新的路由配置类*/
-    public static final String IS_NEED_NEW_ROUTE= "is_need_new_route";
+    public static final String IS_NEED_NEW_ROUTE = "is_need_new_route";
     /**哪个路由配置类*/
-    public static final String ROUTES_CLASS_NAME= "routes_class_name";
+    public static final String ROUTES_CLASS_NAME = "routes_class_name";
     /**是否需要后台管理权限拦截器*/
-    public static final String IS_NEED_ADMIN_INTERCEPTOR= "is_need_admin_interceptor";
+    public static final String IS_NEED_ADMIN_INTERCEPTOR = "is_need_admin_interceptor";
     /**额外配置的拦截器*/
-    public static final String EXTRA_INTERCEPTOR_CLASS_NAME= "extra_interceptor_class_name";
+    public static final String EXTRA_INTERCEPTOR_CLASS_NAME = "extra_interceptor_class_name";
     /**表格查询条件是否启用高级多条件模式*/
-    public static final String IS_TABLE_MULTI_CONDITIONS_MODE= "is_table_multi_conditions_mode";
+    public static final String IS_TABLE_MULTI_CONDITIONS_MODE = "is_table_multi_conditions_mode";
+    /**表格查询高级模式 是否隐藏条件 默认隐藏*/
+    public static final String IS_TABLE_MULTI_CONDITIONS_DEFAULT_HIDE = "is_table_multi_conditions_default_hide";
     /**表格高级查询条件切换按钮是否显示标题*/
-    public static final String IS_TABLE_MULTI_CONDITIONS_BTN_SHOW_TITLE= "is_table_multi_conditions_btn_show_title";
+    public static final String IS_TABLE_MULTI_CONDITIONS_BTN_SHOW_TITLE = "is_table_multi_conditions_btn_show_title";
     /**表格toolbar上启用添加按钮*/
-    public static final String IS_TOOLBAR_ADD_BTN= "is_toolbar_add_btn";
+    public static final String IS_TOOLBAR_ADD_BTN = "is_toolbar_add_btn";
     /**表格toolbar上启用编辑按钮*/
-    public static final String IS_TOOLBAR_EDIT_BTN= "is_toolbar_edit_btn";
+    public static final String IS_TOOLBAR_EDIT_BTN = "is_toolbar_edit_btn";
     /**表格toolbar上启用删除按钮*/
-    public static final String IS_TOOLBAR_DEL_BTN= "is_toolbar_del_btn";
+    public static final String IS_TOOLBAR_DEL_BTN = "is_toolbar_del_btn";
     /**表格toolbar上启用恢复按钮 当有is_deleted时*/
-    public static final String IS_TOOLBAR_RECOVER_BTN= "is_toolbar_recover_btn";
+    public static final String IS_TOOLBAR_RECOVER_BTN = "is_toolbar_recover_btn";
     /**表格tolbar上启用刷新按钮*/
-    public static final String IS_TOOLBAR_REFRESH_BTN= "is_toolbar_refresh_btn";
+    public static final String IS_TOOLBAR_REFRESH_BTN = "is_toolbar_refresh_btn";
     /**是否启用pageTitle上的添加按钮*/
-    public static final String IS_PAGE_TITLE_ADD_BTN= "is_page_title_add_btn";
+    public static final String IS_PAGE_TITLE_ADD_BTN = "is_page_title_add_btn";
     /**是否启用pageTitle上的刷新按钮*/
-    public static final String IS_PAGE_TITLE_REFRESH_BTN= "is_page_title_refresh_btn";
+    public static final String IS_PAGE_TITLE_REFRESH_BTN = "is_page_title_refresh_btn";
     /**是否启用pageTitle上的初始化顺序按钮*/
-    public static final String IS_PAGE_TITLE_INIT_RANK_BTN= "is_page_title_init_rank_btn";
+    public static final String IS_PAGE_TITLE_INIT_RANK_BTN = "is_page_title_init_rank_btn";
     /**是否启用systemLog日志*/
-    public static final String IS_PROJECT_SYSTEM_LOG= "is_project_system_log";
+    public static final String IS_PROJECT_SYSTEM_LOG = "is_project_system_log";
     /**系统日志text*/
-    public static final String PROJECT_SYSTEM_LOG_TARGET_TYPE_TEXT= "project_system_log_target_type_text";
+    public static final String PROJECT_SYSTEM_LOG_TARGET_TYPE_TEXT = "project_system_log_target_type_text";
     /**系统日志value值*/
-    public static final String PROJECT_SYSTEM_LOG_TARGET_TYPE_VALUE= "project_system_log_target_type_value";
+    public static final String PROJECT_SYSTEM_LOG_TARGET_TYPE_VALUE = "project_system_log_target_type_value";
     /**系统日志KeyName*/
-    public static final String PROJECT_SYSTEM_LOG_TARGET_TYPE_KEY_NAME= "project_system_log_target_type_key_name";
+    public static final String PROJECT_SYSTEM_LOG_TARGET_TYPE_KEY_NAME = "project_system_log_target_type_key_name";
     /**form表单的dialog的area属性 长宽*/
-    public static final String FORM_DIALOG_AREA= "form_dialog_area";
+    public static final String FORM_DIALOG_AREA = "form_dialog_area";
     /**是否在baseModel中生成字段常量*/
-    public static final String IS_BASE_MODEL_GEN_COL_CONSTANT= "is_base_model_gen_col_constant";
+    public static final String IS_BASE_MODEL_GEN_COL_CONSTANT = "is_base_model_gen_col_constant";
     /**是否在baseModel中生成的字段常量 名称转大写*/
-    public static final String IS_BASE_MODEL_GEN_COL_CONSTANT_TO_UPPERCASE= "is_base_model_gen_col_constant_to_uppercase";
+    public static final String IS_BASE_MODEL_GEN_COL_CONSTANT_TO_UPPERCASE = "is_base_model_gen_col_constant_to_uppercase";
 	/**
 	 * 主键ID
 	 */
@@ -2300,6 +2302,22 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	}
 
 	/**
+	 * 表格查询高级模式 是否隐藏条件 默认隐藏
+	 */
+	public M setIsTableMultiConditionsDefaultHide(java.lang.Boolean isTableMultiConditionsDefaultHide) {
+		set("is_table_multi_conditions_default_hide", isTableMultiConditionsDefaultHide);
+		return (M)this;
+	}
+	
+	/**
+	 * 表格查询高级模式 是否隐藏条件 默认隐藏
+	 */
+	@JBoltField(name="isTableMultiConditionsDefaultHide" ,columnName="is_table_multi_conditions_default_hide",type="Boolean", remark="表格查询高级模式 是否隐藏条件 默认隐藏", required=true, maxLength=1, fixed=0, order=126)
+	public java.lang.Boolean getIsTableMultiConditionsDefaultHide() {
+		return getBoolean("is_table_multi_conditions_default_hide");
+	}
+
+	/**
 	 * 表格高级查询条件切换按钮是否显示标题
 	 */
 	public M setIsTableMultiConditionsBtnShowTitle(java.lang.Boolean isTableMultiConditionsBtnShowTitle) {
@@ -2310,7 +2328,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格高级查询条件切换按钮是否显示标题
 	 */
-	@JBoltField(name="isTableMultiConditionsBtnShowTitle" ,columnName="is_table_multi_conditions_btn_show_title",type="Boolean", remark="表格高级查询条件切换按钮是否显示标题", required=true, maxLength=1, fixed=0, order=126)
+	@JBoltField(name="isTableMultiConditionsBtnShowTitle" ,columnName="is_table_multi_conditions_btn_show_title",type="Boolean", remark="表格高级查询条件切换按钮是否显示标题", required=true, maxLength=1, fixed=0, order=127)
 	public java.lang.Boolean getIsTableMultiConditionsBtnShowTitle() {
 		return getBoolean("is_table_multi_conditions_btn_show_title");
 	}
@@ -2326,7 +2344,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格toolbar上启用添加按钮
 	 */
-	@JBoltField(name="isToolbarAddBtn" ,columnName="is_toolbar_add_btn",type="Boolean", remark="表格toolbar上启用添加按钮", required=true, maxLength=1, fixed=0, order=127)
+	@JBoltField(name="isToolbarAddBtn" ,columnName="is_toolbar_add_btn",type="Boolean", remark="表格toolbar上启用添加按钮", required=true, maxLength=1, fixed=0, order=128)
 	public java.lang.Boolean getIsToolbarAddBtn() {
 		return getBoolean("is_toolbar_add_btn");
 	}
@@ -2342,7 +2360,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格toolbar上启用编辑按钮
 	 */
-	@JBoltField(name="isToolbarEditBtn" ,columnName="is_toolbar_edit_btn",type="Boolean", remark="表格toolbar上启用编辑按钮", required=true, maxLength=1, fixed=0, order=128)
+	@JBoltField(name="isToolbarEditBtn" ,columnName="is_toolbar_edit_btn",type="Boolean", remark="表格toolbar上启用编辑按钮", required=true, maxLength=1, fixed=0, order=129)
 	public java.lang.Boolean getIsToolbarEditBtn() {
 		return getBoolean("is_toolbar_edit_btn");
 	}
@@ -2358,7 +2376,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格toolbar上启用删除按钮
 	 */
-	@JBoltField(name="isToolbarDelBtn" ,columnName="is_toolbar_del_btn",type="Boolean", remark="表格toolbar上启用删除按钮", required=true, maxLength=1, fixed=0, order=129)
+	@JBoltField(name="isToolbarDelBtn" ,columnName="is_toolbar_del_btn",type="Boolean", remark="表格toolbar上启用删除按钮", required=true, maxLength=1, fixed=0, order=130)
 	public java.lang.Boolean getIsToolbarDelBtn() {
 		return getBoolean("is_toolbar_del_btn");
 	}
@@ -2374,7 +2392,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格toolbar上启用恢复按钮 当有is_deleted时
 	 */
-	@JBoltField(name="isToolbarRecoverBtn" ,columnName="is_toolbar_recover_btn",type="Boolean", remark="表格toolbar上启用恢复按钮 当有is_deleted时", required=true, maxLength=1, fixed=0, order=130)
+	@JBoltField(name="isToolbarRecoverBtn" ,columnName="is_toolbar_recover_btn",type="Boolean", remark="表格toolbar上启用恢复按钮 当有is_deleted时", required=true, maxLength=1, fixed=0, order=131)
 	public java.lang.Boolean getIsToolbarRecoverBtn() {
 		return getBoolean("is_toolbar_recover_btn");
 	}
@@ -2390,7 +2408,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 表格tolbar上启用刷新按钮
 	 */
-	@JBoltField(name="isToolbarRefreshBtn" ,columnName="is_toolbar_refresh_btn",type="Boolean", remark="表格tolbar上启用刷新按钮", required=true, maxLength=1, fixed=0, order=131)
+	@JBoltField(name="isToolbarRefreshBtn" ,columnName="is_toolbar_refresh_btn",type="Boolean", remark="表格tolbar上启用刷新按钮", required=true, maxLength=1, fixed=0, order=132)
 	public java.lang.Boolean getIsToolbarRefreshBtn() {
 		return getBoolean("is_toolbar_refresh_btn");
 	}
@@ -2406,7 +2424,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用pageTitle上的添加按钮
 	 */
-	@JBoltField(name="isPageTitleAddBtn" ,columnName="is_page_title_add_btn",type="Boolean", remark="是否启用pageTitle上的添加按钮", required=true, maxLength=1, fixed=0, order=132)
+	@JBoltField(name="isPageTitleAddBtn" ,columnName="is_page_title_add_btn",type="Boolean", remark="是否启用pageTitle上的添加按钮", required=true, maxLength=1, fixed=0, order=133)
 	public java.lang.Boolean getIsPageTitleAddBtn() {
 		return getBoolean("is_page_title_add_btn");
 	}
@@ -2422,7 +2440,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用pageTitle上的刷新按钮
 	 */
-	@JBoltField(name="isPageTitleRefreshBtn" ,columnName="is_page_title_refresh_btn",type="Boolean", remark="是否启用pageTitle上的刷新按钮", required=true, maxLength=1, fixed=0, order=133)
+	@JBoltField(name="isPageTitleRefreshBtn" ,columnName="is_page_title_refresh_btn",type="Boolean", remark="是否启用pageTitle上的刷新按钮", required=true, maxLength=1, fixed=0, order=134)
 	public java.lang.Boolean getIsPageTitleRefreshBtn() {
 		return getBoolean("is_page_title_refresh_btn");
 	}
@@ -2438,7 +2456,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用pageTitle上的初始化顺序按钮
 	 */
-	@JBoltField(name="isPageTitleInitRankBtn" ,columnName="is_page_title_init_rank_btn",type="Boolean", remark="是否启用pageTitle上的初始化顺序按钮", required=true, maxLength=1, fixed=0, order=134)
+	@JBoltField(name="isPageTitleInitRankBtn" ,columnName="is_page_title_init_rank_btn",type="Boolean", remark="是否启用pageTitle上的初始化顺序按钮", required=true, maxLength=1, fixed=0, order=135)
 	public java.lang.Boolean getIsPageTitleInitRankBtn() {
 		return getBoolean("is_page_title_init_rank_btn");
 	}
@@ -2454,7 +2472,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否启用systemLog日志
 	 */
-	@JBoltField(name="isProjectSystemLog" ,columnName="is_project_system_log",type="Boolean", remark="是否启用systemLog日志", required=true, maxLength=1, fixed=0, order=135)
+	@JBoltField(name="isProjectSystemLog" ,columnName="is_project_system_log",type="Boolean", remark="是否启用systemLog日志", required=true, maxLength=1, fixed=0, order=136)
 	public java.lang.Boolean getIsProjectSystemLog() {
 		return getBoolean("is_project_system_log");
 	}
@@ -2470,7 +2488,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 系统日志text
 	 */
-	@JBoltField(name="projectSystemLogTargetTypeText" ,columnName="project_system_log_target_type_text",type="String", remark="系统日志text", required=false, maxLength=20, fixed=0, order=136)
+	@JBoltField(name="projectSystemLogTargetTypeText" ,columnName="project_system_log_target_type_text",type="String", remark="系统日志text", required=false, maxLength=20, fixed=0, order=137)
 	public java.lang.String getProjectSystemLogTargetTypeText() {
 		return getStr("project_system_log_target_type_text");
 	}
@@ -2486,7 +2504,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 系统日志value值
 	 */
-	@JBoltField(name="projectSystemLogTargetTypeValue" ,columnName="project_system_log_target_type_value",type="String", remark="系统日志value值", required=false, maxLength=10, fixed=0, order=137)
+	@JBoltField(name="projectSystemLogTargetTypeValue" ,columnName="project_system_log_target_type_value",type="String", remark="系统日志value值", required=false, maxLength=10, fixed=0, order=138)
 	public java.lang.String getProjectSystemLogTargetTypeValue() {
 		return getStr("project_system_log_target_type_value");
 	}
@@ -2502,7 +2520,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 系统日志KeyName
 	 */
-	@JBoltField(name="projectSystemLogTargetTypeKeyName" ,columnName="project_system_log_target_type_key_name",type="String", remark="系统日志KeyName", required=false, maxLength=40, fixed=0, order=138)
+	@JBoltField(name="projectSystemLogTargetTypeKeyName" ,columnName="project_system_log_target_type_key_name",type="String", remark="系统日志KeyName", required=false, maxLength=40, fixed=0, order=139)
 	public java.lang.String getProjectSystemLogTargetTypeKeyName() {
 		return getStr("project_system_log_target_type_key_name");
 	}
@@ -2518,7 +2536,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * form表单的dialog的area属性 长宽
 	 */
-	@JBoltField(name="formDialogArea" ,columnName="form_dialog_area",type="String", remark="form表单的dialog的area属性 长宽", required=false, maxLength=20, fixed=0, order=139)
+	@JBoltField(name="formDialogArea" ,columnName="form_dialog_area",type="String", remark="form表单的dialog的area属性 长宽", required=false, maxLength=20, fixed=0, order=140)
 	public java.lang.String getFormDialogArea() {
 		return getStr("form_dialog_area");
 	}
@@ -2534,7 +2552,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否在baseModel中生成字段常量
 	 */
-	@JBoltField(name="isBaseModelGenColConstant" ,columnName="is_base_model_gen_col_constant",type="Boolean", remark="是否在baseModel中生成字段常量", required=true, maxLength=1, fixed=0, order=140)
+	@JBoltField(name="isBaseModelGenColConstant" ,columnName="is_base_model_gen_col_constant",type="Boolean", remark="是否在baseModel中生成字段常量", required=true, maxLength=1, fixed=0, order=141)
 	public java.lang.Boolean getIsBaseModelGenColConstant() {
 		return getBoolean("is_base_model_gen_col_constant");
 	}
@@ -2550,7 +2568,7 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	/**
 	 * 是否在baseModel中生成的字段常量 名称转大写
 	 */
-	@JBoltField(name="isBaseModelGenColConstantToUppercase" ,columnName="is_base_model_gen_col_constant_to_uppercase",type="Boolean", remark="是否在baseModel中生成的字段常量 名称转大写", required=true, maxLength=1, fixed=0, order=141)
+	@JBoltField(name="isBaseModelGenColConstantToUppercase" ,columnName="is_base_model_gen_col_constant_to_uppercase",type="Boolean", remark="是否在baseModel中生成的字段常量 名称转大写", required=true, maxLength=1, fixed=0, order=142)
 	public java.lang.Boolean getIsBaseModelGenColConstantToUppercase() {
 		return getBoolean("is_base_model_gen_col_constant_to_uppercase");
 	}

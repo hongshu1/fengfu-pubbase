@@ -1,17 +1,13 @@
 package cn.jbolt.common.model;
 
 import cn.jbolt.common.model.base.BaseCodeGenModelAttr;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.annotation.UnProcessBoolean;
 import cn.jbolt.core.base.JBoltIDGenMode;
-import cn.jbolt.core.bean.JBoltDateRange;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltDictionaryTypeCache;
 import cn.jbolt.core.consts.JBoltConst;
 import com.jfinal.kit.StrKit;
-
-import java.util.Locale;
 
 /**
  * CodeGen模型详细设计

@@ -11,141 +11,141 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class BaseCodeGenModelAttr<M extends BaseCodeGenModelAttr<M>> extends JBoltBaseModel<M>{
     /**主键ID*/
-    public static final String ID= "id";
+    public static final String ID = "id";
     /**所属codeGen*/
-    public static final String CODE_GEN_ID= "code_gen_id";
+    public static final String CODE_GEN_ID = "code_gen_id";
     /**列名*/
-    public static final String COL_NAME= "col_name";
+    public static final String COL_NAME = "col_name";
     /**属性名*/
-    public static final String ATTR_NAME= "attr_name";
+    public static final String ATTR_NAME = "attr_name";
     /**属性类型*/
-    public static final String JAVA_TYPE= "java_type";
+    public static final String JAVA_TYPE = "java_type";
     /**属性长度*/
-    public static final String ATTR_LENGTH= "attr_length";
+    public static final String ATTR_LENGTH = "attr_length";
     /**属性小数点*/
-    public static final String ATTR_FIXED= "attr_fixed";
+    public static final String ATTR_FIXED = "attr_fixed";
     /**默认值*/
-    public static final String ATTR_DEFAULT_VALUE= "attr_default_value";
+    public static final String ATTR_DEFAULT_VALUE = "attr_default_value";
     /**数据表内默认顺序*/
-    public static final String SORT_RANK= "sort_rank";
+    public static final String SORT_RANK = "sort_rank";
     /**表格中的排序*/
-    public static final String SORT_RANK_INTABLE= "sort_rank_intable";
+    public static final String SORT_RANK_INTABLE = "sort_rank_intable";
     /**表单中的排序*/
-    public static final String SORT_RANK_INFORM= "sort_rank_inform";
+    public static final String SORT_RANK_INFORM = "sort_rank_inform";
     /**查询条件中的顺序*/
-    public static final String SORT_RANK_INSEARCH= "sort_rank_insearch";
+    public static final String SORT_RANK_INSEARCH = "sort_rank_insearch";
     /**是否主键*/
-    public static final String IS_PKEY= "is_pkey";
+    public static final String IS_PKEY = "is_pkey";
     /**是否必填*/
-    public static final String IS_REQUIRED= "is_required";
+    public static final String IS_REQUIRED = "is_required";
     /**作为查询条件是否必填*/
-    public static final String IS_SEARCH_REQUIRED= "is_search_required";
+    public static final String IS_SEARCH_REQUIRED = "is_search_required";
     /**查询条件必填校验规则*/
-    public static final String DATA_RULE_FOR_SEARCH= "data_rule_for_search";
+    public static final String DATA_RULE_FOR_SEARCH = "data_rule_for_search";
     /**查询条件不符合校验的提示信息*/
-    public static final String DATA_TIPS_FOR_SEARCH= "data_tips_for_search";
+    public static final String DATA_TIPS_FOR_SEARCH = "data_tips_for_search";
     /**表单单显示文本*/
-    public static final String FORM_LABEL= "form_label";
+    public static final String FORM_LABEL = "form_label";
     /**表单placeholder*/
-    public static final String PLACEHOLDER= "placeholder";
+    public static final String PLACEHOLDER = "placeholder";
     /**表格中显示文本*/
-    public static final String TABLE_LABEL= "table_label";
+    public static final String TABLE_LABEL = "table_label";
     /**查询表单提示文本*/
-    public static final String SEARCH_FORM_LABEL= "search_form_label";
+    public static final String SEARCH_FORM_LABEL = "search_form_label";
     /**备注*/
-    public static final String REMARK= "remark";
+    public static final String REMARK = "remark";
     /**是否为关键词查询列*/
-    public static final String IS_KEYWORDS_COLUMN= "is_keywords_column";
+    public static final String IS_KEYWORDS_COLUMN = "is_keywords_column";
     /**是否表单可编辑元素*/
-    public static final String IS_FORM_ELE= "is_form_ele";
+    public static final String IS_FORM_ELE = "is_form_ele";
     /**是否表格列*/
-    public static final String IS_TABLE_COL= "is_table_col";
+    public static final String IS_TABLE_COL = "is_table_col";
     /**是否为表格switchbtn*/
-    public static final String IS_TABLE_SWITCHBTN= "is_table_switchbtn";
+    public static final String IS_TABLE_SWITCHBTN = "is_table_switchbtn";
     /**列宽*/
-    public static final String TABLE_COL_WIDTH= "table_col_width";
+    public static final String TABLE_COL_WIDTH = "table_col_width";
     /**是否固定宽度*/
-    public static final String IS_NEED_FIXED_WIDTH= "is_need_fixed_width";
+    public static final String IS_NEED_FIXED_WIDTH = "is_need_fixed_width";
     /**是否检索条件*/
-    public static final String IS_SEARCH_ELE= "is_search_ele";
+    public static final String IS_SEARCH_ELE = "is_search_ele";
     /**是否为检索隐藏条件*/
-    public static final String IS_SEARCH_HIDDEN= "is_search_hidden";
+    public static final String IS_SEARCH_HIDDEN = "is_search_hidden";
     /**格式化操作值*/
-    public static final String COL_FORMAT= "col_format";
+    public static final String COL_FORMAT = "col_format";
     /**查询用ui 组件类型*/
-    public static final String SEARCH_UI_TYPE= "search_ui_type";
+    public static final String SEARCH_UI_TYPE = "search_ui_type";
     /**查询用组件数据源类型*/
-    public static final String SEARCH_DATA_TYPE= "search_data_type";
+    public static final String SEARCH_DATA_TYPE = "search_data_type";
     /**查询用组件数据值*/
-    public static final String SEARCH_DATA_VALUE= "search_data_value";
+    public static final String SEARCH_DATA_VALUE = "search_data_value";
     /**查询用组件默认值*/
-    public static final String SEARCH_DEFAULT_VALUE= "search_default_value";
+    public static final String SEARCH_DEFAULT_VALUE = "search_default_value";
     /**独立新行*/
-    public static final String IS_SINGLE_LINE= "is_single_line";
+    public static final String IS_SINGLE_LINE = "is_single_line";
     /**是否需要data_handler*/
-    public static final String NEED_DATA_HANDLER= "need_data_handler";
+    public static final String NEED_DATA_HANDLER = "need_data_handler";
     /**表单组件类型*/
-    public static final String FORM_UI_TYPE= "form_ui_type";
+    public static final String FORM_UI_TYPE = "form_ui_type";
     /**jboltinput filter handler*/
-    public static final String FORM_JBOLTINPUT_FILTER_HANDLER= "form_jboltinput_filter_handler";
+    public static final String FORM_JBOLTINPUT_FILTER_HANDLER = "form_jboltinput_filter_handler";
     /**jboltinput jstree是否有checkbox*/
-    public static final String IS_FORM_JBOLTINPUT_JSTREE_CHECKBOX= "is_form_jboltinput_jstree_checkbox";
+    public static final String IS_FORM_JBOLTINPUT_JSTREE_CHECKBOX = "is_form_jboltinput_jstree_checkbox";
     /**jboltinput jstree checkbox只选子节点*/
-    public static final String IS_FORM_JBOLTINPUT_JSTREE_ONLY_LEAF= "is_form_jboltinput_jstree_only_leaf";
+    public static final String IS_FORM_JBOLTINPUT_JSTREE_ONLY_LEAF = "is_form_jboltinput_jstree_only_leaf";
     /**表单组件数据源类型*/
-    public static final String FORM_DATA_TYPE= "form_data_type";
+    public static final String FORM_DATA_TYPE = "form_data_type";
     /**表单组件数据值*/
-    public static final String FORM_DATA_VALUE= "form_data_value";
+    public static final String FORM_DATA_VALUE = "form_data_value";
     /**表单组件默认值*/
-    public static final String FORM_DEFAULT_VALUE= "form_default_value";
+    public static final String FORM_DEFAULT_VALUE = "form_default_value";
     /**表单校验规则 自定义*/
-    public static final String DATA_RULE_ASSIGN= "data_rule_assign";
+    public static final String DATA_RULE_ASSIGN = "data_rule_assign";
     /**校验规则*/
-    public static final String DATA_RULE= "data_rule";
+    public static final String DATA_RULE = "data_rule";
     /**校验提示信息*/
-    public static final String DATA_TIPS= "data_tips";
+    public static final String DATA_TIPS = "data_tips";
     /**是否为导入列*/
-    public static final String IS_IMPORT_COL= "is_import_col";
+    public static final String IS_IMPORT_COL = "is_import_col";
     /**导出列*/
-    public static final String IS_EXPORT_COL= "is_export_col";
+    public static final String IS_EXPORT_COL = "is_export_col";
     /**是否可排序*/
-    public static final String IS_SORTABLE= "is_sortable";
+    public static final String IS_SORTABLE = "is_sortable";
     /**可编辑表格显示组件类型*/
-    public static final String TABLE_UI_TYPE= "table_ui_type";
+    public static final String TABLE_UI_TYPE = "table_ui_type";
     /**表格组件数据库类型*/
-    public static final String TABLE_DATA_TYPE= "table_data_type";
+    public static final String TABLE_DATA_TYPE = "table_data_type";
     /**表格组件数据值*/
-    public static final String TABLE_DATA_VALUE= "table_data_value";
+    public static final String TABLE_DATA_VALUE = "table_data_value";
     /**组件自定义宽度*/
-    public static final String FORM_ELE_WIDTH= "form_ele_width";
+    public static final String FORM_ELE_WIDTH = "form_ele_width";
     /**radio checkbox等是否inline*/
-    public static final String IS_ITEM_INLINE= "is_item_inline";
+    public static final String IS_ITEM_INLINE = "is_item_inline";
     /**data-text-attr*/
-    public static final String FORM_DATA_TEXT_ATTR= "form_data_text_attr";
+    public static final String FORM_DATA_TEXT_ATTR = "form_data_text_attr";
     /**data-value-attr*/
-    public static final String FORM_DATA_VALUE_ATTR= "form_data_value_attr";
+    public static final String FORM_DATA_VALUE_ATTR = "form_data_value_attr";
     /**data-column-attr*/
-    public static final String FORM_DATA_COLUMN_ATTR= "form_data_column_attr";
+    public static final String FORM_DATA_COLUMN_ATTR = "form_data_column_attr";
     /**data-text-attr*/
-    public static final String SEARCH_DATA_TEXT_ATTR= "search_data_text_attr";
+    public static final String SEARCH_DATA_TEXT_ATTR = "search_data_text_attr";
     /**data-value-attr*/
-    public static final String SEARCH_DATA_VALUE_ATTR= "search_data_value_attr";
+    public static final String SEARCH_DATA_VALUE_ATTR = "search_data_value_attr";
     /**data-column-attr*/
-    public static final String SEARCH_DATA_COLUMN_ATTR= "search_data_column_attr";
+    public static final String SEARCH_DATA_COLUMN_ATTR = "search_data_column_attr";
     /**data-text-attr*/
-    public static final String TABLE_DATA_TEXT_ATTR= "table_data_text_attr";
+    public static final String TABLE_DATA_TEXT_ATTR = "table_data_text_attr";
     /**data-value-attr*/
-    public static final String TABLE_DATA_VALUE_ATTR= "table_data_value_attr";
+    public static final String TABLE_DATA_VALUE_ATTR = "table_data_value_attr";
     /**data-column-attr*/
-    public static final String TABLE_DATA_COLUMN_ATTR= "table_data_column_attr";
+    public static final String TABLE_DATA_COLUMN_ATTR = "table_data_column_attr";
     /**是否需要翻译*/
-    public static final String IS_NEED_TRANSLATE= "is_need_translate";
+    public static final String IS_NEED_TRANSLATE = "is_need_translate";
     /**翻译类型*/
-    public static final String TRANSLATE_TYPE= "translate_type";
+    public static final String TRANSLATE_TYPE = "translate_type";
     /**翻译用值*/
-    public static final String TRANSLATE_USE_VALUE= "translate_use_value";
+    public static final String TRANSLATE_USE_VALUE = "translate_use_value";
     /**翻译后的列名*/
-    public static final String TRANSLATE_COL_NAME= "translate_col_name";
+    public static final String TRANSLATE_COL_NAME = "translate_col_name";
 	/**
 	 * 主键ID
 	 */
