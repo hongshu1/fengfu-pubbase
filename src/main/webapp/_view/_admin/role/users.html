@@ -19,6 +19,7 @@
 <td>${data.sex|sex}</td>
 <td>${data.username}</td>
 <td>${data.phone}</td>
+<td>${data.email}</td>
 <td>{@if data.enable}<span class="badge badge-success">启用</span>{@else}<span class="badge badge-light">禁用</span>{@/if}</td>
 <td><a tooltip  title="移除"  href="admin/user/deleteRole/${data.id}-#(roleId??)" data-confirm="此操作将影响用户登录授权，确认移除此用户？" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger"></i></a></td>
 </tr>
@@ -35,7 +36,7 @@ data-conditions-form="user_form_#(pageId)"
 data-ajax-success-handler="initDialogBtns_#(pageId)"
 >
 <thead>
-<tr><th data-width="60">序号</th><th data-width="100">头像</th><th data-min-width="120">姓名</th><th data-width="60">性别</th><th data-min-width="120">用户名</th><th data-min-width="120">手机号</th><th data-width="100">是否启用</th><th  data-width="100">操作</th></tr>
+<tr><th data-width="60">序号</th><th data-width="100">头像</th><th data-min-width="120">姓名</th><th data-width="60">性别</th><th data-min-width="120">用户名</th><th data-min-width="120">手机号</th><th data-min-width="120">E-Mail</th><th data-width="100">是否启用</th><th  data-width="100">操作</th></tr>
 </thead>
 <tbody>
 </tbody>

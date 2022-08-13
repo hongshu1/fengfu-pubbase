@@ -2121,6 +2121,7 @@ CREATE TABLE [dbo].[jb_user] (
   [avatar] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [create_time] datetime  NOT NULL,
   [phone] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
+  [email] nvarchar(100) COLLATE Chinese_PRC_CI_AS  NULL,
   [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
   [sex] int  NULL,
   [pinyin] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
@@ -2192,6 +2193,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_user',
 'COLUMN', N'phone'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'电子邮箱',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'email'
 GO
 
 EXEC sp_addextendedproperty

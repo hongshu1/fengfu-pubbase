@@ -662,6 +662,7 @@ CREATE TABLE "public"."jb_user" (
   "avatar" varchar(255) COLLATE "pg_catalog"."default",
   "create_time" timestamp(6),
   "phone" varchar(40) COLLATE "pg_catalog"."default",
+  "email" varchar(100) COLLATE "pg_catalog"."default",
   "enable" char(1) COLLATE "pg_catalog"."default" DEFAULT '0'::bpchar NOT NULL,
   "sex" int4,
   "pinyin" varchar(255) COLLATE "pg_catalog"."default",
@@ -686,6 +687,7 @@ COMMENT ON COLUMN "public"."jb_user"."name" IS '姓名';
 COMMENT ON COLUMN "public"."jb_user"."avatar" IS '头像';
 COMMENT ON COLUMN "public"."jb_user"."create_time" IS '记录创建时间';
 COMMENT ON COLUMN "public"."jb_user"."phone" IS '手机号';
+COMMENT ON COLUMN "public"."jb_user"."email" IS '电子邮箱';
 COMMENT ON COLUMN "public"."jb_user"."enable" IS '启用';
 COMMENT ON COLUMN "public"."jb_user"."sex" IS '性别';
 COMMENT ON COLUMN "public"."jb_user"."pinyin" IS '拼音码';

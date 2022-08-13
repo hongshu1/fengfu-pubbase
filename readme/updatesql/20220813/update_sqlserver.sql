@@ -6,3 +6,12 @@ EXEC sp_addextendedproperty
 'TABLE', N'jb_code_gen',
 'COLUMN', N'is_table_multi_conditions_default_hide'
 GO
+
+alter table [dbo].[jb_user] add [email] nvarchar(100) COLLATE Chinese_PRC_CI_AS NULL;
+
+EXEC sp_addextendedproperty
+'MS_Description', N'电子邮箱',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'email'
+GO
