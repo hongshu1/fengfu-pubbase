@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.5";
+var jbolt_admin_js_version="5.9.6";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -6256,6 +6256,15 @@ function formSetJsonVal(formEle,jsonData,valueHandler){
 	 }
 }
 
+/**
+ * 指定区间内的随机整数
+ * @param min
+ * @param max
+ * @returns {*}
+ */
+function getRandomInt(min,max){
+	return Math.floor(Math.random()*(max-min+1))+min;
+}
 /**
  * 生成随机ID
  */
@@ -19353,7 +19362,7 @@ function deepClone(obj) {
 //封装的lobibox 取名JBoltNotifyBox
 var JBoltNotifyBox={
 		notify:function(type,options){
-			var defaultOptions={width:260,size:'mini',delay:false,title:false,msg:"消息",position:"top right",img:false};
+			var defaultOptions={width:300,messageHeight:200,size:'mini',delay:false,title:false,msg:"消息",position:"top right",img:false};
 			var keys = Object.keys(options);
 			if(keys && keys.length>0){
 				for(var i in keys){

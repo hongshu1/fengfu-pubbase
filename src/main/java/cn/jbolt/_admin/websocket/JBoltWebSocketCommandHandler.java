@@ -2,7 +2,9 @@ package cn.jbolt._admin.websocket;
 
 import java.util.Date;
 
+import cn.jbolt._admin.user.UserService;
 import com.jfinal.aop.Aop;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 
@@ -43,6 +45,9 @@ public class JBoltWebSocketCommandHandler {
 			case JBoltWebSocketCommand.MSGCENTER_CHECK_UNREAD://检测前端消息中心是否有未读
 				outMsg = processMsgCenterCheckUnreadCommand(inMsg, session.getUserId());
 				break;
+			case JBoltWebSocketCommand.CHECK_LAST_PWD_UPDATE_TIME://检测是否超过规定检测密码修改天数
+				outMsg = processCheckLastPwdUpdateTimeCommand(inMsg, session.getUserId());
+				break;
 			default://没有内置处理 就去扩展里找
 				outMsg = JBoltWebSocketExtendCommandHandler.me.process(inMsg, session);
 				break;
@@ -71,5 +76,15 @@ public class JBoltWebSocketCommandHandler {
 //			}
 		}
 		return inMsg.toCommandRetOutMsg(needRedDot);
+	}
+	/**
+	 * 处理检测用户是否最后一次密码修改时间间隔超期
+	 * @param inMsg
+	 * @param userId
+	 * @return
+	 */
+	protected JBoltWebSocketMsg processCheckLastPwdUpdateTimeCommand(JBoltWebSocketMsg inMsg, Object userId) {
+		UserService userService = Aop.get(UserService.class);
+		return inMsg.toCommandRetOutMsg(userService.checkUserLastPwdUpdateTime(Long.parseLong(userId.toString())));
 	}
 }

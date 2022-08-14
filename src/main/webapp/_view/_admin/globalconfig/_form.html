@@ -111,6 +111,14 @@
 				</div>
 			</div>
 		</div>
+	#elseif(globalConfig.configKey==GlobalConfigKey.JBOLT_PASSWORD_CHANGE_NOTICE_DAYS)
+	<div class="form-group">
+		<label>#(globalConfig.name)<small class="text-danger">(数据单位：天)</small></label>
+		<div class="input-group">
+			<input type="number" step="1" min="0" data-rule="pzint;len<=3"  autocomplete="off"  class="form-control" data-rule="required" data-tips="规定天数>=0 填0为关闭此功能 最大三位数" maxlength="3" name="globalConfig.configValue" value="#(globalConfig.configValue??)">
+			<div class="input-group-append"><span class="input-group-text">天</span></div>
+		</div>
+	</div>
 	#elseif(globalConfig.configKey==GlobalConfigKey.JBOLT_DEPT_MGR_TYPE)
 
 	<div class="form-group"
