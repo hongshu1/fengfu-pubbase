@@ -8,6 +8,7 @@ import cn.jbolt.core.common.enums.DictionaryTypeMode;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import cn.jbolt._admin.permission.PermissionKey;
@@ -40,7 +41,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 			renderJsonData("");
 			return;
 		}
-		List<Dictionary> dics = service.getListByTypeId(typeId,getKeywords());
+		List<Dictionary> dics = service.getListByTypeId(typeId,getKeywords(), getBoolean("enable",true));
 		Kv extraData=Kv.by("typeLevel", type.getModeLevel());
 		//使用这个专门的方法 render出去
 		renderJBoltTableJsonData(dics,extraData);
@@ -57,21 +58,21 @@ public class DictionaryAdminController extends JBoltBaseController {
 	 */
 	@UnCheck
 	public void poptions(){
-		renderJsonData(service.getRootOptionListByTypeKey(get("key")));
+		renderJsonData(service.getRootOptionListByTypeKey(get("key"),true));
 	}
 	/**
 	 * 子类级别数据 根据父类ID获取数据
 	 */
 	@UnCheck
 	public void soptions(){
-		renderJsonData(service.getSonOptionListByTypeKey(get("key"),getLong("pid")));
+		renderJsonData(service.getSonOptionListByTypeKey(get("key"),getLong("pid"),true));
 	}
 	/**
 	 * 子类级别数据 根据父类SN获取数据
 	 */
 	@UnCheck
 	public void soptionsByPsn(){
-		renderJsonData(service.getSonOptionListByTypeKeyAndPsn(get("key"),get("psn")));
+		renderJsonData(service.getSonOptionListByTypeKeyAndPsn(get("key"),get("psn"),true));
 	}
 	
 	public void checkandinit() {
@@ -247,6 +248,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 	/**
 	 * 更新
 	 */
+	@Before(Tx.class)
 	public void update(){
 		Dictionary dictionary=getModel(Dictionary.class, "dictionary");
 		renderJson(service.update(dictionary));
@@ -281,5 +283,10 @@ public class DictionaryAdminController extends JBoltBaseController {
 	 */
 	public void clearByType(){
 		renderJson(service.clearByTypeId(getLong("typeId")));
+	}
+
+	@Before(Tx.class)
+	public void toggleEnable(){
+		renderJson(service.toggleBoolean(getLong(0),Dictionary.ENABLE));
 	}
 }
