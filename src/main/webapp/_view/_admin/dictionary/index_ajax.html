@@ -145,7 +145,7 @@ ${data,extraData.typeLevel|getDictionaryTypeLevel}
 								<div class="col-md-auto">
 									<form style="display:none;" id="dictionaryForm_#(pageId)" class="form-inline" onsubmit="return false;">
 										<input type="hidden" name="typeId" id="dicTypeId_#(pageId)"/>
-										<select name="enable" data-autoload class="form-control"
+										<select id="dicEnableSelect_#(pageId)" name="enable" data-autoload class="form-control"
 												data-url="admin/dictionary/options?key=options_enable"
 												data-value-attr="sn"
 										></select>
@@ -208,6 +208,7 @@ function clearDicTable_#(pageId)(){
 		}else{
 			$("#expandCollapseOpt_#(pageId)").hide();
 		}
+		$("#dicEnableSelect_#(pageId)").val((jsonData.enable?"true":"false")).change();
 		refreshJBoltTable("dictionaryTable_#(pageId)");
 	}
 </script>
