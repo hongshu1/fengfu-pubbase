@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.6";
+var jbolt_admin_js_version="5.9.7";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -636,6 +636,9 @@ var isOk=function(obj){
 	default:
 		result=(obj.length&&obj.length>0);
 		break;
+	}
+	if(typeof(result)=="number"){
+		result = result>0;
 	}
 	return result;
 }
@@ -12042,6 +12045,22 @@ function syncOtherInput(value,inputEle){
 		    	   }
 		       }
 		    },
+			initByParent:function(parentEle){
+			    var parent = getRealJqueryObject(parentEle);
+			    if(notOk(parent)){
+					LayerMsgBox.alert("initByParent参数指定元素不存在",2);
+					return;
+			    }
+				var selects = parent.find("select[data-autoload]");
+				if(selects&&selects.length>0){
+					//循环处理 这样写性能高一点
+					var len=selects.length;
+					var that=this;
+					for(var i=0;i<len;i++){
+						that.processOneSelect(selects.eq(i));
+					}
+				}
+			},
 		    initSelect:function(select){
 		    	this.processOneSelect(select)
 		    },

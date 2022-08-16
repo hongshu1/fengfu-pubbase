@@ -146,6 +146,18 @@ public abstract class BaseCodeGenModelAttr<M extends BaseCodeGenModelAttr<M>> ex
     public static final String TRANSLATE_USE_VALUE = "translate_use_value";
     /**翻译后的列名*/
     public static final String TRANSLATE_COL_NAME = "translate_col_name";
+    /**是否上传到七牛*/
+    public static final String IS_UPLOAD_TO_QINIU = "is_upload_to_qiniu";
+    /**上传地址*/
+    public static final String FORM_UPLOAD_URL = "form_upload_url";
+    /**上传组件area*/
+    public static final String FORM_IMG_UPLOADER_AREA = "form_img_uploader_area";
+    /**上传尺寸限制*/
+    public static final String FORM_MAXSIZE = "form_maxsize";
+    /**七牛bucket sn*/
+    public static final String QINIU_BUCKET_SN = "qiniu_bucket_sn";
+    /**七牛file key*/
+    public static final String QINIU_FILE_KEY = "qiniu_file_key";
 	/**
 	 * 主键ID
 	 */
@@ -1234,6 +1246,102 @@ public abstract class BaseCodeGenModelAttr<M extends BaseCodeGenModelAttr<M>> ex
 	@JBoltField(name="translateColName" ,columnName="translate_col_name",type="String", remark="翻译后的列名", required=false, maxLength=250, fixed=0, order=68)
 	public java.lang.String getTranslateColName() {
 		return getStr("translate_col_name");
+	}
+
+	/**
+	 * 是否上传到七牛
+	 */
+	public M setIsUploadToQiniu(java.lang.Boolean isUploadToQiniu) {
+		set("is_upload_to_qiniu", isUploadToQiniu);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否上传到七牛
+	 */
+	@JBoltField(name="isUploadToQiniu" ,columnName="is_upload_to_qiniu",type="Boolean", remark="是否上传到七牛", required=true, maxLength=1, fixed=0, order=69)
+	public java.lang.Boolean getIsUploadToQiniu() {
+		return getBoolean("is_upload_to_qiniu");
+	}
+
+	/**
+	 * 上传地址
+	 */
+	public M setFormUploadUrl(java.lang.String formUploadUrl) {
+		set("form_upload_url", formUploadUrl);
+		return (M)this;
+	}
+	
+	/**
+	 * 上传地址
+	 */
+	@JBoltField(name="formUploadUrl" ,columnName="form_upload_url",type="String", remark="上传地址", required=false, maxLength=255, fixed=0, order=70)
+	public java.lang.String getFormUploadUrl() {
+		return getStr("form_upload_url");
+	}
+
+	/**
+	 * 上传组件area
+	 */
+	public M setFormImgUploaderArea(java.lang.String formImgUploaderArea) {
+		set("form_img_uploader_area", formImgUploaderArea);
+		return (M)this;
+	}
+	
+	/**
+	 * 上传组件area
+	 */
+	@JBoltField(name="formImgUploaderArea" ,columnName="form_img_uploader_area",type="String", remark="上传组件area", required=false, maxLength=20, fixed=0, order=71)
+	public java.lang.String getFormImgUploaderArea() {
+		return getStr("form_img_uploader_area");
+	}
+
+	/**
+	 * 上传尺寸限制
+	 */
+	public M setFormMaxsize(java.lang.Integer formMaxsize) {
+		set("form_maxsize", formMaxsize);
+		return (M)this;
+	}
+	
+	/**
+	 * 上传尺寸限制
+	 */
+	@JBoltField(name="formMaxsize" ,columnName="form_maxsize",type="Integer", remark="上传尺寸限制", required=false, maxLength=10, fixed=0, order=72)
+	public java.lang.Integer getFormMaxsize() {
+		return getInt("form_maxsize");
+	}
+
+	/**
+	 * 七牛bucket sn
+	 */
+	public M setQiniuBucketSn(java.lang.String qiniuBucketSn) {
+		set("qiniu_bucket_sn", qiniuBucketSn);
+		return (M)this;
+	}
+	
+	/**
+	 * 七牛bucket sn
+	 */
+	@JBoltField(name="qiniuBucketSn" ,columnName="qiniu_bucket_sn",type="String", remark="七牛bucket sn", required=false, maxLength=60, fixed=0, order=73)
+	public java.lang.String getQiniuBucketSn() {
+		return getStr("qiniu_bucket_sn");
+	}
+
+	/**
+	 * 七牛file key
+	 */
+	public M setQiniuFileKey(java.lang.String qiniuFileKey) {
+		set("qiniu_file_key", qiniuFileKey);
+		return (M)this;
+	}
+	
+	/**
+	 * 七牛file key
+	 */
+	@JBoltField(name="qiniuFileKey" ,columnName="qiniu_file_key",type="String", remark="七牛file key", required=false, maxLength=100, fixed=0, order=74)
+	public java.lang.String getQiniuFileKey() {
+		return getStr("qiniu_file_key");
 	}
 
 }
