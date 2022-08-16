@@ -934,6 +934,12 @@ CREATE TABLE `jb_code_gen_model_attr`  (
 `translate_type` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '翻译类型',
 `translate_use_value` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '翻译用值',
 `translate_col_name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '翻译后的列名',
+`is_upload_to_qiniu` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否上传到七牛',
+`form_upload_url` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上传地址',
+`form_img_uploader_area` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '200,200' COMMENT '上传组件area',
+`form_maxsize` int(11) DEFAULT '200' COMMENT '上传尺寸限制',
+`qiniu_bucket_sn` varchar(60) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '七牛bucket sn',
+`qiniu_file_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '[dateTime]/[randomId]/[filename]' COMMENT '七牛file key',
 PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'CodeGen模型详细设计' ROW_FORMAT = Dynamic;
 
