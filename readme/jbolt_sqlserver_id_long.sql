@@ -320,7 +320,8 @@ CREATE TABLE [dbo].[jb_dictionary] (
   [pid] bigint  NULL,
   [sort_rank] int  NOT NULL,
   [sn] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
-  [type_key] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NOT NULL
+  [type_key] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NOT NULL,
+  [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL
 )
 GO
 
@@ -377,6 +378,13 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
+'MS_Description', N'是否启用',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_dictionary',
+'COLUMN', N'enable'
+GO
+
+EXEC sp_addextendedproperty
 'MS_Description', N'字典表',
 'SCHEMA', N'dbo',
 'TABLE', N'jb_dictionary'
@@ -394,7 +402,8 @@ CREATE TABLE [dbo].[jb_dictionary_type] (
   [id] bigint  NOT NULL,
   [name] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
   [mode_level] int  NOT NULL,
-  [type_key] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL
+  [type_key] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
+  [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL
 )
 GO
 
@@ -427,6 +436,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_dictionary_type',
 'COLUMN', N'type_key'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'是否启用',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_dictionary_type',
+'COLUMN', N'enable'
 GO
 
 EXEC sp_addextendedproperty
@@ -2121,6 +2137,7 @@ CREATE TABLE [dbo].[jb_user] (
   [avatar] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [create_time] datetime  NOT NULL,
   [phone] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
+  [email] nvarchar(100) COLLATE Chinese_PRC_CI_AS  NULL,
   [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
   [sex] int  NULL,
   [pinyin] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
@@ -2138,7 +2155,8 @@ CREATE TABLE [dbo].[jb_user] (
   [posts] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [dept_path] varchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [update_time] datetime  NOT NULL,
-  [update_user_id] bigint  NOT NULL
+  [update_user_id] bigint  NOT NULL,
+  [last_pwd_update_time] datetime  NULL
 )
 GO
 
@@ -2192,6 +2210,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_user',
 'COLUMN', N'phone'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'电子邮箱',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'email'
 GO
 
 EXEC sp_addextendedproperty
@@ -2318,6 +2343,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_user',
 'COLUMN', N'update_user_id'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'最近一次密码修改时间',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'last_pwd_update_time'
 GO
 
 EXEC sp_addextendedproperty
@@ -4505,6 +4537,7 @@ CREATE TABLE [dbo].[jb_code_gen] (
     [is_need_admin_interceptor] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [extra_interceptor_class_name] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
     [is_table_multi_conditions_mode] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
+    [is_table_multi_conditions_default_hide] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_table_multi_conditions_btn_show_title] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_toolbar_add_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
     [is_toolbar_edit_btn] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
@@ -5400,6 +5433,13 @@ ALTER TABLE [dbo].[jb_code_gen] SET (LOCK_ESCALATION = TABLE)
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen',
     'COLUMN', N'is_table_multi_conditions_mode'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'表格查询高级模式 是否隐藏条件 默认隐藏',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen',
+    'COLUMN', N'is_table_multi_conditions_default_hide'
     GO
 
     EXEC sp_addextendedproperty

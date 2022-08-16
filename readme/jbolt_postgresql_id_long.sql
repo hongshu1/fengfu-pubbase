@@ -136,7 +136,8 @@ CREATE TABLE "public"."jb_dictionary" (
   "pid" int8,
   "sort_rank" int4,
   "sn" varchar(255) COLLATE "pg_catalog"."default",
-  "type_key" varchar(40) COLLATE "pg_catalog"."default"
+  "type_key" varchar(40) COLLATE "pg_catalog"."default",
+  "enable" char(1) COLLATE "pg_catalog"."default" DEFAULT '1'::bpchar NOT NULL
 )
 ;
 COMMENT ON COLUMN "public"."jb_dictionary"."id" IS '字典ID主键';
@@ -146,6 +147,7 @@ COMMENT ON COLUMN "public"."jb_dictionary"."pid" IS '父类ID';
 COMMENT ON COLUMN "public"."jb_dictionary"."sort_rank" IS '排序';
 COMMENT ON COLUMN "public"."jb_dictionary"."sn" IS '编号编码';
 COMMENT ON COLUMN "public"."jb_dictionary"."type_key" IS '字典类型KEY';
+COMMENT ON COLUMN "public"."jb_dictionary"."enable" IS '是否启用';
 COMMENT ON TABLE "public"."jb_dictionary" IS '字典表';
 
 -- ----------------------------
@@ -156,13 +158,15 @@ CREATE TABLE "public"."jb_dictionary_type" (
   "id" int8 NOT NULL,
   "name" varchar(255) COLLATE "pg_catalog"."default",
   "mode_level" int4,
-  "type_key" varchar(255) COLLATE "pg_catalog"."default"
+  "type_key" varchar(255) COLLATE "pg_catalog"."default",
+  "enable" char(1) COLLATE "pg_catalog"."default" DEFAULT '1'::bpchar NOT NULL
 )
 ;
 COMMENT ON COLUMN "public"."jb_dictionary_type"."id" IS '主键ID';
 COMMENT ON COLUMN "public"."jb_dictionary_type"."name" IS '类型名称';
 COMMENT ON COLUMN "public"."jb_dictionary_type"."mode_level" IS '模式层级';
 COMMENT ON COLUMN "public"."jb_dictionary_type"."type_key" IS '标识KEY';
+COMMENT ON COLUMN "public"."jb_dictionary_type"."enable" IS '是否启用';
 COMMENT ON TABLE "public"."jb_dictionary_type" IS '字典类型';
 
 -- ----------------------------
@@ -662,6 +666,7 @@ CREATE TABLE "public"."jb_user" (
   "avatar" varchar(255) COLLATE "pg_catalog"."default",
   "create_time" timestamp(6),
   "phone" varchar(40) COLLATE "pg_catalog"."default",
+  "email" varchar(100) COLLATE "pg_catalog"."default",
   "enable" char(1) COLLATE "pg_catalog"."default" DEFAULT '0'::bpchar NOT NULL,
   "sex" int4,
   "pinyin" varchar(255) COLLATE "pg_catalog"."default",
@@ -686,6 +691,7 @@ COMMENT ON COLUMN "public"."jb_user"."name" IS '姓名';
 COMMENT ON COLUMN "public"."jb_user"."avatar" IS '头像';
 COMMENT ON COLUMN "public"."jb_user"."create_time" IS '记录创建时间';
 COMMENT ON COLUMN "public"."jb_user"."phone" IS '手机号';
+COMMENT ON COLUMN "public"."jb_user"."email" IS '电子邮箱';
 COMMENT ON COLUMN "public"."jb_user"."enable" IS '启用';
 COMMENT ON COLUMN "public"."jb_user"."sex" IS '性别';
 COMMENT ON COLUMN "public"."jb_user"."pinyin" IS '拼音码';

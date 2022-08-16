@@ -3,6 +3,7 @@
 --#
 #define doAdminLayout()
 #setLocal(jboltLeftNavWidth=JBoltGlobalConfigCache.getSystemAdminLeftNavWidth())
+#setLocal(checkLastPwdUpdateTimeDays=JBoltGlobalConfigCache.getSystemPasswordChangeNoticeDays())
 #setLocal(jboltEnableTopnav=JBoltTopnavCache.getJBoltEnableTopnav())
 <!DOCTYPE html>
 <html>
@@ -189,6 +190,9 @@
 		import JBoltWS from './assets/js/jbolt_websocket/jbolt-websocket.js'
 		JBoltWS.initJBoltWebsocket('#(ctx??)',() => {
 			JBoltWS.sendCommand({command:"msgcenter_check_unread"});
+			#if(checkLastPwdUpdateTimeDays>0)
+				setTimeout(function(){JBoltWS.sendCommand({command:"check_last_pwd_update_time"});},(getRandomInt(1,10)*1000));
+			#end
 		});
 		</script>
 		#end

@@ -63,7 +63,8 @@
 </td>
 #end
 <td>${data.username}</td>
-<td>${data.phone}</td>
+<td>${data.phone?data.phone:"未设置"}</td>
+<td>${data.email?data.email:"未设置"}</td>
 <td>$${data.isSystemAdmin?'<span class="badge badge-primary">超级管理员</span>':'<span class="badge badge-dark">一般用户</span>'}</td>
 <td>
 <img data-switchbtn data-value="${data.enable!=null?data.enable:false}"  data-url="admin/user/toggleEnable/${data.id}"/></td>
@@ -128,6 +129,7 @@ data-leftbox="admin_user_leftbox_#(pageId)"
 #end
 <th data-width="150">用户名</th>
 <th data-width="120">手机号</th>
+<th data-width="250">E-Mail</th>
 <th data-width="120">是否为超管</th>
 <th data-width="120">是否启用</th>
 <th data-width="120">操作</th></tr>

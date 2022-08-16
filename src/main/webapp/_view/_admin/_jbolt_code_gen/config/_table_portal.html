@@ -147,7 +147,7 @@
 </div>
 #end
 #if(codeGen.isHeadbox)
-<div style="height:#(codeGen.headboxHeight)px;" class="jbolt_table_headbox #if(codeGen.isTableMultiConditionsMode)d-none#end" id="#(codeGen.modelName)_headbox#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
+<div style="height:#(codeGen.headboxHeight)px;" class="jbolt_table_headbox #if(codeGen.isTableMultiConditionsMode?? && codeGen.isTableMultiConditionsDefaultHide??)d-none#end" id="#(codeGen.modelName)_headbox#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
 #if(codeGen.isTableMultiConditionsMode??)
 <form onsubmit="return false;"  id="#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
 	<div class="row">

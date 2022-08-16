@@ -1,6 +1,7 @@
 #@jboltLayout() 
 #define main()
 #set(pageId = RandomUtil.random(6)) 
+#set(deleteDictionaryEnable = JBoltGlobalConfigCache.getSystemDictionaryDeleteEnable())
 <div class="jbolt_page" data-key="#(pmkey)">
 	<div class="jbolt_page_title">
 		<div class="row">
@@ -28,6 +29,9 @@
 <td title="${data.typeKey}">${data.typeKey}</td>
 <td>${data.modeLevel==1?"一级":"多级"}</td>
 <td>
+	<img data-switchbtn data-confirm="切换后此类型下的所有字典数据与类型启用状态更新一致，确定切换此字典类型启用状态？" data-value="${data.enable}"  data-handler="refreshJBoltTable"  data-url="admin/dictionarytype/toggleEnable/${data.id}"/>
+</td>
+<td>
  <a tooltip data-title="编辑" class=" d-inline-block jbolt_table_editbtn"  data-area="500,400" data-handler="refreshJBoltTable"   href="admin/dictionarytype/edit/${data.id}"><i class="fa fa-edit text-warning"></i></a>
  <a tooltip data-title="删除" class="ml-2 d-inline-block jbolt_table_delbtn" data-confirm="确认删除此分类？" data-handler="refreshJBoltTable" href="admin/dictionarytype/delete/${data.id}"><i class="fa fa-remove text-danger"></i></a>
 </td>
@@ -40,11 +44,16 @@
 <td><span>${name}</span></td>
 <td class="text-center">${sn}</td>
 <td class="text-center">
+	<img data-switchbtn data-value="${enable}"  data-handler="refreshJBoltTable"  data-url="admin/dictionary/toggleEnable/${id}"/>
+</td>
+<td class="text-center">
 	{@if typeLevel == 2}
 	<a href="admin/dictionary/addItem/${typeId}-${id}" data-area="600,500"  tooltip data-title="新增下级数据"  data-handler="refreshJBoltTable" class="jbolt_table_editbtn"><i class="fa fa-plus"></i></a>
 	{@/if}
 	<a href="admin/dictionary/edit/${typeId}-${id}" data-area="600,400"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
-    <a href="admin/dictionary/delete/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除这条数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+    #if(deleteDictionaryEnable)
+	<a href="admin/dictionary/delete/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除这条数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+	#end
     <a href="admin/dictionary/up/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
     <a href="admin/dictionary/down/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
 </td>
@@ -80,7 +89,11 @@ ${data,extraData.typeLevel|getDictionaryTypeLevel}
 								<div class="col pt-2"><label>数据分类</label></div>
 								<div class="col-md-auto">
 									<form id="dictionaryTypeForm_#(pageId)" class="form-inline" onsubmit="return false;">
-										<input data-with-clearbtn="true" class="form-control" type="text" name="keywords" autocomplete="off" placeholder="关键词检索 名称、KEY"/>
+										<select name="enable" data-autoload class="form-control"
+												data-url="admin/dictionary/options?key=options_enable"
+												data-value-attr="sn"
+										></select>
+										<input data-with-clearbtn="true" class="form-control ml-1" type="text" name="keywords" autocomplete="off" placeholder="关键词检索 名称、KEY"/>
 										<button type="submit" class="btn btn-outline-primary btn-sm ml-3"><i class="fa fa-search"></i> 查询</button>
 									</form>
 								</div>
@@ -102,7 +115,7 @@ ${data,extraData.typeLevel|getDictionaryTypeLevel}
 						  	data-row-click-handler="readDictionarys_#(pageId)"
   							data-row-click-active="true"
   							data-fixed-columns-left="1"
-  							data-fixed-columns-right="-1"
+  							data-fixed-columns-right="-1,-2"
   							data-ajax-success-handler="clearDicTable_#(pageId)"
 							>
 							<thead>
@@ -111,7 +124,8 @@ ${data,extraData.typeLevel|getDictionaryTypeLevel}
 									<th data-min-width="100">名称</th>
 									<th data-min-width="100">标识KEY</th>
 									<th data-width="80">模式层级</th>
-									<th data-width="70">操作</th>
+									<th data-width="70">启用</th>
+									<th data-width="80">操作</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -131,7 +145,11 @@ ${data,extraData.typeLevel|getDictionaryTypeLevel}
 								<div class="col-md-auto">
 									<form style="display:none;" id="dictionaryForm_#(pageId)" class="form-inline" onsubmit="return false;">
 										<input type="hidden" name="typeId" id="dicTypeId_#(pageId)"/>
-										<input  id="dicKeywords_#(pageId)"  data-with-clearbtn="true" class="form-control" type="text" name="keywords" autocomplete="off" placeholder="关键词检索 名称、编号"/>
+										<select id="dicEnableSelect_#(pageId)" name="enable" data-autoload class="form-control"
+												data-url="admin/dictionary/options?key=options_enable"
+												data-value-attr="sn"
+										></select>
+										<input  id="dicKeywords_#(pageId)"  data-with-clearbtn="true" class="form-control ml-1" type="text" name="keywords" autocomplete="off" placeholder="关键词检索 名称、编号"/>
 										<button type="submit" class="btn btn-outline-primary btn-sm ml-3"><i class="fa fa-search"></i> 查询</button>
 									</form>
 								</div>
@@ -155,7 +173,8 @@ ${data,extraData.typeLevel|getDictionaryTypeLevel}
 		<tr>
 			<th data-min-width="150">名称</th>
 			<th data-width="200" class="text-center">编号(SN)</th>
-			<th data-width="150" class="text-center">操作</th>
+			<th data-width="70" class="text-center">启用</th>
+			<th data-width="#if(deleteDictionaryEnable??)150#else 120#end" class="text-center">操作</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -189,6 +208,7 @@ function clearDicTable_#(pageId)(){
 		}else{
 			$("#expandCollapseOpt_#(pageId)").hide();
 		}
+		$("#dicEnableSelect_#(pageId)").val((jsonData.enable?"true":"false")).change();
 		refreshJBoltTable("dictionaryTable_#(pageId)");
 	}
 </script>

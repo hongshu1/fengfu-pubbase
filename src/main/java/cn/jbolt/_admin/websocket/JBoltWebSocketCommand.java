@@ -11,4 +11,5 @@ public interface JBoltWebSocketCommand {
 	public static final String PONG = "pong";
 	public static final String SERVER_TIME = "server_time";
 	public static final String MSGCENTER_CHECK_UNREAD = "msgcenter_check_unread";
+	public static final String CHECK_LAST_PWD_UPDATE_TIME = "check_last_pwd_update_time";
 }

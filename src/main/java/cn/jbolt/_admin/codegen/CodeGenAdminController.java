@@ -493,13 +493,13 @@ public class CodeGenAdminController extends JBoltBaseController {
 	 * 选择字典数据
 	 */
 	public void formDictionaryOptions() {
-		renderJsonData(dictionaryService.getOptionListByTypeKey(get("formDataValue")));
+		renderJsonData(dictionaryService.getOptionListByTypeKey(get("formDataValue"),true));
 	}
 	/**
 	 * 选择字典数据
 	 */
 	public void searchDictionaryOptions() {
-		renderJsonData(dictionaryService.getOptionListByTypeKey(get("searchDataValue")));
+		renderJsonData(dictionaryService.getOptionListByTypeKey(get("searchDataValue"),true));
 	}
 
 	/**

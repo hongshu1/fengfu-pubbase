@@ -2,6 +2,7 @@ package cn.jbolt._admin.dictionary;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import cn.jbolt._admin.permission.PermissionKey;
@@ -35,14 +36,14 @@ public class DictionaryTypeAdminController extends JBoltBaseController {
 	 * 管理页面分页读取数据源
 	 */
 	public void datas(){
-		renderJsonData(service.paginateByKeywords("id","desc", getPageNumber(), getPageSize(JBoltPageSize.PAGESIZE_ADMIN_LIST_15), getKeywords(), "name,type_key"));
+		renderJsonData(service.paginateByKeywords("id","desc", getPageNumber(), getPageSize(JBoltPageSize.PAGESIZE_ADMIN_LIST_15), getKeywords(), "name,type_key", Okv.by("enable",getBoolean("enable",true))));
 	}
 	
 	/**
 	 * 低代码模块专用
 	 */
 	public void codeGenOptions(){
-		renderJsonData(service.getOptionList("name","type_key"));
+		renderJsonData(service.getOptionList("name","type_key",Okv.by("enable",TRUE)));
 	}
 	
 	public void add(){
@@ -71,7 +72,12 @@ public class DictionaryTypeAdminController extends JBoltBaseController {
 	public void update(){
 		renderJson(service.update(getModel(DictionaryType.class, "dictionaryType")));
 	}
+	@Before(Tx.class)
 	public void delete(){
 		renderJson(service.delete(getLong(0)));
+	}
+	@Before(Tx.class)
+	public void toggleEnable(){
+		renderJson(service.toggleBoolean(getLong(0),DictionaryType.ENABLE));
 	}
 }
