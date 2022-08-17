@@ -54,7 +54,6 @@ public class AdminIndexController extends JBoltBaseController {
 	@UnCheck
 	@Before(JBoltNoUrlPara.class)
 	public void index(){
-		set("hasEnableTopnav", topnavService.checkHasEnableTopnav());
 		render("index.html");
 	}
 
