@@ -2801,8 +2801,8 @@ GO
 
 CREATE TABLE [dbo].[jb_wechat_media] (
   [id] bigint  NOT NULL,
-  [title] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
-  [digest] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
+  [title] nvarchar(500) COLLATE Chinese_PRC_CI_AS  NOT NULL,
+  [digest] nvarchar(max) COLLATE Chinese_PRC_CI_AS  NULL,
   [type] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
   [mp_id] bigint  NOT NULL,
   [media_id] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,

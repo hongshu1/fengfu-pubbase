@@ -837,8 +837,8 @@ COMMENT ON TABLE "public"."jb_wechat_keywords" IS '微信关键词回复中的�
 DROP TABLE IF EXISTS "public"."jb_wechat_media";
 CREATE TABLE "public"."jb_wechat_media" (
   "id" int8 NOT NULL,
-  "title" varchar(255) COLLATE "pg_catalog"."default",
-  "digest" varchar(255) COLLATE "pg_catalog"."default",
+  "title" varchar(500) COLLATE "pg_catalog"."default",
+  "digest" text COLLATE "pg_catalog"."default",
   "type" varchar(255) COLLATE "pg_catalog"."default",
   "mp_id" int8,
   "media_id" varchar(255) COLLATE "pg_catalog"."default",
