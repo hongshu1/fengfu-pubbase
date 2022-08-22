@@ -4274,6 +4274,9 @@ vertical-align: top;
     min-width: 0;
     margin-bottom: 0;
 }
+.jbolt_page_title form.form-inline .input-group>.ac_input_box{
+	width: auto;
+}
 .jbolt_table_headbox .input-group .select2-container--bootstrap .select2-selection--multiple .select2-search--inline .select2-search__field {
 	width:100%!important;
 }
