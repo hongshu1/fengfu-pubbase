@@ -63,14 +63,13 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 				}else{
 					_submit_ing=false;
 					cancelLayerDialogFormSubmiting(form);
+                    cancelParentLayerDialogOkBtnStateToSubmiting();
+                    cancelParentLayerAllDialogBtnStateToDisabled();
 					if(ret.msg){
 						if(ret.msg=="jbolt_system_locked"){
-							cancelParentLayerDialogOkBtnStateToSubmiting();
-							cancelParentLayerAllDialogBtnStateToDisabled();
+
 							showJboltLockSystem();
 						}else if(ret.msg=="jbolt_nologin"){
-							cancelParentLayerDialogOkBtnStateToSubmiting();
-							cancelParentLayerAllDialogBtnStateToDisabled();
 							showReloginDialog();
 						}else{
                             LayerMsgBox.alert(ret.msg,2);
@@ -112,6 +111,7 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 		_submit_ing=false;
 		cancelLayerDialogFormSubmiting(form);
 		cancelParentLayerDialogAllBtnStateToSubmiting();
+        cancelParentLayerAllDialogBtnStateToDisabled();
 	}
 }
 </script>
