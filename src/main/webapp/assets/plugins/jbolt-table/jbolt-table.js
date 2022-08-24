@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.9.2";
+var jbolt_table_js_version="2.9.3";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -1904,14 +1904,15 @@ function jboltTableGetCheckedId(ele,dontShowError){
  * 返回Json
  * @param ele
  * @param needAttrs
+ * @param dontShowError
  * @returns
  */
-function jboltTableGetCheckedData(ele,needAttrs){
+function jboltTableGetCheckedData(ele,needAttrs,dontShowError){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
-			return jboltTable.me.getCheckedData(jboltTable,needAttrs);
+			return jboltTable.me.getCheckedData(jboltTable,needAttrs,dontShowError);
 		}
 	}
 	LayerMsgBox.alert("表格组件配置异常",2);
@@ -2715,14 +2716,15 @@ function jboltTableGetCheckedCount(ele){
  * 得到选中的行数
  * @param ele
  * @param needAttrs 需要什么字段
+ * @param dontShowError
  * @returns
  */
-function jboltTableGetCheckedDatas(ele,needAttrs){
+function jboltTableGetCheckedDatas(ele,needAttrs,dontShowError){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
-			return jboltTable.me.getCheckedDatas(jboltTable,needAttrs);
+			return jboltTable.me.getCheckedDatas(jboltTable,needAttrs,dontShowError);
 		}
 	}
 	LayerMsgBox.alert("表格组件配置异常",2);
@@ -4304,11 +4306,15 @@ function getScrollBarHeight(ele){
 			var chrds=this.getCheckedEles(table);
 
 			if(!isOk(chrds)){
-				LayerMsgBox.alert("请选择一行数据",2);
+				if(!dontShowError){
+					LayerMsgBox.alert("请选择一行数据",2);
+				}
 				return null;
 			}
 			if(chrds.length>1){
-				LayerMsgBox.alert("最多选择一行数据",2);
+				if(!dontShowError) {
+					LayerMsgBox.alert("最多选择一行数据", 2);
+				}
 				return null;
 			}
 			var datas=table.tableListDatas;
@@ -4361,14 +4367,18 @@ function getScrollBarHeight(ele){
 			return chrds;
 		},
 		//获取选中了一个Tr
-		getCheckedTr:function(table){
+		getCheckedTr:function(table,downShowError){
 			var chrds=this.getCheckedEles(table);
 			if(!isOk(chrds)){
-				LayerMsgBox.alert("请选择一行数据",2);
+				if(!downShowError){
+					LayerMsgBox.alert("请选择一行数据",2);
+				}
 				return false;
 			}
 			if(chrds.length>1){
-				LayerMsgBox.alert("最多选择一行数据",2);
+				if(!downShowError){
+					LayerMsgBox.alert("最多选择一行数据",2);
+				}
 				return false;
 			}
 			var tr=chrds.eq(0).closest("tr");
@@ -4378,10 +4388,12 @@ function getScrollBarHeight(ele){
 			return tr;
 		},
 		//获取选中了多个Tr
-		getCheckedTrs:function(table){
+		getCheckedTrs:function(table,downShowError){
 			var chrds=this.getCheckedEles(table);
 			if(!isOk(chrds)){
-				LayerMsgBox.alert("请至少选择一行数据",2);
+				if(!downShowError){
+					LayerMsgBox.alert("请至少选择一行数据",2);
+				}
 				return false;
 			}
 			var trs=new Array();
