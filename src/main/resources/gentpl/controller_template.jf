@@ -34,6 +34,7 @@ import #(modelImport);
 #if(usePathAnnotation)
 @Path(value = "#(pathValue??)", viewPath = "#(pathViewPath??)")
 #end
+//#(isMainDataSource)
 public class #(controllerName??) extends JBoltBaseController {
 
 	@Inject
@@ -41,7 +42,7 @@ public class #(controllerName??) extends JBoltBaseController {
 	
 #if(methods!=null&&methods.size()>0)
 	#for(method:methods)
-	#@genControllerMethod(method,modelName,needPaginate)
+	#@genControllerMethod(method,modelName,needPaginate,isMainDataSource)
 	
 	#end
 #end

@@ -31,7 +31,7 @@
 #end
     <input id="#(modelName)_#(col.attrName)" type="hidden" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请上传'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" name="#(modelName).#(col.attrName)" #end />
     <div data-imguploader
-         #if(!col.uploadToQiniu)
+         #if(!col.isUploadToQiniu)
          #if(codeGenServiceMode)
          data-url="#(col.formUploadUrl??)"
          #else
@@ -40,12 +40,10 @@
          #end
          data-area="#(col.formImgUploaderArea?? '200,200')"
          data-maxsize="#(col.formMaxsize?? '200')"
-         #if(col.uploadToQiniu??)
+         #if(col.isUploadToQiniu??)
          data-handler="uploadFileToQiniu"
-         #if(col.qiniuBucketSn??)
-         data-bucket-sn="#(col.qiniuBucketSn??)"
-         #end
          data-file-key="#(col.qiniuFileKey?? '[dateTime]/[randomId]/[filename]')"
+         data-bucket-sn="#(col.qiniuBucketSn??)"
          #else
          data-handler="uploadFile"
          #end

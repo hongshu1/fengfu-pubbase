@@ -926,8 +926,28 @@ function processFormEleClickEditorEvent(){
 		if(notOk(eleInput)){
 			eleInput = ele.find("textarea");
 		}
+
+		var isImgUploader = false;
+		var isUploader = false;
+		var isFileUploader = false;
+		var isUploadMulti = false;
+		if(isOk(ele.find("[data-imguploader]"))){
+			isImgUploader = true;
+			isUploader=true;
+			if(isOk(ele.find("[data-multi]"))){
+				isUploadMulti=true;
+			}
+		}
+		if(isOk(ele.find("[data-fileuploader]"))){
+			isFileUploader=true;
+			isUploader=true;
+			if(isOk(ele.find("[data-multi]"))){
+				isUploadMulti=true;
+			}
+		}
+
 		var hasPlaceholder = false;
-		if(isOk(eleInput) && !isCanChangeInlineEle){
+		if(isOk(eleInput) && !isCanChangeInlineEle && !isUploader){
 			hasPlaceholder = true;
 			placeholder = eleInput.attr("placeholder")||"";
 		}
@@ -935,12 +955,17 @@ function processFormEleClickEditorEvent(){
 		if(isOk(theLabelEle)){
 			formLabel = theLabelEle.text()||"标题";
 		}
+
 		var tplData = {
 				widths:widths,
 				isCanChangeInlineEle:isCanChangeInlineEle,
 				formEleWidth:formEleWidth,
 				isJBoltInput:isJBoltInput,
 				jboltInputType:jboltInputType,
+				isUploader:isUploader,
+				isImgUploader:isImgUploader,
+				isFileUploader:isFileUploader,
+				isUploadMulti:isUploadMulti,
 				formControlIsInline:formControlIsInline,
 				isJBoltInputFilterTree:false,
 				isJBoltInputFilterTable:false,
@@ -949,6 +974,56 @@ function processFormEleClickEditorEvent(){
 				placeholder:placeholder,
 				hasPlaceholder:hasPlaceholder
 				};
+		if(isUploader){
+			//上传组件配置
+			tplData.isUploadToQiniu = isOk(ele.find('[data-handler="uploadFileToQiniu"]')) || isOk(ele.find('[data-handler="uploadMultipleFileToQiniu"]'));
+
+			var updiv;
+			if(isImgUploader){
+				if(isUploadMulti){
+					tplData.formUploadUrl = "uploadImgs";
+					if(tplData.isUploadToQiniu){
+						updiv = ele.find('[data-handler="uploadMultipleFileToQiniu"]');
+					}else{
+						updiv = ele.find('[data-handler="uploadMultipleFile"]');
+					}
+					tplData.formImgUploaderArea = updiv.data("area")||"150,150";
+
+				}else{
+					tplData.formUploadUrl = "uploadImg";
+					if(tplData.isUploadToQiniu){
+						updiv = ele.find('[data-handler="uploadFileToQiniu"]');
+					}else{
+						updiv = ele.find('[data-handler="uploadFile"]');
+					}
+					tplData.formImgUploaderArea = updiv.data("area")||"200,200";
+				}
+			}else if(isFileUploader){
+				if(isUploadMulti){
+					tplData.formUploadUrl = "uploadFiles";
+					if(tplData.isUploadToQiniu){
+						updiv = ele.find('[data-handler="uploadMultipleFileToQiniu"]');
+					}else{
+						updiv = ele.find('[data-handler="uploadMultipleFile"]');
+					}
+				}else{
+					tplData.formUploadUrl = "uploadFile";
+					if(tplData.isUploadToQiniu){
+						updiv = ele.find('[data-handler="uploadFileToQiniu"]');
+					}else{
+						updiv = ele.find('[data-handler="uploadFile"]');
+					}
+				}
+			}
+			tplData.formMaxsize=updiv.data("maxsize")||"200"
+			if(tplData.isUploadToQiniu){
+				var qiniuBucketSn = updiv.data("bucket-sn");
+				if(qiniuBucketSn){
+					tplData.qiniuBucketSn = qiniuBucketSn;
+				}
+				tplData.qiniuFileKey= updiv.data("file-key")||'[dateTime]/[randomId]/[filename]';
+			}
+		}
 		if(isJBoltInput && jboltInputType =="jstree"){
 			tplData.isJBoltInputFilterTree = input.data("filter-handler")=="filterTree";
 			tplData.isJBoltInputJsTreeCheckbox = input.data("jstree-checkbox")||false;
@@ -961,9 +1036,62 @@ function processFormEleClickEditorEvent(){
 		var JBoltFormEleEditor= formPreviewPortal_#(pageId).find("#JBoltFormEleEditor");
 		if(isOk(JBoltFormEleEditor)){
 			RadioUtil.init(JBoltFormEleEditor);
+			SelectUtil.initByParent(JBoltFormEleEditor);
 		}
 		return false;
 	});
+}
+function setBucketSn(){
+	var select = formPreviewPortal_#(pageId).find("#qiniubucketsnselect");
+	formPreviewPortal_#(pageId).find("#qiniuBucketSn").val(select.val()||"");
+}
+function changeImgUploaderArea(value){
+	var imgUploader = formPreviewPortal_#(pageId).editingEle.find("[data-imguploader]");
+	var isMulti = imgUploader.data("multi");
+	var width = isMulti?150:200;
+	var height =  isMulti?150:200;
+	if(value&&value.trim()){
+		if(value.indexOf(",")==-1){
+			width = isMulti?150:200;
+			height =  isMulti?150:200;
+		}else{
+			var arr = value.split(",");
+			if(arr&&arr.length==2){
+				width = arr[0];
+				height = arr[1];
+				if(isNaN(width)){
+					width = isMulti?150:200;
+				}
+				if(isNaN(height)){
+					height =  isMulti?150:200;
+				}
+			}else{
+				width = isMulti?150:200;
+				height =  isMulti?150:200;
+			}
+		}
+	}
+
+	imgUploader.css({
+		width:width,
+		height:height
+	});
+}
+function changeIsUploadToQiniu(r,value){
+	if(value=="true"){
+		formPreviewPortal_#(pageId).find("#qiniuBucketSnBox").removeClass("d-none");
+		formPreviewPortal_#(pageId).find("#qiniuFileKeyBox").removeClass("d-none");
+		formPreviewPortal_#(pageId).find("#formUploadUrlBox").addClass("d-none");
+		var fileKeyInput = formPreviewPortal_#(pageId).find("#qiniuFileKey");
+		var fileKey = fileKeyInput.val();
+		if(!fileKey){
+			fileKeyInput.val("[dateTime]/[randomId]/[filename]");
+		}
+	}else{
+		formPreviewPortal_#(pageId).find("#qiniuBucketSnBox").addClass("d-none");
+		formPreviewPortal_#(pageId).find("#qiniuFileKeyBox").addClass("d-none");
+		formPreviewPortal_#(pageId).find("#formUploadUrlBox").removeClass("d-none");
+	}
 }
 function changeFormControlEleFormLabel(value){
 	if(formPreviewPortal_#(pageId).editingEle){

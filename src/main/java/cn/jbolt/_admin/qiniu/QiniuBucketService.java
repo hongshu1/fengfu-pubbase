@@ -1,11 +1,14 @@
 package cn.jbolt._admin.qiniu;
 
+import java.nio.channels.SeekableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cn.jbolt.core.db.sql.Sql;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.qiniu.storage.model.BucketInfo;
@@ -38,10 +41,17 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 	 * @param pageNumber
 	 * @param pageSize
 	 * @param keywords
+	 * @param qiniuId
+	 * @param zone
 	 * @return
 	 */
-	public Page<QiniuBucket> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("id","desc", pageNumber, pageSize, keywords, "name");
+	public Page<QiniuBucket> paginateAdminDatas(int pageNumber, int pageSize, String keywords,Long qiniuId,String zone) {
+		Sql sql = selectSql().page(pageNumber,pageSize);
+		sql.likeMulti(keywords,"name","sn","remark");
+		sql.eq("qiniu_id",qiniuId);
+		sql.eq("region",zone);
+		sql.orderById(true);
+		return paginate(sql);
 	}
 	
   /**

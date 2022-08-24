@@ -80,7 +80,9 @@
    /**
 	* 保存
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void save() {
 		renderJson(service.save(getModel(#(codeGen.modelName).class, "#(firstCharToLowerCase(codeGen.modelName))")));
 	}
@@ -90,7 +92,9 @@
    /**
 	* 更新
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void update() {
 		renderJson(service.update(getModel(#(codeGen.modelName).class, "#(firstCharToLowerCase(codeGen.modelName))")));
 	}
@@ -100,7 +104,9 @@
    /**
 	* 删除
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void delete() {
 	#if(codeGen.isCheckCanDelete??)
 		renderJson(service.deleteById(get#(getIdType?? 'Long')(0),true));
@@ -114,7 +120,9 @@
    /**
 	* 恢复假删数据
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void recover() {
 	#if(codeGen.isCheckCanRecover??)
 		renderJson(service.recoverById(get#(getIdType?? 'Long')(0),true));
@@ -128,7 +136,9 @@
    /**
 	* 批量删除
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void deleteByIds() {
 	#if(codeGen.isCheckCanDelete??)
 		renderJson(service.deleteByIds(get("ids"),true));
@@ -142,7 +152,9 @@
    /**
 	* 批量恢复假删数据
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void recoverByIds() {
 	#if(codeGen.isCheckCanRecover??)
 		renderJson(service.recoverByIds(get("ids"),true));
@@ -156,7 +168,9 @@
    /**
 	* 排序 上移
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void up() {
 		renderJson(service.up(get#(getIdType?? 'Long')(0)));
 	}
@@ -166,7 +180,9 @@
    /**
 	* 排序 下移
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void down() {
 		renderJson(service.down(get#(getIdType?? 'Long')(0)));
 	}
@@ -177,7 +193,9 @@
    /**
 	* 排序 初始化
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void initSortRank() {
 		renderJson(service.initSortRank());
 	}
@@ -304,7 +322,9 @@
    /**
 	* 切换启用状态
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void toggleEnable() {
 		renderJson(service.toggleEnable(get#(getIdType?? 'Long')(0)));
 	}
@@ -334,7 +354,9 @@
    /**
 	* 切换#(colName??)
 	*/
+	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#end
 	public void #(name)() {
 	    renderJson(service.toggleBoolean(get#(getIdType?? 'Long')(0),"#(colName??)"));
 	}

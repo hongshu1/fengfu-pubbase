@@ -1,5 +1,6 @@
 package cn.jbolt._admin.codegen.modelattr;
 
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.codegen.CodeGenService;
 import cn.jbolt.common.model.CodeGen;
@@ -943,6 +944,49 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 				isFormJBoltInputJstreeOnlyLeaf = false;
 			}
 			attr.setIsFormJboltinputJstreeOnlyLeaf(isFormJBoltInputJstreeOnlyLeaf);
+		}
+		//如果是上传组件
+		if(attrJson.containsKey("isUploader") && attrJson.getBooleanValue("isUploader")){
+			boolean isUploadMulti = attrJson.getBooleanValue("isUploadMulti");
+			boolean isImgUploader = attrJson.getBooleanValue("isImgUploader");
+			boolean isFileUploader = attrJson.getBooleanValue("isFileUploader");
+			attr.setFormUploadUrl(attrJson.getString("formUploadUrl"));
+			Integer maxSize = attrJson.getInteger("formMaxsize");
+			if(notOk(maxSize)){
+				maxSize = 200;
+			}
+			attr.setFormMaxsize(maxSize);
+			boolean isUploadToQiniu = attrJson.getBooleanValue("isUploadToQiniu");
+			attr.setIsUploadToQiniu(isUploadToQiniu);
+			if(isUploadToQiniu){
+				String qiniuBucketSn = attrJson.getString("qiniuBucketSn");
+				if(notOk(qiniuBucketSn)){
+					attr.setQiniuBucketSn(qiniuBucketSn);
+				}
+			}
+
+			if(isImgUploader){
+				String formImgUploaderArea = attrJson.getString("formImgUploaderArea");
+				if(notOk(formImgUploaderArea)){
+					if(isUploadMulti){
+						attr.setFormImgUploaderArea("150,150");
+					}else{
+						attr.setFormImgUploaderArea("200,200");
+					}
+				}else{
+					if(formImgUploaderArea.indexOf(",")==-1){
+						throw new RuntimeException("图片上传区域尺寸【"+formImgUploaderArea+"】格式不正确 举例: 200,200");
+					}
+					String[] arr = formImgUploaderArea.split(",");
+					if(arr==null||arr.length!=2){
+						throw new RuntimeException("图片上传区域尺寸【"+formImgUploaderArea+"】格式不正确 举例: 200,200");
+					}
+					if(!NumberUtil.isInteger(arr[0])||!NumberUtil.isInteger(arr[1])){
+						throw new RuntimeException("图片上传区域尺寸【"+formImgUploaderArea+"】格式不正确 举例: 200,200");
+					}
+					attr.setFormImgUploaderArea(formImgUploaderArea);
+				}
+			}
 		}
 		boolean success = attr.update();
 

@@ -2801,8 +2801,8 @@ GO
 
 CREATE TABLE [dbo].[jb_wechat_media] (
   [id] bigint  NOT NULL,
-  [title] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
-  [digest] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
+  [title] nvarchar(500) COLLATE Chinese_PRC_CI_AS  NOT NULL,
+  [digest] nvarchar(max) COLLATE Chinese_PRC_CI_AS  NULL,
   [type] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
   [mp_id] bigint  NOT NULL,
   [media_id] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
@@ -5636,7 +5636,13 @@ CREATE TABLE [dbo].[jb_code_gen_model_attr] (
     [is_need_translate] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
     [translate_type] nvarchar(20) COLLATE Chinese_PRC_CI_AS  NULL,
     [translate_use_value] nvarchar(250) COLLATE Chinese_PRC_CI_AS  NULL,
-    [translate_col_name] nvarchar(250) COLLATE Chinese_PRC_CI_AS  NULL
+    [translate_col_name] nvarchar(250) COLLATE Chinese_PRC_CI_AS  NULL,
+    [is_upload_to_qiniu] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
+    [form_upload_url] nvarchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+    [form_img_uploader_area] nvarchar(20) COLLATE Chinese_PRC_CI_AS DEFAULT '200,200' NOT NULL,
+    [form_maxsize] int DEFAULT 200 NOT NULL,
+    [qiniu_bucket_sn] nvarchar(60) COLLATE Chinese_PRC_CI_AS NULL,
+    [qiniu_file_key] nvarchar(100) COLLATE Chinese_PRC_CI_AS DEFAULT '[dateTime]/[randomId]/[filename]' NOT NULL
     )
     GO
 
@@ -6117,6 +6123,48 @@ ALTER TABLE [dbo].[jb_code_gen_model_attr] SET (LOCK_ESCALATION = TABLE)
     'SCHEMA', N'dbo',
     'TABLE', N'jb_code_gen_model_attr',
     'COLUMN', N'translate_col_name'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'是否上传到七牛',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen_model_attr',
+    'COLUMN', N'is_upload_to_qiniu'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'上传地址',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen_model_attr',
+    'COLUMN', N'form_upload_url'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'上传组件area',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen_model_attr',
+    'COLUMN', N'form_img_uploader_area'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'上传尺寸限制',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen_model_attr',
+    'COLUMN', N'form_maxsize'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'七牛bucket sn',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen_model_attr',
+    'COLUMN', N'qiniu_bucket_sn'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'七牛file key',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_code_gen_model_attr',
+    'COLUMN', N'qiniu_file_key'
     GO
 
     EXEC sp_addextendedproperty

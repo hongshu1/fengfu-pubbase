@@ -46,7 +46,7 @@ public class QiniuAdminController extends JBoltBaseController {
 	 */
 	@CheckPermission({PermissionKey.QINIU,PermissionKey.QINIU_BUCKET})
 	public void options() {
-		renderJsonData(service.findAll());
+		renderJsonData(service.getOptionList());
 	}
   	
   	/**

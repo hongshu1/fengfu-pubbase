@@ -43,92 +43,110 @@
 #end
 
 
-#define c_save(modelName)
+#define c_save(modelName,isMainDataSource)
   /**
 	* 保存
 	*/
-	@Before(Tx.class)
+	#if(isMainDataSource??)
+    @Before(Tx.class)
+    #end
 	public void save() {
 		renderJson(service.save(getModel(#(modelName).class, "#(firstCharToLowerCase(modelName))")));
 	}
 #end
 
-#define c_update(modelName)
+#define c_update(modelName,isMainDataSource)
    /**
 	* 更新
 	*/
-	@Before(Tx.class)
+	#if(isMainDataSource??)
+    @Before(Tx.class)
+    #end
 	public void update() {
 		renderJson(service.update(getModel(#(modelName).class, "#(firstCharToLowerCase(modelName))")));
 	}
 #end
 
-#define c_delete(modelName)
+#define c_delete(modelName,isMainDataSource)
    /**
 	* 删除
 	*/
-	@Before(Tx.class)
+	#if(isMainDataSource??)
+    @Before(Tx.class)
+    #end
 	public void delete() {
 		renderJson(service.delete(get#(getIdType?? 'Int')(0)));
 	}
 #end
 
-#define c_deleteByIds(modelName)
+#define c_deleteByIds(modelName,isMainDataSource)
    /**
 	* 批量删除
 	*/
-	@Before(Tx.class)
+	#if(isMainDataSource??)
+    @Before(Tx.class)
+    #end
 	public void deleteByIds() {
 		renderJson(service.deleteByBatchIds(get("ids")));
 	}
 #end
 
-#define c_up(modelName)
+#define c_up(modelName,isMainDataSource)
   /**
 	* 排序 上移
 	*/
-	@Before(Tx.class)
+	#if(isMainDataSource??)
+    @Before(Tx.class)
+    #end
 	public void up() {
 		renderJson(service.up(get#(getIdType?? 'Int')(0)));
 	}
 #end
 
-#define c_move(modelName)
+#define c_move(modelName,isMainDataSource)
   /**
 	*  灵活移动排序
 	*/
-	@Before(Tx.class)
+	#if(isMainDataSource??)
+    @Before(Tx.class)
+    #end
 	public void move() {
 		renderJson(service.move(get#(getIdType?? 'Int')("id"),get#(getIdType?? 'Int')("otherId")));
 	}
 #end
 
-#define c_down(modelName)
+#define c_down(modelName,isMainDataSource)
   /**
 	* 排序 下移
 	*/
-	@Before(Tx.class)
+	#if(isMainDataSource??)
+    @Before(Tx.class)
+    #end
 	public void down() {
 		renderJson(service.down(get#(getIdType?? 'Int')(0)));
 	}
 #end
 
 
-#define c_initRank(modelName)
+#define c_initRank(modelName,isMainDataSource)
   /**
 	* 排序 初始化
 	*/
-	@Before(Tx.class)
+	#if(isMainDataSource??)
+    @Before(Tx.class)
+    #end
 	public void initRank() {
 		renderJson(service.initRank());
 	}
 #end
 
-#define c_toggleEnable(modelName)
+#define c_toggleEnable(modelName,isMainDataSource)
   /**
 	* 切换启用状态
 	*/
-	@Before(Tx.class)
+	#if(isMainDataSource??)
+    @Before(Tx.class)
+    #end
 	public void toggleEnable() {
 		renderJson(service.toggleEnable(get#(getIdType?? 'Int')(0)));
 	}
@@ -154,19 +172,21 @@
 	}
 #end
 
-#define c_genToggleMethod(name,modelName)
+#define c_genToggleMethod(name,modelName,isMainDataSource)
   /**
 	* 切换#(name)
 	*/
+	#if(isMainDataSource??)
 	@Before(Tx.class)
+	#end
 	public void #(name)() {
 		renderJson(service.#(name)(get#(getIdType?? 'Int')(0)));
 	}
 #end
 
-#define c_genOtherMethod(name,modelName)
+#define c_genOtherMethod(name,modelName,isMainDataSource)
 #if(name.indexOf("toggle")!=-1)
-#@c_genToggleMethod(name,modelName)
+#@c_genToggleMethod(name,modelName,isMainDataSource)
 #else
 	public void #(name)(){
 		//TODO 请实现业务逻辑代码	
@@ -175,7 +195,7 @@
 #end
 #end
 
-#define genControllerMethod(name,modelName,needPaginate)
+#define genControllerMethod(name,modelName,needPaginate,isMainDataSource)
 	#switch(name)
 		#case("index")
 			#@c_index(modelName,needPaginate)
@@ -184,28 +204,28 @@
 		#case("edit")
 			#@c_edit(modelName)
 		#case("save")
-			#@c_save(modelName)
+			#@c_save(modelName,isMainDataSource)
 		#case("update")
-			#@c_update(modelName)	
+			#@c_update(modelName,isMainDataSource)
 		#case("delete")
-			#@c_delete(modelName)	
+			#@c_delete(modelName,isMainDataSource)
 		#case("deleteByIds")
-			#@c_deleteByIds(modelName)	
+			#@c_deleteByIds(modelName,isMainDataSource)
 		#case("toggleEnable")
-			#@c_toggleEnable(modelName)
+			#@c_toggleEnable(modelName,isMainDataSource)
 		#case("up")
-			#@c_up(modelName)
+			#@c_up(modelName,isMainDataSource)
 		#case("move")
-			#@c_move(modelName)
+			#@c_move(modelName,isMainDataSource)
 		#case("down")
-			#@c_down(modelName)
+			#@c_down(modelName,isMainDataSource)
 		#case("initRank")
-			#@c_initRank(modelName)
+			#@c_initRank(modelName,isMainDataSource)
 		#case("tree")
 			#@c_tree(modelName)
 		#case("options")
 			#@c_options(modelName)
 		#default
-			#@c_genOtherMethod(name,modelName)				
+			#@c_genOtherMethod(name,modelName,isMainDataSource)
 	#end
 #end

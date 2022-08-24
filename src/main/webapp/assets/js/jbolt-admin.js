@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.6";
+var jbolt_admin_js_version="5.9.8";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -636,6 +636,9 @@ var isOk=function(obj){
 	default:
 		result=(obj.length&&obj.length>0);
 		break;
+	}
+	if(typeof(result)=="number"){
+		result = result>0;
 	}
 	return result;
 }
@@ -4337,10 +4340,10 @@ var JBoltLayerUtil={
 				that.close();
 				return false;
 			}).on("click",".jbolt_layer",function(e){
-				 e.preventDefault();
+				e.preventDefault();
 				e.stopPropagation();
 				var layer=$(this);
-				if(!layer.data("cancel-click")){
+				if(!layer.data("cancel-click")&&layer.data("mask-close")){
 					that.close(false,"jbolt_layer");
 				}
 				return false;
@@ -4580,13 +4583,17 @@ var JBoltLayerUtil={
 					callback = exe_hanlder;
 				}
 			}
+			var maskClose=trigger.data("mask-close");
+			if(typeof(maskClose)=="undefined"){
+				maskClose = true;
+			}
 			if(keepOpen==false){
 				var layer;
 				if(loadType=="ajaxportal"){
-					layer=$('<div draggable="false" data-triggerid="'+triggerid+'" class="jbolt_layer '+(noMask?" nomask ":"") +dir+(hasClose?" hasclose ":" noclose ")+'" id="jbolt_layer">'+(canResize?"<div style='top:"+top+"px;bottom:"+bottom+"px' class='jbolt_layer_resizebox'></div><div style='top:"+(hasClose?(top+40):top)+"px;bottom:"+bottom+"px' class='jbolt_layer_resizebar'></div>":"")+'<div draggable="false" data-dir="'+dir+'" '+(refreshMenu?"data-refresh":"")+' class="jbolt_layer_portal '+(canResize?"resize":"")+'"  style="top:'+top+'px;width:'+width+'px;bottom:'+bottom+'px"   data-ajaxportal  data-url="'+url+'"></div></div>');
+					layer=$('<div data-mask-close="'+maskClose+'" draggable="false" data-triggerid="'+triggerid+'" class="jbolt_layer '+(noMask?" nomask ":"") +dir+(hasClose?" hasclose ":" noclose ")+'" id="jbolt_layer">'+(canResize?"<div style='top:"+top+"px;bottom:"+bottom+"px' class='jbolt_layer_resizebox'></div><div style='top:"+(hasClose?(top+40):top)+"px;bottom:"+bottom+"px' class='jbolt_layer_resizebar'></div>":"")+'<div draggable="false" data-dir="'+dir+'" '+(refreshMenu?"data-refresh":"")+' class="jbolt_layer_portal '+(canResize?"resize":"")+'"  style="top:'+top+'px;width:'+width+'px;bottom:'+bottom+'px"   data-ajaxportal  data-url="'+url+'"></div></div>');
 				}else{
 					url=processUrlRqType(url,"iframe");
-					layer=$('<div draggable="false" data-triggerid="'+triggerid+'" class="jbolt_layer '+(noMask?" nomask ":"") +dir+(hasClose?" hasclose ":" noclose ")+'" id="jbolt_layer">'+(canResize?"<div style='top:"+top+"px;bottom:"+bottom+"px' class='jbolt_layer_resizebox'></div><div style='top:"+(hasClose?(top+40):top)+"px;bottom:"+bottom+"px' class='jbolt_layer_resizebar'></div>":"")+'<div draggable="false" data-dir="'+dir+'" '+(refreshMenu?"data-refresh":"")+' class="jbolt_layer_portal '+(canResize?"resize":"")+'"  style="top:'+top+'px;width:'+width+'px;bottom:'+bottom+'px" data-url="'+url+'"><iframe frameborder="0" class="jbolt_layer_iframe"></iframe></div></div>');
+					layer=$('<div data-mask-close="'+maskClose+'" draggable="false" data-triggerid="'+triggerid+'" class="jbolt_layer '+(noMask?" nomask ":"") +dir+(hasClose?" hasclose ":" noclose ")+'" id="jbolt_layer">'+(canResize?"<div style='top:"+top+"px;bottom:"+bottom+"px' class='jbolt_layer_resizebox'></div><div style='top:"+(hasClose?(top+40):top)+"px;bottom:"+bottom+"px' class='jbolt_layer_resizebar'></div>":"")+'<div draggable="false" data-dir="'+dir+'" '+(refreshMenu?"data-refresh":"")+' class="jbolt_layer_portal '+(canResize?"resize":"")+'"  style="top:'+top+'px;width:'+width+'px;bottom:'+bottom+'px" data-url="'+url+'"><iframe frameborder="0" class="jbolt_layer_iframe"></iframe></div></div>');
 				}
 				jboltBody.append(layer);
 				if(hasClose){
@@ -12042,6 +12049,22 @@ function syncOtherInput(value,inputEle){
 		    	   }
 		       }
 		    },
+			initByParent:function(parentEle){
+			    var parent = getRealJqueryObject(parentEle);
+			    if(notOk(parent)){
+					LayerMsgBox.alert("initByParent参数指定元素不存在",2);
+					return;
+			    }
+				var selects = parent.find("select[data-autoload]");
+				if(selects&&selects.length>0){
+					//循环处理 这样写性能高一点
+					var len=selects.length;
+					var that=this;
+					for(var i=0;i<len;i++){
+						that.processOneSelect(selects.eq(i));
+					}
+				}
+			},
 		    initSelect:function(select){
 		    	this.processOneSelect(select)
 		    },

@@ -87,6 +87,92 @@ function submitThisForm(callback){
 	</div>
 </div>
 {@/if}
+{@if isUploader}
+	<input type="hidden" name="isUploader" value="${isUploader}"/>
+	<input type="hidden" name="isImgUploader" value="${isImgUploader}"/>
+	<input type="hidden" name="isFileUploader" value="${isFileUploader}"/>
+	<input type="hidden" name="isUploadMulti" value="${isUploadMulti}"/>
+<div class="form-group row"
+		id="isUploadToQiniuRadio"
+		data-radio
+		data-rule="radio"
+		data-value="${isUploadToQiniu}"
+		data-name="isUploadToQiniu"
+		data-default="false"
+		data-handler="changeIsUploadToQiniu"
+		>
+		<label class="col-sm-2 col-form-label" >是否上传七牛</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary radio-inline">
+					<input  id="r_uploadtoqiniu_true" type="radio" name="isUploadToQiniu" value="true"/>
+					<label for="r_uploadtoqiniu_true">是</label>
+				</div>
+				<div class="radio radio-primary radio-inline">
+					<input  id="r_uploadtoqiniu_false" type="radio" name="isUploadToQiniu" value="false"/>
+					<label for="r_uploadtoqiniu_false">否</label>
+				</div>
+			</div>
+</div>
+<div class="d-none" id="qiniuBucketSnBox">
+<div class="form-group row">
+<label class="col-sm-2 col-form-label" >七牛BucketSn</label>
+<div class="col">
+<input type="text" maxlength="60" data-with-clearbtn id="qiniuBucketSn" class="form-control text-info" placeholder="请输入七牛指定的七牛Bucket SN 不输入则使用系统默认"  name="qiniuBucketSn" value="${qiniuBucketSn?qiniuBucketSn:''}"/>
+</div>
+</div>
+<div class="form-group row text-right">
+	<div class="col-sm-2"></div>
+	<div class="col-4">
+		<div class="input-group">
+		<div class="input-group-prepend"><span class="input-group-text">账号</span></div>
+		<select class="form-control" data-autoload data-url="admin/qiniu/options" data-linkage="true" data-sonid="qiniubucketsnselect" data-text="=请选择=" data-value=""></select>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="input-group">
+		<div class="input-group-prepend"><span class="input-group-text">Bucket</span></div>
+		<select class="form-control" data-text-attr="text,value" data-value-attr="sn" data-url="admin/qiniu/bucket/options/" data-linkage="true" id="qiniubucketsnselect" data-text="=请选择=" data-value=""></select>
+		</div>
+	</div>
+	<div class="col-2 text-left">
+	<button class="btn btn-primary btn-sm" type="button" onclick="setBucketSn()"><i class="fa fa-check"></i> 使用</button>
+	</div>
+</div>
+</div>
+
+<div class="form-group row d-none" id="formUploadUrlBox">
+<label class="col-sm-2 col-form-label" >接收文件Action名称</label>
+<div class="col-6">
+<input type="text" maxlength="60" id="formUploadUrl" class="form-control text-info" placeholder="请输入接收文件额action名称"  name="formUploadUrl" value="${formUploadUrl?formUploadUrl:''}"/>
+</div>
+</div>
+
+
+<div class="form-group row d-none" id="qiniuFileKeyBox">
+<label class="col-sm-2 col-form-label" >七牛FileKey</label>
+<div class="col">
+<input type="text" maxlength="100" class="form-control text-info" placeholder="请输入七牛的filekey" id="qiniuFileKey"  name="qiniuFileKey" value="${qiniuFileKey?qiniuFileKey:''}"/>
+</div>
+</div>
+
+<div class="form-group row">
+<label class="col-sm-2 col-form-label" >上传数据大小限制</label>
+<div class="col-6">
+	<div class="input-group">
+		<input type="number" maxlength="10" min="1"  class="form-control text-info" placeholder="请输入上传数据大小限制 例如 200 单位KB" id="formMaxsize"  name="formMaxsize" value="${formMaxsize}"/>
+		<div class="input-group-append"><span class="input-group-text">KB</span></div>
+	</div>
+</div>
+</div>
+{@if isImgUploader}
+<div class="form-group row">
+<label class="col-sm-2 col-form-label" >上传区域尺寸</label>
+<div class="col-6">
+<input type="text" oninput="changeImgUploaderArea(this.value)" onchange="changeImgUploaderArea(this.value)" class="form-control text-info" placeholder="请输入区域尺寸" id="formImgUploaderArea" name="formImgUploaderArea" value="${formImgUploaderArea}"/>
+</div>
+</div>
+{@/if}
+{@/if}
 {@if isCanChangeInlineEle}
 <div class="form-group row" 
 		id="isItemInlineRadio" 

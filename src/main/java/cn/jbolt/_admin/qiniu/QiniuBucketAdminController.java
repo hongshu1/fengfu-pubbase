@@ -2,6 +2,7 @@ package cn.jbolt._admin.qiniu;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import cn.jbolt._admin.permission.PermissionKey;
@@ -51,7 +52,19 @@ public class QiniuBucketAdminController extends JBoltBaseController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords(),getLong("qiniuId"),get("zone")));
+	}
+
+	/**
+	 * options数据源
+	 */
+	public void options() {
+		Long qiniuId = getLong(0);
+		if(notOk(qiniuId)){
+			renderJsonSuccess();
+			return;
+		}
+		renderJsonData(service.getOptionList("name","sn", Okv.by("qiniu_id",qiniuId)));
 	}
 	
    /**

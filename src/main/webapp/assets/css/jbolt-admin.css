@@ -1,4 +1,4 @@
-/*********jbolt_admin_css_version="3.6.4*************/
+/*********jbolt_admin_css_version="3.6.5*************/
 html, body {
 	margin: 0px;
 	padding: 0px;
@@ -3773,6 +3773,14 @@ div[data-citypicker]{
 .jbolt_page_title form.form-inline div[data-citypicker]{
 	margin-bottom: 5px;
 }
+.jbolt_headbox_conditions.row .input-group div[data-citypicker]{
+	vertical-align: middle;
+	display: inline-block;
+	min-width: 195px;
+}
+.jbolt_headbox_conditions.row .input-group .iPicker-list {
+	position: fixed;
+}
 div[data-citypicker] li>span{
 	color:#333333;
 }
@@ -4265,6 +4273,9 @@ vertical-align: top;
     width: 1%;
     min-width: 0;
     margin-bottom: 0;
+}
+.jbolt_page_title form.form-inline .input-group>.ac_input_box{
+	width: auto;
 }
 .jbolt_table_headbox .input-group .select2-container--bootstrap .select2-selection--multiple .select2-search--inline .select2-search__field {
 	width:100%!important;
