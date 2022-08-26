@@ -44,7 +44,7 @@
     #end
 #end
 #if(hasIsDeletedColumn)
-#set(cons = cons + ", getBoolean(\"is_deleted\",false)")
+#set(cons = cons + ", getBoolean(\"isDeleted\",false)")
 #end
    /**
 	* 数据源
