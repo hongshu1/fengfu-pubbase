@@ -1223,14 +1223,18 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
                     //如果是启动了checkbox或者radio
                     if("checkbox".equals(codeGen.getTablePrependColumnType())){
                         genMehtods.add(new CodeGenMethod("recoverByIds"));
+                        genMehtods.add(new CodeGenMethod("realDeleteByIds"));
                     }else{
                         genMehtods.add(new CodeGenMethod("recover"));
+                        genMehtods.add(new CodeGenMethod("realDelete"));
                     }
                 }else{
                     genMehtods.add(new CodeGenMethod("recover"));
+                    genMehtods.add(new CodeGenMethod("realDelete"));
                 }
             }else if(codeGen.getIsShowOptcolRecover()){
                 genMehtods.add(new CodeGenMethod("recover"));
+                genMehtods.add(new CodeGenMethod("realDelete"));
             }
         }
         return genMehtods;

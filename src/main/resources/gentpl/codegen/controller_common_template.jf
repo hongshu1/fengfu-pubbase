@@ -119,6 +119,23 @@
 	}
 #end
 
+
+#define c_realdelete()
+   /**
+	* real delete 真删除
+	*/
+	#if(codeGen.isMainDatasource??)
+	@Before(Tx.class)
+	#end
+	public void realDelete() {
+	#if(codeGen.isCheckCanDelete??)
+		renderJson(service.realDeleteById(get#(getIdType?? 'Long')(0),true));
+	#else
+		renderJson(service.realDeleteById(get#(getIdType?? 'Long')(0)));
+	#end
+	}
+#end
+
 #define c_recover()
    /**
 	* 恢复假删数据
@@ -147,6 +164,22 @@
 		renderJson(service.deleteByIds(get("ids"),true));
 	#else
 		renderJson(service.deleteByIds(get("ids")));
+	#end
+	}
+#end
+
+#define c_realDeleteByIds()
+   /**
+	* 批量 真删除
+	*/
+	#if(codeGen.isMainDatasource??)
+	@Before(Tx.class)
+	#end
+	public void realDeleteByIds() {
+	#if(codeGen.isCheckCanDelete??)
+		renderJson(service.realDeleteByIds(get("ids"),true));
+	#else
+		renderJson(service.realDeleteByIds(get("ids")));
 	#end
 	}
 #end
@@ -390,10 +423,14 @@
 			#@c_update()
 		#case("delete")
 			#@c_delete()
+        #case("realDelete")
+            #@c_realdelete()
 		#case("deleteByIds")
 			#@c_deleteByIds()
 		#case("recoverByIds")
         	#@c_recoverByIds()
+        #case("realDeleteByIds")
+            #@c_realDeleteByIds()
         #case("recover")
             #@c_recover()
 		#case("toggleEnable")
