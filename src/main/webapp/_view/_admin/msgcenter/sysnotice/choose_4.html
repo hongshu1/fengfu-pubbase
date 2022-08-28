@@ -22,6 +22,7 @@ data-column-prepend="1:checkbox:true"
 data-column-resize="true"
 data-url="admin/post/datas"
 data-rowtpl="postRowtpl_#(pageId)"
+data-ajax-success-handler="ajaxSuccessHandler_#(pageId)"
 >
 <thead class="fw-normal">
 <tr>
@@ -51,6 +52,13 @@ function submitThisForm(){
 		 parent.layer.closeAll();
 	}
 	_submit_ing=false;
+}
+
+function ajaxSuccessHandler_#(pageId)(table){
+	var ids = "#(ids??)";
+	if(ids){
+		table.me.setCheckedIds(table,ids.split(","));
+	}
 }
 </script>
 #end

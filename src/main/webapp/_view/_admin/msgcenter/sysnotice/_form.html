@@ -66,10 +66,10 @@
 			<input type="text" readonly="readonly" id="choose_type_names_#(pageId)" onclick="g('choose_btn_#(pageId)').click()" autocomplete="off" class="form-control bg-white hand" placeholder="接收人信息" maxlength="1000"  value="#(sysNotice.receiverValues??)">
 			<div class="input-group-append">
 			<a class="input-group-text hand" onclick="clearChooseReceiverType_#(pageId)()" data-title="清空" ><i class="fa fa-trash text-danger"></i></a>
-			<a class="input-group-text hand" data-link-para-ele="#receiver_type_#(pageId)" id="choose_btn_#(pageId)" data-openpage="dialog" data-area="400,600" data-title="选择接收人" href="admin/sysnotice/chooseReceiver"><i class="fa fa-search"></i></a>
+			<a class="input-group-text hand" data-link-para-ele="#receiver_type_#(pageId),#choose_type_ids_#(pageId)" id="choose_btn_#(pageId)" data-openpage="dialog" data-area="400,600" data-title="选择接收人" href="admin/sysnotice/chooseReceiver"><i class="fa fa-search"></i></a>
 			</div>
 			</div>
-			<input type="hidden" readonly="readonly" id="choose_type_ids_#(pageId)"  name="sysNotice.receiverValue" autocomplete="off"  maxlength="1000"  value="#(sysNotice.receiverValue??)">
+			<input type="hidden" readonly="readonly" id="choose_type_ids_#(pageId)" data-para-name="ids"   name="sysNotice.receiverValue" autocomplete="off"  maxlength="1000"  value="#(sysNotice.receiverValue??)">
 		</div>
 	</div>
 </fieldset>
