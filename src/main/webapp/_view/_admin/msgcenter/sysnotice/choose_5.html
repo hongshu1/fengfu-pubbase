@@ -85,6 +85,18 @@
 	</div>
 </div>
 #end
+<div class="jbolt_table_rightbox" style="width:240px;" id="admin_user_rightbox_#(pageId)">
+	<div class="jb_header"><i class="fa fa-cubes"></i> <span>已选用户：</span><span class="text-danger" id="selected_items_total_#(pageId)">0</span>个</div>
+	<div class="jb_body">
+		<script type="text/template" id="item_tpl_#(pageId)">
+			{@each datas as data,index}
+			<li class="item d-inline-block border border-primary rounded m-1 px-2 py-1 text-nowrap text-center" data-id="${data.id}"><span>${data.name}</span><a tooltip data-title="移除" class="hand float-right text-danger ml-2"><i class="fa fa-remove"></i></a></li>
+			{@/each}
+		</script>
+		<!-- 定义选中内容渲染和盛放容器-->
+		<ul class="m-0 p-0" id="selected_items_box_#(pageId)"></ul>
+	</div>
+</div>
 <table class="table-center thead_font_normal"
 data-jbolttable
 id="choose_users_table_#(pageId)"
@@ -99,6 +111,15 @@ data-column-resize="true"
 #if(deptEnable)
 data-leftbox="admin_user_leftbox_#(pageId)"
 #end
+data-rightbox="admin_user_rightbox_#(pageId)"
+#保留选中数据 功能开启
+data-keep-selected-items = "true"
+#选中数据放哪里
+data-selected-items-box="selected_items_box_#(pageId)"
+#选中数据 渲染模板
+data-selected-items-tpl="item_tpl_#(pageId)"
+#选中数据统计个数
+data-selected-items-total="selected_items_total_#(pageId)"
 >
 <thead>
 <tr>
@@ -169,8 +190,8 @@ function submitThisForm(){
 		return false;
 	}
 	_submit_ing=true;
-	var checkedIds   = getJboltTableCheckedIds("choose_users_table_#(pageId)");
-	var checkedNames = getJboltTableCheckedTexts("choose_users_table_#(pageId)");
+	var checkedIds   = jboltTableGetKeepSelectedIds("choose_users_table_#(pageId)");
+	var checkedNames = jboltTableGetKeepSelectedTexts("choose_users_table_#(pageId)");
 	if(isOk(checkedIds)&&isOk(checkedNames)){
 		 parent.setChooseReceiverDatas(checkedIds,checkedNames);
 		 parent.layer.closeAll();
