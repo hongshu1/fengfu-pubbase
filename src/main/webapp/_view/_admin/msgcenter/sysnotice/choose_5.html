@@ -90,7 +90,7 @@
 	<div class="jb_body">
 		<script type="text/template" id="item_tpl_#(pageId)">
 			{@each datas as data,index}
-			<li class="item d-inline-block border border-primary rounded m-1 px-2 py-1 text-nowrap text-center" data-id="${data.id}"><span>${data.name}</span><a tooltip data-title="移除" class="hand float-right text-danger ml-2"><i class="fa fa-remove"></i></a></li>
+			<li class="item d-inline-block border border-primary rounded m-1 px-2 py-1 text-nowrap text-center" data-id="${data.id}"><span>${data.name}</span><a onclick="jboltTableRemoveKeepSelectedItem(this,'${data.id}')" tooltip data-title="移除" class="hand float-right text-danger ml-2"><i class="fa fa-remove"></i></a></li>
 			{@/each}
 		</script>
 		<!-- 定义选中内容渲染和盛放容器-->

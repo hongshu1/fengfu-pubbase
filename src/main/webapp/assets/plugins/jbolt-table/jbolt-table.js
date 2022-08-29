@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.9.4";
+var jbolt_table_js_version="2.9.5";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6,6 +6,27 @@ function clearJBoltCurrentEditableAndKeyEventTable(){
 }
 function changeJBoltCurrentEditableAndKeyEventTable(table){
 	JBoltCurrentEditableAndKeyEventTable=table;
+}
+
+/**
+ * 移除表格的指定id 的keep selected item
+ * @param tableEle
+ * @param removeId
+ * @returns {null}
+ */
+function jboltTableRemoveKeepSelectedItem(tableEle,removeId){
+	var table=getJBoltTableInst(tableEle);
+	if(!isOk(table)){
+		if(!dontShowError){
+			LayerMsgBox.alert("表格配置异常，无法找到对应表格",2);
+		}
+		return null;
+	}
+	var ele = getRealJqueryObject(tableEle);
+	if(ele[0].hasAttribute("tooltip")){
+		disposeTooltip(ele);
+	}
+	table.me.removeFromKeepSelectedItemsBox(table,removeId);
 }
 
 /**
@@ -13303,6 +13324,13 @@ function getScrollBarHeight(ele){
 					that.removeFromSelectedItemsBox(table,value+"");
 				}
 			});
+		},
+		removeFromKeepSelectedItemsBox:function(table,removeId){
+			this.removeFromSelectedItemsBox(table,removeId+"");
+			var mainTableCheckbox=table.table_box.find("tr[data-id='"+removeId+"']>td>.jbolt_table_checkbox>input[type='checkbox']");
+			if(isOk(mainTableCheckbox)) {
+				CheckboxUtil.uncheckIt(mainTableCheckbox);
+			}
 		},
 		processChangeSelectedItems:function(table,tr,dataIndex,checkbox,checked){
 			if(table.isEmpty){return;}
