@@ -192,6 +192,7 @@ public class SysNoticeAdminController extends JBoltBaseController {
 			set("hasDept", JBoltDeptCache.me.checkHasDept());
 			set("hasPost", JBoltPostCache.me.checkHasPost());
 		}
+		keepPara("ids");
 		render("choose_"+receiverType.intValue()+".html");
 	}
 	
