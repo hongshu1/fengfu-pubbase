@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.8";
+var jbolt_admin_js_version="5.9.9";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -19415,14 +19415,17 @@ var JBoltNotifyBox={
 var JBoltArrayUtil={
 		//删除指定值元素
 		remove:function(array,value){
+			var removeIndex=-1;
 			if(isOk(array)&&typeof(value)!=undefined&&typeof(value)!="undefined"){
 				$.each(array,function(index,item){
 					if(item===value){
 						array.splice(index,1);
+						removeIndex = index;
 						return false;
 					}
 				});
 			}
+			return removeIndex;
 		},
 		//按照坐标替换数据
 		replace:function(array,index,data){

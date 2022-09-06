@@ -11,7 +11,7 @@
 			<div class="col">
 			<!-- 页头表单区 -->
 				<form class="form-inline text-left" id="jbolt_codegen_form_#(pageId)"   onsubmit="return false;" method="post">
-					<input type="hidden" name="is_deleted" value="false"/>
+					<input type="hidden" name="isDeleted" value="false"/>
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
 					
 					<select class="form-control" 
@@ -146,7 +146,7 @@
 <script type="text/javascript">
 function codeGenFormSearch_#(pageId)(formId,isDeleted){
 	var form=$("#"+formId);
-	form.find("input[name='is_deleted']").val(isDeleted);
+	form.find("input[name='isDeleted']").val(isDeleted);
 	if(isDeleted){
 		$("#toolbar_searchBtn_#(pageId)").removeClass("btn-primary").addClass("btn-outline-secondary");
 		$("#toolbar_trashBtn_#(pageId)").removeClass("btn-outline-danger").addClass("btn-danger");

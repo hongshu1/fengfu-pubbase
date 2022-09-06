@@ -214,7 +214,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
      * 处理是否需要recover
      * @param id
      */
-    private void processCodeGenRecoverById(Long id) {
+    public void processCodeGenRecoverById(Long id) {
         CodeGen codeGen = findById(id);
         if(codeGen == null){
             throw new RuntimeException(JBoltMsg.DATA_NOT_EXIST);
@@ -1223,14 +1223,18 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
                     //如果是启动了checkbox或者radio
                     if("checkbox".equals(codeGen.getTablePrependColumnType())){
                         genMehtods.add(new CodeGenMethod("recoverByIds"));
+                        genMehtods.add(new CodeGenMethod("realDeleteByIds"));
                     }else{
                         genMehtods.add(new CodeGenMethod("recover"));
+                        genMehtods.add(new CodeGenMethod("realDelete"));
                     }
                 }else{
                     genMehtods.add(new CodeGenMethod("recover"));
+                    genMehtods.add(new CodeGenMethod("realDelete"));
                 }
             }else if(codeGen.getIsShowOptcolRecover()){
                 genMehtods.add(new CodeGenMethod("recover"));
+                genMehtods.add(new CodeGenMethod("realDelete"));
             }
         }
         return genMehtods;
@@ -1677,5 +1681,22 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setProjectPath(projectPath);
         boolean success = codeGen.update();
         return ret(success);
+    }
+
+    //重新设置mainTablePrimaryKey
+    public void reprocessMainTablePrimaryKey(Long codeGenId) {
+        CodeGen codeGen = findById(codeGenId);
+        if(codeGen == null) {
+            throw new RuntimeException("未找到代码生成的基础配置");
+        }
+        CodeGenModelAttr primarykeyAttr = codeGenModelAttrService.getPrimaryKeyAttr(codeGenId);
+        if(primarykeyAttr == null){
+            throw new RuntimeException("表未设置主键！");
+        }
+
+        if(!primarykeyAttr.getColName().equalsIgnoreCase(codeGen.getMainTablePkey())){
+            codeGen.setMainTablePkey(primarykeyAttr.getColName());
+            codeGen.update();
+        }
     }
 }

@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.9.3";
+var jbolt_table_js_version="2.9.5";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6,6 +6,79 @@ function clearJBoltCurrentEditableAndKeyEventTable(){
 }
 function changeJBoltCurrentEditableAndKeyEventTable(table){
 	JBoltCurrentEditableAndKeyEventTable=table;
+}
+
+/**
+ * 移除表格的指定id 的keep selected item
+ * @param tableEle
+ * @param removeId
+ * @returns {null}
+ */
+function jboltTableRemoveKeepSelectedItem(tableEle,removeId){
+	var table=getJBoltTableInst(tableEle);
+	if(!isOk(table)){
+		if(!dontShowError){
+			LayerMsgBox.alert("表格配置异常，无法找到对应表格",2);
+		}
+		return null;
+	}
+	var ele = getRealJqueryObject(tableEle);
+	if(ele[0].hasAttribute("tooltip")){
+		disposeTooltip(ele);
+	}
+	table.me.removeFromKeepSelectedItemsBox(table,removeId);
+}
+
+/**
+ * 获取所有keep selected 数据 json数据
+ * @param tableEle
+ * @param needAttrs
+ * @param dontShowError
+ * @returns {boolean|*}
+ */
+function jboltTableGetKeepSelectedDatas(tableEle,needAttrs,dontShowError){
+	var table=getJBoltTableInst(tableEle);
+	if(!isOk(table)){
+		if(!dontShowError){
+			LayerMsgBox.alert("表格配置异常，无法找到对应表格",2);
+		}
+		return null;
+	}
+	return table.me.getKeepSelectedDatas(table,needAttrs);
+}
+
+/**
+ * 获取所有 keep selected数据ids
+ * @param tableEle
+ * @param dontShowError
+ * @returns {boolean|*}
+ */
+function jboltTableGetKeepSelectedIds(tableEle,dontShowError){
+	var table=getJBoltTableInst(tableEle);
+	if(!isOk(table)){
+		if(!dontShowError){
+			LayerMsgBox.alert("表格配置异常，无法找到对应表格",2);
+		}
+		return null;
+	}
+	return table.me.getKeepSelectedIds(table);
+}
+
+/**
+ * 获取所有 keep selected数据的显示文本texts
+ * @param tableEle
+ * @param dontShowError
+ * @returns {boolean|*}
+ */
+function jboltTableGetKeepSelectedTexts(tableEle,dontShowError){
+	var table=getJBoltTableInst(tableEle);
+	if(!isOk(table)){
+		if(!dontShowError){
+			LayerMsgBox.alert("表格配置异常，无法找到对应表格",2);
+		}
+		return null;
+	}
+	return table.me.getKeepSelectedTexts(table);
 }
 
 /**
@@ -1970,14 +2043,13 @@ function jboltTableGetCheckedTexts(ele,dontShowError){
 	LayerMsgBox.alert("表格组件配置异常",2);
 	return false;
 }
-
 /**
  * jbolttable设置选中checkbox
- * @param ids
  * @param ele
+ * @param ids
  * @returns
  */
-function jboltTableSetCheckedIds(ids,ele){
+function jboltTableSetCheckedIds(ele,ids){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
@@ -1988,14 +2060,14 @@ function jboltTableSetCheckedIds(ids,ele){
 	LayerMsgBox.alert("表格组件配置异常",2);
 	return false;
 }
-
 /**
  * jbolttable设置选中checkbox
- * @param id
  * @param ele
+ * @param id
  * @returns
  */
-function jboltTableSetCheckedId(id,ele){
+
+function jboltTableSetCheckedId(ele,id){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
@@ -2596,12 +2668,12 @@ function getJboltTableCheckedTexts(tableId,column,dontShowError){
 
 /**
  * checkbox|radio设置选中的ids
+ * @param tableEle
  * @param ids
- * @param tableId
  * @returns
  */
-function setJboltTableCheckedIds(ids,tableId){
-	return jboltTableSetCheckedIds(ids,tableId);
+function setJboltTableCheckedIds(tableEle,ids){
+	return jboltTableSetCheckedIds(tableEle,ids);
 }
 /**
  * 得到checkbox|radio选中的json数据
@@ -4257,6 +4329,52 @@ function getScrollBarHeight(ele){
 				return isOk(jsons)?jsons:null;
 			}
 			return deepClone(datas);
+		},
+		getKeepSelectedDatas:function(table,needAttrs){
+			if(!table.keepSelectedItemsEnable){
+				return null;
+			}
+			var datas=table.selectedItemsDatas;
+			if(!isOk(datas)){
+				return null;
+			}
+			if(isOk(needAttrs)){
+				var jsons=new Array(),newJsonData,newArr,dataSize=datas.length;
+				$.each(datas,function(k){
+					newJsonData={};
+					$.each(needAttrs,function(i,item){
+						if(item.indexOf(":")==-1){
+							newJsonData[item]=datas[k][item];
+						}else{
+							newArr=item.split(":");
+							newJsonData[newArr[1]]=datas[k][newArr[0]];
+						}
+					});
+					jsons.push(newJsonData);
+				});
+				return isOk(jsons)?jsons:null;
+			}
+			return deepClone(datas);
+		},
+		getKeepSelectedTexts:function(table,needAttrs){
+			if(!table.keepSelectedItemsEnable){
+				return null;
+			}
+			var datas=table.selectedItemsDatas;
+			if(!isOk(datas)){
+				return null;
+			}
+			var texts=[];
+			$.each(datas,function(i,json){
+				texts.push((json[table.selectedItemTextAttr]||json[table.selectedItemTextAttr.toUpperCase()]||""));
+			});
+			return isOk(texts)?texts:null;
+		},
+		getKeepSelectedIds:function(table){
+			if(!table.keepSelectedItemsEnable){
+				return null;
+			}
+			return table.selectedItemsIds;
 		},
 		//获得选中数据的数据的json（支持多条）
 		getCheckedDatas:function(table,needAttrs,dontShowError){
@@ -6047,6 +6165,8 @@ function getScrollBarHeight(ele){
 			that.processNormalTableListDatas(table);
 			//processEditable
 			that.processEditable(table);
+			//处理选中checkbox数据
+			that.processTableKeepSelectedItems(table);
 			//处理事件
 			that.processTableEvent(table);
 			setTimeout(function(){
@@ -6054,6 +6174,63 @@ function getScrollBarHeight(ele){
 				that.processEmptyTableBody(table);
 			}, 1000);
 			LayerMsgBox.closeLoadNow();
+		},
+		//处理表格选中保持数据
+		processTableKeepSelectedItems:function(table){
+			var keepSelectedItemsEnable = table.data("keep-selected-items");
+			if(typeof(keepSelectedItemsEnable)=="undefined"){
+				keepSelectedItemsEnable = false;
+			}
+			if(!keepSelectedItemsEnable){
+				return;
+			}
+			table.keepSelectedItemsEnable = keepSelectedItemsEnable;
+			//如果开启了之后 就需要获取值
+			var selectedItemsBoxId = table.data("selected-items-box");
+			if(!selectedItemsBoxId){
+				JBoltMsgBox.alert("未配置选中数据显示的区域data-selected-items-box",2);
+				return;
+			}
+			var selectedItemsBox = jboltBody.find("#"+selectedItemsBoxId);
+			if(notOk(selectedItemsBox)){
+				JBoltMsgBox.alert("data-selected-items-box设置的ID无效",2);
+				return;
+			}
+			table.selectedItemsBox = selectedItemsBox;
+
+			var selectedItemsTplId = table.data("selected-items-tpl");
+			if(!selectedItemsTplId){
+				JBoltMsgBox.alert("未配置选中数据的渲染模板data-selected-items-tpl",2);
+				return;
+			}
+			var selectedItemsTplBox = g(selectedItemsTplId);
+			if(!selectedItemsTplBox){
+				JBoltMsgBox.alert("选中数据的渲染模板配置有误data-selected-items-tpl",2);
+				return;
+			}
+			var selectedItemsTpl;
+			if(selectedItemsTplBox.tagName=="TEXTAREA"){
+				selectedItemsTpl = selectedItemsTplBox.val();
+			}else if(selectedItemsTplBox.tagName=="SCRIPT"){
+				selectedItemsTpl = selectedItemsTplBox.innerText;
+			}
+			if(!selectedItemsTpl){
+				JBoltMsgBox.alert("选中数据的渲染模板配置有误 无任何有效模板数据",2);
+				return;
+			}
+			table.selectedItemsTpl = selectedItemsTpl;
+
+			table.selectedItemValueAttr = table.data("selected-item-value-attr")||"id";
+			table.selectedItemTextAttr = table.data("selected-item-text-attr")||"name";
+			var selectedItemsTotalSpanId = table.data("selected-items-total");
+			if(selectedItemsTotalSpanId){
+				var selectedItemsTotalSpan = jboltBody.find("#"+selectedItemsTotalSpanId);
+				if(isOk(selectedItemsTotalSpan)){
+					selectedItemsTotalSpan.text("0");
+					table.selectedItemsTotal = selectedItemsTotalSpan;
+				}
+			}
+
 		},
 		//处理普通表格携带的数据转tableListDatas
 		processNormalTableListDatas:function(table){
@@ -6363,6 +6540,8 @@ function getScrollBarHeight(ele){
 			that.processEmptyTableBody(table);
 			//processEditable
 			that.processEditable(table);
+			//处理选中checkbox数据
+			that.processTableKeepSelectedItems(table);
 			//处理事件重新绑定
 			that.processTableEvent(table);
 			LayerMsgBox.closeLoadNow();
@@ -6560,7 +6739,13 @@ function getScrollBarHeight(ele){
 			// 	},100);
 			// }
 			that.processTableStyleAfterAjax(table,callback);
-
+			//重新设置当前页面 已选数据的 选中状态
+			that.processTableReKeepSelectedItems(table);
+		},
+		processTableReKeepSelectedItems:function(table){
+			if(!table.keepSelectedItemsEnable || notOk(table.selectedItemsIds)){return;}
+			var that = this;
+			that.setCheckedIds(table,table.selectedItemsIds);
 		},
 		processTableStyleAfterAjax:function(table,callback){
 			var that = this;
@@ -12906,16 +13091,16 @@ function getScrollBarHeight(ele){
 
 				var columnprependactive = table.data("column-prepend-active");
 				if(columnprependactive){
-
 					if(this.checked){
 						table.table_box.find("table>tbody>tr").addClass("active");
 					}else{
 						table.table_box.find("table>tbody>tr").removeClass("active");
 					}
 				}
-
-
-
+				if(table.keepSelectedItemsEnable){
+					//如果开启了选中数据渲染的开关 就得执行处理handler
+					that.processChangeCurrentPageAllSelectedItems(table,this.checked);
+				}
 			});
 			//绑定thead radio点击
 			table.table_box.on("click","table>thead>tr>th>.jbolt_table_radio>input[type='radio']",function(e){
@@ -12983,6 +13168,7 @@ function getScrollBarHeight(ele){
 						table.table_box.find("table>tbody>tr").removeClass("active");
 					}
 				}
+
 
 			});
 			//绑定tbody中的checkbox
@@ -13068,6 +13254,10 @@ function getScrollBarHeight(ele){
 						table.table_box.find("table>tbody>tr[data-index='"+rowIndex+"']").removeClass("active");
 					}
 				}
+				if(table.keepSelectedItemsEnable){
+					//如果开启了选中数据渲染的开关 就得执行处理handler
+					that.processChangeSelectedItems(table,tr,rowIndex,me,this.checked);
+				}
 			});
 			//绑定tbody中的radio
 			table.table_box.on("click","table>tbody>tr>td>.jbolt_table_radio>input[type='radio']",function(e){
@@ -13119,6 +13309,99 @@ function getScrollBarHeight(ele){
 			});
 
 
+		},
+		processChangeCurrentPageAllSelectedItems:function(table,checked){
+			if(table.isEmpty){return;}
+			var that=this;
+			$.each(table.tableListDatas,function(i,trJsonData){
+				if(checked){
+					that.addToSelectedItemsBox(table,trJsonData);
+				}else{
+					var value = trJsonData[table.selectedItemValueAttr]||trJsonData[table.selectedItemValueAttr.toUpperCase()];
+					if(typeof(value)=="undefined"){
+						value="";
+					}
+					that.removeFromSelectedItemsBox(table,value+"");
+				}
+			});
+		},
+		removeFromKeepSelectedItemsBox:function(table,removeId){
+			this.removeFromSelectedItemsBox(table,removeId+"");
+			var mainTableCheckbox=table.table_box.find("tr[data-id='"+removeId+"']>td>.jbolt_table_checkbox>input[type='checkbox']");
+			if(isOk(mainTableCheckbox)) {
+				CheckboxUtil.uncheckIt(mainTableCheckbox);
+			}
+		},
+		processChangeSelectedItems:function(table,tr,dataIndex,checkbox,checked){
+			if(table.isEmpty){return;}
+			var trJsonData = table.tableListDatas[dataIndex];
+			if(checked){
+				this.addToSelectedItemsBox(table,trJsonData);
+			}else{
+				this.removeFromSelectedItemsBox(table,tr.data("id")+"");
+			}
+		},
+		//添加选中的数据到itemsbox
+		addToSelectedItemsBox:function(table,trJsonData){
+			var value = trJsonData[table.selectedItemValueAttr]||trJsonData[table.selectedItemValueAttr.toUpperCase()];
+			if(typeof(value)=="undefined"){
+				value="";
+			}
+			var text  = trJsonData[table.selectedItemTextAttr]||trJsonData[table.selectedItemTextAttr.toUpperCase()];
+			if(typeof(text)=="undefined"){
+				LayerMsgBox.alert("data-selected-item-text-attr配置有误",2);
+				return;
+			}
+			if(typeof(table.selectedItemsIds)=="undefined"){
+				table.selectedItemsIds = [];
+			}
+			if(typeof(table.selectedItemsDatas)=="undefined"){
+				table.selectedItemsDatas = [];
+			}
+			var exist = isOk(table.selectedItemsBox.find(".item[data-id='"+value+"']"));
+			if(!exist){
+				if(table.selectedItemsIds.length==0){
+					table.selectedItemsIds.push(value);
+					table.selectedItemsDatas.push(trJsonData);
+					var html = juicer(table.selectedItemsTpl,{datas:[trJsonData]});
+					var item = $(html);
+					table.selectedItemsBox.append(item);
+					initToolTip(item);
+				}else{
+					if(!table.selectedItemsIds.includes(value)){
+						table.selectedItemsIds.push(value);
+						table.selectedItemsDatas.push(trJsonData);
+						var html = juicer(table.selectedItemsTpl,{datas:[trJsonData]});
+						var item = $(html);
+						table.selectedItemsBox.append(item);
+						initToolTip(item);
+					}
+				}
+			}
+			if(table.selectedItemsTotal){
+				table.selectedItemsTotal.text(table.selectedItemsIds.length);
+			}
+		},
+		//从itemsbox移除指定数据
+		removeFromSelectedItemsBox:function(table,id){
+			if(typeof(table.selectedItemsIds)=="undefined"){
+				table.selectedItemsIds = [];
+			}
+			if(typeof(table.selectedItemsDatas)=="undefined"){
+				table.selectedItemsDatas = [];
+			}
+			var item = table.selectedItemsBox.find(".item[data-id='"+id+"']");
+			var exist = isOk(item);
+			if(exist){
+				item.remove();
+			}
+			var removeIndex = JBoltArrayUtil.remove(table.selectedItemsIds,id);
+			if(removeIndex!=-1){
+				JBoltArrayUtil.removeByIndex(table.selectedItemsDatas,removeIndex,1);
+			}
+			if(table.selectedItemsTotal){
+				table.selectedItemsTotal.text(table.selectedItemsIds.length);
+			}
 		},
 		getCheckboxCheckedCount:function(table){
 			return table.tbody.find("tr>td>.jbolt_table_checkbox>input[type='checkbox'][name='jboltTableCheckbox']:checked").length;

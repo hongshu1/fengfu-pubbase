@@ -29,6 +29,9 @@
         #end
      #end
 #end
+#if(hasIsDeletedColumn)
+#set(cons = cons + ", Boolean isDeleted")
+#end
 	/**
 	 * 后台管理数据查询
 	 #if(codeGen.isPaginate)
@@ -51,6 +54,9 @@
      #end
      #end
      #end
+     #if(hasIsDeletedColumn)
+     * @param isDeleted 是否删除
+     #end
 	 * @return
 	 */
 	public #if(codeGen.isPaginate)Page#else List#end<#(codeGen.modelName)> getAdminDatas(#(cons??)) {
@@ -67,6 +73,9 @@
         sql.eq("#(con.colName)",#(con.attrName));
         #end
         #end
+        #end
+        #if(hasIsDeletedColumn)
+        sql.eqBooleanToChar("is_deleted", isDeleted);
         #end
         #if(keywordsSearchColumns!=null&&keywordsSearchColumns.size()>0)
         //关键词模糊查询

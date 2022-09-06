@@ -1,6 +1,7 @@
 package cn.jbolt.wechat.api;
 
 import cn.jbolt.core.api.*;
+import cn.jbolt.core.kit.JBoltHttpSchemeKit;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Ret;
@@ -30,8 +31,8 @@ public class JBoltWechatApiController extends JBoltApiBaseController {
 	 */
 	@UnCheckJBoltApi
 	public void authorize(@Para(value ="scope", defaultValue = "snsapi_userinfo") String scope) {
-		String redirect_uri = JBoltConfig.DOMAIN+"/api/wechat/authCallback?jboltappid="+JBoltApiKit.getAppId();
-		String wechatAppId  = JBoltApiKit.getWechatAppId();
+		String redirect_uri = JBoltHttpSchemeKit.getFull() + JBoltConfig.DOMAIN+"/api/wechat/authCallback?jboltappid="+JBoltApiKit.getAppId();
+		String wechatAppId  = JBoltApiKit.getWechatAppId() ;
 		String url          = JBoltWechatApi.use(wechatAppId).call(()->SnsAccessTokenApi.getAuthorizeURL(wechatAppId, redirect_uri, "snsapi_base".equalsIgnoreCase(scope)));
 		if(notOk(url)) {
 			renderH5PageFail("生成授权URL失败");
