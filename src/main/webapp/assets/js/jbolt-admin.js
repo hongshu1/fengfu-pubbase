@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.0.0";
+var jbolt_admin_js_version="6.0.1";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -7445,6 +7445,12 @@ var HtmlEditorUtil={
 				var optionsFunc = eval(optionsFuncName);
 				if(optionsFunc && typeof(optionsFunc)=="function"){
 					summernoteOptions = optionsFunc(htmlEditor);
+					if(summernoteOptions){
+						if(!summernoteOptions.lang){
+							summernoteOptions.lang="zh-CN";
+						}
+						summernoteOptions.dialogsInBody=true;
+					}
 				}
 			}
 			if(!summernoteOptions) {
