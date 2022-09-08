@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="5.9.9";
+var jbolt_admin_js_version="6.0.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -7439,106 +7439,119 @@ var HtmlEditorUtil={
 				// return false;
 			}
 			var emoji = htmlEditor.data("emoji");
-			var toolbarTheme = htmlEditor.data("toolbar")||"normal";
-			var toolbar=null;
-			if(toolbarTheme == "normal"){
-				var insertItems=['hr','table','link', 'picture','video'];
-				if(emoji){
-					insertItems.push("emoji");
+			var optionsFuncName = htmlEditor.data("options");
+			var summernoteOptions=null;
+			if(optionsFuncName){
+				var optionsFunc = eval(optionsFuncName);
+				if(optionsFunc && typeof(optionsFunc)=="function"){
+					summernoteOptions = optionsFunc(htmlEditor);
 				}
-				toolbar= [
-					['style', ['style']],
-					['font', ['bold', 'italic', 'underline', 'clear','strikethrough', 'superscript', 'subscript']],
-				    ['fontsize', ['fontsize']],
-				    ['color', ['color']],
-				    ['para', ['ul', 'ol', 'paragraph','height']],
-				    ['insert', insertItems],
-				    ['misc',['fullscreen','codeview','undo','redo','help']]
-				  ];
-			}else if(toolbarTheme=="simple"){
-				var insertItems = ['hr','picture'];
-				if(emoji){
-					insertItems.push("emoji");
-				}
-				toolbar= [
-					['font', ['bold', 'italic', 'underline', 'clear','strikethrough', 'superscript', 'subscript']],
-				    ['insert', insertItems],
-				    ['misc',['undo','redo','help']]
-				  ];
-			}else if(toolbarTheme=="none") {
-				if(emoji){
-					toolbar = [ ['insert', ['emoji']]];
-				}else{
-					toolbar = [];
-				}
+			}
+			if(!summernoteOptions) {
 
-			}
-			var width=htmlEditor.data("width");
-			var height=htmlEditor.data("height")||300;
-			var maxsize=htmlEditor.data("imgmaxsize")||htmlEditor.data("maxsize")||200;
-			var placeholder=htmlEditor.data("placeholder");
-			var summernoteOptions={lang:"zh-CN", 
-				dialogsInBody:true,
-				toolbar:toolbar, 
-				callbacks: {
-		          onImageUpload: function(files, editor, $editable) {
-		        	  if(that.ing){
-		        		     alert("有文件正在上传，请稍后~~");
-		        	  }else{
-		        		  that.ing=true;
-		        		  var len=files.length;
-		        		  var qiniuBucketSn = htmlEditor.data("bucket-sn");
-		        		  var uploadTo = htmlEditor.data("upload-to")||"local";
-		        		  if(uploadTo == "local"){
-		        			  for(var i=0;i<len;i++){
-		        				  if(files[i].size/1024>maxsize){
-		        					  that.ing=false; 
-		        					  LayerMsgBox.alert("图片文件不能大于"+maxsize+"k",2);
-		        					  return false;
-		        				  }
-		        				  that.sendSummernoteFile(htmlEditor,files[i]);
-		        			  }
-		        		  }else if(uploadTo == "qiniu"){
-		        			  that.sendSummernoteFileToQiniu(htmlEditor,files);
-		        		  }else{
-		        			  LayerMsgBox.alert("暂不支持上传"+uploadTo,2);
-		        		  }
-		            	  that.ing=false;
-		        	  }
-		                  
-		             
-		          },onChange: function(contents, $editable) {
-		        	  var hiddenInputId=htmlEditor.data("hidden-input")||htmlEditor.data("hiddeninput");
-		        	  if(hiddenInputId){
-		        		  var hidden=$("#"+hiddenInputId);
-		        		  if(hidden&&hidden.length>0){
-		        			  hidden.val(contents);
-		        		  }
-		        	  }
-		          },onPaste:function(e){
-		        	  if(that.ing){
-		        		  alert("有文件正在上传，请稍后~~");
-		        	  }else{
-		        		  that.parseWord(e,htmlEditor);
-		        		  that.parseIamge(e,htmlEditor);
-		        	  }
-		        	  
-		          }
-		      }};
-			if(placeholder){
-				summernoteOptions.placeholder=placeholder;
-			}
-			if(width){
-				if(isNaN(width)){
-					summernoteOptions.width=width;
-				}else{
-					summernoteOptions.width=width+"px";
+				var toolbarTheme = htmlEditor.data("toolbar") || "normal";
+				var toolbar = null;
+				if (toolbarTheme == "normal") {
+					var insertItems = ['hr', 'table', 'link', 'picture', 'video'];
+					if (emoji) {
+						insertItems.push("emoji");
+					}
+					toolbar = [
+						['style', ['style']],
+						['font', ['bold', 'italic', 'underline', 'clear', 'strikethrough', 'superscript', 'subscript']],
+						['fontsize', ['fontsize']],
+						['color', ['color']],
+						['para', ['ul', 'ol', 'paragraph', 'height']],
+						['insert', insertItems],
+						['misc', ['fullscreen', 'codeview', 'undo', 'redo', 'help']]
+					];
+				} else if (toolbarTheme == "simple") {
+					var insertItems = ['hr', 'picture'];
+					if (emoji) {
+						insertItems.push("emoji");
+					}
+					toolbar = [
+						['font', ['bold', 'italic', 'underline', 'clear', 'strikethrough', 'superscript', 'subscript']],
+						['insert', insertItems],
+						['misc', ['undo', 'redo', 'help']]
+					];
+				} else if (toolbarTheme == "none") {
+					if (emoji) {
+						toolbar = [['insert', ['emoji']]];
+					} else {
+						toolbar = [];
+					}
+
 				}
-			}
-			if(isNaN(height)){
-				summernoteOptions.height=height;
-			}else{
-				summernoteOptions.height=height+"px";
+				var width = htmlEditor.data("width");
+				var height = htmlEditor.data("height") || 300;
+				var maxsize = htmlEditor.data("imgmaxsize") || htmlEditor.data("maxsize") || 200;
+				var placeholder = htmlEditor.data("placeholder");
+				var summernoteOptions = {
+					lang: "zh-CN",
+					dialogsInBody: true,
+					toolbar: toolbar,
+					callbacks: {
+						onImageUpload: function (files, editor, $editable) {
+							if (that.ing) {
+								alert("有文件正在上传，请稍后~~");
+							} else {
+								that.ing = true;
+								var len = files.length;
+								var qiniuBucketSn = htmlEditor.data("bucket-sn");
+								var uploadTo = htmlEditor.data("upload-to") || "local";
+								if (uploadTo == "local") {
+									for (var i = 0; i < len; i++) {
+										if (files[i].size / 1024 > maxsize) {
+											that.ing = false;
+											LayerMsgBox.alert("图片文件不能大于" + maxsize + "k", 2);
+											return false;
+										}
+										that.sendSummernoteFile(htmlEditor, files[i]);
+									}
+								} else if (uploadTo == "qiniu") {
+									that.sendSummernoteFileToQiniu(htmlEditor, files);
+								} else {
+									LayerMsgBox.alert("暂不支持上传" + uploadTo, 2);
+								}
+								that.ing = false;
+							}
+
+
+						}, onChange: function (contents, $editable) {
+							var hiddenInputId = htmlEditor.data("hidden-input") || htmlEditor.data("hiddeninput");
+							if (hiddenInputId) {
+								var hidden = $("#" + hiddenInputId);
+								if (hidden && hidden.length > 0) {
+									hidden.val(contents);
+								}
+							}
+						}, onPaste: function (e) {
+							if (that.ing) {
+								alert("有文件正在上传，请稍后~~");
+							} else {
+								that.parseWord(e, htmlEditor);
+								that.parseIamge(e, htmlEditor);
+							}
+
+						}
+					}
+				};
+				if (placeholder) {
+					summernoteOptions.placeholder = placeholder;
+				}
+				if (width) {
+					if (isNaN(width)) {
+						summernoteOptions.width = width;
+					} else {
+						summernoteOptions.width = width + "px";
+					}
+				}
+				if (isNaN(height)) {
+					summernoteOptions.height = height;
+				} else {
+					summernoteOptions.height = height + "px";
+				}
 			}
 			var goit=function(){
 				htmlEditor.summernote(summernoteOptions);
