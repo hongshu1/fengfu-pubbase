@@ -53,6 +53,7 @@
 		<qiniu.version>7.9.3</qiniu.version>
 		<sentinel.version>1.8.3</sentinel.version>
 		<ttl.version>2.12.5</ttl.version>
+		<toolgood_words.version>3.0.3.1</toolgood_words.version>
 		<jboltcore.version>4.1.2</jboltcore.version>
 	</properties>
 
@@ -481,6 +482,14 @@
 		    <artifactId>transmittable-thread-local</artifactId>
 		    <version>${ttl.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>io.github.toolgood</groupId>
+			<artifactId>toolgood-words</artifactId>
+			<version>${toolgood_words.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
           <groupId>cn.jbolt</groupId>
           <artifactId>jbolt_core</artifactId>
