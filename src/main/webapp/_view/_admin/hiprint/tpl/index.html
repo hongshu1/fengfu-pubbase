@@ -80,7 +80,7 @@ function tableAjaxSuccessHandler_#(pageId)(table){
 	if(addLayerBtnId){
 		$(parent.g(addLayerBtnId)).hide();
 	}
-	setJboltTableCheckedId('#(selectedId?? 0)',table);
+	setJboltTableCheckedId(table,'#(selectedId?? 0)');
 }
 $(function(){
 });
