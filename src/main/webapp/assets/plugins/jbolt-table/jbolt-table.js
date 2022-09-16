@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.9.5";
+var jbolt_table_js_version="2.9.6";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -2628,12 +2628,12 @@ function getJboltTableCheckedId(tableId,dontShowError){
 }
 /**
  * checkbox|radio设置选中的id
+ * @param tableEle
  * @param id
- * @param tableId
  * @returns
  */
-function setJboltTableCheckedId(id,tableId){
-	return jboltTableSetCheckedId(id,tableId);
+function setJboltTableCheckedId(tableEle,id){
+	return jboltTableSetCheckedId(tableEle,id);
 }
 
 /**
