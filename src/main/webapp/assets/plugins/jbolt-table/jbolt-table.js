@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.9.6";
+var jbolt_table_js_version="2.9.7";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
