@@ -463,7 +463,7 @@ CREATE TABLE [dbo].[jb_global_config] (
   [config_key] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
   [config_value] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [create_time] datetime  NOT NULL,
-  [user_id] bigint  NOT NULL,
+  [user_id] bigint NULL,
   [update_time] datetime  NULL,
   [update_user_id] bigint  NULL,
   [name] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
