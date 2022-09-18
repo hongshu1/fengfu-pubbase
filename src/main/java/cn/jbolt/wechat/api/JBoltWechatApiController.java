@@ -85,13 +85,15 @@ public class JBoltWechatApiController extends JBoltApiBaseController {
 		//用户存在的话 设置到threadLocal中拦截器得 用
 		JBoltApiUser apiUser = JBoltApiKit.processBindUser(new JBoltApiUserBean(JBoltApiKit.getApplicationId(),wechatUser.getId(), wechatUser.getNickname()),wechatUser.getBindUser());
 		//创建JWT
-		String jwt = JBoltApiJwtManger.me().createJBoltApiToken(JBoltApiKit.getApplication(), apiUser, 7200000L);
-		if(notOk(jwt)){
+		String[] jwts = JBoltApiJwtManger.me().createJBoltApiTokens(JBoltApiKit.getApplication(), apiUser, 7200000L,604800000L);
+		if(notOk(jwts)){
 			renderH5PageFail("授权回调创建用户令牌失败");
 			return;
 		}
 		//将jwt放在响应里
-		set(JBoltApiJwtManger.JBOLT_API_TOKEN_KEY,jwt);
+		set(JBoltApiJwtManger.JBOLT_API_TOKEN_KEY,jwts[0]);
+		//将refreshjwt放在响应里
+		set(JBoltApiJwtManger.JBOLT_API_REFRESH_TOKEN_KEY,jwts[1]);
 		render("/_view/_test/wechat/authsuccess.html");
 	}
 
