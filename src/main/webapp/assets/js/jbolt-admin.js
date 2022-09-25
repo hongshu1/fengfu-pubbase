@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.0.1";
+var jbolt_admin_js_version="6.0.2";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -13317,6 +13317,10 @@ var DialogUtil={
 					 offset="auto";
 				 }
 			  }
+
+			  var closeBtn = action.data("top-closebtn");
+			  var okBtnText = action.data("ok-btn-text")||"确定";
+			  var closeBtnText = action.data("close-btn-text")||"关闭";
 			  var successHandler=action.data("success-handler");
 		      this.openNewDialog({
 		    	  ele:action,
@@ -13331,13 +13335,16 @@ var DialogUtil={
 		    	  btn:btn,
 		    	  btnAlign:btnAlign,
 		    	  handler:handler,
-		    	  closeHandler:closeHandler,
+				  closeBtn:closeBtn,
+				  closeHandler:closeHandler,
 		    	  cdrfp:cdrfp,
 		    	  fs:fs,
 		    	  successHandler:successHandler,
 		    	  portalId:portalId,
 		    	  contentId:contentid,
-		    	  content:content
+		    	  content:content,
+				  okBtnText:okBtnText,
+				  closeBtnText:closeBtnText
 		      });
 		  },openNewDialog:function(options){
 			  if(options.fs){
@@ -13359,14 +13366,18 @@ var DialogUtil={
 					  options.width="500px";
 				  }
 			  }
+			  var okBtnText=options.okBtnText||"确定";
+			  var closeBtnText=options.closeBtnText||"关闭";
 			  var btn=[];
 			  var dbtn=options.btn;
 			  if(!dbtn||dbtn=="yes"||dbtn=="true"){
-		    	  btn=["确定", '关闭'];
+		    	  btn=[okBtnText, closeBtnText];
 		      }else if(dbtn&&dbtn=="no"){
 		    	  btn=[];
 		      }else if(dbtn&&dbtn=="close"){
-		    	  btn=["确定", '关闭'];
+		    	  btn=[okBtnText, closeBtnText];
+			  }else if(dbtn&&dbtn=="ok"){
+				  btn=[okBtnText];
 		      }else if(dbtn&&dbtn.indexOf(",")!=-1){
 		    	  btn=dbtn.split(",");
 		      }
@@ -13417,6 +13428,13 @@ var DialogUtil={
 					  btnAlign='r';
 					  break;
 			}
+			  var closeBtnType = typeof(options.closeBtn);
+			  var closeBtn = 1;
+			  if(closeBtnType=="undefined"){
+				closeBtn = 1;
+			  }else{
+				  closeBtn = options.closeBtn;
+			  }
 			  var that=this;
 			  var layerOptions={
 					  type: type,
@@ -13424,6 +13442,7 @@ var DialogUtil={
 					  shadeClose:shadeClose,
 					  shade: shade,
 					  maxmin:true,
+				      closeBtn:closeBtn,
 					  offset:options.offset?options.offset:"auto",
 					  area: [options.width, options.height],
 					  content:content,
@@ -13499,11 +13518,14 @@ var DialogUtil={
 			  }
 			  var lindex=layer.open(layerOptions);
 			  var layObj=$("#layui-layer"+lindex);
-			  if(dbtn&&dbtn=="close"){
-				  layObj.find("a.layui-layer-btn0").hide();
-			  }
-			  if(dbtn&&dbtn=="no"){
-				  layObj.find(".layui-layer-btn").remove();
+			  if(dbtn){
+				  if(dbtn=="close"){
+					  layObj.find("a.layui-layer-btn0").hide();
+				  }else if(dbtn=="ok"){
+					  layObj.find("a.layui-layer-btn1").hide();
+				  }else if(dbtn=="no"){
+					  layObj.find(".layui-layer-btn").remove();
+				  }
 			  }
 			  
 //			  layObj.data("trigger-actionid",options.ele.attr("id"));
