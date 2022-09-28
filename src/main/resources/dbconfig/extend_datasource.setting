@@ -19,7 +19,7 @@ enable = false
 db_type = mysql
 db_name = jfinalxueyuan
 dev_mode = true
-jdbc_url = jdbc:mysql://127.0.0.1:3306/jfinalxueyuan?characterEncoding=utf8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull&databaseTerm=SCHEMA&nullDatabaseMeansCurrent=true&nullCatalogMeansCurrent=true&serverTimezone=Asia/Shanghai
+jdbc_url = jdbc:mysql://127.0.0.1:3306/jfinalxueyuan?characterEncoding=utf8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull&databaseTerm=SCHEMA&nullDatabaseMeansCurrent=true&nullCatalogMeansCurrent=true&useInformationSchema=true&serverTimezone=Asia/Shanghai
 user = root
 password = root
 is_encrypted = false
@@ -33,7 +33,7 @@ enable = false
 db_type = mysql
 db_name = meinvtu
 dev_mode = true
-jdbc_url = jdbc:mysql://127.0.0.1:3306/meinvtu?characterEncoding=utf8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull&databaseTerm=SCHEMA&nullDatabaseMeansCurrent=true&nullCatalogMeansCurrent=true&serverTimezone=Asia/Shanghai
+jdbc_url = jdbc:mysql://127.0.0.1:3306/meinvtu?characterEncoding=utf8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull&databaseTerm=SCHEMA&nullDatabaseMeansCurrent=true&nullCatalogMeansCurrent=true&useInformationSchema=true&serverTimezone=Asia/Shanghai
 user = root
 password = root
 is_encrypted = false
