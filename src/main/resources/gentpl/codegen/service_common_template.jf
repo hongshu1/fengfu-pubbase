@@ -69,6 +69,10 @@
         sql.eqBooleanToChar("#(con.colName)",#(con.attrName));
         #else if(con.searchUiType && con.searchUiType.startsWith("laydate_range_"))
         sql.betweenDateRange("#(con.colName)",#(con.attrName+"Range"));
+        #else if(con.searchUiType && con.searchUiType=="laydate_date")
+        sql.eqDate("#(con.colName)",#(con.attrName));
+        #else if(con.searchUiType && con.searchUiType=="laydate_datetime")
+        sql.eqDateTime("#(con.colName)",#(con.attrName));
         #else
         sql.eq("#(con.colName)",#(con.attrName));
         #end
