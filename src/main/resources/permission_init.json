@@ -155,6 +155,16 @@
 			"url": "admin/qiniu/bucket"
 			}
 		]
+	},{
+		"isMenu": true,
+		"isSystemAdminDefault": true,
+		"isTargetBlank": false,
+		"openType": 1,
+		"permissionKey": "sensitive_word",
+		"permissionLevel": 2,
+		"sortRank": 8,
+		"title": "敏感词词库",
+		"url": "admin/sensitiveword"
 	}],
 	"openType": 1,
 	"permissionKey": "systemmgr",

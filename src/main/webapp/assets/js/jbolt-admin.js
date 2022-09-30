@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.0.2";
+var jbolt_admin_js_version="6.0.3";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -11153,7 +11153,7 @@ var Ajax={
 							
 						}
 					},
-					error:function(){
+					error:function(xhr, status, e){
 						var responseJSON = xhr.responseJSON;
 						var defaultMsg = "网络通讯异常";
 						var msg;

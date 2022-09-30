@@ -169,5 +169,8 @@ public class PermissionKey {
 	 * Ureport报表查看权
 	 */
 	public static final String UREPORT_DETAIL = "ureport_detail";
-
+	/**
+	 * 敏感词词库
+	 */
+	public static final String SENSITIVE_WORD = "sensitive_word";
 }
