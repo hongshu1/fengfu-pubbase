@@ -83,12 +83,16 @@ public class SensitiveWordAdminController extends JBoltBaseController {
 
     @Before(Tx.class)
     public void toggleEnable(){
-        renderJson(service.toggleBoolean(getLong(0),"enable"));
+        renderJson(service.toggleBoolean(getInt(0),"enable"));
     }
 
     @Before(Tx.class)
     public void delete(){
-        renderJson(service.deleteById(getLong(0)));
+        renderJson(service.deleteById(getInt(0)));
     }
 
+    @Before(Tx.class)
+    public void deleteByIds(){
+        renderJson(service.deleteByIds(get("ids")));
+    }
 }
