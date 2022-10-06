@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.0.3";
+var jbolt_admin_js_version="6.0.4";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -12723,13 +12723,15 @@ var OpenPageBtnUtil ={
 						  var exeCheck_handler=eval(checkHandler);
 							if(exeCheck_handler&&typeof(exeCheck_handler)=="function"){
 								checkResult=exeCheck_handler(action);
-								if(!checkResult){
+								if(typeof(checkResult)=="boolean" && checkResult==false){
 									return false;
 								}
-								if(isArray(checkResult)){
-									orignUrl=orignUrl+checkResult.join(",");
-								}else{
-									orignUrl=orignUrl+checkResult;
+								if(typeof(checkResult)!="boolean") {
+									if(isArray(checkResult)) {
+										orignUrl = orignUrl + checkResult.join(",");
+									} else {
+										orignUrl = orignUrl + checkResult;
+									}
 								}
 								 if(this.hasAttribute("href")){
 									 action.attr("href",orignUrl);
