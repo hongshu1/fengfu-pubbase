@@ -7,6 +7,8 @@ import java.util.List;
 import cn.jbolt.common.enums.WechatAutoreplyReplyType;
 import cn.jbolt.common.enums.WechatAutoreplyType;
 import cn.jbolt.common.enums.WechatReplyContentType;
+import cn.jbolt.core.cache.JBoltWechatConfigCache;
+import cn.jbolt.core.cache.JBoltWechatMpinfoCache;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -502,10 +504,10 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 	private OutMsg getWechcatSubscribeOrDefaultOutMsg(String appId,int type, String openId) {
 		if(notOk(appId)||notOk(openId)) {return null;}
 		//根据APPID 得到具体配置项
-		WechatConfig appIdConfig=wechatConfigService.getAppIdConfig(appId);
+		WechatConfig appIdConfig= JBoltWechatConfigCache.me.getAppIdConfig(appId);
 		if(appIdConfig==null) {return null;}
 		//得到对应的是哪个公众平台
-		WechatMpinfo wechatMpinfo=wechatMpinfoService.findById(appIdConfig.getMpId());
+		WechatMpinfo wechatMpinfo= JBoltWechatMpinfoCache.me.get(appIdConfig.getMpId());
 		if(wechatMpinfo==null) {return null;}
 
 		//然后就可以拿到自定义回复的配置了

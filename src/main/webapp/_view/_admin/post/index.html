@@ -27,11 +27,7 @@
 <script type="text/template" id="postRowtpl_#(pageId)">
 {@each datas as data,index}
 <tr>
-{@if pageSize&&pageSize>0}
-<td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
-{@else}
-<td>${+index+1}</td>
-{@/if}
+<td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.name}</td>
 <td>${data.typeName}</td>
 <td>${data.sn}</td>

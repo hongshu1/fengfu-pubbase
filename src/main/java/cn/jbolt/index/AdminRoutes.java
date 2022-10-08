@@ -1,5 +1,6 @@
 package cn.jbolt.index;
 
+import cn.jbolt._admin.sensitiveword.SensitiveWordAdminController;
 import com.jfinal.config.Routes;
 
 import cn.jbolt._admin.dept.DeptAdminController;
@@ -69,6 +70,7 @@ public class AdminRoutes extends Routes {
 		this.add("/admin/todo", TodoAdminController.class,"/msgcenter/todo");
 		this.add("/admin/qiniu", QiniuAdminController.class,"/qiniu");
 		this.add("/admin/qiniu/bucket", QiniuBucketAdminController.class,"/qiniu/bucket");
+		this.add("/admin/sensitiveword", SensitiveWordAdminController.class,"/sensitiveword");
 		this.scan("cn.jbolt._admin");
 	}
 

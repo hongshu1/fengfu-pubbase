@@ -140,8 +140,10 @@ $(function(){
 	if(!tplContentJson){
 		tplContentJson = hiprintDesignerDefaultConfigPrintJson;
 	}else{
+		tplContentJson = tplContentJson.replace(/\n/g,"\\n").replace(/\r/g,"\\r");
 		tplContentJson = JSON.parse(tplContentJson);
 	}
+
 	hiprintTemplate_#(pageId) = new hiprint.PrintTemplate(
 			{
 				template:tplContentJson,
