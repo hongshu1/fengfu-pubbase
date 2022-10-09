@@ -9,7 +9,7 @@
 #if(codeGen.isPaginate)
     #set(cons = "getPageNumber(), getPageSize()")
 #end
-#if(keywordsSearchColumns)
+#if(hasIsKeywordsColumn)
     #if(cons!="")
         #set(cons = cons + ", getKeywords()")
     #else
@@ -276,7 +276,7 @@
 #if(codeGen.isPaginate)
     #set(cons = "getPageNumber(), getPageSize()")
 #end
-#if(keywordsSearchColumns)
+#if(hasIsKeywordsColumn)
     #if(cons!="")
         #set(cons = cons + ", getKeywords()")
     #else

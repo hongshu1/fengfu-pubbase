@@ -944,6 +944,8 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         data.set("conditions", codeGenModelAttrService.getCodeGenTableConditions(codeGen.getId()));
         boolean hasIsDeletedColumn = codeGenModelAttrService.checkHasIsDeletedColumn(codeGen.getId());
         data.set("hasIsDeletedColumn",hasIsDeletedColumn);
+        boolean hasIsKeywordsColumn = codeGenModelAttrService.checkHasIsKeywordsColumn(codeGen.getId());
+        data.set("hasIsKeywordsColumn",hasIsKeywordsColumn);
         //执行生成 返回内容
         return engine.getTemplate(indexhtmlTemplate).renderToString(data);
     }
@@ -1067,7 +1069,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         processHasDateTimeColumn(conditions, data);
         processHasDateTimeColumn(keywordsSearchColumns, data);
         data.set("conditions", conditions);
-        data.set("keywordsSearchColumns", keywordsSearchColumns);
+        data.set("hasIsKeywordsColumn",isOk(keywordsSearchColumns));
         data.set("permission", JBoltPermissionCache.me.get(codeGen.getPermissionId()));
         //执行生成 返回内容
         return engine.getTemplate(controllerTemplate).renderToString(data);
