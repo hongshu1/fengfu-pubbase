@@ -310,6 +310,9 @@
         #end
     #end
 #end
+#if(hasIsDeletedColumn)
+#set(cons = cons + ", getBoolean(\"isDeleted\",false)")
+#end
    /**
 	* 执行导出excel 根据查询form表单
 	*/
