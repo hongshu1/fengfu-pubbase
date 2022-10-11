@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.9.7";
+var jbolt_table_js_version="2.9.8";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -3912,6 +3912,22 @@ function getScrollBarHeight(ele){
 			}
 			return commonAttrData;
 		},
+		getSubmitRemoveAttrData:function(table){
+			var removeAttr=table.editableOptions.submit.removeAttr;
+			var type=typeof(removeAttr);
+			var removeAttrData=null;
+			if(type){
+				if(type=="function"){
+					remmoveAttrData=removeAttr();
+					if(typeof(removeAttrData)=="undefined" || !isOk(removeAttrData)){
+						removeAttrData=null;
+					}
+				}else{
+					removeAttrData=removeAttr;
+				}
+			}
+			return removeAttrData;
+		},
 		//数据里插入公共attr
 		processCommonAttrIntoData:function(datas,commonAttr){
 			var keys;
@@ -3924,6 +3940,18 @@ function getScrollBarHeight(ele){
 				}
 			});
 		},
+		//数据里插入公共attr
+		processRemoveDataAttr:function(datas,removeAttr){
+			var keys;
+			$.each(datas,function(i,data){
+				keys=Object.keys(removeAttr);
+				if(isOk(keys)){
+					$.each(keys,function(i,key){
+						delete data[key];
+					});
+				}
+			});
+		},
 		getSubmitData:function(table,returnJsonData){
 			var deleteIds=table.submit_delete_ids;
 			var updateData=this.getSubmitUpdateData(table);
@@ -3931,6 +3959,7 @@ function getScrollBarHeight(ele){
 			var formData=this.getSubmitFormData(table);
 			var paramsData=this.getSubmitParamsData(table);
 			var commonAttr=this.getSubmitCommonAttrData(table);
+
 			if(commonAttr){
 				//如果存在共享all attr的话 就挨个处理 save update
 				var all=commonAttr['all'];
@@ -3953,6 +3982,11 @@ function getScrollBarHeight(ele){
 				if(isOk(update)&&isOk(updateData)){
 					this.processCommonAttrIntoData(updateData,update);
 				}
+			}
+			var removeAttr=this.getSubmitRemoveAttrData(table);
+			if(removeAttr){
+				this.processRemoveDataAttr(saveData,removeAttr);
+				this.processRemoveDataAttr(updateData,removeAttr);
 			}
 			var postData={
 				"delete":deleteIds,
