@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.9.8";
+var jbolt_table_js_version="2.9.9";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -5483,7 +5483,7 @@ function getScrollBarHeight(ele){
 					str = str + "<td>${data." + ( col.valueAttr?col.valueAttr:StrUtil.camel(col.column) ) + "}</td>";
 				}
 			});
-			str+="<tr>"
+			str+="</tr>"
 			str+="{@/each}";
 			table.rowtplContent = str;
 		},
