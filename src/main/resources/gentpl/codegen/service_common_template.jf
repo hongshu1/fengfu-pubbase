@@ -22,10 +22,12 @@
         #set(cons = cons + ", ")
      #end
      #for(con:conditions)
+        #if(con.colName.toLowerCase() !=  "is_deleted")
         #if(con.searchUiType && con.searchUiType.startsWith("laydate_range_"))
             #set(cons = cons + "JBoltDateRange " + con.attrName +"Range" + (for.last?"":", "))
         #else
             #set(cons = cons + con.javaTypeName + " " + con.attrName + (for.last?"":", "))
+        #end
         #end
      #end
 #end
@@ -47,10 +49,12 @@
 	 #end
 	 #if(conditions!=null&&conditions.size()>0)
      #for(con:conditions)
+     #if(con.colName.toLowerCase() !=  "is_deleted")
      #if(con.searchUiType && con.searchUiType.startsWith("laydate_range_"))
      * @param #(con.attrName??)Range #(con.tableLabel?? (con.formLabel?? (con.remark??))) 区间
      #else
      * @param #(con.attrName??) #(con.tableLabel?? (con.formLabel?? (con.remark??)))
+     #end
      #end
      #end
      #end
@@ -65,6 +69,7 @@
 	    #if(conditions!=null&&conditions.size()>0)
 	    //sql条件处理
         #for(con:conditions)
+        #if(con.colName.toLowerCase() !=  "is_deleted")
         #if(con.javaType=="java.lang.Boolean" && con.attrLength==1)
         sql.eqBooleanToChar("#(con.colName)",#(con.attrName));
         #else if(con.searchUiType && con.searchUiType.startsWith("laydate_range_"))
@@ -75,6 +80,7 @@
         sql.eqDateTime("#(con.colName)",#(con.attrName));
         #else
         sql.eq("#(con.colName)",#(con.attrName));
+        #end
         #end
         #end
         #end

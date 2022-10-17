@@ -1212,6 +1212,16 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	}
 
 	/**
+	 * 检测是否存在is_keywords_column字段
+	 * @param codeGenId
+	 * @return
+	 */
+	public boolean checkHasIsKeywordsColumn(Long codeGenId) {
+		return exists(selectSql().eq("code_gen_id",codeGenId).eq("is_keywords_column",TRUE));
+	}
+
+
+	/**
 	 * 提交表格列配置 更新
 	 * @param attr
 	 * @return

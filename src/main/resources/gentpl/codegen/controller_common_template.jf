@@ -9,7 +9,7 @@
 #if(codeGen.isPaginate)
     #set(cons = "getPageNumber(), getPageSize()")
 #end
-#if(keywordsSearchColumns)
+#if(hasIsKeywordsColumn)
     #if(cons!="")
         #set(cons = cons + ", getKeywords()")
     #else
@@ -36,10 +36,12 @@
         #set(cons = cons + ", ")
     #end
     #for(con:conditions)
+        #if(con.colName.toLowerCase() !=  "is_deleted")
         #if(con.searchUiType && con.searchUiType.startsWith("laydate_range_"))
         #set(cons = cons + "getDateRange"+ "(\""+con.attrName+"\","+con.searchUIDateRangeType+")"+ (for.last?"":", "))
         #else
         #set(cons = cons + "get"+con.javaTypeNameForGetPara + "(\""+con.attrName+"\")"+ (for.last?"":", "))
+        #end
         #end
     #end
 #end
@@ -274,7 +276,7 @@
 #if(codeGen.isPaginate)
     #set(cons = "getPageNumber(), getPageSize()")
 #end
-#if(keywordsSearchColumns)
+#if(hasIsKeywordsColumn)
     #if(cons!="")
         #set(cons = cons + ", getKeywords()")
     #else
@@ -307,6 +309,9 @@
         #set(cons = cons + "get"+con.javaTypeNameForGetPara + "(\""+con.attrName+"\")"+ (for.last?"":", "))
         #end
     #end
+#end
+#if(hasIsDeletedColumn)
+#set(cons = cons + ", getBoolean(\"isDeleted\",false)")
 #end
    /**
 	* 执行导出excel 根据查询form表单

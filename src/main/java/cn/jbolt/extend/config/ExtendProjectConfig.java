@@ -45,10 +45,19 @@ public class ExtendProjectConfig {
 	 */
 	public static void configPlugin(Plugins me, Cron4jPlugin cron4jPlugin) {
 		LOG.debug("调用二开扩展配置:configPlugin");
+		//事务配置
+		configTx();
 		//如果需要二开 增加自己的自动调度任务
 		configCron4jPlugin(me,cron4jPlugin);
 	}
-	
+
+	/**
+	 * 事务相关自定义配置txFun等
+	 */
+	private static void configTx() {
+		LOG.debug("调用二开扩展配置:configTx");
+	}
+
 	/**
 	 * 配置自动调度插件
 	 * @param me

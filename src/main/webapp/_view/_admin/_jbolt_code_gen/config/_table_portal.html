@@ -13,9 +13,13 @@
 	<div class="col">
 	#if(!codeGen.isTableMultiConditionsMode)
 	<form class="form-inline" id="#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
+		#if(hasIsKeywordsColumn)
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="#(keywords)" />
+		#end
 		#if(conditions!=null&&conditions.size()>0)
 		#for(col:conditions)
 		#@switchIndexColType?(col)
+		#end
 		#end
 		#if(hasIsDeletedColumn)
 		<input type="hidden" name="isDeleted" value="false"/>
@@ -23,7 +27,6 @@
 		<button onclick="#(codeGen.modelName)_formSearch#if(codeGenServiceMode??)_#[[#]]#(pageId)#end('#(codeGen.modelName)_form#if(codeGenServiceMode??)_#[[#]]#(pageId)#end',true)"  id="form_trashBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  type="button" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 回收站</button>
 		#else
 		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-		#end
 		#end
 	</form>
 	#end
@@ -153,6 +156,16 @@
 	<div class="row">
 		<div class="col">
 			<div class="row jbolt_headbox_conditions">
+				#if(hasIsKeywordsColumn)
+				<div class="col-auto">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<span class="input-group-text">关键词</span>
+					</div>
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="#(keywords)" />
+				</div>
+				</div>
+				#end
 				#if(conditions!=null&&conditions.size()>0)
 				#for(col:conditions)
 				<div class="col-auto">
