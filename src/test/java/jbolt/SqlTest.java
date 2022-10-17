@@ -57,6 +57,10 @@ public class SqlTest{
 		sql = Sql.mysql().delete().from("jb_user").in("username", var);
 		System.out.println(sql);
 		assertTrue(sql.toString().contains(SAFE_VAR));
+
+		sql=Sql.sqlserver().instr("name","222,333,444",false);
+		System.out.println(sql);
+		assertTrue(sql.toString().contains("charindex"));
 	}
 
 }

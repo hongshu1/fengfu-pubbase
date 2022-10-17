@@ -5634,7 +5634,7 @@ CREATE TABLE [dbo].[jb_code_gen_model_attr] (
     [table_data_value_attr] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
     [table_data_column_attr] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
     [is_need_translate] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
-    [translate_type] nvarchar(20) COLLATE Chinese_PRC_CI_AS  NULL,
+    [translate_type] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
     [translate_use_value] nvarchar(250) COLLATE Chinese_PRC_CI_AS  NULL,
     [translate_col_name] nvarchar(250) COLLATE Chinese_PRC_CI_AS  NULL,
     [is_upload_to_qiniu] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
