@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.0.4";
+var jbolt_admin_js_version="6.0.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -14082,10 +14082,10 @@ function checkIdCardNo(card){
 		  return;
 	  }
 	  if(isRequired){
-		  formControl.data("notnull",true).attr("notnull",true);
+		  formControl.data("notnull",true).attr("data-notnull",true);
 		  requiredAndStarIt(formControl);
 	  }else{
-		  formControl.data("notnull",false).attr("notnull",false);
+		  formControl.data("notnull",false).attr("data-notnull",false);
 		  removeRequiredAndStar(formControl);
 	  }
 	  removeFormEleAllStyle(formControl);
@@ -19768,12 +19768,30 @@ function findRequiredAndStarIt(parentEle){
  */
 function requiredAndStarIt(input){
 	var pgroup,mlabels,mlabel,inputp,prevL;
+	var rule = input.data("rule");
+
 	if(input[0].hasAttribute("data-checkbox")){
 		mlabel=input.find("label:first");
 		if(mlabel.parent().hasClass("checkbox")==false && !mlabel.hasClass("is_required")){
 			mlabel.addClass("is_required");
 		}
+		if(!rule){
+			input.data("rule","checkbox").attr("data-rule","checkbox");
+		}
 	}else{
+		if(input[0].hasAttribute("data-radio")){
+			if(!rule){
+				input.data("rule","radio").attr("data-rule","radio");
+			}
+		}else if(input[0].hasAttribute("data-autoload")){
+			if(!rule){
+				input.data("rule","select").attr("data-rule","select");
+			}
+		}else{
+			if(!rule){
+				input.data("rule","required").attr("data-rule","required");
+			}
+		}
 		pgroup=input.closest(".form-group");
 		if(isOk(pgroup)){
 			mlabels=pgroup.find("label");
