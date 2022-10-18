@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.0.5";
+var jbolt_admin_js_version="6.0.6";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -12102,9 +12102,32 @@ function syncOtherInput(value,inputEle){
 	      			that.processOneSelectByOptions(_thisSelect,setting);
 	      		}else{
 	      			var selectedValue=_thisSelect.data("select");
-	      			if(selectedValue){
-	      				_thisSelect.val(selectedValue);
-	      			}
+					if(typeof(selectedValue)!="undefined"){
+						_thisSelect.val(selectedValue).change();
+					}else{
+						var defaultValue = _thisSelect.data("default");
+						if(typeof(defaultValue)!="undefined"){
+							if(defaultValue == "options_first"){
+								_thisSelect[0].selectedIndex=1;
+								_thisSelect.change();
+							}else if(defaultValue == "options_last"){
+								var optionsSize = _thisSelect[0].options.length;
+								if(optionsSize>0){
+									_thisSelect[0].selectedIndex = optionsSize;
+									_thisSelect.change();
+								}
+							}else if(defaultValue.toString().startWith("options_")){
+								defaultValue = defaultValue.toString().replace("options_","");
+								if(!isNaN(defaultValue)){
+									_thisSelect[0].selectedIndex=parseInt(defaultValue);
+									_thisSelect.change();
+								}
+							}else{
+								_thisSelect.val(defaultValue).change();
+							}
+						}
+					}
+
 	      		}
 		    },
 		    /**
