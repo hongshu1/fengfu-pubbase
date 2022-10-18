@@ -1120,6 +1120,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         processHasDateTimeColumn(keywordsSearchColumns, data);
         data.set("conditions", conditions);
         data.set("keywordsSearchColumns", keywordsSearchColumns);
+        data.set("hasIsKeywordsColumn",isOk(keywordsSearchColumns));
         String primaryKey = codeGen.getMainTablePkey();
         if (primaryKey.contains(",")) {
             data.set("getIdMethodName", "getId");

@@ -3,7 +3,7 @@
 #if(codeGen.isPaginate)
     #set(cons = "int pageNumber, int pageSize")
 #end
-#if(keywordsSearchColumns)
+#if(hasIsKeywordsColumn)
     #if(cons!="")
         #set(cons = cons + ", String keywords")
     #else
@@ -40,7 +40,7 @@
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
      #end
-	 #if(keywordsSearchColumns)
+	 #if(hasIsKeywordsColumn)
 	 * @param keywords   关键词
 	 #end
 	 #if(sortableColumns)
@@ -87,7 +87,7 @@
         #if(hasIsDeletedColumn)
         sql.eqBooleanToChar("is_deleted", isDeleted);
         #end
-        #if(keywordsSearchColumns!=null&&keywordsSearchColumns.size()>0)
+        #if(hasIsKeywordsColumn)
         //关键词模糊查询
         #if(keywordsSearchColumns.size()>1)
         #set(likes = "")
