@@ -54,6 +54,7 @@
 		<sentinel.version>1.8.3</sentinel.version>
 		<ttl.version>2.12.5</ttl.version>
 		<toolgood_words.version>3.0.3.1</toolgood_words.version>
+		<codehighlight.version>1.0.3</codehighlight.version>
 		<jboltcore.version>4.1.2</jboltcore.version>
 	</properties>
 
@@ -106,7 +107,12 @@
 			<artifactId>jsoup</artifactId>
 			<version>${jsoup.version}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.deepoove</groupId>
+			<artifactId>codehighlight</artifactId>
+			<version>${codehighlight.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 		  <groupId>com.vdurmont</groupId>
 		  <artifactId>emoji-java</artifactId>
