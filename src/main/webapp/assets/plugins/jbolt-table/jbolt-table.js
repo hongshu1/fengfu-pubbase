@@ -1,4 +1,4 @@
-var jbolt_table_js_version="2.9.9";
+var jbolt_table_js_version="3.0.0";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -11530,7 +11530,7 @@ function getScrollBarHeight(ele){
 						thWidth=parseInt(styleWidth);
 					}
 					th.data("width",thWidth).attr("data-width",thWidth);
-					if(thWidth="auto"&&this.hasAttribute("data-col-index")&&!this.hasAttribute("data-min-width")){
+					if(thWidth=="auto"&&this.hasAttribute("data-col-index")&&!this.hasAttribute("data-min-width")){
 						th.data("min-width","100").attr("data-min-width","100");
 					}
 				}else if(typeof(thWidth)=="number"&&this.hasAttribute("data-col-index")){

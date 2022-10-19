@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.0.6";
+var jbolt_admin_js_version="6.0.8";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -258,26 +258,20 @@ if(!String.prototype.startWith||!String.prototype.endWith){
 	 * 构造startWith方法
 	 */
 	String.prototype.startWith = function(s) {
-		if (s == null || s == "" || this.length == 0 || s.length > this.length)
+		if (s == null || s == "" || this.length == 0 || s.length > this.length){
 			return false;
-		if (this.substr(0, s.length) == s)
-			return true;
-		else
-			return false;
-		return true;
+		}
+		return this.substring(0, s.length) == s;
 	};
 	
 	/**
 	 * 构造endWith方法
 	 */
 	String.prototype.endWith = function(s) {
-		if (s == null || s == "" || this.length == 0 || s.length > this.length)
+		if (s == null || s == "" || this.length == 0 || s.length > this.length){
 			return false;
-		if (this.substring(this.length - s.length) == s)
-			return true;
-		else
-			return false;
-		return true;
+		}
+		return this.substring(this.length - s.length) == s;
 	}
 }
 
@@ -986,7 +980,7 @@ var JBoltInputUtil={
 			var readonly=input.data("readonly");
 			var filterHandler=input.data("filter-handler");
 			var canInput=true;
-			if(!filterHandler&&(readonly==undefined||(typeof(readonly)=="boolean"&&readonly==true))){
+			if(!filterHandler&&(typeof(readonly)=="undefined"||(typeof(readonly)=="boolean"&&readonly===true))){
 				input.attr("readonly","readonly");
 				canInput=false;
 			}
@@ -1970,7 +1964,11 @@ var DownloadUtil={
 			
 			var checkHandler =btn.data("check-handler");
 			//检测是否需要检查主表选择数据
-			var needCheckMaster = (btn.data("check-master")||false) || (checkHandler && checkHandler=="checkMasterTableId");
+			var checkMaster = btn.data("check-master");
+			if(typeof(checkMaster)=="undefined"){
+				checkMaster = false;
+			}
+			var needCheckMaster = (checkMaster || (checkHandler && checkHandler=="checkMasterTableId"));
 			if(needCheckMaster){
 				var masterId = btn.data("master-id");
 				if(!masterId){
@@ -4360,7 +4358,7 @@ var JBoltLayerUtil={
 				var portal=form.closest("[data-ajaxportal]");
 				if(isOk(portal)){
 					var needcheck=form.data("needcheck");
-					if(needcheck!=undefined&&needcheck!=null&&needcheck==true){
+					if(typeof(needcheck)=="boolean"&&needcheck===true){
 						 if(FormChecker.check(form)){
 							 formSubmitToAjaxPortal(form,portal);
 						   }
@@ -4498,12 +4496,12 @@ var JBoltLayerUtil={
 			if(!url){
 				return false;
 			}
-			var keepOpen=false;
+			var keepOpen=trigger.data("keep-open");
+			if(typeof(keepOpen)!="boolean"){
+				keepOpen = false;
+			}
 			var existLayer=jboltBody.find("#jbolt_layer");
-			if(existLayer&&existLayer.length==1){
-				if(trigger[0].hasAttribute("data-keep-open")&&trigger.data("keep-open")){
-					keepOpen=true;
-				}
+			if(isOk(existLayer)){
 				if(keepOpen==false){
 					existLayer.remove();
 				}
@@ -5458,13 +5456,13 @@ var JBoltTabUtil={
 							//如果没有规定不能改变 就改一下
 							var likeNavs=jboltAdminLeftNavs.find("a[href]");
 							if(isOk(likeNavs)){
-								var cunav,cuhref,cutext,maxlen,maxtext;
+								var cunav,cuhref,cutext,maxlen;
 								likeNavs.each(function(){
 									cunav=$(this);
 									cuhref=cunav.attr("href");
 									cutext=$.trim(cunav.text().replace("├",""));
 									if(url.indexOf(cuhref)!=-1){
-										if((!maxlen||!maxtext)||cuhref.length>maxlen){
+										if(!maxlen||cuhref.length>maxlen){
 											tabTitle=cutext;
 											maxlen=cuhref.length;
 											openType=cunav.data("open-type");
@@ -13077,7 +13075,7 @@ var FormDate={
 					 },
 					 done: function(value, date, endDate){
 						 if(doneHandler){
-							 if(typeof(doneHandler)&&doneHandler=="checkme"){
+							 if(typeof(doneHandler)=="string"&&doneHandler=="checkme"){
 								 FormChecker.checkIt(dateEle);
 							 }else{
 								 var done_handler=eval(doneHandler);
