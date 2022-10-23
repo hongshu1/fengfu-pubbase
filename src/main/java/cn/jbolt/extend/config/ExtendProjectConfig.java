@@ -65,10 +65,13 @@ public class ExtendProjectConfig {
 	 */
 	private static void configCron4jPlugin(Plugins me,Cron4jPlugin cron4jPlugin) {
 		LOG.debug("调用二开扩展配置:configCron4jPlugin");
-		//可以直接在 cron4jPlugin 中addTask 也可以自己添加新的cron4jPlugin
-//	    Cron4jPlugin cron4jPlugin = new Cron4jPlugin();
-//	    cron4jPlugin.addTask("0-59/1 * * * *", new WechatMediaDownloaTask());
-//	    me.add(cron4jPlugin);
+		//可以直接在 cron4jPlugin 中addTask
+//		cron4jPlugin.addTask("0-59/1 * * * *", new WechatMediaDownloaTask());
+
+		//也可以自己添加新的cron4jPlugin
+//	    Cron4jPlugin cron4jPlugin2 = new Cron4jPlugin();
+//	    cron4jPlugin2.addTask("0-59/1 * * * *", new WechatMediaDownloaTask());
+//	    me.add(cron4jPlugin2);
 	}
 	
 	/**
