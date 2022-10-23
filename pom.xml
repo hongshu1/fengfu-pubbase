@@ -31,7 +31,7 @@
 		<caffeine.version>2.9.3</caffeine.version>
 		<jedis.version>3.8.0</jedis.version>
 		<fst.version>2.57</fst.version>
-		<hutool.version>5.8.8</hutool.version>
+		<hutool.version>5.8.9</hutool.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<log4j2.version>2.18.0</log4j2.version>
 		<jfinalundertow.version>3.3</jfinalundertow.version>
