@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.0.8";
+var jbolt_admin_js_version="6.0.9";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -4496,12 +4496,12 @@ var JBoltLayerUtil={
 			if(!url){
 				return false;
 			}
-			var keepOpen=trigger.data("keep-open");
-			if(typeof(keepOpen)!="boolean"){
-				keepOpen = false;
-			}
+			var keepOpen=false;
 			var existLayer=jboltBody.find("#jbolt_layer");
 			if(isOk(existLayer)){
+				if(trigger[0].hasAttribute("data-keep-open")&&trigger.data("keep-open")){
+					keepOpen=true;
+				}
 				if(keepOpen==false){
 					existLayer.remove();
 				}
