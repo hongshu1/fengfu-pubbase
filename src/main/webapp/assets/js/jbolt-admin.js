@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.0.4";
+var jbolt_admin_js_version="6.0.9";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -258,26 +258,20 @@ if(!String.prototype.startWith||!String.prototype.endWith){
 	 * 构造startWith方法
 	 */
 	String.prototype.startWith = function(s) {
-		if (s == null || s == "" || this.length == 0 || s.length > this.length)
+		if (s == null || s == "" || this.length == 0 || s.length > this.length){
 			return false;
-		if (this.substr(0, s.length) == s)
-			return true;
-		else
-			return false;
-		return true;
+		}
+		return this.substring(0, s.length) == s;
 	};
 	
 	/**
 	 * 构造endWith方法
 	 */
 	String.prototype.endWith = function(s) {
-		if (s == null || s == "" || this.length == 0 || s.length > this.length)
+		if (s == null || s == "" || this.length == 0 || s.length > this.length){
 			return false;
-		if (this.substring(this.length - s.length) == s)
-			return true;
-		else
-			return false;
-		return true;
+		}
+		return this.substring(this.length - s.length) == s;
 	}
 }
 
@@ -986,7 +980,7 @@ var JBoltInputUtil={
 			var readonly=input.data("readonly");
 			var filterHandler=input.data("filter-handler");
 			var canInput=true;
-			if(!filterHandler&&(readonly==undefined||(typeof(readonly)=="boolean"&&readonly==true))){
+			if(!filterHandler&&(typeof(readonly)=="undefined"||(typeof(readonly)=="boolean"&&readonly===true))){
 				input.attr("readonly","readonly");
 				canInput=false;
 			}
@@ -1970,7 +1964,11 @@ var DownloadUtil={
 			
 			var checkHandler =btn.data("check-handler");
 			//检测是否需要检查主表选择数据
-			var needCheckMaster = (btn.data("check-master")||false) || (checkHandler && checkHandler=="checkMasterTableId");
+			var checkMaster = btn.data("check-master");
+			if(typeof(checkMaster)=="undefined"){
+				checkMaster = false;
+			}
+			var needCheckMaster = (checkMaster || (checkHandler && checkHandler=="checkMasterTableId"));
 			if(needCheckMaster){
 				var masterId = btn.data("master-id");
 				if(!masterId){
@@ -4360,7 +4358,7 @@ var JBoltLayerUtil={
 				var portal=form.closest("[data-ajaxportal]");
 				if(isOk(portal)){
 					var needcheck=form.data("needcheck");
-					if(needcheck!=undefined&&needcheck!=null&&needcheck==true){
+					if(typeof(needcheck)=="boolean"&&needcheck===true){
 						 if(FormChecker.check(form)){
 							 formSubmitToAjaxPortal(form,portal);
 						   }
@@ -4500,7 +4498,7 @@ var JBoltLayerUtil={
 			}
 			var keepOpen=false;
 			var existLayer=jboltBody.find("#jbolt_layer");
-			if(existLayer&&existLayer.length==1){
+			if(isOk(existLayer)){
 				if(trigger[0].hasAttribute("data-keep-open")&&trigger.data("keep-open")){
 					keepOpen=true;
 				}
@@ -5458,13 +5456,13 @@ var JBoltTabUtil={
 							//如果没有规定不能改变 就改一下
 							var likeNavs=jboltAdminLeftNavs.find("a[href]");
 							if(isOk(likeNavs)){
-								var cunav,cuhref,cutext,maxlen,maxtext;
+								var cunav,cuhref,cutext,maxlen;
 								likeNavs.each(function(){
 									cunav=$(this);
 									cuhref=cunav.attr("href");
 									cutext=$.trim(cunav.text().replace("├",""));
 									if(url.indexOf(cuhref)!=-1){
-										if((!maxlen||!maxtext)||cuhref.length>maxlen){
+										if(!maxlen||cuhref.length>maxlen){
 											tabTitle=cutext;
 											maxlen=cuhref.length;
 											openType=cunav.data("open-type");
@@ -12102,9 +12100,32 @@ function syncOtherInput(value,inputEle){
 	      			that.processOneSelectByOptions(_thisSelect,setting);
 	      		}else{
 	      			var selectedValue=_thisSelect.data("select");
-	      			if(selectedValue){
-	      				_thisSelect.val(selectedValue);
-	      			}
+					if(typeof(selectedValue)!="undefined"){
+						_thisSelect.val(selectedValue).change();
+					}else{
+						var defaultValue = _thisSelect.data("default");
+						if(typeof(defaultValue)!="undefined"){
+							if(defaultValue == "options_first"){
+								_thisSelect[0].selectedIndex=1;
+								_thisSelect.change();
+							}else if(defaultValue == "options_last"){
+								var optionsSize = _thisSelect[0].options.length;
+								if(optionsSize>0){
+									_thisSelect[0].selectedIndex = optionsSize;
+									_thisSelect.change();
+								}
+							}else if(defaultValue.toString().startWith("options_")){
+								defaultValue = defaultValue.toString().replace("options_","");
+								if(!isNaN(defaultValue)){
+									_thisSelect[0].selectedIndex=parseInt(defaultValue);
+									_thisSelect.change();
+								}
+							}else{
+								_thisSelect.val(defaultValue).change();
+							}
+						}
+					}
+
 	      		}
 		    },
 		    /**
@@ -13054,7 +13075,7 @@ var FormDate={
 					 },
 					 done: function(value, date, endDate){
 						 if(doneHandler){
-							 if(typeof(doneHandler)&&doneHandler=="checkme"){
+							 if(typeof(doneHandler)=="string"&&doneHandler=="checkme"){
 								 FormChecker.checkIt(dateEle);
 							 }else{
 								 var done_handler=eval(doneHandler);
@@ -14082,10 +14103,10 @@ function checkIdCardNo(card){
 		  return;
 	  }
 	  if(isRequired){
-		  formControl.data("notnull",true).attr("notnull",true);
+		  formControl.data("notnull",true).attr("data-notnull",true);
 		  requiredAndStarIt(formControl);
 	  }else{
-		  formControl.data("notnull",false).attr("notnull",false);
+		  formControl.data("notnull",false).attr("data-notnull",false);
 		  removeRequiredAndStar(formControl);
 	  }
 	  removeFormEleAllStyle(formControl);
@@ -19768,12 +19789,30 @@ function findRequiredAndStarIt(parentEle){
  */
 function requiredAndStarIt(input){
 	var pgroup,mlabels,mlabel,inputp,prevL;
+	var rule = input.data("rule");
+
 	if(input[0].hasAttribute("data-checkbox")){
 		mlabel=input.find("label:first");
 		if(mlabel.parent().hasClass("checkbox")==false && !mlabel.hasClass("is_required")){
 			mlabel.addClass("is_required");
 		}
+		if(!rule){
+			input.data("rule","checkbox").attr("data-rule","checkbox");
+		}
 	}else{
+		if(input[0].hasAttribute("data-radio")){
+			if(!rule){
+				input.data("rule","radio").attr("data-rule","radio");
+			}
+		}else if(input[0].hasAttribute("data-autoload")){
+			if(!rule){
+				input.data("rule","select").attr("data-rule","select");
+			}
+		}else{
+			if(!rule){
+				input.data("rule","required").attr("data-rule","required");
+			}
+		}
 		pgroup=input.closest(".form-group");
 		if(isOk(pgroup)){
 			mlabels=pgroup.find("label");
