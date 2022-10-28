@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.0.9";
+var jbolt_admin_js_version="6.1.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -16522,9 +16522,10 @@ function checkExistLayerDialogBtn(btnBox,title,cssClass){
  * @param title
  * @param cssClass
  * @param clickFunc
+ * @param prependLeft 是否插入到ok btn的左边 默认false
  * @returns
  */
-function addParentLayerDialogBtn(title,cssClass,clickFunc){
+function addParentLayerDialogBtn(title,cssClass,clickFunc,prependLeft){
 	var btnBox = parent.$(".layui-layer:last .layui-layer-btn");
 	if(notOk(btnBox)){
 		return false;
@@ -16536,9 +16537,9 @@ function addParentLayerDialogBtn(title,cssClass,clickFunc){
 	}
 	btnId="lay_btn_"+randomId();
 	var btn="<a tabindex='-1' id='"+btnId+"' class='"+cssClass+"'>"+title+"</a>";
-	var closeBtn = btnBox.find("a.layui-layer-btn1");
-	if(isOk(closeBtn)){
-		closeBtn.before(btn);
+	var afterBtn = btnBox.find("a.layui-layer-btn"+(prependLeft?"0":"1"));
+	if(isOk(afterBtn)){
+		afterBtn.before(btn);
 	}else{
 		btnBox.append(btn);
 	}
