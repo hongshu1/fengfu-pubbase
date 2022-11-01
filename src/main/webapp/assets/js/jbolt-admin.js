@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.1.0";
+var jbolt_admin_js_version="6.1.1";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -1834,7 +1834,7 @@ function ajaxParseFile(xhr,url,status,ele,handler,fileName){
 			});
 			var downloadUrl=window.URL.createObjectURL(fileBolb);
 			var alink=document.createElement("a");
-			alink.download=downloadFileName;
+			alink.download=downloadFileName.replace(new RegExp('"', 'g'), '');
 			alink.href=downloadUrl;
 			alink.click();
 			if(window.URL.revokeObjectUrl){
@@ -2226,7 +2226,7 @@ var DownloadUtil={
 					});
 					var downloadUrl=window.URL.createObjectURL(fileBolb);
 					var alink=document.createElement("a");
-					alink.download=downloadFileName;
+					alink.download=downloadFileName.replace(new RegExp('"', 'g'), '');
 					alink.href=downloadUrl;
 					alink.click();
 					if(window.URL.revokeObjectUrl){
