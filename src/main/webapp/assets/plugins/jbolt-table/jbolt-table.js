@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.0.1";
+var jbolt_table_js_version="3.0.2";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -8,6 +8,22 @@ function changeJBoltCurrentEditableAndKeyEventTable(table){
 	JBoltCurrentEditableAndKeyEventTable=table;
 }
 
+/**
+ * 获取指定行的json数据
+ * @param tableEle
+ * @param rowOrIndex
+ * @returns {null|*}
+ */
+function jboltTableGetRowJsonData(tableEle,rowOrIndex){
+	var table=getJBoltTableInst(tableEle);
+	if(!isOk(table)){
+		if(!dontShowError){
+			LayerMsgBox.alert("表格配置异常，无法找到对应表格",2);
+		}
+		return null;
+	}
+	return table.me.getRowJsonData(table,rowOrIndex);
+}
 /**
  * 移除表格的指定id 的keep selected item
  * @param tableEle
@@ -6752,16 +6768,7 @@ function getScrollBarHeight(ele){
 			that.processUnCheckTheadCheckbox(table);
 			//初始化处理tbody中的横向Summarys
 			that.initEditableTbodyHSummarys(table);
-			if(table.editable){
-				//处理tbody中的横向summarys计算
-				if(table.editableOptions.hsummaryFirstByAutoCalc){
-					that.processTbodyHSummarys(table);
-				}
-				//处理tfoot summary
-				if(table.editableOptions.vsummaryFirstByAutoCalc){
-					that.processTfootSummarys(table);
-				}
-			}
+
 			//处理额外数据
 			that.processExtraData(table);
 			//处理ajax加载数据后重新刷新绑定必要组件自动化
@@ -6772,7 +6779,18 @@ function getScrollBarHeight(ele){
 			// 	setTimeout(function(){
 			// 	},100);
 			// }
-			that.processTableStyleAfterAjax(table,callback);
+			that.processTableStyleAfterAjax(table,function(){
+				if(table.editable){
+					//处理tbody中的横向summarys计算
+					if(table.editableOptions.hsummaryFirstByAutoCalc){
+						that.processTbodyHSummarys(table);
+					}
+					//处理tfoot summary
+					if(table.editableOptions.vsummaryFirstByAutoCalc){
+						that.processTfootSummarys(table);
+					}
+				}
+			},callback);
 			//重新设置当前页面 已选数据的 选中状态
 			that.processTableReKeepSelectedItems(table);
 		},
@@ -6781,7 +6799,7 @@ function getScrollBarHeight(ele){
 			var that = this;
 			that.setCheckedIds(table,table.selectedItemsIds);
 		},
-		processTableStyleAfterAjax:function(table,callback){
+		processTableStyleAfterAjax:function(table,summaryCallback,callback){
 			var that = this;
 			var tableFastMode = table.data("fast-mode")||false;
 			if(tableFastMode){
@@ -6823,7 +6841,9 @@ function getScrollBarHeight(ele){
 
 					//处理单元格宽度
 					that.processCellWidthAfterAjax(table);
-
+					if(summaryCallback){
+						summaryCallback();
+					}
 					//重新设置tableHeight
 					that.setTableHeight(table);
 					//处理恢复样式
