@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.0.2";
+var jbolt_table_js_version="3.0.4";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -1929,10 +1929,11 @@ function jboltTableConvertCheckAll(ele){
 /**
  * 删除选中的行
  * @param ele
- * @param noConfirm
+ * @param confirm
+ * @param callback
  * @returns
  */
-function removeJBoltTableCheckedTr(ele,confirm){
+function removeJBoltTableCheckedTr(ele,confirm,callback){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
@@ -1944,13 +1945,8 @@ function removeJBoltTableCheckedTr(ele,confirm){
 					return false;
 				}
 			}
-			if(confirm){
-				LayerMsgBox.confirm("确定删除所选数据吗？",function(){
-					jboltTable.me.removeJBoltTableCheckedTr(jboltTable);
-				});
-			}else{
-				jboltTable.me.removeJBoltTableCheckedTr(jboltTable);
-			}
+			jboltTable.me.removeJBoltTableCheckedTr(jboltTable,confirm,callback);
+
 		}
 	}
 	return true;
@@ -2099,9 +2095,10 @@ function jboltTableSetCheckedId(ele,id){
  * 删除选中的行
  * @param ele
  * @param confirm
+ * @param callback
  * @returns
  */
-function jboltTableRemoveCheckedRow(ele,confirm){
+function jboltTableRemoveCheckedRow(ele,confirm,callback){
 	var action=getRealJqueryObject(ele);
 	if(isOk(action)){
 		var success = checkMasterTableId(action);
@@ -2116,10 +2113,10 @@ function jboltTableRemoveCheckedRow(ele,confirm){
 		var ids=jboltTableGetCheckedIds(ele,true);
 		if(ids){
 			LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？",function(){
-				removeJBoltTableCheckedTr(ele);
+				removeJBoltTableCheckedTr(ele,false,callback);
 			});
 		}else{
-			removeJBoltTableCheckedTr(ele,confirm);
+			removeJBoltTableCheckedTr(ele,confirm,callback);
 		}
 		return true;
 
@@ -4183,22 +4180,45 @@ function getScrollBarHeight(ele){
 			return true;
 		},
 		//删除选中checkbox或者radio的行
-		removeJBoltTableCheckedTr:function(table,confirm){
+		removeJBoltTableCheckedTr:function(table,confirm,callback){
 			var that=this;
-			var columnprepend=table.data("column-prepend");
-			if(!columnprepend){
-				columnprepend="checkbox";
-			}
-			if(columnprepend=="checkbox"||columnprepend.indexOf(":checkbox")!=-1 || columnprepend=="radio"||columnprepend.indexOf(":radio")!=-1){
-				var cks=table.tbody.find("tr>td input[type='checkbox'][name='jboltTableCheckbox']:checked,tr>td input[type='radio'][name='jboltTableRadio']:checked");
-				if(isOk(cks)){
-					var cksLen=cks.length;
-					cks.each(function(i){
-						that.removeRow(table,cks.eq(i).closest("tr").data("index"),(i<(cksLen-1)));
-					});
-					//重新summary计算
-					this.reProcessEditableTfootSummarys(table);
+			var doRemoveFunc = function(){
+				var columnprepend=table.data("column-prepend");
+				if(!columnprepend){
+					columnprepend="checkbox";
 				}
+				if(columnprepend=="checkbox"||columnprepend.indexOf(":checkbox")!=-1 || columnprepend=="radio"||columnprepend.indexOf(":radio")!=-1){
+					var cks=table.tbody.find("tr>td input[type='checkbox'][name='jboltTableCheckbox']:checked,tr>td input[type='radio'][name='jboltTableRadio']:checked");
+					if(isOk(cks)){
+						var cksLen=cks.length;
+						var ids = [];
+						var tr,id,index;
+						cks.each(function(i){
+							tr = cks.eq(i).closest("tr");
+							index = tr.data("index");
+							id = tr.data("id");
+							that.removeRow(table,index,(i<(cksLen-1)));
+							if(id){
+								ids.push(id);
+							}
+						});
+						//重新summary计算
+						that.reProcessEditableTfootSummarys(table);
+
+						if(callback){
+							callback(table,ids);
+						}
+					}
+				}
+			}
+
+			if(confirm){
+				var msg = ((typeof(confirm)=="boolean")?"确定删除所选数据吗？":confirm);
+				LayerMsgBox.confirm(msg,function(){
+					doRemoveFunc();
+				});
+			}else{
+				doRemoveFunc();
 			}
 			return true;
 		},
