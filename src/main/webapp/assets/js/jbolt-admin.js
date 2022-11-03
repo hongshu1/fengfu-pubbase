@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.1.0";
+var jbolt_admin_js_version="6.1.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -1834,7 +1834,7 @@ function ajaxParseFile(xhr,url,status,ele,handler,fileName){
 			});
 			var downloadUrl=window.URL.createObjectURL(fileBolb);
 			var alink=document.createElement("a");
-			alink.download=downloadFileName;
+			alink.download=downloadFileName.replace(new RegExp('"', 'g'), '');
 			alink.href=downloadUrl;
 			alink.click();
 			if(window.URL.revokeObjectUrl){
@@ -2226,7 +2226,7 @@ var DownloadUtil={
 					});
 					var downloadUrl=window.URL.createObjectURL(fileBolb);
 					var alink=document.createElement("a");
-					alink.download=downloadFileName;
+					alink.download=downloadFileName.replace(new RegExp('"', 'g'), '');
 					alink.href=downloadUrl;
 					alink.click();
 					if(window.URL.revokeObjectUrl){
@@ -7454,9 +7454,39 @@ var HtmlEditorUtil={
 			if(!summernoteOptions) {
 
 				var toolbarTheme = htmlEditor.data("toolbar") || "normal";
+				var noImg = htmlEditor.data("no-img");
+				if(typeof(noImg)=="undefined"){
+					noImg = false;
+				}
+				var noVideo = htmlEditor.data("no-video");
+				if(typeof(noVideo)=="undefined"){
+					noVideo = false;
+				}
+				var noTable = htmlEditor.data("no-table");
+				if(typeof(noTable)=="undefined"){
+					noTable = false;
+				}
+				var noCodeview = htmlEditor.data("no-codeview");
+				if(typeof(noCodeview)=="undefined"){
+					noCodeview = false;
+				}
 				var toolbar = null;
 				if (toolbarTheme == "normal") {
-					var insertItems = ['hr', 'table', 'link', 'picture', 'video'];
+					var insertItems = ['hr', 'link'];
+
+					if(!noImg){
+						insertItems.push('picture');
+					}
+					if(!noVideo){
+						insertItems.push('video');
+					}
+					if(!noTable){
+						insertItems.push('table');
+					}
+					var miscItems=['fullscreen', 'codeview', 'undo', 'redo', 'help']
+					if(noCodeview){
+						miscItems = ['fullscreen', 'undo', 'redo', 'help']
+					}
 					if (emoji) {
 						insertItems.push("emoji");
 					}
@@ -7467,10 +7497,13 @@ var HtmlEditorUtil={
 						['color', ['color']],
 						['para', ['ul', 'ol', 'paragraph', 'height']],
 						['insert', insertItems],
-						['misc', ['fullscreen', 'codeview', 'undo', 'redo', 'help']]
+						['misc', miscItems]
 					];
 				} else if (toolbarTheme == "simple") {
-					var insertItems = ['hr', 'picture'];
+					var insertItems = ['hr'];
+					if(!noImg){
+						insertItems.push('picture');
+					}
 					if (emoji) {
 						insertItems.push("emoji");
 					}
