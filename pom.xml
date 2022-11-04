@@ -24,6 +24,7 @@
 		<mysql.version>8.0.28</mysql.version>
 		<oracle.version>21.5.0.0</oracle.version>
 		<sqlserver.version>9.4.1.jre8</sqlserver.version>
+		<dm.version>8.1.2.141</dm.version>
 		<postgresql.version>42.3.3</postgresql.version>
 		<jsoup.version>1.15.3</jsoup.version>
 		<cron4j.version>2.2.5</cron4j.version>
@@ -202,7 +203,15 @@
 	    	<groupId>org.postgresql</groupId>
 	   	 	<artifactId>postgresql</artifactId>
 	  	 	<version>${postgresql.version}</version>
-		</dependency>-->
+		</dependency>
+
+		<dependency>
+			<groupId>com.dameng</groupId>
+			<artifactId>DmJdbcDriver18</artifactId>
+			<version>${dm.version}</version>
+		</dependency>
+		-->
+
 
 		<dependency>
 			<groupId>org.clojars.cbilson</groupId>
