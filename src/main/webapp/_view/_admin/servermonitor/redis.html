@@ -1,0 +1,35 @@
+<table class="jbolt-table table-hover table-center" data-jbolttable>
+<colgroup><col width="200"></col><col></col></colgroup>
+	<thead>
+		<tr>
+			<th colspan="10">Redis配置</th>
+		</tr>
+	    <tr>
+	        <th>ConfigName</th>
+	        <th>IP</th>
+	        <th>Port</th>
+	        <th>状态</th>
+	        <th>Timeout</th>
+	        <th>Database</th>
+	        <th>ClientName</th>
+	        <th>Expires</th>
+	    </tr>
+	</thead>
+	<tbody>
+		#if(settings)
+		#for(group:settings.groups)
+		#setLocal(setting=settings.getMap(group))
+		<tr>
+			<td>#(group)</td>
+			<td>#(map["ip"]??)</td>
+			<td>#(map["port"]??)</td>
+			<td>#(map["enable"]==null?false:map["enable"])</td>
+			<td>#(map["timeout"]??)</td>
+			<td>DB#(map["database"]?? 0)</td>
+			<td>#(map["clientName"]??)</td>
+			<td>#(map["expires"]??  -1)</td>
+		</tr>
+		#end
+		#end
+	</tbody>
+</table>
