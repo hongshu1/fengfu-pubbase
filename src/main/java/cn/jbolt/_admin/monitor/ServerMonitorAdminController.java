@@ -165,7 +165,8 @@ public class ServerMonitorAdminController extends JBoltBaseController {
 			renderFail("未找到显示缓存参数的UI");
 			return;
 		}
-
+		String pageId = get("pageId");
+		set("pageId",pageId);
 		render(renderHtml);
 	}
 }
