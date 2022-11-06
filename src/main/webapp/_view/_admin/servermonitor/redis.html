@@ -6,7 +6,7 @@
 		</tr>
 	    <tr>
 	        <th>ConfigName</th>
-	        <th>IP</th>
+	        <th>Host</th>
 	        <th>Port</th>
 	        <th>状态</th>
 	        <th>Timeout</th>
@@ -21,7 +21,7 @@
 		#setLocal(map=settings.getMap(group))
 		<tr>
 			<td>#(group)</td>
-			<td>#(map["ip"]??)</td>
+			<td>#(map["host"]??)</td>
 			<td>#(map["port"]??)</td>
 			<td>#(map["enable"]==null?false:map["enable"])</td>
 			<td>#(map["timeout"]??)</td>
