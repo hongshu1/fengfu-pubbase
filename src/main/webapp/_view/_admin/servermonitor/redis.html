@@ -18,7 +18,7 @@
 	<tbody>
 		#if(settings)
 		#for(group:settings.groups)
-		#setLocal(setting=settings.getMap(group))
+		#setLocal(map=settings.getMap(group))
 		<tr>
 			<td>#(group)</td>
 			<td>#(map["ip"]??)</td>
