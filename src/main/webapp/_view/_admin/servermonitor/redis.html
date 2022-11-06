@@ -11,9 +11,9 @@ data-fixed-columns-right="-1"
 	    <tr>
 	        <th data-width="60">序号</th>
 	        <th data-min-width="300">ConfigName</th>
-	        <th data-width="150">Host</th>
-	        <th data-width="100">Port</th>
-	        <th data-width="100">State</th>
+			<th data-width="100">State</th>
+			<th data-width="150">Host</th>
+			<th data-width="100">Port</th>
 	        <th data-width="100">Timeout</th>
 	        <th data-width="100">Database</th>
 	        <th data-min-width="200">ClientName</th>
@@ -28,9 +28,9 @@ data-fixed-columns-right="-1"
 		<tr>
 			<td>#(for.count)</td>
 			<td>#(group)</td>
+			<td style="font-size:20px;">#(map["enable"]==null?'<i tooltip data-title="状态:未启用" class="fa fa-circle text-secondary"></i>':(map["enable"]=="true"?'<i tooltip data-title="状态:已启用" class="fa fa-circle text-success"></i>':'<i tooltip data-title="状态:未启用" class="fa fa-circle text-secondary"></i>'))</td>
 			<td>#(map["host"]??)</td>
 			<td>#(map["port"]??)</td>
-			<td style="font-size:20px;">#(map["enable"]==null?'<i tooltip data-title="状态:未启用" class="fa fa-circle text-secondary"></i>':(map["enable"]=="true"?'<i tooltip data-title="状态:已启用" class="fa fa-circle text-success"></i>':'<i tooltip data-title="状态:未启用" class="fa fa-circle text-secondary"></i>'))</td>
 			<td>#(map["timeout"]??)</td>
 			<td>DB#(map["database"]?? 0)</td>
 			<td>#(map["clientName"]?? '-')</td>
