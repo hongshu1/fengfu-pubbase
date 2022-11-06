@@ -23,7 +23,7 @@
 			<td>#(group)</td>
 			<td>#(map["host"]??)</td>
 			<td>#(map["port"]??)</td>
-			<td>#(map["enable"]==null?'<i class="fa fa-circle text-secondary"></i>':(map["enable"]?'<i class="fa fa-circle text-primary"></i>':'<i class="fa fa-circle text-secondary"></i>'))</td>
+			<td>#(map["enable"]==null?'<i class="fa fa-circle text-secondary"></i>':(map["enable"]=="true"?'<i class="fa fa-circle text-primary"></i>':'<i class="fa fa-circle text-secondary"></i>'))</td>
 			<td>#(map["timeout"]??)</td>
 			<td>DB#(map["database"]?? 0)</td>
 			<td>#(map["clientName"]??)</td>
