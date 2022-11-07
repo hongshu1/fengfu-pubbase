@@ -6193,3 +6193,45 @@ ALTER TABLE [dbo].[jb_code_gen_model_attr] ADD CONSTRAINT [PK__jb_code___3213E83
     ON [PRIMARY]
     GO
 
+
+
+
+CREATE TABLE [dbo].[jb_sensitive_word] (
+    [id] bigint  NOT NULL,
+    [content] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NOT NULL,
+    [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
+    CONSTRAINT [PK__jb_sensi__3213E83FAACE9BB0] PRIMARY KEY CLUSTERED ([id])
+    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+    ON [PRIMARY]
+    )
+    ON [PRIMARY]
+    GO
+
+ALTER TABLE [dbo].[jb_sensitive_word] SET (LOCK_ESCALATION = TABLE)
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'主键ID',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_sensitive_word',
+    'COLUMN', N'id'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'内容',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_sensitive_word',
+    'COLUMN', N'content'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'启用状态',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_sensitive_word',
+    'COLUMN', N'enable'
+    GO
+
+    EXEC sp_addextendedproperty
+    'MS_Description', N'敏感词词库',
+    'SCHEMA', N'dbo',
+    'TABLE', N'jb_sensitive_word'
