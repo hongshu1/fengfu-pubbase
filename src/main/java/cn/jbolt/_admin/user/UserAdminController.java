@@ -3,6 +3,7 @@ package cn.jbolt._admin.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jbolt.common.model.UserExtend;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Ret;
@@ -30,6 +31,8 @@ import cn.jbolt.core.service.JBoltFileService;
 public class UserAdminController extends JBoltBaseController {
 	@Inject
 	private UserService service;
+	@Inject
+	private UserExtendService userExtendService;
 	@Inject
 	private RoleService roleService;
 	@Inject
@@ -197,6 +200,16 @@ public class UserAdminController extends JBoltBaseController {
 			return;
 		}
 		set("user", user);
+		UserExtend extend = userExtendService.findById(userId);
+		if(extend == null){
+			Ret ret = userExtendService.initSaveOneExtend(userId);
+			if(ret.isFail()){
+				renderFail(ret.getStr("msg"));
+				return;
+			}
+			extend = ret.getAs("data");
+		}
+		set("extend", extend);
 		render("edit.html");
 	}
 	/**

@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.1.5";
+var jbolt_admin_js_version="6.1.6";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -9136,7 +9136,10 @@ var ImgUploadUtil={
 						}
 					}
 					var loading=uploder.data("loading");
-					
+					var showDefaultSuccessMsg = uploder.data("show-default-success-msg");
+					if(typeof(showDefaultSuccessMsg)=="undefined"){
+						showDefaultSuccessMsg = true;
+					}
 					if(handler=="uploadMultipleFile"){
 							uploadFile("img",url,fileName,fileDatas,hiddeninput,null,null,true,imgbox,loading,function(type,res){
 								fileInput.val("");
@@ -9156,7 +9159,7 @@ var ImgUploadUtil={
 								}else{
 									LayerMsgBox.alert(res.msg||"上传失败",2);
 								}
-							});
+							},!showDefaultSuccessMsg);
 					}else if(handler=="uploadMultipleFileToQiniu"){
 						loadJBoltPlugin(['qiniu'], function(){
 							uploadFileToQiniu(uploder,"img",fileDatas,hiddeninput,null,null,true,imgbox,loading,function(type,res){
@@ -9289,7 +9292,10 @@ var ImgUploadUtil={
 						}
 					}
 					var loading=uploder.data("loading");
-					
+					var showDefaultSuccessMsg = uploder.data("show-default-success-msg");
+					if(typeof(showDefaultSuccessMsg)=="undefined"){
+						showDefaultSuccessMsg = true;
+					}
 					//如果是本地上传 执行uploadFile
 					if(handler=="uploadFile"){
 						uploadFile("img",url,fileName,fileData,hiddeninput,null,null,false,imgbox,loading,function(type,res){
@@ -9310,7 +9316,7 @@ var ImgUploadUtil={
 							}else{
 								LayerMsgBox.alert(res.msg||"上传失败",2);
 							}
-						});
+						},!showDefaultSuccessMsg);
 					}else if(handler == 'uploadFileToQiniu'){
 						loadJBoltPlugin(['qiniu'], function(){
 							//如果是上传到七牛 执行uploadFileToQiniu
@@ -10213,9 +10219,10 @@ function getQiniuRegion(region){
  * @param loading
  * @param successCallback
  * @param failCallback
+ * @param dontShowDefaultSuccessMsg
  * @returns
  */
-function uploadFile(type,url,name,fileDatas,hiddeninput,filenameInput,sizeinput,isMultiple,imgbox,loading,successCallback,failCallback){
+function uploadFile(type,url,name,fileDatas,hiddeninput,filenameInput,sizeinput,isMultiple,imgbox,loading,successCallback,failCallback,dontShowDefaultSuccessMsg){
 	if(!fileDatas){return false;}
 	if(isMultiple&&fileDatas.length==0){return false;}
 	if(!isMultiple&&!fileDatas.size){return false;}
@@ -10254,13 +10261,16 @@ function uploadFile(type,url,name,fileDatas,hiddeninput,filenameInput,sizeinput,
 	        		}else if((type=="file")&&res.data){
 	        			processFileUploadCallback(res,hiddeninput,filenameInput,isMultiple,imgbox);
 					}
+
 	        		if(successCallback){
-	        			  var exe_callback=eval(successCallback);
-						  if(exe_callback&&typeof(exe_callback)=="function"){
-							  exe_callback(type,res);
-						  }
-	        			}
-	        		LayerMsgBox.success("上传成功",1000);
+					  var exe_callback=eval(successCallback);
+					  if(exe_callback&&typeof(exe_callback)=="function"){
+						  exe_callback(type,res);
+					  }
+					}
+					if(!dontShowDefaultSuccessMsg){
+						LayerMsgBox.success("上传成功",1000);
+					}
 	        	}else{
 					if(failCallback){
 						LayerMsgBox.closeLoadingNow();
@@ -10585,7 +10595,10 @@ var FileUploadUtil={
 					}
 				}
 				var loading=box.data("loading");
-				
+				var showDefaultSuccessMsg = box.data("show-default-success-msg");
+				if(typeof(showDefaultSuccessMsg)=="undefined"){
+					showDefaultSuccessMsg = true;
+				}
 				if(handler=="uploadFile"){
 					uploadFile("file",url,fileName,file[0].files[0],hiddeninput,fileNameInput,sizeinput,null,null,loading,function(type,res){
 						if(ucallback){
@@ -10604,7 +10617,7 @@ var FileUploadUtil={
 						}else{
 							LayerMsgBox.alert(res.msg||"上传异常",2);
 						}
-					});
+					},!showDefaultSuccessMsg);
 				}else if(handler=="uploadFileToQiniu"){
 					loadJBoltPlugin(['qiniu'], function(){
 						uploadFileToQiniu(box,"file",file[0].files[0],hiddeninput,fileNameInput,sizeinput,false,null,loading,function(type,res){
@@ -10723,7 +10736,10 @@ var FileUploadUtil={
 						}
 					}
 					var loading=uploder.data("loading");
-					
+					var showDefaultSuccessMsg = uploder.data("show-default-success-msg");
+					if(typeof(showDefaultSuccessMsg)=="undefined"){
+						showDefaultSuccessMsg = true;
+					}
 					
 					if(handler=="uploadMultipleFile"){
 						uploadFile("file",url,fileName,fileDatas,hiddeninput,null,null,true,filebox,loading,function(type,res){
@@ -10745,7 +10761,7 @@ var FileUploadUtil={
 							}else{
 								LayerMsgBox.alert(res.msg||"上传异常",2);
 							}
-						});
+						},!showDefaultSuccessMsg);
 					}else if(handler=="uploadMultipleFileToQiniu"){
 						loadJBoltPlugin(['qiniu'], function(){
 							uploadFileToQiniu(uploder,"file",fileDatas,hiddeninput,null,null,true,filebox,loading,function(type,res){
