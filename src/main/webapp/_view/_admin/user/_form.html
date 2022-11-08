@@ -1,18 +1,24 @@
 #set(deptEnable=JBoltGlobalConfigCache.deptEnable())
 #set(postEnable=JBoltGlobalConfigCache.postEnable())
+#set(userExtendEnable=JBoltGlobalConfigCache.userExtendEnable())
 <form onsubmit="return false;" id="userForm" action="#(action)" method="post">
-	#if(user.id??)
-		<input type="hidden" name="user.id" value="#(user.id)" />
-	#end
+	<input type="hidden" name="user.id" value="#(user.id??)" />
+
 	<input type="hidden" name="user.avatar" id="userAvatarInput" value="#(user.avatar??)" class="form-control"/>
 	<div class="row">
-		<div class="col-12 col-sm-12 col-lg-6">
+		<div class="col-12 col-sm-12 col-lg-#(userExtendEnable?4:6)">
 		<fieldset class="form-page-fieldset">
 			<legend>基础信息</legend>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">姓名</label>
 				<div class="col">
 					<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入用户姓名" data-tips="请输入用户姓名" maxlength="20" name="user.name" value="#(user.name??)">
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">编号</label>
+				<div class="col">
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="请输入用户编号或工号" data-tips="请输入用户编号或工号" maxlength="20" name="user.sn" value="#(user.sn??)">
 				</div>
 			</div>
 			<div class="form-group row">
@@ -77,7 +83,7 @@
 			</fieldset>
 		
 		</div>
-		<div class="col-12  col-sm-12  col-lg-6">
+		<div class="col-12  col-sm-12  col-lg-#(userExtendEnable?4:6)">
 			#if(deptEnable||postEnable)
 		<fieldset class="form-page-fieldset">
 			<legend>#if(deptEnable)部门#end #if(postEnable)岗位#end</legend>
@@ -132,6 +138,11 @@
 			</div>
 			</fieldset>
 		</div>
+		#if(userExtendEnable)
+		<div class="col-12  col-sm-12  col-lg-4">
+		#include("user_extend_form.html")
+		</div>
+		#end
 	</div>
 	
 	</form>

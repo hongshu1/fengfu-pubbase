@@ -3,6 +3,7 @@
 #set(pageId=RandomUtil.random(6))
 #set(deptEnable=JBoltGlobalConfigCache.deptEnable())
 #set(postEnable=JBoltGlobalConfigCache.postEnable())
+#set(userExtendEnable=JBoltGlobalConfigCache.userExtendEnable())
 <div class="jbolt_page" data-key="#(pmkey)">
 <div class="jbolt_page_title">
 	<div class="row">
@@ -26,7 +27,7 @@
 		</form>
 	</div>
 	<div class="col-md-auto">
-		<button data-area="1080,700" data-handler="refreshJBoltTable" data-title="新增内部人员账户" data-url="admin/user/add" class="jbolt_table_addbtn btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-area="#(userExtendEnable?'80%':1080),700" data-handler="refreshJBoltTable" data-title="新增内部人员账户" data-url="admin/user/add" class="jbolt_table_addbtn btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 	</div>
 	</div>
 </div>
@@ -69,7 +70,7 @@
 <td>
 <img data-switchbtn data-value="${data.enable!=null?data.enable:false}"  data-url="admin/user/toggleEnable/${data.id}"/></td>
 <td>
-<a  tooltip  title="编辑"  href="admin/user/edit/${data.id}" data-scroll="yes" data-handler="refreshJBoltTable" data-title="编辑" data-area="1080,700" class="jbolt_table_editbtn"><i class="fa fa-pencil c-primary"></i></a>
+<a  tooltip  title="编辑"  href="admin/user/edit/${data.id}" data-scroll="yes" data-handler="refreshJBoltTable" data-title="编辑" data-area="#(userExtendEnable?'80%':1080),700" class="jbolt_table_editbtn"><i class="fa fa-pencil c-primary"></i></a>
 <a  tooltip  title="重置密码"  href="admin/user/editpwd/${data.id}" data-handler="LayerMsgBox.success('重置成功',1000)" data-title="重置[${data.name}]密码" data-area="700,300" class="jbolt_table_editbtn"><i class="fa fa-key c-primary"></i></a>
 <a  tooltip  title="删除"  href="admin/user/delete/${data.id}" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger"></i></a>
 </td>
