@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.0.4";
+var jbolt_table_js_version="3.0.5";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -4149,7 +4149,7 @@ function getScrollBarHeight(ele){
 //					}
 //				}
 
-			td.data("orign-text",orignText).attr("data-orign-text",orignText);
+			td.data("origin-text",orignText).attr("data-origin-text",orignText);
 			td.data("changed",false).removeAttr("data-changed").attr("data-syncdb",true).data("syncdb",true);
 			tr.data("changed",false).removeAttr("data-changed").attr("data-syncdb",true).data("syncdb",true);
 			this.processEditableTrChangedStatusByTd(table,td);
@@ -4664,7 +4664,7 @@ function getScrollBarHeight(ele){
 				}
 				newTr.removeClass("active").data("changed",true).attr("data-changed",true);
 				newTr.find("td[data-focus]").data("focus",false).removeAttr("data-focus");
-				newTr.find("td").data("orign-text",'').attr("data-orign-text",'');
+				newTr.find("td").data("origin-text",'').attr("data-origin-text",'');
 				newTr.insertBefore(firstTr);
 				checkbox=newTr.find("td>.jbolt_table_checkbox>input[type='checkbox']:checked");
 				if(isOk(checkbox)){
@@ -4765,7 +4765,7 @@ function getScrollBarHeight(ele){
 
 				newTr.removeClass("active").data("changed",true).attr("data-changed",true);
 				newTr.find("td[data-focus]").data("focus",false).removeAttr("data-focus");
-				newTr.find("td").data("orign-text",'').attr("data-orign-text",'');
+				newTr.find("td").data("origin-text",'').attr("data-origin-text",'');
 				newTr.insertAfter(firstTr);
 				checkbox=newTr.find("td>.jbolt_table_checkbox>input[type='checkbox']:checked");
 				if(isOk(checkbox)){
@@ -4964,7 +4964,7 @@ function getScrollBarHeight(ele){
 									}
 
 									if(colConfig.editable){
-										tempTd.data("orign-text","").attr("data-orign-text","");
+										tempTd.data("origin-text","").attr("data-origin-text","");
 										tempTd.data("changed",true).attr("data-changed",true);
 									}
 								}
@@ -7860,7 +7860,7 @@ function getScrollBarHeight(ele){
 				'<input {@if onlyAttrFilter}data-onlyattrfilter="${onlyAttrFilter}"{@/if} {@if onlyleaf}data-onlyleaf="${onlyleaf?true:false}"{@/if} {@if onlytype}data-onlytype="${onlytype?true:false}"{@/if} {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if}  {@if textAsValue}data-textasvalue="${textAsValue}"{@/if}  {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}   data-jboltinput data-zero-clear="true" data-load-type="${loadType}" {@if openType} data-open-type="${openType}" {@/if} data-hidden-input="${jbe_jbi_hiddenId}" autocomplete="off" type="text" {@if contentId}data-content-id="${contentId}"{@/if} data-tips="${ruleTips}" data-rule="{@if rule}${rule};len<=${maxLength?maxLength:20}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }"  value="${tdText}" {@if new_url}data-url="${new_url}"{@/if}   {@if width}data-width="${width}"{@/if} {@if height}data-height="${height}"{@/if} {@if filterHandler}data-filter-handler="${filterHandler}"{@/if} />'+
 				'<input class="jbt_editor_hidden" type="hidden" id="${jbe_jbi_hiddenId}" name="${jbe_col_key}" value="${tdValue}" />'+
 				'{@else if type==="select" }'+
-				'<select data-select-type="${theme}" {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} data-tips="${ruleTips}" data-rule="select{@if rule};${rule}{@/if}" data-notnull="false" name="${jbe_col_key}" data-autoload {@if refresh} data-refresh="${refresh}" {@/if} {@if onlyleaf} data-onlyleaf="${onlyleaf}" {@/if} {@if delimiter} data-delimiter="${delimiter}" {@/if} data-url="${url}" {@if textAttr} data-text-attr="${textAttr}" {@/if} {@if valueAttr} data-value-attr="${valueAttr}" {@/if}  data-text="=请选择="  data-value="" data-select="${tdValue}"></select>'+
+				'<select data-select-type="${theme}" {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} data-tips="${ruleTips}" data-rule="select{@if rule};${rule}{@/if}" data-notnull="false" name="${jbe_col_key}" data-autoload {@if refresh} data-refresh="${refresh}" {@/if} {@if onlyleaf} data-onlyleaf="${onlyleaf}" {@/if} {@if delimiter} data-delimiter="${delimiter}" {@/if} data-url="${url}" {@if textAttr} data-text-attr="${textAttr}" {@/if} {@if valueAttr} data-value-attr="${valueAttr}" {@/if}  data-text="=请选择="  data-value="" data-default="${defaultValue}" data-select="${tdValue}"></select>'+
 				'{@else if type==="dialogbtn" && withDialog }'+
 				'<button  class="jbt_editor {@if cssClass}${cssClass}{@else}btn btn-light{@/if}" {@if cssStyle} style="${cssStyle}" {@/if} data-in-editable-td="true" onclick="DialogUtil.openBy(this)" data-btn="${dialog.btn}" {@if linkColumn} data-link-column="${linkColumn}" {@/if}  data-link-para-ele="#${jbe_link_ele_id}{@if linkPara},${linkPara}{@/if}" data-area="${dialog.area}"  data-title="${dialog.title}"   data-url="${dialog.url}">{@if icon}<i class="${icon} mr-1"></i>{@else}<i class="fa fa-search mr-1"></i>{@/if}${text?text:"按钮"}</button>'+
 				'{@/if}'+
@@ -8080,7 +8080,7 @@ function getScrollBarHeight(ele){
 		},
 		processEditableTdChooseData:function(table,editingTd,text,value,dontExeValueChangeHandler){
 			var that=this;
-			var orignText=editingTd.data("orign-text");
+			var orignText=editingTd.data("origin-text");
 			if(typeof(orignText)=="undefined"){
 				orignText="";
 			}
@@ -8174,7 +8174,7 @@ function getScrollBarHeight(ele){
 					vchandler(table,editingTd,text,value,jsonData);
 				}
 			}
-			//editingTd.data("orign-text",'').attr("data-orign-text",'');
+			//editingTd.data("origin-text",'').attr("data-origin-text",'');
 			return true;
 		},
 		processColConfigChangeColumns:function(table,editingTd,data){
@@ -8790,7 +8790,7 @@ function getScrollBarHeight(ele){
 						result=this.checked?"true":"false";
 						editingTd.data("value",result).attr("data-value",result);
 						editingTd.data("text",result).attr("data-text",result);
-						editingTd.data("orign-text",result).attr("data-orign-text",result);
+						editingTd.data("origin-text",result).attr("data-origin-text",result);
 						editingTd.data("column",column).attr("data-column","column");
 						editingTd.data("submitattr",submitattr).attr("data-column",submitattr);
 					}
@@ -8817,7 +8817,7 @@ function getScrollBarHeight(ele){
 						result=switchbtn.data("value");
 						editingTd.data("value",result).attr("data-value",result);
 						editingTd.data("text",result).attr("data-text",result);
-						editingTd.data("orign-text",result).attr("data-orign-text",result);
+						editingTd.data("origin-text",result).attr("data-origin-text",result);
 						editingTd.data("column",column).attr("data-column","column");
 						editingTd.data("submitattr",submitattr).attr("data-column",submitattr);
 					}
@@ -9210,10 +9210,10 @@ function getScrollBarHeight(ele){
 				}
 				colConfig.columnKey=tempColKey;
 				colConfig.jbe_col_key=colConfig.submitAttr;
-				orignText=currentTd.data("orign-text");
+				orignText=currentTd.data("origin-text");
 				var originTextType=typeof(orignText);
-				if(originTextType=="undefined"&&!orignText&&!currentTd[0].hasAttribute("data-orign-text")){
-					currentTd.attr("data-orign-text",currentTd[0].innerText).data("orign-text",currentTd[0].innerText);
+				if(originTextType=="undefined"&&!orignText&&!currentTd[0].hasAttribute("data-origin-text")){
+					currentTd.attr("data-origin-text",currentTd[0].innerText).data("origin-text",currentTd[0].innerText);
 				}
 				//处理点击的td转editor
 				that.processEditableEditor(table,currentTd,colConfig);
@@ -10002,10 +10002,10 @@ function getScrollBarHeight(ele){
 				return false;
 			}
 			var that=this;
-			var orignText=editingTd.data("orign-text");
-			if(typeof(orignText)=='undefined'&&!orignText&&!editingTd[0].hasAttribute("data-orign-text")){
+			var orignText=editingTd.data("origin-text");
+			if(typeof(orignText)=='undefined'&&!orignText&&!editingTd[0].hasAttribute("data-origin-text")){
 				orignText=!result;
-				editingTd.attr("data-orign-text",orignText).data("orign-text",orignText);
+				editingTd.attr("data-origin-text",orignText).data("origin-text",orignText);
 			}
 			editingTd.data("text",result).attr("data-text",result);
 			editingTd.data("value",result).attr("data-value",result);
