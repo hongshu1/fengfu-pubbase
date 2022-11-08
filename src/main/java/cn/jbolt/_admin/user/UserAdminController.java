@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.jbolt.common.model.UserExtend;
+import cn.jbolt.core.cache.JBoltGlobalConfigCache;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Ret;
@@ -183,6 +184,50 @@ public class UserAdminController extends JBoltBaseController {
 		set("roles", roleService.findAll());
 		render("add.html");
 	}
+
+	/**
+	 * 查看扩展信息
+	 */
+	public void extendForm(){
+		processRenderExtendForm(false);
+	}
+
+	private void processRenderExtendForm(boolean readonlyMode) {
+		boolean userExtendEnable = JBoltGlobalConfigCache.me.userExtendEnable();
+		if(!userExtendEnable){
+			renderFail("系统全局参数配置中未开启用户扩展支持");
+			return;
+		}
+		set("readonlyMode",readonlyMode);
+		Long id = getLong(0);
+		if(notOk(id)){
+			render("user_extend_form.html");
+			return;
+		}
+		UserExtend extend = userExtendService.findById(id);
+		if(extend == null){
+			User user = service.findById(id);
+			if(user == null){
+				renderFail("用户信息不存在");
+				return;
+			}
+			Ret ret = userExtendService.initSaveOneExtend(id);
+			if(ret.isFail()){
+				renderFail(ret.getStr("msg"));
+				return;
+			}
+			extend = ret.getAs("data");
+		}
+		set("extend",extend);
+		render("user_extend_form.html");
+	}
+
+	/**
+	 * 查看扩展信息
+	 */
+	public void extendDetail(){
+		processRenderExtendForm(true);
+	}
 	/**
 	 * 编辑
 	 */
@@ -200,16 +245,6 @@ public class UserAdminController extends JBoltBaseController {
 			return;
 		}
 		set("user", user);
-		UserExtend extend = userExtendService.findById(userId);
-		if(extend == null){
-			Ret ret = userExtendService.initSaveOneExtend(userId);
-			if(ret.isFail()){
-				renderFail(ret.getStr("msg"));
-				return;
-			}
-			extend = ret.getAs("data");
-		}
-		set("extend", extend);
 		render("edit.html");
 	}
 	/**
@@ -217,14 +252,14 @@ public class UserAdminController extends JBoltBaseController {
 	 */
 	@Before(Tx.class)
 	public void save(){
-		renderJson(service.save(getModel(User.class, "user")));
+		renderJson(service.save(getModel(User.class, "user"),getModel(UserExtend.class, "extend")));
 	}
 	/**
 	 * 更新
 	 */
 	@Before(Tx.class)
 	public void update(){
-		renderJson(service.update(getModel(User.class, "user")));
+		renderJson(service.update(getModel(User.class, "user"),getModel(UserExtend.class, "extend")));
 	}
 	/**
 	 * 删除

@@ -39,7 +39,9 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.name}</td>
 <td><img data-photobtn tooltip data-title="点击查看大图"  style="width: 60px;height: 60px;border-radius:50%;" src="${data.avatar|real_image}" onerror="this.src='assets/img/avatar.jpg'"/></td>
+<td>${data.sn}</td>
 <td>${data.sex|sex}</td>
+<td>${data.age}</td>
 <td>
 {@if data.userRoles}
 {@each data.userRoles as role,index}
@@ -67,6 +69,11 @@
 <td>${data.phone?data.phone:"未设置"}</td>
 <td>${data.email?data.email:"未设置"}</td>
 <td>$${data.isSystemAdmin?'<span class="badge badge-primary">超级管理员</span>':'<span class="badge badge-dark">一般用户</span>'}</td>
+#if(userExtendEnable)
+<td>
+	<a class="btn btn-outline-primary btn-sm" data-dialogbtn href="admin/user/extendDetail/${data.id}" data-area="600,700" data-btn="close" data-dialog-title="查看[${data.username}]扩展信息"><i class="fa fa-credit-card mr-1"></i></a>
+</td>
+#end
 <td>
 <img data-switchbtn data-value="${data.enable!=null?data.enable:false}"  data-url="admin/user/toggleEnable/${data.id}"/></td>
 <td>
@@ -107,7 +114,7 @@ data-ajax="true"
 data-url="admin/user/datas"
 data-page="user_table_page_#(pageId)"
 data-fixed-columns-left="1,2"
-data-fixed-columns-right="-2,-1"
+data-fixed-columns-right="#(userExtendEnable?'-3,':'')-2,-1"
 data-rowtpl="user_table_rowtpl_#(pageId)"
 data-conditions-form="adminUserForm_#(pageId)"
 data-column-resize="true"
@@ -120,7 +127,9 @@ data-leftbox="admin_user_leftbox_#(pageId)"
 <th data-width="60">序号</th>
 <th data-width="150">姓名</th>
 <th data-width="120">头像</th>
+<th data-width="80">编号</th>
 <th data-width="80">性别</th>
+<th data-width="80">年龄</th>
 <th data-width="100">角色</th>
 #if(deptEnable)
 <th data-min-width="200">部门</th>
@@ -131,8 +140,11 @@ data-leftbox="admin_user_leftbox_#(pageId)"
 <th data-width="150">用户名</th>
 <th data-width="120">手机号</th>
 <th data-width="250">E-Mail</th>
-<th data-width="120">是否为超管</th>
-<th data-width="120">是否启用</th>
+<th data-width="100">是否为超管</th>
+#if(userExtendEnable)
+<th data-width="80">扩展信息</th>
+#end
+<th data-width="80">是否启用</th>
 <th data-width="120">操作</th></tr>
 </thead>
 <tbody></tbody>

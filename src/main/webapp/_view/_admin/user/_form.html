@@ -28,6 +28,12 @@
 				</div>
 			</div>
 			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">年龄</label>
+				<div class="col">
+					<input type="text" autocomplete="off"  class="form-control" data-rule="pzint" data-notnull="false"  placeholder="请输入用户年龄" data-tips="请输入用户年龄 正整数" maxlength="3" name="user.age" value="#(user.age??)">
+				</div>
+			</div>
+			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">手机号</label>
 				<div class="col">
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="请输入用户手机号"  maxlength="20" name="user.phone" value="#(user.phone??)">
@@ -140,7 +146,10 @@
 		</div>
 		#if(userExtendEnable)
 		<div class="col-12  col-sm-12  col-lg-4">
-		#include("user_extend_form.html")
+			<fieldset class="form-page-fieldset">
+				<legend>扩展信息</legend>
+				#ajaxPortal("admin/user/extendForm/"+(user.id?? 0),"userExtendFormPortal",true)
+			</fieldset>
 		</div>
 		#end
 	</div>
