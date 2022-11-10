@@ -61,6 +61,7 @@ public class UserAdminController extends JBoltBaseController {
 	/**
 	 *  系统通知 可用 选择用户数据接口
 	 */
+	@CheckPermission(PermissionKey.SYS_NOTICE)
 	public void sysnoticeUsers() {
 		renderJsonData(service.paginateSysNoticeList(getPageNumber(),getPageSize(),getKeywords(),getInt("sex"),getBoolean("assignDept",true),getLong("deptId"),getLong("postId"),getLong("roleId")));
 	}
