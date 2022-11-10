@@ -1,23 +1,19 @@
 package cn.jbolt._admin.monitor;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import com.jfinal.kit.Kv;
-
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.system.oshi.OshiUtil;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.config.JBoltConfig;
+import cn.jbolt.core.cache.JBoltCacheType;
+import cn.jbolt.core.cache.caffeine.CaffeineCacheKit;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.core.util.JBoltIpUtil;
+import com.jfinal.kit.Kv;
+import net.sf.ehcache.CacheManager;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.CentralProcessor.TickType;
 import oshi.hardware.GlobalMemory;
@@ -25,6 +21,13 @@ import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.Util;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 /**
  * 服务器监控
  * @ClassName:  ServerMonitorAdminController   
@@ -137,5 +140,33 @@ public class ServerMonitorAdminController extends JBoltBaseController {
         set("cpuWait", NumberUtil.mul(NumberUtil.toBigDecimal(iowait).divide(NumberUtil.toBigDecimal(totalCpu),2,BigDecimal.ROUND_HALF_UP).doubleValue(), 100));
         set("cpuFree", NumberUtil.mul(NumberUtil.toBigDecimal(idle).divide(NumberUtil.toBigDecimal(totalCpu),2,BigDecimal.ROUND_HALF_UP).doubleValue(), 100));
         render("cpu.html");
+	}
+
+
+	public void cache() {
+		set("cacheType",JBoltConfig.JBOLT_CACHE_TYPE);
+		String renderHtml = null;
+		switch (JBoltConfig.JBOLT_CACHE_TYPE){
+			case JBoltCacheType.EHCACHE:
+//				renderHtml = "ehcache.html";
+				set("settings",CacheManager.ALL_CACHE_MANAGERS);
+				break;
+			case JBoltCacheType.CAFFEINE:
+//				renderHtml = "caffeine.html";
+				set("settings",JBoltConfig.caffeineSettings);
+				break;
+			case JBoltCacheType.REDIS:
+				renderHtml = "redis.html";
+				set("settings",JBoltConfig.redisSettings);
+				break;
+		}
+
+		if(notOk(renderHtml)){
+			renderFail("未找到显示缓存参数的UI");
+			return;
+		}
+		String pageId = get("pageId");
+		set("pageId",pageId);
+		render(renderHtml);
 	}
 }

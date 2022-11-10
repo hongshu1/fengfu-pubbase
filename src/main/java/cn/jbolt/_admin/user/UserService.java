@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.common.model.UserExtend;
+import cn.jbolt.core.cache.*;
 import cn.jbolt.core.model.Dept;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.HashKit;
@@ -17,9 +18,6 @@ import cn.jbolt._admin.loginlog.LoginLogService;
 import cn.jbolt._admin.loginlog.RemoteLoginLogService;
 import cn.jbolt._admin.onlineuser.OnlineUserService;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.cache.JBoltDeptCache;
-import cn.jbolt.core.cache.JBoltPostCache;
-import cn.jbolt.core.cache.JBoltRoleCache;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
@@ -36,18 +34,35 @@ public class UserService extends JBoltUserService {
 	private DeptService deptService;
 	@Inject
 	private OnlineUserService onlineUserService;
-	
+	@Inject
+	private UserExtendService userExtendService;
 	/**
 	 * 保存
 	 * @param user
 	 * @return
 	 */
-	public Ret save(User user) {
+	public Ret save(User user, UserExtend extend) {
 		if(user==null||isOk(user.getId())||notOk(user.getName())
 				||notOk(user.getUsername())){
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		return saveOrUpdate(user);
+		boolean userExtendEnable = JBoltGlobalConfigCache.me.userExtendEnable();
+		if(userExtendEnable && extend!=null && isOk(extend.getId())){
+			return fail("用户扩展信息"+JBoltMsg.PARAM_ERROR);
+		}
+		Ret ret = saveOrUpdate(user);
+		if(ret.isFail()){
+			return ret;
+		}
+		//添加完user后处理extend
+		if(userExtendEnable && extend != null){
+			extend.setId(user.getId());
+			ret = userExtendService.saveByUser(extend);
+			if(ret.isFail()){
+				return ret;
+			}
+		}
+		return SUCCESS;
 	}
 	
 	
@@ -56,13 +71,31 @@ public class UserService extends JBoltUserService {
 	 * @param user
 	 * @return
 	 */
-	public Ret update(User user) {
+	public Ret update(User user, UserExtend extend) {
 		if(user==null||notOk(user.getId())||notOk(user.getName())
 				||notOk(user.getUsername())){
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		
-		return saveOrUpdate(user);
+		boolean userExtendEnable = JBoltGlobalConfigCache.me.userExtendEnable();
+		if(userExtendEnable && extend!=null && notOk(extend.getId())){
+			return fail("用户扩展信息"+JBoltMsg.PARAM_ERROR);
+		}
+		if(!user.getId().equals(extend.getId())){
+			return fail("用户扩展信息"+JBoltMsg.PARAM_ERROR+",与用户主键不一致");
+		}
+		Ret ret = saveOrUpdate(user);
+		if(ret.isFail()){
+			return ret;
+		}
+		//添加完user后处理extend
+		if(userExtendEnable && extend != null){
+			extend.setId(user.getId());
+			ret = userExtendService.updateByUser(extend);
+			if(ret.isFail()){
+				return ret;
+			}
+		}
+		return SUCCESS;
 	}
 
 	/**
@@ -173,6 +206,14 @@ public class UserService extends JBoltUserService {
 		boolean success=user.delete();
 		if(success) {
 			addDeleteSystemLog(user.getId(), userId,user.getName());
+			boolean userExtendEnable = JBoltGlobalConfigCache.me.userExtendEnable();
+			if(userExtendEnable){
+				//同步删除扩展信息
+				Ret ret = userExtendService.deleteById(user.getId());
+				if(ret.isFail()){
+					return ret;
+				}
+			}
 		}
 		return ret(success);
 	}
