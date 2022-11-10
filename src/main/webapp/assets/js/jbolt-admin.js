@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.1.6";
+var jbolt_admin_js_version="6.1.8";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -11416,7 +11416,7 @@ function syncOtherInput(value,inputEle){
 						  }
 					  }
 					  if(isFormInputValueControl(setvaluetoEle)){
-						  setvaluetoEle.val(values?values:"");
+						  setvaluetoEle.val(values?values:"").change();
 					  }else{
 						  setvaluetoEle.text(values?values:"");
 					  }
@@ -11478,7 +11478,7 @@ function syncOtherInput(value,inputEle){
 						  var len=texts.length;
 						  if(selectText&&len==1&&selectText==texts.text()){
 							  if(isInputValueEle){
-								  settexttoEle.val("");
+								  settexttoEle.val("").change();
 							  }else{
 								  settexttoEle.text("");
 							  }
@@ -11504,14 +11504,14 @@ function syncOtherInput(value,inputEle){
 									  textResult=toT.join(",");
 								  }
 								  if(isInputValueEle){
-									  settexttoEle.val(textResult);
+									  settexttoEle.val(textResult).change();
 								  }else{
 									  settexttoEle.text(textResult);
 								  }
 							  }
 					  }else{
 						  if(isInputValueEle){
-							  settexttoEle.val("");
+							  settexttoEle.val("").change();
 						  }else{
 							  settexttoEle.text("");
 						  }
@@ -11612,9 +11612,11 @@ function syncOtherInput(value,inputEle){
 					 if(this.value){
 							if(syncmust){
 								this.value=val;
+								ele.change();
 							}
 						}else{
 							this.value=val;
+						    ele.change();
 						}
 				 }else{
 					 if(this.innerText){
@@ -13055,6 +13057,9 @@ var FormDate={
 			 var theme=dateEle.data("theme");
 			 var triggerType=dateEle.data("trigger")||"click";
 			 var range=dateEle.data("range");
+			 if(typeof(range) == "boolean" && range){
+				 range = "~";
+			 }
 			 
 			 var dateOptions={
 					 elem:"#"+id,

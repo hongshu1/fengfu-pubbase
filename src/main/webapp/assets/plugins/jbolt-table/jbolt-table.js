@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.0.5";
+var jbolt_table_js_version="3.0.6";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -7850,7 +7850,7 @@ function getScrollBarHeight(ele){
 				'{@else if type==="input_ranger" }'+
 				'<span class="rangerText">${tdText}</span><input oninput="$(this).prev().text(this.value)" {@if readOnly}readonly="readonly"{@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="range" {@if min} min="${min}" {@/if} {@if min} min="${min}" {@/if}  {@if max} max="${max}" {@/if}  data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="datetime" || type==="date"  || type==="time" || type==="year" || type==="month"}'+
-				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }" data-date data-type="${type}" data-trigger="focus" name="${jbe_col_key}" data-fmt="${pattern}" value="${tdText}"/>'+
+				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }" data-date data-type="${type}" {@if range}data-range="${range}"{@/if} data-trigger="focus" name="${jbe_col_key}" data-fmt="${pattern}" value="${tdText}"/>'+
 				'{@else if type==="week" }'+
 				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="week" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="autocomplete" }'+
@@ -9261,6 +9261,9 @@ function getScrollBarHeight(ele){
 
 		},
 		processColConfigInitByType:function(colConfig){
+			if(typeof(colConfig.range)=="boolean" && colConfig.range){
+				colConfig.range = "~";
+			}
 			switch (colConfig.type) {
 				case "auto":
 					colConfig.maxLength=colConfig.maxLength||40;
@@ -9327,28 +9330,53 @@ function getScrollBarHeight(ele){
 					break;
 				case "date":
 					colConfig.pattern=colConfig.pattern||"yyyy-MM-dd";
-					colConfig.maxLength=colConfig.maxLength||colConfig.pattern.length;
-					colConfig.placeholder=colConfig.placeholder||"日期";
+					if(colConfig.range){
+						colConfig.maxLength=colConfig.maxLength||(colConfig.pattern.length*2+(typeof(colConfig.range)=="boolean"?3:(colConfig.range.length+2)));
+						colConfig.placeholder=colConfig.placeholder||"日期范围";
+					}else{
+						colConfig.maxLength=colConfig.maxLength||colConfig.pattern.length;
+						colConfig.placeholder=colConfig.placeholder||"日期";
+					}
 					break;
 				case "datetime":
 					colConfig.pattern=colConfig.pattern||"yyyy-MM-dd HH:mm";
-					colConfig.maxLength=colConfig.maxLength||colConfig.pattern.length;
-					colConfig.placeholder=colConfig.placeholder||"日期时间";
+					if(colConfig.range){
+						colConfig.maxLength=colConfig.maxLength||(colConfig.pattern.length*2+(typeof(colConfig.range)=="boolean"?3:(colConfig.range.length+2)));
+						colConfig.placeholder=colConfig.placeholder||"日期时间范围";
+					}else{
+						colConfig.maxLength=colConfig.maxLength||colConfig.pattern.length;
+						colConfig.placeholder=colConfig.placeholder||"日期时间";
+					}
 					break;
 				case "time":
 					colConfig.pattern=colConfig.pattern||"HH:mm";
-					colConfig.maxLength=colConfig.maxLength||colConfig.pattern.length;
-					colConfig.placeholder=colConfig.placeholder||"时间";
+					if(colConfig.range){
+						colConfig.maxLength=colConfig.maxLength||(colConfig.pattern.length*2+(typeof(colConfig.range)=="boolean"?3:(colConfig.range.length+2)));
+						colConfig.placeholder=colConfig.placeholder||"时间范围";
+					}else{
+						colConfig.maxLength=colConfig.maxLength||colConfig.pattern.length;
+						colConfig.placeholder=colConfig.placeholder||"时间";
+					}
 					break;
 				case "year":
 					colConfig.pattern=colConfig.pattern||"yyyy";
-					colConfig.maxLength=colConfig.maxLength||colConfig.pattern.length;
-					colConfig.placeholder=colConfig.placeholder||"年";
+					if(colConfig.range){
+						colConfig.maxLength=colConfig.maxLength||(colConfig.pattern.length*2+(typeof(colConfig.range)=="boolean"?3:(colConfig.range.length+2)));
+						colConfig.placeholder=colConfig.placeholder||"年范围";
+					}else{
+						colConfig.maxLength=colConfig.maxLength||colConfig.pattern.length;
+						colConfig.placeholder=colConfig.placeholder||"年";
+					}
 					break;
 				case "month":
 					colConfig.pattern=colConfig.pattern||"yyyy-MM";
-					colConfig.maxLength=colConfig.maxLength||colConfig.pattern.length;
-					colConfig.placeholder=colConfig.placeholder||"年-月";
+					if(colConfig.range){
+						colConfig.maxLength=colConfig.maxLength||(colConfig.pattern.length*2+(typeof(colConfig.range)=="boolean"?3:(colConfig.range.length+2)));
+						colConfig.placeholder=colConfig.placeholder||"年-月范围";
+					}else{
+						colConfig.maxLength=colConfig.maxLength||colConfig.pattern.length;
+						colConfig.placeholder=colConfig.placeholder||"年-月";
+					}
 					break;
 				case "week":
 					colConfig.maxLength=colConfig.maxLength||10;
