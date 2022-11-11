@@ -77,11 +77,13 @@ public class UserService extends JBoltUserService {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		boolean userExtendEnable = JBoltGlobalConfigCache.me.userExtendEnable();
-		if(userExtendEnable && extend!=null && notOk(extend.getId())){
-			return fail("用户扩展信息"+JBoltMsg.PARAM_ERROR);
-		}
-		if(!user.getId().equals(extend.getId())){
-			return fail("用户扩展信息"+JBoltMsg.PARAM_ERROR+",与用户主键不一致");
+		if(userExtendEnable){
+			if(extend!=null && notOk(extend.getId())){
+				return fail("用户扩展信息"+JBoltMsg.PARAM_ERROR);
+			}
+			if(extend!=null && !user.getId().equals(extend.getId())){
+				return fail("用户扩展信息"+JBoltMsg.PARAM_ERROR+",与用户主键不一致");
+			}
 		}
 		Ret ret = saveOrUpdate(user);
 		if(ret.isFail()){
