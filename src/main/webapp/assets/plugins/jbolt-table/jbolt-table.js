@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.0.6";
+var jbolt_table_js_version="3.0.7";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -4555,16 +4555,16 @@ function getScrollBarHeight(ele){
 			return chrds;
 		},
 		//获取选中了一个Tr
-		getCheckedTr:function(table,downShowError){
+		getCheckedTr:function(table,dontShowError){
 			var chrds=this.getCheckedEles(table);
 			if(!isOk(chrds)){
-				if(!downShowError){
+				if(!dontShowError){
 					LayerMsgBox.alert("请选择一行数据",2);
 				}
 				return false;
 			}
 			if(chrds.length>1){
-				if(!downShowError){
+				if(!dontShowError){
 					LayerMsgBox.alert("最多选择一行数据",2);
 				}
 				return false;
@@ -4576,10 +4576,10 @@ function getScrollBarHeight(ele){
 			return tr;
 		},
 		//获取选中了多个Tr
-		getCheckedTrs:function(table,downShowError){
+		getCheckedTrs:function(table,dontShowError){
 			var chrds=this.getCheckedEles(table);
 			if(!isOk(chrds)){
-				if(!downShowError){
+				if(!dontShowError){
 					LayerMsgBox.alert("请至少选择一行数据",2);
 				}
 				return false;
@@ -4803,7 +4803,7 @@ function getScrollBarHeight(ele){
 		},
 		//获取选中了一个数据
 		getCheckedId:function(table,dontShowError,checkedErrorMsg){
-			var tr=this.getCheckedTr(table);
+			var tr=this.getCheckedTr(table,dontShowError);
 			if(!tr){
 				return false;
 			}
