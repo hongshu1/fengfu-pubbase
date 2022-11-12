@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.1.9";
+var jbolt_admin_js_version="6.2.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -2538,14 +2538,22 @@ var JSTreeUtil={
 				//如果没有开启curd模式 默认就是false 就是只有查询和change处理
 				curd=false;
 			}
-			
+			var stripes = tree.data("stripes");
+			if(typeof(stripes)=="undefined"){
+				stripes = false;
+			}
 			var treeOptions={
 					'core' : {
 						'check_callback' : true,
-						'animation':100
+						'animation':200,
+						"themes" : { "stripes" : stripes }
 					},
-					'plugins' : ["themes","wholerow"],
+				'plugins' : ["themes","sort","state"],
 			};
+			var wholerow = tree.data("wholerow");
+			if((typeof(wholerow)=="boolean" && wholerow)){
+				treeOptions['plugins'].push("wholerow");
+			}
 			 var searchInputId=tree.data("search-input");
 			 var searchInput;
 			 var hasCheckbox = false;
@@ -2681,8 +2689,8 @@ var JSTreeUtil={
 					}
 				}
 			}
-			console.log(treeOptions)
-			
+			jboltlog(treeOptions);
+
 			treeOptions['plugins'].push('types');
 			var defaultTypes={
 			    "#" : {
