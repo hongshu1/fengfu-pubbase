@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.1.8";
+var jbolt_admin_js_version="6.2.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -2538,14 +2538,22 @@ var JSTreeUtil={
 				//如果没有开启curd模式 默认就是false 就是只有查询和change处理
 				curd=false;
 			}
-			
+			var stripes = tree.data("stripes");
+			if(typeof(stripes)=="undefined"){
+				stripes = false;
+			}
 			var treeOptions={
 					'core' : {
 						'check_callback' : true,
-						'animation':100
+						'animation':200,
+						"themes" : { "stripes" : stripes }
 					},
-					'plugins' : ["themes","wholerow"],
+				'plugins' : ["themes","sort","state"],
 			};
+			var wholerow = tree.data("wholerow");
+			if((typeof(wholerow)=="boolean" && wholerow)){
+				treeOptions['plugins'].push("wholerow");
+			}
 			 var searchInputId=tree.data("search-input");
 			 var searchInput;
 			 var hasCheckbox = false;
@@ -2681,8 +2689,8 @@ var JSTreeUtil={
 					}
 				}
 			}
-			console.log(treeOptions)
-			
+			jboltlog(treeOptions);
+
 			treeOptions['plugins'].push('types');
 			var defaultTypes={
 			    "#" : {
@@ -8718,16 +8726,17 @@ function getRealAcceptSplit(accept){
  * @param files
  * @param accept
  * @param maxSize
+ * @param fileNameMaxLength
  * @returns
  */
-function validateFileDatas(fileDatas,accept,maxSize){
+function validateFileDatas(fileDatas,accept,maxSize,fileNameMaxLength){
 	if(!fileDatas||fileDatas.length==0){
 		return false;
 	}
 	var passValidate=true;
 	
 	$.each(fileDatas,function(i,fileData){
-		passValidate = validateFile(fileData,accept,maxSize);
+		passValidate = validateFile(fileData,accept,maxSize,fileNameMaxLength);
 		if(!passValidate){
 			return false;
 		}
@@ -8741,14 +8750,23 @@ function validateFileDatas(fileDatas,accept,maxSize){
  * @param file
  * @param accept
  * @param maxSize
+ * @param fileNameMaxLength
  * @returns
  */
-function validateFile(file,accept,maxSize){
+function validateFile(file,accept,maxSize,fileNameMaxLength){
 	  	  var ele;
 		  if(isFileData(file)){
 			    ele = file;
 			}else{
 				ele = file[0].files[0];
+		  }
+		  var fileName = ele.name;
+		  if(!fileNameMaxLength){
+			  fileNameMaxLength = 50;
+		  }
+		  if(fileName && fileName.length>fileNameMaxLength){
+			  LayerMsgBox.alert("文件名["+fileName+"]太长了，请缩短修改后上传,不能超过["+fileNameMaxLength+"]个字符",2);
+			  return false;
 		  }
 		//默认10M
 		if(maxSize){
@@ -9069,7 +9087,7 @@ var ImgUploadUtil={
 				var handler=uploder.data("handler");
 				
 				if(fileValue){
-					if(!validateFileDatas(fileDatas,"img",maxSize)){
+					if(!validateFileDatas(fileDatas,"img",maxSize,fileNameMaxLength)){
 						fileInput.val("");
 						return false;
 					}
@@ -9194,6 +9212,7 @@ var ImgUploadUtil={
 		  },
 		  changeFile:function(uploder,fileInput,fileData){
 				var maxSize=uploder.data("maxsize");
+				var fileNameMaxLength=uploder.data("filename-maxlength")||50;
 				var fileValue=fileInput.val();
 				var hiddeninput=uploder.data("hidden-input")||uploder.data("hiddeninput");
 				var handler=uploder.data("handler");
@@ -9202,7 +9221,7 @@ var ImgUploadUtil={
 				}
 				
 				if(fileValue){
-					if(validateFile(fileInput,"img",maxSize)){
+					if(validateFile(fileInput,"img",maxSize,fileNameMaxLength)){
 						var arr=fileValue.split('\\');
 						var fileName=arr[arr.length-1];
 						if(handler&&handler!="uploadMultipleFile"){
@@ -10655,9 +10674,10 @@ var FileUploadUtil={
 			var that=this;
 			var accept=box.data("accept");
 			var maxSize=box.data("maxsize");
+			var fileNameMaxLength=box.data("filename-maxlength")||50;
 			var fileValue=fileInput.val();
 			if(fileValue){
-				if(validateFile(fileInput,accept,maxSize)){
+				if(validateFile(fileInput,accept,maxSize,fileNameMaxLength)){
 					var confirmInfo=box.data("confirm");
 					if(confirmInfo){
 						LayerMsgBox.confirm(confirmInfo,function(){
@@ -10678,11 +10698,12 @@ var FileUploadUtil={
 		},
 		changeFiles:function(uploder,fileInput,fileDatas){
 				var maxSize=uploder.data("maxsize");
+				var fileNameMaxLength=uploder.data("filename-maxlength")||50;
 				var fileValue=fileInput.val();
 				var handler=uploder.data("handler");
 				var accept = uploder.data("accept")||"file";
 				if(fileValue){
-					if(!validateFileDatas(fileDatas,accept,maxSize)){
+					if(!validateFileDatas(fileDatas,accept,maxSize,fileNameMaxLength)){
 						fileInput.val("");
 						return false;
 					}

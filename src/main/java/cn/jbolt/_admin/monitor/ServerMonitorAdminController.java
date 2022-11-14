@@ -104,6 +104,8 @@ public class ServerMonitorAdminController extends JBoltBaseController {
 		set("serverOsArch", System.getProperty("os.arch"));
 		set("serverIp",JBoltIpUtil.getServerIp());
 		set("projectPath", System.getProperty("user.dir"));
+		set("dataCenterId", JBoltConfig.DATACENTER_ID);
+		set("workId", JBoltConfig.WORKER_ID);
 		render("server.html");
 	}
 
