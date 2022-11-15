@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.0.7";
+var jbolt_table_js_version="3.0.8";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6800,7 +6800,7 @@ function getScrollBarHeight(ele){
 			// 	},100);
 			// }
 			that.processTableStyleAfterAjax(table,function(){
-				if(table.editable){
+				if(table.editableOptions){
 					//处理tbody中的横向summarys计算
 					if(table.editableOptions.hsummaryFirstByAutoCalc){
 						that.processTbodyHSummarys(table);
@@ -6829,6 +6829,9 @@ function getScrollBarHeight(ele){
 					//that.processCellWidthAfterAjax(table);
 
 					setTimeout(function(){
+						if(summaryCallback){
+							summaryCallback();
+						}
 						//重新设置tableHeight
 						that.setTableHeight(table);
 						//处理恢复样式
