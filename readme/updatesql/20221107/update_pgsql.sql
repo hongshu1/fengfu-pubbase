@@ -16,6 +16,9 @@ COMMENT ON COLUMN "public"."jb_user"."update_user_id" IS '更新用户ID';
 alter table "jb_user" add COLUMN "update_time" timestamp(6) COLLATE "pg_catalog"."default";
 COMMENT ON COLUMN "public"."jb_user"."update_time" IS '更新时间';
 
+alter table "jb_user" add COLUMN "last_pwd_update_time" timestamp(6) COLLATE "pg_catalog"."default";
+COMMENT ON COLUMN "public"."jb_user"."last_pwd_update_time" IS '密码最新更新时间';
+
 alter table "jb_dictionary_type" add COLUMN  "enable" char(1) COLLATE "pg_catalog"."default" NOT NULL DEFAULT '1'::bpchar;
 COMMENT ON COLUMN "public"."jb_dictionary_type"."enable" IS '是否启用';
 

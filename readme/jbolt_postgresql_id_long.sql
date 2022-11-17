@@ -692,7 +692,8 @@ CREATE TABLE "public"."jb_user" (
   "create_user_id" int8 NOT NULL,
   "create_time" timestamp(6),
   "update_user_id" int8 NOT NULL,
-  "update_time" timestamp(6)
+  "update_time" timestamp(6),
+  "last_pwd_update_time" timestamp(6)
 )
 ;
 COMMENT ON COLUMN "public"."jb_user"."id" IS '主键ID';
