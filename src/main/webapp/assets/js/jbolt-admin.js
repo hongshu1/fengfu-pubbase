@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.2.1";
+var jbolt_admin_js_version="6.2.2";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -2378,10 +2378,15 @@ var JSTreeUtil={
 		clearSelected:function(tree){
 			tree.jstree(true).deselect_all();
 		},refresh:function(tree,selectId){
+			var that = this;
 			if(typeof(tree)=="string"){
 				tree = getRealJqueryObject(tree);
 			}
-			var readUrl=tree.data("read-url");
+			var readUrl=that.processTreeReadUrl(tree);
+			if(!readUrl){
+				LayerMsgBox.alert("未设置jstree的data-read-url",2);
+				return;
+			}
 			if(selectId){
 				if(readUrl.indexOf("?")!=-1){
 					readUrl=readUrl+"&selectId="+selectId;
@@ -2507,12 +2512,10 @@ var JSTreeUtil={
 					}
 			}
 		},
-		_initTree:function(tree){
-			var that=this;
+		processTreeReadUrl:function(tree){
 			var read_url=tree.data("read-url");
 			if(!read_url){
-				LayerMsgBox.alert("未设置jstree的data-read-url",2);
-				return;
+				return null;
 			}
 			var openLevel=tree.data("open-level");
 			if(typeof(openLevel)=="undefined"){
@@ -2528,10 +2531,19 @@ var JSTreeUtil={
 					read_url=read_url+"?openLevel="+openLevel;
 				}
 			}
-			var form = that.processConditionsForm(tree);
+			var form = this.processConditionsForm(tree);
 			if(isOk(form)){
 				tree.data("orign-read-url",read_url).attr("data-orign-read-url",read_url);
 				read_url = urlWithFormData(read_url,form);
+			}
+			return read_url;
+		},
+		_initTree:function(tree){
+			var that=this;
+			var read_url=that.processTreeReadUrl(tree);
+			if(!read_url){
+				LayerMsgBox.alert("未设置jstree的data-read-url",2);
+				return;
 			}
 			var curd=tree.data("curd");
 			if(curd==undefined||curd=="undefined"){
