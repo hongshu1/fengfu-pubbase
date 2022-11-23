@@ -312,7 +312,7 @@ public class UserService extends JBoltUserService {
 			user.setDeptPath(dept.getDeptPath());
 			users.add(user);
 			return true;
-		},selectSql().select("id","dept_id").isNotNull("dept_id").toSql());
+		},selectSql().select("id","username","dept_id").isNotNull("dept_id").toSql());
 
 		if(isOk(users)){
 			batchUpdate(users);
