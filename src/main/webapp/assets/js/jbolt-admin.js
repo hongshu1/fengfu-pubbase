@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.2.2";
+var jbolt_admin_js_version="6.2.3";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -2540,7 +2540,16 @@ var JSTreeUtil={
 		},
 		_initTree:function(tree){
 			var that=this;
-			var read_url=that.processTreeReadUrl(tree);
+			var autoLoad = tree.data("autoload");
+			if(typeof(autoLoad) == "undefined"){
+				autoLoad = true;
+			}
+			var read_url;
+			if(autoLoad){
+				read_url=that.processTreeReadUrl(tree);
+			}else{
+				read_url=tree.data("read-url");
+			}
 			if(!read_url){
 				LayerMsgBox.alert("未设置jstree的data-read-url",2);
 				return;
@@ -2550,6 +2559,16 @@ var JSTreeUtil={
 				//如果没有开启curd模式 默认就是false 就是只有查询和change处理
 				curd=false;
 			}
+
+			var treeOptionsHandler = tree.data("options");
+			if(treeOptionsHandler){
+				treeOptionsHandler=eval(treeOptionsHandler);
+				if(!treeOptionsHandler||typeof(treeOptionsHandler)!="function"){
+					LayerMsgBox.alert("设置jstree的data-options 必须为自定义function 并且有返回值",2);
+					return;
+				}
+			}
+
 			var stripes = tree.data("stripes");
 			if(typeof(stripes)=="undefined"){
 				stripes = false;
@@ -2701,7 +2720,7 @@ var JSTreeUtil={
 					}
 				}
 			}
-			jboltlog(treeOptions);
+			// jboltlog(treeOptions);
 
 			treeOptions['plugins'].push('types');
 			var defaultTypes={
@@ -2754,24 +2773,37 @@ var JSTreeUtil={
                     that.processCheckedByTreeDataValue(tree);
                     that.processCheckedByJBoltInput(tree);
                 }
-				var theTree=tree.jstree(treeOptions);
 				tree.hasCheckbox = hasCheckbox;
+				if(treeOptionsHandler&&typeof(treeOptionsHandler)=="function"){
+					treeOptionsHandler(tree,treeOptions);
+				}
+				var theTree=tree.jstree(treeOptions);
 				that.initTreeEvent(tree,theTree,searchInput,curd);
 				that.processCheckedByTreeDataValue(tree);
 				that.processCheckedByJBoltInput(tree);
 			}else{
-				
-				Ajax.get(read_url,function(data){
-					var treeDatas=data.data;
-					treeOptions['core']['data']=treeDatas;
-					var theTree=tree.jstree(treeOptions);
+				if(autoLoad){
+					Ajax.get(read_url,function(data){
+						var treeDatas=data.data;
+						treeOptions['core']['data']=treeDatas;
+						tree.hasCheckbox = hasCheckbox;
+						if(treeOptionsHandler&&typeof(treeOptionsHandler)=="function"){
+							treeOptionsHandler(tree,treeOptions);
+						}
+						var theTree=tree.jstree(treeOptions);
+						that.initTreeEvent(tree,theTree,searchInput,curd);
+						that.processCheckedByJBoltInput(tree);
+						that.processCheckedByTreeDataValue(tree);
+					});
+				}else{
 					tree.hasCheckbox = hasCheckbox;
+					if(treeOptionsHandler&&typeof(treeOptionsHandler)=="function"){
+						treeOptionsHandler(tree,treeOptions);
+					}
+					var theTree=tree.jstree(treeOptions);
 					that.initTreeEvent(tree,theTree,searchInput,curd);
-					that.processCheckedByJBoltInput(tree);
-					that.processCheckedByTreeDataValue(tree);
-				});
+				}
 			}
-			
 		},
 		processSyncEle:function(tree,node){
 			var syncEles = tree.data("sync-ele");
