@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.0.8";
+var jbolt_table_js_version="3.1.1";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -3611,7 +3611,7 @@ function getScrollBarHeight(ele){
 		'<div class="pages">'+
 		'<div class="mainPagination mb-1 mb-sm-0  d-block d-sm-inline-block text-center" id="${pageId}"></div>'+
 		'<div class="searchPage d-none d-sm-inline-block">'+
-		'<span class="page-go pl-3">到<input id="gonu" type="number" onblur="if(this.value&&this.value>=1){}else{this.value=1;}" min="1" max="1"  pattern="[0-9]*" class="current_page" value="1">页</span>'+
+		'<span class="page-go pl-3">到<input style="width:50px;" id="gonu" data-rule="pint" data-tips="请输入正整数" type="text" oninput="return FormChecker.checkIt(this)" min="1" maxlength="6"  pattern="[0-9]*" class="current_page" value="1">页</span>'+
 		'<a tabindex="-1" href="javascript:;" class="page-btn">GO</a>'+
 		'<span class="page-sum">共&nbsp;<strong id="totalRow" class="allPage">1</strong>&nbsp;条&nbsp;<strong id="totalPage" class="allPage">1</strong>&nbsp;页</span>'+
 		'<select id="pageSize" class="mx-2" style="width:80px;height: 32px;margin-top:-1px;border-color:#e6e6e6;">'+
@@ -8767,7 +8767,7 @@ function getScrollBarHeight(ele){
 		initEditableCheckbox:function(table,colConfigs){
 			if(!colConfigs||colConfigs.length==0){return false;}
 			var temp,column,checkbox,editingTd,that=this,result,submitattr;
-			table.table_box.on("click","table>tbody>tr>td[data-col-index] input[type='checkbox'][name!='jboltTableCheckbox']",function(e){
+			table.table_box.on("change","table>tbody>tr>td[data-col-index] input[type='checkbox'][name!='jboltTableCheckbox']",function(e){
 				checkbox=$(this);
 				editingTd=checkbox.closest("td");
 				that.processCheckboxTd(table,editingTd,checkbox,this.checked);
@@ -10703,7 +10703,7 @@ function getScrollBarHeight(ele){
 				jbolt_table_pages=addJboltPageBox(table);
 			}
 			var pager=jbolt_table_pages.find("#"+pageId);
-			jbolt_table_pages.find("#gonu").val(pageInfo.pageNumber).attr("max",pageInfo.totalPage);
+			jbolt_table_pages.find("#gonu").val(pageInfo.pageNumber).attr("max",pageInfo.totalPage).data("rule","pint;<="+pageInfo.totalPage).data("tips","请输入正整数 并且小于等于"+pageInfo.totalPage);
 			jbolt_table_pages.find("#totalPage").text(pageInfo.totalPage);
 			jbolt_table_pages.find("#totalRow").text(pageInfo.totalRow);
 			jbolt_table_pages.find("#pageSize").val(pageInfo.pageSize);
@@ -10742,7 +10742,15 @@ function getScrollBarHeight(ele){
 				});
 
 				jbolt_table_pages.find(".page-btn").on("click",function(){
-					that.readByPage(table);
+					var pageGonum = jbolt_table_pages.find("#gonu");
+					if(isOk(pageGonum)){
+						if(FormChecker.checkIt(pageGonum[0])){
+							that.readByPage(table);
+						}
+					}else{
+						that.readByPage(table);
+					}
+
 				});
 			}
 			table.page=jbolt_table_pages;
@@ -11889,6 +11897,7 @@ function getScrollBarHeight(ele){
 						height=height-Math.ceil($(this).outerHeight(true));
 					});
 				}
+				height = height - 1;
 			}else{
 				if(jboltWithTabs){
 					height = height + 10;
