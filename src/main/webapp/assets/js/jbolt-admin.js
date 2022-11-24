@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.2.5";
+var jbolt_admin_js_version="6.2.6";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -18346,8 +18346,6 @@ var AjaxPortalUtil={
 			}
 			if(isOk(portals)){
 				portals.ajaxPortal(true);
-			}else{
-				LayerMsgBox.alert("指定加载区域不存在",2);
 			}
 		},refresh:function(portalEle){
 			var portal=getRealJqueryObject(portalEle);
