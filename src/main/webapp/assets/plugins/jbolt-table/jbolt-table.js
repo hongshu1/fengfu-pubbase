@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.0.9";
+var jbolt_table_js_version="3.1.0";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -11897,6 +11897,7 @@ function getScrollBarHeight(ele){
 						height=height-Math.ceil($(this).outerHeight(true));
 					});
 				}
+				height = height - 1;
 			}else{
 				if(jboltWithTabs){
 					height = height + 10;
