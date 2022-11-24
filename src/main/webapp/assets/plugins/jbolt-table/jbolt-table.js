@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.1.0";
+var jbolt_table_js_version="3.1.1";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -8767,7 +8767,7 @@ function getScrollBarHeight(ele){
 		initEditableCheckbox:function(table,colConfigs){
 			if(!colConfigs||colConfigs.length==0){return false;}
 			var temp,column,checkbox,editingTd,that=this,result,submitattr;
-			table.table_box.on("click","table>tbody>tr>td[data-col-index] input[type='checkbox'][name!='jboltTableCheckbox']",function(e){
+			table.table_box.on("change","table>tbody>tr>td[data-col-index] input[type='checkbox'][name!='jboltTableCheckbox']",function(e){
 				checkbox=$(this);
 				editingTd=checkbox.closest("td");
 				that.processCheckboxTd(table,editingTd,checkbox,this.checked);
