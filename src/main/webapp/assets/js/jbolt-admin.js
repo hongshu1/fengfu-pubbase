@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.2.3";
+var jbolt_admin_js_version="6.2.4";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -13840,6 +13840,7 @@ Date.prototype.Format = function (fmt) {
 		  }
 	  }
 	  if(msg){
+		  disposeTooltip(target);
 		  target.tooltip({ boundary: 'window',container:"body",title:msg}).tooltip("show");
 		  $("#"+target.attr("aria-describedby")).addClass("error").find(".tooltip-inner").text(msg);
 	  }
@@ -16041,15 +16042,22 @@ function initPage(id,totalPage,pageNumber,formId){
 				}
 		   });
 		  
-		pagerParent.find("#gonu").one("keydown",function(e){
+		pagerParent.find("#gonu").on("keydown",function(e){
 			   if(e.keyCode==109||e.keyCode==189){
 				   return false;
 			   }
 		   });
-		pagerParent.find(".page-btn").one("click",function(){
-			jboltPageSubmitForm(pbox,pager,form);
+		pagerParent.find(".page-btn").on("click",function(){
+			var pageGonum = pagerParent.find("#gonu");
+			if(isOk(pageGonum)){
+				if(FormChecker.checkIt(pageGonum[0])){
+					jboltPageSubmitForm(pbox,pager,form);
+				}
+			}else{
+				jboltPageSubmitForm(pbox,pager,form);
+			}
 		});
-		pagerParent.find("#pageSize").one("change",function(){
+		pagerParent.find("#pageSize").on("change",function(){
 			jboltPageSubmitForm(pbox,pager,form,1);
 		   });
 	});
@@ -18027,7 +18035,7 @@ var jboltPortalPageTpl='<div class="jbolt_portal_pages noselect">'+
 '<div class="pages">'+
 '<div class="mainPagination mb-1 mb-sm-0  d-block d-sm-inline-block text-center" id="${pageId}"></div>'+
 '<div class="searchPage d-none d-sm-inline-block">'+
-'<span class="page-go pl-3">到<input id="gonu" type="number" onblur="if(this.value&&this.value>=1){}else{this.value=1;}" min="1" max="1"  pattern="[0-9]*" class="current_page" value="1">页</span>'+
+'<span class="page-go pl-3">到<input style="width:50px;" id="gonu" data-rule="pint" data-tips="请输入正整数" type="text"  oninput="return FormChecker.checkIt(this);" min="1" maxlength="6"  pattern="[0-9]*" class="current_page" value="1">页</span>'+
 '<a tabindex="-1" href="javascript:;" class="page-btn">GO</a>'+
 '<span class="page-sum">共&nbsp;<strong id="totalRow" class="allPage">1</strong>&nbsp;条&nbsp;<strong id="totalPage" class="allPage">1</strong>&nbsp;页</span>'+
 '<select id="pageSize" class="mx-2" style="width:80px;height: 32px;margin-top:-1px;border-color:#e6e6e6;">'+
@@ -18119,7 +18127,14 @@ var AjaxPortalUtil={
 				   });
 				
 				jbolt_portal_pages.find(".page-btn").on("click",function(){
-					that.readByPage(portal);
+					var pageGonum = jbolt_portal_pages.find("#gonu");
+					if(isOk(pageGonum)){
+						if(FormChecker.checkIt(pageGonum[0])){
+							that.readByPage(portal);
+						}
+					}else{
+						that.readByPage(portal);
+					}
 				});
 			}
 			//设置page初始化成功标识
