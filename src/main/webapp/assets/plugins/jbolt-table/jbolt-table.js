@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.1.2";
+var jbolt_table_js_version="3.1.3";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -4214,11 +4214,11 @@ function getScrollBarHeight(ele){
 				LayerMsgBox.alert("表格尚未选中任何数据",2);
 				return;
 			}
-			if(typeof(table.activeTrIndex)=="number" && table.activeTrIndex>=table.tableListDatas.length){
+			if(typeof(table.activeTrIndex)=="number" && table.activeTrIndex>=table.tableListDatas.length-1){
 				LayerMsgBox.alert("已经选中表格最后一行数据",2);
 				return;
 			}
-			var tr = table.find("table>tbody>tr:nth-child("+(table.activeTrIndex+1)+")");
+			var tr = table.find("tbody>tr[data-index='"+(table.activeTrIndex+1)+"']");
 			if(isOk(tr)){
 				tr.click();
 			}
@@ -4236,7 +4236,7 @@ function getScrollBarHeight(ele){
 				LayerMsgBox.alert("已经选中表格第一行数据",2);
 				return;
 			}
-			var tr = table.find("table>tbody>tr:nth-child("+(table.activeTrIndex-1)+")");
+			var tr = table.find("tbody>tr[data-index='"+(table.activeTrIndex-1)+"']");
 			if(isOk(tr)){
 				tr.click();
 			}
