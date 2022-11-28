@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.2.6";
+var jbolt_admin_js_version="6.2.7";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -8301,19 +8301,31 @@ var LayerPhotoUtil={
 						insertType="replace";
 					}
 					if(autoload){
+						var showLoading = portal.data("show-loading");
+						if(typeof(showLoading) == "undefined"){
+							showLoading = true;
+						}
 						switch (insertType) {
 						case "prepend":
-							portal.prepend("<div class='m-2 p-2 text-center ajaxPortalLoading'><div class='spinner-grow text-secondary' style='width: 3rem; height: 3rem;' role='status'><span class='sr-only'>Loading...</span></div></div>");
+							if(showLoading){
+								portal.prepend("<div class='m-2 p-2 text-center ajaxPortalLoading'><div class='spinner-grow text-secondary' style='width: 3rem; height: 3rem;' role='status'><span class='sr-only'>Loading...</span></div></div>");
+							}
 							break;
 						case "append":
-							portal.append("<div class='m-2 p-2 text-center ajaxPortalLoading'><div class='spinner-grow text-secondary' style='width: 3rem; height: 3rem;' role='status'><span class='sr-only'>Loading...</span></div></div>");
+							if(showLoading) {
+								portal.append("<div class='m-2 p-2 text-center ajaxPortalLoading'><div class='spinner-grow text-secondary' style='width: 3rem; height: 3rem;' role='status'><span class='sr-only'>Loading...</span></div></div>");
+							}
 							break;
 						case "replace":
 							AjaxPortalUtil.triggerPortalJBoltPageCloseHandler(portal);
-							portal.html("<div class='m-2 p-2 text-center ajaxPortalLoading'><div class='spinner-grow text-secondary' style='width: 3rem; height: 3rem;' role='status'><span class='sr-only'>Loading...</span></div></div>");
+							if(showLoading) {
+								portal.html("<div class='m-2 p-2 text-center ajaxPortalLoading'><div class='spinner-grow text-secondary' style='width: 3rem; height: 3rem;' role='status'><span class='sr-only'>Loading...</span></div></div>");
+							}
 							break;
 						default:
-							portal.html("<div class='m-2 p-2 text-center ajaxPortalLoading'><div class='spinner-grow text-secondary' style='width: 3rem; height: 3rem;' role='status'><span class='sr-only'>Loading...</span></div></div>");
+							if(showLoading) {
+								portal.html("<div class='m-2 p-2 text-center ajaxPortalLoading'><div class='spinner-grow text-secondary' style='width: 3rem; height: 3rem;' role='status'><span class='sr-only'>Loading...</span></div></div>");
+							}
 							break;
 						}
 						l_url=actionUrl(l_url);
