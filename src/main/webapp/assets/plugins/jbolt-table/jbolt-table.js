@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.1.1";
+var jbolt_table_js_version="3.1.2";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6,6 +6,32 @@ function clearJBoltCurrentEditableAndKeyEventTable(){
 }
 function changeJBoltCurrentEditableAndKeyEventTable(table){
 	JBoltCurrentEditableAndKeyEventTable=table;
+}
+
+/**
+ * 表格选中行转为上一行
+ * @param tableEle
+ */
+function jboltTableActivePrevTr(tableEle){
+	var table=getJBoltTableInst(tableEle);
+	if(!isOk(table)){
+		LayerMsgBox.alert("表格配置异常，无法找到对应表格",2);
+		return;
+	}
+	table.me.activePrevTr(table);
+}
+
+/**
+ * 表格选中行转为下一行
+ * @param tableEle
+ */
+function jboltTableActiveNextTr(tableEle){
+	var table=getJBoltTableInst(tableEle);
+	if(!isOk(table)){
+		LayerMsgBox.alert("表格配置异常，无法找到对应表格",2);
+		return;
+	}
+	table.me.activeNextTr(table);
 }
 
 /**
@@ -4178,6 +4204,42 @@ function getScrollBarHeight(ele){
 				}
 			});
 			return true;
+		},
+		activeNextTr:function(table){
+			if(table.isEmpty){
+				LayerMsgBox.alert("表格内无数据",2);
+				return;
+			}
+			if(typeof(table.activeTrIndex)=="undefined" || table.activeTrIndex<0){
+				LayerMsgBox.alert("表格尚未选中任何数据",2);
+				return;
+			}
+			if(typeof(table.activeTrIndex)=="number" && table.activeTrIndex>=table.tableListDatas.length){
+				LayerMsgBox.alert("已经选中表格最后一行数据",2);
+				return;
+			}
+			var tr = table.find("table>tbody>tr:nth-child("+(table.activeTrIndex+1)+")");
+			if(isOk(tr)){
+				tr.click();
+			}
+		},
+		activePrevTr:function(table){
+			if(table.isEmpty){
+				LayerMsgBox.alert("表格内无数据",2);
+				return;
+			}
+			if(typeof(table.activeTrIndex)=="undefined" || table.activeTrIndex<0){
+				LayerMsgBox.alert("表格尚未选中任何数据",2);
+				return;
+			}
+			if(typeof(table.activeTrIndex)=="number" && table.activeTrIndex<=0){
+				LayerMsgBox.alert("已经选中表格第一行数据",2);
+				return;
+			}
+			var tr = table.find("table>tbody>tr:nth-child("+(table.activeTrIndex-1)+")");
+			if(isOk(tr)){
+				tr.click();
+			}
 		},
 		//删除选中checkbox或者radio的行
 		removeJBoltTableCheckedTr:function(table,confirm,callback){
@@ -12873,9 +12935,13 @@ function getScrollBarHeight(ele){
 						table.currentChooseActiveTr=tempTr;
 						trIndex=tempTr.index();
 						if(rowClickActive){
+							// table.table_box.find("table>tbody>tr.active").removeClass("active");
+							// table.table_box.find("table>tbody>tr:nth-child("+(trIndex+1)+")").addClass("active");
 							table.table_box.find("table>tbody>tr.active").removeClass("active");
-							table.table_box.find("table>tbody>tr:nth-child("+(trIndex+1)+")").addClass("active");
-
+							var tr = table.table_box.find("table>tbody>tr:nth-child("+(trIndex+1)+")");
+							tr.addClass("active");
+							table.activeTrIndex = trIndex;
+							table.activeTrId    = tr.data("id");
 						}
 						if(rowClickHandler){
 							var exe_handler=eval(rowClickHandler);
