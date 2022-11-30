@@ -1,6 +1,5 @@
 package cn.jbolt.extend.gen;
 
-import cn.jbolt.core.annotation.JBoltAutoCache;
 import cn.jbolt.core.base.JBoltIDGenMode;
 import cn.jbolt.core.gen.JBoltColumnToBuildAttrNameFunction;
 import cn.jbolt.core.gen.JBoltProjectGenConfig;

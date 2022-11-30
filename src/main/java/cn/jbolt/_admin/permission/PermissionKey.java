@@ -173,4 +173,5 @@ public class PermissionKey {
 	 * 敏感词词库
 	 */
 	public static final String SENSITIVE_WORD = "sensitive_word";
+
 }
