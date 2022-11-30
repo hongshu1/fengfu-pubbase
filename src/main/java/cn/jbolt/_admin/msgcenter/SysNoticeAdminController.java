@@ -3,6 +3,7 @@ package cn.jbolt._admin.msgcenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jbolt.core.cache.JBoltUserCache;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -191,6 +192,10 @@ public class SysNoticeAdminController extends JBoltBaseController {
 		if(receiverType.intValue() == 5) {
 			set("hasDept", JBoltDeptCache.me.checkHasDept());
 			set("hasPost", JBoltPostCache.me.checkHasPost());
+			String ids = get("ids");
+			if(isOk(ids)){
+				set("selectedUsers",JBoltUserCache.me.getListByIdsStr(ids));
+			}
 		}
 		keepPara("ids");
 		render("choose_"+receiverType.intValue()+".html");

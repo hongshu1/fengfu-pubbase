@@ -35,6 +35,7 @@ data-url="admin/dept/datas"
 data-rowtpl="deptRowtpl_#(pageId)"
 ###设置是treetable 默认显示到第一级 操作列在第一列
 data-treetable="all:2"
+data-ajax-success-handler="ajaxSuccessHandler_#(pageId)"
 >
 <thead class="fw-normal">
 <tr>
@@ -64,6 +65,13 @@ function submitThisForm(){
 		 parent.layer.closeAll();
 	}
 	_submit_ing=false;
+}
+
+function ajaxSuccessHandler_#(pageId)(table){
+	var ids = "#(ids??)";
+	if(ids){
+		table.me.setCheckedIds(table,ids.split(","));
+	}
 }
 </script>
 #end

@@ -643,6 +643,9 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(user==null) {
 			return JBoltApiRet.WECHAT_XCX_BINDUSER_NO_USER(application,"系统用户");
 		}
+		if(user.getEnable()==null || !user.getEnable()){
+			return JBoltApiRet.API_FAIL("绑定用户已被禁用");
+		}
 		String bindUser=wechatUser.getBindUser();
 		String newBindUser=JBoltApiBindUserBean.TYPE_SYSTEM_USER+"_"+user.getId();
 		boolean needUpdate=false;
