@@ -25,15 +25,21 @@
 {@each datas as data,index}
 <tr data-id="${data.id}" class="hand">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td title="${data.name}">${data.name}</td>
+<td title="${data.name}">${data.name}{@if data.isBuildIn}<span class="text-danger">(内置)</span>{@/if}</td>
 <td title="${data.typeKey}">${data.typeKey}</td>
 <td>${data.modeLevel==1?"一级":"多级"}</td>
-<td>
+	<td>
+	{@if data.isBuildIn}
+	<img data-switchbtn data-value="${data.enable}"  data-disabled="true" data-disabled-msg="系统内置字典类型，不可切换启用状态"/>
+	{@else}
 	<img data-switchbtn data-confirm="切换后此类型下的所有字典数据与类型启用状态更新一致，确定切换此字典类型启用状态？" data-value="${data.enable}"  data-handler="refreshJBoltTable"  data-url="admin/dictionarytype/toggleEnable/${data.id}"/>
+	{@/if}
 </td>
 <td>
+{@if !data.isBuildIn}
  <a tooltip data-title="编辑" class=" d-inline-block jbolt_table_editbtn"  data-area="500,400" data-handler="refreshJBoltTable"   href="admin/dictionarytype/edit/${data.id}"><i class="fa fa-edit text-warning"></i></a>
  <a tooltip data-title="删除" class="ml-2 d-inline-block jbolt_table_delbtn" data-confirm="确认删除此分类？" data-handler="refreshJBoltTable" href="admin/dictionarytype/delete/${data.id}"><i class="fa fa-remove text-danger"></i></a>
+{@/if}
 </td>
 </tr>
 {@/each}
@@ -41,7 +47,7 @@
 <!-- 数据字典表的的数据模板定义-->
 <script type="text/template" id="dictionary_tpl_tr_#(pageId)">
 <tr data-id="${id}" data-pid="${pid}">
-<td><span>${name}</span></td>
+<td>${name}{@if innerCustom}<span class="text-danger">(扩展)</span>{@/if}</td>
 <td class="text-center">${sn}</td>
 <td class="text-center">
 	<img data-switchbtn data-value="${enable}"  data-handler="refreshJBoltTable"  data-url="admin/dictionary/toggleEnable/${id}"/>
@@ -50,12 +56,16 @@
 	{@if typeLevel == 2}
 	<a href="admin/dictionary/addItem/${typeId}-${id}" data-area="600,500"  tooltip data-title="新增下级数据"  data-handler="refreshJBoltTable" class="jbolt_table_editbtn"><i class="fa fa-plus"></i></a>
 	{@/if}
+	{@if !isBuildIn}
 	<a href="admin/dictionary/edit/${typeId}-${id}" data-area="600,400"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
-    #if(deleteDictionaryEnable)
+	{@/if}
+	#if(deleteDictionaryEnable)
+	{@if !isBuildIn}
 	<a href="admin/dictionary/delete/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除这条数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+	{@/if}
 	#end
-    <a href="admin/dictionary/up/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
-    <a href="admin/dictionary/down/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+    <a href="admin/dictionary/up/${id}" data-success-time="50" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+    <a href="admin/dictionary/down/${id}"  data-success-time="50"  data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
 </td>
 </tr>
 {@if items&&items.length>0}

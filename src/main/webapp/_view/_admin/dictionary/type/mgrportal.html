@@ -7,7 +7,7 @@ data-height="fill_box"
 <tbody>
 #for(data:dictionaryTypes)
 <tr class="hand" onclick="readDictionarys(this,'#(data.id)','#(data.name)')">
-<td title="#(data.name??)">#(data.name??)</td>
+ <td title="#(data.name??)">#if(data.isBuildIn??)<span class="text-danger">(内置)</span>#end #(data.name??)</td>
 <td>#(data.modeLevel==1?"一级":"多级")</td>
 <td title="#(data.typeKey??)">#(data.typeKey??)</td>
 <td>
