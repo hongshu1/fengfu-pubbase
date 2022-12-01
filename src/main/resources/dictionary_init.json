@@ -23,17 +23,6 @@
 			{"name":"女","sn":"2"}
 	]
 },{
-	"name": "商品单位",
-	"modeLevel": 1,
-	"typeKey": "goods_unit",
-	"dics":[
-			{"name":"个","sn":"1"},
-			{"name":"套","sn":"2"},
-			{"name":"瓶","sn":"3"},
-			{"name":"箱","sn":"4"},
-			{"name":"克","sn":"5"}
-	]
-},{
 	"name": "机构类型",
 	"modeLevel": 1,
 	"typeKey": "dept_type",

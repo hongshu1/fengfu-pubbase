@@ -94,7 +94,11 @@
 			{@/each}
 		</script>
 		<!-- 定义选中内容渲染和盛放容器-->
-		<ul class="m-0 p-0" id="selected_items_box_#(pageId)"></ul>
+		<ul class="m-0 p-0" id="selected_items_box_#(pageId)">
+			#for(data:selectedUsers)
+			<li class="item d-inline-block border border-primary rounded m-1 px-2 py-1 text-nowrap text-center" data-id="#(data.id??)"><span>#(data.name??)</span><a onclick="jboltTableRemoveKeepSelectedItem(this,'#(data.id??)')" tooltip data-title="移除" class="hand float-right text-danger ml-2"><i class="fa fa-remove"></i></a></li>
+			#end
+		</ul>
 	</div>
 </div>
 <table class="table-center thead_font_normal"
@@ -120,6 +124,7 @@ data-selected-items-box="selected_items_box_#(pageId)"
 data-selected-items-tpl="item_tpl_#(pageId)"
 #选中数据统计个数
 data-selected-items-total="selected_items_total_#(pageId)"
+data-ajax-success-handler="ajaxSuccessHandler_#(pageId)"
 >
 <thead>
 <tr>
@@ -197,6 +202,15 @@ function submitThisForm(){
 		 parent.layer.closeAll();
 	}
 	_submit_ing=false;
+}
+
+function ajaxSuccessHandler_#(pageId)(table){
+	var ids = "#(ids??)";
+	if(ids){
+		var arr = ids.split(",");
+		table.me.setCheckedIds(table,arr);
+		$("#selected_items_total_#(pageId)").text(arr.length);
+	}
 }
 </script>
 #end

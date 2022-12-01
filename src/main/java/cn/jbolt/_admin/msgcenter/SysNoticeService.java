@@ -335,6 +335,9 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 	 */
 	public Page<SysNotice> paginateUserSysNotices(int pageNumber,int pageSize,String keywords,Long userId,String sortColumn, String sortType,Boolean readed,boolean delFlag,boolean needProcessReadedState,Boolean columnWithOrWithout,String... columns) {
 		User user = JBoltUserCache.me.get(userId);
+		if(user == null){
+			return emptyPage(pageSize);
+		}
 		Sql sql = getUserUnReadNoticeSql(user,keywords, sortColumn, sortType, readed, delFlag,
 				needProcessReadedState, columnWithOrWithout, columns).page(pageNumber, pageSize);
 		return paginate(sql);

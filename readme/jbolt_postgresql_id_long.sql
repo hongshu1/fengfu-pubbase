@@ -139,7 +139,8 @@ CREATE TABLE "public"."jb_dictionary" (
   "sort_rank" int4,
   "sn" varchar(255) COLLATE "pg_catalog"."default",
   "type_key" varchar(40) COLLATE "pg_catalog"."default",
-  "enable" char(1) COLLATE "pg_catalog"."default" DEFAULT '1'::bpchar NOT NULL
+  "enable" char(1) COLLATE "pg_catalog"."default" DEFAULT '1'::bpchar NOT NULL,
+  "is_build_in" char(1) COLLATE "pg_catalog"."default" DEFAULT '0'::bpchar NOT NULL
 )
 ;
 COMMENT ON COLUMN "public"."jb_dictionary"."id" IS '字典ID主键';
@@ -150,6 +151,7 @@ COMMENT ON COLUMN "public"."jb_dictionary"."sort_rank" IS '排序';
 COMMENT ON COLUMN "public"."jb_dictionary"."sn" IS '编号编码';
 COMMENT ON COLUMN "public"."jb_dictionary"."type_key" IS '字典类型KEY';
 COMMENT ON COLUMN "public"."jb_dictionary"."enable" IS '是否启用';
+COMMENT ON COLUMN "public"."jb_dictionary"."is_build_in" IS '是否内置';
 COMMENT ON TABLE "public"."jb_dictionary" IS '字典表';
 
 -- ----------------------------
@@ -161,7 +163,8 @@ CREATE TABLE "public"."jb_dictionary_type" (
   "name" varchar(255) COLLATE "pg_catalog"."default",
   "mode_level" int4,
   "type_key" varchar(255) COLLATE "pg_catalog"."default",
-  "enable" char(1) COLLATE "pg_catalog"."default" DEFAULT '1'::bpchar NOT NULL
+  "enable" char(1) COLLATE "pg_catalog"."default" DEFAULT '1'::bpchar NOT NULL,
+  "is_build_in" char(1) COLLATE "pg_catalog"."default" DEFAULT '0'::bpchar NOT NULL
 )
 ;
 COMMENT ON COLUMN "public"."jb_dictionary_type"."id" IS '主键ID';
@@ -169,6 +172,7 @@ COMMENT ON COLUMN "public"."jb_dictionary_type"."name" IS '类型名称';
 COMMENT ON COLUMN "public"."jb_dictionary_type"."mode_level" IS '模式层级';
 COMMENT ON COLUMN "public"."jb_dictionary_type"."type_key" IS '标识KEY';
 COMMENT ON COLUMN "public"."jb_dictionary_type"."enable" IS '是否启用';
+COMMENT ON COLUMN "public"."jb_dictionary_type"."is_build_in" IS '是否内置';
 COMMENT ON TABLE "public"."jb_dictionary_type" IS '字典类型';
 
 -- ----------------------------

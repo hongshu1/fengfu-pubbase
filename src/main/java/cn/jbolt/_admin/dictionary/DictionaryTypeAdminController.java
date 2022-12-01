@@ -1,5 +1,7 @@
 package cn.jbolt._admin.dictionary;
 
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
@@ -52,15 +54,17 @@ public class DictionaryTypeAdminController extends JBoltBaseController {
 	public void edit(){
 		Long id=getLong(0);
 		if(notOk(id)){
-			renderFormFail("数据不存在");
+			renderFormFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
 		DictionaryType type=service.findById(id);
 		if(type==null){
-			if(notOk(id)){
-				renderFormFail("数据不存在");
-				return;
-			}
+			renderFormFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		if(type.getIsBuildIn()){
+			renderFormFail("内置字典类型，不可修改");
+			return;
 		}
 		set("dictionaryType",type);
 		render("edit.html");

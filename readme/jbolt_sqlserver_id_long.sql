@@ -321,7 +321,8 @@ CREATE TABLE [dbo].[jb_dictionary] (
   [sort_rank] int  NOT NULL,
   [sn] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [type_key] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NOT NULL,
-  [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL
+  [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
+  [is_build_in] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL
 )
 GO
 
@@ -385,6 +386,13 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
+'MS_Description', N'是否内置',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_dictionary',
+'COLUMN', N'is_build_in'
+GO
+
+EXEC sp_addextendedproperty
 'MS_Description', N'字典表',
 'SCHEMA', N'dbo',
 'TABLE', N'jb_dictionary'
@@ -403,7 +411,8 @@ CREATE TABLE [dbo].[jb_dictionary_type] (
   [name] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
   [mode_level] int  NOT NULL,
   [type_key] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
-  [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL
+  [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '1' NOT NULL,
+  [is_build_in] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL
 )
 GO
 
@@ -443,6 +452,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_dictionary_type',
 'COLUMN', N'enable'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'是否内置',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_dictionary_type',
+'COLUMN', N'is_build_in'
 GO
 
 EXEC sp_addextendedproperty
