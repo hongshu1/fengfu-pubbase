@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.1.4";
+var jbolt_table_js_version="3.1.5";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6681,12 +6681,11 @@ function getScrollBarHeight(ele){
 			LayerMsgBox.closeLoadNow();
 
 		},
-		initTableBeforeAJaxHandler:function(table){
+		initTableBeforeAjaxHandler:function(table){
 			var handler = table.data("before-ajax-handler");
 			if(handler){
 				table.beforeAjaxHandler = handler;
 			}
-
 		},
 		processOtherTableBindTableId:function(table){
 			var tableId=table.attr("id");
@@ -10651,6 +10650,8 @@ function getScrollBarHeight(ele){
 			}else{
 				table.readByJsonConditions=false;
 			}
+			table.activeTrIndex = null;
+			table.activeTrId    = null;
 			//执行ajax前的处理
 			this.exeBeforeAjaxHandler(table);
 			resetJBolttableSlaveBox(table);
