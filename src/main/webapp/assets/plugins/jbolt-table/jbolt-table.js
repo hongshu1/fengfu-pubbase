@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.1.3";
+var jbolt_table_js_version="3.1.4";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6676,7 +6676,16 @@ function getScrollBarHeight(ele){
 			that.processTableKeepSelectedItems(table);
 			//处理事件重新绑定
 			that.processTableEvent(table);
+			//处理自定义 ajax前的handler
+			that.initTableBeforeAjaxHandler(table);
 			LayerMsgBox.closeLoadNow();
+
+		},
+		initTableBeforeAJaxHandler:function(table){
+			var handler = table.data("before-ajax-handler");
+			if(handler){
+				table.beforeAjaxHandler = handler;
+			}
 
 		},
 		processOtherTableBindTableId:function(table){
@@ -10619,6 +10628,18 @@ function getScrollBarHeight(ele){
 				}
 			}
 		},
+		exeBeforeAjaxHandler:function(table){
+			if(table.beforeAjaxHandler){
+				if(typeof(table.beforeAjaxHandler) == "function"){
+					table.beforeAjaxHandler(table);
+				}else{
+					var tableBeforeAjaxExeFunc = eval(table.beforeAjaxHandler);
+					if(tableBeforeAjaxExeFunc && typeof(tableBeforeAjaxExeFunc)=="function"){
+						tableBeforeAjaxExeFunc(table);
+					}
+				}
+			}
+		},
 		/**
 		 * 按照分页读取
 		 */
@@ -10630,6 +10651,8 @@ function getScrollBarHeight(ele){
 			}else{
 				table.readByJsonConditions=false;
 			}
+			//执行ajax前的处理
+			this.exeBeforeAjaxHandler(table);
 			resetJBolttableSlaveBox(table);
 			var that=this;
 			var jbolt_table_pages=table.table_box.find(".jbolt_table_pages");
