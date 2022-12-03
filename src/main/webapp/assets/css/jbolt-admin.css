@@ -1,4 +1,4 @@
-/*********jbolt_admin_css_version="3.6.6*************/
+/*********jbolt_admin_css_version="3.6.7*************/
 html, body {
 	margin: 0px;
 	padding: 0px;
@@ -3531,6 +3531,10 @@ width:100%;
 	background-color: #FFFFFF;
 	margin: 0px;
 	bottom:0px;
+}
+.jbolt_tab_view>.jbolt_tab_links.vertical>.jbolt_tab_link,
+.jbolt_tab_view>.jbolt_tab_links>.jbolt_tab_link.d-block{
+	display: block!important;
 }
 .jbolt_tab_view:not(.jbolt_tab_border_none)>.jbolt_tab_links>.jbolt_tab_link{
 	border:1px solid transparent;
