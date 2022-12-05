@@ -7,12 +7,7 @@ import cn.jbolt.core.bean.OptionBean;
 import cn.jbolt.core.cache.JBoltCache;
 import cn.jbolt.core.consts.JBoltConst;
 import cn.jbolt.core.service.base.JBoltCommonService;
-import com.jfinal.aop.Aop;
 import com.jfinal.plugin.ehcache.IDataLoader;
-import cn.jbolt._admin.qiniu.QiniuBucketService;
-import cn.jbolt._admin.qiniu.QiniuService;
-import cn.jbolt.common.model.Qiniu;
-import cn.jbolt.common.model.QiniuBucket;
 import cn.jbolt.core.cache.JBoltCacheKit;
 import cn.jbolt.core.cache.JBoltCacheParaValidator;
 
@@ -31,8 +26,6 @@ import java.util.Set;
 public class CACHE extends JBoltCacheParaValidator {
 	public static final CACHE me = new CACHE();
 	public static final String JBOLT_WECAHT_KEYWORDS_CACHE_NAME = "jbolt_cache_wechat_keywords";
-	private QiniuService qiniuService = Aop.get(QiniuService.class);
-	private QiniuBucketService qiniuBucketService = Aop.get(QiniuBucketService.class);
 
 	private String buildCacheKey(String pre, Object value) {
 		return JBoltConst.JBOLT_CACHE_DEFAULT_PREFIX + pre + value.toString();
@@ -59,107 +52,7 @@ public class CACHE extends JBoltCacheParaValidator {
 		return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, key);
 	}
 
-	/**
-	 * 通过七牛账号ID 获取七牛账号
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public Qiniu getQiniu(Object id) {
-		return qiniuService.findById(id);
-	}
 
-	/**
-	 * 通过七牛账号SN 获取七牛账号
-	 * 
-	 * @param sn
-	 * @return
-	 */
-	public Qiniu getQiniuBySn(String sn) {
-		return qiniuService.getCacheByKey(sn);
-	}
-
-	/**
-	 * 通过七牛账号ID 获取七牛Name
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public String getQiniuName(Object id) {
-		Qiniu qiniu = getQiniu(id);
-		return qiniu == null ? null : qiniu.getName();
-	}
-
-	/**
-	 * 通过七牛账号SN 获取七牛Name
-	 * 
-	 * @param sn
-	 * @return
-	 */
-	public String getQiniuName(String sn) {
-		Qiniu qiniu = getQiniuBySn(sn);
-		return qiniu == null ? null : qiniu.getName();
-	}
-
-	/**
-	 * 获得bucket所在七牛账号
-	 * 
-	 * @param bucketSn
-	 * @return
-	 */
-	public Qiniu getQiniuByBucketSn(String bucketSn) {
-		return getQiniu(getQiniuIdByBucketSn(bucketSn));
-	}
-
-	/**
-	 * 获得bucket所在七牛账号Id
-	 * 
-	 * @param bucketSn
-	 * @return
-	 */
-	public Object getQiniuIdByBucketSn(String bucketSn) {
-		QiniuBucket qiniuBucket = getQiniuBucketBySn(bucketSn);
-		return qiniuBucket == null ? null : qiniuBucket.getQiniuId();
-	}
-
-	/**
-	 * 根据bucket Id获取qiniubucket
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public QiniuBucket getQiniuBucket(Object id) {
-		return qiniuBucketService.findById(id);
-	}
-
-	/**
-	 * 根据bucket sn获取qiniubucket
-	 * 
-	 * @param sn
-	 * @return
-	 */
-	public QiniuBucket getQiniuBucketBySn(String sn) {
-		return qiniuBucketService.getCacheByKey(sn);
-	}
-
-	/**
-	 * 获取默认七牛账号
-	 * 
-	 * @return
-	 */
-	public Qiniu getQiniuDefault() {
-		return qiniuService.getDefault();
-	}
-
-	/**
-	 * 获取指定七牛账号下的默认bucket
-	 * 
-	 * @param qiniuId
-	 * @return
-	 */
-	public QiniuBucket getQiniuDefaultBucket(Object qiniuId) {
-		return qiniuBucketService.getQiniuBucketDefault(qiniuId);
-	}
 	/**
 	 * 获取项目里的枚举类
 	 * @return

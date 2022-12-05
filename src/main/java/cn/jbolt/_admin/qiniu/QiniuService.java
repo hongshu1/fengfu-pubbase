@@ -1,5 +1,6 @@
 package cn.jbolt._admin.qiniu;
 
+import cn.jbolt._admin.cache.JBoltQiniuCache;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -268,20 +269,20 @@ public class QiniuService extends JBoltBaseService<Qiniu> {
         //如果没传或者传default 就获取默认default
         if (notOk(bucketSn) || bucketSn.trim().equals("default")) {
             //获取默认七牛账号
-            qiniu = CACHE.me.getQiniuDefault();
+            qiniu = JBoltQiniuCache.me.getDefault();
             if (qiniu == null) {
                 return fail("未指定bucket的sn将使用默认七牛账号，但系统尚未设置默认七牛账号");
             }
-            qiniuBucket = CACHE.me.getQiniuDefaultBucket(qiniu.getId());
+            qiniuBucket = JBoltQiniuCache.me.getDefaultBucket(qiniu.getId());
             if (qiniuBucket == null) {
                 return fail("未指定bucket的sn将使用默认七牛账号，但默认七牛账号里尚未设置默认Bucket");
             }
         } else {
-            qiniuBucket = CACHE.me.getQiniuBucketBySn(bucketSn);
+            qiniuBucket = JBoltQiniuCache.me.getBucketBySn(bucketSn);
             if (qiniuBucket == null) {
                 return fail("指定的bucketSn无效");
             }
-            qiniu = CACHE.me.getQiniu(qiniuBucket.getQiniuId());
+            qiniu = JBoltQiniuCache.me.get(qiniuBucket.getQiniuId());
             if (qiniu == null) {
                 return fail("未找到指定bucket所属七牛账号信息");
             }

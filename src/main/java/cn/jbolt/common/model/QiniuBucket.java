@@ -1,5 +1,6 @@
 package cn.jbolt.common.model;
 
+import cn.jbolt._admin.cache.JBoltQiniuCache;
 import cn.jbolt.common.model.base.BaseQiniuBucket;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.annotation.JBoltAutoCache;
@@ -17,7 +18,7 @@ import cn.jbolt.core.cache.JBoltUserCache;
 @JBoltAutoCache(keyCache = true, column = "sn")
 public class QiniuBucket extends BaseQiniuBucket<QiniuBucket> {
 	public String getQiniuName() {
-		return CACHE.me.getQiniuName(getQiniuId());
+		return JBoltQiniuCache.me.getName(getQiniuId());
 	}
 	public String getRegionName() {
 		return JBoltDictionaryCache.me.getNameBySn("qiniu_region", getRegion());
