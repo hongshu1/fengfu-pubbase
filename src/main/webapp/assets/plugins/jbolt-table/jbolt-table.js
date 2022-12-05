@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.1.5";
+var jbolt_table_js_version="3.1.6";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -7935,11 +7935,12 @@ function getScrollBarHeight(ele){
 				'{@else if type==="select" }'+
 				'<select data-select-type="${theme}" {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} data-tips="${ruleTips}" data-rule="select{@if rule};${rule}{@/if}" data-notnull="false" name="${jbe_col_key}" data-autoload {@if refresh} data-refresh="${refresh}" {@/if} {@if onlyleaf} data-onlyleaf="${onlyleaf}" {@/if} {@if delimiter} data-delimiter="${delimiter}" {@/if} data-url="${url}" {@if textAttr} data-text-attr="${textAttr}" {@/if} {@if valueAttr} data-value-attr="${valueAttr}" {@/if}  data-text="=请选择="  data-value="" data-default="${defaultValue}" data-select="${tdValue}"></select>'+
 				'{@else if type==="dialogbtn" && withDialog }'+
-				'<button  class="jbt_editor {@if cssClass}${cssClass}{@else}btn btn-light{@/if}" {@if cssStyle} style="${cssStyle}" {@/if} data-in-editable-td="true" onclick="DialogUtil.openBy(this)" data-btn="${dialog.btn}" {@if linkColumn} data-link-column="${linkColumn}" {@/if}  data-link-para-ele="#${jbe_link_ele_id}{@if linkPara},${linkPara}{@/if}" data-area="${dialog.area}"  data-title="${dialog.title}"   data-url="${dialog.url}">{@if icon}<i class="${icon} mr-1"></i>{@else}<i class="fa fa-search mr-1"></i>{@/if}${text?text:"按钮"}</button>'+
+				'<button  class="jbt_editor {@if cssClass}${cssClass}{@else}btn btn-light{@/if}" {@if cssStyle} style="${cssStyle}" {@/if} data-in-editable-td="true" onclick="DialogUtil.openBy(this)" data-btn="${dialog.btn}" {@if linkColumn} data-link-column="${linkColumn}" {@/if}  data-link-para-ele="{@if jbe_link_ele_id}#${jbe_link_ele_id}{@/if}{@if linkPara}{@if jbe_link_ele_id},{@/if}${linkPara}{@/if}" data-area="${dialog.area}"  data-title="${dialog.title}"   data-url="${dialog.url}">{@if icon}<i class="${icon} mr-1"></i>{@else}<i class="fa fa-search mr-1"></i>{@/if}${text?text:"按钮"}</button>'+
+				'<input class="jbt_editor_hidden" type="hidden" id="${jbe_hidden_id}" name="${jbe_col_key}" value="${tdValue}" />'+
 				'{@/if}'+
 				'{@if withDialog && type != "dialogbtn"}'+
 				'<div class="ac_append">'+
-				'<button class="btn btn-light" data-in-editable-td="true" onclick="DialogUtil.openBy(this)" data-btn="${dialog.btn}" {@if linkColumn} data-link-column="${linkColumn}" {@/if}  data-link-para-ele="#${jbe_link_ele_id}{@if linkPara},${linkPara}{@/if}" data-area="${dialog.area}"  data-title="${dialog.title}"   data-url="${dialog.url}"><i class="fa fa-search mr-1"></i></button>'+
+				'<button class="btn btn-light" data-in-editable-td="true" onclick="DialogUtil.openBy(this)" data-btn="${dialog.btn}" {@if linkColumn} data-link-column="${linkColumn}" {@/if}  data-link-para-ele="{@if jbe_link_ele_id}#${jbe_link_ele_id}{@/if}{@if linkPara}{@if jbe_link_ele_id},{@/if}${linkPara}{@/if}" data-area="${dialog.area}"  data-title="${dialog.title}"   data-url="${dialog.url}"><i class="fa fa-search mr-1"></i></button>'+
 				'</div>'+
 				'{@/if}'+
 				'</div>';
@@ -9484,6 +9485,12 @@ function getScrollBarHeight(ele){
 					if(colConfig.dialog){
 						colConfig.jbe_id="ipt_"+randomId();
 						colConfig.jbe_link_ele_id=colConfig.jbe_id;
+					}
+					break;
+				case "dialogbtn":
+					if(colConfig.dialog){
+						colConfig.jbe_hidden_id="ipt_"+randomId();
+						colConfig.jbe_link_ele_id=colConfig.jbe_hidden_id;
 					}
 					break;
 				case "autocomplete":
