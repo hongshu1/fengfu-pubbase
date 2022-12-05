@@ -3,6 +3,7 @@ package cn.jbolt.wxa.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jbolt._admin.cache.JBoltWechatUserCache;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Ret;
@@ -62,7 +63,7 @@ public class JBoltWxaApiService extends JBoltApiBaseService{
 			String unionId=apiResult.getStr("unionid");
 			String sessionKey=apiResult.getStr("session_key");
 			//从cache里拿到对应微信用户
-			WechatUser wechatUser=CACHE.me.getApiWechatUserByMpOpenId(mpId, openId);
+			WechatUser wechatUser= JBoltWechatUserCache.me.getApiWechatUserByMpOpenId(mpId, openId);
 			if(wechatUser==null){
 				//如果没有，说明是第一次登录 保存用户信息
 				wechatUser=wechatUserService.saveWxaUser(application.getLinkTargetId(),openId,unionId,sessionKey);
@@ -204,7 +205,7 @@ public class JBoltWxaApiService extends JBoltApiBaseService{
 		}
 		//得到微信小程序配置的APPID
 		Long mpId=JBoltApiKit.getWechatMpId();
-		Object apiUserId=JBoltApiKit.getJwtParseRet().getUserId();
+		Long apiUserId=JBoltApiKit.getJwtParseRet().getUserIdToLong();
 		WechatUser wechatUser=wechatUserService.findByIdToWechatUserFromCache(mpId,apiUserId);
 		JBoltApiRet ret = wechatUserService.bindOtherUer(application,mpId,wechatUser,type,username,password);
 		if(ret.isFail()) {
@@ -221,7 +222,7 @@ public class JBoltWxaApiService extends JBoltApiBaseService{
 	public JBoltApiRet getMyWechatUserInfo() {
 		//获取当前访问Application
 		Application application=JBoltApiKit.getApplication();
-		Object wechatUserId=JBoltApiKit.getApiUserId();
+		Long wechatUserId=JBoltApiKit.getApiUserIdToLong();
 		//得到微信小程序配置的APPID
 //		String wechatAppId=JBoltApiKit.getWechatAppId();
 		Long mpId=JBoltApiKit.getWechatMpId();
@@ -247,7 +248,7 @@ public class JBoltWxaApiService extends JBoltApiBaseService{
 		//得到微信小程序配置的 mpid
 //		String wechatAppId=JBoltApiKit.getWechatAppId();
 		Long mpId=JBoltApiKit.getWechatMpId();
-		Object apiUserId=JBoltApiKit.getApiUserId();
+		Long apiUserId=JBoltApiKit.getApiUserIdToLong();
 		WechatUser wechatUser=wechatUserService.findByIdToWechatUserFromCache(mpId,apiUserId);
 		JBoltApiRet ret = wechatUserService.unbindOtherUser(application,mpId,wechatUser,type,userId);
 		if(ret.isFail()) {

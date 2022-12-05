@@ -1,5 +1,6 @@
 package cn.jbolt.wechat.api;
 
+import cn.jbolt._admin.cache.JBoltWechatUserCache;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.kit.JBoltHttpSchemeKit;
 import com.jfinal.aop.Inject;
@@ -61,7 +62,7 @@ public class JBoltWechatApiController extends JBoltApiBaseController {
 		String openId = accessToken.getOpenid();
 		Long mpId   = JBoltApiKit.getWechatMpId();
 		//判断是否存在用户信息
-		WechatUser wechatUser = CACHE.me.getApiWechatUserByMpOpenId(mpId, openId);
+		WechatUser wechatUser = JBoltWechatUserCache.me.getApiWechatUserByMpOpenId(mpId, openId);
 		//执行获取用户信息
 		ApiResult apiResult=JBoltWechatApi.use(wechatAppId).call(()->SnsApi.getUserInfo(accessToken.getAccessToken(), accessToken.getOpenid()));
 		if(!apiResult.isSucceed()) {

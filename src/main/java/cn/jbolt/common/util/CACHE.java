@@ -48,16 +48,9 @@ import java.util.Set;
 public class CACHE extends JBoltCacheParaValidator {
 	public static final CACHE me = new CACHE();
 	public static final String JBOLT_WECAHT_KEYWORDS_CACHE_NAME = "jbolt_cache_wechat_keywords";
-	private DictionaryService dictionaryService = Aop.get(DictionaryService.class);
-	private DictionaryTypeService dictionaryTypeService = Aop.get(DictionaryTypeService.class);
 	private UserService userService = Aop.get(UserService.class);
-	private UserConfigService userConfigService = Aop.get(UserConfigService.class);
-	private WechatUserService wechatUserService = Aop.get(WechatUserService.class);
 	private ApplicationService applicationService = Aop.get(ApplicationService.class);
 	private WechatReplyContentService wechatReplyContentService = Aop.get(WechatReplyContentService.class);
-	private RoleService roleService = Aop.get(RoleService.class);
-	private DeptService deptService = Aop.get(DeptService.class);
-	private PostService postService = Aop.get(PostService.class);
 	private QiniuService qiniuService = Aop.get(QiniuService.class);
 	private QiniuBucketService qiniuBucketService = Aop.get(QiniuBucketService.class);
 
@@ -65,10 +58,6 @@ public class CACHE extends JBoltCacheParaValidator {
 		return JBoltConst.JBOLT_CACHE_DEFAULT_PREFIX + pre + value.toString();
 	}
 
-	 
-
-	
-	
 	/**
 	 * put
 	 * 
@@ -167,39 +156,6 @@ public class CACHE extends JBoltCacheParaValidator {
 	}
 
 
- 
-	/**
-	 * 根据mpid和openId拿到wechat用户信息 api专用
-	 * 
-	 * @param mpId
-	 * @param openId
-	 * @return
-	 */
-	public WechatUser getApiWechatUserByMpOpenId(Long mpId, String openId) {
-		if (mpId == null || StrKit.isBlank(openId)) {
-			return null;
-		}
-		return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME,
-				buildCacheKey("api_wechat_user_openid_", mpId.toString() + "_" + openId), new IDataLoader() {
-					@Override
-					public Object load() {
-						return wechatUserService.getApiWechatUserByOpenId(mpId, openId);
-					}
-				});
-	}
-
-	/**
-	 * 根据mpid和openId删除wechat用户信息 api专用
-	 * 
-	 * @param mpId
-	 * @param openId
-	 */
-	public void removeApiWechatUserByMpOpenId(Long mpId, String openId) {
-		if (mpId != null && StrKit.notBlank(openId)) {
-			JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME,
-					buildCacheKey("api_wechat_user_openid_", mpId.toString() + "_" + openId));
-		}
-	}
 
 	/**
 	 * 通过用户名 拿到用户信息
@@ -226,33 +182,6 @@ public class CACHE extends JBoltCacheParaValidator {
 		return user == null ? null : user.getId();
 	}
 
-	
-	/**
-	 * 从缓存里获取wechatUser
-	 * 
-	 * @param mpId
-	 * @param id
-	 * @return
-	 */
-	public WechatUser getApiWechatUserByApiUserId(Long mpId, Object id) {
-		return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, "wecaht_user_" + mpId + "_" + id, new IDataLoader() {
-			@Override
-			public Object load() {
-				WechatUser wechatUser = wechatUserService.findByIdToWechatUser(mpId, id);
-				if (wechatUser != null) {
-					wechatUser.removeNullValueAttrs().remove("last_auth_time","first_auth_time","first_login_time","last_login_time","checked_time","remark","group_id","tag_ids","subscribe_scene","qr_scene","qr_scene_str","check_code","session_key","update_time");
-				}
-				return wechatUser;
-			}
-		});
-	}
-
-	/**
-	 * 删除wechatUser
-	 */
-	public void removeApiWechatUser(Long mpId, Object id) {
-		JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME, "wecaht_user_" + mpId + "_" + id);
-	}
 
 
 
