@@ -3,6 +3,7 @@ package cn.jbolt.common.config;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.setting.Setting;
+import cn.jbolt._admin.cache.JBoltCodeGenCache;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.onlineuser.JBoltOnlineUserClearTask;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -408,9 +409,9 @@ public class ProjectConfig extends JBoltProjectConfig {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                CACHE.me.getCodeGenEnums();
-                CACHE.me.getCodeGenCaches();
-                CACHE.me.getCodeGenServices();
+                JBoltCodeGenCache.me.getCodeGenEnums();
+                JBoltCodeGenCache.me.getCodeGenCaches();
+                JBoltCodeGenCache.me.getCodeGenServices();
             }
         }).start();
     }

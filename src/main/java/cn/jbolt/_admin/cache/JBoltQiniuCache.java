@@ -4,8 +4,11 @@ import cn.jbolt._admin.qiniu.QiniuBucketService;
 import cn.jbolt._admin.qiniu.QiniuService;
 import cn.jbolt.common.model.Qiniu;
 import cn.jbolt.common.model.QiniuBucket;
+import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltCache;
+import cn.jbolt.core.cache.JBoltCacheKit;
 import com.jfinal.aop.Aop;
+import com.jfinal.plugin.ehcache.IDataLoader;
 
 public class JBoltQiniuCache extends JBoltCache {
     public static final JBoltQiniuCache me = new JBoltQiniuCache();
@@ -116,7 +119,19 @@ public class JBoltQiniuCache extends JBoltCache {
      * @return
      */
     public Qiniu getDefault() {
-        return service.getDefault();
+        return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, buildCacheKey(Qiniu.class, "default_"), new IDataLoader() {
+            @Override
+            public Object load() {
+                return service.getDefault();
+            }
+        });
+    }
+
+    /**
+     * 删除默认七牛账号
+     */
+    public void removeDefault(){
+        JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME,buildCacheKey(Qiniu.class,"default_"));
     }
 
     /**
@@ -126,7 +141,12 @@ public class JBoltQiniuCache extends JBoltCache {
      * @return
      */
     public QiniuBucket getDefaultBucket(Long qiniuId) {
-        return bucketService.getQiniuBucketDefault(qiniuId);
+        return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, buildCacheKey(Qiniu.class, "default_bucket_",qiniuId.toString()), new IDataLoader() {
+            @Override
+            public Object load() {
+                return bucketService.getQiniuBucketDefault(qiniuId);
+            }
+        });
     }
 
     /**
@@ -135,6 +155,6 @@ public class JBoltQiniuCache extends JBoltCache {
      * @return
      */
     public QiniuBucket getDefaultBucketByQiniuSn(String sn) {
-        return bucketService.getQiniuBucketDefault(getIdBySn(sn));
+        return getDefaultBucket(getIdBySn(sn));
     }
 }
