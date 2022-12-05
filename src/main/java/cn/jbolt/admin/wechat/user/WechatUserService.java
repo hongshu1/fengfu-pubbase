@@ -428,6 +428,19 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		return findFirst(mpId, Okv.by("open_id", openId));
 	}
 	/**
+	 * 根据unionId获取用户 api专用
+	 * @param mpId
+	 * @param unionId
+	 * @return
+	 */
+	public Record getByUnionIdForApi(Long mpId, String unionId) {
+		return findFirst(selectSql(mpId).select(
+						"id,score,realname,bind_code,nickname,open_id,union_id",
+						"union_id,sex,subscibe,head_img_url,enable,session_key,mp_id",
+						"bind_user,phone,weixin,last_login_time,signature,subscibe_mp")
+				.eq("union_id", unionId).first());
+	}
+	/**
 	 * 根据openId获取用户 api专用
 	 * @param mpId 
 	 * @param openId
@@ -448,6 +461,17 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		return new WechatUser()._setAttrs(record.getColumns());
 	}
 	/**
+	 * 根据unionId获取用户 api专用
+	 * @param mpId
+	 * @param unionId
+	 * @return
+	 */
+	public WechatUser getApiWechatUserByUnionId(Long mpId, String unionId) {
+		Record record=getByUnionIdForApi(mpId, unionId);
+		if(record==null) {return null;}
+		return new WechatUser()._setAttrs(record.getColumns());
+	}
+	/**
 	 * 根据openId获取用户 api专用
 	 * @param mpId 
 	 * @param openId
@@ -458,6 +482,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(record==null) {return null;}
 		return new WechatUser()._setAttrs(record.getColumns());
 	}
+
 	/**
 	 * 微信小程序wx.login
 	 * @param mpId

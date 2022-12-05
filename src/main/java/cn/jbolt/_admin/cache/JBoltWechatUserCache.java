@@ -106,4 +106,50 @@ public class JBoltWechatUserCache extends JBoltCache {
             JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME, buildCacheKey(WechatUser.class,"api_byopenid_", mpId.toString() , openId));
         }
     }
+
+
+    /**
+     * 根据mpid和unionId拿到wechat用户信息 api专用
+     *
+     * @param mpId
+     * @param unionId
+     * @return
+     */
+    public WechatUser getApiWechatUserByMpUnionId(Long mpId, String unionId) {
+        if (mpId == null || StrKit.isBlank(unionId)) {
+            return null;
+        }
+        return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME,
+                buildCacheKey(WechatUser.class,"api_byunionid_", mpId.toString(), unionId), new IDataLoader() {
+                    @Override
+                    public Object load() {
+                        return service.getApiWechatUserByUnionId(mpId, unionId);
+                    }
+                });
+    }
+
+    /**
+     * 根据mpid和unionId删除wechat用户信息 api专用
+     *
+     * @param mpId
+     * @param unionId
+     */
+    public void removeApiWechatUserByMpUnionId(Long mpId, String unionId) {
+        if (mpId != null && StrKit.notBlank(unionId)) {
+            JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME,
+                    buildCacheKey(WechatUser.class,"api_byunionid_", mpId.toString(), unionId));
+        }
+    }
+
+    /**
+     * 是否enable
+     * @param mpId
+     * @param id
+     * @return
+     */
+    public Boolean isEnable(Long mpId, Long id) {
+        WechatUser user = getApiWechatUserByApiUserId(mpId, id);
+        return user == null ? false : user.getEnable();
+    }
+
 }
