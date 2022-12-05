@@ -1,7 +1,5 @@
 package cn.jbolt._admin.cache;
-import cn.jbolt._admin.user.UserExtendService;
 import cn.jbolt.admin.wechat.user.WechatUserService;
-import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltCache;
