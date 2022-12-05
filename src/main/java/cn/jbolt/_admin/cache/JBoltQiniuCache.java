@@ -150,6 +150,13 @@ public class JBoltQiniuCache extends JBoltCache {
     }
 
     /**
+     * 删除默认七牛bucket
+     */
+    public void removeDefaultBucket(Long qiniuId){
+        JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME,buildCacheKey(Qiniu.class, "default_bucket_",qiniuId.toString()));
+    }
+
+    /**
      * 据七牛SN 获取指定七牛账号下的默认bucket 根
      * @param sn
      * @return

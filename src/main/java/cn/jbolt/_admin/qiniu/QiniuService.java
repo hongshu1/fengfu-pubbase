@@ -226,6 +226,8 @@ public class QiniuService extends JBoltBaseService<Qiniu> {
                 if (qiniu.getIsDefault()) {
                     changeColumnFalseByExcludedId(IS_DEFAULT, qiniu.getId());
                 }
+                //删除default缓存
+                JBoltQiniuCache.me.removeDefault();
                 addUpdateSystemLog(qiniu.getId(), JBoltUserKit.getUserId(), qiniu.getName(), "的是否默认属性:" + qiniu.getIsDefault());
                 break;
 
