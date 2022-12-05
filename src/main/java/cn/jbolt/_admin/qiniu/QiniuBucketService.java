@@ -146,6 +146,9 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 	protected String afterDelete(QiniuBucket qiniuBucket, Kv kv) {
 		addDeleteSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName());
 		qiniuService.updateBucketCount(qiniuBucket.getQiniuId());
+		if(qiniuBucket.getIsDefault()){
+			JBoltQiniuCache.me.removeDefaultBucket(qiniuBucket.getQiniuId());
+		}
 		return null;
 	}
 	
