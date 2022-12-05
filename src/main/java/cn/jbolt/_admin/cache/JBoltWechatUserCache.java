@@ -29,7 +29,7 @@ public class JBoltWechatUserCache extends JBoltCache {
      * @param id
      * @return
      */
-    public WechatUser getApiWechatUserByApiUserId(Long mpId, Long id) {
+    public WechatUser getApiWechatUserByApiUserId(Long mpId, Object id) {
         return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, buildCacheKey(WechatUser.class,PRE_API,mpId.toString(),id.toString()), new IDataLoader() {
             @Override
             public Object load() {
