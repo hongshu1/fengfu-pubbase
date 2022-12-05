@@ -30,6 +30,7 @@ public class JBoltWechatUserCache extends JBoltCache {
      * @return
      */
     public WechatUser getApiWechatUserByApiUserId(Long mpId, Object id) {
+        if(mpId == null || id == null || mpId.longValue()<=0 || id.toString().equals("0")){return null;}
         return JBoltCacheKit.get(JBoltConfig.JBOLT_CACHE_NAME, buildCacheKey(WechatUser.class,PRE_API,mpId.toString(),id.toString()), new IDataLoader() {
             @Override
             public Object load() {
@@ -48,6 +49,7 @@ public class JBoltWechatUserCache extends JBoltCache {
      * @param id
      */
     public void removeApiWechatUser(Long mpId, Long id) {
+        if(mpId == null || id == null || mpId.longValue()<=0 || id.longValue()<=0){return;}
         JBoltCacheKit.remove(JBoltConfig.JBOLT_CACHE_NAME, buildCacheKey(WechatUser.class,PRE_API,mpId.toString(),id.toString()));
     }
 
@@ -58,6 +60,7 @@ public class JBoltWechatUserCache extends JBoltCache {
      * @return
      */
     public String getNickName(Long mpId, Long id) {
+        if(mpId == null || id == null || mpId.longValue()<=0 || id.longValue()<=0){return null;}
         WechatUser apiUser = getApiWechatUserByApiUserId(mpId, id);
         return apiUser==null?null:apiUser.getNickname();
     }
@@ -69,6 +72,7 @@ public class JBoltWechatUserCache extends JBoltCache {
      * @return
      */
     public String getAvatar(Long mpId, Long id) {
+        if(mpId == null || id == null || mpId.longValue()<=0 || id.longValue()<=0){return null;}
         WechatUser apiUser = getApiWechatUserByApiUserId(mpId, id);
         return apiUser==null?null:apiUser.getHeadImgUrl();
     }
@@ -148,6 +152,7 @@ public class JBoltWechatUserCache extends JBoltCache {
      * @return
      */
     public Boolean isEnable(Long mpId, Long id) {
+        if(mpId == null || id == null || mpId.longValue()<=0 || id.longValue()<=0){return false;}
         WechatUser user = getApiWechatUserByApiUserId(mpId, id);
         return user == null ? false : user.getEnable();
     }
