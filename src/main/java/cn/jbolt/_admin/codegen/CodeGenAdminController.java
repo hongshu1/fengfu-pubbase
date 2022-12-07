@@ -790,7 +790,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 		List<Option> packs =  new ArrayList<>();
 		int count=0;
 		for(File dir:dirs){
-			if(count<20){
+			if(count==20){
 				break;
 			}
 			packs.add(new OptionBean(StrUtil.replace(FileUtil.subPath(rootDir,FileUtil.normalize(dir.getPath())),"/",".")));
