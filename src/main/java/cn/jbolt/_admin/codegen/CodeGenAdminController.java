@@ -1,15 +1,14 @@
 package cn.jbolt._admin.codegen;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ClassUtil;
+import cn.jbolt._admin.cache.JBoltCodeGenCache;
 import cn.jbolt._admin.codegen.modelattr.CodeGenModelAttrService;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.model.CodeGen;
 import cn.jbolt.common.model.CodeGenModelAttr;
 import cn.jbolt.common.util.CACHE;
-import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.bean.Option;
@@ -93,14 +92,14 @@ public class CodeGenAdminController extends JBoltBaseController {
 	 * 刷新enum缓存
 	 */
 	public void refreshEnumsCache() {
-		CACHE.me.removeCodeGenEnums();
+		JBoltCodeGenCache.me.removeCodeGenEnums();
 		renderJsonSuccess();
 	}
 	/**
 	 * 内置枚举类
 	 */
 	public void enums() {
-		List<Option> options = CACHE.me.getCodeGenEnums();
+		List<Option> options = JBoltCodeGenCache.me.getCodeGenEnums();
 		String keywords = get("q");
 		if(isOk(options) && isOk(keywords)){
 			options = options.stream().filter(op->op.getText().toLowerCase().contains(keywords.toLowerCase())).collect(Collectors.toList());
@@ -113,7 +112,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	 * 刷新cache缓存
 	 */
 	public void refreshCachesCache() {
-		CACHE.me.removeCodeGenCaches();
+		JBoltCodeGenCache.me.removeCodeGenCaches();
 		renderJsonSuccess();
 	}
 
@@ -121,7 +120,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	 * 刷新service缓存
 	 */
 	public void refreshServicesCache() {
-		CACHE.me.removeCodeGenServices();
+		JBoltCodeGenCache.me.removeCodeGenServices();
 		renderJsonSuccess();
 	}
 	/**
@@ -135,7 +134,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 			try {
 				Class<?> clazz = ClassUtil.loadClass(className);
 				if(clazz == null){
-					options = CACHE.me.getCodeGenCaches();
+					options = JBoltCodeGenCache.me.getCodeGenCaches();
 				}else{
 					List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
 					if(isOk(methods)){
@@ -147,11 +146,11 @@ public class CodeGenAdminController extends JBoltBaseController {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				options = CACHE.me.getCodeGenCaches();
+				options = JBoltCodeGenCache.me.getCodeGenCaches();
 			}
 
 		}else{
-			options = CACHE.me.getCodeGenCaches();
+			options = JBoltCodeGenCache.me.getCodeGenCaches();
 		}
 		if(isOk(options) && isOk(keywords)){
 			options = options.stream().filter(op->op.getText().toLowerCase().contains(keywords.toLowerCase())).collect(Collectors.toList());
@@ -749,7 +748,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 			try {
 				Class<?> clazz = ClassUtil.loadClass(className);
 				if(clazz == null){
-					options = CACHE.me.getCodeGenServices();
+					options = JBoltCodeGenCache.me.getCodeGenServices();
 				}else{
 					List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
 					if(isOk(methods)){
@@ -761,11 +760,11 @@ public class CodeGenAdminController extends JBoltBaseController {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				options = CACHE.me.getCodeGenServices();
+				options = JBoltCodeGenCache.me.getCodeGenServices();
 			}
 
 		}else{
-			options = CACHE.me.getCodeGenServices();
+			options = JBoltCodeGenCache.me.getCodeGenServices();
 		}
 
 		if(isOk(options)){

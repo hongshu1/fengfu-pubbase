@@ -2,6 +2,7 @@ package cn.jbolt.apitest;
 
 import java.util.Map;
 
+import cn.jbolt._admin.cache.JBoltWechatUserCache;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.api.httpmethod.JBoltHttpGet;
 import com.alibaba.fastjson.JSON;
@@ -123,9 +124,9 @@ public class ApiTestController extends JBoltApiBaseController {
 	 * @throws PaymentException
 	 */
 	private Map<String, String> doUnifiedorderRewardRoleOrder(String mchId, String paternerKey) throws PaymentException {
-		Object wxaUserId = JBoltApiKit.getApiUserId();
+		Long wxaUserId = JBoltApiKit.getApiUserIdToLong();
 		Long mpId = JBoltApiKit.getWechatMpId();
-		WechatUser wxuser=CACHE.me.getApiWechatUserByApiUserId(mpId, wxaUserId);
+		WechatUser wxuser= JBoltWechatUserCache.me.getApiWechatUserByApiUserId(mpId, wxaUserId);
 		String openId=wxuser.getOpenId();
 		String appId = JBoltWechatConfigCache.me.getAppId(mpId);
 		WxaOrder wxaOrder=new WxaOrder(appId, mchId, paternerKey);

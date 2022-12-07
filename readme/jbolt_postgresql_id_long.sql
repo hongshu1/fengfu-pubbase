@@ -673,7 +673,7 @@ CREATE TABLE "public"."jb_user" (
   "username" varchar(40) COLLATE "pg_catalog"."default" NOT NULL,
   "password" varchar(128) COLLATE "pg_catalog"."default" NOT NULL,
   "name" varchar(20) COLLATE "pg_catalog"."default" NOT NULL,
-  "sn" varchar(20) COLLATE "pg_catalog"."default",
+  "sn" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL,
   "age" int4 DEFAULT 0 NOT NULL,
   "avatar" varchar(255) COLLATE "pg_catalog"."default",
   "phone" varchar(40) COLLATE "pg_catalog"."default",

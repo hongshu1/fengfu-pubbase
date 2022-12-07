@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import cn.jbolt._admin.cache.JBoltWechatUserCache;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -311,8 +312,8 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(ret.isOk()) {
 			Record userRecord=ret.getAs("data");
 			//添加日志
-			CACHE.me.removeApiWechatUserByMpOpenId(mpId, userRecord.getStr("open_id"));
-			CACHE.me.removeApiWechatUser(mpId, id);
+			JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, userRecord.getStr("open_id"));
+			JBoltWechatUserCache.me.removeApiWechatUser(mpId, id);
 			return successWithData(userRecord.getBoolean("enable"));
 		}
 		return ret;
@@ -427,6 +428,19 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		return findFirst(mpId, Okv.by("open_id", openId));
 	}
 	/**
+	 * 根据unionId获取用户 api专用
+	 * @param mpId
+	 * @param unionId
+	 * @return
+	 */
+	public Record getByUnionIdForApi(Long mpId, String unionId) {
+		return findFirst(selectSql(mpId).select(
+						"id,score,realname,bind_code,nickname,open_id,union_id",
+						"union_id,sex,subscibe,head_img_url,enable,session_key,mp_id",
+						"bind_user,phone,weixin,last_login_time,signature,subscibe_mp")
+				.eq("union_id", unionId).first());
+	}
+	/**
 	 * 根据openId获取用户 api专用
 	 * @param mpId 
 	 * @param openId
@@ -447,6 +461,17 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		return new WechatUser()._setAttrs(record.getColumns());
 	}
 	/**
+	 * 根据unionId获取用户 api专用
+	 * @param mpId
+	 * @param unionId
+	 * @return
+	 */
+	public WechatUser getApiWechatUserByUnionId(Long mpId, String unionId) {
+		Record record=getByUnionIdForApi(mpId, unionId);
+		if(record==null) {return null;}
+		return new WechatUser()._setAttrs(record.getColumns());
+	}
+	/**
 	 * 根据openId获取用户 api专用
 	 * @param mpId 
 	 * @param openId
@@ -457,6 +482,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(record==null) {return null;}
 		return new WechatUser()._setAttrs(record.getColumns());
 	}
+
 	/**
 	 * 微信小程序wx.login
 	 * @param mpId
@@ -529,8 +555,8 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(ret.isOk()) {
 			if(StrKit.notBlank(oldOpenId)) {
 				//清掉缓存
-				CACHE.me.removeApiWechatUserByMpOpenId(mpId, oldOpenId);
-				CACHE.me.removeApiWechatUser(mpId, wechatUser.getId());
+				JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, oldOpenId);
+				JBoltWechatUserCache.me.removeApiWechatUser(mpId, wechatUser.getId());
 			}
 		}
 		return ret.isOk()?SUCCESS:fail(String.format("更新微信小程序用户授权信息失败[%s:%s]",mpId,wechatUser.getId()));
@@ -573,8 +599,8 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(ret.isOk()) {
 			if(StrKit.notBlank(wechatUser.getOpenId())) {
 				//清掉缓存
-				CACHE.me.removeApiWechatUserByMpOpenId(mpId, wechatUser.getOpenId());
-				CACHE.me.removeApiWechatUser(mpId, wechatUser.getId());
+				JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, wechatUser.getOpenId());
+				JBoltWechatUserCache.me.removeApiWechatUser(mpId, wechatUser.getId());
 			}
 		}
 		return ret.isOk()?successWithData(Okv.by("phoneNumber", wechatUser.getPhone()).set("countryCode",wechatUser.getPhoneCountryCode())):fail(String.format("更新微信小程序用户手机号授权信息失败[%s:%s]",mpId,wechatUser.getId()));
@@ -601,8 +627,8 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(ret.isOk()) {
 			if(StrKit.notBlank(oldOpenId)) {
 				//清掉缓存
-				CACHE.me.removeApiWechatUserByMpOpenId(mpId, oldOpenId);
-				CACHE.me.removeApiWechatUser(mpId, user.getId());
+				JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, oldOpenId);
+				JBoltWechatUserCache.me.removeApiWechatUser(mpId, user.getId());
 			}
 		}
 		return ret.isOk()?SUCCESS:fail(String.format("更新微信小程序用户登录信息失败[%s:%s]",mpId,user.getId()));
@@ -710,8 +736,8 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	 * @param id
 	 * @return
 	 */
-	public WechatUser findByIdToWechatUserFromCache(Long _id,Object id) {
-		return CACHE.me.getApiWechatUserByApiUserId(_id, id);
+	public WechatUser findByIdToWechatUserFromCache(Long _id,Long id) {
+		return JBoltWechatUserCache.me.getApiWechatUserByApiUserId(_id, id);
 	}
 
 	/**

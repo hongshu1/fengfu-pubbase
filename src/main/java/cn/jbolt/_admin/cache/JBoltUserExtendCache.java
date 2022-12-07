@@ -1,4 +1,5 @@
-package cn.jbolt._admin.user;
+package cn.jbolt._admin.cache;
+import cn.jbolt._admin.user.UserExtendService;
 import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.core.cache.JBoltCache;
 import com.jfinal.aop.Aop;

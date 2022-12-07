@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cn.jbolt._admin.cache.JBoltQiniuCache;
 import cn.jbolt.core.db.sql.Sql;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -145,6 +146,9 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 	protected String afterDelete(QiniuBucket qiniuBucket, Kv kv) {
 		addDeleteSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName());
 		qiniuService.updateBucketCount(qiniuBucket.getQiniuId());
+		if(qiniuBucket.getIsDefault()){
+			JBoltQiniuCache.me.removeDefaultBucket(qiniuBucket.getQiniuId());
+		}
 		return null;
 	}
 	
@@ -165,6 +169,8 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 			if(qiniuBucket.getIsDefault()) {
 				changeIsDefaultFalse(qiniuBucket.getQiniuId(), qiniuBucket.getId());
 			}
+			//删除default缓存
+			JBoltQiniuCache.me.removeDefaultBucket(qiniuBucket.getQiniuId());
 			addUpdateSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName(),"的是否默认属性:"+qiniuBucket.getIsDefault());
 			break;
 

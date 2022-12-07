@@ -2150,12 +2150,14 @@ CREATE TABLE [dbo].[jb_user] (
   [username] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NOT NULL,
   [password] nvarchar(128) COLLATE Chinese_PRC_CI_AS  NOT NULL,
   [name] nvarchar(20) COLLATE Chinese_PRC_CI_AS  NOT NULL,
+  [sn] nvarchar(20) COLLATE Chinese_PRC_CI_AS DEFAULT NULL,
   [avatar] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [create_time] datetime  NOT NULL,
   [phone] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
   [email] nvarchar(100) COLLATE Chinese_PRC_CI_AS  NULL,
   [enable] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
-  [sex] int  NULL,
+  [sex] int DEFAULT 0 NOT NULL,
+  [age] int DEFAULT 0 NOT NULL,
   [pinyin] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [roles] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [is_system_admin] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
@@ -2208,6 +2210,13 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
+'MS_Description', N'工号',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'sn'
+GO
+
+EXEC sp_addextendedproperty
 'MS_Description', N'头像',
 'SCHEMA', N'dbo',
 'TABLE', N'jb_user',
@@ -2247,6 +2256,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_user',
 'COLUMN', N'sex'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'年龄',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'age'
 GO
 
 EXEC sp_addextendedproperty
