@@ -2,24 +2,21 @@ package cn.jbolt._admin.codegen;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ClassUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.cache.JBoltCodeGenCache;
 import cn.jbolt._admin.codegen.modelattr.CodeGenModelAttrService;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.model.CodeGen;
 import cn.jbolt.common.model.CodeGenModelAttr;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.bean.Option;
 import cn.jbolt.core.bean.OptionBean;
-import cn.jbolt.core.cache.JBoltCache;
 import cn.jbolt.core.cache.JBoltCacheKit;
-import cn.jbolt.core.cache.JBoltDeptCache;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.db.datasource.JBoltDataSourceUtil;
 import cn.jbolt.core.enumutil.JBoltEnum;
-import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.model.base.JBoltBaseModel;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
@@ -27,20 +24,17 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.service.base.JBoltBaseRecordService;
-import cn.jbolt.core.service.base.JBoltBaseService;
-import cn.jbolt.core.service.base.JBoltCommonService;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.StrKit;
-import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.ehcache.IDataLoader;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 /**
@@ -731,6 +725,79 @@ public class CodeGenAdminController extends JBoltBaseController {
 		return null;
 	}
 
+	/**
+	 * javapackageautocomplete查询
+	 */
+	public void javaPackageAutocomplete(){
+		String keywords = get("q");
+		//没输入 或者没有点 直接忽略
+		if(notOk(keywords)){
+			renderJsonSuccess();
+			return;
+		}
+		//到java的根目录
+		String rootDir = FileUtil.normalize(System.getProperty("user.dir")+"/src/main/java/");
+		//转为小写
+		String lowKeywords = keywords.toLowerCase().trim();
+		String packageName = null;
+		String leaveStr;
+		String allPackage = null;
+		if(lowKeywords.contains(".")) {
+			if(lowKeywords.endsWith(".")){
+				leaveStr = null;
+				packageName = lowKeywords.substring(0,lowKeywords.length()-1);
+			}else{
+				allPackage = lowKeywords;
+				packageName = lowKeywords.substring(0, lowKeywords.lastIndexOf("."));
+				leaveStr =  lowKeywords.substring(lowKeywords.lastIndexOf(".")+1);
+			}
+		}else{
+			leaveStr = null;
+			packageName = lowKeywords;
+		}
+
+		String dirPath = StrUtil.replace(packageName,".","/");
+		String packagePath = FileUtil.normalize(rootDir+"/"+ dirPath);
+		if(!FileUtil.isDirectory(packagePath)){
+			renderJsonSuccess();
+			return;
+		}
+		if(isOk(allPackage)){
+			String alldirPath = StrUtil.replace(allPackage,".","/");
+			String apppackagePath = FileUtil.normalize(rootDir+"/"+ alldirPath);
+			if(FileUtil.isDirectory(apppackagePath)){
+				packageName = allPackage;
+				packagePath = apppackagePath;
+				leaveStr = null;
+			}
+		}
+
+		String finalLeaveStr = leaveStr;
+		File[] dirs = FileUtil.file(packagePath).listFiles(fi->{
+			if(fi.isFile()){return false;}
+			if(isOk(finalLeaveStr) && fi.isDirectory() && fi.getName().toLowerCase().startsWith(finalLeaveStr)){
+				return true;
+			}
+			if(fi.isDirectory()){
+				return true;
+			}
+			return false;
+		});
+		if(notOk(dirs)){
+			renderJsonSuccess();
+			return;
+		}
+		List<Option> packs =  new ArrayList<>();
+		int count=0;
+		for(File dir:dirs){
+			if(count<20){
+				break;
+			}
+			packs.add(new OptionBean(StrUtil.replace(FileUtil.subPath(rootDir,FileUtil.normalize(dir.getPath())),"/",".")));
+			count++;
+		}
+		renderJsonData(packs);
+	}
 
 	/**
 	 * 关键词搜索service方法
