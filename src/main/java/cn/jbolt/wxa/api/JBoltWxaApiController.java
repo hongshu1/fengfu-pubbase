@@ -1,5 +1,7 @@
 package cn.jbolt.wxa.api;
 
+import cn.jbolt.admin.wechat.user.WechatUserService;
+import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.api.httpmethod.JBoltHttpGet;
 import com.jfinal.aop.Inject;
@@ -18,6 +20,8 @@ import cn.jbolt.core.para.JBoltPara;
 public class JBoltWxaApiController extends JBoltApiBaseController {
 	@Inject
 	private JBoltWxaApiService wxapApiService;
+	@Inject
+	private WechatUserService wechatUserService;
 	
 	/**
 	 * wxLogin 
@@ -96,5 +100,13 @@ public class JBoltWxaApiController extends JBoltApiBaseController {
 	@ActionKey("/api/wxa/user/me")
 	public void myWechatUserInfo() {
 		renderJBoltApiRet(wxapApiService.getMyWechatUserInfo());
+	}
+
+	/**
+	 * 更新wechatUser信息
+	 */
+	@JBoltHttpPost
+	public void updateMyWechatUserInfo(JBoltPara para) {
+		renderJBoltApiRet(wechatUserService.updateMyWechatUserInfo(JBoltApiKit.getWechatMpId(),para,true));
 	}
 }

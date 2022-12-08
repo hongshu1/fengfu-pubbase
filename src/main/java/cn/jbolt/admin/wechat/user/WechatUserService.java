@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import cn.jbolt._admin.cache.JBoltWechatUserCache;
+import cn.jbolt.core.api.JBoltApiKit;
+import cn.jbolt.core.para.JBoltPara;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -868,5 +870,64 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	protected String database() {
 		return dao._getDatabaseName();
 	}
-	 
+
+	/**
+	 * 更新微信用户信息
+	 * @param mpId
+	 * @param para
+	 * @param isWxa
+	 * @return
+	 */
+	public Ret updateMyWechatUserInfo(Long mpId,JBoltPara para, boolean isWxa) {
+		if(para == null || para.isEmpty()){return fail(JBoltMsg.PARAM_ERROR);}
+		if(para.containsKey(ID) || notOk(para.getLong(ID))){
+			return fail("更新用户的数据未指定id");
+		}
+		Long myWechatUserId = JBoltApiKit.getApiUserIdToLong();
+		WechatUser dbUser = JBoltWechatUserCache.me.getApiWechatUserByApiUserId(mpId,myWechatUserId);
+		if(dbUser == null){
+			return fail("更新用户的数据不存在");
+		}
+		if(dbUser.getEnable() == false){
+			return fail("账号已禁用，无法更新");
+		}
+		WechatUser wechatUser = new WechatUser();
+		wechatUser.setId(myWechatUserId);
+		boolean needUpdate = false;
+		if(para.containsKey("nickname")){
+			wechatUser.setNickname(para.getString("nickname"));
+			needUpdate = true;
+		}
+		if(para.containsKey("headImgUrl")){
+			wechatUser.setHeadImgUrl(para.getString("headImgUrl"));
+			needUpdate = true;
+		}
+		if(para.containsKey("sex")){
+			wechatUser.setSex(para.getInteger("sex"));
+			needUpdate = true;
+		}
+		if(para.containsKey("realname")){
+			wechatUser.setRealname(para.getString("realname"));
+			needUpdate = true;
+		}
+		if(para.containsKey("phone")){
+			wechatUser.setPhone(para.getString("phone"));
+			needUpdate = true;
+		}
+		if(para.containsKey("weixin")){
+			wechatUser.setWeixin(para.getString("wexin"));
+			needUpdate = true;
+		}
+		if(!needUpdate){
+			return fail("参数异常，未设置有效更新属性值");
+		}
+		wechatUser.setUpdateTime(new Date());
+		Ret ret = update(mpId,wechatUser.toRecord());
+		if(ret.isOk()){
+			JBoltWechatUserCache.me.removeApiWechatUser(mpId,myWechatUserId);
+			JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId,wechatUser.getOpenId());
+			JBoltWechatUserCache.me.removeApiWechatUserByMpUnionId(mpId,wechatUser.getUnionId());
+		}
+		return ret;
+	}
 }
