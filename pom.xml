@@ -14,13 +14,13 @@
 		<jdk.version>1.8</jdk.version>
 		<junit.version>5.9.1</junit.version>
 		<jfinal.version>5.0.7-1</jfinal.version>
-		<oshi.version>6.3.1</oshi.version>
+		<oshi.version>6.4.0</oshi.version>
 		<jna.version>5.12.1</jna.version>
 		<cos.version>2022.2</cos.version>
 		<emoji-java.version>5.1.1</emoji-java.version>
-		<druid.version>1.2.14</druid.version>
+		<druid.version>1.2.15</druid.version>
 		<fastjson.version>1.2.83</fastjson.version>
-        <fastjson2.version>2.0.18</fastjson2.version>
+        <fastjson2.version>2.0.20</fastjson2.version>
 		<mysql.version>8.0.28</mysql.version>
 		<oracle.version>21.5.0.0</oracle.version>
 		<sqlserver.version>9.4.1.jre8</sqlserver.version>
@@ -33,7 +33,7 @@
 		<caffeine.version>2.9.3</caffeine.version>
 		<jedis.version>3.9.0</jedis.version>
 		<fst.version>2.57</fst.version>
-		<hutool.version>5.8.9</hutool.version>
+		<hutool.version>5.8.10</hutool.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<log4j2.version>2.19.0</log4j2.version>
 		<jfinalundertow.version>3.3</jfinalundertow.version>
@@ -49,7 +49,7 @@
 		<screw.version>1.0.5</screw.version>
 		<prettytime.version>5.0.6.Final</prettytime.version>
 		<ureport.version>2.2.9</ureport.version>
-		<jackson.version>2.14.0</jackson.version>
+		<jackson.version>2.14.1</jackson.version>
 		<ip2region.version>1.7.2</ip2region.version>
 		<jfinalevent.version>3.1.3</jfinalevent.version>
 		<qiniu.version>7.12.0</qiniu.version>
@@ -59,7 +59,7 @@
         <codehighlight.version>1.0.3</codehighlight.version>
 		<jboltcore.version>4.1.2</jboltcore.version>
 
-        <kotlin.version>1.7.21</kotlin.version>
+        <kotlin.version>1.7.22</kotlin.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <wildfly-common.version>1.6.0.Final</wildfly-common.version>
@@ -72,7 +72,7 @@
         <jxlss.version>1.0.7</jxlss.version>
         <undertow.version>2.2.20.Final</undertow.version>
 
-        <aliyun-java-sdk-core.version>4.6.2</aliyun-java-sdk-core.version>
+        <aliyun-java-sdk-core.version>4.6.3</aliyun-java-sdk-core.version>
         <aliyun-java-sdk-sms.version>3.0.0-rc1</aliyun-java-sdk-sms.version>
         <aliyun-java-sdk-dysmsapi.version>2.2.1</aliyun-java-sdk-dysmsapi.version>
 
