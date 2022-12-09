@@ -28,7 +28,7 @@ public class LoginLogService extends JBoltLoginLogService{
 	 * @return
 	 */
 	public Page<LoginLog> paginateAdminList(Integer pageNumber, Integer pageSize, String keywords,Date startTime,Date endTime) {
-		Sql sql = selectSql().page(pageNumber,pageSize).bwDateTime("create_time",startTime,endTime);
+		Sql sql = selectSql().page(pageNumber,pageSize).bwDate("create_time",startTime,endTime);
 		sql.like("username",keywords);
 		sql.orderById(true);
 		return paginate(sql);

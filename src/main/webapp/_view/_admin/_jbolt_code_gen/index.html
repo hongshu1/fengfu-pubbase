@@ -77,9 +77,9 @@
 <td>${data.updateTime|date_ymdhms}</td>
 <td>
 {@if data.isDeleted}
-<a tooltip  data-title="查看基础信息"  href="admin/codegen/edit/${data.id}" data-dialog-title="[${data.mainTableName}${data.mainTableRemark?('('+data.mainTableRemark+')'):''}]基本信息" data-area="1280,900" data-openpage="dialog" data-btn="close" class="text-info mr-1"><i class="fa fa-eye"></i></a>
+<a tooltip  data-title="查看基础信息"  href="admin/codegen/edit/${data.id}" data-dialog-title="[${data.mainTableName}${data.mainTableRemark?('('+data.mainTableRemark+')'):''}]基本信息" data-area="1280,950" data-openpage="dialog" data-btn="close" class="text-info mr-1"><i class="fa fa-eye"></i></a>
 {@else}
-<a tooltip  data-title="编辑基础信息"  href="admin/codegen/edit/${data.id}" data-handler="refreshJBoltTable" data-dialog-title="编辑[${data.mainTableName}${data.mainTableRemark?('('+data.mainTableRemark+')'):''}]基本信息" data-area="1280,900" class="jbolt_table_editbtn text-primary"><i class="fa fa-pencil"></i></a>
+<a tooltip  data-title="编辑基础信息"  href="admin/codegen/edit/${data.id}" data-handler="refreshJBoltTable" data-dialog-title="编辑[${data.mainTableName}${data.mainTableRemark?('('+data.mainTableRemark+')'):''}]基本信息" data-area="1280,950" class="jbolt_table_editbtn text-primary"><i class="fa fa-pencil"></i></a>
 {@/if}
 <a tooltip  data-title="设计详细生成配置" target="_blank"  href="admin/codegen/editCodeGenConfig/${data.id}"  class="mr-1 text-success"><i class="fa fa-cogs"></i></a>
 <a tooltip  data-title="删除"  href="admin/codegen/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" class="jbolt_table_delbtn text-danger"><i class="fa fa-remove"></i></a>
@@ -89,8 +89,8 @@
 </textarea>
 <div class="jbolt_table_toolbar" id="codegen_table_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-<button data-dialogbtn data-area="1280,900"  data-handler="refreshJBoltTable" data-title="新增代码生成配置-基础" id="toolbar_addBtn_#(pageId)" data-url="admin/codegen/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-<button data-dialogbtn data-area="1280,900"  data-handler="refreshJBoltTable" data-title="编辑代码生成配置-基础" id="toolbar_editBtn_#(pageId)" data-check-handler="jboltTableGetCheckedId" data-url="admin/codegen/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+<button data-dialogbtn data-area="1280,950"  data-handler="refreshJBoltTable" data-title="新增代码生成配置-基础" id="toolbar_addBtn_#(pageId)" data-url="admin/codegen/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+<button data-dialogbtn data-area="1280,950"  data-handler="refreshJBoltTable" data-title="编辑代码生成配置-基础" id="toolbar_editBtn_#(pageId)" data-check-handler="jboltTableGetCheckedId" data-url="admin/codegen/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/codegen/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
 <button style="display:none;" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_recoverBtn_#(pageId)" data-url="admin/codegen/recoverByIds?ids=" data-confirm="确定还原回收站里选中数据？" class="btn btn-outline-info btn-sm" ><i class="fa fa-reply"></i> 还原</button>
 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-secondary" ><i class="fa fa-refresh"></i> 刷新</button>

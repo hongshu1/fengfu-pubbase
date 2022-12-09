@@ -66,38 +66,50 @@
 			<input type="text" id="remove_prefix" data-sync-attr="prefix" autocomplete="off"  class="form-control" placeholder="请输入表名需要删除的前缀"  maxlength="40" name="codeGen.tableRemovePrefix" value="#(codeGen.tableRemovePrefix??)" />
 		</div>
 	</div>
-	
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">构建类型</label>
-		<div class="col-6">
-			<select class="form-control" 
-				data-autoload
-				name="codeGen.type" 
-				data-url="admin/codegen/types"
-				data-rule="select"
-				data-handler="codeGenTypeHandler"
-				data-select="#(codeGen.type?? 'Admin')"
-				></select>
-		</div>
+	<div class="form-group row"
+		 data-radio
+		 data-rule="radio"
+		 data-value="#(codeGen.type?? 'Admin')"
+		 data-name="codeGen.type"
+		 data-default="options_first"
+		 data-url="admin/codegen/types"
+		 data-label="构建类型"
+		 data-width="col-sm-2,col-9"
+		 data-handler="codeGenTypeHandler"
+		 data-inline="true">
 	</div>
-	 
-	<div class="form-group row admin_type_box d-none" 
-		data-radio 
-		data-rule="radio"  
-		data-value="#(codeGen.style??)" 
-		data-name="codeGen.style" 
+
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label"></label>-->
+<!--		<div class="col-6">-->
+<!--			<select class="form-control" -->
+<!--				data-autoload-->
+<!--				name="codeGen.type" -->
+<!--				data-url="admin/codegen/types"-->
+<!--				data-rule="select"-->
+<!--				data-handler="codeGenTypeHandler"-->
+<!--				data-select="#(codeGen.type?? 'Admin')"-->
+<!--				></select>-->
+<!--		</div>-->
+<!--	</div>-->
+
+	<div class="form-group row admin_type_box d-none"
+		data-radio
+		data-rule="radio"
+		data-value="#(codeGen.style??)"
+		data-name="codeGen.style"
 		data-default="options_first"
 		data-url="admin/codegen/styles"
 		data-label="样式类型"
 		data-width="col-sm-2,col-9"
 		data-inline="true">
 	</div>
-	
-	<div class="form-group row" 
-		data-radio 
+
+	<div class="form-group row"
+		data-radio
 		data-rule="radio"
 		data-name="codeGen.isCrud"
-		data-value="#(codeGen.isCrud??)" 
+		data-value="#(codeGen.isCrud??)"
 		data-default="options_first">
 		<label class="col-sm-2 col-form-label is_required">是否CRUD</label>
 			<div class="col-9"  style="padding-top: 1px;">
@@ -105,7 +117,7 @@
 					<input  id="is_crud_true" type="radio" name="codeGen.isCrud"   value="true"/>
 					<label for="is_crud_true">是</label>
 				</div>
-				
+
 				<div class="radio radio-primary  radio-inline">
 					<input  id="is_crud_false" type="radio" name="codeGen.isCrud"   value="false"/>
 					<label for="is_crud_false">否</label>
@@ -132,11 +144,11 @@
 			</div>
 		</div>
 	</div>
-	<div class="form-group row admin_type_box d-none" 
-		data-radio 
+	<div class="form-group row admin_type_box d-none"
+		data-radio
 		data-rule="radio"
 		data-name="codeGen.isEditable"
-		data-value="#(codeGen.isEditable??)" 
+		data-value="#(codeGen.isEditable??)"
 		data-default="false">
 		<label class="col-sm-2 col-form-label is_required">表格可编辑</label>
 			<div class="col-9"  style="padding-top: 1px;">
@@ -144,7 +156,7 @@
 					<input  id="is_editable_true" type="radio" name="codeGen.isEditable"   value="true"/>
 					<label for="is_editable_true">是</label>
 				</div>
-				
+
 				<div class="radio radio-primary  radio-inline">
 					<input  id="is_editable_false" type="radio" name="codeGen.isEditable"   value="false"/>
 					<label for="is_editable_false">否</label>
@@ -169,8 +181,15 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">Main Java Package</label>
 		<div class="col-6">
-			<input type="text" autocomplete="off"  class="form-control" data-rule="required"  placeholder="请输入java主package" data-tips="请输入版本号(数字)" maxlength="100" name="codeGen.mainJavaPackage" value="#(codeGen.mainJavaPackage?? 'cn.jbolt')" />
-			<small class="text-danger">注意:java 默认生成的主package 默认值cn.jbolt</small>
+			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete" autocomplete="off" id="mainJavaPackageInput"  class="form-control" data-rule="required"  placeholder="请输入java主package" data-tips="请输入版本号(数字)" maxlength="100" name="codeGen.mainJavaPackage" value="#(codeGen.mainJavaPackage?? 'cn.jbolt.admin')" />
+			<small class="text-danger">注意:java 默认生成的主package 默认值<span id="defaultMainJavaPackageText">cn.jbolt.admin</span></small>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">Model Package</label>
+		<div class="col-sm-4">
+			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete"  data-tips="请输入Model生成到哪个package" class="form-control" name="codeGen.modelPackage" value="#(codeGen.modelPackage?? 'cn.jbolt.common.model')" autocomplete="off" />
 		</div>
 	</div>
 	 
@@ -189,12 +208,24 @@ function processTablesReloadHandler(ajaxBtn){
 		refreshBtn.click();
 	}
 }
-function codeGenTypeHandler(select){
-	var selectValue= select.val();
+function codeGenTypeHandler(r,selectValue){
 	var boxs = $(".admin_type_box");
 	boxs.addClass("d-none");
-	if(selectValue && selectValue=="Admin"){
-		boxs.removeClass("d-none");
+	if(selectValue){
+		var mainJavaPackageInput = $("#mainJavaPackageInput");
+		var mainJavaPackageInputVal = mainJavaPackageInput.val();
+		if(selectValue=="Admin"){
+			boxs.removeClass("d-none");
+			$("#defaultMainJavaPackageText").text("cn.jbolt.admin");
+			if(mainJavaPackageInputVal && mainJavaPackageInputVal=="cn.jbolt.api"){
+				mainJavaPackageInput.val("cn.jbolt.admin");
+			}
+		}else if(selectValue == "Api"){
+			$("#defaultMainJavaPackageText").text("cn.jbolt.api");
+			if(mainJavaPackageInputVal && mainJavaPackageInputVal=="cn.jbolt.admin"){
+				mainJavaPackageInput.val("cn.jbolt.api");
+			}
+		}
 	}
 }
 </script>

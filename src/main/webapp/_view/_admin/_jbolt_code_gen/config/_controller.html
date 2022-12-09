@@ -8,7 +8,7 @@
 			<div class="form-group row">
 		 		<label class="col-sm-2 col-form-label">生成到哪个Package</label>
 		 		<div class="col-sm-4">
-		 			<input type="text" data-rule="required" placeholder="请指定Controller生成到哪个Package" data-tips="请输入Controller生成到哪个Package" class="form-control" name="codeGen.controllerPackage" value="#(codeGen.controllerPackage??)" autocomplete="off" />
+		 			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete" data-rule="required" placeholder="请指定Controller生成到哪个Package" data-tips="请输入Controller生成到哪个Package" class="form-control" name="codeGen.controllerPackage" value="#(codeGen.controllerPackage??)" autocomplete="off" />
 		 		</div>
 			</div>
 		 	<div class="form-group row">
