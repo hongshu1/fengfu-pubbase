@@ -123,9 +123,16 @@ public class UserService extends JBoltUserService {
 			if(dbUser == null){
 				return fail(JBoltMsg.DATA_NOT_EXIST);
 			}
-			if(!dbUser.getUsername().equals(user.getUsername().trim())){
-				//说明修改了username 需要清理缓存
-				dbUser.deleteKeyCache();
+			dbUser.deleteKeyCache();
+			//清理角色变更缓存
+			if(!dbUser.getRoles().equals(user.getRoles())){
+				//存在其他跟自己相同角色的就不清理缓存 不存在说明自己独占 就清理
+				boolean existSameRoles = existsSameRoles(dbUser.getRoles(),dbUser.getId());
+				if(!existSameRoles){
+					JBoltPermissionCache.me.removeRolesPermissionKeySet(dbUser.getRoles());
+					JBoltPermissionCache.me.removeRolesMenus(dbUser.getRoles());
+					JBoltPermissionCache.me.removeRolesMenusWithSystemAdminDefault(dbUser.getRoles());
+				}
 			}
 		}else {
 			if(notOk(user.getPassword())) {
@@ -185,6 +192,16 @@ public class UserService extends JBoltUserService {
 			}
 		}
 		return ret(success);
+	}
+
+	/**
+	 * 查询是否存在相同角色组用户 排除自身
+	 * @param roles
+	 * @param userId
+	 * @return
+	 */
+	private boolean existsSameRoles(String roles, Long userId) {
+		return exists("roles",roles,userId);
 	}
 
 	/**
