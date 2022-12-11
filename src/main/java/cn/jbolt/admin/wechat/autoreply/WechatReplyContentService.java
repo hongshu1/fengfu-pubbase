@@ -13,7 +13,6 @@ import cn.jbolt.core.enumutil.JBoltEnum;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Document.OutputSettings;
-import org.jsoup.safety.Whitelist;
 
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -47,6 +46,7 @@ import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
+import org.jsoup.safety.Safelist;
 
 /**   
  * 自动回复内容管理Service
@@ -174,7 +174,7 @@ public class WechatReplyContentService extends JBoltBaseService<WechatReplyConte
 						return fail("请输入描述内容");
 					}
 					OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false);
-					String content = Jsoup.clean(wechatReplyContent.getContent(), "", Whitelist.basic().removeEnforcedAttribute("a", "rel"), outputSettings);
+					String content = Jsoup.clean(wechatReplyContent.getContent(), "", Safelist.basic().removeEnforcedAttribute("a", "rel"), outputSettings);
 					wechatReplyContent.setContent(content);
 					break;
 				case IMG:
