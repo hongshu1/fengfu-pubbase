@@ -13,7 +13,7 @@
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<jdk.version>1.8</jdk.version>
 		<junit.version>5.9.1</junit.version>
-		<jfinal.version>5.0.7-1</jfinal.version>
+		<jfinal.version>5.0.8-1</jfinal.version>
 		<oshi.version>6.4.0</oshi.version>
 		<jna.version>5.12.1</jna.version>
 		<cos.version>2022.2</cos.version>
@@ -21,7 +21,7 @@
 		<druid.version>1.2.15</druid.version>
 		<fastjson.version>1.2.83</fastjson.version>
         <fastjson2.version>2.0.20</fastjson2.version>
-		<mysql.version>8.0.28</mysql.version>
+		<mysql.version>8.0.31</mysql.version>
 		<oracle.version>21.5.0.0</oracle.version>
 		<sqlserver.version>9.4.1.jre8</sqlserver.version>
 		<dm.version>8.1.2.141</dm.version>
