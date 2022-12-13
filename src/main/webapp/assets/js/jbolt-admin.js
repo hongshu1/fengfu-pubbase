@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.2.7";
+var jbolt_admin_js_version="6.2.8";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -2262,6 +2262,7 @@ var DownloadUtil={
 
 //jstree封装
 var JSTreeUtil={
+	    initSortSetting:false,
 		delNodeId:0,
 		init:function(parentEle){
 			 var parent=getRealParentJqueryObject(parentEle);
@@ -2539,6 +2540,22 @@ var JSTreeUtil={
 			return read_url;
 		},
 		_initTree:function(tree){
+			if(!this.initSortSetting){
+				$.jstree.defaults.sort=function(a,b){
+					var nodeA = this.get_node(a);
+					var nodeB = this.get_node(b);
+					if(nodeA.data){
+						if(nodeA.data.hasOwnProperty("sortRank")){
+							return nodeA.data.sortRank - nodeB.data.sortRank;
+						}
+					}else{
+						if(nodeA.original.hasOwnProperty("order")){
+							return nodeA.original.order - nodeB.original.order;
+						}
+					}
+					return nodeA.id > nodeB.id ? 1 : -1;
+				}
+			}
 			var that=this;
 			var autoLoad = tree.data("autoload");
 			if(typeof(autoLoad) == "undefined"){
@@ -2575,12 +2592,14 @@ var JSTreeUtil={
 			}
 			var treeOptions={
 					'core' : {
+						'cache':false,
 						'check_callback' : true,
 						'animation':200,
 						"themes" : { "stripes" : stripes }
 					},
-				'plugins' : ["themes","sort","state"],
+				'plugins' : ["themes","sort"],
 			};
+
 			var wholerow = tree.data("wholerow");
 			if((typeof(wholerow)=="boolean" && wholerow)){
 				treeOptions['plugins'].push("wholerow");
