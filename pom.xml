@@ -100,11 +100,11 @@
 			<scope>test</scope>
 		</dependency>
 		<!--如果config.properties配置动态代理类型为cglib 就解开注释-->
-		<dependency>
+		<!--<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
 			<version>${cglib.version}</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>com.jfinal</groupId>
 			<artifactId>cos</artifactId>
