@@ -13,6 +13,7 @@
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<jdk.version>1.8</jdk.version>
 		<junit.version>5.8.1</junit.version>
+		<cglib.version>3.3.0</cglib.version>
 		<jfinal.version>5.0.8</jfinal.version>
 		<oshi.version>6.1.2</oshi.version>
 		<jna.version>5.10.0</jna.version>
@@ -97,6 +98,12 @@
     		<artifactId>junit-jupiter-engine</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<!--如果config.properties配置动态代理类型为cglib 就解开注释-->
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<version>${cglib.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.jfinal</groupId>
