@@ -21,6 +21,6 @@ public class DeptService extends JBoltDeptService{
      */
     public List<JsTreeBean> getAllCrudJsTreeDatas(Long checkedId, int openLevel) {
         List<Dept> depts=getAllList();
-        return convertJsTree(depts,checkedId,openLevel,null,"sn,name",null,true);
+        return convertJsTree(depts,checkedId,openLevel,null,"sn,name",SORT_RANK,null,false);
     }
 }

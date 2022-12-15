@@ -1,0 +1,15 @@
+#--
+模板ID:4Z3PWfihfio3BXj-vwN_6mYxohnBGeXEVB8Xv3plgvc
+标题:圈子加入成功提醒
+格式:
+{{first.DATA}}
+加入时间：{{keyword1.DATA}}
+加入圈子：{{keyword2.DATA}}
+{{remark.DATA}}
+--#
+{
+"first":"#(first??)"
+"keyword1":"#(joinTime??)"
+"keyword2":"#(groupName??)"
+"remark":"#(remark??)"
+}

@@ -13,6 +13,7 @@
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<jdk.version>1.8</jdk.version>
 		<junit.version>5.9.1</junit.version>
+		<cglib.version>3.3.0</cglib.version>
 		<jfinal.version>5.0.8-1</jfinal.version>
 		<oshi.version>6.4.0</oshi.version>
 		<jna.version>5.12.1</jna.version>
@@ -123,6 +124,12 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<!--如果config.properties配置动态代理类型为cglib 就解开注释-->
+		<!--<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<version>${cglib.version}</version>
+		</dependency>-->
 		<dependency>
 			<groupId>com.jfinal</groupId>
 			<artifactId>cos</artifactId>
