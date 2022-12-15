@@ -1,15 +1,23 @@
-#--
-模板ID:4Z3PWfihfio3BXj-vwN_6mYxohnBGeXEVB8Xv3plgvc
-标题:圈子加入成功提醒
-格式:
-{{first.DATA}}
-加入时间：{{keyword1.DATA}}
-加入圈子：{{keyword2.DATA}}
-{{remark.DATA}}
---#
 {
-"first":"#(first??)"
-"keyword1":"#(joinTime??)"
-"keyword2":"#(groupName??)"
-"remark":"#(remark??)"
+  "touser": "#(openId??)",
+  "template_id": "4Z3PWfihfio3BXj-vwN_6mYxohnBGeXEVB8Xv3plgvc",
+  "miniprogram": {
+    "appid": "#(appId??)",
+    "pagepath": "#(pagePath)"
+  },
+  "data": {
+    "first": {
+      "value": "#(first??)"
+    },
+    "keyword1": {
+      "value": "#now('yyyy年MM月dd日 HH:mm:ss')"
+    },
+    "keyword2": {
+      "value": "#(groupName??)",
+      "color": "#0253f4"
+    },
+    "remark": {
+      "value": "#(remark??)"
+    }
+  }
 }
