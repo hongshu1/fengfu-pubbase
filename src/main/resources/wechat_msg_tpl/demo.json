@@ -3,7 +3,7 @@
   "template_id": "4Z3PWfihfio3BXj-vwN_6mYxohnBGeXEVB8Xv3plgvc",
   "miniprogram": {
     "appid": "#(appId??)",
-    "pagepath": "#(pagePath)"
+    "pagepath": "#(pagePath??)"
   },
   "data": {
     "first": {
