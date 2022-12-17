@@ -363,11 +363,6 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 			//判断如果传进来的user 没有nickname或者有但是是之前自动生成的那种 需要再次设置一下
 			if(notOk(userNickName)||(userNickName.indexOf("用户_")!=-1&&userNickName.equals("用户_")==false)) {
 				String nickName=apiResult.getStr("nickname");
-				if(EmojiUtil.containsEmoji(nickName)) {
-					nickName=EmojiUtil.toHtml(nickName);
-				}else {
-					nickName=JBoltStringUtil.filterEmoji(nickName);
-				}
 				if(StrKit.isBlank(nickName)) {
 					nickName="用户_"+user.getId();
 				}
@@ -377,10 +372,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 			processUserInfoByApi(user, apiResult);
 			Record record=user.toRecord();
 			update(mpId, record);
-			 
 		}
-		
-		
 	}
 	/**
 	 * 填充更新必要字段
@@ -793,17 +785,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		wechatUser.setLastAuthTime(now);
 		wechatUser.setCreateTime(now);
 		wechatUser.setUpdateTime(now);
-		
-		String nickName=userInfo.get("nickname");
-		if(EmojiUtil.containsEmoji(nickName)) {
-			nickName=EmojiUtil.toHtml(nickName);
-		}else {
-			nickName=JBoltStringUtil.filterEmoji(nickName);
-		}
-		if(StrKit.isBlank(nickName)) {
-			nickName="用户_"+JBoltRandomUtil.randomLowWithNumber(6);
-		}
-		wechatUser.setNickname(nickName);
+		wechatUser.setNickname(userInfo.getStr("nickname"));
 		wechatUser.setLanguage(userInfo.getStr("language"));
 		wechatUser.setCountry(userInfo.getStr("country"));
 		wechatUser.setProvince(userInfo.getStr("province"));
@@ -836,16 +818,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		}
 		wechatUser.setLastAuthTime(now);
 		wechatUser.setUpdateTime(now);
-		String nickName=userInfo.get("nickname");
-		if(EmojiUtil.containsEmoji(nickName)) {
-			nickName=EmojiUtil.toHtml(nickName);
-		}else {
-			nickName=JBoltStringUtil.filterEmoji(nickName);
-		}
-		if(StrKit.isBlank(nickName)) {
-			nickName="用户_"+JBoltRandomUtil.randomLowWithNumber(6);
-		}
-		wechatUser.setNickname(nickName);
+		wechatUser.setNickname(userInfo.getStr("nickname"));
 		wechatUser.setLanguage(userInfo.getStr("language"));
 		wechatUser.setCountry(userInfo.getStr("country"));
 		wechatUser.setProvince(userInfo.getStr("province"));
