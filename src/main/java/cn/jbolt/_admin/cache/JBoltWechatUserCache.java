@@ -20,6 +20,14 @@ public class JBoltWechatUserCache extends JBoltCache {
     public String getCacheTypeName() {
         return TYPE_NAME;
     }
+    /**
+     * 获取默认头像
+     * @return
+     */
+    public String getDefaultAvatar(){
+        return JBoltConfig.JBOLT_WECHAT_USER_DEFAULT_AVATAR;
+    }
+
 
     /**
      * 从缓存里获取wechatUser
