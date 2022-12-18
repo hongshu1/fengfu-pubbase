@@ -72,6 +72,30 @@ public class JBoltWechatUserCache extends JBoltCache {
     }
 
     /**
+     * 获取openId
+     * @param mpId
+     * @param id
+     * @return
+     */
+    public String getOpenId(Long mpId, Long id) {
+        if(mpId == null || id == null || mpId.longValue()<=0 || id.longValue()<=0){return null;}
+        WechatUser apiUser = getApiWechatUserByApiUserId(mpId, id);
+        return apiUser==null?null:apiUser.getOpenId();
+    }
+
+    /**
+     * 获取unionId
+     * @param mpId
+     * @param id
+     * @return
+     */
+    public String getUnionId(Long mpId, Long id) {
+        if(mpId == null || id == null || mpId.longValue()<=0 || id.longValue()<=0){return null;}
+        WechatUser apiUser = getApiWechatUserByApiUserId(mpId, id);
+        return apiUser==null?null:apiUser.getUnionId();
+    }
+
+    /**
      * 从缓存里获取wechatUser 头像
      * @param mpId
      * @param id
