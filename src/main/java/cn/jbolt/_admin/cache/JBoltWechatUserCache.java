@@ -104,7 +104,9 @@ public class JBoltWechatUserCache extends JBoltCache {
     public String getAvatar(Long mpId, Long id) {
         if(mpId == null || id == null || mpId.longValue()<=0 || id.longValue()<=0){return null;}
         WechatUser apiUser = getApiWechatUserByApiUserId(mpId, id);
-        return apiUser==null?null:apiUser.getHeadImgUrl();
+        if(apiUser == null){return getDefaultAvatar();}
+        String userAvatar = apiUser.getHeadImgUrl();
+        return (userAvatar==null||userAvatar.trim().length() == 0)?getDefaultAvatar():userAvatar;
     }
 
 
