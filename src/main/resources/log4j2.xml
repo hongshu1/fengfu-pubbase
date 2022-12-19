@@ -268,6 +268,8 @@
 
         <!-- 配置ProxyGenerator 关闭输出-->
         <logger name="com.jfinal.proxy.ProxyGenerator" level="OFF"/>
+        <!-- 配置ApiConfigKit 关闭输出-->
+        <logger name="com.jfinal.weixin.sdk.api.ApiConfigKit" level="OFF"/>
         <!--log4j2 自带过滤日志-->
         <Logger name="org.jboss" level="error" />
         <Logger name="net.dreamlu.event" level="error" />
