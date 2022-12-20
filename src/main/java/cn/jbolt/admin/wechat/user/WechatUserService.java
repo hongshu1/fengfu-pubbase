@@ -134,11 +134,11 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 			//判断如果传进来的user 没有nickname或者有但是是之前自动生成的那种 需要再次设置一下
 			if(notOk(userNickName)||(userNickName.indexOf("用户_")!=-1&&userNickName.equals("用户_")==false)) {
 				String nickName=apiResult.getStr("nickname");
-				if(EmojiUtil.containsEmoji(nickName)) {
-					nickName=EmojiUtil.toHtml(nickName);
-				}else {
-					nickName=JBoltStringUtil.filterEmoji(nickName);
-				}
+//				if(EmojiUtil.containsEmoji(nickName)) {
+//					nickName=EmojiUtil.toHtml(nickName);
+//				}else {
+//					nickName=JBoltStringUtil.filterEmoji(nickName);
+//				}
 				if(StrKit.isBlank(nickName)) {
 					nickName="用户_"+user.get("id");
 				}

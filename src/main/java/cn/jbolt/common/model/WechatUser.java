@@ -28,11 +28,11 @@ public class WechatUser extends BaseWechatUser<WechatUser> {
         if(nickname == null || nickname.trim().length() == 0 || DEFAULT_NICK_NAME.equals(nickname)){
             return super.setNickname("用户_"+ JBoltRandomUtil.randomLowWithNumber(6));
         }
-        if(EmojiUtil.containsEmoji(nickname)) {
-            nickname=EmojiUtil.toHtml(nickname);
-        }else {
-            nickname= JBoltStringUtil.filterEmoji(nickname);
-        }
+//        if(EmojiUtil.containsEmoji(nickname)) {
+//            nickname=EmojiUtil.toHtml(nickname);
+//        }else {
+//            nickname= JBoltStringUtil.filterEmoji(nickname);
+//        }
         return super.setNickname(nickname);
     }
 }
