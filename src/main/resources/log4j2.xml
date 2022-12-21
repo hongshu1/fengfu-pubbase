@@ -48,6 +48,10 @@
          <Console name="JBoltWebSocketConsole" target="SYSTEM_OUT">
             <PatternLayout pattern="[JBolt WebSocket Log:[%level]:%d{yyyy-MM-dd HH:mm:ss.SSS}]%msg%n%xEx%C.%M(%F:%L) %n"/>
         </Console>
+        <!-- JBolt中的JBoltCron4j 控制台输出LOG -->
+        <Console name="JBoltCron4jConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="[JBolt Cron4j task Log:[%level]:%d{yyyy-MM-dd HH:mm:ss.SSS}]%msg%n%xEx%C.%M(%F:%L) %n"/>
+        </Console>
         <!-- JBolt中的JBoltApiConsole Debug 控制台输出LOG -->
          <Console name="JBoltApiConsole" target="SYSTEM_OUT">
             <!--只接受程序中DEBUG级别的日志进行处理-->
@@ -78,6 +82,16 @@
         <!--处理jboltwebsocket日志，并把该日志放到logs/jbolt_websocket.log文件中-->
         <RollingFile name="RollingFileJBoltWebsocketLog" fileName="./logs/jboltwebsocket/jbolt_websocket.log"
                      filePattern="logs/jboltwebsocket/$${date:yyyy-MM}/jbolt_websocket-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout
+                    pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] (%class{36}.java:%L) %M - %msg%n%xEx"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <!--处理jbolt定时任务 cron4j 日志，并把该日志放到logs/jbolt_cron4j.log文件中-->
+        <RollingFile name="RollingFileJBoltCron4jLog" fileName="./logs/jboltcron4j/jbolt_cron4j.log"
+                     filePattern="logs/jboltcron4j/$${date:yyyy-MM}/jbolt_cron4j-%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout
                     pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] (%class{36}.java:%L) %M - %msg%n%xEx"/>
             <Policies>
@@ -265,9 +279,17 @@
             <appender-ref ref="RollingFileJBoltWebsocketLog"/>
         </logger>
 
+        <!-- 配置cron4j log-->
+        <logger name="JBoltCron4jLog" level="INFO" additivity="false">
+            <appender-ref ref="JBoltCron4jConsole"/>
+            <appender-ref ref="RollingFileJBoltCron4jLog"/>
+        </logger>
+
 
         <!-- 配置ProxyGenerator 关闭输出-->
         <logger name="com.jfinal.proxy.ProxyGenerator" level="OFF"/>
+        <!-- 配置ApiConfigKit 关闭输出-->
+        <logger name="com.jfinal.weixin.sdk.api.ApiConfigKit" level="OFF"/>
         <!--log4j2 自带过滤日志-->
         <Logger name="org.jboss" level="error" />
         <Logger name="net.dreamlu.event" level="error" />

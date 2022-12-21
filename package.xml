@@ -38,19 +38,17 @@
 			<excludes>
 				<exclude>WEB-INF</exclude>
 				<exclude>WEB-INF/web.xml</exclude>
+				<exclude>assets/js/jbolt-admin.js</exclude>
 				<exclude>assets/css/jbolt-admin.css</exclude>
-				<exclude>assets/css/jbolt-admin2.css</exclude>
 				<exclude>assets/css/jbolt-mine.css</exclude>
 				<exclude>assets/css/jbolt-wechat-menu.css</exclude>
 				<exclude>assets/css/login.css</exclude>
-				<exclude>assets/plugins/jbolt-table/jbolt-table.css</exclude>
-				<exclude>assets/js/jbolt-admin.js</exclude>
-				<exclude>assets/js/jbolt-admin2.js</exclude>
 				<exclude>assets/js/jbolt-mine.js</exclude>
 				<exclude>assets/js/jbolt-wechat-menu.js</exclude>
 				<exclude>assets/js/login.js</exclude>
+				<exclude>assets/js/relogin.js</exclude>
 				<exclude>assets/plugins/jbolt-table/jbolt-table.js</exclude>
-				<exclude>assets/plugins/jbolt-table/jbolt-table2.js</exclude>
+				<exclude>assets/plugins/jbolt-table/jbolt-table.css</exclude>
 			</excludes>
 		</fileSet>
 

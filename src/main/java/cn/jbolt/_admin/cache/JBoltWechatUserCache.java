@@ -20,6 +20,14 @@ public class JBoltWechatUserCache extends JBoltCache {
     public String getCacheTypeName() {
         return TYPE_NAME;
     }
+    /**
+     * 获取默认头像
+     * @return
+     */
+    public String getDefaultAvatar(){
+        return JBoltConfig.JBOLT_WECHAT_USER_DEFAULT_AVATAR;
+    }
+
 
     /**
      * 从缓存里获取wechatUser
@@ -64,6 +72,30 @@ public class JBoltWechatUserCache extends JBoltCache {
     }
 
     /**
+     * 获取openId
+     * @param mpId
+     * @param id
+     * @return
+     */
+    public String getOpenId(Long mpId, Long id) {
+        if(mpId == null || id == null || mpId.longValue()<=0 || id.longValue()<=0){return null;}
+        WechatUser apiUser = getApiWechatUserByApiUserId(mpId, id);
+        return apiUser==null?null:apiUser.getOpenId();
+    }
+
+    /**
+     * 获取unionId
+     * @param mpId
+     * @param id
+     * @return
+     */
+    public String getUnionId(Long mpId, Long id) {
+        if(mpId == null || id == null || mpId.longValue()<=0 || id.longValue()<=0){return null;}
+        WechatUser apiUser = getApiWechatUserByApiUserId(mpId, id);
+        return apiUser==null?null:apiUser.getUnionId();
+    }
+
+    /**
      * 从缓存里获取wechatUser 头像
      * @param mpId
      * @param id
@@ -72,7 +104,9 @@ public class JBoltWechatUserCache extends JBoltCache {
     public String getAvatar(Long mpId, Long id) {
         if(mpId == null || id == null || mpId.longValue()<=0 || id.longValue()<=0){return null;}
         WechatUser apiUser = getApiWechatUserByApiUserId(mpId, id);
-        return apiUser==null?null:apiUser.getHeadImgUrl();
+        if(apiUser == null){return getDefaultAvatar();}
+        String userAvatar = apiUser.getHeadImgUrl();
+        return (userAvatar==null||userAvatar.trim().length() == 0)?getDefaultAvatar():userAvatar;
     }
 
 

@@ -134,11 +134,11 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 			//判断如果传进来的user 没有nickname或者有但是是之前自动生成的那种 需要再次设置一下
 			if(notOk(userNickName)||(userNickName.indexOf("用户_")!=-1&&userNickName.equals("用户_")==false)) {
 				String nickName=apiResult.getStr("nickname");
-				if(EmojiUtil.containsEmoji(nickName)) {
-					nickName=EmojiUtil.toHtml(nickName);
-				}else {
-					nickName=JBoltStringUtil.filterEmoji(nickName);
-				}
+//				if(EmojiUtil.containsEmoji(nickName)) {
+//					nickName=EmojiUtil.toHtml(nickName);
+//				}else {
+//					nickName=JBoltStringUtil.filterEmoji(nickName);
+//				}
 				if(StrKit.isBlank(nickName)) {
 					nickName="用户_"+user.get("id");
 				}
@@ -314,8 +314,9 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(ret.isOk()) {
 			Record userRecord=ret.getAs("data");
 			//添加日志
-			JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, userRecord.getStr("open_id"));
-			JBoltWechatUserCache.me.removeApiWechatUser(mpId, id);
+//			JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, userRecord.getStr("open_id"));
+//			JBoltWechatUserCache.me.removeApiWechatUser(mpId, id);
+			clearWechatUserCache(mpId,id,userRecord.getStr("open_id"),userRecord.getStr("union_id"));
 			return successWithData(userRecord.getBoolean("enable"));
 		}
 		return ret;
@@ -363,11 +364,6 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 			//判断如果传进来的user 没有nickname或者有但是是之前自动生成的那种 需要再次设置一下
 			if(notOk(userNickName)||(userNickName.indexOf("用户_")!=-1&&userNickName.equals("用户_")==false)) {
 				String nickName=apiResult.getStr("nickname");
-				if(EmojiUtil.containsEmoji(nickName)) {
-					nickName=EmojiUtil.toHtml(nickName);
-				}else {
-					nickName=JBoltStringUtil.filterEmoji(nickName);
-				}
 				if(StrKit.isBlank(nickName)) {
 					nickName="用户_"+user.getId();
 				}
@@ -377,10 +373,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 			processUserInfoByApi(user, apiResult);
 			Record record=user.toRecord();
 			update(mpId, record);
-			 
 		}
-		
-		
 	}
 	/**
 	 * 填充更新必要字段
@@ -533,11 +526,14 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 //		if(openId.equals(wechatUser.getOpenId())==false) {
 //			return fail(String.format("微信小程序用户信息更新时,openId不一致[%s-%s]", mpId,userId));
 //		}
+		String oldOpenId=wechatUser.getOpenId();
+		String oldUnionId=wechatUser.getUnionId();
+
 		String unionId=userInfoResult.getStr("unionId");
 		if(StrKit.notBlank(unionId)) {
 			wechatUser.setUnionId(unionId);
 		}
-		String oldOpenId=wechatUser.getOpenId();
+
 //		wechatUser.setOpenId(openId);
 		wechatUser.setNickname(userInfoResult.getStr("nickName"));
 		wechatUser.setSex(userInfoResult.getInt("gender"));
@@ -557,8 +553,9 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(ret.isOk()) {
 			if(StrKit.notBlank(oldOpenId)) {
 				//清掉缓存
-				JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, oldOpenId);
-				JBoltWechatUserCache.me.removeApiWechatUser(mpId, wechatUser.getId());
+//				JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, oldOpenId);
+//				JBoltWechatUserCache.me.removeApiWechatUser(mpId, wechatUser.getId());
+				clearWechatUserCache(mpId,wechatUser.getId(),oldOpenId,oldUnionId);
 			}
 		}
 		return ret.isOk()?SUCCESS:fail(String.format("更新微信小程序用户授权信息失败[%s:%s]",mpId,wechatUser.getId()));
@@ -601,8 +598,9 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(ret.isOk()) {
 			if(StrKit.notBlank(wechatUser.getOpenId())) {
 				//清掉缓存
-				JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, wechatUser.getOpenId());
-				JBoltWechatUserCache.me.removeApiWechatUser(mpId, wechatUser.getId());
+//				JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, wechatUser.getOpenId());
+//				JBoltWechatUserCache.me.removeApiWechatUser(mpId, wechatUser.getId());
+				clearWechatUserCache(mpId,wechatUser.getId(),wechatUser.getOpenId(),wechatUser.getUnionId());
 			}
 		}
 		return ret.isOk()?successWithData(Okv.by("phoneNumber", wechatUser.getPhone()).set("countryCode",wechatUser.getPhoneCountryCode())):fail(String.format("更新微信小程序用户手机号授权信息失败[%s:%s]",mpId,wechatUser.getId()));
@@ -619,6 +617,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	public Ret updateWxaUserLoginInfo(Long mpId, WechatUser user, String openId, String unionId,
 			String sessionKey) {
 		String oldOpenId=user.getOpenId();
+		String oldUnionId=user.getUnionId();
 		user.setOpenId(openId);
 		user.setUnionId(unionId);
 		user.setSessionKey(sessionKey);
@@ -629,8 +628,9 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(ret.isOk()) {
 			if(StrKit.notBlank(oldOpenId)) {
 				//清掉缓存
-				JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, oldOpenId);
-				JBoltWechatUserCache.me.removeApiWechatUser(mpId, user.getId());
+//				JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId, oldOpenId);
+//				JBoltWechatUserCache.me.removeApiWechatUser(mpId, user.getId());
+				clearWechatUserCache(mpId,user.getId(),oldOpenId,oldUnionId);
 			}
 		}
 		return ret.isOk()?SUCCESS:fail(String.format("更新微信小程序用户登录信息失败[%s:%s]",mpId,user.getId()));
@@ -793,17 +793,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		wechatUser.setLastAuthTime(now);
 		wechatUser.setCreateTime(now);
 		wechatUser.setUpdateTime(now);
-		
-		String nickName=userInfo.get("nickname");
-		if(EmojiUtil.containsEmoji(nickName)) {
-			nickName=EmojiUtil.toHtml(nickName);
-		}else {
-			nickName=JBoltStringUtil.filterEmoji(nickName);
-		}
-		if(StrKit.isBlank(nickName)) {
-			nickName="用户_"+JBoltRandomUtil.randomLowWithNumber(6);
-		}
-		wechatUser.setNickname(nickName);
+		wechatUser.setNickname(userInfo.getStr("nickname"));
 		wechatUser.setLanguage(userInfo.getStr("language"));
 		wechatUser.setCountry(userInfo.getStr("country"));
 		wechatUser.setProvince(userInfo.getStr("province"));
@@ -836,16 +826,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		}
 		wechatUser.setLastAuthTime(now);
 		wechatUser.setUpdateTime(now);
-		String nickName=userInfo.get("nickname");
-		if(EmojiUtil.containsEmoji(nickName)) {
-			nickName=EmojiUtil.toHtml(nickName);
-		}else {
-			nickName=JBoltStringUtil.filterEmoji(nickName);
-		}
-		if(StrKit.isBlank(nickName)) {
-			nickName="用户_"+JBoltRandomUtil.randomLowWithNumber(6);
-		}
-		wechatUser.setNickname(nickName);
+		wechatUser.setNickname(userInfo.getStr("nickname"));
 		wechatUser.setLanguage(userInfo.getStr("language"));
 		wechatUser.setCountry(userInfo.getStr("country"));
 		wechatUser.setProvince(userInfo.getStr("province"));
@@ -924,10 +905,24 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		wechatUser.setUpdateTime(new Date());
 		Ret ret = update(mpId,wechatUser.toRecord());
 		if(ret.isOk()){
-			JBoltWechatUserCache.me.removeApiWechatUser(mpId,myWechatUserId);
-			JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId,wechatUser.getOpenId());
-			JBoltWechatUserCache.me.removeApiWechatUserByMpUnionId(mpId,wechatUser.getUnionId());
+//			JBoltWechatUserCache.me.removeApiWechatUser(mpId,myWechatUserId);
+//			JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId,wechatUser.getOpenId());
+//			JBoltWechatUserCache.me.removeApiWechatUserByMpUnionId(mpId,wechatUser.getUnionId());
+			clearWechatUserCache(mpId,myWechatUserId,wechatUser.getOpenId(),wechatUser.getUnionId());
 		}
 		return ret;
+	}
+
+	/**
+	 * 清理缓存
+	 * @param mpId
+	 * @param id
+	 * @param openId
+	 * @param unionId
+	 */
+	public void clearWechatUserCache(Long mpId,Long id,String openId,String unionId){
+		JBoltWechatUserCache.me.removeApiWechatUser(mpId,id);
+		JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId,openId);
+		JBoltWechatUserCache.me.removeApiWechatUserByMpUnionId(mpId,unionId);
 	}
 }
