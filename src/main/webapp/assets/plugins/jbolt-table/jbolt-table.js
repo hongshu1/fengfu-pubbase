@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.1.8";
+var jbolt_table_js_version="3.1.9";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -8299,6 +8299,7 @@ function getScrollBarHeight(ele){
 				if(editingInputBox[0].tagName=="SELECT"){
 					if(editingInputBox.attr("multiple")){
 						var selectedOptions = editingInputBox.find("option:selected");
+
 						if(isOk(selectedOptions)){
 							var selectCount = selectedOptions.length;
 							var selecteText="";
@@ -8311,17 +8312,39 @@ function getScrollBarHeight(ele){
 								}
 							});
 							text = selecteText;
+
+
+							var columnName_1 = editingTd.data("column");
+							if(!columnName_1){
+								if(table.indexColumnMap){
+									var currentTdIndex_1=editingTd.data("col-index");
+									columnName_1=table.indexColumnMap["col_"+currentTdIndex_1];
+								}
+							}
+							var editselectValue = null;
+							if(columnName_1){
+								var colConfig_1=table.editableOptions.cols[columnName_1];
+								if(!colConfig_1 || typeof(colConfig_1.valueToStr)=="undefined" || colConfig_1.valueToStr) {
+									editselectValue = editingInputBox.val().join(",");
+								}else{
+									editselectValue = editingInputBox.val();
+								}
+							}else{
+								editselectValue = editingInputBox.val().join(",");
+							}
+							value = editselectValue;
 						}else{
 							text="";
+							value="";
 						}
-
 					}else{
 						text=editingInputBox.find("option:selected").text();
+						value=editingInputBox.val();
 					}
+
 					if(editingInputBox.data("text")===text){
 						text="";
 					}
-					value=editingInputBox.val();
 
 				}else if(editingInputBox[0].tagName=="INPUT"&&(editingInputBox.hasClass("ac_input")||editingInputBox[0].hasAttribute("data-jboltinput"))){
 					if(editingInputBox.hasClass("ac_input")){
