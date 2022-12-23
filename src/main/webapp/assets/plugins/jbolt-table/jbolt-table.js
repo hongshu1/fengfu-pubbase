@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.1.7";
+var jbolt_table_js_version="3.1.8";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6932,33 +6932,33 @@ function getScrollBarHeight(ele){
 				},100);
 			}else{
 
-					//处理单元格宽度
-					that.processCellWidthAfterAjax(table);
-					if(summaryCallback){
-						summaryCallback();
-					}
-					//重新设置tableHeight
-					that.setTableHeight(table);
-					//处理恢复样式
-					that.processAllTableStyleReset(table);
-					//处理左侧fixed
-					that.processColumnFixedLeft(table);
-					//处理右侧fixed
-					that.processColumnFixedRight(table);
-					//处理右侧滚动条 纵向
-					that.refreshMainTableVScroll(table);
-					//处理下方滚动条 横向
-					that.refreshFixedColumnHScroll(table);
+				//处理单元格宽度
+				that.processCellWidthAfterAjax(table);
+				if(summaryCallback){
+					summaryCallback();
+				}
+				//重新设置tableHeight
+				that.setTableHeight(table);
+				//处理恢复样式
+				that.processAllTableStyleReset(table);
+				//处理左侧fixed
+				that.processColumnFixedLeft(table);
+				//处理右侧fixed
+				that.processColumnFixedRight(table);
+				//处理右侧滚动条 纵向
+				that.refreshMainTableVScroll(table);
+				//处理下方滚动条 横向
+				that.refreshFixedColumnHScroll(table);
 
-					//处理fixed的滚动位置
-					that.reScrollFixedColumnBox(table);
-					//设置其他table绑定tableId
-					that.processOtherTableBindTableId(table);
-					//处理ajax每次读取加载完事件
-					that.processAjaxSuccessCallback(table);
-					if(callback){
-						callback();
-					}
+				//处理fixed的滚动位置
+				that.reScrollFixedColumnBox(table);
+				//设置其他table绑定tableId
+				that.processOtherTableBindTableId(table);
+				//处理ajax每次读取加载完事件
+				that.processAjaxSuccessCallback(table);
+				if(callback){
+					callback();
+				}
 			}
 
 		},
@@ -7933,7 +7933,7 @@ function getScrollBarHeight(ele){
 				'<input {@if onlyAttrFilter}data-onlyattrfilter="${onlyAttrFilter}"{@/if} {@if onlyleaf}data-onlyleaf="${onlyleaf?true:false}"{@/if} {@if onlytype}data-onlytype="${onlytype?true:false}"{@/if} {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if}  {@if textAsValue}data-textasvalue="${textAsValue}"{@/if}  {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}   data-jboltinput data-zero-clear="true" data-load-type="${loadType}" {@if openType} data-open-type="${openType}" {@/if} data-hidden-input="${jbe_jbi_hiddenId}" autocomplete="off" type="text" {@if contentId}data-content-id="${contentId}"{@/if} data-tips="${ruleTips}" data-rule="{@if rule}${rule};len<=${maxLength?maxLength:20}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }"  value="${tdText}" {@if new_url}data-url="${new_url}"{@/if}   {@if width}data-width="${width}"{@/if} {@if height}data-height="${height}"{@/if} {@if filterHandler}data-filter-handler="${filterHandler}"{@/if} />'+
 				'<input class="jbt_editor_hidden" type="hidden" id="${jbe_jbi_hiddenId}" name="${jbe_col_key}" value="${tdValue}" />'+
 				'{@else if type==="select" }'+
-				'<select {@if multiple} multiple="multiple" {@/if} data-select-type="${theme}" {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} data-tips="${ruleTips}" data-rule="select{@if rule};${rule}{@/if}" data-notnull="false" name="${jbe_col_key}" data-autoload {@if refresh} data-refresh="${refresh}" {@/if} {@if onlyleaf} data-onlyleaf="${onlyleaf}" {@/if} {@if delimiter} data-delimiter="${delimiter}" {@/if} data-url="${url}" {@if textAttr} data-text-attr="${textAttr}" {@/if} {@if valueAttr} data-value-attr="${valueAttr}" {@/if}  data-text="=请选择="  data-value="" data-default="${defaultValue}" data-select="${tdValue}"></select>'+
+				'<select {@if multiple} multiple="multiple" {@/if} {@if selectedTextDelimiter} data-selected-text-delimiter="${selectedTextDelimiter}" {@/if} data-select-type="${theme}" {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} data-tips="${ruleTips}" data-rule="select{@if rule};${rule}{@/if}" data-notnull="false" name="${jbe_col_key}" data-autoload {@if refresh} data-refresh="${refresh}" {@/if} {@if onlyleaf} data-onlyleaf="${onlyleaf}" {@/if} {@if delimiter} data-delimiter="${delimiter}" {@/if} data-url="${url}" {@if textAttr} data-text-attr="${textAttr}" {@/if} {@if valueAttr} data-value-attr="${valueAttr}" {@/if}  data-text="=请选择="  data-value="" data-default="${defaultValue}" data-select="${tdValue}"></select>'+
 				'{@else if type==="dialogbtn" && withDialog }'+
 				'<button  class="jbt_editor {@if cssClass}${cssClass}{@else}btn btn-light{@/if}" {@if cssStyle} style="${cssStyle}" {@/if} data-in-editable-td="true" onclick="DialogUtil.openBy(this)" data-btn="${dialog.btn}" {@if linkColumn} data-link-column="${linkColumn}" {@/if}  data-link-para-ele="{@if jbe_link_ele_id}#${jbe_link_ele_id}{@/if}{@if linkPara}{@if jbe_link_ele_id},{@/if}${linkPara}{@/if}" data-area="${dialog.area}"  data-title="${dialog.title}"   data-url="${dialog.url}">{@if icon}<i class="${icon} mr-1"></i>{@else}<i class="fa fa-search mr-1"></i>{@/if}${text?text:"按钮"}</button>'+
 				'<input class="jbt_editor_hidden" type="hidden" id="${jbe_hidden_id}" name="${jbe_col_key}" value="${tdValue}" />'+
@@ -8297,7 +8297,27 @@ function getScrollBarHeight(ele){
 			var that=this,value="",text="",editingInputBox=editingTd.find(".jbt_editor"),hiddeninput;
 			if(isOk(editingInputBox)){
 				if(editingInputBox[0].tagName=="SELECT"){
-					text=editingInputBox.find("option:selected").text();
+					if(editingInputBox.attr("multiple")){
+						var selectedOptions = editingInputBox.find("option:selected");
+						if(isOk(selectedOptions)){
+							var selectCount = selectedOptions.length;
+							var selecteText="";
+							var textDelimiter = editingInputBox.data("selected-text-delimiter")||",";
+							$.each(selectedOptions,function (i,item) {
+								if(selecteText){
+									selecteText = selecteText + textDelimiter +item.innerText;
+								}else{
+									selecteText = item.innerText;
+								}
+							});
+							text = selecteText;
+						}else{
+							text="";
+						}
+
+					}else{
+						text=editingInputBox.find("option:selected").text();
+					}
 					if(editingInputBox.data("text")===text){
 						text="";
 					}
@@ -13697,18 +13717,18 @@ function getScrollBarHeight(ele){
 				}
 			});
 			table.leftbox.on("mousemove",".jb_header",function(e){
-					var left = table.leftbox.offset().left;
-					var width = table.leftbox.width();
-					var right = left+width;
-					var newLeft = right-4;
-					var currentMouseLeft = e.clientX;
-					if(currentMouseLeft>=newLeft && currentMouseLeft<=right){
-						jboltBody.css("cursor","col-resize");
-						if(table.leftbox.canResize){
-							jboltBody.addClass("noselect");
-							table.leftbox.css("width",(currentMouseLeft-left+1)+"px");
-						}
+				var left = table.leftbox.offset().left;
+				var width = table.leftbox.width();
+				var right = left+width;
+				var newLeft = right-4;
+				var currentMouseLeft = e.clientX;
+				if(currentMouseLeft>=newLeft && currentMouseLeft<=right){
+					jboltBody.css("cursor","col-resize");
+					if(table.leftbox.canResize){
+						jboltBody.addClass("noselect");
+						table.leftbox.css("width",(currentMouseLeft-left+1)+"px");
 					}
+				}
 			});
 
 			table.leftbox.on("mouseleave",".jb_header",function(e){
