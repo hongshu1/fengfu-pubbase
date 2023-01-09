@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.1.9";
+var jbolt_table_js_version="3.2.0";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -4115,9 +4115,23 @@ function getScrollBarHeight(ele){
 			var value=td.data("value");
 			var submitattr=td.data("submitattr");
 			if(!submitattr){
-				var th= table.thead.find("th[data-col-index='"+td.data("col-index")+"']");
-				if(isOk(th)){
-					submitattr = StrUtil.camel(th.data("column"));
+				var tdColumn = td.data("column");
+				if(!tdColumn){
+					var th= table.thead.find("th[data-col-index='"+td.data("col-index")+"']");
+					if(isOk(th)){
+						tdColumn = th.data("column");
+					}
+				}
+				if(!tdColumn){
+					LayerMsgBox.alert("单元格所在列的th为设置data-column",2);
+					return null;
+				}
+
+				var colConfig = table.editableOptions.cols[tdColumn];
+				if(colConfig){
+					submitattr = colConfig.submitAttr || StrUtil.camel(tdColumn);
+				}else{
+					submitattr = StrUtil.camel(tdColumn);
 				}
 			}
 			var postData={};
@@ -4377,8 +4391,9 @@ function getScrollBarHeight(ele){
 				return false;
 			}
 			var texts=new Array();
+			var camcaseColumn = StrUtil.camel(column);
 			$.each(checkedDatas,function(i,json){
-				texts.push(json[column]||json[StrUtil.camel(column)]);
+				texts.push(json[column]||json[camcaseColumn]);
 			});
 			return isOk(texts)?texts:false;
 		},
@@ -8898,11 +8913,16 @@ function getScrollBarHeight(ele){
 				if(column){
 					temp=colConfigs[column];
 					if(temp&&temp.type=="checkbox"){
-						if(column.indexOf("_")!=-1){
-							submitattr=StrUtil.camel(column);
+						if(temp.submitAttr){
+							submitattr = temp.submitAttr;
 						}else{
-							submitattr=column;
+							if(column.indexOf("_")!=-1){
+								submitattr=StrUtil.camel(column);
+							}else{
+								submitattr=column;
+							}
 						}
+
 						editingTd=checkbox.closest("td");
 						result=this.checked?"true":"false";
 						editingTd.data("value",result).attr("data-value",result);
@@ -8925,11 +8945,16 @@ function getScrollBarHeight(ele){
 				if(column){
 					temp=colConfigs[column];
 					if(temp&&temp.type=="switchbtn"){
-						if(column.indexOf("_")!=-1){
-							submitattr=StrUtil.camel(column);
+						if(temp.submitAttr){
+							submitattr = temp.submitAttr;
 						}else{
-							submitattr=column;
+							if(column.indexOf("_")!=-1){
+								submitattr=StrUtil.camel(column);
+							}else{
+								submitattr=column;
+							}
 						}
+
 						editingTd=switchbtn.closest("td");
 						result=switchbtn.data("value");
 						editingTd.data("value",result).attr("data-value",result);
