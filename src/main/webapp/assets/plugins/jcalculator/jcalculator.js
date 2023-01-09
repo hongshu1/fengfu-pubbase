@@ -72,6 +72,7 @@ var template =
             		top:top,
             		left:pos.left
             	});
+                this.element.removeClass("d-none");
             }
 
             this.element.attr("id",randomId())
@@ -104,14 +105,18 @@ var template =
                     }
                 }
                 if (isNaN(code)) {
-                	if(code == 'close'){
-                		if(that.inJBoltTable){
-                			$(this).closest(".jcalculator").removeClass("d-none");
-                		}else{
-                			$(this).closest(".jcalculator").addClass("d-none");
-                		}
-                		return false;
-                	}
+                    if(code == 'close'){
+                        $(this).closest(".jcalculator").addClass("d-none");
+                        if(that.inJBoltTable){
+                            if(window.finishEditingCells){
+                                var table = JBoltTableUtil.get($(this));
+                                if(isOk(table)){
+                                    finishEditingCells(table,true);
+                                }
+                            }
+                        }
+                        return false;
+                    }
                 	else if (code == 'C') {
                         self.digit;
                 	} else if (code=='·') {
