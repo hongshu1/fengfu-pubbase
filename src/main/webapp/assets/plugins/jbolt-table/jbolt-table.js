@@ -4905,14 +4905,18 @@ function getScrollBarHeight(ele){
 					insertEmptyData=deepClone(insertDefaultValues);
 				}
 				var tempTr=this.insertRowData(table,tr,insertEmptyData,false,insertToBefore);
-				this.processTableIndexColumn(table);
-				this.processInsertRowTableListData(table,tempTr,insertEmptyData,insertToBefore);
-				this.initEditableHSummarys(table,tempTr);
-				this.processTfootSummarys(table);
-				//处理change状态
-				this.processNewInsertTrEditableTdsChanged(table,tempTr,insertEmptyData,forceTrChange);
-				//处理新插入的行重新设置宽度
-				this.resizeTrByOldWidth(table,tempTr);
+				if(isOk(tempTr)){
+					this.processTableIndexColumn(table);
+					this.processInsertRowTableListData(table,tempTr,insertEmptyData,insertToBefore);
+					this.initEditableHSummarys(table,tempTr);
+					this.processTfootSummarys(table);
+					//处理change状态
+					this.processNewInsertTrEditableTdsChanged(table,tempTr,insertEmptyData,forceTrChange);
+					//处理新插入的行重新设置宽度
+					this.resizeTrByOldWidth(table,tempTr);
+					//处理动态插入数据后的handler
+					this.processEditableTableAfterInsertRowHandler(table,tempTr);
+				}
 				return tempTr;
 			}
 			return false;
@@ -4958,6 +4962,8 @@ function getScrollBarHeight(ele){
 				this.processNewInsertTrEditableTdsChanged(table,tmpTr,datas);
 				//处理新插入的行重新设置宽度
 				this.resizeTrByOldWidth(table,tmpTr);
+				//处理动态插入数据后的handler
+				this.processEditableTableAfterInsertRowHandler(table,tmpTr);
 			}
 		},
 		getFirstCanInsertTempTr:function(table){
@@ -5100,8 +5106,15 @@ function getScrollBarHeight(ele){
 				}
 				//处理新插入的行重新设置宽度
 				this.resizeTrByOldWidth(table,tmpTr);
+				//处理动态插入数据后的handler
+				this.processEditableTableAfterInsertRowHandler(table,tmpTr);
 			}
 			return tmpTr;
+		},
+		processEditableTableAfterInsertRowHandler:function(table,tr){
+			if(table.editable && table.editableOptions && table.editableOptions.afterInsertRowHandler){
+				table.editableOptions.afterInsertRowHandler(table,tr);
+			}
 		},
 		/**
 		 * 设置单元格数据
@@ -11149,6 +11162,9 @@ function getScrollBarHeight(ele){
 			var tplContent = table.rowtplContent;
 			var html;
 			if(isArray(data)){
+				if(table.editable && table.editableOptions && table.editableOptions.beforeInsertRowHandler){
+					table.editableOptions.beforeInsertRowHandler(table,tr,insertToBefore,data);
+				}
 				if(!keepId){
 					this.removeInsertDataId(table,data);
 				}
@@ -11157,6 +11173,9 @@ function getScrollBarHeight(ele){
 				if(data.tableData&&data.extraData){
 					var datas=data.tableData;
 					var extraData=data.extraData;
+					if(table.editable && table.editableOptions && table.editableOptions.beforeInsertRowHandler){
+						table.editableOptions.beforeInsertRowHandler(table,tr,insertToBefore,datas,extraData);
+					}
 					//如果直接传数据数据 就直接渲染
 					if(!keepId){
 						this.removeInsertDataId(table,datas);
@@ -11167,6 +11186,9 @@ function getScrollBarHeight(ele){
 						html=juicer(tplContent,{datas:[datas],formData:table.formData,extraData:extraData});
 					}
 				}else{
+					if(table.editable && table.editableOptions && table.editableOptions.beforeInsertRowHandler){
+						table.editableOptions.beforeInsertRowHandler(table,tr,insertToBefore,data);
+					}
 					if(!keepId){
 						this.removeInsertDataId(table,data);
 					}
@@ -11202,11 +11224,15 @@ function getScrollBarHeight(ele){
 				}else{
 					table.tbody.append(newTr);
 				}
+
 				this.processEmptyTableBody(table);
 				if(!dontProcessEleInit){
 					//处理这一行里的组件初始化
 					processInnerElesInit(newTr);
 				}
+
+
+
 				return newTr;
 			}
 			return false;
