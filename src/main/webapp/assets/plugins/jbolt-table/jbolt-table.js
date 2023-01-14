@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.2.0";
+var jbolt_table_js_version="3.2.1";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -11133,18 +11133,21 @@ function getScrollBarHeight(ele){
 			if(table.editableOptions.cols.id && table.editableOptions.cols.id.submitAttr){
 				primaryKey = table.editableOptions.cols.id.submitAttr;
 			}
-			if(isArray(datas)){
-				for(var i in datas){
-					if(datas[i][primaryKey]){
-						delete datas[i][primaryKey];
+			if(datas){
+				if(isArray(datas)){
+					var tmpData;
+					for(var i in datas){
+						tmpData = datas[i];
+						if(tmpData&&tmpData[primaryKey]){
+							delete tmpData[primaryKey];
+						}
+					}
+				}else{
+					if(datas[primaryKey]){
+						delete datas[primaryKey];
 					}
 				}
-			}else{
-				if(datas[primaryKey]){
-					delete datas[primaryKey];
-				}
 			}
-
 		},
 		/**
 		 * 插入一行数据
