@@ -251,7 +251,7 @@ public class UserService extends JBoltUserService {
 	 * @return
 	 */
 	public Page<User> paginateAdminList(int pageNumber, int pageSize, String keywords, Integer sex,Boolean assignDept, Long deptId, Long postId,Long roleId,Boolean enable) {
-		String columns=getTableSelectColumnsWithout("password");
+		String[] columns=getTableSelectColumnsWithout("password");
 		Sql sql=selectSql().page(pageNumber, pageSize);
 		sql.select(columns);
 		//如果不是超管 就只能查询不是超管的用户

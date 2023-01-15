@@ -51,7 +51,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 	 * @return
 	 */
 	public Page<SysNotice> paginateAdminDatas(int pageNumber, int pageSize, String keywords, Boolean delFlag, String sortColumn, String sortType) {
-		Page<SysNotice> page = paginateByKeywords(getTableSelectColumnsWithout("content"),sortColumn,sortType, pageNumber, pageSize, keywords, "title,content",Okv.by("del_flag", delFlag==null?false:delFlag));
+		Page<SysNotice> page = paginateByKeywords(getTableSelectColumnStrWithout("content"),sortColumn,sortType, pageNumber, pageSize, keywords, "title,content",Okv.by("del_flag", delFlag==null?false:delFlag));
 		if(page!=null&&page.getTotalRow()>0) {
 			page.getList().forEach(notice->processReceiverValues(notice));
 		}
