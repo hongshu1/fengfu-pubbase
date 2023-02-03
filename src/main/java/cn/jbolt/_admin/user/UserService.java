@@ -125,7 +125,10 @@ public class UserService extends JBoltUserService {
 			}
 			dbUser.deleteKeyCache();
 			//清理角色变更缓存
-			if(!dbUser.getRoles().equals(user.getRoles())){
+			if((isOk(dbUser.getRoles()) && !dbUser.getRoles().equals(user.getRoles()))
+					||
+					(isOk(user.getRoles()) && !user.getRoles().equals(dbUser.getRoles()))
+			){
 				//存在其他跟自己相同角色的就不清理缓存 不存在说明自己独占 就清理
 				boolean existSameRoles = existsSameRoles(dbUser.getRoles(),dbUser.getId());
 				if(!existSameRoles){

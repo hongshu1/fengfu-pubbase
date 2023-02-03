@@ -246,7 +246,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 	 * @return
 	 */
 	public List<SysNotice> getMsgCenterPortalDatas() {
-		Page<SysNotice> pageData = paginateUserSysNotices(1, 10, null, JBoltUserKit.getUserId(), ID, "desc", false,false,false,true,ID,"title","create_time","update_time","type","priority_level");
+		Page<SysNotice> pageData = paginateUserSysNotices(1, 10, null, JBoltUserKit.getUserId(), ID, "desc", false,false,false,true,"id","title","create_time","update_time","type","priority_level");
 		return pageData.getList();
 	}
 	/**
@@ -315,7 +315,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 			return false;
 		}
 		Sql sql = getUserUnReadNoticeSql(user,null, "id", "asc", false, false,
-				false, true, ID,"");
+				false, true, ID);
 		return exists(sql);
 	}
 	/**
@@ -358,7 +358,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 		}
 		if(isOk(sortColumn)) {
 			if(isOk(sortType)){
-				sql.orderBy(mainPre+sortColumn, mainPre+sortType);
+				sql.orderBy(mainPre+sortColumn, sortType);
 			}else {
 				sql.asc(mainPre+sortColumn);
 			}
@@ -389,7 +389,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 					columns = newCols.toArray(new String[columns.length]);
 					sql.select(columns);
 				}else {
-					sql.select(getTableSelectColumnsWithoutWithPre(mainPre,columns)+" ,sr.sys_notice_id as readed ");
+					sql.distinct(mainPre+"id,"+getTableSelectColumnStrWithoutWithPre(mainPre,columns)+" ,sr.sys_notice_id as readed ");
 				}
 			}
 		}else {
@@ -411,7 +411,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 			String[] roleIdArray = JBoltArrayUtil.from(roleIds, ",");
 			if(isOk(roleIdArray)) {
 				sql.or();
-				
+
 				sql.bracketLeft();
 				
 				sql.eq(mainPre+"receiver_type", 2);

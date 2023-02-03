@@ -1,21 +1,21 @@
 ### 后台管理分页多条件查询
 #sql("mpinfo.paginateAdminList")
-select * from #(table) where 1=1 
+select * from #(table) where 1=1
 #if(enable!=null)
- and enable=#(enable)
+ and "enable"=#(enable)
 #end
 #if(isAuthenticated!=null)
- and is_authenticated=#(isAuthenticated)
+ and "is_authenticated"=#(isAuthenticated)
 #end
 #if(type!=null)
- and type=#(type)
+ and "type"=#(type)
 #end
 #if(subjectType!=null)
- and subject_type=#(subjectType)
+ and "subject_type"=#(subjectType)
 #end
 #if(keywords??)
 #setLocal(mpinfokw=SqlUtil.likeValue(keywords))
- and ((name like '%#(mpinfokw)%') or (wechat_id like '%#(mpinfokw)%'))
+ and (("name" like '%#(mpinfokw)%') or ("wechat_id" like '%#(mpinfokw)%'))
 #end
  order by id desc
 #end
@@ -34,10 +34,10 @@ select * from #(table) where mp_id=#(mpId) and type=#(type)
 
 ### 公众号-素材库后台管理分页多条件查询
 #sql("media.paginateAdminList")
-select * from #(table) where mp_id=#(mpId) and type='#(type)'
+select * from #(table) where "mp_id"=#(mpId) and "type"='#(type)'
 #if(keywords??)
 #setLocal(mediakw=SqlUtil.likeValue(keywords))
- and ((title like '%#(mediakw)%') or (digest like '%#(mediakw)%'))
+ and (("title" like '%#(mediakw)%') or ("digest" like '%#(mediakw)%'))
 #end
  order by update_time desc
 #end
@@ -45,13 +45,13 @@ select * from #(table) where mp_id=#(mpId) and type='#(type)'
 
 ### 公众平台-微信用户后台管理分页多条件查询
 #sql("user.paginateAdminList")
-select * from #(table) where mp_id=#(mpId)
+select * from #(table) where "mp_id"=#(mpId)
 #if(sex?? || (sex!=null&&sex.toInt()==0))
- and sex=#(sex)
+ and "sex"=#(sex)
 #end
 #if(keywords??)
 #setLocal(userkw=SqlUtil.likeValue(keywords))
- and ((nickname like '%#(userkw)%') or (realname like '%#(userkw)%') or (open_id like '%#(userkw)%') or (union_id like '%#(userkw)%')  or (phone like '%#(userkw)%') or (weixin like '%#(userkw)%'))
+ and (("nickname" like '%#(userkw)%') or ("realname" like '%#(userkw)%') or ("open_id" like '%#(userkw)%') or ("union_id" like '%#(userkw)%')  or ("phone" like '%#(userkw)%') or ("weixin" like '%#(userkw)%'))
 #end
  order by id desc
 #end
