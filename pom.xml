@@ -33,10 +33,10 @@
 		<caffeine.version>2.9.3</caffeine.version>
 		<jedis.version>3.8.0</jedis.version>
 		<fst.version>2.57</fst.version>
-		<hutool.version>5.8.10</hutool.version>
+		<hutool.version>5.8.11</hutool.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<log4j2.version>2.18.0</log4j2.version>
-		<jfinalundertow.version>3.3</jfinalundertow.version>
+		<jfinalundertow.version>3.4</jfinalundertow.version>
 		<thumbnailator.version>0.4.17</thumbnailator.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
 		<commonslang.version>3.8.1</commonslang.version>
@@ -192,7 +192,7 @@
 			<artifactId>DmJdbcDriver18</artifactId>
 			<version>${dm.version}</version>
 		</dependency>
-		-->
+-->
 
 		<dependency>
 			<groupId>com.belerweb</groupId>
