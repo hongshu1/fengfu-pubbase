@@ -503,7 +503,7 @@ CREATE TABLE "public"."jb_sys_notice" (
   "content" text COLLATE "pg_catalog"."default" NOT NULL,
   "type" int4 NOT NULL,
   "priority_level" int4 NOT NULL,
-  "read_count" int4,
+  "read_count" int4 DEFAULT 0 NOT NULL,
   "create_time" timestamp(6) NOT NULL,
   "update_time" timestamp(6),
   "create_user_id" int8,

@@ -2,11 +2,18 @@ package cn.jbolt._admin.cache;
 import cn.jbolt.admin.wechat.user.WechatUserService;
 import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.core.base.config.JBoltConfig;
+import cn.jbolt.core.bean.Option;
+import cn.jbolt.core.bean.OptionBean;
 import cn.jbolt.core.cache.JBoltCache;
 import cn.jbolt.core.cache.JBoltCacheKit;
+import cn.jbolt.core.util.JBoltArrayUtil;
 import com.jfinal.aop.Aop;
 import com.jfinal.kit.StrKit;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.ehcache.IDataLoader;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 微信用户
@@ -26,6 +33,68 @@ public class JBoltWechatUserCache extends JBoltCache {
      */
     public String getDefaultAvatar(){
         return JBoltConfig.JBOLT_WECHAT_USER_DEFAULT_AVATAR;
+    }
+
+
+    /**
+     * 根据多个ID拼接字符串查询列表
+     * @param mpId
+     * @param ids
+     * @return
+     */
+    public List<Option> getApiWechatUserOptionsByIdsStr(Long mpId, String ids){
+        if(hasNotOk(mpId,ids)){return null;}
+        return getApiWechatUserOptionsByIds(mpId, JBoltArrayUtil.from3(ids));
+    }
+
+    /**
+     * 根据多个ID拼接字符串查询列表
+     * @param mpId
+     * @param ids
+     * @return
+     */
+    public List<WechatUser> getApiWechatUsersByIdsStr(Long mpId,String ids){
+        if(hasNotOk(mpId,ids)){return null;}
+        return getApiWechatUsersByIds(mpId, JBoltArrayUtil.from3(ids));
+    }
+
+
+    /**
+     * 根据多个ID查询列表
+     * @param mpId
+     * @param idArray
+     * @return
+     */
+    public List<Option> getApiWechatUserOptionsByIds(Long mpId, String[] idArray){
+        if(hasNotOk(mpId,idArray)){return null;}
+        List<Option> users = new ArrayList<>();
+        WechatUser wechatUser;
+        for(String id:idArray){
+            wechatUser = getApiWechatUserByApiUserId(mpId,id);
+            if(wechatUser!=null){
+                users.add(new OptionBean(wechatUser.getNickname(),id));
+            }
+        }
+        return users;
+    }
+
+    /**
+     * 根据多个ID查询列表
+     * @param mpId
+     * @param idArray
+     * @return
+     */
+    public List<WechatUser> getApiWechatUsersByIds(Long mpId,String[] idArray){
+        if(hasNotOk(mpId,idArray)){return null;}
+        List<WechatUser> users = new ArrayList<>();
+        WechatUser wechatUser;
+        for(String id:idArray){
+            wechatUser = getApiWechatUserByApiUserId(mpId,id);
+            if(wechatUser!=null){
+                users.add(wechatUser);
+            }
+        }
+        return users;
     }
 
 

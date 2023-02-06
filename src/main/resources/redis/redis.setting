@@ -11,6 +11,13 @@ timeout     = 2000
 #clientName = clientname
 #过期时间 单位 秒 -1为不设置过期
 expires     = -1
+maxTotal    = 300
+maxIdle     = 50
+minIdle     = 50
+maxWaitMillis = -1
+blockWhenExhausted = true
+
+
 
 #扩展-电商服务端
 [mall]
@@ -23,3 +30,8 @@ timeout     = 2000
 #clientName = clientname
 #过期时间 单位 秒 -1为不设置过期
 expires     = -1
+maxTotal    = 300
+maxIdle     = 50
+minIdle     = 50
+maxWaitMillis = -1
+blockWhenExhausted = true
