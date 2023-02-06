@@ -18,6 +18,7 @@ remark = JFinal学院库
 enable = false
 db_type = mysql
 db_name = jfinalxueyuan
+db_schema = jfinalxueyuan
 dev_mode = true
 jdbc_url = jdbc:mysql://127.0.0.1:3306/jfinalxueyuan?characterEncoding=utf8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull&databaseTerm=SCHEMA&nullDatabaseMeansCurrent=true&nullCatalogMeansCurrent=true&useInformationSchema=true&serverTimezone=Asia/Shanghai
 user = root
@@ -31,6 +32,7 @@ remark = 美女图库
 enable = false
 db_type = mysql
 db_name = meinvtu
+db_schema = meinvtu
 dev_mode = true
 jdbc_url = jdbc:mysql://127.0.0.1:3306/meinvtu?characterEncoding=utf8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull&databaseTerm=SCHEMA&nullDatabaseMeansCurrent=true&nullCatalogMeansCurrent=true&useInformationSchema=true&serverTimezone=Asia/Shanghai
 user = root
