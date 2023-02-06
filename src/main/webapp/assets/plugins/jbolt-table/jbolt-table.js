@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.2.1";
+var jbolt_table_js_version="3.3.0";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -11618,6 +11618,8 @@ function getScrollBarHeight(ele){
 				var postData=table.jsonConditions.isMenuFilter?JSON.stringify(table.jsonConditions):table.jsonConditions;
 				Ajax.post(url,postData,function(res){
 					that.ajaxLoadDataWithoutFormCallback(table,res,callback);
+				},function(res){
+					that.ajaxLoadDataWithoutFormCallback(table,res);
 				});
 			}else{
 				//执行ajax加载 要考虑绑定了查询条件的需要带着 用post
@@ -11626,35 +11628,46 @@ function getScrollBarHeight(ele){
 					var ajaxCallback=function(res){
 						//如果分页了 并且 要求是调用跳转到最后一页 并且TM最后一页满了之后 新增加新页面后totalPage变更了
 						//就要根据请求反馈信息拿到最后一页 重新调用一次查询最后一页
-						if(table.data("page")){
-							var toLastPage=table.data("tolastpage");
-							if(toLastPage){
-								table.data("tolastpage",false);
-								table.removeAttr("data-tolastpage");
-								var nowTotalPage=res.data.totalPage;
-								var totalPage=table.data("totalpage");
-								if(nowTotalPage!=totalPage){
-									table.data("pagenumber",res.data.pageNumber);
-									table.data("pagesize",res.data.pageSize);
-									table.data("totalpage",nowTotalPage);
-									//说明新增了一页
-									that.readByPage(table,nowTotalPage);
-									return true;
+						if(res.state == "ok"){
+							if(table.data("page")){
+								var toLastPage=table.data("tolastpage");
+								if(toLastPage){
+									table.data("tolastpage",false);
+									table.removeAttr("data-tolastpage");
+									var nowTotalPage=res.data.totalPage;
+									var totalPage=table.data("totalpage");
+									if(nowTotalPage!=totalPage){
+										table.data("pagenumber",res.data.pageNumber);
+										table.data("pagesize",res.data.pageSize);
+										table.data("totalpage",nowTotalPage);
+										//说明新增了一页
+										that.readByPage(table,nowTotalPage);
+										return true;
+									}
 								}
 							}
+							table.tbody.empty();
+							table.isEmpty=true;
+							//设置表格数据和分页数据
+							var formData=$("#"+conditionsForm).serializeJSON();
+							that.setTableDataAfterAjax(table,res.data,formData);
+							if(callback){
+								callback();
+							}
+							that.hideLoading(table);
+							if(res.msg){
+								LayerMsgBox.alert(res.msg,7);
+							}
+						}else{
+							table.tbody.empty();
+							table.isEmpty=true;
+							//设置表格数据和分页数据
+							var formData=$("#"+conditionsForm).serializeJSON();
+							that.setTableDataAfterAjax(table,res.data,formData);
+							that.processAjaxFailCallback(table,res);
+							that.hideLoading(table);
 						}
-						table.tbody.empty();
-						table.isEmpty=true;
-						//设置表格数据和分页数据
-						var formData=$("#"+conditionsForm).serializeJSON();
-						that.setTableDataAfterAjax(table,res.data,formData);
-						if(callback){
-							callback();
-						}
-						that.hideLoading(table);
-						if(res.msg){
-							LayerMsgBox.alert(res.msg,7);
-						}
+
 					}
 					if(!table.data("inited")){
 						var form=$("#"+conditionsForm);
@@ -11692,13 +11705,13 @@ function getScrollBarHeight(ele){
 						Ajax.get(url,function(res){
 							ajaxCallback(res);
 						},function(res){
-							that.hideLoading(table);
+							ajaxCallback(res);
 						});
 					}else{
 						Ajax.getWithForm(conditionsForm,url,function(res){
 							ajaxCallback(res);
 						},function(res){
-							that.hideLoading(table);
+							ajaxCallback(res);
 						});
 					}
 
@@ -11706,44 +11719,57 @@ function getScrollBarHeight(ele){
 					Ajax.get(url,function(res){
 						that.ajaxLoadDataWithoutFormCallback(table,res,callback);
 					},function(res){
-						that.hideLoading(table);
+						that.ajaxLoadDataWithoutFormCallback(table,res);
 					});
 				}
 			}
 		},
 		ajaxLoadDataWithoutFormCallback:function(table,res,callback){
 			var that=this;
-			//如果分页了 并且 要求是调用跳转到最后一页 并且TM最后一页满了之后 新增加新页面后totalPage变更了
-			//就要根据请求反馈信息拿到最后一页 重新调用一次查询最后一页
-			if(table.data("page")){
-				var toLastPage=table.data("tolastpage");
-				if(toLastPage){
-					table.data("tolastpage",false);
-					table.removeAttr("data-tolastpage");
-					var nowTotalPage=res.data.totalPage;
-					var totalPage=table.data("totalpage");
-					if(nowTotalPage!=totalPage){
-						table.data("pagenumber",res.data.pageNumber);
-						table.data("pagesize",res.data.pageSize);
-						table.data("totalpage",nowTotalPage);
-						//说明新增了一页
-						that.readByPage(table,nowTotalPage);
-						return true;
+			if(res.state=="ok") {
+				//如果分页了 并且 要求是调用跳转到最后一页 并且TM最后一页满了之后 新增加新页面后totalPage变更了
+				//就要根据请求反馈信息拿到最后一页 重新调用一次查询最后一页
+				if (table.data("page")) {
+					var toLastPage = table.data("tolastpage");
+					if (toLastPage) {
+						table.data("tolastpage", false);
+						table.removeAttr("data-tolastpage");
+						var nowTotalPage = res.data.totalPage;
+						var totalPage = table.data("totalpage");
+						if (nowTotalPage != totalPage) {
+							table.data("pagenumber", res.data.pageNumber);
+							table.data("pagesize", res.data.pageSize);
+							table.data("totalpage", nowTotalPage);
+							//说明新增了一页
+							that.readByPage(table, nowTotalPage);
+							return true;
+						}
 					}
 				}
+				table.tbody.empty();
+				table.isEmpty = true;
+				//设置表格数据和分页数据
+				var formData = {};
+				if (table.readByJsonConditions && table.jsonConditions) {
+					formData = table.jsonConditions;
+				}
+				that.setTableDataAfterAjax(table, res.data, formData);
+				if (callback) {
+					callback();
+				}
+				that.hideLoading(table);
+			}else{
+				table.tbody.empty();
+				table.isEmpty=true;
+				//设置表格数据和分页数据
+				var formData = {};
+				if (table.readByJsonConditions && table.jsonConditions) {
+					formData = table.jsonConditions;
+				}
+				that.setTableDataAfterAjax(table, res.data, formData);
+				that.processAjaxFailCallback(table,res);
+				that.hideLoading(table);
 			}
-			table.tbody.empty();
-			table.isEmpty=true;
-			//设置表格数据和分页数据
-			var formData={};
-			if(table.readByJsonConditions&&table.jsonConditions){
-				formData = table.jsonConditions;
-			}
-			that.setTableDataAfterAjax(table,res.data,formData);
-			if(callback){
-				callback();
-			}
-			that.hideLoading(table);
 		},
 		/**
 		 * 处理空数据样式
@@ -13171,20 +13197,32 @@ function getScrollBarHeight(ele){
 			});
 
 		},
-		processAjaxSuccessCallback:function(table){
+		processAjaxSuccessCallback:function(table,res){
 			//处理ajax每次读取加载完事件
 			if(table.isAjax){
 				var handler=table.data("ajax-success-handler");
 				if(handler){
 					var exe_handler=eval(handler);
 					if(exe_handler&&typeof(exe_handler)=="function"){
-						exe_handler(table);
+						exe_handler(table,res);
 					}
 				}
 				//处理左右下box里的非自动初始化的表格初始化
 				this.processLeftRightFootBoxTableInit(table);
 			}
 
+		},
+		processAjaxFailCallback:function(table,res){
+			//处理ajax每次读取加载完事件
+			if(table.isAjax){
+				var handler=table.data("ajax-fail-handler");
+				if(handler){
+					var exe_handler=eval(handler);
+					if(exe_handler&&typeof(exe_handler)=="function"){
+						exe_handler(table,res);
+					}
+				}
+			}
 		},
 		processInitCallback:function(table){
 			//处理首次加载处理完成回调
