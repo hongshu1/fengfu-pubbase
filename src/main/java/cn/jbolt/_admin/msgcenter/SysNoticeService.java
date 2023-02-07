@@ -389,7 +389,7 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 					columns = newCols.toArray(new String[columns.length]);
 					sql.select(columns);
 				}else {
-					sql.distinct(mainPre+"id,"+getTableSelectColumnStrWithoutWithPre(mainPre,columns)+" ,sr.sys_notice_id as readed ");
+					sql.distinct(mainPre+"id",getTableSelectColumnStrWithoutWithPre(mainPre,columns)+" ,sr.sys_notice_id as readed ");
 				}
 			}
 		}else {
