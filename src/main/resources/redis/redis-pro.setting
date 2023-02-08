@@ -12,10 +12,13 @@ timeout     = 2000
 #过期时间 单位 秒 -1为不设置过期
 expires     = -1
 maxTotal    = 300
-maxIdle     = 50
-minIdle     = 50
+maxIdle     = 100
+minIdle     = 5
 maxWaitMillis = -1
 blockWhenExhausted = true
+testWhileldle = true
+timeBetweenEvictionRunsMillis = 30000
+minEvictableIdleTimeMillis = 30000
 
 #扩展-电商服务端
 [mall]
@@ -29,7 +32,10 @@ timeout     = 2000
 #过期时间 单位 秒  -1为不设置过期
 expires     = -1
 maxTotal    = 300
-maxIdle     = 50
-minIdle     = 50
+maxIdle     = 100
+minIdle     = 5
 maxWaitMillis = -1
 blockWhenExhausted = true
+testWhileldle = true
+timeBetweenEvictionRunsMillis = 30000
+minEvictableIdleTimeMillis = 30000
