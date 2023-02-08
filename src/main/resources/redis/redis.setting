@@ -16,7 +16,7 @@ maxIdle     = 100
 minIdle     = 5
 maxWaitMillis = -1
 blockWhenExhausted = true
-testWhileldle = true
+testWhileIdle = true
 timeBetweenEvictionRunsMillis = 30000
 minEvictableIdleTimeMillis = 30000
 
@@ -38,6 +38,6 @@ maxIdle     = 100
 minIdle     = 5
 maxWaitMillis = -1
 blockWhenExhausted = true
-testWhileldle = true
+testWhileIdle = true
 timeBetweenEvictionRunsMillis = 30000
 minEvictableIdleTimeMillis = 30000
