@@ -1,4 +1,4 @@
-/*********jbolt_admin_css_version="3.6.7*************/
+/*********jbolt_admin_css_version="3.6.8*************/
 html, body {
 	margin: 0px;
 	padding: 0px;
@@ -4450,4 +4450,16 @@ div[data-edit-mode="true"] .form_control_box>div.form-group:hover{
 
 .card.border-primary{
 	border-color: #007bff!important;
+}
+
+.jbolt_righttop_btn_group {
+	z-index: 10;
+	text-align: center;
+	position: fixed;
+	top:0px;
+	display: inline-block;
+	right: 30px;
+	background-color: rgba(0, 0, 0, 0.1);
+	border-radius: 0px 0px 4px 4px;
+	padding: 8px 12px;
 }

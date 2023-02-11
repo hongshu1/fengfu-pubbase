@@ -1,5 +1,5 @@
 @charset "UTF-8";
-/********jbolt_table_js_version="1.3.4"*********/
+/********jbolt_table_js_version="1.3.5"*********/
 .jbolt_table_view{
 	position: relative;
 	display: block;
@@ -1158,17 +1158,6 @@ table.jbolt_table.tbody_lh20 .jbt_edit_ele{
 	background-color: #F9F9F9;
 }
 
-.jbolt_righttop_btn_group {
-	z-index: 10;
-	text-align: center;
-	position: fixed;
-	top:0px;
-	display: inline-block;
-	right: 30px;
-	background-color: rgba(0, 0, 0, 0.1);
-	border-radius: 0px 0px 4px 4px;
-	padding: 8px 12px;
-}
 .jbolt_table[data-editable='true']>tbody>tr>td[data-required='true'].is-invalid{
    background-color: #f8dde0;
 }
