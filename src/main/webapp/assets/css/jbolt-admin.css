@@ -1,4 +1,4 @@
-/*********jbolt_admin_css_version="3.6.8*************/
+/*********jbolt_admin_css_version="3.6.9*************/
 html, body {
 	margin: 0px;
 	padding: 0px;
@@ -2170,6 +2170,16 @@ color:red;
 }
 .jb-dashboard-card:hover .j_left_fa.text-danger{
 	background-color: #dc3545;
+	color:white!important;
+}
+
+.jb-dashboard-card:hover .j_left_fa.text-secondary{
+	background-color: #6c757d;
+	color:white!important;
+}
+
+.jb-dashboard-card:hover .j_left_fa.text-dark{
+	background-color: #343a40;
 	color:white!important;
 }
 
