@@ -1053,7 +1053,7 @@ CREATE TABLE "JBOLT"."jb_sys_notice"
     "create_user_id" BIGINT,
     "update_user_id" BIGINT,
     "receiver_type" INT,
-    "receiver_value" TEXT,
+    "receiver_value" VARCHAR(1000),
     "files" VARCHAR(255),
     "del_flag" CHAR(1) DEFAULT '0',
     NOT CLUSTER PRIMARY KEY("id")) STORAGE(ON "MAIN", CLUSTERBTR) ;
