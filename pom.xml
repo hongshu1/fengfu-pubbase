@@ -19,24 +19,24 @@
 		<jna.version>5.13.0</jna.version>
 		<cos.version>2022.2</cos.version>
 		<emoji-java.version>5.1.1</emoji-java.version>
-		<druid.version>1.2.15</druid.version>
+		<druid.version>1.2.16</druid.version>
 		<fastjson.version>1.2.83</fastjson.version>
-        <fastjson2.version>2.0.23</fastjson2.version>
+        <fastjson2.version>2.0.24</fastjson2.version>
 		<mysql.version>8.0.31</mysql.version>
 		<oracle.version>21.5.0.0</oracle.version>
 		<sqlserver.version>9.4.1.jre8</sqlserver.version>
 		<dm.version>8.1.2.141</dm.version>
 		<postgresql.version>42.3.3</postgresql.version>
-		<jsoup.version>1.15.3</jsoup.version>
+		<jsoup.version>1.15.4</jsoup.version>
 		<cron4j.version>2.2.5</cron4j.version>
 		<jfinalweixin.version>3.4.1</jfinalweixin.version>
 		<ehcache.version>2.6.11</ehcache.version>
 		<caffeine.version>2.9.3</caffeine.version>
 		<jedis.version>3.9.0</jedis.version>
 		<fst.version>2.57</fst.version>
-		<hutool.version>5.8.11</hutool.version>
+		<hutool.version>5.8.12</hutool.version>
 		<slf4j.version>1.7.36</slf4j.version>
-		<log4j2.version>2.19.0</log4j2.version>
+		<log4j2.version>2.20.0</log4j2.version>
 		<jfinalundertow.version>3.4</jfinalundertow.version>
 		<thumbnailator.version>0.4.17</thumbnailator.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
@@ -199,7 +199,11 @@
 		    <artifactId>sqljdbc4</artifactId>
 		    <version>${sqlserver4.version}</version>
 		</dependency> -->
-		<!-- SqlServer 8 -->
+		<!-- SqlServer 8 --><dependency>
+        <groupId>com.microsoft.sqlserver</groupId>
+        <artifactId>mssql-jdbc</artifactId>
+        <version>${sqlserver.version}</version>
+    </dependency>
 	<!--	<dependency>
 		    <groupId>com.microsoft.sqlserver</groupId>
 		    <artifactId>mssql-jdbc</artifactId>
