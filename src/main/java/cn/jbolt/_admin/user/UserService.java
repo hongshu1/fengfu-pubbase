@@ -6,7 +6,10 @@ import java.util.List;
 
 import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.core.cache.*;
+import cn.jbolt.core.common.enums.JBoltOfModuleType;
+import cn.jbolt.core.model.Application;
 import cn.jbolt.core.model.Dept;
+import cn.jbolt.core.model.Permission;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.HashKit;
 import com.jfinal.kit.Ret;
@@ -62,8 +65,20 @@ public class UserService extends JBoltUserService {
 		}
 		return SUCCESS;
 	}
-	
-	
+
+	/**
+	 * 处理用户的所属模块信息
+	 * @param user
+	 */
+	protected void processUserOfMoudle(User user) {
+		if(notOk(user.getOfModule()) || user.getOfModule().intValue() == 1){
+			//如果没设置就是默认值
+			user.setOfModule(JBoltOfModuleType.PLATFORM_INNER_ADMIN.getValue());
+			Application application = JBoltApplicationCache.me.getPcInnerPlatformApplication();
+			user.setOfModuleLink(application.getId().toString());
+		}
+	}
+
 	/**
 	 * 更新
 	 * @param user
@@ -183,6 +198,9 @@ public class UserService extends JBoltUserService {
 			user.setDeptPath(dept.getDeptPath());
 		}
 		user.setLastPwdUpdateTime(new Date());
+		if(!update){
+			processUserOfMoudle(user);
+		}
 		//保存或者更新
 		boolean success=update?user.update():user.save();
 		if(success){
