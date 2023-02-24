@@ -7,9 +7,12 @@ import java.util.List;
 import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.core.cache.*;
 import cn.jbolt.core.common.enums.JBoltOfModuleType;
+import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.model.Application;
 import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.model.Permission;
+import cn.jbolt.extend.config.ExtendProjectOfModuleType;
+import cn.jbolt.extend.user.ExtendUserOfModuleLinkService;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.HashKit;
 import com.jfinal.kit.Ret;
@@ -37,6 +40,8 @@ public class UserService extends JBoltUserService {
 	private OnlineUserService onlineUserService;
 	@Inject
 	private UserExtendService userExtendService;
+	@Inject
+	ExtendUserOfModuleLinkService extendUserOfModuleLinkService;
 	/**
 	 * 保存
 	 * @param user
@@ -66,17 +71,45 @@ public class UserService extends JBoltUserService {
 		return SUCCESS;
 	}
 
+
 	/**
 	 * 处理用户的所属模块信息
 	 * @param user
 	 */
 	protected void processUserOfMoudle(User user) {
 		if(notOk(user.getOfModule()) || user.getOfModule().intValue() == 1){
-			//如果没设置就是默认值
-			user.setOfModule(JBoltOfModuleType.PLATFORM_INNER_ADMIN.getValue());
-			Application application = JBoltApplicationCache.me.getPcInnerPlatformApplication();
-			user.setOfModuleLink(application.getId().toString());
+			//如果没设置就save 那得设置上 从当前线程获取 看看有没有 如果有就用了
+			Integer jboltOfModule = JBoltUserKit.getJboltOfModule();
+			ExtendProjectOfModuleType type = null;
+			if(notOk(jboltOfModule)){
+				type= ExtendProjectOfModuleType.PLATFORM_INNER_ADMIN;
+			}else{
+				type= JBoltEnum.getEnumObjectByValue(ExtendProjectOfModuleType.class,jboltOfModule.intValue());
+
+			}
+			if(type == null){
+				throw new RuntimeException("沒有找到对应的ExtendProjectOfModuleType");
+			}
+			user.setOfModule(type.getValue());
+			processOfModuleLinkByType(user,type);
 		}
+	}
+
+	private void processOfModuleLinkByType(User user, ExtendProjectOfModuleType type) {
+		if(type == ExtendProjectOfModuleType.PLATFORM_INNER_ADMIN){
+			processOfModuleLinkIsInnerApplication(user);
+		}else{
+			user.setOfModuleLink(extendUserOfModuleLinkService.processOfModuleLinkByType(type));
+		}
+	}
+
+	/**
+	 * 设置 内置模块link为内置app
+	 * @param user
+	 */
+	private void processOfModuleLinkIsInnerApplication(User user) {
+		Application application = JBoltApplicationCache.me.getPcInnerPlatformApplication();
+		user.setOfModuleLink(application.getId().toString());
 	}
 
 	/**
