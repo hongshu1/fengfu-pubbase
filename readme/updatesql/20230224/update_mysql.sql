@@ -1,0 +1,2 @@
+alter table `jb_dictionary_type` add column `of_moudle` int(11) NOT NULL DEFAULT '1' COMMENT '哪个模块';
+alter table `jb_dictionary_type` add column `of_moudle_link` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '具体指向关联';

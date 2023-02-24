@@ -423,42 +423,56 @@ public class ProjectConfig extends JBoltProjectConfig {
 
     /**
      * 配置租户SN转ID的转换器
+     * @return
      */
     @Override
     protected JBoltSaasTenantSnToIdProcessor getSaasTenantSnToIdProcessor() {
-        return null;
+        return ExtendProjectConfig.configSaasTenantSnToIdProcessor();
     }
 
     /**
      * 配置租户sn转name的转换器
+     * @return
      */
     @Override
     protected JBoltSaasTenantSnToNameProcessor getSaasTenantSnToNameProcessor() {
-        return null;
+        return ExtendProjectConfig.configSaasTenantSnToNameProcessor();
     }
 
     /**
      * 配置租户ID转Name的转换器
+     * @return
      */
     @Override
     protected JBoltSaasTenantIdToNameProcessor getSaasTenantIdToNameProcessor() {
-        return null;
+        return ExtendProjectConfig.configSaasTenantIdToNameProcessor();
     }
 
     /**
      * 配置租户ID转sn的转换器
+     * @return
      */
     @Override
     protected JBoltSaasTenantIdToSnProcessor getSaasTenantIdToSnProcessor() {
-        return null;
+        return ExtendProjectConfig.configSaasTenantIdToSnProcessor();
     }
 
     /**
      * 配置租户获得当前是否可访问的处理器
+     * @return
      */
     @Override
     protected JBoltSaasTenantAccessibleProcessor getSaasTenantAccessibleProcessor() {
-        return null;
+        return ExtendProjectConfig.configSaasTenantAccessibleProcessor();
+    }
+
+    /**
+     * 配置租户列表获取的处理器
+     * @return
+     */
+    @Override
+    protected JBoltSaasTenantGetAllProcessor getSaasTenantAllDatasProcessor() {
+        return ExtendProjectConfig.configSaasTenantAllDatasProcessor();
     }
 
     /**
