@@ -11,6 +11,7 @@
 		<div class="col">
 			<form onkeydown="if(event.which==13){return false;}" onsubmit="return false;" class="form-inline" id="permissionForm_#(pageId)" action="admin/permission" method="post">
 			<label class="d-inline-block">筛选:</label>
+			<select class="form-control" name="ofModule" data-autoload data-url="admin/permission/modules" data-text="=所属模块=" ></select>
 			<select class="form-control" name="topnavId"  data-autoload data-url="admin/topnav/options" data-text="=顶部导航=" data-value=""></select>
 			<button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
 			<input data-clear-handler="onkeyup" onkeyup="jboltTableFilterByKeywords('permission_table_#(pageId)',this.value,[1,6,7])" data-with-clearbtn="true" autocomplete="off"  class="form-control d-inline-block"  placeholder="输入关键字 进行过滤"/>

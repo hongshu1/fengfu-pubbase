@@ -5,6 +5,8 @@ import java.util.List;
 
 import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.core.cache.JBoltGlobalConfigCache;
+import cn.jbolt.core.enumutil.JBoltEnum;
+import cn.jbolt.extend.config.ExtendProjectOfModule;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Ret;
@@ -55,7 +57,7 @@ public class UserAdminController extends JBoltBaseController {
 	 * 表格数据接口
 	 */
 	public void datas() {
-		renderJsonData(service.paginateAdminList(getPageNumber(),getPageSize(),getKeywords(),getInt("sex"),getBoolean("assignDept",true),getLong("deptId"),getLong("postId"),getLong("roleId"),getBoolean("enable")));
+		renderJsonData(service.paginateAdminList(getPageNumber(),getPageSize(),getKeywords(),getOfModule(),getInt("sex"),getBoolean("assignDept",true),getLong("deptId"),getLong("postId"),getLong("roleId"),getBoolean("enable")));
 	}
 
 	/**
@@ -290,5 +292,13 @@ public class UserAdminController extends JBoltBaseController {
 	public void processAllDeptPath(){
 		service.processAllDeptPath();
 		renderJsonSuccess();
+	}
+
+	/**
+	 * 列出模块
+	 */
+	@UnCheck
+	public void modules(){
+		renderJsonData(JBoltEnum.getEnumOptionList(ExtendProjectOfModule.class));
 	}
 }

@@ -6,12 +6,10 @@ import java.util.List;
 
 import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.core.cache.*;
-import cn.jbolt.core.common.enums.JBoltOfModuleType;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.model.Application;
 import cn.jbolt.core.model.Dept;
-import cn.jbolt.core.model.Permission;
-import cn.jbolt.extend.config.ExtendProjectOfModuleType;
+import cn.jbolt.extend.config.ExtendProjectOfModule;
 import cn.jbolt.extend.user.ExtendUserOfModuleLinkService;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.HashKit;
@@ -80,11 +78,11 @@ public class UserService extends JBoltUserService {
 		if(notOk(user.getOfModule()) || user.getOfModule().intValue() == 1){
 			//如果没设置就save 那得设置上 从当前线程获取 看看有没有 如果有就用了
 			Integer jboltOfModule = JBoltUserKit.getJboltOfModule();
-			ExtendProjectOfModuleType type = null;
+			ExtendProjectOfModule type = null;
 			if(notOk(jboltOfModule)){
-				type= ExtendProjectOfModuleType.PLATFORM_INNER_ADMIN;
+				type= ExtendProjectOfModule.PLATFORM_INNER_ADMIN;
 			}else{
-				type= JBoltEnum.getEnumObjectByValue(ExtendProjectOfModuleType.class,jboltOfModule.intValue());
+				type= JBoltEnum.getEnumObjectByValue(ExtendProjectOfModule.class,jboltOfModule.intValue());
 
 			}
 			if(type == null){
@@ -95,8 +93,8 @@ public class UserService extends JBoltUserService {
 		}
 	}
 
-	private void processOfModuleLinkByType(User user, ExtendProjectOfModuleType type) {
-		if(type == ExtendProjectOfModuleType.PLATFORM_INNER_ADMIN){
+	private void processOfModuleLinkByType(User user, ExtendProjectOfModule type) {
+		if(type == ExtendProjectOfModule.PLATFORM_INNER_ADMIN){
 			processOfModuleLinkIsInnerApplication(user);
 		}else{
 			user.setOfModuleLink(extendUserOfModuleLinkService.processOfModuleLinkByType(type));
@@ -294,7 +292,8 @@ public class UserService extends JBoltUserService {
 	 * @param pageNumber
 	 * @param pageSize
 	 * @param keywords
-	 * @param sex 
+	 * @param ofModule
+	 * @param sex
 	 * @param assignDept
 	 * @param deptId
 	 * @param postId
@@ -302,10 +301,11 @@ public class UserService extends JBoltUserService {
 	 * @param enable 
 	 * @return
 	 */
-	public Page<User> paginateAdminList(int pageNumber, int pageSize, String keywords, Integer sex,Boolean assignDept, Long deptId, Long postId,Long roleId,Boolean enable) {
+	public Page<User> paginateAdminList(int pageNumber, int pageSize, String keywords,Integer ofModule, Integer sex,Boolean assignDept, Long deptId, Long postId,Long roleId,Boolean enable) {
 		String[] columns=getTableSelectColumnsWithout("password");
 		Sql sql=selectSql().page(pageNumber, pageSize);
 		sql.select(columns);
+		sql.eqIfOk(User.OF_MODULE,ofModule);
 		//如果不是超管 就只能查询不是超管的用户
 		if(!JBoltUserKit.isSystemAdmin()) {
 			sql.eq("is_system_admin", FALSE);
@@ -362,7 +362,7 @@ public class UserService extends JBoltUserService {
 	 * @return
 	 */
 	public Page<User> paginateSysNoticeList(int pageNumber, int pageSize, String keywords, Integer sex, Boolean assignDept,Long deptId, Long postId,Long roleId) {
-		return paginateAdminList(pageNumber, pageSize, keywords, sex,assignDept, deptId, postId, roleId, true);
+		return paginateAdminList(pageNumber, pageSize, keywords, ExtendProjectOfModule.PLATFORM_INNER_ADMIN.getValue(), sex,assignDept, deptId, postId, roleId, true);
 	}
 
 	/**
