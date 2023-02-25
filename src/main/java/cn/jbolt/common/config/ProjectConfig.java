@@ -484,6 +484,11 @@ public class ProjectConfig extends JBoltProjectConfig {
         return JBoltEnum.getEnumOptionList(ExtendProjectOfModule.class);
     }
 
+    @Override
+    protected String getExtendOfModuleEnumClassSimpleName() {
+        return ExtendProjectOfModule.class.getSimpleName();
+    }
+
     /**
      * 手动管理添加 新开项目的需要给租户分表的Model
      */
