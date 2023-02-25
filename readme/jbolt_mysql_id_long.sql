@@ -338,8 +338,8 @@ CREATE TABLE `jb_user`  (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `update_user_id` bigint(20) DEFAULT NULL COMMENT '更新人ID',
   `last_pwd_update_time` datetime DEFAULT NULL COMMENT '最近一次密码修改时间',
-  `of_moudle` int(11) NOT NULL DEFAULT '1' COMMENT '哪个模块',
-  `of_moudle_link` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '具体指向关联',
+  `of_module` int(11) NOT NULL DEFAULT '1' COMMENT '哪个模块',
+  `of_module_link` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '具体指向关联',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户登录账户表' ROW_FORMAT = Dynamic;
 

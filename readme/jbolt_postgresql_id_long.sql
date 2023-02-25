@@ -364,8 +364,8 @@ CREATE TABLE "public"."jb_permission" (
   "is_system_admin_default" char(1) COLLATE "pg_catalog"."default" DEFAULT '0'::bpchar NOT NULL,
   "open_type" int4,
   "open_option" varchar(255) COLLATE "pg_catalog"."default",
-  "of_moudle" int4 DEFAULT 1 NOT NULL,
-  "of_moudle_link" varchar(40) COLLATE "pg_catalog"."default"
+  "of_module" int4 DEFAULT 1 NOT NULL,
+  "of_module_link" varchar(40) COLLATE "pg_catalog"."default"
 )
 ;
 COMMENT ON COLUMN "public"."jb_permission"."id" IS '主键';
@@ -379,8 +379,8 @@ COMMENT ON COLUMN "public"."jb_permission"."is_target_blank" IS '是否新窗口
 COMMENT ON COLUMN "public"."jb_permission"."is_system_admin_default" IS '是否系统超级管理员默认拥有的权限';
 COMMENT ON COLUMN "public"."jb_permission"."open_type" IS '打开类型 1 默认 2 iframe 3 dialog';
 COMMENT ON COLUMN "public"."jb_permission"."open_option" IS '组件属性json';
-COMMENT ON COLUMN "public"."jb_permission"."of_moudle" IS '哪个模块';
-COMMENT ON COLUMN "public"."jb_permission"."of_moudle_link" IS '具体指向关联';
+COMMENT ON COLUMN "public"."jb_permission"."of_module" IS '哪个模块';
+COMMENT ON COLUMN "public"."jb_permission"."of_module_link" IS '具体指向关联';
 COMMENT ON TABLE "public"."jb_permission" IS 'function定义';
 
 -- ----------------------------
@@ -702,8 +702,8 @@ CREATE TABLE "public"."jb_user" (
   "update_user_id" int8 NOT NULL,
   "update_time" timestamp(6),
   "last_pwd_update_time" timestamp(6),
-  "of_moudle" int4 DEFAULT 1 NOT NULL,
-  "of_moudle_link" varchar(40) COLLATE "pg_catalog"."default"
+  "of_module" int4 DEFAULT 1 NOT NULL,
+  "of_module_link" varchar(40) COLLATE "pg_catalog"."default"
 )
 ;
 COMMENT ON COLUMN "public"."jb_user"."id" IS '主键ID';
@@ -734,8 +734,8 @@ COMMENT ON COLUMN "public"."jb_user"."posts" IS '岗位IDS';
 COMMENT ON COLUMN "public"."jb_user"."dept_path" IS '部门路径';
 COMMENT ON COLUMN "public"."jb_user"."update_time" IS '更新时间';
 COMMENT ON COLUMN "public"."jb_user"."last_pwd_update_time" IS '最近一次密码修改时间';
-COMMENT ON COLUMN "public"."jb_user"."of_moudle" IS '哪个模块';
-COMMENT ON COLUMN "public"."jb_user"."of_moudle_link" IS '具体指向关联';
+COMMENT ON COLUMN "public"."jb_user"."of_module" IS '哪个模块';
+COMMENT ON COLUMN "public"."jb_user"."of_module_link" IS '具体指向关联';
 COMMENT ON TABLE "public"."jb_user" IS '用户登录账户表';
 
 -- ----------------------------
