@@ -193,8 +193,8 @@ CREATE TABLE `jb_permission`  (
   `is_system_admin_default` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否系统超级管理员默认拥有的权限',
   `open_type` int(11) NULL DEFAULT 1 COMMENT '打开类型 1 默认 2 iframe 3 dialog',
   `open_option` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '组件属性json',
-  `of_moudle` int(11) NOT NULL DEFAULT '1' COMMENT '哪个模块',
-  `of_moudle_link` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '具体指向关联',
+  `of_module` int(11) NOT NULL DEFAULT '1' COMMENT '哪个模块',
+  `of_module_link` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '具体指向关联',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'function定义' ROW_FORMAT = Dynamic;
 
