@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.2.8";
+var jbolt_admin_js_version="6.3.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -14497,6 +14497,25 @@ function checkIdCardNo(card){
 	  var self=this;
       var type=input.data("rule");
       if(!type){return true;}
+	  if(typeof(type)=="string" && type.indexOf(";")==-1 && type.indexOf("function:")!=-1){
+		  var tyfunc = type.substring(type.indexOf(":")+1);
+		  type = eval(tyfunc);
+		  if(!type){return true;}
+	  }
+	  if(typeof(type)=="function"){
+		  var jboltTable=JBoltTableUtil.getInst(input);
+		  if(isOk(jboltTable)){
+			  var td = input.closest("td");
+			  var tr = td.parent();
+			  var index=tr.data("index");
+			  var jsondata = null;
+			  if(jboltTable.tableListDatas && jboltTable.tableListDatas.length>=index+1){
+				  jsondata = jboltTable.tableListDatas[index];
+			  }
+			  return type(jboltTable,tr,td,input,jsondata);
+		  }
+		  return type(input);
+	  }
       var mytips=input.data("tips"),
         show=input.data("show"),
         notNull=input.data("notnull");
@@ -14575,6 +14594,48 @@ function checkIdCardNo(card){
       var tsize=types.length;
       for(var i=0;i<tsize;i++){
           var type=types[i];
+		  //处理function:xxx
+		  if(typeof(type)=="string" && type.indexOf("function:")!=-1){
+			  var tyfunc = type.substring(type.indexOf(":")+1);
+			  type = eval(tyfunc);
+			  if(type && typeof(type)=="function"){
+				  var jboltTable=JBoltTableUtil.getInst(input);
+				  if(isOk(jboltTable)){
+					  var td = input.closest("td");
+					  var tr = td.parent();
+					  var index=tr.data("index");
+					  var jsondata = null;
+					  if(jboltTable.tableListDatas && jboltTable.tableListDatas.length>=index+1){
+						  jsondata = jboltTable.tableListDatas[index];
+					  }
+					  var funcret = type(jboltTable,tr,td,input,jsondata);
+					  if(typeof(funcret)=="boolean"){
+						  if(funcret){
+							  continue;
+						  }else{
+							  checkFlag=false;
+							  mytips = "输入格式有误";
+							  self.showMyTipsIfNeed(input,mytips,show);
+							  break;
+						  }
+					  }else{
+						  checkFlag=false;
+						  self.showMyTipsIfNeed(input,funcret,show);
+						  break;
+					  }
+
+
+				  }else{
+					  funcret = type(input);
+					  if(funcret){
+						  continue;
+					  }
+					  checkFlag=false;
+					  break;
+				  }
+			  }
+		  }
+
           var checkResult=self.checkSelf(input,type,value,mytips,show,notNull);
           if(checkResult!=canNotCheck){//判断能否处理 如果处理了 成功了继续下一个type 失败了则直接整个结束
               if(checkResult==success){
@@ -14880,6 +14941,7 @@ function checkIdCardNo(card){
   },
   //显示提示信息
    showMyTipsIfNeed:function(input,mytips,show){
+	   removeFormEleErrorStyle(input);
       if(mytips!=null){
     	  showFormEleErrorStyle(input,mytips);
                   if (show == null) {
@@ -14893,8 +14955,6 @@ function checkIdCardNo(card){
                   } else {
                       g(show).innerHTML = mytips;
                   }
-       }else{
-    	   removeFormEleErrorStyle(input);
        }
   },
   
