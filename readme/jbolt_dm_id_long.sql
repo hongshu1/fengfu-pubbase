@@ -814,6 +814,8 @@ CREATE TABLE "JBOLT"."jb_permission"
     "is_system_admin_default" CHAR(1) DEFAULT '0',
     "open_type" INT DEFAULT 1,
     "open_option" VARCHAR(255),
+    "of_module" INT DEFAULT 1,
+    "of_module_link" VARCHAR(40),
     NOT CLUSTER PRIMARY KEY("id")) STORAGE(ON "MAIN", CLUSTERBTR) ;
 
 COMMENT ON TABLE "JBOLT"."jb_permission" IS 'function定义';
@@ -828,6 +830,8 @@ COMMENT ON COLUMN "JBOLT"."jb_permission"."permission_key" IS '权限资源KEY';
 COMMENT ON COLUMN "JBOLT"."jb_permission"."permission_level" IS '层级';
 COMMENT ON COLUMN "JBOLT"."jb_permission"."sort_rank" IS '排序';
 COMMENT ON COLUMN "JBOLT"."jb_permission"."url" IS '地址';
+COMMENT ON COLUMN "JBOLT"."jb_permission"."of_module" IS '哪个模块';
+COMMENT ON COLUMN "JBOLT"."jb_permission"."of_module_link" IS '具体指向关联';
 
 
 CREATE UNIQUE  INDEX "INDEX309699386485900" ON "JBOLT"."jb_permission"("id" ASC) STORAGE(ON "MAIN", CLUSTERBTR) ;
@@ -1241,6 +1245,8 @@ CREATE TABLE "JBOLT"."jb_user"
     "update_time" TIMESTAMP(0),
     "update_user_id" BIGINT,
     "last_pwd_update_time" TIMESTAMP(0),
+    "of_module" INT DEFAULT 1,
+    "of_module_link" VARCHAR(40),
     NOT CLUSTER PRIMARY KEY("id")) STORAGE(ON "MAIN", CLUSTERBTR) ;
 
 COMMENT ON TABLE "JBOLT"."jb_user" IS '用户登录账户表';
@@ -1273,6 +1279,8 @@ COMMENT ON COLUMN "JBOLT"."jb_user"."sn" IS '工号';
 COMMENT ON COLUMN "JBOLT"."jb_user"."update_time" IS '更新时间';
 COMMENT ON COLUMN "JBOLT"."jb_user"."update_user_id" IS '更新人ID';
 COMMENT ON COLUMN "JBOLT"."jb_user"."username" IS '用户名';
+COMMENT ON COLUMN "JBOLT"."jb_user"."of_module" IS '哪个模块';
+COMMENT ON COLUMN "JBOLT"."jb_user"."of_module_link" IS '具体指向关联';
 
 
 CREATE UNIQUE  INDEX "INDEX309699082297600" ON "JBOLT"."jb_user"("id" ASC) STORAGE(ON "MAIN", CLUSTERBTR) ;

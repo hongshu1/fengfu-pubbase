@@ -17,6 +17,7 @@
 		<input type="hidden" id="assignDept_#(pageId)" name="assignDept" value="true"/>
 		#end
 		<input type="text" autocomplete="off"  class="form-control" placeholder="输入关键字搜索" name="keywords" value="#(keywords??)" />
+		<select class="form-control" name="ofModule" data-autoload data-url="admin/user/modules" data-text="=所属模块=" ></select>
 		<select class="form-control" name="sex" data-autoload data-url="admin/user/sexOptions" data-text="=性别=" ></select>
 		#if(postEnable)
 		<select class="form-control" name="postId" data-autoload data-url="admin/post/enableOptions" data-text="=岗位=" ></select>

@@ -1,5 +1,8 @@
 package cn.jbolt._admin.permission;
 
+import cn.jbolt.core.enumutil.JBoltEnum;
+import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.extend.config.ExtendProjectOfModule;
 import com.jfinal.aop.Inject;
 
 import cn.jbolt.core.controller.base.JBoltBaseController;
@@ -72,6 +75,13 @@ public class PermissionAdminController extends JBoltBaseController {
 	 */
 	public void toggleSystemAdminDefault(){
 		renderJson(service.toggleSystemAdminDefault(getLong(0)));
+	}
+	/**
+	 * 列出模块
+	 */
+	@UnCheck
+	public void modules(){
+		renderJsonData(JBoltEnum.getEnumOptionList(ExtendProjectOfModule.class));
 	}
 	
 }

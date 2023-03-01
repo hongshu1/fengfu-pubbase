@@ -20,8 +20,10 @@ import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.Interceptor.JBoltOnlineUserGlobalInterceptor;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.base.config.JBoltProjectConfig;
+import cn.jbolt.core.bean.Option;
 import cn.jbolt.core.common.enums.DictionaryTypeMode;
 import cn.jbolt.core.enumutil.JBoltEnum;
+import cn.jbolt.core.enumutil.JBoltEnumBean;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.kit.*;
 import cn.jbolt.core.model.DictionaryType;
@@ -34,6 +36,7 @@ import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.core.wechat.WechatConfigKey;
 import cn.jbolt.extend.cache.CacheExtend;
 import cn.jbolt.extend.config.ExtendProjectConfig;
+import cn.jbolt.extend.config.ExtendProjectOfModule;
 import cn.jbolt.index.*;
 import com.jfinal.config.*;
 import com.jfinal.ext.handler.UrlSkipHandler;
@@ -49,6 +52,7 @@ import net.dreamlu.event.EventPlugin;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -423,42 +427,66 @@ public class ProjectConfig extends JBoltProjectConfig {
 
     /**
      * 配置租户SN转ID的转换器
+     * @return
      */
     @Override
     protected JBoltSaasTenantSnToIdProcessor getSaasTenantSnToIdProcessor() {
-        return null;
+        return ExtendProjectConfig.configSaasTenantSnToIdProcessor();
     }
 
     /**
      * 配置租户sn转name的转换器
+     * @return
      */
     @Override
     protected JBoltSaasTenantSnToNameProcessor getSaasTenantSnToNameProcessor() {
-        return null;
+        return ExtendProjectConfig.configSaasTenantSnToNameProcessor();
     }
 
     /**
      * 配置租户ID转Name的转换器
+     * @return
      */
     @Override
     protected JBoltSaasTenantIdToNameProcessor getSaasTenantIdToNameProcessor() {
-        return null;
+        return ExtendProjectConfig.configSaasTenantIdToNameProcessor();
     }
 
     /**
      * 配置租户ID转sn的转换器
+     * @return
      */
     @Override
     protected JBoltSaasTenantIdToSnProcessor getSaasTenantIdToSnProcessor() {
-        return null;
+        return ExtendProjectConfig.configSaasTenantIdToSnProcessor();
     }
 
     /**
      * 配置租户获得当前是否可访问的处理器
+     * @return
      */
     @Override
     protected JBoltSaasTenantAccessibleProcessor getSaasTenantAccessibleProcessor() {
-        return null;
+        return ExtendProjectConfig.configSaasTenantAccessibleProcessor();
+    }
+
+    /**
+     * 配置租户列表获取的处理器
+     * @return
+     */
+    @Override
+    protected JBoltSaasTenantGetAllProcessor getSaasTenantAllDatasProcessor() {
+        return ExtendProjectConfig.configSaasTenantAllDatasProcessor();
+    }
+
+    @Override
+    protected List<JBoltEnumBean> getExtendOfModules() {
+        return JBoltEnum.getEnumOptionList(ExtendProjectOfModule.class);
+    }
+
+    @Override
+    protected String getExtendOfModuleEnumClassSimpleName() {
+        return ExtendProjectOfModule.class.getSimpleName();
     }
 
     /**

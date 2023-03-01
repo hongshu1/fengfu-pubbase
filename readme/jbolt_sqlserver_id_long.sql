@@ -1069,7 +1069,9 @@ CREATE TABLE [dbo].[jb_permission] (
   [is_target_blank] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
   [is_system_admin_default] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
   [open_type] int  NOT NULL,
-  [open_option] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL
+  [open_option] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
+  [of_module] int DEFAULT 1 NOT NULL,
+  [of_module_link] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL
 )
 GO
 
@@ -1165,6 +1167,21 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_permission',
 'COLUMN', N'open_option'
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', N'哪个模块',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_permission',
+'COLUMN', N'of_module'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'具体指向关联',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_permission',
+'COLUMN', N'of_module_link'
 GO
 
 EXEC sp_addextendedproperty
@@ -2174,7 +2191,9 @@ CREATE TABLE [dbo].[jb_user] (
   [dept_path] varchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [update_time] datetime  NOT NULL,
   [update_user_id] bigint  NOT NULL,
-  [last_pwd_update_time] datetime  NULL
+  [last_pwd_update_time] datetime  NULL,
+  [of_module] int DEFAULT 1 NOT NULL,
+  [of_module_link] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL
 )
 GO
 
@@ -2382,6 +2401,20 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'jb_user',
 'COLUMN', N'last_pwd_update_time'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'哪个模块',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'of_module'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'具体指向关联',
+'SCHEMA', N'dbo',
+'TABLE', N'jb_user',
+'COLUMN', N'of_module_link'
 GO
 
 EXEC sp_addextendedproperty

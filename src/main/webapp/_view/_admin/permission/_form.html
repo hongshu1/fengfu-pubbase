@@ -4,6 +4,12 @@
 	#end
 <input type="hidden" name="permission.permissionLevel" value="#(level?? 1)" />
 <div class="form-group row">
+	<label class="col-form-label col-sm-2">所属模块</label>
+	<div class="col-md-6 col-lg-4 col-sm-10">
+		<select data-refresh="true" data-live-search="true" class="form-control" name="permission.ofModule" data-select="#(permission.ofModule?? 1)" data-rule="select" data-tips="请选择所属模块" data-autoload data-url="admin/permission/modules"></select>
+	</div>
+</div>
+	<div class="form-group row">
    <label class="col-form-label col-sm-2">上级资源</label>
        <div class="col-md-6 col-lg-4 col-sm-10">
            <select id="pid" data-refresh="true" data-live-search="true" class="form-control" name="permission.pid"  data-text="=无上级资源=" data-value="0" data-select="#(permission.pid?? (pid?? 0))" data-autoload data-url="admin/permission/options"></select>

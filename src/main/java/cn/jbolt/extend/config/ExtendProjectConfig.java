@@ -1,6 +1,7 @@
 package cn.jbolt.extend.config;
 
 import cn.hutool.setting.Setting;
+import cn.jbolt.core.kit.*;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
 import com.jfinal.config.Interceptors;
@@ -141,5 +142,52 @@ public class ExtendProjectConfig {
 	 */
 	public static void configProjectSaasSeparateTableModels() {
 		LOG.debug("调用二开扩展配置:configProjectSaasSeparateTableModels");
+	}
+
+	/**
+	 * 配置租户获得当前是否可访问的处理器
+	 * @return
+	 */
+	public static JBoltSaasTenantAccessibleProcessor configSaasTenantAccessibleProcessor() {
+		return null;
+	}
+
+	/**
+	 * 配置租户列表获取的处理器
+	 * @return
+	 */
+	public static JBoltSaasTenantGetAllProcessor configSaasTenantAllDatasProcessor() {
+		return null;
+	}
+
+	/**
+	 * 配置租户ID转sn的转换器
+	 * @return
+	 */
+	public static JBoltSaasTenantIdToSnProcessor configSaasTenantIdToSnProcessor() {
+		return null;
+	}
+	/**
+	 * 配置租户ID转Name的转换器
+	 * @return
+	 */
+	public static JBoltSaasTenantIdToNameProcessor configSaasTenantIdToNameProcessor() {
+		return null;
+	}
+
+	/**
+	 * 配置租户sn转name的转换器
+	 * @return
+	 */
+	public static JBoltSaasTenantSnToNameProcessor configSaasTenantSnToNameProcessor() {
+		return null;
+	}
+
+	/**
+	 * 配置租户SN转ID的转换器
+	 * @return
+	 */
+	public static JBoltSaasTenantSnToIdProcessor configSaasTenantSnToIdProcessor() {
+		return null;
 	}
 }

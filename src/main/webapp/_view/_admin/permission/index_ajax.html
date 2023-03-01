@@ -11,6 +11,7 @@
 		<div class="col">
 			<form onkeydown="if(event.which==13){return false;}" onsubmit="return false;" class="form-inline" id="permissionForm_#(pageId)" action="admin/permission" method="post">
 			<label class="d-inline-block">筛选:</label>
+			<select class="form-control" name="ofModule" data-autoload data-url="admin/permission/modules" data-text="=所属模块=" ></select>
 			<select class="form-control" name="topnavId"  data-autoload data-url="admin/topnav/options" data-text="=顶部导航=" data-value=""></select>
 			<button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
 			<input data-clear-handler="onkeyup" onkeyup="jboltTableFilterByKeywords('permission_table_#(pageId)',this.value,[1,6,7])" data-with-clearbtn="true" autocomplete="off"  class="form-control d-inline-block"  placeholder="输入关键字 进行过滤"/>
@@ -31,6 +32,7 @@
 <tr data-id="${id}" data-pid="${pid}" data-level="${eachLevel}" data-hasitems="${items&&items.length>0}">
 <td><i class="${icons}"></i> ${title}</td>
 <td>${permissionLevel}级</td>
+<td class="text-primary">${ofModuleName}</td>
 <td  class="text-center">
 {@if url}${isTargetBlank?"浏览器新窗口":"浏览器当前窗口"}{@/if}
 </td>
@@ -84,7 +86,7 @@ data-jbolttable
 ###设置是treetable 默认显示到第一级 操作列在第一列
 data-treetable="all:1"
 data-fixed-columns-left="1"
-data-fixed-columns-right="9"
+data-fixed-columns-right="-1"
 data-column-resize="true"
 data-ajax="true"
 data-url="admin/permission/datas"
@@ -95,6 +97,7 @@ data-conditions-form="permissionForm_#(pageId)"
 <tr>
 	<th data-width="260">资源</th>
 	<th data-width="60">级别</th>
+	<th data-width="150">模块</th>
 	<th data-width="130">加载方式</th>
 	<th data-width="130">打开类型</th>
 	<th data-width="100">资源类型</th>
