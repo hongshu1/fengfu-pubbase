@@ -1,7 +1,6 @@
 package cn.jbolt.wxa.api;
 
 import cn.jbolt.admin.wechat.user.WechatUserService;
-import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.api.httpmethod.JBoltHttpGet;
 import com.jfinal.aop.Inject;
