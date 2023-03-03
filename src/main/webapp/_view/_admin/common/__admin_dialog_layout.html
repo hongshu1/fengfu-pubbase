@@ -60,6 +60,11 @@
 		#@mainjs?()
 		<!-- 系统后台本项目特殊使用封装JS -->
 		#@minejs?()
+		#if(JBoltConfig.JBOLT_WEBSOCKET_ENABLE)
+		<script>
+			window.JBoltWS = parent.JBoltWS;
+		</script>
+		#end
 		#@js?()
 	</body>
 </html>
