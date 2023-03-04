@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.3.0";
+var jbolt_admin_js_version="6.3.1";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -16388,7 +16388,7 @@ function userLogout(){
  */
 function hideParentLayerDialogBtn(index){
 	if(index==0||index==1){
-		var btns = parent.$(".layui-layer.layui-layer-iframe:last  .layui-layer-btn"+index);
+		var btns = parent.$(".layui-layer.layui-layer-iframe:last  .layui-layer-btn .layui-layer-btn"+index);
 		if(isOk(btns)){
 			btns.hide();
 		}
@@ -16699,7 +16699,7 @@ function cancelParentLayerDialogOkBtnStateToSubmiting(){
  * @returns
  */
 function showParentLayerDialogBtn(index){
-	  if(index){
+	 if(index==0 || index==1){
 		  parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn .layui-layer-btn"+index).show();
 	  }else{
 		  parent.$(".layui-layer.layui-layer-iframe:last .layui-layer-btn").show();
