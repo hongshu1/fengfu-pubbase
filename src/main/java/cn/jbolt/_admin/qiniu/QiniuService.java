@@ -146,7 +146,7 @@ public class QiniuService extends JBoltBaseService<Qiniu> {
             return fail("SK[" + qiniu.getSk() + "]已存在");
         }
         qiniu.remove("enable", "create_user_id");
-        if (qiniu.getIsDefault() != null) {
+        if (qiniu.getIsDefault() == null) {
             qiniu.setIsDefault(false);
         }
         qiniu.setUpdateUserId(JBoltUserKit.getUserId());

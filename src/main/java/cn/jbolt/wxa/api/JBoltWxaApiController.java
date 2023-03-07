@@ -1,7 +1,6 @@
 package cn.jbolt.wxa.api;
 
 import cn.jbolt.admin.wechat.user.WechatUserService;
-import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.api.httpmethod.JBoltHttpGet;
 import com.jfinal.aop.Inject;
@@ -19,7 +18,7 @@ import cn.jbolt.core.para.JBoltPara;
 @CrossOrigin
 public class JBoltWxaApiController extends JBoltApiBaseController {
 	@Inject
-	private JBoltWxaApiService wxapApiService;
+	private JBoltWxaApiService wxaApiService;
 	@Inject
 	private WechatUserService wechatUserService;
 	
@@ -32,7 +31,7 @@ public class JBoltWxaApiController extends JBoltApiBaseController {
 	@JBoltHttpPost
 	public void login(String code) {
 		//调动service业务逻辑执行code转session获取openId等
-		renderJBoltApiRet(wxapApiService.login(code));
+		renderJBoltApiRet(wxaApiService.login(code));
 	}
 
 	/**
@@ -48,7 +47,7 @@ public class JBoltWxaApiController extends JBoltApiBaseController {
 	 */
 	public void decryptUserInfo(JBoltPara param) {
 		//调动service业务逻辑执行解密注册
-		renderJBoltApiRet(wxapApiService.decryptUserInfo(param));
+		renderJBoltApiRet(wxaApiService.decryptUserInfo(param));
 	}
 	
 	/**
@@ -56,7 +55,7 @@ public class JBoltWxaApiController extends JBoltApiBaseController {
 	 */
 	public void decryptPhoneNumber(JBoltPara param) {
 		//调动service业务逻辑执行解密手机号注册
-		renderJBoltApiRet(wxapApiService.decryptPhoneNumber(param));
+		renderJBoltApiRet(wxaApiService.decryptPhoneNumber(param));
 	}
 	
 	/**
@@ -69,7 +68,7 @@ public class JBoltWxaApiController extends JBoltApiBaseController {
 	@JBoltReApplyJWT
 	public void bindOtherUser(JBoltPara param) {
 		//调动service业务逻辑执行系统用户绑定逻辑
-		renderJBoltApiRet(wxapApiService.bindOtherUser(param.getInteger("type"),param.getString("username"),param.getString("password")));
+		renderJBoltApiRet(wxaApiService.bindOtherUser(param.getInteger("type"),param.getString("username"),param.getString("password")));
 	}
 
 	/**
@@ -79,7 +78,7 @@ public class JBoltWxaApiController extends JBoltApiBaseController {
 	@JBoltReApplyJWT
 	public void loginSystemUser(JBoltPara param) {
 		//调动service业务逻辑执行系统用户绑定逻辑
-		renderJBoltApiRet(wxapApiService.bindOtherUser(JBoltApiBindUserBean.TYPE_SYSTEM_USER,param.getString("username"),param.getString("password")));
+		renderJBoltApiRet(wxaApiService.bindOtherUser(JBoltApiBindUserBean.TYPE_SYSTEM_USER,param.getString("username"),param.getString("password")));
 	}
 	
 	/**
@@ -91,7 +90,7 @@ public class JBoltWxaApiController extends JBoltApiBaseController {
 	@JBoltReApplyJWT
 	public void unbindOtherUser(JBoltPara param) {
 		//调动service业务逻辑执行系统用户解除绑定逻辑
-		renderJBoltApiRet(wxapApiService.unbindOtherUser(param.getInteger("type"),param.get("userId")));
+		renderJBoltApiRet(wxaApiService.unbindOtherUser(param.getInteger("type"),param.get("userId")));
 	}
 
 	/**
@@ -99,7 +98,7 @@ public class JBoltWxaApiController extends JBoltApiBaseController {
 	 */
 	@ActionKey("/api/wxa/user/me")
 	public void myWechatUserInfo() {
-		renderJBoltApiRet(wxapApiService.getMyWechatUserInfo());
+		renderJBoltApiRet(wxaApiService.getMyWechatUserInfo());
 	}
 
 	/**

@@ -34,8 +34,8 @@
 		<caffeine.version>2.9.3</caffeine.version>
 		<jedis.version>3.9.0</jedis.version>
 		<fst.version>2.57</fst.version>
-		<hutool.version>5.8.12</hutool.version>
-		<slf4j.version>1.7.36</slf4j.version>
+		<hutool.version>5.8.14</hutool.version>
+		<slf4j.version>2.0.6</slf4j.version>
 		<log4j2.version>2.20.0</log4j2.version>
 		<jfinalundertow.version>3.4</jfinalundertow.version>
 		<thumbnailator.version>0.4.17</thumbnailator.version>
@@ -56,8 +56,8 @@
 		<qiniu.version>7.12.1</qiniu.version>
 		<sentinel.version>1.8.6</sentinel.version>
 		<ttl.version>2.14.2</ttl.version>
-        <toolgood_words.version>3.0.3.1</toolgood_words.version>
-        <codehighlight.version>1.0.3</codehighlight.version>
+		<toolgood_words.version>3.1.0.0</toolgood_words.version>
+		<codehighlight.version>1.0.3</codehighlight.version>
 		<jboltcore.version>4.1.2</jboltcore.version>
 
         <kotlin.version>1.8.10</kotlin.version>
@@ -332,7 +332,7 @@
 		<!--桥接器:告诉slf4j使用Log4j2-->
 		<dependency>
 		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-slf4j-impl</artifactId>
+		    <artifactId>log4j-slf4j2-impl</artifactId>
 		    <version>${log4j2.version}</version>
 		    <exclusions>
 		        <exclusion>

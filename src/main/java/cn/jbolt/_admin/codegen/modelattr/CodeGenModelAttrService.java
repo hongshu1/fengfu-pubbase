@@ -11,11 +11,8 @@ import cn.jbolt.core.db.datasource.JBoltTableMetaUtil;
 import cn.jbolt.core.db.sql.DBType;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.enjoy.directive.ColumnTypeToDirective;
-import cn.jbolt.core.model.Permission;
-import cn.jbolt.core.model.base.JBoltBaseModel;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.service.base.JBoltBaseService;
-import com.alibaba.druid.DbType;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -35,9 +32,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> {
-	private CodeGenModelAttr dao = new CodeGenModelAttr().dao();
+	private final CodeGenModelAttr dao = new CodeGenModelAttr().dao();
 	@Inject
-	private CodeGenService codeGenService;
+	CodeGenService codeGenService;
 	@Override
 	protected CodeGenModelAttr dao() {
 		return dao;
@@ -51,7 +48,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	 * @return
 	 */
 	public List<CodeGenModelAttr> getCodeGenModelAttrs(Long codeGenId,String sortColumn,boolean desc) {
-		if(notOk(codeGenId)) {return new ArrayList<CodeGenModelAttr>();}
+		if(notOk(codeGenId)) {return new ArrayList<>();}
 		CodeGen codeGen = codeGenService.findById(codeGenId);
 		if(codeGen == null) {
 			throw new RuntimeException("未找到代码生成的基础配置");
@@ -85,7 +82,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			codeGen.setMainTablePkey(tableMeta.primaryKey);
 			List<ColumnMeta> columnMetas = tableMeta.columnMetas;
 			if(isOk(columnMetas)) {
-				List<CodeGenModelAttr> attrs = new ArrayList<CodeGenModelAttr>();
+				List<CodeGenModelAttr> attrs = new ArrayList<>();
 				int len = columnMetas.size();
 				ColumnMeta columnMeta;
 				CodeGenModelAttr attrTemp;
@@ -120,7 +117,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 						}
 					}
 					attrs.add(attrTemp);
-					if(columnMeta.name.equalsIgnoreCase("sort_rank") || columnMeta.name.toLowerCase().indexOf("sort_rank")!=-1) {
+					if(columnMeta.name.equalsIgnoreCase("sort_rank") || columnMeta.name.toLowerCase().contains("sort_rank")) {
 						codeGen.setIsShowOptcolSort(true);
 						codeGen.setTableDefaultSortColumn(columnMeta.name);
 						codeGen.setTableDefaultSortType("asc");
@@ -237,11 +234,11 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			attr.setIsSortable(true);
 		}
 
-		if(colLow.equals("create_time") || colLow.equals("update_time") || colLow.equals("delete_time") || (colLow.endsWith("_time") && col.javaType.toLowerCase().equals("java.util.date"))){
+		if(colLow.equals("create_time") || colLow.equals("update_time") || colLow.equals("delete_time") || (colLow.endsWith("_time") && col.javaType.equalsIgnoreCase("java.util.date"))){
 			attr.setColFormat("date_ymdhms");
-		}else if((colLow.endsWith("_day") || colLow.endsWith("_date")) && col.javaType.toLowerCase().equals("java.util.date")){
+		}else if((colLow.endsWith("_day") || colLow.endsWith("_date")) && col.javaType.equalsIgnoreCase("java.util.date")){
 			attr.setColFormat("date_ymd");
-		}else if(col.javaType.toLowerCase().equals("java.sql.time")){
+		}else if(col.javaType.equalsIgnoreCase("java.sql.time")){
 			attr.setColFormat("time_hm");
 		}
 
@@ -479,13 +476,13 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		int total = attrs.size();
 		if(formColumnSize<=1||formColumnSize>6) {
-			kvs = new ArrayList<Kv>();
+			kvs = new ArrayList<>();
 			//当做一列处理
 			kvs.add(Kv.by("datas",attrs).set("labelWidth",formGroupArr[0]).set("formControlWidth",formGroupArr[1]).set("modelName",StrKit.firstCharToLowerCase(codeGen.getModelName())).set("isFormGroupRow",isFormGroupRow));
 		}else {
 			//每列个数
 			int count = (int) Math.ceil(total/formColumnSize);
-			int[] arr = null;
+			int[] arr;
 			if(isOk(formColumnProportion)) {
 				arr = StrUtil.splitToInt(formColumnProportion, ":");
 				if(arr.length != formColumnSize) {
@@ -508,17 +505,17 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			int startIndex = 0;
 			int endIndex = 0;
 			if(formColumnDirection.equals("v")) {
-				kvs = new ArrayList<Kv>();
+				kvs = new ArrayList<>();
 				for(int i=0;i<formColumnSize;i++) {
 					endIndex = startIndex + count;
 					kvs.add(Kv.by("col", arr[i]).set("labelWidth",formGroupArr[0]).set("formControlWidth",formGroupArr[1]).set("modelName",StrKit.firstCharToLowerCase(codeGen.getModelName())).set("isFormGroupRow",isFormGroupRow).set("datas",attrs.subList(startIndex, endIndex)));
 					startIndex = endIndex;
 				}
 			}else {
-				kvs = new ArrayList<Kv>();
-				List<CodeGenModelAttr> kvAttrs = null;
+				kvs = new ArrayList<>();
+				List<CodeGenModelAttr> kvAttrs;
 				for(int i=0;i<formColumnSize;i++) {
-					kvAttrs = new ArrayList<CodeGenModelAttr>();
+					kvAttrs = new ArrayList<>();
 					for(int k=i;k<total;) {
 						kvAttrs.add(attrs.get(k));
 						k=k+formColumnSize;
@@ -536,7 +533,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	 * @return
 	 */
 	public List<CodeGenModelAttr> getCodeGenInFormModelAttrs(Long codeGenId) {
-		if(notOk(codeGenId)) {return new ArrayList<CodeGenModelAttr>();}
+		if(notOk(codeGenId)) {return new ArrayList<>();}
 		CodeGen codeGen = codeGenService.findById(codeGenId);
 		if(codeGen == null) {
 			throw new RuntimeException("未找到代码生成的基础配置");
@@ -757,7 +754,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	}
 
 	private void processSyncDeleteAttrs(List<CodeGenModelAttr> modelAttrs, List<ColumnMeta> columnMetas) {
-		List<CodeGenModelAttr> deletes = new ArrayList<CodeGenModelAttr>();
+		List<CodeGenModelAttr> deletes = new ArrayList<>();
 		List<String> names = columnMetas.stream().map(col->col.name).collect(Collectors.toList());
 		CodeGenModelAttr tempAttr;
 		for(int i = 0;i<modelAttrs.size();i++) {
@@ -961,7 +958,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 						attr.setFormImgUploaderArea("200,200");
 					}
 				}else{
-					if(formImgUploaderArea.indexOf(",")==-1){
+					if(!formImgUploaderArea.contains(",")){
 						throw new RuntimeException("图片上传区域尺寸【"+formImgUploaderArea+"】格式不正确 举例: 200,200");
 					}
 					String[] arr = formImgUploaderArea.split(",");
@@ -987,7 +984,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	 */
 	public List<CodeGenModelAttr> getCodeGenTableColumns(Long codeGenId) {
 		if(notOk(codeGenId)) {
-			return new ArrayList<CodeGenModelAttr>();
+			return new ArrayList<>();
 		}
 		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_table_col", TRUE).orderBySortRank("sort_rank_intable"));
 	}
@@ -998,7 +995,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	 */
 	public List<CodeGenModelAttr> getCodeGenImportColumns(Long codeGenId) {
 		if(notOk(codeGenId)) {
-			return new ArrayList<CodeGenModelAttr>();
+			return new ArrayList<>();
 		}
 		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_import_col", TRUE).orderBySortRank("sort_rank_intable"));
 	}
@@ -1010,7 +1007,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	 */
 	public List<CodeGenModelAttr> getCodeGenExportColumns(Long codeGenId) {
 		if(notOk(codeGenId)) {
-			return new ArrayList<CodeGenModelAttr>();
+			return new ArrayList<>();
 		}
 		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_export_col", TRUE).orderBySortRank("sort_rank_intable"));
 	}
@@ -1022,7 +1019,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	 */
 	public List<CodeGenModelAttr> getCodeGenTableConditions(Long codeGenId) {
 		if(notOk(codeGenId)) {
-			return new ArrayList<CodeGenModelAttr>();
+			return new ArrayList<>();
 		}
 		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_search_ele", TRUE).orderBySortRank("sort_rank_insearch"));
 	}
@@ -1043,7 +1040,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		List<Record> columns = findRecord(sql);
 		String javaType;
-		List<Okv> datas = new ArrayList<Okv>();
+		List<Okv> datas = new ArrayList<>();
 		Okv temp;
 		for(int i=0;i<pageSize;i++) {
 			temp = Okv.create();
@@ -1081,15 +1078,15 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			}
 			datas.add(temp);
 		}
-		return new Page<Okv>(datas, pageNumber, pageSize, 3, 30);
+		return new Page<>(datas, pageNumber, pageSize, 3, 30);
 	}
 	public List<Okv> getCodeGenTableColumnsDatas(Long codeGenId) {
 		if(notOk(codeGenId)) {
-			return new ArrayList<Okv>();
+			return new ArrayList<>();
 		}
 		CodeGen codeGen = codeGenService.findById(codeGenId);
 		if(codeGen == null) {
-			return new ArrayList<Okv>();
+			return new ArrayList<>();
 		}
 		Sql sql = selectSql().eq("code_gen_id", codeGenId).eq("is_table_col", TRUE).orderBySortRank("sort_rank_intable");
 		if(codeGen.getIsTableUseRecord() && !codeGen.getIsTableRecordCamelCase()) {
@@ -1099,7 +1096,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		List<Record> columns = findRecord(sql);
 		String javaType;
-		List<Okv> datas = new ArrayList<Okv>();
+		List<Okv> datas = new ArrayList<>();
 		Okv temp;
 		for(int i=0;i<50;i++) {
 			temp = Okv.create();
