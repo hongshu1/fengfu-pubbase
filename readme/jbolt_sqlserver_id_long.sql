@@ -3355,7 +3355,7 @@ CREATE TABLE [dbo].[jb_wechat_user] (
   [union_id] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [sex] int  NULL,
   [language] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
-  [subscibe] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
+  [subscribe] char(1) COLLATE Chinese_PRC_CI_AS DEFAULT '0' NOT NULL,
   [country] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [province] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
   [city] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
@@ -3437,7 +3437,7 @@ EXEC sp_addextendedproperty
 'MS_Description', N'是否已关注',
 'SCHEMA', N'dbo',
 'TABLE', N'jb_wechat_user',
-'COLUMN', N'subscibe'
+'COLUMN', N'subscribe'
 GO
 
 EXEC sp_addextendedproperty

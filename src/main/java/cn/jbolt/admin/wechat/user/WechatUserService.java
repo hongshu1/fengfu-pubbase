@@ -22,13 +22,11 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.UserApi;
 
-import cn.hutool.extra.emoji.EmojiUtil;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.admin.appdevcenter.ApplicationService;
 import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoType;
 import cn.jbolt.common.model.WechatUser;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.api.JBoltApiBindUserBean;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.base.JBoltMsg;
@@ -40,7 +38,7 @@ import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.service.base.JBoltBaseRecordTableSeparateService;
 import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.core.util.JBoltRandomUtil;
-import cn.jbolt.core.util.JBoltStringUtil;
+
 /**
  * 微信公众号粉丝用户表
  * @ClassName:  WechatUserService   
@@ -234,7 +232,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		wechatUser.setEnable(true);
 		wechatUser.setIsChecked(false);
 		wechatUser.setOpenId(openId);
-		wechatUser.setSubscibe(true);
+		wechatUser.setSubscribe(true);
 		wechatUser.setSource(mpType);
 		wechatUser.setMpId(mpId);
 		wechatUser.autoProcessIdValue();
@@ -431,8 +429,8 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	public Record getByUnionIdForApi(Long mpId, String unionId) {
 		return findFirst(selectSql(mpId).select(
 						"id,score,realname,bind_code,nickname,open_id,union_id",
-						"union_id,sex,subscibe,head_img_url,enable,session_key,mp_id",
-						"bind_user,phone,weixin,last_login_time,signature,subscibe_mp")
+						"union_id,sex,subscribe,head_img_url,enable,session_key,mp_id",
+						"bind_user,phone,weixin,last_login_time")
 				.eq("union_id", unionId).first());
 	}
 	/**
@@ -442,7 +440,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	 * @return
 	 */
 	public Record getByOpenIdForApi(Long mpId, String openId) {
-		return findFirst(selectSql(mpId).select("id,nickname,open_id,union_id,sex,subscibe,head_img_url,enable,session_key,mp_id,bind_user,phone,weixin").eq("open_id", openId).first());
+		return findFirst(selectSql(mpId).select("id,nickname,open_id,union_id,sex,subscribe,head_img_url,enable,session_key,mp_id,bind_user,phone,weixin").eq("open_id", openId).first());
 	}
 	/**
 	 * 根据openId获取用户
@@ -497,7 +495,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		wechatUser.setUnionId(unionId);
 		wechatUser.setSessionKey(sessionKey); 
 		wechatUser.setNickname("用户_"+JBoltRandomUtil.randomLowWithNumber(6));
-		wechatUser.setSubscibe(true);
+		wechatUser.setSubscribe(true);
 		wechatUser.setSubscribeTime(now);
 		wechatUser.setFirstLoginTime(now);
 		wechatUser.setLastLoginTime(now);
@@ -782,10 +780,10 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	 * @param userInfo
 	 * @return
 	 */
-	public Ret addUnSubscibeWechatUserInfo(Long mpId, String openId, ApiResult userInfo) {
+	public Ret addUnSubscribeWechatUserInfo(Long mpId, String openId, ApiResult userInfo) {
 		Date now = new Date();
 		WechatUser wechatUser = new WechatUser();
-		wechatUser.setSubscibe(false);
+		wechatUser.setSubscribe(false);
 		wechatUser.setOpenId(openId);
 		wechatUser.setMpId(Long.parseLong(mpId.toString()));
 		wechatUser.setEnable(true);
@@ -818,7 +816,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	 * @param userInfo
 	 * @return
 	 */
-	public Ret updateSubscibeWechatUserInfo(Long mpId,Object wechatUserId, ApiResult userInfo) {
+	public Ret updateSubscribeWechatUserInfo(Long mpId, Object wechatUserId, ApiResult userInfo) {
 		Date now = new Date();
 		WechatUser wechatUser=findByIdToWechatUser(mpId, wechatUserId);
 		if(notOk(wechatUser.getFirstAuthTime())) {

@@ -1601,7 +1601,7 @@ CREATE TABLE "JBOLT"."jb_wechat_user"
     "union_id" VARCHAR(255),
     "sex" INT DEFAULT 0,
     "language" VARCHAR(255),
-    "subscibe" CHAR(1) DEFAULT '0',
+    "subscribe" CHAR(1) DEFAULT '0',
     "country" VARCHAR(255),
     "province" VARCHAR(255),
     "city" VARCHAR(255),
@@ -1663,7 +1663,7 @@ COMMENT ON COLUMN "JBOLT"."jb_wechat_user"."remark" IS '备注';
 COMMENT ON COLUMN "JBOLT"."jb_wechat_user"."session_key" IS '小程序登录SessionKey';
 COMMENT ON COLUMN "JBOLT"."jb_wechat_user"."sex" IS '性别 1男 2女 0 未知';
 COMMENT ON COLUMN "JBOLT"."jb_wechat_user"."source" IS '来源 小程序还是公众平台';
-COMMENT ON COLUMN "JBOLT"."jb_wechat_user"."subscibe" IS '是否已关注';
+COMMENT ON COLUMN "JBOLT"."jb_wechat_user"."subscribe" IS '是否已关注';
 COMMENT ON COLUMN "JBOLT"."jb_wechat_user"."subscribe_scene" IS '关注渠道';
 COMMENT ON COLUMN "JBOLT"."jb_wechat_user"."subscribe_time" IS '关注时间';
 COMMENT ON COLUMN "JBOLT"."jb_wechat_user"."tag_ids" IS '标签';

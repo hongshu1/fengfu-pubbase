@@ -112,17 +112,17 @@ public abstract class BaseWechatUser<M extends BaseWechatUser<M>> extends JBoltB
 	/**
 	 * 是否已关注
 	 */
-	public M setSubscibe(java.lang.Boolean subscibe) {
-		set("subscibe", subscibe);
+	public M setSubscribe(java.lang.Boolean subscribe) {
+		set("subscribe", subscribe);
 		return (M)this;
 	}
 	
 	/**
 	 * 是否已关注
 	 */
-	@JBoltField(name="subscibe" ,columnName="subscibe",type="Boolean", remark="是否已关注", required=false, maxLength=1, fixed=0, order=7)
-	public java.lang.Boolean getSubscibe() {
-		return getBoolean("subscibe");
+	@JBoltField(name="subscribe" ,columnName="subscribe",type="Boolean", remark="是否已关注", required=false, maxLength=1, fixed=0, order=7)
+	public java.lang.Boolean getSubscribe() {
+		return getBoolean("subscribe");
 	}
 
 	/**
