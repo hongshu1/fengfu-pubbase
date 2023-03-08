@@ -861,7 +861,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	 */
 	public Ret updateMyWechatUserInfo(Long mpId,JBoltPara para, boolean isWxa) {
 		if(para == null || para.isEmpty()){return fail(JBoltMsg.PARAM_ERROR);}
-		if(para.containsKey(ID) || notOk(para.getLong(ID))){
+		if(!para.containsKey(ID) || notOk(para.getLong(ID))){
 			return fail("更新用户的数据未指定id");
 		}
 		Long myWechatUserId = JBoltApiKit.getApiUserIdToLong();
