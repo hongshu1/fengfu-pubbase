@@ -1001,7 +1001,7 @@ CREATE TABLE "public"."jb_wechat_user" (
   "union_id" varchar(255) COLLATE "pg_catalog"."default",
   "sex" int4,
   "language" varchar(255) COLLATE "pg_catalog"."default",
-  "subscibe" char(1) COLLATE "pg_catalog"."default" DEFAULT '0'::bpchar NOT NULL,
+  "subscribe" char(1) COLLATE "pg_catalog"."default" DEFAULT '0'::bpchar NOT NULL,
   "country" varchar(255) COLLATE "pg_catalog"."default",
   "province" varchar(255) COLLATE "pg_catalog"."default",
   "city" varchar(255) COLLATE "pg_catalog"."default",
@@ -1039,7 +1039,7 @@ COMMENT ON COLUMN "public"."jb_wechat_user"."open_id" IS 'openId';
 COMMENT ON COLUMN "public"."jb_wechat_user"."union_id" IS 'unionID';
 COMMENT ON COLUMN "public"."jb_wechat_user"."sex" IS '性别 1男 2女 0 未知';
 COMMENT ON COLUMN "public"."jb_wechat_user"."language" IS '语言';
-COMMENT ON COLUMN "public"."jb_wechat_user"."subscibe" IS '是否已关注';
+COMMENT ON COLUMN "public"."jb_wechat_user"."subscribe" IS '是否已关注';
 COMMENT ON COLUMN "public"."jb_wechat_user"."country" IS '国家';
 COMMENT ON COLUMN "public"."jb_wechat_user"."province" IS '省';
 COMMENT ON COLUMN "public"."jb_wechat_user"."city" IS '城市';
