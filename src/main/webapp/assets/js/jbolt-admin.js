@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.3.1";
+var jbolt_admin_js_version="6.3.2";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -11186,16 +11186,16 @@ var LayerMsgBox={
  */
 var jboltAjaxTimeout=60000;
 var Ajax={
-		uploadBase64File:function(url,base64Data,fileName,success,error,sync,timeout){
+		uploadBase64File:function(url,base64Data,fileName,success,error,sync,timeout,cancelDefaultErrorMsgProcessor){
 			var blob=dataURItoBlob(base64Data);
-			this.uploadBlob(url,blob,fileName,success,error,sync,timeout);
+			this.uploadBlob(url,blob,fileName,success,error,sync,timeout,cancelDefaultErrorMsgProcessor);
 		},
-		uploadBlob:function(url,blob,fileName,success,error,sync,timeout){
+		uploadBlob:function(url,blob,fileName,success,error,sync,timeout,cancelDefaultErrorMsgProcessor){
 			var formData=new FormData();
 			formData.append("file",blob,fileName);
-			this.uploadFormData(url,formData,success,error,sync,timeout);
+			this.uploadFormData(url,formData,success,error,sync,timeout,cancelDefaultErrorMsgProcessor);
 		},
-		uploadFormData:function(url,formData,success,error,sync,timeout){
+		uploadFormData:function(url,formData,success,error,sync,timeout,cancelDefaultErrorMsgProcessor){
 		    var async=true;
 		    if(sync){async=false;}
 		    url=actionUrl(url);
@@ -11225,7 +11225,9 @@ var Ajax={
 						}else{
 							LayerMsgBox.closeLoadingNow();
 							if(error){
-								LayerMsgBox.alert(data.msg?data.msg:"上传异常",2);
+								if(!cancelDefaultErrorMsgProcessor){
+									LayerMsgBox.alert(data.msg?data.msg:"上传异常",2);
+								}
 								error(data);
 							}else{
 								LayerMsgBox.alert(data.msg,2);
@@ -11253,7 +11255,7 @@ var Ajax={
 			});
 			jboltAjaxTimeout=60000;
 		},
-		  post:function(url,data,success,error,sync,timeout,dateType){
+		  post:function(url,data,success,error,sync,timeout,dateType,cancelDefaultErrorMsgProcessor){
 			    var async=true;
 			    if(sync){async=false;}
 			    url=actionUrl(url);
@@ -11287,7 +11289,9 @@ var Ajax={
 							}else{
 								LayerMsgBox.closeLoadingNow();
 								if(error){
-									LayerMsgBox.alert(data.msg?data.msg:"请求异常",2);
+									if(!cancelDefaultErrorMsgProcessor){
+										LayerMsgBox.alert(data.msg?data.msg:"请求异常",2);
+									}
 									error(data);
 								}else{
 									LayerMsgBox.alert(data.msg,2);
@@ -11315,23 +11319,23 @@ var Ajax={
 				});
 				jboltAjaxTimeout=60000;
 			},
-			getWithForm:function(formEle,url,success,error,sync,timeout){
+			getWithForm:function(formEle,url,success,error,sync,timeout,dataType,cancelDefaultErrorMsgProcessor){
 				var form=getRealJqueryObject(formEle);
 				if(!isOk(form)){
 					LayerMsgBox.alert("请指定正确的formEle参数",2);
 					return false;
 				}
 				url=urlWithFormData(url,form);
-				this.get(url,success,error,sync,timeout);
+				this.get(url,success,error,sync,timeout,dataType,cancelDefaultErrorMsgProcessor);
 			},
-			get:function(url,success,error,sync,timeout,dateType){
+			get:function(url,success,error,sync,timeout,dataType,cancelDefaultErrorMsgProcessor){
 				var async=true;
 			    if(sync){async=false;}
 			    url=actionUrl(url);
 				$.ajax({
 					url:url,
 					type:"get",
-					dataType:dateType?dateType:"json",
+					dataType:dataType?dataType:"json",
 					timeout : timeout?timeout:jboltAjaxTimeout, //超时时间设置，单位毫秒
 					async:async,
 					success:function(data){
@@ -11352,7 +11356,9 @@ var Ajax={
 							}else{
 								LayerMsgBox.closeLoadingNow();
 								if(error){
-									LayerMsgBox.alert(data.msg?data.msg:"请求异常",2);
+									if(!cancelDefaultErrorMsgProcessor){
+										LayerMsgBox.alert(data.msg?data.msg:"请求异常",2);
+									}
 									error(data);
 								}else{
 									LayerMsgBox.alert(data.msg,2);
