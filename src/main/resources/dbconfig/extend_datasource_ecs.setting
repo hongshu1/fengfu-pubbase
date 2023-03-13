@@ -46,7 +46,7 @@ enable = true
 db_type = sqlserver
 db_name = UGCFF_MOM_DATA
 dev_mode = true
-jdbc_url = jdbc:sqlserver://172.23.119.50:1433; DatabaseName=UGCFF_MOM_DATA
+jdbc_url = jdbc:sqlserver://172.23.119.50:1433; DatabaseName=UGCFF_MOM_DATA;trustServerCertificate=true
 user = c2e3ca7016138e81
 password = 7e49b8b1a4b6f345883456093b060d0be7297a614abc7682
 is_encrypted = true
@@ -59,7 +59,7 @@ db_type = sqlserver
 db_name = U9CTest
 db_schema = dbo
 dev_mode = true
-jdbc_url = jdbc:sqlserver://172.23.119.50:1433; DatabaseName=U9CTest
+jdbc_url = jdbc:sqlserver://172.23.119.50:1433; DatabaseName=U9CTest;trustServerCertificate=true
 user = c2e3ca7016138e81
 password = 7e49b8b1a4b6f345883456093b060d0be7297a614abc7682
 is_encrypted = true
