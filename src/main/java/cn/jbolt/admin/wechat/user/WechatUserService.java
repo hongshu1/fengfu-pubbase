@@ -428,9 +428,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	 */
 	public Record getByUnionIdForApi(Long mpId, String unionId) {
 		return findFirst(selectSql(mpId).select(
-						"id,score,realname,bind_code,nickname,open_id,union_id",
-						"union_id,sex,subscribe,head_img_url,enable,session_key,mp_id",
-						"bind_user,phone,weixin,last_login_time")
+						"id,realname,nickname,open_id,union_id,union_id,sex,subscribe,head_img_url,enable,session_key,mp_id,bind_user,phone,weixin,last_login_time")
 				.eq("union_id", unionId).first());
 	}
 	/**
@@ -440,7 +438,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	 * @return
 	 */
 	public Record getByOpenIdForApi(Long mpId, String openId) {
-		return findFirst(selectSql(mpId).select("id,nickname,open_id,union_id,sex,subscribe,head_img_url,enable,session_key,mp_id,bind_user,phone,weixin").eq("open_id", openId).first());
+		return findFirst(selectSql(mpId).select("id,realname,nickname,open_id,union_id,sex,subscribe,head_img_url,enable,session_key,mp_id,bind_user,phone,weixin").eq("open_id", openId).first());
 	}
 	/**
 	 * 根据openId获取用户
