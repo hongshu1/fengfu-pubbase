@@ -1,0 +1,6 @@
+Windows Server安装服务
+
+1、派生工程中，修改工程根目录中的service目录中的jbolt.xml文件，修改id/name/description为派生工程的应用名
+2、dev环境内存占用默认为256M、prod环境内存占用默认为4096M，可修改jbolt.xml中JAVA_OPTS的内存大小（可选）
+3、在输出的打包目录中，建议放到部署目录中再操作，执行jbolt install 安装服务
+4、启动服务/停止服务 net start/start jbolt （服务名根据xml中的名称指定）

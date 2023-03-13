@@ -1,0 +1,12 @@
+<service>
+    <id>fengfu-pubbase</id>
+    <name>fengfu-pubbase</name>
+    <description>fengfu-pubbase</description>
+    <executable>java</executable>
+    <log mode="roll"/>
+    <env name="MAIN_CLASS" value="cn.jbolt.starter.Starter"/>
+    <env name="JAVA_OPTS" value="-Xms512m -Xmx4096m -Dundertow.host=0.0.0.0"/>
+    <env name="APP_BASE_PATH" value="%BASE%"/>
+    <env name="CP" value="%APP_BASE_PATH%\config;%APP_BASE_PATH%\lib\*"/>
+    <arguments>-Xverify:none %JAVA_OPTS% -cp %CP% %MAIN_CLASS%</arguments>
+</service>

@@ -1,1 +1,0 @@
-exec sp_rename '[jb_wechat_user].[subscibe]‘，’[jb_wechat_user].[subscribe]';
