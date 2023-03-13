@@ -1,0 +1,125 @@
+<form onsubmit="return false;" id="Application_Form" action="#(action)" method="post">
+
+    #if(application.id??)
+    <input type="hidden" name="application.id" value="#(application.id??)"/>
+    #end
+
+    <div class="form-group row">
+        <!--<label class="col-sm-2 col-form-label">节点层次</label>
+        <div class="col">
+            <input type="number" data-rule="required" data-notnull="true" data-tips="请输入节点层次" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="40" name="application.nodeLevel" value="#(application.nodeLevel??)"/>
+        </div>-->
+        <label class="col-sm-2 col-form-label">父节点</label>
+        <div class="col">
+            <select class="form-control"
+                    name="application.parentId"
+                    data-autoload
+                    data-tips="请选择上级"
+                    data-url="admin/application/options"
+                    data-text-attr="shortName"
+                    data-value-attr="id"
+                    data-text="=请选择="
+                    data-placeholder="=请选择="
+                    data-value="0"
+                    data-select="#(application.parentId??0)">
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">编码</label>
+        <div class="col">
+            <input type="text" data-rule="required" data-notnull="true" data-tips="请输入编码" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="40" name="application.appCode" value="#(application.appCode??)"/>
+        </div>
+        <label class="col-sm-2 col-form-label">名称</label>
+        <div class="col">
+            <input type="text" data-rule="required" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="40" name="application.appName" value="#(application.appName??)"/>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">简称</label>
+        <div class="col">
+            <input type="text" data-rule="required" data-notnull="true" data-tips="请输入编码" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="40" name="application.shortName" value="#(application.shortName??)"/>
+        </div>
+        <label class="col-sm-2 col-form-label">版本号</label>
+        <div class="col">
+            <input type="number" data-rule="required" data-notnull="true" data-tips="请输入版本号" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="40" name="application.versionNum" value="#(application.versionNum??)"/>
+        </div>
+    </div>
+
+    <!--
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">顺序号</label>
+        <div class="col">
+            <input type="number" data-rule="required" data-notnull="true" data-tips="请输入顺序号" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="40" name="application.seq" value="#(application.seq??)"/>
+        </div>
+    </div>
+    -->
+
+    <div class="form-group row">
+        <label class="col-form-label col-sm-2">ICONS</label>
+        <div class="col">
+            <input type="text" autocomplete="off" maxlength="40" placeholder="请输入ICONS" name="application.icons" value="#(application.icons??)" class="form-control">
+            <small class="form-text text-danger">提示：icon哪里找？<a class="btn btn-link text-primary" href="http://www.fontawesome.com.cn/faicons" target="_blank">点击查看fontawesome</a> <a class="btn btn-link text-success" href="assets/plugins/font/alifont/icons.html" target="_blank">点击查看jbicon</a></small>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">生效日期</label>
+        <div class="col">
+            <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-rule="required" data-notnull="true" data-tips="请输入生效日期" autocomplete="off" class="form-control" maxlength="20" name="application.effectiveDate" value="#datetime(application.effectiveDate??,'yyyy-MM-dd')"/>
+        </div>
+        <label class="col-sm-2 col-form-label">失效日期</label>
+        <div class="col">
+            <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-rule="required" data-notnull="true" data-tips="请输入失效日期" autocomplete="off" class="form-control" maxlength="20" name="application.disableDate" value="#datetime(application.disableDate??,'yyyy-MM-dd')"/>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <!--<div class="row col-6"
+             data-radio
+             data-name="application.isLeaf"
+             data-value-attr="sn"
+             data-default="false"
+             data-url="admin/dictionary/options?key=options_enable"
+             data-label="叶节点"
+             data-width="col-sm-4,col"
+             data-value="#(application.isLeaf??)"
+             data-rule="radio"
+             data-notnull="true"
+             data-tips="请输入叶节点"
+             data-inline="true"
+        >
+        </div>-->
+        <div class="row col-6"
+             data-radio
+             data-name="application.isEffective"
+             data-value-attr="sn"
+             data-default="options_first"
+             data-url="admin/dictionary/options?key=options_enable"
+             data-label="是否生效"
+             data-width="col-sm-4,col"
+             data-value="#(application.isEffective??)"
+             data-rule="radio"
+             data-notnull="true"
+             data-tips="请选择是否生效"
+             data-inline="true"
+        >
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">描述</label>
+        <div class="col">
+            <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="200" name="application.description">#(application.description??)</textarea>
+        </div>
+    </div>
+
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="Application_Form")
+#end
+

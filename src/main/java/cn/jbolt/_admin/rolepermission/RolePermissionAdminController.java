@@ -13,6 +13,8 @@ import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.model.Role;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import com.jfinal.core.paragetter.Para;
+
 @CheckPermission(PermissionKey.ROLE)
 @UnCheckIfSystemAdmin
 public class RolePermissionAdminController extends JBoltBaseController {
@@ -78,4 +80,21 @@ public class RolePermissionAdminController extends JBoltBaseController {
 	public void clear() {
 		renderJson(service.deleteByRole(getLong(0)));
 	}
+
+    public void index() {
+        keepPara();
+        render("index.html");
+    }
+
+    /**
+     * 权限资源授权
+     */
+    public void permissionTree(@Para(value = "openLevel") Integer openLevel,
+                               @Para(value = "applicationId") Long applicationId,
+                               @Para(value = "enableIcon") String icon,
+                               @Para(value = "roletype") Integer roletype,
+                               @Para(value = "id") Long id) {
+        renderJsonData(service.getPermissionTree(openLevel, applicationId, icon, roletype, id));
+    }
+
 }

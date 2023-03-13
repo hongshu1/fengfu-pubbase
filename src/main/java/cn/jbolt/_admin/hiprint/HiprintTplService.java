@@ -2,6 +2,7 @@ package cn.jbolt._admin.hiprint;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
@@ -95,6 +96,10 @@ public class HiprintTplService extends JBoltBaseService<HiprintTpl> {
 	protected int systemLogTargetType() {
 		return JBoltProSystemLogTargetType.HIPRINT_TPL.getValue();
 	}
-	
+
+
+	public HiprintTpl findHiprintTplBySn(String sn){
+		return findFirst(Okv.by("sn", sn),"id","DESC");
+	}
 
 }

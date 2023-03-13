@@ -1,0 +1,44 @@
+<script>
+    function getEditableTableOptions_#(pageId)2(table) {
+        var editableTableOptions = {
+            trigger: "click",
+            initRowCount: 0,
+            submit: {
+                type: "multi",
+                name: 'thirdparty'
+                //params:{"orderId":3},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols: {
+                id: {
+                    submitAttr: "id",
+                },
+                thirdpartySystem: {
+                    type: "select",
+                    url: "/admin/enums/thirdpartysystem",
+                    valueAttr: "value",
+                    textAttr: "text",
+                    placeholder: "=请选择=",
+                    required: true,
+                },
+                thirdpartyCode: {
+                    type: "input",
+                    required: true
+                },
+                thirdpartyName: {
+                    type: "input"
+                },
+                thirdpartyPwd: {
+                    type: "input",
+                    rule: 'pint'
+                },
+                remark: {
+                    type: "input"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

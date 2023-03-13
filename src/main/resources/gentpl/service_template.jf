@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.List;
 #end
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.JBoltBaseService;
+import cn.rjtech.base.service.BaseService;
 #if(mainLogicBean.projectSystemLogTargetType && mainLogicBean.projectSystemLogTargetType!="ProjectSystemLogTargetType.NONE")
 import cn.jbolt.core.kit.JBoltUserKit;
 #end
@@ -23,21 +23,23 @@ import cn.jbolt.core.base.JBoltMsg;
 import #(modelImport);
 /**
  * #(mainLogicBean.pageTitle??) Service
- * @ClassName: #(serviceName??)   
+ * @ClassName: #(serviceName??)
  * @author: #(author?? 'JBolt-Generator')
- * @date: #date()  
+ * @date: #date()
  */
-public class #(serviceName) extends JBoltBaseService<#(modelName)> {
-	private final #(modelName) dao=new #(modelName)().dao();
+public class #(serviceName) extends BaseService<#(modelName)> {
+
+	private final #(modelName) dao = new #(modelName)().dao();
+
 	@Override
 	protected #(modelName) dao() {
 		return dao;
 	}
-		
+
 #if(methods!=null&&methods.size()>0)
 	#for(method:methods)
 	#@genServiceMethod(method,modelName,mainLogicBean)
-	
+
 	#end
 #end
 }

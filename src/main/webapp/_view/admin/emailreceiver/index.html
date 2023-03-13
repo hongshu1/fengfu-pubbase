@@ -1,0 +1,77 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h1><i class="jbicon2 jbi-sound"></i>邮件收件人管理</h1>
+            </div>
+            <div class="col-5">
+                <form class="form-inline" id="emailReceiverForm_#(pageId)" onsubmit="return false;" method="post">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords" value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="emailReceiverRowtpl_#(pageId)">
+            {@each datas as data,index}
+                <tr data-id="${data.id}">
+                    <td>${data.receiverType  == 1 ? '异常通知' : ''}</td>
+                    <td>${data.email}</td>
+                    <td><img data-switchbtn data-confirm="确定切换启用状态?" data-value="${data.enable}"  data-handler="refreshJBoltTable"  data-url="admin/emailreceiver/toggleEnable/${data.id}"/></td>
+                    <td>${data.createTime}</td>
+                    <td>${data.updateTime}</td>
+                </tr>
+            {@/each}
+        </textarea>
+
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="emailReceiver_toolbar_#(pageId)">
+            <div class="btn-group" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="600,500" data-handler="refreshJBoltTable" data-title="新增邮件数据" data-url="admin/emailreceiver/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i>新增</button>
+                <button data-dialogbtn data-handler="refreshPjaxContainer" data-title="邮件数据" data-check-handler="jboltTableGetCheckedId" data-url="admin/emailreceiver/edit/" class="btn btn-outline-info btn-sm" data-area="600,600"><i class="fa fa-edit"></i>编辑</button>
+                <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/emailreceiver/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i>删除</button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table table_striped table-center"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               data-column-prepend="1:checkbox:true"
+               data-url="admin/emailreceiver/datas"
+               data-column-resize="true"
+               data-conditions-form="emailReceiverForm_#(pageId)"
+               data-rowtpl="emailReceiverRowtpl_#(pageId)"
+               data-page="emailReceiverPage_#(pageId)"
+               data-toolbar="emailReceiver_toolbar_#(pageId)"
+               data-pagesize="50"
+               data-fixed-columns-left="1,2">
+            <thead>
+            <tr>
+                <th data-width="150" data-column="receiver_type">接收者类型</th>
+                <th data-width="200" data-column="email">邮箱地址</th>
+                <th data-width="100" data-column="enable">启用状态</th>
+                <th data-width="150" data-column="create_time">创建时间</th>
+                <th data-width="150" data-column="update_time">更新时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+#end
+

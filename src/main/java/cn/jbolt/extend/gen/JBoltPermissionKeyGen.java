@@ -1,26 +1,29 @@
 package cn.jbolt.extend.gen;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import javax.sql.DataSource;
-
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.jbolt.core.base.config.JBoltConfig;
+import cn.jbolt.core.model.Permission;
+import cn.jbolt.core.model.PermissionBtn;
 import cn.jbolt.core.util.JBoltStringUtil;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.template.Engine;
 import com.jfinal.template.Template;
 
-import cn.hutool.core.io.FileUtil;
-import cn.jbolt.core.base.config.JBoltConfig;
-import cn.jbolt.core.model.Permission;
+import javax.sql.DataSource;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
- * 本系统中资源权限表里定义的资源 
+ * 本系统中资源权限表里定义的资源
  * 快捷生成静态常量到PermissionKey.java文件中，
  * 方便其他地方统一调用
  */
@@ -60,14 +63,19 @@ public class JBoltPermissionKeyGen {
 		//设置不区分大小写
 		activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory(true));
 		activeRecordPlugin.addMapping("jb_permission", "id", Permission.class);
+        activeRecordPlugin.addMapping("base_permission_btn", "id", PermissionBtn.class);
 		activeRecordPlugin.start();
-		List<Permission> permissions = new Permission().dao().findAll();
+		List<Record> permissions = Db.find("SELECT permission_key AS permissionKey, title FROM jb_permission WHERE is_deleted = '0' ");
+        List<Record> btnPermissions = Db.find("SELECT permission_key AS permissionKey, btn_name AS title FROM base_permission_btn ");
+        if (CollUtil.isNotEmpty(btnPermissions)) {
+            permissions.addAll(btnPermissions);
+        }
 		Engine engine = new Engine();
 //		engine.setStaticFieldExpression(true);
 //		engine.setStaticMethodExpression(true);
 		engine.addSharedObject("JBoltStringUtil", new JBoltStringUtil());
 		Template template=engine.getTemplate(TPL);
-		BufferedWriter writer=FileUtil.getWriter(TARGET, "utf-8", false);
+		BufferedWriter writer=FileUtil.getWriter(TARGET, StandardCharsets.UTF_8, false);
 		try {
 			writer.write(template.renderToString(Kv.by("permissions", permissions)));
 			writer.flush();
@@ -88,7 +96,7 @@ public class JBoltPermissionKeyGen {
 				druidPlugin.stop();
 			}
 		}
-	
-		
+
+
 	}
 }

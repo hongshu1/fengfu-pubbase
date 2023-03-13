@@ -1,0 +1,59 @@
+<form onsubmit="return false;" id="orgForm" action="#(action)" method="post">
+#if(org.id??)
+	<input type="hidden" name="org.id" value="#(org.id)" />
+#end
+	<div class="form-group row">
+		<label class="col-2 col-form-label">组织名称</label>
+		<div class="col-8">
+			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入组织名称" data-tips="请输入组织名称" maxlength="40" name="org.orgName" value="#(org.orgName??)">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-2 col-form-label">U8数据源别名</label>
+		<div class="col-8">
+			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入U8数据源别名" data-tips="请输入U8数据源别名" maxlength="40" name="org.u8Alias" value="#(org.u8Alias??)">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-2 col-form-label">组织编码</label>
+		<div class="col-8">
+			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入组织编码" data-tips="请输入组织编码" maxlength="40" name="org.orgCode" value="#(org.orgCode??)">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-2 col-form-label">U8数据库名</label>
+		<div class="col-8">
+			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入U8数据库名" data-tips="请输入U8数据库名" maxlength="40" name="org.u8Dbname" value="#(org.u8Dbname??)">
+		</div>
+	</div>
+    <div class="form-group row"
+         data-radio
+         data-rule="radio"
+         data-value="#(org.enable??)"
+         data-name="org.enable"
+         data-default="true">
+        <label class="col-2 col-form-label">是否启用</label>
+        <div class="col-2" style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input id="rismenutrue" type="radio" name="org.enable" value="true"/>
+                <label for="rismenutrue">是</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input id="rismenufalse" type="radio" name="org.enable" value="false"/>
+                <label for="rismenufalse">否</label>
+            </div>
+
+        </div>
+    </div>
+	<div class="form-group row">
+		<label class="col-2 col-form-label">备注</label>
+		<div class="col-8">
+			<input type="text" autocomplete="off"  class="form-control" placeholder="请输入备注" data-tips="请输入备注" maxlength="40" name="org.remark" value="#(org.remark??)">
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="orgForm")
+#end

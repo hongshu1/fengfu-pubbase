@@ -44,7 +44,7 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 								cancelParentLayerDialogOkBtnStateToSubmiting();
 								cancelParentLayerAllDialogBtnStateToDisabled();
 								if(successCallback){
-									successCallback();
+									successCallback(ret.data);
 								}
 							});
 						});
@@ -55,11 +55,11 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 							cancelParentLayerDialogOkBtnStateToSubmiting();
 							cancelParentLayerAllDialogBtnStateToDisabled();
 							if(successCallback){
-								successCallback();
+								successCallback(ret.data);
 							}
 						});
 					}
-					
+
 				}else{
 					_submit_ing=false;
 					cancelLayerDialogFormSubmiting(form);
@@ -95,7 +95,7 @@ function submitThisForm#(randomFunctionName??)(successCallback){
 							LayerMsgBox.error("操作异常",1500);
 						}
 					}
-					
+
 				}
 			},
 			error:function(){

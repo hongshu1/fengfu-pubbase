@@ -1,64 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>cn.jbolt</groupId>
-	<artifactId>fengfu-pubbase</artifactId>
-	<version>4.1.2</version>
-	<packaging>jar</packaging>
-	<name>fengfu-pubbase</name>
-	<description>JBolt-基于JFinal的极速开发框架</description>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>cn.jbolt</groupId>
+    <artifactId>fengfu-pubbase</artifactId>
+    <version>4.1.2</version>
+    <packaging>jar</packaging>
+    <name>fengfu-pubbase</name>
+    <description>JBolt-基于JFinal的极速开发框架</description>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-		<jdk.version>1.8</jdk.version>
-		<junit.version>5.9.2</junit.version>
-		<cglib.version>3.3.0</cglib.version>
-		<jfinal.version>5.0.8-1</jfinal.version>
-		<oshi.version>6.4.0</oshi.version>
-		<jna.version>5.13.0</jna.version>
-		<cos.version>2022.2</cos.version>
-		<emoji-java.version>5.1.1</emoji-java.version>
-		<druid.version>1.2.16</druid.version>
-		<fastjson.version>1.2.83</fastjson.version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <jdk.version>1.8</jdk.version>
+        <junit.version>5.9.2</junit.version>
+        <cglib.version>3.3.0</cglib.version>
+        <jfinal.version>5.0.8-1</jfinal.version>
+        <oshi.version>6.4.0</oshi.version>
+        <jna.version>5.13.0</jna.version>
+        <cos.version>2022.2</cos.version>
+        <emoji-java.version>5.1.1</emoji-java.version>
+        <druid.version>1.2.16</druid.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <fastjson2.version>2.0.24</fastjson2.version>
-		<mysql.version>8.0.31</mysql.version>
-		<oracle.version>21.5.0.0</oracle.version>
-		<sqlserver.version>9.4.1.jre8</sqlserver.version>
-		<dm.version>8.1.2.141</dm.version>
-		<postgresql.version>42.3.3</postgresql.version>
-		<jsoup.version>1.15.4</jsoup.version>
-		<cron4j.version>2.2.5</cron4j.version>
-		<jfinalweixin.version>3.4.1</jfinalweixin.version>
-		<ehcache.version>2.6.11</ehcache.version>
-		<caffeine.version>2.9.3</caffeine.version>
-		<jedis.version>3.9.0</jedis.version>
-		<fst.version>2.57</fst.version>
-		<hutool.version>5.8.14</hutool.version>
-		<slf4j.version>2.0.6</slf4j.version>
-		<log4j2.version>2.20.0</log4j2.version>
-		<jfinalundertow.version>3.4</jfinalundertow.version>
-		<thumbnailator.version>0.4.17</thumbnailator.version>
-		<pinyin4j.version>2.5.1</pinyin4j.version>
-		<commonslang.version>3.12.0</commonslang.version>
-		<jwt.version>0.11.5</jwt.version>
-		<zxing.version>3.5.1</zxing.version>
-		<poi.version>4.1.2</poi.version>
-		<xerces.version>2.12.2</xerces.version>
-		<okhttp.version>4.10.0</okhttp.version>
-		<hikaricp.version>4.0.3</hikaricp.version>
-		<screw.version>1.0.5</screw.version>
-		<prettytime.version>5.0.6.Final</prettytime.version>
-		<ureport.version>2.2.9</ureport.version>
-		<jackson.version>2.14.2</jackson.version>
-		<ip2region.version>1.7.2</ip2region.version>
-		<jfinalevent.version>3.1.3</jfinalevent.version>
-		<qiniu.version>7.12.1</qiniu.version>
-		<sentinel.version>1.8.6</sentinel.version>
-		<ttl.version>2.14.2</ttl.version>
-		<toolgood_words.version>3.1.0.0</toolgood_words.version>
-		<codehighlight.version>1.0.3</codehighlight.version>
-		<jboltcore.version>4.1.2</jboltcore.version>
+        <mysql.version>8.0.31</mysql.version>
+        <oracle.version>21.5.0.0</oracle.version>
+        <sqlserver.version>9.4.1.jre8</sqlserver.version>
+        <dm.version>8.1.2.141</dm.version>
+        <postgresql.version>42.3.3</postgresql.version>
+        <jsoup.version>1.15.4</jsoup.version>
+        <cron4j.version>2.2.5</cron4j.version>
+        <jfinalweixin.version>3.4.1</jfinalweixin.version>
+        <ehcache.version>2.6.11</ehcache.version>
+        <caffeine.version>2.9.3</caffeine.version>
+        <jedis.version>3.9.0</jedis.version>
+        <fst.version>2.57</fst.version>
+        <hutool.version>5.8.14</hutool.version>
+        <slf4j.version>2.0.6</slf4j.version>
+        <log4j2.version>2.20.0</log4j2.version>
+        <jfinalundertow.version>3.4</jfinalundertow.version>
+        <thumbnailator.version>0.4.17</thumbnailator.version>
+        <pinyin4j.version>2.5.1</pinyin4j.version>
+        <commonslang.version>3.12.0</commonslang.version>
+        <jwt.version>0.11.5</jwt.version>
+        <zxing.version>3.5.1</zxing.version>
+        <poi.version>4.1.2</poi.version>
+        <xerces.version>2.12.2</xerces.version>
+        <okhttp.version>4.10.0</okhttp.version>
+        <hikaricp.version>4.0.3</hikaricp.version>
+        <screw.version>1.0.5</screw.version>
+        <prettytime.version>5.0.6.Final</prettytime.version>
+        <ureport.version>2.2.9</ureport.version>
+        <jackson.version>2.14.2</jackson.version>
+        <ip2region.version>1.7.2</ip2region.version>
+        <jfinalevent.version>3.1.3</jfinalevent.version>
+        <qiniu.version>7.12.1</qiniu.version>
+        <sentinel.version>1.8.6</sentinel.version>
+        <ttl.version>2.14.2</ttl.version>
+        <toolgood_words.version>3.1.0.0</toolgood_words.version>
+        <codehighlight.version>1.0.3</codehighlight.version>
+        <jboltcore.version>4.1.2</jboltcore.version>
 
         <kotlin.version>1.8.10</kotlin.version>
         <commons-io.version>2.11.0</commons-io.version>
@@ -72,6 +72,11 @@
         <gson.version>2.10.1</gson.version>
         <jxlss.version>1.0.7</jxlss.version>
         <undertow.version>2.2.22.Final</undertow.version>
+        <spire.xls.free.version>5.1.0</spire.xls.free.version>
+        <japidocs.version>1.4.4</japidocs.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <commons-codec.version>1.15</commons-codec.version>
+        <commons-text.version>1.10.0</commons-text.version>
 
         <aliyun-java-sdk-core.version>4.6.3</aliyun-java-sdk-core.version>
         <aliyun-java-sdk-sms.version>3.0.0-rc1</aliyun-java-sdk-sms.version>
@@ -83,139 +88,142 @@
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-	</properties>
+        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+    </properties>
 
-	<!-- 使用阿里 maven 库 -->
-	<repositories>
-		<!-- <repository>
-			<id>localrepository</id>
-			<url>file://${basedir}/repo</url>
-		</repository> -->
-		<repository>
-			<id>ali-maven</id>
-			<url>https://maven.aliyun.com/repository/central</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>repo1</id>
-			<url>https://repo1.maven.org/maven2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-		</repository>
-	</repositories>
+    <!-- 使用阿里 maven 库 -->
+    <repositories>
+        <!-- <repository>
+            <id>localrepository</id>
+            <url>file://${basedir}/repo</url>
+        </repository> -->
+        <repository>
+            <id>ali-maven</id>
+            <url>https://maven.aliyun.com/repository/central</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>repo1</id>
+            <url>https://repo1.maven.org/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>com.e-iceblue</id>
+            <name>e-iceblue</name>
+            <url>https://repo.e-iceblue.cn/repository/maven-public/</url>
+        </repository>
+    </repositories>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-    		<artifactId>junit-jupiter-engine</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!--如果config.properties配置动态代理类型为cglib 就解开注释-->
-		<!--<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
-			<version>${cglib.version}</version>
-		</dependency>-->
-		<dependency>
-			<groupId>com.jfinal</groupId>
-			<artifactId>cos</artifactId>
-			<version>${cos.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>${jsoup.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.deepoove</groupId>
-			<artifactId>codehighlight</artifactId>
-			<version>${codehighlight.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-		  <groupId>com.vdurmont</groupId>
-		  <artifactId>emoji-java</artifactId>
-		  <version>${emoji-java.version}</version>
-		</dependency>
-		<!-- <dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
-		</dependency> -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>${commonslang.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>druid</artifactId>
-			<version>${druid.version}</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--如果config.properties配置动态代理类型为cglib 就解开注释-->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>${cglib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jfinal</groupId>
+            <artifactId>cos</artifactId>
+            <version>${cos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.deepoove</groupId>
+            <artifactId>codehighlight</artifactId>
+            <version>${codehighlight.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>emoji-java</artifactId>
+            <version>${emoji-java.version}</version>
+        </dependency>
+        <!-- <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency> -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commonslang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>${fastjson.version}</version>
-		</dependency>
-		<!--<dependency>
-			<groupId>com.alibaba.fastjson2</groupId>
-			<artifactId>fastjson2</artifactId>
-			<version>${fastjson.version}</version>
-		</dependency>-->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.version}</version>
-		</dependency>
-		<!-- 默认是Mysql，如果启用Oracle 请将注释解开 -->
-		<!-- <dependency>
-		    <groupId>com.oracle.database.jdbc</groupId>
-		    <artifactId>ojdbc8</artifactId>
-		    <version>${oracle.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.oracle.database.nls</groupId>
-		    <artifactId>orai18n</artifactId>
-		    <version>${oracle.version}</version>
-		</dependency>-->
-		<!-- SqlServer 4 -->
-		<!-- <dependency>
-	    	<groupId>com.microsoft.sqlserver</groupId>
-		    <artifactId>sqljdbc4</artifactId>
-		    <version>${sqlserver4.version}</version>
-		</dependency> -->
-		<!-- SqlServer 8 --><dependency>
-        <groupId>com.microsoft.sqlserver</groupId>
-        <artifactId>mssql-jdbc</artifactId>
-        <version>${sqlserver.version}</version>
-    </dependency>
-	<!--	<dependency>
-		    <groupId>com.microsoft.sqlserver</groupId>
-		    <artifactId>mssql-jdbc</artifactId>
-		    <version>${sqlserver.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>-->
+        <!--<dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>-->
+        <!-- 默认是Mysql，如果启用Oracle 请将注释解开 -->
+        <!-- <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>${oracle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.database.nls</groupId>
+            <artifactId>orai18n</artifactId>
+            <version>${oracle.version}</version>
+        </dependency>-->
+        <!-- SqlServer 4 -->
+        <!-- <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+            <version>${sqlserver4.version}</version>
+        </dependency> -->
+        <!-- SqlServer 8 -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>${sqlserver.version}</version>
+        </dependency>
 
-		<dependency>
-	    	<groupId>org.postgresql</groupId>
-	   	 	<artifactId>postgresql</artifactId>
-	  	 	<version>${postgresql.version}</version>
-		</dependency>
+        <!--<dependency>
+            <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+               <version>${postgresql.version}</version>
+        </dependency>-->
 
+        <!--
 		<dependency>
 			<groupId>com.dameng</groupId>
 			<artifactId>DmJdbcDriver18</artifactId>
@@ -223,346 +231,439 @@
 		</dependency>
 -->
 
-		<dependency>
-			<groupId>com.belerweb</groupId>
-			<artifactId>pinyin4j</artifactId>
-			<version>${pinyin4j.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.belerweb</groupId>
+            <artifactId>pinyin4j</artifactId>
+            <version>${pinyin4j.version}</version>
+        </dependency>
 
-		<!-- jwt -->
+        <!-- jwt -->
 
-		<dependency>
-		    <groupId>io.jsonwebtoken</groupId>
-		    <artifactId>jjwt-api</artifactId>
-		    <version>${jwt.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>io.jsonwebtoken</groupId>
-		    <artifactId>jjwt-impl</artifactId>
-		    <version>${jwt.version}</version>
-		    <scope>runtime</scope>
-		</dependency>
-		<dependency>
-		    <groupId>io.jsonwebtoken</groupId>
-		    <artifactId>jjwt-jackson</artifactId>
-		    <version>${jwt.version}</version>
-		   <exclusions>
-		    	<exclusion>
-		    		<groupId>com.fasterxml.jackson.core</groupId>
-		    		<artifactId>jackson-databind</artifactId>
-		    	</exclusion>
-		    </exclusions>
-		    <scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jwt.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>runtime</scope>
+        </dependency>
 
-		<dependency>
-		  	<groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-databind</artifactId>
-		    <version>${jackson.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-		    <groupId>com.google.zxing</groupId>
-		    <artifactId>javase</artifactId>
-		    <version>${zxing.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>xerces</groupId>
-		    <artifactId>xercesImpl</artifactId>
-		    <version>${xerces.version}</version>
-		</dependency>
-		<!--<dependency>
-		    <groupId>com.squareup.okhttp3</groupId>
-		    <artifactId>okhttp</artifactId>
-		    <version>${okhttp.version}</version>
-		</dependency>-->
-		<!-- undertow -->
-		<dependency>
-			<groupId>com.jfinal</groupId>
-			<artifactId>jfinal-undertow</artifactId>
-			<version>${jfinalundertow.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>${zxing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>${xerces.version}</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+        </dependency>-->
+        <!-- undertow -->
+        <dependency>
+            <groupId>com.jfinal</groupId>
+            <artifactId>jfinal-undertow</artifactId>
+            <version>${jfinalundertow.version}</version>
+        </dependency>
 
-		<!-- JFinal Undertow jsp支持 -->
-		<!-- <dependency>
-		   <groupId>io.undertow.jastow</groupId>
-		   <artifactId>jastow</artifactId>
-		   <version>2.1.0.Final</version>
-		   <exclusions>
-		      以下两个包跟jfinal-undertow依赖冲突
-		      <exclusion>
-		         <groupId>io.undertow</groupId>
-		         <artifactId>undertow-servlet</artifactId>
-		      </exclusion>
-		      <exclusion>
-		         <groupId>org.jboss.logging</groupId>
-		         <artifactId>jboss-logging</artifactId>
-		      </exclusion>
-		   </exclusions>
-		</dependency>
-		<dependency>
-		   <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
-		   <artifactId>jboss-jsp-api_2.3_spec</artifactId>
-		   <version>2.0.0.Final</version>
-		</dependency> -->
+        <!-- JFinal Undertow jsp支持 -->
+        <!-- <dependency>
+           <groupId>io.undertow.jastow</groupId>
+           <artifactId>jastow</artifactId>
+           <version>2.1.0.Final</version>
+           <exclusions>
+              以下两个包跟jfinal-undertow依赖冲突
+              <exclusion>
+                 <groupId>io.undertow</groupId>
+                 <artifactId>undertow-servlet</artifactId>
+              </exclusion>
+              <exclusion>
+                 <groupId>org.jboss.logging</groupId>
+                 <artifactId>jboss-logging</artifactId>
+              </exclusion>
+           </exclusions>
+        </dependency>
+        <dependency>
+           <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
+           <artifactId>jboss-jsp-api_2.3_spec</artifactId>
+           <version>2.0.0.Final</version>
+        </dependency> -->
 
-		<!-- WebSocket 支持 -->
-		<dependency>
-		    <groupId>io.undertow</groupId>
-		    <artifactId>undertow-websockets-jsr</artifactId>
-		    <version>${undertow.version}</version>
-		</dependency>
+        <!-- WebSocket 支持 -->
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-websockets-jsr</artifactId>
+            <version>${undertow.version}</version>
+        </dependency>
 
-		<!-- 避免控制台输出如下提示信息： SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-			项目中实际上用不到这个 jar 包 注意：eclipse 下可以将 scope 设置为 provided -->
+        <!-- 避免控制台输出如下提示信息： SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+            项目中实际上用不到这个 jar 包 注意：eclipse 下可以将 scope 设置为 provided -->
 
-		<!--slf4j及log4j日志-->
-		<!--门面-->
-		<dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-		    <version>${slf4j.version}</version>
-		</dependency>
-		<!--桥接器:告诉slf4j使用slf4j-simple 如果需要 请注释下方Log4j2 解开simple-->
-		<!-- <dependency>
-		       <groupId>org.slf4j</groupId>
-		       <artifactId>slf4j-simple</artifactId>
-		       <version>${slf4j.version}</version>
-		</dependency> -->
-		<!--桥接器:告诉slf4j使用Log4j2-->
-		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-slf4j2-impl</artifactId>
-		    <version>${log4j2.version}</version>
-		    <exclusions>
-		        <exclusion>
-		            <artifactId>slf4j-api</artifactId>
-		            <groupId>org.slf4j</groupId>
-		        </exclusion>
-		    </exclusions>
-		</dependency>
-		<!--具体实现,log4j2-->
-		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-api</artifactId>
-		    <version>${log4j2.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-core</artifactId>
-		    <version>${log4j2.version}</version>
-		</dependency>
-		<!--用于解决web环境下关闭服务器时可能出现的log4j线程无法及时关闭的warn，web工程需要包含log4j-web，非web工程不需要 -->
-		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-web -->
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-web</artifactId>
-			<scope>runtime</scope>
-			<version>${log4j2.version}</version>
-		</dependency>
+        <!--slf4j及log4j日志-->
+        <!--门面-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <!--桥接器:告诉slf4j使用slf4j-simple 如果需要 请注释下方Log4j2 解开simple-->
+        <!-- <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-simple</artifactId>
+               <version>${slf4j.version}</version>
+        </dependency> -->
+        <!--桥接器:告诉slf4j使用Log4j2-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>${log4j2.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--具体实现,log4j2-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <!--用于解决web环境下关闭服务器时可能出现的log4j线程无法及时关闭的warn，web工程需要包含log4j-web，非web工程不需要 -->
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-web -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <scope>runtime</scope>
+            <version>${log4j2.version}</version>
+        </dependency>
 
-		<!--使用log4j2的AsyncLogger时需要包含disruptor -->
-		<!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
-		<!-- <dependency>
-		    <groupId>com.lmax</groupId>
-		    <artifactId>disruptor</artifactId>
-		    <scope>runtime</scope>
-		    <version>3.4.2</version>
-		</dependency> -->
-
-
+        <!--使用log4j2的AsyncLogger时需要包含disruptor -->
+        <!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
+        <!-- <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <scope>runtime</scope>
+            <version>3.4.2</version>
+        </dependency> -->
 
 
-		<!--自选库 -->
-		<dependency>
-		    <groupId>com.jfinal</groupId>
-		    <artifactId>jfinal-weixin</artifactId>
-		    <version>${jfinalweixin.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>it.sauronsoftware.cron4j</groupId>
-			<artifactId>cron4j</artifactId>
-			<version>${cron4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache-core</artifactId>
-			<version>${ehcache.version}</version>
-		</dependency>
-
-		<!-- caffeine 缓存 -->
-		<!--<dependency>
-		   <groupId>com.github.ben-manes.caffeine</groupId>
-		   <artifactId>caffeine</artifactId>
-		   <version>${caffeine.version}</version>
-		</dependency>-->
-
-		<!--<dependency>
-		    <groupId>redis.clients</groupId>
-		    <artifactId>jedis</artifactId>
-		    <version>${jedis.version}</version>
-		</dependency>
-
-		<dependency>
-		    <groupId>de.ruedigermoeller</groupId>
-		    <artifactId>fst</artifactId>
-		    <version>${fst.version}</version>
-		</dependency>-->
 
 
-		<dependency>
-			<groupId>cn.hutool</groupId>
-			<artifactId>hutool-all</artifactId>
-			<version>${hutool.version}</version>
-		</dependency>
+        <!--自选库 -->
+        <dependency>
+            <groupId>com.jfinal</groupId>
+            <artifactId>jfinal-weixin</artifactId>
+            <version>${jfinalweixin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>it.sauronsoftware.cron4j</groupId>
+            <artifactId>cron4j</artifactId>
+            <version>${cron4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+            <version>${ehcache.version}</version>
+        </dependency>
+
+        <!-- caffeine 缓存 -->
+        <!--<dependency>
+           <groupId>com.github.ben-manes.caffeine</groupId>
+           <artifactId>caffeine</artifactId>
+           <version>${caffeine.version}</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.ruedigermoeller</groupId>
+            <artifactId>fst</artifactId>
+            <version>${fst.version}</version>
+        </dependency>
 
 
-		<dependency>
-			<groupId>com.jfinal</groupId>
-			<artifactId>jfinal</artifactId>
-			<version>${jfinal.version}</version>
-		</dependency>
-
-		<dependency>
-		    <groupId>com.github.oshi</groupId>
-		    <artifactId>oshi-core</artifactId>
-		    <version>${oshi.version}</version>
-		</dependency>
-
-		<dependency>
-		    <groupId>net.java.dev.jna</groupId>
-		    <artifactId>jna</artifactId>
-		    <version>${jna.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>net.java.dev.jna</groupId>
-		    <artifactId>jna-platform</artifactId>
-		    <version>${jna.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
 
 
-		 <dependency>
+        <dependency>
+            <groupId>com.jfinal</groupId>
+            <artifactId>jfinal</artifactId>
+            <version>${jfinal.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>${oshi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>${jna.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>${jna.version}</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>${hikaricp.version}</version>
-         </dependency>
-		<dependency>
-		    <groupId>cn.smallbun.screw</groupId>
-		    <artifactId>screw-core</artifactId>
-		    <version>${screw.version}</version>
-		    <exclusions>
-		    	<exclusion>
-		    		  <groupId>ch.qos.logback</groupId>
-   					 <artifactId>logback-classic</artifactId>
-		    	</exclusion>
-		    </exclusions>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>cn.smallbun.screw</groupId>
+            <artifactId>screw-core</artifactId>
+            <version>${screw.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<dependency>
-		    <groupId>org.ocpsoft.prettytime</groupId>
-		    <artifactId>prettytime</artifactId>
-		    <version>${prettytime.version}</version>
-		</dependency>
-		<!--ureport-->
-		<dependency>
-		    <groupId>com.bstek.ureport</groupId>
-		    <artifactId>ureport2-console</artifactId>
-		    <version>${ureport.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-		    <groupId>org.lionsoul</groupId>
-		    <artifactId>ip2region</artifactId>
-		    <version>${ip2region.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.ocpsoft.prettytime</groupId>
+            <artifactId>prettytime</artifactId>
+            <version>${prettytime.version}</version>
+        </dependency>
+        <!--ureport-->
+        <dependency>
+            <groupId>com.bstek.ureport</groupId>
+            <artifactId>ureport2-console</artifactId>
+            <version>${ureport.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lionsoul</groupId>
+            <artifactId>ip2region</artifactId>
+            <version>${ip2region.version}</version>
+        </dependency>
 
-		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi</artifactId>
-		    <version>${poi.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		    <version>${poi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>ooxml-schemas</artifactId>
-			<version>1.4</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>ooxml-schemas</artifactId>
+            <version>1.4</version>
+        </dependency>
 
-		<dependency>
-		    <groupId>net.dreamlu</groupId>
-		    <artifactId>JFinal-event</artifactId>
-		    <version>${jfinalevent.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>net.dreamlu</groupId>
+            <artifactId>JFinal-event</artifactId>
+            <version>${jfinalevent.version}</version>
+        </dependency>
 
-		<dependency>
-		  <groupId>com.qiniu</groupId>
-		  <artifactId>qiniu-java-sdk</artifactId>
-		  <version>${qiniu.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>${qiniu.version}</version>
+        </dependency>
 
-		<!-- apache sentinel-->
-		<dependency>
-		    <groupId>com.alibaba.csp</groupId>
-		    <artifactId>sentinel-core</artifactId>
-		    <version>${sentinel.version}</version>
-			<scope>provided</scope>
-		</dependency>
+        <!-- apache sentinel-->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-core</artifactId>
+            <version>${sentinel.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-		    <groupId>com.alibaba.csp</groupId>
-		    <artifactId>sentinel-cluster-client-default</artifactId>
-		    <version>${sentinel.version}</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-cluster-client-default</artifactId>
+            <version>${sentinel.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-		    <groupId>com.alibaba.csp</groupId>
-		    <artifactId>sentinel-web-servlet</artifactId>
-		    <version>${sentinel.version}</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-web-servlet</artifactId>
+            <version>${sentinel.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-		    <groupId>com.alibaba.csp</groupId>
-		    <artifactId>sentinel-transport-simple-http</artifactId>
-		    <version>${sentinel.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-		    <groupId>com.alibaba.csp</groupId>
-		    <artifactId>sentinel-parameter-flow-control</artifactId>
-		    <version>${sentinel.version}</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-transport-simple-http</artifactId>
+            <version>${sentinel.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-parameter-flow-control</artifactId>
+            <version>${sentinel.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-		    <groupId>com.alibaba</groupId>
-		    <artifactId>transmittable-thread-local</artifactId>
-		    <version>${ttl.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
+            <version>${ttl.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>io.github.toolgood</groupId>
-			<artifactId>toolgood-words</artifactId>
-			<version>${toolgood_words.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>io.github.toolgood</groupId>
+            <artifactId>toolgood-words</artifactId>
+            <version>${toolgood_words.version}</version>
+        </dependency>
 
-		<dependency>
+        <dependency>
           <groupId>cn.jbolt</groupId>
-          <artifactId>jbolt_core</artifactId>
+          <artifactId>fengfu-pubbase-core</artifactId>
           <version>${jboltcore.version}</version>
           <scope>system</scope>
           <systemPath>${pom.basedir}/lib/jbolt_core.jar</systemPath>
        </dependency>
-	</dependencies>
+
+        <!--<dependency>
+            <groupId>cn.jbolt</groupId>
+            <artifactId>fengfu-pubbase-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>cn.fsdev</groupId>
+            <artifactId>jfinal-mail-plugin</artifactId>
+            <version>${jfinal-mail-plugin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>${commons-pool2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.rj-tech</groupId>
+            <artifactId>rj-jxlss</artifactId>
+            <version>${jxlss.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>poi</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>poi-ooxml</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>e-iceblue</groupId>
+            <artifactId>spire.xls.free</artifactId>
+            <version>${spire.xls.free.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.yedaxia</groupId>
+            <artifactId>japidocs</artifactId>
+            <version>${japidocs.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text.version}</version>
+        </dependency>
+
+    </dependencies>
 
 
-	<build>
-		<finalName>fengfu-pubbase</finalName>
+    <build>
+        <finalName>fengfu-pubbase</finalName>
 
         <resources>
             <!-- 添加该配置是为了将 .sql 文件打入 jar 包 -->
@@ -581,6 +682,7 @@
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.properties</include>
+                    <include>**/*.xml</include>
                 </includes>
             </resource>
 
@@ -597,11 +699,13 @@
                     <include>**/*.xml</include>
                     <include>**/*.json</include>
                     <include>**/*.db</include>
+                    <include>**/*.ftl</include>
+                    <include>**/*.grf</include>
                 </includes>
             </resource>
         </resources>
 
-		<plugins>
+        <plugins>
 
             <!-- 资源文件拷贝插件 -->
             <plugin>
@@ -619,76 +723,78 @@
                         <nonFilteredFileExtension>xls</nonFilteredFileExtension>
                         <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
                         <nonFilteredFileExtension>db</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>ftl</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>grf</nonFilteredFileExtension>
                     </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
-					<!-- java8 保留参数名编译参数 -->
-					<compilerArgument>-parameters</compilerArgument>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <!-- java8 保留参数名编译参数 -->
+                    <compilerArgument>-parameters</compilerArgument>
+                </configuration>
+            </plugin>
 
-			<!-- jar 包中的配置文件优先级高于 config 目录下的 "同名文件" 因此，打包时需要排除掉 jar 包中来自 src/main/resources
-				目录的 配置文件，否则部署时 config 目录中的同名配置文件不会生效 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>${maven-jar-plugin.version}</version>
-				<configuration>
-					<excludes>
-					    <exclude>/cn/jbolt/common/gen/</exclude>
-					    <exclude>/sql/</exclude>
-					    <exclude>/gentpl/</exclude>
-					    <exclude>/dbconfig/</exclude>
-						<exclude>*.jf</exclude>
-						<exclude>*.sql</exclude>
-						<exclude>*.json</exclude>
-						<exclude>*.txt</exclude>
-						<exclude>*.xml</exclude>
-						<exclude>*.setting</exclude>
-						<exclude>*.properties</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+            <!-- jar 包中的配置文件优先级高于 config 目录下的 "同名文件" 因此，打包时需要排除掉 jar 包中来自 src/main/resources
+                目录的 配置文件，否则部署时 config 目录中的同名配置文件不会生效 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>/cn/jbolt/common/gen/</exclude>
+                        <exclude>/sql/</exclude>
+                        <exclude>/gentpl/</exclude>
+                        <exclude>/dbconfig/</exclude>
+                        <exclude>*.jf</exclude>
+                        <exclude>*.sql</exclude>
+                        <exclude>*.json</exclude>
+                        <exclude>*.txt</exclude>
+                        <exclude>*.xml</exclude>
+                        <exclude>*.setting</exclude>
+                        <exclude>*.properties</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
 
-			<!-- 使用 mvn clean package 打包 更多配置可参考官司方文档：http://maven.apache.org/plugins/maven-assembly-plugin/single-mojo.html -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${maven-assembly-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
+            <!-- 使用 mvn clean package 打包 更多配置可参考官司方文档：http://maven.apache.org/plugins/maven-assembly-plugin/single-mojo.html -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven-assembly-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
 
-						<configuration>
-							<!-- 打包生成的文件名 -->
-							<!--<finalName>${project.artifactId}</finalName>-->
-							<!-- jar 等压缩文件在被打包进入 zip、tar.gz 时是否压缩，设置为 false 可加快打包速度 -->
-							<recompressZippedFiles>false</recompressZippedFiles>
-							<!-- 打包生成的文件是否要追加 release.xml 中定义的 id 值 -->
-							<appendAssemblyId>true</appendAssemblyId>
-							<!-- 指向打包描述文件 package.xml -->
-							<descriptors>
-								<descriptor>package.xml</descriptor>
-							</descriptors>
-							<!-- 打包结果输出的基础目录 -->
-							<outputDirectory>${project.build.directory}/</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+                        <configuration>
+                            <!-- 打包生成的文件名 -->
+                            <!--<finalName>${project.artifactId}</finalName>-->
+                            <!-- jar 等压缩文件在被打包进入 zip、tar.gz 时是否压缩，设置为 false 可加快打包速度 -->
+                            <recompressZippedFiles>false</recompressZippedFiles>
+                            <!-- 打包生成的文件是否要追加 release.xml 中定义的 id 值 -->
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <!-- 指向打包描述文件 package.xml -->
+                            <descriptors>
+                                <descriptor>package.xml</descriptor>
+                            </descriptors>
+                            <!-- 打包结果输出的基础目录 -->
+                            <outputDirectory>${project.build.directory}/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -715,8 +821,37 @@
                 </configuration>
             </plugin>
 
-		</plugins>
-	</build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>pre-clean</id>
+                        <phase>pre-clean</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>prepare-package</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="复制服务运行环境参数配置..."/>
+                                <copy todir="${pom.basedir}/target" file="${pom.basedir}/service/${service.env}/jbolt.xml" overwrite="true"/>
+                                <echo message="复制服务运行环境参数配置完成..."/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
 
     <profiles>
 
@@ -726,18 +861,26 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <pdev>dev</pdev>
+                <pdev>lh</pdev>
+                <service.env>dev</service.env>
+                <log4j2.level>DEBUG</log4j2.level>
+                <log.path>/rj-tech/logs/</log.path>
+                <log.file.name>${project.artifactId}-lh.log</log.file.name>
                 <server.port>8081</server.port>
                 <webapp.path>src/main/webapp</webapp.path>
             </properties>
         </profile>
 
         <profile>
-            <id>test</id>
+            <id>dev</id>
             <properties>
                 <pdev>dev</pdev>
-                <server.port>8081</server.port>
-                <webapp.path>src/main/webapp</webapp.path>
+                <service.env>dev</service.env>
+                <log4j2.level>DEBUG</log4j2.level>
+                <log.path>/rj-tech/logs/</log.path>
+                <log.file.name>${project.artifactId}-test.log</log.file.name>
+                <server.port>8087</server.port>
+                <webapp.path>webapp</webapp.path>
             </properties>
         </profile>
 
@@ -745,8 +888,51 @@
             <id>prod</id>
             <properties>
                 <pdev>pro</pdev>
+                <service.env>prod</service.env>
+                <log4j2.level>INFO</log4j2.level>
+                <log.path>/rj-tech/logs/</log.path>
+                <log.file.name>${project.artifactId}-prod.log</log.file.name>
                 <server.port>8081</server.port>
                 <webapp.path>webapp</webapp.path>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>ecs</id>
+            <properties>
+                <pdev>ecs</pdev>
+                <service.env>dev</service.env>
+                <log4j2.level>DEBUG</log4j2.level>
+                <log.path>/rj-tech/logs/</log.path>
+                <log.file.name>${project.artifactId}-lh.log</log.file.name>
+                <server.port>8088</server.port>
+                <webapp.path>webapp</webapp.path>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>cdev</id>
+            <properties>
+                <pdev>cdev</pdev>
+                <service.env>dev</service.env>
+                <log4j2.level>INFO</log4j2.level>
+                <log.path>/rj-tech/logs/</log.path>
+                <log.file.name>${project.artifactId}-prod.log</log.file.name>
+                <server.port>8088</server.port>
+                <webapp.path>webapp</webapp.path>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>gzdev</id>
+            <properties>
+                <pdev>gzdev</pdev>
+                <service.env>dev</service.env>
+                <log4j2.level>DEBUG</log4j2.level>
+                <log.path>/rj-tech/logs/</log.path>
+                <log.file.name>${project.artifactId}-lh.log</log.file.name>
+                <server.port>8089</server.port>
+                <webapp.path>src/main/webapp</webapp.path>
             </properties>
         </profile>
 

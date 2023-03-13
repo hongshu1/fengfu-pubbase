@@ -1,0 +1,92 @@
+<script>
+
+    function successCallBack(ret) {
+        LayerMsgBox.success(ret.msg, 500, function () {
+            cancelParentLayerDialogOkBtnStateToSubmiting();
+            cancelParentLayerAllDialogBtnStateToDisabled();
+
+            // 刷新父页面
+            parent.refreshJBoltTable();
+
+            location.href = '/admin/permission/edit/' + ret.data.id + '-_jb_rqtype_dialog';
+        });
+    }
+
+    function ajaxSuccessHandler_#(pageId)(table) {
+        showTable('#(permission.isMenu??true)');
+    }
+
+    function getEditableTableOptions_#(pageId)(table) {
+        var editableTableOptions = {
+            trigger: "click",
+            initRowCount: 0,
+            submit: {
+                withForm: ['permissionForm'],
+                type: "all",
+                //params:{"orderId":3},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                url: "admin/permission/saveTableSubmit",
+                success: function (ret) {
+                    if (window.afterFormSubmit#(randomFunctionName??)) {
+                        afterFormSubmit#(randomFunctionName??)(ret, function() {
+                            successCallBack(ret);
+                        });
+                    } else {
+                        successCallBack(ret);
+                    }
+                }
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols: {
+                id: {
+                    submitAttr: "id",
+                },
+                sortRank: {
+                    type: "input_number",
+                    rule: "pint",
+                    required: true
+                },
+                viewType: {
+                    type: "select",
+                    url: "/admin/dictionary/options?key=btn_view_type",
+                    valueAttr: "sn",
+                    textAttr: "name",
+                    placeholder: "=请选择=",
+                    required: true,
+                },
+                btnCode: {
+                    type: "input",
+                    required: true
+                },
+                btnName: {
+                    type: "input",
+                    required: true
+                },
+                permissionKey: {
+                    type: "input",
+                    required: true
+                },
+                url: {
+                    type: "input",
+                    required: true
+                },
+                position: {
+                    type: "select",
+                    url: "/admin/dictionary/options?key=btn_position",
+                    valueAttr: "sn",
+                    textAttr: "name",
+                    placeholder: "=请选择=",
+                    required: true
+                },
+                func: {
+                    type: "input"
+                },
+                tooltip: {
+                    type: "input"
+                },
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

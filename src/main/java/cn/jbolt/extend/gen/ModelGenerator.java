@@ -8,11 +8,11 @@ import cn.jbolt.core.gen.JFinalModelGenerator;
 /**
  * JFinal model Generator 主要用来生成Model和BaseModel
  * @ClassName:  ModelGenerator
- * @author: JFinal学院-小木 QQ：909854136 
+ * @author: JFinal学院-小木 QQ：909854136
  * @date:   2021年4月11日09:24:23
  */
 public class ModelGenerator extends JFinalModelGenerator{
-    
+
 	public static void main(String[] args) {
 		//要生成的代码是在哪个项目下面 设置项目跟路径
 		String projectRootPath=System.getProperty("user.dir");
@@ -69,7 +69,7 @@ public class ModelGenerator extends JFinalModelGenerator{
 //				return null;
 //			}
 //		};
-		
+
 		//初始化项目配置
 		JBoltProjectGenConfig.init(projectRootPath,modelPackage,genModel,idGenMode,genHtmlDataDictionary,false,removedTableNamePrefixes,columnTobuildAttrNameFun,tableNames,tableNamesPrefixes,generateView,null,cover);
 		//设置自动缓存机制

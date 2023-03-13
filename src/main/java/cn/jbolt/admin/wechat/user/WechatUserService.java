@@ -1,27 +1,8 @@
 package cn.jbolt.admin.wechat.user;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import cn.jbolt._admin.cache.JBoltWechatUserCache;
 import cn.jbolt.core.api.JBoltApiKit;
 import cn.jbolt.core.para.JBoltPara;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.jfinal.aop.Inject;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import com.jfinal.kit.StrKit;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.weixin.sdk.api.ApiConfigKit;
-import com.jfinal.weixin.sdk.api.ApiResult;
-import com.jfinal.weixin.sdk.api.UserApi;
-
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.admin.appdevcenter.ApplicationService;
 import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
@@ -38,12 +19,29 @@ import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.service.base.JBoltBaseRecordTableSeparateService;
 import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.core.util.JBoltRandomUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
+import com.jfinal.kit.Ret;
+import com.jfinal.kit.StrKit;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
+import com.jfinal.weixin.sdk.api.ApiResult;
+import com.jfinal.weixin.sdk.api.UserApi;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 /**
  * 微信公众号粉丝用户表
- * @ClassName:  WechatUserService   
- * @author: JFinal学院-小木 QQ：909854136 
- * @date:   2019年9月28日   
+ * @ClassName:  WechatUserService
+ * @author: JFinal学院-小木 QQ：909854136
+ * @date:   2019年9月28日
  */
 public class WechatUserService extends JBoltBaseRecordTableSeparateService<WechatUser>{
 	private final WechatUser dao=new WechatUser().dao();
@@ -63,7 +61,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	 * @param mpId
 	 * @param pageNumber
 	 * @param pageSize
-	 * @param sex 
+	 * @param sex
 	 * @return
 	 */
 	public Page<Record> paginateAdminList(Long mpId, Integer pageNumber, int pageSize,String keywords, Integer sex) {
@@ -117,7 +115,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		batchUpdate(mpId, needSyncUsers);
 		return syncUserInfo(mpId, type);
 	}
-	
+
 	/**
 	 * 调用接口 去获取用户信息
 	 * @param user
@@ -125,7 +123,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	private Ret processUserInfo(Record user) {
 		ApiResult apiResult=UserApi.getUserInfo(user.getStr("open_id"));
 		if(apiResult.isSucceed()==false) {return fail(apiResult.getErrorMsg());}
-		
+
 		Integer subscribe=apiResult.getInt("subscribe");
 		if(isOk(subscribe)&&subscribe.intValue()==1) {
 			String userNickName=user.getStr("nickname");
@@ -157,7 +155,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 			Long subscribeTime=apiResult.getLong("subscribe_time");
 			user.set("subscribe_time", new Date(subscribeTime*1000L));
 			}
-		
+
 		return SUCCESS;
 	}
 	/**
@@ -189,7 +187,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 			syncing=true;
 			return fail(e.getMessage());
 		}
-		
+
 		Integer total=apiResult.getInt("total");
 		if(notOk(total)) {
 			syncing=true;
@@ -220,7 +218,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		//递归调用
 		return syncByNextOpenId(mpId,mpType,nextOpenId);
 	}
-	 
+
 	/**
 	 * 保存一个不重复的OPENID 进入数据库
 	 * @param mpId
@@ -279,7 +277,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(wechatMpinfo==null){
 			return fail("微信公众平台信息不存在");
 		}
-		
+
 		String appId=JBoltWechatConfigCache.me.getAppId(mpId);
 		if(StrKit.isBlank(appId)){
 			return fail(wechatMpinfo.getName()+"基础配置不正确!");
@@ -319,7 +317,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		}
 		return ret;
 	}
-	/** 
+	/**
 	 * 同步关注者的用户信息到微信User表
 	 * @param appId
 	 * @param openId
@@ -334,7 +332,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(wechatMpinfo==null) {
 			return fail("微信公众平台信息不存在");
 		}
-	
+
 		//根据openId去找人 找到就更新 找不到就新增
 		Record wechatUser=getByOpenId(mpId,openId);
 		if(wechatUser!=null) {
@@ -348,7 +346,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 			saveOneNewWechatUserInfo(mpId,wechatMpinfo.getType(),openId);
 		}
 		return SUCCESS;
-		
+
 	}
 	/**
 	 * 更新用户信息
@@ -367,7 +365,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 				}
 				user.setNickname(nickName);
 			}
-			
+
 			processUserInfoByApi(user, apiResult);
 			Record record=user.toRecord();
 			update(mpId, record);
@@ -409,11 +407,11 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 				update(mpId, record);
 			}
 		}
-		
+
 	}
 	/**
 	 * 根据openId获取用户
-	 * @param mpId 
+	 * @param mpId
 	 * @param openId
 	 * @return
 	 */
@@ -435,7 +433,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	}
 	/**
 	 * 根据openId获取用户 api专用
-	 * @param mpId 
+	 * @param mpId
 	 * @param openId
 	 * @return
 	 */
@@ -444,7 +442,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	}
 	/**
 	 * 根据openId获取用户
-	 * @param mpId 
+	 * @param mpId
 	 * @param openId
 	 * @return
 	 */
@@ -466,7 +464,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 	}
 	/**
 	 * 根据openId获取用户 api专用
-	 * @param mpId 
+	 * @param mpId
 	 * @param openId
 	 * @return
 	 */
@@ -493,7 +491,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		wechatUser.setSource(WechatMpinfoType.XCX.getValue());
 		wechatUser.setMpId(mpId);
 		wechatUser.setUnionId(unionId);
-		wechatUser.setSessionKey(sessionKey); 
+		wechatUser.setSessionKey(sessionKey);
 		wechatUser.setNickname("用户_"+JBoltRandomUtil.randomLowWithNumber(6));
 		wechatUser.setSubscribe(true);
 		wechatUser.setSubscribeTime(now);
@@ -582,7 +580,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(wechatUser==null) {
 			return fail(String.format("微信小程序用户手机号信息更新时,找不到指定的用户信息数据[%s-%s]", mpId,userId));
 		}
-		
+
 		wechatUser.setPhone(userInfoResult.getStr("purePhoneNumber"));
 		wechatUser.setPhoneCountryCode(userInfoResult.getStr("countryCode"));
 		Date now=new Date();
@@ -691,7 +689,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 				bindUser=bindUser+","+newBindUser;
 				needUpdate=true;
 			}
-			
+
 		}
 		if(needUpdate) {
 			wechatUser.setBindUser(bindUser);
@@ -701,7 +699,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 			}
 		}
 		return JBoltApiRet.API_SUCCESS;
-		
+
 	}
 	/**
 	 * 检测是否存在相同数据
@@ -715,8 +713,8 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		String[] arr=JBoltArrayUtil.from(bindUser, ",");
 		return JBoltArrayUtil.contains(arr, newBindUser);
 	}
-	
-	
+
+
 
 	/**
 	 * 根据ID获得一条数据转为WechatUser model
@@ -729,7 +727,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		if(record==null) {return null;}
 		return new WechatUser()._setAttrs(record.getColumns());
 	}
-	
+
 	/**
 	 * 从cache根据ID获得一条数据转为WechatUser model
 	 * @param _id 多表模式指定后缀ID
@@ -772,7 +770,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		}
 		return JBoltApiRet.API_SUCCESS("解绑成功");
 	}
-	 
+
 	/**
 	 * 公众号用户授权登录 添加一个未关注的用户信息
 	 * @param mpId
@@ -808,7 +806,7 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		ret.set("data", wechatUser);
 		return ret;
 	}
-	
+
 	/**
 	 * 公众号用户授权登录 添加一个未关注的用户信息
 	 * @param mpId
@@ -923,4 +921,35 @@ public class WechatUserService extends JBoltBaseRecordTableSeparateService<Wecha
 		JBoltWechatUserCache.me.removeApiWechatUserByMpOpenId(mpId,openId);
 		JBoltWechatUserCache.me.removeApiWechatUserByMpUnionId(mpId,unionId);
 	}
+
+    /**
+     * 添加系统用户到微信用户表中
+     *
+     * @param mpId MOM平台mpId
+     */
+    public Ret addSysWechatUser(Long mpId, long userId, String name) {
+        Date now = new Date();
+
+        WechatUser wechatUser = new WechatUser();
+        wechatUser.setSubscribe(false);
+        wechatUser.setOpenId(StrKit.getRandomUUID());
+        wechatUser.setMpId(Long.parseLong(mpId.toString()));
+        wechatUser.setEnable(true);
+        wechatUser.setFirstAuthTime(now);
+        wechatUser.setLastAuthTime(now);
+        wechatUser.setCreateTime(now);
+        wechatUser.setUpdateTime(now);
+        wechatUser.setNickname(name);
+        wechatUser.setBindUser(JBoltApiBindUserBean.TYPE_SYSTEM_USER + "_" + userId);
+
+        Record record = wechatUser.toRecord();
+        Ret ret = save(mpId, record);
+        if (ret.isFail()) {
+            return ret;
+        }
+        wechatUser.setId(Long.parseLong(record.getStr(primaryKey())));
+        ret.set("data", wechatUser);
+        return ret;
+    }
+
 }

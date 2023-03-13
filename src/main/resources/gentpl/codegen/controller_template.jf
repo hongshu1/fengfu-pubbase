@@ -14,7 +14,7 @@ import java.util.List;
 #end
 #end
 import com.jfinal.aop.Inject;
-import cn.jbolt.core.controller.base.JBoltBaseController;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
 #if(permission.isSystemAdminDefault??)
@@ -58,16 +58,16 @@ import #(codeGen.modelPackage+"."+codeGen.modelName);
 #if(codeGen.isViewUsePath?? && codeGen.controllerPath??)
 @Path(value = "#(codeGen.controllerPath??)", viewPath = "#(codeGen.htmlViewPath??)")
 #end
-public class #(codeGen.controllerName??) extends JBoltBaseController {
+public class #(codeGen.controllerName??) extends BaseAdminController {
 
 	@Inject
 	private #(codeGen.serviceName??) service;
-	
+
 #if(methods!=null&&methods.size()>0)
 	#for(method:methods)
 	#@genControllerMethod(method)
-	
+
 	#end
 #end
-	
+
 }

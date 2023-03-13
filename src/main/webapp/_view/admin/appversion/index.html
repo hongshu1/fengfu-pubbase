@@ -1,0 +1,110 @@
+#@adminLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+
+        <div class="row">
+            <div class="col-12 text-left">
+                <form onsubmit="return false;" class="form-inline text-left" id="appversionForm_#(pageId)" method="post">
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="appversionRowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.autoid}">
+                {@if pageSize&&pageSize>0}
+                <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
+                {@else}
+                <td>${+index+1}</td>
+                {@/if}
+                <td>${data.appcode}</td>
+                <td>${data.systemtype < 1 ? 'ios' : '安卓'}</td>
+                <td>${data.versionintro}</td>
+                <td><img data-switchbtn data-confirm="是否发布？" data-value="${data.putaway == 1}" data-handler="refreshJBoltTable" data-url="admin/appversion/putaway/${data.autoid}"/></td>
+                <td>${data.putawaytime}</td>
+                <td><img data-switchbtn data-confirm="是否强制更新？" data-value="${data.isforced == 1}" data-handler="refreshJBoltTable" data-url="admin/appversion/updateisforced/${data.autoid}"/></td>
+                <td>${data.versioncode}</td>
+                <td><a href="${data.downloadurl}" target="_blank" class="btn btn-outline-info"><i class="fa fa-file-download"></i>下载</a></td>
+                <td>${data.versiondate|date_ymd}</td>
+                <td>${data.createby}</td>
+                <td>${data.updateby}</td>
+                <td>${data.createtime}</td>
+                <td>${data.updatetime}</td>
+            </tr>
+            {@/each}
+        </script>
+
+        <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
+
+            <div class="btn-group" role="group" aria-label="btn-group">
+                <!--<button data-dialogbtn data-area="80%,80%" data-handler="jboltTablePageToFirst" data-title="新增工序卡" data-url="admin/appversion/add" class="btn btn-secondary"><i class="fa fa-plus"></i> 新增</button>-->
+                <button data-dialogbtn data-fs="true" data-handler="refreshPjaxContainer" data-title="新增App版本数据" data-url="admin/appversion/add" class="btn btn-secondary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-fs="true" data-handler="refreshPjaxContainer" data-title="编辑资源" data-check-handler="jboltTableGetCheckedId" data-url="admin/appversion/edit/" class="btn btn-secondary"><i class="fa fa-edit"></i> 编辑</button>
+            </div>
+        </div>
+
+        <div class="jbolt_table_view">
+            <div class="jbolt_table_box">
+                <div class="jbolt_table_body">
+                    <table class="jbolt_table jbolt_main_table table_striped thead_font_normal table-center"
+                           id="appversion_table_#(pageId)"
+                           data-jbolttable
+                           data-ajax="true"
+                           data-width="auto"
+                           data-column-prepend="1:checkbox:true"
+                           data-column-resize="true"
+                           data-bind-elements="#appversionAddBtn_#(pageId)"
+                           data-url="admin/appversion/datas"
+                           data-conditions-form="appversionForm_#(pageId)"
+                           data-rowtpl="appversionRowtpl_#(pageId)"
+                           data-page="appversion2Page_#(pageId)"
+                           data-pagesize="30"
+                           data-fixed-columns-left="1"
+                           data-toolbar="jbolt_table_toolbar_#(pageId)"
+                           data-sortable-columns=""
+                           data-sort=""
+                           data-default-sort-column="autoid"
+                    >
+                        <thead>
+                        <tr>
+                            <th data-width="60" data-column="index">序号</th>
+                            <th data-width="150" data-column="AppCode">应用编码</th>
+                            <th data-width="90" data-column="SystemType">系统类型</th>
+                            <th data-width="150" data-column="VersionIntro">版本介绍</th>
+                            <th data-width="90" data-column="Putaway">是否发布</th>
+                            <th data-width="150" data-column="PutawayTime">发布时间</th>
+                            <th data-width="90" data-column="IsForced">强制更新</th>
+                            <th data-width="90" data-column="VersionCode">版本号</th>
+                            <th data-width="150" data-column="DownloadUrl">下载链接</th>
+                            <th data-width="120" data-column="VersionDate">版本日期</th>
+                            <th data-width="90" data-column="CreateBy">创建人</th>
+                            <th data-width="90" data-column="UpdateBy">变更人</th>
+                            <th data-width="170" data-column="CreateTime">创建时间</th>
+                            <th data-width="170" data-column="UpdateTime">变更时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+#end
+#define js()
+#@minejs?()
+<script>
+    var refreshTable = function () {
+        refreshJBoltTableById('appversion_table_#(pageId)');
+    };
+
+</script>
+#end

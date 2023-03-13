@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<base href="#(basepath??)" />
+		<meta charset="utf-8" />
+		<title>#globalConfig(GlobalConfigKey.SYSTEM_NAME,"JBolt极速开发平台")</title>
+		 #if(need_always_https)
+	    	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+		 #end
+		<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+		<meta name="renderer" content="webkit">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+		#@fontcss?()
+		#@bootstrapcss?()
+		#@logincss?()
+		<script>
+		var needPjax=false;//默认是否pjax加载
+		var autoShowRequiredLabelStar=true;//默认是否自动处理表单中的必填项的红星样式
+		</script>
+	</head>
+	<body>
+	<div class="d-block p-4 my-4">
+		<form id="loginForm" method="post" action="#(userType == 'SRM' ? 'admin/srmLogin' : 'admin/login')">
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="jbicon jb-fuwuqi"></i></span>
+                    </div>
+                    <select class="form-control"  id="orgid" name="orgId">
+                        #if(userType == 'MOM')
+                        <option value="">=不选组织=</option>
+                        #end
+                    </select>
+                </div>
+            </div>
+		<div>
+		</div>
+		</form>
+	</div>
+	<script>var needPjax=false;</script>
+	#@jqueryjs?()
+	#@bootstrapjs?()
+	#@jboltmaindialogjslib?()
+	#@mainjs?()
+	###@reloginjs?()
+	<script>
+        $(function () {
+            bindEnterForDialogOkBtn();
+            bindEscForDialogCloseBtn();
+
+            changeParentLayerDialogBtnTitle(0, "切 换");
+
+            Ajax.post("admin/org/accessList", {}, function (res) {
+                var orglist = $("#orgid");
+                for (var i = 0; i < res.data.length; i++) {
+                    orglist.append("<option value=" + res.data[i].id + ">" + res.data[i].name + "</option>");
+                }
+            }, false);
+
+        });
+
+        function submitThisForm() {
+            var index = LayerMsgBox.loading();
+
+            var formData = formToJson($('#loginForm'));
+
+            Ajax.post('admin/switchOrg', formData, function (ret) {
+
+                LayerMsgBox.close(index);
+
+                if (ret.state === 'ok') {
+                    parent.LayerMsgBox.closeAll();
+
+                    parent.location.reload();
+                } else {
+                    LayerMsgBox.alert(ret.msg, 2);
+                }
+            });
+        }
+	</script>
+	</body>
+</html>

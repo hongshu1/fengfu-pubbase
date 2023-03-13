@@ -27,8 +27,9 @@
 <a  tooltip  title="添加子角色"  href="admin/role/addItem/${id}" data-scroll="yes" data-handler="refreshJBoltTable" data-title="添加【${name}】的子角色" data-area="600,420" class="jbolt_table_editbtn"><i class="fa fa-plus c-info"></i></a>
 <a  tooltip  title="编辑"  href="admin/role/edit/${id}" data-scroll="yes" data-handler="refreshJBoltTable" data-title="编辑" data-area="400,300" class="jbolt_table_editbtn"><i class="fa fa-pencil c-primary"></i></a>
 <a  tooltip  title="删除"  href="admin/role/delete/${id}" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger"></i></a>
-<a  tooltip  href="admin/rolepermission/settingTree/${id}" data-dialogbtn data-scroll="yes"  data-title="为角色【${name}】设置权限" data-area="700,90%"  class="jbolt_table_btn"><i class="fa fa-cogs c-info"></i></a>
-<a  tooltip  href="admin/role/users/${id}" data-dialogbtn data-btn="close" data-scroll="yes"  data-title="角色【${name}】-用户列表" data-area="980,80%" class="jbolt_table_btn"><i class="fa fa-users c-danger"></i></a>
+<!--<a  tooltip  href="admin/rolepermission/settingTree/${id}" data-dialogbtn data-scroll="yes"  data-title="为角色【${name}】设置权限" data-area="700,90%"  class="jbolt_table_btn"><i class="fa fa-cogs c-info"></i></a>-->
+<!--<a  tooltip  href="admin/rolepermission?roleId=${id}" data-dialogbtn data-scroll="yes"  data-title="为角色【${name}】设置权限" data-area="99%,99%"  class="jbolt_table_btn"><i class="fa fa-cogs c-info"></i></a>-->
+<a  tooltip  href="admin/role/users/${id}" data-dialogbtn data-btn="close" data-scroll="yes"  data-title="角色【${name}】-用户列表" data-area="99%,99%" class="jbolt_table_btn"><i class="fa fa-users c-danger"></i></a>
 </td>
 </tr>
 {@if items&&items.length>0}
@@ -46,7 +47,7 @@
 
 
 <table class="jbolt_table jbolt_main_table table-center"
-data-jbolttable 
+data-jbolttable
 data-width="auto"
 data-ajax="true"
 data-url="admin/role/datas"
@@ -57,7 +58,7 @@ data-rowtpl="role_rowtpl_#(pageId)"
 <tr><th data-width="400">角色</th><th data-width="200">编码</th><th data-width="150">操作</th></tr>
 </thead>
 <tbody></tbody>
-</table>	
+</table>
 </div>
 </div>
 #end

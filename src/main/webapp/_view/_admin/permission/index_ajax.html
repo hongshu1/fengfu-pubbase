@@ -11,6 +11,25 @@
 		<div class="col">
 			<form onkeydown="if(event.which==13){return false;}" onsubmit="return false;" class="form-inline" id="permissionForm_#(pageId)" action="admin/permission" method="post">
 			<label class="d-inline-block">筛选:</label>
+                <select class="form-control"
+                        name="applicationId"
+                        data-autoload
+                        data-url="admin/application/options"
+                        data-text-attr="shortName"
+                        data-value-attr="id"
+                        data-text="=应用系统="
+                        data-placeholder="=应用系统=">
+                </select>
+
+                <select class="form-control"
+                        name="appId"
+                        data-autoload
+                        data-url="admin/app/options"
+                        data-text-attr="shortName"
+                        data-value-attr="id"
+                        data-text="=应用终端="
+                        data-placeholder="=应用终端=">
+                </select>
 			<select class="form-control" name="ofModule" data-autoload data-url="admin/permission/modules" data-text="=所属模块=" ></select>
 			<select class="form-control" name="topnavId"  data-autoload data-url="admin/topnav/options" data-text="=顶部导航=" data-value=""></select>
 			<button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
@@ -31,11 +50,13 @@
 <script type="text/template" id="permission_rowtpl_tr_#(pageId)">
 <tr data-id="${id}" data-pid="${pid}" data-level="${eachLevel}" data-hasitems="${items&&items.length>0}">
 <td><i class="${icons}"></i> ${title}</td>
+<td>${appName}</td>
 <td>${permissionLevel}级</td>
 <td class="text-primary">${ofModuleName}</td>
 <td  class="text-center">
-{@if url}${isTargetBlank?"浏览器新窗口":"浏览器当前窗口"}{@/if}
+{@if url}${isTargetBlank=='1'?"浏览器新窗口":"浏览器当前窗口"}{@/if}
 </td>
+    <td class="text-center">${name}</td>
 <td class="text-center">
 	{@if openType===1}
 		系统默认
@@ -48,7 +69,7 @@
 	{@/if}
 </td>
 <td>
-{@if isMenu}
+{@if isMenu == '1'}
 <span class="badge badge-primary">菜单</span>
 {@else}
 <span class="badge badge-info">非菜单</span>
@@ -57,10 +78,10 @@
 <td  class="text-left">${url}</td>
 <td  class="text-left">${permissionKey}</td>
 <td>
-<img data-switchbtn data-confirm="确定切换此权限是否是超管默认使用权限？" data-value="${isSystemAdminDefault}"  data-handler="refreshJBoltTable"  data-url="admin/permission/toggleSystemAdminDefault/${id}"/>
+<img data-switchbtn data-confirm="确定切换此权限是否是超管默认使用权限？" data-value="${isSystemAdminDefault=='1'}"  data-handler="refreshJBoltTable"  data-url="admin/permission/toggleSystemAdminDefault/${id}"/>
 </td>
 <td class="text-right">
-<a href="admin/permission/add/${id}-${permissionLevel+1}" data-area="1280,750"  tooltip data-title="添加下级资源"   data-handler="refreshJBoltTable"  dialog-title="添加下级资源" class="jbolt_table_editbtn"><i class="fa fa-plus"></i></a>
+<a href="admin/permission/add/${id}-${permissionLevel+1}-" data-area="1280,750"  tooltip data-title="添加下级资源"   data-handler="refreshJBoltTable"  dialog-title="添加下级资源" class="jbolt_table_editbtn"><i class="fa fa-plus"></i></a>
 <a href="admin/permission/edit/${id}" data-area="1280,750"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" dialog-title="编辑资源" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
 <a href="admin/permission/delete/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTrCascade" data-confirm="确定删除这条数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
 <a href="admin/permission/up/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
@@ -80,15 +101,17 @@
 {@/each}
 </script>
 
-<table class="table table-bordered table-hover table-center text-nowrap thead_font_normal"
+<table class="table table-bordered table-hover table-center text-nowrap thead_font_normal hover_info"
 id="permission_table_#(pageId)"
 data-jbolttable
+data-row-click-active="true"
 ###设置是treetable 默认显示到第一级 操作列在第一列
 data-treetable="all:1"
 data-fixed-columns-left="1"
 data-fixed-columns-right="-1"
 data-column-resize="true"
 data-ajax="true"
+data-width="auto"
 data-url="admin/permission/datas"
 data-rowtpl="permission_rowtpl_#(pageId)"
 data-conditions-form="permissionForm_#(pageId)"
@@ -96,13 +119,15 @@ data-conditions-form="permissionForm_#(pageId)"
 <thead>
 <tr>
 	<th data-width="260">资源</th>
+    <th data-width="120">应用系统</th>
 	<th data-width="60">级别</th>
 	<th data-width="150">模块</th>
 	<th data-width="130">加载方式</th>
+    <th data-width="120">应用终端</th>
 	<th data-width="130">打开类型</th>
-	<th data-width="100">资源类型</th>
-	<th data-min-width="200">URL</th>
-	<th data-min-width="200">KEY</th>
+	<th data-width="80">资源类型</th>
+	<th data-width="200">URL</th>
+	<th data-width="200">KEY</th>
 	<th data-width="100">超管默认</th>
 	<th data-width="150">操作</th>
 </tr>

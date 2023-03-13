@@ -1,0 +1,60 @@
+/*日历组件框*/
+.datepicker{
+    width: 230px!important;
+    height: 190px!important;
+}
+/*边框*/
+.datepicker{
+    border: 1px solid #4e4e4e;
+    border-radius: 5px;
+}
+.datepicker>div[class^='datepickerBorder']{
+    background: none!important;
+}
+/*日期背景色*/
+.datepicker .datepickerContainer{
+    background: #ffffff!important;
+    margin: 3px;
+}
+/*周几文字颜色*/
+.datepicker .datepickerContainer tr.datepickerDoW th{
+    color: #ff9e82 !important;
+    text-align: center!important;
+}
+/*第几周文字颜色*/
+.datepicker .datepickerContainer tr.datepickerDoW th:first-child,
+.datepicker .datepickerContainer th.datepickerWeek a{
+    color: #f2ca58!important;
+    text-align: left!important;
+}
+.datepicker .datepickerContainer td{
+
+}
+/*本月日期文字颜色*/
+.datepicker .datepickerContainer a{
+    color: #4e4e4e!important;
+    width: 25px;
+    line-height: 21px;
+    height: 21px;
+    font-size: 15px;
+}
+.datepicker .datepickerContainer th.datepickerMonth a{
+    width: auto;
+}
+.datepicker .datepickerContainer td.datepickerNotInMonth{
+
+}
+/*其他月日期文字颜色*/
+.datepicker .datepickerContainer td.datepickerNotInMonth a{
+    color: #bababa!important;
+}
+/*选中背景色*/
+.datepicker .datepickerContainer td.datepickerSelected {
+    background: #3eb6ff !important;
+}
+.datepicker .datepickerContainer td.datepickerNotInMonth.datepickerSelected {
+    background: #0d739c !important;
+}
+.datepicker .datepickerContainer td.datepickerSelected a{
+    color: #ffffff!important;
+}

@@ -21,7 +21,7 @@
 <td>${data.updateTime|date_ymdhm}</td>
 <td>
 <a  tooltip  title="编辑"  href="admin/hiprint/tpl/edit/${data.id}" data-scroll="yes" data-handler="refreshJBoltTable" data-title="编辑应用基本信息" data-area="980,650" class="jbolt_table_editbtn"><i class="fa fa-pencil c-primary"></i></a>
-<a  tooltip  title="删除"  href="admin/hiprint/tpl/delete/${data.id}" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger"></i></a>
+<!--<a  tooltip  title="删除"  href="admin/hiprint/tpl/delete/${data.id}" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger"></i></a>-->
 </td>
 </tr>
 {@/each}
@@ -53,7 +53,7 @@ data-ajax-success-handler="tableAjaxSuccessHandler_#(pageId)"
 
 </tbody>
 </table>
-	
+
 </div>
 </div>
 #end

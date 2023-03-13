@@ -6,7 +6,6 @@ import cn.hutool.system.oshi.OshiUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltCacheType;
-import cn.jbolt.core.cache.caffeine.CaffeineCacheKit;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -24,7 +23,7 @@ import oshi.util.Util;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,7 +59,7 @@ public class ServerMonitorAdminController extends JBoltBaseController {
 	         if((fs.getTotalSpace()-fs.getUsableSpace())==0) {
 	        	 kv.set("usedRate","100%");
 	         }else {
-	        	 kv.set("usedRate",NumberUtil.mul(NumberUtil.toBigDecimal(fs.getTotalSpace()-fs.getUsableSpace()).divide(NumberUtil.toBigDecimal(fs.getTotalSpace()),2,BigDecimal.ROUND_HALF_UP).doubleValue(), 100));
+	        	 kv.set("usedRate",NumberUtil.mul(NumberUtil.toBigDecimal(fs.getTotalSpace()-fs.getUsableSpace()).divide(NumberUtil.toBigDecimal(fs.getTotalSpace()),2, RoundingMode.HALF_UP).doubleValue(), 100));
 	         }
 	         disks.add(kv);
 	     }
@@ -81,7 +80,7 @@ public class ServerMonitorAdminController extends JBoltBaseController {
 		if(uesd==0) {
 			set("memoryRate","0%");
 		}else {
-			set("memoryRate", NumberUtil.mul(NumberUtil.toBigDecimal(uesd).divide(NumberUtil.toBigDecimal(total),2,BigDecimal.ROUND_HALF_UP).doubleValue(), 100));
+			set("memoryRate", NumberUtil.mul(NumberUtil.toBigDecimal(uesd).divide(NumberUtil.toBigDecimal(total),2,RoundingMode.HALF_UP).doubleValue(), 100));
 		}
 		long jvmTotal=Runtime.getRuntime().totalMemory();
 		long jvmFree=Runtime.getRuntime().freeMemory();
@@ -92,7 +91,7 @@ public class ServerMonitorAdminController extends JBoltBaseController {
 		if(jvmUsed==0) {
 			set("jvmMemoryRate","0%");
 		}else {
-			set("jvmMemoryRate", NumberUtil.mul(NumberUtil.toBigDecimal(jvmUsed).divide(NumberUtil.toBigDecimal(jvmTotal),2,BigDecimal.ROUND_HALF_UP).doubleValue(), 100));
+			set("jvmMemoryRate", NumberUtil.mul(NumberUtil.toBigDecimal(jvmUsed).divide(NumberUtil.toBigDecimal(jvmTotal),2,RoundingMode.HALF_UP).doubleValue(), 100));
 		}
 		render("memory.html");
 	}
@@ -137,10 +136,10 @@ public class ServerMonitorAdminController extends JBoltBaseController {
         long iowait = ticks[TickType.IOWAIT.getIndex()] - prevTicks[TickType.IOWAIT.getIndex()];
         long idle = ticks[TickType.IDLE.getIndex()] - prevTicks[TickType.IDLE.getIndex()];
         long totalCpu = user + nice + cSys + idle + iowait + irq + softirq + steal;
-        set("cpuSystemUsed", NumberUtil.mul(NumberUtil.toBigDecimal(cSys).divide(NumberUtil.toBigDecimal(totalCpu),2,BigDecimal.ROUND_HALF_UP).doubleValue(), 100));
-        set("cpuUserUsed", NumberUtil.mul(NumberUtil.toBigDecimal(user).divide(NumberUtil.toBigDecimal(totalCpu),2,BigDecimal.ROUND_HALF_UP).doubleValue(), 100));
-        set("cpuWait", NumberUtil.mul(NumberUtil.toBigDecimal(iowait).divide(NumberUtil.toBigDecimal(totalCpu),2,BigDecimal.ROUND_HALF_UP).doubleValue(), 100));
-        set("cpuFree", NumberUtil.mul(NumberUtil.toBigDecimal(idle).divide(NumberUtil.toBigDecimal(totalCpu),2,BigDecimal.ROUND_HALF_UP).doubleValue(), 100));
+        set("cpuSystemUsed", NumberUtil.mul(NumberUtil.toBigDecimal(cSys).divide(NumberUtil.toBigDecimal(totalCpu),2,RoundingMode.HALF_UP).doubleValue(), 100));
+        set("cpuUserUsed", NumberUtil.mul(NumberUtil.toBigDecimal(user).divide(NumberUtil.toBigDecimal(totalCpu),2,RoundingMode.HALF_UP).doubleValue(), 100));
+        set("cpuWait", NumberUtil.mul(NumberUtil.toBigDecimal(iowait).divide(NumberUtil.toBigDecimal(totalCpu),2,RoundingMode.HALF_UP).doubleValue(), 100));
+        set("cpuFree", NumberUtil.mul(NumberUtil.toBigDecimal(idle).divide(NumberUtil.toBigDecimal(totalCpu),2,RoundingMode.HALF_UP).doubleValue(), 100));
         render("cpu.html");
 	}
 

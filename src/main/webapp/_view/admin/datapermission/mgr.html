@@ -1,0 +1,394 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_content">
+
+        <div class="row">
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-header">所有角色及用户</div>
+                    <div class="card-body">
+
+                        <form class="form-inline jbolt_page_title" id="rolepermissionForm_#(pageId)1" onsubmit="return false;" method="post">
+
+                            <div class="row">
+                                <div class="col">
+
+                                    <input type="text" autocomplete="off" class="form-control ml-xl-1" placeholder="=编码/名称=" name="keywords" value=""/>
+                                    <!--<input type="text" autocomplete="off" class="form-control ml-1" placeholder="=名称=" name="name" value=""/>-->
+
+                                    <select class="form-control" name="roletype">
+                                        <option value="">=角色类型=</option>
+                                        <option value="1">角色</option>
+                                        <option value="2">用户</option>
+                                    </select>
+
+                                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                        <!-- JBoltTable的数据模板定义-->
+                        <script type="text/template" id="rolepermissionRowtpl_#(pageId)1">
+                            {@each datas as data,index}
+                            <tr data-id="${data.iautoid}">
+                                <td>${data.sn}</td>
+                                <td>${data.name}</td>
+                                <td>$${data.roletype|roletype}</td>
+                            </tr>
+                            {@/each}
+                        </script>
+
+                        <div class="jbolt_table_view">
+                            <div class="jbolt_table_box">
+                                <div class="jbolt_table_body">
+                                    <table class="jbolt_table jbolt_main_table table-center"
+                                           id="jbolt_table_#(pageId)"
+                                           data-jbolttable
+                                           data-ajax="true"
+                                           data-width="auto"
+                                           data-column-prepend="1:radio:true"
+                                           data-column-resize="true"
+                                           ###data-bind-elements="#rolepermissionAddBtn_#(pageId)1"
+                                           data-url="admin/role/userAndRoleData"
+                                           data-autoload="true"
+                                           data-conditions-form="rolepermissionForm_#(pageId)1"
+                                           data-rowtpl="rolepermissionRowtpl_#(pageId)1"
+                                           data-page="rolepermissionPage_#(pageId)1"
+                                           data-pagesize="30"
+                                           data-row-click-active="true"
+                                           data-row-click-handler="jbolt_table_clickhandler_#(pageId)1"
+                                    >
+                                        <thead>
+                                        <tr>
+                                            <th data-width="150" data-column="sn">编码</th>
+                                            <th data-width="150" data-column="name">名称</th>
+                                            <th data-width="120" data-column="name">角色类型</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-8">
+                <div class="card">
+
+                    <div class="card-header px-3 py-2">
+                        <span>业务对象数据授权</span>
+
+                        <div class="btn-group btn-group-sm pull-right" role="group" aria-label="btn-group">
+
+                            <button type="button" class="btn btn-primary" onclick="savePermissions()">保存</button>
+
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <form class="form-inline jbolt_page_title" id="DataPermission_form_#(pageId)">
+
+                            <input type="hidden" name="objecttype">
+                            <input type="hidden" name="objectid">
+
+                            <div class="row">
+                                <div class="col">
+
+                                    <select class="form-control" name="busobjectId"
+                                            data-rule="select"
+                                            data-autoload
+                                            data-url="admin/busobject/options"
+                                            data-select-type="select"
+                                            data-placeholder="=业务对象="
+                                            data-handler="busObjectChangeHandler"
+                                            ###data-text="=业务对象="
+                                    ></select>
+
+                                    <input type="text" autocomplete="off" class="form-control" placeholder="=关键词=" name="q" value=""/>
+
+                                    <input type="hidden" name="isDeleted" value="false"/>
+
+                                    <button type="submit" id="form_searchBtn_#(pageId)" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- 定义JBoltTable使用的数据渲染模板 -->
+                        <textarea class="jb_tpl_box" id="DataPermission_tpl_#(pageId)">
+                        {@each datas as data,index}
+                        <tr data-id="${data.id}">
+                            <td>${pageNumber,pageSize,index | rownum}</td>
+                            <td>${data.busobjectName}</td>
+                            <td>${data.code}</td>
+                            <td>${data.busobjectValueName}</td>
+                            <td>
+                                <div class="jbolt_table_checkbox {@if data.isViewEnabled == '1'}checked{@/if}">
+                                    <input class="jbt_editor_checkbox" type="checkbox" name="isViewEnabled" {@if data.isViewEnabled == '1'}checked="checked"{@/if} value="true">
+                                    <span><i class="fa fa-check"></i></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="jbolt_table_checkbox {@if data.isEditEnabled == '1'}checked{@/if}">
+                                    <input class="jbt_editor_checkbox" type="checkbox" name="isEditEnabled" {@if data.isEditEnabled == '1'}checked="checked"{@/if} value="true">
+                                    <span><i class="fa fa-check"></i></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="jbolt_table_checkbox {@if data.isDeleteEnabled == '1'}checked{@/if}">
+                                    <input class="jbt_editor_checkbox" type="checkbox" name="isDeleteEnabled" {@if data.isDeleteEnabled == '1'}checked="checked"{@/if} value="true">
+                                    <span><i class="fa fa-check"></i></span>
+                                </div>
+                            </td>
+                        </tr>
+                        {@/each}
+                        </textarea>
+
+                        <table class="jbolt_table jbolt_main_table  table-center "
+                               id="jbolt_table_#(pageId)2"
+                               data-jbolttable
+                               data-width="auto"
+                               data-height="fill"
+                               data-ajax="true"
+                               data-autoload="false"
+                               data-conditions-form="DataPermission_form_#(pageId)"
+                               data-url="admin/datapermission/permissions"
+                               data-rowtpl="DataPermission_tpl_#(pageId)"
+                               data-copy-to-excel="false"
+                               data-page="DataPermission_page"
+                               data-column-resize="true"
+                               ###data-toolbar="DataPermission_toolbar_#(pageId)"
+                               data-column-prepend="1:checkbox:true:false:false"
+                               data-sortable-columns="create_time,last_update_time"
+                               data-sort="#((sortColumn&&sortType)?(sortColumn+':'+sortType):'')"
+                               data-default-sort-column="id"
+                               data-editable="true"
+                               data-editable-option="getEditableTableOptions_#(pageId)"
+                        >
+                            <thead>
+                            <tr>
+                                <th data-width="60" data-column="index">序号</th>
+                                <th data-width="100" data-column="busobject_id">业务对象</th>
+                                <th data-width="150" data-column="busobject_value_id">业务对象值编码</th>
+                                <th data-width="150" data-column="busobject_value_name">业务对象值名称</th>
+                                <th data-width="100" data-column="isViewEnabled">
+                                    <div class="jbolt_table_checkbox">
+                                        <input type="checkbox" name="isViewEnabled" data-ptype="thead" onclick="checkAll(this)"/>
+                                        <span><i class="fa fa-check"></i></span>
+                                    </div> 查看
+                                </th>
+                                <th data-width="100" data-column="isEditEnabled">
+                                    <div class="jbolt_table_checkbox">
+                                        <input type="checkbox" name="isEditEnabled" data-ptype="thead" onclick="checkAll(this)"/>
+                                        <span><i class="fa fa-check"></i></span>
+                                    </div> 编辑
+                                </th>
+                                <th data-width="100" data-column="isDeleteEnabled">
+                                    <div class="jbolt_table_checkbox">
+                                        <input type="checkbox" name="isDeleteEnabled" data-ptype="thead" onclick="checkAll(this)"/>
+                                        <span><i class="fa fa-check"></i></span>
+                                    </div> 删除
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+#end
+#define js()
+<script>
+
+    var $objectid = $('input[name="objectid"]');
+    var $objecttype = $('input[name="objecttype"]');
+
+    $(function () {
+    });
+
+    /**
+     * 保存授权
+     */
+    function savePermissions() {
+        var objecttype = $objecttype.val();
+        var objectid = $objectid.val();
+
+        if (!objecttype || !objectid) {
+            LayerMsgBox.alert('请先选择用户，并维护权限数据！');
+            return;
+        }
+
+        var datas = jboltTableGetAllDatas('jbolt_table_#(pageId)2', ['busobjectValueId', 'busobjectValueName', 'isViewEnabled', 'isEditEnabled', 'isDeleteEnabled']);
+        console.log(JSON.stringify(datas));
+
+        if (!datas || datas.length === 0) {
+            LayerMsgBox.alert('缺少权限维护数据', 2);
+            return;
+        }
+
+        $.each(datas, function (idx, row) {
+            if (typeof row.isViewEnabled === 'string') {
+                row.isViewEnabled = row.isViewEnabled === '1';
+            }
+            if (typeof row.isEditEnabled === 'string') {
+                row.isEditEnabled = row.isEditEnabled === '1';
+            }
+            if (typeof row.isDeleteEnabled === 'string') {
+                row.isDeleteEnabled = row.isDeleteEnabled === '1';
+            }
+        });
+
+        var busobjectId = $('select[name="busobjectId"]').val()
+
+        var index = LayerMsgBox.loading();
+
+        var para = {
+            objecttype: objecttype,
+            objectid: objectid,
+            busobjectId: busobjectId,
+            permissions: JSON.stringify(datas)
+        };
+
+        Ajax.post('admin/datapermission/savePermissions', para, function (ret) {
+            LayerMsgBox.close(index);
+
+            if (ret.state === 'ok') {
+                LayerMsgBox.success(ret.msg, 1000, function () {
+                    $('#DataPermission_form_#(pageId)').submit();
+                });
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        });
+    }
+
+    /**
+     * 所有用户及角色 点击行处理
+     */
+    function jbolt_table_clickhandler_#(pageId)1(table, tempTr1, trId1, rowData) {
+        console.log("jbolt_table_clickhandler: " + JSON.stringify(rowData));
+
+        // 设置菜单的表单
+        $objectid.val(rowData.id);
+        $objecttype.val(rowData.roletype);
+
+        $('#DataPermission_form_#(pageId)').submit();
+    }
+
+    function busObjectChangeHandler(select) {
+        var objectid = $objectid.val();
+        var objecttype = $objecttype.val();
+
+        console.log('busObjectChangeHandler - objecttype: ' + objecttype + ', objectid: ' + objectid);
+
+        if (objectid && objecttype) {
+            $('#DataPermission_form_#(pageId)').submit();
+        }
+    }
+
+    function checkAll(ele) {
+        var name = $(ele).attr('name');
+        var isChecked = $(ele).is(':checked');
+
+        if (isChecked) {
+            CheckboxUtil.checkAll(name, '#jbolt_table_#(pageId)2');
+        } else {
+            CheckboxUtil.uncheckAll(name, '#jbolt_table_#(pageId)2');
+        }
+
+        // var cols = $('#jbolt_table_#(pageId)2').find("tbody>tr>td[data-column='" + name + "']");
+        //
+        // cols.each(function () {
+        //     var $checkbox = $(this).find('div>input[name="' + name + '"]');
+        //
+        //     // td
+        //     $(this).attr('data-changed', true);
+        //     // tr
+        //     $(this).parent().attr('data-changed', true);
+        // });
+
+    }
+
+    function checkHead(table, checkboxColmnName) {
+        // 获取指定checkbox勾选记录数
+        var length = getTableCheckedCount(table, checkboxColmnName);
+        // 获取表体的记录数
+        var tbodylength = getTableRowCount(table);
+        // 全部勾选上了，勾选表头
+        if (tbodylength === length) {
+            CheckboxUtil.checkIt($("input[type='checkbox'][name='" + checkboxColmnName + "'][data-ptype='thead']"), table);
+        }
+    }
+
+    function getEditableTableOptions_#(pageId)(table) {
+        var editableTableOptions = {
+            trigger: "click",
+            initRowCount: 0,
+            submit: {
+                withForm: ['permissionForm'],
+                type: "all",
+                //params:{"orderId":3},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                url: "admin/permission/saveTableSubmit",
+                success: function (ret) {
+                    if (window.afterFormSubmit#(randomFunctionName??)) {
+                        afterFormSubmit#(randomFunctionName??)(ret, function() {
+                            successCallBack(ret);
+                        });
+                    } else {
+                        successCallBack(ret);
+                    }
+                }
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols: {
+                id: {
+                    submitAttr: "id",
+                },
+                isViewEnabled: {
+                    type: "checkbox",
+                    editable: false,
+                    handler: function (table, td, trJsonData, checkbox, isChecked) {
+                        checkHead(table, 'isViewEnabled');
+                    }
+                },
+                isEditEnabled: {
+                    type: "checkbox",
+                    editable: false,
+                    handler: function (table, td, trJsonData, checkbox, isChecked) {
+                        checkHead(table, 'isEditEnabled');
+                    }
+                },
+                isDeleteEnabled: {
+                    type: "checkbox",
+                    editable: false,
+                    handler: function (table, td, trJsonData, checkbox, isChecked) {
+                        checkHead(table, 'isDeleteEnabled');
+                    }
+                },
+            }
+        };
+        return editableTableOptions;
+    }
+</script>
+#end

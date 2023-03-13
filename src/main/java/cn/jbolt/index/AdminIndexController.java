@@ -1,26 +1,19 @@
 package cn.jbolt.index;
 
-import java.io.File;
-import javax.servlet.http.HttpSession;
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Clear;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.JFinal;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.PathKit;
-
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.onlineuser.OnlineUserService;
 import cn.jbolt._admin.topnav.TopnavService;
 import cn.jbolt._admin.user.UserService;
+import cn.jbolt.core.api.HttpMethod;
 import cn.jbolt.core.base.JBoltGlobalConfigKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.config.JBoltConfig;
-import cn.jbolt.core.cache.JBoltGlobalConfigCache;
-import cn.jbolt.core.cache.JBoltPermissionCache;
-import cn.jbolt.core.cache.JBoltUserConfigCache;
+import cn.jbolt.core.cache.*;
 import cn.jbolt.core.common.enums.JBoltLoginState;
+import cn.jbolt.core.common.enums.UserTypeEnum;
 import cn.jbolt.core.consts.JBoltConst;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
@@ -28,19 +21,35 @@ import cn.jbolt.core.kit.JBoltControllerKit;
 import cn.jbolt.core.kit.JBoltSaasTenantKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.LoginLog;
+import cn.jbolt.core.model.OnlineUser;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.model.UserType;
 import cn.jbolt.core.para.JBoltNoUrlPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltLoginLogUtil;
+import cn.jbolt.core.service.OrgService;
+import cn.rjtech.enums.BoolCharEnum;
+import cn.rjtech.enums.CorperateTypeEnum;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Clear;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.JFinal;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.PathKit;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Record;
+
+import javax.servlet.http.HttpSession;
+import java.io.File;
 
 /**
  * 系统后台主入口
- * @ClassName:  AdminIndexController   
- * @author: JFinal学院-小木 QQ：909854136 
- * @date:   2020年3月8日   
+ * @ClassName:  AdminIndexController
+ * @author: JFinal学院-小木 QQ：909854136
+ * @date:   2020年3月8日
  */
 public class AdminIndexController extends JBoltBaseController {
 	@Inject
@@ -51,6 +60,8 @@ public class AdminIndexController extends JBoltBaseController {
 	private TopnavService topnavService;
 	@Inject
 	private OnlineUserService onlineUserService;
+    @Inject
+    private OrgService orgService;
 	@UnCheck
 	@Before(JBoltNoUrlPara.class)
 	public void index(){
@@ -59,7 +70,7 @@ public class AdminIndexController extends JBoltBaseController {
 
 	@UnCheck
 	public void menu(){
-		set("leftMenus", JBoltPermissionCache.me.getRoleMenus(JBoltUserKit.getUserRoleIds()));
+		set("leftMenus", JBoltPermissionCache.me.getRoleMenus(JBoltUserKit.getUserId(), JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APP_ID), JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APPLICATION_ID), JBoltUserKit.getUserRoleIds()));
 		render("menu.html");
 	}
 	@UnCheck
@@ -79,17 +90,18 @@ public class AdminIndexController extends JBoltBaseController {
 				renderJsonFail("密码不正确");
 			}
 		}
-		
+
 	}
-	
+
 	@CheckPermission("dashboard")
 	@UnCheckIfSystemAdmin
 	public void dashboard(){
 		render("dashboard.html");
 	}
-	
+
 	@Clear
 	public void relogin(){
+        set(JBoltConst.USER_TYPE, getCookie(JBoltConst.USER_TYPE, "MOM"));
 		render("relogin.html");
 	}
 	/**
@@ -107,7 +119,8 @@ public class AdminIndexController extends JBoltBaseController {
 		removeCookie(JBoltConst.JBOLT_SESSIONID_KEY);
 		removeCookie(JBoltConst.JBOLT_SESSIONID_REFRESH_TOKEN);
 		removeCookie(JBoltConst.JBOLT_KEEPLOGIN_KEY);
-		redirect(JBoltBaseHandler.processBasepath(getRequest()));
+        String userType = getCookie(JBoltConst.USER_TYPE, "MOM");
+		redirect(JBoltBaseHandler.processBasepath(getRequest()) + (UserTypeEnum.SRM.getValue().equalsIgnoreCase(userType) ? "admin/srmLogin" : StrUtil.EMPTY));
 	}
 	/**
 	 * 进入一个异端顶替登录下线的提示界面
@@ -128,7 +141,7 @@ public class AdminIndexController extends JBoltBaseController {
 	/**
 	 * 登录
 	 */
-	@Clear
+	@Clear(JBoltAdminAuthInterceptor.class)
 	public void login(){
 		//判断不是post就是进登录页面
 		if(getRequest().getMethod().equalsIgnoreCase("post")==false) {
@@ -138,7 +151,7 @@ public class AdminIndexController extends JBoltBaseController {
 		//创建登录日志
 		LoginLog log=JBoltLoginLogUtil.createLoginLog(getRequest());
 		log.setUsername(get("username"));
-		
+
 		//根据全局配置判断是否需要验证码 默认需要
 		boolean checkCaptcha=JBoltGlobalConfigCache.me.isJBoltLoginUseCapture();
 		if(checkCaptcha){
@@ -150,7 +163,17 @@ public class AdminIndexController extends JBoltBaseController {
 				return;
 			}
 		}
-		
+
+        Long orgId = getLong("orgId");
+        String orgCode = null;
+        Record org = orgService.findById(orgId);
+        if (null != org) {
+            ValidationUtils.equals(BoolCharEnum.YES.getValue(), org.getStr("enable"), "该组织已被禁用");
+            ValidationUtils.equals(CorperateTypeEnum.CORPERATE_Y.getValue(), org.getStr("enable"), "该组织已被禁用");
+
+            orgCode = org.getStr("code");
+        }
+
 		Ret ret=userService.getUser(get("username"),get("password"));
 		User user = ret.isFail()?null:ret.getAs("data");
 		//检测用户名密码是否正确输入并得到user
@@ -160,7 +183,7 @@ public class AdminIndexController extends JBoltBaseController {
 			renderJson(ret);
 			return;
 		}
-		
+
 		log.setUserId(user.getId());
 		//检测用户是否禁用
 		if(user.getEnable()==null||user.getEnable()==false){
@@ -169,7 +192,7 @@ public class AdminIndexController extends JBoltBaseController {
 			renderJsonFail(JBoltLoginState.ENABLE_ERROR.getText());
 			return;
 		}
-		
+
 		//检测角色权限分配
 		if(notOk(user.getRoles())&&(user.getIsSystemAdmin()==null||user.getIsSystemAdmin()==false)){
 			log.setLoginState(JBoltLoginState.NOT_ASSIGN_ROLE_ERROR.getValue());
@@ -177,15 +200,15 @@ public class AdminIndexController extends JBoltBaseController {
 			renderJsonFail(JBoltLoginState.NOT_ASSIGN_ROLE_ERROR.getText());
 			return;
 		}
-		
+
 		log.setLoginState(JBoltLoginState.LOGIN_SUCCESS.getValue());
 		log.save();
-		
+
 		//处理用户登录信息 异地登录异常信息
 		boolean isRemoteLogin=userService.processUserRemoteLogin(user,log);
 		userService.processUserLoginInfo(user,isRemoteLogin,log);
 		//登录后的处理
-		afterLogin(user,log);
+		afterLogin(user,log, orgId, orgCode, UserTypeEnum.MOM.getValue());
 		renderJsonSuccess();
 	}
 	/**
@@ -209,10 +232,10 @@ public class AdminIndexController extends JBoltBaseController {
 	 * @param user
 	 * @param log
 	 */
-	private void afterLogin(User user, LoginLog log) {
+	private void afterLogin(User user, LoginLog log, Long orgId, String orgCode, String userType) {
 		//处理onlineUser
 		boolean keeplogin = getCheckBoxBoolean("keepLogin");
-		Kv result=onlineUserService.processUserLogin(keeplogin,user,log);
+		Kv result=onlineUserService.processUserLogin(keeplogin,user,log, orgId, orgCode);
 		if(result!=null && !result.isEmpty()) {
 			int keepLoginSeconds = result.getInt("keepLoginSeconds");
 			String sessionId = result.getStr("sessionId");
@@ -220,9 +243,11 @@ public class AdminIndexController extends JBoltBaseController {
 			setCookie(JBoltConst.JBOLT_SESSIONID_KEY,sessionId,keepLoginSeconds,JFinal.me().getContextPath(),true);
 			//设置refreshToken jwt
 			int refreshTokenLiveSeconds = keepLoginSeconds + 28800;
-			setCookie(JBoltConst.JBOLT_SESSIONID_REFRESH_TOKEN,onlineUserService.genNewSessionIdRefreshToken(user,sessionId,refreshTokenLiveSeconds),refreshTokenLiveSeconds,JFinal.me().getContextPath(),true);
+			setCookie(JBoltConst.JBOLT_SESSIONID_REFRESH_TOKEN,onlineUserService.genNewSessionIdRefreshToken(user,sessionId,refreshTokenLiveSeconds, orgId, orgCode),refreshTokenLiveSeconds,JFinal.me().getContextPath(),true);
 			//设置是否keepLogin
 			setCookie(JBoltConst.JBOLT_KEEPLOGIN_KEY,keeplogin?"true":"false",refreshTokenLiveSeconds,JFinal.me().getContextPath(),true);
+            // 设置用户类型
+            setCookie(JBoltConst.USER_TYPE, userType, keepLoginSeconds, JFinal.me().getContextPath(),true);
 		}
 		//设置用户样式配置的cookie
 		resetUserConfigCookie(user.getId());
@@ -247,7 +272,7 @@ public class AdminIndexController extends JBoltBaseController {
 		boolean nest=JBoltUserConfigCache.me.getJBoltLoginNest(userId);
 		setCookie("jbolt_login_nest",nest+"" ,seconds,JFinal.me().getContextPath());
 	}
-	
+
 	/**
 	 * 验证码
 	 */
@@ -255,7 +280,7 @@ public class AdminIndexController extends JBoltBaseController {
 	public void captcha(){
 		renderJBoltCaptcha(JBoltGlobalConfigCache.me.getConfigValue(JBoltGlobalConfigKey.JBOLT_LOGIN_CAPTURE_TYPE));
 	}
-	
+
 
 	/**
 	 * 获取当前用户Cookie里的TOKEN-jboltid
@@ -266,6 +291,113 @@ public class AdminIndexController extends JBoltBaseController {
 		if(JBoltConfig.SAAS_ENABLE && JBoltSaasTenantKit.me.isSelfRequest()) {
 			kv.set("tenantSn",JBoltSaasTenantKit.me.getSn());
 		}
-		renderJsonData(kv);	
+		renderJsonData(kv);
 	}
+
+    @Clear(JBoltAdminAuthInterceptor.class)
+    public void srmLogin() {
+        // 判断不是post就是进登录页面
+        if(!HttpMethod.POST.name().equalsIgnoreCase(getRequest().getMethod())) {
+            render("srm_login3.html");
+            return;
+        }
+
+        //创建登录日志
+        LoginLog log=JBoltLoginLogUtil.createLoginLog(getRequest());
+        log.setUsername(get("username"));
+
+        //根据全局配置判断是否需要验证码 默认需要
+        boolean checkCaptcha=JBoltGlobalConfigCache.me.isJBoltLoginUseCapture();
+        if(checkCaptcha){
+            boolean checkSuccess=validateCaptcha("captcha");
+            if(!checkSuccess) {
+                log.setLoginState(JBoltLoginState.CAPTURE_ERROR.getValue());
+                log.save();
+                renderJsonFail(JBoltLoginState.CAPTURE_ERROR.getText());
+                return;
+            }
+        }
+
+        Long orgId = getLong("orgId");
+        ValidationUtils.validateId(orgId, "组织参数");
+
+        Record org = orgService.findById(orgId);
+        ValidationUtils.notNull(org, "组织不存在");
+        ValidationUtils.equals(BoolCharEnum.YES.getValue(), org.getStr("enable"), "该组织已被禁用");
+        ValidationUtils.equals(CorperateTypeEnum.CORPERATE_Y.getValue(), org.getStr("enable"), "该组织已被禁用");
+
+        Ret ret=userService.getUser(get("username"),get("password"));
+        User user = ret.isFail()?null:ret.getAs("data");
+        //检测用户名密码是否正确输入并得到user
+        if(user==null){
+            log.setLoginState(JBoltLoginState.USERNAME_PWD_ERROR.getValue());
+            log.save();
+            renderJson(ret);
+            return;
+        }
+
+        UserType userType = UserTypeCache.ME.get(user.getUserTypeId());
+        ValidationUtils.equals(UserTypeEnum.SRM.getValue(), userType.getUsertypeCode(), "您登录的账号，非SRM平台用户");
+
+        log.setUserId(user.getId());
+        //检测用户是否禁用
+        if(user.getEnable()==null|| !user.getEnable()){
+            log.setLoginState(JBoltLoginState.ENABLE_ERROR.getValue());
+            log.save();
+            renderJsonFail(JBoltLoginState.ENABLE_ERROR.getText());
+            return;
+        }
+
+        //检测角色权限分配
+        if(notOk(user.getRoles())&&(user.getIsSystemAdmin()==null|| !user.getIsSystemAdmin())){
+            log.setLoginState(JBoltLoginState.NOT_ASSIGN_ROLE_ERROR.getValue());
+            log.save();
+            renderJsonFail(JBoltLoginState.NOT_ASSIGN_ROLE_ERROR.getText());
+            return;
+        }
+
+        log.setLoginState(JBoltLoginState.LOGIN_SUCCESS.getValue());
+        log.save();
+
+        //处理用户登录信息 异地登录异常信息
+        boolean isRemoteLogin=userService.processUserRemoteLogin(user,log);
+        userService.processUserLoginInfo(user,isRemoteLogin,log);
+        //登录后的处理
+        afterLogin(user,log, orgId, org.getStr("code"), UserTypeEnum.SRM.getValue());
+        renderJsonSuccess();
+    }
+
+    /**
+     * 切换登录组织
+     */
+    @Clear(JBoltAdminAuthInterceptor.class)
+    public void switchOrg() {
+        String userType = getCookie(JBoltConst.USER_TYPE, "MOM");
+        if (HttpMethod.GET.name().equalsIgnoreCase(getRequest().getMethod())) {
+            set(JBoltConst.USER_TYPE, userType);
+            render("switch_org.html");
+            return;
+        }
+
+        Long orgId = getLong("orgId");
+        ValidationUtils.validateId(orgId, "组织参数");
+
+        Record org = orgService.findById(orgId);
+        ValidationUtils.notNull(org, "组织不存在");
+        ValidationUtils.equals(BoolCharEnum.YES.getValue(), org.getStr("enable"), "该组织已被禁用");
+        ValidationUtils.equals(CorperateTypeEnum.CORPERATE_Y.getValue(), org.getStr("enable"), "该组织已被禁用");
+
+        String sessionId = getCookie(JBoltConst.JBOLT_SESSIONID_KEY);
+
+        // 查询当前会话用户
+        OnlineUser onlineUser = JBoltOnlineUserCache.me.getBySessionId(sessionId);
+        onlineUser.setOrgId(orgId);
+        onlineUser.setOrgCode(org.getStr("code"));
+        onlineUser.update();
+        // 删除当前用户的缓存
+        onlineUserService.deleteCacheByKey(sessionId);
+
+        renderJsonSuccess();
+    }
+
 }

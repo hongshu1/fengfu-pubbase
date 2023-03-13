@@ -45,7 +45,7 @@ public class DictionaryTypeAdminController extends JBoltBaseController {
 	 * 低代码模块专用
 	 */
 	public void codeGenOptions(){
-		renderJsonData(service.getOptionList("name","type_key",Okv.by("enable",TRUE)));
+		renderJsonData(service.getOptionList("name","type_key",Okv.by("enable",TRUE), "id", "desc"));
 	}
 	
 	public void add(){

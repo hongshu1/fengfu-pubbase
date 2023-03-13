@@ -1,0 +1,124 @@
+<form onsubmit="return false;" id="appversionForm" action="#(action)" method="post">
+    #if(appversion.autoid??)
+    <input type="hidden" name="appversion.autoid" value="#(appversion.autoid)"/>
+    #end
+
+    <div class="form-group row"
+         data-radio
+         data-rule="radio"
+         data-value="#(appversion.systemtype??)"
+         data-name="appversion.systemtype"
+         data-default="options_first"
+    >
+        <label class="col-2 col-form-label is_required">系统类型</label>
+        <div class="col" style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input id="r3" type="radio" name="appversion.systemtype" value="1"/>
+                <label for="r3">安卓</label>
+            </div>
+
+            <div class="radio radio-primary  radio-inline">
+                <input id="r4" type="radio" name="appversion.systemtype" value="0"/>
+                <label for="r4">ios</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row"
+         data-radio
+         data-rule="radio"
+         data-value="#(appversion.putaway??)"
+         data-name="appversion.putaway"
+         data-default="options_first"
+    >
+        <label class="col-2 col-form-label is_required">是否发布</label>
+
+        <div class="col" style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input id="r31" type="radio" name="appversion.putaway" value="1"/>
+                <label for="r31">是</label>
+            </div>
+
+            <div class="radio radio-primary  radio-inline">
+                <input id="r41" type="radio" name="appversion.putaway" value="2"/>
+                <label for="r41">否</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row"
+         data-radio
+         data-rule="radio"
+         data-value="#(appversion.isforced??)"
+         data-name="appversion.isforced"
+         data-default="options_first"
+    >
+        <label class="col-2 col-form-label">强制更新</label>
+
+        <div class="col" style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input id="r33" type="radio" name="appversion.isforced" value="1"/>
+                <label for="r33">是</label>
+            </div>
+
+            <div class="radio radio-primary  radio-inline">
+                <input id="r43" type="radio" name="appversion.isforced" value="0"/>
+                <label for="r43">否</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">应用编码</label>
+        <div class="col-8">
+            <input type="text" autocomplete="off" class="form-control" data-rule="required" data-tips="请输入应用编码" maxlength="40" name="appversion.appcode" value="#(appversion.appcode??)">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">版本介绍</label>
+        <div class="col-8">
+            <input type="text" autocomplete="off" class="form-control" data-rule="required" data-tips="请输入版本介绍" maxlength="40" name="appversion.versionintro" value="#(appversion.versionintro??)">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">版本日期</label>
+        <div class="col-8">
+            <input type="text" class="form-control" data-date name="appversion.versiondate"
+                   value="#date(DateUtil.toDate(appversion.versiondate??),'yyyy-MM-dd')">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">版本编号</label>
+        <div class="col-8">
+            <input type="text" autocomplete="off" class="form-control" data-rule="required" data-tips="请输入版本编号" maxlength="40" name="appversion.versioncode" value="#(appversion.versioncode??)">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">下载地址</label>
+        <div class="col-8">
+            <input type="text" readonly="readonly" placeholder="请在下方选择文件上传" id="fileUploaderDemo" class="form-control" name="appversion.downloadurl" value="#(appversion.downloadurl??)"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">CDN链接</label>
+        <div class="col-8">
+            <input type="text"  autocomplete="off" class="form-control" maxlength="100" name="appversion.cdnurl" value="#(appversion.cdnurl??)">
+        </div>
+    </div>
+</form>
+
+<div class="form-group text-center">
+    <div class="j_upload_file_box"
+         data-name="file"
+         data-btn-class="btn btn-primary"
+         data-maxsize="204800"
+         data-handler="uploadFile"
+         data-accept="apk"
+         data-url="admin/upload/uploadFile?folder=appversion&type=5"
+         data-hiddeninput="fileUploaderDemo"
+         data-filenameinput="fileNameInput"
+         data-sizeinput="fileSizeInput"
+    ></div>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="appversionForm")
+#end

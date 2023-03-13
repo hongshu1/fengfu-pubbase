@@ -138,7 +138,7 @@ function getModelAttrEditableTableOptions_#(pageId)(){
 			cols:{
 				id:{
 						submitAttr:"id",
-					}, 
+					},
 					table_label:{
 						type:"input",
 						required:true,
@@ -309,9 +309,9 @@ function getModelAttrEditableTableOptions_#(pageId)(){
 							changeTranslateUseValueColOptions_#(pageId)(td,trJsonData["translateType"]);
 						}
 					}
-					
-					
-				
+
+
+
 			}
 	};
 	return editableTableOptions;
@@ -657,7 +657,7 @@ function changeIsGenModel_#(pageId)(r,v){
 
 function afterFormSubmit(ret,callback){
 	var form = $("#codeGenPermissionForm");
-	form.find("input[name='codeGen.permissionId']").val(ret.data);
+	form.find("input[name='codeGen.permissionId']").val(ret.data.id);
 	ajaxSubmitForm(form,function(){
 		AjaxPortalUtil.refresh("codeGenPermissionPortal");
 	});
@@ -755,7 +755,7 @@ function processFormEleMoveEvent(){
 				targetDraggableEle.before(formPreviewPortal_#(pageId).swapEle);
 			}
 		}
-		
+
 	}).on("dragleave","#codegen_form_preview_portal_#(pageId)[data-edit-mode='true'] div.form_control_box",function(e){
 		// 阻止浏览器默认行为
 		e.preventDefault();
@@ -869,7 +869,7 @@ function submitFormEleEditor(){
 			});
 		});
 	});
-	
+
 }
 function refreshModelAttrJBoltTable_#(pageId)(){
 	refreshJBoltTable("#code_gen_model_attr_table_#(pageId)");
@@ -886,7 +886,7 @@ function processFormEleClickEditorEvent(){
 		if(ele.hasClass("edit_form_ele_editor_ing")){
 			return false;
 		}
-		
+
 		if(ele.data("stop-propagation")){
 			ele.data("stop-propagation",false);
 		  return true;
@@ -901,7 +901,7 @@ function processFormEleClickEditorEvent(){
 			existEle.removeClass("jb_draging_ele");
 			formPreviewPortal_#(pageId).find("#JBoltFormEleEditor").remove();
 		}
-		
+
 		ele.addClass("jb_draging_ele");
 		if(!JBoltFormEleEditor_tpl){
 			JBoltFormEleEditor_tpl = g("JBoltFormEleEditor_tpl").value;
@@ -1159,7 +1159,7 @@ function changeFormControlEleisJBoltInputFilterTable(r,value){
 	if(isOk(formPreviewPortal_#(pageId).editingEle)){
 		var input = formPreviewPortal_#(pageId).editingEle.find("input[data-jboltinput]");
 		input.val("");
-		
+
 		if(value=="true"){
 			input.data("filter-handler","filterTable").removeAttr("readonly");
 		}else{

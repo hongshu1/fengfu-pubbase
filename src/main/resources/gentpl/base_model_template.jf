@@ -47,7 +47,7 @@ public abstract class #(tableMeta.baseModelName)<M extends #(tableMeta.baseModel
 		return (M)this;
 		#end
 	}
-	
+
 	#if (cm.remarks)
 	/**
 	 * #(changeToSingleLine(cm.remarks))
@@ -58,13 +58,11 @@ public abstract class #(tableMeta.baseModelName)<M extends #(tableMeta.baseModel
 		#set(getterOfModel = 'get')
 	#end
 	#if (cm.remarks)
-	@JBoltField(name="#(cm.attrName)" ,columnName="#(cm.name)",type="#(javaTypeMap.get(cm.javaType))", remark="#(changeToSingleLine(cm.remarks))", required=#(!(cm.isNullable!=null&&cm.isNullable=="YES")), maxLength=#columnTypeTo(cm.type,1), fixed=#columnTypeTo(cm.type,2), order=#(for.count))
+	@JBoltField(name="#(cm.attrName.toLowerCase())" ,columnName="#(cm.name)",type="#(javaTypeMap.get(cm.javaType))", remark="#(changeToSingleLine(cm.remarks))", required=#(!(cm.isNullable!=null&&cm.isNullable=="YES")), maxLength=#columnTypeTo(cm.type,1), fixed=#columnTypeTo(cm.type,2), order=#(for.count))
 	#else
-	@JBoltField(name="#(cm.attrName)" ,columnName="#(cm.name)",type="#(javaTypeMap.get(cm.javaType))", remark="#(cm.attrName.toUpperCase())", required=#(!(cm.isNullable!=null&&cm.isNullable=="YES")), maxLength=#columnTypeTo(cm.type,1), fixed=#columnTypeTo(cm.type,2), order=#(for.count))
+	@JBoltField(name="#(cm.attrName.toLowerCase())" ,columnName="#(cm.name)",type="#(javaTypeMap.get(cm.javaType))", remark="#(cm.attrName.toUpperCase())", required=#(!(cm.isNullable!=null&&cm.isNullable=="YES")), maxLength=#columnTypeTo(cm.type,1), fixed=#columnTypeTo(cm.type,2), order=#(for.count))
 	#end
-	#if(javaTypeMap.get(cm.javaType)=="Long")
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	#end
+	@JSONField(name = "#(cm.attrName.toLowerCase())"#if(javaTypeMap.get(cm.javaType)=="Long"), serializeUsing = ToStringSerializer.class#end)
 	public #(cm.javaType) get#(firstCharToUpperCase(cm.attrName))() {
 		return #(getterOfModel)("#(cm.name)");
 	}

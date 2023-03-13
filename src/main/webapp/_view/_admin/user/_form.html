@@ -9,6 +9,23 @@
 		<div class="col-12 col-sm-12 col-lg-#(userExtendEnable?4:6)">
 		<fieldset class="form-page-fieldset">
 			<legend>基础信息</legend>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">用户类型</label>
+                <div class="col">
+                    <select class="form-control"
+                            data-rule="select"
+                            name="user.userTypeId"
+                            data-autoload
+                            data-url="admin/usertype/options"
+                            data-select-type="select"
+                            data-text="=用户类型="
+                            data-value=""
+                            data-value-attr="id"
+                            data-text-attr="usertypeName"
+                            data-select="#(user.userTypeId??)"
+                    ></select>
+                </div>
+            </div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">姓名</label>
 				<div class="col">
@@ -45,6 +62,12 @@
 					<input type="text" autocomplete="off"  class="form-control" data-rule="email" data-notnull="false"  placeholder="请输入用户E-Mail"  maxlength="100" name="user.email" value="#(user.email??)">
 				</div>
 			</div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">有效期</label>
+                <div class="col">
+                    <input type="text" data-date class="form-control" placeholder="有效期"   maxlength="20" name="user.expirationTime" value="#date(user.expirationTime??, 'yyyy-MM-dd')">
+                </div>
+            </div>
 		</fieldset>
 		<fieldset class="form-page-fieldset">
 			<legend>登录账号、密码、角色配置</legend>
@@ -54,8 +77,8 @@
 						<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入登录用户名" data-tips="请输入登录用户名" maxlength="20" name="user.username" value="#(user.username??)">
 					</div>
 				</div>
-			
-			 
+
+
 			#if(!(user??))
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label">密码</label>
@@ -64,9 +87,9 @@
 					</div>
 				</div>
 			#end
-			
-			 
-				
+
+
+
 				<div class="form-group row">
 								<label class="col-sm-2 col-form-label">角色</label>
 								<div class="col">
@@ -75,19 +98,19 @@
 										data-rule="select"
 										data-select-type="select2"
 										multiple="multiple"
-										data-tips="请选择用户角色" 
-										data-url="admin/role/options"  
-										data-text="=请选择角色[可多选]=" 
-										data-value="" 
+										data-tips="请选择用户角色"
+										data-url="admin/role/options"
+										data-text="=请选择角色[可多选]="
+										data-value=""
 										data-setvalueto="userRoles"
 										data-select="#(user.roles??)">
 									</select>
 								</div>
 				</div>
 				<input type="hidden" id="userRoles" name="user.roles" value="#(user.roles??)"/>
-				
+
 			</fieldset>
-		
+
 		</div>
 		<div class="col-12  col-sm-12  col-lg-#(userExtendEnable?4:6)">
 			#if(deptEnable||postEnable)
@@ -100,10 +123,10 @@
 					<select class="form-control" name="user.deptId"
 						data-autoload
 						data-select-type="select2"
-						data-tips="请选择部门" 
-						data-url="admin/dept/enableOptions"  
-						data-text="=请选择部门=" 
-						data-value="" 
+						data-tips="请选择部门"
+						data-url="admin/dept/enableOptions"
+						data-text="=请选择部门="
+						data-value=""
 						data-select="#(user.deptId??)">
 					</select>
 				</div>
@@ -117,9 +140,9 @@
 						data-autoload
 						multiple="multiple"
 						data-select-type="select2"
-						data-tips="请选择岗位" 
-						data-url="admin/post/enableOptions"  
-						data-text="=请选择岗位[可多选]=" 
+						data-tips="请选择岗位"
+						data-url="admin/post/enableOptions"
+						data-text="=请选择岗位[可多选]="
 						data-value=""
 						data-setvalueto="userPosts"
 						data-select="#(user.posts??)">
@@ -130,16 +153,16 @@
 		#end
 		</fieldset>
 		#end
-			
+
 			<fieldset class="form-page-fieldset">
 			<legend>上传头像</legend>
 			<div class="form-group text-center">
-					<div class="j_img_uploder" 
-					data-url="admin/user/uploadAvatar" 
-					data-value="#realImage(user.avatar??)"  
-					data-handler="uploadFile"  
-					data-hiddeninput="userAvatarInput"  
-					data-area="200,200" 
+					<div class="j_img_uploder"
+					data-url="admin/user/uploadAvatar"
+					data-value="#realImage(user.avatar??)"
+					data-handler="uploadFile"
+					data-hiddeninput="userAvatarInput"
+					data-area="200,200"
 					data-maxsize="2000"></div>
 			</div>
 			</fieldset>
@@ -153,17 +176,59 @@
 		</div>
 		#end
 	</div>
-	
-	</form>
- 
-	
 
+	</form>
+
+<div class="jbolt_tab_view jb_vflex" style="height: 50%">
+
+    <div class="jbolt_tab_links jb_vheader">
+        <a class="jbolt_tab_link active" href="#jbolt_tabcontent1">用户组织</a>
+        <a class="jbolt_tab_link" href="#jbolt_tabcontent2">第三方用户</a>
+    </div>
+
+    <div class="jbolt_tab_contents jb_vbody">
+
+        <div class="jbolt_tab_content active" id="jbolt_tabcontent1">
+            ### 用户组织
+            #include("user_org.html")
+        </div>
+
+        <div class="jbolt_tab_content" id="jbolt_tabcontent2">
+            ### 第三方用户
+            #render("user_thirdparty.html")
+        </div>
+
+    </div>
+
+</div>
 
 #define js()
 <script>
 
-$(function(){
-})
+    $(function () {
+    });
+
+    function submitThisForm() {
+        var index = LayerMsgBox.loading('执行中...');
+
+        var tables = ["jbolt_Table_#(pageId)1", "jbolt_Table_#(pageId)2"];
+        jboltTableSubmitMulti(tables, "admin/user/saveTableSubmit", function (res) {
+
+            LayerMsgBox.close(index);
+
+            if (res.state === 'ok') {
+                LayerMsgBox.success(res.msg, 1000, function () {
+                    window.parent.refreshJBoltTable();
+
+                    location.href = '/admin/user/edit/' + res.data.id + '-_jb_rqtype_dialog';
+                });
+            } else {
+                LayerMsgBox.alert(res.msg, 2);
+            }
+
+        });
+    }
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="userForm")
+#include("user_org_js.html")
+#include("user_thirdparty_js.html")
 #end

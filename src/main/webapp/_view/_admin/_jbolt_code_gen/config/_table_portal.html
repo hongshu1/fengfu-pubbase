@@ -121,7 +121,7 @@
 #end
 #if(codeGen.isToolbarRefreshBtn)<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>#end
 </div>
-#if(codeGen.toolbarExtraButtonSize>0)
+#if(codeGen.toolbarExtraButtonSize??0>0)
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 #for(i=0;i<codeGen.toolbarExtraButtonSize;i++)
 <button class="btn btn-outline-primary"><i class="fa fa-cog"></i> btn_#(i)</button>
@@ -146,7 +146,7 @@
 #end
 </div>
 #end
- 
+
 </div>
 #end
 #if(codeGen.isHeadbox)

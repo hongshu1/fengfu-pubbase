@@ -1,0 +1,95 @@
+<form onsubmit="return false;" id="Busobject_Form" action="#(action)" method="post">
+
+    #if(busobject.id??)
+    <input type="hidden" name="busobject.id" value="#(busobject.id??)"/>
+    #end
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">应用系统</label>
+                <div class="col-10">
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/application/options"
+                            data-select-type="select"
+                            data-text-attr="appName"
+                            data-value-attr="id"
+                            name="busobject.appId"
+                            data-refresh="true"
+                            data-rule="select"
+                            data-notnull="true"
+                            data-tips="请选择应用系统"
+                            data-text="=请选择="
+                            data-value=""
+                            data-select="#(busobject.appId??)"
+                    ></select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">业务对象编码</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入业务对象编码" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入业务对象编码" maxlength="40" name="busobject.busobjectCode" value="#(busobject.busobjectCode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">显示名</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入显示名" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入显示名" maxlength="40" name="busobject.displayName" value="#(busobject.displayName??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">业务对象名称</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入业务对象名称" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入业务对象名称" maxlength="40" name="busobject.busobjectName" value="#(busobject.busobjectName??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">数据来源</label>
+
+                <div class="col-10">
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/enums/datasource"
+                            data-select-type="select"
+                            name="busobject.dataSource"
+                            data-refresh="true"
+                            data-rule="select"
+                            data-notnull="true"
+                            data-tips="请选择数据来源"
+                            data-text="=请选择="
+                            data-value=""
+                            data-select="#(busobject.dataSource??)"
+
+                    ></select>
+                </div>
+            </div>
+            <div class="form-group row"
+                 data-radio
+                 data-name="busobject.isEnabled"
+                 data-value-attr="sn"
+                 data-default="options_first"
+                 data-url="admin/dictionary/options?key=options_enable"
+                 data-label="启用状态"
+                 data-width="col-sm-2,col-10"
+                 data-value="#(busobject.isEnabled??)"
+                 data-rule="radio"
+                 data-notnull="true"
+                 data-tips="请选择启用或禁用"
+                 data-inline="true"
+            >
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">版本号</label>
+                <div class="col-10">
+                    <input type="number" data-rule="required" data-notnull="true" data-tips="请输入版本号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入版本号" maxlength="40" name="busobject.versionNum" value="#(busobject.versionNum??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="Busobject_Form")
+#end

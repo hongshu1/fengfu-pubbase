@@ -24,10 +24,10 @@
 		#if(codeGen.id??)
 		<input type="text" class="form-control" data-rule="required" maxlength="100" data-tips="请选择数据源" readonly="readonly" value="#(codeGen.datasourceInfo??)" />
 		#else
-			<select class="form-control" 
+			<select class="form-control"
 					data-autoload
 					id="dataSource"
-					name="codeGen.datasourceName" 
+					name="codeGen.datasourceName"
 					data-url="admin/codegen/datasources"
 					data-text="=请选择="
 					data-value=""
@@ -41,7 +41,7 @@
 		#end
 		</div>
 	</div>
-	
+
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">数据表</label>
 		<div class="col-6">
@@ -59,7 +59,7 @@
 			<input type="hidden" id="main_table_remark"   data-sync-attr="remark" autocomplete="off"  maxlength="100" name="codeGen.mainTableRemark" value="#(codeGen.mainTableRemark??)" />
 		</div>
 	</div>
-	
+
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">删除表名前缀</label>
 		<div class="col-6">
@@ -163,14 +163,14 @@
 				</div>
 			</div>
 	</div>
-	
+
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">开发作者</label>
 		<div class="col-6">
-			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入开发作者" data-tips="请输入开发作者" maxlength="60" name="codeGen.author" value="#(codeGen.author?? JBoltUserKit.getUserName())" />
+			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入开发作者" data-tips="请输入开发作者" maxlength="60" name="codeGen.author" value="#(codeGen.author?? '佛山市瑞杰科技有限公司')" />
 		</div>
 	</div>
-	
+
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">版本号</label>
 		<div class="col-6">
@@ -181,7 +181,7 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">Main Java Package</label>
 		<div class="col-6">
-			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete" autocomplete="off" id="mainJavaPackageInput"  class="form-control" data-rule="required"  placeholder="请输入java主package" data-tips="请输入版本号(数字)" maxlength="100" name="codeGen.mainJavaPackage" value="#(codeGen.mainJavaPackage?? 'cn.jbolt.admin')" />
+			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete" autocomplete="off" id="mainJavaPackageInput"  class="form-control" data-rule="required"  placeholder="请输入java主package" data-tips="请输入版本号(数字)" maxlength="100" name="codeGen.mainJavaPackage" value="#(codeGen.mainJavaPackage?? 'cn.rjtech.admin')" />
 			<small class="text-danger">注意:java 默认生成的主package 默认值<span id="defaultMainJavaPackageText">cn.jbolt.admin</span></small>
 		</div>
 	</div>
@@ -189,10 +189,10 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">Model Package</label>
 		<div class="col-sm-4">
-			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete"  data-tips="请输入Model生成到哪个package" class="form-control" name="codeGen.modelPackage" value="#(codeGen.modelPackage?? 'cn.jbolt.common.model')" autocomplete="off" />
+			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete"  data-tips="请输入Model生成到哪个package" class="form-control" name="codeGen.modelPackage" value="#(codeGen.modelPackage?? 'cn.rjtech.model.momdata')" autocomplete="off" />
 		</div>
 	</div>
-	 
+
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">备注</label>
 		<div class="col-9">

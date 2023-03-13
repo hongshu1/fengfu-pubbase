@@ -1,0 +1,159 @@
+#@adminDialogLayout()
+
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+        <div class="card-body">
+            <table class="table table-bordered table-hover table-striped table-center department">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>组织</th>
+                    <th style="width: 80px;">选择</th>
+                </tr>
+                </thead>
+                <tbody>
+                #for(data:orgList)
+                <tr onclick="toogleMyCheckbox(this)" data-id="#(data.id)">
+                    <td>#(for.count)</td>
+                    <td class = "text-left">#(data.org_name)</td>
+                    <td>
+                        <button class="checkboxBtn " data-value="#(data.id)"><i class="fa fa-check"></i></button>
+                    </td>
+                </tr>
+                #end
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+#end
+#define js()
+<script>
+    needPjax = false;
+
+    function checkedSons(son, level) {
+        let sonTr = $("tr[data-pid='" + son + "'][data-level='" + level + "']");
+        if (sonTr && sonTr.length > 0) {
+            sonTr.each(function () {
+                let tr = $(this);
+                tr.find("button.checkboxBtn").addClass("checked");
+                let son = tr.data("son");
+                let level = tr.data("level");
+                checkedSons(son, level + 1);
+
+            })
+        }
+
+    }
+
+    function removeCheckedSons(pid, level) {
+        let sonTr = $("tr[data-pid='" + pid + "'][data-level='" + level + "']");
+        if (sonTr && sonTr.length > 0) {
+            sonTr.each(function () {
+                let tr = $(this);
+                tr.find("button.checkboxBtn.checked").removeClass("checked");
+                let son = tr.data("son");
+                let level = tr.data("level");
+                removeCheckedSons(son, level + 1);
+
+            })
+        }
+
+    }
+
+    function removeCheckedParent(pid, selfLevel, plevel) {
+        let sameBtn = $("tr[data-pid='" + pid + "'][data-level='" + selfLevel + "']").find("button.checkboxBtn.checked");
+        if (!sameBtn || sameBtn.length == 0) {
+            let ptr = $("tr[data-son='" + pid + "'][data-level='" + plevel + "']");
+            ptr.find("button.checkboxBtn").removeClass("checked");
+            let ppid = ptr.data("pid");
+            let level = ptr.data("level");
+            removeCheckedParent(ppid, level, level - 1);
+
+        }
+
+    }
+
+    function checkedParent(pid, level) {
+        let ptr = $("tr[data-son='" + pid + "'][data-level='" + level + "']");
+        if (ptr && ptr.length > 0) {
+            ptr.find("button.checkboxBtn").addClass("checked");
+            let ppid = ptr.data("pid");
+            let level = ptr.data("level");
+            checkedParent(ppid, level - 1);
+
+        }
+
+    }
+
+    function toogleMyCheckbox(ele) {
+        let my = $(ele);
+        let checkbox = my.find(".checkboxBtn");
+        if (checkbox && checkbox.length > 0) {
+            checkbox.toggleClass("checked");
+            let checked = checkbox.hasClass("checked");
+            let level = my.data("level");
+            let son = my.data("son");
+            let pid = my.data("pid");
+            if (checked) {
+                checkedSons(son, level + 1);
+                checkedParent(pid, level - 1);
+            } else {
+                removeCheckedSons(son, level + 1);
+            }
+
+
+        }
+    }
+
+    // 获取选中组织ID
+    function getOrgId() {
+        let orgs = $("button.checkboxBtn.checked");
+        if (orgs && orgs.length > 0) {
+            let orgIds = [];
+            orgs.each(function () {
+                orgIds.push($(this).data("value"));
+            });
+            return orgIds.join();
+        }
+        return "";
+    }
+
+    // 保存数据
+    function submitThisForm(successCallback) {
+        let orgIds = getOrgId();
+        $.post("admin/orgpermission/batchSave", {"roleId": "#(roleId)", "orgIds": orgIds}, (data) => {
+            LayerMsgBox.success(data.msg, 500, successCallback);
+        })
+    }
+
+    // 更改选中状态
+    function checkIds(funs) {
+        for (let i = 0; i < funs.length; i++) {
+            let fun = funs[i];
+            $("tr[data-id='" + fun.org_id + "']").find("button").addClass("checked");
+        }
+
+
+    }
+
+    // 获取选中数据
+    function readCheckeds() {
+        Ajax.get("admin/orgpermission/getCheckeds/#(roleId)", function (ret) {
+            let datas = ret.data;
+            if (datas && datas.length > 0) {
+                // 更改选中状态
+                checkIds(datas);
+            }
+        });
+    }
+
+    $(function () {
+        // 保存设置按钮
+        changeParentLayerDialogBtnTitle(0, "保存设置");
+        // 获取选中数据
+        readCheckeds();
+    });
+</script>
+#end

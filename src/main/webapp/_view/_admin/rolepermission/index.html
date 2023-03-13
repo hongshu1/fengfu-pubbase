@@ -1,0 +1,406 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_content">
+
+        <div class="row">
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-header">所有角色及用户</div>
+                    <div class="card-body">
+
+                        <form class="form-inline" id="rolepermissionForm_#(pageId)1" onsubmit="return false;" method="post">
+
+                            <input type="text" autocomplete="off" class="form-control ml-xl-1" placeholder="=编码/名称=" name="keywords" value=""/>
+                            <!--<input type="text" autocomplete="off" class="form-control ml-1" placeholder="=名称=" name="name" value=""/>-->
+
+                            <select class="form-control" name="roletype" >
+                                <option value="">=角色类型=</option>
+                                <option value="1">角色</option>
+                                <option value="2">用户</option>
+                            </select>
+
+                            <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
+                            <button type="reset" class="btn btn-light"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+
+                        </form>
+
+                        <!-- JBoltTable的数据模板定义-->
+                        <script type="text/template" id="rolepermissionRowtpl_#(pageId)1">
+                            {@each datas as data,index}
+                            <tr data-id="${data.iautoid}">
+                                <td>${data.sn}</td>
+                                <td>${data.name}</td>
+                                <td>$${data.roletype|roletype}</td>
+                            </tr>
+                            {@/each}
+                        </script>
+
+                        <div class="jbolt_table_view">
+                            <div class="jbolt_table_box">
+                                <div class="jbolt_table_body">
+                                    <table class="jbolt_table jbolt_main_table table-center"
+                                           id="jbolt_table_#(pageId)"
+                                           data-jbolttable
+                                           data-ajax="true"
+                                           data-width="auto"
+                                           data-column-prepend="1:radio:true"
+                                           data-column-resize="true"
+                                           ###data-bind-elements="#rolepermissionAddBtn_#(pageId)1"
+                                           data-url="admin/role/userAndRoleData"
+                                           data-autoload="true"
+                                           data-conditions-form="rolepermissionForm_#(pageId)1"
+                                           data-rowtpl="rolepermissionRowtpl_#(pageId)1"
+                                           data-page="rolepermissionPage_#(pageId)1"
+                                           data-pagesize="30"
+                                           data-row-click-active="true"
+                                           data-row-click-handler="jbolt_table_dblclickhandler_#(pageId)1"
+                                    >
+                                        <thead>
+                                        <tr>
+                                            <th data-width="150" data-column="sn">编码</th>
+                                            <th data-width="150" data-column="name">名称</th>
+                                            <th data-width="120" data-column="name">角色类型</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-4">
+                <div class="card">
+
+                    <div class="card-header px-3 py-2">
+                        <span>所有菜单</span>
+
+                        <div class="btn-group btn-group-sm pull-right" role="group" aria-label="btn-group">
+
+                            <div class="col-md-offset-1 col"
+                                 data-checkbox
+                                 data-name="checkAll"
+                                 data-handler="checkAllHandler"
+                                 data-inline="true"
+                            >
+                                <!--<label class="col-auto col-form-label" >全选</label>-->
+                                <div class="col">
+                                    <div class="checkbox checkbox-primary checkbox-inline">
+                                        <input id="c1" type="checkbox" name="checkAll" value="1"/>
+                                        <label for="c1">全选</label>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <button type="button" class="btn btn-primary" onclick="JSTreeUtil.closeAll('#jstree_#(pageId)2')">收起</button>
+
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <form class="form-inline" id="rolepermissionForm_#(pageId)2" onsubmit="return false;" method="post">
+
+                            <input type="hidden" name="roletype">
+                            <input type="hidden" name="id">
+
+                            <select class="form-control"
+                                    name="applicationId"
+                                    data-autoload
+                                    data-url="admin/application/options"
+                                    data-text-attr="appName"
+                                    data-value-attr="id"
+                                    data-text="=全部="
+                                    data-placeholder="=应用系统="
+                                    data-handler="applicationIdHandler">
+                            </select>
+
+                            <input type="text" autocomplete="off" class="form-control" placeholder="=名称=" value="" id="searchInput_#(pageId)"/>
+
+                        </form>
+
+                        <div id="jstree_#(pageId)2" data-jstree
+                             data-checkbox="true"
+                             data-open-level="1"
+                             data-read-url="admin/permission/menuJsTree"
+                             data-change-handler="jstreeChangeHandler_jstree_#(pageId)2"
+                             data-jstree-value-attr="id"
+                             data-conditions-form="rolepermissionForm_#(pageId)2"
+                             data-search-input="searchInput_#(pageId)"
+                             ### 选中值
+                             ###data-select="1,3,7,8"
+                             ### 默认选中值
+                             ###data-default-select="1,3,7,8"
+                             ###data-sync-ele="#checkbox_hidden_1_input_#(pageId),#checkbox_hidden_2_input_#(pageId)"
+                        ></div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-4">
+                <div class="card">
+
+                    <div class="card-header px-3 py-2">
+                        <span>已授权菜单</span>
+
+                        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+
+                            <button type="button" class="btn btn-primary" onclick="savePermission()">保存</button>
+                            <button type="button"  class="btn btn-outline-secondary" onclick="clearTree()"><i class="fa fa-reset"></i> 重置</button>
+
+                        </div>
+
+                        <div class="btn-group btn-group-sm pull-right" role="group" aria-label="btn-group">
+
+                            <button type="button" class="btn btn-primary" onclick="JSTreeUtil.closeAll('#jstree_#(pageId)3')">收起</button>
+
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <form id="rolepermissionForm_#(pageId)3">
+                            <input type="hidden" name="enableIcon" value="<i class='fa fa-trash c-danger' style='position: absolute;right: 20px;'></i>">
+                            <input type="hidden" name="checkedIds">
+                            <input type="hidden" name="renderEmpty">
+                        </form>
+
+                        <div id="jstree_#(pageId)3" data-jstree
+                             ###data-checkbox="true"
+                             data-autoload="false"
+                             data-open-level="1"
+                             data-read-url="admin/permission/menuJsTree"
+                             data-change-handler="jstreeChangeHandler_jstree_#(pageId)3"
+                             ###data-jstree-value-attr="id"
+                             data-conditions-form="rolepermissionForm_#(pageId)3"
+                             ###data-search-input="searchInput_#(pageId)"
+                             ### 选中值
+                             ###data-select="1,3,7,8"
+                             ### 默认选中值
+                             ###data-default-select="1,3,7,8"
+                        ></div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+#end
+#define js()
+<script>
+    $(function () {
+    });
+
+    var $tree2 = $('#jstree_#(pageId)2');
+    var $tree3 = $('#jstree_#(pageId)3');
+
+    /**
+     * 所有菜单 点击事件处理
+     */
+    function jstreeChangeHandler_jstree_#(pageId)2(tree,data){
+        // get_all_checked第一个参数 full-默认false 只返回ID true是返回整条数据json
+        // get_all_checked第二个参数 withoutRoot 默认false 就是都出来 如果是true 就不带root节点 有些root节点无用
+        // console.log(tree.jstree(true).get_all_checked(true,false))
+        // LayerMsgBox.alert("选择了："+data.text);
+
+        var allChecked = tree.jstree(true).get_all_checked(true, false);
+        console.log(allChecked);
+
+        var checkedArr = [];
+
+        $.each(allChecked, function (idx, row) {
+            checkedArr.push(row.id);
+        });
+
+        var checkedIds = checkedArr.join(',');
+
+        $('input[name="checkedIds"]').val(checkedIds);
+
+        setTimeout(function () {
+
+            // 清空参数
+            $('input[name="renderEmpty"]').val('');
+            // 刷新已授权菜单
+            JSTreeUtil.refresh($tree3);
+
+        }, 100);
+
+    }
+
+    var firstLoad = true;
+
+    /**
+     * 切换应用端 自动重新加载 所有菜单
+     */
+    function applicationIdHandler() {
+        if (!firstLoad) {
+            console.log('applicationIdHandler');
+            $('#rolepermissionForm_#(pageId)2').submit();
+        }
+
+        firstLoad = false;
+    }
+
+    /**
+     * 所有菜单 全选处理
+     */
+    var checkAllHandler = function() {
+        // 获取选中值
+        var checked = $('input[name="checkAll"]:checked').val();
+
+        // 全选
+        if (checked === '1') {
+            $tree2.jstree(true).check_all();
+
+            var nodes = $tree2.jstree(true).get_all_checked(true, false);
+            console.log(JSON.stringify(nodes));
+
+            var checkedIds = getCheckedIds(nodes);
+
+            $('input[name="renderEmpty"]').val('');
+            $('input[name="checkedIds"]').val(checkedIds);
+
+            JSTreeUtil.refresh($tree3);
+        } else {
+            clearTree();
+            //$tree2.jstree(true).uncheck_all();
+        }
+    }
+
+    var getCheckedIds = function () {
+        var nodes = $tree2.jstree(true).get_all_checked(true, false);
+
+        var ids = [];
+
+        $.each(nodes, function (idx, row) {
+            ids.push(row.id);
+        });
+        return ids.join(',');
+    };
+
+    /**
+     * 所有用户及角色 点击行处理
+     */
+    function jbolt_table_dblclickhandler_#(pageId)1(table, tempTr1, trId1, rowData) {
+        console.log("jbolt_table_dblclickhandler_#(pageId)1:" + JSON.stringify(rowData));
+
+        // 设置菜单的表单
+        $('input[name="id"]').val(rowData.id);
+        $('input[name="roletype"]').val(rowData.roletype);
+
+        clearTree();
+
+        var para = {
+            roletype: rowData.roletype,
+            id: rowData.id
+        };
+
+        // 加载所有菜单中选中的项目
+        Ajax.post('/admin/permission/permissions', para, function (ret) {
+            if (ret.state === 'ok') {
+                var ids = ret.data.ids;
+                if (ids) {
+                    JSTreeUtil.setChecked($tree2, ids);
+                }
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        });
+    }
+
+    /**
+     * 已授权菜单 点击删除处理
+     */
+    function jstreeChangeHandler_jstree_#(pageId)3(tree, data) {
+        //get_all_checked第一个参数 full-默认false 只返回ID true是返回整条数据json
+        //get_all_checked第二个参数 withoutRoot 默认false 就是都出来 如果是true 就不带root节点 有些root节点无用
+        // console.log(tree.jstree(true).get_all_checked(true,false))
+        //LayerMsgBox.alert("选择了："+data.text);
+        // console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
+        // tree.jstree(true).delete_node(data.id)
+
+        var id = tree.jstree(true).get_selected();
+        if (id) {
+            tree.jstree(true).delete_node(id);
+
+            $tree2.jstree(true).deselect_node(id);
+        }
+    }
+
+    /**
+     * 已授权菜单 重置（清空）
+     */
+    function clearTree() {
+        // 清空已选择
+        JSTreeUtil.clearSelected($tree2);
+        // 设置返回空
+        $('input[name="renderEmpty"]').val('1');
+        JSTreeUtil.refresh($tree3);
+    }
+
+    /**
+     * 保存权限
+     */
+    var savePermission = function () {
+        var index = LayerMsgBox.loading();
+
+        var nodes = $tree2.jstree(true).get_all_checked(true, false);
+        console.log('配置的权限：' + JSON.stringify(nodes));
+
+        var menuids = [];
+        var buttonIds = [];
+
+        $.each(nodes, function (idx, row) {
+            // 按钮
+            if (row.text.startsWith('[按钮]')) {
+                buttonIds.push(row.id)
+            }
+            // 菜单
+            else {
+                menuids.push(row.id);
+            }
+        });
+
+        // 设置菜单的表单
+        var id = $('input[name="id"]').val();
+        var roletype = $('input[name="roletype"]').val();
+
+        var para = {
+            roletype: roletype,
+            id: id,
+            menuIds: menuids.join(','),
+            buttonIds: buttonIds.join(',')
+        }
+
+        Ajax.post('/admin/menupermission/savePermissions', para, function (ret) {
+            LayerMsgBox.close(index);
+
+            if (ret.state === 'ok') {
+                LayerMsgBox.success(ret.msg, 1000, function () {
+
+                });
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        });
+    };
+
+</script>
+#end

@@ -1,0 +1,61 @@
+<form onsubmit="return false;" id="MenuPermission_Form" action="#(action)" method="post">
+
+    #if(menuPermission.id??)
+    <input type="hidden" name="menuPermission.id" value="#(menuPermission.id??)"/>
+    #end
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">对象类型</label>
+                <div class="col-10">
+                    <input type="number" data-rule="required" data-notnull="true" data-tips="请输入对象类型" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入对象类型" maxlength="40" name="menuPermission.objectType" value="#(menuPermission.objectType??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">对象ID</label>
+                <div class="col-10">
+                    <input type="text" class="form-control" data-autocomplete autocomplete="off" maxlength="19" placeholder="请选择对象ID"
+                           data-url="admin/codegen/autocompletedemodatas"
+                           data-hidden-input="objectId_hidden"
+                           data-rule="select"
+                           data-notnull="true"
+                           data-tips="请选择对象ID"/>
+                    <input type="hidden" autocomplete="off" id="objectId_hidden" maxLength="19" name="menuPermission.objectId"
+                           data-rule="select"
+                           data-notnull="true"
+                           data-tips="请选择对象ID"
+                           value="#(menuPermission.objectId??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">菜单ID</label>
+                <div class="col-10">
+                    <input type="text" class="form-control" data-autocomplete autocomplete="off" maxlength="19" placeholder="请选择菜单ID"
+                           data-url="admin/codegen/autocompletedemodatas"
+                           data-hidden-input="menuId_hidden"
+                           data-rule="select"
+                           data-notnull="true"
+                           data-tips="请选择菜单ID"/>
+                    <input type="hidden" autocomplete="off" id="menuId_hidden" maxLength="19" name="menuPermission.menuId"
+                           data-rule="select"
+                           data-notnull="true"
+                           data-tips="请选择菜单ID"
+                           value="#(menuPermission.menuId??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">版本号</label>
+                <div class="col-10">
+                    <input type="number" data-rule="required" data-notnull="true" data-tips="请输入版本号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入版本号" maxlength="40" name="menuPermission.versionNum" value="#(menuPermission.versionNum??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="MenuPermission_Form")
+#end
+

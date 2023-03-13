@@ -15,6 +15,7 @@
 		<form class="form-inline" id="#(modelNameL)Form_#[[#(pageId)]]#"   onsubmit="return false;" method="post">
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="#(keywords??)" />
 		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 		</form>
 	</div>
 	<div class="col-md-auto">
@@ -72,7 +73,7 @@
 #if(mainLogicBean.needHeadBox)
 <!-- headbox -->
 <div class="jbolt_table_headbox" id="#(modelNameL)_headbox_#[[#(pageId)]]#">
-	 head box 内容区域 
+	 head box 内容区域
 </div>
 #end
 
@@ -84,13 +85,13 @@
 		<button data-openpage="dialog" data-area="#(mainLogicBean.dialogArea?? '800,700')"  data-handler="jboltTablePageToFirst" data-title="新增#(mainLogicBean.dataName?? '数据')"  data-url="#(mainLogicBean.realControllerKey)/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		<button data-openpage="dialog" data-area="#(mainLogicBean.dialogArea?? '800,700')"  data-handler="refreshJBoltTable" data-title="修改#(mainLogicBean.dataName?? '数据')" data-check-handler="jboltTableGetCheckedId" data-url="#(mainLogicBean.realControllerKey)/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="#(mainLogicBean.realControllerKey)/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-#if(needSort)		
+#if(needSort)
 		<button data-ajaxbtn data-confirm="确认初始化顺序吗？" data-handler="jboltTablePageToFirst" data-title="初始化排序" data-url="#(mainLogicBean.realControllerKey)/initRank" class="btn btn-outline-info btn-sm" ><i class="fa fa-sort"></i> 初始化排序</button>
 #end
 #end
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 	</div>
-	
+
 	<div class="clearfix"></div>
 </div>
 #end
@@ -125,7 +126,7 @@
 </div>
 #end
 
-<table class="jbolt_table jbolt_main_table table-center"
+<table class="jbolt_table jbolt_main_table table-center hover_info"
 #if(!mainLogicBean.isMasterSlave)
 data-jbolttable
 #end
@@ -133,8 +134,9 @@ data-height="#(mainLogicBean.isMasterSlave?'fill_box':'fill')"
 data-ajax="true"
 data-url="#(mainLogicBean.realControllerKey)/datas"
 data-column-resize="true"
+data-row-click-active="true"
 #if(isCRUD && mainLogicBean.needToolbar)
-data-column-prepend="1:checkbox"
+data-column-prepend="1:checkbox:true"
 #end
 data-conditions-form="#(modelNameL)Form_#[[#(pageId)]]#"
 data-rowtpl="#(modelNameL)Rowtpl_#[[#(pageId)]]#"
@@ -152,8 +154,10 @@ data-fixed-columns-left="1,2"
 #if(isCRUD && (mainLogicBean.needTrEditBtn || mainLogicBean.needTrDeleteBtn || needSort))
 data-fixed-columns-right="-1"
 #end
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#[[#(pageId)]]#"
 >
-<thead class="fw-normal">
+<thead>
 <tr>
 	<th data-width="60">序号</th>
 	#for(th:ths)
@@ -175,7 +179,7 @@ data-fixed-columns-right="-1"
 #if(mainLogicBean.needFootBox)
 <!-- footbox -->
 <div class="jbolt_table_footbox" id="#(modelNameL)_footbox_#[[#(pageId)]]#">
-	  foot box 内容区域 
+	  foot box 内容区域
 </div>
 #end
 
@@ -197,20 +201,31 @@ data-fixed-columns-right="-1"
 	  </div>
 	</div>
 </div>
-  
+
 </div>
 #end
-	
+
 </div>
 </div>
 #[[#end]]#
 
-#if(mainLogicBean.isMasterSlave)
 #[[#define js()]]#
 <script type="text/javascript">
+#if(mainLogicBean.isMasterSlave)
 	$(function(){
 		MasterSlaveUtil.initJBoltTable("#(modelNameL)_mspage_#[[#(pageId)]]#");
 	});
+#end
+
+	function jbolt_table_dblclickhandler_#[[#(pageId)]]#(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/#(mainLogicBean.realControllerKey)/edit/' + rowData.iautoid)
+			.data('area', '#(mainLogicBean.dialogArea?? '800,700')')
+			.data('title', '#(mainLogicBean.dataName?? '数据')')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
 </script>
 #[[#end]]#
-#end

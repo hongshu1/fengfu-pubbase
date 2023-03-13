@@ -1,0 +1,117 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h1><i class="jbicon2 jbi-appstore"></i> 应用管理</h1>
+                <a href="javascript:void(0)" onclick="jboltTableExpandAll(this)" class="text-primary">展开</a>|<a href="javascript:void(0)" onclick="jboltTableCollapseAll(this)" class="text-secondary">闭合</a>
+            </div>
+            <div class="col">
+                <form onkeydown="if(event.which==13){return false;}" onsubmit="return false;" class="form-inline" id="applicationForm_#(pageId)" action="admin/application" method="post">
+                    <input data-clear-handler="onkeyup" onkeyup="jboltTableFilterByKeywords('application_table_#(pageId)',this.value,[1,3,4])" data-with-clearbtn="true" autocomplete="off" class="form-control d-inline-block" placeholder="输入关键字 进行过滤"/>
+                </form>
+            </div>
+            <div class="col-md-auto">
+                <div class="btn-group" role="group" aria-label="btn-group">
+                    <button data-area="1280,750" data-dialogbtn data-handler="refreshJBoltTable" data-title="新增应用" data-url="admin/application/add/0-1" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+                    <!--<button data-ajaxbtn data-confirm="确认初始化权限应用的顺序吗？" data-handler="refreshJBoltTable" data-title="初始化排序" data-url="admin/application/initRank" class="btn btn-outline-info btn-sm"><i class="fa fa-sort"></i> 初始化排序</button>-->
+                    <button onclick="jboltTableRefresh(this)" class="btn btn-outline-secondary btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="application_rowtpl_tr_#(pageId)">
+
+            <tr data-id="${id}" data-pid="${parentId}" data-level="${eachLevel}" data-hasitems="${items&&items.length>0}">
+                <td><i class="${icons}"></i> ${shortName}</td>
+                <td>${nodeLevel}级</td>
+                <td>${appCode}</td>
+                <td>${appName}</td>
+                <!--<td>${sortRank}</td>-->
+                <td>${description}</td>
+                <td>${nodeLevel}</td>
+                <td><img data-switchbtn data-confirm="确定切换是否生效？" data-value="${isEffective}"  data-handler="refreshJBoltTable"  data-url="admin/application/toggleIsEffective/${id}"/></td>
+                <td>${effectiveDate|date_ymd}</td>
+                <td>${disableDate|date_ymd}</td>
+                <td>${versionNum}</td>
+                <td>${createTime|date_ymdhms}</td>
+                <td>${createUserName}</td>
+                <td>${lastUpdateTime|date_ymdhms}</td>
+                <td>${lastUpdateName}</td>
+
+                <td class="text-right">
+                    <a href="admin/application/add/${id}-${nodeLevel+1}" data-area="1280,750" tooltip data-title="添加下级应用" data-handler="refreshJBoltTable" dialog-title="添加下级应用" class="jbolt_table_editbtn"><i class="fa fa-plus"></i></a>
+                    <a href="admin/application/edit/${id}" data-area="1280,750" tooltip data-title="编辑" data-handler="refreshJBoltTable" dialog-title="编辑应用" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+                    <a href="admin/application/delete/${id}" data-ajaxbtn data-loading="执行中" tooltip data-title="删除" data-handler="removeTrCascade" data-confirm="确定删除这条数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+                    <a href="admin/application/up/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp" class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+                    <a href="admin/application/down/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+                </td>
+            </tr>
+
+            {@if items&&items.length>0}
+            {@each items as son}
+            {@include "#application_rowtpl_tr_#(pageId)",son}
+            {@/each}
+            {@/if}
+        </script>
+
+        <script type="text/template" id="application_rowtpl_#(pageId)">
+            {@each datas as data,index}
+            {# 先循环第一级}
+            {@include "#application_rowtpl_tr_#(pageId)",data}
+            {@/each}
+        </script>
+
+        <table class="table table-bordered table-hover table-center text-nowrap thead_font_normal"
+               id="application_table_#(pageId)"
+               data-width="auto"
+               data-jbolttable
+               ###设置是treetable 默认显示到第一级 操作列在第一列
+               data-treetable="all:1"
+               data-fixed-columns-left="1"
+               data-fixed-columns-right="-1"
+               data-column-resize="true"
+               data-ajax="true"
+               data-url="admin/application/datas"
+               data-rowtpl="application_rowtpl_#(pageId)"
+               data-conditions-form="applicationForm_#(pageId)"
+        >
+            <thead>
+            <tr>
+                <th data-width="250">应用简称</th>
+                <th data-width="80">级别</th>
+                <th data-width="100">应用编码</th>
+                <th data-width="150" data-column="appName">应用名称</th>
+                <!--<th data-width="70" data-column="sortRank">顺序号</th>-->
+                <th data-width="150" data-column="description">描述</th>
+                <th data-width="80" data-column="nodeLevel">节点层次</th>
+                <th data-width="100" data-column="isEffective">是否生效</th>
+                <th data-width="100" data-column="effectiveDate">生效日期</th>
+                <th data-width="100" data-column="disableDate">失效日期</th>
+                <th data-width="80" data-column="versionNum">版本号</th>
+                <th data-width="120" data-column="createTime">创建时间</th>
+                <th data-width="90" data-column="createUserName">创建人</th>
+                <th data-width="120" data-column="lastUpdateTime">最后更新时间</th>
+                <th data-width="90" data-column="lastUpdateName">最后更新人</th>
+                <th data-width="150">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+#end
+#define js()
+<script>
+    $(function () {
+    });
+</script>
+#end

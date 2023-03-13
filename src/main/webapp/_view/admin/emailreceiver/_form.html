@@ -1,0 +1,63 @@
+
+<div class="jbolt_page_title">
+    <div class="row">
+
+        <div class="col-12 form-inline">
+
+            <div class="col-4">
+                <h3>基础信息</h3>
+            </div>
+
+            <div class="col-8 text-right">
+                ###permission(PermissionKey::permissionKeyName)
+                 ###定义权限控制的按钮
+                ###end
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+<form onsubmit="return false;" id="emailReceiverForm" action="#(action)" method="post">
+#if(emailReceiver.id??)
+	<input type="hidden" name="emailReceiver.id" value="#(emailReceiver.id)" />
+#end
+	<div class="form-group row">
+		<label class="col-2 col-form-label">接收者类型</label>
+		<div class="col-2">
+			<select class="form-control ml-1"
+					data-autoload
+					name="emailReceiver.receiverType"
+					data-select-type="select2"
+					data-hiddeninput="receiverType"
+					data-tips="=请选择类型状态="
+					data-url="admin/dictionary/options?key=receivertype"
+					data-value=""
+					data-width="220"
+					data-setvalueto="receiverType"
+					data-text-attr="name"
+					data-value-attr="sn"
+					data-select="#(emailReceiver.receiverType??)"
+					>
+			</select>
+
+		</div>
+
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">邮箱地址</label>
+		<div class="col">
+			<input type="email"  data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="email" placeholder="请输入邮箱地址" maxlength="32" name="emailReceiver.email" value="#(emailReceiver.email??)"/>
+		</div>
+	</div>
+</form>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="emailReceiverForm")
+#end
+

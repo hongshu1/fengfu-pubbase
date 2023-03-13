@@ -1,7 +1,6 @@
 package cn.jbolt.starter;
 
 import cn.jbolt.core.util.JBoltArrayUtil;
-import com.alibaba.csp.sentinel.adapter.servlet.CommonFilter;
 import com.jfinal.server.undertow.WebBuilder;
 
 import cn.jbolt._admin.websocket.JBoltWebSocketServerEndpoint;
@@ -14,13 +13,12 @@ import io.undertow.util.HttpString;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * 项目启动器
- * @ClassName:  Starter   
- * @author: JFinal学院-小木 QQ：909854136 
- * @date:   2019年11月9日   
+ * @ClassName:  Starter
+ * @author: JFinal学院-小木 QQ：909854136
+ * @date:   2019年11月9日
  */
 public class Starter {
 	/**
@@ -34,6 +32,9 @@ public class Starter {
 		//builder.addFilter("myFilter", "com.abc.MyFilter");
 		//builder.addFilterUrlMapping("myFilter", "/*");
 		//builder.addFilterInitParam("myFilter", "key", "value");
+
+        builder.addFilter("globalFilter", "cn.rjtech.filter.GlobalFilter");
+        builder.addFilterUrlMapping("globalFilter", "/*");
 	}
 
 	/**
@@ -139,7 +140,7 @@ public class Starter {
 					  	configSentinel(builder);
 				       }).start();
 	}
-	
+
 	/**
 	 * 配置Sentinel
 	 * @param builder
@@ -151,7 +152,7 @@ public class Starter {
 //		builder.addFilterUrlMapping("sentinelFilter", "/*");
 //		builder.addInitParameter(CommonFilter.WEB_CONTEXT_UNIFY, "false");
 	}
-	
+
 	/**
 	 * 启动器入口
 	 * @param args

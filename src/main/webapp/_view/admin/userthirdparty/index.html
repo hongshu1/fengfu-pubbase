@@ -1,0 +1,88 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>第三方系统账号信息表</h1></div>
+            <div class="col">
+                <form class="form-inline" id="UserThirdparty_form_#(pageId)">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords" value=""/>
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入第三方系统(钉钉、微信企业和ERP)" maxlength="40" name="thirdpartySystem"/>
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入第三方用户编码" maxlength="40" name="thirdpartyCode"/>
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入第三方用户名称" maxlength="40" name="thirdpartyName"/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                </form>
+            </div>
+            <div class="col-sm-auto text-right">
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="UserThirdparty_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.id}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.thirdpartySystem}</td>
+            <td>${data.thirdpartyCode}</td>
+            <td>${data.thirdpartyName}</td>
+            <td>${data.thirdpartyPwd}</td>
+            <td>${data.remark}</td>
+        </tr>
+        {@/each}
+        </textarea>
+
+        <div class="jbolt_table_toolbar" id="UserThirdparty_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增第三方系统账号信息表" data-url="admin/userthirdparty/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑第三方系统账号信息表" data-check-handler="jboltTableGetCheckedId" data-url="admin/userthirdparty/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑
+                </button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/userthirdparty/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+            <div class="float-right" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="600,400" data-handler="jboltTablePageToFirst" tooltip data-title="导入Excel数据" data-url="admin/userthirdparty/initImportExcel" data-btn="close" class="btn btn-outline-primary btn-sm"><i class="fa fa-upload"></i></button>
+                <div class="btn-group btn-group-sm">
+                    <button tooltip data-title="导出Excel(查询结果)" data-form="UserThirdparty_form_#(pageId)" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="admin/userthirdparty/exportExcelByForm"><i class="fa fa-download"></i></button>
+                    <button tooltip data-title="导出Excel(选中行数据)" data-usecheckedids="true" class="btn btn-outline-success btn-sm" data-downloadbtn data-url="admin/userthirdparty/exportExcelByCheckedIds"><i class="fa fa-download"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="auto"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="UserThirdparty_form_#(pageId)"
+               data-url="admin/userthirdparty/datas"
+               data-rowtpl="UserThirdparty_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-column-resize="true"
+               data-toolbar="UserThirdparty_toolbar_#(pageId)"
+               data-column-prepend="1:checkbox:true:false:false"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150" data-column="thirdpartySystem">第三方系统(钉钉、微信企业和ERP)</th>
+                <th data-width="150" data-column="thirdpartyCode">第三方用户编码</th>
+                <th data-width="150" data-column="thirdpartyName">第三方用户名称</th>
+                <th data-width="150" data-column="thirdpartyPwd">第三方用户密码</th>
+                <th data-width="150" data-column="remark">备注</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

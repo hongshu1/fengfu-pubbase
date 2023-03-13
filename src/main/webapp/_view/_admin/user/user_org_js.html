@@ -1,0 +1,54 @@
+<script>
+    function getEditableTableOptions_#(pageId)1(table) {
+        var editableTableOptions = {
+            trigger: "click",
+            initRowCount: 0,
+            submit: {
+                withForm: ['userForm'],
+                type: "multi",
+                name: 'org'
+                //params:{"orderId":3},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols: {
+                id: {
+                    submitAttr: "id",
+                },
+                orgId: {
+                    type: "select2",
+                    url: "/admin/org/list",
+                    valueAttr: "id",
+                    textAttr: "name",
+                    placeholder: "=请选择=",
+                    required: true,
+                },
+                position: {
+                    type: "input"
+                },
+                isPrincipal: {
+                    type: 'switchbtn',
+                    editable: false
+                },
+                versionNum: {
+                    type: "input_number",
+                    rule: 'pint'
+                },
+                parentPsnId: {
+                    type: "autocomplete",
+                    url: "admin/user/autocomplete",
+                    colIndex: 1,
+                    maxLength: 100,
+                    placeholder: "请输入",
+                    textAttr: "name",
+                    width: 500,
+                    valueAttr: "id",
+                    columnAttr: "name,username",
+                    header:'名称,登录名'
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

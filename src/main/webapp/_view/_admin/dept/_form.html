@@ -7,58 +7,75 @@
     <legend>基本信息</legend>
 
 	<div class="form-group row">
-   <label class="col-sm-2 col-form-label">上级部门</label>
+   <label class="col-sm-2 col-form-label">上级组织</label>
        <div class="col">
-           <select class="form-control" name="dept.pid" data-select-type="select2"
-           data-url="admin/dept/options"
+           <input type="hidden" name="dept.pid" value="#(dept.pid)" data-sync-attr="id" id="dept_id_#(pageId)"/>
+
+           <select class="form-control" data-select-type="select2"
+                   #if(dept.type?? == '1')  disabled #end
+                   data-url="admin/dept/options"
            data-text-format-handler="deptTextFormatHandler_#(pageId)"
            data-handler="syncAttrToOther"
-           data-sync-ele="#dept_sn_#(pageId)"
+           data-sync-ele="#dept_sn_#(pageId),#dept_id_#(pageId)"
            data-sync-must="#(dept==null)"
-           data-text="=无上级部门="  data-value="0" data-select="#(dept.pid?? (pid?? 0))" data-autoload></select>
+           data-text="=无上级组织="  data-value="0" data-select="#(dept.pid?? (pid?? 0))" data-autoload></select>
        </div>
    </div>
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">部门名称</label>
+		<label class="col-sm-2 col-form-label">组织名称</label>
 		<div class="col">
 			<input type="text" data-with-clearbtn="true"  onblur="syncOtherInput(this.value,'#deptFullName_#(pageId)')" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入名称" data-tips="请输入名称" maxlength="40" name="dept.name" value="#(dept.name??)">
 		</div>
 	</div>
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">部门全称</label>
+		<label class="col-sm-2 col-form-label">组织全称</label>
 		<div class="col">
 			<input type="text" data-with-clearbtn="true"  id="deptFullName_#(pageId)" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入全称" data-tips="请输入全称" maxlength="40" name="dept.fullName" value="#(dept.fullName??)">
 		</div>
 	</div>
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">部门代码</label>
+		<label class="col-sm-2 col-form-label">组织代码</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true"  id="dept_sn_#(pageId)" data-sync-attr="sn" data-sync-must="false" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入部门代码" data-tips="请输入部门代码" maxlength="40" name="dept.sn" value="#(dept.sn??)">
+			<input type="text" data-with-clearbtn="true"  id="dept_sn_#(pageId)" data-sync-attr="sn" data-sync-must="false" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入组织代码" data-tips="请输入组织代码" maxlength="40" name="dept.sn" value="#(dept.sn??)">
 		</div>
 	</div>
-	
-	 <div class="form-group row" 
-		data-radio 
-		data-rule="radio"  
-		data-value="#(dept.type??)" 
-		data-name="dept.type" 
+
+	 <div class="form-group row"
+		data-radio
+		data-rule="radio"
+		data-value="#(dept.type??)"
+		data-name="dept.type"
 		data-default="options_first"
 		data-value-attr="sn"
 		data-url="admin/dictionary/options?key=dept_type"
-		data-label="<a class='mr-1' href='javascript:void(0)' onclick='RadioUtil.refresh(this)' tooltip data-title='刷新'><i class='fa fa-refresh'></i><a><a class='mr-1' data-target='parent' href='admin/dictionary' data-openpage='dialog' data-area='80%,80%' data-btn='close' tooltip data-title='部门类型维护'><i class='fa fa-cog'></i><a> 部门类型"
+		data-label="<a class='mr-1' href='javascript:void(0)' onclick='RadioUtil.refresh(this)' tooltip data-title='刷新'><i class='fa fa-refresh'></i><a><a class='mr-1' data-target='parent' href='admin/dictionary' data-openpage='dialog' data-area='80%,80%' data-btn='close' tooltip data-title='组织类型维护'><i class='fa fa-cog'></i><a> 组织类型"
 		data-width="col-sm-2,col"
+          #if(dept.type?? == '1')  data-disabled #end
 		data-inline="true"></div>
+
+    <div class="form-group row"
+         data-radio
+         data-rule="radio"
+         data-value="#(dept.corperateType??)"
+         data-name="dept.corperateType"
+         data-default="options_last"
+         data-value-attr="sn"
+         data-url="admin/dictionary/options?key=coperate_type"
+         data-label="<a class='mr-1' href='javascript:void(0)' onclick='RadioUtil.refresh(this)' tooltip data-title='刷新'><i class='fa fa-refresh'></i><a><a class='mr-1' data-target='parent' href='admin/dictionary' data-openpage='dialog' data-area='80%,80%' data-btn='close' tooltip data-title='形态类型维护'><i class='fa fa-cog'></i><a> 形态类型"
+         data-width="col-sm-2,col"
+         data-inline="true"></div>
+
 </fieldset>
 <fieldset>
     <legend>详细信息</legend>
-	
+
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">负责人</label>
 		<div class="col">
 			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" placeholder="请输入负责人" data-tips="请输入负责人" maxlength="40" name="dept.leader" value="#(dept.leader??)">
 		</div>
 	</div>
-	
+
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">邮政编码</label>
 		<div class="col">

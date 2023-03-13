@@ -1,6 +1,8 @@
 package cn.jbolt._admin.dictionary;
 
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import cn.jbolt.core.cache.JBoltDictionaryCache;
@@ -8,7 +10,6 @@ import cn.jbolt.core.common.enums.DictionaryTypeMode;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import cn.jbolt._admin.permission.PermissionKey;
@@ -288,5 +289,44 @@ public class DictionaryAdminController extends JBoltBaseController {
 	@Before(Tx.class)
 	public void toggleEnable(){
 		renderJson(service.toggleBoolean(getLong(0),Dictionary.ENABLE));
+	}
+
+	@UnCheck
+	public void dayOptions(){
+		String pid = get("pid");
+		if(notOk(pid)){
+			renderJsonData(new ArrayList<>());
+			return;
+		}
+		List<Dictionary> key = JBoltDictionaryCache.me.getListByTypeKey(get("key"), true);
+		Integer month=Integer.valueOf(pid);
+		List<Dictionary> result=new ArrayList<>();
+		switch (month){
+			case 1:
+			case 3:
+			case 5:
+			case 7:
+			case 8:
+			case 10:
+			case 12:
+				result=key;
+				break;
+			case 4:
+			case 6:
+			case 9:
+			case 11:
+				result=key.subList(0,30);
+				break;
+			case 2:
+				Calendar cal = Calendar.getInstance();
+				int year = cal.get(Calendar.YEAR);
+				if(((year%4==0)&&!(year%100==0))||(year%400==0)){
+					result=key.subList(0,29);
+				}else{
+					result=key.subList(0,28);
+				}
+				break;
+		}
+		renderJsonData(result);
 	}
 }

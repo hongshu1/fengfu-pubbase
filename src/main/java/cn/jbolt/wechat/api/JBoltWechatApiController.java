@@ -18,9 +18,9 @@ import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltWechatConfigCache;
 /**
  * 内置微信公众平台API
- * @ClassName:  JBoltWechatApiController   
- * @author: JFinal学院-小木 QQ：909854136 
- * @date:   2021年5月22日   
+ * @ClassName:  JBoltWechatApiController
+ * @author: JFinal学院-小木 QQ：909854136
+ * @date:   2021年5月22日
  */
 public class JBoltWechatApiController extends JBoltApiBaseController {
 	@Inject
@@ -40,7 +40,7 @@ public class JBoltWechatApiController extends JBoltApiBaseController {
 		}
 		redirect(url);
 	}
-	
+
 	/**
 	 * 授权成功回调
 	 */
@@ -68,14 +68,14 @@ public class JBoltWechatApiController extends JBoltApiBaseController {
 			renderH5PageFail("授权回调获取用户信息失败，"+apiResult.getErrorMsg());
 			return;
 		}
-		
-		Ret ret = null;
+
+		Ret ret;
 		if(wechatUser == null) {
 			ret = wechatUserService.addUnSubscribeWechatUserInfo(mpId,openId,apiResult);
 		}else {
 			ret = wechatUserService.updateSubscribeWechatUserInfo(mpId,wechatUser.getId(),apiResult);
 		}
-		
+
 		if(ret.isFail()) {
 			renderH5PageFail("授权回调创建用户信息失败，"+ret.getStr("msg"));
 			return;
@@ -85,7 +85,7 @@ public class JBoltWechatApiController extends JBoltApiBaseController {
 		//用户存在的话 设置到threadLocal中拦截器得 用
 		JBoltApiUser apiUser = JBoltApiKit.processBindUser(new JBoltApiUserBean(JBoltApiKit.getApplicationId(),wechatUser.getId(), wechatUser.getNickname()),wechatUser.getBindUser());
 		//创建JWT
-		String[] jwts = JBoltApiJwtManger.me().createJBoltApiTokens(JBoltApiKit.getApplication(), apiUser, 7200000L,604800000L);
+		String[] jwts = JBoltApiJwtManger.me().createJBoltApiTokens(JBoltApiKit.getApplication(), apiUser, JBoltApiJwtManger.JWT_TTL,JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL);
 		if(notOk(jwts)){
 			renderH5PageFail("授权回调创建用户令牌失败");
 			return;

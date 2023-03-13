@@ -1,18 +1,18 @@
 package cn.jbolt.common.config;
 
-import java.io.File;
-
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.util.JBoltDateUtil;
+import com.jfinal.core.JFinal;
 
-/**   
+/**
  * 上传控制 定义的目录
- * @ClassName:  UploadFolder   
- * @author: JFinal学院-小木 QQ：909854136 
- * @date:   2019年3月24日 上午12:00:48   
+ * @ClassName:  UploadFolder
+ * @author: JFinal学院-小木 QQ：909854136
+ * @date:   2019年3月24日 上午12:00:48
  */
 public class JBoltUploadFolder {
-	public static final String SEPARATOR = File.separator;
-	
+	public static final String SEPARATOR = StrUtil.SLASH;
+
 	/**
 	 * 获取今天的日期对应文件夹名
 	 * @return
@@ -45,4 +45,9 @@ public class JBoltUploadFolder {
 	public static final String DEMO_APITEST_IMAGE = "demo" + SEPARATOR + "apitest" + SEPARATOR + "image";
 	public static final String SYSNOTICE_FILES = "sysnotice" + SEPARATOR + "files";
 	public static final String IMPORT_EXCEL_TEMP_FOLDER = "exceltemps";
+
+    public static String getUploadPath(String folder) {
+        return JFinal.me().getConstants().getBaseUploadPath() + SEPARATOR + folder;
+    }
+
 }

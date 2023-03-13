@@ -1,0 +1,126 @@
+<form onsubmit="return false;" id="DataPermission_Form" action="#(action)" method="post">
+
+    #if(dataPermission.id??)
+    <input type="hidden" name="dataPermission.id" value="#(dataPermission.id??)"/>
+    #end
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">业务对象</label>
+
+                <div class="col-10">
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/busobject/options"
+                            data-select-type="select"
+                            name="dataPermission.busobjectId"
+                            data-refresh="true"
+                            data-rule="select"
+                            data-notnull="true"
+                            data-tips="请选择业务对象"
+                            data-text="=请选择="
+                            data-value=""
+                            data-select="#(dataPermission.busobjectId??)"
+
+                    ></select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">授权类型</label>
+
+                <div class="col-10">
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=data_permission_object_type"
+                            data-select-type="select"
+                            name="dataPermission.objectType"
+                            data-refresh="true"
+                            data-rule="select"
+                            data-notnull="true"
+                            data-tips="请选择授权类型"
+                            data-text="=请选择="
+                            data-value=""
+                            data-value-attr="sn"
+                            data-select="#(dataPermission.objectType??)"
+                    ></select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">授权对象</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入授权对象" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="40" name="dataPermission.objectId" value="#(dataPermission.objectId??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">业务对象值</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="40" name="dataPermission.busobjectValueId" value="#(dataPermission.busobjectValueId??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">业务对象值名称</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="40" name="dataPermission.busobjectValueName" value="#(dataPermission.busobjectValueName??)"/>
+                </div>
+            </div>
+            <div class="form-group row"
+                 data-radio
+                 data-name="dataPermission.isViewEnabled"
+                 data-value-attr="sn"
+                 data-default="options_first"
+                 data-url="admin/dictionary/options?key=options_enable"
+                 data-label="查看权限"
+                 data-width="col-sm-2,col-10"
+                 data-value="#(dataPermission.isViewEnabled??)"
+                 data-rule="radio"
+                 data-notnull="true"
+                 data-tips="请输入查看权限"
+                 data-inline="true"
+            >
+            </div>
+            <div class="form-group row"
+                 data-radio
+                 data-name="dataPermission.isEditEnabled"
+                 data-value-attr="sn"
+                 data-default="options_first"
+                 data-url="admin/dictionary/options?key=options_enable"
+                 data-label="编辑权限"
+                 data-width="col-sm-2,col-10"
+                 data-value="#(dataPermission.isEditEnabled??)"
+                 data-rule="radio"
+                 data-notnull="true"
+                 data-tips="请输入编辑权限"
+                 data-inline="true"
+            >
+            </div>
+            <div class="form-group row"
+                 data-radio
+                 data-name="dataPermission.isDeleteEnabled"
+                 data-value-attr="sn"
+                 data-default="options_first"
+                 data-url="admin/dictionary/options?key=options_enable"
+                 data-label="删除权限"
+                 data-width="col-sm-2,col-10"
+                 data-value="#(dataPermission.isDeleteEnabled??)"
+                 data-rule="radio"
+                 data-notnull="true"
+                 data-tips="请输入删除权限"
+                 data-inline="true"
+            >
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">版本号</label>
+                <div class="col-10">
+                    <input type="number" data-rule="required" data-notnull="true" data-tips="请输入版本号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入版本号" maxlength="40" name="dataPermission.versionNum" value="#(dataPermission.versionNum??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="DataPermission_Form")
+#end
+

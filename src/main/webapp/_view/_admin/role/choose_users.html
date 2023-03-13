@@ -1,0 +1,114 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col">
+                <form class="form-inline" onsubmit="return false;" id="adminUserForm_#(pageId)" action="admin/user/datas" data-pjaxsubmit method="get">
+
+                    <input type="hidden" name="excludeRoleId" value="#(roleId)">
+
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords" value="#(keywords??)"/>
+
+                    <select class="form-control" name="sex" data-autoload data-url="admin/user/sexOptions" data-text="=性别="></select>
+                    <!--<select class="form-control" name="roleId" data-autoload data-url="admin/role/options" data-text="=角色="></select>-->
+                    <select class="form-control" name="enable" data-autoload data-options="启用:true,禁用:false" data-text="=状态="></select>
+
+                    <button type="submit" class="btn btn-outline-secondary catdata_table_searchbtn"><i class="fa fa-search"></i> 查询</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="user_table_rowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.id}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.name}</td>
+                <td><img data-photobtn tooltip data-title="点击查看大图" style="width: 60px;height: 60px;border-radius:50%;" src="${data.avatar|real_image}" onerror="this.src='assets/img/avatar.jpg'"/></td>
+                <td>${data.sn}</td>
+                <td>${data.sex|sex}</td>
+                <td>${data.age}</td>
+                <td>
+                    {@if data.userRoles}
+                    {@each data.userRoles as role,index}
+                    <span class="badge badge-${(+index+1)|colorClassByLevel} d-block my-1">${role.name}</span>
+                    {@/each}
+                    {@else}
+                    <span class="badge badge-default">未设置</span>
+                    {@/if}
+                </td>
+                <td>${data.username}</td>
+                <td>${data.phone?data.phone:"未设置"}</td>
+                <td>${data.email?data.email:"未设置"}</td>
+                <td>$${data.isSystemAdmin?'<span class="badge badge-primary">超级管理员</span>':'<span class="badge badge-dark">一般用户</span>'}</td>
+            </tr>
+            {@/each}
+        </script>
+
+        <table class="table-center thead_font_normal"
+               id="jbolt_table_#(pageId)"
+               data-jbolttable
+               data-width="auto"
+               data-ajax="true"
+               data-url="admin/user/datas"
+               data-page="user_table_page_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+               data-fixed-columns-left="1,2"
+               data-fixed-columns-right="#(userExtendEnable?'-3,':'')-2,-1"
+               data-rowtpl="user_table_rowtpl_#(pageId)"
+               data-conditions-form="adminUserForm_#(pageId)"
+               data-column-resize="true"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150">姓名</th>
+                <th data-width="120">头像</th>
+                <th data-width="80">编号</th>
+                <th data-width="80">性别</th>
+                <th data-width="80">年龄</th>
+                <th data-width="100">角色</th>
+                <th data-width="150">用户名</th>
+                <th data-width="120">手机号</th>
+                <th data-width="250">E-Mail</th>
+                <th data-width="100">是否为超管</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+#define js()
+<script>
+    console.log('roleId: #(roleId)');
+
+    function submitThisForm() {
+        var ids = jboltTableGetCheckedIds('#jbolt_table_#(pageId)');
+        if (ids && ids.length > 0) {
+            var para = {
+                roleId: '#(roleId)',
+                userIds: ids.join(',')
+            };
+            Ajax.post('/admin/user/updateRoles', para, function (ret) {
+                if (ret.state === 'ok') {
+                    // 刷新
+                    parent.refreshPjaxContainer();
+                    // 关闭
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                } else {
+                    LayerMsgBox.alert(ret.msg, 2);
+                }
+            });
+        }
+        return false;
+    }
+</script>
+#end
+

@@ -1,9 +1,5 @@
 package cn.jbolt._admin.role;
 
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.tx.Tx;
-
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
@@ -13,6 +9,10 @@ import cn.jbolt.core.model.Role;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.plugin.activerecord.tx.Tx;
+
 @CheckPermission(PermissionKey.ROLE)
 @UnCheckIfSystemAdmin
 public class RoleAdminController extends JBoltBaseController {
@@ -102,4 +102,25 @@ public class RoleAdminController extends JBoltBaseController {
 	public void clearUsers() {
 		renderJson(userService.clearUsersByRole(getLong()));
 	}
+
+    public void chooseUsers() {
+        keepPara();
+        render("choose_users.html");
+    }
+
+    /**
+     * 用户与角色数据
+     */
+    @UnCheck
+    public void userAndRoleData() {
+        renderJsonData(service.paginateUserAndRoleDatas(getPageNumber(), getPageSize(), getKv()));
+    }
+
+
+	public void autocomplete(){
+		renderJsonData(service.autocomplete(getKv()));
+	}
+
+
+
 }

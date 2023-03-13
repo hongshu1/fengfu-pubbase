@@ -1,30 +1,47 @@
 package cn.jbolt._admin.user;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.dept.DeptService;
 import cn.jbolt._admin.onlineuser.OnlineUserService;
 import cn.jbolt.common.model.UserExtend;
+import cn.jbolt.core.base.JBoltGlobalConfigKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.*;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.kit.JBoltCurrentOfModuleKit;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Application;
 import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.JBoltUserService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltPinYinUtil;
 import cn.jbolt.extend.config.ExtendProjectOfModule;
 import cn.jbolt.extend.user.ExtendUserOfModuleLinkService;
+import cn.rjtech.admin.userorg.UserOrgService;
+import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
+import cn.rjtech.model.main.UserOrg;
+import cn.rjtech.model.main.UserThirdparty;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.HashKit;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 用户Service
@@ -42,6 +59,10 @@ public class UserService extends JBoltUserService {
     private UserExtendService userExtendService;
     @Inject
     ExtendUserOfModuleLinkService extendUserOfModuleLinkService;
+    @Inject
+    private UserOrgService userOrgService;
+    @Inject
+    private UserThirdpartyService userThirdpartyService;
 
     /**
      * 保存
@@ -177,16 +198,16 @@ public class UserService extends JBoltUserService {
             }
             dbUser.deleteKeyCache();
             //清理角色变更缓存
-            if ((isOk(dbUser.getRoles()) && !dbUser.getRoles().equals(user.getRoles()))
-                    ||
-                    (isOk(user.getRoles()) && !user.getRoles().equals(dbUser.getRoles()))
-            ) {
+            if(ObjUtil.notEqual(dbUser.getRoles(), user.getRoles())) {
                 //存在其他跟自己相同角色的就不清理缓存 不存在说明自己独占 就清理
-                boolean existSameRoles = existsSameRoles(dbUser.getRoles(), dbUser.getId());
-                if (!existSameRoles) {
+                boolean existSameRoles = existsSameRoles(dbUser.getRoles(),dbUser.getId());
+                if(!existSameRoles){
+                    long appId = JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APP_ID);
+                    long applicationId = JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APPLICATION_ID);
+
                     JBoltPermissionCache.me.removeRolesPermissionKeySet(dbUser.getRoles());
-                    JBoltPermissionCache.me.removeRolesMenus(dbUser.getRoles());
-                    JBoltPermissionCache.me.removeRolesMenusWithSystemAdminDefault(dbUser.getRoles());
+                    JBoltPermissionCache.me.removeRolesMenus(dbUser.getId(), appId, applicationId, dbUser.getRoles());
+                    JBoltPermissionCache.me.removeRolesMenusWithSystemAdminDefault(dbUser.getId(), appId, applicationId, dbUser.getRoles());
                 }
             }
         } else {
@@ -312,7 +333,7 @@ public class UserService extends JBoltUserService {
      * @param enable
      * @return
      */
-    public Page<User> paginateAdminList(int pageNumber, int pageSize, String keywords, Integer ofModule, Integer sex, Boolean assignDept, Long deptId, Long postId, Long roleId, Boolean enable) {
+    public Page<User> paginateAdminList(int pageNumber, int pageSize, String keywords, Integer ofModule, Integer sex, Boolean assignDept, Long deptId, Long postId, Long roleId, Boolean enable, Long excludeRoleId) {
         String[] columns = getTableSelectColumnsWithout("password");
         Sql sql = selectSql().page(pageNumber, pageSize);
         sql.select(columns);
@@ -346,6 +367,9 @@ public class UserService extends JBoltUserService {
         if (isOk(roleId)) {
             sql.findInSet(roleId.toString(), "roles", true);
         }
+        if (isOk(excludeRoleId)) {
+            sql.notLike("roles", excludeRoleId.toString()).or().isNull("roles");
+        }
         sql.eq("sex", sex);
         sql.findInSet(postId, "posts", true);
         sql.orderById(true);
@@ -374,7 +398,7 @@ public class UserService extends JBoltUserService {
      * @return
      */
     public Page<User> paginateSysNoticeList(int pageNumber, int pageSize, String keywords, Integer sex, Boolean assignDept, Long deptId, Long postId, Long roleId) {
-        return paginateAdminList(pageNumber, pageSize, keywords, ExtendProjectOfModule.PLATFORM_INNER_ADMIN.getValue(), sex, assignDept, deptId, postId, roleId, true);
+        return paginateAdminList(pageNumber, pageSize, keywords, ExtendProjectOfModule.PLATFORM_INNER_ADMIN.getValue(), sex, assignDept, deptId, postId, roleId, true, null);
     }
 
     /**
@@ -399,4 +423,151 @@ public class UserService extends JBoltUserService {
             batchUpdate(users);
         }
     }
+
+    public Ret saveTableSubmit(JBoltTableMulti jBoltTable, User loginUser, Date now) {
+        // 组织表格
+        JBoltTable orgTable = jBoltTable.getJBoltTable("org");
+        // 用户信息
+        User userForm = orgTable.getFormModel(User.class, "user");
+        // 扩展信息
+        UserExtend extend = orgTable.getFormModel(UserExtend.class, "extend");
+
+        // 第三方账号
+        JBoltTable thirdpartyTable = jBoltTable.getJBoltTable("thirdparty");
+
+        if (null == userForm.getId()) {
+            save(userForm, extend);
+
+            // 新增组织
+            saveOrgs(orgTable.getSaveModelList(UserOrg.class), userForm.getId(), loginUser, now);
+            // 校验组织不能重复
+            ValidationUtils.isTrue(userOrgService.notExistsDuplicate(userForm.getId()), "组织重复定义错误");
+
+            // 新增第三方系统账号
+            saveThirdpartys(thirdpartyTable.getSaveModelList(UserThirdparty.class), userForm.getId());
+
+            // 校验第三方账号不重复
+            ValidationUtils.isTrue(userThirdpartyService.notExitsDuplicate(userForm.getId()), "第三方系统账号重复定义错误");
+        } else {
+            update(userForm, extend);
+
+            // 新增组织
+            saveOrgs(orgTable.getSaveModelList(UserOrg.class), userForm.getId(), loginUser, now);
+            // 修改组织
+            updateOrgs(orgTable.getUpdateModelList(UserOrg.class), loginUser, now);
+            // 删除组织
+            deleteOrgs(orgTable.getDelete());
+
+            // 校验组织不能重复
+            ValidationUtils.isTrue(userOrgService.notExistsDuplicate(userForm.getId()), "组织重复定义错误");
+
+            // 新增第三方系统账号
+            saveThirdpartys(thirdpartyTable.getSaveModelList(UserThirdparty.class), userForm.getId());
+            // 修改第三方系统账号
+            updateThirdpartys(thirdpartyTable.getUpdateModelList(UserThirdparty.class));
+            // 删除第三方系统账号
+            deleteThirdpartys(thirdpartyTable.getDelete());
+
+            // 校验第三方账号不重复
+            ValidationUtils.isTrue(userThirdpartyService.notExitsDuplicate(userForm.getId()), "第三方系统账号重复定义错误");
+        }
+
+        return successWithData(userForm.keep("id"));
+    }
+
+    private void saveOrgs(List<UserOrg> saveOrgs, Long userId, User user, Date now) {
+        if (CollUtil.isNotEmpty(saveOrgs)) {
+            for (UserOrg org : saveOrgs) {
+                org.setId(JBoltSnowflakeKit.me.nextId())
+                        .setUserId(userId)
+                        .setCreateUserId(user.getId())
+                        .setCreateUserName(user.getName())
+                        .setCreateTime(now)
+                        .setLastUpdateId(user.getId())
+                        .setLastUpdateName(user.getName());
+            }
+            userOrgService.batchSave(saveOrgs);
+        }
+    }
+
+    private void updateOrgs(List<UserOrg> updateOrgs, User user, Date now) {
+        if (CollUtil.isNotEmpty(updateOrgs)) {
+            for (UserOrg org : updateOrgs) {
+                org.keep("id", "org_id", "position", "is_principal", "parent_psn_id", "version_num")
+                        .setLastUpdateId(user.getId())
+                        .setLastUpdateName(user.getName())
+                        .setLastUpdateTime(now);
+            }
+            userOrgService.batchUpdate(updateOrgs);
+        }
+    }
+
+    private void deleteOrgs(Object[] delete) {
+        if (ArrayUtil.isNotEmpty(delete)) {
+            List<Record> delRecords = new ArrayList<>();
+            for (Object id : delete) {
+                delRecords.add(new Record()
+                        .set("id", id)
+                        .set("is_deleted", "1"));
+            }
+            userOrgService.batchUpdateRecords(delRecords);
+        }
+    }
+
+    private void saveThirdpartys(List<UserThirdparty> saveThirdpartys, long userId) {
+        if (CollUtil.isNotEmpty(saveThirdpartys)) {
+            for (UserThirdparty pt : saveThirdpartys) {
+                pt.setId(JBoltSnowflakeKit.me.nextId())
+                        .setUserId(userId);
+            }
+            userThirdpartyService.batchSave(saveThirdpartys);
+        }
+    }
+
+    private void updateThirdpartys(List<UserThirdparty> thirdpartyList) {
+        if (CollUtil.isNotEmpty(thirdpartyList)) {
+            userThirdpartyService.batchUpdate(thirdpartyList);
+        }
+    }
+
+    private void deleteThirdpartys(Object[] delete) {
+        if (ArrayUtil.isNotEmpty(delete)) {
+            userThirdpartyService.deleteByMultiIds(delete);
+        }
+    }
+
+    public Ret updateRoles(String roleId, String userIds) {
+        List<User> users = new ArrayList<>();
+
+        for (String userIdStr : StrSplitter.split(userIds, COMMA, true, true)) {
+            User user = findById(userIdStr);
+            ValidationUtils.notNull(user, "用户不存在");
+
+            List<String> roleIds = StrSplitter.split(user.getRoles(), COMMA, true, true);
+
+            // 包含
+            if (CollUtil.contains(roleIds, roleId)) {
+                roleIds.remove(roleId);
+            } else {
+                roleIds.add(roleId);
+            }
+
+            user.setRoles(CollUtil.join(roleIds, COMMA));
+            users.add(user);
+        }
+
+        if (CollUtil.isNotEmpty(users)) {
+            batchUpdate(users);
+        }
+        return SUCCESS;
+    }
+
+
+    /**
+     * 通过用户查找
+     */
+    public String getCdepcode(long id) {
+        return dbTemplate( "user.getcdepcode", Kv.by("id", id)).queryColumn();
+    }
+    
 }

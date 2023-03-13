@@ -1,28 +1,23 @@
 package cn.jbolt._admin.dept;
 
-import cn.hutool.core.util.ClassUtil;
-import cn.jbolt.core.base.JBoltGlobalConfigKey;
-import cn.jbolt.core.cache.JBoltGlobalConfigCache;
-import cn.jbolt.core.common.enums.JBoltDeptMgrType;
-import cn.jbolt.core.enumutil.JBoltEnum;
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.kit.Ret;
-import com.jfinal.kit.StrKit;
-import com.jfinal.plugin.activerecord.tx.Tx;
-
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltGlobalConfigCache;
+import cn.jbolt.core.common.enums.JBoltDeptMgrType;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.tx.Tx;
 /**
- * 
- * @ClassName: DeptAdminController   
+ *
+ * @ClassName: DeptAdminController
  * @author: JFinal学院-小木
- * @date: 2021-02-07 20:34  
+ * @date: 2021-02-07 20:34
  */
 @CheckPermission(PermissionKey.DEPT)
 @UnCheckIfSystemAdmin
@@ -30,7 +25,7 @@ public class DeptAdminController extends JBoltBaseController {
 
 	@Inject
 	private DeptService service;
-	
+
   /**
 	* 首页
 	*/
@@ -94,7 +89,7 @@ public class DeptAdminController extends JBoltBaseController {
 		set("pid", getLong(0,0L));
 		render("add.html");
 	}
-	
+
   /**
 	* 编辑
 	*/
@@ -113,7 +108,7 @@ public class DeptAdminController extends JBoltBaseController {
 		set("showPortalBtn",type == JBoltDeptMgrType.JS_TREE);
 		render("edit.html");
 	}
-	
+
   /**
 	* 保存
 	*/
@@ -126,7 +121,7 @@ public class DeptAdminController extends JBoltBaseController {
 		}
 		renderJson(ret);
 	}
-	
+
   /**
 	* 更新
 	*/
@@ -139,7 +134,7 @@ public class DeptAdminController extends JBoltBaseController {
 		}
 		renderJson(ret);
 	}
-	
+
   /**
 	* 删除
 	*/
@@ -147,7 +142,7 @@ public class DeptAdminController extends JBoltBaseController {
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
-	
+
   /**
 	* 切换启用状态
 	*/
@@ -155,7 +150,7 @@ public class DeptAdminController extends JBoltBaseController {
 	public void toggleEnable() {
 		renderJson(service.toggleEnable(getLong(0)));
 	}
-	
+
   /**
 	* 排序 上移
 	*/
@@ -163,7 +158,7 @@ public class DeptAdminController extends JBoltBaseController {
 	public void up() {
 		renderJson(service.up(getLong(0)));
 	}
-	
+
   /**
 	* 排序 下移
 	*/
@@ -171,7 +166,7 @@ public class DeptAdminController extends JBoltBaseController {
 	public void down() {
 		renderJson(service.down(getLong(0)));
 	}
-	
+
   /**
 	* 排序 初始化
 	*/
@@ -196,5 +191,5 @@ public class DeptAdminController extends JBoltBaseController {
 	public void move(){
 		renderJson(service.move(getLong("id"),getLong("pid"),getInt("rank")));
 	}
-	
+
 }

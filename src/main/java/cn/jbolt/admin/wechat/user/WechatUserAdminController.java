@@ -18,11 +18,13 @@ import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.permission.UnCheck;
+import com.jfinal.core.paragetter.Para;
+
 /**
  *   微信用户信息管理 公众号和小程序
- * @ClassName:  WechatUserAdminController   
- * @author: JFinal学院-小木 QQ：909854136 
- * @date:   2019年7月20日   
+ * @ClassName:  WechatUserAdminController
+ * @author: JFinal学院-小木 QQ：909854136
+ * @date:   2019年7月20日
  */
 @CheckPermission(PermissionKey.WECHAT_USER)
 @OnlySaasPlatform
@@ -75,4 +77,14 @@ public class WechatUserAdminController extends JBoltBaseController {
 		Long id=getLong(1);
 		renderJson(service.syncOneUserInfo(mpId,id));
 	}
+
+    /**
+     * 创建公众平台用户表
+     */
+    public void createTable(@Para(value = "mpId") Long mpId) {
+        service.createTable(mpId);
+
+        renderJsonSuccess();
+    }
+
 }

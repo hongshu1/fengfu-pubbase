@@ -11,16 +11,16 @@ var LayerMsgBox={
 							handler();
 						}
 					  layer.close(index);
-					});  
+					});
 			}else{
 				layer.alert(msg, function(index){
 					if(handler){
 						handler();
 					}
 				  layer.close(index);
-				});  
+				});
 			}
-			
+
 		},
 		/**
 		 * 弹出成功信息,并执行回调方法
@@ -113,9 +113,9 @@ var Ajax={
 						if(error){
 							error();
 						}
-						
+
 					}
-					
+
 				});
 			}
 }
@@ -143,8 +143,8 @@ function checkForm(form){
 			return false;
 		}
 	}
-	
-	
+
+
 	return true;
 }
 /**
@@ -360,7 +360,7 @@ function md5(string){
 }
 var _submit_ing=false;
 //提交登录
-function submitForm(form){
+function submitForm(url, form){
 		if(_submit_ing){
 			return false;
 		}
@@ -373,7 +373,7 @@ function submitForm(form){
 			var left = getRandomString(2);
 			var right = getRandomString(3);
 			pwdInput.val(left+md5(passwordValue)+right);
-			Ajax.post("admin/login",sf.serialize(),function(res){
+			Ajax.post(url,sf.serialize(),function(res){
 				LayerMsgBox.success("登录成功",300,function(){
 					_submit_ing=false;
 					var base=$("base").attr("href");
@@ -402,7 +402,7 @@ function submitForm(form){
 		//var glassStyle=$.cookie('jbolt_login_glassStyle');
 		var bgimgBlur=$.cookie('jbolt_login_bgimgBlur');
 		var needNest=$.cookie('jbolt_login_nest');
-		
+
 		// if(glassStyle&&glassStyle=="true"){
 		// 	$(".jbolt_loginform").addClass("jbolt_bg_glass");
 		// }else{
@@ -437,7 +437,7 @@ function submitForm(form){
 			    count: 200,
 			  });
 		});
-		
+
 	}
 
 	$(function(){

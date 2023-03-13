@@ -1,0 +1,156 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>业务对象</h1></div>
+            <div class="col">
+                <form class="form-inline" id="Busobject_form_#(pageId)">
+
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=关键词=" name="keywords" value=""/>
+
+                    <select class="form-control" name="appId"
+                            data-autoload
+                            data-url="admin/application/options"
+                            data-select-type="select"
+                            data-text-attr="appName"
+                            data-text="=应用系统="
+                            data-value=""
+                    ></select>
+
+                    <select class="form-control" name="dataSource"
+                            data-autoload
+                            data-url="admin/enums/datasource"
+                            data-select-type="select"
+                            data-text="=数据来源="
+                            data-value=""
+                    ></select>
+
+                    <select class="form-control" name="isEnabled"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=启用状态="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+
+                    <input type="hidden" name="isDeleted" value="false"/>
+
+                    <button onclick="Busobject_formSearch_#(pageId)('Busobject_form_#(pageId)',false)" id="form_searchBtn_#(pageId)" type="button" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button onclick="Busobject_formSearch_#(pageId)('Busobject_form_#(pageId)',true)" id="form_trashBtn_#(pageId)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 回收站</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="Busobject_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.id}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.appName}</td>
+            <td>${data.busobjectCode}</td>
+            <td>${data.displayName}</td>
+            <td>${data.busobjectName}</td>
+            <td>${data.datasourceName}</td>
+            <td><img data-switchbtn data-confirm="确定切换启用状态？" data-value="${data.isEnabled}"  data-handler="refreshJBoltTable"  data-url="admin/busobject/toggleIsEnabled/${data.id}"/></td>
+            <td>${data.versionNum}</td>
+            <td>${data.createUserName}</td>
+            <td>${data.createTime|date_ymdhms}</td>
+            <td>${data.lastUserName}</td>
+            <td>${data.lastUpdateTime|date_ymdhms}</td>
+            <td>
+                {@if data.isDeleted == '1'}
+                <a class="text-info mr-1" data-openpage="dialog" href="admin/busobject/edit/${data.id}" data-area="800,600" data-title="查看业务对象"><i class="fa fa-eye"></i></a>
+                {@else}
+                <a class="jbolt_table_editbtn" href="admin/busobject/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑业务对象"><i class="fa fa-edit"></i></a>
+                {@/if}
+                <a class="jbolt_table_delbtn" href="admin/busobject/${data.isDeleted == '1'?'realDeleteByIds':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+                {@if data.isDeleted == '1'}
+                <a class="text-info mr-1" data-ajaxbtn data-confirm="确认恢复此数据?" href="admin/busobject/recoverByIds?ids=${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-reply"></i></a>
+                {@/if}
+            </td>
+        </tr>
+        {@/each}
+        </textarea>
+
+        <div class="jbolt_table_toolbar" id="Busobject_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增业务对象" data-url="admin/busobject/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑业务对象" data-check-handler="jboltTableGetCheckedId" data-url="admin/busobject/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/busobject/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
+                <button style="display:none;" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_recoverBtn_#(pageId)" data-url="admin/busobject/recoverByIds?ids=" data-confirm="确定还原回收站里选中数据？" class="btn btn-outline-info btn-sm"><i class="fa fa-reply"></i> 还原</button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="auto"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="Busobject_form_#(pageId)"
+               data-url="admin/busobject/datas"
+               data-rowtpl="Busobject_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="Busobject_page"
+               data-column-resize="true"
+               data-toolbar="Busobject_toolbar_#(pageId)"
+               data-column-prepend="1:checkbox:true:false:false"
+               data-sortable-columns="create_time,last_update_time"
+               data-sort="#((sortColumn&&sortType)?(sortColumn+':'+sortType):'')"
+               data-default-sort-column="id"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="120" data-column="app_id">应用系统</th>
+                <th data-width="110" data-column="busobject_code">业务对象编码</th>
+                <th data-width="150" data-column="display_name">显示名</th>
+                <th data-width="150" data-column="busobject_name">业务对象名称</th>
+                <th data-width="150" data-column="data_source">数据来源</th>
+                <th data-width="100" data-column="is_enabled">启用状态</th>
+                <th data-width="100" data-column="version_num">版本号</th>
+                <th data-width="100" data-column="create_user_name">创建人</th>
+                <th data-width="160" data-column="create_time">创建时间</th>
+                <th data-width="100" data-column="last_user_name">更新人</th>
+                <th data-width="160" data-column="last_update_time">更新时间</th>
+                <th data-width="100">操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    function Busobject_formSearch_#(pageId)(formId, isDeleted) {
+        var form = $("#" + formId);
+
+        form.find("input[name='isDeleted']").val(isDeleted);
+        if (isDeleted) {
+            $("#form_searchBtn_#(pageId)").removeClass("btn-primary").addClass("btn-outline-secondary");
+            $("#form_trashBtn_#(pageId)").removeClass("btn-outline-danger").addClass("btn-danger");
+            $("#toolbar_recoverBtn_#(pageId)").show();
+            $("#toolbar_deleteBtn_#(pageId)").hide();
+            $("#toolbar_addBtn_#(pageId)").hide();
+            $("#toolbar_editBtn_#(pageId)").hide();
+        } else {
+            $("#form_searchBtn_#(pageId)").removeClass("btn-outline-secondary").addClass("btn-primary");
+            $("#form_trashBtn_#(pageId)").removeClass("btn-danger").addClass("btn-outline-danger");
+            $("#toolbar_recoverBtn_#(pageId)").hide();
+            $("#toolbar_deleteBtn_#(pageId)").show();
+            $("#toolbar_addBtn_#(pageId)").show();
+            $("#toolbar_editBtn_#(pageId)").show();
+        }
+
+        form.submit();
+    }
+</script>
+#end

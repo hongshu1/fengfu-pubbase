@@ -1,25 +1,16 @@
 package cn.jbolt._admin.user;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import cn.jbolt.common.model.UserExtend;
-import cn.jbolt.core.cache.JBoltGlobalConfigCache;
-import cn.jbolt.core.enumutil.JBoltEnum;
-import cn.jbolt.extend.config.ExtendProjectOfModule;
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import com.jfinal.upload.UploadFile;
-
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.role.RoleService;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.Option;
 import cn.jbolt.core.bean.OptionBean;
 import cn.jbolt.core.cache.JBoltCacheInterceptor;
+import cn.jbolt.core.cache.JBoltGlobalConfigCache;
+import cn.jbolt.core.enumutil.JBoltEnum;
+import cn.jbolt.extend.config.ExtendProjectOfModule;
 import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -28,6 +19,17 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltFileService;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.tx.Tx;
+import com.jfinal.upload.UploadFile;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @CheckPermission(PermissionKey.USER)
 @UnCheckIfSystemAdmin
@@ -57,7 +59,7 @@ public class UserAdminController extends JBoltBaseController {
 	 * 表格数据接口
 	 */
 	public void datas() {
-		renderJsonData(service.paginateAdminList(getPageNumber(),getPageSize(),getKeywords(),getOfModule(),getInt("sex"),getBoolean("assignDept",true),getLong("deptId"),getLong("postId"),getLong("roleId"),getBoolean("enable")));
+		renderJsonData(service.paginateAdminList(getPageNumber(),getPageSize(),getKeywords(),getOfModule(),getInt("sex"),getBoolean("assignDept",true),getLong("deptId"),getLong("postId"),getLong("roleId"),getBoolean("enable"), getLong("excludeRoleId")));
 	}
 
 	/**
@@ -301,4 +303,19 @@ public class UserAdminController extends JBoltBaseController {
 	public void modules(){
 		renderJsonData(JBoltEnum.getEnumOptionList(ExtendProjectOfModule.class));
 	}
+
+    @Before(Tx.class)
+    public void saveTableSubmit() {
+        renderJson(service.saveTableSubmit(getJBoltTables(), JBoltUserKit.getUser(), new Date()));
+    }
+
+    @Before(Tx.class)
+    public void updateRoles(@Para(value = "roleId") String roleId,
+                            @Para(value = "userIds") String userIds) {
+        ValidationUtils.notBlank(roleId, "缺少角色ID");
+        ValidationUtils.notBlank(userIds, "缺少用户ID");
+
+        renderJson(service.updateRoles(roleId, userIds));
+    }
+
 }

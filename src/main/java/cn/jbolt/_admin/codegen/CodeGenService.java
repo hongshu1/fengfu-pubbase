@@ -1,6 +1,7 @@
 package cn.jbolt._admin.codegen;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
@@ -11,6 +12,7 @@ import cn.jbolt.common.model.CodeGen;
 import cn.jbolt.common.model.CodeGenModelAttr;
 import cn.jbolt.core.base.JBoltIDGenMode;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltPermissionCache;
 import cn.jbolt.core.consts.JBoltConst;
 import cn.jbolt.core.db.sql.Sql;
@@ -170,7 +172,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setIsTableUseRecord(false);
         codeGen.setIsTableRecordCamelCase(false);
         codeGen.setIsIdCache(true);
-        codeGen.setIsToolbar(false);
+        codeGen.setIsToolbar(true);
         codeGen.setIsShowOptcol(true);
         codeGen.setIsShowOptcol(codeGen.getIsCrud());
         codeGen.setViewLayout("jboltLayout");
@@ -234,7 +236,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         if (isOk(tableRemovePrefix)) {
             mainTableName = StrUtil.removePrefixIgnoreCase(mainTableName, tableRemovePrefix);
         }
-        String modelName = StrUtil.upperFirst(StrUtil.toCamelCase(mainTableName));
+        String modelName = mainTableName.contains(StrUtil.UNDERLINE) ? StrUtil.upperFirst(StrUtil.toCamelCase(mainTableName)) : StrUtil.upperFirst(mainTableName);
         String oldModelName = codeGen.getModelName();
         boolean mustReplace = StrKit.notBlank(oldModelName) && !modelName.equals(oldModelName);
         codeGen.setModelName(modelName);
@@ -245,7 +247,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             codeGen.setMainJavaPackage(mainJavaPackage);
         }
         if (notOk(codeGen.getModelPackage())) {
-            codeGen.setModelPackage(mainJavaPackage + "." + modelName.toLowerCase() + ".model");
+            codeGen.setModelPackage(mainJavaPackage + ".model." + codeGen.getDatasourceName());
         } else if (mustReplace) {
             codeGen.setModelPackage(codeGen.getModelPackage().replace(oldModelName.toLowerCase(), modelName.toLowerCase()));
         }
@@ -1125,7 +1127,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         if (primaryKey.contains(",")) {
             data.set("getIdMethodName", "getId");
         } else {
-            data.set("getIdMethodName", "get" + StrUtil.upperFirst(StrUtil.toCamelCase(primaryKey.toLowerCase())));
+            data.set("getIdMethodName", "get" + (Validator.isLowerCase(primaryKey) ? StrUtil.upperFirst(StrUtil.toCamelCase(primaryKey.toLowerCase())): StrUtil.upperFirst(primaryKey)));
         }
         //执行生成 返回内容
         return engine.getTemplate(serviceTemplate).renderToString(data);
@@ -1473,14 +1475,15 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
 
         //下面这个默认是null就行 自定义的数据库字段转驼峰getter属性名的策略，
         //默认使用策略已经够用，如果你有特殊需求就在这里定义它
-        JBoltColumnToBuildAttrNameFunction columnTobuildAttrNameFun = null;
-//		JBoltColumnToBuildAttrNameFunction columnTobuildAttrNameFun = new JBoltColumnToBuildAttrNameFunction() {
-//			@Override
-//			public String build(String column) {
-//				//这里column就是数据库里的一个字段 然后你通过处理返回一个应有的定制格式即可
-//				return null;
-//			}
-//		};
+        // JBoltColumnToBuildAttrNameFunction columnTobuildAttrNameFun = null;
+        JBoltColumnToBuildAttrNameFunction columnTobuildAttrNameFun = column -> {
+            //这里column就是数据库里的一个字段 然后你通过处理返回一个应有的定制格式即可
+            //只有包含下滑线的才转驼峰
+            if(column.contains(StrUtil.UNDERLINE)) {
+                return StrKit.toCamelCase(column.toLowerCase());
+            }
+            return StrKit.toCamelCase(column);
+        };
         //获取翻译设置
         List<CodeGenModelAttr> translates = codeGenModelAttrService.getCodeGenNeedTranslateAttrs(codeGen.getId());
         //设置是否生成baseModel中的字段常量
@@ -1496,7 +1499,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         if (success) {
             processModelPackage(codeGen);
             //更新生成状态
-            if(codeGen.getState().intValue() == CodeGenState.ONLY_MAIN_LOGIC_GEN.getValue()){
+            if(codeGen.getState() == CodeGenState.ONLY_MAIN_LOGIC_GEN.getValue()){
                 codeGen.setState(CodeGenState.GENED.getValue());
             }else{
                 codeGen.setState(CodeGenState.ONLY_MODEL_GEN.getValue());
@@ -1511,12 +1514,12 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         String configFilePath = null;
         String configFilePathPro = null;
         if (codeGen.getIsMainDatasource()) {
-            configFilePath = FileUtil.normalize(codeGen.getProjectPath() + SEPARATOR + "src/main/resources/dbconfig/" + dbType.toLowerCase() + "/config.properties");
+            configFilePath = FileUtil.normalize(codeGen.getProjectPath() + SEPARATOR + "src/main/resources/dbconfig/" + dbType.toLowerCase() + "/config-" + JBoltConfig.PDEV + ".properties");
             configFilePathPro = FileUtil.normalize(codeGen.getProjectPath() + SEPARATOR + "src/main/resources/dbconfig/" + dbType.toLowerCase() + "/config-pro.properties");
             processMainModelPackages(configFilePath, codeGen.getModelPackage());
             processMainModelPackages(configFilePathPro, codeGen.getModelPackage());
         } else {
-            configFilePath = FileUtil.normalize(codeGen.getProjectPath() + SEPARATOR + "src/main/resources/dbconfig/extend_datasource.setting");
+            configFilePath = FileUtil.normalize(codeGen.getProjectPath() + SEPARATOR + "src/main/resources/dbconfig/extend_datasource_" + JBoltConfig.PDEV + ".setting");
             configFilePathPro = FileUtil.normalize(codeGen.getProjectPath() + SEPARATOR + "src/main/resources/dbconfig/extend_datasource_pro.setting");
             processExtendModelPackages(configFilePath, codeGen.getDatasourceName(), codeGen.getModelPackage());
             processExtendModelPackages(configFilePathPro, codeGen.getDatasourceName(), codeGen.getModelPackage());

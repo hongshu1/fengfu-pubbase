@@ -20,6 +20,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 		#@jboltpageloadingcss?()
 		#@fontcss?()
+		#@spreadcss?()
 		#@bootstrapcss?()
 		<!-- Select2组件css资源 如果系统不使用select2 可以注释掉这个地方 -->
 		#@select2css?()
@@ -68,9 +69,9 @@
 				<!--left top userInfo  end-->
 					<a tabindex="-1" class="jbolt_topbar_btn jbolt_toggle_Left_nav_btn"><i class="jbicon2 jbi-outdent"></i></a>
 					<a tabindex="-1" class="jbolt_topbar_btn" onclick="refreshPjaxContainer(this)"><i class="jbicon2 jbi-reload"></i></a>
-					
+
 					<!-- admin top navs -->
-					#setLocal(topnavs=JBoltTopnavCache.getTopNavs())
+					#setLocal(topnavs=JBoltTopnavCache.getTopNavs(JBoltGlobalConfigCache.getLongConfigValue(GlobalConfigKey.MOM_APP_ID), JBoltGlobalConfigCache.getLongConfigValue(GlobalConfigKey.MOM_APPLICATION_ID)))
 					#if(notEmpty(topnavs))
 					<ul class="jbolt_admin_topnavs animate__animated animate__fadeIn">
 						#for(nav:topnavs)
@@ -81,20 +82,21 @@
 						#end
 					</ul>
 					#end
-					
+
 					<!-- <h1 class="jbolt_admin_title">#globalConfig(GlobalConfigKey.SYSTEM_NAME,"JBolt极速开发平台")</h1> -->
 					#if(adminGlobalSearchShow)
 					<div class="jbolt_search_box withicon mx-3 animate__animated animate__fadeIn">
 					<input type="search" autocomplete="new-password" name="keywords" id="searchInput" placeholder="全局搜索"/>
 					</div>
 					#end
-					
+
 					<div class="pull-right animate__animated animate__fadeIn">
+                        <span style="font-size:16px;font-weight: 500;margin-top: 20px;margin-bottom: 20px;margin-right:15px;text-align: center; letter-spacing:2px;">欢迎您，#(user.name??)！当前登录组织：#(OrgAccessKit.getOrgName()??'无')[<b style="cursor: pointer" onclick="showSwitchOrgDialog(false)">切换</b>]</span>
 					<!-- <a tabindex="-1" onclick="return confirm('确定退出系统?')" tooltip data-title="退出系统"  href="admin/logout" class="jbolt_topbar_btn jbolt_logout_btn"></a> -->
 					<a tabindex="-1" tooltip data-title="消息中心" href="admin/msgcenter/layer"  data-top="#(enableSystemAdminH50?51:61)" data-nomask data-height="400" data-openpage="jboltlayer" data-width="350" data-resize="true" class="jbolt_topbar_btn"><i class="jbicon jb-msg-o"></i><span id="msgCenterRedDot" class="reddot"></span></a>
 					<a tabindex="-1" data-fullscreenbtn class="jbolt_topbar_btn"><i class="jbicon2 jbi-fullscreen"></i></a>
 					<a tabindex="-1" tooltip data-title="更多样式配置" data-refresh="true"  data-width="400" data-noclose data-top="#(enableSystemAdminH50?50:60)" data-jboltlayertrigger href="admin/userconfig" class="jbolt_topbar_btn jbolt_theme_btn" ></a>
-					
+
 					<div class="jb_header_user">
 						<div class="jb_header_loged">
 						<div class="jb_header_avatar"><img  tabindex="-1" src="#realImage(user.avatar??,'assets/img/avatar.jpg')" onerror="this.src='assets/img/avatar.jpg'"/><span class="fa fa-sort-desc p-1 ml-1"></span></div>
@@ -109,7 +111,7 @@
 						</div>
 						</div>
 					</div>
-					
+
 					</div>
 				</div>
 			<!--left  start-->
@@ -133,7 +135,7 @@
 				#@main?()
 				</div>
 				#else
-				#@main?() 
+				#@main?()
 				#end
 				</div>
 				<!--main container end-->
@@ -155,7 +157,7 @@
 		<span class="d-none" id="JBOLT_AUTO_LOCK_SCREEN_SECONDS">#(jboltAutoLockScreenSeconds??)</span>
 		<span class="d-none" id="JBOLT_TAB_KEEP_AFTER_RELOAD">#(jboltTabKeepAfterReload??)</span>
 		<span class="d-none" id="JBOLT_GLOBAL_UPLOAD_TO">#(JBOLT_GLOBAL_UPLOAD_TO?? 'local')</span>
-		#else 
+		#else
 		<div class="alert alert-danger" style="max-width:400px;margin: 50px auto;">
 			尚未登录,请<a data-openpage="dialog" class='text-danger' data-title='请重新登录系统'  data-handler='reloadCurrentPage' data-area='500,400' data-url='admin/relogin'>点此</a>重新登录
 		</div>
@@ -179,7 +181,7 @@
 		$(function(){
 			jboltAdminLayoutInitTopNavFirst();
 			#if(!JBoltConfig.JBOLT_WEBSOCKET_ENABLE)
-			initReadUserMsgCenterUnreadInfo();	
+			initReadUserMsgCenterUnreadInfo();
 			#end
 			hideJBoltPageLoading();
 		});

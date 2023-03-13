@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col-8">
+        <form onsubmit="return false;" id="userForm" action="#(action)" method="post">
+
+            <input type="hidden" name="user.id" value="#(user.id)"/>
+            <div class="form-group row">
+                    <label class="offset-1 col-2 col-form-label" style="width: 100px;">用户角色</label>
+                    <div class="col-8">
+                        <select class="form-control"
+                                data-autoload
+                                data-rule="select"
+                                data-select-type="select2"
+                                multiple="multiple"
+                                data-tips="请选择用户角色"
+                                data-url="admin/role/select"
+                                data-text="=请选择角色[可多选]="
+                                data-value=""
+                                data-setvalueto="userRoles"
+                                data-select="#(user.roles??)">
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" id="userRoles" name="user.roles" value="#(user.roles??)"/>
+
+            </fieldset>
+        </form>
+    </div>
+    <div class="col-4">
+        <fieldset class="form-page-fieldset">
+            <legend>上传头像</legend>
+            <div class="form-group text-center">
+                <div class="j_img_uploder"
+                     data-url="admin/user/uploadAvatar"
+                     data-value="#realImage(user.avatar??)"
+                     data-handler="uploadFile"
+                     data-hiddeninput="userAvatarInput"
+                     data-area="200,200"
+                     data-maxsize="2000"></div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+
+#define js()
+<script>
+
+    $(function () {
+    })
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="userForm")
+#end

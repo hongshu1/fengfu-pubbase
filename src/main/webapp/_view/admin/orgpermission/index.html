@@ -1,0 +1,65 @@
+#@adminLayout()
+
+#define showItems(items,level)
+#for(data:items)
+<tr data-id="#(data.id)" data-pid="#(data.pid)" #if(level>1) data-son #end  #if(data.items) data-parent#end>
+    <td></td>
+    <td class="text-left"><span class="text-danger mr-1" style="margin-left: #((level-1)*20)px">├</span>#(data.name??)</td>
+    <td>
+        <a  tooltip  href="admin/orgpermission/toAddOrgPermission/#(data.id)" data-dialogbtn data-scroll="yes"  data-title="为角色【#(data.name??)】设置权限" data-area="700,90%"  class="jbolt_table_btn"><i class="fa fa-pencil c-primary"></i></a>
+
+    </td>
+    <td></td>
+</tr>
+#@showItems(data.items,level+1)
+#end
+#end
+
+#define main()
+<div class="jbolt_page" data-key="#(pmkey)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-9">
+                <h1>组织权限管理</h1>
+                <span> #(dataList.size()?? 0) 条记录</span>
+                [<a href="#" class="text-primary" id="roleExpandAllBtn">全部展开</a>/<a href="#" id="roleCollapseAllBtn" class="text-primary">全部闭合</a>]
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-center"
+                   data-jbolttreetable
+                   data-expandall
+                   data-parent-td-index="2"
+                   data-expandall-trigger="#roleExpandAllBtn"
+                   data-collapseall-trigger="#roleCollapseAllBtn"
+            >
+                <thead>
+                <tr><th style="width: 60px">序号</th><th style="width: 200px">角色</th><th  style="width: 200px">操作</th><th></th></tr>
+                </thead>
+                <tbody>
+                #for(data:dataList)
+                <tr data-id="#(data.id)"  data-pid="#(data.pid)" #if(data.items) data-parent #end>
+                    <td>#(for.count)</td>
+                    <td class="text-left">#(data.name??)</td>
+                    <td>
+                        <a tooltip  href="admin/orgpermission/toAddOrgPermission/#(data.id)" data-dialogbtn data-scroll="yes"  data-title="为角色【#(data.name??)】设置权限" data-area="700,90%"  class="jbolt_table_btn"><i class="fa fa-pencil c-primary"></i></a>
+                    </td>
+                    <td></td>
+                </tr>
+                #@showItems(data.items,2)
+                #end
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+#end
+#define js()
+<script>
+    $(function(){
+    });
+</script>
+#end
+

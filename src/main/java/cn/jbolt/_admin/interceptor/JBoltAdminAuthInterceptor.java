@@ -1,8 +1,13 @@
 package cn.jbolt._admin.interceptor;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.rjtech.annotations.CheckDataPermission;
+import cn.rjtech.kit.DataPermissionKit;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
@@ -60,15 +65,15 @@ public class JBoltAdminAuthInterceptor implements Interceptor {
 //				return;
 //			}
 //		}
+        Method method=inv.getMethod();
 		//uncheck是只校验上面的登录 不校验其它 如果controller上直接写了uncheck注解 只要登录了就直接过
 		if(JBoltSecurityCheck.isUncheck(controller)){
-			inv.invoke();
+			invokeWithDataPermission(inv, method, user);
 			return;
 		}
-		Method method=inv.getMethod();
 		//uncheck是只校验上面的登录 不校验其它
 		if(JBoltSecurityCheck.isUncheck(method)){
-			inv.invoke();
+			invokeWithDataPermission(inv, method, user);
 			return;
 		}
 		//具体有哪些注解
@@ -77,7 +82,7 @@ public class JBoltAdminAuthInterceptor implements Interceptor {
 		if(user.getIsSystemAdmin()) {
 			//如果设置了是超级管理员可以直接访问的权限注解 不校验其它
 			if(JBoltSecurityCheck.isUncheckIfSystemAdmin(controller,method)) {
-				inv.invoke();
+				invokeWithDataPermission(inv, method, user);
 				return;
 			}
 			// 得到具体的可以校验的注解
@@ -91,7 +96,7 @@ public class JBoltAdminAuthInterceptor implements Interceptor {
 			//如果没设置 就得拿到当前访问的actionkey去找到对应权限定义 在判断是不是超管可以直接访问
 			boolean isSystemAdminDefault=JBoltSecurityCheck.checkIsSystemAdminDefaultPermission(checkAll,permissionKeys);
 			if(isSystemAdminDefault) {
-				inv.invoke();
+                invokeWithDataPermission(inv, method, user);
 				return;
 			}
 		}else {
@@ -108,6 +113,14 @@ public class JBoltAdminAuthInterceptor implements Interceptor {
 		String roleIds = JBoltUserKit.getUserRoleIds();
 		//从cache中找到这些角色对应的权限绑定集合
 		Set<String> permissionKeySet = JBoltPermissionCache.me.getRolePermissionKeySet(roleIds);
+        // 用户权限
+        Set<String> userPermissionKeySet = JBoltPermissionCache.me.getUserPermissionKeySet(user.getId());
+        if (CollUtil.isNotEmpty(userPermissionKeySet)) {
+            if (CollUtil.isEmpty(permissionKeySet)) {
+                permissionKeySet = new HashSet<>();
+            }
+            permissionKeySet.addAll(userPermissionKeySet);
+        }
 		if (permissionKeySet == null || permissionKeySet.isEmpty()) {
 			// 如果没有权限 返回错误信息
 			JBoltControllerKit.renderFail(controller,JBoltMsg.INTERCEPTOR_NO_AUTH_ASSIGN);
@@ -122,7 +135,7 @@ public class JBoltAdminAuthInterceptor implements Interceptor {
 			return;
 		}
 		// 最后执行action
-		inv.invoke();
+		invokeWithDataPermission(inv, method, user);
 	}
 
 	
@@ -183,4 +196,29 @@ public class JBoltAdminAuthInterceptor implements Interceptor {
 		
 		return temps;
 	}
+
+    /**
+     * 处理数据权限相关业务，绑定用户的部门编码权限
+     */
+    private void processDataPermission(Method method, User user) {
+        if (DataPermissionKit.isAnnotatedWithCheckDataPermission(method)) {
+            // 数据权限注解
+            CheckDataPermission per = method.getAnnotation(CheckDataPermission.class);
+            // 绑定当前用户具备的
+            List<String> accessCdepcodes = DataPermissionKit.getAccessCdepcodes(user, per.operation(), per.type());
+            if (CollUtil.isNotEmpty(accessCdepcodes)) {
+                DataPermissionKit.setAccessCdepcodes(accessCdepcodes);
+            }
+        }
+    }
+
+    public void invokeWithDataPermission(Invocation inv, Method method, User user) {
+        try {
+            processDataPermission(method, user);
+            inv.invoke();
+        } finally {
+            DataPermissionKit.clear();
+        }
+    }
+
 }

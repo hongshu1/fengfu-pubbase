@@ -38,6 +38,7 @@ import cn.jbolt.extend.cache.CacheExtend;
 import cn.jbolt.extend.config.ExtendProjectConfig;
 import cn.jbolt.extend.config.ExtendProjectOfModule;
 import cn.jbolt.index.*;
+import cn.rjtech.interceptor.GlobalExceptionInterceptor;
 import com.jfinal.config.*;
 import com.jfinal.ext.handler.UrlSkipHandler;
 import com.jfinal.ext.interceptor.SessionInViewInterceptor;
@@ -222,7 +223,7 @@ public class ProjectConfig extends JBoltProjectConfig {
                 new ArrayBlockingQueue<Runnable>(1024));
         eventPlugin.threadPool(fixedThreadPool);
         // 执行扫描 多个package 使用分号;隔开 例如 pa;pb
-        eventPlugin.enableClassScan().scanJar().scanPackage("cn.jbolt._admin.event");
+        eventPlugin.enableClassScan().scanJar().scanPackage("cn.jbolt._admin.event;cn.rjtech.event");
         me.add(eventPlugin);
     }
 
@@ -244,6 +245,7 @@ public class ProjectConfig extends JBoltProjectConfig {
      */
     @Override
     public void configInterceptors(Interceptors me) {
+        me.addGlobalActionInterceptor(new GlobalExceptionInterceptor());
         me.addGlobalActionInterceptor(new SessionInViewInterceptor());
         me.addGlobalActionInterceptor(new JBoltOnlineUserGlobalInterceptor());
         //二开配置扩展全局拦截器

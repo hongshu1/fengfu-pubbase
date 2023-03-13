@@ -21,13 +21,13 @@
 	</head>
 	<body>
 	<div class="d-block p-4 my-4">
-		<form id="loginForm" method="post" action="admin/login">
+		<form id="loginForm" method="post" action="#(userType == 'SRM' ? 'admin/srmLogin' : 'admin/login')">
 		<div class="form-group">
 		<div class="input-group">
 		 <div class="input-group-prepend">
 		    <span class="input-group-text"><i class="fa fa-user"></i></span>
 		  </div>
-		<input type="text" autocomplete="off" data-rule="required"  data-tips="请输入用户名"  class="form-control" autocomplete="off" maxlength="20" autofocus="autofocus"  name="username" placeholder="请输入用户名"/>
+		<input type="text" autocomplete="off" data-rule="required"  data-tips="请输入用户名"  class="form-control" maxlength="20" autofocus="autofocus"  name="username" placeholder="请输入用户名"/>
 		</div>
 		</div>
 		<div class="form-group">
@@ -38,6 +38,16 @@
 		<input type="password" class="form-control" data-rule="required" data-tips="请输入密码"  autocomplete="off" maxlength="20"  name="password" placeholder="请输入密码"/>
 		</div>
 		</div>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="jbicon jb-fuwuqi"></i></span>
+                    </div>
+                    <select class="form-control"  id="orgid" name="orgId">
+                        <option value="">=不选组织=</option>
+                    </select>
+                </div>
+            </div>
 		#setLocal(needCapture=JBoltGlobalConfigCache.isJBoltLoginUseCapture())
 		#if(needCapture)
 		<div class="form-group">
@@ -45,8 +55,8 @@
 		 <div class="input-group-prepend">
 		    <span class="input-group-text"><i class="fa fa-check-square" style="width:10px;"></i></span>
 		  </div>
-		<input type="text" autocomplete="off" data-rule="required" data-tips="请输入验证码"   class="form-control" maxlength="10" id="captcha" autocomplete="off" data-rule="required"  data-tips="请输入验证码" name="captcha" placeholder="请输入验证码"/>
-		<div class="input-group-append" style="padding: 0px 0px;">
+		<input type="text" autocomplete="off" data-rule="required" data-tips="请输入验证码"   class="form-control" maxlength="10" id="captcha" name="captcha" placeholder="请输入验证码"/>
+		<div class="input-group-append" style="padding: 0 0;">
 		    <img id="captchaimg" src="admin/captcha" onclick="changeCaptcha()"/>
 		  </div>
 		</div>
@@ -70,6 +80,13 @@
 $(function(){
 	bindEnterForDialogOkBtn();
 	bindEscForDialogCloseBtn();
+
+    Ajax.post("admin/org/list", {}, function (res) {
+        var orglist = $("#orgid");
+        for (var i = 0; i < res.data.length; i++) {
+            orglist.append("<option value=" + res.data[i].id + ">" + res.data[i].name + "</option>");
+        }
+    }, false);
 })
 	</script>
 	</body>

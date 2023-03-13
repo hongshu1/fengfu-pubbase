@@ -1,8 +1,70 @@
+#set(pageId=RandomUtil.random(6))
 <form onsubmit="return false;" id="permissionForm" action="#(action)" method="post">
 	#if(permission.id??)
 		<input type="hidden" name="permission.id" value="#(permission.id)" />
+    #else
+        #if(permission.applicationId??)
+        <input type="hidden" name="permission.applicationId" value="#(permission.applicationId??)">
+        #end
+        #if(permission.appId??)
+        <input type="hidden" name="permission.appId" value="#(permission.appId??)">
+        #end
 	#end
 <input type="hidden" name="permission.permissionLevel" value="#(level?? 1)" />
+
+    <div class="form-group row">
+        <label class="col-form-label col-sm-2">应用系统</label>
+        <div class="col-md-7 col-sm-10">
+            <select class="form-control"
+                    name="permission.applicationId"
+                    data-rule="required"
+                    data-autoload
+                    data-tips="请选择应用系统"
+                    data-url="admin/application/options"
+                    data-text-attr="appName"
+                    data-value-attr="id"
+                    data-text="=请选择="
+                    data-placeholder="=请选择="
+                    data-select="#(permission.applicationId??0)"
+                    data-setvalueto="applicationId"
+                    data-handler="refreshPid"
+                    #if(permission.applicationId??)
+                    disabled
+                    #end
+            >
+            </select>
+
+            <input type="hidden" name="applicationId" id="applicationId" value="#(permission.applicationId??)">
+
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-form-label col-sm-2">应用终端</label>
+        <div class="col-md-7 col-sm-10">
+            <select class="form-control"
+                    name="permission.appId"
+                    data-rule="required"
+                    data-autoload
+                    data-tips="请选择应用终端"
+                    data-url="admin/app/options"
+                    data-text-attr="shortName"
+                    data-value-attr="id"
+                    data-text="=请选择="
+                    data-placeholder="=请选择="
+                    data-select="#(permission.appId??0)"
+                    data-setvalueto="appId"
+                    data-handler="refreshPid"
+                    #if(permission.applicationId??)
+                    disabled
+                    #end
+            >
+            </select>
+
+            <input type="hidden" name="appId" id="appId" value="#(permission.appId??)">
+        </div>
+    </div>
+
 <div class="form-group row">
 	<label class="col-form-label col-sm-2">所属模块</label>
 	<div class="col-md-6 col-lg-4 col-sm-10">
@@ -12,11 +74,24 @@
 	<div class="form-group row">
    <label class="col-form-label col-sm-2">上级资源</label>
        <div class="col-md-6 col-lg-4 col-sm-10">
-           <select id="pid" data-refresh="true" data-live-search="true" class="form-control" name="permission.pid"  data-text="=无上级资源=" data-value="0" data-select="#(permission.pid?? (pid?? 0))" data-autoload data-url="admin/permission/options"></select>
+           <select id="pid" 
+                   ###data-live-search="true" 
+                   class="form-control" 
+                   data-text="=无上级资源=" 
+                   data-select-type="select2"
+                   ###data-value="#(permission.pid?? (pid?? 0))"
+                   data-select="#(permission.pid?? (pid?? 0))"
+                   data-url="admin/permission/options" data-autoload="false"
+                   data-link-para-ele="#applicationId,#appId"
+                   data-sync-ele="#parentId"
+                    ###data-setvalueto="parentId"
+           ></select>
+
+           <input type="hidden" name="permission.pid" value="#(permission.pid?? (pid?? 0))" id="parentId" data-sync-attr="id">
        </div>
-       <div class="col-auto">
+       <!--<div class="col-auto">
        		<a class="btn btn-danger btn-sm mt-1" data-openpage="dialog" data-target="parent" data-area="1080,750" href="admin/permission/add" tooltip data-title="添加新上级资源"><i class="fa fa-plus"></i></a>
-       </div>
+       </div>-->
    </div>
     <div class="form-group row">
     <label class="col-form-label col-sm-2">资源名称</label>
@@ -37,20 +112,23 @@
             <input type="text" autocomplete="off"    maxlength="255" placeholder="请输入资源地址"   name="permission.url" value="#(permission.url??)" class="form-control">
         </div>
     </div>
-    
+
     <div class="form-group row">
     <label class="col-form-label col-sm-2">权限KEY</label>
         <div class="col-md-7 col-sm-10">
             <input type="text" autocomplete="off"   data-rule="required" data-tips="请输入权限KEY" maxlength="40" placeholder="请输入权限KEY" tips="请输入权限KEY" name="permission.permissionKey" value="#(permission.permissionKey??)" class="form-control">
         </div>
     </div>
- 
+
+    <input type="hidden" name="permission.isMenu" value="#(permission.isMenu??true)">
     
-    <div class="form-group row" 
-		data-radio 
-		data-rule="radio"  
-		data-value="#(permission.isMenu??)" 
-		data-name="permission.isMenu" 
+    <div class="form-group row"
+		data-radio
+		data-rule="radio"
+         data-disabled
+		data-value="#(permission.isMenu??true)"
+		data-name="permission.isMenu"
+         ###data-handler="isMenuHandler"
 		data-default="true">
 		<label class="col-form-label col-sm-2" >是否是菜单</label>
 			<div class="col"  style="padding-top: 1px;">
@@ -62,15 +140,15 @@
 					<input  id="rismenufalse" type="radio" name="permission.isMenu"   value="false"/>
 					<label for="rismenufalse">否</label>
 				</div>
-				
+
 			</div>
 		</div>
-    
-     <div class="form-group row" 
-		data-radio 
-		data-rule="radio"  
-		data-value="#(permission.isTargetBlank??)" 
-		data-name="permission.isTargetBlank" 
+
+     <div class="form-group row"
+		data-radio
+		data-rule="radio"
+		data-value="#(permission.isTargetBlank??)"
+		data-name="permission.isTargetBlank"
 		data-handler="togglePermissionOpenType"
 		data-default="false">
 		<label class="col-form-label col-sm-2" >加载方式</label>
@@ -79,7 +157,7 @@
 					<input  id="rblankfalse" type="radio" name="permission.isTargetBlank"   value="false"/>
 					<label for="rblankfalse">浏览器当前窗口</label>
 				</div>
-				
+
 				<div class="radio radio-primary  radio-inline">
 					<input  id="rblanktrue" type="radio" name="permission.isTargetBlank"   value="true"/>
 					<label for="rblanktrue">浏览器新窗口</label>
@@ -88,10 +166,10 @@
 			</div>
 		</div>
      <div class="form-group row" style="display:none;" id="permissionOpenType"
-		data-radio 
-		data-rule="radio"  
-		data-value="#(permission.openType??)" 
-		data-name="permission.openType" 
+		data-radio
+		data-rule="radio"
+		data-value="#(permission.openType??)"
+		data-name="permission.openType"
 		data-handler="processMenuOpenOptions"
 		data-default="1">
 		<label class="col-form-label col-sm-2" >打开类型</label>
@@ -100,24 +178,24 @@
 					<input  id="rbopenType1" type="radio" name="permission.openType"   value="1"/>
 					<label for="rbopenType1">系统默认</label>
 				</div>
-				
+
 				<div class="radio radio-primary  radio-inline">
 					<input  id="rbopenType2" type="radio" name="permission.openType"   value="2"/>
 					<label for="rbopenType2">IFrame</label>
 				</div>
-				
+
 				<div class="radio radio-primary  radio-inline">
 					<input  id="rbopenType3" type="radio" name="permission.openType"   value="3"/>
 					<label for="rbopenType3">Dialog</label>
 				</div>
-				
+
 				<div class="radio radio-primary  radio-inline">
 					<input  id="rbopenType4" type="radio" name="permission.openType"   value="4"/>
 					<label for="rbopenType4">JBoltLayer组件</label>
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="form-group row" style="display:none;" id="menuOpenOptionBox">
     	<label class="col-form-label col-sm-2">组件属性配置</label>
         <div class="col-5">
@@ -141,7 +219,7 @@
 			    </div>
 			    <input type="text" class="form-control"  tooltip data-title="组件显示高度，非必填"  placeholder="非必填项"  id="option_height"/>
 			</div>
-			
+
             <div class="input-group mt-1 jbolt_layer_option" style="display:none;">
 			    <div class="input-group-prepend">
 			      <span class="input-group-text" >top：</span>
@@ -211,18 +289,18 @@
 			    <input type="text" class="form-control"  tooltip data-title="JBoltLayer组件关闭时提示的Confirm信息，非必填" placeholder="非必填项"  id="option_confirm"/>
 
 			</div>
-			
+
         </div>
         <textarea style="display:none;" class="form-control mt-2" id="permissionOpenOption" name="permission.openOption">#(permission.openOption??)</textarea>
     	</div>
-    
-	   <div class="form-group row" 
-		data-radio 
-		data-rule="radio"  
-		data-value="#(permission.isSystemAdminDefault??)" 
-		data-name="permission.isSystemAdminDefault" 
+
+	   <div class="form-group row"
+		data-radio
+		data-rule="radio"
+		data-value="#(permission.isSystemAdminDefault??)"
+		data-name="permission.isSystemAdminDefault"
 		data-default="false">
-		<label class="col-form-label col-sm-2" >是否超级管理员默认可用权限</label>
+		<label class="col-form-label col-sm-2" >超级管理员默认可用权限</label>
 			<div class="col"  style="padding-top: 1px;">
 				<div class="radio radio-primary  radio-inline">
 					<input  id="risSystemAdminDefaulttrue" type="radio" name="permission.isSystemAdminDefault"   value="true"/>
@@ -232,16 +310,17 @@
 					<input  id="risSystemAdminDefaultfalse" type="radio" name="permission.isSystemAdminDefault"   value="false"/>
 					<label for="risSystemAdminDefaultfalse">否</label>
 				</div>
-				
+
 			<small class="form-text text-danger">提示：设置后超级管理员即使没有分配其它权限，也可以正常进入系统使用功能</small>
 			</div>
 		</div>
-	
-	
-	
+
+    #include("permission_btn.html")
+
+
 </form>
 #define js()
-#include("/_view/_admin/common/_formjs.html",formId="permissionForm")
+###include("/_view/_admin/common/_formjs.html",formId="permissionForm")
 <script type="text/javascript">
 var permissionOpenType=$("#permissionOpenType"),optionHideLeftNav=$("#option_hideLeftNav"),permissionOpenOption=$("#permissionOpenOption"),menuOpenOptionBox=$("#menuOpenOptionBox");
 var optionWidth=$("#option_width"),optionHeight=$("#option_height"),optionBtn=$("#option_btn"),optionTitle=$("#option_title"),optionTop=$("#option_top"),optionDir=$("#option_dir"),optionResize=$("#option_resize"),optionClose=$("#option_close"),optionNomask=$("#option_nomask"),optionLoadType=$("#option_loadtype")
@@ -306,7 +385,7 @@ function processPermissionDialogOption(){
 		optionTitle.val(title);
 		optionBtn.val("false");
 	}
-	
+
 }
 /**
  * 处理修改界面 填充JBoltLayer的属性
@@ -339,7 +418,7 @@ function processPermissionJBoltLayerOption(){
 			optionLoadType.val("ajaxportal");
 			optionConfirm.val("");
 		}
-	
+
 }
 
 /**
@@ -413,9 +492,48 @@ function processMenuOpenOptions(r,v){
 		$(".jbolt_layer_dialog_option").slideUp(200);
 		$(".iframe_option").slideUp(200);
 		menuOpenOptionBox.slideUp(200);
-		
+
 	}
 }
+
+function refreshPid(select) {
+    var applicationId = $('#applicationId').val();
+    var appId = $('#appId').val();
+
+    if (applicationId && appId) {
+        console.log('applicationId: ' + applicationId + ', appId:' + appId);
+        //SelectUtil.refresh('#pid');
+        
+        // setTimeout(function () {
+        //     $('#pid').select2();
+        // }, 50);
+    }
+}
+
+function submitThisForm() {
+    jboltTableSubmit('#jbolt_table_#(pageId)');
+}
+
+function isMenuHandler() {
+    var isMenu = $('input[type="radio"][name="permission.isMenu"]:checked').val();
+
+    isMenu = isMenu ? isMenu : 'true';
+    console.log('isMenu: ' + isMenu);
+
+    showTable(isMenu);
+}
+
+function showTable(isMenu) {
+    if (isMenu === 'true') {
+        $('.jbolt_table_view').show();
+    } else {
+        $('.jbolt_table_view').hide();
+    }
+}
+
+console.log(#json(permission));
+
 </script>
+#include("permission_btn_js.html")
 
 #end

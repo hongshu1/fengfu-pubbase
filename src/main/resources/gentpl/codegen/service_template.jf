@@ -18,7 +18,7 @@ import java.sql.Time;
 import cn.jbolt.core.bean.JBoltDateRange;
 #end
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.JBoltBaseService;
+import cn.rjtech.base.service.BaseService;
 #if(codeGen.isProjectSystemLog && codeGen.projectSystemLogTargetTypeKeyName!="NONE")
 import cn.jbolt.core.kit.JBoltUserKit;
 #end
@@ -42,9 +42,9 @@ import #(codeGen.modelPackage+"."+codeGen.modelName??);
  * #(codeGen.indexHtmlPageTitle?? (codeGen.mainTableRemark?? (codeGen.serviceName??)))
  * @ClassName: #(codeGen.serviceName??)
  * @author: #(codeGen.author?? 'JBolt-Generator')
- * @date: #date()  
+ * @date: #date()
  */
-public class #(codeGen.serviceName) extends JBoltBaseService<#(codeGen.modelName)> {
+public class #(codeGen.serviceName) extends BaseService<#(codeGen.modelName)> {
 	private final #(codeGen.modelName) dao=new #(codeGen.modelName)().dao();
 	@Override
 	protected #(codeGen.modelName) dao() {
@@ -59,11 +59,11 @@ public class #(codeGen.serviceName) extends JBoltBaseService<#(codeGen.modelName
         return ProjectSystemLogTargetType.NONE.getValue();
      #end
     }
-		
+
 #if(methods!=null&&methods.size()>0)
 	#for(method:methods)
 	#@genServiceMethod(method)
-	
+
 	#end
 #end
 }

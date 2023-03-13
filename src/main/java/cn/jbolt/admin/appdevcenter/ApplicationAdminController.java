@@ -18,11 +18,11 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
  * 主要管理调用接口的Application
  * 不管是APP还是小程序或者其它端应用 都可以集成进来
  * 为调用开发API类应用准备
- * @ClassName:  AppDevCenterAdminController   
- * @author: JFinal学院-小木 QQ：909854136 
- * @date:   2019年9月12日   
- *    
- * 
+ * @ClassName:  AppDevCenterAdminController
+ * @author: JFinal学院-小木 QQ：909854136
+ * @date:   2019年9月12日
+ *
+ *
  */
 @CheckPermission(PermissionKey.APPLICATION)
 @UnCheckIfSystemAdmin
@@ -56,7 +56,7 @@ public class ApplicationAdminController extends JBoltBaseController {
 		setAttr("application", application);
 		render("appinfo.html");
 	}
-	
+
 	/**
 	 * enable 启用状态数据源
 	 */
@@ -75,7 +75,7 @@ public class ApplicationAdminController extends JBoltBaseController {
 	public void typesInForm() {
 		renderJsonData(JBoltEnum.getEnumOptionListWithout(ApplicationType.class,ApplicationType.PC_INNER_PLATFORM.getValue()));
 	}
-	
+
 	public void add() {
 		render("add.html");
 	}
@@ -151,4 +151,9 @@ public class ApplicationAdminController extends JBoltBaseController {
 	public void removeLinkTarget() {
 		renderJson(service.removeLinkTarget(getLong(0)));
 	}
+
+    public void options() {
+        renderJsonData(service.findAll());
+    }
+
 }

@@ -5,15 +5,26 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.extend.config.ExtendProjectOfModule;
 import com.jfinal.aop.Inject;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.application.RjApplicationService;
+import cn.rjtech.model.main.Application;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.core.paragetter.Para;
+
+import java.util.List;
+
 @CheckPermission(PermissionKey.PERMISSION)
 @UnCheckIfSystemAdmin
 public class PermissionAdminController extends JBoltBaseController {
 	@Inject
 	private PermissionService service;
+    @Inject
+    private RjApplicationService rjApplicationService;
+
 	public void index(){
 		render("index_ajax.html");
 	}
@@ -21,17 +32,32 @@ public class PermissionAdminController extends JBoltBaseController {
 	 * ajax数据接口
 	 */
 	public void datas() {
-		renderJsonData(service.getAdminPermissionsWithLevel(getLong("topnavId")));
+		renderJsonData(service.getAdminPermissionRecordsWithLevel(getLong("applicationId"), getLong("appId"), getLong("topnavId")));
 	}
 	/**
 	 * ajax options数据接口
 	 */
 	public void options() {
-		renderJsonData(service.getAllPermissionsOptionsWithLevel());
+		renderJsonData(service.getAllPermissionsOptionsWithLevel(getLong("applicationId", 0L), getLong("appId", 0L)));
 	}
 	public void add(){
-		set("pid", getLong(0,0L));
-		set("level", getInt(1,1));
+        long pid = getLong(0, 0L);
+        int level = getInt(1, 1);
+
+		set("pid", pid);
+		set("level", level);
+
+        if (pid > 0) {
+            Permission parentPermission = service.findById(pid);
+            ValidationUtils.notNull(parentPermission, "当前上级不存在");
+
+            Permission permission = new Permission();
+            permission.setApplicationId(parentPermission.getApplicationId());
+            permission.setAppId(parentPermission.getAppId());
+            permission.setPid(pid);
+            set("permission", permission);
+        }
+
 		render("add.html");
 	}
 	 
@@ -84,4 +110,47 @@ public class PermissionAdminController extends JBoltBaseController {
 		renderJsonData(JBoltEnum.getEnumOptionList(ExtendProjectOfModule.class));
 	}
 	
+
+    /**
+     * ajax options数据接口
+     */
+    public void options2(@Para(value = "applicationId") Long applicationId,
+                         @Para(value = "appId") Long appId) {
+        ValidationUtils.validateId(applicationId, "系统应用ID");
+        ValidationUtils.validateId(appId, "开发中心应用ID");
+
+        // 通过应用编码获取平台应用ID
+        Application application = rjApplicationService.findById(applicationId);
+        ValidationUtils.notNull(application, "系统应用不存在");
+
+        renderJsonData(service.getAllPermissionsOptionsWithLevel(application.getId(), appId));
+    }
+
+    public void saveTableSubmit() {
+        renderJson(service.saveTableSubmit(getJBoltTable()));
+    }
+
+    public void menuJsTree(@Para(value = "openLevel") Integer openLevel,
+                           @Para(value = "applicationId") Long applicationId,
+                           @Para(value = "enableIcon") String enableIcon,
+                           @Para(value = "checkedIds") String checkedIds,
+                           @Para(value = "renderEmpty") Integer renderEmpty) {
+        if (null == renderEmpty) {
+            renderJsonData(service.getMenuJsTree(openLevel, applicationId, enableIcon, checkedIds));
+        } else {
+            renderJsonData(CollUtil.empty(List.class));
+        }
+    }
+
+    /**
+     * 用户或角色的 菜单及按钮权限
+     */
+    public void permissions(@Para(value = "roletype") Integer roletype,
+                            @Para(value = "id") Long id) {
+        ValidationUtils.notNull(roletype, "缺少角色类型");
+        ValidationUtils.validateId(id, "参数ID");
+
+        renderJson(service.getUserOrRolePermissions(roletype, id));
+    }
+
 }

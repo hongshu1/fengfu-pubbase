@@ -8,5 +8,6 @@ import com.jfinal.config.Routes;
 public class ProjectCodeGenRoutesConfig {
     public static void config(Routes me) {
 
+		me.scan("cn.rjtech.admin");
     }
 }

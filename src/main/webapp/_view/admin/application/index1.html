@@ -1,0 +1,146 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>应用系统</h1></div>
+            <div class="col">
+                <form class="form-inline" id="Application_form_#(pageId)">
+
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=关键字搜索=" name="keywords" value=""/>
+
+                    <!--<select class="form-control" name="isLeaf"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=叶节点(末级:1,其他:0)="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>-->
+
+                    <select class="form-control"
+                            name="isEffective"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=是否生效="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+
+                    <input type="hidden" name="isDeleted" value="false"/>
+                    <button onclick="Application_formSearch_#(pageId)('Application_form_#(pageId)',false)" id="form_searchBtn_#(pageId)" type="button" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <!--<button onclick="Application_formSearch_#(pageId)('Application_form_#(pageId)',true)" id="form_trashBtn_#(pageId)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 回收站</button>-->
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="Application_tpl_#(pageId)">
+        {@each datas as data,index}
+            <tr data-id="${data.id}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.appCode}</td>
+            <td>${data.shortName}</td>
+            <td>${data.appName}</td>
+            <td>${data.seq}</td>
+            <td>${data.description}</td>
+            <td>${data.nodeLevel}</td>
+            <td><img data-switchbtn data-confirm="确定切换是否生效？" data-value="${data.isEffective}"  data-handler="refreshJBoltTable"  data-url="admin/application/toggleIsEffective/${data.id}"/></td>
+            <td>${data.effectiveDate|date_ymd}</td>
+            <td>${data.disableDate|date_ymd}</td>
+            <td>${data.versionNum}</td>
+            <td>${data.createTime|date_ymdhms}</td>
+            <td>${data.createUserName}</td>
+            <td>${data.lastUpdateTime|date_ymdhms}</td>
+            <td>${data.last_update_name}</td>
+            <td>
+                {@if data.isDeleted}
+                <a class="text-info mr-1" data-openpage="dialog" href="admin/application/edit/${data.id}" data-area="800,600" data-title="查看应用系统表"><i class="fa fa-eye"></i></a>
+                {@else}
+                <a class="jbolt_table_editbtn" href="admin/application/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑应用系统表"><i class="fa fa-edit"></i></a>
+                {@/if}
+                <a class="jbolt_table_delbtn" href="admin/application/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+                {@if data.isDeleted}
+                <a class="text-info mr-1" data-ajaxbtn data-confirm="确认恢复此数据?" href="admin/application/recover/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-reply"></i></a>
+                {@/if}
+            </td>
+            </tr>
+        {@/each}
+        </textarea>
+
+        <div class="jbolt_table_toolbar" id="Application_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="800,700"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增应用系统" data-url="admin/application/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-area="800,700"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑应用系统" data-check-handler="jboltTableGetCheckedId" data-url="admin/application/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/application/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+                <button style="display:none;" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_recoverBtn_#(pageId)" data-url="admin/application/recoverByIds?ids="  data-confirm="确定还原回收站里选中数据？" class="btn btn-outline-info btn-sm" ><i class="fa fa-reply"></i> 还原</button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="auto"
+               data-height="fill"
+               data-ajax="true"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="Application_form_#(pageId)"
+               data-toolbar="Application_toolbar_#(pageId)"
+               data-url="admin/application/datas"
+               data-rowtpl="Application_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="Application_page"
+               ###data-sortable-columns="effectiveDate,disableDate,createTime,lastUpdateTime"
+               ###data-sort="#((sortColumn&&sortType)?(sortColumn+':'+sortType):'')"
+               data-default-sort-column="id"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="80" data-column="appCode">编码</th>
+                <th data-width="100" data-column="shortName">简称</th>
+                <th data-width="150" data-column="appName">名称</th>
+                <th data-width="70" data-column="seq">顺序号</th>
+                <th data-width="150" data-column="description">描述</th>
+                <th data-width="90" data-column="nodeLevel">节点层次</th>
+                <th data-width="100" data-column="isEffective">是否生效</th>
+                <th data-width="120" data-column="effectiveDate">生效日期</th>
+                <th data-width="120" data-column="disableDate">失效日期</th>
+                <th data-width="70" data-column="versionNum">版本号</th>
+                <th data-width="120" data-column="createTime">创建时间</th>
+                <th data-width="100" data-column="createUserName">创建人</th>
+                <th data-width="120" data-column="lastUpdateTime">最后更新时间</th>
+                <th data-width="100" data-column="lastUpdateName">最后更新人</th>
+                <th data-width="80">操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    function Application_formSearch_#(pageId)(formId, isDeleted) {
+        var form = $("#" + formId);
+        form.find("input[name='isDeleted']").val(isDeleted);
+        if (isDeleted) {
+            $("#form_searchBtn_#(pageId)").removeClass("btn-primary").addClass("btn-outline-secondary");
+            $("#form_trashBtn_#(pageId)").removeClass("btn-outline-danger").addClass("btn-danger");
+        } else {
+            $("#form_searchBtn_#(pageId)").removeClass("btn-outline-secondary").addClass("btn-primary");
+            $("#form_trashBtn_#(pageId)").removeClass("btn-danger").addClass("btn-outline-danger");
+        }
+        form.submit();
+    }
+</script>
+#end

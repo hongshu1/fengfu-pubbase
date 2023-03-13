@@ -1,6 +1,6 @@
 <!--left nav menu start-->
 <div class="jbolt_admin_left_navs" data-pjax>
-#set(leftMenus=JBoltPermissionCache.getCurrentUserMenus())
+#set(leftMenus=JBoltPermissionCache.getCurrentUserMenus(JBoltGlobalConfigCache.getLongConfigValue(GlobalConfigKey.MOM_APP_ID), JBoltGlobalConfigCache.getLongConfigValue(GlobalConfigKey.MOM_APPLICATION_ID)))
 #set(menuDefaultIcon=JBoltGlobalConfigCache.getSystemAdminNavMenuDefaultIcon())
 #for(l1:leftMenus)
 <nav tabindex="-1" data-topnavid="#(l1.topnavId?? 0)" class="jbolt_admin_nav  animate__animated animate__fadeIn jb_animate__faster #if(isEmpty(l1.items)) single_link #end #(hasEnableTopnav?'d-none':'') #(for.first&&l1.url?"expansion":"")" data-key="#(l1.permissionKey??)">
@@ -21,7 +21,7 @@
 $(function(){LayerMsgBox.alert("当前用户尚未分配任何菜单权限",2);})
 </script>
 #end
-	
+
 </div>
 <!--left nav menu end-->
 

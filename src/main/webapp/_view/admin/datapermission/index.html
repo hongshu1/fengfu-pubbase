@@ -1,0 +1,178 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>数据权限</h1></div>
+            <div class="col">
+                <form class="form-inline" id="DataPermission_form_#(pageId)">
+
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=关键词=" name="keywords" value=""/>
+
+                    <select class="form-control" name="busobjectId"
+                            data-autoload
+                            data-url="admin/busobject/options"
+                            data-select-type="select"
+                            data-text="=业务对象="
+                            data-value=""
+                    ></select>
+
+                    <select class="form-control" name="objectType"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=data_permission_object_type"
+                            data-select-type="select"
+                            data-text="=授权类型="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+
+                    <!--<select class="form-control" name="isViewEnabled"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=查看权限="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+
+                    <select class="form-control" name="isEditEnabled"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=编辑权限="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+
+                    <select class="form-control" name="isDeleteEnabled"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=删除权限="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>-->
+
+                    <input type="hidden" name="isDeleted" value="false"/>
+
+                    <button onclick="DataPermission_formSearch_#(pageId)('DataPermission_form_#(pageId)',false)" id="form_searchBtn_#(pageId)" type="button" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button onclick="DataPermission_formSearch_#(pageId)('DataPermission_form_#(pageId)',true)" id="form_trashBtn_#(pageId)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 回收站</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="DataPermission_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.id}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.busobjectId}</td>
+            <td>${data.objectType}</td>
+            <td>${data.objectId}</td>
+            <td>${data.busobjectValueId}</td>
+            <td>${data.busobjectValueName}</td>
+            <td><img data-switchbtn data-confirm="确定切换查看权限？" data-value="${data.isViewEnabled}"  data-handler="refreshJBoltTable"  data-url="admin/datapermission/toggleIsViewEnabled/${data.id}"/></td>
+            <td><img data-switchbtn data-confirm="确定切换编辑权限？" data-value="${data.isEditEnabled}"  data-handler="refreshJBoltTable"  data-url="admin/datapermission/toggleIsEditEnabled/${data.id}"/></td>
+            <td><img data-switchbtn data-confirm="确定切换删除权限？" data-value="${data.isDeleteEnabled}"  data-handler="refreshJBoltTable"  data-url="admin/datapermission/toggleIsDeleteEnabled/${data.id}"/></td>
+            <td>${data.versionNum}</td>
+            <td>${data.createUserName}</td>
+            <td>${data.createTime|date_ymdhms}</td>
+            <td>${data.lastUpdateName}</td>
+            <td>${data.lastUpdateTime|date_ymdhms}</td>
+            <td>
+                {@if data.isDeleted}
+                <a class="text-info mr-1" data-openpage="dialog" href="admin/datapermission/edit/${data.id}" data-area="800,600" data-title="查看数据权限"><i class="fa fa-eye"></i></a>
+                {@else}
+                <a class="jbolt_table_editbtn" href="admin/datapermission/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑数据权限"><i class="fa fa-edit"></i></a>
+                {@/if}
+                <a class="jbolt_table_delbtn" href="admin/datapermission/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+                {@if data.isDeleted}
+                <a class="text-info mr-1" data-ajaxbtn data-confirm="确认恢复此数据?" href="admin/datapermission/recover/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-reply"></i></a>
+                {@/if}
+            </td>
+        </tr>
+        {@/each}
+        </textarea>
+
+        <div class="jbolt_table_toolbar" id="DataPermission_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增数据权限" data-url="admin/datapermission/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑数据权限" data-check-handler="jboltTableGetCheckedId" data-url="admin/datapermission/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/datapermission/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
+                <button style="display:none;" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_recoverBtn_#(pageId)" data-url="admin/datapermission/recoverByIds?ids=" data-confirm="确定还原回收站里选中数据？" class="btn btn-outline-info btn-sm"><i
+                        class="fa fa-reply"></i> 还原
+                </button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="auto"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="DataPermission_form_#(pageId)"
+               data-url="admin/datapermission/datas"
+               data-rowtpl="DataPermission_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="DataPermission_page"
+               data-column-resize="true"
+               data-toolbar="DataPermission_toolbar_#(pageId)"
+               data-column-prepend="1:checkbox:true:false:false"
+               data-sortable-columns="create_time,last_update_time"
+               data-sort="#((sortColumn&&sortType)?(sortColumn+':'+sortType):'')"
+               data-default-sort-column="id"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="100" data-column="busobject_id">业务对象</th>
+                <th data-width="100" data-column="object_type">授权类型</th>
+                <th data-width="100" data-column="object_id">授权对象</th>
+                <th data-width="100" data-column="busobject_value_id">业务对象值</th>
+                <th data-width="150" data-column="busobject_value_name">业务对象值名称</th>
+                <th data-width="100" data-column="is_view_enabled">查看权限</th>
+                <th data-width="100" data-column="is_edit_enabled">编辑权限</th>
+                <th data-width="100" data-column="is_delete_enabled">删除权限</th>
+                <th data-width="100" data-column="version_num">版本号</th>
+                <th data-width="150" data-column="create_user_name">创建用户名称</th>
+                <th data-min-width="160" data-column="create_time">创建时间</th>
+                <th data-width="150" data-column="last_update_name">更新用户名称</th>
+                <th data-min-width="160" data-column="last_update_time">更新时间</th>
+                <th data-width="80">操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+	function DataPermission_formSearch_#(pageId)(formId,isDeleted) {
+        var form = $("#" + formId);
+        form.find("input[name='isDeleted']").val(isDeleted);
+        if (isDeleted) {
+            $("#form_searchBtn_#(pageId)").removeClass("btn-primary").addClass("btn-outline-secondary");
+            $("#form_trashBtn_#(pageId)").removeClass("btn-outline-danger").addClass("btn-danger");
+            $("#toolbar_recoverBtn_#(pageId)").show();
+            $("#toolbar_deleteBtn_#(pageId)").hide();
+            $("#toolbar_addBtn_#(pageId)").hide();
+            $("#toolbar_editBtn_#(pageId)").hide();
+        } else {
+            $("#form_searchBtn_#(pageId)").removeClass("btn-outline-secondary").addClass("btn-primary");
+            $("#form_trashBtn_#(pageId)").removeClass("btn-danger").addClass("btn-outline-danger");
+            $("#toolbar_recoverBtn_#(pageId)").hide();
+            $("#toolbar_deleteBtn_#(pageId)").show();
+            $("#toolbar_addBtn_#(pageId)").show();
+            $("#toolbar_editBtn_#(pageId)").show();
+        }
+        form.submit();
+	}
+</script>
+#end
