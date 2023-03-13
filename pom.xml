@@ -21,10 +21,10 @@
 		<emoji-java.version>5.1.1</emoji-java.version>
 		<druid.version>1.2.16</druid.version>
 		<fastjson.version>1.2.83</fastjson.version>
-        <fastjson2.version>2.0.24</fastjson2.version>
+        <fastjson2.version>2.0.25</fastjson2.version>
 		<mysql.version>8.0.31</mysql.version>
 		<oracle.version>21.5.0.0</oracle.version>
-		<sqlserver.version>9.4.1.jre8</sqlserver.version>
+		<sqlserver.version>12.2.0.jre8</sqlserver.version>
 		<dm.version>8.1.2.141</dm.version>
 		<postgresql.version>42.3.3</postgresql.version>
 		<jsoup.version>1.15.4</jsoup.version>
@@ -34,7 +34,7 @@
 		<caffeine.version>2.9.3</caffeine.version>
 		<jedis.version>3.9.0</jedis.version>
 		<fst.version>2.57</fst.version>
-		<hutool.version>5.8.14</hutool.version>
+		<hutool.version>5.8.15</hutool.version>
 		<slf4j.version>2.0.6</slf4j.version>
 		<log4j2.version>2.20.0</log4j2.version>
 		<jfinalundertow.version>3.4</jfinalundertow.version>
@@ -79,9 +79,9 @@
 
         <!-- plugin version -->
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
-        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-        <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.5.0</maven-assembly-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 	</properties>
 
