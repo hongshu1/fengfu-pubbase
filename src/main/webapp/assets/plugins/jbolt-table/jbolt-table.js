@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.3.0";
+var jbolt_table_js_version="3.3.1";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -1403,6 +1403,16 @@ function processEditableKeyEventDefaultEditorOk(table,e){
 		e.preventDefault();
 		e.stopPropagation();
 		var td=ele.closest("td");
+		var enterHandler = td.data("enter-handler");
+		if(enterHandler && typeof(enterHandler) == "function"){
+			var tr=td.parent();
+			var jsonData = table.isEmpty?null:table.tableListDatas[tr.data("index")];
+			ele.data("in-editable-td",true);
+			var retValue = enterHandler(table,tr,td,ele,jsonData);
+			if(!retValue){
+				return retValue;
+			}
+		}
 		that.changeTdFocus(table,td);
 		var nextTd=table.tbody.focusTd.nextTd;
 		if(nextTd){
@@ -1772,13 +1782,20 @@ function jboltTableInsertRowsByDialogChooser(action,datas,insertType,keepId,dont
 		return false;
 	}
 	var result=false;
+	var theTr = null;
+	if(action.data("in-editable-td")){
+		theTr = action.closest("tr[data-index]");
+		if(!insertType){
+			insertType = "replace";
+		}
+	}
 	if(insertType){
 		switch(insertType){
 			case "prepend":
-				result=jboltTablePrependRow(table,datas,keepId,dontProcessChange,forceTrChange);
+				result=jboltTablePrependRow(table,datas,keepId,dontProcessChange,forceTrChange,theTr);
 				break;
 			case "append":
-				result=jboltTableAppendRow(table,datas,keepId,dontProcessChange,forceTrChange);
+				result=jboltTableAppendRow(table,datas,keepId,dontProcessChange,forceTrChange,theTr);
 				break;
 			case "before":
 				result=jboltTableInsertRowBeforeChecked(table,datas,keepId,dontProcessChange,forceTrChange);
@@ -1787,13 +1804,13 @@ function jboltTableInsertRowsByDialogChooser(action,datas,insertType,keepId,dont
 				result=jboltTableInsertRowAfterChecked(table,datas,keepId,dontProcessChange,forceTrChange);
 				break;
 			case "replace":
-				result=jboltTableReplaceCheckedRow(table,datas,true,keepId,dontProcessChange,forceTrChange);
+				result=jboltTableReplaceCheckedRow(table,datas,true,keepId,dontProcessChange,forceTrChange,theTr);
 				break;
 			case "merge":
-				result=jboltTableReplaceCheckedRow(table,datas,false,keepId,dontProcessChange,forceTrChange);
+				result=jboltTableReplaceCheckedRow(table,datas,false,keepId,dontProcessChange,forceTrChange,theTr);
 				break;
 			default:
-				result=jboltTableInsertRow(table,datas,keepId,dontProcessChange,forceTrChange);
+				result=jboltTableInsertRow(table,datas,keepId,dontProcessChange,forceTrChange,theTr);
 				break;
 		}
 	}else{
@@ -2377,9 +2394,10 @@ function jboltTableInsertRow(ele,data,keepId,dontProcessChange,forceTrChange){
  * @param keepId
  * @param dontProcessChange
  * @param forceTrChange
+ * @param theTr
  * @returns
  */
-function jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange){
+function jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange,theTr){
 	if(!isOk(data)){
 		return jboltTableAppendEmptyRow(ele,forceTrChange);
 	}
@@ -2401,7 +2419,7 @@ function jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange){
 				}
 			}
 			if(!jboltTable.isEmpty){
-				var tr=jboltTable.tbody.find("tr:last");
+				var tr=theTr?theTr:jboltTable.tbody.find("tr:last");
 				if(isOk(tr)){
 					return jboltTable.me.insertRows(jboltTable,data,tr,false,keepId,dontProcessChange,forceTrChange);
 				}
@@ -2419,9 +2437,10 @@ function jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange){
  * @param keepId             是否保留数据里的ID
  * @param dontProcessChange  不处理tr td标红处理
  * @param forceTrChange      强制tr标红 dontProcessChange不是true才有效
+ * @param theTr      强制指定tr
  * @returns
  */
-function jboltTablePrependRow(ele,data,keepId,dontProcessChange,forceTrChange){
+function jboltTablePrependRow(ele,data,keepId,dontProcessChange,forceTrChange,theTr){
 	if(!isOk(data)){
 		return jboltTablePrependEmptyRow(ele,forceTrChange);
 	}
@@ -2443,7 +2462,7 @@ function jboltTablePrependRow(ele,data,keepId,dontProcessChange,forceTrChange){
 				}
 			}
 			if(!jboltTable.isEmpty){
-				var tr=jboltTable.tbody.find("tr:first");
+				var tr=theTr?theTr:jboltTable.tbody.find("tr:first");
 				if(isOk(tr)){
 					return jboltTable.me.insertRows(jboltTable,data,tr,true,keepId,dontProcessChange,forceTrChange);
 				}
@@ -2504,9 +2523,10 @@ function jboltTableInsertRowAfterChecked(ele,data,keepId,dontProcessChange,force
  * @param keepId
  * @param dontProcessChange
  * @param forceTrChange
+ * @param theTr
  * @returns
  */
-function jboltTableReplaceCheckedRow(ele,data,replaceAllData,keepId,dontProcessChange,forceTrChange){
+function jboltTableReplaceCheckedRow(ele,data,replaceAllData,keepId,dontProcessChange,forceTrChange,theTr){
 	if(!isOk(data)){
 		LayerMsgBox.alert("请选择数据",2);
 		return false;
@@ -2522,7 +2542,7 @@ function jboltTableReplaceCheckedRow(ele,data,replaceAllData,keepId,dontProcessC
 					return false;
 				}
 			}
-			var tr=jboltTable.me.getCheckedTr(jboltTable);
+			var tr=theTr?theTr:jboltTable.me.getCheckedTr(jboltTable);
 			if(isOk(tr)){
 				if(typeof(dontProcessChange)=="undefined"){
 					dontProcessChange = false;
@@ -8024,6 +8044,9 @@ function getScrollBarHeight(ele){
 			}
 			if(colConfig.type=="select"&&colConfig.options){
 				editorEle.find("select").data("options",colConfig.options);
+			}
+			if(colConfig.enterHandler){
+				currentTd.data("enter-handler",colConfig.enterHandler);
 			}
 			return editorEle;
 		},
