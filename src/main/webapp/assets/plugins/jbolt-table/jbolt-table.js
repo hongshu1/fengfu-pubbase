@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.3.2";
+var jbolt_table_js_version="3.3.3";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -8244,7 +8244,7 @@ function getScrollBarHeight(ele){
 				editingTd.removeClass("is-invalid").removeClass("imgbg");
 				editingTd.tooltip("dispose");
 			}
-			if(text.toString()==orignText.toString()){
+			if(typeof(text)!="undefined" && typeof(orignText)!="undefined"  && text.toString()==orignText.toString()){
 				editingTd.data("changed",false).removeAttr("data-changed");
 			}else{
 				editingTd.data("changed",true).attr("data-changed",true);
@@ -8444,7 +8444,8 @@ function getScrollBarHeight(ele){
 						}
 					}
 				}else if(editingInputBox[0].tagName=="BUTTON"){
-					text=editingInputBox.val();
+					var buttonHidden = editingInputBox.next();
+					text=buttonHidden.val();
 					if(editingInputBox.data("textasvalue")){
 						value=(text!=""&&text.length>0)?text:"";
 					}else{

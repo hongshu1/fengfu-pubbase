@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.3.2";
+var jbolt_admin_js_version="6.3.4";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -3642,6 +3642,10 @@ var ImageViewerUtil={
 			});
 		},
 		oneLinkViewerClick:function(url){
+			if(window.event){
+				window.event.preventDefault();
+				window.event.stopPropagation();
+			}
 			var image = new Image();
 		     image.src = url;
 	         var nviewer = new Viewer(image,{
@@ -3650,6 +3654,7 @@ var ImageViewerUtil={
 	          }
 	        });
 	         nviewer.show();
+			 return false;
 		},
 		initViewer:function(viewer,needLoadPlugin){
 			var that=this;
@@ -13403,6 +13408,13 @@ var DialogUtil={
 					  		  }
 						  }
 					  }
+			  }else{
+				  if(url){
+					  url=actionUrl(url);
+					  url=processEleUrlByLinkOtherParamEle(action,url,false);
+					  url=processJBoltTableEleUrlByLinkColumn(action,url);
+					  url=processUrlRqType(url,"dialog");
+				  }
 			  }
 			  
 			  var handler=action.data("handler");
@@ -13501,8 +13513,13 @@ var DialogUtil={
 			  var okBtnText = action.data("ok-btn-text")||"确定";
 			  var closeBtnText = action.data("close-btn-text")||"关闭";
 			  var successHandler=action.data("success-handler");
+			  var inEditableTable = action.data("in-editable-td");
+			  var dialogEle = action;
+			  if(inEditableTable && !action.is("td")){
+				dialogEle = action.closest("td");
+			  }
 		      this.openNewDialog({
-		    	  ele:action,
+		    	  ele:dialogEle,
 		    	  title:title,
 		    	  width:w,
 		    	  height:h,
