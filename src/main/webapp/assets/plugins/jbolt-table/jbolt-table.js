@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.3.1";
+var jbolt_table_js_version="3.3.2";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -1783,7 +1783,7 @@ function jboltTableInsertRowsByDialogChooser(action,datas,insertType,keepId,dont
 	}
 	var result=false;
 	var theTr = null;
-	if(action.data("in-editable-td")){
+	if(action.data("in-editable-td")||action.is("td")){
 		theTr = action.closest("tr[data-index]");
 		if(!insertType){
 			insertType = "replace";

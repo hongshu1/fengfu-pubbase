@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cn.hutool.core.util.ArrayUtil;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -389,6 +390,9 @@ public class SysNoticeService extends JBoltBaseService<SysNotice> {
 					columns = newCols.toArray(new String[columns.length]);
 					sql.select(columns);
 				}else {
+					if(!ArrayUtil.contains(columns,"id")){
+						columns = ArrayUtil.append(columns,"id");
+					}
 					sql.distinct(mainPre+"id,"+getTableSelectColumnStrWithoutWithPre(mainPre,columns)+",sr.sys_notice_id as readed ");
 				}
 			}
