@@ -20,16 +20,14 @@ import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.kit.JBoltControllerKit;
 import cn.jbolt.core.kit.JBoltSaasTenantKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.LoginLog;
-import cn.jbolt.core.model.OnlineUser;
-import cn.jbolt.core.model.User;
-import cn.jbolt.core.model.UserType;
+import cn.jbolt.core.model.*;
 import cn.jbolt.core.para.JBoltNoUrlPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltLoginLogUtil;
-import cn.jbolt.core.service.OrgService;
+import cn.jbolt.core.service.JBoltOrgService;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.BoolCharEnum;
 import cn.rjtech.enums.CorperateTypeEnum;
 import cn.rjtech.util.ValidationUtils;
@@ -61,7 +59,7 @@ public class AdminIndexController extends JBoltBaseController {
 	@Inject
 	private OnlineUserService onlineUserService;
     @Inject
-    private OrgService orgService;
+    private JBoltOrgService orgService;
 	@UnCheck
 	@Before(JBoltNoUrlPara.class)
 	public void index(){
@@ -164,16 +162,15 @@ public class AdminIndexController extends JBoltBaseController {
 			}
 		}
 
-        Long orgId = getLong("orgId");
         String orgCode = null;
-        Record org = orgService.findById(orgId);
-        if (null != org) {
-            ValidationUtils.equals(BoolCharEnum.YES.getValue(), org.getStr("enable"), "该组织已被禁用");
-            ValidationUtils.equals(CorperateTypeEnum.CORPERATE_Y.getValue(), org.getStr("enable"), "该组织已被禁用");
+        Long orgId = getLong("orgId");
+        if (null != orgId) {
+            Org org = orgService.findById(orgId);
+            ValidationUtils.isTrue(org.getEnable(), "该组织机构已被禁用");
 
-            orgCode = org.getStr("code");
+            orgCode = org.getOrgCode();
         }
-
+        
 		Ret ret=userService.getUser(get("username"),get("password"));
 		User user = ret.isFail()?null:ret.getAs("data");
 		//检测用户名密码是否正确输入并得到user
@@ -183,6 +180,11 @@ public class AdminIndexController extends JBoltBaseController {
 			renderJson(ret);
 			return;
 		}
+
+        // 校验组织权限
+        if (!user.getIsSystemAdmin()) {
+            ValidationUtils.isTrue(userService.checkUserHasOrg(user.getId(), orgId), ErrorMsg.ORG_ACCESS_DENIED);
+        }
 
 		log.setUserId(user.getId());
 		//检测用户是否禁用
@@ -321,10 +323,9 @@ public class AdminIndexController extends JBoltBaseController {
         Long orgId = getLong("orgId");
         ValidationUtils.validateId(orgId, "组织参数");
 
-        Record org = orgService.findById(orgId);
+        Org org = orgService.findById(orgId);
         ValidationUtils.notNull(org, "组织不存在");
-        ValidationUtils.equals(BoolCharEnum.YES.getValue(), org.getStr("enable"), "该组织已被禁用");
-        ValidationUtils.equals(CorperateTypeEnum.CORPERATE_Y.getValue(), org.getStr("enable"), "该组织已被禁用");
+        ValidationUtils.isTrue(org.getEnable(), "该组织已被禁用");
 
         Ret ret=userService.getUser(get("username"),get("password"));
         User user = ret.isFail()?null:ret.getAs("data");
@@ -382,10 +383,9 @@ public class AdminIndexController extends JBoltBaseController {
         Long orgId = getLong("orgId");
         ValidationUtils.validateId(orgId, "组织参数");
 
-        Record org = orgService.findById(orgId);
+        Org org = orgService.findById(orgId);
         ValidationUtils.notNull(org, "组织不存在");
-        ValidationUtils.equals(BoolCharEnum.YES.getValue(), org.getStr("enable"), "该组织已被禁用");
-        ValidationUtils.equals(CorperateTypeEnum.CORPERATE_Y.getValue(), org.getStr("enable"), "该组织已被禁用");
+        ValidationUtils.isTrue(org.getEnable(), "该组织已被禁用");
 
         String sessionId = getCookie(JBoltConst.JBOLT_SESSIONID_KEY);
 

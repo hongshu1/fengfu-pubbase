@@ -102,7 +102,7 @@
         Ajax.post("admin/org/list", {}, function (res) {
             var orglist = $("#orgId");
             for (var i = 0; i < res.data.length; i++) {
-                orglist.append("<option value=" + res.data[i].id + ">" + res.data[i].name + "</option>");
+                orglist.append("<option value=" + res.data[i].id + ">" + res.data[i].orgName + "</option>");
             }
         }, false);
     });

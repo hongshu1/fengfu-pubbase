@@ -4,7 +4,7 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.core.service.OrgService;
+import cn.jbolt.core.service.JBoltOrgService;
 import cn.rjtech.admin.userorg.UserOrgService;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -19,12 +19,12 @@ import com.jfinal.core.Path;
 public class OrgAdminController extends JBoltBaseController {
 
     @Inject
-    private OrgService service;
+    private JBoltOrgService service;
     @Inject
     private UserOrgService userOrgService;
 
     public void list() {
-        renderJsonData(service.getList());
+        renderJsonData(service.getEnabledList());
     }
 
     /**
@@ -33,7 +33,7 @@ public class OrgAdminController extends JBoltBaseController {
     public void accessList() {
         User user = JBoltUserKit.getUser();
         if (user.getIsSystemAdmin()) {
-            renderJsonData(service.getList());
+            renderJsonData(service.getEnabledList());
             return;
         }
         renderJsonData(userOrgService.getAccessList(JBoltUserKit.getUserId()));

@@ -569,5 +569,9 @@ public class UserService extends JBoltUserService {
     public String getCdepcode(long id) {
         return dbTemplate( "user.getcdepcode", Kv.by("id", id)).queryColumn();
     }
+
+    public boolean checkUserHasOrg(long userId, Long orgId) {
+        return null != queryInt(selectSql().select("1").eq(UserOrg.USER_ID, userId).eq(UserOrg.ORG_ID, orgId).eq(UserOrg.IS_DELETED, ZERO_STR).first()) ;
+    }
     
 }
