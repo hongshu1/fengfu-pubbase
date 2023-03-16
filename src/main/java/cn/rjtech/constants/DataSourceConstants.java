@@ -19,7 +19,11 @@ public class DataSourceConstants {
      * U9 数据源别名
      */
     public static final String U9 = "u9";
-
+    /**
+     * U8 数据源别名
+     */
+    public static final String U8 = "u8";
+    
     private DataSourceConstants() {
     }
 
