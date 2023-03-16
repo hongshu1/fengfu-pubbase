@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.List;
 #end
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.base.service.BaseService;
+import cn.jbolt.core.service.base.BaseService;
 #if(mainLogicBean.projectSystemLogTargetType && mainLogicBean.projectSystemLogTargetType!="ProjectSystemLogTargetType.NONE")
 import cn.jbolt.core.kit.JBoltUserKit;
 #end

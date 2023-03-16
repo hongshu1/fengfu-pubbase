@@ -145,6 +145,9 @@ public class ExtendProjectConfig {
 	 */
 	public static void onStart() {
 		LOG.debug("调用二开扩展配置:onStart");
+
+        // 初始化U8数据源
+        U8DataSourceKit.ME.init();
 	}
 
 	/**

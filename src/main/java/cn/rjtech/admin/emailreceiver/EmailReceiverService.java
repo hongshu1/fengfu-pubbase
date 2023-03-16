@@ -4,7 +4,7 @@ import cn.jbolt.common.model.EmailReceiver;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.base.service.BaseService;
+import cn.jbolt.core.service.base.BaseService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
