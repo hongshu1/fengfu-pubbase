@@ -53,7 +53,7 @@ is_encrypted = true
 id_gen_mode = snowflake
 model_package=cn.rjtech.model.momdata,cn.rjtech.common.model
 
-[u9]
+[u8]
 enable = true
 db_type = sqlserver
 db_name = 003
