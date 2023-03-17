@@ -27,3 +27,11 @@
 #namespace("menupermission")
 #include("menupermission/menupermission.sql")
 #end
+
+# namespace("workclass")
+# include("workclass/workclass.sql")
+# end
+
+# namespace("operation")
+# include("operation/operation.sql")
+# end
