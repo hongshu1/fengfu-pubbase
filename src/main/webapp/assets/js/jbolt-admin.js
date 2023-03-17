@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.3.4";
+var jbolt_admin_js_version="6.3.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -13727,8 +13727,12 @@ var DialogUtil={
 //			  layObj.data("trigger-actionid",options.ele.attr("id"));
 			  if(options.ele){
 				  layObj.data("trigger-action",options.ele);
-				  if(options.ele.data("in-editable-td")){
-					  layObj.data("link-editable-td",options.ele.closest("td"));
+				  if(options.ele.is("td")){
+					  layObj.data("link-editable-td",options.ele);
+				  }else{
+					  if(options.ele.data("in-editable-td")){
+						  layObj.data("link-editable-td",options.ele.closest("td"));
+					  }
 				  }
 			  }
 		  },
