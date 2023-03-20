@@ -1,6 +1,6 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseBdForgeigncurrency;
+import cn.rjtech.model.momdata.base.BaseForgeignCurrency;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
 
@@ -10,6 +10,6 @@ import cn.jbolt.core.base.JBoltIDGenMode;
  */
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Bd_ForgeignCurrency" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
-public class BdForgeigncurrency extends BaseBdForgeigncurrency<BdForgeigncurrency> {
+public class ForgeignCurrency extends BaseForgeignCurrency<ForgeignCurrency> {
 }
 
