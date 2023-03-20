@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.3.3";
+var jbolt_table_js_version="3.3.4";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -38,9 +38,10 @@ function jboltTableActiveNextTr(tableEle){
  * 获取指定行的json数据
  * @param tableEle
  * @param rowOrIndex
+ * @param dontShowError
  * @returns {null|*}
  */
-function jboltTableGetRowJsonData(tableEle,rowOrIndex){
+function jboltTableGetRowJsonData(tableEle,rowOrIndex,dontShowError){
 	var table=getJBoltTableInst(tableEle);
 	if(!isOk(table)){
 		if(!dontShowError){
@@ -54,9 +55,10 @@ function jboltTableGetRowJsonData(tableEle,rowOrIndex){
  * 移除表格的指定id 的keep selected item
  * @param tableEle
  * @param removeId
+ * @param dontShowError
  * @returns {null}
  */
-function jboltTableRemoveKeepSelectedItem(tableEle,removeId){
+function jboltTableRemoveKeepSelectedItem(tableEle,removeId,dontShowError){
 	var table=getJBoltTableInst(tableEle);
 	if(!isOk(table)){
 		if(!dontShowError){
