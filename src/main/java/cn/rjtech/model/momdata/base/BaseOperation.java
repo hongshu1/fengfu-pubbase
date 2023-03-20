@@ -1,4 +1,4 @@
-package cn.rjtech.model.main.base;
+package cn.rjtech.model.momdata.base;
 import cn.jbolt.core.model.base.JBoltBaseModel;
 import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;

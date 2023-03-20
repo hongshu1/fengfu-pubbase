@@ -1,6 +1,6 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.main.base.BaseOperation;
+import cn.rjtech.model.momdata.base.BaseOperation;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
 

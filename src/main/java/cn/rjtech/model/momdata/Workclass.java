@@ -3,7 +3,7 @@ package cn.rjtech.model.momdata;
 import cn.jbolt.core.annotation.JBoltAutoCache;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
-import cn.rjtech.model.main.base.BaseWorkclass;
+import cn.rjtech.model.momdata.base.BaseWorkclass;
 
 /**
  * 工种档案

@@ -1,0 +1,127 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>质量建模-检验参数</h1></div>
+      <div class="col">
+        <form class="form-inline" id="QcParam_form_#(pageId)">
+          <input type="text" autocomplete="off" class="form-control" placeholder="参数名称" name="keywords" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="参数项目" name="keywords" value=""/>
+
+          <select class="form-control" name="isEnabled"
+                  data-autoload
+                  data-url="admin/dictionary/options?key=options_enable"
+                  data-select-type="select"
+                  data-text="全部"
+                  data-value=""
+                  data-value-attr="sn"
+          ></select>
+
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+        </form>
+      </div>
+      <div class="col-sm-auto text-right">
+
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- 定义JBoltTable使用的数据渲染模板 -->
+    <textarea class="jb_tpl_box" id="QcParam_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cOrgName}</td>
+<td>${data.cQcParamName}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用：0. 否 1. 是？" data-value="${data.isEnabled}" data-handler="refreshJBoltTable"
+         data-url="admin/qcparam/toggleIsEnabled/${data.id}"/></td>
+<td>${data.cCreateName}</td>
+<td>${data.dCreateTime}</td>
+<td>${data.iUpdateBy}</td>
+  <td>
+<a tooltip  title="编辑"  href="admin/jboltversion/editFile/${data.id}" data-scroll="yes" data-handler="refreshJBoltTable" data-title="编辑" data-area="600,400" class="jbolt_table_editbtn"><i class="fa fa-pencil c-primary"></i></a>
+<a tooltip  title="删除"  href="admin/jboltversion/deleteFile/${data.id}" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger"></i></a>
+</td>
+
+</tr>
+{@/each}
+</textarea>
+    <div class="jbolt_table_toolbar" id="QcParam_toolbar_#(pageId)">
+      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
+                data-title="新增质量建模-检验参数" data-url="admin/qcparam/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i>
+          新增
+        </button>
+        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+      </div>
+
+      <div class="btn-group dropdown">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+          </button>
+          <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+            <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                    data-url="admin/qcparam/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
+            </button>
+            <button class="btn dropdown-item" data-downloadbtn data-url="admin/qcparam/exportExcelAll"
+                    data-form="QcParam_form_#(pageId)"><i class="fa fa-download"></i> 导出全部
+            </button>
+          </div>
+        </div>
+
+      <div class="btn-group dropdown">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+        </button>
+        <div class="dropdown-menu" aria-labelledby="importMenuButton">
+          <div class="j_upload_file_box"
+               data-name="file"
+               data-btn-class="btn dropdown-item"
+               data-placeholder="上传导入"
+               data-confirm="确认导入数据？"
+               data-accept="excel"
+               data-maxsize="20480"
+               data-handler="uploadFile"
+               data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+               data-url="/admin/qcparam/importExcel">
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <table class="jbolt_table jbolt_main_table  table-center "
+           data-jbolttable
+           data-width="fill"
+           data-height="fill"
+           data-ajax="true"
+           data-conditions-form="QcParam_form_#(pageId)"
+           data-url="admin/qcparam/datas"
+           data-rowtpl="QcParam_tpl_#(pageId)"
+           data-column-prepend="1:checkbox:true"
+           data-copy-to-excel="false"
+           data-page="QcParam_page"
+           data-toolbar="QcParam_toolbar_#(pageId)"
+    >
+      <thead>
+      <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-width="150" data-column="cOrgName">组织名称</th>
+        <th data-width="150" data-column="cQcParamName">参数名称</th>
+        <th data-width="100" data-column="isEnabled">是否启用：0. 否 1. 是</th>
+        <th data-width="100" data-column="iCreateBy">创建人ID</th>
+        <th data-width="150" data-column="cCreateName">创建人</th>
+        <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+        <th data-width="80">操作</th>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
