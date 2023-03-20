@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.3.4";
+var jbolt_admin_js_version="6.3.6";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -6797,18 +6797,24 @@ var DragScrollUtil={
  * checkbox工具类封装
  */
 var CheckboxUtil={
-		processHiddenInput:function(inputName,hiddenInputId,ck){
-			var ids=this.getCheckedValueToString(inputName,",",ck);
-			$("#"+hiddenInputId).val(ids).change();
+		processHiddenInput:function(inputName,hiddenInputId,hiddenTextInputId,ck){
+			if(hiddenInputId){
+				var ids=this.getCheckedValueToString(inputName,",",ck);
+				$("#"+hiddenInputId).val(ids).change();
+			}
+			if(hiddenTextInputId){
+				var texts=this.getCheckedTextToString(inputName,",",ck);
+				$("#"+hiddenTextInputId).val(texts).change();
+			}
 		},
-		initCheckBoxEvent:function(ck,name,hiddenInputId,handler){
+		initCheckBoxEvent:function(ck,name,hiddenInputId,hiddenTextInputId,handler){
 			var that=this;
 			if(handler){
 			 if(handler=="processHiddenInput"){
-				 if(hiddenInputId){
-					 that.processHiddenInput(name,hiddenInputId,ck);
+				 if(hiddenInputId || hiddenTextInputId){
+					 that.processHiddenInput(name,hiddenInputId,hiddenTextInputId,ck);
 				 }else{
-					 LayerMsgBox.alert("请checkbox组件设置对应隐藏域data-hidden-input",2);
+					 LayerMsgBox.alert("请checkbox组件设置对应隐藏域data-hidden-input 或者 data-hidden-text-input",2);
 				 }
 			  }else{
 				  var exe_handler=eval(handler);
@@ -6828,9 +6834,9 @@ var CheckboxUtil={
 			  }
 			 
 		  }else{
-			  if(hiddenInputId){
+			  if(hiddenInputId||hiddenTextInputId){
 					 ck.find("input[type='checkbox'][name='"+name+"']").unbind("change").on("change",function(){
-						 that.processHiddenInput(name,hiddenInputId,ck);
+						 that.processHiddenInput(name,hiddenInputId,hiddenTextInputId,ck);
 					 });
 				}
 		  }
@@ -6849,6 +6855,7 @@ var CheckboxUtil={
 			value=ck.data("value")+"",
 			defaultValue=ck.data("default")+"",
 			hiddenInputId=ck.data("hidden-input")||ck.data("hiddeninput"),
+			hiddenTextInputId=ck.data("hidden-text-input"),
 			url=ck.data("url"),
 			label=ck.data("label"),
 			optionItems=ck.data("options");
@@ -6856,7 +6863,7 @@ var CheckboxUtil={
 //			  if(!defaultValue){defaultValue="";}else{defaultValue=defaultValue+""}
 			  if(url){
 				  that.insertDatas(ck,url,name,label,function(){
-					  that.initCheckBoxEvent(ck,name,hiddenInputId,handler);
+					  that.initCheckBoxEvent(ck,name,hiddenInputId,hiddenTextInputId,handler);
 					  that.setChecked(ck,name,value,defaultValue);
 					  that.processDisabled(ck);
 				  });
@@ -6867,7 +6874,7 @@ var CheckboxUtil={
 						  //处理样式
 						  that.processCheckboxAlignAndWidth(ck);
 					  }
-					  that.initCheckBoxEvent(ck,name,hiddenInputId,handler);
+					  that.initCheckBoxEvent(ck,name,hiddenInputId,hiddenTextInputId,handler);
 					
 					  that.setChecked(ck,name,value,defaultValue);
 					  that.processDisabled(ck);
@@ -13727,8 +13734,12 @@ var DialogUtil={
 //			  layObj.data("trigger-actionid",options.ele.attr("id"));
 			  if(options.ele){
 				  layObj.data("trigger-action",options.ele);
-				  if(options.ele.data("in-editable-td")){
-					  layObj.data("link-editable-td",options.ele.closest("td"));
+				  if(options.ele.is("td")){
+					  layObj.data("link-editable-td",options.ele);
+				  }else{
+					  if(options.ele.data("in-editable-td")){
+						  layObj.data("link-editable-td",options.ele.closest("td"));
+					  }
 				  }
 			  }
 		  },
