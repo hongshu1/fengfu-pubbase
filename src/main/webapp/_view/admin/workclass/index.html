@@ -49,12 +49,12 @@
     <div class="jbolt_table_toolbar" id="workclass_toolbar_#(pageId)">
       <div class="btn-group" role="group" aria-label="btn-group">
         #permission(PermissionKey.WORKCLASS_ADD)
-        <button data-openpage="dialog" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-title="新增工种档案"
+        <button data-openpage="dialog" data-area="90%,80%" data-handler="jboltTablePageToFirst" data-title="新增工种档案"
                 data-url="admin/workclass/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增
         </button>
         #end
         #permission(PermissionKey.WORKCLASS_EDIT)
-        <button data-openpage="dialog" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="修改工种档案"
+        <button data-openpage="dialog" data-area="90%,80%" data-handler="refreshJBoltTable" data-title="修改工种档案"
                 data-check-handler="jboltTableGetCheckedId" data-url="admin/workclass/edit/" class="btn btn-outline-info btn-sm">
           <i class="fa fa-edit"></i> 修改
         </button>

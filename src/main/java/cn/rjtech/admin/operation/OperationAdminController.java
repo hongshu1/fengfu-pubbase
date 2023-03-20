@@ -4,21 +4,32 @@ import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.common.model.CodeGenModelAttr;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 //import cn.rjtech.admin.operationbadness.OperationbadnessService;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.rjtech.admin.workclass.WorkClassService;
 import cn.rjtech.model.momdata.Operation;
 import cn.rjtech.util.Util;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
+import com.jfinal.kit.StrKit;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 料品工序档案配置 Controller
@@ -30,7 +41,7 @@ import java.util.List;
 @CheckPermission(PermissionKey.OPERATION)
 @Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/operation", viewPath = "/_view/admin/workclass")
+@Path(value = "/admin/operation", viewPath = "/_view/admin/operation")
 public class OperationAdminController extends JBoltBaseController {
 
     @Inject
@@ -42,8 +53,6 @@ public class OperationAdminController extends JBoltBaseController {
      * 首页
      */
     public void index() {
-        System.out.println("getControllerPath===>"+getControllerPath());
-        System.out.println("getViewPath===>"+getViewPath());
         render("index.html");
     }
 
@@ -80,13 +89,13 @@ public class OperationAdminController extends JBoltBaseController {
      * 保存
      */
     public void save() {
-        String ibadnessids = get("ibadnessids");
-        if (notOk(ibadnessids)) {
-            renderFail("请选择不良项目");
-            return;
-        }
+//        String ibadnessids = get("ibadnessids");
+////        if (notOk(ibadnessids)) {
+////            renderFail("请选择不良项目");
+////            return;
+////        }
         Operation model = getModel(Operation.class, "operation");
-        model.setCupdatename(ibadnessids);
+//        model.setCupdatename(ibadnessids);
         renderJson(service.save(model));
     }
 
@@ -94,13 +103,13 @@ public class OperationAdminController extends JBoltBaseController {
      * 更新
      */
     public void update() {
-        String ibadnessids = get("ibadnessids");
+        /*String ibadnessids = get("ibadnessids");
         if (notOk(ibadnessids)) {
             renderFail("请选择不良项目");
             return;
-        }
+        }*/
         Operation model = getModel(Operation.class, "operation");
-        model.setCupdatename(ibadnessids);
+        //model.setCupdatename(ibadnessids);
         renderJson(service.update(model));
     }
 
@@ -140,6 +149,9 @@ public class OperationAdminController extends JBoltBaseController {
         renderJsonData(service.pageList(getKv()));
     }
 
+    /*
+    * 导出选中
+    * */
     @SuppressWarnings("unchecked")
     public void exportExcelByIds() throws Exception {
         String ids = get("ids");
@@ -152,9 +164,16 @@ public class OperationAdminController extends JBoltBaseController {
             renderJsonFail("无有效数据导出");
             return;
         }
-        renderJxls("operation.xlsx", Kv.by("rows", data), "工序(选中导出)_" + DateUtil.today() + ".xlsx");
+        //2、生成excel文件
+        JBoltExcel jBoltExcel = service.exportExcelTpl(service.getListByIds(ids));
+        //3、导出
+        renderBytesToExcelXlsFile(jBoltExcel);
+//        renderJxls("operation.xlsx", Kv.by("rows", data), "工序(选中导出)_" + DateUtil.today() + ".xlsx");
     }
 
+    /*
+    * 导出全部
+    * */
     @SuppressWarnings("unchecked")
     public void exportExcelAll() throws Exception {
         List<Record> rows = service.list(getKv());
@@ -162,12 +181,17 @@ public class OperationAdminController extends JBoltBaseController {
             renderJsonFail("无有效数据导出");
             return;
         }
-        renderJxls("operation.xlsx", Kv.by("rows", rows), "工序_" + DateUtil.today() + ".xlsx");
+        //2、生成excel文件
+        JBoltExcel jBoltExcel = service.exportExcelTpl(service.findAll());
+        //3、导出
+        renderBytesToExcelXlsFile(jBoltExcel);
+//        renderJxls("operation.xlsx", Kv.by("rows", rows), "工序_" + DateUtil.today() + ".xlsx");
     }
 
     @SuppressWarnings("unchecked")
     public void downloadTpl() throws Exception {
-        renderJxls("operation_import.xlsx", Kv.by("rows", null), "工序导入模板.xlsx");
+//        renderJxls("operation_import.xlsx", Kv.by("rows", null), "工序导入模板.xlsx");
+        renderBytesToExcelXlsFile(service.getExcelImportTpl().setFileName("工序导入模板"));
     }
 
     public void importExcel() {

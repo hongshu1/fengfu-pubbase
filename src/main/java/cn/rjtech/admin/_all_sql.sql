@@ -35,3 +35,7 @@
 # namespace("operation")
 # include("operation/operation.sql")
 # end
+
+# namespace("qcitem")
+# include("qcitem/qcitem.sql")
+# end

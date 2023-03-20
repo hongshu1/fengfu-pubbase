@@ -547,4 +547,15 @@ public class CACHE extends JBoltCacheParaValidator {
 		Workclass workclass = workclassService.getCacheByKey(code);
 		return notOk(workclass)?null:workclass.getIautoid();
 	}
+
+	/**
+	 * 获得用户用户名
+	 *
+	 * @param id
+	 * @return
+	 */
+	public String getUserUsername(Object id) {
+		User user = getUser(id);
+		return user == null ? "" : user.getUsername();
+	}
 }

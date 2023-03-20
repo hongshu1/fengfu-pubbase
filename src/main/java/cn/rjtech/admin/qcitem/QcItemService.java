@@ -1,7 +1,11 @@
 package cn.rjtech.admin.qcitem;
 
+import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
 import com.jfinal.plugin.activerecord.Page;
+
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
@@ -10,6 +14,7 @@ import com.jfinal.plugin.activerecord.Record;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.QcItem;
+import cn.rjtech.util.JBoltModelKit;
 import cn.rjtech.util.ValidationUtils;
 
 /**
@@ -47,10 +52,25 @@ public class QcItemService extends BaseService<QcItem> {
         //sql条件处理
         sql.eqBooleanToChar("isDeleted", isDeleted);
         //关键词模糊查询
-        sql.likeMulti(keywords, "cOrgName", "cQcItemName", "cCreateName", "cUpdatName");
+        sql.likeMulti(keywords, "cOrgName","cQcItemCode", "cQcItemName", "cCreateName", "cUpdatName");
         //排序
-        sql.desc("iAutoId");
+        sql.desc("dupdatetime");
         return paginate(sql);
+    }
+
+    public Page<Record> pageList(Kv kv) {
+        Page<Record> recordPage = dbTemplate("qcitem.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
+        /*if (isOk(recordPage.getList())) {
+            for (Record r : recordPage.getList()) {
+                if (isOk(r.getStr("ilevel"))) {
+//					r.put("ilevel",personService.formatPattenSn(r.getStr("ilevel"),"work_level"));
+                }
+                if (isOk(r.getBigDecimal("isalary"))) {
+                    r.put("isalary", r.getBigDecimal("isalary").setScale(2, RoundingMode.HALF_UP));
+                }
+            }
+        }*/
+        return recordPage;
     }
 
     /**
@@ -62,9 +82,25 @@ public class QcItemService extends BaseService<QcItem> {
         }
         //项目编码不能重复
         ValidationUtils.isTrue(findQcItemCode(qcItem.getCQcItemCode())==null, qcItem.getCQcItemCode() + "：项目编码重复");
+        //1、赋值
+        String userName = JBoltUserKit.getUserName();
+        Long userId = JBoltUserKit.getUserId();
+        Date date = new Date();
+        qcItem.setIOrgId(getOrgId());
+        qcItem.setCOrgCode(getOrgCode());
+        qcItem.setCOrgName(getOrgName());
+        qcItem.setIsDeleted(false);
+        qcItem.setICreateBy(userId);
+        qcItem.setCCreateName(userName);
+        qcItem.setDCreateTime(date);
+        qcItem.setIUpdateBy(userId);
+        qcItem.setCUpdatName(userName);
+        qcItem.setDUpdateTime(date);
+        //2、保存
         boolean success = qcItem.save();
         //给对象QcItem的其它栏位赋值
 //		saveWorkClassHandle();
+        //3、返回保存结果
         return ret(success);
     }
 

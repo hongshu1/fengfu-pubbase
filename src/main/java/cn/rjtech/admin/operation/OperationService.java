@@ -1,22 +1,30 @@
 package cn.rjtech.admin.operation;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelMerge;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 //import cn.rjtech.admin.badnessclass.BadnessclassService;
 //import cn.rjtech.admin.operationbadness.OperationbadnessService;
+import cn.rjtech.admin.workclass.WorkClassService;
 import cn.rjtech.model.momdata.Operation;
 //import cn.rjtech.model.momdata.Operationbadness;
+import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
+
+import com.bstek.ureport.expression.model.Op;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -43,6 +51,8 @@ public class OperationService extends BaseService<Operation> {
 	protected Operation dao() {
 		return dao;
 	}
+	@Inject
+	private WorkClassService workClassService;
 //	@Inject
 //	private OperationbadnessService operationbadnessService;
 //	@Inject
@@ -56,7 +66,7 @@ public class OperationService extends BaseService<Operation> {
 	 * @return
 	 */
 	public List<Operation> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return getCommonListByKeywords(keywords,"cOperationCode","DESC","cOperationName,cOperationCode",Okv.by("isEnabled",true).set("isDeleted",false));
+		return getCommonListByKeywords(keywords,"dUpdateTime","DESC","cOperationName,cOperationCode",Okv.by("isEnabled",true).set("isDeleted",false));
 		//return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "cOperationName",Okv.by("isEnabled",true).set("isDeleted",false));
 	}
 
@@ -76,31 +86,11 @@ public class OperationService extends BaseService<Operation> {
 		operation.setIautoid(JBoltSnowflakeKit.me.nextId());
 		//是否存在编码
 		Operation operation1 = findFirst(Okv.by("cOperationCode", operation.getCoperationcode()).set("isDeleted", 0), "iAutoid", "DESC");
-
-		ValidationUtils.isTrue(operation1==null, "已存在编码"+operation.getCoperationcode());
+		ValidationUtils.isTrue(operation1==null, "已存在编码："+operation.getCoperationcode());
 
 		saveOperationHandle(operation, JBoltUserKit.getUserId(),new Date(),JBoltUserKit.getUserName(), getOrgId(),getOrgCode(), getOrgName());
 		//if(existsName(operation.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		/*boolean success = tx(() -> {
-			List<Operationbadness> operationbadnessList=new ArrayList<>();
-			String[]  ids = operation.getCupdatename().split(",");
-			for(String id:ids){
-				Operationbadness ob = new Operationbadness();
-				ob.setIoperationid(operation.getIautoid());
-				ob.setIbadnessclassid(Long.valueOf(id));
-				ob.setIcreateby(JBoltUserKit.getUserId());
-				ob.setCcreatename(JBoltUserKit.getUserName());
-				ob.setDcreatetime(new Date());
-				operationbadnessList.add(ob);
-			}
-			operation.save();
-			operationbadnessService.batchSave(operationbadnessList);
-			return true;
-		});
-		if(success) {
-			//添加日志
-			//addSaveSystemLog(operation.getIautoid(), JBoltUserKit.getUserId(), operation.getName());
-		}*/
+		operation.save();
 		return ret(true);
 	}
 
@@ -119,32 +109,11 @@ public class OperationService extends BaseService<Operation> {
 
 		Operation operation1 = findFirst("SELECT * FROM Bd_Operation WHERE cOperationCode =? AND isDeleted = 0 AND iAutoId != ?", operation.getCoperationcode(), operation.getIautoid());
 		ValidationUtils.isTrue(operation1==null, "已存在编码"+operation.getCoperationcode());
-
-		/*boolean success = tx(() -> {
-			//先清除绑定关系
-			operationbadnessService.deleteByOperationId(operation.getIautoid());
-			List<Operationbadness> operationbadnessList=new ArrayList<>();
-			String[]  ids = operation.getCupdatename().split(",");
-			for(String id:ids){
-				Operationbadness ob = new Operationbadness();
-				ob.setIoperationid(operation.getIautoid());
-				ob.setIbadnessclassid(Long.valueOf(id));
-				ob.setIcreateby(JBoltUserKit.getUserId());
-				ob.setCcreatename(JBoltUserKit.getUserName());
-				ob.setDcreatetime(new Date());
-				operationbadnessList.add(ob);
-			}
-			operation.update();
-			operationbadnessService.batchSave(operationbadnessList);
-			return true;
-		});
-		//if(existsName(operation.getName(), operation.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		if(success) {
-			//添加日志
-			//addUpdateSystemLog(operation.getIautoid(), JBoltUserKit.getUserId(), operation.getName());
-		}
-		return ret(success);*/
-		return ret(true);
+		operation.setIupdateby(JBoltUserKit.getUserId());
+		operation.setDupdatetime(new Date());
+		operation.setCupdatename(JBoltUserKit.getUserName());
+		boolean result = operation.update();
+		return ret(result);
 	}
 
 	/**
@@ -267,6 +236,9 @@ public class OperationService extends BaseService<Operation> {
 		operation.setIorgid(orgId);
 		operation.setCorgcode(orgCode);
 		operation.setCorgname(orgName);
+		operation.setDupdatetime(date);
+		operation.setIupdateby(userId);
+		operation.setCupdatename(username);
 	}
 
 	public Page<Record> pageList(Kv kv) {
@@ -299,7 +271,6 @@ public class OperationService extends BaseService<Operation> {
 										JBoltExcelHeader.create("coperationcode","工艺方法编码"),
 										JBoltExcelHeader.create("coperationname","工艺方法名称"),
 										JBoltExcelHeader.create("iworkclassid","所属工种"),
-										JBoltExcelHeader.create("cupdatename","不良大类"),
 										JBoltExcelHeader.create("cmemo","备注")
 								)
 								//特殊数据转换器
@@ -335,10 +306,6 @@ public class OperationService extends BaseService<Operation> {
 				if(notOk(op.getIworkclassid())){
 					return fail("所属工种不能为空");
 				}
-				if(notOk(op.getCupdatename())){
-					return fail("不良大类不能为空");
-				}
-
 				//数据库是否存在工序编码
 				ValidationUtils.isTrue(isNull(findFirst(Okv.by("cOperationCode", op.getCoperationcode()).set("isDeleted", "0"), "iautoid", "desc")), JBoltMsg.DATA_IMPORT_FAIL+"存在重复编码数据");
 			}
@@ -384,5 +351,54 @@ public class OperationService extends BaseService<Operation> {
 
 	public List<Operation> getIdAndNameList(){
 		return find("SELECT iAutoId,cOperationName FROM Bd_Operation WHERE isDeleted = '0' ");
+	}
+
+	/*
+	 * 导出excel文件
+	 * */
+	public JBoltExcel exportExcelTpl(List<Operation> datas) {
+		//2、创建JBoltExcel
+		JBoltExcel jBoltExcel = JBoltExcel
+			.createByTpl("工序导出模板.xls")//创建JBoltExcel 从模板加载创建
+			.addSheet(//设置sheet
+				JBoltExcelSheet.create("工序")//创建sheet name保持与模板中的sheet一致
+					.setHeaders(//sheet里添加表头
+						JBoltExcelHeader.create("coperationcode", "工序编码", 20),
+						JBoltExcelHeader.create("coperationname", "工序名称", 20),
+						JBoltExcelHeader.create("iworkclassid", "所属工种", 20),
+						JBoltExcelHeader.create("cmemo", "备注", 20),
+						JBoltExcelHeader.create("ccreatename", "创建人", 20),
+						JBoltExcelHeader.create("dcreatetime", "创建时间", 20)
+					)
+					.setDataChangeHandler((data, index) -> {//设置数据转换处理器
+						//将user_id转为user_name
+						data.changeWithKey("user_id", "user_username", CACHE.me.getUserUsername(data.get("user_id")));
+						data.changeBooleanToStr("is_deleted", "是", "否");
+					})
+					.setModelDatas(3,datas)//设置数据
+			)
+			.setFileName("工序"+ "_"+ DateUtil.today());
+		//3、返回生成的excel文件
+		return jBoltExcel;
+	}
+
+	/**
+	 * 生成Excel 导入模板的数据 byte[]
+	 */
+	public JBoltExcel getExcelImportTpl() {
+		return JBoltExcel
+			//创建
+			.create()
+			.setSheets(
+				JBoltExcelSheet.create("工序导入模板")
+					//设置列映射 顺序 标题名称 不处理别名
+					.setHeaders(2, false,
+						JBoltExcelHeader.create("工序编码", 20),
+						JBoltExcelHeader.create("工序名称", 20),
+						JBoltExcelHeader.create("所属工种", 20),
+						JBoltExcelHeader.create("备注", 20)
+					)
+					.setMerges(JBoltExcelMerge.create("A", "D", 1, 1, "工序"))
+			);
 	}
 }
