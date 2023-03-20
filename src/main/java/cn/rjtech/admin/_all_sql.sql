@@ -27,3 +27,7 @@
 #namespace("menupermission")
 #include("menupermission/menupermission.sql")
 #end
+
+#namespace("forgeigncurrency")
+#include("forgeigncurrency/forgeigncurrency.sql")
+#end

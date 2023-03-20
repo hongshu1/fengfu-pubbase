@@ -41,7 +41,7 @@ public class ForgeignCurrencyService extends BaseService<ForgeignCurrency> {
 	 * @return
 	 */
 	public Ret save(ForgeignCurrency forgeignCurrency) {
-		if(forgeignCurrency==null || isOk(forgeignCurrency.getIautoid())) {
+		if(forgeignCurrency==null || isOk(forgeignCurrency.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//if(existsName(forgeignCurrency.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
@@ -59,11 +59,11 @@ public class ForgeignCurrencyService extends BaseService<ForgeignCurrency> {
 	 * @return
 	 */
 	public Ret update(ForgeignCurrency forgeignCurrency) {
-		if(forgeignCurrency==null || notOk(forgeignCurrency.getIautoid())) {
+		if(forgeignCurrency==null || notOk(forgeignCurrency.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//更新时需要判断数据存在
-		ForgeignCurrency dbForgeignCurrency=findById(forgeignCurrency.getIautoid());
+		ForgeignCurrency dbForgeignCurrency=findById(forgeignCurrency.getIAutoId());
 		if(dbForgeignCurrency==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(forgeignCurrency.getName(), forgeignCurrency.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=forgeignCurrency.update();
