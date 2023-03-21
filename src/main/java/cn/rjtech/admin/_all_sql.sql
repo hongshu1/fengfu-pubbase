@@ -28,18 +28,34 @@
 #include("menupermission/menupermission.sql")
 #end
 
-# namespace("workclass")
-# include("workclass/workclass.sql")
-# end
+#namespace("forgeigncurrency")
+#include("forgeigncurrency/forgeigncurrency.sql")
+#end
 
-# namespace("operation")
-# include("operation/operation.sql")
-# end
+#namespace("workclass")
+#include("workclass/workclass.sql")
+#end
 
-# namespace("qcitem")
-# include("qcitem/qcitem.sql")
-# end
+#namespace("operation")
+#include("operation/operation.sql")
+#end
 
-# namespace("qcparam")
-# include("qcparam/qcparam.sql")
-# end
+#namespace("qcitem")
+#include("qcitem/qcitem.sql")
+#end
+
+#namespace("workcalendard")
+#include("workcalendard/workcalendard.sql")
+#end
+
+#namespace("workcalendarm")
+#include("workcalendarm/workcalendarm.sql")
+#end
+
+#namespace("workshiftd")
+#include("workshiftd/workshiftd.sql")
+#end
+
+#namespace("workshiftm")
+#include("workshiftm/workshiftm.sql")
+#end
