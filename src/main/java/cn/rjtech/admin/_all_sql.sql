@@ -31,3 +31,7 @@
 #namespace("forgeigncurrency")
 #include("forgeigncurrency/forgeigncurrency.sql")
 #end
+
+#namespace("workregionm")
+#include("workregionm/workregionm.sql")
+#end
