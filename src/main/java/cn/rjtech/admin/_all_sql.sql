@@ -43,3 +43,20 @@
 # namespace("qcparam")
 # include("qcparam/qcparam.sql")
 # end
+
+
+#namespace("warehouseshelves")
+#include("warehouseshelves/warehouseshelves.sql")
+#end
+
+#namespace("warehouseposition")
+#include("warehouseposition/warehouseposition.sql")
+#end
+
+#namespace("warehousearea")
+#include("warehousearea/warehousearea.sql")
+#end
+
+#namespace("warehouse")
+#include("warehouse/warehouse.sql")
+#end
