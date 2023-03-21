@@ -60,3 +60,10 @@
 #namespace("warehouse")
 #include("warehouse/warehouse.sql")
 #end
+#namespace("workshiftd")
+#include("workshiftd/workshiftd.sql")
+#end
+
+#namespace("workshiftm")
+#include("workshiftm/workshiftm.sql")
+#end

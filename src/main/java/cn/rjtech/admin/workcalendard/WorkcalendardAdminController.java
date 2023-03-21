@@ -24,63 +24,63 @@ import com.jfinal.core.Path;
 @Path(value = "/admin/workcalendard", viewPath = "/_view/admin/workcalendard")
 public class WorkcalendardAdminController extends JBoltBaseController {
 
-	@Inject
-	private WorkcalendardService service;
+    @Inject
+    private WorkcalendardService service;
 
-   /**
-	* 首页
-	*/
-	public void index() {
-		render("index.html");
-	}
+    /**
+     * 首页
+     */
+    public void index() {
+        render("index.html");
+    }
 
-  	/**
-	* 数据源
-	*/
-	public void datas() {
-		renderJsonData(service.list(getKv()));
-	}
+    /**
+     * 数据源
+     */
+    public void datas() {
+        renderJsonData(service.list(getKv()));
+    }
 
-   /**
-	* 新增
-	*/
-	public void add() {
-		render("add.html");
-	}
+    /**
+     * 新增
+     */
+    public void add() {
+        render("add.html");
+    }
 
-   /**
-	* 编辑
-	*/
-	public void edit() {
-		Workcalendard workcalendard=service.findById(getLong(0));
-		if(workcalendard == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		set("workcalendard",workcalendard);
-		render("edit.html");
-	}
+    /**
+     * 编辑
+     */
+    public void edit() {
+        Workcalendard workcalendard = service.findById(getLong(0));
+        if (workcalendard == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        set("workcalendard", workcalendard);
+        render("edit.html");
+    }
 
-  /**
-	* 保存
-	*/
-	public void save() {
-		renderJson(service.save(getModel(Workcalendard.class, "workcalendard")));
-	}
+    /**
+     * 保存
+     */
+    public void save() {
+        renderJson(service.save(getModel(Workcalendard.class, "workcalendard")));
+    }
 
-   /**
-	* 更新
-	*/
-	public void update() {
-		renderJson(service.update(getModel(Workcalendard.class, "workcalendard")));
-	}
+    /**
+     * 更新
+     */
+    public void update() {
+        renderJson(service.update(getModel(Workcalendard.class, "workcalendard")));
+    }
 
-   /**
-	* 批量删除
-	*/
-	public void deleteByIds() {
-		renderJson(service.deleteByBatchIds(get("ids")));
-	}
+    /**
+     * 批量删除
+     */
+    public void deleteByIds() {
+        renderJson(service.deleteByBatchIds(get("ids")));
+    }
 
 
 }
