@@ -2,6 +2,8 @@ package cn.rjtech.routes;
 
 import com.jfinal.config.Routes;
 
+import cn.rjtech.admin.forgeigncurrency.ForgeignCurrencyAdminController;
+
 /**
  * MOM平台路由配置
  *
@@ -16,6 +18,8 @@ public class ExtendAdminRoutes extends Routes {
         // MOM平台路由扫描配置
         this.scan("cn.rjtech.common.")
                 .scan("cn.rjtech.erp.");
+        this.setBaseViewPath("/_view/admin");
+        this.add("/admin/forgeigncurrency", ForgeignCurrencyAdminController.class, "/forgeigncurrency");
     }
 
 }

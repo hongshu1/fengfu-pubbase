@@ -5,9 +5,6 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.ForgeignCurrency;
 /**
@@ -16,9 +13,8 @@ import cn.rjtech.model.momdata.ForgeignCurrency;
  * @author: WYX
  * @date: 2023-03-20 21:09
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.FORGEIGN_CURRENCY_INDEX)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/forgeigncurrency", viewPath = "/_view/admin/forgeigncurrency")
 public class ForgeignCurrencyAdminController extends BaseAdminController {
 
 	@Inject
@@ -49,7 +45,7 @@ public class ForgeignCurrencyAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		ForgeignCurrency forgeignCurrency=service.findById(getLong(0)); 
+		ForgeignCurrency forgeignCurrency = service.findById(getLong(0)); 
 		if(forgeignCurrency == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
@@ -86,13 +82,19 @@ public class ForgeignCurrencyAdminController extends BaseAdminController {
 		renderJson(service.delete(getLong(0)));
 	}
 
-  /**
+   /**
 	* 切换toggleBcal
 	*/
 	public void toggleBcal() {
 		renderJson(service.toggleBcal(getLong(0)));
 	}
-
+	/**
+	 * 切换toggleIotherused
+	 * */
+	public void toggleIotherused() {
+		renderJson(service.toggleIotherused(getLong(0)));
+	}
+	
   /**
 	* 切换toggleIsDeleted
 	*/

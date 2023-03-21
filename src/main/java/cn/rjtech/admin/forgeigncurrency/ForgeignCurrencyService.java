@@ -3,11 +3,14 @@ package cn.rjtech.admin.forgeigncurrency;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+
+import java.util.Date;
+
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.ForgeignCurrency;
 /**
  * 币种档案 Service
@@ -44,7 +47,20 @@ public class ForgeignCurrencyService extends BaseService<ForgeignCurrency> {
 		if(forgeignCurrency==null || isOk(forgeignCurrency.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		//if(existsName(forgeignCurrency.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		Date now = new Date();
+		Long userid = JBoltUserKit.getUserId();
+		String loginUserName = JBoltUserKit.getUserName();
+		forgeignCurrency.setIOrgId(getOrgId());
+		forgeignCurrency.setCOrgName(getOrgName());
+		forgeignCurrency.setCOrgCode(getOrgCode());
+		forgeignCurrency.setICreateBy(userid);
+		forgeignCurrency.setDCreateTime(now);
+		forgeignCurrency.setCCreateName(loginUserName);
+		forgeignCurrency.setIUpdateBy(userid);
+		forgeignCurrency.setDUpdateTime(now);
+		forgeignCurrency.setCUpdateName(loginUserName);
+		forgeignCurrency.setIsDeleted(false);
+		forgeignCurrency.setISource(SourceEnum.MES.getValue());
 		boolean success=forgeignCurrency.save();
 		if(success) {
 			//添加日志
@@ -131,7 +147,12 @@ public class ForgeignCurrencyService extends BaseService<ForgeignCurrency> {
 	public Ret toggleBcal(Long id) {
 		return toggleBoolean(id, "bcal");
 	}
-
+	/**
+	 * 切换iotherused属性
+	 */	
+	public Ret toggleIotherused(Long id) {
+		return toggleBoolean(id, "iotherused");
+	}
 	/**
 	 * 切换isdeleted属性
 	 */
@@ -172,5 +193,6 @@ public class ForgeignCurrencyService extends BaseService<ForgeignCurrency> {
 		//这里用来覆盖 检测ForgeignCurrency是否被其它表引用
 		return null;
 	}
+
 
 }

@@ -2229,4 +2229,9 @@ public class PermissionKey {
 	 * 强制更新
 	 */
 	public static final String APPVERSION_ISFORCE = "appversion_isforce";
+	/**
+	 * 币种档案
+	 */
+	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";	
+	
 }

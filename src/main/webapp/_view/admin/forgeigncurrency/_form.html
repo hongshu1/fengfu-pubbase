@@ -1,33 +1,15 @@
 <form onsubmit="return false;" id="forgeignCurrencyForm" action="#(action)" method="post">
 <input type="hidden" name="forgeignCurrency.iautoid" value="#(forgeignCurrency.iautoid??)" />
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织ID</label>
+		<label class="col-sm-2 col-form-label">币种编码</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="forgeignCurrency.iorgid" value="#(forgeignCurrency.iorgid??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织编码</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="40" name="forgeignCurrency.corgcode" value="#(forgeignCurrency.corgcode??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="50" name="forgeignCurrency.corgname" value="#(forgeignCurrency.corgname??)"/>
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入币种编码" maxlength="4" name="forgeignCurrency.cexchcode" value="#(forgeignCurrency.cexchcode??)"/>
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">币种名称</label>
 		<div class="col">
 			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入币种名称" maxlength="8" name="forgeignCurrency.cexchname" value="#(forgeignCurrency.cexchname??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">币种编码</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入币种编码" maxlength="4" name="forgeignCurrency.cexchcode" value="#(forgeignCurrency.cexchcode??)"/>
 		</div>
 	</div>
     <div class="form-group row"
@@ -54,90 +36,36 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">小数位数</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入小数位数" maxlength="3" name="forgeignCurrency.idec" value="#(forgeignCurrency.idec??)"/>
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" data-rule="pzint" placeholder="请输入小数位数" maxlength="3" name="forgeignCurrency.idec" value="#(forgeignCurrency.idec??)"/>
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">最大误差</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入最大误差" maxlength="24" name="forgeignCurrency.nerror" value="#(forgeignCurrency.nerror??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">是否本位币</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入是否本位币"  maxlength="10" name="forgeignCurrency.iotherused" value="#(forgeignCurrency.iotherused??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建人ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人ID" maxlength="19" name="forgeignCurrency.icreateby" value="#(forgeignCurrency.icreateby??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建人名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="50" name="forgeignCurrency.ccreatename" value="#(forgeignCurrency.ccreatename??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建时间</label>
-		<div class="col">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="forgeignCurrency.dcreatetime" value="#(forgeignCurrency.dcreatetime??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新人ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人ID" maxlength="19" name="forgeignCurrency.iupdateby" value="#(forgeignCurrency.iupdateby??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新人名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人名称" maxlength="50" name="forgeignCurrency.cupdatename" value="#(forgeignCurrency.cupdatename??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新时间</label>
-		<div class="col">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="forgeignCurrency.dupdatetime" value="#(forgeignCurrency.dupdatetime??)"/>
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" data-rule="number"  placeholder="请输入最大误差" maxlength="24" name="forgeignCurrency.nerror" value="#(forgeignCurrency.nerror??)"/>
 		</div>
 	</div>
     <div class="form-group row"
     	data-radio
     	data-rule="radio"
-    	data-value="#(forgeignCurrency.isdeleted??)"
-    	data-name="forgeignCurrency.isdeleted"
+    	data-value="#(forgeignCurrency.iotherused??)"
+    	data-name="forgeignCurrency.iotherused"
     	data-default="options_first"
     	data-width="col-sm-2,col"
 		>
-			<label class="col-sm-2 col-form-label" >删除状态：0. 未删除 1. 已删除</label>
+			<label class="col-sm-2 col-form-label" >是否本位币</label>
 			<div class="col"  style="padding-top: 1px;">
 				<div class="radio radio-primary  radio-inline">
-					<input  id="r_isdeleted_true" type="radio" name="forgeignCurrency.isdeleted" value="true"/>
-					<label for="r_isdeleted_true">是</label>
+					<input  id="r_iotherused_true" type="radio" name="forgeignCurrency.iotherused" value="1"/>
+					<label for="r_iotherused_true">是</label>
 				</div>
 				
 				<div class="radio radio-primary  radio-inline">
-					<input  id="r_isdeleted_false" type="radio" name="forgeignCurrency.isdeleted" value="false"/>
-					<label for="r_isdeleted_false">否</label>
+					<input  id="r_iotherused_false" type="radio" name="forgeignCurrency.iotherused" value="0"/>
+					<label for="r_iotherused_false">否</label>
 				</div>
 			</div>
-		</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">来源：1. MES 2. U8, MES端只能维护MES来源的记录</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入来源：1. MES 2. U8, MES端只能维护MES来源的记录"  maxlength="10" name="forgeignCurrency.isource" value="#(forgeignCurrency.isource??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">来源ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入来源ID" maxlength="32" name="forgeignCurrency.isourceid" value="#(forgeignCurrency.isourceid??)"/>
-		</div>
-	</div>
+		</div>	
 </form>
 #define js()
 <script>
