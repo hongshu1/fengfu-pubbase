@@ -1818,7 +1818,5 @@ public class PermissionKey {
 	 * 币种档案
 	 */
 	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";	
-	
-	public static final String APPVERSION_ISFORCE = "appversion_isfore";
 
 }

@@ -32,14 +32,30 @@
 #include("forgeigncurrency/forgeigncurrency.sql")
 #end
 
-# namespace("workclass")
-# include("workclass/workclass.sql")
-# end
+#namespace("workclass")
+#include("workclass/workclass.sql")
+#end
 
-# namespace("operation")
-# include("operation/operation.sql")
-# end
+#namespace("operation")
+#include("operation/operation.sql")
+#end
 
-# namespace("qcitem")
-# include("qcitem/qcitem.sql")
-# end
+#namespace("qcitem")
+#include("qcitem/qcitem.sql")
+#end
+
+#namespace("workcalendard")
+#include("workcalendard/workcalendard.sql")
+#end
+
+#namespace("workcalendarm")
+#include("workcalendarm/workcalendarm.sql")
+#end
+
+#namespace("workshiftd")
+#include("workshiftd/workshiftd.sql")
+#end
+
+#namespace("workshiftm")
+#include("workshiftm/workshiftm.sql")
+#end

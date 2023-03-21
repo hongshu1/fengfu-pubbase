@@ -1,0 +1,110 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="workcalendarmSplit_tpl_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.holidayname}</td>
+            <td>${data.dstarttime|date_ymd}</td>
+            <td>${data.dendtime|date_ymd}</td>
+            <td>${data.cmemo}</td>
+        </tr>
+    {@/each}
+</textarea>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- 工具条 toolbar -->
+                <div class="jbolt_table_toolbar" id="workcalendarm_split_toolbar_#(pageId)">
+
+                    <div class="btn-group" role="group" aria-label="btn-group">
+                        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+                        <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+                    </div>
+
+                    <div class="clearfix"></div>
+                </div>
+
+                <table class="jbolt_table jbolt_main_table  table-center"
+                       id="jbolt_table_workcalendarm_split_#(pageId)"
+                       data-jbolttable
+                       data-width="auto"
+                       data-height="200"
+                       data-ajax="true"
+                       data-column-prepend="1:checkbox:true"
+                       ###data-conditions-form="workcalendarmSplit_form_#(pageId)"
+                       data-toolbar="workcalendarm_split_toolbar_#(pageId)"
+                       data-url="admin/workcalendard/datas?iworkcalendarid=#(workcalendarm.iautoid??)"
+                       data-rowtpl="workcalendarmSplit_tpl_#(pageId)"
+                       ###data-copy-to-excel="false"
+                       data-column-resize="true"
+                       data-editable="true"
+                       data-editable-option="getEditableTableOptions_split_#(pageId)"
+                >
+                    <thead>
+                    <tr>
+                        <th data-width="60" data-column="index">序号</th>
+                        <th data-width="150" data-column="ccalendarsn">假期类型</th>
+                        <th data-width="150" data-column="dstarttime">开始日期</th>
+                        <th data-width="150" data-column="dendtime">结束日期</th>
+                        <th data-width="350" data-column="cmemo">备注</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function getEditableTableOptions_split_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
+            insertDefaultValues: {name:'#(JBoltUserKit.getUserName())'},
+            submit: {
+                withForm: ["workcalendarmForm"],
+                type: "all",
+                url: "/admin/workcalendarm/updateEditTable",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid"
+                },
+                ccalendarsn:{
+                    type:"select",
+                    required:true,
+                    url:"admin/dictionary/options?key=holiday_date",
+                    valueAttr:"sn",
+                    textAttr:"name"
+                },
+                dstarttime: {
+                    type: "date",
+                    required: true,
+                    placeholder: "=开始时间="
+                },
+                dendtime: {
+                    type: "date",
+                    required: true,
+                    placeholder: "=结束时间="
+                },
+                cmemo: {
+                    type: "input",
+                    placeholder: "=备注="
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>
