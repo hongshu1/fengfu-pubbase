@@ -18,6 +18,8 @@ public abstract class BaseQcParam<M extends BaseQcParam<M>> extends JBoltBaseMod
     public static final String CORGCODE = "cOrgCode";
     /**组织名称*/
     public static final String CORGNAME = "cOrgName";
+	/**检验项目ID*/
+	public static final String IQCITEMID = "iQcItemId";
     /**参数名称*/
     public static final String CQCPARAMNAME = "cQcParamName";
     /**是否启用：0. 否 1. 是*/
@@ -102,6 +104,23 @@ public abstract class BaseQcParam<M extends BaseQcParam<M>> extends JBoltBaseMod
 	@JSONField(name = "corgname")
 	public java.lang.String getCOrgName() {
 		return getStr("cOrgName");
+	}
+
+	/**
+	 * 检验项目ID
+	 */
+	public M setIqcitemid(Long iqcitemid) {
+		set("iQcItemId", iqcitemid);
+		return (M)this;
+	}
+
+	/**
+	 * 检验项目ID
+	 */
+	@JBoltField(name="iqcitemid" ,columnName="iQcItemId",type="Long", remark="检验项目ID", required=false, maxLength=19, fixed=0, order=4)
+	@JSONField(serializeUsing= ToStringSerializer.class)
+	public Long getIqcitemid() {
+		return getLong("iQcItemId");
 	}
 
 	/**

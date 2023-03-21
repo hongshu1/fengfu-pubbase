@@ -133,14 +133,6 @@ public class WorkclassAdminController extends JBoltBaseController {
         JBoltExcel jBoltExcel = service.exportExcelTpl(service.getListByIds(ids));
         //3、导出
         renderBytesToExcelXlsFile(jBoltExcel);
-		/*for(Record r:data){
-//			r.put("ilevel",personService.formatPattenSn(r.getStr("ilevel"),"work_level"));
-		}
-		try {
-			renderJxls("工种档案导出模板.xls", Kv.by("rows", data), "工种档案(选中导出)_" + DateUtil.today() + ".xlsx");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
     }
 
     /*
@@ -173,6 +165,9 @@ public class WorkclassAdminController extends JBoltBaseController {
         renderBytesToExcelXlsFile(service.getExcelImportTpl().setFileName("工种档案导入模板"));
     }
 
+    /*
+     * 数据导入
+     * */
     public void importExcel() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);
