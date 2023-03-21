@@ -1,0 +1,75 @@
+<form onsubmit="return false;" id="forgeignCurrencyForm" action="#(action)" method="post">
+<input type="hidden" name="forgeignCurrency.iautoid" value="#(forgeignCurrency.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">币种编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入币种编码" maxlength="4" name="forgeignCurrency.cexchcode" value="#(forgeignCurrency.cexchcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">币种名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入币种名称" maxlength="8" name="forgeignCurrency.cexchname" value="#(forgeignCurrency.cexchname??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(forgeignCurrency.bcal??)"
+    	data-name="forgeignCurrency.bcal"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >折算方式</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bcal_true" type="radio" name="forgeignCurrency.bcal" value="true"/>
+					<label for="r_bcal_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bcal_false" type="radio" name="forgeignCurrency.bcal" value="false"/>
+					<label for="r_bcal_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">小数位数</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" data-rule="pzint" placeholder="请输入小数位数" maxlength="3" name="forgeignCurrency.idec" value="#(forgeignCurrency.idec??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">最大误差</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" data-rule="number"  placeholder="请输入最大误差" maxlength="24" name="forgeignCurrency.nerror" value="#(forgeignCurrency.nerror??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(forgeignCurrency.iotherused??)"
+    	data-name="forgeignCurrency.iotherused"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否本位币</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_iotherused_true" type="radio" name="forgeignCurrency.iotherused" value="1"/>
+					<label for="r_iotherused_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_iotherused_false" type="radio" name="forgeignCurrency.iotherused" value="0"/>
+					<label for="r_iotherused_false">否</label>
+				</div>
+			</div>
+		</div>	
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="forgeignCurrencyForm")
+#end
+

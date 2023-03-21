@@ -28,6 +28,10 @@
 #include("menupermission/menupermission.sql")
 #end
 
+#namespace("forgeigncurrency")
+#include("forgeigncurrency/forgeigncurrency.sql")
+#end
+
 # namespace("workclass")
 # include("workclass/workclass.sql")
 # end

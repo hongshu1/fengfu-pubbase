@@ -110,6 +110,16 @@ function auditstatus(val) {
             return '';
     }
 }
+function iSource(val) {
+    switch (val) {
+        case 1:
+            return "MES";
+        case 2:
+            return "U8";
+        default:
+            return '';
+    }
+}
 
 function initMineJuicer(){
 	//格式 juicer.register("模板函数名定义（自己取名）",具体模板函数实现);
@@ -130,6 +140,7 @@ function initMineJuicer(){
     juicer.register('position', position);
     juicer.register('roletype', roletype);
     juicer.register('auditstatus', auditstatus);
+    juicer.register('iSource', iSource);
 }
 
 function jboltTableGetSpecCols(ele, colName) {
