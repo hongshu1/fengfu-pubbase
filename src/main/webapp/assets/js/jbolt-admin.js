@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.3.6";
+var jbolt_admin_js_version="6.3.7";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -15835,6 +15835,16 @@ function activeLeftNavByKey(key){
 				hideLeftAndFullMainConainer();
 			}else{
 				jboltAdmin.removeClass("fullMainContainer");
+			}
+		}
+	}else{
+		if(jboltWithTabs){
+			var leftNav = JBoltTabUtil.getCurrentTabContent().find(".jbolt_page[data-leftnav]");
+			if(leftNav){
+				var leftNavUrl = leftNav.data("leftnav");
+				if(leftNavUrl){
+					openLeftNav(leftNavUrl);
+				}
 			}
 		}
 	}
