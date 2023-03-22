@@ -138,6 +138,12 @@ public abstract class BasePerson<M extends BasePerson<M>> extends JBoltBaseModel
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**工号*/
+    public static final String JOBNUMBER = "JobNumber";
+    /**人员类别编码，增加字典：rPersonType*/
+    public static final String RPERSONTYPE = "rPersonType";
+    /**雇佣状态编码，增加字典：rEmployState*/
+    public static final String REMPLOYSTATE = "rEmployState";
 	/**
 	 * 主键ID
 	 */
@@ -1224,6 +1230,57 @@ public abstract class BasePerson<M extends BasePerson<M>> extends JBoltBaseModel
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 工号
+	 */
+	public M setJobNumber(java.lang.String JobNumber) {
+		set("JobNumber", JobNumber);
+		return (M)this;
+	}
+
+	/**
+	 * 工号
+	 */
+	@JBoltField(name="jobnumber" ,columnName="JobNumber",type="String", remark="工号", required=false, maxLength=50, fixed=0, order=65)
+	@JSONField(name = "jobnumber")
+	public java.lang.String getJobNumber() {
+		return getStr("JobNumber");
+	}
+
+	/**
+	 * 人员类别编码，增加字典：rPersonType
+	 */
+	public M setRPersonType(java.lang.String rPersonType) {
+		set("rPersonType", rPersonType);
+		return (M)this;
+	}
+
+	/**
+	 * 人员类别编码，增加字典：rPersonType
+	 */
+	@JBoltField(name="rpersontype" ,columnName="rPersonType",type="String", remark="人员类别编码，增加字典：rPersonType", required=false, maxLength=10, fixed=0, order=66)
+	@JSONField(name = "rpersontype")
+	public java.lang.String getRPersonType() {
+		return getStr("rPersonType");
+	}
+
+	/**
+	 * 雇佣状态编码，增加字典：rEmployState
+	 */
+	public M setREmployState(java.lang.String rEmployState) {
+		set("rEmployState", rEmployState);
+		return (M)this;
+	}
+
+	/**
+	 * 雇佣状态编码，增加字典：rEmployState
+	 */
+	@JBoltField(name="remploystate" ,columnName="rEmployState",type="String", remark="雇佣状态编码，增加字典：rEmployState", required=false, maxLength=10, fixed=0, order=67)
+	@JSONField(name = "remploystate")
+	public java.lang.String getREmployState() {
+		return getStr("rEmployState");
 	}
 
 }
