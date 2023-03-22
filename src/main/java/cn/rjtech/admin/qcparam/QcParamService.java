@@ -4,8 +4,17 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
+
+import cn.hutool.core.date.DateUtil;
+import cn.jbolt.common.util.CACHE;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -13,11 +22,18 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.rjtech.admin.qcitem.QcItemService;
+import cn.rjtech.model.momdata.Operation;
+import cn.rjtech.model.momdata.QcItem;
 import cn.rjtech.model.momdata.QcParam;
+import cn.rjtech.util.ValidationUtils;
 
 /**
  * 质量建模-检验参数
@@ -29,6 +45,9 @@ import cn.rjtech.model.momdata.QcParam;
 public class QcParamService extends BaseService<QcParam> {
 
     private final QcParam dao = new QcParam().dao();
+
+    @Inject
+    private QcItemService qcItemService;
 
     @Override
     protected QcParam dao() {
@@ -62,6 +81,11 @@ public class QcParamService extends BaseService<QcParam> {
         return paginate(sql);
     }
 
+    public Page<Record> pageList(Kv kv) {
+        Page<Record> recordPage = dbTemplate("qcparam.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
+        return recordPage;
+    }
+
     /**
      * 保存
      */
@@ -69,12 +93,9 @@ public class QcParamService extends BaseService<QcParam> {
         if (qcParam == null || isOk(qcParam.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        //if(existsName(qcParam.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+        qcParam.setIAutoId(JBoltSnowflakeKit.me.nextId());
+        saveQcParam(qcParam);
         boolean success = qcParam.save();
-        if (success) {
-            //添加日志
-            //addSaveSystemLog(qcParam.getIAutoId(), JBoltUserKit.getUserId(), qcParam.getName());
-        }
         return ret(success);
     }
 
@@ -140,8 +161,47 @@ public class QcParamService extends BaseService<QcParam> {
         return null;
     }
 
+    public List<Record> list(Kv kv) {
+        return dbTemplate("qcparam.list", kv).find();
+    }
+
+    /**
+     * 切换isenabled属性
+     */
+    public Ret toggleIsenabled(Long id) {
+        return toggleBoolean(id, "isEnabled");
+    }
+
     /*
-     * 数据导入
+     * 导出excel文件
+     * */
+    public JBoltExcel exportExcelTpl(List<QcParam> datas) {
+        //2、创建JBoltExcel
+        JBoltExcel jBoltExcel = JBoltExcel
+            .create()
+            .addSheet(//设置sheet
+                JBoltExcelSheet.create("检验参数")//创建sheet name保持与模板中的sheet一致
+                    .setHeaders(//sheet里添加表头
+                        JBoltExcelHeader.create("cqcitemname", "参数项目名称", 20),
+                        JBoltExcelHeader.create("cqcparamname", "参数名称", 20),
+//                        JBoltExcelHeader.create("isenabled", "是否启用", 20),
+                        JBoltExcelHeader.create("ccreatename", "创建人", 20),
+                        JBoltExcelHeader.create("dcreatetime", "创建时间", 20)
+                    )
+                    .setDataChangeHandler((data, index) -> {//设置数据转换处理器
+                        //将user_id转为user_name
+                        data.changeWithKey("user_id", "user_username", CACHE.me.getUserUsername(data.get("user_id")));
+                        data.changeBooleanToStr("is_enabled", "是", "否");
+                    })
+                    .setModelDatas(2, datas)//设置数据
+            )
+            .setFileName("检验参数" + "_" + DateUtil.today());
+        //3、返回生成的excel文件
+        return jBoltExcel;
+    }
+
+    /*
+     * 上传excel文件
      * */
     public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
@@ -150,29 +210,26 @@ public class QcParamService extends BaseService<QcParam> {
             .from(file)
             //设置工作表信息
             .setSheets(
-                JBoltExcelSheet.create("检验参数")
+                JBoltExcelSheet.create("sheet1")
                     //设置列映射 顺序 标题名称
                     .setHeaders(
-                        JBoltExcelHeader.create("cworkclasscode", "工种编码"),
-                        JBoltExcelHeader.create("cworkclassname", "工种名称"),
-                        JBoltExcelHeader.create("ilevel", "工种等级"),
-                        JBoltExcelHeader.create("isalary", "工种薪酬"),
-                        JBoltExcelHeader.create("cmemo", "备注")
+                        JBoltExcelHeader.create("iqcitemid", "参数项目名称"),
+                        JBoltExcelHeader.create("cqcparamname", "参数名称")
                     )
-                    //特殊数据转换器
-                    /*.setDataChangeHandler((data, index) -> {
-                        try {
-                            String isalary = data.getStr("isalary");
-                            data.change("isalary", new BigDecimal(isalary));
-                        } catch (Exception e) {
-                            errorMsg.append(data.getStr("isalary") + "薪酬填写有误");
-                        }
-                    })*/
-                    //从第三行开始读取
+//                    //特殊数据转换器
+//                    .setDataChangeHandler((data, index) -> {
+//                        try {
+//                            String isalary = data.getStr("isalary");
+//                            data.change("isalary", new BigDecimal(isalary));
+//                        } catch (Exception e) {
+//                            errorMsg.append(data.getStr("isalary") + "薪酬填写有误");
+//                        }
+//                    })
+                    //从第几行开始读取
                     .setDataStartRow(2)
             );
         //从指定的sheet工作表里读取数据
-        List<QcParam> models = JBoltExcelUtil.readModels(jBoltExcel, "检验参数", QcParam.class, errorMsg);
+        List<QcParam> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", QcParam.class, errorMsg);
         if (notOk(models)) {
             if (errorMsg.length() > 0) {
                 return fail(errorMsg.toString());
@@ -186,42 +243,60 @@ public class QcParamService extends BaseService<QcParam> {
         //读取数据没有问题后判断必填字段
         if (models.size() > 0) {
             for (QcParam param : models) {
-                /*if (notOk(param.getCworkclasscode())) {
-                    return fail("工种编码不能为空");
+                if (notOk(param.getIqcitemid())) {
+                    return fail("参数项目名称不能为空");
                 }
-                if (notOk(param.getCworkclassname())) {
-                    return fail("工种名称不能为空");
+                if (notOk(param.getCQcParamName())) {
+                    return fail("参数名称不能为空");
                 }
-                if (notOk(param.getIlevel())) {
-                    return fail("工种等级不能为空");
-                }*/
             }
         }
-        savaModelHandle(models);
+        //判断是否存在这个参数项目
+        for (QcParam each : models) {
+            List<QcItem> qcItemList = qcItemService.findQcItemName(each.getIqcitemid().toString());
+            if (notOk(qcItemList)) {
+                return fail(each.getIqcitemid() + "参数项目不存在，请去【检验项目】页面新增！");
+            }
+        }
 
+        savaModelHandle(models);
         //执行批量操作
-        boolean result = tx(new IAtom() {
+        boolean success = tx(new IAtom() {
             @Override
             public boolean run() throws SQLException {
                 batchSave(models);
                 return true;
             }
         });
-        if (!result) {
+        if (!success) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL);
         }
         return SUCCESS;
     }
 
-    private void savaModelHandle(List<QcParam> models) {
-        Long userId = JBoltUserKit.getUserId();//用户id
-        String userName = JBoltUserKit.getUserName();//用户名
-        Date date = new Date();
-        getOrgId();//组织id
-        getOrgCode();//组织编码
-        getOrgName();//组织名称
-        for (QcParam qcParam : models) {
+    public void savaModelHandle(List<QcParam> models) {
+        for (QcParam param : models) {
+            saveQcParam(param);
+            List<QcItem> qcItemList = qcItemService.findQcItemName(param.getIqcitemid().toString());
+            param.setIqcitemid(qcItemList.get(0).getIAutoId());
         }
+    }
+
+    public void saveQcParam(QcParam param) {
+        Long userId = JBoltUserKit.getUserId();
+        String userName = JBoltUserKit.getUserName();
+        Date date = new Date();
+        param.setCOrgCode(getOrgCode());
+        param.setCOrgName(getOrgName());
+        param.setICreateBy(userId);
+        param.setCCreateName(userName);
+        param.setDCreateTime(date);
+        param.setDUpdateTime(date);
+        param.setCUpdateName(userName);
+        param.setIUpdateBy(userId);
+        param.setIsDeleted(false);
+        param.setIsEnabled(true);
+//        param.setIqcitemid();
     }
 
 }

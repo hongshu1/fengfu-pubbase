@@ -1813,6 +1813,29 @@ public class PermissionKey {
 	/**
 	 * 是否强制更新
 	 */
-	public static final String APPVERSION_ISFORCE = "appversion_isfore";
+	public static final String APPVERSION_ISFORCE = "appversion_isforce";
+	/**
+	 * 币种档案
+	 */
+	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";	
 
+	/**
+	 * 实体扩展字段
+	 */
+	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
+
+	/**
+	 * 实体扩展字段值集
+	 */
+	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
+
+	/**
+	 * 人员档案
+	 */
+	public static final String PERSON = "person";
+
+	/**
+	 * 新增
+	 */
+	public static final String WAREHOUSE_ADD = "warehouse_add";
 }

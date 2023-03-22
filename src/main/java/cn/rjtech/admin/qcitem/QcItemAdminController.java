@@ -102,6 +102,14 @@ public class QcItemAdminController extends BaseAdminController {
     }
 
     /**
+     * 批量删除
+     */
+    @Before(Tx.class)
+    public void deleteByIds() {
+        renderJson(service.deleteByIds(get("ids")));
+    }
+
+    /**
      * 切换isDeleted
      */
     public void toggleIsDeleted() {
@@ -122,14 +130,10 @@ public class QcItemAdminController extends BaseAdminController {
             renderJsonFail("无有效数据导出");
             return;
         }
-        for (Record r : data) {
-//			r.put("ilevel",personService.formatPattenSn(r.getStr("ilevel"),"work_level"));
-        }
-        try {
-            renderJxls("检验项目（分类）.xlsx", Kv.by("rows", data), "检验项目（分类）(选中导出)_" + DateUtil.today() + ".xlsx");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //2、生成excel文件
+        JBoltExcel jBoltExcel = service.exportExcelTpl(service.getListByIds(ids));
+        //3、导出
+        renderBytesToExcelXlsFile(jBoltExcel);
     }
 
     /*
@@ -141,14 +145,13 @@ public class QcItemAdminController extends BaseAdminController {
             renderJsonFail("无有效数据导出");
             return;
         }
-        for (Record r : rows) {
-//			r.put("ilevel",personService.formatPattenSn(r.getStr("ilevel"),"work_level"));
-        }
-        try {
-            renderJxls("检验项目（分类）.xlsx", Kv.by("rows", rows), "检验项目（分类）" + DateUtil.today() + ".xlsx");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //2、生成excel文件
+        JBoltExcel jBoltExcel = service.exportExcelTpl(service.findAll());
+        //3、导出
+        renderBytesToExcelXlsFile(jBoltExcel);
     }
 
+    public void options() {
+        renderJsonData(service.options());
+    }
 }

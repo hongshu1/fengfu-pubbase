@@ -365,7 +365,7 @@ public class OperationService extends BaseService<Operation> {
 					.setHeaders(//sheet里添加表头
 						JBoltExcelHeader.create("coperationcode", "工序编码", 20),
 						JBoltExcelHeader.create("coperationname", "工序名称", 20),
-						JBoltExcelHeader.create("iworkclassid", "所属工种", 20),
+						JBoltExcelHeader.create("iworkclassname", "所属工种", 20),
 						JBoltExcelHeader.create("cmemo", "备注", 20),
 						JBoltExcelHeader.create("ccreatename", "创建人", 20),
 						JBoltExcelHeader.create("dcreatetime", "创建时间", 20)

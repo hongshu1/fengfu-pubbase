@@ -1,20 +1,26 @@
 package cn.rjtech.admin.qcitem;
 
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
+
 import com.jfinal.plugin.activerecord.Page;
 
+import cn.hutool.core.date.DateUtil;
+import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
+
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.QcItem;
-import cn.rjtech.util.JBoltModelKit;
 import cn.rjtech.util.ValidationUtils;
 
 /**
@@ -52,7 +58,7 @@ public class QcItemService extends BaseService<QcItem> {
         //sql条件处理
         sql.eqBooleanToChar("isDeleted", isDeleted);
         //关键词模糊查询
-        sql.likeMulti(keywords, "cOrgName","cQcItemCode", "cQcItemName", "cCreateName", "cUpdatName");
+        sql.likeMulti(keywords, "cOrgName", "cQcItemCode", "cQcItemName", "cCreateName", "cUpdatName");
         //排序
         sql.desc("dupdatetime");
         return paginate(sql);
@@ -60,16 +66,6 @@ public class QcItemService extends BaseService<QcItem> {
 
     public Page<Record> pageList(Kv kv) {
         Page<Record> recordPage = dbTemplate("qcitem.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
-        /*if (isOk(recordPage.getList())) {
-            for (Record r : recordPage.getList()) {
-                if (isOk(r.getStr("ilevel"))) {
-//					r.put("ilevel",personService.formatPattenSn(r.getStr("ilevel"),"work_level"));
-                }
-                if (isOk(r.getBigDecimal("isalary"))) {
-                    r.put("isalary", r.getBigDecimal("isalary").setScale(2, RoundingMode.HALF_UP));
-                }
-            }
-        }*/
         return recordPage;
     }
 
@@ -81,7 +77,7 @@ public class QcItemService extends BaseService<QcItem> {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         //项目编码不能重复
-        ValidationUtils.isTrue(findQcItemCode(qcItem.getCQcItemCode())==null, qcItem.getCQcItemCode() + "：项目编码重复");
+        ValidationUtils.isTrue(findQcItemCode(qcItem.getCQcItemCode()) == null, qcItem.getCQcItemCode() + "：项目编码重复");
         //1、赋值
         String userName = JBoltUserKit.getUserName();
         Long userId = JBoltUserKit.getUserId();
@@ -111,19 +107,14 @@ public class QcItemService extends BaseService<QcItem> {
         return queryColumn(selectSql().select(QcItem.CQCITEMCODE).eq(QcItem.CQCITEMCODE, cqcItemCode));
     }
 
-	/*public void saveWorkClassHandle(QcItem qcItem, Long icreateBy, String createName, String createTime){
-//		qcItem.setCOrgCode();//组织编码
-//		qcItem.setCCreateName();//组织名称
-//		qcItem.setCQcItemCode();//检验项目编码
-//		qcItem.setCQcItemName();//检验项目名称
-		qcItem.setICreateBy(icreateBy);
-		qcItem.setCCreateName();
-		qcItem.setDCreateTime();
-		qcItem.setIUpdateBy(icreateBy);
-		qcItem.setCUpdatName();
-		qcItem.setDUpdateTime()
-//		qcItem.setIsDeleted(false);
-	}*/
+    /*
+     * 检验项目名称
+     * */
+    public List<QcItem> findQcItemName(String cqcItemName) {
+        List<QcItem> qcItemList =
+            query(selectSql().select(QcItem.CQCITEMNAME).eq(QcItem.CQCITEMNAME, cqcItemName).eq(QcItem.ISDELETED, "0"));
+        return qcItemList;
+    }
 
     /**
      * 更新
@@ -184,7 +175,47 @@ public class QcItemService extends BaseService<QcItem> {
     }
 
     public List<Record> list(Kv kv) {
-        return dbTemplate("qcItem.list", kv).find();
+        return dbTemplate("qcitem.list", kv).find();
+    }
+
+    public List<Record> options() {
+        return dbTemplate("qcitem.list", Kv.of("isenabled", "true")).find();
+    }
+
+    /**
+     * 删除
+     */
+    public Ret delete(Long id) {
+        return deleteById(id, true);
+    }
+
+    /*
+     * 导出excel文件
+     * */
+    public JBoltExcel exportExcelTpl(List<QcItem> datas) {
+        //2、创建JBoltExcel
+        JBoltExcel jBoltExcel = JBoltExcel
+            .create()
+            .addSheet(//设置sheet
+                JBoltExcelSheet.create("检验项目(分类)")//创建sheet name保持与模板中的sheet一致
+                    .setHeaders(//sheet里添加表头
+                        JBoltExcelHeader.create("corgcode", "组织编码", 20),
+                        JBoltExcelHeader.create("corgname", "组织名称", 20),
+                        JBoltExcelHeader.create("cqcitemcode", "检验项目编码", 20),
+                        JBoltExcelHeader.create("cqcitemname", "检验项目名称", 20),
+                        JBoltExcelHeader.create("ccreatename", "创建人", 20),
+                        JBoltExcelHeader.create("dcreatetime", "创建时间", 20)
+                    )
+                    .setDataChangeHandler((data, index) -> {//设置数据转换处理器
+                        //将user_id转为user_name
+                        data.changeWithKey("user_id", "user_username", CACHE.me.getUserUsername(data.get("user_id")));
+                        data.changeBooleanToStr("is_deleted", "是", "否");
+                    })
+                    .setModelDatas(2, datas)//设置数据
+            )
+            .setFileName("检验项目(分类)" + "_" + DateUtil.today());
+        //3、返回生成的excel文件
+        return jBoltExcel;
     }
 
 }
