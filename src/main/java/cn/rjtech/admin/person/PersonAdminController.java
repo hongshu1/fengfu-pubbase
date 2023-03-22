@@ -1,12 +1,16 @@
 package cn.rjtech.admin.person;
 
 import com.jfinal.aop.Inject;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.model.User;
 import cn.rjtech.model.momdata.Person;
 /**
  * 人员档案 Controller
@@ -20,6 +24,8 @@ public class PersonAdminController extends BaseAdminController {
 
 	@Inject
 	private PersonService service;
+	@Inject
+	private UserService userService;
 
    /**
 	* 首页
@@ -51,7 +57,10 @@ public class PersonAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("person",person);
+		Record rc = person.toRecord();
+		User user = userService.findById(rc.getLong("iuserid"));
+		rc.set("cusername", user == null ? null : user.getName());
+		set("person",rc);
 		render("edit.html");
 	}
 

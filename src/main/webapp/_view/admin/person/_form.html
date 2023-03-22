@@ -20,7 +20,7 @@
 				   data-tips="请选择"
 				   data-header="用户名,姓名,电话"
 				   maxlength="40"
-				   value="#(person.iuserid??)"
+				   value="#(person.cusername??)"
 				   >		
 		</div>	
 		<label class="col-sm-1 col-form-label">人员编码</label>
@@ -89,7 +89,7 @@
 				data-text="=请选择="
 				data-text-attr="name"
 				data-value-attr="sn"
-				data-value="#(person.cDept_num??)"
+				data-select="#(person.cdept_num??)"
 				>
 			</select>			
 		</div>
@@ -141,7 +141,7 @@
     <div class="form-group row"
     	data-radio
     	data-rule="radio"
-    	data-value="#(person.isenabled??)"
+    	data-value="#(person.isenabled?? == '1'? 'true' : 'false')"
     	data-name="person.isenabled"
     	data-default="options_first"
     	data-width="col-sm-1"

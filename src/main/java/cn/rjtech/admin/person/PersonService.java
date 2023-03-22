@@ -119,7 +119,7 @@ public class PersonService extends BaseService<Person> {
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		return deleteById(id,true);
+		return updateColumn(id, "isdeleted", true);
 	}
 	/**
 	 * 删除
@@ -247,15 +247,24 @@ public class PersonService extends BaseService<Person> {
 			Long userid = JBoltUserKit.getUserId();
 			String username = JBoltUserKit.getUserName();
 			Date now = new Date();
-			person.setISource(SourceEnum.MES.getValue())
-				.setICreateBy(userid)
-				.setCCreateName(username)
-				.setDCreateTime(now)
-				.setIUpdateBy(userid)
+			if(person.getIAutoId() == null){
+				person.setISource(SourceEnum.MES.getValue())
+					.setICreateBy(userid)
+					.setCCreateName(username)
+					.setDCreateTime(now)
+					.setIUpdateBy(userid)
+					.setCUpdateName(username)
+					.setDUpdateTime(now)
+					.setIsDeleted(false);
+				ValidationUtils.isTrue(person.save(),JBoltMsg.FAIL);
+			}else{
+				person.setIUpdateBy(userid)
 				.setCUpdateName(username)
-				.setDUpdateTime(now)
-				.setIsDeleted(false);
-			ValidationUtils.isTrue(person.save(),JBoltMsg.FAIL);
+				.setDUpdateTime(now);
+			ValidationUtils.isTrue(person.update(),JBoltMsg.FAIL);
+			}
+				
+			
 			//新增人员设备档案
 			personEquipmentService.addSubmitTableDatas(jBoltTable,person.getIAutoId());
 			//修改人员设备档案
