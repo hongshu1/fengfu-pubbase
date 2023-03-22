@@ -276,7 +276,7 @@ public class PermissionKey {
 	/**
 	 * 供应商档案
 	 */
-	public static final String SUPPLIER = "supplier";
+	public static final String VENDORCLASS = "vendorclass";
 	/**
 	 * APS计划排程
 	 */
@@ -764,7 +764,7 @@ public class PermissionKey {
 	/**
 	 * 供应商主表
 	 */
-	public static final String SUPPLIERM = "supplierm";
+	public static final String VENDOR = "vendor";
 	/**
 	 * 新增
 	 */
@@ -892,23 +892,23 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String SUPPLIER_ADD = "supplier_add";
+	public static final String VENDOR_ADD = "vendor_add";
 	/**
 	 * 编辑
 	 */
-	public static final String SUPPLIER_EDIT = "supplier_edit";
+	public static final String VENDOR_EDIT = "vendor_edit";
 	/**
 	 * 删除
 	 */
-	public static final String SUPPLIER_DELETE = "supplier_delete";
+	public static final String VENDOR_DELETE = "vendor_delete";
 	/**
 	 * 导出
 	 */
-	public static final String SUPPLIER_EXPORT = "supplier_export";
+	public static final String VENDOR_EXPORT = "vendor_export";
 	/**
 	 * 导入
 	 */
-	public static final String SUPPLIER_IMPORT = "supplier_import";
+	public static final String VENDOR_IMPORT = "vendor_import";
 	/**
 	 * 新增
 	 */
@@ -1797,45 +1797,40 @@ public class PermissionKey {
 	 * 检验项目
 	 */
 	public static final String QCITEM = "qcitem";
-
 	/**
-	 * 保存
+	 * 生产计划管理
 	 */
-	public static final String APPVERSION_SAVE = "appversion_save";
+	public static final String PRODUCTION_PLAN = "production_plan";
 	/**
-	 * 更新
+	 * 年度生产计划排产
 	 */
-	public static final String APPVERSION_UPDATE = "appversion_update";
+	public static final String YEAR_PRODUCTION_SCHEDULE = "year_production_schedule";
 	/**
-	 * 改变发布状态
+	 * 年度生产计划汇总
 	 */
-	public static final String APPVERSION_PUBLISH = "appversion_publish";
+	public static final String SUMMARY_OF_ANNUAL_PRODUCTION_PLAN = "summary_of_annual_production_plan";
 	/**
-	 * 是否强制更新
+	 * 月周生产计划排产
 	 */
-	public static final String APPVERSION_ISFORCE = "appversion_isforce";
+	public static final String MONTHLY_AND_WEEKLY_PRODUCTION_SCHEDULE = "monthly_and_weekly_production_schedule";
+	/**
+	 * 月周生产计划汇总
+	 */
+	public static final String SUMMARY_OF_MONTHLY_AND_WEEKLY_PRODUCTION = "summary_of_monthly_and_weekly_production";
+	/**
+	 * 生产计划及实绩管理
+	 */
+	public static final String PRODUCTION_PLANNING_AND_PERFORMANCE_MANA = "production_planning_and_performance_mana";
+	/**
+	 * 禀议建模
+	 */
+	public static final String PROPOSAL_MODEL = "proposal_model";
 	/**
 	 * 币种档案
 	 */
-	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";	
-
-	/**
-	 * 实体扩展字段
-	 */
-	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
-
-	/**
-	 * 实体扩展字段值集
-	 */
-	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
-
+	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";
 	/**
 	 * 人员档案
 	 */
-	public static final String PERSON = "person";
-
-	/**
-	 * 新增
-	 */
-	public static final String WAREHOUSE_ADD = "warehouse_add";
+	public static final String PERSON_INDEX = "person_index";
 }

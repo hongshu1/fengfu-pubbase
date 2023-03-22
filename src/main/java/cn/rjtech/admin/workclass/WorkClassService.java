@@ -89,6 +89,7 @@ public class WorkClassService extends BaseService<Workclass> {
         if (dbWorkclass == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
+        ValidationUtils.isTrue(findWorkClassCodeInfo(workclass.getCworkclasscode()) == null, "编码重复！");
         workclass.setIupdateby(JBoltUserKit.getUserId());
         workclass.setCupdatename(JBoltUserKit.getUserName());
         workclass.setDupdatetime(new Date());
