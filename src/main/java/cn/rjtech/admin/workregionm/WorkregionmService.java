@@ -27,7 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -62,10 +62,10 @@ public class WorkregionmService extends BaseService<Workregionm> {
      * 保存
      */
     public Ret save(Workregionm workregionm) {
-        if (workregionm == null || isOk(workregionm.getIautoid())) {
+        if (workregionm == null || isOk(workregionm.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        ValidationUtils.isTrue(getCworkcode(workregionm.getCworkcode()) == null, "编码重复！");
+        ValidationUtils.isTrue(getCworkcode(workregionm.getCWorkCode()) == null, "编码重复！");
         //if(existsName(workregionm.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         saveWorkRegionMHandle(workregionm, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(), getOrgName());
         boolean success = workregionm.save();
@@ -80,11 +80,11 @@ public class WorkregionmService extends BaseService<Workregionm> {
      * 更新
      */
     public Ret update(Workregionm workregionm) {
-        if (workregionm == null || notOk(workregionm.getIautoid())) {
+        if (workregionm == null || notOk(workregionm.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         //更新时需要判断数据存在
-        Workregionm dbWorkregionm = findById(workregionm.getIautoid());
+        Workregionm dbWorkregionm = findById(workregionm.getIAutoId());
         if (dbWorkregionm == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
@@ -105,7 +105,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
             for (String id : StrSplitter.split(ids, COMMA, true, true)) {
                 Workregionm workregionm = findById(id);
                 ValidationUtils.notNull(workregionm, JBoltMsg.DATA_NOT_EXIST);
-                workregionm.setIsdeleted(true);
+                workregionm.setIsDeleted(true);
                 workregionm.update();
             }
             return true;
@@ -200,12 +200,12 @@ public class WorkregionmService extends BaseService<Workregionm> {
      * 创建工段档案信息预处理
      */
     public void saveWorkRegionMHandle(Workregionm workregionm, Long userId, Date date, String username, Long orgId, String orgCode, String orgName) {
-        workregionm.setIcreateby(userId);
-        workregionm.setDcreatetime(date);
-        workregionm.setCcreatename(username);
-        workregionm.setIorgid(orgId);
-        workregionm.setCorgcode(orgCode);
-        workregionm.setCorgname(orgName);
+        workregionm.setICreateBy(userId);
+        workregionm.setDCreateTime(date);
+        workregionm.setCCreateName(username);
+        workregionm.setIOrgId(orgId);
+        workregionm.setCOrgCode(String.valueOf(orgId));
+        workregionm.setCOrgName(String.valueOf(orgId));
     }
 
     public Page<Record> pageList(Integer pageNumber, Integer pageSize, Kv kv) {
@@ -255,17 +255,23 @@ public class WorkregionmService extends BaseService<Workregionm> {
         // 读取数据没有问题后判断必填字段
         if (models.size() > 0) {
             for (Workregionm w : models) {
-                if (notOk(w.getCworkcode())) {
+                if (notOk(w.getCWorkCode())) {
                     return fail("工段编码不能为空");
                 }
-                if (notOk(w.getCworkcode())) {
+                if (notOk(w.getCWorkCode())) {
                     return fail("工段名称不能为空");
                 }
-                if (notOk(w.getIdepid())) {
+                if (notOk(w.getIDepId())) {
                     return fail("部门编码不能为空");
                 }
-                if (isOk(findWorkregionmCodeInfo(w.getCworkcode()))) {
-                    deleteCworkCode(w.getCworkcode());
+                if (isOk(findWorkregionmCodeInfo(w.getCWorkCode()))) {
+                    deleteCworkCode(w.getCWorkCode());
+                }
+                if (notOk(w.getIPsLevel())){
+                    return fail("排产层级不能为空");
+                }
+                if (notOk(w.getIWarehouseId())){
+                    return fail("关联仓库不能为空");
                 }
             }
         }
@@ -376,5 +382,13 @@ public class WorkregionmService extends BaseService<Workregionm> {
 
     public String findWorkregionmCodeInfo(String cCode) {
         return queryColumn(selectSql().select(Workregionm.CWORKCODE).eq(Workregionm.CWORKCODE, cCode));
+    }
+    
+    public List<Record> findByWarehouse(){
+        return dbTemplate("workregionm.findByWarehouse", Kv.by("orgId", getOrgId())).find();
+    }
+    
+    public List<Record> findByWareHouseId(long wareHouseId){
+        return dbTemplate("workregionm.findByWareHouseId", Okv.by("wareHouseId", wareHouseId)).find();
     }
 }

@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
-import cn.jbolt.common.util.CACHE;
+
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -69,7 +69,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        if (isOk(workregionm) && isOk(workregionm.getIpersonid())) {
+        if (isOk(workregionm) && isOk(workregionm.getIPersonId())) {
 //            String personName = CACHE.me.getPersonNameById(workregionm.getIpersonid());
 //            set("personname", personName);
         }
@@ -197,5 +197,13 @@ public class WorkregionmAdminController extends JBoltBaseController {
      */
     public void selectWorkRegionMList() {
         renderJsonData(service.selectWorkRegionMList());
+    }
+    
+    public void findByWarehouse(){
+        renderJsonData(service.findByWarehouse());
+    }
+    
+    public void findByWareHouseId(){
+        renderJsonData(service.findByWareHouseId(getLong("iWarehouseId")));
     }
 }

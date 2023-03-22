@@ -1,5 +1,20 @@
 <form onsubmit="return false;" id="workregionmForm" action="#(action)" method="post">
 <input type="hidden" name="workregionm.iautoid" value="#(workregionm.iautoid??)" />
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">产线编码</label>
+		<div class="col-sm-4">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  data-rule="required"  placeholder="请输入产线编码" maxlength="50" name="workregionm.cworkcode" value="#(workregionm.cworkcode??)"/>
+		</div>
+		<div class="col-sm-auto"></div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">产线名称</label>
+		<div class="col-sm-4">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  data-rule="required"  placeholder="请输入产线名称" maxlength="50" name="workregionm.cworkname" value="#(workregionm.cworkname??)"/>
+		</div>
+	</div>
+
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">所属部门</label>
 		<div class="col-sm-4">
@@ -18,35 +33,74 @@
 		<div class="col-sm-auto"></div>
 	</div>
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">产线编码</label>
-		<div class="col-sm-4">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  data-rule="required"  placeholder="请输入产线编码" maxlength="50" name="workregionm.cworkcode" value="#(workregionm.cworkcode??)"/>
-		</div>
-		<div class="col-sm-auto"></div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">产线名称</label>
-		<div class="col-sm-4">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  data-rule="required"  placeholder="请输入产线名称" maxlength="50" name="workregionm.cworkname" value="#(workregionm.cworkname??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">产线长</label>
 		<div class="col-sm-4">
 			<input type="hidden" id="ipersonid" name="workregionm.ipersonid" value="#(workregionm.ipersonid??)" />
 			<input type="text" autocomplete="off" value="#(personname??)" class="form-control"
 				   placeholder="==请选择产线长=="
-				   data-jboltinput
-				   data-width="600"
-				   data-height="450"
 				   readonly
-				   data-refresh="true"
-				   data-hidden-input="ipersonid"
-				   data-load-type="ajaxportal"
-				   data-url="admin/workregionm/personTable"/>
+				   />
 		</div>
 		<div class="col-sm-auto"></div>
 	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">排产层级</label>
+		<div class="col-sm-4">
+			<select class="form-control"
+					data-autoload
+					name="workregionm.ipslevel"
+					data-tips="请选择排产层级"
+					data-rule="required"
+					data-url="admin/dictionary/options?key=pslevel_type"
+					data-text="=请选择排产层级="
+					data-value=""
+					data-value-attr="sn"
+					data-select="#(workregionm.ipslevel??)">
+			</select>
+		</div>
+		<div class="col-sm-auto"></div>
+	</div>
+
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">关联仓库</label>
+		<div class="col-sm-4">
+			<select class="form-control"
+					data-autoload
+					name="workregionm.iwarehouseid"
+					data-tips="请选择关联仓库"
+					data-rule="required"
+					data-url="/admin/workregionm/findByWarehouse"
+					data-text="=请选择关联仓库="
+					data-value=""
+					data-value-attr="iautoid"
+					data-text-attr="cwhcode,cwhname"
+					data-linkage="true"
+					data-sonid="l2Select"
+					data-select="#(workregionm.iwarehouseid??)">
+			</select>
+		</div>
+		<div class="col-sm-auto"></div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">关联库区</label>
+		<div class="col-sm-4">
+			<select class="form-control"
+					name="workregionm.ireservoirareaid"
+                    id="l2Select"
+                    data-linkage="true"
+                    data-origin-url="admin/workregionm/findByWareHouseId?iWarehouseId="
+					data-value=""
+                    data-value-attr="iautoid"
+                    data-text-attr="careacode,careaname"
+					data-select="#(workregionm.ireservoirareaid??)">
+			</select>
+		</div>
+		<div class="col-sm-auto"></div>
+	</div>
+
 	<div class="form-group row"
 		 data-radio
 		 data-rule="radio"
