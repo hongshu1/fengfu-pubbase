@@ -40,10 +40,13 @@
 # include("qcitem/qcitem.sql")
 # end
 
+# namespace("equipment")
+# include("equipment/equipment.sql")
+# end
+
 # namespace("qcparam")
 # include("qcparam/qcparam.sql")
 # end
-
 
 #namespace("warehouseshelves")
 #include("warehouseshelves/warehouseshelves.sql")
@@ -60,6 +63,7 @@
 #namespace("warehouse")
 #include("warehouse/warehouse.sql")
 #end
+
 #namespace("workshiftd")
 #include("workshiftd/workshiftd.sql")
 #end
