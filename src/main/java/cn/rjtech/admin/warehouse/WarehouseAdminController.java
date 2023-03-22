@@ -20,9 +20,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.Warehouse;
 import com.jfinal.upload.UploadFile;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Date;
+import java.util.List;
 
 /**
  * 仓库建模-仓库档案
@@ -204,5 +202,15 @@ public class WarehouseAdminController extends BaseAdminController {
 			return;
 		}
 		renderJson(service.importExcelData(file.getFile()));
+	}
+
+	/**
+	 * 导出
+	 */
+	@SuppressWarnings("unchecked")
+	public void dataExport() throws Exception {
+		List<Record> rows = service.list(getKv());
+
+		renderJxls("warehouse.xlsx", Kv.by("rows", rows), "仓库列表_" + DateUtil.today() + ".xlsx");
 	}
 }
