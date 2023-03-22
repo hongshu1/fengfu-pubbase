@@ -4,6 +4,7 @@
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.name}</td>
+            <td>${data.cname}</td>
             <td>${data.dstarttime}</td>
             <td>${data.dendtime}</td>
             <td>${data.iminute}</td>
@@ -48,6 +49,7 @@
                     <tr>
                         <th data-width="60" data-column="index">序号</th>
                         <th data-width="150" data-column="itype">类型</th>
+                        <th data-width="150" data-column="cname">出勤名称</th>
                         <th data-width="150" data-column="dstarttime">开始时间</th>
                         <th data-width="150" data-column="dendtime">结束时间</th>
                         <th data-width="150" data-column="iminute">总时长</th>
@@ -109,6 +111,7 @@
                             iminute = parseInt((Math.abs(etime.getTime() - stime.getTime())) / (1000 * 60));
                         }
                         jboltTableSetCell(table, td.parent(), "iminute", iminute, iminute)
+                        judgeTime(table.tableListDatas)
                     }
                 },
                 dendtime: {
@@ -130,15 +133,53 @@
                             iminute = parseInt((Math.abs(etime.getTime() - stime.getTime())) / (1000 * 60));
                         }
                         jboltTableSetCell(table, td.parent(), "iminute", iminute, iminute)
+                        //判断出勤结束时间
+                        judgeTime(table.tableListDatas)
                     },
                 },
                 cmemo: {
                     type: "input",
                     placeholder: "=备注="
+                },
+                cname: {
+                    type: "input",
+                    placeholder: "=出勤名称="
                 }
             }
         };
         return editableTableOptions;
     }
+    
+    function judgeTime(list) {
+        startTime = list[0].dstarttime;
+        endTime = list[0].dendtime;
+        var dstarttime = "2022-11-01";
+        var dendtime = "2022-11-01";
+        if(list.length < 2){
+            setTime(startTime,endTime);
+            return;
+        }
+        var stime = new Date(dstarttime+" "+startTime+":00").getTime();
+        var etime = new Date(dendtime+" "+endTime+":00").getTime();
 
+        for(var i = 1; i< list.length; i++){
+            var istime = new Date(dstarttime+" "+list[i].dstarttime+":00").getTime()
+            var ietime = new Date(dendtime+" "+list[i].dendtime+":00").getTime()
+
+            if(istime < stime){
+                stime = istime;
+                startTime = list[i].dstarttime
+            }
+            if(ietime > etime){
+                etime = ietime;
+                endTime = list[i].dendtime
+            }
+        }
+        setTime(startTime,endTime);
+    }
+
+    function setTime(start,end) {
+        document.getElementById("dstarttime").value = start;
+        document.getElementById("dendtime").value = end;
+    }
 </script>
