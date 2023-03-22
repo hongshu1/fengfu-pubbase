@@ -1,0 +1,125 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>人员档案</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="personForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="personRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a href="admin/person/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改人员档案" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+    <a href="admin/person/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+</td>
+<td>${data.cpsnnum}</td>
+<td>${data.cpsnname}</td>
+<td>${data.isex}</td>
+<td>${data.cpsnmobilephone}</td>
+<td>${data.vcardno}</td>
+<td>${data.cecardno}</td>
+<td>${data.iuserid}</td>
+<td>${data.cdeptnum}</td>
+<td>${data.sysworkage}</td>
+<td>${data.dleavedate}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用：0. 否 1. 是？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/person/toggleIsenabled/${data.id}"/></td>
+<td>${data.dhiredate}</td>
+<td>${data.isource}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/person/toggleIsdeleted/${data.id}"/></td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="person_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增人员档案"  data-url="admin/person/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table table-bordered jbolt_main_table table-center thead_font_normal"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/person/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="personForm_#(pageId)"
+data-rowtpl="personRowtpl_#(pageId)"
+data-page="personPage_#(pageId)"
+data-toolbar="person_toolbar_#(pageId)"
+data-fixed-columns-left="1,2,3,4,5"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="100">操作</th>
+	<th data-width="150" data-column="cPsn_Num">编码</th>
+	<th data-width="150" data-column="cPsn_Name">姓名</th>
+	<th data-width="150" data-column="iSex">性别</th>
+	<th data-width="150" data-column="cPsnMobilePhone">手机</th>
+	<th data-width="150" data-column="vCardNo">工号</th>
+	<th data-width="150" data-column="cEcardNo">电子卡号</th>
+	<th data-width="150" data-column="iUserId">所属用户ID</th>
+	<th data-width="150" data-column="cDept_num">所属部门</th>
+	<th data-width="150" data-column="SysWorkAge">工龄</th>
+	<th data-width="150" data-column="dLeaveDate">离职日期</th>
+	<th data-width="150" data-column="isEnabled">是否启用</th>
+	<th data-width="150" data-column="dHireDate">入职日期</th>
+	<th data-width="150" data-column="iSource">来源：1. MES 2. U8</th>
+	<th data-width="150" data-column="cCreateName">创建人名称</th>
+	<th data-width="150" data-column="dCreateTime">创建时间</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/person/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('handler',refreshJBoltTable)
+			.data('title', '人员档案')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end

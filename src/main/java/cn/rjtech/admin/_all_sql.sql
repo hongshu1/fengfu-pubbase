@@ -71,3 +71,11 @@
 #namespace("workshiftm")
 #include("workshiftm/workshiftm.sql")
 #end
+
+#namespace("workregionm")
+#include("workregionm/workregionm.sql")
+#end
+
+#namespace("person")
+#include("person/person.sql")
+#end

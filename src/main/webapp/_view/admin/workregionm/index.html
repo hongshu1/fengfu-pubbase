@@ -1,0 +1,137 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col">
+		<form class="form-inline" id="workregionmForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=产线编码=" maxlength="50" name="cworkcode" value="#(cworkcode??)"/>
+			<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=产线名称=" maxlength="50" name="cworkname" value="#(cworkname??)"/>
+			<select class="form-control"
+					data-select-type="select2"
+					data-autoload
+					name="idepid"
+					data-url="admin/dept/datas"
+					data-text="=所属部门="
+					data-text-attr="sn,name"
+					data-value=""
+					data-value-attr="id"
+					data-select="#(idepid??)">
+			</select>
+			<select class="form-control" data-url="admin/dictionary/options?key=pslevel_type" name="ipslevel" data-autoload data-text="=排产层级=" data-value-attr="sn" data-value=""></select>
+			<select class="form-control" data-url="admin/dictionary/options?key=options_enable" name="isenabled" data-autoload data-text="=启用状态=" data-value-attr="sn" data-value="" ></select>
+			<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="workregionmRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cworkcode}</td>
+<td>${data.cworkname}</td>
+<td>${data.cdepname}</td>
+<td>${data.cpersonname}</td>
+<td>${data.ipslevel}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/workregionm/toggleIsenabled/${data.iautoid}"/></td>
+<td>${data.cmemo}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="workregionm_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		#permission(PermissionKey.WORKREGIONM_ADD)
+		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增产线档案"  data-url="admin/workregionm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		#end
+		#permission(PermissionKey.WORKREGIONM_EDIT)
+		<button data-openpage="dialog" data-area="100%,100%"  data-handler="refreshJBoltTable" data-title="修改产线档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/workregionm/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		#end
+		#permission(PermissionKey.WORKREGIONM_DELETE)
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/workregionm/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		#end
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+		#permission(PermissionKey.WORKREGIONM_EXPORT)
+		<div class="btn-group dropdown">
+			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+				<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/workregionm/exportExcelByIds"><i class="fa fa-download"></i> 导出选中</button>
+				<button class="btn dropdown-item" data-downloadbtn data-url="admin/workregionm/exportExcelAll" data-form="workregionmForm_#(pageId)"><i class="fa fa-download"></i> 导出全部</button>
+			</div>
+		</div>
+		#end
+		#permission(PermissionKey.WORKREGIONM_IMPORT)
+		<div class="btn-group dropdown">
+			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+			<div class="dropdown-menu" aria-labelledby="importMenuButton">
+				<a data-downloadbtn href="/admin/workregionm/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+				<div class="j_upload_file_box"
+					 data-name="file"
+					 data-btn-class="btn dropdown-item"
+					 data-placeholder="上传导入"
+					 data-confirm="确认导入数据？"
+					 data-accept="excel"
+					 data-maxsize="20480"
+					 data-handler="uploadFile"
+					 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+					 data-url="/admin/workregionm/importExcel">
+				</div>
+			</div>
+		</div>
+		#end
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+data-width="auto"
+data-ajax="true"
+data-url="admin/workregionm/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="workregionmForm_#(pageId)"
+data-rowtpl="workregionmRowtpl_#(pageId)"
+data-page="workregionmPage_#(pageId)"
+data-toolbar="workregionm_toolbar_#(pageId)"
+data-fixed-columns-left="1,2,3"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="150" data-column="cWorkCode">产线编码</th>
+	<th data-width="150" data-column="cWorkName">产线名称</th>
+	<th data-width="150" data-column="cDepName">所属部门</th>
+	<th data-width="150" data-column="cPersonName">产线长</th>
+	<th data-width="150" data-column="iPsLevel">排产层级</th>
+	<th data-width="150" data-column="isEnabled">是否启用</th>
+	<th data-width="150" data-column="cMemo">备注</th>
+	<th data-width="150" data-column="cCreateName">创建人</th>
+	<th data-width="150" data-column="dCreateTime">创建时间</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
