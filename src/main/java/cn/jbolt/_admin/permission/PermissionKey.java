@@ -1815,6 +1815,10 @@ public class PermissionKey {
 	 */
 	public static final String APPVERSION_ISFORCE = "appversion_isforce";
 	/**
+	 * 人员档案
+	 */
+	public static final String PERSON_INDEX = "person_index";	
+	/**
 	 * 币种档案
 	 */
 	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";	

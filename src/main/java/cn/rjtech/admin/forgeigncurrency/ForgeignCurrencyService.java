@@ -1,6 +1,8 @@
 package cn.rjtech.admin.forgeigncurrency;
 
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 
@@ -34,8 +36,8 @@ public class ForgeignCurrencyService extends BaseService<ForgeignCurrency> {
 	 * @param keywords
 	 * @return
 	 */
-	public Page<ForgeignCurrency> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		return dbTemplate("forgeigncurrency.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 	}
 
 	/**
@@ -100,12 +102,12 @@ public class ForgeignCurrencyService extends BaseService<ForgeignCurrency> {
 	}
 
 	/**
-	 * 删除
+	 * 逻辑删除
 	 * @param id
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		return deleteById(id,true);
+		return updateColumn(id, "isdeleted", true);
 	}
 
 	/**

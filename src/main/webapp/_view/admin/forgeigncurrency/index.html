@@ -25,8 +25,12 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.cexchname}</td>
-<td>${data.cexchcode}</td>
+<td>
+	<a href="admin/forgeigncurrency/edit/${data.iautoid}" data-area="900,500"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改币种档案" class="jbolt_table_editbtn">修改</a>
+    <a href="admin/forgeigncurrency/delete/${data.iautoid}" data-ajaxbtn  tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"></i>删除</a>
+</td>
+<td>${data.cexch_name}</td>
+<td>${data.cexch_code}</td>
 <td><img data-switchbtn data-confirm="确定切换折算方式？" data-value="${data.bcal}"  data-handler="refreshJBoltTable"  data-url="admin/forgeigncurrency/toggleBcal/${data.iautoid}"/></td>
 <td>${data.idec}</td>
 <td>${data.nerror}</td>
@@ -34,10 +38,6 @@
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
 <td>${data.isource|iSource}</td>
-<td>
-	<a href="admin/forgeigncurrency/edit/${data.iautoid}" data-area="900,500"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改币种档案" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
-    <a href="admin/forgeigncurrency/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
-</td>
 </tr>
 {@/each}
 </textarea>
@@ -51,8 +51,6 @@
 	<div class="clearfix"></div>
 </div>
 
-
-
 <table class="jbolt_table table-bordered jbolt_main_table table-center thead_font_normal"
 data-jbolttable
 data-height="fill"
@@ -65,14 +63,15 @@ data-conditions-form="forgeignCurrencyForm_#(pageId)"
 data-rowtpl="forgeignCurrencyRowtpl_#(pageId)"
 data-page="forgeignCurrencyPage_#(pageId)"
 data-toolbar="forgeignCurrency_toolbar_#(pageId)"
-data-fixed-columns-left="1,2,3,4"
-data-fixed-columns-right="-1"
+data-fixed-columns-left="1,2,3,4,5"
+###data-fixed-columns-right="-1"
 data-row-dblclick-active="true"
 data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 >
 <thead>
 <tr>
 	<th data-width="60">序号</th>
+	<th data-width="100">操作</th>
 	<th data-width="150" data-column="cexch_name">币种名称</th>
 	<th data-width="150" data-column="cexch_code">币种编码</th>
 	<th data-width="150" data-column="bcal">折算方式</th>
@@ -82,7 +81,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 	<th data-width="150" data-column="cCreateName">创建人名称</th>
 	<th data-width="150" data-column="dCreateTime">创建时间</th>
 	<th data-width="150" data-column="iSource">来源</th>
-	<th data-width="100">操作</th>
+	
 </tr>
 </thead>
 <tbody>
@@ -101,10 +100,11 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
 		console.log(JSON.stringify(rowData));
 
-		$(tempTr1).data('url', '/admin/admin/forgeigncurrency/edit/' + rowData.iautoid)
-			.data('area', '1200,800')
+		$(tempTr1).data('url', '/admin/forgeigncurrency/edit/' + rowData.iautoid)
+			.data('area', '900,500')
+			.data('handler','refreshJBoltTable')
 			.data('title', '币种档案')
-			.data('btn', '保存,关闭');
+			.data('btn', '确定,关闭');
 
 		DialogUtil.openBy(tempTr1);
 	}
