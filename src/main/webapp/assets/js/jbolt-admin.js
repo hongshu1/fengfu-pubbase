@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.3.8";
+var jbolt_admin_js_version="6.4.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -20720,4 +20720,40 @@ function isJSON(str) {
 		}
 	}
 	console.error('It is not a string!')
+}
+
+/**
+ * 表格dom 指定列相同内容数据合并单元格
+ * @param table
+ * @param cols
+ */
+function tableMergeCells(table, cols) {
+	var isArr = isArray(cols);
+	if(!isArr){
+		cols = [cols];
+	}
+	if (cols.length == 0) {
+		return;
+	}
+	var rows = table.rows;
+	var prevText = null;
+	var prevRow = null;
+	var rowLen = rows.length;
+	var colLen = cols.length;
+	var row,col;
+	var text;
+	for (var colIndex = 0; colIndex < colLen; colIndex++) {
+		col = cols[colIndex]-1;
+		for (var i = 0; i < rowLen; i++) {
+			row  = rows[i];
+			text = row.cells[col].textContent;
+			if (text === prevText && prevRow !== null) {
+				row.deleteCell(col);
+				prevRow.cells[col].rowSpan++;
+			} else {
+				prevText = text;
+				prevRow = row;
+			}
+		}
+	}
 }
