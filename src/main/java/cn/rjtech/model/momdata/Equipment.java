@@ -15,5 +15,6 @@ public class Equipment extends BaseEquipment<Equipment> {
     public String getStateName() {
         return JBoltDictionaryCache.me.getNameBySn("healthy_type", getIStatus()+"");
     }
+
 }
 

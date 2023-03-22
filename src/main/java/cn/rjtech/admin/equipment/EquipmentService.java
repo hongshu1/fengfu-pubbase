@@ -18,6 +18,8 @@ import java.sql.SQLException;
 import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.Equipment;
+import com.jfinal.plugin.activerecord.Record;
+
 /**
  * 设备管理-设备档案
  * @ClassName: EquipmentService
@@ -40,26 +42,34 @@ public class EquipmentService extends BaseService<Equipment> {
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @param keywords   关键词
-     * @param cEquipmentCode 设备编码
-     * @param cEquipmentName 设备名称
-     * @param iWorkRegionmId 产线ID
-     * @param isDeleted 删除状态：0. 未删除 1. 已删除
 	 * @return
 	 */
-	public Page<Equipment> getAdminDatas(int pageNumber, int pageSize, String keywords, String cEquipmentCode, String cEquipmentName, Long iWorkRegionmId, Boolean isDeleted) {
-	    //创建sql对象
-	    Sql sql = selectSql().page(pageNumber,pageSize);
-	    //sql条件处理
-        sql.eq("cEquipmentCode",cEquipmentCode);
-        sql.eq("cEquipmentName",cEquipmentName);
-        sql.eq("iWorkRegionmId",iWorkRegionmId);
-        sql.eqBooleanToChar("isDeleted",isDeleted);
-        //关键词模糊查询
-        sql.likeMulti(keywords,"cCreateName", "cUpdateName");
-        //排序
-        sql.desc("iAutoId");
-		return paginate(sql);
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+
+		return dbTemplate("equipment.selectEquipments",kv).paginate(pageNumber,pageSize);
+
+	}
+
+	/**
+	 * 后台管理数据查询
+	 * @return
+	 */
+	public List<Record> getAdminDataNoPage( Kv kv) {
+
+		return dbTemplate("equipment.selectEquipments",kv).find();
+
+	}
+
+	/**
+	 * 后台管理数据查询
+	 * @param pageNumber 第几页
+	 * @param pageSize   每页几条数据
+	 * @return
+	 */
+	public Page<Record> getAdminDataResModels(int pageNumber, int pageSize, Kv kv) {
+
+		return dbTemplate("equipment.selectEquipments",kv).paginate(pageNumber,pageSize);
+
 	}
 
 	/**
@@ -227,7 +237,7 @@ public class EquipmentService extends BaseService<Equipment> {
 	 * 生成要导出的Excel
 	 * @return
 	 */
-	public JBoltExcel exportExcel(List<Equipment> datas) {
+	public JBoltExcel exportExcel(List<Record> datas) {
 	    return JBoltExcel
 			    //创建
 			    .create()
@@ -240,14 +250,14 @@ public class EquipmentService extends BaseService<Equipment> {
                     .setHeaders(1,
                             JBoltExcelHeader.create("cequipmentcode","设备编码",15),
                             JBoltExcelHeader.create("cequipmentname","设备名称",15),
-                            JBoltExcelHeader.create("iworkregionmid","产线ID",15),
+                            JBoltExcelHeader.create("workname","所属产线",15),
                             JBoltExcelHeader.create("isnozzleswitchenabled","是否导电咀更换",15),
-                            JBoltExcelHeader.create("istatus","状态",15),
+                            JBoltExcelHeader.create("statename","状态",15),
                             JBoltExcelHeader.create("ccreatename","创建人名称",15),
                             JBoltExcelHeader.create("dcreatetime","创建时间",15)
                             )
     		    	//设置导出的数据源 来自于数据库查询出来的Model List
-    		    	.setModelDatas(2,datas)
+    		    	.setRecordDatas(2,datas)
     		    );
 	}
 
@@ -268,4 +278,7 @@ public class EquipmentService extends BaseService<Equipment> {
 		return null;
 	}
 
+	public List<Record> selectWorkRegs() {
+		return dbTemplate("equipment.selectWorkRegs").find();
+	}
 }

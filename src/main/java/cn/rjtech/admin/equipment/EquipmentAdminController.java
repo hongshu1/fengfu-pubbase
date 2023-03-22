@@ -2,6 +2,8 @@ package cn.rjtech.admin.equipment;
 
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import cn.rjtech.model.momdata.Equipment;
@@ -45,7 +47,7 @@ public class EquipmentAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("cequipmentcode"), get("cequipmentname"), getLong("iworkregionmid"), getBoolean("isdeleted")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
 	}
 
    /**
@@ -120,8 +122,8 @@ public class EquipmentAdminController extends BaseAdminController {
 	* 执行导出excel 根据查询form表单
 	*/
 	public void exportExcelByForm() {
-	    Page<Equipment> pageData = service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("cEquipmentCode"), get("cEquipmentName"), getLong("iWorkRegionmId"), getBoolean("isDeleted"));
-	    if(notOk(pageData.getTotalRow())){
+		Page<Record> pageData = service.getAdminDatas(getPageNumber(), getPageSize(), getKv());
+		if(notOk(pageData.getTotalRow())){
 	        renderJsonFail("无有效数据导出");
 	        return;
 	    }
@@ -133,11 +135,18 @@ public class EquipmentAdminController extends BaseAdminController {
 	*/
 	public void exportExcelByCheckedIds() {
 	    String ids = get("ids");
-	    if(notOk(ids)){
-	        renderJsonFail("未选择有效数据，无法导出");
-        	return;
-	    }
-	    List<Equipment> datas = service.getListByIds(ids);
+		Kv kv = getKv();
+		if (ids != null) {
+			String[] split = ids.split(",");
+			String sqlids = "";
+			for (String id : split) {
+				sqlids += "'" + id + "',";
+			}
+			ValidationUtils.isTrue(sqlids.length() > 0, "请至少选择一条数据!");
+			sqlids = sqlids.substring(0, sqlids.length() - 1);
+			kv.set("sqlids", sqlids);
+		}
+	    List<Record> datas = service.getAdminDataNoPage(kv);
 	    if(notOk(datas)){
 	        renderJsonFail("无有效数据导出");
 	        return;
@@ -149,7 +158,7 @@ public class EquipmentAdminController extends BaseAdminController {
 	* 执行导出excel 所有数据
 	*/
 	public void exportExcelAll() {
-	    List<Equipment> datas = service.findAll();
+	    List<Record> datas = service.getAdminDataNoPage(getKv());
 	    if(notOk(datas)){
 	        renderJsonFail("无有效数据导出");
 	        return;
@@ -172,17 +181,6 @@ public class EquipmentAdminController extends BaseAdminController {
 	}
 
 	public void selectLine(){
-		ArrayList<Record> objects = new ArrayList<>();
-		Record record = new Record();
-		record.set("name","产线1");
-		record.set("value",1);
-		Record record1 = new Record();
-		record.set("name","产线2");
-		record.set("value",2);
-		objects.add(record);
-		HashMap<Object, Object> map = new HashMap<>();
-		map.put("data",objects);
-		map.put("state","ok");
-		renderJson(map);
+		renderJsonData(service.selectWorkRegs());
 	}
 }

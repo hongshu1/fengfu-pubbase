@@ -39,3 +39,7 @@
 # namespace("qcitem")
 # include("qcitem/qcitem.sql")
 # end
+
+# namespace("equipment")
+# include("equipment/equipment.sql")
+# end

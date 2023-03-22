@@ -16,7 +16,8 @@
 	data-select-type="select"
 	data-text="=产线ID="
 	data-value=""
-		data-value-attr="value"
+		data-value-attr="iautoid"
+		data-text-attr="cworkname"
 	></select>
 
 		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
@@ -36,17 +37,17 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
 	{@if data.isdeleted}
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/equipment/edit/${data.iautoid}" data-area="800,600" data-title="查看设备管理-设备档案"><i class="fa fa-eye"></i></a>
+			<a class="jbolt_table_editbtn" href="admin/equipment/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑设备管理-设备档案"><i class="fa fa-edit"></i></a>
 	{@else}
-	<a class="jbolt_table_editbtn" href="admin/equipment/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑设备管理-设备档案"><i class="fa fa-edit"></i></a>
+			<a class="text-info mr-1" data-openpage="dialog" href="admin/equipment/edit/${data.iautoid}" data-area="800,600" data-title="查看设备管理-设备档案"><i class="fa fa-eye"></i></a>
 	{@/if}
 	<a class="jbolt_table_delbtn" href="admin/equipment/${data.isdeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
 </td>
 <td>${data.cequipmentcode}</td>
 <td>${data.cequipmentname}</td>
-<td>${data.iworkregionmid}</td>
+<td>${data.workname}</td>
 <td><img data-switchbtn data-confirm="确定切换是否导电咀更换？" data-value="${data.isnozzleswitchenabled}"  data-handler="refreshJBoltTable"  data-url="admin/equipment/toggleIsNozzleSwitchEnabled/${data.iautoid}"/></td>
-<td>${data.stateName}</td>
+<td>${data.statename}</td>
 <td><img data-switchbtn data-confirm="确定切换是否启用：0. 否 1. 是？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/equipment/toggleIsEnabled/${data.iautoid}"/></td>
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
