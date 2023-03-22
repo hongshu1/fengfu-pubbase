@@ -1,5 +1,7 @@
 package cn.rjtech.admin.person;
 
+import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.model.Dictionary;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -7,6 +9,10 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.Person;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+
 /**
  * 人员档案 Service
  * @ClassName: PersonService
@@ -199,4 +205,14 @@ public class PersonService extends BaseService<Person> {
 		return null;
 	}
 
+    public Object formatPattenSn(String value, String key) {
+		if (notNull(value)) {
+			if (notNull(key)) {
+				List<Dictionary> list = JBoltDictionaryCache.me.getListByTypeKey(key, true);
+				Dictionary find = list.stream().filter(dictionary -> StringUtils.equalsIgnoreCase(dictionary.getSn(), String.valueOf(value))).findFirst().orElse(null);
+				return find == null ? null : find.getName();
+			}
+		}
+		return null;
+    }
 }
