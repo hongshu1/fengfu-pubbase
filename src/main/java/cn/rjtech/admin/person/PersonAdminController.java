@@ -3,6 +3,7 @@ package cn.rjtech.admin.person;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.base.JBoltMsg;
@@ -31,7 +32,7 @@ public class PersonAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
 
    /**
@@ -81,6 +82,13 @@ public class PersonAdminController extends BaseAdminController {
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
+	
+   /**
+	* 删除
+	*/
+	public void deleteByAjax() {
+		renderJson(service.deleteByAjax());
+	}
 
   /**
 	* 切换toggleBPsnPerson
@@ -123,6 +131,11 @@ public class PersonAdminController extends BaseAdminController {
 	public void toggleIsDeleted() {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
-
-
+	/**
+	 * 表格提交
+	 * */
+	@UnCheck
+	public void submitTable(){
+		renderJson(service.submitTable(getJBoltTable()));
+	}
 }
