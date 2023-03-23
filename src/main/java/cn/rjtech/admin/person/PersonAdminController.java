@@ -147,4 +147,11 @@ public class PersonAdminController extends BaseAdminController {
 	public void submitTable(){
 		renderJson(service.submitTable(getJBoltTable()));
 	}
+	/**
+	 * 数据导入界面
+	 * */
+	@CheckPermission(PermissionKey.PERSON_IMPORT_EXCEL_INDEX)
+	public void importExcelIndex(){
+		render("import_excel_index.html");
+	}
 }

@@ -263,8 +263,6 @@ public class PersonService extends BaseService<Person> {
 				.setDUpdateTime(now);
 			ValidationUtils.isTrue(person.update(),JBoltMsg.FAIL);
 			}
-				
-			
 			//新增人员设备档案
 			personEquipmentService.addSubmitTableDatas(jBoltTable,person.getIAutoId());
 			//修改人员设备档案
