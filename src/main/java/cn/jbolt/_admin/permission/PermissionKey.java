@@ -1842,6 +1842,10 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
+	/**
+	 * 机型档案
+	 */
+	public static final String EQUIPMENT_MODEL = "equipment_model";
 	
 	/**
 	 * 部门档案

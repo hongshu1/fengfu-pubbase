@@ -10,8 +10,8 @@
 <!--	</div>-->
 	<div class="col">
 		<form class="form-inline" id="warehouseAreaForm_#(pageId)"   onsubmit="return false;" method="post">
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="库区编码" name="careacode" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="库区名称" name="careaname" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=库区编码=" name="careacode" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=库区名称=" name="careaname" value="" />
 			<select class="form-control"
 					data-autoload
 					data-url="admin/enums/boolchar"
@@ -51,10 +51,10 @@
 <div class="jbolt_table_toolbar" id="warehouseArea_toolbar_#(pageId)">
 	<div class="btn-group" role="group" aria-label="btn-group">
 		#permission(PermissionKey.WAREHOUSE_AREA_ADD)
-		<button data-openpage="dialog" data-area="700,800"  data-handler="jboltTablePageToFirst" data-title="新增库区档案"  data-url="admin/warehousearea/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="600,450"  data-handler="jboltTablePageToFirst" data-title="新增库区档案"  data-url="admin/warehousearea/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		#end
 		#permission(PermissionKey.WAREHOUSE_AREA_EDIT)
-		<button data-openpage="dialog" data-area="700,800"  data-handler="refreshJBoltTable" data-title="修改库区档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/warehousearea/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-openpage="dialog" data-area="600,450"  data-handler="refreshJBoltTable" data-title="修改库区档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/warehousearea/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
 		#end
 		#permission(PermissionKey.WAREHOUSE_AREA_DELETE)
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/warehousearea/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
@@ -121,7 +121,7 @@ data-fixed-columns-left="1,2,3"
 <thead>
 <tr>
 	<th data-width="60">序号</th>
-	<th data-min-width="150" data-column="cAreaCode">库区编码</th>
+	<th data-width="auto" data-column="cAreaCode">库区编码</th>
 	<th data-width="150" data-column="cAreaName">库区名称</th>
 	<th data-width="150" data-column="iWarehouseId">所属仓库</th>
 	<th data-width="150" data-column="cMemo">备注</th>

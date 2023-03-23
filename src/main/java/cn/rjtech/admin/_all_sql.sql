@@ -83,3 +83,12 @@
 #namespace("department")
 #include("department/department.sql")
 #end
+
+
+#namespace("equipment_model")
+#include("equipmentmodel/equipment_model.sql")
+#end
+
+#namespace("uom")
+#include("uom/uom.sql")
+#end
