@@ -10,7 +10,8 @@ import cn.jbolt.core.enumutil.JBoltEnum;
 public enum JBoltProSystemLogTargetType {
 	HIPRINT_TPL("Hiprint模板",10001),
 	SYSTEM_NOTICE("系统通知",10002),
-	
+	ORG("组织机构", 20003),
+	ORG_PERMISSION("组织权限", 20004),
 	;
 	private String text;
 	private int value;

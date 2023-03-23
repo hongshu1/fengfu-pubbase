@@ -43,3 +43,7 @@
 #namespace("personequipment")
 #include("personequipment/personequipment.sql")
 #end
+
+#namespace("org")
+#include("org/org.sql")
+#end
