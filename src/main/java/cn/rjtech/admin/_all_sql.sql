@@ -28,25 +28,25 @@
 #include("menupermission/menupermission.sql")
 #end
 
-# namespace("workclass")
-# include("workclass/workclass.sql")
-# end
+#namespace("workclass")
+#include("workclass/workclass.sql")
+#end
 
-# namespace("operation")
-# include("operation/operation.sql")
-# end
+#namespace("operation")
+#include("operation/operation.sql")
+#end
 
-# namespace("qcitem")
-# include("qcitem/qcitem.sql")
-# end
+#namespace("qcitem")
+#include("qcitem/qcitem.sql")
+#end
 
-# namespace("equipment")
-# include("equipment/equipment.sql")
-# end
+#namespace("equipment")
+#include("equipment/equipment.sql")
+#end
 
-# namespace("qcparam")
-# include("qcparam/qcparam.sql")
-# end
+#namespace("qcparam")
+#include("qcparam/qcparam.sql")
+#end
 
 #namespace("warehouseshelves")
 #include("warehouseshelves/warehouseshelves.sql")
@@ -78,6 +78,14 @@
 
 #namespace("person")
 #include("person/person.sql")
+#end
+
+#namespace("personequipment")
+#include("personequipment/personequipment.sql")
+#end
+
+#namespace("org")
+#include("org/org.sql")
 #end
 
 #namespace("department")

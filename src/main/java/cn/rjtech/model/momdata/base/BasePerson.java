@@ -144,6 +144,8 @@ public abstract class BasePerson<M extends BasePerson<M>> extends JBoltBaseModel
     public static final String RPERSONTYPE = "rPersonType";
     /**雇佣状态编码，增加字典：rEmployState*/
     public static final String REMPLOYSTATE = "rEmployState";
+    /**工种ID*/
+    public static final String IWORKCLASSID = "iWorkClassId";
 	/**
 	 * 主键ID
 	 */
@@ -1281,6 +1283,23 @@ public abstract class BasePerson<M extends BasePerson<M>> extends JBoltBaseModel
 	@JSONField(name = "remploystate")
 	public java.lang.String getREmployState() {
 		return getStr("rEmployState");
+	}
+
+	/**
+	 * 工种ID
+	 */
+	public M setIWorkClassId(java.lang.Long iWorkClassId) {
+		set("iWorkClassId", iWorkClassId);
+		return (M)this;
+	}
+
+	/**
+	 * 工种ID
+	 */
+	@JBoltField(name="iworkclassid" ,columnName="iWorkClassId",type="Long", remark="工种ID", required=false, maxLength=19, fixed=0, order=68)
+	@JSONField(name = "iworkclassid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIWorkClassId() {
+		return getLong("iWorkClassId");
 	}
 
 }

@@ -1819,6 +1819,10 @@ public class PermissionKey {
 	 */
 	public static final String PERSON_INDEX = "person_index";
 	/**
+	 * 人员档案数据导入
+	 */
+	public static final String PERSON_IMPORT_EXCEL_INDEX = "person_import_excel_index";	
+	/**
 	 * 币种档案
 	 */
 	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";

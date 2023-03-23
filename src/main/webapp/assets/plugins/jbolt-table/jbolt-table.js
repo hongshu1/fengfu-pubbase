@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.3.4";
+var jbolt_table_js_version="3.3.5";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6354,6 +6354,8 @@ function getScrollBarHeight(ele){
 			setTimeout(function(){
 				//处理空的tbody
 				that.processEmptyTableBody(table);
+				//处理自动合并单元格
+				that.processTableAutoMergeCells(table);
 			}, 1000);
 			LayerMsgBox.closeLoadNow();
 		},
@@ -6933,6 +6935,26 @@ function getScrollBarHeight(ele){
 			},callback);
 			//重新设置当前页面 已选数据的 选中状态
 			that.processTableReKeepSelectedItems(table);
+			//处理自动合并单元格
+			that.processTableAutoMergeCells(table);
+		},
+		//处理自动合并指定列单元格
+		processTableAutoMergeCells:function(table){
+			if(table.isEmpty){return;}
+			var mergeCellCols = table.data("auto-merge-cell-cols");
+			var type = typeof(mergeCellCols);
+			if(type=="undefined"){
+				return;
+			}
+			//如果是有逗号的字符串
+			if(type=="string" && mergeCellCols.indexOf(",")!=-1){
+				var arr = mergeCellCols.split(",");
+				mergeCellCols = [];
+				for(var i=0;i<arr.length;i++){
+					mergeCellCols.push(parseInt(arr[i]));
+				}
+			}
+			tableMergeCells(table[0],mergeCellCols);
 		},
 		processTableReKeepSelectedItems:function(table){
 			if(!table.keepSelectedItemsEnable || notOk(table.selectedItemsIds)){return;}
