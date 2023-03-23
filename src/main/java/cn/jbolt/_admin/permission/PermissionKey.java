@@ -1817,11 +1817,11 @@ public class PermissionKey {
 	/**
 	 * 人员档案
 	 */
-	public static final String PERSON_INDEX = "person_index";	
+	public static final String PERSON_INDEX = "person_index";
 	/**
 	 * 币种档案
 	 */
-	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";	
+	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";
 
 	/**
 	 * 实体扩展字段
@@ -1842,4 +1842,29 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
+	
+	/**
+	 * 部门档案
+	 */
+	public static final String DEPARTMENT = "department";
+	/**
+	 * 部门档案新增
+	 */
+	public static final String DEPARTMENT_ADD = "department_add";
+	/**
+	 * 部门档案编辑
+	 */
+	public static final String DEPARTMENT_EDIT = "department_edit";
+	/**
+	 * 部门档案 删除
+	 */
+	public static final String DEPARTMENT_DEL = "department_del";
+	/**
+	 * 部门档案 导出
+	 */
+	public static final String DEPARTMENT_EXPORT = "department_export";
+	/**
+	 * 部门档案 导入
+	 */
+	public static final String DEPARTMENT_IMPORT = "department_import";
 }

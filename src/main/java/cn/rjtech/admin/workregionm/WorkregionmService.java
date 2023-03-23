@@ -1,7 +1,9 @@
 package cn.rjtech.admin.workregionm;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -80,13 +82,16 @@ public class WorkregionmService extends BaseService<Workregionm> {
      * 更新
      */
     public Ret update(Workregionm workregionm) {
-        if (workregionm == null || notOk(workregionm.getIAutoId())) {
+        if (workregionm == null || notOk(workregionm.getIAutoId()) || StrUtil.isBlank(workregionm.getCWorkCode())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         //更新时需要判断数据存在
         Workregionm dbWorkregionm = findById(workregionm.getIAutoId());
         if (dbWorkregionm == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
+        }
+        if (!workregionm.getCWorkCode().equals(dbWorkregionm.getCWorkCode())){
+            ValidationUtils.isTrue(getCworkcode(workregionm.getCWorkCode()) == null, "产线编码重复！");
         }
         //if(existsName(workregionm.getName(), workregionm.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = workregionm.update();
@@ -204,8 +209,11 @@ public class WorkregionmService extends BaseService<Workregionm> {
         workregionm.setDCreateTime(date);
         workregionm.setCCreateName(username);
         workregionm.setIOrgId(orgId);
-        workregionm.setCOrgCode(String.valueOf(orgId));
-        workregionm.setCOrgName(String.valueOf(orgId));
+        workregionm.setCOrgCode(orgCode);
+        workregionm.setCOrgName(orgName);
+        workregionm.setIUpdateBy(userId);
+        workregionm.setDUpdateTime(date);
+        workregionm.setCUpdateName(username);
     }
 
     public Page<Record> pageList(Integer pageNumber, Integer pageSize, Kv kv) {
@@ -223,15 +231,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
                 .from(file)
                 //设置工作表信息
                 .setSheets(
-                        JBoltExcelSheet.create("sheet1")
-                                //设置列映射 顺序 标题名称
-                                .setHeaders(
-                                        JBoltExcelHeader.create("cworkcode", "产线编码"),
-                                        JBoltExcelHeader.create("cworkname", "产线名称"),
-                                        JBoltExcelHeader.create("idepid", "所属部门"),
-                                        JBoltExcelHeader.create("ipersonid", "产线长"),
-                                        JBoltExcelHeader.create("cmemo", "备注")
-                                )
+                        createJboltExcelSheetTpl()
                                 //特殊数据转换器
                                 .setDataChangeHandler((data, index) -> {
 //                                    data.change("ipersonid", CACHE.me.getPersonIdByCode(data.getStr("ipersonid")));
@@ -384,11 +384,38 @@ public class WorkregionmService extends BaseService<Workregionm> {
         return queryColumn(selectSql().select(Workregionm.CWORKCODE).eq(Workregionm.CWORKCODE, cCode));
     }
     
-    public List<Record> findByWarehouse(){
-        return dbTemplate("workregionm.findByWarehouse", Kv.by("orgId", getOrgId())).find();
+    public JBoltExcel exportExcelTpl(List<Record> datas) {
+        //2、创建JBoltExcel
+        JBoltExcel jBoltExcel = JBoltExcel
+                .create()//创建JBoltExcel 从模板加载创建
+                .addSheet(createJboltExcelSheetTpl().setDataChangeHandler((data, index) -> {//设置数据转换处理器
+//                                    //将user_id转为user_name
+//                                    data.changeWithKey("user_id", "user_username", CACHE.me.getUserUsername(data.get("user_id")));
+//                                    data.changeBooleanToStr("is_deleted", "是", "否");
+                                })
+                                .setRecordDatas(2,datas)//设置数据
+                )
+                .setFileName("产线档案"+ "_"+ DateUtil.today());
+        //3、返回生成的excel文件
+        return jBoltExcel;
     }
     
-    public List<Record> findByWareHouseId(long wareHouseId){
-        return dbTemplate("workregionm.findByWareHouseId", Okv.by("wareHouseId", wareHouseId)).find();
+    /**
+     * 统一导入导出模板
+     * @return
+     */
+    private JBoltExcelSheet createJboltExcelSheetTpl(){
+        JBoltExcelSheet jBoltExcelSheet = JBoltExcelSheet.create("sheet");
+        jBoltExcelSheet.setHeaders(
+                JBoltExcelHeader.create("cworkcode", "产线编码", 20),
+                JBoltExcelHeader.create("cworkname", "产线名称", 20),
+                JBoltExcelHeader.create("cdepname", "所属部门", 20),
+                JBoltExcelHeader.create("cpersonname", "产线长", 20),
+                JBoltExcelHeader.create("ipslevel", "排产层级", 15),
+                JBoltExcelHeader.create("cwhname", "关联仓库名称", 20),
+                JBoltExcelHeader.create("cmemo", "备注",20)
+        );
+        return jBoltExcelSheet;
     }
+    
 }

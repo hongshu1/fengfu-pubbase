@@ -323,4 +323,8 @@ public class WarehouseService extends BaseService<Warehouse> {
 
 		return SUCCESS;
 	}
+	
+	public List<Record> findByWarehouse(){
+		return dbTemplate("warehouse.findByWarehouse", Kv.by("orgId", getOrgId())).find();
+	}
 }

@@ -1,10 +1,15 @@
 #sql("list")
 SELECT
-    jd.name cDepName,
-    jd.sn cDepCode,
+    jd.cDepName cDepName,
+    jd.cDepCode cDepCode,
+    per.cPsn_Name  cPersonName,
+    ware.cWhCode,
+    ware.cWhName,
     m.*
 FROM Bd_WorkRegionM m
-    LEFT JOIN #(getBaseDbName()).dbo.jb_dept jd ON jd.id = m.iDepId
+    LEFT JOIN Bd_Department jd ON jd.iautoid = m.iDepId
+    LEFT JOIN Bd_Person per ON per.iAutoId = m.iPersonId
+    LEFT JOIN Bd_Warehouse ware ON ware.iAutoId = m.iWarehouseId
 WHERE m.isDeleted = '0'
     #if(ids)
         AND m.iautoid IN #(ids)
@@ -44,18 +49,3 @@ FROM Bd_WorkRegionM
 WHERE iDepId IN (#(teamIdList))
 #end
 
-#sql("findByWarehouse")
-SELECT
-	iAutoId,
-	cWhCode,
-	cWhName
-FROM
-	Bd_Warehouse
-	WHERE
-	    iOrgId = #para(orgId)
-	AND isDeleted = '0'
-#end
-
-#sql("findByWareHouseId")
-SELECT iAutoId,cAreaCode,cAreaName FROM Bd_Warehouse_Area WHERE iWarehouseId = #para(wareHouseId) AND isEnabled = 1 AND isDeleted = '0'
-#end

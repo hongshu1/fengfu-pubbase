@@ -272,5 +272,9 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 
 		return SUCCESS;
 	}
+	
+	public List<Record> findByWareHouseId(long wareHouseId){
+		return dbTemplate("warehousearea.findByWareHouseId", Okv.by("wareHouseId", wareHouseId)).find();
+	}
 
 }

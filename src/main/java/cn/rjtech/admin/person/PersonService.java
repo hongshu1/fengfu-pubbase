@@ -7,6 +7,9 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.Person;
+
+import java.util.List;
+
 /**
  * 人员档案 Service
  * @ClassName: PersonService
@@ -115,7 +118,7 @@ public class PersonService extends BaseService<Person> {
 	}
 
 	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType 
+	 * 设置返回二开业务所属的关键systemLog的targetType
 	 * @return
 	 */
 	@Override
@@ -198,5 +201,12 @@ public class PersonService extends BaseService<Person> {
 		//这里用来覆盖 检测Person是否被其它表引用
 		return null;
 	}
-
+	
+	public Page<Person> paginateDatas(int pageNumber, int pageSize, Kv kv){
+		return daoTemplate("person.findAll", kv).paginate(pageNumber, pageSize);
+	}
+	
+	public List<Person> findAll(Kv kv){
+		return daoTemplate("person.findAll", kv).find();
+	}
 }

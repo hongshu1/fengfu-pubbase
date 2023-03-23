@@ -79,3 +79,7 @@
 #namespace("person")
 #include("person/person.sql")
 #end
+
+#namespace("department")
+#include("department/department.sql")
+#end
