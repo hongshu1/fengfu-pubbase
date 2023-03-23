@@ -121,6 +121,17 @@ function iSource(val) {
     }
 }
 
+function iSex(val) {
+    switch (val) {
+        case 1:
+            return "男";
+        case 2:
+            return "女";
+        default:
+            return '';
+    }
+}
+
 function initMineJuicer(){
 	//格式 juicer.register("模板函数名定义（自己取名）",具体模板函数实现);
 	//举例 juicer.register("date_ymdhm",date_ymdhm);
@@ -141,6 +152,7 @@ function initMineJuicer(){
     juicer.register('roletype', roletype);
     juicer.register('auditstatus', auditstatus);
     juicer.register('iSource', iSource);
+    juicer.register('iSex', iSex);
 }
 
 function jboltTableGetSpecCols(ele, colName) {

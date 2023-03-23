@@ -7,10 +7,10 @@
         <div class="row">
             <div class="col-12 text-left">
                 <form class="form-inline text-left" id="orgForm_#(pageId)" onsubmit="return false;" method="post">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="组织编码" name="orgCode"/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="组织名称" name="orgName"/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="U8数据库名" name="u8Dbname"/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="U8数据源别名" name="u8Alias"/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=组织编码=" name="orgCode"/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=组织名称=" name="orgName"/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=U8数据库名=" name="u8Dbname"/>
+                    <!--<input type="text" autocomplete="off" class="form-control" placeholder="=U8数据源别名=" name="u8Alias"/>-->
                     <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
                     <button type="reset" class="btn btn-light"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
                 </form>
@@ -25,9 +25,9 @@
                 <td>${data.org_code}</td>
                 <td>${data.org_name}</td>
                 <td>${data.u8_dbname}</td>
-                <td>${data.u8_alias}</td>
+                <!--<td>${data.u8_alias}</td>-->
                 <td>${data.name}</td>
-                <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.enable}" data-handler="refreshJBoltTable" data-url="admin/org/toggleEnable/${data.id}"/></td>
+                <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.enable == '1'}" data-handler="refreshJBoltTable" data-url="admin/org/toggleEnable/${data.id}"/></td>
                 <td>${data.enable_time}</td>
                 <td>${data.remark}</td>
             </tr>
@@ -66,7 +66,7 @@
                             <th data-width="80" data-column="org_code">组织编码</th>
                             <th data-width="150" data-column="org_name">组织名称</th>
                             <th data-width="150" data-column="u8_dbname">U8数据库名</th>
-                            <th data-width="110" data-column="u8_alias">U8数据源别名</th>
+                            <!--<th data-width="110" data-column="u8_alias">U8数据源别名</th>-->
                             <th data-width="150" data-column="name">创建人</th>
                             <th data-width="100" data-column="enable">是否启用</th>
                             <th data-width="150" data-column="enable_time">启用时间</th>
