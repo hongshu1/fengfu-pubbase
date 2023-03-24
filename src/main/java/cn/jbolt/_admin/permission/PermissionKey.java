@@ -1821,7 +1821,7 @@ public class PermissionKey {
 	/**
 	 * 人员档案数据导入
 	 */
-	public static final String PERSON_IMPORT_EXCEL_INDEX = "person_import_excel_index";	
+	public static final String PERSON_IMPORT_EXCEL_INDEX = "person_import_excel_index";
 	/**
 	 * 币种档案
 	 */
@@ -1879,6 +1879,31 @@ public class PermissionKey {
 	 * 部门档案 导入
 	 */
 	public static final String DEPARTMENT_IMPORT = "department_import";
+	
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE = "inventorychange";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_ADD = "inventorychange_add";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_DEL = "inventorychange_del";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_EDIT = "inventorychange_edit";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_IMPORT = "inventorychange_import";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_EXPORT = "inventorychange_export";
 	/**
 	 * 年度计划
 	 */

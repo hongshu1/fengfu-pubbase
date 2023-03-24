@@ -110,6 +110,10 @@
 #include("uom/uom.sql")
 #end
 
+#namespace("inventorychange")
+#include("inventorychange/inventorychange.sql")
+#end
+
 #namespace("container")
 #include("container/container.sql")
 #end
