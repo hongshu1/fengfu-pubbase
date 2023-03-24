@@ -47,3 +47,7 @@
 #namespace("org")
 #include("org/org.sql")
 #end
+
+#namespace("settlestyle")
+#include("settlestyle/settlestyle.sql")
+#end
