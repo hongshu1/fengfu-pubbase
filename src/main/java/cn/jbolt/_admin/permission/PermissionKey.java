@@ -1825,6 +1825,11 @@ public class PermissionKey {
 	/**
 	 * 币种档案
 	 */
+	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";	
+	/**
+	 * 结算方式
+	 */
+	public static final String SETTLE_STYLE = "settle_style";	
 	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";
 
 	/**

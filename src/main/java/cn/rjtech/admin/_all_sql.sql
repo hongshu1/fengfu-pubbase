@@ -88,6 +88,11 @@
 #include("org/org.sql")
 #end
 
+#namespace("settlestyle")
+#include("settlestyle/settlestyle.sql")
+#end
+
+
 #namespace("department")
 #include("department/department.sql")
 #end
