@@ -28,25 +28,25 @@
 #include("menupermission/menupermission.sql")
 #end
 
-# namespace("workclass")
-# include("workclass/workclass.sql")
-# end
+#namespace("workclass")
+#include("workclass/workclass.sql")
+#end
 
-# namespace("operation")
-# include("operation/operation.sql")
-# end
+#namespace("operation")
+#include("operation/operation.sql")
+#end
 
-# namespace("qcitem")
-# include("qcitem/qcitem.sql")
-# end
+#namespace("qcitem")
+#include("qcitem/qcitem.sql")
+#end
 
-# namespace("equipment")
-# include("equipment/equipment.sql")
-# end
+#namespace("equipment")
+#include("equipment/equipment.sql")
+#end
 
-# namespace("qcparam")
-# include("qcparam/qcparam.sql")
-# end
+#namespace("qcparam")
+#include("qcparam/qcparam.sql")
+#end
 
 #namespace("warehouseshelves")
 #include("warehouseshelves/warehouseshelves.sql")
@@ -72,6 +72,10 @@
 #include("workshiftm/workshiftm.sql")
 #end
 
+#namespace("monthweekproductionschedule")
+#include("monthweekproductionschedule/monthweekproductionschedule.sql")
+#end
+
 #namespace("workregionm")
 #include("workregionm/workregionm.sql")
 #end
@@ -79,6 +83,24 @@
 #namespace("person")
 #include("person/person.sql")
 #end
+
+#namespace("personequipment")
+#include("personequipment/personequipment.sql")
+#end
+
+#namespace("org")
+#include("org/org.sql")
+#end
+
+#namespace("settlestyle")
+#include("settlestyle/settlestyle.sql")
+#end
+
+
+#namespace("department")
+#include("department/department.sql")
+#end
+
 
 #namespace("equipment_model")
 #include("equipmentmodel/equipment_model.sql")
@@ -90,4 +112,12 @@
 
 #namespace("inventoryclass")
 #include("inventoryclass/inventoryclass.sql")
+#end
+
+#namespace("inventorychange")
+#include("inventorychange/inventorychange.sql")
+#end
+
+#namespace("container")
+#include("container/container.sql")
 #end

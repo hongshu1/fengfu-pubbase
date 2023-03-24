@@ -1817,11 +1817,19 @@ public class PermissionKey {
 	/**
 	 * 人员档案
 	 */
-	public static final String PERSON_INDEX = "person_index";	
+	public static final String PERSON_INDEX = "person_index";
+	/**
+	 * 人员档案数据导入
+	 */
+	public static final String PERSON_IMPORT_EXCEL_INDEX = "person_import_excel_index";
 	/**
 	 * 币种档案
 	 */
-	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";	
+	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";
+	/**
+	 * 结算方式
+	 */
+	public static final String SETTLE_STYLE = "settle_style";
 
 	/**
 	 * 实体扩展字段
@@ -1850,4 +1858,95 @@ public class PermissionKey {
 	 * 料品档案
 	 */
     public static final String INVENTORY_RECORD = "inventory_record";
+	
+	/**
+	 * 部门档案
+	 */
+	public static final String DEPARTMENT = "department";
+	/**
+	 * 部门档案新增
+	 */
+	public static final String DEPARTMENT_ADD = "department_add";
+	/**
+	 * 部门档案编辑
+	 */
+	public static final String DEPARTMENT_EDIT = "department_edit";
+	/**
+	 * 部门档案 删除
+	 */
+	public static final String DEPARTMENT_DEL = "department_del";
+	/**
+	 * 部门档案 导出
+	 */
+	public static final String DEPARTMENT_EXPORT = "department_export";
+	/**
+	 * 部门档案 导入
+	 */
+	public static final String DEPARTMENT_IMPORT = "department_import";
+	
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE = "inventorychange";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_ADD = "inventorychange_add";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_DEL = "inventorychange_del";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_EDIT = "inventorychange_edit";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_IMPORT = "inventorychange_import";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_EXPORT = "inventorychange_export";
+	/**
+	 * 年度计划
+	 */
+	public static final String ANNUALORDERM = "annualorderm";
+
+	/**
+	 * 容器管理
+	 */
+	public static final String CONTAINER_CONTROL = "container_control";
+	/**
+	 * 容器档案
+	 */
+	public static final String CONTAINER = "container";
+	/**
+	 * 容器分类
+	 */
+	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 生产计划管理
+	 */
+	public static final String PRODUCTION_PLAN = "production_plan";
+	/**
+	 * 年度生产计划排产
+	 */
+	public static final String YEAR_PRODUCTION_SCHEDULE = "year_production_schedule";
+	/**
+	 * 年度生产计划汇总
+	 */
+	public static final String SUMMARY_OF_ANNUAL_PRODUCTION_PLAN = "summary_of_annual_production_plan";
+	/**
+	 * 月周生产计划排产
+	 */
+	public static final String MONTHLY_AND_WEEKLY_PRODUCTION_SCHEDULE = "monthly_and_weekly_production_schedule";
+	/**
+	 * 月周生产计划汇总
+	 */
+	public static final String SUMMARY_OF_MONTHLY_AND_WEEKLY_PRODUCTION = "summary_of_monthly_and_weekly_production";
+	/**
+	 * 生产计划及实绩管理
+	 */
+	public static final String PRODUCTION_PLANNING_AND_PERFORMANCE_MANA = "production_planning_and_performance_mana";
 }
