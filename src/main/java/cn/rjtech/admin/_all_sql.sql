@@ -72,6 +72,10 @@
 #include("workshiftm/workshiftm.sql")
 #end
 
+#namespace("monthweekproductionschedule")
+#include("monthweekproductionschedule/monthweekproductionschedule.sql")
+#end
+
 #namespace("workregionm")
 #include("workregionm/workregionm.sql")
 #end

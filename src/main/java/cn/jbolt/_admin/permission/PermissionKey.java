@@ -1825,11 +1825,11 @@ public class PermissionKey {
 	/**
 	 * 币种档案
 	 */
-	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";	
+	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";
 	/**
 	 * 结算方式
 	 */
-	public static final String SETTLE_STYLE = "settle_style";	
+	public static final String SETTLE_STYLE = "settle_style";
 
 	/**
 	 * 实体扩展字段
@@ -1896,4 +1896,28 @@ public class PermissionKey {
 	 * 容器分类
 	 */
 	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 生产计划管理
+	 */
+	public static final String PRODUCTION_PLAN = "production_plan";
+	/**
+	 * 年度生产计划排产
+	 */
+	public static final String YEAR_PRODUCTION_SCHEDULE = "year_production_schedule";
+	/**
+	 * 年度生产计划汇总
+	 */
+	public static final String SUMMARY_OF_ANNUAL_PRODUCTION_PLAN = "summary_of_annual_production_plan";
+	/**
+	 * 月周生产计划排产
+	 */
+	public static final String MONTHLY_AND_WEEKLY_PRODUCTION_SCHEDULE = "monthly_and_weekly_production_schedule";
+	/**
+	 * 月周生产计划汇总
+	 */
+	public static final String SUMMARY_OF_MONTHLY_AND_WEEKLY_PRODUCTION = "summary_of_monthly_and_weekly_production";
+	/**
+	 * 生产计划及实绩管理
+	 */
+	public static final String PRODUCTION_PLANNING_AND_PERFORMANCE_MANA = "production_planning_and_performance_mana";
 }

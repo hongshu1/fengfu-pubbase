@@ -1,0 +1,71 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+
+        <div class="card">
+            <div class="card-body">
+                <form id="forms">
+                    <!-- 输入框组件 -->
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">指定年份：</label>
+                        <div class="col">
+                            <input type="text" class="form-control" style="display: inline-block; width: 200px" placeholder="指定年" id="layYear" data-rule="required"
+                                   data-date data-type="year" data-fmt="yyyy" name="layYear" value="#(layYear??)"></div>
+                    </div>
+                    <!-- 单行 静态radio组件 -->
+                    <div class="form-group row"
+                         id="radios"
+                         ### 声明是个radio组件
+                         data-radio
+                         ### 声明校验规则 必选 如果不需要就去掉
+                         data-rule="radio"
+                         ### 指定加载UI后选中的值 字符串类型 多个用逗号隔开
+                         data-value="#(customerName??)"
+                         ### 指定下方radio里input的name属性
+                         data-name="customerName"
+                    >
+                        <label class="col-sm-3 col-form-label is_required">指定客户：</label>
+                        <div class="col" style="padding-top: 1px;">
+                            <div class="radio radio-primary  radio-inline">
+                                <input id="clei11" type="radio" name="customerName" value="1"/>
+                                <label for="clei11">客户名称1</label>
+                            </div>
+                            <div class="radio radio-primary  radio-inline">
+                                <input id="clei22" type="radio" name="customerName" value="2"/>
+                                <label for="clei22">客户名称2</label>
+                            </div>
+                            <div class="radio radio-primary  radio-inline">
+                                <input id="clei33" type="radio" name="customerName" value="3"/>
+                                <label for="clei33">客户名称3</label>
+                            </div>
+                            <div class="radio radio-primary  radio-inline">
+                                <input id="clei44" type="radio" name="customerName" value="4"/>
+                                <label for="clei44">客户名称4</label>
+                            </div>
+                            <div class="radio radio-primary  radio-inline">
+                                <input id="clei55" type="radio" name="customerName" value="5"/>
+                                <label for="clei55">客户名称5</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+#end
+
+#define js()
+<script>
+
+    //点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+    function submitThisForm(callback) {
+        var layYear = $("#layYear").val()
+        var customerName = $("input[name='customerName']:checked").val()
+        parent.setChooseDialogSelectResult(layYear, customerName);
+        if (callback)
+            callback();
+    }
+</script>
+#end

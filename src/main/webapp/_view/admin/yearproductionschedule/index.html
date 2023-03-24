@@ -1,0 +1,91 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-auto">
+                <form class="form-inline" id="jboltVersionForm_#(pageId)" onsubmit="return false;" method="post">
+                    <label class="d-inline-block ml-3">计划单号:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入计划单号" name="keywords" value=""/>
+                    <label class="d-inline-block ml-3">状态:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入状态" name="keywords" value=""/>
+                    <label class="d-inline-block ml-3">创建人:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入创建人" name="keywords" value=""/>
+                    <label class="d-inline-block ml-3">创建时间:</label>
+                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" name="startTime" value="#datetime(startTime??,'yyyy-MM-dd')"/>
+                    <span class="ml-1 mr-1">至</span>
+                    <input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20" name="endTime" value="#datetime(endTime??,'yyyy-MM-dd')"/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-secondary"><i class="fa fa-recycle"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_normal">
+            <div class="btn-group" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-handler="refreshPjaxContainer" data-title="新增年度生产计划排产" data-fs="true" data-btn="no"
+                        data-url="/admin/yearproductionschedule/add" class="btn btn-secondary"><i class="fa fa-plus"></i> 新增
+                </button>
+                <button data-dialogbtn data-handler="refreshPjaxContainer" data-title="年度生产计划排产详情" data-fs="true" data-btn="no"
+                        data-url="/admin/yearproductionschedule/detail/12" class="btn btn-secondary"><i class="fa fa-plus"></i> 测试查看
+                </button>
+            </div>
+        </div>
+
+        <!--data-ajax="true"
+        data-url="/admin/yearproductionschedule/datas"-->
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-column-prepend="1:checkbox:true"
+               data-column-resize="true"
+               data-conditions-form="jboltVersionForm_#(pageId)"
+               data-rowtpl="jboltVersionRowtpl_#(pageId)"
+               data-toolbar="jbolt_table_toolbar_normal"
+               data-page="jboltTablePage_ajax_#(pageId)"
+               data-pagesize="10"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150">操作</th>
+                <th data-column="version">订单状态</th>
+                <th data-column="publish_time">计划单号</th>
+                <th data-column="is_new">年份</th>
+                <th data-column="create_time">创建人</th>
+                <th data-column="create_time">创建时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="jboltVersionRowtpl_#(pageId)">
+            {@each datas as data,index}
+                <tr data-id="${data.id}" >
+                    <td>${pageNumber,pageSize,index | rownum}</td>
+                    <td>
+                        <a href="/admin/yearproductionschedule/detail/${data.id}" data-area="700,800"  tooltip data-title="查看"  data-handler="refreshJBoltTable"
+                            data-dialog-title="年度生产计划排产详情" class="jbolt_table_editbtn">查看</a>
+                        <a href="test/table/version/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable"
+                            data-confirm="确定删除此数据？" class="jbolt_table_delbtn">编辑</a>
+                        <a href="test/table/version/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable"
+                            data-confirm="确定删除此数据？" class="jbolt_table_delbtn">审批</a>
+                    </td>
+                    <td>已保存</td>
+                    <td>${1+index}</td>
+                    <td>${data.publishTime}</td>
+                    <td>admin</td>
+                    <td>${data.createTime}</td>
+                </tr>
+            {@/each}
+        </textarea>
+
+    </div>
+</div>
+#end
+
