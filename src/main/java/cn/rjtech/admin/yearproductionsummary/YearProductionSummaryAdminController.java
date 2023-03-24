@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * 年度生产计划汇总
  *
- * @author ：chang
+ * @author ：佛山市瑞杰科技有限公司
  * @description ：YearProductionSummaryAdminController
  * @date ：2023/3/20 14:36
  */
