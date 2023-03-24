@@ -114,6 +114,8 @@ public class WarehouseService extends BaseService<Warehouse> {
 		warehouse.setIOrgId(getOrgId());
 		//TODO 来源1.MES 2.U8  现默认U8
 		warehouse.setISource(2);
+		//默认未删除
+		warehouse.setIsDeleted(false);
 		boolean success=warehouse.save();
 
 		if(success) {

@@ -126,7 +126,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
     }
 
     /**
-     * 生产班次Excel导入数据库
+     * 货架档案Excel导入数据库
      */
     public void importExcel(){
         String uploadPath= JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);

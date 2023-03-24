@@ -1879,4 +1879,17 @@ public class PermissionKey {
 	 * 年度计划
 	 */
 	public static final String ANNUALORDERM = "annualorderm";
+
+	/**
+	 * 容器管理
+	 */
+	public static final String CONTAINER_CONTROL = "container_control";
+	/**
+	 * 容器档案
+	 */
+	public static final String CONTAINER = "container";
+	/**
+	 * 容器分类
+	 */
+	public static final String CONTAINERCLASS = "containerclass";
 }

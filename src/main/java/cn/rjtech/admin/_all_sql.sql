@@ -100,3 +100,7 @@
 #namespace("uom")
 #include("uom/uom.sql")
 #end
+
+#namespace("container")
+#include("container/container.sql")
+#end

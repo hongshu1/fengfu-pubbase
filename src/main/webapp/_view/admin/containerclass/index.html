@@ -1,0 +1,68 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col">
+	<form class="form-inline" id="ContainerClass_form_#(pageId)">
+	</form>
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="ContainerClass_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.ccontainerclasscode}</td>
+<td>${data.ccontainerclassname}</td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/containerclass/edit/${data.iautoid}" data-area="800,600" data-title="查看仓库建模-容器分类"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/containerclass/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑仓库建模-容器分类"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/containerclass/${data.isdeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="ContainerClass_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="70%,90%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增仓库建模-容器分类" data-url="/admin/containerclass/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="ContainerClass_form_#(pageId)"
+	   data-url="admin/containerclass/datas"
+	   data-rowtpl="ContainerClass_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="ContainerClass_page"
+	   data-toolbar="ContainerClass_toolbar_#(pageId)"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="150" data-column="cContainerClassCode">分类编码</th>
+	<th data-width="150" data-column="cContainerClassName">分类名称</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
