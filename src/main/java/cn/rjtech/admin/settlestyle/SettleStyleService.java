@@ -1,11 +1,20 @@
 package cn.rjtech.admin.settlestyle;
 
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+
+import java.util.Date;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.User;
+import cn.rjtech.config.DictionaryTypeKey;
 import cn.rjtech.model.momdata.SettleStyle;
 /**
  * 结算方式 Service
@@ -29,8 +38,12 @@ public class SettleStyleService extends BaseService<SettleStyle> {
 	 * @param keywords
 	 * @return
 	 */
-	public Page<SettleStyle> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		Page<Record> pageList = dbTemplate("settlestyle.paginateAdminDatas",para).paginate(pageNumber, pageSize);
+		for (Record row : pageList.getList()) {
+			row.set("issbilltypedesc", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.ISSBILLTYPE, row.getStr("issbilltype")));
+		}
+		return pageList;
 	}
 
 	/**
@@ -42,7 +55,15 @@ public class SettleStyleService extends BaseService<SettleStyle> {
 		if(settleStyle==null || isOk(settleStyle.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		//if(existsName(settleStyle.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		User loginUser = JBoltUserKit.getUser();
+		Date now = new Date();
+		settleStyle.setICreateBy(loginUser.getId())
+			.setCCreateName(loginUser.getName())
+			.setDCreateTime(now)
+			.setIUpdateBy(loginUser.getId())
+			.setCUpdateName(loginUser.getName())
+			.setDUpdateTime(now)
+			.setIsDeleted(false);
 		boolean success=settleStyle.save();
 		if(success) {
 			//添加日志
@@ -63,7 +84,11 @@ public class SettleStyleService extends BaseService<SettleStyle> {
 		//更新时需要判断数据存在
 		SettleStyle dbSettleStyle=findById(settleStyle.getIAutoId());
 		if(dbSettleStyle==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(settleStyle.getName(), settleStyle.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		User loginUser = JBoltUserKit.getUser();
+		Date now = new Date();
+		dbSettleStyle.setIUpdateBy(loginUser.getId())
+			.setCUpdateName(loginUser.getName())
+			.setDUpdateTime(now);
 		boolean success=settleStyle.update();
 		if(success) {
 			//添加日志
@@ -87,7 +112,7 @@ public class SettleStyleService extends BaseService<SettleStyle> {
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		return deleteById(id,true);
+		return updateColumn(id, "isdeleted", true);
 	}
 
 	/**

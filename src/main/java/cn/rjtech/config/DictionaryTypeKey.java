@@ -6,5 +6,8 @@ package cn.rjtech.config;
  * @author Kephon
  */
 public class DictionaryTypeKey {
-
+	/**
+     * 票据类型
+     */
+    public static final String ISSBILLTYPE = "iSSBillType";
 }

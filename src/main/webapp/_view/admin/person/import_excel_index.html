@@ -8,6 +8,7 @@
 <div class="card-header" style="padding:0px;padding-left:10px;padding-top:10px;">
     <div class="form-group row"
     	data-radio
+    	id="iscoverradio"
     	data-rule="radio"
     	data-value=""
     	data-name="person.isenabled"
@@ -41,7 +42,7 @@
 #end
 #setLocal(inputId=RandomUtil.random(6))
 <div class="form-group text-center">
-<input type="file" id="fileInput_#(inputId)" class="file-loading" data-max-filecount="8" data-uploadurl="/demo/multiplefilesyncuploader/upload" data-choosebtntext="选择文件" data-theme="explorer-fa" multiple="multiple" data-multiplefileinput  name="file" accept="" data-max-filesize="300" data-sync="true" data-extrahandler="processExtraHandler1" data-handler="setValueTo" data-setvalueto="fileSyncUploaderDemo"/>
+<input type="file" id="fileInput_#(inputId)" class="file-loading" data-link-para-ele="iscoverradio" data-max-filecount="8" data-uploadurl="/admin/person/importExcel" data-choosebtntext="选择文件" data-theme="explorer-fa" multiple="multiple" data-multiplefileinput  name="file" accept="" data-max-filesize="300" data-sync="true" data-extrahandler="processExtraHandler1" data-handler="setValueTo" data-setvalueto="fileSyncUploaderDemo"/>
 </div>
 </fieldset>
 	
