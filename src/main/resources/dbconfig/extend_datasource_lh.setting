@@ -56,10 +56,10 @@ model_package=cn.rjtech.model.momdata,cn.rjtech.common.model
 [u8]
 enable = true
 db_type = sqlserver
-db_name = UFDATA_999_2014
+db_name = UFDATA_001_2023
 db_schema = dbo
 dev_mode = true
-jdbc_url = jdbc:sqlserver://120.24.44.82:1433; DatabaseName=UFDATA_999_2014;trustServerCertificate=true
+jdbc_url = jdbc:sqlserver://120.24.44.82:1433; DatabaseName=UFDATA_001_2023;trustServerCertificate=true
 user = c2e3ca7016138e81
 password = 7e49b8b1a4b6f345883456093b060d0be7297a614abc7682
 is_encrypted = true
