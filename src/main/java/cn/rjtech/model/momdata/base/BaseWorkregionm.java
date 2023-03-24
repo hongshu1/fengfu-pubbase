@@ -54,6 +54,9 @@ public abstract class BaseWorkregionm<M extends BaseWorkregionm<M>> extends JBol
     public static final String DUPDATETIME = "dUpdateTime";
     /**是否删除 1已删除*/
     public static final String ISDELETED = "isDeleted";
+    
+    public static final String cAttachments = "cAttachments";
+    
 	/**
 	 * 主键
 	 */
@@ -427,6 +430,22 @@ public abstract class BaseWorkregionm<M extends BaseWorkregionm<M>> extends JBol
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
 	}
-
+	
+	/**
+	 * 图片
+	 */
+	public M setCAttachments(java.lang.String cAttachments) {
+		set("cAttachments", cAttachments);
+		return (M)this;
+	}
+	
+	/**
+	 * 图片
+	 */
+	@JBoltField(name="cattachments" ,columnName="cAttachments",type="String", remark="图片", required=true, maxLength=50, fixed=0, order=20)
+	@JSONField(name = "cattachments")
+	public java.lang.String getCAttachments() {
+		return getStr("cUpdateName");
+	}
 }
 

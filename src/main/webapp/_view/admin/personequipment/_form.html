@@ -1,0 +1,42 @@
+<form onsubmit="return false;" id="personEquipmentForm" action="#(action)" method="post">
+<input type="hidden" name="personEquipment.iautoid" value="#(personEquipment.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">人员ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入人员ID" maxlength="19" name="personEquipment.ipersonid" value="#(personEquipment.ipersonid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">设备ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入设备ID" maxlength="19" name="personEquipment.iequipmentid" value="#(personEquipment.iequipmentid??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(personEquipment.isdeleted??)"
+    	data-name="personEquipment.isdeleted"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >删除状态：0. 未删除 1. 已删除</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_true" type="radio" name="personEquipment.isdeleted" value="true"/>
+					<label for="r_isdeleted_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_false" type="radio" name="personEquipment.isdeleted" value="false"/>
+					<label for="r_isdeleted_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="personEquipmentForm")
+#end
+

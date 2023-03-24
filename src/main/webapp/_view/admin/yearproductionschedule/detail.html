@@ -1,0 +1,121 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <button class="btn btn-secondary" data-dialogbtn data-link-para-ele="#layYear,#customerName" data-area="600,400" data-title="作成条件"
+                                data-url="/admin/yearproductionschedule/chooseData"> 审批
+                        </button>
+                        <button class="btn btn-secondary" value="loadExcel"> 反审批</button>
+                        <button class="btn btn-secondary"> 关闭</button>
+                        <button class="btn btn-secondary" onclick="saveData()"> 数据导出</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card" style="height: 200px;">
+                    <div class="card-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="jbolt_page_content">
+
+        <div class="jbolt_table_toolbar" id="expenseBudget_toolbar_#(pageId)">
+            <form class="form-inline" id="expenseBudgetForm_#(pageId)" onsubmit="return false;" method="post">
+                <input type="text" autocomplete="off" class="form-control" placeholder="客户名称" name="keywords" data-placeholder="请输入客户名称"/>
+                <input type="text" autocomplete="off" class="form-control" placeholder="机型名称" name="keywords" data-placeholder="请输入机型名称"/>
+                <input type="text" autocomplete="off" class="form-control" placeholder="客户部番" name="keywords" data-placeholder="请输入客户部番"/>
+                <input type="text" autocomplete="off" class="form-control" placeholder="部品名称" name="keywords" data-placeholder="请输入部品名称"/>
+                <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+            </form>
+        </div>
+
+        <!--data-ajax="true"
+            data-url="/admin/yearproductionschedule/datas"-->
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-column-prepend="1:checkbox:true"
+               data-column-resize="true"
+               data-conditions-form="jboltVersionForm_#(pageId)"
+               data-rowtpl="jboltVersionRowtpl_#(pageId)"
+               data-toolbar="expenseBudget_toolbar_#(pageId)"
+               data-page="jboltTablePage_ajax_#(pageId)"
+               data-pagesize="10"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" rowspan="3">序号</th>
+                <th data-width="150" rowspan="3">客户名称</th>
+                <th data-column="version" rowspan="3">机型</th>
+                <th data-column="publish_time" rowspan="3">存货编码</th>
+                <th data-column="is_new" rowspan="3">客户部番</th>
+                <th data-column="create_time" rowspan="3">部品名称</th>
+                <th data-column="create_time" rowspan="3">创建时间</th>
+                <th data-column="create_time">年份</th>
+                <th></th>
+                <th colspan="13">#(layYear)年</th>
+                <th colspan="4">#(nextLayYear)年</th>
+
+            </tr>
+            <tr>
+                <th data-column="create_time">月份</th>
+                <th></th>
+                #for(i = 1; i <= 12; i++)
+                <th>#(i)月</th>
+                #end
+                <th rowspan="2">合计</th>
+                #for(i = 1; i <= 3; i++)
+                <th>#(i)月</th>
+                #end
+                <th rowspan="2">合计</th>
+            </tr>
+            <tr>
+                <th data-column="create_time">客户行事历</th>
+                <th></th>
+                #for(i = 1; i <= 12; i++)
+                <th>#(i)月</th>
+                #end
+                #for(i = 1; i <= 3; i++)
+                <th>#(i)月</th>
+                #end
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="jboltVersionRowtpl_#(pageId)">
+            {@each datas as data,index}
+                <tr data-id="${data.id}" >
+                    <td>${pageNumber,pageSize,index | rownum}</td>
+                    <td>
+                        <a href="/admin/yearproductionschedule/detail/${data.id}" data-area="700,800"  tooltip data-title="查看"  data-handler="refreshJBoltTable"
+                            data-dialog-title="年度生产计划排产详情" class="jbolt_table_editbtn">查看</a>
+                        <a href="test/table/version/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable"
+                            data-confirm="确定删除此数据？" class="jbolt_table_delbtn">编辑</a>
+                        <a href="test/table/version/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable"
+                            data-confirm="确定删除此数据？" class="jbolt_table_delbtn">审批</a>
+                    </td>
+                    <td>已保存</td>
+                    <td>${1+index}</td>
+                    <td>${data.publishTime}</td>
+                    <td>admin</td>
+                    <td>${data.createTime}</td>
+                </tr>
+            {@/each}
+        </textarea>
+    </div>
+
+</div>
+#end

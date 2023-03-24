@@ -1,0 +1,107 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-auto">
+                <form class="form-inline" id="jboltVersionForm_#(pageId)" onsubmit="return false;" method="post">
+                    <label class="d-inline-block ml-3">指定年份:</label>
+                    <input type="text" class="form-control" placeholder="指定年份" id="layYear" data-date data-type="year" data-fmt="yyyy" name="layYear"
+                           value="#datetime((layYear?? DateUtil.getYear()),'yyyy')">
+                    <label class="d-inline-block ml-3">产线名称:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="请输入产线名称" name="keywords" value=""/>
+                    <label class="d-inline-block ml-3">存货编码:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="请输入存货编码" name="keywords" value=""/>
+                    <label class="d-inline-block ml-3">客户部番:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="请输入客户部番" name="keywords" value=""/>
+                    <label class="d-inline-block ml-3">部品名称:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="请输入部品名称" name="keywords" value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-secondary"><i class="fa fa-recycle"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_normal">
+            <div class="btn-group dropdown">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+                </button>
+                <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+                    <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                            data-url="admin/qcitem/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
+                    </button>
+                    <button class="btn dropdown-item" data-downloadbtn data-url="admin/qcitem/exportExcelAll"
+                            data-form="QcItem_form_#(pageId)"><i class="fa fa-download"></i> 导出全部
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!--data-ajax="true"
+        data-url="/admin/yearproductionschedule/datas"-->
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-column-prepend="1:checkbox:true"
+               data-column-resize="true"
+               data-conditions-form="jboltVersionForm_#(pageId)"
+               data-rowtpl="jboltVersionRowtpl_#(pageId)"
+               data-toolbar="jbolt_table_toolbar_normal"
+               data-page="jboltTablePage_ajax_#(pageId)"
+               data-pagesize="10"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" rowspan="2">序号</th>
+                <th data-width="150" rowspan="2">产线名称</th>
+                <th data-width="150" data-column="version" rowspan="2">存货编码</th>
+                <th data-width="150" data-column="publish_time" rowspan="2">客户部番</th>
+                <th data-width="150" data-column="is_new" rowspan="2">部品名称</th>
+                <th colspan="13">#{layYear}</th>
+            </tr>
+            <tr>
+                #for(i = 1; i <= 12; i++)
+                <th>#(i)月</th>
+                #end
+                <th>合计</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="jboltVersionRowtpl_#(pageId)">
+            {@each datas as data,index}
+                <tr data-id="${data.id}" >
+                    <td>${pageNumber,pageSize,index | rownum}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                    <td>${data.createTime}</td>
+                </tr>
+            {@/each}
+        </textarea>
+
+    </div>
+</div>
+#end
+

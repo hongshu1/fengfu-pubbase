@@ -24,3 +24,7 @@ FROM
     #end
 	ORDER BY wa.dCreateTime DESC
 #end
+
+#sql("findByWareHouseId")
+SELECT iAutoId,cAreaCode,cAreaName FROM Bd_Warehouse_Area WHERE iWarehouseId = #para(wareHouseId) AND isEnabled = 1 AND isDeleted = '0'
+#end

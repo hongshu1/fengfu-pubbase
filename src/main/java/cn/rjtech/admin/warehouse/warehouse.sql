@@ -61,3 +61,16 @@ WHERE
 	AND ware.isDeleted = 0
 	AND ware.isEnabled = 1
 #end
+
+#sql("findByWarehouse")
+SELECT
+	iAutoId,
+	cWhCode,
+	cWhName
+FROM
+	Bd_Warehouse
+	WHERE
+	    iOrgId = #para(orgId)
+	AND isDeleted = '0'
+	AND isEnabled = '1'
+#end

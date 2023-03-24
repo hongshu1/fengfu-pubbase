@@ -3,16 +3,30 @@ package cn.rjtech.admin.person;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.model.Dictionary;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+
+import java.util.Date;
+
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+
+import cn.jbolt._admin.dept.DeptService;
+import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.User;
+import cn.rjtech.admin.personequipment.PersonEquipmentService;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Person;
+import cn.rjtech.util.ValidationUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
-
 /**
  * 人员档案 Service
  * @ClassName: PersonService
@@ -21,6 +35,12 @@ import java.util.List;
  */
 public class PersonService extends BaseService<Person> {
 
+	@Inject
+	private UserService userService;
+	@Inject
+	private DeptService deptService;
+	@Inject
+	private PersonEquipmentService personEquipmentService;
 	private final Person dao = new Person().dao();
 
 	@Override
@@ -35,8 +55,19 @@ public class PersonService extends BaseService<Person> {
 	 * @param keywords
 	 * @return
 	 */
-	public Page<Person> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		Boolean isenabled = para.getBoolean("isenabled");
+		//是否启用boolean转char
+		String isenabledStr = isenabled == null ? null:(isenabled ? "1":"0");
+		para.set("isenabled",isenabledStr);
+		Page<Record> pageList = dbTemplate("person.paginateAdminDatas",para).paginate(pageNumber, pageSize);
+		for (Record row : pageList.getList()) {
+			row.set("cdepname", deptService.findNameBySn(row.getStr("cdept_num")));
+			User user = userService.findById(row.getLong("iuserid"));
+			String username = user == null ? null : user.getName();
+			row.set("cusername", username);
+		}
+		return pageList;
 	}
 
 	/**
@@ -93,9 +124,16 @@ public class PersonService extends BaseService<Person> {
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		return deleteById(id,true);
+		return updateColumn(id, "isdeleted", true);
 	}
-
+	/**
+	 * 删除
+	 * @param id
+	 * @return
+	 */
+	public Ret deleteByAjax() {
+		return SUCCESS;
+	}
 	/**
 	 * 删除数据后执行的回调
 	 * @param person 要删除的model
@@ -121,7 +159,7 @@ public class PersonService extends BaseService<Person> {
 	}
 
 	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType 
+	 * 设置返回二开业务所属的关键systemLog的targetType
 	 * @return
 	 */
 	@Override
@@ -204,6 +242,42 @@ public class PersonService extends BaseService<Person> {
 		//这里用来覆盖 检测Person是否被其它表引用
 		return null;
 	}
+	/**
+	 * 表格提交
+	 * */
+	public Ret submitTable(JBoltTable jBoltTable) {
+		Person person = jBoltTable.getFormModel(Person.class, "person");
+		ValidationUtils.notNull(person, JBoltMsg.PARAM_ERROR);
+		tx(()->{
+			Long userid = JBoltUserKit.getUserId();
+			String username = JBoltUserKit.getUserName();
+			Date now = new Date();
+			if(person.getIAutoId() == null){
+				person.setISource(SourceEnum.MES.getValue())
+					.setICreateBy(userid)
+					.setCCreateName(username)
+					.setDCreateTime(now)
+					.setIUpdateBy(userid)
+					.setCUpdateName(username)
+					.setDUpdateTime(now)
+					.setIsDeleted(false);
+				ValidationUtils.isTrue(person.save(),JBoltMsg.FAIL);
+			}else{
+				person.setIUpdateBy(userid)
+				.setCUpdateName(username)
+				.setDUpdateTime(now);
+			ValidationUtils.isTrue(person.update(),JBoltMsg.FAIL);
+			}
+			//新增人员设备档案
+			personEquipmentService.addSubmitTableDatas(jBoltTable,person.getIAutoId());
+			//修改人员设备档案
+			personEquipmentService.updateSubmitTableDatas(jBoltTable);
+			//删除人员设备档案
+			personEquipmentService.deleteSubmitTableDatas(jBoltTable);
+			return true;
+		});
+		return SUCCESS;
+	}
 
     public Object formatPattenSn(String value, String key) {
 		if (notNull(value)) {
@@ -215,4 +289,12 @@ public class PersonService extends BaseService<Person> {
 		}
 		return null;
     }
+	
+	public Page<Person> paginateDatas(int pageNumber, int pageSize, Kv kv){
+		return daoTemplate("person.findAll", kv).paginate(pageNumber, pageSize);
+	}
+	
+	public List<Person> findAll(Kv kv){
+		return daoTemplate("person.findAll", kv).find();
+	}
 }
