@@ -1,31 +1,34 @@
 #@jboltLayout()
 #define main()
+#set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
 <div class="jbolt_page_content">
 <div class="row">
 <div class="col-12">
 <div class="card">
 <div class="card-header" style="padding:0px;padding-left:10px;padding-top:10px;">
+<form onsubmit="return false;" id="importExcelForm_#(pageId)" action="#(action)" method="post">
     <div class="form-group row"
     	data-radio
     	data-rule="radio"
     	data-value=""
-    	data-name="person.isenabled"
-    	data-default="options_second"
+    	data-name="iscover"
+    	data-default="options_first"
 		>
 			<label class="col-auto col-form-label" >已存在的数据是否更新：</label>
 			<div class="col-auto">
 				<div class="radio radio-primary  radio-inline">
-					<input id="r_isenabled_true" type="radio" name="person.isenabled" value="true"/>
-					<label for="r_isenabled_true">是</label>
+					<input id="r_iscover_true" type="radio" name="iscover" value="true"/>
+					<label for="r_iscover_true">是</label>
 				</div>
 				
 				<div class="radio radio-primary  radio-inline">
-					<input id="r_isenabled_false" type="radio" name="person.isenabled" value="false"/>
-					<label for="r_isenabled_false">否</label>
+					<input id="r_iscover_false" type="radio" name="iscover" value="false"/>
+					<label for="r_iscover_false">否</label>
 				</div>
 			</div>
 	</div>
+</form>
 </div>
 <div class="card-body" style="padding:0px">
 <div class="alert">
@@ -41,7 +44,7 @@
 #end
 #setLocal(inputId=RandomUtil.random(6))
 <div class="form-group text-center">
-<input type="file" id="fileInput_#(inputId)" class="file-loading" data-max-filecount="8" data-uploadurl="/demo/multiplefilesyncuploader/upload" data-choosebtntext="选择文件" data-theme="explorer-fa" multiple="multiple" data-multiplefileinput  name="file" accept="" data-max-filesize="300" data-sync="true" data-extrahandler="processExtraHandler1" data-handler="setValueTo" data-setvalueto="fileSyncUploaderDemo"/>
+<input type="file" id="fileInput_#(inputId)" class="file-loading" data-form="importExcelForm_#(pageId)" data-max-filecount="8" data-uploadurl="/admin/person/importExcel" data-choosebtntext="选择文件" data-theme="explorer-fa" multiple="multiple" data-multiplefileinput  name="file" accept="" data-max-filesize="300" data-sync="true" data-extrahandler="processExtraHandler1" data-handler="setValueTo" data-setvalueto="fileSyncUploaderDemo"/>
 </div>
 </fieldset>
 	

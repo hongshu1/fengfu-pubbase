@@ -154,4 +154,12 @@ public class PersonAdminController extends BaseAdminController {
 	public void importExcelIndex(){
 		render("import_excel_index.html");
 	}
+	/**
+	 * 数据导入
+	 * 
+	 * */
+	@UnCheck
+	public void importExcel(){
+		renderJsonSuccess();
+	}
 }

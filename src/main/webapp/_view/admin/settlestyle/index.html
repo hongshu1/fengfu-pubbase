@@ -25,25 +25,16 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.iorgid}</td>
-<td>${data.corgcode}</td>
-<td>${data.corgname}</td>
+<td>
+	<a href="admin/settlestyle/edit/${data.iautoid}" data-area="900,400"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改结算方式" class="jbolt_table_editbtn">修改</a>
+    <a href="admin/settlestyle/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+</td>
 <td>${data.csscode}</td>
 <td>${data.cssname}</td>
-<td><img data-switchbtn data-confirm="确定切换是否票据管理？" data-value="${data.bssflag}"  data-handler="refreshJBoltTable"  data-url="admin/settlestyle/toggleBssflag/${data.id}"/></td>
-<td>${data.issbilltype}</td>
-<td>${data.ipid}</td>
-<td>${data.icreateby}</td>
+<td><img data-switchbtn data-confirm="确定切换是否票据管理？" data-value="${data.bssflag}"  data-handler="refreshJBoltTable"  data-url="admin/settlestyle/toggleBSSFlag/${data.iautoid}"/></td>
+<td>${data.issbilltypedesc}</td>
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
-<td>${data.iupdateby}</td>
-<td>${data.cupdatename}</td>
-<td>${data.dupdatetime}</td>
-<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/settlestyle/toggleIsdeleted/${data.id}"/></td>
-<td>
-	<a href="admin/settlestyle/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改结算方式" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
-    <a href="admin/settlestyle/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
-</td>
 </tr>
 {@/each}
 </textarea>
@@ -51,18 +42,13 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="settleStyle_toolbar_#(pageId)">
 	<div class="btn-group" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增结算方式"  data-url="admin/settlestyle/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改结算方式" data-check-handler="jboltTableGetCheckedId" data-url="admin/settlestyle/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/settlestyle/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+		<button data-openpage="dialog" data-area="900,400"  data-handler="jboltTablePageToFirst" data-title="新增结算方式"  data-url="admin/settlestyle/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 	</div>
-
-	<div class="clearfix"></div>
 </div>
 
 
 
-<table class="jbolt_table jbolt_main_table table-center hover_info"
+<table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal"
 data-jbolttable
 data-height="fill"
 data-ajax="true"
@@ -74,34 +60,20 @@ data-conditions-form="settleStyleForm_#(pageId)"
 data-rowtpl="settleStyleRowtpl_#(pageId)"
 data-page="settleStylePage_#(pageId)"
 data-toolbar="settleStyle_toolbar_#(pageId)"
-
-
-
-
 data-fixed-columns-left="1,2,3"
-data-fixed-columns-right="-1"
 data-row-dblclick-active="true"
 data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 >
 <thead>
 <tr>
 	<th data-width="60">序号</th>
-	<th data-min-width="150" data-column="iOrgId">组织ID</th>
-	<th data-width="150" data-column="cOrgCode">组织编码</th>
-	<th data-width="150" data-column="cOrgName">组织名称</th>
+	<th data-width="100">操作</th>
 	<th data-width="150" data-column="cSSCode">结算方式编码</th>
 	<th data-width="150" data-column="cSSName">结算方式名称</th>
 	<th data-width="150" data-column="bSSFlag">是否票据管理</th>
 	<th data-width="150" data-column="iSSBillType">对应票据类型</th>
-	<th data-width="150" data-column="iPid">上级ID</th>
-	<th data-width="150" data-column="iCreateBy">创建人ID</th>
 	<th data-width="150" data-column="cCreateName">创建人名称</th>
 	<th data-width="150" data-column="dCreateTime">创建时间</th>
-	<th data-width="150" data-column="iUpdateBy">更新人ID</th>
-	<th data-width="150" data-column="cUpdateName">更新人名称</th>
-	<th data-width="150" data-column="dUpdateTime">更新时间</th>
-	<th data-width="150" data-column="IsDeleted">删除状态：0. 未删除 1. 已删除</th>
-	<th data-width="100">操作</th>
 </tr>
 </thead>
 <tbody>
@@ -120,10 +92,11 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
 		console.log(JSON.stringify(rowData));
 
-		$(tempTr1).data('url', '/admin/admin/settlestyle/edit/' + rowData.iautoid)
-			.data('area', '1200,800')
+		$(tempTr1).data('url', '/admin/settlestyle/edit/' + rowData.iautoid)
+			.data('area', '900,400')
+			.data('handler','refreshJBoltTable')
 			.data('title', '结算方式')
-			.data('btn', '保存,关闭');
+			.data('btn', '确认,关闭');
 
 		DialogUtil.openBy(tempTr1);
 	}
