@@ -1875,4 +1875,8 @@ public class PermissionKey {
 	 * 部门档案 导入
 	 */
 	public static final String DEPARTMENT_IMPORT = "department_import";
+	/**
+	 * 年度计划
+	 */
+	public static final String ANNUALORDERM = "annualorderm";
 }

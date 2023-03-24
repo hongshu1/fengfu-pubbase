@@ -1,0 +1,185 @@
+#set(pageId=RandomUtil.random(6))
+#set(iYear=DateUtil.getYear())
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
+                        <button onclick="" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form onsubmit="return false;" id="AnnualOrderM_Form_#(pageId)" action="#(action)" method="post">
+                        #if(annualOrderM.iAutoId??)
+                        <input type="hidden" name="annualOrderM.iAutoId" value="#(annualOrderM.iAutoId??)"/>
+                        #end
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">订单号</label>
+                                    <div class="col-10">
+                                        <input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="annualOrderM.cOrderNo" value="#(annualOrderM.cOrderNo??)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">客户ID</label>
+                                    <div class="col-10">
+                                        <input type="text" data-rule="required" data-notnull="true" data-tips="请输入客户ID" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入客户ID" maxlength="40" name="annualOrderM.iCustomerId" value="#(annualOrderM.iCustomerId??)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">年份</label>
+                                    <div class="col-10">
+                                        <input data-done-handler="changeDoneYear"
+                                               type="text"
+                                               data-rule="required"
+                                               data-date
+                                               data-type="year"
+                                               data-fmt="yyyy"
+                                               readonly="readonly"
+                                               autocomplete="off"
+                                               class="form-control"
+                                               maxlength="20"
+                                               name="iYear"
+                                               value="#datetime(DateUtil.getNow(),'yyyy')"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+    <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+        </div>
+    </div>
+
+    <table class="table-center" id="jbolt_orderItemTable_#(pageId)"
+           data-jbolttable
+           data-ajax="true"
+           data-column-resize="true"
+           data-tfoot-fixed="true"
+           data-column-prepend="1:checkbox"
+           data-url="admin/annualorderm/datas"
+           data-rowtpl="jboltTable_demotpl_#(pageId)"
+           data-toolbar="AnnualOrderM_toolbar_#(pageId)"
+           data-conditions-form="AnnualOrderM_Form_#(pageId)"
+           data-editable="true"
+           data-editable-option="getEditableTableOptions_#(pageId)"
+    >
+        <thead class="fw_normal">
+        <tr>
+            <th data-width="60" data-column="index" rowspan="2">序号</th>
+            <th data-width="150" data-column="cInvCode" rowspan="2">存货编码</th>
+            <th data-width="150" data-column="cInvCode1" rowspan="2">客户部番</th>
+            <th data-width="150" data-column="cInvName1" rowspan="2">部品名称</th>
+            <th data-width="150" data-column="cInvStd" rowspan="2">规格</th>
+            <th data-width="100" data-column="iInventoryUomId1" rowspan="2">库存主单位</th>
+            <th colspan="13">#(iYear)年</th>
+            <th colspan="13">#(iYear + 1)年</th>
+        </tr>
+        <tr>
+            #for(i = 1; i <= 10; i++)
+                <th>#(i)月</th>
+            #end
+            <th>合计</th>
+            #for(i = 1; i <= 3; i++)
+                <th>#(i)月</th>
+            #end
+            <th>合计</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+        <tr>
+            <th></th>
+            <th>合计</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tfoot>
+    </table>
+
+    <script type="text/template" id="jboltTable_demotpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.id}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+
+            </td>
+            <td>${data.name?data.name:''}</td>
+            <td>${data.age}</td>
+            <td>${data.demoDate|date_ymd}</td>
+            <td>${data.demoMonth}</td>
+            <td>{@if data.price}${data.price,2|number_format}{@/if}</td>
+            <td>${data.amount?data.amount:0}</td>
+            <td>${data.total?data.total:0}</td>
+            <td><input class="jbt_editor_checkbox" type="checkbox" name="enable" {@if data.enable}checked="checked" {@/if} value="true"></td>
+            <td><img data-switchbtn data-value="${data.enable}" data-handler="switchEditableTd"/></td>
+            <td>${data.briefInfo}</td>
+        </tr>
+        {@/each}
+    </script>
+
+</div>
+#define js()
+<script>
+    //获得配置参数
+    function getEditableTableOptions_#(pageId)() {
+        var editableTableOptions = {
+            submit: {
+                withForm: ["AnnualOrderM_Form_#(pageId)"],
+                type: "all",
+                url: "/admin/annualorderm/submitAll",
+                success: function (res) {
+                    LayerMsgBox.success("提交成功", 600, function () {
+                        refreshPjaxContainer();
+                    });
+                }
+            },
+            cols: {
+                id: {
+                    submitAttr: "id",
+                },
+                name: {
+                    type: "jboltinput",
+                    url: "demo/jboltinput/ajaxPortalTable",
+                    width: 500,
+                    placeholder: "=请选择=",
+                    required: true,
+                    filterHandler: 'filterTable'
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+
+    function changeDoneYear(ele, value) {
+        #set(iYear=value)
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="AnnualOrderM_Form")
+#end
+
