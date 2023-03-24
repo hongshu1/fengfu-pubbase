@@ -1846,4 +1846,8 @@ public class PermissionKey {
 	 * 机型档案
 	 */
 	public static final String EQUIPMENT_MODEL = "equipment_model";
+	/**
+	 * 料品档案
+	 */
+    public static final String INVENTORY_RECORD = "inventory_record";
 }

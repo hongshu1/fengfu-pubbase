@@ -87,3 +87,7 @@
 #namespace("uom")
 #include("uom/uom.sql")
 #end
+
+#namespace("inventoryclass")
+#include("inventoryclass/inventoryclass.sql")
+#end
