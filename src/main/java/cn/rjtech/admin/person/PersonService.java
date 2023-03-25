@@ -11,9 +11,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltStringUtil;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -66,10 +64,6 @@ public class PersonService extends BaseService<Person> {
 
 	/**
 	 * 后台管理分页查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param keywords
-	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
 		Boolean isenabled = para.getBoolean("isenabled");
@@ -88,8 +82,6 @@ public class PersonService extends BaseService<Person> {
 
 	/**
 	 * 保存
-	 * @param person
-	 * @return
 	 */
 	public Ret save(Person person) {
 		if(person==null || isOk(person.getIAutoId())) {
@@ -106,8 +98,6 @@ public class PersonService extends BaseService<Person> {
 
 	/**
 	 * 更新
-	 * @param person
-	 * @return
 	 */
 	public Ret update(Person person) {
 		if(person==null || notOk(person.getIAutoId())) {
@@ -127,8 +117,6 @@ public class PersonService extends BaseService<Person> {
 
 	/**
 	 * 删除 指定多个ID
-	 * @param ids
-	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
 		return deleteByIds(ids,true);
@@ -136,16 +124,12 @@ public class PersonService extends BaseService<Person> {
 
 	/**
 	 * 删除
-	 * @param id
-	 * @return
 	 */
 	public Ret delete(Long id) {
 		return updateColumn(id, "isdeleted", true);
 	}
 	/**
 	 * 删除
-	 * @param id
-	 * @return
 	 */
 	public Ret deleteByAjax() {
 		return SUCCESS;
@@ -154,7 +138,6 @@ public class PersonService extends BaseService<Person> {
 	 * 删除数据后执行的回调
 	 * @param person 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(Person person, Kv kv) {
@@ -166,7 +149,6 @@ public class PersonService extends BaseService<Person> {
 	 * 检测是否可以删除
 	 * @param person 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkCanDelete(Person person, Kv kv) {
@@ -176,7 +158,6 @@ public class PersonService extends BaseService<Person> {
 
 	/**
 	 * 设置返回二开业务所属的关键systemLog的targetType
-	 * @return
 	 */
 	@Override
 	protected int systemLogTargetType() {
@@ -230,7 +211,6 @@ public class PersonService extends BaseService<Person> {
 	 * @param person 要toggle的model
 	 * @param column 操作的哪一列
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkCanToggle(Person person,String column, Kv kv) {
@@ -251,7 +231,6 @@ public class PersonService extends BaseService<Person> {
 	 * 检测是否可以删除
 	 * @param person model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkInUse(Person person, Kv kv) {
@@ -393,7 +372,7 @@ public class PersonService extends BaseService<Person> {
 			person.setCpsnName(excelRecord.getStr("cpsnname"));
 			person.setVIDNo(excelRecord.getStr("vidno"));
 			String isexStr = excelRecord.getStr("isex");
-			Integer isex = JBoltStringUtil.isBlank(isexStr) ? null : (isexStr == "男" ? 1 : 2);
+			Integer isex = JBoltStringUtil.isBlank(isexStr) ? null : ("男".equals(isexStr) ? 1 : 2);
 			person.setISex(isex);
 			//获取封装的事业类型的字典
 			Record rpersontypeDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.RPERSONTYPE);
@@ -413,7 +392,7 @@ public class PersonService extends BaseService<Person> {
 			person.setDBirthDate(excelRecord.getStr("dbirthdate"));
 			person.setCPsnEmail(excelRecord.getStr("cpsnemail"));
 			String isenabled = excelRecord.getStr("isenabled");
-			person.setIsEnabled(isenabled == "是" ? true :  false);
+			person.setIsEnabled(Objects.equals(isenabled, "是"));
 			person.setCMemo(excelRecord.getStr("cmemo"));
 			String cequipmentcodes = excelRecord.getStr("cequipmentcode");
 			if(JBoltStringUtil.isBlank(cequipmentcodes)) return;
