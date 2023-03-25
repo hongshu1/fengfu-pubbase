@@ -5,18 +5,17 @@ import cn.jbolt.core.model.Dictionary;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.core.util.JBoltStringUtil;
 
+import java.math.BigDecimal;
 import java.util.*;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.dept.DeptService;
 import cn.jbolt._admin.dictionary.DictionaryService;
@@ -29,15 +28,17 @@ import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
+import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
+import cn.rjtech.admin.workclass.WorkClassService;
 import cn.rjtech.config.DictionaryTypeKey;
 import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PersonEquipment;
+import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.ValidationUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
 /**
  * 人员档案 Service
  * @ClassName: PersonService
@@ -54,6 +55,11 @@ public class PersonService extends BaseService<Person> {
 	private PersonEquipmentService personEquipmentService;
 	@Inject
 	private DictionaryService dictionaryService;
+	@Inject
+	private EquipmentService equipmentService;
+	@Inject
+	private WorkClassService workClassService;
+	
 	
 	private final Person dao = new Person().dao();
 
@@ -76,6 +82,7 @@ public class PersonService extends BaseService<Person> {
 			User user = userService.findById(row.getLong("iuserid"));
 			String username = user == null ? null : user.getName();
 			row.set("cusername", username);
+			row.set("sysworkage", calcSysworkage(row.getDate("dhiredate")));
 		}
 		return pageList;
 	}
@@ -329,6 +336,11 @@ public class PersonService extends BaseService<Person> {
 	        List<Person> personList = new ArrayList<Person>();
 	        List<PersonEquipment> PersonEquipmentList = new ArrayList<PersonEquipment>();
 	        constructPersonModelByExcelDatas(rows,personList,PersonEquipmentList);
+	        tx(()->{
+	        	batchSave(personList);
+	        	personEquipmentService.batchSave(PersonEquipmentList);
+	        	return true;
+	        });
 	        return SUCCESS;
 	    }
 		return null;
@@ -388,20 +400,38 @@ public class PersonService extends BaseService<Person> {
 			remploystate = JBoltStringUtil.isNotBlank(remploystate) ? remploystateDictionaryRecord.getStr(remploystate) : remploystate;
 			person.setVIDNo(remploystate);
 			person.setDHireDate(excelRecord.getDate("dhiredate"));
-			person.setIWorkClassId(null);
+			String cWorkClassCode = excelRecord.getStr("iworkclassid");
+			Workclass workClass = workClassService.findModelByCode(cWorkClassCode);
+			if(workClass != null)  person.setIWorkClassId(workClass.getIautoid());
 			person.setDBirthDate(excelRecord.getStr("dbirthdate"));
 			person.setCPsnEmail(excelRecord.getStr("cpsnemail"));
 			String isenabled = excelRecord.getStr("isenabled");
 			person.setIsEnabled(Objects.equals(isenabled, "是"));
 			person.setCMemo(excelRecord.getStr("cmemo"));
+			person.setIOrgId(getOrgId());
+			person.setCOrgCode(getOrgCode());
+			person.setCOrgName(getOrgName());
+			User loginUser = JBoltUserKit.getUser();
+			Date now  = new Date();
+			person.setICreateBy(loginUser.getId());
+			person.setCCreateName(loginUser.getName());
+			person.setDCreateTime(now);
+			person.setIUpdateBy(loginUser.getId());
+			person.setDUpdateTime(now);
+			person.setCUpdateName(loginUser.getName());
+			person.setISource(SourceEnum.MES.getValue());
+			personList.add(person);
 			String cequipmentcodes = excelRecord.getStr("cequipmentcode");
 			if(JBoltStringUtil.isBlank(cequipmentcodes)) return;
 			for (String cequipmentcode : cequipmentcodes.split(",")) {
-				
+				Equipment equipment = equipmentService.findModelByCode(cequipmentcode);
+				if(equipment == null) continue;
 				PersonEquipment personEquipment = new PersonEquipment();
 				personEquipment.setIAutoId(JBoltSnowflakeKit.me.nextId());
 				personEquipment.setIPersonId(personId);
+				personEquipment.setIEquipmentId(equipment.getIAutoId());
 				personEquipment.setIsDeleted(false);
+				personEquipmentList.add(personEquipment);
 			}
 		}
 	}
@@ -423,5 +453,11 @@ public class PersonService extends BaseService<Person> {
 	
 	public List<Person> findAll(Kv kv){
 		return daoTemplate("person.findAll", kv).find();
+	}
+	/**
+	 * 计算工龄
+	 * */
+	public BigDecimal calcSysworkage(Date date) {
+		return new BigDecimal(JBoltDateUtil.daysBetween(date, new Date()) / 365d).setScale(2,BigDecimal.ROUND_HALF_UP);
 	}
 }

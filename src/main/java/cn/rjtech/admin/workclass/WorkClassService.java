@@ -345,4 +345,8 @@ public class WorkClassService extends BaseService<Workclass> {
         // 3、返回生成的excel文件
         return jBoltExcel;
     }
+
+	public Workclass findModelByCode(String cWorkClassCode) {
+		return findFirst(selectSql().eq("cworkclasscode", cWorkClassCode));
+	}
 }
