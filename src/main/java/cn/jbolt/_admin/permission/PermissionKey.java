@@ -1949,4 +1949,8 @@ public class PermissionKey {
 	 * 生产计划及实绩管理
 	 */
 	public static final String PRODUCTION_PLANNING_AND_PERFORMANCE_MANA = "production_planning_and_performance_mana";
+	/**
+	 * 项目管理项目分类目录
+	 */
+	public static final String FITEMSS97CLASS = "fitemss97class";
 }

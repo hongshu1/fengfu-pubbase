@@ -1,6 +1,7 @@
 package cn.rjtech.admin.person;
 
 import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.model.Dictionary;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -79,9 +80,7 @@ public class PersonService extends BaseService<Person> {
 		Page<Record> pageList = dbTemplate("person.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : pageList.getList()) {
 			row.set("cdepname", deptService.findNameBySn(row.getStr("cdept_num")));
-			User user = userService.findById(row.getLong("iuserid"));
-			String username = user == null ? null : user.getName();
-			row.set("cusername", username);
+			row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("iuserid")));
 			row.set("sysworkage", calcSysworkage(row.getDate("dhiredate")));
 		}
 		return pageList;
@@ -458,6 +457,7 @@ public class PersonService extends BaseService<Person> {
 	 * 计算工龄
 	 * */
 	public BigDecimal calcSysworkage(Date date) {
+		if(date == null) return null;
 		return new BigDecimal(JBoltDateUtil.daysBetween(date, new Date()) / 365d).setScale(2,BigDecimal.ROUND_HALF_UP);
 	}
 }

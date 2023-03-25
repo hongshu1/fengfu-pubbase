@@ -52,6 +52,11 @@
 #include("warehouseshelves/warehouseshelves.sql")
 #end
 
+#namespace("forgeigncurrency")
+#include("forgeigncurrency/forgeigncurrency.sql")
+#end
+
+
 #namespace("warehouseposition")
 #include("warehouseposition/warehouseposition.sql")
 #end
@@ -121,3 +126,8 @@
 #namespace("container")
 #include("container/container.sql")
 #end
+
+#namespace("fitemss97class")
+#include("fitemss97class/fitemss97class.sql")
+#end
+
