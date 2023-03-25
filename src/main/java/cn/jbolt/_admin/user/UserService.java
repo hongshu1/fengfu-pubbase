@@ -573,5 +573,10 @@ public class UserService extends JBoltUserService {
     public boolean checkUserHasOrg(long userId, Long orgId) {
         return null != queryInt(selectSql().select("1").eq(UserOrg.USER_ID, userId).eq(UserOrg.ORG_ID, orgId).eq(UserOrg.IS_DELETED, ZERO_STR).first()) ;
     }
+
+
+	public User getUserByUserName(String username) {
+		return findFirst(selectSql().eq("username", username));
+	}
     
 }
