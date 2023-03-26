@@ -1081,9 +1081,9 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             Boolean hasTimeColumn = data.getAs("hasTimeColumn", false);
             Boolean hasDateRangeColumn = data.getAs("hasDateRangeColumn", false);
             for (CodeGenModelAttr col : columns) {
-                if (col.getJavaTypeName() == "Date" && !hasDateColumn) {
+                if ("Date".equals(col.getJavaTypeName()) && !hasDateColumn) {
                     hasDateColumn = true;
-                } else if (col.getJavaTypeName() == "Time" && !hasTimeColumn) {
+                } else if ("Time".equals(col.getJavaTypeName()) && !hasTimeColumn) {
                     hasTimeColumn = true;
                 }
                 if (isOk(col.getSearchUiType()) && col.getSearchUiType().startsWith("laydate_range_") && !hasDateRangeColumn) {
