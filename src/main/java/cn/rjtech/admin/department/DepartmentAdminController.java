@@ -14,6 +14,7 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
@@ -210,5 +211,9 @@ public class DepartmentAdminController extends BaseAdminController {
 			return this.notOk(p.getLong(Department.IPID));
 		});
 		renderJsonData(trees);
+	}
+
+	public void options(){
+		renderJsonData(service.findAll());
 	}
 }

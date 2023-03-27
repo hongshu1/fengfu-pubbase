@@ -143,3 +143,7 @@
 #namespace("vendoraddr")
 #include("vendoraddr/vendoraddr.sql")
 #end
+
+#namespace("calendar")
+#include("calendar/calendar.sql")
+#end
