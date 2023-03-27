@@ -1,0 +1,51 @@
+<form onsubmit="return false;" id="VendorClass_Form" action="#(action)" method="post">
+  #if(vendorclass.iautoid??)
+  <input type="hidden" name="vendorclass.iautoid" value="#(vendorclass.iautoid??)"/>
+  #end
+  <div class="row">
+    <div class="col">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">分类编码</label>
+        <div class="col-10">
+          <input type="text" data-rule="required" data-notnull="true" data-tips="请输入供应商分类编码" data-with-clearbtn="true"
+                 autocomplete="off" class="form-control" placeholder="请输入供应商分类编码" maxlength="40" name="vendorClass.cVCCode"
+                 value="#(vendorClass.cVCCode??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">类别名称</label>
+        <div class="col-10">
+          <input type="text" data-rule="required" data-notnull="true" data-tips="请输入类别名称" data-with-clearbtn="true"
+                 autocomplete="off" class="form-control" placeholder="请输入类别名称" maxlength="40" name="vendorClass.cVCName"
+                 value="#(vendorClass.cVCName??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">上级分类</label>
+        <div class="col">
+          <select class="form-control"
+                  name="vendorClass.ipid"
+                  data-autoload
+                  data-text-attr="cvcname"
+                  data-value-attr="iautoid"
+                  data-select-type="select2"
+                  data-tips="请选择分类"
+                  data-url="admin/vendorclass/enableOptions"
+                  data-text="=请选择分类="
+                  data-value="#(ipid??)"
+                  data-select="#(vendorclass.iautoid??)"
+                  data-ajax-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)">
+          </select>
+          <!--#(vendorclass.iautoid??)-->
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+#define js()
+<script>
+
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="VendorClass_Form")
+#end
+

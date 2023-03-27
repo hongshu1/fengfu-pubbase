@@ -1,0 +1,219 @@
+<form onsubmit="return false;" id="Vendor_Form" action="#(action)" method="post">
+  #if(vendor.iAutoId??)
+  <input type="hidden" name="vendor.iAutoId" value="#(vendor.iAutoId??)"/>
+  #end
+
+  <div class="form-group row">
+    <label class="col-sm-1 col-form-label">供应商分类</label>
+    <div class="col-2">
+      <select class="form-control"
+              name="cvccode"
+              data-autoload
+              data-rule="select"
+              data-text-attr="cvcname"
+              data-value-attr="cvccode"
+              data-select-type="select2"
+              data-tips="请选择分类"
+              data-url="admin/vendorclass/enableOptions"
+              data-text="=请选择分类="
+              data-value=""
+              data-select="#(cvccode??)">
+      </select>
+    </div>
+
+    <label class="col-sm-1 col-form-label">供应商编码</label>
+    <div class="col-2">
+      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
+             placeholder="请输入供应商编码" maxlength="255" name="cvencode" value="#(cvencode??)"/>
+    </div>
+
+    <label class="col-sm-1 col-form-label">供应商名称</label>
+    <div class="col-2">
+      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
+             placeholder="请输入供应商名称" maxlength="255" name="cvenname" value="#(cvenname??)"/>
+    </div>
+
+    <label class="col-sm-1 col-form-label">供应商简称</label>
+    <div class="col-2">
+      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
+             placeholder="请输入供应商简称" maxlength="255" name="cvenabbname" value="#(cvenabbname??)"/>
+    </div>
+  </div>
+
+
+  <div class="form-group row">
+    <label class="col-sm-1 col-form-label">助记码</label>
+    <div class="col-2">
+      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
+             placeholder="请输入助记码" maxlength="255" name="cVenMnemCode" value="#(cVenMnemCode??)"/>
+    </div>
+
+    <label class="col-sm-1 col-form-label">所属地区</label>
+    <div class="col-2"
+         data-text="=所属地区="
+         data-citypicker
+         data-setvalueto="cprovince:cprovince:code;cprovince:cprovince:name"
+         data-value=""
+         data-value-attr="cprovince">
+      </select>
+    </div>
+    <!--name="cprovince"-->
+    <!--data-setvalueto="address_name_all:address_name_all:cprovince"-->
+    <!--data-text-attr="cvcname"
+         data-value-attr="cvccode"-->
+
+    <label class="col-sm-1 col-form-label">分管部门</label>
+    <div class="col-2">
+      <select class="form-control"
+              data-autoload
+              name="cVenDepart"
+              data-select-type="select2"
+              data-tips="所属部门"
+              data-url="admin/dept/datas"
+              data-text="=所属部门="
+              data-value=""
+              data-value-attr="id"
+              data-select="#(cVenDepart??)">
+      </select>
+    </div>
+
+    <label class="col-sm-1 col-form-label">专管业务员</label>
+    <div class="col-2">
+      <select class="form-control"
+              data-autoload
+              name="cvenpperson"
+              data-select-type="select2"
+              data-tips="专管业务员"
+              data-url="admin/vendor/options"
+              data-text="=专管业务员="
+              data-value=""
+              data-value-attr="id"
+              data-select="#(cvenpperson??)">
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group row" >
+    <label class="col-sm-1 col-form-label">发展日期</label>
+    <div class="col-2">
+      <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"
+             data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入发展日期" maxlength="20"
+             name="dvendevdate" value="#datetime(dvendevdate??,'yyyy-MM-dd')"/>
+    </div>
+
+    <label class="col-sm-1 col-form-label">默认委外仓</label>
+    <div class="col-2">
+        <select class="form-control"
+                data-autoload
+                name="comwhcode"
+                data-select-type="select2"
+                data-url="admin/warehouse/options"
+                data-text="=默认委外仓="
+                data-value=""
+                data-text-attr="cwhname"
+                data-value-attr="iautoid"
+                data-select="#(comwhcode??)">
+        </select>
+      </div>
+
+    <label class="col-sm-1 col-form-label">币种</label>
+    <div class="col-2">
+      <select class="form-control" data-url="admin/dictionary/options?key=ccurrency" name="ccurrency" data-autoload
+              data-text="=请选择=" data-value-attr="sn" data-value="" data-select="#(cCurrency??)"></select>
+    </div>
+
+    <label class="col-sm-1 col-form-label">税率</label>
+    <div class="col-2">
+      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="税率，通常2位小数"
+             maxlength="40" name="itaxrate" value="#(itaxrate??)"/>
+    </div>
+  </div>
+
+  <!--data-hidden-input="xxx"-->
+  <div class="form-group row"
+       data-checkbox
+       data-rule="checkbox"
+       data-value="#(cproperty??)"
+       data-name="cproperty"
+       style="right: 8px;">
+    <label class="col-auto col-form-label" >供应商属性</label>
+    <div class="col" style="left: 15px;">
+      <div class="checkbox checkbox-primary  checkbox-inline">
+        <input  id="c1" type="checkbox" name="cproperty"   value="采购"/>
+        <label for="c1">采购</label>
+      </div>
+
+      <div class="checkbox checkbox-primary  checkbox-inline">
+        <input  id="c2" type="checkbox" name="cproperty"   value="委外"/>
+        <label for="c2">委外</label>
+      </div>
+
+      <div class="checkbox checkbox-primary  checkbox-inline">
+        <input  id="c3" type="checkbox" name="cproperty"   value="服务"/>
+        <label for="c3">服务</label>
+      </div>
+
+      <div class="checkbox checkbox-primary  checkbox-inline">
+        <input  id="c4" type="checkbox" name="cproperty"   value="国外"/>
+        <label for="c4">国外</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-1 col-form-label">联系地址</label>
+    <div class="col-11">
+      <div class="jbolt_page_content">
+        #render("_table_split.html")
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row"
+       data-radio
+       data-rule="radio"
+       data-value="#(isenabled??)"
+       data-name="isenabled"
+       data-default="options_first"
+       data-width="col-sm-1,col-sm-4">
+    <label class="col-sm-1 col-form-label">是否启用</label>
+    <div class="col-sm-4" style="padding-top: 1px;">
+      <div class="radio radio-primary  radio-inline">
+        <input id="r_isenabled_true" type="radio" name="isenabled" value="true"/>
+        <label for="r_isenabled_true">是</label>
+      </div>
+      <div class="radio radio-primary  radio-inline">
+        <input id="r_isenabled_false" type="radio" name="isenabled" value="false"/>
+        <label for="r_isenabled_false">否</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-1 col-form-label">备注</label>
+    <div class="col">
+      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入备注"
+             maxlength="255" name="cmemo" value="#(cmemo??)"/>
+    </div>
+  </div>
+
+</form>
+#define js()
+<script>
+  //设置checkbox单选功能
+  function setCheckBox(obj){
+    var cproperty = document.forms[0].cproperty;
+    for (var i = 0; i < cproperty.length; i++) {
+      cproperty[i].checked = false;
+    }
+    obj.checked = true;
+  }
+
+  function submitThisForm() {
+    jboltTableSubmit('#jbolt_table_vendoradd_split_#(pageId)');
+  }
+
+</script>
+<!--#include("/_view/_admin/common/_formjs.html",formId="Vendor_Form")-->
+#end
+

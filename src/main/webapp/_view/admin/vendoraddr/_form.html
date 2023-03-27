@@ -1,0 +1,129 @@
+<form onsubmit="return false;" id="VendorAddr_Form" action="#(action)" method="post">
+	#if(vendorAddr.iAutoId??)
+	<input type="hidden" name="vendorAddr.iAutoId" value="#(vendorAddr.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="vendorAddr.iAutoId" value="#(vendorAddr.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">客户档案ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入客户档案ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入客户档案ID" maxlength="40" name="vendorAddr.iCustomerId" value="#(vendorAddr.iCustomerId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">地点编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入地点编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入地点编码" maxlength="40" name="vendorAddr.cDistrictCode" value="#(vendorAddr.cDistrictCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">地点名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入地点名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入地点名称" maxlength="40" name="vendorAddr.cDistrictName" value="#(vendorAddr.cDistrictName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">联系人编码</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入联系人编码" maxlength="40" name="vendorAddr.cContactCode" value="#(vendorAddr.cContactCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">联系人名称</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入联系人名称" maxlength="40" name="vendorAddr.cContactName" value="#(vendorAddr.cContactName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">国家/地区</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入国家/地区" maxlength="40" name="vendorAddr.cCountry" value="#(vendorAddr.cCountry??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">省/自治区</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入省/自治区" maxlength="40" name="vendorAddr.cProvince" value="#(vendorAddr.cProvince??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">城市</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入城市" maxlength="40" name="vendorAddr.cCity" value="#(vendorAddr.cCity??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">区县</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入区县" maxlength="40" name="vendorAddr.cDistrict" value="#(vendorAddr.cDistrict??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">邮政编码</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入邮政编码" maxlength="40" name="vendorAddr.cPostCode" value="#(vendorAddr.cPostCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">移动电话</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入移动电话" maxlength="40" name="vendorAddr.cMobile" value="#(vendorAddr.cMobile??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">传真</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入传真" maxlength="40" name="vendorAddr.cFax" value="#(vendorAddr.cFax??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">电子邮件</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入电子邮件" maxlength="40" name="vendorAddr.cEmail" value="#(vendorAddr.cEmail??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="vendorAddr.isEnabled"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否生效：0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(vendorAddr.isEnabled??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否生效：0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="vendorAddr.isDeleted"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态：0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(vendorAddr.isDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态：0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="VendorAddr_Form")
+#end
+
