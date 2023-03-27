@@ -1960,5 +1960,9 @@ public class PermissionKey {
 	/**
 	 * 项目管理大类项目子目录
 	 */
-	public static final String FITEMSS97SUB = "fitemss97sub";	
+	public static final String FITEMSS97SUB = "fitemss97sub";
+	/**
+	 * 项目管理大类项目子目录
+	 */
+	public static final String VOUCHRDCONTRAPOSE = "vouchrdcontrapose";
 }

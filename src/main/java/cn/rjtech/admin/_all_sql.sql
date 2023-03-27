@@ -138,3 +138,7 @@
 #namespace("fitemss97sub")
 #include("fitemss97sub/fitemss97sub.sql")
 #end
+
+#namespace("vouchrdcontrapose")
+#include("vouchrdcontrapose/vouchrdcontrapose.sql")
+#end
