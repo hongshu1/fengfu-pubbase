@@ -1,5 +1,7 @@
 package cn.rjtech.admin.containerclass;
 
+import cn.hutool.core.date.DateUtil;
+import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -10,9 +12,15 @@ import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.ContainerClass;
+import com.jfinal.upload.UploadFile;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+
 /**
  * 分类管理
  * @ClassName: ContainerClassAdminController
@@ -99,8 +107,32 @@ public class ContainerClassAdminController extends BaseAdminController {
 	 */
 	@SuppressWarnings("unchecked")
 	public void downloadTpl() throws Exception {
-		renderJxls("container_import.xlsx", Kv.by("rows", null), "容器分类导入模板.xlsx");
+		renderJxls("containerClass_import.xlsx", Kv.by("rows", null), "容器分类导入模板.xlsx");
 	}
 
+	/**
+	 * 容器档案Excel导入数据库
+	 */
+	public void importExcel(){
+		String uploadPath= JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+		UploadFile file=getFile("file",uploadPath);
+		if(notExcel(file)){
+			renderJsonFail("请上传excel文件");
+			return;
+		}
+		renderJson(service.importExcelData(file.getFile()));
+	}
+
+	/**
+	 * 导出数据
+	 */
+	@SuppressWarnings("unchecked")
+	public void dataExport() throws Exception {
+		List<Record> rows = service.list(getKv());
+		for (Record row : rows) {
+			row.put("isenabled", StringUtils.equals("1", row.getStr("isenabled")) ? "是" : "否");
+		}
+		renderJxls("containerClass.xlsx", Kv.by("rows", rows), "容器分类_" + DateUtil.today() + ".xlsx");
+	}
 
 }

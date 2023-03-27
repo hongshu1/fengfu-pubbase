@@ -12,6 +12,92 @@
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
                            placeholder="=工种名称=" maxlength="50"
                            name="cworkclassname" value="#(cworkclassname??)"/>
+                    <select class="form-control" data-tips="请选择工种等级=="
+                            data-url="admin/dictionary/options?key=work_level" name="ilevel"
+                            data-autoload data-text="=工种等级=" data-value-attr="sn" data-value=""
+                            data-select="#(ilevel??)"></select>
+                    <select class="form-control" data-url="admin/dictionary/options?key=options_enable" name="isenabled"
+                            data-autoload
+                            data-text="=启用状态=" data-value-attr="sn" data-value=""
+                            data-select="#(isenabled??)"></select>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-undo"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="workclassRowtpl_#(pageId)">
+          {@each datas as data,index}
+          <tr data-id="${data.iautoid}">
+          <td>${pageNumber,pageSize,index | rownum}</td>
+          <td>${data.cworkclasscode}</td>
+          <td>${data.cworkclassname}</td>
+          <td>${data.ileveldes}</td>
+          <td>${data.isalarydes}</td>
+          <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}" data-handler="refreshJBoltTable"
+                   data-url="admin/workclass/toggleIsenabled/${data.iautoid}"/></td>
+          <td>${data.cmemo}</td>
+          <td>${data.ccreatename}</td>
+          <td>${data.dcreatetime}</td>
+          </tr>
+          {@/each}
+        </textarea>
+
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col-md-auto">
+        <h1>工种档案</h1>
+      </div>
+      <div class="col">
+        <form class="form-inline" id="workclassForm_#(pageId)" onsubmit="return false;" method="post">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=工种编码=" maxlength="50"
+                 name="cworkclasscode" value="#(cworkclasscode??)"/>
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=工种名称=" maxlength="50"
+                 name="cworkclassname" value="#(cworkclassname??)"/>
+          <select class="form-control" data-tips="请选择工种等级==" data-url="admin/dictionary/options?key=work_level" name="ilevel"
+                  data-autoload data-text="=工种等级=" data-value-attr="sn" data-value="" data-select="#(ilevel??)"></select>
+          <select class="form-control" data-url="admin/dictionary/options?key=options_enable" name="isenabled" data-autoload
+                  data-text="=启用状态=" data-value-attr="sn" data-value="" data-select="#(isenabled??)"></select>
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+        </form>
+      </div>
+      <div class="col-md-auto">
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="workclassRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cworkclasscode}</td>
+<td>${data.cworkclassname}</td>
+<td>${data.ilevel}</td>
+<td>${data.isalary}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}" data-handler="refreshJBoltTable"
+         data-url="admin/workclass/toggleIsenabled/${data.iautoid}"/></td>
+<td>${data.cmemo}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <form class="form-inline" id="workclassForm_#(pageId)" onsubmit="return false;" method="post">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="=工种编码=" maxlength="50"
+                           name="cworkclasscode" value="#(cworkclasscode??)"/>
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="=工种名称=" maxlength="50"
+                           name="cworkclassname" value="#(cworkclassname??)"/>
                     <select class="form-control" data-tips="请选择工种等级"
                             data-url="admin/dictionary/options?key=work_level" name="ilevel"
                             data-autoload data-text="=工种等级=" data-value-attr="sn" data-value=""
@@ -47,6 +133,18 @@
           {@/each}
         </textarea>
 
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="workclass_toolbar_#(pageId)">
+            <div class="btn-group" role="group" aria-label="btn-group">
+                #permission(PermissionKey.WORKCLASS_ADD)
+                <button data-openpage="dialog" data-area="70%,80%" data-handler="jboltTablePageToFirst"
+                        data-title="新增工种档案"
+                        data-url="admin/workclass/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i>
+                    新增
+                </button>
+                #end
+                #permission(PermissionKey.WORKCLASS_EDIT)
+                <button data-openpage="dialog" data-area="70%,80%" data-handler="refreshJBoltTable" data-title="修改工种档案"
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="workclass_toolbar_#(pageId)">
             <div class="btn-group" role="group" aria-label="btn-group">
@@ -116,6 +214,67 @@
             </div>
             <div class="clearfix"></div>
         </div>
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="workclass_toolbar_#(pageId)">
+      <div class="btn-group" role="group" aria-label="btn-group">
+        #permission(PermissionKey.WORKCLASS_ADD)
+        <button data-openpage="dialog" data-area="90%,80%" data-handler="jboltTablePageToFirst" data-title="新增工种档案"
+                data-url="admin/workclass/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增
+        </button>
+        #end
+        #permission(PermissionKey.WORKCLASS_EDIT)
+        <button data-openpage="dialog" data-area="90%,80%" data-handler="refreshJBoltTable" data-title="修改工种档案"
+                data-check-handler="jboltTableGetCheckedId" data-url="admin/workclass/edit/" class="btn btn-outline-info btn-sm">
+          <i class="fa fa-edit"></i> 修改
+        </button>
+        #end
+        #permission(PermissionKey.WORKCLASS_DELETE)
+        <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
+                data-url="admin/workclass/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i
+            class="fa fa-trash"></i> 删除
+        </button>
+        #end
+        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+        #permission(PermissionKey.WORKCLASS_EXPORT)
+        <div class="btn-group dropdown">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+        </button>
+        <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+          <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                  data-url="admin/workclass/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
+          </button>
+          <button class="btn dropdown-item" data-downloadbtn data-url="admin/workclass/exportExcelAll"
+                  data-form="workclassForm_#(pageId)"><i class="fa fa-download"></i> 导出全部
+          </button>
+        </div>
+      </div>
+        #end
+        #permission(PermissionKey.WORKCLASS_IMPORT)
+        <div class="btn-group dropdown">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+          </button>
+          <div class="dropdown-menu" aria-labelledby="importMenuButton">
+            <a data-downloadbtn href="/admin/workclass/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+            <div class="j_upload_file_box"
+                 data-name="file"
+                 data-btn-class="btn dropdown-item"
+                 data-placeholder="上传导入"
+                 data-confirm="确认导入数据？"
+                 data-accept="excel"
+                 data-maxsize="20480"
+                 data-handler="uploadFile"
+                 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                 data-url="/admin/workclass/importExcel">
+            </div>
+          </div>
+        </div>
+        #end
+      </div>
+
+      <div class="clearfix"></div>
+    </div>
 
 
         <table class="jbolt_table jbolt_main_table table-center"

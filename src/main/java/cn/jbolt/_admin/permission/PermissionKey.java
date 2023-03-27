@@ -276,7 +276,7 @@ public class PermissionKey {
 	/**
 	 * 供应商档案
 	 */
-	public static final String SUPPLIER = "supplier";
+	public static final String VENDORCLASS = "vendorclass";
 	/**
 	 * APS计划排程
 	 */
@@ -761,10 +761,6 @@ public class PermissionKey {
 	 * 片料加工余料
 	 */
 	public static final String SLICEINVPROCESSSTUFF = "sliceinvprocessstuff";
-	/**
-	 * 供应商主表
-	 */
-	public static final String SUPPLIERM = "supplierm";
 	/**
 	 * 新增
 	 */
@@ -1797,23 +1793,34 @@ public class PermissionKey {
 	 * 检验项目
 	 */
 	public static final String QCITEM = "qcitem";
-
 	/**
-	 * 保存
+	 * 生产计划管理
 	 */
-	public static final String APPVERSION_SAVE = "appversion_save";
+	public static final String PRODUCTION_PLAN = "production_plan";
 	/**
-	 * 更新
+	 * 年度生产计划排产
 	 */
-	public static final String APPVERSION_UPDATE = "appversion_update";
+	public static final String YEAR_PRODUCTION_SCHEDULE = "year_production_schedule";
 	/**
-	 * 改变发布状态
+	 * 年度生产计划汇总
 	 */
-	public static final String APPVERSION_PUBLISH = "appversion_publish";
+	public static final String SUMMARY_OF_ANNUAL_PRODUCTION_PLAN = "summary_of_annual_production_plan";
 	/**
-	 * 是否强制更新
+	 * 月周生产计划排产
 	 */
-	public static final String APPVERSION_ISFORCE = "appversion_isforce";
+	public static final String MONTHLY_AND_WEEKLY_PRODUCTION_SCHEDULE = "monthly_and_weekly_production_schedule";
+	/**
+	 * 月周生产计划汇总
+	 */
+	public static final String SUMMARY_OF_MONTHLY_AND_WEEKLY_PRODUCTION = "summary_of_monthly_and_weekly_production";
+	/**
+	 * 生产计划及实绩管理
+	 */
+	public static final String PRODUCTION_PLANNING_AND_PERFORMANCE_MANA = "production_planning_and_performance_mana";
+	/**
+	 * 禀议建模
+	 */
+	public static final String PROPOSAL_MODEL = "proposal_model";
 	/**
 	 * 人员档案
 	 */
@@ -1830,39 +1837,64 @@ public class PermissionKey {
 	 * 结算方式
 	 */
 	public static final String SETTLE_STYLE = "settle_style";
-
+	/**
+	 * 供应商分类
+	 */
+	public static final String VENDOR = "vendor";
+	/**
+	 * 机型档案
+	 */
+	public static final String EQUIPMENT_MODEL = "equipment_model";
+	/**
+	 * 客户档案-联系地址
+	 */
+	public static final String ADMIN_CUSTOMERADDR = "ADMIN_CUSTOMERADDR";
+	/**
+	 * 部门档案
+	 */
+	public static final String DEPARTMENT = "department";
+	/**
+	 * 容器管理
+	 */
+	public static final String CONTAINER_CONTROL = "container_control";
+	/**
+	 * 容器档案
+	 */
+	public static final String CONTAINER = "container";
+	/**
+	 * 质量建模
+	 */
+	public static final String QCFORM_MODEL = "qcform_model";
+	/**
+	 * 质量表格设置
+	 */
+	public static final String QCFORM = "qcform";
+	/**
+	 * 容器分类
+	 */
+	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 供应商地址明细
+	 */
+	public static final String VENDORADDR = "vendoraddr";
 	/**
 	 * 实体扩展字段
 	 */
 	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
-
 	/**
 	 * 实体扩展字段值集
 	 */
 	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
 
-	/**
-	 * 人员档案
-	 */
-	public static final String PERSON = "person";
 
 	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
 	/**
-	 * 机型档案
-	 */
-	public static final String EQUIPMENT_MODEL = "equipment_model";
-	/**
 	 * 料品档案
 	 */
     public static final String INVENTORY_RECORD = "inventory_record";
-	
-	/**
-	 * 部门档案
-	 */
-	public static final String DEPARTMENT = "department";
 	/**
 	 * 部门档案新增
 	 */
@@ -1883,7 +1915,7 @@ public class PermissionKey {
 	 * 部门档案 导入
 	 */
 	public static final String DEPARTMENT_IMPORT = "department_import";
-	
+
 	/**
 	 * 物料建模-物料形态对照表
 	 */
@@ -1912,41 +1944,4 @@ public class PermissionKey {
 	 * 年度计划
 	 */
 	public static final String ANNUALORDERM = "annualorderm";
-
-	/**
-	 * 容器管理
-	 */
-	public static final String CONTAINER_CONTROL = "container_control";
-	/**
-	 * 容器档案
-	 */
-	public static final String CONTAINER = "container";
-	/**
-	 * 容器分类
-	 */
-	public static final String CONTAINERCLASS = "containerclass";
-	/**
-	 * 生产计划管理
-	 */
-	public static final String PRODUCTION_PLAN = "production_plan";
-	/**
-	 * 年度生产计划排产
-	 */
-	public static final String YEAR_PRODUCTION_SCHEDULE = "year_production_schedule";
-	/**
-	 * 年度生产计划汇总
-	 */
-	public static final String SUMMARY_OF_ANNUAL_PRODUCTION_PLAN = "summary_of_annual_production_plan";
-	/**
-	 * 月周生产计划排产
-	 */
-	public static final String MONTHLY_AND_WEEKLY_PRODUCTION_SCHEDULE = "monthly_and_weekly_production_schedule";
-	/**
-	 * 月周生产计划汇总
-	 */
-	public static final String SUMMARY_OF_MONTHLY_AND_WEEKLY_PRODUCTION = "summary_of_monthly_and_weekly_production";
-	/**
-	 * 生产计划及实绩管理
-	 */
-	public static final String PRODUCTION_PLANNING_AND_PERFORMANCE_MANA = "production_planning_and_performance_mana";
 }

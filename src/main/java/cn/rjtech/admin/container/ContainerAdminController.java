@@ -1,6 +1,7 @@
 package cn.rjtech.admin.container;
 
-import cn.hutool.core.convert.Convert;
+
+import cn.hutool.core.date.DateUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Inject;
@@ -11,10 +12,13 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.tx.Tx;
+import com.jfinal.plugin.activerecord.Record;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.Container;
 import com.jfinal.upload.UploadFile;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * 仓库建模-容器档案
@@ -126,5 +130,17 @@ public class ContainerAdminController extends BaseAdminController {
 			return;
 		}
 		renderJson(service.importExcelData(file.getFile()));
+	}
+
+	/**
+	 * 导出数据
+	 */
+	@SuppressWarnings("unchecked")
+	public void dataExport() throws Exception {
+		List<Record> rows = service.list(getKv());
+		for (Record row : rows) {
+			row.put("isinner", StringUtils.equals("1", row.getStr("isinner")) ? "社外" : "社内");
+		}
+		renderJxls("container.xlsx", Kv.by("rows", rows), "容器档案_" + DateUtil.today() + ".xlsx");
 	}
 }

@@ -21,6 +21,7 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -249,11 +250,13 @@ public class ContainerService extends BaseService<Container> {
                                     ValidationUtils.notNull(data.get("iDepId"),"部门为空！");
                                     ValidationUtils.notNull(data.get("cwhcode"),"所属仓库为空！");
                                     ValidationUtils.notNull(data.get("isInner"), "存放地点为空！");
+                                    data.changeStrToBoolean("isInner", "社外");
                                     ValidationUtils.notNull(data.get("iLength"), "长(mm)为空！");
                                     ValidationUtils.notNull(data.get("iWidth"), "宽(mm)为空！");
                                     ValidationUtils.notNull(data.get("iHeight"), "高(mm)为空！");
                                     ValidationUtils.notNull(data.get("iSupplierId"), "供应商为空！");
                                     ValidationUtils.notNull(data.get("isEnabled"), "是否启用为空！");
+                                    data.changeStrToBoolean("isEnabled", "是");
 
 
 									ValidationUtils.isTrue(findByContainerCode(data.getStr("cContainerCode"))==null, data.getStr("cContainerCode")+"编码重复");
@@ -269,7 +272,7 @@ public class ContainerService extends BaseService<Container> {
 									}
 
 									//仓库
-									data.change("cContainerCode", warehouse.getIAutoId());
+									data.change("iWarehouseId", warehouse.getIAutoId());
 
 									data.remove("cwhcode");
 									data.remove("cContainerClassCode");
@@ -288,13 +291,15 @@ public class ContainerService extends BaseService<Container> {
 									data.change("iOrgId", getOrgCode());
 									data.change("cOrgCode", getOrgCode());
 									data.change("cOrgName", getOrgName());
+									//删除默认 0：未删除
+									data.change("IsDeleted", 0);
 
 								})
 								//从第三行开始读取
 								.setDataStartRow(3)
 				);
 		//从指定的sheet工作表里读取数据
-		List<WarehouseShelves> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", WarehouseShelves.class, errorMsg);
+		List<Container> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", Container.class, errorMsg);
 		if(notOk(models)) {
 			if(errorMsg.length()>0) {
 				return fail(errorMsg.toString());
@@ -302,8 +307,19 @@ public class ContainerService extends BaseService<Container> {
 				return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 			}
 	}
+		//读取数据没有问题后判断必填字段
+		if(models.size()>0){
+			tx(() -> {
+				batchSave(models);
+				return true;
+			});
+
+		}
 		return SUCCESS;
 }
 
 
+	public List<Record> list(Kv kv) {
+		return dbTemplate("container.paginateAdminDatas", kv).find();
+	}
 }

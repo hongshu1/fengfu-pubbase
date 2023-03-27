@@ -58,6 +58,8 @@ public abstract class BaseContainer<M extends BaseContainer<M>> extends JBoltBas
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "IsDeleted";
+    /**客户ID*/
+    public static final String ICUSTOMERID = "iCustomerId";
 	/**
 	 * 主键ID
 	 */
@@ -324,7 +326,7 @@ public abstract class BaseContainer<M extends BaseContainer<M>> extends JBoltBas
 	/**
 	 * 供应商ID
 	 */
-	@JBoltField(name="isupplierid" ,columnName="iSupplierId",type="Long", remark="供应商ID", required=true, maxLength=19, fixed=0, order=16)
+	@JBoltField(name="isupplierid" ,columnName="iSupplierId",type="Long", remark="供应商ID", required=false, maxLength=19, fixed=0, order=16)
 	@JSONField(name = "isupplierid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getISupplierId() {
 		return getLong("iSupplierId");
@@ -464,6 +466,23 @@ public abstract class BaseContainer<M extends BaseContainer<M>> extends JBoltBas
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");
+	}
+
+	/**
+	 * 客户ID
+	 */
+	public M setICustomerId(java.lang.Long iCustomerId) {
+		set("iCustomerId", iCustomerId);
+		return (M)this;
+	}
+
+	/**
+	 * 客户ID
+	 */
+	@JBoltField(name="icustomerid" ,columnName="iCustomerId",type="Long", remark="客户ID", required=false, maxLength=19, fixed=0, order=25)
+	@JSONField(name = "icustomerid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getICustomerId() {
+		return getLong("iCustomerId");
 	}
 
 }

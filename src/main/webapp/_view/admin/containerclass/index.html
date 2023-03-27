@@ -35,12 +35,41 @@
 
 </div>
 
+	<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+		<div class="dropdown-menu" aria-labelledby="importButton">
+			<a data-downloadbtn href="/admin/containerclass/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+			<div class="j_upload_file_box"
+				 data-name="file"
+				 data-btn-class="btn dropdown-item"
+				 data-placeholder="上传导入"
+				 data-confirm="确认导入数据？"
+				 data-accept="excel"
+				 data-maxsize="20480"
+				 data-handler="uploadFile"
+				 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+				 data-url="/admin/containerclass/importExcel">
+			</div>
+		</div>
+	</div>
+
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<div class="btn-group dropdown">
+			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+			<div class="dropdown-menu" aria-labelledby="exportButton">
+				<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="/admin/containerclass/dataExport"><i class="fa fa-download"></i> 导出选中</button>
+				<button class="btn dropdown-item" data-downloadbtn data-url="/admin/containerclass/dataExport"  data-form="ContainerClass_tpl_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
+			</div>
+		</div>
+	</div>
+
 </div>
 <table class="jbolt_table jbolt_main_table  table-center "
 	   data-jbolttable
 	   data-width="fill"
 	   data-height="fill"
 	   data-ajax="true"
+	   data-column-prepend="1:checkbox:true"
 	   data-conditions-form="ContainerClass_form_#(pageId)"
 	   data-url="admin/containerclass/datas"
 	   data-rowtpl="ContainerClass_tpl_#(pageId)"
