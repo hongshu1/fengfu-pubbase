@@ -323,4 +323,8 @@ public class WarehouseService extends BaseService<Warehouse> {
 
 		return SUCCESS;
 	}
+
+	public List<Record> options() {
+		return dbTemplate("warehouse.options", Kv.of("isenabled", "true")).find();
+	}
 }

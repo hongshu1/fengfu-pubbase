@@ -65,15 +65,9 @@ public class WorkClassService extends BaseService<Workclass> {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         ValidationUtils.isTrue(findWorkClassCodeInfo(workclass.getCworkclasscode()) == null, "编码重复！");
-        //if(existsName(workclass.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-        final String orgCode = getOrgCode();
         saveWorkClassHandle(workclass, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(),
             getOrgName());
         boolean success = workclass.save();
-        if (success) {
-            //添加日志
-            //addSaveSystemLog(workclass.getIautoid(), JBoltUserKit.getUserId(), workclass.getName());
-        }
         return ret(success);
     }
 

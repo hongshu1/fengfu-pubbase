@@ -23,6 +23,7 @@ import com.jfinal.upload.UploadFile;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 仓库建模-仓库档案
@@ -204,5 +205,9 @@ public class WarehouseAdminController extends BaseAdminController {
 			return;
 		}
 		renderJson(service.importExcelData(file.getFile()));
+	}
+
+	public void options(){
+		renderJsonData(service.options());
 	}
 }

@@ -67,3 +67,15 @@
 #namespace("workshiftm")
 #include("workshiftm/workshiftm.sql")
 #end
+
+#namespace("vendor")
+#include("vendor/vendor.sql")
+#end
+
+#namespace("vendorclass")
+#include("vendorclass/vendorclass.sql")
+#end
+
+#namespace("vendoraddr")
+#include("vendoraddr/vendoraddr.sql")
+#end

@@ -762,10 +762,6 @@ public class PermissionKey {
 	 */
 	public static final String SLICEINVPROCESSSTUFF = "sliceinvprocessstuff";
 	/**
-	 * 供应商主表
-	 */
-	public static final String VENDOR = "vendor";
-	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_SHELVES_ADD = "warehouse_shelves_add";
@@ -1833,4 +1829,54 @@ public class PermissionKey {
 	 * 人员档案
 	 */
 	public static final String PERSON_INDEX = "person_index";
+	/**
+	 * 供应商分类
+	 */
+	public static final String VENDOR = "vendor";
+	/**
+	 * 机型档案
+	 */
+	public static final String EQUIPMENT_MODEL = "equipment_model";
+	/**
+	 * 客户档案-联系地址
+	 */
+	public static final String ADMIN_CUSTOMERADDR = "ADMIN_CUSTOMERADDR";
+	/**
+	 * 部门档案
+	 */
+	public static final String DEPARTMENT = "department";
+	/**
+	 * 容器管理
+	 */
+	public static final String CONTAINER_CONTROL = "container_control";
+	/**
+	 * 容器档案
+	 */
+	public static final String CONTAINER = "container";
+	/**
+	 * 质量建模
+	 */
+	public static final String QCFORM_MODEL = "qcform_model";
+	/**
+	 * 质量表格设置
+	 */
+	public static final String QCFORM = "qcform";
+	/**
+	 * 容器分类
+	 */
+	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 供应商地址明细
+	 */
+	public static final String VENDORADDR = "vendoraddr";
+	/**
+	 * 实体扩展字段
+	 */
+	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
+	/**
+	 * 实体扩展字段值集
+	 */
+	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
+
+
 }
