@@ -9,6 +9,10 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.InventoryWorkRegion;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 存货档案-产线列表
  * @ClassName: InventoryWorkRegionService
@@ -127,4 +131,17 @@ public class InventoryWorkRegionService extends BaseService<InventoryWorkRegion>
 		return null;
 	}
 
+    public List<Record> getDatasOfSql(Kv kv) {
+		return dbTemplate("inventoryclass.workRegions",kv).find();
+    }
+
+    public List<InventoryWorkRegion> getWorkRegions(Long id){
+		//创建sql对象
+		Sql sql = selectSql();
+		//sql条件处理
+		sql.eq("iInventoryId",id);
+		//排序
+		sql.asc("iAutoId");
+		return find(sql);
+	}
 }

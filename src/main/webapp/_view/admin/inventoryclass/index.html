@@ -121,8 +121,8 @@
 	{@else}
 	<a class="jbolt_table_editbtn" data-dialog-title="修改存货" tooltip href="admin/inventory/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area=100%,100%" data-title="编辑存货档案"><i class="fa fa-edit"></i></a>
 	{@/if}
-	<a class="jbolt_table_btn" data-ajaxbtn tooltip href="admin/inventory/copy/${data.iautoid}" data-handler="refreshJBoltTable"  data-title="复制存货档案"><i class="fa fa-copy"></i></a>
-	<a class="jbolt_table_delbtn" href="admin/inventory/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+	<a class="jbolt_table_btn" data-openpage="dialog" tooltip href="admin/inventory/copy/${data.iautoid}" data-area="350,270" data-handler="refreshJBoltTable"   data-title="复制存货档案"><i class="fa fa-copy"></i></a>
+	<a class="jbolt_table_delbtn" href="admin/inventory/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" data-title="删除存货档案" tooltip><i class="fa fa-remove c-danger"></i></a>
 </td>
 <td>${data.cinvcode}</td>
 <td>${data.cinvname}</td>

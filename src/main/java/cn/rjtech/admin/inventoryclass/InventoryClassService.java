@@ -242,7 +242,7 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 	public List<JsTreeBean> getMgrTree(Long selectId, Integer openLevel) {
 		List<InventoryClass> inventoryClassList = find("select * from Bd_InventoryClass where isdeleted='0'");
 		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
-		JsTreeBean parent = new JsTreeBean("1","#","计量单位组",null,"",false);
+		JsTreeBean parent = new JsTreeBean("1","#","存货分类",null,"",false);
 		jsTreeBeanList.add(parent);
 		for (InventoryClass inventoryClass : inventoryClassList){
 			Long id = inventoryClass.getIAutoId();
@@ -253,7 +253,7 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 			jsTreeBean.setId(inventoryClass.getIAutoId()+"");
 			if(inventoryClass.getIPid() != null){
 				jsTreeBean.setParent(inventoryClass.getIPid()+"");
-				jsTreeBean.setChildren(true);
+				//jsTreeBean.setChildren(true);
 			}
 			jsTreeBeanList.add(jsTreeBean);
 		}

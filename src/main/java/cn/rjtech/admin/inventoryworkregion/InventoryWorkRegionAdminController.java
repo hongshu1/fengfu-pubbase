@@ -1,5 +1,6 @@
 package cn.rjtech.admin.inventoryworkregion;
 
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -7,15 +8,23 @@ import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.InventoryWorkRegion;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 存货档案-产线列表
  * @ClassName: InventoryWorkRegionAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-24 14:00
  */
+@UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.INVENTORY_RECORD)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/inventoryworkregion", viewPath = "/_view/admin/inventoryworkregion")
 public class InventoryWorkRegionAdminController extends BaseAdminController {
@@ -98,5 +107,14 @@ public class InventoryWorkRegionAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
-
+	public void options(){
+		Kv kv = getKv();
+		Long iinventoryid = kv.getLong("iInventoryId");
+		if(iinventoryid == null)
+			renderJsonData(new ArrayList<>());
+		else{
+			List<Record> datas = service.getDatasOfSql(kv);
+			renderJsonData(datas);
+		}
+	}
 }

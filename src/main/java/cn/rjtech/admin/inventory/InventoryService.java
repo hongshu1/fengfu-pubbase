@@ -1,7 +1,17 @@
 package cn.rjtech.admin.inventory;
 
+import cn.hutool.core.io.FileTypeUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.rjtech.model.momdata.InventoryClass;
+import cn.jbolt.core.util.JBoltRealUrlUtil;
+import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
+import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
+import cn.rjtech.admin.inventoryplan.InventoryPlanService;
+import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
+import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
+import cn.rjtech.model.momdata.*;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Page;
 
 import java.util.Date;
@@ -14,10 +24,11 @@ import cn.jbolt.core.base.JBoltMsg;
 import java.io.File;
 import com.jfinal.plugin.activerecord.IAtom;
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicReference;
+
 import cn.jbolt.core.poi.excel.*;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.Inventory;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 /**
  * 物料建模-存货档案
@@ -27,6 +38,18 @@ import com.jfinal.plugin.activerecord.Record;
  */
 public class InventoryService extends BaseService<Inventory> {
 	private final Inventory dao=new Inventory().dao();
+
+	@Inject
+	private InventoryStockConfigService inventoryStockConfigService;
+	@Inject
+	private InventoryMfgInfoService inventoryMfgInfoService;
+	@Inject
+	private InventoryPlanService inventoryPlanService;
+	@Inject
+	private InventoryAdditionService inventoryAdditionService;
+	@Inject
+	private InventoryWorkRegionService inventoryWorkRegionService;
+
 	@Override
 	protected Inventory dao() {
 		return dao;
@@ -275,5 +298,94 @@ public class InventoryService extends BaseService<Inventory> {
 
 	public List<Record> getAdminDatasNoPage(Kv kv) {
 		return dbTemplate("inventoryclass.inventoryList",kv).find();
+	}
+
+	public Inventory saveJBoltFile(UploadFile file, String uploadPath, int fileType) {
+		String localPath = file.getUploadPath() + File.separator + file.getFileName();
+		String localUrl = FileUtil.normalize(JBoltRealUrlUtil.get(JFinal.me().getConstants().getBaseUploadPath() + '/' + uploadPath + '/' + file.getFileName()));
+		localPath = FileUtil.normalize(localPath);
+		Inventory itempicture = new Inventory();
+		itempicture.setCPics(localUrl);
+		String originalFileName = file.getOriginalFileName();
+		File realFile = file.getFile();
+		String fileSuffix = FileTypeUtil.getType(realFile);
+		Long fileSize = FileUtil.size(realFile);
+		return  itempicture ;
+	}
+
+	public Ret updateForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo, InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions) {
+		AtomicReference<Ret> res = new AtomicReference<>();
+		res.set(SUCCESS);
+		tx(() -> {
+			Ret inventoryRet = update(inventory);
+			inventoryAddition.setIInventoryId(inventory.getIAutoId());
+			Ret additionRet = inventoryAdditionService.update(inventoryAddition);
+			inventoryPlan.setIInventoryId(inventory.getIAutoId());
+			Ret planRet = inventoryPlanService.update(inventoryPlan);
+			inventoryMfgInfo.setIInventoryId(inventory.getIAutoId());
+			Ret mfgInfoRet = inventoryMfgInfoService.update(inventoryMfgInfo);
+			inventorystockconfig.setIInventoryId(inventory.getIAutoId());
+			Ret stockRet = inventoryStockConfigService.update(inventorystockconfig);
+			if(inventoryWorkRegions != null && inventoryWorkRegions.size() > 0){
+				for (InventoryWorkRegion workRegion : inventoryWorkRegions) {
+					workRegion.setIInventoryId(inventory.getIAutoId());
+				}
+				int[] ints = inventoryWorkRegionService.batchUpdate(inventoryWorkRegions);
+			}
+			return true;
+		});
+
+		return res.get();
+	}
+
+	public Ret saveForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo, InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions) {
+		AtomicReference<Ret> res = new AtomicReference<>();
+		res.set(SUCCESS);
+		tx(() -> {
+		Ret inventoryRet = save(inventory);
+		if(inventoryRet.isFail()){
+			res.set(inventoryRet);
+			return false;
+		}
+		inventoryAddition.setIInventoryId(inventory.getIAutoId());
+		Ret additionRet = inventoryAdditionService.save(inventoryAddition);
+			if(additionRet.isFail()){
+				res.set(additionRet);
+				return false;
+			}
+		inventoryPlan.setIInventoryId(inventory.getIAutoId());
+		Ret planRet = inventoryPlanService.save(inventoryPlan);
+			if(planRet.isFail()){
+				res.set(planRet);
+				return false;
+			}
+		inventoryMfgInfo.setIInventoryId(inventory.getIAutoId());
+		Ret mfgInfoRet = inventoryMfgInfoService.save(inventoryMfgInfo);
+			if(mfgInfoRet.isFail()){
+				res.set(mfgInfoRet);
+				return false;
+			}
+		inventorystockconfig.setIInventoryId(inventory.getIAutoId());
+		Ret stockRet = inventoryStockConfigService.save(inventorystockconfig);
+			if(stockRet.isFail()){
+				res.set(stockRet);
+				return false;
+			}
+		if(inventoryWorkRegions != null && inventoryWorkRegions.size() > 0){
+			for (InventoryWorkRegion workRegion : inventoryWorkRegions) {
+				workRegion.setIInventoryId(inventory.getIAutoId());
+				workRegion.setIsDeleted(false);
+			}
+			int[] ints = inventoryWorkRegionService.batchSave(inventoryWorkRegions);
+			if(ints.length != inventoryWorkRegions.size())
+			{
+				res.set(Ret.fail("产线信息异常!"));
+				return false;
+			}
+		}
+		return true;
+		});
+
+		return res.get();
 	}
 }
