@@ -43,9 +43,6 @@ public class Fitemss97classService extends BaseService<Fitemss97class> {
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
 		Page<Record> pageList = dbTemplate("fitemss97class.paginateAdminDatas",para).paginate(pageNumber, pageSize);
-		for (Record row : pageList.getList()) {
-			row.set("createusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
-		}
 		return pageList;
 	}
 

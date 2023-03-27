@@ -131,3 +131,6 @@
 #include("fitemss97class/fitemss97class.sql")
 #end
 
+#namespace("fitemss97")
+#include("fitemss97/fitemss97.sql")
+#end
