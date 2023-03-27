@@ -20832,3 +20832,53 @@ function table_rowspan(table, table_colnum) {
 		}
 	});
 }
+
+/**
+ * 表格dom 指定列相同内容数据合并单元格
+ * @param table
+ * @param cols
+ */
+function tableMergeCells(table, cols) {
+	var isArr = isArray(cols);
+	if(!isArr){
+		cols = [cols];
+	}
+	if (cols.length == 0) {
+		return;
+	}
+	var colLen = cols.length;
+	for (var colIndex = 0; colIndex < colLen; colIndex++) {
+		table_rowspan(table,cols[colIndex]);
+	}
+}
+/**
+ * @ function：合并指定表格列（表格id为table_id）指定列（列数为table_colnum）的相同文本的相邻单元格
+ * @ param：table_id 为需要进行合并单元格的表格的id。如在HTMl中指定表格 id="data" ，此参数应为 #data
+ * @ param：table_colnum 为需要合并单元格的所在列。为数字，从最左边第一列为1开始算起。
+ */
+function table_rowspan(table, table_colnum) {
+	var table_firsttd = "";
+	var table_currenttd = "";
+	var table_SpanNum = 0;
+	var table_Obj = $(table).find("tbody>tr td:nth-child(" + table_colnum + ")");
+	table_Obj.each(function (i) {
+		if (i == 0) {
+			table_firsttd = $(this);
+			table_SpanNum = 1;
+		} else {
+			table_currenttd = $(this);
+			//alert($(this).attr('value'));
+			if (table_firsttd.text() === table_currenttd.text()) { //这边注意不是val（）属性，而是text（）属性
+				//td内容为空的不合并
+				if(table_firsttd.text() !==""){
+					table_SpanNum++;
+					table_currenttd.hide(); //remove();
+					table_firsttd.attr("rowSpan", table_SpanNum);
+				}
+			} else {
+				table_firsttd = $(this);
+				table_SpanNum = 1;
+			}
+		}
+	});
+}
