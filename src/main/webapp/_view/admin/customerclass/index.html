@@ -1,0 +1,125 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+	<div class="jbolt_page_title">
+		<!--		<div class="row">-->
+		<!--			<div class="col-sm-auto">-->
+		<!--				<h1><i class="jbicon2 jbi-tags"></i> 客户分类</h1>-->
+		<!--			</div>-->
+		<!--			<div class="col">-->
+		<!--			</div>-->
+		<!--			<div class="col-sm-auto">-->
+		<!--			</div>-->
+		<!--		</div>-->
+	</div>
+	<div class="jbolt_page_content">
+		<div class="row">
+			<div class="col-auto mb-3" style="width:25%;">
+				<div class="card">
+					<div class="card-header py-2">
+						<span class="d-inline-block py-1">客户分类</span>
+						<div class="pull-right">
+							<input type="text" class="form-control" id="searchBackGoodsTypeInput_#(pageId)"  placeholder="搜索" />
+						</div>
+					</div>
+					<div class="card-header py-2">
+						<div>
+							<div class="btn-group" role="group" aria-label="btn-group">
+								<button data-area="580,450" data-title="新增分类" onclick="addBtn_#(pageId)(this)"  class="btn btn-outline-info btn-sm"><i class="fa fa-plus"></i> 新增</button>
+
+								<button data-area="580,450" data-title="修改分类" onclick="updateBtn_#(pageId)(this)"  class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+								<button onclick="deleteBtn_#(pageId)(this)" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+
+								<!--								<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-title="使用Excel上传并导入数据" data-btn="close" data-area="600,400" data-url="admin/ceshi/demotable/initImport"><i class="fa fa-upload"></i> 导入</button>-->
+<!--								<button data-downloadbtn class="btn btn-outline-primary btn-sm" data-url="admin/customerclass/dataExport"><i class="fa fa-download"></i> 导出</button>-->
+
+								<!--<div class="btn-group dropdown">
+									<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+									<div class="dropdown-menu" aria-labelledby="importMenuButton">
+										<a data-downloadbtn href="/admin/customerclass/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+										<div class="j_upload_file_box"
+											 data-name="file"
+											 data-btn-class="btn dropdown-item"
+											 data-placeholder="上传导入"
+											 data-confirm="确认导入数据？"
+											 data-accept="excel"
+											 data-maxsize="20480"
+											 data-handler="uploadFile"
+											 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+											 data-url="/admin/customerclass/importExcel">
+										</div>
+									</div>
+								</div>-->
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+					<div class="card-body overflow-auto" style="min-height:600px;">
+						<div id="customerBackCategoryTree"
+							 data-jstree
+							 data-target="portal"
+							 data-search-input="searchBackGoodsTypeInput_#(pageId)"
+							 data-portalid="customerBackCategoryPortal_#(pageId)"
+							 data-curd="false"
+							 data-open-level="-1"
+							 data-read-url="admin/customerclass/mgrTree/"
+							 data-add-url="admin/customerclass/add/"
+							 data-edit-url="admin/customerclass/edit/"
+							 data-delete-url="admin/customerclass/delete/"
+							 data-move-url="admin/customerclass/move/"
+							 data-change-handler="jstreeClike_#(pageId)">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-auto" style="width:75%;">
+				#ajaxPortal("/admin/customer/index","customerBackCategoryPortal_#(pageId)",true)
+			</div>
+		</div>
+	</div>
+
+
+	<script>
+		var autoid = "";
+		function jstreeClike_#(pageId)(tree,data){
+			autoid = data.id;
+
+			//设置右侧表格属性
+			$("#customermForm_add").data("url","admin/customerm/add?autoid="+autoid);
+			$("#customermForm_autoid").val(autoid)
+			$("#customermForm_submit").click();
+		}
+		function updateBtn_#(pageId)(ele){
+			if (autoid == ""){
+				LayerMsgBox.alert("请选择所需修改的客户分类！");
+				return;
+			}
+			var url="admin/customerclass/edit/"+autoid;
+			$(ele).data("url",url);
+			DialogUtil.openBy(ele);
+		}
+
+		function addBtn_#(pageId)(ele) {
+			var url="admin/customerclass/add?autoid="+autoid;
+			$(ele).data("url",url);
+			DialogUtil.openBy(ele);
+		}
+
+		function deleteBtn_#(pageId)(ele){
+			if (autoid == ""){
+				LayerMsgBox.alert("请选择所需删除的客户分类！");
+				return;
+			}
+			LayerMsgBox.confirm("确定删除选中数据？",function(){
+				let url = "admin/customerclass/deleteByIds?ids="+autoid
+				Ajax.get(url,function(res){
+					window.parent.refreshPjaxContainer();
+				});
+			});
+		}
+
+	</script>
+</div>
+#end
+
