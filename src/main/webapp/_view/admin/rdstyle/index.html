@@ -1,0 +1,138 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col-sm-auto">
+				<h1><i class="jbicon2 jbi-tags"></i> 收发类别</h1>
+			</div>
+			<div class="col">
+			</div>
+			<div class="col-sm-auto">
+			</div>
+		</div>
+	</div>
+	<div class="jbolt_page_content">
+		<div class="row">
+			<div class="col-auto mb-3" style="width:26%;">
+				<div class="card">
+					<div class="card-header py-2">
+						<span class="d-inline-block py-1"><strong>收发类别</strong></span>
+
+					</div>
+					<div class="card-header py-2">
+						<div>
+							<div class="btn-group" role="group" aria-label="btn-group">
+
+
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+					<div class="card-body overflow-auto" style="height:600px;">
+						<div id="rdStyleTree"
+							 data-jstree
+							 data-target="portal"
+							 data-portalid="rdStyleId"
+							 data-curd="false"
+							 data-open-level="-1"
+							 data-read-url="admin/rdstyle/mgrTree"
+							 data-change-handler="jstreeClike">
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="col-auto card " style="width:74%; margin-top: 0px">
+
+				<!--料品列表-->
+				<!--#ajaxPortal("/admin/itemmaster/index","itemcategoryId",true)-->
+				<div class="jbolt_page" data-key="itemmaster_#(pmkey)" >
+					<div class="jbolt_page_title">
+						<div class="row">
+
+							<div class="col">
+								<form class="form-inline" id="itemmasterForm_#(pageId)"   onsubmit="return false;" method="post">
+
+								</form>
+							</div>
+							<div class="col-md-auto">
+							</div>
+						</div>
+					</div>
+					<div class="jbolt_page_content">
+						<!-- JBoltTable的数据模板定义-->
+						<textarea class="jb_tpl_box" id="itemmasterRowtpl_#(pageId)">
+							{@each datas as data,index}
+							<tr data-id="${data.iautoid}" >
+							<td>${pageNumber,pageSize,index | rownum}</td>
+							<td>${data.crdcode}</td>
+							<td>${data.crdname}</td>
+							<td>${data.brdflag}</td>
+							<td>${data.bretail}</td>
+							</tr>
+							{@/each}
+						</textarea>
+
+						<!-- 工具条 toolbar -->
+						<div class="jbolt_table_toolbar" id="itemmaster_toolbar_#(pageId)">
+							<div class="btn-group" role="group" aria-label="btn-group">
+
+							</div>
+							<div class="clearfix"></div>
+						</div>
+
+						<table class="jbolt_table jbolt_main_table table-center"
+							   data-jbolttable
+							   data-height="fill"
+							   data-ajax="true"
+							   data-url="admin/rdstyle/datas"
+							   data-column-resize="true"
+							   data-column-prepend="1:checkbox:true"
+							   data-conditions-form="itemmasterForm_#(pageId)"
+							   data-rowtpl="itemmasterRowtpl_#(pageId)"
+							   data-page="itemmasterPage_#(pageId)"
+							   data-toolbar="itemmaster_toolbar_#(pageId)"
+							   data-fixed-columns-left="1,2,3"
+						>
+							<thead>
+							<tr>
+								<th data-width="150" data-column="cRdCode">收发类别编码</th>
+								<th data-width="150" data-column="cRdName">收发类别名称</th>
+								<th data-width="150" data-column="bRdFlag">收发标志: 0. 发 1. 收</th>
+								<th data-width="150" data-column="bRetail">是否零售</th>
+							</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		/*料品分类*/
+		var autoid = "";
+		function jstreeClike(tree,data){
+			autoid = data.id;
+			$("#iitemcategoryid").val(autoid);
+			jboltTablePageToFirst();
+		}
+		function submitBtn(){
+			$("#iitemcategoryid").val('');
+		}
+
+		/*料品档案*/
+		function addMasterBtn(ele){
+			var url="admin/itemmaster/add?iitemcategoryid="+autoid;
+			$(ele).data("url",url);
+			DialogUtil.openBy(ele);
+		}
+
+	</script>
+</div>
+#end
+
