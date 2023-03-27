@@ -229,12 +229,13 @@
         <label class="col-sm-1 col-form-label" >是否启用</label>
         <div class="col"  style="padding-top: 1px;">
             <div class="radio radio-primary  radio-inline">
-                <input #if(customerm.isenabled??) checked #end id="r_isenabled_true" type="radio" name="customerm.isenabled" value="true"/>
+                <input #if(customerm.isenabled=='1'??) checked #end id="r_isenabled_true" type="radio"
+                       name="customerm.isenabled" value="true"/>
                 <label for="r_isenabled_true">是</label>
             </div>
 
             <div class="radio radio-primary  radio-inline">
-                <input #if(!customerm.isenabled??) checked #end id="r_isenabled_false" type="radio"
+                <input #if(customerm.isenabled=='0'??) checked #end id="r_isenabled_false" type="radio"
                        name="customerm.isenabled" value="false"/>
                 <label for="r_isenabled_false">否</label>
             </div>

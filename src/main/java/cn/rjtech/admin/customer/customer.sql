@@ -35,7 +35,7 @@ FROM
     #if(ids)
       AND CHARINDEX(','+cast((select a.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
     #end
-    ORDER BY dCreateTime DESC
+    ORDER BY dUpdateTime DESC
 #end
 
 
