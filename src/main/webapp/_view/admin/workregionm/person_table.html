@@ -1,0 +1,57 @@
+#@jboltLayout()
+#define main()
+#setLocal(pageId=RandomUtil.random(6))
+<div class="jbolt_page">
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col">
+		<form onsubmit="return false;" class="form-inline" id="jboltversion_JboltTableForm_ajax_#(pageId)" action="admin/workregionm/findPersonPage"  method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="请输入姓名" name="cpersonname" data-value="#(cpersonname??)"/>
+		<button  type="button" onclick="refreshJBoltTable(this)" class="btn btn-light" ><i class="fa fa-search"></i> 查询</button>
+		</form>
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable -->
+<!-- JBoltTable的数据模板定义-->
+<script type="text/template" id="jboltTable_demotpl">
+{@each datas as data,index}
+<tr class="hand" data-json='#json(data,"iautoid,cpsnnum,cpsnname,cpsnmobilephone")' data-jboltinput-setvalue-trigger data-text=${data.cpsnname} data-value=${data.iautoid}>
+<td>${data.cpsnnum}</td>
+<td>${data.cpsnname}</td>
+<td>${data.cpsnmobilephone}</td>
+</tr>
+{@/each}
+</script>
+ <table class="thead_font_normal table table-bordered table-hover table-sm table-striped text-center text-nowrap"
+  data-jbolttable
+  data-height="250"
+  data-column-resize="true"
+  data-ajax="true"
+  data-conditions-form="jboltversion_JboltTableForm_ajax_#(pageId)"
+  data-page="jboltTablePage_ajax_#(pageId)"
+  data-pagesize="5"
+  data-url="admin/workregionm/findPersonPage"
+  data-rowtpl="jboltTable_demotpl"
+ >
+<thead>
+<tr>
+<th data-width="150" data-column="cPsnNum">人员编码</th>
+<th data-min-width="160" data-column="cPsnName">人员姓名</th>
+<th data-min-width="160" data-column="cPsnMobilePhone">手机号</th>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script>
+/*$(function(){
+	###这里因为是进入二级内页 所以需要写这个 为了在刷新浏览器后还能选中左侧导航
+	openLeftNav("/admin/person");
+})*/
+</script>
+#end

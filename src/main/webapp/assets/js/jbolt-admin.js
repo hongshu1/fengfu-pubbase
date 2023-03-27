@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.3.6";
+var jbolt_admin_js_version="6.4.3";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -1232,10 +1232,15 @@ var JBoltInputUtil={
 					if(!url){
 						return false;
 					}
+					url = processDataFormLinkParams(input,url);
+					if(!url){
+						return false;
+					}
 					url=processJBoltTableEleUrlByLinkColumn(input,url);
 					if(!url){
 						return false;
 					}
+
 				}
 				
 				if(loadType=="html"){
@@ -3734,6 +3739,25 @@ function processAutocompleteItem(data,column_attr,align){
 	}
 	return text;
 }
+
+/**
+ * 处理data-form 挂参到URL上
+ * @param ele
+ * @param url
+ * @returns {*}
+ */
+function processDataFormLinkParams(ele,url){
+	var formId = ele.data("form");
+	if(formId){
+		var form=$("#"+formId);
+		if(!isOk(form)){
+			LayerMsgBox.alert("组件绑定data-form未找到",2);
+			return;
+		}
+		url = urlWithFormData(url,form);
+	}
+	return url;
+}
 /**
  * 处理一个组件绑定了另外组件作为param的URL
  * dialog autocomplate组件通用
@@ -3948,6 +3972,7 @@ var AutocompleteUtil={
 			var url=ac_input.data("url");
 			var newUrl=processEleUrlByLinkOtherParamEle(ac_input,url,false);
 			if(newUrl){
+				newUrl=processDataFormLinkParams(ac_input,newUrl);
 				newUrl=processJBoltTableEleUrlByLinkColumn(ac_input,newUrl);
 				var options={url:newUrl};
 				ac_input.setOptions(options);
@@ -4121,6 +4146,7 @@ var AutocompleteUtil={
 		
 		
 		url=actionUrl(url);
+		url=processDataFormLinkParams(input,url);
 		url=processEleUrlByLinkOtherParamEle(input,url,true,function(){
 			AutocompleteUtil.resetParamBind(input);
 		});
@@ -4565,6 +4591,10 @@ var JBoltLayerUtil={
 			//处理URL
 			url=actionUrl(url);
 			url=processEleUrlByLinkOtherParamEle(trigger,url);
+			if(!url){
+				return false;
+			}
+			url=processDataFormLinkParams(trigger,url);
 			if(!url){
 				return false;
 			}
@@ -5264,6 +5294,7 @@ var JBoltTabUtil={
 				  var openOptions=nav.data("open-option");
 				url=actionUrl(url);
 				url=processEleUrlByLinkOtherParamEle(nav,url);
+				url=processDataFormLinkParams(nav,url);
 				url=processJBoltTableEleUrlByLinkColumn(nav,url);
 				var triggerKey = null;
 				var currentTab=this.getCurrentTab();
@@ -6523,6 +6554,7 @@ var SwitchBtnUtil={
 				LayerMsgBox.loading("正在执行...",10000);
 				url=actionUrl(url);
 				url=processEleUrlByLinkOtherParamEle(_btn,url);
+			    url=processDataFormLinkParams(_btn,url);
       			url=processJBoltTableEleUrlByLinkColumn(_btn,url);
 				$.ajax({
 					type:"post",
@@ -8367,11 +8399,12 @@ var LayerPhotoUtil={
 								return false;
 							}
 
-							var formId = portal.data("conditions-form");
+
+							var formId = portal.data("conditions-form")||portal.data("form");
 							if(formId){
 								var form=$("#"+formId);
 								if(!isOk(form)){
-									LayerMsgBox.alert("ajaxPortal绑定data-conditions-form未找到",2);
+									LayerMsgBox.alert("ajaxPortal绑定data-conditions-form 或者 data-form未找到",2);
 									return;
 								}
 								l_url = urlWithFormData(l_url,form);
@@ -9198,6 +9231,7 @@ var ImgUploadUtil={
 					}
 					if(url){
 						url = processEleUrlByLinkOtherParamEle(uploder,url);
+						url = processDataFormLinkParams(uploder,url);
 					}
 					LayerMsgBox.loading("处理中",10000);
 					var hiddeninputId=uploder.data("hidden-input")||uploder.data("hiddeninput");
@@ -9354,6 +9388,7 @@ var ImgUploadUtil={
 					}
 					if(url){
 						url=processEleUrlByLinkOtherParamEle(uploder,url);
+						url = processDataFormLinkParams(uploder,url);
 					}
 
 					LayerMsgBox.loading("处理中",1000);
@@ -10673,6 +10708,7 @@ var FileUploadUtil={
 				}
 				if(url){
 					url = processEleUrlByLinkOtherParamEle(box,url);
+					url = processDataFormLinkParams(box,url);
 				}
 				
 				var hiddeninputId=box.data("hidden-input")||box.data("hiddeninput");
@@ -10806,6 +10842,7 @@ var FileUploadUtil={
 					}
 					if(url){
 						url = processEleUrlByLinkOtherParamEle(uploder,url);
+						url = processDataFormLinkParams(uploder,url);
 					}
 					
 					LayerMsgBox.loading("处理中",10000);
@@ -11937,6 +11974,10 @@ function syncOtherInput(value,inputEle){
 		      			if(!url){
 		      				return false;
 		      			}
+						url=processDataFormLinkParams(_thisSelect,url);
+						if(!url){
+							return false;
+						}
 		      			url=processJBoltTableEleUrlByLinkColumn(_thisSelect,url);
 		      			if(!url){
 		      				return false;
@@ -12780,7 +12821,8 @@ var AjaxBtnUtil ={
 				  //处理URL 和关联的参数元素值
 				  url=actionUrl(url);
 				  url=processEleUrlByLinkOtherParamEle(action,url);
-				  
+				  url=processDataFormLinkParams(action,url);
+
 				  var dataconfirm=action.data("confirm");
 				  if(!dataconfirm&&cssSelector==".jbolt_table_delbtn"){
 					  dataconfirm="确定删除此项?";
@@ -12949,6 +12991,7 @@ var OpenPageBtnUtil ={
 						 var a=document.createElement("a");
 						 blankUrl=actionUrl(blankUrl);
 						 blankUrl=processEleUrlByLinkOtherParamEle(action,blankUrl);
+						 blankUrl=processDataFormLinkParams(action,blankUrl);
 						 blankUrl=processJBoltTableEleUrlByLinkColumn(action,blankUrl);
 						 a.href=blankUrl;
 						 a.target="_blank";
@@ -12970,6 +13013,7 @@ var OpenPageBtnUtil ={
 							 if(parent.jboltWithTabs){
 								 blankUrl=actionUrl(blankUrl);
 								 blankUrl=processEleUrlByLinkOtherParamEle(action,blankUrl);
+								 blankUrl=processDataFormLinkParams(action,blankUrl);
 								 blankUrl=processJBoltTableEleUrlByLinkColumn(action,blankUrl);
 								 parent.JBoltTabUtil.currentTabGo(blankUrl);
 							 }else{
@@ -12979,6 +13023,7 @@ var OpenPageBtnUtil ={
 							 if(jboltWithTabs){
 								 blankUrl=actionUrl(blankUrl);
 								 blankUrl=processEleUrlByLinkOtherParamEle(action,blankUrl);
+								 blankUrl=processDataFormLinkParams(action,blankUrl);
 								 blankUrl=processJBoltTableEleUrlByLinkColumn(action,blankUrl);
 								 JBoltTabUtil.currentTabGo(blankUrl);
 							 }else{
@@ -13390,6 +13435,7 @@ var DialogUtil={
 						  		  if(dialogKey==iframeKey){
 						  			  url=actionUrl(url);
 									  url=processEleUrlByLinkOtherParamEle(action,url,false);
+									  url=processDataFormLinkParams(action,url);
 									  url=processJBoltTableEleUrlByLinkColumn(action,url);
 									  url=processUrlRqType(url,"dialog");
 									  iframe.attr("src",url);
@@ -13399,6 +13445,7 @@ var DialogUtil={
 						  	  }else{
 						  		  url=actionUrl(url);
 								  url=processEleUrlByLinkOtherParamEle(action,url,false);
+								  url=processDataFormLinkParams(action,url);
 								  url=processJBoltTableEleUrlByLinkColumn(action,url);
 								  url=processUrlRqType(url,"dialog");
 								  iframe.attr("src",url);
@@ -13419,6 +13466,7 @@ var DialogUtil={
 				  if(url){
 					  url=actionUrl(url);
 					  url=processEleUrlByLinkOtherParamEle(action,url,false);
+					  url=processDataFormLinkParams(action,url);
 					  url=processJBoltTableEleUrlByLinkColumn(action,url);
 					  url=processUrlRqType(url,"dialog");
 				  }
@@ -13604,6 +13652,10 @@ var DialogUtil={
 				  var url=actionUrl(options.url);
 				  if(isOk(options.ele)){
 					  url=processEleUrlByLinkOtherParamEle(options.ele,url,false);
+					  if(!url){
+						  return false;
+					  }
+					  url=processDataFormLinkParams(options.ele,url);
 					  if(!url){
 						  return false;
 					  }
@@ -15384,6 +15436,7 @@ var JBoltPjaxUtil={
 			}
 			url=actionUrl(url);
 			url=processEleUrlByLinkOtherParamEle(nav,url);
+			url=processDataFormLinkParams(nav,url);
 			//url=processJBoltTableEleUrlByLinkColumn(nav,url);
 			var key=nav.data("key")||randomId();
 			var text=$.trim(nav.data("text")||nav.data("title")||nav.attr("title")||nav.text()||"新标签页");
@@ -15835,6 +15888,19 @@ function activeLeftNavByKey(key){
 				hideLeftAndFullMainConainer();
 			}else{
 				jboltAdmin.removeClass("fullMainContainer");
+			}
+		}
+	}else{
+		var theleftNav;
+		if(jboltWithTabs){
+			leftNavKey = JBoltTabUtil.getCurrentTabContent().find(".jbolt_page[data-leftnav-key]:first");
+		}else{
+			leftNavKey = mainPjaxContainer.find(".jbolt_page[data-leftnav-key]:first");
+		}
+		if(leftNavKey){
+			var leftNavKey = leftNavKey.data("leftnav-key");
+			if(leftNavKey){
+				activeLeftNavByKey(leftNavKey);
 			}
 		}
 	}
@@ -19547,7 +19613,11 @@ var MultipleFileInputUtil={
 			var uploadUrl=input.data("uploadurl");
 			if(!uploadUrl){
 				LayerMsgBox.alert("请设置多文件组件上传地址：data-uploadurl",2);
+				return;
 			}
+			uploadUrl = actionUrl(uploadUrl);
+			uploadUrl=processEleUrlByLinkOtherParamEle(input,uploadUrl);
+			uploadUrl=processDataFormLinkParams(input,uploadUrl);
 			var options={
 					enctype: 'multipart/form-data',
 			        previewFileType: "any",
@@ -20389,6 +20459,7 @@ function jboltTableGetHiprintUrl(btnEle,dataUrl,isSingleLine){
 	//处理URL 和关联的参数元素值
 	url=actionUrl(url);
 	url=processEleUrlByLinkOtherParamEle(btn,url);
+	url = processDataFormLinkParams(btn,url);
 	return url;
 }
 /**
@@ -20707,4 +20778,57 @@ function isJSON(str) {
 		}
 	}
 	console.error('It is not a string!')
+}
+
+/**
+ * 表格dom 指定列相同内容数据合并单元格
+ * @param table
+ * @param cols
+ */
+function tableMergeCells(table, cols) {
+	var isArr = isArray(cols);
+	if(!isArr){
+		cols = [cols];
+	}
+	if (cols.length == 0) {
+		return;
+	}
+	var colLen = cols.length;
+	for (var colIndex = 0; colIndex < colLen; colIndex++) {
+		table_rowspan(table,cols[colIndex]);
+	}
+}
+/**
+ * @ function：合并指定表格列（表格id为table_id）指定列（列数为table_colnum）的相同文本的相邻单元格
+ * @ param：table_id 为需要进行合并单元格的表格的id。如在HTMl中指定表格 id="data" ，此参数应为 #data
+ * @ param：table_colnum 为需要合并单元格的所在列。为数字，从最左边第一列为1开始算起。
+ */
+function table_rowspan(table, table_colnum) {
+	var table_firsttd = "";
+	var table_currenttd = "";
+	var table_SpanNum = 0;
+	var table_Obj = $(table).find("tbody>tr td:nth-child(" + table_colnum + ")");
+	var height=0;
+	table_Obj.each(function (i) {
+		if (i == 0) {
+			table_firsttd = $(this);
+			height = parseInt(table_firsttd.css("height"));
+			table_SpanNum = 1;
+		} else {
+			table_currenttd = $(this);
+			//alert($(this).attr('value'));
+			if (table_firsttd.text() === table_currenttd.text()) { //这边注意不是val（）属性，而是text（）属性
+				//td内容为空的不合并
+				if(table_firsttd.text() !==""){
+					table_SpanNum++;
+					table_currenttd.hide(); //remove();
+					table_firsttd.attr("rowSpan", table_SpanNum);
+					table_firsttd.css({"height":height*table_SpanNum},{"min-height":height*table_SpanNum},{"max-height":height*table_SpanNum});
+				}
+			} else {
+				table_firsttd = $(this);
+				table_SpanNum = 1;
+			}
+		}
+	});
 }

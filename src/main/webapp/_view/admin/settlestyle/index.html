@@ -1,0 +1,104 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>结算方式</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="settleStyleForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="settleStyleRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a href="admin/settlestyle/edit/${data.iautoid}" data-area="900,400"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改结算方式" class="jbolt_table_editbtn">修改</a>
+    <a href="admin/settlestyle/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+</td>
+<td>${data.csscode}</td>
+<td>${data.cssname}</td>
+<td><img data-switchbtn data-confirm="确定切换是否票据管理？" data-value="${data.bssflag}"  data-handler="refreshJBoltTable"  data-url="admin/settlestyle/toggleBSSFlag/${data.iautoid}"/></td>
+<td>${data.issbilltypedesc}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="settleStyle_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="900,400"  data-handler="jboltTablePageToFirst" data-title="新增结算方式"  data-url="admin/settlestyle/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+	</div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/settlestyle/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="settleStyleForm_#(pageId)"
+data-rowtpl="settleStyleRowtpl_#(pageId)"
+data-page="settleStylePage_#(pageId)"
+data-toolbar="settleStyle_toolbar_#(pageId)"
+data-fixed-columns-left="1,2,3"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="100">操作</th>
+	<th data-width="150" data-column="cSSCode">结算方式编码</th>
+	<th data-width="150" data-column="cSSName">结算方式名称</th>
+	<th data-width="150" data-column="bSSFlag">是否票据管理</th>
+	<th data-width="150" data-column="iSSBillType">对应票据类型</th>
+	<th data-width="150" data-column="cCreateName">创建人名称</th>
+	<th data-width="150" data-column="dCreateTime">创建时间</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/settlestyle/edit/' + rowData.iautoid)
+			.data('area', '900,400')
+			.data('handler','refreshJBoltTable')
+			.data('title', '结算方式')
+			.data('btn', '确认,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end

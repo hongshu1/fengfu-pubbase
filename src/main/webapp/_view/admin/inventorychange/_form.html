@@ -1,0 +1,122 @@
+<form onsubmit="return false;" id="InventoryChange_Form" action="#(action)" method="post">
+	#if(inventoryChange.iAutoId??)
+	<input type="hidden" name="inventoryChange.iAutoId" value="#(inventoryChange.iautoid??)" />
+	#end
+<div class="row">
+<div class="col" >
+
+    <div class="py-2">
+        <span class="py-1"><strong>转换前物料</strong></span>
+    </div>
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label">转换前存货编码</label>
+        <div class="col-sm-2">
+            <input type="text" hidden data-sync-attr="itemid" id="iBeforeInventoryId"  data-notnull="true" data-tips="请输入转换前存货ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" name="inventoryChange.iBeforeInventoryId" value="#(inventoryChange.ibeforeinventoryid??)"/>
+            <input type="text"
+                   data-rule="required"
+                   data-autocomplete
+                   data-notnull="true"
+                   data-tips="请选择转换前存货编码"
+                   data-with-clearbtn="true"
+                   autocomplete="off"
+                   class="form-control"
+                   placeholder="请选择转换前存货编码"
+                   maxlength="40"
+                   value="#(inventoryChange.beforeInventorycode??)"
+                   data-url="admin/inventorychange/inventoryAutocomplete"
+                   data-sync-ele="#beforeInvCode1,#beforeInvName1,#beforuomname,#iWeight,#iBeforeInventoryId"
+                   data-text-attr="cinvcode"
+                   data-column-attr="cinvcode,cinvcode1,cinvname1,cuomname"
+            />
+        </div>
+    </div>
+
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label">转换前客户部番</label>
+        <div class="col-sm-2">
+            <input id="beforeInvCode1" type="text"   value="#(inventoryChange.beforeinvcode1??)" data-notnull="true" data-sync-attr="cinvcode1"   data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+        </div>
+    </div>
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label">转换前部品名称</label>
+        <div class="col-sm-2">
+            <input id="beforeInvName1" type="text" value="#(inventoryChange.beforeinvname1??)"  data-notnull="true" data-sync-attr="cinvname1"  data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+        </div>
+    </div>
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label" >计量单位</label>
+        <div class="col-sm-2">
+            <input id="beforuomname" type="text" value="#(inventoryChange.beforuomname??)"  data-notnull="true" data-sync-attr="cuomname"  data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+        </div>
+    </div>
+
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label" >单位重量</label>
+        <div class="col-sm-2">
+            <input id="iWeight" type="text"  value="#(inventoryChange.iweight??)"  data-notnull="true" data-sync-attr="iweight"   data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+        </div>
+    </div>
+
+    <div class="py-2">
+        <span class="py-1"><strong>转换后物料</strong></span>
+    </div>
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label">转换后存货编码</label>
+        <div class="col-sm-2">
+            <input type="text" id="iAfterInventoryId" data-sync-attr="itemid" hidden data-notnull="true" data-tips="请输入抓换后存货ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入抓换后存货ID" maxlength="40" name="inventoryChange.iAfterInventoryId" value="#(inventoryChange.iafterinventoryid??)"/>
+            <input type="text"
+                   data-autocomplete
+                   data-rule="required"
+                   data-notnull="true"
+                   data-tips="转换后存货编码"
+                   data-with-clearbtn="true"
+                   autocomplete="off"
+                   class="form-control"
+                   placeholder="请选择转换后存货编码"
+                   maxlength="40"
+                   value="#(inventoryChange.afterInventorycode??)"
+                data-url="admin/inventorychange/inventoryAutocomplete"
+                data-sync-ele="#afterInvCode1,#afterInvName1,#afteruomname,#iAfterInventoryId"
+                data-text-attr="cinvcode"
+                data-column-attr="cinvcode,cinvcode1,cinvname1,cuomname"
+/>
+        </div>
+    </div>
+
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label">转换后客户部番</label>
+        <div class="col-sm-2">
+            <input id="afterInvCode1" type="text" value="#(inventoryChange.afterinvcode1??)"  data-notnull="true" data-sync-attr="cinvcode1" data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+        </div>
+    </div>
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label">转换后部品名称</label>
+        <div class="col-sm-2">
+            <input id="afterInvName1" type="text" value="#(inventoryChange.afterinvname1??)"  data-notnull="true" data-sync-attr="cinvname1" data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+        </div>
+    </div>
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label">计量单位</label>
+        <div class="col-sm-2">
+            <input id="afteruomname" type="text"  value="#(inventoryChange.afteruomname??)" data-notnull="true"  data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+        </div>
+    </div>
+
+
+
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label">转换率</label>
+        <div class="col-sm-2">
+            <input type="text"  data-rule="pznumber" data-sync-attr="cuomname" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入转换率" maxlength="40" name="inventoryChange.iChangeRate" value="#(inventoryChange.ichangerate??)"/>
+        </div>
+    </div>
+
+    </div>
+    </div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="InventoryChange_Form")
+#end
+

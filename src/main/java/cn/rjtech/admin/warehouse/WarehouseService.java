@@ -1,14 +1,14 @@
 package cn.rjtech.admin.warehouse;
 
 import cn.hutool.core.date.DateUtil;
+import cn.jbolt._admin.dept.DeptService;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -45,6 +45,9 @@ public class WarehouseService extends BaseService<Warehouse> {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
+
+	@Inject
+	private DeptService deptService;
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
@@ -111,6 +114,8 @@ public class WarehouseService extends BaseService<Warehouse> {
 		warehouse.setIOrgId(getOrgId());
 		//TODO 来源1.MES 2.U8  现默认U8
 		warehouse.setISource(2);
+		//默认未删除
+		warehouse.setIsDeleted(false);
 		boolean success=warehouse.save();
 
 		if(success) {
@@ -223,10 +228,16 @@ public class WarehouseService extends BaseService<Warehouse> {
         return getCommonList(kv,"iAutoId","asc");
     }
 
-    public Object list(Kv kv) {
+    public List<Record> list(Kv kv) {
         return dbTemplate("warehouse.paginateAdminDatas", kv).find();
     }
 
+
+	/**
+	 * 仓库档案导入
+	 * @param file
+	 * @return
+	 */
 	public Ret importExcelData(File file) {
 		StringBuilder errorMsg=new StringBuilder();
 		JBoltExcel jBoltExcel=JBoltExcel
@@ -266,24 +277,33 @@ public class WarehouseService extends BaseService<Warehouse> {
 									ValidationUtils.notNull(data.get("cwhcode"), "仓库编码为空！");
 									ValidationUtils.notNull(data.get("cWhValueStyle"), "计价方式为空！");
 									ValidationUtils.notNull(data.get("bFreeze"), "是否冻结为空！");
+									data.changeStrToBoolean("bFreeze","是");
 									ValidationUtils.notNull(data.get("bMRP"), "是否参与MRP运算为空！");
+									data.changeStrToBoolean("bMRP","是");
 									ValidationUtils.notNull(data.get("iWHProperty"), "仓库属性为空！");
 									ValidationUtils.notNull(data.get("bShop"), "是否门店为空！");
-									ValidationUtils.notNull(data.get("bInAvailCalcu"), "是否计入成本为空！");
-									ValidationUtils.notNull(data.get("bProxyWh"), "是否纳入可用量计算为空！");
+									data.changeStrToBoolean("bShop","是");
+									ValidationUtils.notNull(data.get("bInCost"), "是否计入成本为空！");
+									data.changeStrToBoolean("bInCost","是");
+									ValidationUtils.notNull(data.get("bInAvailCalcu"), "是否纳入可用量计算为空！");
+									data.changeStrToBoolean("bInAvailCalcu","是");
 									ValidationUtils.notNull(data.get("bProxyWh"), "是否为代管仓为空！");
+									data.changeStrToBoolean("bProxyWh","是");
 									ValidationUtils.notNull(data.get("iSAConMode"), "销售可用量控制方式为空！");
 									ValidationUtils.notNull(data.get("iEXConMode"), "出口可用量控制方式为空！");
 									ValidationUtils.notNull(data.get("iSTConMode"), "库存可用量控制方式为空！");
 									ValidationUtils.notNull(data.get("bBondedWh"), "是否保税仓为空！");
+									data.changeStrToBoolean("bBondedWh","是");
 									ValidationUtils.notNull(data.get("bWhAsset"), "是否资产仓为空！");
+									data.changeStrToBoolean("bWhAsset","是");
 									ValidationUtils.notNull(data.get("isSpaceControlEnabled"), "启用库存预警为空！");
+									data.changeStrToBoolean("isSpaceControlEnabled","是");
 									ValidationUtils.notNull(data.get("isStockWarnEnabled"), "启用空间掌控为空！");
+									data.changeStrToBoolean("isStockWarnEnabled","是");
 									ValidationUtils.isTrue(findByWhCode(data.getStr("cwhcode"))==null, data.getStr("cwhcode")+"编码重复");
 //
-//									Dept dept = deptService.findFirst(Okv.by("sn", data.get("idepid")));
-//									ValidationUtils.notNull(dept, data.get("idepid")+"部门错误！");
-
+//									Dept dept = deptService.findFirst(Okv.by("sn", data.get("cDepCode")));
+//									ValidationUtils.notNull(dept, data.get("cDepCode")+"部门错误！");
 									//创建相关信息
 									data.change("iCreateBy", JBoltUserKit.getUserId());
 									data.change("cCreateName", JBoltUserKit.getUserName());
@@ -296,6 +316,8 @@ public class WarehouseService extends BaseService<Warehouse> {
 									data.change("cOrgCode", "1");
 									data.change("cOrgName", "1");
 									data.change("iOrgId", "1");
+                                    //TODO 来源1.MES 2.U8  现默认U8
+                                    data.change("iSource", "2");
 
 
 								})
@@ -326,5 +348,9 @@ public class WarehouseService extends BaseService<Warehouse> {
 
 	public List<Record> options() {
 		return dbTemplate("warehouse.options", Kv.of("isenabled", "true")).find();
+	}
+
+	public List<Record> findByWarehouse(){
+		return dbTemplate("warehouse.findByWarehouse", Kv.by("orgId", getOrgId())).find();
 	}
 }

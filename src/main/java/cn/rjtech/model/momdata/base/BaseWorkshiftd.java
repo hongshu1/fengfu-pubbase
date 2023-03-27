@@ -25,6 +25,8 @@ public abstract class BaseWorkshiftd<M extends BaseWorkshiftd<M>> extends JBoltB
     public static final String IMINUTE = "iMinute";
     /**备注*/
     public static final String CMEMO = "cMemo";
+    /**出勤名称*/
+    public static final String CNAME = "cName";
     /**次序*/
     public static final String ISEQ = "iSeq";
 	/**
@@ -142,6 +144,22 @@ public abstract class BaseWorkshiftd<M extends BaseWorkshiftd<M>> extends JBoltB
 	}
 
 	/**
+	 * 出勤名称
+	 */
+	public M setCname(String cname) {
+		set("cName", cname);
+		return (M)this;
+	}
+
+	/**
+	 * 出勤名称
+	 */
+	@JBoltField(name="cname" ,columnName="cName",type="String", remark="出勤名称", required=false, maxLength=50, fixed=0, order=8)
+	public String getCname() {
+		return getStr("cName");
+	}
+
+	/**
 	 * 次序
 	 */
 	public M setIseq(Integer iseq) {
@@ -152,7 +170,7 @@ public abstract class BaseWorkshiftd<M extends BaseWorkshiftd<M>> extends JBoltB
 	/**
 	 * 次序
 	 */
-	@JBoltField(name="iseq" ,columnName="iSeq",type="Integer", remark="次序", required=false, maxLength=10, fixed=0, order=8)
+	@JBoltField(name="iseq" ,columnName="iSeq",type="Integer", remark="次序", required=false, maxLength=10, fixed=0, order=9)
 	public Integer getIseq() {
 		return getInt("iSeq");
 	}

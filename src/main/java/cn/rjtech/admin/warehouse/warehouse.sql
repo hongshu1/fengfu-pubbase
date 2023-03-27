@@ -81,3 +81,16 @@ WHERE wh.isDeleted = 0
     #end
 ORDER BY dCreateTime DESC
 #end
+
+#sql("findByWarehouse")
+SELECT
+	iAutoId,
+	cWhCode,
+	cWhName
+FROM
+	Bd_Warehouse
+	WHERE
+	    iOrgId = #para(orgId)
+	AND isDeleted = '0'
+	AND isEnabled = '1'
+#end

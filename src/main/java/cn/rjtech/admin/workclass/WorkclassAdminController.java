@@ -1,24 +1,17 @@
 package cn.rjtech.admin.workclass;
 
-import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-//import cn.rjtech.admin.person.PersonService;
 import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.Util;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
-import com.jfinal.core.NotAction;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
@@ -28,7 +21,6 @@ import java.util.List;
 
 /**
  * 工种档案 Controller
- *
  * @ClassName: WorkclassAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-11-09 16:21
@@ -41,15 +33,13 @@ public class WorkclassAdminController extends JBoltBaseController {
 
     @Inject
     private WorkClassService service;
-//	@Inject
-//	private PersonService personService;
+    // @Inject
+    // private PersonService personService;
 
     /**
      * 首页
      */
     public void index() {
-        System.out.println("getControllerPath===>" + getControllerPath());
-        System.out.println("getViewPath===>" + getViewPath());
         render("index.html");
     }
 
@@ -139,7 +129,6 @@ public class WorkclassAdminController extends JBoltBaseController {
      * 导出所有数据
      * */
     public void exportExcelAll() {
-//		List<Record> datas = service.list(getKv());
         List<Workclass> datas = service.findAll();
         if (notOk(datas)) {
             renderJsonFail("无有效数据导出");
@@ -149,19 +138,10 @@ public class WorkclassAdminController extends JBoltBaseController {
         JBoltExcel jBoltExcel = service.exportExcelTpl(datas);
         //3、导出
         renderBytesToExcelXlsFile(jBoltExcel);
-		/*for(Record r:rows){
-//			r.put("ilevel",personService.formatPattenSn(r.getStr("ilevel"),"work_level"));
-		}
-		try {
-			renderJxls("工种档案导出模板.xlsx", Kv.by("rows", rows), "工种档案_" + DateUtil.today() + ".xlsx");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
     }
 
     @SuppressWarnings("unchecked")
     public void downloadTpl() throws Exception {
-//		renderJxls("workclass_import.xlsx", Kv.by("rows", null), "工种档案导入模板.xlsx");
         renderBytesToExcelXlsFile(service.getExcelImportTpl().setFileName("工种档案导入模板"));
     }
 

@@ -11,12 +11,11 @@ import cn.jbolt.core.poi.excel.JBoltExcelMerge;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-//import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.ValidationUtils;
 
-import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.IAtom;
@@ -47,8 +46,8 @@ public class WorkClassService extends BaseService<Workclass> {
     protected Workclass dao() {
         return dao;
     }
-//	@Inject
-//	private PersonService personService;
+    // @Inject
+    // private PersonService personService;
 
     /**
      * 后台管理分页查询
@@ -65,6 +64,8 @@ public class WorkClassService extends BaseService<Workclass> {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         ValidationUtils.isTrue(findWorkClassCodeInfo(workclass.getCworkclasscode()) == null, "编码重复！");
+        final String orgCode = getOrgCode();
+        saveWorkClassHandle(workclass, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(), getOrgName());
         saveWorkClassHandle(workclass, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(),
             getOrgName());
         boolean success = workclass.save();
@@ -78,11 +79,12 @@ public class WorkClassService extends BaseService<Workclass> {
         if (workclass == null || notOk(workclass.getIautoid())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        //更新时需要判断数据存在
+        // 更新时需要判断数据存在
         Workclass dbWorkclass = findById(workclass.getIautoid());
         if (dbWorkclass == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
+        if(exists("cWorkClassCode",workclass.getCworkclasscode(), workclass.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         ValidationUtils.isTrue(findWorkClassCodeInfo(workclass.getCworkclasscode()) == null, "编码重复！");
         workclass.setIupdateby(JBoltUserKit.getUserId());
         workclass.setCupdatename(JBoltUserKit.getUserName());
@@ -118,7 +120,7 @@ public class WorkClassService extends BaseService<Workclass> {
      */
     @Override
     protected String afterDelete(Workclass workclass, Kv kv) {
-        //addDeleteSystemLog(workclass.getIautoid(), JBoltUserKit.getUserId(),workclass.getName());
+        // addDeleteSystemLog(workclass.getIautoid(), JBoltUserKit.getUserId(),workclass.getName());
         return null;
     }
 
@@ -130,7 +132,7 @@ public class WorkClassService extends BaseService<Workclass> {
      */
     @Override
     public String checkCanDelete(Workclass workclass, Kv kv) {
-        //如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
+        // 如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
         return checkInUse(workclass, kv);
     }
 
@@ -165,7 +167,7 @@ public class WorkClassService extends BaseService<Workclass> {
      */
     @Override
     public String checkCanToggle(Workclass workclass, String column, Kv kv) {
-        //没有问题就返回null  有问题就返回提示string 字符串
+        // 没有问题就返回null  有问题就返回提示string 字符串
         return null;
     }
 
@@ -174,7 +176,7 @@ public class WorkClassService extends BaseService<Workclass> {
      */
     @Override
     protected String afterToggleBoolean(Workclass workclass, String column, Kv kv) {
-        //addUpdateSystemLog(workclass.getIautoid(), JBoltUserKit.getUserId(), workclass.getName(),"的字段["+column+"]值:"+workclass.get(column));
+        // addUpdateSystemLog(workclass.getIautoid(), JBoltUserKit.getUserId(), workclass.getName(),"的字段["+column+"]值:"+workclass.get(column));
         return null;
     }
 
@@ -186,12 +188,11 @@ public class WorkClassService extends BaseService<Workclass> {
      */
     @Override
     public String checkInUse(Workclass workclass, Kv kv) {
-        //这里用来覆盖 检测Workclass是否被其它表引用
+        // 这里用来覆盖 检测Workclass是否被其它表引用
         return null;
     }
 
-    public void saveWorkClassHandle(Workclass workclass, Long userId, Date date, String username, Long orgId, String orgCode,
-                                    String orgName) {
+    public void saveWorkClassHandle(Workclass workclass, Long userId, Date date, String username, Long orgId, String orgCode, String orgName) {
         workclass.setIcreateby(userId);
         workclass.setDcreatetime(date);
         workclass.setCcreatename(username);
@@ -205,16 +206,6 @@ public class WorkClassService extends BaseService<Workclass> {
 
     public Page<Record> pageList(Kv kv) {
         Page<Record> recordPage = dbTemplate("workclass.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
-        if (isOk(recordPage.getList())) {
-            for (Record r : recordPage.getList()) {
-                if (isOk(r.getStr("ilevel"))) {
-//					r.put("ilevel",personService.formatPattenSn(r.getStr("ilevel"),"work_level"));
-                }
-                if (isOk(r.getBigDecimal("isalary"))) {
-                    r.put("isalary", r.getBigDecimal("isalary").setScale(2, RoundingMode.HALF_UP));
-                }
-            }
-        }
         return recordPage;
     }
 
@@ -228,32 +219,32 @@ public class WorkClassService extends BaseService<Workclass> {
     public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
         JBoltExcel jBoltExcel = JBoltExcel
-            //从excel文件创建JBoltExcel实例
-            .from(file)
-            //设置工作表信息
-            .setSheets(
-                JBoltExcelSheet.create("sheet1")
-                    //设置列映射 顺序 标题名称
-                    .setHeaders(
-                        JBoltExcelHeader.create("cworkclasscode", "工种编码"),
-                        JBoltExcelHeader.create("cworkclassname", "工种名称"),
-                        JBoltExcelHeader.create("ilevel", "工种等级"),
-                        JBoltExcelHeader.create("isalary", "工种薪酬"),
-                        JBoltExcelHeader.create("cmemo", "备注")
-                    )
-                    //特殊数据转换器
-                    .setDataChangeHandler((data, index) -> {
-                        try {
-                            String isalary = data.getStr("isalary");
-                            data.change("isalary", new BigDecimal(isalary));
-                        } catch (Exception e) {
-                            errorMsg.append(data.getStr("isalary") + "薪酬填写有误");
-                        }
-                    })
-                    //从第三行开始读取
-                    .setDataStartRow(2)
-            );
-        //从指定的sheet工作表里读取数据
+                // 从excel文件创建JBoltExcel实例
+                .from(file)
+                // 设置工作表信息
+                .setSheets(
+                        JBoltExcelSheet.create("sheet1")
+                                // 设置列映射 顺序 标题名称
+                                .setHeaders(
+                                        JBoltExcelHeader.create("cworkclasscode", "工种编码"),
+                                        JBoltExcelHeader.create("cworkclassname", "工种名称"),
+                                        JBoltExcelHeader.create("ilevel", "工种等级"),
+                                        JBoltExcelHeader.create("isalary", "工种薪酬"),
+                                        JBoltExcelHeader.create("cmemo", "备注")
+                                )
+                                // 特殊数据转换器
+                                .setDataChangeHandler((data, index) -> {
+                                    try {
+                                        String isalary = data.getStr("isalary");
+                                        data.change("isalary", new BigDecimal(isalary));
+                                    } catch (Exception e) {
+                                        errorMsg.append(data.getStr("isalary") + "薪酬填写有误");
+                                    }
+                                })
+                                // 从第三行开始读取
+                                .setDataStartRow(2)
+                );
+        // 从指定的sheet工作表里读取数据
         List<Workclass> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", Workclass.class, errorMsg);
         if (notOk(models)) {
             if (errorMsg.length() > 0) {
@@ -265,7 +256,7 @@ public class WorkClassService extends BaseService<Workclass> {
         if (errorMsg.length() > 0) {
             return fail(errorMsg.toString());
         }
-        //读取数据没有问题后判断必填字段
+        // 读取数据没有问题后判断必填字段
         if (models.size() > 0) {
             for (Workclass w : models) {
                 if (notOk(w.getCworkclasscode())) {
@@ -277,7 +268,7 @@ public class WorkClassService extends BaseService<Workclass> {
             }
         }
         savaModelHandle(models);
-        //执行批量操作
+        // 执行批量操作
         boolean success = tx(new IAtom() {
             @Override
             public boolean run() throws SQLException {
@@ -312,49 +303,49 @@ public class WorkClassService extends BaseService<Workclass> {
      */
     public JBoltExcel getExcelImportTpl() {
         return JBoltExcel
-            //创建
-            .create()
-            .setSheets(
-                JBoltExcelSheet.create("工种档案导入模板")
-                    //设置列映射 顺序 标题名称 不处理别名
-                    .setHeaders(2, false,
-                        JBoltExcelHeader.create("工种编码", 20),
-                        JBoltExcelHeader.create("工种名称", 20),
-                        JBoltExcelHeader.create("工种等级", 20),
-                        JBoltExcelHeader.create("工种薪酬", 20),
-                        JBoltExcelHeader.create("备注", 20)
-                    )
-                    .setMerges(JBoltExcelMerge.create("A", "E", 1, 1, "工种档案"))
-            );
+                // 创建
+                .create()
+                .setSheets(
+                        JBoltExcelSheet.create("工种档案导入模板")
+                                // 设置列映射 顺序 标题名称 不处理别名
+                                .setHeaders(2, false,
+                                        JBoltExcelHeader.create("工种编码", 20),
+                                        JBoltExcelHeader.create("工种名称", 20),
+                                        JBoltExcelHeader.create("工种等级", 20),
+                                        JBoltExcelHeader.create("工种薪酬", 20),
+                                        JBoltExcelHeader.create("备注", 20)
+                                )
+                                .setMerges(JBoltExcelMerge.create("A", "E", 1, 1, "工种档案"))
+                );
     }
 
     /*
      * 导出excel文件
      * */
     public JBoltExcel exportExcelTpl(List<Workclass> datas) {
-        //2、创建JBoltExcel
+        // 2、创建JBoltExcel
         JBoltExcel jBoltExcel = JBoltExcel
-            .createByTpl("工种档案导出模板.xls")//创建JBoltExcel 从模板加载创建
-            .addSheet(//设置sheet
-                JBoltExcelSheet.create("工种档案")//创建sheet name保持与模板中的sheet一致
-                    .setHeaders(//sheet里添加表头
-                        JBoltExcelHeader.create("cworkclasscode", "工种编码", 20),
-                        JBoltExcelHeader.create("cworkclassname", "工种名称", 20),
-                        JBoltExcelHeader.create("ilevel", "工种等级", 20),
-                        JBoltExcelHeader.create("isalary", "工种薪酬", 20),
-                        JBoltExcelHeader.create("cmemo", "备注", 20),
-                        JBoltExcelHeader.create("ccreatename", "创建人", 20),
-                        JBoltExcelHeader.create("dcreatetime", "创建时间", 20)
-                    )
-                    .setDataChangeHandler((data, index) -> {//设置数据转换处理器
-                        //将user_id转为user_name
-                        data.changeWithKey("user_id", "user_username", CACHE.me.getUserUsername(data.get("user_id")));
-                        data.changeBooleanToStr("is_deleted", "是", "否");
-                    })
-                    .setModelDatas(3, datas)//设置数据
-            )
-            .setFileName("工种档案"+ "_"+DateUtil.today());
-        //3、返回生成的excel文件
+                .createByTpl("工种档案导出模板.xls")// 创建JBoltExcel 从模板加载创建
+                .addSheet(// 设置sheet
+                        JBoltExcelSheet.create("工种档案")// 创建sheet name保持与模板中的sheet一致
+                                .setHeaders(// sheet里添加表头
+                                        JBoltExcelHeader.create("cworkclasscode", "工种编码", 20),
+                                        JBoltExcelHeader.create("cworkclassname", "工种名称", 20),
+                                        JBoltExcelHeader.create("ilevel", "工种等级", 20),
+                                        JBoltExcelHeader.create("isalary", "工种薪酬", 20),
+                                        JBoltExcelHeader.create("cmemo", "备注", 20),
+                                        JBoltExcelHeader.create("ccreatename", "创建人", 20),
+                                        JBoltExcelHeader.create("dcreatetime", "创建时间", 20)
+                                )
+                                .setDataChangeHandler((data, index) -> {// 设置数据转换处理器
+                                    // 将user_id转为user_name
+                                    data.changeWithKey("user_id", "user_username", CACHE.me.getUserUsername(data.get("user_id")));
+                                    data.changeBooleanToStr("is_deleted", "是", "否");
+                                })
+                                .setModelDatas(3, datas)// 设置数据
+                )
+                .setFileName("工种档案" + "_" + DateUtil.today());
+        // 3、返回生成的excel文件
         return jBoltExcel;
     }
 }

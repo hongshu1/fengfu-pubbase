@@ -888,23 +888,23 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String VENDOR_ADD = "vendor_add";
+	public static final String SUPPLIER_ADD = "supplier_add";
 	/**
 	 * 编辑
 	 */
-	public static final String VENDOR_EDIT = "vendor_edit";
+	public static final String SUPPLIER_EDIT = "supplier_edit";
 	/**
 	 * 删除
 	 */
-	public static final String VENDOR_DELETE = "vendor_delete";
+	public static final String SUPPLIER_DELETE = "supplier_delete";
 	/**
 	 * 导出
 	 */
-	public static final String VENDOR_EXPORT = "vendor_export";
+	public static final String SUPPLIER_EXPORT = "supplier_export";
 	/**
 	 * 导入
 	 */
-	public static final String VENDOR_IMPORT = "vendor_import";
+	public static final String SUPPLIER_IMPORT = "supplier_import";
 	/**
 	 * 新增
 	 */
@@ -1822,13 +1822,21 @@ public class PermissionKey {
 	 */
 	public static final String PROPOSAL_MODEL = "proposal_model";
 	/**
+	 * 人员档案
+	 */
+	public static final String PERSON_INDEX = "person_index";
+	/**
+	 * 人员档案数据导入
+	 */
+	public static final String PERSON_IMPORT_EXCEL_INDEX = "person_import_excel_index";
+	/**
 	 * 币种档案
 	 */
 	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";
 	/**
-	 * 人员档案
+	 * 结算方式
 	 */
-	public static final String PERSON_INDEX = "person_index";
+	public static final String SETTLE_STYLE = "settle_style";
 	/**
 	 * 供应商分类
 	 */
@@ -1879,4 +1887,61 @@ public class PermissionKey {
 	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
 
 
+	/**
+	 * 新增
+	 */
+	public static final String WAREHOUSE_ADD = "warehouse_add";
+	/**
+	 * 料品档案
+	 */
+    public static final String INVENTORY_RECORD = "inventory_record";
+	/**
+	 * 部门档案新增
+	 */
+	public static final String DEPARTMENT_ADD = "department_add";
+	/**
+	 * 部门档案编辑
+	 */
+	public static final String DEPARTMENT_EDIT = "department_edit";
+	/**
+	 * 部门档案 删除
+	 */
+	public static final String DEPARTMENT_DEL = "department_del";
+	/**
+	 * 部门档案 导出
+	 */
+	public static final String DEPARTMENT_EXPORT = "department_export";
+	/**
+	 * 部门档案 导入
+	 */
+	public static final String DEPARTMENT_IMPORT = "department_import";
+
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE = "inventorychange";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_ADD = "inventorychange_add";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_DEL = "inventorychange_del";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_EDIT = "inventorychange_edit";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_IMPORT = "inventorychange_import";
+	/**
+	 * 物料建模-物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE_EXPORT = "inventorychange_export";
+	/**
+	 * 年度计划
+	 */
+	public static final String ANNUALORDERM = "annualorderm";
 }

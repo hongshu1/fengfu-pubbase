@@ -1,0 +1,213 @@
+<form onsubmit="return false;" id="Department_Form" action="#(action)" method="post">
+	#if(department.iAutoId??)
+	<input type="hidden" name="department.iAutoId" value="#(department.iAutoId??)" />
+	#end
+<div class="py-2">
+    <span class="py-1"><strong>基本信息</strong></span>
+</div>
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">上级部门</label>
+        <div class="col-sm-3">
+            <input hidden id="ipid">
+            <select class="form-control" data-tips="请选择上级部门"
+                    data-url="admin/department/getTreeTableDatas?excludeId=#(department.iAutoId??)"
+                    data-autoload data-text="=请选择上级部门="
+                    data-value=""
+                    name="department.ipid"
+                    data-text-attr="cdepname"
+                    data-value-attr="iautoid"
+                    data-select="#(department.ipid??)"></select>
+        </div>
+        <label class="col-sm-1 col-form-label">部门编码</label>
+        <div class="col-sm-3">
+            <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off"  class="form-control"  placeholder="请输入部门编码" maxlength="255" name="department.cdepcode" value="#(department.cdepcode??)"/>
+        </div>
+
+        <label class="col-sm-1 col-form-label">部门名称</label>
+        <div class="col-sm-3">
+            <input type="text" data-with-clearbtn="true" autocomplete="off" data-rule="required" class="form-control"  placeholder="请输入部门名称" maxlength="255" name="department.cdepname" value="#(department.cdepname??)"/>
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+
+        <label class="col-sm-1 col-form-label">英文名称</label>
+        <div class="col-sm-3">
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入英文名称" maxlength="255" name="department.cdepnameen" value="#(department.cdepnameen??)"/>
+        </div>
+
+        <label class="col-sm-1 col-form-label">部门属性</label>
+        <div class="col-sm-3">
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" maxlength="10" placeholder="请输入部门属性"  name="department.cdepprop" value="#(department.cdepprop??)"/>
+        </div>
+
+        <label class="col-sm-1 col-form-label">部门类型</label>
+        <div class="col">
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入部门类型" maxlength="255" name="department.cdeptype" value="#(department.cdeptype??)"/>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">成立日期</label>
+        <div class="col-sm-3">
+            <input data-date type="text" data-theme="#dc3545" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入成立日期" maxlength="255" name="department.ddepbegindate" value="#date(DateUtil.toDate(department.ddepbegindate??),'yyyy-MM-dd')"/>
+        </div>
+
+        <label class="col-sm-1 col-form-label">撤销日期</label>
+        <div class="col-sm-3">
+            <input data-date type="text" data-theme="#dc3545"  data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入撤销日期" maxlength="255" name="department.ddependdate" value="#date(DateUtil.toDate(department.ddependdate??),'yyyy-MM-dd')"/>
+        </div>
+
+        <label class="col-sm-1 col-form-label">批准文号</label>
+        <div class="col-sm-3">
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入批准文号" maxlength="255" name="department.vauthorizedoc" value="#(department.vauthorizedoc??)"/>
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">批准单位</label>
+        <div class="col-sm-3">
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入批准单位" maxlength="255" name="department.vauthorizeunit" value="#(department.vauthorizeunit??)"/>
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label is_required">组织类型</label>
+        <div class="col-sm-7"
+             data-radio
+             data-rule="radio"
+             data-name="department.ctype"
+             data-value-attr="sn"
+             data-default="true"
+             data-url="admin/dictionary/options?key=org_type"
+             data-value="#(department.ctype??)"
+             data-notnull="true"
+             data-tips="请选择组织类型"
+             data-inline="true"
+        >
+        </div>
+            <label class="col-sm-1 col-form-label">是否参与排产</label>
+            <input  name="department.isapsinvoled"  hidden id="isapsinvoled" value="#(department.isapsinvoled??'0'=='1'?true:false)">
+            <img style="margin-top: 5px" src="assets/img/off.png" data-handler="updateIsApsinvoled" data-switchbtn data-text="是:否"  data-nomsg="true" data-value="#(department.isapsinvoled??'0'=='1'?true:false)"/>
+    </div>
+
+    <div class="py-2">
+        <span class="py-1"><strong>详细信息</strong></span>
+    </div>
+
+    <div class="form-group row">
+
+        <label class="col-sm-1 col-form-label">负责人：</label>
+        <div class="col-sm-3">
+            <input hidden id="idutyuserid" name="department.idutyuserid" value="#(department.idutyuserid??)">
+            <input hidden id="cdepperson" name="department.cdepperson" value="#(department.cdepperson??)">
+            <input type="text" autocomplete="off" value="#(cdeppersonname??)" class="form-control"
+                   placeholder="==请选择负责人=="
+                   data-jboltinput
+                   data-width="600"
+                   data-height="450"
+                   data-refresh="true"
+                   data-hidden-input="idutyuserid"
+                   data-load-type="ajaxportal"
+                   data-url="admin/department/personTable"
+            />
+        </div>
+
+        <label class="col-sm-1 col-form-label">分管领导</label>
+        <div class="col-sm-3">
+            <input hidden id="cdepleader" name="department.cdepleader" value="#(department.cdepleader??)">
+            <input type="text" autocomplete="off" value="#(cdepleadername??)" class="form-control"
+                   placeholder="==请选择分管领导=="
+                   data-jboltinput
+                   data-width="600"
+                   data-height="450"
+                   data-refresh="true"
+                   data-hidden-input="cdepleader"
+                   data-load-type="ajaxportal"
+                   data-url="admin/department/personTable"
+            />
+<!--            <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off"  class="form-control"  placeholder="请输入分管领导" maxlength="255" name="department.cdepleader" value="#(department.cdepleader??)"/>-->
+<!--            <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off"  class="form-control"  placeholder="请输入分管领导" maxlength="255" name="department.cdepleader" value="#(department.cdepleader??)"/>-->
+        </div>
+
+
+        <label class="col-sm-1 col-form-label">联系电话</label>
+        <div class="col-sm-3">
+            <input type="text" data-notnull="false" data-rule="phone" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入联系电话" maxlength="255" name="department.cdepphone" value="#(department.cdepphone??)"/>
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">传真</label>
+        <div class="col-sm-3">
+            <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control"  placeholder="请输入传真" maxlength="255" name="department.cdepfax" value="#(department.cdepfax??)"/>
+        </div>
+
+        <label class="col-sm-1 col-form-label">电子邮箱</label>
+        <div class="col-sm-3">
+            <input type="text" data-rule="email" data-notnull="false" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入电子邮箱" maxlength="255" name="department.cdepemail" value="#(department.cdepemail??)"/>
+        </div>
+
+        <label class="col-sm-1 col-form-label">邮政编码</label>
+        <div class="col-sm-3">
+            <input type="text" data-rule="postalcode" data-notnull="false" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入邮政编码" maxlength="255" name="department.cdeppostcode" value="#(department.cdeppostcode??)"/>
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">联系地址</label>
+        <div class="col-sm-7">
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入联系地址" maxlength="255" name="department.cdepaddress" value="#(department.cdepaddress??)"/>
+        </div>
+
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">信用额度</label>
+        <div class="col-sm-3">
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入信用额度" maxlength="255" name="department.icreline" value="#(department.icreline??)"/>
+        </div>
+
+        <label class="col-sm-1 col-form-label">信用等级</label>
+        <div class="col-sm-3">
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入信用等级" maxlength="255" name="department.ccregrade" value="#(department.ccregrade??)"/>
+        </div>
+
+        <label class="col-sm-1 col-form-label">信用天数</label>
+        <div class="col-sm-3">
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入信用天数" maxlength="255" name="department.icredate" value="#(department.icredate??)"/>
+        </div>
+    </div>
+
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label">是否启用</label>
+        <div class="col-sm-3">
+            <input hidden name="department.isenabled" id="isEnabled" value="#(department.isenabled??'1'=='1'?true:false)">
+            <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-text="是:否"  data-nomsg="true" data-value="#(department.isenabled??'1'=='1'?true:false)"/>
+        </div>
+    </div>
+
+    <div class="form-group row" >
+        <label class="col-sm-1 col-form-label">备注</label>
+        <div class="col-sm-7">
+            <textarea class="form-control" data-auto-height="100" autocomplete="off" data-show-count placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="department.cdepmemo" value="">#(department.cdepmemo??)</textarea>
+        </div>
+    </div>
+
+</form>
+#define js()
+<script>
+    function updateIsEnabled(ele) {
+        $("#isEnabled").val(ele.data("value"))
+    }
+    function updateIsApsinvoled(ele) {
+        $("#isapsinvoled").val(ele.data("value"))
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="Department_Form")
+#end
+

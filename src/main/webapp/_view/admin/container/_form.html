@@ -1,0 +1,199 @@
+<style>
+    .form-control-two {
+        display: block;
+        width: 90%;
+        height: calc(1.5em + 0.75rem + 2px);
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    .btn-outline-pri {
+        color: #495057;
+        background-color: #e9ecef;
+        border: 1px solid #ced4da;
+    }
+</style>
+
+<form onsubmit="return false;" id="Container_Form" action="#(action)" method="post">
+	#if(container.iAutoId??)
+	<input type="hidden" name="container.iAutoId" value="#(container.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">容器编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入容器编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入容器编码" maxlength="40" name="container.cContainerCode" value="#(container.cContainerCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">容器名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入容器名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入容器名称" maxlength="40" name="container.cContainerName" value="#(container.cContainerName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">容器类型</label>
+
+<div class="col-10">
+    <select  class="form-control-two"
+            data-autoload
+            data-url="admin/containerclass/list"
+            data-select-type="select"
+            name="container.iContainerClassId"
+            data-rule="select"
+            data-notnull="true"
+            data-refresh="true"
+            data-tips="容器类型"
+            data-text="=容器类型="
+            data-text-attr="ccontainerclasscode,ccontainerclassname"
+            data-value=""
+             data-value-attr="iautoid"
+            data-select="#(container.iContainerClassId??)"
+    ></select>
+<!--    <div class="input-group-append hand jb_select_refresh"><span class="input-group-text"><i class="fa fa-cog"></i></span></div>-->
+
+</div>
+    <div class="col-10">
+    <button style="margin-left:117%;margin-top:-6.6%" data-area="75%,90%" data-dialogbtn  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="分类管理" data-url="admin/containerclass" class="btn btn-outline-pri" ><i class="fa fa-cog"></i></button>
+    </div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">部门ID</label>
+
+<div class="col-10">
+    <select class="form-control"
+            data-autoload
+            data-url="admin/dept/datas"
+            data-select-type="select"
+            name="container.iDepId"
+            data-refresh="true"
+            data-rule="select"
+            data-notnull="true"
+            data-tips="请选择部门ID"
+            data-text="=请选择="
+            data-value=""
+            data-select="#(container.iDepId??)"
+            
+    ></select>
+</div>
+</div>
+<div class="form-group row">
+        <label class="col-sm-2 col-form-label">所属仓库</label>
+        <div class="col">
+            <select class="form-control"
+                    data-autoload
+                    name="container.iWarehouseId"
+                    data-select-type="select2"
+                    data-rule="select"
+                    data-tips="所属仓库"
+                    data-url="admin/warehouse/list?isDeleted=0"
+                    data-text="=所属仓库="
+                    data-text-attr="cwhcode,cwhname"
+                    data-value=""
+                    data-value-attr="iautoid"
+                    data-select="#(container.iWarehouseId??)">
+            </select>
+            <!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入所属仓库" maxlength="19" name="warehouseArea.iwarehouseid" value="#(warehouseArea.iwarehouseid??)"/>-->
+        </div>
+    </div>
+
+    <div class="form-group row"
+         data-radio
+         data-name="container.isInner"
+         data-value-attr="sn"
+         data-default="false"
+         data-url="admin/dictionary/options?key=in_Inner"
+         data-label="存放地点"
+         data-width="col-sm-2,col-10"
+         data-value="#(container.isinner??)"
+         data-rule="radio"
+         data-notnull="true"
+         data-tips="=请选择="
+         data-inline="true"
+    ></div>
+
+
+    <div class="form-group row" >
+    <label class="col-sm-2 col-form-label">长(mm)</label>
+    <div class="col-10">
+        <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入长(mm)"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入长(mm)" maxlength="40" name="container.iLength" value="#(container.iLength??)"/>
+    </div>
+    </div>
+    <div class="form-group row" >
+    <label class="col-sm-2 col-form-label">宽(mm)</label>
+    <div class="col-10">
+        <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入宽(mm)"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入宽(mm)" maxlength="40" name="container.iWidth" value="#(container.iWidth??)"/>
+    </div>
+    </div>
+    <div class="form-group row" >
+    <label class="col-sm-2 col-form-label">高(mm)</label>
+    <div class="col-10">
+        <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入高(mm)"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入高(mm)" maxlength="40" name="container.iHeight" value="#(container.iHeight??)"/>
+    </div>
+    </div>
+    <div class="form-group row" >
+    <label class="col-sm-2 col-form-label">体积</label>
+    <div class="col-10">
+        <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入体积" maxlength="40" name="container.cVolume" value="#(container.cVolume??)"/>
+    </div>
+    </div>
+    <div class="form-group row" >
+    <label class="col-sm-2 col-form-label">公用机型</label>
+    <div class="col-10">
+        <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入公用机型" maxlength="40" name="container.cCommonModel" value="#(container.cCommonModel??)"/>
+    </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">客户名称</label>
+        <div class="col">
+            <select class="form-control"
+                    data-autoload
+                    name="container.icustomerid"
+                    data-select-type="select2"
+                    data-tips="客户"
+                    data-url="admin/customer/list?isdeleted=0"
+                    data-text="=客户="
+                    data-text-attr="customercode,customername"
+                    data-value=""
+                    data-value-attr="iautoid"
+                    data-select="#(container.iCustomerId??)">
+            >
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group row"
+    data-radio
+    data-name="container.isEnabled"
+    data-value-attr="sn"
+    data-default="options_first"
+    data-url="admin/dictionary/options?key=options_enable"
+    data-label="是否启用"
+    data-width="col-sm-2,col-10"
+    data-value="#(container.isEnabled??)"
+    data-rule="radio"
+    data-notnull="true"
+    data-tips="请输入是否启用"
+    data-inline="true"
+    >
+    </div>
+
+</div>
+</div>
+</form>
+
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="Container_Form")
+#end
+

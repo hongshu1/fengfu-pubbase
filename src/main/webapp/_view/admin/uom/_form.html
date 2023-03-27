@@ -1,0 +1,70 @@
+<form onsubmit="return false;" id="uomForm" action="#(action)" method="post">
+<input type="hidden" name="uom.iautoid" value="#(uom.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计量单位编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入计量单位编码" maxlength="255" name="uom.cuomcode" value="#(uom.cuomcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计量单位名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入计量单位名称" maxlength="255" name="uom.cuomname" value="#(uom.cuomname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计量单位组名称</label>
+		<div class="col">
+			<select class="form-control"
+					data-autoload
+					name="uom.iuomclassid"
+					data-tips="请选择计量单位组"
+					data-rule="required"
+					data-url="admin/uomclass/options"
+					data-text="=请选择计量单位组="
+					data-value=""
+					data-text-attr="cuomclassname"
+					data-value-attr="iautoid"
+					data-select="#(uom.iuomclassid??)">
+			</select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">换算率</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入换算率"  maxlength="24" name="uom.iratiotobase" value="#(uom.iratiotobase??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">换算说明</label>
+		<div class="col">
+			<textarea class="form-control" data-auto-height="100" autocomplete="off" data-show-count placeholder="请输入换算说明" data-tips="请输入换算说明"  maxlength="200" name="uom.cmemo" >#(uom.cmemo??)</textarea>
+		</div>
+	</div>
+	<div class="form-group row"
+		 data-radio
+		 data-rule="radio"
+		 data-value="#(uom.isbase??'1'=='1'?true:false)"
+		 data-name="uom.isbase"
+		 data-default="false"
+		 data-width="col-sm-2,col">
+		<label class="col-sm-2 col-form-label is_required">是否主计量</label>
+		<div class="col"  style="padding-top: 1px;">
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isbase_true" type="radio" name="uom.isbase" value="true"/>
+				<label for="r_isbase_true">是</label>
+			</div>
+
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isbase_false" type="radio" name="uom.isbase" value="false"/>
+				<label for="r_isbase_false">否</label>
+			</div>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="uomForm")
+#end
+

@@ -72,7 +72,7 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
     public static final String BBONDEDWH = "bBondedWh";
     /**资产仓*/
     public static final String BWHASSET = "bWhAsset";
-    /**资产仓*/
+    /**配额(%)*/
     public static final String FWHQUOTA = "fWhQuota";
     /**停用日期*/
     public static final String DWHENDDATE = "dWhEndDate";
@@ -148,14 +148,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="iorgid" ,columnName="iOrgId",type="Long", remark="组织ID", required=true, maxLength=19, fixed=0, order=2)
 	@JSONField(name = "iorgid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIOrgId() {
+	public Long getIOrgId() {
 		return getLong("iOrgId");
 	}
 
 	/**
 	 * 组织编码
 	 */
-	public M setCOrgCode(java.lang.String cOrgCode) {
+	public M setCOrgCode(String cOrgCode) {
 		set("cOrgCode", cOrgCode);
 		return (M)this;
 	}
@@ -165,14 +165,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="corgcode" ,columnName="cOrgCode",type="String", remark="组织编码", required=true, maxLength=40, fixed=0, order=3)
 	@JSONField(name = "corgcode")
-	public java.lang.String getCOrgCode() {
+	public String getCOrgCode() {
 		return getStr("cOrgCode");
 	}
 
 	/**
 	 * 组织名称
 	 */
-	public M setCOrgName(java.lang.String cOrgName) {
+	public M setCOrgName(String cOrgName) {
 		set("cOrgName", cOrgName);
 		return (M)this;
 	}
@@ -182,14 +182,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="corgname" ,columnName="cOrgName",type="String", remark="组织名称", required=true, maxLength=50, fixed=0, order=4)
 	@JSONField(name = "corgname")
-	public java.lang.String getCOrgName() {
+	public String getCOrgName() {
 		return getStr("cOrgName");
 	}
 
 	/**
 	 * 仓库编码
 	 */
-	public M setCWhCode(java.lang.String cWhCode) {
+	public M setCWhCode(String cWhCode) {
 		set("cWhCode", cWhCode);
 		return (M)this;
 	}
@@ -199,14 +199,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cwhcode" ,columnName="cWhCode",type="String", remark="仓库编码", required=true, maxLength=10, fixed=0, order=5)
 	@JSONField(name = "cwhcode")
-	public java.lang.String getCWhCode() {
+	public String getCWhCode() {
 		return getStr("cWhCode");
 	}
 
 	/**
 	 * 仓库名称
 	 */
-	public M setCWhName(java.lang.String cWhName) {
+	public M setCWhName(String cWhName) {
 		set("cWhName", cWhName);
 		return (M)this;
 	}
@@ -216,14 +216,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cwhname" ,columnName="cWhName",type="String", remark="仓库名称", required=false, maxLength=20, fixed=0, order=6)
 	@JSONField(name = "cwhname")
-	public java.lang.String getCWhName() {
+	public String getCWhName() {
 		return getStr("cWhName");
 	}
 
 	/**
 	 * 所属部门
 	 */
-	public M setCDepCode(java.lang.String cDepCode) {
+	public M setCDepCode(String cDepCode) {
 		set("cDepCode", cDepCode);
 		return (M)this;
 	}
@@ -233,14 +233,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cdepcode" ,columnName="cDepCode",type="String", remark="所属部门", required=false, maxLength=12, fixed=0, order=7)
 	@JSONField(name = "cdepcode")
-	public java.lang.String getCDepCode() {
+	public String getCDepCode() {
 		return getStr("cDepCode");
 	}
 
 	/**
 	 * 仓库地址
 	 */
-	public M setCWhAddress(java.lang.String cWhAddress) {
+	public M setCWhAddress(String cWhAddress) {
 		set("cWhAddress", cWhAddress);
 		return (M)this;
 	}
@@ -250,14 +250,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cwhaddress" ,columnName="cWhAddress",type="String", remark="仓库地址", required=false, maxLength=255, fixed=0, order=8)
 	@JSONField(name = "cwhaddress")
-	public java.lang.String getCWhAddress() {
+	public String getCWhAddress() {
 		return getStr("cWhAddress");
 	}
 
 	/**
 	 * 电话
 	 */
-	public M setCWhPhone(java.lang.String cWhPhone) {
+	public M setCWhPhone(String cWhPhone) {
 		set("cWhPhone", cWhPhone);
 		return (M)this;
 	}
@@ -267,14 +267,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cwhphone" ,columnName="cWhPhone",type="String", remark="电话", required=false, maxLength=100, fixed=0, order=9)
 	@JSONField(name = "cwhphone")
-	public java.lang.String getCWhPhone() {
+	public String getCWhPhone() {
 		return getStr("cWhPhone");
 	}
 
 	/**
 	 * 负责人
 	 */
-	public M setCWhPerson(java.lang.String cWhPerson) {
+	public M setCWhPerson(String cWhPerson) {
 		set("cWhPerson", cWhPerson);
 		return (M)this;
 	}
@@ -284,14 +284,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cwhperson" ,columnName="cWhPerson",type="String", remark="负责人", required=false, maxLength=20, fixed=0, order=10)
 	@JSONField(name = "cwhperson")
-	public java.lang.String getCWhPerson() {
+	public String getCWhPerson() {
 		return getStr("cWhPerson");
 	}
 
 	/**
 	 * 计价方式
 	 */
-	public M setCWhValueStyle(java.lang.String cWhValueStyle) {
+	public M setCWhValueStyle(String cWhValueStyle) {
 		set("cWhValueStyle", cWhValueStyle);
 		return (M)this;
 	}
@@ -301,14 +301,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cwhvaluestyle" ,columnName="cWhValueStyle",type="String", remark="计价方式", required=true, maxLength=12, fixed=0, order=11)
 	@JSONField(name = "cwhvaluestyle")
-	public java.lang.String getCWhValueStyle() {
+	public String getCWhValueStyle() {
 		return getStr("cWhValueStyle");
 	}
 
 	/**
 	 * 仓库期末处理会计期
 	 */
-	public M setCMonth(java.lang.String cMonth) {
+	public M setCMonth(String cMonth) {
 		set("cMonth", cMonth);
 		return (M)this;
 	}
@@ -318,14 +318,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cmonth" ,columnName="cMonth",type="String", remark="仓库期末处理会计期", required=false, maxLength=6, fixed=0, order=12)
 	@JSONField(name = "cmonth")
-	public java.lang.String getCMonth() {
+	public String getCMonth() {
 		return getStr("cMonth");
 	}
 
 	/**
 	 * 备注
 	 */
-	public M setCWhMemo(java.lang.String cWhMemo) {
+	public M setCWhMemo(String cWhMemo) {
 		set("cWhMemo", cWhMemo);
 		return (M)this;
 	}
@@ -335,14 +335,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cwhmemo" ,columnName="cWhMemo",type="String", remark="备注", required=false, maxLength=20, fixed=0, order=13)
 	@JSONField(name = "cwhmemo")
-	public java.lang.String getCWhMemo() {
+	public String getCWhMemo() {
 		return getStr("cWhMemo");
 	}
 
 	/**
 	 * 是否冻结
 	 */
-	public M setBFreeze(java.lang.Boolean bFreeze) {
+	public M setBFreeze(Boolean bFreeze) {
 		set("bFreeze", bFreeze);
 		return (M)this;
 	}
@@ -352,14 +352,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="bfreeze" ,columnName="bFreeze",type="Boolean", remark="是否冻结", required=true, maxLength=1, fixed=0, order=14)
 	@JSONField(name = "bfreeze")
-	public java.lang.Boolean getBFreeze() {
+	public Boolean getBFreeze() {
 		return getBoolean("bFreeze");
 	}
 
 	/**
 	 * 条形码
 	 */
-	public M setCBarCode(java.lang.String cBarCode) {
+	public M setCBarCode(String cBarCode) {
 		set("cBarCode", cBarCode);
 		return (M)this;
 	}
@@ -369,14 +369,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cbarcode" ,columnName="cBarCode",type="String", remark="条形码", required=false, maxLength=30, fixed=0, order=15)
 	@JSONField(name = "cbarcode")
-	public java.lang.String getCBarCode() {
+	public String getCBarCode() {
 		return getStr("cBarCode");
 	}
 
 	/**
 	 * 是否参与MRP运算
 	 */
-	public M setBMRP(java.lang.Boolean bMRP) {
+	public M setBMRP(Boolean bMRP) {
 		set("bMRP", bMRP);
 		return (M)this;
 	}
@@ -386,14 +386,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="bmrp" ,columnName="bMRP",type="Boolean", remark="是否参与MRP运算", required=true, maxLength=1, fixed=0, order=16)
 	@JSONField(name = "bmrp")
-	public java.lang.Boolean getBMRP() {
+	public Boolean getBMRP() {
 		return getBoolean("bMRP");
 	}
 
 	/**
 	 * 盘点周期
 	 */
-	public M setIFrequency(java.lang.Short iFrequency) {
+	public M setIFrequency(Short iFrequency) {
 		set("iFrequency", iFrequency);
 		return (M)this;
 	}
@@ -563,7 +563,7 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	/**
 	 * 出口可用量控制方式
 	 */
-	public M setIEXConMode(java.lang.Short iEXConMode) {
+	public M setIEXConMode(Short iEXConMode) {
 		set("iEXConMode", iEXConMode);
 		return (M)this;
 	}
@@ -573,14 +573,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="iexconmode" ,columnName="iEXConMode",type="", remark="出口可用量控制方式", required=true, maxLength=5, fixed=0, order=28)
 	@JSONField(name = "iexconmode")
-	public java.lang.Short getIEXConMode() {
+	public Short getIEXConMode() {
 		return getShort("iEXConMode");
 	}
 
 	/**
 	 * 库存可用量控制方式
 	 */
-	public M setISTConMode(java.lang.Short iSTConMode) {
+	public M setISTConMode(Short iSTConMode) {
 		set("iSTConMode", iSTConMode);
 		return (M)this;
 	}
@@ -590,14 +590,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="istconmode" ,columnName="iSTConMode",type="", remark="库存可用量控制方式", required=true, maxLength=5, fixed=0, order=29)
 	@JSONField(name = "istconmode")
-	public java.lang.Short getISTConMode() {
+	public Short getISTConMode() {
 		return getShort("iSTConMode");
 	}
 
 	/**
 	 * 是否保税仓
 	 */
-	public M setBBondedWh(java.lang.Boolean bBondedWh) {
+	public M setBBondedWh(Boolean bBondedWh) {
 		set("bBondedWh", bBondedWh);
 		return (M)this;
 	}
@@ -607,14 +607,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="bbondedwh" ,columnName="bBondedWh",type="Boolean", remark="是否保税仓", required=true, maxLength=1, fixed=0, order=30)
 	@JSONField(name = "bbondedwh")
-	public java.lang.Boolean getBBondedWh() {
+	public Boolean getBBondedWh() {
 		return getBoolean("bBondedWh");
 	}
 
 	/**
 	 * 资产仓
 	 */
-	public M setBWhAsset(java.lang.Boolean bWhAsset) {
+	public M setBWhAsset(Boolean bWhAsset) {
 		set("bWhAsset", bWhAsset);
 		return (M)this;
 	}
@@ -624,31 +624,31 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="bwhasset" ,columnName="bWhAsset",type="Boolean", remark="资产仓", required=true, maxLength=1, fixed=0, order=31)
 	@JSONField(name = "bwhasset")
-	public java.lang.Boolean getBWhAsset() {
+	public Boolean getBWhAsset() {
 		return getBoolean("bWhAsset");
 	}
 
 	/**
-	 * 资产仓
+	 * 配额(%)
 	 */
-	public M setFWhQuota(java.lang.Double fWhQuota) {
+	public M setFWhQuota(Double fWhQuota) {
 		set("fWhQuota", fWhQuota);
 		return (M)this;
 	}
 
 	/**
-	 * 资产仓
+	 * 配额(%)
 	 */
 	@JBoltField(name="fwhquota" ,columnName="fWhQuota",type="Double", remark="资产仓", required=false, maxLength=53, fixed=0, order=32)
 	@JSONField(name = "fwhquota")
-	public java.lang.Double getFWhQuota() {
+	public Double getFWhQuota() {
 		return getDouble("fWhQuota");
 	}
 
 	/**
 	 * 停用日期
 	 */
-	public M setDWhEndDate(java.util.Date dWhEndDate) {
+	public M setDWhEndDate(Date dWhEndDate) {
 		set("dWhEndDate", dWhEndDate);
 		return (M)this;
 	}
@@ -658,14 +658,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="dwhenddate" ,columnName="dWhEndDate",type="Date", remark="停用日期", required=false, maxLength=23, fixed=3, order=33)
 	@JSONField(name = "dwhenddate")
-	public java.util.Date getDWhEndDate() {
+	public Date getDWhEndDate() {
 		return getDate("dWhEndDate");
 	}
 
 	/**
 	 * 是否核算分项成本
 	 */
-	public M setBCheckSubitemCost(java.lang.Boolean bCheckSubitemCost) {
+	public M setBCheckSubitemCost(Boolean bCheckSubitemCost) {
 		set("bCheckSubitemCost", bCheckSubitemCost);
 		return (M)this;
 	}
@@ -675,14 +675,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="bchecksubitemcost" ,columnName="bCheckSubitemCost",type="Boolean", remark="是否核算分项成本", required=false, maxLength=1, fixed=0, order=34)
 	@JSONField(name = "bchecksubitemcost")
-	public java.lang.Boolean getBCheckSubitemCost() {
+	public Boolean getBCheckSubitemCost() {
 		return getBoolean("bCheckSubitemCost");
 	}
 
 	/**
 	 * 拣货货位 
 	 */
-	public M setCPickPos(java.lang.String cPickPos) {
+	public M setCPickPos(String cPickPos) {
 		set("cPickPos", cPickPos);
 		return (M)this;
 	}
@@ -692,14 +692,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cpickpos" ,columnName="cPickPos",type="String", remark="拣货货位 ", required=false, maxLength=40, fixed=0, order=35)
 	@JSONField(name = "cpickpos")
-	public java.lang.String getCPickPos() {
+	public String getCPickPos() {
 		return getStr("cPickPos");
 	}
 
 	/**
 	 * 电商仓
 	 */
-	public M setBEB(java.lang.Boolean bEB) {
+	public M setBEB(Boolean bEB) {
 		set("bEB", bEB);
 		return (M)this;
 	}
@@ -709,14 +709,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="beb" ,columnName="bEB",type="Boolean", remark="电商仓", required=false, maxLength=1, fixed=0, order=36)
 	@JSONField(name = "beb")
-	public java.lang.Boolean getBEB() {
+	public Boolean getBEB() {
 		return getBoolean("bEB");
 	}
 
 	/**
 	 * 修改日期
 	 */
-	public M setDModifyDate(java.util.Date dModifyDate) {
+	public M setDModifyDate(Date dModifyDate) {
 		set("dModifyDate", dModifyDate);
 		return (M)this;
 	}
@@ -726,14 +726,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="dmodifydate" ,columnName="dModifyDate",type="Date", remark="修改日期", required=false, maxLength=23, fixed=3, order=37)
 	@JSONField(name = "dmodifydate")
-	public java.util.Date getDModifyDate() {
+	public Date getDModifyDate() {
 		return getDate("dModifyDate");
 	}
 
 	/**
 	 * 仓库核算组
 	 */
-	public M setCWareGroupCode(java.lang.String cWareGroupCode) {
+	public M setCWareGroupCode(String cWareGroupCode) {
 		set("cWareGroupCode", cWareGroupCode);
 		return (M)this;
 	}
@@ -743,14 +743,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cwaregroupcode" ,columnName="cWareGroupCode",type="String", remark="仓库核算组", required=false, maxLength=100, fixed=0, order=38)
 	@JSONField(name = "cwaregroupcode")
-	public java.lang.String getCWareGroupCode() {
+	public String getCWareGroupCode() {
 		return getStr("cWareGroupCode");
 	}
 
 	/**
 	 * 省/直辖市
 	 */
-	public M setCProvince(java.lang.String cProvince) {
+	public M setCProvince(String cProvince) {
 		set("cProvince", cProvince);
 		return (M)this;
 	}
@@ -760,14 +760,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="cprovince" ,columnName="cProvince",type="String", remark="省/直辖市", required=false, maxLength=100, fixed=0, order=39)
 	@JSONField(name = "cprovince")
-	public java.lang.String getCProvince() {
+	public String getCProvince() {
 		return getStr("cProvince");
 	}
 
 	/**
 	 * 市
 	 */
-	public M setCCity(java.lang.String cCity) {
+	public M setCCity(String cCity) {
 		set("cCity", cCity);
 		return (M)this;
 	}
@@ -777,14 +777,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="ccity" ,columnName="cCity",type="String", remark="市", required=false, maxLength=100, fixed=0, order=40)
 	@JSONField(name = "ccity")
-	public java.lang.String getCCity() {
+	public String getCCity() {
 		return getStr("cCity");
 	}
 
 	/**
 	 * 区县
 	 */
-	public M setCCounty(java.lang.String cCounty) {
+	public M setCCounty(String cCounty) {
 		set("cCounty", cCounty);
 		return (M)this;
 	}
@@ -794,14 +794,14 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="ccounty" ,columnName="cCounty",type="String", remark="区县", required=false, maxLength=100, fixed=0, order=41)
 	@JSONField(name = "ccounty")
-	public java.lang.String getCCounty() {
+	public String getCCounty() {
 		return getStr("cCounty");
 	}
 
 	/**
 	 * 删除状态: 0. 未删除 1. 已删除
 	 */
-	public M setIsDeleted(java.lang.Boolean isDeleted) {
+	public M setIsDeleted(Boolean isDeleted) {
 		set("isDeleted", isDeleted);
 		return (M)this;
 	}
@@ -811,7 +811,7 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 */
 	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态: 0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=42)
 	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
+	public Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
 	}
 
@@ -949,7 +949,7 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	/**
 	 * 启用空间掌控：0. 否 1. 是
 	 */
-	public M setIsSpaceControlEnabled(java.lang.Boolean isSpaceControlEnabled) {
+	public M setIsSpaceControlEnabled(Boolean isSpaceControlEnabled) {
 		set("isSpaceControlEnabled", isSpaceControlEnabled);
 		return (M)this;
 	}
@@ -958,7 +958,7 @@ public abstract class BaseWarehouse<M extends BaseWarehouse<M>> extends JBoltBas
 	 * 启用空间掌控：0. 否 1. 是
 	 */
 	@JBoltField(name="isSpaceControlEnabled" ,columnName="isSpaceControlEnabled",type="Boolean", remark="启用空间掌控：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=8)
-	public java.lang.Boolean getIsSpaceControlEnabled() {
+	public Boolean getIsSpaceControlEnabled() {
 		return getBoolean("isSpaceControlEnabled");
 	}
 

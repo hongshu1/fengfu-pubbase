@@ -3,23 +3,21 @@ package cn.rjtech.admin.warehouse;
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.model.momdata.Person;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.NotAction;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.Warehouse;
 import com.jfinal.upload.UploadFile;
 
+import java.util.List;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
@@ -205,6 +203,16 @@ public class WarehouseAdminController extends BaseAdminController {
 			return;
 		}
 		renderJson(service.importExcelData(file.getFile()));
+	}
+
+	/**
+	 * 导出
+	 */
+	@SuppressWarnings("unchecked")
+	public void dataExport() throws Exception {
+		List<Record> rows = service.list(getKv());
+
+		renderJxls("warehouse.xlsx", Kv.by("rows", rows), "仓库列表_" + DateUtil.today() + ".xlsx");
 	}
 
 	public void options(){

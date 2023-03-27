@@ -8,10 +8,10 @@
 			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入组织名称" data-tips="请输入组织名称" maxlength="40" name="org.orgName" value="#(org.orgName??)">
 		</div>
 	</div>
-	<div class="form-group row">
+	<div class="form-group row" hidden>
 		<label class="col-2 col-form-label">U8数据源别名</label>
 		<div class="col-8">
-			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入U8数据源别名" data-tips="请输入U8数据源别名" maxlength="40" name="org.u8Alias" value="#(org.u8Alias??)">
+			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入U8数据源别名" data-tips="请输入U8数据源别名" maxlength="40" name="org.u8Alias" value="#(org.u8Alias??'u8')" readonly>
 		</div>
 	</div>
 	<div class="form-group row">
@@ -23,7 +23,22 @@
 	<div class="form-group row">
 		<label class="col-2 col-form-label">U8数据库名</label>
 		<div class="col-8">
-			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入U8数据库名" data-tips="请输入U8数据库名" maxlength="40" name="org.u8Dbname" value="#(org.u8Dbname??)">
+            <select class="form-control"
+                    data-rule="select"
+                    data-url="admin/org/u8dbs"
+                    data-text-attr="name"
+                    data-value-attr="name"
+                    data-autoload
+                    data-setvalueto="u8DbNamme"
+                    #if(org.id??)
+                    data-select="#(org.u8Dbname??)"
+                    disabled
+                    #else
+                    data-text="=请选择U8数据库="
+                    #end
+            ></select>
+
+            <input type="hidden" name="org.u8Dbname" value="#(org.u8Dbname??)" id="u8DbNamme">
 		</div>
 	</div>
     <div class="form-group row"

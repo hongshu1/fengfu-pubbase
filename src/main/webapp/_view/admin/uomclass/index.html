@@ -1,0 +1,264 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col-sm-auto">
+				<h1><i class="jbicon2 jbi-tags"></i> 计量单位组</h1>
+			</div>
+			<div class="col">
+			</div>
+			<div class="col-sm-auto">
+			</div>
+		</div>
+	</div>
+	<div class="jbolt_page_content">
+		<div class="row">
+			<div class="col-auto mb-3" style="width:28%;">
+				<div class="card">
+					<div class="card-header py-2">
+						<span class="d-inline-block py-1"><strong>计量单位组</strong></span>
+						<div class="pull-right">
+							<input type="text" class="form-control" id="searchBackGoodsTypeInput_#(pageId)"  placeholder="搜索关键字过滤" />
+						</div>
+					</div>
+					<div class="card-header py-2">
+						<div>
+							<div class="btn-group" role="group" aria-label="btn-group">
+								#permission(PermissionKey.UOMCLASS_ADD)
+								<button data-area="580,520" data-title="新增单位计量组" onclick="addBtn(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+								#end
+								#permission(PermissionKey.UOMCLASS_EDIT)
+								<button data-area="580,520" data-title="修改单位计量组" onclick="updateBtn(this)"  class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+								#end
+								#permission(PermissionKey.UOMCLASS_DELETE)
+								<button onclick="deleteBtn(this)" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+								#end
+								#permission(PermissionKey.UOMCLASS_EXPORT)
+								<button data-downloadbtn class="btn btn-outline-primary btn-sm" data-url="admin/uomclass/exportExcelAll"><i class="fa fa-download"></i> 导出</button>
+								#end
+								#permission(PermissionKey.UOMCLASS_IMPORT)
+								<div class="btn-group dropdown">
+									<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入</button>
+									<div class="dropdown-menu" aria-labelledby="importMenuButton">
+										<a data-downloadbtn href="/admin/uomclass/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+										<div class="j_upload_file_box"
+											 data-name="file"
+											 data-btn-class="btn dropdown-item"
+											 data-placeholder="上传导入"
+											 data-confirm="确认导入数据？"
+											 data-accept="excel"
+											 data-maxsize="20480"
+											 data-handler="uploadFile"
+											 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+											 data-url="/admin/uomclass/importExcel">
+										</div>
+									</div>
+								</div>
+								#end
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+					<div class="card-body overflow-auto" style="min-height:600px;">
+						<div id="goodsBackCategoryTree"
+							 data-jstree
+							 data-target="portal"
+							 data-search-input="searchBackGoodsTypeInput_#(pageId)"
+							 data-portalid="goodsBackCategoryPortal"
+							 data-curd="false"
+							 data-open-level="-1"
+							 data-read-url="admin/uomclass/mgrTree/"
+							 data-add-url="admin/itemcategory/add/"
+							 data-edit-url="admin/itemcategory/edit/"
+							 data-delete-url="admin/itemcategory/delete/"
+							 data-move-url="admin/itemcategory/move/"
+							 data-change-handler="jstreeClike">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-auto card " style="width:72%; margin-top: 0px">
+
+				<!--计量单位列表-->
+				<!--#ajaxPortal("/admin/itemmaster/index","goodsBackCategoryPortal",true)-->
+				<div class="jbolt_page" data-key="#(pmkey)" >
+					<div class="jbolt_page_title">
+						<div class="row">
+							<div class="col-md-auto">
+								<h6><strong>计量单位列表</strong></h6>
+							</div>
+							<div class="col">
+								<form class="form-inline" id="uomForm_#(pageId)"   onsubmit="return false;" method="post">
+									<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="计量单位组ID" id="uomclassid" name="uomclassid" value="" />
+									<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=计量单位组编码=" maxlength="50" name="cuomcode" value="#(cuomcode??)"/>
+									<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=计量单位组名称=" maxlength="50" name="cuomname" value="#(cuomname??)"/>
+									<select class="form-control" data-url="admin/dictionary/options?key=uom_type" name="cuomclasssn" data-autoload data-text="=计量单位组类别=" data-value-attr="sn" data-value="" data-select="#(cuomclasssn??)"></select>
+									<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+									<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+								</form>
+							</div>
+							<div class="col-md-auto">
+							</div>
+						</div>
+					</div>
+					<div class="jbolt_page_content">
+						<!-- JBoltTable的数据模板定义-->
+						<textarea class="jb_tpl_box" id="itemmasterRowtpl_#(pageId)">
+							{@each datas as data,index}
+							<tr data-id="${data.iautoid}" >
+							<td>${pageNumber,pageSize,index | rownum}</td>
+							<td>${data.cuomcode}</td>
+							<td>${data.cuomname}</td>
+							<td>${data.cuomclasscode}</td>
+							<td>${data.cuomclassname}</td>
+							<td>${data.cuomclasssn}</td>
+							<td>
+								{@if data.isbase == '1'}
+								<span>是</span>
+								{@else}
+								<span>否</span>
+								{@/if}
+							</td>
+							<td>${data.iratiotobase}</td>
+							</tr>
+							{@/each}
+						</textarea>
+
+						<!-- 工具条 toolbar -->
+						<div class="jbolt_table_toolbar" id="itemmaster_toolbar_#(pageId)">
+							<div class="btn-group" role="group" aria-label="btn-group">
+								#permission(PermissionKey.UOMCLASS_ADD)
+								<button data-area="100%,100%" data-title="新增计量单位" data-handler="refreshJBoltTable" onclick="addUomBtn(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+								#end
+								#permission(PermissionKey.UOMCLASS_EDIT)
+								<button data-openpage="dialog" data-area="100%,100%"  data-handler="refreshJBoltTable" data-title="修改计量单位" data-check-handler="jboltTableGetCheckedId" data-url="admin/uom/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+								#end
+								#permission(PermissionKey.UOMCLASS_DELETE)
+								<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" data-url="admin/uom/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+								#end
+								<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+								#permission(PermissionKey.UOMCLASS_EXPORT)
+								<div class="btn-group dropdown">
+									<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+									<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+										<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/uom/exportExcelByIds"><i class="fa fa-download"></i> 导出选中</button>
+										<button class="btn dropdown-item" data-downloadbtn data-url="admin/uom/exportExcelAll" data-form="uomForm_#(pageId)"><i class="fa fa-download"></i> 导出全部</button>
+									</div>
+								</div>
+								#end
+								#permission(PermissionKey.UOMCLASS_IMPORT)
+								<div class="btn-group dropdown">
+									<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+									<div class="dropdown-menu" aria-labelledby="importTableButton">
+										<a data-downloadbtn href="/admin/uom/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+										<div class="j_upload_file_box"
+											 data-name="file"
+											 data-btn-class="btn dropdown-item"
+											 data-placeholder="上传导入"
+											 data-confirm="确认导入数据？"
+											 data-accept="excel"
+											 data-maxsize="20480"
+											 data-handler="uploadFile"
+											 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+											 data-url="/admin/uom/importExcel">
+										</div>
+									</div>
+								</div>
+								#end
+							</div>
+							<div class="clearfix"></div>
+						</div>
+
+						<table class="jbolt_table jbolt_main_table table-center"
+							   data-jbolttable
+							   data-height="480"
+							   data-width="auto"
+							   data-ajax="true"
+							   data-url="admin/uom/datas"
+							   data-column-resize="true"
+							   data-column-prepend="1:checkbox:true"
+							   data-conditions-form="uomForm_#(pageId)"
+							   data-rowtpl="itemmasterRowtpl_#(pageId)"
+							   data-page="itemmasterPage_#(pageId)"
+							   data-toolbar="itemmaster_toolbar_#(pageId)"
+							   data-fixed-columns-left="1,2,3"
+							   data-fixed-columns-right="-1"
+						>
+							<thead>
+							<tr>
+								<th data-width="60">序号</th>
+								<th data-width="150" data-column="cUomCode">计量单位编码</th>
+								<th data-width="150" data-column="cUomName">计量单位名称</th>
+								<th data-width="150" data-column="cUomClassCode">计量单位组编码</th>
+								<th data-width="150" data-column="cUomClassName">计量单位组名称</th>
+								<th data-width="150" data-column="cUomClassSn">计量单位组类别</th>
+								<th data-width="150" data-column="isBase">默认主计量单位</th>
+								<th data-width="150" data-column="iRatioToBase">换算率</th>
+							</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script>
+		/*料品分类*/
+		var autoid = "";
+		function jstreeClike(tree,data){
+			console.log(tree)
+			console.log(data)
+			autoid = data.id;
+			$("#uomclassid").val(autoid);
+			jboltTablePageToFirst();
+		}
+		function addBtn(ele){
+			var url="admin/uomclass/add?pid="+autoid;
+			$(ele).data("url",url);
+			DialogUtil.openBy(ele);
+		}
+		function updateBtn(ele){
+			if (autoid == ""){
+				LayerMsgBox.alert("请先选择需要修改的计量单位组！");
+				return;
+			}
+			var url="admin/uomclass/edit/"+autoid;
+			$(ele).data("url",url);
+			DialogUtil.openBy(ele);
+		}
+		function deleteBtn(ele){
+			if (autoid == ""){
+				LayerMsgBox.alert("请先选择需要删除的计量单位组！");
+				return;
+			}
+			LayerMsgBox.confirm("确定删除选中数据？",function(){
+				let url = "admin/uomclass/deleteByIds?ids="+autoid
+				Ajax.get(url,function(res){
+					window.parent.refreshPjaxContainer();
+				});
+			});
+		}
+		/*function refreshBtn(ele){
+			window.parent.refreshPjaxContainer();
+		}*/
+		/*新增计量单位*/
+		function addUomBtn(ele){
+			if (autoid == ""){
+				LayerMsgBox.alert("请先选择需要新增的计量单位组！");
+				return;
+			}
+			var url="admin/uom/add?iautoid="+autoid;
+			$(ele).data("url",url);
+			DialogUtil.openBy(ele);
+		}
+
+	</script>
+</div>
+#end
+

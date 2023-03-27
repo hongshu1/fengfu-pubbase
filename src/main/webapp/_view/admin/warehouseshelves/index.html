@@ -10,8 +10,8 @@
 <!--	</div>-->
 	<div class="col">
 		<form class="form-inline" id="warehouseShelvesForm_#(pageId)"   onsubmit="return false;" method="post">
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="货架编码" name="cshelvescode" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="货架名称" name="cshelvesname" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=货架编码=" name="cshelvescode" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=货架名称=" name="cshelvesname" value="" />
 			<select class="form-control"
 					data-autoload
 					data-url="admin/enums/boolchar"
@@ -52,10 +52,10 @@
 <div class="jbolt_table_toolbar" id="warehouseShelves_toolbar_#(pageId)">
 	<div class="btn-group" role="group" aria-label="btn-group">
 		#permission(PermissionKey.WAREHOUSE_SHELVES_ADD)
-		<button data-openpage="dialog" data-area="700,800"  data-handler="jboltTablePageToFirst" data-title="新增货架档案"  data-url="admin/warehouseshelves/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="700,500"  data-handler="jboltTablePageToFirst" data-title="新增货架档案"  data-url="admin/warehouseshelves/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		#end
 		#permission(PermissionKey.WAREHOUSE_SHELVES_EDIT)
-		<button data-openpage="dialog" data-area="700,800"  data-handler="refreshJBoltTable" data-title="修改货架档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/warehouseshelves/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-openpage="dialog" data-area="700,500"  data-handler="refreshJBoltTable" data-title="修改货架档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/warehouseshelves/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
 		#end
 		#permission(PermissionKey.WAREHOUSE_SHELVES_DELETE)
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/warehouseshelves/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
@@ -109,19 +109,6 @@
 		</div>
 	</div>
 	#end
-
-	<div class="btn-group" role="group" aria-label="btn-group">
-		<div class="btn-group dropdown">
-			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
-					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
-			</button>
-			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
-				<button class="btn dropdown-item" data-downloadbtn data-check-handler="jboltTableGetCheckedIds"
-						onclick="getDbSources()"><i class="fa fa-download"></i> 打印勾选行
-				</button>
-			</div>
-		</div>
-	</div>
 
 	<div class="clearfix"></div>
 </div>
