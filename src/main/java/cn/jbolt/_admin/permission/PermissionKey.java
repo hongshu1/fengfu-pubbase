@@ -1953,9 +1953,12 @@ public class PermissionKey {
 	 * 项目管理项目分类目录
 	 */
 	public static final String FITEMSS97CLASS = "fitemss97class";
-	
 	/**
-	 * 项目管理项目分类目录
+	 * 项目管理大类项目主目录
 	 */
 	public static final String FITEMSS97 = "fitemss97";
+	/**
+	 * 项目管理大类项目子目录
+	 */
+	public static final String FITEMSS97SUB = "fitemss97sub";	
 }
