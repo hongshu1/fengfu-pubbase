@@ -1,0 +1,282 @@
+<div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <span class="py-1"><strong>库存量信息</strong></span>
+    </div>
+    <input type="hidden" name="inventorystockconfig.iAutoId" value="#(inventorystockconfig.iAutoId??)" />
+    <div class="form-group row" >
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-4 col-form-label" >最低库存</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入数量" data-tips="请输入数量"  maxlength="10" name="inventorystockconfig.iInventoryMinLimitQty" value="#(inventorystockconfig.iInventoryMinLimitQty??)">
+
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >最大库存</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入数量" data-tips="请输入数量"  maxlength="10" name="inventorystockconfig.iSafetyStockQty" value="#(inventorystockconfig.iSafetyStockQty??)">
+
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >安全库存</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入数量" data-tips="请输入数量"  maxlength="10" name="inventorystockconfig.iTurnOverDays" value="#(inventorystockconfig.iTurnOverDays??)">
+
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >标准周转天数</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入数量" data-tips="请输入数量"  maxlength="10" name="inventorystockconfig.iTurnOverDays" value="#(inventorystockconfig.iTurnOverDays??)">
+
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group row" >
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-4 col-form-label" >盘点周期</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入数量" data-tips="请输入数量"  maxlength="10" name="inventorystockconfig.cIncCycle" value="#(inventorystockconfig.cIncCycle??)">
+
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >积压标准</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入数量" data-tips="请输入数量"  maxlength="10" name="inventorystockconfig.cOverstock" value="#(inventorystockconfig.cOverstock??)">
+
+            </div>
+        </div>
+        <div class="col-3 row"
+             data-radio
+             data-rule="radio"
+             data-value="#(inventorystockconfig.isNegativeInventory??'1'=='1'?true:false)"
+             data-name="inventorystockconfig.isNegativeInventory"
+             data-default="options_first" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >允许负库存</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <div class="radio radio-primary  radio-inline">
+                    <input  id="r_isnegativeinventory_true" type="radio" name="inventorystockconfig.isNegativeInventory" value="true"/>
+                    <label for="r_isnegativeinventory_true">是</label>
+                </div>
+                <div class="radio radio-primary  radio-inline">
+                    <input  id="r_isnegativeinventory_false" type="radio" name="inventorystockconfig.isNegativeInventory" value="false"/>
+                    <label for="r_isnegativeinventory_false">否</label>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >在库天数</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入数量" data-tips="请输入数量"  maxlength="10" name="inventorystockconfig.iInStockDays" value="#(inventorystockconfig.iInStockDays??)">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <span class="py-1"><strong>其它信息</strong></span>
+    </div>
+
+    <div class="form-group row" >
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-4 col-form-label" >默认供应商</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <select class="form-control" name="inventorystockconfig.iVendorId"
+                        data-autoload
+                        data-url="admin/inventoryclass/options?ipid=#(inventoryClass.iAutoid??)"
+                        data-select-type="select"
+                        data-text="=计量单位组="
+                        data-value=""
+                        data-select="#(inventorystockconfig.iVendorId??)"
+                        data-value-attr="iautoid"
+                        data-text-attr="cuomname"
+                ></select>
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >默认仓库</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <select class="form-control" name="inventorystockconfig.iWarehouseId"
+                        data-autoload
+                        data-url="admin/inventoryclass/options?ipid=#(inventoryClass.iAutoid??)"
+                        data-select-type="select"
+                        data-text="=计量单位组="
+                        data-value=""
+                        data-select="#(inventorystockconfig.iWarehouseId??)"
+                        data-value-attr="iautoid"
+                        data-text-attr="cuomname"
+                ></select>                            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >默认库区</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <select class="form-control" name="inventorystockconfig.iWarehouseAreaId"
+                        data-autoload
+                        data-url="admin/inventoryclass/options?ipid=#(inventoryClass.iAutoid??)"
+                        data-select-type="select"
+                        data-text="=计量单位组="
+                        data-value=""
+                        data-select="#(inventorystockconfig.iWarehouseAreaId??)"
+                        data-value-attr="iautoid"
+                        data-text-attr="cuomname"
+                ></select>
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+
+        </div>
+
+    </div>
+</div>
+
+<div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <span class="py-1"><strong>批号管理</strong></span>
+    </div>
+    <div class="form-group row"
+         data-radio
+         ###data-rule="radio"
+         data-rule="required"
+         data-value="#(inventorystockconfig.isLotControl??'1'=='1'?true:false)"
+         data-name="inventorystockconfig.isLotControl"
+         data-default="options_first" >
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-4 col-form-label" >开启批号管理</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <div class="radio radio-primary  radio-inline">
+                    <input  id="r_islotcontrol_true" type="radio" name="inventorystockconfig.isLotControl" value="true"/>
+                    <label for="r_islotcontrol_true">是</label>
+                </div>
+                <div class="radio radio-primary  radio-inline">
+                    <input  id="r_islotcontrol_false" type="radio" name="inventorystockconfig.isLotControl" value="false"/>
+                    <label for="r_islotcontrol_false">否</label>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >流水号</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <div class="input-group" style="width: 50%">
+                    <div class="input-group-prepend">
+                        <button class="input-group-text btn-outline-secondary" onclick="jianBtn(this,'ilotserialno')">-</button>
+                    </div>
+                    <input type="text" id="ilotserialno" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-notnull="false" maxlength="10" name="inventorystockconfig.iLotSerialNo" value="#(inventorystockconfig.iLotSerialNo??)"/>
+                    <div class="input-group-append">
+                        <button class="input-group-text btn-outline-secondary" onclick="jiaBtn(this,'ilotserialno')">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+
+        </div>
+
+    </div>
+    <div class="form-group row"
+         data-radio
+         data-value="#(inventory.isValid??'1'=='1'?true:false)"
+         data-name="inventory.isValid"
+         data-default="options_first" >
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-5 col-form-label" >开启有效期管理</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <div class="radio radio-primary  radio-inline">
+                    <input  id="r_isvalid_true" type="radio" name="inventorystockconfig.isValid" value="true"/>
+                    <label for="r_isvalid_true">是</label>
+                </div>
+                <div class="radio radio-primary  radio-inline">
+                    <input  id="r_isvalid_false" type="radio" name="inventorystockconfig.isValid" value="false"/>
+                    <label for="r_isvalid_false">否</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >保质期</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <div class="input-group" style="width: 50%">
+                    <div class="input-group-prepend">
+                        <button class="input-group-text btn-outline-secondary" onclick="jianBtn(this,'ivaliddays')">-</button>
+                    </div>
+                    <input type="text" id="ivaliddays" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-notnull="false" maxlength="10" name="inventorystockconfig.iValidDays" value="#(inventorystockconfig.iValidDays??)"/>
+                    <div class="input-group-append">
+                        <button class="input-group-text btn-outline-secondary" onclick="jiaBtn(this,'ivaliddays')">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-4 col-form-label" >保质期单位</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <select class="form-control" name="inventorystockconfig.iValidUnit"
+                        data-autoload
+                        data-url="admin/uom/options"
+                        data-select-type="select"
+                        data-text="=保质期单位="
+                        data-value=""
+                        data-select="#(inventorystockconfig.iValidUnit??)"
+                        data-value-attr="iautoid"
+                        data-text-attr="cuomname"
+                ></select>
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+
+        </div>
+
+    </div>
+</div>
+<div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <span class="py-1"><strong>序列号管理</strong></span>
+    </div>
+    <div class="form-group row"
+         data-radio
+         data-value="#(inventory.isStructCode??'1'=='1'?true:false)"
+         data-name="inventory.isStructCode"
+         data-default="options_first" >
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-5 col-form-label" >开启一物一码管理</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <div class="radio radio-primary  radio-inline">
+                    <input  id="r_isstructcode_true" type="radio" name="inventorystockconfig.isstructcode" value="true"/>
+                    <label for="r_isstructcode_true">是</label>
+                </div>
+                <div class="radio radio-primary  radio-inline">
+                    <input  id="r_isstructcode_false" type="radio" name="inventorystockconfig.isstructcode" value="false"/>
+                    <label for="r_isstructcode_false">否</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+            <label class="col-sm-3 col-form-label" >流水号</label>
+            <div class="col "  style="display:flex;justify-content: flex-start">
+                <div class="input-group" style="width: 50%">
+                    <div class="input-group-prepend">
+                        <button class="input-group-text btn-outline-secondary" onclick="jianBtn(this,'istructserialno')">-</button>
+                    </div>
+                    <input type="text" id="istructserialno" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-notnull="false" maxlength="10" name="inventorystockconfig.iStructSerialNo" value="#(iteminventoryinfo.iStructSerialNo??)"/>
+                    <div class="input-group-append">
+                        <button class="input-group-text btn-outline-secondary" onclick="jiaBtn(this,'istructserialno')">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+
+        </div>
+        <div class="col-3 row" style="padding: 0px;margin: 0px">
+
+        </div>
+
+    </div>
+</div>
