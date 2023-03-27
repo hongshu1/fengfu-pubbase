@@ -37,7 +37,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  */
 public class WarehousePositionService extends BaseService<WarehousePosition> {
 	private final WarehousePosition dao=new WarehousePosition().dao();
-	//111
+
 
 	@Override
 	protected WarehousePosition dao() {

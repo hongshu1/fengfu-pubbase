@@ -22,7 +22,7 @@ FROM
         AND c.isInner = #para(isInner)
     #end
     #if(ids)
-        AND CHARINDEX(','+cast((select wa.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
+        AND CHARINDEX(','+cast((select c.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
     #end
 	ORDER BY c.dCreateTime DESC
 #end
