@@ -1,0 +1,332 @@
+<form onsubmit="return false;" id="warehouseForm_" action="#(action)" method="post">
+	#if(warehouse.iAutoId??)
+	<input type="hidden" name="warehouse.iAutoId" value="#(warehouse.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">仓库编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入仓库编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入仓库编码" maxlength="40" name="warehouse.cWhCode" value="#(warehouse.cWhCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">仓库名称</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入仓库名称" maxlength="40" name="warehouse.cWhName" value="#(warehouse.cWhName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">所属部门</label>
+<div class="col-10">
+    <select class="form-control"
+            data-autoload
+            name="warehouse.cDepCode"
+            data-select-type="select2"
+            data-rule="select"
+            data-tips="所属部门"
+            data-url="admin/dept/datas"
+            data-text="=所属部门="
+            data-value=""
+            data-value-attr="id"
+            data-select="#(warehouse.idepid??)">
+    </select>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">仓库地址</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入仓库地址" maxlength="200" name="warehouse.cWhAddress">#(warehouse.cWhAddress??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">电话</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入电话" maxlength="40" name="warehouse.cWhPhone" value="#(warehouse.cWhPhone??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">负责人</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入负责人" maxlength="40" name="warehouse.cWhPerson" value="#(warehouse.cWhPerson??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">计价方式</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入计价方式"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入计价方式" maxlength="40" name="warehouse.cWhValueStyle" value="#(warehouse.cWhValueStyle??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">仓库期末处理会计期</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入仓库期末处理会计期" maxlength="40" name="warehouse.cMonth" value="#(warehouse.cMonth??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入备注" maxlength="40" name="warehouse.cWhMemo" value="#(warehouse.cWhMemo??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="warehouse.bFreeze"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否冻结"
+data-width="col-sm-2,col-10"
+data-value="#(warehouse.bFreeze??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否冻结"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">条形码</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入条形码" maxlength="40" name="warehouse.cBarCode" value="#(warehouse.cBarCode??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="warehouse.bMRP"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否参与MRP运算"
+data-width="col-sm-2,col-10"
+data-value="#(warehouse.bMRP??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否参与MRP运算"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">盘点周期</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入盘点周期" maxlength="40" name="warehouse.iFrequency" value="#(warehouse.iFrequency??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">盘点周期单位</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入盘点周期单位" maxlength="40" name="warehouse.cFrequency" value="#(warehouse.cFrequency??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">每第几天</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入每第几天" maxlength="40" name="warehouse.iDays" value="#(warehouse.iDays??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">上次盘点日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入上次盘点日期" maxlength="20" name="warehouse.dLastDate"    value="#datetime(warehouse.dLastDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">仓库属性</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入仓库属性"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入仓库属性" maxlength="40" name="warehouse.iWHProperty" value="#(warehouse.iWHProperty??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="warehouse.bShop"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否门店"
+data-width="col-sm-2,col-10"
+data-value="#(warehouse.bShop??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否门店"
+data-inline="true"
+>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="warehouse.bInCost"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="记入成本"
+data-width="col-sm-2,col-10"
+data-value="#(warehouse.bInCost??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入记入成本"
+data-inline="true"
+>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="warehouse.bInAvailCalcu"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="纳入可用量计算"
+data-width="col-sm-2,col-10"
+data-value="#(warehouse.bInAvailCalcu??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入纳入可用量计算"
+data-inline="true"
+>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="warehouse.bProxyWh"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="代管仓"
+data-width="col-sm-2,col-10"
+data-value="#(warehouse.bProxyWh??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入代管仓"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">销售可用量控制方式</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入销售可用量控制方式"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入销售可用量控制方式" maxlength="40" name="warehouse.iSAConMode" value="#(warehouse.iSAConMode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">出口可用量控制方式</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入出口可用量控制方式"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入出口可用量控制方式" maxlength="40" name="warehouse.iEXConMode" value="#(warehouse.iEXConMode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">库存可用量控制方式</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入库存可用量控制方式"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入库存可用量控制方式" maxlength="40" name="warehouse.iSTConMode" value="#(warehouse.iSTConMode??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="warehouse.bBondedWh"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否保税仓"
+data-width="col-sm-2,col-10"
+data-value="#(warehouse.bBondedWh??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否保税仓"
+data-inline="true"
+>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="warehouse.bWhAsset"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="资产仓"
+data-width="col-sm-2,col-10"
+data-value="#(warehouse.bWhAsset??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入资产仓"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">资产仓</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入资产仓" maxlength="40" name="warehouse.fWhQuota" value="#(warehouse.fWhQuota??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">停用日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入停用日期" maxlength="20" name="warehouse.dWhEndDate"    value="#datetime(warehouse.dWhEndDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="warehouse.bCheckSubitemCost"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否核算分项成本"
+data-width="col-sm-2,col-10"
+data-value="#(warehouse.bCheckSubitemCost??)"
+data-rule="radio"
+data-notnull="false"
+data-tips="请输入是否核算分项成本"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">拣货货位 </label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入拣货货位 " maxlength="40" name="warehouse.cPickPos" value="#(warehouse.cPickPos??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="warehouse.bEB"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="电商仓"
+data-width="col-sm-2,col-10"
+data-value="#(warehouse.bEB??)"
+data-rule="radio"
+data-notnull="false"
+data-tips="请输入电商仓"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">修改日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入修改日期" maxlength="20" name="warehouse.dModifyDate"    value="#datetime(warehouse.dModifyDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">仓库核算组</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入仓库核算组" maxlength="40" name="warehouse.cWareGroupCode" value="#(warehouse.cWareGroupCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">省/直辖市</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入省/直辖市" maxlength="40" name="warehouse.cProvince" value="#(warehouse.cProvince??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">市</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入市" maxlength="40" name="warehouse.cCity" value="#(warehouse.cCity??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">区县</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入区县" maxlength="40" name="warehouse.cCounty" value="#(warehouse.cCounty??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="warehouseForm_")
+#end
+

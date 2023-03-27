@@ -5,8 +5,8 @@
 <div class="jbolt_page_title">
 	<div class="row">
 	<div class="col">
-		<form onsubmit="return false;" class="form-inline" id="jboltversion_JboltTableForm_ajax_#(pageId)" action="demo/jbolttable/paginate"  method="post">
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="请输入姓名" name="person.cpersonname" value="#(person.cpersonname??)" />
+		<form onsubmit="return false;" class="form-inline" id="jboltversion_JboltTableForm_ajax_#(pageId)" action="admin/workregionm/findPersonPage"  method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="请输入姓名" name="cpersonname" data-value="#(cpersonname??)"/>
 		<button  type="button" onclick="refreshJBoltTable(this)" class="btn btn-light" ><i class="fa fa-search"></i> 查询</button>
 		</form>
 	</div>
@@ -17,10 +17,10 @@
 <!-- JBoltTable的数据模板定义-->
 <script type="text/template" id="jboltTable_demotpl">
 {@each datas as data,index}
-<tr class="hand" data-json='#json(data,"iautoid,cpersoncode,cpersonname,cphone")' data-jboltinput-setvalue-trigger data-text=${data.cpersonname} data-value=${data.iautoid}>
-<td>${data.cpersoncode}</td>
-<td>${data.cpersonname}</td>
-<td>${data.cphone}</td>
+<tr class="hand" data-json='#json(data,"iautoid,cpsnnum,cpsnname,cpsnmobilephone")' data-jboltinput-setvalue-trigger data-text=${data.cpsnname} data-value=${data.iautoid}>
+<td>${data.cpsnnum}</td>
+<td>${data.cpsnname}</td>
+<td>${data.cpsnmobilephone}</td>
 </tr>
 {@/each}
 </script>
@@ -32,14 +32,14 @@
   data-conditions-form="jboltversion_JboltTableForm_ajax_#(pageId)"
   data-page="jboltTablePage_ajax_#(pageId)"
   data-pagesize="5"
-  data-url="admin/war/datas"
+  data-url="admin/workregionm/findPersonPage"
   data-rowtpl="jboltTable_demotpl"
  >
 <thead>
 <tr>
-<th data-width="150" data-column="cPersonCode">人员编码</th>
-<th data-min-width="160" data-column="cPersonName">人员姓名</th>
-<th data-min-width="160" data-column="cPhone">手机号</th>
+<th data-width="150" data-column="cPsnNum">人员编码</th>
+<th data-min-width="160" data-column="cPsnName">人员姓名</th>
+<th data-min-width="160" data-column="cPsnMobilePhone">手机号</th>
 </thead>
 <tbody></tbody>
 </table>

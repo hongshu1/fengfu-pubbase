@@ -1,27 +1,34 @@
 package cn.rjtech.admin.person;
 
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Record;
-
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.UnCheck;
+import com.jfinal.upload.UploadFile;
+import cn.hutool.core.net.URLEncoder;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Person;
+import pres.lnk.jxlss.JxlsBuilder;
 /**
  * 人员档案 Controller
  * @ClassName: PersonAdminController
- * @author: WYX
+ * @author: heming
  * @date: 2023-03-21 15:11
  */
 @CheckPermission(PermissionKey.PERSON_INDEX)
 @UnCheckIfSystemAdmin
 public class PersonAdminController extends BaseAdminController {
-
 	@Inject
 	private PersonService service;
 	@Inject
@@ -60,6 +67,7 @@ public class PersonAdminController extends BaseAdminController {
 		Record rc = person.toRecord();
 		User user = userService.findById(rc.getLong("iuserid"));
 		rc.set("cusername", user == null ? null : user.getName());
+		rc.set("sysworkage", service.calcSysworkage(rc.getDate("dhiredate")));
 		set("person",rc);
 		render("edit.html");
 	}
@@ -155,11 +163,39 @@ public class PersonAdminController extends BaseAdminController {
 		render("import_excel_index.html");
 	}
 	/**
+	 * 模板下载
+	 * */
+	@SuppressWarnings("deprecation")
+	@UnCheck
+	public void downloadTpl() throws Exception {
+        HttpServletResponse response = getResponse();
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentType("multipart/form-data");
+        // 设置下载头
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.createDefault().encode("人员档案导入.xlsx", StandardCharsets.UTF_8));
+        JxlsBuilder.getBuilder("personDownloadTpl.xlsx")
+                .out(response.getOutputStream())
+                .build();
+    }
+	
+	/**
 	 * 数据导入
-	 * 
 	 * */
 	@UnCheck
-	public void importExcel(){
-		renderJsonSuccess();
+	public void importExcelDatas(){
+		//上传到今天的文件夹下
+		String uploadPath=JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_FILE_UPLOADER);
+		List<UploadFile> files=getFiles(uploadPath);
+		if(!isOk(files)) {
+			renderBootFileUploadFail("文件上传失败!");
+			return;
+		}
+		for (UploadFile file : files) {
+			if (notExcel(file)) {
+	            renderJsonFail("请上传excel文件");
+	            return;
+	        }
+		}
+        renderJson(service.importExcelDatas(files,getKv()));
 	}
 }

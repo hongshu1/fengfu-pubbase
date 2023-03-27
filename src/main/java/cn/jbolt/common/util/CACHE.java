@@ -6,6 +6,8 @@ import cn.jbolt._admin.qiniu.QiniuBucketService;
 import cn.jbolt._admin.qiniu.QiniuService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt._admin.userconfig.UserConfigService;
+import cn.rjtech.admin.uomclass.UomclassService;
+import cn.rjtech.admin.workclass.WorkClassService;
 import cn.jbolt.admin.appdevcenter.ApplicationService;
 import cn.jbolt.admin.wechat.autoreply.WechatReplyContentService;
 import cn.jbolt.admin.wechat.user.WechatUserService;
@@ -24,6 +26,9 @@ import cn.jbolt.core.model.Application;
 import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.JBoltCommonService;
+import cn.rjtech.model.momdata.Uomclass;
+import cn.rjtech.model.momdata.Workclass;
+
 import com.jfinal.aop.Aop;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.ehcache.IDataLoader;
@@ -52,7 +57,9 @@ public class CACHE extends JBoltCacheParaValidator {
 	private DeptService deptService = Aop.get(DeptService.class);
 	private QiniuService qiniuService = Aop.get(QiniuService.class);
 	private QiniuBucketService qiniuBucketService = Aop.get(QiniuBucketService.class);
-    
+	private WorkClassService workclassService = Aop.get(WorkClassService.class);
+	private UomclassService uomclassService = Aop.get(UomclassService.class);
+
 	private String buildCacheKey(String pre, Object value) {
 		return JBoltConst.JBOLT_CACHE_DEFAULT_PREFIX + pre + value.toString();
 	}
@@ -539,4 +546,24 @@ public class CACHE extends JBoltCacheParaValidator {
         return dept==null?null:dept.getId();
     }
 
+	public Long getWorkClassIdByCode(String code) {
+		Workclass workclass = workclassService.getCacheByKey(code);
+		return notOk(workclass)?null:workclass.getIautoid();
+	}
+
+	/**
+	 * 获得用户用户名
+	 *
+	 * @param id
+	 * @return
+	 */
+	public String getUserUsername(Object id) {
+		User user = getUser(id);
+		return user == null ? "" : user.getUsername();
+	}
+
+    public Long getUomClassIdByCode(String code) {
+		Uomclass uomclass = uomclassService.getCacheByKey(code);
+		return notOk(uomclass)?null:uomclass.getIAutoId();
+    }
 }

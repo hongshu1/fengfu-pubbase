@@ -13,11 +13,11 @@
 					data-select-type="select2"
 					data-autoload
 					name="idepid"
-					data-url="admin/dept/datas"
+					data-url="admin/department/getTreeTableDatas"
 					data-text="=所属部门="
-					data-text-attr="sn,name"
+					data-text-attr="cdepcode,cdepname"
 					data-value=""
-					data-value-attr="id"
+					data-value-attr="iautoid"
 					data-select="#(idepid??)">
 			</select>
 			<select class="form-control" data-url="admin/dictionary/options?key=pslevel_type" name="ipslevel" data-autoload data-text="=排产层级=" data-value-attr="sn" data-value=""></select>
@@ -41,6 +41,8 @@
 <td>${data.cdepname}</td>
 <td>${data.cpersonname}</td>
 <td>${data.ipslevel}</td>
+<!--<td>${data.cwhcode}</td>-->
+<td>${data.cwhname}</td>
 <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/workregionm/toggleIsenabled/${data.iautoid}"/></td>
 <td>${data.cmemo}</td>
 <td>${data.ccreatename}</td>
@@ -85,7 +87,7 @@
 					 data-maxsize="20480"
 					 data-handler="uploadFile"
 					 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-					 data-url="/admin/workregionm/importExcel">
+					 data-url="/admin/workregionm/findPersonPage">
 				</div>
 			</div>
 		</div>
@@ -119,6 +121,8 @@ data-fixed-columns-left="1,2,3"
 	<th data-width="150" data-column="cDepName">所属部门</th>
 	<th data-width="150" data-column="cPersonName">产线长</th>
 	<th data-width="150" data-column="iPsLevel">排产层级</th>
+<!--	<th data-width="150" data-column="cwhcode">关联仓库编码</th>-->
+	<th data-width="150" data-column="cWhName">关联仓库</th>
 	<th data-width="150" data-column="isEnabled">是否启用</th>
 	<th data-width="150" data-column="cMemo">备注</th>
 	<th data-width="150" data-column="cCreateName">创建人</th>

@@ -10,6 +10,11 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.service.JBoltFileService;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.admin.warehousearea.WarehouseAreaService;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.Workregionm;
 import cn.rjtech.util.Util;
 import com.jfinal.aop.Before;
@@ -17,6 +22,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.NotAction;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
@@ -38,7 +44,16 @@ public class WorkregionmAdminController extends JBoltBaseController {
 
     @Inject
     private WorkregionmService service;
-
+    @Inject
+    private WarehouseService warehouseService;
+    @Inject
+    private WarehouseAreaService warehouseAreaService;
+    @Inject
+    private PersonService personService;
+    
+    @Inject
+    private JBoltFileService jboltFileService;
+    
     /**
      * 首页
      */
@@ -70,10 +85,12 @@ public class WorkregionmAdminController extends JBoltBaseController {
             return;
         }
         if (isOk(workregionm) && isOk(workregionm.getIPersonId())) {
-//            String personName = CACHE.me.getPersonNameById(workregionm.getIpersonid());
-//            set("personname", personName);
+            Person person = personService.findById(workregionm.getIPersonId());
+            if (person != null){
+                set("personname", person.getCpsnName());
+            }
         }
-
+       
         set("workregionm", workregionm);
         render("edit.html");
     }
@@ -132,7 +149,8 @@ public class WorkregionmAdminController extends JBoltBaseController {
             renderJsonFail("无有效数据导出");
             return;
         }
-        renderJxls("workregionm.xlsx", Kv.by("rows", data), "产线档案(选中导出)_" + DateUtil.today() + ".xlsx");
+        
+        renderBytesToExcelXlsFile(service.exportExcelTpl(data));
     }
 
     @SuppressWarnings("unchecked")
@@ -142,12 +160,16 @@ public class WorkregionmAdminController extends JBoltBaseController {
             renderJsonFail("无有效数据导出");
             return;
         }
-        renderJxls("workregionm.xlsx", Kv.by("rows", rows), "产线档案_" + DateUtil.today() + ".xlsx");
+        
+        renderBytesToExcelXlsFile(service.exportExcelTpl(rows));
+//        renderJxls("workregionm.xlsx", Kv.by("rows", rows), "产线档案_" + DateUtil.today() + ".xlsx");
     }
+    
+
 
     @SuppressWarnings("unchecked")
     public void downloadTpl() throws Exception {
-        renderJxls("workregionm_import.xlsx", Kv.by("rows", null), "产线档案导入模板.xlsx");
+        renderBytesToExcelXlsFile(service.exportExcelTpl(null));
     }
 
     public void importExcel() {
@@ -200,10 +222,51 @@ public class WorkregionmAdminController extends JBoltBaseController {
     }
     
     public void findByWarehouse(){
-        renderJsonData(service.findByWarehouse());
+        renderJsonData(warehouseService.findByWarehouse());
     }
     
     public void findByWareHouseId(){
-        renderJsonData(service.findByWareHouseId(getLong("iWarehouseId")));
+        renderJsonData(warehouseAreaService.findByWareHouseId(getLong("iWarehouseId")));
+    }
+    
+    public void findPersonPage(){
+        renderJsonData(personService.paginateDatas(getPageNumber(), getPageSize(), getKv()));
+    }
+    
+    public void uploadImages(){
+        //上传到今天的文件夹下
+        String uploadPath=JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_IMAGE_UPLOADER);
+        List<UploadFile> files=getFiles(uploadPath);
+        if(files==null || files.size()==0) {
+            renderJsonFail("请选择图片后上传");
+            return;
+        }
+        StringBuilder msg = new StringBuilder();
+        files.forEach(file->{
+            if(notImage(file)){
+                msg.append(file.getFileName()+"不是图片类型文件;");
+            }
+        });
+        if(msg.length()>0) {
+            renderJsonFail(msg.toString());
+            return;
+        }
+        
+        List<String> retFiles=new ArrayList<String>();
+        Ret ret;
+        StringBuilder errormsg = new StringBuilder();
+        for(UploadFile uploadFile:files) {
+            ret=jboltFileService.saveImageFile(uploadFile,uploadPath);
+            if(ret.isOk()){
+                retFiles.add(ret.getStr("data"));
+            }else {
+                errormsg.append(uploadFile.getOriginalFileName()+"上传失败;");
+            }
+        }
+        if(retFiles.size()==0) {
+            renderJsonFail(errormsg.toString());
+            return;
+        }
+        renderJsonData(retFiles,errormsg.toString());
     }
 }

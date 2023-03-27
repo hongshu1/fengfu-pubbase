@@ -1,0 +1,193 @@
+<form onsubmit="return false;" id="workcalendarmForm" action="#(action)" method="post">
+<input type="hidden" name="workcalendarm.iautoid" value="#(workcalendarm.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">适用部门</label>
+		<div class="col">
+			<select class="form-control"
+					data-autoload
+					data-select-type="select2"
+					data-rule="select"
+					multiple="multiple"
+					data-tips="适用部门"
+					data-url="admin/dept/datas"
+					data-text="=请选择适用部门[多选]="
+					data-value=""
+					data-value-attr="id"
+					data-setvalueto="workcalendarmmultipleidepidInput"
+					data-select="#(workcalendarm.idepids??)">
+			</select>
+			<input type="hidden" id="workcalendarmmultipleidepidInput" name="workcalendarm.idepids" value="#(workcalendarm.idepids??)" />
+			</select>
+<!--			<select class="form-control"-->
+<!--					data-autoload-->
+<!--					name="warehouse.idepid"-->
+<!--					data-select-type="select2"-->
+<!--					data-rule="select"-->
+<!--					data-tips="所属部门"-->
+<!--					data-url="admin/dept/datas"-->
+<!--					data-text="=所属部门="-->
+<!--					data-value=""-->
+<!--					data-value-attr="id"-->
+<!--					data-select="#(warehouse.idepid??)">-->
+<!--			</select>-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  data-rule="required" class="form-control"  placeholder="请输入适用部门" maxlength="255" name="workcalendarm.idepids" value="#(workcalendarm.idepids??)"/>-->
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度</label>
+		<div class="col">
+			<input type="text" class="form-control"  data-date data-type="year" placeholder="请选择年度"  data-rule="required" name="workcalendarm.cyear" value="#(workcalendarm.cyear??)">
+<!--			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年度 2022" data-tips="请设置年度 2022" maxlength="255" name="workcalendarm.cyear" value="#(workcalendarm.cyear??)"/>-->
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日历名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  data-rule="required" class="form-control"  placeholder="请输入日历名称" maxlength="255" name="workcalendarm.ccalendarname" value="#(workcalendarm.ccalendarname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">工作日</label>
+		<div class="col">
+
+			<select class="form-control"
+					data-autoload
+
+					data-select-type="select2"
+					data-rule="select"
+					multiple="multiple"
+					data-tips="请选择数据分类"
+					data-url="admin/dictionary/options?key=week_type"
+					data-text="=请选择数据分类[多选]="
+					data-value=""
+					data-value-attr="sn"
+					data-setvalueto="workcalendarmmultipleInput"
+					data-select="#(workcalendarm.cweekday??)">
+			</select>
+			<input type="hidden" id="workcalendarmmultipleInput" name="workcalendarm.cweekday" value="#(workcalendarm.cweekday??)" />
+			</select>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">假期设置</label>
+		<div class="col">
+			<div class="jbolt_page_content">
+				#render("_table_split.html")
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">备注</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="255" name="workcalendarm.cmemo" value="#(workcalendarm.cmemo??)"/>
+		</div>
+	</div>
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">创建人</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人" maxlength="19" name="workcalendarm.icreateby" value="#(workcalendarm.icreateby??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">创建人名称</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="255" name="workcalendarm.ccreatename" value="#(workcalendarm.ccreatename??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">创建时间</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="workcalendarm.dcreatetime" value="#(workcalendarm.dcreatetime??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">更新人</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新人" maxlength="19" name="workcalendarm.iupdateby" value="#(workcalendarm.iupdateby??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">更新人名称</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新人名称" maxlength="255" name="workcalendarm.cupdatename" value="#(workcalendarm.cupdatename??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">更新时间</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="workcalendarm.dupdatetime" value="#(workcalendarm.dupdatetime??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">组织ID</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="workcalendarm.iorgid" value="#(workcalendarm.iorgid??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">组织编码</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="255" name="workcalendarm.corgcode" value="#(workcalendarm.corgcode??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">组织名称</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="255" name="workcalendarm.corgname" value="#(workcalendarm.corgname??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(workcalendarm.isenabled??)"
+    	data-name="workcalendarm.isenabled"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否启用</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isenabled_true" type="radio" name="workcalendarm.isenabled" value="true"/>
+					<label for="r_isenabled_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isenabled_false" type="radio" name="workcalendarm.isenabled" value="false"/>
+					<label for="r_isenabled_false">否</label>
+				</div>
+			</div>
+		</div>
+<!--    <div class="form-group row"-->
+<!--    	data-radio-->
+<!--    	data-rule="radio"-->
+<!--    	data-value="#(workcalendarm.isdeleted??)"-->
+<!--    	data-name="workcalendarm.isdeleted"-->
+<!--    	data-default="options_first"-->
+<!--    	data-width="col-sm-2,col"-->
+<!--		>-->
+<!--			<label class="col-sm-2 col-form-label" >是否删除 1未删除</label>-->
+<!--			<div class="col"  style="padding-top: 1px;">-->
+<!--				<div class="radio radio-primary  radio-inline">-->
+<!--					<input  id="r_isdeleted_true" type="radio" name="workcalendarm.isdeleted" value="true"/>-->
+<!--					<label for="r_isdeleted_true">是</label>-->
+<!--				</div>-->
+<!--				-->
+<!--				<div class="radio radio-primary  radio-inline">-->
+<!--					<input  id="r_isdeleted_false" type="radio" name="workcalendarm.isdeleted" value="false"/>-->
+<!--					<label for="r_isdeleted_false">否</label>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--		</div>-->
+</form>
+#define js()
+<script>
+	function submitThisForm() {
+		// var formData = $('#workshiftmForm').serializeArray();
+		// var tebleDatas = jboltTableGetSubmitData('#jbolt_table_workshiftd_split_#(pageId)');
+		jboltTableSubmit('#jbolt_table_workcalendarm_split_#(pageId)');
+	}
+</script>
+#end
+

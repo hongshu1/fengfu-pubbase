@@ -1,0 +1,125 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <!--<div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-auto">
+                <form class="form-inline" id="jboltVersionForm_#(pageId)" onsubmit="return false;" method="post">
+                    <label class="d-inline-block ml-3">排产层级:</label>
+                    <select class="form-control" name="isEnabled"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="全部"
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+                    <label class="d-inline-block ml-3">产线名称:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入状态" name="keywords" value=""/>
+                    <label class="d-inline-block ml-3">存货编码:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入存货编码" name="keywords" value=""/>
+                    <label class="d-inline-block ml-3">客户部番:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入客户部番" name="keywords" value=""/>
+                    <label class="d-inline-block ml-3">部品名称:</label>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入部品名称" name="keywords" value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-secondary"><i class="fa fa-recycle"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>-->
+    <div class="jbolt_page_content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <button class="btn btn-secondary" data-dialogbtn data-link-para-ele="#layDate,#hierarchy" data-area="800,600" data-title="作成条件"
+                                data-url="/admin/monthweekproductionschedule/chooseData"><i class="fa fa-plus"></i> 排产
+                        </button>
+                        <input type="hidden" class="form-control" id="layDate" name="layDate"/>
+                        <input type="hidden" class="form-control" id="hierarchy" name="hierarchy"/>
+
+                        <button id="exportExcel" class="btn btn-secondary"><i class="fa fa-trash"></i> 数据导出</button>
+                        <button id="loadExcel" value="loadExcel" class="btn btn-secondary"><i class="fa fa-plus-square-o"></i> 数据导入</button>
+                        <button class="btn btn-secondary"><i class="fa fa-plus-square-o"></i> 保存层级</button>
+                        <button class="btn btn-secondary" onclick="refreshexcel()"><i class="fa fa-plus-square-o"></i> 计划使用刷新</button>
+
+                        <button class="btn btn-secondary" data-dialogbtn data-link-para-ele="#lockDate" data-area="600,500" data-title="锁定计划"
+                                data-url="/admin/monthweekproductionschedule/lock"><i class="fa fa-plus-square-o"></i> 锁定
+                        </button>
+                        <input type="hidden" class="form-control" id="lockDate" name="lockDate"/>
+
+                        <button class="btn btn-secondary" data-dialogbtn data-link-para-ele="#lockDate" data-area="600,500" data-title="解锁计划"
+                                data-url="/admin/monthweekproductionschedule/unLock"><i class="fa fa-plus-square-o"></i> 解锁
+                        </button>
+                        <input type="hidden" class="form-control" id="unLockDate" name="unLockDate"/>
+
+                        <button onclick="getData()" class="btn btn-primary"><i class="fa fa-refresh"></i> 获取数据</button>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="ssWeek" style="width: 100%;height: 300px;"></div>
+                        <div id="statusBar" style="height:25px;min-height:25px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#end
+
+#define js()
+<script src="../../../assets/plugins/Grape/FileSaver.min.js"></script>
+<script src="../../../assets/plugins/scripts/myTool.js" type="text/javascript"></script>
+<script src="../../../assets/plugins/Grape/16.0.2/gc.spread.sheets.all.16.0.2.min.js" type="text/javascript"></script>
+<script src="../../../assets/plugins/Grape/16.0.2/gc.spread.excelio.16.0.2.min.js" type="text/javascript"></script>
+<script src="../../../assets/plugins/Grape/16.0.2/gc.spread.sheets.resources.zh.16.0.2.min.js" type="text/javascript"></script>
+<script src="/_view/admin/monthweekproductionschedule/spreadWeek.js?v=1.0.2" type="text/javascript"></script>
+<script>
+
+    /**
+     * 定义dialog里选择的数据传递的方法和具体操作的组件
+     */
+    function setChooseDialogSelectResultWeek(layDate, hierarchy) {
+        $("#layDate").val(layDate);
+        $("#hierarchy").val(hierarchy);
+        // 获取排程后的数据进行页面渲染
+        Ajax.post("admin/monthweekproductionschedule/querySchedulingData", {
+            "layDate": layDate,
+            "hierarchy": hierarchy
+        }, function (res) {
+
+        });
+
+        LayerMsgBox.loading("BOM生成中...", 20000);
+        inits2();
+        LayerMsgBox.closeLoading();
+        LayerMsgBox.success("BOM生成成功", 3000);
+    }
+
+    // 锁定
+    function setChooseDialogSelectResultLock(lockDate) {
+        $("#lockDate").val(lockDate)
+
+        lock()
+    }
+
+    // 解锁
+    function setChooseDialogSelectResultUnLock(unLockDate) {
+        $("#unLockDate").val(unLockDate)
+        unlock()
+    }
+
+</script>
+#end
+
+

@@ -1,27 +1,45 @@
 package cn.rjtech.admin.person;
 
+import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.model.Dictionary;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
+import com.jfinal.upload.UploadFile;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.util.JBoltDateUtil;
+import cn.jbolt.core.util.JBoltStringUtil;
 
-import java.util.Date;
-
+import java.math.BigDecimal;
+import java.util.*;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.dept.DeptService;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.poi.excel.JBoltExcelUtil;
+import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
+import cn.rjtech.admin.workclass.WorkClassService;
+import cn.rjtech.config.DictionaryTypeKey;
 import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.PersonEquipment;
+import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.ValidationUtils;
+import org.apache.commons.lang3.StringUtils;
 /**
  * 人员档案 Service
  * @ClassName: PersonService
@@ -36,6 +54,14 @@ public class PersonService extends BaseService<Person> {
 	private DeptService deptService;
 	@Inject
 	private PersonEquipmentService personEquipmentService;
+	@Inject
+	private DictionaryService dictionaryService;
+	@Inject
+	private EquipmentService equipmentService;
+	@Inject
+	private WorkClassService workClassService;
+	
+	
 	private final Person dao = new Person().dao();
 
 	@Override
@@ -45,10 +71,6 @@ public class PersonService extends BaseService<Person> {
 
 	/**
 	 * 后台管理分页查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param keywords
-	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
 		Boolean isenabled = para.getBoolean("isenabled");
@@ -58,17 +80,14 @@ public class PersonService extends BaseService<Person> {
 		Page<Record> pageList = dbTemplate("person.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : pageList.getList()) {
 			row.set("cdepname", deptService.findNameBySn(row.getStr("cdept_num")));
-			User user = userService.findById(row.getLong("iuserid"));
-			String username = user == null ? null : user.getName();
-			row.set("cusername", username);
+			row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("iuserid")));
+			row.set("sysworkage", calcSysworkage(row.getDate("dhiredate")));
 		}
 		return pageList;
 	}
 
 	/**
 	 * 保存
-	 * @param person
-	 * @return
 	 */
 	public Ret save(Person person) {
 		if(person==null || isOk(person.getIAutoId())) {
@@ -85,8 +104,6 @@ public class PersonService extends BaseService<Person> {
 
 	/**
 	 * 更新
-	 * @param person
-	 * @return
 	 */
 	public Ret update(Person person) {
 		if(person==null || notOk(person.getIAutoId())) {
@@ -106,8 +123,6 @@ public class PersonService extends BaseService<Person> {
 
 	/**
 	 * 删除 指定多个ID
-	 * @param ids
-	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
 		return deleteByIds(ids,true);
@@ -115,16 +130,12 @@ public class PersonService extends BaseService<Person> {
 
 	/**
 	 * 删除
-	 * @param id
-	 * @return
 	 */
 	public Ret delete(Long id) {
 		return updateColumn(id, "isdeleted", true);
 	}
 	/**
 	 * 删除
-	 * @param id
-	 * @return
 	 */
 	public Ret deleteByAjax() {
 		return SUCCESS;
@@ -133,7 +144,6 @@ public class PersonService extends BaseService<Person> {
 	 * 删除数据后执行的回调
 	 * @param person 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(Person person, Kv kv) {
@@ -145,7 +155,6 @@ public class PersonService extends BaseService<Person> {
 	 * 检测是否可以删除
 	 * @param person 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkCanDelete(Person person, Kv kv) {
@@ -154,8 +163,7 @@ public class PersonService extends BaseService<Person> {
 	}
 
 	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType 
-	 * @return
+	 * 设置返回二开业务所属的关键systemLog的targetType
 	 */
 	@Override
 	protected int systemLogTargetType() {
@@ -209,7 +217,6 @@ public class PersonService extends BaseService<Person> {
 	 * @param person 要toggle的model
 	 * @param column 操作的哪一列
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkCanToggle(Person person,String column, Kv kv) {
@@ -230,7 +237,6 @@ public class PersonService extends BaseService<Person> {
 	 * 检测是否可以删除
 	 * @param person model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkInUse(Person person, Kv kv) {
@@ -273,5 +279,185 @@ public class PersonService extends BaseService<Person> {
 		});
 		return SUCCESS;
 	}
+	/**
+	 * 数据导入
+	 * */
+	public Ret importExcelDatas(List<UploadFile> fileList,Kv para) {
+		String iscover = JBoltStringUtil.isBlank(para.getStr("iscover")) ? "1":"0";
+		int startRow = 2;
+		for (UploadFile uploadFile : fileList) {
+	        StringBuilder errorMsg = new StringBuilder();
+	        JBoltExcel excel = JBoltExcel
+	                // 从excel文件创建JBoltExcel实例
+	                .from(uploadFile.getFile())
+	                // 设置工作表信息
+	                .setSheets(
+	                        JBoltExcelSheet.create("Sheet1")
+	                                // 设置列映射 顺序 标题名称
+	                                .setHeaders(1,
+	                                        JBoltExcelHeader.create("indexnum", "序号"),
+	                                        JBoltExcelHeader.create("iuserid", "所属用户名"),
+	                                        JBoltExcelHeader.create("cpsnnum", "人员编码"),
+	                                        JBoltExcelHeader.create("cpsnname", "姓名"),
+	                                        JBoltExcelHeader.create("vidno", "证件号码"),
+	                                        JBoltExcelHeader.create("isex", "性别"),
+	                                        JBoltExcelHeader.create("rpersontype", "人员类别"),
+	                                        JBoltExcelHeader.create("cpsnmobilephone", "手机号"),
+	                                        JBoltExcelHeader.create("jobnumber", "工号"),
+	                                        JBoltExcelHeader.create("cecardno", "电子卡号"),
+	                                        JBoltExcelHeader.create("cdeptnum", "所属部门编码"),
+	                                        JBoltExcelHeader.create("remploystate", "在职状态"),
+	                                        JBoltExcelHeader.create("dhiredate", "入职日期"),
+	                                        JBoltExcelHeader.create("iworkclassid", "所属工种"),
+	                                        JBoltExcelHeader.create("dbirthdate", "出生日期"),
+	                                        JBoltExcelHeader.create("cpsnemail", "邮箱"),
+	                                        JBoltExcelHeader.create("isenabled", "是否启用"),
+	                                        JBoltExcelHeader.create("cmemo", "备注"),
+	                                        JBoltExcelHeader.create("cequipmentcode", "人员设备")
+	                                )
+	                                // 从第三行开始读取
+	                                .setDataStartRow(startRow)
+	                );
 
+	        // 从指定的sheet工作表里读取数据
+	        List<Record> rows = JBoltExcelUtil.readRecords(excel, 0, true, errorMsg);
+	        if (notOk(rows)) {
+	            if (errorMsg.length() > 0) {
+	                return fail(errorMsg.toString());
+	            } else {
+	                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+	            }
+	        }
+	        //校验数据的有效性
+	        constructPersonModelCheckDatasEffectiveColumnByExcelDatas(rows,errorMsg,startRow);
+	        ValidationUtils.isTrue(errorMsg.length() == 0, errorMsg.toString());
+	        //构造model
+	        List<Person> personList = new ArrayList<Person>();
+	        List<PersonEquipment> PersonEquipmentList = new ArrayList<PersonEquipment>();
+	        constructPersonModelByExcelDatas(rows,personList,PersonEquipmentList);
+	        tx(()->{
+	        	batchSave(personList);
+	        	personEquipmentService.batchSave(PersonEquipmentList);
+	        	return true;
+	        });
+	        return SUCCESS;
+	    }
+		return null;
+	}
+	/**
+	 * 导入功能-校验每行数据的有效性：非空 ，数字等
+	 * */
+	public void constructPersonModelCheckDatasEffectiveColumnByExcelDatas(List<Record> excelRecordList,StringBuilder errorMsg,int startRow){
+		if(CollUtil.isEmpty(excelRecordList)) return;
+		for (Record excelRecord : excelRecordList) {
+			String cpsnNum = excelRecord.getStr("cpsnnum");
+			String cpsnName = excelRecord.getStr("cpsnname");
+			if(JBoltStringUtil.isBlank(cpsnNum)) errorMsg.append("第").append(startRow).append("行,[人员编码]为空,请检查!<br/>");
+			if(JBoltStringUtil.isBlank(cpsnName)) errorMsg.append("第").append(startRow).append("行,[姓名]为空,请检查!<br/>");
+			try {
+				excelRecord.getDate("dhiredate");
+			} catch (Exception e) {
+				errorMsg.append("第").append(startRow).append("行,[入职日期]格式不正确,请检查!<br/>");
+			}
+			try {
+				excelRecord.getDate("dbirthdate");
+			} catch (Exception e) {
+				errorMsg.append("第").append(startRow).append("行,[出生日期]格式不正确,请检查!<br/>");
+			}
+			
+		}
+	}
+	/**
+	 * 导入功能-构造model
+	 * */
+	public void constructPersonModelByExcelDatas(List<Record> excelRecordList,List<Person> personList,List<PersonEquipment> personEquipmentList){
+		if(CollUtil.isEmpty(excelRecordList)) return;
+		for (Record excelRecord : excelRecordList) {
+			Person person = new Person();
+			Long personId = JBoltSnowflakeKit.me.nextId();
+			person.setIAutoId(personId);
+			String username = excelRecord.getStr("iuserid");
+			User user = userService.getUserByUserName(username);
+			if(user != null) person.setIUserId(user.getId());
+			person.setCpsnNum(excelRecord.getStr("cpsnnum"));
+			person.setCpsnName(excelRecord.getStr("cpsnname"));
+			person.setVIDNo(excelRecord.getStr("vidno"));
+			String isexStr = excelRecord.getStr("isex");
+			Integer isex = JBoltStringUtil.isBlank(isexStr) ? null : ("男".equals(isexStr) ? 1 : 2);
+			person.setISex(isex);
+			//获取封装的事业类型的字典
+			Record rpersontypeDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.RPERSONTYPE);
+			String rpersontype = excelRecord.getStr("rpersontype");
+			rpersontype = JBoltStringUtil.isNotBlank(rpersontype) ? rpersontypeDictionaryRecord.getStr(rpersontype) : rpersontype;
+			person.setRPersonType(rpersontype);
+			person.setCPsnMobilePhone(excelRecord.getStr("cpsnmobilephone"));
+			person.setJobNumber(excelRecord.getStr("jobnumber"));
+			person.setCEcardNo(excelRecord.getStr("cecardno"));
+			person.setCdeptNum(deptService.findNameBySn(excelRecord.getStr("cdeptnum")));
+			Record remploystateDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.JOB_TYPE);
+			String remploystate = excelRecord.getStr("remploystate");
+			remploystate = JBoltStringUtil.isNotBlank(remploystate) ? remploystateDictionaryRecord.getStr(remploystate) : remploystate;
+			person.setVIDNo(remploystate);
+			person.setDHireDate(excelRecord.getDate("dhiredate"));
+			String cWorkClassCode = excelRecord.getStr("iworkclassid");
+			Workclass workClass = workClassService.findModelByCode(cWorkClassCode);
+			if(workClass != null)  person.setIWorkClassId(workClass.getIautoid());
+			person.setDBirthDate(excelRecord.getStr("dbirthdate"));
+			person.setCPsnEmail(excelRecord.getStr("cpsnemail"));
+			String isenabled = excelRecord.getStr("isenabled");
+			person.setIsEnabled(Objects.equals(isenabled, "是"));
+			person.setCMemo(excelRecord.getStr("cmemo"));
+			person.setIOrgId(getOrgId());
+			person.setCOrgCode(getOrgCode());
+			person.setCOrgName(getOrgName());
+			User loginUser = JBoltUserKit.getUser();
+			Date now  = new Date();
+			person.setICreateBy(loginUser.getId());
+			person.setCCreateName(loginUser.getName());
+			person.setDCreateTime(now);
+			person.setIUpdateBy(loginUser.getId());
+			person.setDUpdateTime(now);
+			person.setCUpdateName(loginUser.getName());
+			person.setISource(SourceEnum.MES.getValue());
+			personList.add(person);
+			String cequipmentcodes = excelRecord.getStr("cequipmentcode");
+			if(JBoltStringUtil.isBlank(cequipmentcodes)) return;
+			for (String cequipmentcode : cequipmentcodes.split(",")) {
+				Equipment equipment = equipmentService.findModelByCode(cequipmentcode);
+				if(equipment == null) continue;
+				PersonEquipment personEquipment = new PersonEquipment();
+				personEquipment.setIAutoId(JBoltSnowflakeKit.me.nextId());
+				personEquipment.setIPersonId(personId);
+				personEquipment.setIEquipmentId(equipment.getIAutoId());
+				personEquipment.setIsDeleted(false);
+				personEquipmentList.add(personEquipment);
+			}
+		}
+	}
+	
+    public Object formatPattenSn(String value, String key) {
+		if (notNull(value)) {
+			if (notNull(key)) {
+				List<Dictionary> list = JBoltDictionaryCache.me.getListByTypeKey(key, true);
+				Dictionary find = list.stream().filter(dictionary -> StringUtils.equalsIgnoreCase(dictionary.getSn(), String.valueOf(value))).findFirst().orElse(null);
+				return find == null ? null : find.getName();
+			}
+		}
+		return null;
+    }
+	
+	public Page<Person> paginateDatas(int pageNumber, int pageSize, Kv kv){
+		return daoTemplate("person.findAll", kv).paginate(pageNumber, pageSize);
+	}
+	
+	public List<Person> findAll(Kv kv){
+		return daoTemplate("person.findAll", kv).find();
+	}
+	/**
+	 * 计算工龄
+	 * */
+	public BigDecimal calcSysworkage(Date date) {
+		if(date == null) return null;
+		return new BigDecimal(JBoltDateUtil.daysBetween(date, new Date()) / 365d).setScale(2,BigDecimal.ROUND_HALF_UP);
+	}
 }

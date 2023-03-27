@@ -23,10 +23,11 @@
 					name="workregionm.idepid"
 					data-tips="请选择所属部门"
 					data-rule="required"
-					data-url="admin/dept/datas"
+					data-url="admin/department/getTreeTableDatas"
 					data-text="=请选择所属部门="
 					data-value=""
-					data-value-attr="id"
+					data-value-attr="iautoid"
+					data-text-attr="cdepname"
 					data-select="#(workregionm.idepid??)">
 			</select>
 		</div>
@@ -38,7 +39,13 @@
 			<input type="hidden" id="ipersonid" name="workregionm.ipersonid" value="#(workregionm.ipersonid??)" />
 			<input type="text" autocomplete="off" value="#(personname??)" class="form-control"
 				   placeholder="==请选择产线长=="
-				   readonly
+				   data-jboltinput
+				   data-width="600"
+				   data-height="450"
+				   data-refresh="true"
+				   data-hidden-input="ipersonid"
+				   data-load-type="ajaxportal"
+				   data-url="admin/workregionm/personTable"
 				   />
 		</div>
 		<div class="col-sm-auto"></div>
@@ -104,7 +111,7 @@
 	<div class="form-group row"
 		 data-radio
 		 data-rule="radio"
-		 data-value="#(workregionm.isenabled??)"
+		 data-value="#(workregionm.isenabled??'1'=='1' ? true:false)"
 		 data-name="workregionm.isenabled"
 		 data-default="options_first"
 		 data-width="col-sm-2,col-sm-4">
@@ -123,12 +130,31 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">备注</label>
 		<div class="col-sm-6">
-			<textarea class="form-control" data-auto-height="100" autocomplete="off" data-show-count placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="workregionm.cmemo" value="#(workregionm.cmemo??)"></textarea>
+			<textarea class="form-control" data-auto-height="100" autocomplete="off" data-show-count placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="workregionm.cmemo" value="">#(workregionm.cmemo??)</textarea>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 col-form-label">图片</label>
+		<input hidden name="workregionm.cattachments" id="cattachments" value="#(workregionm.cattachments??)">
+		<div class="col-sm-6">
+			<fieldset class="form-page-fieldset">
+				<div class="j_upload_imgbox_multi row">
+					<div class="col-sm-6">
+						<div class="j_img_uploder" data-multi="true" data-imgbox="imgbox" data-upload-success-handler="uploadHandler" data-url="/admin/workregionm/uploadImages"   data-handler="uploadMultipleFile"  data-hiddeninput="cattachments"  data-area="80,80" data-maxsize="2000" data-type=""></div>
+					</div>
+					<div class="col-sm-6">
+						<ul class="j_imgbox" style="border:1px dashed #ddd;" id="imgbox" data-remove-confirm="true" data-imgstyle="width:100px;height:100px;" ></ul>
+					</div>
+				</div>
+			</fieldset>
 		</div>
 	</div>
 </form>
 #define js()
 <script>
+	function uploadHandler(type,fileInput,res){
+		//alert(JSON.stringify(res))
+	}
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="workregionmForm")
 #end

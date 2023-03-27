@@ -1,0 +1,33 @@
+<form onsubmit="return false;" id="EquipmentModel_Form" action="#(action)" method="post">
+	#if(equipmentModel.iAutoId??)
+	<input type="hidden" name="equipmentModel.iAutoId" value="#(equipmentModel.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">机型编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入机型编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入机型编码" maxlength="40" name="equipmentModel.cEquipmentModelCode" value="#(equipmentModel.cEquipmentModelCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">机型名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入机型名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入机型名称" maxlength="40" name="equipmentModel.cEquipmentModelName" value="#(equipmentModel.cEquipmentModelName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="equipmentModel.cMemo">#(equipmentModel.cMemo??)</textarea>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="EquipmentModel_Form")
+#end
+

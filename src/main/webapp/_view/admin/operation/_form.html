@@ -1,0 +1,58 @@
+<form onsubmit="return false;" id="operationForm" action="#(action)" method="post">
+  <input type="hidden" name="operation.iautoid" value="#(operation.iautoid??)"/>
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">工序编码</label>
+    <div class="col">
+      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
+             placeholder="请输入工序编码" maxlength="255" name="operation.coperationcode" value="#(operation.coperationcode??)"/>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">工序名称</label>
+    <div class="col">
+      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
+             placeholder="请输入工序名称" maxlength="255" name="operation.coperationname" value="#(operation.coperationname??)"/>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">所属工种</label>
+    <div class="col">
+      <select class="form-control" data-rule="required" data-tips="请选择所属工种" data-url="admin/workclass/options"
+              name="operation.iworkclassid" data-autoload data-text="=请选择所属工种=" data-value-attr="iautoid"
+              data-text-attr="cworkclassname" data-value="" data-select="#(operation.iworkclassid??)"></select>
+    </div>
+  </div>
+  <div class="form-group row"
+       data-radio
+       data-rule="radio"
+       data-value="#(operation.isenabled??)"
+       data-name="operation.isenabled"
+       data-default="options_first"
+       data-width="col-sm-2,col-sm-4">
+    <label class="col-sm-2 col-form-label">是否启用</label>
+    <div class="col-sm-4" style="padding-top: 1px;">
+      <div class="radio radio-primary  radio-inline">
+        <input id="r_isenabled_true" type="radio" name="operation.isenabled" value="true"/>
+        <label for="r_isenabled_true">是</label>
+      </div>
+      <div class="radio radio-primary  radio-inline">
+        <input id="r_isenabled_false" type="radio" name="operation.isenabled" value="false"/>
+        <label for="r_isenabled_false">否</label>
+      </div>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">备注</label>
+    <div class="col-sm-6">
+      <textarea class="form-control" data-auto-height="100" autocomplete="off" data-show-count placeholder="请输入备注"
+                data-tips="请输入备注" maxlength="200" name="operation.cmemo">#(operation.cmemo??)</textarea>
+    </div>
+  </div>
+</form>
+#define js()
+<script>
+  console.log('#(operation)')
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="operationForm")
+#end
+

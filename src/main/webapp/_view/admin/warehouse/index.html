@@ -1,0 +1,199 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col">
+                <form class="form-inline" id="warehouseForm_#(pageId)"   onsubmit="return false;" method="post">
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=仓库编码=" name="cwhcode" value="" />
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=仓库名称=" name="cwhname" value="" />
+                    <select class="form-control"
+                            data-autoload
+                            name="idepid"
+                            data-select-type="select2"
+                            data-tips="所属部门"
+                            data-url="admin/dept/datas"
+                            data-text="=所属部门="
+                            data-value=""
+                            data-value-attr="id"
+                            data-select="">
+                    </select>
+
+                    <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="warehouseRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cwhcode}</td>
+<td>${data.cwhname}</td>
+<td>${data.cdepcode}</td>
+<td>${data.cwhaddress}</td>
+<td>${data.cwhphone}</td>
+<td>${data.cwhperson}</td>
+<td>${data.cwhvaluestyle}</td>
+<td>${data.cmonth}</td>
+<td>${data.cwhMemo}</td>
+<td><img data-switchbtn data-confirm="确定切换是否冻结？" data-value="${data.bfreeze}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBFreeze/${data.id}"/></td>
+<td>${data.cbarcode}</td>
+<td><img data-switchbtn data-confirm="确定切换是否参与MRP运算？" data-value="${data.bmrp}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBMRP/${data.id}"/></td>
+<td>${data.ifrequency}</td>
+<td>${data.cfrequency}</td>
+<td>${data.idays}</td>
+<td>${data.dlastdate}</td>
+<td>${data.iwhproperty}</td>
+<td><img data-switchbtn data-confirm="确定切换是否门店？" data-value="${data.bshop}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBShop/${data.id}"/></td>
+<td><img data-switchbtn data-confirm="确定切换记入成本？" data-value="${data.bincost}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBInCost/${data.id}"/></td>
+<td><img data-switchbtn data-confirm="确定切换纳入可用量计算？" data-value="${data.binavailcalcu}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBInAvailCalcu/${data.id}"/></td>
+<td><img data-switchbtn data-confirm="确定切换代管仓？" data-value="${data.bproxywh}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBProxyWh/${data.id}"/></td>
+<td>${data.isaconmode}</td>
+<td>${data.iexconmode}</td>
+<td>${data.istconmode}</td>
+<td><img data-switchbtn data-confirm="确定切换是否保税仓？" data-value="${data.bbondedwh}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBBondedWh/${data.id}"/></td>
+<td><img data-switchbtn data-confirm="确定切换资产仓？" data-value="${data.bwhasset}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBWhAsset/${data.id}"/></td>
+<td>${data.fwhQuota}</td>
+<td>${data.dwhEndDate}</td>
+<td><img data-switchbtn data-confirm="确定切换是否核算分项成本？" data-value="${data.bchecksubitemcost}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBCheckSubitemCost/${data.id}"/></td>
+<td>${data.cpickpos}</td>
+<td><img data-switchbtn data-confirm="确定切换电商仓？" data-value="${data.beb}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBEB/${data.id}"/></td>
+<td>${data.dmodifyDate}</td>
+<td>${data.cwareGroupCode}</td>
+<td>${data.cprovince}</td>
+<td>${data.ccity}</td>
+<td>${data.ccounty}</td>
+<td>${data.dcreatetime}</td>
+<!--<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleIsenabled/${data.iautoid}"/></td>-->
+</tr>
+{@/each}
+</textarea>
+
+
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="warehouse_toolbar_#(pageId)">
+            <div class="btn-group" role="group" aria-label="btn-group">
+                #permission(PermissionKey.WAREHOUSE_ADD)
+                <button data-openpage="dialog" data-area="50%,100%"  data-handler="jboltTablePageToFirst" data-title="新增仓库档案"  data-url="admin/warehouse/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+                #end
+                #permission(PermissionKey.WAREHOUSE_EDIT)
+                <button data-openpage="dialog" data-area="50%,100%"  data-handler="refreshJBoltTable" data-title="修改仓库档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/warehouse/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+                #end
+                #permission(PermissionKey.WAREHOUSE_DELETE)
+                <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/warehouse/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+                #end
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+                <button data-ajaxbtn data-confirm="确定同步最新数据？" data-handler="refreshJBoltTable" data-title="同步最新数据" data-url="admin/u9datassynctaskrecord/syncU9Datas?type=5" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 同步U9</button>
+
+            </div>
+
+            #permission(PermissionKey.WAREHOUSE_EXPORT)
+            <div class="btn-group" role="group" aria-label="btn-group">
+                <div class="btn-group dropdown">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuwarehouseButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+                    <div class="dropdown-menu" aria-labelledby="exportMenuwarehouseButton">
+                        <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/warehouse/dataExport"><i class="fa fa-download"></i> 导出选中</button>
+                        <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouse/dataExport"  data-form="warehouseForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
+                    </div>
+                </div>
+            </div>
+            #end
+
+            #permission(PermissionKey.WAREHOUSE_IMPORT)
+            <div class="btn-group dropdown">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+                <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                    <a data-downloadbtn href="/admin/warehouse/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+                    <div class="j_upload_file_box"
+                         data-name="file"
+                         data-btn-class="btn dropdown-item"
+                         data-placeholder="上传导入"
+                         data-confirm="确认导入数据？"
+                         data-accept="excel"
+                         data-maxsize="20480"
+                         data-handler="uploadFile"
+                         data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                         data-url="/admin/warehouse/importExcel">
+                    </div>
+                </div>
+            </div>
+            #end
+
+            <div class="clearfix"></div>
+        </div>
+
+
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="admin/warehouse/datas?isdeleted=0"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="warehouseForm_#(pageId)"
+               data-rowtpl="warehouseRowtpl_#(pageId)"
+               data-page="warehousePage_#(pageId)"
+               data-toolbar="warehouse_toolbar_#(pageId)"
+               data-fixed-columns-left="1,2,3"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150" data-column="cwhcode">仓库编码</th>
+                <th data-width="150" data-column="cwhname">仓库名称</th>
+                <th data-width="150" data-column="cDepCode">所属部门</th>
+                <th data-width="150" data-column="cwhAddress">仓库地址</th>
+                <th data-width="150" data-column="cwhPhone">电话</th>
+                <th data-width="150" data-column="cwhPerson">负责人</th>
+                <th data-width="150" data-column="cwhvaluestyle">计价方式</th>
+                <th data-width="150" data-column="cMonth">仓库期末处理会计期</th>
+                <th data-width="150" data-column="cwhMemo">备注</th>
+                <th data-width="100" data-column="bfreeze">是否冻结</th>
+                <th data-width="150" data-column="cbarcode">条形码</th>
+                <th data-width="100" data-column="bmrp">是否参与MRP运算</th>
+                <th data-width="100" data-column="iFrequency">盘点周期</th>
+                <th data-width="150" data-column="cFrequency">盘点周期单位</th>
+                <th data-width="100" data-column="iDays">每第几天</th>
+                <th data-min-width="160" data-column="dLastDate">上次盘点日期</th>
+                <th data-width="100" data-column="iWHProperty">仓库属性</th>
+                <th data-width="100" data-column="bshop">是否门店</th>
+                <th data-width="100" data-column="bincost">记入成本</th>
+                <th data-width="100" data-column="binavailcalcu">纳入可用量计算</th>
+                <th data-width="100" data-column="bproxywh">代管仓</th>
+                <th data-width="100" data-column="iSAConMode">销售可用量控制方式</th>
+                <th data-width="100" data-column="iEXConMode">出口可用量控制方式</th>
+                <th data-width="100" data-column="iSTConMode">库存可用量控制方式</th>
+                <th data-width="100" data-column="bbondedwh">是否保税仓</th>
+                <th data-width="100" data-column="bwhasset">资产仓</th>
+                <th data-width="100" data-column="fWhQuota">资产仓</th>
+                <th data-min-width="160" data-column="dWhEndDate">停用日期</th>
+                <th data-width="100" data-column="bchecksubitemcost">是否核算分项成本</th>
+                <th data-width="150" data-column="cpickpos">拣货货位 </th>
+                <th data-width="100" data-column="beb">电商仓</th>
+                <th data-min-width="160" data-column="dModifyDate">修改日期</th>
+                <th data-width="150" data-column="cWareGroupCode">仓库核算组</th>
+                <th data-width="150" data-column="cProvince">省/直辖市</th>
+                <th data-width="150" data-column="cCity">市</th>
+                <th data-width="150" data-column="cCounty">区县</th>
+                <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+
+
+    </div>
+</div>
+#end
+

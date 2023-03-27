@@ -1,0 +1,31 @@
+<form onsubmit="return false;" id="QcItem_Form" action="#(action)" method="post">
+  #if(qcItem.iAutoId??)
+  <input type="hidden" name="qcItem.iAutoId" value="#(qcItem.iAutoId??)"/>
+  #end
+  <div class="row">
+    <div class="col">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">检验项目编码</label>
+        <div class="col-10">
+          <input type="text" data-rule="required" data-notnull="true" data-tips="请输入检验项目编码" data-with-clearbtn="true"
+                 autocomplete="off" class="form-control" placeholder="请输入检验项目编码" maxlength="40" name="qcItem.cQcItemCode"
+                 value="#(qcItem.cQcItemCode??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">检验项目名称</label>
+        <div class="col-10">
+          <input type="text" data-rule="required" data-notnull="true" data-tips="请输入检验项目名称" data-with-clearbtn="true"
+                 autocomplete="off" class="form-control" placeholder="请输入检验项目名称" maxlength="40" name="qcItem.cQcItemName"
+                 value="#(qcItem.cQcItemName??)"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="QcItem_Form")
+#end
+
