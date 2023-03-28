@@ -1,5 +1,7 @@
 package cn.rjtech.admin.locListCN;
 
+import java.util.List;
+
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -90,6 +92,7 @@ public class LocListCNAdminController extends BaseAdminController {
 
 	public void findByIPid(){
 		Long ipid = 0L;
+		String ipid1 = get("ipid");
 		if(isOk(get("ccountry"))){
 			ipid = getLong("ccountry");
 		}else if(isOk(get("cprovince"))){
@@ -97,18 +100,20 @@ public class LocListCNAdminController extends BaseAdminController {
 		}else if(isOk(get("ccity"))){
 			ipid = getLong("ccity");
 		}
-		renderJsonData(service.findByIPid(ipid));
+		List<LocListCN> list = service.findByIPid(ipid);
+		renderJsonData(list);
 	}
 
 	public void findByNameChild(){
 		String name = null;
-		if(isOk(get("ccountry"))){
+		if(isOk(get("ccountry"))){ //
 			name = get("ccountry");
 		}else if(isOk(get("cprovince"))){
 			name = get("cprovince");
 		}else if(isOk(get("ccity"))){
 			name = get("ccity");
 		}
-		renderJsonData(service.findByNameChild(name));
+		List<LocListCN> byNameChild = service.findByNameChild(name);
+		renderJsonData(byNameChild);
 	}
 }

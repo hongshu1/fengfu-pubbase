@@ -20,6 +20,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
@@ -144,6 +145,7 @@ public class OperationAdminController extends JBoltBaseController {
     }*/
 
     public void pageList() {
+        final Page<Record> recordPage = service.pageList(getKv());
         renderJsonData(service.pageList(getKv()));
     }
 

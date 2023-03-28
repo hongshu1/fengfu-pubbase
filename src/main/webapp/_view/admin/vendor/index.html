@@ -6,13 +6,19 @@
     <div class="row">
       <div class="col-12">
         <form class="form-inline" id="vendorForm_#(pageId)" style="left: 30px;text-align: left">
+          <input value="" hidden id="vendorForm_autoid" name="iventorid">
           <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=供应商编码="
                  maxlength="50" name="cvencode" value="#(cvencode??)"/>
           <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=供应商名称="
                  maxlength="50" name="cvenname" value="#(cvenname??)"/>
-          <select class="form-control" data-url="admin/dictionary/options?key=options_enable" name="isenabled" data-autoload
-                  data-text="=启用状态=" data-value-attr="sn" data-value="" data-select="#(isenabled??)"></select>
-          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <select class="form-control" name="isEnabled"
+                  data-autoload
+                  data-url="admin/dictionary/options?key=options_enable"
+                  data-select-type="select"
+                  data-text="=全部="
+                  data-value=""
+                  data-value-attr="sn"></select>
+          <button type="submit" id="vendorForm_submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
           <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
         </form>
       </div>
@@ -22,22 +28,22 @@
     <!-- 定义JBoltTable使用的数据渲染模板 -->
     <textarea class="jb_tpl_box" id="vendorRowtpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.id}">
+<tr data-id="${data.iautoid}">
   <td>${pageNumber,pageSize,index | rownum}</td>
       <td>
         <a tooltip title="编辑" href="admin/vendor/edit/${data.iautoid}" data-scroll="yes" data-handler="refreshJBoltTable"
-           data-title="编辑" data-area="1200,1000" class="jbolt_table_editbtn">编辑</a>
+           data-title="编辑" data-area="100%,1300" class="jbolt_table_editbtn">编辑</a>
         <a tooltip title="删除" href="admin/vendor/delete/${data.iautoid}" data-handler="refreshJBoltTable"
            class="jbolt_table_delbtn">删除</a>
       </td>
       <td>${data.cvencode}</td>
       <td>${data.cvenname}</td>
       <td>${data.cvenabbname}</td>
-      <td>${data.cvenpperson}</td><!--分管部门-->
-      <td>${data.idutyuserid}</td><!--专管业务员-->
-      <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isEnabled}" data-handler="refreshJBoltTable"
-               data-url="admin/vendor/toggleIsEnabled/${data.id}"/></td>
-      <td>${data.isource}</td>
+      <td>${data.cvendepart}</td><!--分管部门-->
+      <td>${data.cvenpperson}</td><!--专管业务员-->
+      <td><img data-switchbtn data-confirm="确定切换是否启用状态？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"
+           data-url="admin/vendor/toggleIsEnabled/${data.iautoid}"/></td>
+      <td>${data.isource==1?"MES":"U8"}</td>
       <td>${data.ccreatename}</td>
       <td>${data.dcreatetime}</td>
 </tr>
@@ -49,10 +55,10 @@
                 data-title="新增往来单位-供应商档案" data-url="admin/vendor/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i>
           新增
         </button>
-        <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)"
-                data-title="编辑往来单位-供应商档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/vendor/edit/"
+        <!--<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)"
+                data-title="编辑往来单位-供应商档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/vendor/edit/${data.iautoid}"
                 class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑
-        </button>
+        </button>-->
         <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                 id="toolbar_deleteBtn_#(pageId)" data-url="admin/vendor/deleteByIds?ids=" data-confirm="确定删除选中数据？"
                 class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
@@ -77,12 +83,12 @@
 
       <tr>
         <th data-width="60" data-column="index">序号</th>
-        <th data-width="80">操作</th>
+        <th data-width="150">操作</th>
         <th data-width="150" data-column="cVenCode">供应商编码</th>
         <th data-width="150" data-column="cVenName">供应商名称</th>
         <th data-width="150" data-column="cVenAbbName">供应商简称</th>
-        <th data-width="150" data-column="">分管部门</th>
-        <th data-width="100" data-column="iDutyUserId">专管业务员, 系统用户ID</th>
+        <th data-width="150" data-column="cVenDepart">分管部门</th>
+        <th data-width="100" data-column="cvenpperson">专管业务员</th>
         <th data-width="100" data-column="isEnabled">是否启用</th>
         <th data-width="100" data-column="iSource">来源</th>
         <th data-width="150" data-column="cCreateName">创建人名称</th>

@@ -34,6 +34,7 @@ import cn.rjtech.config.DictionaryTypeKey;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PersonEquipment;
+import cn.rjtech.model.momdata.VendorAddr;
 import cn.rjtech.util.ValidationUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -423,5 +424,9 @@ public class PersonService extends BaseService<Person> {
 	
 	public List<Person> findAll(Kv kv){
 		return daoTemplate("person.findAll", kv).find();
+	}
+
+	public List<Person> list(Kv kv){
+		return find("SELECT * FROM Bd_Person WHERE iUserId = ?", kv.get("iuserid"));
 	}
 }

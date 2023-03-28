@@ -85,26 +85,12 @@ public class VendorAddrService extends BaseService<VendorAddr> {
 		if(vendorAddr==null || isOk(vendorAddr.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		return ret(true);
-//		boolean success=vendorAddr.save();
-//		return ret(success);
+		saveVendorAddrModel(vendorAddr);
+		boolean success=vendorAddr.save();
+		return ret(success);
 	}
 
 	public void saveVendorAddrModel(VendorAddr vendorAddr){
-		vendorAddr.setIAutoId(JBoltSnowflakeKit.me.nextId());
-		vendorAddr.setICustomerId(new Long(0));
-		vendorAddr.setCDistrictCode("");//地点编码
-		vendorAddr.setCDistrictName("");//地点名称
-		vendorAddr.setCContactCode(""); //联系人编码
-		vendorAddr.setCContactName(""); //联系人名称
-		vendorAddr.setCCountry(""); //
-		vendorAddr.setCProvince("");//省/自治区
-		vendorAddr.setCCity(""); //城市
-		vendorAddr.setCCounty("");//区县
-		vendorAddr.setCPostCode("");
-		vendorAddr.setCMobile("");
-		vendorAddr.setCFax("");
-		vendorAddr.setCEmail("");
 		vendorAddr.setIsEnabled(true);
 		vendorAddr.setIsDeleted(false);
 	}
@@ -172,7 +158,7 @@ public class VendorAddrService extends BaseService<VendorAddr> {
 	}
 
 	public List<VendorAddr> list(Kv kv){
-		return find("SELECT * FROM Bd_VendorAddr WHERE iCustomerId = ?", kv.get("icustomermid"));
+		return find("SELECT * FROM Bd_VendorAddr WHERE ivendorid = ?", kv.get("ivendorid"));
 	}
 
 	public Ret updateEditTable(JBoltTable jBoltTable, Long userId, Date now) {

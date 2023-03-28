@@ -12,8 +12,8 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
 public abstract class BaseVendorAddr<M extends BaseVendorAddr<M>> extends JBoltBaseModel<M>{
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
-    /**客户档案ID*/
-    public static final String ICUSTOMERID = "iCustomerId";
+    /**供应商ID*/
+    public static final String IVENDORID = "iVendorId";
     /**地点编码*/
     public static final String CDISTRICTCODE = "cDistrictCode";
     /**地点名称*/
@@ -36,6 +36,8 @@ public abstract class BaseVendorAddr<M extends BaseVendorAddr<M>> extends JBoltB
     public static final String CPOSTCODE = "cPostCode";
     /**移动电话*/
     public static final String CMOBILE = "cMobile";
+    /**固定电话*/
+    public static final String CPHONE = "cPhone";
     /**传真*/
     public static final String CFAX = "cFax";
     /**电子邮件*/
@@ -62,20 +64,20 @@ public abstract class BaseVendorAddr<M extends BaseVendorAddr<M>> extends JBoltB
 	}
 
 	/**
-	 * 客户档案ID
+	 * 供应商ID
 	 */
-	public M setICustomerId(java.lang.Long iCustomerId) {
-		set("iCustomerId", iCustomerId);
+	public M setIVendorId(java.lang.Long iVendorId) {
+		set("iVendorId", iVendorId);
 		return (M)this;
 	}
 
 	/**
-	 * 客户档案ID
+	 * 供应商ID
 	 */
-	@JBoltField(name="icustomerid" ,columnName="iCustomerId",type="Long", remark="客户档案ID", required=true, maxLength=19, fixed=0, order=2)
-	@JSONField(name = "icustomerid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getICustomerId() {
-		return getLong("iCustomerId");
+	@JBoltField(name="ivendorid" ,columnName="iVendorId",type="Long", remark="供应商ID", required=true, maxLength=19, fixed=0, order=2)
+	@JSONField(name = "ivendorid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIVendorId() {
+		return getLong("iVendorId");
 	}
 
 	/**
@@ -266,6 +268,23 @@ public abstract class BaseVendorAddr<M extends BaseVendorAddr<M>> extends JBoltB
 	}
 
 	/**
+	 * 固定电话
+	 */
+	public M setCPhone(java.lang.String cPhone) {
+		set("cPhone", cPhone);
+		return (M)this;
+	}
+
+	/**
+	 * 固定电话
+	 */
+	@JBoltField(name="cphone" ,columnName="cPhone",type="String", remark="固定电话", required=false, maxLength=20, fixed=0, order=14)
+	@JSONField(name = "cphone")
+	public java.lang.String getCPhone() {
+		return getStr("cPhone");
+	}
+
+	/**
 	 * 传真
 	 */
 	public M setCFax(java.lang.String cFax) {
@@ -276,7 +295,7 @@ public abstract class BaseVendorAddr<M extends BaseVendorAddr<M>> extends JBoltB
 	/**
 	 * 传真
 	 */
-	@JBoltField(name="cfax" ,columnName="cFax",type="String", remark="传真", required=false, maxLength=20, fixed=0, order=14)
+	@JBoltField(name="cfax" ,columnName="cFax",type="String", remark="传真", required=false, maxLength=20, fixed=0, order=15)
 	@JSONField(name = "cfax")
 	public java.lang.String getCFax() {
 		return getStr("cFax");
@@ -293,7 +312,7 @@ public abstract class BaseVendorAddr<M extends BaseVendorAddr<M>> extends JBoltB
 	/**
 	 * 电子邮件
 	 */
-	@JBoltField(name="cemail" ,columnName="cEmail",type="String", remark="电子邮件", required=false, maxLength=20, fixed=0, order=15)
+	@JBoltField(name="cemail" ,columnName="cEmail",type="String", remark="电子邮件", required=false, maxLength=20, fixed=0, order=16)
 	@JSONField(name = "cemail")
 	public java.lang.String getCEmail() {
 		return getStr("cEmail");
@@ -310,7 +329,7 @@ public abstract class BaseVendorAddr<M extends BaseVendorAddr<M>> extends JBoltB
 	/**
 	 * 是否生效：0. 否 1. 是
 	 */
-	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否生效：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=16)
+	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否生效：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=17)
 	@JSONField(name = "isenabled")
 	public java.lang.Boolean getIsEnabled() {
 		return getBoolean("isEnabled");
@@ -327,7 +346,7 @@ public abstract class BaseVendorAddr<M extends BaseVendorAddr<M>> extends JBoltB
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=17)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=18)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
