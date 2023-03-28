@@ -1,0 +1,225 @@
+<form onsubmit="return false;" id="BomMaster_Form" action="#(action)" method="post">
+	#if(bomMaster.iAutoId??)
+	<input type="hidden" name="bomMaster.iAutoId" value="#(bomMaster.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键" maxlength="40" name="bomMaster.iAutoId" value="#(bomMaster.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织ID" maxlength="40" name="bomMaster.iOrgId" value="#(bomMaster.iOrgId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织编码" maxlength="40" name="bomMaster.cOrgCode" value="#(bomMaster.cOrgCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织名称" maxlength="40" name="bomMaster.cOrgName" value="#(bomMaster.cOrgName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">母件存货ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入母件存货ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入母件存货ID" maxlength="40" name="bomMaster.iInventoryId" value="#(bomMaster.iInventoryId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">机型ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入机型ID" maxlength="40" name="bomMaster.iEquipmentModelId" value="#(bomMaster.iEquipmentModelId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">文件名称</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入文件名称" maxlength="40" name="bomMaster.cDocName" value="#(bomMaster.cDocName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">文件编码</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入文件编码" maxlength="40" name="bomMaster.cDocCode" value="#(bomMaster.cDocCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">版本/版次</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入版本/版次"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入版本/版次" maxlength="40" name="bomMaster.cBomVersion" value="#(bomMaster.cBomVersion??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">启用日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入启用日期" maxlength="20" name="bomMaster.dEnableDate"    value="#datetime(bomMaster.dEnableDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">停用日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入停用日期" maxlength="20" name="bomMaster.dDisableDate"    value="#datetime(bomMaster.dDisableDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设变号1</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入设变号1" maxlength="40" name="bomMaster.cDcNo1" value="#(bomMaster.cDcNo1??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设备日期1</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入设备日期1" maxlength="20" name="bomMaster.dDcDate1"    value="#datetime(bomMaster.dDcDate1??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设变号2</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入设变号2" maxlength="40" name="bomMaster.cDcNo2" value="#(bomMaster.cDcNo2??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设变日期2</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入设变日期2" maxlength="20" name="bomMaster.dDcDate2"    value="#datetime(bomMaster.dDcDate2??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">客户ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入客户ID" maxlength="40" name="bomMaster.iCustomerId" value="#(bomMaster.iCustomerId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注共用件</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注共用件" maxlength="200" name="bomMaster.cCommonPartMemo">#(bomMaster.cCommonPartMemo??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">上级ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入上级ID" maxlength="40" name="bomMaster.iPid" value="#(bomMaster.iPid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">层级</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入层级" maxlength="40" name="bomMaster.iLevel" value="#(bomMaster.iLevel??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">来源：1.MES 2. U8</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入来源：1.MES 2. U8"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源：1.MES 2. U8" maxlength="40" name="bomMaster.iSource" value="#(bomMaster.iSource??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">来源标识ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源标识ID" maxlength="40" name="bomMaster.iSourceId" value="#(bomMaster.iSourceId??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="bomMaster.isEnabled"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否启用"
+data-width="col-sm-2,col-10"
+data-value="#(bomMaster.isEnabled??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否启用"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过" maxlength="40" name="bomMaster.iAuditStatus" value="#(bomMaster.iAuditStatus??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">审核时间，未走审批流时，有值</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入审核时间，未走审批流时，有值" maxlength="20" name="bomMaster.dAuditTime"    value="#datetime(bomMaster.dAuditTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="bomMaster.cMemo">#(bomMaster.cMemo??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人" maxlength="40" name="bomMaster.iCreateBy" value="#(bomMaster.iCreateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="bomMaster.dCreateTime"    value="#datetime(bomMaster.dCreateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="bomMaster.cCreateName" value="#(bomMaster.cCreateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人ID" maxlength="40" name="bomMaster.iUpdateBy" value="#(bomMaster.iUpdateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人名称" maxlength="40" name="bomMaster.cUpdateName" value="#(bomMaster.cUpdateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入更新时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="bomMaster.dUpdateTime"    value="#datetime(bomMaster.dUpdateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="bomMaster.isDeleted"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否删除 1已删除"
+data-width="col-sm-2,col-10"
+data-value="#(bomMaster.isDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否删除 1已删除"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="BomMaster_Form")
+#end
+

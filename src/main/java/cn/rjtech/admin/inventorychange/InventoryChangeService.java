@@ -1,5 +1,6 @@
 package cn.rjtech.admin.inventorychange;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.common.util.CACHE;
@@ -279,4 +280,21 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 		return queryLong("SELECT IAUTOID FROM Bd_Inventory WHERE cInvCode=?", itemCode);
 	}
 	
+	public Ret removeByIds(String ids){
+		DateTime date = DateUtil.date();
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		tx(() -> {
+			for (String id : ids.split(",")){
+				InventoryChange inventoryChange = findById(id);
+				inventoryChange.setIsDeleted(true);
+				inventoryChange.setIUpdateBy(userId);
+				inventoryChange.setDUpdateTime(date);
+				inventoryChange.setCUpdateName(userName);
+				inventoryChange.update();
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
 }
