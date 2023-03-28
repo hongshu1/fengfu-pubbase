@@ -1,15 +1,15 @@
 package cn.rjtech.admin.annualorderm;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.AnnualOrderM;
@@ -23,7 +23,7 @@ import java.util.Date;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-23 17:23
  */
-// @CheckPermission(PermissionKey.ANNUALORDERM)
+@CheckPermission(PermissionKey.ANNUALORDERM)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/annualorderm", viewPath = "/_view/admin/annualorderm")

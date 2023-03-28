@@ -142,3 +142,11 @@
 #namespace("vouchrdcontrapose")
 #include("vouchrdcontrapose/vouchrdcontrapose.sql")
 #end
+
+#namespace("annualorderm")
+#include("annualorderm/annualorderm.sql")
+#end
+
+#namespace("inventory")
+#include("inventory/inventory.sql")
+#end

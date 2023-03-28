@@ -1,30 +1,30 @@
-package cn.rjtech.admin.forgeigncurrency;
+package cn.rjtech.admin.annualorderd;
 
-import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
-
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import com.jfinal.core.Path;
+import com.jfinal.aop.Before;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.ForgeignCurrency;
+import cn.rjtech.model.momdata.AnnualOrderD;
 /**
- * 币种档案 Controller
- * @ClassName: ForgeignCurrencyAdminController
- * @author: WYX
- * @date: 2023-03-20 21:09
+ * 年度计划订单年汇总 Controller
+ * @ClassName: AnnualOrderDAdminController
+ * @author: heming
+ * @date: 2023-03-28 17:06
  */
-@CheckPermission(PermissionKey.FORGEIGN_CURRENCY_INDEX)
+@CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/forgeigncurrency", viewPath = "/_view/admin/forgeigncurrency")
-public class ForgeignCurrencyAdminController extends BaseAdminController {
+@Path(value = "/admin/annualorderd", viewPath = "/_view/admin/annualorderd")
+public class AnnualOrderDAdminController extends BaseAdminController {
 
 	@Inject
-	private ForgeignCurrencyService service;
+	private AnnualOrderDService service;
 
    /**
 	* 首页
@@ -37,7 +37,7 @@ public class ForgeignCurrencyAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
+		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
 	}
 
    /**
@@ -51,12 +51,12 @@ public class ForgeignCurrencyAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		ForgeignCurrency forgeignCurrency = service.findById(getLong(0)); 
-		if(forgeignCurrency == null){
+		AnnualOrderD annualOrderD=service.findById(getLong(0)); 
+		if(annualOrderD == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("forgeignCurrency",forgeignCurrency);
+		set("annualOrderD",annualOrderD);
 		render("edit.html");
 	}
 
@@ -64,14 +64,14 @@ public class ForgeignCurrencyAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(ForgeignCurrency.class, "forgeignCurrency")));
+		renderJson(service.save(getModel(AnnualOrderD.class, "annualOrderD")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(ForgeignCurrency.class, "forgeignCurrency")));
+		renderJson(service.update(getModel(AnnualOrderD.class, "annualOrderD")));
 	}
 
    /**
@@ -88,19 +88,6 @@ public class ForgeignCurrencyAdminController extends BaseAdminController {
 		renderJson(service.delete(getLong(0)));
 	}
 
-   /**
-	* 切换toggleBcal
-	*/
-	public void toggleBcal() {
-		renderJson(service.toggleBcal(getLong(0)));
-	}
-	/**
-	 * 切换toggleIotherused
-	 * */
-	public void toggleIotherused() {
-		renderJson(service.toggleIotherused(getLong(0)));
-	}
-	
   /**
 	* 切换toggleIsDeleted
 	*/

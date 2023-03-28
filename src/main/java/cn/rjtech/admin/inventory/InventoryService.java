@@ -276,4 +276,8 @@ public class InventoryService extends BaseService<Inventory> {
 	public List<Record> getAdminDatasNoPage(Kv kv) {
 		return dbTemplate("inventoryclass.inventoryList",kv).find();
 	}
+
+	public List<Record> getAutocompleteData(String q, Integer limit) {
+		return dbTemplate("inventory.getAutocompleteData",Kv.by("q", q).set("limit",limit)).find();
+	}
 }
