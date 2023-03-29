@@ -3,6 +3,8 @@ package cn.rjtech.admin.rdstyle;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.model.momdata.InventoryClass;
+import cn.rjtech.model.momdata.SaleType;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -53,6 +55,8 @@ public class RdStyleService extends BaseService<RdStyle> {
 		if(rdStyle==null || isOk(rdStyle.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
+		ValidationUtils.assertNull(findBycSTCode(rdStyle.getCRdCode()), "收发类型编码重复");
+
 		setRdStyleClass(rdStyle);
 		//if(existsName(rdStyle.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=rdStyle.save();
@@ -61,6 +65,15 @@ public class RdStyleService extends BaseService<RdStyle> {
 			//addSaveSystemLog(rdStyle.getIautoid(), JBoltUserKit.getUserId(), rdStyle.getName());
 		}
 		return ret(success);
+	}
+
+	/**
+	 * 查找收发类型编码
+	 * @param cRdCode
+	 * @return
+	 */
+	public RdStyle findBycSTCode(String cRdCode) {
+		return findFirst(Okv.by("cRdCode", cRdCode).set("isDeleted", false), "iautoid", "asc");
 	}
 
 	/**

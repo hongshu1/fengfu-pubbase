@@ -143,6 +143,11 @@
 #include("vouchrdcontrapose/vouchrdcontrapose.sql")
 #end
 
+###销售类型
+#namespace("saletype")
+#include("saletype/saletype.sql")
+#end
+
 #namespace("annualorderm")
 #include("annualorderm/annualorderm.sql")
 #end

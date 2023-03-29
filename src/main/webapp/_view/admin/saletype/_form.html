@@ -1,30 +1,6 @@
 <form onsubmit="return false;" id="saleTypeForm" action="#(action)" method="post">
 <input type="hidden" name="saleType.iautoid" value="#(saleType.iautoid??)" />
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="saleType.iorgid" value="#(saleType.iorgid??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织编码</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="40" name="saleType.corgcode" value="#(saleType.corgcode??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="50" name="saleType.corgname" value="#(saleType.corgname??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">收发类型ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入收发类型ID" maxlength="19" name="saleType.irdstyleid" value="#(saleType.irdstyleid??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">销售类型编码</label>
 		<div class="col">
 			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入销售类型编码" maxlength="2" name="saleType.cstcode" value="#(saleType.cstcode??)"/>
@@ -36,10 +12,44 @@
 			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入销售类型名称" maxlength="20" name="saleType.cstname" value="#(saleType.cstname??)"/>
 		</div>
 	</div>
+
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">出库类别编码</label>
+		<label class="col-sm-2 col-form-label">收发类型ID</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入出库类别编码" maxlength="5" name="saleType.crdcode" value="#(saleType.crdcode??)"/>
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入收发类型ID" maxlength="19" name="saleType.irdstyleid" value="#(saleType.irdstyleid??)"/>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">出库类别</label>	<!--出库类别编码-->
+<!--		<div class="form-group row">-->
+<!--			<select  class="form-control-two"-->
+<!--					 data-autoload-->
+<!--					 data-url="admin/rdstyle/enableOptions"-->
+<!--					 data-select-type="select"-->
+<!--					 name="saleType.crdcode"-->
+<!--					 data-rule="select"-->
+<!--					 data-notnull="true"-->
+<!--					 data-refresh="true"-->
+<!--					 data-tips="请选择出库类别"-->
+<!--					 data-text="=请选择出库类别="-->
+<!--					 data-text-attr="crdcode,crdname"-->
+<!--					 data-value=""-->
+<!--					 data-value-attr="crdcode"-->
+<!--					 data-select="#(rdStyle.crdcode??)"-->
+<!--			></select>-->
+<!--		</div>-->
+		<div class="col-sm-4">
+			<select class="form-control"
+					data-url="admin/rdstyle/saletype"
+					name="rdstyle.crdcode"
+					data-autoload
+					data-text="=请选择出库类别="
+					data-text-attr="crdcode"
+					data-value-attr="crdcode"
+					data-value=""
+					data-select="#(rdstyle.crdcode??)"></select>
+<!--			<input type="hidden"  name="rdstyle.crdcode"  value="#(rdstyle.crdcode??)"/>-->
 		</div>
 	</div>
     <div class="form-group row"
@@ -50,7 +60,7 @@
     	data-default="options_first"
     	data-width="col-sm-2,col"
 		>
-			<label class="col-sm-2 col-form-label" >是否默认值: 1. 是 0. 否</label>
+			<label class="col-sm-2 col-form-label" >是否默认值</label>	<!--1. 是 0. 否-->
 			<div class="col"  style="padding-top: 1px;">
 				<div class="radio radio-primary  radio-inline">
 					<input  id="r_bdefault_true" type="radio" name="saleType.bdefault" value="true"/>
@@ -71,7 +81,7 @@
     	data-default="options_first"
     	data-width="col-sm-2,col"
 		>
-			<label class="col-sm-2 col-form-label" >是否列入MPS/MRP计划</label>
+			<label class="col-sm-2 col-form-label" >参与需求运算</label>	<!--是否列入MPS/MRP计划-->
 			<div class="col"  style="padding-top: 1px;">
 				<div class="radio radio-primary  radio-inline">
 					<input  id="r_bstmpsmrp_true" type="radio" name="saleType.bstmpsmrp" value="true"/>
@@ -81,75 +91,6 @@
 				<div class="radio radio-primary  radio-inline">
 					<input  id="r_bstmpsmrp_false" type="radio" name="saleType.bstmpsmrp" value="false"/>
 					<label for="r_bstmpsmrp_false">否</label>
-				</div>
-			</div>
-		</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">来源: 1. MES 2. U8</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入来源: 1. MES 2. U8"  maxlength="10" name="saleType.isource" value="#(saleType.isource??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">来源ID，U8为编码</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入来源ID，U8为编码" maxlength="32" name="saleType.isourceid" value="#(saleType.isourceid??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建人ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人ID" maxlength="19" name="saleType.icreateby" value="#(saleType.icreateby??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建人名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="50" name="saleType.ccreatename" value="#(saleType.ccreatename??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建时间</label>
-		<div class="col">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="saleType.dcreatetime" value="#(saleType.dcreatetime??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新人ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人ID" maxlength="19" name="saleType.iupdateby" value="#(saleType.iupdateby??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新人名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人名称" maxlength="50" name="saleType.cupdatename" value="#(saleType.cupdatename??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新时间</label>
-		<div class="col">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="saleType.dupdatetime" value="#(saleType.dupdatetime??)"/>
-		</div>
-	</div>
-    <div class="form-group row"
-    	data-radio
-    	data-rule="radio"
-    	data-value="#(saleType.isdeleted??)"
-    	data-name="saleType.isdeleted"
-    	data-default="options_first"
-    	data-width="col-sm-2,col"
-		>
-			<label class="col-sm-2 col-form-label" >删除状态：0. 未删除 1. 已删除</label>
-			<div class="col"  style="padding-top: 1px;">
-				<div class="radio radio-primary  radio-inline">
-					<input  id="r_isdeleted_true" type="radio" name="saleType.isdeleted" value="true"/>
-					<label for="r_isdeleted_true">是</label>
-				</div>
-				
-				<div class="radio radio-primary  radio-inline">
-					<input  id="r_isdeleted_false" type="radio" name="saleType.isdeleted" value="false"/>
-					<label for="r_isdeleted_false">否</label>
 				</div>
 			</div>
 		</div>

@@ -6,8 +6,6 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.SaleType;
 /**
@@ -38,7 +36,7 @@ public class SaleTypeAdminController extends BaseAdminController {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
 	}
 
-   /**
+	/**
 	* 新增
 	*/
 	public void add() {
@@ -107,5 +105,11 @@ public class SaleTypeAdminController extends BaseAdminController {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
 
+	/**
+	 * 收发类型_编码,名字
+	 */
+	public void selectRdStyle (){
+		renderJsonData(service.selectRdStyle(getKv()));
+	}
 
 }

@@ -25,24 +25,24 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-<!--<td>${data.iorgid}</td>-->
-<!--<td>${data.corgcode}</td>-->
-<!--<td>${data.corgname}</td>-->
-<!--<td>${data.irdstyleid}</td>-->
+<td>${data.iorgid}</td>
+<td>${data.corgcode}</td>
+<td>${data.corgname}</td>
+<td>${data.irdstyleid}</td>
 <td>${data.cstcode}</td>
 <td>${data.cstname}</td>
 <td>${data.crdcode}</td>
 <td><img data-switchbtn data-confirm="确定切换是否默认值: 1. 是 0. 否？" data-value="${data.bdefault}"  data-handler="refreshJBoltTable"  data-url="admin/saletype/toggleBdefault/${data.id}"/></td>
 <td><img data-switchbtn data-confirm="确定切换是否列入MPS/MRP计划？" data-value="${data.bstmpsmrp}"  data-handler="refreshJBoltTable"  data-url="admin/saletype/toggleBstmpsmrp/${data.id}"/></td>
-<!--<td>${data.isource}</td>-->
-<!--<td>${data.isourceid}</td>-->
-<!--<td>${data.icreateby}</td>-->
-<!--<td>${data.ccreatename}</td>-->
-<!--<td>${data.dcreatetime}</td>-->
-<!--<td>${data.iupdateby}</td>-->
-<!--<td>${data.cupdatename}</td>-->
-<!--<td>${data.dupdatetime}</td>-->
-<!--<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/saletype/toggleIsdeleted/${data.id}"/></td>-->
+<td>${data.isource}</td>
+<td>${data.isourceid}</td>
+<td>${data.icreateby}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+<td>${data.iupdateby}</td>
+<td>${data.cupdatename}</td>
+<td>${data.dupdatetime}</td>
+<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/saletype/toggleIsdeleted/${data.id}"/></td>
 <td>
 	<a href="admin/saletype/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改销售类型" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
     <a href="admin/saletype/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
@@ -89,11 +89,24 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 <thead>
 <tr>
 	<th data-width="60">序号</th>
+	<th data-min-width="150" data-column="iOrgId">组织ID</th>
+	<th data-width="150" data-column="cOrgCode">组织编码</th>
+	<th data-width="150" data-column="cOrgName">组织名称</th>
+	<th data-width="150" data-column="iRdStyleId">收发类型ID</th>
 	<th data-width="150" data-column="cSTCode">销售类型编码</th>
 	<th data-width="150" data-column="cSTName">销售类型名称</th>
-	<th data-width="150" data-column="cRdCode">出库类别</th>		<!--出库类别编码-->
-	<th data-width="150" data-column="bDefault">是否默认值</th> <!--1. 是 0. 否-->
-	<th data-width="150" data-column="bSTMPS_MRP">参与需求计划运算</th>  <!--是否列入MPS/MRP计划-->
+	<th data-width="150" data-column="cRdCode">出库类别编码</th>
+	<th data-width="150" data-column="bDefault">是否默认值: 1. 是 0. 否</th>
+	<th data-width="150" data-column="bSTMPS_MRP">是否列入MPS/MRP计划</th>
+	<th data-width="150" data-column="iSource">来源: 1. MES 2. U8</th>
+	<th data-width="150" data-column="iSourceId">来源ID，U8为编码</th>
+	<th data-width="150" data-column="iCreateBy">创建人ID</th>
+	<th data-width="150" data-column="cCreateName">创建人名称</th>
+	<th data-width="150" data-column="dCreateTime">创建时间</th>
+	<th data-width="150" data-column="iUpdateBy">更新人ID</th>
+	<th data-width="150" data-column="cUpdateName">更新人名称</th>
+	<th data-width="150" data-column="dUpdateTime">更新时间</th>
+	<th data-width="150" data-column="IsDeleted">删除状态：0. 未删除 1. 已删除</th>
 	<th data-width="100">操作</th>
 </tr>
 </thead>

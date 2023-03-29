@@ -1,14 +1,23 @@
 package cn.rjtech.admin.saletype;
 
+
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.model.momdata.RdStyle;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.SaleType;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.Date;
+import java.util.List;
+
+
 /**
  * 销售类型 Service
  * @ClassName: SaleTypeService
@@ -41,9 +50,13 @@ public class SaleTypeService extends BaseService<SaleType> {
 	 * @return
 	 */
 	public Ret save(SaleType saleType) {
-		if(saleType==null || isOk(saleType.getIautoid())) {
+		if(saleType==null || isOk(saleType.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
+
+		ValidationUtils.assertNull(findBycSTCode(saleType.getCSTCode()), "销售类型编码重复");
+
+		setSaleTypeClass(saleType);
 		//if(existsName(saleType.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=saleType.save();
 		if(success) {
@@ -54,16 +67,45 @@ public class SaleTypeService extends BaseService<SaleType> {
 	}
 
 	/**
+	 * 查找销售类型编码
+	 * @param cSTCode
+	 * @return
+	 */
+	public SaleType findBycSTCode(String cSTCode) {
+		return findFirst(Okv.by("cSTCode", cSTCode).set("isDeleted", false), "iautoid", "asc");
+	}
+
+	/**
+	 * 设置参数
+	 * @param saleType
+	 * @return
+	 */
+	private SaleType setSaleTypeClass(SaleType saleType){
+		saleType.setIsDeleted(false);
+		Long userId = JBoltUserKit.getUserId();
+		saleType.setICreateBy(userId);	//创建人ID
+		saleType.setIUpdateBy(userId);	//更新人ID
+		String userName = JBoltUserKit.getUserName();
+		saleType.setCCreateName(userName);	//创建人名称
+		saleType.setCUpdateName(userName);	//更新人名称
+		Date date = new Date();
+		saleType.setDCreateTime(date);	//创建时间
+		saleType.setDUpdateTime(date);	//更新时间
+		saleType.setISource(1);	//来源 1.MES 2.U8
+		return saleType;
+	}
+
+	/**
 	 * 更新
 	 * @param saleType
 	 * @return
 	 */
 	public Ret update(SaleType saleType) {
-		if(saleType==null || notOk(saleType.getIautoid())) {
+		if(saleType==null || notOk(saleType.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//更新时需要判断数据存在
-		SaleType dbSaleType=findById(saleType.getIautoid());
+		SaleType dbSaleType=findById(saleType.getIAutoId());
 		if(dbSaleType==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(saleType.getName(), saleType.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=saleType.update();
@@ -178,6 +220,13 @@ public class SaleTypeService extends BaseService<SaleType> {
 	public String checkInUse(SaleType saleType, Kv kv) {
 		//这里用来覆盖 检测SaleType是否被其它表引用
 		return null;
+	}
+
+	/**
+	 * 收发类型_编码,名字
+	 */
+	public List<Record> selectRdStyle (Kv kv){
+		return dbTemplate("saletype.selectRdStyle",kv).find();
 	}
 
 }
