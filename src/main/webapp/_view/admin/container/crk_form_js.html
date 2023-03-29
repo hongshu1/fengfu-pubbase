@@ -1,0 +1,61 @@
+<script>
+    function getEditableTableOptions_#(pageId)2(table) {
+        var editableTableOptions = {
+            trigger: "click",
+            initRowCount: 0,
+            submit: {
+                type: "all",
+                url:"/admin/container/handleData?mark="+document.getElementById('mark').value,
+                success: function (res) {
+                    if (res.data.state == 'fail') {
+                        LayerMsgBox.error(res.data.msg);
+                    } else {
+                        LayerMsgBox.success("提交成功", 600, function () {
+                            refreshPjaxContainer();
+                        });
+                    }
+
+                }
+                // params:{"mark":document.getElementById('mark').value},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+            },
+            onChange:{
+
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols: {
+                id: {
+                    submitAttr: "iautoid",
+                },
+                ccontainercode: {
+                    type: "autocomplete",
+                    placeholder: "请输入",
+                    textAttr: "ccontainercode,ccontainername",
+                    width: 500,
+                    height:100,
+                    valueAttr: "iautoid",
+                    header:'编码,名称',
+                    url: "/admin/container/crkData?mark="+document.getElementById('mark').value,
+                    required: true,
+                    // dialog:{
+                    //     url:"/admin/container/data?mark="+document.getElementById('mark').value,
+                    //     textAttr: "ccontainercode,ccontainername",
+                    //     header:'编码,名称',
+                    // },
+                    changeColumns: [{column: "ccontainercode", use: "ccontainercode"},
+                        {column: "ccontainername", use: "ccontainername"}]
+
+                },
+                ccontainername: {
+                    // type: "input",
+                    required: true
+                },
+                cmemo: {
+                    type: "input"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

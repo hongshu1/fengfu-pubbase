@@ -70,7 +70,6 @@
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/container/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
 
-
 </div>
 
 
@@ -102,7 +101,12 @@
 		</div>
 	</div>
 
+	<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="60%,65%"  data-handler="refreshJBoltTable"  id="toolbar_Rk_#(pageId)"  data-title="入库"  data-url="admin/container/rk/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 入库</button>
+	<button data-dialogbtn data-area="60%,65%"  data-handler="refreshJBoltTable"  id="toolbar_Ck_#(pageId)"  data-title="出库"  data-url="admin/container/ck/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 出库</button>
 	</div>
+
+</div>
 		<table class="jbolt_table jbolt_main_table  table-center "
 			   data-jbolttable
 			   data-width="fill"

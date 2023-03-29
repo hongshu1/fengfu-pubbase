@@ -49,6 +49,12 @@ public class ContainerAdminController extends BaseAdminController {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
 
+	/**
+	 * 出入库数据源
+	 */
+	public void data() {
+		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv().set("isInner",5)));
+	}
    /**
 	* 新增
 	*/
@@ -142,5 +148,41 @@ public class ContainerAdminController extends BaseAdminController {
 			row.put("isinner", StringUtils.equals("1", row.getStr("isinner")) ? "社外" : "社内");
 		}
 		renderJxls("container.xlsx", Kv.by("rows", rows), "容器档案_" + DateUtil.today() + ".xlsx");
+	}
+
+	/**
+	 * 入库
+	 */
+	public void rk() {
+		//标识-入库
+		set("mark", "1");
+		render("crk_form.html");
+	}
+
+	/**
+	 * 出库
+	 */
+	public void ck() {
+		//标识-出库
+		set("mark", "0");
+		render("crk_form.html");
+	}
+
+	/**
+	 * 容器下拉信息查询
+	 */
+	public void crkData(String mark){
+		Kv kv = Kv.create();
+		kv.set("isInner", mark);
+		kv.set("isEnabled", 1);
+		renderJsonData(service.list(kv));
+	}
+
+	/**
+	 * 容器出入库处理
+	 *
+	 */
+	public void handleData(String mark){
+		renderJsonData(service.handleData(getJBoltTable(),mark));
 	}
 }

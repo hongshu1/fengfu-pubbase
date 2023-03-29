@@ -21,6 +21,22 @@
                             data-select="">
                     </select>
 
+                    <input type="number" autocomplete="off" style="width:110px"  class="form-control"  placeholder="最小存储数" name="imaxstockMin" value="" />
+                    <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大存储数" name="imaxstockMax" value="" />
+                    <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最小空间值" name="imaxspaceMin" value="" />
+                    <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大空间值" name="imaxspaceMax" value="" />
+
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/enums/boolchar"
+                            name="isenabled"
+                            data-text="=是否启用="
+                            data-value=""
+                            data-select=""
+                    >
+                    </select>
+
+
                     <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
                     <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
                 </form>
@@ -38,41 +54,14 @@
 <td>${data.cwhcode}</td>
 <td>${data.cwhname}</td>
 <td>${data.cdepcode}</td>
-<td>${data.cwhaddress}</td>
-<td>${data.cwhphone}</td>
-<td>${data.cwhperson}</td>
-<td>${data.cwhvaluestyle}</td>
-<td>${data.cmonth}</td>
-<td>${data.cwhMemo}</td>
-<td><img data-switchbtn data-confirm="确定切换是否冻结？" data-value="${data.bfreeze}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBFreeze/${data.id}"/></td>
-<td>${data.cbarcode}</td>
-<td><img data-switchbtn data-confirm="确定切换是否参与MRP运算？" data-value="${data.bmrp}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBMRP/${data.id}"/></td>
-<td>${data.ifrequency}</td>
-<td>${data.cfrequency}</td>
-<td>${data.idays}</td>
-<td>${data.dlastdate}</td>
-<td>${data.iwhproperty}</td>
-<td><img data-switchbtn data-confirm="确定切换是否门店？" data-value="${data.bshop}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBShop/${data.id}"/></td>
-<td><img data-switchbtn data-confirm="确定切换记入成本？" data-value="${data.bincost}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBInCost/${data.id}"/></td>
-<td><img data-switchbtn data-confirm="确定切换纳入可用量计算？" data-value="${data.binavailcalcu}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBInAvailCalcu/${data.id}"/></td>
-<td><img data-switchbtn data-confirm="确定切换代管仓？" data-value="${data.bproxywh}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBProxyWh/${data.id}"/></td>
-<td>${data.isaconmode}</td>
-<td>${data.iexconmode}</td>
-<td>${data.istconmode}</td>
-<td><img data-switchbtn data-confirm="确定切换是否保税仓？" data-value="${data.bbondedwh}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBBondedWh/${data.id}"/></td>
-<td><img data-switchbtn data-confirm="确定切换资产仓？" data-value="${data.bwhasset}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBWhAsset/${data.id}"/></td>
-<td>${data.fwhQuota}</td>
-<td>${data.dwhEndDate}</td>
-<td><img data-switchbtn data-confirm="确定切换是否核算分项成本？" data-value="${data.bchecksubitemcost}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBCheckSubitemCost/${data.id}"/></td>
-<td>${data.cpickpos}</td>
-<td><img data-switchbtn data-confirm="确定切换电商仓？" data-value="${data.beb}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleBEB/${data.id}"/></td>
-<td>${data.dmodifyDate}</td>
-<td>${data.cwareGroupCode}</td>
-<td>${data.cprovince}</td>
-<td>${data.ccity}</td>
-<td>${data.ccounty}</td>
+<td>${data.imaxstock}</td>
+<td>${data.imaxspace}</td>
+<td><img data-switchbtn data-confirm="确定切换是否库存预警？" data-value="${data.isstockwarnenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/isStockWarnEnabled/${data.iautoid}"/></td>
+<td><img data-switchbtn data-confirm="确定切换是否启动？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/isEnabled/${data.iautoid}"/></td>
+<td>${data.cwhmemo}</td>
+<td>${data.isource==1?"MES":"U8"}</td>
+<td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
-<!--<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/toggleIsenabled/${data.iautoid}"/></td>-->
 </tr>
 {@/each}
 </textarea>
@@ -151,39 +140,13 @@
                 <th data-width="150" data-column="cwhcode">仓库编码</th>
                 <th data-width="150" data-column="cwhname">仓库名称</th>
                 <th data-width="150" data-column="cDepCode">所属部门</th>
-                <th data-width="150" data-column="cwhAddress">仓库地址</th>
-                <th data-width="150" data-column="cwhPhone">电话</th>
-                <th data-width="150" data-column="cwhPerson">负责人</th>
-                <th data-width="150" data-column="cwhvaluestyle">计价方式</th>
-                <th data-width="150" data-column="cMonth">仓库期末处理会计期</th>
-                <th data-width="150" data-column="cwhMemo">备注</th>
-                <th data-width="100" data-column="bfreeze">是否冻结</th>
-                <th data-width="150" data-column="cbarcode">条形码</th>
-                <th data-width="100" data-column="bmrp">是否参与MRP运算</th>
-                <th data-width="100" data-column="iFrequency">盘点周期</th>
-                <th data-width="150" data-column="cFrequency">盘点周期单位</th>
-                <th data-width="100" data-column="iDays">每第几天</th>
-                <th data-min-width="160" data-column="dLastDate">上次盘点日期</th>
-                <th data-width="100" data-column="iWHProperty">仓库属性</th>
-                <th data-width="100" data-column="bshop">是否门店</th>
-                <th data-width="100" data-column="bincost">记入成本</th>
-                <th data-width="100" data-column="binavailcalcu">纳入可用量计算</th>
-                <th data-width="100" data-column="bproxywh">代管仓</th>
-                <th data-width="100" data-column="iSAConMode">销售可用量控制方式</th>
-                <th data-width="100" data-column="iEXConMode">出口可用量控制方式</th>
-                <th data-width="100" data-column="iSTConMode">库存可用量控制方式</th>
-                <th data-width="100" data-column="bbondedwh">是否保税仓</th>
-                <th data-width="100" data-column="bwhasset">资产仓</th>
-                <th data-width="100" data-column="fWhQuota">资产仓</th>
-                <th data-min-width="160" data-column="dWhEndDate">停用日期</th>
-                <th data-width="100" data-column="bchecksubitemcost">是否核算分项成本</th>
-                <th data-width="150" data-column="cpickpos">拣货货位 </th>
-                <th data-width="100" data-column="beb">电商仓</th>
-                <th data-min-width="160" data-column="dModifyDate">修改日期</th>
-                <th data-width="150" data-column="cWareGroupCode">仓库核算组</th>
-                <th data-width="150" data-column="cProvince">省/直辖市</th>
-                <th data-width="150" data-column="cCity">市</th>
-                <th data-width="150" data-column="cCounty">区县</th>
+                <th data-width="150" data-column="cwhAddress">最大存储数量</th>
+                <th data-width="150" data-column="cwhPhone">最大存储空间</th>
+                <th data-width="150" data-column="cwhPerson">启用库存预警</th>
+                <th data-width="150" data-column="cwhvaluestyle">是否启用</th>
+                <th data-width="150" data-column="cMonth">备注</th>
+                <th data-width="150" data-column="cwhMemo">来源</th>
+                <th data-width="100" data-column="bfreeze">创建人</th>
                 <th data-min-width="160" data-column="dCreateTime">创建时间</th>
             </tr>
             </thead>

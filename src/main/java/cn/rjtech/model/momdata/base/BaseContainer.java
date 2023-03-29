@@ -60,6 +60,8 @@ public abstract class BaseContainer<M extends BaseContainer<M>> extends JBoltBas
     public static final String ISDELETED = "IsDeleted";
     /**客户ID*/
     public static final String ICUSTOMERID = "iCustomerId";
+	/**备注*/
+	public static final String CMEMO = "cMemo";
 	/**
 	 * 主键ID
 	 */
@@ -485,5 +487,20 @@ public abstract class BaseContainer<M extends BaseContainer<M>> extends JBoltBas
 		return getLong("iCustomerId");
 	}
 
+	/**
+	 * 备注
+	 */
+	public M setCMemo(java.lang.String cMemo) {
+		set("cMemo", cMemo);
+		return (M)this;
+	}
+
+	/**
+	 * 备注
+	 */
+	@JSONField(name = "cmemo", serializeUsing = ToStringSerializer.class)
+	public java.lang.String getCMemo() {
+		return getStr("cMemo");
+	}
 }
 

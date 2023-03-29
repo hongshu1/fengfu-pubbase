@@ -8,6 +8,9 @@ import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.rjtech.admin.ContainerStockInD.ContainerStockInDService;
+import cn.rjtech.admin.ContainerStockInD.ContainerStockInMService;
 import cn.rjtech.admin.containerclass.ContainerClassService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.model.momdata.*;
@@ -22,6 +25,7 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import com.jfinal.plugin.activerecord.Record;
+import org.springframework.beans.BeanUtils;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -53,6 +57,14 @@ public class ContainerService extends BaseService<Container> {
 
     @Inject
     private ContainerClassService containerClassService;
+
+    //明细入库明细service
+	@Inject
+	private ContainerStockInDService containerStockInDService;
+
+	//明细入库主表service
+	@Inject
+	private ContainerStockInMService containerStockInMService;
 
 	/**
 	 * 后台管理数据查询
@@ -321,5 +333,24 @@ public class ContainerService extends BaseService<Container> {
 
 	public List<Record> list(Kv kv) {
 		return dbTemplate("container.paginateAdminDatas", kv).find();
+	}
+
+	public Ret handleData(JBoltTable jBoltTable,String mark) {
+		if (jBoltTable == null || jBoltTable.isBlank()) {
+			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
+		}
+//		List<Container> containers = jBoltTable.getSaveModelList(Container.class);
+		//入库 2
+		Kv kv = Kv.create();
+		if (mark.equals("3")) {
+			//入库主表处理
+			ContainerStockInM stockInM = new ContainerStockInM();
+			stockInM.setCMemo("");
+			String o = kv.isNull("cmemo") ? TRUE : kv.getStr("cmemo");
+			containerStockInMService.save(stockInM);
+			//入库明细表处理
+			containerStockInDService.save(new ContainerStockInD());
+		}
+		return null;
 	}
 }
