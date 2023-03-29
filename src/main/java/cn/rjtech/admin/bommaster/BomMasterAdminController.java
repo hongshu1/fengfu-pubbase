@@ -16,7 +16,7 @@ import cn.rjtech.model.momdata.BomMaster;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-28 16:39
  */
-@Before(JBoltAdminAuthInterceptor.class)
+
 @Path(value = "/admin/bommaster", viewPath = "/_view/admin/bommaster")
 public class BomMasterAdminController extends BaseAdminController {
 
