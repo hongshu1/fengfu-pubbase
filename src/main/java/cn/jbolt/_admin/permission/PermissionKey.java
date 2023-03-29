@@ -2201,8 +2201,5 @@ public class PermissionKey {
 	 * 分类管理
 	 * */
 	public static final String CONTAINERCLASS = "containerclass";
-	/**
-	 * 工作日历 Controller
-	 */
 	public static final String WORKCALENDARM = "workcalendarm";
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
@@ -271,6 +272,15 @@ public class InventoryAdminController extends BaseAdminController {
 	        return;
 	    }
 		renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("物料建模-存货档案"));
+	}
+	/**
+	  * 获取存货档案列表 
+	  * 通过关键字匹配 
+	 * autocomplete组件使用
+	 */
+	@UnCheck
+	public void autocomplete() {
+		renderJsonData(service.getAutocompleteData(get("q"), getInt("limit",10)));
 	}
 
 	/**

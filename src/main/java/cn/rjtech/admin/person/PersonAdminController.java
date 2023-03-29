@@ -5,10 +5,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import cn.hutool.core.net.URLEncoder;
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.common.config.JBoltUploadFolder;
@@ -28,6 +31,8 @@ import pres.lnk.jxlss.JxlsBuilder;
  */
 @CheckPermission(PermissionKey.PERSON_INDEX)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
+@Path(value = "/admin/person", viewPath = "/_view/admin/person")
 public class PersonAdminController extends BaseAdminController {
 	@Inject
 	private PersonService service;
@@ -67,6 +72,7 @@ public class PersonAdminController extends BaseAdminController {
 		Record rc = person.toRecord();
 		User user = userService.findById(rc.getLong("iuserid"));
 		rc.set("cusername", user == null ? null : user.getName());
+		rc.set("sysworkage", service.calcSysworkage(rc.getDate("dhiredate")));
 		set("person",rc);
 		render("edit.html");
 	}

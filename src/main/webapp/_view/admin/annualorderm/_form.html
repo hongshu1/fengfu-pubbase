@@ -17,9 +17,12 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form onsubmit="return false;" id="AnnualOrderM_Form_#(pageId)" action="#(action)" method="post">
+                    <form onsubmit="return false;" id="AnnualOrderD_Form_#(pageId)" action="#(action)" method="post">
                         #if(annualOrderM.iAutoId??)
                         <input type="hidden" name="annualOrderM.iAutoId" value="#(annualOrderM.iAutoId??)"/>
+                        <input type="hidden" name="annualOrderM.iOrderStatus" value="#(annualOrderM.iOrderStatus??1)"/>
+                        <input type="hidden" name="annualOrderM.iAuditStatus" value="#(annualOrderM.iAuditStatus??0)"/>
+                        <input type="hidden" name="annualOrderM.isDeleted" value="#(annualOrderM.isDeleted??0)"/>
                         #end
                         <div class="row">
                             <div class="col-md-4">
@@ -32,9 +35,22 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">客户ID</label>
-                                    <div class="col-10">
-                                        <input type="text" data-rule="required" data-notnull="true" data-tips="请输入客户ID" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入客户ID" maxlength="40" name="annualOrderM.iCustomerId" value="#(annualOrderM.iCustomerId??)"/>
+                                	<input type="hidden" name="annualOrderM.iCustomerId" value="#(annualOrderM.iCustomerId??)" id="iCustomerId"/>
+                                    <label class="col-sm-3 col-form-label">客户名称</label>
+                                    <div class="col-9">
+										<input type="text" class="form-control"
+											   data-autocomplete
+											   data-url="admin/customer/autocomplete"
+											   data-rule="required"
+											   data-hidden-input="iCustomerId"
+											   data-text-attr="ccusname"
+											   data-column-attr="ccuscode,ccusname,ccusabbname"
+											   placeholder="请选择"
+											   data-tips="请选择"
+											   data-header="客户编码,客户名称,客户简称"
+											   maxlength="40"
+											   value="#(annualOrderM.ccusname??)"
+											   >                                        
                                     </div>
                                 </div>
                             </div>
@@ -50,12 +66,11 @@
                                                data-date
                                                data-type="year"
                                                data-fmt="yyyy"
-                                               readonly="readonly"
                                                autocomplete="off"
                                                class="form-control"
                                                maxlength="20"
-                                               name="iYear"
-                                               value="#datetime(DateUtil.getNow(),'yyyy')"/>
+                                               name="annualOrderM.iYear"
+                                               value="#datetime(annualOrderM.iYear??DateUtil.getNow(),'yyyy')"/>
                                     </div>
                                 </div>
                             </div>
@@ -68,46 +83,87 @@
 </div>
 
 <div class="jbolt_page_content">
-
+    <script type="text/template" id="jboltTable_demotpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.cuomname}</td>
+            <td>${data.inowyearmonthamount1}</td>
+			<td>${data.inowyearmonthamount2}</td>
+			<td>${data.inowyearmonthamount3}</td>
+			<td>${data.inowyearmonthamount4}</td>
+			<td>${data.inowyearmonthamount5}</td>
+			<td>${data.inowyearmonthamount6}</td>
+			<td>${data.inowyearmonthamount7}</td>
+			<td>${data.inowyearmonthamount8}</td>
+			<td>${data.inowyearmonthamount9}</td>
+			<td>${data.inowyearmonthamount10}</td>
+			<td>${data.inowyearmonthamount11}</td>
+			<td>${data.inowyearmonthamount12}</td>
+			<td>${data.inowyearmonthamounttotal}</td>
+			<td>${data.inextyearmonthamount1}</td>
+			<td>${data.inextyearmonthamount2}</td>
+			<td>${data.inextyearmonthamount3}</td>
+			<td>${data.inextyearmonthamounttotal}</td>
+			<td>
+    			<a href="admin/person/deleteByAjax" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+			</td>
+        </tr>
+        {@/each}
+    </script>
     <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
         </div>
     </div>
-
     <table class="table-center" id="jbolt_orderItemTable_#(pageId)"
            data-jbolttable
+           #if(annualOrderM.iAutoId??)
            data-ajax="true"
+           data-url="admin/annualorderd/findEditTableDatas?iAnnualOrderMid=#(annualOrderM.iAutoId??)"
+           #end
            data-column-resize="true"
            data-tfoot-fixed="true"
            data-column-prepend="1:checkbox"
-           data-url="admin/annualorderm/datas"
            data-rowtpl="jboltTable_demotpl_#(pageId)"
            data-toolbar="AnnualOrderM_toolbar_#(pageId)"
-           data-conditions-form="AnnualOrderM_Form_#(pageId)"
            data-editable="true"
            data-editable-option="getEditableTableOptions_#(pageId)"
     >
         <thead class="fw_normal">
         <tr>
             <th data-width="60" data-column="index" rowspan="2">序号</th>
-            <th data-width="150" data-column="cInvCode" rowspan="2">存货编码</th>
-            <th data-width="150" data-column="cInvCode1" rowspan="2">客户部番</th>
-            <th data-width="150" data-column="cInvName1" rowspan="2">部品名称</th>
-            <th data-width="150" data-column="cInvStd" rowspan="2">规格</th>
-            <th data-width="100" data-column="iInventoryUomId1" rowspan="2">库存主单位</th>
-            <th colspan="13">#(iYear)年</th>
-            <th colspan="13">#(iYear + 1)年</th>
+            <th data-width="150" data-column="cinvcode" rowspan="2">存货编码</th>
+            <th data-width="150" data-column="cinvcode1" rowspan="2">客户部番</th>
+            <th data-width="150" data-column="cinvname1" rowspan="2">部品名称</th>
+            <th data-width="150" data-column="cinvstd" rowspan="2">规格</th>
+            <th data-width="100" data-column="cuomname" rowspan="2">库存主单位</th>
+            <th colspan="13" id="nowYear">#(iYear)年</th>
+            <th colspan="4" id="nextYear">#(iYear+1)年</th>
+            <th data-width="100" rowspan="2">操作</th>
         </tr>
         <tr>
-            #for(i = 1; i <= 10; i++)
-                <th>#(i)月</th>
-            #end
-            <th>合计</th>
-            #for(i = 1; i <= 3; i++)
-                <th>#(i)月</th>
-            #end
-            <th>合计</th>
+                <th data-column="inowyearmonthamount1">1月</th>
+                <th data-column="inowyearmonthamount2">2月</th>
+                <th data-column="inowyearmonthamount3">3月</th>
+                <th data-column="inowyearmonthamount4">4月</th>
+                <th data-column="inowyearmonthamount5">5月</th>
+                <th data-column="inowyearmonthamount6">6月</th>
+                <th data-column="inowyearmonthamount7">7月</th>
+                <th data-column="inowyearmonthamount8">8月</th>
+                <th data-column="inowyearmonthamount9">9月</th>
+                <th data-column="inowyearmonthamount10">10月</th>
+                <th data-column="inowyearmonthamount11">11月</th>
+                <th data-column="inowyearmonthamount12">12月</th>
+            	<th data-column="inowyearmonthamounttotal">合计</th>
+           		<th data-column="inextyearmonthamount1">1月</th>
+           		<th data-column="inextyearmonthamount2">2月</th>
+           		<th data-column="inextyearmonthamount3">3月</th>
+            	<th data-column="inextyearmonthamounttotal">合计</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -119,30 +175,27 @@
             <th></th>
             <th></th>
             <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        <tr>
         </tfoot>
     </table>
-
-    <script type="text/template" id="jboltTable_demotpl_#(pageId)">
-        {@each datas as data,index}
-        <tr data-id="${data.id}">
-            <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>
-
-            </td>
-            <td>${data.name?data.name:''}</td>
-            <td>${data.age}</td>
-            <td>${data.demoDate|date_ymd}</td>
-            <td>${data.demoMonth}</td>
-            <td>{@if data.price}${data.price,2|number_format}{@/if}</td>
-            <td>${data.amount?data.amount:0}</td>
-            <td>${data.total?data.total:0}</td>
-            <td><input class="jbt_editor_checkbox" type="checkbox" name="enable" {@if data.enable}checked="checked" {@/if} value="true"></td>
-            <td><img data-switchbtn data-value="${data.enable}" data-handler="switchEditableTd"/></td>
-            <td>${data.briefInfo}</td>
-        </tr>
-        {@/each}
-    </script>
-
 </div>
 #define js()
 <script>
@@ -150,27 +203,113 @@
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
             submit: {
-                withForm: ["AnnualOrderM_Form_#(pageId)"],
+                withForm: ["AnnualOrderD_Form_#(pageId)"],
                 type: "all",
                 url: "/admin/annualorderm/submitAll",
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
-                        refreshPjaxContainer();
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
                     });
                 }
             },
             cols: {
-                id: {
-                    submitAttr: "id",
+            	iautoid: {
+                    submitAttr: "iautoid",
                 },
-                name: {
-                    type: "jboltinput",
-                    url: "demo/jboltinput/ajaxPortalTable",
-                    width: 500,
-                    placeholder: "=请选择=",
+                cinvcode: {
+                    type: "autocomplete",
+                    url: "admin/inventory/autocomplete",
+                    maxLength: 100,
                     required: true,
-                    filterHandler: 'filterTable'
-                }
+                    placeholder: "请选择",
+                    textAttr: "cinvcode",
+                    width: 500,
+                    valueAttr: "cinvcode",
+                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
+                    header:'存货编码,客户部番,部品名称,规格,库存主单位',
+                    changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
+                                   {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
+                                   {column: "cuomname", use: "cuomname"},{column: "iinventoryid", use: "iautoid"}]
+                },
+                inowyearmonthamount1: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount2: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount3: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount4: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount5: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount6: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount7: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount8: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount9: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount10: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount11: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamount12: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inowyearmonthamounttotal: {
+					summary:[{
+						dir:"h",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"inowyearmonthamount1+inowyearmonthamount2+inowyearmonthamount3+inowyearmonthamount4+inowyearmonthamount5+inowyearmonthamount6+inowyearmonthamount7+inowyearmonthamount8+inowyearmonthamount9+inowyearmonthamount10+inowyearmonthamount11+inowyearmonthamount12"
+					}]
+				},
+				inextyearmonthamount1: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inextyearmonthamount2: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inextyearmonthamount3: {
+					type:"amount",
+					placeholder:'数量'
+				},
+				inextyearmonthamounttotal: {
+					summary:[{
+						dir:"h",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"inextyearmonthamount1+inextyearmonthamount2+inextyearmonthamount3"
+					}]
+				}
             }
         };
         return editableTableOptions;
@@ -178,6 +317,8 @@
 
     function changeDoneYear(ele, value) {
         #set(iYear=value)
+        $("#nowYear").html(ele.val()+"年");
+        $("#nextYear").html(ele.val()+"年");
     }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="AnnualOrderM_Form")

@@ -1,0 +1,54 @@
+<form onsubmit="return false;" id="fitemss97subForm" action="#(action)" method="post">
+<input type="hidden" name="fitemss97sub.iautoid" value="#(fitemss97sub.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">子项目编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入子项目编码" maxlength="60" name="fitemss97sub.citemcode" value="#(fitemss97sub.citemcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">子项目名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入子项目名称" maxlength="255" name="fitemss97sub.citemname" value="#(fitemss97sub.citemname??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(fitemss97.iclose??)"
+    	data-name="fitemss97.iclose"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否结算</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_iclose_true" type="radio" name="fitemss97.iclose" value="1"/>
+					<label for="r_iclose_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_iclose_false" type="radio" name="fitemss97.iclose" value="0"/>
+					<label for="r_iclose_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">结束日期</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置结束日期" data-tips="请设置结束日期" maxlength="23" name="fitemss97sub.denddate" value="#date(fitemss97sub.denddate??,'yyyy-MM-dd')"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目属性</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入项目属性" maxlength="10" name="fitemss97sub.ctype" value="#(fitemss97sub.ctype??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="fitemss97subForm")
+#end
+

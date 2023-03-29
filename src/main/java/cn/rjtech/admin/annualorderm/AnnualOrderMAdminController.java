@@ -1,15 +1,16 @@
 package cn.rjtech.admin.annualorderm;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.AnnualOrderM;
@@ -23,7 +24,7 @@ import java.util.Date;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-23 17:23
  */
-// @CheckPermission(PermissionKey.ANNUALORDERM)
+@CheckPermission(PermissionKey.ANNUALORDERM)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/annualorderm", viewPath = "/_view/admin/annualorderm")
@@ -43,7 +44,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getSortColumn("iAutoId"), getSortType("desc"), getBoolean("cOrderNo"), getLong("iCustomerId"), getInt("iYear"), getInt("iOrderStatus"), get("cCreateName")));
+        renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
     /**
@@ -69,7 +70,9 @@ public class AnnualOrderMAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("annualOrderM", annualOrderM);
+        Record annualOrderMRc = annualOrderM.toRecord();
+        //annualOrderMRc.set("ccusname", );
+        set("annualOrderM", annualOrderMRc);
         render("edit.html");
     }
 

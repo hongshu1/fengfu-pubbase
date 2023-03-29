@@ -1,0 +1,75 @@
+<form onsubmit="return false;" id="fitemss97Form" action="#(action)" method="post">
+<input type="hidden" name="fitemss97.iautoid" value="#(fitemss97.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入项目编码" maxlength="60" name="fitemss97.citemcode" value="#(fitemss97.citemcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入项目名称" maxlength="255" name="fitemss97.citemname" value="#(fitemss97.citemname??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(fitemss97.bclose??)"
+    	data-name="fitemss97.bclose"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否封存</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bclose_true" type="radio" name="fitemss97.bclose" value="true"/>
+					<label for="r_bclose_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bclose_false" type="radio" name="fitemss97.bclose" value="false"/>
+					<label for="r_bclose_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目大类编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入项目大类编码" maxlength="22" name="fitemss97.citemccode" value="#(fitemss97.citemccode??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(fitemss97.iotherused??)"
+    	data-name="fitemss97.iotherused"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >其它系统是否使用</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_iotherused_true" type="radio" name="fitemss97.iotherused" value="1"/>
+					<label for="r_iotherused_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_iotherused_false" type="radio" name="fitemss97.iotherused" value="0"/>
+					<label for="r_iotherused_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">结束日期</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置结束日期" data-tips="请设置结束日期" maxlength="23" name="fitemss97.denddate" value="#date(fitemss97.denddate??,'yyyy-MM-dd')"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="fitemss97Form")
+#end
+
