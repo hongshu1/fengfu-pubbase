@@ -10,6 +10,7 @@ import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Before;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.AnnualOrderM;
@@ -69,7 +70,9 @@ public class AnnualOrderMAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("annualOrderM", annualOrderM);
+        Record annualOrderMRc = annualOrderM.toRecord();
+        //annualOrderMRc.set("ccusname", );
+        set("annualOrderM", annualOrderMRc);
         render("edit.html");
     }
 

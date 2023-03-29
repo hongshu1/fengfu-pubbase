@@ -1,29 +1,28 @@
-package cn.rjtech.admin.annualorderd;
+package cn.rjtech.admin.annualorderdamount;
 
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.AnnualOrderD;
+import cn.rjtech.model.momdata.AnnualorderdAmount;
 /**
- * 年度计划订单年汇总 Controller
- * @ClassName: AnnualOrderDAdminController
- * @author: heming
- * @date: 2023-03-28 17:06
+ * 年度计划订单年月金额 Controller
+ * @ClassName: AnnualorderdAmountAdminController
+ * @author: 佛山市瑞杰科技有限公司
+ * @date: 2023-03-29 14:22
  */
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
-@Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/annualorderd", viewPath = "/_view/admin/annualorderd")
-public class AnnualOrderDAdminController extends BaseAdminController {
+@Path(value = "/admin/annualorderdamount", viewPath = "/_view/admin/annualorderdamount")
+public class AnnualorderdAmountAdminController extends BaseAdminController {
 
 	@Inject
-	private AnnualOrderDService service;
+	private AnnualorderdAmountService service;
 
    /**
 	* 首页
@@ -50,12 +49,12 @@ public class AnnualOrderDAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		AnnualOrderD annualOrderD=service.findById(getLong(0)); 
-		if(annualOrderD == null){
+		AnnualorderdAmount annualorderdAmount=service.findById(getLong(0)); 
+		if(annualorderdAmount == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("annualOrderD",annualOrderD);
+		set("annualorderdAmount",annualorderdAmount);
 		render("edit.html");
 	}
 
@@ -63,14 +62,14 @@ public class AnnualOrderDAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(AnnualOrderD.class, "annualOrderD")));
+		renderJson(service.save(getModel(AnnualorderdAmount.class, "annualorderdAmount")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(AnnualOrderD.class, "annualOrderD")));
+		renderJson(service.update(getModel(AnnualorderdAmount.class, "annualorderdAmount")));
 	}
 
    /**
@@ -93,9 +92,6 @@ public class AnnualOrderDAdminController extends BaseAdminController {
 	public void toggleIsDeleted() {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
-	
-	public void findEditTableDatas(){
-		renderJsonData(service.findEditTableDatas(getKv()));
-	}
+
 
 }

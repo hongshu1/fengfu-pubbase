@@ -20,6 +20,9 @@
                     <form onsubmit="return false;" id="AnnualOrderM_Form_#(pageId)" action="#(action)" method="post">
                         #if(annualOrderM.iAutoId??)
                         <input type="hidden" name="annualOrderM.iAutoId" value="#(annualOrderM.iAutoId??)"/>
+                        <input type="hidden" name="annualOrderM.iOrderStatus" value="#(annualOrderM.iOrderStatus??1)"/>
+                        <input type="hidden" name="annualOrderM.iAuditStatus" value="#(annualOrderM.iAuditStatus??0)"/>
+                        <input type="hidden" name="annualOrderM.isDeleted" value="#(annualOrderM.isDeleted??0)"/>
                         #end
                         <div class="row">
                             <div class="col-md-4">
@@ -32,9 +35,22 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">客户名称</label>
-                                    <div class="col-10">
-                                        <input type="text" data-rule="required" data-notnull="true" data-tips="请输入客户名称" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入客户名称" maxlength="40" name="annualOrderM.iCustomerId" value="#(annualOrderM.iCustomerId??)"/>
+                                	<input type="hidden" name="annualOrderM.iCustomerId" value="#(annualOrderM.iCustomerId??)" id="iCustomerId"/>
+                                    <label class="col-sm-3 col-form-label">客户名称</label>
+                                    <div class="col-9">
+										<input type="text" class="form-control"
+											   data-autocomplete
+											   data-url="admin/customer/autocomplete"
+											   data-rule="required"
+											   data-hidden-input="iCustomerId"
+											   data-text-attr="ccusname"
+											   data-column-attr="ccuscode,ccusname,ccusabbname"
+											   placeholder="请选择"
+											   data-tips="请选择"
+											   data-header="客户编码,客户名称,客户简称"
+											   maxlength="40"
+											   value="#(annualOrderM.ccusname??)"
+											   >                                        
                                     </div>
                                 </div>
                             </div>
@@ -53,8 +69,8 @@
                                                autocomplete="off"
                                                class="form-control"
                                                maxlength="20"
-                                               name="iYear"
-                                               value="#datetime(DateUtil.getNow(),'yyyy')"/>
+                                               name="annualOrderM.iYear"
+                                               value="#datetime(annualOrderM.iYear??DateUtil.getNow(),'yyyy')"/>
                                     </div>
                                 </div>
                             </div>
@@ -89,10 +105,13 @@
 			<td>${data.inowyearmonthamount11}</td>
 			<td>${data.inowyearmonthamount12}</td>
 			<td>${data.inowyearmonthamounttotal}</td>
-			<td>${data.inowyearmonthamount1}</td>
-			<td>${data.inowyearmonthamount2}</td>
-			<td>${data.inowyearmonthamount3}</td>
+			<td>${data.inextyearmonthamount1}</td>
+			<td>${data.inextyearmonthamount2}</td>
+			<td>${data.inextyearmonthamount3}</td>
 			<td>${data.inextyearmonthamounttotal}</td>
+			<td>
+    			<a href="admin/person/deleteByAjax" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+			</td>
         </tr>
         {@/each}
     </script>
@@ -103,11 +122,13 @@
     </div>
     <table class="table-center" id="jbolt_orderItemTable_#(pageId)"
            data-jbolttable
+           #if(annualOrderM.iAutoId??)
            data-ajax="true"
+           data-url="admin/annualorderd/findEditTableDatas?iAnnualOrderMid=#(annualOrderM.iAutoId??)"
+           #end
            data-column-resize="true"
            data-tfoot-fixed="true"
            data-column-prepend="1:checkbox"
-           data-url="admin/annualorderm/datas"
            data-rowtpl="jboltTable_demotpl_#(pageId)"
            data-toolbar="AnnualOrderM_toolbar_#(pageId)"
            data-conditions-form="AnnualOrderM_Form_#(pageId)"
@@ -124,6 +145,7 @@
             <th data-width="100" data-column="cuomname" rowspan="2">库存主单位</th>
             <th colspan="13" id="nowYear">#(iYear)年</th>
             <th colspan="4" id="nextYear">#(iYear+1)年</th>
+            <th data-width="100" rowspan="2">操作</th>
         </tr>
         <tr>
                 <th data-column="inowyearmonthamount1">1月</th>
@@ -187,7 +209,8 @@
                 url: "/admin/annualorderm/submitAll",
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
-                        refreshPjaxContainer();
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
                     });
                 }
             },
@@ -199,6 +222,7 @@
                     type: "autocomplete",
                     url: "admin/inventory/autocomplete",
                     maxLength: 100,
+                    required: true,
                     placeholder: "请选择",
                     textAttr: "cinvcode",
                     width: 500,
@@ -207,8 +231,7 @@
                     header:'存货编码,客户部番,部品名称,规格,库存主单位',
                     changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
                                    {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
-                                   {column: "cuomname", use: "cuomname"}
-                                   ]
+                                   {column: "cuomname", use: "cuomname"},{column: "iinventoryid", use: "iautoid"}]
                 },
                 inowyearmonthamount1: {
 					type:"amount",

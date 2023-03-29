@@ -155,3 +155,7 @@
 #namespace("inventory")
 #include("inventory/inventory.sql")
 #end
+
+#namespace("annualorderd")
+#include("annualorderd/annualorderd.sql")
+#end
