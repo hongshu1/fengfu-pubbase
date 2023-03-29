@@ -17,7 +17,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form onsubmit="return false;" id="AnnualOrderM_Form_#(pageId)" action="#(action)" method="post">
+                    <form onsubmit="return false;" id="AnnualOrderD_Form_#(pageId)" action="#(action)" method="post">
                         #if(annualOrderM.iAutoId??)
                         <input type="hidden" name="annualOrderM.iAutoId" value="#(annualOrderM.iAutoId??)"/>
                         <input type="hidden" name="annualOrderM.iOrderStatus" value="#(annualOrderM.iOrderStatus??1)"/>
@@ -131,7 +131,6 @@
            data-column-prepend="1:checkbox"
            data-rowtpl="jboltTable_demotpl_#(pageId)"
            data-toolbar="AnnualOrderM_toolbar_#(pageId)"
-           data-conditions-form="AnnualOrderM_Form_#(pageId)"
            data-editable="true"
            data-editable-option="getEditableTableOptions_#(pageId)"
     >
@@ -204,7 +203,7 @@
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
             submit: {
-                withForm: ["AnnualOrderM_Form_#(pageId)"],
+                withForm: ["AnnualOrderD_Form_#(pageId)"],
                 type: "all",
                 url: "/admin/annualorderm/submitAll",
                 success: function (res) {

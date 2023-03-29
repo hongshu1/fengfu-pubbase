@@ -35,21 +35,18 @@
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="AnnualOrderM_tpl_#(pageId)">
             {@each datas as data,index}
-            <tr data-id="${data.id}">
+            <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                {@if data.isDeleted}
-                <a class="text-info mr-1" data-openpage="dialog" href="admin/annualorderm/edit/${data.id}" data-area="800,600" data-title="查看客户订单-年度订单"><i class="fa fa-eye"></i></a>
-                {@else}
-                <a class="jbolt_table_editbtn" href="admin/annualorderm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑客户订单-年度订单"><i class="fa fa-edit"></i></a>
-                {@/if}
-                <a class="jbolt_table_delbtn" href="admin/annualorderm/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+                <a class="text-info mr-1" data-openpage="dialog" href="admin/annualorderm/edit/${data.id}" data-area="800,600" data-title="查看客户订单-年度订单">查看</a>
+                <a class="jbolt_table_editbtn" href="admin/annualorderm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑客户订单-年度订单">编辑</a>
+                <a class="jbolt_table_delbtn" href="admin/annualorderm/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
             </td>
-            <td>${data.corderno}</td>
-            <td>${data.icustomerid}</td>
-            <td>${data.iyear}</td>
             <td>${data.iorderstatus}</td>
-            <td>${data.iauditstatus}</td>
+             <td>${data.cauditprogress}</td>
+            <td>${data.corderno}</td>
+            <td>${data.ccusname}</td>
+            <td>${data.iyear}</td>
             <td>${data.ccreatename}</td>
             <td>${data.dcreatetime}</td>
             </tr>
@@ -62,7 +59,7 @@
                 </button>
             </div>
         </div>
-        <table class="jbolt_table jbolt_main_table  table-center "
+        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
                data-jbolttable
                data-width="fill"
                data-height="fill"
@@ -73,22 +70,20 @@
                data-copy-to-excel="false"
                data-page="AnnualOrderM_page"
                data-toolbar="AnnualOrderM_toolbar_#(pageId)"
-               data-column-prepend="1:checkbox:false:false:false"
-               data-sortable-columns="dCreateTime"
-               data-sort="#((sortColumn&&sortType)?(sortColumn+':'+sortType):'')"
+               data-column-prepend="1:checkbox:true"
                data-default-sort-column="iAutoId"
         >
             <thead>
             <tr>
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="150">操作</th>
-                <th data-column="cOrderNo">订单号</th>
-                <th data-column="iCustomerId">客户ID</th>
-                <th data-column="iYear">年份</th>
                 <th data-column="iOrderStatus">订单状态</th>
-                <th data-column="iAuditStatus">审核状态</th>
-                <th data-column="cCreateName">创建人名称</th>
-                <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+                <th data-column="cAuditProgress">审批进度</th>
+                <th data-column="cOrderNo">订单号</th>
+                <th data-column="cCusName">客户名称</th>
+                <th data-column="iYear">年份</th>
+                <th data-column="cCreateName">创建人</th>
+                <th data-column="dCreateTime">创建时间</th>
             </tr>
             </thead>
             <tbody></tbody>

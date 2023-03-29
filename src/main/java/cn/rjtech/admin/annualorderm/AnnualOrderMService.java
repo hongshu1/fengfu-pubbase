@@ -14,7 +14,6 @@ import com.jfinal.plugin.activerecord.Record;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
@@ -50,36 +49,13 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
-
     /**
      * 后台管理数据查询
-     *
-     * @param pageNumber   第几页
-     * @param pageSize     每页几条数据
-     * @param keywords     关键词
-     * @param sortColumn   排序列名
-     * @param sortType     排序方式 asc desc
-     * @param cOrderNo     订单号
-     * @param iCustomerId  客户ID
-     * @param iYear        年份
-     * @param iOrderStatus 订单状态：1. 已保存 2. 待审核 3. 已审批
-     * @param cCreateName  创建人名称
-     * @return
      */
-    public Page<AnnualOrderM> getAdminDatas(int pageNumber, int pageSize, String keywords, String sortColumn, String sortType, Boolean cOrderNo, Long iCustomerId, Integer iYear, Integer iOrderStatus, String cCreateName) {
-        //创建sql对象
-        Sql sql = selectSql().page(pageNumber, pageSize);
-        //sql条件处理
-        sql.eqBooleanToChar("cOrderNo", cOrderNo);
-        sql.eq("iCustomerId", iCustomerId);
-        sql.eq("iYear", iYear);
-        sql.eq("iOrderStatus", iOrderStatus);
-        sql.eq("cCreateName", cCreateName);
-        //关键词模糊查询
-        sql.likeMulti(keywords, "cOrderNo", "iCustomerId", "cCreateName");
-        //排序
-        sql.orderBy(sortColumn, sortType);
-        return paginate(sql);
+    public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+    	para.set("iorgid",getOrgId());
+    	Page<Record> pageList = dbTemplate("annualorderm.paginateAdminDatas",para).paginate(pageNumber, pageSize);
+    	return pageList;
     }
 
     /**

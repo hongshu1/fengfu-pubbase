@@ -44,7 +44,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getSortColumn("iAutoId"), getSortType("desc"), getBoolean("cOrderNo"), getLong("iCustomerId"), getInt("iYear"), getInt("iOrderStatus"), get("cCreateName")));
+        renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
     /**
