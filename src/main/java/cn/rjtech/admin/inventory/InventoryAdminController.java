@@ -1,6 +1,7 @@
 package cn.rjtech.admin.inventory;
 
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -24,6 +25,7 @@ import java.util.List;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
@@ -75,6 +77,13 @@ public class InventoryAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
+		Long inventoryclassid = getLong("inventoryclassid");
+		Inventory inventory = new Inventory();
+		inventory.setIInventoryClassId(inventoryclassid);
+		set("inventory", inventory);
+		//set("centityname", "itemmaster");  //扩展字段
+		Long autoid = JBoltSnowflakeKit.me.nextId();
+		set("iinventoryid", autoid);
 		render("add.html");
 	}
 
@@ -271,6 +280,15 @@ public class InventoryAdminController extends BaseAdminController {
 	        return;
 	    }
 		renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("物料建模-存货档案"));
+	}
+	/**
+	  * 获取存货档案列表 
+	  * 通过关键字匹配 
+	 * autocomplete组件使用
+	 */
+	@UnCheck
+	public void autocomplete() {
+		renderJsonData(service.getAutocompleteData(get("q"), getInt("limit",10)));
 	}
 
 	/**

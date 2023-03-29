@@ -300,6 +300,10 @@ public class InventoryService extends BaseService<Inventory> {
 		return dbTemplate("inventoryclass.inventoryList",kv).find();
 	}
 
+	public List<Record> getAutocompleteData(String q, Integer limit) {
+		return dbTemplate("inventory.getAutocompleteData",Kv.by("q", q).set("limit",limit)).find();
+	}
+
 	public Inventory saveJBoltFile(UploadFile file, String uploadPath, int fileType) {
 		String localPath = file.getUploadPath() + File.separator + file.getFileName();
 		String localUrl = FileUtil.normalize(JBoltRealUrlUtil.get(JFinal.me().getConstants().getBaseUploadPath() + '/' + uploadPath + '/' + file.getFileName()));
@@ -388,4 +392,5 @@ public class InventoryService extends BaseService<Inventory> {
 
 		return res.get();
 	}
+    
 }

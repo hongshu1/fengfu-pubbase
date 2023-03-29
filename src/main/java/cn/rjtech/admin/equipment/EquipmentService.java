@@ -281,4 +281,10 @@ public class EquipmentService extends BaseService<Equipment> {
 	public List<Record> selectWorkRegs() {
 		return dbTemplate("equipment.selectWorkRegs").find();
 	}
+	/**
+	 * 根据设备编码查询
+	 * */
+	public Equipment findModelByCode(String cequipmentcode) {
+		return findFirst(selectSql().eq("cequipmentcode", cequipmentcode));
+	}
 }

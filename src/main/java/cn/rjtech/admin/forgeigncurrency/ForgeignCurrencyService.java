@@ -83,7 +83,9 @@ public class ForgeignCurrencyService extends BaseService<ForgeignCurrency> {
 		//更新时需要判断数据存在
 		ForgeignCurrency dbForgeignCurrency=findById(forgeignCurrency.getIAutoId());
 		if(dbForgeignCurrency==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(forgeignCurrency.getName(), forgeignCurrency.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		forgeignCurrency.setIUpdateBy(JBoltUserKit.getUserId());
+		forgeignCurrency.setCUpdateName(JBoltUserKit.getUserName());
+		forgeignCurrency.setDUpdateTime(new Date());
 		boolean success=forgeignCurrency.update();
 		if(success) {
 			//添加日志

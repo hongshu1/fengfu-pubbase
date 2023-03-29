@@ -10,7 +10,7 @@ WHERE t1.isDeleted = '0'
   AND t1.cqcparamname = #para(cqcparamname)
   #end
   #if(isenabled)
-  AND t1.isenabled = #para(isenabled)
+  AND t1.isenabled = #para(isenabled == 'true' ? 1 : 0)
 #end
 ORDER BY t1.dUpdateTime
     DESC
