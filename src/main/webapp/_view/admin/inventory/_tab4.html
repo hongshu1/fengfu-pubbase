@@ -1,0 +1,160 @@
+<div>
+    <!--<div class="py-2" style="padding:.5rem 0rem;">
+        &lt;!&ndash;<span class="py-1"><strong>附加信息</strong></span>&ndash;&gt;
+    </div>-->
+    <input type="hidden" name="inventoryrouting" value="#(inventoryrouting??)" />
+
+    <form></form>
+    <div data-key="#(pmkey)" >
+		<div class="jbolt_page_title">
+			<div class="row">
+				<div class="col">
+					<form class="form-inline" id="itemroutingconfigForm_#(pageId)"   onsubmit="return false;" method="post">
+						<input type="hidden" id="iinventoryid" autocomplete="off" class="form-control col-sm-4"  placeholder="料品工艺档案Id" name="iinventoryid" value="#(iinventoryid)" />
+						<input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+						<button  type="submit" id="itemroutingconfigFormBtn" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+					</form>
+				</div>
+				<div class="col-md-auto">
+				</div>
+			</div>
+		</div>
+        <div class="jbolt_page_content">
+            <!-- JBoltTable的数据模板定义-->
+            <textarea class="jb_tpl_box" id="itemroutingconfigRowtpl_#(pageId)">
+								{@each datas as data,index}
+								<tr data-id="${data.iAutoId}" >
+								<td hidden>${data.iInventoryId}</td>
+								<td> OP${data.iSeq}</td>
+								<td>${data.cMergedSeq}</td>
+								<td data-value="${data.cOperationName}">${data.cOperationName}</td>
+								<td data-value="${data.iType}">${data.iType}</td>
+								<td onclick="cancelEditCsupplier(this,'${data.iRsInventoryId}')">${data.iRsInventoryId}</td>
+								<td onclick="cancelEditIsreport(this,'${data.cProductSn}')">
+								   {@if data.cProductSn == '1'}
+									   <span>是</span>
+									   {@else if data.cProductSn == '0'}
+									   <span>否</span>
+								  {@/if}
+								</td>
+								<td onclick="cancelEditIprice(this,'${data.cProductTechSn}')">${data.cProductTechSn}</td>
+								<td>${data.iMergedNum}</td>
+								<td>${data.iMergeRate}</td>
+								<td>${data.iMergeSecs}</td>
+								<td>
+									{@if data.iSecs == undefined}
+										   <span></span>
+										   {@else}
+										   <span><i class="fa fa-cog"></i>已选${data.iSecs}个</span>
+									{@/if}
+								</td>
+								<td>
+									{@if data.invcs == undefined}
+										   <span></span>
+										   {@else}
+										   <span><i class="fa fa-cog"></i>已选${data.invcs}个</span>
+									{@/if}
+								</td>
+								<td>
+									{@if data.equipmentnum == undefined}
+										   <span></span>
+										   {@else}
+										   <span><i class="fa fa-cog"></i>已选${data.equipmentnum}个</span>
+									{@/if}
+								</td>
+
+								<td>
+								   {@if data.ismoulds == '1'}
+									   <span>是</span>
+									   {@else if data.ismoulds == '0'}
+									   <span>否</span>
+								  {@/if}
+								</td>
+								<td>
+									<a tooltip data-title="上移"  href="javascript:void(0)" onclick="moveUpBtn(this,'${data.iAutoId}',${data.iSeq})"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+									<a tooltip data-title="下移"  href="javascript:void(0)" onclick="moveDownBtn(this,'${data.iAutoId}',${data.iSeq})"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+									<a href="admin/itemroutingconfig/deleteByIds?ids=${data.iAutoId}" data-ajaxbtn data-loading="执行中" tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+								</td>
+								</tr>
+								{@/each}
+							</textarea>
+
+            <!-- 工具条 toolbar -->
+            <div class="jbolt_table_toolbar" id="itemroutingconfig_toolbar_#(pageId)">
+                <div class="btn-group" role="group" aria-label="btn-group">
+                    <div>
+						<span>
+							当前工艺：
+							<input type="text" id="iitemroutingname" style="display: inline-block;border: 0px;width: 400px" disabled="disabled" name="iitemroutingname" value="#(iitemroutingname)" />
+						</span>
+                        <button data-area="95%,95%" data-title="设置工艺路线" onclick="addRoutingBtn(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-cog"></i> 设置工艺路线</button>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                                <button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+                            </div>
+                            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" data-url="admin/itemroutingconfig/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+                            <button hidden onclick="" class="btn btn-primary btn-sm" ><i class="fa fa-file-image-o"></i> 工艺结构图</button>
+                            <button data-title="工序可视图" data-area="90%,85%" data-url="admin/itemroutingconfig/deleteByIds?ids=" class="btn btn-primary btn-sm" >工序可视图</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <table class="jbolt_table jbolt_main_table table-center"
+                   data-jbolttable
+                   data-height="62%"
+                   data-ajax="true"
+                   data-url="admin/inventoryroutingconfig/list"
+                   data-column-resize="true"
+                   data-column-prepend="1:checkbox:true"
+                   data-conditions-form="itemroutingconfigForm_#(pageId)"
+                   data-rowtpl="itemroutingconfigRowtpl_#(pageId)"
+                   data-toolbar="itemroutingconfig_toolbar_#(pageId)"
+                   data-editable="true"
+                   data-editable-option="getEditableTableOptions"
+                   id="itemroutingconfigid"
+            >
+                <thead>
+                <tr>
+                    <th hidden data-width="120" data-column="iInventoryId">工艺档案id</th>
+                    <th data-width="80" data-column="iSeq">工序号</th>
+                    <th data-width="160" data-column="cMergedSeq">合并工序</th>
+                    <th data-width="160" data-column="cOperationName">工序名称</th>
+                    <th data-width="120" data-column="iType">工序类型</th>
+                    <th data-width="120" data-column="iRsInventoryId">半成品/成品名称</th>
+                    <th data-width="120" data-column="cProductSn">生产方式</th>
+                    <th data-width="120" data-column="cProductTechSn">生产工艺</th>
+                    <th data-width="120" data-column="iMergedNum">合并要员（人）</th>
+                    <th data-width="120" data-column="iMergeRate">要员（人）</th>
+                    <th data-width="120" data-column="iMergeSecs">合并工时（秒）</th>
+                    <th data-width="120" data-column="iSecs">单工时（秒）</th>
+
+                    <th data-width="120" data-column="invcs">所需物料集</th>
+                    <th data-width="120" data-column="equipments">所需设备集</th>
+
+                    <th data-width="120" data-column="ismoulds">作业指导书</th>
+                    <th data-width="100">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+<!--<div>
+    <div class="mermaid">
+            graph TD
+            1([开始]) &ndash;&gt; 2[工序1]
+            2 &ndash;&gt; 3[工序2]
+            4[工序3] &ndash;&gt; 3
+            3 &ndash;&gt; 5[工序4]
+    </div>
+</div>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+</script>-->
+

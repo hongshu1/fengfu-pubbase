@@ -1,0 +1,233 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col">
+		<form class="form-inline" id="itemroutingForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品档案Id" name="iinventoryid" value="#(iinventoryid)" />
+			<input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+	<td>${pageNumber,pageSize,index | rownum}</td>
+	<td>${data.croutingname}</td>
+	<td>${data.cversion}</td>
+	<td>${data.dfromdate |date_ymd}</td>
+	<td>${data.dtodate |date_ymd}</td>
+	<td>${data.ifinishedrate}</td>
+	<td>${data.crequirement}</td>
+	<td>${data.cmemo}</td>
+	<td>
+		{@if data.isenable == 0}
+		<button onclick="selectBtn('${data.iautoid}','${data.croutingname}','${data.cversion}','${data.dtodate}','${data.isenabled}')" class="btn btn-outline-info btn-sm" > 选择</button>
+		{@/if}
+		<button onclick="refBtn('${data.iautoid}','${data.croutingname}','${data.croutingtypesn}','${data.itype}','${data.ifinishedrate}')" class="btn btn-outline-info btn-sm" > 复制</button>
+	</td>
+</tr>
+{@/each}
+</textarea>
+		<!-- 工具条 toolbar -->
+		<div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
+			<div class="btn-group" role="group" aria-label="btn-group">
+				<div>
+					<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+						<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增工艺版本行</button>
+						<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+						<button onclick="refreshPjaxContainer(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+						<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<table class="jbolt_table jbolt_main_table table-center"
+			   id="itemRoutingid"
+			   data-jbolttable
+			   data-height="fill"
+			   data-ajax="true"
+			   data-url="admin/inventoryrouting/dataList"
+			   data-column-resize="true"
+			   data-column-prepend="1:checkbox:true"
+			   data-conditions-form="itemroutingForm_#(pageId)"
+			   data-rowtpl="itemroutingRowtpl_#(pageId)"
+			   data-toolbar="itemrouting_toolbar_#(pageId)"
+			   data-editable="true"
+			   data-editable-option="getEditableTableOptions_itemrouting"
+
+			   data-fixed-columns-right="-1"
+		>
+			<thead>
+			<tr>
+				<th data-width="60" data-column="index">序号</th>
+				<th data-width="150" data-column="croutingname">工艺路线名称</th>
+				<th data-width="100" data-column="cversion">工艺版本</th>
+				<th data-width="120" data-column="dfromdate">启用日期</th>
+				<th data-width="120" data-column="dtodate">停用日期</th>
+				<th data-width="100" data-column="ifinishedrate">成品率</th>
+				<th data-width="150" data-column="crequirement">工艺要求</th>
+				<th data-width="150" data-column="cmemo">备注</th>
+				<th data-width="100">操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+	</div>
+</div>
+<script>
+	$(function(){
+		hideParentLayerDialogBtn(0);
+		addParentLayerDialogBtn("选择","lay_success",function(data){
+			//获取表格数据
+			let rowdata = getJboltTableCheckedData('#itemRoutingid')
+			if (rowdata){
+				selectBtn(rowdata.iautoid,rowdata.croutingname,rowdata.cversion,rowdata.dtodate,rowdata.isenabled);
+			}
+		});
+	});
+
+	var version = "";
+	var toDate = "";
+	function addTableRow(ele){
+		//获取表格数据
+		var tableDatas = getJboltTableAllDatas(ele);
+		console.log(tableDatas);
+		if (tableDatas){
+			var data = tableDatas[tableDatas.length - 1];
+			if (!data.cversion){
+				LayerMsgBox.alert("请先输入工艺版本！");
+				return;
+			}
+			if (!data.dtodate){
+				LayerMsgBox.alert("请先选择停用日期！");
+				return;
+			}
+			version = data.cversion;
+			toDate = data.dtodate;
+			//表格新增行/带参数
+			jboltTableInsertRow(ele,{cversion:(Number(version) +0.1).toFixed(1),dfromdate:toDate})
+		}else {
+			//表格新增行/带参数
+			let croutingname = "#(citemcode)" + "#(citemname)";
+			jboltTableInsertRow(ele,{croutingname:croutingname,cversion:'1.0'})
+		}
+	}
+
+	function getEditableTableOptions_itemrouting(){
+		var editableTableOptions={
+			trigger:"click",
+			initRowCount:0,
+			maxRowCount:30,
+			//keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+			submit:{
+				// withForm:[""],
+				type:"all",//cell|all
+				//params:{"masterautoid":'#(masterautoid)'},//携带其他额外参数
+				//commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+				url:"admin/inventoryrouting/saveItemRouting?iinventoryid=#(iinventoryid)",
+				success:function(res){
+					LayerMsgBox.success("提交成功",600,function(){
+						refreshPjaxContainer();
+						//parent.LayerMsgBox.closeAll();
+					});
+				}
+			},
+			//插入数据时默认属性值
+			//insertDefaultValues:{age:10},
+			cols:{
+				iautoid:{
+					submitAttr:"iautoid",
+				},
+				croutingname:{type:"input", required:true},
+				coperationname:{type:"input"},
+				dfromdate:{
+					submitAttr:"dfromdate",
+					type:"date",
+					required:true
+				},
+				dtodate:{
+					submitAttr:"dtodate",
+					type:"date",
+					required:true
+				},
+				ifinishedrate:{type:"input_number", rule:"number",placeholder:"0"},
+				crequirement:{type:"input"},
+				cmemo:{type:"input"},
+			}
+		};
+		return editableTableOptions;
+	}
+	/*function compareDate(){
+		var dateAStr=$("input[name=dateA]").val();
+		var arrA=dateAStr.split("-");
+		var dateA=new Date(arrA[0],arrA[1],arrA[2]);
+		var dateAT=dateA.getTime();
+		var dateBStr=$("input[name=dateB]").val();
+		var arrB=dateBStr.split("-");
+		var dateB=new Date(arrB[0],arrB[1],arrB[2]);
+		var dateBT=dateB.getTime();
+		if(dateAT>dateBT){
+			alert("A大于B");
+		}else{
+			alert("A非大于B");
+		}
+	}*/
+	function refBtn(id,name,croutingtypesn,itype,ifinishedrate){
+		//获取表格数据
+		var tableDatas = getJboltTableAllDatas('#itemRoutingid');
+		if (tableDatas != null){
+			var data = tableDatas[tableDatas.length - 1];
+			if (!data.cversion){
+				LayerMsgBox.alert("请先输入工艺版本！");
+				return;
+			}
+			if (!data.dtodate){
+				LayerMsgBox.alert("请先选择停用日期！");
+				return;
+			}
+			version = data.cversion;
+			toDate = data.dtodate;
+			//表格新增行/带参数
+			jboltTableInsertRow('#itemRoutingid',{croutingname:name+"-副本",croutingtypesn:croutingtypesn,itype:itype,ifinishedrate:ifinishedrate,iautoid:id,
+				cversion:(Number(version) +0.1).toFixed(1),dfromdate:toDate})
+		}else {
+			//表格新增行/带参数
+			jboltTableInsertRow('#itemRoutingid',{cversion:'1.0'})
+		}
+	}
+	function selectBtn(id,cname,cversion,dtodate,isenabled){
+		if (!id){
+			LayerMsgBox.alert("请先保存工艺后选择！");
+			return;
+		}
+		if ((Date.parse(dtodate)) < (new Date().getTime())){
+			LayerMsgBox.alert("该工艺已到停用日期，不能选择！");
+			return;
+		}
+		if (isenabled == 0){
+			LayerMsgBox.alert("该工艺已停用，不能选择！");
+			return;
+		}
+		parent.$("#iitemroutingid").val(id);
+		parent.$("#iitemroutingname").val(cname+"（"+cversion+"）");
+		parent.$("#itemroutingconfigFormBtn").click();
+		parent.LayerMsgBox.closeAll();
+	}
+</script>
+#end
+
+

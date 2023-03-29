@@ -1,6 +1,7 @@
 package cn.rjtech.admin.inventory;
 
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -75,6 +76,13 @@ public class InventoryAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
+		Long inventoryclassid = getLong("inventoryclassid");
+		Inventory inventory = new Inventory();
+		inventory.setIInventoryClassId(inventoryclassid);
+		set("inventory", inventory);
+		//set("centityname", "itemmaster");  //扩展字段
+		Long autoid = JBoltSnowflakeKit.me.nextId();
+		set("iinventoryid", autoid);
 		render("add.html");
 	}
 

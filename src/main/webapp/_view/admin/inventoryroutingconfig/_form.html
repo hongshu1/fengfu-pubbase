@@ -1,0 +1,132 @@
+<form onsubmit="return false;" id="InventoryRoutingConfig_Form" action="#(action)" method="post">
+	#if(inventoryRoutingConfig.iAutoId??)
+	<input type="hidden" name="inventoryRoutingConfig.iAutoId" value="#(inventoryRoutingConfig.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键" maxlength="40" name="inventoryRoutingConfig.iAutoId" value="#(inventoryRoutingConfig.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">存货工艺档案ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入存货工艺档案ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货工艺档案ID" maxlength="40" name="inventoryRoutingConfig.iInventoryRoutingId" value="#(inventoryRoutingConfig.iInventoryRoutingId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">序号</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入序号" maxlength="40" name="inventoryRoutingConfig.iSeq" value="#(inventoryRoutingConfig.iSeq??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">合并工序</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入合并工序" maxlength="40" name="inventoryRoutingConfig.cMergedSeq" value="#(inventoryRoutingConfig.cMergedSeq??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">工序名称</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入工序名称" maxlength="40" name="inventoryRoutingConfig.cOperationName" value="#(inventoryRoutingConfig.cOperationName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">工序类型: 1. 串序 2. 并序</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入工序类型: 1. 串序 2. 并序" maxlength="40" name="inventoryRoutingConfig.iType" value="#(inventoryRoutingConfig.iType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">半成品/成品ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入半成品/成品ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入半成品/成品ID" maxlength="40" name="inventoryRoutingConfig.iRsInventoryId" value="#(inventoryRoutingConfig.iRsInventoryId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产方式(字典值) 内作/外作</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产方式(字典值) 内作/外作" maxlength="40" name="inventoryRoutingConfig.cProductSn" value="#(inventoryRoutingConfig.cProductSn??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产工艺： 1. 冲压 2. 弯管 3. 焊接</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产工艺： 1. 冲压 2. 弯管 3. 焊接" maxlength="40" name="inventoryRoutingConfig.cProductTechSn" value="#(inventoryRoutingConfig.cProductTechSn??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">合并要员（人）</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入合并要员（人）" maxlength="40" name="inventoryRoutingConfig.iMergedNum" value="#(inventoryRoutingConfig.iMergedNum??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">要员（人）</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入要员（人）" maxlength="40" name="inventoryRoutingConfig.iMergeRate" value="#(inventoryRoutingConfig.iMergeRate??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">合并工时（秒）</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入合并工时（秒）" maxlength="40" name="inventoryRoutingConfig.iMergeSecs" value="#(inventoryRoutingConfig.iMergeSecs??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">单工时（秒）</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入单工时（秒）" maxlength="40" name="inventoryRoutingConfig.iSecs" value="#(inventoryRoutingConfig.iSecs??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="inventoryRoutingConfig.cMemo">#(inventoryRoutingConfig.cMemo??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人" maxlength="40" name="inventoryRoutingConfig.iCreateBy" value="#(inventoryRoutingConfig.iCreateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="inventoryRoutingConfig.cCreateName" value="#(inventoryRoutingConfig.cCreateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="inventoryRoutingConfig.dCreateTime"    value="#datetime(inventoryRoutingConfig.dCreateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="inventoryRoutingConfig.isEnabled"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否启用"
+data-width="col-sm-2,col-10"
+data-value="#(inventoryRoutingConfig.isEnabled??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否启用"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="InventoryRoutingConfig_Form")
+#end
+

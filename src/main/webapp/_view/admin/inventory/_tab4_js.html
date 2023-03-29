@@ -1,0 +1,197 @@
+<script>
+    function addRoutingBtn(ele){
+/*
+        let iitemattribute = $("#iitemattribute").val();
+        if (!iitemattribute){
+            LayerMsgBox.alert("请先选择料品属性！");
+            return;
+        }
+        if (iitemattribute != "10"){
+            LayerMsgBox.alert("该料品属性为非制造件，不能设置工艺路线！");
+            return;
+        }*/
+        let citemcode = $("#citemcode").val();
+        let citemname = $("#citemname").val();
+        var url="admin/inventoryrouting/dialog_index?iinventoryid=#(inventory.iAutoId)"+"&citemcode="+citemcode+"&citemname="+citemname;
+        $(ele).data("url",url);
+        DialogUtil.openBy(ele);
+    }
+
+    function addTableRow(ele){
+        //获取表格数据
+        let iitemroutingid = $("#iitemroutingid").val();
+        if (iitemroutingid == ''){
+            LayerMsgBox.alert("请先设置工艺路线！");
+            return;
+        }
+        let seq = 0;
+        var tableDatas = getJboltTableAllDatas(ele);
+        if (tableDatas != null){
+            var data = tableDatas[tableDatas.length - 1];
+            seq = data.iseq;
+        }
+        let url = "admin/itemmaster/saveItemRoutingConfig?iitemroutingid="+iitemroutingid+"&iseq="+Number(seq+10);
+        Ajax.get(url,function(res){
+            refreshJBoltTable("#itemroutingconfigid");
+        });
+    }
+    var isroutingreportValue = '';
+    var isubsupplieridValue = '';
+    function getEditableTableOptions(){
+        var editableTableOptions={
+            trigger:"click",
+            initRowCount:0,
+            maxRowCount:30,
+            keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+            submit:{
+                /*withForm:[""],*/
+                type:"cell",//cell|all
+                //params:{"orderId":3},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                url:"admin/itemmaster/updateItemRoutingConfig",
+                success:function(res){
+                    //refreshJBoltTable("#itemroutingconfigid");
+                    /*LayerMsgBox.success("提交成功",600,function(){
+                        //refreshPjaxContainer();
+                        refreshJBoltTable("#itemroutingconfigid");
+                    });*/
+                },
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols:{
+                iautoid:{
+                    submitAttr:"iautoid",
+                },
+                iitemroutingid:{type:"input", required:true},
+                //iseq:{type:"input", required:true},
+                coperationname:{  //工序名称
+                    type:"dialogbtn",
+                    placeholder:"选择工序",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/itemroutingconfig/operation_dialog_index",
+                        area:"60%,70%",
+                        title:"选择工序",
+                        btn:"确定,关闭"
+                    }
+                },
+                itype:{  //工序类型
+                    type:"select",
+                    url:"admin/dictionary/options?key=process_type",
+                    maxLength:100,
+                    placeholder:"请输入",
+                    textAttr: "name",
+                    valueAttr:"sn",
+                },
+                cproductsn:{  //生产方式
+                    type:"select",
+                    url:"admin/dictionary/options?key=cproductsn_type",
+                    maxLength:100,
+                    placeholder:"请输入",
+                    textAttr: "name",
+                    valueAttr:"sn",
+                    handler:function(table,td,text,value,trJsonData){
+                        if (value == "1"){
+                            isubsupplieridValue = '1';
+                            jboltTableSetCellEditable(table, td.parent(), "isubsupplierid", false, false);
+                            jboltTableSetCellEditable(table, td.parent(), "isroutingreport", true, false)
+                        }
+                        if (value == "2"){
+                            isubsupplieridValue = '2';
+                            jboltTableSetCellEditable(table, td.parent(), "isubsupplierid", true, false);
+                            jboltTableSetCellEditable(table, td.parent(), "isroutingreport", false, false)
+                        }
+                    },
+                },
+                invcs:{  //所需物料集
+                    type:"dialogbtn",
+                    placeholder:"设置物料集",
+                    linkColumn:'iautoid',
+                    dialog:{
+                        url:"admin/itemroutingconfig/invc_dialog_index?masterautoid=#(masterautoid)",
+                        area:"70%,80%",
+                        title:"工序物料集",
+                        btn:"确定,关闭"
+                    }
+                },
+                equipments:{  //设备集
+                    type:"dialogbtn",
+                    placeholder:"工序设备集",
+                    linkColumn:'iautoid',
+                    dialog:{
+                        url:"admin/itemroutingconfig/equipment_dialog_index",
+                        area:"70%,80%",
+                        title:"选择设备",
+                        btn:"确定,关闭"
+                    }
+                },
+                drawings:{  //工艺文件
+                    type:"dialogbtn",
+                    placeholder:"工艺文件",
+                    linkColumn:'iautoid',
+                    dialog:{
+                        url:"admin/itemroutingconfig/drawing_dialog_index",
+                        area:"70%,80%",
+                        title:"工艺文件",
+                        btn:"确定,关闭"
+                    }
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+    function moveUpBtn(ele,id,seq){
+        let iitemroutingid = $("#iitemroutingid").val();
+        let url = "admin/itemroutingconfig/moveUp?iitemroutingid="+iitemroutingid+"&iitemroutingconfigid="+id+"&seq="+seq;
+        Ajax.get(url,function(res){
+            refreshJBoltTable("#itemroutingconfigid");
+        });
+        //jboltTableTrMoveDown(ele);
+    }
+    function moveDownBtn(ele,id,seq){
+        let iitemroutingid = $("#iitemroutingid").val();
+        let url = "admin/itemroutingconfig/moveDown?iitemroutingid="+iitemroutingid+"&iitemroutingconfigid="+id+"&seq="+seq;
+        Ajax.get(url,function(res){
+            refreshJBoltTable("#itemroutingconfigid");
+        });
+        //jboltTableTrMoveDown(ele);
+    }
+
+    //是否可编辑 委外供应商
+    function cancelEditCsupplier(td,value) {
+        if (isubsupplieridValue != ''){
+            return;
+        }
+        let table = getJBoltTable("#itemroutingconfigid");
+        if (value == '自制'){
+            jboltTableSetCellEditable(table, $(td).parent(), "isubsupplierid", false, false);
+        }else {
+            jboltTableSetCellEditable(table, $(td).parent(), "isubsupplierid", true, false);
+        }
+    }
+    //是否可编辑 是否报工
+    function cancelEditIsreport(td,value) {
+        if (isubsupplieridValue != ''){
+            return;
+        }
+        let table = getJBoltTable("#itemroutingconfigid");
+        if (value == '委外'){
+            jboltTableSetCellEditable(table, $(td).parent(), "isroutingreport", false, false);
+        }else {
+            jboltTableSetCellEditable(table, $(td).parent(), "isroutingreport", true, false);
+        }
+    }
+    //是否可编辑 工序单价
+    function cancelEditIprice(td,value) {
+        if (isroutingreportValue != ''){
+            return;
+        }
+        let table = getJBoltTable("#itemroutingconfigid");
+        if (value == '0'){
+            jboltTableSetCellEditable(table, $(td).parent(), "iprice", false, false);
+        }else {
+            jboltTableSetCellEditable(table, $(td).parent(), "iprice", true, false);
+        }
+    }
+</script>

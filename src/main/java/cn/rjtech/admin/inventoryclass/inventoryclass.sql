@@ -45,3 +45,27 @@ left join Bd_Department d on iw.iDepId = d.iAutoId
 left join #(getBaseDbName()).dbo.jb_dictionary jd on iw.isDefault + 1 = jd.sort_rank and jd.type_key = 'options_boolean'
 where iw.iInventoryId = #para(iInventoryId)
 #end
+
+#sql("getRouingConfigs")
+SELECT
+    a.*,
+    b.name as itypename,
+    c.name as cproductsnname,
+    d.name as cproducttechsnname
+FROM
+    Bd_InventoryRoutingConfig a
+        inner join Bd_InventoryRouting ir on a.iInventoryRoutingId = ir.iAutoId
+        LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary b ON a.iType = b.sn AND b.type_key = 'process_type'
+        LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary c ON a.cProductSn = c.sn AND c.type_key = 'cproductsn_type'
+        LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary d ON a.cProductTechSn = d.sn AND d.type_key = 'product_tech'
+WHERE
+        ir.iinventoryid = #para(iinventoryid) and ir.isEnabled = 1
+ORDER BY a.iSeq ASC
+#end
+
+#sql("getRouings")
+SELECT
+    ir.*
+FROM Bd_InventoryRouting ir
+WHERE ir.iinventoryid = #para(iinventoryid)
+#end

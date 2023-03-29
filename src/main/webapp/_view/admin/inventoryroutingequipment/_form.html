@@ -1,0 +1,57 @@
+<form onsubmit="return false;" id="InventoryRoutingEquipment_Form" action="#(action)" method="post">
+	#if(inventoryRoutingEquipment.iAutoId??)
+	<input type="hidden" name="inventoryRoutingEquipment.iAutoId" value="#(inventoryRoutingEquipment.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键" maxlength="40" name="inventoryRoutingEquipment.iAutoId" value="#(inventoryRoutingEquipment.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">料品工艺档案配置ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入料品工艺档案配置ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入料品工艺档案配置ID" maxlength="40" name="inventoryRoutingEquipment.iInventoryRoutingConfigId" value="#(inventoryRoutingEquipment.iInventoryRoutingConfigId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设备ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入设备ID" maxlength="40" name="inventoryRoutingEquipment.iEquipmentId" value="#(inventoryRoutingEquipment.iEquipmentId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="inventoryRoutingEquipment.cMemo">#(inventoryRoutingEquipment.cMemo??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人" maxlength="40" name="inventoryRoutingEquipment.iCreateBy" value="#(inventoryRoutingEquipment.iCreateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人名称</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="inventoryRoutingEquipment.cCreateName" value="#(inventoryRoutingEquipment.cCreateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="inventoryRoutingEquipment.dCreateTime"    value="#datetime(inventoryRoutingEquipment.dCreateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="InventoryRoutingEquipment_Form")
+#end
+

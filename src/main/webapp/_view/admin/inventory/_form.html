@@ -1,6 +1,7 @@
 <form onsubmit="return false;" id="Inventory_Form_#(pageId)" action="#(action)" method="post">
 	#if(inventory.iAutoId??)
 	<input type="hidden" name="inventory.iAutoId" value="#(inventory.iAutoId??)" />
+	<input type="hidden" name="iinventoryid" value="#(iinventoryid??)" />
 	#end
     <div >
     <div class="row">
@@ -25,7 +26,7 @@
         <div class="form-group row" >
             <label class="col-sm-3 col-form-label">存货编码</label>
             <div class="col">
-                <input type="text" data-rule="required" data-notnull="true" data-tips="请输入存货编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货编码" maxlength="40" name="inventory.cInvCode" value="#(inventory.cInvCode??)"/>
+                <input type="text" data-rule="required" data-notnull="true" data-tips="请输入存货编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货编码" maxlength="40" name="inventory.cInvCode" value="#(inventory.cInvCode??)" id="citemcode"/>
             </div>
         </div>
     </div>
@@ -33,7 +34,7 @@
         <div class="form-group row" >
             <label class="col-sm-3 col-form-label">存货名称</label>
             <div class="col">
-                <input type="text" data-rule="required" data-notnull="true" data-tips="请输入存货名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货名称" maxlength="40" name="inventory.cInvName" value="#(inventory.cInvName??)"/>
+                <input type="text" data-rule="required" data-notnull="true" data-tips="请输入存货名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货名称" maxlength="40" name="inventory.cInvName" value="#(inventory.cInvName??)" id="citemname"/>
             </div>
         </div>
     </div>
@@ -119,7 +120,6 @@
 
     </div>
     </div>
-
 </div>
     <div class="jbolt_page_content" style="margin-top: 20px">
         #setLocal(jboltTabId=(goods.id?? RandomUtil.random(6)))
@@ -158,7 +158,7 @@
 
             <!--4 工艺 start -->
             <div class="tab-pane fade" id="tab-four" role="tabpanel" aria-labelledby="nav-attr-tab_four">
-                <div></div>
+                #render("_tab4.html")
             </div>
             <!--4 工艺 end -->
 
@@ -190,6 +190,7 @@
 </form>
 #define js()
 #render("_table_split_js.html")
+#render("_tab4_js.html")
 <script>
     function submitThisForm(){
         jboltTableSubmit("#jbolt_table_workshiftd_split_#(pageId)");
