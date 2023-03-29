@@ -1,0 +1,78 @@
+<form onsubmit="return false;" id="annualOrderDForm" action="#(action)" method="post">
+<input type="hidden" name="annualOrderD.iautoid" value="#(annualOrderD.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度计划订单ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入年度计划订单ID" maxlength="19" name="annualOrderD.iannualordermid" value="#(annualOrderD.iannualordermid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="annualOrderD.iinventoryid" value="#(annualOrderD.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度1</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年度1" data-tips="请设置年度1" maxlength="10" name="annualOrderD.iyear1" value="#(annualOrderD.iyear1??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度1合计</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年度1合计" data-tips="请设置年度1合计" maxlength="18" name="annualOrderD.iyear1sum" value="#(annualOrderD.iyear1sum??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度2</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置年度2" data-tips="请设置年度2" maxlength="10" name="annualOrderD.iyear2" value="#(annualOrderD.iyear2??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度2合计</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置年度2合计" data-tips="请设置年度2合计" maxlength="18" name="annualOrderD.iyear2sum" value="#(annualOrderD.iyear2sum??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度3</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置年度3" data-tips="请设置年度3" maxlength="10" name="annualOrderD.iyear3" value="#(annualOrderD.iyear3??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度3合计</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置年度3合计" data-tips="请设置年度3合计" maxlength="18" name="annualOrderD.iyear3sum" value="#(annualOrderD.iyear3sum??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(annualOrderD.isdeleted??)"
+    	data-name="annualOrderD.isdeleted"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >删除状态：0. 未删除 1. 已删除</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_true" type="radio" name="annualOrderD.isdeleted" value="true"/>
+					<label for="r_isdeleted_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_false" type="radio" name="annualOrderD.isdeleted" value="false"/>
+					<label for="r_isdeleted_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="annualOrderDForm")
+#end
+

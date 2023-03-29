@@ -86,11 +86,11 @@ public class WarehouseAdminController extends BaseAdminController {
 		renderJson(service.update(getModel(Warehouse.class, "warehouse")));
 	}
 
-   /**
-	* 批量删除
-	*/
+	/**
+	 * 批量删除
+	 */
 	public void deleteByIds() {
-		renderJson(service.deleteByIds(get("ids")));
+		renderJson(service.deleteByBatchIds(get("ids")));
 	}
 
    /**
@@ -100,74 +100,18 @@ public class WarehouseAdminController extends BaseAdminController {
 		renderJson(service.deleteById(getLong(0)));
 	}
 
-   /**
-	* 切换bFreeze
-	*/
-	public void toggleBFreeze() {
-	    renderJson(service.toggleBoolean(getLong(0),"bFreeze"));
+	/**
+	 * 切换是否库存预警
+	 */
+	public void isStockWarnEnabled() {
+		renderJson(service.toggleBoolean(getLong(0),"isStockWarnEnabled"));
 	}
 
-   /**
-	* 切换bMRP
-	*/
-	public void toggleBMRP() {
-	    renderJson(service.toggleBoolean(getLong(0),"bMRP"));
-	}
-
-   /**
-	* 切换bShop
-	*/
-	public void toggleBShop() {
-	    renderJson(service.toggleBoolean(getLong(0),"bShop"));
-	}
-
-   /**
-	* 切换bInCost
-	*/
-	public void toggleBInCost() {
-	    renderJson(service.toggleBoolean(getLong(0),"bInCost"));
-	}
-
-   /**
-	* 切换bInAvailCalcu
-	*/
-	public void toggleBInAvailCalcu() {
-	    renderJson(service.toggleBoolean(getLong(0),"bInAvailCalcu"));
-	}
-
-   /**
-	* 切换bProxyWh
-	*/
-	public void toggleBProxyWh() {
-	    renderJson(service.toggleBoolean(getLong(0),"bProxyWh"));
-	}
-
-   /**
-	* 切换bBondedWh
-	*/
-	public void toggleBBondedWh() {
-	    renderJson(service.toggleBoolean(getLong(0),"bBondedWh"));
-	}
-
-   /**
-	* 切换bWhAsset
-	*/
-	public void toggleBWhAsset() {
-	    renderJson(service.toggleBoolean(getLong(0),"bWhAsset"));
-	}
-
-   /**
-	* 切换bCheckSubitemCost
-	*/
-	public void toggleBCheckSubitemCost() {
-	    renderJson(service.toggleBoolean(getLong(0),"bCheckSubitemCost"));
-	}
-
-   /**
-	* 切换bEB
-	*/
-	public void toggleBEB() {
-	    renderJson(service.toggleBoolean(getLong(0),"bEB"));
+	/**
+	 * 切换是否启动
+	 */
+	public void isEnabled() {
+		renderJson(service.toggleBoolean(getLong(0),"isEnabled"));
 	}
 
    /**

@@ -111,12 +111,7 @@ public class QcParamService extends BaseService<QcParam> {
         if (dbQcParam == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
-        //if(existsName(qcParam.getName(), qcParam.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = qcParam.update();
-        if (success) {
-            //添加日志
-            //addUpdateSystemLog(qcParam.getIAutoId(), JBoltUserKit.getUserId(), qcParam.getName());
-        }
         return ret(success);
     }
 

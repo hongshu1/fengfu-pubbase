@@ -12,8 +12,8 @@ WHERE v.isDeleted = '0'
   AND v.cvenname = #para(cvenname)
   #end
   #if(isenabled)
-  AND v.isenabled = #para(isenabled)
-    #end
+  AND v.isenabled = #para(isenabled == 'true' ? 1 : 0)
+  #end
 ORDER BY v.dUpdateTime
     DESC
 #end

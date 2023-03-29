@@ -86,7 +86,7 @@ public class SettleStyleService extends BaseService<SettleStyle> {
 		if(dbSettleStyle==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		User loginUser = JBoltUserKit.getUser();
 		Date now = new Date();
-		dbSettleStyle.setIUpdateBy(loginUser.getId())
+		settleStyle.setIUpdateBy(loginUser.getId())
 			.setCUpdateName(loginUser.getName())
 			.setDUpdateTime(now);
 		boolean success=settleStyle.update();

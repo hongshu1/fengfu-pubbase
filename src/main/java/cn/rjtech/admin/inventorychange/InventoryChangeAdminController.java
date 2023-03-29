@@ -89,7 +89,7 @@ public class InventoryChangeAdminController extends BaseAdminController {
 	*/
    @CheckPermission(PermissionKey.INVENTORYCHANGE_DEL)
 	public void deleteByIds() {
-		renderJson(service.deleteByIds(get("ids")));
+		renderJson(service.removeByIds(get("ids")));
 	}
 
    /**
@@ -97,7 +97,7 @@ public class InventoryChangeAdminController extends BaseAdminController {
 	*/
    @CheckPermission(PermissionKey.INVENTORYCHANGE_DEL)
 	public void delete() {
-		renderJson(service.deleteById(getLong(0)));
+		renderJson(service.removeByIds(get(0)));
 	}
 
    /**

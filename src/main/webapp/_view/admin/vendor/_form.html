@@ -1,6 +1,6 @@
 <form onsubmit="return false;" id="Vendor_Form" action="#(action)" method="post">
   #if(vendor.iAutoId??)
-  <input type="hidden" name="vendor.iAutoId" value="#(vendor.iAutoId??)"/>
+  <input type="hidden" name="iAutoId" value="#(vendor.iAutoId??)"/>
   #end
 
   <div class="form-group row">
@@ -17,26 +17,26 @@
               data-url="admin/vendorclass/enableOptions"
               data-text="=请选择分类="
               data-value=""
-              data-select="#(cvccode??)">
+              data-select="#(vendor.cvccode??)">
       </select>
     </div>
 
     <label class="col-sm-1 col-form-label">供应商编码</label>
     <div class="col-2">
       <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
-             placeholder="请输入供应商编码" maxlength="255" name="cvencode" value="#(cvencode??)"/>
+             placeholder="请输入供应商编码" maxlength="255" name="cvencode" value="#(vendor.cvencode??)"/>
     </div>
 
     <label class="col-sm-1 col-form-label">供应商名称</label>
     <div class="col-2">
       <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
-             placeholder="请输入供应商名称" maxlength="255" name="cvenname" value="#(cvenname??)"/>
+             placeholder="请输入供应商名称" maxlength="255" name="cvenname" value="#(vendor.cvenname??)"/>
     </div>
 
     <label class="col-sm-1 col-form-label">供应商简称</label>
     <div class="col-2">
       <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
-             placeholder="请输入供应商简称" maxlength="255" name="cvenabbname" value="#(cvenabbname??)"/>
+             placeholder="请输入供应商简称" maxlength="255" name="cvenabbname" value="#(vendor.cvenabbname??)"/>
     </div>
   </div>
 
@@ -45,16 +45,20 @@
     <label class="col-sm-1 col-form-label">助记码</label>
     <div class="col-2">
       <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
-             placeholder="请输入助记码" maxlength="255" name="cVenMnemCode" value="#(cVenMnemCode??)"/>
+             placeholder="请输入助记码" maxlength="255" name="cVenMnemCode" value="#(vendor.cVenMnemCode??)"/>
     </div>
 
     <label class="col-sm-1 col-form-label">所属地区</label>
     <div class="col-2"
+         name="cprovince"
+         data-tips="所属地区"
          data-text="=所属地区="
          data-citypicker
-         data-setvalueto="cprovince:cprovince:code;cprovince:cprovince:name"
+         data-setvalueto="cprovince:cprovince:code;cprovince:cprovince:code"
+         data-value-attr="code"
+         data-text-attr="code"
          data-value=""
-         data-value-attr="cprovince">
+         data-select="#(vendor.cprovince??)"><!--[120000,120100,120102]-->
       </select>
     </div>
     <!--name="cprovince"-->
@@ -68,12 +72,12 @@
               data-autoload
               name="cVenDepart"
               data-select-type="select2"
-              data-tips="所属部门"
+              data-tips="分管部门"
               data-url="admin/dept/datas"
-              data-text="=所属部门="
+              data-text="=分管部门="
               data-value=""
               data-value-attr="id"
-              data-select="#(cVenDepart??)">
+              data-select="#(vendor.cVenDepart??)">
       </select>
     </div>
 
@@ -88,7 +92,7 @@
               data-text="=专管业务员="
               data-value=""
               data-value-attr="id"
-              data-select="#(cvenpperson??)">
+              data-select="#(vendor.cvenpperson??)">
       </select>
     </div>
   </div>
@@ -98,9 +102,14 @@
     <div class="col-2">
       <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"
              data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入发展日期" maxlength="20"
-             name="dvendevdate" value="#datetime(dvendevdate??,'yyyy-MM-dd')"/>
+             name="dvendevdate" value="#datetime(vendor.dvendevdate??,'yyyy-MM-dd')"/>
     </div>
 
+    <!--
+    name="comwhcode"
+    data-text-attr="cwhname"
+    data-select="#(vendor.comwhcode??)"
+    -->
     <label class="col-sm-1 col-form-label">默认委外仓</label>
     <div class="col-2">
         <select class="form-control"
@@ -108,56 +117,40 @@
                 name="comwhcode"
                 data-select-type="select2"
                 data-url="admin/warehouse/options"
+                data-tips="默认委外仓"
                 data-text="=默认委外仓="
                 data-value=""
                 data-text-attr="cwhname"
-                data-value-attr="iautoid"
-                data-select="#(comwhcode??)">
+                data-value-attr="cwhcode"
+                data-select="#(vendor.comwhcode??)">
         </select>
       </div>
 
     <label class="col-sm-1 col-form-label">币种</label>
     <div class="col-2">
       <select class="form-control" data-url="admin/dictionary/options?key=ccurrency" name="ccurrency" data-autoload
-              data-text="=请选择=" data-value-attr="sn" data-value="" data-select="#(cCurrency??)"></select>
+              data-text="=请选择=" data-value-attr="sn" data-value="" data-select="#(vendor.cCurrency??)"></select>
     </div>
 
     <label class="col-sm-1 col-form-label">税率</label>
     <div class="col-2">
       <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="税率，通常2位小数"
-             maxlength="40" name="itaxrate" value="#(itaxrate??)"/>
+             maxlength="40" name="itaxrate" value="#(vendor.itaxrate??)"/>
     </div>
   </div>
 
   <!--data-hidden-input="xxx"-->
-  <div class="form-group row"
+  <div class="form-group row col-6"
        data-checkbox
        data-rule="checkbox"
-       data-value="#(cproperty??)"
-       data-name="cproperty"
-       style="right: 8px;">
-    <label class="col-auto col-form-label" >供应商属性</label>
-    <div class="col" style="left: 15px;">
-      <div class="checkbox checkbox-primary  checkbox-inline">
-        <input  id="c1" type="checkbox" name="cproperty"   value="采购"/>
-        <label for="c1">采购</label>
-      </div>
-
-      <div class="checkbox checkbox-primary  checkbox-inline">
-        <input  id="c2" type="checkbox" name="cproperty"   value="委外"/>
-        <label for="c2">委外</label>
-      </div>
-
-      <div class="checkbox checkbox-primary  checkbox-inline">
-        <input  id="c3" type="checkbox" name="cproperty"   value="服务"/>
-        <label for="c3">服务</label>
-      </div>
-
-      <div class="checkbox checkbox-primary  checkbox-inline">
-        <input  id="c4" type="checkbox" name="cproperty"   value="国外"/>
-        <label for="c4">国外</label>
-      </div>
-    </div>
+       data-label="供应商属性"
+       data-default=""
+       data-url="admin/dictionary/options?key=vendor_cproperty"
+       data-value-attr="sn"
+       data-text-attr="cproperty"
+       data-inline="true"
+       data-value="#(vendor.cproperty??)"
+       data-name="cproperty">
   </div>
 
   <div class="form-group row">

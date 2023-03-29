@@ -84,8 +84,12 @@ public class WorkClassService extends BaseService<Workclass> {
         if (dbWorkclass == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
+        if (!workclass.getCworkclasscode().equals(dbWorkclass.getCworkclasscode())){
+            ValidationUtils.isTrue(findWorkClassCodeInfo(workclass.getCworkclasscode()) == null,
+                workclass.getCworkclasscode()+" 编码重复！");
+        }
         if(exists("cWorkClassCode",workclass.getCworkclasscode(), workclass.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-        ValidationUtils.isTrue(findWorkClassCodeInfo(workclass.getCworkclasscode()) == null, "编码重复！");
+
         workclass.setIupdateby(JBoltUserKit.getUserId());
         workclass.setCupdatename(JBoltUserKit.getUserName());
         workclass.setDupdatetime(new Date());
@@ -348,4 +352,8 @@ public class WorkClassService extends BaseService<Workclass> {
         // 3、返回生成的excel文件
         return jBoltExcel;
     }
+
+	public Workclass findModelByCode(String cWorkClassCode) {
+		return findFirst(selectSql().eq("cworkclasscode", cWorkClassCode));
+	}
 }

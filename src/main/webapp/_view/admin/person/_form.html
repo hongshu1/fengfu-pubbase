@@ -125,7 +125,7 @@
 		</div>
 		<label class="col-sm-1 col-form-label">工龄</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入工龄"  maxlength="10" name="person.sysworkage" value="#(person.sysworkage??)"/>
+			<input type="text" data-with-clearbtn="true" disabled autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入工龄"  maxlength="10" name="person.sysworkage" value="#(person.sysworkage??)"/>
 		</div>		
 		<label class="col-sm-1 col-form-label">出生日期</label>
 		<div class="col">
@@ -291,6 +291,7 @@ function getEditableTableOptions_#(pageId)(){
                 placeholder: "请选择",
                 textAttr: "cequipmentcode",
                 width: 500,
+                required: true,
                 valueAttr: "cequipmentcode",
                 columnAttr: "cequipmentcode,cequipmentname",
                 header:'设备编码,设备名称',

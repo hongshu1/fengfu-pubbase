@@ -10,11 +10,11 @@
             <td>${data.ccountry}</td>
             <td>${data.cprovince}</td>
             <td>${data.ccity}</td>
-            <td>${data.ccountry}</td>
-            <td>${data.caddress}</td>
+            <td>${data.ccounty}</td>
+            <td>${data.caddr}</td>
             <td>${data.cpostcode}</td>
+            <td>${data.cmobile}</td>
             <td>${data.cphone}</td>
-            <td>${data.ctele}</td>
             <td>${data.cfax}</td>
             <td>${data.cemail}</td>
             <td><img data-switchbtn data-value="${data.isEnabled?data.isenabled:true}" data-handler="refreshJBoltTable"
@@ -48,7 +48,7 @@
                        data-column-prepend="1:checkbox:true"
                        ###data-conditions-form="vendoraddSplit_form_#(pageId)"
                        data-toolbar="vendoradd_split_toolbar_#(pageId)"
-                       data-url="admin/vendoraddr/list?icustomermid=#(vendor.iautoid??)"
+                       data-url="admin/vendoraddr/list?ivendorid=#(vendor.iautoid??)"
                        data-rowtpl="vendraddSplit_tpl_#(pageId)"
                        ###data-copy-to-excel="false"
                        data-column-resize="true"
@@ -65,11 +65,11 @@
                         <th data-width="120" data-column="ccountry">国家/地区</th>
                         <th data-width="120" data-column="cprovince">省/自治区</th>
                         <th data-width="120" data-column="ccity">城市</th>
-                        <th data-width="120" data-column="ccountry">区县</th>
-                        <th data-width="120" data-column="caddress">地址</th>
+                        <th data-width="120" data-column="ccounty">区县</th>
+                        <th data-width="120" data-column="caddr">地址</th>
                         <th data-width="120" data-column="cpostcode">邮政编码</th>
-                        <th data-width="120" data-column="cphone">移动电话</th>
-                        <th data-width="120" data-column="ctele">固定电话</th>
+                        <th data-width="120" data-column="cmobile">移动电话</th>
+                        <th data-width="120" data-column="cphone">固定电话</th>
                         <th data-width="120" data-column="cfax">传真</th>
                         <th data-width="120" data-column="cemail">电子邮件</th>
                         <th data-width="120" data-column="isenabled">生效</th>
@@ -86,22 +86,6 @@
         var editoptions = {
             trigger: "click",
             insertDefaultValues: {name:'#(JBoltUserKit.getUserName())'},
-            /*submit: {
-                withForm: ["vendoradForm"],
-                type: "all",
-                url: "/admin/vendoraddr/updateEditTable",
-                success: function (res, table, td) {
-                    if (res.state === 'ok') {
-                        LayerMsgBox.success(res.msg, 1000, function () {
-                            // refreshPjaxContainer();
-                            parent.LayerMsgBox.closeAll();
-                            parent.refreshPjaxContainer();
-                        });
-                    } else {
-                        LayerMsgBox.alert(res.msg, 2);
-                    }
-                }
-            },*/
             submit:{
                 type:"all",//提交类型 all|cell
                 withForm: ["Vendor_Form"],
@@ -109,7 +93,7 @@
                 success:function(res,table,td){
                     if (res.state === 'ok'){
                         LayerMsgBox.success(res.msg,500,function(){
-                            alert("展示完更新完成提示信息后 需要跳转页面或者刷新的就在这里写");
+                            // alert("展示完更新完成提示信息后 需要跳转页面或者刷新的就在这里写");
                             refreshPjaxContainer();
                             parent.LayerMsgBox.closeAll();
                             parent.refreshPjaxContainer();
@@ -149,21 +133,20 @@
                     placeholder: "=联系人名称="
                 },
                 ccountry: {
-                    text:"中国",
                     placeholder: "=国家/地区=",
-                    type:"text",
-                    cityData:"",
+                    type:"select2",
                     url:"admin/locListCN/findByNameChild",
                     valueAttr:"name",
-                    textAttr:"name",
+                    textAttr:"name"
+                    // linkColumn:'ccountry'
                 },
                 cprovince: {
                     placeholder: "=省/自治区=",
                     type:"select2",
-                    url:"admin/locListCN/findByNameChild",
+                    url:"admin/locListCN/findByNameChild",//?ipid=(#locListCN.iautoid??)
                     valueAttr:"name",
                     textAttr:"name",
-                    linkColumn:'cprovince'
+                    linkColumn:'ccountry'
                 },
                 ccity: {
                     placeholder: "=城市=",
@@ -171,17 +154,17 @@
                     url:"admin/locListCN/findByNameChild",
                     valueAttr:"name",
                     textAttr:"name",
-                    linkColumn:'ccity'
+                    linkColumn:'cprovince'
                 },
-                ccountry: {
+                ccounty: {
                     placeholder: "=区县=",
                     type:"select2",
                     url:"admin/locListCN/findByNameChild",
                     valueAttr:"name",
                     textAttr:"name",
-                    linkColumn:'ccounty'
+                    linkColumn:'ccity'
                 },
-                caddress: {
+                caddr: {
                     type: "input",
                     placeholder: "=地址="
                 },
@@ -189,11 +172,11 @@
                     type: "input",
                     placeholder: "=邮政编码="
                 },
-                cphone: {
+                cmobile: {
                     type: "input",
                     placeholder: "=移动电话="
                 },
-                ctele: {
+                cphone: {
                     type: "input",
                     placeholder: "=固定电话="
                 },

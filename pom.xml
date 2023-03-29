@@ -866,7 +866,7 @@
                 <log4j2.level>DEBUG</log4j2.level>
                 <log.path>/rj-tech/logs/</log.path>
                 <log.file.name>${project.artifactId}-lh.log</log.file.name>
-                <server.port>9999</server.port>
+                <server.port>8081</server.port>
                 <webapp.path>src/main/webapp</webapp.path>
             </properties>
         </profile>

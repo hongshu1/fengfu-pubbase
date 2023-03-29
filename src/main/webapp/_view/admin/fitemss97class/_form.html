@@ -1,0 +1,21 @@
+<form onsubmit="return false;" id="fitemss97classForm" action="#(action)" method="post">
+<input type="hidden" name="fitemss97class.iautoid" value="#(fitemss97class.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目大类编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入项目大类编码" maxlength="22" name="fitemss97class.citemccode" value="#(fitemss97class.citemccode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目大类名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入项目大类名称" maxlength="20" name="fitemss97class.citemcname" value="#(fitemss97class.citemcname??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="fitemss97classForm")
+#end
+

@@ -56,9 +56,9 @@
 	name="file" 
 	accept="" 
 	data-max-filesize="300" 
-	data-sync="true" 
+	data-sync="false" 
 	data-extrahandler="processExtraHandler1" 
-	###data-handler="setValueTo"
+	data-handler="uploadCallback"
 	###data-setvalueto="fileSyncUploaderDemo"
 	/>
 </div>
@@ -77,6 +77,12 @@
 <script>
 function processExtraHandler1(input){
 	console.log("在这里初始化其他事件处理");
+}
+function uploadCallback(a,b){
+	if(b.state == 'fail'){
+		LayerMsgBox.alert(b.msg,2);
+	}
+	parent.refreshJBoltTable();
 }
 </script>
 #end

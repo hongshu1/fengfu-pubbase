@@ -12,7 +12,18 @@ WHERE wh.isDeleted = 0
 	#if(idepid)
 	    AND wh.cDepCode = #para(idepid)
 	#end
-
+	#if(imaxstockMin)
+    AND wh.iMaxStock >= #para(imaxstockMin)
+    #end
+    #if(imaxstockMax)
+        AND wh.iMaxStock <= #para(imaxstockMax)
+    #end
+    #if(imaxspaceMin)
+        AND wh.iMaxSpace >= #para(imaxspaceMin)
+    #end
+    #if(imaxspaceMax)
+        AND wh.iMaxSpace <= #para(imaxspaceMax)
+    #end
     #if(isenabled)
         AND wh.isEnabled = #para(isenabled)
     #end
