@@ -10,6 +10,7 @@ import cn.rjtech.model.momdata.Vendor;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
@@ -177,4 +178,14 @@ public class CustomerAdminController extends BaseAdminController {
 		renderJsonData(service.findVendorPage(getPageNumber(), getPageSize(), kv));
 
 	}
+	/**
+	  * 获取客户列表 
+	  * 通过关键字匹配 
+	 * autocomplete组件使用
+	 */
+	@UnCheck
+	public void autocomplete() {
+		renderJsonData(service.getAutocompleteList(get("q"), getInt("limit",10),true,"cCusCode,cCusName,cCusAbbName"));
+	}
+	
 }

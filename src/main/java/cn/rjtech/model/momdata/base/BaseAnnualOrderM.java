@@ -119,7 +119,7 @@ public abstract class BaseAnnualOrderM<M extends BaseAnnualOrderM<M>> extends JB
 	/**
 	 * 订单号
 	 */
-	public M setCOrderNo(java.lang.Boolean cOrderNo) {
+	public M setCOrderNo(java.lang.String cOrderNo) {
 		set("cOrderNo", cOrderNo);
 		return (M)this;
 	}
@@ -127,10 +127,10 @@ public abstract class BaseAnnualOrderM<M extends BaseAnnualOrderM<M>> extends JB
 	/**
 	 * 订单号
 	 */
-	@JBoltField(name="corderno" ,columnName="cOrderNo",type="Boolean", remark="订单号", required=true, maxLength=1, fixed=0, order=5)
+	@JBoltField(name="corderno" ,columnName="cOrderNo",type="String", remark="订单号", required=true, maxLength=10, fixed=0, order=5)
 	@JSONField(name = "corderno")
-	public java.lang.Boolean getCOrderNo() {
-		return getBoolean("cOrderNo");
+	public java.lang.String getCOrderNo() {
+		return getStr("cOrderNo");
 	}
 
 	/**

@@ -76,7 +76,12 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         }
         return ret(success);
     }
-
+	/**
+	 * 删除
+	 */
+	public Ret delete(Long id) {
+		return updateColumn(id, "isdeleted", true);
+	}
     /**
      * 更新
      *
@@ -134,7 +139,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      * @return
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-    	AnnualOrderM annualOrderM = jBoltTable.getFormModel(AnnualOrderM.class);
+    	AnnualOrderM annualOrderM = jBoltTable.getFormModel(AnnualOrderM.class,"annualOrderM");
     	User user = JBoltUserKit.getUser();
     	Date now = new Date();
     	tx(()->{
