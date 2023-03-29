@@ -319,4 +319,9 @@ public class WarehouseService extends BaseService<Warehouse> {
 	public List<Record> options() {
 		return dbTemplate("warehouse.options", Kv.of("isenabled", "true")).find();
 	}
+
+	public Ret deleteByBatchIds(String ids) {
+		update("UPDATE Bd_Warehouse SET isDeleted = 1 WHERE iAutoId IN (" +ids + ") ");
+		return SUCCESS;
+	}
 }

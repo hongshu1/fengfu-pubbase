@@ -86,11 +86,11 @@ public class WarehouseAdminController extends BaseAdminController {
 		renderJson(service.update(getModel(Warehouse.class, "warehouse")));
 	}
 
-   /**
-	* 批量删除
-	*/
+	/**
+	 * 批量删除
+	 */
 	public void deleteByIds() {
-		renderJson(service.deleteByIds(get("ids")));
+		renderJson(service.deleteByBatchIds(get("ids")));
 	}
 
    /**
