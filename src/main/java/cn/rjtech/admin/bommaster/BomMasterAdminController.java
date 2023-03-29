@@ -1,5 +1,6 @@
 package cn.rjtech.admin.bommaster;
 
+import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -22,7 +23,8 @@ public class BomMasterAdminController extends BaseAdminController {
 
 	@Inject
 	private BomMasterService service;
-
+	@Inject
+	private InventoryChangeService inventoryChangeService;
    /**
 	* 首页
 	*/
@@ -97,6 +99,12 @@ public class BomMasterAdminController extends BaseAdminController {
 	public void toggleIsDeleted() {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
-
+	
+	/**
+	 * 默认给1-100个数据
+	 */
+	public void inventoryAutocomplete(){
+		renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), 100, getKv()));
+	}
 
 }
