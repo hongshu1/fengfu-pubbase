@@ -157,7 +157,6 @@ public class PersonAdminController extends BaseAdminController {
 	/**
 	 * 数据导入界面
 	 * */
-	@CheckPermission(PermissionKey.PERSON_IMPORT_EXCEL_INDEX)
 	public void importExcelIndex(){
 		render("import_excel_index.html");
 	}

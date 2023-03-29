@@ -147,3 +147,7 @@
 #namespace("calendar")
 #include("calendar/calendar.sql")
 #end
+
+#namespace("spotcheckparam")
+#include("spotcheckparam/spotcheckparam.sql")
+#end

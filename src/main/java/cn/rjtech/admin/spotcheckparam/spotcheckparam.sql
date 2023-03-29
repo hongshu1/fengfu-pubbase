@@ -1,6 +1,6 @@
 #sql("list")
 SELECT t1.*, t2.cQcItemName
-FROM Bd_QcParam t1
+FROM Bd_SpotCheckParam t1
          left join Bd_QcItem t2 on t1.iQcItemId = t2.iAutoId
 WHERE t1.isDeleted = '0'
   #if(iautoid)

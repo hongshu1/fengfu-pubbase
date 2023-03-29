@@ -78,6 +78,8 @@ public class QcItemService extends BaseService<QcItem> {
         }
         //项目编码不能重复
         ValidationUtils.isTrue(findQcItemCode(qcItem.getCQcItemCode()) == null, qcItem.getCQcItemCode() + "：项目编码重复");
+        //项目名不能重复
+        ValidationUtils.isTrue(findQcItemName(qcItem.getCQcItemName()).isEmpty(), qcItem.getCQcItemName() + "：项目名重复");
         //1、赋值
         String userName = JBoltUserKit.getUserName();
         Long userId = JBoltUserKit.getUserId();
@@ -128,12 +130,11 @@ public class QcItemService extends BaseService<QcItem> {
         if (dbQcItem == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
-        //if(existsName(qcItem.getName(), qcItem.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+        //项目编码不能重复
+        ValidationUtils.isTrue(findQcItemCode(qcItem.getCQcItemCode()) == null, qcItem.getCQcItemCode() + "：项目编码重复");
+        //项目名不能重复
+        ValidationUtils.isTrue(findQcItemName(qcItem.getCQcItemName()).isEmpty(), qcItem.getCQcItemName() + "：项目名重复");
         boolean success = qcItem.update();
-        if (success) {
-            //添加日志
-            //addUpdateSystemLog(qcItem.getIAutoId(), JBoltUserKit.getUserId(), qcItem.getName());
-        }
         return ret(success);
     }
 
