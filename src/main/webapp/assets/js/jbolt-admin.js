@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.4.3";
+var jbolt_admin_js_version="6.4.4";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -10226,14 +10226,14 @@ function uploadFileToQiniu(uploader,type,fileDatas,hiddeninput,filenameInput,siz
 					if (successCallback) {
 						var exe_callback = eval(successCallback);
 						if (exe_callback && typeof (exe_callback) == "function") {
-							exe_callback(uploader,type, {data: qiniuFiles});
+							exe_callback(type, {data: qiniuFiles});
 						}
 					}
 				}catch (e){
 					if (failCallback) {
 						var exe_callback = eval(failCallback);
 						if (exe_callback && typeof (exe_callback) == "function") {
-							exe_callback(uploader,type);
+							exe_callback(type);
 						}
 					}else{
 						LayerMsgBox.alert("上传失败",2);
