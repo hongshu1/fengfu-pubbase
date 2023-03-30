@@ -1,6 +1,7 @@
 package cn.rjtech.admin.inventoryroutingconfig;
 
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.model.momdata.Inventory;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -8,6 +9,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.InventoryRoutingConfig;
@@ -27,8 +29,8 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	private InventoryRoutingConfigService service;
 
 	public void list() {
-		Long iinventoryid = getLong("iinventoryid");
-		renderJsonData(service.dataList(iinventoryid));
+		Long iinventoryroutingid = getLong("iinventoryroutingid");
+		renderJsonData(service.dataList(iinventoryroutingid));
 	}
 
    /**
@@ -49,6 +51,10 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	*/
 	public void add() {
 		render("add.html");
+	}
+
+	public void saveItemRoutingConfig() {
+		renderJsonData(service.saveItemRoutingConfig(getLong("iitemroutingid"), getInt("iseq")), "");
 	}
 
    /**
@@ -99,5 +105,18 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isEnabled"));
 	}
 
+	public void operation_dialog_index(){
+		render("operation_dialog_index.html");
+	}
 
+	public void inventory_dialog_index(){
+		Kv kv = getKv();
+		set("inventoryid",kv.getStr("inventoryid"));
+		set("",kv.getStr("cinvcode"));
+		set("",kv.getStr("cinvcode1"));
+		set("",kv.getStr("cinvname1"));
+		set("",kv.getStr("cinvstd"));
+		set("",kv.getStr("iinventoryuomid1"));
+		render("inventory_dialog_index.html");
+	}
 }

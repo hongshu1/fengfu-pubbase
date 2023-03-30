@@ -1,6 +1,7 @@
 package cn.rjtech.admin.inventoryroutingconfig;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
@@ -15,6 +16,7 @@ import cn.rjtech.model.momdata.InventoryRoutingConfig;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static cn.hutool.core.text.StrPool.COMMA;
@@ -137,8 +139,31 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 		return null;
 	}
 
-	public List<Record> dataList(Long iinventoryid) {
-		return dbTemplate("inventoryclass.getRouingConfigs", Okv.by("iinventoryid", iinventoryid)).find();
+	public List<Record> dataList(Long iinventoryroutingid) {
+		return dbTemplate("inventoryclass.getRouingConfigs", Okv.by("iinventoryroutingid", iinventoryroutingid)).find();
+	}
+
+
+	public Ret saveItemRoutingConfig(Long iitemroutingid, Integer iseq) {
+		tx(() -> {
+			//新增
+			InventoryRoutingConfig itemroutingconfig = new InventoryRoutingConfig();
+			Long autoid = JBoltSnowflakeKit.me.nextId();
+			itemroutingconfig.setIAutoId(autoid);
+			itemroutingconfig.setIInventoryRoutingId(iitemroutingid);
+			itemroutingconfig.setISeq(iseq);
+			itemroutingconfig.setIsEnabled(true);
+			itemroutingconfig.setICreateBy(JBoltUserKit.getUserId());
+			itemroutingconfig.setCCreateName(JBoltUserKit.getUserName());
+			itemroutingconfig.setDCreateTime(new Date());
+			itemroutingconfig.save();
+
+			//修改工序配置顺序号
+			updateSeq(iitemroutingid);
+
+			return true;
+		});
+		return SUCCESS;
 	}
 
 	/**

@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import cn.jbolt.core.poi.excel.*;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 物料建模-存货档案
@@ -392,5 +393,26 @@ public class InventoryService extends BaseService<Inventory> {
 
 		return res.get();
 	}
-    
+
+	public List<Inventory> options(Kv kv) {
+		List<Inventory> inventories = find(selectSql().eq("isDeleted", "0").set("isEnabled", "1"));
+		if(inventories != null ){
+			Long inventoryId = kv.getLong("inventoryid");
+			if(inventories.size() > 0){
+				for (Inventory i : inventories) {
+					if(i.getIAutoId().longValue() == inventoryId.longValue()){
+						return inventories;
+					}
+				}
+			}
+			Inventory inventory = new Inventory();
+			String cInvName = kv.getStr("cinvname");
+			if(StringUtils.isBlank(cInvName))
+				return inventories;
+			inventory.setIAutoId(inventoryId);
+			inventory.setCInvName(cInvName);
+			inventories.add(inventory);
+		}
+		return inventories;
+	}
 }

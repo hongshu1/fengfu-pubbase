@@ -19,7 +19,7 @@
 
     function addTableRow(ele){
         //获取表格数据
-        let iitemroutingid = $("#iitemroutingid").val();
+        let iitemroutingid = $("#iinventoryroutingid").val();
         if (iitemroutingid == ''){
             LayerMsgBox.alert("请先设置工艺路线！");
             return;
@@ -30,7 +30,7 @@
             var data = tableDatas[tableDatas.length - 1];
             seq = data.iseq;
         }
-        let url = "admin/itemmaster/saveItemRoutingConfig?iitemroutingid="+iitemroutingid+"&iseq="+Number(seq+10);
+        let url = "admin/inventoryroutingconfig/saveItemRoutingConfig?iitemroutingid="+iitemroutingid+"&iseq="+Number(seq+10);
         Ajax.get(url,function(res){
             refreshJBoltTable("#itemroutingconfigid");
         });
@@ -64,15 +64,30 @@
                     submitAttr:"iautoid",
                 },
                 iitemroutingid:{type:"input", required:true},
+                cmergedseq:{type:"input"},
                 //iseq:{type:"input", required:true},
                 coperationname:{  //工序名称
                     type:"dialogbtn",
                     placeholder:"选择工序",
                     maxLength:100,
                     dialog:{
-                        url:"admin/itemroutingconfig/operation_dialog_index",
+                        url:"admin/inventoryroutingconfig/operation_dialog_index",
                         area:"60%,70%",
                         title:"选择工序",
+                        btn:"确定,关闭"
+                    }
+                },
+                irsinventoryid:{  //半成品/成品名称
+                    type:"dialogbtn",
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    handler:{
+
+                    },
+                    dialog:{
+                        url:"admin/inventoryroutingconfig/inventory_dialog_index",
+                        area:"60%,70%",
+                        title:"选择存货",
                         btn:"确定,关闭"
                     }
                 },

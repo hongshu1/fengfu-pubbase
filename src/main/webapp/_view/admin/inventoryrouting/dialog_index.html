@@ -30,9 +30,7 @@
 	<td>${data.crequirement}</td>
 	<td>${data.cmemo}</td>
 	<td>
-		{@if data.isenable == 0}
 		<button onclick="selectBtn('${data.iautoid}','${data.croutingname}','${data.cversion}','${data.dtodate}','${data.isenabled}')" class="btn btn-outline-info btn-sm" > 选择</button>
-		{@/if}
 		<button onclick="refBtn('${data.iautoid}','${data.croutingname}','${data.croutingtypesn}','${data.itype}','${data.ifinishedrate}')" class="btn btn-outline-info btn-sm" > 复制</button>
 	</td>
 </tr>
@@ -222,7 +220,7 @@
 			LayerMsgBox.alert("该工艺已停用，不能选择！");
 			return;
 		}
-		parent.$("#iitemroutingid").val(id);
+		parent.$("#iinventoryroutingid").val(id);
 		parent.$("#iitemroutingname").val(cname+"（"+cversion+"）");
 		parent.$("#itemroutingconfigFormBtn").click();
 		parent.LayerMsgBox.closeAll();

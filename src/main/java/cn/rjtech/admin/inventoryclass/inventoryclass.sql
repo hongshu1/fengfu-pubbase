@@ -54,12 +54,11 @@ SELECT
     d.name as cproducttechsnname
 FROM
     Bd_InventoryRoutingConfig a
-        inner join Bd_InventoryRouting ir on a.iInventoryRoutingId = ir.iAutoId
         LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary b ON a.iType = b.sn AND b.type_key = 'process_type'
         LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary c ON a.cProductSn = c.sn AND c.type_key = 'cproductsn_type'
         LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary d ON a.cProductTechSn = d.sn AND d.type_key = 'product_tech'
 WHERE
-        ir.iinventoryid = #para(iinventoryid) and ir.isEnabled = 1
+        a.iInventoryRoutingId = #para(iinventoryroutingid)
 ORDER BY a.iSeq ASC
 #end
 
