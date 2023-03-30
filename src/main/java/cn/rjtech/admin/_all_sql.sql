@@ -142,3 +142,11 @@
 #namespace("vouchrdcontrapose")
 #include("vouchrdcontrapose/vouchrdcontrapose.sql")
 #end
+
+#namespace("qcform")
+#include("qcform/qcform.sql")
+#end
+
+#namespace("qcformitem")
+#include("qcformitem/qcformitem.sql")
+#end

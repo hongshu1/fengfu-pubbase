@@ -5,7 +5,7 @@ package cn.jbolt._admin.permission;
  * 此文件由JBoltGeneratorGUI生成 请勿手动修改
  */
 public class PermissionKey {
-    /**
+	/**
 	 * 空权限
 	 */
 	public static final String NONE = "NONE";
@@ -1857,8 +1857,8 @@ public class PermissionKey {
 	/**
 	 * 料品档案
 	 */
-    public static final String INVENTORY_RECORD = "inventory_record";
-	
+	public static final String INVENTORY_RECORD = "inventory_record";
+
 	/**
 	 * 部门档案
 	 */
@@ -1883,7 +1883,7 @@ public class PermissionKey {
 	 * 部门档案 导入
 	 */
 	public static final String DEPARTMENT_IMPORT = "department_import";
-	
+
 	/**
 	 * 物料建模-物料形态对照表
 	 */
@@ -1965,4 +1965,9 @@ public class PermissionKey {
 	 * 项目管理大类项目子目录
 	 */
 	public static final String VOUCHRDCONTRAPOSE = "vouchrdcontrapose";
+
+	/**
+	 * 质量建模
+	 */
+	public static final String QCFORM = "qcform";
 }
