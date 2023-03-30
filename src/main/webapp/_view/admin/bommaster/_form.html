@@ -47,8 +47,11 @@
             <img src="assets/img/defaultposter.jpg" data-target="parent" data-photobtn class="m-1" style="height: 100px" tooltip data-title="点击查看大图" />
         </div>
         <div style="float: left; margin-left: 5px">
-            <table class="jbolt_table thead_font_normal table-center thead_font_normal" data-width="auto" height="100px" data-height="300px"
-                   data-jbolttable>
+            <table class="jbolt_table thead_font_normal table-center thead_font_normal" data-width="auto" 
+                   ###height="100px" 
+                   data-height="300px"
+                   ###data-jbolttable
+            >
                 <thead>
                 <tr>
                     <th  data-width="50" data-column="version">NO</th>
@@ -199,7 +202,7 @@
             <div style="border-bottom:solid 1px #dee2e6;text-align: center; height: 50px;line-height: 50px">
                 <input type="text" hidden data-sync-attr="itemid" id="iBeforeInventoryId1"  data-notnull="true" data-with-clearbtn="true" autocomplete="off"  class="form-control" maxlength="40"/>
                 <input type="text"
-                       id="invItemId"
+                       ###id="invItemId"
                        data-rule="required"
                        data-autocomplete
                        data-notnull="true"
@@ -208,6 +211,7 @@
                        autocomplete="off"
                        class="form-control"
                        placeholder="请选择存货编码"
+                       data-width="450"
                        maxlength="40"
                        data-url="admin/bommaster/inventoryAutocomplete"
                        data-sync-ele="#cInvCode1,#iWeight1,#iBeforeInventoryId1,#cInvName1,#cInvAddName1,#cInvAddCode1,#InvName1"

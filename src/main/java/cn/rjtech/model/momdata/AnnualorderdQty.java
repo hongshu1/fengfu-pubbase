@@ -1,6 +1,6 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseAnnualorderdAmount;
+import cn.rjtech.model.momdata.base.BaseAnnualorderdQty;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
 
@@ -10,6 +10,6 @@ import cn.jbolt.core.base.JBoltIDGenMode;
  */
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Co_AnnualOrderD_Amount" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
-public class AnnualorderdAmount extends BaseAnnualorderdAmount<AnnualorderdAmount> {
+public class AnnualorderdQty extends BaseAnnualorderdQty<AnnualorderdQty> {
 }
 
