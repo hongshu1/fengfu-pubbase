@@ -1,0 +1,235 @@
+
+<table class="table_striped jbolt_main_table  table-center "
+       data-jbolttable
+       data-width="auto"
+       data-height="fill"
+       data-toolbar="bomMaster_toolbar_#(pageId)"
+>
+    <thead>
+    <tr>
+        <th  rowspan="2" colspan="6" data-width="420">编号</th>
+        <th  rowspan="1" data-width="150">存货编码</th>
+        <th  rowspan="1" data-width="150">客户部番</th>
+        <th  rowspan="1" data-width="150">UG部番</th>
+        <th  rowspan="2" data-width="150">略图</th>
+        <th  rowspan="1" data-width="120">QTY</th>
+        <th  rowspan="1" data-width="150">材质</th>
+        <th  rowspan="2" data-width="150">材料类别</th>
+        <th  rowspan="1" data-width="150">原材料存货编码</th>
+        <th  rowspan="1" data-width="150">原材料供应商</th>
+        <th  rowspan="1" data-width="120">可制件数</th>
+        <th  rowspan="1" data-width="150">分条存货编码</th>
+        <th  rowspan="1" data-width="150">分条商</th>
+        <th  rowspan="1" data-width="120">可制件数</th>
+        <th  rowspan="1" data-width="150">落料存货编码</th>
+        <th  rowspan="1" data-width="150">落料商</th>
+        <th  rowspan="1" data-width="120">可制件数</th>
+        <th  rowspan="2" data-width="150">部品加工商</th>
+        <th  rowspan="2" data-width="120">是否外作</th>
+        <th  rowspan="2" data-width="120">备注</th>
+        <th  rowspan="2" data-width="150">操作</th>
+    </tr>
+    <tr>
+        <th rowspan="1" data-width="150">存货名称</th>
+        <th rowspan="1" data-width="150">部品名称</th>
+        <th rowspan="1" data-width="150">UG部品名称</th>
+        <th rowspan="1" data-width="120">重量</th>
+        <th rowspan="1" data-width="120">厚度</th>
+        <th rowspan="1" data-width="150">原材料存货名称</th>
+        <th rowspan="1" data-width="150">原材料规格</th>
+        <th rowspan="1" data-width="120">重量</th>
+        <th rowspan="1" data-width="150">分条存货名称</th>
+        <th rowspan="1" data-width="150">分条规格</th>
+        <th rowspan="1" data-width="120">重量</th>
+        <th rowspan="1" data-width="150">落料存货名称</th>
+        <th rowspan="1" data-width="150">下料尺寸</th>
+        <th rowspan="1" data-width="120">重量</th>
+    </tr>
+
+    </thead>
+    <tbody>
+     <tr id="0">
+        <!--<td>
+            <input  autocomplete="off" class="form-control" style="width: 40px;">
+        </td>
+    <td>
+        <input  autocomplete="off" class="form-control" style="width: 50px;">
+    </td>
+    <td>
+        <input  autocomplete="off" class="form-control" style="width: 50px;">
+    </td>
+    <td>
+        <input  autocomplete="off" class="form-control" style="width: 50px;">
+    </td>
+    <td>
+        <input  autocomplete="off" class="form-control" style="width: 50px;">
+    </td>-->
+    <td>
+        <input  autocomplete="off" class="form-control">
+    </td>
+
+        <td>
+            <input type="text" hidden data-sync-attr="itemid" id="iBeforeInventoryId1"  data-notnull="true" data-with-clearbtn="true" autocomplete="off"  class="form-control" maxlength="40"/>
+            <input type="text"
+                   id="invItemId"
+                   data-rule="required"
+                   data-autocomplete
+                   data-notnull="true"
+                   data-tips="请选择存货编码"
+                   data-with-clearbtn="true"
+                   autocomplete="off"
+                   class="form-control"
+                   placeholder="请选择存货编码"
+                   maxlength="40"
+                   data-url="admin/bommaster/inventoryAutocomplete"
+                   data-sync-ele="#cInvCode1,#iWeight1,#iBeforeInventoryId1,#cInvName1,#cInvAddName1,#cInvAddCode1,#InvName1"
+                   data-text-attr="cinvcode"
+                   data-column-attr="cinvcode"
+            />
+            <div style="margin-top: 10px"></div>
+            <input id="cInvName1" type="text"   value="" data-notnull="true" data-sync-attr="cinvname"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+        </td>
+        <td>
+            <input id="cInvCode1" type="text"   value="" data-notnull="true" data-sync-attr="cinvcode1"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+            <div style="margin-top: 10px"></div>
+            <input id="cInvAddName1" type="text"   value="" data-notnull="true" data-sync-attr="cinvname1"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+        </td>
+        <td>
+            <input id="cInvAddCode1" type="text"   value="" data-notnull="true" data-sync-attr="cinvaddcode1"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+            <div style="margin-top: 10px"></div>
+            <input id="InvName1" type="text"   value="" data-notnull="true" data-sync-attr="cinvname2"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+        </td>
+        <td>
+
+        </td>
+        <td>
+            <input type="text" autocomplete="off"  class="form-control" data-rule="number" placeholder="请输入数量" data-tips="请输入数量"  maxlength="10">
+            <div style="margin-top: 10px"></div>
+            <input id="iWeight1" type="text"   value="" data-notnull="true" data-sync-attr="iweight"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+        </td>
+        <td>
+            <input type="text" autocomplete="off"  class="form-control" disabled>
+            <div style="margin-top: 10px"></div>
+            <input type="text" autocomplete="off"  class="form-control" disabled>
+        </td>
+        <td>
+
+        </td>
+        <td>
+            <input type="text" hidden data-sync-attr="itemid" id="originalInvId1"  data-notnull="true"  data-with-clearbtn="true" autocomplete="off"  class="form-control" maxlength="40"/>
+            <input type="text" id="originalItemId"
+                   data-rule="required"
+                   data-autocomplete
+                   data-notnull="true"
+                   data-tips="请选择存货编码"
+                   data-with-clearbtn="true"
+                   autocomplete="off"
+                   class="form-control"
+                   placeholder="请选择存货编码"
+                   maxlength="40"
+                   data-url="admin/bommaster/inventoryAutocomplete"
+                   data-sync-ele="#originalInvId1,#originalInvName1,#originalInvStd1"
+                   data-text-attr="cinvcode"
+                   data-column-attr="cinvcode"
+            />
+            <div style="margin-top: 10px"></div>
+            <input id="originalInvName1" type="text"   value="" data-notnull="true" data-sync-attr="cinvname"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+        </td>
+        <td>
+            <input id="originalInvSup" style="width: 150px" type="text"   value="" data-notnull="true"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+            <div style="margin-top: 10px"></div>
+            <input id="originalInvStd1" type="text"   value="" data-notnull="true" data-sync-attr="cinvstd"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+        </td>
+        <td>
+            <input type="text" style="width: 150px" autocomplete="off"  class="form-control" data-rule="number" maxlength="10" >
+            <div style="margin-top: 10px"></div>
+            <input type="text" autocomplete="off"  class="form-control" data-rule="number" maxlength="10" >
+        </td>
+        <td>
+            <input type="text" hidden data-sync-attr="itemid" id="slicingInvId1"  data-notnull="true"  data-with-clearbtn="true" autocomplete="off"  class="form-control"  maxlength="40" />
+            <input type="text"
+                   id="slicingItemId"
+                   data-autocomplete
+                   data-notnull="true"
+                   data-tips="请选择存货编码"
+                   data-with-clearbtn="true"
+                   autocomplete="off"
+                   class="form-control"
+                   placeholder="请选择存货编码"
+                   maxlength="40"
+                   data-url="admin/bommaster/inventoryAutocomplete"
+                   data-sync-ele="#slicingInvId1,#slicingInvName1,#slicingInvStd1"
+                   data-text-attr="cinvcode"
+                   data-column-attr="cinvcode"
+            />
+            <div style="margin-top: 10px"></div>
+
+            <input id="slicingInvName1" type="text"   value="" data-notnull="true" data-sync-attr="cinvname"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+        </td>
+        <td>
+            <input id="slicingInvSup" style="width: 150px" type="text"   value="" data-notnull="true"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+            <div style="margin-top: 10px"></div>
+
+            <input id="slicingInvStd1" type="text"   value="" data-notnull="true" data-sync-attr="cinvstd"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
+        </td>
+        <td>
+            <input type="text" style="width: 150px" autocomplete="off"  class="form-control" data-rule="number" placeholder="请输入数量" data-tips="请输入数量"  maxlength="10" name="number1" value="#(number1??)">
+            <div style="margin-top: 10px"></div>
+            <input type="text" autocomplete="off"  class="form-control" data-rule="number" placeholder="请输入数量" data-tips="请输入数量"  maxlength="10">
+        </td>
+        <td>
+            <input type="text" hidden data-sync-attr="itemid" id="blankingInvId1"  data-notnull="true" data-with-clearbtn="true" autocomplete="off"  class="form-control"  maxlength="40"/>
+            <input type="text"
+                   id="blankingItemId"
+                   data-rule="required"
+                   data-autocomplete
+                   data-notnull="true"
+                   data-tips="请选择存货编码"
+                   data-with-clearbtn="true"
+                   autocomplete="off"
+                   class="form-control"
+                   placeholder="请选择存货编码"
+                   maxlength="40"
+                   data-url="admin/bommaster/inventoryAutocomplete"
+                   data-sync-ele="#blankingInvId1,#blankingInvName1,#blankingStd1,#blankingInvName1"
+                   data-text-attr="cinvcode"
+                   data-column-attr="cinvcode"
+                   style="width: 150px"
+            />
+            <div style="margin-top: 10px"></div>
+            <input id="blankingInvName1" type="text"   value="" data-notnull="true" data-sync-attr="cinvname"  autocomplete="off"  class="form-control" disabled/>
+        </td>
+        <td>
+            <input id="blankingSup1" style="width: 150px" type="text"   value="" data-notnull="true"   data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+            <div style="margin-top: 10px"></div>
+            <input id="blankingStd1" type="text"   value="" data-notnull="true" data-sync-attr="cinvstd"   data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+        </td>
+        <td>
+            <input type="text" autocomplete="off"  style="width: 120px" class="form-control" data-rule="number" placeholder="请输入数量" data-tips="请输入数量"  maxlength="10"/>
+            <div style="margin-top: 10px"></div>
+            <input type="text" autocomplete="off"  class="form-control" data-rule="number" placeholder="请输入数量" data-tips="请输入数量"  maxlength="10"/>
+        </td>
+        <td>
+            <input type="text" autocomplete="off"  class="form-control" >
+        </td>
+        <td>
+            <input type="text" autocomplete="off"  class="form-control" >
+        </td>
+        <td>
+            <input type="text" autocomplete="off"  class="form-control" >
+        </td>
+        <td>
+            <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="插入一行"  onclick=""><i class="fa fa-plus"></i></a>
+            <a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="移除此行" onclick="" ><i class="fa fa-trash"></i></a>
+            <a tooltip data-title="上移"  href="javascript:void(0)" onclick=""   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+            <a tooltip data-title="下移"  href="javascript:void(0)" onclick=""  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="BomMaster_Form")
+#end

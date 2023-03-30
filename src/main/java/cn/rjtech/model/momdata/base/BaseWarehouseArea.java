@@ -20,7 +20,7 @@ public abstract class BaseWarehouseArea<M extends BaseWarehouseArea<M>> extends 
     /**所属仓库*/
     public static final String IWAREHOUSEID = "iWarehouseId";
 
-    public static final String ICONTAINERID = "iContainerId";
+    public static final String IMAXCAPACITY = "iMaxCapacity";
     /**备注*/
     public static final String CMEMO = "cMemo";
     /**创建人*/
@@ -118,18 +118,18 @@ public abstract class BaseWarehouseArea<M extends BaseWarehouseArea<M>> extends 
 	/**
 	 * 所属仓库
 	 */
-	public M setIcontainerId(Long iContainerId) {
-		set("iContainerId", iContainerId);
+	public M setIMaxCapacity(Long iMaxCapacity) {
+		set("iMaxCapacity", iMaxCapacity);
 		return (M)this;
 	}
 
 	/**
 	 * 所属仓库
 	 */
-	@JBoltField(name="iContainerId" ,columnName="iContainerId",type="Long", remark="所属容器", required=true, maxLength=19, fixed=0, order=4)
+	@JBoltField(name="imaxcapacity" ,columnName="iMaxCapacity",type="Long", remark="最大存储数量", required=true, maxLength=19, fixed=0, order=4)
 	@JSONField(serializeUsing= ToStringSerializer.class)
-	public Long getIcontainerId() {
-		return getLong("iContainerId");
+	public Long getIMaxCapacity() {
+		return getLong("iMaxCapacity");
 	}
 
 	/**

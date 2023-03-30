@@ -14,12 +14,16 @@
                             name="idepid"
                             data-select-type="select2"
                             data-tips="所属部门"
-                            data-url="admin/dept/datas"
+                            data-url="admin/department/list"
                             data-text="=所属部门="
                             data-value=""
-                            data-value-attr="id"
-                            data-select="">
+                            data-text-attr="cdepcode,cdepname"
+                            data-value-attr="iautoid"
+                            data-select=""
+                           >
                     </select>
+                   <!-- name="warehouse.cdepcode"
+                    data-select="#(warehouse.cdepcode??)"-->
 
                     <input type="number" autocomplete="off" style="width:110px"  class="form-control"  placeholder="最小存储数" name="imaxstockMin" value="" />
                     <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大存储数" name="imaxstockMax" value="" />
@@ -53,7 +57,7 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.cwhcode}</td>
 <td>${data.cwhname}</td>
-<td>${data.cdepcode}</td>
+<td>${data.cdepname}</td>
 <td>${data.imaxstock}</td>
 <td>${data.imaxspace}</td>
 <td><img data-switchbtn data-confirm="确定切换是否库存预警？" data-value="${data.isstockwarnenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/isStockWarnEnabled/${data.iautoid}"/></td>

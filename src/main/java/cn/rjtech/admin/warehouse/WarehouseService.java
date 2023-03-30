@@ -3,6 +3,7 @@ package cn.rjtech.admin.warehouse;
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.dept.DeptService;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
@@ -99,6 +100,9 @@ public class WarehouseService extends BaseService<Warehouse> {
 		}
 //		if(existsName(warehouse.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 
+        //查重
+        ValidationUtils.assertNull(findByWhCode(warehouse.getCWhCode()), "仓库编码重复！");
+
 		//创建信息
 		warehouse.setIcreateby(JBoltUserKit.getUserId());
 		warehouse.setCcreatename(JBoltUserKit.getUserName());
@@ -137,6 +141,15 @@ public class WarehouseService extends BaseService<Warehouse> {
 		//更新时需要判断数据存在
 		Warehouse dbWarehouse=findById(warehouse.getIAutoId());
 		if(dbWarehouse==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
+
+        //查询编码是否存在
+        Warehouse ware = findByWhCode(warehouse.getCWhCode());
+
+        //编码重复判断
+        if (ware != null && !warehouse.getIAutoId().equals(ware.getIAutoId())) {
+            ValidationUtils.assertNull(ware.getCWhCode(), "仓库编码重复！");
+        }
+
 		//if(existsName(warehouse.getName(), warehouse.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=warehouse.update();
 		if(success) {
@@ -266,10 +279,12 @@ public class WarehouseService extends BaseService<Warehouse> {
 									data.changeStrToBoolean("isSpaceControlEnabled","是");
 									ValidationUtils.notNull(data.get("isStockWarnEnabled"), "启用空间掌控为空！");
 									data.changeStrToBoolean("isStockWarnEnabled","是");
-									ValidationUtils.isTrue(findByWhCode(data.getStr("cwhcode"))==null, data.getStr("cwhcode")+"编码重复");
-//
-//									Dept dept = deptService.findFirst(Okv.by("sn", data.get("cDepCode")));
-//									ValidationUtils.notNull(dept, data.get("cDepCode")+"部门错误！");
+
+                                    //查重
+                                    ValidationUtils.assertNull(findByWhCode(data.getStr("cwhcode")), "仓库编码重复！");
+
+									Dept dept = deptService.findFirst(Okv.by("sn", data.get("cDepCode")));
+									ValidationUtils.notNull(dept, data.get("cDepCode")+"部门错误！");
 									//创建相关信息
 									data.change("iCreateBy", JBoltUserKit.getUserId());
 									data.change("cCreateName", JBoltUserKit.getUserName());
@@ -320,6 +335,11 @@ public class WarehouseService extends BaseService<Warehouse> {
 		return dbTemplate("warehouse.options", Kv.of("isenabled", "true")).find();
 	}
 
+    /**
+     * 批量删除（逻辑）
+     * @param ids
+     * @return
+     */
 	public Ret deleteByBatchIds(String ids) {
 		update("UPDATE Bd_Warehouse SET isDeleted = 1 WHERE iAutoId IN (" +ids + ") ");
 		return SUCCESS;
