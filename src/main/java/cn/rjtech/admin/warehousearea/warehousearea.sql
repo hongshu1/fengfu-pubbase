@@ -19,6 +19,12 @@ FROM
     #if(isenabled)
         AND wa.isEnabled = #para(isenabled)
     #end
+    #if(imaxcapacityMin)
+        AND wa.iMaxCapacity >= #para(imaxcapacityMin)
+    #end
+    #if(imaxcapacityMax)
+        AND wa.iMaxCapacity <= #para(imaxcapacityMax)
+    #end
     #if(ids)
         AND CHARINDEX(','+cast((select wa.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
     #end

@@ -15,6 +15,7 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
@@ -176,5 +177,16 @@ public class CustomerAdminController extends BaseAdminController {
 		kv.setIfNotNull("keywords", keywords);
 		renderJsonData(service.findVendorPage(getPageNumber(), getPageSize(), kv));
 
+	}
+
+	/**
+	 * 客户数据源
+	 */
+	public void list(){
+		Okv kv = Okv.create();
+		kv.set("IsEnabled", 1);
+		kv.set("IsDeleted", 0);
+
+		renderJsonData(service.getCommonList(kv, "dCreateTime", "desc"));
 	}
 }

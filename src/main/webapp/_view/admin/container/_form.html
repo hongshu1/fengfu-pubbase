@@ -71,7 +71,7 @@
 <div class="col-10">
     <select class="form-control"
             data-autoload
-            data-url="admin/dept/datas"
+            data-url="/admin/department/list"
             data-select-type="select"
             name="container.iDepId"
             data-refresh="true"
@@ -79,7 +79,9 @@
             data-notnull="true"
             data-tips="请选择部门ID"
             data-text="=请选择="
+            data-text-attr="cdepcode,cdepname"
             data-value=""
+            data-value-attr="iautoid"
             data-select="#(container.iDepId??)"
             
     ></select>
@@ -157,12 +159,12 @@
         <div class="col">
             <select class="form-control"
                     data-autoload
-                    name="container.icustomerid"
+                    name="container.iCustomerId"
                     data-select-type="select2"
                     data-tips="客户"
-                    data-url="admin/customer/list?isdeleted=0"
+                    data-url="admin/customer/list"
                     data-text="=客户="
-                    data-text-attr="customercode,customername"
+                    data-text-attr="ccuscode,ccusname"
                     data-value=""
                     data-value-attr="iautoid"
                     data-select="#(container.iCustomerId??)">
