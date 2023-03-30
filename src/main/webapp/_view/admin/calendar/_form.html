@@ -1,0 +1,91 @@
+<form onsubmit="return false;" id="calendarForm" action="#(action)" method="post">
+<input type="hidden" name="calendar.iautoid" value="#(calendar.iautoid??)" />
+<div class="row">
+	<div class="col">
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">来源代码，取字典值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入来源代码，取字典值" maxlength="50" name="calendar.csourcecode" value="#(calendar.csourcecode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">来源类型，取字典值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入来源类型，取字典值" maxlength="50" name="calendar.csourcetype" value="#(calendar.csourcetype??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">发生日期</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置发生日期" data-tips="请设置发生日期" maxlength="10" name="calendar.dtakedate" value="#(calendar.dtakedate??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(calendar.icaluedartype??)"
+    	data-name="calendar.icaluedartype"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >1工作日历 0非工作日历</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_icaluedartype_true" type="radio" name="calendar.icaluedartype" value="true"/>
+					<label for="r_icaluedartype_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_icaluedartype_false" type="radio" name="calendar.icaluedartype" value="false"/>
+					<label for="r_icaluedartype_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="calendar.iorgid" value="#(calendar.iorgid??)"/>
+		</div>
+	</div>
+	</div>
+	<div class="col">
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="100" name="calendar.corgcode" value="#(calendar.corgcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人" maxlength="19" name="calendar.icreateby" value="#(calendar.icreateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建人名称" maxlength="100" name="calendar.ccreatename" value="#(calendar.ccreatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="calendar.dcreatetime" value="#(calendar.dcreatetime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新人" maxlength="19" name="calendar.iupdateby" value="#(calendar.iupdateby??)"/>
+		</div>
+	</div>
+	</div>
+</div>
+
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="calendarForm")
+#end
+

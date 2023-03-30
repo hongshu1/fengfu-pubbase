@@ -1,8 +1,12 @@
 package cn.rjtech.admin.vouchrdcontrapose;
 
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.base.JBoltMsg;
@@ -15,6 +19,8 @@ import cn.rjtech.model.momdata.VouchRdContrapose;
  */
 @CheckPermission(PermissionKey.VOUCHRDCONTRAPOSE)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
+@Path(value = "/admin/vouchrdcontrapose", viewPath = "/_view/admin/vouchrdcontrapose")
 public class VouchRdContraposeAdminController extends BaseAdminController {
 
 	@Inject

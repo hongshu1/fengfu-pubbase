@@ -1,0 +1,94 @@
+<form onsubmit="return false;" id="rdStyleForm" action="#(action)" method="post">
+<input type="hidden" name="rdStyle.iautoid" value="#(rdStyle.iautoid??)" />
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">上级分类</label>
+		<div class="col">
+			<select class="form-control"
+					data-rule="required"
+					name="rdStyle.ipid"
+					data-autoload
+					data-text-attr="crdname"
+					data-value-attr="iautoid"
+					data-select-type="select2"
+					data-tips="请选择分类"
+					data-url="admin/rdstyle/enableOptions"
+					data-text="=请选择分类="
+					data-value=""
+					data-select="#(rdStyle.ipid??)">
+			</select>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">收发类别编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入收发类别编码" maxlength="5" name="rdStyle.crdcode" value="#(rdStyle.crdcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">收发类别名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入收发类别名称" maxlength="12" name="rdStyle.crdname" value="#(rdStyle.crdname??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(rdStyle.brdflag??)"
+    	data-name="rdStyle.brdflag"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >收发标志</label>  <!--0. 发 1. 收-->
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_brdflag_false" type="radio" name="rdStyle.brdflag" value="false"/>
+					<label for="r_brdflag_false">收</label>
+				</div>
+
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_brdflag_true" type="radio" name="rdStyle.brdflag" value="true"/>
+					<label for="r_brdflag_true">发</label>
+				</div>
+			</div>
+		</div>
+
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(rdStyle.bretail??)"
+    	data-name="rdStyle.bretail"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否零售</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bretail_true" type="radio" name="rdStyle.bretail" value="true"/>
+					<label for="r_bretail_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bretail_false" type="radio" name="rdStyle.bretail" value="false"/>
+					<label for="r_bretail_false">否</label>
+				</div>
+			</div>
+		</div>
+
+		</div>
+</form>
+#define js()
+<script>
+	function afterFormSubmit(ret, callback){
+		setTimeout(function(){
+			parent.refreshPjaxContainer();
+			callback();
+		},500);
+		callback();
+	}
+
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="rdStyleForm")
+#end
+

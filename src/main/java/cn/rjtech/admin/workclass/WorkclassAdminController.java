@@ -14,6 +14,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
@@ -47,7 +48,27 @@ public class WorkclassAdminController extends JBoltBaseController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.pageList(getKv()));
+        Page<Record> recordPage = service.pageList(getKv());
+        for (Record record : recordPage.getList()) {
+            switch (record.get("ilevel").toString()){
+                case "1":
+                    record.set("ilevel","一级");
+                    break;
+                case "2":
+                    record.set("ilevel","二级");
+                    break;
+                case "3":
+                    record.set("ilevel","三级");
+                    break;
+                case "4":
+                    record.set("ilevel","四级");
+                    break;
+                case "5":
+                    record.set("ilevel","五级");
+                    break;
+            }
+        }
+        renderJsonData(recordPage);
     }
 
     /**

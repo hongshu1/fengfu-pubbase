@@ -1,6 +1,7 @@
 package cn.rjtech.admin.container;
 
-import cn.hutool.core.convert.Convert;
+
+import cn.hutool.core.date.DateUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Inject;
@@ -11,10 +12,13 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.tx.Tx;
+import com.jfinal.plugin.activerecord.Record;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.Container;
 import com.jfinal.upload.UploadFile;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * 仓库建模-容器档案
@@ -45,6 +49,12 @@ public class ContainerAdminController extends BaseAdminController {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
 
+	/**
+	 * 出入库数据源
+	 */
+	public void data() {
+		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv().set("isInner",5)));
+	}
    /**
 	* 新增
 	*/
@@ -126,5 +136,53 @@ public class ContainerAdminController extends BaseAdminController {
 			return;
 		}
 		renderJson(service.importExcelData(file.getFile()));
+	}
+
+	/**
+	 * 导出数据
+	 */
+	@SuppressWarnings("unchecked")
+	public void dataExport() throws Exception {
+		List<Record> rows = service.list(getKv());
+		for (Record row : rows) {
+			row.put("isinner", StringUtils.equals("1", row.getStr("isinner")) ? "社外" : "社内");
+		}
+		renderJxls("container.xlsx", Kv.by("rows", rows), "容器档案_" + DateUtil.today() + ".xlsx");
+	}
+
+	/**
+	 * 入库
+	 */
+	public void rk() {
+		//标识-入库
+		set("mark", "1");
+		render("crk_form.html");
+	}
+
+	/**
+	 * 出库
+	 */
+	public void ck() {
+		//标识-出库
+		set("mark", "0");
+		render("crk_form.html");
+	}
+
+	/**
+	 * 容器下拉信息查询
+	 */
+	public void crkData(String mark){
+		Kv kv = Kv.create();
+		kv.set("isInner", mark);
+		kv.set("isEnabled", 1);
+		renderJsonData(service.list(kv));
+	}
+
+	/**
+	 * 容器出入库处理
+	 *
+	 */
+	public void handleData(String mark){
+		renderJsonData(service.handleData(getJBoltTable(),mark));
 	}
 }

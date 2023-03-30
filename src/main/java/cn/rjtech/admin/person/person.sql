@@ -1,5 +1,8 @@
 #sql("paginateAdminDatas")
 select * from bd_person where 1=1 and isdeleted = 0
+	#if(iorgid)
+		and iorgid = #para(iorgid)
+	#end
 	#if(cpsnnum)
 		and cpsn_num like concat('%',#para(cpsnnum),'%')
 	#end

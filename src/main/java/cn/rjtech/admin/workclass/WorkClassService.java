@@ -66,6 +66,8 @@ public class WorkClassService extends BaseService<Workclass> {
         ValidationUtils.isTrue(findWorkClassCodeInfo(workclass.getCworkclasscode()) == null, "编码重复！");
         final String orgCode = getOrgCode();
         saveWorkClassHandle(workclass, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(), getOrgName());
+        saveWorkClassHandle(workclass, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(),
+            getOrgName());
         boolean success = workclass.save();
         return ret(success);
     }
@@ -82,7 +84,12 @@ public class WorkClassService extends BaseService<Workclass> {
         if (dbWorkclass == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
+        if (!workclass.getCworkclasscode().equals(dbWorkclass.getCworkclasscode())){
+            ValidationUtils.isTrue(findWorkClassCodeInfo(workclass.getCworkclasscode()) == null,
+                workclass.getCworkclasscode()+" 编码重复！");
+        }
         if(exists("cWorkClassCode",workclass.getCworkclasscode(), workclass.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+
         workclass.setIupdateby(JBoltUserKit.getUserId());
         workclass.setCupdatename(JBoltUserKit.getUserName());
         workclass.setDupdatetime(new Date());

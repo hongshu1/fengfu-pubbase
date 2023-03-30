@@ -33,3 +33,15 @@ WHERE 1=1
  AND i.iAutoId in (#(sqlids))
 #end
 #end
+
+#sql("workRegions")
+select
+ iw.*,wr.cWorkName cworkname,wr.cWorkCode cworkcode,p.cPsn_Name cpersonname,
+ d.cDepName cdepname,jd.name defaultname
+from Bd_InventoryWorkRegion iw
+inner join Bd_WorkRegionM wr on iw.iWorkRegionMid = wr.iAutoId
+left join Bd_Person p on wr.iPersonId = p.iAutoId
+left join Bd_Department d on iw.iDepId = d.iAutoId
+left join #(getBaseDbName()).dbo.jb_dictionary jd on iw.isDefault + 1 = jd.sort_rank and jd.type_key = 'options_boolean'
+where iw.iInventoryId = #para(iInventoryId)
+#end

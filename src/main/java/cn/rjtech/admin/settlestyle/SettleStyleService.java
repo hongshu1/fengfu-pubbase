@@ -39,6 +39,7 @@ public class SettleStyleService extends BaseService<SettleStyle> {
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		para.set("iorgid",getOrgId());
 		Page<Record> pageList = dbTemplate("settlestyle.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : pageList.getList()) {
 			row.set("issbilltypedesc", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.ISSBILLTYPE, row.getStr("issbilltype")));

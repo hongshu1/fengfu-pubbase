@@ -1,0 +1,31 @@
+<div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <!--<span class="py-1"><strong>附加信息</strong></span>-->
+    </div>
+    <input type="hidden" name="inventory.cPics" id="itemImages" value="#(inventory.cPics??)" class="form-control"/>
+    <div class="form-group row">
+        <label class="col-form-label col-sm-2 text-right">图片上传(选传)：</label>
+        <div class="col">
+            <div class="j_upload_imgbox_multi">
+                <div class="row">
+                    <div class="col-sm-auto">
+                        <div class="j_img_uploder"
+                             data-url="admin/inventory/uploadImage?iAutoId=#(inventory.iAutoId??)"
+                             data-limit="10"
+                             data-multi="true"
+                             data-handler="uploadMultipleFile"
+                             data-imgbox="itemImagebox"
+                             data-hidden-input="itemImages"
+                             data-area="150,150"
+                             data-maxsize="2048"
+                             style="width: 150px; height: 150px;"></div>
+                        <small  class="form-text text-muted text-ceter">单张大小不超2Mb，最多10张</small>
+                    </div>
+                    <div class="col pr-3">
+                        <ul id="itemImagebox" class="j_imgbox" data-remove-confirm="true" data-imgstyle="width:150px;height:150px;"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

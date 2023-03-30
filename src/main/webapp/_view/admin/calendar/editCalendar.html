@@ -1,0 +1,364 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+#define css()
+
+<link href="../../../assets/plugins/datepicker/css/datepicker.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/plugins/datepicker/css/skin-BigWhite.css" rel="stylesheet" type="text/css">
+<!--<link rel="stylesheet" type="text/css" href="${ctxStatic}/jquery-ui-1.12.1.custom/jquery-ui.css">-->
+<style>
+	body{
+		height: 100%;
+	}
+	.box-main,.main-content{
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	/*日历容器*/
+	.calendars{
+
+	}
+	.calendars .row{
+		padding: 0px 20px;
+	}
+	.calendars .row .calendar{
+		display: inline-block;
+		margin-left: 1px;
+	}
+
+	/*日期选项*/
+	.calendarsOption{
+		padding: 3px;
+		border: 1px solid #DCDCDC;
+		border-radius: 5px;
+	}
+	.calendarsOption .form-group{
+		margin-bottom: 0px!important;
+		margin-right: 0px!important;
+	}
+	.filldown{
+		font-size: 18px;
+	}
+	.filldown i{
+		position: relative;
+		top: 1px;
+	}
+	/*选中的当月日期*/
+	.datepicker .datepickerContainer tbody.datepickerDays td.datepickerSelected{
+		background: #91ade7 !important;
+	}
+	.datepicker .datepickerContainer tbody.datepickerDays td.datepickerSelected a{
+		color: #4e4e4e!important;
+	}
+	/*选中的其他月日期*/
+	.datepicker .datepickerContainer tbody.datepickerDays td.datepickerNotInMonth.datepickerSelected {
+		background: #C5D9F1 !important;
+	}
+	.datepicker .datepickerContainer tbody.datepickerDays td.datepickerNotInMonth.datepickerSelected a{
+		color: #4e4e4e!important;
+	}
+	/*未选中日期*/
+	.datepicker .datepickerContainer tbody.datepickerDays td{
+		background: #FFFF00;
+	}
+	/*未选中日期字体*/
+	.datepicker .datepickerContainer tbody.datepickerDays td a{
+		color: red !important;
+	}
+
+</style>
+#end
+
+<div class="jbolt_page" data-key="#(pmkey)" >
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col">
+				<span>年份：</span>
+				<input type="text" class="form-control" id="year" style="display: inline-block; width: 200px"  placeholder="年份"
+					   data-date data-type="year" data-fmt="yyyy" name="year" value="#(year??)">
+				<span>&nbsp;&nbsp;类型：</span>
+				<select class="form-control" id="type" style="display: inline-block; width: 200px"  data-rule="required"  data-tips="请选择日历类型"
+						data-url="admin/dictionary/options?key=prodcalendar_type"
+						name="" data-autoload data-text="=请选择日历类型=" data-value-attr="sn" data-value=""
+						data-select="">
+				</select>
+				<button  class="btn btn-success" id="query" data-title="查询数据"><i class="fa fa-search mr-1"></i> 查询</button>
+				<button  class="btn btn-success" id="save" data-title="保存数据" disabled="disabled"> 保存</button>
+				<div class="form-group calendarsOption" style="display: inline-block; width: 240px">
+					<div class="form-group">
+						<span>&nbsp;快选：</span>
+						<button id="selectAll" class="btn btn-success" >
+							<i class="fa fa-check-square-o"></i>全选
+						</button>
+						<button id="selectWeekdays" class="btn btn-success" >
+							<i class="fa fa-check-square-o"></i>周一到周五
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-auto">
+			</div>
+		</div>
+	</div>
+	<div class="jbolt_page_content">
+		<div class="calendars" style="flex-grow:1;width:100%;">
+			<div class="row">
+				<div id="calendar_1" class="calendar"></div>
+				<div id="calendar_2" class="calendar"></div>
+				<div id="calendar_3" class="calendar"></div>
+				<div id="calendar_4" class="calendar"></div>
+			</div>
+			<div class="row">
+				<div id="calendar_5" class="calendar"></div>
+				<div id="calendar_6" class="calendar"></div>
+				<div id="calendar_7" class="calendar"></div>
+				<div id="calendar_8" class="calendar"></div>
+			</div>
+			<div class="row">
+				<div id="calendar_9" class="calendar"></div>
+				<div id="calendar_10" class="calendar"></div>
+				<div id="calendar_11" class="calendar"></div>
+				<div id="calendar_12" class="calendar"></div>
+			</div>
+		</div>
+	</div>
+</div>
+#end
+#define js()
+<script src="../../../assets/plugins/datepicker/js/datepicker.js?v=1.0.1" type="text/javascript"></script>
+<!--<script src="${ctxStatic}/jquery-ui-1.12.1.custom/jquery-ui.min.js" type="text/javascript"></script>-->
+
+<script type="text/javascript">
+
+	var selectDate = ['2021-02-01','2021-02-02','2021-02-03'];
+	function initDatePicker(selectDate){
+		let nowYear = $('#year').val();
+		for (let i = 0; i < 12; i++) {
+			let _selectDate = deepClone(selectDate);
+			$('#calendar_'+(i+1)).DatePicker({
+				flat: true,
+				date: [],
+				current: new Date(nowYear+'-'+(i+1)),
+				format: 'Y-m-d',
+				calendars: 1,
+				mode: 'multiple',
+				onChange: function(date) {
+					for (let j = 0; j < 12; j++) {
+						$('#calendar_'+(j+1)).DatePickerSetDate(deepClone(date), false);
+					}
+				},
+			});
+		}
+	}
+	initDatePicker(selectDate);
+
+	/*查询*/
+	$('#query').click(function () {
+		let type = $('#type').val();
+		let year = $('#year').val();
+		if (year == undefined || year == ""){
+			LayerMsgBox.alert("请先选择年份！");
+			return;
+		}
+		if (type == undefined || type == ""){
+			LayerMsgBox.alert("请先选择日历类型！");
+			return;
+		}
+		let url = "admin/calendar/getTakeDateListByYear?year="+year+"&type="+type;
+		Ajax.get(url,function(res){
+			setCalendars(year, res.data);
+			enableBtns('#save','#selectWeekdays','#selectAll');
+			LayerMsgBox.success("查询成功!");
+		});
+	});
+
+	/*保存*/
+	$('#save').click(function () {
+		let nowYear = $('#year').val();
+		if (nowYear == undefined || nowYear == ""){
+			LayerMsgBox.alert("请先选择年份！");
+			return;
+		}
+		let type = $('#type').val();
+		if (type == undefined || type == ""){
+			LayerMsgBox.alert("请先选择日历类型！");
+			return;
+		}
+		let newSelectDate = $('#calendar_1').DatePickerGetDate('Y-m-d');
+		newSelectDate = filterSelectDate(newSelectDate);
+		console.log(newSelectDate);
+		let data = {
+			dates:JSON.stringify(newSelectDate),
+		}
+
+		let url = "admin/calendar/saveCalendar?year="+nowYear+"&type="+type;
+		Ajax.post(url,data,function(res){
+			LayerMsgBox.success("保存成功!");
+		});
+	});
+
+
+	/*全选*/
+	$('#selectAll').click(function () {
+		let nowYear = $('#year').val();
+		if (nowYear == undefined || nowYear == ""){
+			LayerMsgBox.alert("请先选择年份！");
+			return;
+		}
+		let weekdays = getYearDateFormat(nowYear,0);
+		setCalendars(nowYear, weekdays);
+	});
+	/*周一到周五*/
+	$('#selectWeekdays').click(function () {
+		let nowYear = $('#year').val();
+		if (nowYear == undefined || nowYear == ""){
+			LayerMsgBox.alert("请先选择年份！");
+			return;
+		}
+		let weekdays = getYearDateFormat(nowYear,1);
+		setCalendars(nowYear, weekdays);
+	});
+	/**
+	 * 获取日期
+	 * @param year 年份
+	 * @param type 获取类型(0:所有，1:周一至周五，2:周六周日)
+	 */
+	function getYearDateFormat(year,type){
+		let date = new Date(year,0);
+		let yearDayNum = getYearDayNum(year);
+		let weekdays = [];
+
+		let check;
+		switch(type) {
+			case 0:{
+				//所有
+				check = function(tempDate) {
+					return true;
+				}
+			}break;
+			case 1:{
+				//周一至周五
+				check = function(tempDate) {
+					if (tempDate.getDay() > 0 && tempDate.getDay() < 6){
+						return true;
+					}
+					return false;
+				}
+			}break;
+			case 2:{
+				//周六周日
+				check = function(tempDate) {
+					if (tempDate.getDay() == 0 || tempDate.getDay() == 6){
+						return true;
+					}
+					return false;
+				}
+			}break;
+		}
+
+		for (let i = 0; i < yearDayNum; i++) {
+			let tempDate = new Date(year,0);
+			tempDate.setDate(date.getDate()+i);
+			if (check(tempDate)){
+				weekdays.push(tempDate.format("yyyy-MM-dd"));
+			}
+		}
+		return weekdays;
+	}
+
+	/*设置日历*/
+	function setCalendars(year, dates){
+		for (let i = 0; i < 12; i++) {
+			$('#calendar_'+(i+1)).DatePickerSetDate(year+'-'+(i+1)+'-01',true);
+			$('#calendar_'+(i+1)).DatePickerClear();
+			$('#calendar_'+(i+1)).DatePickerSetDate(deepClone(dates),false);
+		}
+	}
+
+	/*启用按钮组*/
+	function enableBtns(btn1,btn2,btn3){
+		$(btn1).removeAttr("disabled");
+		$(btn2).removeAttr("disabled");
+		$(btn3).removeAttr("disabled");
+	}
+	/*禁用按钮组*/
+	function disableBtns(btns){
+		for (let i in btns) {
+			$(btns[i]).attr("disabled","disabled");
+		}
+	}
+
+
+	/**
+	 * 过滤非法日期
+	 * @param {Array} arr
+	 */
+	function filterSelectDate(arr){
+		let nowYear = $('#year').val();
+		let newSelectDate = [];
+		for (let i = 0; i < arr.length; i++) {
+			if(newSelectDate.indexOf(arr[i]) == -1 && arr[i].substring(0, 4) == nowYear){
+				newSelectDate.push(arr[i]);
+			}
+		}
+		return newSelectDate;
+	}
+
+
+	/**
+	 * 深克隆
+	 * @param {Object} obj
+	 */
+	function deepClone(obj){
+		return JSON.parse(JSON.stringify(obj));
+	}
+
+	/*日期格式化*/
+	Date.prototype.format = function(fmt) {
+		var o = {
+			"M+" : this.getMonth()+1,                 //月份
+			"d+" : this.getDate(),                    //日
+			"h+" : this.getHours(),                   //小时
+			"m+" : this.getMinutes(),                 //分
+			"s+" : this.getSeconds(),                 //秒
+			"q+" : Math.floor((this.getMonth()+3)/3), //季度
+			"S"  : this.getMilliseconds()             //毫秒
+		};
+		if(/(y+)/.test(fmt)) {
+			fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+		}
+		for(var k in o) {
+			if(new RegExp("("+ k +")").test(fmt)){
+				fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+			}
+		}
+		return fmt;
+	}
+	/*获取年份的总天数*/
+	function getYearDayNum(year) {
+		if (year==null) {
+			var Year = new Date().getFullYear(), s = 0, d;//获取当前年
+			for (var i = 1; i < 13; i++) {
+				d = new Date(Year, i, 0);//获取某一个月的天数
+				s += d.getDate();
+			};
+			return s;
+		} else if(year >= 1970) {
+			var Year = new Date().getFullYear(), s = 0, d;
+			for (var i = 1; i < 13; i++) {
+				d = new Date(year, i, 0);
+				s += d.getDate();
+			};
+			return s;
+		} else {
+			return "";
+		}
+	}
+
+
+</script>
+#end
+
+

@@ -42,6 +42,7 @@ public class Fitemss97classService extends BaseService<Fitemss97class> {
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		para.set("iorgid",getOrgId());
 		Page<Record> pageList = dbTemplate("fitemss97class.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		return pageList;
 	}

@@ -1,0 +1,199 @@
+<form onsubmit="return false;" id="BomMaster_Form" action="#(action)" method="post">
+	#if(bomMaster.iAutoId??)
+	<input type="hidden" name="bomMaster.iAutoId" value="#(bomMaster.iAutoId??)" />
+	#end
+    <table class="jbolt_table thead_font_normal table-center" data-width="1200px" data-height="300px"
+           data-jbolttable>
+        <thead>
+        <tr>
+            <th data-width="200" data-column="version">机型</th>
+            <th data-width="150" data-column="version">文件名称</th>
+            <th data-width="120" data-column="publish_time">文件名称</th>
+            <th data-width="100" data-column="create_time">版本/版次</th>
+            <th data-width="120" data-column="version">启用日期</th>
+            <th data-width="120" data-column="version">停用日期</th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+
+            </td>
+            <td>
+                <input type="text" autocomplete="off"  class="form-control"  placeholder="输入文件名称" name="keywords" value="" />
+            </td>
+            <td>
+                <input type="text" autocomplete="off"  class="form-control"  placeholder="输入文件名称" name="keywords" value="" />
+            </td>
+            <td>
+                <input type="text" autocomplete="off"  class="form-control"  placeholder="输入版本/版次" name="keywords" value="" />
+            </td>
+            <td>
+                <input type="text" class="form-control" id="startTime_demo" data-rule="required"  data-date name="startDate" value="#date(DateUtil.toDate(startDate??),'yyyy-MM-dd')">
+            </td>
+            <td>
+                <input type="text" class="form-control" id="endTime_demo" data-rule="required;>=#startTime_demo" data-done-handler="checkme" data-date name="endDate" value="#date(DateUtil.toDate(endDate??),'yyyy-MM-dd')">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 50px;">
+        <div style="float: left; width: 150px">
+            <img src="assets/img/defaultposter.jpg" data-target="parent" data-photobtn class="m-1" style="height: 100px" tooltip data-title="点击查看大图" />
+        </div>
+        <div style="float: left; margin-left: 5px">
+            <table class="jbolt_table thead_font_normal table-center" data-width="auto" height="100px" data-height="300px"
+                   data-jbolttable>
+                <thead>
+                <tr>
+                    <th  data-width="50" data-column="version">NO</th>
+                    <th  data-width="150" data-column="version">存货编码</th>
+                    <th  data-width="120" data-column="publish_time">客户部番</th>
+                    <th  data-width="100" data-column="create_time">重量（KG）</th>
+                    <th  data-width="120" data-column="version">设变号</th>
+                    <th  data-width="120" data-column="version">设变日期</th>
+                    <th  data-width="50" data-column="version">NO</th>
+                    <th  data-width="120" data-column="create_time">UG部番</th>
+                    <th  data-width="100" data-column="create_time">重量（KG）</th>
+                    <th  data-width="120" data-column="version">设变号</th>
+                    <th  data-width="120" data-column="version">设变日期</th>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>01</td>
+                    <td>
+                        <input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货编码" name="keywords" value="" />
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <input type="text" autocomplete="off"  class="form-control"  placeholder="输入设变号" name="keywords" value="" />
+                    </td>
+                    <td>
+                        <input type="text" class="form-control"  data-date name="startDate" value="#date(DateUtil.toDate(startDate??),'yyyy-MM-dd')">
+                    </td>
+                    <td>01</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <input type="text" autocomplete="off"  class="form-control"  placeholder="输入设变号" name="keywords" value="" />
+                    </td>
+                    <td>
+                        <input type="text" class="form-control"  data-date name="startDate" value="#date(DateUtil.toDate(startDate??),'yyyy-MM-dd')">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="form-group row" style="margin-top: 10px">
+                <label class="col-2 col-form-label" style="margin-left: -200px;">客户名称：</label>
+                <div class="col-2">
+                    <input type="text" autocomplete="off" class="form-control" data-rule="required" data-tips="请输入客户名称" maxlength="40" name="appversion.appcode" value="#(appversion.appcode??)">
+                </div>
+                <label class="col-2 col-form-label">备注共用件：</label>
+                <div class="col-2">
+                    <input type="text" autocomplete="off" class="form-control" data-rule="required" data-tips="请输入客户名称" maxlength="40" name="appversion.appcode" value="#(appversion.appcode??)">
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="jbolt_table_toolbar" id="bomMaster_toolbar_#(pageId)">
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+
+        <button data-dialogbtn data-area="90%,90%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增组织建模-部门档案" data-url="admin/department/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+        <button data-dialogbtn data-area="90%,90%"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑组织建模-部门档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/department/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+
+        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+    </div>
+
+</div>
+
+<table class="table_striped jbolt_main_table  table-center "
+       data-jbolttable
+       data-width="auto"
+       data-height="fill"
+       data-toolbar="bomMaster_toolbar_#(pageId)"
+>
+
+    <thead>
+    <tr>
+        <th colspan="6" rowspan="2" data-width="240">编号</th>
+        <th colspan="1" rowspan="1" data-min-width="120">存货编码</th>
+        <th colspan="1" rowspan="1" data-min-width="120">客户部番</th>
+        <th colspan="1" rowspan="1" data-min-width="120">UG部番</th>
+        <th colspan="1" rowspan="2"  data-min-width="120">略图</th>
+        <th colspan="1" rowspan="1" data-min-width="120">QTY</th>
+        <th colspan="1" rowspan="1" data-min-width="120">材质</th>
+        <th colspan="1" rowspan="2" data-min-width="120">材料类别</th>
+        <th colspan="2" rowspan="1" data-min-width="120">原材料存货编码</th>
+        <th colspan="1" rowspan="1" data-min-width="120">原材料供应商</th>
+        <th colspan="1" rowspan="1" data-min-width="120">可制件数</th>
+        <th colspan="1" rowspan="1" data-min-width="120">分条存货编码</th>
+        <th colspan="1" rowspan="1" data-min-width="120">分条商</th>
+        <th colspan="1" rowspan="1" data-min-width="120">可制件数</th>
+        <th colspan="1" rowspan="1" data-min-width="120">落料存货编码</th>
+        <th colspan="1" rowspan="1" data-min-width="120">落料商</th>
+        <th colspan="1" rowspan="1" data-min-width="120">可制件数</th>
+        <th colspan="1" rowspan="2" data-min-width="120">部品加工商</th>
+        <th colspan="1" rowspan="2" data-min-width="120">是否外作</th>
+        <th colspan="1" rowspan="2" data-min-width="120">备注</th>
+        <th colspan="1" rowspan="2" data-min-width="150">操作</th>
+    </tr>
+    <tr>
+        <th colspan="1" rowspan="1"  data-min-width="120">存货名称</th>
+        <th colspan="1" rowspan="1"  data-min-width="120">部品名称</th>
+        <th colspan="1" rowspan="1" data-min-width="120">UG部品名称</th>
+        <th colspan="1" rowspan="1" data-min-width="120">重量</th>
+        <th colspan="1" rowspan="1" data-min-width="120">厚度</th>
+        <th colspan="1" rowspan="1" data-min-width="120">原材料存货名称</th>
+        <th colspan="1" rowspan="1" data-min-width="120">原材料规格</th>
+        <th colspan="1" rowspan="1" data-min-width="120">重量</th>
+        <th colspan="1" rowspan="1" data-min-width="120">分条存货名称</th>
+        <th colspan="1" rowspan="1" data-min-width="120">分条规格</th>
+        <th colspan="1" rowspan="1" data-min-width="120">重量</th>
+        <th colspan="1" rowspan="1" data-min-width="120">落料存货名称</th>
+        <th colspan="1" rowspan="1" data-min-width="120">下料尺寸</th>
+        <th colspan="1" rowspan="1" data-min-width="120">重量</th>
+    </tr>
+
+    </thead>
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>1-1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+        <td>1220</td>
+
+    </tr>
+    </tbody>
+</table>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="BomMaster_Form")
+#end
+

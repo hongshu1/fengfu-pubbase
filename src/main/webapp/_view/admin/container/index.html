@@ -10,10 +10,10 @@
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="=容器编码=" name="cContainerCode" value="" />
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="=容器名称=" name="cContainerName" value="" />
 <!--		<input type="text" autocomplete="off"  class="form-control"  placeholder="=容器类型=" name="iContainerClassId" value="" />-->
-		<select  class="form-control-two"
+		<select  class="form-control"
 				 data-autoload
 				 data-url="admin/containerclass/list"
-				 data-select-type="select2"
+				 data-select-type="select"
 				 name="iContainerClassId"
 				 data-rule="select"
 				 data-notnull="false"
@@ -70,7 +70,6 @@
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/container/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
 
-
 </div>
 
 
@@ -92,7 +91,22 @@
 		</div>
 	</div>
 
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<div class="btn-group dropdown">
+			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+			<div class="dropdown-menu" aria-labelledby="exportContainerButton">
+				<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="/admin/container/dataExport"><i class="fa fa-download"></i> 导出选中</button>
+				<button class="btn dropdown-item" data-downloadbtn data-url="/admin/container/dataExport"  data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
+			</div>
+		</div>
 	</div>
+
+	<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="60%,65%"  data-handler="refreshJBoltTable"  id="toolbar_Rk_#(pageId)"  data-title="入库"  data-url="admin/container/rk/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 入库</button>
+	<button data-dialogbtn data-area="60%,65%"  data-handler="refreshJBoltTable"  id="toolbar_Ck_#(pageId)"  data-title="出库"  data-url="admin/container/ck/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 出库</button>
+	</div>
+
+</div>
 		<table class="jbolt_table jbolt_main_table  table-center "
 			   data-jbolttable
 			   data-width="fill"
@@ -106,6 +120,7 @@
 			   data-copy-to-excel="false"
 			   data-page="Container_page"
 			   data-toolbar="Container_toolbar_#(pageId)"
+			   data-fixed-columns-left="1,2,3"
 		>
 		<thead>
 		<tr>

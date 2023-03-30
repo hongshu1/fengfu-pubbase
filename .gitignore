@@ -2,4 +2,6 @@
 /logs/
 /.idea/
 /.svn/
+/.git/
 /src/main/webapp/upload/
+*.iml

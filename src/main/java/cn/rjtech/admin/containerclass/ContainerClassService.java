@@ -1,6 +1,11 @@
 package cn.rjtech.admin.containerclass;
 
+import cn.hutool.core.date.DateUtil;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -11,8 +16,11 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.ContainerClass;
+import com.jfinal.plugin.activerecord.Record;
 
+import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -153,5 +161,85 @@ public class ContainerClassService extends BaseService<ContainerClass> {
 	public Ret delete(Long id) {
 		return toggleBoolean(id, "isDeleted");
 
+	}
+
+	/**
+	 * 容器分类导入
+	 * @param file
+	 * @return
+	 */
+	public Ret importExcelData(File file) {
+		StringBuilder errorMsg=new StringBuilder();
+		JBoltExcel jBoltExcel=JBoltExcel
+				//从excel文件创建JBoltExcel实例
+				.from(file)
+				//设置工作表信息
+				.setSheets(
+						JBoltExcelSheet.create("sheet1")
+								//设置列映射 顺序 标题名称
+								.setHeaders(
+										JBoltExcelHeader.create("cContainerClassCode","分类编码"),
+										JBoltExcelHeader.create("cContainerClassName","分类名称"),
+										JBoltExcelHeader.create("isEnabled", "是否启用")
+								)
+								//特殊数据转换器
+								.setDataChangeHandler((data,index) ->{
+									ValidationUtils.notNull(data.get("cContainerClassCode"),"分类编码为空！");
+									ValidationUtils.notNull(data.get("cContainerClassName"),"分类名称为空！");
+									ValidationUtils.notNull(data.get("isEnabled"), "是否启用为空！");
+									data.changeStrToBoolean("isEnabled", "是");
+
+									ValidationUtils.isTrue(findByConClassCode(data.getStr("cContainerClassCode"))==null, data.getStr("cContainerClassCode")+"编码重复");
+
+									//创建信息
+									data.change("iCreateBy", JBoltUserKit.getUserId());
+									data.change("cCreateName", JBoltUserKit.getUserName());
+									data.change("dCreateTime", DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+
+									//更新信息
+									data.change("iUpdateBy", JBoltUserKit.getUserId());
+									data.change("cUpdateName", JBoltUserKit.getUserName());
+									data.change("dUpdateTime", DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+
+									//组织信息
+									data.change("iOrgId", getOrgCode());
+									data.change("cOrgCode", getOrgCode());
+									data.change("cOrgName", getOrgName());
+									//删除默认 0：未删除
+									data.change("IsDeleted", 0);
+
+								})
+								//从第三行开始读取
+								.setDataStartRow(3)
+				);
+		//从指定的sheet工作表里读取数据
+		List<ContainerClass> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", ContainerClass.class, errorMsg);
+		if(notOk(models)) {
+			if(errorMsg.length()>0) {
+				return fail(errorMsg.toString());
+			}else {
+				return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+			}
+		}
+		//读取数据没有问题后判断必填字段
+		if(models.size()>0){
+			tx(() -> {
+				batchSave(models);
+				return true;
+			});
+
+		}
+		return SUCCESS;
+	}
+
+	/**
+	 * 导出查询
+	 * @param kv
+	 * @return
+	 */
+	public List<Record> list(Kv kv) {
+		Sql sql = selectSql().le("IsDeleted",0).desc("dCreateTime");
+
+		return findRecord(sql);
 	}
 }

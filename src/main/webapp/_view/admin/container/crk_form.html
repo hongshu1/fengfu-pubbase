@@ -1,0 +1,66 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="UserThirdparty_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+    <td>${pageNumber,pageSize,index | rownum}</td>
+    <td>${data.ccontainercode}</td>
+    <td>${data.ccontainername}</td>
+    <td>${data.cmemo}</td>
+    <td>
+	<a class="jbolt_table_delbtn" onclick="jboltTableRemoveRow(this,true)" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="UserThirdparty_toolbar_#(pageId)">
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <input type="hidden" id="mark" value="#(mark??)" />
+        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+        <button onclick="jboltTableRemoveCheckedRow(this,true)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+        <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-success btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+    </div>
+</div>
+
+
+<table class="jbolt_table jbolt_main_table  table-center "
+       id="jbolt_Table_#(pageId)2"
+       data-jbolttable
+       data-width="auto"
+       data-height="fill"
+       data-ajax="true"
+       data-url="admin/container/data"
+       data-rowtpl="UserThirdparty_tpl_#(pageId)"
+       data-autoload="true"
+       data-column-resize="false"
+       data-toolbar="UserThirdparty_toolbar_#(pageId)"
+       data-column-prepend="1:checkbox:true:false:false"
+       data-editable="true"
+       data-editable-option="getEditableTableOptions_#(pageId)2"
+>
+    <thead>
+    <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-min-width="150" data-column="ccontainercode">编码</th>
+        <th data-min-width="230" data-column="ccontainername">名称</th>
+        <th data-min-width="230" data-column="cmemo">备注</th>
+        <th data-width="67" data-column="thirdpartyName">操作</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+</div>
+</div>
+
+#end
+#define js()
+<script>
+    function submitThisForm(){
+        jboltTableSubmit("#jbolt_Table_#(pageId)2");
+    }
+</script>
+#include("crk_form_js.html")
+#end

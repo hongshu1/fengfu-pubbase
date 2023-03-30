@@ -1,8 +1,12 @@
 package cn.rjtech.admin.fitemss97;
 
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.base.JBoltMsg;
@@ -15,6 +19,8 @@ import cn.rjtech.model.momdata.Fitemss97;
  */
 @CheckPermission(PermissionKey.FITEMSS97)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
+@Path(value = "/admin/fitemss97", viewPath = "/_view/admin/fitemss97")
 public class Fitemss97AdminController extends BaseAdminController {
 
 	@Inject

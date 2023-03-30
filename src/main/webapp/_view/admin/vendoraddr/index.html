@@ -1,0 +1,122 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>供应商档案-联系地址</h1></div>
+	<div class="col">
+	<form class="form-inline" id="VendorAddr_form_#(pageId)">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+
+<select class="form-control" name="isEnabled"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=是否生效：0. 否 1. 是="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+
+<select class="form-control" name="isDeleted"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=删除状态：0. 未删除 1. 已删除="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/vendoraddr/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增供应商档案-联系地址"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="VendorAddr_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cDistrictCode}</td>
+<td>${data.cDistrictName}</td>
+<td>${data.cContactCode}</td>
+<td>${data.cContactName}</td>
+<td>${data.cCountry}</td>
+<td>${data.cProvince}</td>
+<td>${data.cCity}</td>
+<td>${data.cDistrict}</td>
+<td>${data.cPostCode}</td>
+<td>${data.cMobile}</td>
+<td>${data.cFax}</td>
+<td>${data.cEmail}</td>
+<td><img data-switchbtn data-confirm="确定切换是否生效：0. 否 1. 是？" data-value="${data.isEnabled}"  data-handler="refreshJBoltTable"  data-url="admin/vendoraddr/toggleIsEnabled/${data.id}"/></td>
+<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isDeleted}"  data-handler="refreshJBoltTable"  data-url="admin/vendoraddr/toggleIsDeleted/${data.id}"/></td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/vendoraddr/edit/${data.id}" data-area="800,600" data-title="查看供应商档案-联系地址"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/vendoraddr/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑供应商档案-联系地址"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/vendoraddr/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="VendorAddr_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增供应商档案-联系地址" data-url="admin/vendoraddr/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑供应商档案-联系地址" data-check-handler="jboltTableGetCheckedId" data-url="admin/vendoraddr/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/vendoraddr/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="VendorAddr_form_#(pageId)"
+	   data-url="admin/vendoraddr/datas"
+	   data-rowtpl="VendorAddr_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="VendorAddr_page"
+	   data-toolbar="VendorAddr_toolbar_#(pageId)"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="150" data-column="cDistrictCode">地点编码</th>
+	<th data-width="150" data-column="cDistrictName">地点名称</th>
+	<th data-width="150" data-column="cContactCode">联系人编码</th>
+	<th data-width="150" data-column="cContactName">联系人名称</th>
+	<th data-width="150" data-column="cCountry">国家/地区</th>
+	<th data-width="150" data-column="cProvince">省/自治区</th>
+	<th data-width="150" data-column="cCity">城市</th>
+	<th data-width="150" data-column="cDistrict">区县</th>
+	<th data-width="150" data-column="cPostCode">邮政编码</th>
+	<th data-width="150" data-column="cMobile">移动电话</th>
+	<th data-width="150" data-column="cFax">传真</th>
+	<th data-width="150" data-column="cEmail">电子邮件</th>
+	<th data-width="100" data-column="isEnabled">是否生效：0. 否 1. 是</th>
+	<th data-width="100" data-column="isDeleted">删除状态：0. 未删除 1. 已删除</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

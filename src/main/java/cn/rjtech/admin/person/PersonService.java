@@ -73,6 +73,7 @@ public class PersonService extends BaseService<Person> {
 	 * 后台管理分页查询
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		para.set("iorgid",getOrgId());
 		Boolean isenabled = para.getBoolean("isenabled");
 		//是否启用boolean转char
 		String isenabledStr = isenabled == null ? null:(isenabled ? "1":"0");
@@ -453,11 +454,16 @@ public class PersonService extends BaseService<Person> {
 	public List<Person> findAll(Kv kv){
 		return daoTemplate("person.findAll", kv).find();
 	}
+    
 	/**
 	 * 计算工龄
-	 * */
+	 */
 	public BigDecimal calcSysworkage(Date date) {
 		if(date == null) return null;
 		return new BigDecimal(JBoltDateUtil.daysBetween(date, new Date()) / 365d).setScale(2,BigDecimal.ROUND_HALF_UP);
+	}
+
+	public List<Person> list(Kv kv){
+		return find("SELECT * FROM Bd_Person WHERE iUserId = ?", kv.get("iuserid"));
 	}
 }

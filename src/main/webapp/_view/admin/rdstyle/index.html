@@ -19,118 +19,186 @@
 				<div class="card">
 					<div class="card-header py-2">
 						<span class="d-inline-block py-1"><strong>收发类别</strong></span>
-
+						<div class="pull-right">
+							<input type="text" class="form-control" id="searchBackGoodsTypeInput_#(pageId)"  placeholder="搜索关键字过滤" />
+						</div>
 					</div>
 					<div class="card-header py-2">
 						<div>
 							<div class="btn-group" role="group" aria-label="btn-group">
-
-
+								<button data-area="580,350" data-title="新增分类" onclick="addrdstyle(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+								<button onclick="deleterdstyle(this)" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
 							</div>
-							<div class="clearfix"></div>
 						</div>
 					</div>
+
 					<div class="card-body overflow-auto" style="height:600px;">
 						<div id="rdStyleTree"
 							 data-jstree
 							 data-target="portal"
+							 data-search-input="searchBackGoodsTypeInput_#(pageId)"
 							 data-portalid="rdStyleId"
 							 data-curd="false"
 							 data-open-level="-1"
-							 data-read-url="admin/rdstyle/mgrTree"
-							 data-change-handler="jstreeClike">
+							 data-read-url="admin/rdstyle/mgrTree/"
+							 data-add-url="admin/rdstyle/add/"
+							 data-edit-url="admin/rdstyle/edit/"
+							 data-delete-url="admin/rdstyle/delete/"
+							 data-change-handler="rdstyleClick">
 						</div>
 					</div>
 
 				</div>
 			</div>
 			<div class="col-auto card " style="width:74%; margin-top: 0px">
+				<!--右边详情-->
+				<form onsubmit="return false;" id="rdStyleForm" action="#(action)" method="post">
+					<input type="hidden" name="rdStyle.iautoid" value="#(rdStyle.iautoid??)" />
 
-				<!--料品列表-->
-				<!--#ajaxPortal("/admin/itemmaster/index","itemcategoryId",true)-->
-				<div class="jbolt_page" data-key="itemmaster_#(pmkey)" >
-					<div class="jbolt_page_title">
-						<div class="row">
-
-							<div class="col">
-								<form class="form-inline" id="itemmasterForm_#(pageId)"   onsubmit="return false;" method="post">
-
-								</form>
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label">收发类别编码</label>
+						<div class="col">
+							<input type="text" id="crdcode" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入收发类别编码" maxlength="5" name="rdStyle.crdcode" value="#(rdStyle.crdcode??)"/>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label">收发类别名称</label>
+						<div class="col">
+							<input type="text" id="crdname" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入收发类别名称" maxlength="12" name="rdStyle.crdname" value="#(rdStyle.crdname??)"/>
+						</div>
+					</div>
+					<div class="form-group row"
+						 data-radio
+						 id="brdflag"
+						 data-rule="radio"
+						 data-value="#(rdStyle.brdflag??)"
+						 data-name="rdStyle.brdflag"
+						 data-default="options_first"
+						 data-width="col-sm-2,col"
+					>
+						<label class="col-sm-2 col-form-label" >收发标志</label>	 <!--0. 发 1. 收-->
+						<div class="col"  style="padding-top: 1px;">
+							<div class="radio radio-primary  radio-inline">
+								<input  id="r_brdflag_false" type="radio" name="rdStyle.brdflag" value="false"/>
+								<label for="r_brdflag_false">收</label>
 							</div>
-							<div class="col-md-auto">
+
+							<div class="radio radio-primary  radio-inline">
+								<input  id="r_brdflag_true" type="radio" name="rdStyle.brdflag" value="true"/>
+								<label for="r_brdflag_true">发</label>
 							</div>
 						</div>
 					</div>
-					<div class="jbolt_page_content">
-						<!-- JBoltTable的数据模板定义-->
-						<textarea class="jb_tpl_box" id="itemmasterRowtpl_#(pageId)">
-							{@each datas as data,index}
-							<tr data-id="${data.iautoid}" >
-							<td>${pageNumber,pageSize,index | rownum}</td>
-							<td>${data.crdcode}</td>
-							<td>${data.crdname}</td>
-							<td>${data.brdflag}</td>
-							<td>${data.bretail}</td>
-							</tr>
-							{@/each}
-						</textarea>
 
-						<!-- 工具条 toolbar -->
-						<div class="jbolt_table_toolbar" id="itemmaster_toolbar_#(pageId)">
-							<div class="btn-group" role="group" aria-label="btn-group">
-
+					<div class="form-group row"
+						 data-radio
+						 id="bretail"
+						 data-rule="radio"
+						 data-value="#(rdStyle.bretail??)"
+						 data-name="rdStyle.bretail"
+						 data-default="options_first"
+						 data-width="col-sm-2,col"
+					>
+						<label class="col-sm-2 col-form-label" >是否零售</label>
+						<div class="col"  style="padding-top: 1px;">
+							<div class="radio radio-primary  radio-inline">
+								<input  id="r_bretail_true" type="radio" name="rdStyle.bretail" value="true"/>
+								<label for="r_bretail_true">是</label>
 							</div>
-							<div class="clearfix"></div>
-						</div>
 
-						<table class="jbolt_table jbolt_main_table table-center"
-							   data-jbolttable
-							   data-height="fill"
-							   data-ajax="true"
-							   data-url="admin/rdstyle/datas"
-							   data-column-resize="true"
-							   data-column-prepend="1:checkbox:true"
-							   data-conditions-form="itemmasterForm_#(pageId)"
-							   data-rowtpl="itemmasterRowtpl_#(pageId)"
-							   data-page="itemmasterPage_#(pageId)"
-							   data-toolbar="itemmaster_toolbar_#(pageId)"
-							   data-fixed-columns-left="1,2,3"
-						>
-							<thead>
-							<tr>
-								<th data-width="150" data-column="cRdCode">收发类别编码</th>
-								<th data-width="150" data-column="cRdName">收发类别名称</th>
-								<th data-width="150" data-column="bRdFlag">收发标志: 0. 发 1. 收</th>
-								<th data-width="150" data-column="bRetail">是否零售</th>
-							</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
+							<div class="radio radio-primary  radio-inline">
+								<input  id="r_bretail_false" type="radio" name="rdStyle.bretail" value="false"/>
+								<label for="r_bretail_false">否</label>
+							</div>
+						</div>
 					</div>
-				</div>
+
+					<div>
+						<button id="savePurchasorder1" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存</button>
+					</div>
+
+				</form>
 			</div>
 		</div>
 	</div>
 
 	<script>
-		/*料品分类*/
 		var autoid = "";
-		function jstreeClike(tree,data){
-			autoid = data.id;
-			$("#iitemcategoryid").val(autoid);
-			jboltTablePageToFirst();
+		/*详情*/
+		function rdstyleClick(tree,data){
+			console.log(data);
+			 autoid = data.id;
+
+			let url = "admin/rdstyle/selectRdStyle?autoid="+autoid;
+			Ajax.get(url,function(res){
+				if (res.state === 'ok'){
+					let table = res.data;
+					console.log(res.data);
+					$("#crdcode").val(table.crdcode);
+					$("#crdname").val(table.crdname);
+					RadioUtil.setChecked('#brdflag', 'rdStyle.brdflag', table.brdflag);
+					RadioUtil.setChecked('#bretail', 'rdStyle.bretail', table.bretail);
+				}else {
+					LayerMsgBox.error("接口错误！");
+				}
+			});
 		}
+
 		function submitBtn(){
 			$("#iitemcategoryid").val('');
 		}
 
-		/*料品档案*/
-		function addMasterBtn(ele){
-			var url="admin/itemmaster/add?iitemcategoryid="+autoid;
+		/*新增*/
+		function addrdstyle(ele){
+			var url="admin/rdstyle/add?pid="+autoid;
 			$(ele).data("url",url);
 			DialogUtil.openBy(ele);
+
 		}
+
+		/*删除*/
+		function deleterdstyle(ele){
+			if (autoid == ""){
+				LayerMsgBox.alert("请先选择需要删除的收发类别！");
+				return;
+			}
+			LayerMsgBox.confirm("确定删除选中数据？",function(){
+				let url = "admin/rdstyle/deleteByIds?ids="+autoid
+				Ajax.get(url,function(res){
+					window.parent.refreshPjaxContainer();
+				});
+			});
+		}
+
+		//保存
+		$("#savePurchasorder1").click(function (){
+
+			let crdcode = $("#crdcode").val();
+			let crdname = $("#crdname").val();
+
+			if(!crdcode){
+				LayerMsgBox.error("收发类别编码不能为空！",2000);
+				return;
+			}if(!crdname){
+				LayerMsgBox.error("收发类别名称不能为空！",2000);
+				return;
+			}
+
+			let dataObj = {
+				autoid: autoid,
+				crdcode: crdcode,
+				crdname: crdname,
+			}
+			let url = "admin/rdstyle/save1";
+			Ajax.post(url,dataObj,function(res){
+				LayerMsgBox.success("保存成功！");
+				setTimeout(function(){
+					parent.refreshPjaxContainer();
+					callback();
+				},500);
+				callback();
+			});
+		});
 
 	</script>
 </div>

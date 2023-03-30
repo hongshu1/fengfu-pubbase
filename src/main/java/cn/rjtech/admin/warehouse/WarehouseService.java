@@ -253,19 +253,6 @@ public class WarehouseService extends BaseService<Warehouse> {
 										JBoltExcelHeader.create("cDepCode","所属部门"),
 										JBoltExcelHeader.create("cWhAddress","地址"),
 										JBoltExcelHeader.create("cWhPerson","负责人"),
-										JBoltExcelHeader.create("cWhValueStyle","计价方式"),
-										JBoltExcelHeader.create("bFreeze","是否冻结"),
-										JBoltExcelHeader.create("bMRP","是否参与MRP运算"),
-										JBoltExcelHeader.create("iWHProperty","仓库属性"),
-										JBoltExcelHeader.create("bShop","是否门店"),
-										JBoltExcelHeader.create("bInCost","是否计入成本"),
-										JBoltExcelHeader.create("bInAvailCalcu","是否纳入可用量计算"),
-										JBoltExcelHeader.create("bProxyWh","是否为代管仓"),
-										JBoltExcelHeader.create("iSAConMode","销售可用量控制方式"),
-										JBoltExcelHeader.create("iEXConMode","出口可用量控制方式"),
-										JBoltExcelHeader.create("iSTConMode","库存可用量控制方式"),
-										JBoltExcelHeader.create("bBondedWh","是否保税仓"),
-										JBoltExcelHeader.create("bWhAsset","是否资产仓"),
 										JBoltExcelHeader.create("iMaxStock","最大存储数量"),
 										JBoltExcelHeader.create("iMaxSpace","最大存储空间"),
 										JBoltExcelHeader.create("isSpaceControlEnabled","是否启用空间管控"),
@@ -275,27 +262,6 @@ public class WarehouseService extends BaseService<Warehouse> {
 								//特殊数据转换器
 								.setDataChangeHandler((data,index) ->{
 									ValidationUtils.notNull(data.get("cwhcode"), "仓库编码为空！");
-									ValidationUtils.notNull(data.get("cWhValueStyle"), "计价方式为空！");
-									ValidationUtils.notNull(data.get("bFreeze"), "是否冻结为空！");
-									data.changeStrToBoolean("bFreeze","是");
-									ValidationUtils.notNull(data.get("bMRP"), "是否参与MRP运算为空！");
-									data.changeStrToBoolean("bMRP","是");
-									ValidationUtils.notNull(data.get("iWHProperty"), "仓库属性为空！");
-									ValidationUtils.notNull(data.get("bShop"), "是否门店为空！");
-									data.changeStrToBoolean("bShop","是");
-									ValidationUtils.notNull(data.get("bInCost"), "是否计入成本为空！");
-									data.changeStrToBoolean("bInCost","是");
-									ValidationUtils.notNull(data.get("bInAvailCalcu"), "是否纳入可用量计算为空！");
-									data.changeStrToBoolean("bInAvailCalcu","是");
-									ValidationUtils.notNull(data.get("bProxyWh"), "是否为代管仓为空！");
-									data.changeStrToBoolean("bProxyWh","是");
-									ValidationUtils.notNull(data.get("iSAConMode"), "销售可用量控制方式为空！");
-									ValidationUtils.notNull(data.get("iEXConMode"), "出口可用量控制方式为空！");
-									ValidationUtils.notNull(data.get("iSTConMode"), "库存可用量控制方式为空！");
-									ValidationUtils.notNull(data.get("bBondedWh"), "是否保税仓为空！");
-									data.changeStrToBoolean("bBondedWh","是");
-									ValidationUtils.notNull(data.get("bWhAsset"), "是否资产仓为空！");
-									data.changeStrToBoolean("bWhAsset","是");
 									ValidationUtils.notNull(data.get("isSpaceControlEnabled"), "启用库存预警为空！");
 									data.changeStrToBoolean("isSpaceControlEnabled","是");
 									ValidationUtils.notNull(data.get("isStockWarnEnabled"), "启用空间掌控为空！");
@@ -345,8 +311,17 @@ public class WarehouseService extends BaseService<Warehouse> {
 
 		return SUCCESS;
 	}
-	
+
 	public List<Record> findByWarehouse(){
 		return dbTemplate("warehouse.findByWarehouse", Kv.by("orgId", getOrgId())).find();
+	}
+
+	public List<Record> options() {
+		return dbTemplate("warehouse.options", Kv.of("isenabled", "true")).find();
+	}
+
+	public Ret deleteByBatchIds(String ids) {
+		update("UPDATE Bd_Warehouse SET isDeleted = 1 WHERE iAutoId IN (" +ids + ") ");
+		return SUCCESS;
 	}
 }

@@ -12,7 +12,18 @@ WHERE wh.isDeleted = 0
 	#if(idepid)
 	    AND wh.cDepCode = #para(idepid)
 	#end
-
+	#if(imaxstockMin)
+    AND wh.iMaxStock >= #para(imaxstockMin)
+    #end
+    #if(imaxstockMax)
+        AND wh.iMaxStock <= #para(imaxstockMax)
+    #end
+    #if(imaxspaceMin)
+        AND wh.iMaxSpace >= #para(imaxspaceMin)
+    #end
+    #if(imaxspaceMax)
+        AND wh.iMaxSpace <= #para(imaxspaceMax)
+    #end
     #if(isenabled)
         AND wh.isEnabled = #para(isenabled)
     #end
@@ -60,6 +71,26 @@ WHERE
     ware.iOrgId = #para(orgId)
 	AND ware.isDeleted = 0
 	AND ware.isEnabled = 1
+#end
+
+#sql("options")
+SELECT
+	wh.*
+FROM Bd_Warehouse wh
+WHERE wh.isDeleted = 0
+	#if(iautoid)
+	    AND wh.iautoid = #para(iautoid)
+	#end
+	#if(cwhcode)
+	    AND wh.cWhCode = #para(cwhcode)
+	#end
+	#if(cwhname)
+	    AND wh.cWhName = #para(cwhname)
+	#end
+    #if(isenabled)
+        AND wh.isenabled = #para(isenabled == 'true' ? 1 : 0)
+    #end
+ORDER BY dCreateTime DESC
 #end
 
 #sql("findByWarehouse")

@@ -62,7 +62,7 @@
 
 </div>
     <div class="col-10">
-    <button style="margin-left:117%;margin-top:-6.6%" data-area="90%,80%" data-dialogbtn  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="分类管理" data-url="admin/containerclass" class="btn btn-outline-pri" ><i class="fa fa-cog"></i></button>
+    <button style="margin-left:117%;margin-top:-6.6%" data-area="75%,90%" data-dialogbtn  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="分类管理" data-url="admin/containerclass" class="btn btn-outline-pri" ><i class="fa fa-cog"></i></button>
     </div>
 </div>
 <div class="form-group row" >
@@ -151,12 +151,26 @@
         <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入公用机型" maxlength="40" name="container.cCommonModel" value="#(container.cCommonModel??)"/>
     </div>
     </div>
-    <div class="form-group row" >
-    <label class="col-sm-2 col-form-label">客户名称</label>
-    <div class="col-10">
-        <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入供应商ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入供应商ID" maxlength="40" name="container.iSupplierId" value="#(container.iSupplierId??)"/>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">客户名称</label>
+        <div class="col">
+            <select class="form-control"
+                    data-autoload
+                    name="container.icustomerid"
+                    data-select-type="select2"
+                    data-tips="客户"
+                    data-url="admin/customer/list?isdeleted=0"
+                    data-text="=客户="
+                    data-text-attr="customercode,customername"
+                    data-value=""
+                    data-value-attr="iautoid"
+                    data-select="#(container.iCustomerId??)">
+            >
+            </select>
+        </div>
     </div>
-    </div>
+
     <div class="form-group row"
     data-radio
     data-name="container.isEnabled"
