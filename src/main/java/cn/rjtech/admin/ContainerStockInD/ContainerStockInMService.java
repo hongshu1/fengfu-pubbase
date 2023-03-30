@@ -8,6 +8,7 @@ import cn.rjtech.model.momdata.ContainerStockInM;
 import com.jfinal.kit.Ret;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 容器档案-入库主表
@@ -50,5 +51,13 @@ public class ContainerStockInMService extends BaseService<ContainerStockInM> {
             //addSaveSystemLog(container.getIAutoId(), JBoltUserKit.getUserId(), container.getName());
         }
         return ret(success);
+    }
+
+    /**
+     * 批量删除
+     * @param stockInMIds
+     */
+    public void deleteByStockInMIds(List<String> stockInMIds) {
+        update("UPDATE Bd_ContainerStockInM SET isDeleted = 1 WHERE iAutoId IN (" +stockInMIds + ") ");
     }
 }
