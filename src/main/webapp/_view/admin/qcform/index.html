@@ -1,0 +1,115 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>质量建模-检验表格</h1></div>
+	<div class="col">
+	<form class="form-inline" id="QcForm_form_#(pageId)">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+
+<select class="form-control" name="isDeleted"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=删除状态：0. 未删除 1. 已删除="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+
+<select class="form-control" name="isEnabled"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=是否启用：0. 否 1. 是="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+	</form>
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="QcForm_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iOrgId}</td>
+<td>${data.cOrgName}</td>
+<td>${data.cOrgCode}</td>
+<td>${data.cQcFormName}</td>
+<td>${data.iCreateBy}</td>
+<td>${data.cCreateName}</td>
+<td>${data.dCreateTime}</td>
+<td>${data.iUpdateBy}</td>
+<td>${data.cUpdateName}</td>
+<td>${data.dUpdateTime}</td>
+<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isDeleted}"  data-handler="refreshJBoltTable"  data-url="admin/qcform/toggleIsDeleted/${data.id}"/></td>
+<td><img data-switchbtn data-confirm="确定切换是否启用：0. 否 1. 是？" data-value="${data.isEnabled}"  data-handler="refreshJBoltTable"  data-url="admin/qcform/toggleIsEnabled/${data.id}"/></td>
+<td>${data.cMemo}</td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/qcform/edit/${data.id}" data-area="100%,100%" data-title="查看质量建模-检验表格"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/qcform/edit/${data.id}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="编辑质量建模-检验表格"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/qcform/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="QcForm_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增质量建模-检验表格" data-url="admin/qcform/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="100%,100%"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑质量建模-检验表格" data-check-handler="jboltTableGetCheckedId" data-url="admin/qcform/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/qcform/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="QcForm_form_#(pageId)"
+	   data-url="admin/qcform/datas"
+	   data-rowtpl="QcForm_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="QcForm_page"
+	   data-toolbar="QcForm_toolbar_#(pageId)"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="100" data-column="iAutoId">主键ID</th>
+	<th data-width="100" data-column="iOrgId">组织ID</th>
+	<th data-width="150" data-column="cOrgName">组织名称</th>
+	<th data-width="150" data-column="cOrgCode">组织编码</th>
+	<th data-width="150" data-column="cQcFormName">检验表格名称</th>
+	<th data-width="100" data-column="iCreateBy">创建人ID</th>
+	<th data-width="150" data-column="cCreateName">创建人名称</th>
+	<th data-min-width="160" data-column="dCreateTime">创建时间</th>
+	<th data-width="100" data-column="iUpdateBy">更新人ID</th>
+	<th data-width="150" data-column="cUpdateName">更新人名称</th>
+	<th data-min-width="160" data-column="dUpdateTime">更新时间</th>
+	<th data-width="100" data-column="isDeleted">删除状态：0. 未删除 1. 已删除</th>
+	<th data-width="100" data-column="isEnabled">是否启用：0. 否 1. 是</th>
+	<th data-width="150" data-column="cMemo">备注</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

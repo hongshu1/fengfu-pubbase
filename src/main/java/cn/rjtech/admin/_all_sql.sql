@@ -65,6 +65,7 @@
 #include("forgeigncurrency/forgeigncurrency.sql")
 #end
 
+
 #namespace("warehouseposition")
 #include("warehouseposition/warehouseposition.sql")
 #end
@@ -185,4 +186,12 @@
 
 #namespace("spotcheckparam")
 #include("spotcheckparam/spotcheckparam.sql")
+#end
+
+#namespace("qcform")
+#include("qcform/qcform.sql")
+#end
+
+#namespace("qcformitem")
+#include("qcformitem/qcformitem.sql")
 #end
