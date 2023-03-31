@@ -6,6 +6,8 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.ApsAnnualplanm;
 import cn.rjtech.util.DateUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -25,8 +27,7 @@ import java.util.*;
 @CheckPermission(PermissionKey.NOME)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/scheduproductplanyear", viewPath = "/_view/admin/scheduproductplanyear")
-public class ScheduProductPlanYearController extends JBoltBaseController {
-
+public class ScheduProductPlanYearController extends BaseAdminController {
 
     @Inject
     private ScheduProductPlanYearService service;
@@ -35,8 +36,6 @@ public class ScheduProductPlanYearController extends JBoltBaseController {
      * 首页
      */
     public void index() {
-        set("layMonth", DateUtils.formatDate(new Date(),"yyyy-MM"));
-        set("layDate", DateUtils.formatDate(new Date(),"yyyy-MM-dd"));
         render("index.html");
     }
 
@@ -44,7 +43,7 @@ public class ScheduProductPlanYearController extends JBoltBaseController {
      * 数据源
      */
     public void datas() {
-        //renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+        renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
     }
 
     /**
@@ -58,34 +57,41 @@ public class ScheduProductPlanYearController extends JBoltBaseController {
      * 编辑
      */
     public void edit() {
-        /*Schedubaseplan schedubaseplan=service.findById(getLong(0));
-        if(schedubaseplan == null){
+        ApsAnnualplanm apsAnnualplanm=service.findById(getLong(0));
+        if(apsAnnualplanm == null){
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("schedubaseplan",schedubaseplan);
-        render("edit.html");*/
+        set("apsAnnualplanm",apsAnnualplanm);
+        render("edit.html");
     }
 
     /**
      * 更新
      */
     public void update() {
-        //renderJson(service.update(getModel(Schedubaseplan.class, "schedubaseplan")));
+        renderJson(service.update(getModel(ApsAnnualplanm.class, "apsAnnualplanm")));
     }
 
     /**
      * 批量删除
      */
     public void deleteByIds() {
-        //renderJson(service.deleteByBatchIds(get("ids")));
+        renderJson(service.deleteByBatchIds(get("ids")));
     }
 
     /**
      * 删除
      */
     public void delete() {
-        //renderJson(service.delete(getLong(0)));
+        renderJson(service.delete(getLong(0)));
+    }
+
+    /**
+     * 切换toggleIsDeleted
+     */
+    public void toggleIsDeleted() {
+        renderJson(service.toggleIsDeleted(getLong(0)));
     }
 
 

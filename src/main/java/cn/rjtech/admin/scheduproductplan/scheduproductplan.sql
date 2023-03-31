@@ -109,7 +109,7 @@ SELECT a.iCustomerId,d.cCusCode,
            WHERE iAnnualOrderDid = b.iautoid
              AND iyear = a.iyear + 1
              AND imonth = 3
-       ) AS nextmonth3, b.iYear2Sum AS nextmonthSum,
+       ) AS nextmonth3, b.iYear2Sum AS nextMonthSum,
        'PP' AS planTypeCode
 FROM Co_AnnualOrderM AS a
          LEFT JOIN Co_AnnualOrderD AS b ON a.iAutoId = b.iAnnualOrderMid
@@ -120,9 +120,61 @@ WHERE a.isDeleted = '0'
   AND a.iYear = #para(startyear) AND a.iCustomerId IN (#(customerids))
 #end
 
+#sql("getInvInfoList")
+###查询物料集信息
+SELECT a.iAutoId,a.cInvCode,
+       b.cProdCalendarTypeSn
+FROM Bd_Inventory AS a
+         LEFT JOIN Bd_InventoryMfgInfo AS b ON b.iInventoryId = a.iAutoId
+WHERE a.iAutoId IN (#(invids))
+#end
 
+#sql("getCalendarMonthNumList")
+###查询年度每月的工作天数
+SELECT
+    CONVERT(VARCHAR(4),dTakeDate,120) AS dTakeYear,
+    SUBSTRING(CONVERT(VARCHAR(7),dTakeDate,120), 6, 2) AS month,
+COUNT(dTakeDate) AS monthNum
+FROM Bd_Calendar
+WHERE iCaluedarType = #para(icaluedartype)
+  AND cSourceCode = #para(csourcecode)
+  AND CONVERT(VARCHAR(4),dTakeDate,120) >= #para(startyear)
+  AND CONVERT(VARCHAR(4),dTakeDate,120) <= #para(endyear)
+GROUP BY
+    CONVERT(VARCHAR(4),dTakeDate,120),
+    SUBSTRING(CONVERT(VARCHAR(7),dTakeDate,120), 6, 2)
+ORDER BY
+    CONVERT(VARCHAR(4),dTakeDate,120)
+#end
 
+#sql("getCalendarYearNumList")
+###查询年度的工作天数
+SELECT
+    CONVERT(VARCHAR(4),dTakeDate,120) AS dTakeYear,
+    COUNT(dTakeDate) AS yearNum
+FROM Bd_Calendar
+WHERE iCaluedarType = #para(icaluedartype)
+  AND cSourceCode = #para(csourcecode)
+  AND CONVERT(VARCHAR(4),dTakeDate,120) >= #para(startyear)
+  AND CONVERT(VARCHAR(4),dTakeDate,120) <= #para(endyear)
+GROUP BY
+    CONVERT(VARCHAR(4),dTakeDate,120)
+ORDER BY
+    CONVERT(VARCHAR(4),dTakeDate,120)
+#end
 
+#sql("getCusWorkMonthNumList")
+###根据客户id集查询客户年度每月工作天数
+SELECT iCustomerId,iYear,
+       iMonth1Days AS month1,iMonth2Days AS month2,iMonth3Days AS month3,
+       iMonth4Days AS month4,iMonth5Days AS month5,iMonth6Days AS month6,
+       iMonth7Days AS month7,iMonth8Days AS month8,iMonth9Days AS month9,
+       iMonth10Days AS month10,iMonth11Days AS month11,iMonth12Days AS month12
+FROM Bd_CustomerWorkDays
+WHERE iCustomerId IN (#(customerids))
+  AND CONVERT(VARCHAR(4),iYear,120) >= #para(startyear)
+  AND CONVERT(VARCHAR(4),iYear,120) <= #para(endyear)
+#end
 
 
 
