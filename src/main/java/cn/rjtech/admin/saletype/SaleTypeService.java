@@ -1,6 +1,7 @@
 package cn.rjtech.admin.saletype;
 
 
+import cn.jbolt.common.model.CodeGenModelAttr;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.model.momdata.RdStyle;
 import cn.rjtech.util.ValidationUtils;
@@ -44,6 +45,10 @@ public class SaleTypeService extends BaseService<SaleType> {
 		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
 	}
 
+	public List<Record> selectData (Kv kv){
+		return dbTemplate("saletype.selectData",kv).find();
+	}
+
 	/**
 	 * 保存
 	 * @param saleType
@@ -53,10 +58,11 @@ public class SaleTypeService extends BaseService<SaleType> {
 		if(saleType==null || isOk(saleType.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-
 		ValidationUtils.assertNull(findBycSTCode(saleType.getCSTCode()), "销售类型编码重复");
 
+//		List attrs = find(selectSql().select("cRdCode").eq("iAutoId", saleType.getIRdStyleId()));
 		setSaleTypeClass(saleType);
+
 		//if(existsName(saleType.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=saleType.save();
 		if(success) {
@@ -92,6 +98,8 @@ public class SaleTypeService extends BaseService<SaleType> {
 		saleType.setDCreateTime(date);	//创建时间
 		saleType.setDUpdateTime(date);	//更新时间
 		saleType.setISource(1);	//来源 1.MES 2.U8
+		List<SaleType> crdcode = find("select cRdCode from Bd_Rd_Style where iAutoId = ?",saleType.getIRdStyleId());
+		saleType.setCRdCode(crdcode.get(0).getCRdCode());	//0：下标，，第一个
 		return saleType;
 	}
 
@@ -222,11 +230,5 @@ public class SaleTypeService extends BaseService<SaleType> {
 		return null;
 	}
 
-	/**
-	 * 收发类型_编码,名字
-	 */
-	public List<Record> selectRdStyle (Kv kv){
-		return dbTemplate("saletype.selectRdStyle",kv).find();
-	}
 
 }
