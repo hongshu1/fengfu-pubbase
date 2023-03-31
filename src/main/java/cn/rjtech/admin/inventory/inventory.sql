@@ -9,3 +9,28 @@
 		)
 	#end
 #end
+
+#sql("getRoutingInvcs")
+select ri.*,i.cInvCode,i.cInvName,i.cInvStd,i.cInvName1,u1.cUomName purchaseuom,u2.cUomName manufactureuom
+from Bd_InventoryRoutingInvc ri
+left join Bd_Inventory i on i.iAutoId = ri.iInventoryId
+left join bd_uom u1 on u1.iAutoId = i.iPurchaseUomId
+left join bd_uom u2 on u1.iAutoId = i.iManufactureUomId
+ where   ri.iInventoryRoutingConfigId = #para(configid)
+#end
+
+#sql("getInventoryDataList")
+select i.*,u1.cUomName purchaseuom,u2.cUomName manufactureuom
+from  Bd_Inventory i
+left join bd_uom u1 on u1.iAutoId = i.iPurchaseUomId
+left join bd_uom u2 on u1.iAutoId = i.iManufactureUomId
+#end
+
+#sql("getRoutingEqps")
+SELECT re.*, e.cEquipmentCode,e.cEquipmentName,w.cWorkName workName,dp.cDepName
+ from Bd_InventoryRoutingEquipment re
+ left join Bd_Equipment e on re.iEquipmentId = e.iAutoId
+ left join Bd_WorkRegionM w on e.iworkregionmid = w.iAutoId
+ left join Bd_Department dp on dp.iAutoId = w.iDepId
+ WHERE re.iInventoryRoutingConfigId = #para(configid)
+#end

@@ -74,8 +74,8 @@
 					ids = ids.concat("/").concat(data[i].iautoid);
 				}
 			}
-			//let nanes_ids =names.concat("^").concat(ids);
-			parent.jboltTableProcessTdByDialogChooser(names,names,data);
+			let nanes_ids =names.concat("^").concat(ids);
+			parent.jboltTableProcessTdByDialogChooser(names,nanes_ids,data);
 			if(callback){
 				callback();
 			}

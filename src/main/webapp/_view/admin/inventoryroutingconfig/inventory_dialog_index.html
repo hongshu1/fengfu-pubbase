@@ -6,7 +6,7 @@
 	<div class="jbolt_page_title">
 		<div class="row">
 			<div class="col">
-				<form class="form-inline" id="operationForm_#(pageId)"   onsubmit="return false;" method="post">
+				<form class="form-inline" id="inventorydialog_#(pageId)"   onsubmit="return false;" method="post">
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
 					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="inventoryid" value="#(inventoryid)" />
 					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="cinvcode" value="#(cinvcode)" />
@@ -23,35 +23,44 @@
 	</div>
 	<div class="jbolt_page_content">
 		<!-- JBoltTable的数据模板定义-->
-		<textarea class="jb_tpl_box" id="operationRowtpl_#(pageId)">
+		<textarea class="jb_tpl_box" id="inventorydialogRowtpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.coperationcode}</td>
-<td>${data.coperationname}</td>
+<td>${data.cinvcode}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
+<td>${data.iinventoryuomid1}</td>
+<td>
+	<a tooltip data-title="上移"  href="javascript:void(0)" onclick="moveUpBtn(this,'${data.iAutoId}',${data.iSeq})"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+</td>
 </tr>
 {@/each}
 </textarea>
 
 		<!-- 工具条 toolbar -->
-
 		<table class="jbolt_table jbolt_main_table table-center"
 			   data-jbolttable
 			   data-height="fill"
 			   data-ajax="true"
 			   data-url="admin/inventory/options"
 			   data-column-resize="true"
-			   data-column-prepend="1:checkbox:true"
-			   data-conditions-form="operationForm_#(pageId)"
-			   data-rowtpl="operationRowtpl_#(pageId)"
-			   data-toolbar="operation_toolbar_#(pageId)"
-			   id="operationtableid"
+			   data-column-prepend="1:radio:true"
+			   data-conditions-form="inventorydialogForm_#(pageId)"
+			   data-rowtpl="inventorydialogRowtpl_#(pageId)"
+			   data-toolbar="inventorydialog_toolbar_#(pageId)"
+			   id="inventorydialogtableid"
 		>
 			<thead class="fw-normal">
 			<tr>
 				<th data-width="60" data-column="index">序号</th>
-				<th data-column="cOperationCode">工序编码</th>
-				<th data-column="cOperationName">工序名称</th>
+				<th data-column="cinvcode">存货编码</th>
+				<th data-column="cinvcode1">客户部番</th>
+				<th data-column="cinvname1">部品名称</th>
+				<th data-column="cinvstd">规格</th>
+				<th data-column="iinventoryuomid1">库存单位</th>
+				<th data-column="cOperationName">操作</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -65,28 +74,25 @@
 </div>
 <script>
 	function submitThisForm(callback){
-		var data=getJboltTableCheckedDatas("operationtableid");
+		var data=getJboltTableCheckedDatas("inventorydialogtableid");
+		console.log(JSON.stringify(data))
 		if(data){
-			//LayerMsgBox.confirm("确认选择此数据?",function(){
-
-			let names = "";
-			let ids = "";
-			for (let i = 0; i < data.length; i++) {
-				if (i == 0){
-					names = data[i].coperationname;
-					ids = data[i].iautoid;
-				}else {
-					names = names.concat("/").concat(data[i].coperationname);
-					ids = ids.concat("/").concat(data[i].iautoid);
-				}
-			}
-			//let nanes_ids =names.concat("^").concat(ids);
-			parent.jboltTableProcessTdByDialogChooser(names,names,data);
+			let names = data[0].cinvname1;
+			let ids = data[0].iautoid;
+			parent.jboltTableProcessTdByDialogChooser(names,ids,data);
 			if(callback){
 				callback();
 			}
-			//});
 		}
+	}
+
+	function moveUpBtn(ele,id,seq){
+		let iitemroutingid = $("#iitemroutingid").val();
+		let url = "admin/itemroutingconfig/moveUp?iitemroutingid="+iitemroutingid+"&iitemroutingconfigid="+id+"&seq="+seq;
+		Ajax.get(url,function(res){
+			refreshJBoltTable("#itemroutingconfigid");
+		});
+		//jboltTableTrMoveDown(ele);
 	}
 </script>
 #end

@@ -9,7 +9,9 @@ import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.InventoryRoutingConfig;
@@ -54,7 +56,7 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	}
 
 	public void saveItemRoutingConfig() {
-		renderJsonData(service.saveItemRoutingConfig(getLong("iitemroutingid"), getInt("iseq")), "");
+		renderJson(service.saveItemRoutingConfig(getLong("iitemroutingid"), getInt("iseq")));
 	}
 
    /**
@@ -88,7 +90,7 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	* 批量删除
 	*/
 	public void deleteByIds() {
-		renderJson(service.deleteByIds(get("ids")));
+		renderJson(service.deleteByBatchIds(get("ids")));
 	}
 
    /**
@@ -109,14 +111,50 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 		render("operation_dialog_index.html");
 	}
 
+	public void invc_dialog_index(){
+		set("configid",getLong("iautoid"));
+		set("iinventoryid",getLong("iinventoryid"));
+		render("invc_dialog_index.html");
+	}
+
+	public void equipment_dialog_index(){
+		set("configid",getLong("iautoid"));
+		render("equipment_dialog_index.html");
+	}
+
+	public void drawing_dialog_index(){
+		set("configid",getLong("iautoid"));
+		render("drawing_dialog_index.html");
+	}
+
 	public void inventory_dialog_index(){
 		Kv kv = getKv();
-		set("inventoryid",kv.getStr("inventoryid"));
-		set("",kv.getStr("cinvcode"));
-		set("",kv.getStr("cinvcode1"));
-		set("",kv.getStr("cinvname1"));
-		set("",kv.getStr("cinvstd"));
-		set("",kv.getStr("iinventoryuomid1"));
+		set("inventoryid",kv.getStr("iAutoId"));
+		set("cinvcode",kv.getStr("cInvCode"));
+		set("cinvcode1",kv.getStr("cInvCode1"));
+		set("cinvname1",kv.getStr("cInvName1"));
+		set("cinvstd",kv.getStr("cInvStd"));
+		set("iinventoryuomid1",kv.getStr("iInventoryUomId1"));
 		render("inventory_dialog_index.html");
+	}
+
+	public void updateRoutingConfig() {
+		Record record = new Record().setColumns(getKv());
+		renderJson(service.updateRoutingConfig(record));
+	}
+
+
+	public void moveDown() {
+		Long iitemroutingid = getLong("iinventoryroutingid");
+		Long iitemroutingconfigid = getLong("iitemroutingconfigid");
+		Integer seq = getInt("seq");
+		renderJsonData(service.moveDown(iitemroutingid, iitemroutingconfigid, seq));
+	}
+
+	public void moveUp() {
+		Long iitemroutingid = getLong("iinventoryroutingid");
+		Long iitemroutingconfigid = getLong("iitemroutingconfigid");
+		Integer seq = getInt("seq");
+		renderJsonData(service.moveUp(iitemroutingid, iitemroutingconfigid, seq));
 	}
 }

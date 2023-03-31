@@ -287,4 +287,8 @@ public class EquipmentService extends BaseService<Equipment> {
 	public Equipment findModelByCode(String cequipmentcode) {
 		return findFirst(selectSql().eq("cequipmentcode", cequipmentcode));
 	}
+
+	public List<Record> dataList() {
+		return dbTemplate("equipment.selectEquipments").find();
+	}
 }

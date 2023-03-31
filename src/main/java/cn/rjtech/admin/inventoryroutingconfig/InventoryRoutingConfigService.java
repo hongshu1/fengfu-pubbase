@@ -3,6 +3,7 @@ package cn.rjtech.admin.inventoryroutingconfig;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.model.momdata.InventoryroutingconfigOperation;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -14,6 +15,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.InventoryRoutingConfig;
 import com.jfinal.plugin.activerecord.Record;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -232,4 +234,91 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 			batchUpdate(saveRecords, 500);
 		}
 	}
+
+    public Ret updateRoutingConfig(Record inventoryRoutingConfig) {
+		tx(() -> {
+			//修改工序配置
+			//inventoryRoutingConfig.setIAutoId(autoid);
+			String coperationname = inventoryRoutingConfig.getStr("COperationName");
+			Long iAutoId = inventoryRoutingConfig.getLong("iAutoId");
+			String ioperationIds = "";
+			if (StringUtils.isNotBlank(coperationname)) {
+				String[] arry = coperationname.split("\\^");
+				inventoryRoutingConfig.set("COperationName",arry[0]);
+				ioperationIds = arry[1];
+			}
+			updateRecord(inventoryRoutingConfig);
+			//工序名称子表
+			if (StringUtils.isNotBlank(ioperationIds)){
+				String[] arry = ioperationIds.split("/");
+				List<Long> longList = new ArrayList<>();
+				for (int i = 0; i < arry.length; i++) {
+					InventoryroutingconfigOperation operation = new InventoryroutingconfigOperation();
+					Long operautoid = JBoltSnowflakeKit.me.nextId();
+					operation.setIAutoId(operautoid);
+					operation.setIInventoryRoutingConfigId(iAutoId);
+					operation.setIOperationId(Long.parseLong(arry[i]));
+					operation.setICreateBy(JBoltUserKit.getUserId());
+					operation.setCCreateName(JBoltUserKit.getUserName());
+					operation.setDCreateTime(new Date());
+					longList.add(operautoid);
+					operation.save();
+				}
+				deleteMultiByIdsOper(iAutoId, longList.toArray());
+			}
+			return true;
+		});
+		return SUCCESS;
+    }
+
+	public void deleteMultiByIdsOper(Long coonfigid, Object[] deletes) {
+		delete("DELETE FROM Bd_InventoryRoutingConfig_Operation WHERE iInventoryRoutingConfigId = ? AND iautoid NOT IN (" + ArrayUtil.join(deletes, COMMA) + ") ", coonfigid);
+	}
+
+
+	public Ret moveDown(Long iitemroutingid, Long iitemroutingconfigid, Integer seq) {
+		tx(() -> {
+			Integer nextseq = seq + 10;
+			Long nextid = getIdByseq(iitemroutingid, nextseq);
+			if (isOk(nextid)) {
+				InventoryRoutingConfig config = new InventoryRoutingConfig();
+				config.setIAutoId(iitemroutingconfigid);
+				config.setISeq(nextseq);
+				config.update();
+
+				InventoryRoutingConfig config2 = new InventoryRoutingConfig();
+				config2.setIAutoId(nextid);
+				config2.setISeq(seq);
+				config2.update();
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	public Ret moveUp(Long iitemroutingid, Long iitemroutingconfigid, Integer seq) {
+		tx(() -> {
+			Integer nextseq = seq - 10;
+			Long nextid = getIdByseq(iitemroutingid, nextseq);
+			if (isOk(nextid)) {
+				InventoryRoutingConfig config = new InventoryRoutingConfig();
+				config.setIAutoId(iitemroutingconfigid);
+				config.setISeq(nextseq);
+				config.update();
+
+				InventoryRoutingConfig config2 = new InventoryRoutingConfig();
+				config2.setIAutoId(nextid);
+				config2.setISeq(seq);
+				config2.update();
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	public Long getIdByseq(Long routingId, Integer seq) {
+		Long iAutoId = queryLong("select iAutoId from Bd_InventoryRoutingConfig where iInventoryRoutingId = ? and iSeq = ? ", routingId, seq);
+		return iAutoId;
+	}
+
 }

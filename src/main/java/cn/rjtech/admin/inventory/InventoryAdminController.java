@@ -80,6 +80,10 @@ public class InventoryAdminController extends BaseAdminController {
 		renderJsonData(service.options(getKv()));
 	}
 
+	public void dataBomList(){
+		renderJsonData(service.dataBomList());
+	}
+
    /**
 	* 新增
 	*/

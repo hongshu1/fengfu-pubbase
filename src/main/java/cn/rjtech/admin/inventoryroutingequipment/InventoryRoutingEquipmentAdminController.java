@@ -1,5 +1,6 @@
 package cn.rjtech.admin.inventoryroutingequipment;
 
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -16,12 +17,18 @@ import cn.rjtech.model.momdata.InventoryRoutingEquipment;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-29 10:04
  */
+@UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.INVENTORY_RECORD)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/inventoryroutingequipment", viewPath = "/_view/admin/inventoryroutingequipment")
 public class InventoryRoutingEquipmentAdminController extends BaseAdminController {
 
 	@Inject
 	private InventoryRoutingEquipmentService service;
+
+	public void equ_dialog_index(){
+		render("equ_dialog_index.html");
+	}
 
    /**
 	* 首页
@@ -84,5 +91,12 @@ public class InventoryRoutingEquipmentAdminController extends BaseAdminControlle
 		renderJson(service.deleteById(getLong(0)));
 	}
 
+	public void saveEquipment(){
+		Long configid = getLong("configid");
+		renderJson(service.saveEquipment(getJBoltTable(),configid));
+	}
 
+	public void dataList(){
+		renderJsonData(service.dataList(getKv()));
+	}
 }

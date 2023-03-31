@@ -25,19 +25,32 @@
 								{@each datas as data,index}
 								<tr data-id="${data.iautoid}" >
 								<td hidden>${data.iinventoryid}</td>
-								<td> OP${data.iSeq}</td>
+								<td>${data.iseq}</td>
 								<td>${data.cmergedseq}</td>
 								<td data-value="${data.coperationname}">${data.coperationname}</td>
-								<td data-value="${data.itype}">${data.itype}</td>
-								<td data-value="${data.irsinventoryid}">${data.irsinventoryid}</td>
-								<td onclick="cancelEditIsreport(this,'${data.cproductsn}')">
+								<td data-value="${data.itype}">
+									{@if data.itype == '1'}
+									   <span>串序</span>
+									   {@else if data.itype == '2'}
+									   <span>并序</span>
+								  	{@/if}</td>
+								<td data-value="${data.irsinventoryid}">${data.rsinventoryname}</td>
+								<td >
 								   {@if data.cproductsn == '1'}
 									   <span>内作</span>
 									   {@else if data.cproductsn == '2'}
 									   <span>外作</span>
 								  {@/if}
 								</td>
-								<td onclick="cancelEditIprice(this,'${data.cproducttechsn}')">${data.cproducttechsn}</td>
+								<td >${data.cproducttechsn}
+									{@if data.cproducttechsn == '1'}
+									   <span>冲压</span>
+									   {@else if data.cproducttechsn == '2'}
+									   <span>弯管</span>
+									   {@else if data.cproducttechsn == '3'}
+									   <span>焊接</span>
+								  	{@/if}
+								</td>
 								<td>${data.imergednum}</td>
 								<td>${data.imergerate}</td>
 								<td>${data.imergesecs}</td>
@@ -50,24 +63,24 @@
 									{@/if}
 								</td>
 								<td>
-									{@if data.equipmentnum == undefined}
+									{@if data.equipments == undefined}
 										   <span></span>
 										   {@else}
-										   <span><i class="fa fa-cog"></i>已选${data.equipmentnum}个</span>
+										   <span><i class="fa fa-cog"></i>已选${data.equipments}个</span>
 									{@/if}
 								</td>
 
 								<td>
-								   {@if data.ismoulds == '1'}
-									   <span>是</span>
-									   {@else if data.ismoulds == '0'}
-									   <span>否</span>
-								  {@/if}
+								   {@if data.drawings == undefined}
+										   <span></span>
+										   {@else}
+										   <span><i class="fa fa-cog"></i>已选${data.drawings}个</span>
+									{@/if}
 								</td>
 								<td>
-									<a tooltip data-title="上移"  href="javascript:void(0)" onclick="moveUpBtn(this,'${data.iAutoId}',${data.iSeq})"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
-									<a tooltip data-title="下移"  href="javascript:void(0)" onclick="moveDownBtn(this,'${data.iAutoId}',${data.iSeq})"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
-									<a href="admin/itemroutingconfig/deleteByIds?ids=${data.iAutoId}" data-ajaxbtn data-loading="执行中" tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+									<a tooltip data-title="上移"  href="javascript:void(0)" onclick="moveUpBtn(this,'${data.iautoid}',${data.iseq})"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+									<a tooltip data-title="下移"  href="javascript:void(0)" onclick="moveDownBtn(this,'${data.iautoid}',${data.iseq})"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+									<a href="admin/inventoryroutingconfig/deleteByIds?ids=${data.iautoid}" data-ajaxbtn data-loading="执行中" tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
 								</td>
 								</tr>
 								{@/each}
@@ -86,9 +99,11 @@
                             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                                 <button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
                             </div>
+<!--
                             <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" data-url="admin/itemroutingconfig/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-                            <button hidden onclick="" class="btn btn-primary btn-sm" ><i class="fa fa-file-image-o"></i> 工艺结构图</button>
-                            <button data-title="工序可视图" data-area="90%,85%" data-url="admin/itemroutingconfig/deleteByIds?ids=" class="btn btn-primary btn-sm" >工序可视图</button>
+-->
+                            <button onclick="technologicalStructureBtn(this)" class="btn btn-primary btn-sm" ><i class="fa fa-file-image-o"></i> 工艺结构图</button>
+                            <button data-title="工序可视图" data-area="40%,90%" onclick="processViewBtn(this)" class="btn btn-primary btn-sm" >工序可视图</button>
                         </div>
                     </div>
                 </div>
@@ -111,7 +126,7 @@
             >
                 <thead>
                 	<tr>
-                	    <th hidden data-width="120" data-column="iInventoryId">工艺档案id</th>
+                	    <th hidden data-width="120" data-column="iinventoryid">工艺档案id</th>
                 	    <th data-width="80" data-column="iseq">工序号</th>
                 	    <th data-width="160" data-column="cmergedseq">合并工序</th>
                 	    <th data-width="160" data-column="coperationname">工序名称</th>
@@ -127,7 +142,7 @@
                 	    <th data-width="120" data-column="invcs">所需物料集</th>
                 	    <th data-width="120" data-column="equipments">所需设备集</th>
 
-                	    <th data-width="120" data-column="ismoulds">作业指导书</th>
+                	    <th data-width="120" data-column="drawings">作业指导书</th>
                 	    <th data-width="100">操作</th>
                 	</tr>
                 </thead>
@@ -138,17 +153,5 @@
     </div>
 
 </div>
-<!--<div>
-    <div class="mermaid">
-            graph TD
-            1([开始]) &ndash;&gt; 2[工序1]
-            2 &ndash;&gt; 3[工序2]
-            4[工序3] &ndash;&gt; 3
-            3 &ndash;&gt; 5[工序4]
-    </div>
-</div>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true });
-</script>-->
+
 

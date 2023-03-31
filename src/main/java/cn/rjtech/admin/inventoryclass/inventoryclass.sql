@@ -51,13 +51,15 @@ SELECT
     a.*,
     b.name as itypename,
     c.name as cproductsnname,
-    d.name as cproducttechsnname
+    d.name as cproducttechsnname,
+    i.cInvName1 rsinventoryname
 FROM
     Bd_InventoryRoutingConfig a
         LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary b ON a.iType = b.sn AND b.type_key = 'process_type'
         LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary c ON a.cProductSn = c.sn AND c.type_key = 'cproductsn_type'
         LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary d ON a.cProductTechSn = d.sn AND d.type_key = 'product_tech'
-WHERE
+        left join Bd_Inventory i on a.irsinventoryid = i.iAutoId
+WHERE a.isEnabled = 1 AND
         a.iInventoryRoutingId = #para(iinventoryroutingid)
 ORDER BY a.iSeq ASC
 #end

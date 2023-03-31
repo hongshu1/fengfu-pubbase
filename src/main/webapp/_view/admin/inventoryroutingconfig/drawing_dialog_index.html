@@ -1,0 +1,194 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col">
+		<form class="form-inline" id="itemroutingForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品工艺档案配置Id" name="configid" value="#(configid)" />
+			<input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cname}</td>
+<td>${data.csuffix}</td>
+<td>${data.isize}</td>
+<td>${data.iversion}</td>
+<td>${data.dfromdate |date_ymd}</td>
+<td>${data.dtodate |date_ymd}</td>
+<td>${data.cpath}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+	<td>
+	<a class="btn" onclick="jboltTableRemoveRow(this)"  ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+		<!-- 工具条 toolbar -->
+		<div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
+			<div class="btn-group" role="group" aria-label="btn-group">
+				<div>
+					<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+						<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+						<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+						<button onclick="refreshPjaxContainer(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+						<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<table class="jbolt_table jbolt_main_table table-center"
+			   id="drawingtableid"
+			   data-jbolttable
+			   data-height="fill"
+			   data-ajax="true"
+			   data-url="admin/inventoryroutingsop/dataList"
+			   data-column-resize="true"
+			   data-column-prepend="1:checkbox:true"
+			   data-conditions-form="itemroutingForm_#(pageId)"
+			   data-rowtpl="itemroutingRowtpl_#(pageId)"
+			   data-toolbar="itemrouting_toolbar_#(pageId)"
+			   data-editable="true"
+			   data-editable-option="getEditableTableOptions_workposition"
+		>
+			<thead class="fw-normal">
+			<tr>
+				<!--<th data-min-width="150" data-column="iItemId">料品档案ID</th>-->
+				<th data-width="60" data-min-width="60" data-column="index">序号</th>
+				<th data-width="150" data-column="cname">名称</th>
+				<th data-width="120" data-column="csuffix">文件类型</th>
+				<th data-width="120" data-column="isize">大小</th>
+				<th data-width="120" data-column="iversion">版本号</th>
+				<th data-width="150" data-column="dfromdate">启用时间</th>
+				<th data-width="150" data-column="dtodate">停用时间</th>
+				<th data-width="150" data-column="cpath">路径</th>
+				<th data-width="120" data-column="ccreatename">创建人</th>
+				<th data-width="150" data-column="dcreatetime">创建时间</th>
+				<th data-width="80" >操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+	</div>
+</div>
+<script>
+	/*function submitThisForm(callback){
+		var data=getJboltTableCheckedDatas("workpositionid");
+		if(data){
+			//LayerMsgBox.confirm("确认选择此数据?",function(){
+			parent.jboltTableProcessTdByDialogChooser(data.coperationname,data.iautoid,data);
+			if(callback){
+				callback();
+			}
+			//});
+		}
+	}*/
+
+	$(function(){
+		hideParentLayerDialogBtn(0);
+		addParentLayerDialogBtn("保存","lay_success",function(data){
+			//获取表格数据
+			//var tableDatas = getJboltTableAllDatas('#drawingtableid');
+			jboltTableSubmit('#drawingtableid');
+		});
+	});
+
+	var version = "";
+	function addTableRow(ele){
+		//获取表格数据
+		var tableDatas = getJboltTableAllDatas(ele);
+		if (tableDatas != null){
+			var data = tableDatas[tableDatas.length - 1];
+			if (!data.iversion){
+				LayerMsgBox.alert("请先输入文件版本！");
+				return;
+			}
+			version = data.iversion;
+			//表格新增行/带参数
+			jboltTableInsertRow(ele,{iversion:(Number(version) +0.1).toFixed(1)})
+		}else {
+			//表格新增行/带参数
+			jboltTableInsertRow(ele,{iversion:'1.0'})
+		}
+	}
+
+	function getEditableTableOptions_workposition(){
+		var editableTableOptions={
+			trigger:"click",
+			initRowCount:0,
+			maxRowCount:30,
+			//keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+			submit:{
+				// withForm:[""],
+				type:"all",//cell|all
+				//params:{"masterautoid":'#(masterautoid)'},//携带其他额外参数
+				//commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+				url:"admin/inventoryroutingsop/saveDrawing?configid=#(configid)",
+				success:function(res){
+					LayerMsgBox.success("提交成功",600,function(){
+						//refreshPjaxContainer();
+						parent.refreshJBoltTable("#itemroutingconfigid");
+						parent.LayerMsgBox.closeAll();
+					});
+				}
+			},
+			//插入数据时默认属性值
+			//insertDefaultValues:{age:10},
+			cols:{
+				iautoid:{
+					submitAttr:"iautoid",
+				},
+				cname:{  //名称
+					type:"dialogbtn",
+					placeholder:"文件上传",
+					required:true,
+					linkColumn:'iworkpositionid',
+					dialog:{
+						url:"admin/inventoryroutingsop/file_dialog_index?configid=#(configid)",
+						area:"55%,80%",
+						title:"上传文件",
+						btn:"确定,关闭"
+					},
+					header: "文件类型,大小,路径,创建人,创建人,创建时间",
+					columnAttr:"csuffix,isize,cpath,icreateby,ccreatename,dcreatetime",
+					changeColumns:[{column:"csuffix",use:"csuffix"},{column:"isize",use:"isize"},
+						{column:"cpath",use:"cpath"},{column:"icreateby",use:"icreateby"},
+						{column:"ccreatename",use:"ccreatename"},{column:"dcreatetime",use:"dcreatetime"}],
+				},
+				//iversion:{type:"input", required:true},
+				dfromdate:{
+					submitAttr:"dfromdate",
+					type:"date",
+					required:true
+				},
+				dtodate:{
+					submitAttr:"dtodate",
+					type:"date",
+					required:true
+				},
+			}
+		};
+		return editableTableOptions;
+	}
+
+</script>
+#end
+
+
