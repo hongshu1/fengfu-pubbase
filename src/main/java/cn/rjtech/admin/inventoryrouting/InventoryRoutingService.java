@@ -298,7 +298,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 	}
 
 	public Object getMgrTree(Long iinventoryroutingid) {
-			List<InventoryClass> inventoryClassList = find("select * from Bd_InventoryClass where isdeleted='0'");
+			/*List<InventoryClass> inventoryClassList = find("select * from Bd_InventoryClass where isdeleted='0'");
 			List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
 			JsTreeBean parent = new JsTreeBean("1","#","存货分类",null,"",false);
 			jsTreeBeanList.add(parent);
@@ -315,7 +315,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 				}
 				jsTreeBeanList.add(jsTreeBean);
 			}
-			return jsTreeBeanList;
-
+			return jsTreeBeanList;*/
+		return null;
 	}
 }
