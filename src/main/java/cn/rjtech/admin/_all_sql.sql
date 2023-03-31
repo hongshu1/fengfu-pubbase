@@ -195,3 +195,7 @@
 #namespace("qcformitem")
 #include("qcformitem/qcformitem.sql")
 #end
+
+#namespace("scheduproductplan")
+#include("scheduproductplan/scheduproductplan.sql")
+#end
