@@ -1,0 +1,88 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<!--料品列表-->
+<div class="jbolt_page" data-key="#(pmkey)" >
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col">
+				<form class="form-inline" id="itemmasterForm_#(pageId)"   onsubmit="return false;" method="post">
+					<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品分类ID" id="iitemcategoryid" name="iitemcategoryid" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="料品编码" name="cinvcode" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="料品名称" name="cinvname" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="别名" name="cinvname1" value="" />
+					<input type="hidden" autocomplete="off"  class="form-control"  placeholder="料品id" name="masterautoid" value="#(masterautoid)" />
+					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				</form>
+			</div>
+			<div class="col-md-auto">
+			</div>
+		</div>
+	</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="itemmasterRowtpl_#(pageId)">
+							{@each datas as data,index}
+							<tr data-id="${data.iautoid}" >
+							<td>${pageNumber,pageSize,index | rownum}</td>
+							<td>${data.cinvcode}</td>
+							<td>${data.cinvname}</td>
+							<td>${data.cinvname1}</td>
+							<td>${data.cinvstd}</td>
+							<td>${data.manufactureuom}</td>
+							<td>${data.purchaseuom}</td>
+							</tr>
+							{@/each}
+						</textarea>
+
+		<!-- 工具条 toolbar -->
+
+		<table class="jbolt_table jbolt_main_table table-center"
+			   data-jbolttable
+			   data-height="fill"
+			   data-ajax="true"
+			   data-url="admin/inventory/dataBomList"
+			   data-column-resize="true"
+			   data-column-prepend="1:radio"
+			   data-conditions-form="itemmasterForm_#(pageId)"
+			   data-rowtpl="itemmasterRowtpl_#(pageId)"
+			   data-page="itemmasterPage_#(pageId)"
+			   data-toolbar="itemmaster_toolbar_#(pageId)"
+			   id="iteminvtableid"
+		>
+			<thead>
+			<tr>
+				<th data-width="30" data-min-width="60" data-column="index">序号</th>
+				<th data-width="150" data-column="cinvcode">料品编码</th>
+				<th data-width="150" data-column="cinvname">料品名称</th>
+				<th data-width="150" data-column="cinvname1">部品名称</th>
+				<th data-width="150" data-column="cinvstd">规格</th>
+				<th data-width="120" data-column="manufactureuom">采购单位</th>
+				<th data-width="120" data-column="purchaseuom">生产单位</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+<script>
+
+	function submitThisForm(callback){
+		var data=getJboltTableCheckedData("iteminvtableid");
+		if(data){
+			//LayerMsgBox.confirm("确认选择此数据?",function(){
+
+			parent.jboltTableProcessTdByDialogChooser(data.cinvcode,data.iautoid,data);
+			if(callback){
+				callback();
+			}
+			//});
+		}
+	}
+
+</script>
+#end
+

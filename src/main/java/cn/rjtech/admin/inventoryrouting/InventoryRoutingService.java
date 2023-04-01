@@ -3,6 +3,7 @@ package cn.rjtech.admin.inventoryrouting;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -23,6 +24,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -262,5 +264,58 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 
 	public void deleteMultiByIds(Object[] deletes) {
 		delete("DELETE FROM Bd_InventoryRouting WHERE iautoid IN (" + ArrayUtil.join(deletes, COMMA) + ") ");
+	}
+
+	public String getprocessViewStr(Long iinventoryroutingid) {
+		List<InventoryRoutingConfig> routingConfigs = inventoryRoutingConfigService.find(inventoryRoutingConfigService.selectSql().eq("iInventoryRoutingId", iinventoryroutingid).eq("isEnabled","1").orderBy("iSeq","ASC"));
+		StringBuilder processViewStr = new StringBuilder("graph TD\nA([开始])");
+		if(routingConfigs != null && routingConfigs.size() > 0){
+			if(routingConfigs.get(0).getISeq() == null||StringUtils.isBlank(routingConfigs.get(0).getCOperationName())){
+				return processViewStr.toString();
+			}
+			processViewStr.append(" --> ").append(routingConfigs.get(0).getISeq()).append("[").append(routingConfigs.get(0).getCOperationName()).append("]\n");
+			List<StringBuilder> parallels = new ArrayList<>();
+			InventoryRoutingConfig last = routingConfigs.get(0);
+			for (int i =1;i<routingConfigs.size();i++){
+				InventoryRoutingConfig config = routingConfigs.get(i);
+				if (config.getIType() != null&&1 == config.getIType().intValue() && routingConfigs.get(0).getISeq() != null&&StringUtils.isNotBlank(routingConfigs.get(0).getCOperationName())){
+					processViewStr.append(last.getISeq()).append(" --> ").append(config.getISeq()).append("[").append(config.getCOperationName()).append("]\n");
+
+					if(parallels.size() > 0){
+						for (StringBuilder parallel : parallels) {
+							processViewStr.append(parallel).append(" --> ").append(config.getISeq()).append("\n");
+						}
+						parallels.clear();
+					}
+					last = config;
+				}else if(config.getIType() != null && routingConfigs.get(0).getISeq() != null&&StringUtils.isNotBlank(routingConfigs.get(0).getCOperationName())){
+					StringBuilder parallel = new StringBuilder(config.getISeq().intValue()+"").append("[").append(config.getCOperationName()).append("]");
+					parallels.add(parallel);
+				}
+			}
+		}
+		return processViewStr.toString();
+	}
+
+	public Object getMgrTree(Long iinventoryroutingid) {
+			/*List<InventoryClass> inventoryClassList = find("select * from Bd_InventoryClass where isdeleted='0'");
+			List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
+			JsTreeBean parent = new JsTreeBean("1","#","存货分类",null,"",false);
+			jsTreeBeanList.add(parent);
+			for (InventoryClass inventoryClass : inventoryClassList){
+				Long id = inventoryClass.getIAutoId();
+				String pid="1";
+				String text = "["+ inventoryClass.getCInvCCode()+"]" + inventoryClass.getCInvCName();
+				String type = inventoryClass.getCInvCCode();
+				JsTreeBean jsTreeBean = new JsTreeBean(id,pid,text,type,"",false);
+				jsTreeBean.setId(inventoryClass.getIAutoId()+"");
+				if(inventoryClass.getIPid() != null){
+					jsTreeBean.setParent(inventoryClass.getIPid()+"");
+					//jsTreeBean.setChildren(true);
+				}
+				jsTreeBeanList.add(jsTreeBean);
+			}
+			return jsTreeBeanList;*/
+		return null;
 	}
 }

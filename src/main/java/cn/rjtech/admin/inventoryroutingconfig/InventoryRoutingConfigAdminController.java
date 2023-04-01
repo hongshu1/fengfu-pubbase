@@ -1,6 +1,7 @@
 package cn.rjtech.admin.inventoryroutingconfig;
 
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.model.momdata.Inventory;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -8,6 +9,9 @@ import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.InventoryRoutingConfig;
@@ -27,8 +31,8 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	private InventoryRoutingConfigService service;
 
 	public void list() {
-		Long iinventoryid = getLong("iinventoryid");
-		renderJsonData(service.dataList(iinventoryid));
+		Long iinventoryroutingid = getLong("iinventoryroutingid");
+		renderJsonData(service.dataList(iinventoryroutingid));
 	}
 
    /**
@@ -49,6 +53,10 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	*/
 	public void add() {
 		render("add.html");
+	}
+
+	public void saveItemRoutingConfig() {
+		renderJson(service.saveItemRoutingConfig(getLong("iitemroutingid"), getInt("iseq")));
 	}
 
    /**
@@ -82,7 +90,7 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	* 批量删除
 	*/
 	public void deleteByIds() {
-		renderJson(service.deleteByIds(get("ids")));
+		renderJson(service.deleteByBatchIds(get("ids")));
 	}
 
    /**
@@ -99,5 +107,54 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isEnabled"));
 	}
 
+	public void operation_dialog_index(){
+		render("operation_dialog_index.html");
+	}
 
+	public void invc_dialog_index(){
+		set("configid",getLong("iautoid"));
+		set("iinventoryid",getLong("iinventoryid"));
+		render("invc_dialog_index.html");
+	}
+
+	public void equipment_dialog_index(){
+		set("configid",getLong("iautoid"));
+		render("equipment_dialog_index.html");
+	}
+
+	public void drawing_dialog_index(){
+		set("configid",getLong("iautoid"));
+		render("drawing_dialog_index.html");
+	}
+
+	public void inventory_dialog_index(){
+		Kv kv = getKv();
+		set("inventoryid",kv.getStr("iAutoId"));
+		set("cinvcode",kv.getStr("cInvCode"));
+		set("cinvcode1",kv.getStr("cInvCode1"));
+		set("cinvname1",kv.getStr("cInvName1"));
+		set("cinvstd",kv.getStr("cInvStd"));
+		set("iinventoryuomid1",kv.getStr("iInventoryUomId1"));
+		render("inventory_dialog_index.html");
+	}
+
+	public void updateRoutingConfig() {
+		Record record = new Record().setColumns(getKv());
+		renderJson(service.updateRoutingConfig(record));
+	}
+
+
+	public void moveDown() {
+		Long iitemroutingid = getLong("iinventoryroutingid");
+		Long iitemroutingconfigid = getLong("iitemroutingconfigid");
+		Integer seq = getInt("seq");
+		renderJsonData(service.moveDown(iitemroutingid, iitemroutingconfigid, seq));
+	}
+
+	public void moveUp() {
+		Long iitemroutingid = getLong("iinventoryroutingid");
+		Long iitemroutingconfigid = getLong("iitemroutingconfigid");
+		Integer seq = getInt("seq");
+		renderJsonData(service.moveUp(iitemroutingid, iitemroutingconfigid, seq));
+	}
 }

@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import cn.jbolt.core.poi.excel.*;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 物料建模-存货档案
@@ -83,6 +84,9 @@ public class InventoryService extends BaseService<Inventory> {
 		if(inventory==null || isOk(inventory.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
+		Inventory first = findFirst(selectSql().eq("cInvCode", inventory.getCInvCode()));
+		if(first != null)
+			return fail(JBoltMsg.DATA_SAME_SN_EXIST);
 		setInventory(inventory);
 		//if(existsName(inventory.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=inventory.save();
@@ -392,5 +396,40 @@ public class InventoryService extends BaseService<Inventory> {
 
 		return res.get();
 	}
-    
+
+	public List<Inventory> options(Kv kv) {
+		List<Inventory> inventories = find(selectSql().eq("isDeleted", "0").set("isEnabled", "1"));
+		if(inventories != null ){
+			Long inventoryId = kv.getLong("inventoryid");
+			if(inventoryId == null)
+				return inventories;
+			if(inventories.size() > 0){
+				for (Inventory i : inventories) {
+					if(i.getIAutoId().longValue() == inventoryId.longValue()){
+						return inventories;
+					}
+				}
+			}
+			Inventory inventory = new Inventory();
+			Long iinventoryuomid1 = kv.getLong("iinventoryuomid1");
+			String cInvCode = kv.getStr("cinvcode");
+			String cInvCode1 = kv.getStr("cinvcode1");
+			String cInvName1 = kv.getStr("cinvname1");
+			String cInvStd = kv.getStr("cinvstd");
+			if(StringUtils.isBlank(cInvName1))
+				return inventories;
+			inventory.setIAutoId(inventoryId);
+			inventory.setCInvName1(cInvName1);
+			inventory.setCInvCode(cInvCode);
+			inventory.setCInvCode1(cInvCode1);
+			inventory.setCInvStd(cInvStd);
+			inventory.setIInventoryUomId1(iinventoryuomid1);
+			inventories.add(inventory);
+		}
+		return inventories;
+	}
+
+	public List<Record> dataBomList() {
+		return dbTemplate("inventory.getInventoryDataList").find();
+	}
 }

@@ -74,6 +74,17 @@ public class InventoryAdminController extends BaseAdminController {
 	}
 
    /**
+	* 数据源
+	*/
+	public void options() {
+		renderJsonData(service.options(getKv()));
+	}
+
+	public void dataBomList(){
+		renderJsonData(service.dataBomList());
+	}
+
+   /**
 	* 新增
 	*/
 	public void add() {

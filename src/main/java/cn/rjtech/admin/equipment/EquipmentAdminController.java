@@ -183,4 +183,8 @@ public class EquipmentAdminController extends BaseAdminController {
 	public void selectLine(){
 		renderJsonData(service.selectWorkRegs());
 	}
+
+	public void dataList(){
+		renderJsonData(service.dataList());
+	}
 }

@@ -1,7 +1,7 @@
 <form onsubmit="return false;" id="Inventory_Form_#(pageId)" action="#(action)" method="post">
 	#if(inventory.iAutoId??)
-	<input type="hidden" name="inventory.iAutoId" value="#(inventory.iAutoId??)" />
-	<input type="hidden" name="iinventoryid" value="#(iinventoryid??)" />
+	<input type="hidden" name="inventory.iAutoId" value="#(inventory.iAutoId??)"  id="iautoid"/>
+	<input type="hidden" name="iinventoryid" id="iinventoryid" value="#(iinventoryid??)" />
 	#end
     <div >
     <div class="row">
@@ -52,7 +52,7 @@
             <div class="form-group row" >
                 <label class="col-sm-3 col-form-label">客户部番</label>
                 <div class="col">
-                    <input type="text" data-notnull="true" data-tips="请输入客户部番"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入客户部番" maxlength="40" name="inventory.cInvCode1" value="#(inventory.cInvCode1??)"/>
+                    <input type="text" data-notnull="true" data-tips="请输入客户部番"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入客户部番" maxlength="40" name="inventory.cInvCode1" value="#(inventory.cInvCode1??)" id="cinvcode1"/>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@
         <div class="form-group row" >
             <label class="col-sm-3 col-form-label">UG部番</label>
             <div class="col">
-                <input type="text" data-notnull="true" data-tips="请输入UG部番"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入UG部番" maxlength="40" name="inventory.cInvAddCode1" value="#(inventory.cInvAddCode1??)"/>
+                <input type="text" data-notnull="true" data-tips="请输入UG部番"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入UG部番" maxlength="40" name="inventory.cInvAddCode1" value="#(inventory.cInvAddCode1??)" id="cinvaddcode1"/>
             </div>
         </div>
     </div>
@@ -68,7 +68,7 @@
         <div class="form-group row" >
             <label class="col-sm-3 col-form-label">部品名称</label>
             <div class="col">
-                <input type="text" data-notnull="true" data-tips="请输入部品名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入部品名称" maxlength="40" name="inventory.cInvName1" value="#(inventory.cInvName1??)"/>
+                <input type="text" data-notnull="true" data-tips="请输入部品名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入部品名称" maxlength="40" name="inventory.cInvName1" value="#(inventory.cInvName1??)" id="cinvname1"/>
             </div>
         </div>
     </div>
@@ -92,7 +92,7 @@
         <div class="form-group row" >
             <label class="col-sm-3 col-form-label">规格</label>
             <div class="col">
-                <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入规格" maxlength="255" name="inventory.cInvStd">#(inventory.cInvStd??)</textarea>
+                <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入规格" maxlength="255" name="inventory.cInvStd" id="cinvstd">#(inventory.cInvStd??)</textarea>
             </div>
         </div>
     </div>

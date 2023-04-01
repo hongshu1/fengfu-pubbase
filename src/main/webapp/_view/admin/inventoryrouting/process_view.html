@@ -1,0 +1,31 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+    <div class="col-8">
+    <div>
+        <label class="col-sm-4 col-form-label">存货编码:</label><label class="col-form-label">#(cInvCode)</label>
+    </div>
+    <div>
+        <label class="col-sm-4 col-form-label">客户部番:</label><label class="col-form-label">#(cInvCode1)</label>
+    </div>
+    <div>
+        <label class="col-sm-4 col-form-label">部品名称:</label><label class="col-form-label">#(cInvName1)</label>
+    </div>
+
+    </div>
+    <div class="col-4"></div>
+    <div style="padding-left: 35%">
+
+        <div class="mermaid" >
+            #(processViewStr)
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    $(mermaid.initialize({ startOnLoad: true }));
+</script>
+#end
+

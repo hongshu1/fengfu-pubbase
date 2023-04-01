@@ -1,5 +1,9 @@
 package cn.rjtech.admin.inventoryroutingsop;
 
+import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.model.JboltFile;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.extend.config.ExtendUploadFolder;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -10,12 +14,16 @@ import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.InventoryRoutingSop;
+import com.jfinal.upload.UploadFile;
+
 /**
  * 物料建模-存货工序作业指导书
  * @ClassName: InventoryRoutingSopAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-29 10:06
  */
+@UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.INVENTORY_RECORD)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/inventoryroutingsop", viewPath = "/_view/admin/inventoryroutingsop")
 public class InventoryRoutingSopAdminController extends BaseAdminController {
@@ -91,5 +99,35 @@ public class InventoryRoutingSopAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isEnabled"));
 	}
 
+	public void file_dialog_index() {
+		Long configid = getLong("configid");
+		set("configid",configid);
+		render("file_dialog_index.html");
+	}
 
+	public void dataList(){
+		renderJsonData(service.dataList(getLong("configid")));
+	}
+
+	/**
+	 * 上传文件
+	 */
+	public void uploadFile(){
+		Long configid=getLong("configid");
+		//上传到今天的文件夹下
+		String uploadPath= JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMROUTINGDRAWING_EDITOR_FILE);
+		UploadFile file=getFile("file",uploadPath);
+		if(file==null) {
+			renderJsonFail("上传失败");
+			return;
+		}
+		//第一种方式 返回jboltFile
+		renderJsonData(service.saveJBoltFile(file, uploadPath, JboltFile.FILE_TYPE_ATTACHMENT,configid));
+
+	}
+
+	public void saveDrawing() {
+		Long configid = getLong("configid");
+		renderJson(service.saveDrawing(getJBoltTable(), configid));
+	}
 }
