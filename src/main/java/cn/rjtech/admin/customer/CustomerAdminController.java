@@ -64,6 +64,7 @@ public class CustomerAdminController extends BaseAdminController {
 		set("centityname", "customerm");
 
 		set("icustomerclassid", get("autoid"));
+		set("customerm",new Customer());
 		render("add.html");
 	}
 
@@ -127,7 +128,8 @@ public class CustomerAdminController extends BaseAdminController {
 	}
 
 	public void updateEditTable() {
-		renderJson(service.updateEditTable(getJBoltTable(), JBoltUserKit.getUserId(), new Date()));
+//		renderJson(service.updateEditTable(getJBoltTable(), JBoltUserKit.getUserId(), new Date()));
+		renderJson(service.submitByJBoltTables(getJBoltTables()));
 	}
 
 	/**
