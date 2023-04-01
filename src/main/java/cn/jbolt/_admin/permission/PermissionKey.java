@@ -2202,4 +2202,10 @@ public class PermissionKey {
 	 * */
 	public static final String CONTAINERCLASS = "containerclass";
 	public static final String WORKCALENDARM = "workcalendarm";
+
+	/**
+	 * 往来单位-客户行事日历
+	 */
+	public static final String ADMIN_CUSTOMERWORKDAYS = "ADMIN_CUSTOMERWORKDAYS";
+
 }
