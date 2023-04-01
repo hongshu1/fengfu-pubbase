@@ -1,6 +1,7 @@
 package cn.rjtech.admin.inventoryrouting;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
@@ -180,7 +181,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 						//更新被复制工艺为停用状态
 						update("UPDATE Bd_InventoryRouting SET isEnabled = 0 WHERE iAutoId = ?",preroutingid);
 						//工序配置子表   .set("isEnabled",1)
-						List<InventoryRoutingConfig> itemroutingconfigList = inventoryRoutingConfigService.getCommonList(Okv.by("iItemRoutingId", preroutingid));
+						List<InventoryRoutingConfig> itemroutingconfigList = inventoryRoutingConfigService.getCommonList(Okv.by("iInventoryRoutingId", preroutingid));
 						for (InventoryRoutingConfig itemroutingconfig : itemroutingconfigList) {
 							Long preconfigid = itemroutingconfig.getIAutoId();  //被复制工序配置的id
 							Long newconfigid = JBoltSnowflakeKit.me.nextId();
@@ -188,7 +189,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 							itemroutingconfig.setIInventoryRoutingId(autoid);
 
 							//工序子表
-							List<InventoryroutingconfigOperation> itemroutingoperationList = inventoryroutingconfigOperationService.getCommonList(Okv.by("iItemRoutingConfigId", preconfigid));
+							List<InventoryroutingconfigOperation> itemroutingoperationList = inventoryroutingconfigOperationService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
 							for (InventoryroutingconfigOperation table : itemroutingoperationList) {
 								Long newid = JBoltSnowflakeKit.me.nextId();
 								table.setIAutoId(newid);
@@ -197,7 +198,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 							inventoryroutingconfigOperationService.batchSave(itemroutingoperationList);
 
 							//设备集子表
-							List<InventoryRoutingEquipment> itemroutingequipmentList = inventoryRoutingEquipmentService.getCommonList(Okv.by("iItemRoutingConfigId", preconfigid));
+							List<InventoryRoutingEquipment> itemroutingequipmentList = inventoryRoutingEquipmentService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
 							for (InventoryRoutingEquipment table : itemroutingequipmentList) {
 								Long newid = JBoltSnowflakeKit.me.nextId();
 								table.setIAutoId(newid);
@@ -206,7 +207,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 							inventoryRoutingEquipmentService.batchSave(itemroutingequipmentList);
 
 							//存货工艺工序物料集
-							List<InventoryRoutingInvc> inventoryRoutingInvcs = inventoryRoutingInvcService.getCommonList(Okv.by("iItemRoutingConfigId", preconfigid));
+							List<InventoryRoutingInvc> inventoryRoutingInvcs = inventoryRoutingInvcService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
 							for (InventoryRoutingInvc table : inventoryRoutingInvcs) {
 								Long newid = JBoltSnowflakeKit.me.nextId();
 								table.setIAutoId(newid);
@@ -215,7 +216,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 							inventoryRoutingInvcService.batchSave(inventoryRoutingInvcs);
 
 							//存货工序作业指导书
-							List<InventoryRoutingSop> inventoryRoutingSops = inventoryRoutingSopService.getCommonList(Okv.by("iItemRoutingConfigId", preconfigid));
+							List<InventoryRoutingSop> inventoryRoutingSops = inventoryRoutingSopService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
 							for (InventoryRoutingSop table : inventoryRoutingSops) {
 								Long newid = JBoltSnowflakeKit.me.nextId();
 								table.setIAutoId(newid);
@@ -297,25 +298,113 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 		return processViewStr.toString();
 	}
 
-	public Object getMgrTree(Long iinventoryroutingid) {
-			/*List<InventoryClass> inventoryClassList = find("select * from Bd_InventoryClass where isdeleted='0'");
-			List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
-			JsTreeBean parent = new JsTreeBean("1","#","存货分类",null,"",false);
-			jsTreeBeanList.add(parent);
-			for (InventoryClass inventoryClass : inventoryClassList){
-				Long id = inventoryClass.getIAutoId();
-				String pid="1";
-				String text = "["+ inventoryClass.getCInvCCode()+"]" + inventoryClass.getCInvCName();
-				String type = inventoryClass.getCInvCCode();
-				JsTreeBean jsTreeBean = new JsTreeBean(id,pid,text,type,"",false);
-				jsTreeBean.setId(inventoryClass.getIAutoId()+"");
-				if(inventoryClass.getIPid() != null){
-					jsTreeBean.setParent(inventoryClass.getIPid()+"");
-					//jsTreeBean.setChildren(true);
-				}
-				jsTreeBeanList.add(jsTreeBean);
+	public List<JsTreeBean> getMgrTree(Long iinventoryroutingid) {
+		Kv kv = new Kv();
+		kv.put("iinventoryroutingid",iinventoryroutingid);
+		List<Record> configs = dbTemplate("inventoryclass.getRouingConfigs", kv).find();
+		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
+		JsTreeBean parent = new JsTreeBean("1","#","成品名称",null,"",false);
+		JsTreeBean parent1 = new JsTreeBean("2","#","半成品名称",null,"",false);
+		jsTreeBeanList.add(parent1);
+		jsTreeBeanList.add(parent);
+		StringBuilder ids = new StringBuilder();
+		for (Record inventoryClass : configs){
+			Long id = inventoryClass.getLong("iautoid");
+			ids.append(id).append(",");
+			String type = inventoryClass.getInt("itype") + "";
+			String pid = "";
+			String text ="";
+			if(inventoryClass.getLong("irsinventoryid") == null){
+				pid="2";
+				text = "虚拟件:"+ inventoryClass.getStr("coperationname");
+			}else {
+				pid="1";
+				text = inventoryClass.getStr("rsinventoryname");
 			}
-			return jsTreeBeanList;*/
-		return null;
+
+			JsTreeBean jsTreeBean = new JsTreeBean(id,pid,text,type,"",false);
+			jsTreeBeanList.add(jsTreeBean);
+		}
+		if(StringUtils.isNotBlank(ids)){
+			Kv kv1 = new Kv();
+			kv1.put("idsstr",ids.substring(0,ids.length()-1));
+			List<Record> invcs = dbTemplate("inventory.getRoutingInvcs", kv1).find();
+			if(invcs != null && invcs.size() > 0){
+				for (Record invc : invcs) {
+					Long id = invc.getLong("iautoid");
+					ids.append(id).append(",");
+					String type = invc.getStr("cinvcode");
+					String pid = invc.getLong("iinventoryroutingconfigid")+"";
+					String text =invc.getStr("cinvname");
+					JsTreeBean jsTreeBean = new JsTreeBean(id,pid,text,type,"",false);
+					jsTreeBeanList.add(jsTreeBean);
+				}
+			}
+		}
+		return jsTreeBeanList;
+	}
+
+	public void copy(Long iAutoId,Long newId) {
+		//复制工艺
+		List<InventoryRouting> inventoryRoutings = find(selectSql().eq("iInventoryId", iAutoId));
+		if(inventoryRoutings != null && inventoryRoutings.size() > 0){
+			for (InventoryRouting inventoryRouting : inventoryRoutings) {
+				inventoryRouting.setIInventoryId(newId);
+				Long newconfigid = JBoltSnowflakeKit.me.nextId();
+				copys(newconfigid,inventoryRouting.getIAutoId());
+				inventoryRouting.setIAutoId(newconfigid);
+				inventoryRouting.save();
+			}
+		}
+
+
+	}
+
+	public void copys(Long IautoId,Long oldId){
+		List<InventoryRoutingConfig> itemroutingconfigList = inventoryRoutingConfigService.getCommonList(Okv.by("iInventoryRoutingId", oldId));
+		for (InventoryRoutingConfig itemroutingconfig : itemroutingconfigList) {
+			Long preconfigid = itemroutingconfig.getIAutoId();  //被复制工序配置的id
+			Long newconfigid = JBoltSnowflakeKit.me.nextId();
+			itemroutingconfig.setIAutoId(newconfigid);
+			itemroutingconfig.setIInventoryRoutingId(IautoId);
+
+			//工序子表
+			List<InventoryroutingconfigOperation> itemroutingoperationList = inventoryroutingconfigOperationService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
+			for (InventoryroutingconfigOperation table : itemroutingoperationList) {
+				Long newid = JBoltSnowflakeKit.me.nextId();
+				table.setIAutoId(newid);
+				table.setIInventoryRoutingConfigId(newconfigid);
+			}
+			inventoryroutingconfigOperationService.batchSave(itemroutingoperationList);
+
+			//设备集子表
+			List<InventoryRoutingEquipment> itemroutingequipmentList = inventoryRoutingEquipmentService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
+			for (InventoryRoutingEquipment table : itemroutingequipmentList) {
+				Long newid = JBoltSnowflakeKit.me.nextId();
+				table.setIAutoId(newid);
+				table.setIInventoryRoutingConfigId(newconfigid);
+			}
+			inventoryRoutingEquipmentService.batchSave(itemroutingequipmentList);
+
+			//存货工艺工序物料集
+			List<InventoryRoutingInvc> inventoryRoutingInvcs = inventoryRoutingInvcService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
+			for (InventoryRoutingInvc table : inventoryRoutingInvcs) {
+				Long newid = JBoltSnowflakeKit.me.nextId();
+				table.setIAutoId(newid);
+				table.setIInventoryRoutingConfigId(newconfigid);
+			}
+			inventoryRoutingInvcService.batchSave(inventoryRoutingInvcs);
+
+			//存货工序作业指导书
+			List<InventoryRoutingSop> inventoryRoutingSops = inventoryRoutingSopService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
+			for (InventoryRoutingSop table : inventoryRoutingSops) {
+				Long newid = JBoltSnowflakeKit.me.nextId();
+				table.setIAutoId(newid);
+				table.setIInventoryRoutingConfigId(newconfigid);
+			}
+			inventoryRoutingSopService.batchSave(inventoryRoutingSops);
+
+		}
+		inventoryRoutingConfigService.batchSave(itemroutingconfigList);
 	}
 }

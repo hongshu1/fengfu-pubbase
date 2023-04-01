@@ -418,4 +418,7 @@ public class ContainerService extends BaseService<Container> {
     }
 
 
+	public List<Container> options() {
+		return find(selectSql().eq("IsDeleted","0").eq("isEnabled","1"));
+	}
 }

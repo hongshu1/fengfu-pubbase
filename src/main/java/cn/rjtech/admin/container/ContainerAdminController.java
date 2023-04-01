@@ -185,4 +185,8 @@ public class ContainerAdminController extends BaseAdminController {
 	public void handleData(String mark){
 		renderJsonData(service.handleData(getJBoltTable(),mark));
 	}
+
+	public void options(){
+		renderJsonData(service.options());
+	}
 }

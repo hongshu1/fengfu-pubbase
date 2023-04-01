@@ -2,11 +2,13 @@ package cn.rjtech.admin.inventory;
 
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.inventoryplan.InventoryPlanService;
+import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
 import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
 import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
 import cn.rjtech.model.momdata.*;
@@ -50,6 +52,8 @@ public class InventoryService extends BaseService<Inventory> {
 	private InventoryAdditionService inventoryAdditionService;
 	@Inject
 	private InventoryWorkRegionService inventoryWorkRegionService;
+	@Inject
+	private InventoryRoutingService inventoryRoutingService;
 
 	@Override
 	protected Inventory dao() {
@@ -81,7 +85,7 @@ public class InventoryService extends BaseService<Inventory> {
 	 * @return
 	 */
 	public Ret save(Inventory inventory) {
-		if(inventory==null || isOk(inventory.getIAutoId())) {
+		if(inventory==null) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		Inventory first = findFirst(selectSql().eq("cInvCode", inventory.getCInvCode()));
@@ -321,7 +325,7 @@ public class InventoryService extends BaseService<Inventory> {
 		return  itempicture ;
 	}
 
-	public Ret updateForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo, InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions) {
+	public Ret updateForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo, InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions, List<InventoryWorkRegion> newInventoryWorkRegions, Object[] delete) {
 		AtomicReference<Ret> res = new AtomicReference<>();
 		res.set(SUCCESS);
 		tx(() -> {
@@ -340,10 +344,25 @@ public class InventoryService extends BaseService<Inventory> {
 				}
 				int[] ints = inventoryWorkRegionService.batchUpdate(inventoryWorkRegions);
 			}
+			if(newInventoryWorkRegions != null && newInventoryWorkRegions.size() >0){
+				for (InventoryWorkRegion workRegion : newInventoryWorkRegions) {
+					workRegion.setIInventoryId(inventory.getIAutoId());
+					workRegion.setIsDeleted(false);
+				}
+				inventoryWorkRegionService.batchSave(newInventoryWorkRegions);
+			}
+			// 删除
+			if (ArrayUtil.isNotEmpty(delete)) {
+				deleteMultiByIds(delete);
+			}
 			return true;
 		});
 
 		return res.get();
+	}
+
+	public void deleteMultiByIds(Object[] deletes) {
+		delete("DELETE FROM Bd_InventoryWorkRegion WHERE iAutoId IN (" + ArrayUtil.join(deletes, ",") + ") ");
 	}
 
 	public Ret saveForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo, InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions) {

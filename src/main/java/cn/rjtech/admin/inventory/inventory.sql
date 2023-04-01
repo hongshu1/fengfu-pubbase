@@ -16,7 +16,13 @@ from Bd_InventoryRoutingInvc ri
 left join Bd_Inventory i on i.iAutoId = ri.iInventoryId
 left join bd_uom u1 on u1.iAutoId = i.iPurchaseUomId
 left join bd_uom u2 on u1.iAutoId = i.iManufactureUomId
- where   ri.iInventoryRoutingConfigId = #para(configid)
+ where 1=1
+   #if(configid)
+   and ri.iInventoryRoutingConfigId = #para(configid)
+   #end
+   #if(idsstr)
+   and ri.iInventoryRoutingConfigId in (#(idsstr))
+   #end
 #end
 
 #sql("getInventoryDataList")
