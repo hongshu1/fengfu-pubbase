@@ -36,6 +36,7 @@ import cn.rjtech.admin.inventoryspotcheckformOperation.InventoryspotcheckformOpe
 import cn.rjtech.admin.operation.OperationService;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.InventorySpotCheckForm;
+import cn.rjtech.model.momdata.InventoryspotcheckformOperation;
 import cn.rjtech.model.momdata.VendorClass;
 import cn.rjtech.util.ValidationUtils;
 
@@ -183,13 +184,21 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
             }
             String userName = JBoltUserKit.getUserName();
             ArrayList<InventorySpotCheckForm> checkFormList = new ArrayList<>();
+            ArrayList<InventoryspotcheckformOperation> formOperationList = new ArrayList<>();
             for (Inventory inventory : saveModelList) {
                 InventorySpotCheckForm checkForm = new InventorySpotCheckForm();
                 saveInventorySpotCheckForm(checkForm, inventory, userId, now, userName, spotCheckForm.getIType(),
                     spotCheckForm.getISpotCheckFormId());
                 checkFormList.add(checkForm);
+                //添加到【质量建模-存货点检工序】表
+                InventoryspotcheckformOperation formOperation = new InventoryspotcheckformOperation();
+                formOperation.setIAutoId(JBoltSnowflakeKit.me.nextId());
+                formOperation.setIInventorySpotCheckFormId(checkForm.getIAutoId());
+                //formOperation.setIOperationId("");
+                formOperationList.add(formOperation);
             }
 //            int[] ints = batchSave(checkFormList);
+//            inventoryspotcheckformOperationService.batchSave(formOperationList);
             System.out.println("ints的次数======>");
         }
         //2、更新
