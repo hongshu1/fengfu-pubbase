@@ -1,0 +1,56 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <input type="hidden" id="mark" value="#(mark??)" />
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="Container_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.ccontainercode}</td>
+<td>${data.ccontainername}</td>
+<td>$${data.isinner==1?"社外":"社内"}</td>
+
+</tr>
+{@/each}
+</textarea>
+
+        <table class="jbolt_table jbolt_main_table  table-center "
+               id="jbolt_Table_#(pageId)"
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="Container_form_#(pageId)"
+               data-url="admin/container/crkData?mark=#(mark??)"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-rowtpl="Container_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="Container_page"
+               data-editable="true"
+               data-editable-option="getEditableTableOptions_#(pageId)2"
+        >
+            <thead>
+            <tr>
+                <th data-width="50" data-column="index">序号</th>
+                <th  data-column="cContainerCode">容器编码</th>
+                <th  data-column="cContainerName">容器名称</th>
+                <th  data-column="isInner">存放地点</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    function submitThisForm(){
+        jboltTableSubmit("jbolt_Table_#(pageId)");
+    }
+</script>
+#end

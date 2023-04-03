@@ -418,4 +418,12 @@ public class ContainerService extends BaseService<Container> {
     }
 
 
+	/**
+	 * 打印数据
+	 * @param kv 参数
+	 * @return
+	 */
+	public Object getPrintDataCheck(Kv kv) {
+		return dbTemplate("container.containerPrintData",kv).find();
+    }
 }

@@ -171,11 +171,25 @@ public class ContainerAdminController extends BaseAdminController {
 	/**
 	 * 容器下拉信息查询
 	 */
-	public void crkData(String mark){
+	public void crkSelectData(String mark){
 		Kv kv = Kv.create();
 		kv.set("isInner", mark);
 		kv.set("isEnabled", 1);
 		renderJsonData(service.list(kv));
+	}
+
+	/**
+	 * 出入库数据源
+	 */
+	public void dataIndex(String mark) {
+		set("mark", mark);
+		render("crk_index.html");
+	}
+	/**
+	 * 出入库数据源
+	 */
+	public void crkData(String mark) {
+		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv().set("isInner",mark).set("isEnabled", 1)));
 	}
 
 	/**
@@ -184,5 +198,13 @@ public class ContainerAdminController extends BaseAdminController {
 	 */
 	public void handleData(String mark){
 		renderJsonData(service.handleData(getJBoltTable(),mark));
+	}
+
+	/**
+	 * 容器打印数据
+	 *
+	 */
+	public void printData(){
+		renderJsonData(service.getPrintDataCheck(getKv()));
 	}
 }

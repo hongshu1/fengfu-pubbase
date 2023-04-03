@@ -35,13 +35,12 @@
                     valueAttr: "ccontainercode",
                     submitAttr: "ccontainercode",
                     header:'编码,名称',
-                    url: "/admin/container/crkData?mark="+document.getElementById('mark').value,
+                    url: "/admin/container/crkSelectData?mark="+document.getElementById('mark').value,
                     required: true,
-                    // dialog:{
-                    //     url:"/admin/container/data?mark="+document.getElementById('mark').value,
-                    //     textAttr: "ccontainercode,ccontainername",
-                    //     header:'编码,名称',
-                    // },
+                   /* dialog:{
+                        url:"/admin/container/dataIndex?mark="+document.getElementById('mark').value,
+                        area:"80%,80%"
+                    },*/
                     changeColumns: [{column: "ccontainercode", use: "ccontainercode"},
                         {column: "ccontainername", use: "ccontainername"},
                         {column: "iautoid", use: "iautoid"}]
