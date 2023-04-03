@@ -120,6 +120,10 @@
 #include("uom/uom.sql")
 #end
 
+#namespace("inventory")
+#include("inventory/inventory.sql")
+#end
+
 #namespace("inventoryclass")
 #include("inventoryclass/inventoryclass.sql")
 #end
