@@ -36,10 +36,9 @@
 #include("customer/customer.sql")
 #end
 
-
-# namespace("workclass")
-# include("workclass/workclass.sql")
-# end
+#namespace("workclass")
+#include("workclass/workclass.sql")
+#end
 
 #namespace("operation")
 #include("operation/operation.sql")
@@ -49,13 +48,13 @@
 #include("qcitem/qcitem.sql")
 #end
 
-# namespace("equipment")
-# include("equipment/equipment.sql")
-# end
+#namespace("equipment")
+#include("equipment/equipment.sql")
+#end
 
-# namespace("qcparam")
-# include("qcparam/qcparam.sql")
-# end
+#namespace("qcparam")
+#include("qcparam/qcparam.sql")
+#end
 
 #namespace("warehouseshelves")
 #include("warehouseshelves/warehouseshelves.sql")
@@ -93,7 +92,6 @@
 #include("person/person.sql")
 #end
 
-
 #namespace("personequipment")
 #include("personequipment/personequipment.sql")
 #end
@@ -106,11 +104,9 @@
 #include("settlestyle/settlestyle.sql")
 #end
 
-
 #namespace("department")
 #include("department/department.sql")
 #end
-
 
 #namespace("equipment_model")
 #include("equipmentmodel/equipment_model.sql")
@@ -164,5 +160,58 @@
 #include("spotcheckform/spotcheckform.sql")
 #end
 
+#namespace("annualorderm")
+#include("annualorderm/annualorderm.sql")
+#end
 
+#namespace("annualorderd")
+#include("annualorderd/annualorderd.sql")
+#end
 
+#namespace("customeraddr")
+#include("customeraddr/customeraddr.sql")
+#end
+
+#namespace("descflexfielddef")
+#include("descflexfielddef/descflexfielddef.sql")
+#end
+
+#namespace("fitemss97")
+#include("fitemss97/fitemss97.sql")
+#end
+
+#namespace("fitemss97class")
+#include("fitemss97class/fitemss97class.sql")
+#end
+
+#namespace("fitemss97sub")
+#include("fitemss97sub/fitemss97sub.sql")
+#end
+
+#namespace("forgeigncurrency")
+#include("forgeigncurrency/forgeigncurrency.sql")
+#end
+
+#namespace("qcform")
+#include("qcform/qcform.sql")
+#end
+
+#namespace("qcformitem")
+#include("qcformitem/qcformitem.sql")
+#end
+
+#namespace("saletype")
+#include("saletype/saletype.sql")
+#end
+
+#namespace("scheduproductplan")
+#include("scheduproductplan/scheduproductplan.sql")
+#end
+
+#namespace("vouchrdcontrapose")
+#include("vouchrdcontrapose/vouchrdcontrapose.sql")
+#end
+
+#namespace("yearproductionsummary")
+#include("yearproductionsummary/yearproductionsummary.sql")
+#end
