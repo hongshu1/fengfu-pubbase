@@ -3217,6 +3217,8 @@ function jboltTableRemove(ele,confirm){
  * @returns
  */
 function jboltTableRefresh(ele,confirm,refreshEditableOptions){
+	console.log("打印confirm============>"+confirm)
+	console.log("打印refreshEditableOptions============>"+refreshEditableOptions)
 	refreshJBoltTable(ele,confirm,refreshEditableOptions);
 }
 /**

@@ -1850,38 +1850,6 @@ public class PermissionKey {
 	 */
 	public static final String BOMMASTER = "bommaster";
 	/**
-	 * 消息模板
-	 */
-	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
-	/**
-	 * 备份设置
-	 */
-	public static final String BACKUP_LOG = "backup_log";
-	/**
-	 * 采购类型
-	 */
-	public static final String PURCHASETYPE = "purchasetype";
-	/**
-	 * 质量建模-检验适用标准
-	 */
-	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
-	/**
-	 * 参数配置
-	 */
-	public static final String 	SYS_CONFIG = "	sys_config";
-	/**
-	 * 实体扩展字段
-	 */
-	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
-	/**
-	 * 容器分类
-	 */
-	public static final String CONTAINERCLASS = "containerclass";
-	/**
-	 * 拓展字段值
-	 */
-	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
-	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -2222,8 +2190,24 @@ public class PermissionKey {
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
 	/**
-	 * 往来单位-客户行事日历
+	 * 工作日历明细
 	 */
-	public static final String ADMIN_CUSTOMERWORKDAYS = "ADMIN_CUSTOMERWORKDAYS";
+	public static final String WORKCALENDARM = "workcalendard";
+	/**
+	 * 实体扩展字段
+	 */
+	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
+	/**
+	 * 实体扩展字段值集
+	 */
+	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
+	/**
+	 * 分类管理
+	 */
+	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 开发管理-备份记录
+	 */
+	public static final String BACKUP_LOG = "backuplog";
 
 }

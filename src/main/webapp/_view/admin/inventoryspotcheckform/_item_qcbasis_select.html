@@ -1,0 +1,128 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col">
+        <form class="form-inline" id="equipmentqcparamForm_#(pageId)" onsubmit="return false;" method="post" style="text-align: left;">
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cInvAddCode"
+                 value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cInvCode1"
+                 value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cInvName1"
+                 value=""/>
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="equipmentqcparamRowtpl_#(pageId)">
+{@each datas as data,index}
+	<tr data-id="${data.iautoid}">
+		<td>${pageNumber,pageSize,index | rownum}</td>
+		<td>${data.cinvaddcode}</td>
+		<td>${data.cinvcode1}</td>
+		<td>${data.cinvname1}</td><!--部品名称-->
+    <td>${data.cinvstd}</td><!--规格-->
+    <td>${data.cequipmentmodelname}</td><!--机型-->
+    <td>${data.cuomname}</td><!--库存单位-->
+	</tr>
+	{@/each}
+</textarea>
+
+    <div class="jbolt_table_toolbar" id="equipmentqcparam_toolbar_#(pageId)">
+      <div class="btn-group" hidden role="group" aria-label="btn-group">
+        <button data-btn onclick="getCheckedTplIds(this)" id="btnclick" data-title="选择"
+                class="btn btn-secondary"><i class="fa fa-check"></i> 选择
+        </button>
+      </div>
+    </div>
+
+    <table class="jbolt_table jbolt_main_table table-center"
+           id="bomitemPage_#(pageId)"
+           data-jbolttable
+           data-height="200"
+           data-ajax="true"
+           data-url="admin/inventory/inventorySpotCheckList"
+           data-column-resize="true"
+           data-column-prepend="1:checkbox:true"
+           data-conditions-form="equipmentqcparamForm_#(pageId)"
+           data-rowtpl="equipmentqcparamRowtpl_#(pageId)"
+           data-page="iequipmentqcparamPage_#(pageId)"
+           data-toolbar="equipmentqcparam_toolbar_#(pageId)">
+      <thead class="fw-normal">
+        <tr>
+          <th data-width="30">序号</th>
+          <th data-width="150" data-column="cInvAddCode">存货编码</th>
+          <th data-width="150" data-cInvCode1="cinvcode1">客户部番</th>
+          <th data-width="150" data-column="cinvname1">部品名称</th>
+          <th data-width="150" data-column="cinvstd">规格</th>
+          <th data-width="150" data-column="cequipmentmodelname">机型</th>
+          <th data-width="150" data-column="cuomname">库存单位</th><!-- iinventoryuomid1-->
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+#end
+#define js()
+<script>
+  hideParentLayerDialogBtn(0)
+  addParentLayerDialogBtn("确定", "lay_success", function (data) {
+    $("#btnclick").click();
+  });
+
+  function getCheckedTplIds(o) {
+    var data = jboltTableGetCheckedDatas(o);
+    var insertDatas = [];
+    let tableAllData = parent.getJboltTableAllDatas(parent.$("#jbolt_table_inventory_split_"));
+    for (var i in data) {
+      let isContinue = false;
+      if (isOk(tableAllData)) {
+        for (let k in tableAllData) {
+          let tempId = tableAllData[k].iautoid
+          if (isOk(tempId)) {
+            if (tempId == data[i].iautoid) {
+              isContinue = true
+              break
+            }
+          }
+        }
+      }
+      if (isContinue) {
+        continue
+      }
+      insertDatas.push({
+        "iautoid": data[i].inventoryiautoid,                //存货id
+        "eqiautoid": data[i].eqiautoid,                     //所属机型ID
+        "cequipmentmodelname": data[i].cequipmentmodelname, //机型
+        "cinvaddcode": data[i].cinvaddcode,               //存货编码
+        "cinvcode1": data[i].cinvcode1,                   //客户部番
+        "cinvname1": data[i].cinvname1,                   //部品名称
+        "cinvstd": data[i].cinvstd,                       //规格
+        "iinventoryuomid1":data[i].uomiautoid       //主计量单位的主键
+        "cuomname":data[i].cuomname       //主计量单位的名称
+      });
+    }
+    if (insertDatas.length > 0) {
+      console.log("打印日志insertDatas======>"+insertDatas);
+      parent.jboltTableInsertRow(parent.$("#jbolt_table_inventory_split_"), insertDatas, false, false, true);
+    }
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+  }
+</script>
+<style>
+  span.selection {
+    width: 200px !important;
+  }
+</style>
+#end
+

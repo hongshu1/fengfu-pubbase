@@ -10,29 +10,36 @@ WHERE 1=1
 
 #sql("inventoryList")
 SELECT
-   i.*,ic.cInvCName cinvcname
+    i.*,ic.cInvCName cinvcname
 FROM Bd_Inventory i
-inner join Bd_InventoryClass ic on i.iInventoryClassId = ic.iautoid
+         inner join Bd_InventoryClass ic on i.iInventoryClassId = ic.iautoid
 WHERE 1=1
 #if(iInventoryClassId)
- AND i.iInventoryClassId = #para(iInventoryClassId)
+  AND i.iInventoryClassId = #para(iInventoryClassId)
 #end
 #if(isEnabled)
- AND i.isenabled = #para(isEnabled)
+  AND i.isenabled = #para(isEnabled)
 #end
 #if(cInvCode1)
- AND i.cInvCode1 = #para(cInvCode1)
+  AND i.cInvCode1 = #para(cInvCode1)
 #end
 #if(cInvName)
- AND i.cInvName like CONCAT('%', #para(cInvName), '%')
+  AND i.cInvName like CONCAT('%', #para(cInvName), '%')
+#end
+#if(cInvName1)
+  AND i.cInvName1 like CONCAT('%', #para(cInvName1), '%')
 #end
 #if(cInvCode)
- AND i.cInvCode = #para(cInvCode)
+  AND i.cInvCode = #para(cInvCode)
+#end
+#if(cInvAddCode)
+  AND i.cInvAddCode = #para(cInvAddCode)
 #end
 #if(sqlids)
- AND i.iAutoId in (#(sqlids))
+  AND i.iAutoId in (#(sqlids))
 #end
 #end
+
 
 #sql("workRegions")
 select
@@ -46,31 +53,41 @@ left join #(getBaseDbName()).dbo.jb_dictionary jd on iw.isDefault + 1 = jd.sort_
 where iw.iInventoryId = #para(iInventoryId)
 #end
 
-#sql("getRouingConfigs")
+#sql("inventorySpotCheckList")
 SELECT
-    a.*,
-    b.name as itypename,
-    c.name as cproductsnname,
-    d.name as cproducttechsnname,
-    i.cInvName1 rsinventoryname,
-    ri.invcs,rs.drawings,re.equipments
-FROM
-    Bd_InventoryRoutingConfig a
-        LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary b ON a.iType = b.sn AND b.type_key = 'process_type'
-        LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary c ON a.cProductSn = c.sn AND c.type_key = 'cproductsn_type'
-        LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary d ON a.cProductTechSn = d.sn AND d.type_key = 'product_tech'
-        left join Bd_Inventory i on a.irsinventoryid = i.iAutoId
-        left join (SELECT COUNT(iInventoryRoutingConfigId) invcs ,iInventoryRoutingConfigId configid FROM Bd_InventoryRoutingInvc GROUP BY iInventoryRoutingConfigId) ri on a.iAutoId = ri.configid
-        left join (SELECT COUNT(iInventoryRoutingConfigId) drawings ,iInventoryRoutingConfigId configid FROM Bd_InventoryRoutingSop GROUP BY iInventoryRoutingConfigId) rs on a.iAutoId = rs.configid
-        left join (SELECT COUNT(iInventoryRoutingConfigId) equipments ,iInventoryRoutingConfigId configid FROM Bd_InventoryRoutingEquipment GROUP BY iInventoryRoutingConfigId) re on a.iAutoId = re.configid
-WHERE a.isEnabled = 1 AND
-        a.iInventoryRoutingId = #para(iinventoryroutingid)
-ORDER BY a.iSeq ASC
+    i.*,i.iautoid as inventoryiautoid,ic.cInvCName cinvcname,eq.*,
+    eq.iautoid equipiautoid,
+    uom.iautoid uomiautoid,
+    uom.iUomClassId,
+    uom.cUomCode,
+    uom.cUomName
+FROM Bd_Inventory i
+    inner join Bd_InventoryClass ic on i.iInventoryClassId = ic.iautoid
+    left join Bd_EquipmentModel eq on i.iEquipmentModelId = eq.iautoid
+    left join Bd_Uom uom on i.iInventoryUomId1 = uom.iautoid
+WHERE 1=1
+#if(iInventoryClassId)
+    AND i.iInventoryClassId = #para(iInventoryClassId)
 #end
-
-#sql("getRouings")
-SELECT
-    ir.*
-FROM Bd_InventoryRouting ir
-WHERE ir.iinventoryid = #para(iinventoryid)
+#if(isEnabled)
+    AND i.isenabled = '1'
+#end
+#if(cInvCode1)
+    AND i.cInvCode1 = #para(cInvCode1)
+#end
+#if(cInvName)
+    AND i.cInvName like CONCAT('%', #para(cInvName), '%')
+#end
+#if(cInvName1)
+    AND i.cInvName1 like CONCAT('%', #para(cInvName1), '%')
+#end
+#if(cInvCode)
+    AND i.cInvCode = #para(cInvCode)
+#end
+#if(cInvAddCode)
+    AND i.cInvAddCode = #para(cInvAddCode)
+#end
+#if(sqlids)
+    AND i.iAutoId in (#(sqlids))
+#end
 #end
