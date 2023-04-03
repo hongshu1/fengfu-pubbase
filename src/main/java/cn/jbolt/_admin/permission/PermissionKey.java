@@ -2201,4 +2201,24 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
+	/**
+	 * 质量建模-检验适用标准
+	 */
+	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
+	/**
+	 * 参数配置
+	 */
+	public static final String 	SYS_CONFIG = "	sys_config";
+	/**
+	 * 实体扩展字段
+	 */
+	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
+	/**
+	 * 容器分类
+	 */
+	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 拓展字段值
+	 */
+	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
 }
