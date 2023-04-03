@@ -13,19 +13,12 @@
 		</div>
 	</div>
 
-<!--	<div class="form-group row">-->
-<!--		<label class="col-sm-2 col-form-label">收发类型ID</label>-->
-<!--		<div class="col">-->
-<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入收发类型ID" maxlength="19" name="saleType.irdstyleid" value="#(saleType.irdstyleid??)"/>-->
-<!--		</div>-->
-<!--	</div>-->
-
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">出库类别</label>	<!--出库类别编码-->
 		<div class="form-group row">
 			<select  class="form-control-two"
 					 data-autoload
-					 data-url="admin/rdstyle/enableOptions"
+					 data-url="admin/rdstyle/getSaleType"
 					 data-select-type="select"
 					 name="saleType.irdstyleid"
 					 data-rule="select"
