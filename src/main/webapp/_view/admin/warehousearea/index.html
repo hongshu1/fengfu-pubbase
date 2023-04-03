@@ -24,7 +24,7 @@
 			<input type="number" autocomplete="off" style="width:110px"  class="form-control"  placeholder="最小存储数" name="imaxcapacityMin" value="" />
 			<input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大存储数" name="imaxcapacityMax" value="" />
 
-		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		    <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 		</form>
 	</div>
@@ -98,7 +98,20 @@
 	</div>
 	#end
 
-	<div class="clearfix"></div>
+	<div class="btn-group" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
+				data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
+		</button>
+		<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+			<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds"
+					onclick="warehouseareaPrint('check')"><i class="fa fa-download"></i> 打印勾选行
+			</button>
+			<button class="btn dropdown-item" onclick="warehouseareaPrint('page')"><i class="fa fa-download"></i> 打印当前页
+			</button>
+		</div>
+
+	</div>
+
 </div>
 
 
@@ -140,9 +153,33 @@ data-fixed-columns-left="1,2,3"
 </tbody>
 </table>
 
-
-
 </div>
 </div>
+#end
+
+
+#define js()
+<script type="text/javascript">
+	//打印
+	function warehouseareaPrint(mark) {
+		let rows;
+		if (mark == 'check') {
+			rows = jboltTableGetCheckedDatas();
+			if (rows == null) {
+				return;
+			}
+		} else{
+			rows = jboltTableGetAllDatas();
+		}
+		let code = [];
+		for (let i in rows) {
+			let rowdata = rows[i];
+			var ccode = rowdata.iautoid;
+			code.push(ccode);
+		}
+		jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=' + code.join(",") + "&&mark=" + mark);
+
+	}
+</script>
 #end
 

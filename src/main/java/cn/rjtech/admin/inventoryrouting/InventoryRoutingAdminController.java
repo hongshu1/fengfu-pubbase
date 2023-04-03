@@ -75,6 +75,7 @@ public class InventoryRoutingAdminController extends BaseAdminController {
 		Long iinventoryid = getLong("iinventoryid");
 		renderJson(service.saveItemRouting(getJBoltTable(),iinventoryid));
 	}
+
    /**
 	* 编辑
 	*/
