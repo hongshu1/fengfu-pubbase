@@ -32,6 +32,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.inventoryspotcheckformOperation.InventoryspotcheckformOperationService;
 import cn.rjtech.admin.operation.OperationService;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.InventorySpotCheckForm;
@@ -50,11 +51,14 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
     private final InventorySpotCheckForm dao = new InventorySpotCheckForm().dao();
 
     @Inject
-    private InventoryService      inventoryService;        //存货档案
+    private InventoryService                       inventoryService;        //存货档案
     @Inject
-    private OperationService      operationService;        //工序
+    private OperationService                       operationService;        //工序
     @Inject
-    private EquipmentModelService equipmentModelService; //机型档案
+    private EquipmentModelService                  equipmentModelService; //机型档案
+    @Inject
+    private InventoryspotcheckformOperationService inventoryspotcheckformOperationService; //质量建模-存货点检工序
+
 
     @Override
     protected InventorySpotCheckForm dao() {
@@ -185,8 +189,8 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                     spotCheckForm.getISpotCheckFormId());
                 checkFormList.add(checkForm);
             }
-            int[] ints = batchSave(checkFormList);
-            System.out.println("ints的次数======>" + ints);
+//            int[] ints = batchSave(checkFormList);
+            System.out.println("ints的次数======>");
         }
         //2、更新
         if (jBoltTable.updateIsNotBlank()) {
@@ -200,7 +204,7 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                 checkForm.setIUpdateBy(userId);
                 checkForm.setCUpdateName(JBoltUserKit.getUserName());
             }
-            batchUpdate(updateModelList);
+//            batchUpdate(updateModelList);
         }
         return SUCCESS;
     }

@@ -353,6 +353,10 @@ public class OperationService extends BaseService<Operation> {
 		return find("SELECT iAutoId,cOperationName FROM Bd_Operation WHERE isDeleted = '0' ");
 	}
 
+	public List<Operation> getIdAndNameListToInventoryCheckForm(){
+		return find("SELECT iAutoId as iOperationId,cOperationName FROM Bd_Operation WHERE isDeleted = '0' ");
+	}
+
 	/*
 	 * 导出excel文件
 	 * */

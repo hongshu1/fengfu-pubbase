@@ -13,6 +13,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.inventoryspotcheckformOperation.InventoryspotcheckformOperationService;
 import cn.rjtech.admin.operation.OperationService;
 import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -62,6 +63,8 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
     private SpotCheckFormService          spotCheckFormService; //点检表格
     @Inject
     private DictionaryService             dictionaryService;
+    @Inject
+    private InventoryspotcheckformOperationService inventoryspotcheckformOperationService; //质量建模-存货点检工序
 
     /**
      * 首页

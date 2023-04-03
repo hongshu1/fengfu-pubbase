@@ -13,7 +13,7 @@
             <td>${data.cinvname1}</td> <!--部品名称-->
             <td>${data.cinvstd}</td> <!--规格-->
             <td>${data.cuomname}</td> <!--主计量单位iinventoryuomid1-->
-            <td>${data.cOperationName}</td> <!--工序名称-->
+            <td>${data.coperationname}</td> <!--工序名称-->
         </tr>
     {@/each}
 </textarea>
@@ -86,7 +86,7 @@
             <th data-width="150" data-column="cInvName1">部品名称</th>
             <th data-width="150" data-column="cInvStd">规格</th>
             <th data-width="150" data-column="cuomname">主计量单位</th><!--iInventoryUomId1-->
-            <th data-width="150" data-column="cOperationName">工序名称</th>
+            <th data-width="150" data-column="coperationname">工序名称</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -126,6 +126,14 @@
       cols: {
         iautoid: {
           submitAttr: "iautoid"
+        },
+        coperationname: { //工序
+          required: true,
+          placeholder: "=工序=",
+          type:"select",
+          url:"admin/operation/optionsToInventoryCheckForm",
+          valueAttr:"ioperationid",//textAttr:"cOperationName"
+          textAttr:"coperationname"
         },
       }
     };

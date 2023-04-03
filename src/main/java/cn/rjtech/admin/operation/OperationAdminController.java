@@ -220,4 +220,8 @@ public class OperationAdminController extends JBoltBaseController {
     public void options(){
         renderJsonData(service.getIdAndNameList());
     }
+
+    public void optionsToInventoryCheckForm(){
+        renderJsonData(service.getIdAndNameListToInventoryCheckForm());
+    }
 }
