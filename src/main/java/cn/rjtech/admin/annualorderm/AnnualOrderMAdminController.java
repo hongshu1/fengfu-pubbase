@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 
+import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
@@ -14,6 +15,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.AnnualOrderM;
+import cn.rjtech.model.momdata.Customer;
 
 import java.util.Date;
 
@@ -32,7 +34,8 @@ public class AnnualOrderMAdminController extends BaseAdminController {
 
     @Inject
     private AnnualOrderMService service;
-
+    @Inject
+    private CustomerService customerService;
     /**
      * 首页
      */
@@ -71,7 +74,8 @@ public class AnnualOrderMAdminController extends BaseAdminController {
             return;
         }
         Record annualOrderMRc = annualOrderM.toRecord();
-        //annualOrderMRc.set("ccusname", );
+        Customer customer = customerService.findById(annualOrderM.getICustomerId());
+        annualOrderMRc.set("ccusname", customer == null ? null:customer.getCCusName());
         set("annualOrderM", annualOrderMRc);
         render("edit.html");
     }
@@ -87,7 +91,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
      * 删除
      */
     public void delete() {
-        renderJson(service.deleteById(getLong(0)));
+        renderJson(service.delete(getLong(0)));
     }
 
     /**

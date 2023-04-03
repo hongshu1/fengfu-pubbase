@@ -7,9 +7,9 @@
                 <div class="card-body">
                     <div class="col">
                         <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
-                        <button onclick="" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
                         <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
-                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>
             </div>
@@ -20,10 +20,10 @@
                     <form onsubmit="return false;" id="AnnualOrderD_Form_#(pageId)" action="#(action)" method="post">
                         #if(annualOrderM.iAutoId??)
                         <input type="hidden" name="annualOrderM.iAutoId" value="#(annualOrderM.iAutoId??)"/>
+                        #end
                         <input type="hidden" name="annualOrderM.iOrderStatus" value="#(annualOrderM.iOrderStatus??1)"/>
                         <input type="hidden" name="annualOrderM.iAuditStatus" value="#(annualOrderM.iAuditStatus??0)"/>
                         <input type="hidden" name="annualOrderM.isDeleted" value="#(annualOrderM.isDeleted??0)"/>
-                        #end
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -35,7 +35,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                	<input type="hidden" name="annualOrderM.iCustomerId" value="#(annualOrderM.iCustomerId??)" id="iCustomerId"/>
+                                	<input type="hidden" name="annualOrderM.iCustomerId" value="#(annualOrderM.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
                                     <label class="col-sm-3 col-form-label">客户名称</label>
                                     <div class="col-9">
 										<input type="text" class="form-control"
@@ -120,12 +120,13 @@
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
         </div>
     </div>
-    <table class="table-center" id="jbolt_orderItemTable_#(pageId)"
+    <table class="jbolt_table thead_font_normal table-bordered table-center"
            data-jbolttable
            #if(annualOrderM.iAutoId??)
            data-ajax="true"
            data-url="admin/annualorderd/findEditTableDatas?iAnnualOrderMid=#(annualOrderM.iAutoId??)"
            #end
+           id="jbolt_Table_#(pageId)"
            data-column-resize="true"
            data-tfoot-fixed="true"
            data-column-prepend="1:checkbox"
@@ -199,11 +200,17 @@
 </div>
 #define js()
 <script>
+hideParentLayerDialogBtn(0);
+hideParentLayerDialogBtn(1);
+function submitThisForm(){
+	jboltTableSubmit("#jbolt_Table_#(pageId)");
+}
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
             submit: {
                 withForm: ["AnnualOrderD_Form_#(pageId)"],
+                name: 'annualOrderDForm',
                 type: "all",
                 url: "/admin/annualorderm/submitAll",
                 success: function (res) {
@@ -234,51 +241,135 @@
                 },
                 inowyearmonthamount1: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount2: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount3: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount4: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount5: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount6: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount7: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount8: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount9: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount10: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount11: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamount12: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inowyearmonthamounttotal: {
 					summary:[{
@@ -287,19 +378,47 @@
 						roundtag:"round",
 						removezero:true,
 						formula:"inowyearmonthamount1+inowyearmonthamount2+inowyearmonthamount3+inowyearmonthamount4+inowyearmonthamount5+inowyearmonthamount6+inowyearmonthamount7+inowyearmonthamount8+inowyearmonthamount9+inowyearmonthamount10+inowyearmonthamount11+inowyearmonthamount12"
+					}],
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
 					}]
 				},
 				inextyearmonthamount1: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inextyearmonthamount2: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inextyearmonthamount3: {
 					type:"amount",
-					placeholder:'数量'
+					placeholder:'数量',
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
+					}]
 				},
 				inextyearmonthamounttotal: {
 					summary:[{
@@ -308,6 +427,13 @@
 						roundtag:"round",
 						removezero:true,
 						formula:"inextyearmonthamount1+inextyearmonthamount2+inextyearmonthamount3"
+					}],
+					summary:[{
+						dir:"v",
+						tofixed:2,
+						roundtag:"round",
+						removezero:true,
+						formula:"sum"
 					}]
 				}
             }
@@ -320,7 +446,11 @@
         $("#nowYear").html(ele.val()+"年");
         $("#nextYear").html(ele.val()+"年");
     }
+
+    function closeHandler(){
+    	parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="AnnualOrderM_Form")
 #end
 

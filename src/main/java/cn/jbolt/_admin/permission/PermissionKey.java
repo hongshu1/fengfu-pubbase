@@ -5,7 +5,7 @@ package cn.jbolt._admin.permission;
  * 此文件由JBoltGeneratorGUI生成 请勿手动修改
  */
 public class PermissionKey {
-    /**
+	/**
 	 * 空权限
 	 */
 	public static final String NONE = "NONE";
