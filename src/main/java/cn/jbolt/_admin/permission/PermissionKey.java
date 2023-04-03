@@ -5,7 +5,7 @@ package cn.jbolt._admin.permission;
  * 此文件由JBoltGeneratorGUI生成 请勿手动修改
  */
 public class PermissionKey {
-	/**
+    /**
 	 * 空权限
 	 */
 	public static final String NONE = "NONE";
@@ -1858,6 +1858,30 @@ public class PermissionKey {
 	 */
 	public static final String BACKUP_LOG = "backup_log";
 	/**
+	 * 采购类型
+	 */
+	public static final String PURCHASETYPE = "purchasetype";
+	/**
+	 * 质量建模-检验适用标准
+	 */
+	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
+	/**
+	 * 参数配置
+	 */
+	public static final String 	SYS_CONFIG = "	sys_config";
+	/**
+	 * 实体扩展字段
+	 */
+	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
+	/**
+	 * 容器分类
+	 */
+	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 拓展字段值
+	 */
+	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -2197,20 +2221,6 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
-	/**
-	 * 实体扩展字段值集
-	 */
-	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
-	/*
-	 * 实体扩展字段
-	 * */
-	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
-	/*
-	 * 分类管理
-	 * */
-	public static final String CONTAINERCLASS = "containerclass";
-	public static final String WORKCALENDARM = "workcalendarm";
-
 	/**
 	 * 往来单位-客户行事日历
 	 */
