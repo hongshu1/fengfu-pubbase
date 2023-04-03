@@ -140,4 +140,12 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
 		renderJson(service.importExcelData(file.getFile()));
 	}
 
+	/**
+	 * 库区打印数据
+	 *
+	 */
+	public void printData(){
+		renderJsonData(service.getPrintDataCheck(getKv()));
+	}
+
 }

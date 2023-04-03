@@ -442,9 +442,9 @@ public class PermissionKey {
 	 */
 	public static final String SPOTCHECKPARAM = "spotcheckparam";
 	/**
-	 * 点检标准
+	 * 点检适用标准
 	 */
-	public static final String EQUIPMENTQCBASIS = "equipmentqcbasis";
+	public static final String INVENTORYSPOTCHECKFORM = "inventoryspotcheckform";
 	/**
 	 * 其他事项
 	 */
@@ -1184,15 +1184,15 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String EQUIPMENTQCBASIS_ADD = "equipmentqcbasis_add";
+	public static final String INVENTORYSPOTCHECKFORM_ADD = "inventoryspotcheckform_add";
 	/**
 	 * 导出
 	 */
-	public static final String EQUIPMENTQCBASIS_EXPORT = "equipmentqcbasis_export";
+	public static final String INVENTORYSPOTCHECKFORM_EXPORT = "inventoryspotcheckform_export";
 	/**
 	 * 导入
 	 */
-	public static final String EQUIPMENTQCBASIS_IMPORT = "equipmentqcbasis_import";
+	public static final String INVENTORYSPOTCHECKFORM_IMPORT = "inventoryspotcheckform_import";
 	/**
 	 * 新增
 	 */
@@ -1849,6 +1849,14 @@ public class PermissionKey {
 	 * 物料建模-Bom母项
 	 */
 	public static final String BOMMASTER = "bommaster";
+	/**
+	 * 消息模板
+	 */
+	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
+	/**
+	 * 备份设置
+	 */
+	public static final String BACKUP_LOG = "backup_log";
 	/**
 	 * 新增
 	 */

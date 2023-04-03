@@ -283,4 +283,12 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 		return dbTemplate("warehousearea.findByWareHouseId", Okv.by("wareHouseId", wareHouseId)).find();
 	}
 
+	/**
+	 * 打印数据
+	 * @param kv 查询参数
+	 * @return
+	 */
+	public Object getPrintDataCheck(Kv kv) {
+		return dbTemplate("warehousearea.containerPrintData",kv).find();
+	}
 }
