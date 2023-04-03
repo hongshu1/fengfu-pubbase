@@ -116,5 +116,26 @@ public class InventoryRoutingAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isEnabled"));
 	}
 
+	public void process_view(){
+		Long iinventoryroutingid = getLong("iinventoryroutingid");
+		String processViewStr = service.getprocessViewStr(iinventoryroutingid);
+		set("processViewStr",processViewStr);
+		set("cInvCode",get("cInvCode"));
+		set("cInvCode1",get("cInvCode1"));
+		set("cInvName1",get("cInvName1"));
+		render("process_view.html");
+	}
 
+	public void technological_Structure(){
+		Long iinventoryroutingid = getLong("iinventoryroutingid");
+		set("iinventoryroutingid",iinventoryroutingid);
+		set("cInvCode1",get("cInvCode1"));
+		set("cInvName1",get("cInvName1"));
+		render("technological_structure.html");
+	}
+
+	public void mgrTree(){
+		Long iinventoryroutingid = getLong("iinventoryroutingid");
+		renderJsonData(service.getMgrTree(iinventoryroutingid));
+	}
 }

@@ -12,8 +12,10 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.rjtech.admin.customeraddr.CustomerAddrService;
 import cn.rjtech.admin.customerclass.CustomerClassService;
+import cn.rjtech.admin.customerworkdays.CustomerWorkDaysService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -51,6 +53,8 @@ public class CustomerService extends BaseService<Customer> {
 	private CustomerClassService customerclassService;
 	@Inject
     private CustomerAddrService addrService;
+	@Inject
+	private CustomerWorkDaysService workDaysService;
 	@Inject
 	private VendorService vendorService;
 
@@ -182,6 +186,104 @@ public class CustomerService extends BaseService<Customer> {
 		return findFirst(Okv.by("cCusCode", customercode).set("isDeleted", false), "iautoid", "asc");
 	}
 
+	/**
+	 * 多个可编辑表格同时提交
+	 * @param jboltTableMulti
+	 * @return
+	 */
+	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
+		if(jboltTableMulti==null||jboltTableMulti.isEmpty()) {
+			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
+		}
+		//这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
+//		jboltTableMulti.entrySet().forEach(en->{
+//			JBoltTable jBoltTable = en.getValue();
+		JBoltTable jBoltTable = jboltTableMulti.getJBoltTable("table1");
+		JBoltTable jBoltTable2 = jboltTableMulti.getJBoltTable("table2");
+		Date now = new Date();
+
+		Customer customerm = jBoltTable.getFormModel(Customer.class, "customerm");
+		ValidationUtils.notNull(customerm, JBoltMsg.PARAM_ERROR);
+
+		tx(() -> {
+			//修改
+			if(isOk(customerm.getIAutoId())){
+				customerm.setIUpdateBy(JBoltUserKit.getUserId());
+				customerm.setDUpdateTime(now);
+				customerm.setCUpdateName(JBoltUserKit.getUserName());
+				ValidationUtils.isTrue(customerm.update(), JBoltMsg.FAIL);
+			}else{
+				//新增
+				//编码是否存在
+				ValidationUtils.isTrue(findByCustomermCode(customerm.getCCCCode())==null, "编码重复");
+				customerm.setIAutoId(JBoltSnowflakeKit.me.nextId());
+				customerm.setICreateBy(JBoltUserKit.getUserId());
+				customerm.setCCreateName(JBoltUserKit.getUserName());
+				customerm.setDCreateTime(now);
+				customerm.setIUpdateBy(JBoltUserKit.getUserId());
+				customerm.setCUpdateName(JBoltUserKit.getUserName());
+				customerm.setDUpdateTime(now);
+				customerm.setCOrgCode(getOrgCode());
+				customerm.setCOrgName(getOrgName());
+				customerm.setIOrgId(getOrgId());
+
+				ValidationUtils.isTrue(customerm.save(), JBoltMsg.FAIL);
+			}
+
+
+			//新增
+			List<CustomerAddr> saveRecords = jBoltTable.getSaveModelList(CustomerAddr.class);
+			if (CollUtil.isNotEmpty(saveRecords)) {
+				for (CustomerAddr row : saveRecords) {
+					row.setICustomerId(customerm.getIAutoId());
+
+				}
+				addrService.batchSave(saveRecords, 500);
+			}
+
+			List<CustomerWorkDays> saveModelList = jBoltTable2.getSaveModelList(CustomerWorkDays.class);
+			if (CollUtil.isNotEmpty(saveModelList)) {
+				for (CustomerWorkDays row : saveModelList) {
+					row.setICustomerId(customerm.getIAutoId());
+				}
+				workDaysService.batchSave(saveModelList, 500);
+			}
+
+			//修改
+			List<CustomerAddr> updateRecords = jBoltTable.getUpdateModelList(CustomerAddr.class);
+			if (CollUtil.isNotEmpty(updateRecords)) {
+				addrService.batchUpdate(updateRecords, 500);
+			}
+
+			List<CustomerWorkDays> updateModelList = jBoltTable2.getUpdateModelList(CustomerWorkDays.class);
+			if (CollUtil.isNotEmpty(updateModelList)) {
+				workDaysService.batchUpdate(updateModelList, 500);
+			}
+
+			// 删除
+			Object[] deletes = jBoltTable.getDelete();
+			if (ArrayUtil.isNotEmpty(deletes)) {
+				addrService.deleteMultiByIds(deletes);
+			}
+
+			Object[] deletes2 = jBoltTable2.getDelete();
+			if (ArrayUtil.isNotEmpty(deletes2)) {
+				workDaysService.deleteMultiByIds(deletes2);
+			}
+
+			return true;
+		});
+
+		return SUCCESS;
+	}
+
+	/**
+	 * 表格提交
+	 * @param jBoltTable
+	 * @param userId
+	 * @param now
+	 * @return
+	 */
 	public Ret updateEditTable(JBoltTable jBoltTable, Long userId, Date now) {
 		Customer customerm = jBoltTable.getFormModel(Customer.class, "customerm");
 		ValidationUtils.notNull(customerm, JBoltMsg.PARAM_ERROR);

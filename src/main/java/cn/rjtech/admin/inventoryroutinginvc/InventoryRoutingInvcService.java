@@ -1,5 +1,10 @@
 package cn.rjtech.admin.inventoryroutinginvc;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +14,13 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.InventoryRoutingInvc;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.Date;
+import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
+
 /**
  * 物料建模-存货工艺工序物料集
  * @ClassName: InventoryRoutingInvcService
@@ -107,4 +119,43 @@ public class InventoryRoutingInvcService extends BaseService<InventoryRoutingInv
 		return null;
 	}
 
+	public List<Record> dataList(Kv kv) {
+		return dbTemplate("inventory.getRoutingInvcs",kv).find();
+	}
+
+
+	public Ret saveInvc(JBoltTable jBoltTable, Long iitemroutingconfigid) {
+		tx(() -> {
+			//新增
+			List<InventoryRoutingInvc> saveRecords = jBoltTable.getSaveModelList(InventoryRoutingInvc.class);
+			if (CollUtil.isNotEmpty(saveRecords)) {
+				for (int i = 0; i < saveRecords.size(); i++) {
+					Long autoid = JBoltSnowflakeKit.me.nextId();
+					saveRecords.get(i).setIAutoId(autoid);
+					saveRecords.get(i).setIInventoryRoutingConfigId(iitemroutingconfigid);
+					saveRecords.get(i).setICreateBy(JBoltUserKit.getUserId());
+					saveRecords.get(i).setCCreateName(JBoltUserKit.getUserName());
+					saveRecords.get(i).setDCreateTime(new Date());
+				}
+				batchSave(saveRecords, 500);
+			}
+
+			//修改
+			List<InventoryRoutingInvc> updateRecords = jBoltTable.getUpdateModelList(InventoryRoutingInvc.class);
+			if (CollUtil.isNotEmpty(updateRecords)) {
+				batchUpdate(updateRecords, 500);
+			}
+
+			// 删除
+			Object[] deletes = jBoltTable.getDelete();
+			if (ArrayUtil.isNotEmpty(deletes)) {
+				deleteMultiByIds(deletes);
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
+	public void deleteMultiByIds(Object[] deletes) {
+		delete("DELETE FROM Bd_InventoryRoutingInvc WHERE iAutoId IN (" + ArrayUtil.join(deletes, COMMA) + ") ");
+	}
 }

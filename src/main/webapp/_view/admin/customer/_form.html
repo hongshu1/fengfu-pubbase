@@ -218,6 +218,15 @@
         </div>
     </div>
 
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">客户行事历</label>
+        <div class="col-11">
+            <div class="jbolt_page_content">
+                #render("../customerworkdays/_form.html")
+            </div>
+        </div>
+    </div>
+
     <div class="form-group row"
          data-radio
          data-rule="radio"
@@ -252,8 +261,53 @@
 </form>
 #define js()
 <script>
+
+    /**
+     * 校验单元格
+     * @returns {boolean}
+     */
+    function checkTd(){
+        //执行item表格 每一个修改了的行里是否有必填的没有填写
+        var trs=$("#jbolt_table_CustomerWorkDays_#(pageId)").find("tr[data-changed='true']");
+        if(isOk(trs)){
+            var tds,tempTr,tempTd,tempText,hasInvalid=false,count=0;
+            trs.each(function(){
+                tempTr=$(this);
+                tds=tempTr.find("td[data-changed='true'][class='is-invalid']");
+                if(isOk(tds)){
+                    hasInvalid = true;
+                    count++;
+                }
+                console.log('count',count);
+            });
+            if(hasInvalid){
+                LayerMsgBox.error("客户行事历表格中存在["+count+"]个不符合的数值,请先修改再作提交",2000);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 提交方法
+     */
     function submitThisForm() {
-        jboltTableSubmit('#jbolt_table_customerd_split_#(pageId)');
+        // jboltTableSubmit('#jbolt_table_customerd_split_#(pageId)');
+        if (checkTd()){
+            var tables = ["jbolt_table_customerd_split_#(pageId)","jbolt_table_CustomerWorkDays_#(pageId)"];
+            jboltTableSubmitMulti(tables, "/admin/customer/updateEditTable", function (res) {
+                // alert("看到这个消息说明多个表格都提交成功了");
+                if (res.state === 'ok') {
+                    LayerMsgBox.success(res.msg, 1000, function () {
+                        // refreshPjaxContainer();
+                        parent.LayerMsgBox.closeAll();
+                        parent.refreshPjaxContainer();
+                    });
+                } else {
+                    LayerMsgBox.alert(res.msg, 2);
+                }
+            });
+        }
     }
 </script>
 <!--#include("/_view/_admin/common/_formjs.html",formId="customermForm")-->

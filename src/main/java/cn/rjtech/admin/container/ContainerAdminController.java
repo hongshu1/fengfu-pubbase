@@ -207,4 +207,8 @@ public class ContainerAdminController extends BaseAdminController {
 	public void printData(){
 		renderJsonData(service.getPrintDataCheck(getKv()));
 	}
+
+	public void options(){
+		renderJsonData(service.options());
+	}
 }

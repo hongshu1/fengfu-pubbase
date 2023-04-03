@@ -1,0 +1,41 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+    <div class="row">
+
+        <div class="col-6">
+            <label class="col-sm-3 col-form-label">客户部番:</label><label class="col-form-label">#(cInvCode1)</label>
+        </div>
+        <div class="col-6">
+            <label class="col-sm-3 col-form-label">部品名称:</label><label class="col-form-label">#(cInvName1)</label>
+        </div>
+    </div>
+    <div class="card-header py-2">
+        <span class="d-inline-block py-1"><strong>成品名称</strong></span>
+    </div>
+    <input hidden name="iinventoryroutingid" value="#(iinventoryroutingid)">
+    <div class="card-body overflow-auto" style="min-height:600px;">
+        <div id="goodsBackCategoryTree"
+             data-jstree
+             data-target="portal"
+             ###data-search-input="searchBackGoodsTypeInput_#(pageId)"
+             data-portalid="goodsBackCategoryPortal"
+             data-curd="false"
+             data-open-level="-1"
+             data-read-url="admin/inventoryrouting/mgrTree?iinventoryroutingid=#(iinventoryroutingid)">
+        </div>
+    </div>
+</div>
+
+<script>
+    function jstreeClike(tree,data){
+        console.log(tree)
+        console.log(data)
+        autoid = data.id;
+        $("#inventoryclassid").val(autoid);
+        jboltTablePageToFirst();
+    }
+</script>
+#end
+

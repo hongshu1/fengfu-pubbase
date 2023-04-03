@@ -20,6 +20,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
@@ -216,4 +217,7 @@ public class OperationAdminController extends JBoltBaseController {
         renderJson(service.importExcelData(file.getFile()));
     }
 
+    public void options(){
+        renderJsonData(service.getIdAndNameList());
+    }
 }

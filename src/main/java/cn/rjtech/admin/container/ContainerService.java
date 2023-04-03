@@ -418,6 +418,9 @@ public class ContainerService extends BaseService<Container> {
     }
 
 
+	public List<Container> options() {
+		return find(selectSql().eq("IsDeleted","0").eq("isEnabled","1"));
+	}
 	/**
 	 * 打印数据
 	 * @param kv 参数
