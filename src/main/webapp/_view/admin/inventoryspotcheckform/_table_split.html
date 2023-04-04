@@ -42,11 +42,6 @@
                     data-text-attr="cequipmentmodelname"
                     data-select="#(iautoid??)">
             </select>
-            <!--
-            iequipmentmodelid
-            cequipmentmodelname
-            cequipmentmodelcode
-            -->
             <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>
             <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>
           </form>
@@ -86,7 +81,7 @@
             <th data-width="150" data-column="cInvName1">部品名称</th>
             <th data-width="150" data-column="cInvStd">规格</th>
             <th data-width="150" data-column="cuomname">主计量单位</th><!--iInventoryUomId1-->
-            <th data-width="150" data-column="coperationname">工序名称</th>
+            <th data-width="150" data-column="ioperationid">工序名称</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -127,13 +122,13 @@
         iautoid: {
           submitAttr: "iautoid"
         },
-        coperationname: { //工序
+        ioperationid: { //工序
           required: true,
           placeholder: "=工序=",
-          type:"select",
+          type:"select2",
           url:"admin/operation/optionsToInventoryCheckForm",
-          valueAttr:"ioperationid",//textAttr:"cOperationName"
-          textAttr:"coperationname"
+          valueAttr:"iautoid",//textAttr:"cOperationName"
+          textAttr:"coperationname" //coperationname\ioperationid
         },
       }
     };

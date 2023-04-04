@@ -354,7 +354,7 @@ public class OperationService extends BaseService<Operation> {
 	}
 
 	public List<Operation> getIdAndNameListToInventoryCheckForm(){
-		return find("SELECT iAutoId as iOperationId,cOperationName FROM Bd_Operation WHERE isDeleted = '0' ");
+		return find("SELECT iautoid,coperationcode,coperationname,iworkclassid FROM Bd_Operation WHERE isDeleted = '0' ");
 	}
 
 	/*

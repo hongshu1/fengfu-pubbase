@@ -2,6 +2,7 @@ package cn.rjtech.admin.inventoryspotcheckform;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.jfinal.aop.Inject;
 
@@ -35,8 +36,11 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.EquipmentModel;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.InventorySpotCheckForm;
+import cn.rjtech.model.momdata.InventoryspotcheckformOperation;
+import cn.rjtech.model.momdata.Operation;
 import cn.rjtech.model.momdata.SpotCheckForm;
 import cn.rjtech.model.momdata.VendorClass;
+import cn.rjtech.model.momdata.base.BaseInventoryspotcheckformOperation;
 
 /**
  * 质量建模-点检适用标准
@@ -151,6 +155,16 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
      * 批量删除
      */
     public void deleteByIds() {
+        //质量建模-存货点检工序的数据也要删除
+        String[] ids = get("ids").split(",");
+        for (String id : ids) {
+            List<InventoryspotcheckformOperation> list = inventoryspotcheckformOperationService
+                .listByIinventorySpotCheckFormId(id);
+            for (InventoryspotcheckformOperation operation : list) {
+                inventoryspotcheckformOperationService.delete(operation.getIAutoId());
+            }
+        }
+        //然后删除点检适用标准表
         renderJson(service.deleteByIds(get("ids")));
     }
 

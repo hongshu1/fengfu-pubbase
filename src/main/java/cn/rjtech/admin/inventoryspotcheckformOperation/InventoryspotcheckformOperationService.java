@@ -1,5 +1,7 @@
 package cn.rjtech.admin.inventoryspotcheckformOperation;
 
+import java.util.List;
+
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -125,4 +127,7 @@ public class InventoryspotcheckformOperationService extends BaseService<Inventor
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
+	public List<InventoryspotcheckformOperation> listByIinventorySpotCheckFormId(String iInventorySpotCheckFormId){
+		return find("select * from Bd_InventorySpotCheckForm_Operation where iInventorySpotCheckFormId =? ",iInventorySpotCheckFormId);
+	}
 }

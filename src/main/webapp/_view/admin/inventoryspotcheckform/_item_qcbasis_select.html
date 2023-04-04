@@ -109,11 +109,10 @@
         "cinvname1": data[i].cinvname1,                   //部品名称
         "cinvstd": data[i].cinvstd,                       //规格
         "iinventoryuomid1":data[i].uomiautoid,       //主计量单位的主键
-        "cuomname":data[i].cuomname       //主计量单位的名称
-      });
+        "cuomname":data[i].cuomname       //主计;量单位的名称
+      })
     }
     if (insertDatas.length > 0) {
-      console.log("打印日志insertDatas======>"+insertDatas);
       parent.jboltTableInsertRow(parent.$("#jbolt_table_inventory_split_"), insertDatas, false, false, true);
     }
     parent.layer.close(parent.layer.getFrameIndex(window.name));
