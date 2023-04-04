@@ -1,0 +1,83 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>子件物料清单</h1></div>
+	<div class="col">
+	<form class="form-inline" id="BomCompare_form_#(pageId)">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="料号" name="invCode" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="品名" name="invName" value="" />
+
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+	</form>
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="BomCompare_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+
+<td>${data.cinvcode}</td>
+<td>${data.cinvname}</td>
+<td>${data.cinvstd}</td>
+<td>${data.cuomname}</td>
+<td></td>
+<td>${data.iqty}</td>
+<td>${data.iweight}</td>
+<td></td>
+<td></td>
+<td>${data.cbomversion}</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="BomCompare_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增物料清单" data-url="admin/bommaster/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
+	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="BomCompare_form_#(pageId)"
+	   data-url="admin/bommaster/getPageData"
+	   data-rowtpl="BomCompare_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="BomCompare_page"
+	   data-toolbar="BomCompare_toolbar_#(pageId)"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="150" data-column="cInvCode">子件物料编码</th>
+	<th data-width="150" data-column="cInvName">子件物料名称</th>
+	<th data-width="150" data-column="cInvStd">规格</th>
+	<th data-width="100" data-column="cUomName">计量单位</th>
+	<th data-width="120" data-column="">材料类别</th>
+	<th data-width="100" data-column="iQty">QTY</th>
+	<th data-width="100" data-column="iWeight">重量</th>
+	<th data-width="120" data-column="">单位材料成本</th>
+	<th data-width="120" data-column="">材料成本</th>
+	<th data-width="120" data-column="cBomVersion">版本/版次</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

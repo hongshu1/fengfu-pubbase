@@ -219,3 +219,7 @@
 #namespace("pad")
 #include("pad/pad.sql")
 #end
+
+#namespace("bommaster")
+#include("bommaster/bommaster.sql")
+#end
