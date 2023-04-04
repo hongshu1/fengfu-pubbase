@@ -210,6 +210,7 @@
 
     var $tree2 = $('#jstree_#(pageId)2');
     var $tree3 = $('#jstree_#(pageId)3');
+    
     /**
      * 所有菜单 点击事件处理
      */
@@ -231,16 +232,23 @@
             checkedArr.push(row.id);
         });
 
-        var checkedIds = checkedArr.join(',');
+        if (checkedArr.length > 0) {
+            var checkedIds = checkedArr.join(',');
 
-        $('input[name="checkedIds"]').val(checkedIds);
-        console.log(checkedIds)
-        setTimeout(function () {
-            // 清空参数
-            $('input[name="renderEmpty"]').val('');
+            $('input[name="checkedIds"]').val(checkedIds);
+            console.log(checkedIds);
+
+            setTimeout(function () {
+                // 清空参数
+                $('input[name="renderEmpty"]').val('');
+                // 刷新已授权菜单
+                JSTreeUtil.refresh($tree3);
+            }, 100);
+        } else {
+            $('input[name="renderEmpty"]').val('1');
             // 刷新已授权菜单
             JSTreeUtil.refresh($tree3);
-        }, 100);
+        }
     }
     var timetemp = null
     function debounce(func, wait = 500, immediate = false) {
