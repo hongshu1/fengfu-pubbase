@@ -7,10 +7,11 @@
 	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>子件物料清单</h1></div>
 	<div class="col">
 	<form class="form-inline" id="BomCompare_form_#(pageId)">
+        <input id="bomCompare_pid" hidden type="text" autocomplete="off"  name="pid" value="">
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="料号" name="invCode" value="" />
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="品名" name="invName" value="" />
 
-		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="submit" id="bomCompare_submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 	</form>
 	</div>
