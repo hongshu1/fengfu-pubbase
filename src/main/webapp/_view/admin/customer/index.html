@@ -1,0 +1,155 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col-md-auto">
+				<h1>客户列表</h1>
+			</div>
+			<div class="col">
+				<form class="form-inline" id="customermForm_#(pageId)"   onsubmit="return false;" method="post">
+					<input value="" hidden id="customermForm_autoid" name="icustomerclassid">
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="客户编码" name="ccustomercode" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="客户名称" name="ccustomername" value="" />
+					<select class="form-control"
+							data-autoload
+							name="ccustomerlevelsn"
+							data-select-type="select2"
+							data-tips="客户等级"
+							data-url="admin/dictionary/options?key=customer_level"
+							data-text="=客户等级="
+							data-value=""
+							data-value-attr="sn"
+							data-select="">
+					</select>
+					<select class="form-control"
+							data-autoload
+							data-url="admin/enums/boolchar"
+							name="isenabled"
+							data-text="=是否启用="
+							data-value=""
+							data-select=""
+					>
+					</select>
+					<button  type="submit" id="customermForm_submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+					<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+				</form>
+			</div>
+			<div class="col-md-auto">
+			</div>
+		</div>
+	</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="customermRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.ccuscode}</td>
+<td>${data.ccusname}</td>
+<td>${data.dicname}</td>
+<td>${data.depname}</td>
+<td>${data.personname}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/customer/toggleIsenabled/${data.iautoid}"/></td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+
+		<!-- 工具条 toolbar -->
+		<div class="jbolt_table_toolbar" id="customerm_toolbar_#(pageId)">
+			<div class="btn-group" role="group" aria-label="btn-group">
+				#permission(PermissionKey.CUSTOMER_ADD)
+				<button data-openpage="dialog" data-area="100%,100%" id="customermForm_add" data-handler="jboltTablePageToFirst" data-title="新增客户档案"  data-url="admin/customer/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+				#end
+				#permission(PermissionKey.CUSTOMER_EDIT)
+				<button data-openpage="dialog" data-area="100%,100%"  data-handler="refreshJBoltTable" data-title="修改客户档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/customer/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+				#end
+				#permission(PermissionKey.CUSTOMER_DELETE)
+				<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/customer/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+				#end
+				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+<!--				<button data-ajaxbtn data-confirm="确定同步最新数据？" data-handler="refreshJBoltTable" data-title="同步最新数据" data-url="admin/u9datassynctaskrecord/syncU9Datas?type=4" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 同步U9</button>-->
+			</div>
+
+			#permission(PermissionKey.CUSTOMER_EXPORT)
+			<div class="btn-group" role="group" aria-label="btn-group">
+				<!--<div class="btn-group dropdown">
+					<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenucustomermButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+					<div class="dropdown-menu" aria-labelledby="exportMenucustomermButton">
+						<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/customerm/dataExport"><i class="fa fa-download"></i> 导出选中</button>
+						<button class="btn dropdown-item" data-downloadbtn data-url="admin/customer/dataExport"  data-form="customermForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
+					</div>
+				</div>-->
+			</div>
+			#end
+
+			#permission(PermissionKey.CUSTOMER_IMPORT)
+			<!--<div class="btn-group dropdown">
+				<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+				<div class="dropdown-menu" aria-labelledby="importMenuButton">
+					<a data-downloadbtn href="/admin/customer/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+					<div class="j_upload_file_box"
+						 data-name="file"
+						 data-btn-class="btn dropdown-item"
+						 data-placeholder="上传导入"
+						 data-confirm="确认导入数据？"
+						 data-accept="excel"
+						 data-maxsize="20480"
+						 data-handler="uploadFile"
+						 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+						 data-url="/admin/customer/importExcel">
+					</div>
+				</div>
+			</div>-->
+			#end
+
+			<div class="clearfix"></div>
+		</div>
+
+
+
+		<table class="jbolt_table jbolt_main_table table-center"
+			   data-jbolttable
+			   data-height="fill"
+			   data-ajax="true"
+			   data-url="admin/customer/datas"
+			   data-column-resize="true"
+			   data-column-prepend="1:checkbox:true"
+			   data-conditions-form="customermForm_#(pageId)"
+			   data-rowtpl="customermRowtpl_#(pageId)"
+			   data-page="customermPage_#(pageId)"
+			   data-toolbar="customerm_toolbar_#(pageId)"
+
+
+
+
+			   data-fixed-columns-left="1,2,3"
+		>
+			<thead>
+			<tr>
+				<th data-width="60">序号</th>
+				<th data-width="150" data-column="cCustomerCode">客户编码</th>
+				<th data-width="150" data-column="cCustomerName">客户名称</th>
+				<th data-width="150" data-column="cCustomerLevelSn">客户等级</th>
+				<th data-width="150" data-column="iDepId">分管部门</th>
+				<th data-width="150" data-column="cPersonName">分管人员</th>
+				<th data-width="150" data-column="isEnabled">是否启用</th>
+				<th data-width="150" data-column="cCreateName">创建人名称</th>
+				<th data-width="150" data-column="dCreateTime">创建时间</th>
+
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+
+
+	</div>
+</div>
+#end
+

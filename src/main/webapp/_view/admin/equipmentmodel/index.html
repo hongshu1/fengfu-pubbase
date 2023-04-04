@@ -1,0 +1,93 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>物料建模-机型档案</h1></div>
+	<div class="col">
+	<form class="form-inline" id="EquipmentModel_form_#(pageId)">
+<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入机型编码" maxlength="40" name="cEquipmentModelCode" />
+<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入机型名称" maxlength="40" name="cEquipmentModelName" />
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	
+	
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="EquipmentModel_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cequipmentmodelcode}</td>
+<td>${data.cequipmentmodelname}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/equipmentmodel/edit/${data.iautoid}" data-area="800,600" data-title="查看物料建模-机型档案"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/equipmentmodel/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑物料建模-机型档案"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/equipmentmodel/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="EquipmentModel_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增物料建模-机型档案" data-url="admin/equipmentmodel/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+
+</div>
+<div class="float-right" role="group" aria-label="btn-group">
+<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" tooltip data-title="导入Excel数据" data-url="admin/equipmentmodel/initImportExcel" data-btn="close" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>
+	<div class="btn-group btn-group-sm">
+		<button tooltip data-title="导出Excel(查询结果)" data-form="EquipmentModel_form_#(pageId)" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="admin/equipmentmodel/exportExcelByForm"><i class="fa fa-download"></i></button>
+		<button tooltip data-title="导出Excel(选中行数据)" data-usecheckedids="true" class="btn btn-outline-success btn-sm" data-downloadbtn data-url="admin/equipmentmodel/exportExcelByCheckedIds"><i class="fa fa-download"></i></button>
+		<button tooltip data-title="导出Excel(所有数据)" class="btn btn-outline-info btn-sm" data-downloadbtn data-url="admin/equipmentmodel/exportExcelAll"><i class="fa fa-download"></i></button>
+	</div>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-column-prepend="1:checkbox:true"
+	   data-conditions-form="EquipmentModel_form_#(pageId)"
+	   data-url="admin/equipmentmodel/datas"
+	   data-rowtpl="EquipmentModel_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="EquipmentModel_page"
+	   data-toolbar="EquipmentModel_toolbar_#(pageId)"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="150" data-column="cEquipmentModelCode">机型编码</th>
+	<th data-width="150" data-column="cEquipmentModelName">机型名称</th>
+	<th data-width="150" data-column="cCreateName">创建人名称</th>
+	<th data-min-width="160" data-column="dCreateTime">创建时间</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

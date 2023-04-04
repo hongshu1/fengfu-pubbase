@@ -1,0 +1,158 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>物料建模-Bom母项</h1></div>
+	<div class="col">
+	<form class="form-inline" id="BomMaster_form_#(pageId)">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+
+<select class="form-control" name="isEnabled"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=是否启用="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+
+<select class="form-control" name="isDeleted"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=是否删除 1已删除="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/bommaster/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增物料建模-Bom母项"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="BomMaster_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iOrgId}</td>
+<td>${data.cOrgCode}</td>
+<td>${data.cOrgName}</td>
+<td>${data.iInventoryId}</td>
+<td>${data.iEquipmentModelId}</td>
+<td>${data.cDocName}</td>
+<td>${data.cDocCode}</td>
+<td>${data.cBomVersion}</td>
+<td>${data.dEnableDate}</td>
+<td>${data.dDisableDate}</td>
+<td>${data.cDcNo1}</td>
+<td>${data.dDcDate1}</td>
+<td>${data.cDcNo2}</td>
+<td>${data.dDcDate2}</td>
+<td>${data.iCustomerId}</td>
+<td>${data.cCommonPartMemo}</td>
+<td>${data.iPid}</td>
+<td>${data.iLevel}</td>
+<td>${data.iSource}</td>
+<td>${data.iSourceId}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isEnabled}"  data-handler="refreshJBoltTable"  data-url="admin/bommaster/toggleIsEnabled/${data.id}"/></td>
+<td>${data.iAuditStatus}</td>
+<td>${data.dAuditTime}</td>
+<td>${data.cMemo}</td>
+<td>${data.iCreateBy}</td>
+<td>${data.dCreateTime}</td>
+<td>${data.cCreateName}</td>
+<td>${data.iUpdateBy}</td>
+<td>${data.cUpdateName}</td>
+<td>${data.dUpdateTime}</td>
+<td><img data-switchbtn data-confirm="确定切换是否删除 1已删除？" data-value="${data.isDeleted}"  data-handler="refreshJBoltTable"  data-url="admin/bommaster/toggleIsDeleted/${data.id}"/></td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/bommaster/edit/${data.id}" data-area="800,600" data-title="查看物料建模-Bom母项"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/bommaster/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑物料建模-Bom母项"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/bommaster/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="BomMaster_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增物料建模-Bom母项" data-url="admin/bommaster/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑物料建模-Bom母项" data-check-handler="jboltTableGetCheckedId" data-url="admin/bommaster/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/bommaster/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="BomMaster_form_#(pageId)"
+	   data-url="admin/bommaster/datas"
+	   data-rowtpl="BomMaster_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="BomMaster_page"
+	   data-toolbar="BomMaster_toolbar_#(pageId)"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="100" data-column="iAutoId">主键</th>
+	<th data-width="100" data-column="iOrgId">组织ID</th>
+	<th data-width="150" data-column="cOrgCode">组织编码</th>
+	<th data-width="150" data-column="cOrgName">组织名称</th>
+	<th data-width="100" data-column="iInventoryId">母件存货ID</th>
+	<th data-width="100" data-column="iEquipmentModelId">机型ID</th>
+	<th data-width="150" data-column="cDocName">文件名称</th>
+	<th data-width="150" data-column="cDocCode">文件编码</th>
+	<th data-width="150" data-column="cBomVersion">版本/版次</th>
+	<th data-min-width="160" data-column="dEnableDate">启用日期</th>
+	<th data-min-width="160" data-column="dDisableDate">停用日期</th>
+	<th data-width="150" data-column="cDcNo1">设变号1</th>
+	<th data-min-width="160" data-column="dDcDate1">设备日期1</th>
+	<th data-width="150" data-column="cDcNo2">设变号2</th>
+	<th data-min-width="160" data-column="dDcDate2">设变日期2</th>
+	<th data-width="100" data-column="iCustomerId">客户ID</th>
+	<th data-width="150" data-column="cCommonPartMemo">备注共用件</th>
+	<th data-width="100" data-column="iPid">上级ID</th>
+	<th data-width="100" data-column="iLevel">层级</th>
+	<th data-width="100" data-column="iSource">来源：1.MES 2. U8</th>
+	<th data-width="150" data-column="iSourceId">来源标识ID</th>
+	<th data-width="100" data-column="isEnabled">是否启用</th>
+	<th data-width="100" data-column="iAuditStatus">审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过</th>
+	<th data-min-width="160" data-column="dAuditTime">审核时间，未走审批流时，有值</th>
+	<th data-width="150" data-column="cMemo">备注</th>
+	<th data-width="100" data-column="iCreateBy">创建人</th>
+	<th data-min-width="160" data-column="dCreateTime">创建时间</th>
+	<th data-width="150" data-column="cCreateName">创建人名称</th>
+	<th data-width="100" data-column="iUpdateBy">更新人ID</th>
+	<th data-width="150" data-column="cUpdateName">更新人名称</th>
+	<th data-min-width="160" data-column="dUpdateTime">更新时间</th>
+	<th data-width="100" data-column="isDeleted">是否删除 1已删除</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

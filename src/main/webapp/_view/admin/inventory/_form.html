@@ -1,0 +1,213 @@
+<form onsubmit="return false;" id="Inventory_Form_#(pageId)" action="#(action)" method="post">
+	#if(inventory.iAutoId??)
+	<input type="hidden" name="inventory.iAutoId" value="#(inventory.iAutoId??)" />
+	#end
+    <div >
+    <div class="row">
+    <div class="col-3">
+        <div class="form-group row" >
+            <label class="col-sm-3 col-form-label">所属分类</label>
+            <div class="col">
+                <select class="form-control" name="inventory.iInventoryClassId"
+                        data-rule="required"
+                        data-autoload
+                        data-url="admin/inventoryclass/options"
+                        data-select-type="select2"
+                        data-text="=上级分类="
+                        data-select="#(inventory.iInventoryClassId??)"
+                        data-value-attr="iautoid"
+                        data-text-attr="cinvcname"
+                ></select>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-group row" >
+            <label class="col-sm-3 col-form-label">存货编码</label>
+            <div class="col">
+                <input type="text" data-rule="required" data-notnull="true" data-tips="请输入存货编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货编码" maxlength="40" name="inventory.cInvCode" value="#(inventory.cInvCode??)"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-group row" >
+            <label class="col-sm-3 col-form-label">存货名称</label>
+            <div class="col">
+                <input type="text" data-rule="required" data-notnull="true" data-tips="请输入存货名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货名称" maxlength="40" name="inventory.cInvName" value="#(inventory.cInvName??)"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-group row" >
+            <label class="col-sm-4 col-form-label">存货代码</label>
+            <div class="col">
+                <input type="text" data-notnull="true" data-tips="请输入存货代码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入客户部番" maxlength="40" name="inventory.cInvAddCode" value="#(inventory.cInvAddCode??)"/>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <div class="form-group row" >
+                <label class="col-sm-3 col-form-label">客户部番</label>
+                <div class="col">
+                    <input type="text" data-notnull="true" data-tips="请输入客户部番"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入客户部番" maxlength="40" name="inventory.cInvCode1" value="#(inventory.cInvCode1??)"/>
+                </div>
+            </div>
+        </div>
+    <div class="col-3">
+        <div class="form-group row" >
+            <label class="col-sm-3 col-form-label">UG部番</label>
+            <div class="col">
+                <input type="text" data-notnull="true" data-tips="请输入UG部番"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入UG部番" maxlength="40" name="inventory.cInvAddCode1" value="#(inventory.cInvAddCode1??)"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-group row" >
+            <label class="col-sm-3 col-form-label">部品名称</label>
+            <div class="col">
+                <input type="text" data-notnull="true" data-tips="请输入部品名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入部品名称" maxlength="40" name="inventory.cInvName1" value="#(inventory.cInvName1??)"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-group row" >
+            <label class="col-sm-4 col-form-label">UG部品名称</label>
+            <div class="col">
+                <input type="text" data-notnull="true" data-tips="请输入UG部品名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入UG部品名称" maxlength="40" name="inventory.cInvName2" value="#(inventory.cInvName2??)"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-group row" >
+
+        </div>
+    </div>
+    </div>
+    <div class="row">
+    <div class="col">
+
+        <div class="form-group row" >
+            <label class="col-sm-3 col-form-label">规格</label>
+            <div class="col">
+                <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入规格" maxlength="255" name="inventory.cInvStd">#(inventory.cInvStd??)</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group row" >
+            <label class="col-sm-3 col-form-label">所属机型</label>
+            <div class="col">
+                    <select class="form-control" name="inventory.iEquipmentModelId"
+                            data-autoload
+                            data-url="admin/inventoryclass/options?ipid=#(inventoryClass.iAutoid??)"
+                            data-select-type="select"
+                            data-text="=选择机型="
+                            data-value=""
+                            data-select="#(inventoryClass.iEquipmentModelId??)"
+                            data-value-attr="iautoid"
+                            data-text-attr="cuomname"
+                    ></select>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+
+    </div>
+    <div class="col">
+
+    </div>
+    </div>
+
+</div>
+    <div class="jbolt_page_content" style="margin-top: 20px">
+        #setLocal(jboltTabId=(goods.id?? RandomUtil.random(6)))
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
+                <a class="nav-item nav-link active" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" aria-controls="tab-one" aria-selected="true">基础</a>
+                <a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false">库存</a>
+                <a class="nav-item nav-link" id="nav-attr-tab_three" data-toggle="tab" href="#tab-three" role="tab" aria-controls="tab-three" aria-selected="false">生产</a>
+                <a class="nav-item nav-link" id="nav-attr-tab_four" data-toggle="tab" href="#tab-four" role="tab" aria-controls="tab-four" aria-selected="false">工艺</a>
+                <a class="nav-item nav-link" id="nav-attr-tab_five" data-toggle="tab" href="#tab-five" role="tab" aria-controls="tab-five" aria-selected="false">图片</a>
+
+                <a class="nav-item nav-link" id="nav-attr-tab_six" data-toggle="tab" href="#tab-six" role="tab" aria-controls="tab-six" aria-selected="false">附加</a>
+                <a class="nav-item nav-link" id="nav-attr-tab_seven" data-toggle="tab" href="#tab-seven" role="tab" aria-controls="tab-seven" aria-selected="false">计划</a>
+                <a class="nav-item nav-link" id="nav-attr-tab_eight" data-toggle="tab" href="#tab-eight" role="tab" aria-controls="tab-eight" aria-selected="false">拓展字段</a>
+            </div>
+        </nav>
+        <div class="tab-content" style="padding: 0px 1rem">
+            <!--1 基础 start -->
+            <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="nav-base-tab_one">
+                #render("_tab1.html")
+            </div>
+            <!--1 基础 end -->
+
+            <!--2 库存 start-->
+            <div class="tab-pane fade" id="tab-two" role="tabpanel" aria-labelledby="nav-base-tab_two">
+                #render("_tab2.html")
+
+            </div>
+            <!--2 库存 end -->
+
+            <!--3 生产 start -->
+            <div class="tab-pane fade" id="tab-three" role="tabpanel" aria-labelledby="nav-attr-tab_three">
+                #render("_tab3.html")
+            </div>
+            <!--3 生产 end -->
+
+            <!--4 工艺 start -->
+            <div class="tab-pane fade" id="tab-four" role="tabpanel" aria-labelledby="nav-attr-tab_four">
+                <div></div>
+            </div>
+            <!--4 工艺 end -->
+
+            <!--5 图片 start -->
+            <div class="tab-pane fade" id="tab-five" role="tabpanel" aria-labelledby="nav-attr-tab_five">
+                #render("_tab5.html")
+            </div>
+            <!--5 图片 end -->
+
+            <!--6 附加 start -->
+            <div class="tab-pane fade" id="tab-six" role="tabpanel" aria-labelledby="nav-attr-tab_six">
+                #render("_tab6.html")
+            </div>
+            <!--6 附加 end -->
+
+            <!--7 计划 start -->
+            <div class="tab-pane fade" id="tab-seven" role="tabpanel" aria-labelledby="nav-attr-tab_seven">
+                #render("_tab7.html")
+            </div>
+            <!--7 计划 end -->
+
+            <!--8 自定义项 start -->
+            <div class="tab-pane fade" id="tab-eight" role="tabpanel" aria-labelledby="nav-attr-tab_eight">
+                <div></div>
+            </div>
+            <!--8 自定义项 end -->
+        </div>
+    </div>
+</form>
+#define js()
+#render("_table_split_js.html")
+<script>
+    function submitThisForm(){
+        jboltTableSubmit("#jbolt_table_workshiftd_split_#(pageId)");
+    }
+
+    function jianBtn(ele,idField){
+        let value = $("#"+idField).val();
+        if (value < 2){
+            LayerMsgBox.alert("必须为正数！");
+            return;
+        }
+        $("#"+idField).val(Number(value) -1)
+    }
+    function jiaBtn(ele,idField){
+        let value = $("#"+idField).val();
+        $("#"+idField).val(Number(value) +1)
+    }
+</script>
+###include("/_view/_admin/common/_formjs.html",formId="Inventory_Form")
+#end
+

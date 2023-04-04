@@ -53,7 +53,6 @@ public class AppversionAdminController extends BaseAdminController {
     /**
      * 新增
      */
-    @CheckPermission(PermissionKey.APPVERSION_SAVE)
     public void add() {
         render("add.html");
     }
@@ -61,7 +60,6 @@ public class AppversionAdminController extends BaseAdminController {
     /**
      * 编辑
      */
-    @CheckPermission(PermissionKey.APPVERSION_UPDATE)
     public void edit() {
         Long autoid = getLong(0);
         Appversion appversion = service.findById(autoid);
@@ -74,7 +72,6 @@ public class AppversionAdminController extends BaseAdminController {
     /**
      * 保存
      */
-    @CheckPermission(PermissionKey.APPVERSION_SAVE)
     public void save() {
         renderJson(service.save(useIfValid(Appversion.class, "appversion", "APP版本")));
     }
@@ -82,7 +79,6 @@ public class AppversionAdminController extends BaseAdminController {
     /**
      * 更新
      */
-    @CheckPermission(PermissionKey.APPVERSION_UPDATE)
     public void update() {
         renderJson(service.update(useIfValid(Appversion.class, "appversion", "APP版本")));
     }
@@ -97,7 +93,6 @@ public class AppversionAdminController extends BaseAdminController {
     /**
      * 改变发布状态
      */
-    @CheckPermission(PermissionKey.APPVERSION_PUBLISH)
     public void putaway() {
         renderJson(service.putaway(getLong(0)));
     }
@@ -105,7 +100,6 @@ public class AppversionAdminController extends BaseAdminController {
     /**
      * 是否强制更新
      */
-    @CheckPermission(PermissionKey.APPVERSION_ISFORCE)
     public void updateisforced() {
         renderJson(service.updateisforced(getLong(0)));
     }

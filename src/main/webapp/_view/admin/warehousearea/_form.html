@@ -1,0 +1,155 @@
+<form onsubmit="return false;"  id="warehouseAreaForm" action="#(action)" method="post">
+<input type="hidden" name="warehouseArea.iautoid" value="#(warehouseArea.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">库区编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入库区编码" maxlength="255" name="warehouseArea.careacode" value="#(warehouseArea.careacode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">库区名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入库区名称" maxlength="255" name="warehouseArea.careaname" value="#(warehouseArea.careaname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">所属仓库</label>
+		<div class="col">
+			<select class="form-control"
+					data-autoload
+					name="warehouseArea.iwarehouseid"
+					data-select-type="select2"
+					data-rule="select"
+					data-tips="所属仓库"
+					data-url="admin/warehouse/list?isDeleted=0"
+					data-text="=所属仓库="
+					data-text-attr="cwhcode,cwhname"
+					data-value=""
+					data-value-attr="iautoid"
+					data-select="#(warehouseArea.iwarehouseid??)">
+			</select>
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入所属仓库" maxlength="19" name="warehouseArea.iwarehouseid" value="#(warehouseArea.iwarehouseid??)"/>-->
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">备注</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="255" name="warehouseArea.cmemo" value="#(warehouseArea.cmemo??)"/>
+		</div>
+	</div>
+	<div class="form-group row"
+		 data-radio
+		 data-rule="radio"
+		 data-value="#(warehouseArea.isenabled??)"
+		 data-name="warehouseArea.isenabled"
+		 data-default="options_first"
+		 data-width="col-sm-2,col"
+	>
+		<label class="col-sm-2 col-form-label" >是否启用</label>
+		<div class="col"  style="padding-top: 1px;">
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isenabled_true" type="radio" name="warehouseArea.isenabled" value="true"/>
+				<label for="r_isenabled_true">是</label>
+			</div>
+
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isenabled_false" type="radio" name="warehouseArea.isenabled" value="false"/>
+				<label for="r_isenabled_false">否</label>
+			</div>
+		</div>
+	</div>
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">创建人</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人" maxlength="19" name="warehouseArea.icreateby" value="#(warehouseArea.icreateby??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">创建人名称</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="255" name="warehouseArea.ccreatename" value="#(warehouseArea.ccreatename??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">创建时间</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="warehouseArea.dcreatetime" value="#(warehouseArea.dcreatetime??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">更新人</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新人" maxlength="19" name="warehouseArea.iupdateby" value="#(warehouseArea.iupdateby??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">更新人名称</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新人名称" maxlength="255" name="warehouseArea.cupdatename" value="#(warehouseArea.cupdatename??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">更新时间</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="warehouseArea.dupdatetime" value="#(warehouseArea.dupdatetime??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">组织ID</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="warehouseArea.iorgid" value="#(warehouseArea.iorgid??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">组织编码</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="255" name="warehouseArea.corgcode" value="#(warehouseArea.corgcode??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">组织名称</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="255" name="warehouseArea.corgname" value="#(warehouseArea.corgname??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">来源1.MES 2.U9;1.MES</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入来源1.MES 2.U9;1.MES"  maxlength="10" name="warehouseArea.isource" value="#(warehouseArea.isource??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group row">-->
+<!--		<label class="col-sm-2 col-form-label">来源标识ID</label>-->
+<!--		<div class="col">-->
+<!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入来源标识ID" maxlength="255" name="warehouseArea.isourceid" value="#(warehouseArea.isourceid??)"/>-->
+<!--		</div>-->
+<!--	</div>-->
+
+<!--    <div class="form-group row"-->
+<!--    	data-radio-->
+<!--    	data-rule="radio"-->
+<!--    	data-value="#(warehouseArea.isdeleted??)"-->
+<!--    	data-name="warehouseArea.isdeleted"-->
+<!--    	data-default="options_first"-->
+<!--    	data-width="col-sm-2,col"-->
+<!--		>-->
+<!--			<label class="col-sm-2 col-form-label" >是否删除 1未删除</label>-->
+<!--			<div class="col"  style="padding-top: 1px;">-->
+<!--				<div class="radio radio-primary  radio-inline">-->
+<!--					<input  id="r_isdeleted_true" type="radio" name="warehouseArea.isdeleted" value="true"/>-->
+<!--					<label for="r_isdeleted_true">是</label>-->
+<!--				</div>-->
+<!--				-->
+<!--				<div class="radio radio-primary  radio-inline">-->
+<!--					<input  id="r_isdeleted_false" type="radio" name="warehouseArea.isdeleted" value="false"/>-->
+<!--					<label for="r_isdeleted_false">否</label>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--		</div>-->
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="warehouseAreaForm")
+#end
+

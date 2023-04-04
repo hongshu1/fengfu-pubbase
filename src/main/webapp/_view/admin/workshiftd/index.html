@@ -1,0 +1,90 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>生产班次明细</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="workshiftdForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="workshiftdRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iworkshiftmid}</td>
+<td>${data.itype}</td>
+<td>${data.dstarttime}</td>
+<td>${data.dendtime}</td>
+<td>${data.iminute}</td>
+<td>${data.cmemo}</td>
+<td>${data.iseq}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="workshiftd_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="700,800"  data-handler="jboltTablePageToFirst" data-title="新增生产班次明细"  data-url="admin/workshiftd/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="700,800"  data-handler="refreshJBoltTable" data-title="修改生产班次明细" data-check-handler="jboltTableGetCheckedId" data-url="admin/workshiftd/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/workshiftd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/workshiftd/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="workshiftdForm_#(pageId)"
+data-rowtpl="workshiftdRowtpl_#(pageId)"
+data-page="workshiftdPage_#(pageId)"
+data-toolbar="workshiftd_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-min-width="150" data-column="iWorkShiftMId">班次主表ID</th>
+	<th data-width="150" data-column="iType">类型 1工作时间 2休息时间</th>
+	<th data-width="150" data-column="dStartTime">开始时间</th>
+	<th data-width="150" data-column="dEndTime">结束时间</th>
+	<th data-width="150" data-column="iMinute">时长(分)</th>
+	<th data-width="150" data-column="cMemo">备注</th>
+	<th data-width="150" data-column="iSeq">次序</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+

@@ -1,0 +1,57 @@
+<form onsubmit="return false;" id="settleStyleForm" action="#(action)" method="post">
+<input type="hidden" name="settleStyle.iautoid" value="#(settleStyle.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">结算方式编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入结算方式编码" maxlength="3" name="settleStyle.csscode" value="#(settleStyle.csscode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">结算方式名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入结算方式名称" maxlength="12" name="settleStyle.cssname" value="#(settleStyle.cssname??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(settleStyle.bssflag??'1' == '1' ? 'true' : 'false')"
+    	data-name="settleStyle.bssflag"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否票据管理</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bssflag_true" type="radio" name="settleStyle.bssflag" value="true"/>
+					<label for="r_bssflag_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bssflag_false" type="radio" name="settleStyle.bssflag" value="false"/>
+					<label for="r_bssflag_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">对应票据类型</label>
+		<div class="col">
+			<select class="form-control"
+					name="settleStyle.issbilltype"
+					data-autoload
+					data-rule="required"
+					data-url="admin/dictionary/options?key=iSSBillType"
+					data-value-attr="sn"
+					data-text-attr="name"
+					data-text="=请选择="				
+					data-select="#(settleStyle.issbilltype??)">
+			</select>					
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="settleStyleForm")
+#end
+

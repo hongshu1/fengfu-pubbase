@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.3.3";
+var jbolt_table_js_version="3.3.6";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -38,9 +38,10 @@ function jboltTableActiveNextTr(tableEle){
  * 获取指定行的json数据
  * @param tableEle
  * @param rowOrIndex
+ * @param dontShowError
  * @returns {null|*}
  */
-function jboltTableGetRowJsonData(tableEle,rowOrIndex){
+function jboltTableGetRowJsonData(tableEle,rowOrIndex,dontShowError){
 	var table=getJBoltTableInst(tableEle);
 	if(!isOk(table)){
 		if(!dontShowError){
@@ -54,9 +55,10 @@ function jboltTableGetRowJsonData(tableEle,rowOrIndex){
  * 移除表格的指定id 的keep selected item
  * @param tableEle
  * @param removeId
+ * @param dontShowError
  * @returns {null}
  */
-function jboltTableRemoveKeepSelectedItem(tableEle,removeId){
+function jboltTableRemoveKeepSelectedItem(tableEle,removeId,dontShowError){
 	var table=getJBoltTableInst(tableEle);
 	if(!isOk(table)){
 		if(!dontShowError){
@@ -6932,6 +6934,24 @@ function getScrollBarHeight(ele){
 			//重新设置当前页面 已选数据的 选中状态
 			that.processTableReKeepSelectedItems(table);
 		},
+		//处理自动合并指定列单元格
+		processTableAutoMergeCells:function(table){
+			if(table.isEmpty){return;}
+			var mergeCellCols = table.data("auto-merge-cell-cols");
+			var type = typeof(mergeCellCols);
+			if(type=="undefined"){
+				return;
+			}
+			//如果是有逗号的字符串
+			if(type=="string" && mergeCellCols.indexOf(",")!=-1){
+				var arr = mergeCellCols.split(",");
+				mergeCellCols = [];
+				for(var i=0;i<arr.length;i++){
+					mergeCellCols.push(parseInt(arr[i]));
+				}
+			}
+			tableMergeCells(table[0],mergeCellCols);
+		},
 		processTableReKeepSelectedItems:function(table){
 			if(!table.keepSelectedItemsEnable || notOk(table.selectedItemsIds)){return;}
 			var that = this;
@@ -6954,6 +6974,8 @@ function getScrollBarHeight(ele){
 						that.setTableHeight(table);
 						//处理恢复样式
 						that.processAllTableStyleReset(table);
+						//处理自动合并单元格
+						that.processTableAutoMergeCells(table);
 						//处理左侧fixed
 						that.processColumnFixedLeft(table);
 						//处理右侧fixed
@@ -6989,6 +7011,8 @@ function getScrollBarHeight(ele){
 				that.setTableHeight(table);
 				//处理恢复样式
 				that.processAllTableStyleReset(table);
+				//处理自动合并单元格
+				that.processTableAutoMergeCells(table);
 				//处理左侧fixed
 				that.processColumnFixedLeft(table);
 				//处理右侧fixed
@@ -12170,6 +12194,8 @@ function getScrollBarHeight(ele){
 			that.processCellWidthAndHeight(table);
 			//处理fixed Header Footer
 			that.processHeaderAndFooterFixed(table);
+			//处理自动合并单元格
+			that.processTableAutoMergeCells(table);
 			//处理fixedColumn
 			that.processColumnFixed(table);
 			//处理空的tbody

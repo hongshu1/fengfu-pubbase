@@ -1,0 +1,130 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>物料建模-物料形态对照表</h1></div>
+	<div class="col">
+	<form class="form-inline" id="InventoryChange_form_#(pageId)">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="转化前客户部番" name="beforeInventory" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="转化前部品名称" name="beforeInventoryName" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="转化后客户部番" name="afterInventory" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="转化后部品名称" name="afterInventoryName" value="" />
+
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+		#permission(PermissionKey.INVENTORYCHANGE_ADD)
+			<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/inventorychange/add" data-handler="jboltTablePageToFirst" data-area="90%,90%" tooltip data-title="新增物料建模-物料形态对照表"><i class="fa fa-plus"></i></button>
+		#end
+		<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+
+
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="InventoryChange_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+	<td>${pageNumber,pageSize,index | rownum}</td>
+	<td>
+		{@if data.isDeleted}
+		<a class="text-info mr-1" data-openpage="dialog" href="admin/inventorychange/edit/${data.iautoid}" data-area="90%,90%" data-title="查看物料建模-物料形态对照表"><i class="fa fa-eye"></i></a>
+		{@else}
+		#permission(PermissionKey.INVENTORYCHANGE_EDIT)
+			<a class="jbolt_table_editbtn" href="admin/inventorychange/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="90%,90%" data-title="编辑物料建模-物料形态对照表"><i class="fa fa-edit"></i></a>
+		#end
+		{@/if}
+		#permission(PermissionKey.INVENTORYCHANGE_DEL)
+		<a class="jbolt_table_delbtn" href="admin/inventorychange/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+		#end
+	</td>
+
+	<td>${data.beforeinventorycode}</td>
+	<td>${data.beforeinvcode1}</td>
+	<td>${data.beforeinvname1}</td>
+	<td>${data.beforuomname}</td>
+	<td>${data.afterinventorycode}</td>
+	<td>${data.afterinvcode1}</td>
+	<td>${data.afterinvname1}</td>
+	<td>${data.afteruomname}</td>
+	<td>${data.ichangerate,6|number_format2}</td>
+	<td>${data.ccreatename}</td>
+	<td>${data.dcreatetime}</td>
+
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="InventoryChange_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	#permission(PermissionKey.INVENTORYCHANGE_ADD)
+		<button data-dialogbtn data-area="90%,90%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增物料建模-物料形态对照表" data-url="admin/inventorychange/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	#end
+	#permission(PermissionKey.INVENTORYCHANGE_EDIT)
+		<button data-dialogbtn data-area="90%,90%"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑物料建模-物料形态对照表" data-check-handler="jboltTableGetCheckedId" data-url="admin/inventorychange/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	#end
+	#permission(PermissionKey.INVENTORYCHANGE_DEL)
+		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/inventorychange/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+	#end
+	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+<div class="float-right" role="group" aria-label="btn-group">
+	#permission(PermissionKey.INVENTORYCHANGE_IMPORT)
+	<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" tooltip data-title="导入Excel数据" data-url="admin/inventorychange/initImportExcel" data-btn="close" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>
+	#end
+	#permission(PermissionKey.INVENTORYCHANGE_EXPORT)
+	<div class="btn-group btn-group-sm">
+		<button tooltip data-title="导出Excel(查询结果)" data-form="InventoryChange_form_#(pageId)" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="admin/inventorychange/exportExcelByForm"><i class="fa fa-download"></i></button>
+		<button tooltip data-title="导出Excel(选中行数据)" data-usecheckedids="true" class="btn btn-outline-success btn-sm" data-downloadbtn data-url="admin/inventorychange/exportExcelByCheckedIds"><i class="fa fa-download"></i></button>
+		<button tooltip data-title="导出Excel(所有数据)" class="btn btn-outline-info btn-sm" data-downloadbtn data-url="admin/inventorychange/exportExcelAll"><i class="fa fa-download"></i></button>
+	</div>
+	#end
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="InventoryChange_form_#(pageId)"
+	   data-url="admin/inventorychange/datas"
+	   data-rowtpl="InventoryChange_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="InventoryChange_page"
+	   data-toolbar="InventoryChange_toolbar_#(pageId)"
+	   data-sortable-columns="cOrgName"
+	   data-sort="#((sortColumn&&sortType)?(sortColumn+':'+sortType):'')"
+	   data-default-sort-column="iAutoId"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="80">操作</th>
+	<th data-width="150" data-column="beforeInventorycode">转换前存货编码</th>
+	<th data-width="150" data-column="beforeInvCode1">转换前客户部番</th>
+	<th data-width="150" data-column="beforeinvname1">转换前部品名称</th>
+	<th data-width="100" data-column="beforuomname">主计量单位</th>
+	<th data-width="150" data-column="afterInventorycode">转换后存货编码</th>
+	<th data-width="150" data-column="afterinvcode1">转换后客户部番</th>
+	<th data-width="150" data-column="afterinvname1">转换后部品名称</th>
+	<th data-width="100" data-column="afteruomname">主计量单位</th>
+	<th data-width="100" data-column="ichangerate">转换率</th>
+	<th data-width="150" data-column="ccreatename">创建人名称</th>
+	<th data-min-width="160" data-column="dcreatetime">创建时间</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

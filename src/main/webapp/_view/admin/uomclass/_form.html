@@ -1,0 +1,76 @@
+<form onsubmit="return false;" id="uomclassForm" action="#(action)" method="post">
+<input type="hidden" name="uomclass.iautoid" value="#(uomclass.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-4 col-form-label">计量组单位编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入计量组单位名称" maxlength="255" name="uomclass.cuomclasscode" value="#(uomclass.cuomclasscode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-4 col-form-label">计量组单位名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入计量组单位名称" maxlength="255" name="uomclass.cuomclassname" value="#(uomclass.cuomclassname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-4 col-form-label">计量类型</label>
+		<div class="col">
+			<select class="form-control"  data-tips="请选择计量类型" data-url="admin/dictionary/options?key=uom_type"  name="uomclass.cuomclasssn" data-autoload data-text="=请选择计量类型=" data-value-attr="sn" data-value="" data-select="#(uomclass.cuomclasssn??)"></select>
+		</div>
+	</div>
+	<div class="form-group row"
+		 data-radio
+		 data-rule="radio"
+		 data-value="#(uomclass.isdefault??'1'=='1'?true:false)"
+		 data-name="uomclass.isdefault"
+		 data-default="false"
+		 data-width="col-sm-4,col-sm-6">
+		<label class="col-sm-4 col-form-label" >是否默认组</label>
+		<div class="col-sm-6"  style="padding-top: 1px;">
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isdefault_true" type="radio" name="uomclass.isdefault" value="true"/>
+				<label for="r_isdefault_true">是</label>
+			</div>
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isdefault_false" type="radio" name="uomclass.isdefault" value="false"/>
+				<label for="r_isdefault_false">否</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row"
+		 data-radio
+		 data-rule="radio"
+		 data-value="#(uomclass.isenabled??'1'=='1'?true:false)"
+		 data-name="uomclass.isenabled"
+		 data-default="options_first"
+		 data-width="col-sm-4,col-sm-6">
+		<label class="col-sm-4 col-form-label" >是否启用</label>
+		<div class="col-sm-6"  style="padding-top: 1px;">
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isenabled_true" type="radio" name="uomclass.isenabled" value="true"/>
+				<label for="r_isenabled_true">是</label>
+			</div>
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isenabled_false" type="radio" name="uomclass.isenabled" value="false"/>
+				<label for="r_isenabled_false">否</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-4 col-form-label">备注</label>
+		<div class="col">
+			<textarea class="form-control" data-auto-height="100" autocomplete="off" data-show-count placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="uomclass.cmemo" >#(uomclass.cmemo??)</textarea>
+		</div>
+	</div>
+
+</form>
+#define js()
+<script>
+	function afterFormSubmit(ret, callback){
+		parent.refreshPjaxContainer();
+		callback();
+	}
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="uomclassForm")
+#end
+

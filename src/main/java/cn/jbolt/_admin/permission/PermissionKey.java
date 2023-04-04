@@ -190,25 +190,9 @@ public class PermissionKey {
 	 */
 	public static final String ROLEMR = "rolemr";
 	/**
-	 * 计划排程
-	 */
-	public static final String SCHEDULED = "scheduled";
-	/**
-	 * 制程管理
-	 */
-	public static final String PROCESSMR = "processmr";
-	/**
-	 * 基础资料
-	 */
-	public static final String BASICDATA = "basicdata";
-	/**
 	 * 组织建模
 	 */
 	public static final String FUNC1 = "func1";
-	/**
-	 * 人员档案
-	 */
-	public static final String PERSON = "person";
 	/**
 	 * 排产建模
 	 */
@@ -218,9 +202,9 @@ public class PermissionKey {
 	 */
 	public static final String WORKSHIFTM = "workshiftm";
 	/**
-	 * 生产日历
+	 * 排程工作日历
 	 */
-	public static final String WORKCALENDARM = "workcalendarm";
+	public static final String CALENDAR = "calendar";
 	/**
 	 * 新增班次
 	 */
@@ -266,14 +250,6 @@ public class PermissionKey {
 	 */
 	public static final String RJ_APPLICATION = "rj_application";
 	/**
-	 * 实体扩展字段
-	 */
-	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
-	/**
-	 * 编码规则
-	 */
-	public static final String BILLNOSETTING = "billnosetting";
-	/**
 	 * 产线档案
 	 */
 	public static final String WORKREGIONM = "workregionm";
@@ -300,7 +276,7 @@ public class PermissionKey {
 	/**
 	 * 供应商档案
 	 */
-	public static final String SUPPLIER = "supplier";
+	public static final String VENDORCLASS = "vendorclass";
 	/**
 	 * APS计划排程
 	 */
@@ -321,10 +297,6 @@ public class PermissionKey {
 	 * U9生产计划
 	 */
 	public static final String SCHEDUSOURCEORDER = "schedusourceorder";
-	/**
-	 * 物料清单
-	 */
-	public static final String BOMMASTER = "bommaster";
 	/**
 	 * 组合件关系
 	 */
@@ -358,21 +330,9 @@ public class PermissionKey {
 	 */
 	public static final String WORKCLASS = "workclass";
 	/**
-	 * 不良项目
-	 */
-	public static final String BADNESS_PROJECT = "badness_project";
-	/**
-	 * 工序
+	 * 工序档案
 	 */
 	public static final String OPERATION = "operation";
-	/**
-	 * 工艺档案
-	 */
-	public static final String ITEMROUTING = "itemrouting";
-	/**
-	 * 排程工作日历
-	 */
-	public static final String CALENDAR = "calendar";
 	/**
 	 * 车间执行
 	 */
@@ -480,11 +440,11 @@ public class PermissionKey {
 	/**
 	 * 点检参数
 	 */
-	public static final String EQUIPMENTQCPARAM = "equipmentqcparam";
+	public static final String SPOTCHECKPARAM = "spotcheckparam";
 	/**
-	 * 点检标准
+	 * 点检适用标准
 	 */
-	public static final String EQUIPMENTQCBASIS = "equipmentqcbasis";
+	public static final String INVENTORYSPOTCHECKFORM = "inventoryspotcheckform";
 	/**
 	 * 其他事项
 	 */
@@ -658,34 +618,6 @@ public class PermissionKey {
 	 */
 	public static final String ITEMPLAN = "itemplan";
 	/**
-	 * 工艺不良项目
-	 */
-	public static final String ITEMROUTINGBADNESS = "itemroutingbadness";
-	/**
-	 * 料品工艺档案配置
-	 */
-	public static final String ITEMROUTINGCONFIG = "itemroutingconfig";
-	/**
-	 * 工艺方法
-	 */
-	public static final String ITEMROUTINGCONFIGOPERATION = "itemroutingconfigoperation";
-	/**
-	 * 工艺文件
-	 */
-	public static final String ITEMROUTINGDRAWING = "itemroutingdrawing";
-	/**
-	 * 设备集
-	 */
-	public static final String ITEMROUTINGEQUIPMENT = "itemroutingequipment";
-	/**
-	 * 工序物料集
-	 */
-	public static final String ITEMROUTINGINVC = "itemroutinginvc";
-	/**
-	 * 工艺工装集
-	 */
-	public static final String ITEMROUTINGMOULDS = "itemroutingmoulds";
-	/**
 	 * 保养纪录文件
 	 */
 	public static final String KEEPINGRECORDDRAWING = "keepingrecorddrawing";
@@ -709,10 +641,6 @@ public class PermissionKey {
 	 * 模具档案配置
 	 */
 	public static final String MOULDSRECORD = "mouldsrecord";
-	/**
-	 * 工艺方法不良项目关联配置
-	 */
-	public static final String OPERATIONBADNESS = "operationbadness";
 	/**
 	 * 分类
 	 */
@@ -786,10 +714,6 @@ public class PermissionKey {
 	 */
 	public static final String SLICEINVPROCESSSTUFF = "sliceinvprocessstuff";
 	/**
-	 * 供应商主表
-	 */
-	public static final String SUPPLIERM = "supplierm";
-	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_SHELVES_ADD = "warehouse_shelves_add";
@@ -821,18 +745,6 @@ public class PermissionKey {
 	 * 打印
 	 */
 	public static final String WAREHOUSE_SHELVES_PRINT = "warehouse_shelves_print";
-	/**
-	 * 新增
-	 */
-	public static final String PERSON_ADD = "person_add";
-	/**
-	 * 导入
-	 */
-	public static final String PERSON_IMPORT = "person_import";
-	/**
-	 * 导出
-	 */
-	public static final String PERSON_EXPORT = "person_export";
 	/**
 	 * 新增
 	 */
@@ -928,23 +840,23 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String SUPPLIER_ADD = "supplier_add";
+	public static final String VENDOR_ADD = "vendor_add";
 	/**
 	 * 编辑
 	 */
-	public static final String SUPPLIER_EDIT = "supplier_edit";
+	public static final String VENDOR_EDIT = "vendor_edit";
 	/**
 	 * 删除
 	 */
-	public static final String SUPPLIER_DELETE = "supplier_delete";
+	public static final String VENDOR_DELETE = "vendor_delete";
 	/**
 	 * 导出
 	 */
-	public static final String SUPPLIER_EXPORT = "supplier_export";
+	public static final String VENDOR_EXPORT = "vendor_export";
 	/**
 	 * 导入
 	 */
-	public static final String SUPPLIER_IMPORT = "supplier_import";
+	public static final String VENDOR_IMPORT = "vendor_import";
 	/**
 	 * 新增
 	 */
@@ -1050,21 +962,9 @@ public class PermissionKey {
 	 */
 	public static final String MAINTAIN_PARAMETER_EXPORT = "maintain_parameter_export";
 	/**
-	 * 新增
-	 */
-	public static final String BADNESS_PROJECT_ADD = "badness_project_add";
-	/**
-	 * 导出
-	 */
-	public static final String BADNESS_PROJECT_EXPORT = "badness_project_export";
-	/**
 	 * 导入
 	 */
 	public static final String MAINTAIN_PARAMETER_IMPORT = "maintain_parameter_import";
-	/**
-	 * 导入
-	 */
-	public static final String BADNESS_PROJECT_IMPORT = "badness_project_import";
 	/**
 	 * 新增
 	 */
@@ -1272,27 +1172,27 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String EQUIPMENTQCPARAM_ADD = "equipmentqcparam_add";
+	public static final String SPOTCHECKPARAM_ADD = "spotcheckparam_add";
 	/**
 	 * 导出
 	 */
-	public static final String EQUIPMENTQCPARAM_EXPORT = "equipmentqcparam_export";
+	public static final String SPOTCHECKPARAM_EXPORT = "spotcheckparam_export";
 	/**
 	 * 导入
 	 */
-	public static final String EQUIPMENTQCPARAM_IMPORT = "equipmentqcparam_import";
+	public static final String SPOTCHECKPARAM_IMPORT = "spotcheckparam_import";
 	/**
 	 * 新增
 	 */
-	public static final String EQUIPMENTQCBASIS_ADD = "equipmentqcbasis_add";
+	public static final String INVENTORYSPOTCHECKFORM_ADD = "inventoryspotcheckform_add";
 	/**
 	 * 导出
 	 */
-	public static final String EQUIPMENTQCBASIS_EXPORT = "equipmentqcbasis_export";
+	public static final String INVENTORYSPOTCHECKFORM_EXPORT = "inventoryspotcheckform_export";
 	/**
 	 * 导入
 	 */
-	public static final String EQUIPMENTQCBASIS_IMPORT = "equipmentqcbasis_import";
+	public static final String INVENTORYSPOTCHECKFORM_IMPORT = "inventoryspotcheckform_import";
 	/**
 	 * 新增
 	 */
@@ -1390,10 +1290,6 @@ public class PermissionKey {
 	 */
 	public static final String JL_INSTORE = "JL_InStore";
 	/**
-	 * 排程物料BOM
-	 */
-	public static final String BOMMASTERFILTER = "bommasterfilter";
-	/**
 	 * 采购入库
 	 */
 	public static final String PUINSTORE = "puinstore";
@@ -1462,10 +1358,6 @@ public class PermissionKey {
 	 */
 	public static final String PRODUCTION_IN_EXPORT = "production_in_export";
 	/**
-	 * 其他业务
-	 */
-	public static final String OTHER = "other";
-	/**
 	 * 调入单
 	 */
 	public static final String TRANSFERIN = "transferin";
@@ -1473,10 +1365,6 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String QC_SETTING_ADD = "qc_setting_add";
-	/**
-	 * 【Web API】设备管理
-	 */
-	public static final String API_EQUIPMENT = "api_equipment";
 	/**
 	 * 编辑
 	 */
@@ -1558,10 +1446,6 @@ public class PermissionKey {
 	 */
 	public static final String EQUIPMENTRECORD = "equipmentrecord";
 	/**
-	 * 编码规则配置行
-	 */
-	public static final String BILLNOSETTINGLINE = "billnosettingline";
-	/**
 	 * 维修派工
 	 */
 	public static final String REPAIR_APPLY_ASSIGN = "repair_apply_assign";
@@ -1597,10 +1481,6 @@ public class PermissionKey {
 	 * 新增委外维修处理
 	 */
 	public static final String REPAIR_APPLY_ISSUE_ASSIGN_ADD = "repair_apply_issue_assign_add";
-	/**
-	 * 形态转换
-	 */
-	public static final String TRANS_FROM = "trans_from";
 	/**
 	 * 委外维修下达
 	 */
@@ -1666,10 +1546,6 @@ public class PermissionKey {
 	 */
 	public static final String VERIFYPROGRESS = "verifyprogress";
 	/**
-	 * 不良项目分类
-	 */
-	public static final String BADNESS_PROJECT_CLASS = "badness_project_class";
-	/**
 	 * 敏感词词库
 	 */
 	public static final String SENSITIVE_WORD = "sensitive_word";
@@ -1689,14 +1565,6 @@ public class PermissionKey {
 	 * 加工实物耗用记录
 	 */
 	public static final String CUTBARCODECONSUMPTION = "cutbarcodeconsumption";
-	/**
-	 * 工艺档案工位集
-	 */
-	public static final String ITEMROUTINGWORKPOSITION = "itemroutingworkposition";
-	/**
-	 * 实体扩展字段值集
-	 */
-	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
 	/**
 	 * 维修记录
 	 */
@@ -1726,10 +1594,6 @@ public class PermissionKey {
 	 */
 	public static final String REPAIR_APPLY_AUDIT_RECORD = "repair_apply_audit_record";
 	/**
-	 * 人员条码管理查询
-	 */
-	public static final String PERSON_BARCODE = "person_barcode";
-	/**
 	 * U9同步数据时间配置
 	 */
 	public static final String U9DATASSYNCTASKRECORD = "u9datassynctaskrecord";
@@ -1745,30 +1609,6 @@ public class PermissionKey {
 	 * 检具档案
 	 */
 	public static final String APPLYAUDITRECORD = "applyauditrecord";
-	/**
-	 * 新增
-	 */
-	public static final String DESCFLEXFIELDDEF_ADD = "descflexfielddef_add";
-	/**
-	 * 编辑
-	 */
-	public static final String DESCFLEXFIELDDEF_EDIT = "descflexfielddef_edit";
-	/**
-	 * 删除
-	 */
-	public static final String DESCFLEXFIELDDEF_DELETE = "descflexfielddef_delete";
-	/**
-	 * 新增
-	 */
-	public static final String BILLNOSETTING_ADD = "billnosetting_add";
-	/**
-	 * 编辑
-	 */
-	public static final String BILLNOSETTING_EDIT = "billnosetting_edit";
-	/**
-	 * 删除
-	 */
-	public static final String BILLNOSETTING_DELETE = "billnosetting_delete";
 	/**
 	 * 编辑
 	 */
@@ -1838,14 +1678,6 @@ public class PermissionKey {
 	 */
 	public static final String PARAMETER_IMPORT = "parameter_import";
 	/**
-	 * 拆分条码
-	 */
-	public static final String BARCODE = "barcode";
-	/**
-	 * 合并条码
-	 */
-	public static final String STRIPBARCODE = "stripbarcode";
-	/**
 	 * 设备委外维修
 	 */
 	public static final String REPAIR_APPLY_ISSUE = "repair_apply_issue";
@@ -1878,61 +1710,157 @@ public class PermissionKey {
 	 */
 	public static final String RCVRPTDOC = "rcvrptdoc";
 	/**
-	 * APP菜单权限管理
-	 */
-	public static final String UNIAPP = "UniAPP";
-	/**
-	 * 拆框
-	 */
-	public static final String SPLITBASKET = "SplitBasket";
-	/**
-	 * 合框
-	 */
-	public static final String CLOSINGBASKET = "ClosingBasket";
-	/**
-	 * 拆条码
-	 */
-	public static final String BARCODESPLIT = "BarcodeSplit";
-	/**
-	 * 合条码
-	 */
-	public static final String BARCODEMERGE = "BarcodeMerge";
-	/**
-	 * 调入单(无来源单据)
-	 */
-	public static final String INTRANSFERBILL = "inTransferBill";
-	/**
-	 * 调入单(有来源单据)
-	 */
-	public static final String INTRANSFERBILLSOURCE = "inTransferBillSource";
-	/**
-	 * 调出单(有来源)
-	 */
-	public static final String OUTTRANSFERBILLSOURCE = "outTransferBillSource";
-	/**
-	 * 形态转换
-	 */
-	public static final String ASSEMVOUCH = "AssemVouch";
-	/**
-	 * 完工入库
-	 */
-	public static final String PRODUCTIONINFORMES = "ProductionInForMes";
-	/**
-	 * 生产领料
-	 */
-	public static final String MATERIALOUTFORMES = "MaterialOutForMes";
-	/**
-	 * 委外领料
-	 */
-	public static final String TRANSVOUCHFOROM = "TransVouchForOM";
-	/**
 	 * APP版本
 	 */
 	public static final String APPVERSION = "appversion";
 	/**
-	 * 排程提交
+	 * 检验参数
 	 */
-	public static final String P1 = "p1";
+	public static final String QCPARAM = "qcparam";
+	/**
+	 * 检验项目
+	 */
+	public static final String QCITEM = "qcitem";
+	/**
+	 * 生产计划管理
+	 */
+	public static final String PRODUCTION_PLAN = "production_plan";
+	/**
+	 * 年度生产计划排产
+	 */
+	public static final String YEAR_PRODUCTION_SCHEDULE = "year_production_schedule";
+	/**
+	 * 年度生产计划汇总
+	 */
+	public static final String SUMMARY_OF_ANNUAL_PRODUCTION_PLAN = "summary_of_annual_production_plan";
+	/**
+	 * 月周生产计划排产
+	 */
+	public static final String MONTHLY_AND_WEEKLY_PRODUCTION_SCHEDULE = "monthly_and_weekly_production_schedule";
+	/**
+	 * 月周生产计划汇总
+	 */
+	public static final String SUMMARY_OF_MONTHLY_AND_WEEKLY_PRODUCTION = "summary_of_monthly_and_weekly_production";
+	/**
+	 * 生产计划及实绩管理
+	 */
+	public static final String PRODUCTION_PLANNING_AND_PERFORMANCE_MANA = "production_planning_and_performance_mana";
+	/**
+	 * 禀议建模
+	 */
+	public static final String PROPOSAL_MODEL = "proposal_model";
+	/**
+	 * 币种档案
+	 */
+	public static final String FORGEIGN_CURRENCY_INDEX = "forgeign_currency_index";
+	/**
+	 * 人员档案
+	 */
+	public static final String PERSON_INDEX = "person_index";
+	/**
+	 * 供应商分类
+	 */
+	public static final String VENDOR = "vendor";
+	/**
+	 * 机型档案
+	 */
+	public static final String EQUIPMENT_MODEL = "equipment_model";
+	/**
+	 * 客户档案-联系地址
+	 */
+	public static final String ADMIN_CUSTOMERADDR = "ADMIN_CUSTOMERADDR";
+	/**
+	 * 部门档案
+	 */
+	public static final String DEPARTMENT = "department";
+	/**
+	 * 容器管理
+	 */
+	public static final String CONTAINER_CONTROL = "container_control";
+	/**
+	 * 容器档案
+	 */
+	public static final String CONTAINER = "container";
+	/**
+	 * 质量建模
+	 */
+	public static final String QCFORM_MODEL = "qcform_model";
+	/**
+	 * 质量表格设置
+	 */
+	public static final String QCFORM = "qcform";
+	/**
+	 * 供应商地址明细
+	 */
+	public static final String VENDORADDR = "vendoraddr";
+	/**
+	 * 存货档案
+	 */
+	public static final String INVENTORY_RECORD = "inventory_record";
+	/**
+	 * 物料形态对照表
+	 */
+	public static final String INVENTORYCHANGE = "INVENTORYCHANGE";
+	/**
+	 * 客户订单管理
+	 */
+	public static final String CUSTOMER_ORDERS = "customer_orders";
+	/**
+	 * 年度计划
+	 */
+	public static final String ANNUALORDERM = "annualorderm";
+	/**
+	 * 结算方式
+	 */
+	public static final String SETTLE_STYLE = "settle_style";
+	/**
+	 * 基础档案
+	 */
+	public static final String BASICS = "basics";
+	/**
+	 * 收发类别
+	 */
+	public static final String RDSTYLE = "rdstyle";
+	/**
+	 * 项目管理项目分类目录
+	 */
+	public static final String FITEMSS97CLASS = "fitemss97class";
+	/**
+	 * 项目管理大类项目主目录
+	 */
+	public static final String FITEMSS97 = "fitemss97";
+	/**
+	 * 项目管理大类项目子目录
+	 */
+	public static final String FITEMSS97SUB = "fitemss97sub";
+	/**
+	 * 单据类型与收发类别对照表
+	 */
+	public static final String VOUCHRDCONTRAPOSE = "vouchrdcontrapose";
+	/**
+	 * 销售类型
+	 */
+	public static final String SALETYPE = "saletype";
+	/**
+	 * 物料清单版本记录
+	 */
+	public static final String MASTER_AUDIT = "master_audit";
+	/**
+	 * 物料建模-Bom母项
+	 */
+	public static final String BOMMASTER = "bommaster";
+	/**
+	 * 消息模板
+	 */
+	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
+	/**
+	 * 备份设置
+	 */
+	public static final String BACKUP_LOG = "backup_log";
+	/**
+	 * 采购类型
+	 */
+	public static final String PURCHASETYPE = "purchasetype";
 	/**
 	 * 新增
 	 */
@@ -2229,4 +2157,68 @@ public class PermissionKey {
 	 * 强制更新
 	 */
 	public static final String APPVERSION_ISFORCE = "appversion_isforce";
+	/**
+	 * 新增
+	 */
+	public static final String DEPARTMENT_ADD = "department_add";
+	/**
+	 * 删除
+	 */
+	public static final String DEPARTMENT_DEL = "department_del";
+	/**
+	 * 编辑
+	 */
+	public static final String DEPARTMENT_EDIT = "department_edit";
+	/**
+	 * 导出
+	 */
+	public static final String DEPARTMENT_EXPORT = "department_export";
+	/**
+	 * 导入
+	 */
+	public static final String DEPARTMENT_IMPORT = "department_import";
+	/**
+	 * 新增
+	 */
+	public static final String INVENTORYCHANGE_ADD = "inventorychange_add";
+	/**
+	 * 删除
+	 */
+	public static final String INVENTORYCHANGE_DEL = "inventorychange_del";
+	/**
+	 * 修改
+	 */
+	public static final String INVENTORYCHANGE_EDIT = "inventorychange_edit";
+	/**
+	 * 导入
+	 */
+	public static final String INVENTORYCHANGE_IMPORT = "inventorychange_import";
+	/**
+	 * 导出
+	 */
+	public static final String INVENTORYCHANGE_EXPORT = "inventorychange_export";
+	/**
+	 * 新增
+	 */
+	public static final String ANNUALORDERM_ADD = "annualorderm_add";
+	/**
+	 * 质量建模-检验适用标准
+	 */
+	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
+	/**
+	 * 参数配置
+	 */
+	public static final String 	SYS_CONFIG = "	sys_config";
+	/**
+	 * 实体扩展字段
+	 */
+	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
+	/**
+	 * 容器分类
+	 */
+	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 拓展字段值
+	 */
+	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
 }

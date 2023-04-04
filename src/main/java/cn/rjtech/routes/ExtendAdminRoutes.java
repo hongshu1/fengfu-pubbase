@@ -1,7 +1,6 @@
 package cn.rjtech.routes;
 
 import com.jfinal.config.Routes;
-
 /**
  * MOM平台路由配置
  *

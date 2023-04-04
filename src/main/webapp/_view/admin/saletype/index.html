@@ -1,0 +1,123 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>销售类型</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="saleTypeForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="=销售类型编码=" name="cSTCode" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="=销售类型名称=" name="cSTName" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="saleTypeRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cstcode}</td>
+<td>${data.cstname}</td>
+<td>${data.crdname}</td>			<!--: 1. 是 0. 否-->
+<td><img data-switchbtn data-confirm="确定切换是否默认值?" data-value="${data.bdefault}"
+	data-handler="refreshJBoltTable"  data-url="admin/saletype/toggleBDefault/${data.iautoid}"/></td>
+<td><img data-switchbtn data-confirm="确定切换是否参与需求计划运算?" data-value="${data.bstmps_mrp}"
+	data-handler="refreshJBoltTable"  data-url="admin/saletype/toggleBstmpsMrp/${data.iautoid}"/></td>
+
+<!--<td>-->
+<!--	<a href="admin/saletype/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改销售类型" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>-->
+<!--    <a href="admin/saletype/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>-->
+<!--</td>-->
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="saleType_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增销售类型"
+				data-url="admin/saletype/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改销售类型"
+				data-check-handler="jboltTableGetCheckedId" data-url="admin/saletype/edit/" class="btn btn-outline-info btn-sm">
+			<i class="fa fa-edit"></i> 修改</button>
+
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
+				data-url="admin/saletype/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" >
+			<i class="fa fa-trash"></i> 删除</button>
+
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/saletype/selectData"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="saleTypeForm_#(pageId)"
+data-rowtpl="saleTypeRowtpl_#(pageId)"
+data-page="saleTypePage_#(pageId)"
+data-toolbar="saleType_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+data-fixed-columns-right="-1"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="150" data-column="cSTCode">销售类型编码</th>
+	<th data-width="150" data-column="cSTName">销售类型名称</th>
+	<th data-width="150" data-column="cRdCode">出库类别</th>		<!--出库类别编码-->
+	<th data-width="150" data-column="bDefault">是否默认值</th> <!--1. 是 0. 否-->
+	<th data-width="150" data-column="bSTMPS_MRP">参与需求计划运算</th>  <!--是否列入MPS/MRP计划-->
+<!--	<th data-width="100">操作</th>-->
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/saletype/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('title', '销售类型')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end

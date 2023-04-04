@@ -1,0 +1,199 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="vendraddSplit_tpl_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.cdistrictcode}</td>
+            <td>${data.cdistrictname}</td>
+            <td>${data.ccontactcode}</td>
+            <td>${data.ccontactname}</td>
+            <td>${data.ccountry}</td>
+            <td>${data.cprovince}</td>
+            <td>${data.ccity}</td>
+            <td>${data.ccounty}</td>
+            <td>${data.caddr}</td>
+            <td>${data.cpostcode}</td>
+            <td>${data.cmobile}</td>
+            <td>${data.cphone}</td>
+            <td>${data.cfax}</td>
+            <td>${data.cemail}</td>
+            <td><img data-switchbtn data-value="${data.isEnabled?data.isenabled:true}" data-handler="refreshJBoltTable"
+                           data-url="admin/vendor/toggleIsEnabled/${data.id}"/></td>
+        </tr>
+    {@/each}
+</textarea>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- 工具条 toolbar -->
+                <div class="jbolt_table_toolbar" id="vendoradd_split_toolbar_#(pageId)">
+
+                    <div class="btn-group" role="group" aria-label="btn-group">
+                        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+                        <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+                    </div>
+
+                    <div class="clearfix"></div>
+                </div>
+
+                <table class="jbolt_table jbolt_main_table  table-center"
+                       id="jbolt_table_vendoradd_split_#(pageId)"
+                       data-jbolttable
+                       data-width="auto"
+                       data-height="200"
+                       data-ajax="true"
+                       data-column-prepend="1:checkbox:true"
+                       ###data-conditions-form="vendoraddSplit_form_#(pageId)"
+                       data-toolbar="vendoradd_split_toolbar_#(pageId)"
+                       data-url="admin/vendoraddr/list?ivendorid=#(vendor.iautoid??)"
+                       data-rowtpl="vendraddSplit_tpl_#(pageId)"
+                       ###data-copy-to-excel="false"
+                       data-column-resize="true"
+                       data-editable="true"
+                       ### 配置可编辑表格的submit属性
+                       data-editable-option="getEditableTableOptions_split_#(pageId)">
+                    <thead>
+                    <tr>
+                        <th data-width="60" data-column="index">序号</th>
+                        <th data-width="100" data-column="cdistrictcode">地点编码</th>
+                        <th data-width="100" data-column="cdistrictname">地点名称</th>
+                        <th data-width="120" data-column="ccontactcode">联系人编码</th>
+                        <th data-width="120" data-column="ccontactname">联系人姓名</th>
+                        <th data-width="120" data-column="ccountry">国家/地区</th>
+                        <th data-width="120" data-column="cprovince">省/自治区</th>
+                        <th data-width="120" data-column="ccity">城市</th>
+                        <th data-width="120" data-column="ccounty">区县</th>
+                        <th data-width="120" data-column="caddr">地址</th>
+                        <th data-width="120" data-column="cpostcode">邮政编码</th>
+                        <th data-width="120" data-column="cmobile">移动电话</th>
+                        <th data-width="120" data-column="cphone">固定电话</th>
+                        <th data-width="120" data-column="cfax">传真</th>
+                        <th data-width="120" data-column="cemail">电子邮件</th>
+                        <th data-width="120" data-column="isenabled">生效</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function getEditableTableOptions_split_#(pageId)() {
+        var editoptions = {
+            trigger: "click",
+            insertDefaultValues: {name:'#(JBoltUserKit.getUserName())'},
+            submit:{
+                type:"all",//提交类型 all|cell
+                withForm: ["Vendor_Form"],
+                url:"admin/vendor/submit",//提交地址
+                success:function(res,table,td){
+                    if (res.state === 'ok'){
+                        LayerMsgBox.success(res.msg,500,function(){
+                            // alert("展示完更新完成提示信息后 需要跳转页面或者刷新的就在这里写");
+                            refreshPjaxContainer();
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid"
+                },
+                cdistrictcode: {
+                    type: "input",
+                    required:true,
+                    placeholder: "=地点编码="
+                },
+                cdistrictname: {
+                    type: "input",
+                    placeholder: "=地点名称="
+                },
+                ideliveryadvance: {
+                    type: "input",
+                    placeholder: "=提前期="
+                },
+                csearchcode: {
+                    type: "input",
+                    placeholder: "=搜索码="
+                },
+                ccontactcode: {
+                    type: "input",
+                    placeholder: "=联系人编码="
+                },
+                ccontactname: {
+                    type: "input",
+                    placeholder: "=联系人名称="
+                },
+                ccountry: {
+                    placeholder: "=国家/地区=",
+                    type:"select2",
+                    url:"admin/locListCN/findByNameChild",
+                    valueAttr:"name",
+                    textAttr:"name"
+                    // linkColumn:'ccountry'
+                },
+                cprovince: {
+                    placeholder: "=省/自治区=",
+                    type:"select2",
+                    url:"admin/locListCN/findByNameChild",//?ipid=(#locListCN.iautoid??)
+                    valueAttr:"name",
+                    textAttr:"name",
+                    linkColumn:'ccountry'
+                },
+                ccity: {
+                    placeholder: "=城市=",
+                    type:"select2",
+                    url:"admin/locListCN/findByNameChild",
+                    valueAttr:"name",
+                    textAttr:"name",
+                    linkColumn:'cprovince'
+                },
+                ccounty: {
+                    placeholder: "=区县=",
+                    type:"select2",
+                    url:"admin/locListCN/findByNameChild",
+                    valueAttr:"name",
+                    textAttr:"name",
+                    linkColumn:'ccity'
+                },
+                caddr: {
+                    type: "input",
+                    placeholder: "=地址="
+                },
+                cpostcode: {
+                    type: "input",
+                    placeholder: "=邮政编码="
+                },
+                cmobile: {
+                    type: "input",
+                    placeholder: "=移动电话="
+                },
+                cphone: {
+                    type: "input",
+                    placeholder: "=固定电话="
+                },
+                cfax: {
+                    type: "input",
+                    placeholder: "=传真="
+                },
+                cemail: {
+                    type: "input",
+                    placeholder: "=电子邮件="
+                },
+                isenabled: {
+                    type:'switchbtn',
+                    editable:false
+                }
+            }
+        };
+        return editoptions;
+    }
+</script>
