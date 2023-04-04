@@ -18,10 +18,10 @@
 								  <a tooltip='' data-title='复制版本提示' data-dialogbtn='' data-area='400,300' href='admin/bommaster/copyForm/?' ><i class='fa fa-copy c-warning' style='position: absolute;left: 435px;'></i></a>
 								  <a tooltip='' data-ajaxbtn href='admin/bommaster/ajaxSuccess' data-confirm='确定要执行此操作？'><i class='fa fa-trash c-danger'  style='position: absolute;left: 460px;'></i></a>
 ">
-						</form>
+
 						<input type="text" class="form-control"  id="searchBackGoodsTypeInput_#(pageId)"
-						//onblur="onblurInput()"
-							   placeholder="输入关键字过滤" />
+							   placeholder="输入关键字过滤" name="keyWords"/>
+                        </form>
 					</div>
 				</div>
 				<div class="card-body overflow-auto" style="width:600px;height: 80%">
@@ -45,34 +45,10 @@
 
 #define js()
 <script type="text/javascript">
-	function bommaster_jstree_#(pageId)(data){
-		// get_all_checked第一个参数 full-默认false 只返回ID true是返回整条数据json
-		// get_all_checked第二个参数 withoutRoot 默认false 就是都出来 如果是true 就不带root节点 有些root节点无用
-		// console.log(tree.jstree(true).get_all_checked(true,false))
-		// LayerMsgBox.alert("选择了："+data.text);
-
-		var allChecked = tree.jstree(true).get_all_checked(true, false);
-		console.log(allChecked);
-
-		var checkedArr = [];
-
-		$.each(allChecked, function (idx, row) {
-			checkedArr.push(row.id);
-		});
-
-		var checkedIds = checkedArr.join(',');
-
-		$('input[name="checkedIds"]').val(checkedIds);
-
-		setTimeout(function () {
-
-			// 清空参数
-			$('input[name="renderEmpty"]').val('');
-			// 刷新已授权菜单
-			JSTreeUtil.refresh($tree3);
-
-		}, 100);
-
+	function bommaster_jstree_#(pageId)(tree, data){
+	    debugger;
+        $("#bomCompare_pid").val(data.id);
+        $("#bomCompare_submit").click();
 	}
 </script>
 #end

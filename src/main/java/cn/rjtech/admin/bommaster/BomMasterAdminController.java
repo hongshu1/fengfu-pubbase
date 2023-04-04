@@ -121,30 +121,7 @@ public class BomMasterAdminController extends BaseAdminController {
 	}
 	
 	public void getDatas(){
-		List<Record> recordList = service.getDatas(getKv());
-		if (CollectionUtil.isEmpty(recordList)){
-			renderJsonData(recordList);
-		}
-//		List<Record> trees = service.convertToRecordTree(datas, "id", "pid", (p)->{
-//			return this.notOk(p.getLong("pid"));
-//		});
-		List<JsTreeBean> trees = new ArrayList<>();
-		for (Record record : recordList){
-			Long id = record.getLong("id");
-			Object pid = record.get("pid");
-			StringBuilder text = new StringBuilder(record.getStr("cinvcode"));
-			if (pid == null) {
-				pid = "#";
-				if (StrUtil.isNotBlank(get("enableIcon"))){
-					String enableIcon = get("enableIcon");
-					enableIcon = enableIcon.replace("?", record.getStr("id"));
-					text.append(enableIcon);
-				}
-			}
-			JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text.toString(), true);
-			trees.add(jsTreeBean);
-		}
-		renderJsonData(trees);
+		renderJsonData(service.getDatas(getKv()));
 	}
 	
 	public void getPageData(){

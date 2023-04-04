@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.admin.bomcompare.BomCompareService;
@@ -14,6 +15,7 @@ import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -542,13 +544,75 @@ public class BomMasterService extends BaseService<BomMaster> {
 	    return code1;
     }
     
-    public List<Record> getDatas(Kv kv){
+    public List<JsTreeBean> getDatas(Kv kv){
     	kv.set("orgId", getOrgId());
-    	return dbTemplate("bommaster.datas", kv).find();
+        List<Record> recordList = dbTemplate("bommaster.datas", kv).find();
+        if (!kv.containsKey("keyWords")){
+            return createJsTreeBean(kv.getStr("enableIcon"), recordList);
+        }
+        List<Record> allRecordList = new ArrayList<>();
+    	return createJsTreeBean(kv.getStr("enableIcon"), allRecordList);
 	}
 	
+	public List<JsTreeBean> createJsTreeBean(String enableIconStr, List<Record> recordList){
+        List<JsTreeBean> trees = new ArrayList<>();
+        for (Record record : recordList){
+            Long id = record.getLong("id");
+            Object pid = record.get("pid");
+            StringBuilder text = new StringBuilder(record.getStr("cinvcode"));
+            if (pid == null) {
+                pid = "#";
+                if (StrUtil.isNotBlank(enableIconStr)){
+                    String enableIcon = enableIconStr;
+                    enableIcon = enableIcon.replace("?", record.getStr("id"));
+                    text.append(enableIcon);
+                }
+            }
+            JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text.toString(), true);
+            trees.add(jsTreeBean);
+        }
+       return trees;
+    }
+	
 	public Page<Record> getPageData(int pageNumber, int pageSize, Kv kv){
+		Page<Record> test = test(pageNumber, pageSize, kv);
 		kv.set("orgId", getOrgId());
 		return dbTemplate("bommaster.datas", kv).paginate(pageNumber, pageSize);
 	}
+	
+	public Page<Record> test(int pageNumber, int pageSize, Kv kv){
+		StringBuilder sqlStr = new StringBuilder("WITH a ( iAutoId, pid ) AS ( " +
+				" SELECT " +
+				" b1.iAutoId ," +
+				" b1.iPid AS pid " +
+				" FROM " +
+				" Bd_BomCompare AS b1 ");
+		Long pid = kv.getLong("pid");
+		if (StrUtil.isNotBlank(kv.getStr("pid"))){
+			sqlStr.append(" where ").append(" b1.iPid = ").append(pid).append(" OR b1.iAutoId = ").append(pid);
+		}
+		sqlStr.append( " UNION ALL " +
+				" SELECT\n" +
+				" b2.iAutoId , " +
+				" b2.iPid AS pid " +
+				" FROM " +
+				" Bd_BomCompare AS b2 " +
+				" INNER JOIN a ON b2.iPid  = a.iAutoId  " +
+				" ) \n");
+		
+		
+		String a = new String(" SELECT DISTINCT inv.cInvCode,b.iautoId from a INNER JOIN Bd_BomCompare b ON a.iAutoId = b.iAutoId " +
+				" INNER JOIN Bd_Inventory inv ON inv.iAutoId = b.iInventoryId");
+		
+		
+		String b =new String(" SELECT COUNT(1) FROM (SELECT DISTINCT inv.cInvCode,b.iautoId from a INNER JOIN Bd_BomCompare b ON a.iAutoId = b.iAutoId " +
+				" INNER JOIN Bd_Inventory inv ON inv.iAutoId = b.iInventoryId) a");
+		
+		
+		String findSql =sqlStr.toString().concat(a);
+		
+		String totalRowSql =sqlStr.toString().concat(b);
+		
+       return Db.use(dataSourceConfigName()).paginateByFullSql(pageNumber, pageSize, totalRowSql, findSql);
+    }
 }
