@@ -1,0 +1,22 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+        <form onsubmit="return false;" id="Copy_Form" action="/admin/bommaster/saveCopy" method="post">
+            <input name="oldId" hidden value="#(oldId)">
+
+            <div class="form-group row" >
+                <label class="col-form-label" style="padding-left: 10px">将拷贝并新增一条新版本的物料清单信息，是否继续？
+                </label>
+            </div>
+            <div class="form-group row" >
+                <label class="col-sm-3 col-form-label">新版本号</label>
+                <div class="col">
+                    <input data-rule="required" type="text" data-notnull="true" data-tips="请输入新版本号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入新版本号" maxlength="40" name="cversion" value=""/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+#include("/_view/_admin/common/_formjs.html",formId="Copy_Form")
+#end

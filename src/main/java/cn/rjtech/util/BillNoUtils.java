@@ -139,5 +139,25 @@ public class BillNoUtils {
             return MOM_DATA_FUNC_SERVICE.getNextRouteNo(orgId, prefix + DateUtil.format(new Date(), "yyMMdd"), billNoLength);
         }
     }
-
+    
+    private char[] getLowerCaseLetter(){
+        char[] letter = new char[26];
+        for (int i=0; i<26;i++){
+            letter[i] = (char) ('a'+i);
+        }
+        return letter;
+    }
+    
+    private char[] getUpperCaseLetter(){
+        char[] letter = getLowerCaseLetter();
+        for (int i=0; i<letter.length; i++){
+            letter[i] = Character.toUpperCase(letter[i]);
+        }
+        return letter;
+    }
+    
+    public String getMaterialsBill(Long orgId, Long a){
+        return null;
+    }
+    
 }

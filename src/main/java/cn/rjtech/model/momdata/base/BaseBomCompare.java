@@ -28,7 +28,7 @@ public abstract class BaseBomCompare<M extends BaseBomCompare<M>> extends JBoltB
     public static final String ILEVEL = "iLevel";
     /**层级文本，示例：1-1*/
     public static final String CINVLEV = "cInvLev";
-    /**原材料类型：1. 卷料 2. 片料 3. 分条料*/
+    /**原材料类型：0.部品 1. 片料 2. 分条料 3. 卷料 */
     public static final String IRAWTYPE = "iRawType";
     /**单位用量/可制件数*/
     public static final String IQTY = "iQty";
@@ -58,6 +58,8 @@ public abstract class BaseBomCompare<M extends BaseBomCompare<M>> extends JBoltB
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态： 0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    
+    public static final String IPID = "iPid";
 	/**
 	 * 主键ID
 	 */
@@ -212,7 +214,7 @@ public abstract class BaseBomCompare<M extends BaseBomCompare<M>> extends JBoltB
 	}
 
 	/**
-	 * 原材料类型：1. 卷料 2. 片料 3. 分条料
+	 * 原材料类型：0.部品 1. 片料 2. 分条料 3. 卷料
 	 */
 	public M setIRawType(java.lang.Integer iRawType) {
 		set("iRawType", iRawType);
@@ -220,9 +222,9 @@ public abstract class BaseBomCompare<M extends BaseBomCompare<M>> extends JBoltB
 	}
 
 	/**
-	 * 原材料类型：1. 卷料 2. 片料 3. 分条料
+	 * 原材料类型：0.部品 1. 片料 2. 分条料 3. 卷料
 	 */
-	@JBoltField(name="irawtype" ,columnName="iRawType",type="Integer", remark="原材料类型：1. 卷料 2. 片料 3. 分条料", required=true, maxLength=10, fixed=0, order=10)
+	@JBoltField(name="irawtype" ,columnName="iRawType",type="Integer", remark="原材料类型：0.部品 1. 片料 2. 分条料 3. 卷料 ", required=true, maxLength=10, fixed=0, order=10)
 	@JSONField(name = "irawtype")
 	public java.lang.Integer getIRawType() {
 		return getInt("iRawType");
@@ -465,6 +467,22 @@ public abstract class BaseBomCompare<M extends BaseBomCompare<M>> extends JBoltB
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
 	}
-
+	
+	/**
+	 * 父id
+	 */
+	public M setIPid(java.lang.Long iPid) {
+		set("iPid", iPid);
+		return (M)this;
+	}
+	
+	/**
+	 * 父id
+	 */
+	@JBoltField(name="ipid" ,columnName="iPid",type="Long", remark="父id", required=true, maxLength=19, fixed=0, order=25)
+	@JSONField(name = "ipid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIPid() {
+		return getLong("iPid");
+	}
 }
 

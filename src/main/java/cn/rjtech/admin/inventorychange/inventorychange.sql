@@ -47,7 +47,8 @@ SELECT
 	inv.cInvCode AS cInvCode,
 	inv.cInvCode1 AS cInvCode1,
 	inv.cInvName1 AS cInvName1,
-	uom.cUomName
+	uom.cUomName,
+	inv.iCustomerMId
 FROM
 	Bd_Inventory inv
 	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iUomClassId
@@ -58,5 +59,8 @@ FROM
 	    #end
 	    #if(itemId)
 	        AND inv.iautoId = #para(itemId)
+	    #end
+	    #if(iEquipmentModelId)
+	        AND INV.iEquipmentModelId = #para(iEquipmentModelId)
 	    #end
 #end
