@@ -132,6 +132,9 @@ public class VendorAdminController extends BaseAdminController {
 		renderJson(service.deleteById(getLong(0)));
 	}
 
+	/*
+	* 删除供应商地址的关联记录
+	* */
 	public void deleteVendorAddrById(Long vendorIautoId){
 		Vendor vendor = service.findById(vendorIautoId);
 		Kv kv = new Kv();

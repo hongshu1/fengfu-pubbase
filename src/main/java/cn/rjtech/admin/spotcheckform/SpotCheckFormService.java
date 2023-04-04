@@ -50,9 +50,8 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 		}
 		//if(existsName(spotCheckForm.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=spotCheckForm.save();
-		if(success) {
-			//添加日志
-			//addSaveSystemLog(spotCheckForm.getIautoid(), JBoltUserKit.getUserId(), spotCheckForm.getName());
+		if(!success) {
+			return fail(JBoltMsg.FAIL);
 		}
 		return ret(success);
 	}
@@ -69,11 +68,9 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 		//更新时需要判断数据存在
 		SpotCheckForm dbSpotCheckForm=findById(spotCheckForm.getIAutoId());
 		if(dbSpotCheckForm==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(spotCheckForm.getName(), spotCheckForm.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=spotCheckForm.update();
-		if(success) {
-			//添加日志
-			//addUpdateSystemLog(spotCheckForm.getIautoid(), JBoltUserKit.getUserId(), spotCheckForm.getName());
+		if(!success) {
+			return fail(JBoltMsg.FAIL);
 		}
 		return ret(success);
 	}

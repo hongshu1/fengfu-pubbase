@@ -48,8 +48,6 @@ public class OperationAdminController extends JBoltBaseController {
     private WorkClassService workClassService;
     @Inject
     private QcParamService   qcParamService;
-//    @Inject
-//    private OperationbadnessService operationbadnessService;
 
     /**
      * 首页
@@ -82,8 +80,6 @@ public class OperationAdminController extends JBoltBaseController {
             return;
         }
         set("operation", operation);
-//        String ids = service.findBadnessClassIds(operation.getIautoid());
-//        set("ibadnessids", ids);
         render("edit.html");
     }
 
@@ -99,13 +95,7 @@ public class OperationAdminController extends JBoltBaseController {
      * 更新
      */
     public void update() {
-        /*String ibadnessids = get("ibadnessids");
-        if (notOk(ibadnessids)) {
-            renderFail("请选择不良项目");
-            return;
-        }*/
         Operation model = getModel(Operation.class, "operation");
-        //model.setCupdatename(ibadnessids);
         renderJson(service.update(model));
     }
 
@@ -146,7 +136,6 @@ public class OperationAdminController extends JBoltBaseController {
     }*/
 
     public void pageList() {
-        final Page<Record> recordPage = service.pageList(getKv());
         renderJsonData(service.pageList(getKv()));
     }
 
