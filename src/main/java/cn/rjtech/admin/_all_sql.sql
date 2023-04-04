@@ -215,3 +215,11 @@
 #namespace("yearproductionsummary")
 #include("yearproductionsummary/yearproductionsummary.sql")
 #end
+
+#namespace("pad")
+#include("pad/pad.sql")
+#end
+
+#namespace("bommaster")
+#include("bommaster/bommaster.sql")
+#end

@@ -2210,4 +2210,5 @@ public class PermissionKey {
 	 */
 	public static final String BACKUP_LOG = "backuplog";
 
+	public static final String PAD = "pad";
 }

@@ -1,0 +1,69 @@
+<form onsubmit="return false;" id="PadWorkRegion_Form" action="#(action)" method="post">
+	#if(padWorkRegion.iAutoId??)
+	<input type="hidden" name="padWorkRegion.iAutoId" value="#(padWorkRegion.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="padWorkRegion.iAutoId" value="#(padWorkRegion.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">平板ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入平板ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入平板ID" maxlength="40" name="padWorkRegion.iPadId" value="#(padWorkRegion.iPadId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">产线ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入产线ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入产线ID" maxlength="40" name="padWorkRegion.iWorkRegionMid" value="#(padWorkRegion.iWorkRegionMid??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="padWorkRegion.isDefault"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否默认；0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(padWorkRegion.isDefault??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否默认；0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="padWorkRegion.cMemo">#(padWorkRegion.cMemo??)</textarea>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="padWorkRegion.isDeleted"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态：0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(padWorkRegion.isDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态：0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="PadWorkRegion_Form")
+#end
+

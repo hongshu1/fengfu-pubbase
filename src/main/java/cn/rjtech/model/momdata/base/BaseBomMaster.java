@@ -32,14 +32,24 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
     public static final String DENABLEDATE = "dEnableDate";
     /**停用日期*/
     public static final String DDISABLEDATE = "dDisableDate";
+    /**序号1*/
+    public static final String CNO1 = "cNo1";
     /**设变号1*/
     public static final String CDCNO1 = "cDcNo1";
     /**设备日期1*/
     public static final String DDCDATE1 = "dDcDate1";
+    /**序号2*/
+    public static final String CNO2 = "cNo2";
     /**设变号2*/
     public static final String CDCNO2 = "cDcNo2";
     /**设变日期2*/
     public static final String DDCDATE2 = "dDcDate2";
+    /**序号3*/
+    public static final String CNO3 = "cNo3";
+    /**设变号3*/
+    public static final String CDCNO3 = "cDcNo3";
+    /**设变日期3*/
+    public static final String DDCDATE3 = "dDcDate3";
     /**客户ID*/
     public static final String ICUSTOMERID = "iCustomerId";
     /**备注共用件*/
@@ -262,6 +272,23 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	}
 
 	/**
+	 * 序号1
+	 */
+	public M setCNo1(java.lang.String cNo1) {
+		set("cNo1", cNo1);
+		return (M)this;
+	}
+
+	/**
+	 * 序号1
+	 */
+	@JBoltField(name="cno1" ,columnName="cNo1",type="String", remark="序号1", required=true, maxLength=3, fixed=0, order=12)
+	@JSONField(name = "cno1")
+	public java.lang.String getCNo1() {
+		return getStr("cNo1");
+	}
+
+	/**
 	 * 设变号1
 	 */
 	public M setCDcNo1(java.lang.String cDcNo1) {
@@ -272,7 +299,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 设变号1
 	 */
-	@JBoltField(name="cdcno1" ,columnName="cDcNo1",type="String", remark="设变号1", required=false, maxLength=50, fixed=0, order=12)
+	@JBoltField(name="cdcno1" ,columnName="cDcNo1",type="String", remark="设变号1", required=false, maxLength=50, fixed=0, order=13)
 	@JSONField(name = "cdcno1")
 	public java.lang.String getCDcNo1() {
 		return getStr("cDcNo1");
@@ -289,10 +316,27 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 设备日期1
 	 */
-	@JBoltField(name="ddcdate1" ,columnName="dDcDate1",type="Date", remark="设备日期1", required=false, maxLength=10, fixed=0, order=13)
+	@JBoltField(name="ddcdate1" ,columnName="dDcDate1",type="Date", remark="设备日期1", required=false, maxLength=10, fixed=0, order=14)
 	@JSONField(name = "ddcdate1")
 	public java.util.Date getDDcDate1() {
 		return getDate("dDcDate1");
+	}
+
+	/**
+	 * 序号2
+	 */
+	public M setCNo2(java.lang.String cNo2) {
+		set("cNo2", cNo2);
+		return (M)this;
+	}
+
+	/**
+	 * 序号2
+	 */
+	@JBoltField(name="cno2" ,columnName="cNo2",type="String", remark="序号2", required=true, maxLength=3, fixed=0, order=15)
+	@JSONField(name = "cno2")
+	public java.lang.String getCNo2() {
+		return getStr("cNo2");
 	}
 
 	/**
@@ -306,7 +350,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 设变号2
 	 */
-	@JBoltField(name="cdcno2" ,columnName="cDcNo2",type="String", remark="设变号2", required=false, maxLength=50, fixed=0, order=14)
+	@JBoltField(name="cdcno2" ,columnName="cDcNo2",type="String", remark="设变号2", required=false, maxLength=50, fixed=0, order=16)
 	@JSONField(name = "cdcno2")
 	public java.lang.String getCDcNo2() {
 		return getStr("cDcNo2");
@@ -323,10 +367,61 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 设变日期2
 	 */
-	@JBoltField(name="ddcdate2" ,columnName="dDcDate2",type="Date", remark="设变日期2", required=false, maxLength=10, fixed=0, order=15)
+	@JBoltField(name="ddcdate2" ,columnName="dDcDate2",type="Date", remark="设变日期2", required=false, maxLength=10, fixed=0, order=17)
 	@JSONField(name = "ddcdate2")
 	public java.util.Date getDDcDate2() {
 		return getDate("dDcDate2");
+	}
+
+	/**
+	 * 序号3
+	 */
+	public M setCNo3(java.lang.String cNo3) {
+		set("cNo3", cNo3);
+		return (M)this;
+	}
+
+	/**
+	 * 序号3
+	 */
+	@JBoltField(name="cno3" ,columnName="cNo3",type="String", remark="序号3", required=false, maxLength=3, fixed=0, order=18)
+	@JSONField(name = "cno3")
+	public java.lang.String getCNo3() {
+		return getStr("cNo3");
+	}
+
+	/**
+	 * 设变号3
+	 */
+	public M setCDcNo3(java.lang.String cDcNo3) {
+		set("cDcNo3", cDcNo3);
+		return (M)this;
+	}
+
+	/**
+	 * 设变号3
+	 */
+	@JBoltField(name="cdcno3" ,columnName="cDcNo3",type="String", remark="设变号3", required=false, maxLength=50, fixed=0, order=19)
+	@JSONField(name = "cdcno3")
+	public java.lang.String getCDcNo3() {
+		return getStr("cDcNo3");
+	}
+
+	/**
+	 * 设变日期3
+	 */
+	public M setDDcDate3(java.util.Date dDcDate3) {
+		set("dDcDate3", dDcDate3);
+		return (M)this;
+	}
+
+	/**
+	 * 设变日期3
+	 */
+	@JBoltField(name="ddcdate3" ,columnName="dDcDate3",type="Date", remark="设变日期3", required=false, maxLength=10, fixed=0, order=20)
+	@JSONField(name = "ddcdate3")
+	public java.util.Date getDDcDate3() {
+		return getDate("dDcDate3");
 	}
 
 	/**
@@ -340,7 +435,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 客户ID
 	 */
-	@JBoltField(name="icustomerid" ,columnName="iCustomerId",type="Long", remark="客户ID", required=false, maxLength=19, fixed=0, order=16)
+	@JBoltField(name="icustomerid" ,columnName="iCustomerId",type="Long", remark="客户ID", required=false, maxLength=19, fixed=0, order=21)
 	@JSONField(name = "icustomerid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICustomerId() {
 		return getLong("iCustomerId");
@@ -357,7 +452,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 备注共用件
 	 */
-	@JBoltField(name="ccommonpartmemo" ,columnName="cCommonPartMemo",type="String", remark="备注共用件", required=false, maxLength=200, fixed=0, order=17)
+	@JBoltField(name="ccommonpartmemo" ,columnName="cCommonPartMemo",type="String", remark="备注共用件", required=false, maxLength=200, fixed=0, order=22)
 	@JSONField(name = "ccommonpartmemo")
 	public java.lang.String getCCommonPartMemo() {
 		return getStr("cCommonPartMemo");
@@ -374,7 +469,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 上级ID
 	 */
-	@JBoltField(name="ipid" ,columnName="iPid",type="Long", remark="上级ID", required=false, maxLength=19, fixed=0, order=18)
+	@JBoltField(name="ipid" ,columnName="iPid",type="Long", remark="上级ID", required=false, maxLength=19, fixed=0, order=23)
 	@JSONField(name = "ipid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIPid() {
 		return getLong("iPid");
@@ -391,7 +486,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 层级
 	 */
-	@JBoltField(name="ilevel" ,columnName="iLevel",type="Integer", remark="层级", required=false, maxLength=10, fixed=0, order=19)
+	@JBoltField(name="ilevel" ,columnName="iLevel",type="Integer", remark="层级", required=false, maxLength=10, fixed=0, order=24)
 	@JSONField(name = "ilevel")
 	public java.lang.Integer getILevel() {
 		return getInt("iLevel");
@@ -408,7 +503,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 来源：1.MES 2. U8
 	 */
-	@JBoltField(name="isource" ,columnName="iSource",type="Integer", remark="来源：1.MES 2. U8", required=true, maxLength=10, fixed=0, order=20)
+	@JBoltField(name="isource" ,columnName="iSource",type="Integer", remark="来源：1.MES 2. U8", required=true, maxLength=10, fixed=0, order=25)
 	@JSONField(name = "isource")
 	public java.lang.Integer getISource() {
 		return getInt("iSource");
@@ -425,7 +520,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 来源标识ID
 	 */
-	@JBoltField(name="isourceid" ,columnName="iSourceId",type="String", remark="来源标识ID", required=false, maxLength=32, fixed=0, order=21)
+	@JBoltField(name="isourceid" ,columnName="iSourceId",type="String", remark="来源标识ID", required=false, maxLength=32, fixed=0, order=26)
 	@JSONField(name = "isourceid")
 	public java.lang.String getISourceId() {
 		return getStr("iSourceId");
@@ -442,7 +537,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 是否启用
 	 */
-	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否启用", required=true, maxLength=1, fixed=0, order=22)
+	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否启用", required=true, maxLength=1, fixed=0, order=27)
 	@JSONField(name = "isenabled")
 	public java.lang.Boolean getIsEnabled() {
 		return getBoolean("isEnabled");
@@ -459,7 +554,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
 	 */
-	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=23)
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=28)
 	@JSONField(name = "iauditstatus")
 	public java.lang.Integer getIAuditStatus() {
 		return getInt("iAuditStatus");
@@ -476,7 +571,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 审核时间，未走审批流时，有值
 	 */
-	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间，未走审批流时，有值", required=false, maxLength=23, fixed=3, order=24)
+	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间，未走审批流时，有值", required=false, maxLength=23, fixed=3, order=29)
 	@JSONField(name = "daudittime")
 	public java.util.Date getDAuditTime() {
 		return getDate("dAuditTime");
@@ -493,7 +588,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=25)
+	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=30)
 	@JSONField(name = "cmemo")
 	public java.lang.String getCMemo() {
 		return getStr("cMemo");
@@ -510,7 +605,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 创建人
 	 */
-	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人", required=true, maxLength=19, fixed=0, order=26)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人", required=true, maxLength=19, fixed=0, order=31)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
@@ -527,7 +622,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=27)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=32)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
@@ -544,7 +639,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=28)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=33)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
@@ -561,7 +656,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 更新人ID
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=29)
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=34)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
@@ -578,7 +673,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=30)
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=35)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
@@ -595,7 +690,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=31)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=36)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
@@ -612,7 +707,7 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 是否删除 1已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除 1已删除", required=true, maxLength=1, fixed=0, order=32)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除 1已删除", required=true, maxLength=1, fixed=0, order=37)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
