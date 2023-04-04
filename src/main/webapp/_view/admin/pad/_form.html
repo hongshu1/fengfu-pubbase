@@ -1,0 +1,49 @@
+<form onsubmit="return false;" id="Pad_Form_#(pageId)" action="#(action)" method="post">
+	#if(pad.iAutoId??)
+	<input type="hidden" name="pad.iAutoId" value="#(pad.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">平板名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入平板名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入平板名称" maxlength="40" name="pad.cPadName" value="#(pad.cPadName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">平板编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入平板编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入平板编码" maxlength="40" name="pad.cPadCode" value="#(pad.cPadCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">MAC地址</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入MAC地址"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入MAC地址" maxlength="40" name="pad.cMac" value="#(pad.cMac??)"/>
+</div>
+</div>
+
+    <div class="row">
+        <div class="form-group row">
+
+            <div class="col" style="padding-left: 30px">
+                <label class="col-form-label">所属生产线</label>
+            </div>
+            <div class="col">
+                #render("_table_split.html")
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</form>
+#define js()
+#render("_table_split_js.html")
+<script>
+    function submitThisForm(){
+        jboltTableSubmit("#jbolt_table_workshiftd_split_#(pageId)");
+    }
+</script>
+<!--#include("/_view/_admin/common/_formjs.html",formId="Pad_Form")-->
+#end
+
