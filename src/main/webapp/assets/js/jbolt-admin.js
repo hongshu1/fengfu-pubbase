@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.4.4";
+var jbolt_admin_js_version="6.4.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -13462,15 +13462,16 @@ var DialogUtil={
 					  		  }
 						  }
 					  }
-			  }else{
-				  if(url){
-					  url=actionUrl(url);
-					  url=processEleUrlByLinkOtherParamEle(action,url,false);
-					  url=processDataFormLinkParams(action,url);
-					  url=processJBoltTableEleUrlByLinkColumn(action,url);
-					  url=processUrlRqType(url,"dialog");
-				  }
 			  }
+			  // else{
+				//   if(url){
+				// 	  url=actionUrl(url);
+				// 	  url=processEleUrlByLinkOtherParamEle(action,url,false);
+				// 	  url=processDataFormLinkParams(action,url);
+				// 	  url=processJBoltTableEleUrlByLinkColumn(action,url);
+				// 	  url=processUrlRqType(url,"dialog");
+				//   }
+			  // }
 			  
 			  var handler=action.data("handler");
 			  var closeHandler=action.data("close-handler");
