@@ -21,3 +21,12 @@ AND e.iAutoId in (#(sqlids))
 #end
 order by e.iAutoId desc
 #end
+
+#sql("getAutocompleteDatas")
+	select top #(limit) ep.*,wrm.cworkname from Bd_Equipment ep 
+		left join Bd_WorkRegionM wrm on ep.iWorkRegionmId = wrm.iautoid 
+	where ep.isenabled = 1
+	#if(q)
+		and (cequipmentcode like concat('%',#para(q),'%') or cequipmentname like concat('%',#para(q),'%') or wrm.cworkname like concat('%',#para(q),'%'))
+	#end
+#end
