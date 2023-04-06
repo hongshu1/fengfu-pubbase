@@ -74,3 +74,42 @@ SELECT
 FROM Bd_InventoryRouting ir
 WHERE ir.iinventoryid = #para(iinventoryid)
 #end
+
+#sql("inventorySpotCheckList")
+SELECT
+    i.*,i.iautoid as inventoryiautoid,ic.cInvCName cinvcname,eq.*,
+    eq.iautoid equipiautoid,
+    uom.iautoid uomiautoid,
+    uom.iUomClassId,
+    uom.cUomCode,
+    uom.cUomName
+FROM Bd_Inventory i
+    inner join Bd_InventoryClass ic on i.iInventoryClassId = ic.iautoid
+    left join Bd_EquipmentModel eq on i.iEquipmentModelId = eq.iautoid
+    left join Bd_Uom uom on i.iInventoryUomId1 = uom.iautoid
+WHERE 1=1
+#if(iInventoryClassId)
+    AND i.iInventoryClassId = #para(iInventoryClassId)
+#end
+#if(isEnabled)
+    AND i.isenabled = '1'
+#end
+#if(cInvCode1)
+    AND i.cInvCode1 = #para(cInvCode1)
+#end
+#if(cInvName)
+    AND i.cInvName like CONCAT('%', #para(cInvName), '%')
+#end
+#if(cInvName1)
+    AND i.cInvName1 like CONCAT('%', #para(cInvName1), '%')
+#end
+#if(cInvCode)
+    AND i.cInvCode = #para(cInvCode)
+#end
+#if(cInvAddCode)
+    AND i.cInvAddCode = #para(cInvAddCode)
+#end
+#if(sqlids)
+    AND i.iAutoId in (#(sqlids))
+#end
+#end

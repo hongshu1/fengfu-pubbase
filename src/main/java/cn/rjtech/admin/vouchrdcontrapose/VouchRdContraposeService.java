@@ -38,6 +38,7 @@ public class VouchRdContraposeService extends BaseService<VouchRdContrapose> {
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		para.set("iorgid",getOrgId());
 		return dbTemplate("vouchrdcontrapose.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 	}
 

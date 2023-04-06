@@ -1,0 +1,177 @@
+<form onsubmit="return false;" id="BomCompare_Form" action="#(action)" method="post">
+	#if(bomCompare.iAutoId??)
+	<input type="hidden" name="bomCompare.iAutoId" value="#(bomCompare.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="bomCompare.iAutoId" value="#(bomCompare.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织ID" maxlength="40" name="bomCompare.iOrgId" value="#(bomCompare.iOrgId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织编码" maxlength="40" name="bomCompare.cOrgCode" value="#(bomCompare.cOrgCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织名称" maxlength="40" name="bomCompare.cOrgName" value="#(bomCompare.cOrgName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">Bom母项ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入Bom母项ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入Bom母项ID" maxlength="40" name="bomCompare.iBOMMasterId" value="#(bomCompare.iBOMMasterId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">料品档案ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入料品档案ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入料品档案ID" maxlength="40" name="bomCompare.iInventoryId" value="#(bomCompare.iInventoryId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">次序</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入次序"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入次序" maxlength="40" name="bomCompare.iSeq" value="#(bomCompare.iSeq??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">层级</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入层级"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入层级" maxlength="40" name="bomCompare.iLevel" value="#(bomCompare.iLevel??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">层级文本，示例：1-1</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入层级文本，示例：1-1"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入层级文本，示例：1-1" maxlength="40" name="bomCompare.cInvLev" value="#(bomCompare.cInvLev??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">原材料类型：1. 卷料 2. 片料 3. 分条料</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入原材料类型：1. 卷料 2. 片料 3. 分条料"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入原材料类型：1. 卷料 2. 片料 3. 分条料" maxlength="40" name="bomCompare.iRawType" value="#(bomCompare.iRawType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">单位用量/可制件数</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入单位用量/可制件数"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入单位用量/可制件数" maxlength="40" name="bomCompare.iQty" value="#(bomCompare.iQty??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">重量</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入重量" maxlength="40" name="bomCompare.iWeight" value="#(bomCompare.iWeight??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">供应商ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入供应商ID" maxlength="40" name="bomCompare.iVendorId" value="#(bomCompare.iVendorId??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="bomCompare.isOutSourced"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否外作：0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(bomCompare.isOutSourced??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否外作：0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="bomCompare.cMemo">#(bomCompare.cMemo??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">来源： 1.MES 2. U8</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入来源： 1.MES 2. U8"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源： 1.MES 2. U8" maxlength="40" name="bomCompare.iSource" value="#(bomCompare.iSource??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">来源标识ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源标识ID" maxlength="40" name="bomCompare.iSourceId" value="#(bomCompare.iSourceId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人ID" maxlength="40" name="bomCompare.iCreateBy" value="#(bomCompare.iCreateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="bomCompare.cCreateName" value="#(bomCompare.cCreateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="bomCompare.dCreateTime"    value="#datetime(bomCompare.dCreateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人ID" maxlength="40" name="bomCompare.iUpdateBy" value="#(bomCompare.iUpdateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人名称" maxlength="40" name="bomCompare.cUpdateName" value="#(bomCompare.cUpdateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入更新时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="bomCompare.dUpdateTime"    value="#datetime(bomCompare.dUpdateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="bomCompare.isDeleted"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态： 0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(bomCompare.isDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态： 0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="BomCompare_Form")
+#end
+

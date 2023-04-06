@@ -3,33 +3,76 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
     <div class="jbolt_page_title">
-        <div class="row">
-            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>年度计划订单</h1></div>
-            <div class="col">
-                <form class="form-inline" id="AnnualOrderM_form_#(pageId)">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords" value=""/>
-                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="cOrderNo"/>
-                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入客户ID" maxlength="40" name="iCustomerId"/>
-                    <select class="form-control" name="iOrderStatus"
-                            data-autoload
-                            data-url="admin/dictionary/options?key=todo_state"
-                            data-select-type="select"
-                            data-text="=订单状态="
-                            data-value=""
-                            data-value-attr="sn"
-                    >
-                    </select>
-                    <input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" data-with-clearbtn="true"
-                           autocomplete="off" class="form-control" placeholder="请输入年份" maxlength="20" name="iYear"/>
-                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入创建人名称" maxlength="40" name="cCreateName"/>
-                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
-                </form>
-            </div>
-            <div class="col-sm-auto text-right">
-
-
-            </div>
-        </div>
+    	<div class="row">
+			<div class="col-md-auto">
+				<h1>年度计划</h1>
+			</div>
+		</div>
+		<div class="jbolt_table_headbox">
+			<form id="AnnualOrderM_form_#(pageId)" onsubmit="return false;" method="post">
+				<div class="row">
+					<div class="col-2">
+						<div class="input-group">
+							<div class="input-group-prepend">
+						      <span class="input-group-text">订单号</span>
+						    </div>
+						   	<input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="cOrderNo" value="" />
+						</div>
+					</div>
+					<div class="col-2">
+						<div class="input-group">
+							<div class="input-group-prepend">
+						      <span class="input-group-text">客户名称</span>
+						    </div>
+						   	<input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="cCusName" value="" />
+						</div>
+					</div>				
+					<div class="col-2">
+						<div class="input-group">
+							<div class="input-group-prepend">
+						      <span class="input-group-text">订单状态</span>
+						    </div>
+			                <select class="form-control"
+			                        name="iAuditStatus"
+			                        data-autoload
+			                        data-url="admin/dictionary/options?key=annual_order_auditstatus"
+			                        data-select-type="select"
+			                        data-text="=请选择="
+			                        data-value=""
+			                        data-with-clearbtn="true"
+			                        data-value-attr="sn"
+			                ></select>
+						</div>
+					</div>							
+					<div class="col-2">
+						<div class="input-group">
+							<div class="input-group-prepend">
+						      <span class="input-group-text">年份</span>
+						    </div>
+						   	<input type="text"
+	                            data-date
+	                            data-type="year"
+	                            data-fmt="yyyy"
+	                            autocomplete="off"
+	                            class="form-control"
+	                            maxlength="20"
+	                            name="iYear"
+	                            value=""/>
+						</div>
+					</div>		
+					<div class="col-2">
+						<div class="input-group">
+							<div class="input-group-prepend">
+						      <span class="input-group-text">创建人</span>
+						    </div>
+						   	<input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="cCreateName" value="" />
+						</div>
+					</div>		
+					<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+					<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+				</div>
+			</form>
+		</div>
     </div>
     <div class="jbolt_page_content">
         <!-- 定义JBoltTable使用的数据渲染模板 -->
@@ -38,14 +81,14 @@
             <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class="text-info mr-1" data-openpage="dialog" href="admin/annualorderm/edit/${data.id}" data-area="800,600" data-title="查看客户订单-年度订单">查看</a>
-                <a class="jbolt_table_editbtn" href="admin/annualorderm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑客户订单-年度订单">编辑</a>
-                <a class="jbolt_table_delbtn" href="admin/annualorderm/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
+                <a class=jbolt_table_editbtn href="admin/annualorderm/edit/${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" data-title="查看客户订单-年度订单">查看</a>
+                <a class="jbolt_table_editbtn" href="admin/annualorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-title="编辑客户订单-年度订单">编辑</a>
+                <a class="jbolt_table_delbtn" href="admin/annualorderm/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
             </td>
-            <td>${data.iorderstatus}</td>
-             <td>${data.cauditprogress}</td>
+            <td>${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
+            <td>${data.cauditprogress}</td>
             <td>${data.corderno}</td>
-            <td>${data.ccusname}</td>
+            <td tooltip title="${data.ccusname}">${data.ccusname}</td>
             <td>${data.iyear}</td>
             <td>${data.ccreatename}</td>
             <td>${data.dcreatetime}</td>
@@ -54,7 +97,7 @@
         </textarea>
         <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                <button data-dialogbtn data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-fs="true"
+                <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true"
                         data-title="新增客户订单-年度订单" data-url="admin/annualorderm/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
                 </button>
             </div>
@@ -71,7 +114,8 @@
                data-page="AnnualOrderM_page"
                data-toolbar="AnnualOrderM_toolbar_#(pageId)"
                data-column-prepend="1:checkbox:true"
-               data-default-sort-column="iAutoId"
+               data-row-dblclick-active="true"
+			   data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
         >
             <thead>
             <tr>
@@ -80,10 +124,10 @@
                 <th data-column="iOrderStatus">订单状态</th>
                 <th data-column="cAuditProgress">审批进度</th>
                 <th data-column="cOrderNo">订单号</th>
-                <th data-column="cCusName">客户名称</th>
+                <th data-width="150" data-column="cCusName">客户名称</th>
                 <th data-column="iYear">年份</th>
                 <th data-column="cCreateName">创建人</th>
-                <th data-column="dCreateTime">创建时间</th>
+                <th data-width="150" data-column="dCreateTime">创建时间</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -94,5 +138,14 @@
 
 #define js()
 <script type="text/javascript">
+function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+	$(tempTr1).data('url', '/admin/annualorderm/edit/' + rowData.iautoid)
+		.data('area', '100%,100%')
+		.data('handler','refreshJBoltTable')
+		.data('title', '人员档案')
+		.data('btn', '确认,关闭');
+
+	DialogUtil.openBy(tempTr1);
+}
 </script>
 #end

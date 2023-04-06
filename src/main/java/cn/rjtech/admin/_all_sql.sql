@@ -36,7 +36,6 @@
 #include("customer/customer.sql")
 #end
 
-
 #namespace("workclass")
 #include("workclass/workclass.sql")
 #end
@@ -59,10 +58,6 @@
 
 #namespace("warehouseshelves")
 #include("warehouseshelves/warehouseshelves.sql")
-#end
-
-#namespace("forgeigncurrency")
-#include("forgeigncurrency/forgeigncurrency.sql")
 #end
 
 #namespace("warehouseposition")
@@ -109,11 +104,9 @@
 #include("settlestyle/settlestyle.sql")
 #end
 
-
 #namespace("department")
 #include("department/department.sql")
 #end
-
 
 #namespace("equipment_model")
 #include("equipmentmodel/equipment_model.sql")
@@ -121,6 +114,10 @@
 
 #namespace("uom")
 #include("uom/uom.sql")
+#end
+
+#namespace("inventory")
+#include("inventory/inventory.sql")
 #end
 
 #namespace("inventoryclass")
@@ -135,38 +132,6 @@
 #include("container/container.sql")
 #end
 
-#namespace("fitemss97class")
-#include("fitemss97class/fitemss97class.sql")
-#end
-
-#namespace("fitemss97")
-#include("fitemss97/fitemss97.sql")
-#end
-
-#namespace("fitemss97sub")
-#include("fitemss97sub/fitemss97sub.sql")
-#end
-
-#namespace("vouchrdcontrapose")
-#include("vouchrdcontrapose/vouchrdcontrapose.sql")
-#end
-
-###销售类型
-#namespace("saletype")
-#include("saletype/saletype.sql")
-#end
-
-#namespace("annualorderm")
-#include("annualorderm/annualorderm.sql")
-#end
-
-#namespace("inventory")
-#include("inventory/inventory.sql")
-#end
-
-#namespace("annualorderd")
-#include("annualorderd/annualorderd.sql")
-#end
 #namespace("vendor")
 #include("vendor/vendor.sql")
 #end
@@ -185,4 +150,76 @@
 
 #namespace("spotcheckparam")
 #include("spotcheckparam/spotcheckparam.sql")
+#end
+
+#namespace("inventoryspotcheckform")
+#include("inventoryspotcheckform/inventoryspotcheckform.sql")
+#end
+
+#namespace("spotcheckform")
+#include("spotcheckform/spotcheckform.sql")
+#end
+
+#namespace("annualorderm")
+#include("annualorderm/annualorderm.sql")
+#end
+
+#namespace("annualorderd")
+#include("annualorderd/annualorderd.sql")
+#end
+
+#namespace("customeraddr")
+#include("customeraddr/customeraddr.sql")
+#end
+
+#namespace("descflexfielddef")
+#include("descflexfielddef/descflexfielddef.sql")
+#end
+
+#namespace("fitemss97")
+#include("fitemss97/fitemss97.sql")
+#end
+
+#namespace("fitemss97class")
+#include("fitemss97class/fitemss97class.sql")
+#end
+
+#namespace("fitemss97sub")
+#include("fitemss97sub/fitemss97sub.sql")
+#end
+
+#namespace("forgeigncurrency")
+#include("forgeigncurrency/forgeigncurrency.sql")
+#end
+
+#namespace("qcform")
+#include("qcform/qcform.sql")
+#end
+
+#namespace("qcformitem")
+#include("qcformitem/qcformitem.sql")
+#end
+
+#namespace("saletype")
+#include("saletype/saletype.sql")
+#end
+
+#namespace("scheduproductplan")
+#include("scheduproductplan/scheduproductplan.sql")
+#end
+
+#namespace("vouchrdcontrapose")
+#include("vouchrdcontrapose/vouchrdcontrapose.sql")
+#end
+
+#namespace("yearproductionsummary")
+#include("yearproductionsummary/yearproductionsummary.sql")
+#end
+
+#namespace("pad")
+#include("pad/pad.sql")
+#end
+
+#namespace("bommaster")
+#include("bommaster/bommaster.sql")
 #end

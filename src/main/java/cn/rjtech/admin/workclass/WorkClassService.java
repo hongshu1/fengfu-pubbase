@@ -64,10 +64,7 @@ public class WorkClassService extends BaseService<Workclass> {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         ValidationUtils.isTrue(findWorkClassCodeInfo(workclass.getCworkclasscode()) == null, "编码重复！");
-        final String orgCode = getOrgCode();
         saveWorkClassHandle(workclass, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(), getOrgName());
-        saveWorkClassHandle(workclass, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(),
-            getOrgName());
         boolean success = workclass.save();
         return ret(success);
     }
@@ -209,8 +206,7 @@ public class WorkClassService extends BaseService<Workclass> {
     }
 
     public Page<Record> pageList(Kv kv) {
-        Page<Record> recordPage = dbTemplate("workclass.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
-        return recordPage;
+        return dbTemplate("workclass.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
     }
 
     public List<Record> list(Kv kv) {

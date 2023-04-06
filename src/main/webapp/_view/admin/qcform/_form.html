@@ -1,0 +1,97 @@
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-md-auto">
+            <h1><i class="fa fa-file-text-o"></i>基本信息</h1>
+        </div>
+        <div class="jbolt_righttop_btn_group"  id="jbolt_righttop_btn_group_#(pageId)">
+            <button onclick="save(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
+            <button onclick="dialogClose()" class="btn btn-danger btn-sm"><i class="fa fa-close"></i> 关闭</button>
+        </div>
+    </div>
+</div>
+<form onsubmit="return false;" id="QcForm_Form" action="#(action)" method="post">
+    #if(qcForm.iAutoId??)
+    <input type="hidden" name="qcForm.iAutoId" value="#(qcForm.iAutoId??)"/>
+    #end
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">检验表格名称</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入检验表格名称"
+                           data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入检验表格名称"
+                           maxlength="40" name="qcForm.cQcFormName" value="#(qcForm.cQcFormName??)"/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">表格配置:</label>
+                <div class="col-10">
+                    <div class="jbolt_page_content">
+                        #render("qcformitem/_table_split.html")
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row"
+                 data-radio
+                 data-name="qcForm.isDeleted"
+                 data-value-attr="sn"
+                 data-default="options_first"
+                 data-url="admin/dictionary/options?key=options_enable"
+                 data-label="删除状态：0. 未删除 1. 已删除"
+                 data-width="col-sm-2,col-10"
+                 data-value="#(qcForm.isDeleted??)"
+                 data-rule="radio"
+                 data-notnull="true"
+                 data-tips="请输入删除状态：0. 未删除 1. 已删除"
+                 data-inline="true"
+            >
+            </div>
+            <div class="form-group row"
+                 data-radio
+                 data-name="qcForm.isEnabled"
+                 data-value-attr="sn"
+                 data-default="options_first"
+                 data-url="admin/dictionary/options?key=options_enable"
+                 data-label="是否启用：0. 否 1. 是"
+                 data-width="col-sm-2,col-10"
+                 data-value="#(qcForm.isEnabled??)"
+                 data-rule="radio"
+                 data-notnull="true"
+                 data-tips="请输入是否启用：0. 否 1. 是"
+                 data-inline="true"
+            >
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">备注</label>
+                <div class="col-10">
+                    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                              placeholder="请输入备注" maxlength="200" name="qcForm.cMemo">#(qcForm.cMemo??)</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+#define js()
+<script>
+    /**
+     * 关闭弹窗
+     * */
+    function dialogClose() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+    }
+    // 隐藏form表单下面的按钮
+    // hideAllParentLayerDialogBtn();
+
+    // 保存
+    function save(ele) {
+        jboltTableSubmit(ele);
+    }
+
+
+
+
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="QcForm_Form")
+#end
+

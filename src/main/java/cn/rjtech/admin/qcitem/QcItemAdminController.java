@@ -2,6 +2,8 @@ package cn.rjtech.admin.qcitem;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.jfinal.aop.Inject;
 
 import cn.hutool.core.date.DateUtil;
@@ -11,6 +13,7 @@ import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelMerge;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.rjtech.admin.qcparam.QcParamService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -27,6 +30,7 @@ import com.jfinal.upload.UploadFile;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.QcItem;
+import cn.rjtech.model.momdata.QcParam;
 import cn.rjtech.util.Util;
 
 /**
@@ -43,7 +47,9 @@ import cn.rjtech.util.Util;
 public class QcItemAdminController extends BaseAdminController {
 
     @Inject
-    private QcItemService service;
+    private QcItemService  service;
+    @Inject
+    private QcParamService qcParamService;
 
     /**
      * 首页
@@ -98,6 +104,11 @@ public class QcItemAdminController extends BaseAdminController {
      * 删除
      */
     public void delete() {
+        String checkResult = checkQcItemIsUse(getLong(0));
+        if(StringUtils.isNotBlank(checkResult)){
+            renderFail(checkResult);
+            return;
+        }
         renderJson(service.deleteById(getLong(0)));
     }
 
@@ -106,7 +117,28 @@ public class QcItemAdminController extends BaseAdminController {
      */
     @Before(Tx.class)
     public void deleteByIds() {
+        String[] ids = get("ids").split(",");
+        for (String id : ids) {
+            String checkResult = checkQcItemIsUse(Long.valueOf(id));
+            if(StringUtils.isNotBlank(checkResult)){
+                renderFail(checkResult);
+                return;
+            }
+        }
         renderJson(service.deleteByIds(get("ids")));
+    }
+
+    /*
+    * 检查项目是否被引用了
+    * */
+    public String checkQcItemIsUse(Long id){
+        String msg = "";
+        QcItem qcItem = service.findById(id);
+        List<QcParam> qcParams = qcParamService.findByIqcItemId(qcItem.getIAutoId());
+        if (!qcParams.isEmpty()){
+            msg = qcItem.getCQcItemName()+ " 已经在【检验参数】页面使用了，不能删除";
+        }
+        return msg;
     }
 
     /**

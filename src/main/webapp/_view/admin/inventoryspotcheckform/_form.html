@@ -1,0 +1,58 @@
+<form onsubmit="return false;" id="inventorySpotCheckAdminForm" action="#(action)" method="post">
+  #if(inventorySpotCheckForm.iAutoId??)
+  <input type="hidden" name="inventoryspotcheckform.iAutoId" value="#(inventoryspotcheckform.iAutoId??)"/>
+  #end
+  <div class="form-group row col-7"
+       data-checkbox
+       data-rule="checkbox"
+       data-label="点检业务"
+       data-default=""
+       data-url="admin/dictionary/options?key=iType"
+       data-value-attr="sn"
+       data-text-attr="cproperty"
+       data-inline="true"
+       data-value="#(inventoryspotcheckform.itype??)"
+       data-name="itype">
+  </div>
+
+  <!--
+  data-select=""#(cspotcheckformname.ispotcheckformId??)
+  name="ispotcheckformId"
+  -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" style="right: 80px;">点检表格名称</label>
+    <div class="col-2" style="right: 85px;">
+      <select class="form-control"
+              data-autoload
+              name="ispotcheckformid"
+              data-select-type="select2"
+              data-tips="点检表格名称"
+              data-url="admin/spotcheckform/options"
+              data-text="=点检表格名称="
+              data-value=""
+              data-value-attr="iautoid"
+              data-text-attr="cspotcheckformname"
+              data-select="#(inventoryspotcheckform.ispotcheckformid??)">
+      </select>
+    </div>
+  </div>
+</form>
+
+<div class="form-group row">
+  <label class="col-sm-1 col-form-label" style="left: 20px;">适用存货</label>
+  <div class="col-11" style="left: 17px;">
+    <div class="jbolt_page_content">
+      #render("_table_split.html")
+    </div>
+  </div>
+</div>
+
+#define js()
+<script>
+  function submitThisForm() {
+    jboltTableSubmit('#jbolt_table_inventory_split_#(pageId)');
+  }
+</script>
+<!--#include("/_view/_admin/common/_formjs.html",formId="inventorySpotCheckAdminForm")-->
+#end
+

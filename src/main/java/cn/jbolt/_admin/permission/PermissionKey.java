@@ -2202,22 +2202,25 @@ public class PermissionKey {
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
 	/**
+	 * 工作日历明细
+	 */
+	public static final String WORKCALENDARM = "workcalendard";
+	/**
+	 * 实体扩展字段
+	 */
+	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
+	/**
 	 * 实体扩展字段值集
 	 */
 	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
-	/*
-	 * 实体扩展字段
-	 * */
-	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
-	/*
-	 * 分类管理
-	 * */
-	public static final String CONTAINERCLASS = "containerclass";
-	public static final String WORKCALENDARM = "workcalendarm";
-
 	/**
-	 * 往来单位-客户行事日历
+	 * 分类管理
 	 */
-	public static final String ADMIN_CUSTOMERWORKDAYS = "ADMIN_CUSTOMERWORKDAYS";
+	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 开发管理-备份记录
+	 */
+	public static final String BACKUP_LOG = "backuplog";
 
+	public static final String PAD = "pad";
 }

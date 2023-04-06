@@ -38,7 +38,6 @@ import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PersonEquipment;
 import cn.rjtech.model.momdata.Workclass;
-import cn.rjtech.model.momdata.VendorAddr;
 import cn.rjtech.util.ValidationUtils;
 import org.apache.commons.lang3.StringUtils;
 /**
@@ -74,6 +73,7 @@ public class PersonService extends BaseService<Person> {
 	 * 后台管理分页查询
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		para.set("iorgid",getOrgId());
 		Boolean isenabled = para.getBoolean("isenabled");
 		//是否启用boolean转char
 		String isenabledStr = isenabled == null ? null:(isenabled ? "1":"0");

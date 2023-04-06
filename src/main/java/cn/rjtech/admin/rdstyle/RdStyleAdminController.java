@@ -23,7 +23,7 @@ import java.util.Map;
  * @author: WYX
  * @date: 2023-03-24 09:48
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.RDSTYLE)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/rdstyle", viewPath = "/_view/admin/rdstyle")
 public class RdStyleAdminController extends BaseAdminController {

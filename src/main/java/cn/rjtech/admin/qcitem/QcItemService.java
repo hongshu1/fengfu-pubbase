@@ -65,8 +65,7 @@ public class QcItemService extends BaseService<QcItem> {
     }
 
     public Page<Record> pageList(Kv kv) {
-        Page<Record> recordPage = dbTemplate("qcitem.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
-        return recordPage;
+        return dbTemplate("qcitem.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
     }
 
     /**
@@ -95,11 +94,12 @@ public class QcItemService extends BaseService<QcItem> {
         qcItem.setCUpdatName(userName);
         qcItem.setDUpdateTime(date);
         //2、保存
-        boolean success = qcItem.save();
-        //给对象QcItem的其它栏位赋值
-//		saveWorkClassHandle();
+        boolean result = qcItem.save();
+        if (!result){
+            return fail(JBoltMsg.FAIL);
+        }
         //3、返回保存结果
-        return ret(success);
+        return ret(result);
     }
 
     /*
@@ -113,9 +113,7 @@ public class QcItemService extends BaseService<QcItem> {
      * 检验项目名称
      * */
     public List<QcItem> findQcItemName(String cqcItemName) {
-        List<QcItem> qcItemList =
-            query(selectSql().select(QcItem.CQCITEMNAME).eq(QcItem.CQCITEMNAME, cqcItemName).eq(QcItem.ISDELETED, "0"));
-        return qcItemList;
+        return query(selectSql().select(QcItem.CQCITEMNAME).eq(QcItem.CQCITEMNAME, cqcItemName).eq(QcItem.ISDELETED, "0"));
     }
 
     /**
@@ -134,8 +132,11 @@ public class QcItemService extends BaseService<QcItem> {
         ValidationUtils.isTrue(findQcItemCode(qcItem.getCQcItemCode()) == null, qcItem.getCQcItemCode() + "：项目编码重复");
         //项目名不能重复
         ValidationUtils.isTrue(findQcItemName(qcItem.getCQcItemName()).isEmpty(), qcItem.getCQcItemName() + "：项目名重复");
-        boolean success = qcItem.update();
-        return ret(success);
+        boolean result = qcItem.update();
+        if (!result){
+            return fail(JBoltMsg.FAIL);
+        }
+        return ret(result);
     }
 
     /**
