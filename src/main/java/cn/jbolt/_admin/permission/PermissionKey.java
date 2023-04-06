@@ -2219,4 +2219,10 @@ public class PermissionKey {
 	public static final String CONTAINERCLASS = "containerclass";
 
 	public static final String PAD = "pad";
+
+	/**
+	 * 质量建模-检验适用标准
+	 */
+	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
+
 }
