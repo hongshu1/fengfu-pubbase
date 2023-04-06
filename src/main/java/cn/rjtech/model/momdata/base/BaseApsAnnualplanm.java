@@ -18,6 +18,10 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
     public static final String CORGCODE = "cOrgCode";
     /**组织名称*/
     public static final String CORGNAME = "cOrgName";
+    /**客户ID*/
+    public static final String ICUSTOMERID = "iCustomerId";
+    /**年份*/
+    public static final String IYEAR = "iYear";
     /**计划单号*/
     public static final String CPLANORDERNO = "cPlanOrderNo";
     /**订单状态*/
@@ -109,6 +113,40 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	}
 
 	/**
+	 * 客户ID
+	 */
+	public M setICustomerId(java.lang.Long iCustomerId) {
+		set("iCustomerId", iCustomerId);
+		return (M)this;
+	}
+
+	/**
+	 * 客户ID
+	 */
+	@JBoltField(name="icustomerid" ,columnName="iCustomerId",type="Long", remark="客户ID", required=true, maxLength=19, fixed=0, order=5)
+	@JSONField(name = "icustomerid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getICustomerId() {
+		return getLong("iCustomerId");
+	}
+
+	/**
+	 * 年份
+	 */
+	public M setIYear(java.lang.Integer iYear) {
+		set("iYear", iYear);
+		return (M)this;
+	}
+
+	/**
+	 * 年份
+	 */
+	@JBoltField(name="iyear" ,columnName="iYear",type="Integer", remark="年份", required=true, maxLength=10, fixed=0, order=6)
+	@JSONField(name = "iyear")
+	public java.lang.Integer getIYear() {
+		return getInt("iYear");
+	}
+
+	/**
 	 * 计划单号
 	 */
 	public M setCPlanOrderNo(java.lang.String cPlanOrderNo) {
@@ -119,7 +157,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 计划单号
 	 */
-	@JBoltField(name="cplanorderno" ,columnName="cPlanOrderNo",type="String", remark="计划单号", required=true, maxLength=40, fixed=0, order=5)
+	@JBoltField(name="cplanorderno" ,columnName="cPlanOrderNo",type="String", remark="计划单号", required=true, maxLength=40, fixed=0, order=7)
 	@JSONField(name = "cplanorderno")
 	public java.lang.String getCPlanOrderNo() {
 		return getStr("cPlanOrderNo");
@@ -136,7 +174,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 订单状态
 	 */
-	@JBoltField(name="iplanorderstatus" ,columnName="iPlanOrderStatus",type="Integer", remark="订单状态", required=true, maxLength=10, fixed=0, order=6)
+	@JBoltField(name="iplanorderstatus" ,columnName="iPlanOrderStatus",type="Integer", remark="订单状态", required=true, maxLength=10, fixed=0, order=8)
 	@JSONField(name = "iplanorderstatus")
 	public java.lang.Integer getIPlanOrderStatus() {
 		return getInt("iPlanOrderStatus");
@@ -153,7 +191,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
 	 */
-	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=7)
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=9)
 	@JSONField(name = "iauditstatus")
 	public java.lang.Integer getIAuditStatus() {
 		return getInt("iAuditStatus");
@@ -170,7 +208,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 审核时间
 	 */
-	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=8)
+	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=10)
 	@JSONField(name = "daudittime")
 	public java.util.Date getDAuditTime() {
 		return getDate("dAuditTime");
@@ -187,7 +225,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 创建人ID
 	 */
-	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=9)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=11)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
@@ -204,7 +242,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=10)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=12)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
@@ -221,7 +259,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=11)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=13)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
@@ -238,7 +276,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 更新人ID
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=12)
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=false, maxLength=19, fixed=0, order=14)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
@@ -255,7 +293,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=13)
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=false, maxLength=50, fixed=0, order=15)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
@@ -272,7 +310,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=14)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=16)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
@@ -289,7 +327,7 @@ public abstract class BaseApsAnnualplanm<M extends BaseApsAnnualplanm<M>> extend
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=15)
+	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=17)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");

@@ -1,7 +1,7 @@
 #sql("getSourceYearOrderList")
 ###根据客户id集查询年度订单 并进行行转列
-SELECT a.iCustomerId,d.cCusCode,
-       e.iEquipmentModelId,f.cEquipmentModelCode,
+SELECT a.iCustomerId,d.cCusCode,d.cCusName,
+       e.iEquipmentModelId,f.cEquipmentModelCode,f.cEquipmentModelName,
        b.iInventoryId,e.cInvCode,e.cInvCode1,e.cInvName1,
        b.iYear1 AS nowyear,
        (
@@ -109,7 +109,14 @@ SELECT a.iCustomerId,d.cCusCode,
            WHERE iAnnualOrderDid = b.iautoid
              AND iyear = a.iyear + 1
              AND imonth = 3
-       ) AS nextmonth3, b.iYear2Sum AS nextMonthSum,
+       ) AS nextmonth3,
+       (
+           SELECT iQty
+           FROM Co_AnnualOrderD_Qty
+           WHERE iAnnualOrderDid = b.iautoid
+             AND iyear = a.iyear + 1
+             AND imonth = 4
+       ) AS nextmonth4,
        'PP' AS planTypeCode
 FROM Co_AnnualOrderM AS a
          LEFT JOIN Co_AnnualOrderD AS b ON a.iAutoId = b.iAnnualOrderMid
@@ -123,11 +130,154 @@ WHERE a.isDeleted = '0'
 #sql("getInvInfoList")
 ###查询物料集信息
 SELECT a.iAutoId,a.cInvCode,
-       b.cProdCalendarTypeSn
+       b.cProdCalendarTypeSn,c.iMinInStockDays,c.iMaxInStockDays
 FROM Bd_Inventory AS a
          LEFT JOIN Bd_InventoryMfgInfo AS b ON b.iInventoryId = a.iAutoId
+         LEFT JOIN Bd_InventoryPlan AS c ON c.iInventoryId = a.iAutoId
 WHERE a.iAutoId IN (#(invids))
 #end
+
+#sql("getCusWorkMonthNumList")
+###根据客户id集查询客户年度每月工作天数
+SELECT iCustomerId,iYear,
+       iMonth1Days AS month1,iMonth2Days AS month2,iMonth3Days AS month3,
+       iMonth4Days AS month4,iMonth5Days AS month5,iMonth6Days AS month6,
+       iMonth7Days AS month7,iMonth8Days AS month8,iMonth9Days AS month9,
+       iMonth10Days AS month10,iMonth11Days AS month11,iMonth12Days AS month12
+FROM Bd_CustomerWorkDays
+WHERE iCustomerId IN (#(customerids))
+  AND CONVERT(VARCHAR(4),iYear,120) >= #para(startyear)
+  AND CONVERT(VARCHAR(4),iYear,120) <= #para(endyear)
+#end
+
+#sql("getApsYearPlanQtyList")
+###根据条件查询客户年度生产计划排程明细
+SELECT a.iCustomerId,d.cCusCode,d.cCusName,
+       b.iEquipmentModelId,f.cEquipmentModelCode,f.cEquipmentModelName,
+       b.iInventoryId,e.cInvCode,e.cInvCode1,e.cInvName1,
+       planTypeCode = CASE WHEN c.iType = 1 THEN 'PP'
+                           WHEN c.iType = 2 THEN 'CP'
+                           WHEN c.iType = 3 THEN 'ZK'
+                           ELSE '' END,
+       c.iYear,c.iMonth,c.iQty,
+       b.iYear11Qty,b.iYear12Qty,b.iYear13Qty,b.iYear21Qty,b.iYear22Qty,b.iYear23Qty,
+       c.iAnnualPlanDid
+FROM Aps_AnnualPlanM AS a
+         LEFT JOIN Aps_AnnualPlanD AS b ON a.iAutoId = b.iAnnualPlanMid
+         LEFT JOIN Aps_AnnualPlanD_Qty AS c ON b.iAutoId = c.iAnnualPlanDid
+         LEFT JOIN Bd_Customer AS d ON a.iCustomerId = d.iAutoId
+         LEFT JOIN Bd_Inventory AS e ON b.iInventoryId = e.iAutoId
+         LEFT JOIN Bd_EquipmentModel AS f ON b.iEquipmentModelId = f.iAutoId
+WHERE a.isDeleted = '0'
+  AND CONVERT(VARCHAR(4),c.iYear,120) >= #para(startyear)
+  AND CONVERT(VARCHAR(4),c.iYear,120) <= #para(endyear)
+    #if(cplanorderno)
+        AND a.cPlanOrderNo = #para(cplanorderno)
+    #end
+    #if(icustomerid)
+        AND a.iCustomerId = #para(icustomerid)
+    #end
+    #if(cinvcode)
+        AND e.cInvCode LIKE CONCAT('%', #para(cinvcode), '%')
+    #end
+    #if(cinvcode1)
+        AND e.cInvCode1 LIKE CONCAT('%', #para(cinvcode1), '%')
+    #end
+    #if(cinvname1)
+        AND e.cInvName1 LIKE CONCAT('%', #para(cinvname1), '%')
+    #end
+    #if(iequipmentmodelid)
+        AND b.iEquipmentModelId = #para(iequipmentmodelid)
+    #end
+ORDER BY f.cEquipmentModelCode,e.cInvCode,c.iType,c.iYear,c.iMonth
+#end
+
+#sql("getApsYearPlanMasterPage")
+SELECT a.iAutoId,a.iCustomerId,d.cCusCode,d.cCusName,a.iYear,a.cPlanOrderNo,
+       a.iPlanOrderStatus,a.iAuditStatus,a.cCreateName,a.dCreateTime
+FROM Aps_AnnualPlanM AS a
+         LEFT JOIN Bd_Customer AS d ON a.iCustomerId = d.iAutoId
+WHERE a.isDeleted = '0'
+    #if(cplanorderno)
+        AND a.cPlanOrderNo LIKE CONCAT('%', #para(cplanorderno), '%')
+    #end
+    #if(icustomerid)
+        AND a.iCustomerId = #para(icustomerid)
+    #end
+    #if(iplanorderstatus)
+        AND a.iPlanOrderStatus = #para(iplanorderstatus)
+    #end
+    #if(ccreatename)
+        AND a.cCreateName LIKE CONCAT('%', #para(ccreatename), '%')
+    #end
+    #if(startcreatetime)
+        AND CONVERT(VARCHAR(10),a.dCreateTime,120) >= #para(startcreatetime)
+    #end
+    #if(endcreatetime)
+        AND CONVERT(VARCHAR(10),a.dCreateTime,120) <= #para(endcreatetime)
+    #end
+ORDER BY a.cPlanOrderNo DESC
+#end
+
+
+
+
+
+
+
+#sql("getApsYearPlanSumPage")
+###年度生产计划汇总
+SELECT d.iWorkRegionMid,e.cWorkCode,e.cWorkName,
+       a.iInventoryId,c.cInvCode,c.cInvCode1,c.cInvName1,
+       planTypeCode = CASE WHEN b.iType = 1 THEN 'PP'
+                           WHEN b.iType = 2 THEN 'CP'
+                           WHEN b.iType = 3 THEN 'ZK'
+                           ELSE '' END,
+       b.iYear,b.iMonth,SUM(b.iQty) AS iQty,
+       SUM(a.iYear12Qty) AS iYear12Qty,
+       SUM(a.iYear22Qty) AS iYear22Qty
+FROM Aps_AnnualPlanD AS a
+         LEFT JOIN Aps_AnnualPlanD_Qty AS b ON a.iAutoId = b.iAnnualPlanDid
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+         LEFT JOIN Bd_InventoryWorkRegion AS d ON a.iAutoId = d.iInventoryId AND d.isDefault = '1' AND d.isDeleted = '0'
+         LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId
+WHERE b.iType = 2
+  AND CONVERT(VARCHAR(4),b.iYear,120) >= #para(startyear)
+  AND CONVERT(VARCHAR(4),b.iYear,120) <= #para(endyear)
+    #if(cworkname)
+        AND e.cWorkName LIKE CONCAT('%', #para(cworkname), '%')
+    #end
+    #if(cinvcode)
+        AND c.cInvCode LIKE CONCAT('%', #para(cinvcode), '%')
+    #end
+    #if(cinvcode1)
+        AND c.cInvCode1 LIKE CONCAT('%', #para(cinvcode1), '%')
+    #end
+    #if(cinvname1)
+        AND c.cInvName1 LIKE CONCAT('%', #para(cinvname1), '%')
+    #end
+GROUP BY d.iWorkRegionMid,e.cWorkCode,e.cWorkName,a.iInventoryId,c.cInvCode,c.cInvCode1,c.cInvName1,b.iType,b.iYear,b.iMonth
+ORDER BY e.cWorkCode,c.cInvCode,b.iType,b.iYear,b.iMonth
+#end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #sql("getCalendarMonthNumList")
 ###查询年度每月的工作天数
@@ -163,18 +313,7 @@ ORDER BY
     CONVERT(VARCHAR(4),dTakeDate,120)
 #end
 
-#sql("getCusWorkMonthNumList")
-###根据客户id集查询客户年度每月工作天数
-SELECT iCustomerId,iYear,
-       iMonth1Days AS month1,iMonth2Days AS month2,iMonth3Days AS month3,
-       iMonth4Days AS month4,iMonth5Days AS month5,iMonth6Days AS month6,
-       iMonth7Days AS month7,iMonth8Days AS month8,iMonth9Days AS month9,
-       iMonth10Days AS month10,iMonth11Days AS month11,iMonth12Days AS month12
-FROM Bd_CustomerWorkDays
-WHERE iCustomerId IN (#(customerids))
-  AND CONVERT(VARCHAR(4),iYear,120) >= #para(startyear)
-  AND CONVERT(VARCHAR(4),iYear,120) <= #para(endyear)
-#end
+
 
 
 
