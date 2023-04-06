@@ -1850,6 +1850,18 @@ public class PermissionKey {
 	 */
 	public static final String BOMMASTER = "bommaster";
 	/**
+	 * 消息模板
+	 */
+	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
+	/**
+	 * 备份记录
+	 */
+	public static final String BACKUP_LOG = "backup_log";
+	/**
+	 * 备份设置
+	 */
+	public static final String BACKUP_CONFIG = "backup_config";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -2205,10 +2217,12 @@ public class PermissionKey {
 	 * 分类管理
 	 */
 	public static final String CONTAINERCLASS = "containerclass";
-	/**
-	 * 开发管理-备份记录
-	 */
-	public static final String BACKUP_LOG = "backuplog";
 
 	public static final String PAD = "pad";
+
+	/**
+	 * 质量建模-检验适用标准
+	 */
+	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
+
 }

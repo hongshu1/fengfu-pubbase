@@ -1,6 +1,8 @@
 package cn.rjtech.admin.backuplog;
 
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.backupconfig.BackupConfigService;
+import cn.rjtech.model.momdata.BackupConfig;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -8,9 +10,13 @@ import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.BackupLog;
+
+import java.io.IOException;
+
 /**
  * 开发管理-备份记录
  * @ClassName: BackupLogAdminController
@@ -26,17 +32,27 @@ public class BackupLogAdminController extends BaseAdminController {
 	@Inject
 	private BackupLogService service;
 
+	@Inject
+	private BackupConfigService backupConfigService;
+
    /**
 	* 首页
 	*/
 	public void index() {
+		//查询备份设置
+		BackupConfig backupConfig = backupConfigService.findFirstConfig();
+		if (backupConfig==null) {
+			backupConfig = new BackupConfig();
+			backupConfig.setIsAutoBackupEnabled(true);
+		}
+		set("backupConfig",backupConfig);
 		render("index.html");
 	}
    /**
 	* 数据源
 	*/
-	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
+	public void datas(String cName) {
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), cName));
 	}
 
    /**
@@ -88,4 +104,21 @@ public class BackupLogAdminController extends BaseAdminController {
 	}
 
 
+
+
+	/**
+	 * 文件下载
+	 */
+	public void copyFile(){
+		BackupLog backupLog = service.findById(getLong(0));
+		if(backupLog == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		try {
+			renderJson(service.copyFile(backupLog));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

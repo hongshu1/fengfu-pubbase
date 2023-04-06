@@ -1,6 +1,7 @@
 package cn.rjtech.admin.backuplog;
 
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.base.exception.ParameterException;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -10,7 +11,10 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.BackupLog;
+import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.Date;
 
 /**
@@ -35,14 +39,14 @@ public class BackupLogService extends BaseService<BackupLog> {
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @param keywords   关键词
+	 * @param   cName 查询参数
 	 * @return
 	 */
-	public Page<BackupLog> getAdminDatas(int pageNumber, int pageSize, String keywords) {
+	public Page<BackupLog> getAdminDatas(int pageNumber, int pageSize, String cName) {
 	    //创建sql对象
 	    Sql sql = selectSql().page(pageNumber,pageSize);
         //关键词模糊查询
-        sql.likeMulti(keywords,"cName", "cUpdateName");
+        sql.likeMulti(cName,"cName");
         //排序
         sql.desc("iAutoId");
 		return paginate(sql);
@@ -120,4 +124,55 @@ public class BackupLogService extends BaseService<BackupLog> {
 		return null;
 	}
 
+    public Ret copyFile(BackupLog backupLog) throws IOException {
+		String cPath = backupLog.getCPath();
+
+		if (StringUtils.isBlank(cPath)) {
+				return fail("请输入文件路径");
+			}
+		File dest = new File("F:\\demo\\fengfu");//目的地
+		//判断是否为目录，不存在则不作操作
+		//判断目的地目录是否存在，不存在就创建目录
+		if(!dest.exists()) {
+			boolean mkdir = dest.mkdirs();
+		}
+
+		String printFilePath = "F:\\demo\\fengfu-pubbase\\src\\main\\resources"+cPath+ "/" + backupLog.getCName();
+
+		File file = new File(printFilePath);
+		if (!file.exists()) {
+			return fail("服务器上文件不存在!");
+		}
+		//获取要复制的文件
+		FileInputStream fileInputStream = new FileInputStream(file);
+
+		/*//要生成的新文件（指定路径如果没有则创建）
+		File newfile=new File(cPath);
+		//获取父目录
+		File fileParent = newfile.getParentFile();
+		//判断是否存在
+		if (!fileParent.exists()) {
+			// 创建父目录文件夹
+			fileParent.mkdirs();
+		}*/
+
+		OutputStream os = new FileOutputStream("F:\\demo\\fengfu"+File.separator + backupLog.getCName());
+		byte[] data = new byte[1024];//缓存容器
+		int len = -1;//接收长度
+		while((len=fileInputStream.read(data))!=-1) {
+			os.write(data, 0, len);
+		}
+
+		os.close();
+		fileInputStream.close();
+		/*	// 设置响应头，控制浏览器下载该文件
+			response.reset();
+			response.setHeader("content-disposition", "attachment;filename=" + new String((fileName + ".grf").getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+			response.setContentType("multipart/form-data");
+
+			IoUtil.copy(IoUtil.toStream(file), response.getOutputStream());
+
+			LOG.info("成功...");*/
+			return SUCCESS;
+	}
 }

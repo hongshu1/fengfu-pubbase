@@ -202,9 +202,10 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                 formOperation.setIOperationId(operation.getIOperationId());
                 formOperationList.add(formOperation);
             }
+            //保存在【Bd_InventorySpotCheckForm】表
             batchSave(checkFormList);
+            //保存在【Bd_InventorySpotCheckForm_Operation】表
             checkformOperationService.batchSave(formOperationList);
-            System.out.println("ints的次数======>");
         }
         //2、更新
         if (jBoltTable.updateIsNotBlank()) {
@@ -229,9 +230,10 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                 }
                 formOperationList.addAll(operations);
             }
+            //更新【Bd_InventorySpotCheckForm】表
             batchUpdate(updateModelList);
+            //更新【Bd_InventorySpotCheckForm_Operation】表
             checkformOperationService.batchUpdate(formOperationList);
-
         }
         return SUCCESS;
     }
@@ -241,7 +243,7 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
     * */
     public List<InventoryspotcheckformOperation> getcheckformOperation(JBoltTable jBoltTable ){
         if (jBoltTable.saveIsNotBlank()){
-            return  jBoltTable.getSaveModelList(InventoryspotcheckformOperation.class);
+            return jBoltTable.getSaveModelList(InventoryspotcheckformOperation.class);
         }
         return jBoltTable.getUpdateModelList(InventoryspotcheckformOperation.class);
     }
