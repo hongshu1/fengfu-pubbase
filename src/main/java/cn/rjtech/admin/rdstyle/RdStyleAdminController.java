@@ -23,7 +23,7 @@ import java.util.Map;
  * @author: WYX
  * @date: 2023-03-24 09:48
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.RDSTYLE)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/rdstyle", viewPath = "/_view/admin/rdstyle")
 public class RdStyleAdminController extends BaseAdminController {
@@ -144,6 +144,20 @@ public class RdStyleAdminController extends BaseAdminController {
 		rdStyle.setCRdCode(crdcode);
 		rdStyle.setCRdName(crdname);
 		renderJson(service.update(rdStyle));
+	}
+
+	/**
+	 * 销售类型_新增_出库
+	 */
+	public void getSaleType() {
+		renderJsonData(service.getSaleType(true, true));
+	}
+
+	/**
+	 * 采购类型_新增_入库
+	 */
+	public void getPurchaseType() {
+		renderJsonData(service.getPurchaseType(true, true));
 	}
 
 }

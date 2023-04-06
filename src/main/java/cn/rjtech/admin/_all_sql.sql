@@ -157,6 +157,11 @@
 #include("saletype/saletype.sql")
 #end
 
+###采购类型
+#namespace("purchasetype")
+#include("purchasetype/purchasetype.sql")
+#end
+
 #namespace("annualorderm")
 #include("annualorderm/annualorderm.sql")
 #end

@@ -1,0 +1,109 @@
+<form onsubmit="return false;" id="purchaseTypeForm" action="#(action)" method="post">
+<input type="hidden" name="purchaseType.iautoid" value="#(purchaseType.iautoid??)" />
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">采购类型编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入采购类型编码" maxlength="2" name="purchaseType.cptcode" value="#(purchaseType.cptcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">采购类型名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入采购类型名称" maxlength="20" name="purchaseType.cptname" value="#(purchaseType.cptname??)"/>
+		</div>
+	</div>
+
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">入库类别</label>	<!--入库类别ID-->
+		<div class="form-group row">
+			<select  class="form-control-two"
+					 data-autoload
+					 data-url="admin/rdstyle/getPurchaseType"
+					 data-select-type="select"
+					 name="purchaseType.irdstyleid"
+					 data-rule="select"
+					 data-notnull="true"
+					 data-refresh="true"
+					 data-tips="请选择入库类别"
+					 data-text="=请选择入库类别="
+					 data-text-attr="crdname"
+					 data-value=""
+					 data-value-attr="iautoid"
+					 data-select="#(purchaseType.irdstyleid??)"
+			></select>
+		</div>
+	</div>
+
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(purchaseType.bdefault??)"
+    	data-name="purchaseType.bdefault"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否默认值</label>	<!--是否默认值：0. 否 1. 是-->
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bdefault_true" type="radio" name="purchaseType.bdefault" value="1"/>
+					<label for="r_bdefault_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bdefault_false" type="radio" name="purchaseType.bdefault" value="0"/>
+					<label for="r_bdefault_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(purchaseType.bpfdefault??)"
+    	data-name="purchaseType.bpfdefault"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否委外默认值</label>	<!--是否委外默认值：0. 否 1 是-->
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bpfdefault_true" type="radio" name="purchaseType.bpfdefault" value="1"/>
+					<label for="r_bpfdefault_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bpfdefault_false" type="radio" name="purchaseType.bpfdefault" value="0"/>
+					<label for="r_bpfdefault_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(purchaseType.bptmps_mrp??)"
+    	data-name="purchaseType.bptmpsmrp"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >参与需求运算</label>	<!--是否列入MPS/MRP计划: 0. 否 1. 是-->
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bptmpsmrp_true" type="radio" name="purchaseType.bptmpsmrp" value="1"/>
+					<label for="r_bptmpsmrp_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_bptmpsmrp_false" type="radio" name="purchaseType.bptmpsmrp" value="0"/>
+					<label for="r_bptmpsmrp_false">否</label>
+				</div>
+			</div>
+		</div>
+
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="purchaseTypeForm")
+#end
+
