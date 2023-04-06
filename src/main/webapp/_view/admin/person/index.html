@@ -3,7 +3,7 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" >
 <div class="jbolt_page_title">
-	<div class="row">
+	<!-- <div class="row">
 		<div class="col-md-auto">
 			<h1>人员档案</h1>
 		</div>
@@ -68,8 +68,8 @@
 	                ></select>
 	            </div>
 	        </div>			
-				<!-- <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-				<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button> -->
+				<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 		</div>
 		<div class="row">
 			<div class="col-auto">
@@ -131,7 +131,54 @@
 			</div>
 		</div>
 	</form>
-	</div>
+	</div> -->
+    <div class="row">
+      <div class="col">
+        <form class="form-inline" id="personForm_#(pageId)" onsubmit="return false;" method="post">
+          <input type="text" class="form-control" data-with-clearbtn="true" name="cpsnnum" value="" placeholder="=人员编码="/>
+          <input type="text" class="form-control" data-with-clearbtn="true" name="cpsnname" value="" placeholder="=人员姓名="/>
+          <input type="text" class="form-control" data-with-clearbtn="true" name="cpsnmobilephone" value="" placeholder="=手机号="/>
+          <input type="text" class="form-control" data-with-clearbtn="true" name="jobnumber" value="" placeholder="=工号="/>
+          <input type="text" class="form-control" data-with-clearbtn="true" name="cecardno" value="" placeholder="=电子卡号="/>
+          <select class="form-control"
+                  name="isenabled"
+                  data-autoload
+                  data-url="admin/dictionary/options?key=options_enable"
+                  data-select-type="select"
+                  data-text="=是否启用="
+                  data-value=""
+                  data-with-clearbtn="true"
+                  data-value-attr="sn"
+          ></select>         
+		<select class="form-control" name="cdeptnum"
+			data-autoload
+			data-with-clearbtn="true"
+			data-select-type="select2"
+			data-url="admin/dept/enableOptions"
+			data-text="=所属部门="
+			data-value-attr="sn"
+			data-text-attr="name"
+			data-value=""
+			>
+		</select>   
+           <select class="form-control"
+                   name="remploystate"
+                   data-autoload
+                   data-url="admin/dictionary/options?key=job_type"
+                   data-select-type="select"
+                   data-text="=在职状态="
+                   data-value=""
+                   data-with-clearbtn="true"
+                   data-value-attr="sn"
+                   data-text-attr="name"
+           ></select>			       
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+        </form>
+      </div>
+      <div class="col-md-auto">
+      </div>
+    </div>	
 </div>
 <div class="jbolt_page_content">
 <!-- JBoltTable的数据模板定义-->
