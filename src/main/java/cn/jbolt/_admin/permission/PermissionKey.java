@@ -2217,10 +2217,6 @@ public class PermissionKey {
 	 * 分类管理
 	 */
 	public static final String CONTAINERCLASS = "containerclass";
-	/**
-	 * 开发管理-备份记录
-	 */
-	public static final String BACKUP_LOG = "backuplog";
 
 	public static final String PAD = "pad";
 }
