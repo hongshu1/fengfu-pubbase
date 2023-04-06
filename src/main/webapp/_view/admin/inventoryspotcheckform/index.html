@@ -1,0 +1,131 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col">
+        <form class="form-inline" id="inventorySpotCheckAdminForm_#(pageId)" style="left: 60px;text-align: left">
+          <input type="text" autocomplete="off" class="form-control" placeholder="=标准表格名称=" name="cspotcheckformname" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
+          <select class="form-control" name="itype"
+                  data-autoload
+                  data-url="admin/dictionary/options?key=iType"
+                  data-select-type="select"
+                  data-text="=点检业务"
+                  data-value=""
+                  data-value-attr="sn">
+          </select>
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- 定义JBoltTable使用的数据渲染模板 -->
+    <textarea class="jb_tpl_box" id="inventorySpotCheckRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+  <td>${pageNumber,pageSize,index | rownum}</td>
+  <td>
+    <a tooltip title="编辑" href="admin/inventoryspotcheckform/edit/${data.iautoid}" data-scroll="yes"
+       data-handler="refreshJBoltTable" data-title="编辑质量建模-点检适用标准" data-area="1200,1000" class="jbolt_table_editbtn">编辑</a>
+    <a tooltip title="删除" href="admin/inventoryspotcheckform/delete/${data.iautoid}" data-handler="refreshJBoltTable"
+       class="jbolt_table_delbtn">删除</a>
+  </td>
+  <td>${data.itypename}</td>
+  <td>${data.cspotcheckformname}</td>
+  <td>${data.cinvaddcode}</td>
+  <td>${data.cinvcode1}</td>
+  <td>${data.cinvname1}</td>
+  <td>${data.coperationname}</td>
+  <td>${data.ccreatename}</td>
+  <td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+    <div class="jbolt_table_toolbar" id="inventorySpotCheckForm_toolbar_#(pageId)">
+      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <!--id="toolbar_addBtn_#(pageId)"-->
+        <button data-dialogbtn data-area="90%,1000" data-handler="jboltTablePageToFirst" data-openpage="dialog"
+                data-title="新增质量建模-点检适用标准" data-url="admin/inventoryspotcheckform/add" class="btn btn-outline-primary"><i
+            class="fa fa-plus"></i> 新增
+        </button>
+        <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                id="toolbar_deleteBtn_#(pageId)" data-url="admin/inventoryspotcheckform/deleteByIds?ids=" data-confirm="确定删除选中数据？"
+                class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
+        </button>
+        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+      </div>
+      <div class="btn-group dropdown">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+        </button>
+        <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+          <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                  data-url="admin/inventoryspotcheckform/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
+          </button>
+          <button class="btn dropdown-item" data-downloadbtn data-url="admin/inventoryspotcheckform/exportExcelAll"
+                  data-form="spotCheckParamFrom_#(pageId)"><i class="fa fa-download"></i> 导出全部
+          </button>
+        </div>
+      </div>
+      <div class="btn-group dropdown">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+        </button>
+        <div class="dropdown-menu" aria-labelledby="importMenuButton">
+          <a data-downloadbtn href="/admin/inventoryspotcheckform/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+          <div class="j_upload_file_box"
+               data-name="file"
+               data-btn-class="btn dropdown-item"
+               data-placeholder="上传导入"
+               data-confirm="确认导入数据？"
+               data-accept="excel"
+               data-maxsize="20480"
+               data-handler="uploadFile"
+               data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+               data-url="/admin/inventoryspotcheckform/importExcel">
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <table class="jbolt_table jbolt_main_table  table-center "
+           data-jbolttable
+           data-width="fill"
+           data-height="fill"
+           data-ajax="true"
+           data-column-resize="true"
+           data-column-prepend="1:checkbox:true"
+           data-conditions-form="inventorySpotCheckAdminForm_#(pageId)"
+           data-url="admin/inventoryspotcheckform/datas"
+           data-rowtpl="inventorySpotCheckRowtpl_#(pageId)"
+           data-copy-to-excel="false"
+           data-page="inventorySpotCheckFormPage_#(pageId)"
+           data-toolbar="inventorySpotCheckForm_toolbar_#(pageId)">
+      <thead>
+      <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-width="120">操作</th>
+        <th data-width="130" data-column="itypename">点检业务</th>
+        <th data-width="130" data-column="cspotcheckformname">点检表格名称</th>
+        <th data-width="120" data-column="cinvaddcode">存货编码</th>
+        <th data-width="120" data-column="cinvcode1">客户部番</th>
+        <th data-width="120" data-column="cinvname1">部品名称</th>
+        <th data-width="100" data-column="coperationname">工序名称</th>
+        <th data-width="100" data-column="ccreatename">创建人名称</th>
+        <th data-min-width="60" data-column="dcreatetime">创建时间</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

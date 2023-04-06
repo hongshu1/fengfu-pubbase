@@ -11,5 +11,47 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Bd_BomCompare" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class BomCompare extends BaseBomCompare<BomCompare> {
+   
+    /**编码栏 1-6*/
+    public static final String CODE1 = "code1";
+    public static final String CODE2 = "code2";
+    public static final String CODE3 = "code3";
+    public static final String CODE4 = "code4";
+    public static final String CODE5 = "code5";
+    public static final String CODE6 = "code6";
+    
+    /**
+     * 部品id
+     */
+    public static final String INVITEMID = "invItemId";
+    /**
+     * 部品数量
+     */
+    public static final String INVQTY = "invQty";
+    
+    /**
+     * 分条料
+     */
+    public static final String SLICINGINVITEMID = "slicingInvItemId";
+    
+    public static final String SLICINGQTY = "slicingQty";
+    
+    public static final String SLICINGWEIGHT = "slicingWeight";
+    
+    /**
+     * 卷料
+     */
+    public static final String ORIGINALITEMID = "originalItemId";
+    public static final String ORIGINALQTY = "originalQty";
+    public static final String ORIGINALWEIGHT = "originalWeight";
+    
+    /**
+     * 片料
+     */
+    public static final String BLANKINGITEMID = "blankingItemId";
+    
+    public static final String BLANKINGQTY = "blankingQty";
+    
+    public static final String BLANKINGWEIGHT = "blankingWeight";
 }
 

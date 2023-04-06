@@ -377,4 +377,8 @@ public class InventoryAdminController extends BaseAdminController {
 		renderJsonData(imgList, errormsg.toString());
 	}
 
+	public void inventorySpotCheckList() {
+		renderJsonData(service.inventorySpotCheckList(getKv()));
+	}
+
 }

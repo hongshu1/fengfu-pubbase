@@ -87,11 +87,13 @@ public class OperationService extends BaseService<Operation> {
 		//是否存在编码
 		Operation operation1 = findFirst(Okv.by("cOperationCode", operation.getCoperationcode()).set("isDeleted", 0), "iAutoid", "DESC");
 		ValidationUtils.isTrue(operation1==null, "已存在编码："+operation.getCoperationcode());
-
+		//组数据
 		saveOperationHandle(operation, JBoltUserKit.getUserId(),new Date(),JBoltUserKit.getUserName(), getOrgId(),getOrgCode(), getOrgName());
-		//if(existsName(operation.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		operation.save();
-		return ret(true);
+		boolean save = operation.save();
+		if (!save){
+			return fail(JBoltMsg.FAIL);
+		}
+		return ret(save);
 	}
 
 	/**
@@ -113,6 +115,9 @@ public class OperationService extends BaseService<Operation> {
 		operation.setDupdatetime(new Date());
 		operation.setCupdatename(JBoltUserKit.getUserName());
 		boolean result = operation.update();
+		if (!result){
+			return fail(JBoltMsg.FAIL);
+		}
 		return ret(result);
 	}
 
@@ -225,10 +230,6 @@ public class OperationService extends BaseService<Operation> {
 		return null;
 	}
 
-	/*public List<Record> badnessOptions() {
-		return dbTemplate("operation.badnessOptions").find();
-	}*/
-
 	public void saveOperationHandle(Operation operation, Long userId, Date date, String username,Long orgId,String orgCode,String orgName){
 		operation.setIcreateby(userId);
 		operation.setDcreatetime(date);
@@ -248,15 +249,6 @@ public class OperationService extends BaseService<Operation> {
 	public List<Record> list(Kv kv) {
 		return dbTemplate("operation.list", kv).find();
 	}
-
-	/*public String findBadnessClassIds(Long iautoid){
-		List<Operationbadness> list = operationbadnessService.find(operationbadnessService.selectSql().eq("iOperationId", iautoid));
-		StringJoiner sj=new StringJoiner(",");
-		for(Operationbadness ob:list){
-			sj.add(String.valueOf(ob.getIbadnessclassid()));
-		}
-		return sj.toString();
-	}*/
 
 	public Ret importExcelData(File file) {
 		StringBuilder errorMsg=new StringBuilder();
@@ -311,13 +303,11 @@ public class OperationService extends BaseService<Operation> {
 			}
 			ValidationUtils.isTrue(set.size()==models.size(), JBoltMsg.DATA_IMPORT_FAIL+"存在重复编码数据");
 		}
-//		List<Operationbadness> operationbadnessList = savaModelHandle(models);
 		//执行批量操作
 		boolean success=tx(new IAtom() {
 			@Override
 			public boolean run() throws SQLException {
 				batchSave(models);
-//				operationbadnessService.batchSave(operationbadnessList);
 				return true;
 			}
 		});
@@ -327,30 +317,12 @@ public class OperationService extends BaseService<Operation> {
 		return SUCCESS;
 	}
 
-	/*private List<Operationbadness> savaModelHandle(List<Operation> models) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		List<Operationbadness> obs=new ArrayList<>();
-		for(Operation operation:models){
-			operation.setIautoid(JBoltSnowflakeKit.me.nextId());
-			List<String> ids = badnessclassService.getIdsByCodes(Util.getInSqlByIds(operation.getCupdatename()));
-			for(String id:ids){
-				Operationbadness ob = new Operationbadness();
-				ob.setIoperationid(operation.getIautoid());
-				ob.setIbadnessclassid(Long.valueOf(id));
-				ob.setIcreateby(JBoltUserKit.getUserId());
-				ob.setCcreatename(JBoltUserKit.getUserName());
-				ob.setDcreatetime(new Date());
-				obs.add(ob);
-			}
-			operation.setCupdatename(null);
-			saveOperationHandle(operation,userId,new Date(),userName,getOrgId(),getOrgCode(), getOrgName());
-		}
-		return obs;
-	}*/
-
 	public List<Operation> getIdAndNameList(){
 		return find("SELECT iAutoId,cOperationName FROM Bd_Operation WHERE isDeleted = '0' ");
+	}
+
+	public List<Operation> getIdAndNameListToInventoryCheckForm(){
+		return find("SELECT iautoid,coperationcode,coperationname,iworkclassid FROM Bd_Operation WHERE isDeleted = '0' ");
 	}
 
 	/*
@@ -400,6 +372,10 @@ public class OperationService extends BaseService<Operation> {
 					)
 					.setMerges(JBoltExcelMerge.create("A", "D", 1, 1, "工序"))
 			);
+	}
+
+	public List<Operation> findByIworkclassId(Long iworkclassId){
+		return find("select * from Bd_Operation where iWorkClassId=?",iworkclassId);
 	}
 
 }
