@@ -2226,8 +2226,4 @@ public class PermissionKey {
 	 */
 	public static final String ADMIN_CUSTOMERWORKDAYS = "ADMIN_CUSTOMERWORKDAYS";
 
-	/**
-	 * 质量建模-检验适用标准
-	 */
-	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
 }

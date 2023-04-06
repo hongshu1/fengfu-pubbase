@@ -199,3 +199,7 @@
 #namespace("scheduproductplan")
 #include("scheduproductplan/scheduproductplan.sql")
 #end
+
+#namespace("inventoryqcform")
+#include("inventoryqcform/inventoryqcform.sql")
+#end
