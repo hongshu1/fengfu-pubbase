@@ -1854,9 +1854,13 @@ public class PermissionKey {
 	 */
 	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
 	/**
-	 * 备份设置
+	 * 备份记录
 	 */
 	public static final String BACKUP_LOG = "backup_log";
+	/**
+	 * 备份设置
+	 */
+	public static final String BACKUP_CONFIG = "backup_config";
 	/**
 	 * 新增
 	 */
