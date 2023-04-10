@@ -214,7 +214,12 @@
             #if(multi)
             multiple="multiple"
             #end
+            #if(type != "select2")
             name="#(modelName).#(col.attrName)"
+            #end
+            #if(type == "select2")
+            data-hidden-input="#(modelName)_#(col.attrName)_hidden"
+            #end
             data-refresh="true"
             #if(col.dataRule || col.isRequired)
             data-rule="#(col.dataRule?? (col.isRequired?'select':''))"
@@ -235,6 +240,9 @@
             #if(codeGenServiceMode??)data-select="#[[#]]#(#(modelName).#(col.attrName)??)"#end
             #if(!codeGenServiceMode??)data-select="#(col.formDefaultValue??)"#end
     ></select>
+    #if(type == "select2")
+    <input type="hidden" name="#(modelName).#(col.attrName)"  id="#(modelName)_#(col.attrName)_hidden" name="" value="#[[#]]#(#(modelName).#(col.attrName)??)"/>
+    #end
 #if(isFormGroupRow)
 </div>
 #end
