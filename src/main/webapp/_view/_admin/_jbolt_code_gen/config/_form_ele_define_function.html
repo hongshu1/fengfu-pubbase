@@ -218,7 +218,7 @@
             name="#(modelName).#(col.attrName)"
             #end
             #if(type == "select2")
-            data-hidden-input="#(modelName)_#(col.attrName)_hidden"
+            data-sync-ele="##(modelName)_#(col.attrName)_hidden"
             #end
             data-refresh="true"
             #if(col.dataRule || col.isRequired)
@@ -241,7 +241,7 @@
             #if(!codeGenServiceMode??)data-select="#(col.formDefaultValue??)"#end
     ></select>
     #if(type == "select2")
-    <input type="hidden" name="#(modelName).#(col.attrName)"  id="#(modelName)_#(col.attrName)_hidden" name="" value="#[[#]]#(#(modelName).#(col.attrName)??)"/>
+    <input type="hidden" name="#(modelName).#(col.attrName)" data-sync-attr="#(col.attrName)"  id="#(modelName)_#(col.attrName)_hidden" value="#[[#]]#(#(modelName).#(col.attrName)??)"/>
     #end
 #if(isFormGroupRow)
 </div>
