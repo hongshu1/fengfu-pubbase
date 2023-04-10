@@ -1,6 +1,10 @@
 package cn.rjtech.admin.backupconfig;
 
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.admin.backuplog.BackupLogService;
+import cn.rjtech.model.momdata.BackupLog;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -10,7 +14,9 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.BackupConfig;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.*;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +38,8 @@ public class BackupConfigService extends BaseService<BackupConfig> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
+	@Inject
+	private BackupLogService backupLogService;
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
@@ -83,6 +91,11 @@ public class BackupConfigService extends BaseService<BackupConfig> {
 	 * @return
 	 */
 	public Ret update(BackupConfig backupConfig) {
+		String cPath = backupConfig.getCPath();
+		if (null != cPath) {
+			File file = new File(cPath);
+			 ValidationUtils.isTrue(file.isAbsolute(),"请输入绝对路径！");
+		}
 		//数据库没数据  初始化  新增操作
 		List<BackupConfig> configs = findAll();
 		if (configs.size() <= 0) {
@@ -151,5 +164,73 @@ public class BackupConfigService extends BaseService<BackupConfig> {
 	//时间倒序查询备份设置
 	public BackupConfig findFirstConfig() {
 		return findFirst(selectSql().orderBy("dUpdateTime", "desc"));
+	}
+
+	public void copyFileTask() {
+		try {
+			copyFile();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void copyFile() throws IOException {
+		//通过备份设置拿到备份文件保存路径
+		BackupConfig firstConfig = findFirstConfig();
+		InputStream fileInputStream = null;
+		OutputStream os = null;
+		String strFilePath =  firstConfig.getCPath() + File.separator ;
+
+
+		File dest = new File(firstConfig.getCPath());//目的地
+		//判断目的地目录是否存在，不存在就创建目录
+		if(!dest.exists()) {
+			dest.mkdirs();
+		}
+		List<BackupLog> backupLogs = backupLogService.findAll();
+		for (BackupLog backupLog : backupLogs) {
+			if (backupLog.getIType() == 2) {
+				//源文件是否存在
+				String sourceFilePath = backupLog.getCPath()+ "/" + backupLog.getCName();
+				File file = new File(sourceFilePath);
+				if (!file.exists()) {
+					throw new NullPointerException();
+				}
+				//获取要复制的文件
+				fileInputStream = new FileInputStream(file);
+
+
+
+
+				show(dest,backupLog.getCName());
+				if (dest.exists()) {
+					strFilePath += "(1)" + backupLog.getCName();
+				}
+				os = new FileOutputStream(strFilePath);
+				byte[] data = new byte[1024];//缓存容器
+				int len = -1;//接收长度
+				while((len=fileInputStream.read(data))!=-1) {
+					os.write(data, 0, len);
+				}
+				System.out.println("备份成功！");
+			}
+		}
+		System.out.println("自动备份任务执行完毕");
+		if (null != os && null != fileInputStream) {
+			os.close();
+			fileInputStream.close();
+		}
+	}
+
+	private void show(File dest,String name) {
+
+		for (File file : dest.listFiles()) {
+			if (file.isFile()) {
+				if (file.getName().contains(name)) {
+
+				}
+			}
+
+		}
 	}
 }

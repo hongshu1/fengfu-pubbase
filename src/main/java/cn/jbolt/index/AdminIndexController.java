@@ -28,8 +28,6 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltLoginLogUtil;
 import cn.jbolt.core.service.JBoltOrgService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.BoolCharEnum;
-import cn.rjtech.enums.CorperateTypeEnum;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
@@ -38,7 +36,6 @@ import com.jfinal.core.JFinal;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Record;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
@@ -162,15 +159,11 @@ public class AdminIndexController extends JBoltBaseController {
 			}
 		}
 
-        String orgCode = null;
         Long orgId = getLong("orgId");
-        if (null != orgId) {
-            Org org = orgService.findById(orgId);
-            ValidationUtils.isTrue(org.getEnable(), "该组织机构已被禁用");
+        ValidationUtils.validateId(orgId, "缺少组织参数");
+        Org org = orgService.findById(orgId);
+        ValidationUtils.isTrue(org.getEnable(), "该组织机构已被禁用");
 
-            orgCode = org.getOrgCode();
-        }
-        
 		Ret ret=userService.getUser(get("username"),get("password"));
 		User user = ret.isFail()?null:ret.getAs("data");
 		//检测用户名密码是否正确输入并得到user
@@ -210,7 +203,7 @@ public class AdminIndexController extends JBoltBaseController {
 		boolean isRemoteLogin=userService.processUserRemoteLogin(user,log);
 		userService.processUserLoginInfo(user,isRemoteLogin,log);
 		//登录后的处理
-		afterLogin(user,log, orgId, orgCode, UserTypeEnum.MOM.getValue());
+		afterLogin(user,log, orgId, org.getOrgCode(), UserTypeEnum.MOM.getValue());
 		renderJsonSuccess();
 	}
 	/**
