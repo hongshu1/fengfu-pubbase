@@ -3,143 +3,15 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" >
 <div class="jbolt_page_title">
-	<!-- <div class="row">
-		<div class="col-md-auto">
-			<h1>人员档案</h1>
-		</div>
-	</div>
-	<div class="jbolt_table_headbox">
-	<form id="personForm_#(pageId)" onsubmit="return false;" method="post">
-		<div class="row">
-			<div class="col-2">
-				<div class="input-group">
-					<div class="input-group-prepend">
-				      <span class="input-group-text">编码</span>
-				    </div>
-				   	 <input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="cpsnnum" value="" />
-				</div>
-			</div>
-			<div class="col-2">
-				<div class="input-group">
-					<div class="input-group-prepend">
-				      <span class="input-group-text">姓名</span>
-				    </div>
-				   	 <input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="cpsnname" value="" />
-				</div>
-			</div>
-			<div class="col-2">
-				<div class="input-group">
-					<div class="input-group-prepend">
-				      <span class="input-group-text">手机号</span>
-				    </div>
-				   	 <input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="cpsnmobilephone" value="" />
-				</div>
-			</div>
-			<div class="col-2">
-				<div class="input-group">
-					<div class="input-group-prepend">
-				      <span class="input-group-text">工号</span>
-				    </div>
-				   	 <input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="jobnumber" value="" />
-				</div>
-			</div>
-			<div class="col-2">
-				<div class="input-group">
-					<div class="input-group-prepend">
-				      <span class="input-group-text">电子卡号</span>
-				    </div>
-				   	 <input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="cecardno" value="" />
-				</div>
-			</div>
-	        <div class="col-2">
-				<div class="input-group">
-					<div class="input-group-prepend">
-				      <span class="input-group-text">是否启用</span>
-				    </div>
-	                <select class="form-control"
-	                        name="isenabled"
-	                        data-autoload
-	                        data-url="admin/dictionary/options?key=options_enable"
-	                        data-select-type="select"
-	                        data-text="=请选择="
-	                        data-value=""
-	                        data-with-clearbtn="true"
-	                        data-value-attr="sn"
-	                ></select>
-	            </div>
-	        </div>			
-				<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-				<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-		</div>
-		<div class="row">
-			<div class="col-auto">
-				<div class="input-group">
-					<div class="input-group-prepend">
-				      <span class="input-group-text">所属部门</span>
-				    </div>
-					<select class="form-control" name="cdeptnum"
-						data-autoload
-						data-with-clearbtn="true"
-						data-select-type="select2"
-						data-tips="请选择"
-						data-url="admin/dept/enableOptions"
-						data-text="=请选择="
-						data-value-attr="sn"
-						data-text-attr="name"
-						data-value=""
-						>
-					</select>
-				</div>			   	 
-			</div>		
-			<div class="col-auto">
-				<div class="input-group">
-					<div class="input-group-prepend">
-				      <span class="input-group-text">在职状态</span>
-				    </div>
-	                <select class="form-control"
-	                        name="remploystate"
-	                        data-autoload
-	                        data-url="admin/dictionary/options?key=job_type"
-	                        data-select-type="select"
-	                        data-text="=请选择="
-	                        data-value=""
-	                        data-with-clearbtn="true"
-	                        data-value-attr="sn"
-	                        data-text-attr="name"
-	                ></select>
-	            </div>
-	        </div>
-	        <div class="col-auto">
-				<div class="input-group d-inline-block text-nowrap">
-					<div class="input-group-prepend">
-				      <span class="input-group-text">入职时间</span>
-				    </div>				
-					<div class="input-group-prepend">
-					<input type="text" data-date class="form-control" placeholder="开始日期"   maxlength="20" name="starttime" value="">
-					</div>
-					<div class="input-group-append">
-					<span class="input-group-text">至</span>
-					</div>
-					<div class="input-group-append">
-					<input type="text" data-date class="form-control rounded-left-0"   placeholder="截止日期"   maxlength="20" name="endtime" value="#datetime(endTime,'yyyy-MM-dd')">
-					</div>
-					<div class="input-group-append">
-					<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-					<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</form>
-	</div> -->
     <div class="row">
+    	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>人员档案</h1></div>
       <div class="col">
-        <form class="form-inline" id="personForm_#(pageId)" onsubmit="return false;" method="post">
-          <input type="text" class="form-control" data-with-clearbtn="true" name="cpsnnum" value="" placeholder="=人员编码="/>
-          <input type="text" class="form-control" data-with-clearbtn="true" name="cpsnname" value="" placeholder="=人员姓名="/>
-          <input type="text" class="form-control" data-with-clearbtn="true" name="cpsnmobilephone" value="" placeholder="=手机号="/>
-          <input type="text" class="form-control" data-with-clearbtn="true" name="jobnumber" value="" placeholder="=工号="/>
-          <input type="text" class="form-control" data-with-clearbtn="true" name="cecardno" value="" placeholder="=电子卡号="/>
+        <form class="form-inline text-left" id="personForm_#(pageId)" onsubmit="return false;" method="post">
+          <input type="text" class="form-control" style="width:110px;" data-with-clearbtn="true" name="cpsnnum" value="" placeholder="=人员编码="/>
+          <input type="text" class="form-control" style="width:110px;" data-with-clearbtn="true" name="cpsnname" value="" placeholder="=人员姓名="/>
+          <input type="text" class="form-control" style="width:110px;" data-with-clearbtn="true" name="cpsnmobilephone" value="" placeholder="=手机号="/>
+          <input type="text" class="form-control" style="width:110px;" data-with-clearbtn="true" name="jobnumber" value="" placeholder="=工号="/>
+          <input type="text" class="form-control" style="width:110px;" data-with-clearbtn="true" name="cecardno" value="" placeholder="=电子卡号="/>
           <select class="form-control"
                   name="isenabled"
                   data-autoload
@@ -187,8 +59,8 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/person/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改人员档案" class="jbolt_table_editbtn">修改</a>
-    <a href="admin/person/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+	<a href="admin/person/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改人员档案" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>修改</a>
+    <a href="admin/person/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 </td>
 <td>${data.cpsn_num}</td>
 <td>${data.cpsn_name}</td>
@@ -213,7 +85,7 @@
 <div class="jbolt_table_toolbar" id="person_toolbar_#(pageId)">
 	<div class="btn-group" role="group" aria-label="btn-group">
 		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增人员档案"  data-url="admin/person/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		<button data-openpage="dialog" data-area="500,720"  data-handler="jboltTablePageToFirst" data-title="批量导入"  data-url="admin/person/importExcelIndex" data-btn="close" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 数据导入</button>
+		<button data-openpage="dialog" data-area="500,720"  data-handler="jboltTablePageToFirst" data-title="批量导入"  data-url="admin/person/importExcelIndex" data-btn="close" class="btn btn-outline-primary btn-sm"><i class="fa fa-file"></i> 数据导入</button>
 	</div>
 </div>
 
@@ -236,7 +108,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 <thead>
 <tr>
 	<th data-width="60">序号</th>
-	<th data-width="100">操作</th>
+	<th data-width="150">操作</th>
 	<th data-width="150" data-column="cPsn_Num">编码</th>
 	<th data-width="150" data-column="cPsn_Name">姓名</th>
 	<th data-width="150" data-column="iSex">性别</th>
