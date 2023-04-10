@@ -2218,6 +2218,9 @@ public class PermissionKey {
 	 */
 	public static final String CONTAINERCLASS = "containerclass";
 
+	/**
+	 * 平板端配置
+	 */
 	public static final String PAD = "pad";
 
 	/**
@@ -2225,4 +2228,8 @@ public class PermissionKey {
 	 */
 	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
 
+	/**
+	 * 平板登录日志
+	 */
+    public static final String PADLOGINLOG = "pad_loginlog";
 }

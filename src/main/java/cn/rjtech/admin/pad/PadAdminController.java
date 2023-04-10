@@ -1,20 +1,17 @@
 package cn.rjtech.admin.pad;
 
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.rjtech.model.momdata.*;
-import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
+import cn.rjtech.model.momdata.Pad;
 import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
-
-import java.util.List;
 
 /**
  * 系统配置-平板端设置
@@ -48,6 +45,10 @@ public class PadAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
+		if(getOrgId() == null)
+		{
+			renderFail("未选择组织!");
+		}else
 		render("add.html");
 	}
 
