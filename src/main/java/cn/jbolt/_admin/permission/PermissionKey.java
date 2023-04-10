@@ -2221,4 +2221,8 @@ public class PermissionKey {
 	 * 拓展字段值
 	 */
 	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
+	/**
+	 * 月度计划订单
+	 */
+	public static final String MONTHORDERM = "monthorderm";
 }
