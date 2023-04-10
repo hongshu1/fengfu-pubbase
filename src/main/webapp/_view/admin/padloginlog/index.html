@@ -1,0 +1,79 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>日志监控-平板登录日志</h1></div>
+	<div class="col">
+	<form class="form-inline" id="PadLoginLog_form_#(pageId)">
+		<input type="text" autocomplete="off" data-with-clearbtn="true"  class="form-control"  placeholder="平板名称" name="cpadname" value="" />
+		<input type="text" autocomplete="off" data-with-clearbtn="true" class="form-control"  placeholder="平板编码" name="cpadcode" value="" />
+		<input type="text" autocomplete="off" data-with-clearbtn="true" class="form-control"  placeholder="用户名" name="name" value="" />
+		<input type="text" autocomplete="off" data-with-clearbtn="true" class="form-control"  placeholder="姓名" name="username" value="" />
+		<input type="text" data-with-clearbtn="true" class="form-control" data-date data-type="date" placeholder="创建时间" data-range="~" data-fmt="yyyy-MM-dd" name="dateRange" value="#(dateRange??)" >
+
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	
+	
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="PadLoginLog_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cpadname}</td>
+<td>${data.cpadcode}</td>
+<td>${data.cmac}</td>
+<td>${data.name}</td>
+<td>${data.username}</td>
+<td>${data.dcreatetime}</td>
+<td>${data.cip}</td>
+</tr>
+{@/each}
+</textarea>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="PadLoginLog_form_#(pageId)"
+	   data-url="admin/padloginlog/datas"
+	   data-rowtpl="PadLoginLog_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="PadLoginLog_page"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="150" data-column="cpadname">平板名称</th>
+	<th data-width="150" data-column="cpadcode">平板编码</th>
+	<th data-width="150" data-column="cmac">MAC地址</th>
+	<th data-width="120" data-column="name">用户名</th>
+	<th data-width="120" data-column="username">姓名</th>
+	<th data-min-width="160" data-column="dcreatetime">创建时间</th>
+	<th data-width="150" data-column="cip">登录IP</th>
+
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

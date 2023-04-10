@@ -224,6 +224,10 @@
 #include("pad/pad.sql")
 #end
 
+#namespace("padloginlog")
+#include("padloginlog/padloginlog.sql")
+#end
+
 #namespace("bommaster")
 #include("bommaster/bommaster.sql")
 #end
