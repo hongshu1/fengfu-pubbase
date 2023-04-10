@@ -14,6 +14,8 @@ public abstract class BaseBackupLog<M extends BaseBackupLog<M>> extends JBoltBas
     public static final String IAUTOID = "iAutoId";
     /**备份类型：1. 手工备份 2. 自动备份*/
     public static final String ITYPE = "iType";
+    /**库名  JBOLT/MES*/
+    public static final String CDBNAME = "cDbName";
     /**文件名称*/
     public static final String CNAME = "cName";
     /**文件路径*/
@@ -81,6 +83,23 @@ public abstract class BaseBackupLog<M extends BaseBackupLog<M>> extends JBoltBas
 	@JSONField(name = "cname")
 	public java.lang.String getCName() {
 		return getStr("cName");
+	}
+
+	/**
+	 * 库名  JBOLT/MES
+	 */
+	public M setCDbName(java.lang.String cDbName) {
+		set("cDbName", cDbName);
+		return (M)this;
+	}
+
+	/**
+	 * 库名  JBOLT/MES
+	 */
+	@JBoltField(name="cdbname" ,columnName="cDbName",type="String", remark="库名  JBOLT/MES", required=true, maxLength=200, fixed=0, order=3)
+	@JSONField(name = "cdbname")
+	public java.lang.String getCDbName() {
+		return getStr("cDbName");
 	}
 
 	/**

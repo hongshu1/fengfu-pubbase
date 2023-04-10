@@ -12,6 +12,8 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
 public abstract class BaseBackupConfig<M extends BaseBackupConfig<M>> extends JBoltBaseModel<M>{
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
+    /**库名*/
+    public static final String cDbName = "cDbName";
     /**备份路径*/
     public static final String CPATH = "cPath";
     /**保留自动备份数量*/
@@ -48,6 +50,25 @@ public abstract class BaseBackupConfig<M extends BaseBackupConfig<M>> extends JB
 	public java.lang.Long getIAutoId() {
 		return getLong("iAutoId");
 	}
+
+
+	/**
+	 * 库名
+	 */
+	public M setCDbName(java.lang.String cDbName) {
+		set("cDbName", cDbName);
+		return (M)this;
+	}
+
+	/**
+	 * 库名
+	 */
+	@JBoltField(name="cdbname" ,columnName="cDbName",type="String", remark="库名", required=true, maxLength=300, fixed=0, order=2)
+	@JSONField(name = "cdbname")
+	public java.lang.String getCDbName() {
+		return getStr("cDbName");
+	}
+
 
 	/**
 	 * 备份路径
