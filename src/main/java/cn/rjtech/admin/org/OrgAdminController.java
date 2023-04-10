@@ -102,6 +102,13 @@ public class OrgAdminController extends BaseMesAdminController {
     }
 
     /**
+     * 切换启用状态
+     */
+    public void toggleIsDefault() {
+        renderJson(service.toggleIsDefault(useIfPresent(getLong(0))));
+    }
+
+    /**
      * 获取U8数据库列表
      */
     public void u8dbs() {
