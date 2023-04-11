@@ -1,30 +1,29 @@
-package cn.rjtech.admin.personequipment;
+package cn.rjtech.admin.monthorderd;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
-
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import com.jfinal.core.Path;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.PersonEquipment;
+import cn.rjtech.model.momdata.Monthorderd;
 /**
- * 人员设备档案 Controller
- * @ClassName: PersonEquipmentAdminController
- * @author: WYX
- * @date: 2023-03-22 15:36
+ * 月度计划订单明细 Controller
+ * @ClassName: MonthorderdAdminController
+ * @author: 佛山市瑞杰科技有限公司
+ * @date: 2023-04-10 18:20
  */
-@UnCheck
+@CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/personequipment", viewPath = "/_view/admin/personequipment")
-public class PersonEquipmentAdminController extends BaseAdminController {
+@Path(value = "/admin/monthorderd", viewPath = "/_view/admin/monthorderd")
+public class MonthorderdAdminController extends BaseAdminController {
 
 	@Inject
-	private PersonEquipmentService service;
+	private MonthorderdService service;
 
    /**
 	* 首页
@@ -51,12 +50,12 @@ public class PersonEquipmentAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		PersonEquipment personEquipment=service.findById(getLong(0)); 
-		if(personEquipment == null){
+		Monthorderd monthorderd=service.findById(getLong(0)); 
+		if(monthorderd == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("personEquipment",personEquipment);
+		set("monthorderd",monthorderd);
 		render("edit.html");
 	}
 
@@ -64,14 +63,14 @@ public class PersonEquipmentAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(PersonEquipment.class, "personEquipment")));
+		renderJson(service.save(getModel(Monthorderd.class, "monthorderd")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(PersonEquipment.class, "personEquipment")));
+		renderJson(service.update(getModel(Monthorderd.class, "monthorderd")));
 	}
 
    /**
@@ -94,13 +93,8 @@ public class PersonEquipmentAdminController extends BaseAdminController {
 	public void toggleIsDeleted() {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
-	
-	/**
-	 * 查询可编辑表格数据 
-	 * */
-	public void findEditableDatas(@Para(value="iPersonId") Long iPersonId){
-		renderJsonData(service.findEditableDatas(iPersonId));
+
+	public void findEditTableDatas(){
+		renderJsonData(service.findEditTableDatas(getKv()));
 	}
-
 }
-

@@ -239,6 +239,7 @@
        data-rowtpl="jbolt_table_rowtpl_#(pageId)"
        data-toolbar="jbolt_table_toolbar_#(pageId)"
        data-autoload="true"
+       data-ajax="true"
        data-url="/admin/personequipment/findEditableDatas?iPersonId=#(person.iautoid??)"
        data-editable="true"
        data-editable-option="getEditableTableOptions_#(pageId)"
@@ -293,8 +294,8 @@ function getEditableTableOptions_#(pageId)(){
                 width: 500,
                 required: true,
                 valueAttr: "cequipmentcode",
-                columnAttr: "cequipmentcode,cequipmentname",
-                header:'设备编码,设备名称',
+                columnAttr: "cequipmentcode,cequipmentname,cworkname",
+                header:'设备编码,设备名称,产线名称',
                 changeColumns:[{column: "cequipmentcode", use: "cequipmentcode"},{column: "cequipmentname", use: "cequipmentname"},
                                {column: "iequipmentid", use: "iautoid"},{column: "cworkname", use: "cworkname"}]
             }

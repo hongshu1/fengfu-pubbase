@@ -204,3 +204,12 @@
 #namespace("scheduproductplan")
 #include("scheduproductplan/scheduproductplan.sql")
 #end
+
+#namespace("monthorderm")
+#include("monthorderm/monthorderm.sql")
+#end
+
+#namespace("monthorderd")
+#include("monthorderd/monthorderd.sql")
+#end
+

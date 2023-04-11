@@ -1,0 +1,54 @@
+<form onsubmit="return false;" id="annualorderdQtyForm" action="#(action)" method="post">
+<input type="hidden" name="annualorderdQty.iautoid" value="#(annualorderdQty.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度计划明细ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入年度计划明细ID" maxlength="19" name="annualorderdQty.iannualorderdid" value="#(annualorderdQty.iannualorderdid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年度" data-tips="请设置年度" maxlength="10" name="annualorderdQty.iyear" value="#(annualorderdQty.iyear??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">月份</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入月份"  maxlength="10" name="annualorderdQty.imonth" value="#(annualorderdQty.imonth??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入数量"  maxlength="18" name="annualorderdQty.iqty" value="#(annualorderdQty.iqty??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(annualorderdQty.isdeleted??)"
+    	data-name="annualorderdQty.isdeleted"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >删除状态：0. 未删除 1. 已删除</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_true" type="radio" name="annualorderdQty.isdeleted" value="true"/>
+					<label for="r_isdeleted_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_false" type="radio" name="annualorderdQty.isdeleted" value="false"/>
+					<label for="r_isdeleted_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="annualorderdQtyForm")
+#end
+
