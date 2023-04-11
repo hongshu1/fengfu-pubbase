@@ -111,25 +111,25 @@
 <script type="text/javascript">
 	function batchAudit(ele) {
 		var data=getJboltTableCheckedDatas("ManualOrderMTable_#(pageId)");
-		var url="admin/manualorderm/dialog_index?iinventoryid=#(inventory.iAutoId)"+"&citemcode="+citemcode+"&citemname="+citemname;
+		var url="admin/manualorderm/dialog_index?iinventoryid=#(inventory.iAutoId??)"+"&citemcode="+citemcode+"&citemname="+citemname;
 		$(ele).data("url",url);
 		DialogUtil.openBy(ele);
 	}
 	function batchAntiAudit(ele) {
 		var data=getJboltTableCheckedDatas("ManualOrderMTable");
-		var url="admin/manualorderm/dialog_index?iinventoryid=#(inventory.iAutoId)"+"&citemcode="+citemcode+"&citemname="+citemname;
+		var url="admin/manualorderm/dialog_index?iinventoryid=#(inventory.iAutoId??)"+"&citemcode="+citemcode+"&citemname="+citemname;
 		$(ele).data("url",url);
 		DialogUtil.openBy(ele);
 	}
 	function batchDetect(ele) {
 		var data=getJboltTableCheckedDatas("ManualOrderMTable");
-		var url="admin/manualorderm/dialog_index?iinventoryid=#(inventory.iAutoId)"+"&citemcode="+citemcode+"&citemname="+citemname;
+		var url="admin/manualorderm/dialog_index?iinventoryid=#(inventory.iAutoId??)"+"&citemcode="+citemcode+"&citemname="+citemname;
 		$(ele).data("url",url);
 		DialogUtil.openBy(ele);
 	}
 	function batchClose(ele) {
 		var data=getJboltTableCheckedDatas("ManualOrderMTable");
-		var url="admin/manualorderm/dialog_index?iinventoryid=#(inventory.iAutoId)"+"&citemcode="+citemcode+"&citemname="+citemname;
+		var url="admin/manualorderm/dialog_index?iinventoryid=#(inventory.iAutoId??)"+"&citemcode="+citemcode+"&citemname="+citemname;
 		$(ele).data("url",url);
 		DialogUtil.openBy(ele);
 	}
