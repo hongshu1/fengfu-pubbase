@@ -13,7 +13,7 @@ public abstract class BaseMonthorderd<M extends BaseMonthorderd<M>> extends JBol
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**月度计划订单ID*/
-    public static final String IANNUALORDERMID = "iAnnualOrderMid";
+    public static final String IMONTHORDERMID = "iMonthOrderMid";
     /**存货ID*/
     public static final String IINVENTORYID = "iInventoryId";
     /**1日数量*/
@@ -102,18 +102,18 @@ public abstract class BaseMonthorderd<M extends BaseMonthorderd<M>> extends JBol
 	/**
 	 * 月度计划订单ID
 	 */
-	public M setIAnnualOrderMid(java.lang.Long iAnnualOrderMid) {
-		set("iAnnualOrderMid", iAnnualOrderMid);
+	public M setIMonthOrderMid(java.lang.Long iMonthOrderMid) {
+		set("iMonthOrderMid", iMonthOrderMid);
 		return (M)this;
 	}
 
 	/**
 	 * 月度计划订单ID
 	 */
-	@JBoltField(name="iannualordermid" ,columnName="iAnnualOrderMid",type="Long", remark="月度计划订单ID", required=true, maxLength=19, fixed=0, order=2)
-	@JSONField(name = "iannualordermid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIAnnualOrderMid() {
-		return getLong("iAnnualOrderMid");
+	@JBoltField(name="imonthordermid" ,columnName="iMonthOrderMid",type="Long", remark="月度计划订单ID", required=true, maxLength=19, fixed=0, order=2)
+	@JSONField(name = "imonthordermid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIMonthOrderMid() {
+		return getLong("iMonthOrderMid");
 	}
 
 	/**

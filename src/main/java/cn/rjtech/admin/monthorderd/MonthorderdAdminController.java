@@ -94,5 +94,7 @@ public class MonthorderdAdminController extends BaseAdminController {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
 
-
+	public void findEditTableDatas(){
+		renderJsonData(service.findEditTableDatas(getKv()));
+	}
 }

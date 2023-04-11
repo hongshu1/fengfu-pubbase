@@ -1,12 +1,28 @@
 package cn.rjtech.admin.monthorderm;
 
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.TableMapping;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.User;
+import cn.rjtech.admin.monthorderd.MonthorderdService;
+import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.model.momdata.Monthorderd;
 import cn.rjtech.model.momdata.Monthorderm;
+import cn.rjtech.util.ValidationUtils;
 /**
  * 月度计划订单 Service
  * @ClassName: MonthordermService
@@ -16,7 +32,8 @@ import cn.rjtech.model.momdata.Monthorderm;
 public class MonthordermService extends BaseService<Monthorderm> {
 
 	private final Monthorderm dao = new Monthorderm().dao();
-
+	@Inject
+	private MonthorderdService monthorderdService;
 	@Override
 	protected Monthorderm dao() {
 		return dao;
@@ -29,8 +46,9 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	 * @param keywords
 	 * @return
 	 */
-	public Page<Monthorderm> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		para.set("iorgid",getOrgId());
+		return dbTemplate("monthorderm.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 	}
 
 	/**
@@ -87,7 +105,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		return deleteById(id,true);
+		return updateColumn(id, "isdeleted", true);
 	}
 
 	/**
@@ -163,5 +181,84 @@ public class MonthordermService extends BaseService<Monthorderm> {
 		//这里用来覆盖 检测Monthorderm是否被其它表引用
 		return null;
 	}
+    /**
+     * 执行JBoltTable表格整体提交
+     *
+     * @param jBoltTable
+     * @return
+     */
+    public Ret submitByJBoltTable(JBoltTable jBoltTable) {
+    	Monthorderm monthorderm = jBoltTable.getFormModel(Monthorderm.class,"monthorderm");
+    	User user = JBoltUserKit.getUser();
+    	Date now = new Date();
+    	tx(()->{
+	    	if(monthorderm.getIAutoId() == null){
+		    	monthorderm.setIOrgId(getOrgId());
+		    	monthorderm.setCOrgCode(getOrgCode());
+		    	monthorderm.setCOrgName(getOrgName());
+		    	monthorderm.setICreateBy(user.getId());
+		    	monthorderm.setCCreateName(user.getName());
+		    	monthorderm.setDCreateTime(now);
+		    	monthorderm.setIUpdateBy(user.getId());
+		    	monthorderm.setCUpdateName(user.getName());
+		    	monthorderm.setDUpdateTime(now);
+		    	ValidationUtils.isTrue(monthorderm.save(), ErrorMsg.SAVE_FAILED);
+	    	}else{
+	    		monthorderm.setIUpdateBy(user.getId());
+		    	monthorderm.setCUpdateName(user.getName());
+		    	monthorderm.setDUpdateTime(now);
+		    	ValidationUtils.isTrue(monthorderm.update(), ErrorMsg.UPDATE_FAILED);
+	    	}
+	    	saveTableSubmitDatas(jBoltTable,monthorderm);
+	    	updateTableSubmitDatas(jBoltTable,monthorderm);
+	    	deleteTableSubmitDatas(jBoltTable);
+	    	return true;
+    	});
+        return SUCCESS;
+    }
 
+    //可编辑表格提交-新增数据
+    private void saveTableSubmitDatas(JBoltTable jBoltTable,Monthorderm monthorderm){
+    	List<Record> list = jBoltTable.getSaveRecordList();
+    	if(CollUtil.isEmpty(list)) return;
+    	for (int i=0;i<list.size();i++) {
+    		Record row = list.get(i);
+    		if (i == 0) {
+    		    // 避免保存不到所有字段的问题
+    		    Set<String> columnNames = TableMapping.me().getTable(Monthorderd.class).getColumnNameSet();
+    		    for (String columnName : columnNames) {
+    		        if (null == row.get(columnName)) {
+    		            row.set(columnName, null);
+    		        }
+    		    }
+    		}
+    		row.keep("iautoid","iinventoryid","iqty1","iqty2","iqty3","iqty4","iqty5","iqty6","iqty7","iqty8","iqty9","iqty10","iqty11","iqty12",
+    				"iqty13","iqty14","iqty15","iqty16","iqty17","iqty18","iqty19","iqty20","iqty21","iqty22","iqty23","iqty24","iqty25",
+    				"iqty26","iqty27","iqty28","iqty29","iqty30","iqty31","isum");
+    		row.set("isdeleted", "0");
+    		row.set("imonthordermid", monthorderm.getIAutoId());
+    		row.set("iautoid", JBoltSnowflakeKit.me.nextId());
+		}
+    	monthorderdService.batchSaveRecords(list);
+    }
+    //可编辑表格提交-修改数据
+    private void updateTableSubmitDatas(JBoltTable jBoltTable,Monthorderm monthorderm){
+    	List<Record> list = jBoltTable.getUpdateRecordList();
+    	if(CollUtil.isEmpty(list)) return;
+    	for(int i = 0;i < list.size(); i++){
+    		Record row = list.get(i);
+    		row.keep("iautoid","iinventoryid","iqty1","iqty2","iqty3","iqty4","iqty5","iqty6","iqty7","iqty8","iqty9","iqty10","iqty11","iqty12",
+    				"iqty13","iqty14","iqty15","iqty16","iqty17","iqty18","iqty19","iqty20","iqty21","iqty22","iqty23","iqty24","iqty25",
+    				"iqty26","iqty27","iqty28","iqty29","iqty30","iqty31","isum");
+    	}
+    	monthorderdService.batchUpdateRecords(list);
+    }
+    //可编辑表格提交-删除数据
+    private void deleteTableSubmitDatas(JBoltTable jBoltTable){
+    	Object[] ids = jBoltTable.getDelete();
+    	if(ArrayUtil.isEmpty(ids)) return;
+    	for (Object id : ids) {
+    		monthorderdService.deleteById(id);
+		}
+    }
 }

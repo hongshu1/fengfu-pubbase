@@ -1,12 +1,18 @@
 package cn.rjtech.admin.monthorderd;
 
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+
+import java.util.List;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.Monthorderd;
+import cn.rjtech.util.ValidationUtils;
 /**
  * 月度计划订单明细 Service
  * @ClassName: MonthorderdService
@@ -162,6 +168,11 @@ public class MonthorderdService extends BaseService<Monthorderd> {
 	public String checkInUse(Monthorderd monthorderd, Kv kv) {
 		//这里用来覆盖 检测Monthorderd是否被其它表引用
 		return null;
+	}
+
+	public List<Record> findEditTableDatas(Kv para) {
+		ValidationUtils.notNull(para.getLong("imonthordermid"), JBoltMsg.PARAM_ERROR);
+		return dbTemplate("monthorderd.findEditTableDatas",para).find();
 	}
 
 }

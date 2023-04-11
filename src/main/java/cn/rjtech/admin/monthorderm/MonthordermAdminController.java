@@ -1,14 +1,19 @@
 package cn.rjtech.admin.monthorderm;
 
 import com.jfinal.aop.Inject;
+
+import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.rjtech.model.momdata.Customer;
 import cn.rjtech.model.momdata.Monthorderm;
 /**
  * 月度计划订单 Controller
@@ -24,6 +29,8 @@ public class MonthordermAdminController extends BaseAdminController {
 
 	@Inject
 	private MonthordermService service;
+	@Inject
+	private CustomerService customerService;
 
    /**
 	* 首页
@@ -36,7 +43,7 @@ public class MonthordermAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
 
    /**
@@ -55,7 +62,10 @@ public class MonthordermAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("monthorderm",monthorderm);
+		Record monthordermRc = monthorderm.toRecord();
+        Customer customer = customerService.findById(monthorderm.getICustomerId());
+        monthordermRc.set("ccusname", customer == null ? null:customer.getCCusName());
+		set("monthorderm",monthordermRc);
 		render("edit.html");
 	}
 
@@ -94,5 +104,11 @@ public class MonthordermAdminController extends BaseAdminController {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
 
-
+    /**
+     * 新增-可编辑表格-批量提交
+     */
+    @Before(Tx.class)
+    public void submitAll() {
+        renderJson(service.submitByJBoltTable(getJBoltTable()));
+    }
 }
