@@ -1858,6 +1858,10 @@ public class PermissionKey {
 	 */
 	public static final String BACKUP_LOG = "backup_log";
 	/**
+	 * 采购类型
+	 */
+	public static final String PURCHASETYPE = "purchasetype";
+	/**
 	 * 备份设置
 	 */
 	public static final String BACKUP_CONFIG = "backup_config";
@@ -2202,32 +2206,37 @@ public class PermissionKey {
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
 	/**
-	 * 工作日历明细
+	 * 质量建模-检验适用标准
 	 */
-	public static final String WORKCALENDARM = "workcalendard";
+	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
+	/**
+	 * 参数配置
+	 */
+	public static final String 	SYS_CONFIG = "	sys_config";
 	/**
 	 * 实体扩展字段
 	 */
 	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
 	/**
-	 * 实体扩展字段值集
+	 * 容器分类
+	 */
+	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 拓展字段值
 	 */
 	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
 	/**
-	 * 分类管理
+	 * 月度计划订单
 	 */
-	public static final String CONTAINERCLASS = "containerclass";
-
+	public static final String MONTHORDERM = "monthorderm";
+	/**
+	 * 工作日历明细
+	 */
+	public static final String WORKCALENDARM = "workcalendard";
 	/**
 	 * 平板端配置
 	 */
 	public static final String PAD = "pad";
-
-	/**
-	 * 质量建模-检验适用标准
-	 */
-	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
-
 	/**
 	 * 平板登录日志
 	 */

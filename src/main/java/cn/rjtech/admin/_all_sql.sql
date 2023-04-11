@@ -160,6 +160,11 @@
 #include("spotcheckform/spotcheckform.sql")
 #end
 
+###采购类型
+#namespace("purchasetype")
+#include("purchasetype/purchasetype.sql")
+#end
+
 #namespace("annualorderm")
 #include("annualorderm/annualorderm.sql")
 #end
@@ -208,6 +213,14 @@
 #include("scheduproductplan/scheduproductplan.sql")
 #end
 
+#namespace("monthorderm")
+#include("monthorderm/monthorderm.sql")
+#end
+
+#namespace("monthorderd")
+#include("monthorderd/monthorderd.sql")
+#end
+
 #namespace("inventoryqcform")
 #include("inventoryqcform/inventoryqcform.sql")
 #end
@@ -234,4 +247,8 @@
 
 #namespace("manualorderm")
 #include("manualorderm/manualorderm.sql")
+#end
+
+#namespace("containerStockInD")
+#include("containerStockInD/containerStockD.sql")
 #end

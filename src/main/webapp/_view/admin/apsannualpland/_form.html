@@ -1,0 +1,69 @@
+<form onsubmit="return false;" id="apsAnnualplandForm" action="#(action)" method="post">
+<input type="hidden" name="apsAnnualpland.iautoid" value="#(apsAnnualpland.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度计划订单ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入年度计划订单ID" maxlength="19" name="apsAnnualpland.iannualplanmid" value="#(apsAnnualpland.iannualplanmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">客户ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入客户ID" maxlength="19" name="apsAnnualpland.icustomerid" value="#(apsAnnualpland.icustomerid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">机型ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入机型ID" maxlength="19" name="apsAnnualpland.iequipmentmodelid" value="#(apsAnnualpland.iequipmentmodelid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="apsAnnualpland.iinventoryid" value="#(apsAnnualpland.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度1-计划使用（数量）</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年度1-计划使用（数量）" data-tips="请设置年度1-计划使用（数量）" maxlength="10" name="apsAnnualpland.iyear11qty" value="#(apsAnnualpland.iyear11qty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度1-计划数量</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年度1-计划数量" data-tips="请设置年度1-计划数量" maxlength="10" name="apsAnnualpland.iyear12qty" value="#(apsAnnualpland.iyear12qty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度1-计划在库（数量）</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年度1-计划在库（数量）" data-tips="请设置年度1-计划在库（数量）" maxlength="10" name="apsAnnualpland.iyear13qty" value="#(apsAnnualpland.iyear13qty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度2-计划使用（数量）</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置年度2-计划使用（数量）" data-tips="请设置年度2-计划使用（数量）" maxlength="10" name="apsAnnualpland.iyear21qty" value="#(apsAnnualpland.iyear21qty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度2-计划数量</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置年度2-计划数量" data-tips="请设置年度2-计划数量" maxlength="10" name="apsAnnualpland.iyear22qty" value="#(apsAnnualpland.iyear22qty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度2-计划在库（数量）</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置年度2-计划在库（数量）" data-tips="请设置年度2-计划在库（数量）" maxlength="10" name="apsAnnualpland.iyear23qty" value="#(apsAnnualpland.iyear23qty??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="apsAnnualplandForm")
+#end
+

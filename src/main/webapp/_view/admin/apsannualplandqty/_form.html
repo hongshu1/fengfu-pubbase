@@ -1,0 +1,45 @@
+<form onsubmit="return false;" id="apsAnnualplandQtyForm" action="#(action)" method="post">
+<input type="hidden" name="apsAnnualplandQty.iautoid" value="#(apsAnnualplandQty.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年度计划明细ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入年度计划明细ID" maxlength="19" name="apsAnnualplandQty.iannualplandid" value="#(apsAnnualplandQty.iannualplandid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">类型：1. 计划使用 2. 计划数量 3. 计划在库</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入类型：1. 计划使用 2. 计划数量 3. 计划在库"  maxlength="10" name="apsAnnualplandQty.itype" value="#(apsAnnualplandQty.itype??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年" data-tips="请设置年" maxlength="10" name="apsAnnualplandQty.iyear" value="#(apsAnnualplandQty.iyear??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">月</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入月"  maxlength="10" name="apsAnnualplandQty.imonth" value="#(apsAnnualplandQty.imonth??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入日"  maxlength="10" name="apsAnnualplandQty.idate" value="#(apsAnnualplandQty.idate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入数量"  maxlength="10" name="apsAnnualplandQty.iqty" value="#(apsAnnualplandQty.iqty??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="apsAnnualplandQtyForm")
+#end
+

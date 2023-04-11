@@ -4,6 +4,7 @@ package cn.rjtech.admin.scheduproductplan;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
+import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -26,17 +27,32 @@ import java.util.*;
  */
 @CheckPermission(PermissionKey.NOME)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/scheduproductplanyear", viewPath = "/_view/admin/scheduproductplanyear")
+@Path(value = "/admin/scheduproductplanyear", viewPath = "/_view/admin/scheduproductplan")
 public class ScheduProductPlanYearController extends BaseAdminController {
 
     @Inject
     private ScheduProductPlanYearService service;
 
-    /**
-     * 首页
-     */
-    public void index() {
-        render("index.html");
+    public void planyear() {
+        render("planyear.html");
+    }
+    public void addview() {
+        set("cplanorderno",get("cplanorderno"));
+        set("icustomerid",get("icustomerid"));
+        set("startyear",get("startyear"));
+        render("planyear_add.html");
+    }
+
+    public void addviewparm() {
+        set("startyear", DateUtils.formatDate(new Date(),"yyyy"));
+        render("planyearparm.html");
+    }
+
+
+
+
+    public void planyearsum() {
+        render("planyearsum.html");
     }
 
     /**
@@ -95,14 +111,75 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     }
 
 
+    //-----------------------------------------------------------------年度生产计划排产-----------------------------------------------
+
+
+    public void getCustomerList() {
+        renderJsonData(service.getCustomerList());
+    }
+
     /**
-     * 生成排程计划
+     * 作成计划
      */
     public void schedulingPlan() {
-        //TODO: 将订单计划处理更新到排程来源表
-        //service.soUpdScheduSource(getKv());
         renderJson(service.scheduPlanYear(getKv()));
     }
+    /**
+     * 保存计划
+     */
+    public void saveScheduPlanYear() {
+        //renderJsonData(service.saveScheduPlanYear(getJBoltTable()));
+    }
+    /*public void saveScheduPlanYear(JBoltPara para) {
+        renderJsonData(service.saveScheduPlanYear(para.getRawData()));
+    }*/
+
+    /**
+     * 获取计划
+     */
+    public void getApsYearPlanList() {
+        String cplanorderno = get("cplanorderno");
+        Long icustomerid = getLong("icustomerid");
+        String startYear = get("startyear");
+        renderJsonData(service.getApsYearPlanList(cplanorderno,icustomerid,startYear,getKv()));
+    }
+
+    /**
+     * 获取订单计划
+     */
+    public void getApsYearPlanMasterPage() {
+        renderJsonData(service.getApsYearPlanMasterPage(getPageNumber(),getPageSize(),getKv()));
+    }
+
+
+    //-----------------------------------------------------------------年度生产计划汇总-----------------------------------------------
+
+    /**
+     * 获取年度生产计划汇总
+     */
+    public void getApsYearPlanSumPage() {
+        renderJsonData(service.getApsYearPlanSumPage(getPageNumber(),getPageSize(),getKv()));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 查询排程计划
@@ -131,14 +208,6 @@ public class ScheduProductPlanYearController extends BaseAdminController {
         renderJson(dataMap);
     }
 
-    /**
-     * 保存计划变更数
-     */
-    public void save() {
-        String dataStr = get("datas");
-        JSONArray dataJSONArr = JSONArray.parseArray(dataStr);
-        //renderJson(service.savePlan(dataJSONArr));
-    }
 
     /**
      * 锁定计划

@@ -12,10 +12,20 @@ public class ScheduProductYearViewDTO implements Serializable {
     private Long iCustomerId;
     //客户编码
     private String cCusCode;
+    //客户名称
+    private String cCusName;
     //机型ID
     private Long iEquipmentModelId;
     //机型编码
     private String cEquipmentModelCode;
+    //机型名称
+    private String cEquipmentModelName;
+    //产线ID
+    private Long iWorkRegionMid;
+    //产线编码
+    private String cWorkCode;
+    //产线名称
+    private String cWorkName;
     //存货ID
     private Long iInventoryId;
     //存货编码
@@ -47,12 +57,79 @@ public class ScheduProductYearViewDTO implements Serializable {
     private BigDecimal nextmonth1;
     private BigDecimal nextmonth2;
     private BigDecimal nextmonth3;
+    private BigDecimal nextmonth4;
     //下一年份1月-3月的数量汇总
-    private BigDecimal nextmonthSum;
+    private BigDecimal nextMonthSum;
 
     //计划类型编码（PP:计划使用数）
     private String planTypeCode;
+    //期初数量
+    private BigDecimal nowmonth0;
 
+
+    public Long getiWorkRegionMid() {
+        return iWorkRegionMid;
+    }
+
+    public void setiWorkRegionMid(Long iWorkRegionMid) {
+        this.iWorkRegionMid = iWorkRegionMid;
+    }
+
+    public String getcWorkCode() {
+        return cWorkCode;
+    }
+
+    public void setcWorkCode(String cWorkCode) {
+        this.cWorkCode = cWorkCode;
+    }
+
+    public String getcWorkName() {
+        return cWorkName;
+    }
+
+    public void setcWorkName(String cWorkName) {
+        this.cWorkName = cWorkName;
+    }
+
+    public String getcCusName() {
+        return cCusName;
+    }
+
+    public void setcCusName(String cCusName) {
+        this.cCusName = cCusName;
+    }
+
+    public String getcEquipmentModelName() {
+        return cEquipmentModelName;
+    }
+
+    public void setcEquipmentModelName(String cEquipmentModelName) {
+        this.cEquipmentModelName = cEquipmentModelName;
+    }
+
+    public BigDecimal getNowmonth0() {
+        return nowmonth0;
+    }
+
+    public void setNowmonth0(BigDecimal nowmonth0) {
+        this.nowmonth0 = nowmonth0;
+    }
+
+    public BigDecimal getNextMonthSum() {
+        return nextMonthSum;
+    }
+
+    public void setNextMonthSum(BigDecimal nextMonthSum) {
+        this.nextMonthSum = nextMonthSum;
+    }
+
+    public BigDecimal getNextmonth4() {
+        return nextmonth4;
+    }
+
+    public void setNextmonth4(BigDecimal nextmonth4) {
+        this.nextmonth4 = nextmonth4;
+    }
 
     public Long getiCustomerId() {
         return iCustomerId;
@@ -262,13 +339,7 @@ public class ScheduProductYearViewDTO implements Serializable {
         this.nextmonth3 = nextmonth3;
     }
 
-    public BigDecimal getNextmonthSum() {
-        return nextmonthSum;
-    }
 
-    public void setNextmonthSum(BigDecimal nextmonthSum) {
-        this.nextmonthSum = nextmonthSum;
-    }
 
     public String getPlanTypeCode() {
         return planTypeCode;

@@ -1,11 +1,14 @@
 package cn.rjtech.admin.personequipment;
 
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.PersonEquipment;
 /**
@@ -16,6 +19,8 @@ import cn.rjtech.model.momdata.PersonEquipment;
  */
 @UnCheck
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
+@Path(value = "/admin/personequipment", viewPath = "/_view/admin/personequipment")
 public class PersonEquipmentAdminController extends BaseAdminController {
 
 	@Inject
