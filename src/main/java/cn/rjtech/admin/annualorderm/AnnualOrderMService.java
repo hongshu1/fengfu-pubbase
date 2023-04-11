@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import cn.rjtech.model.momdata.AnnualorderdQty;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -25,6 +24,7 @@ import cn.rjtech.admin.annualorderdqty.AnnualorderdQtyService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.AnnualOrderD;
 import cn.rjtech.model.momdata.AnnualOrderM;
+import cn.rjtech.model.momdata.AnnualorderdQty;
 import cn.rjtech.util.ValidationUtils;
 
 /**
@@ -215,26 +215,26 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
 		}
     }
     private void saveAnnualOrderDModel(Record record,AnnualOrderM annualOrderM,AnnualOrderD annualOrderD){
-    	AnnualorderdQty annualorderdQty;
+    	AnnualorderdQty AnnualorderdQty;
 		for (int j=1; j <= 12; j++) {
-			annualorderdQty = new AnnualorderdQty();
-			annualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
-			annualorderdQty.setIYear(annualOrderM.getIYear());
-			annualorderdQty.setIMonth(j);
+			AnnualorderdQty = new AnnualorderdQty();
+			AnnualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
+			AnnualorderdQty.setIYear(annualOrderM.getIYear());
+			AnnualorderdQty.setIMonth(j);
 			BigDecimal inowyearmonthamount= record.getBigDecimal("inowyearmonthamount"+j);
-			annualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
-			annualorderdQty.setIsDeleted(false);
-			ValidationUtils.isTrue(annualorderdQty.save(), ErrorMsg.SAVE_FAILED);
+			AnnualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
+			AnnualorderdQty.setIsDeleted(false);
+			ValidationUtils.isTrue(AnnualorderdQty.save(), ErrorMsg.SAVE_FAILED);
 		}
 		for (int m=1; m <= 3; m++) {
-			annualorderdQty = new AnnualorderdQty();
-			annualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
-			annualorderdQty.setIYear(annualOrderM.getIYear()+1);
-			annualorderdQty.setIMonth(m);
+			AnnualorderdQty = new AnnualorderdQty();
+			AnnualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
+			AnnualorderdQty.setIYear(annualOrderM.getIYear()+1);
+			AnnualorderdQty.setIMonth(m);
 			BigDecimal inowyearmonthamount= record.getBigDecimal("inextyearmonthamount"+m);
-			annualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
-			annualorderdQty.setIsDeleted(false);
-			ValidationUtils.isTrue(annualorderdQty.save(), ErrorMsg.SAVE_FAILED);
+			AnnualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
+			AnnualorderdQty.setIsDeleted(false);
+			ValidationUtils.isTrue(AnnualorderdQty.save(), ErrorMsg.SAVE_FAILED);
 		}
     }
     /**

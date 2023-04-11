@@ -6,7 +6,7 @@
 <div class="jbolt_page_title">
 	<div class="row">
 	<div class="col-md-auto">
-	<h1>年度计划订单年月金额</h1>
+	<h1>年度计划订单年月数量</h1>
 	</div>
 	<div class="col">
 		<form class="form-inline" id="annualorderdQtyForm_#(pageId)"   onsubmit="return false;" method="post">
@@ -28,10 +28,10 @@
 <td>${data.iannualorderdid}</td>
 <td>${data.iyear}</td>
 <td>${data.imonth}</td>
-<td>${data.iamount}</td>
+<td>${data.iqty}</td>
 <td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/annualorderdqty/toggleIsdeleted/${data.id}"/></td>
 <td>
-	<a href="admin/annualorderdqty/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改年度计划订单年月金额" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+	<a href="admin/annualorderdqty/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改年度计划订单年月数量" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
     <a href="admin/annualorderdqty/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
 </td>
 </tr>
@@ -41,8 +41,8 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="annualorderdQty_toolbar_#(pageId)">
 	<div class="btn-group" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增年度计划订单年月金额"  data-url="admin/annualorderdqty/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改年度计划订单年月金额" data-check-handler="jboltTableGetCheckedId" data-url="admin/annualorderdqty/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增年度计划订单年月数量"  data-url="admin/annualorderdqty/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改年度计划订单年月数量" data-check-handler="jboltTableGetCheckedId" data-url="admin/annualorderdqty/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/annualorderdqty/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 	</div>
@@ -79,7 +79,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 	<th data-min-width="150" data-column="iAnnualOrderDid">年度计划明细ID</th>
 	<th data-width="150" data-column="iYear">年度</th>
 	<th data-width="150" data-column="iMonth">月份</th>
-	<th data-width="150" data-column="iAmount">金额</th>
+	<th data-width="150" data-column="iQty">数量</th>
 	<th data-width="150" data-column="isDeleted">删除状态：0. 未删除 1. 已删除</th>
 	<th data-width="100">操作</th>
 </tr>
@@ -102,7 +102,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 
 		$(tempTr1).data('url', '/admin/admin/annualorderdqty/edit/' + rowData.iautoid)
 			.data('area', '1200,800')
-			.data('title', '年度计划订单年月金额')
+			.data('title', '年度计划订单年月数量')
 			.data('btn', '保存,关闭');
 
 		DialogUtil.openBy(tempTr1);

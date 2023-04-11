@@ -4,75 +4,37 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
     <div class="jbolt_page_title">
     	<div class="row">
-			<div class="col-md-auto">
-				<h1>年度计划</h1>
-			</div>
-		</div>
-		<div class="jbolt_table_headbox">
-			<form id="AnnualOrderM_form_#(pageId)" onsubmit="return false;" method="post">
-				<div class="row">
-					<div class="col-2">
-						<div class="input-group">
-							<div class="input-group-prepend">
-						      <span class="input-group-text">订单号</span>
-						    </div>
-						   	<input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="cOrderNo" value="" />
-						</div>
-					</div>
-					<div class="col-2">
-						<div class="input-group">
-							<div class="input-group-prepend">
-						      <span class="input-group-text">客户名称</span>
-						    </div>
-						   	<input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="cCusName" value="" />
-						</div>
-					</div>				
-					<div class="col-2">
-						<div class="input-group">
-							<div class="input-group-prepend">
-						      <span class="input-group-text">订单状态</span>
-						    </div>
-			                <select class="form-control"
-			                        name="iAuditStatus"
-			                        data-autoload
-			                        data-url="admin/dictionary/options?key=annual_order_auditstatus"
-			                        data-select-type="select"
-			                        data-text="=请选择="
-			                        data-value=""
-			                        data-with-clearbtn="true"
-			                        data-value-attr="sn"
-			                ></select>
-						</div>
-					</div>							
-					<div class="col-2">
-						<div class="input-group">
-							<div class="input-group-prepend">
-						      <span class="input-group-text">年份</span>
-						    </div>
-						   	<input type="text"
-	                            data-date
-	                            data-type="year"
-	                            data-fmt="yyyy"
-	                            autocomplete="off"
-	                            class="form-control"
-	                            maxlength="20"
-	                            name="iYear"
-	                            value=""/>
-						</div>
-					</div>		
-					<div class="col-2">
-						<div class="input-group">
-							<div class="input-group-prepend">
-						      <span class="input-group-text">创建人</span>
-						    </div>
-						   	<input type="text" class="form-control" data-with-clearbtn="true" placeholder="" name="cCreateName" value="" />
-						</div>
-					</div>		
-					<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-					<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-				</div>
-			</form>
-		</div>
+			<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>年度计划</h1></div>
+		      <div class="col">
+		        <form class="form-inline text-left" id="AnnualOrderM_form_#(pageId)" onsubmit="return false;" method="post">
+					<input type="text" class="form-control" data-with-clearbtn="true" placeholder="订单号" name="cOrderNo" value="" />
+					<input type="text" class="form-control" data-with-clearbtn="true" placeholder="客户名称" name="cCusName" value="" />
+	                <select class="form-control"
+	                        name="iAuditStatus"
+	                        data-autoload
+	                        data-url="admin/dictionary/options?key=annual_order_auditstatus"
+	                        data-select-type="select"
+	                        data-text="=订单状态="
+	                        data-value=""
+	                        data-with-clearbtn="true"
+	                        data-value-attr="sn"
+	                ></select>
+	                <input type="text"
+                           data-date
+                           data-type="year"
+                           placeholder="=年份="
+                           data-fmt="yyyy"
+                           autocomplete="off"
+                           class="form-control"
+                           maxlength="20"
+                           name="iYear"
+                           value=""/>
+					<input type="text" class="form-control" data-with-clearbtn="true" placeholder="创建人" name="cCreateName" value="" />                           
+					<button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          			<button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>		        	
+		        </form>
+		      </div>
+		</div>		
     </div>
     <div class="jbolt_page_content">
         <!-- 定义JBoltTable使用的数据渲染模板 -->
@@ -81,9 +43,9 @@
             <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class=jbolt_table_editbtn href="admin/annualorderm/edit/${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" data-title="查看客户订单-年度订单">查看</a>
-                <a class="jbolt_table_editbtn" href="admin/annualorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-title="编辑客户订单-年度订单">编辑</a>
-                <a class="jbolt_table_delbtn" href="admin/annualorderm/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
+                <a class=jbolt_table_editbtn href="admin/annualorderm/edit/${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" data-title="查看客户订单-年度订单"><i class="fa fa-eye"></i>查看</a>
+                <a class="jbolt_table_editbtn" href="admin/annualorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-title="编辑客户订单-年度订单"><i class="fa fa-edit"></i>编辑</a>
+                <a class="jbolt_table_delbtn" href="admin/annualorderm/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable"><i class="fa fa-remove c-danger">删除</i></a>
             </td>
             <td>${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
             <td>${data.cauditprogress}</td>
@@ -111,6 +73,7 @@
                data-url="admin/annualorderm/datas"
                data-rowtpl="AnnualOrderM_tpl_#(pageId)"
                data-copy-to-excel="false"
+               data-column-resize="true"
                data-page="AnnualOrderM_page"
                data-toolbar="AnnualOrderM_toolbar_#(pageId)"
                data-column-prepend="1:checkbox:true"
@@ -120,7 +83,7 @@
             <thead>
             <tr>
                 <th data-width="60" data-column="index">序号</th>
-                <th data-width="150">操作</th>
+                <th data-width="200">操作</th>
                 <th data-column="iOrderStatus">订单状态</th>
                 <th data-column="cAuditProgress">审批进度</th>
                 <th data-column="cOrderNo">订单号</th>
