@@ -1,0 +1,1387 @@
+<script>
+
+    function getEditableTableOptions_workposition(){
+        var editableTableOptions={
+            trigger:"click",
+            initRowCount:0,
+            maxRowCount:30,
+            //keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+            submit:{
+                withForm:["ManualOrderM_Form_#(pageId)"],
+                name:"manualorderd",
+                type:"all",//cell|all
+                //params:{"masterautoid":'#(masterautoid)'},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                url:"admin/manualorderm/save",
+                success:function(res){
+                    LayerMsgBox.success("提交成功",600,function(){
+                        //refreshPjaxContainer();
+                        parent.refreshJBoltTable("#itemroutingconfigid");
+                        parent.LayerMsgBox.closeAll();
+                    });
+                }
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10},
+            cols:{
+                iautoid:{
+                    submitAttr:"iautoid",
+                },
+                cinvcode:{  //半成品/成品名称
+                    type:"dialogbtn",
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/manualorderm/inventory_dialog_index",
+                        area:"60%,70%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
+                    columnAttr:"iinventoryid,cinvcode1,cinvname1,cinvstd,cuomname",
+                    changeColumns: [
+                        {column:"cuomname",use:"cuomname"},
+                        {column:"cinvstd",use:"cinvstd"},
+                        {column:"cinvname1",use:"cinvname1"},
+                        {column:"cinvcode1",use:"cinvcode1"},
+                        {column:"iinventoryid",use:"iautoid"},
+                    ]
+                },
+                iqty1:{type:"input_number",
+                       summary:[{
+                           dir:"v",
+                           tofixed:2,
+                           roundtag:"round",
+                           removezero:true,
+                           formula:"sum"
+                       }],
+                    handler:function(table,td,text,value,trJsonData){
+                    var isNum = 0.0;
+                    if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                    if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                    if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                    if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                    if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                    if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                    if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                    if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                    if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                    if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                    if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                    if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                    if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                    if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                    if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                    if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                    if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                    if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                    if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                    if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                    if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                    if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                    if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                    if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                    if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                    if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                    if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                    if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                    if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                    if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                    if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty2:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty3:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty4:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty5:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty6:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty7:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty8:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty9:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty10:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty11:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty12:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty13:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty14:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty15:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty16:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty17:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty18:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty19:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty20:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty21:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty22:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty23:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty24:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty25:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty26:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty27:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty28:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty29:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty30:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+                iqty31:{type:"input_number",
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                    handler:function(table,td,text,value,trJsonData){
+                        var isNum = 0.0;
+                        if(trJsonData.iqty1){isNum += trJsonData.iqty1}
+                        if(trJsonData.iqty2){isNum += trJsonData.iqty2}
+                        if(trJsonData.iqty3){isNum += trJsonData.iqty3}
+                        if(trJsonData.iqty4){isNum += trJsonData.iqty4}
+                        if(trJsonData.iqty5){isNum += trJsonData.iqty5}
+                        if(trJsonData.iqty6){isNum += trJsonData.iqty6}
+                        if(trJsonData.iqty7){isNum += trJsonData.iqty7}
+                        if(trJsonData.iqty8){isNum += trJsonData.iqty8}
+                        if(trJsonData.iqty9){isNum += trJsonData.iqty9}
+                        if(trJsonData.iqty10){isNum += trJsonData.iqty10}
+                        if(trJsonData.iqty11){isNum += trJsonData.iqty11}
+                        if(trJsonData.iqty12){isNum += trJsonData.iqty12}
+                        if(trJsonData.iqty13){isNum += trJsonData.iqty13}
+                        if(trJsonData.iqty14){isNum += trJsonData.iqty14}
+                        if(trJsonData.iqty15){isNum += trJsonData.iqty15}
+                        if(trJsonData.iqty16){isNum += trJsonData.iqty16}
+                        if(trJsonData.iqty17){isNum += trJsonData.iqty17}
+                        if(trJsonData.iqty18){isNum += trJsonData.iqty18}
+                        if(trJsonData.iqty19){isNum += trJsonData.iqty19}
+                        if(trJsonData.iqty20){isNum += trJsonData.iqty20}
+                        if(trJsonData.iqty21){isNum += trJsonData.iqty21}
+                        if(trJsonData.iqty22){isNum += trJsonData.iqty22}
+                        if(trJsonData.iqty23){isNum += trJsonData.iqty23}
+                        if(trJsonData.iqty24){isNum += trJsonData.iqty24}
+                        if(trJsonData.iqty25){isNum += trJsonData.iqty25}
+                        if(trJsonData.iqty26){isNum += trJsonData.iqty26}
+                        if(trJsonData.iqty27){isNum += trJsonData.iqty27}
+                        if(trJsonData.iqty28){isNum += trJsonData.iqty28}
+                        if(trJsonData.iqty29){isNum += trJsonData.iqty29}
+                        if(trJsonData.iqty30){isNum += trJsonData.iqty30}
+                        if(trJsonData.iqty31){isNum += trJsonData.iqty31}
+                        jboltTableSetCell(table, td.parent(), "isum", isNum, isNum)
+                    }},
+            }
+        };
+        return editableTableOptions;
+    }
+
+</script>

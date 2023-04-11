@@ -2232,4 +2232,8 @@ public class PermissionKey {
 	 * 平板登录日志
 	 */
     public static final String PADLOGINLOG = "pad_loginlog";
+	/**
+	 * 手配订单
+	 */
+	public static final String MANUALORDER = "manual_order";
 }

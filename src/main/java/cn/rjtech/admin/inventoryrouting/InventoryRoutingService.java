@@ -308,6 +308,8 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 		jsTreeBeanList.add(parent1);
 		jsTreeBeanList.add(parent);
 		StringBuilder ids = new StringBuilder();
+		Long finishedId = null;
+		Long semiFinishedId = null;
 		for (Record inventoryClass : configs){
 			Long id = inventoryClass.getLong("iautoid");
 			ids.append(id).append(",");
@@ -315,11 +317,17 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 			String pid = "";
 			String text ="";
 			if(inventoryClass.getLong("irsinventoryid") == null){
-				pid="2";
-				text = "虚拟件:"+ inventoryClass.getStr("coperationname");
-			}else {
 				pid="1";
+				text = "虚拟件:"+ inventoryClass.getStr("coperationname");
+				if(finishedId != null)
+					pid = finishedId +"";
+				finishedId = inventoryClass.getLong("iautoid");
+			}else {
+				pid="2";
 				text = inventoryClass.getStr("rsinventoryname");
+				if(semiFinishedId != null)
+					pid = semiFinishedId +"";
+				semiFinishedId = inventoryClass.getLong("iautoid");
 			}
 
 			JsTreeBean jsTreeBean = new JsTreeBean(id,pid,text,type,"",false);

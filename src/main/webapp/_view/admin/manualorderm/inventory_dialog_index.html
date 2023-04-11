@@ -33,7 +33,7 @@
 <td>${data.cinvstd}</td>
 <td>${data.cuomname}</td>
 <td>
-	<a tooltip href="javascript:void(0)" onclick="checkThis('${data.iautoid}','${data.cinvname1}')"   class="jbolt_table_btn">选择</a>
+	<a tooltip   href="javascript:void(0)" onclick="checkThis('${data.cinvcode}','${data.cinvcode1}','${data.cinvname1}','${data.cinvstd}','${data.cuomname}','${data.iautoid}',)"   class="jbolt_table_btn">选择</a>
 </td>
 </tr>
 {@/each}
@@ -74,21 +74,20 @@
 </div>
 <script>
 	function submitThisForm(callback){
-		var data=getJboltTableCheckedDatas("inventorydialogtableid");
-		console.log(JSON.stringify(data))
+		var data=getJboltTableCheckedData("inventorydialogtableid");
 		if(data){
-			let names = data[0].cinvname1;
-			let ids = data[0].iautoid;
-			parent.jboltTableProcessTdByDialogChooser(names,ids,data);
+			parent.jboltTableProcessTdByDialogChooser(data.cinvcode,data.cinvcode,data);
 			if(callback){
 				callback();
 			}
 		}
 	}
 
-	function checkThis(iautoid,cinvname1){
-		if(iautoid){
-			parent.jboltTableProcessTdByDialogChooser(cinvname1,iautoid,[]);
+	function checkThis(cinvcode,cinvcode1,cinvname1,cinvstd,cuomname,iautoid){
+		var data = {"cinvcode":cinvcode,"cinvcode1":cinvcode1,"cinvname1":cinvname1,
+			"cinvstd":cinvstd,"cuomname":cuomname,"iautoid":iautoid,}
+		if(cinvcode){
+			parent.jboltTableProcessTdByDialogChooser(cinvcode,cinvcode,data);
 			parent.LayerMsgBox.closeAll();
 		}
 	}

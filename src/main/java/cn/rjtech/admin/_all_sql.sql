@@ -231,3 +231,7 @@
 #namespace("bommaster")
 #include("bommaster/bommaster.sql")
 #end
+
+#namespace("manualorderm")
+#include("manualorderm/manualorderm.sql")
+#end
