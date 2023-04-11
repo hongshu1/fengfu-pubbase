@@ -45,7 +45,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
 
     public void addviewparm() {
         set("startyear", DateUtils.formatDate(new Date(),"yyyy"));
-        render("addviewparm.html");
+        render("planyearparm.html");
     }
 
 
@@ -115,7 +115,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
 
 
     public void getCustomerList() {
-        renderJson(service.getCustomerList());
+        renderJsonData(service.getCustomerList());
     }
 
     /**

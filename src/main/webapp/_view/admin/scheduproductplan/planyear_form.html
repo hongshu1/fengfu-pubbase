@@ -63,6 +63,8 @@
         </script>
         <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbaradd_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-area="50%,80%" onclick="addviewparmBtn(this)" class="btn btn-sm"><i class="fa fa-trash"></i> 作成条件</button>
+
                 <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
                 <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
                 <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
@@ -154,6 +156,11 @@ function submitThisForm(){
 	jboltTableSubmit("#jbolt_Table_#(pageId)");
 }
 
+function addviewparmBtn(ele){
+    var url="admin/scheduproductplanyear/addviewparm";
+    $(ele).data("url",url);
+    DialogUtil.openBy(ele);
+}
 
 
 </script>

@@ -762,8 +762,8 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
         List<ScheduProductYearViewDTO> scheduProductPlanYearList = new ArrayList<>();
 
         if (notOk(cplanorderno) || notOk(startYear) || notOk(icustomerid)){
-            ValidationUtils.isTrue(false,"查询条件不能为空!");
-            //throw new RuntimeException("该客户无订单计划！");
+            //ValidationUtils.isTrue(false,"查询条件不能为空!");
+            return scheduProductPlanYearList;
         }
         try {
             kv.set("cplanorderno",cplanorderno);//必传

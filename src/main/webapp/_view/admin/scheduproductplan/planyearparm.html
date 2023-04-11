@@ -1,0 +1,65 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+        #set(pageId=RandomUtil.random(6))
+        #set(iYear=DateUtil.getYear())
+        <div class="jbolt_page_title">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-2 col-form-label">指定年份</label>
+                                    <div class="col-10">
+                                        <input data-done-handler="changeDoneYear"
+                                               type="text"
+                                               data-rule="required"
+                                               data-date
+                                               data-type="year"
+                                               data-fmt="yyyy"
+                                               autocomplete="off"
+                                               class="form-control"
+                                               maxlength="20"
+                                               name="iyear"
+                                               value="#datetime(annualOrderM.iYear??DateUtil.getNow(),'yyyy')"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group row"
+                                     data-radio
+                                     data-rule="radio"
+                                     data-value="#(customerId??)"
+                                     data-name="customerId"
+                                     data-default=""
+                                     data-text-attr="ccusname"
+                                     data-value-attr="iautoid"
+                                     data-url="admin/scheduproductplanyear/getCustomerList"
+                                     data-width="col-2,col-10"
+                                     data-label="指定客户"
+                                     data-inline="true"
+                                     data-align-left="true"
+                                >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        #define js()
+        <script>
+
+        </script>
+        #end
+    </div>
+</div>
+#end
+
+
+
