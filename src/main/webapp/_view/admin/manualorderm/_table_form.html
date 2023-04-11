@@ -14,56 +14,54 @@
         </div>
     </div>
     <div class="jbolt_page_content">
+        
         <!-- JBoltTable的数据模板定义-->
         <textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.iautoid}" >
-<td>${pageNumber,pageSize,index | rownum}</td>
-
-	<td>
-	<a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger"></i></a>
-</td>
-<td>${data.cinvcode}</td>
-<td hidden>${data.iinventoryid}</td>
-<td>${data.cinvcode1}</td>
-<td>${data.cinvname1}</td>
-<td>${data.cinvstd}</td>
-<td>${data.cuomname}</td>
-<td>${data.iqty1}</td>
-<td>${data.iqty2}</td>
-<td>${data.iqty3}</td>
-<td>${data.iqty4}</td>
-<td>${data.iqty5}</td>
-<td>${data.iqty6}</td>
-<td>${data.iqty7}</td>
-<td>${data.iqty8}</td>
-<td>${data.iqty9}</td>
-<td>${data.iqty10}</td>
-<td>${data.iqty11}</td>
-<td>${data.iqty12}</td>
-<td>${data.iqty13}</td>
-<td>${data.iqty14}</td>
-<td>${data.iqty15}</td>
-<td>${data.iqty16}</td>
-<td>${data.iqty17}</td>
-<td>${data.iqty18}</td>
-<td>${data.iqty19}</td>
-<td>${data.iqty20}</td>
-<td>${data.iqty21}</td>
-<td>${data.iqty22}</td>
-<td>${data.iqty23}</td>
-<td>${data.iqty24}</td>
-<td>${data.iqty25}</td>
-<td>${data.iqty26}</td>
-<td>${data.iqty27}</td>
-<td>${data.iqty28}</td>
-<td>${data.iqty29}</td>
-<td>${data.iqty30}</td>
-<td>${data.iqty31}</td>
-<td>${data.isum}</td>
-</tr>
-{@/each}
-</textarea>
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}" >
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td><a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger"></i></a></td>
+            <td>${data.cinvcode}</td>
+            <td hidden>${data.iinventoryid}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.cuomname}</td>
+            <td>${data.iqty1}</td>
+            <td>${data.iqty2}</td>
+            <td>${data.iqty3}</td>
+            <td>${data.iqty4}</td>
+            <td>${data.iqty5}</td>
+            <td>${data.iqty6}</td>
+            <td>${data.iqty7}</td>
+            <td>${data.iqty8}</td>
+            <td>${data.iqty9}</td>
+            <td>${data.iqty10}</td>
+            <td>${data.iqty11}</td>
+            <td>${data.iqty12}</td>
+            <td>${data.iqty13}</td>
+            <td>${data.iqty14}</td>
+            <td>${data.iqty15}</td>
+            <td>${data.iqty16}</td>
+            <td>${data.iqty17}</td>
+            <td>${data.iqty18}</td>
+            <td>${data.iqty19}</td>
+            <td>${data.iqty20}</td>
+            <td>${data.iqty21}</td>
+            <td>${data.iqty22}</td>
+            <td>${data.iqty23}</td>
+            <td>${data.iqty24}</td>
+            <td>${data.iqty25}</td>
+            <td>${data.iqty26}</td>
+            <td>${data.iqty27}</td>
+            <td>${data.iqty28}</td>
+            <td>${data.iqty29}</td>
+            <td>${data.iqty30}</td>
+            <td>${data.iqty31}</td>
+            <td>${data.isum}</td>
+        </tr>
+        {@/each}
+        </textarea>
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
             <div class="btn-group" role="group" aria-label="btn-group">
@@ -142,10 +140,11 @@
                 <th></th>
                 <th></th>
                 <th></th>
+                <th hidden></th>
                 <th></th>
                 <th></th>
                 <th></th>
-                <th>合计</th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
