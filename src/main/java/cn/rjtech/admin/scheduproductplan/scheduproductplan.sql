@@ -204,6 +204,9 @@ WHERE a.isDeleted = '0'
     #if(icustomerid)
         AND a.iCustomerId = #para(icustomerid)
     #end
+    #if(ccusname)
+        AND d.cCusName LIKE CONCAT('%', #para(ccusname), '%')
+    #end
     #if(iplanorderstatus)
         AND a.iPlanOrderStatus = #para(iplanorderstatus)
     #end

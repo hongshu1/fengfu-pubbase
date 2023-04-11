@@ -27,17 +27,32 @@ import java.util.*;
  */
 @CheckPermission(PermissionKey.NOME)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/scheduproductplanyear", viewPath = "/_view/admin/scheduproductplanyear")
+@Path(value = "/admin/scheduproductplanyear", viewPath = "/_view/admin/scheduproductplan")
 public class ScheduProductPlanYearController extends BaseAdminController {
 
     @Inject
     private ScheduProductPlanYearService service;
 
-    /**
-     * 首页
-     */
-    public void index() {
-        render("index.html");
+    public void planyear() {
+        render("planyear.html");
+    }
+    public void addview() {
+        set("cplanorderno",get("cplanorderno"));
+        set("icustomerid",get("icustomerid"));
+        set("startyear",get("startyear"));
+        render("planyear_add.html");
+    }
+
+    public void addviewparm() {
+        set("startyear", DateUtils.formatDate(new Date(),"yyyy"));
+        render("addviewparm.html");
+    }
+
+
+
+
+    public void planyearsum() {
+        render("planyearsum.html");
     }
 
     /**
@@ -98,6 +113,11 @@ public class ScheduProductPlanYearController extends BaseAdminController {
 
     //-----------------------------------------------------------------年度生产计划排产-----------------------------------------------
 
+
+    public void getCustomerList() {
+        renderJson(service.getCustomerList());
+    }
+
     /**
      * 作成计划
      */
@@ -119,7 +139,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
      */
     public void getApsYearPlanList() {
         String cplanorderno = get("cplanorderno");
-        Long icustomerid = 1002302220113209l;//getLong("icustomerid");
+        Long icustomerid = getLong("icustomerid");
         String startYear = get("startyear");
         renderJsonData(service.getApsYearPlanList(cplanorderno,icustomerid,startYear,getKv()));
     }

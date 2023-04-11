@@ -231,13 +231,19 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
 
     //-----------------------------------------------------------------年度生产计划排产-----------------------------------------------
 
+    public List<Record> getCustomerList() {
+        return findRecord("SELECT iAutoId,cCusName FROM Bd_Customer WHERE isDeleted = '0'");
+    }
+
+
+
     public Page<Record> getApsYearPlanMasterPage(int pageNumber, int pageSize, Kv kv) {
         return dbTemplate("scheduproductplan.getApsYearPlanMasterPage",kv).paginate(pageNumber,pageSize);
     }
 
 
     /**
-     * APS排程逻辑处理
+     * 年度生产计划逻辑处理
      * @param kv
      * @return
      */
