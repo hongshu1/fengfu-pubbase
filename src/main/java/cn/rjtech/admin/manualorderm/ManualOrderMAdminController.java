@@ -1,6 +1,7 @@
 package cn.rjtech.admin.manualorderm;
 
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -61,7 +62,9 @@ public class ManualOrderMAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(ManualOrderM.class, "manualOrderM")));
+		JBoltTable jBoltTable = getJBoltTable();
+		ManualOrderM manualOrderM = jBoltTable.getFormBean(ManualOrderM.class, "manualOrderM");
+		renderJson(service.saveForm(manualOrderM,jBoltTable));
 	}
 
    /**
@@ -74,6 +77,46 @@ public class ManualOrderMAdminController extends BaseAdminController {
 			return;
 		}
 		set("manualOrderM",manualOrderM);
+		render("edit.html");
+	}
+
+   /**
+	* 编辑
+	*/
+	public void audit() {
+		ManualOrderM manualOrderM=service.findById(getLong(0));
+		if(manualOrderM == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("manualOrderM",manualOrderM);
+		render("edit.html");
+	}
+
+   /**
+	* 编辑
+	*/
+	public void colse() {
+		ManualOrderM manualOrderM=service.findById(getLong(0));
+		if(manualOrderM == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("manualOrderM",manualOrderM);
+		render("edit.html");
+	}
+
+   /**
+	* 编辑
+	*/
+	public void info() {
+		ManualOrderM manualOrderM=service.findById(getLong(0));
+		if(manualOrderM == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("manualOrderM",manualOrderM);
+		set("view",1);
 		render("edit.html");
 	}
 

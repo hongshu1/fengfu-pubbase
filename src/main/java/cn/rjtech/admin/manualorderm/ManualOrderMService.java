@@ -1,17 +1,25 @@
 package cn.rjtech.admin.manualorderm;
 
+import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.rjtech.admin.manualorderd.ManualOrderDService;
+import cn.rjtech.model.momdata.ManualOrderD;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import java.util.Date;
-import cn.jbolt.core.bean.JBoltDateRange;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.ManualOrderM;
 import com.jfinal.plugin.activerecord.Record;
+
+import static cn.jbolt.core.util.JBoltArrayUtil.COMMA;
 
 /**
  * 客户订单-手配订单主表
@@ -21,6 +29,10 @@ import com.jfinal.plugin.activerecord.Record;
  */
 public class ManualOrderMService extends BaseService<ManualOrderM> {
 	private final ManualOrderM dao=new ManualOrderM().dao();
+
+	@Inject
+	private ManualOrderDService manualOrderDService;
+
 	@Override
 	protected ManualOrderM dao() {
 		return dao;
@@ -51,7 +63,9 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 		if(manualOrderM==null || isOk(manualOrderM.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		//if(existsName(manualOrderM.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		if(exists("cOrderNo",manualOrderM.getCOrderNo())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		setManualOrderM(manualOrderM);
+		manualOrderM.setIAuditStatus(0);
 		boolean success=manualOrderM.save();
 		if(success) {
 			//添加日志
@@ -60,6 +74,28 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 		return ret(success);
 	}
 
+	/**
+	 * 设置参数
+	 * @param manualOrderM
+	 * @return
+	 */
+	private ManualOrderM setManualOrderM(ManualOrderM manualOrderM){
+		manualOrderM.setCOrgCode(getOrgCode());
+		manualOrderM.setCOrgName(getOrgName());
+		manualOrderM.setIOrgId(getOrgId());
+		manualOrderM.setIsDeleted(false);
+		Long userId = JBoltUserKit.getUserId();
+		manualOrderM.setICreateBy(userId);
+		manualOrderM.setIUpdateBy(userId);
+		String userName = JBoltUserKit.getUserName();
+		manualOrderM.setCCreateName(userName);
+		manualOrderM.setCUpdateName(userName);
+		Date date = new Date();
+		manualOrderM.setDCreateTime(date);
+		manualOrderM.setDUpdateTime(date);
+		return manualOrderM;
+	}
+	
 	/**
 	 * 更新
 	 * @param manualOrderM
@@ -105,4 +141,43 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 		return null;
 	}
 
+	public Ret saveForm(ManualOrderM manualOrderM, JBoltTable jBoltTable) {
+		AtomicReference<Ret> res = new AtomicReference<>();
+		res.set(SUCCESS);
+		tx(() -> {
+			if(manualOrderM.getIAutoId() == null) {
+				Ret save = save(manualOrderM);
+				if(!save.isOk()){
+					res.set(save);
+					return false;
+				}
+			} else
+				update(manualOrderM);
+			List<ManualOrderD> saveBeanList = jBoltTable.getSaveBeanList(ManualOrderD.class);
+			if(saveBeanList != null && saveBeanList.size() > 0){
+				for (ManualOrderD manualOrderD : saveBeanList) {
+					manualOrderD.setIManualOrderMid(manualOrderM.getIAutoId());
+					manualOrderD.setIsDeleted(false);
+				}
+				manualOrderDService.batchSave(saveBeanList);
+			}
+			List<ManualOrderD> updateBeanList = jBoltTable.getUpdateBeanList(ManualOrderD.class);
+			if(updateBeanList != null && updateBeanList.size() > 0){
+				for (ManualOrderD manualOrderD : updateBeanList) {
+					manualOrderD.setIManualOrderMid(manualOrderM.getIAutoId());
+				}
+				manualOrderDService.batchUpdate(saveBeanList);
+			}
+			Object[] deletes = jBoltTable.getDelete();
+			if (ArrayUtil.isNotEmpty(deletes)) {
+				deleteMultiByIds(deletes);
+			}
+			return true;
+		});
+		return res.get();
+	}
+
+	public void deleteMultiByIds(Object[] deletes) {
+		delete("DELETE FROM Co_ManualOrderD WHERE iAutoId IN (" + ArrayUtil.join(deletes, COMMA) + ") ");
+	}
 }

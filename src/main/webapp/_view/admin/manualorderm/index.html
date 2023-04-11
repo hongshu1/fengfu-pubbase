@@ -4,7 +4,7 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
 <div class="jbolt_page_title">
 <div class="row">
-	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>客户订单-手配订单主表</h1></div>
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>客户订单-手配订单</h1></div>
 	<div class="col">
 	<form class="form-inline" id="ManualOrderM_form_#(pageId)">
 <input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入订单号" maxlength="40" name="cOrderNo" />
@@ -39,15 +39,22 @@
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-	{@if data.isDeleted}
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/manualorderm/edit/${data.iautoid}" data-area="100%,100%" data-title="查看客户订单-手配订单主表"><i class="fa fa-eye"></i></a>
-	{@else}
-	<a class="jbolt_table_editbtn" href="admin/manualorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="编辑客户订单-手配订单主表"><i class="fa fa-edit"></i></a>
-	{@/if}
+		{@if data.iorderstatus == 2}
+			<a class="jbolt_table_btn" href="admin/manualorderm/audit/${data.iautoid}" data-handler="refreshJBoltTable" >审批</a>
+		{@/if}
+		{@if data.iorderstatus == 3}
+			<a class="jbolt_table_btn" href="admin/manualorderm/colse/${data.iautoid}" data-handler="refreshJBoltTable" >关闭</a>
+		{@/if}
+			<a class="text-info mr-1" data-openpage="dialog" href="admin/manualorderm/info/${data.iautoid}" data-area="100%,100%" data-title="查看手配订单"><i class="fa fa-eye"></i></a>
+
+	{@if data.iorderstatus == 1 || data.iorderstatus == 4}
+	<a class="jbolt_table_editbtn" href="admin/manualorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="编辑手配订单"><i class="fa fa-edit"></i></a>
 	<a class="jbolt_table_delbtn" href="admin/manualorderm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+	{@/if}
 </td>
+	<td>${data.statename}</td>
+
 <td>${data.corderno}</td>
-<td>${data.statename}</td>
 <td>${data.ccusname}</td>
 <td>${data.iyear}</td>
 <td>${data.imonth}</td>
@@ -58,11 +65,11 @@
 </textarea>
 <div class="jbolt_table_toolbar" id="ManualOrderM_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-	<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增客户订单-手配订单主表" data-url="admin/manualorderm/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-	<button data-title="批量审核"  onclick="batchAudit(this)" class="btn btn-primary btn-sm" >批量审核</button>
-	<button data-title="批量反审核"  onclick="batchAntiAudit(this)" class="btn btn-primary btn-sm" >批量反审核</button>
-	<button data-title="批量删除"  onclick="batchDetect(this)" class="btn btn-primary btn-sm" >批量删除</button>
-	<button data-title="批量关闭"  onclick="batchClose(this)" class="btn btn-primary btn-sm" >批量关闭</button>
+	<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增手配订单" data-url="admin/manualorderm/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-title="批量审核"  onclick="batchAudit(this)" data-handler="jboltTablePageToFirst" class="btn btn-primary btn-sm" >批量审核</button>
+	<button data-title="批量反审核"  onclick="batchAntiAudit(this)" data-handler="jboltTablePageToFirst" class="btn btn-primary btn-sm" >批量反审核</button>
+	<button data-title="批量删除"  onclick="batchDetect(this)" data-handler="jboltTablePageToFirst" class="btn btn-primary btn-sm" >批量删除</button>
+	<button data-title="批量关闭"  onclick="batchClose(this)" data-handler="jboltTablePageToFirst" class="btn btn-primary btn-sm" >批量关闭</button>
 </div>
 
 </div>
@@ -78,7 +85,7 @@
 	   data-page="ManualOrderM_page"
 	   data-toolbar="ManualOrderM_toolbar_#(pageId)"
 	   data-column-prepend="1:checkbox:true"
-	   id="ManualOrderMTable"
+	   id="manualordermtable_#(pageId)"
 >
 <thead>
 <tr>
@@ -87,7 +94,7 @@
 	<th data-width="80">操作</th>
 	<th data-width="100" data-column="iOrderStatus">订单状态</th>
 	<th data-width="150" data-column="cOrderNo">订单号</th>
-	<th data-width="100" data-column="iCustomerId">客户名称</th>
+	<th data-width="250" data-column="iCustomerId">客户名称</th>
 	<th data-width="100" data-column="iYear">年份</th>
 	<th data-width="100" data-column="iMonth">月份</th>
 	<th data-width="150" data-column="cCreateName">创建人</th>
@@ -103,7 +110,7 @@
 #define js()
 <script type="text/javascript">
 	function batchAudit(ele) {
-		var data=getJboltTableCheckedDatas("ManualOrderMTable");
+		var data=getJboltTableCheckedDatas("ManualOrderMTable_#(pageId)");
 		var url="admin/manualorderm/dialog_index?iinventoryid=#(inventory.iAutoId)"+"&citemcode="+citemcode+"&citemname="+citemname;
 		$(ele).data("url",url);
 		DialogUtil.openBy(ele);

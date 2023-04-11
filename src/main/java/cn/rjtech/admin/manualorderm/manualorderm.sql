@@ -17,17 +17,18 @@ and mom.iMonth = #para(imonth)
 and mom.iOrderStatus = #para(iorderstatus)
 #end
 #if(starttime)
-and pl.dCreateTime >= #para(starttime)
+and mom.dCreateTime >= #para(starttime)
 #end
 #if(endtime)
-and pl.dCreateTime <= #para(endtime)
+and mom.dCreateTime <= #para(endtime)
 #end
-order by pl.dCreateTime desc
+order by mom.dCreateTime desc
 #end
 
 #sql("manualorderds")
-select mod.*,i.cInvCode,i.cInvCode1,i.cInvName1,i.cInvStd,u1.cUomName from Co_ManualOrderD mod
-left join Bd_Inventory i on mod.iInventoryId = i.iAutoId
+select md.*,i.cInvCode,i.cInvCode1,i.cInvName1,i.cInvStd,u1.cUomName
+from Co_ManualOrderD md
+left join Bd_Inventory i on md.iInventoryId = i.iAutoId
 left join bd_uom u1 on u1.iAutoId = i.iInventoryUomId1
-where mod.iManualOrderMid = #(imanualordermid)
+where md.iManualOrderMid = #para(imanualordermid)
 #end
