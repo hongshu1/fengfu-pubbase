@@ -245,6 +245,10 @@
 #include("bommaster/bommaster.sql")
 #end
 
+#namespace("bomcompare")
+#include("bomcompare/bomcompare.sql")
+#end
+
 #namespace("manualorderm")
 #include("manualorderm/manualorderm.sql")
 #end

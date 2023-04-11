@@ -1,10 +1,14 @@
 #sql("datas")
-SELECT DISTINCT * FROM (SELECT
+SELECT * FROM (SELECT
 	master.iAutoId AS id,
 	master.cBomVersion,
 	minv.cInvCode,
 	minv.cInvName,
 	minv.cInvStd,
+	minv.cInvCode1,
+	minv.cInvAddCode1,
+	minv.cInvName1,
+	minv.cInvName2,
 	uom.cUomName,
     NULL iQty,
     minv.iweight,
@@ -26,6 +30,10 @@ SELECT
 	minv.cInvCode,
 	minv.cInvName,
 	minv.cInvStd,
+	minv.cInvCode1,
+	minv.cInvAddCode1,
+	minv.cInvName1,
+	minv.cInvName2,
 	uom2.cUomName,
 	bbc.iQty,
 	bbc.iWeight,
@@ -57,25 +65,95 @@ WHERE
 	  #end
 #end
 
-#sql("test")
-WITH a ( iAutoId, pid ) AS (
-	SELECT
-		b1.iAutoId ,
-		b1.iPid AS pid
-	FROM
-		Bd_BomCompare AS b1  WHERE b1.iPid = 1642802976143011841 OR b1.iAutoId = 1642802976143011841
-	UNION ALL
-	SELECT
-		b2.iAutoId ,
-		b2.iPid AS pid
-	FROM
-		Bd_BomCompare AS b2
-		INNER JOIN a ON b2.iPid  = a.iAutoId
-	)
-	SELECT DISTINCT
-	inv.cInvCode,b.iautoId
+#sql("getVersionRecord")
+SELECT
+	master.iAutoId AS id,
+	master.cBomVersion,
+	master.dEnableDate,
+	master.dDisableDate,
+	master.iAuditStatus,
+	master.cCreateName,
+	master.dCreateTime,
+	minv.cInvCode,
+	minv.cInvName,
+	minv.cInvStd,
+	minv.cInvCode1,
+	minv.cInvAddCode1,
+	minv.cInvName1,
+	minv.cInvName2,
+	uom.cUomName
 FROM
-	a
-	INNER JOIN Bd_BomCompare b ON a.iAutoId = b.iAutoId
-	INNER JOIN Bd_Inventory inv ON inv.iAutoId = b.iInventoryId
+	Bd_BomMaster master
+	INNER JOIN Bd_Inventory minv ON minv.iAutoId = master.iInventoryId
+	LEFT JOIN Bd_Uom uom ON uom.iAutoId = minv.iUomClassId
+WHERE
+	master.IsDeleted = '0'
+	AND master.isEnabled = '1'
+	#if(orgId)
+	AND  master.iOrgId = #para(orgId)
+	#end
+	#if(cInvCode)
+	    AND minv.cInvCode LIKE CONCAT('%',#para(cInvCode),'%')
+	#end
+	#if(cInvCode1)
+	    AND minv.minv.cInvCode1 LIKE CONCAT('%',#para(cInvCode1),'%')
+	#end
+	#if(cInvName1)
+	    AND minv.minv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%')
+	#end
+	ORDER BY master.dCreateTime ASC
+#end
+
+#sql("queryBomMasterId")
+SELECT a.id FROM (SELECT
+	master.iAutoId AS id,
+	minv.cInvCode,
+	minv.cInvName,
+	minv.cInvStd,
+	minv.cInvCode1,
+	minv.cInvAddCode1,
+	minv.cInvName1,
+	minv.cInvName2,
+    master.iOrgId
+FROM
+	Bd_BomMaster master
+	INNER JOIN Bd_Inventory minv ON minv.iAutoId = master.iInventoryId
+	LEFT JOIN Bd_Uom uom ON uom.iAutoId = minv.iUomClassId
+WHERE
+	master.IsDeleted = '0'
+	AND master.isEnabled = '1'
+	AND master.dEnableDate <= GETDATE()
+	AND master.dDisableDate >= GETDATE()
+UNION ALL
+SELECT
+	bbc.iBOMMasterId AS id,
+	minv.cInvCode,
+	minv.cInvName,
+	minv.cInvStd,
+	minv.cInvCode1,
+	minv.cInvAddCode1,
+	minv.cInvName1,
+	minv.cInvName2,
+	a.iOrgId
+FROM
+	Bd_BomCompare bbc
+	INNER JOIN Bd_Inventory minv ON minv.iAutoId = bbc.iInventoryId
+	INNER JOIN Bd_BomMaster a ON a.iAutoId = bbc.iBOMMasterId AND a.dEnableDate <= GETDATE() AND a.dDisableDate >= GETDATE()
+WHERE
+	bbc.IsDeleted = '0'
+	AND a.IsDeleted = '0'
+	AND a.isEnabled = '1'
+	  ) a
+	   WHERE 1 = 1
+	  #if(orgId)
+	    AND a.iOrgId = #para(orgId)
+	  #end
+	  #if(keyWords)
+        AND (
+           (a.cInvCode LIKE CONCAT('%',#para(keyWords),'%')) OR ( a.cInvName LIKE CONCAT('%',#para(keyWords),'%') )
+          OR (a.cInvCode1 LIKE CONCAT('%',#para(keyWords),'%')) OR ( a.cInvAddCode1 LIKE CONCAT('%',#para(keyWords),'%') )
+          OR (a.cInvName1 LIKE CONCAT('%',#para(keyWords),'%')) OR ( a.cInvName2 LIKE CONCAT('%',#para(keyWords),'%') )
+        )
+	  #end
+	  group by a.id
 #end

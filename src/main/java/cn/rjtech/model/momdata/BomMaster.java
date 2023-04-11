@@ -11,5 +11,13 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Bd_BomMaster" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class BomMaster extends BaseBomMaster<BomMaster> {
+    /**机型名称*/
+    public static final String EQUIPMENTMODELNAME = "equipmentModelName";
+    /**客户部番*/
+    public static final String INVCODE1 = "invCode1";
+    /**客户ID*/
+    public static final String USTOMERNAME = "customerName";
+    /**UG部番*/
+    public static final String INVADDCODE1 = "cInvAddCode1";
 }
 
