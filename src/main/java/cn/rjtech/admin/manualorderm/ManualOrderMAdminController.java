@@ -81,7 +81,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
 	}
 
    /**
-	* 编辑
+	* 审核
 	*/
 	public void audit() {
 		ManualOrderM manualOrderM=service.findById(getLong(0));
@@ -89,12 +89,13 @@ public class ManualOrderMAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("manualOrderM",manualOrderM);
-		render("edit.html");
+		manualOrderM.setIAuditStatus(1);
+		manualOrderM.setIOrderStatus(3);
+		renderJson(service.update(manualOrderM));
 	}
 
    /**
-	* 编辑
+	* 关闭
 	*/
 	public void colse() {
 		ManualOrderM manualOrderM=service.findById(getLong(0));
@@ -102,8 +103,8 @@ public class ManualOrderMAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("manualOrderM",manualOrderM);
-		render("edit.html");
+		manualOrderM.setIOrderStatus(6);
+		renderJson(service.update(manualOrderM));
 	}
 
    /**
@@ -143,5 +144,21 @@ public class ManualOrderMAdminController extends BaseAdminController {
 
 	public void inventory_dialog_index(){
 		render("inventory_dialog_index.html");
+	}
+
+	public void batchAudit(){
+		renderJson(service.batchHandle(getKv(),3));
+	}
+
+	public void batchAntiAudit(){
+		renderJson(service.batchHandle(getKv(),2));
+	}
+
+	public void batchClose(){
+		renderJson(service.batchHandle(getKv(),6));
+	}
+
+	public void batchDetect(){
+		renderJson(service.batchDetect(getKv()));
 	}
 }

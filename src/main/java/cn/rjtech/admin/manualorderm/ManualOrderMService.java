@@ -180,4 +180,26 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 	public void deleteMultiByIds(Object[] deletes) {
 		delete("DELETE FROM Co_ManualOrderD WHERE iAutoId IN (" + ArrayUtil.join(deletes, COMMA) + ") ");
 	}
+
+	public Ret batchHandle(Kv kv,int status) {
+		List<Record> records = dbTemplate("manualorderm.list", kv).find();
+		if(records != null && records.size() > 0){
+			for (Record record : records) {
+				record.put("iorderstatus",status);
+			}
+			batchUpdateRecords(records);
+		}
+		return SUCCESS;
+	}
+
+	public Ret batchDetect(Kv kv) {
+		List<Record> records = dbTemplate("manualorderm.list", kv).find();
+		if(records != null && records.size() > 0){
+			for (Record record : records) {
+				record.put("isdeleted",1);
+			}
+			batchUpdateRecords(records);
+		}
+		return SUCCESS;
+	}
 }

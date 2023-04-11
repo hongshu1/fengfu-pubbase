@@ -22,6 +22,9 @@ and mom.dCreateTime >= #para(starttime)
 #if(endtime)
 and mom.dCreateTime <= #para(endtime)
 #end
+#if(ids)
+and mom.iAutoId in (#para(ids))
+#end
 order by mom.dCreateTime desc
 #end
 
@@ -32,3 +35,4 @@ left join Bd_Inventory i on md.iInventoryId = i.iAutoId
 left join bd_uom u1 on u1.iAutoId = i.iInventoryUomId1
 where md.iManualOrderMid = #para(imanualordermid)
 #end
+
