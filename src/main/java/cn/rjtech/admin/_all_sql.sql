@@ -193,8 +193,8 @@
 #include("fitemss97sub/fitemss97sub.sql")
 #end
 
-#namespace("forgeigncurrency")
-#include("forgeigncurrency/forgeigncurrency.sql")
+#namespace("foreigncurrency")
+#include("foreigncurrency/foreigncurrency.sql")
 #end
 
 #namespace("qcform")

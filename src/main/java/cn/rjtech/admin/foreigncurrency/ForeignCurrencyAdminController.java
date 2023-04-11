@@ -1,5 +1,6 @@
-package cn.rjtech.admin.forgeigncurrency;
+package cn.rjtech.admin.foreigncurrency;
 
+import cn.rjtech.model.momdata.ForeignCurrency;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -10,21 +11,21 @@ import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.ForgeignCurrency;
+
 /**
  * 币种档案 Controller
- * @ClassName: ForgeignCurrencyAdminController
+ * @ClassName: ForeignCurrencyAdminController
  * @author: WYX
  * @date: 2023-03-20 21:09
  */
 @CheckPermission(PermissionKey.FORGEIGN_CURRENCY_INDEX)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/forgeigncurrency", viewPath = "/_view/admin/forgeigncurrency")
-public class ForgeignCurrencyAdminController extends BaseAdminController {
+@Path(value = "/admin/foreigncurrency", viewPath = "/_view/admin/foreigncurrency")
+public class ForeignCurrencyAdminController extends BaseAdminController {
 
 	@Inject
-	private ForgeignCurrencyService service;
+	private ForeignCurrencyService service;
 
    /**
 	* 首页
@@ -51,12 +52,12 @@ public class ForgeignCurrencyAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		ForgeignCurrency forgeignCurrency = service.findById(getLong(0)); 
-		if(forgeignCurrency == null){
+		ForeignCurrency foreignCurrency = service.findById(getLong(0)); 
+		if(foreignCurrency == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("forgeignCurrency",forgeignCurrency);
+		set("foreignCurrency", foreignCurrency);
 		render("edit.html");
 	}
 
@@ -64,14 +65,14 @@ public class ForgeignCurrencyAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(ForgeignCurrency.class, "forgeignCurrency")));
+		renderJson(service.save(getModel(ForeignCurrency.class, "foreignCurrency")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(ForgeignCurrency.class, "forgeignCurrency")));
+		renderJson(service.update(getModel(ForeignCurrency.class, "foreignCurrency")));
 	}
 
    /**
