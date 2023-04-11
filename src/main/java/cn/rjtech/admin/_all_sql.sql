@@ -248,3 +248,7 @@
 #namespace("manualorderm")
 #include("manualorderm/manualorderm.sql")
 #end
+
+#namespace("containerStockInD")
+#include("containerStockInD/containerStockD.sql")
+#end
