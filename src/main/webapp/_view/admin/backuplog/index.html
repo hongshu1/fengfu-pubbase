@@ -1,6 +1,21 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
+<style>
+    .col-form-content {
+        padding-top: calc(0.375rem + 1px);
+        padding-bottom: calc(0.375rem + 1px);
+        margin-bottom: 0;
+        font-size: inherit
+    }
+    .col-form-contentColor {
+        padding-top: calc(0.375rem + 1px);
+        padding-bottom: calc(0.375rem + 1px);
+        margin-bottom: 0;
+        font-size: inherit;
+        color:silver;
+    }
+</style>
 <div class="jbolt_page" data-key="#(pmkey??)">
 <div class="jbolt_page_title">
 <div class="row">
@@ -21,28 +36,26 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="BackupLog_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.id}">
+<tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.itype==1?"手工备份":"自动备份"}</td>
 <td>${data.cname}</td>
 <td>${data.cpath}</td>
 <td>${data.isize}</td>
+<td>${data.cdbname}</td>
+<td>${data.dcreatetime}</td>
 <td>
-	{@if data.isDeleted}
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/backuplog/edit/${data.id}" data-area="800,600" data-title="查看开发管理-备份记录"><i class="fa fa-eye"></i></a>
-	{@else}
-	<a class="jbolt_table_editbtn" href="admin/backuplog/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑开发管理-备份记录"><i class="fa fa-edit"></i></a>
-	{@/if}
-	<a class="jbolt_table_delbtn" href="admin/backuplog/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+	<a class="jbolt_table_btn" data-ajaxbtn data-confirm="确定下载此文件？" href="admin/backuplog/copyFile/${data.iautoid}" data-handler="refreshJBoltTable" >下载</a>
+	<a class="jbolt_table_delbtn" href="admin/backuplog/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" >删除</a>
 </td>
 </tr>
 {@/each}
 </textarea>
 <div class="jbolt_table_toolbar" id="BackupLog_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增开发管理-备份记录" data-url="admin/backuplog/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑开发管理-备份记录" data-check-handler="jboltTableGetCheckedId" data-url="admin/backuplog/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
-	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/backuplog/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增开发管理-备份记录" data-url="admin/backuplog/add" class="btn btn-outline-primary" >手工备份</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑开发管理-备份记录" data-check-handler="jboltTableGetCheckedId" data-url="admin/backuplog/edit/" class="btn btn-outline-primary">编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/backuplog/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" > 删除</button>
 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
 </div>
 
@@ -50,14 +63,17 @@
 <table class="jbolt_table jbolt_main_table  table-center "
 	   data-jbolttable
 	   data-width="fill"
-	   data-height="fill"
+	   data-height="50%"
 	   data-ajax="true"
 	   data-conditions-form="BackupLog_form_#(pageId)"
 	   data-url="admin/backuplog/datas"
+	   data-column-prepend="1:checkbox:true"
+       data-pagesize="5"
 	   data-rowtpl="BackupLog_tpl_#(pageId)"
 	   data-copy-to-excel="false"
 	   data-page="BackupLog_page"
 	   data-toolbar="BackupLog_toolbar_#(pageId)"
+       data-fixed-columns-left="1,2,3"
 >
 <thead>
 <tr>
@@ -66,16 +82,133 @@
 	<th data-width="150" data-column="cName">文件名称</th>
 	<th data-width="150" data-column="cPath">文件路径</th>
 	<th data-width="100" data-column="iSize">文件大小</th>
+	<th data-width="100" data-column="iSize">数据库</th>
+	<th data-width="100" data-column="dCreateTime">备份时间</th>
 <th data-width="80">操作</th>
 </tr>
 </thead>
 <tbody></tbody>
 </table>
 </div>
+    <div style="border: 1px solid #ededed">
+    <div class="jbolt_page_title" >
+        <div class="row">
+            <div class="col-sm-auto"><h5>设置备份参数</h5></div>
+            <div class="col-md-7">
+            </div>
+            <div class="col-md-auto" >
+            </div>
+        </div>
+
+    </div>
+    <div>
+        <form onsubmit="return false;" id="BackupConfig_Form" action="/admin/backupconfig/update" method="post">
+            #if(backupConfig.iAutoId??)
+            <input type="hidden" name="backupConfig.iAutoId" value="#(backupConfig.iAutoId??)" />
+            #end
+            <div class="row">
+                <div class="col" >
+                    <div class="form-group row" >
+                        <label class="col-sm-2 col-form-label">备份文件保存路径</label>
+                        <div class="col-6">
+                            <input  type="text" data-rule="required" data-notnull="true" data-tips="请输入备份路径" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="注：请填写绝对路径" maxlength="200" name="backupConfig.cPath" value="#(backupConfig.cPath??)"/>
+                            <!--<a style="color: #8D8D8D">注：请填写绝对路径</a>-->
+                        </div>
+                        <div class="col-form-contentColor" >注：请填写绝对路径</div>
+
+                    </div>
+                    <div class="form-group row" >
+                        <label class="col-sm-2 col-form-label">保存备份数量</label>
+                        <div class="col-3">
+                            <input  type="number"    data-rule="required" data-notnull="true" data-tips="请输入保存备份数量"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="注：备份数量超出限制时，会删除旧的备份数据" maxlength="40" name="backupConfig.iAutoBackupCopys" value="#(backupConfig.iAutoBackupCopys??)"/>
+                        </div>
+                        <div class="col-form-contentColor" >注：备份数量超出限制时，会删除旧的备份数据</div>
+                        &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+<!--                        <button  type="submit" onclick="submitThisForm('BackupConfig_Form')"  value="submit" class="btn btn-outline-secondary btn-sm" ><i class="fa fa-reset"></i> 保存</button>-->
+                    </div>
+                    <div class="form-group row"
+                         data-radio
+                         data-name="backupConfig.cDbName"
+                         data-value-attr="dbname"
+                         data-text-attr="dbname"
+                         data-default="false"
+                         data-url="admin/datasource/list?dataSources=u8,main"
+                         data-label="备份数据库"
+                         data-width="col-sm-2,col-10"
+                         data-value="#(backupConfig.cDbName??)"
+                         data-rule="radio"
+                         data-notnull="true"
+                         data-tips="=请选择="
+                         data-inline="true"
+                    ></div>
+                    <div class="col" >
+                        <button  type="submit" onclick="submitThisForm('BackupConfig_Form')"  value="submit" class="btn btn-outline-secondary btn-sm" ><i class="fa fa-reset"></i> 保存</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="jbolt_page_title" >
+                <div class="row">
+                    <div class="col-sm-auto"><h5>设置自动备份</h5></div>
+                </div>
+                <div class="col" >
+                    <div  id="Config_Hidden" >
+                        <div class="form-group row" >
+                            <label class="col-sm-2 col-form-label ">备份周期</label>
+                            <div class="col-form-content" >每隔</div>
+                            <div class="col-3">
+                                <input type="number"   data-rule="required" data-notnull="true" data-tips="请输入自动备份间隔天数"  data-with-clearbtn="true" autocomplete="off"  class="form-control" maxlength="40" name="backupConfig.iDayPeriod" value="#(backupConfig.iDayPeriod??)"/>
+                            </div>
+                            <div class="col-form-content" >天备份一次</div>
+                        </div>
+                        <div class="form-group row" >
+                        <label class="col-sm-2 col-form-label">备份时间</label>
+                        <div class="col-2">
+                            <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入备份时"  data-with-clearbtn="true" autocomplete="off"  class="form-control"  maxlength="2" name="backupConfig.iHour" value="#(backupConfig.iHour??)"/>
+                        </div>
+                        <div class="col-form-content"  >点</div>
+                        <div class="col-2">
+                            <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入备份分"  data-with-clearbtn="true" autocomplete="off"  class="form-control"  maxlength="2" name="backupConfig.iMin" value="#(backupConfig.iMin??)"/>
+                        </div>
+                        <div class="col-form-content"  >分</div>
+                    </div>
+                    </div>
+                </div>
+                <div class="col" >
+                    <button type="button"  onclick="closeBackup()"  class="btn btn-outline-secondary btn-sm" ><i class="fa fa-reset"></i> 关闭自动备份</button>
+                    <input type="hidden" id="closeBackupId" name="backupConfig.isAutoBackupEnabled" value="#(backupConfig.isAutoBackupEnabled??)"/>
+                </div>
+           </div>
+        </form>
+    </div>
+    </div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
+let isClose = $("#closeBackupId").val();
+
+//頁面初始化
+if (isClose == 'false') {
+    $("#Config_Hidden").hide();
+}
+if (isClose == 'true') {
+    $("#Config_Hidden").show();
+}
+function closeBackup() {
+    if (isClose == 'true') {
+        $("#closeBackupId").val(false);
+        $("#Config_Hidden").hide();
+    } else {
+        $("#closeBackupId").val(true);
+        $("#Config_Hidden").show();
+    }
+    isClose = $("#closeBackupId").val();
+}
+
+
+
 </script>
+#include("/_view/_admin/common/_formjs.html",formId="BackupConfig_Form")
 #end

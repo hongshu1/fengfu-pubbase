@@ -31,10 +31,31 @@ data-inline="true"
 </div>
 </div>
 <div class="form-group row" >
-<label class="col-sm-2 col-form-label">文件大小</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入文件大小"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入文件大小" maxlength="40" name="backupLog.iSize" value="#(backupLog.iSize??)"/>
+    <label class="col-sm-2 col-form-label">文件大小</label>
+    <div class="col-10">
+        <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入文件大小"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入文件大小" maxlength="40" name="backupLog.iSize" value="#(backupLog.iSize??)"/>
+    </div>
 </div>
+<div class="form-group row" >
+    <label class="col-sm-2 col-form-label">数据库</label>
+    <div class="col-10">
+        <!--dataSources 固定参数暂未配置 暂时以u8,main查询 -->
+        <select  class="form-control-two"
+                 data-autoload
+                 data-url="admin/datasource/list?dataSources=u8,main"
+                 data-select-type="select2"
+                 name="backupLog.cDbName"
+                 data-rule="select"
+                 data-notnull="true"
+                 data-refresh="true"
+                 data-tips="容器类型"
+                 data-text="=容器类型="
+                 data-text-attr="dbname,dsname"
+                 data-value=""
+                 data-value-attr="dbname"
+                 data-select="#(backupLog.cDbName??)"
+        ></select>
+    </div>
 </div>
 </div>
 </div>

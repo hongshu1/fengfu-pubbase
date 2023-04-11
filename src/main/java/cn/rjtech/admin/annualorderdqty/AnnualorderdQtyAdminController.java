@@ -1,6 +1,5 @@
 package cn.rjtech.admin.annualorderdqty;
 
-import cn.rjtech.model.momdata.AnnualorderdQty;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -10,12 +9,12 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.base.JBoltMsg;
-
+import cn.rjtech.model.momdata.AnnualorderdQty;
 /**
- * 年度计划订单年月金额 Controller
+ * 年度计划订单年月数量 Controller
  * @ClassName: AnnualorderdQtyAdminController
  * @author: 佛山市瑞杰科技有限公司
- * @date: 2023-03-29 14:22
+ * @date: 2023-04-10 16:29
  */
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
@@ -51,12 +50,12 @@ public class AnnualorderdQtyAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		AnnualorderdQty annualorderdQty =service.findById(getLong(0)); 
+		AnnualorderdQty annualorderdQty=service.findById(getLong(0)); 
 		if(annualorderdQty == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("annualorderdQty", annualorderdQty);
+		set("annualorderdQty",annualorderdQty);
 		render("edit.html");
 	}
 

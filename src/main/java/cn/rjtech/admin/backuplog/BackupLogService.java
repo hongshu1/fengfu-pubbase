@@ -1,6 +1,10 @@
 package cn.rjtech.admin.backuplog;
 
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.admin.backupconfig.BackupConfigService;
+import cn.rjtech.base.exception.ParameterException;
+import cn.rjtech.model.momdata.BackupConfig;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -10,7 +14,10 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.BackupLog;
+import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.Date;
 
 /**
@@ -21,6 +28,10 @@ import java.util.Date;
  */
 public class BackupLogService extends BaseService<BackupLog> {
 	private final BackupLog dao=new BackupLog().dao();
+
+	@Inject
+	private BackupConfigService backupConfigService;
+
 	@Override
 	protected BackupLog dao() {
 		return dao;
@@ -35,14 +46,14 @@ public class BackupLogService extends BaseService<BackupLog> {
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @param keywords   关键词
+	 * @param   cName 查询参数
 	 * @return
 	 */
-	public Page<BackupLog> getAdminDatas(int pageNumber, int pageSize, String keywords) {
+	public Page<BackupLog> getAdminDatas(int pageNumber, int pageSize, String cName) {
 	    //创建sql对象
 	    Sql sql = selectSql().page(pageNumber,pageSize);
         //关键词模糊查询
-        sql.likeMulti(keywords,"cName", "cUpdateName");
+        sql.likeMulti(cName,"cName");
         //排序
         sql.desc("iAutoId");
 		return paginate(sql);
@@ -120,4 +131,59 @@ public class BackupLogService extends BaseService<BackupLog> {
 		return null;
 	}
 
+	/**
+	 * 文件下载（备份）
+	 * @param backupLog
+	 * @return
+	 * @throws IOException
+	 */
+    public Ret copyFile(BackupLog backupLog) throws IOException {
+		String cPath = backupLog.getCPath();
+
+		if (StringUtils.isBlank(cPath)) {
+				return fail("请输入文件路径");
+			}
+		//通过备份设置拿到备份文件保存路径
+		BackupConfig firstConfig = backupConfigService.findFirstConfig();
+
+		File dest = new File(firstConfig.getCPath());//目的地
+		//判断目的地目录是否存在，不存在就创建目录
+		if(!dest.exists()) {
+			dest.mkdirs();
+		}
+
+		String sourceFilePath = cPath+ "/" + backupLog.getCName();
+		//源文件是否存在
+
+		File file = new File(sourceFilePath);
+		if (!file.exists()) {
+			return fail("服务器上文件不存在!");
+		}
+		//获取要复制的文件
+		FileInputStream fileInputStream = null;
+		try {
+			fileInputStream = new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		OutputStream os = null;
+		try {
+			os = new FileOutputStream(firstConfig.getCPath()+ File.separator + backupLog.getCName());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		byte[] data = new byte[1024];//缓存容器
+		int len = -1;//接收长度
+		while((len=fileInputStream.read(data))!=-1) {
+			try {
+				os.write(data, 0, len);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		os.close();
+		fileInputStream.close();
+			return SUCCESS;
+	}
 }

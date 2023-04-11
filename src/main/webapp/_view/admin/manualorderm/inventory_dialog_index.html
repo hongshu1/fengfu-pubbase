@@ -1,0 +1,96 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col">
+				<form class="form-inline" id="inventorydialog_#(pageId)"   onsubmit="return false;" method="post">
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="inventoryid" value="#(inventoryid)" />
+					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="cinvcode" value="#(cinvcode)" />
+					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="cinvcode1" value="#(cinvcode1)" />
+					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="cinvname1" value="#(cinvname1)" />
+					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="cinvstd" value="#(cinvstd)" />
+					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="iinventoryuomid1" value="#(iinventoryuomid1)" />
+					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				</form>
+			</div>
+			<div class="col-md-auto">
+			</div>
+		</div>
+	</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="inventorydialogRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cinvcode}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
+<td>${data.cuomname}</td>
+<td>
+	<a tooltip   href="javascript:void(0)" onclick="checkThis('${data.cinvcode}','${data.cinvcode1}','${data.cinvname1}','${data.cinvstd}','${data.cuomname}','${data.iautoid}',)"   class="jbolt_table_btn">选择</a>
+</td>
+</tr>
+{@/each}
+</textarea>
+
+		<!-- 工具条 toolbar -->
+		<table class="jbolt_table jbolt_main_table table-center"
+			   data-jbolttable
+			   data-height="fill"
+			   data-ajax="true"
+			   data-url="admin/inventory/options"
+			   data-column-resize="true"
+			   data-column-prepend="1:radio:true"
+			   data-conditions-form="inventorydialogForm_#(pageId)"
+			   data-rowtpl="inventorydialogRowtpl_#(pageId)"
+			   data-toolbar="inventorydialog_toolbar_#(pageId)"
+			   id="inventorydialogtableid"
+		>
+			<thead class="fw-normal">
+			<tr>
+				<th data-width="60" data-column="index">序号</th>
+				<th data-column="cinvcode">存货编码</th>
+				<th data-column="cinvcode1">客户部番</th>
+				<th data-column="cinvname1">部品名称</th>
+				<th data-column="cinvstd">规格</th>
+				<th data-column="iinventoryuomid1">库存单位</th>
+				<th data-column="cOperationName">操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+
+
+
+</div>
+</div>
+<script>
+	function submitThisForm(callback){
+		var data=getJboltTableCheckedData("inventorydialogtableid");
+		if(data){
+			parent.jboltTableProcessTdByDialogChooser(data.cinvcode,data.cinvcode,data);
+			if(callback){
+				callback();
+			}
+		}
+	}
+
+	function checkThis(cinvcode,cinvcode1,cinvname1,cinvstd,cuomname,iautoid){
+		var data = {"cinvcode":cinvcode,"cinvcode1":cinvcode1,"cinvname1":cinvname1,
+			"cinvstd":cinvstd,"cuomname":cuomname,"iautoid":iautoid,}
+		if(cinvcode){
+			parent.jboltTableProcessTdByDialogChooser(cinvcode,cinvcode,data);
+			parent.LayerMsgBox.closeAll();
+		}
+	}
+</script>
+#end
+

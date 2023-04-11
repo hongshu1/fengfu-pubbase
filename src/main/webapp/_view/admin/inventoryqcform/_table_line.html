@@ -1,0 +1,274 @@
+
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="PheDeliveryLines_tpl_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td data-editable="false">${data.iinventorycode}</td>
+            <td>${data.iinventoryname}</td>
+            <td>${data.machinetype}</td>
+            <td>${data.customermanager}</td>
+            <td>${data.componentname}</td>
+            <td>${data.specs}</td>
+            <td>${data.unit}</td>
+            <td>${data.inspectionname}</td>
+            <td>
+            <a tooltip title="上传图片" href="admin/inventoryqcform/openFileDialog/${data.iautoid}"
+               data-btn="yes" data-title="上传图片" data-area="30%,60%" class="jbolt_table_editbtn">
+                    {@if data.cpics} <i class="fa fa-files-o c-primary"></i>
+                    {@else}
+                   <i class="fa fa-files-o c-danger"></i>
+                   {@/if}
+               </a>
+            </td>
+            <td>${data.cdccode}</td>
+            <td>${data.cmeasure}</td>
+            <td style="display: none">${data.iinventoryid}</td>
+        </tr>
+    {@/each}
+</textarea>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- 工具条 toolbar -->
+                <div class="jbolt_table_toolbar" id="PheDeliveryLines_toolbar_#(pageId)" style="display: flex">
+                    <div class="btn-group" role="group" aria-label="btn-group">
+                        <button onclick="jboltTableChooseAndInsert(this)"
+                                data-url="/admin/inventoryqcform/chooseItem"
+                                data-dialogbtn
+                                data-link-para-ele="#itemHidden" id="buttonDialog_#(pageId)"
+                                data-area="90%,90%" data-btn="选中,取消" data-title="批量选择资源" class="btn btn-success btn-sm"><i
+                                class="fa fa-folder-open-o"></i> 获取资源
+                        </button>
+                        <button onclick="jboltTableRemoveCheckedRow(this, true)"
+                                class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                    </div>
+                    <div class="clearfix" style="padding-left: 15%">
+                        <form class="form-inline" id="PheDeliveryLines_form_#(pageId)">
+                            #if(inventoryQcForm.iQcFormId??)
+                            <input type="hidden" name="iQcFormId" value="#(inventoryQcForm.iQcFormId??)" />
+                            #end
+                            <input type="hidden" id="itemHidden" name="itemHidden" value=""/>
+                            <input type="text" autocomplete="off"  class="form-control"  placeholder="存货编码/名称"
+                                   name="keywords" value="" />
+                            <input type="text" autocomplete="off"  class="form-control"  placeholder="客户部番"
+                                   name="CustomerManager" value="" />
+                            <input type="text" autocomplete="off"  class="form-control"  placeholder="部品名称" name="componentName"
+                                   value="" />
+                            <input type="text" autocomplete="off"  class="form-control"  placeholder="机型" name="machineType"
+                                   value="" />
+                            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                            <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                        </form>
+                    </div>
+                </div>
+
+                <table class="jbolt_table jbolt_main_table  table-center"
+                       id="jbolt_table_pheDeliveryLines_#(pageId)"
+                       data-jbolttable
+                       data-ajax-success-handler="tableDataSuccess()"
+                       data-width="auto"
+                       data-height="fill"
+                       data-ajax="true"
+                       data-page="PheDeliveryLines_page_#(pageId)"
+                       data-column-prepend="1:checkbox:true"
+                       data-toolbar="PheDeliveryLines_toolbar_#(pageId)"
+                       data-url="admin/inventoryqcform/listData"
+                       data-conditions-form="PheDeliveryLines_form_#(pageId)"
+                       data-rowtpl="PheDeliveryLines_tpl_#(pageId)"
+                       data-column-resize="true"
+                       data-editable="true"
+                       data-editable-option="getEditableTableOptions_#(pageId)"
+                >
+                    <thead>
+                    <tr>
+                        <th data-width="60" data-column="index">序号</th>
+                        <th data-width="100" data-column="iinventorycode">存货编码</th>
+                        <th data-width="100" data-column="iinventoryname">存货名称</th>
+                        <th data-width="200" data-column="machinetype">机型</th>
+                        <th data-width="200" data-column="customermanager">客户部番</th>
+                        <th data-width="120" data-column="componentname">部品名称</th>
+                        <th data-width="120" data-column="specs">规格</th>
+                        <th data-width="120" data-column="unit">主计量单位</th>
+                        <th data-min-width="200" data-column="inspectiontype">检验类型</th>
+                        <th data-width="120" data-column="cpics">图片</th>
+                        <th data-width="120" data-column="cdccode">设变号</th>
+                        <th data-width="120" data-column="cmeasure">测试理由</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    /**
+     * 打印方法
+     */
+    function getDbSource_line(ele) {
+        var action = getRealJqueryObject(ele);
+        var barcodeId = action.data("id");
+        console.log('id====',barcodeId)
+        var jdbc_url = "";
+        var print_url = "";
+        var OrganizeCode = "";
+        Ajax.post("admin/organize/getDbSource", {}, function (ret) {
+            if (ret.state === 'ok') {
+                var data = ret.data;
+                jdbc_url = data.jdbc_url;
+                print_url = data.print_url;
+                OrganizeCode = data.OrganizeCode;
+                console.log("jdbc_url:" + jdbc_url);
+                console.log("print_url:" + print_url);
+                console.log("OrganizeCode:" + OrganizeCode);
+                if (jdbc_url  && OrganizeCode) {
+                    labelPrint_line(jdbc_url, OrganizeCode, print_url,barcodeId);
+                }
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        });
+    }
+
+
+    /**
+     * 标签打印
+     * @param jdbc_url
+     * @param OrganizeCode
+     * @param print_url
+     */
+    function labelPrint_line(jdbc_url,OrganizeCode,print_url,barcodeId) {
+
+        var url = print_url + "reportname=labelJuan" + "&organizecode=" + OrganizeCode  + "&barcodeId=" +barcodeId;
+        console.log('url===>',url);
+        LayerMsgBox.loading("正在执行请稍后...", 20000);
+        $.ajax({
+            url: url,
+            success: function (ret) {
+                LayerMsgBox.closeLoadingNow();
+                if (ret.code === '200') {
+                    LayerMsgBox.alert(ret.message, 1);
+                } else {
+                    LayerMsgBox.alert(ret.message, 2);
+                }
+            },
+            error: function (e) {
+                console.log("error:" + e.status + e.readyState + e.response);
+                LayerMsgBox.closeLoadingNow();
+                LayerMsgBox.alert('打印失败,请检查打印服务是否正常！<a href="#globalConfig(MomConfigKey.GRID_REPORT_DOWNLOAD_URL)">下载插件</a>', 2);
+            },
+        })
+    }
+
+    /**
+     * 返回 jbolttable的id
+     * */
+    function getJboltId(){
+        var id = "jbolt_table_pheDeliveryLines_#(pageId)";
+        return id;
+    }
+
+    /**
+     * 刷新jbolttable
+     * */
+    function RefreshJboltTable() {
+        jboltTableRefresh(getJboltId());
+    }
+
+    /**
+     * 获取已选数据函数
+     * */
+    function tableDataSuccess() {
+        let result = jboltTableGetAllDatas(getJboltId(), ["iinventoryid"]);
+        let array = new Array();
+        if (result != null) {
+            for (let i = 0; i < result.length; i++) {
+                array.push("'" + result[i].iinventoryid + "'");
+            }
+            let codes = array.join(',');
+            $("#itemHidden").val(codes);
+        }
+        console.log('iinventoryid===',$("#itemHidden").val());
+    }
+
+</script>
+
+<script>
+    function getEditableTableOptions_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
+            insertDefaultValues: {username:'#(JBoltUserKit.getUserName())'},
+            submit: {
+                withForm: ["InventoryQcForm_Form"],
+                type: "all",
+                url: "/admin/inventoryqcform/submit",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            refreshPjaxContainer();
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iAutoId"
+                },
+                iinventorycode: {
+                    type: "input",
+                    submitAttr: "iInventoryCode"
+                },
+                iinventoryname: {
+                    submitAttr: "iInventoryName"
+                },
+                machinetype: {
+                    submitAttr: "machineType"
+                },
+                customermanager: {
+                    submitAttr: "CustomerManager"
+                },
+                componentname: {
+                    submitAttr: "componentName"
+                },
+                specs: {
+                    submitAttr: "specs"
+                },
+                unit: {
+                    submitAttr: "unit"
+                },
+                inspectiontype: {
+                    submitAttr: "inspectionType",
+                    type: "select2",
+                    url: "admin/dictionary/options?key=inspection_type",
+                    valueAttr: "sn",
+                    textAttr: "name",
+                    multiple:"multiple"
+                },
+                cpics: {
+                    submitAttr: "cPics"
+                },
+                cdccode: {
+                    type:"input",
+                    submitAttr: "cDcCode"
+                },
+                cmeasure: {
+                    type:"input",
+                    // submitAttr: "cMeasure"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+
+</script>
+
+

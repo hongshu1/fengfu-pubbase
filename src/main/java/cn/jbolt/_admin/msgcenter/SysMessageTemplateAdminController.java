@@ -1,19 +1,17 @@
 package cn.jbolt._admin.msgcenter;
 
-import cn.jbolt.core.kit.JBoltUserKit;
-import cn.rjtech.model.main.MessageUser;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.common.model.SysMessageTemplate;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.main.MessageUser;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,17 +57,20 @@ public class SysMessageTemplateAdminController extends BaseAdminController {
 	*/
 	public void edit() {
 		SysMessageTemplate sysMessageTemplate=service.findById(getLong(0));
+
 		if(sysMessageTemplate == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
-		}else {
-			List<MessageUser> messageUsers = messageUserService.find(
-					"select * from [dbo].[jb_message_user] where message_id = ? and del_fag = '0'", sysMessageTemplate.getId());
-			sysMessageTemplate.setMessageUsers(messageUsers);
 		}
-		System.out.println("789"+sysMessageTemplate.toJson());
 		set("sysMessageTemplate",sysMessageTemplate);
 		render("edit.html");
+	}
+
+	public void messageUserDate(){
+		String messageId = get("messageId");
+		List<MessageUser>  messageUsers = messageUserService.find(
+				"select * from  where message_id = ? and del_fag = '0'", messageId);
+		renderJsonData(messageUsers);
 	}
 
 
@@ -110,7 +111,7 @@ public class SysMessageTemplateAdminController extends BaseAdminController {
 	* 切换toggleIsOn
 	*/
 	@Before(Tx.class)
-	public void toggleIsOn() {
+	public void toggleIson() {
 		renderJson(service.toggleIsOn(getLong(0)));
 	}
 

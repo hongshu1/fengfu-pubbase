@@ -1,0 +1,156 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>客户订单-手配订单明细</h1></div>
+	<div class="col">
+	<form class="form-inline" id="ManualOrderD_form_#(pageId)">
+
+<select class="form-control" name="isDeleted"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=删除状态：0. 未删除 1. 已删除="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/manualorderd/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增客户订单-手配订单明细"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="ManualOrderD_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iManualOrderMid}</td>
+<td>${data.iInventoryId}</td>
+<td>${data.iQty1}</td>
+<td>${data.iQty2}</td>
+<td>${data.iQty3}</td>
+<td>${data.iQty4}</td>
+<td>${data.iQty5}</td>
+<td>${data.iQty6}</td>
+<td>${data.iQty7}</td>
+<td>${data.iQty8}</td>
+<td>${data.iQty9}</td>
+<td>${data.iQty10}</td>
+<td>${data.iQty11}</td>
+<td>${data.iQty12}</td>
+<td>${data.iQty13}</td>
+<td>${data.iQty14}</td>
+<td>${data.iQty15}</td>
+<td>${data.iQty16}</td>
+<td>${data.iQty17}</td>
+<td>${data.iQty18}</td>
+<td>${data.iQty19}</td>
+<td>${data.iQty20}</td>
+<td>${data.iQty21}</td>
+<td>${data.iQty22}</td>
+<td>${data.iQty23}</td>
+<td>${data.iQty24}</td>
+<td>${data.iQty25}</td>
+<td>${data.iQty26}</td>
+<td>${data.iQty27}</td>
+<td>${data.iQty28}</td>
+<td>${data.iQty29}</td>
+<td>${data.iQty30}</td>
+<td>${data.iQty31}</td>
+<td>${data.iSum}</td>
+<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isDeleted}"  data-handler="refreshJBoltTable"  data-url="admin/manualorderd/toggleIsDeleted/${data.id}"/></td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/manualorderd/edit/${data.id}" data-area="800,600" data-title="查看客户订单-手配订单明细"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/manualorderd/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑客户订单-手配订单明细"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/manualorderd/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="ManualOrderD_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增客户订单-手配订单明细" data-url="admin/manualorderd/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑客户订单-手配订单明细" data-check-handler="jboltTableGetCheckedId" data-url="admin/manualorderd/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/manualorderd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="ManualOrderD_form_#(pageId)"
+	   data-url="admin/manualorderd/datas"
+	   data-rowtpl="ManualOrderD_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="ManualOrderD_page"
+	   data-toolbar="ManualOrderD_toolbar_#(pageId)"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="100" data-column="iAutoId">主键ID</th>
+	<th data-width="100" data-column="iManualOrderMid">手配订单主表ID</th>
+	<th data-width="100" data-column="iInventoryId">存货ID</th>
+	<th data-width="100" data-column="iQty1">1日数量</th>
+	<th data-width="100" data-column="iQty2">2日数量</th>
+	<th data-width="100" data-column="iQty3">3日数量</th>
+	<th data-width="100" data-column="iQty4">4日数量</th>
+	<th data-width="100" data-column="iQty5">5日数量</th>
+	<th data-width="100" data-column="iQty6">6日数量</th>
+	<th data-width="100" data-column="iQty7">7日数量</th>
+	<th data-width="100" data-column="iQty8">8日数量</th>
+	<th data-width="100" data-column="iQty9">9日数量</th>
+	<th data-width="100" data-column="iQty10">10日数量</th>
+	<th data-width="100" data-column="iQty11">11日数量</th>
+	<th data-width="100" data-column="iQty12">12日数量</th>
+	<th data-width="100" data-column="iQty13">13日数量</th>
+	<th data-width="100" data-column="iQty14">14日数量</th>
+	<th data-width="100" data-column="iQty15">15日数量</th>
+	<th data-width="100" data-column="iQty16">16日数量</th>
+	<th data-width="100" data-column="iQty17">17日数量</th>
+	<th data-width="100" data-column="iQty18">18日数量</th>
+	<th data-width="100" data-column="iQty19">19日数量</th>
+	<th data-width="100" data-column="iQty20">20日数量</th>
+	<th data-width="100" data-column="iQty21">21日数量</th>
+	<th data-width="100" data-column="iQty22">22日数量</th>
+	<th data-width="100" data-column="iQty23">23日数量</th>
+	<th data-width="100" data-column="iQty24">24日数量</th>
+	<th data-width="100" data-column="iQty25">25日数量</th>
+	<th data-width="100" data-column="iQty26">26日数量</th>
+	<th data-width="100" data-column="iQty27">27日数量</th>
+	<th data-width="100" data-column="iQty28">28日数量</th>
+	<th data-width="100" data-column="iQty29">29日数量</th>
+	<th data-width="100" data-column="iQty30">30日数量</th>
+	<th data-width="100" data-column="iQty31">31日数量</th>
+	<th data-width="100" data-column="iSum">合计数量</th>
+	<th data-width="100" data-column="isDeleted">删除状态：0. 未删除 1. 已删除</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
