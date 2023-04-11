@@ -223,3 +223,7 @@
 #namespace("bommaster")
 #include("bommaster/bommaster.sql")
 #end
+
+#namespace("bomcompare")
+#include("bomcompare/bomcompare.sql")
+#end

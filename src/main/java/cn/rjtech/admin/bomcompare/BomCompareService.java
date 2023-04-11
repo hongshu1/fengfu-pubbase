@@ -1,5 +1,8 @@
 package cn.rjtech.admin.bomcompare;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,10 +12,11 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.BomCompare;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
 
 /**
  * 物料建模-Bom清单
@@ -167,5 +171,116 @@ public class BomCompareService extends BaseService<BomCompare> {
 		bomCompare.setCOrgCode(getOrgCode());
 		bomCompare.setCOrgName(getOrgName());
 		return bomCompare;
+	}
+	
+	public List<Record> findByBomMasterId(Long bomMasterId) {
+		ValidationUtils.notNull(bomMasterId, JBoltMsg.DATA_NOT_EXIST);
+		List<Record> records = dbTemplate("bomcompare.findByBomMasterId", Okv.by("bomMasterId", bomMasterId)).find();
+		if (CollectionUtil.isEmpty(records)){
+			return records;
+		}
+		Map<String, List<Record>> cInvLevMap = new HashMap<>();
+		List<Record> recordList = new ArrayList<>();
+		for (Record record : records){
+			String cInvLev = record.getStr("cInvLev");
+			List<Record> seqList = cInvLevMap.containsKey(cInvLev) ? cInvLevMap.get(cInvLev) : new ArrayList<>();
+			seqList.add(record);
+			cInvLevMap.put(cInvLev, seqList);
+		}
+		// 记录下标数
+		int index = 0;
+		for (String cInvLev : cInvLevMap.keySet()){
+			List<Record> cInvLevList = cInvLevMap.get(cInvLev);
+			Record bomCompareRecord = new Record();
+			for (Record record : cInvLevList){
+				Long iInventoryId = record.getLong("iInventoryId");
+				Long iAutoId = record.getLong("iAutoId");
+				// 先获取编码栏数据
+				Integer invLev = record.getInt("iLevel");
+				String invLevStr = record.getStr("cInvLev");
+				if (invLev == 6){
+					bomCompareRecord.set(BomCompare.CODE6, invLevStr);
+				}else if (invLev == 5){
+					bomCompareRecord.set(BomCompare.CODE5, invLevStr);
+				}else if (invLev == 4){
+					bomCompareRecord.set(BomCompare.CODE4, invLevStr);
+				}else if (invLev == 3){
+					bomCompareRecord.set(BomCompare.CODE3, invLevStr);
+				}else if (invLev == 2){
+					bomCompareRecord.set(BomCompare.CODE2, invLevStr);
+				}else{
+					bomCompareRecord.set(BomCompare.CODE1, invLevStr);
+				}
+				Integer rawType = record.getInt("iRawType");
+				String iQty = record.getStr("iQty");
+				String iWeight = record.getStr("iWeight");
+				String cInvCode = record.getStr("cInvCode");
+				String cInvCode1 = record.getStr("cInvCode1");
+				String cInvName = record.getStr("cInvName");
+				switch (rawType){
+					case 0:
+						bomCompareRecord.set(BomCompare.INVITEMID, iInventoryId);
+						bomCompareRecord.set(BomCompare.INVBOMCOMPAREID, iAutoId);
+						bomCompareRecord.set(BomCompare.INVQTY, iQty);
+						bomCompareRecord.set(BomCompare.INVWEIGHT, iWeight);
+						bomCompareRecord.set(BomCompare.INVITEMCODE, cInvCode);
+						bomCompareRecord.set(BomCompare.CINVCODE1, cInvCode1);
+						bomCompareRecord.set(BomCompare.CINVADDCODE1, record.getStr("cInvAddCode1"));
+						bomCompareRecord.set(BomCompare.CINVNAME1, record.getStr("cInvName1"));
+						bomCompareRecord.set(BomCompare.CINVNAME2, record.getStr("cInvName2"));
+						break;
+					case 1:
+						bomCompareRecord.set(BomCompare.BLANKINGITEMID, iInventoryId);
+						bomCompareRecord.set(BomCompare.BLANKINGBOMCOMPAREID, iAutoId);
+						bomCompareRecord.set(BomCompare.BLANKINGQTY, iQty);
+						bomCompareRecord.set(BomCompare.BLANKINGWEIGHT, iWeight);
+						
+						bomCompareRecord.set(BomCompare.BLANKINGITEMCODE, cInvCode);
+						bomCompareRecord.set(BomCompare.BLANKINGINVNAME, cInvName);
+						
+						bomCompareRecord.set(BomCompare.BLANKINGSTD, record.getStr("cInvStd"));
+						bomCompareRecord.set(BomCompare.BLANKINGVENDORNAME, record.getStr("cVenName"));
+						break;
+					case 2:
+						bomCompareRecord.set(BomCompare.SLICINGINVITEMID, iInventoryId);
+						bomCompareRecord.set(BomCompare.SLICINGBOMCOMPAREID, iAutoId);
+						bomCompareRecord.set(BomCompare.SLICINGQTY, iQty);
+						bomCompareRecord.set(BomCompare.SLICINGWEIGHT, iWeight);
+						bomCompareRecord.set(BomCompare.SLICINGINVITEMCODE, cInvCode);
+						bomCompareRecord.set(BomCompare.SLICINGINVNAME, cInvName);
+						bomCompareRecord.set(BomCompare.SLICINGSTD, record.getStr("cInvStd"));
+						bomCompareRecord.set(BomCompare.SLICINGVENDORNAME, record.getStr("cVenName"));
+						break;
+					case 3:
+						bomCompareRecord.set(BomCompare.ORIGINALITEMID, iInventoryId);
+						bomCompareRecord.set(BomCompare.ORIGINALBOMCOMPAREID, iAutoId);
+						bomCompareRecord.set(BomCompare.ORIGINALQTY, iQty);
+						bomCompareRecord.set(BomCompare.ORIGINALWEIGHT, iWeight);
+						bomCompareRecord.set(BomCompare.ORIGINALITEMCODE, cInvCode);
+						bomCompareRecord.set(BomCompare.ORIGINALINVNAME, cInvName);
+						bomCompareRecord.set(BomCompare.ORIGINALSTD, record.getStr("cInvStd"));
+						bomCompareRecord.set(BomCompare.ORIGINALVENDORNAME, record.getStr("cVenName"));
+						break;
+				}
+				if (StrUtil.isNotBlank(record.getStr("cVenName"))){
+					bomCompareRecord.set(BomCompare.VENDORNAME, record.getStr("cVenName"));
+					bomCompareRecord.set(BomCompare.IVENDORID, record.getLong("iVendorId"));
+				}
+				if (StrUtil.isNotBlank(record.getStr("isOutSourced"))){
+					bomCompareRecord.set(BomCompare.ISOUTSOURCED, record.getStr("isOutSourced"));
+				}
+				if (StrUtil.isNotBlank(record.getStr("cMemo"))){
+					bomCompareRecord.set(BomCompare.CMEMO, record.getStr("cMemo"));
+				}
+				bomCompareRecord.set("index", index);
+				index +=1;
+			}
+			recordList.add(bomCompareRecord);
+		}
+		return recordList;
+	}
+	
+	public Integer queryCompareIndex(Long bomMasterId){
+		return dbTemplate("bomcompare.queryCompareIndex", Okv.by("bomMasterId", bomMasterId)).queryInt();
 	}
 }

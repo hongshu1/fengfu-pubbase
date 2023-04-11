@@ -325,5 +325,9 @@ public class VendorService extends BaseService<Vendor> {
     public Ret toggleIsenabled(Long id) {
         return toggleBoolean(id, "isEnabled");
     }
+    
+    public Vendor findByName(String vendorName){
+        return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvenname = ?", vendorName);
+    }
 
 }
