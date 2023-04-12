@@ -9,14 +9,15 @@
             <div class="form-group row"
                  data-checkbox
                  data-rule="checkbox"
-
+                 data-hidden-input="itemAttribute"
                  data-value-attr="sn"
-                 data-value="#(inventory.iItemAttribute??)"
-                 data-name="inventory.iItemAttribute"
+                 data-value="#(inventory.itemAttribute??)"
+                 data-name="inventory.itemAttribute"
                  data-default=""
                  data-url="/admin/dictionary/options?key=iItem_attribute"
                  data-inline="true"
             >
+                <input type="hidden" name="inventory.itemAttributes" id="itemAttribute" >
             </div>
         </div>
     </div>
