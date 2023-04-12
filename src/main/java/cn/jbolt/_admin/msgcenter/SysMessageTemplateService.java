@@ -182,7 +182,7 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
         sql.eq("message_chance", messageChance, true);
         sql.eq("del_flag", "0");
         //关键词模糊查询
-        sql.likeMulti(keywords, "message_name");
+        sql.likeMulti(keywords, "message_title");
         //排序
         sql.orderBy("id", true);
 
@@ -261,5 +261,13 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
             return true;
         });
         return SUCCESS;
+    }
+
+    public List<Record> findMessage(String messageId) {
+        List<Record>  messageUsers = findRecord(
+                "SELECT mu.*,ju.username,ju.name,ju.email FROM jb_message_user mu " +
+                        "LEFT JOIN jb_user ju on  mu.user_id = ju.id " +
+                        "WHERE mu.message_id = ? and mu.del_fag = '0'",false, messageId);
+        return messageUsers;
     }
 }

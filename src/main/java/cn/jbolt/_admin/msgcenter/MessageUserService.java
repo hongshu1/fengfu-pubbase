@@ -68,7 +68,7 @@ public class MessageUserService extends BaseService<MessageUser> {
 		if(CollUtil.isEmpty(list)) return;
 		for (Record row : list) {
 			MessageUser messageUser = findById(row.getLong("id"));
-			Long userId = row.getLong("iequipmentid");
+			Long userId = row.getLong("userId");
 			messageUser.setUserId(userId);
 			ValidationUtils.isTrue(messageUser.update(), JBoltMsg.FAIL);
 		}
