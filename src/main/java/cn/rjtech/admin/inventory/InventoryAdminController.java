@@ -161,6 +161,11 @@ public class InventoryAdminController extends BaseAdminController {
 		set("inventoryplan",inventoryplan);
 		InventoryMfgInfo inventoryMfgInfo = inventoryMfgInfoService.findFirst(Okv.by("iInventoryId", inventory.getIAutoId()), "iAutoId", "DESC");
 		set("inventorymfginfo",inventoryMfgInfo);
+		InventoryRouting inventoryRouting = inventoryRoutingService.getCurrentRouting(inventory.getIAutoId());
+		if(inventoryRouting != null){
+			set("iinventoryroutingid",inventoryRouting.getIAutoId());
+			set("iitemroutingname",inventoryRouting.getCRoutingName());
+		}
 		render("edit.html");
 	}
 
