@@ -244,4 +244,8 @@ public class OrgService extends BaseMesService<Org> {
         return dbTemplate("org.getU8DbList").find();
     }
 
+    public List<Org> getListForApi() {
+        return find("SELECT id, org_code AS code, org_name AS name FROM jb_org WHERE enable = ? ORDER BY is_default DESC, id DESC", JBoltEnableEnum.TRUE.getValue());
+    }
+
 }
