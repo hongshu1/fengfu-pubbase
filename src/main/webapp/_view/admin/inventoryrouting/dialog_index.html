@@ -155,12 +155,42 @@
 				dfromdate:{
 					submitAttr:"dfromdate",
 					type:"date",
-					required:true
+					required:true,
+					handler:function(table,td,text,value,trJsonData){
+						var dfrom = Date.parse(value);
+						var list = table.tableListDatas;
+						for(var i = 0; i< list.length; i++){
+							if(trJsonData === list[i]){
+								continue;
+							}
+							var istime = new Date(list[i].dfromdate)
+							var ietime = new Date(list[i].dtodate)
+							if(dfrom >= istime && dfrom < ietime){
+								jboltTableSetCell(table, td.parent(), "dfromdate", "", "")
+								LayerMsgBox.alert("该日期已使用！");
+							}
+						}
+					}
 				},
 				dtodate:{
 					submitAttr:"dtodate",
 					type:"date",
-					required:true
+					required:true,
+					handler:function(table,td,text,value,trJsonData){
+						var dfrom = Date.parse(value);
+						var list = table.tableListDatas;
+						for(var i = 0; i< list.length; i++){
+							if(trJsonData === list[i]){
+								continue;
+							}
+							var istime = new Date(list[i].dfromdate)
+							var ietime = new Date(list[i].dtodate)
+							if(dfrom >= istime && dfrom <ietime){
+								jboltTableSetCell(table, td.parent(), "dtodate", "", "")
+								LayerMsgBox.alert("该日期已使用！");
+							}
+						}
+					}
 				},
 				ifinishedrate:{type:"input_number", rule:"number",placeholder:"0"},
 				crequirement:{type:"input"},

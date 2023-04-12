@@ -61,3 +61,7 @@
 #namespace("vouchprocessnote")
 #include("vouchprocessnote.sql")
 #end
+
+#namespace("organize")
+#include("organize.sql")
+#end
