@@ -31,8 +31,8 @@
 <tr data-id="${data.id}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="jbolt_table_editbtn" href="admin/messageTemplate/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑业务对象"><i class="fa fa-edit"></i></a>
-	<a class="jbolt_table_delbtn" href="admin/messageTemplate/${data.isDeleted == '1'?'realDeleteByIds':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+	<a class="jbolt_table_editbtn" href="admin/messageTemplate/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑业务对象"><i class="fa fa-edit">编辑</i></a>
+	<a class="jbolt_table_delbtn" href="admin/messageTemplate/${data.isDeleted == '1'?'realDeleteByIds':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger">删除</i></a>
  </td>
 <td>${data.messageNameValue}</td>
 <td>${data.id}</td>
@@ -71,7 +71,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 <thead>
 <tr>
 	<th data-width="60">序号</th>
-	<th data-width="100">操作</th>
+	<th data-width="150">操作</th>
 	<th data-width="150" data-column="message_name">消息名称</th>
 	<th data-min-width="150" data-column="id">消息编码</th>
 	<th data-width="150" data-column="message_chance">发送时机</th>
