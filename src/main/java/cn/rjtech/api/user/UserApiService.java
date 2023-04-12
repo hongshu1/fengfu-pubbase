@@ -7,14 +7,13 @@ import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.common.enums.JBoltLoginState;
+import cn.jbolt.core.model.Org;
 import cn.jbolt.core.model.User;
-import cn.jbolt.core.service.OrgService;
-import cn.rjtech.enums.BoolCharEnum;
+import cn.rjtech.admin.org.OrgService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 用户API
@@ -37,9 +36,9 @@ public class UserApiService extends JBoltApiBaseService {
     }
 
     public JBoltApiRet login(String username, String password, Long orgId) {
-        Record org = orgService.findById(orgId);
+        Org org = orgService.findById(orgId);
         ValidationUtils.notNull(org, "组织不存在");
-        ValidationUtils.equals(BoolCharEnum.YES.getValue(), org.getStr("enable"), "该组织已被禁用");
+        ValidationUtils.isTrue(org.getEnable(), "该组织已被禁用");
 
         // 通过用户名去找用户
         User user = userService.findFirst(Okv.by("username", username));

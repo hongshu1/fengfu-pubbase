@@ -2,7 +2,7 @@ package cn.rjtech.api.org;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
-import cn.jbolt.core.service.OrgService;
+import cn.rjtech.admin.org.OrgService;
 import com.jfinal.aop.Inject;
 
 /**
@@ -16,7 +16,7 @@ public class OrgApiService extends JBoltApiBaseService {
     private OrgService orgService;
 
     public JBoltApiRet getList() {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(orgService.getList());
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(orgService.getListForApi());
     }
 
 }
