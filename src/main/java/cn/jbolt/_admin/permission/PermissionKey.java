@@ -2245,4 +2245,8 @@ public class PermissionKey {
 	 * 手配订单
 	 */
 	public static final String MANUALORDER = "manual_order";
+    /**
+     * 来料检验单
+     */
+    public static final String RCVDOCQCFORMM = "rcvdocqcformm";
 }

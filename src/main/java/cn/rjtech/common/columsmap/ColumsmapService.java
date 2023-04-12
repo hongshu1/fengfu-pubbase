@@ -28,8 +28,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.ICallback;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -37,13 +35,13 @@ import java.sql.*;
 import java.util.Date;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static cn.hutool.core.util.StrUtil.COMMA;
 
 /**
  * 字段映射 Service
+ *
  * @ClassName: ColumsmapService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-12-07 15:15
@@ -237,10 +235,10 @@ public class ColumsmapService extends BaseService<Columsmap> {
     public Map<String, Object> generalQuerySeting(String type) throws RuntimeException {
         List<Record> maps = generalQuerySeting();
         Record map = new Record();
-        for (int i=0; i<maps.size(); i++){
-            String[] types = StringUtils.split(maps.get(i).get("type").toString(),',') ;
-            for (int j=0; j<types.length; j++){
-                if(types[j].equals(type)){
+        for (int i = 0; i < maps.size(); i++) {
+            String[] types = StringUtils.split(maps.get(i).get("type").toString(), ',');
+            for (int j = 0; j < types.length; j++) {
+                if (types[j].equals(type)) {
                     map = maps.get(i);
                     return map.toMap();
                 }
@@ -249,7 +247,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
         return map.toMap();
     }
 
-    public List<Record> vouchType(String vouchCode)  {
+    public List<Record> vouchType(String vouchCode) {
         Kv kv = Kv.by("vouchCode", vouchCode);
         return dbTemplate("columsmap.vouchType", kv).find();
     }
@@ -282,7 +280,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
         kv.remove("erpDBName");
         kv.remove("erpDBSchemas");
         kv.remove("processName");
-        List<Map<String, Object>> mapList = (List<Map<String, Object>>) execute(erpdbalias, (conn) -> {
+        List<Map<String, Object>> mapList = (List<Map<String, Object>>) executeFunc(erpdbalias, (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
             String sql = "{ call " + erpDBName + "." + erpDBSchemas + "." + processName + "(?, ?, ?, ?, ?, ?, ?) }";
             System.err.println(sql);
@@ -298,15 +296,15 @@ public class ColumsmapService extends BaseService<Columsmap> {
             //执行
             boolean isSuccess = true;
             ResultSet rs = null;
-            try{
+            try {
                 rs = proc.executeQuery();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 isSuccess = false;
             }
             //ResultSet rs = proc.getResultSet();
 
             // 获取结果集列名
-            if(isSuccess){
+            if (isSuccess) {
                 ResultSetMetaData rsm = rs.getMetaData();
                 List<String> allColumn = new ArrayList<>();
                 // 获取结果集列名集合
@@ -339,16 +337,17 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
     /**
      * 获取单据信息
-     * @param erpDBName	数据库
-     * @param organizeCode	组织代码
-     * @param billNo		条码
-     * @param flag			查看标志
+     *
+     * @param erpDBName    数据库
+     * @param organizeCode 组织代码
+     * @param billNo       条码
+     * @param flag         查看标志
      * @return
      * @throws Exception
      */
-    public List<Map<String,Object>> getBillInfo(Organize orgApp, String barCode, String flag){
+    public List<Map<String, Object>> getBillInfo(Organize orgApp, String barCode, String flag) {
         HashMap<String, Object> paraMap = new HashMap<>();
-        List<Map<String, Object>> mapList = (List<Map<String, Object>>) execute(orgApp.getErpdbalias(), (conn) -> {
+        List<Map<String, Object>> mapList = (List<Map<String, Object>>) executeFunc(orgApp.getErpdbalias(), (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
             String sql = "{ call " + orgApp.getErpdbname() + "." + orgApp.getErpdbschemas() + ".P_Sys_GetBillInfo" + "(?, ?, ?, ?, ?) }";
             System.err.println(sql);
@@ -362,12 +361,12 @@ public class ColumsmapService extends BaseService<Columsmap> {
             //执行
             boolean isSuccess = true;
             ResultSet rs = null;
-            try{
+            try {
                 rs = proc.executeQuery();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 isSuccess = false;
             }
-            if(isSuccess){
+            if (isSuccess) {
                 // 获取结果集列名
                 ResultSetMetaData rsm = rs.getMetaData();
                 List<String> allColumn = new ArrayList<>();
@@ -403,13 +402,13 @@ public class ColumsmapService extends BaseService<Columsmap> {
      * 获取条码信息
      *
      * @param posCode
-     * @param flag         查询标志
+     * @param flag    查询标志
      */
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getBarcodeInfo(Organize orgApp, String barCode, String posCode, String flag) {
         HashMap<String, Object> paraMap = new HashMap<>();
 
-        return (List<Map<String, Object>>) execute(orgApp.getErpdbalias(), (conn) -> {
+        return (List<Map<String, Object>>) executeFunc(orgApp.getErpdbalias(), (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
             String sql = "{ call " + orgApp.getErpdbname() + "." + orgApp.getErpdbschemas() + ".P_Sys_GetBarcodeInfo" + "(?, ?, ?, ?, ?, ?, ?) }";
             System.err.println(sql);
@@ -425,12 +424,12 @@ public class ColumsmapService extends BaseService<Columsmap> {
             ResultSet rs = null;
             boolean isSuccess = true;
             //执行
-            try{
+            try {
                 rs = proc.executeQuery();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 isSuccess = false;
             }
-            if(isSuccess){
+            if (isSuccess) {
                 // 获取结果集列名
                 ResultSetMetaData rsm = rs.getMetaData();
                 List<String> allColumn = new ArrayList<>();
@@ -460,7 +459,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
         });
     }
 
-    public Map vouchProcessSubmit(Kv k){
+    public Map vouchProcessSubmit(Kv k) {
         CaseInsensitiveMap<String, Object> kv = new CaseInsensitiveMap<String, Object>(k);
         String sourceJson = k.toJson();
 
@@ -486,7 +485,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
             Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> {
                 return ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag");
             }, Collectors.toList()));
-            
+
             Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
             for (Object flag : groupFlags) {
                 // 获取主数据
@@ -514,9 +513,9 @@ public class ColumsmapService extends BaseService<Columsmap> {
                 plugeReturnMap.put("CreatePersonName", userApp.getStr("user_name"));
                 plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
                 plugeReturnMap.put("organizeCode", kv.get("organizecode"));
-                
+
                 AtomicInteger currentSeq = new AtomicInteger();
-                
+
                 try {
 
                     // 内层事务,当异常条件下，对已执行的子事务提交，并返回错误信息
@@ -753,20 +752,19 @@ public class ColumsmapService extends BaseService<Columsmap> {
     }
 
     /**
-     *
-     * @param currentSeq  当前执行流程的序号
-     * @param currentSeq  流程id
+     * @param currentSeq     当前执行流程的序号
+     * @param currentSeq     流程id
      * @param processBusMaps 流程集合
      */
     private void rollbackProcess(Integer currentSeq, String seqBusinessID, List<Record> processBusMaps) {
-        while (currentSeq > 10){
+        while (currentSeq > 10) {
             Integer finalCurrentSeq = currentSeq;
             List<Record> list = processBusMaps.stream().filter(p -> Objects.equals(p.getInt("seq"), finalCurrentSeq)).collect(Collectors.toList());
             if (!list.isEmpty()) {
                 String processID = list.get(0).getStr("autoid");
                 Record rollback = vouchRollBackRefService.rollback(processID);
                 if (rollback != null) {
-                    if (list.get(0).getStr("memo").contains("审核")){
+                    if (list.get(0).getStr("memo").contains("审核")) {
                         processID = processBusMaps.stream().filter(p -> p.getInt("seq") == (finalCurrentSeq - 10)).collect(Collectors.toList()).get(0).getStr("autoid");
                     }
                     List<Record> rollbackref = vouchRollBackRefService.rollbackref(seqBusinessID, processID);
@@ -780,12 +778,12 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     System.out.println(rojsonObject);
                     //回滚api
                     Map roapimap = new HashMap();
-                    roapimap.put("tag",rollback.get("tag"));
-                    roapimap.put("url",rollback.get("url"));
-                    List<Map<String,String>> roapimaps = new ArrayList<>();
+                    roapimap.put("tag", rollback.get("tag"));
+                    roapimap.put("url", rollback.get("url"));
+                    List<Map<String, String>> roapimaps = new ArrayList<>();
                     roapimaps.add(roapimap);
                     //u9调用
-                    String message = WebService.ApiWebService(rollback.get("tag","").toString(),roapimaps,rojsonObject);
+                    String message = WebService.ApiWebService(rollback.get("tag", "").toString(), roapimaps, rojsonObject);
                 }
             }
             currentSeq -= 10;
@@ -923,7 +921,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
         return processFlag;
     }
 
-    public Map tmp(Kv kv){
+    public Map tmp(Kv kv) {
         //默认代码为200
         int code = 200;
         //返回的数据
@@ -939,17 +937,15 @@ public class ColumsmapService extends BaseService<Columsmap> {
         JSONObject preAllocate = JSONObject.parseObject(kv.getStr("PreAllocate"));
         //通过数据的分组id，将数据分成多组，分别提交
         Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("MainData")).stream().collect(Collectors.groupingBy(p -> {
-            Map<String, Object> a = (Map) p;
             return ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag");
         }, Collectors.toList()));
         Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
-        Iterator groupFlag = groupFlags.iterator();
-        while (groupFlag.hasNext()){
+        for (Object flag : groupFlags) {
             //业务id
             String vouchBusinessID = String.valueOf(JBoltSnowflakeKit.me.nextId());
             String seqBusinessID = vouchBusinessID;
             //获取主数据
-            JSONArray mainData = JSONArray.parseArray(JSON.toJSONString(dataGroup.get(groupFlag.next())));//JSONArray.parseArray(kv.getStr("maindata"));
+            JSONArray mainData = JSONArray.parseArray(JSON.toJSONString(dataGroup.get(flag)));//JSONArray.parseArray(kv.getStr("maindata"));
             // 获取详细数据
             JSONArray detailData = JSONArray.parseArray(kv.getStr("DetailData"));
             // 获取扩展数据
@@ -984,9 +980,9 @@ public class ColumsmapService extends BaseService<Columsmap> {
             plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
             plugeReturnMap.put("organizeCode", kv.getStr("organizeCode"));
             List<Record> processBusMap = new ArrayList<>();
-            while (true){
+            while (true) {
                 List<Record> dynamic = processBusDynamic(id1, seqBusinessID);
-                if (dynamic.isEmpty()){
+                if (dynamic.isEmpty()) {
                     break;
                 }
                 String autoid = dynamic.get(0).getStr("autoid");
@@ -1001,8 +997,8 @@ public class ColumsmapService extends BaseService<Columsmap> {
                 processBusMap = groupProcessDatas.get(groupId.next());//取出分组中的流程
                 tsysLog = new Log();
             }*/
-            result.put("code",code);
-            result.put("message",message);
+            result.put("code", code);
+            result.put("message", message);
         }
 
         return result;
@@ -1010,19 +1006,20 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
     /**
      * 查询数据动态交换数据
-     * @param erpDBName	数据库类型
-     * @param exchangeID	交换表exchangeID
+     *
+     * @param erpDBName  数据库类型
+     * @param exchangeID 交换表exchangeID
      * @return
      */
-    public Map<String,List<Record>> queryExchange(String erpDBName,String erpDBSchemas, String exchangeID)throws RuntimeException{
-        Map<String,List<Record>> map = new HashMap<>();
+    public Map<String, List<Record>> queryExchange(String erpDBName, String erpDBSchemas, String exchangeID) throws RuntimeException {
+        Map<String, List<Record>> map = new HashMap<>();
         String[] exchangeIDs = exchangeID.split(",");
         /*Kv kv = Kv.by("erpDBName", erpDBName);
         kv.set("erpDBSchemas", erpDBSchemas);*/
-        for (int i=0; i<exchangeIDs.length; i++){
+        for (int i = 0; i < exchangeIDs.length; i++) {
             //kv.set("ExchangeID", exchangeIDs[i]);
             List<Record> list = exchangeTableService.findRecord("SELECT * FROM T_Sys_ExchangeTable WHERE ExchangeID in(" + exchangeIDs[i] + ")");
-            switch (i){
+            switch (i) {
                 case 0:
                     map.put("MainData", list);
                     break;
@@ -1037,12 +1034,11 @@ public class ColumsmapService extends BaseService<Columsmap> {
         return map;
     }
 
-    //执行存储过程
-    //执行存储过程
+    /**
+     * 执行存储过程
+     */
     private Record StoredProcedure(String dataSourceConfigName, String erpDBName, String erpdbschemas, String processname, String processFlag, String exchangeId) {
-        AtomicReference<Record> atomicReference = new AtomicReference();
-
-        Record rc = (Record) execute(dataSourceConfigName, (conn) -> {
+        return (Record) executeFunc(dataSourceConfigName, (conn) -> {
             String sql = "{ call " + erpDBName + "." + erpdbschemas + "." + processname + "(?, ?, ?, ?, ?) }";
             System.err.println(sql);
             CallableStatement proc = conn.prepareCall(sql);
@@ -1061,41 +1057,29 @@ public class ColumsmapService extends BaseService<Columsmap> {
             record.set("resultExchangeID", proc.getString(5));
             return record;
         });
-        atomicReference.set(rc);
         //ValidationUtils.isTrue("200".equals(rc.getStr("resultCode")), rc.getStr("resultInfo"));
         /*if (!"200".equals(rc.getStr("resultcode"))) {
             return null;
         }*/
-        return atomicReference.get();
-    }
-    public Object execute(ICallback callback) {
-        return Db.use(dataSourceConfigName()).execute(callback);
-    }
-    protected Object execute(String dataSourceConfigName, ICallback callback) {
-        return Db.use(dataSourceConfigName).execute(callback);
     }
 
     /**
      * 读取流程表
-     * @param masID
-     * @return
      */
-    public List<Record> processBus(Integer masID){
+    public List<Record> processBus(Integer masID) {
         Kv kv = Kv.by("masID", masID);
         return dbTemplate("openapi.processBus", kv).find();
     }
 
     /**
      * 读取动态流程表
-     * @param masID
-     * @return
      */
-    public List<Record> processBusDynamic(Integer masID, String seqBusinessID){
+    public List<Record> processBusDynamic(Integer masID, String seqBusinessID) {
         Kv kv = Kv.by("masID", masID).set("seqBusinessID", seqBusinessID);
         return dbTemplate("openapi.processBusDynamic", kv).find();
     }
 
-    public List<Record> getOpenAPI(String code)throws RuntimeException{
+    public List<Record> getOpenAPI(String code) throws RuntimeException {
         Kv kv = Kv.by("code", code);
         return dbTemplate("openapi.api", kv).find();
     }

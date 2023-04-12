@@ -245,6 +245,10 @@
 #include("bommaster/bommaster.sql")
 #end
 
+#namespace("rcvdocqcformm")
+#include("rcvdocqcformm/rcvdocqcformm.sql")
+#end
+
 #namespace("bomcompare")
 #include("bomcompare/bomcompare.sql")
 #end

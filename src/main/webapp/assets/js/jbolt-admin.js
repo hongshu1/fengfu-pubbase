@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.4.3";
+var jbolt_admin_js_version="6.4.6";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -10226,14 +10226,14 @@ function uploadFileToQiniu(uploader,type,fileDatas,hiddeninput,filenameInput,siz
 					if (successCallback) {
 						var exe_callback = eval(successCallback);
 						if (exe_callback && typeof (exe_callback) == "function") {
-							exe_callback(uploader,type, {data: qiniuFiles});
+							exe_callback(type, {data: qiniuFiles});
 						}
 					}
 				}catch (e){
 					if (failCallback) {
 						var exe_callback = eval(failCallback);
 						if (exe_callback && typeof (exe_callback) == "function") {
-							exe_callback(uploader,type);
+							exe_callback(type);
 						}
 					}else{
 						LayerMsgBox.alert("上传失败",2);
@@ -12565,9 +12565,13 @@ function trChangeToUp(currentTr,prevTr,jboltTable){
 	}
 	if(jboltTable){
 		if(jboltTable.fixedColumnTables){
-			jboltTable.me.processColumnFixed(jboltTable);
+
 			setTimeout(function(){
-				jboltTable.fixedColumnTables.find("tbody>tr.sortActive").removeClass("sortActive");
+				jboltTable.table_box.find(".jbolt_table_fixed>.jbolt_table_body>table>tbody>tr.sortActive").removeClass("sortActive");
+				//如果有横向滚动条 处理一下样式
+				jboltTable.me.refreshFixedColumnHScroll(jboltTable);
+				//处理fixed的滚动位置
+				jboltTable.me.reScrollFixedColumnBox(jboltTable);
 				var sortSuccessHandler = jboltTable.data("sort-success-handler");
 				if(sortSuccessHandler){
 					var exeSortHandler=eval(sortSuccessHandler);
@@ -12695,7 +12699,7 @@ function trChangeToDown(currentTr,nextTr,jboltTable){
 				for(var i=0;i<len;i++){
 					showArr[i].removeClass("sortActive")
 				}
-			},1000)
+			},300)
 		}
 		
 	}else{
@@ -12704,15 +12708,18 @@ function trChangeToDown(currentTr,nextTr,jboltTable){
 			currentTr.addClass("sortActive");
 			setTimeout(function(){
 				currentTr.removeClass("sortActive");
-			},1000);
+			},300);
 		} 
 	}
 	
 	if(jboltTable&&jboltTable.fixedColumnTables){
-		jboltTable.me.processColumnFixed(jboltTable);
 		setTimeout(function(){
-			jboltTable.fixedColumnTables.find("tbody>tr.sortActive").removeClass("sortActive");
-		},1000);
+			jboltTable.table_box.find(".jbolt_table_fixed>.jbolt_table_body>table>tbody>tr.sortActive").removeClass("sortActive");
+			//如果有横向滚动条 处理一下样式
+			jboltTable.me.refreshFixedColumnHScroll(jboltTable);
+			//处理fixed的滚动位置
+			jboltTable.me.reScrollFixedColumnBox(jboltTable);
+		},300);
 	}
 	
 
@@ -13462,15 +13469,16 @@ var DialogUtil={
 					  		  }
 						  }
 					  }
-			  }else{
-				  if(url){
-					  url=actionUrl(url);
-					  url=processEleUrlByLinkOtherParamEle(action,url,false);
-					  url=processDataFormLinkParams(action,url);
-					  url=processJBoltTableEleUrlByLinkColumn(action,url);
-					  url=processUrlRqType(url,"dialog");
-				  }
 			  }
+			  // else{
+				//   if(url){
+				// 	  url=actionUrl(url);
+				// 	  url=processEleUrlByLinkOtherParamEle(action,url,false);
+				// 	  url=processDataFormLinkParams(action,url);
+				// 	  url=processJBoltTableEleUrlByLinkColumn(action,url);
+				// 	  url=processUrlRqType(url,"dialog");
+				//   }
+			  // }
 			  
 			  var handler=action.data("handler");
 			  var closeHandler=action.data("close-handler");

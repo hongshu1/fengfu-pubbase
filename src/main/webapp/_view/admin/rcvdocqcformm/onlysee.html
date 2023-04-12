@@ -1,0 +1,630 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+  <div class="jbolt_page_content">
+    <form onsubmit="return false;" id="RcvDocQcFormM_Form" action="#(action)" method="post">
+      <div>
+        <table border="1">
+          <tr>
+
+          </tr>
+        </table>
+
+
+        <h6 style="font-weight: bold">维修信息</h6>
+        <div class="form-group row">
+
+
+          <!--删除行ID-->
+          <input type="text" name="deleids" hidden id="deleids">
+          <!--输入行总数-->
+          <input type="text" id="trindex" hidden name="trindex">
+          <!--检验参数数量-->
+          <input type="text" id="trcount" hidden name="trcount">
+          <!--记录ID-->
+          <input type="text" hidden name="mouldsFirstDoc.iautoid" value="#(mouldsFirstDoc.iautoid??)">
+
+          <label class="col-sm-2 col-form-label">报修单号：</label>
+          <div class="col-sm-2 col-form-label">
+            #(mouldsFirstDoc.crepairno??)
+
+          </div>
+          <label class="col-sm-2 col-form-label">报修时间：</label>
+          <div class="col-sm-2 col-form-label">
+            #(mouldsFirstDoc.crepairtime??)
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">模具编码：</label>
+          <div class="col-sm-2 col-form-label">
+            #(mouldsFirstDoc.cmouldscode??)
+          </div>
+          <label class="col-sm-2 col-form-label">模具名称：</label>
+          <div class="col-sm-2 col-form-label">
+            #(mouldsFirstDoc.cmouldsname??)
+          </div>
+        </div>
+
+        <hr/>
+        <!--<h6 style="font-weight: bold">派工信息</h6>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">派工单号：</label>
+            <div class="col-sm-2 col-form-label">
+                #(mouldsFirstDoc.cassignorderno??)
+            </div>
+            <label class="col-sm-2 col-form-label">报修时间：</label>
+            <div class="col-sm-2 col-form-label">
+                #(mouldsFirstDoc.crepairtime??)
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">料号：</label>
+            <div class="col-sm-2 col-form-label">
+                #(mouldsFirstDoc.citemcode??)
+            </div>
+            <label class="col-sm-2 col-form-label">品名：</label>
+            <div class="col-sm-2 col-form-label">
+                #(mouldsFirstDoc.citemname??)
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">工序名称：</label>
+            <div class="col-sm-2 col-form-label">
+                #(mouldsFirstDoc.coperationname??)
+            </div>
+            <label class="col-sm-2 col-form-label">派工数量：</label>
+            <div class="col-sm-2 col-form-label">
+                #(mouldsFirstDoc.iqty??)
+            </div>
+        </div>
+    </div>
+    <hr/>-->
+        <div>
+          <!-- <h6 style="font-weight: bold">确认操作</h6>
+           <div class="form-group row">
+               <label class="col-sm-2 col-form-label">是否合格：</label>
+               <div id="radio" class="form-group row"
+                    data-radio
+                    data-rule="radio"
+                    data-value="#(mouldsFirstDoc.iscomplete??)"
+                    data-name="mouldsFirstDoc.iscomplete"
+                    data-default="options_first"
+                    data-width="col-sm-2,col"
+               >
+                   <div class="col" style="padding-top: 1px;">
+                       <div class="radio radio-primary  radio-inline">
+                           <input id="r_isenabled_true" type="radio" name="mouldsFirstDoc.iscomplete" value="1"/>
+                           <label for="r_isenabled_true">是</label>
+                       </div>
+                       <div class="radio radio-primary  radio-inline">
+                           <input id="r_isenabled_false" type="radio" name="mouldsFirstDoc.iscomplete" value="0"/>
+                           <label for="r_isenabled_false">否</label>
+                       </div>
+                   </div>
+               </div>
+           </div>
+           <div class="form-group row">
+               <label class="col-sm-2 col-form-label">操作人：</label>
+               <div class="col-sm-2 col-form-label">
+                   #(mouldsFirstDoc.username??)
+               </div>
+               <label class="col-sm-2 col-form-label">操作时间：</label>
+               <div class="col-sm-2 col-form-label">
+                   #(mouldsFirstDoc.doperationtime??)
+               </div>
+           </div>-->
+          <div style="font-size: 30px; height: 80px; line-height: 80px; font-weight: bold;
+                 text-align: center; display: flex; align-items: baseline; justify-content: center;">
+            冲压件质量检查/模具安装参数记录卡
+            <div style="font-size: 20px;vertical-align: sub;">（机械压力机）</div>
+          </div>
+          <!--<div id="isNot" class="form-group row" style="font-size: 20px; font-weight: bold">
+              <label class="col-sm-2 col-form-label">零件编码：</label>
+              <div class="col-sm-2 col-form-label">
+                  <input id="cInvNo" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                         placeholder="请输入零件编码" maxlength="255" name="mouldsFirstDoc.cinvno"
+                         value="#(mouldsFirstDoc.cinvno??)"/>
+              </div>
+              <label class="col-sm-2 col-form-label">生产日期：</label>
+              <div class="col-sm-2 col-form-label">
+                  <input id="dProdDate" type="text" data-date data-type="date" data-fmt="yyyy-MM-dd"
+                         readonly="readonly"
+                         autocomplete="off" class="form-control" placeholder="请设置入厂日期"
+                         data-tips="请设置生产日期" maxlength="10" name="mouldsFirstDoc.dproddate"
+                         value="#date((mouldsFirstDoc.dproddate??),'yyyy-MM-dd')"/>
+              </div>
+              <label class="col-sm-2 col-form-label">生产机台：</label>
+              <div class="col-sm-2 col-form-label">
+                  <input id="cEquipmentName" type="text" data-with-clearbtn="true" autocomplete="off"
+                         class="form-control"
+                         placeholder="请输入生产机台" maxlength="255" name="mouldsFirstDoc.cequipmentname"
+                         value="#(mouldsFirstDoc.cequipmentname??)"/>
+              </div>
+          </div>-->
+          <table id="tableID" border="1" align="center" cellspacing="0" cellpadding="10">
+            <div>
+              <tr class="colspan">
+                <th colspan="5">检查内容</th>
+                <th colspan="22">检查记录</th>
+              </tr>
+              <tr class="colspan">
+                <th>NO</th>
+                <th>检查项目</th>
+                <th>判断基准</th>
+                <th colspan="2">方法</th>
+                <th>30</th>
+                <th>70</th>
+                <th>100</th>
+                <th>150</th>
+                <th>200</th>
+                <th>300</th>
+                <th>400</th>
+                <th>500</th>
+                <th>600</th>
+                <th>700</th>
+                <th>800</th>
+                <th>900</th>
+                <th>1000</th>
+                <th>1100</th>
+                <th>1200</th>
+                <th>1300</th>
+                <th>1400</th>
+                <th>1500</th>
+                <th>1600</th>
+                <th>1700</th>
+                <th>1800</th>
+                <th>1900</th>
+              </tr>
+              <tr id="trd1" class="trd">
+                <td>1</td>
+                <td>裂纹111</td>
+                <td>无</td>
+                <td colspan="2">目视、样件</td>
+                <td><input name="cA30" type="text"/></td>
+                <td><input name="cA70" type="text"/></td>
+                <td><input name="cA100" type="text"/></td>
+                <td><input name="cA150" type="text"/></td>
+                <td><input name="cA200" type="text"/></td>
+                <td><input name="cA300" type="text"/></td>
+                <td><input name="cA400" type="text"/></td>
+                <td><input name="cA500" type="text"/></td>
+                <td><input name="cA600" type="text"/></td>
+                <td><input name="cA700" type="text"/></td>
+                <td><input name="cA800" type="text"/></td>
+                <td><input name="cA900" type="text"/></td>
+                <td><input name="cA1000" type="text"/></td>
+                <td><input name="cA1100" type="text"/></td>
+                <td><input name="cA1200" type="text"/></td>
+                <td><input name="cA1300" type="text"/></td>
+                <td><input name="cA1400" type="text"/></td>
+                <td><input name="cA1500" type="text"/></td>
+                <td><input name="cA1600" type="text"/></td>
+                <td><input name="cA1700" type="text"/></td>
+                <td><input name="cA1800" type="text"/></td>
+                <td><input name="cA1900" type="text"/></td>
+              </tr>
+              <tr class="trd">
+                <td>2</td>
+                <td>暗裂</td>
+                <td>板厚70%以上</td>
+                <td colspan="2">目视(千分尺测量)</td>
+                <td><input name="cA30" type="text"/></td>
+                <td><input name="cA70" type="text"/></td>
+                <td><input name="cA100" type="text"/></td>
+                <td><input name="cA150" type="text"/></td>
+                <td><input name="cA200" type="text"/></td>
+                <td><input name="cA300" type="text"/></td>
+                <td><input name="cA400" type="text"/></td>
+                <td><input name="cA500" type="text"/></td>
+                <td><input name="cA600" type="text"/></td>
+                <td><input name="cA700" type="text"/></td>
+                <td><input name="cA800" type="text"/></td>
+                <td><input name="cA900" type="text"/></td>
+                <td><input name="cA1000" type="text"/></td>
+                <td><input name="cA1100" type="text"/></td>
+                <td><input name="cA1200" type="text"/></td>
+                <td><input name="cA1300" type="text"/></td>
+                <td><input name="cA1400" type="text"/></td>
+                <td><input name="cA1500" type="text"/></td>
+                <td><input name="cA1600" type="text"/></td>
+                <td><input name="cA1700" type="text"/></td>
+                <td><input name="cA1800" type="text"/></td>
+                <td><input name="cA1900" type="text"/></td>
+              </tr>
+              <tr class="trd">
+                <td>3</td>
+                <td>缺边/多边</td>
+                <td>检查规格以内(检具)</td>
+                <td colspan="2">日视、样件</td>
+                <td><input name="cA30" type="text"/></td>
+                <td><input name="cA70" type="text"/></td>
+                <td><input name="cA100" type="text"/></td>
+                <td><input name="cA150" type="text"/></td>
+                <td><input name="cA200" type="text"/></td>
+                <td><input name="cA300" type="text"/></td>
+                <td><input name="cA400" type="text"/></td>
+                <td><input name="cA500" type="text"/></td>
+                <td><input name="cA600" type="text"/></td>
+                <td><input name="cA700" type="text"/></td>
+                <td><input name="cA800" type="text"/></td>
+                <td><input name="cA900" type="text"/></td>
+                <td><input name="cA1000" type="text"/></td>
+                <td><input name="cA1100" type="text"/></td>
+                <td><input name="cA1200" type="text"/></td>
+                <td><input name="cA1300" type="text"/></td>
+                <td><input name="cA1400" type="text"/></td>
+                <td><input name="cA1500" type="text"/></td>
+                <td><input name="cA1600" type="text"/></td>
+                <td><input name="cA1700" type="text"/></td>
+                <td><input name="cA1800" type="text"/></td>
+                <td><input name="cA1900" type="text"/></td>
+              </tr>
+              <tr class="trd">
+                <td>4</td>
+                <td></td>
+                <td>无温冲多冲位置错</td>
+                <td colspan="2">目视</td>
+                <td><input name="cA30" type="text"/></td>
+                <td><input name="cA70" type="text"/></td>
+                <td><input name="cA100" type="text"/></td>
+                <td><input name="cA150" type="text"/></td>
+                <td><input name="cA200" type="text"/></td>
+                <td><input name="cA300" type="text"/></td>
+                <td><input name="cA400" type="text"/></td>
+                <td><input name="cA500" type="text"/></td>
+                <td><input name="cA600" type="text"/></td>
+                <td><input name="cA700" type="text"/></td>
+                <td><input name="cA800" type="text"/></td>
+                <td><input name="cA900" type="text"/></td>
+                <td><input name="cA1000" type="text"/></td>
+                <td><input name="cA1100" type="text"/></td>
+                <td><input name="cA1200" type="text"/></td>
+                <td><input name="cA1300" type="text"/></td>
+                <td><input name="cA1400" type="text"/></td>
+                <td><input name="cA1500" type="text"/></td>
+                <td><input name="cA1600" type="text"/></td>
+                <td><input name="cA1700" type="text"/></td>
+                <td><input name="cA1800" type="text"/></td>
+                <td><input name="cA1900" type="text"/></td>
+              </tr>
+              <tr class="trd">
+                <td>5</td>
+                <td>变形</td>
+                <td>无(险具)</td>
+                <td colspan="2">目视</td>
+                <td><input name="cA30" type="text"/></td>
+                <td><input name="cA70" type="text"/></td>
+                <td><input name="cA100" type="text"/></td>
+                <td><input name="cA150" type="text"/></td>
+                <td><input name="cA200" type="text"/></td>
+                <td><input name="cA300" type="text"/></td>
+                <td><input name="cA400" type="text"/></td>
+                <td><input name="cA500" type="text"/></td>
+                <td><input name="cA600" type="text"/></td>
+                <td><input name="cA700" type="text"/></td>
+                <td><input name="cA800" type="text"/></td>
+                <td><input name="cA900" type="text"/></td>
+                <td><input name="cA1000" type="text"/></td>
+                <td><input name="cA1100" type="text"/></td>
+                <td><input name="cA1200" type="text"/></td>
+                <td><input name="cA1300" type="text"/></td>
+                <td><input name="cA1400" type="text"/></td>
+                <td><input name="cA1500" type="text"/></td>
+                <td><input name="cA1600" type="text"/></td>
+                <td><input name="cA1700" type="text"/></td>
+                <td><input name="cA1800" type="text"/></td>
+                <td><input name="cA1900" type="text"/></td>
+              </tr>
+              <tr class="trd">
+                <td>6</td>
+                <td>压痕</td>
+                <td>不明显且板厚70以上</td>
+                <td colspan="2">目视(千分尺测量)</td>
+                <td><input name="cA30" type="text"/></td>
+                <td><input name="cA70" type="text"/></td>
+                <td><input name="cA100" type="text"/></td>
+                <td><input name="cA150" type="text"/></td>
+                <td><input name="cA200" type="text"/></td>
+                <td><input name="cA300" type="text"/></td>
+                <td><input name="cA400" type="text"/></td>
+                <td><input name="cA500" type="text"/></td>
+                <td><input name="cA600" type="text"/></td>
+                <td><input name="cA700" type="text"/></td>
+                <td><input name="cA800" type="text"/></td>
+                <td><input name="cA900" type="text"/></td>
+                <td><input name="cA1000" type="text"/></td>
+                <td><input name="cA1100" type="text"/></td>
+                <td><input name="cA1200" type="text"/></td>
+                <td><input name="cA1300" type="text"/></td>
+                <td><input name="cA1400" type="text"/></td>
+                <td><input name="cA1500" type="text"/></td>
+                <td><input name="cA1600" type="text"/></td>
+                <td><input name="cA1700" type="text"/></td>
+                <td><input name="cA1800" type="text"/></td>
+                <td><input name="cA1900" type="text"/></td>
+              </tr>
+              <tr class="trd">
+                <td>7</td>
+                <td>叠料</td>
+                <td>无</td>
+                <td colspan="2">目视</td>
+                <td><input name="cA30" type="text"/></td>
+                <td><input name="cA70" type="text"/></td>
+                <td><input name="cA100" type="text"/></td>
+                <td><input name="cA150" type="text"/></td>
+                <td><input name="cA200" type="text"/></td>
+                <td><input name="cA300" type="text"/></td>
+                <td><input name="cA400" type="text"/></td>
+                <td><input name="cA500" type="text"/></td>
+                <td><input name="cA600" type="text"/></td>
+                <td><input name="cA700" type="text"/></td>
+                <td><input name="cA800" type="text"/></td>
+                <td><input name="cA900" type="text"/></td>
+                <td><input name="cA1000" type="text"/></td>
+                <td><input name="cA1100" type="text"/></td>
+                <td><input name="cA1200" type="text"/></td>
+                <td><input name="cA1300" type="text"/></td>
+                <td><input name="cA1400" type="text"/></td>
+                <td><input name="cA1500" type="text"/></td>
+                <td><input name="cA1600" type="text"/></td>
+                <td><input name="cA1700" type="text"/></td>
+                <td><input name="cA1800" type="text"/></td>
+                <td><input name="cA1900" type="text"/></td>
+              </tr>
+              <tr class="trd">
+                <td>8</td>
+                <td>拉伤/划痕</td>
+                <td>不明显且板厚70%以上</td>
+                <td colspan="2">目视(千分尺测量)</td>
+                <td><input name="cA30" type="text"/></td>
+                <td><input name="cA70" type="text"/></td>
+                <td><input name="cA100" type="text"/></td>
+                <td><input name="cA150" type="text"/></td>
+                <td><input name="cA200" type="text"/></td>
+                <td><input name="cA300" type="text"/></td>
+                <td><input name="cA400" type="text"/></td>
+                <td><input name="cA500" type="text"/></td>
+                <td><input name="cA600" type="text"/></td>
+                <td><input name="cA700" type="text"/></td>
+                <td><input name="cA800" type="text"/></td>
+                <td><input name="cA900" type="text"/></td>
+                <td><input name="cA1000" type="text"/></td>
+                <td><input name="cA1100" type="text"/></td>
+                <td><input name="cA1200" type="text"/></td>
+                <td><input name="cA1300" type="text"/></td>
+                <td><input name="cA1400" type="text"/></td>
+                <td><input name="cA1500" type="text"/></td>
+                <td><input name="cA1600" type="text"/></td>
+                <td><input name="cA1700" type="text"/></td>
+                <td><input name="cA1800" type="text"/></td>
+                <td><input name="cA1900" type="text"/></td>
+              </tr>
+              <tr class="trd">
+                <td>9</td>
+                <td>毛刺</td>
+                <td>0.30MM以下</td>
+                <td colspan="2">目视</td>
+                <td><input name="cA30" type="text"/></td>
+                <td><input name="cA70" type="text"/></td>
+                <td><input name="cA100" type="text"/></td>
+                <td><input name="cA150" type="text"/></td>
+                <td><input name="cA200" type="text"/></td>
+                <td><input name="cA300" type="text"/></td>
+                <td><input name="cA400" type="text"/></td>
+                <td><input name="cA500" type="text"/></td>
+                <td><input name="cA600" type="text"/></td>
+                <td><input name="cA700" type="text"/></td>
+                <td><input name="cA800" type="text"/></td>
+                <td><input name="cA900" type="text"/></td>
+                <td><input name="cA1000" type="text"/></td>
+                <td><input name="cA1100" type="text"/></td>
+                <td><input name="cA1200" type="text"/></td>
+                <td><input name="cA1300" type="text"/></td>
+                <td><input name="cA1400" type="text"/></td>
+                <td><input name="cA1500" type="text"/></td>
+                <td><input name="cA1600" type="text"/></td>
+                <td><input name="cA1700" type="text"/></td>
+                <td><input name="cA1800" type="text"/></td>
+                <td><input name="cA1900" type="text"/></td>
+              </tr>
+              <tr class="trd">
+                <td>10</td>
+                <td>关键点</td>
+                <td>在检具上抽检关键点</td>
+                <td colspan="2">间隙尺、直尺</td>
+                <td><input name="cA30" type="text"/></td>
+                <td><input name="cA70" type="text"/></td>
+                <td><input name="cA100" type="text"/></td>
+                <td><input name="cA150" type="text"/></td>
+                <td><input name="cA200" type="text"/></td>
+                <td><input name="cA300" type="text"/></td>
+                <td><input name="cA400" type="text"/></td>
+                <td><input name="cA500" type="text"/></td>
+                <td><input name="cA600" type="text"/></td>
+                <td><input name="cA700" type="text"/></td>
+                <td><input name="cA800" type="text"/></td>
+                <td><input name="cA900" type="text"/></td>
+                <td><input name="cA1000" type="text"/></td>
+                <td><input name="cA1100" type="text"/></td>
+                <td><input name="cA1200" type="text"/></td>
+                <td><input name="cA1300" type="text"/></td>
+                <td><input name="cA1400" type="text"/></td>
+                <td><input name="cA1500" type="text"/></td>
+                <td><input name="cA1600" type="text"/></td>
+                <td><input name="cA1700" type="text"/></td>
+                <td><input name="cA1800" type="text"/></td>
+                <td><input name="cA1900" type="text"/></td>
+              </tr>
+            </div>
+          </table>
+        </div>
+    </form>
+
+  </div>
+</div>
+#end
+#define js()
+<script>
+  hideParentLayerDialogBtn(0);
+  //禁止编辑
+  $("#tableID" + " tbody tr").find("input").attr("disabled", "disabled");
+  $("#isNot").find("input").attr("disabled", "disabled");
+  var parameterData = [];
+  $(function () {
+    Ajax.get("admin/mouldsfirstrecord/list", function (res) {
+      for (let i = 0; i < res.data.length; i++) {
+        console.log(res.data[i].iautoid)
+        parameterData.push(res.data[i].iautoid);
+      }
+      //获取动态检验参数
+      for (let i = 0; i < res.data.length - 10; i++) {
+        $("#tableID" + " tbody tr").eq(i + 2).find("td:eq(1)").html(res.data[i].cname);
+        $("#tableID" + " tbody tr").eq(i + 2).find("td:eq(2)").html(res.data[i].csegment1);
+        $("#tableID" + " tbody tr").eq(i + 2).find("td:eq(3)").html(res.data[i].csegment2);
+      }
+      for (let i = 10; i < res.data.length - 6; i++) {
+        if (i === 13) {
+          $("#tableID" + " tbody tr").eq(i + 5).find("td:eq(2)").html(res.data[i - 10].cname);
+        } else {
+          $("#tableID" + " tbody tr").eq(i + 5).find("td:eq(3)").html(res.data[i - 10].cname);
+        }
+        $("#tableID" + " tbody tr").eq(i + 3).find("td:eq(0)").html(res.data[i].cname);
+      }
+      for (let i = 15; i < res.data.length; i++) {
+        $("#tableID" + " tbody tr").eq(i + 4).find("td:eq(0)").html(res.data[i].cname);
+      }
+      for (let i = 15; i < res.data.length; i++) {
+        $("#tableID" + " tbody tr").eq(i + 4).find("td:eq(3)").html(res.data[i - 11].cname);
+      }
+    });
+    Ajax.get("admin/mouldsfirstrecordparameter/datas?iMouldsFirstDocId=#(mouldsFirstDoc.iautoid)", function (res) {
+      for (let i = 10; i < res.data.length; i++) {
+        if (i > res.data.length - 7) {
+          $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(0)").val(res.data[i].cvalue);
+        } else {
+          $("#tableID" + " tbody tr").eq(i + 3).find("input:eq(0)").val(res.data[i].cvalue);
+        }
+      }
+      console.log(res.data)
+    })
+    Ajax.get("admin/mouldsfirstrecord/datas?iMouldsFirstDocId=#(mouldsFirstDoc.iautoid)", function (res) {
+      console.log(res.data[0].ca70)
+      //根据某列进行赋值
+      for (let i = 0; i < res.data.length - 11; i++) {
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(0)").val(res.data[i].ca30);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(1)").val(res.data[i].ca70);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(2)").val(res.data[i].ca100);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(3)").val(res.data[i].ca150);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(4)").val(res.data[i].ca200);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(5)").val(res.data[i].ca300);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(6)").val(res.data[i].ca400);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(7)").val(res.data[i].ca500);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(8)").val(res.data[i].ca600);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(9)").val(res.data[i].ca700);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(10)").val(res.data[i].ca800);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(11)").val(res.data[i].ca900);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(12)").val(res.data[i].ca1000);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(13)").val(res.data[i].ca1100);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(14)").val(res.data[i].ca1200);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(15)").val(res.data[i].ca1300);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(16)").val(res.data[i].ca1400);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(17)").val(res.data[i].ca1500);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(18)").val(res.data[i].ca1600);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(19)").val(res.data[i].ca1700);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(20)").val(res.data[i].ca1800);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(21)").val(res.data[i].ca1900);
+      }
+
+      for (let i = 10; i < res.data.length; i++) {
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(1)").val(res.data[i].ca2000);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(2)").val(res.data[i].ca2100);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(3)").val(res.data[i].ca2200);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(4)").val(res.data[i].ca2300);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(5)").val(res.data[i].ca2400);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(6)").val(res.data[i].ca2500);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(7)").val(res.data[i].ca2600);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(8)").val(res.data[i].ca2700);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(9)").val(res.data[i].ca2800);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(10)").val(res.data[i].ca2900);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(11)").val(res.data[i].ca3000);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(12)").val(res.data[i].ca3100);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(13)").val(res.data[i].ca3200);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(14)").val(res.data[i].ca3300);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(15)").val(res.data[i].ca3400);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(16)").val(res.data[i].ca3500);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(17)").val(res.data[i].ca3600);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(18)").val(res.data[i].ca3700);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(19)").val(res.data[i].ca3800);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(20)").val(res.data[i].ca3900);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(21)").val(res.data[i].ca4000);
+        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(22)").val(res.data[i].ca4100);
+      }
+    })
+  })
+
+  function submitThisForm() {
+    var milasUrl = {};//新建对象，用来存储所有数据
+    var subMilasUrlArr = {};//存储每一行数据
+    var tableData = {};
+    $("#tableID" + " tbody tr").each(function (trindex, tritem) {//遍历每一行
+      tableData[trindex] = new Array();
+      $(tritem).find("input").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+    });
+    for (var key in subMilasUrlArr) {
+      milasUrl[key] = subMilasUrlArr[key];//将每一行存入对象
+      console.log(milasUrl[key])
+    }
+    console.log(parameterData)
+    const submitData = {
+      iMouldsFirstDocId: #(mouldsFirstDoc.iautoid),
+      tableDataList: JSON.stringify(milasUrl),
+      parameterId: JSON.stringify(parameterData)
+    }
+
+    Ajax.post("admin/mouldsfirstrecord/updateTable", submitData, function (res) {
+      if (res.state === "ok") {
+
+        LayerMsgBox.success(res.msg, 1000, function () {
+          refreshPjaxContainer();
+          parent.LayerMsgBox.closeAll();
+          parent.refreshPjaxContainer();
+        });
+      } else {
+        LayerMsgBox.alert(res.msg, 2);
+      }
+    })
+  }
+
+
+</script>
+#end
+
+<style>
+  .trd td {
+    width: 60px;
+    overflow: hidden;
+    height: 100%;
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .trd td input {
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+    font-size: 14px;
+    text-align: center;
+    border: none;
+
+  }
+
+  .colspan {
+    text-align: center;
+  }
+</style>

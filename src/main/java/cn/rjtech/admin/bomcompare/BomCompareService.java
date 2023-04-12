@@ -198,6 +198,7 @@ public class BomCompareService extends BaseService<BomCompare> {
 				// 先获取编码栏数据
 				Integer invLev = record.getInt("iLevel");
 				String invLevStr = record.getStr("cInvLev");
+				bomCompareRecord.set("cInvLev", invLevStr);
 				if (invLev == 6){
 					bomCompareRecord.set(BomCompare.CODE6, invLevStr);
 				}else if (invLev == 5){
@@ -277,6 +278,7 @@ public class BomCompareService extends BaseService<BomCompare> {
 			}
 			recordList.add(bomCompareRecord);
 		}
+		recordList.sort(Comparator.comparing(obj -> obj.getStr("cInvLev")));
 		return recordList;
 	}
 	
