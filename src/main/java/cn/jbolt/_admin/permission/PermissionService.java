@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.jbolt.admin.appdevcenter.ApplicationService;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.model.PermissionBtn;
 import cn.jbolt.core.service.ButtonPermissionService;
@@ -281,4 +282,17 @@ public class PermissionService extends JBoltPermissionService {
         return null;
     }
 
+    public List<Record> getUserPermissionList(String permissionKey, String pkey) {
+        Long userId = JBoltUserKit.getUserId();
+        String roleIdList = JBoltUserKit.getUserRoleIds();
+        List<Long> personPermissionIdList = this.dbTemplate("permission.getPermissionIds", Kv.by("objecttype", 2).set("objectid", userId)).query();
+        List<Long> rolePermissionIdList = this.dbTemplate("permission.getPermissionIds", Kv.by("objecttype", 1).set("objectid", roleIdList)).query();
+        if (CollUtil.isNotEmpty(rolePermissionIdList)) {
+            personPermissionIdList.addAll(rolePermissionIdList);
+        }
+
+        String ids = CollUtil.join(personPermissionIdList, COMMA);
+        return this.isOk(ids) ? this.dbTemplate("permission.getPermissionList", Kv.by("permissionkey", permissionKey).set("pkey", pkey).set("ids", ids)).find() : null;
+    }
+    
 }

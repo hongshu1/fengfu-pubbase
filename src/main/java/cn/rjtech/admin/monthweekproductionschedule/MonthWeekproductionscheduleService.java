@@ -3,7 +3,7 @@ package cn.rjtech.admin.monthweekproductionschedule;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.base.JBoltBaseService;
-import cn.rjtech.model.momdata.ForgeignCurrency;
+import cn.rjtech.model.momdata.ForeignCurrency;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.spire.ms.System.Collections.ArrayList;
@@ -16,10 +16,10 @@ import java.util.List;
  * @description ：TODO
  * @date ：2023/3/23 13:30
  */
-public class MonthWeekproductionscheduleService extends JBoltBaseService<ForgeignCurrency> {
+public class MonthWeekproductionscheduleService extends JBoltBaseService<ForeignCurrency> {
 
     @Override
-    protected ForgeignCurrency dao() {
+    protected ForeignCurrency dao() {
         return null;
     }
 

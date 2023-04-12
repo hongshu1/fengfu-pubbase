@@ -146,4 +146,18 @@ public class RdStyleAdminController extends BaseAdminController {
 		renderJson(service.update(rdStyle));
 	}
 
+	/**
+	 * 销售类型_新增_出库
+	 */
+	public void getSaleType() {
+		renderJsonData(service.getSaleType(true, true));
+	}
+
+	/**
+	 * 采购类型_新增_入库
+	 */
+	public void getPurchaseType() {
+		renderJsonData(service.getPurchaseType(true, true));
+	}
+
 }

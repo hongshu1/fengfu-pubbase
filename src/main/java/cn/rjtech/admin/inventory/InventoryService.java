@@ -416,20 +416,20 @@ public class InventoryService extends BaseService<Inventory> {
 		return res.get();
 	}
 
-	public List<Inventory> options(Kv kv) {
-		List<Inventory> inventories = find(selectSql().eq("isDeleted", "0").set("isEnabled", "1"));
+	public List<Record> options(Kv kv) {
+		List<Record> inventories = dbTemplate("inventory.options").find();
 		if(inventories != null ){
 			Long inventoryId = kv.getLong("inventoryid");
 			if(inventoryId == null)
 				return inventories;
 			if(inventories.size() > 0){
-				for (Inventory i : inventories) {
-					if(i.getIAutoId().longValue() == inventoryId.longValue()){
+				for (Record i : inventories) {
+					if(i.getLong("iautoid").longValue() == inventoryId.longValue()){
 						return inventories;
 					}
 				}
 			}
-			Inventory inventory = new Inventory();
+			Record inventory = new Record();
 			Long iinventoryuomid1 = kv.getLong("iinventoryuomid1");
 			String cInvCode = kv.getStr("cinvcode");
 			String cInvCode1 = kv.getStr("cinvcode1");
@@ -437,12 +437,12 @@ public class InventoryService extends BaseService<Inventory> {
 			String cInvStd = kv.getStr("cinvstd");
 			if(StringUtils.isBlank(cInvName1))
 				return inventories;
-			inventory.setIAutoId(inventoryId);
-			inventory.setCInvName1(cInvName1);
-			inventory.setCInvCode(cInvCode);
-			inventory.setCInvCode1(cInvCode1);
-			inventory.setCInvStd(cInvStd);
-			inventory.setIInventoryUomId1(iinventoryuomid1);
+			inventory.put("iautoid",inventoryId);
+			inventory.put("cinvname1",cInvName1);
+			inventory.put("cinvcode",cInvCode);
+			inventory.put("cinvcode1",cInvCode1);
+			inventory.put("cinvstd",cInvStd);
+			//inventory.put("iautoid",iinventoryuomid1);
 			inventories.add(inventory);
 		}
 		return inventories;

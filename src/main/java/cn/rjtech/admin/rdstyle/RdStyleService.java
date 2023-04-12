@@ -267,5 +267,55 @@ public class RdStyleService extends BaseService<RdStyle> {
 		return getCommonList(kv, "iAutoId", "asc");
 	}
 
+	/**
+	 * 销售类型_新增_出库
+	 */
+	public List<RdStyle> getSaleType(boolean onlyEnable, boolean asOptions) {
+		List<RdStyle> rdStylesList = getSaleTypeList();
+		return this.convertToModelTree(rdStylesList, "iAutoId", "iPid", (p) -> this.notOk(p.getIPid()));
+	}
+
+	/**
+	 * 获取分类数据中的所有后端分类数据
+	 */
+	public List<RdStyle> getSaleTypeList() {
+		return getSaleType(true);
+	}
+
+	/**
+	 * 获取分类数据
+	 *
+	 * @param isEnabled 启用禁用状态
+	 */
+	public List<RdStyle> getSaleType(Boolean isEnabled) {
+		Okv kv = Okv.by("isDeleted", false).set("bRdFlag",0);
+		return getCommonList(kv, "iAutoId", "asc");
+	}
+
+	/**
+	 * 采购类型_新增_入库
+	 */
+	public List<RdStyle> getPurchaseType(boolean onlyEnable, boolean asOptions) {
+		List<RdStyle> rdStylesList = getPurchaseTypeList();
+		return this.convertToModelTree(rdStylesList, "iAutoId", "iPid", (p) -> this.notOk(p.getIPid()));
+	}
+
+	/**
+	 * 获取分类数据中的所有后端分类数据
+	 */
+	public List<RdStyle> getPurchaseTypeList() {
+		return getPurchaseType(true);
+	}
+
+	/**
+	 * 获取分类数据
+	 *
+	 * @param isEnabled 启用禁用状态
+	 */
+	public List<RdStyle> getPurchaseType(Boolean isEnabled) {
+		Okv kv = Okv.by("isDeleted", false).set("bRdFlag",1);
+		return getCommonList(kv, "iAutoId", "asc");
+	}
+
 
 }
