@@ -10,6 +10,7 @@ import cn.rjtech.model.main.MessageUser;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import java.util.List;
@@ -68,8 +69,10 @@ public class SysMessageTemplateAdminController extends BaseAdminController {
 
 	public void messageUserDate(){
 		String messageId = get("messageId");
-		List<MessageUser>  messageUsers = messageUserService.find(
-				"select * from  where message_id = ? and del_fag = '0'", messageId);
+		List<Record>  messageUsers = service.findRecord(
+				"SELECT * FROM jb_message_user mu " +
+						"LEFT JOIN jb_user ju on  mu.user_id = ju.id " +
+						"WHERE mu.message_id = ? and del_fag = '0'",false, messageId);
 		renderJsonData(messageUsers);
 	}
 

@@ -9,3 +9,11 @@ WHERE uo.user_id = #para(userId)
     AND uo.is_deleted = '0'
 ORDER BY id
 #end
+
+#sql("getAutocompleteDatas")
+select top #(limit) id,username,name,email from jb_user
+where 1=1
+    #if(q)
+    and (username like concat('%',#para(q),'%') or name like concat('%',#para(q),'%'))
+  #end
+#end

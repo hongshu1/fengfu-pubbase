@@ -119,7 +119,10 @@
 <tr data-id="${data.id}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.id}</td>
-
+<td>${data.user_id}</td>
+<td>${data.username}</td>
+<td>${data.name}</td>
+<td>${data.email}</td>
 </tr>
 {@/each}
 </textarea>
@@ -136,7 +139,6 @@
            data-jbolttable
            id="jbolt_Table_#(pageId)"
            data-height="400"
-           data-ajax="true"
            data-width="auto"
            data-column-resize="true"
            data-rowtpl="jbolt_table_rowtpl_#(pageId)"
@@ -146,6 +148,7 @@
            #else
            data-autoload="false"
            #end
+           data-ajax="true"
            data-editable="true"
            data-editable-option="getEditableTableOptions_#(pageId)"
     >
@@ -153,7 +156,8 @@
         <tr>
             <th data-width="60">序号</th>
             <th data-column="id" >id</th>
-            <th data-column="userid" data-width="150">用户名</th>
+            <th  data-column="user_id" >用户id</th>
+            <th data-column="username" data-width="150">用户名</th>
             <th data-column="name" data-width="100">姓名</th>
             <th data-column="email" data-width="120">E-Mail</th>
             <th data-width="100">操作</th>
@@ -176,7 +180,7 @@
             // 限制最大数 默认30
             submit:{
                 withForm:["sysMessageTemplateForm_#(pageId)"],
-                name: 'sysMessageTemplateForm_',
+                name: 'sysMessageTemplateForm',
                 type:"all",//cell|all
                 //params:{"orderId":3},//携带其他额外参数
                 url:"admin/person/submitTable",
@@ -191,20 +195,22 @@
                 id: {
                     submitAttr: "id",
                 },
-                userid: {
+                username: {
                     type: "autocomplete",
-                    url: "admin/person/datas",
+                    url: "admin/user/autocomplete",
                     maxLength: 100,
                     placeholder: "请选择",
-                    textAttr: "id",
+                    textAttr: "username",
                     width: 500,
                     required: true,
-                    valueAttr: "id",
-                    columnAttr: "id",
+                    valueAttr: "username",
+                    columnAttr: "username,name,email",
                     header:'用户id',
                     changeColumns:[
-                        {column: "id", use: "id"},
-                        {column: "userid", use: "userid"}
+                        {column: "user_id", use: "id"},
+                        {column: "username", use: "username"},
+                        {column: "name", use: "name"},
+                        {column: "email", use: "email"}
                     ]
                 }
             }
