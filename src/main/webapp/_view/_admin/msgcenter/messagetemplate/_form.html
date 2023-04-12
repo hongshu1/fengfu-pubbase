@@ -42,6 +42,7 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">模板标题</label>
         <div class="col">
+
             <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off" class="form-control"
                    placeholder="请输入模板标题" maxlength="10" name="sysMessageTemplate.message_title"
                    value="#(sysMessageTemplate.message_title??)"/>
@@ -50,10 +51,10 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">发送内容</label>
         <div class="col">
-            <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off" class="form-control"
-                   placeholder="请输入发送内容"
-                   maxlength="2147483647" name="sysMessageTemplate.message_value"
-                   value="#(sysMessageTemplate.message_value??)"/>
+
+
+            <textarea class="form-control" data-auto-height data-with-clearbtn="true"  data-rule="required"  placeholder="请输入发送内容" data-tips="请输入发送内容"
+                      maxlength="20000" name="sysMessageTemplate.message_value" value="">#(sysMessageTemplate.message_value??)</textarea>
         </div>
     </div>
 
