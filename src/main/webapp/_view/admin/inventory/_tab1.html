@@ -6,18 +6,19 @@
     <div class="form-group row">
         <label class="col-sm-1 col-form-label" >存货属性</label>
         <div class="col"  style="padding-top: 1px;">
+            <input type="hidden" name="inventory.itemAttributes" id="itemAttribute" >
+            
             <div class="form-group row"
                  data-checkbox
                  data-rule="checkbox"
                  data-hidden-input="itemAttribute"
                  data-value-attr="sn"
                  data-value="#(inventory.itemAttribute??)"
-                 data-name="inventory.itemAttribute"
-                 data-default=""
+                 data-name="itemAttributes"
+                 ###data-default=""
                  data-url="/admin/dictionary/options?key=iItem_attribute"
                  data-inline="true"
             >
-                <input type="hidden" name="inventory.itemAttributes" id="itemAttribute" >
             </div>
         </div>
     </div>
