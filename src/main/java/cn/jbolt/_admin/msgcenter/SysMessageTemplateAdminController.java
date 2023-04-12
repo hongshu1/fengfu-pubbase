@@ -77,11 +77,8 @@ public class SysMessageTemplateAdminController extends BaseAdminController {
 	}
 	public void messageUserDate(){
 		String messageId = get("messageId");
-		List<Record>  messageUsers = service.findRecord(
-				"SELECT mu.*,ju.username,ju.name,ju.email FROM jb_message_user mu " +
-						"LEFT JOIN jb_user ju on  mu.user_id = ju.id " +
-						"WHERE mu.message_id = ? and mu.del_fag = '0'",false, messageId);
-		renderJsonData(messageUsers);
+
+		renderJsonData(service.findMessage(messageId));
 	}
 
 
