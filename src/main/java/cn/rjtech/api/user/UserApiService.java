@@ -63,7 +63,7 @@ public class UserApiService extends JBoltApiBaseService {
             wechatUser = ret.getAs("data");
         }
 
-        JBoltApiUserBean userBean = new JBoltApiUserBean(JBoltApiKit.getApplicationId(), user.getId(), user.getName(), user.getIsSystemAdmin(), orgId, org.getStr("code"));
+        JBoltApiUserBean userBean = new JBoltApiUserBean(JBoltApiKit.getApplicationId(), user.getId(), user.getName(), user.getIsSystemAdmin(), orgId, org.getOrgCode());
 
         JBoltApiUser apiUser = JBoltApiKit.processBindUser(userBean, wechatUser.getBindUser());
 
