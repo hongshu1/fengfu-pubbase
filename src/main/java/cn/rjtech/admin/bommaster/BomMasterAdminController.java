@@ -158,8 +158,8 @@ public class BomMasterAdminController extends BaseAdminController {
 	}
 	
 	// 拷贝
-	public void saveCopy(@Para(value = "oldId") String oldId){
-	
+	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "oldId") Long oldId){
+		renderJson(service.saveCopy(oldId, cVersion));
 	}
 	
 	public void importExcelFile() throws IOException {
@@ -184,5 +184,9 @@ public class BomMasterAdminController extends BaseAdminController {
 	
 	public void getVersionRecord(){
 		renderJsonData(service.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
+	}
+	
+	public void del(){
+		renderJson(service.del(getLong(0)));
 	}
 }

@@ -24,7 +24,7 @@ import java.util.Date;
  * @date: 2023-04-10 15:18
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.MANUALORDER)
+@CheckPermission(PermissionKey.MANUAL_ORDER)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/manualorderm", viewPath = "/_view/admin/manualorderm")
 public class ManualOrderMAdminController extends BaseAdminController {

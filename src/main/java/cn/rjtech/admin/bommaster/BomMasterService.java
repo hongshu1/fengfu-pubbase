@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.xssf.usermodel.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.STTLTriggerRuntimeNode;
 
 
 import java.io.FileInputStream;
@@ -970,5 +971,64 @@ public class BomMasterService extends BaseService<BomMaster> {
 	
 	public List<Record> queryBomMasterId(Kv kv){
 		return dbTemplate("bommaster.getVersionRecord", kv.set("orgId", getOrgId())).find();
+	}
+	
+	public Ret del(Long bomMasterId) {
+		ValidationUtils.notNull(bomMasterId, JBoltMsg.PARAM_ERROR);
+		BomMaster bomMaster = findById(bomMasterId);
+		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
+		tx(() -> {
+			// 删除母件
+			bomMaster.setIsDeleted(true);
+			bomMaster.setIUpdateBy(JBoltUserKit.getUserId());
+			bomMaster.setCUpdateName(JBoltUserKit.getUserName());
+			bomMaster.setDUpdateTime(DateUtil.date());
+			bomMaster.update();
+			// 删除母件下所有子件数据
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	public Ret saveCopy(Long bomMasterId, String cVersion) {
+		ValidationUtils.notBlank(cVersion, JBoltMsg.JBOLTTABLE_IS_BLANK);
+		ValidationUtils.notNull(bomMasterId, JBoltMsg.PARAM_ERROR);
+		BomMaster bomMaster = findById(bomMasterId);
+		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
+		
+		ValidationUtils.isTrue(!cVersion.equals(bomMaster.getCBomVersion()), "版本号不能一致");
+		// 查询当前母件下所有子件。
+		List<BomCompare> bomCompareList = bomCompareService.findByBomMasterIdList(bomMasterId);
+		Map<Long, Long> pidMap = new HashMap<>();
+		long newBomMasterId = JBoltSnowflakeKit.me.nextId();
+		// 先复制产品的id替换成新的
+		pidMap.put(bomMasterId, newBomMasterId);
+		for (BomCompare bomCompare :  bomCompareList){
+			Long id = bomCompare.getIAutoId();
+			Long newId = JBoltSnowflakeKit.me.nextId();
+			bomCompare.setIAutoId(newId);
+			// 设置新的bomMasterId
+			bomCompare.setIBOMMasterId(newBomMasterId);
+			
+			// key为旧id， value为新id
+			pidMap.put(id, newId);
+		}
+		
+		for (BomCompare bomCompare : bomCompareList){
+			Long pid = bomCompare.getIPid();
+			// 替换成新的id
+			bomCompare.setIPid(pidMap.get(pid));
+		}
+		
+		tx(() -> {
+			// 设置新的id
+			bomMaster.setIAutoId(newBomMasterId);
+			bomMaster.setCBomVersion(cVersion);
+			save(bomMaster,JBoltUserKit.getUserId(),JBoltUserKit.getUserName(), DateUtil.date());
+			bomCompareService.batchSave(bomCompareList);
+			// 删除母件下所有子件数据
+			return true;
+		});
+		return SUCCESS;
 	}
 }
