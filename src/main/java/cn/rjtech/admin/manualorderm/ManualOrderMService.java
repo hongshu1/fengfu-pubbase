@@ -5,6 +5,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.admin.manualorderd.ManualOrderDService;
 import cn.rjtech.model.momdata.ManualOrderD;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import java.util.Date;
@@ -141,6 +142,12 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 		return null;
 	}
 
+	/**
+	 * 保存
+	 * @param manualOrderM
+	 * @param jBoltTable
+	 * @return
+	 */
 	public Ret saveForm(ManualOrderM manualOrderM, JBoltTable jBoltTable) {
 		AtomicReference<Ret> res = new AtomicReference<>();
 		res.set(SUCCESS);
@@ -181,25 +188,67 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 		delete("DELETE FROM Co_ManualOrderD WHERE iAutoId IN (" + ArrayUtil.join(deletes, COMMA) + ") ");
 	}
 
-	public Ret batchHandle(Kv kv,int status) {
-		List<Record> records = dbTemplate("manualorderm.list", kv).find();
+	/**
+	 * 批量生成
+	 * @param kv
+	 * @param status
+	 * @param conformtos
+	 * @return
+	 */
+	public Ret batchHandle(Kv kv,int status,int[] conformtos) {
+		List<Record> records = getDatasByIds(kv);
 		if(records != null && records.size() > 0){
 			for (Record record : records) {
-				record.put("iorderstatus",status);
+				if(conformtos.length > 0){
+					boolean conformto = false;
+					for (int exception : conformtos) {
+						if(exception == record.getInt("iorderstatus")){
+							conformto = true;
+						}
+					}
+					if(!conformto)
+						return fail(new StringBuilder("订单(").append(record.getStr("corderno")).append(")不能进行该操作!").toString());
+				}
+				record.set("iorderstatus",status);
+				if(status == 3){
+					record.set("iauditstatus",2);
+					//TODO 自动生成出货质检任务
+				}
+				updateRecord(record);
 			}
-			batchUpdateRecords(records);
+			//batchUpdateRecords(records);
 		}
 		return SUCCESS;
 	}
 
 	public Ret batchDetect(Kv kv) {
-		List<Record> records = dbTemplate("manualorderm.list", kv).find();
+		List<Record> records = getDatasByIds(kv);
 		if(records != null && records.size() > 0){
 			for (Record record : records) {
-				record.put("isdeleted",1);
+				Integer iorderstatus = record.getInt("iorderstatus");
+				if(iorderstatus != 1 && iorderstatus != 4)
+					return fail(new StringBuilder("订单(").append(record.getStr("corderno")).append(")不能删除!").toString());
+
+				record.set("isdeleted",1);
+				updateRecord(record);
 			}
-			batchUpdateRecords(records);
+			//batchUpdateRecords(records);
 		}
 		return SUCCESS;
+	}
+
+	public List<Record> getDatasByIds(Kv kv){
+		String ids = kv.getStr("ids");
+		if (ids != null) {
+			String[] split = ids.split(",");
+			String sqlids = "";
+			for (String id : split) {
+				sqlids += "'" + id + "',";
+			}
+			ValidationUtils.isTrue(sqlids.length() > 0, "请至少选择一条数据!");
+			sqlids = sqlids.substring(0, sqlids.length() - 1);
+			kv.set("sqlids", sqlids);
+		}
+		return dbTemplate("manualorderm.getDatasByIds", kv).find();
 	}
 }

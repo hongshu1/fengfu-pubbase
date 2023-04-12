@@ -147,15 +147,15 @@ public class ManualOrderMAdminController extends BaseAdminController {
 	}
 
 	public void batchAudit(){
-		renderJson(service.batchHandle(getKv(),3));
+		renderJson(service.batchHandle(getKv(),3,new int[]{2}));
 	}
 
 	public void batchAntiAudit(){
-		renderJson(service.batchHandle(getKv(),2));
+		renderJson(service.batchHandle(getKv(),2,new int[]{3}));
 	}
 
 	public void batchClose(){
-		renderJson(service.batchHandle(getKv(),6));
+		renderJson(service.batchHandle(getKv(),6,new int[]{3}));
 	}
 
 	public void batchDetect(){

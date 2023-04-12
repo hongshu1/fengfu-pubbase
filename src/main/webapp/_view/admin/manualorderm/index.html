@@ -7,11 +7,11 @@
 	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>客户订单-手配订单</h1></div>
 	<div class="col">
 	<form class="form-inline" id="ManualOrderM_form_#(pageId)">
-<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入订单号" maxlength="40" name="cOrderNo" />
-<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入年份" maxlength="20" name="iYear" />
-<input type="text" data-date data-type="month" data-with-clearbtn="true" data-fmt="yyyy-MM" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入月份" maxlength="20" name="iMonth" />
+<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入订单号" maxlength="40" name="corderno" />
+<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入年份" maxlength="20" name="iyear" />
+<input type="text" data-date data-type="month" data-with-clearbtn="true" data-fmt="MM" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入月份" maxlength="20" name="imonth" />
 
-<select class="form-control" name="iOrderStatus"
+<select class="form-control" name="iorderstatus"
 	data-autoload
 	data-url="admin/dictionary/options?key=manual_order_state"
 	data-select-type="select"
@@ -21,6 +21,7 @@
 	></select>
 		<input type="text" data-with-clearbtn="true" class="form-control" data-date data-type="date" placeholder="创建时间" data-range="~" data-fmt="yyyy-MM-dd" name="dateRange" value="#(dateRange??)" >
 		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
 	</form>
 	</div>
 	<div class="col-sm-auto text-right">
@@ -41,10 +42,10 @@
 	<td>
 		<a class="text-info mr-1" data-openpage="dialog" href="admin/manualorderm/info/${data.iautoid}" data-area="100%,100%" data-title="查看手配订单"><i class="fa fa-eye"></i></a>
 		{@if data.iorderstatus == 2}
-			<a class="jbolt_table_btn" href="admin/manualorderm/audit/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-check"></i></a>
+			<a class="jbolt_table_btn" href="admin/manualorderm/audit/${data.iautoid}" data-handler="refreshJBoltTable" data-ajaxbtn ><i class="fa fa-check"></i></a>
 		{@/if}
 		{@if data.iorderstatus == 3}
-			<a class="jbolt_table_btn" href="admin/manualorderm/colse/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-close"></i></a>
+			<a class="jbolt_table_btn" href="admin/manualorderm/colse/${data.iautoid}" data-handler="refreshJBoltTable" data-ajaxbtn ><i class="fa fa-close"></i></a>
 		{@/if}
 	{@if data.iorderstatus == 1 || data.iorderstatus == 4}
 	<a class="jbolt_table_editbtn" href="admin/manualorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="编辑手配订单"><i class="fa fa-edit"></i></a>
@@ -64,7 +65,7 @@
 </textarea>
 <div class="jbolt_table_toolbar" id="ManualOrderM_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-	<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增手配订单" data-url="admin/manualorderm/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="100%,100%"  data-handler="refreshJBoltTable"  id="toolbar_addBtn_#(pageId)"  data-title="新增手配订单" data-url="admin/manualorderm/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAuditBtn_#(pageId)" data-url="admin/manualorderm/batchAudit?ids=" data-confirm="确定审核选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 批量审核</button>
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAntiAuditBtn_#(pageId)" data-url="admin/manualorderm/batchAntiAudit?ids=" data-confirm="确定反审核选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 批量反审核</button>
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/manualorderm/batchDetect?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 批量删除</button>
