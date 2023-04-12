@@ -285,4 +285,9 @@ public class BomCompareService extends BaseService<BomCompare> {
 	public Integer queryCompareIndex(Long bomMasterId){
 		return dbTemplate("bomcompare.queryCompareIndex", Okv.by("bomMasterId", bomMasterId)).queryInt();
 	}
+	
+	public List<BomCompare> findByBomMasterIdList(Long bomMasterId){
+		ValidationUtils.notNull(bomMasterId, JBoltMsg.PARAM_ERROR);
+		return find("SELECT a.* FROM Bd_BomCompare a WHERE a.iBOMMasterId = ? AND a.isDeleted = '0'", bomMasterId);
+	}
 }
