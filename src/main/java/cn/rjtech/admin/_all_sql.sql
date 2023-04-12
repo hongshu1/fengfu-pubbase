@@ -193,8 +193,8 @@
 #include("fitemss97sub/fitemss97sub.sql")
 #end
 
-#namespace("forgeigncurrency")
-#include("forgeigncurrency/forgeigncurrency.sql")
+#namespace("foreigncurrency")
+#include("foreigncurrency/foreigncurrency.sql")
 #end
 
 #namespace("qcform")
@@ -243,6 +243,10 @@
 
 #namespace("bommaster")
 #include("bommaster/bommaster.sql")
+#end
+
+#namespace("bomcompare")
+#include("bomcompare/bomcompare.sql")
 #end
 
 #namespace("manualorderm")

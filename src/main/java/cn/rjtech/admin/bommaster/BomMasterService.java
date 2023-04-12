@@ -8,14 +8,14 @@ import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.admin.bomcompare.BomCompareService;
+import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
-import cn.rjtech.model.momdata.BomCompare;
-import cn.rjtech.model.momdata.Inventory;
+import cn.rjtech.admin.vendor.VendorService;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -23,11 +23,18 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.BomMaster;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
+import org.apache.poi.ss.usermodel.CellRange;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.SSCellRange;
+import org.apache.poi.xssf.usermodel.*;
 
 
-
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -43,6 +50,10 @@ public class BomMasterService extends BaseService<BomMaster> {
 	private InventoryService inventoryService;
 	@Inject
 	private BomCompareService bomCompareService;
+	@Inject
+	private EquipmentModelService equipmentModelService;
+	@Inject
+	private VendorService vendorService;
 	
 	@Override
 	protected BomMaster dao() {
@@ -213,8 +224,9 @@ public class BomMasterService extends BaseService<BomMaster> {
 			Map<String, Long> bomCompareMap = new HashMap<>();
 			for (BomCompare bomCompare : bomCompareList){
 				Integer level = bomCompare.getILevel();
+				Long iPid = bomCompare.getIPid();
 				// level 等于1 说明是产品（半成品）下的半成品或部品
-				if (1 == level){
+				if (1 == level && ObjectUtil.isNull(iPid)){
 					bomCompare.setIPid(bomMasterId);
 				}
 				String code = bomCompare.getCInvLev();
@@ -241,7 +253,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 					continue;
 				}
 				// 不等于null，说明在前面已经赋值了
-				if (ObjectUtil.isNotNull(bomCompare.getIBOMMasterId())){
+				if (ObjectUtil.isNotNull(bomCompare.getIPid())){
 					continue;
 				}
 				String cInvLev = bomCompare.getCInvLev();
@@ -447,7 +459,6 @@ public class BomMasterService extends BaseService<BomMaster> {
 		 *
 		 * 	第二种（一行填写一个存货，以上一个部品作为父级）
 		 *
-		 *
 		 */
 		BomCompare bomCompare = null;
 		// 部品 先赋值成品的存货id
@@ -546,12 +557,35 @@ public class BomMasterService extends BaseService<BomMaster> {
     
     public List<JsTreeBean> getDatas(Kv kv){
     	kv.set("orgId", getOrgId());
-        List<Record> recordList = dbTemplate("bommaster.datas", kv).find();
-        if (!kv.containsKey("keyWords")){
+		List<Record> recordList = dbTemplate("bommaster.datas", kv).find();
+        if (StrUtil.isBlank(kv.getStr("keyWords"))){
             return createJsTreeBean(kv.getStr("enableIcon"), recordList);
         }
-        List<Record> allRecordList = new ArrayList<>();
+        
+        Map<String, Record> bomCompareMap = new HashMap<>();
+        
+  		for (Record record : recordList){
+			String pid = record.getStr("pid");
+			String id = record.getStr("id");
+			// pid等于空说明 当前为产品/半成品
+			if (StrUtil.isBlank(pid)){
+				bomCompareMap.put(id, record);
+				continue;
+			}
+			// 已近包含了父级
+			if (bomCompareMap.containsKey(pid)){
+				continue;
+			}
+			bomCompareMap.put(id, record);
+		}
+  
+		List<Record> allRecordList = new ArrayList<>();
     	return createJsTreeBean(kv.getStr("enableIcon"), allRecordList);
+	}
+	
+	
+	public void upToFind(List<Record> allRecordList, String id){
+ 
 	}
 	
 	public List<JsTreeBean> createJsTreeBean(String enableIconStr, List<Record> recordList){
@@ -559,7 +593,7 @@ public class BomMasterService extends BaseService<BomMaster> {
         for (Record record : recordList){
             Long id = record.getLong("id");
             Object pid = record.get("pid");
-            StringBuilder text = new StringBuilder(record.getStr("cinvcode"));
+            StringBuilder text = new StringBuilder(record.getStr("cinvname"));
             if (pid == null) {
                 pid = "#";
                 if (StrUtil.isNotBlank(enableIconStr)){
@@ -575,44 +609,366 @@ public class BomMasterService extends BaseService<BomMaster> {
     }
 	
 	public Page<Record> getPageData(int pageNumber, int pageSize, Kv kv){
-		Page<Record> test = test(pageNumber, pageSize, kv);
-		kv.set("orgId", getOrgId());
-		return dbTemplate("bommaster.datas", kv).paginate(pageNumber, pageSize);
+		int end = pageNumber * pageSize;
+		if (end <= 0) {
+			end = pageSize;
+		}
+		
+		int begin = (pageNumber - 1) * pageSize;
+		if (begin < 0) {
+			begin = 0;
+		}
+		
+		Integer size = queryInt("EXEC BD_BOMTREE_COUNT @orgId=?, @pId= ?,@itemCode = ?,@itemName = ?", getOrgId(), kv.getLong("pid"), kv.getLong("invCode"), kv.getLong("invName"));
+		
+		if (size == null || size < 0){
+			return new Page(new ArrayList(0), pageNumber, pageSize, 0, 0);
+		}
+		
+		long totalRow = Long.valueOf(size);
+		int totalPage = (int)(totalRow / (long)pageSize);
+		if (totalRow % (long)pageSize != 0L) {
+			++totalPage;
+		}
+		
+		if (pageNumber > totalPage) {
+			return new Page(new ArrayList(0), pageNumber, pageSize, totalPage, (int)totalRow);
+		} else {
+			List<Record> list = findRecord("EXEC BD_BOMTree_Page @orgId=?, @pId= ?,@itemCode = ?,@itemName = ?,@pageNumber=?,@pageSize = ?", false,
+					getOrgId(),
+					kv.getLong("pid"),
+					kv.getStr("invCode"),
+					kv.getStr("invName"),
+				    begin,
+					end);
+			return new Page(list, pageNumber, pageSize, totalPage, (int)totalRow);
+		}
+		
 	}
 	
-	public Page<Record> test(int pageNumber, int pageSize, Kv kv){
-		StringBuilder sqlStr = new StringBuilder("WITH a ( iAutoId, pid ) AS ( " +
-				" SELECT " +
-				" b1.iAutoId ," +
-				" b1.iPid AS pid " +
-				" FROM " +
-				" Bd_BomCompare AS b1 ");
-		Long pid = kv.getLong("pid");
-		if (StrUtil.isNotBlank(kv.getStr("pid"))){
-			sqlStr.append(" where ").append(" b1.iPid = ").append(pid).append(" OR b1.iAutoId = ").append(pid);
+	public Map<String, Object>  importExcelFile(UploadFile file) throws IOException {
+		StringBuilder errorMsg = new StringBuilder();
+		return readInfoFromXls(new FileInputStream(file.getFile()));
+	}
+	
+	/**
+	 * 导入excel数据
+	 */
+	private Map<String, Object> readInfoFromXls(InputStream in) throws IOException {
+		Map<String, Object> repMap = new HashMap();
+		XSSFWorkbook workbook = new XSSFWorkbook(in);
+		// 循环工作表Sheet workbook.getNumberOfSheets()
+		/*for (int numSheet = 0; numSheet < workbook.getNumberOfSheets(); numSheet++) {
+
+		}*/
+		XSSFSheet sheet = workbook.getSheetAt(0);
+		ValidationUtils.notNull(sheet, "未解析到sheet数据");
+		// 获取表单数据
+		Record headForm = buildForm(sheet);
+		// 获取表格子件数据
+		List<Record> bodyTable = buildTable(sheet);
+		repMap.put("head", headForm);
+		repMap.put("body", bodyTable);
+		return repMap;
+	}
+	
+	/**
+	 * 获取表头数据
+	 * @param sheet
+	 * @return
+	 */
+	private Record buildForm(XSSFSheet sheet){
+		Record record = new Record();
+		/**
+		 * 合并单元格取数
+ 		 */
+		// 机型
+		CellRange<XSSFCell> equipmentModelCellRange = createCellRange(sheet, new CellRangeAddress(2, 2, 1, 6));
+		XSSFCell[] flattenedCells = equipmentModelCellRange.getFlattenedCells();
+		String equipmentModelName = getCellRangeValue(flattenedCells);
+		// 机型名称不为空，则找到对应的机型id
+		EquipmentModel equipmentModel = StrUtil.isNotBlank(equipmentModelName) ? equipmentModelService.findByName(equipmentModelName) : null;
+		if (ObjectUtil.isNotNull(equipmentModel)){
+			record.set(BomMaster.IEQUIPMENTMODELID, equipmentModel.getIAutoId());
 		}
-		sqlStr.append( " UNION ALL " +
-				" SELECT\n" +
-				" b2.iAutoId , " +
-				" b2.iPid AS pid " +
-				" FROM " +
-				" Bd_BomCompare AS b2 " +
-				" INNER JOIN a ON b2.iPid  = a.iAutoId  " +
-				" ) \n");
+		record.set(BomMaster.EQUIPMENTMODELNAME, equipmentModelName);
+		// 文 件 名 称
+		CellRange<XSSFCell> docNameCellRange = createCellRange(sheet, new CellRangeAddress(2, 2, 7, 12));
+		record.set(BomMaster.CDOCNAME, getCellRangeValue(docNameCellRange.getFlattenedCells()));
+		// 文 件 编 号
+		CellRange<XSSFCell> docCodeCellRange = createCellRange(sheet, new CellRangeAddress(2, 2, 13, 14));
+		record.set(BomMaster.CDOCCODE, getCellRangeValue(docCodeCellRange.getFlattenedCells()));
+		// 启用日期
+		CellRange<XSSFCell> enableDateCellRange = createCellRange(sheet, new CellRangeAddress(2, 2, 17, 18));
+		String enableDateStr = getCellRangeValue(enableDateCellRange.getFlattenedCells());
+		Date enableDate = null;
+		if (StrUtil.isNotBlank(enableDateStr)){
+			enableDate = DateUtil.parseDate(enableDateStr);
+		}
+		record.set(BomMaster.DENABLEDATE, enableDate);
+		// NO.1
+		CellRange<XSSFCell> no1CellRange = createCellRange(sheet, new CellRangeAddress(5, 5, 11, 12));
+		record.set(BomMaster.CNO1, getCellRangeValue(no1CellRange.getFlattenedCells()));
+		// 客户部番
+		CellRange<XSSFCell> invCode1CellRange = createCellRange(sheet, new CellRangeAddress(5, 5, 13, 14));
+		record.set(BomMaster.INVCODE1, getCellRangeValue(invCode1CellRange.getFlattenedCells()));
+		/**
+		 * 通过下标找到对应的值
+		 */
+		// 版本号
+		XSSFCell bomVersionCell = sheet.getRow(2).getCell(15);
+		record.set(BomMaster.CBOMVERSION, getStringCellValue(bomVersionCell));
+		// 停用日期
+		XSSFCell disableCell = sheet.getRow(2).getCell(19);
+		record.set(BomMaster.DDISABLEDATE, disableCell.getDateCellValue());
+		// 设变号1
+		XSSFCell dcNo1Cell = sheet.getRow(5).getCell(15);
+		record.set(BomMaster.CDCNO1, getStringCellValue(dcNo1Cell));
+		// 设变日期1
+		XSSFCell docDate1 = sheet.getRow(5).getCell(17);
+		record.set(BomMaster.DDCDATE1, docDate1.getDateCellValue());
+		// NO.2
+		XSSFCell no2Cell = sheet.getRow(5).getCell(18);
+		record.set(BomMaster.CNO2, getStringCellValue(no2Cell));
+		// UG部番
+		XSSFCell cInvAddCode1Cell = sheet.getRow(5).getCell(19);
+		record.set(BomMaster.INVADDCODE1, getStringCellValue(cInvAddCode1Cell));
+		// 设变号2
+		XSSFCell dcNo2Cell = sheet.getRow(5).getCell(20);
+		record.set(BomMaster.CDCNO2, getStringCellValue(dcNo2Cell));
+		// 设变日期2
+		XSSFCell dcDate2 = sheet.getRow(5).getCell(22);
+		record.set(BomMaster.DDCDATE2, dcDate2.getDateCellValue());
 		
+		// 客户：GHAC
+		XSSFCell customerNameCell = sheet.getRow(7).getCell(1);
+		String customerName = getStringCellValue(customerNameCell);
+		record.set(BomMaster.USTOMERNAME, customerName);
+		record.set(BomMaster.ICUSTOMERID, null);
+		// 共用件: 2WD/4WD 共用
+		XSSFCell commonPartMemoCell = sheet.getRow(7).getCell(8);
+		String commonPartMemo = getStringCellValue(commonPartMemoCell);
+		record.set(BomMaster.CCOMMONPARTMEMO, commonPartMemo);
+		return record;
+	}
+	
+	
+	private String getStringCellValue(XSSFCell cell){
+		if (cell == null){
+			return null;
+		}
+		cell.setCellType(CellType.STRING);
+		return cell.getStringCellValue();
+	}
+	
+	private String getCellRangeValue(XSSFCell[] flattenedCells){
+		if (flattenedCells==null || flattenedCells.length<1){
+			return null;
+		}
+		String value = null;
+		for (XSSFCell cell : flattenedCells){
+			cell.setCellType(CellType.STRING);
+			if (StrUtil.isBlank(cell.getStringCellValue())){
+				continue;
+			}
+			value = cell.getStringCellValue();
+		}
+		return value;
+	}
+	
+	/**
+	 * 解析excel
+	 */
+	private List<Record> buildTable(XSSFSheet sheet) {
+		List<Record> list = new ArrayList<>();
+		// 记录上一行有编码栏的值
+		Record perCacheRecord = null;
+		// 子件数据从第十一行开始读，下标10
+		for (int i=10; i<sheet.getLastRowNum(); i++){
+			XSSFRow row = sheet.getRow(i);
+			if (ObjectUtil.isNull(row) || ObjectUtil.isNull(row.getCell(1))){
+				perCacheRecord = null;
+				continue;
+			}
+			Record rowRecord = new Record();
+			// 编码栏1-6
+			String codeKey = null;
+			// 编码值
+			String codeValue = null;
+			// 先获取编码
+			for (int iCode=1; iCode<7; iCode++){
+				XSSFCell cell = row.getCell(iCode);
+				if (ObjectUtil.isNull(cell)){
+					continue;
+				}
+				cell.setCellType(CellType.STRING);
+				String stringCellValue = cell.getStringCellValue();
+				if (StrUtil.isBlank(stringCellValue)){
+					continue;
+				}
+				// 通过下标确定具体是那一栏
+				switch (iCode){
+					case 1:
+						codeKey = BomCompare.CODE1;
+						break;
+					case 2:
+						codeKey = BomCompare.CODE2;
+						break;
+					case 3:
+						codeKey = BomCompare.CODE3;
+						break;
+					case 4:
+						codeKey = BomCompare.CODE4;
+						break;
+					case 5:
+						codeKey = BomCompare.CODE5;
+						break;
+					default:
+						codeKey = BomCompare.CODE6;
+						break;
+				}
+				codeValue = stringCellValue;
+				break;
+			}
+			// 编码全部为空，则跳过
+			if (StrUtil.isBlank(codeKey)){
+				// 上一层对象没有记录则直接跳过
+				if (ObjectUtil.isNull(perCacheRecord)){
+					continue;
+				}
+				buildLastRow(sheet, row,rowRecord);
+				int perIndexOf = list.lastIndexOf(perCacheRecord);
+				if (perIndexOf > -1){
+					Record record = list.get(perIndexOf);
+					record.setColumns(rowRecord);
+				}
+				perCacheRecord = null;
+				continue;
+			}
+			rowRecord.set(codeKey, codeValue);
+			// 补充第一行所有数据行
+			buildFristRow(sheet, row, rowRecord);
+			// 记录当前行
+			perCacheRecord = rowRecord;
+			list.add(rowRecord);
+		}
+		return list;
+	}
+	
+	private void buildFristRow(XSSFSheet sheet, XSSFRow row, Record record){
 		
-		String a = new String(" SELECT DISTINCT inv.cInvCode,b.iautoId from a INNER JOIN Bd_BomCompare b ON a.iAutoId = b.iAutoId " +
-				" INNER JOIN Bd_Inventory inv ON inv.iAutoId = b.iInventoryId");
+		// 客户部番
+		CellRange<XSSFCell> cInvCode1CellRange = createCellRange(sheet, new CellRangeAddress(row.getRowNum(), row.getRowNum(), 7, 8));
+		record.set(BomCompare.CINVCODE1, getCellRangeValue(cInvCode1CellRange.getFlattenedCells()));
+		// UG部番
+		CellRange<XSSFCell> cInvAddCode1CellRange = createCellRange(sheet, new CellRangeAddress(row.getRowNum(), row.getRowNum(), 9, 10));
+		record.set(BomCompare.CINVADDCODE1, getCellRangeValue(cInvAddCode1CellRange.getFlattenedCells()));
+		// QTY
+		XSSFCell qtyCell = row.getCell(13);
+		record.set(BomCompare.INVQTY, getStringCellValue(qtyCell));
+		// 材料类别
+		XSSFCell materialTypeCell = row.getCell(14);
+		record.set(BomCompare.MATERIALTYPE, getStringCellValue(materialTypeCell));
+		// 材质
+		XSSFCell materialCell = row.getCell(15);
+		record.set(BomCompare.MATERIAL, getStringCellValue(materialCell));
+		// 原材料供应商
+		XSSFCell originalvendorNameCell = row.getCell(16);
+		record.set(BomCompare.ORIGINALQTY, getStringCellValue(originalvendorNameCell));
+		// 原材料可制件数
+		XSSFCell originalQtyCell = row.getCell(17);
+		record.set(BomCompare.ORIGINALQTY, getStringCellValue(originalQtyCell));
+		// 分条料可制件数
+		XSSFCell slicingQtyCell = row.getCell(19);
+		record.set(BomCompare.SLICINGQTY, getStringCellValue(slicingQtyCell));
+		// 落料可制件数
+		XSSFCell blankingQtyCell = row.getCell(21);
+		record.set(BomCompare.BLANKINGQTY, getStringCellValue(blankingQtyCell));
+		// 部品加工商
+		XSSFCell vendorNameCell = row.getCell(22);
+		String stringCellValue = getStringCellValue(vendorNameCell);
+		String vendorName = null;
+		if (StrUtil.isNotBlank(stringCellValue)){
+			Vendor vendor = vendorService.findByName(stringCellValue);
+			if (vendor != null){
+				vendorName = vendor.getCVenName();
+				record.set(BomCompare.IVENDORID, vendor.getIAutoId());
+			}
+		}
+		record.set(BomCompare.VENDORNAME, vendorName);
+		// 是否外作
+		XSSFCell isOutSourcedCell = row.getCell(23);
+		int isOutSourced = 0;
+		if ("是".equals(getStringCellValue(isOutSourcedCell))){
+			isOutSourced = 1;
+		}
+		record.set(BomCompare.ISOUTSOURCED, isOutSourced);
+		// 备注
+		XSSFCell cMeCell = row.getCell(24);
+		record.set(BomCompare.CMEMO, getStringCellValue(cMeCell));
+	}
+	
+	private void buildLastRow(XSSFSheet sheet, XSSFRow row, Record record){
 		
+		// 部品名称
+		CellRange<XSSFCell> cInvName1CellRange = createCellRange(sheet, new CellRangeAddress(row.getRowNum(), row.getRowNum(), 7, 8));
+		record.set(BomCompare.CINVNAME1, getCellRangeValue(cInvName1CellRange.getFlattenedCells()));
+		// UG部品名称
+		CellRange<XSSFCell> cInvName2CellRange = createCellRange(sheet, new CellRangeAddress(row.getRowNum(), row.getRowNum(), 9, 10));
+		record.set(BomCompare.CINVNAME2, getCellRangeValue(cInvName2CellRange.getFlattenedCells()));
+		// 重量(KG)
+		XSSFCell weightCell = row.getCell(13);
+		record.set(BomCompare.INVWEIGHT, getStringCellValue(weightCell));
+		// 厚度
+		XSSFCell thicknessCell = row.getCell(15);
+		record.set(BomCompare.THICKNESS, getStringCellValue(thicknessCell));
+		// 原材料规格(mm)
+		XSSFCell originalStdCell = row.getCell(16);
+		record.set(BomCompare.ORIGINALSTD, getStringCellValue(originalStdCell));
+		// 原材料重量(KG)
+		XSSFCell originalWeightCell = row.getCell(17);
+		record.set(BomCompare.ORIGINALWEIGHT, getStringCellValue(originalWeightCell));
+		// 分条料重量(KG)
+		XSSFCell slicingWeightCell = row.getCell(19);
+		record.set(BomCompare.ORIGINALWEIGHT, getStringCellValue(slicingWeightCell));
+		// 落料重量(KG)
+		XSSFCell blankingWeightCell = row.getCell(21);
+		record.set(BomCompare.BLANKINGWEIGHT, getStringCellValue(blankingWeightCell));
+	}
+	
+	private CellRange<XSSFCell> createCellRange(XSSFSheet hssfSheet, CellRangeAddress range){
+		int firstRow = range.getFirstRow();
+		int firstColumn = range.getFirstColumn();
+		int lastRow = range.getLastRow();
+		int lastColumn = range.getLastColumn();
+		int height = lastRow - firstRow + 1;
+		int width = lastColumn - firstColumn + 1;
+		List<XSSFCell> temp = new ArrayList(height * width);
 		
-		String b =new String(" SELECT COUNT(1) FROM (SELECT DISTINCT inv.cInvCode,b.iautoId from a INNER JOIN Bd_BomCompare b ON a.iAutoId = b.iAutoId " +
-				" INNER JOIN Bd_Inventory inv ON inv.iAutoId = b.iInventoryId) a");
+		for(int rowIn = firstRow; rowIn <= lastRow; ++rowIn) {
+			for(int colIn = firstColumn; colIn <= lastColumn; ++colIn) {
+				XSSFRow row = hssfSheet.getRow(rowIn);
+				if (row == null) {
+					row = hssfSheet.createRow(rowIn);
+				}
+				
+				XSSFCell cell = row.getCell(colIn);
+				if (cell == null) {
+					cell = row.createCell(colIn);
+				}
+				
+				temp.add(cell);
+			}
+		}
 		
-		
-		String findSql =sqlStr.toString().concat(a);
-		
-		String totalRowSql =sqlStr.toString().concat(b);
-		
-       return Db.use(dataSourceConfigName()).paginateByFullSql(pageNumber, pageSize, totalRowSql, findSql);
-    }
+		return SSCellRange.create(firstRow, firstColumn, height, width, temp, XSSFCell.class);
+	}
+	
+	public Page<Record> getVersionRecord(Integer pageNumber, Integer pageSize, Kv kv) {
+		return dbTemplate("bommaster.getVersionRecord", kv.set("orgId", getOrgId())).paginate(pageNumber, pageSize);
+	}
+	
+	public List<Record> queryBomMasterId(Kv kv){
+		return dbTemplate("bommaster.getVersionRecord", kv.set("orgId", getOrgId())).find();
+	}
 }
