@@ -19,6 +19,8 @@ import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Page;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -107,42 +109,62 @@ public class InventoryService extends BaseService<Inventory> {
 		return ret(success);
 	}
 
-	public Inventory setIItemAttribute(Inventory inventory){
-		List<String> itemAttribute = inventory.getItemAttribute();
+	public Inventory setIItemAttributes(Inventory inventory) {
+		List<Dictionary> dictionaries = dictionaryService.getOptionListByTypeKey("iItem_attribute_column");
+		StringBuilder itemAttributes = new StringBuilder();
+		if(dictionaries != null && dictionaries.size() > 0){
+			for (Dictionary dictionary : dictionaries) {
+				Method[] m = inventory.getClass().getMethods();
+				for(int i = 0;i < m.length;i++){
+					if(("get"+dictionary.getName()).toLowerCase().equals(m[i].getName().toLowerCase())){
+						try {
+							Boolean invoke = (Boolean) m[i].invoke(inventory);
+							if(invoke)
+							{
+								itemAttributes.append(dictionary.getSn()).append(",");
+							}
+						} catch (Exception e) {
+							continue;
+						}
+					}
+				}
+			}
+		}
+		inventory.setItemAttributes(itemAttributes.length()>1?itemAttributes.substring(0,itemAttributes.length()-1):"");
+		return inventory;
+	}
 
+	public Inventory setIItemAttribute(Inventory inventory){
+		String itemAttributes = inventory.getItemAttributes();
+		String[] itemAttribute = null;
+		if(StringUtils.isNotBlank(itemAttributes)){
+			itemAttribute = itemAttributes.split(",");
+		}
 		List<Dictionary> dictionaries = dictionaryService.getOptionListByTypeKey("iItem_attribute_column");
 		if(dictionaries != null && dictionaries.size() > 0){
 			for (Dictionary dictionary : dictionaries) {
-				Field field = null;
-				try {
-					field =inventory.getClass().getField(dictionary.getName());
-				}catch (NoSuchFieldException ex) {
-					// 子类不存在该变量那么尝试去父类获取变量
-					try {
-						field=inventory.getClass().getSuperclass().getDeclaredField(dictionary.getName());
-					} catch (NoSuchFieldException e) {
-						continue;
-					}
-				}
-				field.setAccessible(true);
-				if(itemAttribute == null){
-					try {
-						field.set(inventory,"0");
-					} catch (IllegalAccessException e) {
-						continue;
-					}
-				}else {
-					for (String s : itemAttribute) {
-						if(s.equals(dictionary.getSn())){
-							try {
-								field.set(inventory,"1");
-							} catch (IllegalAccessException e) {
-								continue;
+				Method[] m = inventory.getClass().getMethods();
+				for(int i = 0;i < m.length;i++){
+					if(("set"+dictionary.getName()).toLowerCase().equals(m[i].getName().toLowerCase())){
+						try {
+							m[i].invoke(inventory,false);
+							if(itemAttribute != null){
+								for (String s : itemAttribute) {
+									if(s.equals(dictionary.getSn())){
+										try {
+											m[i].invoke(inventory,true);
+										} catch (IllegalAccessException e) {
+											continue;
+										}
+									}
+								}
 							}
+						} catch (Exception e) {
+							continue;
 						}
 					}
-
 				}
+
 			}
 		}
 		return inventory;
@@ -183,6 +205,7 @@ public class InventoryService extends BaseService<Inventory> {
 		Inventory dbInventory=findById(inventory.getIAutoId());
 		if(dbInventory==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(inventory.getName(), inventory.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		setIItemAttribute(inventory);
 		boolean success=inventory.update();
 		if(success) {
 			//添加日志

@@ -13,14 +13,14 @@ import java.util.List;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Bd_Inventory" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class Inventory extends BaseInventory<Inventory> {
-    public List<String> itemAttribute;
+    public String itemAttributes;
 
-    public List<String> getItemAttribute() {
-        return itemAttribute;
+    public String getItemAttributes() {
+        return itemAttributes;
     }
 
-    public void setItemAttribute(List<String> itemAttribute) {
-        this.itemAttribute = itemAttribute;
+    public void setItemAttributes(String itemAttributes) {
+        this.itemAttributes = itemAttributes;
     }
 }
 
