@@ -1,5 +1,7 @@
 package cn.rjtech.admin.qcform;
 
+import java.util.List;
+
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -139,6 +141,10 @@ public class QcFormService extends BaseService<QcForm> {
 		}
 		*/
 		return null;
+	}
+
+	public List<Record> options() {
+		return dbTemplate("qcform.AdminDatas", Kv.of("isenabled", "true")).find();
 	}
 
 }

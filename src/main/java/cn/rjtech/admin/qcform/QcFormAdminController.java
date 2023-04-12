@@ -1,5 +1,7 @@
 package cn.rjtech.admin.qcform;
 
+import java.util.List;
+
 import cn.rjtech.model.momdata.QcParam;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -8,6 +10,8 @@ import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.QcForm;
@@ -115,4 +119,7 @@ public class QcFormAdminController extends BaseAdminController {
 		render("qcitem/index.html");
 	}
 
+	public void options(){
+		renderJsonData(service.options());
+	}
 }

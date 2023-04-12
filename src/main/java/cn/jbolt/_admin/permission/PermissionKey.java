@@ -2232,4 +2232,9 @@ public class PermissionKey {
 	 * 平板登录日志
 	 */
     public static final String PADLOGINLOG = "pad_loginlog";
+
+	/**
+	 * 来料检验单
+	 */
+	public static final String RCVDOCQCFORMM = "rcvdocqcformm";
 }

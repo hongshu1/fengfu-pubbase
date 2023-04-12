@@ -1,0 +1,243 @@
+<form onsubmit="return false;" id="RcvDocQcFormM_Form" action="#(action)" method="post">
+	#if(rcvDocQcFormM.iAutoId??)
+	<input type="hidden" name="rcvDocQcFormM.iAutoId" value="#(rcvDocQcFormM.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="rcvDocQcFormM.iAutoId" value="#(rcvDocQcFormM.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织ID" maxlength="40" name="rcvDocQcFormM.iOrgId" value="#(rcvDocQcFormM.iOrgId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织编码" maxlength="40" name="rcvDocQcFormM.cOrgCode" value="#(rcvDocQcFormM.cOrgCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织名称" maxlength="40" name="rcvDocQcFormM.cOrgName" value="#(rcvDocQcFormM.cOrgName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检验单号</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入检验单号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入检验单号" maxlength="40" name="rcvDocQcFormM.cRcvDocQcFormNo" value="#(rcvDocQcFormM.cRcvDocQcFormNo??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">质检表格ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入质检表格ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入质检表格ID" maxlength="40" name="rcvDocQcFormM.iQcFormId" value="#(rcvDocQcFormM.iQcFormId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">收料单ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入收料单ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入收料单ID" maxlength="40" name="rcvDocQcFormM.iRcvDocId" value="#(rcvDocQcFormM.iRcvDocId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">收料单号</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入收料单号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入收料单号" maxlength="40" name="rcvDocQcFormM.cRcvDocNo" value="#(rcvDocQcFormM.cRcvDocNo??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">存货ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入存货ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货ID" maxlength="40" name="rcvDocQcFormM.iInventoryId" value="#(rcvDocQcFormM.iInventoryId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">供应商ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入供应商ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入供应商ID" maxlength="40" name="rcvDocQcFormM.iVendorId" value="#(rcvDocQcFormM.iVendorId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">收货日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入收货日期" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入收货日期" maxlength="20" name="rcvDocQcFormM.dRcvDate"    value="#datetime(rcvDocQcFormM.dRcvDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">数量</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入数量"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入数量" maxlength="40" name="rcvDocQcFormM.iQty" value="#(rcvDocQcFormM.iQty??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">批次号</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入批次号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入批次号" maxlength="40" name="rcvDocQcFormM.cBatchNo" value="#(rcvDocQcFormM.cBatchNo??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检验结果：0. 未生成 1. 待检 2. 不合格 3. 合格</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入检验结果：0. 未生成 1. 待检 2. 不合格 3. 合格"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入检验结果：0. 未生成 1. 待检 2. 不合格 3. 合格" maxlength="40" name="rcvDocQcFormM.iStatus" value="#(rcvDocQcFormM.iStatus??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="rcvDocQcFormM.isCompleted"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否已完成：0. 未完成 1. 已完成"
+data-width="col-sm-2,col-10"
+data-value="#(rcvDocQcFormM.isCompleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否已完成：0. 未完成 1. 已完成"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检验员Id, 系统用户ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入检验员Id, 系统用户ID" maxlength="40" name="rcvDocQcFormM.iQcUserId" value="#(rcvDocQcFormM.iQcUserId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">标记：1. 正常 2. 初物</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入标记：1. 正常 2. 初物"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入标记：1. 正常 2. 初物" maxlength="40" name="rcvDocQcFormM.iMask" value="#(rcvDocQcFormM.iMask??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">测定目的</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入测定目的" maxlength="200" name="rcvDocQcFormM.cMeasurePurpose">#(rcvDocQcFormM.cMeasurePurpose??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">测定理由</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入测定理由" maxlength="200" name="rcvDocQcFormM.cMeasureReason">#(rcvDocQcFormM.cMeasureReason??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设变号</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入设变号" maxlength="200" name="rcvDocQcFormM.cDcNo">#(rcvDocQcFormM.cDcNo??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">测定单位</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入测定单位" maxlength="40" name="rcvDocQcFormM.cMeasureUnit" value="#(rcvDocQcFormM.cMeasureUnit??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检测日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入检测日期" maxlength="20" name="rcvDocQcFormM.dQcTime"    value="#datetime(rcvDocQcFormM.dQcTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="rcvDocQcFormM.isCpkSigned"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否CPK数值的输入内容按正负数显示：0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(rcvDocQcFormM.isCpkSigned??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否CPK数值的输入内容按正负数显示：0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="rcvDocQcFormM.isOk"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否判定合格：0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(rcvDocQcFormM.isOk??)"
+data-rule="radio"
+data-notnull="false"
+data-tips="请输入是否判定合格：0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="rcvDocQcFormM.cMemo">#(rcvDocQcFormM.cMemo??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人ID" maxlength="40" name="rcvDocQcFormM.iCreateBy" value="#(rcvDocQcFormM.iCreateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="rcvDocQcFormM.cCreateName" value="#(rcvDocQcFormM.cCreateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="rcvDocQcFormM.dCreateTime"    value="#datetime(rcvDocQcFormM.dCreateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人ID" maxlength="40" name="rcvDocQcFormM.iUpdateBy" value="#(rcvDocQcFormM.iUpdateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人名称" maxlength="40" name="rcvDocQcFormM.cUpdateName" value="#(rcvDocQcFormM.cUpdateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入更新时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="rcvDocQcFormM.dUpdateTime"    value="#datetime(rcvDocQcFormM.dUpdateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="rcvDocQcFormM.IsDeleted"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态：0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(rcvDocQcFormM.IsDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态：0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="RcvDocQcFormM_Form")
+#end
+
