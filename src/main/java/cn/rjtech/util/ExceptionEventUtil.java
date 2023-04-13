@@ -30,6 +30,11 @@ public class ExceptionEventUtil {
         String errorCode = getErrorCode(e);
         Long reportTimes = getExceptionNotice(errorCode);
         
+        // 首次设值，设置过期时间为2小时
+        if (reportTimes == 1) {
+            setExpire(errorCode);
+        }
+        
         LOG.info("异常已经报告: {} 次!", reportTimes);
 
         EventKit.post(new ExceptionEvent(getExceptionMsg(errorCode, e)));
@@ -90,6 +95,13 @@ public class ExceptionEventUtil {
      */
     public static Long getExceptionNotice(String exceptionKey) {
         return RedisUtil.incr("LH:EXCEPTION:NOTICE:" + exceptionKey);
+    }
+
+    /**
+     * 设置异常信息的过期时间
+     */
+    public static void setExpire(String exceptionKey) {
+        RedisUtil.expire("LH:EXCEPTION:NOTICE:" + exceptionKey, RedisUtil.EXPIRES_IN_2_HOURS);
     }
 
 }
