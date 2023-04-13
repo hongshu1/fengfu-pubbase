@@ -1,0 +1,54 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+  <div class="jbolt_page_content">
+    <input type="hidden" readonly="readonly" name="fileUploaderIds" id="fileUploaderIds_#(pageId)" value="#(fileUploaderIds??)" class="form-control"/>
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="j_upload_file_box"
+               data-name="file"
+               data-multi="true"
+               data-limit="10"
+               data-value-attr="id"
+               data-filebox="filebox_#(pageId)"
+               data-btn-class="btn btn-primary"
+               data-maxsize="20480"
+               data-handler="uploadMultipleFile"
+               data-placeholder="选择文件上传,文件大小限制20M以内"
+               data-url="admin/inventoryqcform/uploadFileAndSave?lineId=#(lineId??)"
+               data-remove-url="admin/inventoryqcform/deleteFile?fileId=[file]&lineId=#(lineId??)"
+               data-hiddeninput="fileUploaderIds_#(pageId)"
+          ></div>
+
+          <div class="j_upload_filebox_multi  mt-3">
+            <ul class="j_filebox" id="filebox_#(pageId)" data-remove-confirm="true">
+              #for(data : files)
+              <li data-filebox="filebox_#(pageId)" data-hiddeninput="fileUploaderIds_#(pageId)"><a target="_blank" data-path="#(data.id)" href="#realImage(data.localUrl)">#(data.fileName)</a><i title="删除" onclick="removeUploadFileBoxLi(this)" class="fa fa-trash text-danger ml-3"></i></li>
+              #end
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+#end
+
+<script>
+  function submitThisForm(callback){
+    parent.RefreshJboltTable();
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+  }
+  /**
+   * 选中按钮
+   */
+  $(function(){
+    hideParentLayerDialogBtn(1);
+    addParentLayerDialogBtn("关闭","layui-layer-btn1",function(){
+      parent.RefreshJboltTable();
+      parent.layer.close(parent.layer.getFrameIndex(window.name));
+
+    });
+  });
+</script>

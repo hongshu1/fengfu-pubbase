@@ -1,0 +1,71 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+	<div class="jbolt_page_title">
+		<div class="row">
+		</div>
+	</div>
+
+	<div class="jbolt_page_content">
+		<div class="alert alert-info">
+			<small class="form-text text-muted text-ceter">温馨提示：附件只支持PPT、WORD、EXCEL、JPG、PDF等格式预览，文件大小不超过20M</small>
+		</div>
+		<br/>
+		<div class="col-12 col-sm-6 col-lg-3">
+			<fieldset class="form-page-fieldset">
+				<div class="form-group text-center">
+					<div class="j_upload_file_box"
+						 data-handler="uploadFile"
+						 data-maxsize="204800"
+						 data-upload-success-handler="uploadFiles"
+						 data-url="/admin/inventoryroutingsop/uploadFile?configid=#(configid)"
+						 data-value="#(proposalattachment.attachmenturi??)"></div>
+					<!-- <small class="form-text text-muted text-ceter">文件大小不超过20M</small> -->
+				</div>
+			</fieldset>
+		</div>
+
+		<!--<form onsubmit="return false;" id="proposalAttachmentForm" method="post">
+
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">附件名称</label>
+				<div class="col">
+					<input type="text" id="attaName" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入附件名称" maxlength="200" name="attachmentname" data-rule="required" data-tips="请上传附件" readonly/>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">附件路径</label>
+				<div class="col">
+					<input type="text" id="attaUrlInput" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入附件路径" maxlength="200" name="attachmenturi" data-rule="required" data-tips="请上传附件" readonly/>
+				</div>
+			</div>
+		</form>-->
+
+	</div>
+
+</div>
+#define js()
+<script>
+	function uploadFiles(fileInput, type, btn, res) {
+		$("#attaName").val(res.data.cname);
+		$("#attaUrlInput").val(res.data.cpath);
+
+		parent.jboltTableProcessTdByDialogChooser(res.data.cname,res.data.cname,res.data);
+		parent.LayerMsgBox.closeAll();
+	}
+
+	/*function submitThisForm() {
+		var $form = $('#proposalAttachmentForm');
+		// 校验表单
+		if (FormChecker.check($form)) {
+			var data = $form.serializeJSON();
+			console.log(JSON.stringify(data));
+
+
+			// 关闭当前页面
+			parent.layer.close(parent.layer.getFrameIndex(window.name));
+		}
+	}*/
+</script>
+#end
+#end

@@ -95,7 +95,7 @@
 	</div>
 	#end
 
-	#permission(PermissionKey.WAREHOUSE_SHELVES_PRINT)
+	<!--#permission(PermissionKey.WAREHOUSE_SHELVES_PRINT)
 	<div class="btn-group" role="group" aria-label="btn-group">
 		<div class="btn-group dropdown">
 			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
@@ -108,7 +108,7 @@
 			</div>
 		</div>
 	</div>
-	#end
+	#end-->
 
 	<div class="clearfix"></div>
 </div>
@@ -165,7 +165,7 @@ data-fixed-columns-left="1,2,3"
 		var OrganizeCode = "";
 		var reportName = "warehouseshelves";
 
-		Ajax.post("admin/organize/getDbSource", {}, function (ret) {
+	/*	Ajax.post("admin/container/printData", {}, function (ret) {
 			if (ret.state === 'ok') {
 				var data = ret.data;
 
@@ -186,7 +186,7 @@ data-fixed-columns-left="1,2,3"
 			} else {
 				LayerMsgBox.alert(ret.msg, 2);
 			}
-		});
+		});*/
 	}
 
 	function printAll(jdbc_url,OrganizeCode,print_url,reportName) {

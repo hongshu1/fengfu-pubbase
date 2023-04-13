@@ -1854,13 +1854,17 @@ public class PermissionKey {
 	 */
 	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
 	/**
-	 * 备份设置
+	 * 备份记录
 	 */
 	public static final String BACKUP_LOG = "backup_log";
 	/**
 	 * 采购类型
 	 */
 	public static final String PURCHASETYPE = "purchasetype";
+	/**
+	 * 备份设置
+	 */
+	public static final String BACKUP_CONFIG = "backup_config";
 	/**
 	 * 新增
 	 */
@@ -2225,4 +2229,26 @@ public class PermissionKey {
 	 * 月度计划订单
 	 */
 	public static final String MONTHORDERM = "monthorderm";
+	/**
+	 * 工作日历明细
+	 */
+	public static final String WORKCALENDARM = "workcalendard";
+	/**
+	 * 平板端配置
+	 */
+	public static final String PAD = "pad";
+	/**
+	 * 平板登录日志
+	 */
+    public static final String PADLOGINLOG = "pad_loginlog";
+	/**
+	 * 手配订单
+	 */
+	public static final String MANUALORDER = "manual_order";
+	
+	/**
+	 *	委外销售订单
+	 */
+	public static final String SUBCONTRACTSALEORDERM = "subcontractsaleorderm";
+	
 }

@@ -1,0 +1,108 @@
+<form onsubmit="return false;" id="InventoryRoutingSop_Form" action="#(action)" method="post">
+	#if(inventoryRoutingSop.iAutoId??)
+	<input type="hidden" name="inventoryRoutingSop.iAutoId" value="#(inventoryRoutingSop.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键" maxlength="40" name="inventoryRoutingSop.iAutoId" value="#(inventoryRoutingSop.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">料品工艺档案配置ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入料品工艺档案配置ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入料品工艺档案配置ID" maxlength="40" name="inventoryRoutingSop.iInventoryRoutingConfigId" value="#(inventoryRoutingSop.iInventoryRoutingConfigId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入名称" maxlength="40" name="inventoryRoutingSop.cName" value="#(inventoryRoutingSop.cName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">路径</label>
+<div class="col-10">
+    <textarea style="height:100px;"  data-rule="required"  data-notnull="true" data-tips="请输入路径" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入路径" maxlength="200" name="inventoryRoutingSop.cPath">#(inventoryRoutingSop.cPath??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">文件类型</label>
+<div class="col-10">
+    <textarea style="height:100px;"  data-rule="required"  data-notnull="true" data-tips="请输入文件类型" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入文件类型" maxlength="200" name="inventoryRoutingSop.cSuffix">#(inventoryRoutingSop.cSuffix??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">大小</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入大小"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入大小" maxlength="40" name="inventoryRoutingSop.iSize" value="#(inventoryRoutingSop.iSize??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">版本号</label>
+<div class="col-10">
+    <textarea style="height:100px;"  data-rule="required"  data-notnull="true" data-tips="请输入版本号" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入版本号" maxlength="200" name="inventoryRoutingSop.iVersion">#(inventoryRoutingSop.iVersion??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">启用时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入启用时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入启用时间" maxlength="20" name="inventoryRoutingSop.dFromDate"    value="#datetime(inventoryRoutingSop.dFromDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">停用时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入停用时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入停用时间" maxlength="20" name="inventoryRoutingSop.dToDate"    value="#datetime(inventoryRoutingSop.dToDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入备注" maxlength="40" name="inventoryRoutingSop.cMemo" value="#(inventoryRoutingSop.cMemo??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人" maxlength="40" name="inventoryRoutingSop.iCreateBy" value="#(inventoryRoutingSop.iCreateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="inventoryRoutingSop.cCreateName" value="#(inventoryRoutingSop.cCreateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="inventoryRoutingSop.dCreateTime"    value="#datetime(inventoryRoutingSop.dCreateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="inventoryRoutingSop.isEnabled"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否启用"
+data-width="col-sm-2,col-10"
+data-value="#(inventoryRoutingSop.isEnabled??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否启用"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="InventoryRoutingSop_Form")
+#end
+

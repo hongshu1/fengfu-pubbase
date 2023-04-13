@@ -1,10 +1,12 @@
 #sql("list")
 select
     dep.*,
-    per.cPsn_Name as cpersonname
+    per.cPsn_Name as cpersonname,
+    jd.name as typename
 from
     Bd_Department dep
     left join Bd_Person per ON per.iAutoId = dep.iDutyUserId
+    left join #(getBaseDbName()).dbo.jb_dictionary jd on dep.cType  = jd.sn and jd.type_key = 'org_type'
 where
     dep.isDeleted = '0'
     #if(orgId)

@@ -1,7 +1,8 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page" data-key="#(pmkey??)"
+	 data-require-plugin="hiprint">
 <div class="jbolt_page_title">
 <div class="row">
 	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>容器档案</h1></div>
@@ -48,7 +49,7 @@
 <td>${data.ccontainercode}</td>
 <td>${data.ccontainername}</td>
 <td>${data.ccontainerclassname}</td>
-<td>${data.idepid}</td>
+<td>${data.cdepname}</td>
 <td>${data.cwhname}</td>
 <td>$${data.isinner==1?"社外":"社内"}</td>
 <td>${data.ilength}</td>
@@ -56,14 +57,14 @@
 <td>${data.iheight}</td>
 <td>${data.cvolume}</td>
 <td>${data.ccommonmodel}</td>
-<td>${data.isupplierid}</td>
+<!--<td>${data.isupplierid}</td>-->
 <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/container/toggleIsEnabled/${data.iautoid}"/></td>
 <td>${data.dcreatetime}</td>
 <td>${data.ccreatename}</td>
 </tr>
 {@/each}
 </textarea>
-<div class="jbolt_table_toolbar" id="Container_toolbar_#(pageId)">
+<div class="jbolt_table_toolbar" id="Container_toolbar_#(pageId)" >
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 	<button data-dialogbtn data-area="80%,95%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增仓库建模-容器档案" data-url="admin/container/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
 	<button data-dialogbtn data-area="80%,95%"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑仓库建模-容器档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/container/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
@@ -92,7 +93,7 @@
 	</div>
 
 	<div class="btn-group" role="group" aria-label="btn-group">
-		<div class="btn-group dropdown">
+		<div class="btn-group dropdown ">
 			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
 			<div class="dropdown-menu" aria-labelledby="exportContainerButton">
 				<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="/admin/container/dataExport"><i class="fa fa-download"></i> 导出选中</button>
@@ -101,9 +102,23 @@
 		</div>
 	</div>
 
+	<div class="btn-group" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
+				data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
+		</button>
+		<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+			<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds"
+					onclick="containerPrint('check')"><i class="fa fa-download"></i> 打印勾选行
+			</button>
+			<button class="btn dropdown-item" onclick="containerPrint('page')"><i class="fa fa-download"></i> 打印当前页
+			</button>
+		</div>
+
+	</div>
+
 	<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-	<button data-dialogbtn data-area="60%,65%"  data-handler="refreshJBoltTable"  id="toolbar_Rk_#(pageId)"  data-title="入库"  data-url="admin/container/rk/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 入库</button>
-	<button data-dialogbtn data-area="60%,65%"  data-handler="refreshJBoltTable"  id="toolbar_Ck_#(pageId)"  data-title="出库"  data-url="admin/container/ck/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 出库</button>
+	<button data-dialogbtn data-area="60%,85%"  data-handler="refreshJBoltTable"  id="toolbar_Rk_#(pageId)"  data-title="入库"  data-url="admin/container/rk/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 入库</button>
+	<button data-dialogbtn data-area="60%,85%"  data-handler="refreshJBoltTable"  id="toolbar_Ck_#(pageId)"  data-title="出库"  data-url="admin/container/ck/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 出库</button>
 	</div>
 
 </div>
@@ -136,7 +151,7 @@
 			<th data-width="100" data-column="iHeight">高(mm)</th>
 			<th data-width="150" data-column="cVolume">体积</th>
 			<th data-width="150" data-column="cCommonModel">公用机型</th>
-			<th data-width="100" data-column="iSupplierId">供应商ID</th>
+<!--			<th data-width="100" data-column="iSupplierId">供应商ID</th>-->
 			<th data-width="100" data-column="isEnabled">是否启用</th>
 			<th data-min-width="160" data-column="dCreateTime">创建时间</th>
 			<th data-width="150" data-column="cCreateName">创建人名称</th>
@@ -150,5 +165,25 @@
 
 #define js()
 <script type="text/javascript">
+	//打印
+	function containerPrint(mark) {
+		let rows;
+		if (mark == 'check') {
+			rows = jboltTableGetCheckedDatas();
+			if (rows == null) {
+				return;
+			}
+		} else{
+			rows = jboltTableGetAllDatas();
+		}
+		let code = [];
+		for (let i in rows) {
+			let rowdata = rows[i];
+			var ccode = rowdata.iautoid;
+			code.push(ccode);
+		}
+		jboltHiprintWebPrint('rqda_key', 'url', 'admin/container/printData?ids=' + code.join(",") + "&&mark=" + mark);
+
+	}
 </script>
 #end

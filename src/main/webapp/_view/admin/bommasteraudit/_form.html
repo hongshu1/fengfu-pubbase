@@ -2,128 +2,14 @@
 	#if(bomMasterAudit.iAutoId??)
 	<input type="hidden" name="bomMasterAudit.iAutoId" value="#(bomMasterAudit.iAutoId??)" />
 	#end
-<div class="row">
+<!--<div class="row">
 <div class="col" >
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">主键ID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="bomMasterAudit.iAutoId" value="#(bomMasterAudit.iAutoId??)"/>
+
 </div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">组织ID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织ID" maxlength="40" name="bomMasterAudit.iOrgId" value="#(bomMasterAudit.iOrgId??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">组织编码</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织编码" maxlength="40" name="bomMasterAudit.cOrgCode" value="#(bomMasterAudit.cOrgCode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">组织名称</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织名称" maxlength="40" name="bomMasterAudit.cOrgName" value="#(bomMasterAudit.cOrgName??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">母件ID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入母件ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入母件ID" maxlength="40" name="bomMasterAudit.iBomMasterId" value="#(bomMasterAudit.iBomMasterId??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">存货ID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入存货ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货ID" maxlength="40" name="bomMasterAudit.iInventoryId" value="#(bomMasterAudit.iInventoryId??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">版本</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入版本"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入版本" maxlength="40" name="bomMasterAudit.cVersion" value="#(bomMasterAudit.cVersion??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">启用时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入启用时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入启用时间" maxlength="20" name="bomMasterAudit.dEnableTime"    value="#datetime(bomMasterAudit.dEnableTime??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">停用时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入停用时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入停用时间" maxlength="20" name="bomMasterAudit.dDisableTime"    value="#datetime(bomMasterAudit.dDisableTime??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过</label>
-<div class="col-10">
-    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过" maxlength="40" name="bomMasterAudit.iAuditStatus" value="#(bomMasterAudit.iAuditStatus??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">审核时间，未走审批流时，有值</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入审核时间，未走审批流时，有值" maxlength="20" name="bomMasterAudit.dAuditTime"    value="#datetime(bomMasterAudit.dAuditTime??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">创建人ID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人ID" maxlength="40" name="bomMasterAudit.iCreateBy" value="#(bomMasterAudit.iCreateBy??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">创建人名称</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="bomMasterAudit.cCreateName" value="#(bomMasterAudit.cCreateName??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">创建时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="bomMasterAudit.dCreateTime"    value="#datetime(bomMasterAudit.dCreateTime??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">更新人ID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人ID" maxlength="40" name="bomMasterAudit.iUpdateBy" value="#(bomMasterAudit.iUpdateBy??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">更新人名称</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人名称" maxlength="40" name="bomMasterAudit.cUpdateName" value="#(bomMasterAudit.cUpdateName??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">更新时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入更新时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="bomMasterAudit.dUpdateTime"    value="#datetime(bomMasterAudit.dUpdateTime??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" 
-data-radio
-data-name="bomMasterAudit.IsDeleted"
-data-value-attr="sn"
-data-default="false"
-data-url="admin/dictionary/options?key=options_enable"
-data-label="删除状态：0. 未删除 1. 已删除"
-data-width="col-sm-2,col-10"
-data-value="#(bomMasterAudit.IsDeleted??)"
-data-rule="radio"
-data-notnull="true"
-data-tips="请输入删除状态：0. 未删除 1. 已删除"
-data-inline="true"
->
-</div>
-</div>
-</div>
+</div>-->
 </form>
+
+
 #define js()
 <script>
 </script>

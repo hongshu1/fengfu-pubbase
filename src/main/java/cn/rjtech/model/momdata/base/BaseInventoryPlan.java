@@ -32,6 +32,9 @@ public abstract class BaseInventoryPlan<M extends BaseInventoryPlan<M>> extends 
     public static final String IDAILYLOSS = "iDailyLoss";
     /**尾数处理(字典值)*/
     public static final String CMANTISSASN = "cMantissaSn";
+    public static final String IINNERINSTOCKDAYS = "iInnerInStockDays";
+    public static final String IMININSTOCKDAYS = "iMinInStockDays";
+    public static final String IMAXINSTOCKDAYS = "iMaxInStockDays";
 	/**
 	 * 主键
 	 */
@@ -217,6 +220,57 @@ public abstract class BaseInventoryPlan<M extends BaseInventoryPlan<M>> extends 
 	@JSONField(name = "cmantissasn")
 	public java.lang.String getCMantissaSn() {
 		return getStr("cMantissaSn");
+	}
+
+	/**
+	 * 内作在库天数
+	 */
+	public M setIInnerInStockDays(java.lang.Integer iInnerInStockDays) {
+		set("iInnerInStockDays", iInnerInStockDays);
+		return (M)this;
+	}
+
+	/**
+	 * 内作在库天数
+	 */
+	@JBoltField(name="iinnerinstockdays" ,columnName="iInnerInStockDays",type="Integer", remark="内作在库天数", required=false, maxLength=10, fixed=0, order=12)
+	@JSONField(name = "iinnerinstockdays")
+	public java.lang.String getIInnerInStockDays() {
+		return getStr("iInnerInStockDays");
+	}
+
+	/**
+	 * 最小在库天数
+	 */
+	public M setIMinInStockDays(java.lang.Integer iMinInStockDays) {
+		set("iMinInStockDays", iMinInStockDays);
+		return (M)this;
+	}
+
+	/**
+	 * 最小在库天数
+	 */
+	@JBoltField(name="imininstockdays" ,columnName="iMinInStockDays",type="Integer", remark="最小在库天数", required=false, maxLength=10, fixed=0, order=13)
+	@JSONField(name = "imininstockdays")
+	public java.lang.String getIMinInStockDays() {
+		return getStr("iMinInStockDays");
+	}
+
+	/**
+	 * 最大在库天数
+	 */
+	public M setIMaxInStockDays(java.lang.Integer iMaxInStockDays) {
+		set("iMaxInStockDays", iMaxInStockDays);
+		return (M)this;
+	}
+
+	/**
+	 * 最大在库天数
+	 */
+	@JBoltField(name="imaxinstockdays" ,columnName="iMaxInStockDays",type="Integer", remark="最大在库天数", required=false, maxLength=10, fixed=0, order=14)
+	@JSONField(name = "imaxinstockdays")
+	public java.lang.String getIMaxInStockDays() {
+		return getStr("iMaxInStockDays");
 	}
 
 }

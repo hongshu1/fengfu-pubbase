@@ -49,9 +49,9 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">质量等级</label>
                 <div class="col">
-                    <select class="form-control" data-tips="请选择质量等级" data-url="admin/dictionary/options?key=iqualitylevel_type"
-                            name="itemmaster.iqualitylevel" data-autoload data-text="=请选择质量等级=" data-value-attr="sn" data-value=""
-                            data-select="#(itemmaster.iqualitylevel??)"></select>
+                    <select class="form-control" data-tips="请选择质量等级" data-url="admin/dictionary/options?key=itemimpstate_type"
+                            name="inventorymfginfo.iQualityLevel" data-autoload data-text="=请选择质量等级=" data-value-attr="sn" data-value=""
+                            data-select="#(inventorymfginfo.iQualityLevel??)"></select>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">采购周期</label>
                 <div class="col">
-                    <select class="form-control" data-tips="请选择采购周期" data-url="admin/dictionary/options?key=purchase_period"
+                    <select data-rule="required" class="form-control" data-tips="请选择采购周期" data-url="admin/dictionary/options?key=purchase_period"
                             name="inventorymfginfo.iPurchasePeriod" data-autoload data-text="=请选择采购周期=" data-value-attr="sn" data-value=""
                             data-select="#(inventorymfginfo.iPurchasePeriod??)" ></select>
                 </div>
@@ -107,7 +107,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">超量完工类型</label>
                 <div class="col">
-                    <select class="form-control"  data-tips="请选择超量完工类型" data-url="admin/dictionary/options?key=coverfinishsn_type"
+                    <select class="form-control"  data-tips="请选择超量完工类型" data-url="admin/dictionary/options?key=overfinish_type"
                             name="inventorymfginfo.cOverFinishSn" data-autoload data-text="=请选择超量完工类型=" data-value-attr="sn" data-value=""
                             data-select="#(inventorymfginfo.cOverFinishSn??)"></select>
                 </div>

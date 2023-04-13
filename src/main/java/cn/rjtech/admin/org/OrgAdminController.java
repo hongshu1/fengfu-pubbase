@@ -1,5 +1,6 @@
 package cn.rjtech.admin.org;
 
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -35,7 +36,7 @@ public class OrgAdminController extends BaseMesAdminController {
     /**
      * 登陆页面下拉框列表
      */
-    @Clear
+    @Clear(JBoltAdminAuthInterceptor.class)
     public void list() {
         ok(service.getList());
     }
@@ -99,6 +100,13 @@ public class OrgAdminController extends BaseMesAdminController {
      */
     public void toggleEnable() {
         renderJson(service.toggleEnable(useIfPresent(getLong(0))));
+    }
+
+    /**
+     * 切换启用状态
+     */
+    public void toggleIsDefault() {
+        renderJson(service.toggleIsDefault(useIfPresent(getLong(0))));
     }
 
     /**

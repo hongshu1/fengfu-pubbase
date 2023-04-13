@@ -161,6 +161,10 @@ public class CustomerAddrService extends BaseService<CustomerAddr> {
 		return null;
 	}
 
+	/**
+	 * 根据主键删除
+	 * @param deletes
+	 */
 	public void deleteMultiByIds(Object[] deletes) {
 		delete("DELETE FROM Bd_CustomerAddr WHERE iAutoId IN (" + ArrayUtil.join(deletes, COMMA) + ") ");
 	}

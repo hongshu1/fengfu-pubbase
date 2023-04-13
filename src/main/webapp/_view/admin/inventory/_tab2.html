@@ -89,13 +89,13 @@
             <div class="col "  style="display:flex;justify-content: flex-start">
                 <select class="form-control" name="inventorystockconfig.iVendorId"
                         data-autoload
-                        data-url="admin/inventoryclass/options?ipid=#(inventoryClass.iAutoid??)"
+                        data-url="admin/vendor/options"
                         data-select-type="select"
-                        data-text="=计量单位组="
+                        data-text="=默认供应商="
                         data-value=""
                         data-select="#(inventorystockconfig.iVendorId??)"
                         data-value-attr="iautoid"
-                        data-text-attr="cuomname"
+                        data-text-attr="cvenname"
                 ></select>
             </div>
         </div>
@@ -104,27 +104,32 @@
             <div class="col "  style="display:flex;justify-content: flex-start">
                 <select class="form-control" name="inventorystockconfig.iWarehouseId"
                         data-autoload
-                        data-url="admin/inventoryclass/options?ipid=#(inventoryClass.iAutoid??)"
+                        data-url="admin/warehouse/options"
                         data-select-type="select"
-                        data-text="=计量单位组="
+                        data-text="=默认仓库="
                         data-value=""
                         data-select="#(inventorystockconfig.iWarehouseId??)"
                         data-value-attr="iautoid"
-                        data-text-attr="cuomname"
+                        data-text-attr="cwhname"
+
+                        data-linkage="true"
+                        data-sonid="iWarehouseAreaId"
                 ></select>                            </div>
         </div>
         <div class="col-3 row" style="padding: 0px;margin: 0px">
             <label class="col-sm-3 col-form-label" >默认库区</label>
             <div class="col "  style="display:flex;justify-content: flex-start">
                 <select class="form-control" name="inventorystockconfig.iWarehouseAreaId"
-                        data-autoload
-                        data-url="admin/inventoryclass/options?ipid=#(inventoryClass.iAutoid??)"
+                        data-url="admin/warehousearea/list?iwarehouseid="
                         data-select-type="select"
-                        data-text="=计量单位组="
+                        data-text="=默认库区="
                         data-value=""
                         data-select="#(inventorystockconfig.iWarehouseAreaId??)"
                         data-value-attr="iautoid"
-                        data-text-attr="cuomname"
+                        data-text-attr="careaname"
+
+                        data-linkage="true"
+                        id="iWarehouseAreaId"
                 ></select>
             </div>
         </div>
@@ -219,13 +224,13 @@
             <div class="col "  style="display:flex;justify-content: flex-start">
                 <select class="form-control" name="inventorystockconfig.iValidUnit"
                         data-autoload
-                        data-url="admin/uom/options"
+                        data-url="admin/dictionary/options?key=expiration_date_unity"
                         data-select-type="select"
                         data-text="=保质期单位="
                         data-value=""
                         data-select="#(inventorystockconfig.iValidUnit??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
+                        data-value-attr="sn"
+                        data-text-attr="name"
                 ></select>
             </div>
         </div>

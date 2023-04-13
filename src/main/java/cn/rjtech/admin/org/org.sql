@@ -9,7 +9,8 @@ SELECT
     o.enable,
     o.enable_Time,
     o.remark,
-    u.name
+    u.name,
+    o.is_default
 FROM jb_org o
     LEFT JOIN jb_user u ON u.id = o.user_id
 WHERE 1=1

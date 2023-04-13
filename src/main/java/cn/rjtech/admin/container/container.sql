@@ -3,11 +3,14 @@ SELECT
 	c.*,
 	cs.cContainerClassName,
 	wh.cWhCode,
-	wh.cWhName
+	wh.cWhName,
+    dt.cDepCode,
+    dt.cDepName
 FROM
 	Bd_Container c
     LEFT JOIN Bd_ContainerClass cs ON c.iContainerClassId = cs.iAutoId
 	LEFT JOIN Bd_Warehouse wh ON c.iWarehouseId = wh.iAutoId
+	LEFT JOIN bd_department dt ON c.iDepId = dt.iAutoId
 	WHERE c.isDeleted = 0
     #if(cContainerCode)
         AND c.cContainerCode LIKE CONCAT('%', #para(cContainerCode), '%')
@@ -25,4 +28,23 @@ FROM
         AND CHARINDEX(','+cast((select c.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
     #end
 	ORDER BY c.dCreateTime DESC
+#end
+
+#sql("containerPrintData")
+SELECT
+c.*,
+(ISNULL(c.cContainerName, '')+'+'+ISNULL(c.cContainerCode, '')) ccontainercodename,
+cs.cContainerClassName,
+dt.cDepCode,
+dt.cDepName
+FROM
+Bd_Container c
+LEFT JOIN Bd_ContainerClass cs ON c.iContainerClassId = cs.iAutoId
+LEFT JOIN bd_department dt ON c.iDepId = dt.iAutoId
+WHERE  c.isDeleted = 0
+ #if(ids)
+   AND CHARINDEX(','+cast((select c.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
+ #end
+ORDER BY
+c.dCreateTime DESC
 #end

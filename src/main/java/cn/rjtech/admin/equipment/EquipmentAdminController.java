@@ -189,4 +189,9 @@ public class EquipmentAdminController extends BaseAdminController {
 	public void autocomplete() {
 		renderJsonData(service.getAutocompleteDatas(get("q"),getInt("limit", 10)));
 	}
+
+	public void dataList(){
+		renderJsonData(service.dataList());
+	}
+    
 }

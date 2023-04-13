@@ -19,39 +19,40 @@
                 // params:{"mark":document.getElementById('mark').value},//携带其他额外参数
                 //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
             },
-            onChange:{
-
-            },
             //插入数据时默认属性值
             //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
             cols: {
-                id: {
+                iautoid: {
                     submitAttr: "iautoid",
+                    valueAttr: "iautoid",
                 },
                 ccontainercode: {
                     type: "autocomplete",
-                    placeholder: "请输入",
+                    placeholder: "请选择",
                     textAttr: "ccontainercode,ccontainername",
                     width: 500,
-                    height:100,
-                    valueAttr: "iautoid",
+                    height:130,
+                    valueAttr: "ccontainercode",
+                    submitAttr: "ccontainercode",
                     header:'编码,名称',
-                    url: "/admin/container/crkData?mark="+document.getElementById('mark').value,
+                    url: "/admin/container/crkSelectData?mark="+document.getElementById('mark').value,
                     required: true,
-                    // dialog:{
-                    //     url:"/admin/container/data?mark="+document.getElementById('mark').value,
-                    //     textAttr: "ccontainercode,ccontainername",
-                    //     header:'编码,名称',
-                    // },
+                   /* dialog:{
+                        url:"/admin/container/dataIndex?mark="+document.getElementById('mark').value,
+                        area:"80%,80%"
+                    },*/
                     changeColumns: [{column: "ccontainercode", use: "ccontainercode"},
-                        {column: "ccontainername", use: "ccontainername"}]
+                        {column: "ccontainername", use: "ccontainername"},
+                        {column: "iautoid", use: "iautoid"}]
 
                 },
                 ccontainername: {
                     // type: "input",
+                    placeholder: "请选择编码",
                     required: true
                 },
                 cmemo: {
+                    placeholder: "请输入",
                     type: "input"
                 }
             }

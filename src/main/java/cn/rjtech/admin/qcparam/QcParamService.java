@@ -82,8 +82,7 @@ public class QcParamService extends BaseService<QcParam> {
     }
 
     public Page<Record> pageList(Kv kv) {
-        Page<Record> recordPage = dbTemplate("qcparam.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
-        return recordPage;
+        return dbTemplate("qcparam.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
     }
 
     /**
@@ -96,6 +95,9 @@ public class QcParamService extends BaseService<QcParam> {
         qcParam.setIAutoId(JBoltSnowflakeKit.me.nextId());
         saveQcParam(qcParam);
         boolean success = qcParam.save();
+        if (!success){
+            return fail(JBoltMsg.FAIL);
+        }
         return ret(success);
     }
 
@@ -108,10 +110,13 @@ public class QcParamService extends BaseService<QcParam> {
         }
         //更新时需要判断数据存在
         QcParam dbQcParam = findById(qcParam.getIAutoId());
-        if (dbQcParam == null) {
+        if (null == dbQcParam) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
         boolean success = qcParam.update();
+        if (!success){
+            return fail(JBoltMsg.FAIL);
+        }
         return ret(success);
     }
 
@@ -211,15 +216,6 @@ public class QcParamService extends BaseService<QcParam> {
                         JBoltExcelHeader.create("iqcitemid", "参数项目名称"),
                         JBoltExcelHeader.create("cqcparamname", "参数名称")
                     )
-//                    //特殊数据转换器
-//                    .setDataChangeHandler((data, index) -> {
-//                        try {
-//                            String isalary = data.getStr("isalary");
-//                            data.change("isalary", new BigDecimal(isalary));
-//                        } catch (Exception e) {
-//                            errorMsg.append(data.getStr("isalary") + "薪酬填写有误");
-//                        }
-//                    })
                     //从第几行开始读取
                     .setDataStartRow(2)
             );
@@ -291,7 +287,10 @@ public class QcParamService extends BaseService<QcParam> {
         param.setIUpdateBy(userId);
         param.setIsDeleted(false);
         param.setIsEnabled(true);
-//        param.setIqcitemid();
+    }
+
+    public List<QcParam> findByIqcItemId(Long iQcItemId){
+        return find("select * from Bd_QcParam where iQcItemId=?",iQcItemId);
     }
 
 }

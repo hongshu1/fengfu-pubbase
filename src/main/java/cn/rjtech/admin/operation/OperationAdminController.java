@@ -20,6 +20,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
@@ -47,8 +48,6 @@ public class OperationAdminController extends JBoltBaseController {
     private WorkClassService workClassService;
     @Inject
     private QcParamService   qcParamService;
-//    @Inject
-//    private OperationbadnessService operationbadnessService;
 
     /**
      * 首页
@@ -81,8 +80,6 @@ public class OperationAdminController extends JBoltBaseController {
             return;
         }
         set("operation", operation);
-//        String ids = service.findBadnessClassIds(operation.getIautoid());
-//        set("ibadnessids", ids);
         render("edit.html");
     }
 
@@ -98,13 +95,7 @@ public class OperationAdminController extends JBoltBaseController {
      * 更新
      */
     public void update() {
-        /*String ibadnessids = get("ibadnessids");
-        if (notOk(ibadnessids)) {
-            renderFail("请选择不良项目");
-            return;
-        }*/
         Operation model = getModel(Operation.class, "operation");
-        //model.setCupdatename(ibadnessids);
         renderJson(service.update(model));
     }
 
@@ -145,7 +136,6 @@ public class OperationAdminController extends JBoltBaseController {
     }*/
 
     public void pageList() {
-        final Page<Record> recordPage = service.pageList(getKv());
         renderJsonData(service.pageList(getKv()));
     }
 
@@ -216,4 +206,11 @@ public class OperationAdminController extends JBoltBaseController {
         renderJson(service.importExcelData(file.getFile()));
     }
 
+    public void options(){
+        renderJsonData(service.getIdAndNameList());
+    }
+
+    public void optionsToInventoryCheckForm(){
+        renderJsonData(service.getIdAndNameListToInventoryCheckForm());
+    }
 }

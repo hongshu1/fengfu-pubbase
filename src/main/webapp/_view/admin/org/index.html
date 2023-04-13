@@ -24,9 +24,10 @@
             <tr data-id="${data.id}">
                 <td>${data.org_code}</td>
                 <td>${data.org_name}</td>
-                <td>${data.u8_dbname}</td>
+                <td >${data.u8_dbname}</td>
                 <!--<td>${data.u8_alias}</td>-->
-                <td>${data.name}</td>
+                <td >${data.name}</td>
+                <td><img data-switchbtn data-confirm="确定切换是否默认？" data-value="${data.is_default == '1'}" data-handler="refreshJBoltTable" data-url="admin/org/toggleIsDefault/${data.id}"/></td>
                 <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.enable == '1'}" data-handler="refreshJBoltTable" data-url="admin/org/toggleEnable/${data.id}"/></td>
                 <td>${data.enable_time}</td>
                 <td>${data.remark}</td>
@@ -68,6 +69,7 @@
                             <th data-width="150" data-column="u8_dbname">U8数据库名</th>
                             <!--<th data-width="110" data-column="u8_alias">U8数据源别名</th>-->
                             <th data-width="150" data-column="name">创建人</th>
+                            <th data-width="100" data-column="enable">是否默认</th>
                             <th data-width="100" data-column="enable">是否启用</th>
                             <th data-width="150" data-column="enable_time">启用时间</th>
                             <th data-width="150" data-column="remark">备注</th>

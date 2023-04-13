@@ -289,4 +289,8 @@ public class EquipmentService extends BaseService<Equipment> {
 		return dbTemplate("equipment.getAutocompleteDatas",Kv.by("q", q).set("limit",limit)).find();
 	}
 
+	public List<Record> dataList() {
+		return dbTemplate("equipment.selectEquipments").find();
+	}
+    
 }

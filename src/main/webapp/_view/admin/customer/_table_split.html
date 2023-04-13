@@ -94,19 +94,8 @@
             insertDefaultValues: {name:'#(JBoltUserKit.getUserName())'},
             submit: {
                 withForm: ["customermForm"],
-                type: "all",
-                url: "/admin/customer/updateEditTable",
-                success: function (res, table, td) {
-                    if (res.state === 'ok') {
-                        LayerMsgBox.success(res.msg, 1000, function () {
-                            // refreshPjaxContainer();
-                            parent.LayerMsgBox.closeAll();
-                            parent.refreshPjaxContainer();
-                        });
-                    } else {
-                        LayerMsgBox.alert(res.msg, 2);
-                    }
-                }
+                type:"multi",//cell|all|multi
+                name:"table1"
             },
             cols: {
                 iautoid: {

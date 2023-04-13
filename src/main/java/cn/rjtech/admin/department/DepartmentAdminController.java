@@ -216,4 +216,14 @@ public class DepartmentAdminController extends BaseAdminController {
 	public void options(){
 		renderJsonData(service.findAll());
 	}
+
+	/**
+	 * 部门数据源
+	 */
+	public void list() {
+		Okv kv = Okv.create();
+		kv.set("IsEnabled", 1);
+		kv.set("IsDeleted", 0);
+
+		renderJsonData(service.getCommonList(kv, "dCreateTime", "desc"));	}
 }

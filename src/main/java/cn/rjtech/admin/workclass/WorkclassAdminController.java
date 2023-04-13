@@ -8,6 +8,9 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.rjtech.admin.operation.OperationService;
+import cn.rjtech.model.momdata.Operation;
+import cn.rjtech.model.momdata.QcParam;
 import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.Util;
 import com.jfinal.aop.Before;
@@ -19,6 +22,8 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 工种档案 Controller
@@ -33,9 +38,9 @@ import java.util.List;
 public class WorkclassAdminController extends JBoltBaseController {
 
     @Inject
-    private WorkClassService service;
-    // @Inject
-    // private PersonService personService;
+    private WorkClassService service; //工种档案
+    @Inject
+    private OperationService operationService; //工序档案
 
     /**
      * 首页
@@ -49,25 +54,6 @@ public class WorkclassAdminController extends JBoltBaseController {
      */
     public void datas() {
         Page<Record> recordPage = service.pageList(getKv());
-        for (Record record : recordPage.getList()) {
-            switch (record.get("ilevel").toString()){
-                case "1":
-                    record.set("ilevel","一级");
-                    break;
-                case "2":
-                    record.set("ilevel","二级");
-                    break;
-                case "3":
-                    record.set("ilevel","三级");
-                    break;
-                case "4":
-                    record.set("ilevel","四级");
-                    break;
-                case "5":
-                    record.set("ilevel","五级");
-                    break;
-            }
-        }
         renderJsonData(recordPage);
     }
 
@@ -109,6 +95,14 @@ public class WorkclassAdminController extends JBoltBaseController {
      * 批量删除
      */
     public void deleteByIds() {
+        String[] ids = get("ids").split(",");
+        for (String id : ids) {
+            String checkResult = checkOperationIsUse(Long.valueOf(id));
+            if(StringUtils.isNotBlank(checkResult)){
+                renderFail(checkResult);
+                return;
+            }
+        }
         renderJson(service.deleteByBatchIds(get("ids")));
     }
 
@@ -117,6 +111,19 @@ public class WorkclassAdminController extends JBoltBaseController {
      */
     public void toggleIsdeleted() {
         renderJson(service.toggleIsdeleted(getLong(0)));
+    }
+
+    /*
+     * 删除工种前判断是否已经被使用了
+     * */
+    public String checkOperationIsUse(Long id){
+        String msg = "";
+        Workclass workclass = service.findById(id);
+        List<Operation> operations = operationService.findByIworkclassId(workclass.getIautoid());
+        if (!operations.isEmpty()){
+            msg = workclass.getCworkclassname()+ " 已经在【工序档案】页面使用了，不能删除";
+        }
+        return msg;
     }
 
     /**

@@ -44,6 +44,25 @@
     <div class="form-group row"
          data-radio
          data-rule="radio"
+         data-value="#(org.isDefault??)"
+         data-name="org.isDefault"
+         data-default="true">
+        <label class="col-2 col-form-label">是否默认</label>
+        <div class="col-2" style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input id="risdefault1" type="radio" name="org.isDefault" value="true"/>
+                <label for="risdefault1">是</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input id="risdefault0" type="radio" name="org.isDefault" value="false"/>
+                <label for="risdefault0">否</label>
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group row"
+         data-radio
+         data-rule="radio"
          data-value="#(org.enable??)"
          data-name="org.enable"
          data-default="true">

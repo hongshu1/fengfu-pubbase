@@ -1,0 +1,192 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="CustomerWorkDays_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.iyear}</td>
+            <td>${data.imonth1days}</td>
+            <td>${data.imonth2days}</td>
+            <td>${data.imonth3days}</td>
+            <td>${data.imonth4days}</td>
+            <td>${data.imonth5days}</td>
+            <td>${data.imonth6days}</td>
+            <td>${data.imonth7days}</td>
+            <td>${data.imonth8days}</td>
+            <td>${data.imonth9days}</td>
+            <td>${data.imonth10days}</td>
+            <td>${data.imonth11days}</td>
+            <td>${data.imonth12days}</td>
+        </tr>
+    {@/each}
+</textarea>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- 工具条 toolbar -->
+                <div class="jbolt_table_toolbar" id="CustomerWorkDays_toolbar_#(pageId)">
+
+                    <div class="btn-group" role="group" aria-label="btn-group">
+                        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+                        <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+                    </div>
+
+                    <div class="clearfix"></div>
+                </div>
+
+                <table class="jbolt_table jbolt_main_table  table-center"
+                       id="jbolt_table_CustomerWorkDays_#(pageId)"
+                       data-jbolttable
+                       data-width="auto"
+                       data-height="200"
+                       data-ajax="true"
+                       data-column-prepend="1:checkbox:true"
+                       ###data-conditions-form="customerdSplit_form_#(pageId)"
+                       data-toolbar="CustomerWorkDays_toolbar_#(pageId)"
+                       data-url="admin/customerworkdays/getList?icustomermid=#(customerm.iautoid??)"
+                       data-rowtpl="CustomerWorkDays_#(pageId)"
+                       ###data-copy-to-excel="false"
+                       data-column-resize="true"
+                       data-editable="true"
+                       data-editable-option="getEditableTableOptions_CustomerWorkDays_#(pageId)"
+                >
+                    <thead>
+                    <tr>
+                        <th data-width="60" data-column="index">序号</th>
+                        <th data-width="100" data-column="iyear">年份</th>
+                        <th data-width="100" data-column="imonth1days">1月</th>
+                        <th data-width="100" data-column="imonth2days">2月</th>
+                        <th data-width="100" data-column="imonth3days">3月</th>
+                        <th data-width="120" data-column="imonth4days">4月</th>
+                        <th data-width="120" data-column="imonth5days">5月</th>
+                        <th data-width="120" data-column="imonth6days">6月</th>
+                        <th data-width="120" data-column="imonth7days">7月</th>
+                        <th data-width="120" data-column="imonth8days">8月</th>
+                        <th data-width="120" data-column="imonth9days">9月</th>
+                        <th data-width="120" data-column="imonth10days">10月</th>
+                        <th data-width="120" data-column="imonth11days">11月</th>
+                        <th data-width="120" data-column="imonth12days">12月</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function getEditableTableOptions_CustomerWorkDays_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
+            insertDefaultValues: {name:'#(JBoltUserKit.getUserName())'},
+            submit: {
+                withForm: ["customermForm"],
+                type:"multi",//cell|all|multi
+                name:"table2"
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid"
+                },
+                iyear: {
+                    type: "year",
+                    required:true,
+                    handler:function(table,td,text,value,trJsonData){
+                        console.log('value',value);
+                        var datas =
+                            jboltTableGetAllDatas("jbolt_table_CustomerWorkDays_#(pageId)",['iyear']);
+                        console.log('datas',datas);
+                        var int = 0;
+                        for (var i = 0; i < datas.length; i++) {
+                            var year = datas[i].iyear;
+                            console.log('year',year)
+                            if (year===value){
+                                ++int;
+                            }
+                        }
+                        console.log('int',int)
+                        if (int > 1){
+                            showFormEleErrorStyle(td,"已存在"+value+"年");
+                            return false;
+                        }
+                    }
+                },
+                imonth1days: {
+                    submitAttr:"imonth1days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth2days: {
+                    submitAttr:"imonth2days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth3days: {
+                    submitAttr:"imonth3days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth4days: {
+                    submitAttr:"imonth4days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth5days: {
+                    submitAttr:"imonth5days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth6days: {
+                    submitAttr:"imonth6days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth7days: {
+                    submitAttr:"imonth7days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth8days: {
+                    submitAttr:"imonth8days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth9days: {
+                    submitAttr:"imonth9days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth10days: {
+                    submitAttr:"imonth10days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth11days: {
+                    submitAttr:"imonth11days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                },
+                imonth12days: {
+                    submitAttr:"imonth12days",
+                    required:true,
+                    type: "input",
+                    rule:"int"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>
