@@ -42,6 +42,7 @@
 	<td>
 		<a class="text-info mr-1" data-openpage="dialog" href="admin/manualorderm/info/${data.iautoid}" data-area="100%,100%" data-title="查看手配订单"><i class="fa fa-eye"></i></a>
 		{@if data.iorderstatus == 2}
+			<a class="jbolt_table_btn" href="admin/manualorderm/reply/${data.iautoid}" data-handler="refreshJBoltTable" data-ajaxbtn ><i class="fa fa-reply"></i></a>
 			<a class="jbolt_table_btn" href="admin/manualorderm/audit/${data.iautoid}" data-handler="refreshJBoltTable" data-ajaxbtn ><i class="fa fa-check"></i></a>
 		{@/if}
 		{@if data.iorderstatus == 3}

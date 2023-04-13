@@ -100,6 +100,19 @@ public class ManualOrderMAdminController extends BaseAdminController {
 	}
 
    /**
+	* 撤回
+	*/
+	public void reply() {
+		ManualOrderM manualOrderM=service.findById(getLong(0));
+		if(manualOrderM == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		manualOrderM.setIOrderStatus(1);
+		renderJson(service.update(manualOrderM));
+	}
+
+   /**
 	* 关闭
 	*/
 	public void colse() {
@@ -113,7 +126,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
 	}
 
    /**
-	* 编辑
+	* 查看
 	*/
 	public void info() {
 		ManualOrderM manualOrderM=service.findById(getLong(0));
