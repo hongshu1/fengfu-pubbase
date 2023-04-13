@@ -40,3 +40,10 @@ SELECT re.*, e.cEquipmentCode,e.cEquipmentName,w.cWorkName workName,dp.cDepName
  left join Bd_Department dp on dp.iAutoId = w.iDepId
  WHERE re.iInventoryRoutingConfigId = #para(configid)
 #end
+
+#sql("options")
+select i.*,u1.cUomName
+from  Bd_Inventory i
+left join bd_uom u1 on u1.iAutoId = i.iInventoryUomId1
+where i.isEnabled = '1' and i.isDeleted = '0'
+#end

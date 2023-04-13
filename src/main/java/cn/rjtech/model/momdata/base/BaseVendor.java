@@ -116,6 +116,22 @@ public abstract class BaseVendor<M extends BaseVendor<M>> extends JBoltBaseModel
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**联系人编码*/
+    public static final String CVENCONTACTCODE = "cVenContactCode";
+    /**到货地址*/
+    public static final String CVENIADDRESS = "cVenIAddress";
+    /**所属地区*/
+    public static final String CAREA = "cArea";
+    /**到货仓库编码*/
+    public static final String CVENWHCODE  = "cVenWhCode ";
+    /**是否委外：0. 否 1. 是*/
+    public static final String BPROXYFOREIGN = "bProxyForeign";
+    /**是否服务： 0. 否 1. 是*/
+    public static final String BVENSERVICE = "bVenService";
+    /**是否国外： 0. 否 1. 是*/
+    public static final String BVENOVERSEAS = "bVenOverseas";
+    /**供应商分类ID*/
+    public static final String IVENDORCLASSID = "iVendorClassId";
 	/**
 	 * 主键ID
 	 */
@@ -1015,6 +1031,142 @@ public abstract class BaseVendor<M extends BaseVendor<M>> extends JBoltBaseModel
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 联系人编码
+	 */
+	public M setCVenContactCode(java.lang.String cVenContactCode) {
+		set("cVenContactCode", cVenContactCode);
+		return (M)this;
+	}
+
+	/**
+	 * 联系人编码
+	 */
+	@JBoltField(name="cvencontactcode" ,columnName="cVenContactCode",type="String", remark="联系人编码", required=false, maxLength=50, fixed=0, order=54)
+	@JSONField(name = "cvencontactcode")
+	public java.lang.String getCVenContactCode() {
+		return getStr("cVenContactCode");
+	}
+
+	/**
+	 * 到货地址
+	 */
+	public M setCVenIAddress(java.lang.String cVenIAddress) {
+		set("cVenIAddress", cVenIAddress);
+		return (M)this;
+	}
+
+	/**
+	 * 到货地址
+	 */
+	@JBoltField(name="cveniaddress" ,columnName="cVenIAddress",type="String", remark="到货地址", required=false, maxLength=200, fixed=0, order=55)
+	@JSONField(name = "cveniaddress")
+	public java.lang.String getCVenIAddress() {
+		return getStr("cVenIAddress");
+	}
+
+	/**
+	 * 所属地区
+	 */
+	public M setCArea(java.lang.String cArea) {
+		set("cArea", cArea);
+		return (M)this;
+	}
+
+	/**
+	 * 所属地区
+	 */
+	@JBoltField(name="carea" ,columnName="cArea",type="String", remark="所属地区", required=false, maxLength=50, fixed=0, order=56)
+	@JSONField(name = "carea")
+	public java.lang.String getCArea() {
+		return getStr("cArea");
+	}
+
+	/**
+	 * 到货仓库编码
+	 */
+	public M setCVenWhCode (java.lang.String cVenWhCode ) {
+		set("cVenWhCode ", cVenWhCode );
+		return (M)this;
+	}
+
+	/**
+	 * 到货仓库编码
+	 */
+	@JBoltField(name="cvenwhcode " ,columnName="cVenWhCode ",type="String", remark="到货仓库编码", required=false, maxLength=30, fixed=0, order=57)
+	@JSONField(name = "cvenwhcode ")
+	public java.lang.String getCVenWhCode () {
+		return getStr("cVenWhCode ");
+	}
+
+	/**
+	 * 是否委外：0. 否 1. 是
+	 */
+	public M setBProxyForeign(java.lang.Boolean bProxyForeign) {
+		set("bProxyForeign", bProxyForeign);
+		return (M)this;
+	}
+
+	/**
+	 * 是否委外：0. 否 1. 是
+	 */
+	@JBoltField(name="bproxyforeign" ,columnName="bProxyForeign",type="Boolean", remark="是否委外：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=58)
+	@JSONField(name = "bproxyforeign")
+	public java.lang.Boolean getBProxyForeign() {
+		return getBoolean("bProxyForeign");
+	}
+
+	/**
+	 * 是否服务： 0. 否 1. 是
+	 */
+	public M setBVenService(java.lang.Boolean bVenService) {
+		set("bVenService", bVenService);
+		return (M)this;
+	}
+
+	/**
+	 * 是否服务： 0. 否 1. 是
+	 */
+	@JBoltField(name="bvenservice" ,columnName="bVenService",type="Boolean", remark="是否服务： 0. 否 1. 是", required=false, maxLength=1, fixed=0, order=59)
+	@JSONField(name = "bvenservice")
+	public java.lang.Boolean getBVenService() {
+		return getBoolean("bVenService");
+	}
+
+	/**
+	 * 是否国外： 0. 否 1. 是
+	 */
+	public M setBVenOverseas(java.lang.Boolean bVenOverseas) {
+		set("bVenOverseas", bVenOverseas);
+		return (M)this;
+	}
+
+	/**
+	 * 是否国外： 0. 否 1. 是
+	 */
+	@JBoltField(name="bvenoverseas" ,columnName="bVenOverseas",type="Boolean", remark="是否国外： 0. 否 1. 是", required=false, maxLength=1, fixed=0, order=60)
+	@JSONField(name = "bvenoverseas")
+	public java.lang.Boolean getBVenOverseas() {
+		return getBoolean("bVenOverseas");
+	}
+
+	/**
+	 * 供应商分类ID
+	 */
+	public M setIVendorClassId(java.lang.Long iVendorClassId) {
+		set("iVendorClassId", iVendorClassId);
+		return (M)this;
+	}
+
+	/**
+	 * 供应商分类ID
+	 */
+	@JBoltField(name="ivendorclassid" ,columnName="iVendorClassId",type="Long", remark="供应商分类ID", required=false, maxLength=19, fixed=0, order=61)
+	@JSONField(name = "ivendorclassid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIVendorClassId() {
+		return getLong("iVendorClassId");
 	}
 
 }

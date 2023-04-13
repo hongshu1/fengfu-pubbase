@@ -152,6 +152,7 @@ public class InventoryAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		inventory = service.setIItemAttributes(inventory);
 		set("inventory",inventory);
 		InventoryStockConfig inventorystockconfig = inventoryStockConfigService.findFirst(Okv.by("iInventoryId", inventory.getIAutoId()), "iAutoId", "DESC");
 		set("inventorystockconfig",inventorystockconfig);
@@ -161,6 +162,11 @@ public class InventoryAdminController extends BaseAdminController {
 		set("inventoryplan",inventoryplan);
 		InventoryMfgInfo inventoryMfgInfo = inventoryMfgInfoService.findFirst(Okv.by("iInventoryId", inventory.getIAutoId()), "iAutoId", "DESC");
 		set("inventorymfginfo",inventoryMfgInfo);
+		InventoryRouting inventoryRouting = inventoryRoutingService.getCurrentRouting(inventory.getIAutoId());
+		if(inventoryRouting != null){
+			set("iinventoryroutingid",inventoryRouting.getIAutoId());
+			set("iitemroutingname",inventoryRouting.getCRoutingName());
+		}
 		render("edit.html");
 	}
 

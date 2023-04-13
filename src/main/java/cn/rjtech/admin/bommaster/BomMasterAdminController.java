@@ -1,28 +1,22 @@
 package cn.rjtech.admin.bommaster;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.jbolt.core.bean.JsTreeBean;
-import cn.jbolt.core.bean.JsTreeStateBean;
+import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.rjtech.admin.bomcompare.BomCompareService;
+import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
-import cn.rjtech.model.momdata.BomCompare;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
-import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.BomMaster;
+import com.jfinal.upload.UploadFile;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
 /**
  * 物料建模-Bom母项
@@ -40,6 +34,12 @@ public class BomMasterAdminController extends BaseAdminController {
 	private InventoryChangeService inventoryChangeService;
 	@Inject
 	private EquipmentModelService equipmentModelService;
+	@Inject
+	private InventoryService inventoryService;
+	@Inject
+	private CustomerService customerService;
+	@Inject
+	private BomCompareService bomCompareService;
    /**
 	* 首页
 	*/
@@ -66,15 +66,34 @@ public class BomMasterAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		BomMaster bomMaster=service.findById(getLong(0));
+		getBomMaster(getLong(0));
+		render("edit.html");
+	}
+	
+	private void getBomMaster(Long id){
+		BomMaster bomMaster=service.findById(id);
 		if(bomMaster == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		set("index", bomCompareService.queryCompareIndex(id));
+		set("equipmentModel", equipmentModelService.findById(bomMaster.getIEquipmentModelId()));
+		set("inventory", inventoryService.findById(bomMaster.getIInventoryId()));
 		set("bomMaster",bomMaster);
+	}
+	
+	/**
+	 * 查看
+	 */
+	public void info(){
+		getBomMaster(getLong(0));
+		set("view",1);
 		render("edit.html");
 	}
 	
+	public void findByBomMasterId(){
+		renderJsonData(bomCompareService.findByBomMasterId(getLong(0)));
+	}
 
    /**
 	* 批量删除
@@ -139,7 +158,35 @@ public class BomMasterAdminController extends BaseAdminController {
 	}
 	
 	// 拷贝
-	public void saveCopy(@Para(value = "oldId") String oldId){
+	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "oldId") Long oldId){
+		renderJson(service.saveCopy(oldId, cVersion));
+	}
 	
+	public void importExcelFile() throws IOException {
+		//上传到今天的文件夹下
+		String uploadFile= JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_FILE_UPLOADER);
+		UploadFile file=getFile("file", uploadFile);
+		
+		if (notExcel(file)) {
+			renderJsonFail("请上传excel文件");
+			return;
+		}
+		renderJsonData(service.importExcelFile(file));
+	}
+	
+	public void bomMasterIndex(){
+		render("bommaster_index.html");
+	}
+	
+	public void versionIndex(){
+		render("version_index.html");
+	}
+	
+	public void getVersionRecord(){
+		renderJsonData(service.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
+	}
+	
+	public void del(){
+		renderJson(service.del(getLong(0)));
 	}
 }

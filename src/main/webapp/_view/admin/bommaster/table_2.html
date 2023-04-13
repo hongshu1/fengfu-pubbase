@@ -1,0 +1,76 @@
+<div style="margin-top: 50px;">
+    <div style="float: left; width: 150px; margin-bottom: 20px">
+        <img src="assets/img/defaultposter.jpg" data-target="parent" data-photobtn class="m-1" style="height: 100px" tooltip data-title="点击查看大图" />
+    </div>
+    <div style="float: left; margin-left: 5px">
+        <table class="jbolt_table thead_font_normal table-center thead_font_normal" data-width="auto" height="100px" data-height="300px"
+               data-jbolttable>
+            <thead>
+            <tr>
+                <th  data-width="70" data-column="cNo1">NO</th>
+                <th  data-width="150" data-column="version" class="is_required">存货编码</th>
+                <th  data-width="150" data-column="publish_time">客户部番</th>
+                <th  data-width="120" data-column="create_time">重量（KG）</th>
+                <th  data-width="120" data-column="version">设变号</th>
+                <th  data-width="120" data-column="version">设变日期</th>
+                <th  data-width="70" data-column="cNo2">NO</th>
+                <th  data-width="150" data-column="create_time">UG部番</th>
+                <th  data-width="150" data-column="create_time">重量（KG）</th>
+                <th  data-width="120" data-column="version">设变号</th>
+                <th  data-width="120" data-column="version">设变日期</th>
+            </thead>
+            <tbody>
+            <tr>
+                <td><input autocomplete="off" class="form-control" name="cNo1" value="#(bomMaster.cno1??)"></td>
+                <td>
+                    <input type="text" name="iInventoryId" value="#(bomMaster.iinventoryid??)" hidden data-sync-attr="itemid" id="iBeforeInveId"  data-notnull="true" data-tips="请输入转换前存货ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
+                    <input type="text"
+                           data-autocomplete
+                           data-rule="required"
+                           data-tips="请选择存货编码"
+                           autocomplete="off"
+                           class="form-control"
+                           placeholder="请选择存货编码"
+                           value="#(inventory.cinvcode??)"
+                           id="inventoryName"
+                           maxlength="40"
+                           data-link-para-ele="#iEquipmentModelId"
+                           data-url="admin/bommaster/inventoryAutocomplete"
+                           data-sync-ele="#beforeInvCode,#Weight,#iBeforeInveId"
+                           data-text-attr="cinvcode"
+                           data-column-attr="cinvcode"
+                    />
+                </td>
+                <td>
+                    <input id="beforeInvCode" type="text"    data-notnull="true" data-sync-attr="cinvcode1"   data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled value="#(inventory.cinvcode1??)"/>
+                </td>
+                <td>
+                    <input id="Weight" type="text"   value="" data-notnull="true" data-sync-attr="iweight"   data-with-clearbtn="true" autocomplete="off"  class="form-control" vocab="#(inventory.iweight??)" disabled/>
+                </td>
+                <td>
+                    <input id="cDcNo1" type="text" autocomplete="off"  class="form-control"  placeholder="输入设变号" name="cDcNo1" value="#(bomMaster.cdcno1??)" />
+                </td>
+                <td>
+                    <input id="dDcDate1" type="text" class="form-control" data-date name="dDcDate1" value="#date(DateUtil.toDate(bomMaster.ddcdate1??),'yyyy-MM-dd')">
+                </td>
+                <td>
+                    <input id="cNo1" autocomplete="off" class="form-control" name="cNo1" value="#(bomMaster.cno1??)">
+                </td>
+                <td>
+                    <input id="AddCode1" type="text"   value="#(inventory.cinvaddcode1??)" data-notnull="true" data-sync-attr="cinvaddcode1"   data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+                </td>
+                <td>
+                    <input id="iweight" type="text"   value="#(inventory.iweight??)" data-notnull="true" data-sync-attr="iweight"   data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled/>
+                </td>
+                <td>
+                    <input id="cDcNo2" type="text" autocomplete="off"  class="form-control"  placeholder="输入设变号" name="cDcNo2" value="#(bomMaster.cdcno2??)" />
+                </td>
+                <td>
+                    <input id="dDcDate2" type="text" class="form-control"  data-date name="dDcDate2" value="#date(DateUtil.toDate(bomMaster.ddcdate2??),'yyyy-MM-dd')">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+

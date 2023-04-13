@@ -26,3 +26,12 @@ FROM
         LEFT JOIN Bd_VendorClass t2 ON t1.iAutoId = t2.iPid
 WHERE 1=1
 #end
+
+#sql("findRecordByCVCCode")
+SELECT *
+FROM Bd_VendorClass t1
+WHERE t1.isDeleted = '0'
+  #if(cvccode)
+  AND t1.cvccode = #para(cvccode)
+  #end
+#end

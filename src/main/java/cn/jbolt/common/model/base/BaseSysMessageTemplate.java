@@ -1,6 +1,7 @@
 package cn.jbolt.common.model.base;
-import cn.jbolt.core.model.base.JBoltBaseModel;
+
 import cn.jbolt.core.gen.JBoltField;
+import cn.jbolt.core.model.base.JBoltBaseModel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -39,7 +40,7 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	/**
 	 * 主键
 	 */
-	public M setId(java.lang.Long id) {
+	public M setId(Long id) {
 		set("id", id);
 		return (M)this;
 	}
@@ -49,14 +50,14 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="id" ,columnName="id",type="Long", remark="主键", required=true, maxLength=19, fixed=0, order=1)
 	@JSONField(name = "id", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getId() {
+	public Long getId() {
 		return getLong("id");
 	}
 
 	/**
 	 * 消息编码
 	 */
-	public M setMessageCode(java.lang.Integer messageCode) {
+	public M setMessageCode(Integer messageCode) {
 		set("message_code", messageCode);
 		return (M)this;
 	}
@@ -66,14 +67,14 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="messagecode" ,columnName="message_code",type="Integer", remark="消息编码", required=false, maxLength=10, fixed=0, order=2)
 	@JSONField(name = "messagecode")
-	public java.lang.Integer getMessageCode() {
+	public Integer getMessageCode() {
 		return getInt("message_code");
 	}
 
 	/**
 	 * 消息名称
 	 */
-	public M setMessageName(java.lang.Integer messageName) {
+	public M setMessageName(Integer messageName) {
 		set("message_name", messageName);
 		return (M)this;
 	}
@@ -83,14 +84,14 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="messagename" ,columnName="message_name",type="Integer", remark="消息名称", required=false, maxLength=10, fixed=0, order=3)
 	@JSONField(name = "messagename")
-	public java.lang.Integer getMessageName() {
+	public Integer getMessageName() {
 		return getInt("message_name");
 	}
 
 	/**
 	 * 发送时机
 	 */
-	public M setMessageChance(java.lang.Integer messageChance) {
+	public M setMessageChance(Integer messageChance) {
 		set("message_chance", messageChance);
 		return (M)this;
 	}
@@ -100,14 +101,14 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="messagechance" ,columnName="message_chance",type="Integer", remark="发送时机", required=false, maxLength=10, fixed=0, order=4)
 	@JSONField(name = "messagechance")
-	public java.lang.Integer getMessageChance() {
+	public Integer getMessageChance() {
 		return getInt("message_chance");
 	}
 
 	/**
 	 * 模板标题
 	 */
-	public M setMessageTitle(java.lang.Integer messageTitle) {
+	public M setMessageTitle(Integer messageTitle) {
 		set("message_title", messageTitle);
 		return (M)this;
 	}
@@ -117,13 +118,13 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="messagetitle" ,columnName="message_title",type="Integer", remark="模板标题", required=false, maxLength=10, fixed=0, order=5)
 	@JSONField(name = "messagetitle")
-	public java.lang.Integer getMessageTitle() {
+	public Integer getMessageTitle() {
 		return getInt("message_title");
 	}
 	/**
 	 * 消息类型
 	 */
-	public M setMessageType(java.lang.Integer messageType) {
+	public M setMessageType(String messageType) {
 		set("message_type", messageType);
 		return (M)this;
 	}
@@ -133,14 +134,14 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="messagetype" ,columnName="message_type",type="String", remark="消息类型", required=false, maxLength=10, fixed=0, order=5)
 	@JSONField(name = "messagetype")
-	public java.lang.Integer getMessageType() {
-		return getInt("message_type");
+	public String getMessageType() {
+		return getStr("message_type");
 	}
 
 	/**
 	 * 发送内容
 	 */
-	public M setMessageValue(java.lang.String messageValue) {
+	public M setMessageValue(String messageValue) {
 		set("message_value", messageValue);
 		return (M)this;
 	}
@@ -150,7 +151,7 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="messagevalue" ,columnName="message_value",type="String", remark="发送内容", required=false, maxLength=2147483647, fixed=0, order=6)
 	@JSONField(name = "messagevalue")
-	public java.lang.String getMessageValue() {
+	public String getMessageValue() {
 		return getStr("message_value");
 	}
 
@@ -191,7 +192,7 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	/**
 	 * 创建人
 	 */
-	public M setCreateUserId(java.lang.Long createUserId) {
+	public M setCreateUserId(Long createUserId) {
 		set("create_user_id", createUserId);
 		return (M)this;
 	}
@@ -201,14 +202,14 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="createuserid" ,columnName="create_user_id",type="Long", remark="创建人", required=false, maxLength=19, fixed=0, order=9)
 	@JSONField(name = "createuserid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getCreateUserId() {
+	public Long getCreateUserId() {
 		return getLong("create_user_id");
 	}
 
 	/**
 	 * 更新人
 	 */
-	public M setUpdateUserId(java.lang.Long updateUserId) {
+	public M setUpdateUserId(Long updateUserId) {
 		set("update_user_id", updateUserId);
 		return (M)this;
 	}
@@ -218,14 +219,14 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="updateuserid" ,columnName="update_user_id",type="Long", remark="更新人", required=false, maxLength=19, fixed=0, order=10)
 	@JSONField(name = "updateuserid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getUpdateUserId() {
+	public Long getUpdateUserId() {
 		return getLong("update_user_id");
 	}
 
 	/**
 	 * 删除标志
 	 */
-	public M setDelFlag(java.lang.Boolean delFlag) {
+	public M setDelFlag(Boolean delFlag) {
 		set("del_flag", delFlag);
 		return (M)this;
 	}
@@ -235,14 +236,14 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="delflag" ,columnName="del_flag",type="Boolean", remark="删除标志", required=true, maxLength=1, fixed=0, order=11)
 	@JSONField(name = "delflag")
-	public java.lang.Boolean getDelFlag() {
+	public Boolean getDelFlag() {
 		return getBoolean("del_flag");
 	}
 
 	/**
 	 * 启用禁用
 	 */
-	public M setIsOn(java.lang.Boolean isOn) {
+	public M setIsOn(Boolean isOn) {
 		set("is_on", isOn);
 		return (M)this;
 	}
@@ -252,7 +253,7 @@ public abstract class BaseSysMessageTemplate<M extends BaseSysMessageTemplate<M>
 	 */
 	@JBoltField(name="ison" ,columnName="is_on",type="Boolean", remark="启用禁用", required=true, maxLength=1, fixed=0, order=12)
 	@JSONField(name = "ison")
-	public java.lang.Boolean getIsOn() {
+	public Boolean getIsOn() {
 		return getBoolean("is_on");
 	}
 

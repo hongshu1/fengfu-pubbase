@@ -1,0 +1,185 @@
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col">
+                <form class="form-inline" id="itemroutingForm_#(pageId)"   onsubmit="return false;" method="post">
+                    <input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品工艺档案配置Id" name="configid" value="#(configid)" />
+                    <input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+                    <button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}" >
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td><a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger"></i></a></td>
+            <td>${data.cinvcode}</td>
+            <td hidden>${data.iinventoryid}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.cuomname}</td>
+            <td>${data.iqty1}</td>
+            <td>${data.iqty2}</td>
+            <td>${data.iqty3}</td>
+            <td>${data.iqty4}</td>
+            <td>${data.iqty5}</td>
+            <td>${data.iqty6}</td>
+            <td>${data.iqty7}</td>
+            <td>${data.iqty8}</td>
+            <td>${data.iqty9}</td>
+            <td>${data.iqty10}</td>
+            <td>${data.iqty11}</td>
+            <td>${data.iqty12}</td>
+            <td>${data.iqty13}</td>
+            <td>${data.iqty14}</td>
+            <td>${data.iqty15}</td>
+            <td>${data.iqty16}</td>
+            <td>${data.iqty17}</td>
+            <td>${data.iqty18}</td>
+            <td>${data.iqty19}</td>
+            <td>${data.iqty20}</td>
+            <td>${data.iqty21}</td>
+            <td>${data.iqty22}</td>
+            <td>${data.iqty23}</td>
+            <td>${data.iqty24}</td>
+            <td>${data.iqty25}</td>
+            <td>${data.iqty26}</td>
+            <td>${data.iqty27}</td>
+            <td>${data.iqty28}</td>
+            <td>${data.iqty29}</td>
+            <td>${data.iqty30}</td>
+            <td>${data.iqty31}</td>
+            <td>${data.isum}</td>
+        </tr>
+        {@/each}
+        </textarea>
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
+            <div class="btn-group" role="group" aria-label="btn-group">
+                <div>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               id="manualorderd_#(pageId)"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="admin/manualorderd/dataList?imanualordermid=#(manualOrderM.iAutoId??)"
+               data-column-resize="true"
+               ##data-column-prepend="1:checkbox:true"
+               data-conditions-form="itemroutingForm_#(pageId)"
+               data-rowtpl="itemroutingRowtpl_#(pageId)"
+               data-toolbar="itemrouting_toolbar_#(pageId)"
+               data-editable="true"
+               data-editable-option="getEditableTableOptions_workposition"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <!--<th data-min-width="150" data-column="iItemId">料品档案ID</th>-->
+                <th data-width="60" data-min-width="60" data-column="index">序号</th>
+                <th data-width="60">操作</th>
+                <th data-column="cinvcode">存货编码</th>
+                <th data-column="iinventoryid" hidden>存货</th>
+                <th data-column="cinvcode1" >客户部番</th>
+                <th data-column="cinvname1">部品名称</th>
+                <th data-column="cinvstd">规格</th>
+                <th data-column="cuomname">库存主单位</th>
+                <th data-column="iqty1">1日</th>
+                <th data-column="iqty2">2日</th>
+                <th data-column="iqty3">3日</th>
+                <th data-column="iqty4">4日</th>
+                <th data-column="iqty5">5日</th>
+                <th data-column="iqty6">6日</th>
+                <th data-column="iqty7">7日</th>
+                <th data-column="iqty8">8日</th>
+                <th data-column="iqty9">9日</th>
+                <th data-column="iqty10">10日</th>
+                <th data-column="iqty11">10日</th>
+                <th data-column="iqty12">12日</th>
+                <th data-column="iqty13">13日</th>
+                <th data-column="iqty14">14日</th>
+                <th data-column="iqty15">15日</th>
+                <th data-column="iqty16">16日</th>
+                <th data-column="iqty17">17日</th>
+                <th data-column="iqty18">18日</th>
+                <th data-column="iqty19">19日</th>
+                <th data-column="iqty20">20日</th>
+                <th data-column="iqty21">21日</th>
+                <th data-column="iqty22">22日</th>
+                <th data-column="iqty23">23日</th>
+                <th data-column="iqty24">24日</th>
+                <th data-column="iqty25">25日</th>
+                <th data-column="iqty26">26日</th>
+                <th data-column="iqty27">27日</th>
+                <th data-column="iqty28">28日</th>
+                <th data-column="iqty29">29日</th>
+                <th data-column="iqty30">30日</th>
+                <th data-column="iqty31">31日</th>
+                <th data-column="isum">合计数量</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th hidden></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            <tr>
+            </tfoot>
+        </table>
+
+    </div>
+</div>

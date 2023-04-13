@@ -2,11 +2,17 @@ package cn.jbolt._admin.msgcenter;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.JBoltDictionaryService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.enums.DataSourceEnum;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.main.Application;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ModelMap;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -18,10 +24,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.common.model.SysMessageTemplate;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 消息模板 Service
@@ -33,6 +36,8 @@ import java.util.Map;
 public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
 
     private final SysMessageTemplate dao = new SysMessageTemplate().dao();
+    @Inject
+    private MessageUserService messageUserService;
 
     @Override
     protected SysMessageTemplate dao() {
@@ -175,8 +180,9 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
         sql.eqBooleanToChar("is_on", isEnabled);
         sql.eq("message_name", messageName, true);
         sql.eq("message_chance", messageChance, true);
+        sql.eq("del_flag", "0");
         //关键词模糊查询
-        sql.likeMulti(keywords, "message_name");
+        sql.likeMulti(keywords, "message_title");
         //排序
         sql.orderBy("id", true);
 
@@ -217,5 +223,51 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
             map.put(dictionary.getSn(), dictionary.getName());
         }
         return map;
+    }
+    /**
+     * 删除
+     */
+    public Ret deleteByAjax() {
+        return SUCCESS;
+    }
+
+    /**
+     * 表格提交
+     * */
+    public Ret submitTable(JBoltTable jBoltTable) {
+        SysMessageTemplate sysMessageTemplate = jBoltTable.getFormModel(SysMessageTemplate.class, "sysMessageTemplate");
+        ValidationUtils.notNull(sysMessageTemplate, JBoltMsg.PARAM_ERROR);
+        tx(()->{
+            Long userid = JBoltUserKit.getUserId();
+            String username = JBoltUserKit.getUserName();
+            Date now = new Date();
+            if(sysMessageTemplate.getId() == null){
+                sysMessageTemplate.setCreateTime(now)
+                        .setCreateUserId(userid)
+                        .setUpdateTime(now)
+                        .setUpdateUserId(userid);
+                ValidationUtils.isTrue(sysMessageTemplate.save(),JBoltMsg.FAIL);
+            }else{
+                sysMessageTemplate.setUpdateUserId(userid)
+                        .setUpdateTime(now);
+                ValidationUtils.isTrue(sysMessageTemplate.update(),JBoltMsg.FAIL);
+            }
+            //新增人员
+            messageUserService.addSubmitTableDatas(jBoltTable,sysMessageTemplate.getId());
+            //修改人员
+            messageUserService.updateSubmitTableDatas(jBoltTable);
+            //删除人员
+            messageUserService.deleteSubmitTableDatas(jBoltTable);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    public List<Record> findMessage(String messageId) {
+        List<Record>  messageUsers = findRecord(
+                "SELECT mu.*,ju.username,ju.name,ju.email FROM jb_message_user mu " +
+                        "LEFT JOIN jb_user ju on  mu.user_id = ju.id " +
+                        "WHERE mu.message_id = ? and mu.del_fag = '0'",false, messageId);
+        return messageUsers;
     }
 }

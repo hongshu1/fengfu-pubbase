@@ -146,6 +146,12 @@ public class VendorClassService extends BaseService<VendorClass> {
         return queryColumn(sql);
     }
 
+    public Record findRecordByCVCCode(String cvccode) {
+        Kv kv = new Kv();
+        kv.set("cvccode",cvccode);
+        return dbTemplate("vendorclass.findRecordByCVCCode", kv).findFirst();
+    }
+
     /**
      * 更新
      */

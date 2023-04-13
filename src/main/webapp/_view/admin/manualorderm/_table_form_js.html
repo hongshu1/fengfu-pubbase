@@ -1,0 +1,380 @@
+<script>
+
+    function getEditableTableOptions_workposition(){
+        var editableTableOptions={
+            trigger:"click",
+            initRowCount:0,
+            maxRowCount:30,
+            //keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+            submit:{
+                withForm:["ManualOrderM_Form_#(pageId)"],
+                name:"manualorderd",
+                type:"all",//cell|all
+                //params:{"masterautoid":'#(masterautoid)'},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                url:"admin/manualorderm/save",
+                success:function(res){
+                    LayerMsgBox.success("提交成功",600,function(){
+                        //refreshPjaxContainer();
+                        parent.refreshJBoltTable("#itemroutingconfigid");
+                        parent.LayerMsgBox.closeAll();
+                    });
+                }
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10},
+            cols:{
+                iautoid:{
+                    submitAttr:"iautoid",
+                },
+                cinvcode:{
+                    required:true,
+                    type:"dialogbtn",
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/manualorderm/inventory_dialog_index",
+                        area:"60%,70%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
+                    columnAttr:"iinventoryid,cinvcode1,cinvname1,cinvstd,cuomname",
+                    changeColumns: [
+                        {column:"cuomname",use:"cuomname"},
+                        {column:"cinvstd",use:"cinvstd"},
+                        {column:"cinvname1",use:"cinvname1"},
+                        {column:"cinvcode1",use:"cinvcode1"},
+                        {column:"iinventoryid",use:"iautoid"},
+                    ]
+                },
+                iqty1: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty2: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty3: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty4: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty5: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty6: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty7: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty8: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty9: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty10: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty11: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty12: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty13: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty14: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty15: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty16: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty17: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty18: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty19: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty20: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty21: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty22: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty23: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty24: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty25: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty26: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty27: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty28: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty29: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty30: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                iqty31: {
+                    type: "input_number",
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                },
+                isum: {
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }, {
+                        dir: "h",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "iqty1+iqty2+iqty3+iqty4+iqty5+iqty6+iqty7+iqty8+iqty9+iqty10+iqty11+iqty12+iqty13+iqty14+iqty15+iqty16+iqty17+iqty18+iqty19+iqty20+iqty21+iqty22+iqty23+iqty24+iqty25+iqty26+iqty27+iqty28+iqty29+iqty30+iqty31"
+                    }],
+                },
+            }
+        };
+        return editableTableOptions;
+    }
+
+</script>

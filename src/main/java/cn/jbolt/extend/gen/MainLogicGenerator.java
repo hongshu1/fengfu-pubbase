@@ -4,12 +4,7 @@ import cn.jbolt.core.gen.IndexHtmlLayoutType;
 import cn.jbolt.core.gen.JBoltMainLogicBean;
 import cn.jbolt.core.gen.JBoltMainLogicGenerator;
 import cn.jbolt.core.gen.SystemLogTargetType;
-import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.model.Permission;
-import cn.rjtech.model.momdata.ForgeignCurrency;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.PersonEquipment;
-import cn.rjtech.model.momdata.SettleStyle;
 import cn.rjtech.model.momdata.SpotCheckForm;
 
 import com.jfinal.plugin.activerecord.Model;

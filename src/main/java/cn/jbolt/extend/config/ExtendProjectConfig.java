@@ -12,6 +12,7 @@ import cn.rjtech.config.RedisConfig;
 import cn.rjtech.enjoy.directive.BracketDirective;
 import cn.rjtech.kit.DataPermissionKit;
 import cn.rjtech.kit.ReflectionTemplateFn;
+import cn.rjtech.routes.ApiRoutes;
 import cn.rjtech.routes.ExtendAdminRoutes;
 import cn.rjtech.serializer.StringRedisSerializer;
 import com.jfinal.config.*;
@@ -58,6 +59,8 @@ public class ExtendProjectConfig {
                         .scan("cn.rjtech.base.controller");
             }
         });
+
+        me.add(new ApiRoutes());
 	}
 	/**
 	 * 插件配置

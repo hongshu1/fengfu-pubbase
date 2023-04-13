@@ -1,4 +1,5 @@
-<form onsubmit="return false;" id="sysMessageTemplateForm" action="#(action)" method="post">
+#set(pageId=RandomUtil.random(6))
+<form onsubmit="return false;" id="sysMessageTemplateForm_#(pageId)" action="#(action)" method="post">
     <input type="hidden" name="sysMessageTemplate.id" value="#(sysMessageTemplate.id??)"/>
 
     <div class="form-group row">
@@ -41,18 +42,19 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">模板标题</label>
         <div class="col">
-            <input type="text" data-with-clearbtn="true"  data-rule="required"  autocomplete="off" class="form-control"
-                    placeholder="请输入模板标题" maxlength="10" name="sysMessageTemplate.message_title"
+
+            <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off" class="form-control"
+                   placeholder="请输入模板标题" maxlength="10" name="sysMessageTemplate.message_title"
                    value="#(sysMessageTemplate.message_title??)"/>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">发送内容</label>
         <div class="col">
-            <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off" class="form-control"
-                   placeholder="请输入发送内容"
-                   maxlength="2147483647" name="sysMessageTemplate.message_value"
-                   value="#(sysMessageTemplate.message_value??)"/>
+
+
+            <textarea class="form-control" data-auto-height data-with-clearbtn="true"  data-rule="required"  placeholder="请输入发送内容" data-tips="请输入发送内容"
+                      maxlength="20000" name="sysMessageTemplate.message_value" value="">#(sysMessageTemplate.message_value??)</textarea>
         </div>
     </div>
 
@@ -61,78 +63,169 @@
             <p style="font-size: 15px;font-weight:600;"><span>接收人配置</span></p>
         </div>
     </div>
-    <!-- JBoltTable的数据模板定义-->
-    <textarea class="jb_tpl_box" id="jbolt_table_rowtpl_#(pageId)">
+    <input type="text" id="xxx" hidden=hidden name="sysMessageTemplate.message_type" value="#(sysMessageTemplate.message_type??)"/>
+    <div class="form-group row"
+         data-checkbox
+         data-rule="checkbox"
+         data-value="#(sysMessageTemplate.message_type??)"
+         data-hidden-input="xxx"
+         data-name="message_type"
+         data-default="">
+        <label class="col-auto col-form-label" >消息属性：</label>
+        <div class="col"  style="padding-top: 1px;">
+            <div class="checkbox checkbox-primary  checkbox-inline">
+                <input  id="c1" type="checkbox" name="message_type"   value="1"/>
+                <label for="c1">自动发送系统通知</label>
+            </div>
 
-    </textarea>
+            <div class="checkbox checkbox-primary  checkbox-inline">
+                <input  id="c2" type="checkbox" name="message_type"   value="2"/>
+                <label for="c2">邮箱</label>
+            </div>
+
+            <div class="checkbox checkbox-primary  checkbox-inline">
+                <input  id="c3" type="checkbox" name="message_type"   value="3"/>
+                <label for="c3">短信</label>
+            </div>
+            <div class="checkbox checkbox-primary  checkbox-inline">
+                <input  id="c4" type="checkbox" name="message_type"   value="4"/>
+                <label for="c4">微信</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row"
+         data-radio
+         data-rule="radio"
+         data-value="#(sysMessageTemplate.is_on??'1' == '1'? 'true' : 'false')"
+         data-name="sysMessageTemplate.is_on"
+         data-default="options_first"
+         data-width="col-sm-1"
+    >
+        <label class="col-sm-1 col-form-label" >是否启用</label>
+        <div class="col"  style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input  id="r_isenabled_true" type="radio" name="sysMessageTemplate.is_on" value="true"/>
+                <label for="r_isenabled_true">是</label>
+            </div>
+
+            <div class="radio radio-primary  radio-inline">
+                <input  id="r_isenabled_false" type="radio" name="sysMessageTemplate.is_on" value="false"/>
+                <label for="r_isenabled_false">否</label>
+            </div>
+        </div>
+    </div>
+
+</form>
+    <!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="jbolt_table_rowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.id}</td>
+
+<td>${data.username}</td>
+ <td>${data.user_id}</td>
+<td>${data.name}</td>
+<td>${data.email}</td>
+<td> <a data-ajaxbtn href="/admin/person/deleteByAjax" data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a></td>
+</tr>
+{@/each}
+</textarea>
     <!-- 工具条 toolbar -->
     <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+
+            <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>
+                新增
+            </button>
         </div>
     </div>
-    <table class="jbolt_table thead_font_normal table-bordered table-center"
+    <table class="jbolt_table thead_font_normal table-bordered hover_info"
            data-jbolttable
            id="jbolt_Table_#(pageId)"
-           data-height="auto"
+           data-height="400"
            data-width="auto"
            data-column-resize="true"
            data-rowtpl="jbolt_table_rowtpl_#(pageId)"
            data-toolbar="jbolt_table_toolbar_#(pageId)"
-           data-autoload="true"
-           data-url="/admin/personequipment/findEditableDatas?iPersonId=#(person.iautoid??)"
+           #if(sysMessageTemplate.id??)
+           data-url="admin/messageTemplate/messageUserDate?messageId=#(sysMessageTemplate.id)"
+           #else
+           data-autoload="false"
+           #end
+           data-ajax="true"
            data-editable="true"
            data-editable-option="getEditableTableOptions_#(pageId)"
     >
-        <thead class="fw_normal">
+        <thead>
         <tr>
             <th data-width="60">序号</th>
-            <th data-column="cequipmentcode" data-width="150">用户名</th>
-            <th data-column="cequipmentname" data-width="100">姓名</th>
-            <th data-column="cworkname" data-width="120">E-Mail</th>
+            <th data-column="id" >id</th>
+            <th data-column="username" data-width="150">用户名</th>
+            <th data-column="user_id" >用户id</th>
+            <th data-column="name" data-width="100">姓名</th>
+            <th data-column="email" data-width="120">E-Mail</th>
             <th data-width="100">操作</th>
         </thead>
         <tbody>
         </tbody>
     </table>
 
-    <div class="form-group row"
-         data-checkbox
-         data-rule="checkbox"
-         data-label="消息属性"
-         data-default=""
-         data-url="admin/dictionary/options?key=message_type"
-         data-value-attr="sn"
-         data-text-attr="message_type"
-         data-inline="true"
-         data-value="#(sysMessageTemplate.message_type??)"
-         data-name="sysMessageTemplate.message_type">
-    </div>
-    <div class="form-group row"
-         data-radio
-         data-rule="radio"
-         data-value="#(sysMessageTemplate.ison??)"
-         data-name="sysMessageTemplate.ison"
-         data-default="options_first"
-         data-width="col-sm-2,col"
-    >
-        <label class="col-sm-2 col-form-label">启用禁用</label>
-        <div class="col" style="padding-top: 1px;">
-            <div class="radio radio-primary  radio-inline">
-                <input id="r_ison_true" type="radio" name="sysMessageTemplate.ison" value="true"/>
-                <label for="r_ison_true">是</label>
-            </div>
 
-            <div class="radio radio-primary  radio-inline">
-                <input id="r_ison_false" type="radio" name="sysMessageTemplate.ison" value="false"/>
-                <label for="r_ison_false">否</label>
-            </div>
-        </div>
-    </div>
-</form>
+
+
 #define js()
 <script>
+    function submitThisForm(){
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+    //获得配置参数
+    function getEditableTableOptions_#(pageId)(){
+        var editableTableOptions={
+            trigger:"click",
+            // 初始行数
+            initRowCount:1,
+            // 限制最大数 默认30
+            submit:{
+                withForm:["sysMessageTemplateForm_#(pageId)"],
+                name: 'sysMessageTemplateForm',
+                type:"all",//cell|all
+                //params:{"orderId":3},//携带其他额外参数
+                url:"admin/messageTemplate/submitTable",
+                success:function(res){
+                    LayerMsgBox.success("提交成功",600,function(){
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
+                    });
+                }
+            },
+            cols: {
+                id: {
+                    submitAttr: "id",
+                },
+                username: {
+                    type: "autocomplete",
+                    url: "admin/user/autocomplete",
+                    maxLength: 100,
+                    placeholder: "请选择",
+                    textAttr: "username",
+                    width: 500,
+                    required: true,
+                    valueAttr: "username",
+                    columnAttr: "username,name,email",
+                    header:'用户id',
+                    changeColumns:[
+                        {column: "user_id", use: "id"},
+                        {column: "username", use: "username"},
+                        {column: "name", use: "name"},
+                        {column: "email", use: "email"}
+                    ]
+                }
+            }
+        };
+        return editableTableOptions;
+    }
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="sysMessageTemplateForm")
+
 #end
 

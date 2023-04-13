@@ -31,9 +31,9 @@
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
-<td>${data.iinventoryuomid1}</td>
+<td>${data.cuomname}</td>
 <td>
-	<a tooltip data-title="上移"  href="javascript:void(0)" onclick="moveUpBtn(this,'${data.iAutoId}',${data.iSeq})"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+	<a tooltip href="javascript:void(0)" onclick="checkThis('${data.iautoid}','${data.cinvname1}')"   class="jbolt_table_btn">选择</a>
 </td>
 </tr>
 {@/each}
@@ -86,13 +86,11 @@
 		}
 	}
 
-	function moveUpBtn(ele,id,seq){
-		let iitemroutingid = $("#iitemroutingid").val();
-		let url = "admin/itemroutingconfig/moveUp?iitemroutingid="+iitemroutingid+"&iitemroutingconfigid="+id+"&seq="+seq;
-		Ajax.get(url,function(res){
-			refreshJBoltTable("#itemroutingconfigid");
-		});
-		//jboltTableTrMoveDown(ele);
+	function checkThis(iautoid,cinvname1){
+		if(iautoid){
+			parent.jboltTableProcessTdByDialogChooser(cinvname1,iautoid,[]);
+			parent.LayerMsgBox.closeAll();
+		}
 	}
 </script>
 #end

@@ -11,6 +11,7 @@ import cn.jbolt.core.model.Org;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.base.BaseMesService;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -72,6 +73,11 @@ public class OrgService extends BaseMesService<Org> {
 
             ValidationUtils.isTrue(org.save(), ErrorMsg.SAVE_FAILED);
 
+            // 当前为默认，则其他更新为非默认
+            if (org.getIsDefault()) {
+                updateOtherIsDefault0(org.getId());
+            }
+
             // 加载数据源
             if (org.getEnable()) {
                 U8DataSourceKit.ME.addDataSource(org);
@@ -82,6 +88,10 @@ public class OrgService extends BaseMesService<Org> {
         // 添加日志
         // addSystemLog(org.getId(), userId, SystemLog.TYPE_SAVE, SystemLog.TARGETTYPE_xxx, org.getName())
         return SUCCESS;
+    }
+
+    private void updateOtherIsDefault0(Long id) {
+        update("UPDATE jb_org SET is_default = '0' WHERE id <> ? AND is_default = '1' ", id);
     }
 
     /**
@@ -110,6 +120,14 @@ public class OrgService extends BaseMesService<Org> {
                 } else {
                     // 卸载数据源
                     U8DataSourceKit.ME.addDataSource(org);
+                }
+            }
+
+            // 修改了默认
+            if (ObjUtil.notEqual(org.getIsDefault(), dbOrg.getIsDefault())) {
+                // 当前为默认，则其他更新为非默认
+                if (org.getIsDefault()) {
+                    updateOtherIsDefault0(org.getId());
                 }
             }
 
@@ -144,38 +162,66 @@ public class OrgService extends BaseMesService<Org> {
         return SUCCESS;
     }
 
-    /**
-     * 切换禁用启用状态
-     */
-    public Ret toggleEnable(Long id) {
-        // 说明:如果需要日志处理 就解开下面部分内容 如果不需要直接删掉即可
-        Ret ret = toggleBoolean(id, "enable");
+//    /**
+//     * 切换禁用启用状态
+//     */
+//    public Ret toggleEnable(Long id) {
+//        // 说明:如果需要日志处理 就解开下面部分内容 如果不需要直接删掉即可
+//        Ret ret = toggleBoolean(id, "enable");
+//        
+//        // 更新启用时间
+//        Org org = findById(id);
+//        if (org.getEnable()) {
+//            tx(() -> {
+//                ValidationUtils.isTrue(org.setEnableTime(new Date()).update(), ErrorMsg.UPDATE_FAILED);
+//
+//                // 加载数据源
+//                U8DataSourceKit.ME.addDataSource(org);
+//                return true;
+//            });
+//        } else {
+//            // 卸载数据源
+//            U8DataSourceKit.ME.removeDataSource(org);
+//        }
+//
+//        if (ret.isOk()) {
+//            // 添加日志
+//            // Org org=ret.getAs("data");
+//            // addUpdateSystemLog(id, userId, SystemLog.TARGETTYPE_xxx, org.getName(),"的启用状态:"+org.getEnable());
+//        }
+//        return ret;
+//    }
 
-        // 更新启用时间
-        Org org = findById(id);
-        if (org.getEnable()) {
-            tx(() -> {
-                ValidationUtils.isTrue(org.setEnableTime(new Date()).update(), ErrorMsg.UPDATE_FAILED);
+    @Override
+    protected String afterToggleBoolean(Org org, String column, Kv kv) {
+        switch (column) {
+            case "enable":
+                if (org.getEnable()) {
+                    tx(() -> {
+                        ValidationUtils.isTrue(org.setEnableTime(new Date()).update(), ErrorMsg.UPDATE_FAILED);
 
-                // 加载数据源
-                U8DataSourceKit.ME.addDataSource(org);
-                return true;
-            });
-        } else {
-            // 卸载数据源
-            U8DataSourceKit.ME.removeDataSource(org);
+                        // 加载数据源
+                        U8DataSourceKit.ME.addDataSource(org);
+                        return true;
+                    });
+                } else {
+                    // 卸载数据源
+                    U8DataSourceKit.ME.removeDataSource(org);
+                }
+                break;
+            case "is_default":
+                if (org.getIsDefault()) {
+                    updateOtherIsDefault0(org.getId());
+                }
+                break;
+            default:
+                break;
         }
-
-        if (ret.isOk()) {
-            // 添加日志
-            // Org org=ret.getAs("data");
-            // addUpdateSystemLog(id, userId, SystemLog.TARGETTYPE_xxx, org.getName(),"的启用状态:"+org.getEnable());
-        }
-        return ret;
+        return null;
     }
 
     public List<Org> getList() {
-        return find("SELECT id, org_name FROM jb_org WHERE enable = ? ", JBoltEnableEnum.TRUE.getValue());
+        return find("SELECT id, org_name FROM jb_org WHERE enable = ? ORDER BY is_default DESC, id DESC", JBoltEnableEnum.TRUE.getValue());
     }
     public String getU8Alias(long orgId) {
         return queryColumn("SELECT u8_alias FROM jb_org WHERE id = ? ", orgId);
@@ -196,6 +242,10 @@ public class OrgService extends BaseMesService<Org> {
 
     public List<Record> getU8DbList() {
         return dbTemplate("org.getU8DbList").find();
+    }
+
+    public List<Record> getListForApi() {
+        return findRecords("SELECT id, org_code AS code, org_name AS name FROM jb_org WHERE enable = ? ORDER BY is_default DESC, id DESC", JBoltEnableEnum.TRUE.getValue());
     }
 
 }
