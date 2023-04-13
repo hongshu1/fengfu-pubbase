@@ -20,6 +20,7 @@ import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.model.User;
 import cn.rjtech.config.DictionaryTypeKey;
 import cn.rjtech.constants.ErrorMsg;
@@ -51,9 +52,11 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		para.set("iorgid",getOrgId());
 		Page<Record> pageList = dbTemplate("subcontractsaleorderm.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : pageList.getList()) {
-			row.set("cdepname", deptService.findById(row.getLong("idepartmentid")));
+			Dept dept = deptService.findById(row.getLong("idepartmentid"));
+			row.set("cdepname", dept == null? null : dept.getName());
 			row.set("cbususername", JBoltUserCache.me.getUserName(row.getLong("iBusUserId")));
 			row.set("ccurrencyname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.CCURRENCY, row.getStr("cCurrency")));
 		}

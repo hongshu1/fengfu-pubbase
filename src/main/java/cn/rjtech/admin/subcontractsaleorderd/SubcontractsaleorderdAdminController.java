@@ -93,6 +93,8 @@ public class SubcontractsaleorderdAdminController extends BaseAdminController {
 	public void toggleIsDeleted() {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
-
+	public void findEditTableDatas(){
+		renderJsonData(service.findEditTableDatas(getKv()));
+	}
 
 }

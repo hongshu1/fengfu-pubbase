@@ -1,12 +1,18 @@
 package cn.rjtech.admin.subcontractsaleorderd;
 
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+
+import java.util.List;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.Subcontractsaleorderd;
+import cn.rjtech.util.ValidationUtils;
 /**
  * 委外销售订单明细 Service
  * @ClassName: SubcontractsaleorderdService
@@ -163,5 +169,8 @@ public class SubcontractsaleorderdService extends BaseService<Subcontractsaleord
 		//这里用来覆盖 检测Subcontractsaleorderd是否被其它表引用
 		return null;
 	}
-
+	public List<Record> findEditTableDatas(Kv para) {
+		ValidationUtils.notNull(para.getLong("isubcontractsaleordermid"), JBoltMsg.PARAM_ERROR);
+		return dbTemplate("subcontractsaleorderd.findEditTableDatas",para).find();
+	}
 }
