@@ -63,7 +63,7 @@ public class UserApiService extends JBoltApiBaseService {
             wechatUser = ret.getAs("data");
         }
 
-        JBoltApiUserBean userBean = new JBoltApiUserBean(JBoltApiKit.getApplicationId(), user.getId(), user.getName(), user.getIsSystemAdmin(), orgId, org.getStr("code"));
+        JBoltApiUserBean userBean = new JBoltApiUserBean(JBoltApiKit.getApplicationId(), user.getId(), user.getName(), user.getIsSystemAdmin(), orgId, org.getOrgCode());
 
         JBoltApiUser apiUser = JBoltApiKit.processBindUser(userBean, wechatUser.getBindUser());
 
@@ -71,7 +71,10 @@ public class UserApiService extends JBoltApiBaseService {
         String[] jwts = JBoltApiJwtManger.me().createJBoltApiTokens(JBoltApiKit.getApplication(), apiUser, JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL, JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL * 2);
         ValidationUtils.notEmpty(jwts, "生成jwt失败");
 
-        return JBoltApiRet.successWithData(Okv.by(JBoltApiJwtManger.JBOLT_API_TOKEN_KEY, jwts[0]).set(JBoltApiJwtManger.JBOLT_API_REFRESH_TOKEN_KEY, jwts[1]));
+        Okv ret = Okv.by(JBoltApiJwtManger.JBOLT_API_TOKEN_KEY, jwts[0])
+                .set(JBoltApiJwtManger.JBOLT_API_REFRESH_TOKEN_KEY, jwts[1])
+                .set("orgcode", org.getOrgCode());
+        return JBoltApiRet.successWithData(ret);
     }
 
 }

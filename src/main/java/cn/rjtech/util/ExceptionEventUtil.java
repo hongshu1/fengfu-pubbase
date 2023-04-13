@@ -1,9 +1,9 @@
 package cn.rjtech.util;
 
 import cn.jbolt.core.base.config.JBoltConfig;
-import cn.jbolt.core.cache.JBoltCacheKit;
 import cn.rjtech.base.event.ExceptionEvent;
 import cn.rjtech.base.redis.RedisKeys;
+import cn.rjtech.base.redis.RedisUtil;
 import com.jfinal.log.Log;
 import net.dreamlu.event.EventKit;
 
@@ -11,8 +11,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-
-import static cn.jbolt.core.base.config.JBoltConfig.JBOLT_CACHE_NAME;
 
 public class ExceptionEventUtil {
 
@@ -30,13 +28,14 @@ public class ExceptionEventUtil {
         }
 
         String errorCode = getErrorCode(e);
-        Integer reportTimes = getExceptionNotice(errorCode);
-        if (null != reportTimes) {
-            setExceptionNotice(errorCode, ++reportTimes);
-            LOG.info("异常已经报告: {} 次!", reportTimes);
-            return;
+        Long reportTimes = getExceptionNotice(errorCode);
+        
+        // 首次设值，设置过期时间为2小时
+        if (reportTimes == 1) {
+            setExpire(errorCode);
         }
-        setExceptionNotice(errorCode, 1);
+        
+        LOG.info("异常已经报告: {} 次!", reportTimes);
 
         EventKit.post(new ExceptionEvent(getExceptionMsg(errorCode, e)));
     }
@@ -89,23 +88,20 @@ public class ExceptionEventUtil {
     }
 
     /**
-     * 设置异常报告次数
-     *
-     * @param exceptionKey 异常key
-     * @param times        异常报错次数
-     */
-    public static void setExceptionNotice(String exceptionKey, int times) {
-        JBoltCacheKit.put(JBOLT_CACHE_NAME, "LH:EXCEPTION:NOTICE:", exceptionKey, times);
-    }
-
-    /**
      * 获取异常通知次数
      *
      * @param exceptionKey 异常key
      * @return 异常报告次数
      */
-    public static Integer getExceptionNotice(String exceptionKey) {
-        return JBoltCacheKit.get(JBOLT_CACHE_NAME, "LH:EXCEPTION:NOTICE:" + exceptionKey);
+    public static Long getExceptionNotice(String exceptionKey) {
+        return RedisUtil.incr("LH:EXCEPTION:NOTICE:" + exceptionKey);
+    }
+
+    /**
+     * 设置异常信息的过期时间
+     */
+    public static void setExpire(String exceptionKey) {
+        RedisUtil.expire("LH:EXCEPTION:NOTICE:" + exceptionKey, RedisUtil.EXPIRES_IN_2_HOURS);
     }
 
 }

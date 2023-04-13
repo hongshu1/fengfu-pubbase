@@ -15,13 +15,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.weixin.sdk.jfinal.ApiInterceptor;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -105,19 +103,6 @@ public class CommonController extends BaseRestController {
         result.put("detail", maps);
         result.put("ColumnList", paramMap.get("ResultInfo").toString());
         renderJson(result);
-    }
-
-    /**
-     * 单据提交
-     */
-    @Before(ApiInterceptor.class)
-    public void vouchProcessSubmit(){
-        Map map = commonService.vouchProcessSubmit(getKv());
-        if ("200".equals(map.get("code").toString())) {
-            renderJsonSuccess(map);
-        } else {
-            renderJson(Kv.by("code", map.get("code").toString()).set("data", map));
-        }
     }
 
     /**

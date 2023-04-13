@@ -1701,4 +1701,14 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
+	/**
+	 * 工作日历明细
+	 */
+	public static final String WORKCALENDARM = "workcalendard";
+
+
+	/**
+	 * 平板登录日志
+	 */
+    public static final String PADLOGINLOG = "pad_loginlog";
 }
