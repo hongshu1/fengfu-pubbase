@@ -1,12 +1,22 @@
 package cn.rjtech.admin.rcvdocqcformm;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Page;
+
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt.core.util.JBoltRealUrlUtil;
+import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -139,6 +149,25 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 		}
 		*/
 		return null;
+	}
+
+	/**
+	 * 上传图片
+	 *
+	 * @param files
+	 * @return
+	 */
+	public List<String> uploadImage(List<UploadFile> files) {
+		List<String> imgList = new ArrayList<>();
+		if (ObjectUtil.isEmpty(files)) {
+			return imgList;
+		}
+		for (UploadFile uploadFile : files) {
+			String localUrl = FileUtil.normalize(JBoltRealUrlUtil.get(JFinal.me().getConstants().getBaseUploadPath() + '/'
+				+ uploadFile.getUploadPath()+ '/' + uploadFile.getFileName()));
+			imgList.add(localUrl);
+		}
+		return imgList;
 	}
 
 }
