@@ -2245,4 +2245,10 @@ public class PermissionKey {
 	 * 手配订单
 	 */
 	public static final String MANUALORDER = "manual_order";
+	
+	/**
+	 *	委外销售订单
+	 */
+	public static final String SUBCONTRACTSALEORDERM = "subcontractsaleorderm";
+	
 }

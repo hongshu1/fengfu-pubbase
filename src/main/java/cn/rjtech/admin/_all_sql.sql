@@ -252,3 +252,11 @@
 #namespace("containerStockInD")
 #include("containerStockInD/containerStockD.sql")
 #end
+
+#namespace("subcontractsaleorderm")
+#include("subcontractsaleorderm/subcontractsaleorderm.sql")
+#end
+
+#namespace("subcontractsaleorderd")
+#include("subcontractsaleorderd/subcontractsaleorderd.sql")
+#end
