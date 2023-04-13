@@ -1705,36 +1705,10 @@ public class PermissionKey {
 	 * 工作日历明细
 	 */
 	public static final String WORKCALENDARM = "workcalendard";
-	/**
-	 * 实体扩展字段
-	 */
-	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
-	/**
-	 * 实体扩展字段值集
-	 */
-	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
-	/**
-	 * 分类管理
-	 */
-	public static final String CONTAINERCLASS = "containerclass";
 
-	/**
-	 * 平板端配置
-	 */
-	public static final String PAD = "pad";
-
-	/**
-	 * 质量建模-检验适用标准
-	 */
-	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
 
 	/**
 	 * 平板登录日志
 	 */
     public static final String PADLOGINLOG = "pad_loginlog";
-
-	/**
-	 * 周间客户订单
-	 */
-	public static final String WEEK_ORDERM = "week_orderm";
 }
