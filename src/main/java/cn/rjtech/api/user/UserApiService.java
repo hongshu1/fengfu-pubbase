@@ -7,14 +7,13 @@ import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.common.enums.JBoltLoginState;
+import cn.jbolt.core.model.Org;
 import cn.jbolt.core.model.User;
-import cn.jbolt.core.service.OrgService;
-import cn.rjtech.enums.BoolCharEnum;
+import cn.rjtech.admin.org.OrgService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 用户API
@@ -37,9 +36,9 @@ public class UserApiService extends JBoltApiBaseService {
     }
 
     public JBoltApiRet login(String username, String password, Long orgId) {
-        Record org = orgService.findById(orgId);
+        Org org = orgService.findById(orgId);
         ValidationUtils.notNull(org, "组织不存在");
-        ValidationUtils.equals(BoolCharEnum.YES.getValue(), org.getStr("enable"), "该组织已被禁用");
+        ValidationUtils.isTrue(org.getEnable(), "该组织已被禁用");
 
         // 通过用户名去找用户
         User user = userService.findFirst(Okv.by("username", username));
@@ -64,7 +63,7 @@ public class UserApiService extends JBoltApiBaseService {
             wechatUser = ret.getAs("data");
         }
 
-        JBoltApiUserBean userBean = new JBoltApiUserBean(JBoltApiKit.getApplicationId(), user.getId(), user.getName(), user.getIsSystemAdmin(), orgId, org.getStr("code"));
+        JBoltApiUserBean userBean = new JBoltApiUserBean(JBoltApiKit.getApplicationId(), user.getId(), user.getName(), user.getIsSystemAdmin(), orgId, org.getOrgCode());
 
         JBoltApiUser apiUser = JBoltApiKit.processBindUser(userBean, wechatUser.getBindUser());
 
@@ -72,7 +71,10 @@ public class UserApiService extends JBoltApiBaseService {
         String[] jwts = JBoltApiJwtManger.me().createJBoltApiTokens(JBoltApiKit.getApplication(), apiUser, JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL, JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL * 2);
         ValidationUtils.notEmpty(jwts, "生成jwt失败");
 
-        return JBoltApiRet.successWithData(Okv.by(JBoltApiJwtManger.JBOLT_API_TOKEN_KEY, jwts[0]).set(JBoltApiJwtManger.JBOLT_API_REFRESH_TOKEN_KEY, jwts[1]));
+        Okv ret = Okv.by(JBoltApiJwtManger.JBOLT_API_TOKEN_KEY, jwts[0])
+                .set(JBoltApiJwtManger.JBOLT_API_REFRESH_TOKEN_KEY, jwts[1])
+                .set("orgcode", org.getOrgCode());
+        return JBoltApiRet.successWithData(ret);
     }
 
 }

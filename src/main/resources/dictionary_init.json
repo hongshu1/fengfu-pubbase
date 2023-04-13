@@ -142,11 +142,13 @@
 	"dics":[
 			{"name":"自增_auto_int","sn":"auto"},
 			{"name":"自增_auto_long","sn":"auto_long"},
+			{"name":"自增_auto_string","sn":"auto_string"},
 			{"name":"自增序列_sequence","sn":"sequence"},
 			{"name":"自增序列_sequence_long","sn":"sequence_long"},
 			{"name":"自增序列_pgsql_serial","sn":"serial"},
 			{"name":"自增序列_pgsql_bigserial","sn":"bigserial"},
-			{"name":"雪花_snowflake","sn":"snowflake"},
+			{"name":"雪花_snowflake_long","sn":"snowflake"},
+			{"name":"雪花_snowflake_字符串","sn":"snowflake_string"},
 			{"name":"UUID","sn":"uuid"}
 	]
 },{

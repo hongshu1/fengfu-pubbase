@@ -1,10 +1,10 @@
 package cn.rjtech.app.user.service;
 
-import cn.rjtech.base.service.BaseU9RecordService;
+import cn.jbolt.core.service.base.BaseU8RecordService;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
-public class UserAppService extends BaseU9RecordService {
+public class UserAppService extends BaseU8RecordService {
 
     @Override
     protected String getTableName() {

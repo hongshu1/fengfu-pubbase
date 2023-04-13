@@ -321,4 +321,8 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 		return iAutoId;
 	}
 
+    public List<Record> getByiInventoryRoutingId(long iInventoryRoutingId) {
+        return findRecords("SELECT * FROM Bd_InventoryRoutingConfig WHERE iInventoryRoutingId = ? ORDER BY iSeq ", iInventoryRoutingId);
+    }
+
 }

@@ -223,7 +223,9 @@
        data-url="/admin/bommaster/findByBomMasterId/#(bomMaster.iautoid??)"
        #end
        data-toolbar="bomMaster_toolbar_#(pageId)"
+       #if(view??0 !=1)
        data-editable="true"
+       #end
        data-tfoot-fixed="true"
        id="bomMaster_#(pageId)"
        data-rowtpl="bomMaster_demotpl"

@@ -3,7 +3,9 @@ package cn.rjtech.admin.inventory;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
@@ -16,6 +18,9 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Page;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -54,6 +59,8 @@ public class InventoryService extends BaseService<Inventory> {
 	private InventoryWorkRegionService inventoryWorkRegionService;
 	@Inject
 	private InventoryRoutingService inventoryRoutingService;
+	@Inject
+	private DictionaryService dictionaryService;
 
 	@Override
 	protected Inventory dao() {
@@ -92,6 +99,7 @@ public class InventoryService extends BaseService<Inventory> {
 		if(first != null)
 			return fail(JBoltMsg.DATA_SAME_SN_EXIST);
 		setInventory(inventory);
+		setIItemAttribute(inventory);
 		//if(existsName(inventory.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=inventory.save();
 		if(success) {
@@ -99,6 +107,67 @@ public class InventoryService extends BaseService<Inventory> {
 			//addSaveSystemLog(inventory.getIAutoId(), JBoltUserKit.getUserId(), inventory.getName());
 		}
 		return ret(success);
+	}
+
+	public Inventory setIItemAttributes(Inventory inventory) {
+		List<Dictionary> dictionaries = dictionaryService.getOptionListByTypeKey("iItem_attribute_column");
+		StringBuilder itemAttributes = new StringBuilder();
+		if(dictionaries != null && dictionaries.size() > 0){
+			for (Dictionary dictionary : dictionaries) {
+				Method[] m = inventory.getClass().getMethods();
+				for(int i = 0;i < m.length;i++){
+					if(("get"+dictionary.getName()).toLowerCase().equals(m[i].getName().toLowerCase())){
+						try {
+							Boolean invoke = (Boolean) m[i].invoke(inventory);
+							if(invoke)
+							{
+								itemAttributes.append(dictionary.getSn()).append(",");
+							}
+						} catch (Exception e) {
+							continue;
+						}
+					}
+				}
+			}
+		}
+		inventory.setItemAttributes(itemAttributes.length()>1?itemAttributes.substring(0,itemAttributes.length()-1):"");
+		return inventory;
+	}
+
+	public Inventory setIItemAttribute(Inventory inventory){
+		String itemAttributes = inventory.getItemAttributes();
+		String[] itemAttribute = null;
+		if(StringUtils.isNotBlank(itemAttributes)){
+			itemAttribute = itemAttributes.split(",");
+		}
+		List<Dictionary> dictionaries = dictionaryService.getOptionListByTypeKey("iItem_attribute_column");
+		if(dictionaries != null && dictionaries.size() > 0){
+			for (Dictionary dictionary : dictionaries) {
+				Method[] m = inventory.getClass().getMethods();
+				for(int i = 0;i < m.length;i++){
+					if(("set"+dictionary.getName()).toLowerCase().equals(m[i].getName().toLowerCase())){
+						try {
+							m[i].invoke(inventory,false);
+							if(itemAttribute != null){
+								for (String s : itemAttribute) {
+									if(s.equals(dictionary.getSn())){
+										try {
+											m[i].invoke(inventory,true);
+										} catch (IllegalAccessException e) {
+											continue;
+										}
+									}
+								}
+							}
+						} catch (Exception e) {
+							continue;
+						}
+					}
+				}
+
+			}
+		}
+		return inventory;
 	}
 
 	/**
@@ -136,6 +205,7 @@ public class InventoryService extends BaseService<Inventory> {
 		Inventory dbInventory=findById(inventory.getIAutoId());
 		if(dbInventory==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(inventory.getName(), inventory.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		setIItemAttribute(inventory);
 		boolean success=inventory.update();
 		if(success) {
 			//添加日志

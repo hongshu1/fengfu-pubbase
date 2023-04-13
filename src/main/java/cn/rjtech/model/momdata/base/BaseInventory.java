@@ -144,6 +144,62 @@ public abstract class BaseInventory<M extends BaseInventory<M>> extends JBoltBas
     public static final String ISDELETED = "isDeleted";
     /**图片，多张","分隔*/
     public static final String CPICS = "cPics";
+    /**内作在库天数*/
+    public static final String IINNERINSTOCKDAYS = "iInnerInStockDays";
+    /**最小在库天数*/
+    public static final String IMININSTOCKDAYS = "iMinInStockDays";
+    /**是否外购: 0. 否 1. 是*/
+    public static final String BPURCHASE = "bPurchase";
+    /**是否外销: 0. 否 1. 是*/
+    public static final String BEXPSALE = "bExpSale";
+    /**是否进口：0. 否 1. 是*/
+    public static final String BIMPORT = "bImport";
+    /**是否自制：0. 否 1. 是*/
+    public static final String BSELF = "bSelf";
+    /**是否委外：0. 否 1. 是*/
+    public static final String BPROXYFOREIGN = "bProxyForeign";
+    /**是否委托代销：0. 否 1. 是*/
+    public static final String BINVENTRUST = "bInvEntrust";
+    /**是否计划品: 0. 否 1. 是*/
+    public static final String BPLANINV = "bPlanInv";
+    /**是否在制：0. 否 1. 是*/
+    public static final String BPRODUCING = "bProducing";
+    /**是否生产耗用: 0. 否 1. 是*/
+    public static final String BCOMSUME = "bComsume";
+    /**是否PTO模型: 0. 否 1. 是*/
+    public static final String BPTOMODEL = "bPTOModel";
+    /**是否ATO模型： 0. 否 1. 是*/
+    public static final String BATOMODEL = "bATOModel";
+    /**是否模型：0. 否 1. 是*/
+    public static final String BINVMODEL = "bInvModel";
+    /**是否资产：0. 否 1. 是*/
+    public static final String BINVASSET = "bInvAsset";
+    /**是否工程物料：0. 否 1. 是*/
+    public static final String BPRJMAT = "bPrjMat";
+    /**是否计件：0. 否 1. 是*/
+    public static final String BPIECE = "bPiece";
+    /**是否服务项目：0. 否 1. 是*/
+    public static final String BSRVITEM = "bSrvItem";
+    /**是否服务配件：0. 否 1. 是*/
+    public static final String BSRVFITTINGS = "bSrvFittings";
+    /**是否服务产品：0. 否 1. 是*/
+    public static final String BSRVPRODUCT  = "bSrvProduct ";
+    /**是否折扣：0. 否 1. 是*/
+    public static final String BINVTYPE = "bInvType";
+    /**是否应税劳务：0. 否 1. 是*/
+    public static final String BSERVICE = "bService";
+    /**是否保税品: 0. 否 1. 是*/
+    public static final String BBONDEDINV = "bBondedInv";
+    /**是否成套件：0. 否 1. 是*/
+    public static final String BACCESSARY = "bAccessary";
+    /**是否选项类：0. 否 1. 是*/
+    public static final String BCHECKITEM = "bCheckItem";
+    /**是否适用零售：0. 否 1. 是*/
+    public static final String BSUITRETAIL = "bSuitRetail";
+    /**参考成本*/
+    public static final String IINVSPRICE = "iInvSPrice";
+    /**最新成本*/
+    public static final String IINVNCOST = "iInvNCost";
 	/**
 	 * 主键
 	 */
@@ -1281,6 +1337,482 @@ public abstract class BaseInventory<M extends BaseInventory<M>> extends JBoltBas
 	@JSONField(name = "cpics")
 	public java.lang.String getCPics() {
 		return getStr("cPics");
+	}
+
+	/**
+	 * 内作在库天数
+	 */
+	public M setIInnerInStockDays(java.lang.Integer iInnerInStockDays) {
+		set("iInnerInStockDays", iInnerInStockDays);
+		return (M)this;
+	}
+
+	/**
+	 * 内作在库天数
+	 */
+	@JBoltField(name="iinnerinstockdays" ,columnName="iInnerInStockDays",type="Integer", remark="内作在库天数", required=false, maxLength=10, fixed=0, order=68)
+	@JSONField(name = "iinnerinstockdays")
+	public java.lang.Integer getIInnerInStockDays() {
+		return getInt("iInnerInStockDays");
+	}
+
+	/**
+	 * 最小在库天数
+	 */
+	public M setIMinInStockDays(java.lang.Integer iMinInStockDays) {
+		set("iMinInStockDays", iMinInStockDays);
+		return (M)this;
+	}
+
+	/**
+	 * 最小在库天数
+	 */
+	@JBoltField(name="imininstockdays" ,columnName="iMinInStockDays",type="Integer", remark="最小在库天数", required=false, maxLength=10, fixed=0, order=69)
+	@JSONField(name = "imininstockdays")
+	public java.lang.Integer getIMinInStockDays() {
+		return getInt("iMinInStockDays");
+	}
+
+	/**
+	 * 是否外购: 0. 否 1. 是
+	 */
+	public M setBPurchase(java.lang.Boolean bPurchase) {
+		set("bPurchase", bPurchase);
+		return (M)this;
+	}
+
+	/**
+	 * 是否外购: 0. 否 1. 是
+	 */
+	@JBoltField(name="bpurchase" ,columnName="bPurchase",type="Boolean", remark="是否外购: 0. 否 1. 是", required=false, maxLength=1, fixed=0, order=70)
+	@JSONField(name = "bpurchase")
+	public java.lang.Boolean getBPurchase() {
+		return getBoolean("bPurchase");
+	}
+
+	/**
+	 * 是否外销: 0. 否 1. 是
+	 */
+	public M setBExpSale(java.lang.Boolean bExpSale) {
+		set("bExpSale", bExpSale);
+		return (M)this;
+	}
+
+	/**
+	 * 是否外销: 0. 否 1. 是
+	 */
+	@JBoltField(name="bexpsale" ,columnName="bExpSale",type="Boolean", remark="是否外销: 0. 否 1. 是", required=false, maxLength=1, fixed=0, order=71)
+	@JSONField(name = "bexpsale")
+	public java.lang.Boolean getBExpSale() {
+		return getBoolean("bExpSale");
+	}
+
+	/**
+	 * 是否进口：0. 否 1. 是
+	 */
+	public M setBImport(java.lang.Boolean bImport) {
+		set("bImport", bImport);
+		return (M)this;
+	}
+
+	/**
+	 * 是否进口：0. 否 1. 是
+	 */
+	@JBoltField(name="bimport" ,columnName="bImport",type="Boolean", remark="是否进口：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=72)
+	@JSONField(name = "bimport")
+	public java.lang.Boolean getBImport() {
+		return getBoolean("bImport");
+	}
+
+	/**
+	 * 是否自制：0. 否 1. 是
+	 */
+	public M setBSelf(java.lang.Boolean bSelf) {
+		set("bSelf", bSelf);
+		return (M)this;
+	}
+
+	/**
+	 * 是否自制：0. 否 1. 是
+	 */
+	@JBoltField(name="bself" ,columnName="bSelf",type="Boolean", remark="是否自制：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=73)
+	@JSONField(name = "bself")
+	public java.lang.Boolean getBSelf() {
+		return getBoolean("bSelf");
+	}
+
+	/**
+	 * 是否委外：0. 否 1. 是
+	 */
+	public M setBProxyForeign(java.lang.Boolean bProxyForeign) {
+		set("bProxyForeign", bProxyForeign);
+		return (M)this;
+	}
+
+	/**
+	 * 是否委外：0. 否 1. 是
+	 */
+	@JBoltField(name="bproxyforeign" ,columnName="bProxyForeign",type="Boolean", remark="是否委外：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=74)
+	@JSONField(name = "bproxyforeign")
+	public java.lang.Boolean getBProxyForeign() {
+		return getBoolean("bProxyForeign");
+	}
+
+	/**
+	 * 是否委托代销：0. 否 1. 是
+	 */
+	public M setBInvEntrust(java.lang.Boolean bInvEntrust) {
+		set("bInvEntrust", bInvEntrust);
+		return (M)this;
+	}
+
+	/**
+	 * 是否委托代销：0. 否 1. 是
+	 */
+	@JBoltField(name="binventrust" ,columnName="bInvEntrust",type="Boolean", remark="是否委托代销：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=75)
+	@JSONField(name = "binventrust")
+	public java.lang.Boolean getBInvEntrust() {
+		return getBoolean("bInvEntrust");
+	}
+
+	/**
+	 * 是否计划品: 0. 否 1. 是
+	 */
+	public M setBPlanInv(java.lang.Boolean bPlanInv) {
+		set("bPlanInv", bPlanInv);
+		return (M)this;
+	}
+
+	/**
+	 * 是否计划品: 0. 否 1. 是
+	 */
+	@JBoltField(name="bplaninv" ,columnName="bPlanInv",type="Boolean", remark="是否计划品: 0. 否 1. 是", required=false, maxLength=1, fixed=0, order=76)
+	@JSONField(name = "bplaninv")
+	public java.lang.Boolean getBPlanInv() {
+		return getBoolean("bPlanInv");
+	}
+
+	/**
+	 * 是否在制：0. 否 1. 是
+	 */
+	public M setBProducing(java.lang.Boolean bProducing) {
+		set("bProducing", bProducing);
+		return (M)this;
+	}
+
+	/**
+	 * 是否在制：0. 否 1. 是
+	 */
+	@JBoltField(name="bproducing" ,columnName="bProducing",type="Boolean", remark="是否在制：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=77)
+	@JSONField(name = "bproducing")
+	public java.lang.Boolean getBProducing() {
+		return getBoolean("bProducing");
+	}
+
+	/**
+	 * 是否生产耗用: 0. 否 1. 是
+	 */
+	public M setBComsume(java.lang.Boolean bComsume) {
+		set("bComsume", bComsume);
+		return (M)this;
+	}
+
+	/**
+	 * 是否生产耗用: 0. 否 1. 是
+	 */
+	@JBoltField(name="bcomsume" ,columnName="bComsume",type="Boolean", remark="是否生产耗用: 0. 否 1. 是", required=false, maxLength=1, fixed=0, order=78)
+	@JSONField(name = "bcomsume")
+	public java.lang.Boolean getBComsume() {
+		return getBoolean("bComsume");
+	}
+
+	/**
+	 * 是否PTO模型: 0. 否 1. 是
+	 */
+	public M setBPTOModel(java.lang.Boolean bPTOModel) {
+		set("bPTOModel", bPTOModel);
+		return (M)this;
+	}
+
+	/**
+	 * 是否PTO模型: 0. 否 1. 是
+	 */
+	@JBoltField(name="bptomodel" ,columnName="bPTOModel",type="Boolean", remark="是否PTO模型: 0. 否 1. 是", required=false, maxLength=1, fixed=0, order=79)
+	@JSONField(name = "bptomodel")
+	public java.lang.Boolean getBPTOModel() {
+		return getBoolean("bPTOModel");
+	}
+
+	/**
+	 * 是否ATO模型： 0. 否 1. 是
+	 */
+	public M setBATOModel(java.lang.Boolean bATOModel) {
+		set("bATOModel", bATOModel);
+		return (M)this;
+	}
+
+	/**
+	 * 是否ATO模型： 0. 否 1. 是
+	 */
+	@JBoltField(name="batomodel" ,columnName="bATOModel",type="Boolean", remark="是否ATO模型： 0. 否 1. 是", required=false, maxLength=1, fixed=0, order=80)
+	@JSONField(name = "batomodel")
+	public java.lang.Boolean getBATOModel() {
+		return getBoolean("bATOModel");
+	}
+
+	/**
+	 * 是否模型：0. 否 1. 是
+	 */
+	public M setBInvModel(java.lang.Boolean bInvModel) {
+		set("bInvModel", bInvModel);
+		return (M)this;
+	}
+
+	/**
+	 * 是否模型：0. 否 1. 是
+	 */
+	@JBoltField(name="binvmodel" ,columnName="bInvModel",type="Boolean", remark="是否模型：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=81)
+	@JSONField(name = "binvmodel")
+	public java.lang.Boolean getBInvModel() {
+		return getBoolean("bInvModel");
+	}
+
+	/**
+	 * 是否资产：0. 否 1. 是
+	 */
+	public M setBInvAsset(java.lang.Boolean bInvAsset) {
+		set("bInvAsset", bInvAsset);
+		return (M)this;
+	}
+
+	/**
+	 * 是否资产：0. 否 1. 是
+	 */
+	@JBoltField(name="binvasset" ,columnName="bInvAsset",type="Boolean", remark="是否资产：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=82)
+	@JSONField(name = "binvasset")
+	public java.lang.Boolean getBInvAsset() {
+		return getBoolean("bInvAsset");
+	}
+
+	/**
+	 * 是否工程物料：0. 否 1. 是
+	 */
+	public M setBPrjMat(java.lang.Boolean bPrjMat) {
+		set("bPrjMat", bPrjMat);
+		return (M)this;
+	}
+
+	/**
+	 * 是否工程物料：0. 否 1. 是
+	 */
+	@JBoltField(name="bprjmat" ,columnName="bPrjMat",type="Boolean", remark="是否工程物料：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=83)
+	@JSONField(name = "bprjmat")
+	public java.lang.Boolean getBPrjMat() {
+		return getBoolean("bPrjMat");
+	}
+
+	/**
+	 * 是否计件：0. 否 1. 是
+	 */
+	public M setBPiece(java.lang.Boolean bPiece) {
+		set("bPiece", bPiece);
+		return (M)this;
+	}
+
+	/**
+	 * 是否计件：0. 否 1. 是
+	 */
+	@JBoltField(name="bpiece" ,columnName="bPiece",type="Boolean", remark="是否计件：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=84)
+	@JSONField(name = "bpiece")
+	public java.lang.Boolean getBPiece() {
+		return getBoolean("bPiece");
+	}
+
+	/**
+	 * 是否服务项目：0. 否 1. 是
+	 */
+	public M setBSrvItem(java.lang.Boolean bSrvItem) {
+		set("bSrvItem", bSrvItem);
+		return (M)this;
+	}
+
+	/**
+	 * 是否服务项目：0. 否 1. 是
+	 */
+	@JBoltField(name="bsrvitem" ,columnName="bSrvItem",type="Boolean", remark="是否服务项目：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=85)
+	@JSONField(name = "bsrvitem")
+	public java.lang.Boolean getBSrvItem() {
+		return getBoolean("bSrvItem");
+	}
+
+	/**
+	 * 是否服务配件：0. 否 1. 是
+	 */
+	public M setBSrvFittings(java.lang.Boolean bSrvFittings) {
+		set("bSrvFittings", bSrvFittings);
+		return (M)this;
+	}
+
+	/**
+	 * 是否服务配件：0. 否 1. 是
+	 */
+	@JBoltField(name="bsrvfittings" ,columnName="bSrvFittings",type="Boolean", remark="是否服务配件：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=86)
+	@JSONField(name = "bsrvfittings")
+	public java.lang.Boolean getBSrvFittings() {
+		return getBoolean("bSrvFittings");
+	}
+
+	/**
+	 * 是否服务产品：0. 否 1. 是
+	 */
+	public M setBSrvProduct (java.lang.Boolean bSrvProduct ) {
+		set("bSrvProduct ", bSrvProduct );
+		return (M)this;
+	}
+
+	/**
+	 * 是否服务产品：0. 否 1. 是
+	 */
+	@JBoltField(name="bsrvproduct " ,columnName="bSrvProduct ",type="Boolean", remark="是否服务产品：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=87)
+	@JSONField(name = "bsrvproduct ")
+	public java.lang.Boolean getBSrvProduct () {
+		return getBoolean("bSrvProduct ");
+	}
+
+	/**
+	 * 是否折扣：0. 否 1. 是
+	 */
+	public M setBInvType(java.lang.Boolean bInvType) {
+		set("bInvType", bInvType);
+		return (M)this;
+	}
+
+	/**
+	 * 是否折扣：0. 否 1. 是
+	 */
+	@JBoltField(name="binvtype" ,columnName="bInvType",type="Boolean", remark="是否折扣：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=88)
+	@JSONField(name = "binvtype")
+	public java.lang.Boolean getBInvType() {
+		return getBoolean("bInvType");
+	}
+
+	/**
+	 * 是否应税劳务：0. 否 1. 是
+	 */
+	public M setBService(java.lang.Boolean bService) {
+		set("bService", bService);
+		return (M)this;
+	}
+
+	/**
+	 * 是否应税劳务：0. 否 1. 是
+	 */
+	@JBoltField(name="bservice" ,columnName="bService",type="Boolean", remark="是否应税劳务：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=89)
+	@JSONField(name = "bservice")
+	public java.lang.Boolean getBService() {
+		return getBoolean("bService");
+	}
+
+	/**
+	 * 是否保税品: 0. 否 1. 是
+	 */
+	public M setBBondedInv(java.lang.Boolean bBondedInv) {
+		set("bBondedInv", bBondedInv);
+		return (M)this;
+	}
+
+	/**
+	 * 是否保税品: 0. 否 1. 是
+	 */
+	@JBoltField(name="bbondedinv" ,columnName="bBondedInv",type="Boolean", remark="是否保税品: 0. 否 1. 是", required=false, maxLength=1, fixed=0, order=90)
+	@JSONField(name = "bbondedinv")
+	public java.lang.Boolean getBBondedInv() {
+		return getBoolean("bBondedInv");
+	}
+
+	/**
+	 * 是否成套件：0. 否 1. 是
+	 */
+	public M setBAccessary(java.lang.Boolean bAccessary) {
+		set("bAccessary", bAccessary);
+		return (M)this;
+	}
+
+	/**
+	 * 是否成套件：0. 否 1. 是
+	 */
+	@JBoltField(name="baccessary" ,columnName="bAccessary",type="Boolean", remark="是否成套件：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=91)
+	@JSONField(name = "baccessary")
+	public java.lang.Boolean getBAccessary() {
+		return getBoolean("bAccessary");
+	}
+
+	/**
+	 * 是否选项类：0. 否 1. 是
+	 */
+	public M setBCheckItem(java.lang.Boolean bCheckItem) {
+		set("bCheckItem", bCheckItem);
+		return (M)this;
+	}
+
+	/**
+	 * 是否选项类：0. 否 1. 是
+	 */
+	@JBoltField(name="bcheckitem" ,columnName="bCheckItem",type="Boolean", remark="是否选项类：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=92)
+	@JSONField(name = "bcheckitem")
+	public java.lang.Boolean getBCheckItem() {
+		return getBoolean("bCheckItem");
+	}
+
+	/**
+	 * 是否适用零售：0. 否 1. 是
+	 */
+	public M setBSuitRetail(java.lang.Boolean bSuitRetail) {
+		set("bSuitRetail", bSuitRetail);
+		return (M)this;
+	}
+
+	/**
+	 * 是否适用零售：0. 否 1. 是
+	 */
+	@JBoltField(name="bsuitretail" ,columnName="bSuitRetail",type="Boolean", remark="是否适用零售：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=93)
+	@JSONField(name = "bsuitretail")
+	public java.lang.Boolean getBSuitRetail() {
+		return getBoolean("bSuitRetail");
+	}
+
+	/**
+	 * 参考成本
+	 */
+	public M setIInvSPrice(java.math.BigDecimal iInvSPrice) {
+		set("iInvSPrice", iInvSPrice);
+		return (M)this;
+	}
+
+	/**
+	 * 参考成本
+	 */
+	@JBoltField(name="iinvsprice" ,columnName="iInvSPrice",type="BigDecimal", remark="参考成本", required=false, maxLength=20, fixed=6, order=94)
+	@JSONField(name = "iinvsprice")
+	public java.math.BigDecimal getIInvSPrice() {
+		return getBigDecimal("iInvSPrice");
+	}
+
+	/**
+	 * 最新成本
+	 */
+	public M setIInvNCost(java.math.BigDecimal iInvNCost) {
+		set("iInvNCost", iInvNCost);
+		return (M)this;
+	}
+
+	/**
+	 * 最新成本
+	 */
+	@JBoltField(name="iinvncost" ,columnName="iInvNCost",type="BigDecimal", remark="最新成本", required=false, maxLength=20, fixed=6, order=95)
+	@JSONField(name = "iinvncost")
+	public java.math.BigDecimal getIInvNCost() {
+		return getBigDecimal("iInvNCost");
 	}
 
 }
