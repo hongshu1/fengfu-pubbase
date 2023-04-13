@@ -22,6 +22,7 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.model.User;
+import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
 import cn.rjtech.config.DictionaryTypeKey;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.Subcontractsaleorderm;
@@ -36,7 +37,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
 
 	private final Subcontractsaleorderm dao = new Subcontractsaleorderm().dao();
 	@Inject
-	private SubcontractsaleordermService subcontractsaleordermService;
+	private SubcontractsaleorderdService subcontractsaleorderdService;
 	@Inject
 	private DeptService deptService;
 	@Override
@@ -251,7 +252,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     		row.set("isubcontractsaleordermid", subcontractsaleorderm.getIAutoId());
     		row.set("iautoid", JBoltSnowflakeKit.me.nextId());
 		}
-    	subcontractsaleordermService.batchSaveRecords(list);
+    	subcontractsaleorderdService.batchSaveRecords(list);
     }
     //可编辑表格提交-修改数据
     private void updateTableSubmitDatas(JBoltTable jBoltTable,Subcontractsaleorderm subcontractsaleorderm){
@@ -263,14 +264,14 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     				"iqty13","iqty14","iqty15","iqty16","iqty17","iqty18","iqty19","iqty20","iqty21","iqty22","iqty23","iqty24","iqty25",
     				"iqty26","iqty27","iqty28","iqty29","iqty30","iqty31","isum");
     	}
-    	subcontractsaleordermService.batchUpdateRecords(list);
+    	subcontractsaleorderdService.batchUpdateRecords(list);
     }
     //可编辑表格提交-删除数据
     private void deleteTableSubmitDatas(JBoltTable jBoltTable){
     	Object[] ids = jBoltTable.getDelete();
     	if(ArrayUtil.isEmpty(ids)) return;
     	for (Object id : ids) {
-    		subcontractsaleordermService.deleteById(id);
+    		subcontractsaleorderdService.deleteById(id);
 		}
     }
 }
