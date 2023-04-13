@@ -14,6 +14,9 @@ WHERE v.isDeleted = '0'
   #if(isenabled)
   AND v.isenabled = #para(isenabled == 'true' ? 1 : 0)
   #end
+  #if(ivendorclassid)
+  AND v.ivendorclassid = #para(ivendorclassid)
+  #end
 ORDER BY v.dUpdateTime
     DESC
 #end
