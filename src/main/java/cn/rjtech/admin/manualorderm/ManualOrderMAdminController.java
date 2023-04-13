@@ -11,6 +11,7 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.ManualOrderM;
@@ -24,7 +25,7 @@ import java.util.Date;
  * @date: 2023-04-10 15:18
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.MANUALORDER)
+@CheckPermission(PermissionKey.MANUAL_ORDER)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/manualorderm", viewPath = "/_view/admin/manualorderm")
 public class ManualOrderMAdminController extends BaseAdminController {
@@ -91,6 +92,23 @@ public class ManualOrderMAdminController extends BaseAdminController {
 		}
 		manualOrderM.setIAuditStatus(1);
 		manualOrderM.setIOrderStatus(3);
+		Ret stockoutQcFormM = service.createStockoutQcFormM(manualOrderM.getICustomerId(), manualOrderM.getIAutoId());
+		if(stockoutQcFormM.isFail())
+			renderJson(stockoutQcFormM);
+		else
+			renderJson(service.update(manualOrderM));
+	}
+
+   /**
+	* 撤回
+	*/
+	public void reply() {
+		ManualOrderM manualOrderM=service.findById(getLong(0));
+		if(manualOrderM == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		manualOrderM.setIOrderStatus(1);
 		renderJson(service.update(manualOrderM));
 	}
 
@@ -108,7 +126,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
 	}
 
    /**
-	* 编辑
+	* 查看
 	*/
 	public void info() {
 		ManualOrderM manualOrderM=service.findById(getLong(0));

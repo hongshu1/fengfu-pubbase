@@ -65,3 +65,11 @@
 #namespace("organize")
 #include("organize.sql")
 #end
+
+#namespace("userapp")
+#include("userapp.sql")
+#end
+
+#namespace("openapi")
+#include("openapi.sql")
+#end

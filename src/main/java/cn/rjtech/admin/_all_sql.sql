@@ -260,3 +260,11 @@
 #namespace("containerStockInD")
 #include("containerStockInD/containerStockD.sql")
 #end
+
+#namespace("weekorderm")
+#include("weekorderm/weekorderm.sql")
+#end
+
+#namespace("weekorderd")
+#include("weekorderd/weekorderd.sql")
+#end

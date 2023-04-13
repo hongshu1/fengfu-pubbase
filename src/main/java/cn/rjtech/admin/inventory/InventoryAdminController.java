@@ -152,6 +152,7 @@ public class InventoryAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		inventory = service.setIItemAttributes(inventory);
 		set("inventory",inventory);
 		InventoryStockConfig inventorystockconfig = inventoryStockConfigService.findFirst(Okv.by("iInventoryId", inventory.getIAutoId()), "iAutoId", "DESC");
 		set("inventorystockconfig",inventorystockconfig);

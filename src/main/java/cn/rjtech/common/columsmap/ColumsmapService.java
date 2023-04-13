@@ -65,9 +65,6 @@ public class ColumsmapService extends BaseService<Columsmap> {
     @Inject
     private VouchRollBackRefService vouchRollBackRefService;
 
-    //日志对象
-    private Log tsysLog = new Log();
-
     @Override
     protected Columsmap dao() {
         return dao;
@@ -269,6 +266,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Map<String, Object>> daofindComponentList(Map<String, Object> paraMap) {
         String erpDBName = (String) paraMap.get("erpDBName");
         String erpDBSchemas = (String) paraMap.get("erpDBSchemas");
@@ -280,7 +278,8 @@ public class ColumsmapService extends BaseService<Columsmap> {
         kv.remove("erpDBName");
         kv.remove("erpDBSchemas");
         kv.remove("processName");
-        List<Map<String, Object>> mapList = (List<Map<String, Object>>) executeFunc(erpdbalias, (conn) -> {
+
+        return (List<Map<String, Object>>) executeFunc(erpdbalias, (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
             String sql = "{ call " + erpDBName + "." + erpDBSchemas + "." + processName + "(?, ?, ?, ?, ?, ?, ?) }";
             System.err.println(sql);
@@ -331,23 +330,18 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
             return list;
         });
-
-        return mapList;
     }
 
     /**
      * 获取单据信息
      *
-     * @param erpDBName    数据库
-     * @param organizeCode 组织代码
-     * @param billNo       条码
      * @param flag         查看标志
-     * @return
-     * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getBillInfo(Organize orgApp, String barCode, String flag) {
         HashMap<String, Object> paraMap = new HashMap<>();
-        List<Map<String, Object>> mapList = (List<Map<String, Object>>) executeFunc(orgApp.getErpdbalias(), (conn) -> {
+
+        return (List<Map<String, Object>>) executeFunc(orgApp.getErpdbalias(), (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
             String sql = "{ call " + orgApp.getErpdbname() + "." + orgApp.getErpdbschemas() + ".P_Sys_GetBillInfo" + "(?, ?, ?, ?, ?) }";
             System.err.println(sql);
@@ -394,8 +388,6 @@ public class ColumsmapService extends BaseService<Columsmap> {
             ValidationUtils.isTrue("200".equals(paraMap.get("resultCode")), paraMap.get("resultInfo").toString());
             return list;
         });
-
-        return mapList;
     }
 
     /**

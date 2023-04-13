@@ -188,6 +188,8 @@ public class BackupConfigService extends BaseService<BackupConfig> {
         OutputStream os = null;
         String strFilePath = firstConfig.getCPath() + File.separator;
 
+        //验证是否开启自动备份
+        if (!firstConfig.getIsAutoBackupEnabled()) return;
         // 目的地
         File dest = new File(firstConfig.getCPath());
         // 判断目的地目录是否存在，不存在就创建目录

@@ -4,462 +4,454 @@
   <div class="jbolt_page_content">
     <form onsubmit="return false;" id="RcvDocQcFormM_Form" action="#(action)" method="post">
       <div>
-        <table border="1">
-          <tr>
+        <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
+        <table border="1" style="text-align: center;left: 60px;margin-left:100px" width="1200" id="isNot">
 
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r0">
+            <td height="26" class="x70" width="117" style="height:19.5pt;width:87.75pt;">机型</td>
+            <td class="x71" width="260" style="width:195pt;">#(cequipmentname??)</td>
+            <td colspan="4" class="x72" width="514" style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;">
+              测定目的
+            </td>
+          </tr>
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r1">
+            <td height="26" class="x70" style="height:19.5pt;">客户部番</td>
+            <td class="x71">#(cinvcode1??)</td>
+            <td colspan="4" rowspan="2" height="54" class="x71"
+                style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;height:40.5pt;">
+              <div class="form-group row  col-8"
+                   data-radio
+                   data-rule="radio"
+                   data-default=""
+                   data-url="admin/dictionary/options?key=cmeasurepurpose"
+                   data-value-attr="sn"
+                   data-text-attr="cmeasurepurpose"
+                   data-inline="true"
+                   data-value="#(cmeasurepurpose??)"
+                   data-name="cmeasurepurpose">
+              </div>
+            </td>
+          </tr>
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r2">
+            <td height="26" class="x74" style="height:19.5pt;">部品名称</td>
+            <td class="x71">#(cinvname1??)</td>
+          </tr>
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r3">
+            <td height="26" class="x74" style="height:19.5pt;">批次号</td>
+            <td class="x71">#(cbatchno??)</td>
+            <td class="x70" width="100px">批次大小</td>
+            <td class="x71" width="250">#(cbatchno??)</td>
+            <td class="x70" width="100px">检测日期</td>
+            <td class="x71" width="250">#(dupdatetime??)</td>
+          </tr>
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r4">
+            <td height="26" class="x70" style="height:19.5pt;">测定理由</td>
+            <td colspan="3">
+              <input type="text" autocomplete="off" placeholder="=请输入测定理由=" name="cmeasurereason" value="#(cmeasurereason??)"
+                     maxlength="355" data-rule="required" style="width: 630px"/>
+            </td>
+            <td class="x70">设变号</td>
+            <td class="x70">—</td>
+          </tr>
+          <tr height="300px">
+            <td colspan="6">
+              <div class="col">
+                <div class="py-2" style="padding:.5rem 0rem;">
+                </div>
+
+                <input type="hidden" id="recordImages" placeholder="=测试==" name="recordImages"
+                       value="#(imgList??)" class="form-control"/>
+
+                <div class="form-group row">
+                  <label class="col-form-label col-sm-2 text-left">检验图片：</label>
+                  <div class="col">
+                    <div class="j_upload_imgbox_multi">
+                      <div class="row">
+                        <div class="col-sm-auto">
+                          <!--class="j_img_uploder"-->
+                          <div
+                              data-url="admin/rcvdocqcformm/uploadImage"
+                              data-limit="10"
+                              data-align="left"
+                              data-multi="true"
+                              data-handler="uploadMultipleFile"
+                              data-hidden-input="recordImages"
+                              data-imgbox="recordBox"
+                              data-area="150,150"
+                              data-maxsize="2000"
+                              style="width: 230px; height: 230px;"></div>
+                          <!--<small class="form-text text-muted text-ceter">单张大小不超200kb，最多10张</small>-->
+                        </div>
+                        <div class="col pr-3">
+                          <ul id="recordBox" class="j_imgbox" data-remove-confirm="true"
+                              data-imgstyle="width:230px;height:230px;"></ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>测定单位</td>
+            <td>
+              <div class="form-group row  col-8"
+                   data-radio
+                   data-rule="radio"
+                   data-default=""
+                   data-url="admin/dictionary/options?key=cmeasureunit"
+                   data-value-attr="sn"
+                   data-text-attr="cmeasureunit"
+                   data-inline="true"
+                   data-value="#(cmeasureunit??)"
+                   data-name="cmeasureunit">
+              </div>
+            </td>
           </tr>
         </table>
 
-
-        <h6 style="font-weight: bold">维修信息</h6>
-        <div class="form-group row">
-
-
-          <!--删除行ID-->
-          <input type="text" name="deleids" hidden id="deleids">
-          <!--输入行总数-->
-          <input type="text" id="trindex" hidden name="trindex">
-          <!--检验参数数量-->
-          <input type="text" id="trcount" hidden name="trcount">
-          <!--记录ID-->
-          <input type="text" hidden name="mouldsFirstDoc.iautoid" value="#(mouldsFirstDoc.iautoid??)">
-
-          <label class="col-sm-2 col-form-label">报修单号：</label>
-          <div class="col-sm-2 col-form-label">
-            #(mouldsFirstDoc.crepairno??)
-
-          </div>
-          <label class="col-sm-2 col-form-label">报修时间：</label>
-          <div class="col-sm-2 col-form-label">
-            #(mouldsFirstDoc.crepairtime??)
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label class="col-sm-2 col-form-label">模具编码：</label>
-          <div class="col-sm-2 col-form-label">
-            #(mouldsFirstDoc.cmouldscode??)
-          </div>
-          <label class="col-sm-2 col-form-label">模具名称：</label>
-          <div class="col-sm-2 col-form-label">
-            #(mouldsFirstDoc.cmouldsname??)
-          </div>
-        </div>
-
-        <hr/>
-        <!--<h6 style="font-weight: bold">派工信息</h6>
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">派工单号：</label>
-            <div class="col-sm-2 col-form-label">
-                #(mouldsFirstDoc.cassignorderno??)
-            </div>
-            <label class="col-sm-2 col-form-label">报修时间：</label>
-            <div class="col-sm-2 col-form-label">
-                #(mouldsFirstDoc.crepairtime??)
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">料号：</label>
-            <div class="col-sm-2 col-form-label">
-                #(mouldsFirstDoc.citemcode??)
-            </div>
-            <label class="col-sm-2 col-form-label">品名：</label>
-            <div class="col-sm-2 col-form-label">
-                #(mouldsFirstDoc.citemname??)
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">工序名称：</label>
-            <div class="col-sm-2 col-form-label">
-                #(mouldsFirstDoc.coperationname??)
-            </div>
-            <label class="col-sm-2 col-form-label">派工数量：</label>
-            <div class="col-sm-2 col-form-label">
-                #(mouldsFirstDoc.iqty??)
-            </div>
-        </div>
-    </div>
-    <hr/>-->
         <div>
-          <!-- <h6 style="font-weight: bold">确认操作</h6>
-           <div class="form-group row">
-               <label class="col-sm-2 col-form-label">是否合格：</label>
-               <div id="radio" class="form-group row"
-                    data-radio
-                    data-rule="radio"
-                    data-value="#(mouldsFirstDoc.iscomplete??)"
-                    data-name="mouldsFirstDoc.iscomplete"
-                    data-default="options_first"
-                    data-width="col-sm-2,col"
-               >
-                   <div class="col" style="padding-top: 1px;">
-                       <div class="radio radio-primary  radio-inline">
-                           <input id="r_isenabled_true" type="radio" name="mouldsFirstDoc.iscomplete" value="1"/>
-                           <label for="r_isenabled_true">是</label>
-                       </div>
-                       <div class="radio radio-primary  radio-inline">
-                           <input id="r_isenabled_false" type="radio" name="mouldsFirstDoc.iscomplete" value="0"/>
-                           <label for="r_isenabled_false">否</label>
-                       </div>
-                   </div>
-               </div>
-           </div>
-           <div class="form-group row">
-               <label class="col-sm-2 col-form-label">操作人：</label>
-               <div class="col-sm-2 col-form-label">
-                   #(mouldsFirstDoc.username??)
-               </div>
-               <label class="col-sm-2 col-form-label">操作时间：</label>
-               <div class="col-sm-2 col-form-label">
-                   #(mouldsFirstDoc.doperationtime??)
-               </div>
-           </div>-->
           <div style="font-size: 30px; height: 80px; line-height: 80px; font-weight: bold;
                  text-align: center; display: flex; align-items: baseline; justify-content: center;">
-            冲压件质量检查/模具安装参数记录卡
-            <div style="font-size: 20px;vertical-align: sub;">（机械压力机）</div>
-          </div>
-          <!--<div id="isNot" class="form-group row" style="font-size: 20px; font-weight: bold">
-              <label class="col-sm-2 col-form-label">零件编码：</label>
-              <div class="col-sm-2 col-form-label">
-                  <input id="cInvNo" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                         placeholder="请输入零件编码" maxlength="255" name="mouldsFirstDoc.cinvno"
-                         value="#(mouldsFirstDoc.cinvno??)"/>
-              </div>
-              <label class="col-sm-2 col-form-label">生产日期：</label>
-              <div class="col-sm-2 col-form-label">
-                  <input id="dProdDate" type="text" data-date data-type="date" data-fmt="yyyy-MM-dd"
-                         readonly="readonly"
-                         autocomplete="off" class="form-control" placeholder="请设置入厂日期"
-                         data-tips="请设置生产日期" maxlength="10" name="mouldsFirstDoc.dproddate"
-                         value="#date((mouldsFirstDoc.dproddate??),'yyyy-MM-dd')"/>
-              </div>
-              <label class="col-sm-2 col-form-label">生产机台：</label>
-              <div class="col-sm-2 col-form-label">
-                  <input id="cEquipmentName" type="text" data-with-clearbtn="true" autocomplete="off"
-                         class="form-control"
-                         placeholder="请输入生产机台" maxlength="255" name="mouldsFirstDoc.cequipmentname"
-                         value="#(mouldsFirstDoc.cequipmentname??)"/>
-              </div>
-          </div>-->
-          <table id="tableID" border="1" align="center" cellspacing="0" cellpadding="10">
-            <div>
-              <tr class="colspan">
-                <th colspan="5">检查内容</th>
-                <th colspan="22">检查记录</th>
+          显示CPK数值的内容
+        </div>
+          <!--cellspacing="0"
+              cellpadding="10"-->
+          <table id="tableID" border="1"  style="text-align: center;left: 60px;margin-left:100px" width="1200" cellpadding="2" >
+            <div >
+              <tr class="colspan"><!--class="colspan"-->
+                <th style="background-color: #F9F9F9;width: 30px;">序号</th>
+                <th style="background-color: #F9F9F9;">检查项目</th>
+                <th style="background-color: #F9F9F9">规格公差</th>
+                <th style="background-color: #F9F9F9;">检查方法</th>
+                <th style="background-color: #F9F9F9;">1</th>
+                <th style="background-color: #F9F9F9">2</th>
+                <th style="background-color: #F9F9F9">3</th>
+                <th style="background-color: #F9F9F9">4</th>
+                <th style="background-color: #F9F9F9">5</th>
+                <th style="background-color: #F9F9F9">6</th>
+                <th style="background-color: #F9F9F9">7</th>
+                <th style="background-color: #F9F9F9" >8</th>
+                <th style="background-color: #F9F9F9" >9</th>
+                <th style="background-color: #F9F9F9" >10</th>
               </tr>
-              <tr class="colspan">
-                <th>NO</th>
-                <th>检查项目</th>
-                <th>判断基准</th>
-                <th colspan="2">方法</th>
-                <th>30</th>
-                <th>70</th>
-                <th>100</th>
-                <th>150</th>
-                <th>200</th>
-                <th>300</th>
-                <th>400</th>
-                <th>500</th>
-                <th>600</th>
-                <th>700</th>
-                <th>800</th>
-                <th>900</th>
-                <th>1000</th>
-                <th>1100</th>
-                <th>1200</th>
-                <th>1300</th>
-                <th>1400</th>
-                <th>1500</th>
-                <th>1600</th>
-                <th>1700</th>
-                <th>1800</th>
-                <th>1900</th>
-              </tr>
-              <tr id="trd1" class="trd">
+              <tr id="trd1" >
                 <td>1</td>
-                <td>裂纹111</td>
-                <td>无</td>
-                <td colspan="2">目视、样件</td>
-                <td><input name="cA30" type="text"/></td>
-                <td><input name="cA70" type="text"/></td>
-                <td><input name="cA100" type="text"/></td>
-                <td><input name="cA150" type="text"/></td>
-                <td><input name="cA200" type="text"/></td>
-                <td><input name="cA300" type="text"/></td>
-                <td><input name="cA400" type="text"/></td>
-                <td><input name="cA500" type="text"/></td>
-                <td><input name="cA600" type="text"/></td>
-                <td><input name="cA700" type="text"/></td>
-                <td><input name="cA800" type="text"/></td>
-                <td><input name="cA900" type="text"/></td>
-                <td><input name="cA1000" type="text"/></td>
-                <td><input name="cA1100" type="text"/></td>
-                <td><input name="cA1200" type="text"/></td>
-                <td><input name="cA1300" type="text"/></td>
-                <td><input name="cA1400" type="text"/></td>
-                <td><input name="cA1500" type="text"/></td>
-                <td><input name="cA1600" type="text"/></td>
-                <td><input name="cA1700" type="text"/></td>
-                <td><input name="cA1800" type="text"/></td>
-                <td><input name="cA1900" type="text"/></td>
+                <td>总长</td>
+                <td>415.6  |  416.6  |  415.16</td>
+                <td >检具</td> <!---->
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
               </tr>
-              <tr class="trd">
+              <tr >
                 <td>2</td>
-                <td>暗裂</td>
-                <td>板厚70%以上</td>
-                <td colspan="2">目视(千分尺测量)</td>
-                <td><input name="cA30" type="text"/></td>
-                <td><input name="cA70" type="text"/></td>
-                <td><input name="cA100" type="text"/></td>
-                <td><input name="cA150" type="text"/></td>
-                <td><input name="cA200" type="text"/></td>
-                <td><input name="cA300" type="text"/></td>
-                <td><input name="cA400" type="text"/></td>
-                <td><input name="cA500" type="text"/></td>
-                <td><input name="cA600" type="text"/></td>
-                <td><input name="cA700" type="text"/></td>
-                <td><input name="cA800" type="text"/></td>
-                <td><input name="cA900" type="text"/></td>
-                <td><input name="cA1000" type="text"/></td>
-                <td><input name="cA1100" type="text"/></td>
-                <td><input name="cA1200" type="text"/></td>
-                <td><input name="cA1300" type="text"/></td>
-                <td><input name="cA1400" type="text"/></td>
-                <td><input name="cA1500" type="text"/></td>
-                <td><input name="cA1600" type="text"/></td>
-                <td><input name="cA1700" type="text"/></td>
-                <td><input name="cA1800" type="text"/></td>
-                <td><input name="cA1900" type="text"/></td>
+                <td>宽</td>
+                <td>212.1 |  212.6  |  211</td>
+                <td>检具</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
               </tr>
-              <tr class="trd">
+              <tr >
                 <td>3</td>
-                <td>缺边/多边</td>
-                <td>检查规格以内(检具)</td>
-                <td colspan="2">日视、样件</td>
-                <td><input name="cA30" type="text"/></td>
-                <td><input name="cA70" type="text"/></td>
-                <td><input name="cA100" type="text"/></td>
-                <td><input name="cA150" type="text"/></td>
-                <td><input name="cA200" type="text"/></td>
-                <td><input name="cA300" type="text"/></td>
-                <td><input name="cA400" type="text"/></td>
-                <td><input name="cA500" type="text"/></td>
-                <td><input name="cA600" type="text"/></td>
-                <td><input name="cA700" type="text"/></td>
-                <td><input name="cA800" type="text"/></td>
-                <td><input name="cA900" type="text"/></td>
-                <td><input name="cA1000" type="text"/></td>
-                <td><input name="cA1100" type="text"/></td>
-                <td><input name="cA1200" type="text"/></td>
-                <td><input name="cA1300" type="text"/></td>
-                <td><input name="cA1400" type="text"/></td>
-                <td><input name="cA1500" type="text"/></td>
-                <td><input name="cA1600" type="text"/></td>
-                <td><input name="cA1700" type="text"/></td>
-                <td><input name="cA1800" type="text"/></td>
-                <td><input name="cA1900" type="text"/></td>
+                <td>高</td>
+                <td>496.1 | 495.6 | 495.6</td>
+                <td>检具</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
               </tr>
-              <tr class="trd">
+              <tr >
                 <td>4</td>
-                <td></td>
-                <td>无温冲多冲位置错</td>
-                <td colspan="2">目视</td>
-                <td><input name="cA30" type="text"/></td>
-                <td><input name="cA70" type="text"/></td>
-                <td><input name="cA100" type="text"/></td>
-                <td><input name="cA150" type="text"/></td>
-                <td><input name="cA200" type="text"/></td>
-                <td><input name="cA300" type="text"/></td>
-                <td><input name="cA400" type="text"/></td>
-                <td><input name="cA500" type="text"/></td>
-                <td><input name="cA600" type="text"/></td>
-                <td><input name="cA700" type="text"/></td>
-                <td><input name="cA800" type="text"/></td>
-                <td><input name="cA900" type="text"/></td>
-                <td><input name="cA1000" type="text"/></td>
-                <td><input name="cA1100" type="text"/></td>
-                <td><input name="cA1200" type="text"/></td>
-                <td><input name="cA1300" type="text"/></td>
-                <td><input name="cA1400" type="text"/></td>
-                <td><input name="cA1500" type="text"/></td>
-                <td><input name="cA1600" type="text"/></td>
-                <td><input name="cA1700" type="text"/></td>
-                <td><input name="cA1800" type="text"/></td>
-                <td><input name="cA1900" type="text"/></td>
+                <td>FR端径外（10mm范围）A</td>
+                <td>47 | 47.2 | 46.8</td>
+                <td>卡尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
               </tr>
-              <tr class="trd">
+              <tr >
                 <td>5</td>
-                <td>变形</td>
-                <td>无(险具)</td>
-                <td colspan="2">目视</td>
-                <td><input name="cA30" type="text"/></td>
-                <td><input name="cA70" type="text"/></td>
-                <td><input name="cA100" type="text"/></td>
-                <td><input name="cA150" type="text"/></td>
-                <td><input name="cA200" type="text"/></td>
-                <td><input name="cA300" type="text"/></td>
-                <td><input name="cA400" type="text"/></td>
-                <td><input name="cA500" type="text"/></td>
-                <td><input name="cA600" type="text"/></td>
-                <td><input name="cA700" type="text"/></td>
-                <td><input name="cA800" type="text"/></td>
-                <td><input name="cA900" type="text"/></td>
-                <td><input name="cA1000" type="text"/></td>
-                <td><input name="cA1100" type="text"/></td>
-                <td><input name="cA1200" type="text"/></td>
-                <td><input name="cA1300" type="text"/></td>
-                <td><input name="cA1400" type="text"/></td>
-                <td><input name="cA1500" type="text"/></td>
-                <td><input name="cA1600" type="text"/></td>
-                <td><input name="cA1700" type="text"/></td>
-                <td><input name="cA1800" type="text"/></td>
-                <td><input name="cA1900" type="text"/></td>
+                <td>FR端径外（10mm范围）B</td>
+                <td>47 | 47.2 | 46.8</td>
+                <td>卡尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
               </tr>
-              <tr class="trd">
+              <tr >
                 <td>6</td>
-                <td>压痕</td>
-                <td>不明显且板厚70以上</td>
-                <td colspan="2">目视(千分尺测量)</td>
-                <td><input name="cA30" type="text"/></td>
-                <td><input name="cA70" type="text"/></td>
-                <td><input name="cA100" type="text"/></td>
-                <td><input name="cA150" type="text"/></td>
-                <td><input name="cA200" type="text"/></td>
-                <td><input name="cA300" type="text"/></td>
-                <td><input name="cA400" type="text"/></td>
-                <td><input name="cA500" type="text"/></td>
-                <td><input name="cA600" type="text"/></td>
-                <td><input name="cA700" type="text"/></td>
-                <td><input name="cA800" type="text"/></td>
-                <td><input name="cA900" type="text"/></td>
-                <td><input name="cA1000" type="text"/></td>
-                <td><input name="cA1100" type="text"/></td>
-                <td><input name="cA1200" type="text"/></td>
-                <td><input name="cA1300" type="text"/></td>
-                <td><input name="cA1400" type="text"/></td>
-                <td><input name="cA1500" type="text"/></td>
-                <td><input name="cA1600" type="text"/></td>
-                <td><input name="cA1700" type="text"/></td>
-                <td><input name="cA1800" type="text"/></td>
-                <td><input name="cA1900" type="text"/></td>
+                <td>FR端径外（10mm范围）C</td>
+                <td>47 | 47.2 | 46.8</td>
+                <td>卡尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
               </tr>
-              <tr class="trd">
+              <tr >
                 <td>7</td>
-                <td>叠料</td>
-                <td>无</td>
-                <td colspan="2">目视</td>
-                <td><input name="cA30" type="text"/></td>
-                <td><input name="cA70" type="text"/></td>
-                <td><input name="cA100" type="text"/></td>
-                <td><input name="cA150" type="text"/></td>
-                <td><input name="cA200" type="text"/></td>
-                <td><input name="cA300" type="text"/></td>
-                <td><input name="cA400" type="text"/></td>
-                <td><input name="cA500" type="text"/></td>
-                <td><input name="cA600" type="text"/></td>
-                <td><input name="cA700" type="text"/></td>
-                <td><input name="cA800" type="text"/></td>
-                <td><input name="cA900" type="text"/></td>
-                <td><input name="cA1000" type="text"/></td>
-                <td><input name="cA1100" type="text"/></td>
-                <td><input name="cA1200" type="text"/></td>
-                <td><input name="cA1300" type="text"/></td>
-                <td><input name="cA1400" type="text"/></td>
-                <td><input name="cA1500" type="text"/></td>
-                <td><input name="cA1600" type="text"/></td>
-                <td><input name="cA1700" type="text"/></td>
-                <td><input name="cA1800" type="text"/></td>
-                <td><input name="cA1900" type="text"/></td>
+                <td>FR端径外（10mm范围）D</td>
+                <td>47 | 47.2 | 46.8</td>
+                <td>卡尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
               </tr>
-              <tr class="trd">
+              <tr >
                 <td>8</td>
-                <td>拉伤/划痕</td>
-                <td>不明显且板厚70%以上</td>
-                <td colspan="2">目视(千分尺测量)</td>
-                <td><input name="cA30" type="text"/></td>
-                <td><input name="cA70" type="text"/></td>
-                <td><input name="cA100" type="text"/></td>
-                <td><input name="cA150" type="text"/></td>
-                <td><input name="cA200" type="text"/></td>
-                <td><input name="cA300" type="text"/></td>
-                <td><input name="cA400" type="text"/></td>
-                <td><input name="cA500" type="text"/></td>
-                <td><input name="cA600" type="text"/></td>
-                <td><input name="cA700" type="text"/></td>
-                <td><input name="cA800" type="text"/></td>
-                <td><input name="cA900" type="text"/></td>
-                <td><input name="cA1000" type="text"/></td>
-                <td><input name="cA1100" type="text"/></td>
-                <td><input name="cA1200" type="text"/></td>
-                <td><input name="cA1300" type="text"/></td>
-                <td><input name="cA1400" type="text"/></td>
-                <td><input name="cA1500" type="text"/></td>
-                <td><input name="cA1600" type="text"/></td>
-                <td><input name="cA1700" type="text"/></td>
-                <td><input name="cA1800" type="text"/></td>
-                <td><input name="cA1900" type="text"/></td>
+                <td>扩口长度</td>
+                <td>20 | 21 | 19.8</td>
+                <td>卡尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
               </tr>
-              <tr class="trd">
+              <tr >
                 <td>9</td>
-                <td>毛刺</td>
-                <td>0.30MM以下</td>
-                <td colspan="2">目视</td>
-                <td><input name="cA30" type="text"/></td>
-                <td><input name="cA70" type="text"/></td>
-                <td><input name="cA100" type="text"/></td>
-                <td><input name="cA150" type="text"/></td>
-                <td><input name="cA200" type="text"/></td>
-                <td><input name="cA300" type="text"/></td>
-                <td><input name="cA400" type="text"/></td>
-                <td><input name="cA500" type="text"/></td>
-                <td><input name="cA600" type="text"/></td>
-                <td><input name="cA700" type="text"/></td>
-                <td><input name="cA800" type="text"/></td>
-                <td><input name="cA900" type="text"/></td>
-                <td><input name="cA1000" type="text"/></td>
-                <td><input name="cA1100" type="text"/></td>
-                <td><input name="cA1200" type="text"/></td>
-                <td><input name="cA1300" type="text"/></td>
-                <td><input name="cA1400" type="text"/></td>
-                <td><input name="cA1500" type="text"/></td>
-                <td><input name="cA1600" type="text"/></td>
-                <td><input name="cA1700" type="text"/></td>
-                <td><input name="cA1800" type="text"/></td>
-                <td><input name="cA1900" type="text"/></td>
+                <td>FR端径外（10mm范围）A</td>
+                <td>45 | 45.2 |  44.8</td>
+                <td>卡尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
               </tr>
-              <tr class="trd">
+              <tr >
                 <td>10</td>
-                <td>关键点</td>
-                <td>在检具上抽检关键点</td>
-                <td colspan="2">间隙尺、直尺</td>
-                <td><input name="cA30" type="text"/></td>
-                <td><input name="cA70" type="text"/></td>
-                <td><input name="cA100" type="text"/></td>
-                <td><input name="cA150" type="text"/></td>
-                <td><input name="cA200" type="text"/></td>
-                <td><input name="cA300" type="text"/></td>
-                <td><input name="cA400" type="text"/></td>
-                <td><input name="cA500" type="text"/></td>
-                <td><input name="cA600" type="text"/></td>
-                <td><input name="cA700" type="text"/></td>
-                <td><input name="cA800" type="text"/></td>
-                <td><input name="cA900" type="text"/></td>
-                <td><input name="cA1000" type="text"/></td>
-                <td><input name="cA1100" type="text"/></td>
-                <td><input name="cA1200" type="text"/></td>
-                <td><input name="cA1300" type="text"/></td>
-                <td><input name="cA1400" type="text"/></td>
-                <td><input name="cA1500" type="text"/></td>
-                <td><input name="cA1600" type="text"/></td>
-                <td><input name="cA1700" type="text"/></td>
-                <td><input name="cA1800" type="text"/></td>
-                <td><input name="cA1900" type="text"/></td>
+                <td>FR端径外（10mm范围）B</td>
+                <td>45 | 45.2 |  44.8</td>
+                <td>卡尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
+              </tr>
+              <tr >
+                <td>11</td>
+                <td>FR端径外（10mm范围）C</td>
+                <td>45 | 45.2 |  44.8</td>
+                <td>卡尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
+              </tr>
+              <tr >
+                <td>12</td>
+                <td>FR端径外（10mm范围）D</td>
+                <td>45 | 45.2 |  44.8</td>
+                <td>卡尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
+              </tr>
+              <tr >
+                <td>13</td>
+                <td>拉薄率（板厚=1.5）</td>
+                <td>＜30%</td>
+                <td>超声波测厚仪</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
+              </tr>
+              <tr >
+                <td>14</td>
+                <td>扁平率（素管Φ45）</td>
+                <td>＜6%</td>
+                <td>卡尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
+              </tr>
+              <tr >
+                <td>15</td>
+                <td>整体尺寸</td>
+                <td>合检具，无干涉</td>
+                <td>检具</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
+              </tr>
+              <tr >
+                <td>16</td>
+                <td>整体尺寸</td>
+                <td>管口斜面＜0.5</td>
+                <td>塞尺</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
+              </tr>
+              <tr >
+                <td>17</td>
+                <td>整体外观</td>
+                <td>无异常毛刺、拉花、变形、压伤、开裂、起皱</td>
+                <td>目视</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
+              </tr>
+              <tr >
+                <td>18</td>
+                <td>材质</td>
+                <td>HSS441-TK</td>
+                <td>核对标签</td>
+                <td><input name="1" type="text"/></td>
+                <td><input name="2" type="text"/></td>
+                <td><input name="3" type="text"/></td>
+                <td><input name="4" type="text"/></td>
+                <td><input name="5" type="text"/></td>
+                <td><input name="6" type="text"/></td>
+                <td><input name="7" type="text"/></td>
+                <td><input name="8" type="text"/></td>
+                <td><input name="9" type="text"/></td>
+                <td><input name="10" type="text"/></td>
               </tr>
             </div>
           </table>
         </div>
+        <table border="1" style="text-align: center;left: 60px;margin-left:100px" width="1200">
+          <tr height="60" style="mso-height-source:userset;height:21pt" id="r2">
+            <td height="26" class="x70" width="117" style="height:19.5pt;width:87.75pt;">备注</td>
+            <td width="850px"><!--class="x71" width="260" style="width:195pt;"-->
+              <div >
+                <textarea class="form-control" data-auto-height="100" autocomplete="off" data-show-count placeholder="=请输入备注="
+                          data-tips="请输入备注" maxlength="200" name="cmemo" value="">#(cmemo??)</textarea>
+              </div>
+            </td>
+            <td width="300px">
+              <div class="form-group row  col-9"
+                   data-radio
+                   data-rule="radio"
+                   data-default=""
+                   data-url="admin/dictionary/options?key=judge_type	"
+                   data-value-attr="sn"
+                   data-text-attr="judge"
+                   data-inline="true"
+                   data-value="#(judge??)"
+                   data-name="judge">
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
     </form>
 
   </div>
@@ -605,8 +597,8 @@
 #end
 
 <style>
-  .trd td {
-    width: 60px;
+ /* .trd td {
+    width: 80px;
     overflow: hidden;
     height: 100%;
     font-size: 14px;
@@ -622,9 +614,57 @@
     text-align: center;
     border: none;
 
-  }
+  }*/
 
   .colspan {
     text-align: center;
+  }
+
+  .x71 {
+    mso-style-parent: style0;
+    mso-number-format: General;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    background: white;
+    mso-pattern: auto;
+    color: #000000;
+    font-size: 12pt;
+    font-weight: 700;
+    font-style: normal;
+    font-family: "宋体", "sans-serif";
+    border-top: 1px solid windowtext;
+    border-right: 1px solid windowtext;
+    border-bottom: 1px solid windowtext;
+    border-left: 1px solid windowtext;
+    mso-diagonal-down: none;
+    mso-diagonal-up: none;
+    mso-protection: locked visible;
+  }
+
+  .x70 {
+    mso-style-parent: style0;
+    mso-number-format: General;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    background: white;
+    mso-pattern: auto;
+    color: #000000;
+    font-size: 12pt;
+    font-weight: 700;
+    font-style: normal;
+    font-family: "宋体", "sans-serif";
+    border-top: 1px solid windowtext;
+    border-right: 1px solid windowtext;
+    border-bottom: 1px solid windowtext;
+    border-left: 1px solid windowtext;
+    mso-diagonal-down: none;
+    mso-diagonal-up: none;
+    mso-protection: locked visible;
+  }
+
+  .biaotoucolor{
+    background-color: #b1dfbb;
   }
 </style>

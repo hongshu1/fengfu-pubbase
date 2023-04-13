@@ -1,4 +1,5 @@
-<form onsubmit="return false;" id="sysMessageTemplateForm" action="#(action)" method="post">
+#set(pageId=RandomUtil.random(6))
+<form onsubmit="return false;" id="sysMessageTemplateForm_#(pageId)" action="#(action)" method="post">
     <input type="hidden" name="sysMessageTemplate.id" value="#(sysMessageTemplate.id??)"/>
 
     <div class="form-group row">
@@ -41,6 +42,7 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">模板标题</label>
         <div class="col">
+
             <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off" class="form-control"
                    placeholder="请输入模板标题" maxlength="10" name="sysMessageTemplate.message_title"
                    value="#(sysMessageTemplate.message_title??)"/>
@@ -49,10 +51,10 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">发送内容</label>
         <div class="col">
-            <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off" class="form-control"
-                   placeholder="请输入发送内容"
-                   maxlength="2147483647" name="sysMessageTemplate.message_value"
-                   value="#(sysMessageTemplate.message_value??)"/>
+
+
+            <textarea class="form-control" data-auto-height data-with-clearbtn="true"  data-rule="required"  placeholder="请输入发送内容" data-tips="请输入发送内容"
+                      maxlength="20000" name="sysMessageTemplate.message_value" value="">#(sysMessageTemplate.message_value??)</textarea>
         </div>
     </div>
 
@@ -91,28 +93,29 @@
             </div>
         </div>
     </div>
-
     <div class="form-group row"
          data-radio
          data-rule="radio"
-         data-value="#(sysMessageTemplate.ison??)"
-         data-name="sysMessageTemplate.ison"
+         data-value="#(sysMessageTemplate.is_on??'1' == '1'? 'true' : 'false')"
+         data-name="sysMessageTemplate.is_on"
          data-default="options_first"
-         data-width="col-sm-2,col"
+         data-width="col-sm-1"
     >
-        <label class="col-sm-2 col-form-label">启用禁用</label>
-        <div class="col" style="padding-top: 1px;">
+        <label class="col-sm-1 col-form-label" >是否启用</label>
+        <div class="col"  style="padding-top: 1px;">
             <div class="radio radio-primary  radio-inline">
-                <input id="r_ison_true" type="radio" name="sysMessageTemplate.ison" value="true"/>
-                <label for="r_ison_true">是</label>
+                <input  id="r_isenabled_true" type="radio" name="sysMessageTemplate.is_on" value="true"/>
+                <label for="r_isenabled_true">是</label>
             </div>
 
             <div class="radio radio-primary  radio-inline">
-                <input id="r_ison_false" type="radio" name="sysMessageTemplate.ison" value="false"/>
-                <label for="r_ison_false">否</label>
+                <input  id="r_isenabled_false" type="radio" name="sysMessageTemplate.is_on" value="false"/>
+                <label for="r_isenabled_false">否</label>
             </div>
         </div>
     </div>
+
+</form>
     <!-- JBoltTable的数据模板定义-->
 <textarea class="jb_tpl_box" id="jbolt_table_rowtpl_#(pageId)">
 {@each datas as data,index}
@@ -120,6 +123,11 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.id}</td>
 
+<td>${data.username}</td>
+ <td>${data.user_id}</td>
+<td>${data.name}</td>
+<td>${data.email}</td>
+<td> <a data-ajaxbtn href="/admin/person/deleteByAjax" data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a></td>
 </tr>
 {@/each}
 </textarea>
@@ -136,7 +144,6 @@
            data-jbolttable
            id="jbolt_Table_#(pageId)"
            data-height="400"
-           data-ajax="true"
            data-width="auto"
            data-column-resize="true"
            data-rowtpl="jbolt_table_rowtpl_#(pageId)"
@@ -146,6 +153,7 @@
            #else
            data-autoload="false"
            #end
+           data-ajax="true"
            data-editable="true"
            data-editable-option="getEditableTableOptions_#(pageId)"
     >
@@ -153,7 +161,8 @@
         <tr>
             <th data-width="60">序号</th>
             <th data-column="id" >id</th>
-            <th data-column="userid" data-width="150">用户名</th>
+            <th data-column="username" data-width="150">用户名</th>
+            <th data-column="user_id" >用户id</th>
             <th data-column="name" data-width="100">姓名</th>
             <th data-column="email" data-width="120">E-Mail</th>
             <th data-width="100">操作</th>
@@ -162,11 +171,14 @@
         </tbody>
     </table>
 
-</form>
+
 
 
 #define js()
 <script>
+    function submitThisForm(){
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
     //获得配置参数
     function getEditableTableOptions_#(pageId)(){
         var editableTableOptions={
@@ -176,10 +188,10 @@
             // 限制最大数 默认30
             submit:{
                 withForm:["sysMessageTemplateForm_#(pageId)"],
-                name: 'sysMessageTemplateForm_',
+                name: 'sysMessageTemplateForm',
                 type:"all",//cell|all
                 //params:{"orderId":3},//携带其他额外参数
-                url:"admin/person/submitTable",
+                url:"admin/messageTemplate/submitTable",
                 success:function(res){
                     LayerMsgBox.success("提交成功",600,function(){
                         parent.refreshPjaxContainer();
@@ -191,20 +203,22 @@
                 id: {
                     submitAttr: "id",
                 },
-                userid: {
+                username: {
                     type: "autocomplete",
-                    url: "admin/person/datas",
+                    url: "admin/user/autocomplete",
                     maxLength: 100,
                     placeholder: "请选择",
-                    textAttr: "id",
+                    textAttr: "username",
                     width: 500,
                     required: true,
-                    valueAttr: "id",
-                    columnAttr: "id",
+                    valueAttr: "username",
+                    columnAttr: "username,name,email",
                     header:'用户id',
                     changeColumns:[
-                        {column: "id", use: "id"},
-                        {column: "userid", use: "userid"}
+                        {column: "user_id", use: "id"},
+                        {column: "username", use: "username"},
+                        {column: "name", use: "name"},
+                        {column: "email", use: "email"}
                     ]
                 }
             }
@@ -212,6 +226,6 @@
         return editableTableOptions;
     }
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="sysMessageTemplateForm")
+
 #end
 
