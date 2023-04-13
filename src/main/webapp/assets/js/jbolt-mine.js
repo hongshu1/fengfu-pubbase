@@ -146,6 +146,28 @@ function cOrderStatusDescByAuditStatus(val) {
             return '';
     }
 }
+
+function iOrderStatus(val) {
+    switch (val) {
+        case 1:
+            return "已保存";
+        case 2:
+            return "待审批";
+        case 3:
+            return "已审批";
+        case 4:
+            return "审批不通过";
+        case 5:
+            return "已发货";
+        case 6:
+            return "已核对";
+        case 7:
+            return "已关闭";
+        default:
+            return '11';
+    }
+}
+
 function initMineJuicer(){
 	//格式 juicer.register("模板函数名定义（自己取名）",具体模板函数实现);
 	//举例 juicer.register("date_ymdhm",date_ymdhm);
@@ -168,7 +190,7 @@ function initMineJuicer(){
     juicer.register('iSource', iSource);
     juicer.register('iSex', iSex);
     juicer.register('cOrderStatusDescByAuditStatus', cOrderStatusDescByAuditStatus);
-    
+    juicer.register('iOrderStatus', iOrderStatus);
 }
 
 function jboltTableGetSpecCols(ele, colName) {

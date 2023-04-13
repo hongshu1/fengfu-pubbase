@@ -2232,4 +2232,9 @@ public class PermissionKey {
 	 * 平板登录日志
 	 */
     public static final String PADLOGINLOG = "pad_loginlog";
+
+	/**
+	 * 周间客户订单
+	 */
+	public static final String WEEK_ORDERM = "week_orderm";
 }
