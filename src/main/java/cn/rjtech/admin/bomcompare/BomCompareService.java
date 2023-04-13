@@ -1,6 +1,7 @@
 package cn.rjtech.admin.bomcompare;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
@@ -290,4 +291,16 @@ public class BomCompareService extends BaseService<BomCompare> {
 		ValidationUtils.notNull(bomMasterId, JBoltMsg.PARAM_ERROR);
 		return find("SELECT a.* FROM Bd_BomCompare a WHERE a.iBOMMasterId = ? AND a.isDeleted = '0'", bomMasterId);
 	}
+	
+	public int deleteByBomMasterId(Long bomMasterId) {
+		return delete("DELETE Bd_BomCompare WHERE iBOMMasterId = ?", bomMasterId);
+	}
+	
+	public List<Record> getCommonInv(Long bomMasterId, String invId, String qty, String weight){
+        Okv okv = Okv.by("invId", invId).set("qty", qty).set("weight", weight);
+        if (ObjectUtil.isNotNull(bomMasterId)){
+            okv.set("bomMasterId", bomMasterId);
+        }
+	    return dbTemplate("bomcompare.getCommonInv", okv).find();
+    }
 }

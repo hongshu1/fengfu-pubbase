@@ -5,8 +5,8 @@
 	#setLocal(jboltTabId=(goods.id?? RandomUtil.random(6)))
 	<nav>
 		<div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
-			<a class="nav-item nav-link active" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" aria-controls="tab-one" aria-selected="true">物料清单</a>
-			<a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false">版本记录</a>
+			<a class="nav-item nav-link active" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" onclick="refreshPjaxContainer()" aria-controls="tab-one" aria-selected="true">物料清单</a>
+			<a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" onclick="refreshJBoltTable()" aria-controls="tab-two" aria-selected="false">版本记录</a>
 		</div>
 	</nav>
 	<div class="tab-content" style="padding: 0px 1rem">
@@ -14,7 +14,6 @@
 			<div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="nav-base-tab_one">
 				#render("bommaster_index.html")
 			</div>
-
 			<!--2 版本记录 -->
 			<div class="tab-pane fade" id="tab-two" role="tabpanel" aria-labelledby="nav-base-tab_two">
 				#ajaxPortal("/admin/bommaster/versionIndex","bommaster_jstree_#(pageId)",true)
