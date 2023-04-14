@@ -124,7 +124,7 @@
 						<div class="form-group row">
 							<label class="col-sm-1 col-form-label">税率</label>
 							<div class="col">
-								<input type="text" data-with-clearbtn="true" data-rule="pnumber;" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入税率" maxlength="6" name="subcontractsaleorderm.cPaymentTerm" value="#(subcontractsaleorderm.cPaymentTerm??)"/>		  	
+								<input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入税率" maxlength="6" name="subcontractsaleorderm.iTaxRate" value="#(subcontractsaleorderm.iTaxRate??)"/>		  	
 							</div>	
 							<label class="col-sm-1 col-form-label">币种</label>
 							<div class="col">
@@ -140,7 +140,7 @@
 							</div>
 							<label class="col-sm-1 col-form-label">汇率</label>
 							<div class="col">
-								<input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入汇率" maxlength="10" name="subcontractsaleorderm.cPaymentTerm" value="#(subcontractsaleorderm.cPaymentTerm??)"/>		  									
+								<input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入汇率" maxlength="10" name="subcontractsaleorderm.iExchangeRate" value="#(subcontractsaleorderm.iExchangeRate??)"/>		  									
 							</div>		
 							<label class="col-sm-1 col-form-label">备注</label>
 							<div class="col">
@@ -245,7 +245,7 @@
            data-jbolttable
            #if(subcontractsaleorderm.iAutoId??)
            data-ajax="true"
-           data-url="admin/subcontractsaleorderm/findEditTableDatas?isubcontractsaleordermid=#(subcontractsaleorderm.iAutoId??)"
+           data-url="admin/subcontractsaleorderd/findEditTableDatas?isubcontractsaleordermid=#(subcontractsaleorderm.iAutoId??)"
            #end
            id="jbolt_Table_#(pageId)"
            data-column-resize="true"
@@ -254,6 +254,7 @@
            data-rowtpl="jboltTable_demotpl_#(pageId)"
            data-toolbar="subcontractsaleorderm_toolbar_#(pageId)"
            data-editable="true"
+           data-fixed-columns-right="-1"
            data-editable-option="getEditableTableOptions_#(pageId)"
     >
         <thead class="fw_normal">

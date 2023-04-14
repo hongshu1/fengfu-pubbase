@@ -8,9 +8,50 @@
 	<div class="col-md-auto"><h1><i class="jbicon2 jbi-appstore"></i>委外销售订单</h1></div>
 	<div class="col">
 		<form class="form-inline text-left" id="subcontractsaleordermForm_#(pageId)"   onsubmit="return false;" method="post">
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
-		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+			<input type="text" class="form-control" data-with-clearbtn="true" placeholder="订单号" name="cOrderNo" style="width:100px;" value="" />
+			<input type="text" class="form-control" data-with-clearbtn="true" placeholder="客户名称" name="cCusName" style="width:100px;" value="" />
+               <select class="form-control"
+                       name="iAuditStatus"
+                       data-autoload
+                       data-url="admin/dictionary/options?key=annual_order_auditstatus"
+                       data-select-type="select"
+                       data-text="=订单状态="
+                       data-value=""
+                       data-with-clearbtn="true"
+                       data-value-attr="sn"
+               ></select>
+               <input type="text"
+                data-date
+                data-type="year"
+                placeholder="=年份="
+                style="width:91px!important;"
+                data-fmt="yyyy"
+                autocomplete="off"
+                class="form-control"
+                maxlength="20"
+                name="iYear"
+                value=""/>
+			<select class="form-control" name="iMonth">
+		        <option value="">=月份=</option>
+		        <option value="1">1月</option>
+		        <option value="2">2月</option>
+		        <option value="3">3月</option>
+		        <option value="4">4月</option>
+		        <option value="5">5月</option>
+		        <option value="6">6月</option>
+		        <option value="7">7月</option>
+		        <option value="8">8月</option>
+		        <option value="9">9月</option>
+		        <option value="10">10月</option>
+		        <option value="11">11月</option>
+		        <option value="12">12月</option>
+            </select>	                
+			<input type="text" class="form-control" data-with-clearbtn="true" placeholder="创建人" style="width:110px;" name="cCreateName" value="" />
+			<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" name="startTime" value=""/>
+            <span class="ml-1 mr-1">至</span>
+            <input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20" name="endTime" value=""/>
+			<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 		</form>
 	</div>
 	<div class="col-md-auto">
@@ -24,12 +65,12 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/subcontractsaleorderm/edit/${data.iautoid}" data-fs="true" tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="修改委外销售订单主表" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
-    <a href="admin/subcontractsaleorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+	<a href="admin/subcontractsaleorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-dialog-title="修改委外销售订单主表" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+    <a href="admin/subcontractsaleorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 </td>
 <td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
 <td>${data.corderno}</td>
-<td>${data.dorderdate}</td>
+<td>${data.dorderdate|date_ymd}</td>
 <td>${data.ibustype}</td>
 <td>${data.isaletypeid}</td>
 <td>${data.ccuscode}</td>
@@ -52,12 +93,10 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="subcontractsaleorderm_toolbar_#(pageId)">
 	<div class="btn-group" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-fs="true" data-handler="jboltTablePageToFirst" data-title="新增委外销售订单主表"  data-url="admin/subcontractsaleorderm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-fs="true" data-handler="jboltTablePageToFirst" data-title="新增委外销售订单"  data-url="admin/subcontractsaleorderm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 	</div>
 </div>
-
-
 
 <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
 data-jbolttable
@@ -72,14 +111,13 @@ data-rowtpl="subcontractsaleordermRowtpl_#(pageId)"
 data-page="subcontractsaleordermPage_#(pageId)"
 data-toolbar="subcontractsaleorderm_toolbar_#(pageId)"
 data-fixed-columns-left="1,2,3"
-data-fixed-columns-right="-1"
 data-row-dblclick-active="true"
 data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 >
 <thead>
 <tr>
 	<th data-width="60">序号</th>
-	<th data-width="100">操作</th>
+	<th data-width="150">操作</th>
 	<th data-width="150" data-column="iAuditStatus">审核状态</th>
 	<th data-width="150" data-column="cOrderNo">订单号</th>
 	<th data-width="150" data-column="dOrderDate">订单日期</th>
