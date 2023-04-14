@@ -240,7 +240,7 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 	 * @return
 	 */
 	public List<JsTreeBean> getMgrTree(Long selectId, Integer openLevel) {
-		List<InventoryClass> inventoryClassList = find("select * from Bd_InventoryClass where isdeleted='0'");
+		List<InventoryClass> inventoryClassList = find("select * from Bd_InventoryClass where isdeleted='0' order by cInvCCode asc ");
 		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
 		JsTreeBean parent = new JsTreeBean("1","#","存货分类",null,"",false);
 		jsTreeBeanList.add(parent);

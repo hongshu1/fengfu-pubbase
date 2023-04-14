@@ -84,6 +84,8 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
     public static final String DUPDATETIME = "dUpdateTime";
     /**是否删除 1已删除*/
     public static final String ISDELETED = "isDeleted";
+	/**是否生效：0. 否 1. 是*/
+    public static final String ISEFFECTIVE = "isEffective";
 	/**
 	 * 主键
 	 */
@@ -703,15 +705,31 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 		set("isDeleted", isDeleted);
 		return (M)this;
 	}
-
+	
 	/**
 	 * 是否删除 1已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除 1已删除", required=true, maxLength=1, fixed=0, order=37)
+	@JBoltField(name="iseffective" ,columnName="isEffective",type="Boolean", remark="是否删除 1已删除", required=true, maxLength=1, fixed=0, order=37)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
 	}
-
+	
+	/**
+	 * 是否生效：0. 否 1. 是
+	 */
+	public M setIsEffective(java.lang.Boolean isEffective) {
+		set("isEffective", isEffective);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生效：0. 否 1. 是
+	 */
+	@JBoltField(name="iseffective" ,columnName="isEffective",type="Boolean", remark="是否生效：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=38)
+	@JSONField(name = "iseffective")
+	public java.lang.Boolean getIsEffective() {
+		return getBoolean("Effective");
+	}
 }
 

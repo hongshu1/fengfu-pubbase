@@ -110,328 +110,367 @@
             </td>
           </tr>
         </table>
+        <table id="isNotButton" border="3" style="text-align: center;left: 60px;margin-left:100px" width="1200" cellpadding="2">
+          <div style="left: 60px;margin-left:100px;height: 50px;width: 500px;">
+            <button type="button" onclick="inserRow(10)" class="btn btn-success" disabled="true"
+                    style="background-color: #1006F1;margin-top: 11px">新增页
+            </button>
+            <img data-switchbtn data-value="${data.isCpkSigned}" data-handler="refreshJBoltTable"
+                 data-url="admin/rcvdocqcformm/toggleIsCpkSigned/${data.iautoid}" style="margin-left: 50px;"/>
+            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+          </div>
+        </table>
 
-        <div>
-          <div style="font-size: 30px; height: 80px; line-height: 80px; font-weight: bold;
-                 text-align: center; display: flex; align-items: baseline; justify-content: center;">
-          显示CPK数值的内容
-        </div>
-          <!--cellspacing="0"
-              cellpadding="10"-->
-          <table id="tableID" border="1"  style="text-align: center;left: 60px;margin-left:100px" width="1200" cellpadding="2" >
-            <div >
-              <tr class="colspan"><!--class="colspan"-->
-                <th style="background-color: #F9F9F9;width: 30px;">序号</th>
-                <th style="background-color: #F9F9F9;">检查项目</th>
-                <th style="background-color: #F9F9F9">规格公差</th>
-                <th style="background-color: #F9F9F9;">检查方法</th>
-                <th style="background-color: #F9F9F9;">1</th>
-                <th style="background-color: #F9F9F9">2</th>
-                <th style="background-color: #F9F9F9">3</th>
-                <th style="background-color: #F9F9F9">4</th>
-                <th style="background-color: #F9F9F9">5</th>
-                <th style="background-color: #F9F9F9">6</th>
-                <th style="background-color: #F9F9F9">7</th>
-                <th style="background-color: #F9F9F9" >8</th>
-                <th style="background-color: #F9F9F9" >9</th>
-                <th style="background-color: #F9F9F9" >10</th>
-              </tr>
-              <tr id="trd1" >
-                <td>1</td>
-                <td>总长</td>
-                <td>415.6  |  416.6  |  415.16</td>
-                <td >检具</td> <!---->
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>2</td>
-                <td>宽</td>
-                <td>212.1 |  212.6  |  211</td>
-                <td>检具</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>3</td>
-                <td>高</td>
-                <td>496.1 | 495.6 | 495.6</td>
-                <td>检具</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>4</td>
-                <td>FR端径外（10mm范围）A</td>
-                <td>47 | 47.2 | 46.8</td>
-                <td>卡尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>5</td>
-                <td>FR端径外（10mm范围）B</td>
-                <td>47 | 47.2 | 46.8</td>
-                <td>卡尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>6</td>
-                <td>FR端径外（10mm范围）C</td>
-                <td>47 | 47.2 | 46.8</td>
-                <td>卡尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>7</td>
-                <td>FR端径外（10mm范围）D</td>
-                <td>47 | 47.2 | 46.8</td>
-                <td>卡尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>8</td>
-                <td>扩口长度</td>
-                <td>20 | 21 | 19.8</td>
-                <td>卡尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>9</td>
-                <td>FR端径外（10mm范围）A</td>
-                <td>45 | 45.2 |  44.8</td>
-                <td>卡尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>10</td>
-                <td>FR端径外（10mm范围）B</td>
-                <td>45 | 45.2 |  44.8</td>
-                <td>卡尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>11</td>
-                <td>FR端径外（10mm范围）C</td>
-                <td>45 | 45.2 |  44.8</td>
-                <td>卡尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>12</td>
-                <td>FR端径外（10mm范围）D</td>
-                <td>45 | 45.2 |  44.8</td>
-                <td>卡尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>13</td>
-                <td>拉薄率（板厚=1.5）</td>
-                <td>＜30%</td>
-                <td>超声波测厚仪</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>14</td>
-                <td>扁平率（素管Φ45）</td>
-                <td>＜6%</td>
-                <td>卡尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>15</td>
-                <td>整体尺寸</td>
-                <td>合检具，无干涉</td>
-                <td>检具</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>16</td>
-                <td>整体尺寸</td>
-                <td>管口斜面＜0.5</td>
-                <td>塞尺</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>17</td>
-                <td>整体外观</td>
-                <td>无异常毛刺、拉花、变形、压伤、开裂、起皱</td>
-                <td>目视</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-              <tr >
-                <td>18</td>
-                <td>材质</td>
-                <td>HSS441-TK</td>
-                <td>核对标签</td>
-                <td><input name="1" type="text"/></td>
-                <td><input name="2" type="text"/></td>
-                <td><input name="3" type="text"/></td>
-                <td><input name="4" type="text"/></td>
-                <td><input name="5" type="text"/></td>
-                <td><input name="6" type="text"/></td>
-                <td><input name="7" type="text"/></td>
-                <td><input name="8" type="text"/></td>
-                <td><input name="9" type="text"/></td>
-                <td><input name="10" type="text"/></td>
-              </tr>
-            </div>
-          </table>
-        </div>
+        <table id="tableID" border="1" style="left: 60px;margin-left:100px;width: 100%;" cellpadding="2">
+          <!--          <div >-->
+          <tr class="colspan" style="word-wrap:break-word;width: auto !important;"><!--class="colspan"-->
+            <th style="background-color: #F9F9F9;width: 50px">序号</th>
+            <th style="background-color: #F9F9F9;width: 70px;">检查项目</th>
+            <th style="background-color: #F9F9F9;width: 70px;">规格公差</th>
+            <th style="background-color: #F9F9F9;width: 70px;">检查方法</th>
+            <th style="background-color: #F9F9F9;width: 20px" width="10px">1</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">2</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">3</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">4</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">5</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">6</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">7</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">8</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">9</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">10</th>
+          </tr>
+          <tr style="word-wrap:break-word;width: auto !important;"><!--id="trd1"-->
+            <td height="30px" width="100px">1</td>
+            <td style="width: 100px;">总长</td>
+            <td>415.6 | 416.6 | 415.16</td>
+            <td>检具</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+        </table>
+
+        <table  border="1" style="left: 60px;margin-left:100px" cellpadding="2">
+          <!--          <div >-->
+          <tr class="colspan" style="word-wrap:break-word;width: auto !important;"><!--class="colspan"-->
+            <th style="background-color: #F9F9F9;width: 50px">序号</th>
+            <th style="background-color: #F9F9F9;width: 70px;">检查项目</th>
+            <th style="background-color: #F9F9F9;width: 70px;">规格公差</th>
+            <th style="background-color: #F9F9F9;width: 70px;">检查方法</th>
+            <th style="background-color: #F9F9F9;width: 20px" width="10px">1</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">2</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">3</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">4</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">5</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">6</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">7</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">8</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">9</th>
+            <th style="background-color: #F9F9F9;width: 10px" width="10px">10</th>
+          </tr>
+          <tr><!--id="trd1"-->
+            <td height="30px" width="100px">1</td>
+            <td style="width: 100px;">总长</td>
+            <td>415.6 | 416.6 | 415.16</td>
+            <td>检具</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>宽</td>
+            <td>212.1 | 212.6 | 211</td>
+            <td>检具</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>高</td>
+            <td>496.1 | 495.6 | 495.6</td>
+            <td>检具</td>
+            <td style="width: 10px"><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>FR端径外（10mm范围）A</td>
+            <td>47 | 47.2 | 46.8</td>
+            <td>卡尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>FR端径外（10mm范围）B</td>
+            <td>47 | 47.2 | 46.8</td>
+            <td>卡尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>FR端径外（10mm范围）C</td>
+            <td>47 | 47.2 | 46.8</td>
+            <td>卡尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>FR端径外（10mm范围）D</td>
+            <td>47 | 47.2 | 46.8</td>
+            <td>卡尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>扩口长度</td>
+            <td>20 | 21 | 19.8</td>
+            <td>卡尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>FR端径外（10mm范围）A</td>
+            <td>45 | 45.2 | 44.8</td>
+            <td>卡尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>FR端径外（10mm范围）B</td>
+            <td>45 | 45.2 | 44.8</td>
+            <td>卡尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td>FR端径外（10mm范围）C</td>
+            <td>45 | 45.2 | 44.8</td>
+            <td>卡尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td>FR端径外（10mm范围）D</td>
+            <td>45 | 45.2 | 44.8</td>
+            <td>卡尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td>拉薄率（板厚=1.5）</td>
+            <td>＜30%</td>
+            <td>超声波测厚仪</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td>扁平率（素管Φ45）</td>
+            <td>＜6%</td>
+            <td>卡尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td>整体尺寸</td>
+            <td>合检具，无干涉</td>
+            <td>检具</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>16</td>
+            <td>整体尺寸</td>
+            <td>管口斜面＜0.5</td>
+            <td>塞尺</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>17</td>
+            <td>整体外观</td>
+            <td>无异常毛刺、拉花、变形、压伤、开裂、起皱</td>
+            <td>目视</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <tr>
+            <td>18</td>
+            <td>材质</td>
+            <td>HSS441-TK</td>
+            <td>核对标签</td>
+            <td><input name="1" type="text"/></td>
+            <td><input name="2" type="text"/></td>
+            <td><input name="3" type="text"/></td>
+            <td><input name="4" type="text"/></td>
+            <td><input name="5" type="text"/></td>
+            <td><input name="6" type="text"/></td>
+            <td><input name="7" type="text"/></td>
+            <td><input name="8" type="text"/></td>
+            <td><input name="9" type="text"/></td>
+            <td><input name="10" type="text"/></td>
+          </tr>
+          <!--          </div>-->
+        </table>
+
         <table border="1" style="text-align: center;left: 60px;margin-left:100px" width="1200">
           <tr height="60" style="mso-height-source:userset;height:21pt" id="r2">
             <td height="26" class="x70" width="117" style="height:19.5pt;width:87.75pt;">备注</td>
             <td width="850px"><!--class="x71" width="260" style="width:195pt;"-->
-              <div >
+              <div>
                 <textarea class="form-control" data-auto-height="100" autocomplete="off" data-show-count placeholder="=请输入备注="
                           data-tips="请输入备注" maxlength="200" name="cmemo" value="">#(cmemo??)</textarea>
               </div>
@@ -458,146 +497,9 @@
 </div>
 #end
 #define js()
-<script>
-  hideParentLayerDialogBtn(0);
-  //禁止编辑
-  $("#tableID" + " tbody tr").find("input").attr("disabled", "disabled");
-  $("#isNot").find("input").attr("disabled", "disabled");
-  var parameterData = [];
-  $(function () {
-    Ajax.get("admin/mouldsfirstrecord/list", function (res) {
-      for (let i = 0; i < res.data.length; i++) {
-        console.log(res.data[i].iautoid)
-        parameterData.push(res.data[i].iautoid);
-      }
-      //获取动态检验参数
-      for (let i = 0; i < res.data.length - 10; i++) {
-        $("#tableID" + " tbody tr").eq(i + 2).find("td:eq(1)").html(res.data[i].cname);
-        $("#tableID" + " tbody tr").eq(i + 2).find("td:eq(2)").html(res.data[i].csegment1);
-        $("#tableID" + " tbody tr").eq(i + 2).find("td:eq(3)").html(res.data[i].csegment2);
-      }
-      for (let i = 10; i < res.data.length - 6; i++) {
-        if (i === 13) {
-          $("#tableID" + " tbody tr").eq(i + 5).find("td:eq(2)").html(res.data[i - 10].cname);
-        } else {
-          $("#tableID" + " tbody tr").eq(i + 5).find("td:eq(3)").html(res.data[i - 10].cname);
-        }
-        $("#tableID" + " tbody tr").eq(i + 3).find("td:eq(0)").html(res.data[i].cname);
-      }
-      for (let i = 15; i < res.data.length; i++) {
-        $("#tableID" + " tbody tr").eq(i + 4).find("td:eq(0)").html(res.data[i].cname);
-      }
-      for (let i = 15; i < res.data.length; i++) {
-        $("#tableID" + " tbody tr").eq(i + 4).find("td:eq(3)").html(res.data[i - 11].cname);
-      }
-    });
-    Ajax.get("admin/mouldsfirstrecordparameter/datas?iMouldsFirstDocId=#(mouldsFirstDoc.iautoid)", function (res) {
-      for (let i = 10; i < res.data.length; i++) {
-        if (i > res.data.length - 7) {
-          $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(0)").val(res.data[i].cvalue);
-        } else {
-          $("#tableID" + " tbody tr").eq(i + 3).find("input:eq(0)").val(res.data[i].cvalue);
-        }
-      }
-      console.log(res.data)
-    })
-    Ajax.get("admin/mouldsfirstrecord/datas?iMouldsFirstDocId=#(mouldsFirstDoc.iautoid)", function (res) {
-      console.log(res.data[0].ca70)
-      //根据某列进行赋值
-      for (let i = 0; i < res.data.length - 11; i++) {
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(0)").val(res.data[i].ca30);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(1)").val(res.data[i].ca70);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(2)").val(res.data[i].ca100);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(3)").val(res.data[i].ca150);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(4)").val(res.data[i].ca200);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(5)").val(res.data[i].ca300);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(6)").val(res.data[i].ca400);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(7)").val(res.data[i].ca500);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(8)").val(res.data[i].ca600);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(9)").val(res.data[i].ca700);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(10)").val(res.data[i].ca800);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(11)").val(res.data[i].ca900);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(12)").val(res.data[i].ca1000);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(13)").val(res.data[i].ca1100);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(14)").val(res.data[i].ca1200);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(15)").val(res.data[i].ca1300);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(16)").val(res.data[i].ca1400);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(17)").val(res.data[i].ca1500);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(18)").val(res.data[i].ca1600);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(19)").val(res.data[i].ca1700);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(20)").val(res.data[i].ca1800);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(21)").val(res.data[i].ca1900);
-      }
-
-      for (let i = 10; i < res.data.length; i++) {
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(1)").val(res.data[i].ca2000);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(2)").val(res.data[i].ca2100);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(3)").val(res.data[i].ca2200);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(4)").val(res.data[i].ca2300);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(5)").val(res.data[i].ca2400);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(6)").val(res.data[i].ca2500);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(7)").val(res.data[i].ca2600);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(8)").val(res.data[i].ca2700);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(9)").val(res.data[i].ca2800);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(10)").val(res.data[i].ca2900);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(11)").val(res.data[i].ca3000);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(12)").val(res.data[i].ca3100);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(13)").val(res.data[i].ca3200);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(14)").val(res.data[i].ca3300);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(15)").val(res.data[i].ca3400);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(16)").val(res.data[i].ca3500);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(17)").val(res.data[i].ca3600);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(18)").val(res.data[i].ca3700);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(19)").val(res.data[i].ca3800);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(20)").val(res.data[i].ca3900);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(21)").val(res.data[i].ca4000);
-        $("#tableID" + " tbody tr").eq(i + 4).find("input:eq(22)").val(res.data[i].ca4100);
-      }
-    })
-  })
-
-  function submitThisForm() {
-    var milasUrl = {};//新建对象，用来存储所有数据
-    var subMilasUrlArr = {};//存储每一行数据
-    var tableData = {};
-    $("#tableID" + " tbody tr").each(function (trindex, tritem) {//遍历每一行
-      tableData[trindex] = new Array();
-      $(tritem).find("input").each(function (tdindex, tditem) {
-        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
-        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
-      });
-    });
-    for (var key in subMilasUrlArr) {
-      milasUrl[key] = subMilasUrlArr[key];//将每一行存入对象
-      console.log(milasUrl[key])
-    }
-    console.log(parameterData)
-    const submitData = {
-      iMouldsFirstDocId: #(mouldsFirstDoc.iautoid),
-      tableDataList: JSON.stringify(milasUrl),
-      parameterId: JSON.stringify(parameterData)
-    }
-
-    Ajax.post("admin/mouldsfirstrecord/updateTable", submitData, function (res) {
-      if (res.state === "ok") {
-
-        LayerMsgBox.success(res.msg, 1000, function () {
-          refreshPjaxContainer();
-          parent.LayerMsgBox.closeAll();
-          parent.refreshPjaxContainer();
-        });
-      } else {
-        LayerMsgBox.alert(res.msg, 2);
-      }
-    })
-  }
-
-
-</script>
-#end
 
 <style>
- /* .trd td {
+  .trd td {
     width: 80px;
     overflow: hidden;
     height: 100%;
@@ -614,7 +516,7 @@
     text-align: center;
     border: none;
 
-  }*/
+  }
 
   .colspan {
     text-align: center;
@@ -664,7 +566,93 @@
     mso-protection: locked visible;
   }
 
-  .biaotoucolor{
+  .biaotoucolor {
     background-color: #b1dfbb;
   }
 </style>
+<script>
+  //1.隐藏确定按钮 （因为这是查看页面，不允许修改）
+  hideParentLayerDialogBtn(0);
+  //2.禁止编辑
+  $("#tableID" + " tbody tr").find("input").attr("disabled", "disabled");
+  $("#isNot").find("input").attr("disabled", "disabled");
+  $("#isNotButton").find("img").attr("disabled", true);
+  $("#isNotButton").find("button").attr("disabled", true);
+
+  /*
+  * @desc：新增行
+  * @param：rows:行数
+  * */
+  function inserRow(rows) {
+    alert("测试");
+  }
+</script>
+
+<script>
+  var parameterData = [];
+  $(function () {
+    Ajax.get("admin/rcvdocqcformm/list", function (res) {
+      for (let i = 0; i < res.data.length; i++) {
+        console.log(res.data[i].iautoid)
+        parameterData.push(res.data[i].iautoid);
+      }
+    });
+    Ajax.get("admin/rcvdocqcformm/datas?iautoid=#(data.iautoid)", function (res) {
+      console.log(res.data[0].ca70)
+      //根据某列进行赋值
+      for (let i = 0; i < res.data.length - 11; i++) {
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(0)").val(res.data[i].ca10);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(1)").val(res.data[i].ca70);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(2)").val(res.data[i].ca100);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(3)").val(res.data[i].ca150);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(4)").val(res.data[i].ca200);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(5)").val(res.data[i].ca300);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(6)").val(res.data[i].ca400);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(7)").val(res.data[i].ca500);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(8)").val(res.data[i].ca600);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(9)").val(res.data[i].ca700);
+        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(10)").val(res.data[i].ca800);
+      }
+    })
+  });
+
+  function submitThisForm() {
+    var milasUrl = {};//新建对象，用来存储所有数据
+    var subMilasUrlArr = {};//存储每一行数据
+    var tableData = {};
+    $("#tableID" + " tbody tr").each(function (trindex, tritem) {//遍历每一行
+      tableData[trindex] = new Array();
+      $(tritem).find("input").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+    });
+
+    for (var key in subMilasUrlArr) {
+      milasUrl[key] = subMilasUrlArr[key];//将每一行存入对象
+      console.log(milasUrl[key])
+    }
+    console.log(parameterData)
+
+    const submitData = {
+      iMouldsFirstDocId: #(mouldsFirstDoc.iautoid),
+      tableDataList: JSON.stringify(milasUrl),
+      parameterId: JSON.stringify(parameterData)
+    };
+
+    Ajax.post("admin/mouldsfirstrecord/updateTable", submitData, function (res) {
+      if (res.state === "ok") {
+        LayerMsgBox.success(res.msg, 1000, function () {
+          refreshPjaxContainer();
+          parent.LayerMsgBox.closeAll();
+          parent.refreshPjaxContainer();
+        });
+      } else {
+        LayerMsgBox.alert(res.msg, 2);
+      }
+    })
+  }
+</script>
+#end
+
+
