@@ -23,11 +23,15 @@
 <tr data-id="${data.id}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-		<a tabindex="-1"  href="javascript:void(0)" tooltip data-title="审批"><i class="fa fa-plus"></i></a>
-		<a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="查看" ><i class="fa fa-trash"></i></a>
-		<a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="编辑" ><i class="fa fa-trash"></i></a>
+		 {@if data.iauditstatus==0 || data.iauditstatus==3}
+			<a data-ajaxbtn href='admin/bommaster/audit?bomMasterId=${data.id}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>
+			<a class="ml-1"  data-dialogbtn='' data-area='90%,90%' href="admin/bommaster/edit/${data.id}" onclick="" tooltip data-title="编辑" >编辑</a>
+		 {@else if data.iauditstatus==1 }
+			<a data-ajaxbtn href='admin/bommaster/audit?bomMasterId=${data.id}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>
+		{@/if}
+		<a class="ml-1"  data-dialogbtn='' data-area='90%,90%' href="admin/bommaster/info/${data.id}" onclick="" tooltip data-title="查看" >查看</a>
 	</td>
-	<td>${data.iauditstatus}</td>
+	<td>${data.auditstatusstr}</td>
 	<td>${data.cinvcode}</td>
 	<td>${data.cinvcode1}</td>
 	<td>${data.cinvname1}</td>
@@ -54,6 +58,7 @@
 	   data-width="fill"
 	   data-height="fill"
 	   data-ajax="true"
+       data-column-resize="true"
 	   data-conditions-form="BomCompare_form_#(pageId)"
 	   data-url="admin/bommaster/getVersionRecord"
 	   data-rowtpl="BomCompare_tpl_#(pageId)"
@@ -65,7 +70,7 @@
 <tr>
 	<th data-width="60" data-column="index">序号</th>
 	<th data-width="120">操作</th>
-	<th data-width="150" data-column="">状态</th>
+	<th data-width="150" data-column="auditstatusstr">状态</th>
 	<th data-width="150" data-column="cInvCode">存货编码</th>
 	<th data-width="150" data-column="cInvCode1">客户部番</th>
 	<th data-width="150" data-column="cInvName1">部品名称</th>

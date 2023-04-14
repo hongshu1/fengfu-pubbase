@@ -1,0 +1,27 @@
+<form onsubmit="return false;" id="rcvdocqcformdLineForm" action="#(action)" method="post">
+<input type="hidden" name="rcvdocqcformdLine.iautoid" value="#(rcvdocqcformdLine.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验项目配置</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入检验项目配置" maxlength="19" name="rcvdocqcformdLine.ircvdocqcformdid" value="#(rcvdocqcformdLine.ircvdocqcformdid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">列顺序值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入列顺序值"  maxlength="10" name="rcvdocqcformdLine.iseq" value="#(rcvdocqcformdLine.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">填写值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入填写值" maxlength="200" name="rcvdocqcformdLine.cvalue" value="#(rcvdocqcformdLine.cvalue??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="rcvdocqcformdLineForm")
+#end
+

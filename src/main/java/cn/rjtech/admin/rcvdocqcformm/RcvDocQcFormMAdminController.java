@@ -1,13 +1,22 @@
 package cn.rjtech.admin.rcvdocqcformm;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.jfinal.aop.Inject;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.util.JBoltRealUrlUtil;
+import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
+
+import com.jfinal.core.JFinal;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
@@ -15,6 +24,8 @@ import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+import com.jfinal.upload.UploadFile;
+
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 /**
@@ -128,5 +139,23 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isOk"));
 	}
 
+	/**
+	 * 导入图片
+	 */
+	public void uploadImage() {
+		String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
+		renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+	}
 
+	public void updateTable(JBoltPara JboltPara){
+		renderJson(service.updateEditTable(JboltPara));
+	}
+
+
+	/*
+	* 生成
+	* */
+	public void createchecklist(){
+		//todo 生成检查表
+	}
 }

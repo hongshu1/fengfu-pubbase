@@ -22,7 +22,8 @@ public enum ProjectSystemLogTargetType {
 	REPAIR_APLY_ASSIGN("维修派工",20017),
 	REPAIR_APPLY_ISSUE("维修申请委外",20018),
 	REPAIR_RECORD("设备维修记录",20019),
-    APP_VERSION("应用版本", 20020)
+    APP_VERSION("应用版本", 20020),
+	WEEK_ORDER("周间客户订单", 20021),
 	;
 	private String text;
 	private int value;

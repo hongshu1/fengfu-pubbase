@@ -19,5 +19,7 @@ public class BomMaster extends BaseBomMaster<BomMaster> {
     public static final String USTOMERNAME = "customerName";
     /**UG部番*/
     public static final String INVADDCODE1 = "cInvAddCode1";
+    /**审批状态名称*/
+    public static final String AUDITSTATUSSTR = "auditStatusStr";
 }
 
