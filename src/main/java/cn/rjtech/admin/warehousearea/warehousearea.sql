@@ -10,6 +10,9 @@ FROM
     #if(careacode)
         AND wa.cAreaCode LIKE CONCAT('%', #para(careacode), '%')
     #end
+     #if(iwarehouseid)
+        AND wa.iWarehouseId LIKE CONCAT('%', #para(iwarehouseid), '%')
+    #end
     #if(careaname)
         AND wa.cAreaName LIKE CONCAT('%', #para(careaname), '%')
     #end
@@ -28,7 +31,7 @@ FROM
     #if(ids)
         AND CHARINDEX(','+cast((select wa.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
     #end
-	ORDER BY wa.dCreateTime DESC
+	ORDER BY wa.cAreaCode DESC
 #end
 
 #sql("findByWareHouseId")

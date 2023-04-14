@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col">
                 <form class="form-inline" id="warehouseForm_#(pageId)"   onsubmit="return false;" method="post">
-                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=仓库编码=" name="cwhcode" value="" />
+                    <input type="text" autocomplete="off"  class="form-control col-md-1 "  placeholder="=仓库编码=" name="cwhcode" value="" />
                     <input type="text" autocomplete="off"  class="form-control"  placeholder="=仓库名称=" name="cwhname" value="" />
                     <select class="form-control"
                             data-autoload
@@ -22,13 +22,12 @@
                             data-select=""
                            >
                     </select>
-                   <!-- name="warehouse.cdepcode"
-                    data-select="#(warehouse.cdepcode??)"-->
-
+<!--
                     <input type="number" autocomplete="off" style="width:110px"  class="form-control"  placeholder="最小存储数" name="imaxstockMin" value="" />
                     <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大存储数" name="imaxstockMax" value="" />
                     <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最小空间值" name="imaxspaceMin" value="" />
                     <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大空间值" name="imaxspaceMax" value="" />
+-->
 
                     <select class="form-control"
                             data-autoload
@@ -58,8 +57,8 @@
 <td>${data.cwhcode}</td>
 <td>${data.cwhname}</td>
 <td>${data.cdepname}</td>
-<td>${data.imaxstock}</td>
-<td>${data.imaxspace}</td>
+<!--<td>${data.imaxstock}</td>
+<td>${data.imaxspace}</td>-->
 <td><img data-switchbtn data-confirm="确定切换是否库存预警？" data-value="${data.isstockwarnenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/isStockWarnEnabled/${data.iautoid}"/></td>
 <td><img data-switchbtn data-confirm="确定切换是否启动？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/isEnabled/${data.iautoid}"/></td>
 <td>${data.cwhmemo}</td>
@@ -95,6 +94,7 @@
                     <div class="dropdown-menu" aria-labelledby="exportMenuwarehouseButton">
                         <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/warehouse/dataExport"><i class="fa fa-download"></i> 导出选中</button>
                         <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouse/dataExport"  data-form="warehouseForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
+                        <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouse/dataExport" ><i class="fa fa-download"></i> 全部导出</button>
                     </div>
                 </div>
             </div>
@@ -144,8 +144,8 @@
                 <th data-width="150" data-column="cwhcode">仓库编码</th>
                 <th data-width="150" data-column="cwhname">仓库名称</th>
                 <th data-width="150" data-column="cDepCode">所属部门</th>
-                <th data-width="150" data-column="cwhAddress">最大存储数量</th>
-                <th data-width="150" data-column="cwhPhone">最大存储空间</th>
+               <!-- <th data-width="150" data-column="cwhAddress">最大存储数量</th>
+                <th data-width="150" data-column="cwhPhone">最大存储空间</th>-->
                 <th data-width="150" data-column="cwhPerson">启用库存预警</th>
                 <th data-width="150" data-column="cwhvaluestyle">是否启用</th>
                 <th data-width="150" data-column="cMonth">备注</th>
