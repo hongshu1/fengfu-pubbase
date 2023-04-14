@@ -1,0 +1,75 @@
+<form onsubmit="return false;" id="inventoryQcFormDForm" action="#(action)" method="post">
+<input type="hidden" name="inventoryQcFormD.iautoid" value="#(inventoryQcFormD.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">来料检ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入来料检ID" maxlength="19" name="inventoryQcFormD.ircvdocqcformmid" value="#(inventoryQcFormD.ircvdocqcformmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验表格ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入检验表格ID" maxlength="19" name="inventoryQcFormD.iqcformid" value="#(inventoryQcFormD.iqcformid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验项目ID，Bd_QcFormTableParam.iAutoId</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入检验项目ID，Bd_QcFormTableParam.iAutoId" maxlength="19" name="inventoryQcFormD.iformparamid" value="#(inventoryQcFormD.iformparamid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目次序，固定取参数项目名为“项目”的参数名称次序值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入项目次序，固定取参数项目名为“项目”的参数名称次序值"  maxlength="10" name="inventoryQcFormD.iseq" value="#(inventoryQcFormD.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">子次序</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入子次序"  maxlength="10" name="inventoryQcFormD.isubseq" value="#(inventoryQcFormD.isubseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验参数值ID，点检方法允许为空（拼接“-”）多个逗号分隔</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入检验参数值ID，点检方法允许为空（拼接“-”）多个逗号分隔" maxlength="500" name="inventoryQcFormD.cqcformparamids" value="#(inventoryQcFormD.cqcformparamids??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间"  maxlength="10" name="inventoryQcFormD.itype" value="#(inventoryQcFormD.itype??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">标准值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=7;"  data-notnull="false" placeholder="请输入标准值"  maxlength="20" name="inventoryQcFormD.istdval" value="#(inventoryQcFormD.istdval??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">最大设定值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=7;"  data-notnull="false" placeholder="请输入最大设定值"  maxlength="20" name="inventoryQcFormD.imaxval" value="#(inventoryQcFormD.imaxval??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">最小设定值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=7;"  data-notnull="false" placeholder="请输入最小设定值"  maxlength="20" name="inventoryQcFormD.iminval" value="#(inventoryQcFormD.iminval??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">列表可选值，多个分号分隔</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入列表可选值，多个分号分隔" maxlength="500" name="inventoryQcFormD.coptions" value="#(inventoryQcFormD.coptions??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="inventoryQcFormDForm")
+#end
+

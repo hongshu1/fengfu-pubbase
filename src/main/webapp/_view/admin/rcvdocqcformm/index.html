@@ -7,9 +7,9 @@
       <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <a class="nav-item nav-link active" href="javascript:void(0)" id="nav-base-tab_one"
            onclick="selectFinishDocList(null)">全部</a>
-        <a class="nav-item nav-link" href="javascript:void(0)" id="nav-base-tab_three"
+        <a class="nav-item nav-link" href="javascript:void(0)" id="nav-base-tab_two"
            onclick="selectFinishDocList(0)">未完成</a>
-        <a class="nav-item nav-link" href="javascript:void(0)" id="nav-base-tab_four"
+        <a class="nav-item nav-link" href="javascript:void(0)" id="nav-base-tab_three"
            onclick="selectFinishDocList(1)">已完成</a>
       </div>
     </nav>
@@ -18,7 +18,7 @@
     <div class="row">
 <!--      <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>质量管理-来料检</h1></div>-->
       <div class="col">
-        <form class="form-inline" id="rcvDocQcFormM_form_#(pageId)" style="left: 30px;text-align: left">
+        <form class="form-inline" id="rcvDocQcFormMForm_#(pageId)" style="left: 30px;text-align: left">
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="crcvdocqcformno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=收料单号=" name="crcvdocno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=供应商名称=" name="cvenname" value=""/>
@@ -90,23 +90,23 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
     {@if data.istatus == 0}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/edit/${data.id}" data-area="800,600"
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/createchecklist/${data.id}" data-area="800,600"
          data-title="生成"><i class="fa fa-eye"></i></a>
     {@/if}
     {@if data.istatus == 1}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/edit/${data.id}" data-area="800,600"
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onleysee/${data.id}" data-area="95%,92%"
          data-title="检验"><i class="fa fa-eye"></i></a>
     {@/if}
     {@if data.istatus == 2}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/edit/${data.id}" data-area="800,600"
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onleysee/${data.id}" data-area="95%,92%"
          data-title="查看"><i class="fa fa-eye"></i></a>
-      <a class="jbolt_table_editbtn" href="admin/rcvdocqcformm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600"
+      <a class="jbolt_table_editbtn" href="admin/rcvdocqcformm/edit/${data.id}" data-handler="refreshJBoltTable"data-area="95%,92%"
          data-title="编辑"><i class="fa fa-edit"></i></a>
     {@/if}
     {@if data.istatus == 3}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/edit/${data.id}" data-area="800,600"
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onleysee/${data.id}" data-area="95%,92%"
          data-title="查看"><i class="fa fa-eye"></i></a>
-      <a class="jbolt_table_editbtn" href ="javascript:return false;" data-handler="refreshJBoltTable" data-area="800,600"
+      <a class="jbolt_table_editbtn" href ="javascript:return false;" data-handler="refreshJBoltTable" data-area="95%,92%"
          data-title="编辑" disabled="disabled"><i class="fa fa-edit"></i></a>
     {@/if}
   </td>
@@ -158,11 +158,11 @@
            data-width="fill"
            data-height="fill"
            data-ajax="true"
-           data-conditions-form="rcvDocQcFormM_form_#(pageId)"
+           data-conditions-form="rcvDocQcFormMForm_#(pageId)"
            data-url="admin/rcvdocqcformm/datas"
            data-rowtpl="rcvDocQcFormMtpl_#(pageId)"
            data-copy-to-excel="false"
-           data-page="rcvDocQcFormM_page"
+           data-page="rcvDocQcFormM_page#(pageId)"
            data-toolbar="rcvDocQcFormM_toolbar_#(pageId)">
       <thead>
       <tr>
@@ -196,10 +196,11 @@
 #define js()
 <script type="text/javascript">
 
-  function selectFinishDocList(isCompleted) {
-    console.log("isCompleted==========>  "+isCompleted)
-    $('#iscompleted').val(isCompleted);
-    $('#rcvDocQcFormM_form_#(pageId)').submit();
+  function selectFinishDocList(iscompleted) {
+    console.log("isCompleted==========>  "+iscompleted)
+    $('#isCompleted').val(iscompleted);
+    $('#rcvDocQcFormMForm_#(pageId)').submit();
+    console.log();
   }
 
 </script>
