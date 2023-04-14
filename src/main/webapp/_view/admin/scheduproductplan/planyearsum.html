@@ -66,8 +66,20 @@
 		</script>
 		<div class="jbolt_table_toolbar" id="AnnualOrderM_toolbarsum_#(pageId)">
 			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-
-				<button onclick="" class="btn  btn-sm"><i class="fa fa-trash"></i> 数据导出</button>
+				<div class="btn-group dropdown">
+					<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+							id="exportMenuBadnessButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						数据导出
+					</button>
+					<div class="dropdown-menu" aria-labelledby="exportMenuBadnessButton">
+						<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+								data-url="admin/basis/dataExportxxx"><i class="fa fa-download"></i> 导出选中
+						</button>
+						<button class="btn dropdown-item" data-downloadbtn data-url="admin/basis/dataExportxxx"
+								data-form="basisForm_#(pageId)"><i class="fa fa-download"></i> 全部导出
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 		<table class="jbolt_table thead_font_normal table-bordered table-center"
