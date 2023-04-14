@@ -731,5 +731,23 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	public java.lang.Boolean getIsEffective() {
 		return getBoolean("Effective");
 	}
+	
+	
+	/**
+	 * 复制来源ID，复制操作生成
+	 */
+	public M setICopyFromId(java.lang.Long iCopyFromId) {
+		set("iCopyFromId", iCopyFromId);
+		return (M)this;
+	}
+	
+	/**
+	 * 复制来源ID，复制操作生成
+	 */
+	@JBoltField(name="icopyfromid" ,columnName="iCopyFromId",type="Long", remark="复制来源ID，复制操作生成", required=true, maxLength=19, fixed=0, order=39)
+	@JSONField(name = "icopyfromid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getICopyFromId() {
+		return getLong("iCopyFromId");
+	}
 }
 
