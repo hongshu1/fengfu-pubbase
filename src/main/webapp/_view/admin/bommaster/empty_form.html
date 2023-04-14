@@ -6,8 +6,8 @@
     #render("table_1.html")
     <!--  图片  -->
     #render("table_2.html")
-    <div class="form-group row" style="clear: both;margin-top: 30px;">
-        <label class="col-2 col-form-label" style="margin-left: -200px">客户名称：</label>
+    <div class="form-group row" style="clear: both;margin-top: 5%;">
+        <label class="col-2 col-form-label" style="margin-left: -5%">客户名称：</label>
         <div class="col-2">
             <select class="form-control" data-url="admin/dictionary/options?key=options_boolean" name="iCustomerId" data-autoload
                     data-text="=请选择=" data-value-attr="sn" id="cUstomerName" data-value="" data-select="#(bomMaster.icustomerid??)"></select>
@@ -276,25 +276,70 @@
         })
 
         if (flag){
-            console.log('formData:' + formData)
-            console.log('tableData:'+ tableData)
-            Ajax.post('/admin/bommaster/submitForm', {
-                formJsonData: JSON.stringify(formData),
-                tableJsonData: JSON.stringify(tableData)
-            }, function (ret) {
-                if (ret.state === 'ok') {
-                    LayerMsgBox.success(ret.msg, 1000, function () {
-                        parent.LayerMsgBox.closeAll();
-                        parent.refreshPjaxContainer();
-                    });
-                } else {
-                    LayerMsgBox.alert(ret.msg, 2);
+            console.log("bomMasterId："+formData.iAutoId);
+            var arr = [];
+            console.log("tableData："+tableData);
+            for (var i=0; i<tableData.length; i++){
+                 var item = tableData[i];
+                // 部品
+                var invItemId = item.invItemId;
+                // 卷料
+                var originalItemId = item.originalItemId;
+                // 分条料
+                var slicingInvItemId = item.slicingInvItemId;
+                // 片料
+                var blankingItemId = item.blankingItemId;
+                if (invItemId){
+                    arr.push(createItem(invItemId, item.invQty, item.invWeight));
                 }
+                if (originalItemId){
+                    arr.push(createItem(originalItemId, item.originalQty, item.originalWeight));
+                }
+                if (slicingInvItemId){
+                    arr.push(createItem(slicingInvItemId, item.slicingQty, item.slicingWeight));
+                }
+                if (blankingItemId){
+                    arr.push(createItem(blankingItemId, item.blankingQty, item.blankingWeight));
+                }
+            }
+
+            Ajax.post('/admin/bommaster/checkCommonInv', {
+                bomMasterId: formData.iAutoId,
+                tableJsonData: JSON.stringify(arr)
+            }, function (ret) {
+               if (ret.data.data){
+                   // 存在共用件提示！
+                   submitForm(formData, tableData);
+               }else{
+                   submitForm(formData, tableData);
+               }
             });
+
+
         }
     });
     #end
 
+
+    function submitForm(formData, tableData) {
+        Ajax.post('/admin/bommaster/submitForm', {
+            formJsonData: JSON.stringify(formData),
+            tableJsonData: JSON.stringify(tableData)
+        }, function (ret) {
+            if (ret.state === 'ok') {
+                LayerMsgBox.success(ret.msg, 1000, function () {
+                    parent.LayerMsgBox.closeAll();
+                    parent.refreshPjaxContainer();
+                });
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        });
+    }
+
+    function createItem(invId, invQty, invWeight) {
+        return {id: invId, qty: invQty, weight: invWeight};
+    }
 
     function verification(item, formData) {
         // 部品
@@ -397,6 +442,10 @@
         if (invItemId){
             if (!item.invQty){
                 LayerMsgBox.alert("部品QTY不能为空",2);
+                return false;
+            }
+            if (!item.invWeight){
+                LayerMsgBox.alert("部品重量不能为空",2);
                 return false;
             }
         }

@@ -1713,4 +1713,12 @@ public class PermissionKey {
 	 * 来料检明细列值表
 	 */
 	public static final String RCVDOCQCFORMD_LINE = "rcvdocqcformdline";
+	/*
+	 * 工作日历明细
+	 */
+	public static final String WORKCALENDARM = "workcalendard";
+	/**
+	 * 平板登录日志
+	 */
+    public static final String PADLOGINLOG = "pad_loginlog";
 }

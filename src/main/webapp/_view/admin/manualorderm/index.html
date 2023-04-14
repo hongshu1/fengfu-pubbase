@@ -40,16 +40,17 @@
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-		<a class="text-info mr-1" data-openpage="dialog" href="admin/manualorderm/info/${data.iautoid}" data-area="100%,100%" data-title="查看手配订单"><i class="fa fa-eye"></i></a>
+		<a class="text-info mr-1" data-openpage="dialog" href="admin/manualorderm/info/${data.iautoid}" data-area="100%,100%" data-title="查看订单" tooltip><i class="fa fa-eye"></i></a>
 		{@if data.iorderstatus == 2}
-			<a class="jbolt_table_btn" href="admin/manualorderm/audit/${data.iautoid}" data-handler="refreshJBoltTable" data-ajaxbtn ><i class="fa fa-check"></i></a>
+			<a class="jbolt_table_btn" href="admin/manualorderm/reply/${data.iautoid}" data-handler="refreshJBoltTable" data-ajaxbtn data-title="撤回订单" tooltip><i class="fa fa-reply"></i></a>
+			<a class="jbolt_table_btn" href="admin/manualorderm/audit/${data.iautoid}" data-handler="refreshJBoltTable" data-ajaxbtn data-title="审核订单" tooltip><i class="fa fa-check"></i></a>
 		{@/if}
 		{@if data.iorderstatus == 3}
-			<a class="jbolt_table_btn" href="admin/manualorderm/colse/${data.iautoid}" data-handler="refreshJBoltTable" data-ajaxbtn ><i class="fa fa-close"></i></a>
+			<a class="jbolt_table_btn" href="admin/manualorderm/colse/${data.iautoid}" data-handler="refreshJBoltTable" data-ajaxbtn data-title="关闭订单" tooltip><i class="fa fa-close"></i></a>
 		{@/if}
 	{@if data.iorderstatus == 1 || data.iorderstatus == 4}
-	<a class="jbolt_table_editbtn" href="admin/manualorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="编辑手配订单"><i class="fa fa-edit"></i></a>
-	<a class="jbolt_table_delbtn" href="admin/manualorderm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+	<a class="jbolt_table_editbtn" href="admin/manualorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="编辑订单" tooltip><i class="fa fa-edit"></i></a>
+	<a class="jbolt_table_delbtn" href="admin/manualorderm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" tooltip data-title="删除订单"><i class="fa fa-remove c-danger"></i></a>
 	{@/if}
 </td>
 	<td>${data.statename}</td>

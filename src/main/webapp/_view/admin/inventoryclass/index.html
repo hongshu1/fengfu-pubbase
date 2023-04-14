@@ -55,7 +55,7 @@
 							<div class="clearfix"></div>
 						</div>
 					</div>
-					<div class="card-body overflow-auto" style="min-height:600px;">
+					<div class="card-body overflow-auto" style="min-height:500px; max-height: 600px">
 						<div id="goodsBackCategoryTree"
 							 data-jstree
 							 data-target="portal"
@@ -85,8 +85,8 @@
 								<form class="form-inline" id="Inventory_form_#(pageId)">
 									<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="存货分类id" id="inventoryclassid" name="iInventoryClassId" value="" />
 
-									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入料品编码" maxlength="40" name="cInvCode" />
-									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入料品名称" maxlength="40" name="cInvName" />
+									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货编码" maxlength="40" name="cInvCode" />
+									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货名称" maxlength="40" name="cInvName" />
 									<select class="form-control" name="isEnabled"
 											data-autoload
 											data-url="admin/dictionary/options?key=options_enable"
@@ -132,7 +132,15 @@
 <td>${data.cinvname2}</td>
 <td>${data.cinvstd}</td>
 <td>${data.cinvcname}</td>
-<td>${data.isource}</td>
+<td>
+	{@if data.isource == 1}
+	MES
+	{@else if data.isource == 2}
+	U8
+	{@else}
+	${data.isource}
+	{@/if}
+</td>
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
 </tr>
@@ -169,15 +177,15 @@
 							<tr>
 								<th data-width="60" data-column="index">序号</th>
 								<th data-width="120">操作</th>
-								<th data-width="150" data-column="cInvCode">料品编码</th>
-								<th data-width="150" data-column="cInvName">料品名称</th>
+								<th data-width="150" data-column="cInvCode">存货编码</th>
+								<th data-width="300" data-column="cInvName">存货名称</th>
 								<th data-width="150" data-column="cInvCode1">客户部番</th>
 								<th data-width="150" data-column="cInvAddCode1">UG部番</th>
 								<th data-width="150" data-column="cInvName1">部品名称</th>
 								<th data-width="150" data-column="cInvName2">UG部品名称</th>
 								<th data-width="150" data-column="cInvStd">规格</th>
 
-								<th data-width="100" data-column="iInventoryClassId">分类</th>
+								<th data-width="150" data-column="iInventoryClassId">分类</th>
 								<th data-width="100" data-column="iSource">来源</th>
 								<th data-width="150" data-column="cCreateName">创建人名称</th>
 								<th data-min-width="160" data-column="dCreateTime">创建时间</th>
@@ -193,7 +201,7 @@
 
 
 	<script>
-		/*料品分类*/
+		/*存货分类*/
 		var autoid = "";
 		function jstreeClike(tree,data){
 			console.log(tree)
