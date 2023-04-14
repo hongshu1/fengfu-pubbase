@@ -55,7 +55,7 @@
 							<div class="clearfix"></div>
 						</div>
 					</div>
-					<div class="card-body overflow-auto" style="min-height:500px; max-height: 600px">
+					<div class="card-body overflow-auto" style="min-height:450px; max-height: 600px">
 						<div id="goodsBackCategoryTree"
 							 data-jstree
 							 data-target="portal"
@@ -84,6 +84,7 @@
 							<div class="col">
 								<form class="form-inline" id="Inventory_form_#(pageId)">
 									<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="存货分类id" id="inventoryclassid" name="iInventoryClassId" value="" />
+									<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="存货分类编码" id="inventoryclasscode" name="iInventoryClassCode" value="" />
 
 									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货编码" maxlength="40" name="cInvCode" />
 									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货名称" maxlength="40" name="cInvName" />
@@ -208,6 +209,7 @@
 			console.log(data)
 			autoid = data.id;
 			$("#inventoryclassid").val(autoid);
+			$("#inventoryclasscode").val(data.text);
 			jboltTablePageToFirst();
 		}
 		function addBtn(ele){

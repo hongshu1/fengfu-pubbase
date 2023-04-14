@@ -83,6 +83,17 @@ public class InventoryService extends BaseService<Inventory> {
 		Boolean isEnabled = kv.getBoolean("isEnabled");
 		if(isEnabled != null)
 			kv.set("isEnabled",isEnabled?"1":"0");
+		Long id = kv.getLong("iInventoryClassId");
+		if(id != null && id.longValue() == 1l){
+			kv.remove("iInventoryClassId");
+		}
+		String iInventoryClassCode = kv.getStr("iInventoryClassCode");
+		if(StringUtils.isNotBlank(iInventoryClassCode)){
+			if(iInventoryClassCode.indexOf("[") < 0)
+				kv.remove("iInventoryClassCode");
+			else
+				kv.put("iInventoryClassCode",iInventoryClassCode.substring(1,iInventoryClassCode.indexOf("]")));
+		}
 		return dbTemplate("inventoryclass.inventoryList",kv).paginate(pageNumber,pageSize);
 	}
 
