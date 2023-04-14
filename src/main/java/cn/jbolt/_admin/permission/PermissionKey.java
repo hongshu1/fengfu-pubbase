@@ -1702,11 +1702,21 @@ public class PermissionKey {
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
 	/**
+	 * 来料检单行配置表
+	 */
+	public static final String INVENTORYQCFORMD = "inventoryqcformd";
+	/**
+	 * 来料检单行配置表
+	 */
+	public static final String RCVDOCQCFORMD = "rcvdocqcformd";
+	/**
+	 * 来料检明细列值表
+	 */
+	public static final String RCVDOCQCFORMD_LINE = "rcvdocqcformdline";
+	/*
 	 * 工作日历明细
 	 */
 	public static final String WORKCALENDARM = "workcalendard";
-
-
 	/**
 	 * 平板登录日志
 	 */

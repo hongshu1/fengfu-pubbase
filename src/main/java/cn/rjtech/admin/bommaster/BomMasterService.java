@@ -1,5 +1,6 @@
 package cn.rjtech.admin.bommaster;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -8,13 +9,16 @@ import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.admin.bomcompare.BomCompareService;
+import cn.rjtech.admin.bommasterinv.BomMasterInvService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.vendor.VendorService;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -55,6 +59,8 @@ public class BomMasterService extends BaseService<BomMaster> {
 	private EquipmentModelService equipmentModelService;
 	@Inject
 	private VendorService vendorService;
+	@Inject
+	private BomMasterInvService bomMasterInvService;
 	
 	@Override
 	protected BomMaster dao() {
@@ -103,8 +109,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		bomMaster.setICreateBy(userId);
 		bomMaster.setCCreateName(userName);
 		bomMaster.setDCreateTime(now);
-		// 设置默认审批流
-		bomMaster.setIAuditStatus(0);
+		
 		bomMaster.setISource(1);
 		bomMaster.setIUpdateBy(userId);
 		bomMaster.setCUpdateName(userName);
@@ -114,6 +119,10 @@ public class BomMasterService extends BaseService<BomMaster> {
 		bomMaster.setIOrgId(getOrgId());
 		bomMaster.setCOrgCode(getOrgCode());
 		bomMaster.setCOrgName(getOrgName());
+		bomMaster.setIsEffective(false);
+		// 设置默认审批流
+		bomMaster.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+		bomMaster.setDAuditTime(null);
 		//if(existsName(bomMaster.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=bomMaster.save();
 		if(success) {
@@ -202,73 +211,134 @@ public class BomMasterService extends BaseService<BomMaster> {
         Long userId = JBoltUserKit.getUserId();
         String userName = JBoltUserKit.getUserName();
         DateTime now = DateUtil.date();
-        
-        
-        
         // 主键id为空为 新增或者为修改
         if (ObjectUtil.isNull(bomMaster.getIAutoId())){
-            // 设置主键id
-            long bomMasterId = JBoltSnowflakeKit.me.nextId();
-            bomMaster.setIAutoId(bomMasterId);
-            List<BomCompare> bomCompareList = new ArrayList<>();
-            for (int i=0; i<tableData.size(); i++){
-                JSONObject row = tableData.getJSONObject(i);
-                if (isAdd(row)){
-                    continue;
-                }
-                // 获取一行的子件
-                List<BomCompare> bomCompares = objectConversionOfToBomCompara(row, bomMasterId, userId, userName, now);
-                bomCompareList.addAll(bomCompares);
-            }
-            ValidationUtils.notEmpty(bomCompareList, "未解析到子件数据");
-            // 记录每行最小层次的id
-			Map<String, Long> bomCompareMap = new HashMap<>();
-			for (BomCompare bomCompare : bomCompareList){
-				Integer level = bomCompare.getILevel();
-				Long iPid = bomCompare.getIPid();
-				// level 等于1 说明是产品（半成品）下的半成品或部品
-				if (1 == level && ObjectUtil.isNull(iPid)){
-					bomCompare.setIPid(bomMasterId);
-				}
-				String code = bomCompare.getCInvLev();
-				// map有记录当前编码，说明已经记录了，不需要重新记录
-				if (bomCompareMap.containsKey(code)){
-					continue;
-				}
-				// 记录相同的编码数据
-				List<BomCompare> bomCompares = new ArrayList<>();
-				// 找出相同的
-				for (BomCompare fristBomCompare : bomCompareList){
-					if (code.equals(fristBomCompare.getCInvLev())){
-						bomCompares.add(fristBomCompare);
-					}
-				}
-				bomCompares.sort(Comparator.comparing(obj -> obj.getIRawType()));
-				bomCompareMap.put(code, bomCompares.get(0).getIAutoId());
-			}
-			
-			// 找到上一级最小层级的id,除第一层级无需找
-			for (BomCompare bomCompare : bomCompareList){
-				Integer level = bomCompare.getILevel();
-				if (1 == level){
-					continue;
-				}
-				// 不等于null，说明在前面已经赋值了
-				if (ObjectUtil.isNotNull(bomCompare.getIPid())){
-					continue;
-				}
-				String cInvLev = bomCompare.getCInvLev();
-				String perCode = getPerCode(cInvLev);
-				bomCompare.setIPid(bomCompareMap.get(perCode));
-			}
-			tx(() -> {
-				save(bomMaster, userId, userName, now);
-				bomCompareService.batchSave(bomCompareList);
-				return true;
-			});
+			return saveForm(bomMaster, tableData, userId, userName, now);
         }
-        
-        return SUCCESS;
+        return updateForm(bomMaster, tableData, userId, userName, now);
+	}
+	
+	public Ret saveForm(BomMaster bomMaster, JSONArray tableData, Long userId, String userName, DateTime now){
+		// 设置主键id
+		long bomMasterId = JBoltSnowflakeKit.me.nextId();
+		bomMaster.setIAutoId(bomMasterId);
+		List<BomCompare> bomCompareList =getBomCompareList(bomMasterId, tableData, userId, userName, now);
+		tx(() -> {
+			save(bomMaster, userId, userName, now);
+			bomCompareService.batchSave(bomCompareList);
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	private void copyBomMaster(BomMaster bomMaster, BomMaster oldBomMaster){
+		// 机型id
+		oldBomMaster.setIEquipmentModelId(bomMaster.getIEquipmentModelId());
+		// 文件编码
+		oldBomMaster.setCDocCode(bomMaster.getCDocCode());
+		// 文件名称
+		oldBomMaster.setCDocName(bomMaster.getCDocName());
+		// 版本
+		oldBomMaster.setCBomVersion(bomMaster.getCBomVersion());
+		// 启用日期
+		oldBomMaster.setDEnableDate(bomMaster.getDEnableDate());
+		// 停用日期
+		oldBomMaster.setDDisableDate(bomMaster.getDDisableDate());
+		// 序号1
+		oldBomMaster.setCNo1(bomMaster.getCNo1());
+		// 序号2
+		oldBomMaster.setCNo2(bomMaster.getCNo2());
+		// 设变号1
+		oldBomMaster.setCDcNo1(bomMaster.getCDcNo1());
+		// 设变号2
+		oldBomMaster.setCDcNo2(bomMaster.getCDcNo2());
+		// 设备日期1
+		oldBomMaster.setDDcDate1(bomMaster.getDDcDate1());
+		// 设备日期2
+		oldBomMaster.setDDcDate2(bomMaster.getDDcDate2());
+		// 存货id
+		oldBomMaster.setIInventoryId(bomMaster.getIInventoryId());
+		// 客户ID
+		oldBomMaster.setICustomerId(bomMaster.getICustomerId());
+		// 共用件备注
+		oldBomMaster.setCCommonPartMemo(bomMaster.getCCommonPartMemo());
+	}
+	
+	public Ret updateForm(BomMaster bomMaster, JSONArray tableData, Long userId, String userName, DateTime now){
+		BomMaster oldBomMaster = findById(bomMaster.getIAutoId());
+		Integer iAuditStatus = oldBomMaster.getIAuditStatus();
+		AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
+		ValidationUtils.isTrue((iAuditStatus==0 || iAuditStatus==3), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行修改");
+		// 复制
+		copyBomMaster(bomMaster, oldBomMaster);
+		List<BomCompare> bomCompareList = getBomCompareList(oldBomMaster.getIAutoId(), tableData, userId, userName, now);
+		tx(() -> {
+			// 将原来的删除掉子件数据 只有审核中才会有这个删除
+//			bomMasterInvService.deleteByBomMasterId(oldBomMaster.getIAutoId());
+//			bomMasterInvService.saveBomMasterInv(oldBomMaster.getIAutoId(), oldBomMaster.getIInventoryId(), bomCompareList);
+			// 删除子件数据
+			bomCompareService.deleteByBomMasterId(oldBomMaster.getIAutoId());
+			update(oldBomMaster, userId, userName, now);
+			bomCompareService.batchSave(bomCompareList);
+			
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	private List<BomCompare> getBomCompareList(long bomMasterId, JSONArray tableData, Long userId, String userName, DateTime now){
+		List<BomCompare> bomCompareList = new ArrayList<>();
+		for (int i=0; i<tableData.size(); i++){
+			JSONObject row = tableData.getJSONObject(i);
+			if (isAdd(row)){
+				continue;
+			}
+			// 获取一行的子件
+			List<BomCompare> bomCompares = objectConversionOfToBomCompara(row, bomMasterId, userId, userName, now);
+			bomCompareList.addAll(bomCompares);
+		}
+		ValidationUtils.notEmpty(bomCompareList, "未解析到子件数据");
+		// 记录每行最小层次的id
+		Map<String, Long> bomCompareMap = new HashMap<>();
+		for (BomCompare bomCompare : bomCompareList){
+			Integer level = bomCompare.getILevel();
+			Long iPid = bomCompare.getIPid();
+			// level 等于1 说明是产品（半成品）下的半成品或部品
+			if (1 == level && ObjectUtil.isNull(iPid)){
+				bomCompare.setIPid(bomMasterId);
+			}
+			String code = bomCompare.getCInvLev();
+			// map有记录当前编码，说明已经记录了，不需要重新记录
+			if (bomCompareMap.containsKey(code)){
+				continue;
+			}
+			// 记录相同的编码数据
+			List<BomCompare> bomCompares = new ArrayList<>();
+			// 找出相同的
+			for (BomCompare fristBomCompare : bomCompareList){
+				if (code.equals(fristBomCompare.getCInvLev())){
+					bomCompares.add(fristBomCompare);
+				}
+			}
+			bomCompares.sort(Comparator.comparing(obj -> obj.getIRawType()));
+			bomCompareMap.put(code, bomCompares.get(0).getIAutoId());
+		}
+		
+		// 找到上一级最小层级的id,除第一层级无需找
+		for (BomCompare bomCompare : bomCompareList){
+			Integer level = bomCompare.getILevel();
+			if (1 == level){
+				continue;
+			}
+			// 不等于null，说明在前面已经赋值了
+			if (ObjectUtil.isNotNull(bomCompare.getIPid())){
+				continue;
+			}
+			String cInvLev = bomCompare.getCInvLev();
+			String perCode = getPerCode(cInvLev);
+			bomCompare.setIPid(bomCompareMap.get(perCode));
+		}
+		return bomCompareList;
 	}
 	
 	public void verification(JSONObject formData, JSONArray tableData){
@@ -290,7 +360,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		// 校验当前存货是否为当前选择机型下的
 		Inventory inventory = inventoryService.findById(inventoryId);
 		ValidationUtils.notNull(inventory, JBoltMsg.DATA_NOT_EXIST);
-		ValidationUtils.isTrue(equipmentModelId.equals(String.valueOf(inventory.getIEquipmentModelId())), "机型跟产品编码不匹配");
+//		ValidationUtils.isTrue(equipmentModelId.equals(String.valueOf(inventory.getIEquipmentModelId())), "机型跟产品编码不匹配");
 	}
 	
 	/**
@@ -529,12 +599,6 @@ public class BomMasterService extends BaseService<BomMaster> {
     
     /**
      * 获取当前部品属于第几层级
-     * @param code1
-     * @param code2
-     * @param code3
-     * @param code4
-     * @param code5
-     * @param code6
      * @return
      */
     public String getCode(String code1, String code2, String code3, String code4, String code5, String code6){
@@ -582,11 +646,6 @@ public class BomMasterService extends BaseService<BomMaster> {
   
 		List<Record> allRecordList = new ArrayList<>();
     	return createJsTreeBean(kv.getStr("enableIcon"), allRecordList);
-	}
-	
-	
-	public void upToFind(List<Record> allRecordList, String id){
- 
 	}
 	
 	public List<JsTreeBean> createJsTreeBean(String enableIconStr, List<Record> recordList){
@@ -648,7 +707,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 	}
 	
 	public Map<String, Object>  importExcelFile(UploadFile file) throws IOException {
-		StringBuilder errorMsg = new StringBuilder();
+//		StringBuilder errorMsg = new StringBuilder();
 		return readInfoFromXls(new FileInputStream(file.getFile()));
 	}
 	
@@ -966,7 +1025,15 @@ public class BomMasterService extends BaseService<BomMaster> {
 	}
 	
 	public Page<Record> getVersionRecord(Integer pageNumber, Integer pageSize, Kv kv) {
-		return dbTemplate("bommaster.getVersionRecord", kv.set("orgId", getOrgId())).paginate(pageNumber, pageSize);
+		Page<Record> page = dbTemplate("bommaster.getVersionRecord", kv.set("orgId", getOrgId())).paginate(pageNumber, pageSize);
+		if (CollectionUtil.isEmpty(page.getList())){
+			return page;
+		}
+		for (Record record : page.getList()){
+			AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(record.getInt(BomMaster.IAUDITSTATUS));
+			record.set(BomMaster.AUDITSTATUSSTR, auditStatusEnum.getText());
+		}
+		return page;
 	}
 	
 	public List<Record> queryBomMasterId(Kv kv){
@@ -985,7 +1052,8 @@ public class BomMasterService extends BaseService<BomMaster> {
 			bomMaster.setDUpdateTime(DateUtil.date());
 			bomMaster.update();
 			// 删除母件下所有子件数据
-			return true;
+			boolean flag = bomMasterInvService.deleteByBomMasterId(bomMasterId);
+			return flag;
 		});
 		return SUCCESS;
 	}
@@ -1009,26 +1077,115 @@ public class BomMasterService extends BaseService<BomMaster> {
 			bomCompare.setIAutoId(newId);
 			// 设置新的bomMasterId
 			bomCompare.setIBOMMasterId(newBomMasterId);
-			
 			// key为旧id， value为新id
 			pidMap.put(id, newId);
 		}
-		
 		for (BomCompare bomCompare : bomCompareList){
 			Long pid = bomCompare.getIPid();
 			// 替换成新的id
 			bomCompare.setIPid(pidMap.get(pid));
 		}
-		
+		// 获取母件所有子件集合
 		tx(() -> {
 			// 设置新的id
 			bomMaster.setIAutoId(newBomMasterId);
 			bomMaster.setCBomVersion(cVersion);
+			// 设置审核状态
+			bomMaster.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+			bomMaster.setDAuditTime(null);
+			// 设置失效状态
+			bomMaster.setIsEffective(false);
 			save(bomMaster,JBoltUserKit.getUserId(),JBoltUserKit.getUserName(), DateUtil.date());
 			bomCompareService.batchSave(bomCompareList);
 			// 删除母件下所有子件数据
 			return true;
 		});
+		return SUCCESS;
+	}
+	
+	public Ret audit(Long bomMasterId, Integer status) {
+		ValidationUtils.notNull(bomMasterId, JBoltMsg.JBOLTTABLE_IS_BLANK);
+		ValidationUtils.notNull(status, JBoltMsg.JBOLTTABLE_IS_BLANK);
+		BomMaster bomMaster = findById(bomMasterId);
+		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
+		DateTime date = DateUtil.date();
+		bomMaster.setIAuditStatus(status);
+		bomMaster.setDAuditTime(date);
+		update(bomMaster, JBoltUserKit.getUserId(), JBoltUserKit.getUserName(), date);
+		tx(() -> {
+			bomMaster.setIsEffective(true);
+			// 将生效的bom改为失效
+			updateNotEffective(bomMaster.getIInventoryId());
+			BomMaster first = findFirst("select * from Bd_BomMaster where isEffective = 1 and iInventoryId = ?", bomMaster.getIInventoryId());
+			if (ObjectUtil.isNotNull(first)){
+				// 将失效的bom母件记录删除
+				bomMasterInvService.deleteByBomMasterId(first.getIAutoId());
+			}
+			// 保存最新的一份
+			bomMasterInvService.saveBomMasterInv(bomMasterId, bomMaster.getIInventoryId());
+			update(bomMaster, JBoltUserKit.getUserId(), JBoltUserKit.getUserName(), date);
+			// 删除母件下所有子件数据
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	/**
+	 * 将其余生效的改为失效
+	 * @param inventoryId
+	 */
+	public void updateNotEffective(long	inventoryId){
+		update("UPDATE Bd_BomMaster SET isEffective = 0 WHERE iInventoryId = ?", inventoryId);
+	}
+	
+	/**
+	 * 校验共用件问题。
+	 * @param bomMasterId
+	 * @param tableJsonData
+	 * @return
+	 */
+	public Ret checkCommonInv(Long bomMasterId, String tableJsonData) {
+		ValidationUtils.notBlank(tableJsonData, JBoltMsg.JBOLTTABLE_IS_BLANK);
+		JSONArray jsonArray = JSONObject.parseArray(tableJsonData);
+		Map<String, List<JSONObject>> invMap = new HashMap<>();
+		for (Object o : jsonArray){
+			JSONObject jsonObject = (JSONObject) o;
+			String invId = jsonObject.getString("id");
+			List<JSONObject> list = invMap.containsKey(invId) ? invMap.get(invId) : new ArrayList<>();
+			list.add(jsonObject);
+			invMap.put(invId, list);
+		}
+		// 记录共同件的重量或数量不一致的数据
+		Map<String, List<JSONObject>> commonInvMap = new HashMap<>();
+		for (String invId : invMap.keySet()){
+			List<JSONObject> invList = invMap.get(invId);
+			List<JSONObject> masterList = new ArrayList<>();
+			// 用于判断 同一种存货编码是否出现多个子件下的bomMaster相同
+			Map<Long, String> masterIdMap = new HashMap<>();
+			for (JSONObject item : invList){
+				List<Record> commonInv = bomCompareService.getCommonInv(bomMasterId, invId, item.getString("qty"), item.getString("weight"));
+				if (CollectionUtil.isNotEmpty(commonInv)){
+						for (Record record : commonInv){
+							Long masterId = record.getLong(BomCompare.IBOMMASTERID);
+							if (masterIdMap.containsKey(masterId)){
+								continue;
+							}
+							masterIdMap.put(masterId, null);
+							// 记录bomMasterId
+							item.put(BomCompare.IBOMMASTERID, masterId);
+							masterList.add(item);
+						}
+				}
+			}
+			if (CollectionUtil.isNotEmpty(masterList)){
+				commonInvMap.put(invId, masterList);
+			}
+		}
+		
+		if (CollectionUtil.isNotEmpty(commonInvMap)){
+			Ret ok = Ret.ok("data", commonInvMap);
+			return ok;
+		}
 		return SUCCESS;
 	}
 }

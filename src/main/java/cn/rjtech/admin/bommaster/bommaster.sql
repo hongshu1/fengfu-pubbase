@@ -23,6 +23,8 @@ WHERE
 	AND master.isEnabled = '1'
 	AND master.dEnableDate <= GETDATE()
 	AND master.dDisableDate >= GETDATE()
+	AND master.iAuditStatus = 2
+	AND master.isEffective = 1
 UNION ALL
 SELECT
 	bbc.iAutoId AS id,
@@ -48,6 +50,8 @@ WHERE
 	bbc.IsDeleted = '0'
 	AND a.IsDeleted = '0'
 	AND a.isEnabled = '1'
+	AND a.iAuditStatus = 2
+	AND a.isEffective = 1
 	  ) a
 	   WHERE 1 = 1
 	  #if(orgId)

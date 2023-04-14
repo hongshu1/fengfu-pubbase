@@ -8,6 +8,7 @@ import com.jfinal.aop.Inject;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.config.ExtendUploadFolder;
@@ -146,5 +147,15 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
 		renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
 	}
 
+	public void updateTable(JBoltPara JboltPara){
+		renderJson(service.updateEditTable(JboltPara));
+	}
 
+
+	/*
+	* 生成
+	* */
+	public void createchecklist(){
+		//todo 生成检查表
+	}
 }

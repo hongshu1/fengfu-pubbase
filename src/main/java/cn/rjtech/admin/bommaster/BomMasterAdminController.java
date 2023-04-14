@@ -189,4 +189,14 @@ public class BomMasterAdminController extends BaseAdminController {
 	public void del(){
 		renderJson(service.del(getLong(0)));
 	}
+	
+	public void audit(@Para(value = "bomMasterId") Long bomMasterId,
+					  @Para(value = "status") Integer status){
+		renderJson(service.audit(bomMasterId, status));
+	}
+	
+	public void checkCommonInv(@Para(value = "") Long bomMasterId,
+							   @Para(value = "tableJsonData") String tableJsonData){
+		renderJsonData(service.checkCommonInv(bomMasterId, tableJsonData));
+	}
 }
