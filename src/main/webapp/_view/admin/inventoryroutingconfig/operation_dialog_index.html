@@ -7,7 +7,8 @@
 		<div class="row">
 			<div class="col">
 				<form class="form-inline" id="operationForm_#(pageId)"   onsubmit="return false;" method="post">
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="工序编码" name="coperationcode" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="工序名称" name="coperationname" value="" />
 					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 				</form>
 			</div>
@@ -33,7 +34,8 @@
 			   data-jbolttable
 			   data-height="fill"
 			   data-ajax="true"
-			   data-url="admin/operation/datas"
+			   data-url="admin/operation/pageList"
+			   data-page="operationRowtpl_page"
 			   data-column-resize="true"
 			   data-column-prepend="1:checkbox:true"
 			   data-conditions-form="operationForm_#(pageId)"
