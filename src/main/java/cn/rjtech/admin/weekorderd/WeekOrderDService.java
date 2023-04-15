@@ -113,4 +113,8 @@ public class WeekOrderDService extends BaseService<WeekOrderD> {
 		ValidationUtils.notNull(kv.getLong("iWeekOrderMid"), JBoltMsg.PARAM_ERROR);
 		return dbTemplate("weekorderd.weekOrderDData",kv).find();
 	}
+
+    public Ret delete(Long id) {
+		return toggleBoolean(id, "isDeleted");
+    }
 }

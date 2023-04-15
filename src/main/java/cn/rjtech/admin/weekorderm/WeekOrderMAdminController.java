@@ -80,13 +80,6 @@ public class WeekOrderMAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		/*WeekOrderM weekOrderM = service.findById(getLong(0));
-
-		if(weekOrderM== null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		set("weekOrderM",weekOrderM);*/
 		List<Record> weekOrderM = service.findByIdToShow(getLong(0));
 		if(weekOrderM.get(0) == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
@@ -106,6 +99,29 @@ public class WeekOrderMAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		//订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
+		switch (weekOrderM.get(0).getInt("iorderstatus")) {
+			case 1:
+				weekOrderM.get(0).set("iorderstatus", "已保存");
+				break;
+			case 2:
+				weekOrderM.get(0).set("iorderstatus", "待审批");
+				break;
+			case 3:
+				weekOrderM.get(0).set("iorderstatus", "已审批");
+				break;
+			case 4:
+				weekOrderM.get(0).set("iorderstatus", "审批不通过");
+				break;
+			case 5:
+				weekOrderM.get(0).set("iorderstatus", "已发货");
+				break;
+			case 6:
+				weekOrderM.get(0).set("iorderstatus", "已核对");
+				break;
+			case 7:
+				weekOrderM.get(0).set("iorderstatus", "已关闭");
+		}
 		set("weekOrderM",weekOrderM.get(0));
 		set("mark", "SHOW");
 		render("showWeekOrder.html");
@@ -123,7 +139,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
 	* 批量删除
 	*/
 	public void deleteByIds() {
-		renderJson(service.deleteByIds(get("ids")));
+		renderJson(service.deleteByIdS(get("ids")));
 	}
 
    /**
@@ -142,6 +158,38 @@ public class WeekOrderMAdminController extends BaseAdminController {
 			return;
 		}
 		renderJson(service.approve(iAutoId,mark));
+	}
+	/**
+	 * 反审批
+	 */
+	public void NoApprove(String ids) {
+		if (StringUtils.isEmpty(ids)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		renderJson(service.NoApprove(ids));
+	}
+
+	/**
+	 * 撤回
+	 */
+	public void recall(String iAutoId) {
+		if (StringUtils.isEmpty(iAutoId)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		renderJson(service.recall(iAutoId));
+	}
+
+	/**
+	 * 手动关闭
+	 */
+	public void closeWeekOrder(String iAutoId) {
+		if (StringUtils.isEmpty(iAutoId)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		renderJson(service.closeWeekOrder(iAutoId));
 	}
 
 	//TODO 查询暂用简单查询 此方法暂时作废

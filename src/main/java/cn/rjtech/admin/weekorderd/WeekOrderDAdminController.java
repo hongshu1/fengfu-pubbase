@@ -85,7 +85,7 @@ public class WeekOrderDAdminController extends BaseAdminController {
 	* 删除
 	*/
 	public void delete() {
-		renderJson(service.deleteById(getLong(0)));
+		renderJson(service.delete(getLong(0)));
 	}
 
 }
