@@ -271,6 +271,16 @@ function showSwitchOrgDialog(showMsg, handler) {
     }
 }
 
+function zoomPage() {
+    var wid = $(window).width(), len;
+    if (wid < 1400) {
+        len = wid / 1400;
+        var $html = $("html");
+        $html.css("zoom", len);
+        $html.css({"-moz-transform": "scale(" + len + ")"}, {"-moz-transform-origin": "0 0"});
+    }
+}
+
 ;(function ($) {
 
     $.fn.tablesMergeCell = function(options, mergecel) {
@@ -390,5 +400,5 @@ function showSwitchOrgDialog(showMsg, handler) {
 
 $(function(){
 //初始化调用加载
-
+    zoomPage();
 });
