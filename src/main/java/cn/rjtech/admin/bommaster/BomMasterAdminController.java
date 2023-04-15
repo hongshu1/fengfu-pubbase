@@ -1,6 +1,5 @@
 package cn.rjtech.admin.bommaster;
 
-import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.rjtech.admin.bomcompare.BomCompareService;
 import cn.rjtech.admin.customer.CustomerService;
@@ -127,12 +126,15 @@ public class BomMasterAdminController extends BaseAdminController {
 	 * 默认给1-100个数据
 	 */
 	public void inventoryAutocomplete(){
-		renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), 100, getKv()));
+		renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), 200, getKv()));
 	}
 	
 	public void submitForm(@Para(value = "formJsonData") String formJsonData,
-						   @Para(value = "tableJsonData") String tableJsonData){
-		renderJsonData(service.submitForm(formJsonData, tableJsonData));
+						   @Para(value = "tableJsonData") String tableJsonData,
+						   @Para(value="commonInvData") String commonInvData,
+						   @Para(value = "flag") Boolean flag){
+		
+		renderJsonData(service.submitForm(formJsonData, tableJsonData, commonInvData, flag));
 	}
 	
 	public void findEquipmentModelAll(){
@@ -195,7 +197,7 @@ public class BomMasterAdminController extends BaseAdminController {
 		renderJson(service.audit(bomMasterId, status));
 	}
 	
-	public void checkCommonInv(@Para(value = "") Long bomMasterId,
+	public void checkCommonInv(@Para(value = "bomMasterId") Long bomMasterId,
 							   @Para(value = "tableJsonData") String tableJsonData){
 		renderJsonData(service.checkCommonInv(bomMasterId, tableJsonData));
 	}

@@ -744,10 +744,44 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 	/**
 	 * 复制来源ID，复制操作生成
 	 */
-	@JBoltField(name="icopyfromid" ,columnName="iCopyFromId",type="Long", remark="复制来源ID，复制操作生成", required=true, maxLength=19, fixed=0, order=39)
+	@JBoltField(name="icopyfromid" ,columnName="iCopyFromId",type="Long", remark="复制来源ID，复制操作生成", required=false, maxLength=19, fixed=0, order=39)
 	@JSONField(name = "icopyfromid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICopyFromId() {
 		return getLong("iCopyFromId");
+	}
+	
+	/**
+	 * 提审时间
+	 */
+	public M setDSubmitTime(java.util.Date dSubmitTime) {
+		set("dSubmitTime", dSubmitTime);
+		return (M)this;
+	}
+	
+	/**
+	 * 提审时间
+	 */
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=40)
+	@JSONField(name = "dsubmittime")
+	public java.util.Date getDSubmitTime() {
+		return getDate("dSubmitTime");
+	}
+	
+	/**
+	 * 审批方式：1. 审批状态 2. 审批流
+	 */
+	public M setIAuditWay(java.lang.Integer iAuditWay) {
+		set("iAuditWay", iAuditWay);
+		return (M)this;
+	}
+	
+	/**
+	 * 审批方式：1. 审批状态 2. 审批流
+	 */
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审批状态 2. 审批流", required=false, maxLength=10, fixed=0, order=41)
+	@JSONField(name = "iauditway")
+	public java.lang.Integer getIAuditWay() {
+		return getInt("iAuditWay");
 	}
 }
 
