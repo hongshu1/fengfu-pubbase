@@ -12,6 +12,7 @@ import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
@@ -142,7 +143,8 @@ public class QcFormAdminController extends BaseAdminController {
 	public void getQcFormTableParamListByPId() {
 		Okv kv =new Okv();
 		kv.setIfNotNull("iqcformid", get("iQcFormId"));
-		renderJsonData(service.getQcFormTableParamListByPId(getPageNumber(), getPageSize(), kv));
+		Page<Record> recordPage = service.getQcFormTableParamListByPId(getPageNumber(), getPageSize(), kv);
+		renderJsonData(recordPage);
 	}
 
 
@@ -176,9 +178,9 @@ public class QcFormAdminController extends BaseAdminController {
 	 * qcformtableparam可编辑表格提交
 	 *
 	 */
-	public void QcFormTableParamJBoltTable() {
-		renderJson(service.QcFormTableParamJBoltTable(getJBoltTable()));
-	}
+//	public void QcFormTableParamJBoltTable() {
+//		renderJson(service.QcFormTableParamJBoltTable(getJBoltTable()));
+//	}
 
 
 

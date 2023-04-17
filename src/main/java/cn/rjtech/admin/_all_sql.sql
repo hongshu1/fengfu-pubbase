@@ -62,7 +62,7 @@
 #end
 
 #namespace("forgeigncurrency")
-#include("forgeigncurrency/forgeigncurrency.sql")
+#include("foreigncurrency/foreigncurrency.sql")
 #end
 
 

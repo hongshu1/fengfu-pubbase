@@ -11,11 +11,9 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.rjtech.admin.qcformitem.QcFormItemService;
 import cn.rjtech.admin.qcformparam.QcFormParamService;
-import cn.rjtech.admin.qcformtableparam.QcFormTableParamService;
 import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.model.momdata.QcFormItem;
 import cn.rjtech.model.momdata.QcFormParam;
-import cn.rjtech.model.momdata.QcFormTableParam;
 import cn.rjtech.util.StreamUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -52,9 +50,9 @@ public class QcFormService extends BaseService<QcForm> {
 	}
 
 	@Override
-    protected int systemLogTargetType() {
-        return ProjectSystemLogTargetType.NONE.getValue();
-    }
+	protected int systemLogTargetType() {
+		return ProjectSystemLogTargetType.NONE.getValue();
+	}
 
 	@Inject
 	QcFormItemService qcFormItemService;
@@ -62,29 +60,26 @@ public class QcFormService extends BaseService<QcForm> {
 	@Inject
 	QcFormParamService qcFormParamService;
 
-	@Inject
-	QcFormTableParamService qcFormTableParamService;
-
 
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
 	 * @param keywords   关键词
-     * @param isDeleted 删除状态：0. 未删除 1. 已删除
-     * @param isEnabled 是否启用：0. 否 1. 是
+	 * @param isDeleted 删除状态：0. 未删除 1. 已删除
+	 * @param isEnabled 是否启用：0. 否 1. 是
 	 * @return
 	 */
 	public Page<QcForm> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isDeleted, Boolean isEnabled) {
-	    //创建sql对象
-	    Sql sql = selectSql().page(pageNumber,pageSize);
-	    //sql条件处理
-        sql.eqBooleanToChar("isDeleted",isDeleted);
-        sql.eqBooleanToChar("isEnabled",isEnabled);
-        //关键词模糊查询
-        sql.likeMulti(keywords,"cOrgName", "cQcFormName", "cCreateName", "cUpdateName");
-        //排序
-        sql.desc("iAutoId");
+		//创建sql对象
+		Sql sql = selectSql().page(pageNumber,pageSize);
+		//sql条件处理
+		sql.eqBooleanToChar("isDeleted",isDeleted);
+		sql.eqBooleanToChar("isEnabled",isEnabled);
+		//关键词模糊查询
+		sql.likeMulti(keywords,"cOrgName", "cQcFormName", "cCreateName", "cUpdateName");
+		//排序
+		sql.desc("iAutoId");
 		return paginate(sql);
 	}
 
@@ -168,13 +163,13 @@ public class QcFormService extends BaseService<QcForm> {
 	protected String afterToggleBoolean(QcForm qcForm, String column, Kv kv) {
 		//addUpdateSystemLog(qcForm.getIAutoId(), JBoltUserKit.getUserId(), qcForm.getName(),"的字段["+column+"]值:"+qcForm.get(column));
 		/**
-		switch(column){
-		    case "isDeleted":
-		        break;
-		    case "isEnabled":
-		        break;
-		}
-		*/
+		 switch(column){
+		 case "isDeleted":
+		 break;
+		 case "isEnabled":
+		 break;
+		 }
+		 */
 		return null;
 	}
 
@@ -289,67 +284,6 @@ public class QcFormService extends BaseService<QcForm> {
 	 * @return
 	 */
 	public Ret QcFormParamJBoltTable(JBoltTable jBoltTable){
-		QcForm qcForm = jBoltTable.getFormModel(QcForm.class, "qcForm");
-		ValidationUtils.notNull(qcForm, JBoltMsg.PARAM_ERROR);
-
-
-		Long userId = JBoltUserKit.getUserId();
-		String name =JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-
-
-		tx(()->{
-			//修改
-			if (isOk(qcForm.getIAutoId())) {
-				qcForm.setCUpdateName(name);
-				qcForm.setIUpdateBy(userId);
-				qcForm.setDUpdateTime(nowDate);
-				ValidationUtils.isTrue(qcForm.update(), JBoltMsg.FAIL);
-			} else {
-				//新增
-				qcForm.setCCreateName(name);
-				qcForm.setICreateBy(userId);
-				qcForm.setDCreateTime(nowDate);
-				qcForm.setCUpdateName(name);
-				qcForm.setIUpdateBy(userId);
-				qcForm.setDUpdateTime(nowDate);
-				qcForm.setIsDeleted(0);
-				ValidationUtils.isTrue(qcForm.save(), JBoltMsg.FAIL);
-			}
-
-			List<QcFormTableParam> saveQcFormTableParam = jBoltTable.getSaveModelList(QcFormTableParam.class);
-			int k = 0;
-			for (QcFormTableParam saveQcFormTableParamLine :saveQcFormTableParam){
-
-			}
-			qcFormTableParamService.batchSave(saveQcFormTableParam);
-			//更新
-			if (jBoltTable.updateIsNotBlank()) {
-				List<QcFormTableParam> updateQcFormTableParam = jBoltTable.getUpdateModelList(QcFormTableParam.class);
-				updateQcFormTableParam.forEach(updateQcFormItemLine -> {
-
-				});
-				qcFormTableParamService.batchUpdate(updateQcFormTableParam);
-			}
-			// 获取待删除数据 执行删除
-//			if (jBoltTable.deleteIsNotBlank()) {
-//				qcFormParamService.deleteByIds(jBoltTable.getDelete());
-//			}
-			return true;
-		});
-		return SUCCESS;
-	}
-
-
-
-
-	/**
-	 * qcformparam可编辑表格提交
-	 *
-	 * @param jBoltTable 编辑表格提交内容
-	 * @return
-	 */
-	public Ret QcFormTableParamJBoltTable(JBoltTable jBoltTable){
 		QcForm qcForm = jBoltTable.getFormModel(QcForm.class, "qcForm");
 		ValidationUtils.notNull(qcForm, JBoltMsg.PARAM_ERROR);
 
