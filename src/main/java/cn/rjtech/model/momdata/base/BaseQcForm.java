@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -42,7 +41,7 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	/**
 	 * 主键ID
 	 */
-	public M setIAutoId(Long iAutoId) {
+	public M setIAutoId(java.lang.Long iAutoId) {
 		set("iAutoId", iAutoId);
 		return (M)this;
 	}
@@ -52,14 +51,14 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="iautoid" ,columnName="iAutoId",type="Long", remark="主键ID", required=true, maxLength=19, fixed=0, order=1)
 	@JSONField(name = "iautoid", serializeUsing = ToStringSerializer.class)
-	public Long getIAutoId() {
+	public java.lang.Long getIAutoId() {
 		return getLong("iAutoId");
 	}
 
 	/**
 	 * 组织ID
 	 */
-	public M setIOrgId(Long iOrgId) {
+	public M setIOrgId(java.lang.Long iOrgId) {
 		set("iOrgId", iOrgId);
 		return (M)this;
 	}
@@ -69,14 +68,14 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="iorgid" ,columnName="iOrgId",type="Long", remark="组织ID", required=true, maxLength=19, fixed=0, order=2)
 	@JSONField(name = "iorgid", serializeUsing = ToStringSerializer.class)
-	public Long getIOrgId() {
+	public java.lang.Long getIOrgId() {
 		return getLong("iOrgId");
 	}
 
 	/**
 	 * 组织编码
 	 */
-	public M setCOrgCode(String cOrgCode) {
+	public M setCOrgCode(java.lang.String cOrgCode) {
 		set("cOrgCode", cOrgCode);
 		return (M)this;
 	}
@@ -86,14 +85,14 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="corgcode" ,columnName="cOrgCode",type="String", remark="组织编码", required=true, maxLength=40, fixed=0, order=3)
 	@JSONField(name = "corgcode")
-	public String getCOrgCode() {
+	public java.lang.String getCOrgCode() {
 		return getStr("cOrgCode");
 	}
 
 	/**
 	 * 组织名称
 	 */
-	public M setCOrgName(String cOrgName) {
+	public M setCOrgName(java.lang.String cOrgName) {
 		set("cOrgName", cOrgName);
 		return (M)this;
 	}
@@ -103,14 +102,14 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="corgname" ,columnName="cOrgName",type="String", remark="组织名称", required=true, maxLength=50, fixed=0, order=4)
 	@JSONField(name = "corgname")
-	public String getCOrgName() {
+	public java.lang.String getCOrgName() {
 		return getStr("cOrgName");
 	}
 
 	/**
 	 * 检验表格名称
 	 */
-	public M setCQcFormName(String cQcFormName) {
+	public M setCQcFormName(java.lang.String cQcFormName) {
 		set("cQcFormName", cQcFormName);
 		return (M)this;
 	}
@@ -120,14 +119,14 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="cqcformname" ,columnName="cQcFormName",type="String", remark="检验表格名称", required=true, maxLength=100, fixed=0, order=5)
 	@JSONField(name = "cqcformname")
-	public String getCQcFormName() {
+	public java.lang.String getCQcFormName() {
 		return getStr("cQcFormName");
 	}
 
 	/**
 	 * 创建人ID
 	 */
-	public M setICreateBy(Long iCreateBy) {
+	public M setICreateBy(java.lang.Long iCreateBy) {
 		set("iCreateBy", iCreateBy);
 		return (M)this;
 	}
@@ -137,14 +136,14 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=6)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
-	public Long getICreateBy() {
+	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
 	}
 
 	/**
 	 * 创建人名称
 	 */
-	public M setCCreateName(String cCreateName) {
+	public M setCCreateName(java.lang.String cCreateName) {
 		set("cCreateName", cCreateName);
 		return (M)this;
 	}
@@ -154,7 +153,7 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=7)
 	@JSONField(name = "ccreatename")
-	public String getCCreateName() {
+	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
 	}
 
@@ -178,7 +177,7 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	/**
 	 * 更新人ID
 	 */
-	public M setIUpdateBy(Long iUpdateBy) {
+	public M setIUpdateBy(java.lang.Long iUpdateBy) {
 		set("iUpdateBy", iUpdateBy);
 		return (M)this;
 	}
@@ -188,14 +187,14 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=9)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
-	public Long getIUpdateBy() {
+	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
 	}
 
 	/**
 	 * 更新人名称
 	 */
-	public M setCUpdateName(String cUpdateName) {
+	public M setCUpdateName(java.lang.String cUpdateName) {
 		set("cUpdateName", cUpdateName);
 		return (M)this;
 	}
@@ -205,7 +204,7 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=10)
 	@JSONField(name = "cupdatename")
-	public String getCUpdateName() {
+	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
 	}
 
@@ -228,9 +227,8 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
-	 * @param isDeleted
 	 */
-	public M setIsDeleted(int isDeleted) {
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
 		set("isDeleted", isDeleted);
 		return (M)this;
 	}
@@ -240,14 +238,14 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=12)
 	@JSONField(name = "isdeleted")
-	public Boolean getIsDeleted() {
+	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
 	}
 
 	/**
 	 * 是否启用：0. 否 1. 是
 	 */
-	public M setIsEnabled(Boolean isEnabled) {
+	public M setIsEnabled(java.lang.Boolean isEnabled) {
 		set("isEnabled", isEnabled);
 		return (M)this;
 	}
@@ -257,14 +255,14 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否启用：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=13)
 	@JSONField(name = "isenabled")
-	public Boolean getIsEnabled() {
+	public java.lang.Boolean getIsEnabled() {
 		return getBoolean("isEnabled");
 	}
 
 	/**
 	 * 备注
 	 */
-	public M setCMemo(String cMemo) {
+	public M setCMemo(java.lang.String cMemo) {
 		set("cMemo", cMemo);
 		return (M)this;
 	}
@@ -274,7 +272,7 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	 */
 	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=14)
 	@JSONField(name = "cmemo")
-	public String getCMemo() {
+	public java.lang.String getCMemo() {
 		return getStr("cMemo");
 	}
 
