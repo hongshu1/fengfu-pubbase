@@ -284,3 +284,7 @@
 #namespace("subcontractsaleorderd")
 #include("subcontractsaleorderd/subcontractsaleorderd.sql")
 #end
+
+#namespace("routing")
+#include("routing/routing.sql")
+#end

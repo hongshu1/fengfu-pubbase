@@ -1491,10 +1491,10 @@ public class RoutingService extends BaseService<BomMaster> {
 	 */
 	public List<Record> getMaster() {
 		// 查询属性为成品/半成品的制造件
-		List<Record> masterList = dbTemplate("bommaster.getMaster").find();
+		List<Record> masterList = dbTemplate("routing.getMaster").find();
 
 		// 查询属性为半成品/原料的存货
-		List<Record> compareList = dbTemplate("bommaster.getCompare").find();
+		List<Record> compareList = dbTemplate("routing.getCompare").find();
 
 		//
 		List<Record> resultList = masterList.stream().map(master -> {
