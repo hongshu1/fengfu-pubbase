@@ -201,4 +201,12 @@ public class BomMasterAdminController extends BaseAdminController {
 							   @Para(value = "tableJsonData") String tableJsonData){
 		renderJsonData(service.checkCommonInv(bomMasterId, tableJsonData));
 	}
+	
+	public void findCustomerList(){
+		renderJsonData(customerService.getAdminDatas(getKv()));
+	}
+	
+	public void findVendorList(){
+		renderJsonData(customerService.findVendorList(getKv()));
+	}
 }

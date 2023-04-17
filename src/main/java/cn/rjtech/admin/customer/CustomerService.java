@@ -70,7 +70,12 @@ public class CustomerService extends BaseService<Customer> {
 		return dbTemplate("customer.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
 		//return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
 	}
-
+	
+	public List<Record> getAdminDatas(Kv kv) {
+		return dbTemplate("customer.paginateAdminDatas", kv.set("orgId", getOrgId())).find();
+		//return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+	}
+	
 	/**
 	 * 保存
 	 */
@@ -526,5 +531,25 @@ public class CustomerService extends BaseService<Customer> {
 		Kv kv = new Kv();
 		kv.set("vendorCode",vendorCode);
 		return vendorService.daoTemplate("customer.findVendorByCode",kv).findFirst();
+	}
+	
+	/**
+	 * @param cVenItem
+	 * @return
+	 */
+	public Record findByVendorName(String cVenItem){
+		return vendorService.dbTemplate("customer.findVendor", Okv.by("cVenItem", cVenItem)).findFirst();
+	}
+	
+	/**
+	 * 供应商数据源
+	 * @param kv
+	 * @return
+	 */
+	public List<Record> findVendorList(Kv kv){
+		if (kv.containsKey("q")){
+			kv.set("keywords", kv.getStr("q"));
+		}
+		return vendorService.dbTemplate("customer.findVendor", kv).find();
 	}
 }
