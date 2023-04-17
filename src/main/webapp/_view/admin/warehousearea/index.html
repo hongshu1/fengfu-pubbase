@@ -21,7 +21,10 @@
 					data-select=""
 			>
 			</select>
-		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+			<input type="number" autocomplete="off" style="width:110px"  class="form-control"  placeholder="最小存储数" name="imaxcapacityMin" value="" />
+			<input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大存储数" name="imaxcapacityMax" value="" />
+
+		    <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 		</form>
 	</div>
@@ -38,8 +41,9 @@
 <td>${data.careacode}</td>
 <td>${data.careaname}</td>
 <td>${data.cwhname}</td>
+<td>${data.imaxcapacity}</td>
 <td>${data.cmemo}</td>
-	<td>${data.cwhcode}|${data.careacode}</td>
+<td>${data.cwhcode}|${data.careacode}</td>
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
 <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehousearea/toggleIsenabled/${data.iautoid}"/></td>
@@ -94,7 +98,20 @@
 	</div>
 	#end
 
-	<div class="clearfix"></div>
+	<div class="btn-group" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
+				data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
+		</button>
+		<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+			<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds"
+					onclick="warehouseareaPrint('check')"><i class="fa fa-download"></i> 打印勾选行
+			</button>
+			<button class="btn dropdown-item" onclick="warehouseareaPrint('page')"><i class="fa fa-download"></i> 打印当前页
+			</button>
+		</div>
+
+	</div>
+
 </div>
 
 
@@ -124,6 +141,7 @@ data-fixed-columns-left="1,2,3"
 	<th data-width="auto" data-column="cAreaCode">库区编码</th>
 	<th data-width="150" data-column="cAreaName">库区名称</th>
 	<th data-width="150" data-column="iWarehouseId">所属仓库</th>
+	<th data-width="150" data-column="iMaxCapacity">最大存储数量</th>
 	<th data-width="150" data-column="cMemo">备注</th>
 	<th data-width="150" data-column="cMemo">库区码</th>
 	<th data-width="150" data-column="cCreateName">创建人名称</th>
@@ -135,9 +153,33 @@ data-fixed-columns-left="1,2,3"
 </tbody>
 </table>
 
-
-
 </div>
 </div>
+#end
+
+
+#define js()
+<script type="text/javascript">
+	//打印
+	function warehouseareaPrint(mark) {
+		let rows;
+		if (mark == 'check') {
+			rows = jboltTableGetCheckedDatas();
+			if (rows == null) {
+				return;
+			}
+		} else{
+			rows = jboltTableGetAllDatas();
+		}
+		let code = [];
+		for (let i in rows) {
+			let rowdata = rows[i];
+			var ccode = rowdata.iautoid;
+			code.push(ccode);
+		}
+		jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=' + code.join(",") + "&&mark=" + mark);
+
+	}
+</script>
 #end
 

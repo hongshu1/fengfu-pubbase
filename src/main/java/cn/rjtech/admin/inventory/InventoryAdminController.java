@@ -1,6 +1,7 @@
 package cn.rjtech.admin.inventory;
 
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -8,6 +9,7 @@ import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.inventoryplan.InventoryPlanService;
+import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
 import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
 import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
 import cn.rjtech.model.momdata.*;
@@ -58,6 +60,8 @@ public class InventoryAdminController extends BaseAdminController {
 	private InventoryAdditionService inventoryAdditionService;
 	@Inject
 	private InventoryWorkRegionService inventoryWorkRegionService;
+	@Inject
+	private InventoryRoutingService inventoryRoutingService;
 
    /**
 	* 首页
@@ -73,12 +77,38 @@ public class InventoryAdminController extends BaseAdminController {
 	}
 
    /**
+	* 数据源
+	*/
+	public void options() {
+		renderJsonData(service.options(getKv()));
+	}
+
+	/**
+	 * 用作数据源
+	 */
+	public void dataBomList(){
+		renderJsonData(service.dataBomList());
+	}
+
+   /**
 	* 新增
 	*/
 	public void add() {
+		Long inventoryclassid = getLong("inventoryclassid");
+		Inventory inventory = new Inventory();
+		inventory.setIInventoryClassId(inventoryclassid);
+
+		//set("centityname", "itemmaster");  //扩展字段
+		Long autoid = JBoltSnowflakeKit.me.nextId();
+		set("iinventoryid", autoid);
+		inventory.setIAutoId(autoid);
+		set("inventory", inventory);
 		render("add.html");
 	}
 
+	/**
+	 * 新增或编辑料品
+	 */
 	public void formSubmit(){
 		JBoltTable jBoltTable = getJBoltTable();
 		Inventory inventory = jBoltTable.getFormBean(Inventory.class, "inventory");
@@ -88,9 +118,12 @@ public class InventoryAdminController extends BaseAdminController {
 		InventoryMfgInfo inventoryMfgInfo = jBoltTable.getFormBean(InventoryMfgInfo.class, "inventorymfginfo");
 
 		Ret result = null;
-		if(inventory != null && inventory.getIAutoId() != null){
+		Inventory byId = service.findById(inventory.getIAutoId());
+		if(inventory != null && byId != null){
 			List<InventoryWorkRegion> inventoryWorkRegions = jBoltTable.getUpdateBeanList(InventoryWorkRegion.class);
-			result = service.updateForm(inventory,inventoryAddition,inventoryPlan,inventoryMfgInfo,inventorystockconfig,inventoryWorkRegions);
+			List<InventoryWorkRegion> saveBeanList = jBoltTable.getSaveBeanList(InventoryWorkRegion.class);
+			Object[] delete = jBoltTable.getDelete();
+			result = service.updateForm(inventory,inventoryAddition,inventoryPlan,inventoryMfgInfo,inventorystockconfig,inventoryWorkRegions,saveBeanList,delete);
 
 		}else {
 			List<InventoryWorkRegion> inventoryWorkRegions = jBoltTable.getSaveBeanList(InventoryWorkRegion.class);
@@ -149,6 +182,9 @@ public class InventoryAdminController extends BaseAdminController {
 		inventoryMfgInfoService.deleteBy(Okv.by("iInventoryId", id));
 		inventoryPlanService.deleteBy(Okv.by("iInventoryId", id));
 		inventoryWorkRegionService.deleteBy(Okv.by("iInventoryId", id));
+		//删除工艺
+		Object[] objects = new Object[]{id};
+		inventoryRoutingService.deleteMultiByConfigids(objects);
 		Ret ret = service.deleteById(id);
 		renderJson(ret);
 	}
@@ -195,7 +231,9 @@ public class InventoryAdminController extends BaseAdminController {
 			for (InventoryWorkRegion inventoryWorkRegion : inventoryWorkRegions) {
 				inventoryWorkRegion.setIAutoId(null);
 			}
+
 		Ret ret = service.saveForm(inventory, inventoryAddition, inventoryplan, inventoryMfgInfo, inventorystockconfig, inventoryWorkRegions);
+		inventoryRoutingService.copy(iAutoId,inventory.getIAutoId());
 		renderJson(ret);
 	}
 
@@ -337,6 +375,10 @@ public class InventoryAdminController extends BaseAdminController {
 			}
 		}
 		renderJsonData(imgList, errormsg.toString());
+	}
+
+	public void inventorySpotCheckList() {
+		renderJsonData(service.inventorySpotCheckList(getKv()));
 	}
 
 }

@@ -1,0 +1,81 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-12">
+                <form onsubmit="return false;" class="form-inline" id="chooseDataForm"  method="post">
+                    <input style="width: 400px" type="text" autocomplete="off"  class="form-control"
+                           placeholder="检验表格名称"
+                           name="keywords" value="" />
+                    <button type="submit" class="btn btn-light" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-light" ><i class="fa fa-undo"></i> 查询</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable -->
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_demotpl">
+            {@each datas as data,index}
+            <tr data-id="${data.iqcformid}">
+                {@if pageSize&&pageSize>0}
+                <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
+                {@else}
+                <td>${+index+1}</td>
+                {@/if}
+                <td>${data.iqcformname}</td>
+            </tr>
+            {@/each}
+        </script>
+        <table class="thead_font_normal"
+               id="chooseDataTable"
+               data-jbolttable
+               data-fixed-columns-left="1,2"
+               data-fixed-columns-right="6,7"
+               data-column-resize="true"
+               data-ajax="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="chooseDataForm"
+               data-page="jboltTablePage_ajax"
+               data-pagesize="50"
+               data-url="admin/inventoryqcform/getFormList"
+               data-rowtpl="jboltTable_demotpl"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="dbClickCheckData"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="160" data-column="iQcFormName">检验表格名称</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script>
+    //点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+    function submitThisForm(callback){
+        var data=getJboltTableCheckedData("chooseDataTable");
+        console.log('data===>',data);
+        if(data){
+            // LayerMsgBox.confirm("确认选择此数据?",function(){
+                parent.setChooseDialogSelectResultFromData(data);
+                if(callback){
+                    callback();
+                }
+            // });
+        }
+    }
+
+    function dbClickCheckData(table,tempTr1,trId1,rowData) {
+        parent.setChooseDialogSelectResultFromData(rowData);
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+    }
+
+</script>
+#end

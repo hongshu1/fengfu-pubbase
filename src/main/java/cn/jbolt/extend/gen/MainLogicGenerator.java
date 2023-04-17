@@ -4,9 +4,8 @@ import cn.jbolt.core.gen.IndexHtmlLayoutType;
 import cn.jbolt.core.gen.JBoltMainLogicBean;
 import cn.jbolt.core.gen.JBoltMainLogicGenerator;
 import cn.jbolt.core.gen.SystemLogTargetType;
-import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.model.Permission;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.SpotCheckForm;
 
 import com.jfinal.plugin.activerecord.Model;
 
@@ -41,19 +40,19 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		 */
 		IndexHtmlLayoutType indexHtmlLayoutType = IndexHtmlLayoutType.NORMAL_CRUD;
 		//生成java代码里的作者信息 默认 JBolt-Generator
-		String author                    = "佛山市瑞杰科技有限公司";
+		String author                    = "RJ";
 		//controller service等java代码生成的报名 路径
-		String packageName               = "cn.rjtech.admin.saletype";
+		String packageName               = "cn.rjtech.admin.spotcheckform";
 		//在路由配置里的controllerPath参数 也用在生成其它URL的前缀
-		String controllerPath            = "/admin/saletype";
+		String controllerPath            = "/admin/spotcheckform";
 		//生成html存放位置 从src/main/webapp根目录下开始 /作为前缀
-		String viewFolder                = "/_view/admin/saletype";;
+		String viewFolder                = "/_view/admin/spotcheckform";;
 		//生成Index.html左上角页面标题
-		String pageTitle                 = "销售类型";
+		String pageTitle                 = "点检表格";
 		//在页面里使用增加 修改 删除 提示信息等用到的针对此模块操作的数据名称 例如 商品管理中是【商品】 品牌管理中是【品牌】
-		String dataName                  = "销售类型";
+		String dataName                  = "点检表格";
 		//生成模块用的model是哪个？
-		Class<? extends Model<?>> modelClass = SaleType.class;
+		Class<? extends Model<?>> modelClass = SpotCheckForm.class;
 		//是否需要分页查询
 		boolean needPaginate             = true;
 		//index.html 是否需要启用表格的工具条 toolbar

@@ -904,8 +904,8 @@
                 <service.env>dev</service.env>
                 <log4j2.level>DEBUG</log4j2.level>
                 <log.path>/rj-tech/logs/</log.path>
-                <log.file.name>${project.artifactId}-lh.log</log.file.name>
-                <server.port>8088</server.port>
+                <log.file.name>${project.artifactId}-ecs.log</log.file.name>
+                <server.port>8085</server.port>
                 <webapp.path>webapp</webapp.path>
             </properties>
         </profile>

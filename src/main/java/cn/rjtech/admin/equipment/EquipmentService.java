@@ -1,7 +1,6 @@
 package cn.rjtech.admin.equipment;
 
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.User;
 import com.jfinal.plugin.activerecord.Page;
 
 import java.util.Date;
@@ -9,14 +8,12 @@ import java.util.List;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import java.io.File;
 import com.jfinal.plugin.activerecord.IAtom;
 import java.sql.SQLException;
 import cn.jbolt.core.poi.excel.*;
-import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.Equipment;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -287,4 +284,13 @@ public class EquipmentService extends BaseService<Equipment> {
 	public Equipment findModelByCode(String cequipmentcode) {
 		return findFirst(selectSql().eq("cequipmentcode", cequipmentcode));
 	}
+
+	public List<Record> getAutocompleteDatas(String q, Integer limit) {
+		return dbTemplate("equipment.getAutocompleteDatas",Kv.by("q", q).set("limit",limit)).find();
+	}
+
+	public List<Record> dataList() {
+		return dbTemplate("equipment.selectEquipments").find();
+	}
+    
 }

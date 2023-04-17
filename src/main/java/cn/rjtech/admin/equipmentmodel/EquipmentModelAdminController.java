@@ -163,5 +163,9 @@ public class EquipmentModelAdminController extends BaseAdminController {
 		renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("物料建模-机型档案"));
 	}
 
+	public void options() {
+		List<Record> options = service.options();
+		renderJsonData(options);
+	}
 
 }

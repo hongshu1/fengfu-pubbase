@@ -20,11 +20,11 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.annualorderd.AnnualOrderDService;
-import cn.rjtech.admin.annualorderdamount.AnnualorderdAmountService;
+import cn.rjtech.admin.annualorderdqty.AnnualorderdQtyService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.AnnualOrderD;
 import cn.rjtech.model.momdata.AnnualOrderM;
-import cn.rjtech.model.momdata.AnnualorderdAmount;
+import cn.rjtech.model.momdata.AnnualorderdQty;
 import cn.rjtech.util.ValidationUtils;
 
 /**
@@ -39,7 +39,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
     @Inject
     private AnnualOrderDService annualOrderDService;
     @Inject
-    private AnnualorderdAmountService annualorderdAmountService;
+    private AnnualorderdQtyService annualorderdQtyService;
     @Override
     protected AnnualOrderM dao() {
         return dao;
@@ -201,7 +201,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
 			annualOrderD.setIYear2(annualOrderM.getIYear()+1);
 			annualOrderD.setIYear2Sum(record.getBigDecimal("inextyearmonthamounttotal"));
 			ValidationUtils.isTrue(annualOrderD.update(), ErrorMsg.UPDATE_FAILED);
-			annualorderdAmountService.deleteBy(Okv.by("iannualorderdid", annualOrderD.getIAutoId()));
+			annualorderdQtyService.deleteBy(Okv.by("iannualorderdid", annualOrderD.getIAutoId()));
 			saveAnnualOrderDModel(record,annualOrderM,annualOrderD);
     	}
     }
@@ -210,31 +210,31 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
     	Object[] ids = jBoltTable.getDelete();
     	if(ArrayUtil.isEmpty(ids)) return;
     	for (Object id : ids) {
-    		annualorderdAmountService.deleteBy(Okv.by("iannualorderdid", id));
+    		annualorderdQtyService.deleteBy(Okv.by("iannualorderdid", id));
 			annualOrderDService.deleteById(id);
 		}
     }
     private void saveAnnualOrderDModel(Record record,AnnualOrderM annualOrderM,AnnualOrderD annualOrderD){
-    	AnnualorderdAmount annualorderdAmount;
+    	AnnualorderdQty AnnualorderdQty;
 		for (int j=1; j <= 12; j++) {
-			annualorderdAmount = new AnnualorderdAmount();
-			annualorderdAmount.setIAnnualOrderDid(annualOrderD.getIAutoId());
-			annualorderdAmount.setIYear(annualOrderM.getIYear());
-			annualorderdAmount.setIMonth(j);
+			AnnualorderdQty = new AnnualorderdQty();
+			AnnualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
+			AnnualorderdQty.setIYear(annualOrderM.getIYear());
+			AnnualorderdQty.setIMonth(j);
 			BigDecimal inowyearmonthamount= record.getBigDecimal("inowyearmonthamount"+j);
-			annualorderdAmount.setIAmount(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
-			annualorderdAmount.setIsDeleted(false);
-			ValidationUtils.isTrue(annualorderdAmount.save(), ErrorMsg.SAVE_FAILED);
+			AnnualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
+			AnnualorderdQty.setIsDeleted(false);
+			ValidationUtils.isTrue(AnnualorderdQty.save(), ErrorMsg.SAVE_FAILED);
 		}
 		for (int m=1; m <= 3; m++) {
-			annualorderdAmount = new AnnualorderdAmount();
-			annualorderdAmount.setIAnnualOrderDid(annualOrderD.getIAutoId());
-			annualorderdAmount.setIYear(annualOrderM.getIYear()+1);
-			annualorderdAmount.setIMonth(m);
+			AnnualorderdQty = new AnnualorderdQty();
+			AnnualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
+			AnnualorderdQty.setIYear(annualOrderM.getIYear()+1);
+			AnnualorderdQty.setIMonth(m);
 			BigDecimal inowyearmonthamount= record.getBigDecimal("inextyearmonthamount"+m);
-			annualorderdAmount.setIAmount(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
-			annualorderdAmount.setIsDeleted(false);
-			ValidationUtils.isTrue(annualorderdAmount.save(), ErrorMsg.SAVE_FAILED);
+			AnnualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
+			AnnualorderdQty.setIsDeleted(false);
+			ValidationUtils.isTrue(AnnualorderdQty.save(), ErrorMsg.SAVE_FAILED);
 		}
     }
     /**

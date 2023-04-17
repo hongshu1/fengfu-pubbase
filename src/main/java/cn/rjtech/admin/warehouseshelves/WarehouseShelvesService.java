@@ -61,6 +61,11 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
 	}
 
 
+	/**
+	 * 查找此货架编码是否存在
+	 * @param cshelvescode
+	 * @return
+	 */
 	public WarehouseShelves findByCshelvesCode(String cshelvescode){
 		return findFirst(Okv.by("cShelvesCode", cshelvescode).set("isDeleted", false), "iautoid", "asc");
 	}
@@ -73,7 +78,7 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//if(existsName(warehouseShelves.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		ValidationUtils.assertNull(findByCshelvesCode(warehouseShelves.getCshelvescode()), "编码重复");
+		ValidationUtils.assertNull(findByCshelvesCode(warehouseShelves.getCshelvescode()), warehouseShelves.getCshelvescode()+" 编码重复");
 
 		warehouseShelves.setIcreateby(JBoltUserKit.getUserId());
 		warehouseShelves.setCcreatename(JBoltUserKit.getUserName());
@@ -107,6 +112,15 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
 		//更新时需要判断数据存在
 		WarehouseShelves dbWarehouseShelves=findById(warehouseShelves.getIautoid());
 		if(dbWarehouseShelves==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
+
+		//查询编码是否存在
+		WarehouseShelves ware = findByCshelvesCode(warehouseShelves.getCshelvescode());
+
+		//编码重复判断
+		if (ware != null && !warehouseShelves.getIautoid().equals(ware.getIautoid())) {
+			ValidationUtils.assertNull(ware.getCshelvescode(), warehouseShelves.getCshelvescode()+" 编码重复！");
+		}
+
 		dbWarehouseShelves.setIupdateby(JBoltUserKit.getUserId());
 		dbWarehouseShelves.setCupdatename(JBoltUserKit.getUserName());
 		dbWarehouseShelves.setDupdatetime(new Date());
@@ -212,10 +226,12 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
 		return null;
 	}
 
-	public WarehouseShelves findByCode(String cshelvescode){
-		return findFirst(Okv.by("cShelvesCode", cshelvescode).set("isDeleted", false), "iautoid", "asc");
-	}
 
+	/**
+	 * 导入
+	 * @param file
+	 * @return
+	 */
 	public Ret importExcelData(File file) {
 		StringBuilder errorMsg=new StringBuilder();
 		JBoltExcel jBoltExcel=JBoltExcel
@@ -238,13 +254,13 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
 									ValidationUtils.notNull(data.get("cshelvesname"), "货架名称为空！");
 									ValidationUtils.notNull(data.get("cwhcode"), "仓库编码为空！");
 
-									ValidationUtils.isTrue(findByCode(data.getStr("cshelvescode"))==null, data.getStr("cshelvescode")+"编码重复");
+									ValidationUtils.isTrue(findByCshelvesCode(data.getStr("cshelvescode"))==null, data.getStr("cshelvescode")+"编码重复");
 
 									Warehouse warehouse = warehouseService.findByWhCode(data.getStr("cwhcode"));
 									ValidationUtils.notNull(warehouse, data.getStr("cwhcode")+JBoltMsg.DATA_NOT_EXIST);
 
 									if(isOk(data.getStr("careacode"))){
-										WarehouseArea warehouseArea = warehouseAreaService.findByCode(data.getStr("careacode"));
+										WarehouseArea warehouseArea = warehouseAreaService.findByWhAreaCode(data.getStr("careacode"));
 										ValidationUtils.notNull(warehouse, data.getStr("careacode")+JBoltMsg.DATA_NOT_EXIST);
 										data.change("iwarehouseareaid", warehouseArea.getIautoid());
 									}
@@ -257,9 +273,14 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
 									data.change("icreateby", JBoltUserKit.getUserId());
 									data.change("ccreatename", JBoltUserKit.getUserName());
 									data.change("dcreatetime", DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+									//更新
+									data.change("iupdateby", JBoltUserKit.getUserId());
+									data.change("cupdatename", JBoltUserKit.getUserName());
+									data.change("dupdatetime", DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
 									data.change("corgcode", "1");
 									data.change("corgname", "1");
 									data.change("iorgid", "1");
+
 
 								})
 								//从第三行开始读取

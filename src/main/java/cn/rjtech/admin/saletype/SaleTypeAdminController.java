@@ -14,7 +14,7 @@ import cn.rjtech.model.momdata.SaleType;
  * @author: WYX
  * @date: 2023-03-28 11:04
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.SALETYPE)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/saletype", viewPath = "/_view/admin/saletype")
 public class SaleTypeAdminController extends BaseAdminController {
@@ -34,6 +34,10 @@ public class SaleTypeAdminController extends BaseAdminController {
 	*/
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+	}
+
+	public void selectData (){
+		renderJsonData(service.selectData(getKv()));
 	}
 
 	/**
@@ -103,13 +107,6 @@ public class SaleTypeAdminController extends BaseAdminController {
 	*/
 	public void toggleIsDeleted() {
 		renderJson(service.toggleIsDeleted(getLong(0)));
-	}
-
-	/**
-	 * 收发类型_编码,名字
-	 */
-	public void selectRdStyle (){
-		renderJsonData(service.selectRdStyle(getKv()));
 	}
 
 }

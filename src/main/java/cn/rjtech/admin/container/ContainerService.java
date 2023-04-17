@@ -1,6 +1,5 @@
 package cn.rjtech.admin.container;
 
-import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -9,8 +8,10 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.rjtech.admin.ContainerStockInD.ContainerStockInDService;
-import cn.rjtech.admin.ContainerStockInD.ContainerStockInMService;
+import cn.rjtech.admin.containerStockInD.ContainerStockInDService;
+import cn.rjtech.admin.containerStockInD.ContainerStockInMService;
+import cn.rjtech.admin.containerStockInD.ContainerStockOutDService;
+import cn.rjtech.admin.containerStockInD.ContainerStockOutMService;
 import cn.rjtech.admin.containerclass.ContainerClassService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.model.momdata.*;
@@ -25,10 +26,9 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import com.jfinal.plugin.activerecord.Record;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.List;
 
@@ -65,6 +65,14 @@ public class ContainerService extends BaseService<Container> {
 	//明细入库主表service
 	@Inject
 	private ContainerStockInMService containerStockInMService;
+
+    //明细出库明细service
+    @Inject
+    private ContainerStockOutDService stockOutDService;
+
+    //明细出库主表service
+    @Inject
+    private ContainerStockOutMService stockOutMService;
 
 	/**
 	 * 后台管理数据查询
@@ -335,22 +343,84 @@ public class ContainerService extends BaseService<Container> {
 		return dbTemplate("container.paginateAdminDatas", kv).find();
 	}
 
+
+    /**
+     * 出入库处理
+     * @param jBoltTable 表格数据
+     * @param mark 记号
+     * @return
+     */
 	public Ret handleData(JBoltTable jBoltTable,String mark) {
+	    //参数判空
 		if (jBoltTable == null || jBoltTable.isBlank()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
-//		List<Container> containers = jBoltTable.getSaveModelList(Container.class);
-		//入库 2
-		Kv kv = Kv.create();
-		if (mark.equals("3")) {
-			//入库主表处理
-			ContainerStockInM stockInM = new ContainerStockInM();
-			stockInM.setCMemo("");
-			String o = kv.isNull("cmemo") ? TRUE : kv.getStr("cmemo");
-			containerStockInMService.save(stockInM);
-			//入库明细表处理
-			containerStockInDService.save(new ContainerStockInD());
+        //记号判空
+		if (mark == null|| StringUtils.isBlank(mark)) {
+			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		return null;
+
+		//转换javabean
+		List<Container> containers = jBoltTable.getSaveModelList(Container.class);
+		//将集合中的id抽取成id集合
+        Long[] ids = containers.stream().map(Container::getIAutoId).toArray(Long[]::new);
+
+		//记号Mark ——入库：1 出库：0
+		if (mark.equals("1")) {
+		    //入库
+		    //修改容器存放地点
+            updateInnerByCRk(ids,"0");
+            for (Container container : containers) {
+			    //入库主表处理
+                ContainerStockInM stockInM = new ContainerStockInM();
+                stockInM.setCMemo(container.getCMemo());
+                containerStockInMService.save(stockInM);
+                //入库明细表处理
+                ContainerStockInD stockInD = new ContainerStockInD();
+                stockInD.setCMemo(container.getCMemo());
+                stockInD.setIContainerStockInMid(stockInM.getIAutoId());
+                stockInD.setIContainerId(container.getIAutoId());
+                containerStockInDService.save(stockInD);
+            }
+		} else {
+            //出库
+            //修改容器存放地点
+            updateInnerByCRk(ids,"1");
+            for (Container container : containers) {
+                //出库主表处理
+                ContainerStockOutM stockOutM = new ContainerStockOutM();
+                stockOutM.setCMemo(container.getCMemo());
+                stockOutMService.save(stockOutM);
+                //出库明细表处理
+                ContainerStockOutD stockOutD = new ContainerStockOutD();
+                stockOutD.setCMemo(container.getCMemo());
+                stockOutD.setIContainerId(container.getIAutoId());
+                stockOutD.setIContainerStockOutMid(stockOutM.getIAutoId());
+                stockOutDService.save(stockOutD);
+            }
+        }
+		return SUCCESS;
 	}
+
+    /**
+     *
+     * @param ids 容器id
+     * @param isInner 1：出库，0：入库
+     */
+    private void updateInnerByCRk(Long[] ids,String isInner) {
+        update("UPDATE Bd_Container SET isInner =" + isInner + " WHERE iAutoId IN (" + ArrayUtil.join(ids, COMMA) + ")");
+    }
+
+
+	public List<Container> options() {
+		return find(selectSql().eq("IsDeleted","0").eq("isEnabled","1"));
+	}
+	/**
+	 * 打印数据
+	 * @param kv 参数
+	 * @return
+	 */
+	public Object getPrintDataCheck(Kv kv) {
+		return dbTemplate("container.containerPrintData",kv).find();
+    }
 }

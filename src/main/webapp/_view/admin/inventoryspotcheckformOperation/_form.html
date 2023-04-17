@@ -1,0 +1,21 @@
+<form onsubmit="return false;" id="inventoryspotcheckformOperationForm" action="#(action)" method="post">
+<input type="hidden" name="inventoryspotcheckformOperation.iautoid" value="#(inventoryspotcheckformOperation.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货点检表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货点检表ID" maxlength="19" name="inventoryspotcheckformOperation.iinventoryspotcheckformid" value="#(inventoryspotcheckformOperation.iinventoryspotcheckformid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">工序ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入工序ID" maxlength="19" name="inventoryspotcheckformOperation.ioperationid" value="#(inventoryspotcheckformOperation.ioperationid??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="inventoryspotcheckformOperationForm")
+#end
+

@@ -146,7 +146,6 @@ public class VendorService extends BaseService<Vendor> {
     }
 
     public void saveVendorModel(Vendor vendor, Warehouse warehouse) {
-//		vendor.setIAutoId(JBoltSnowflakeKit.me.nextId());
         Long userId = JBoltUserKit.getUserId();
         String userName = JBoltUserKit.getUserName();
         Date date = new Date();
@@ -252,31 +251,9 @@ public class VendorService extends BaseService<Vendor> {
         }
         //3、获取待删除数据 执行删除
         if (jBoltTable.deleteIsNotBlank()) {
-            /*Object[] delete = jBoltTable.getDelete();
-            deleteByIds(jBoltTable.getDelete());
-            Kv kv = new Kv();
-            kv.set("ivendorid", "");
-            List<VendorAddr> list = vendorAddrService.list(kv);
-            if (!list.isEmpty()) {
-                List<Long> collect = list.stream().map(BaseVendorAddr::getIAutoId).collect(Collectors.toList());
-                vendorAddrService.deleteByIds(collect.toArray());
-            }*/
         }
 
         return SUCCESS;
-
-        //获取待保存数据 执行保存
-		/*if(jBoltTable.saveIsNotBlank()) {
-			vendorAddrService.batchSave(jBoltTable.getSaveModelList(VendorAddr.class));
-		}*/
-		/*//获取待更新数据 执行更新
-		if(jBoltTable.updateIsNotBlank()) {
-			batchUpdate(jBoltTable.getUpdateModelList(Demotable.class));
-		}
-		//获取待删除数据 执行删除
-		if(jBoltTable.deleteIsNotBlank()) {
-			deleteByIds(jBoltTable.getDelete());
-		}*/
     }
 
     /**

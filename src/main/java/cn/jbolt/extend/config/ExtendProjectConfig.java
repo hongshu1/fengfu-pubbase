@@ -6,11 +6,13 @@ import cn.jbolt.core.cache.JBoltDeptCache;
 import cn.jbolt.core.cache.OrgCache;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.kit.*;
+import cn.rjtech.admin.backupconfig.BackupConfigTask;
 import cn.rjtech.config.MomConfigKey;
 import cn.rjtech.config.RedisConfig;
 import cn.rjtech.enjoy.directive.BracketDirective;
 import cn.rjtech.kit.DataPermissionKit;
 import cn.rjtech.kit.ReflectionTemplateFn;
+import cn.rjtech.routes.ApiRoutes;
 import cn.rjtech.routes.ExtendAdminRoutes;
 import cn.rjtech.serializer.StringRedisSerializer;
 import com.jfinal.config.*;
@@ -57,6 +59,8 @@ public class ExtendProjectConfig {
                         .scan("cn.rjtech.base.controller");
             }
         });
+
+        me.add(new ApiRoutes());
 	}
 	/**
 	 * 插件配置
@@ -91,7 +95,8 @@ public class ExtendProjectConfig {
 		LOG.debug("调用二开扩展配置:configCron4jPlugin");
 		//可以直接在 cron4jPlugin 中addTask
 //		cron4jPlugin.addTask("0-59/1 * * * *", new WechatMediaDownloaTask());
-
+		// 定时备份任务
+		// cron4jPlugin.addTask("0-59/1 * * * *", new BackupConfigTask());
 		//也可以自己添加新的cron4jPlugin
 //	    Cron4jPlugin cron4jPlugin2 = new Cron4jPlugin();
 //	    cron4jPlugin2.addTask("0-59/1 * * * *", new WechatMediaDownloaTask());

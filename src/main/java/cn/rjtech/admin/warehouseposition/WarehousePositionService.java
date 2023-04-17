@@ -70,7 +70,6 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
 	public WarehousePosition findByCpositionCode(String cshelvescode){
 		return findFirst(Okv.by("cPositionCode", cshelvescode).set("isDeleted", false), "iautoid", "asc");
 	}
-
 	/**
 	 * 保存
 	 */
@@ -79,7 +78,7 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//if(existsName(warehousePosition.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		ValidationUtils.isTrue(findByCpositionCode(warehousePosition.getCpositioncode())==null, "编码重复");
+		ValidationUtils.isTrue(findByCpositionCode(warehousePosition.getCpositioncode())==null, warehousePosition.getCpositioncode()+" 编码重复");
 
 		warehousePosition.setIcreateby(JBoltUserKit.getUserId());
 		warehousePosition.setCcreatename(JBoltUserKit.getUserName());
@@ -113,6 +112,15 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
 		//更新时需要判断数据存在
 		WarehousePosition dbWarehousePosition=findById(warehousePosition.getIautoid());
 		if(dbWarehousePosition==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
+
+		//查询编码是否存在
+		WarehousePosition ware = findByCpositionCode(warehousePosition.getCpositioncode());
+
+		//编码重复判断
+		if (ware != null && !warehousePosition.getIautoid().equals(ware.getIautoid())) {
+			ValidationUtils.assertNull(ware.getCpositioncode(), warehousePosition.getCpositioncode()+" 编码重复！");
+		}
+
 		dbWarehousePosition.setIupdateby(JBoltUserKit.getUserId());
 		dbWarehousePosition.setCupdatename(JBoltUserKit.getUserName());
 		dbWarehousePosition.setDupdatetime(new Date());
@@ -231,10 +239,6 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
 		return getCommonList(kv,"iAutoId","asc");
 	}
 
-	public WarehousePosition findByCode(String cpositioncode){
-		return findFirst(Okv.by("cPositionCode", cpositioncode).set("isDeleted", false), "iautoid", "asc");
-	}
-
 	public Ret importExcelData(File file) {
 		StringBuilder errorMsg=new StringBuilder();
 		JBoltExcel jBoltExcel= JBoltExcel
@@ -251,7 +255,7 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
 										JBoltExcelHeader.create("careacode", "所属库区编码"),
 										JBoltExcelHeader.create("cshelvescode", "所属货架编码"),
 
-										JBoltExcelHeader.create("ilong", "长"),
+										JBoltExcelHeader.create("ilength", "长"),
 										JBoltExcelHeader.create("iwidth", "宽"),
 										JBoltExcelHeader.create("iheight", "高"),
 										JBoltExcelHeader.create("imaxweight", "最大重量"),
@@ -265,20 +269,20 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
 									ValidationUtils.notNull(data.get("cpositionname"), "库位名称为空！");
 									ValidationUtils.notNull(data.get("cwhcode"), "仓库编码为空！");
 
-									ValidationUtils.isTrue(findByCode(data.getStr("cpositioncode"))==null, data.getStr("cpositioncode")+"编码重复");
+									ValidationUtils.isTrue(findByCpositionCode(data.getStr("cpositioncode"))==null, data.getStr("cpositioncode")+"编码重复");
 
 									Warehouse warehouse = warehouseService.findByWhCode(data.getStr("cwhcode"));
 									ValidationUtils.notNull(warehouse, data.getStr("cwhcode")+ JBoltMsg.DATA_NOT_EXIST);
 									data.change("iwarehouseid", warehouse.getIAutoId());
 
 									if(isOk(data.getStr("careacode"))){
-										WarehouseArea warehouseArea = warehouseAreaService.findByCode(data.getStr("careacode"));
+										WarehouseArea warehouseArea = warehouseAreaService.findByWhAreaCode(data.getStr("careacode"));
 										ValidationUtils.notNull(warehouse, data.getStr("careacode")+ JBoltMsg.DATA_NOT_EXIST);
 										data.change("iwarehouseareaid", warehouseArea.getIautoid());
 									}
 
 									if(isOk(data.getStr("cshelvescode"))){
-										WarehouseShelves warehouseShelves = warehouseShelvesService.findByCode(data.getStr("cshelvescode"));
+										WarehouseShelves warehouseShelves = warehouseShelvesService.findByCshelvesCode(data.getStr("cshelvescode"));
 										ValidationUtils.notNull(warehouse, data.getStr("cshelvescode")+ JBoltMsg.DATA_NOT_EXIST);
 										data.change("iwarehouseshelvesid", warehouseShelves.getIautoid());
 									}
@@ -290,6 +294,11 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
 									data.change("icreateby", JBoltUserKit.getUserId());
 									data.change("ccreatename", JBoltUserKit.getUserName());
 									data.change("dcreatetime", DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+									//更新
+									data.change("iupdateby", JBoltUserKit.getUserId());
+									data.change("cupdatename", JBoltUserKit.getUserName());
+									data.change("dupdatetime", DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+
 									data.change("corgcode", "1");
 									data.change("corgname", "1");
 									data.change("iorgid", "1");

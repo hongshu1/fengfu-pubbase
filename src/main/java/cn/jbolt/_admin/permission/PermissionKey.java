@@ -5,7 +5,7 @@ package cn.jbolt._admin.permission;
  * 此文件由JBoltGeneratorGUI生成 请勿手动修改
  */
 public class PermissionKey {
-	/**
+    /**
 	 * 空权限
 	 */
 	public static final String NONE = "NONE";
@@ -443,9 +443,9 @@ public class PermissionKey {
 	 */
 	public static final String SPOTCHECKPARAM = "spotcheckparam";
 	/**
-	 * 点检标准
+	 * 点检适用标准
 	 */
-	public static final String EQUIPMENTQCBASIS = "equipmentqcbasis";
+	public static final String INVENTORYSPOTCHECKFORM = "inventoryspotcheckform";
 	/**
 	 * 其他事项
 	 */
@@ -1185,15 +1185,15 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String EQUIPMENTQCBASIS_ADD = "equipmentqcbasis_add";
+	public static final String INVENTORYSPOTCHECKFORM_ADD = "inventoryspotcheckform_add";
 	/**
 	 * 导出
 	 */
-	public static final String EQUIPMENTQCBASIS_EXPORT = "equipmentqcbasis_export";
+	public static final String INVENTORYSPOTCHECKFORM_EXPORT = "inventoryspotcheckform_export";
 	/**
 	 * 导入
 	 */
-	public static final String EQUIPMENTQCBASIS_IMPORT = "equipmentqcbasis_import";
+	public static final String INVENTORYSPOTCHECKFORM_IMPORT = "inventoryspotcheckform_import";
 	/**
 	 * 新增
 	 */
@@ -1838,7 +1838,6 @@ public class PermissionKey {
 	 * 单据类型与收发类别对照表
 	 */
 	public static final String VOUCHRDCONTRAPOSE = "vouchrdcontrapose";
-
 	/**
 	 * 销售类型
 	 */
@@ -1851,6 +1850,22 @@ public class PermissionKey {
 	 * 物料建模-Bom母项
 	 */
 	public static final String BOMMASTER = "bommaster";
+	/**
+	 * 消息模板
+	 */
+	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
+	/**
+	 * 备份记录
+	 */
+	public static final String BACKUP_LOG = "backup_log";
+	/**
+	 * 采购类型
+	 */
+	public static final String PURCHASETYPE = "purchasetype";
+	/**
+	 * 备份设置
+	 */
+	public static final String BACKUP_CONFIG = "backup_config";
 	/**
 	 * 新增
 	 */
@@ -2192,16 +2207,49 @@ public class PermissionKey {
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
 	/**
-	 * 实体扩展字段值集
+	 * 质量建模-检验适用标准
+	 */
+	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
+	/**
+	 * 参数配置
+	 */
+	public static final String 	SYS_CONFIG = "	sys_config";
+	/**
+	 * 实体扩展字段
+	 */
+	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
+	/**
+	 * 容器分类
+	 */
+	public static final String CONTAINERCLASS = "containerclass";
+	/**
+	 * 拓展字段值
 	 */
 	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
-	/*
-	 * 实体扩展字段
-	 * */
-	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
-	/*
-	 * 分类管理
-	 * */
-	public static final String CONTAINERCLASS = "containerclass";
-	public static final String WORKCALENDARM = "workcalendarm";
+	/**
+	 * 月度计划订单
+	 */
+	public static final String MONTHORDERM = "monthorderm";
+	/**
+	 * 工作日历明细
+	 */
+	public static final String WORKCALENDARM = "workcalendard";
+	/**
+	 * 平板端配置
+	 */
+	public static final String PAD = "pad";
+	/**
+	 * 平板登录日志
+	 */
+    public static final String PADLOGINLOG = "pad_loginlog";
+	/**
+	 * 手配订单
+	 */
+	public static final String MANUALORDER = "manual_order";
+
+	/**
+	 *	委外销售订单
+	 */
+	public static final String SUBCONTRACTSALEORDERM = "subcontractsaleorderm";
+
 }

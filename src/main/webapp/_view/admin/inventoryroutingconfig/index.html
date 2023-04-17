@@ -1,0 +1,130 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>物料建模-存货工艺配置</h1></div>
+	<div class="col">
+	<form class="form-inline" id="InventoryRoutingConfig_form_#(pageId)">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+
+<select class="form-control" name="iType"
+	data-autoload
+	data-url="admin/dictionary/options?key=null"
+	data-select-type="select"
+	data-text="=工序类型: 1. 串序 2. 并序="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+
+<select class="form-control" name="isEnabled"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=是否启用="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/inventoryroutingconfig/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增物料建模-存货工艺配置"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="InventoryRoutingConfig_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iInventoryRoutingId}</td>
+<td>${data.iSeq}</td>
+<td>${data.cMergedSeq}</td>
+<td>${data.cOperationName}</td>
+<td>${data.iType}</td>
+<td>${data.iRsInventoryId}</td>
+<td>${data.cProductSn}</td>
+<td>${data.cProductTechSn}</td>
+<td>${data.iMergedNum}</td>
+<td>${data.iMergeRate}</td>
+<td>${data.iMergeSecs}</td>
+<td>${data.iSecs}</td>
+<td>${data.cMemo}</td>
+<td>${data.iCreateBy}</td>
+<td>${data.cCreateName}</td>
+<td>${data.dCreateTime}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isEnabled}"  data-handler="refreshJBoltTable"  data-url="admin/inventoryroutingconfig/toggleIsEnabled/${data.id}"/></td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/inventoryroutingconfig/edit/${data.id}" data-area="800,600" data-title="查看物料建模-存货工艺配置"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/inventoryroutingconfig/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑物料建模-存货工艺配置"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/inventoryroutingconfig/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="InventoryRoutingConfig_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增物料建模-存货工艺配置" data-url="admin/inventoryroutingconfig/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑物料建模-存货工艺配置" data-check-handler="jboltTableGetCheckedId" data-url="admin/inventoryroutingconfig/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/inventoryroutingconfig/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="InventoryRoutingConfig_form_#(pageId)"
+	   data-url="admin/inventoryroutingconfig/datas"
+	   data-rowtpl="InventoryRoutingConfig_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="InventoryRoutingConfig_page"
+	   data-toolbar="InventoryRoutingConfig_toolbar_#(pageId)"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="100" data-column="iAutoId">主键</th>
+	<th data-width="100" data-column="iInventoryRoutingId">存货工艺档案ID</th>
+	<th data-width="100" data-column="iSeq">序号</th>
+	<th data-width="150" data-column="cMergedSeq">合并工序</th>
+	<th data-width="150" data-column="cOperationName">工序名称</th>
+	<th data-width="100" data-column="iType">工序类型: 1. 串序 2. 并序</th>
+	<th data-width="100" data-column="iRsInventoryId">半成品/成品ID</th>
+	<th data-width="150" data-column="cProductSn">生产方式(字典值) 内作/外作</th>
+	<th data-width="150" data-column="cProductTechSn">生产工艺： 1. 冲压 2. 弯管 3. 焊接</th>
+	<th data-width="100" data-column="iMergedNum">合并要员（人）</th>
+	<th data-width="100" data-column="iMergeRate">要员（人）</th>
+	<th data-width="100" data-column="iMergeSecs">合并工时（秒）</th>
+	<th data-width="100" data-column="iSecs">单工时（秒）</th>
+	<th data-width="150" data-column="cMemo">备注</th>
+	<th data-width="100" data-column="iCreateBy">创建人</th>
+	<th data-width="150" data-column="cCreateName">创建人名称</th>
+	<th data-min-width="160" data-column="dCreateTime">创建时间</th>
+	<th data-width="100" data-column="isEnabled">是否启用</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

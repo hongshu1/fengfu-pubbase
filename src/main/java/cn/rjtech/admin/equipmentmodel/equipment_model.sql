@@ -7,6 +7,11 @@ AND e.cequipmentmodelcode = #para(cequipmentmodelcode)
 #if(cequipmentmodelname)
 AND e.cequipmentmodelname like CONCAT('%', #para(cequipmentmodelname), '%')
 #end
+
+#if(q)
+AND (e.cequipmentmodelname like CONCAT('%', #para(q), '%') OR e.cequipmentmodelcode like CONCAT('%', #para(q), '%'))
+#end
+
 #if(sqlids)
 AND e.iAutoId in (#(sqlids))
 #end

@@ -229,4 +229,8 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 	public List<Record> getAdminDataNoPage(Kv kv) {
 		return dbTemplate("equipment_model.selectEquipmentModels",kv).find() ;
 	}
+
+	public List<Record> options() {
+		return dbTemplate("equipment_model.selectEquipmentModels").find();
+	}
 }

@@ -68,7 +68,7 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 		if(warehouseArea==null || isOk(warehouseArea.getIautoid())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		ValidationUtils.isTrue(findByWhAreaCode(warehouseArea.getCareacode())==null, "编码重复");
+		ValidationUtils.isTrue(findByWhAreaCode(warehouseArea.getCareacode())==null, warehouseArea.getCareacode()+" 编码重复");
 
 		//if(existsName(warehouseArea.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		warehouseArea.setIcreateby(JBoltUserKit.getUserId());
@@ -79,8 +79,6 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 		warehouseArea.setCorgname(getOrgName());
 		warehouseArea.setIorgid(getOrgId());
 
-		//TODO 容器id  暂时没有写这个业务模块 先给一个默认值
-		warehouseArea.setIcontainerId(Long.parseLong("111"));
 		boolean success=warehouseArea.save();
 		if(success) {
 			//添加日志
@@ -99,6 +97,15 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 		//更新时需要判断数据存在
 		WarehouseArea dbWarehouseArea=findById(warehouseArea.getIautoid());
 		if(dbWarehouseArea==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
+
+		//查询编码是否存在
+		WarehouseArea ware = findByWhAreaCode(warehouseArea.getCareacode());
+
+		//编码重复判断
+		if (ware != null && !warehouseArea.getIautoid().equals(ware.getIautoid())) {
+			ValidationUtils.assertNull(ware.getCareacode(), warehouseArea.getCareacode()+" 编码重复！");
+		}
+
 		warehouseArea.setIupdateby(JBoltUserKit.getUserId());
 		warehouseArea.setCupdatename(JBoltUserKit.getUserName());
 		warehouseArea.setDupdatetime(new Date());
@@ -204,10 +211,11 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 		return null;
 	}
 
-	public WarehouseArea findByCode(String careacode){
-		return findFirst(Okv.by("cAreaCode", careacode).set("isDeleted", false), "iautoid", "asc");
-	}
-
+	/**
+	 * 库区导入
+	 * @param file
+	 * @return
+	 */
 	public Ret importExcelData(File file) {
 		StringBuilder errorMsg=new StringBuilder();
 		JBoltExcel jBoltExcel= JBoltExcel
@@ -229,7 +237,7 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 									ValidationUtils.notNull(data.get("careaname"), "库区名称为空！");
 									ValidationUtils.notNull(data.get("cwhcode"), "仓库编码为空！");
 
-									ValidationUtils.isTrue(findByCode(data.getStr("careacode"))==null, data.getStr("careacode")+"编码重复");
+									ValidationUtils.isTrue(findByWhAreaCode(data.getStr("careacode"))==null, data.getStr("careacode")+" 编码重复");
 
 
 									Warehouse warehouse = warehouseService.findByWhCode(data.getStr("cwhcode"));
@@ -238,8 +246,6 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 									data.change("iwarehouseid", warehouse.getIAutoId());
                                     data.remove("cwhcode");
 
-									//TODO 容器id  暂时没有写这个业务模块 先给一个默认值
-									data.change("iContainerId", Long.parseLong("111"));
 									data.change("icreateby", JBoltUserKit.getUserId());
 									data.change("ccreatename", JBoltUserKit.getUserName());
 									data.change("dcreatetime", DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
@@ -277,4 +283,12 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 		return dbTemplate("warehousearea.findByWareHouseId", Okv.by("wareHouseId", wareHouseId)).find();
 	}
 
+	/**
+	 * 打印数据
+	 * @param kv 查询参数
+	 * @return
+	 */
+	public Object getPrintDataCheck(Kv kv) {
+		return dbTemplate("warehousearea.containerPrintData",kv).find();
+	}
 }

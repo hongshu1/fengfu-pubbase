@@ -1,0 +1,137 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+              <a tooltip title="删除" href="admin/inventoryspotcheckform/delete/${data.iautoid}" data-handler="refreshJBoltTable"
+                 class="jbolt_table_delbtn">删除</a>
+            </td>
+            <td>${data.cequipmentmodelname}</td> <!--机型,cEquipmentModelName-->
+            <td>${data.cinvaddcode}</td> <!--存货编码-->
+            <td>${data.cinvcode1}</td> <!--客户部番-->
+            <td>${data.cinvname1}</td> <!--部品名称-->
+            <td>${data.cinvstd}</td> <!--规格-->
+            <td>${data.cuomname}</td> <!--主计量单位iinventoryuomid1-->
+            <td>${data.coperationname}</td> <!--工序名称-->
+        </tr>
+    {@/each}
+</textarea>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="btn-group">
+          <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
+            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=存货编码="
+                   maxlength="50" name="cinvaddcode" value="#(cinvaddcode??)"/>
+            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=客户部番="
+                   maxlength="50" name="cinvcode1" value="#(cinvcode1??)"/>
+            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=部品名称="
+                   maxlength="50" name="cinvname1" value="#(cinvname1??)"/>
+
+            <select class="form-control col-sm-3" name="iequipmentmodelid"
+                    data-autoload
+                    data-url="admin/equipmentmodel/options"
+                    data-select-type="select"
+                    data-text="=机型="
+                    data-tips="机型"
+                    data-value=""
+                    data-value-attr="iautoid"
+                    data-text-attr="cequipmentmodelname"
+                    data-select="#(iautoid??)">
+            </select>
+            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>
+            <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>
+          </form>
+        </div>
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)">
+          <div class="btn-group" role="group" aria-label="btn-group">
+            <button onclick="addBomcompareTr(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+            <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+            <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+
+        <!---->
+        <table class="jbolt_table jbolt_main_table table-center"
+               id="jbolt_table_inventory_split_#(pageId)"
+               data-jbolttable
+               data-height="200"
+               data-ajax="true"
+               data-column-resize="true"
+               data-url="admin/inventoryspotcheckform/addDatas?iautoid=#(inventoryspotcheckform.iautoid??)"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="inventoryForm_#(pageId)"
+               data-rowtpl="inventorySplit_tpl_#(pageId)"
+               data-page="iequipmentqcparam_Page_#(pageId)"
+               data-toolbar="inventory_split_toolbar_#(pageId)"
+               data-editable="true"
+               data-editable-option="getEditableTableOptions_split_#(pageId)">
+          <thead class="fw-normal">
+          <tr>
+            <th data-width="60" data-column="index">序号</th>
+            <th data-width="80">操作</th>
+            <th data-width="150" data-column="cEquipmentModelName">机型</th>
+            <th data-width="150" data-column="cInvAddCode">存货编码</th>
+            <th data-width="150" data-cInvCode1="cPhone">客户部番</th>
+            <th data-width="150" data-column="cInvName1">部品名称</th>
+            <th data-width="150" data-column="cInvStd">规格</th>
+            <th data-width="150" data-column="cuomname">主计量单位</th><!--iInventoryUomId1-->
+            <th data-width="150" data-column="ioperationid">工序名称</th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  /*新增*/
+  function addBomcompareTr(ele){
+    var url="/admin/inventoryspotcheckform/equipmentqcparamSelect";
+    $(ele).data("url",url).attr("data-area","90%,90%").attr("data-title","关联点检参数");
+    DialogUtil.openBy(ele);
+  }
+  /*去后端执行提交功能*/
+  function getEditableTableOptions_split_#(pageId)(){
+    var editableTableOptions = {
+      trigger: "click",
+      insertDefaultValues: {name: '#(JBoltUserKit.getUserName())'},
+      submit: {
+        withForm: ["inventorySpotCheckAdminForm"],
+        type: "all",
+        url: "/admin/inventoryspotcheckform/updateEditTable",
+        success: function (res, table, td) {
+          if (res.state === 'ok') {
+            LayerMsgBox.success(res.msg, 1000, function () {
+              refreshPjaxContainer();
+              parent.LayerMsgBox.closeAll();
+              parent.refreshPjaxContainer();
+            });
+          } else {
+            LayerMsgBox.alert(res.msg, 2);
+          }
+        }
+      },
+      cols: {
+        iautoid: {
+          submitAttr: "iautoid"
+        },
+        ioperationid: { //工序
+          required: true,
+          placeholder: "=工序=",
+          type:"select2",
+          url:"admin/operation/optionsToInventoryCheckForm",
+          valueAttr:"iautoid",//textAttr:"cOperationName"
+          textAttr:"coperationname" //coperationname\ioperationid
+        },
+      }
+    };
+    return editableTableOptions;
+  }
+</script>

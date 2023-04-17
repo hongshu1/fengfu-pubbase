@@ -8,20 +8,16 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import cn.rjtech.model.momdata.Equipment;
 import com.jfinal.plugin.activerecord.Page;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.Equipment;
 /**
  * 设备管理-设备档案
  * @ClassName: EquipmentAdminController
@@ -183,4 +179,19 @@ public class EquipmentAdminController extends BaseAdminController {
 	public void selectLine(){
 		renderJsonData(service.selectWorkRegs());
 	}
+	
+	/**
+	  * 获取设备列表 
+	  * 通过关键字匹配 
+	 * autocomplete组件使用
+	 */
+	@UnCheck
+	public void autocomplete() {
+		renderJsonData(service.getAutocompleteDatas(get("q"),getInt("limit", 10)));
+	}
+
+	public void dataList(){
+		renderJsonData(service.dataList());
+	}
+    
 }

@@ -42,19 +42,25 @@ WHERE
 SELECT
     inv.iautoid as itemId,
 	inv.iweight,
+	inv.cInvName,
+	inv.cInvStd,
 	inv.cInvCode AS cInvCode,
 	inv.cInvCode1 AS cInvCode1,
 	inv.cInvName1 AS cInvName1,
-	uom.cUomName
+	uom.cUomName,
+	inv.iCustomerMId
 FROM
 	Bd_Inventory inv
 	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iUomClassId
 	WHERE
 	    1 = 1
-	    #if(keywords)
-            AND (inv.cInvCode LIKE CONCAT('%', #para(keywords), '%') OR inv.cInvCode1 LIKE CONCAT('%', #para(keywords), '%') OR inv.cInvName1 LIKE CONCAT('%', #para(keywords), '%'))
+	    #if(q)
+            AND (inv.cInvCode LIKE CONCAT('%', #para(q), '%') OR inv.cInvCode1 LIKE CONCAT('%', #para(q), '%') OR inv.cInvName1 LIKE CONCAT('%', #para(q), '%'))
 	    #end
 	    #if(itemId)
 	        AND inv.iautoId = #para(itemId)
+	    #end
+	    #if(iEquipmentModelId)
+	        AND INV.iEquipmentModelId = #para(iEquipmentModelId)
 	    #end
 #end

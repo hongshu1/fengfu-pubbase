@@ -5,11 +5,9 @@
 
 <div class="jbolt_page_title">
 	<div class="row">
-	<div class="col-md-auto">
-	<h1>项目管理项目分类目录</h1>
-	</div>
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>项目管理项目分类目录</h1></div>
 	<div class="col">
-		<form class="form-inline" id="fitemss97classForm_#(pageId)"   onsubmit="return false;" method="post">
+		<form class="form-inline text-left" id="fitemss97classForm_#(pageId)"   onsubmit="return false;" method="post">
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
 		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -26,8 +24,8 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/fitemss97class/edit/${data.iautoid}" data-area="600,400"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改项目管理项目分类目录" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
-    <a href="admin/fitemss97class/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+	<a href="admin/fitemss97class/edit/${data.iautoid}" data-area="600,400"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改项目管理项目分类目录" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>修改</a>
+    <a href="admin/fitemss97class/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 </td>
 <td>${data.citemccode}</td>
 <td>${data.citemcname}</td>
@@ -67,7 +65,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 <thead>
 <tr>
 	<th data-width="60">序号</th>
-	<th data-width="100">操作</th>
+	<th data-width="150">操作</th>
 	<th data-width="150" data-column="cItemCcode">项目大类编码</th>
 	<th data-width="150" data-column="cItemCname">项目大类名称</th>
 	<th data-width="150" data-column="iSource">来源</th>
