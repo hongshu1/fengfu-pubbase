@@ -515,6 +515,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                 plugeReturnMap.put("CreatePersonName", userApp.getStr("user_name"));
                 plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
                 plugeReturnMap.put("organizeCode", kv.get("organizecode"));
+                plugeReturnMap.put("password", userApp.getStr("u8_pwd"));
 
                 AtomicInteger currentSeq = new AtomicInteger();
 
