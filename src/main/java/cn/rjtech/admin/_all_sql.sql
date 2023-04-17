@@ -61,10 +61,9 @@
 #include("warehouseshelves/warehouseshelves.sql")
 #end
 
-#namespace("forgeigncurrency")
-#include("forgeigncurrency/forgeigncurrency.sql")
+#namespace("foreigncurrency")
+#include("foreigncurrency/foreigncurrency.sql")
 #end
-
 
 #namespace("warehouseposition")
 #include("warehouseposition/warehouseposition.sql")
@@ -195,10 +194,6 @@
 
 #namespace("fitemss97sub")
 #include("fitemss97sub/fitemss97sub.sql")
-#end
-
-#namespace("foreigncurrency")
-#include("foreigncurrency/foreigncurrency.sql")
 #end
 
 #namespace("qcform")
