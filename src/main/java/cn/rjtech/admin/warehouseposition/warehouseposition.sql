@@ -34,7 +34,7 @@ WHERE 1 = 1
         AND CHARINDEX(','+cast((select wp.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
     #end
 
-ORDER BY wp.dCreateTime DESC
+ORDER BY wp.cPositionCode DESC
 #end
 
 #sql("findByMouldsId")

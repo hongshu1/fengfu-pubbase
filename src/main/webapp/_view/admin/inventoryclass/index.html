@@ -18,14 +18,13 @@
 			<div class="col-auto mb-3" style="width:28%;">
 				<div class="card">
 					<div class="card-header py-2">
-						<span class="d-inline-block py-1"><strong>存货分类</strong></span>
-						<div class="pull-right">
+						<div class="pull-left">
 							<input type="text" class="form-control" id="searchBackGoodsTypeInput_#(pageId)"  placeholder="搜索关键字过滤" />
 						</div>
 					</div>
 					<div class="card-header py-2">
 						<div>
-							<div class="btn-group" role="group" aria-label="btn-group">
+							<div class="" role="group" aria-label="btn-group">
 								<button data-area="580,520" data-title="新增存货分类" onclick="addBtn(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 
 								<button data-area="580,520" data-title="修改存货分类" onclick="updateBtn(this)"  class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
@@ -55,7 +54,7 @@
 							<div class="clearfix"></div>
 						</div>
 					</div>
-					<div class="card-body overflow-auto" style="min-height:500px; max-height: 600px">
+					<div class="card-body overflow-auto" style="min-height:450px; max-height: 750px">
 						<div id="goodsBackCategoryTree"
 							 data-jstree
 							 data-target="portal"
@@ -80,10 +79,10 @@
 				<div class="jbolt_page" data-key="#(pmkey??)">
 					<div class="jbolt_page_title">
 						<div class="row">
-							<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>物料建模-存货档案</h1></div>
 							<div class="col">
-								<form class="form-inline" id="Inventory_form_#(pageId)">
+								<form class="form-inline text-left" id="Inventory_form_#(pageId)">
 									<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="存货分类id" id="inventoryclassid" name="iInventoryClassId" value="" />
+									<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="存货分类编码" id="inventoryclasscode" name="iInventoryClassCode" value="" />
 
 									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货编码" maxlength="40" name="cInvCode" />
 									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货名称" maxlength="40" name="cInvName" />
@@ -208,6 +207,7 @@
 			console.log(data)
 			autoid = data.id;
 			$("#inventoryclassid").val(autoid);
+			$("#inventoryclasscode").val(data.text);
 			jboltTablePageToFirst();
 		}
 		function addBtn(ele){

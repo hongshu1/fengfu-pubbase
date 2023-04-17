@@ -6,7 +6,7 @@
 <div class="jbolt_page_title">
 	<div class="row">
 	<div class="col">
-		<form class="form-inline" id="workregionmForm_#(pageId)"   onsubmit="return false;" method="post">
+		<form class="form-inline text-left" id="workregionmForm_#(pageId)"   onsubmit="return false;" method="post">
 			<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=产线编码=" maxlength="50" name="cworkcode" value="#(cworkcode??)"/>
 			<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=产线名称=" maxlength="50" name="cworkname" value="#(cworkname??)"/>
 			<select class="form-control"
@@ -53,7 +53,7 @@
 
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="workregionm_toolbar_#(pageId)">
-	<div class="btn-group" role="group" aria-label="btn-group">
+	<div class="" role="group" aria-label="btn-group">
 		#permission(PermissionKey.WORKREGIONM_ADD)
 		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增产线档案"  data-url="admin/workregionm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		#end

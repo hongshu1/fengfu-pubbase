@@ -9,7 +9,7 @@
                 <h1><i class="jbicon2 jbi-sound"></i>邮件收件人管理</h1>
             </div>
             <div class="col-5">
-                <form class="form-inline" id="emailReceiverForm_#(pageId)" onsubmit="return false;" method="post">
+                <form class="form-inline text-left" id="emailReceiverForm_#(pageId)" onsubmit="return false;" method="post">
                     <input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords" value=""/>
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
                     <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
@@ -37,7 +37,7 @@
 
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="emailReceiver_toolbar_#(pageId)">
-            <div class="btn-group" role="group" aria-label="btn-group">
+            <div class="" role="group" aria-label="btn-group">
                 <button data-dialogbtn data-area="600,500" data-handler="refreshJBoltTable" data-title="新增邮件数据" data-url="admin/emailreceiver/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i>新增</button>
                 <button data-dialogbtn data-handler="refreshPjaxContainer" data-title="邮件数据" data-check-handler="jboltTableGetCheckedId" data-url="admin/emailreceiver/edit/" class="btn btn-outline-info btn-sm" data-area="600,600"><i class="fa fa-edit"></i>编辑</button>
                 <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/emailreceiver/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i>删除</button>

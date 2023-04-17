@@ -25,7 +25,7 @@
 					</div>
 					<div class="card-header py-2">
 						<div>
-							<div class="btn-group" role="group" aria-label="btn-group">
+							<div class="" role="group" aria-label="btn-group">
 								#permission(PermissionKey.UOMCLASS_ADD)
 								<button data-area="580,520" data-title="新增单位计量组" onclick="addBtn(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 								#end
@@ -90,7 +90,7 @@
 								<h6><strong>计量单位列表</strong></h6>
 							</div>
 							<div class="col">
-								<form class="form-inline" id="uomForm_#(pageId)"   onsubmit="return false;" method="post">
+								<form class="form-inline text-left" id="uomForm_#(pageId)"   onsubmit="return false;" method="post">
 									<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="计量单位组ID" id="uomclassid" name="uomclassid" value="" />
 									<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=计量单位组编码=" maxlength="50" name="cuomcode" value="#(cuomcode??)"/>
 									<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=计量单位组名称=" maxlength="50" name="cuomname" value="#(cuomname??)"/>
@@ -128,7 +128,7 @@
 
 						<!-- 工具条 toolbar -->
 						<div class="jbolt_table_toolbar" id="itemmaster_toolbar_#(pageId)">
-							<div class="btn-group" role="group" aria-label="btn-group">
+							<div class="" role="group" aria-label="btn-group">
 								#permission(PermissionKey.UOMCLASS_ADD)
 								<button data-area="100%,100%" data-title="新增计量单位" data-handler="refreshJBoltTable" onclick="addUomBtn(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 								#end

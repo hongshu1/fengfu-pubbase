@@ -19,6 +19,7 @@ import cn.rjtech.common.vouchrollbackref.VouchRollBackRefService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.erp.mood.DataConversion;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.ListUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import cn.rjtech.wms.utils.WebService;
@@ -31,6 +32,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.Date;
 import java.util.*;
@@ -617,7 +619,11 @@ public class ColumsmapService extends BaseService<Columsmap> {
                                         apimaps.add(apimap);
 
                                         // u9调用
-                                        message = WebService.ApiWebService(processBus.getStr("tag"), apimaps, jsonData);
+                                        try {
+                                            message = HttpApiUtils.u8Api(apimap.get("url").toString(), jsonData);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
                                         System.out.println(message);
 
                                         // 返回解析
@@ -775,7 +781,13 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     List<Map<String, String>> roapimaps = new ArrayList<>();
                     roapimaps.add(roapimap);
                     //u9调用
-                    String message = WebService.ApiWebService(rollback.get("tag", "").toString(), roapimaps, rojsonObject);
+                    if (rojsonObject != null){
+                        try {
+                            HttpApiUtils.u8Api(roapimap.get("url").toString(), rojsonObject);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
             currentSeq -= 10;
@@ -834,7 +846,12 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     apimaps.add(apimap);
 
                     // u9调用
-                    String message = WebService.ApiWebService(processBusMap.getStr("tag"), apimaps, jsonData);
+                    String message = null;
+                    try {
+                        message = HttpApiUtils.u8Api(processBusMap.get("url"), jsonData);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     // 返回解析
                     Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message, 1);
                     String resultCode = JBoltStringUtil.isBlank(processResult.get("resultCode").toString()) ? "201" : processResult.get("resultCode").toString();
@@ -863,12 +880,15 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     //创建是否成功
                     if ("200".equals(resultCode)) {
                         result.set("state", 0);
-                        String docId = processResult.get("docID") == null ? null : processResult.get("docID").toString();
+                        plugeReturnMap.put("VouchId", processResult.get("docID"));
+                        result.put("message", resultInfo);
+                        result.put("dommessage", processResult.get("domMsg"));
+                        /*String docId = processResult.get("docID") == null ? null : processResult.get("docID").toString();
                         if (null != docId) {
                             plugeReturnMap.put("ResultDocID", docId);
                         }
                         plugeReturnMap.put("ResultDocNo", processResult.get("docNo"));
-                        result.set("code", resultCode).set("message", message);
+                        result.set("code", resultCode).set("message", message);*/
                     } else {
                         result.set("state", 1);
                         // 日志记录

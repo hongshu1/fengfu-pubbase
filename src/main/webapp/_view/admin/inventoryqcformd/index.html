@@ -9,7 +9,7 @@
 	<h1>点检表格</h1>
 	</div>
 	<div class="col">
-		<form class="form-inline" id="inventoryQcFormDForm_#(pageId)"   onsubmit="return false;" method="post">
+		<form class="form-inline text-left" id="inventoryQcFormDForm_#(pageId)"   onsubmit="return false;" method="post">
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
 		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -46,7 +46,7 @@
 
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="inventoryQcFormD_toolbar_#(pageId)">
-	<div class="btn-group" role="group" aria-label="btn-group">
+	<div class="" role="group" aria-label="btn-group">
 		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增点检表格"  data-url="admin/inventoryqcformd/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改点检表格" data-check-handler="jboltTableGetCheckedId" data-url="admin/inventoryqcformd/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/inventoryqcformd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>

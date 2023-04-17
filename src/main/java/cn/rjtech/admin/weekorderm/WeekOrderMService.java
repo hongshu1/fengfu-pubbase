@@ -55,7 +55,8 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 	}
 
 	/**
-	 * 保存
+	 *
+	 * @param jBoltTable 前端保存数据
 	 * @param
 	 * @return
 	 */
@@ -65,11 +66,12 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
 		WeekOrderM weekOrderM = jBoltTable.getFormModel(WeekOrderM.class,"weekOrderM");
+		String approve = jBoltTable.getForm().getString("approve");
 		if(weekOrderM==null || isOk(weekOrderM.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//主表保存
-		saveContant(weekOrderM);
+		saveContant(weekOrderM,approve);
 
 		if (null!=jBoltTable.getSave()) {
 			return updateWeekOrderDs("save", jBoltTable, weekOrderM);
@@ -81,11 +83,20 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 	 * 主表保存
 	 * @param weekOrderM
 	 */
-	private void saveContant(WeekOrderM weekOrderM) {
-		//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-		weekOrderM.setIAuditStatus(0);
-		//订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
-		weekOrderM.setIOrderStatus(1);
+	private void saveContant(WeekOrderM weekOrderM,String approve) {
+		//主表新增页审核
+		if (approve.equals("approve")) {
+			//审核状态：1. 待审核
+			weekOrderM.setIAuditStatus(1);
+			//订单状态：2. 待审批
+			weekOrderM.setIOrderStatus(2);
+		} else {
+			//保存
+			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+			weekOrderM.setIAuditStatus(0);
+			//订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
+			weekOrderM.setIOrderStatus(1);
+		}
 		//组织信息
 		weekOrderM.setIOrgId(getOrgId());
 		weekOrderM.setCOrgCode(getOrgCode());
@@ -154,6 +165,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 				for (WeekOrderD weekOrderD : weekOrderDs) {
 					weekOrderD.update();
 				}
+				break;
 			//保存
 			case "save":
 				weekOrderDs = jBoltTable.getSaveModelList(WeekOrderD.class);
@@ -234,11 +246,11 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 	 * @return
 	 */
 	public Ret approve(String iAutoId,Integer mark) {
-		WeekOrderM weekOrderM = new WeekOrderM();
+		WeekOrderM weekOrderM = null;
 		boolean success = false;
 		if (mark == 1) {
 			weekOrderM = findById(iAutoId);
-			if (weekOrderM == null || isOk(weekOrderM.getIAutoId())) {
+			if (weekOrderM == null ||notOk(weekOrderM.getIAutoId())) {
 				return fail(JBoltMsg.PARAM_ERROR);
 			}
 			//订单状态：2. 待审批
@@ -250,8 +262,8 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 				//TODO 由于审批流程暂未开发 先审批提审即通过
 				if (listByIds.size() > 0) {
 					for (WeekOrderM orderM : listByIds) {
-						if (orderM.getIOrderStatus() == 3 || orderM.getIOrderStatus() > 4) {
-							return warn("当前订单状态不支持审批操作！");
+						if (orderM.getIOrderStatus() != 2) {
+							return warn("订单："+orderM.getCOrderNo()+"状态不支持审批操作！");
 						}
 						//订单状态：3. 已审批
 						orderM.setIOrderStatus(3);
@@ -273,5 +285,79 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 			addUpdateSystemLog(weekOrderM.getIAutoId(), JBoltUserKit.getUserId(), weekOrderM.getIAutoId().toString());
 		}
 		return ret(success);
+	}
+
+	/**
+	 * 撤回
+	 * @param iAutoId
+	 * @return
+	 */
+	public Ret recall(String iAutoId) {
+		if( notOk(iAutoId)) {
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		WeekOrderM weekOrderM = findById(iAutoId);
+		//订单状态：2. 待审批
+		weekOrderM.setIOrderStatus(1);
+		//审核状态： 1. 待审核
+		weekOrderM.setIAuditStatus(0);
+		boolean result = weekOrderM.update();
+		return ret(result);
+	}
+
+	/**
+	 * 关闭功能
+	 * @param iAutoId
+	 * @return
+	 */
+	public Ret closeWeekOrder(String iAutoId) {
+		if( notOk(iAutoId)) {
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		WeekOrderM weekOrderM = findById(iAutoId);
+		//订单状态：7. 已关闭
+		weekOrderM.setIOrderStatus(7);
+		boolean result = weekOrderM.update();
+		return ret(result);
+
+	}
+
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	public Ret deleteByIdS(String ids) {
+		List<WeekOrderM> listByIds = getListByIds(ids);
+		for (WeekOrderM weekOrderM : listByIds) {
+			//订单状态：1. 已保存
+			if (weekOrderM.getIOrderStatus() != 1) {
+				return warn("订单："+weekOrderM.getCOrderNo()+"状态不支持删除操作！");
+			}
+			weekOrderM.setIsDeleted(true);
+			weekOrderM.update();
+		}
+		return SUCCESS;
+	}
+
+	/**
+	 * 批量反审批
+	 * @param ids
+	 * @return
+	 */
+	public Ret NoApprove(String ids) {
+		//TODO数据同步暂未开发 现只修改状态
+		for (WeekOrderM weekOrderM :  getListByIds(ids)) {
+			//订单状态： 3. 已审批
+			if (weekOrderM.getIOrderStatus() != 3) {
+				return warn("订单："+weekOrderM.getCOrderNo()+"状态不支持反审批操作！");
+			}
+			//审核状态：1. 待审核
+			weekOrderM.setIAuditStatus(1);
+			//订单状态： 2. 待审批
+			weekOrderM.setIOrderStatus(2);
+			weekOrderM.update();
+		}
+		return SUCCESS;
 	}
 }

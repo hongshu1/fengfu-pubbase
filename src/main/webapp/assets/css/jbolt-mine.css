@@ -117,3 +117,18 @@
     font-size: 16px;
     font-weight: bold;
 }
+
+/**
+ * 所有按钮字体加粗
+ */
+.btn {
+    font-weight: bold;
+}
+
+/**
+ * 按钮悬浮底色
+ */
+.btn:hover {
+    background-color: #bfd8f2;
+    color: #0c0c0c;
+}
