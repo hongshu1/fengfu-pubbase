@@ -3,6 +3,8 @@ package cn.rjtech.common.columsmap;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.CaseInsensitiveMap;
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.util.JBoltStringUtil;
@@ -16,6 +18,7 @@ import cn.rjtech.common.organize.OrganizeService;
 import cn.rjtech.common.tsyslog.TsysLogService;
 import cn.rjtech.common.vouchprocessnote.VouchProcessNoteService;
 import cn.rjtech.common.vouchrollbackref.VouchRollBackRefService;
+import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.erp.mood.DataConversion;
 import cn.rjtech.util.ValidationUtils;
@@ -453,34 +456,39 @@ public class ColumsmapService extends BaseService<Columsmap> {
         });
     }
 
-    public Map vouchProcessSubmit(Kv k) {
+    @SuppressWarnings("unchecked")
+    public Map vouchProcessSubmit(Kv k){
         CaseInsensitiveMap<String, Object> kv = new CaseInsensitiveMap<String, Object>(k);
         String sourceJson = k.toJson();
 
         Kv result = Kv.create();
-        tx(Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
 
-            Organize orgApp = organizeService.getOrgByCode((String) kv.get("organizecode"));
+        Date now = new Date();
 
-            Record userApp = userAppService.getUserByUserCode(orgApp.getErpdbname(), orgApp.getErpdbschemas(), (String) kv.get("usercode"));
-            ValidationUtils.notNull(userApp, "当前组织下没有该用户！");
+        Organize orgApp = organizeService.getOrgByCode((String) kv.get("organizecode"));
 
-            String erpDBName = orgApp.getErpdbname();
-            String erpDbAlias = orgApp.getErpdbalias();
+        Record userApp = userAppService.getUserByUserCode(orgApp.getErpdbname(), orgApp.getErpdbschemas(), (String) kv.get("usercode"));
+        ValidationUtils.notNull(userApp, "当前组织下没有该用户！");
 
-            // 业务id
-            String vouchBusinessID = String.valueOf(JBoltSnowflakeKit.me.nextId());
-            String seqBusinessID = vouchBusinessID;
+        String erpDBName = orgApp.getErpdbname();
+        String erpDbAlias = orgApp.getErpdbalias();
 
-            // 获取所有钟工组件返回的u8单据类型值
-            JSONObject preAllocate = (JSONObject) kv.get("preallocate");
+        // 业务id
+        String vouchBusinessID = JBoltSnowflakeKit.me.nextIdStr();
 
-            //通过数据的分组id，将数据分成多组，分别提交
-            Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> {
-                return ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag");
-            }, Collectors.toList()));
+        // 获取所有钟工组件返回的u8单据类型值
+        JSONObject preAllocate = (JSONObject) kv.get("preallocate");
 
-            Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
+        //通过数据的分组id，将数据分成多组，分别提交
+        Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> {
+            return ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag");
+        }, Collectors.toList()));
+
+        Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
+
+        // 外层事务
+        tx(erpDbAlias, Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
+
             for (Object flag : groupFlags) {
                 // 获取主数据
                 JSONArray mainData = JSONArray.parseArray(JSON.toJSONString(dataGroup.get(flag)));//(JSONArray) kv.get("maindata");
@@ -494,8 +502,8 @@ public class ColumsmapService extends BaseService<Columsmap> {
                 Map plugeReturnMap = ListUtils.dealWithReturnData(preAllocate);
 
                 String type = plugeReturnMap.get("type").toString();
-                List<Record> list = findInfoFlag(type);
-                String synergyTag = list.get(0).getStr("synergytag");
+                // List<Record> list = findInfoFlag(type)
+                // String synergyTag = list.get(0).getStr("synergytag")
 
                 // 获取对应
                 Record vouchType = findInfoFlag(type).get(0);
@@ -507,245 +515,56 @@ public class ColumsmapService extends BaseService<Columsmap> {
                 plugeReturnMap.put("CreatePersonName", userApp.getStr("user_name"));
                 plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
                 plugeReturnMap.put("organizeCode", kv.get("organizecode"));
+                plugeReturnMap.put("password", userApp.getStr("u8_pwd"));
 
                 AtomicInteger currentSeq = new AtomicInteger();
 
                 try {
+                    Map<Object, List<Record>> groupProcessDatas = processBusMaps.stream().collect(Collectors.groupingBy(p -> p.get("groupseq") == null ? "10" : p.get("groupseq"), Collectors.toList()));//通过配置表的groupseq分组
+                    Set<Object> groupSeqs = new TreeSet<>(groupProcessDatas.keySet());
+                    Iterator<Object> groupId = groupSeqs.iterator();
+                    DataConversion dataConversion = new DataConversion(this, columsmapdetailService);
 
-                    // 内层事务,当异常条件下，对已执行的子事务提交，并返回错误信息
-                    tx(Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
+                    while (groupId.hasNext()) {
+                        // 取出分组中的流程
+                        List<Record> processBusList = groupProcessDatas.get(groupId.next());
 
-                        // 默认代码为200
-                        int code = 200;
-                        // 返回的数据
-                        String message = "成功";
-                        // 日志状态
-                        int state = 0;
+                        for (int i = 0; i < processBusList.size(); i++) {
+                            Record processBusMap = processBusList.get(i);
 
-                        Map<String, List<Record>> recordMap;
+                            currentSeq.set(processBusMap.getInt("seq"));
 
-                        Map<Object, List<Record>> groupProcessDatas = processBusMaps.stream().collect(Collectors.groupingBy(p -> p.get("groupseq") == null ? "10" : p.get("groupseq"), Collectors.toList()));//通过配置表的groupseq分组
-                        Set<Object> groupSeqs = new TreeSet<>(groupProcessDatas.keySet());
-                        Iterator<Object> groupId = groupSeqs.iterator();
-                        DataConversion dataConversion = new DataConversion(this, columsmapdetailService);
+                            // 预制项配置
+                            plugeReturnMap.put("InitializeMapID", processBusMap.get("initializemapid"));
 
-                        while (groupId.hasNext()) {
-                            // 取出分组中的流程
-                            List<Record> processBusList = groupProcessDatas.get(groupId.next());
+                            // 判断流程是否可用
+                            if (StrUtil.isBlank(processBusMap.get("pcloseperson")) && StrUtil.isBlank(processBusMap.get("bcloseperson"))) {
 
-                            for (int i = 0; i < processBusList.size(); i++) {
-                                Record processBus = processBusList.get(i);
-                                currentSeq.set(processBus.getInt("seq"));
-                                // 预制项配置
-                                plugeReturnMap.put("InitializeMapID", processBus.get("initializemapid"));
-                                // 判断流程是否可用
-                                if (null == processBus.get("pcloseperson") || "".equals(processBus.get("pcloseperson")) && null == processBus.get("bcloseperson") || "".equals(processBus.get("bcloseperson"))) {
-                                    // 保存交换表步骤
-                                    if (null == processBus.get("processname") && null == processBus.get("url") || "".equals(processBus.get("processname")) && null == processBus.get("url")) {
-                                        // 创建数据动态交换表list
-                                        List<ExchangeTable> dt = dataConversion.getTSysExchangetable(type, plugeReturnMap, mainData, detailData, extData);
-                                        exchangeTableService.saveInTx(dt);
+                                Record processBusPre = i > 0 ? processBusList.get(i - 1) : null;
 
-                                        VouchProcessNote note = new VouchProcessNote();
-                                        note.setVouchbusinessid(vouchBusinessID);
-                                        note.setSeq(processBus.getInt("seq"));
-                                        note.setExchangeid(dt.get(0).getExchangeID());
-                                        note.setCreatedate(new Date());
-                                        vouchProcessNoteService.saveVouchprocessnoteInTx(note);
-
-                                        String vouchtypeId = vouchType.getStr("vouchcode");
-                                        String source = sourceJson;//"PreAllocate:" + preAllocate;
-                                        String memo = "Exchangeid:" + dt.get(0).getExchangeID();
-
-                                        Log tsysLog = new Log();
-                                        dataConversion.recordLog(orgApp.getOrganizecode(), vouchBusinessID, vouchtypeId, processBus.get("seq").toString(), "", dt.get(0).getExchangeID(), state, source, "", "", memo, userApp.getStr("user_code"), tsysLog);
-                                        tsysLogService.saveLogInTx(tsysLog);
-                                    }
-
-                                    // flag级别使用
-                                    String processFlag = processFlag(processBus);
-
-                                    if (null != processBus.get("processname") && !"".equals(processBus.get("processname"))) {
-                                        // 获取节点信息
-                                        List<Record> datamap = vouchProcessNoteService.processNote(processBus.getStr("exechgeseq"), seqBusinessID);
-                                        String ExchangeId = datamap.get(datamap.size() - 1).getStr("exchangeid");
-
-                                        Log tsysLog = new Log();
-                                        tsysLog.setVouchtype(vouchType.getStr("vouchcode"));
-                                        tsysLog.setVouchstep(processBus.getStr("seq"));
-                                        // 执行U9数据源事务
-                                        txInU9(erpDbAlias, erpDBName, vouchBusinessID, orgApp, processBus, processFlag, ExchangeId, dataConversion, userApp, tsysLog, plugeReturnMap, result);
-                                        message = result.getStr("message");
-                                        // 失败,
-                                        if (result.getInt("state") == 1) {
-                                            // 返回错误信息
-                                            //result.set("message", result.getStr("message"));
-                                            // 提交事务
-                                            return true;
-                                        }
-                                    }
-
-                                    if (null != processBus.get("url") && "Audit".equals(processBus.getStr("tag"))) {
-                                        //日志状态初始
-                                        state = 0;
-                                        Map<String, String> apimap = new HashMap<>();
-
-                                        try {
-                                            recordMap = queryExchange(erpDBName, orgApp.getErpdbschemas(), result.getStr("resultExchangeID"));
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                            // 返回错误信息
-                                            result.set("code", "201").set("message", e.getLocalizedMessage());
-                                            // 提交事务
-                                            return true;
-                                        }
-
-                                        System.out.println(recordMap);
-                                        plugeReturnMap.put("ProcessMapID", processBus.get("initializemapid"));
-
-                                        JSONObject jsonData = dataConversion.InterfaceTransform(processBus.get("resulttype").toString(), plugeReturnMap, recordMap);
-                                        System.out.println(jsonData);
-
-                                        VouchRollBackRef vouchrollbackref = new VouchRollBackRef();
-                                        vouchrollbackref.setVouchbusinessid(seqBusinessID);
-                                        vouchrollbackref.setProcessvalue(jsonData.toString());
-                                        vouchrollbackref.setProcessid(processBusList.get(i - 1).getStr("autoid"));
-                                        vouchRollBackRefService.updateRefInTx(vouchrollbackref);
-
-                                        apimap.put("tag", processBus.get("tag"));
-                                        apimap.put("url", processBus.get("url"));
-
-                                        List<Map<String, String>> apimaps = new ArrayList<>();
-                                        apimaps.add(apimap);
-
-                                        // u9调用
-                                        try {
-                                            message = HttpApiUtils.u8Api(apimap.get("url").toString(), jsonData);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                        System.out.println(message);
-
-                                        // 返回解析
-                                        Map processResult = dataConversion.processResult(processBus.getStr("resulttype"), message, 1);
-                                        //System.out.println(processResult.get("resultCode").toString() + processResult.get("resultInfo").toString());
-                                        String resultCode = processResult.get("resultCode").toString();
-                                        message = processResult.get("resultInfo").toString();
-
-                                        // 单据处理节点信息
-                                        VouchProcessNote vouchprocessnote = new VouchProcessNote();
-                                        vouchprocessnote.setVouchbusinessid(seqBusinessID);
-                                        vouchprocessnote.setSeq(processBus.getInt("seq"));
-                                        vouchprocessnote.setPreallocate(plugeReturnMap.toString());
-                                        vouchprocessnote.setExchangeid(result.getStr("resultExchangeID"));
-                                        vouchprocessnote.setReturnvalue(jsonData.toString());
-                                        vouchprocessnote.setCreatedate(new Date());
-                                        vouchProcessNoteService.saveVouchprocessnoteInTx(vouchprocessnote);
-
-                                        //审核是否失败
-                                        if (!"200".equals(resultCode)) {
-                                            result.set("code", "201").set("message", message);
-                                            throw new RuntimeException(message);
-                                            // 日志记录
-                                            /*state = 1;
-                                            Record rollback = vouchRollBackRefService.rollback(processBusList.get(i - 1).getStr("autoid"));
-                                            if (rollback == null) throw new RuntimeException(message);
-                                            List<Record> rollbackref = vouchRollBackRefService.rollbackref(seqBusinessID);
-                                            String processvalue = rollbackref.get(0).getStr("processvalue");
-                                            // map2=JSON.parseObject(processvalue,HashMap.class);
-                                            JSONObject rojsonObject = JSONObject.parseObject(processvalue);
-                                            System.out.println(rojsonObject);
-                                            //回滚api
-                                            Map roapimap = new HashMap();
-                                            roapimap.put("tag",rollback.get("tag"));
-                                            roapimap.put("url",rollback.get("url"));
-                                            List<Map<String,String>> roapimaps = new ArrayList<>();
-                                            roapimaps.add(roapimap);
-                                            //u9调用
-                                            message = WebService.ApiWebService(rollback.get("tag","").toString(),roapimaps,rojsonObject);
-                                            //返回解析
-                                            Map roprocessResult = dataConversion.processResult(rollback.get("resulttype","").toString().toLowerCase(), message,1);
-                                            String roresultCode = roprocessResult.get("resultCode").toString();
-                                            String roresultInfo = roprocessResult.get("resultInfo").toString();
-                                            message = roresultInfo;
-                                            if (!"200".equals(roresultCode)) {
-                                                String source = rojsonObject.toString();
-                                                String memo = "系统回滚";
-                                                String logResult = "审核信息:" + resultInfo + ";" + message;
-                                                String logUrl = roapimap.get("url").toString();
-                                                Log tsysLog = new Log();
-                                                dataConversion.recordLog(orgApp.getOrganizecode(),vouchBusinessID,vouchType.getStr("vouchcode"),processBusList.get(i-1).getStr("seq"),result.getStr("resultExchangeID"),"",state,source,logResult,logUrl,memo,userApp.getStr("user_code"),tsysLog);
-                                                tsysLogService.saveLogInTx(tsysLog);
-                                            }else{
-                                                state=0;
-                                                // 日志记录
-                                                String rsource = jsonData.toString();
-                                                String rmemo = "系统回滚";
-                                                String rlogResult = "审核信息:" + resultInfo + ";" + message;
-                                                String rlogUrl = roapimap.get("url").toString();
-                                                Log tsysLog = new Log();
-                                                dataConversion.recordLog(orgApp.getOrganizecode(),vouchBusinessID,vouchType.getStr("vouchcode"),processBus.getStr("seq"),result.getStr("resultExchangeID"),"",state,rsource,rlogResult,rlogUrl,rmemo,userApp.getStr("user_code"),tsysLog);
-                                                tsysLogService.saveLogInTx(tsysLog);
-
-                                                // 返回错误信息
-                                                result.set("code", resultCode).set("message", rlogResult);
-                                                // 提交事务
-                                                return true;
-                                            }
-
-                                            System.out.println(rojsonObject);
-                                            System.out.println(message);
-                                            // 日志记录
-                                            String source = jsonData.toString();
-                                            String memo = "单据审核";
-                                            String logResult = message;
-                                            String logUrl = apimap.get("url").toString();
-                                            Log tsysLog = new Log();
-                                            dataConversion.recordLog(orgApp.getOrganizecode(),vouchBusinessID,vouchType.getStr("vouchcode"),processBus.getStr("seq"),result.getStr("resultExchangeID"),"",state,source,logResult,logUrl,memo,userApp.getStr("user_code"),tsysLog);
-                                            tsysLogService.saveLogInTx(tsysLog);
-
-                                            // 返回错误信息
-                                            result.set("code", resultCode).set("message", message);
-                                            // 提交事务
-                                            return true;*/
-                                        } else {
-                                            // 日志记录
-                                            String source = jsonData.toString();
-                                            String memo = "单据审核";
-                                            String logUrl = apimap.get("url");
-                                            Log tsysLog = new Log();
-                                            dataConversion.recordLog(orgApp.getOrganizecode(), vouchBusinessID, vouchType.getStr("vouchcode"), processBus.getStr("seq"), result.getStr("resultExchangeID"), "", state, source, message, logUrl, memo, userApp.getStr("user_name"), tsysLog);
-                                            tsysLogService.saveLogInTx(tsysLog);
-                                        }
-                                    }
+                                // ---------------------------------------------------------
+                                // ERP 生单、审单事务上下文开始
+                                // ---------------------------------------------------------
+                                try {
+                                    txInErp(erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
+                                } catch (Exception e) {
+                                    LOG.error(e.getLocalizedMessage());
+                                    // 这里不打印异常信息，处理回滚外层事务
+                                    return false;
                                 }
                             }
-
                         }
-
-                        result.set("code", code).set("message", message);
-                        // 内层事务提交
-                        return true;
-                    });
-
-                } catch (Exception e) {
-                    // 内层循环出异常，则外层事务不提交
-                    e.printStackTrace();
-                    //rollbackProcess(currentSeq.get(), seqBusinessID, processBusMaps);
-                    // 回滚外层事务
-                    return false;
+                    }
                 } finally {
                     if (!"200".equals(result.getStr("code"))) {
-                        rollbackProcess(currentSeq.get(), seqBusinessID, processBusMaps);
+                        rollbackProcess(currentSeq.get(), vouchBusinessID, processBusMaps);
                     }
                 }
             }
 
-            // 外层事务提交
             return true;
         });
 
-        // 外层事务
         return result;
     }
 
@@ -919,6 +738,276 @@ public class ColumsmapService extends BaseService<Columsmap> {
             }*/
             return true;
         });
+    }
+
+    private void txInErp(String erpDbAlias, String erpDBName, Record vouchType, String vouchBusinessID, Organize orgApp, Record processBusMap, DataConversion dataConversion, Record userApp, Record processBusPre, String type, Map plugeReturnMap, Kv result, JSONArray mainData, JSONArray detailData, JSONArray extData, String sourceJson, Date now) {
+        // 日志操作记录
+        List<Log> saveLogs = new ArrayList<>();
+        // 交换表数据保存
+        List<ExchangeTable> saveExchangeTables = new ArrayList<>();
+        // 单据处理节点信息
+        List<VouchProcessNote> saveVouchProcessNotes = new ArrayList<>();
+        // 单据回滚日志参照表
+        List<VouchRollBackRef> saveVouchRollBackRefs = new ArrayList<>();
+
+        List<VouchRollBackRef> updateVouchRollBackRefs = new ArrayList<>();
+
+        try {
+            // 保存交换表步骤
+            if (StrUtil.isBlank(processBusMap.get("processname")) && ObjUtil.isNull(processBusMap.get("url"))) {
+                // 创建数据动态交换表list
+                List<ExchangeTable> dt = dataConversion.getTSysExchangetable(type, plugeReturnMap, mainData, detailData, extData);
+                //exchangeTableService.save(dt);
+                saveExchangeTables.addAll(dt);
+
+                VouchProcessNote note = new VouchProcessNote();
+                note.setVouchbusinessid(vouchBusinessID);
+                note.setSeq(processBusMap.getInt("seq"));
+                note.setExchangeid(dt.get(0).getExchangeID());
+                note.setCreatedate(now);
+                saveVouchProcessNotes.add(note);
+
+                String vouchtypeId = vouchType.getStr("vouchcode");
+                String memo = "Exchangeid:" + dt.get(0).getExchangeID();
+
+                Log tsysLog = new Log();
+
+                dataConversion.recordLog(orgApp.getOrganizecode(), vouchBusinessID, vouchtypeId, processBusMap.get("seq").toString(), "", dt.get(0).getExchangeID(), 0, sourceJson, "", "", memo, userApp.getStr("user_code"), tsysLog);
+                saveLogs.add(tsysLog);
+            }
+
+            // flag级别使用
+            String processFlag = processFlag(processBusMap);
+
+            // ------------------------------
+            // ERP 生单开始
+            // ------------------------------
+
+            if (StrUtil.isNotBlank(processBusMap.get("processname"))) {
+                // 获取节点信息
+                List<Record> datamap = vouchProcessNoteService.processNote(processBusMap.getStr("exechgeseq"), vouchBusinessID);
+                String ExchangeId = datamap.get(datamap.size() - 1).getStr("exchangeid");
+
+                Log log = new Log().setVouchtype(vouchType.getStr("vouchcode")).setVouchstep(processBusMap.getStr("seq"));
+
+                // 调用相关存储过程
+                Record map = StoredProcedure(erpDbAlias, erpDBName, orgApp.getErpdbschemas(), processBusMap.getStr("processname"), processFlag, ExchangeId);
+                result.set("resultExchangeID", map.get("resultexchangeid"));
+                result.set("message", map.get("resultinfo"));
+
+                if (map.get("resultExchangeID") == null) {
+                    result.set("state", 1)
+                            .set("code", map.getStr("resultcode"))
+                            .set("message", map.getStr("resultInfo"));
+
+                    // 日志记录
+                    String source = "ProcessName:" + processBusMap.getStr("processname") + "ProcessFlag:" + processFlag + "";
+                    String memo = "存储过程调用";
+                    String logResult = map.toString();
+                    String logUrl = "";
+                    dataConversion.recordLog(orgApp.getOrganizecode(), vouchBusinessID, log.getVouchtype(), processBusMap.getStr("seq"), ExchangeId, "", result.getInt("state"), source, logResult, logUrl, memo, userApp.getStr("user_code"), log);
+                    saveLogs.add(log);
+
+                    // 失败，则提回滚 返回错误信息
+                    if (result.getInt("state") == 1) {
+                        throw new RuntimeException(result.getStr("message"));
+                    }
+                } else {
+                    Map<String, List<Record>> recordMap = queryExchange(erpDBName, orgApp.getErpdbschemas(), result.getStr("resultExchangeID"));
+                    System.out.println(recordMap);
+
+                    plugeReturnMap.put("ProcessMapID", processBusMap.getStr("initializemapid"));
+                    if (null != processBusMap.getStr("url") && "Create".equals(processBusMap.getStr("tag"))) {
+                        JSONObject jsonData = dataConversion.InterfaceTransform("", plugeReturnMap, recordMap);
+
+                        // 创建api信息
+                        Map<String, String> apimap = new HashMap<>();
+                        apimap.put("tag", processBusMap.get("tag"));
+                        apimap.put("url", processBusMap.get("url"));
+
+                        List<Map<String, String>> apimaps = new ArrayList<>();
+                        apimaps.add(apimap);
+
+                        String message = null;
+                        try {
+                            message = HttpApiUtils.u8Api(processBusMap.get("url"), jsonData);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        // 返回解析
+                        Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message, 1);
+                        String resultCode = JBoltStringUtil.isBlank(processResult.get("resultCode").toString()) ? "201" : processResult.get("resultCode").toString();
+                        if (!JBoltStringUtil.isBlank(processResult.get("resultInfo").toString())){
+                            message = processResult.get("resultInfo").toString();
+                        }
+
+                        //单据处理节点信息
+                        VouchProcessNote vouchprocessnote = new VouchProcessNote();
+                        vouchprocessnote.setVouchbusinessid(vouchBusinessID);
+                        vouchprocessnote.setSeq(processBusMap.getInt("seq"));
+                        vouchprocessnote.setPreallocate(plugeReturnMap.toString());
+                        vouchprocessnote.setExchangeid(map.get("resultExchangeID"));
+                        vouchprocessnote.setReturnvalue(jsonData.toString());
+                        vouchprocessnote.setCreatedate(now);
+                        saveVouchProcessNotes.add(vouchprocessnote);
+
+                        //回滚参照信息
+                        VouchRollBackRef vouchrollbackref = new VouchRollBackRef();
+                        vouchrollbackref.setVouchbusinessid(vouchBusinessID);
+                        vouchrollbackref.setState("0");
+                        vouchrollbackref.setProcessid(processBusMap.get("autoid").toString());
+                        vouchrollbackref.setCreateperson(userApp.getStr("usercode"));
+                        vouchrollbackref.setCreatedate(now);
+                        saveVouchRollBackRefs.add(vouchrollbackref);
+
+                        // 创建成功
+                        if ("200".equals(resultCode)) {
+                            result.set("state", 0);
+                            plugeReturnMap.put("VouchId", processResult.get("docID"));
+                            /*String docId = processResult.get("docID") == null ? null : processResult.get("docID").toString();
+                            if (null != docId) {
+                                plugeReturnMap.put("ResultDocID", docId);
+                            }
+                            plugeReturnMap.put("ResultDocNo", processResult.get("docNo"));
+                            result.set("code", resultCode).set("message", message);*/
+                            result.set("code", resultCode).set("message", message).set("dommessage", processResult.get("domMsg"));
+
+                            // 日志记录
+                            String source = jsonData.toString();
+                            String memo = "系统生单";
+                            String logResult = message;
+                            String logUrl = apimap.get("url");
+                            dataConversion.recordLog(orgApp.getOrganizecode(), vouchBusinessID, log.getVouchtype(), processBusMap.get("seq").toString(), ExchangeId, map.get("resultExchangeID"), result.getInt("state"), source, logResult, logUrl, memo, userApp.getStr("user_code"), log);
+                            saveLogs.add(log);
+                        } else {
+                            result.set("state", 1);
+                            // 日志记录
+                            String source = jsonData.toString();
+                            String memo = "系统生单";
+                            String logUrl = apimap.get("url");
+                            dataConversion.recordLog(orgApp.getOrganizecode(), vouchBusinessID, log.getVouchtype(), processBusMap.get("seq").toString(), ExchangeId, map.get("resultExchangeID"), result.getInt("state"), source, message, logUrl, memo, userApp.getStr("user_code"), log);
+                            saveLogs.add(log);
+
+                            // 返回错误信息
+                            result.set("code", resultCode).set("message", message);
+                            throw new RuntimeException(message);
+                        }
+                    }
+                }
+            }
+            // ---------------------------------------------------------
+            // ERP 生单结束
+            // ---------------------------------------------------------
+
+            // ---------------------------------------------------------
+            // ERP 审单开始
+            // ---------------------------------------------------------
+            if (null != processBusMap.get("url") && "Audit".equals(processBusMap.getStr("tag"))) {
+                // 日志状态初始
+                int state = 0;
+
+                Map<String, List<Record>> recordMap = queryExchange(erpDBName, orgApp.getErpdbschemas(), result.getStr("resultExchangeID"));
+                System.out.println(recordMap);
+                plugeReturnMap.put("ProcessMapID", processBusMap.get("initializemapid"));
+
+                JSONObject jsonData = dataConversion.InterfaceTransform(processBusMap.get("resulttype").toString(), plugeReturnMap, recordMap);
+                System.out.println(jsonData);
+
+                VouchRollBackRef vouchrollbackref = new VouchRollBackRef();
+                vouchrollbackref.setVouchbusinessid(vouchBusinessID);
+                vouchrollbackref.setProcessvalue(jsonData.toString());
+                vouchrollbackref.setProcessid(processBusPre.getStr("autoid"));
+                updateVouchRollBackRefs.add(vouchrollbackref);
+
+                Map<String, String> apimap = new HashMap<>();
+                apimap.put("tag", processBusMap.get("tag"));
+                apimap.put("url", processBusMap.get("url"));
+
+                List<Map<String, String>> apimaps = new ArrayList<>();
+                apimaps.add(apimap);
+
+                String message = null;
+                try {
+                    message = HttpApiUtils.u8Api(apimap.get("url").toString(), jsonData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(message);
+
+                // 返回解析
+                Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message, 1);
+                //System.out.println(processResult.get("resultCode").toString() + processResult.get("resultInfo").toString());
+                String resultCode = processResult.get("resultCode").toString();
+                message = processResult.get("resultInfo").toString();
+
+                // 单据处理节点信息
+                VouchProcessNote vouchprocessnote = new VouchProcessNote();
+                vouchprocessnote.setVouchbusinessid(vouchBusinessID);
+                vouchprocessnote.setSeq(processBusMap.getInt("seq"));
+                vouchprocessnote.setPreallocate(plugeReturnMap.toString());
+                vouchprocessnote.setExchangeid(result.getStr("resultExchangeID"));
+                vouchprocessnote.setReturnvalue(jsonData.toString());
+                vouchprocessnote.setCreatedate(now);
+                saveVouchProcessNotes.add(vouchprocessnote);
+
+                // 审核是否成功
+                if ("200".equals(resultCode)) {
+                    // 日志记录
+                    String source = jsonData.toString();
+                    String memo = "单据审核";
+                    String logUrl = apimap.get("url");
+
+                    Log log = new Log();
+
+                    dataConversion.recordLog(orgApp.getOrganizecode(), vouchBusinessID, vouchType.getStr("vouchcode"), processBusMap.getStr("seq"), result.getStr("resultExchangeID"), "", state, source, message, logUrl, memo, userApp.getStr("user_name"), log);
+                    saveLogs.add(log);
+                } else {
+                    result.set("code", "201").set("message", message);
+                    String source = jsonData.toString();
+                    String memo = "审核错误";
+                    String logUrl = apimap.get("url");
+
+                    Log log = new Log();
+
+                    dataConversion.recordLog(orgApp.getOrganizecode(), vouchBusinessID, vouchType.getStr("vouchcode"), processBusMap.getStr("seq"), result.getStr("resultExchangeID"), "", state, source, message, logUrl, memo, userApp.getStr("user_name"), log);
+                    saveLogs.add(log);
+                    throw new RuntimeException(message);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 返回错误信息
+            result.set("code", "201").set("message", e.getLocalizedMessage());
+
+            throw new RuntimeException(e.getLocalizedMessage());
+        } finally {
+            // 保存所有日志操作及调用参数记录
+            tx(DataSourceConstants.MOMDATA, Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
+
+                // 保存日志
+                if (CollUtil.isNotEmpty(saveLogs)) {
+                    tsysLogService.batchSave(saveLogs);
+                }
+//                // 交换表
+                if (CollUtil.isNotEmpty(saveExchangeTables)) {
+                    exchangeTableService.batchSave(saveExchangeTables);
+                }
+                // 保存单据操作记录
+                if (CollUtil.isNotEmpty(saveVouchProcessNotes)) {
+                    vouchProcessNoteService.batchSave(saveVouchProcessNotes);
+                }
+                // 保存回滚
+                if (CollUtil.isNotEmpty(saveVouchRollBackRefs)) {
+                    vouchRollBackRefService.batchSave(saveVouchRollBackRefs);
+                }
+                // 更新
+                if (CollUtil.isNotEmpty(updateVouchRollBackRefs)) {
+                    vouchRollBackRefService.batchUpdate(updateVouchRollBackRefs);
+                }
+
+                return true;
+            });
+        }
     }
 
     private String processFlag(Record processBus) {
