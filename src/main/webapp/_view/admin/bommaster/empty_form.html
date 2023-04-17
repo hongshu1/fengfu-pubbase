@@ -307,9 +307,11 @@
                 bomMasterId: formData.iAutoId,
                 tableJsonData: JSON.stringify(arr)
             }, function (ret) {
+                // 存在共用件提示！
                if (ret.data.data){
-                   // 存在共用件提示！
-                   submitForm(formData, tableData);
+                   LayerMsgBox.confirm("此物料已关联其它成品/半成品物料BOM，确认是否变更，如确认变更，关联的其他共用成品/半成品的物料BOM，自动升级新版本号。",function(){
+                       submitForm(formData, tableData, ret.data.data, ret.data.flag);
+                   })
                }else{
                    submitForm(formData, tableData);
                }
@@ -321,10 +323,12 @@
     #end
 
 
-    function submitForm(formData, tableData) {
+    function submitForm(formData, tableData, commonInvMap, flag) {
         Ajax.post('/admin/bommaster/submitForm', {
             formJsonData: JSON.stringify(formData),
-            tableJsonData: JSON.stringify(tableData)
+            tableJsonData: JSON.stringify(tableData),
+            commonInvData: JSON.stringify(commonInvMap),
+            flag: flag
         }, function (ret) {
             if (ret.state === 'ok') {
                 LayerMsgBox.success(ret.msg, 1000, function () {

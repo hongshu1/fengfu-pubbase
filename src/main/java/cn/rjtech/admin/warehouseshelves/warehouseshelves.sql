@@ -28,7 +28,7 @@ FROM
     #if(ids)
         AND CHARINDEX(','+cast((select ws.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
     #end
-	ORDER BY ws.dCreateTime DESC
+	ORDER BY ws.cShelvesCode DESC
 #end
 
 #sql("selectPrint")

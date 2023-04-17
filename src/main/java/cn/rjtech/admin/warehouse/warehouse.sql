@@ -34,7 +34,7 @@ WHERE wh.isDeleted = 0
         AND CHARINDEX(','+cast((select wh.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
     #end
 
-ORDER BY dCreateTime DESC
+ORDER BY wh.cWhCode DESC
 #end
 
 #sql("findByMouldsId")

@@ -75,7 +75,12 @@
 
           <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
                   data-title="来料检查成绩表" data-url="admin/rcvdocqcformm/onlysee" class="btn btn-outline-primary">
-            跳转到子页面
+            跳转到查看页面
+          </button>
+
+          <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
+                  data-title="来料检查成绩表" data-url="admin/rcvdocqcformm/checkout" class="btn btn-outline-primary">
+            跳转到检验页面
           </button>
 
         </form>
@@ -94,17 +99,17 @@
          data-title="生成"><i class="fa fa-eye"></i></a>
     {@/if}
     {@if data.istatus == 1}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onleysee/${data.id}" data-area="95%,92%"
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/checkout/${data.id}" data-area="95%,92%"
          data-title="检验"><i class="fa fa-eye"></i></a>
     {@/if}
     {@if data.istatus == 2}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onleysee/${data.id}" data-area="95%,92%"
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onlysee/${data.id}" data-area="95%,92%"
          data-title="查看"><i class="fa fa-eye"></i></a>
       <a class="jbolt_table_editbtn" href="admin/rcvdocqcformm/edit/${data.id}" data-handler="refreshJBoltTable"data-area="95%,92%"
          data-title="编辑"><i class="fa fa-edit"></i></a>
     {@/if}
     {@if data.istatus == 3}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onleysee/${data.id}" data-area="95%,92%"
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onlysee/${data.id}" data-area="95%,92%"
          data-title="查看"><i class="fa fa-eye"></i></a>
       <a class="jbolt_table_editbtn" href ="javascript:return false;" data-handler="refreshJBoltTable" data-area="95%,92%"
          data-title="编辑" disabled="disabled"><i class="fa fa-edit"></i></a>

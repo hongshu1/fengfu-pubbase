@@ -112,7 +112,7 @@
         </table>
         <table id="isNotButton" border="3" style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
           <div style="left: 60px;margin-left:50px;height: 50px;width: 500px;">
-            <button type="button" onclick="inserRow(10)" class="btn btn-success" disabled="true"
+            <button type="button" onclick="inserRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
             <img data-switchbtn data-value="${data.isCpkSigned}" data-handler="refreshJBoltTable"
@@ -714,15 +714,8 @@
     background-color: #b1dfbb;
   }
 </style>
-<script>
-  //1.隐藏确定按钮 （因为这是查看页面，不允许修改）
-  hideParentLayerDialogBtn(0);
-  //2.禁止编辑
-  $("#tableID" + " tbody tr").find("input").attr("disabled", "disabled");
-  $("#isNot").find("input").attr("disabled", "disabled");
-  $("#tableID" + " tbody tr").find("select").attr("disabled", "disabled");
-  $("#tableID" + " tbody tr").find("div").attr("disabled", "disabled");
 
+<script>
   /*
   * @desc：新增行
   * @param：rows:行数
@@ -730,9 +723,7 @@
   function inserRow(rows) {
     alert("测试");
   }
-</script>
 
-<script>
   var parameterData = [];
   $(function () {
     Ajax.get("admin/rcvdocqcformm/list", function (res) {
@@ -806,6 +797,11 @@
       }
     })
   }
+
+</script>
+
+<script>
+
 </script>
 #end
 

@@ -9,7 +9,7 @@
 <!--	<h1>生产班次</h1>-->
 <!--	</div>-->
 	<div class="col">
-		<form class="form-inline" id="workshiftmForm_#(pageId)"   onsubmit="return false;" method="post">
+		<form class="form-inline text-left" id="workshiftmForm_#(pageId)"   onsubmit="return false;" method="post">
 			<select class="form-control"
 					data-autoload
 					data-url="admin/enums/boolchar"
@@ -58,7 +58,7 @@
 
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="workshiftm_toolbar_#(pageId)">
-	<div class="btn-group" role="group" aria-label="btn-group">
+	<div class="" role="group" aria-label="btn-group">
 		#permission(PermissionKey.WORKSHIFTM_ADD)
 		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增生产班次"  data-url="admin/workshiftm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		#end
@@ -72,7 +72,7 @@
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 	</div>
 	#permission(PermissionKey.WORKSHIFTM_EXPORT)
-	<div class="btn-group" role="group" aria-label="btn-group">
+	<div class="" role="group" aria-label="btn-group">
 		<div class="btn-group dropdown">
 			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
 			<div class="dropdown-menu" aria-labelledby="exportMenuButton">

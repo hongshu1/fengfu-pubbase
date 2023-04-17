@@ -214,8 +214,8 @@ public class BomCompareService extends BaseService<BomCompare> {
 					bomCompareRecord.set(BomCompare.CODE1, invLevStr);
 				}
 				Integer rawType = record.getInt("iRawType");
-				String iQty = record.getStr("iQty");
-				String iWeight = record.getStr("iWeight");
+				String iQty = getStr(record.getBigDecimal("iQty"));
+				String iWeight = getStr(record.getBigDecimal("iWeight"));
 				String cInvCode = record.getStr("cInvCode");
 				String cInvCode1 = record.getStr("cInvCode1");
 				String cInvName = record.getStr("cInvName");
@@ -283,6 +283,13 @@ public class BomCompareService extends BaseService<BomCompare> {
 		return recordList;
 	}
 	
+	private String getStr(BigDecimal value){
+		if (ObjectUtil.isNull(value)){
+			return null;
+		}
+		return value.stripTrailingZeros().toPlainString();
+	}
+	
 	public Integer queryCompareIndex(Long bomMasterId){
 		return dbTemplate("bomcompare.queryCompareIndex", Okv.by("bomMasterId", bomMasterId)).queryInt();
 	}
@@ -296,8 +303,8 @@ public class BomCompareService extends BaseService<BomCompare> {
 		return delete("DELETE Bd_BomCompare WHERE iBOMMasterId = ?", bomMasterId);
 	}
 	
-	public List<Record> getCommonInv(Long bomMasterId, String invId, String qty, String weight){
-        Okv okv = Okv.by("invId", invId).set("qty", qty).set("weight", weight);
+	public List<Record> getCommonInv(Long bomMasterId, String invId, String qty, String weight, Integer iAuditStatus, boolean isEffective){
+        Okv okv = Okv.by("invId", invId).set("qty", qty).set("weight", weight).set("iAuditStatus", iAuditStatus).set("isEffective", true== isEffective ? 1:0);
         if (ObjectUtil.isNotNull(bomMasterId)){
             okv.set("bomMasterId", bomMasterId);
         }

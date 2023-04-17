@@ -9,7 +9,7 @@
         <h1>工种档案</h1>
       </div>-->
       <div class="col">
-        <form class="form-inline" id="workclassForm_#(pageId)" onsubmit="return false;" method="post"
+        <form class="form-inline text-left" id="workclassForm_#(pageId)" onsubmit="return false;" method="post"
               style="left: 40px;text-align: left">
           <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=工种编码=" maxlength="50"
                  name="cworkclasscode" value="#(cworkclasscode??)"/>
@@ -49,7 +49,7 @@
 
     <!-- 工具条 toolbar -->
     <div class="jbolt_table_toolbar" id="workclass_toolbar_#(pageId)">
-      <div class="btn-group" role="group" aria-label="btn-group">
+      <div class="" role="group" aria-label="btn-group">
         #permission(PermissionKey.WORKCLASS_ADD)
         <button data-openpage="dialog" data-area="90%,80%" data-handler="jboltTablePageToFirst" data-title="新增工种档案"
                 data-url="admin/workclass/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增

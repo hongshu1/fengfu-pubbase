@@ -8,8 +8,8 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 审批</button>
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 反审批</button>
+                        <button onclick="approve()" id="approve_By_Edit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-trash"></i> 审批</button>
+                        <button onclick="noApprove()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 反审批</button>
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                         <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-download"></i> 数据导出</button>
                     </div>
@@ -142,9 +142,40 @@
     </div>
 </div>
 <script>
+    // hideAllParentLayerDialogBtn();
+
     function closeHandler(){
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
+
+    //审批
+    function approve() {
+        Ajax.get('/admin/weekorderm/approve?iAutoId='+$("input[name='weekOrderM.iAutoId']").val()+"&&mark="+2 , function (ret) {
+            if (ret.state === 'ok') {
+                // 刷新
+                parent.refreshPjaxContainer();
+                // 关闭
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
+            } else {
+                LayerMsgBox.success();
+            }
+        });
+    }
+
+    //反审批
+    function noApprove() {
+        Ajax.get('/admin/weekorderm/NoApprove?ids='+$("input[name='weekOrderM.iAutoId']").val(), function (ret) {
+            if (ret.state === 'ok') {
+                // 刷新
+                parent.refreshPjaxContainer();
+                // 关闭
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
+            } else {
+                LayerMsgBox.success();
+            }
+        });
+    }
+
 </script>
 #end

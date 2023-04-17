@@ -57,16 +57,21 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
 //		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isCompleted"), getBoolean("isCpkSigned"), getBoolean("isOk"), getBoolean("IsDeleted")));
 	}
 
+    /**
+     * 检验
+     */
+    public void checkout() {
+        RcvDocQcFormM rcvDocQcFormM=service.findById(getLong(0));
+        set("rcvDocQcFormM",rcvDocQcFormM);
+        render("checkout.html");
+    }
+
 	/**
 	 * 查看
 	 */
 	public void onlysee() {
-		RcvDocQcFormM rcvDocQcFormM=service.findById(getLong(0));
-		/*if(rcvDocQcFormM == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		set("rcvDocQcFormM",rcvDocQcFormM);*/
+        RcvDocQcFormM rcvDocQcFormM=service.findById(getLong(0));
+        set("rcvDocQcFormM",rcvDocQcFormM);
 		render("onlysee.html");
 	}
 

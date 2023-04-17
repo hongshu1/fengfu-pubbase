@@ -102,7 +102,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 	 * @param now
 	 * @return
 	 */
-	public Ret save(BomMaster bomMaster, Long userId, String userName, Date now) {
+	public Ret save(BomMaster bomMaster, Long userId, String userName, Date now, int auditState) {
 		if(bomMaster==null) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
@@ -121,8 +121,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		bomMaster.setCOrgName(getOrgName());
 		bomMaster.setIsEffective(false);
 		// 设置默认审批流
-		bomMaster.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-		bomMaster.setDAuditTime(null);
+		bomMaster.setIAuditStatus(auditState);
 		//if(existsName(bomMaster.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=bomMaster.save();
 		if(success) {
@@ -200,11 +199,12 @@ public class BomMasterService extends BaseService<BomMaster> {
 		return null;
 	}
 	
-	public Ret submitForm(String formJsonData, String tableJsonData) {
+	public Ret submitForm(String formJsonData, String tableJsonData, String commonInvData, Boolean flag) {
 		ValidationUtils.notBlank(formJsonData, JBoltMsg.PARAM_ERROR);
 		ValidationUtils.notBlank(tableJsonData, JBoltMsg.PARAM_ERROR);
 		JSONObject formData = JSONObject.parseObject(formJsonData);
 		JSONArray tableData = JSONObject.parseArray(tableJsonData);
+		JSONObject invMap = JSONObject.parseObject(commonInvData);
 		// 校验数据
 		verification(formData, tableData);
         BomMaster bomMaster = JSONObject.parseObject(formJsonData, BomMaster.class);
@@ -213,18 +213,19 @@ public class BomMasterService extends BaseService<BomMaster> {
         DateTime now = DateUtil.date();
         // 主键id为空为 新增或者为修改
         if (ObjectUtil.isNull(bomMaster.getIAutoId())){
-			return saveForm(bomMaster, tableData, userId, userName, now);
+			return saveForm(bomMaster, tableData, userId, userName, now, invMap, flag);
         }
-        return updateForm(bomMaster, tableData, userId, userName, now);
+        return updateForm(bomMaster, tableData, userId, userName, now, invMap, flag);
 	}
 	
-	public Ret saveForm(BomMaster bomMaster, JSONArray tableData, Long userId, String userName, DateTime now){
+	public Ret saveForm(BomMaster bomMaster, JSONArray tableData, Long userId, String userName, DateTime now, JSONObject invMap, Boolean flag){
 		// 设置主键id
 		long bomMasterId = JBoltSnowflakeKit.me.nextId();
 		bomMaster.setIAutoId(bomMasterId);
 		List<BomCompare> bomCompareList =getBomCompareList(bomMasterId, tableData, userId, userName, now);
 		tx(() -> {
-			save(bomMaster, userId, userName, now);
+			saveCommonCompare(invMap, flag);
+			save(bomMaster, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
 			bomCompareService.batchSave(bomCompareList);
 			return true;
 		});
@@ -264,11 +265,11 @@ public class BomMasterService extends BaseService<BomMaster> {
 		oldBomMaster.setCCommonPartMemo(bomMaster.getCCommonPartMemo());
 	}
 	
-	public Ret updateForm(BomMaster bomMaster, JSONArray tableData, Long userId, String userName, DateTime now){
+	public Ret updateForm(BomMaster bomMaster, JSONArray tableData, Long userId, String userName, DateTime now, JSONObject invMap, Boolean flag){
 		BomMaster oldBomMaster = findById(bomMaster.getIAutoId());
 		Integer iAuditStatus = oldBomMaster.getIAuditStatus();
 		AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
-		ValidationUtils.isTrue((iAuditStatus==0 || iAuditStatus==3), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行修改");
+		ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行修改");
 		// 复制
 		copyBomMaster(bomMaster, oldBomMaster);
 		List<BomCompare> bomCompareList = getBomCompareList(oldBomMaster.getIAutoId(), tableData, userId, userName, now);
@@ -276,6 +277,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 			// 将原来的删除掉子件数据 只有审核中才会有这个删除
 //			bomMasterInvService.deleteByBomMasterId(oldBomMaster.getIAutoId());
 //			bomMasterInvService.saveBomMasterInv(oldBomMaster.getIAutoId(), oldBomMaster.getIInventoryId(), bomCompareList);
+			saveCommonCompare(invMap, flag);
 			// 删除子件数据
 			bomCompareService.deleteByBomMasterId(oldBomMaster.getIAutoId());
 			update(oldBomMaster, userId, userName, now);
@@ -535,7 +537,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		// 部品 先赋值成品的存货id
         if (StrUtil.isNotBlank(row.getString(BomCompare.INVITEMID))){
            bomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now, bomMasterId, null, row.getLong(BomCompare.INVITEMID), invLev, invLev, code, 0,
-                    row.getBigDecimal(BomCompare.INVQTY), null, row.getLong(BomCompare.IVENDORID), row.getString(BomCompare.CMEMO),
+                    row.getBigDecimal(BomCompare.INVQTY), row.getBigDecimal(BomCompare.INVWEIGHT), row.getLong(BomCompare.IVENDORID), row.getString(BomCompare.CMEMO),
 					Boolean.valueOf(row.getString(BomCompare.ISOUTSOURCED)), false);
             bomCompares.add(bomCompare);
         }
@@ -679,7 +681,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 			begin = 0;
 		}
 		
-		Integer size = queryInt("EXEC BD_BOMTREE_COUNT @orgId=?, @pId= ?,@itemCode = ?,@itemName = ?", getOrgId(), kv.getLong("pid"), kv.getLong("invCode"), kv.getLong("invName"));
+		Integer size = queryInt("EXEC BD_BOMTREE_COUNT @orgId=?, @pId= ?,@itemCode = ?,@itemName = ?", getOrgId(), kv.getLong("pid"), kv.getStr("invCode"), kv.getStr("invName"));
 		
 		if (size == null || size < 0){
 			return new Page(new ArrayList(0), pageNumber, pageSize, 0, 0);
@@ -1045,11 +1047,18 @@ public class BomMasterService extends BaseService<BomMaster> {
 		BomMaster bomMaster = findById(bomMasterId);
 		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
 		tx(() -> {
+		    // 校验审批中或已审批的数据不能进行删除
+            
+            Integer iAuditStatus = bomMaster.getIAuditStatus();
+            AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
+            ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行删除");
 			// 删除母件
 			bomMaster.setIsDeleted(true);
 			bomMaster.setIUpdateBy(JBoltUserKit.getUserId());
 			bomMaster.setCUpdateName(JBoltUserKit.getUserName());
 			bomMaster.setDUpdateTime(DateUtil.date());
+			// 设置为失效
+			bomMaster.setIsEffective(false);
 			bomMaster.update();
 			// 删除母件下所有子件数据
 			boolean flag = bomMasterInvService.deleteByBomMasterId(bomMasterId);
@@ -1063,12 +1072,54 @@ public class BomMasterService extends BaseService<BomMaster> {
 		ValidationUtils.notNull(bomMasterId, JBoltMsg.PARAM_ERROR);
 		BomMaster bomMaster = findById(bomMasterId);
 		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
-		
 		ValidationUtils.isTrue(!cVersion.equals(bomMaster.getCBomVersion()), "版本号不能一致");
-		// 查询当前母件下所有子件。
-		List<BomCompare> bomCompareList = bomCompareService.findByBomMasterIdList(bomMasterId);
-		Map<Long, Long> pidMap = new HashMap<>();
+		
+		// 获取母件所有子件集合
+		tx(() -> {
+			saveCopyBomMaster(bomMasterId, cVersion, bomMaster);
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	
+	private void saveCopyBomMaster(Long bomMasterId, String cVersion, BomMaster bomMaster){
+		// 设置新的id
 		long newBomMasterId = JBoltSnowflakeKit.me.nextId();
+		List<BomCompare> bomCompareList = getNewBomCompareList(bomMasterId, newBomMasterId, bomCompareService.findByBomMasterIdList(bomMasterId));
+		operation(bomMasterId, newBomMasterId, cVersion, bomMaster, bomCompareList);
+	}
+    
+    /**
+     * 操作
+     * @param bomMasterId
+     * @param newBomMasterId
+     * @param cVersion
+     * @param bomMaster
+     * @param bomCompareList
+     */
+	private void operation(Long bomMasterId, Long newBomMasterId, String cVersion, BomMaster bomMaster, List<BomCompare> bomCompareList){
+		bomMaster.setIAutoId(newBomMasterId);
+		bomMaster.setCBomVersion(cVersion);
+		bomMaster.setDAuditTime(null);
+		// 设置copy前的ID
+		bomMaster.setICopyFromId(bomMasterId);
+		DateTime now = DateUtil.date();
+		bomMaster.setDAuditTime(now);
+		bomCompareService.batchSave(bomCompareList);
+		save(bomMaster,JBoltUserKit.getUserId(),JBoltUserKit.getUserName(), now, AuditStatusEnum.AWAIT_AUDIT.getValue());
+		
+	}
+	
+	/**
+	 * 将查询出来的子件更换ip
+ 	 * @param bomMasterId
+	 * @param newBomMasterId
+	 * @return
+	 */
+	private List<BomCompare> getNewBomCompareList(Long bomMasterId, Long newBomMasterId, List<BomCompare> bomCompareList){
+		
+		Map<Long, Long> pidMap = new HashMap<>();
 		// 先复制产品的id替换成新的
 		pidMap.put(bomMasterId, newBomMasterId);
 		for (BomCompare bomCompare :  bomCompareList){
@@ -1085,22 +1136,58 @@ public class BomMasterService extends BaseService<BomMaster> {
 			// 替换成新的id
 			bomCompare.setIPid(pidMap.get(pid));
 		}
-		// 获取母件所有子件集合
-		tx(() -> {
-			// 设置新的id
-			bomMaster.setIAutoId(newBomMasterId);
-			bomMaster.setCBomVersion(cVersion);
-			// 设置审核状态
-			bomMaster.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-			bomMaster.setDAuditTime(null);
-			// 设置失效状态
-			bomMaster.setIsEffective(false);
-			save(bomMaster,JBoltUserKit.getUserId(),JBoltUserKit.getUserName(), DateUtil.date());
-			bomCompareService.batchSave(bomCompareList);
-			// 删除母件下所有子件数据
-			return true;
-		});
-		return SUCCESS;
+		return bomCompareList;
+	}
+	
+	/**
+	 * 更新共用件 物料清单
+	 * @param invMap
+	 * @param flag 校验是否存在共用件在审批中
+	 */
+	private void saveCommonCompare(JSONObject invMap, Boolean flag){
+		if (ObjectUtil.isNull(invMap)){
+			return;
+		}
+		ValidationUtils.isTrue(flag, "此物料已关联其它成品/半成品物料BOM且再审批中，不能进行升级版本");
+		// 去重母件id
+		Set<Long> setBomMasterId = new HashSet<>();
+		// 记录相同存货id的重量跟数量
+		Map<Long, JSONObject> itemMap = new HashMap<>();
+		for (String invId :invMap.keySet()){
+			List<JSONObject> list  = (List<JSONObject>) invMap.get(invId);
+			for (JSONObject jsonObject : list){
+				setBomMasterId.add(jsonObject.getLong(BomCompare.IBOMMASTERID));
+				if (itemMap.containsKey(invId)){
+					continue;
+				}
+				itemMap.put(Long.valueOf(invId), jsonObject);
+			}
+		}
+		for (Long bomMasterId :setBomMasterId){
+			BomMaster bomMaster = findById(bomMasterId);
+			String newBomVersion = upgradeVersion(bomMaster.getCBomVersion());
+			// 生成新的id
+			long newBomMasterId = JBoltSnowflakeKit.me.nextId();
+			List<BomCompare> bomCompareList = getNewBomCompareList(bomMasterId, newBomMasterId, bomCompareService.findByBomMasterIdList(bomMasterId));
+			for (BomCompare bomCompare : bomCompareList){
+				Long inventoryId = bomCompare.getIInventoryId();
+				if (itemMap.containsKey(inventoryId)){
+					JSONObject jsonObject = itemMap.get(inventoryId);
+					bomCompare.setIQty(jsonObject.getBigDecimal("qty"));
+					bomCompare.setIWeight(jsonObject.getBigDecimal("weight"));
+				}
+			}
+			operation(bomMasterId, newBomMasterId, newBomVersion, bomMaster, bomCompareList);
+		}
+	}
+	
+	/**
+	 * 升级版本号
+	 * @param bomVersion
+	 * @return
+	 */
+	public String upgradeVersion(String bomVersion){
+		return bomVersion.concat("1");
 	}
 	
 	public Ret audit(Long bomMasterId, Integer status) {
@@ -1148,6 +1235,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		ValidationUtils.notBlank(tableJsonData, JBoltMsg.JBOLTTABLE_IS_BLANK);
 		JSONArray jsonArray = JSONObject.parseArray(tableJsonData);
 		Map<String, List<JSONObject>> invMap = new HashMap<>();
+		boolean flag = true;
 		for (Object o : jsonArray){
 			JSONObject jsonObject = (JSONObject) o;
 			String invId = jsonObject.getString("id");
@@ -1163,7 +1251,15 @@ public class BomMasterService extends BaseService<BomMaster> {
 			// 用于判断 同一种存货编码是否出现多个子件下的bomMaster相同
 			Map<Long, String> masterIdMap = new HashMap<>();
 			for (JSONObject item : invList){
-				List<Record> commonInv = bomCompareService.getCommonInv(bomMasterId, invId, item.getString("qty"), item.getString("weight"));
+				// 校验物料是否有存在审批中
+				List<Record> awaitCommonInv = bomCompareService.getCommonInv(bomMasterId, invId, item.getString("qty"), item.getString("weight"), 1, false);
+				// 为true才会校验， false
+				if (flag){
+					// 判断是否为空
+					flag = CollectionUtil.isEmpty(awaitCommonInv);
+				}
+				List<Record> commonInv = bomCompareService.getCommonInv(bomMasterId, invId, item.getString("qty"), item.getString("weight"), 2, true);
+				// 校验是否存在不一样存货重量及数量的生效物料清单
 				if (CollectionUtil.isNotEmpty(commonInv)){
 						for (Record record : commonInv){
 							Long masterId = record.getLong(BomCompare.IBOMMASTERID);
@@ -1173,6 +1269,8 @@ public class BomMasterService extends BaseService<BomMaster> {
 							masterIdMap.put(masterId, null);
 							// 记录bomMasterId
 							item.put(BomCompare.IBOMMASTERID, masterId);
+							// 设置bomId
+							item.put(BomCompare.IAUTOID, record.getLong(BomCompare.IAUTOID));
 							masterList.add(item);
 						}
 				}
@@ -1184,6 +1282,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		
 		if (CollectionUtil.isNotEmpty(commonInvMap)){
 			Ret ok = Ret.ok("data", commonInvMap);
+			ok.set("flag", flag);
 			return ok;
 		}
 		return SUCCESS;

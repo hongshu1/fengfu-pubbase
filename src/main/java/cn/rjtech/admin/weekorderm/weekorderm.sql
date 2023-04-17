@@ -29,8 +29,11 @@ WHERE
      #if(iorderstatus)
         AND co.iOrderStatus = #para(iorderstatus)
     #end
-    #if(ids)
-        AND CHARINDEX(','+cast((select c.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
+    #if(iAutoId)
+        AND co.iAutoId = #para(iAutoId)
     #end
-	ORDER BY c.dCreateTime DESC
+    #if(ids)
+        AND CHARINDEX(','+cast((select co.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
+    #end
+	ORDER BY co.dCreateTime DESC
 #end

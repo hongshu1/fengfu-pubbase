@@ -5,8 +5,9 @@
 				<div class="card-body">
 					<div class="col" >
 						<button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-file-excel-o"></i> 数据导入</button>
-						<button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
-						<button onclick="approve()" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+						<button onclick="submitThisForm()"class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+						<button onclick="approve()" id="approve_By_Edit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+						<button onclick="approveByAdd()"  id="approve_By_Add" type="submit"  class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
 						<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
 					</div>
 				</div>
@@ -25,6 +26,7 @@
 									<label class="col-sm-2 col-form-label">订单号</label>
 									<div class="col-8">
 										<input type="hidden" name="mark" id="mark" value="#(mark??)" />
+										<input type="hidden" name="approve" id="approve" value="111" />
 										<input type="text" readonly data-rule="required" data-notnull="true" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control"  maxlength="40" name="weekOrderM.cOrderNo" value="#(weekOrderM.corderno??)"/>
 									</div>
 								</div>
@@ -104,7 +106,7 @@
 			<td>${data.cversion}</td>
 			<td>${data.cmemo}</td>
 			<td>
-				<a href="admin/person/deleteByAjax" name="yichuhang" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+				<a href="admin/weekorderd/delete/${data.iautoid}" name="yichuhang" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
 			</td>
 		</tr>
 		{@/each}
@@ -133,7 +135,7 @@
 			<th data-width="60" data-column="index">序号</th>
 			<th data-width="100" data-column="iCustomerAddrId">收货地点ID</th>
 			<th data-width="100" data-column="cPlanCode">计划代码</th>
-			<th data-width="100" data-column="iInventoryId">存货编码</th>
+			<th data-width="100" data-column="cinvcode">存货编码</th>
 			<th data-width="100" data-column="cDefine1">客户部署</th>
 			<th data-width="100" data-column="cDefine2">部品名称</th>
 			<th data-width="100" data-column="cDefine3">规格</th>
@@ -153,6 +155,14 @@
 </div>
 #define js()
 <script>
+	hideParentLayerDialogBtn();
+
+	let mark = $("#mark").val();
+	if (mark == 'EDIT') {
+		$("#approve_By_Add").hide();
+	}else if (mark == 'ADD') {
+		$("#approve_By_Edit").hide()
+	}
 
 	//获得配置参数
 	function getEditableTableOptions_#(pageId)() {
@@ -184,7 +194,7 @@
 					type:"input",
 					placeholder:'计划代码'
 				},
-				iInventoryId: {
+				cinvcode: {
 					type:"autocomplete",
 					url: "admin/inventory/autocomplete",
 					maxLength: 100,
@@ -192,10 +202,10 @@
 					placeholder: "请选择",
 					textAttr: "cinvcode",
 					width: 500,
-					valueAttr: "iautoid",
+					valueAttr: "cinvcode",
 					columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,isalesuomid",
 					header:'存货编码,客户部署,部品名称,规格,销售单位',
-					changeColumns:[{column: "iInventoryId", use: "cinvcode"},{column: "cDefine1", use: "cinvcode1"},
+					changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cDefine1", use: "cinvcode1"},
 						{column: "cDefine2", use: "cinvname1"},{column: "cDefine3", use: "cinvstd"},
 						{column: "cDefine4", use: "isalesuomid"},{column: "iInventoryId", use: "iautoid"}]
 				},
@@ -274,6 +284,13 @@
 		console.log("......执行");
 		jboltTableSubmit("#jbolt_Table_#(pageId)");
 	}
+
+	function approveByAdd(){
+		$("#approve").val("approve");
+		console.log($("#approve").val());
+		submitThisForm();
+	}
+
 
 	function closeHandler(){
 		parent.layer.close(parent.layer.getFrameIndex(window.name));
