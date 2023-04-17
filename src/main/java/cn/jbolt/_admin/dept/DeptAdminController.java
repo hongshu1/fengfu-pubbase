@@ -1,6 +1,5 @@
 package cn.jbolt._admin.dept;
 
-import java.util.List;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -14,7 +13,6 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 /**
  *

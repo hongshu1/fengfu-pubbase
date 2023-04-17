@@ -7,7 +7,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
-import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.QcFormItem;
@@ -15,10 +15,10 @@ import cn.rjtech.model.momdata.QcFormItem;
  * 质量建模-检验表格项目
  * @ClassName: QcFormItemAdminController
  * @author: 佛山市瑞杰科技有限公司
- * @date: 2023-03-27 17:09
+ * @date: 2023-04-04 16:10
  */
 @CheckPermission(PermissionKey.QCFORM)
-@Path(value = "/admin/qcformitem", viewPath = "/_view/admin/qcformitem")
+@Path(value = "/admin/qcform/qcformitem", viewPath = "/_view/admin/qcform/qcformitem")
 public class QcFormItemAdminController extends BaseAdminController {
 
 	@Inject
@@ -34,8 +34,9 @@ public class QcFormItemAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getBoolean("isDeleted")));
-	}
+		Long headerId = getLong("qcForm.iAutoId");
+		System.out.println("===="+headerId);
+		renderJsonData(service.getAdminDatas(getPageSize(), getPageNumber(), getKv()));	}
 
    /**
 	* 新增
@@ -92,16 +93,54 @@ public class QcFormItemAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
+
 	/**
-	 * 行数据
+	 * 查询表格项目
 	 */
-	public void formItemList() {
-		Long id = getLong("qcFormItem.iautoid");
-		Kv kv = new Kv();
-		kv.set("id", id);
-		LOG.info("{}", id);
-		renderJsonData(service.formItemList(kv));
+	public void qcFormItemDatas() {
+		set("type", get("type"));
+		set("FormItemCodes", get("FormItemCodes"));
+		System.out.println("==="+get("FormItemCodes"));
+		render("qcitem.html");
 	}
+
+
+	/**
+	 * 表格项目数据源
+	 */
+	public void qcitemlist() {
+		Okv kv =new Okv();
+		kv.setIfNotNull("iQcItemId", get("FormItemCodes"));
+		renderJsonData(service.qcitemlist(getPageNumber(), getPageSize(), kv));
+
+	}
+
+
+	/**
+	 * 删除
+	 */
+	@Before(Tx.class)
+	public void deletes() {
+		renderJson(service.delete(getLong(0)));
+	}
+
+	/**
+	 * 排序 上移
+	 */
+	@Before(Tx.class)
+	public void up() {
+		renderJson(service.up(getLong(0)));
+	}
+
+	/**
+	 * 排序 下移
+	 */
+	@Before(Tx.class)
+	public void down() {
+		renderJson(service.down(getLong(0)));
+	}
+
+
 
 
 }

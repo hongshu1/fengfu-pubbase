@@ -18,4 +18,8 @@ public class DictionaryTypeKey {
      * 在职状态
      */
     public static final String JOB_TYPE = "job_type";
+    /**
+     * 币种
+     */
+    public static final String CCURRENCY = "cCurrency";
 }

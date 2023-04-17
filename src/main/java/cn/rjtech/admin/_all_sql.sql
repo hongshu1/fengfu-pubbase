@@ -268,3 +268,11 @@
 #namespace("weekorderd")
 #include("weekorderd/weekorderd.sql")
 #end
+
+#namespace("qcformparam")
+#include("qcformparam/qcformparam.sql")
+#end
+
+#namespace("qcformtableparam")
+#include("qcformtableparam/qcformtableparam.sql")
+#end
