@@ -10,6 +10,7 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.admin.bomcompare.BomCompareService;
 import cn.rjtech.admin.bommasterinv.BomMasterInvService;
+import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.vendor.VendorService;
@@ -18,7 +19,6 @@ import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -34,12 +34,11 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.xssf.usermodel.*;
-import org.openxmlformats.schemas.presentationml.x2006.main.STTLTriggerRuntimeNode;
-
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -61,6 +60,8 @@ public class BomMasterService extends BaseService<BomMaster> {
 	private VendorService vendorService;
 	@Inject
 	private BomMasterInvService bomMasterInvService;
+	@Inject
+	private CustomerService customerService;
 	
 	@Override
 	protected BomMaster dao() {
@@ -362,7 +363,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		// 校验当前存货是否为当前选择机型下的
 		Inventory inventory = inventoryService.findById(inventoryId);
 		ValidationUtils.notNull(inventory, JBoltMsg.DATA_NOT_EXIST);
-//		ValidationUtils.isTrue(equipmentModelId.equals(String.valueOf(inventory.getIEquipmentModelId())), "机型跟产品编码不匹配");
+		ValidationUtils.isTrue(equipmentModelId.equals(String.valueOf(inventory.getIEquipmentModelId())), "机型跟产品编码不匹配");
 	}
 	
 	/**
@@ -745,6 +746,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		 * 合并单元格取数
  		 */
 		// 机型
+		Inventory inventory= null;
 		CellRange<XSSFCell> equipmentModelCellRange = createCellRange(sheet, new CellRangeAddress(2, 2, 1, 6));
 		XSSFCell[] flattenedCells = equipmentModelCellRange.getFlattenedCells();
 		String equipmentModelName = getCellRangeValue(flattenedCells);
@@ -767,7 +769,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		if (StrUtil.isNotBlank(enableDateStr)){
 			enableDate = DateUtil.parseDate(enableDateStr);
 		}
-		record.set(BomMaster.DENABLEDATE, enableDate);
+		record.set(BomMaster.DENABLEDATE, getDateConventStr(enableDate));
 		// NO.1
 		CellRange<XSSFCell> no1CellRange = createCellRange(sheet, new CellRangeAddress(5, 5, 11, 12));
 		record.set(BomMaster.CNO1, getCellRangeValue(no1CellRange.getFlattenedCells()));
@@ -782,38 +784,66 @@ public class BomMasterService extends BaseService<BomMaster> {
 		record.set(BomMaster.CBOMVERSION, getStringCellValue(bomVersionCell));
 		// 停用日期
 		XSSFCell disableCell = sheet.getRow(2).getCell(19);
-		record.set(BomMaster.DDISABLEDATE, disableCell.getDateCellValue());
+		record.set(BomMaster.DDISABLEDATE, getDateConventStr(disableCell.getDateCellValue()));
 		// 设变号1
 		XSSFCell dcNo1Cell = sheet.getRow(5).getCell(15);
 		record.set(BomMaster.CDCNO1, getStringCellValue(dcNo1Cell));
 		// 设变日期1
 		XSSFCell docDate1 = sheet.getRow(5).getCell(17);
-		record.set(BomMaster.DDCDATE1, docDate1.getDateCellValue());
+		record.set(BomMaster.DDCDATE1, getDateConventStr(docDate1.getDateCellValue()));
 		// NO.2
 		XSSFCell no2Cell = sheet.getRow(5).getCell(18);
 		record.set(BomMaster.CNO2, getStringCellValue(no2Cell));
 		// UG部番
 		XSSFCell cInvAddCode1Cell = sheet.getRow(5).getCell(19);
 		record.set(BomMaster.INVADDCODE1, getStringCellValue(cInvAddCode1Cell));
+		
 		// 设变号2
 		XSSFCell dcNo2Cell = sheet.getRow(5).getCell(20);
 		record.set(BomMaster.CDCNO2, getStringCellValue(dcNo2Cell));
 		// 设变日期2
 		XSSFCell dcDate2 = sheet.getRow(5).getCell(22);
-		record.set(BomMaster.DDCDATE2, dcDate2.getDateCellValue());
+		record.set(BomMaster.DDCDATE2, getDateConventStr(dcDate2.getDateCellValue()));
 		
 		// 客户：GHAC
 		XSSFCell customerNameCell = sheet.getRow(7).getCell(1);
 		String customerName = getStringCellValue(customerNameCell);
-		record.set(BomMaster.USTOMERNAME, customerName);
-		record.set(BomMaster.ICUSTOMERID, null);
+		// 赋值客户id
+		if (StrUtil.isNotBlank(customerName)){
+			String customerStr = customerName.contains("客户：") ? customerName.substring(customerName.lastIndexOf("客户：")) : customerName;
+			Record customerRecord = customerService.findByVendorName(customerStr);
+			if (ObjectUtil.isNotNull(customerRecord)){
+				record.set(BomMaster.ICUSTOMERID, customerRecord.getLong("cvenid"));
+			}
+			record.set(BomMaster.USTOMERNAME, customerStr);
+		}
 		// 共用件: 2WD/4WD 共用
 		XSSFCell commonPartMemoCell = sheet.getRow(7).getCell(8);
 		String commonPartMemo = getStringCellValue(commonPartMemoCell);
 		record.set(BomMaster.CCOMMONPARTMEMO, commonPartMemo);
+		
+		String invCode1 = getCellRangeValue(invCode1CellRange.getFlattenedCells());
+		// 根据客户部番
+		if (StrUtil.isNotBlank(invCode1)){
+			inventory = inventoryService.findBycInvAddCode(invCode1);
+		}
+		String cInvAddCode1 = getStringCellValue(cInvAddCode1Cell);
+		if (StrUtil.isNotBlank(cInvAddCode1)){
+			inventory = inventoryService.findBycInvAddCode(invCode1);
+		}
+		// 赋值存货id
+		if (inventory != null){
+			record.set(BomMaster.IINVENTORYID, inventory.getIAutoId());
+		}
 		return record;
 	}
 	
+	private String getDateConventStr(Date date){
+		if (ObjectUtil.isNull(date)){
+			return null;
+		}
+		return DateUtil.formatDate(date);
+	}
 	
 	private String getStringCellValue(XSSFCell cell){
 		if (cell == null){
@@ -836,6 +866,16 @@ public class BomMasterService extends BaseService<BomMaster> {
 			value = cell.getStringCellValue();
 		}
 		return value;
+	}
+	
+	
+	private String getBigDecimalCell(String value){
+		if (StrUtil.isBlank(value)){
+			return null;
+		}
+		DecimalFormat df = new DecimalFormat("#0.000");
+		BigDecimal num = new BigDecimal(value);
+		return df.format(num);
 	}
 	
 	/**
@@ -892,7 +932,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 				codeValue = stringCellValue;
 				break;
 			}
-			// 编码全部为空，则跳过
+			// 编码全部为空，则跳过（第二层开始查找存货）
 			if (StrUtil.isBlank(codeKey)){
 				// 上一层对象没有记录则直接跳过
 				if (ObjectUtil.isNull(perCacheRecord)){
@@ -904,6 +944,8 @@ public class BomMasterService extends BaseService<BomMaster> {
 					Record record = list.get(perIndexOf);
 					record.setColumns(rowRecord);
 				}
+				// 匹配存货
+				
 				perCacheRecord = null;
 				continue;
 			}
@@ -921,13 +963,15 @@ public class BomMasterService extends BaseService<BomMaster> {
 		
 		// 客户部番
 		CellRange<XSSFCell> cInvCode1CellRange = createCellRange(sheet, new CellRangeAddress(row.getRowNum(), row.getRowNum(), 7, 8));
-		record.set(BomCompare.CINVCODE1, getCellRangeValue(cInvCode1CellRange.getFlattenedCells()));
+		String cInvCode1 = getCellRangeValue(cInvCode1CellRange.getFlattenedCells());
+		record.set(BomCompare.CINVCODE1, cInvCode1);
 		// UG部番
 		CellRange<XSSFCell> cInvAddCode1CellRange = createCellRange(sheet, new CellRangeAddress(row.getRowNum(), row.getRowNum(), 9, 10));
-		record.set(BomCompare.CINVADDCODE1, getCellRangeValue(cInvAddCode1CellRange.getFlattenedCells()));
+		String cInvAddCode1 = getCellRangeValue(cInvAddCode1CellRange.getFlattenedCells());
+		record.set(BomCompare.CINVADDCODE1, cInvAddCode1);
 		// QTY
 		XSSFCell qtyCell = row.getCell(13);
-		record.set(BomCompare.INVQTY, getStringCellValue(qtyCell));
+		record.set(BomCompare.INVQTY, getBigDecimalCell(getStringCellValue(qtyCell)));
 		// 材料类别
 		XSSFCell materialTypeCell = row.getCell(14);
 		record.set(BomCompare.MATERIALTYPE, getStringCellValue(materialTypeCell));
@@ -939,13 +983,13 @@ public class BomMasterService extends BaseService<BomMaster> {
 		record.set(BomCompare.ORIGINALQTY, getStringCellValue(originalvendorNameCell));
 		// 原材料可制件数
 		XSSFCell originalQtyCell = row.getCell(17);
-		record.set(BomCompare.ORIGINALQTY, getStringCellValue(originalQtyCell));
+		record.set(BomCompare.ORIGINALQTY, getBigDecimalCell(getStringCellValue(originalQtyCell)));
 		// 分条料可制件数
 		XSSFCell slicingQtyCell = row.getCell(19);
-		record.set(BomCompare.SLICINGQTY, getStringCellValue(slicingQtyCell));
+		record.set(BomCompare.SLICINGQTY, getBigDecimalCell(getStringCellValue(slicingQtyCell)));
 		// 落料可制件数
 		XSSFCell blankingQtyCell = row.getCell(21);
-		record.set(BomCompare.BLANKINGQTY, getStringCellValue(blankingQtyCell));
+		record.set(BomCompare.BLANKINGQTY, getBigDecimalCell(getStringCellValue(blankingQtyCell)));
 		// 部品加工商
 		XSSFCell vendorNameCell = row.getCell(22);
 		String stringCellValue = getStringCellValue(vendorNameCell);
@@ -980,7 +1024,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		record.set(BomCompare.CINVNAME2, getCellRangeValue(cInvName2CellRange.getFlattenedCells()));
 		// 重量(KG)
 		XSSFCell weightCell = row.getCell(13);
-		record.set(BomCompare.INVWEIGHT, getStringCellValue(weightCell));
+		record.set(BomCompare.INVWEIGHT, getBigDecimalCell(getStringCellValue(weightCell)));
 		// 厚度
 		XSSFCell thicknessCell = row.getCell(15);
 		record.set(BomCompare.THICKNESS, getStringCellValue(thicknessCell));
@@ -989,13 +1033,18 @@ public class BomMasterService extends BaseService<BomMaster> {
 		record.set(BomCompare.ORIGINALSTD, getStringCellValue(originalStdCell));
 		// 原材料重量(KG)
 		XSSFCell originalWeightCell = row.getCell(17);
-		record.set(BomCompare.ORIGINALWEIGHT, getStringCellValue(originalWeightCell));
+		record.set(BomCompare.ORIGINALWEIGHT, getBigDecimalCell(getStringCellValue(originalWeightCell)));
+		
+		// 分条规格(mm)
+		XSSFCell slicingStdCell = row.getCell(18);
+		record.set(BomCompare.SLICINGSTD, getStringCellValue(slicingStdCell));
+		
 		// 分条料重量(KG)
 		XSSFCell slicingWeightCell = row.getCell(19);
-		record.set(BomCompare.ORIGINALWEIGHT, getStringCellValue(slicingWeightCell));
+		record.set(BomCompare.SLICINGWEIGHT, getBigDecimalCell(getStringCellValue(slicingWeightCell)));
 		// 落料重量(KG)
 		XSSFCell blankingWeightCell = row.getCell(21);
-		record.set(BomCompare.BLANKINGWEIGHT, getStringCellValue(blankingWeightCell));
+		record.set(BomCompare.BLANKINGWEIGHT, getBigDecimalCell(getStringCellValue(blankingWeightCell)));
 	}
 	
 	private CellRange<XSSFCell> createCellRange(XSSFSheet hssfSheet, CellRangeAddress range){
@@ -1036,6 +1085,148 @@ public class BomMasterService extends BaseService<BomMaster> {
 			record.set(BomMaster.AUDITSTATUSSTR, auditStatusEnum.getText());
 		}
 		return page;
+	}
+	
+	public void setInventory(Record record){
+		// 客户部番
+		String cInvCode1 = record.getStr(BomCompare.CINVCODE1);
+		// UG部番
+		String cInvAddCode1 = record.getStr(BomCompare.CINVADDCODE1);
+		Inventory inventory = null;
+		// 部品 通过客户部番跟UG部番查找
+		if (StrUtil.isNotBlank(cInvCode1)){
+			inventory = inventoryService.findBycInvAddCode(cInvCode1);
+		}
+		if (StrUtil.isNotBlank(cInvAddCode1)){
+			inventory = inventoryService.findBycInvAddCode(cInvAddCode1);
+		}
+		// 部品id
+		if (inventory != null){
+			record.set(BomCompare.INVITEMID, inventory.getIAutoId());
+			record.set(BomCompare.INVITEMCODE, inventory.getCInvCode());
+			record.set(BomCompare.CINVNAME, inventory.getCInvName());
+		}
+		String materialType = record.getStr(BomCompare.MATERIALTYPE);
+		// 没有材料类别直接返回
+		if (StrUtil.isBlank(materialType)){
+			return;
+		}
+		// 厚度
+		String thicknessStr = record.getStr(BomCompare.THICKNESS);
+		// 材质
+		String materialStr = record.getStr(BomCompare.MATERIAL);
+		// 原材料规格(mm)
+		String originalStd = record.getStr(BomCompare.ORIGINALSTD);
+		// 分条规格(mm)
+		String slicingStd = record.getStr(BomCompare.SLICINGSTD);
+		// 下料尺寸
+		String blankingStd = record.getStr(BomCompare.BLANKINGSTD);
+		
+		String symbol = " ";
+		// 星号
+		String asterisk = "*";
+		String prefixStr = materialStr.concat(symbol).concat(thicknessStr);
+		// *c
+		String endStr= asterisk.concat(originalStd);
+		switch (materialType){
+			case "卷材":
+				/**
+				 * - 原材料：材质 厚度*c；
+				 *
+				 * - 分条：材质 厚度*宽度；
+				 *
+				 * - 落料：材质 厚度*宽度*长度
+				 */
+				boolean originalFlag = StrUtil.isNotBlank(originalStd);
+				if (originalFlag){
+					String originItem = prefixStr.concat(endStr);
+					Inventory originalInventory = inventoryService.findBycInvAddCode(originItem);
+					setItemRecord(record, originalInventory, 0);
+				}
+				boolean slicingFlag = StrUtil.isNotBlank(slicingStd);
+				if (originalFlag && slicingFlag){
+					String slicingItem = prefixStr.concat(asterisk).concat(slicingStd);
+					Inventory slicingInventory = inventoryService.findBycInvAddCode(slicingItem.concat(endStr));
+					setItemRecord(record, slicingInventory, 1);
+				}
+				
+				if (originalFlag && slicingFlag && StrUtil.isNotBlank(blankingStd)){
+					// 材质 厚度*宽度*长度
+					String blankingItem = prefixStr.concat(asterisk).concat(slicingStd).concat(asterisk).concat(blankingStd);
+					Inventory blankingInventory = inventoryService.findBycInvAddCode(blankingItem);
+					setItemRecord(record, blankingInventory, 2);
+				}
+				break;
+			case "管材":
+				/**
+				 * - 原材料：材质 厚度*直径*长度
+				 *
+				 * - 分条：无
+				 *
+				 * - 落料：材质 厚度*直径*落料尺寸的长度
+				 */
+				if (StrUtil.isNotBlank(originalStd)){
+					String originItem = prefixStr.concat(endStr);
+					Inventory originalInventory = inventoryService.findBycInvAddCode(originItem);
+					setItemRecord(record, originalInventory, 0);
+				}
+				if (StrUtil.isNotBlank(blankingStd)){
+					// 材质 厚度*宽度*长度
+					String blankingItem = prefixStr.concat(asterisk).concat(endStr).concat(asterisk).concat(blankingStd);
+					Inventory blankingInventory = inventoryService.findBycInvAddCode(blankingItem);
+					setItemRecord(record, blankingInventory, 2);
+				}
+				break;
+			case "板卷":
+				/**
+				 * - 原材料：材质 厚度
+				 *
+				 * - 分条：材质 厚度*宽*长度
+				 *
+				 * - 落料：无
+				 */
+				if (StrUtil.isNotBlank(originalStd)){
+					String originItem = prefixStr.concat(endStr);
+					Inventory originalInventory = inventoryService.findBycInvAddCode(originItem);
+					setItemRecord(record, originalInventory, 0);
+				}
+				
+				if (StrUtil.isNotBlank(slicingStd)){
+					String slicingItem = prefixStr.concat(asterisk).concat(slicingStd);
+					Inventory slicingInventory = inventoryService.findBycInvAddCode(slicingItem.concat(endStr));
+					setItemRecord(record, slicingInventory, 1);
+				}
+				break;
+		}
+	}
+	
+	/**
+	 * 赋值（存货id，存货编码，存货名称）
+	 * @param record
+	 * @param inventory
+	 * @param type 0:原材料 1： 分条料 2：漏料
+	 */
+	private void setItemRecord(Record record, Inventory inventory, int type){
+		if (ObjectUtil.isNull(inventory)){
+			return;
+		}
+		switch (type){
+			case 0:
+				record.set(BomCompare.ORIGINALITEMID, inventory.getIAutoId());
+				record.set(BomCompare.ORIGINALITEMCODE, inventory.getCInvCode());
+				record.set(BomCompare.ORIGINALINVNAME, inventory.getCInvName());
+				break;
+			case 1:
+				record.set(BomCompare.SLICINGINVITEMID, inventory.getIAutoId());
+				record.set(BomCompare.SLICINGINVITEMCODE, inventory.getCInvCode());
+				record.set(BomCompare.SLICINGINVNAME, inventory.getCInvName());
+				break;
+			case 2:
+				record.set(BomCompare.BLANKINGITEMID, inventory.getIAutoId());
+				record.set(BomCompare.BLANKINGITEMCODE, inventory.getCInvCode());
+				record.set(BomCompare.BLANKINGINVNAME, inventory.getCInvName());
+				break;
+		}
 	}
 	
 	public List<Record> queryBomMasterId(Kv kv){

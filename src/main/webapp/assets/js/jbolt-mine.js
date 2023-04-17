@@ -273,7 +273,7 @@ function showSwitchOrgDialog(showMsg, handler) {
 
 function zoomPage() {
     var wid = $(window).width(), len;
-    if (wid < 1400) {
+    if (wid >= 1024 && wid < 1400) {
         len = wid / 1400;
         var $html = $("html");
         $html.css("zoom", len);

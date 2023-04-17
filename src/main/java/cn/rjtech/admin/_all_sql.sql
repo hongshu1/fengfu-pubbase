@@ -276,3 +276,11 @@
 #namespace("qcformtableparam")
 #include("qcformtableparam/qcformtableparam.sql")
 #end
+
+#namespace("subcontractsaleorderm")
+#include("subcontractsaleorderm/subcontractsaleorderm.sql")
+#end
+
+#namespace("subcontractsaleorderd")
+#include("subcontractsaleorderd/subcontractsaleorderd.sql")
+#end
