@@ -63,7 +63,7 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/monthorderm/edit/${data.iautoid}" data-area="100%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改月度计划订单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>修改</a>
+	<a href="admin/monthorderm/edit/${data.iautoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑月度计划订单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
     <a href="admin/monthorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 </td>
 <td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>

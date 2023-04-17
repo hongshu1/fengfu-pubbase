@@ -7,8 +7,8 @@
                 <div class="col">
                     <form class="form-inline" id="apsAnnualplanmFormadd_#(pageId)"   onsubmit="return false;" method="post">
                         <input type="text" hidden class="form-control" placeholder="计划单号" name="cplanorderno" value="#(cplanorderno)" />
-                        <input type="text" hidden class="form-control" placeholder="客户id" name="icustomerid" value="#(icustomerid)" />
-                        <input type="text" hidden class="form-control" placeholder="年份" name="startyear" value="#(startyear)" />
+                        <input type="text" hidden class="form-control" placeholder="客户id" name="icustomerid" value="#(icustomerid)" id="icustomerid"/>
+                        <input type="text" hidden class="form-control" placeholder="年份" name="startyear" value="#(startyear)" id="startyear"/>
 
                         <input type="text" class="form-control" placeholder="存货编码" name="cinvcode" value="" />
                         <input type="text" class="form-control" placeholder="客户部番" name="cinvcode1" value="" />
@@ -24,7 +24,7 @@
                                 data-value-attr="sn"
                         ></select>
 
-                        <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                        <button  type="submit" id="submitBtn" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
                         <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
                     </form>
                 </div>
@@ -41,6 +41,18 @@
                 <td>${data.cInvCode}</td>
                 <td>${data.cInvCode1}</td>
                 <td>${data.cInvName1}</td>
+                <td>
+                    {@if data.planTypeCode == 'PP'}
+                    <span>计划使用</span>
+                    {@else if data.planTypeCode == 'CP'}
+                    <span>计划数量</span>
+                    {@else if data.planTypeCode == 'ZK'}
+                    <span>计划在库</span>
+                    {@else if data.planTypeCode == 'CC'}
+                    <span>客户行事历</span>
+                    {@/if}
+                </td>
+                <td>${data.nowmonth0}</td>
                 <td>${data.nowmonth1}</td>
                 <td>${data.nowmonth2}</td>
                 <td>${data.nowmonth3}</td>
@@ -63,11 +75,61 @@
         </script>
         <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbaradd_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                <button data-area="50%,80%" onclick="addviewparmBtn(this)" class="btn btn-sm"><i class="fa fa-trash"></i> 作成条件</button>
-
-                <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
-                <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
+                #if(cplanorderno == '' || cplanorderno == null)
+                <button data-area="50%,80%" onclick="addviewparmBtn(this)" class="btn btn-outline-primary btn-sm"></i> 作成条件</button>
+                <div class="btn-group dropdown">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+                    <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                        <a data-downloadbtn href="/admin/customerclass/downloadTplxxx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+                        <div class="j_upload_file_box"
+                             data-name="file"
+                             data-btn-class="btn dropdown-item"
+                             data-placeholder="上传导入"
+                             data-confirm="确认导入数据？"
+                             data-accept="excel"
+                             data-maxsize="20480"
+                             data-handler="uploadFile"
+                             data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                             data-url="/admin/customerclass/importExcelxxx">
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group dropdown">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+                            id="exportMenuBadnessButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        数据导出
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="exportMenuBadnessButton">
+                        <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                                data-url="admin/basis/dataExportxxx"><i class="fa fa-download"></i> 导出选中
+                        </button>
+                        <button class="btn dropdown-item" data-downloadbtn data-url="admin/basis/dataExportxxx"
+                                data-form="basisForm_#(pageId)"><i class="fa fa-download"></i> 全部导出
+                        </button>
+                    </div>
+                </div>
+                <button onclick="submitThisFormPlan()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
                 <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                #end
+
+                #if(cplanorderno != '' && cplanorderno != null)
+                <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 审批</button>
+                <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 反审批</button>
+                <div class="btn-group dropdown">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+                            id="exportMenuBadnessButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        数据导出
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="exportMenuBadnessButton">
+                        <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                                data-url="admin/basis/dataExportxxx"><i class="fa fa-download"></i> 导出选中
+                        </button>
+                        <button class="btn dropdown-item" data-downloadbtn data-url="admin/basis/dataExportxxx"
+                                data-form="basisForm_#(pageId)"><i class="fa fa-download"></i> 全部导出
+                        </button>
+                    </div>
+                </div>
+                #end
                 <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
             </div>
         </div>
@@ -76,12 +138,14 @@
                data-ajax="true"
                data-conditions-form="apsAnnualplanmFormadd_#(pageId)"
                data-url="admin/scheduproductplanyear/getApsYearPlanList"
-               id="jbolt_Table_#(pageId)"
+               id="jbolt_Table_year"
                data-column-resize="true"
                data-tfoot-fixed="true"
                data-column-prepend="1:checkbox"
                data-rowtpl="jboltTable_demotpladd_#(pageId)"
                data-toolbar="AnnualOrderM_toolbaradd_#(pageId)"
+               data-editable="true"
+               data-editable-option="getEditableTableOptions_year"
         >
             <thead class="fw_normal">
             <tr>
@@ -91,10 +155,12 @@
                 <th data-width="150" data-column="cinvcode" rowspan="2">存货编码</th>
                 <th data-width="150" data-column="cinvcode1" rowspan="2">客户部番</th>
                 <th data-width="150" data-column="cinvname1" rowspan="2">部品名称</th>
-                <th colspan="13" id="nowYear">#(iYear)年</th>
-                <th colspan="4" id="nextYear">#(iYear+1)年</th>
+                <th colspan="13" id="nowYear">#(startyear)年</th>
+                <th colspan="4" id="nextYear">#(endyear)年</th>
             </tr>
             <tr>
+                <th data-column="plantypecode"></th>
+                <th data-column="nowmonth0"></th>
                 <th data-column="nowmonth1">1月</th>
                 <th data-column="nowmonth2">2月</th>
                 <th data-column="nowmonth3">3月</th>
@@ -141,6 +207,8 @@
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
             <tr>
             </tfoot>
         </table>
@@ -152,14 +220,251 @@
 <script>
 hideParentLayerDialogBtn(0);
 hideParentLayerDialogBtn(1);
-function submitThisForm(){
-	jboltTableSubmit("#jbolt_Table_#(pageId)");
+function submitThisFormPlan(){
+	//jboltTableSubmit("#jbolt_Table_year");
+    saveTable();
+}
+function saveTable(){
+    let tableDatas = getJboltTableAllDatas('#jbolt_Table_year');
+    let dataObj = {
+        yearDataArry: JSON.stringify(tableDatas),
+    }
+    let url = "admin/scheduproductplanyear/saveScheduPlanYear";
+    Ajax.post(url,dataObj,function(res){
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+        parent.LayerMsgBox.success("保存成功!");
+    });
 }
 
 function addviewparmBtn(ele){
     var url="admin/scheduproductplanyear/addviewparm";
     $(ele).data("url",url);
     DialogUtil.openBy(ele);
+}
+
+function getEditableTableOptions_year() {
+    var editableTableOptions = {
+        trigger:"click",
+        submit: {
+            //withForm:[""],
+            type:"all",//cell|all
+            //params:{"cequipmentcode":'#(cequipmentcode??)',"cequipmentname":'#(cequipmentname??)'},//携带其他额外参数
+            //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+            url: "/admin/scheduproductplanyear/saveScheduPlanYear",
+            success: function (res) {
+                LayerMsgBox.success("提交成功", 600, function () {
+                    parent.refreshPjaxContainer();
+                    parent.layer.closeAll();
+                });
+            }
+        },
+        cols: {
+            nowmonth1: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth2: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth3: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth4: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth5: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth6: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth7: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth8: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth9: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth10: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth11: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonth12: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nowmonthsum: {
+                summary:[{
+                    dir:"h",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"nowmonth1+nowmonth2+nowmonth3+nowmonth4+nowmonth5+nowmonth6+nowmonth7+nowmonth8+nowmonth9+nowmonth10+nowmonth11+nowmonth12"
+                }],
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nextmonth1: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nextmonth2: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nextmonth3: {
+                type:"amount",
+                placeholder:'数量',
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            },
+            nextmonthsum: {
+                summary:[{
+                    dir:"h",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"nextmonth1+nextmonth2+nextmonth3"
+                }],
+                summary:[{
+                    dir:"v",
+                    tofixed:2,
+                    roundtag:"round",
+                    removezero:true,
+                    formula:"sum"
+                }]
+            }
+        }
+    };
+    return editableTableOptions;
+}
+
+function closeHandler(){
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+    window.parent.refreshJBoltTable();
 }
 
 
