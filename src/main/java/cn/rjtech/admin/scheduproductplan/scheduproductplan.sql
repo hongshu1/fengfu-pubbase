@@ -244,7 +244,8 @@ FROM Aps_AnnualPlanD AS a
          LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
          LEFT JOIN Bd_InventoryWorkRegion AS d ON a.iAutoId = d.iInventoryId AND d.isDefault = '1' AND d.isDeleted = '0'
          LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId
-WHERE b.iType = 2
+         LEFT JOIN Aps_AnnualPlanM AS f ON a.iAnnualPlanMid = f.iAutoId
+WHERE b.iType = 2 AND f.isDeleted = '0'
   AND CONVERT(VARCHAR(4),b.iYear,120) >= #para(startyear)
   AND CONVERT(VARCHAR(4),b.iYear,120) <= #para(endyear)
     #if(cworkname)

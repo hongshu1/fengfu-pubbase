@@ -13,7 +13,8 @@
                                 <div class="form-group row">
                                     <label class="col-2 col-form-label">指定年份</label>
                                     <div class="col-10">
-                                        <input data-done-handler="changeDoneYear"
+                                        <input data-done-handler=""
+                                               id="iyear"
                                                type="text"
                                                data-rule="required"
                                                data-date
@@ -54,6 +55,27 @@
 
         #define js()
         <script>
+
+            function submitThisForm(){
+                //parent.$("#itemroutingconfigFormBtn").click();
+                let customerId = $('input[name=customerId]:radio:checked').val();
+                let iyear = $('#iyear').val();
+
+                if (customerId == undefined){
+                    LayerMsgBox.error("请选择年份！");
+                    return;
+                }
+                if (iyear == undefined){
+                    LayerMsgBox.error("请选择客户！");
+                    return;
+                }
+                parent.$("#icustomerid").val(customerId);
+                parent.$("#startyear").val(iyear);
+                parent.LayerMsgBox.closeAll();
+                parent.$("#submitBtn").click();
+                //LayerMsgBox.success("成功!");
+                //parent.refreshPjaxContainer();
+            }
 
         </script>
         #end

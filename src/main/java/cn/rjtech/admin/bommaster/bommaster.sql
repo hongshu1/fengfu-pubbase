@@ -161,3 +161,70 @@ WHERE
 	  #end
 	  group by a.id
 #end
+
+#sql("getMaster")
+SELECT DISTINCT
+    birc.iSeq,--工序号
+    birc.cOperationName,--工序名称
+    birc.iType,--工序类型
+    birc.cMergedSeq,--合并工序
+    birc.cProductSn,--生产方式
+    birc.iMergedNum,--合并要员Bd_Customer
+    birc.iMergeRate,--要员
+    birc.iMergeSecs,--合并工时
+    birc.iSecs,--单工时
+    bi.cInvName,--成品，半成品名称(包括成品/半成品)
+    birc.iInventoryId,--原料集子id
+    STUFF(
+            (
+                SELECT
+                        ', ' + be.cEquipmentName
+                FROM
+                    Bd_InventoryRoutingConfig birc2
+                        left JOIN Bd_InventoryRoutingEquipment bire ON birc2.iAutoId = bire.iInventoryRoutingConfigId
+                        left JOIN Bd_Equipment be ON be.iAutoId = bire.iEquipmentId
+                WHERE
+                        birc2.iAutoId = birc.iAutoId FOR XML PATH ( '' )
+        ),
+		1,
+		2,
+		''
+	) AS cEquipmentName --设备名
+
+FROM
+    Bd_Inventory bi --	LEFT JOIN Bd_InventoryRoutingConfig birc ON bi.iAutoId = birc.iRsInventoryId --筛选半成品/成品(每个存货有一个配置表)
+        LEFT JOIN Bd_InventoryRouting bir ON bi.iAutoId = bir.iInventoryId --每个存货有一条工艺路线
+        LEFT JOIN (
+        SELECT
+            birc.iSeq,--工序号
+            birc.cOperationName,--工序名称
+            birc.iType,--工序类型
+            birc.cMergedSeq,--合并工序
+            birc.cProductSn,--生产方式
+            birc.iMergedNum,--合并要员Bd_Customer
+            birc.iMergeRate,--要员
+            birc.iMergeSecs,--合并工时
+            birc.iSecs,--单工时
+            be.cEquipmentName,
+            birc.iRsInventoryId,
+            biri.iInventoryId,
+            birc.iAutoId
+        FROM
+            Bd_InventoryRoutingConfig birc
+                LEFT JOIN Bd_InventoryRoutingEquipment bire ON birc.iAutoId = bire.iInventoryRoutingConfigId
+                LEFT JOIN Bd_Equipment be ON be.iAutoId = bire.iEquipmentId
+                LEFT JOIN Bd_InventoryRoutingInvc biri ON birc.iAutoId = biri.iInventoryRoutingConfigId
+    ) birc ON bi.iAutoId = birc.iRsInventoryId
+WHERE
+        bir.isEnabled = 1 and
+        CONVERT ( VARCHAR, GETDATE( ), 23 ) > bir.dToDate
+#end
+
+#sql("getCompare")
+SELECT
+    bi.iAutoId,
+    bi.cInvName
+FROM
+    Bd_Inventory bi
+        LEFT JOIN Bd_BomCompare bbc ON bi.iAutoId = bbc.iInventoryId
+#end
