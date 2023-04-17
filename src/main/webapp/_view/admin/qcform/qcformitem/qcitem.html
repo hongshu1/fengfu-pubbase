@@ -1,0 +1,113 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h6><strong>料品列表</strong></h6>
+            </div>
+            <div class="col">
+                <form class="form-inline" id="itemmasterForm_#(pageId)" onsubmit="return false;" method="post">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=物料编码=" name="citemcode"
+                           value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=物料名称=" name="citemname"
+                           value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="itemmasterRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cqcitemcode}</td>
+<td>${data.cqcitemname}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/itemmaster/toggleIsenabled/${data.id}"/></td>
+</tr>
+{@/each}
+</textarea>
+        <div class="jbolt_table_toolbar" id="itemmaster_toolbar_#(pageId)">
+            <div class="btn-group" hidden role="group" aria-label="btn-group">
+                <button data-btn onclick="getCheckedTplIds(this)" id="btnclick" data-title="选择"
+                        class="btn btn-secondary"><i class="fa fa-check"></i> 选择
+                </button>
+            </div>
+        </div>
+
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               id="bomitemPage"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="/admin/qcform/qcformitem/qcitemlist?FormItemCodes=#(FormItemCodes??)"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="itemmasterForm_#(pageId)"
+               data-rowtpl="itemmasterRowtpl_#(pageId)"
+               data-page="itemmasterPage_#(pageId)"
+               data-toolbar="itemmaster_toolbar_#(pageId)"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150" data-column="cQcItemCode">检验项目编码</th>
+                <th data-width="150" data-column="cQcItemName">检验项目名称</th>
+                <th data-width="150" data-column="isEnabled">启用状态</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+#end
+#define js()
+<script>
+    hideParentLayerDialogBtn(0)
+    addParentLayerDialogBtn("确定", "lay_success", function (data) {
+        $("#btnclick").click();
+    });
+
+    function getCheckedTplIds(o) {
+        //子件增加行
+        if ('#(type??)' == '1') {
+            var data = jboltTableGetCheckedDatas(o);
+            var insertDatas = [];
+            for (var i in data) {
+                insertDatas.push({
+                    "iqcitemid": data[i].iautoid,
+                    "cqcitemname": data[i].cqcitemname
+                });
+            }
+            parent.jboltTableInsertRow(parent.$("#jbolt_table_QcFormItem_split"), insertDatas);
+            // parent.insertRow(insertDatas);
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
+        } else {
+            //母件选择
+            const data = jboltTableGetCheckedData(o);
+            console.log("====="+data)
+            if (data != null) {
+                parent.$("#iqcitemid").val(data.iautoid)
+                // parent.$("#iqcformid").val(data.cqcitemcode)
+                // parent.$("#iQcFormItemId").val(data.cqcitemcode)
+
+                const insertionData = {
+                    "iqcitemid": data.iautoid
+                }
+                jboltTableInsertRow(parent.$("#jbolt_table_QcFormItem_split"), insertionData);
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
+            }
+        }
+    }
+</script>
+#end
+

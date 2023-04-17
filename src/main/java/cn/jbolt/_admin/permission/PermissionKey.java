@@ -276,6 +276,7 @@ public class PermissionKey {
 	/**
 	 * 供应商档案
 	 */
+	public static final String SUPPLIER = "supplier";
 	public static final String VENDORCLASS = "vendorclass";
 	/**
 	 * APS计划排程
@@ -1837,6 +1838,7 @@ public class PermissionKey {
 	 * 单据类型与收发类别对照表
 	 */
 	public static final String VOUCHRDCONTRAPOSE = "vouchrdcontrapose";
+
 	/**
 	 * 销售类型
 	 */

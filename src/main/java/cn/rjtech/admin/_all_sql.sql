@@ -195,3 +195,14 @@
 #namespace("qcformitem")
 #include("qcformitem/qcformitem.sql")
 #end
+
+
+#namespace("qcformparam")
+#include("qcformparam/qcformparam.sql")
+#end
+
+#namespace("qcformtableparam")
+#include("qcformtableparam/qcformtableparam.sql")
+#end
+
+

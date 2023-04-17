@@ -91,8 +91,9 @@ public abstract class BaseQcFormItem<M extends BaseQcFormItem<M>> extends JBoltB
 
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
+	 * @param isDeleted
 	 */
-	public M setIsDeleted(Boolean isDeleted) {
+	public M setIsDeleted(int isDeleted) {
 		set("isDeleted", isDeleted);
 		return (M)this;
 	}

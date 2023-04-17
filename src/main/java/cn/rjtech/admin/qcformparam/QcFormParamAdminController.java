@@ -1,4 +1,4 @@
-package cn.rjtech.admin.qcformitem;
+package cn.rjtech.admin.qcformparam;
 
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -10,19 +10,19 @@ import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.QcFormItem;
+import cn.rjtech.model.momdata.QcFormParam;
 /**
- * 质量建模-检验表格项目
- * @ClassName: QcFormItemAdminController
+ * 质量建模-检验表格参数
+ * @ClassName: QcFormParamAdminController
  * @author: 佛山市瑞杰科技有限公司
- * @date: 2023-04-04 16:10
+ * @date: 2023-04-04 16:09
  */
 @CheckPermission(PermissionKey.QCFORM)
-@Path(value = "/admin/qcform/qcformitem", viewPath = "/_view/admin/qcform/qcformitem")
-public class QcFormItemAdminController extends BaseAdminController {
+@Path(value = "/admin/qcform/qcformparam", viewPath = "/_view/admin/qcform/qcformparam")
+public class QcFormParamAdminController extends BaseAdminController {
 
 	@Inject
-	private QcFormItemService service;
+	private QcFormParamService service;
 
    /**
 	* 首页
@@ -34,9 +34,8 @@ public class QcFormItemAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		Long headerId = getLong("qcForm.iAutoId");
-		System.out.println("===="+headerId);
-		renderJsonData(service.getAdminDatas(getPageSize(), getPageNumber(), getKv()));	}
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getBoolean("isDeleted")));
+	}
 
    /**
 	* 新增
@@ -49,19 +48,19 @@ public class QcFormItemAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(QcFormItem.class, "qcFormItem")));
+		renderJson(service.save(getModel(QcFormParam.class, "qcFormParam")));
 	}
 
    /**
 	* 编辑
 	*/
 	public void edit() {
-		QcFormItem qcFormItem=service.findById(getLong(0));
-		if(qcFormItem == null){
+		QcFormParam qcFormParam=service.findById(getLong(0));
+		if(qcFormParam == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("qcFormItem",qcFormItem);
+		set("qcFormParam",qcFormParam);
 		render("edit.html");
 	}
 
@@ -69,7 +68,7 @@ public class QcFormItemAdminController extends BaseAdminController {
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(QcFormItem.class, "qcFormItem")));
+		renderJson(service.update(getModel(QcFormParam.class, "qcFormParam")));
 	}
 
    /**
@@ -95,26 +94,25 @@ public class QcFormItemAdminController extends BaseAdminController {
 
 
 	/**
-	 * 查询表格项目
-	 */
-	public void qcFormItemDatas() {
-		set("type", get("type"));
-		set("FormItemCodes", get("FormItemCodes"));
-		System.out.println("==="+get("FormItemCodes"));
-		render("qcitem.html");
-	}
-
-
-	/**
 	 * 表格项目数据源
 	 */
-	public void qcitemlist() {
+	public void qcformparamlist() {
 		Okv kv =new Okv();
-		kv.setIfNotNull("iQcItemId", get("FormItemCodes"));
-		renderJsonData(service.qcitemlist(getPageNumber(), getPageSize(), kv));
+		kv.setIfNotNull("iQcParamId", get("FormItemCodes"));
+		kv.setIfNotNull("iqcformitemid", get("iqcformitemid"));
+		renderJsonData(service.qcformparamlist(getPageNumber(), getPageSize(), kv));
 
 	}
 
+	/**
+	 * 查询表格项目
+	 */
+	public void qcformparamDatas() {
+		set("type", get("type"));
+		set("FormItemCodes", get("FormItemCodes"));
+		set("iqcformitemid", get("typeId"));
+		render("qcformparam.html");
+	}
 
 	/**
 	 * 删除
@@ -139,7 +137,6 @@ public class QcFormItemAdminController extends BaseAdminController {
 	public void down() {
 		renderJson(service.down(getLong(0)));
 	}
-
 
 
 
