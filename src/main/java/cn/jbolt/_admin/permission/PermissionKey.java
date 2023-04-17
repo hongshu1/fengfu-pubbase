@@ -1374,6 +1374,10 @@ public class PermissionKey {
 	 */
 	public static final String PS_PURCHASE_ORDER = "ps_purchase_order";
 	/**
+	 * 委外销售订单
+	 */
+	public static final String SUBCONTRACTSALEORDERM = "subcontractsaleorderm";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";

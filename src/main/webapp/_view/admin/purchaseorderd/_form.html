@@ -1,0 +1,81 @@
+<form onsubmit="return false;" id="PurchaseOrderD_Form" action="#(action)" method="post">
+	#if(purchaseOrderD.iAutoId??)
+	<input type="hidden" name="purchaseOrderD.iAutoId" value="#(purchaseOrderD.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="purchaseOrderD.iAutoId" value="#(purchaseOrderD.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">采购订单主表ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入采购订单主表ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入采购订单主表ID" maxlength="40" name="purchaseOrderD.iPurchaseOrderMid" value="#(purchaseOrderD.iPurchaseOrderMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">存货ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入存货ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货ID" maxlength="40" name="purchaseOrderD.iInventoryId" value="#(purchaseOrderD.iInventoryId??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="purchaseOrderD.isPresent"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否赠品： 0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(purchaseOrderD.isPresent??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否赠品： 0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">供应商地址ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入供应商地址ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入供应商地址ID" maxlength="40" name="purchaseOrderD.iVendorAddrId" value="#(purchaseOrderD.iVendorAddrId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">合计数量</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入合计数量" maxlength="40" name="purchaseOrderD.iSum" value="#(purchaseOrderD.iSum??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="purchaseOrderD.cMemo">#(purchaseOrderD.cMemo??)</textarea>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="purchaseOrderD.isDeleted"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态：0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(purchaseOrderD.isDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态：0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="PurchaseOrderD_Form")
+#end
+
