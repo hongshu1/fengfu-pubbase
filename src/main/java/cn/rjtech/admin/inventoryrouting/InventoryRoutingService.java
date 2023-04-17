@@ -415,5 +415,9 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 		inventoryRoutingConfigService.batchSave(itemroutingconfigList);
 	}
 
+    public InventoryRouting getCurrentRouting(Long iAutoId) {
+        Date date = new Date();
+        return findFirst(selectSql().eq("iInventoryId",iAutoId).ge("dToDate",date).le("dFromDate",date));
+    }
 
 }

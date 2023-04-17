@@ -203,8 +203,8 @@ public class BomMasterAdminController extends BaseAdminController {
 	}
 
 	// 工艺路线
-	public void getMasterData() {
-		renderJsonData(service.getMaster());
-	}
+//	public void getMasterData() {
+//		renderJsonData(service.getMaster());
+//	}
 
 }
