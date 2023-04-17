@@ -142,4 +142,10 @@ public class BomMasterAdminController extends BaseAdminController {
 	public void saveCopy(@Para(value = "oldId") String oldId){
 	
 	}
+
+	// 工艺路线
+	public void getMasterData() {
+		renderJsonData(service.getMaster());
+	}
+
 }

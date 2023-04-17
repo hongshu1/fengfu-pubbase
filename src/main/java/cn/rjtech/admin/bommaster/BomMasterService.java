@@ -29,6 +29,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 物料建模-Bom母项
@@ -615,4 +616,30 @@ public class BomMasterService extends BaseService<BomMaster> {
 		
        return Db.use(dataSourceConfigName()).paginateByFullSql(pageNumber, pageSize, totalRowSql, findSql);
     }
+
+	/**
+	 * 工艺路线数据回显
+	 *
+	 * @return
+	 */
+	public List<Record> getMaster() {
+		// 查询属性为成品/半成品的制造件
+		List<Record> masterList = dbTemplate("bommaster.getMaster").find();
+
+		// 查询属性为半成品/原料的存货
+		List<Record> compareList = dbTemplate("bommaster.getCompare").find();
+
+		//
+		List<Record> resultList = masterList.stream().map(master -> {
+					for (Record compare : compareList) {
+						if (master.get("iInventoryId") == compare.get("iAutoId")) {
+							master.set("material_name", compare.get("cInvName"));
+						}
+					}
+					return master;
+				}
+		).sorted(Comparator.comparing(master -> master.get("cVersion"))).collect(Collectors.toList());
+		return resultList;
+	}
+
 }
