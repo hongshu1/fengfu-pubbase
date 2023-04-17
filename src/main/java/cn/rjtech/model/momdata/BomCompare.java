@@ -104,7 +104,7 @@ public class BomCompare extends BaseBomCompare<BomCompare> {
     public static final String MATERIAL = "material";
     
     /**
-     * 材质
+     * 材质类型
      */
     public static final String MATERIALTYPE = "materialType";
     /**
@@ -127,6 +127,11 @@ public class BomCompare extends BaseBomCompare<BomCompare> {
      * 存货编码
      */
     public static final String INVITEMCODE = "invItemCode";
+    
+    /**
+     * 部品名称
+     */
+    public static final String CINVNAME = "cInvName";
     
 }
 

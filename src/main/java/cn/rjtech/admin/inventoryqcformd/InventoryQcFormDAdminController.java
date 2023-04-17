@@ -1,25 +1,20 @@
 package cn.rjtech.admin.inventoryqcformd;
 
-import com.jfinal.aop.Inject;
-
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InventoryQcFormD;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 /**
  * 质量管理-来料检单行配置表 Controller
  * @ClassName: InventoryQcFormDAdminController
  * @author: RJ
  * @date: 2023-04-13 16:39
  */
-@CheckPermission(PermissionKey.INVENTORYQCFORMD)
-@UnCheckIfSystemAdmin
+@UnCheck
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/inventoryqcformd", viewPath = "/_view/admin/inventoryqcformd")
 public class InventoryQcFormDAdminController extends BaseAdminController {

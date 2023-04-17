@@ -168,7 +168,23 @@
             <input id="blankingWeight${data.index}" type="text" autocomplete="off" data-sync-attr="iweight"  class="form-control" data-rule="number"  data-notnull="true" name="blankingWeight" value="${data.blankingweight}" maxlength="10"/>
         </td>
         <td>
-            <input type="text" autocomplete="off"  class="form-control" name="iVendorId" value="${data.ivendorid}">
+            <input type="text" hidden autocomplete="off"  class="form-control" id="iVendorId${data.index}" data-sync-attr="cvenid" name="iVendorId" value="${data.ivendorid}">
+
+            <input type="text"
+                   value="${data.blankingitemcode}"
+                   data-autocomplete
+                   data-notnull="true"
+                   data-tips="请选择部品加工商"
+                   data-with-clearbtn="true"
+                   autocomplete="off"
+                   class="form-control"
+                   placeholder="请选择部品加工商"
+                   maxlength="40"
+                   data-url="admin/bommaster/findVendorList"
+                   data-sync-ele="iVendorId${data.index}"
+                   data-text-attr="cvenname"
+                   data-column-attr="cvenname"
+            />
         </td>
         <td>
             <select class="form-control" data-url="admin/dictionary/options?key=isOutSourcedType" name="isOutSourced" data-autoload

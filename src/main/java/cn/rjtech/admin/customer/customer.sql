@@ -14,6 +14,9 @@ FROM
 	LEFT JOIN Bd_Person p ON a.iDutyUserId = p.iAutoId
 	LEFT JOIN #(getBaseDbName()).dbo.jb_dept jd ON a.cCusDepart = jd.id
 	WHERE 1=1
+	#if(orgId)
+	    AND a.iOrgId = #para(orgId)
+	#end
 	#if(icustomerclassid)
         AND a.iCustomerClassId = #para(icustomerclassid)
 	#end
@@ -51,6 +54,12 @@ WHERE
     AND A.isDeleted = '0'
     #if(keywords)
         AND (A.cVenCode LIKE CONCAT('%', #para(keywords),'%') or A.cVenName LIKE CONCAT('%', #para(keywords),'%'))
+    #end
+    #if(cVenItem)
+        AND (A.cVenCode = #para(cVenItem) or A.cVenName =  #para(cVenItem))
+    #end
+    #if(id)
+        AND A.iAutoId = #para(id)
     #end
 #end
 

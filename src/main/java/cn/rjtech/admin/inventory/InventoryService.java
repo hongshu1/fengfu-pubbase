@@ -543,5 +543,13 @@ public class InventoryService extends BaseService<Inventory> {
 		List<Record> recordList = dbTemplate("inventoryclass.inventorySpotCheckList", kv).find();
 		return recordList;
 	}
+	
+	/**
+	 * 根据客户部番或UG部番 查找存货
+	 * @param cInvAddCode
+	 */
+	public Inventory findBycInvAddCode(String cInvAddCode){
+		return findFirst("SELECT * FROM Bd_Inventory WHERE cInvCode1 = ? OR cInvAddCode1 = ?", cInvAddCode, cInvAddCode);
+	}
 }
 

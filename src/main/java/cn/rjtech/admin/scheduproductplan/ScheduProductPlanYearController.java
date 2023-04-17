@@ -15,7 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
 
@@ -37,9 +37,17 @@ public class ScheduProductPlanYearController extends BaseAdminController {
         render("planyear.html");
     }
     public void addview() {
-        set("cplanorderno",get("cplanorderno"));
-        set("icustomerid",get("icustomerid"));
-        set("startyear",get("startyear"));
+        String cplanorderno = get("cplanorderno");
+        String icustomerid = get("icustomerid");
+        String startyear = get("startyear");
+
+        set("cplanorderno",cplanorderno);
+        set("icustomerid",icustomerid);
+        if (StringUtils.isBlank(cplanorderno)){
+            startyear = DateUtils.formatDate(new Date(),"yyyy");
+        }
+        set("startyear",startyear);
+        set("endyear",Integer.parseInt(startyear) + 1);
         render("planyear_add.html");
     }
 
@@ -127,12 +135,9 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      * 保存计划
      */
-    public void saveScheduPlanYear() {
-        //renderJsonData(service.saveScheduPlanYear(getJBoltTable()));
+    public void saveScheduPlanYear(String yearDataArry) {
+        renderJsonData(service.saveScheduPlanYear(yearDataArry));
     }
-    /*public void saveScheduPlanYear(JBoltPara para) {
-        renderJsonData(service.saveScheduPlanYear(para.getRawData()));
-    }*/
 
     /**
      * 获取计划

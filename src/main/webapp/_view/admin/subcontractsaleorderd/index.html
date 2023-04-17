@@ -1,0 +1,171 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>委外销售订单明细</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="subcontractsaleorderdForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="subcontractsaleorderdRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.isubcontractsaleordermid}</td>
+<td>${data.iinventoryid}</td>
+<td>${data.iqty1}</td>
+<td>${data.iqty2}</td>
+<td>${data.iqty3}</td>
+<td>${data.iqty4}</td>
+<td>${data.iqty5}</td>
+<td>${data.iqty6}</td>
+<td>${data.iqty7}</td>
+<td>${data.iqty8}</td>
+<td>${data.iqty9}</td>
+<td>${data.iqty10}</td>
+<td>${data.iqty11}</td>
+<td>${data.iqty12}</td>
+<td>${data.iqty13}</td>
+<td>${data.iqty14}</td>
+<td>${data.iqty15}</td>
+<td>${data.iqty16}</td>
+<td>${data.iqty17}</td>
+<td>${data.iqty18}</td>
+<td>${data.iqty19}</td>
+<td>${data.iqty20}</td>
+<td>${data.iqty21}</td>
+<td>${data.iqty22}</td>
+<td>${data.iqty23}</td>
+<td>${data.iqty24}</td>
+<td>${data.iqty25}</td>
+<td>${data.iqty26}</td>
+<td>${data.iqty27}</td>
+<td>${data.iqty28}</td>
+<td>${data.iqty29}</td>
+<td>${data.iqty30}</td>
+<td>${data.iqty31}</td>
+<td>${data.isum}</td>
+<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/subcontractsaleorderm/toggleIsdeleted/${data.id}"/></td>
+<td>
+	<a href="admin/subcontractsaleorderm/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改委外销售订单明细" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+    <a href="admin/subcontractsaleorderm/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="subcontractsaleorderd_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增委外销售订单明细"  data-url="admin/subcontractsaleorderm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改委外销售订单明细" data-check-handler="jboltTableGetCheckedId" data-url="admin/subcontractsaleorderm/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/subcontractsaleorderm/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/subcontractsaleorderm/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="subcontractsaleorderdForm_#(pageId)"
+data-rowtpl="subcontractsaleorderdRowtpl_#(pageId)"
+data-page="subcontractsaleorderdPage_#(pageId)"
+data-toolbar="subcontractsaleorderd_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+data-fixed-columns-right="-1"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-min-width="150" data-column="iSubcontractSaleOrderMid">委外销售订单主表ID</th>
+	<th data-width="150" data-column="iInventoryId">存货ID</th>
+	<th data-width="150" data-column="iQty1">1日数量</th>
+	<th data-width="150" data-column="iQty2">2日数量</th>
+	<th data-width="150" data-column="iQty3">3日数量</th>
+	<th data-width="150" data-column="iQty4">4日数量</th>
+	<th data-width="150" data-column="iQty5">5日数量</th>
+	<th data-width="150" data-column="iQty6">6日数量</th>
+	<th data-width="150" data-column="iQty7">7日数量</th>
+	<th data-width="150" data-column="iQty8">8日数量</th>
+	<th data-width="150" data-column="iQty9">9日数量</th>
+	<th data-width="150" data-column="iQty10">10日数量</th>
+	<th data-width="150" data-column="iQty11">11日数量</th>
+	<th data-width="150" data-column="iQty12">12日数量</th>
+	<th data-width="150" data-column="iQty13">13日数量</th>
+	<th data-width="150" data-column="iQty14">14日数量</th>
+	<th data-width="150" data-column="iQty15">15日数量</th>
+	<th data-width="150" data-column="iQty16">16日数量</th>
+	<th data-width="150" data-column="iQty17">17日数量</th>
+	<th data-width="150" data-column="iQty18">18日数量</th>
+	<th data-width="150" data-column="iQty19">19日数量</th>
+	<th data-width="150" data-column="iQty20">20日数量</th>
+	<th data-width="150" data-column="iQty21">21日数量</th>
+	<th data-width="150" data-column="iQty22">22日数量</th>
+	<th data-width="150" data-column="iQty23">23日数量</th>
+	<th data-width="150" data-column="iQty24">24日数量</th>
+	<th data-width="150" data-column="iQty25">25日数量</th>
+	<th data-width="150" data-column="iQty26">26日数量</th>
+	<th data-width="150" data-column="iQty27">27日数量</th>
+	<th data-width="150" data-column="iQty28">28日数量</th>
+	<th data-width="150" data-column="iQty29">29日数量</th>
+	<th data-width="150" data-column="iQty30">30日数量</th>
+	<th data-width="150" data-column="iQty31">31日数量</th>
+	<th data-width="150" data-column="iSum">合计数量</th>
+	<th data-width="150" data-column="IsDeleted">删除状态：0. 未删除 1. 已删除</th>
+	<th data-width="100">操作</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/subcontractsaleorderm/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('title', '委外销售订单明细')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end

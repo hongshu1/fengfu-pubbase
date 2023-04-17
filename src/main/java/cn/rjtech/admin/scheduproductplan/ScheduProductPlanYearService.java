@@ -31,8 +31,8 @@ import com.jfinal.kit.TypeKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.rmi.MarshalledObject;
@@ -140,7 +140,9 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
      * @return
      */
     public Ret delete(Long id) {
-        return deleteById(id,true);
+        //deleteById(id,true);
+        update("UPDATE Aps_AnnualPlanM SET isDeleted = 1 WHERE iAutoId = ? ",id);
+        return SUCCESS;
     }
 
     /**
@@ -314,7 +316,8 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
             //TODO:查询本次所有客户的订单计划
             List<Record> sourceYearOrderList = getSourceYearOrderList(Okv.by("organizeid",organizeId).set("customerids",customerId).set("startyear",startYear));
             if (sourceYearOrderList.size() < 1){
-                throw new RuntimeException("该客户无订单计划！");
+                ValidationUtils.isTrue(false,"该客户无订单计划！");
+                //throw new RuntimeException("该客户无订单计划！");
             }
 
             //本次所有物料集ids
@@ -364,9 +367,10 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
                 scheduProductPlanYearList.add(productYearViewCP);
                 scheduProductPlanYearList.add(productYearViewZK);
             }
-            //saveScheduPlanYear(startYear,scheduProductPlanYearList);
+            //saveScheduPlan(startYear,scheduProductPlanYearList);
         }catch (Exception e){
-            throw new RuntimeException("排程计划出错！"+e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         return scheduProductPlanYearList;
     }
@@ -634,7 +638,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
     /**
      * 保存计划 列转行
      */
-    public Ret saveScheduPlanYear(String startYear,List<ScheduProductYearViewDTO> scheduProductPlanYearList) throws Exception {
+    public Ret saveScheduPlan(String startYear,List<ScheduProductYearViewDTO> scheduProductPlanYearList) throws Exception {
 
         List<ScheduProductYearViewDTO> scheduList = scheduProductPlanYearList;
         if (scheduProductPlanYearList.size() < 1){
@@ -761,8 +765,10 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
     public List<ScheduProductYearViewDTO> getApsYearPlanList(String cplanorderno,Long icustomerid,String startYear,Kv kv) {
         List<ScheduProductYearViewDTO> scheduProductPlanYearList = new ArrayList<>();
 
-        if (notOk(cplanorderno) || notOk(startYear) || notOk(icustomerid)){
+        if (notOk(cplanorderno) && isOk(icustomerid) && isOk(startYear)){
+            return scheduPlanYear(Kv.by("startyear",startYear).set("customerId",icustomerid));
             //ValidationUtils.isTrue(false,"查询条件不能为空!");
+        }else if (notOk(cplanorderno) && notOk(icustomerid) && isOk(startYear)){
             return scheduProductPlanYearList;
         }
         try {
@@ -939,9 +945,16 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
         });
         return SUCCESS;
     }*/
-    public Ret saveScheduPlanYear(String rawData) {
-        List<ScheduProductYearViewDTO> list = JSONArray.parseArray(rawData,ScheduProductYearViewDTO.class);
-        return SUCCESS;
+    public Ret saveScheduPlanYear(String yearDataArry) {
+        if (StringUtils.isBlank(yearDataArry) || yearDataArry.equals("null")){
+            ValidationUtils.isTrue(false,"无计划保存!");
+        }
+        try {
+            List<ScheduProductYearViewDTO> list = JSONArray.parseArray(yearDataArry,ScheduProductYearViewDTO.class);
+            return saveScheduPlan(list.get(0).getNowyear(),list);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

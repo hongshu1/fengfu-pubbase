@@ -2,10 +2,10 @@
 #define main()
 <div class="jbolt_page">
   <div class="jbolt_page_content">
-    <form onsubmit="return false;" id="rcvDocQcFormMForm" action="#(action)" method="post">
+    <form onsubmit="return false;" id="rcvDocQcFormMForm_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
       <div>
         <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
-        <table border="1" style="text-align: center;left: 60px;margin-left:50px" width="1200" id="isNot">
+        <table id="table1" border="1" style="text-align: center;left: 60px;margin-left:50px" width="1200">
 
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r0"><!--"宋体 ",sans-serif";-->
             <td height="26" class="x74" width="117" style="height:19.5pt;width:87.75pt;">机型</td>
@@ -110,7 +110,7 @@
             </td>
           </tr>
         </table>
-        <table id="isNotButton" border="3" style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
+        <table id="table2" border="3" style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
           <div style="left: 60px;margin-left:50px;height: 50px;width: 500px;">
             <button type="button" onclick="inserRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
@@ -121,7 +121,7 @@
           </div>
         </table>
 
-        <table id="tableID"style="left: 60px;margin-left: 50px" border="1" align="center" cellspacing="0" cellpadding="10">
+        <table id="tableID" style="left: 60px;margin-left: 50px" border="1" align="center" cellspacing="0" cellpadding="10">
           <div>
             <tr class="colspan biaotoucolor">
               <th colspan="7">检查内容</th>
@@ -379,7 +379,8 @@
             <tr class="trd colspan">
               <td>14</td>
               <td>扁平率
-                （素管Φ45）</td>
+                （素管Φ45）
+              </td>
               <td colspan="3">＜6%</td>
               <td colspan="2">卡尺</td>
               <td><input name="cA01" type="text" class="cA01"/></td>
@@ -398,25 +399,35 @@
               <td>整体尺寸</td>
               <td colspan="3">合检具，无干涉</td>
               <td colspan="2">检具</td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
             </tr>
             <tr class="trd colspan">
@@ -424,25 +435,35 @@
               <td>整体尺寸</td>
               <td colspan="3">合管口斜面＜0.5</td>
               <td colspan="2">塞尺</td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
             </tr>
             <tr class="trd colspan">
@@ -451,7 +472,33 @@
               <th colspan="3">无异常毛刺、拉花、变形、压伤、开裂、起皱</th>
               <td colspan="2">目视</td>
               <td>
-                <div class="form-group row " 
+                <div class="form-group row "
+                     data-checkbox
+                     data-rule="checkbox"
+                     data-default=""
+                     data-url="admin/dictionary/options?key=appearance"
+                     data-value-attr="sn"
+                     data-text-attr="appearance"
+                     data-inline="false"
+                     data-value="#(appearance??)"
+                     data-name="appearance"></div>
+
+                <div class="form-group row col-6"
+                     data-checkbox
+                     data-rule="checkbox"
+                     data-label="供应商属性"
+                     data-default=""
+                     data-url="admin/dictionary/options?key=vendor_cproperty"
+                     data-value-attr="sn"
+                     data-text-attr="cproperty"
+                     data-inline="true"
+                     data-value="#(vendor.cproperty??)"
+                     data-name="cproperty">
+                </div>
+
+              </td>
+              <td>
+                <div class="form-group row "
                      data-checkbox
                      data-rule="checkbox"
                      data-default=""
@@ -463,7 +510,7 @@
                      data-name="appearance"></div>
               </td>
               <td>
-                <div class="form-group row " 
+                <div class="form-group row "
                      data-checkbox
                      data-rule="checkbox"
                      data-default=""
@@ -475,7 +522,7 @@
                      data-name="appearance"></div>
               </td>
               <td>
-                <div class="form-group row " 
+                <div class="form-group row "
                      data-checkbox
                      data-rule="checkbox"
                      data-default=""
@@ -487,7 +534,7 @@
                      data-name="appearance"></div>
               </td>
               <td>
-                <div class="form-group row " 
+                <div class="form-group row "
                      data-checkbox
                      data-rule="checkbox"
                      data-default=""
@@ -499,7 +546,7 @@
                      data-name="appearance"></div>
               </td>
               <td>
-                <div class="form-group row " 
+                <div class="form-group row "
                      data-checkbox
                      data-rule="checkbox"
                      data-default=""
@@ -511,7 +558,7 @@
                      data-name="appearance"></div>
               </td>
               <td>
-                <div class="form-group row " 
+                <div class="form-group row "
                      data-checkbox
                      data-rule="checkbox"
                      data-default=""
@@ -523,19 +570,7 @@
                      data-name="appearance"></div>
               </td>
               <td>
-                <div class="form-group row " 
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
-              </td>
-              <td>
-                <div class="form-group row " 
+                <div class="form-group row "
                      data-checkbox
                      data-rule="checkbox"
                      data-default=""
@@ -590,8 +625,8 @@
           </div>
         </table>
 
-        <table border="1" style="text-align: center;left: 60px;margin-left:50px" width="1200">
-          <tr height="60" style="mso-height-source:userset;height:21pt" id="r2">
+        <table id="table4" border="1" style="text-align: center;left: 60px;margin-left:50px" width="1200">
+          <tr height="60" style="mso-height-source:userset;height:21pt" id="r3">
             <td height="26" class="x74" width="117" style="height:19.5pt;width:87.75pt;">备注</td>
             <td width="850px"><!--class="x71" width="260" style="width:195pt;"-->
               <div>
@@ -625,11 +660,11 @@
 
 <style>
 
-  .cA01{
+  .cA01 {
     width: 30px;
   }
 
-  .th{
+  .th {
     overflow: hidden;
     height: 100%;
     width: 30px;
@@ -717,12 +752,80 @@
 
 <script>
   /*
-  * @desc：新增行
-  * @param：rows:行数
-  * */
+* @desc：新增行
+* @param：rows:行数
+* */
   function inserRow(rows) {
     alert("测试");
   }
+</script>
+
+<script>
+
+  function submitThisForm() {
+    console.log("submitThisForm==============");
+    var milasUrl = {};//新建对象，用来存储所有数据
+    var subMilasUrlArr = {};//存储每一行数据
+    var tableData = {};
+
+    //table1
+    $("#tableID" + " tbody tr").each(function (trindex, tritem) {
+      tableData[trindex] = new Array();
+      //测定理由
+      $(tritem).find("input").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+
+      //测定目的和测定单位
+      $(tritem).find("radio").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+    });
+
+    //table2
+
+    //table3
+    $("#tableID" + " tbody tr").each(function (trindex, tritem) {//遍历每一行
+      tableData[trindex] = new Array();
+      //有input框的值 存入
+      $(tritem).find("input").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+      //整体尺寸
+      $(tritem).find("select").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+      //整体外观
+      $(tritem).find("checkbox").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+    });
+
+    //table4
+    $("#tableID" + " tbody tr").each(function (trindex, tritem) {
+      tableData[trindex] = new Array();
+      //备注
+      $(tritem).find("textarea").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+      //是否合格
+      $(tritem).find("radio").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+    });
+  }
+
+</script>
+
+<script>
+
 
   var parameterData = [];
   $(function () {
@@ -750,53 +853,6 @@
     })
   });
 
-  function submitThisForm() {
-    var milasUrl = {};//新建对象，用来存储所有数据
-    var subMilasUrlArr = {};//存储每一行数据
-    var tableData = {};
-    $("#tableID" + " tbody tr").each(function (trindex, tritem) {//遍历每一行
-      tableData[trindex] = new Array();
-      //有input框的值 存入
-      $(tritem).find("input").each(function (tdindex, tditem) {
-        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
-        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
-      });
-      //有select的值 存入
-      $(tritem).find("select").each(function (tdindex, tditem) {
-        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
-        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
-      });
-      //有CheckBox的值 存入
-      $(tritem).find("checkbox").each(function (tdindex, tditem) {
-        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
-        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
-      });
-    });
-
-    for (var key in subMilasUrlArr) {
-      milasUrl[key] = subMilasUrlArr[key];//将每一行存入对象
-      console.log("milasUrl[key]===>"+milasUrl[key])
-    }
-    console.log("parameterData===>"+parameterData)
-
-    const submitData = {
-      iMouldsFirstDocId: #(mouldsFirstDoc.iautoid),
-      tableDataList: JSON.stringify(milasUrl),
-      parameterId: JSON.stringify(parameterData)
-    };
-
-    Ajax.post("admin/mouldsfirstrecord/updateTable", submitData, function (res) {
-      if (res.state === "ok") {
-        LayerMsgBox.success(res.msg, 1000, function () {
-          refreshPjaxContainer();
-          parent.LayerMsgBox.closeAll();
-          parent.refreshPjaxContainer();
-        });
-      } else {
-        LayerMsgBox.alert(res.msg, 2);
-      }
-    })
-  }
 
 </script>
 

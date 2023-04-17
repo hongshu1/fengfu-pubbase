@@ -1,26 +1,23 @@
 package cn.rjtech.admin.rcvdocqcformdline;
 
-import com.jfinal.aop.Inject;
-
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.RcvdocqcformdLine;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+
 /**
  * 质量管理-来料检明细列值表 Controller
+ *
  * @ClassName: RcvdocqcformdLineAdminController
  * @author: RJ
  * @date: 2023-04-13 16:53
  */
-@CheckPermission(PermissionKey.RCVDOCQCFORMD_LINE)
+@UnCheck
 @Before(JBoltAdminAuthInterceptor.class)
-@UnCheckIfSystemAdmin
 @Path(value = "/admin/rcvdocqcformdline", viewPath = "/_view/admin/rcvdocqcformdline")
 public class RcvdocqcformdLineAdminController extends BaseAdminController {
 

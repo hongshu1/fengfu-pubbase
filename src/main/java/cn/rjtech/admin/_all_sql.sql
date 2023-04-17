@@ -60,6 +60,10 @@
 #include("warehouseshelves/warehouseshelves.sql")
 #end
 
+#namespace("foreigncurrency")
+#include("foreigncurrency/foreigncurrency.sql")
+#end
+
 #namespace("warehouseposition")
 #include("warehouseposition/warehouseposition.sql")
 #end
@@ -193,10 +197,6 @@
 #include("fitemss97sub/fitemss97sub.sql")
 #end
 
-#namespace("foreigncurrency")
-#include("foreigncurrency/foreigncurrency.sql")
-#end
-
 #namespace("qcform")
 #include("qcform/qcform.sql")
 #end
@@ -267,4 +267,24 @@
 
 #namespace("weekorderd")
 #include("weekorderd/weekorderd.sql")
+#end
+
+#namespace("qcformparam")
+#include("qcformparam/qcformparam.sql")
+#end
+
+#namespace("qcformtableparam")
+#include("qcformtableparam/qcformtableparam.sql")
+#end
+
+#namespace("subcontractsaleorderm")
+#include("subcontractsaleorderm/subcontractsaleorderm.sql")
+#end
+
+#namespace("subcontractsaleorderd")
+#include("subcontractsaleorderd/subcontractsaleorderd.sql")
+#end
+
+#namespace("routing")
+#include("routing/routing.sql")
 #end

@@ -1,7 +1,6 @@
 package cn.rjtech.admin.inventoryrouting;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
@@ -416,8 +415,9 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 		inventoryRoutingConfigService.batchSave(itemroutingconfigList);
 	}
 
-	public InventoryRouting getCurrentRouting(Long iAutoId) {
-		Date date = new Date();
-		return findFirst(selectSql().eq("iInventoryId",iAutoId).ge("dToDate",date).le("dFromDate",date));
-	}
+    public InventoryRouting getCurrentRouting(Long iAutoId) {
+        Date date = new Date();
+        return findFirst(selectSql().eq("iInventoryId",iAutoId).ge("dToDate",date).le("dFromDate",date));
+    }
+
 }
