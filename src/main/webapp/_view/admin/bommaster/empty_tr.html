@@ -23,16 +23,13 @@
         <td>
             <input type="text" hidden data-sync-attr="itemid" id="iBeforeInventoryId${data.index}" data-tips="部品" data-notnull="true" autocomplete="off"  class="form-control" maxlength="40" name="invItemId" value="${data.invitemid}"/>
             <input type="text" hidden data-tips="部品" data-notnull="true" autocomplete="off"  class="form-control" maxlength="40" name="invBomCompareId" value="${data.invbomcompareid}"/>
-            
             <div class="input-group">
-                
+
                 <input type="text"
-                       ###style="width: 75%"
                        id="invItemId${data.index}"
                        data-autocomplete
                        data-notnull="true"
                        data-tips="请选择存货编码"
-                       data-with-clearbtn="false"
                        autocomplete="off"
                        class="form-control"
                        maxlength="40"
@@ -42,12 +39,10 @@
                        data-text-attr="cinvcode"
                        data-column-attr="cinvcode"
                 />
-                
+
                 <div class="input-group-append">
-                    <button style="float: right" onclick="searchBox(${data.index})" id="bomCompare_submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i></button>
+                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#iBeforeInventoryId${data.index}" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex?index=${data.index}&type=0"><i class="fa fa-search"></i></button>
                 </div>
-                
-                <!--            <button><span class="icon jbicon jb-fangdajing"></span></button>-->
             </div>
             <div style="margin-top: 10px"></div>
             <input id="cInvName${data.index}" type="text"   value="${data.cinvname}" data-notnull="true" data-sync-attr="cinvname"    autocomplete="off"  class="form-control" readonly/>
@@ -81,21 +76,28 @@
         <td>
             <input type="text" hidden data-sync-attr="itemid" id="originalInvId${data.index}" data-tips="卷料" value="${data.originalitemid}" data-notnull="true"   autocomplete="off"  class="form-control" maxlength="40" name="originalItemId"/>
             <input type="text" hidden data-tips="卷料" value="${data.originalbomcompareid}" data-notnull="true"   autocomplete="off"  class="form-control" maxlength="40" name="originalBomCompareId"/>
-            <input type="text" id="originalItemId${data.index}"
-                   data-rule="required"
-                   value="${data.originalitemcode}"
-                   data-autocomplete
-                   data-notnull="true"
-                   data-tips="请选择存货编码"
-                   
-                   autocomplete="off"
-                   class="form-control"
-                   maxlength="40"
-                   data-url="admin/bommaster/inventoryAutocomplete"
-                   data-sync-ele="#originalInvId${data.index},#originalInvName${data.index},#originalInvStd${data.index},#originalWeight${data.index}"
-                   data-text-attr="cinvcode"
-                   data-column-attr="cinvcode"
-            />
+            <div class="input-group">
+
+                <input type="text" id="originalItemId${data.index}"
+                       data-rule="required"
+                       value="${data.originalitemcode}"
+                       data-autocomplete
+                       data-notnull="true"
+                       data-tips="请选择存货编码"
+                       autocomplete="off"
+                       class="form-control"
+                       maxlength="40"
+                       data-url="admin/bommaster/inventoryAutocomplete"
+                       data-sync-ele="#originalInvId${data.index},#originalInvName${data.index},#originalInvStd${data.index},#originalWeight${data.index}"
+                       data-text-attr="cinvcode"
+                       data-column-attr="cinvcode"
+                />
+
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#originalInvId${data.index}" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex?index=${data.index}&type=3"><i class="fa fa-search"></i></button>
+                </div>
+
+            </div>
             <div style="margin-top: 10px"></div>
             <input id="originalInvName${data.index}" type="text"   value="${data.originalinvname}" data-notnull="true" data-sync-attr="cinvname"    autocomplete="off"  class="form-control" readonly/>
         </td>
@@ -112,29 +114,33 @@
         <td>
             <input type="text" hidden data-sync-attr="itemid" id="slicingInvId${data.index}"  data-notnull="true"   autocomplete="off"  class="form-control"  maxlength="40" data-tips="分条料" name="slicingInvItemId" value="${data.slicinginvitemid}"/>
             <input type="text" hidden data-notnull="true"   autocomplete="off"  class="form-control"  maxlength="40" data-tips="分条料" name="slicingBomCompareId" value="${data.slicingbomcompareid}"/>
-            <input type="text"
-                   id="slicingItemId${data.index}"
-                   data-autocomplete
-                   data-notnull="true"
-                   data-tips="请选择存货编码"
-                   
-                   value="${data.slicingitemcode}"
-                   autocomplete="off"
-                   class="form-control"
-                   placeholder="请选择存货编码"
-                   maxlength="40"
-                   data-url="admin/bommaster/inventoryAutocomplete"
-                   data-sync-ele="#slicingInvId${data.index},#slicingInvName${data.index},#slicingInvStd${data.index},#slicingWeight${data.index}"
-                   data-text-attr="cinvcode"
-                   data-column-attr="cinvcode"
-            />
+            <div class="input-group">
+                <input type="text"
+                       id="slicingItemId${data.index}"
+                       data-autocomplete
+                       data-notnull="true"
+                       data-tips="请选择存货编码"
+                       value="${data.slicingitemcode}"
+                       autocomplete="off"
+                       class="form-control"
+                       placeholder="请选择存货编码"
+                       maxlength="40"
+                       data-url="admin/bommaster/inventoryAutocomplete"
+                       data-sync-ele="#slicingInvId${data.index},#slicingInvName${data.index},#slicingInvStd${data.index},#slicingWeight${data.index}"
+                       data-text-attr="cinvcode"
+                       data-column-attr="cinvcode"
+                />
+
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#slicingInvId${data.index}" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex?index=${data.index}&type=2"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
             <div style="margin-top: 10px"></div>
             <input id="slicingInvName${data.index}" type="text"   value="${data.slicinginvname}" data-notnull="true" data-sync-attr="cinvname"    autocomplete="off"  class="form-control" readonly/>
         </td>
         <td>
             <input id="slicingInvSup${data.index}" type="text"   value="${data.slicinginvsup}" data-notnull="true"    autocomplete="off"  class="form-control" readonly/>
             <div style="margin-top: 10px"></div>
-
             <input id="slicingInvStd${data.index}" type="text"   value="${data.slicinginvstd}" data-notnull="true" data-sync-attr="cinvstd"  autocomplete="off"  class="form-control" readonly/>
         </td>
         <td>
@@ -145,23 +151,30 @@
         <td>
             <input type="text" hidden data-sync-attr="itemid" id="blankingInvId${data.index}"  data-notnull="true"  autocomplete="off"  class="form-control"  data-tips="片料" maxlength="40" name="blankingItemId" value="${data.blankingitemid}"/>
             <input type="text" hidden data-notnull="true"  autocomplete="off"  class="form-control"  data-tips="片料" maxlength="40" name="blankingBomCompareId" value="${data.blankingbomcompareid}"/>
-            <input type="text"
-                   id="blankingItemId${data.index}"
-                   value="${data.blankingitemcode}"
-                   data-rule="required"
-                   data-autocomplete
-                   data-notnull="true"
-                   data-tips="请选择存货编码"
-                   
-                   autocomplete="off"
-                   class="form-control"
-                   placeholder="请选择存货编码"
-                   maxlength="40"
-                   data-url="admin/bommaster/inventoryAutocomplete"
-                   data-sync-ele="#blankingInvId${data.index},#blankingInvName${data.index},#blankingStd${data.index},#blankingInvName${data.index},#blankingWeight${data.index}"
-                   data-text-attr="cinvcode"
-                   data-column-attr="cinvcode"
-            />
+
+            <div class="input-group">
+                <input type="text"
+                       id="blankingItemId${data.index}"
+                       value="${data.blankingitemcode}"
+                       data-rule="required"
+                       data-autocomplete
+                       data-notnull="true"
+                       data-tips="请选择存货编码"
+                       autocomplete="off"
+                       class="form-control"
+                       placeholder="请选择存货编码"
+                       maxlength="40"
+                       data-url="admin/bommaster/inventoryAutocomplete"
+                       data-sync-ele="#blankingInvId${data.index},#blankingInvName${data.index},#blankingStd${data.index},#blankingInvName${data.index},#blankingWeight${data.index}"
+                       data-text-attr="cinvcode"
+                       data-column-attr="cinvcode"
+                />
+
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#blankingInvId${data.index}" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex?index=${data.index}&type=1"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+
             <div style="margin-top: 10px"></div>
             <input id="blankingInvName${data.index}" type="text" value="${data.blankinginvname}" data-notnull="true" data-sync-attr="cinvname"  autocomplete="off"  class="form-control" disabled/>
         </td>
@@ -183,7 +196,6 @@
                    data-autocomplete
                    data-notnull="true"
                    data-tips="请选择部品加工商"
-                   
                    autocomplete="off"
                    class="form-control"
                    placeholder="请选择部品加工商"
@@ -259,7 +271,7 @@
     <tr>
         <th rowspan="2" data-column="index">序号</th>
         <th  colspan="6" data-width="420">编号</th>
-        <th  rowspan="1" data-width="150">存货编码</th>
+        <th  rowspan="1" data-width="150"  data-column="irsinventoryid">存货编码</th>
         <th  rowspan="1" data-width="150">客户部番</th>
         <th  rowspan="1" data-width="150">UG部番</th>
         <th  rowspan="2" data-width="150">略图</th>
