@@ -194,4 +194,8 @@ public class QcFormAdminController extends BaseAdminController {
 		renderJsonData(service.customerList(kv));
 
 	}
+
+	public void options(){
+		renderJsonData(service.options());
+	}
 }
