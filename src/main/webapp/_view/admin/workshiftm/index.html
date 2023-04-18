@@ -1,153 +1,153 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page" data-key="#(pmkey)">
 
-<div class="jbolt_page_title">
-	<div class="row">
-<!--	<div class="col-md-auto">-->
-<!--	<h1>生产班次</h1>-->
-<!--	</div>-->
-	<div class="col">
-		<form class="form-inline text-left" id="workshiftmForm_#(pageId)"   onsubmit="return false;" method="post">
-			<select class="form-control"
-					data-autoload
-					data-url="admin/enums/boolchar"
-					name="isenabled"
-					data-text="=是否启用="
-					data-value=""
-					data-select=""
-			>
-			</select>
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="班次编码" name="cworkshiftcode" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="班次名称" name="cworkshiftname" value="" />
-			<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-		</form>
-	</div>
-	<div class="col-md-auto">
-	</div>
-	</div>
-</div>
-<div class="jbolt_page_content">
-<!-- JBoltTable的数据模板定义-->
-<textarea class="jb_tpl_box" id="workshiftmRowtpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.iautoid}" >
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.cworkshiftcode}</td>
-<td>${data.cworkshiftname}</td>
-<td>${data.dstarttime}</td>
-<td>${data.dendtime}</td>
-<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/workshiftm/toggleIsenabled/${data.iautoid}"/></td>
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col">
+                <form class="form-inline text-left" id="workshiftmForm_#(pageId)" onsubmit="return false;" method="post">
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/enums/boolchar"
+                            name="isenabled"
+                            data-text="=是否启用="
+                            data-value=""
+                            data-select=""
+                    >
+                    </select>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="班次编码" name="cworkshiftcode" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="班次名称" name="cworkshiftname" value=""/>
+                    
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="jbolt_page_content">
+        
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="workshiftmRowtpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}" >
+        <td>${pageNumber,pageSize,index | rownum}</td>
+        <td>${data.cworkshiftcode}</td>
+        <td>${data.cworkshiftname}</td>
+        <td>${data.dstarttime}</td>
+        <td>${data.dendtime}</td>
+        <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/workshiftm/toggleIsenabled/${data.iautoid}"/></td>
+        <td>${data.cmemo}</td>
+        <!--<td>${data.icreateby}</td>-->
+        <td>${data.ccreatename}</td>
+        <td>${data.dcreatetime}</td>
+        <!--<td>${data.iupdateby}</td>-->
+        <td>${data.cupdatename}</td>
+        <td>${data.dupdatetime}</td>
+        <!--<td>${data.iorgid}</td>-->
+        <!--<td>${data.corgcode}</td>-->
+        <!--<td>${data.corgname}</td>-->
+        <!--<td><img data-switchbtn data-confirm="确定切换是否删除 1未删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/workshiftm/toggleIsdeleted/${data.id}"/></td>-->
+        </tr>
+        {@/each}
+        </textarea>
 
-<td>${data.cmemo}</td>
-<!--<td>${data.icreateby}</td>-->
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
-<!--<td>${data.iupdateby}</td>-->
-<td>${data.cupdatename}</td>
-<td>${data.dupdatetime}</td>
-<!--<td>${data.iorgid}</td>-->
-<!--<td>${data.corgcode}</td>-->
-<!--<td>${data.corgname}</td>-->
-<!--<td><img data-switchbtn data-confirm="确定切换是否删除 1未删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/workshiftm/toggleIsdeleted/${data.id}"/></td>-->
-</tr>
-{@/each}
-</textarea>
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="workshiftm_toolbar_#(pageId)">
+            
+            <div class="row">
+                
+            <div class="col" role="group" aria-label="btn-group">
+                #permission(PermissionKey.WORKSHIFTM_ADD)
+                <button data-openpage="dialog" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-title="新增生产班次" data-url="admin/workshiftm/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+                #end
+                #permission(PermissionKey.WORKSHIFTM_EDIT)
+                <button data-openpage="dialog" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="修改生产班次" data-check-handler="jboltTableGetCheckedId" data-url="admin/workshiftm/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+                #end
+                #permission(PermissionKey.WORKSHIFTM_DELETE)
+                <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/workshiftm/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                #end
+                <!--		<a data-downloadbtn href="admin/workshiftm/dataExport" class="btn btn-outline-success btn-sm" data-form="workshiftmForm_#(pageId)"> 导出</a>-->
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+            
+            #permission(PermissionKey.WORKSHIFTM_EXPORT)
+            <div class="" role="group" aria-label="btn-group">
+                <div class="btn-group dropdown">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+                    <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+                        <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/workshiftm/dataExport"><i class="fa fa-download"></i> 导出选中</button>
+                        <button class="btn dropdown-item" data-downloadbtn data-url="admin/workshiftm/dataExport" data-form="workshiftmForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
+                    </div>
+                </div>
+            </div>
+            #end
+            
+            #permission(PermissionKey.WORKSHIFTM_IMPORT)
+            <div class="" role="group" aria-label="btn-group">
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+                    <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                        <a data-downloadbtn href="/admin/workshiftm/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+                        <div class="j_upload_file_box"
+                             data-name="file"
+                             data-btn-class="btn dropdown-item"
+                             data-placeholder="上传导入"
+                             data-confirm="确认导入数据？"
+                             data-accept="excel"
+                             data-maxsize="20480"
+                             data-handler="uploadFile"
+                             data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                             data-url="/admin/workshiftm/importExcel">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            #end
 
-<!-- 工具条 toolbar -->
-<div class="jbolt_table_toolbar" id="workshiftm_toolbar_#(pageId)">
-	<div class="" role="group" aria-label="btn-group">
-		#permission(PermissionKey.WORKSHIFTM_ADD)
-		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增生产班次"  data-url="admin/workshiftm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		#end
-		#permission(PermissionKey.WORKSHIFTM_EDIT)
-		<button data-openpage="dialog" data-area="100%,100%"  data-handler="refreshJBoltTable" data-title="修改生产班次" data-check-handler="jboltTableGetCheckedId" data-url="admin/workshiftm/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-		#end
-		#permission(PermissionKey.WORKSHIFTM_DELETE)
-		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/workshiftm/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-		#end
-<!--		<a data-downloadbtn href="admin/workshiftm/dataExport" class="btn btn-outline-success btn-sm" data-form="workshiftmForm_#(pageId)"> 导出</a>-->
-		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
-	</div>
-	#permission(PermissionKey.WORKSHIFTM_EXPORT)
-	<div class="" role="group" aria-label="btn-group">
-		<div class="btn-group dropdown">
-			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
-			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
-				<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/workshiftm/dataExport"><i class="fa fa-download"></i> 导出选中</button>
-				<button class="btn dropdown-item" data-downloadbtn data-url="admin/workshiftm/dataExport"  data-form="workshiftmForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
-			</div>
-		</div>
-	</div>
-	#end
-	#permission(PermissionKey.WORKSHIFTM_IMPORT)
-	<div class="btn-group dropdown">
-		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
-		<div class="dropdown-menu" aria-labelledby="importMenuButton">
-			<a data-downloadbtn href="/admin/workshiftm/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
-			<div class="j_upload_file_box"
-				 data-name="file"
-				 data-btn-class="btn dropdown-item"
-				 data-placeholder="上传导入"
-				 data-confirm="确认导入数据？"
-				 data-accept="excel"
-				 data-maxsize="20480"
-				 data-handler="uploadFile"
-				 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-				 data-url="/admin/workshiftm/importExcel">
-			</div>
-		</div>
-	</div>
-	#end
+            </div>
+        </div>
 
-	<div class="clearfix"></div>
-</div>
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-width="auto"
+               data-height="fill"
+               data-ajax="true"
+               data-url="admin/workshiftm/datas?isdeleted=0"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="workshiftmForm_#(pageId)"
+               data-rowtpl="workshiftmRowtpl_#(pageId)"
+               data-page="workshiftmPage_#(pageId)"
+               data-toolbar="workshiftm_toolbar_#(pageId)"
+               data-fixed-columns-left="1,2,3"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150" data-column="cworkshiftcode">班次编码</th>
+                <th data-width="150" data-column="cworkshiftname">班次名称</th>
+                <th data-width="150" data-column="dstarttime">出勤开始时间</th>
+                <th data-width="150" data-column="dstarttime">出勤结束时间</th>
+                <th data-width="150" data-column="isenabled">是否启用</th>
 
+                <th data-width="150" data-column="cmemo">备注</th>
+                <th data-width="150" data-column="ccreatename">创建人</th>
+                <th data-width="150" data-column="dcreatetime">创建时间</th>
+                <th data-width="150" data-column="cupdatename">最后更新人</th>
+                <th data-width="150" data-column="dupdatetime">更新时间</th>
+                <!--	<th data-width="150" data-column="iOrgId">组织ID</th>-->
+                <!--	<th data-width="150" data-column="cOrgCode">组织编码</th>-->
+                <!--	<th data-width="150" data-column="cOrgName">组织名称</th>-->
+                <!--	<th data-width="150" data-column="isDeleted">是否删除</th>-->
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
 
-
-<table class="jbolt_table jbolt_main_table table-center"
-data-jbolttable
-data-height="fill"
-data-ajax="true"
-data-url="admin/workshiftm/datas?isdeleted=0"
-data-column-resize="true"
-data-column-prepend="1:checkbox:true"
-data-conditions-form="workshiftmForm_#(pageId)"
-data-rowtpl="workshiftmRowtpl_#(pageId)"
-data-page="workshiftmPage_#(pageId)"
-data-toolbar="workshiftm_toolbar_#(pageId)"
-
-data-fixed-columns-left="1,2,3"
->
-<thead>
-<tr>
-	<th data-width="60">序号</th>
-	<th data-min-width="150" data-column="cWorkShiftCode">班次编码</th>
-	<th data-width="150" data-column="cWorkShiftName">班次名称</th>
-	<th data-width="150" data-column="dStartTime">出勤开始时间</th>
-	<th data-width="150" data-column="dStartTime">出勤结束时间</th>
-	<th data-width="150" data-column="isEnabled">是否启用</th>
-
-	<th data-width="150" data-column="cMemo">备注</th>
-	<th data-width="150" data-column="cCreateName">创建人</th>
-	<th data-width="150" data-column="dCreateTime">创建时间</th>
-	<th data-width="150" data-column="cUpdateName">最后更新人</th>
-	<th data-width="150" data-column="dUpdateTime">更新时间</th>
-<!--	<th data-width="150" data-column="iOrgId">组织ID</th>-->
-<!--	<th data-width="150" data-column="cOrgCode">组织编码</th>-->
-<!--	<th data-width="150" data-column="cOrgName">组织名称</th>-->
-<!--	<th data-width="150" data-column="isDeleted">是否删除</th>-->
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-
-
-
-</div>
+    </div>
 </div>
 #end
 
