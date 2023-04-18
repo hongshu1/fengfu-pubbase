@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.4.6";
+var jbolt_admin_js_version="6.4.7";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -12565,9 +12565,9 @@ function trChangeToUp(currentTr,prevTr,jboltTable){
 	}
 	if(jboltTable){
 		if(jboltTable.fixedColumnTables){
-
 			setTimeout(function(){
 				jboltTable.table_box.find(".jbolt_table_fixed>.jbolt_table_body>table>tbody>tr.sortActive").removeClass("sortActive");
+				jboltTable.me.processColumnFixed(jboltTable);
 				//如果有横向滚动条 处理一下样式
 				jboltTable.me.refreshFixedColumnHScroll(jboltTable);
 				//处理fixed的滚动位置
