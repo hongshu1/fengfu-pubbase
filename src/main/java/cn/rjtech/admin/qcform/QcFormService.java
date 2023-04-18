@@ -368,6 +368,8 @@ public class QcFormService extends BaseService<QcForm> {
 		return dbTemplate("qcformtableparam.customerList", kv).find();
 	}
 
-
+	public List<Record> options() {
+		return dbTemplate("qcform.AdminDatas", Kv.of("isenabled", "true")).find();
+	}
 
 }

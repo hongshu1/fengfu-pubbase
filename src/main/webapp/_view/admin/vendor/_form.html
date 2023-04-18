@@ -8,7 +8,7 @@
       <select class="form-control"
               name="cvccode"
               data-autoload
-              data-rule="select"
+              data-rule="select2"
               data-text-attr="cvcname"
               data-value-attr="cvccode"
               data-select-type="select2"
@@ -118,7 +118,7 @@
 
     <label class="col-sm-1 col-form-label">币种</label>
     <div class="col-2">
-      <select class="form-control" data-url="admin/dictionary/options?key=ccurrency" name="ccurrency" data-autoload
+      <select class="form-control" data-select-type="select2" data-url="admin/dictionary/options?key=ccurrency" name="ccurrency" data-autoload
               data-text="=请选择=" data-value-attr="sn" data-value="" data-select="#(vendor.cCurrency??)"></select>
     </div>
 
