@@ -89,8 +89,6 @@ function loadDay(parms) {
     parms.activeSheet.addSpan(0, 3, 3, 1, GC.Spread.Sheets.SheetArea.colHeader);
     parms.activeSheet.addSpan(0, 4, 3, 1, GC.Spread.Sheets.SheetArea.colHeader);
     parms.activeSheet.addSpan(0, 5, 3, 1, GC.Spread.Sheets.SheetArea.colHeader);
-  /*  原野丁真 鉴定为 家人们睡洞啊*/
-
     parms.activeSheet.setValue(0, 0, "序号", GC.Spread.Sheets.SheetArea.colHeader);
     parms.activeSheet.setValue(0, 1, "排产层级", GC.Spread.Sheets.SheetArea.colHeader);
     parms.activeSheet.setValue(0, 2, "产线名称", GC.Spread.Sheets.SheetArea.colHeader);
