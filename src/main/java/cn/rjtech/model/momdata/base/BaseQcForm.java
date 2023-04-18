@@ -228,7 +228,7 @@ public abstract class BaseQcForm<M extends BaseQcForm<M>> extends JBoltBaseModel
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
 	 */
-	public M setIsDeleted(int isDeleted) {
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
 		set("isDeleted", isDeleted);
 		return (M)this;
 	}
