@@ -23,6 +23,7 @@
         <td>
             <input type="text" hidden data-sync-attr="itemid" id="iBeforeInventoryId${data.index}" data-tips="部品" data-notnull="true" data-with-clearbtn="true" autocomplete="off"  class="form-control" maxlength="40" name="invItemId" value="${data.invitemid}"/>
             <input type="text" hidden data-tips="部品" data-notnull="true" data-with-clearbtn="true" autocomplete="off"  class="form-control" maxlength="40" name="invBomCompareId" value="${data.invbomcompareid}"/>
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <input type="text"
                    style="width: 75%"
                    id="invItemId${data.index}"
@@ -39,8 +40,9 @@
                    data-text-attr="cinvcode"
                    data-column-attr="cinvcode"
             />
-            <button style="float: right" onclick="searchBox(${data.index})" id="bomCompare_submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 搜索</button>
+            <button style="float: right" onclick="searchBox(${data.index})" id="bomCompare_submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i></button>
 <!--            <button><span class="icon jbicon jb-fangdajing"></span></button>-->
+            </div>
             <div style="margin-top: 10px"></div>
             <input id="cInvName${data.index}" type="text"   value="${data.cinvname}" data-notnull="true" data-sync-attr="cinvname"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
         </td>
