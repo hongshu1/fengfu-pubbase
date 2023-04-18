@@ -276,6 +276,7 @@ public class PermissionKey {
 	/**
 	 * 供应商档案
 	 */
+	public static final String SUPPLIER = "supplier";
 	public static final String VENDORCLASS = "vendorclass";
 	/**
 	 * APS计划排程
@@ -2245,10 +2246,10 @@ public class PermissionKey {
 	 * 手配订单
 	 */
 	public static final String MANUALORDER = "manual_order";
-	
+
 	/**
 	 *	委外销售订单
 	 */
 	public static final String SUBCONTRACTSALEORDERM = "subcontractsaleorderm";
-	
+
 }

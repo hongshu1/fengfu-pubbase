@@ -36,6 +36,7 @@
 #include("customer/customer.sql")
 #end
 
+
 #namespace("workclass")
 #include("workclass/workclass.sql")
 #end
@@ -58,6 +59,10 @@
 
 #namespace("warehouseshelves")
 #include("warehouseshelves/warehouseshelves.sql")
+#end
+
+#namespace("foreigncurrency")
+#include("foreigncurrency/foreigncurrency.sql")
 #end
 
 #namespace("warehouseposition")
@@ -104,9 +109,11 @@
 #include("settlestyle/settlestyle.sql")
 #end
 
+
 #namespace("department")
 #include("department/department.sql")
 #end
+
 
 #namespace("equipment_model")
 #include("equipmentmodel/equipment_model.sql")
@@ -114,10 +121,6 @@
 
 #namespace("uom")
 #include("uom/uom.sql")
-#end
-
-#namespace("inventory")
-#include("inventory/inventory.sql")
 #end
 
 #namespace("inventoryclass")
@@ -193,10 +196,6 @@
 #include("fitemss97sub/fitemss97sub.sql")
 #end
 
-#namespace("foreigncurrency")
-#include("foreigncurrency/foreigncurrency.sql")
-#end
-
 #namespace("qcform")
 #include("qcform/qcform.sql")
 #end
@@ -260,3 +259,14 @@
 #namespace("subcontractsaleorderd")
 #include("subcontractsaleorderd/subcontractsaleorderd.sql")
 #end
+
+
+#namespace("qcformparam")
+#include("qcformparam/qcformparam.sql")
+#end
+
+#namespace("qcformtableparam")
+#include("qcformtableparam/qcformtableparam.sql")
+#end
+
+

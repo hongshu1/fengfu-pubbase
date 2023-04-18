@@ -1,5 +1,19 @@
 package cn.rjtech.admin.qcformitem;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
+import cn.jbolt.core.model.User;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
+import cn.rjtech.base.exception.ParameterException;
+import cn.rjtech.model.momdata.QcForm;
+import cn.rjtech.util.StreamUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -11,13 +25,18 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.QcFormItem;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 质量建模-检验表格项目
  * @ClassName: QcFormItemService
  * @author: 佛山市瑞杰科技有限公司
- * @date: 2023-03-27 17:09
+ * @date: 2023-04-04 16:10
  */
 public class QcFormItemService extends BaseService<QcFormItem> {
 	private final QcFormItem dao=new QcFormItem().dao();
@@ -35,17 +54,12 @@ public class QcFormItemService extends BaseService<QcFormItem> {
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-     * @param isDeleted 删除状态：0. 未删除 1. 已删除
 	 * @return
 	 */
-	public Page<QcFormItem> getAdminDatas(int pageNumber, int pageSize, Boolean isDeleted) {
-	    //创建sql对象
-	    Sql sql = selectSql().page(pageNumber,pageSize);
-	    //sql条件处理
-        sql.eqBooleanToChar("isDeleted",isDeleted);
-        //排序
-        sql.desc("iAutoId");
-		return paginate(sql);
+	public Page<Record> getAdminDatas(int pageSize, int pageNumber, Kv para) {
+		System.out.println("====="+para);
+		return dbTemplate(dao()._getDataSourceConfigName(), "qcformitem.formItemList", para).paginate(pageNumber, pageSize);
+
 	}
 
 	/**
@@ -64,6 +78,12 @@ public class QcFormItemService extends BaseService<QcFormItem> {
 			//addSaveSystemLog(qcFormItem.getIAutoId(), JBoltUserKit.getUserId(), qcFormItem.getName());
 		}
 		return ret(success);
+	}
+
+	public int ISeq(QcFormItem qcFormItem) {
+		int success=1;
+		qcFormItem.setISeq(getNextSortRank());
+		return success;
 	}
 
 	/**
@@ -126,11 +146,111 @@ public class QcFormItemService extends BaseService<QcFormItem> {
 		return null;
 	}
 
-	/**
-	 * 行数据
-	 */
-	public List<Record> formItemList(Kv kv) {
-		return dbTemplate("qcformitem.formItemList", kv).find();
+	public Page<Record> qcitemlist(int pageNumber, int pageSize, Okv kv) {
+		return dbTemplate("qcformitem.qcitemlist", kv).paginate(pageNumber, pageSize);
 	}
+
+
+	/**
+	 * 上移
+	 * @param
+	 * @param iautoid
+	 * @return
+	 */
+	public Ret up(Long iautoid) {
+		QcFormItem qcFormItem=findById(iautoid);
+		if(qcFormItem==null){
+			return fail("数据不存在或已被删除");
+		}
+		Integer rank=qcFormItem.getISeq();
+		if(rank==null||rank<=0){
+			return fail("顺序需要初始化");
+		}
+		if(rank==1){
+			return fail("已经是第一个");
+		}
+		int isep = rank-1;
+		QcFormItem upQcFormItem = findFirst("SELECT top 1 * FROM Bd_QcFormItem WHERE 1 = 1 and iseq = '"+isep+"' AND isDeleted = 0  ORDER BY iAutoId ASC");
+
+//		QcFormItem upQcFormItem=findFirst(Okv.by("iseq", rank-1));
+		if(upQcFormItem==null){
+			return fail("顺序需要初始化");
+		}
+		upQcFormItem.setISeq(rank);
+		qcFormItem.setISeq(rank-1);
+
+		upQcFormItem.update();
+		qcFormItem.update();
+		return SUCCESS;
+	}
+
+
+
+	/**
+	 * 下移
+	 * @param iautoid
+	 * @return
+	 */
+	public Ret down(Long iautoid) {
+		QcFormItem qcFormItem=findById(iautoid);
+		if(qcFormItem==null){
+			return fail("数据不存在或已被删除");
+		}
+		Integer rank=qcFormItem.getISeq();
+		Long iQcFormId =qcFormItem.getIQcFormId();
+		if(rank==null||rank<=0){
+			return fail("顺序需要初始化");
+		}
+		QcFormItem max = findFirst("SELECT max(iSeq) as iseq FROM Bd_QcFormItem WHERE iQcFormId = '"+iQcFormId+"' AND isDeleted = 0");
+		Integer maxiItemParamSeq = max.getInt("iseq");
+		if(rank==maxiItemParamSeq){
+			return fail("已经是最后一个");
+		}
+		int isep = rank+1;
+		QcFormItem upQcFormItem = findFirst("SELECT top 1 * FROM Bd_QcFormItem WHERE 1 = 1 and iseq = '"+isep+"' AND isDeleted = 0  ORDER BY iAutoId ASC");
+
+		if(upQcFormItem==null){
+			return fail("顺序需要初始化");
+		}
+		upQcFormItem.setISeq(rank);
+		qcFormItem.setISeq(rank+1);
+
+		upQcFormItem.update();
+		qcFormItem.update();
+		return SUCCESS;
+	}
+
+
+
+	/**
+	 * 删除
+	 * @param iautoid
+	 * @return
+	 */
+	public Ret delete(Long iautoid) {
+		QcFormItem qcFormItem=findById(iautoid);
+			//重新设置其他剩余顺序
+			Long iqcformid = qcFormItem.getIQcFormId();
+			int iSeq = qcFormItem.getISeq();
+			//软删除isDeleted
+			deleteByTopnavId(iautoid);
+
+			update("update Bd_QcFormItem set ISeq = ISeq - 1 WHERE iQcFormId ='"+iqcformid+"' AND iSeq >= 0 AND iSeq >= '"+iSeq+"' AND isDeleted = 0 ");
+
+		return SUCCESS;
+	}
+
+
+	/**
+	 * 删除一个顶部导航下的菜单配置
+	 * @param iAutoId
+	 */
+	public void deleteByTopnavId(Long iAutoId) {
+		if(isOk(iAutoId)) {
+//			deleteBy(Okv.by("iautoid", iAutoId));
+			update("update Bd_QcFormItem set isDeleted =  1 WHERE iAutoId ='"+iAutoId+"'");
+		}
+	}
+
 
 }
