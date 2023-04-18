@@ -24,15 +24,14 @@
             <input type="text" hidden data-sync-attr="itemid" id="iBeforeInventoryId${data.index}" data-tips="部品" data-notnull="true" data-with-clearbtn="true" autocomplete="off"  class="form-control" maxlength="40" name="invItemId" value="${data.invitemid}"/>
             <input type="text" hidden data-tips="部品" data-notnull="true" data-with-clearbtn="true" autocomplete="off"  class="form-control" maxlength="40" name="invBomCompareId" value="${data.invbomcompareid}"/>
             <input type="text"
+                   style="width: 75%"
                    id="invItemId${data.index}"
-                   data-rule="required"
                    data-autocomplete
                    data-notnull="true"
                    data-tips="请选择存货编码"
                    data-with-clearbtn="true"
                    autocomplete="off"
                    class="form-control"
-                   placeholder="请选择存货编码"
                    maxlength="40"
                    value="${data.invitemcode}"
                    data-url="admin/bommaster/inventoryAutocomplete"
@@ -40,6 +39,8 @@
                    data-text-attr="cinvcode"
                    data-column-attr="cinvcode"
             />
+            <button style="float: right" onclick="searchBox(${data.index})" id="bomCompare_submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 搜索</button>
+<!--            <button><span class="icon jbicon jb-fangdajing"></span></button>-->
             <div style="margin-top: 10px"></div>
             <input id="cInvName${data.index}" type="text"   value="${data.cinvname}" data-notnull="true" data-sync-attr="cinvname"   data-with-clearbtn="true" autocomplete="off"  class="form-control" readonly/>
         </td>
@@ -81,7 +82,6 @@
                    data-with-clearbtn="true"
                    autocomplete="off"
                    class="form-control"
-                   placeholder="请选择存货编码"
                    maxlength="40"
                    data-url="admin/bommaster/inventoryAutocomplete"
                    data-sync-ele="#originalInvId${data.index},#originalInvName${data.index},#originalInvStd${data.index},#originalWeight${data.index}"
