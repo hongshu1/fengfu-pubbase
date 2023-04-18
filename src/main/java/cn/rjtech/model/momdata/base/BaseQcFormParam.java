@@ -109,8 +109,7 @@ public abstract class BaseQcFormParam<M extends BaseQcFormParam<M>> extends JBol
 
 	/**
 	 * 删除状态: 0. 未删除 1. 已删除
-     * @param isDeleted
-     */
+	 */
 	public M setIsDeleted(int isDeleted) {
 		set("isDeleted", isDeleted);
 		return (M)this;

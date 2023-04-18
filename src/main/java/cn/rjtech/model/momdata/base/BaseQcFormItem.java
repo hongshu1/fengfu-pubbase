@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -24,7 +23,7 @@ public abstract class BaseQcFormItem<M extends BaseQcFormItem<M>> extends JBoltB
 	/**
 	 * 主键ID
 	 */
-	public M setIAutoId(Long iAutoId) {
+	public M setIAutoId(java.lang.Long iAutoId) {
 		set("iAutoId", iAutoId);
 		return (M)this;
 	}
@@ -34,14 +33,14 @@ public abstract class BaseQcFormItem<M extends BaseQcFormItem<M>> extends JBoltB
 	 */
 	@JBoltField(name="iautoid" ,columnName="iAutoId",type="Long", remark="主键ID", required=true, maxLength=19, fixed=0, order=1)
 	@JSONField(name = "iautoid", serializeUsing = ToStringSerializer.class)
-	public Long getIAutoId() {
+	public java.lang.Long getIAutoId() {
 		return getLong("iAutoId");
 	}
 
 	/**
 	 * 检验表格ID
 	 */
-	public M setIQcFormId(Long iQcFormId) {
+	public M setIQcFormId(java.lang.Long iQcFormId) {
 		set("iQcFormId", iQcFormId);
 		return (M)this;
 	}
@@ -51,14 +50,14 @@ public abstract class BaseQcFormItem<M extends BaseQcFormItem<M>> extends JBoltB
 	 */
 	@JBoltField(name="iqcformid" ,columnName="iQcFormId",type="Long", remark="检验表格ID", required=true, maxLength=19, fixed=0, order=2)
 	@JSONField(name = "iqcformid", serializeUsing = ToStringSerializer.class)
-	public Long getIQcFormId() {
+	public java.lang.Long getIQcFormId() {
 		return getLong("iQcFormId");
 	}
 
 	/**
 	 * 检验项目ID
 	 */
-	public M setIQcItemId(Long iQcItemId) {
+	public M setIQcItemId(java.lang.Long iQcItemId) {
 		set("iQcItemId", iQcItemId);
 		return (M)this;
 	}
@@ -68,14 +67,14 @@ public abstract class BaseQcFormItem<M extends BaseQcFormItem<M>> extends JBoltB
 	 */
 	@JBoltField(name="iqcitemid" ,columnName="iQcItemId",type="Long", remark="检验项目ID", required=true, maxLength=19, fixed=0, order=3)
 	@JSONField(name = "iqcitemid", serializeUsing = ToStringSerializer.class)
-	public Long getIQcItemId() {
+	public java.lang.Long getIQcItemId() {
 		return getLong("iQcItemId");
 	}
 
 	/**
 	 * 项次
 	 */
-	public M setISeq(Integer iSeq) {
+	public M setISeq(java.lang.Integer iSeq) {
 		set("iSeq", iSeq);
 		return (M)this;
 	}
@@ -85,13 +84,12 @@ public abstract class BaseQcFormItem<M extends BaseQcFormItem<M>> extends JBoltB
 	 */
 	@JBoltField(name="iseq" ,columnName="iSeq",type="Integer", remark="项次", required=true, maxLength=10, fixed=0, order=4)
 	@JSONField(name = "iseq")
-	public Integer getISeq() {
+	public java.lang.Integer getISeq() {
 		return getInt("iSeq");
 	}
 
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
-	 * @param isDeleted
 	 */
 	public M setIsDeleted(int isDeleted) {
 		set("isDeleted", isDeleted);
@@ -103,7 +101,7 @@ public abstract class BaseQcFormItem<M extends BaseQcFormItem<M>> extends JBoltB
 	 */
 	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=5)
 	@JSONField(name = "isdeleted")
-	public Boolean getIsDeleted() {
+	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
 	}
 

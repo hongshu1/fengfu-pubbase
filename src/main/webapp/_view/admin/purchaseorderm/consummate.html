@@ -1,0 +1,51 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>订单作成</h1></div>
+        </div>
+        <div>
+            <form class="form-inline" id="PurchaseOrderM_form_#(pageId)">
+                <span>开始日期</span>
+                <input type="date" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder=""
+                       maxlength="40" name="begindate" data-rule="required"/>
+                <span>结束日期</span>
+                <input type="date" data-with-clearbtn="true" autocomplete="off"
+                       class="form-control" placeholder=""
+                       maxlength="40" name="enddate" data-rule="required"/>
+                &nbsp;
+                &nbsp;
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                       placeholder="请输入供应商名称" maxlength="40" name="ivendorid" data-rule="required"/>
+                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
+                <button type="reset" class="btn btn-outline-secondary"><i class="fa text-reset"></i> 重置</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+        <div class="jbolt_table_toolbar" id="PurchaseOrderM_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            </div>
+        </div>
+    </div>
+
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    function submitThisForm() {
+        var $form = $('#PurchaseOrderM_form_#(pageId)');
+        if (FormChecker.check($form)) {
+            var formData = formToJson($form);
+            console.log(JSON.stringify(formData));
+            location.href = '/admin/purchaseorderm/add? =' + formData.ivendorid + '&begindate=' + formData.begindate + '&enddate=' + formData.enddate + '&_jb_rqtype_=dialog';
+        }
+
+
+    }
+</script>
+#end

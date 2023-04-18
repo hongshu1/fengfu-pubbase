@@ -1,0 +1,102 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>采购/委外订单-采购订单明细数量</h1></div>
+            <div class="col">
+            </div>
+            <div class="col-sm-auto text-right">
+                <button onclick="jboltTableToggleHeadbox(this)" class="btn btn-outline-primary btn-sm"><i
+                        class="fa fa-filter"></i> 筛选条件
+                </button>
+                <button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/purchaseorderdqty/add"
+                        data-handler="jboltTablePageToFirst" data-area="800,600" tooltip
+                        data-title="新增采购/委外订单-采购订单明细数量"><i class="fa fa-plus"></i></button>
+                <button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip
+                        data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="PurchaseorderdQty_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iPurchaseOrderDid}</td>
+<td>${data.iYear}</td>
+<td>${data.iMonth}</td>
+<td>${data.iDay}</td>
+<td>${data.iQty}</td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/purchaseorderdqty/edit/${data.id}" data-area="800,600" data-title="查看采购/委外订单-采购订单明细数量"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/purchaseorderdqty/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑采购/委外订单-采购订单明细数量"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/purchaseorderdqty/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+        <div class="jbolt_table_toolbar" id="PurchaseorderdQty_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst"
+                        id="toolbar_addBtn_#(pageId)" data-title="新增采购/委外订单-采购订单明细数量"
+                        data-url="admin/purchaseorderdqty/add" class="btn btn-outline-primary"><i
+                        class="fa fa-plus"></i> 新增
+                </button>
+                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable"
+                        id="toolbar_editBtn_#(pageId)" data-title="编辑采购/委外订单-采购订单明细数量"
+                        data-check-handler="jboltTableGetCheckedId" data-url="admin/purchaseorderdqty/edit/"
+                        class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑
+                </button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                        id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseorderdqty/deleteByIds?ids="
+                        data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
+                </button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
+                </button>
+            </div>
+
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="PurchaseorderdQty_form_#(pageId)"
+               data-url="admin/purchaseorderdqty/datas"
+               data-rowtpl="PurchaseorderdQty_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="PurchaseorderdQty_page"
+               data-toolbar="PurchaseorderdQty_toolbar_#(pageId)"
+               data-column-prepend="1:checkbox:true:false:false"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="100" data-column="iAutoId">主键ID</th>
+                <th data-width="100" data-column="iPurchaseOrderDid">采购订单明细ID</th>
+                <th data-width="100" data-column="iYear">年份</th>
+                <th data-width="100" data-column="iMonth">月</th>
+                <th data-width="150" data-column="iDay">日</th>
+                <th data-width="100" data-column="iQty">数量</th>
+                <th data-width="80">操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
