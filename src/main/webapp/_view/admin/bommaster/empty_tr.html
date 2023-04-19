@@ -71,7 +71,7 @@
             <input type="text" autocomplete="off" value="${data.thickness}" class="form-control" disabled>
         </td>
         <td>
-            <input type="text"   value="${data.materialtype}" data-notnull="true"    autocomplete="off"  class="form-control" readonly/>
+            <input type="text" id="materialtype${data.index}" value="${data.materialtype}" data-notnull="true"  autocomplete="off"  class="form-control" readonly/>
         </td>
         <td>
             <input type="text" hidden data-sync-attr="itemid" id="originalInvId${data.index}" data-tips="卷料" value="${data.originalitemid}" data-notnull="true"   autocomplete="off"  class="form-control" maxlength="40" name="originalItemId"/>
@@ -192,6 +192,7 @@
             <input type="text" hidden autocomplete="off"  class="form-control" id="iVendorId${data.index}" data-sync-attr="cvenid" name="iVendorId" value="${data.ivendorid}">
 
             <input type="text"
+                   id="iVendorName${data.index}"
                    value="${data.blankingitemcode}"
                    data-autocomplete
                    data-notnull="true"

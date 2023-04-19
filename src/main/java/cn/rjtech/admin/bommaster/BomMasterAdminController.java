@@ -7,6 +7,7 @@ import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
+import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -14,6 +15,8 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.BomMaster;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.io.IOException;
@@ -127,7 +130,9 @@ public class BomMasterAdminController extends BaseAdminController {
 	 * 默认给1-100个数据
 	 */
 	public void inventoryAutocomplete(){
-		renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), 200, getKv()));
+		Integer pageSize = getInt("pageSize", 100);
+		Page<Record> recordPage = inventoryChangeService.inventoryAutocomplete(getPageNumber(), pageSize, getKv());
+		renderJsonData(recordPage.getList());
 	}
 	
 	public void submitForm(@Para(value = "formJsonData") String formJsonData,
@@ -233,8 +238,18 @@ public class BomMasterAdminController extends BaseAdminController {
 		}else if (StrUtil.isNotBlank(blankingItemId)){
 			invId= blankingItemId;
 		}
-		set("invId", invId);
+		if (StrUtil.isNotBlank(invId)){
+			Inventory inventory = inventoryService.findById(invId);
+			set("cInvCode", inventory.getCInvCode());
+		}
 		keepPara();
 		render("inventory_dialog_index.html");
+	}
+	
+	/**
+	 * 默认给1-100个数据
+	 */
+	public void inventoryPage(){
+		renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
 	}
 }
