@@ -802,9 +802,9 @@
       cmeasurepurpose:cmeasurepurpose,
       cmeasureunit:cmeasureunit,
       cmemo:cmemo,
-      judge:judge
+      isok:isok
     }
-    Ajax.post("admin/stockoutqcformm/updateTable", submitDatas, function (res) {
+    Ajax.post("admin/stockoutqcformm/editTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {
           // refreshPjaxContainer();

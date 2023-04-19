@@ -12,6 +12,8 @@ import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.config.ExtendUploadFolder;
+import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
+import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -23,6 +25,7 @@ import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
@@ -44,7 +47,11 @@ import cn.rjtech.model.momdata.RcvDocQcFormM;
 public class RcvDocQcFormMAdminController extends BaseAdminController {
 
     @Inject
-    private RcvDocQcFormMService service;
+    private RcvDocQcFormMService     service;              //质量管理-来料检验表
+    @Inject
+    private RcvDocQcFormDService     rcvDocQcFormDService; //质量管理-来料检单行配置表
+    @Inject
+    private RcvdocqcformdLineService rcvdocqcformdLineService; //质量管理-来料检明细列值表
 
     /**
      * 首页
@@ -57,26 +64,8 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.pageList(getKv()));
-//		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isCompleted"), getBoolean("isCpkSigned"), getBoolean("isOk"), getBoolean("IsDeleted")));
-    }
-
-    /**
-     * 检验
-     */
-    public void checkout() {
-        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
-        set("rcvDocQcFormM", rcvDocQcFormM);
-        render("checkout.html");
-    }
-
-    /**
-     * 查看
-     */
-    public void onlysee() {
-        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
-        set("rcvDocQcFormM", rcvDocQcFormM);
-        render("onlysee.html");
+        Page<Record> recordPage = service.pageList(getKv());
+        renderJsonData(recordPage);
     }
 
     /**
@@ -156,18 +145,42 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
     }
 
-    /*
-     * 保存或编辑检验表
-     * */
-    public void updateTable(JBoltPara JboltPara) {
-        renderJson(service.updateEditTable(JboltPara));
+    /**
+     * 跳转到检验页面
+     */
+    public void checkout() {
+        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
+        set("rcvDocQcFormM", rcvDocQcFormM);
+        render("checkout.html");
     }
 
+    /**
+     * 只能查看，不能编辑
+     */
+    public void onlysee() {
+        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
+        set("rcvDocQcFormM", rcvDocQcFormM);
+        render("onlysee.html");
+    }
+
+    /*
+     * 点击编辑
+     * */
+    public void editTable(JBoltPara JboltPara) {
+        renderJson(service.editTable(JboltPara));
+    }
+
+    /*
+     * 点击检验
+     * */
+    public void checkoutTable(JBoltPara JboltPara){
+        renderJson(service.editTable(JboltPara));
+    }
 
     /*
      * 生成
      * */
-    public void createchecklist() {
-        //todo 生成检查表
+    public void createTable(JBoltPara jBoltPara) {
+        renderJson(service.createTable(jBoltPara));
     }
 }
