@@ -41,6 +41,10 @@
         return editableTableOptions;
     }
 
+    function searchBox(index) {
+        console.log(index);
+    }
+
     function insertDataRow(data) {
         var table=getJBoltTable("bomMaster_#(pageId)");
         if(isOk(table)){
@@ -553,6 +557,12 @@
         $("#dDcDate2").val(head.ddcdate2);
         $("#cUstomerName").val(head.customername);
         $("#cCommonPartMemo").val(head.ccommonpartmemo);
+    }
+
+    function setChooseDialogSelectResult(data,index, type){
+        console.log("data:"+data)
+        console.log("index:"+index)
+        console.log("type:"+type)
     }
 
 </script>

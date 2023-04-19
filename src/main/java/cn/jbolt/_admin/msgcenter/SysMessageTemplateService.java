@@ -195,7 +195,7 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
             Map<String, String> chanceDict = addDictinary(listByTypeKeyChance);
 
             List<SysMessageTemplate> pageList = page.getList();
-            List<SysMessageTemplate> newList = new ArrayList<>();
+
 
             for (int i = 0; i < pageList.size(); i++) {
                 SysMessageTemplate sysMessageTemplate = pageList.get(i);
@@ -207,7 +207,7 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
                 if (chanceKey!=null &&chanceDict.get(chanceKey)!= null){
                     sysMessageTemplate.setMessageChanceValue(chanceDict.get(chanceKey));
                 }
-                newList.add(sysMessageTemplate);
+
             }
 
         }

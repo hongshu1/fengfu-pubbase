@@ -4,16 +4,8 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
     <div class="jbolt_page_title">
         <div class="row">
-            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>采购订单管理</h1></div>
-
             <div class="col">
-
-            </div>
-
-            <div>
-                <form class="form-inline" id="PurchaseOrderM_form_#(pageId)">
-                    &nbsp;
-                    &nbsp;
+                <form class="form-inline  text-left" id="PurchaseOrderM_form_#(pageId)">
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
                            placeholder="请输入订单编号" maxlength="40" name="cOrderNo"/>
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
@@ -26,14 +18,11 @@
                             data-value=""
                             data-value-attr="sn">
                     </select>
-                    &nbsp;
-                    &nbsp;
-                    <span>开始日期</span>
-                    <input type="date" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder=""
-                           maxlength="40" name="iAuditStatus"/>
-                    <span>结束日期</span>
-                    <input type="date" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder=""
-                           maxlength="40" name="iAuditStatus"/>
+                    <span>到货日期：</span>
+                    <input id="dEnableDate" type="text" placeholder="开始日期" class="form-control" data-date name="dEnableDate" value="">
+                        至
+                    <input id="dDisableDate" type="text" placeholder="结束日期" class="form-control" data-done-handler="checkme" data-date name="dDisableDate" value="">
+
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
                     <button type="reset" class="btn btn-outline-secondary"><i class="fa text-reset"></i> 重置</button>
                 </form>

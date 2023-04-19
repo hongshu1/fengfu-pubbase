@@ -1,5 +1,6 @@
 package cn.rjtech.admin.bommaster;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.rjtech.admin.bomcompare.BomCompareService;
 import cn.rjtech.admin.customer.CustomerService;
@@ -208,5 +209,32 @@ public class BomMasterAdminController extends BaseAdminController {
 	
 	public void findVendorList(){
 		renderJsonData(customerService.findVendorList(getKv()));
+	}
+	
+	public void inventoryDialogIndex(@Para(value = "index") String index, @Para(value = "type") String type){
+		ValidationUtils.notBlank(index, JBoltMsg.PARAM_ERROR);
+		ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
+		// 部品存货id
+		String invItemId = get("invItemId");
+		// 原材料存货id
+		String originalItemId = get("originalItemId");
+		// 分条料存货id
+		String slicingInvItemId = get("slicingInvItemId");
+		// 落料存货id
+		String blankingItemId = get("blankingItemId");
+		
+		String invId = null;
+		if (StrUtil.isNotBlank(invItemId)){
+			invId= invItemId;
+		}else if (StrUtil.isNotBlank(originalItemId)){
+			invId= originalItemId;
+		}else if (StrUtil.isNotBlank(slicingInvItemId)){
+			invId= slicingInvItemId;
+		}else if (StrUtil.isNotBlank(blankingItemId)){
+			invId= blankingItemId;
+		}
+		set("invId", invId);
+		keepPara();
+		render("inventory_dialog_index.html");
 	}
 }
