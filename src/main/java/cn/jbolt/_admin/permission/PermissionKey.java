@@ -1725,4 +1725,19 @@ public class PermissionKey {
 	 * 平板登录日志
 	 */
     public static final String PADLOGINLOG = "pad_loginlog";
+
+	/**
+	 * 审批管理
+	 */
+	public static final String APPROVAL_CONFIG = "approval_config";
+
+	/**
+	 * 审批/审核配置
+	 */
+	public static final String AUDIT_CONFIG = "audit_config";
+
+	/**
+	 * 审批流配置
+	 */
+	public static final String APPROVAL_M = "approval_m";
 }
