@@ -9,3 +9,21 @@ from co_monthorderd aod
 		and aom.iautoid = #para(imonthordermid)
 	#end
 #end
+
+#sql("cusOrderSumIncCusPlan")
+SELECT
+	cmd.*,cmm.iMonth
+FROM
+	Co_MonthOrderD cmd
+	LEFT JOIN Co_MonthOrderM cmm ON cmm.iAutoId = cmd.iMonthOrderMid
+	AND cmm.IsDeleted= 0
+WHERE
+	cmd.IsDeleted = 0
+	AND cmm.iAuditStatus = 2
+	#if(inventoryIdList)
+		AND cmd.iInventoryId IN (#(inventoryIdList))
+	#end
+	#if(iYear)
+		AND cmm.iYear = #para(iYear)
+	#end
+#end

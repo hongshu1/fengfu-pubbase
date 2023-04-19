@@ -175,4 +175,7 @@ public class MonthorderdService extends BaseService<Monthorderd> {
 		return dbTemplate("monthorderd.findEditTableDatas",para).find();
 	}
 
+    public List<Monthorderd> findByMid(Long iAutoId) {
+		return find(selectSql().eq("iMonthOrderMid", iAutoId));
+    }
 }

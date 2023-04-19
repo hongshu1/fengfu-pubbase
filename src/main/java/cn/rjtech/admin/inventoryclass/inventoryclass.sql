@@ -35,6 +35,9 @@ WHERE 1=1
 #if(sqlids)
  AND i.iAutoId in (#(sqlids))
 #end
+#if(invId)
+AND i.iAutoId = #para(invId)
+#end
 #end
 
 #sql("workRegions")

@@ -112,5 +112,12 @@ public class AnnualOrderMAdminController extends BaseAdminController {
         render("add.html");
     }
 
+    /**
+     * 审批
+     */
+     public void approve() {
+         renderJson(service.approve(getLong(0)));
+     }
+
 
 }

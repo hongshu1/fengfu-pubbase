@@ -1,5 +1,6 @@
 package cn.rjtech.admin.monthorderm;
 
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.TableMapping;
@@ -34,6 +35,8 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	private final Monthorderm dao = new Monthorderm().dao();
 	@Inject
 	private MonthorderdService monthorderdService;
+	@Inject
+	private CusOrderSumService cusOrderSumService;
 	@Override
 	protected Monthorderm dao() {
 		return dao;
@@ -260,5 +263,27 @@ public class MonthordermService extends BaseService<Monthorderm> {
     	for (Object id : ids) {
     		monthorderdService.deleteById(id);
 		}
+    }
+
+	/**
+	 * 审批
+	 * @param id
+	 * @return
+	 */
+	public Ret approve(Long id) {
+		Monthorderm monthorderm = findById(id);
+
+		//2. 审核通过
+		monthorderm.setIAuditStatus(2);
+		// 3. 已审批
+		monthorderm.setIOrderStatus(3);
+		monthorderm.setIUpdateBy(JBoltUserKit.getUserId());
+		monthorderm.setCUpdateName(JBoltUserKit.getUserName());
+		monthorderm.setDUpdateTime(new Date());
+		monthorderm.update();
+
+		//审批通过生成客户计划汇总
+		return cusOrderSumService.approveByMonth(monthorderm);
+
     }
 }
