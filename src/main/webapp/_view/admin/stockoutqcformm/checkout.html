@@ -2,9 +2,9 @@
 #define main()
 <div class="jbolt_page">
   <div class="jbolt_page_content">
-    <form onsubmit="return false;" id="rcvDocQcFormMForm_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
-      #if(rcvDocQcFormM.iAutoId??)
-      <input type="hidden" name="rcvDocQcFormM.iAutoId" value="#(rcvDocQcFormM.iAutoId??)" />
+    <form onsubmit="return false;" id="stockoutqcformmForm_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
+      #if(stockoutqcformm.iAutoId??)
+      <input type="hidden" name="stockoutqcformm.iAutoId" value="#(stockoutqcformm.iAutoId??)" />
       #end
       <div>
         <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
@@ -77,7 +77,7 @@
                         <div class="col-sm-auto">
                           <!--class="j_img_uploder"-->
                           <div
-                              data-url="admin/rcvdocqcformm/uploadImage"
+                              data-url="admin/stockoutqcformm/uploadImage"
                               data-limit="10"
                               data-align="left"
                               data-multi="true"
@@ -124,7 +124,7 @@
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
             <img data-switchbtn data-value="${data.isCpkSigned}" data-handler="refreshJBoltTable"
-                 data-url="admin/rcvdocqcformm/toggleIsCpkSigned/${data.iautoid}" style="margin-left: 50px;"/>
+                 data-url="admin/stockoutqcformm/toggleIsCpkSigned/${data.iautoid}" style="margin-left: 50px;"/>
             <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
           </div>
         </table>
@@ -634,8 +634,8 @@
                    id="isok"
                    data-radio
                    data-rule="radio"
-                   data-default=""
                    data-label="判定是否合格："
+                   data-default=""
                    data-url="admin/dictionary/options?key=isok"
                    data-value-attr="sn"
                    data-text-attr="isok"
@@ -804,7 +804,7 @@
       cmemo:cmemo,
       judge:judge
     }
-    Ajax.post("admin/rcvdocqcformm/updateTable", submitDatas, function (res) {
+    Ajax.post("admin/stockoutqcformm/updateTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {
           // refreshPjaxContainer();
@@ -823,13 +823,13 @@
 
   var parameterData = [];
   $(function () {
-    Ajax.get("admin/rcvdocqcformm/list", function (res) {
+    Ajax.get("admin/stockoutqcformm/list", function (res) {
       for (let i = 0; i < res.data.length; i++) {
         console.log(res.data[i].iautoid)
         parameterData.push(res.data[i].iautoid);
       }
     });
-    Ajax.get("admin/rcvdocqcformm/datas?iautoid=#(data.iautoid)", function (res) {
+    Ajax.get("admin/stockoutqcformm/datas?iautoid=#(data.iautoid)", function (res) {
       console.log(res.data[0].cA01)
       //根据某列进行赋值
       for (let i = 0; i < res.data.length - 11; i++) {

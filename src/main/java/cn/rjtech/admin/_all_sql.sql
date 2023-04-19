@@ -288,3 +288,7 @@
 #namespace("routing")
 #include("routing/routing.sql")
 #end
+
+#namespace("stockoutqcformm")
+#include("stockoutqcformm/stockoutqcformm.sql")
+#end

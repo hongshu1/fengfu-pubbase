@@ -1725,4 +1725,12 @@ public class PermissionKey {
 	 * 平板登录日志
 	 */
     public static final String PADLOGINLOG = "pad_loginlog";
+	/**
+	 * 出库检
+	 */
+	public static final String STOCKOUTQCFORMM = "stockoutqcformm";
+	/**
+	 * 在库检
+	 */
+	public static final String INSTOCKQCFORMM = "instockqcformm";
 }

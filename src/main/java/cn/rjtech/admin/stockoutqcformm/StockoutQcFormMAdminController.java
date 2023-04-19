@@ -1,6 +1,11 @@
 package cn.rjtech.admin.stockoutqcformm;
 
 import com.jfinal.aop.Inject;
+
+import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.para.JBoltPara;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -16,6 +21,8 @@ import cn.rjtech.model.momdata.StockoutQcFormM;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-12 19:18
  */
+@CheckPermission(PermissionKey.STOCKOUTQCFORMM)
+@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/stockoutqcformm", viewPath = "/_view/admin/stockoutqcformm")
 public class StockoutQcFormMAdminController extends BaseAdminController {
@@ -33,7 +40,7 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize()));
+		renderJsonData(service.pageList(getKv()));
 	}
 
    /**
@@ -84,5 +91,44 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 		renderJson(service.deleteById(getLong(0)));
 	}
 
+	/**
+	 * 检验
+	 */
+	public void checkout() {
+		StockoutQcFormM stockoutQcFormM=service.findById(getLong(0));
+		set("stockoutQcFormM",stockoutQcFormM);
+		render("checkout.html");
+	}
 
+	/**
+	 * 查看
+	 */
+	public void onlysee() {
+		StockoutQcFormM stockoutQcFormM=service.findById(getLong(0));
+		set("stockoutQcFormM",stockoutQcFormM);
+		render("onlysee.html");
+	}
+
+	/*
+	 * 生成
+	 * */
+	public void createchecklist(JBoltPara JboltPara){
+		//todo 生成检查表
+        renderJsonData(null);
+	}
+
+	/**
+	 * 导入图片
+	 */
+	public void uploadImage() {
+		String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
+		renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+	}
+
+	/*
+	 * 保存或编辑检验表
+	 * */
+	public void updateTable(JBoltPara JboltPara) {
+		renderJson(service.updateEditTable(JboltPara));
+	}
 }
