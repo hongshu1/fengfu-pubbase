@@ -14,12 +14,21 @@
                     <span style="margin-right: 5px; margin-left: 5px"> - </span>
                     <input id="dDisableDate" type="text" data-rule="required;>=#dEnableDate" style="width: 15%" class="form-control" placeholder="结束日期" data-done-handler="checkme" data-date name="enddate" value="">
                 </div>
+
                 <div class="form-group row">
                     <label class="col-form-label col-lg-1">选择供应商：</label>
-                    <input type="text" autocomplete="off" class="form-control" data-rule="required" style="width: 15%"
-                           placeholder="请输入供应商名称" name="iVendorId"/>
+                    <input hidden type="text" name="iVendorId" id="iVendorId_#(pageId)" data-sync-attr="cvenid" >
+                    <input data-autocomplete
+                           type="text"
+                           autocomplete="off"
+                           class="form-control"
+                           data-rule="required"
+                           data-url="admin/bommaster/findVendorList"
+                           data-sync-ele="#iVendorId_#(pageId)"
+                           data-text-attr="cvenname"
+                           placeholder="请输入供应商名称"
+                           />
                 </div>
-
             </form>
         </div>
     </div>
@@ -40,8 +49,11 @@
         var $form = $('#PurchaseOrderM_form_#(pageId)');
         if (FormChecker.check($form)) {
             var formData = formToJson($form);
-            console.log(JSON.stringify(formData));
-            location.href = '/admin/purchaseorderm/add?iVendorId=' + formData.iVendorId + '&begindate=' + formData.begindate + '&enddate=' + formData.enddate + '&_jb_rqtype_=dialog';
+            Ajax.post("admin/purchaseorderm/checkData",{iVendorId: formData.iVendorId, beginDate: formData.begindate, endDate: formData.enddate}, function (res) {
+                if (res.state=='ok'){
+                    location.href = '/admin/purchaseorderm/add?iVendorId=' + formData.iVendorId + '&beginDate=' + formData.begindate + '&endDate=' + formData.enddate + '&_jb_rqtype_=dialog';
+                }
+            });
         }
 
 

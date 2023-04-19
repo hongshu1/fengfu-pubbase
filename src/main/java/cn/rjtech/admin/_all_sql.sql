@@ -289,6 +289,12 @@
 #include("routing/routing.sql")
 #end
 
+#namespace("demandplanm")
+#include("demandplanm/demandplanm.sql")
+#end
+
+
+
 #namespace("cusordersum")
 #include("cusordersum/cusordersum.sql")
 #end
