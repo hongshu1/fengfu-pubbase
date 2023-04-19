@@ -1740,4 +1740,9 @@ public class PermissionKey {
 	 * 审批流配置
 	 */
 	public static final String APPROVAL_M = "approval_m";
+
+	/**
+	 * 客户计划汇总
+	 */
+	public static final String CUSORDER_SUM = "cusorder_sum";
 }

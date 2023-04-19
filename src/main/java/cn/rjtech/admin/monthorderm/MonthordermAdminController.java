@@ -111,4 +111,12 @@ public class MonthordermAdminController extends BaseAdminController {
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
+
+	/**
+	 * 审批
+	 */
+	@Before(Tx.class)
+	public void approve() {
+		renderJson(service.approve(getLong(0)));
+	}
 }

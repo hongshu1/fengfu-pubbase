@@ -122,4 +122,8 @@ public class CustomerWorkDaysService extends BaseService<CustomerWorkDays> {
 	public List<CustomerWorkDays> getList(Kv kv){
 		return find("SELECT * FROM Bd_CustomerWorkDays WHERE iCustomerId = ?", kv.get("icustomermid"));
 	}
+
+    public CustomerWorkDays findByICustomerId(Long iCustomerId) {
+		return findFirst(selectSql().eq("iCustomerId", iCustomerId));
+    }
 }

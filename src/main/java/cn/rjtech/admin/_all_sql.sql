@@ -288,3 +288,7 @@
 #namespace("routing")
 #include("routing/routing.sql")
 #end
+
+#namespace("cusordersum")
+#include("cusordersum/cusordersum.sql")
+#end
