@@ -1239,7 +1239,6 @@ public class BomMasterService extends BaseService<BomMaster> {
 		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
 		tx(() -> {
 		    // 校验审批中或已审批的数据不能进行删除
-            
             Integer iAuditStatus = bomMaster.getIAuditStatus();
             AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
             ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行删除");
@@ -1252,8 +1251,8 @@ public class BomMasterService extends BaseService<BomMaster> {
 			bomMaster.setIsEffective(false);
 			bomMaster.update();
 			// 删除母件下所有子件数据
-			boolean flag = bomMasterInvService.deleteByBomMasterId(bomMasterId);
-			return flag;
+			bomMasterInvService.deleteByBomMasterId(bomMasterId);
+			return true;
 		});
 		return SUCCESS;
 	}

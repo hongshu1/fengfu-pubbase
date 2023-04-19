@@ -1257,8 +1257,8 @@ public class RoutingService extends BaseService<BomMaster> {
 			bomMaster.setIsEffective(false);
 			bomMaster.update();
 			// 删除母件下所有子件数据
-			boolean flag = bomMasterInvService.deleteByBomMasterId(bomMasterId);
-			return flag;
+			bomMasterInvService.deleteByBomMasterId(bomMasterId);
+			return true;
 		});
 		return SUCCESS;
 	}
