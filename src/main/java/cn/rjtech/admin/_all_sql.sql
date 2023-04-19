@@ -288,3 +288,9 @@
 #namespace("routing")
 #include("routing/routing.sql")
 #end
+
+#namespace("demandplanm")
+#include("demandplanm/demandplanm.sql")
+#end
+
+

@@ -50,7 +50,7 @@
         if (FormChecker.check($form)) {
             var formData = formToJson($form);
             Ajax.post("admin/purchaseorderm/checkData",{iVendorId: formData.iVendorId, beginDate: formData.begindate, endDate: formData.enddate}, function (res) {
-                if (res.code){
+                if (res.state=='ok'){
                     location.href = '/admin/purchaseorderm/add?iVendorId=' + formData.iVendorId + '&beginDate=' + formData.begindate + '&endDate=' + formData.enddate + '&_jb_rqtype_=dialog';
                 }
             });
