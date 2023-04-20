@@ -1,0 +1,27 @@
+<form onsubmit="return false;" id="inventoryCapacityForm" action="#(action)" method="post">
+<input type="hidden" name="inventoryCapacity.iautoid" value="#(inventoryCapacity.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="inventoryCapacity.iinventoryid" value="#(inventoryCapacity.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">班次ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入班次ID" maxlength="19" name="inventoryCapacity.iworkshiftmid" value="#(inventoryCapacity.iworkshiftmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">产能</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入产能"  maxlength="18" name="inventoryCapacity.icapacity" value="#(inventoryCapacity.icapacity??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="inventoryCapacityForm")
+#end
+
