@@ -1,9 +1,10 @@
 package cn.rjtech.admin.purchaseorderm;
 
-import cn.jbolt.common.enums.WechatAutoreplyType;
-import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.hutool.core.date.DateUtil;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
+import cn.rjtech.admin.vendor.VendorService;
+import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -15,11 +16,12 @@ import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
+
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 
 import java.util.List;
+
 
 /**
  * 采购/委外订单-采购订单主表
@@ -40,7 +42,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	@Inject
 	private PurchaseTypeService purchaseTypeService;
 	@Inject
-	private DemandPlanMService demandPlanMService;
+	private VendorService vendorService;
 
    /**
 	* 首页
@@ -61,9 +63,15 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	public void add(@Para(value = "beginDate") String beginDate,
 					@Para(value = "endDate") String endDate,
 					@Para(value = "iVendorId") String iVendorId) {
-		ValidationUtils.notBlank(beginDate, "请选择日期范围");
-		ValidationUtils.notBlank(endDate, "请选择日期范围");
-		ValidationUtils.notBlank(iVendorId, "请选择供应商");
+		
+		Vendor vendor = vendorService.findById(iVendorId);
+		Record record = new Record();
+		record.set(PurchaseOrderM.IVENDORID, vendor.getIAutoId());
+		record.set(Vendor.CVENNAME, vendor.getCVenName());
+		record.set(PurchaseOrderM.CORDERNO, service.generateCGCode());
+		record.set(PurchaseOrderM.DORDERDATE, DateUtil.formatDate(DateUtil.date()));
+		setAttrs(service.getDateMap(beginDate, endDate, iVendorId));
+		set("purchaseOrderM", record);
 		render("add.html");
 	}
 	
@@ -73,8 +81,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 		ValidationUtils.notBlank(beginDate, "请选择日期范围");
 		ValidationUtils.notBlank(endDate, "请选择日期范围");
 		ValidationUtils.notBlank(iVendorId, "请选择供应商");
-		
-		List<Record> list = demandPlanMService.findByVendorDate(getKv());
+		List<Record> list = service.getVendorDateList(beginDate, endDate, iVendorId);
 		ValidationUtils.notEmpty(list, "该时间范围未找到该供应商所需求物料");
 		ok();
 	}

@@ -11,4 +11,5 @@ WHERE isDeleted = '0'
   #if(cqcitemname)
   AND cqcitemname = #para(cqcitemname)
   #end
+ORDER BY dUpdateTime DESC
 #end

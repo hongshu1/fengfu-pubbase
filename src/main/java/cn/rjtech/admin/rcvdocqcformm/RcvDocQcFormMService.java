@@ -18,6 +18,7 @@ import org.omg.PortableInterceptor.SUCCESSFUL;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.jfinal.aop.Inject;
 import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Page;
 
@@ -38,7 +39,11 @@ import com.sun.corba.se.spi.ior.ObjectKey;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
+import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
+import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
+import cn.rjtech.model.momdata.RcvdocqcformdLine;
 
 /**
  * 质量管理-来料检
@@ -50,6 +55,11 @@ import cn.rjtech.model.momdata.RcvDocQcFormM;
 public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 
     private final RcvDocQcFormM dao = new RcvDocQcFormM().dao();
+
+    @Inject
+    private RcvDocQcFormDService     rcvDocQcFormDService; //质量管理-来料检单行配置表
+    @Inject
+    private RcvdocqcformdLineService rcvdocqcformdLineService; //质量管理-来料检明细列值表
 
     @Override
     protected RcvDocQcFormM dao() {
@@ -191,7 +201,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     /*
      * 更新
      * */
-    public Ret updateEditTable(JBoltPara JboltPara) {
+    public Ret editTable(JBoltPara JboltPara) {
         if (JboltPara == null || JboltPara.isEmpty()) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
@@ -220,6 +230,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         //2、将输入框的数据保存在【来料检表（PL_RcvDocQcFormM）】
 //        RcvDocQcFormM docQcFormM = findById(JboltPara.getString("iautoid"));
 //        saveDocQcFormMModel(docQcFormM,JboltPara);
+
+        RcvDocQcFormD rcvDocQcFormD = new RcvDocQcFormD();//质量管理-来料检单行配置表
+        RcvdocqcformdLine rcvdocqcformdLine = new RcvdocqcformdLine();//质量管理-来料检明细列值表
 
         return ret(true);
     }
@@ -271,6 +284,30 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             return result;
         }
         return null;
+    }
+
+    /*
+     * 根据表格ID生成table
+     * */
+    public Ret createTable(JBoltPara jBoltPara){
+        Object iautoid = jBoltPara.get("iautoid");
+        RcvDocQcFormM rcvDocQcFormM = findById(iautoid);
+        if (null == rcvDocQcFormM){
+            return fail(JBoltMsg.DATA_NOT_EXIST);
+        }
+        //1、根据表格ID查询数据
+        Long iQcFormId = rcvDocQcFormM.getIQcFormId();//表格ID
+
+        RcvDocQcFormD rcvDocQcFormD = new RcvDocQcFormD();//质量管理-来料检单行配置表
+        RcvdocqcformdLine rcvdocqcformdLine = new RcvdocqcformdLine();//质量管理-来料检明细列值表
+
+        //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检-1”
+        rcvDocQcFormM.setIStatus(1);
+        Ret ret = update(rcvDocQcFormM);
+        if (ret.isFail()) {
+            return ret;
+        }
+        return SUCCESS;
     }
 
 }

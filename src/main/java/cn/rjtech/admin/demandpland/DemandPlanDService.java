@@ -9,6 +9,10 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.DemandPlanD;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 需求计划管理-到货计划细表
  * @ClassName: DemandPlanDService
@@ -103,5 +107,10 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
 	}
-
+	
+	public List<Record> findByDemandPlanMList(String beginDate, String endDate, String iVendorId){
+		Okv okv = Okv.by("beginDate", beginDate).set("endDate", endDate).set("iVendorId", iVendorId);
+		okv.set("orgId", getOrgId());
+		return dbTemplate("demandpland.findByDemandPlanMList", okv).find();
+	}
 }

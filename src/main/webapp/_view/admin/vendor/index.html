@@ -37,8 +37,8 @@
            class="jbolt_table_delbtn">删除</a>
       </td>
       <td>${data.cvencode}</td>
-      <td>${data.cvenname}</td>
-      <td>${data.cvenabbname}</td>
+      <td title="${data.cvenname}">${data.cvenname}</td>
+      <td title="${data.cvenabbname}">${data.cvenabbname}</td>
       <td>${data.cvendepart}</td><!--分管部门-->
       <td>${data.cvenpperson}</td><!--专管业务员-->
       <td><img data-switchbtn data-confirm="确定切换是否启用状态？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"

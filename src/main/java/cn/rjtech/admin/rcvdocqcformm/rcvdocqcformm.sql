@@ -1,9 +1,12 @@
 #sql("list")
 SELECT
     t1.*,
-    t2.iAutoId qcformiautoid,t2.cQcFormName,
+    t2.cQcFormName,
     t3.cInvCode1,t3.cInvName1,t3.cInvStd,t3.iInventoryUomId1,t3.cInvAddCode,
-    t4.cVenName,t5.*,t6.cEquipmentName
+    t4.cVenName,
+    t5.iautoid rcvdocqcformdiautoid,t5.iRcvDocQcFormMid,t5.iFormParamId,t5.iSeq,
+    t5.iSubSeq,t5.cQcFormParamIds,t5.iType,t5.iStdVal,t5.iMaxVal,t5.iMinVal,t5.cOptions,
+    t6.cEquipmentName
 FROM PL_RcvDocQcFormM t1
          LEFT JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
          LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
