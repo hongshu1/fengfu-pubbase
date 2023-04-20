@@ -1,6 +1,8 @@
 <form onsubmit="return false;" id="PurchaseOrderM_Form" action="#(action)" method="post">
     #if(purchaseOrderM.iAutoId??)
-    <input type="hidden" name="purchaseOrderM.iAutoId" value="#(purchaseOrderM.iAutoId??)"/>
+    <input type="hidden" name="iAutoId" value="#(purchaseOrderM.iAutoId??)"/>
+    <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dBeginDate??)"/>
+    <input type="hidden" name="dEndDate" value="#(purchaseOrderM.dEndDate??)"/>
     #end
     <div class="row">
 
@@ -8,8 +10,9 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">业务类型</label>
                 <div class="col-6">
-                    <select class="form-control" name=""
+                    <select class="form-control" name="iBusType"
                             data-autoload
+                            data-rule="required"
                             data-url="admin/dictionary/options?key=purchase_business_type"
                             data-select-type="select"
                             data-text="==请选择=="
@@ -22,7 +25,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">采购类型</label>
                 <div class="col-6">
-                    <select class="form-control" name=""
+                    <select class="form-control" name="iPurchaseTypeId"
                             data-autoload
                             data-rule="required"
                             data-url="admin/purchaseorderm/findPurchaseType"
@@ -36,14 +39,15 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">业务员</label>
                 <div class="col-6">
-                    <input type="hidden" id="ipersonid" name="workregionm.ipersonid" value="#(workregionm.ipersonid??)" />
+                    <input type="hidden" id="ipersonid_#(pageId)" name="workregionm.ipersonid" value="#(workregionm.ipersonid??)" />
                     <input type="text" autocomplete="off" value="#(personname??)" class="form-control"
                            placeholder="==请选择人员=="
+                           data-rule="required"
                            data-jboltinput
                            data-width="600"
                            data-height="450"
                            data-refresh="true"
-                           data-hidden-input="ipersonid"
+                           data-hidden-input="ipersonid_#(pageId)"
                            data-load-type="ajaxportal"
                            data-url="admin/workregionm/personTable"
                     />
@@ -52,7 +56,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">币种</label>
                 <div class="col-6">
-                    <select class="form-control" name=""
+                    <select class="form-control" name="cCurrency"
                             data-autoload
                             data-rule="required"
                             data-url="admin/purchaseorderm/findForeignCurrencyAll"
@@ -68,31 +72,22 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">订单日期</label>
                 <div class="col-6">
-                    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd"
-                           readonly="readonly" data-rule="required" data-notnull="true" data-tips="请输入订单日期"
-                           data-with-clearbtn="true" autocomplete="off" class="form-control"
-                           placeholder="请输入订单日期" maxlength="20" name="purchaseOrderM.dOrderDate"
+                    <input type="text" readonly data-rule="required" data-notnull="true" autocomplete="off" class="form-control" maxlength="20" name="purchaseOrderM.dOrderDate"
                            value="#datetime(purchaseOrderM.dOrderDate??,'yyyy-MM-dd')"/>
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">供应商名称</label>
                 <div class="col-6">
-                    <select class="form-control" name=""
-                            data-autoload
-                            data-url="admin/dictionary/options?key="
-                            data-select-type="select"
-                            data-text="佛山市丰富汽配有限公司"
-                            data-value=""
-                            data-value-attr="sn">
-                    </select>
+                    <input hidden type="text" name="iVendorId" value="#(purchaseOrderM.iVendorId??)">
+                    <input type="text" autocomplete="off" class="form-control" value="#(purchaseOrderM.cVenName??)">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">税率</label>
                 <div class="col-6">
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                           placeholder="请输入税率" maxlength="40" name="purchaseOrderM.iTaxRate"
+                           placeholder="请输入税率" maxlength="40" name="iTaxRate"
                            value="#(purchaseOrderM.iTaxRate??)"/>
                 </div>
             </div>
@@ -100,7 +95,7 @@
                 <label class="col-sm-3 col-form-label">汇率</label>
                 <div class="col-6">
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
-                           placeholder="请输入汇率" maxlength="40" name="purchaseOrderM.iExchangeRate"
+                           placeholder="请输入汇率" maxlength="40" name="iExchangeRate"
                            value="#(purchaseOrderM.iExchangeRate??)"/>
                 </div>
             </div>
@@ -109,10 +104,8 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">订单编号</label>
                 <div class="col-6">
-                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单编号"
-                           data-with-clearbtn="true" autocomplete="off" class="form-control"
-                           placeholder="请输入订单编号" maxlength="40" name="purchaseOrderM.cOrderNo"
-                           value="#(purchaseOrderM.cOrderNo??)"/>
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单编号" autocomplete="off" class="form-control"
+                           placeholder="请输入订单编号" maxlength="40" name="cOrderNo"  readonly="readonly" value="#(purchaseOrderM.cOrderNo??)"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -120,7 +113,7 @@
                 <div class="col-6">
                     <select class="form-control"
                             data-autoload
-                            name="workregionm.idepid"
+                            name="iDepartmentId"
                             data-tips="请选择部门"
                             data-rule="required"
                             data-url="admin/department/getTreeTableDatas"
@@ -149,8 +142,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">备注</label>
                 <div class="col-6">
-                    <input type="text" data-notnull="true" data-tips="" data-with-clearbtn="true"
-                           autocomplete="off" class="form-control" placeholder="" maxlength="40" name="" value=""/>
+                    <textarea class="form-control" style="height:80px"  placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="cMemo">#(purchaseOrderM.cMemo??)</textarea>
                 </div>
             </div>
         </div>
@@ -158,26 +150,7 @@
     </div>
 </form>
 <!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="PurchaseOrderD_tpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.id}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-    <td>
-	    <a class="jbolt_table_delbtn" href="admin/purchaseorderd/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
-    </td>
-<td>${data.iInventoryId}</td>
-    <td>${data.cInvCode1}</td>
-    <td>${data.cInvName1}</td>
-    <td>${data.cInvStd}</td>
-    <td>${data.iPurchaseUomId}</td>
-    <td>${data.iPkgQty}</td>
-<td><img data-switchbtn data-confirm="确定切换是否赠品： 0. 否 1. 是？" data-value="${data.isPresent}"  data-handler="refreshJBoltTable"  data-url="admin/purchaseorderd/toggleIsPresent/${data.id}"/></td>
-<td>${data.iVendorAddrId}</td>
-<td>${data.cMemo}</td>
-<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isDeleted}"  data-handler="refreshJBoltTable"  data-url="admin/purchaseorderd/toggleIsDeleted/${data.id}"/></td>
-</tr>
-{@/each}
-</textarea>
+
 <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
@@ -191,35 +164,72 @@
        data-jbolttable
        data-width="fill"
        data-height="fill"
-       data-ajax="true"
-       data-conditions-form="PurchaseOrderD_form_#(pageId)"
-       data-url="admin/purchaseorderd/datas"
-       data-rowtpl="PurchaseOrderD_tpl_#(pageId)"
        data-copy-to-excel="false"
-       data-page="PurchaseOrderD_page"
        data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
        data-column-prepend="1:checkbox:true:false:false"
+       data-page="PurchaseOrderPage_#(pageId)"
 >
     <thead>
     <tr>
-        <th data-width="60" data-column="index">序号</th>
-        <th data-width="80">操作</th>
-        <th data-width="100" data-column="iInventoryId">存货编码</th>
-        <th data-width="150" data-column="cInvCode1">客户部番</th>
-        <th data-width="150" data-column="cInvName1">部品名称</th>
-        <th data-width="150" data-column="cInvStd">规格</th>
-        <th data-width="150" data-column="iPurchaseUomId">采购单位</th>
-        <th data-width="150" data-column="iPkgQty">包装数量</th>
-        <th data-width="100" data-column="isPresent">是否赠品</th>
-        <th data-width="100" data-column="cMemo">备注</th>
-        <th data-width="100" data-column="iVendorAddrId">供应商地址</th>
+        <th data-width="60"  rowspan="2" data-column="index">序号</th>
+        <th data-width="80"  rowspan="2">操作</th>
+        <th data-width="100" rowspan="2" data-column="iInventoryId">存货编码</th>
+        <th data-width="150" rowspan="2" data-column="cInvCode1">客户部番</th>
+        <th data-width="150" rowspan="2" data-column="cInvName1">部品名称</th>
+        <th data-width="150" rowspan="2" data-column="cInvStd">规格</th>
+        <th data-width="150" rowspan="2" data-column="iPurchaseUomId">采购单位</th>
+        <th data-width="150" rowspan="2" data-column="iPkgQty">包装数量</th>
+        <th data-width="100" rowspan="2" data-column="isPresent">是否赠品</th>
+        <th data-width="100" rowspan="2" data-column="cMemo">备注</th>
+        <th data-width="100" rowspan="2" data-column="iVendorAddrId">供应商地址</th>
+        <!--   显示日期 -->
+        #for(key:tableHeadMap.keySet())
+            <th data-width="80" colspan="#(tableHeadMap.get(key).size())">#(key)</th>
+        #end
+    </tr>
+
+    <tr>
+        #for(data:tableHeadMap.keySet())
+            #for(day: tableHeadMap.get(data))
+              <th data-width="80" data-column="#(day)">#(day)</th>
+            #end
+        #end
+        <th data-width="80">合计</th>
     </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+        #for(data:tableData)
+            <tr>
+                <td>#(for.index+1)</td>
+                <td>操作</td>
+                <td>#(data.cinvcode??)</td>
+                <td>#(data.cinvcode1??)</td>
+                <td>#(data.cinvname1??)</td>
+                <td>#(data.cinvstd??)</td>
+                <td>#(data.cinvcode??)</td>
+                <td></td>
+                <td> #boolToStr(data.isgavepresent?? == 1,"是","否")</td>
+                <td>
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           maxlength="200"/>
+                </td>
+                <td>#(data.cdistrictname??)</td>
+                #for(qty:data.arr??)
+                 <td>#(qty)</td>
+                #end
+                <td>#(data.isum??)</td>
+            </tr>
+        #end
+    </tbody>
 </table>
 #define js()
 <script>
+    $(function(){
+        //初始化page
+        initPage("PurchaseOrderPage_#(pageId)",#(pageData.totalPage??),#(pageData.pageNumber??),"PurchaseOrderM_Form");
+    });
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="PurchaseOrderM_Form")
+#include("/_view/_admin/common/_jbolt_table_page.html",pageEleId="PurchaseOrderM_Table_"+pageId)
 #end
 

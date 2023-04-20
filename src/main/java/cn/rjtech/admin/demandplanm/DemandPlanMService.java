@@ -129,9 +129,10 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 		return null;
 	}
 	
-	public List<Record> findByVendorDate(Kv kv){
-		kv.set("orgId", getOrgId());
-		return dbTemplate("demandplanm.findByVendorDate", kv).find();
+	public List<Record> findByVendorDate(String beginDate, String endDate, String iVendorId){
+		Okv okv = Okv.by("beginDate", beginDate).set("endDate", endDate).set("iVendorId", iVendorId);
+		okv.set("orgId", getOrgId());
+		return dbTemplate("demandplanm.findByVendorDate", okv).find();
 	}
 
 }

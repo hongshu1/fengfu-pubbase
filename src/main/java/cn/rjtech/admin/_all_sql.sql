@@ -293,4 +293,8 @@
 #include("demandplanm/demandplanm.sql")
 #end
 
+#namespace("demandpland")
+#include("demandpland/demandpland.sql")
+#end
+
 

@@ -56,7 +56,7 @@ SELECT
 	ven.cVenName
 FROM
 	Bd_Inventory inv
-	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iUomClassId
+	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iInventoryUomId1
 	LEFT JOIN Bd_InventoryStockConfig invstock ON invstock.iInventoryId = inv.iAutoId
 	LEFT JOIN Bd_Vendor ven ON ven.iAutoId = invstock.iVendorId
 	WHERE
