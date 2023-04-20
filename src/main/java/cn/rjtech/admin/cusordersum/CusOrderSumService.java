@@ -281,13 +281,11 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 			if (cusOrderSums.size() > 0) {
 				for (CusOrderSum orderSum : cusOrderSums) {
 					if (orderSum.getIInventoryId().equals(monthorderd.getIInventoryId())) {
-						for (int i = 1; i <= 31; i++) {
-							orderSum.setIQty1(monthorderd.get("iQty" + i));
-							orderSum.setIUpdateBy(JBoltUserKit.getUserId());
-							orderSum.setCUpdateName(JBoltUserKit.getUserName());
-							orderSum.setDUpdateTime(new Date());
-							orderSum.update();
-						}
+						orderSum.setIQty1(monthorderd.get("iQty" + orderSum.getIDate()));
+						orderSum.setIUpdateBy(JBoltUserKit.getUserId());
+						orderSum.setCUpdateName(JBoltUserKit.getUserName());
+						orderSum.setDUpdateTime(new Date());
+						orderSum.update();
 					} else {
 						cusOrderSum.setIInventoryId(monthorderd.getIInventoryId());
 						for (int i = 1; i <= 31; i++) {
