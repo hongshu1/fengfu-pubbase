@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -40,6 +41,9 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
     private AnnualOrderDService annualOrderDService;
     @Inject
     private AnnualorderdQtyService annualorderdQtyService;
+
+	@Inject
+	private CusOrderSumService cusOrderSumService;
     @Override
     protected AnnualOrderM dao() {
         return dao;
@@ -246,4 +250,17 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
 
     }
 
+	public Ret approve(Long id) {
+		AnnualOrderM annualOrderM = superFindById(id);
+		//2. 审核通过
+		annualOrderM.setIAuditStatus(2);
+		// 3. 已审批
+		annualOrderM.setIOrderStatus(3);
+		annualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+		annualOrderM.setCUpdateName(JBoltUserKit.getUserName());
+		annualOrderM.setDUpdateTime(new Date());
+		annualOrderM.update();
+		//审批通过生成客户计划汇总
+		return cusOrderSumService.approve(annualOrderM);
+	}
 }

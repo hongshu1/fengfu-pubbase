@@ -1725,6 +1725,14 @@ public class PermissionKey {
 	 * 平板登录日志
 	 */
     public static final String PADLOGINLOG = "pad_loginlog";
+	/**
+	 * 出库检
+	 */
+	public static final String STOCKOUTQCFORMM = "stockoutqcformm";
+	/**
+	 * 在库检
+	 */
+	public static final String INSTOCKQCFORMM = "instockqcformm";
 
 	/**
 	 * 审批管理
@@ -1740,4 +1748,9 @@ public class PermissionKey {
 	 * 审批流配置
 	 */
 	public static final String APPROVAL_M = "approval_m";
+
+	/**
+	 * 客户计划汇总
+	 */
+	public static final String CUSORDER_SUM = "cusorder_sum";
 }

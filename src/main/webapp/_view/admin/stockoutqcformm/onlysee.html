@@ -2,9 +2,9 @@
 #define main()
 <div class="jbolt_page">
   <div class="jbolt_page_content">
-    <form onsubmit="return false;" id="rcvDocQcFormMForm_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
-      #if(rcvDocQcFormM.iAutoId??)
-      <input type="hidden" name="rcvDocQcFormM.iAutoId" value="#(rcvDocQcFormM.iAutoId??)" />
+    <form onsubmit="return false;" id="stockoutqcformmForm_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
+      #if(stockoutqcformm.iAutoId??)
+      <input type="hidden" name="stockoutqcformm.iAutoId" value="#(stockoutqcformm.iAutoId??)" />
       #end
       <div>
         <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
@@ -52,7 +52,8 @@
             <td height="26" class="x74" style="height:19.5pt;">测定理由</td>
             <td colspan="3">
               <input id="cMeaSureReason" type="text" autocomplete="off" placeholder="=请输入测定理由=" name="cmeasurereason"
-                     value="#(cmeasurereason??)" maxlength="355" data-rule="required" style="width: 630px"/>
+                     value="#(cmeasurereason??)"
+                     maxlength="355" data-rule="required" style="width: 630px"/>
             </td>
             <td class="x74">设变号</td>
             <td class="x71" width="250">
@@ -77,7 +78,7 @@
                         <div class="col-sm-auto">
                           <!--class="j_img_uploder"-->
                           <div
-                              data-url="admin/rcvdocqcformm/uploadImage"
+                              data-url="admin/stockoutqcformm/uploadImage"
                               data-limit="10"
                               data-align="left"
                               data-multi="true"
@@ -124,7 +125,7 @@
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
             <img data-switchbtn data-value="${data.isCpkSigned}" data-handler="refreshJBoltTable"
-                 data-url="admin/rcvdocqcformm/toggleIsCpkSigned/${data.iautoid}" style="margin-left: 50px;"/>
+                 data-url="admin/stockoutqcformm/toggleIsCpkSigned/${data.iautoid}" style="margin-left: 50px;"/>
             <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
           </div>
         </table>
@@ -158,16 +159,16 @@
               <th>416.6</th>
               <th>415.6</th>
               <td colspan="2">检具</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：415.6，标准值：416.6，最小值：415.16"/></td>
-              <td><input name="cA02" type="number"  title="最大值：415.6，标准值：416.6，最小值：415.16"/></td>
-              <td><input name="cA03" type="number" title="最大值：415.6，标准值：416.6，最小值：415.16"/></td>
-              <td><input name="cA04" type="number" title="最大值：415.6，标准值：416.6，最小值：415.16"/></td>
-              <td><input name="cA05" type="number" title="最大值：415.6，标准值：416.6，最小值：415.16"/></td>
-              <td><input name="cA06" type="number" title="最大值：415.6，标准值：416.6，最小值：415.16"/></td>
-              <td><input name="cA07" type="number" title="最大值：415.6，标准值：416.6，最小值：415.16"/></td>
-              <td><input name="cA08" type="number" title="最大值：415.6，标准值：416.6，最小值：415.16"/></td>
-              <td><input name="cA09" type="number" title="最大值：415.6，标准值：416.6，最小值：415.16"/></td>
-              <td><input name="cA10" type="number" title="最大值：415.6，标准值：416.6，最小值：415.16"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>2</td>
@@ -176,16 +177,16 @@
               <th>212.6</th>
               <th>211.6</th>
               <td colspan="2">检具</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：212.1，标准值：212.6，最小值：211.6"/></td>
-              <td><input name="cA02" type="number" title="最大值：212.1，标准值：212.6，最小值：211.6"/></td>
-              <td><input name="cA03" type="number" title="最大值：212.1，标准值：212.6，最小值：211.6"/></td>
-              <td><input name="cA04" type="number" title="最大值：212.1，标准值：212.6，最小值：211.6"/></td>
-              <td><input name="cA05" type="number" title="最大值：212.1，标准值：212.6，最小值：211.6"/></td>
-              <td><input name="cA06" type="number" title="最大值：212.1，标准值：212.6，最小值：211.6"/></td>
-              <td><input name="cA07" type="number" title="最大值：212.1，标准值：212.6，最小值：211.6"/></td>
-              <td><input name="cA08" type="number" title="最大值：212.1，标准值：212.6，最小值：211.6"/></td>
-              <td><input name="cA09" type="number" title="最大值：212.1，标准值：212.6，最小值：211.6"/></td>
-              <td><input name="cA10" type="number" title="最大值：212.1，标准值：212.6，最小值：211.6"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>3</td>
@@ -194,16 +195,16 @@
               <th>495.6</th>
               <th>495.6</th>
               <td colspan="2">检具</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：496.1，标准值：495.6，最小值：495.6"/></td>
-              <td><input name="cA02" type="number" title="最大值：496.1，标准值：495.6，最小值：495.6"/></td>
-              <td><input name="cA03" type="number" title="最大值：496.1，标准值：495.6，最小值：495.6"/></td>
-              <td><input name="cA04" type="number" title="最大值：496.1，标准值：495.6，最小值：495.6"/></td>
-              <td><input name="cA05" type="number" title="最大值：496.1，标准值：495.6，最小值：495.6"/></td>
-              <td><input name="cA06" type="number" title="最大值：496.1，标准值：495.6，最小值：495.6"/></td>
-              <td><input name="cA07" type="number" title="最大值：496.1，标准值：495.6，最小值：495.6"/></td>
-              <td><input name="cA08" type="number" title="最大值：496.1，标准值：495.6，最小值：495.6"/></td>
-              <td><input name="cA09" type="number" title="最大值：496.1，标准值：495.6，最小值：495.6"/></td>
-              <td><input name="cA10" type="number" title="最大值：496.1，标准值：495.6，最小值：495.6"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>4</td>
@@ -212,16 +213,16 @@
               <th>47.2</th>
               <th>46.8</th>
               <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA02" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA03" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA04" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA05" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA06" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA07" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA08" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA09" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA10" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>5</td>
@@ -230,16 +231,16 @@
               <th>47.2</th>
               <th>46.8</th>
               <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA02" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA03" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA04" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA05" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA06" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA07" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA08" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA09" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA10" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>6</td>
@@ -248,16 +249,16 @@
               <th>47.2</th>
               <th>46.8</th>
               <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA02" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA03" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA04" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA05" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA06" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA07" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA08" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA09" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA10" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>7</td>
@@ -266,16 +267,16 @@
               <th>47.2</th>
               <th>46.8</th>
               <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA02" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA03" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA04" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA05" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA06" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA07" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA08" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA09" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
-              <td><input name="cA10" type="number" title="最大值：47，标准值：47.2，最小值：46.8"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>8</td>
@@ -284,16 +285,16 @@
               <th>21</th>
               <th>19.8</th>
               <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：20，标准值：21，最小值：19.8"/></td>
-              <td><input name="cA02" type="number" title="最大值：20，标准值：21，最小值：19.8"/></td>
-              <td><input name="cA03" type="number" title="最大值：20，标准值：21，最小值：19.8"/></td>
-              <td><input name="cA04" type="number" title="最大值：20，标准值：21，最小值：19.8"/></td>
-              <td><input name="cA05" type="number" title="最大值：20，标准值：21，最小值：19.8"/></td>
-              <td><input name="cA06" type="number" title="最大值：20，标准值：21，最小值：19.8"/></td>
-              <td><input name="cA07" type="number" title="最大值：20，标准值：21，最小值：19.8"/></td>
-              <td><input name="cA08" type="number" title="最大值：20，标准值：21，最小值：19.8"/></td>
-              <td><input name="cA09" type="number" title="最大值：20，标准值：21，最小值：19.8"/></td>
-              <td><input name="cA10" type="number" title="最大值：20，标准值：21，最小值：19.8"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>9</td>
@@ -302,16 +303,16 @@
               <th>45.2</th>
               <th>44.8</th>
               <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA02" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA03" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA04" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA05" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA06" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA07" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA08" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA09" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA10" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>10</td>
@@ -320,16 +321,16 @@
               <th>45.2</th>
               <th>44.8</th>
               <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA02" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA03" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA04" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA05" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA06" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA07" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA08" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA09" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA10" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
 
             <tr class="trd colspan">
@@ -339,16 +340,16 @@
               <th>45.2</th>
               <th>44.8</th>
               <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA02" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA03" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA04" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA05" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA06" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA07" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA08" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA09" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA10" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>12</td>
@@ -357,32 +358,32 @@
               <th>45.2</th>
               <th>44.8</th>
               <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="number" class="cA01" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA02" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA03" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA04" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA05" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA06" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA07" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA08" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA09" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
-              <td><input name="cA10" type="number" title="最大值：45，标准值：45.2，最小值：44.8"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>13</td>
               <td>拉薄率（板厚=1.5）</td>
               <td colspan="3">＜30%</td>
               <td colspan="2">超声波测厚仪</td>
-              <td><input name="cA01" type="number" class="cA01" title="＜30%"/></td>
-              <td><input name="cA02" type="number" title="＜30%"/></td>
-              <td><input name="cA03" type="number" title="＜30%"/></td>
-              <td><input name="cA04" type="number" title="＜30%"/></td>
-              <td><input name="cA05" type="number" title="＜30%"/></td>
-              <td><input name="cA06" type="number" title="＜30%"/></td>
-              <td><input name="cA07" type="number" title="＜30%"/></td>
-              <td><input name="cA08" type="number" title="＜30%"/></td>
-              <td><input name="cA09" type="number" title="＜30%"/></td>
-              <td><input name="cA10" type="number" title="＜30%"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>14</td>
@@ -391,16 +392,16 @@
               </td>
               <td colspan="3">＜6%</td>
               <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="number" class="cA01" title="＜6%"/></td>
-              <td><input name="cA02" type="number" title="＜6%"/></td>
-              <td><input name="cA03" type="number" title="＜6%"/></td>
-              <td><input name="cA04" type="number" title="＜6%"/></td>
-              <td><input name="cA05" type="number" title="＜6%"/></td>
-              <td><input name="cA06" type="number" title="＜6%"/></td>
-              <td><input name="cA07" type="number" title="＜6%"/></td>
-              <td><input name="cA08" type="number" title="＜6%"/></td>
-              <td><input name="cA09" type="number" title="＜6%"/></td>
-              <td><input name="cA10" type="number" title="＜6%"/></td>
+              <td><input name="cA01" type="text" class="cA01"/></td>
+              <td><input name="cA02" type="text"/></td>
+              <td><input name="cA03" type="text"/></td>
+              <td><input name="cA04" type="text"/></td>
+              <td><input name="cA05" type="text"/></td>
+              <td><input name="cA06" type="text"/></td>
+              <td><input name="cA07" type="text"/></td>
+              <td><input name="cA08" type="text"/></td>
+              <td><input name="cA09" type="text"/></td>
+              <td><input name="cA10" type="text"/></td>
             </tr>
             <tr class="trd colspan">
               <td>15</td>
@@ -634,8 +635,8 @@
                    id="isok"
                    data-radio
                    data-rule="radio"
-                   data-default=""
                    data-label="判定是否合格："
+                   data-default=""
                    data-url="admin/dictionary/options?key=isok"
                    data-value-attr="sn"
                    data-text-attr="isok"
@@ -758,6 +759,14 @@
 
 <script>
 
+  //1.隐藏确定按钮 （因为这是查看页面，不允许修改）
+  hideParentLayerDialogBtn(0);
+  //2.禁止编辑
+  $("#tableID" + " tbody tr").find("input").attr("disabled", "disabled");
+  $("#isNot").find("input").attr("disabled", "disabled");
+  $("#tableID" + " tbody tr").find("select").attr("disabled", "disabled");
+  $("#tableID" + " tbody tr").find("div.checkbox").attr("disabled", "disabled");
+
   function submitThisForm() {
     var milasUrl = {};//新建对象，用来存储所有数据
     var subMilasUrlArr = {};//存储每一行数据
@@ -802,9 +811,9 @@
       cmeasurepurpose:cmeasurepurpose,
       cmeasureunit:cmeasureunit,
       cmemo:cmemo,
-      judge:judge
+      isok:isok
     }
-    Ajax.post("admin/rcvdocqcformm/updateTable", submitDatas, function (res) {
+    Ajax.post("admin/stockoutqcformm/updateTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {
           // refreshPjaxContainer();
@@ -823,13 +832,13 @@
 
   var parameterData = [];
   $(function () {
-    Ajax.get("admin/rcvdocqcformm/list", function (res) {
+    Ajax.get("admin/stockoutqcformm/list", function (res) {
       for (let i = 0; i < res.data.length; i++) {
         console.log(res.data[i].iautoid)
         parameterData.push(res.data[i].iautoid);
       }
     });
-    Ajax.get("admin/rcvdocqcformm/datas?iautoid=#(data.iautoid)", function (res) {
+    Ajax.get("admin/stockoutqcformm/datas?iautoid=#(data.iautoid)", function (res) {
       console.log(res.data[0].cA01)
       //根据某列进行赋值
       for (let i = 0; i < res.data.length - 11; i++) {

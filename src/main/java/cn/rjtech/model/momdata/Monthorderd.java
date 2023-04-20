@@ -11,5 +11,21 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Co_MonthOrderD" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class Monthorderd extends BaseMonthorderd<Monthorderd> {
+    /**月份*/
+    private String iMonth;
+
+    /**
+     * 月份
+     */
+    public void setIMonth(java.lang.String iMonth) {
+        this.iMonth = iMonth;
+    }
+
+    /**
+     * 月份
+     */
+    public java.lang.String getIMonth() {
+        return iMonth;
+    }
 }
 
