@@ -8,9 +8,11 @@ SELECT
 	inv.cInvStd,
 	inv.cInvCode,
 	inv.cInvName,
+	inv.cInvName1,
 	inv.cInvCode1,
 	inv.isGavePresent,
 	inv.iPurchaseUomId,
+	uom.cUomName,
 	addr.cDistrictName
 FROM
 	Mrp_DemandPlanM a

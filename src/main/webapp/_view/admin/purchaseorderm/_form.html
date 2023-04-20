@@ -165,6 +165,7 @@
        data-width="fill"
        data-height="fill"
        data-copy-to-excel="false"
+       data-column-resize="true"
        data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
        data-column-prepend="1:checkbox:true:false:false"
        data-page="PurchaseOrderPage_#(pageId)"
@@ -206,7 +207,7 @@
                 <td>#(data.cinvcode1??)</td>
                 <td>#(data.cinvname1??)</td>
                 <td>#(data.cinvstd??)</td>
-                <td>#(data.cinvcode??)</td>
+                <td>#(data.cuomname??)</td>
                 <td></td>
                 <td> #boolToStr(data.isgavepresent?? == 1,"是","否")</td>
                 <td>
