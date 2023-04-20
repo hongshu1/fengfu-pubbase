@@ -1,0 +1,80 @@
+<!-- 检验表格项目表的的数据模板定义-->
+<script type="text/template" id="QcFormTableParam_tpl_#(pageId)">
+    {@each datas as data,index}
+    <tr data-id="${data.iautoid}" class="hand" data-changed="">
+        {@if pageSize&&pageSize>0}
+        <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
+        {@else}
+        <td>${+index+1}</td>
+        {@/if}
+        <!--                    #for(data:rowTwoList)-->
+        <!--                    <td>-->
+        <!--                        #(data.cqcparamname??)-->
+        <!--                    </td>-->
+        <!--                    #end-->
+        <td>${data.cqcparamname}</td>
+        <!--                    <td>-->
+        <!--                        <input type="text"-->
+        <!--                               style="height: 30px; font-size: 12px;"-->
+        <!--                               data-autocomplete-->
+        <!--                               data-url="/admin/qcform/customerList?iqcformid=#(qcForm.iAutoId??)&is=${data.cqcparamname}"-->
+        <!--                               data-header="名称"-->
+        <!--                               data-column-attr="cqcparamname"-->
+        <!--                               data-text-attr="cqcparamname"-->
+        <!--                               data-value-attr="cqcparamname"-->
+        <!--                               data-rule="required"-->
+        <!--                               data-notnull="true"-->
+        <!--                               autocomplete="off" class="form-control" maxlength="30"/>-->
+        <!--                    </td>-->
+        <!--                    <td>${data.itype}</td>-->
+        <!--                    <td>${data.istdval}</td>-->
+        <!--                    <td>${data.imaxval}</td>-->
+        <!--                    <td>${data.iminval}</td>-->
+        <!--                    <td>${data.coptions}</td>-->
+        <!--                    <td>-->
+        <!--                        <a href="/admin/qcform/qcformitem/up/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>-->
+        <!--                        <a href="/admin/qcform/qcformitem/down/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>-->
+        <!--                        <a href="/admin/qcform/qcformitem/deletes/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>-->
+        <!--                    </td>-->
+    </tr>
+    {@/each}
+</script>
+
+<div class="jbolt_table_toolbar" id="qcformtableparam_split_toolbar_#(pageId)">
+    <div class="col-md-l pt-2" role="group" aria-label="btn-group">
+        <button onclick="addBomcompareTr(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+        <button onclick="QcFormItemsubmit(this)" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存</button>
+    </div>
+</div>
+
+<table id="jbolt_table_qcformtableparam_split" class="table-center jbolt_table thead_font_normal dictionaryTypes" data-jbolttable data-column-resize="true" data-height="fill_box"
+       data-rowtpl="QcFormTableParam_tpl_#(pageId)"
+       data-ajax="true"
+       data-url="/admin/qcform/getQcFormTableParamListByPId?iqcformid=#(qcForm.iAutoId??)"
+       data-toolbar="qcformtableparam_split_toolbar_#(pageId)"
+       data-page-mini="true"
+       data-row-click-active="true"
+       data-width="auto"
+       data-editable="true"
+       data-conditions-form="qcformtableparamForm_#(pageId)"
+       data-editable-option="getqcformtableparamTableOptions_split"
+>
+    <thead>
+    <tr>
+        <th data-width="60" data-column="index">项次</th>
+        #for(data:rowOneList)
+        <th colspan="#(data.cn??)" data-width="300" data-column="#(data.pcname??)">
+            #(data.pcname??)
+        </th>
+        #end
+        <th data-width="120" data-column="iType">参数录入方式</th>
+        <th data-width="120" data-column="iStdVal">标准值</th>
+        <th data-width="120" data-column="iMaxVal">最大设定值</th>
+        <th data-width="120" data-column="iMinVal">最小设定值</th>
+        <th data-width="120" data-column="cOptions">列表可选值</th>
+        <th data-width="100">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
