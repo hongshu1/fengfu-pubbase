@@ -4,6 +4,7 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.manualorderd.ManualOrderDService;
@@ -29,6 +30,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import com.jfinal.plugin.activerecord.Record;
 
 import static cn.jbolt.core.util.JBoltArrayUtil.COMMA;
+import static sun.plugin2.os.windows.FLASHWINFO.size;
 
 /**
  * 客户订单-手配订单主表
@@ -47,6 +49,9 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 	private InventoryService inventoryService;
 	@Inject
 	private InventoryQcFormService inventoryQcFormService;
+
+    @Inject
+    private CusOrderSumService cusOrderSumService;
 
 	@Override
 	protected ManualOrderM dao() {
@@ -344,4 +349,11 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 		}
 		return dbTemplate("manualorderm.getDatasByIds", kv).find();
 	}
+
+    public void handleCusOrderByManual(ManualOrderM manualOrderM) {
+        List<ManualOrderD> manualOrderDS = manualOrderDService.findByMid(manualOrderM);
+        if (manualOrderDS.size() > 0) {
+            cusOrderSumService.handelManualOrder(manualOrderM, manualOrderDS);
+        }
+    }
 }

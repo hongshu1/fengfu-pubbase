@@ -42,9 +42,27 @@ WHERE 1=1
 
 #sql("getiQty1")
     SELECT
-        iMonth,iyear,iInventoryId,SUM (  iQty1  ) as iQty1Sum,
+        iMonth,iyear,iInventoryId,SUM (  iQty1  ) as iQtySum,
         #for (x : roleArray.split(','))
             SUM(CASE iDate WHEN '#(x)' THEN iQty1 ELSE 0 END) as 'iQty#(x)' #(for.last?'':',')
+        #end
+        FROM
+            Co_CusOrderSum
+        WHERE 1=1
+          #if(iInventoryId)
+              and  iInventoryId  = #para(iInventoryId)
+          #end
+    GROUP BY
+        iMonth,iyear,iInventoryId
+    ORDER BY
+	    iMonth
+#end
+
+#sql("getiQty2")
+    SELECT
+        iMonth,iyear,iInventoryId,SUM (  iQty2  ) as iQtySum,
+        #for (x : roleArray.split(','))
+            SUM(CASE iDate WHEN '#(x)' THEN iQty2 ELSE 0 END) as 'iQty#(x)' #(for.last?'':',')
         #end
         FROM
             Co_CusOrderSum

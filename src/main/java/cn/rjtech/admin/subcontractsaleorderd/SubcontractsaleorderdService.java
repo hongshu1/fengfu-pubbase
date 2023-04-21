@@ -1,5 +1,6 @@
 package cn.rjtech.admin.subcontractsaleorderd;
 
+import cn.rjtech.model.momdata.Subcontractsaleorderm;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -172,5 +173,9 @@ public class SubcontractsaleorderdService extends BaseService<Subcontractsaleord
 	public List<Record> findEditTableDatas(Kv para) {
 		ValidationUtils.notNull(para.getLong("isubcontractsaleordermid"), JBoltMsg.PARAM_ERROR);
 		return dbTemplate("subcontractsaleorderd.findEditTableDatas",para).find();
+	}
+
+	public List<Subcontractsaleorderd> findByMid(Subcontractsaleorderm subcontractsaleorderm) {
+		return find(selectSql().eq("iSubcontractSaleOrderMid", subcontractsaleorderm.getIAutoId()).eq("IsDeleted", 0));
 	}
 }
