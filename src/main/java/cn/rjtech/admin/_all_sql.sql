@@ -288,3 +288,15 @@
 #namespace("routing")
 #include("routing/routing.sql")
 #end
+
+#namespace("auditformconfig")
+#include("auditformconfig/auditformconfig.sql")
+#end
+
+#namespace("approvalform")
+#include("approvalform/approvalform.sql")
+#end
+
+#namespace("approvald")
+#include("approvald/approvald.sql")
+#end
