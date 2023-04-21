@@ -270,7 +270,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			// 记录当前主表下的每一个日期数量
 			Map<String, BigDecimal> map = demandPlanDMap.containsKey(mId) ? demandPlanDMap.get(mId) : new HashMap<>();
 			BigDecimal qty = map.containsKey(key) ? map.get(key) : BigDecimal.ZERO;
-			map.put(key, qty.add(record.getBigDecimal(DemandPlanD.IQTY1)));
+			map.put(key, qty.add(record.getBigDecimal(DemandPlanD.IQTY)));
 			demandPlanDMap.put(mId, map);
 		}
 		

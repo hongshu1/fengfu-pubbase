@@ -24,8 +24,8 @@ public abstract class BasePurchaseOrderM<M extends BasePurchaseOrderM<M>> extend
     public static final String DORDERDATE = "dOrderDate";
     /**业务类型： 1. 普通采购*/
     public static final String IBUSTYPE = "iBusType";
-    /**采购类型*/
-    public static final String IPURCHASETYPE = "iPurchaseType";
+    /**采购类型ID，取采购类型档案*/
+    public static final String IPURCHASETYPEID = "iPurchaseTypeId";
     /**供应商ID*/
     public static final String IVENDORID = "iVendorId";
     /**部门ID*/
@@ -62,6 +62,16 @@ public abstract class BasePurchaseOrderM<M extends BasePurchaseOrderM<M>> extend
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "IsDeleted";
+    /**已失效隐藏：0. 否 1. 是*/
+    public static final String HIDEINVALID = "hideInvalid";
+    /**开始日期*/
+    public static final String DBEGINDATE = "dBeginDate";
+    /**结束日期*/
+    public static final String DENDDATE = "dEndDate";
+    /**审批方式：1. 审批状态 2. 审批流*/
+    public static final String IAUDITWAY = "iAuditWay";
+    /**提审时间*/
+    public static final String DSUBMITTIME = "dSubmitTime";
 	/**
 	 * 主键ID
 	 */
@@ -182,20 +192,20 @@ public abstract class BasePurchaseOrderM<M extends BasePurchaseOrderM<M>> extend
 	}
 
 	/**
-	 * 采购类型
+	 * 采购类型ID，取采购类型档案
 	 */
-	public M setIPurchaseType(java.lang.Integer iPurchaseType) {
-		set("iPurchaseType", iPurchaseType);
+	public M setIPurchaseTypeId(java.lang.Long iPurchaseTypeId) {
+		set("iPurchaseTypeId", iPurchaseTypeId);
 		return (M)this;
 	}
 
 	/**
-	 * 采购类型
+	 * 采购类型ID，取采购类型档案
 	 */
-	@JBoltField(name="ipurchasetype" ,columnName="iPurchaseType",type="Integer", remark="采购类型", required=true, maxLength=10, fixed=0, order=8)
-	@JSONField(name = "ipurchasetype")
-	public java.lang.Integer getIPurchaseType() {
-		return getInt("iPurchaseType");
+	@JBoltField(name="ipurchasetypeid" ,columnName="iPurchaseTypeId",type="Long", remark="采购类型ID，取采购类型档案", required=true, maxLength=19, fixed=0, order=8)
+	@JSONField(name = "ipurchasetypeid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIPurchaseTypeId() {
+		return getLong("iPurchaseTypeId");
 	}
 
 	/**
@@ -502,6 +512,91 @@ public abstract class BasePurchaseOrderM<M extends BasePurchaseOrderM<M>> extend
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");
+	}
+
+	/**
+	 * 已失效隐藏：0. 否 1. 是
+	 */
+	public M setHideInvalid(java.lang.Boolean hideInvalid) {
+		set("hideInvalid", hideInvalid);
+		return (M)this;
+	}
+
+	/**
+	 * 已失效隐藏：0. 否 1. 是
+	 */
+	@JBoltField(name="hideinvalid" ,columnName="hideInvalid",type="Boolean", remark="已失效隐藏：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=27)
+	@JSONField(name = "hideinvalid")
+	public java.lang.Boolean getHideInvalid() {
+		return getBoolean("hideInvalid");
+	}
+
+	/**
+	 * 开始日期
+	 */
+	public M setDBeginDate(java.util.Date dBeginDate) {
+		set("dBeginDate", dBeginDate);
+		return (M)this;
+	}
+
+	/**
+	 * 开始日期
+	 */
+	@JBoltField(name="dbegindate" ,columnName="dBeginDate",type="Date", remark="开始日期", required=false, maxLength=10, fixed=0, order=28)
+	@JSONField(name = "dbegindate")
+	public java.util.Date getDBeginDate() {
+		return getDate("dBeginDate");
+	}
+
+	/**
+	 * 结束日期
+	 */
+	public M setDEndDate(java.util.Date dEndDate) {
+		set("dEndDate", dEndDate);
+		return (M)this;
+	}
+
+	/**
+	 * 结束日期
+	 */
+	@JBoltField(name="denddate" ,columnName="dEndDate",type="Date", remark="结束日期", required=false, maxLength=10, fixed=0, order=29)
+	@JSONField(name = "denddate")
+	public java.util.Date getDEndDate() {
+		return getDate("dEndDate");
+	}
+
+	/**
+	 * 审批方式：1. 审批状态 2. 审批流
+	 */
+	public M setIAuditWay(java.lang.Integer iAuditWay) {
+		set("iAuditWay", iAuditWay);
+		return (M)this;
+	}
+
+	/**
+	 * 审批方式：1. 审批状态 2. 审批流
+	 */
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审批状态 2. 审批流", required=false, maxLength=10, fixed=0, order=30)
+	@JSONField(name = "iauditway")
+	public java.lang.Integer getIAuditWay() {
+		return getInt("iAuditWay");
+	}
+
+	/**
+	 * 提审时间
+	 */
+	public M setDSubmitTime(java.util.Date dSubmitTime) {
+		set("dSubmitTime", dSubmitTime);
+		return (M)this;
+	}
+
+	/**
+	 * 提审时间
+	 */
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=31)
+	@JSONField(name = "dsubmittime")
+	public java.util.Date getDSubmitTime() {
+		return getDate("dSubmitTime");
 	}
 
 }

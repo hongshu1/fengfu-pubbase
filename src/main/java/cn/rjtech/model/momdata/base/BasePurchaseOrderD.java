@@ -20,8 +20,14 @@ public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extend
     public static final String ISPRESENT = "isPresent";
     /**供应商地址ID*/
     public static final String IVENDORADDRID = "iVendorAddrId";
+    /**到货地址*/
+    public static final String CADDRESS = "cAddress";
     /**合计数量*/
     public static final String ISUM = "iSum";
+    /**转换前存货ID*/
+    public static final String ISOURCEINVENTORYID = "iSourceInventoryId";
+    /**转换前合计数量*/
+    public static final String ISOURCESUM = "iSourceSum";
     /**备注*/
     public static final String CMEMO = "cMemo";
     /**删除状态：0. 未删除 1. 已删除*/
@@ -112,6 +118,23 @@ public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extend
 	}
 
 	/**
+	 * 到货地址
+	 */
+	public M setCAddress(java.lang.String cAddress) {
+		set("cAddress", cAddress);
+		return (M)this;
+	}
+
+	/**
+	 * 到货地址
+	 */
+	@JBoltField(name="caddress" ,columnName="cAddress",type="String", remark="到货地址", required=true, maxLength=50, fixed=0, order=6)
+	@JSONField(name = "caddress")
+	public java.lang.String getCAddress() {
+		return getStr("cAddress");
+	}
+
+	/**
 	 * 合计数量
 	 */
 	public M setISum(java.math.BigDecimal iSum) {
@@ -122,10 +145,44 @@ public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extend
 	/**
 	 * 合计数量
 	 */
-	@JBoltField(name="isum" ,columnName="iSum",type="BigDecimal", remark="合计数量", required=false, maxLength=18, fixed=2, order=6)
+	@JBoltField(name="isum" ,columnName="iSum",type="BigDecimal", remark="合计数量", required=false, maxLength=18, fixed=2, order=7)
 	@JSONField(name = "isum")
 	public java.math.BigDecimal getISum() {
 		return getBigDecimal("iSum");
+	}
+
+	/**
+	 * 转换前存货ID
+	 */
+	public M setISourceInventoryId(java.lang.Long iSourceInventoryId) {
+		set("iSourceInventoryId", iSourceInventoryId);
+		return (M)this;
+	}
+
+	/**
+	 * 转换前存货ID
+	 */
+	@JBoltField(name="isourceinventoryid" ,columnName="iSourceInventoryId",type="Long", remark="转换前存货ID", required=true, maxLength=19, fixed=0, order=8)
+	@JSONField(name = "isourceinventoryid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getISourceInventoryId() {
+		return getLong("iSourceInventoryId");
+	}
+
+	/**
+	 * 转换前合计数量
+	 */
+	public M setISourceSum(java.math.BigDecimal iSourceSum) {
+		set("iSourceSum", iSourceSum);
+		return (M)this;
+	}
+
+	/**
+	 * 转换前合计数量
+	 */
+	@JBoltField(name="isourcesum" ,columnName="iSourceSum",type="BigDecimal", remark="转换前合计数量", required=false, maxLength=18, fixed=2, order=9)
+	@JSONField(name = "isourcesum")
+	public java.math.BigDecimal getISourceSum() {
+		return getBigDecimal("iSourceSum");
 	}
 
 	/**
@@ -139,7 +196,7 @@ public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extend
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=7)
+	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=10)
 	@JSONField(name = "cmemo")
 	public java.lang.String getCMemo() {
 		return getStr("cMemo");
@@ -156,7 +213,7 @@ public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extend
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=8)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=11)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");

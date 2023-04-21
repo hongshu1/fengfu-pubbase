@@ -18,6 +18,10 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
     public static final String CORGCODE = "cOrgCode";
     /**组织名称*/
     public static final String CORGNAME = "cOrgName";
+    /**计划单号*/
+    public static final String CPLANNO = "cPlanNo";
+    /**计划时间*/
+    public static final String DPLANTIME = "dPlanTime";
     /**开始日期*/
     public static final String DBEGINDATE = "dBeginDate";
     /**结束日期*/
@@ -26,6 +30,8 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
     public static final String IVENDORID = "iVendorId";
     /**存货ID*/
     public static final String IINVENTORYID = "iInventoryId";
+    /**状态：1. 未完成 2. 已完成*/
+    public static final String ISTATUS = "iStatus";
     /**创建人ID*/
     public static final String ICREATEBY = "iCreateBy";
     /**创建人名称*/
@@ -109,6 +115,40 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	}
 
 	/**
+	 * 计划单号
+	 */
+	public M setCPlanNo(java.lang.String cPlanNo) {
+		set("cPlanNo", cPlanNo);
+		return (M)this;
+	}
+
+	/**
+	 * 计划单号
+	 */
+	@JBoltField(name="cplanno" ,columnName="cPlanNo",type="String", remark="计划单号", required=true, maxLength=40, fixed=0, order=5)
+	@JSONField(name = "cplanno")
+	public java.lang.String getCPlanNo() {
+		return getStr("cPlanNo");
+	}
+
+	/**
+	 * 计划时间
+	 */
+	public M setDPlanTime(java.util.Date dPlanTime) {
+		set("dPlanTime", dPlanTime);
+		return (M)this;
+	}
+
+	/**
+	 * 计划时间
+	 */
+	@JBoltField(name="dplantime" ,columnName="dPlanTime",type="Date", remark="计划时间", required=true, maxLength=23, fixed=3, order=6)
+	@JSONField(name = "dplantime")
+	public java.util.Date getDPlanTime() {
+		return getDate("dPlanTime");
+	}
+
+	/**
 	 * 开始日期
 	 */
 	public M setDBeginDate(java.util.Date dBeginDate) {
@@ -119,7 +159,7 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 开始日期
 	 */
-	@JBoltField(name="dbegindate" ,columnName="dBeginDate",type="Date", remark="开始日期", required=true, maxLength=10, fixed=0, order=5)
+	@JBoltField(name="dbegindate" ,columnName="dBeginDate",type="Date", remark="开始日期", required=true, maxLength=10, fixed=0, order=7)
 	@JSONField(name = "dbegindate")
 	public java.util.Date getDBeginDate() {
 		return getDate("dBeginDate");
@@ -136,7 +176,7 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 结束日期
 	 */
-	@JBoltField(name="denddate" ,columnName="dEndDate",type="Date", remark="结束日期", required=true, maxLength=10, fixed=0, order=6)
+	@JBoltField(name="denddate" ,columnName="dEndDate",type="Date", remark="结束日期", required=true, maxLength=10, fixed=0, order=8)
 	@JSONField(name = "denddate")
 	public java.util.Date getDEndDate() {
 		return getDate("dEndDate");
@@ -153,7 +193,7 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 供应商ID
 	 */
-	@JBoltField(name="ivendorid" ,columnName="iVendorId",type="Long", remark="供应商ID", required=true, maxLength=19, fixed=0, order=7)
+	@JBoltField(name="ivendorid" ,columnName="iVendorId",type="Long", remark="供应商ID", required=true, maxLength=19, fixed=0, order=9)
 	@JSONField(name = "ivendorid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIVendorId() {
 		return getLong("iVendorId");
@@ -170,10 +210,27 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 存货ID
 	 */
-	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="存货ID", required=true, maxLength=19, fixed=0, order=8)
+	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="存货ID", required=true, maxLength=19, fixed=0, order=10)
 	@JSONField(name = "iinventoryid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIInventoryId() {
 		return getLong("iInventoryId");
+	}
+
+	/**
+	 * 状态：1. 未完成 2. 已完成
+	 */
+	public M setIStatus(java.lang.Integer iStatus) {
+		set("iStatus", iStatus);
+		return (M)this;
+	}
+
+	/**
+	 * 状态：1. 未完成 2. 已完成
+	 */
+	@JBoltField(name="istatus" ,columnName="iStatus",type="Integer", remark="状态：1. 未完成 2. 已完成", required=true, maxLength=10, fixed=0, order=11)
+	@JSONField(name = "istatus")
+	public java.lang.Integer getIStatus() {
+		return getInt("iStatus");
 	}
 
 	/**
@@ -187,7 +244,7 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 创建人ID
 	 */
-	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=9)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=12)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
@@ -204,7 +261,7 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=10)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=13)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
@@ -221,7 +278,7 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=11)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=14)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
@@ -238,7 +295,7 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 更新人ID
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=12)
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=15)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
@@ -255,7 +312,7 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=13)
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=16)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
@@ -272,7 +329,7 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=14)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=17)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
@@ -289,7 +346,7 @@ public abstract class BaseDemandPlanM<M extends BaseDemandPlanM<M>> extends JBol
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=15)
+	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=18)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");
