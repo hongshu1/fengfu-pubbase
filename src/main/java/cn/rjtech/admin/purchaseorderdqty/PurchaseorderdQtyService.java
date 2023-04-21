@@ -1,5 +1,8 @@
 package cn.rjtech.admin.purchaseorderdqty;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +12,10 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.PurchaseorderdQty;
+import org.apache.commons.lang3.time.DatePrinter;
+
+import java.math.BigDecimal;
+
 /**
  * 采购/委外订单-采购订单明细数量
  * @ClassName: PurchaseorderdQtyService
@@ -102,6 +109,16 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 	public String checkInUse(PurchaseorderdQty purchaseorderdQty, Kv kv) {
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
+	}
+	
+	public PurchaseorderdQty createPurchaseorderdQty(int year, int month, int day, BigDecimal qty, BigDecimal sourceQty){
+		PurchaseorderdQty purchaseorderdQty = new PurchaseorderdQty();
+		purchaseorderdQty.setIYear(year);
+		purchaseorderdQty.setIMonth(month);
+		purchaseorderdQty.setIDate(day);
+		purchaseorderdQty.setIQty(qty);
+		purchaseorderdQty.setIQty(sourceQty);
+		return purchaseorderdQty;
 	}
 
 }
