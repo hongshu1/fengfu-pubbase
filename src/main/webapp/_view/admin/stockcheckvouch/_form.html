@@ -1,0 +1,81 @@
+<form onsubmit="return false;" id="StockCheckVouch_Form" action="#(action)" method="post">
+	#if(stockCheckVouch.Autoid??)
+	<input type="hidden" name="stockCheckVouch.Autoid" value="#(stockCheckVouch.Autoid??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织编码</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织编码" maxlength="40" name="stockCheckVouch.OrganizeCode" value="#(stockCheckVouch.OrganizeCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">盘点方式;0 明盘 1 暗盘</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入盘点方式;0 明盘 1 暗盘" maxlength="40" name="stockCheckVouch.CheckType" value="#(stockCheckVouch.CheckType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">单号</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入单号" maxlength="40" name="stockCheckVouch.BillNo" value="#(stockCheckVouch.BillNo??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">单据日期</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入单据日期" maxlength="40" name="stockCheckVouch.BillDate" value="#(stockCheckVouch.BillDate??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">盘点人</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入盘点人" maxlength="40" name="stockCheckVouch.CheckPerson" value="#(stockCheckVouch.CheckPerson??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">仓库编码</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入仓库编码" maxlength="40" name="stockCheckVouch.WhCode" value="#(stockCheckVouch.WhCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人" maxlength="40" name="stockCheckVouch.CreatePerson" value="#(stockCheckVouch.CreatePerson??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="stockCheckVouch.CreateDate"    value="#datetime(stockCheckVouch.CreateDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人" maxlength="40" name="stockCheckVouch.ModifyPerson" value="#(stockCheckVouch.ModifyPerson??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="stockCheckVouch.ModifyDate"    value="#datetime(stockCheckVouch.ModifyDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键id</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键id"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键id" maxlength="40" name="stockCheckVouch.Autoid" value="#(stockCheckVouch.Autoid??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="StockCheckVouch_Form")
+#end
+

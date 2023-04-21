@@ -95,6 +95,13 @@ public class BillNoUtils {
     }
 
     /**
+     * 盘点单
+     */
+    public static String genCurrentNo() {
+        return genBillNo("PD");
+    }
+
+    /**
      * 条码编码
      */
     public static String getCassiGnOrderNo(String itemCategoryName,Long orgId) {
@@ -155,6 +162,8 @@ public class BillNoUtils {
         }
         return letter;
     }
+
+
     
     public String getMaterialsBill(Long orgId, Long a){
         return null;
