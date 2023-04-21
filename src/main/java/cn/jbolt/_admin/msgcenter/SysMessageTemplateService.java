@@ -184,7 +184,7 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
         //关键词模糊查询
         sql.likeMulti(keywords, "message_title");
         //排序
-        sql.orderBy("id", true);
+        sql.orderBy("id", false);
 
         Page<SysMessageTemplate> page = paginate(sql);
         //遍历字典,添加字典值

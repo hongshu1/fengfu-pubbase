@@ -255,8 +255,8 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
     		    );
 	}
 	
-	public List<Record> inventoryAutocomplete(int pageNumber, int pageSize, Kv kv) {
-		return dbTemplate("inventorychange.inventoryAutocomplete", kv).paginate(pageNumber, pageSize).getList();
+	public Page<Record> inventoryAutocomplete(int pageNumber, int pageSize, Kv kv) {
+		return dbTemplate("inventorychange.inventoryAutocomplete", kv).paginate(pageNumber, pageSize);
 	}
 	
 	public Record findByIdRecord(String id){

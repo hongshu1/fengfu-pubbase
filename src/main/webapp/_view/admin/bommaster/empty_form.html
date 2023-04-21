@@ -6,7 +6,7 @@
     #render("table_1.html")
     <!--  图片  -->
     #render("table_2.html")
-    <div class="form-group row" style="clear: both;margin-top: 5%;">
+    <div class="form-group row">
         <label class="col-2 col-form-label" style="margin-left: -5%">客户名称：</label>
         <div class="col-2">
             <select class="form-control" data-url="admin/bommaster/findCustomerList" name="iCustomerId" data-autoload
@@ -560,9 +560,40 @@
     }
 
     function setChooseDialogSelectResult(data,index, type){
-        console.log("data:"+data)
-        console.log("index:"+index)
-        console.log("type:"+type)
+        if (type == 0){
+            $("#iBeforeInventoryId"+index).val(data.itemid);
+            $("#invItemId"+index).val(data.cinvcode);
+            $("#cInvName"+index).val(data.cinvname);
+            $("#cInvCode"+index).val(data.cinvcode1);
+            $("#cInvAddName"+index).val(data.cinvname1);
+            $("#cInvAddCode"+index).val(data.cinvaddcode1);
+            $("#InvName"+index).val(data.cinvname2);
+            $("#iWeight"+index).val(data.iweight);
+            $("#iVendorId"+index).val(data.venid);
+            $("#iVendorName"+index).val(data.cvenname);
+            // $("#materialtype"+index).val(data.version);
+        }else if (type == 1){
+            $("#blankingInvId"+index).val(data.itemid);
+            $("#blankingItemId"+index).val(data.cinvcode);
+            $("#blankingInvName"+index).val(data.cinvname);
+            $("#blankingSup"+index).val(data.cvenname);
+            $("#blankingStd"+index).val(data.cinvstd);
+            $("#blankingWeight"+index).val(data.iweight);
+        }else if (type == 2){
+            $("#slicingInvId"+index).val(data.itemid);
+            $("#slicingItemId"+index).val(data.cinvcode);
+            $("#slicingInvName"+index).val(data.cinvname);
+            $("#slicingInvSup"+index).val(data.cvenname);
+            $("#slicingInvStd"+index).val(data.cinvstd);
+            $("#slicingWeight"+index).val(data.iweight);
+        }else if (type == 3){
+            $("#originalInvId"+index).val(data.itemid);
+            $("#originalItemId"+index).val(data.cinvcode);
+            $("#originalInvName"+index).val(data.cinvname);
+            $("#originalInvSup"+index).val(data.cvenname);
+            $("#originalInvStd"+index).val(data.cinvstd);
+            $("#originalWeight"+index).val(data.iweight);
+        }
     }
 
 </script>

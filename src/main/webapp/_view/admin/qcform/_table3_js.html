@@ -1,0 +1,44 @@
+<script>
+    // 检验表格录入方式提交
+    function getqcformtableparamTableOptions_split() {
+        var editableTableOptions = {
+            trigger: "click",
+            submit: {
+                withForm: ["QcFormForm"],
+                type: "all",
+                url: "/admin/qcform/QcFormTableParamJBoltTable",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iType: {
+                    submitAttr: "itype",
+                },
+                iStdVal: {
+                    submitAttr: "istdval",
+                },
+                iMaxVal: {
+                    submitAttr: "imaxval",
+                    type: "input"
+                },
+                iMinVal: {
+                    submitAttr: "iminval",
+                    type: "input"
+                },
+                cOptions: {
+                    submitAttr: "coptions",
+                    type: "input"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

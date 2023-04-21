@@ -29,5 +29,17 @@ public class MomDataFuncService extends BaseMomDataFuncService {
                 }
         );
     }
-
+    
+    public String getNextNo(String prefix, int billNoLength) {
+        return (String) execute((conn) -> {
+                    CallableStatement proc = conn.prepareCall("{ call P_Sys_GetNextNo(?, ?, ?) }");
+                    proc.setObject(1, prefix);
+                    proc.setObject(2, billNoLength);
+                    // 注册输出参数
+                    proc.registerOutParameter(3, Types.VARCHAR);
+                    proc.execute();
+                    return proc.getString(3);
+                }
+        );
+    }
 }

@@ -20,8 +20,8 @@ public abstract class BaseStockoutQcFormM<M extends BaseStockoutQcFormM<M>> exte
     public static final String CORGNAME = "cOrgName";
     /**检验单号*/
     public static final String CSTOCKOUTQCFORMNO = "cStockoutQcFormNo";
-    /**供应商ID*/
-    public static final String IVENDORID = "iVendorId";
+    /**客户ID*/
+    public static final String ICUSTOMERID = "iCustomerId";
     /**质检表格ID*/
     public static final String IQCFORMID = "iQcFormId";
     /**存货ID*/
@@ -160,7 +160,7 @@ public abstract class BaseStockoutQcFormM<M extends BaseStockoutQcFormM<M>> exte
 	}
 
 	/**
-	 * 供应商ID
+	 * 客户ID
 	 */
 	@JBoltField(name="icustomerid" ,columnName="iCustomerId",type="Long", remark="客户ID", required=true, maxLength=19, fixed=0, order=6)
 	@JSONField(name = "icustomerid", serializeUsing = ToStringSerializer.class)
@@ -213,7 +213,7 @@ public abstract class BaseStockoutQcFormM<M extends BaseStockoutQcFormM<M>> exte
 	/**
 	 * 数量
 	 */
-	@JBoltField(name="iqty" ,columnName="iQty",type="Integer", remark="数量", required=true, maxLength=18, fixed=2, order=9)
+	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=18, fixed=2, order=9)
 	@JSONField(name = "iqty")
 	public java.math.BigDecimal getIQty() {
 		return getBigDecimal("iQty");

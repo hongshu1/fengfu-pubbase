@@ -40,18 +40,25 @@ WHERE
 #end
 #sql("inventoryAutocomplete")
 SELECT
-    inv.iautoid as itemId,
+    inv.iAutoId as itemId,
 	inv.iweight,
+	inv.cInvAddCode1,
 	inv.cInvName,
 	inv.cInvStd,
 	inv.cInvCode AS cInvCode,
 	inv.cInvCode1 AS cInvCode1,
 	inv.cInvName1 AS cInvName1,
+	inv.cInvName2 AS cInvName2,
 	uom.cUomName,
-	inv.iCustomerMId
+	inv.iCustomerMId,
+	ven.iAutoId AS venid,
+	ven.cVenCode,
+	ven.cVenName
 FROM
 	Bd_Inventory inv
-	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iUomClassId
+	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iInventoryUomId1
+	LEFT JOIN Bd_InventoryStockConfig invstock ON invstock.iInventoryId = inv.iAutoId
+	LEFT JOIN Bd_Vendor ven ON ven.iAutoId = invstock.iVendorId
 	WHERE
 	    1 = 1
 	    #if(q)
@@ -62,5 +69,17 @@ FROM
 	    #end
 	    #if(iEquipmentModelId)
 	        AND INV.iEquipmentModelId = #para(iEquipmentModelId)
+	    #end
+	    #if(cInvCode)
+             AND inv.cInvCode LIKE CONCAT('%', #para(cInvCode), '%')
+	    #end
+	    #if(cInvCode1)
+             AND inv.cInvCode LIKE CONCAT('%', #para(cInvCode1), '%')
+	    #end
+	    #if(cInvName)
+             AND inv.cInvName LIKE CONCAT('%', #para(cInvName), '%')
+	    #end
+	    #if(cVenName)
+	        AND ven.cVenName LIKE CONCAT('%', #para(cVenName), '%')
 	    #end
 #end

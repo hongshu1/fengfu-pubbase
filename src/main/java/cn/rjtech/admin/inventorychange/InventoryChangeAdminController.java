@@ -177,7 +177,7 @@ public class InventoryChangeAdminController extends BaseAdminController {
 	 * 默认给1-100个数据
 	 */
 	public void inventoryAutocomplete(){
-		renderJsonData(service.inventoryAutocomplete(getPageNumber(), 100, getKv()));
+		renderJsonData(service.inventoryAutocomplete(getPageNumber(), 100, getKv()).getList());
 	}
 
 

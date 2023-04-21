@@ -175,4 +175,7 @@ public class AnnualOrderDService extends BaseService<AnnualOrderD> {
 		return dbTemplate("annualorderd.findEditTableDatas",para).find();
 	}
 
+    public List<AnnualOrderD> findByMid(Long iAutoId) {
+		return find(selectSql().eq("iAnnualOrderMid", iAutoId));
+    }
 }
