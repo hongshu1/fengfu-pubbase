@@ -117,4 +117,8 @@ public class WeekOrderDService extends BaseService<WeekOrderD> {
     public Ret delete(Long id) {
 		return toggleBoolean(id, "isDeleted");
     }
+
+    public List<WeekOrderD> findByMId(String iAutoId) {
+        return find(selectSql().eq("iWeekOrderMid", iAutoId).eq("isDeleted", 0));
+    }
 }

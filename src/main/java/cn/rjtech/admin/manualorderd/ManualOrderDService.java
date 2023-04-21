@@ -1,5 +1,6 @@
 package cn.rjtech.admin.manualorderd;
 
+import cn.rjtech.model.momdata.ManualOrderM;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -114,4 +115,8 @@ public class ManualOrderDService extends BaseService<ManualOrderD> {
 			return null;
 		return dbTemplate("manualorderm.manualorderds",kv).find();
 	}
+
+    public List<ManualOrderD> findByMid(ManualOrderM manualOrderM) {
+        return find(selectSql().eq("iManualOrderMid", manualOrderM.getIAutoId()).eq("isDeleted", 0));
+    }
 }

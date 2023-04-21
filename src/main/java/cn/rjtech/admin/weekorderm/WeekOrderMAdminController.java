@@ -17,6 +17,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.WeekOrderM;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,7 +54,8 @@ public class WeekOrderMAdminController extends BaseAdminController {
 	public void add() {
 //		WeekOrderM addData = service.findAddData();
 		WeekOrderM addData = new WeekOrderM();
-		addData.setCOrderNo("DDH001");
+
+//		addData.setCOrderNo("DDH"+new Date().toString());
 		set("weekOrderM",addData);
 		set("mark", "ADD");
 		render("add.html");
