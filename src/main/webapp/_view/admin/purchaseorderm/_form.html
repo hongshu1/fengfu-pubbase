@@ -182,7 +182,7 @@
         <th data-width="150" rowspan="2" data-column="iPkgQty">包装数量</th>
         <th data-width="100" rowspan="2" data-column="isPresent">是否赠品</th>
         <th data-width="100" rowspan="2" data-column="cMemo">备注</th>
-        <th data-width="100" rowspan="2" data-column="iVendorAddrId">供应商地址</th>
+        <th data-width="200" rowspan="2" data-column="iVendorAddrId">供应商地址</th>
         <!--   显示日期 -->
         #for(key:tableHeadMap.keySet())
             <th data-width="80" colspan="#(tableHeadMap.get(key).size())">#(key)</th>
@@ -208,13 +208,27 @@
                 <td>#(data.cinvname1??)</td>
                 <td>#(data.cinvstd??)</td>
                 <td>#(data.cuomname??)</td>
-                <td></td>
+                <td>
+                    #(data.ipkgqty??)
+                </td>
                 <td> #boolToStr(data.isgavepresent?? == 1,"是","否")</td>
                 <td>
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
                            maxlength="200"/>
                 </td>
-                <td>#(data.cdistrictname??)</td>
+                <td>
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/purchaseorderm/findByiVendorId?vendorId=#(purchaseOrderM.iVendorId??)"
+                            data-select-type="select"
+                            data-text="==请选择=="
+                            data-value=""
+                            data-select="#(data.ivendoraddrid??)"
+                            data-text-attr="cdistrictname"
+                            data-value-attr="iautoid"
+                    >
+                    </select>
+                </td>
                 #for(qty:data.arr??)
                  <td>#(qty)</td>
                 #end
@@ -225,12 +239,8 @@
 </table>
 #define js()
 <script>
-    $(function(){
-        //初始化page
-        initPage("PurchaseOrderPage_#(pageId)",#(pageData.totalPage??),#(pageData.pageNumber??),"PurchaseOrderM_Form");
-    });
+
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="PurchaseOrderM_Form")
-#include("/_view/_admin/common/_jbolt_table_page.html",pageEleId="PurchaseOrderM_Table_"+pageId)
 #end
 

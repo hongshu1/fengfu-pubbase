@@ -1,5 +1,6 @@
 package cn.rjtech.admin.inventorychange;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -11,8 +12,8 @@ import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
@@ -296,5 +297,9 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 			return true;
 		});
 		return SUCCESS;
+	}
+	
+	public List<Record> findByOrgList(Long orgId){
+		return dbTemplate("inventorychange.findList", Okv.by("orgId", orgId)).find();
 	}
 }

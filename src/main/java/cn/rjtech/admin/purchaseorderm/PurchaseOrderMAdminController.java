@@ -1,9 +1,11 @@
 package cn.rjtech.admin.purchaseorderm;
 
 import cn.hutool.core.date.DateUtil;
+import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
+import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -43,7 +45,11 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	private PurchaseTypeService purchaseTypeService;
 	@Inject
 	private VendorService vendorService;
-
+	@Inject
+	private DemandPlanMService demandPlanMService;
+	
+	@Inject
+	private VendorAddrService vendorAddrService;
    /**
 	* 首页
 	*/
@@ -62,7 +68,8 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	*/
 	public void add(@Para(value = "beginDate") String beginDate,
 					@Para(value = "endDate") String endDate,
-					@Para(value = "iVendorId") String iVendorId) {
+					@Para(value = "iVendorId") String iVendorId,
+					@Para(value = "processType") Integer processType) {
 		
 		Vendor vendor = vendorService.findById(iVendorId);
 		Record record = new Record();
@@ -70,18 +77,19 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 		record.set(Vendor.CVENNAME, vendor.getCVenName());
 		record.set(PurchaseOrderM.CORDERNO, service.generateCGCode());
 		record.set(PurchaseOrderM.DORDERDATE, DateUtil.formatDate(DateUtil.date()));
-		setAttrs(service.getDateMap(beginDate, endDate, iVendorId));
+		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType));
 		set("purchaseOrderM", record);
 		render("add.html");
 	}
 	
 	public void checkData(@Para(value = "beginDate") String beginDate,
 						  @Para(value = "endDate") String endDate,
-						  @Para(value = "iVendorId") String iVendorId){
+						  @Para(value = "iVendorId") String iVendorId,
+						  @Para(value = "processType") Integer processType){
 		ValidationUtils.notBlank(beginDate, "请选择日期范围");
 		ValidationUtils.notBlank(endDate, "请选择日期范围");
 		ValidationUtils.notBlank(iVendorId, "请选择供应商");
-		List<Record> list = service.getVendorDateList(beginDate, endDate, iVendorId);
+		List<Record> list = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
 		ValidationUtils.notEmpty(list, "该时间范围未找到该供应商所需求物料");
 		ok();
 	}
@@ -139,5 +147,10 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	
 	public void findPurchaseType(){
 		renderJsonData(purchaseTypeService.selectAll(getKv()));
+	}
+	
+	public void findByiVendorId(@Para(value = "vendorId") String vendorId,
+								@Para(value = "id") String id){
+		renderJsonData(vendorAddrService.findList(getKv()));
 	}
 }
