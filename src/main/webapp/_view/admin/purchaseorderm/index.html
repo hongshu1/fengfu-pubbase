@@ -1,0 +1,151 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>采购订单管理</h1></div>
+
+            <div class="col">
+
+            </div>
+
+            <div>
+                <form class="form-inline" id="PurchaseOrderM_form_#(pageId)">
+                    &nbsp;
+                    &nbsp;
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入订单编号" maxlength="40" name="cOrderNo"/>
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入供应商名称" maxlength="40" name="iVendorId"/>
+                    <select class="form-control" name="iAuditStatus"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=iAuditStatus"
+                            data-select-type="select"
+                            data-text="--全部--"
+                            data-value=""
+                            data-value-attr="sn">
+                    </select>
+                    &nbsp;
+                    &nbsp;
+                    <span>开始日期</span>
+                    <input type="date" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder=""
+                           maxlength="40" name="iAuditStatus"/>
+                    <span>结束日期</span>
+                    <input type="date" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder=""
+                           maxlength="40" name="iAuditStatus"/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa text-reset"></i> 重置</button>
+                </form>
+            </div>
+
+            <div class="col-sm-auto text-right">
+
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="PurchaseOrderM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+
+<td>${pageNumber,pageSize,index | rownum}</td>
+	<td>
+		{@if data.isDeleted}
+		<a class="text-info mr-1" data-openpage="dialog" href="admin/purchaseorderm/edit/${data.id}" data-area="800,600" data-title="查看采购/委外订单-采购订单主表"><i class="fa fa-eye"></i></a>
+		{@else}
+		<a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑采购/委外订单-采购订单主表"><i class="fa fa-edit"></i></a>
+		{@/if}
+		<a class="jbolt_table_delbtn" href="admin/purchaseorderm/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+	</td>
+<td>${data.iauditstatus}</td>
+<td>${data.corderno}</td>
+<td>${data.ivendorid}</td>
+<td>${data.dorderdate}</td>
+<td>${data.ibustype}</td>
+<td>${data.ipurchasetype}</td>
+<td>${data.ipayabletype}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+
+</tr>
+{@/each}
+
+</textarea>
+
+        <div class="jbolt_table_toolbar" id="PurchaseOrderM_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst" id="consummate#(pageId)"
+                        data-title="订单作成" data-url="admin/purchaseorderm/consummate"
+                        class="btn btn-outline-primary"><i class="fa fa-plus"></i> 订单作成
+                </button>
+                <!--                <button data-dialogbtn data-area="80%,60%" data-handler="jboltTablePageToFirst"
+                                        id="toolbar_addBtn_#(pageId)" data-title="订单作成"
+                                        data-url="admin/purchaseorderm/add" class="btn btn-outline-primary"><i class="fa fa-plus">新增</i>
+
+                                </button>-->
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="b"
+                        data-title="新增采购/委外订单-采购订单主表" data-url="admin/purchaseorderm/add"
+                        class="btn btn-outline-primary"><i class="fa fa-plus"></i> 批量审批
+                </button>
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="c()"
+                        data-title="新增采购/委外订单-采购订单主表" data-url="admin/purchaseorderm/add"
+                        class="btn btn-outline-primary"><i class="fa fa-plus"></i> 批量反审批
+                </button>
+                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable"
+                        id="toolbar_editBtn_#(pageId)" data-title="编辑采购/委外订单-采购订单主表"
+                        data-check-handler="jboltTableGetCheckedId" data-url="admin/purchaseorderm/edit/"
+                        class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑
+                </button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                        id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseorderm/deleteByIds?ids="
+                        data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
+                </button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
+                </button>
+                <button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst" id=""
+                        data-title="订单作成" data-url="admin/purchaseorderm/consummate"
+                        class="btn btn-outline-primary"><i class="fa fa-plus"></i> 批量生成现品票
+                </button>
+            </div>
+
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="PurchaseOrderM_form_#(pageId)"
+               data-url="admin/purchaseorderm/datas"
+               data-rowtpl="PurchaseOrderM_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="PurchaseOrderM_page"
+               data-column-resize="true"
+               data-toolbar="PurchaseOrderM_toolbar_#(pageId)"
+               data-column-prepend="1:checkbox:true:false:false">
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="80">操作</th>
+                <th data-width="100" data-column="iAuditStatus">审核状态</th>
+                <th data-width="150" data-column="cOrderNo">订单编号</th>
+                <th data-width="100" data-column="iVendorId">供应商名称</th>
+                <th data-min-width="160" data-column="dOrderDate">订单日期</th>
+                <th data-width="100" data-column="iBusType">业务类型</th>
+                <th data-width="100" data-column="iPurchaseType">采购类型</th>
+                <th data-width="100" data-column="iPayableType">应付类型</th>
+                <th data-width="150" data-column="cCreateName">创建人名称</th>
+                <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

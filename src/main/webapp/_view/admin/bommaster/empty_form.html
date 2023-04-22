@@ -9,8 +9,8 @@
     <div class="form-group row" style="clear: both;margin-top: 5%;">
         <label class="col-2 col-form-label" style="margin-left: -5%">客户名称：</label>
         <div class="col-2">
-            <select class="form-control" data-url="admin/dictionary/options?key=options_boolean" name="iCustomerId" data-autoload
-                    data-text="=请选择=" data-value-attr="sn" id="cUstomerName" data-value="" data-select="#(bomMaster.icustomerid??)"></select>
+            <select class="form-control" data-url="admin/bommaster/findCustomerList" name="iCustomerId" data-autoload
+                    data-text="=请选择=" data-value-attr="sn" id="cUstomerName" data-text-attr="ccusname" data-value="iautoid" data-select="#(bomMaster.icustomerid??)"></select>
         </div>
         <label class="col-2 col-form-label">备注共用件：</label>
         <div class="col-2">
@@ -360,6 +360,12 @@
         // 获取编码栏是否为空
         var flag = (!item.code1 && !item.code2 && !item.code3 && !item.code4 && !item.code5 && !item.code6);
         // 判断存货编码栏不为空时，编码栏也不能为空
+
+        if ((!invItemId && !originalItemId && !slicingInvItemId && !blankingItemId)){
+            LayerMsgBox.alert("未找到存货编码数据",2);
+            return false;
+        }
+
         if (flag && (invItemId || originalItemId || slicingInvItemId || blankingItemId)){
             LayerMsgBox.alert("已选择存货编码，编号不能为空",2);
             return false;
@@ -441,7 +447,6 @@
             LayerMsgBox.alert("分条料存货不能跟片料（落料）存货选择一致",2);
             return false;
         }
-
         // 校验数量跟重量
         if (invItemId){
             if (!item.invQty){

@@ -1348,7 +1348,7 @@ public class PermissionKey {
 	/**
 	 * 周间客户订单
 	 */
-	public static final String WEEK_ORDERM = "week_orderm";
+	public static final String WEEK_ORDERM = "WEEK_ORDERM";
 	/**
 	 * 手配订单
 	 */
@@ -1377,30 +1377,6 @@ public class PermissionKey {
 	 * 委外销售订单
 	 */
 	public static final String SUBCONTRACTSALEORDERM = "subcontractsaleorderm";
-	/**
-	 * 入库管理
-	 */
-	public static final String RK = "rk";
-	/**
-	 * 出库管理
-	 */
-	public static final String CHUKU = "chuku";
-	/**
-	 * 出货管理
-	 */
-	public static final String CH = "ch";
-	/**
-	 * 条码管理
-	 */
-	public static final String BARCODE = "barcode";
-	/**
-	 * 客户订单汇总
-	 */
-	public static final String CUSORDER_SUM = "cusorder_sum";
-	/**
-	 * 月周生产计划排产2
-	 */
-	public static final String SCHEDUPRODUCTPLANMONTH = "scheduproductplanmonth";
 	/**
 	 * 新增
 	 */
@@ -1729,4 +1705,29 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
+	/**
+	 * 来料检单行配置表
+	 */
+	public static final String INVENTORYQCFORMD = "inventoryqcformd";
+	/**
+	 * 来料检单行配置表
+	 */
+	public static final String RCVDOCQCFORMD = "rcvdocqcformd";
+	/**
+	 * 来料检明细列值表
+	 */
+	public static final String RCVDOCQCFORMD_LINE = "rcvdocqcformdline";
+	/*
+	 * 工作日历明细
+	 */
+	public static final String WORKCALENDARM = "workcalendard";
+	/**
+	 * 平板登录日志
+	 */
+    public static final String PADLOGINLOG = "pad_loginlog";
+
+    /**
+	 * 平板登录日志
+	 */
+    public static final String RCVDOCDEFECT = "RcvDocDefect";
 }
