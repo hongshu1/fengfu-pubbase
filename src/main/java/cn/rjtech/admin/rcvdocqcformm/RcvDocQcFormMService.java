@@ -230,7 +230,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             String iautoid = jsonObject.getString("iautoid");
             String coptions = jsonObject.getString("coptions");
             JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
-            Param param = new Gson().fromJson(jsonObject, Param.class);
+            Param param = JSONObject.toJavaObject(jsonObject, Param.class);
             System.out.println(param);
         }
 
