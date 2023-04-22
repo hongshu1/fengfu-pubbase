@@ -1,5 +1,8 @@
 package cn.rjtech.admin.demandpland;
 
+import cn.rjtech.model.momdata.DemandPlanM;
+import cn.rjtech.model.momdata.PurchaseOrderRef;
+import com.beust.ah.A;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +12,11 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.DemandPlanD;
+import com.jfinal.plugin.activerecord.Record;
+import java.math.BigDecimal;
+import java.util.*;
+
+
 /**
  * 需求计划管理-到货计划细表
  * @ClassName: DemandPlanDService
@@ -103,5 +111,68 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
 	}
-
+	
+	public List<Record> findByDemandPlanMList(String beginDate, String endDate, String iVendorId, Integer processType){
+		Okv okv = Okv.by("beginDate", beginDate).set("endDate", endDate).set("iVendorId", iVendorId).set("processType", processType);
+		okv.set("orgId", getOrgId());
+		return dbTemplate("demandpland.findByDemandPlanMList", okv).find();
+	}
+	
+	/**
+	 *
+	 * @return 获取存货中每个日期下的数量
+	 */
+	public Map<Long, Map<String, BigDecimal>> getDemandPlanDMap(List<Record> demandPlanDList){
+		// key:存货id 年月日 value: (key:, 数量)
+		Map<Long, Map<String, BigDecimal>> demandPlanDMap = new HashMap<>();
+		// 遍历所有日期，到货计划主表 ： List<年月日 : qty>
+		for (Record record : demandPlanDList){
+			// 按存货安全
+			Long invId = record.getLong(DemandPlanM.IINVENTORYID);
+			String key = getKey(record);
+			// 记录当前主表下的每一个日期数量
+			Map<String, BigDecimal> map = demandPlanDMap.containsKey(invId) ? demandPlanDMap.get(invId) : new HashMap<>();
+			BigDecimal qty = map.containsKey(key) ? map.get(key) : BigDecimal.ZERO;
+			map.put(key, qty.add(record.getBigDecimal(DemandPlanD.IQTY)));
+			demandPlanDMap.put(invId, map);
+		}
+		return demandPlanDMap;
+	}
+	
+	/**
+	 * 记录每一个存货 中存在多个到货计划细表id
+	 * @param demandPlanDList
+	 * @return
+	 */
+	public Map<Long, List<PurchaseOrderRef>> getPuOrderRefByInvId(List<Record> demandPlanDList){
+		Map<Long, List<PurchaseOrderRef>> map = new HashMap<>();
+		// 遍历所有日期，到货计划主表 ： List<年月日 : qty>
+		for (Record record : demandPlanDList){
+			PurchaseOrderRef ref = new PurchaseOrderRef();
+			ref.setIDemandPlanDid(record.getLong(DemandPlanD.IAUTOID));
+			Long invId = record.getLong(DemandPlanM.IINVENTORYID);
+			List<PurchaseOrderRef> list= map.containsKey(invId) ? map.get(invId) : new ArrayList<>();
+			list.add(ref);
+			map.put(invId, list);
+		}
+		
+		return map;
+	}
+	
+	
+	private String getKey(Record record){
+		String yearStr = record.getStr(DemandPlanD.IYEAR);
+		String monthStr = "";
+		if (record.getInt(DemandPlanD.IMONTH) <10){
+			monthStr = monthStr.concat("0");
+		}
+		monthStr = monthStr.concat(record.getStr(DemandPlanD.IMONTH));
+		String dateStr = "";
+		if (record.getInt(DemandPlanD.IDATE) < 10){
+			dateStr = dateStr.concat("0");
+		}
+		dateStr = dateStr.concat(record.getStr(DemandPlanD.IDATE));
+		return yearStr.concat(monthStr).concat(dateStr);
+	}
+	
 }

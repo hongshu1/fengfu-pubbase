@@ -289,6 +289,15 @@
 #include("routing/routing.sql")
 #end
 
+
+#namespace("RcvDocDefect")
+#include("RcvDocDefect/RcvDocDefect.sql")
+#end
+
+#namespace("ProcessDefect")
+#include("ProcessDefect/ProcessDefect.sql")
+#end
+
 #namespace("stockoutqcformm")
 #include("stockoutqcformm/stockoutqcformm.sql")
 #end
@@ -300,3 +309,9 @@
 #namespace("cusordersum")
 #include("cusordersum/cusordersum.sql")
 #end
+
+#namespace("demandpland")
+#include("demandpland/demandpland.sql")
+#end
+
+

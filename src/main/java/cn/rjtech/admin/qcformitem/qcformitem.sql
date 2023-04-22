@@ -17,11 +17,9 @@ WHERE isDeleted = '0'
 SELECT
    t1.*,t3.cQcItemName,t2.cQcFormName
 FROM Bd_QcFormItem t1
-         LEFT JOIN Bd_QcForm t2 ON t2.iAutoId = t1.iQcFormId
-         left join Bd_QcItem t3 on t3.iAutoId = t1.iQcItemId
-WHERE
-      t1.iQcFormId = #para(iQcFormId)
-ORDER BY
-    t1.iAutoId
-    #end
+    LEFT JOIN Bd_QcForm t2 ON t2.iAutoId = t1.iQcFormId
+    left join Bd_QcItem t3 on t3.iAutoId = t1.iQcItemId
+WHERE t1.iQcFormId = #para(iqcformid)
+ORDER BY t1.iAutoId
+#end
 

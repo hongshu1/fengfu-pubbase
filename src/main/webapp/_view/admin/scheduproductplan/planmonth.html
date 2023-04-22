@@ -1,0 +1,131 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h1>月周生产计划排产</h1>
+            </div>
+            <div class="col">
+                <form class="form-inline" id="apsAnnualplanmForm_#(pageId)"   onsubmit="return false;" method="post">
+                    <input type="text" autocomplete="off"  class="form-control" data-with-clearbtn="true" placeholder="计划单号" name="cplanorderno" value="" />
+                    <input type="text" class="form-control" data-with-clearbtn="true" placeholder="客户名称" name="ccusname" value="" />
+                    <select class="form-control"
+                            name="iplanorderstatus"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=annual_order_auditstatus"
+                            data-select-type="select"
+                            data-text="=请选择订单状态="
+                            data-value=""
+                            data-with-clearbtn="true"
+                            data-value-attr="sn"
+                    ></select>
+                    <input type="text" class="form-control" data-with-clearbtn="true" placeholder="创建人" name="ccreatename" value="" />
+
+                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" name="startcreatetime" value="#datetime(startTime??,'yyyy-MM-dd')"/>
+                    <span style="margin-top: 5px">至</span>
+                    <input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" name="endcreatetime" value="#datetime(endTime??,'yyyy-MM-dd')"/>
+
+                    <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="apsAnnualplanm_tpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
+                    onclick="addViewBtn(this,'${data.cplanorderno}','${data.icustomerid}','${data.iyear}')" data-handler="refreshJBoltTable" data-title="查看年度计划">查看</a>
+
+                <a class="jbolt_table_editbtn" href="admin/annualorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-title="编辑年度计划">编辑</a>
+
+                <a class="jbolt_table_delbtn" href="admin/scheduproductplanyear/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
+            </td>
+            <td>${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
+            <td>${data.cplanorderno}</td>
+            <td tooltip title="${data.ccusname}">${data.ccusname}</td>
+            <td>${data.iyear}</td>
+            <td>${data.ccreatename}</td>
+            <td>${data.dcreatetime}</td>
+            </tr>
+            {@/each}
+        </textarea>
+        <div class="jbolt_table_toolbar" id="apsAnnualplanm_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true"
+                        data-title="新增年度生产计划排产" data-url="admin/scheduproductplanyear/addview" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
+                </button>
+            </div>
+        </div>
+        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="apsAnnualplanmForm_#(pageId)"
+               data-url="admin/scheduproductplanyear/getApsYearPlanMasterPage"
+               data-rowtpl="apsAnnualplanm_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="apsAnnualplanm_page"
+               data-toolbar="apsAnnualplanm_toolbar_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+               data-row-dblclick-active="true"
+			   data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150">操作</th>
+                <th data-column="iOrderStatus">订单状态</th>
+                <th data-column="cPlanOrderNo">计划单号</th>
+                <th data-width="250" data-column="cCusName">客户名称</th>
+                <th data-column="iYear">年份</th>
+                <th data-column="cCreateName">创建人</th>
+                <th data-width="150" data-column="dCreateTime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+	$(tempTr1).data('url', '/admin/annualorderm/edit/' + rowData.iautoid)
+		.data('area', '100%,100%')
+		.data('handler','refreshJBoltTable')
+		.data('title', '人员档案')
+		.data('btn', '确认,关闭');
+
+	DialogUtil.openBy(tempTr1);
+}
+
+
+function addViewBtn(ele,cPlanOrderNo,iCustomerId,iYear){
+    var url="admin/scheduproductplanyear/addview?cplanorderno="+cPlanOrderNo+"&icustomerid="+iCustomerId+"&startyear="+iYear;
+    $(ele).data("url",url);
+    DialogUtil.openBy(ele);
+}
+
+
+
+
+
+
+
+
+
+
+
+</script>
+#end

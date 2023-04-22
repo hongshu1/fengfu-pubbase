@@ -38,8 +38,8 @@
 </div>
 <div class="jbolt_page_content">
 <!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="CusOrderSum_tpl_#(pageId)">
-	<tr></tr>
+    <script type="text/template" id="CusOrderSum_tpl_#(pageId)">
+
 {@each datas as data,index}
 <tr data-id="${data.id}">
 <td rowspan="4" >${pageNumber,pageSize,index | rownum}</td>
@@ -47,110 +47,269 @@
 <td rowspan="4">${data.cinvcode1}</td>
 <td rowspan="4" >${data.cinvname1}</td>
 </tr>
-	<tr>
-		<th >客户计划</th>
-	{@each data.record2 as record,index}
-	{@if index == record.imonth-1}
-		<td>${record.iqty1}</td>
-		<td>${record.iqty2}</td>
-		<td>${record.iqty3}</td>
-		<td>${record.iqty4}</td>
-		<td>${record.iqty5}</td>
-		<td>${record.iqty6}</td>
-		<td>${record.iqty7}</td>
-		<td>${record.iqty8}</td>
-		<td>${record.iqty9}</td>
-		<td>${record.iqty10}</td>
-		<td>${record.iqty11}</td>
-		<td>${record.iqty12}</td>
-		<td>${record.iqty13}</td>
-		<td>${record.iqty14}</td>
-		<td>${record.iqty15}</td>
-		<td>${record.iqty16}</td>
-		<td>${record.iqty17}</td>
-		<td>${record.iqty18}</td>
-		<td>${record.iqty19}</td>
-		<td>${record.iqty20}</td>
-		<td>${record.iqty21}</td>
-		<td>${record.iqty22}</td>
-		<td>${record.iqty23}</td>
-		<td>${record.iqty24}</td>
-		<td>${record.iqty25}</td>
-		<td>${record.iqty26}</td>
-		<td>${record.iqty27}</td>
-		<td>${record.iqty28}</td>
-		<td>${record.iqty29}</td>
-		<td>${record.iqty30}</td>
-		<td>${record.iqty31}</td>
-		<td>${record.iqty1sum}</td>
-	{@else}
-	#for(i = 1; i <= 12; i++)
-		{@if record.imonth == #(i)}
-			<td>${record.iqty1}</td>
-			<td>${record.iqty2}</td>
-			<td>${record.iqty3}</td>
-			<td>${record.iqty4}</td>
-			<td>${record.iqty5}</td>
-			<td>${record.iqty6}</td>
-			<td>${record.iqty7}</td>
-			<td>${record.iqty8}</td>
-			<td>${record.iqty9}</td>
-			<td>${record.iqty10}</td>
-			<td>${record.iqty11}</td>
-			<td>${record.iqty12}</td>
-			<td>${record.iqty13}</td>
-			<td>${record.iqty14}</td>
-			<td>${record.iqty15}</td>
-			<td>${record.iqty16}</td>
-			<td>${record.iqty17}</td>
-			<td>${record.iqty18}</td>
-			<td>${record.iqty19}</td>
-			<td>${record.iqty20}</td>
-			<td>${record.iqty21}</td>
-			<td>${record.iqty22}</td>
-			<td>${record.iqty23}</td>
-			<td>${record.iqty24}</td>
-			<td>${record.iqty25}</td>
-			<td>${record.iqty26}</td>
-			<td>${record.iqty27}</td>
-			<td>${record.iqty28}</td>
-			<td>${record.iqty29}</td>
-			<td>${record.iqty30}</td>
-			<td>${record.iqty31}</td>
-			<td>${record.iqty1sum}</td>
-		{@else}
-			#for(i = 1; i <= 31; i++)
-				<td></td>
-			#end
-			<td></td>
-		{@/if}
-	#end
-	{@/if}
-	{@/each}
+<tr>
+    <th>客户计划</th>
+    {@each data.record1 as record,index}
+    {@if data.record1.length == 12}
+            <td>${record.iqty1}</td>
+            <td>${record.iqty2}</td>
+            <td>${record.iqty3}</td>
+            <td>${record.iqty4}</td>
+            <td>${record.iqty5}</td>
+            <td>${record.iqty6}</td>
+            <td>${record.iqty7}</td>
+            <td>${record.iqty8}</td>
+            <td>${record.iqty9}</td>
+            <td>${record.iqty10}</td>
+            <td>${record.iqty11}</td>
+            <td>${record.iqty12}</td>
+            <td>${record.iqty13}</td>
+            <td>${record.iqty14}</td>
+            <td>${record.iqty15}</td>
+            <td>${record.iqty16}</td>
+            <td>${record.iqty17}</td>
+            <td>${record.iqty18}</td>
+            <td>${record.iqty19}</td>
+            <td>${record.iqty20}</td>
+            <td>${record.iqty21}</td>
+            <td>${record.iqty22}</td>
+            <td>${record.iqty23}</td>
+            <td>${record.iqty24}</td>
+            <td>${record.iqty25}</td>
+            <td>${record.iqty26}</td>
+            <td>${record.iqty27}</td>
+            <td>${record.iqty28}</td>
+            <td>${record.iqty29}</td>
+            <td>${record.iqty30}</td>
+            <td>${record.iqty31}</td>
+            <td>${record.iqtysum}</td>
+    {@/if}
+    {@/each}
+    #for(i = 1; i <= 12; i++)
+    ${mark=1}
+    {@each data.record1 as record,index}
+    {@if record.imonth == #(i)}
+    <td>${record.iqty1}</td>
+    <td>${record.iqty2}</td>
+    <td>${record.iqty3}</td>
+    <td>${record.iqty4}</td>
+    <td>${record.iqty5}</td>
+    <td>${record.iqty6}</td>
+    <td>${record.iqty7}</td>
+    <td>${record.iqty8}</td>
+    <td>${record.iqty9}</td>
+    <td>${record.iqty10}</td>
+    <td>${record.iqty11}</td>
+    <td>${record.iqty12}</td>
+    <td>${record.iqty13}</td>
+    <td>${record.iqty14}</td>
+    <td>${record.iqty15}</td>
+    <td>${record.iqty16}</td>
+    <td>${record.iqty17}</td>
+    <td>${record.iqty18}</td>
+    <td>${record.iqty19}</td>
+    <td>${record.iqty20}</td>
+    <td>${record.iqty21}</td>
+    <td>${record.iqty22}</td>
+    <td>${record.iqty23}</td>
+    <td>${record.iqty24}</td>
+    <td>${record.iqty25}</td>
+    <td>${record.iqty26}</td>
+    <td>${record.iqty27}</td>
+    <td>${record.iqty28}</td>
+    <td>${record.iqty29}</td>
+    <td>${record.iqty30}</td>
+    <td>${record.iqty31}</td>
+    <td>${record.iqtysum}</td>
+    ${mark=2}
+    {@/if}
+    {@/each}
+    {@if mark == 1}
+    #for(a = 1; a <= 31; a++)
+            <td></td>
+            #end
+            <td></td>
+    {@/if}
+    #end
+        </tr>
 
+        <tr>
+            <th>客户订单</th>
+            {@each data.record2 as record,index}
+            {@if data.record2.length == 12}
+            <td>${record.iqty1}</td>
+            <td>${record.iqty2}</td>
+            <td>${record.iqty3}</td>
+            <td>${record.iqty4}</td>
+            <td>${record.iqty5}</td>
+            <td>${record.iqty6}</td>
+            <td>${record.iqty7}</td>
+            <td>${record.iqty8}</td>
+            <td>${record.iqty9}</td>
+            <td>${record.iqty10}</td>
+            <td>${record.iqty11}</td>
+            <td>${record.iqty12}</td>
+            <td>${record.iqty13}</td>
+            <td>${record.iqty14}</td>
+            <td>${record.iqty15}</td>
+            <td>${record.iqty16}</td>
+            <td>${record.iqty17}</td>
+            <td>${record.iqty18}</td>
+            <td>${record.iqty19}</td>
+            <td>${record.iqty20}</td>
+            <td>${record.iqty21}</td>
+            <td>${record.iqty22}</td>
+            <td>${record.iqty23}</td>
+            <td>${record.iqty24}</td>
+            <td>${record.iqty25}</td>
+            <td>${record.iqty26}</td>
+            <td>${record.iqty27}</td>
+            <td>${record.iqty28}</td>
+            <td>${record.iqty29}</td>
+            <td>${record.iqty30}</td>
+            <td>${record.iqty31}</td>
+            <td>${record.iqtysum}</td>
+            {@/if}
+            {@/each}
+            #for(i = 1; i <= 12; i++)
+            ${mark=1}
+            {@each data.record2 as record,index}
+            {@if record.imonth == #(i)}
+            <td>${record.iqty1}</td>
+            <td>${record.iqty2}</td>
+            <td>${record.iqty3}</td>
+            <td>${record.iqty4}</td>
+            <td>${record.iqty5}</td>
+            <td>${record.iqty6}</td>
+            <td>${record.iqty7}</td>
+            <td>${record.iqty8}</td>
+            <td>${record.iqty9}</td>
+            <td>${record.iqty10}</td>
+            <td>${record.iqty11}</td>
+            <td>${record.iqty12}</td>
+            <td>${record.iqty13}</td>
+            <td>${record.iqty14}</td>
+            <td>${record.iqty15}</td>
+            <td>${record.iqty16}</td>
+            <td>${record.iqty17}</td>
+            <td>${record.iqty18}</td>
+            <td>${record.iqty19}</td>
+            <td>${record.iqty20}</td>
+            <td>${record.iqty21}</td>
+            <td>${record.iqty22}</td>
+            <td>${record.iqty23}</td>
+            <td>${record.iqty24}</td>
+            <td>${record.iqty25}</td>
+            <td>${record.iqty26}</td>
+            <td>${record.iqty27}</td>
+            <td>${record.iqty28}</td>
+            <td>${record.iqty29}</td>
+            <td>${record.iqty30}</td>
+            <td>${record.iqty31}</td>
+            <td>${record.iqtysum}</td>
+            ${mark=2}
+            {@/if}
+            {@/each}
+            {@if mark == 1}
+            #for(a = 1; a <= 31; a++)
+            <td></td>
+            #end
+            <td></td>
+            {@/if}
+            #end
+        </tr>
 </tr>
-	<tr>
-		<th>客户订单</th>
-	#for(i = 1; i <= 12; i++)
-		#for(i = 1; i <= 31; i++)
-		<th></th>
-		#end
-		<th></th>
-	#end
-	</tr>
+
 	<tr>
 		<th >计划使用</th>
-	#for(i = 1; i <= 12; i++)
-		#for(i = 1; i <= 31; i++)
-		<th></th>
-		#end
-		<th></th>
-	#end
+        {@each data.record3 as record,index}
+        {@if data.record3.length == 12}
+        <td>${record.iqty1}</td>
+        <td>${record.iqty2}</td>
+        <td>${record.iqty3}</td>
+        <td>${record.iqty4}</td>
+        <td>${record.iqty5}</td>
+        <td>${record.iqty6}</td>
+        <td>${record.iqty7}</td>
+        <td>${record.iqty8}</td>
+        <td>${record.iqty9}</td>
+        <td>${record.iqty10}</td>
+        <td>${record.iqty11}</td>
+        <td>${record.iqty12}</td>
+        <td>${record.iqty13}</td>
+        <td>${record.iqty14}</td>
+        <td>${record.iqty15}</td>
+        <td>${record.iqty16}</td>
+        <td>${record.iqty17}</td>
+        <td>${record.iqty18}</td>
+        <td>${record.iqty19}</td>
+        <td>${record.iqty20}</td>
+        <td>${record.iqty21}</td>
+        <td>${record.iqty22}</td>
+        <td>${record.iqty23}</td>
+        <td>${record.iqty24}</td>
+        <td>${record.iqty25}</td>
+        <td>${record.iqty26}</td>
+        <td>${record.iqty27}</td>
+        <td>${record.iqty28}</td>
+        <td>${record.iqty29}</td>
+        <td>${record.iqty30}</td>
+        <td>${record.iqty31}</td>
+        <td>${record.iqtysum}</td>
+        {@/if}
+        {@/each}
+        #for(i = 1; i <= 12; i++)
+        ${mark=1}
+        {@each data.record3 as record,index}
+        {@if record.imonth == #(i)}
+        <td>${record.iqty1}</td>
+        <td>${record.iqty2}</td>
+        <td>${record.iqty3}</td>
+        <td>${record.iqty4}</td>
+        <td>${record.iqty5}</td>
+        <td>${record.iqty6}</td>
+        <td>${record.iqty7}</td>
+        <td>${record.iqty8}</td>
+        <td>${record.iqty9}</td>
+        <td>${record.iqty10}</td>
+        <td>${record.iqty11}</td>
+        <td>${record.iqty12}</td>
+        <td>${record.iqty13}</td>
+        <td>${record.iqty14}</td>
+        <td>${record.iqty15}</td>
+        <td>${record.iqty16}</td>
+        <td>${record.iqty17}</td>
+        <td>${record.iqty18}</td>
+        <td>${record.iqty19}</td>
+        <td>${record.iqty20}</td>
+        <td>${record.iqty21}</td>
+        <td>${record.iqty22}</td>
+        <td>${record.iqty23}</td>
+        <td>${record.iqty24}</td>
+        <td>${record.iqty25}</td>
+        <td>${record.iqty26}</td>
+        <td>${record.iqty27}</td>
+        <td>${record.iqty28}</td>
+        <td>${record.iqty29}</td>
+        <td>${record.iqty30}</td>
+        <td>${record.iqty31}</td>
+        <td>${record.iqtysum}</td>
+        ${mark=2}
+        {@/if}
+        {@/each}
+        {@if mark == 1}
+        #for(a = 1; a <= 31; a++)
+        <td></td>
+        #end
+        <td></td>
+        {@/if}
+        #end
+    </tr>
 	</tr>
 
 
 {@/each}
-</textarea>
+    </script>
 <div class="jbolt_table_toolbar" id="CusOrderSum_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 	<div class="btn-group dropdown ">

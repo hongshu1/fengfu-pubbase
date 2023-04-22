@@ -56,7 +56,7 @@ SELECT
 	ven.cVenName
 FROM
 	Bd_Inventory inv
-	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iUomClassId
+	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iInventoryUomId1
 	LEFT JOIN Bd_InventoryStockConfig invstock ON invstock.iInventoryId = inv.iAutoId
 	LEFT JOIN Bd_Vendor ven ON ven.iAutoId = invstock.iVendorId
 	WHERE
@@ -82,4 +82,29 @@ FROM
 	    #if(cVenName)
 	        AND ven.cVenName LIKE CONCAT('%', #para(cVenName), '%')
 	    #end
+#end
+
+#sql("findList")
+SELECT
+	a.iAfterInventoryId,
+	a.iBeforeInventoryId,
+	a.iChangeRate,
+	inv.cInvStd,
+	inv.cInvCode as afterCInvCode,
+	inv.cInvName as afterCInvName,
+	inv.cInvName1 as afterCInvName1,
+	inv.cInvCode1 as afterCInvCode1,
+	inv.isGavePresent as isGavePresent,
+	inv.iPkgQty as iPkgQty,
+	inv.iPurchaseUomId,
+	uom.cUomName
+FROM
+	Bd_InventoryChange a
+	INNER JOIN Bd_Inventory inv ON inv.iautoId = a.iBeforeInventoryId
+	AND inv.isDeleted = '0'
+	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iPurchaseUomId
+	AND uom.isDeleted = '0'
+WHERE
+	a.iOrgId = #para(orgId)
+	AND a.IsDeleted = 0
 #end

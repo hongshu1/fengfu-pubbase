@@ -165,8 +165,8 @@ public class QcFormService extends BaseService<QcForm> {
     /**
      * 按主表qcformparam查询列表
      */
-    public Page<Record> getQcFormParamListByPId(int pageNumber, int pageSize, Okv kv) {
-        return dbTemplate("qcformparam.formParamList", kv).paginate(pageNumber, pageSize);
+    public Page<Record> getQcFormParamListByPId(int pageNumber, int pageSize, Kv para) {
+        return dbTemplate("qcformparam.formParamList", para).paginate(pageNumber, pageSize);
     }
 
     /**
@@ -243,7 +243,7 @@ public class QcFormService extends BaseService<QcForm> {
             return true;
         });
 
-        return SUCCESS;
+        return successWithData(qcForm.keep("iautoid"));
     }
 
     /**
@@ -313,14 +313,14 @@ public class QcFormService extends BaseService<QcForm> {
     /**
      * 检验报告记录详情表头一
      */
-    public List<Record> qcformtableparamOneTitle(String iAutoId) {
+    public List<Record> qcformtableparamOneTitle(Long iAutoId) {
         return dbTemplate("qcform.qcformtableparamOneTitle", Kv.by("iQcFormId", iAutoId)).find();
     }
 
     /**
      * 检验报告记录详情表头二
      */
-    public List<Record> qcformtableparamTwoTitle(String iAutoId) {
+    public List<Record> qcformtableparamTwoTitle(Long iAutoId) {
         return dbTemplate("qcform.qcformtableparamTwoTitle", Kv.by("iQcFormId", iAutoId)).find();
     }
 

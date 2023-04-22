@@ -1,6 +1,7 @@
 package cn.rjtech.admin.cusordersum;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt.core.db.sql.OrderBy;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.admin.annualorderd.AnnualOrderDService;
@@ -16,6 +17,7 @@ import com.jfinal.plugin.activerecord.Page;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -150,21 +152,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 	 * @return
 	 */
 	public Ret approve(AnnualOrderM annualOrderM) {
-		CusOrderSum cusOrderSum = new CusOrderSum();
-		//创建信息
-		cusOrderSum.setICreateBy(JBoltUserKit.getUserId());
-		cusOrderSum.setCCreateName(JBoltUserKit.getUserName());
-		cusOrderSum.setDCreateTime(new Date());
-
-		//更新信息
-		cusOrderSum.setIUpdateBy(JBoltUserKit.getUserId());
-		cusOrderSum.setCUpdateName(JBoltUserKit.getUserName());
-		cusOrderSum.setDUpdateTime(new Date());
-
-		//组织信息
-		cusOrderSum.setCOrgCode(getOrgCode());
-		cusOrderSum.setCOrgName(getOrgName());
-		cusOrderSum.setIOrgId(getOrgId());
+		CusOrderSum cusOrderSum = createCusOrderSum();
 
 		List<AnnualOrderD> iAnnualOrderDList = annualOrderDService.findByMid(annualOrderM.getIAutoId());
 		//年
@@ -247,14 +235,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 		return SUCCESS;
 	}
 
-	private void saveCusOrderSum(Record record) {
-
-	}
-
-	public Ret approveByMonth(Monthorderm monthorderm) {
-		List<Monthorderd> monthorderds = monthorderdService.findByMid(monthorderm.getIAutoId());
-		Long[] inventoryIds = monthorderds.stream().map(Monthorderd::getIInventoryId).toArray(Long[]::new);
-
+	private CusOrderSum createCusOrderSum() {
 		CusOrderSum cusOrderSum = new CusOrderSum();
 		//创建信息
 		cusOrderSum.setICreateBy(JBoltUserKit.getUserId());
@@ -270,24 +251,29 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 		cusOrderSum.setCOrgCode(getOrgCode());
 		cusOrderSum.setCOrgName(getOrgName());
 		cusOrderSum.setIOrgId(getOrgId());
+		return cusOrderSum;
+	}
 
+	public Ret approveByMonth(Monthorderm monthorderm) {
+		List<Monthorderd> monthorderds = monthorderdService.findByMid(monthorderm.getIAutoId());
+		Long[] inventoryIds = monthorderds.stream().map(Monthorderd::getIInventoryId).toArray(Long[]::new);
+
+		CusOrderSum cusOrderSum = createCusOrderSum();
 		cusOrderSum.setIYear(monthorderm.getIYear());
 		cusOrderSum.setIMonth(monthorderm.getIMonth());
 
 		List<CusOrderSum> cusOrderSums = find(selectSql().eq("iYear", monthorderm.getIYear()).
 				eq("iMonth", monthorderm.getIMonth()).
-				in("iInventoryId", ArrayUtil.join(inventoryIds, COMMA)));
+				in("iInventoryId", ArrayUtil.join(inventoryIds, COMMA)).isNotNull("iQty1"));
 		for (Monthorderd monthorderd : monthorderds) {
 			if (cusOrderSums.size() > 0) {
 				for (CusOrderSum orderSum : cusOrderSums) {
 					if (orderSum.getIInventoryId().equals(monthorderd.getIInventoryId())) {
-						for (int i = 1; i <= 31; i++) {
-							orderSum.setIQty1(monthorderd.get("iQty" + i));
-							orderSum.setIUpdateBy(JBoltUserKit.getUserId());
-							orderSum.setCUpdateName(JBoltUserKit.getUserName());
-							orderSum.setDUpdateTime(new Date());
-							orderSum.update();
-						}
+						orderSum.setIQty1(monthorderd.get("iQty" + orderSum.getIDate()));
+						orderSum.setIUpdateBy(JBoltUserKit.getUserId());
+						orderSum.setCUpdateName(JBoltUserKit.getUserName());
+						orderSum.setDUpdateTime(new Date());
+						orderSum.update();
 					} else {
 						cusOrderSum.setIInventoryId(monthorderd.getIInventoryId());
 						for (int i = 1; i <= 31; i++) {
@@ -326,7 +312,16 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 			for (Record record : pageData.getList()) {
 				String iinventoryid = record.getStr("iinventoryid");
 				kv.set("iInventoryId", iinventoryid);
-				List<Record> record2 = dbTemplate("cusordersum.getiQty1", kv).find();
+				List<Record> record1 = dbTemplate("cusordersum.getiQty1", kv).find();
+				List<Record> record2 = dbTemplate("cusordersum.getiQty2", kv).find();
+				List<CusOrderSum> cusOrderSums = find(selectSql().eq("iYear", record.getStr("iYear")).
+						eq("iInventoryId", iinventoryid).isNotNull("iQty2"));
+				if (cusOrderSums.size() > 0) {
+					record.set("record3", record2);
+				} else {
+					record.set("record3", record1);
+				}
+				record.set("record1", record1);
 				record.set("record2", record2);
 				System.out.println("数据iinventoryid："+iinventoryid);
 			}
@@ -338,5 +333,160 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 			});
 		}*/
 		return pageData;
+	}
+
+	/**
+	 * 周间客户订单审批通过触发客户计划汇总-客户订单
+	 *
+	 * @param weekOrderDS
+	 */
+	public void handelWeekOrder(List<WeekOrderD> weekOrderDS) {
+		//周间遍历
+		for (WeekOrderD weekOrderD : weekOrderDS) {
+			Date dPlanAogDate = weekOrderD.getDPlanAogDate();
+			//年月日
+			int year = dPlanAogDate.getYear() + 1900;
+			int month = dPlanAogDate.getMonth();
+			int date = dPlanAogDate.getDate();
+			CusOrderSum cusOrderSum = findDistinctByInYMD(weekOrderD.getIInventoryId(), year, month, date);
+			/*CusOrderSum cusOrderSum = findFirst(selectSql().eq("iInventoryId", weekOrderD.getIInventoryId())
+					.eq("iYear", year).eq("iMonth", month).eq("iDate", date));*/
+			if (null != cusOrderSum) {
+				BigDecimal iQty2 = cusOrderSum.getIQty2();
+				if (iQty2 != null) {
+					cusOrderSum.setIQty2(cusOrderSum.getIQty2().add(new BigDecimal(weekOrderD.getIQty())));
+				} else {
+					cusOrderSum.setIQty2(new BigDecimal(weekOrderD.getIQty()));
+				}
+				//更新信息
+				cusOrderSum.setIUpdateBy(JBoltUserKit.getUserId());
+				cusOrderSum.setCUpdateName(JBoltUserKit.getUserName());
+				cusOrderSum.setDUpdateTime(new Date());
+				cusOrderSum.update();
+			} else {
+				cusOrderSum = createCusOrderSum();
+				cusOrderSum.setIYear(year);
+				cusOrderSum.setIMonth(month);
+				cusOrderSum.setIDate(date);
+				cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
+
+				cusOrderSum.setIInventoryId(weekOrderD.getIInventoryId());
+				cusOrderSum.setIQty2(new BigDecimal(weekOrderD.getIQty()));
+				cusOrderSum.save();
+			}
+		}
+	}
+
+	private CusOrderSum findDistinctByInYMD(Long iInventoryId, int year, int month, int date) {
+		return findFirst(selectSql().eq("iInventoryId", iInventoryId)
+				.eq("iYear", year).eq("iMonth", month).eq("iDate", date));
+	}
+
+	/**
+	 * 手配订单审批通过触发客户计划汇总-客户订单
+	 *
+	 * @param manualOrderDS
+	 */
+	public void handelManualOrder(ManualOrderM manualOrderM, List<ManualOrderD> manualOrderDS) {
+		for (ManualOrderD manualOrderD : manualOrderDS) {
+			List<CusOrderSum> cusOrderSums = find(selectSql().eq("iInventoryId", manualOrderD.getIInventoryId())
+					.eq("iYear", manualOrderM.getIYear()).eq("iMonth", manualOrderM.getIMonth()).orderBy(OrderBy.asc("iDate")));
+
+			CusOrderSum cusOrderSum = createCusOrderSum();
+			cusOrderSum.setIYear(manualOrderM.getIYear());
+			cusOrderSum.setIMonth(manualOrderM.getIMonth());
+
+			boolean mark = true;
+			for (int i = 1; i <= 31; i++) {
+				BigDecimal IQty = manualOrderD.get("IQty" + i);
+				if (null != IQty) {
+					if (cusOrderSums.size() > 0) {
+						for (CusOrderSum orderSum : cusOrderSums) {
+							if (orderSum.getIDate() == i) {
+								BigDecimal iQty = manualOrderD.get("IQty" + orderSum.getIDate());
+								BigDecimal iQty2 = orderSum.getIQty2();
+								if (iQty2 != null && null != iQty) {
+									orderSum.setIQty2(orderSum.getIQty2().add(iQty));
+								} else {
+									orderSum.setIQty2(iQty);
+								}
+								//更新信息
+								orderSum.setIUpdateBy(JBoltUserKit.getUserId());
+								orderSum.setCUpdateName(JBoltUserKit.getUserName());
+								orderSum.setDUpdateTime(new Date());
+								orderSum.update();
+								mark = false;
+							}
+						}
+						if (mark) {
+							cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
+							cusOrderSum.setIDate(i);
+							cusOrderSum.setIQty2(IQty);
+							cusOrderSum.setIInventoryId(manualOrderD.getIInventoryId());
+							cusOrderSum.save();
+						}
+					} else {
+						cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
+						cusOrderSum.setIDate(i);
+						cusOrderSum.setIQty2(IQty);
+						cusOrderSum.setIInventoryId(manualOrderD.getIInventoryId());
+						cusOrderSum.save();
+
+					}
+				}
+			}
+		}
+	}
+
+	public void handelSubcontractsaleorderd(Subcontractsaleorderm subcontractsaleorderm, List<Subcontractsaleorderd> subcontractsaleorderds) {
+		for (Subcontractsaleorderd subcontractsaleorderd : subcontractsaleorderds) {
+			List<CusOrderSum> cusOrderSums = find(selectSql().eq("iInventoryId", subcontractsaleorderd.getIInventoryId())
+					.eq("iYear", subcontractsaleorderm.getIYear()).eq("iMonth", subcontractsaleorderm.getIMonth()).orderBy(OrderBy.asc("iDate")));
+
+			CusOrderSum cusOrderSum = createCusOrderSum();
+			cusOrderSum.setIYear(subcontractsaleorderm.getIYear());
+			cusOrderSum.setIMonth(subcontractsaleorderm.getIMonth());
+
+			boolean mark = true;
+			int size = cusOrderSums.size();
+			for (int i = 1; i <= 31; i++) {
+				BigDecimal IQty = subcontractsaleorderd.get("iQty" + i);
+				if (null != IQty) {
+					if (size > 0) {
+						for (CusOrderSum orderSum : cusOrderSums) {
+							if (orderSum.getIDate() == i) {
+								BigDecimal iQty = subcontractsaleorderd.get("iQty" + orderSum.getIDate());
+								BigDecimal iQty2 = orderSum.getIQty2();
+								if (iQty2 != null && null != iQty) {
+									orderSum.setIQty2(orderSum.getIQty2().add(iQty));
+								} else {
+									orderSum.setIQty2(iQty);
+								}
+								//更新信息
+								orderSum.setIUpdateBy(JBoltUserKit.getUserId());
+								orderSum.setCUpdateName(JBoltUserKit.getUserName());
+								orderSum.setDUpdateTime(new Date());
+								orderSum.update();
+								mark = false;
+								size = size - 1;
+							}
+						}
+						if (mark) {
+							cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
+							cusOrderSum.setIDate(i);
+							cusOrderSum.setIQty2(IQty);
+							cusOrderSum.setIInventoryId(subcontractsaleorderd.getIInventoryId());
+							cusOrderSum.save();
+						}
+					} else {
+						cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
+						cusOrderSum.setIDate(i);
+						cusOrderSum.setIQty2(IQty);
+						cusOrderSum.setIInventoryId(subcontractsaleorderd.getIInventoryId());
+						cusOrderSum.save();
+					}
+				}
+			}
+		}
 	}
 }

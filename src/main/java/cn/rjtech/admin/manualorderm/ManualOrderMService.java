@@ -1,9 +1,13 @@
 package cn.rjtech.admin.manualorderm;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.manualorderd.ManualOrderDService;
@@ -11,7 +15,10 @@ import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -20,13 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import com.jfinal.plugin.activerecord.Record;
 
 import static cn.jbolt.core.util.JBoltArrayUtil.COMMA;
 
@@ -47,6 +47,9 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 	private InventoryService inventoryService;
 	@Inject
 	private InventoryQcFormService inventoryQcFormService;
+
+    @Inject
+    private CusOrderSumService cusOrderSumService;
 
 	@Override
 	protected ManualOrderM dao() {
@@ -344,4 +347,11 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 		}
 		return dbTemplate("manualorderm.getDatasByIds", kv).find();
 	}
+
+    public void handleCusOrderByManual(ManualOrderM manualOrderM) {
+        List<ManualOrderD> manualOrderDS = manualOrderDService.findByMid(manualOrderM);
+        if (manualOrderDS.size() > 0) {
+            cusOrderSumService.handelManualOrder(manualOrderM, manualOrderDS);
+        }
+    }
 }

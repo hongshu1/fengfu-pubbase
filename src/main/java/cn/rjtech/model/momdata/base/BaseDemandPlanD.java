@@ -20,12 +20,12 @@ public abstract class BaseDemandPlanD<M extends BaseDemandPlanD<M>> extends JBol
     public static final String IMONTH = "iMonth";
     /**日*/
     public static final String IDATE = "iDate";
-    /**实绩需求数*/
-    public static final String IQTY1 = "iQty1";
     /**到货计划数*/
-    public static final String IQTY2 = "iQty2";
-    /**计划在库*/
-    public static final String IQTY3 = "iQty3";
+    public static final String IQTY = "iQty";
+    /**状态：1. 未完成 2. 已完成*/
+    public static final String ISTATUS = "iStatus";
+    /**生成类型：0. 未生成 1. 采购订单 2. 销售订单*/
+    public static final String IGENTYPE = "iGenType";
 	/**
 	 * 主键ID
 	 */
@@ -112,54 +112,54 @@ public abstract class BaseDemandPlanD<M extends BaseDemandPlanD<M>> extends JBol
 	}
 
 	/**
-	 * 实绩需求数
-	 */
-	public M setIQty1(java.math.BigDecimal iQty1) {
-		set("iQty1", iQty1);
-		return (M)this;
-	}
-
-	/**
-	 * 实绩需求数
-	 */
-	@JBoltField(name="iqty1" ,columnName="iQty1",type="BigDecimal", remark="实绩需求数", required=true, maxLength=18, fixed=2, order=6)
-	@JSONField(name = "iqty1")
-	public java.math.BigDecimal getIQty1() {
-		return getBigDecimal("iQty1");
-	}
-
-	/**
 	 * 到货计划数
 	 */
-	public M setIQty2(java.math.BigDecimal iQty2) {
-		set("iQty2", iQty2);
+	public M setIQty(java.math.BigDecimal iQty) {
+		set("iQty", iQty);
 		return (M)this;
 	}
 
 	/**
 	 * 到货计划数
 	 */
-	@JBoltField(name="iqty2" ,columnName="iQty2",type="BigDecimal", remark="到货计划数", required=true, maxLength=18, fixed=2, order=7)
-	@JSONField(name = "iqty2")
-	public java.math.BigDecimal getIQty2() {
-		return getBigDecimal("iQty2");
+	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="到货计划数", required=true, maxLength=18, fixed=2, order=6)
+	@JSONField(name = "iqty")
+	public java.math.BigDecimal getIQty() {
+		return getBigDecimal("iQty");
 	}
 
 	/**
-	 * 计划在库
+	 * 状态：1. 未完成 2. 已完成
 	 */
-	public M setIQty3(java.math.BigDecimal iQty3) {
-		set("iQty3", iQty3);
+	public M setIStatus(java.lang.Integer iStatus) {
+		set("iStatus", iStatus);
 		return (M)this;
 	}
 
 	/**
-	 * 计划在库
+	 * 状态：1. 未完成 2. 已完成
 	 */
-	@JBoltField(name="iqty3" ,columnName="iQty3",type="BigDecimal", remark="计划在库", required=true, maxLength=18, fixed=2, order=8)
-	@JSONField(name = "iqty3")
-	public java.math.BigDecimal getIQty3() {
-		return getBigDecimal("iQty3");
+	@JBoltField(name="istatus" ,columnName="iStatus",type="Integer", remark="状态：1. 未完成 2. 已完成", required=true, maxLength=10, fixed=0, order=7)
+	@JSONField(name = "istatus")
+	public java.lang.Integer getIStatus() {
+		return getInt("iStatus");
+	}
+
+	/**
+	 * 生成类型：0. 未生成 1. 采购订单 2. 销售订单
+	 */
+	public M setIGenType(java.lang.Integer iGenType) {
+		set("iGenType", iGenType);
+		return (M)this;
+	}
+
+	/**
+	 * 生成类型：0. 未生成 1. 采购订单 2. 销售订单
+	 */
+	@JBoltField(name="igentype" ,columnName="iGenType",type="Integer", remark="生成类型：0. 未生成 1. 采购订单 2. 销售订单", required=true, maxLength=10, fixed=0, order=8)
+	@JSONField(name = "igentype")
+	public java.lang.Integer getIGenType() {
+		return getInt("iGenType");
 	}
 
 }

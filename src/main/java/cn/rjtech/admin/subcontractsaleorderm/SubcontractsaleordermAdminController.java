@@ -1,5 +1,6 @@
 package cn.rjtech.admin.subcontractsaleorderm;
 
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import com.jfinal.aop.Inject;
 
 import cn.rjtech.admin.customer.CustomerService;
@@ -112,5 +113,21 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
+
+	/**
+	 * 审批
+	 */
+	public void approve() {
+		Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong(0));
+		if (subcontractsaleorderm == null) {
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		subcontractsaleorderm.setIAuditStatus(2);
+		subcontractsaleorderm.setIOrderStatus(3);
+		service.handleCusOrderBySubcontract(subcontractsaleorderm);
+		renderJson(subcontractsaleorderm.update());
+	}
+
 
 }

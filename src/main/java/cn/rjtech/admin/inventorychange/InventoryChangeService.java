@@ -1,7 +1,9 @@
 package cn.rjtech.admin.inventorychange;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -11,8 +13,8 @@ import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
@@ -272,7 +274,14 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 		ValidationUtils.notNull(inventoryChange.getIChangeRate(), "转换率不能为空且只能为正数或0");
 		String beforeInv = String.valueOf(inventoryChange.getIBeforeInventoryId());
 		String afterInv = String.valueOf(inventoryChange.getIAfterInventoryId());
-		ValidationUtils.isTrue(!beforeInv.equals(afterInv), JBoltMsg.DATA_SAME_SN_EXIST);
+		ValidationUtils.isTrue(!beforeInv.equals(afterInv), "转换前跟转换后的编码一致，请跟换");
+		String sql = "select * from Bd_InventoryChange where IsDeleted = 0 and iBeforeInventoryId = ?";
+		// 为空校验全部，不为空排除校验自己
+		if (ObjectUtil.isNotNull(inventoryChange.getIAutoId())){
+			sql = sql.concat(" and iAutoId <> "+inventoryChange.getIAutoId());
+		}
+		InventoryChange change = findFirst(sql, inventoryChange.getIBeforeInventoryId());
+		ValidationUtils.isTrue(change == null, JBoltMsg.DATA_SAME_SN_EXIST);
 		ValidationUtils.isTrue(ZERO_BIGDECIMAL.compareTo(inventoryChange.getIChangeRate()) <=0,"转换率不能为空且只能为正数或0");
 	}
 	
@@ -296,5 +305,9 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 			return true;
 		});
 		return SUCCESS;
+	}
+	
+	public List<Record> findByOrgList(Long orgId){
+		return dbTemplate("inventorychange.findList", Okv.by("orgId", orgId)).find();
 	}
 }

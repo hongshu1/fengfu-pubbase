@@ -30,8 +30,8 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     @Inject
     private ScheduProductPlanMonthService service;
 
-    public void planyear() {
-        render("planyear.html");
+    public void planmonth() {
+        render("planmonth.html");
     }
     public void addview() {
         set("cplanorderno",get("cplanorderno"));
@@ -119,14 +119,18 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
      * 作成计划
      */
     public void schedulingPlan() {
-        renderJson(service.scheduPlanMonth(getKv()));
+        //排产层级
+        int level = 1;
+        //截止日期
+        String endDate = "2023-06-18";
+        renderJson(service.scheduPlanMonth(level,endDate));
     }
 
 
 
 
 
-    //-----------------------------------------------------------------年度生产计划汇总-----------------------------------------------
+    //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------
 
 
 
