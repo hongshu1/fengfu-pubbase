@@ -153,9 +153,7 @@
 
 <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-        <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseorderd/deleteByIds?ids="
-                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
+        <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
         </button>
     </div>
 
@@ -168,20 +166,26 @@
        data-column-resize="true"
        data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
        data-column-prepend="1:checkbox:true:false:false"
-       data-page="PurchaseOrderPage_#(pageId)"
+       data-editable="true"
+       data-editable-option="getEditableTableOptions1_#(pageId)"
 >
     <thead>
     <tr>
         <th data-width="60"  rowspan="2" data-column="index">序号</th>
         <th data-width="80"  rowspan="2">操作</th>
-        <th data-width="100" rowspan="2" data-column="iInventoryId">存货编码</th>
-        <th data-width="150" rowspan="2" data-column="cInvCode1">客户部番</th>
-        <th data-width="150" rowspan="2" data-column="cInvName1">部品名称</th>
+        <th data-width="150" rowspan="2" data-column="cInventoryCode">转换前存货编码</th>
+        <th data-width="150" rowspan="2" data-column="cInvCode1">转换前客户部番</th>
+        <th data-width="150" rowspan="2" data-column="cInvName1">转换前部品名称</th>
+
+        <th data-width="150" rowspan="2" data-column="afterCInvCode">转换后存货编码</th>
+        <th data-width="150" rowspan="2" data-column="aftercinvcode1">转换后客户部番</th>
+        <th data-width="150" rowspan="2" data-column="aftercinvname1">转换后部品名称</th>
+
         <th data-width="150" rowspan="2" data-column="cInvStd">规格</th>
         <th data-width="150" rowspan="2" data-column="iPurchaseUomId">采购单位</th>
         <th data-width="150" rowspan="2" data-column="iPkgQty">包装数量</th>
         <th data-width="100" rowspan="2" data-column="isPresent">是否赠品</th>
-        <th data-width="100" rowspan="2" data-column="cMemo">备注</th>
+        <th data-width="150" rowspan="2" data-column="cMemo">备注</th>
         <th data-width="200" rowspan="2" data-column="iVendorAddrId">供应商地址</th>
         <!--   显示日期 -->
         #for(key:tableHeadMap.keySet())
@@ -202,16 +206,23 @@
         #for(data:tableData)
             <tr>
                 <td>#(for.index+1)</td>
-                <td>操作</td>
+                <td>
+                    <a tabindex="-1" class="ml-1 " href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash text-danger">删除</i></a>
+                </td>
                 <td>#(data.cinvcode??)</td>
                 <td>#(data.cinvcode1??)</td>
                 <td>#(data.cinvname1??)</td>
+
+                <td>#(data.aftercinvcode??)</td>
+                <td>#(data.aftercinvcode1??)</td>
+                <td>#(data.aftercinvname1??)</td>
+
                 <td>#(data.cinvstd??)</td>
                 <td>#(data.cuomname??)</td>
                 <td>
                     #(data.ipkgqty??)
                 </td>
-                <td> #boolToStr(data.isgavepresent?? == 1,"是","否")</td>
+                <td>#boolToStr(data.isgavepresent?? == 1,"是","否")</td>
                 <td>
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
                            maxlength="200"/>
@@ -239,7 +250,24 @@
 </table>
 #define js()
 <script>
-
+    function getEditableTableOptions1_#(pageId)(){
+        var editableTableOptions={
+            trigger:"click",
+            //初始行数
+            initRowCount:0,
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols:{
+                id:{
+                    submitAttr:"id",
+                },
+                index:{
+                    submitAttr: "index"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="PurchaseOrderM_Form")
 #end
