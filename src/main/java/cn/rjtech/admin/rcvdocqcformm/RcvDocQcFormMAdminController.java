@@ -31,6 +31,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 
 /**
@@ -91,7 +92,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("rcvDocQcFormM", rcvDocQcFormM);
+        set("rcvdocqcformm", rcvDocQcFormM);
         render("edit.html");
     }
 
@@ -150,8 +151,26 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      */
     public void checkout() {
         RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
-        set("rcvDocQcFormM", rcvDocQcFormM);
+        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+        set("rcvdocqcformm", rcvDocQcFormM);
+        set("record", record);
         render("checkout.html");
+    }
+
+    /*
+     * 点击检验时，进入弹窗自动加载table的数据
+     * */
+    public void getCheckOutTableDatas() {
+        /*List<RcvDocQcFormD> rcvDocQcFormDList = rcvDocQcFormDService.findByIRcvDocQcFormMId(rcvDocQcFormM.getIAutoId());
+        List<Record> recordList = new ArrayList<>();
+        for (RcvDocQcFormD rcvDocQcFormD : rcvDocQcFormDList) {
+            Record record = service.getCheckoutListByIFormParamId(rcvDocQcFormD.getIFormParamId());
+            recordList.add(record);
+        }
+        set("recordList",recordList);
+        set("rcvDocQcFormDList", rcvDocQcFormDList);
+        set("rcvDocQcFormM", rcvDocQcFormM);*/
+        renderJsonData(service.getCheckOutTableDatas(getKv()));
     }
 
     /**
@@ -159,21 +178,23 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      */
     public void onlysee() {
         RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
-        set("rcvDocQcFormM", rcvDocQcFormM);
+        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+        set("rcvdocqcformm", rcvDocQcFormM);
+        set("record", record);
         render("onlysee.html");
     }
 
     /*
-     * 点击编辑
+     * 在编辑页面点击确定
      * */
     public void editTable(JBoltPara JboltPara) {
         renderJson(service.editTable(JboltPara));
     }
 
     /*
-     * 点击检验
+     * 在检验页面点击确定
      * */
-    public void checkoutTable(JBoltPara JboltPara){
+    public void editCheckOutTable(JBoltPara JboltPara) {
         renderJson(service.editTable(JboltPara));
     }
 

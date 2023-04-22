@@ -122,8 +122,10 @@
     {@if data.istatus == 2}<span>不合格</span>{/@if}
     {@if data.istatus == 3}<span>合格</span>{/@if}
   </td>
-  {@if data.isCompleted == 0}<td>未完成</td>{@/if}
-  {@if data.isCompleted == 1}<td>已完成</td>{@/if}
+  <td>
+    {@if data.iscompleted == 0}<span>未完成</span>{@/if}
+    {@if data.iscompleted == 1}<span>已完成</span>{@/if}
+  </td>
   <td>${data.cstockoutqcformno}</td>
   <td>${data.cqcformname}</td>
 	<td>${data.cinvaddcode}</td>
