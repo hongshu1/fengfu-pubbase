@@ -1,3 +1,5 @@
+###---------------------------------------------------------年度生产计划排产---------------------
+
 #sql("getSourceYearOrderList")
 ###根据客户id集查询年度订单 并进行行转列
 SELECT a.iCustomerId,d.cCusCode,d.cCusName,
@@ -225,8 +227,7 @@ ORDER BY a.cPlanOrderNo DESC
 
 
 
-
-
+###---------------------------------------------------------年度生产计划汇总---------------------
 
 #sql("getApsYearPlanSumPage")
 ###年度生产计划汇总
@@ -266,6 +267,55 @@ ORDER BY e.cWorkCode,c.cInvCode,b.iType,b.iYear,b.iMonth
 
 
 
+###---------------------------------------------------------月周生产计划排产---------------------
+
+#sql("getCusOrderSumList")
+###根据层级及销售类型获取客户计划汇总表数据
+SELECT
+    t.iYear,
+    t.iMonth,
+    t.iDate,
+    t.iQty3,
+    a.iAutoId AS invId,
+    a.cInvCode,
+    a.cInvCode1,
+    a.cInvName1,
+    a.iSaleType,
+    b.iWorkRegionMid,
+    c.cWorkCode,
+    c.cWorkName,
+    c.iPsLevel
+FROM Co_CusOrderSum AS t
+         LEFT JOIN Bd_Inventory AS a ON a.iAutoId = t.iInventoryId
+         LEFT JOIN Bd_InventoryWorkRegion AS b ON a.iAutoId = b.iInventoryId AND b.isDefault = 1 AND b.isDeleted = 0
+         LEFT JOIN Bd_WorkRegionM AS c ON b.iWorkRegionMid = c.iAutoId AND c.isDeleted = 0
+WHERE
+    c.iPsLevel = #para(ipslevel)
+    #if(isaletype)
+        AND a.iSaleType = #para(isaletype)
+    #end
+    AND t.iYear >= #para(startyear) AND t.iYear <= #para(endyear)
+    AND t.iMonth >= #para(startmonth) AND t.iMonth <= #para(endmonth)
+    AND t.iDate >= #para(startday) AND t.iDate <= #para(endday)
+ORDER BY c.cWorkCode,a.cInvCode,t.iYear,t.iMonth,t.iDate
+#end
+
+#sql("getApsWeekschedule")
+###获取当前层级上次排产截止日期
+SELECT TOP 1 iLevel,dScheduleEndTime,dLockEndTime
+FROM Aps_WeekSchedule
+WHERE iLevel = #para(level)
+ORDER BY dCreateTime DESC
+#end
+
+#sql("getInvCapacityList")
+###根据物料集查询各班次产能
+SELECT b.cInvCode,c.cWorkShiftCode,c.cWorkShiftName,a.iCapacity
+FROM Bd_InventoryCapacity AS a
+         LEFT JOIN Bd_Inventory AS b ON a.iInventoryId = b.iAutoId
+         LEFT JOIN Bd_WorkShiftM AS c ON a.iWorkShiftMid = c.iAutoId
+WHERE a.iInventoryId IN #(ids)
+#end
 
 
 

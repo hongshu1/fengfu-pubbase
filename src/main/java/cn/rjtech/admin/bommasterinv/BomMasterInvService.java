@@ -192,7 +192,7 @@ public class BomMasterInvService extends BaseService<BomMasterInv> {
 		return delCount;
 	}
 
-	public boolean deleteByBomMasterId  (Long bomMasterId){
+	public void deleteByBomMasterId  (Long bomMasterId){
 		// 查询当前母件下所有子件。
 		List<BomCompare> bomCompareList = bomCompareService.findByBomMasterIdList(bomMasterId);
 		List<Long> bomCompareIds = new ArrayList<>();
@@ -201,7 +201,7 @@ public class BomMasterInvService extends BaseService<BomMasterInv> {
 		for (BomCompare bomCompare : bomCompareList){
 			bomCompareIds.add(bomCompare.getIAutoId());
 		}
-		return deleteByPIds(bomCompareIds) > 0;
+		deleteByPIds(bomCompareIds);
 	}
 	
 	public int[] saveBomMasterInv(Long bomMasterId, Long inventoryId){

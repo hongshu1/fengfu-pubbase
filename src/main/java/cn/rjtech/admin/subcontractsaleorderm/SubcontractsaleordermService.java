@@ -1,5 +1,7 @@
 package cn.rjtech.admin.subcontractsaleorderm;
 
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
+import cn.rjtech.model.momdata.Subcontractsaleorderd;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.TableMapping;
@@ -40,6 +42,8 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
 	private SubcontractsaleorderdService subcontractsaleorderdService;
 	@Inject
 	private DeptService deptService;
+	@Inject
+	private CusOrderSumService cusOrderSumService;
 	@Override
 	protected Subcontractsaleorderm dao() {
 		return dao;
@@ -274,4 +278,11 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     		subcontractsaleorderdService.deleteById(id);
 		}
     }
+
+	public void handleCusOrderBySubcontract(Subcontractsaleorderm subcontractsaleorderm) {
+		List<Subcontractsaleorderd> subcontractsaleorderds = subcontractsaleorderdService.findByMid(subcontractsaleorderm);
+		if (subcontractsaleorderds.size() > 0) {
+			cusOrderSumService.handelSubcontractsaleorderd(subcontractsaleorderm, subcontractsaleorderds);
+		}
+	}
 }

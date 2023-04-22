@@ -8,16 +8,16 @@
             <div class="col">
                 <form class="form-inline" id="QcForm_form_#(pageId)">
                     <input type="text" autocomplete="off" class="form-control" placeholder="=检验表格名称=" name="cQcFormName" id="cQcFormName" value=""/>
-
+                    
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
                     <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
                 </form>
             </div>
         </div>
     </div>
-
+    
     <div class="jbolt_page_content">
-
+        
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="QcForm_tpl_#(pageId)">
         {@each datas as data,index}
@@ -33,7 +33,7 @@
         </tr>
         {@/each}
         </textarea>
-
+        
         <div class="jbolt_table_toolbar" id="QcForm_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                 <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增质量建模-检验表格" data-url="admin/qcform/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
@@ -42,7 +42,7 @@
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
             </div>
         </div>
-
+        
         <table class="jbolt_table jbolt_main_table  table-center "
                data-jbolttable
                data-width="auto"

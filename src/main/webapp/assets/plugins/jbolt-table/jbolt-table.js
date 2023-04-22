@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.3.6";
+var jbolt_table_js_version="3.3.7";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -6,6 +6,54 @@ function clearJBoltCurrentEditableAndKeyEventTable(){
 }
 function changeJBoltCurrentEditableAndKeyEventTable(table){
 	JBoltCurrentEditableAndKeyEventTable=table;
+}
+
+/**
+ * 表格设置指定行指定属性的值 用于不在表格显示的列
+ * @param tableEle
+ * @param tr
+ * @param attr
+ * @param value
+ * @param dontExeValueChangeHandler
+ */
+function jboltTableSetAttrValue(tableEle,tr,attr,value,dontExeValueChangeHandler){
+	var table=getJBoltTable(tableEle);
+	if(isOk(table)){
+		var jboltTable=table.jboltTable("inst");
+		if(jboltTable){
+			return jboltTable.me.setTrDataAttr(jboltTable,tr,attr,value,dontExeValueChangeHandler);
+		}
+	}
+	LayerMsgBox.alert("表格组件配置异常",2);
+	return false;
+}
+
+
+/**
+ * 表格设置指定行的指定属性的值 用于不在表格显示的列
+ * @param tableEle
+ * @param tr
+ * @param attrValues //{attr:"age",value:1}
+ * @param dontExeValueChangeHandler
+ */
+function jboltTableSetAttrsValue(tableEle,tr,attrValues,dontExeValueChangeHandler){
+	var table=getJBoltTable(tableEle);
+	if(isOk(table)){
+		var jboltTable=table.jboltTable("inst");
+		if(jboltTable){
+			var columnJson,success=false;
+			for(var i in attrValues){
+				columnJson=attrValues[i];
+				success=jboltTable.me.setTrDataAttr(jboltTable,tr,columnJson.attr,columnJson.value,dontExeValueChangeHandler);
+				if(!success){
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	LayerMsgBox.alert("表格组件配置异常",2);
+	return false;
 }
 
 /**
@@ -4109,6 +4157,13 @@ function getScrollBarHeight(ele){
 			if(!canSubmit){return false;}
 			var submitOption=table.editableOptions["submit"];
 			var that=this;
+			var beforeHandler=submitOption.before;
+			if(beforeHandler){
+				var result = beforeHandler(table,table.tableListDatas);
+				if(typeof(result)=="boolean" && !result){
+					return false;
+				}
+			}
 			var postData=that.getSubmitData(table);
 			var successCallback=submitOption.success;
 			var failCallback=submitOption.fail;
@@ -5154,6 +5209,18 @@ function getScrollBarHeight(ele){
 			if(typeof(dataIndex)!=undefined && typeof(dataIndex)!="undefined" && dataIndex>=0){
 				var td = tr.find("td[data-col-index='"+dataIndex+"']");
 				return this.processEditableTdChooseData(table,td,text,value,dontExeValueChangeHandler);
+			}
+			return false;
+		},
+		setTrDataAttr:function(jboltTable,tr,attrName,value,dontExeValueChangeHandler){
+			if(table.isEmpty){
+				return false;
+			}
+			var dataIndex = tr.data("index");
+			//设置属性数据
+			if(typeof(dataIndex)!=undefined && typeof(dataIndex)!="undefined" && dataIndex>=0){
+				JBoltArrayUtil.changeOneItemAttrValue(table.tableListDatas,dataIndex,attrName,value);
+				return true;
 			}
 			return false;
 		},

@@ -184,7 +184,7 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
         //关键词模糊查询
         sql.likeMulti(keywords, "message_title");
         //排序
-        sql.orderBy("id", true);
+        sql.orderBy("id", false);
 
         Page<SysMessageTemplate> page = paginate(sql);
         //遍历字典,添加字典值
@@ -195,7 +195,7 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
             Map<String, String> chanceDict = addDictinary(listByTypeKeyChance);
 
             List<SysMessageTemplate> pageList = page.getList();
-            List<SysMessageTemplate> newList = new ArrayList<>();
+
 
             for (int i = 0; i < pageList.size(); i++) {
                 SysMessageTemplate sysMessageTemplate = pageList.get(i);
@@ -207,7 +207,7 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
                 if (chanceKey!=null &&chanceDict.get(chanceKey)!= null){
                     sysMessageTemplate.setMessageChanceValue(chanceDict.get(chanceKey));
                 }
-                newList.add(sysMessageTemplate);
+
             }
 
         }

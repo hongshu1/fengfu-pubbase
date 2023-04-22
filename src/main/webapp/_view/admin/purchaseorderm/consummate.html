@@ -7,20 +7,28 @@
             <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>订单作成</h1></div>
         </div>
         <div>
-            <form class="form-inline" id="PurchaseOrderM_form_#(pageId)">
-                <span>开始日期</span>
-                <input type="date" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder=""
-                       maxlength="40" name="begindate" data-rule="required"/>
-                <span>结束日期</span>
-                <input type="date" data-with-clearbtn="true" autocomplete="off"
-                       class="form-control" placeholder=""
-                       maxlength="40" name="enddate" data-rule="required"/>
-                &nbsp;
-                &nbsp;
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       placeholder="请输入供应商名称" maxlength="40" name="ivendorid" data-rule="required"/>
-                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
-                <button type="reset" class="btn btn-outline-secondary"><i class="fa text-reset"></i> 重置</button>
+            <form onsubmit="return false;" id="PurchaseOrderM_form_#(pageId)" action="" method="post">
+                <div class="form-group row">
+                    <label class="col-form-label col-lg-1">日期：</label>
+                    <input id="dEnableDate"  type="text" data-rule="required" style="width: 15%" placeholder="开始日期" class="form-control" data-date name="begindate" value="">
+                    <span style="margin-right: 5px; margin-left: 5px"> - </span>
+                    <input id="dDisableDate" type="text" data-rule="required;>=#dEnableDate" style="width: 15%" class="form-control" placeholder="结束日期" data-done-handler="checkme" data-date name="enddate" value="">
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-lg-1">选择供应商：</label>
+                    <input hidden type="text" name="iVendorId" id="iVendorId_#(pageId)" data-sync-attr="cvenid" >
+                    <input data-autocomplete
+                           type="text"
+                           autocomplete="off"
+                           class="form-control"
+                           data-rule="required"
+                           data-url="admin/bommaster/findVendorList"
+                           data-sync-ele="#iVendorId_#(pageId)"
+                           data-text-attr="cvenname"
+                           placeholder="请输入供应商名称"
+                           />
+                </div>
             </form>
         </div>
     </div>
@@ -41,8 +49,11 @@
         var $form = $('#PurchaseOrderM_form_#(pageId)');
         if (FormChecker.check($form)) {
             var formData = formToJson($form);
-            console.log(JSON.stringify(formData));
-            location.href = '/admin/purchaseorderm/add? =' + formData.ivendorid + '&begindate=' + formData.begindate + '&enddate=' + formData.enddate + '&_jb_rqtype_=dialog';
+            Ajax.post("admin/purchaseorderm/checkData",{iVendorId: formData.iVendorId, beginDate: formData.begindate, endDate: formData.enddate, processType: 3}, function (res) {
+                if (res.state=='ok'){
+                    location.href = '/admin/purchaseorderm/add?processType=3&iVendorId=' + formData.iVendorId + '&beginDate=' + formData.begindate + '&endDate=' + formData.enddate + '&_jb_rqtype_=dialog';
+                }
+            });
         }
 
 

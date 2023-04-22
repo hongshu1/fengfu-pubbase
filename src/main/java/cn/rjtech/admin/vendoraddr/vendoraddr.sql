@@ -21,3 +21,15 @@ WHERE t1.isDeleted = '0'
 ORDER BY t1.iautoid
     DESC
 #end
+
+#sql("findList")
+SELECT
+	*
+FROM
+	Bd_VendorAddr
+WHERE
+	iVendorId = #para(vendorId)
+	#if(id)
+	    AND iAutoId = #para(id)
+	#end
+#end

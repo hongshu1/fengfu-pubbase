@@ -33,11 +33,10 @@ public class ExceptionEventUtil {
         // 首次设值，设置过期时间为2小时
         if (reportTimes == 1) {
             setExpire(errorCode);
+            EventKit.post(new ExceptionEvent(getExceptionMsg(errorCode, e)));
         }
         
         LOG.info("异常已经报告: {} 次!", reportTimes);
-
-        EventKit.post(new ExceptionEvent(getExceptionMsg(errorCode, e)));
     }
 
     public static String getErrorCode(Exception e) {

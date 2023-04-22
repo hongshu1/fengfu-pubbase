@@ -11,5 +11,9 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "PS_PurchaseOrderD" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class PurchaseOrderD extends BasePurchaseOrderD<PurchaseOrderD> {
+    /**
+     * 记录到货日期字段
+     */
+    public static final String PURCHASEORDERD_QTY_LIST = "purchaseorderdQtyList";
 }
 

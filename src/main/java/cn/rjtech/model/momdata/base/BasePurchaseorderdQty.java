@@ -19,9 +19,11 @@ public abstract class BasePurchaseorderdQty<M extends BasePurchaseorderdQty<M>> 
     /**月*/
     public static final String IMONTH = "iMonth";
     /**日*/
-    public static final String IDAY = "iDay";
+    public static final String IDATE = "iDate";
     /**数量*/
     public static final String IQTY = "iQty";
+    /**转换前原数量*/
+    public static final String ISOURCEQTY = "iSourceQty";
 	/**
 	 * 主键ID
 	 */
@@ -93,18 +95,18 @@ public abstract class BasePurchaseorderdQty<M extends BasePurchaseorderdQty<M>> 
 	/**
 	 * 日
 	 */
-	public M setIDay(java.lang.String iDay) {
-		set("iDay", iDay);
+	public M setIDate(java.lang.Integer iDate) {
+		set("iDate", iDate);
 		return (M)this;
 	}
 
 	/**
 	 * 日
 	 */
-	@JBoltField(name="iday" ,columnName="iDay",type="String", remark="日", required=true, maxLength=255, fixed=0, order=5)
-	@JSONField(name = "iday")
-	public java.lang.String getIDay() {
-		return getStr("iDay");
+	@JBoltField(name="idate" ,columnName="iDate",type="Integer", remark="日", required=true, maxLength=10, fixed=0, order=5)
+	@JSONField(name = "idate")
+	public java.lang.Integer getIDate() {
+		return getInt("iDate");
 	}
 
 	/**
@@ -122,6 +124,23 @@ public abstract class BasePurchaseorderdQty<M extends BasePurchaseorderdQty<M>> 
 	@JSONField(name = "iqty")
 	public java.math.BigDecimal getIQty() {
 		return getBigDecimal("iQty");
+	}
+
+	/**
+	 * 转换前原数量
+	 */
+	public M setISourceQty(java.math.BigDecimal iSourceQty) {
+		set("iSourceQty", iSourceQty);
+		return (M)this;
+	}
+
+	/**
+	 * 转换前原数量
+	 */
+	@JBoltField(name="isourceqty" ,columnName="iSourceQty",type="BigDecimal", remark="转换前原数量", required=false, maxLength=18, fixed=2, order=7)
+	@JSONField(name = "isourceqty")
+	public java.math.BigDecimal getISourceQty() {
+		return getBigDecimal("iSourceQty");
 	}
 
 }

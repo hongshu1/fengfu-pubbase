@@ -12,6 +12,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 币种档案 Service
@@ -190,4 +191,7 @@ public class ForeignCurrencyService extends BaseService<ForeignCurrency> {
         return null;
     }
 
+    public List<Record> findAll(Kv kv){
+        return dbTemplate("foreigncurrency.paginateAdminDatas", kv.set("iorgid", getOrgId())).find();
+    }
 }

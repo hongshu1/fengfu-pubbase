@@ -2,10 +2,13 @@
 #define main()
 <div class="jbolt_page">
   <div class="jbolt_page_content">
-    <form onsubmit="return false;" id="rcvDocQcFormMForm" action="#(action)" method="post">
+    <form onsubmit="return false;" id="rcvDocQcFormMForm_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
+      #if(rcvDocQcFormM.iAutoId??)
+      <input type="hidden" name="rcvDocQcFormM.iAutoId" value="#(rcvDocQcFormM.iAutoId??)" />
+      #end
       <div>
         <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
-        <table border="1" style="text-align: center;left: 60px;margin-left:50px" width="1200" id="isNot">
+        <table id="table1" border="1" style="text-align: center;left: 60px;margin-left:50px" width="1200">
 
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r0"><!--"宋体 ",sans-serif";-->
             <td height="26" class="x74" width="117" style="height:19.5pt;width:87.75pt;">机型</td>
@@ -20,6 +23,7 @@
             <td colspan="4" rowspan="2" height="54" class="x74"
                 style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;height:40.5pt;">
               <div class="form-group row  col-8"
+                   id="cMeaSurePurpose"
                    data-radio
                    data-rule="radio"
                    data-default=""
@@ -47,11 +51,15 @@
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r4">
             <td height="26" class="x74" style="height:19.5pt;">测定理由</td>
             <td colspan="3">
-              <input type="text" autocomplete="off" placeholder="=请输入测定理由=" name="cmeasurereason" value="#(cmeasurereason??)"
+              <input id="cMeaSureReason" type="text" autocomplete="off" placeholder="=请输入测定理由=" name="cmeasurereason"
+                     value="#(cmeasurereason??)"
                      maxlength="355" data-rule="required" style="width: 630px"/>
             </td>
             <td class="x74">设变号</td>
-            <td class="x70">—</td>
+            <td class="x71" width="250">
+              <input id="cDcNo" type="text" autocomplete="off" placeholder="=请输入设变号=" name="cdcno"
+                     value="#(cdcno??)" maxlength="355" data-rule="required"/>
+            </td>
           </tr>
           <tr height="300px">
             <td colspan="6">
@@ -97,6 +105,7 @@
             <td>测定单位</td>
             <td>
               <div class="form-group row  col-8"
+                   id="cMeaSureUnit"
                    data-radio
                    data-rule="radio"
                    data-default=""
@@ -110,9 +119,9 @@
             </td>
           </tr>
         </table>
-        <table id="isNotButton" border="3" style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
+        <table id="table2" border="3" style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
           <div style="left: 60px;margin-left:50px;height: 50px;width: 500px;">
-            <button type="button" onclick="inserRow(10)" class="btn btn-success" disabled="true"
+            <button type="button" onclick="inserRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
             <img data-switchbtn data-value="${data.isCpkSigned}" data-handler="refreshJBoltTable"
@@ -121,7 +130,7 @@
           </div>
         </table>
 
-        <table id="tableID"style="left: 60px;margin-left: 50px" border="1" align="center" cellspacing="0" cellpadding="10">
+        <table id="tableID" style="left: 60px;margin-left: 50px" border="1" align="center" cellspacing="0" cellpadding="10">
           <div>
             <tr class="colspan biaotoucolor">
               <th colspan="7">检查内容</th>
@@ -379,7 +388,8 @@
             <tr class="trd colspan">
               <td>14</td>
               <td>扁平率
-                （素管Φ45）</td>
+                （素管Φ45）
+              </td>
               <td colspan="3">＜6%</td>
               <td colspan="2">卡尺</td>
               <td><input name="cA01" type="text" class="cA01"/></td>
@@ -398,25 +408,35 @@
               <td>整体尺寸</td>
               <td colspan="3">合检具，无干涉</td>
               <td colspan="2">检具</td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
             </tr>
             <tr class="trd colspan">
@@ -424,25 +444,35 @@
               <td>整体尺寸</td>
               <td colspan="3">合管口斜面＜0.5</td>
               <td colspan="2">塞尺</td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize" data-autoload
+              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
+                          data-autoload
                           data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
             </tr>
             <tr class="trd colspan">
@@ -459,8 +489,8 @@
                      data-value-attr="sn"
                      data-text-attr="appearance"
                      data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
+                     data-value=""
+                     data-name="appearance"></div><!--#(appearance??)-->
               </td>
               <td>
                 <div class="form-group row "
@@ -590,27 +620,29 @@
           </div>
         </table>
 
-        <table border="1" style="text-align: center;left: 60px;margin-left:50px" width="1200">
-          <tr height="60" style="mso-height-source:userset;height:21pt" id="r2">
+        <table id="table4" border="1" style="text-align: center;left: 60px;margin-left:50px" width="1200">
+          <tr height="60" style="mso-height-source:userset;height:21pt" id="r3">
             <td height="26" class="x74" width="117" style="height:19.5pt;width:87.75pt;">备注</td>
             <td width="850px"><!--class="x71" width="260" style="width:195pt;"-->
               <div>
-                <textarea class="form-control" data-auto-height="100" autocomplete="off" data-show-count placeholder="=请输入备注="
+                <textarea id="cMemo" class="form-control" data-auto-height="100" autocomplete="off" data-show-count
+                          placeholder="=请输入备注="
                           data-tips="请输入备注" maxlength="200" name="cmemo" value="">#(cmemo??)</textarea>
               </div>
             </td>
             <td width="300px">
               <div class="form-group row  col-9"
+                   id="isok"
                    data-radio
                    data-rule="radio"
+                   data-label="判定是否合格："
                    data-default=""
-                   data-url="admin/dictionary/options?key=judge_type	"
+                   data-url="admin/dictionary/options?key=isok"
                    data-value-attr="sn"
-                   data-text-attr="judge"
+                   data-text-attr="isok"
                    data-inline="true"
-                   data
-                   data-value="#(judge??)"
-                   data-name="judge">
+                   data-value="#(isok??)"
+                   data-name="isok">
               </div>
             </td>
           </tr>
@@ -625,11 +657,11 @@
 
 <style>
 
-  .cA01{
+  .cA01 {
     width: 30px;
   }
 
-  .th{
+  .th {
     overflow: hidden;
     height: 100%;
     width: 30px;
@@ -714,25 +746,90 @@
     background-color: #b1dfbb;
   }
 </style>
-<script>
-  //1.隐藏确定按钮 （因为这是查看页面，不允许修改）
-  hideParentLayerDialogBtn(0);
-  //2.禁止编辑
-  $("#tableID" + " tbody tr").find("input").attr("disabled", "disabled");
-  $("#isNot").find("input").attr("disabled", "disabled");
-  $("#tableID" + " tbody tr").find("select").attr("disabled", "disabled");
-  $("#tableID" + " tbody tr").find("div").attr("disabled", "disabled");
 
+<script>
   /*
-  * @desc：新增行
-  * @param：rows:行数
-  * */
+* @desc：新增行
+* @param：rows:行数
+* */
   function inserRow(rows) {
     alert("测试");
   }
 </script>
 
 <script>
+
+  //1.隐藏确定按钮 （因为这是查看页面，不允许修改）
+  hideParentLayerDialogBtn(0);
+  //2.禁止编辑
+  $("#tableID" + " tbody tr").find("input").attr("disabled", "disabled");
+  $("#isNot").find("input").attr("disabled", "disabled");
+  $("#tableID" + " tbody tr").find("select").attr("disabled", "disabled");
+  $("#tableID" + " tbody tr").find("div.checkbox").attr("disabled", "disabled");
+
+  function submitThisForm() {
+    var milasUrl = {};//新建对象，用来存储所有数据
+    var subMilasUrlArr = {};//存储每一行数据
+    var tableData = {};
+
+    //table3
+    $("#tableID" + " tbody tr").each(function (trindex, tritem) {//遍历每一行
+      tableData[trindex] = new Array();
+      //有input框的值 存入
+      $(tritem).find("input").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+      //整体尺寸
+      $(tritem).find("select").each(function (tdindex, tditem) {
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
+      });
+      //整体外观
+      $(tritem).find("div.checkbox").each(function (tdindex, tditem) {
+        console.log("tditem=========>"+tditem)
+        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
+        subMilasUrlArr[trindex] = tableData[trindex]//将每一行的数据存入
+      });
+    });
+
+    for (var key in subMilasUrlArr) {
+      milasUrl[key] = subMilasUrlArr[key];//将每一行存入对象
+    }
+
+    var cmeasurereason = $("#cMeaSureReason").val(); //测定理由
+    var cmeasurepurpose = $('input[name="cmeasurepurpose"]').filter(':checked').val();//测试目的
+    var cmeasureunit = $('input[name="cmeasureunit"]').filter(':checked').val();//测定单位
+    var isok = $('input[name="isok"]').filter(':checked').val();//是否合格
+    var cmemo = $("#cMemo").val(); //备注
+    var cdcno = $("#cDcNo").val(); //设变号
+
+    const submitDatas={
+      tableDataList: JSON.stringify(milasUrl),
+      // parameterId: JSON.stringify(parameterData),
+      cmeasurereason:cmeasurereason,
+      cmeasurepurpose:cmeasurepurpose,
+      cmeasureunit:cmeasureunit,
+      cmemo:cmemo,
+      judge:judge
+    }
+    Ajax.post("admin/rcvdocqcformm/updateTable", submitDatas, function (res) {
+      if (res.state === "ok") {
+        LayerMsgBox.success(res.msg, 1000, function () {
+          // refreshPjaxContainer();
+          // parent.LayerMsgBox.closeAll();
+          // parent.refreshPjaxContainer();
+        });
+      } else {
+        LayerMsgBox.alert(res.msg, 2);
+      }
+    })
+  }
+
+</script>
+
+<script>
+
   var parameterData = [];
   $(function () {
     Ajax.get("admin/rcvdocqcformm/list", function (res) {
@@ -742,7 +839,7 @@
       }
     });
     Ajax.get("admin/rcvdocqcformm/datas?iautoid=#(data.iautoid)", function (res) {
-      console.log(res.data[0].ca70)
+      console.log(res.data[0].cA01)
       //根据某列进行赋值
       for (let i = 0; i < res.data.length - 11; i++) {
         $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(0)").val(res.data[i].cA01);
@@ -759,54 +856,9 @@
     })
   });
 
-  function submitThisForm() {
-    var milasUrl = {};//新建对象，用来存储所有数据
-    var subMilasUrlArr = {};//存储每一行数据
-    var tableData = {};
-    $("#tableID" + " tbody tr").each(function (trindex, tritem) {//遍历每一行
-      tableData[trindex] = new Array();
-      //有input框的值 存入
-      $(tritem).find("input").each(function (tdindex, tditem) {
-        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
-        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
-      });
-      //有select的值 存入
-      $(tritem).find("select").each(function (tdindex, tditem) {
-        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
-        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
-      });
-      //有CheckBox的值 存入
-      $(tritem).find("checkbox").each(function (tdindex, tditem) {
-        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
-        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
-      });
-    });
 
-    for (var key in subMilasUrlArr) {
-      milasUrl[key] = subMilasUrlArr[key];//将每一行存入对象
-      console.log("milasUrl[key]===>"+milasUrl[key])
-    }
-    console.log("parameterData===>"+parameterData)
-
-    const submitData = {
-      iMouldsFirstDocId: #(mouldsFirstDoc.iautoid),
-      tableDataList: JSON.stringify(milasUrl),
-      parameterId: JSON.stringify(parameterData)
-    };
-
-    Ajax.post("admin/mouldsfirstrecord/updateTable", submitData, function (res) {
-      if (res.state === "ok") {
-        LayerMsgBox.success(res.msg, 1000, function () {
-          refreshPjaxContainer();
-          parent.LayerMsgBox.closeAll();
-          parent.refreshPjaxContainer();
-        });
-      } else {
-        LayerMsgBox.alert(res.msg, 2);
-      }
-    })
-  }
 </script>
+
 #end
 
 

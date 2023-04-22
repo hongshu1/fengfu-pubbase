@@ -206,5 +206,9 @@ public class VendorAddrService extends BaseService<VendorAddr> {
 
 		return SUCCESS;
 	}
+	
+	public List<Record> findList(Kv kv){
+		return dbTemplate("vendoraddr.findList", kv).find();
+	}
 
 }

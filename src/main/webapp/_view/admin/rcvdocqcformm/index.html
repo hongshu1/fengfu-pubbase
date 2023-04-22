@@ -37,32 +37,33 @@
                   data-select="#(user.name??)">
           </select>
 
-          <select class="form-control" name="iscompleted"
+          <select class="form-control"
+                  name="iscompleted"
                   data-autoload
                   data-url="admin/dictionary/options?key=iscompleted"
-                  data-select-type="select"
+                  data-select-type="select2"
                   data-text="=检验结果="
                   data-value=""
                   data-value-attr="sn"
-                  data-select="#(iscompleted)"/>
+                  data-select="#(iscompleted)"></select>
 
           <select class="form-control" name="istatus"
                   data-autoload
                   data-url="admin/dictionary/options?key=istatus"
-                  data-select-type="select"
-                    data-text="=状态="
+                  data-select-type="select2"
+                  data-text="=状态="
                   data-value=""
-                  data-value-attr="sn"/>
+                  data-value-attr="sn"></select>
 
           <select class="form-control" name="cqcformname"
                   data-autoload
                   data-url="admin/qcform/options"
-                  data-select-type="select"
+                  data-select-type="select2"
                   data-text="=检验表格名称="
                   data-value=""
                   data-value-attr="iautoid"
                   data-text-attr="cqcformname"
-                  data-select="#(qcform.cqcformname??)"/>
+                  data-select="#(qcform.cqcformname??)"></select>
 
           <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
                  class="form-control" placeholder="开始日期" name="starttime" data-tips="开始时间" maxlength="23" value="">
@@ -73,12 +74,12 @@
           <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
           <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 
-          <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
+          <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_onlyseeBtn_#(pageId)"
                   data-title="来料检查成绩表" data-url="admin/rcvdocqcformm/onlysee" class="btn btn-outline-primary">
             跳转到查看页面
           </button>
 
-          <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
+          <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_checkoutBtn_#(pageId)"
                   data-title="来料检查成绩表" data-url="admin/rcvdocqcformm/checkout" class="btn btn-outline-primary">
             跳转到检验页面
           </button>
@@ -91,52 +92,61 @@
     <!-- 定义JBoltTable使用的数据渲染模板 -->
     <textarea class="jb_tpl_box" id="rcvDocQcFormMtpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.id}">
+<tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
     {@if data.istatus == 0}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/createchecklist/${data.id}" data-area="800,600"
-         data-title="生成"><i class="fa fa-eye"></i></a>
+      <!--<a class="text-info mr-1" href="admin/rcvdocqcformm/createTable/${data.iautoid}" data-handler="refreshJBoltTable"
+         data-title="生成">生成</a>-->
+    		<button type="button" onclick="createTable(${data.iautoid})" data-handler="refreshJBoltTable"
+                class="btn btn-outline-secondary">生成</button>
     {@/if}
     {@if data.istatus == 1}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/checkout/${data.id}" data-area="95%,92%"
-         data-title="检验"><i class="fa fa-eye"></i></a>
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/checkout/${data.iautoid}" data-area="100%,100%"
+         data-title="检验">检验</a>
     {@/if}
     {@if data.istatus == 2}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onlysee/${data.id}" data-area="95%,92%"
-         data-title="查看"><i class="fa fa-eye"></i></a>
-      <a class="jbolt_table_editbtn" href="admin/rcvdocqcformm/edit/${data.id}" data-handler="refreshJBoltTable"data-area="95%,92%"
-         data-title="编辑"><i class="fa fa-edit"></i></a>
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onlysee/${data.iautoid}" data-area="100%,100%"
+         data-title="查看">查看</a>
+      <a class="jbolt_table_editbtn" href="admin/rcvdocqcformm/checkout/${data.iautoid}"
+         data-handler="refreshJBoltTable"data-area="100%,100%"
+         data-title="编辑">编辑</a>
     {@/if}
     {@if data.istatus == 3}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onlysee/${data.id}" data-area="95%,92%"
-         data-title="查看"><i class="fa fa-eye"></i></a>
-      <a class="jbolt_table_editbtn" href ="javascript:return false;" data-handler="refreshJBoltTable" data-area="95%,92%"
-         data-title="编辑" disabled="disabled"><i class="fa fa-edit"></i></a>
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onlysee/${data.iautoid}" data-area="100%,100%"
+         data-title="查看">查看</a>
+      <a class="jbolt_table_editbtn" href ="javascript:return false;" data-handler="refreshJBoltTable" data-area="100%,100%"
+         data-title="编辑" disabled="disabled">编辑</a>
     {@/if}
   </td>
-  <td>${data.iStatus}</td>
-  {@if data.isCompleted == 0}
-    <td>未完成</td>
-  {@/if}
-  {@if data.isCompleted == 1}
-    <td>已完成</td>
-  {@/if}
-  <td>${data.iMask}</td>
-  <td>${data.cQcFormName}</td>
-  <td>${data.cRcvDocQcFormNo}</td>
-  <td>${data.cRcvDocNo}</td>
-  <td>${data.cVenName}</td>
-  <td>${data.cInvAddCode}</td>
-  <td>${data.cInvCode1}</td>
-  <td>${data.cInvName1}</td>
-  <td>${data.cInvStd}</td>
-  <td>${data.iInventoryUomId1}</td>
-  <td>${data.dRcvDate}</td>
-  <td>${data.iQty}</td>
-  <td>${data.cBatchNo}</td>
-  <td>${data.dCreateTime}</td>
-  <td>${data.iQcUserId}</td>
+  <td>
+    {@if data.istatus == 0}<span>未有检查表</span>{@/if}
+    {@if data.istatus == 1}<span>待检</span>{@/if}
+    {@if data.istatus == 2}<span>不合格</span>{@/if}
+    {@if data.istatus == 3}<span>合格</span>{@/if}
+  </td>
+  <td>
+    {@if data.iscompleted == 0}<span>未完成</span>{@/if}
+    {@if data.iscompleted == 1}<span>已完成</span>{@/if}
+  </td>
+  <td>
+    {@if data.imask == 1}<span>正常</span>{@/if}
+    {@if data.imask == 2}<span>初物</span>{@/if}
+  </td>
+  <td title="${data.cqcformname}">${data.cqcformname}</td>
+  <td title="${data.crcvdocqcformno}">${data.crcvdocqcformno}</td>
+  <td title="${data.crcvdocno}">${data.crcvdocno}</td>
+  <td title="${data.cvenname}">${data.cvenname}</td>
+  <td title="${data.cinvaddcode}">${data.cinvaddcode}</td>
+  <td title="${data.cinvcode1}">${data.cinvcode1}</td>
+  <td title="${data.cinvname1}">${data.cinvname1}</td>
+  <td title="${data.cinvstd}">${data.cinvstd}</td>
+  <td title="${data.iinventoryuomid1}">${data.iinventoryuomid1}</td>
+  <td title="${data.drcvdate}">${data.drcvdate}</td>
+  <td title="${data.iqty}">${data.iqty}</td>
+  <td title="${data.cbatchno}">${data.cbatchno}</td>
+  <td title="${data.iqcuserid}">${data.iqcuserid}</td>
+  <td title="${data.dcreatetime}">${data.dcreatetime}</td>
 </tr>
 {@/each}
 </textarea>
@@ -154,14 +164,14 @@
       <thead>
       <tr>
         <th data-width="60" data-column="index">序号</th>
-        <th data-width="80">操作</th>
-        <th data-width="150" data-column="iStatus">检验结果</th><!--0. 未生成 1. 待检 2. 不合格 3. 合格-->
+        <th data-width="150">操作</th>
+        <th data-width="120" data-column="iStatus">检验结果</th><!--0. 未生成 1. 待检 2. 不合格 3. 合格-->
         <th data-width="100" data-column="isCompleted">状态</th>
         <th data-width="100" data-column="iMask">标记</th><!--1. 正常 2. 初物-->
         <th data-width="150" data-column="cQcFormName">检验表格名称</th>
         <th data-width="150" data-column="cRcvDocQcFormNo">检验单号</th>
         <th data-width="100" data-column="cRcvDocNo">收料单号</th>
-        <th data-width="100" data-column="cVenName">供应商名称</th>
+        <th data-width="150" data-column="cVenName">供应商名称</th>
         <th data-width="100" data-column="cInvAddCode">存货编码</th>
         <th data-width="100" data-column="cInvCode1">客户部番</th>
         <th data-width="100" data-column="cInvName1">部品名称</th>
@@ -170,8 +180,8 @@
         <th data-min-width="160" data-column="dRcvDate">收货日期</th>
         <th data-width="100" data-column="iQty">数量</th>
         <th data-width="150" data-column="cBatchNo">批次号</th>
-        <th data-min-width="160" data-column="dCreateTime">创建时间</th>
         <th data-width="100" data-column="iQcUserId">检验员</th>
+        <th data-min-width="160" data-column="dCreateTime">创建时间</th>
       </tr>
       </thead>
       <tbody></tbody>
@@ -188,6 +198,25 @@
     $('#isCompleted').val(iscompleted);
     $('#rcvDocQcFormMForm_#(pageId)').submit();
     console.log();
+  }
+
+  /*
+  * 生成
+  * */
+  function createTable(iautoid) {
+    var para={
+      iautoid:iautoid
+    }
+
+    Ajax.post('/admin/rcvdocqcformm/createTable', para, function (res) {
+      if (res.state === "ok") {
+        LayerMsgBox.success(res.msg, 1000, function () {
+          refreshPjaxContainer();
+        });
+      } else {
+        LayerMsgBox.alert(res.msg, 2);
+      }
+    });
   }
 
 </script>

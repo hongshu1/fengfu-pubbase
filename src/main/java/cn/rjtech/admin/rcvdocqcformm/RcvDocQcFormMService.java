@@ -1,12 +1,24 @@
 package cn.rjtech.admin.rcvdocqcformm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.omg.PortableInterceptor.SUCCESSFUL;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.jfinal.aop.Inject;
 import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Page;
 
@@ -23,10 +35,15 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+import com.sun.corba.se.spi.ior.ObjectKey;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
+import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
+import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
+import cn.rjtech.model.momdata.RcvdocqcformdLine;
 
 /**
  * 质量管理-来料检
@@ -38,6 +55,11 @@ import cn.rjtech.model.momdata.RcvDocQcFormM;
 public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 
     private final RcvDocQcFormM dao = new RcvDocQcFormM().dao();
+
+    @Inject
+    private RcvDocQcFormDService     rcvDocQcFormDService; //质量管理-来料检单行配置表
+    @Inject
+    private RcvdocqcformdLineService rcvdocqcformdLineService; //质量管理-来料检明细列值表
 
     @Override
     protected RcvDocQcFormM dao() {
@@ -179,11 +201,113 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     /*
      * 更新
      * */
-    public Ret updateEditTable(JBoltPara JboltPara) {
-        JSONObject jsonObject = new JSONObject(JboltPara.getJSONObject("tableDataList"));
-        JSONArray getParameterId = new JSONArray(JboltPara.getJSONArray("parameterId"));
+    public Ret editTable(JBoltPara JboltPara) {
+        if (JboltPara == null || JboltPara.isEmpty()) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        String cmeasurereason = JboltPara.getString("cmeasurereason"); //测定理由
+        String cmeasurepurpose = JboltPara.getString("cmeasurepurpose"); //测定目的
+        String cmeasureunit = JboltPara.getString("cmeasureunit"); //测定单位
+        String cmemo = JboltPara.getString("cmemo"); //备注
+        String isok = JboltPara.getString("isok"); //是否合格
+        String cdcno = JboltPara.getString("cdcno"); //设变号
+        JSONObject tableDataList = JboltPara.getJSONObject("tableDataList");
+        //tableDataList转为map
+        Map<String, Object> innerMap = tableDataList.getInnerMap();
+        //对innerMap排序
+        Map<String, Object> sortMap = sortMapByKey(innerMap);
+        sortMap.forEach((key, value) -> {
+            System.out.println(key);
+            String s = value.toString();
+            List<String> list = oobjectToList(value, String.class)
+                .stream()
+                .filter(e -> StringUtils.isNotBlank(e))
+                .collect(Collectors.toList());
+            System.out.println("list==>" + new Gson().toJson(list));
+            //1、将table数据保存在检验表
+
+        });
+        //2、将输入框的数据保存在【来料检表（PL_RcvDocQcFormM）】
+//        RcvDocQcFormM docQcFormM = findById(JboltPara.getString("iautoid"));
+//        saveDocQcFormMModel(docQcFormM,JboltPara);
+
+        RcvDocQcFormD rcvDocQcFormD = new RcvDocQcFormD();//质量管理-来料检单行配置表
+        RcvdocqcformdLine rcvdocqcformdLine = new RcvdocqcformdLine();//质量管理-来料检明细列值表
 
         return ret(true);
+    }
+
+    public void saveDocQcFormMModel(RcvDocQcFormM docQcFormM, JBoltPara JboltPara) {
+        docQcFormM.setCMeasurePurpose(JboltPara.getString("cmeasurepurpose"));//测定目的
+        docQcFormM.setCMeasureReason(JboltPara.getString("cmeasurereason"));//测定理由
+        docQcFormM.setCMeasureUnit(JboltPara.getString("cmeasureunit")); //测定单位
+        docQcFormM.setCMemo(JboltPara.getString("cmemo"));//备注
+        docQcFormM.setCDcNo(JboltPara.getString("cdcno")); //设变号
+        String isok = JboltPara.getString("isok");
+        docQcFormM.setIsOk(isok.equalsIgnoreCase("0") ? false : true);//是否合格
+    }
+
+    public static Map<String, Object> sortMapByKey(Map<String, Object> map) {
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> sortMap = new TreeMap<String, Object>(new KeyCompareUtil());
+        sortMap.putAll(map);
+        return sortMap;
+    }
+
+    /**
+     * 从小到大排序
+     */
+    public static class KeyCompareUtil implements Comparator<String> {
+
+        @Override
+        public int compare(String s1, String s2) {
+            return Integer.valueOf(s1).compareTo(Integer.valueOf(s2));
+        }
+    }
+
+    /**
+     * object 转 list
+     *
+     * @param obj   需要转换的List对象
+     * @param clazz List中元素的class
+     */
+    public static <T> List<T> oobjectToList(Object obj, Class<T> clazz) {
+        List<T> result = new ArrayList<T>();
+        // 判断 obj 是否包含 List 类型
+        if (obj instanceof List<?>) {
+            for (Object o : (List<?>) obj) {
+                // 使用Class.cast做类型转换
+                result.add(clazz.cast(o));
+            }
+            return result;
+        }
+        return null;
+    }
+
+    /*
+     * 根据表格ID生成table
+     * */
+    public Ret createTable(JBoltPara jBoltPara){
+        Object iautoid = jBoltPara.get("iautoid");
+        RcvDocQcFormM rcvDocQcFormM = findById(iautoid);
+        if (null == rcvDocQcFormM){
+            return fail(JBoltMsg.DATA_NOT_EXIST);
+        }
+        //1、根据表格ID查询数据
+        Long iQcFormId = rcvDocQcFormM.getIQcFormId();//表格ID
+
+        RcvDocQcFormD rcvDocQcFormD = new RcvDocQcFormD();//质量管理-来料检单行配置表
+        RcvdocqcformdLine rcvdocqcformdLine = new RcvdocqcformdLine();//质量管理-来料检明细列值表
+
+        //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检-1”
+        rcvDocQcFormM.setIStatus(1);
+        Ret ret = update(rcvDocQcFormM);
+        if (ret.isFail()) {
+            return ret;
+        }
+        return SUCCESS;
     }
 
 }

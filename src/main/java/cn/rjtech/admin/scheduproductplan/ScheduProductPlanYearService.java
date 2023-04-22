@@ -831,7 +831,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
             ScheduProductYearViewDTO productYearViewCC = getProductYearViewCC(CC,startYear,endYear,cusWorkMonthNumMap);
             scheduProductPlanYearList.add(productYearViewCC);
 
-            //key:invid+equid   value:List<Record>
+            //key:物料id+机型id   value:List<Record>
             Map<String,List<Record>> apsYearPlanQtyListMap = new HashMap<>();
             for (Record record : apsYearPlanQtyList){
                 Long iInventoryId = record.getLong("iInventoryId");
@@ -849,7 +849,9 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
                 }
             }
             //对物料+机型逐个处理
-            for (List<Record> recordList : apsYearPlanQtyListMap.values()){
+            for (String key : apsYearPlanQtyListMap.keySet()){
+                List<Record> recordList = apsYearPlanQtyListMap.get(key);
+
                 //key：code     value：ScheduProductYearViewDTO
                 Map<String,ScheduProductYearViewDTO> yearViewDTOMap = new LinkedHashMap<>();
                 //行转列
@@ -978,7 +980,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
         List<Record> apsYearPlanQtyList = recordPage.getList();
 
         try {
-            //key:invid+workid   value:List<Record>
+            //key:物料id+产线id   value:List<Record>
             Map<String,List<Record>> apsYearPlanQtyListMap = new HashMap<>();
             for (Record record : apsYearPlanQtyList){
                 Long iInventoryId = record.getLong("iInventoryId");
@@ -995,7 +997,9 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
                 }
             }
             //对物料+产线逐个处理
-            for (List<Record> recordList : apsYearPlanQtyListMap.values()){
+            for (String key : apsYearPlanQtyListMap.keySet()){
+                List<Record> recordList = apsYearPlanQtyListMap.get(key);
+
                 //key：code     value：ScheduProductYearViewDTO
                 Map<String,ScheduProductYearViewDTO> yearViewDTOMap = new LinkedHashMap<>();
                 //行转列

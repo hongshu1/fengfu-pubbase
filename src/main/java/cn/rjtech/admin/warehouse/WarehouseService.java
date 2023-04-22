@@ -116,8 +116,8 @@ public class WarehouseService extends BaseService<Warehouse> {
 		warehouse.setCOrgCode(getOrgCode());
 		warehouse.setCOrgName(getOrgName());
 		warehouse.setIOrgId(getOrgId());
-		//TODO 来源1.MES 2.U8  现默认U8
-		warehouse.setISource(2);
+		//TODO 来源1.MES 2.U8  现默认MES
+		warehouse.setISource(1);
 		//默认未删除
 		warehouse.setIsDeleted(false);
 		boolean success=warehouse.save();
@@ -297,8 +297,8 @@ public class WarehouseService extends BaseService<Warehouse> {
 									data.change("cOrgCode", "1");
 									data.change("cOrgName", "1");
 									data.change("iOrgId", "1");
-                                    //TODO 来源1.MES 2.U8  现默认U8
-                                    data.change("iSource", "2");
+                                    //TODO 来源1.MES 2.U8  现默认MES
+                                    data.change("iSource", "1");
 
 
 								})

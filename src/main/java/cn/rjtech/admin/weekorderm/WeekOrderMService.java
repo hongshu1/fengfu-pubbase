@@ -1,7 +1,9 @@
 package cn.rjtech.admin.weekorderm;
 
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.customer.CustomerService;
+import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.model.momdata.CustomerClass;
 import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.util.ValidationUtils;
@@ -43,6 +45,12 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 
 	@Inject
 	private CustomerService customerService;
+
+    @Inject
+    private CusOrderSumService cusOrderSumService;
+
+    @Inject
+    private WeekOrderDService weekOrderDService;
 
 	/**
 	 * 后台管理数据查询
@@ -246,10 +254,9 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 	 * @return
 	 */
 	public Ret approve(String iAutoId,Integer mark) {
-		WeekOrderM weekOrderM = null;
 		boolean success = false;
 		if (mark == 1) {
-			weekOrderM = findById(iAutoId);
+            WeekOrderM weekOrderM = findById(iAutoId);
 			if (weekOrderM == null ||notOk(weekOrderM.getIAutoId())) {
 				return fail(JBoltMsg.PARAM_ERROR);
 			}
@@ -257,6 +264,11 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 			weekOrderM.setIOrderStatus(2);
 			//审核状态： 1. 待审核
 			weekOrderM.setIAuditStatus(1);
+            success = weekOrderM.update();
+            if (success) {
+                //添加日志
+                addUpdateSystemLog(weekOrderM.getIAutoId(), JBoltUserKit.getUserId(), weekOrderM.getIAutoId().toString());
+            }
 		} else {
 				List<WeekOrderM> listByIds = getListByIds(iAutoId);
 				//TODO 由于审批流程暂未开发 先审批提审即通过
@@ -276,14 +288,12 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 						}
 					}
 				}
-				return ret(success);
-//			}
 		}
-		success = weekOrderM.update();
-		if(success) {
-			//添加日志
-			addUpdateSystemLog(weekOrderM.getIAutoId(), JBoltUserKit.getUserId(), weekOrderM.getIAutoId().toString());
-		}
+
+        List<WeekOrderD> weekOrderDS = weekOrderDService.findByMId(iAutoId);
+        if (weekOrderDS.size() > 0) cusOrderSumService.handelWeekOrder(weekOrderDS);
+
+
 		return ret(success);
 	}
 
