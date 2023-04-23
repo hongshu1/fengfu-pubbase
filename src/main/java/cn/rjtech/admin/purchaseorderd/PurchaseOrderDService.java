@@ -1,18 +1,15 @@
 package cn.rjtech.admin.purchaseorderd;
 
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
-import com.alibaba.fastjson.JSONObject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.PurchaseOrderD;
-
-import java.util.Date;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 
 /**
  * 采购/委外订单-采购订单明细
@@ -146,5 +143,9 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
         purchaseOrderD.setISourceSum(jsonObject.getBigDecimal(purchaseOrderD.ISOURCESUM.toLowerCase()));
         return purchaseOrderD;
 	}
+	
+	public int removeByPurchaseOrderMId(Long purchaseOrderMId){
+	    return update("update PS_PurchaseOrderD set isDeleted=1 where iPurchaseOrderMid = ?", purchaseOrderMId);
+    }
 
 }

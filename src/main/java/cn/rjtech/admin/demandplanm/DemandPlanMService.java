@@ -8,6 +8,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
+import cn.rjtech.enums.CompleteTypeEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -255,21 +256,32 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 	public void updateStatusById(Long id, Integer status){
 		DemandPlanM demandPlanM = findById(id);
 		ValidationUtils.notNull(demandPlanM, JBoltMsg.DATA_NOT_EXIST);
+		
+		// 未完成直接修改
+		if (status == CompleteTypeEnum.COMPLETE.getValue()){
+			update(demandPlanM, status);
+		}
+		
 		// 先去校验子件是否全部做了订单
 		List<Record> demandPlanDList = demandPlanDService.findByDemandPlanMid(id);
 		if (CollectionUtil.isEmpty(demandPlanDList)){
 			return;
 		}
+		// 查询所有细表数据
 		List<Long> demandPlanDIds = demandPlanDList.stream().map(record -> record.getLong(DemandPlanD.IAUTOID)).collect(Collectors.toList());
-		
+		// 排除
 		Integer count = demandPlanDService.queryNotGenOrderNum(id, demandPlanDIds);
 		if (ObjectUtil.isNotNull(count) && count == 0){
-			demandPlanM.setIStatus(status);
-			demandPlanM.setIUpdateBy(JBoltUserKit.getUserId());
-			demandPlanM.setCUpdateName(JBoltUserKit.getUserName());
-			demandPlanM.setDUpdateTime(DateUtil.date());
-			demandPlanM.update();
+			update(demandPlanM, status);
 		}
+	}
+	
+	private void update(DemandPlanM demandPlanM, Integer status){
+		demandPlanM.setIStatus(status);
+		demandPlanM.setIUpdateBy(JBoltUserKit.getUserId());
+		demandPlanM.setCUpdateName(JBoltUserKit.getUserName());
+		demandPlanM.setDUpdateTime(DateUtil.date());
+		demandPlanM.update();
 	}
 	
 	public void batchUpdateStatusByIds(List<Long> ids, Integer status){
@@ -288,5 +300,9 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 	public List<Long> pegging(List<Long> demandPlanDIds){
 		List<DemandPlanD> ids = demandPlanDService.getListByIds(demandPlanDIds.toArray());
 		return ids.stream().map(DemandPlanD::getIDemandPlanMid).collect(Collectors.toList());
+	}
+	
+	public void removeByPurchaseOrderMId(Long purchaseOrderMId) {
+	
 	}
 }

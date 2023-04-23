@@ -5,6 +5,7 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.rjtech.model.momdata.PurchaseOrderRef;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -12,6 +13,8 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import com.jfinal.plugin.activerecord.Record;
+
 import java.util.*;
 
 
@@ -130,4 +133,16 @@ public class PurchaseOrderRefService extends BaseService<PurchaseOrderRef> {
 		purchaseOrderRef.setIDemandPlanDid(demandPlanDid);
 		return purchaseOrderRef;
 	}
+	
+	public void removeByPurchaseOrderDIds(Long purchaseOrderId){
+	    delete("DELETE PS_PurchaseOrderRef WHERE iPurchaseOrderDid = ?", purchaseOrderId);
+	}
+	
+	public List<Record> findByPurchaseOderMId(Long purchaseOrderMId){
+		return dbTemplate("purchaseorderref.findByPurchaseOderMId", Okv.by("purchaseOrderMId", purchaseOrderMId)).find();
+	}
+	
+	public int removeByPurchaseOderMId(Long purchaseOrderMId){
+	   return dbTemplate("purchaseorderref.removeByPurchaseOderMId", Okv.by("purchaseOrderMId", purchaseOrderMId)).delete();
+    }
 }

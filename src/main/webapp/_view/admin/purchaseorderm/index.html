@@ -8,13 +8,22 @@
                 <form class="form-inline  text-left" id="PurchaseOrderM_form_#(pageId)">
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
                            placeholder="请输入订单编号" maxlength="40" name="cOrderNo"/>
-                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                           placeholder="请输入供应商名称" maxlength="40" name="cVenName"/>
+
+                    <input data-autocomplete
+                           type="text"
+                           autocomplete="off"
+                           class="form-control"
+                           data-url="admin/bommaster/findVendorList"
+                           data-text-attr="cvenname"
+                           placeholder="请输入供应商名称"
+                           name="cVenName"
+                    />
+
                     <select class="form-control" name="iAuditStatus"
                             data-autoload
                             data-url="admin/dictionary/options?key=iAuditStatus"
                             data-select-type="select"
-                            data-text="--全部--"
+                            data-text="==全部=="
                             data-value=""
                             data-value-attr="sn">
                     </select>
@@ -43,17 +52,17 @@
 	<td>
             <a class="text-info mr-1" data-openpage="dialog" href="admin/purchaseorderm/edit/${data.id}" data-area="800,600" data-title="查看">查看</a>
         {@if data.iorderstatus==1 || data.iorderstatus==4}
-            <a class="jbolt_table_delbtn"  data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批"  >审批</a>
+            <a class="jbolt_table_delbtn"  data-ajaxbtn href="admin/purchaseorderm/1/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批"  >审批</a>
             <a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑采购订单">编辑</a>
-            <a class="text-danger" data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >刪除</a>
+            <a class="text-danger" data-ajaxbtn href="admin/purchaseorderm/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >刪除</a>
         {@else if data.iorderstatus==2 }
-            <a data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批">审批</a>
-            <a data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="撤回">撤回</a>
+            <a data-ajaxbtn href="admin/purchaseorderm/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批">审批</a>
+            <a data-ajaxbtn href="admin/purchaseorderm/1/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="撤回">撤回</a>
         {@else if data.iorderstatus==3 }
-            <a data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="生成现品票"  >生成现品票</a>
+            <a data-ajaxbtn href="admin/purchaseorderm/1/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="生成现品票"  >生成现品票</a>
         {@else if data.iorderstatus==5 }
             <a class="jbolt_table_delbtn" href="admin/purchaseorderm/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" >现品票明细</a>
-            <a data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="关闭" >关闭</a>
+            <a data-ajaxbtn href="admin/purchaseorderm/1/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="关闭" >关闭</a>
 		{@/if}
 
 	</td>
@@ -78,11 +87,6 @@
                         data-title="订单作成" data-url="admin/purchaseorderm/consummate"
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 订单作成
                 </button>
-                <!--                <button data-dialogbtn data-area="80%,60%" data-handler="jboltTablePageToFirst"
-                                        id="toolbar_addBtn_#(pageId)" data-title="订单作成"
-                                        data-url="admin/purchaseorderm/add" class="btn btn-outline-primary"><i class="fa fa-plus">新增</i>
-
-                                </button>-->
                 <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="b"
                         data-title="新增采购/委外订单-采购订单主表" data-url="admin/purchaseorderm/add"
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 批量审批
@@ -102,7 +106,7 @@
                 </button>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
                 </button>
-                <button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst" id=""
+                <button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst"
                         data-title="订单作成" data-url="admin/purchaseorderm/consummate"
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 批量生成现品票
                 </button>
@@ -128,12 +132,12 @@
                 <th data-width="200">操作</th>
                 <th data-width="100" data-column="iAuditStatus">审核状态</th>
                 <th data-width="150" data-column="cOrderNo">订单编号</th>
-                <th data-width="100" data-column="iVendorId">供应商名称</th>
-                <th data-min-width="160" data-column="dOrderDate">订单日期</th>
-                <th data-width="100" data-column="iBusType">业务类型</th>
-                <th data-width="100" data-column="iPurchaseType">采购类型</th>
+                <th data-width="200" data-column="iVendorId">供应商名称</th>
+                <th data-width="120" data-column="dOrderDate">订单日期</th>
+                <th data-width="120" data-column="iBusType">业务类型</th>
+                <th data-width="120" data-column="iPurchaseType">采购类型</th>
                 <th data-width="100" data-column="iPayableType">应付类型</th>
-                <th data-width="150" data-column="cCreateName">创建人名称</th>
+                <th data-width="120" data-column="cCreateName">创建人名称</th>
                 <th data-min-width="160" data-column="dCreateTime">创建时间</th>
             </tr>
             </thead>

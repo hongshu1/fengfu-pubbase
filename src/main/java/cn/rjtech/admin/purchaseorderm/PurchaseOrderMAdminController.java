@@ -156,4 +156,14 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 					   @Para(value = "invTableData") String invTableData) {
 		renderJson(service.submit(dataStr, formStr, invTableData, getKv()));
 	}
+	
+	public void del(){
+		renderJsonData(service.del(getLong(0)));
+	}
+	
+	public void operationalState(@Para(value = "id") Long id,
+								 @Para(value = "type") Integer type){
+		renderJsonData(service.operationalState(id, type));
+	}
+	
 }

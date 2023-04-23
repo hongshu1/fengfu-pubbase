@@ -203,4 +203,8 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 	public List<Record> findByDemandPlanMid(Long demandPlanMid){
 		return dbTemplate("demandpland.findAll", Okv.by(DemandPlanD.IDEMANDPLANMID, demandPlanMid)).find();
 	}
+	
+	public void removeByPurchaseOrderMId(Long purchaseOrderMId){
+		
+	}
 }

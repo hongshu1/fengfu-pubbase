@@ -318,4 +318,8 @@
 #include("purchaseorderm/purchaseorderm.sql")
 #end
 
+#namespace("purchaseorderref")
+#include("purchaseorderref/purchaseorderref.sql")
+#end
+
 

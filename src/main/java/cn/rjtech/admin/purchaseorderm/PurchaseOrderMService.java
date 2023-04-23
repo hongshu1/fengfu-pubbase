@@ -87,7 +87,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-		Page<Record> page = dbTemplate("purchaseorderm.findAll").paginate(pageNumber, pageSize);
+		Page<Record> page = dbTemplate("purchaseorderm.findAll", kv).paginate(pageNumber, pageSize);
 		changeData(page.getList());
 		return page;
 	}
@@ -428,6 +428,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		purchaseOrderM.setDEndDate(formJsonObject.getDate(PurchaseOrderM.DENDDATE));
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
 		purchaseOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+		// 默认 已失效隐藏
+		purchaseOrderM.setHideInvalid(true);
 		return purchaseOrderM;
 	}
 	
@@ -448,4 +450,51 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	public Integer findOderNoIsNotExists(String orderNo){
 		return findOderNoIsNotExists(null, orderNo);
 	}
+	
+	/**
+	 * 操作状态：审批/撤回等。。。
+	 * @param id
+	 * @param type
+	 * @return
+	 */
+	public Ret operationalState(Long id, Integer type) {
+		ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
+		ValidationUtils.notNull(type, JBoltMsg.PARAM_ERROR);
+		PurchaseOrderM purchaseOrderM = findById(id);
+		ValidationUtils.notNull(purchaseOrderM, JBoltMsg.DATA_NOT_EXIST);
+		return SUCCESS;
+	}
+	
+	/**
+	 * 删除操作
+	 * @param id
+	 * @return
+	 */
+	
+	
+	public Ret del(Long id) {
+		ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
+		PurchaseOrderM purchaseOrderM = findById(id);
+		ValidationUtils.notNull(purchaseOrderM, JBoltMsg.DATA_NOT_EXIST);
+		// 修改操作
+		purchaseOrderM.setDUpdateTime(DateUtil.date());
+		purchaseOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+		purchaseOrderM.setCUpdateName(JBoltUserKit.getUserName());
+		purchaseOrderM.setIsDeleted(true);
+		
+		tx(()->{
+			// 修改细表数据
+			purchaseOrderDService.removeByPurchaseOrderMId(id);
+			// 修改到货计划细表状态
+			demandPlanDService.removeByPurchaseOrderMId(id);
+			// 修改主表状态
+			demandPlanMService.removeByPurchaseOrderMId(id);
+			// 删除中间表数据
+			purchaseOrderRefService.removeByPurchaseOderMId(id);
+			purchaseOrderM.update();
+			return true;
+		});
+		return SUCCESS;
+	}
+	
 }
