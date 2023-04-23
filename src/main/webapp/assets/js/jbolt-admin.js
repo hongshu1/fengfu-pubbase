@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.4.8";
+var jbolt_admin_js_version="6.4.9";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -9036,10 +9036,26 @@ var ImgUploadUtil={
 				box.off("click").on("click",function(e){
 					e.preventDefault();
 					e.stopPropagation();
-					var innerInputId=$(this).data("inputid");
-					var fileInput=jboltBody.find(".j_upload_img_input>input#"+innerInputId);
-					if(isOk(fileInput)){
-						fileInput.trigger("click");
+					var goToTrigger=function(){
+						var innerInputId=box.data("inputid");
+						var fileInput=jboltBody.find(".j_upload_img_input>input#"+innerInputId);
+						if(isOk(fileInput)){
+							fileInput.trigger("click");
+						}
+					}
+					var checkHandlerStr=box.data("check-handler");
+					if(checkHandlerStr){
+						var checkHandler = eval(checkHandlerStr);
+						if(checkHandler && typeof(checkHandler)=="function"){
+							var checkResult=checkHandler(box);
+							if(typeof(checkResult)=="boolean" && checkResult){
+								goToTrigger();
+							}
+						}else{
+							goToTrigger();
+						}
+					}else{
+						goToTrigger();
 					}
 					return false;
 				});
@@ -10951,10 +10967,26 @@ var FileUploadUtil={
 				fbtn.off("click").on("click",function(e){
 					e.preventDefault();
 					e.stopPropagation();
-					var innerInputId=$(this).data("inputid");
-					var fileInput=jboltBody.find(".j_upload_file_input>input#"+innerInputId);
-					if(isOk(fileInput)){
-						fileInput.trigger("click");
+					var goToTrigger=function(){
+						var innerInputId=fbox.data("inputid");
+						var fileInput=jboltBody.find(".j_upload_file_input>input#"+innerInputId);
+						if(isOk(fileInput)){
+							fileInput.trigger("click");
+						}
+					}
+					var checkHandlerStr=fbox.data("check-handler");
+					if(checkHandlerStr){
+						var checkHandler = eval(checkHandlerStr);
+						if(checkHandler && typeof(checkHandler)=="function"){
+							var checkResult=checkHandler(fbox);
+							if(typeof(checkResult)=="boolean" && checkResult){
+								goToTrigger();
+							}
+						}else{
+							goToTrigger();
+						}
+					}else{
+						goToTrigger();
 					}
 					return false;
 				});
