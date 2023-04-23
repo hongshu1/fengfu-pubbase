@@ -1,22 +1,17 @@
 package cn.rjtech.admin.purchaseorderdqty;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.PurchaseorderdQty;
-import org.apache.commons.lang3.time.DatePrinter;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -128,7 +123,7 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 		return purchaseorderdQty;
 	}
 	
-	public List<PurchaseorderdQty> getPurchaseorderdQty(Long purchaseOrderDid, JSONArray purchaseorderdQtyJsonArray){
+	public List<PurchaseorderdQty> getPurchaseorderdQty(Long purchaseOrderDId, JSONArray purchaseorderdQtyJsonArray){
 		List<PurchaseorderdQty> list = new ArrayList<>();
 		if (CollectionUtil.isEmpty(purchaseorderdQtyJsonArray)){
 		
@@ -142,7 +137,7 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 					jsonObject.getBigDecimal(PurchaseorderdQty.IQTY.toLowerCase()),
 					jsonObject.getBigDecimal(PurchaseorderdQty.ISOURCEQTY.toLowerCase())
 					);
-			purchaseOrderdQty.setIPurchaseOrderDid(purchaseOrderDid);
+			purchaseOrderdQty.setIPurchaseOrderDid(purchaseOrderDId);
 			list.add(purchaseOrderdQty);
 		}
 		return list;

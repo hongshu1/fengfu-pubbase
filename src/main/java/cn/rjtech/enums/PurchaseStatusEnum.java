@@ -24,7 +24,7 @@ public enum PurchaseStatusEnum {
     
     private final String text;
     private final int value;
-    
+  
     PurchaseStatusEnum(String text, int value) {
         this.text = text;
         this.value = value;
@@ -44,7 +44,7 @@ public enum PurchaseStatusEnum {
     
     @Override
     public String toString() {
-        return "AuditStatusEnum{" +
+        return "PurchaseStatusEnum{" +
                 "text='" + text + '\'' +
                 ", value=" + value +
                 '}';

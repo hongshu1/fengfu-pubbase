@@ -1,14 +1,20 @@
 package cn.rjtech.admin.purchaseorderref;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.rjtech.model.momdata.PurchaseOrderRef;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.PurchaseOrderRef;
+import java.util.*;
+
+
 /**
  * 采购/委外-采购订单与到货计划关联
  * @ClassName: PurchaseOrderRefService
@@ -104,4 +110,24 @@ public class PurchaseOrderRefService extends BaseService<PurchaseOrderRef> {
 		return null;
 	}
 	
+	public List<PurchaseOrderRef> getPurchaseOrderRefList(Long purchaseOrderDId, JSONArray orderRefJsonArray){
+		List<PurchaseOrderRef> purchaseOrderRefList = new ArrayList<>();
+		if (CollectionUtil.isEmpty(orderRefJsonArray)){
+			return purchaseOrderRefList;
+		}
+		for (int i=0; i<orderRefJsonArray.size(); i++){
+			JSONObject jsonObject = orderRefJsonArray.getJSONObject(i);
+			PurchaseOrderRef purchaseOrderRef = createPurchaseOrderRef(purchaseOrderDId, jsonObject.getLong(PurchaseOrderRef.IDEMANDPLANDID.toLowerCase()));
+			purchaseOrderRefList.add(purchaseOrderRef);
+		}
+		return purchaseOrderRefList;
+	}
+	
+	public PurchaseOrderRef createPurchaseOrderRef(Long purchaseOrderDid, Long demandPlanDid){
+		PurchaseOrderRef purchaseOrderRef = new PurchaseOrderRef();
+		purchaseOrderRef.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		purchaseOrderRef.setIPurchaseOrderDid(purchaseOrderDid);
+		purchaseOrderRef.setIDemandPlanDid(demandPlanDid);
+		return purchaseOrderRef;
+	}
 }

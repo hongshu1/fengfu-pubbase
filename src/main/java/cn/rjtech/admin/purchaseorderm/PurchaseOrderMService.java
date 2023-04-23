@@ -13,6 +13,7 @@ import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
+import cn.rjtech.admin.purchaseorderref.PurchaseOrderRefService;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
@@ -58,6 +59,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	private PurchaseorderdQtyService purchaseorderdQtyService;
 	@Inject
 	private PurchaseOrderDService purchaseOrderDService;
+	@Inject
+	private PurchaseOrderRefService purchaseOrderRefService;
 	
 	@Override
 	protected PurchaseOrderM dao() {
@@ -304,6 +307,11 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		Map<Long, JSONObject> invTableMap = invJsonArray.stream().collect(Collectors.toMap(r -> ((JSONObject)r).getLong(PurchaseOrderD.IINVENTORYID),  r -> (JSONObject)r, (key1, key2) -> key2));
 		// 日期
 		Map<String, Integer> calendarMap = getCalendarMap(DateUtil.date(purchaseOrderM.getDBeginDate()), DateUtil.date(purchaseOrderM.getDEndDate()));
+		// 获取所有明细数据
+		// 记录多个子件数据
+		List<PurchaseOrderD> purchaseOrderDList = new ArrayList<>();
+		List<PurchaseorderdQty> purchaseOrderdQtyList= new ArrayList<>();
+		List<PurchaseOrderRef> purchaseOrderdRefList= new ArrayList<>();
 		
 		for (Long inventoryId : invTableMap.keySet()){
 			// 记录供应商地址及备注
@@ -313,19 +321,42 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 				continue;
 			}
 			JSONObject dataJsonObject = invDataMap.get(inventoryId);
+			// 添加备注
 			dataJsonObject.put(PurchaseOrderD.CMEMO.toLowerCase(), invJsonObject.getString(PurchaseOrderD.CMEMO));
+			// 添加到货地址
 			dataJsonObject.put(PurchaseOrderD.CADDRESS.toLowerCase(), invJsonObject.getString(PurchaseOrderD.CADDRESS));
+			// 添加到货地址Id
 			dataJsonObject.put(PurchaseOrderD.IVENDORADDRID.toLowerCase(), invJsonObject.getLong(PurchaseOrderD.IVENDORADDRID));
-			// 创建子件
+			// 创建采购订单明细
 			PurchaseOrderD purchaseOrderD = purchaseOrderDService.createPurchaseOrderD(purchaseOrderM.getIAutoId(), dataJsonObject);
-			// 获取数量
-			JSONArray purchaseOrderdQtyList = dataJsonObject.getJSONArray(PurchaseOrderD.PURCHASEORDERD_QTY_LIST.toLowerCase());
-			JSONArray array = dataJsonObject.getJSONArray(PurchaseOrderM.ARR);
-			purchaseorderdQtyService.getPurchaseorderdQty(purchaseOrderD.getIAutoId(), purchaseOrderdQtyList);
 			
+			Long purchaseOrderDId = purchaseOrderD.getIAutoId();
+			
+			// 创建采购订单明细数量
+			JSONArray purchaseOrderdQtyJsonArray = dataJsonObject.getJSONArray(PurchaseOrderD.PURCHASEORDERD_QTY_LIST.toLowerCase());
+			List<PurchaseorderdQty> createPurchaseOrderdQtyList = purchaseorderdQtyService.getPurchaseorderdQty(purchaseOrderDId, purchaseOrderdQtyJsonArray);
+			
+			// 创建采购订单与到货计划关联
+			JSONArray purchaseOrderRefJsonArray = dataJsonObject.getJSONArray(PurchaseOrderM.PURCHASEORDERREFLIST);
+			List<PurchaseOrderRef> createPurchaseOrderRefList = purchaseOrderRefService.getPurchaseOrderRefList(purchaseOrderDId, purchaseOrderRefJsonArray);
+			// 添加到集合
+			purchaseOrderDList.add(purchaseOrderD);
+			purchaseOrderdQtyList.addAll(createPurchaseOrderdQtyList);
+			purchaseOrderdRefList.addAll(createPurchaseOrderRefList);
 		}
-		// 创建细表对象
-		return null;
+		
+		// 操作
+		tx( ()-> {
+			// 新增
+			purchaseOrderM.save();
+			purchaseOrderDService.batchSave(purchaseOrderDList);
+			purchaseorderdQtyService.batchSave(purchaseOrderdQtyList);
+			purchaseOrderRefService.batchSave(purchaseOrderdRefList);
+			// 修改物料到货计划状态
+			
+			return true;
+		});
+		return SUCCESS;
 	}
 	
 	
