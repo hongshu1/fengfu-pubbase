@@ -124,7 +124,7 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 		purchaseorderdQty.setIMonth(month);
 		purchaseorderdQty.setIDate(day);
 		purchaseorderdQty.setIQty(qty);
-		purchaseorderdQty.setIQty(sourceQty);
+		purchaseorderdQty.setISourceQty(sourceQty);
 		return purchaseorderdQty;
 	}
 	
