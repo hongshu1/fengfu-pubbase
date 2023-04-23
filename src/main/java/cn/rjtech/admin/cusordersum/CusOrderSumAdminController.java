@@ -8,11 +8,13 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.CusOrderSum;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,14 +36,13 @@ public class CusOrderSumAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		List<Record> records = service.dbTemplate("cusordersum.getYearMouth", getKv()).find();
-		set("records", records);
 		render("index.html");
 	}
    /**
 	* 数据源
 	*/
 	public void datas() {
+		Kv kv = getKv();
 		renderJsonData(service.findCusOrderSum(getPageNumber(), getPageSize(), getKv()));
 	}
 
@@ -88,10 +89,40 @@ public class CusOrderSumAdminController extends BaseAdminController {
 
 
 	/**
-	 * 审批
+	 * 获取表格
 	 */
-	/*public void approve() {
-		renderJson(service.approve(getLong(0)));
-	}*/
+	public void getYear() {
+		Kv kv = getKv();
+		Date startTime = kv.getDate("startTime");
+		Date endTime = kv.getDate("endTime");
+
+		set("startTime", startTime);
+		set("endTime", endTime);
+		set("cinvcode", kv.getStr("cinvcode"));
+		set("cinvcode1", kv.getStr("cinvcode1"));
+		set("cinvname1", kv.getStr("cinvname1"));
+
+		if (null != startTime && null != endTime) {
+			set("iYear1", startTime.getYear() + 1900);
+			set("iMonth1", startTime.getMonth());
+			set("iYear2", endTime.getYear() + 1900);
+			set("iMonth2", endTime.getMonth());
+		} else if (null != endTime) {
+			set("iYear2", endTime.getYear() + 1900);
+			set("iMonth2", endTime.getMonth());
+			set("iYear1", endTime.getYear() + 1900);
+			set("iMonth1", 1);
+
+		} else if (null != startTime) {
+			set("iYear1", startTime.getYear() + 1900);
+			set("iMonth1", startTime.getMonth());
+			set("iYear2", startTime.getYear() + 1900);
+			set("iMonth2", 12);
+		} else {
+			set("iYear", 2023);
+		}
+
+		render("year.html");
+	}
 
 }
