@@ -256,35 +256,37 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 
 	public Ret approveByMonth(Monthorderm monthorderm) {
 		List<Monthorderd> monthorderds = monthorderdService.findByMid(monthorderm.getIAutoId());
-		Long[] inventoryIds = monthorderds.stream().map(Monthorderd::getIInventoryId).toArray(Long[]::new);
 
 		CusOrderSum cusOrderSum = createCusOrderSum();
 		cusOrderSum.setIYear(monthorderm.getIYear());
 		cusOrderSum.setIMonth(monthorderm.getIMonth());
 
-		List<CusOrderSum> cusOrderSums = find(selectSql().eq("iYear", monthorderm.getIYear()).
-				eq("iMonth", monthorderm.getIMonth()).
-				in("iInventoryId", ArrayUtil.join(inventoryIds, COMMA)).isNotNull("iQty1"));
 		for (Monthorderd monthorderd : monthorderds) {
-			if (cusOrderSums.size() > 0) {
+            List<CusOrderSum> cusOrderSums = find(selectSql().eq("iYear", monthorderm.getIYear())
+                    .eq("iMonth", monthorderm.getIMonth())
+                    .eq("iInventoryId", monthorderd.getIInventoryId())
+                    .orderBy("iDate", "asc"));
+            int size = cusOrderSums.size();
+            if (size > 0) {
+                int b = size + 1;
 				for (CusOrderSum orderSum : cusOrderSums) {
-					if (orderSum.getIInventoryId().equals(monthorderd.getIInventoryId())) {
-						orderSum.setIQty1(monthorderd.get("iQty" + orderSum.getIDate()));
-						orderSum.setIUpdateBy(JBoltUserKit.getUserId());
-						orderSum.setCUpdateName(JBoltUserKit.getUserName());
-						orderSum.setDUpdateTime(new Date());
-						orderSum.update();
-					} else {
-						cusOrderSum.setIInventoryId(monthorderd.getIInventoryId());
-						for (int i = 1; i <= 31; i++) {
+                    orderSum.setIQty1(monthorderd.get("iQty" + orderSum.getIDate()));
+                    orderSum.setIUpdateBy(JBoltUserKit.getUserId());
+                    orderSum.setCUpdateName(JBoltUserKit.getUserName());
+                    orderSum.setDUpdateTime(new Date());
+                    orderSum.update();
+                    if (size < 31) {
+                        for (int i = b; 31 - size > 0; i++) {
+                            cusOrderSum.setIInventoryId(monthorderd.getIInventoryId());
 							cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
 							cusOrderSum.setIDate(i);
 							cusOrderSum.setIQty1(monthorderd.get("iQty" + i));
 							cusOrderSum.save();
+                            size++;
 						}
 					}
 				}
-			} else {
+            } else {
 				cusOrderSum.setIInventoryId(monthorderd.getIInventoryId());
 				for (int i = 1; i <= 31; i++) {
 					cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
@@ -293,8 +295,8 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 					cusOrderSum.save();
 				}
 			}
+        }
 
-		}
 		return SUCCESS;
 	}
 
