@@ -1,9 +1,10 @@
+#set(pageId=RandomUtil.random(6))
 <form onsubmit="return false;" id="PurchaseOrderM_Form" action="#(action)" method="post">
     #if(purchaseOrderM.iAutoId??)
-    <input type="hidden" name="iAutoId" value="#(purchaseOrderM.iAutoId??)"/>
-    <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dBeginDate??)"/>
-    <input type="hidden" name="dEndDate" value="#(purchaseOrderM.dEndDate??)"/>
+    <input type="hidden" name="iAutoId" value="#(purchaseOrderM.iautoid??)"/>
     #end
+    <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dbegindate??)"/>
+    <input type="hidden" name="dEndDate" value="#(purchaseOrderM.denddate??)"/>
     <div class="row">
 
         <div class="col">
@@ -31,7 +32,7 @@
                             data-url="admin/purchaseorderm/findPurchaseType"
                             data-select-type="select"
                             data-text="==请选择=="
-                            data-value=""
+                            data-value-attr="iautoid"
                             data-text-attr="cptname">
                     </select>
                 </div>
@@ -39,7 +40,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">业务员</label>
                 <div class="col-6">
-                    <input type="hidden" id="ipersonid_#(pageId)" name="workregionm.ipersonid" value="#(workregionm.ipersonid??)" />
+                    <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(workregionm.ipersonid??)" />
                     <input type="text" autocomplete="off" value="#(personname??)" class="form-control"
                            placeholder="==请选择人员=="
                            data-rule="required"
@@ -72,7 +73,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">订单日期</label>
                 <div class="col-6">
-                    <input type="text" readonly data-rule="required" data-notnull="true" autocomplete="off" class="form-control" maxlength="20" name="purchaseOrderM.dOrderDate"
+                    <input type="text" readonly data-rule="required" data-notnull="true" autocomplete="off" class="form-control" maxlength="20" name="dOrderDate"
                            value="#datetime(purchaseOrderM.dOrderDate??,'yyyy-MM-dd')"/>
                 </div>
             </div>
@@ -159,6 +160,7 @@
 
 </div>
 <table class="jbolt_table jbolt_main_table  table-center "
+       id="PurchaseOrderM_Table_"
        data-jbolttable
        data-width="fill"
        data-height="fill"
@@ -167,10 +169,11 @@
        data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
        data-column-prepend="1:checkbox:true:false:false"
        data-editable="true"
-       data-editable-option="getEditableTableOptions1_#(pageId)"
+       data-editable-option="getEditableTableOptions1"
 >
     <thead>
     <tr>
+        <th hidden rowspan="2">存货id</th>
         <th data-width="60"  rowspan="2" data-column="index">序号</th>
         <th data-width="80"  rowspan="2">操作</th>
         <th data-width="150" rowspan="2" data-column="cInventoryCode">转换前存货编码</th>
@@ -205,6 +208,7 @@
     <tbody>
         #for(data:tableData)
             <tr>
+                <td hidden><input name="iInventoryId" autocomplete="off" class="form-control" value="#(data.iinventoryid)"></td>
                 <td>#(for.index+1)</td>
                 <td>
                     <a tabindex="-1" class="ml-1 " href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash text-danger">删除</i></a>
@@ -224,7 +228,7 @@
                 </td>
                 <td>#boolToStr(data.isgavepresent?? == 1,"是","否")</td>
                 <td>
-                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                    <input type="text" data-with-clearbtn="true" name="cMemo" autocomplete="off" class="form-control"
                            maxlength="200"/>
                 </td>
                 <td>
@@ -234,6 +238,7 @@
                             data-select-type="select"
                             data-text="==请选择=="
                             data-value=""
+                            name="iVendorAddrId"
                             data-select="#(data.ivendoraddrid??)"
                             data-text-attr="cdistrictname"
                             data-value-attr="iautoid"
@@ -250,7 +255,7 @@
 </table>
 #define js()
 <script>
-    function getEditableTableOptions1_#(pageId)(){
+    function getEditableTableOptions1(){
         var editableTableOptions={
             trigger:"click",
             //初始行数
@@ -268,6 +273,59 @@
         };
         return editableTableOptions;
     }
+
+    function getTableData() {
+        var bomMaster_complete = $("#PurchaseOrderM_Table_");
+        var rows = [];
+        bomMaster_complete.children("tbody").children("tr").each(function () {
+            var row = {};
+            // 获取input标签 class属性还有form-control
+            $(this).find('td').each(function () {
+                var inputs = $(this).find("input[class*='form-control']");
+                getField(row, inputs);
+                var selects = $(this).find("select[class='form-control']");
+                getField(row, selects);
+
+            })
+            rows.push(row);
+        })
+        return rows;
+    };
+
+
+    function getField(row, labels) {
+        if (labels && labels.length > 0) {
+            $.each(labels, function (idx, v) {
+                if (v.name && v.name !== '' && v.value) {
+                    row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
+                }
+            });
+        }
+    }
+
+    // 隐藏第一个按钮
+    hideParentLayerDialogBtn(0);
+
+    #if(view??0 !=1)
+        addParentLayerDialogBtn("保存","lay_success",function(){
+            if (!FormChecker.check("#PurchaseOrderM_Form")){
+                return;
+            }
+            var data = getTableData();
+            if (!data || data.length ==0){
+                LayerMsgBox.alert("表格数据不能为空",2);
+                return;
+            }
+            var formData = formToJson('#PurchaseOrderM_Form');
+            Ajax.post('/admin/purchaseorderm/submit', {
+                formData: JSON.stringify(formData),
+                tableData: '#(tableDataStr)',
+                invTableData: JSON.stringify(data)
+            },  function(ret) {
+
+            });
+        });
+    #end
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="PurchaseOrderM_Form")
 #end

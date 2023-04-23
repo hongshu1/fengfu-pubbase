@@ -1,8 +1,12 @@
 package cn.rjtech.admin.purchaseorderdqty;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -15,6 +19,8 @@ import cn.rjtech.model.momdata.PurchaseorderdQty;
 import org.apache.commons.lang3.time.DatePrinter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 采购/委外订单-采购订单明细数量
@@ -111,8 +117,10 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 		return null;
 	}
 	
-	public PurchaseorderdQty createPurchaseorderdQty(int year, int month, int day, BigDecimal qty, BigDecimal sourceQty){
+	private PurchaseorderdQty createPurchaseorderdQty(Long purchaseOrderDid, int year, int month, int day, BigDecimal qty, BigDecimal sourceQty){
 		PurchaseorderdQty purchaseorderdQty = new PurchaseorderdQty();
+		purchaseorderdQty.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		purchaseorderdQty.setIPurchaseOrderDid(purchaseOrderDid);
 		purchaseorderdQty.setIYear(year);
 		purchaseorderdQty.setIMonth(month);
 		purchaseorderdQty.setIDate(day);
@@ -120,5 +128,23 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 		purchaseorderdQty.setIQty(sourceQty);
 		return purchaseorderdQty;
 	}
-
+	
+	public List<PurchaseorderdQty> getPurchaseorderdQty(Long purchaseOrderDid, JSONArray purchaseorderdQtyJsonArray){
+		List<PurchaseorderdQty> list = new ArrayList<>();
+		if (CollectionUtil.isEmpty(purchaseorderdQtyJsonArray)){
+		
+		}
+		for (int i=0; i<purchaseorderdQtyJsonArray.size(); i++){
+			JSONObject jsonObject = purchaseorderdQtyJsonArray.getJSONObject(i);
+			PurchaseorderdQty purchaseOrderdQty = createPurchaseorderdQty(purchaseOrderDid,
+					jsonObject.getIntValue(PurchaseorderdQty.IYEAR.toLowerCase()),
+					jsonObject.getIntValue(PurchaseorderdQty.IMONTH.toLowerCase()),
+					jsonObject.getIntValue(PurchaseorderdQty.IDATE.toLowerCase()),
+					jsonObject.getBigDecimal(PurchaseorderdQty.IQTY.toLowerCase()),
+					jsonObject.getBigDecimal(PurchaseorderdQty.ISOURCEQTY.toLowerCase())
+					);
+			list.add(purchaseOrderdQty);
+		}
+		return list;
+	}
 }

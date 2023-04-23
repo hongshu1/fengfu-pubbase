@@ -31,9 +31,7 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-12 15:19
  */
-@CheckPermission(PermissionKey.PS_PURCHASE_ORDER)
-@UnCheckIfSystemAdmin
-@Before(JBoltAdminAuthInterceptor.class)
+
 @Path(value = "/admin/purchaseorderm", viewPath = "/_view/admin/purchaseorderm")
 public class PurchaseOrderMAdminController extends BaseAdminController {
 
@@ -77,6 +75,8 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 		record.set(Vendor.CVENNAME, vendor.getCVenName());
 		record.set(PurchaseOrderM.CORDERNO, service.generateCGCode());
 		record.set(PurchaseOrderM.DORDERDATE, DateUtil.formatDate(DateUtil.date()));
+		record.set(PurchaseOrderM.DBEGINDATE, beginDate);
+		record.set(PurchaseOrderM.DENDDATE, endDate);
 		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType));
 		set("purchaseOrderM", record);
 		render("add.html");
@@ -152,5 +152,14 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	public void findByiVendorId(@Para(value = "vendorId") String vendorId,
 								@Para(value = "id") String id){
 		renderJsonData(vendorAddrService.findList(getKv()));
+	}
+	
+	/**
+	 * 保存
+	 */
+	public void submit(@Para(value = "tableData") String dataStr,
+					   @Para(value = "formData") String formStr,
+					   @Para(value = "invTableData") String invTableData) {
+		renderJson(service.submit(dataStr, formStr, invTableData, getKv()));
 	}
 }

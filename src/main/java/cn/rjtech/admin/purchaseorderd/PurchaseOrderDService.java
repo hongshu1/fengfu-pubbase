@@ -1,5 +1,7 @@
 package cn.rjtech.admin.purchaseorderd;
 
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +11,9 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.PurchaseOrderD;
+
+import java.util.Date;
+
 /**
  * 采购/委外订单-采购订单明细
  * @ClassName: PurchaseOrderDService
@@ -124,6 +129,22 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		}
 		*/
 		return null;
+	}
+	
+	public PurchaseOrderD createPurchaseOrderD(Long purchaseOrderMid, JSONObject jsonObject){
+        PurchaseOrderD purchaseOrderD = new PurchaseOrderD();
+        purchaseOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
+        purchaseOrderD.setIPurchaseOrderMid(purchaseOrderMid);
+        purchaseOrderD.setIVendorAddrId(jsonObject.getLong(purchaseOrderD.IVENDORADDRID.toLowerCase()));
+        purchaseOrderD.setCAddress(jsonObject.getString(purchaseOrderD.CADDRESS.toLowerCase()));
+        purchaseOrderD.setCMemo(jsonObject.getString(purchaseOrderD.CMEMO.toLowerCase()));
+        purchaseOrderD.setIsPresent(jsonObject.getBoolean(purchaseOrderD.ISPRESENT.toLowerCase()));
+        purchaseOrderD.setIsDeleted(false);
+        purchaseOrderD.setISourceInventoryId(jsonObject.getLong(purchaseOrderD.ISOURCEINVENTORYID.toLowerCase()));
+        purchaseOrderD.setIInventoryId(jsonObject.getLong(purchaseOrderD.IINVENTORYID.toLowerCase()));
+        purchaseOrderD.setISum(jsonObject.getBigDecimal(purchaseOrderD.ISUM.toLowerCase()));
+        purchaseOrderD.setISourceSum(jsonObject.getBigDecimal(purchaseOrderD.ISOURCESUM.toLowerCase()));
+        return purchaseOrderD;
 	}
 
 }

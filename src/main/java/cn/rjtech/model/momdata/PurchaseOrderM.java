@@ -29,6 +29,10 @@ public class PurchaseOrderM extends BasePurchaseOrderM<PurchaseOrderM> {
     public static final String CINVSTD = "cInvStd";
     
     public static final String CUOMNAME = "cUomName";
+    // 根据存货id记录中间变数据
+    public static final String PURCHASEORDERREFLIST = "PurchaseOrderRefList";
+    
+    public static final String ARR = "arr";
    
 }
 

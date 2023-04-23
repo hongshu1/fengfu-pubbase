@@ -5,19 +5,20 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.format.DatePrinter;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
+import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
-import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.CreateByEnum;
-import cn.rjtech.enums.OrderStatusTypeEnum;
-import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
@@ -55,6 +56,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	private InventoryChangeService inventoryChangeService;
 	@Inject
 	private PurchaseorderdQtyService purchaseorderdQtyService;
+	@Inject
+	private PurchaseOrderDService purchaseOrderDService;
 	
 	@Override
 	protected PurchaseOrderM dao() {
@@ -257,15 +260,15 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		
 		// 获取物料形态转换表
 		List<Record> inventoryChanges = inventoryChangeService.findByOrgList(getOrgId());
-		Map<Long, BigDecimal> invChangeRateMap = inventoryChanges.stream().collect(Collectors.toMap(r -> r.getLong(InventoryChange.IBEFOREINVENTORYID), r -> r.getBigDecimal(InventoryChange.ICHANGERATE), (key1, key2) -> key2));
-		
-		Map<Long, Record> invChangeMap = inventoryChanges.stream().collect(Collectors.toMap(r -> r.getLong(InventoryChange.IBEFOREINVENTORYID),  r -> r, (key1, key2) -> key2));
+//		Map<Long, BigDecimal> invChangeRateMap = inventoryChanges.stream().collect(Collectors.toMap(r -> r.getLong(InventoryChange.IAFTERINVENTORYID), r -> r.getBigDecimal(InventoryChange.ICHANGERATE), (key1, key2) -> key2));
+//////
+		Map<Long, Record> invChangeMap = inventoryChanges.stream().collect(Collectors.toMap(r -> r.getLong(InventoryChange.IAFTERINVENTORYID),  r -> r, (key1, key2) -> key2));
 		
 		Map<String, Object> repMap = new HashMap<>();
 		// 获取所有日期集合
 		Map<String, Integer> calendarMap = getCalendarMap(DateUtil.parseDate(beginDate), DateUtil.parseDate(endDate));
 		// 设置到货计划明细数量
-		demandPlanMService.setVendorDateList(vendorDateList, demandPlanDMap, calendarMap, invChangeRateMap, invChangeMap);
+		demandPlanMService.setVendorDateList(vendorDateList, demandPlanDMap, calendarMap, invChangeMap, puOrderRefMap);
 		
 		// 第一层：年月
 		// 第二层：日
@@ -284,7 +287,91 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		}
 		repMap.put("tableHeadMap", dateMap);
 		repMap.put("tableData", vendorDateList);
+		repMap.put("tableDataStr", JSONObject.toJSONString(vendorDateList));
 		repMap.put("puOrderRefMap", puOrderRefMap);
 		return repMap;
+	}
+	
+	
+	public Ret submit(String dataStr, String formStr, String invTableData, Kv kv) {
+		verifyData(dataStr, formStr, invTableData);
+		JSONArray jsonArray = JSONObject.parseArray(dataStr);
+		JSONObject formJsonObject = JSONObject.parseObject(formStr);
+		JSONArray invJsonArray = JSONObject.parseArray(invTableData);
+		// 创建主表对象
+		PurchaseOrderM purchaseOrderM = createPurchaseOrderM(formJsonObject);
+		Map<Long, JSONObject> invDataMap = jsonArray.stream().collect(Collectors.toMap(r -> ((JSONObject)r).getLong(PurchaseOrderD.IINVENTORYID.toLowerCase()),  r -> (JSONObject)r, (key1, key2) -> key2));
+		Map<Long, JSONObject> invTableMap = invJsonArray.stream().collect(Collectors.toMap(r -> ((JSONObject)r).getLong(PurchaseOrderD.IINVENTORYID),  r -> (JSONObject)r, (key1, key2) -> key2));
+		// 日期
+		Map<String, Integer> calendarMap = getCalendarMap(DateUtil.date(purchaseOrderM.getDBeginDate()), DateUtil.date(purchaseOrderM.getDEndDate()));
+		
+		for (Long inventoryId : invTableMap.keySet()){
+			// 记录供应商地址及备注
+			JSONObject invJsonObject = invTableMap.get(inventoryId);
+			// 存在这个存货说明没有删除
+			if (!invDataMap.containsKey(inventoryId)){
+				continue;
+			}
+			JSONObject dataJsonObject = invDataMap.get(inventoryId);
+			dataJsonObject.put(PurchaseOrderD.CMEMO.toLowerCase(), invJsonObject.getString(PurchaseOrderD.CMEMO));
+			dataJsonObject.put(PurchaseOrderD.CADDRESS.toLowerCase(), invJsonObject.getString(PurchaseOrderD.CADDRESS));
+			dataJsonObject.put(PurchaseOrderD.IVENDORADDRID.toLowerCase(), invJsonObject.getLong(PurchaseOrderD.IVENDORADDRID));
+			// 创建子件
+			PurchaseOrderD purchaseOrderD = purchaseOrderDService.createPurchaseOrderD(purchaseOrderM.getIAutoId(), dataJsonObject);
+			// 获取数量
+			JSONArray purchaseOrderdQtyList = dataJsonObject.getJSONArray(PurchaseOrderD.PURCHASEORDERD_QTY_LIST.toLowerCase());
+			JSONArray array = dataJsonObject.getJSONArray(PurchaseOrderM.ARR);
+			purchaseorderdQtyService.getPurchaseorderdQty(purchaseOrderD.getIAutoId(), purchaseOrderdQtyList);
+			
+		}
+		// 创建细表对象
+		return null;
+	}
+	
+	
+	private PurchaseOrderM createPurchaseOrderM(JSONObject formJsonObject){
+		PurchaseOrderM purchaseOrderM = new PurchaseOrderM();
+		purchaseOrderM.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		purchaseOrderM.setIDutyUserId(formJsonObject.getLong(PurchaseOrderM.IDUTYUSERID));
+		purchaseOrderM.setCOrderNo(formJsonObject.getString(PurchaseOrderM.CORDERNO));
+		purchaseOrderM.setIPurchaseTypeId(formJsonObject.getLong(PurchaseOrderM.IPURCHASETYPEID));
+		purchaseOrderM.setIPayableType(formJsonObject.getInteger(PurchaseOrderM.IPAYABLETYPE));
+		purchaseOrderM.setDOrderDate(formJsonObject.getDate(PurchaseOrderM.DORDERDATE));
+		purchaseOrderM.setIVendorId(formJsonObject.getLong(PurchaseOrderM.IVENDORID));
+		purchaseOrderM.setCMemo(formJsonObject.getString(PurchaseOrderM.CMEMO));
+		// 币种
+		purchaseOrderM.setCCurrency(formJsonObject.getString(PurchaseOrderM.CCURRENCY));
+		purchaseOrderM.setIBusType(formJsonObject.getInteger(PurchaseOrderM.IBUSTYPE));
+		
+		purchaseOrderM.setIDepartmentId(formJsonObject.getLong(PurchaseOrderM.IDEPARTMENTID));
+		purchaseOrderM.setITaxRate(formJsonObject.getBigDecimal(PurchaseOrderM.ITAXRATE));
+		purchaseOrderM.setIExchangeRate(formJsonObject.getBigDecimal(PurchaseOrderM.IEXCHANGERATE));
+		
+		purchaseOrderM.setIOrgId(getOrgId());
+		purchaseOrderM.setCOrgCode(getOrgCode());
+		purchaseOrderM.setCOrgName(getOrgName());
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		DateTime date = DateUtil.date();
+		purchaseOrderM.setICreateBy(userId);
+		purchaseOrderM.setCCreateName(userName);
+		purchaseOrderM.setDCreateTime(date);
+		// 修改时间
+		purchaseOrderM.setIUpdateBy(userId);
+		purchaseOrderM.setCUpdateName(userName);
+		purchaseOrderM.setDCreateTime(date);
+		purchaseOrderM.setIsDeleted(false);
+		purchaseOrderM.setHideInvalid(false);
+		purchaseOrderM.setDBeginDate(formJsonObject.getDate(PurchaseOrderM.DBEGINDATE));
+		purchaseOrderM.setDEndDate(formJsonObject.getDate(PurchaseOrderM.DENDDATE));
+		purchaseOrderM.setIOrderStatus(PurchaseStatusEnum.NOT_AUDIT.getValue());
+		purchaseOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+		return purchaseOrderM;
+	}
+	
+	private void verifyData(String dataStr, String formStr, String invTableData){
+		ValidationUtils.notBlank(formStr, "未获取到表单数据");
+		ValidationUtils.notBlank(dataStr, JBoltMsg.JBOLTTABLE_IS_BLANK);
+		ValidationUtils.notBlank(invTableData, JBoltMsg.JBOLTTABLE_IS_BLANK);
 	}
 }
