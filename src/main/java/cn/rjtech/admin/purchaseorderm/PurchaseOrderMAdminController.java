@@ -1,26 +1,20 @@
 package cn.rjtech.admin.purchaseorderm;
 
 import cn.hutool.core.date.DateUtil;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
-
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.PurchaseOrderM;
 
 import java.util.List;
 
@@ -58,7 +52,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("cOrderNo"), getInt("iBusType"), getInt("iPurchaseType"), getLong("iVendorId"), getLong("iDepartmentId"), getInt("iPayableType"), getInt("iOrderStatus"), getInt("iAuditStatus")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
 	}
 
    /**

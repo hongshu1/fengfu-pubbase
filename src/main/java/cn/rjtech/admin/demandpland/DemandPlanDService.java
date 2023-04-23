@@ -179,18 +179,21 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 		return yearStr.concat(monthStr).concat(dateStr);
 	}
 	
+	public int updateGenTypeById(Long id, Integer genType, Integer status){
+		return update("UPDATE Mrp_DemandPlanD SET iGenType = ?, iStatus = ? where iAutoId = ?", genType, status, id);
+	}
 	
-	public void updateGenTypeByIds(List<Long> ids, Integer genType, Integer status){
+	public void batchUpdateGenTypeByIds(List<Long> ids, Integer genType, Integer status){
 		if (CollectionUtil.isEmpty(ids)){
 			return;
 		}
 		for (Long id : ids){
-			update("UPDATE Mrp_DemandPlanD SET iGenType = ?, iStatus = ? where iAutoId = ?", genType, status, id);
+			updateGenTypeById(id, genType, status);
 		}
 	}
 	
 	public Integer queryNotGenOrderNum(Long demandPlanMid, List<Long> demandPlanDIds){
-		return dbTemplate("demandpland.findByDemandPlanMList", Okv.by(DemandPlanD.IDEMANDPLANMID, demandPlanMid).set("ids", demandPlanDIds)).queryInt();
+		return dbTemplate("demandpland.queryNotGenOrderNum", Okv.by(DemandPlanD.IDEMANDPLANMID, demandPlanMid).set("ids", demandPlanDIds)).queryInt();
 	}
 	
 	public List<Record> findAll(Okv okv){

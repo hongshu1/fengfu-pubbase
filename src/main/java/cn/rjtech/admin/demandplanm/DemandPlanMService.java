@@ -175,7 +175,7 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 		// 将日期设值。
 		for (Record record : vendorDateList){
 			// 存货id
-			Long invId = record.getLong("iInventoryId");
+			Long invId = record.getLong(PurchaseOrderD.ISOURCEINVENTORYID);
 			// 找出对应的到货细表id
 			if (puOrderRefMap.containsKey(invId)){
 				record.set(PurchaseOrderM.PURCHASEORDERREFLIST, puOrderRefMap.get(invId));
@@ -218,12 +218,12 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 						// 获取转换率
 						rate = invChangeRecord.getBigDecimal(InventoryChange.ICHANGERATE);
 						// 获取转换后的id
-						record.set(PurchaseOrderD.ISOURCEINVENTORYID, invChangeRecord.getLong(PurchaseOrderM.IAFTERINVENTORYID));
+						record.set(PurchaseOrderD.IINVENTORYID, invChangeRecord.getLong(PurchaseOrderM.IAFTERINVENTORYID));
 						// 需更改转换后的数据
 						record.set(PurchaseOrderM.AFTERCINVCODE, invChangeRecord.getLong(PurchaseOrderM.AFTERCINVCODE));
 						record.set(PurchaseOrderM.AFTERCINVCODE1, invChangeRecord.getLong(PurchaseOrderM.AFTERCINVCODE1));
 						record.set(PurchaseOrderM.AFTERCINVNAME1, invChangeRecord.getLong(PurchaseOrderM.AFTERCINVNAME1));
-						record.set(PurchaseOrderM.ISGAVEPRESENT, invChangeRecord.getLong(PurchaseOrderM.ISGAVEPRESENT));
+						record.set(PurchaseOrderD.ISPRESENT, invChangeRecord.getLong(PurchaseOrderD.ISPRESENT));
 						record.set(PurchaseOrderM.IPKGQTY, invChangeRecord.getLong(PurchaseOrderM.IPKGQTY));
 						record.set(PurchaseOrderM.CINVSTD, invChangeRecord.getLong(PurchaseOrderM.CINVSTD));
 						record.set(PurchaseOrderM.CUOMNAME, invChangeRecord.getLong(PurchaseOrderM.CUOMNAME));
@@ -239,6 +239,9 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 					amount = amount.add(qty.multiply(rate));
 					sourceSum = sourceSum.add(qty);
 				}
+			}
+			if (ObjectUtil.isNull(record.getLong(PurchaseOrderD.IINVENTORYID))){
+				record.set(PurchaseOrderD.IINVENTORYID, invId);
 			}
 			// 字段记录
 			if (CollectionUtil.isNotEmpty(purchaseorderdQtyList)){
@@ -267,5 +270,23 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 			demandPlanM.setDUpdateTime(DateUtil.date());
 			demandPlanM.update();
 		}
+	}
+	
+	public void batchUpdateStatusByIds(List<Long> ids, Integer status){
+		if (CollectionUtil.isEmpty(ids)){
+			return;
+		}
+		for (Long id : ids){
+			updateStatusById(id, status);
+		}
+	}
+	
+	/**
+	 * 根据子件id反查 母件数据
+	 * @return
+	 */
+	public List<Long> pegging(List<Long> demandPlanDIds){
+		List<DemandPlanD> ids = demandPlanDService.getListByIds(demandPlanDIds.toArray());
+		return ids.stream().map(DemandPlanD::getIDemandPlanMid).collect(Collectors.toList());
 	}
 }

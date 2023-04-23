@@ -49,4 +49,11 @@ WHERE
     #if(iDemandPlanMid)
        AND d.iDemandPlanMid = #para(iDemandPlanMid)
     #end
+    #if(ids)
+      AND  d.iAutoId NOT IN (
+            #for(v:ids)
+                '#(v)' #(for.last?'':',')
+            #end
+        )
+    #end
 #end
