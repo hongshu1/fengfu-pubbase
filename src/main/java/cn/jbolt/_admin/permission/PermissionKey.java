@@ -1725,6 +1725,13 @@ public class PermissionKey {
 	 * 平板登录日志
 	 */
     public static final String PADLOGINLOG = "pad_loginlog";
+
+
+    /**
+	 * 平板登录日志
+	 */
+    public static final String RCVDOCDEFECT = "RcvDocDefect";
+
 	/**
 	 * 出库检
 	 */

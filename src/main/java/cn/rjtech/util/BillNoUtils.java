@@ -45,6 +45,16 @@ public class BillNoUtils {
         return prefix + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6);
     }
 
+
+    /**
+     * 来料异常品记录
+     */
+    public static String getcDocNo(long ordId, String prefix, int billNoLength) {
+        prefix = prefix + DateUtil.format(new Date(), "yyMMdd");
+        return MOM_DATA_FUNC_SERVICE.getNextRouteNo(ordId, prefix, billNoLength);
+    }
+
+
     /**
      * 质检问题
      */

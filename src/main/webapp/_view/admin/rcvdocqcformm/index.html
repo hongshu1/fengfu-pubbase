@@ -16,7 +16,6 @@
   </div>
   <div class="jbolt_page_title">
     <div class="row">
-<!--      <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>质量管理-来料检</h1></div>-->
       <div class="col">
         <form class="form-inline" id="rcvDocQcFormMForm_#(pageId)" style="left: 30px;text-align: left">
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="crcvdocqcformno" value=""/>
@@ -74,13 +73,16 @@
           <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
           <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 
+          <!--onclick="clickonlysee(${data.iautoid})"-->
           <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_onlyseeBtn_#(pageId)"
-                  data-title="来料检查成绩表" data-url="admin/rcvdocqcformm/onlysee" class="btn btn-outline-primary">
+                  data-title="来料检查成绩表"  data-url="admin/rcvdocqcformm/onlysee?iautoid=11111"
+                  class="btn btn-outline-primary">
             跳转到查看页面
           </button>
 
           <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_checkoutBtn_#(pageId)"
-                  data-title="来料检查成绩表" data-url="admin/rcvdocqcformm/checkout" class="btn btn-outline-primary">
+                  data-title="来料检查成绩表" data-url="admin/rcvdocqcformm/checkout?iautoid=11111"
+                  class="btn btn-outline-primary">
             跳转到检验页面
           </button>
 
@@ -103,7 +105,7 @@
     {@/if}
     {@if data.istatus == 1}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/checkout/${data.iautoid}" data-area="100%,100%"
-         data-title="检验">检验</a>
+         data-title="检验成绩表">检验</a>
     {@/if}
     {@if data.istatus == 2}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onlysee/${data.iautoid}" data-area="100%,100%"
