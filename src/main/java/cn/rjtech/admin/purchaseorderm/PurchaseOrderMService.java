@@ -5,8 +5,11 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.format.DatePrinter;
+import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
@@ -14,6 +17,7 @@ import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderref.PurchaseOrderRefService;
+import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
@@ -61,6 +65,10 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	private PurchaseOrderDService purchaseOrderDService;
 	@Inject
 	private PurchaseOrderRefService purchaseOrderRefService;
+	@Inject
+	private VendorAddrService vendorAddrService;
+	@Inject
+	private DictionaryService dictionaryService;
 	
 	@Override
 	protected PurchaseOrderM dao() {
@@ -76,33 +84,45 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-     * @param cOrderNo 订单编号
-     * @param iBusType 业务类型： 1. 普通采购
-     * @param iPurchaseType 采购类型
-     * @param iVendorId 供应商ID
-     * @param iDepartmentId 部门ID
-     * @param iPayableType 应付类型：1. 材料费
-     * @param iOrderStatus 订单状态：1. 已保存 2. 待审批 3. 已审核 4. 审批不通过 5. 已生成现品票 6. 已关闭
-     * @param iAuditStatus 审核状态：1. 审核中 2. 审核通过 3. 审核不通过
 	 * @return
 	 */
-	public Page<PurchaseOrderM> getAdminDatas(int pageNumber, int pageSize, String cOrderNo, Integer iBusType, Integer iPurchaseType, Long iVendorId, Long iDepartmentId, Integer iPayableType, Integer iOrderStatus, Integer iAuditStatus) {
-	    //创建sql对象
-	    Sql sql = selectSql().page(pageNumber,pageSize);
-	    //sql条件处理
-        sql.eq("cOrderNo",cOrderNo);
-        sql.eq("iBusType",iBusType);
-        sql.eq("iPurchaseType",iPurchaseType);
-        sql.eq("iVendorId",iVendorId);
-        sql.eq("iDepartmentId",iDepartmentId);
-        sql.eq("iPayableType",iPayableType);
-        sql.eq("iOrderStatus",iOrderStatus);
-        sql.eq("iAuditStatus",iAuditStatus);
-        //排序
-        sql.desc("iAutoId");
-		return paginate(sql);
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+		Page<Record> page = dbTemplate("purchaseorderm.findAll").paginate(pageNumber, pageSize);
+		changeData(page.getList());
+		return page;
 	}
 
+	
+	private void changeData(List<Record> list){
+		if (CollectionUtil.isEmpty(list)){
+			return;
+		}
+		// 应付类型
+		List<Dictionary> purchaseCopingTypeList = dictionaryService.getListByTypeKey("purchase_coping_type", true);
+		
+		Map<String, Dictionary> purchaseCopingTypeMap = purchaseCopingTypeList.stream().collect(Collectors.toMap(p -> p.getSn(), p -> p));
+		// 业务类型
+		List<Dictionary> purchaseBusinessTypeList = dictionaryService.getListByTypeKey("purchase_business_type", true);
+		
+		Map<String, Dictionary> purchaseBusinessTypeMap = purchaseBusinessTypeList.stream().collect(Collectors.toMap(p -> p.getSn(), p -> p));
+		
+		for (Record record : list){
+			Integer orderStatus = record.getInt(PurchaseOrderM.IORDERSTATUS);
+			OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(orderStatus);
+			ValidationUtils.notNull(orderStatusEnum, "未知订单状态");
+			record.set(PurchaseOrderM.ADUITSTATUSTEXT, orderStatusEnum.getText());
+			String iPayableType = record.getStr(PurchaseOrderM.IPAYABLETYPE);
+			
+			String iBusType = record.getStr(PurchaseOrderM.IBUSTYPE);
+			if (purchaseCopingTypeMap.containsKey(iPayableType)){
+				record.set(PurchaseOrderM.PAYABLETYPETEXT, purchaseCopingTypeMap.get(iPayableType).getName());
+			}
+			if (purchaseBusinessTypeMap.containsKey(iBusType)){
+				record.set(PurchaseOrderM.BUSTYPETEXT, purchaseBusinessTypeMap.get(iBusType).getName());
+			}
+		}
+	}
+	
 	/**
 	 * 保存
 	 * @param purchaseOrderM
@@ -312,6 +332,10 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		List<PurchaseorderdQty> purchaseOrderdQtyList= new ArrayList<>();
 		List<PurchaseOrderRef> purchaseOrderdRefList= new ArrayList<>();
 		
+		// 校验采购合同号是否存在
+		Integer count = findOderNoIsNotExists(purchaseOrderM.getCOrderNo());
+		ValidationUtils.isTrue(ObjectUtil.isEmpty(count) || count == 0, "采购订单号已存在");
+		
 		for (Long inventoryId : invTableMap.keySet()){
 			// 记录供应商地址及备注
 			JSONObject invJsonObject = invTableMap.get(inventoryId);
@@ -323,9 +347,11 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			// 添加备注
 			dataJsonObject.put(PurchaseOrderD.CMEMO.toLowerCase(), invJsonObject.getString(PurchaseOrderD.CMEMO));
 			// 添加到货地址
-			dataJsonObject.put(PurchaseOrderD.CADDRESS.toLowerCase(), invJsonObject.getString(PurchaseOrderD.CADDRESS));
+			VendorAddr vendorAddr = vendorAddrService.findById(invJsonObject.getLong(PurchaseOrderD.IVENDORADDRID));
+			ValidationUtils.notNull(vendorAddr, "供应商地址不存在！！！");
+			dataJsonObject.put(PurchaseOrderD.CADDRESS.toLowerCase(), vendorAddr.getCAddr());
 			// 添加到货地址Id
-			dataJsonObject.put(PurchaseOrderD.IVENDORADDRID.toLowerCase(), invJsonObject.getLong(PurchaseOrderD.IVENDORADDRID));
+			dataJsonObject.put(PurchaseOrderD.IVENDORADDRID.toLowerCase(), vendorAddr.getIAutoId());
 			// 创建采购订单明细
 			PurchaseOrderD purchaseOrderD = purchaseOrderDService.createPurchaseOrderD(purchaseOrderM.getIAutoId(), dataJsonObject);
 			
@@ -336,7 +362,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			List<PurchaseorderdQty> createPurchaseOrderdQtyList = purchaseorderdQtyService.getPurchaseorderdQty(purchaseOrderDId, purchaseOrderdQtyJsonArray);
 			
 			// 创建采购订单与到货计划关联
-			JSONArray purchaseOrderRefJsonArray = dataJsonObject.getJSONArray(PurchaseOrderM.PURCHASEORDERREFLIST);
+			JSONArray purchaseOrderRefJsonArray = dataJsonObject.getJSONArray(PurchaseOrderM.PURCHASEORDERREFLIST.toLowerCase());
 			List<PurchaseOrderRef> createPurchaseOrderRefList = purchaseOrderRefService.getPurchaseOrderRefList(purchaseOrderDId, purchaseOrderRefJsonArray);
 			// 添加到集合
 			purchaseOrderDList.add(purchaseOrderD);
@@ -353,8 +379,12 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			purchaseOrderRefService.batchSave(purchaseOrderdRefList);
 			// 修改物料到货计划状态
 			List<Long> demandPlanDIds = purchaseOrderdRefList.stream().map(PurchaseOrderRef::getIDemandPlanDid).collect(Collectors.toList());
-			demandPlanDService.updateGenTypeByIds(demandPlanDIds, OrderGenType.PURCHASE_GEN.getValue(), PurchaseStatusEnum.NOT_AUDIT.getValue());
-			
+			// 根据到货细表id反查到货计划主表id
+			List<Long> demandPlanMIds = demandPlanMService.pegging(demandPlanDIds);
+			// 判断是否需要更改到货计划主表状态 改为已完成
+			demandPlanMService.batchUpdateStatusByIds(demandPlanMIds, CompleteTypeEnum.COMPLETE.getValue());
+			// 修改到货计划细表状态 改为已完成
+			demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenType.PURCHASE_GEN.getValue(), CompleteTypeEnum.COMPLETE.getValue());
 			return true;
 		});
 		return SUCCESS;
@@ -391,12 +421,12 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		// 修改时间
 		purchaseOrderM.setIUpdateBy(userId);
 		purchaseOrderM.setCUpdateName(userName);
-		purchaseOrderM.setDCreateTime(date);
+		purchaseOrderM.setDUpdateTime(date);
 		purchaseOrderM.setIsDeleted(false);
 		purchaseOrderM.setHideInvalid(false);
 		purchaseOrderM.setDBeginDate(formJsonObject.getDate(PurchaseOrderM.DBEGINDATE));
 		purchaseOrderM.setDEndDate(formJsonObject.getDate(PurchaseOrderM.DENDDATE));
-		purchaseOrderM.setIOrderStatus(PurchaseStatusEnum.NOT_AUDIT.getValue());
+		purchaseOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
 		purchaseOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
 		return purchaseOrderM;
 	}
@@ -405,5 +435,17 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		ValidationUtils.notBlank(formStr, "未获取到表单数据");
 		ValidationUtils.notBlank(dataStr, JBoltMsg.JBOLTTABLE_IS_BLANK);
 		ValidationUtils.notBlank(invTableData, JBoltMsg.JBOLTTABLE_IS_BLANK);
+	}
+	
+	public Integer findOderNoIsNotExists(Long id, String orderNo){
+		String sql = "select count(1) from PS_PurchaseOrderM where cOrderNo =? ";
+		if (ObjectUtil.isNotNull(id)){
+			sql = sql.concat("iAutoId <> "+ id);
+		}
+		return queryInt(sql, orderNo);
+	}
+	
+	public Integer findOderNoIsNotExists(String orderNo){
+		return findOderNoIsNotExists(null, orderNo);
 	}
 }

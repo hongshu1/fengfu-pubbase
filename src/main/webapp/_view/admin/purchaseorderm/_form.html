@@ -17,7 +17,7 @@
                             data-url="admin/dictionary/options?key=purchase_business_type"
                             data-select-type="select"
                             data-text="==请选择=="
-                            data-value=""
+                            data-text-attr="iautoid"
                             data-value-attr="sn">
                     </select>
                 </div>
@@ -64,6 +64,7 @@
                             data-select-type="select"
                             data-text="==请选择=="
                             data-value=""
+                            data-value-attr="cexch_name"
                             data-text-attr="cexch_name">
                     </select>
                 </div>
@@ -129,13 +130,13 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">应付类型</label>
                 <div class="col-6">
-                    <select class="form-control" name="iPayableType "
+                    <select class="form-control" name="iPayableType"
                             data-autoload
                             data-rule="required"
                             data-url="admin/dictionary/options?key=purchase_coping_type"
                             data-select-type="select"
                             data-text="==请选择=="
-                            data-value=""
+                            data-text-attr="name"
                             data-value-attr="sn">
                     </select>
                 </div>
@@ -226,7 +227,7 @@
                 <td>
                     #(data.ipkgqty??)
                 </td>
-                <td>#boolToStr(data.isgavepresent?? == 1,"是","否")</td>
+                <td>#boolToStr(data.ispresent?? == 1,"是","否")</td>
                 <td>
                     <input type="text" data-with-clearbtn="true" name="cMemo" autocomplete="off" class="form-control"
                            maxlength="200"/>

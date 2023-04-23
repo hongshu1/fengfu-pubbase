@@ -9,7 +9,7 @@
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
                            placeholder="请输入订单编号" maxlength="40" name="cOrderNo"/>
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                           placeholder="请输入供应商名称" maxlength="40" name="iVendorId"/>
+                           placeholder="请输入供应商名称" maxlength="40" name="cVenName"/>
                     <select class="form-control" name="iAuditStatus"
                             data-autoload
                             data-url="admin/dictionary/options?key=iAuditStatus"
@@ -19,9 +19,9 @@
                             data-value-attr="sn">
                     </select>
                     <span>到货日期：</span>
-                    <input id="dEnableDate" type="text" placeholder="开始日期" class="form-control" data-date name="dEnableDate" value="">
+                    <input id="dEnableDate" type="text" placeholder="开始日期" class="form-control" data-date name="startDate" value="">
                         至
-                    <input id="dDisableDate" type="text" placeholder="结束日期" class="form-control" data-done-handler="checkme" data-date name="dDisableDate" value="">
+                    <input id="dDisableDate" type="text" placeholder="结束日期" class="form-control" data-done-handler="checkme" data-date name="endDate" value="">
 
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
                     <button type="reset" class="btn btn-outline-secondary"><i class="fa text-reset"></i> 重置</button>
@@ -41,20 +41,29 @@
 
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-		{@if data.isDeleted}
-		<a class="text-info mr-1" data-openpage="dialog" href="admin/purchaseorderm/edit/${data.id}" data-area="800,600" data-title="查看采购/委外订单-采购订单主表"><i class="fa fa-eye"></i></a>
-		{@else}
-		<a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑采购/委外订单-采购订单主表"><i class="fa fa-edit"></i></a>
+            <a class="text-info mr-1" data-openpage="dialog" href="admin/purchaseorderm/edit/${data.id}" data-area="800,600" data-title="查看">查看</a>
+        {@if data.iorderstatus==1 || data.iorderstatus==4}
+            <a class="jbolt_table_delbtn"  data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批"  >审批</a>
+            <a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑采购订单">编辑</a>
+            <a class="text-danger" data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >刪除</a>
+        {@else if data.iorderstatus==2 }
+            <a data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批">审批</a>
+            <a data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="撤回">撤回</a>
+        {@else if data.iorderstatus==3 }
+            <a data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="生成现品票"  >生成现品票</a>
+        {@else if data.iorderstatus==5 }
+            <a class="jbolt_table_delbtn" href="admin/purchaseorderm/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" >现品票明细</a>
+            <a data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="关闭" >关闭</a>
 		{@/if}
-		<a class="jbolt_table_delbtn" href="admin/purchaseorderm/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+
 	</td>
-<td>${data.iauditstatus}</td>
+<td>${data.aduitstatustext}</td>
 <td>${data.corderno}</td>
-<td>${data.ivendorid}</td>
-<td>${data.dorderdate}</td>
-<td>${data.ibustype}</td>
-<td>${data.ipurchasetype}</td>
-<td>${data.ipayabletype}</td>
+<td>${data.cvenname}</td>
+<td>${data.dorderdate |date_ymd}</td>
+<td>${data.bustypetext}</td>
+<td>${data.cptname}</td>
+<td>${data.payabletypetext}</td>
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
 
@@ -116,7 +125,7 @@
             <thead>
             <tr>
                 <th data-width="60" data-column="index">序号</th>
-                <th data-width="80">操作</th>
+                <th data-width="200">操作</th>
                 <th data-width="100" data-column="iAuditStatus">审核状态</th>
                 <th data-width="150" data-column="cOrderNo">订单编号</th>
                 <th data-width="100" data-column="iVendorId">供应商名称</th>

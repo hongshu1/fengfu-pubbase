@@ -21,8 +21,7 @@ public class PurchaseOrderM extends BasePurchaseOrderM<PurchaseOrderM> {
     public static final String AFTERCINVNAME = "afterCInvName";
     
     public static final String AFTERCINVNAME1 = "afterCInvName1";
-    // 转换后： 是否
-    public static final String ISGAVEPRESENT = "isGavePresent";
+   
     // 转换后： 包装数量
     public static final String IPKGQTY = "iPkgQty";
     
@@ -34,5 +33,13 @@ public class PurchaseOrderM extends BasePurchaseOrderM<PurchaseOrderM> {
     
     public static final String ARR = "arr";
    
+    public static final String ORDERSTATUS = "orderStatus";
+    
+    public static final String ADUITSTATUSTEXT = "aduitStatusText";
+    
+    public static final String PAYABLETYPETEXT = "payableTypeText";
+    
+    public static final String BUSTYPETEXT = "busTypeText";
+    
 }
 

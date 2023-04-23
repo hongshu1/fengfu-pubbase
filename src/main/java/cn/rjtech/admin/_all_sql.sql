@@ -314,4 +314,8 @@
 #include("demandpland/demandpland.sql")
 #end
 
+#namespace("purchaseorderm")
+#include("purchaseorderm/purchaseorderm.sql")
+#end
+
 
