@@ -4,6 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -20,6 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 需求计划管理-到货计划主表
@@ -33,6 +37,8 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 	
 	@Inject
 	private PurchaseorderdQtyService purchaseorderdQtyService;
+	@Inject
+	private DemandPlanDService demandPlanDService;
 	
 	
 	@Override
@@ -240,6 +246,26 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 			}
 			record.set(PurchaseOrderD.ISUM, amount);
 			record.set(PurchaseOrderD.ISOURCESUM, sourceSum);
+		}
+	}
+	
+	public void updateStatusById(Long id, Integer status){
+		DemandPlanM demandPlanM = findById(id);
+		ValidationUtils.notNull(demandPlanM, JBoltMsg.DATA_NOT_EXIST);
+		// 先去校验子件是否全部做了订单
+		List<Record> demandPlanDList = demandPlanDService.findByDemandPlanMid(id);
+		if (CollectionUtil.isEmpty(demandPlanDList)){
+			return;
+		}
+		List<Long> demandPlanDIds = demandPlanDList.stream().map(record -> record.getLong(DemandPlanD.IAUTOID)).collect(Collectors.toList());
+		
+		Integer count = demandPlanDService.queryNotGenOrderNum(id, demandPlanDIds);
+		if (ObjectUtil.isNotNull(count) && count == 0){
+			demandPlanM.setIStatus(status);
+			demandPlanM.setIUpdateBy(JBoltUserKit.getUserId());
+			demandPlanM.setCUpdateName(JBoltUserKit.getUserName());
+			demandPlanM.setDUpdateTime(DateUtil.date());
+			demandPlanM.update();
 		}
 	}
 }

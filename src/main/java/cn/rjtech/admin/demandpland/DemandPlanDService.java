@@ -1,20 +1,24 @@
 package cn.rjtech.admin.demandpland;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.DemandPlanD;
 import cn.rjtech.model.momdata.DemandPlanM;
 import cn.rjtech.model.momdata.PurchaseOrderRef;
-import com.beust.ah.A;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.DemandPlanD;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -175,4 +179,25 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 		return yearStr.concat(monthStr).concat(dateStr);
 	}
 	
+	
+	public void updateGenTypeByIds(List<Long> ids, Integer genType, Integer status){
+		if (CollectionUtil.isEmpty(ids)){
+			return;
+		}
+		for (Long id : ids){
+			update("UPDATE Mrp_DemandPlanD SET iGenType = ?, iStatus = ? where iAutoId = ?", genType, status, id);
+		}
+	}
+	
+	public Integer queryNotGenOrderNum(Long demandPlanMid, List<Long> demandPlanDIds){
+		return dbTemplate("demandpland.findByDemandPlanMList", Okv.by(DemandPlanD.IDEMANDPLANMID, demandPlanMid).set("ids", demandPlanDIds)).queryInt();
+	}
+	
+	public List<Record> findAll(Okv okv){
+		return dbTemplate("demandpland.findAll", okv).find();
+	}
+	
+	public List<Record> findByDemandPlanMid(Long demandPlanMid){
+		return dbTemplate("demandpland.findAll", Okv.by(DemandPlanD.IDEMANDPLANMID, demandPlanMid)).find();
+	}
 }

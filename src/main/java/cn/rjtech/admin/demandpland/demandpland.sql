@@ -21,3 +21,32 @@ WHERE
     AND convert(char(10),a.dEndDate,126) >=#para(endDate)
     AND inv.iProcessType = #para(processType)
 #end
+
+#sql("queryNotGenOrderNum")
+SELECT
+	COUNT(1)
+FROM
+	Mrp_DemandPlanD
+WHERE
+	iAutoId NOT IN (
+        #for(v:ids)
+            '#(v)' #(for.last?'':',')
+        #end
+	)
+	AND iStatus = 1
+	AND iGenType = 0
+	AND iDemandPlanMid = #para(iDemandPlanMid)
+
+#end
+
+#sql("findAll")
+SELECT
+	d.*
+FROM
+	Mrp_DemandPlanD d
+WHERE
+    1 = 1
+    #if(iDemandPlanMid)
+       AND d.iDemandPlanMid = #para(iDemandPlanMid)
+    #end
+#end

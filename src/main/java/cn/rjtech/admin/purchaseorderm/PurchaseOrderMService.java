@@ -114,7 +114,6 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		}
 		User user = JBoltUserKit.getUser();
 		Date now = new Date();
-		purchaseOrderM.setIOrderStatus(OrderStatusTypeEnum.ORDER_STATUS_SAVE.getValue());
 		purchaseOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
 		purchaseOrderM.setICreateBy(user.getId());
 		purchaseOrderM.setCCreateName(user.getName());
@@ -353,6 +352,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			purchaseorderdQtyService.batchSave(purchaseOrderdQtyList);
 			purchaseOrderRefService.batchSave(purchaseOrderdRefList);
 			// 修改物料到货计划状态
+			List<Long> demandPlanDIds = purchaseOrderdRefList.stream().map(PurchaseOrderRef::getIDemandPlanDid).collect(Collectors.toList());
+			demandPlanDService.updateGenTypeByIds(demandPlanDIds, OrderGenType.PURCHASE_GEN.getValue(), PurchaseStatusEnum.NOT_AUDIT.getValue());
 			
 			return true;
 		});
