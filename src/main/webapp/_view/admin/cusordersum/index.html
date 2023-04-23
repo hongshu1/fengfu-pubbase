@@ -2,58 +2,66 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
-<div class="jbolt_page_title">
-<div class="row">
-	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>客户计划汇总</h1></div>
-	<div class="col">
-	<form class="form-inline" id="CusOrderSum_form_#(pageId)">
-		<div class="input-group d-inline-block text-nowrap">
-			<div class="input-group-prepend">
-				<input type="text" data-date class="form-control" placeholder="=开始日期=" maxlength="20" id="startTime"
-					   name="startTime" value="">
-				<!--				value="#date((startTime?? DateUtil.getNow()),'yyyy-MM-dd')"-->
-			</div>
-			<div class="input-group-append">
-				<span class="input-group-text">至</span>
-			</div>
-			<div class="input-group-append">
-				<input type="text" data-date class="form-control rounded-left-0" placeholder="=截止日期=" maxlength="20"
-					   id="endTime" name="endTime" value="">
-			</div>
-		</div>
-		<input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" id="cinvcode"
-			   value=""/>
-		<input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" id="cinvcode1"
-			   value=""/>
-		<input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" id="cinvname1"
-			   value=""/>
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>客户计划汇总</h1></div>
+            <div class="col">
+                <form class="form-inline" id="CusOrderSum_form_#(pageId)" onsubmit="return false;" method="post">
+                    <div class="input-group d-inline-block text-nowrap">
+                        <div class="input-group-prepend">
+                            <input type="text" data-date class="form-control" placeholder="=开始日期=" maxlength="20" id="beginDate" name="beginDate" value="#date(DateUtil.getNow(),'yyyy-MM-dd')" data-rule="required">
+                        </div>
+                        <div class="input-group-append">
+                            <span class="input-group-text">至</span>
+                        </div>
+                        <div class="input-group-append">
+                            <input type="text" data-date class="form-control rounded-left-0" placeholder="=截止日期=" maxlength="20" id="endDate" name="endDate" value="#date(DateUtil.getNow(),'yyyy-MM-dd')" data-rule="required">
+                        </div>
+                    </div>
+                    
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" id="cinvcode" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" id="cinvcode1" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" id="cinvname1" value=""/>
 
-		<button type="button" data-portalbtn data-portalid="cusorder_data_#(pageId)" class="btn btn-outline-secondary">
-			<i class="fa fa-search"></i> 查询
-		</button>
-		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-	</form>
-	</div>
-	<div class="col-sm-auto text-right">
-	</div>
-</div>
-</div>
-<div class="jbolt_page_content">
-	#ajaxPortal("admin/cusordersum/getYear?startTime=", "cusorder_data_"+pageId, true)
-</div>
+                    <button type="button" onclick="submitThisForm()" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+            
+            <div class="col-sm-auto text-right">
+            </div>
+        </div>
+    </div>
+    
+    <div class="jbolt_page_content">
+
+        <div id="cusOrderSumPortal_#(pageId)" data-ajaxportal data-url="admin/cusordersum/getYear" data-form="CusOrderSum_form_#(pageId)" data-autoload="true"></div>
+        
+    </div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
-	function Cus() {
-		$("#cinvname1_B").val($("#cinvname1").val());
-		$("#cinvcode1_B").val($("#cinvcode1").val());
-		$("#cinvcode_B").val($("#cinvcode").val());
-		$("#endTime_B").val($("#endTime").val());
-		$("#startTime_B").val($("#startTime").val());
-		form.find("#CusOrderSum_form_Search").click();
-		console.log("1111")
-	}
+    function Cus() {
+        $("#cinvname1_B").val($("#cinvname1").val());
+        $("#cinvcode1_B").val($("#cinvcode1").val());
+        $("#cinvcode_B").val($("#cinvcode").val());
+        $("#endTime_B").val($("#endDate").val());
+        $("#startTime_B").val($("#beginDate").val());
+        form.find("#CusOrderSum_form_Search").click();
+        console.log("1111")
+    }
+
+    function submitThisForm() {
+        var $form = $('#CusOrderSum_form_#(pageId)');
+
+        if (FormChecker.check($form)) {
+            var formData = formToJson($form);
+            console.log(JSON.stringify(formData));
+
+            AjaxPortalUtil.refresh('cusOrderSumPortal_#(pageId)');
+        }
+    }
 </script>
 #end
