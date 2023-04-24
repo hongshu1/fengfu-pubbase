@@ -1,22 +1,21 @@
 package cn.rjtech.admin.ProcessDefect;
 
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.rjtech.model.momdata.RcvDocDefect;
-import cn.rjtech.util.BillNoUtils;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.ProcessDefect;
+import cn.rjtech.util.BillNoUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.ProcessDefect;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 制程异常品记录 Service
@@ -184,12 +183,6 @@ public class ProcessDefectService extends BaseService<ProcessDefect> {
 				ProcessDefect processDefect = findById(formRecord.getLong("processDefect.iautoid"));
 				if (processDefect.getIStatus() == 1){
 					//录入数据
-					processDefect.setProcessName(formRecord.getStr("processDefect.processname"));
-					processDefect.setIDqQty(formRecord.getBigDecimal("processDefect.idqqty"));
-					processDefect.setIRespType(formRecord.getInt("processDefect.iresptype"));
-					processDefect.setIsFirstTime(formRecord.getBoolean("processDefect.isfirsttime"));
-					processDefect.setCBadnessSns(formRecord.getStr("processDefect.cbadnesssns"));
-					processDefect.setCDesc(formRecord.getStr("processDefect.cdesc"));
 					processDefect.setCApproach(formRecord.getStr("processDefect.capproach"));
 					processDefect.setIStatus(2);
 
@@ -216,9 +209,16 @@ public class ProcessDefectService extends BaseService<ProcessDefect> {
 	//未有主键的保存方法
 	public void processDefectLinesave(Kv formRecord, Date now){
 		System.out.println("formRecord==="+formRecord);
-		System.out.println("now==="+now);
 		ProcessDefect processDefect = new ProcessDefect();
 		processDefect.setIAutoId(formRecord.getLong("processDefect.iautoid"));
+
+		//制造工单-特殊领料单主表明细
+		processDefect.setIIssueId(formRecord.getLong("specMaterialsRcvM.iAutoid"));
+		processDefect.setIMoDocId(formRecord.getLong("specMaterialsRcvM.imodocid"));
+		processDefect.setIDepartmentId(formRecord.getLong("specMaterialsRcvM.idepartmentid"));
+		processDefect.setDDemandDate(formRecord.getDate("specMaterialsRcvM.ddemanddate"));
+
+		//录入填写的数据
 		processDefect.setIStatus(1);
 		processDefect.setProcessName(formRecord.getStr("processDefect.processname"));
 		processDefect.setIDqQty(formRecord.getBigDecimal("processDefect.idqqty"));
@@ -227,11 +227,11 @@ public class ProcessDefectService extends BaseService<ProcessDefect> {
 		processDefect.setCBadnessSns(formRecord.getStr("processDefect.cbadnesssns"));
 		processDefect.setCDesc(formRecord.getStr("processDefect.cdesc"));
 
+
+		//必录入基本数据
 		processDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		String billNo = BillNoUtils.getcDocNo(getOrgId(), "YCP", 5);
 		processDefect.setCDocNo(billNo);
-
-
 		processDefect.setIOrgId(getOrgId());
 		processDefect.setCOrgCode(getOrgCode());
 		processDefect.setCOrgName(getOrgName());
@@ -243,5 +243,17 @@ public class ProcessDefectService extends BaseService<ProcessDefect> {
 		processDefect.setDUpdateTime(now);
 		processDefect.save();
 	}
+
+
+
+
+	/**
+	 * 获取制造工单信息
+	 */
+	public List<Record> OneMaterialTitle(String iissueid){
+		return dbTemplate("ProcessDefect.OneMaterialTitle", Kv.by("iissueid", iissueid)).find();
+	}
+
+
 
 }

@@ -1,6 +1,6 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <script type="text/template" id="CusOrderSum_tpl_#(pageId)">
-    
+
     {@each datas as data,index}
         <tr data-id="${data.id}">
             <td rowspan="4">${pageNumber,pageSize,index | rownum}</td>
@@ -8,7 +8,7 @@
             <td rowspan="4">${data.cinvcode1}</td>
             <td rowspan="4">${data.cinvname1}</td>
         </tr>
-        
+
         <tr>
             <th>客户计划</th>
             {@each data.record1 as record,index}
@@ -288,11 +288,10 @@
 </div>
 
 <table class="jbolt_table jbolt_main_table  table-center "
-       data-autoload="false"
        data-jbolttable
        data-column-resize="true"
        data-ajax="true"
-       data-conditions-form="CusOrderSum_form_#(pageId)"
+       data-conditions-form="CusOrderSum_form"
        data-url="admin/cusordersum/datas"
        data-rowtpl="CusOrderSum_tpl_#(pageId)"
        data-copy-to-excel="false"

@@ -16,6 +16,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -46,7 +47,11 @@ public class CusOrderSumAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.findCusOrderSum(getPageNumber(), getPageSize(), getKv()));
+        try {
+            renderJsonData(service.findCusOrderSum(getPageNumber(), getPageSize(), getKv()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
