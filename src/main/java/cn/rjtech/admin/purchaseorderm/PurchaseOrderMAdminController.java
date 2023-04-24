@@ -1,12 +1,16 @@
 package cn.rjtech.admin.purchaseorderm;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
+import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
@@ -38,6 +42,8 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	private VendorService vendorService;
 	@Inject
 	private DemandPlanMService demandPlanMService;
+	@Inject
+	private PersonService personService;
 	
 	@Inject
 	private VendorAddrService vendorAddrService;
@@ -93,15 +99,27 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	}
 
    /**
-	* 编辑
+	* 编辑 isView: 判断是否只有查看功能
 	*/
-	public void edit() {
+	public void edit(@Para(value = "isView") String isView) {
 		PurchaseOrderM purchaseOrderM=service.findById(getLong(0));
 		if(purchaseOrderM == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		Person person = personService.findById(purchaseOrderM.getIDutyUserId());
+		if (ObjectUtil.isNotNull(person)){
+			set("personname",person.getCpsnName());
+		}
+		
+		Vendor vendor = vendorService.findById(purchaseOrderM.getIVendorId());
+		ValidationUtils.notNull(vendor, "未找到供应商数据");
+		set(Vendor.CVENNAME, vendor.getCVenName());
+		if (StrUtil.isNotBlank(isView)){
+			set("isView", 1);
+		}
 		set("purchaseOrderM",purchaseOrderM);
+		setAttrs(service.getDateMap(purchaseOrderM));
 		render("edit.html");
 	}
 
@@ -150,8 +168,9 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	 */
 	public void submit(@Para(value = "tableData") String dataStr,
 					   @Para(value = "formData") String formStr,
-					   @Para(value = "invTableData") String invTableData) {
-		renderJson(service.submit(dataStr, formStr, invTableData, getKv()));
+					   @Para(value = "invTableData") String invTableData,
+					   @Para(value = "type") String type) {
+		renderJson(service.submit(dataStr, formStr, invTableData, type, getKv()));
 	}
 	
 	public void operationalState(@Para(value = "id") Long id,
@@ -203,5 +222,9 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	
 	public void batchGenerate(@Para(value = "ids") String ids){
 		renderJsonData(service.batchGenerate(ids));
+	}
+	
+	public void batchDel(@Para(value = "ids") String ids){
+		renderJsonData(service.batchDel(ids));
 	}
 }

@@ -278,7 +278,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		// 记录每一个存货中存在多个物料到货计划
 		Map<Long, List<PurchaseOrderRef>> puOrderRefMap = demandPlanDService.getPuOrderRefByInvId(demandPlanDList);
 		// 按存货编码汇总
-		Map<Long, Map<String, BigDecimal>> demandPlanDMap = demandPlanDService.getDemandPlanDMap(demandPlanDList);
+		Map<Long, Map<String, BigDecimal>> demandPlanDMap = demandPlanDService.getDemandPlanDMap(demandPlanDList, DemandPlanM.IINVENTORYID);
 		
 		// 获取物料形态转换表
 		List<Record> inventoryChanges = inventoryChangeService.findByOrgList(getOrgId());
@@ -310,20 +310,150 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		repMap.put("tableHeadMap", dateMap);
 		repMap.put("tableData", vendorDateList);
 		repMap.put("tableDataStr", JSONObject.toJSONString(vendorDateList));
-		repMap.put("puOrderRefMap", puOrderRefMap);
 		return repMap;
 	}
 	
 	
-	public Ret submit(String dataStr, String formStr, String invTableData, Kv kv) {
+	public Map<String, Object> getDateMap(PurchaseOrderM purchaseOrderM){
+		
+		// 采购订单细表数据
+		List<Record> purchaseOrderDList = purchaseOrderDService.findByPurchaseOrderMId(purchaseOrderM.getIAutoId());
+		
+		// 采购订单到货数量明细
+		List<Record> purchaseOrderdQtyList = purchaseorderdQtyService.findByPurchaseOrderMid(purchaseOrderM.getIAutoId());
+		
+		// 按存货编码汇总
+		Map<Long, Map<String, BigDecimal>>  purchaseOrderdQtyMap = demandPlanDService.getDemandPlanDMap(purchaseOrderdQtyList, DemandPlanM.IINVENTORYID);
+		
+		Map<String, Object> repMap = new HashMap<>();
+		// 获取所有日期集合
+		Map<String, Integer> calendarMap = getCalendarMap(DateUtil.date(purchaseOrderM.getDBeginDate()), DateUtil.date(purchaseOrderM.getDEndDate()));
+		
+		// 设置到货计划明细数量
+		purchaseOrderDService.setPurchaseOrderDList(calendarMap, purchaseOrderdQtyMap, purchaseOrderDList);
+		
+		// 第一层：年月
+		// 第二层：日
+		Map<String, List<Integer>> dateMap = new HashMap<>();
+		for (String dateStr : calendarMap.keySet()){
+			// yyyy-MM-dd
+			DateTime dateTime = DateUtil.parse(dateStr, DatePattern.NORM_DATE_PATTERN);
+			// yyyy-MM
+			String YMKey = DateUtil.format(dateTime, "yyyy年MM月");
+			// 日期
+			int dayOfMonth = dateTime.dayOfMonth();
+			List<Integer> monthDays = dateMap.containsKey(YMKey) ? dateMap.get(YMKey) : new ArrayList<>();
+			monthDays.add(dayOfMonth);
+			Collections.sort(monthDays);
+			dateMap.put(YMKey, monthDays);
+		}
+		
+		repMap.put("tableHeadMap", dateMap);
+		repMap.put("tableData", purchaseOrderDList);
+		repMap.put("tableDataStr", JSONObject.toJSONString(purchaseOrderDList));
+		return repMap;
+	}
+	
+	/**
+	 *
+	 * @param dataStr  所有加载进来的数据
+	 * @param formStr  // form表单数据
+	 * @param invTableData // 操作表体数据
+	 * @param type	区分是保存还是修改 0：保存； 1：修改
+	 * @param kv
+	 * @return
+	 */
+	public Ret submit(String dataStr, String formStr, String invTableData, String type, Kv kv) {
 		verifyData(dataStr, formStr, invTableData);
 		JSONArray jsonArray = JSONObject.parseArray(dataStr);
 		JSONObject formJsonObject = JSONObject.parseObject(formStr);
 		JSONArray invJsonArray = JSONObject.parseArray(invTableData);
-		// 创建主表对象
-		PurchaseOrderM purchaseOrderM = createPurchaseOrderM(formJsonObject);
+		
 		Map<Long, JSONObject> invDataMap = jsonArray.stream().collect(Collectors.toMap(r -> ((JSONObject)r).getLong(PurchaseOrderD.IINVENTORYID.toLowerCase()),  r -> (JSONObject)r, (key1, key2) -> key2));
 		Map<Long, JSONObject> invTableMap = invJsonArray.stream().collect(Collectors.toMap(r -> ((JSONObject)r).getLong(PurchaseOrderD.IINVENTORYID),  r -> (JSONObject)r, (key1, key2) -> key2));
+		
+		switch (type){
+			case "0":
+				saveSubmit(formJsonObject, invDataMap, invTableMap);
+				break;
+			case "1":
+				updateSubmit(formJsonObject, invDataMap, invTableMap);
+				break;
+		}
+		
+		return SUCCESS;
+	}
+	
+	private void updateSubmit(JSONObject formJsonObject, Map<Long, JSONObject> invDataMap, Map<Long, JSONObject> invTableMap){
+		Long id = formJsonObject.getLong(PurchaseOrderM.IAUTOID);
+		ValidationUtils.notNull(id, "未获取到主键id");
+		PurchaseOrderM purchaseOrderM = findById(id);
+		ValidationUtils.notNull(purchaseOrderM, JBoltMsg.DATA_NOT_EXIST);
+		setPurchaseOrderM(purchaseOrderM, formJsonObject, JBoltUserKit.getUserId(), JBoltUserKit.getUserName(), DateUtil.date());
+		List<Long> notIds = new ArrayList<>();
+		for (Long invId : invDataMap.keySet()){
+			JSONObject invDJsonObject = invDataMap.get(invId);
+			Long purchaseOrderDId = invDJsonObject.getLong(PurchaseOrderD.IAUTOID.toLowerCase());
+			// 存在则修改，不存在这删除,将主键id添加进来
+			if (invTableMap.containsKey(invId)){
+				JSONObject invTableJsonObject = invTableMap.get(invId);
+				invTableJsonObject.put(PurchaseOrderD.IAUTOID, purchaseOrderDId);
+				continue;
+			}
+			// 添加删除的id
+			notIds.add(purchaseOrderDId);
+		}
+		
+		tx(()->{
+			// 删除 先修改细表状态，在删除中间表数据，在修改到货计划细表及主表状态
+			if (CollectionUtil.isNotEmpty(notIds)){
+				for (Long purchaseOrderDId : notIds){
+					PurchaseOrderD purchaseOrderD = purchaseOrderDService.findById(purchaseOrderDId);
+					ValidationUtils.notNull(purchaseOrderD, "采购订单细表数据未找到");
+					purchaseOrderD.setIsDeleted(true);
+					purchaseOrderD.update();
+				}
+				// 根据细表id反查 中间表数据
+				List<Record> purchaseOrderDRefList = purchaseOrderRefService.findByPurchaseOrderDIds(notIds);
+				// 获取中间表对应的物料到货计划数据
+				List<Long> demandPlanDIds = purchaseOrderDRefList.stream().map(record -> record.getLong(PurchaseOrderRef.IDEMANDPLANDID)).collect(Collectors.toList());
+				// 修改到货计划细表状态
+				demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenType.NOT_GEN.getValue(), CompleteTypeEnum.INCOMPLETE.getValue());
+				// 修改主表状态
+				List<Long> demandPlanMIds = demandPlanMService.pegging(demandPlanDIds);
+				demandPlanMService.batchUpdateStatusByIds(demandPlanMIds, CompleteTypeEnum.INCOMPLETE.getValue());
+				// 删除 中间表数据
+				purchaseOrderRefService.removeByPurchaseOrderDIds(notIds);
+			}
+			// 修改
+			for (Long invId : invTableMap.keySet()){
+				JSONObject invJsonObject = invTableMap.get(invId);
+				Long purchaseOrderDId = invJsonObject.getLong(PurchaseOrderD.IAUTOID);
+				PurchaseOrderD purchaseOrderD = purchaseOrderDService.findById(purchaseOrderDId);
+				ValidationUtils.notNull(purchaseOrderD, "采购订单细表数据未找到");
+				// 备注
+				purchaseOrderD.setCMemo(invJsonObject.getString(PurchaseOrderD.CMEMO));
+				// 添加到货地址
+				VendorAddr vendorAddr = vendorAddrService.findById(invJsonObject.getLong(PurchaseOrderD.IVENDORADDRID));
+				ValidationUtils.notNull(vendorAddr, "供应商地址不存在！！！");
+				purchaseOrderD.setCAddress(vendorAddr.getCDistrictName());
+				purchaseOrderD.setIVendorAddrId(invJsonObject.getLong(PurchaseOrderD.IVENDORADDRID));
+				purchaseOrderD.update();
+			}
+			purchaseOrderM.update();
+			return true;
+		});
+	}
+	
+	/**
+	 * 保存操作
+	 * @param formJsonObject
+	 * @param invDataMap
+	 * @param invTableMap
+	 */
+	private void saveSubmit(JSONObject formJsonObject, Map<Long, JSONObject> invDataMap, Map<Long, JSONObject> invTableMap){
+		// 创建主表对象
+		PurchaseOrderM purchaseOrderM = createPurchaseOrderM(formJsonObject);
 		// 日期
 		Map<String, Integer> calendarMap = getCalendarMap(DateUtil.date(purchaseOrderM.getDBeginDate()), DateUtil.date(purchaseOrderM.getDEndDate()));
 		// 获取所有明细数据
@@ -349,7 +479,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			// 添加到货地址
 			VendorAddr vendorAddr = vendorAddrService.findById(invJsonObject.getLong(PurchaseOrderD.IVENDORADDRID));
 			ValidationUtils.notNull(vendorAddr, "供应商地址不存在！！！");
-			dataJsonObject.put(PurchaseOrderD.CADDRESS.toLowerCase(), vendorAddr.getCAddr());
+			dataJsonObject.put(PurchaseOrderD.CADDRESS.toLowerCase(), vendorAddr.getCDistrictName());
 			// 添加到货地址Id
 			dataJsonObject.put(PurchaseOrderD.IVENDORADDRID.toLowerCase(), vendorAddr.getIAutoId());
 			// 创建采购订单明细
@@ -386,15 +516,37 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenType.PURCHASE_GEN.getValue(), CompleteTypeEnum.COMPLETE.getValue());
 			purchaseOrderM.setCOrderNo(generateCGCode());
 			purchaseOrderM.setDOrderDate(DateUtil.date());
+			purchaseOrderM.save();
 			return true;
 		});
-		return SUCCESS;
 	}
-	
 	
 	private PurchaseOrderM createPurchaseOrderM(JSONObject formJsonObject){
 		PurchaseOrderM purchaseOrderM = new PurchaseOrderM();
-		purchaseOrderM.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		Long iAutoId = formJsonObject.getLong(PurchaseOrderM.IAUTOID);
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		DateTime date = DateUtil.date();
+		
+		if (iAutoId == null){
+			iAutoId = JBoltSnowflakeKit.me.nextId();
+			purchaseOrderM.setIOrgId(getOrgId());
+			purchaseOrderM.setCOrgCode(getOrgCode());
+			purchaseOrderM.setCOrgName(getOrgName());
+			purchaseOrderM.setICreateBy(userId);
+			purchaseOrderM.setCCreateName(userName);
+			purchaseOrderM.setDCreateTime(date);
+			purchaseOrderM.setDBeginDate(formJsonObject.getDate(PurchaseOrderM.DBEGINDATE));
+			purchaseOrderM.setDEndDate(formJsonObject.getDate(PurchaseOrderM.DENDDATE));
+			// 默认 已失效隐藏
+			purchaseOrderM.setHideInvalid(true);
+		}
+		purchaseOrderM.setIAutoId(iAutoId);
+		setPurchaseOrderM(purchaseOrderM, formJsonObject, userId, userName, date);
+		return purchaseOrderM;
+	}
+	
+	private void setPurchaseOrderM(PurchaseOrderM purchaseOrderM, JSONObject formJsonObject, Long userId, String userName, Date date){
 		purchaseOrderM.setIDutyUserId(formJsonObject.getLong(PurchaseOrderM.IDUTYUSERID));
 		purchaseOrderM.setCOrderNo(formJsonObject.getString(PurchaseOrderM.CORDERNO));
 		purchaseOrderM.setIPurchaseTypeId(formJsonObject.getLong(PurchaseOrderM.IPURCHASETYPEID));
@@ -410,28 +562,13 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		purchaseOrderM.setITaxRate(formJsonObject.getBigDecimal(PurchaseOrderM.ITAXRATE));
 		purchaseOrderM.setIExchangeRate(formJsonObject.getBigDecimal(PurchaseOrderM.IEXCHANGERATE));
 		
-		purchaseOrderM.setIOrgId(getOrgId());
-		purchaseOrderM.setCOrgCode(getOrgCode());
-		purchaseOrderM.setCOrgName(getOrgName());
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		DateTime date = DateUtil.date();
-		purchaseOrderM.setICreateBy(userId);
-		purchaseOrderM.setCCreateName(userName);
-		purchaseOrderM.setDCreateTime(date);
 		// 修改时间
 		purchaseOrderM.setIUpdateBy(userId);
 		purchaseOrderM.setCUpdateName(userName);
 		purchaseOrderM.setDUpdateTime(date);
 		purchaseOrderM.setIsDeleted(false);
-		purchaseOrderM.setHideInvalid(false);
-		purchaseOrderM.setDBeginDate(formJsonObject.getDate(PurchaseOrderM.DBEGINDATE));
-		purchaseOrderM.setDEndDate(formJsonObject.getDate(PurchaseOrderM.DENDDATE));
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
 		purchaseOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-		// 默认 已失效隐藏
-		purchaseOrderM.setHideInvalid(true);
-		return purchaseOrderM;
 	}
 	
 	private void verifyData(String dataStr, String formStr, String invTableData){
@@ -518,7 +655,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
 		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
 		ValidationUtils.notNull(orderStatusEnum, "未知状态");
-		ValidationUtils.isTrue(OrderStatusEnum.APPROVED.getValue() == orderStatusEnum.getValue(), "已审核的单据才能关闭");
+		ValidationUtils.isTrue(OrderStatusEnum.APPROVED.getValue() != orderStatusEnum.getValue(), "已审核的单据不能关闭");
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.CLOSE.getValue());
 		purchaseOrderM.update();
 		return SUCCESS;
@@ -534,10 +671,10 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
 		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
 		ValidationUtils.notNull(orderStatusEnum, "未知状态");
-		ValidationUtils.isTrue(OrderStatusEnum.APPROVED.getValue() == orderStatusEnum.getValue(), "已审核的单据才能生成现成票");
+		ValidationUtils.isTrue(OrderStatusEnum.APPROVED.getValue() != orderStatusEnum.getValue(), "已审核的单据才能生成现成票");
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.GENERATE_CASH_TICKETS.getValue());
 		// 获取细表数据
-		List<PurchaseOrderD> byPurchaseOrderMId = purchaseOrderDService.findByPurchaseOrderMId(id);
+		List<Record> byPurchaseOrderMId = purchaseOrderDService.findByPurchaseOrderMId(id);
 		
 		purchaseOrderM.update();
 		return SUCCESS;
@@ -569,26 +706,52 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	 * @return
 	 */
 	public Ret del(Long id) {
-		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
-		purchaseOrderM.setIsDeleted(true);
-		List<Record> purchaseOrderRefList = purchaseOrderRefService.findByPurchaseOderMId(id);
+		
 		tx(()->{
-			// 修改细表数据
-			purchaseOrderDService.removeByPurchaseOrderMId(id);
-			if (CollectionUtil.isNotEmpty(purchaseOrderRefList)){
-				List<Long> demandPlanDIds = purchaseOrderRefList.stream().map(record -> record.getLong(PurchaseOrderRef.IDEMANDPLANDID)).collect(Collectors.toList());
-				// 修改到货计划细表状态
-				demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenType.NOT_GEN.getValue(), CompleteTypeEnum.INCOMPLETE.getValue());
-				// 修改主表状态
-				List<Long> demandPlanMIds = demandPlanMService.pegging(demandPlanDIds);
-				demandPlanMService.batchUpdateStatusByIds(demandPlanMIds, CompleteTypeEnum.INCOMPLETE.getValue());
-				// 删除中间表数据
-				purchaseOrderRefService.removeByPurchaseOderMId(id);
-			}
-			purchaseOrderM.update();
+			removeNoTransaction(id);
 			return true;
 		});
 		return SUCCESS;
+	}
+	
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	public Ret batchDel(String ids){
+		ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+		tx(()->{
+			for (String id : ids.split(",")){
+				removeNoTransaction(Long.valueOf(id));
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	private void removeNoTransaction(Long id){
+		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
+		ValidationUtils.notNull(purchaseOrderM, JBoltMsg.DATA_NOT_EXIST);
+		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
+		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
+		ValidationUtils.notNull(orderStatusEnum, "未知状态");
+		ValidationUtils.isTrue(OrderStatusEnum.APPROVED.getValue() != orderStatusEnum.getValue(), "已审核的单据不能删除");
+		purchaseOrderM.setIsDeleted(true);
+		List<Record> purchaseOrderRefList = purchaseOrderRefService.findByPurchaseOderMId(id);
+		// 修改细表数据
+		purchaseOrderDService.removeByPurchaseOrderMId(id);
+		if (CollectionUtil.isNotEmpty(purchaseOrderRefList)){
+			List<Long> demandPlanDIds = purchaseOrderRefList.stream().map(record -> record.getLong(PurchaseOrderRef.IDEMANDPLANDID)).collect(Collectors.toList());
+			// 修改到货计划细表状态
+			demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenType.NOT_GEN.getValue(), CompleteTypeEnum.INCOMPLETE.getValue());
+			// 修改主表状态
+			List<Long> demandPlanMIds = demandPlanMService.pegging(demandPlanDIds);
+			demandPlanMService.batchUpdateStatusByIds(demandPlanMIds, CompleteTypeEnum.INCOMPLETE.getValue());
+			// 删除中间表数据
+			purchaseOrderRefService.removeByPurchaseOderMId(id);
+		}
+		purchaseOrderM.update();
 	}
 	
 	/**

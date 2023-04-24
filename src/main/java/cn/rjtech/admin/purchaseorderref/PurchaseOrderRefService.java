@@ -134,8 +134,16 @@ public class PurchaseOrderRefService extends BaseService<PurchaseOrderRef> {
 		return purchaseOrderRef;
 	}
 	
-	public void removeByPurchaseOrderDIds(Long purchaseOrderId){
+	public List<Record> findByPurchaseOrderDIds(List<Long> purchaseOrderDIds){
+		return dbTemplate("purchaseorderref.findByPurchaseOrderDIds", Okv.by("ids", purchaseOrderDIds)).find();
+	}
+	
+	public void removeByPurchaseOrderDId(Long purchaseOrderId){
 	    delete("DELETE PS_PurchaseOrderRef WHERE iPurchaseOrderDid = ?", purchaseOrderId);
+	}
+	
+	public int removeByPurchaseOrderDIds(List<Long> purchaseOrderDIds){
+		return dbTemplate("purchaseorderref.removeByPurchaseOrderDIds", Okv.by("ids", purchaseOrderDIds)).delete();
 	}
 	
 	public List<Record> findByPurchaseOderMId(Long purchaseOrderMId){
