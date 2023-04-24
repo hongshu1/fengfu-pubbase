@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.5.0";
+var jbolt_admin_js_version="6.5.1";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -13614,6 +13614,7 @@ var DialogUtil={
 			  var dialogEle = action;
 			  if(inEditableTable && !action.is("td")){
 				dialogEle = action.closest("td");
+				dialogEle.actionEle = action;
 			  }
 		      this.openNewDialog({
 		    	  ele:dialogEle,
@@ -13678,13 +13679,14 @@ var DialogUtil={
 			  if(!(options.url)&&(options.contentId||options.content)){
 				  type=1;
 			  }
+			  var optionsEle = (options.ele&&options.ele.actionEle)?options.ele.actionEle:options.ele;
 			  var content="";
 			  if(type==1){
 				  if(options.contentId){
 					  content=$("#"+options.contentId).html();
 				  }else if(options.content){
 					  if(options.content=="this"){
-						  content=options.ele.html();
+						  content=optionsEle.html();
 						  content='<div class="p-3 text-break">'+content+'</div>';
 					  }else{
 						  content='<div class="p-3 text-break">'+options.content+'</div>';
@@ -13692,16 +13694,16 @@ var DialogUtil={
 				  }
 			  }else {
 				  var url=actionUrl(options.url);
-				  if(isOk(options.ele)){
-					  url=processEleUrlByLinkOtherParamEle(options.ele,url,false);
+				  if(isOk(optionsEle)){
+					  url=processEleUrlByLinkOtherParamEle(optionsEle,url,false);
 					  if(!url){
 						  return false;
 					  }
-					  url=processDataFormLinkParams(options.ele,url);
+					  url=processDataFormLinkParams(optionsEle,url);
 					  if(!url){
 						  return false;
 					  }
-					  url=processJBoltTableEleUrlByLinkColumn(options.ele,url);
+					  url=processJBoltTableEleUrlByLinkColumn(optionsEle,url);
 					  if(!url){
 							return false;
 						}
@@ -13750,8 +13752,8 @@ var DialogUtil={
 //							  var iframeWin = window[$(".layui-layer-iframe").find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
 ////							  iframeWin.focus();
 //						  }
-						  if(type==2 && options.ele){
-							  var dialogKey=options.ele.data("dialog-key");
+						  if(type==2 && optionsEle){
+							  var dialogKey=optionsEle.data("dialog-key");
 							  if(dialogKey){
 								  var iframe=obj.find("iframe");
 								  if(iframe){
@@ -13808,8 +13810,8 @@ var DialogUtil={
 			  }
 			  if(options&&options.id){
 				  layerOptions.id=options.id;
-			  }else if(options.ele){
-				  layerOptions.id = options.ele.attr("id")+"_layer";
+			  }else if(optionsEle){
+				  layerOptions.id = optionsEle.attr("id")+"_layer";
 			  }else{
 				  layerOptions.id = randomId()+"_layer";
 			  }
