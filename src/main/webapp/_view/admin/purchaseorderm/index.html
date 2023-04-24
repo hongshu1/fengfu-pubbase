@@ -50,19 +50,19 @@
 
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-            <a class="text-info mr-1" data-openpage="dialog" href="admin/purchaseorderm/edit/${data.id}" data-area="800,600" data-title="查看">查看</a>
+            <a class="text-info mr-1" data-openpage="dialog" href="admin/purchaseorderm/edit/${data.iautoid}" data-area="800,600" data-title="查看">查看</a>
         {@if data.iorderstatus==1 || data.iorderstatus==4}
-            <a class="jbolt_table_delbtn"  data-ajaxbtn href="admin/purchaseorderm/1/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批"  >审批</a>
-            <a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑采购订单">编辑</a>
-            <a class="text-danger" data-ajaxbtn href="admin/purchaseorderm/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >刪除</a>
+            <a class="jbolt_table_delbtn"  data-ajaxbtn href="admin/purchaseorderm/arraignment/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批"  >审批</a>
+            <a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑采购订单">编辑</a>
+            <a class="text-danger" data-ajaxbtn href="admin/purchaseorderm/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >刪除</a>
         {@else if data.iorderstatus==2 }
-            <a data-ajaxbtn href="admin/purchaseorderm/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批">审批</a>
-            <a data-ajaxbtn href="admin/purchaseorderm/1/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="撤回">撤回</a>
+            <a data-ajaxbtn href="admin/purchaseorderm/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批">审批</a>
+            <a data-ajaxbtn href="admin/purchaseorderm/withdraw/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="撤回">撤回</a>
         {@else if data.iorderstatus==3 }
-            <a data-ajaxbtn href="admin/purchaseorderm/1/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="生成现品票"  >生成现品票</a>
+            <a data-ajaxbtn href="admin/purchaseorderm/generate/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="生成现品票"  >生成现品票</a>
         {@else if data.iorderstatus==5 }
-            <a class="jbolt_table_delbtn" href="admin/purchaseorderm/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" >现品票明细</a>
-            <a data-ajaxbtn href="admin/purchaseorderm/1/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="关闭" >关闭</a>
+            <a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="现品票明细">现品票明细</a>
+            <a data-ajaxbtn href="admin/purchaseorderm/close/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="关闭" >关闭</a>
 		{@/if}
 
 	</td>
