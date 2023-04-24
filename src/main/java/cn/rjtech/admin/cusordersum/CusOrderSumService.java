@@ -16,9 +16,10 @@ import com.jfinal.plugin.activerecord.DbTemplate;
 import com.jfinal.plugin.activerecord.Page;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Calendar;
 import java.util.stream.Collectors;
 
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -300,11 +301,22 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 		return SUCCESS;
 	}
 
-	public Object findCusOrderSum(Integer pageNumber, Integer pageSize,  Kv kv) {
-		JSONObject jsonObject = new JSONObject();
+	public Object findCusOrderSum(Integer pageNumber, Integer pageSize, Kv kv) throws ParseException {
+
+		java.util.Calendar calendar = java.util.Calendar.getInstance();
+		calendar.setTime(kv.getDate("beginDate"));
+		List<Integer> months = new ArrayList<>();
+
+		while (calendar.getTime().before(kv.getDate("endDate"))) {
+			// 年月 - 年-月-日
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+			String str = sdf.format(calendar.getTime());
+			System.out.println(str);//输出日期结果
+			calendar.add(Calendar.MONTH, 1);
+		}
 		Page<Record> pageData = dbTemplate("cusordersum.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
 //		List<Record> records = dbTemplate("cusordersum.getYearMouth", kv).find();
-//		kv.set("iMonth", 1);
+		kv.set("iMonth", months);
 //		kv.set("iYear", 2023);
 //		List<Record> record3 = dbTemplate("cusordersum.getIDate", kv).find();
 		String str = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31";
@@ -325,15 +337,8 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 				}
 				record.set("record1", record1);
 				record.set("record2", record2);
-				System.out.println("数据iinventoryid："+iinventoryid);
 			}
 		}
-		/*if (pageData.getTotalRow() > 0) {
-			pageData.getList().forEach(data -> {
-		//	data.set("records", records);
-				data.set("record2", record2);
-			});
-		}*/
 		return pageData;
 	}
 

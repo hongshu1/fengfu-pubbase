@@ -35,7 +35,8 @@
     
     <div class="jbolt_page_content">
 
-        <div id="cusOrderSumPortal_#(pageId)" data-ajaxportal data-url="admin/cusordersum/getYear" data-form="CusOrderSum_form_#(pageId)" data-autoload="true"></div>
+        <div id="cusOrderSumPortal_#(pageId)" data-ajaxportal data-url="admin/cusordersum/getYear"
+             data-form="CusOrderSum_form_#(pageId)"></div>
         
     </div>
 </div>
@@ -43,15 +44,6 @@
 
 #define js()
 <script type="text/javascript">
-    function Cus() {
-        $("#cinvname1_B").val($("#cinvname1").val());
-        $("#cinvcode1_B").val($("#cinvcode1").val());
-        $("#cinvcode_B").val($("#cinvcode").val());
-        $("#endTime_B").val($("#endDate").val());
-        $("#startTime_B").val($("#beginDate").val());
-        form.find("#CusOrderSum_form_Search").click();
-        console.log("1111")
-    }
 
     function submitThisForm() {
         var $form = $('#CusOrderSum_form_#(pageId)');
@@ -62,6 +54,15 @@
 
             AjaxPortalUtil.refresh('cusOrderSumPortal_#(pageId)');
         }
+    }
+
+    function submitThis() {
+        // $("#cinvname1_B").val($("#cinvname1").val());
+        // $("#cinvcode1_B").val($("#cinvcode1").val());
+        // $("#cinvcode_B").val($("#cinvcode").val());
+        // $("#endTime_B").val($("#endDate").val());
+        // $("#startTime_B").val($("#beginDate").val());
+        $("#CusOrderSum_form_Search").click();
     }
 </script>
 #end
