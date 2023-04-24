@@ -1,14 +1,12 @@
 package cn.rjtech.admin.SpecMaterialsRcvM;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.SpecMaterialsRcvM;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 /**
  * 制造工单-特殊领料单主表 Service
  * @ClassName: SpecMaterialsRcvMService
@@ -41,7 +39,7 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
 	 * @return
 	 */
 	public Ret save(SpecMaterialsRcvM specMaterialsRcvM) {
-		if(specMaterialsRcvM==null || isOk(specMaterialsRcvM.getIautoid())) {
+		if(specMaterialsRcvM==null || isOk(specMaterialsRcvM.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//if(existsName(specMaterialsRcvM.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
@@ -59,11 +57,11 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
 	 * @return
 	 */
 	public Ret update(SpecMaterialsRcvM specMaterialsRcvM) {
-		if(specMaterialsRcvM==null || notOk(specMaterialsRcvM.getIautoid())) {
+		if(specMaterialsRcvM==null || notOk(specMaterialsRcvM.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//更新时需要判断数据存在
-		SpecMaterialsRcvM dbSpecMaterialsRcvM=findById(specMaterialsRcvM.getIautoid());
+		SpecMaterialsRcvM dbSpecMaterialsRcvM=findById(specMaterialsRcvM.getIAutoId());
 		if(dbSpecMaterialsRcvM==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(specMaterialsRcvM.getName(), specMaterialsRcvM.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=specMaterialsRcvM.update();

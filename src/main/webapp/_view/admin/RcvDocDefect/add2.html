@@ -8,13 +8,18 @@
             <hr/>
             <div class="form-group row">
 
+                <input type="hidden"  placeholder="来料检ID" name="rcvDocQcFormM.iautoid" value="#(rcvDocQcFormM.iautoid??)"/>
+                <input type="hidden"  placeholder="供应商ID" name="rcvDocQcFormM.iinventoryid" value="#(rcvDocQcFormM.iinventoryid??)"/>
+                <input type="hidden"  placeholder="存货ID" name="rcvDocQcFormM.ivendorid" value="#(rcvDocQcFormM.ivendorid??)"/>
+                <input type="hidden"  placeholder="检验人ID" name="rcvDocQcFormM.iupdateby" value="#(rcvDocQcFormM.iupdateby??)"/>
+
                 <label class="col-sm-2 col-form-label">异常品单号：</label>
                 <div class="col-sm-2 col-form-label">
                     <input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(rcvDocDefect.cdocno??)"/>
                 </div>
                 <label class="col-sm-2 col-form-label">检验单号：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(rcvDocDefect.ircvdocqcformmid??)"/>
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(rcvDocQcFormM.crcvdocqcformno??)"/>
                 </div>
                 <label class="col-sm-2 col-form-label">供应商名称：</label>
                 <div class="col-sm-2 col-form-label">
@@ -38,21 +43,21 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">不合格数量：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(rcvDocDefect.idqqty??)"/>
+                    <input type="text" class="form-control border-none" name="rcvDocDefect.idqqty" placeholder="" value="#(rcvDocDefect.idqqty??)"/>
                 </div>
                 <label class="col-sm-2 col-form-label">检验人：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(rcvDocDefect.iqcuserid??)"/>
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"  name="rcvDocQcFormM.cUpdateName" placeholder="" value="#(rcvDocQcFormM.cUpdateName??)"/>
                 </div>
                 <label class="col-sm-2 col-form-label">检验时间：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(rcvDocDefect.dqctime??)"/>
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"  name="rcvDocQcFormM.dUpdateTime" placeholder="" value="#(rcvDocQcFormM.dUpdateTime??)"/>
                 </div>
             </div>
 
             <h5>异常品记录信息</h5>
             <div class="form-group row">
-                <input type="hidden" id="cbadnesssns" name="processDefect.cbadnesssns" value="#(processDefect.cbadnesssns??)"/>
+                <input type="hidden" id="cbadnesssns" name="rcvDocDefect.cbadnesssns" value="#(rcvDocDefect.cbadnesssns??)"/>
                 <label class="col-sm-2 col-form-label">不良项目：</label>
                 <div class="col-sm-8 col-form-label">
                     <div class="form-group row"

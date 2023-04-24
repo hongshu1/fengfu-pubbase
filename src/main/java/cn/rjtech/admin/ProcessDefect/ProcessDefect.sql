@@ -5,7 +5,14 @@ SELECT
     t1.iDepartmentId,
     t1.cSpecRcvDocNo,
     t1.dDemandDate,
-    t2.iStatus
+    t2.iStatus,
+    t2.iAutoId,
+    t2.cDocNo,
+    t2.ProcessName,
+    t2.iDqQty,
+    t2.cApproach,
+    t2.cCreateName,
+    t2.dCreateTime
 FROM
     Mo_SpecMaterialsRcvM t1
     LEFT JOIN Mo_ProcessDefect t2 ON t2.iIssueId = t1.iAutoId
@@ -40,7 +47,7 @@ order by t2.dUpdateTime desc
 
 
 
-    #sql("AdminDatas")
+#sql("AdminDatas")
 SELECT *
 FROM Bd_QcForm
 WHERE 1 = 1
