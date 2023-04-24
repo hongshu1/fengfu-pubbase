@@ -6,12 +6,15 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.PurchaseOrderD;
 import cn.rjtech.model.momdata.PurchaseorderdQty;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -141,5 +144,9 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 			list.add(purchaseOrderdQty);
 		}
 		return list;
+	}
+	
+	public List<Record> findByPurchaseOrderMid(Long purchaseOrderMid){
+		return dbTemplate("purchaseorderdqty.findByPurchaseOrderMid", Okv.by(PurchaseOrderD.IPURCHASEORDERMID, purchaseOrderMid)).find();
 	}
 }

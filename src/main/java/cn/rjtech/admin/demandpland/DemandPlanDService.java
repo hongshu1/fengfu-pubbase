@@ -126,13 +126,13 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 	 *
 	 * @return 获取存货中每个日期下的数量
 	 */
-	public Map<Long, Map<String, BigDecimal>> getDemandPlanDMap(List<Record> demandPlanDList){
+	public Map<Long, Map<String, BigDecimal>> getDemandPlanDMap(List<Record> demandPlanDList, String invIdKey){
 		// key:存货id 年月日 value: (key:, 数量)
 		Map<Long, Map<String, BigDecimal>> demandPlanDMap = new HashMap<>();
 		// 遍历所有日期，到货计划主表 ： List<年月日 : qty>
 		for (Record record : demandPlanDList){
 			// 按存货安全
-			Long invId = record.getLong(DemandPlanM.IINVENTORYID);
+			Long invId = record.getLong(invIdKey);
 			String key = getKey(record);
 			// 记录当前主表下的每一个日期数量
 			Map<String, BigDecimal> map = demandPlanDMap.containsKey(invId) ? demandPlanDMap.get(invId) : new HashMap<>();

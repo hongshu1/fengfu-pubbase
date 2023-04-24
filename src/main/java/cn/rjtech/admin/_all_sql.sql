@@ -330,4 +330,12 @@
 #include("purchaseorderdbatchversion/purchaseorderdbatchversion.sql")
 #end
 
+#namespace("purchaseorderdqty")
+#include("purchaseorderdqty/purchaseorderdqty.sql")
+#end
+
+#namespace("purchaseorderd")
+#include("purchaseorderd/purchaseorderd.sql")
+#end
+
 

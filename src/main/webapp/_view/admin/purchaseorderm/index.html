@@ -31,7 +31,6 @@
                     <input id="dEnableDate" type="text" placeholder="开始日期" class="form-control" data-date name="startDate" value="">
                         至
                     <input id="dDisableDate" type="text" placeholder="结束日期" class="form-control" data-done-handler="checkme" data-date name="endDate" value="">
-
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
                     <button type="reset" class="btn btn-outline-secondary"><i class="fa text-reset"></i> 重置</button>
                 </form>
@@ -50,18 +49,18 @@
 
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-            <a class="text-info mr-1" data-openpage="dialog" href="admin/purchaseorderm/edit/${data.iautoid}" data-area="800,600" data-title="查看">查看</a>
+            <a class="text-info mr-1" data-openpage="dialog" href="admin/purchaseorderm/edit/${data.iautoid}?isView=1" data-area="90%,90%" data-title="查看">查看</a>
         {@if data.iorderstatus==1 || data.iorderstatus==4}
             <a class="jbolt_table_delbtn"  data-ajaxbtn href="admin/purchaseorderm/arraignment/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批"  >审批</a>
-            <a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑采购订单">编辑</a>
+            <a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="90%,90%" data-title="编辑采购订单">编辑</a>
             <a class="text-danger" data-ajaxbtn href="admin/purchaseorderm/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >刪除</a>
         {@else if data.iorderstatus==2 }
-            <a data-ajaxbtn href="admin/purchaseorderm/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批">审批</a>
+            <a data-ajaxbtn href="admin/purchaseorderm/audit/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="审批">审批</a>
             <a data-ajaxbtn href="admin/purchaseorderm/withdraw/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="撤回">撤回</a>
         {@else if data.iorderstatus==3 }
             <a data-ajaxbtn href="admin/purchaseorderm/generate/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="生成现品票"  >生成现品票</a>
         {@else if data.iorderstatus==5 }
-            <a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="现品票明细">现品票明细</a>
+            <a class="jbolt_table_editbtn" href="admin/purchaseorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="90%,90%" data-title="现品票明细">现品票明细</a>
             <a data-ajaxbtn href="admin/purchaseorderm/close/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="关闭" >关闭</a>
 		{@/if}
 
@@ -87,28 +86,32 @@
                         data-title="订单作成" data-url="admin/purchaseorderm/consummate"
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 订单作成
                 </button>
-                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="b"
+                <!--<button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="b"
                         data-title="新增采购/委外订单-采购订单主表" data-url="admin/purchaseorderm/add"
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 批量审批
                 </button>
                 <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="c()"
                         data-title="新增采购/委外订单-采购订单主表" data-url="admin/purchaseorderm/add"
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 批量反审批
-                </button>
-                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable"
-                        id="toolbar_editBtn_#(pageId)" data-title="编辑采购/委外订单-采购订单主表"
-                        data-check-handler="jboltTableGetCheckedId" data-url="admin/purchaseorderm/edit/"
-                        class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑
-                </button>
+                </button>-->
+
+<!--                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable"-->
+<!--                        id="toolbar_editBtn_#(pageId)" data-title="编辑采购/委外订单-采购订单主表"-->
+<!--                        data-check-handler="jboltTableGetCheckedId" data-url="admin/purchaseorderm/edit/"-->
+<!--                        class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑-->
+<!--                </button>-->
+
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                        id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseorderm/deleteByIds?ids="
+                        id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseorderm/batchDel?ids="
                         data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
                 </button>
-                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
-                </button>
-                <button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst"
-                        data-title="订单作成" data-url="admin/purchaseorderm/consummate"
+
+                <button data-dialogbtn data-area="90%,90%" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                        data-confirm='确定要执行此操作？' data-url="admin/purchaseorderm/batchGenerate?ids="
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 批量生成现品票
+                </button>
+
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
                 </button>
             </div>
 

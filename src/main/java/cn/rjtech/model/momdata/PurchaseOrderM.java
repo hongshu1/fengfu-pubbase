@@ -25,6 +25,8 @@ public class PurchaseOrderM extends BasePurchaseOrderM<PurchaseOrderM> {
     // 转换后： 包装数量
     public static final String IPKGQTY = "iPkgQty";
     
+    public static final String AFTERIPKGQTY = "afterIPkgQty";
+    
     public static final String CINVSTD = "cInvStd";
     
     public static final String CUOMNAME = "cUomName";
