@@ -322,4 +322,12 @@
 #include("purchaseorderref/purchaseorderref.sql")
 #end
 
+#namespace("purchaseorderdbatch")
+#include("purchaseorderdbatch/purchaseorderdbatch.sql")
+#end
+
+#namespace("purchaseorderdbatchversion")
+#include("purchaseorderdbatchversion/purchaseorderdbatchversion.sql")
+#end
+
 

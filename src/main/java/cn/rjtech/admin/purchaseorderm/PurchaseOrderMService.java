@@ -372,8 +372,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		
 		// 操作
 		tx( ()-> {
-			// 新增
-			purchaseOrderM.save();
+			
 			purchaseOrderDService.batchSave(purchaseOrderDList);
 			purchaseorderdQtyService.batchSave(purchaseOrderdQtyList);
 			purchaseOrderRefService.batchSave(purchaseOrderdRefList);
@@ -385,6 +384,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			demandPlanMService.batchUpdateStatusByIds(demandPlanMIds, CompleteTypeEnum.COMPLETE.getValue());
 			// 修改到货计划细表状态 改为已完成
 			demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenType.PURCHASE_GEN.getValue(), CompleteTypeEnum.COMPLETE.getValue());
+			purchaseOrderM.setCOrderNo(generateCGCode());
+			purchaseOrderM.setDOrderDate(DateUtil.date());
 			return true;
 		});
 		return SUCCESS;
@@ -466,35 +467,140 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	}
 	
 	/**
-	 * 删除操作
+	 * 撤回操作
+	 */
+	public Ret withdraw(Long id){
+		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
+		// 修改审批状态为：未审批
+		purchaseOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+		purchaseOrderM.setDAuditTime(null);
+		purchaseOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+		purchaseOrderM.update();
+		return SUCCESS;
+	}
+	
+	
+	/**
+	 * 提审操作
+	 */
+	public Ret arraignment(Long id){
+		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
+		// 修改审批状态为：未审批
+		purchaseOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+		purchaseOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+		purchaseOrderM.update();
+		return SUCCESS;
+	}
+	
+	/**
+	 * 审核操作
 	 * @param id
 	 * @return
 	 */
+	public Ret audit(Long id){
+		DateTime date = DateUtil.date();
+		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
+		purchaseOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+		purchaseOrderM.setDAuditTime(date);
+		purchaseOrderM.setDSubmitTime(date);
+		purchaseOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+		purchaseOrderM.update();
+		return SUCCESS;
+	}
 	
+	/**
+	 * 关闭操作（关闭之前的状态必须生成）
+	 * @param id
+	 * @return
+	 */
+	public Ret close(Long id){
+		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
+		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
+		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
+		ValidationUtils.notNull(orderStatusEnum, "未知状态");
+		ValidationUtils.isTrue(OrderStatusEnum.APPROVED.getValue() == orderStatusEnum.getValue(), "已审核的单据才能关闭");
+		purchaseOrderM.setIOrderStatus(OrderStatusEnum.CLOSE.getValue());
+		purchaseOrderM.update();
+		return SUCCESS;
+	}
 	
-	public Ret del(Long id) {
+	/**
+	 * 生成现成票（1个订单1个文件，然后按料品、日期，生成现品票明细查询表）
+	 * @param id
+	 * @return
+	 */
+	public Ret generate(Long id){
+		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
+		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
+		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
+		ValidationUtils.notNull(orderStatusEnum, "未知状态");
+		ValidationUtils.isTrue(OrderStatusEnum.APPROVED.getValue() == orderStatusEnum.getValue(), "已审核的单据才能生成现成票");
+		purchaseOrderM.setIOrderStatus(OrderStatusEnum.GENERATE_CASH_TICKETS.getValue());
+		// 获取细表数据
+		List<PurchaseOrderD> byPurchaseOrderMId = purchaseOrderDService.findByPurchaseOrderMId(id);
+		
+		purchaseOrderM.update();
+		return SUCCESS;
+	}
+	
+	/**
+	 * 获取主表数据
+	 * @param id
+	 * @return
+	 */
+	private PurchaseOrderM getPurchaseOrderM(Long id){
 		ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
 		PurchaseOrderM purchaseOrderM = findById(id);
 		ValidationUtils.notNull(purchaseOrderM, JBoltMsg.DATA_NOT_EXIST);
-		// 修改操作
 		purchaseOrderM.setDUpdateTime(DateUtil.date());
 		purchaseOrderM.setIUpdateBy(JBoltUserKit.getUserId());
 		purchaseOrderM.setCUpdateName(JBoltUserKit.getUserName());
+		return purchaseOrderM;
+	}
+	
+	/**
+	 * 删除操作
+	 * 	1.修改主表删除状态
+	 * 	2.修改细表删除状态
+	 * 	3.删除中间表数据
+	 * 	4.修改到货计划细表订单状态及未完成状态
+	 * 	5.修改到货计划主表未完成状态
+	 * @param id
+	 * @return
+	 */
+	public Ret del(Long id) {
+		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
 		purchaseOrderM.setIsDeleted(true);
-		
+		List<Record> purchaseOrderRefList = purchaseOrderRefService.findByPurchaseOderMId(id);
 		tx(()->{
 			// 修改细表数据
 			purchaseOrderDService.removeByPurchaseOrderMId(id);
-			// 修改到货计划细表状态
-			demandPlanDService.removeByPurchaseOrderMId(id);
-			// 修改主表状态
-			demandPlanMService.removeByPurchaseOrderMId(id);
-			// 删除中间表数据
-			purchaseOrderRefService.removeByPurchaseOderMId(id);
+			if (CollectionUtil.isNotEmpty(purchaseOrderRefList)){
+				List<Long> demandPlanDIds = purchaseOrderRefList.stream().map(record -> record.getLong(PurchaseOrderRef.IDEMANDPLANDID)).collect(Collectors.toList());
+				// 修改到货计划细表状态
+				demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenType.NOT_GEN.getValue(), CompleteTypeEnum.INCOMPLETE.getValue());
+				// 修改主表状态
+				List<Long> demandPlanMIds = demandPlanMService.pegging(demandPlanDIds);
+				demandPlanMService.batchUpdateStatusByIds(demandPlanMIds, CompleteTypeEnum.INCOMPLETE.getValue());
+				// 删除中间表数据
+				purchaseOrderRefService.removeByPurchaseOderMId(id);
+			}
 			purchaseOrderM.update();
 			return true;
 		});
 		return SUCCESS;
 	}
 	
+	/**
+	 * 批量生成现成票
+	 * @param ids
+	 * @return
+	 */
+	public Ret batchGenerate(String ids) {
+		ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+		for (String id : ids.split(",")){
+		
+		}
+		return SUCCESS;
+	}
 }

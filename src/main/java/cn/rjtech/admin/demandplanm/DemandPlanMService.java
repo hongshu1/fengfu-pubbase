@@ -302,7 +302,4 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 		return ids.stream().map(DemandPlanD::getIDemandPlanMid).collect(Collectors.toList());
 	}
 	
-	public void removeByPurchaseOrderMId(Long purchaseOrderMId) {
-	
-	}
 }

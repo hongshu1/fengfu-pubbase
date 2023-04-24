@@ -204,7 +204,4 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 		return dbTemplate("demandpland.findAll", Okv.by(DemandPlanD.IDEMANDPLANMID, demandPlanMid)).find();
 	}
 	
-	public void removeByPurchaseOrderMId(Long purchaseOrderMId){
-		
-	}
 }
