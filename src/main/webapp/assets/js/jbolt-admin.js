@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.4.9";
+var jbolt_admin_js_version="6.5.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -10959,16 +10959,17 @@ var FileUploadUtil={
 			if(!isOk(fileBoxs)){
 				return false;
 			}
-			var that=this,fbox,fbtn;
+			var that=this;
 			//box的点击效果
 			fileBoxs.each(function(){
-				fbox=$(this);
-				fbtn=fbox.find("button");
-				fbtn.off("click").on("click",function(e){
+				var uploadBtn = $(this).find("button");
+				uploadBtn.off("click").on("click",function(e){
 					e.preventDefault();
 					e.stopPropagation();
-					var goToTrigger=function(){
-						var innerInputId=fbox.data("inputid");
+					var fbtn= $(this);
+					var fbox = fbtn.parent();
+					var goTrigger=function(clickbtn){
+						var innerInputId=clickbtn.data("inputid");
 						var fileInput=jboltBody.find(".j_upload_file_input>input#"+innerInputId);
 						if(isOk(fileInput)){
 							fileInput.trigger("click");
@@ -10980,19 +10981,19 @@ var FileUploadUtil={
 						if(checkHandler && typeof(checkHandler)=="function"){
 							var checkResult=checkHandler(fbox);
 							if(typeof(checkResult)=="boolean" && checkResult){
-								goToTrigger();
+								goTrigger(fbtn);
 							}
 						}else{
-							goToTrigger();
+							goTrigger(fbtn);
 						}
 					}else{
-						goToTrigger();
+						goTrigger(fbtn);
 					}
 					return false;
 				});
 				
 				// onchange事件
-				jboltBody.find("input[type='file']#"+fbtn.data("inputid")).off("change").on("change",function(event){
+				jboltBody.find("input[type='file']#"+uploadBtn.data("inputid")).off("change").on("change",function(event){
 					var files = event.target.files; 
 					var file=$(this);
 					var btnId=file.data("btnid");
