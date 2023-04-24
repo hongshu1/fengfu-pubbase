@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.4.6";
+var jbolt_admin_js_version="6.5.1";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -9036,10 +9036,26 @@ var ImgUploadUtil={
 				box.off("click").on("click",function(e){
 					e.preventDefault();
 					e.stopPropagation();
-					var innerInputId=$(this).data("inputid");
-					var fileInput=jboltBody.find(".j_upload_img_input>input#"+innerInputId);
-					if(isOk(fileInput)){
-						fileInput.trigger("click");
+					var goToTrigger=function(){
+						var innerInputId=box.data("inputid");
+						var fileInput=jboltBody.find(".j_upload_img_input>input#"+innerInputId);
+						if(isOk(fileInput)){
+							fileInput.trigger("click");
+						}
+					}
+					var checkHandlerStr=box.data("check-handler");
+					if(checkHandlerStr){
+						var checkHandler = eval(checkHandlerStr);
+						if(checkHandler && typeof(checkHandler)=="function"){
+							var checkResult=checkHandler(box);
+							if(typeof(checkResult)=="boolean" && checkResult){
+								goToTrigger();
+							}
+						}else{
+							goToTrigger();
+						}
+					}else{
+						goToTrigger();
 					}
 					return false;
 				});
@@ -10943,24 +10959,41 @@ var FileUploadUtil={
 			if(!isOk(fileBoxs)){
 				return false;
 			}
-			var that=this,fbox,fbtn;
+			var that=this;
 			//box的点击效果
 			fileBoxs.each(function(){
-				fbox=$(this);
-				fbtn=fbox.find("button");
-				fbtn.off("click").on("click",function(e){
+				var uploadBtn = $(this).find("button");
+				uploadBtn.off("click").on("click",function(e){
 					e.preventDefault();
 					e.stopPropagation();
-					var innerInputId=$(this).data("inputid");
-					var fileInput=jboltBody.find(".j_upload_file_input>input#"+innerInputId);
-					if(isOk(fileInput)){
-						fileInput.trigger("click");
+					var fbtn= $(this);
+					var fbox = fbtn.parent();
+					var goTrigger=function(clickbtn){
+						var innerInputId=clickbtn.data("inputid");
+						var fileInput=jboltBody.find(".j_upload_file_input>input#"+innerInputId);
+						if(isOk(fileInput)){
+							fileInput.trigger("click");
+						}
+					}
+					var checkHandlerStr=fbox.data("check-handler");
+					if(checkHandlerStr){
+						var checkHandler = eval(checkHandlerStr);
+						if(checkHandler && typeof(checkHandler)=="function"){
+							var checkResult=checkHandler(fbox);
+							if(typeof(checkResult)=="boolean" && checkResult){
+								goTrigger(fbtn);
+							}
+						}else{
+							goTrigger(fbtn);
+						}
+					}else{
+						goTrigger(fbtn);
 					}
 					return false;
 				});
 				
 				// onchange事件
-				jboltBody.find("input[type='file']#"+fbtn.data("inputid")).off("change").on("change",function(event){
+				jboltBody.find("input[type='file']#"+uploadBtn.data("inputid")).off("change").on("change",function(event){
 					var files = event.target.files; 
 					var file=$(this);
 					var btnId=file.data("btnid");
@@ -12565,9 +12598,9 @@ function trChangeToUp(currentTr,prevTr,jboltTable){
 	}
 	if(jboltTable){
 		if(jboltTable.fixedColumnTables){
-
 			setTimeout(function(){
 				jboltTable.table_box.find(".jbolt_table_fixed>.jbolt_table_body>table>tbody>tr.sortActive").removeClass("sortActive");
+				jboltTable.me.processColumnFixed(jboltTable);
 				//如果有横向滚动条 处理一下样式
 				jboltTable.me.refreshFixedColumnHScroll(jboltTable);
 				//处理fixed的滚动位置
@@ -12715,6 +12748,7 @@ function trChangeToDown(currentTr,nextTr,jboltTable){
 	if(jboltTable&&jboltTable.fixedColumnTables){
 		setTimeout(function(){
 			jboltTable.table_box.find(".jbolt_table_fixed>.jbolt_table_body>table>tbody>tr.sortActive").removeClass("sortActive");
+			jboltTable.me.processColumnFixed(jboltTable);
 			//如果有横向滚动条 处理一下样式
 			jboltTable.me.refreshFixedColumnHScroll(jboltTable);
 			//处理fixed的滚动位置
@@ -13580,6 +13614,7 @@ var DialogUtil={
 			  var dialogEle = action;
 			  if(inEditableTable && !action.is("td")){
 				dialogEle = action.closest("td");
+				dialogEle.actionEle = action;
 			  }
 		      this.openNewDialog({
 		    	  ele:dialogEle,
@@ -13644,13 +13679,14 @@ var DialogUtil={
 			  if(!(options.url)&&(options.contentId||options.content)){
 				  type=1;
 			  }
+			  var optionsEle = (options.ele&&options.ele.actionEle)?options.ele.actionEle:options.ele;
 			  var content="";
 			  if(type==1){
 				  if(options.contentId){
 					  content=$("#"+options.contentId).html();
 				  }else if(options.content){
 					  if(options.content=="this"){
-						  content=options.ele.html();
+						  content=optionsEle.html();
 						  content='<div class="p-3 text-break">'+content+'</div>';
 					  }else{
 						  content='<div class="p-3 text-break">'+options.content+'</div>';
@@ -13658,16 +13694,16 @@ var DialogUtil={
 				  }
 			  }else {
 				  var url=actionUrl(options.url);
-				  if(isOk(options.ele)){
-					  url=processEleUrlByLinkOtherParamEle(options.ele,url,false);
+				  if(isOk(optionsEle)){
+					  url=processEleUrlByLinkOtherParamEle(optionsEle,url,false);
 					  if(!url){
 						  return false;
 					  }
-					  url=processDataFormLinkParams(options.ele,url);
+					  url=processDataFormLinkParams(optionsEle,url);
 					  if(!url){
 						  return false;
 					  }
-					  url=processJBoltTableEleUrlByLinkColumn(options.ele,url);
+					  url=processJBoltTableEleUrlByLinkColumn(optionsEle,url);
 					  if(!url){
 							return false;
 						}
@@ -13716,8 +13752,8 @@ var DialogUtil={
 //							  var iframeWin = window[$(".layui-layer-iframe").find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
 ////							  iframeWin.focus();
 //						  }
-						  if(type==2 && options.ele){
-							  var dialogKey=options.ele.data("dialog-key");
+						  if(type==2 && optionsEle){
+							  var dialogKey=optionsEle.data("dialog-key");
 							  if(dialogKey){
 								  var iframe=obj.find("iframe");
 								  if(iframe){
@@ -13774,8 +13810,8 @@ var DialogUtil={
 			  }
 			  if(options&&options.id){
 				  layerOptions.id=options.id;
-			  }else if(options.ele){
-				  layerOptions.id = options.ele.attr("id")+"_layer";
+			  }else if(optionsEle){
+				  layerOptions.id = optionsEle.attr("id")+"_layer";
 			  }else{
 				  layerOptions.id = randomId()+"_layer";
 			  }
