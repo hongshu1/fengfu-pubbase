@@ -17,7 +17,7 @@ select * from Bd_InventoryQcForm t1 where t1.IsDeleted = '0'
 #if(iQcFormId)
  and t1.iQcFormId = '#(iQcFormId)'
 #else
- and 1=2
+ and t1.iQcFormId = ' '
 #end
 #if(keywords)
  and (t1.iInventoryCode like '#(keywords)%' or t1.iInventoryName like '%#(keywords)%')

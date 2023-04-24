@@ -1,0 +1,75 @@
+<form onsubmit="return false;" id="rcvDocQcFormDForm" action="#(action)" method="post">
+<input type="hidden" name="rcvDocQcFormD.iautoid" value="#(rcvDocQcFormD.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">来料检ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入来料检ID" maxlength="19" name="rcvDocQcFormD.ircvdocqcformmid" value="#(rcvDocQcFormD.ircvdocqcformmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验表格ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入检验表格ID" maxlength="19" name="rcvDocQcFormD.iqcformid" value="#(rcvDocQcFormD.iqcformid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验项目ID，Bd_QcFormTableParam.iAutoId</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入检验项目ID，Bd_QcFormTableParam.iAutoId" maxlength="19" name="rcvDocQcFormD.iformparamid" value="#(rcvDocQcFormD.iformparamid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目次序，固定取参数项目名为“项目”的参数名称次序值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入项目次序，固定取参数项目名为“项目”的参数名称次序值"  maxlength="10" name="rcvDocQcFormD.iseq" value="#(rcvDocQcFormD.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">子次序</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入子次序"  maxlength="10" name="rcvDocQcFormD.isubseq" value="#(rcvDocQcFormD.isubseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验参数值ID，点检方法允许为空（拼接“-”）多个逗号分隔</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入检验参数值ID，点检方法允许为空（拼接“-”）多个逗号分隔" maxlength="500" name="rcvDocQcFormD.cqcformparamids" value="#(rcvDocQcFormD.cqcformparamids??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间"  maxlength="10" name="rcvDocQcFormD.itype" value="#(rcvDocQcFormD.itype??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">标准值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=7;"  data-notnull="false" placeholder="请输入标准值"  maxlength="20" name="rcvDocQcFormD.istdval" value="#(rcvDocQcFormD.istdval??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">最大设定值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=7;"  data-notnull="false" placeholder="请输入最大设定值"  maxlength="20" name="rcvDocQcFormD.imaxval" value="#(rcvDocQcFormD.imaxval??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">最小设定值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=7;"  data-notnull="false" placeholder="请输入最小设定值"  maxlength="20" name="rcvDocQcFormD.iminval" value="#(rcvDocQcFormD.iminval??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">列表可选值，多个用分号分隔</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入列表可选值，多个用分号分隔" maxlength="500" name="rcvDocQcFormD.coptions" value="#(rcvDocQcFormD.coptions??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="rcvDocQcFormDForm")
+#end
+

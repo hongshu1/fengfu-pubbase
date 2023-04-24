@@ -6,11 +6,11 @@
 	<div class="jbolt_page_title">
 		<div class="row">
 			<div class="col">
-				<form class="form-inline" id="itemmasterForm_#(pageId)"   onsubmit="return false;" method="post">
+				<form class="form-inline text-left" id="itemmasterForm_#(pageId)"   onsubmit="return false;" method="post">
 					<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品分类ID" id="iitemcategoryid" name="iitemcategoryid" value="" />
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="料品编码" name="cinvcode" value="" />
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="料品名称" name="cinvname" value="" />
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="别名" name="cinvname1" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货编码" name="cInvCode" value="#(cInvCode)" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货名称" name="cInvName" value="#(cInvName)" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入客户部番" name="cInvCode1" value="#(cInvCode1)" />
 					<input type="hidden" autocomplete="off"  class="form-control"  placeholder="料品id" name="masterautoid" value="#(masterautoid)" />
 					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 				</form>
@@ -41,7 +41,7 @@
 			   data-jbolttable
 			   data-height="fill"
 			   data-ajax="true"
-			   data-url="admin/inventory/dataBomList"
+			   data-url="admin/inventory/datas"
 			   data-column-resize="true"
 			   data-column-prepend="1:radio"
 			   data-conditions-form="itemmasterForm_#(pageId)"

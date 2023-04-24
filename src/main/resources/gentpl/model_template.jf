@@ -6,6 +6,11 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 #if(autoCacheEnable??)
 import cn.jbolt.core.annotation.JBoltAutoCache;
 #end
+#if(importClasses)
+#for(ics:importClasses)
+#(ics??)
+#end
+#end
 
 /**
  * #(tableMeta.remarks??)
@@ -43,7 +48,11 @@ public class #(tableMeta.modelName) extends #(tableMeta.baseModelName)<#(tableMe
         #if(attr.translateType == "sys_dic_id")
         return JBoltDictionaryCache.me.getName(#(attrName));
         #else if(attr.translateType == "sys_dic_sn")
+            #if(attr.formUiType=="select_multi" || attr.formUiType=="select2_multi")
+        return JBoltDictionaryCache.me.getNameStrBySns("#(attr.translateUseValue)",String.valueOf(#(attrName)));
+            #else
         return JBoltDictionaryCache.me.getNameBySn("#(attr.translateUseValue)",String.valueOf(#(attrName)));
+            #end
         #else if(attr.translateType == "sys_user_id_to_username")
         return JBoltUserCache.me.getUserName(#(attrName));
         #else if(attr.translateType == "sys_user_id_to_name")

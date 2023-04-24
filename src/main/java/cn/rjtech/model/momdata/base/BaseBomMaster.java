@@ -84,6 +84,8 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
     public static final String DUPDATETIME = "dUpdateTime";
     /**是否删除 1已删除*/
     public static final String ISDELETED = "isDeleted";
+	/**是否生效：0. 否 1. 是*/
+    public static final String ISEFFECTIVE = "isEffective";
 	/**
 	 * 主键
 	 */
@@ -703,15 +705,83 @@ public abstract class BaseBomMaster<M extends BaseBomMaster<M>> extends JBoltBas
 		set("isDeleted", isDeleted);
 		return (M)this;
 	}
-
+	
 	/**
 	 * 是否删除 1已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除 1已删除", required=true, maxLength=1, fixed=0, order=37)
+	@JBoltField(name="iseffective" ,columnName="isEffective",type="Boolean", remark="是否删除 1已删除", required=true, maxLength=1, fixed=0, order=37)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
 	}
-
+	
+	/**
+	 * 是否生效：0. 否 1. 是
+	 */
+	public M setIsEffective(java.lang.Boolean isEffective) {
+		set("isEffective", isEffective);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生效：0. 否 1. 是
+	 */
+	@JBoltField(name="iseffective" ,columnName="isEffective",type="Boolean", remark="是否生效：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=38)
+	@JSONField(name = "iseffective")
+	public java.lang.Boolean getIsEffective() {
+		return getBoolean("Effective");
+	}
+	
+	
+	/**
+	 * 复制来源ID，复制操作生成
+	 */
+	public M setICopyFromId(java.lang.Long iCopyFromId) {
+		set("iCopyFromId", iCopyFromId);
+		return (M)this;
+	}
+	
+	/**
+	 * 复制来源ID，复制操作生成
+	 */
+	@JBoltField(name="icopyfromid" ,columnName="iCopyFromId",type="Long", remark="复制来源ID，复制操作生成", required=false, maxLength=19, fixed=0, order=39)
+	@JSONField(name = "icopyfromid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getICopyFromId() {
+		return getLong("iCopyFromId");
+	}
+	
+	/**
+	 * 提审时间
+	 */
+	public M setDSubmitTime(java.util.Date dSubmitTime) {
+		set("dSubmitTime", dSubmitTime);
+		return (M)this;
+	}
+	
+	/**
+	 * 提审时间
+	 */
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=40)
+	@JSONField(name = "dsubmittime")
+	public java.util.Date getDSubmitTime() {
+		return getDate("dSubmitTime");
+	}
+	
+	/**
+	 * 审批方式：1. 审批状态 2. 审批流
+	 */
+	public M setIAuditWay(java.lang.Integer iAuditWay) {
+		set("iAuditWay", iAuditWay);
+		return (M)this;
+	}
+	
+	/**
+	 * 审批方式：1. 审批状态 2. 审批流
+	 */
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审批状态 2. 审批流", required=false, maxLength=10, fixed=0, order=41)
+	@JSONField(name = "iauditway")
+	public java.lang.Integer getIAuditWay() {
+		return getInt("iAuditWay");
+	}
 }
 

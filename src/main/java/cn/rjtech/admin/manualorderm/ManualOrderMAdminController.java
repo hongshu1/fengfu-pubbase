@@ -11,6 +11,7 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.ManualOrderM;
@@ -24,7 +25,7 @@ import java.util.Date;
  * @date: 2023-04-10 15:18
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.MANUALORDER)
+@CheckPermission(PermissionKey.MANUAL_ORDER)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/manualorderm", viewPath = "/_view/admin/manualorderm")
 public class ManualOrderMAdminController extends BaseAdminController {
@@ -81,7 +82,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
 	}
 
    /**
-	* 编辑
+	* 审核
 	*/
 	public void audit() {
 		ManualOrderM manualOrderM=service.findById(getLong(0));
@@ -89,12 +90,31 @@ public class ManualOrderMAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("manualOrderM",manualOrderM);
-		render("edit.html");
+		manualOrderM.setIAuditStatus(1);
+		manualOrderM.setIOrderStatus(3);
+		Ret stockoutQcFormM = service.createStockoutQcFormM(manualOrderM.getICustomerId(), manualOrderM.getIAutoId());
+        service.handleCusOrderByManual(manualOrderM);
+		if(stockoutQcFormM.isFail())
+			renderJson(stockoutQcFormM);
+		else
+			renderJson(service.update(manualOrderM));
 	}
 
    /**
-	* 编辑
+	* 撤回
+	*/
+	public void reply() {
+		ManualOrderM manualOrderM=service.findById(getLong(0));
+		if(manualOrderM == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		manualOrderM.setIOrderStatus(1);
+		renderJson(service.update(manualOrderM));
+	}
+
+   /**
+	* 关闭
 	*/
 	public void colse() {
 		ManualOrderM manualOrderM=service.findById(getLong(0));
@@ -102,12 +122,12 @@ public class ManualOrderMAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("manualOrderM",manualOrderM);
-		render("edit.html");
+		manualOrderM.setIOrderStatus(6);
+		renderJson(service.update(manualOrderM));
 	}
 
    /**
-	* 编辑
+	* 查看
 	*/
 	public void info() {
 		ManualOrderM manualOrderM=service.findById(getLong(0));
@@ -143,5 +163,21 @@ public class ManualOrderMAdminController extends BaseAdminController {
 
 	public void inventory_dialog_index(){
 		render("inventory_dialog_index.html");
+	}
+
+	public void batchAudit(){
+		renderJson(service.batchHandle(getKv(),3,new int[]{2}));
+	}
+
+	public void batchAntiAudit(){
+		renderJson(service.batchHandle(getKv(),2,new int[]{3}));
+	}
+
+	public void batchClose(){
+		renderJson(service.batchHandle(getKv(),6,new int[]{3}));
+	}
+
+	public void batchDetect(){
+		renderJson(service.batchDetect(getKv()));
 	}
 }

@@ -34,10 +34,12 @@ import com.spire.ms.System.Collections.ArrayList;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.admin.vendorclass.VendorClassService;
 import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.model.momdata.VendorAddr;
@@ -69,9 +71,9 @@ public class VendorService extends BaseService<Vendor> {
     @Inject
     private WarehouseService   warehouseService;
     @Inject
-    private DeptService        deptService;
+    private PersonService      personService;
     @Inject
-    private PersonService personService;
+    private DepartmentService  departmentService;
 
     @Override
     protected int systemLogTargetType() {
@@ -87,26 +89,28 @@ public class VendorService extends BaseService<Vendor> {
      * @param isEnabled  是否启用：0. 停用 1. 启用
      * @param isDeleted  删除状态：0. 未删除 1. 已删除
      */
-    public Page<Vendor> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEnabled, Boolean isDeleted,Kv kv) {
+    public Page<Vendor> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEnabled, Boolean isDeleted,
+                                      Kv kv) {
         //创建sql对象
         Sql sql = selectSql().page(pageNumber, pageSize);
         //sql条件处理
         sql.eqBooleanToChar("isEnabled", isEnabled);
         sql.eqBooleanToChar("isDeleted", isDeleted);
-        sql.eq("cVenName",kv.get("cvenname"));//供应商编码
-        sql.eq("cVenCode",kv.get("cvencode"));//供应商名称
+        sql.eq("cVenName", kv.get("cvenname"));//供应商编码
+        sql.eq("cVenCode", kv.get("cvencode"));//供应商名称
+        sql.eq("iVendorClassId", kv.get("iventorclassid"));//供应商分类id
         //关键词模糊查询
         sql.likeMulti(keywords, "cOrgName", "cVenName", "cVenAbbName", "cCreateName", "cUpdateName");
         //排序
         sql.desc("iAutoId");
         Page<Vendor> paginate = paginate(sql);
         for (Vendor vendor : paginate.getList()) {
-            Dept dept = deptService.findById(vendor.getCVenDepart());
-            vendor.setCVenDepart(dept.getFullName());
+            Department dept = departmentService.findById(vendor.getCVenDepart());
+            vendor.setCVenDepart(null != dept ? dept.getCDepName() : "");
 
             List<Person> personList = personService.list(kv.set("iuserid", vendor.getIDutyPersonId()));
-            if (!personList.isEmpty()){
-                vendor.set("cvenpperson",personList.get(0).getCpsnName());
+            if (!personList.isEmpty()) {
+                vendor.set("cvenpperson", personList.get(0).getCpsnName());
             }
         }
         return paginate;
@@ -202,8 +206,11 @@ public class VendorService extends BaseService<Vendor> {
                     vendor.setCVenEmail(vendorAddr.getCEmail());//email地址
                     vendor.setCVenPerson(vendorAddr.getCContactName());//联系人
                     vendor.setCVenHand(vendorAddr.getCMobile());//手机、移动电话
-                    //vendor.setCProperty("");//供应商属性
+
                 }
+                Record record = vendorClassService.findRecordByCVCCode(vendor.getCVCCode());
+                vendor.setIVendorClassId(record != null ? record.get("iautoid"):new Long(0));
+                //供应商分类id
                 //表头保存
                 Ret retVendor = save(vendor);
                 if (retVendor.isFail()) {
@@ -326,4 +333,9 @@ public class VendorService extends BaseService<Vendor> {
         return toggleBoolean(id, "isEnabled");
     }
 
+    public Vendor findByName(String vendorName) {
+        return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvenname = ?", vendorName);
+    }
+
+    
 }

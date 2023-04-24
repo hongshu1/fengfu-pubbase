@@ -1,0 +1,62 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>订单作成</h1></div>
+        </div>
+        <div>
+            <form onsubmit="return false;" id="PurchaseOrderM_form_#(pageId)" action="" method="post">
+                <div class="form-group row">
+                    <label class="col-form-label col-lg-1">日期：</label>
+                    <input id="dEnableDate"  type="text" data-rule="required" style="width: 15%" placeholder="开始日期" class="form-control" data-date name="begindate" value="">
+                    <span style="margin-right: 5px; margin-left: 5px"> - </span>
+                    <input id="dDisableDate" type="text" data-rule="required;>=#dEnableDate" style="width: 15%" class="form-control" placeholder="结束日期" data-done-handler="checkme" data-date name="enddate" value="">
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-lg-1">选择供应商：</label>
+                    <input hidden type="text" name="iVendorId" id="iVendorId_#(pageId)" data-sync-attr="cvenid" >
+                    <input data-autocomplete
+                           type="text"
+                           autocomplete="off"
+                           class="form-control"
+                           data-rule="required"
+                           data-url="admin/bommaster/findVendorList"
+                           data-sync-ele="#iVendorId_#(pageId)"
+                           data-text-attr="cvenname"
+                           placeholder="请输入供应商名称"
+                           />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+        <div class="jbolt_table_toolbar" id="PurchaseOrderM_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            </div>
+        </div>
+    </div>
+
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    function submitThisForm() {
+        var $form = $('#PurchaseOrderM_form_#(pageId)');
+        if (FormChecker.check($form)) {
+            var formData = formToJson($form);
+            Ajax.post("admin/purchaseorderm/checkData",{iVendorId: formData.iVendorId, beginDate: formData.begindate, endDate: formData.enddate, processType: 3}, function (res) {
+                if (res.state=='ok'){
+                    location.href = '/admin/purchaseorderm/add?processType=3&iVendorId=' + formData.iVendorId + '&beginDate=' + formData.begindate + '&endDate=' + formData.enddate + '&_jb_rqtype_=dialog';
+                }
+            });
+        }
+
+
+    }
+</script>
+#end

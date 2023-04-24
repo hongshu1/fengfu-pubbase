@@ -4,12 +4,15 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.model.SysMessageTemplate;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.main.MessageUser;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import java.util.List;
@@ -65,12 +68,17 @@ public class SysMessageTemplateAdminController extends BaseAdminController {
 		set("sysMessageTemplate",sysMessageTemplate);
 		render("edit.html");
 	}
-
+	/**
+	 * 表格提交
+	 * */
+	@UnCheck
+	public void submitTable(){
+		renderJson(service.submitTable(getJBoltTable()));
+	}
 	public void messageUserDate(){
 		String messageId = get("messageId");
-		List<MessageUser>  messageUsers = messageUserService.find(
-				"select * from  where message_id = ? and del_fag = '0'", messageId);
-		renderJsonData(messageUsers);
+
+		renderJsonData(service.findMessage(messageId));
 	}
 
 
@@ -83,13 +91,17 @@ public class SysMessageTemplateAdminController extends BaseAdminController {
 		System.out.println("123"+sysMessageTemplate.toJson());
 		renderJson(service.save(sysMessageTemplate));
 	}
-
+	/**
+	 * 删除
+	 */
+	public void deleteByAjax() {
+		renderJson(service.deleteByAjax());
+	}
    /**
 	* 更新
 	*/
     @Before(Tx.class)
 	public void update() {
-
 		renderJson(service.update(getModel(SysMessageTemplate.class, "sysMessageTemplate")));
 	}
 	/**
@@ -97,7 +109,7 @@ public class SysMessageTemplateAdminController extends BaseAdminController {
 	 */
 	@Before(Tx.class)
 	public void delete() {
-		renderJson(service.deleteById(getLong(0)));
+		renderJson(service.updateColumn(getLong(0),"del_flag","1"));
 	}
   /**
 	* 切换toggleDelFlag

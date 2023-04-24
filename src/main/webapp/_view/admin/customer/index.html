@@ -9,7 +9,7 @@
 				<h1>客户列表</h1>
 			</div>
 			<div class="col">
-				<form class="form-inline" id="customermForm_#(pageId)"   onsubmit="return false;" method="post">
+				<form class="form-inline text-left" id="customermForm_#(pageId)"   onsubmit="return false;" method="post">
 					<input value="" hidden id="customermForm_autoid" name="icustomerclassid">
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="客户编码" name="ccustomercode" value="" />
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="客户名称" name="ccustomername" value="" />
@@ -61,7 +61,7 @@
 
 		<!-- 工具条 toolbar -->
 		<div class="jbolt_table_toolbar" id="customerm_toolbar_#(pageId)">
-			<div class="btn-group" role="group" aria-label="btn-group">
+			<div class="" role="group" aria-label="btn-group">
 				#permission(PermissionKey.CUSTOMER_ADD)
 				<button data-openpage="dialog" data-area="100%,100%" id="customermForm_add" data-handler="jboltTablePageToFirst" data-title="新增客户档案"  data-url="admin/customer/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 				#end
@@ -76,7 +76,7 @@
 			</div>
 
 			#permission(PermissionKey.CUSTOMER_EXPORT)
-			<div class="btn-group" role="group" aria-label="btn-group">
+			<div class="" role="group" aria-label="btn-group">
 				<!--<div class="btn-group dropdown">
 					<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenucustomermButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
 					<div class="dropdown-menu" aria-labelledby="exportMenucustomermButton">

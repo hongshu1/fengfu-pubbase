@@ -17,6 +17,9 @@ WHERE 1=1
 #if(iInventoryClassId)
  AND i.iInventoryClassId = #para(iInventoryClassId)
 #end
+#if(iInventoryClassCode)
+ OR ic.cInvCCode like CONCAT(#para(iInventoryClassCode), '%')
+#end
 #if(isEnabled)
  AND i.isenabled = #para(isEnabled)
 #end
@@ -31,6 +34,9 @@ WHERE 1=1
 #end
 #if(sqlids)
  AND i.iAutoId in (#(sqlids))
+#end
+#if(invId)
+AND i.iAutoId = #para(invId)
 #end
 #end
 

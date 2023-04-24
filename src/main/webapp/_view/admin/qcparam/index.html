@@ -6,7 +6,7 @@
     <div class="row">
 <!--      <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>质量建模-检验参数</h1></div>-->
       <div class="col">
-        <form class="form-inline" id="qcParamFrom_#(pageId)" style="left: 30px;text-align: left">
+        <form class="form-inline text-left" id="qcParamFrom_#(pageId)" style="left: 30px;text-align: left">
           <input type="text" autocomplete="off" class="form-control" placeholder="=参数名称=" name="keywords" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=参数项目=" name="keywords" value=""/>
 
@@ -36,12 +36,12 @@
   <td>
     <!-- <i class="fa fa-pencil c-primary"></i>-->
     <!-- <i class="fa fa-remove c-danger"></i>-->
-      <a tooltip title="编辑" href="admin/qcparam/edit/${data.iautoid}" data-scroll="yes" data-handler="refreshJBoltTable"
+      <a tooltip title="编辑" href="admin/qcparam/checkout/${data.iautoid}" data-scroll="yes" data-handler="refreshJBoltTable"
          data-title="编辑" data-area="1200,1000" class="jbolt_table_editbtn">编辑</a>
       <a tooltip title="删除" href="admin/qcparam/delete/${data.iautoid}" data-handler="refreshJBoltTable"
          class="jbolt_table_delbtn">删除</a>
   </td>
-  <td>${data.cqcitemname}</td><!--参数项目名称-->
+  <td title="${data.cqcitemname}">${data.cqcitemname}</td><!--参数项目名称-->
   <td>${data.cqcparamname}</td><!--参数名称-->
   <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"
            data-url="admin/operation/toggleIsenabledByQcParam/${data.iautoid}"/>
@@ -121,8 +121,3 @@
   </div>
 </div>
 #end
-
-<!--#define js()-->
-<!--<script type="text/javascript">-->
-<!--</script>-->
-<!--#end-->

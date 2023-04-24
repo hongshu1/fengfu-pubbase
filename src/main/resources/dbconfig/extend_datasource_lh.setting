@@ -65,4 +65,4 @@ password = 7e49b8b1a4b6f345883456093b060d0be7297a614abc7682
 is_encrypted = true
 id_gen_mode = snowflake
 # U8请勿使用model模式
-model_package=cn.rjtech.model.u8
+model_package=cn.rjtech.model.u8,cn.rjtech.common.model

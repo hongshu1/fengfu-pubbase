@@ -9,7 +9,7 @@
 	<h1>消息模板</h1>
 	</div>
 	<div class="col">
-		<form class="form-inline" id="sysMessageTemplateForm_#(pageId)"   onsubmit="return false;" method="post">
+		<form class="form-inline text-left" id="sysMessageTemplateForm_#(pageId)"   onsubmit="return false;" method="post">
 			<select class="form-control" name="messageChance" data-autoload data-url="admin/dictionary/options?key=message_chance"  data-select-type="select" data-text="=发送时机=" data-value="" data-value-attr="sn"></select>
 			<input type="text" autocomplete="off"  class="form-control"  placeholder="标题模板" name="keywords" value="" />
 			<select class="form-control" name="isEnabled" data-autoload data-url="admin/dictionary/options?key=options_enable" data-select-type="select" data-text="=启用状态=" data-value="" data-value-attr="sn"></select>
@@ -19,9 +19,7 @@
 		<button type="reset"  class="btn btn-outline-secondary" onclick="jboltTableRefresh(this)"><i class="fa fa-reset"></i> 重置</button>
 		</form>
 	</div>
-	<div class="col-md-auto">
-	<button data-dialogbtn data-area="1200,800" data-handler="refreshJBoltTable" data-title="新增消息模板"  data-url="admin/messageTemplate/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-	</div>
+
 	</div>
 </div>
 <div class="jbolt_page_content">
@@ -31,8 +29,8 @@
 <tr data-id="${data.id}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="jbolt_table_editbtn" href="admin/messageTemplate/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑业务对象"><i class="fa fa-edit"></i></a>
-	<a class="jbolt_table_delbtn" href="admin/messageTemplate/${data.isDeleted == '1'?'realDeleteByIds':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+	<a class="jbolt_table_editbtn" href="admin/messageTemplate/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑业务对象"><i class="fa fa-edit">编辑</i></a>
+	<a class="jbolt_table_delbtn" href="admin/messageTemplate/${data.isDeleted == '1'?'realDeleteByIds':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger">删除</i></a>
  </td>
 <td>${data.messageNameValue}</td>
 <td>${data.id}</td>
@@ -49,7 +47,12 @@
 </tr>
 {@/each}
 </textarea>
+	<div class="jbolt_table_toolbar" id="person_toolbar_#(pageId)">
+		<div class="" role="group" aria-label="btn-group">
+			<button data-dialogbtn data-area="1200,800" data-handler="refreshJBoltTable" data-title="新增消息模板"  data-url="admin/messageTemplate/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 
+		</div>
+	</div>
 
 
 
@@ -71,7 +74,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 <thead>
 <tr>
 	<th data-width="60">序号</th>
-	<th data-width="100">操作</th>
+	<th data-width="150">操作</th>
 	<th data-width="150" data-column="message_name">消息名称</th>
 	<th data-min-width="150" data-column="id">消息编码</th>
 	<th data-width="150" data-column="message_chance">发送时机</th>

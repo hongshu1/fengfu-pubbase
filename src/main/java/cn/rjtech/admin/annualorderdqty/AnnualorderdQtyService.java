@@ -1,5 +1,6 @@
 package cn.rjtech.admin.annualorderdqty;
 
+import cn.rjtech.model.momdata.AnnualOrderM;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -7,6 +8,9 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.AnnualorderdQty;
+
+import java.util.List;
+
 /**
  * 年度计划订单年月数量 Service
  * @ClassName: AnnualorderdQtyService
@@ -164,4 +168,7 @@ public class AnnualorderdQtyService extends BaseService<AnnualorderdQty> {
 		return null;
 	}
 
+	public List<AnnualorderdQty> findAnnualorderdQty(Long iAutoId, AnnualOrderM annualOrderM) {
+		return find(selectSql().eq("iAnnualOrderDid", iAutoId).eq("iYear",annualOrderM.getIYear()));
+	}
 }

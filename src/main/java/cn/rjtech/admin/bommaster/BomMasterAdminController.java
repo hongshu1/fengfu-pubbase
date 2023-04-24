@@ -1,28 +1,25 @@
 package cn.rjtech.admin.bommaster;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.jbolt.core.bean.JsTreeBean;
-import cn.jbolt.core.bean.JsTreeStateBean;
+import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.rjtech.admin.bomcompare.BomCompareService;
+import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
-import cn.rjtech.model.momdata.BomCompare;
+import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
-import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.BomMaster;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
 /**
  * 物料建模-Bom母项
@@ -40,6 +37,12 @@ public class BomMasterAdminController extends BaseAdminController {
 	private InventoryChangeService inventoryChangeService;
 	@Inject
 	private EquipmentModelService equipmentModelService;
+	@Inject
+	private InventoryService inventoryService;
+	@Inject
+	private CustomerService customerService;
+	@Inject
+	private BomCompareService bomCompareService;
    /**
 	* 首页
 	*/
@@ -66,15 +69,34 @@ public class BomMasterAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		BomMaster bomMaster=service.findById(getLong(0));
+		getBomMaster(getLong(0));
+		render("edit.html");
+	}
+	
+	private void getBomMaster(Long id){
+		BomMaster bomMaster=service.findById(id);
 		if(bomMaster == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		set("index", bomCompareService.queryCompareIndex(id));
+		set("equipmentModel", equipmentModelService.findById(bomMaster.getIEquipmentModelId()));
+		set("inventory", inventoryService.findById(bomMaster.getIInventoryId()));
 		set("bomMaster",bomMaster);
+	}
+	
+	/**
+	 * 查看
+	 */
+	public void info(){
+		getBomMaster(getLong(0));
+		set("view",1);
 		render("edit.html");
 	}
 	
+	public void findByBomMasterId(){
+		renderJsonData(bomCompareService.findByBomMasterId(getLong(0)));
+	}
 
    /**
 	* 批量删除
@@ -108,12 +130,17 @@ public class BomMasterAdminController extends BaseAdminController {
 	 * 默认给1-100个数据
 	 */
 	public void inventoryAutocomplete(){
-		renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), 100, getKv()));
+		Integer pageSize = getInt("pageSize", 100);
+		Page<Record> recordPage = inventoryChangeService.inventoryAutocomplete(getPageNumber(), pageSize, getKv());
+		renderJsonData(recordPage.getList());
 	}
 	
 	public void submitForm(@Para(value = "formJsonData") String formJsonData,
-						   @Para(value = "tableJsonData") String tableJsonData){
-		renderJsonData(service.submitForm(formJsonData, tableJsonData));
+						   @Para(value = "tableJsonData") String tableJsonData,
+						   @Para(value="commonInvData") String commonInvData,
+						   @Para(value = "flag") Boolean flag){
+		
+		renderJsonData(service.submitForm(formJsonData, tableJsonData, commonInvData, flag));
 	}
 	
 	public void findEquipmentModelAll(){
@@ -139,13 +166,90 @@ public class BomMasterAdminController extends BaseAdminController {
 	}
 	
 	// 拷贝
-	public void saveCopy(@Para(value = "oldId") String oldId){
+	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "oldId") Long oldId){
+		renderJson(service.saveCopy(oldId, cVersion));
+	}
 	
+	public void importExcelFile() throws IOException {
+		//上传到今天的文件夹下
+		String uploadFile= JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_FILE_UPLOADER);
+		UploadFile file=getFile("file", uploadFile);
+		
+		if (notExcel(file)) {
+			renderJsonFail("请上传excel文件");
+			return;
+		}
+		renderJsonData(service.importExcelFile(file));
 	}
-
-	// 工艺路线
-	public void getMasterData() {
-		renderJsonData(service.getMaster());
+	
+	public void bomMasterIndex(){
+		render("bommaster_index.html");
 	}
-
+	
+	public void versionIndex(){
+		render("version_index.html");
+	}
+	
+	public void getVersionRecord(){
+		renderJsonData(service.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
+	}
+	
+	public void del(){
+		renderJson(service.del(getLong(0)));
+	}
+	
+	public void audit(@Para(value = "bomMasterId") Long bomMasterId,
+					  @Para(value = "status") Integer status){
+		renderJson(service.audit(bomMasterId, status));
+	}
+	
+	public void checkCommonInv(@Para(value = "bomMasterId") Long bomMasterId,
+							   @Para(value = "tableJsonData") String tableJsonData){
+		renderJsonData(service.checkCommonInv(bomMasterId, tableJsonData));
+	}
+	
+	public void findCustomerList(){
+		renderJsonData(customerService.getAdminDatas(getKv()));
+	}
+	
+	public void findVendorList(){
+		renderJsonData(customerService.findVendorList(getKv()));
+	}
+	
+	public void inventoryDialogIndex(@Para(value = "index") String index, @Para(value = "type") String type){
+		ValidationUtils.notBlank(index, JBoltMsg.PARAM_ERROR);
+		ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
+		// 部品存货id
+		String invItemId = get("invItemId");
+		// 原材料存货id
+		String originalItemId = get("originalItemId");
+		// 分条料存货id
+		String slicingInvItemId = get("slicingInvItemId");
+		// 落料存货id
+		String blankingItemId = get("blankingItemId");
+		
+		String invId = null;
+		if (StrUtil.isNotBlank(invItemId)){
+			invId= invItemId;
+		}else if (StrUtil.isNotBlank(originalItemId)){
+			invId= originalItemId;
+		}else if (StrUtil.isNotBlank(slicingInvItemId)){
+			invId= slicingInvItemId;
+		}else if (StrUtil.isNotBlank(blankingItemId)){
+			invId= blankingItemId;
+		}
+		if (StrUtil.isNotBlank(invId)){
+			Inventory inventory = inventoryService.findById(invId);
+			set("cInvCode", inventory.getCInvCode());
+		}
+		keepPara();
+		render("inventory_dialog_index.html");
+	}
+	
+	/**
+	 * 默认给1-100个数据
+	 */
+	public void inventoryPage(){
+		renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
+	}
 }

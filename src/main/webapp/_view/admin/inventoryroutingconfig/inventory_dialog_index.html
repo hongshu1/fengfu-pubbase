@@ -6,14 +6,10 @@
 	<div class="jbolt_page_title">
 		<div class="row">
 			<div class="col">
-				<form class="form-inline" id="inventorydialog_#(pageId)"   onsubmit="return false;" method="post">
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
-					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="inventoryid" value="#(inventoryid)" />
-					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="cinvcode" value="#(cinvcode)" />
-					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="cinvcode1" value="#(cinvcode1)" />
-					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="cinvname1" value="#(cinvname1)" />
-					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="cinvstd" value="#(cinvstd)" />
-					<input type="text" autocomplete="off" hidden class="form-control"  placeholder="输入关键字搜索" name="iinventoryuomid1" value="#(iinventoryuomid1)" />
+				<form class="form-inline text-left" id="inventorydialogForm_#(pageId)"   onsubmit="return false;" method="post">
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货编码" name="cInvCode" value="#(cInvCode)" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货名称" name="cInvName" value="#(cInvName)" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入客户部番" name="cInvCode1" value="#(cInvCode1)" />
 					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 				</form>
 			</div>
@@ -44,9 +40,10 @@
 			   data-jbolttable
 			   data-height="fill"
 			   data-ajax="true"
-			   data-url="admin/inventory/options"
+			   data-url="admin/inventory/datas"
 			   data-column-resize="true"
 			   data-column-prepend="1:radio:true"
+			   data-page="inventorydialogForm_page"
 			   data-conditions-form="inventorydialogForm_#(pageId)"
 			   data-rowtpl="inventorydialogRowtpl_#(pageId)"
 			   data-toolbar="inventorydialog_toolbar_#(pageId)"

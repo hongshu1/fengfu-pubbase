@@ -1,8 +1,13 @@
 package cn.rjtech.admin.inventory;
 
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.model.JboltFile;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.config.ExtendUploadFolder;
@@ -12,29 +17,21 @@ import cn.rjtech.admin.inventoryplan.InventoryPlanService;
 import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
 import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
 import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import com.jfinal.plugin.activerecord.Page;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.Inventory;
-import net.sf.cglib.asm.$ClassTooLargeException;
 
 /**
  * 物料建模-存货档案
@@ -152,6 +149,7 @@ public class InventoryAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		inventory = service.setIItemAttributes(inventory);
 		set("inventory",inventory);
 		InventoryStockConfig inventorystockconfig = inventoryStockConfigService.findFirst(Okv.by("iInventoryId", inventory.getIAutoId()), "iAutoId", "DESC");
 		set("inventorystockconfig",inventorystockconfig);
@@ -161,6 +159,11 @@ public class InventoryAdminController extends BaseAdminController {
 		set("inventoryplan",inventoryplan);
 		InventoryMfgInfo inventoryMfgInfo = inventoryMfgInfoService.findFirst(Okv.by("iInventoryId", inventory.getIAutoId()), "iAutoId", "DESC");
 		set("inventorymfginfo",inventoryMfgInfo);
+		InventoryRouting inventoryRouting = inventoryRoutingService.getCurrentRouting(inventory.getIAutoId());
+		if(inventoryRouting != null){
+			set("iinventoryroutingid",inventoryRouting.getIAutoId());
+			set("iitemroutingname",inventoryRouting.getCRoutingName());
+		}
 		render("edit.html");
 	}
 

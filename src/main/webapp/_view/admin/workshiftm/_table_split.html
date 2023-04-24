@@ -20,7 +20,7 @@
                 <!-- 工具条 toolbar -->
                 <div class="jbolt_table_toolbar" id="workshiftd_split_toolbar_#(pageId)">
 
-                    <div class="btn-group" role="group" aria-label="btn-group">
+                    <div class="" role="group" aria-label="btn-group">
                         <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
                         <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
                         <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
@@ -101,6 +101,7 @@
                         var iminute = 0;
                         var dstarttime = "2022-11-01";
                         var dendtime = "2022-11-01";
+                        var dendtime2 = "2022-11-02";
                         if(dstarttime==null || dstarttime.trim()=='' || dendtime==null || dendtime.trim()==''){
                             LayerMsgBox.alert("选择出勤时间",2);
                             return;
@@ -108,7 +109,12 @@
                         if(trJsonData.dstarttime!=null && trJsonData.dendtime!=null){
                             var stime = new Date(dstarttime+" "+trJsonData.dstarttime+":00");
                             var etime = new Date(dendtime+" "+trJsonData.dendtime+":00");
-                            iminute = parseInt((Math.abs(etime.getTime() - stime.getTime())) / (1000 * 60));
+                            if(etime > stime){
+                                iminute = parseInt((Math.abs(etime.getTime() - stime.getTime())) / (1000 * 60));
+                            }else {
+                                etime = new Date(dendtime2+" "+trJsonData.dendtime+":00");
+                                iminute = parseInt((Math.abs(etime.getTime() - stime.getTime())) / (1000 * 60));
+                            }
                         }
                         jboltTableSetCell(table, td.parent(), "iminute", iminute, iminute)
                         judgeTime(table.tableListDatas)
@@ -123,6 +129,7 @@
                         var iminute = 0;
                         var dstarttime = "2022-11-01";
                         var dendtime = "2022-11-01";
+                        var dendtime2 = "2022-11-02";
                         if(dstarttime==null || dstarttime.trim()=='' || dendtime==null || dendtime.trim()==''){
                             LayerMsgBox.alert("选择出勤时间",2);
                             return;
@@ -130,7 +137,12 @@
                         if(trJsonData.dstarttime!=null && trJsonData.dendtime!=null){
                             var stime = new Date(dstarttime+" "+trJsonData.dstarttime+":00");
                             var etime = new Date(dendtime+" "+trJsonData.dendtime+":00");
-                            iminute = parseInt((Math.abs(etime.getTime() - stime.getTime())) / (1000 * 60));
+                            if(etime > stime){
+                                iminute = parseInt((Math.abs(etime.getTime() - stime.getTime())) / (1000 * 60));
+                            }else {
+                                etime = new Date(dendtime2+" "+trJsonData.dendtime+":00");
+                                iminute = parseInt((Math.abs(etime.getTime() - stime.getTime())) / (1000 * 60));
+                            }
                         }
                         jboltTableSetCell(table, td.parent(), "iminute", iminute, iminute)
                         //判断出勤结束时间
@@ -155,6 +167,8 @@
         endTime = list[0].dendtime;
         var dstarttime = "2022-11-01";
         var dendtime = "2022-11-01";
+        var dendtime2 = "2022-11-02";
+        var transsky = false;
         if(list.length < 2){
             setTime(startTime,endTime);
             return;
@@ -165,7 +179,10 @@
         for(var i = 1; i< list.length; i++){
             var istime = new Date(dstarttime+" "+list[i].dstarttime+":00").getTime()
             var ietime = new Date(dendtime+" "+list[i].dendtime+":00").getTime()
-
+            if(ietime < istime){
+                var ietime = new Date(dendtime2+" "+list[i].dendtime+":00").getTime()
+                transsky = true
+            }
             if(istime < stime){
                 stime = istime;
                 startTime = list[i].dstarttime
@@ -175,11 +192,24 @@
                 endTime = list[i].dendtime
             }
         }
-        setTime(startTime,endTime);
+
+        setTime(startTime,endTime,transsky);
     }
 
-    function setTime(start,end) {
+    function setTime(start,end,transsky) {
         document.getElementById("dstarttime").value = start;
         document.getElementById("dendtime").value = end;
+        $("#transsky").html(transsky?"次日":"")
     }
+
+    $(
+        function () {
+            console.log("测试")
+            var dstarttime = "2022-11-01";
+            var dendtime = "2022-11-01";
+            var stime = new Date(dstarttime+" "+$("#dstarttime").val()+":00").getTime();
+            var etime = new Date(dendtime+" "+$("#dendtime").val()+":00").getTime();
+            $("#transsky").html(stime>etime?"次日":"")
+        }
+    )
 </script>

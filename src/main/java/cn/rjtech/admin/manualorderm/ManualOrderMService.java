@@ -1,23 +1,32 @@
 package cn.rjtech.admin.manualorderm;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
+import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.manualorderd.ManualOrderDService;
-import cn.rjtech.model.momdata.ManualOrderD;
+import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
+import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.ManualOrderM;
-import com.jfinal.plugin.activerecord.Record;
 
 import static cn.jbolt.core.util.JBoltArrayUtil.COMMA;
 
@@ -32,6 +41,15 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 
 	@Inject
 	private ManualOrderDService manualOrderDService;
+	@Inject
+	private StockoutQcFormMService stockoutQcFormMService;
+	@Inject
+	private InventoryService inventoryService;
+	@Inject
+	private InventoryQcFormService inventoryQcFormService;
+
+    @Inject
+    private CusOrderSumService cusOrderSumService;
 
 	@Override
 	protected ManualOrderM dao() {
@@ -141,6 +159,12 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 		return null;
 	}
 
+	/**
+	 * 保存
+	 * @param manualOrderM
+	 * @param jBoltTable
+	 * @return
+	 */
 	public Ret saveForm(ManualOrderM manualOrderM, JBoltTable jBoltTable) {
 		AtomicReference<Ret> res = new AtomicReference<>();
 		res.set(SUCCESS);
@@ -180,4 +204,154 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 	public void deleteMultiByIds(Object[] deletes) {
 		delete("DELETE FROM Co_ManualOrderD WHERE iAutoId IN (" + ArrayUtil.join(deletes, COMMA) + ") ");
 	}
+
+	/**
+	 * 批量生成
+	 * @param kv
+	 * @param status
+	 * @param conformtos
+	 * @return
+	 */
+	public Ret batchHandle(Kv kv,int status,int[] conformtos) {
+		List<Record> records = getDatasByIds(kv);
+		if(records != null && records.size() > 0){
+			for (Record record : records) {
+				if(conformtos.length > 0){
+					boolean conformto = false;
+					for (int exception : conformtos) {
+						if(exception == record.getInt("iorderstatus")){
+							conformto = true;
+						}
+					}
+					if(!conformto)
+						return fail(new StringBuilder("订单(").append(record.getStr("corderno")).append(")不能进行该操作!").toString());
+				}
+				record.set("iorderstatus",status);
+				if(status == 3){
+					record.set("iauditstatus",2);
+					//自动生成出货质检任务
+					Ret stockoutQcFormM = createStockoutQcFormM(record.getLong("icustomerid"), record.getLong("iautoid"));
+					if(stockoutQcFormM.isFail())
+						return stockoutQcFormM;
+				}
+				updateRecord(record);
+			}
+			//batchUpdateRecords(records);
+		}
+		return SUCCESS;
+	}
+
+	/**
+	 * 生成出货检
+	 * @param icustomerid
+	 */
+	public Ret createStockoutQcFormM(Long icustomerid,Long iautoid){
+		try {
+			//判断是否有外购品
+			List<ManualOrderD> manualOrderDS = manualOrderDService.find(manualOrderDService.selectSql().eq("iManualOrderMid", iautoid));
+			if (manualOrderDS != null && manualOrderDS.size() > 0) {
+				StringBuffer ids = new StringBuffer();
+				for (ManualOrderD manualOrderD : manualOrderDS) {
+					ids.append(manualOrderD.getIInventoryId()).append(",");
+				}
+				List<Inventory> inventories = inventoryService.getListByIds(ids.length() > 1 ? ids.substring(0, ids.length() - 1) : "");
+				if (inventories != null && inventories.size() > 0) {
+					List<StockoutQcFormM> stockoutQcFormMS = new ArrayList<>();
+
+					for (Inventory inventory : inventories) {
+						if (inventory.getBPurchase()) {
+							Sql sql = Sql.me(this.dbType()).select(" q.* ").from("Bd_InventoryQcForm", "q")
+									.innerJoin("Bd_InventoryQcFormType", " qt ", " q.iAutoId = qt.iInventoryQcFormId and qt.iType = 3 ")
+									.eq("iInventoryId", inventory.getIAutoId());
+
+							InventoryQcForm inventoryQcForm = inventoryQcFormService.findFirst(sql);
+							StockoutQcFormM stockoutQcFormM = new StockoutQcFormM();
+							stockoutQcFormM.setIInventoryId(inventory.getIAutoId());
+							stockoutQcFormM.setICustomerId(icustomerid);
+							stockoutQcFormM.setIQcFormId(inventoryQcForm.getIAutoId());
+
+							Date date = new Date();
+							String format = new SimpleDateFormat("yyyy-mm-dd").format(date);
+							for (ManualOrderD manualOrderD : manualOrderDS) {
+								if (manualOrderD.getIInventoryId().longValue() == stockoutQcFormM.getIInventoryId().longValue()) {
+									String dd = new SimpleDateFormat("dd").format(date);
+									int idd = Integer.parseInt(dd);
+									Method[] m = manualOrderD.getClass().getMethods();
+									for (int i = 0; i < m.length; i++) {
+										if (("getiqty" + idd).toLowerCase().equals(m[i].getName().toLowerCase())) {
+											try {
+												BigDecimal invoke = (BigDecimal) m[i].invoke(manualOrderD);
+												stockoutQcFormM.setIQty(invoke);
+											} catch (Exception e) {
+												continue;
+											}
+										}
+									}
+									break;
+								}
+							}
+							stockoutQcFormM.setCStockoutQcFormNo(format);
+							stockoutQcFormM.setCBatchNo(format);
+							stockoutQcFormM.setIStatus(0);
+							stockoutQcFormM.setIsCompleted(false);
+							stockoutQcFormM.setIOrgId(getOrgId());
+							stockoutQcFormM.setCOrgCode(getOrgCode());
+							stockoutQcFormM.setCOrgName(getOrgName());
+							stockoutQcFormM.setIsCpkSigned(false);
+							Long userId = JBoltUserKit.getUserId();
+							stockoutQcFormM.setICreateBy(userId);
+							stockoutQcFormM.setIUpdateBy(userId);
+							String userName = JBoltUserKit.getUserName();
+							stockoutQcFormM.setCCreateName(userName);
+							stockoutQcFormM.setCUpdateName(userName);
+							stockoutQcFormM.setDCreateTime(date);
+							stockoutQcFormM.setDUpdateTime(date);
+							stockoutQcFormMService.save(stockoutQcFormM);
+						}
+					}
+				}
+			}
+		}catch (Exception e){
+			return fail("生成出货质检任务失败!");
+		}
+		return SUCCESS;
+	}
+
+	public Ret batchDetect(Kv kv) {
+		List<Record> records = getDatasByIds(kv);
+		if(records != null && records.size() > 0){
+			for (Record record : records) {
+				Integer iorderstatus = record.getInt("iorderstatus");
+				if(iorderstatus != 1 && iorderstatus != 4)
+					return fail(new StringBuilder("订单(").append(record.getStr("corderno")).append(")不能删除!").toString());
+
+				record.set("isdeleted",1);
+				updateRecord(record);
+			}
+			//batchUpdateRecords(records);
+		}
+		return SUCCESS;
+	}
+
+	public List<Record> getDatasByIds(Kv kv){
+		String ids = kv.getStr("ids");
+		if (ids != null) {
+			String[] split = ids.split(",");
+			String sqlids = "";
+			for (String id : split) {
+				sqlids += "'" + id + "',";
+			}
+			ValidationUtils.isTrue(sqlids.length() > 0, "请至少选择一条数据!");
+			sqlids = sqlids.substring(0, sqlids.length() - 1);
+			kv.set("sqlids", sqlids);
+		}
+		return dbTemplate("manualorderm.getDatasByIds", kv).find();
+	}
+
+    public void handleCusOrderByManual(ManualOrderM manualOrderM) {
+        List<ManualOrderD> manualOrderDS = manualOrderDService.findByMid(manualOrderM);
+        if (manualOrderDS.size() > 0) {
+            cusOrderSumService.handelManualOrder(manualOrderM, manualOrderDS);
+        }
+    }
 }

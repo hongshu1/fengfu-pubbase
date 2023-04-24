@@ -6,7 +6,7 @@
     <div class="row">
 <!--      <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>质量建模-检验项目（分类）</h1></div>-->
       <div class="col">
-        <form class="form-inline" id="QcItem_form_#(pageId)" onsubmit="return false;" method="post" style="left: 30px;text-align: left">
+        <form class="form-inline text-left" id="QcItem_form_#(pageId)" onsubmit="return false;" method="post" style="left: 30px;text-align: left">
           <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=输入检验项目编码搜索="
                  maxlength="50" name="cqcitemcode" value="#(cqcitemcode??)"/>
           <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=输入检验项目名称搜索="
@@ -28,7 +28,7 @@
 <td>${data.corgcode}</td>
 <td>${data.corgname}</td>
 <td>${data.cqcitemcode}</td>
-<td>${data.cqcitemname}</td>
+<td title="${data.cqcitemname}">${data.cqcitemname}</td>
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
 </tr>

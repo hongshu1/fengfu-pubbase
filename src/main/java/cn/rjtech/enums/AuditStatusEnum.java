@@ -12,9 +12,10 @@ public enum AuditStatusEnum {
     /**
      * 枚举列表
      */
-    AWAIT_AUDIT("待审核", 0),
-    APPROVED("同意", 1),
-    REJECTED("不同意", 2);
+    NOT_AUDIT("未审核", 0),
+    AWAIT_AUDIT("待审核", 1),
+    APPROVED("审核通过", 2),
+    REJECTED("审核不通过", 3);
 
     private static final Map<Integer, AuditStatusEnum> AUDIT_STATUS_ENUM_MAP = new HashMap<>();
 

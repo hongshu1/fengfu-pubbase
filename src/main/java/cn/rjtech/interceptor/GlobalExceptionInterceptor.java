@@ -161,6 +161,8 @@ public class GlobalExceptionInterceptor implements Interceptor {
 
         e.printStackTrace();
 
+        ExceptionEventUtil.postExceptionEvent(e);
+
         // 使用JBolt内置错误处理适配
         JBoltControllerKit.renderFail(controller, StrUtil.blankToDefault(msg, JBoltMsg.FAIL));
     }

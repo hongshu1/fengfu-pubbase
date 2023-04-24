@@ -8,7 +8,7 @@
 	<span> #(pageData.totalRow?? 0) 条记录</span>
 	</div>
 	<div class="col">
-		<form class="form-inline" id="adminUserForm" action="admin/user" data-pjaxsubmit  method="get">
+		<form class="form-inline text-left" id="adminUserForm" action="admin/user" data-pjaxsubmit  method="get">
 		<input type="text" autocomplete="off"  class="form-control" placeholder="输入关键字搜索" name="keywords" value="#(keywords??)" />
 		<button type="submit" class="btn btn-outline-secondary catdata_table_searchbtn" ><i class="fa fa-search"></i> 查询</button>
 		</form>
@@ -40,8 +40,8 @@ data-fixed-columns-right="9,10"
 <td>
 #setLocal(userRoles=JBoltRoleCache.getRoles(data.roles))
 #for(role:userRoles)
-<span class="badge badge-info d-block my-1">#(role.name??)</span>
-#else
+	<span class="badge badge-info d-block my-1">#(role.name??)</span>
+	#else
 <span class="badge badge-default">未设置</span>
 #end
 

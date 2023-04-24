@@ -1,5 +1,9 @@
 package cn.jbolt._admin.msgcenter;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +13,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.main.MessageUser;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 消息模板 Service
  * @ClassName: MessageUserService
@@ -34,7 +42,50 @@ public class MessageUserService extends BaseService<MessageUser> {
 	public Page<MessageUser> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
 		return paginateByKeywords("id","DESC", pageNumber, pageSize, keywords, "del_flag");
 	}
-
+	/**
+	 *	保存可编辑表格的新增行
+	 * @param jBoltTable
+	 * @param iPersonId
+	 * */
+	public void addSubmitTableDatas(JBoltTable jBoltTable, Long iPersonId) {
+		List<Record> list = jBoltTable.getSaveRecordList();
+		if(CollUtil.isEmpty(list)) return;
+		for (Record row : list) {
+			MessageUser messageUser = new MessageUser();
+			Long userId = row.getLong("userid");
+			messageUser.setMessageId(iPersonId);
+			messageUser.setUserId(userId);
+			messageUser.setDelFag(false);
+			ValidationUtils.isTrue(messageUser.save(), JBoltMsg.FAIL);
+		}
+	}
+	/**
+	 *	保存可编辑表格的修改行
+	 * @param jBoltTable
+	 * */
+	public void updateSubmitTableDatas(JBoltTable jBoltTable) {
+		List<Record> list = jBoltTable.getUpdateRecordList();
+		if(CollUtil.isEmpty(list)) return;
+		for (Record row : list) {
+			MessageUser messageUser = findById(row.getLong("id"));
+			Long userId = row.getLong("userId");
+			messageUser.setUserId(userId);
+			ValidationUtils.isTrue(messageUser.update(), JBoltMsg.FAIL);
+		}
+	}
+	/**
+	 *	保存可编辑表格的删除行
+	 * @param jBoltTable
+	 * */
+	public void deleteSubmitTableDatas(JBoltTable jBoltTable) {
+		Object[] ids = jBoltTable.getDelete();
+		if(ArrayUtil.isEmpty(ids)) return;
+		for (Object id : ids) {
+			MessageUser messageUser = findById(id);
+			messageUser.setDelFag(true);
+			ValidationUtils.isTrue(messageUser.update(), JBoltMsg.FAIL);
+		}
+	}
 	/**
 	 * 保存
 	 * @param messageUser
@@ -87,7 +138,7 @@ public class MessageUserService extends BaseService<MessageUser> {
 	}
 
 	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType 
+	 * 设置返回二开业务所属的关键systemLog的targetType
 	 * @return
 	 */
 	@Override

@@ -2,53 +2,53 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_content">
-	<div class="row">
-		<div class="col-auto mb-3" style="width:30%;">
-			<div class="card">
-				<div class="card-header py-2">
-						<span class="d-inline-block py-1">母件物料清单
-							<!-- <button  onclick="tPageFn()"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-refresh"></i>同步U9</button>-->
-						</span>
-					<div class="pull-right">
-						<form id="bomMaster_1_#(pageId)">
-							<input type="hidden" name="enableIcon"
-								   value="
-								  <a tooltip='' data-title='查看' data-dialogbtn='' data-area='90%,90%' href='admin/bommaster/info/?'> <i class='fa fa-eye c-info' style='position: absolute;left: 380px;'></i></a>
-								  <a tooltip='' data-title='编辑' data-dialogbtn='' data-area='90%,90%' href='admin/bommaster/edit/?' ><i class='fa fa-edit c-primary' style='position: absolute;left: 410px;'></i></a>
-								  <a tooltip='' data-title='复制版本提示' data-dialogbtn='' data-area='400,300' href='admin/bommaster/copyForm/?' ><i class='fa fa-copy c-warning' style='position: absolute;left: 435px;'></i></a>
-								  <a tooltip='' data-ajaxbtn href='admin/bommaster/ajaxSuccess' data-confirm='确定要执行此操作？'><i class='fa fa-trash c-danger'  style='position: absolute;left: 460px;'></i></a>
-">
-
-						<input type="text" class="form-control"  id="searchBackGoodsTypeInput_#(pageId)"
-							   placeholder="输入关键字过滤" name="keyWords"/>
-                        </form>
-					</div>
-				</div>
-				<div class="card-body overflow-auto" style="width:600px;height: 80%">
-					<div data-jstree
-						 data-open-level="-1"
-						 data-async="true"
-						 data-change-handler="bommaster_jstree_#(pageId)"
-						 data-conditions-form="bomMaster_1_#(pageId)"
-						 data-read-url="admin/bommaster/getDatas">
-					</div>
-				</div>
-
+	#setLocal(jboltTabId=(goods.id?? RandomUtil.random(6)))
+	<nav>
+		<div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
+			<a class="nav-item nav-link active" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" onclick="refreshPjaxContainer()" aria-controls="tab-one" aria-selected="true">物料清单</a>
+			<a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" onclick="refreshJBoltTable()" aria-controls="tab-two" aria-selected="false">版本记录</a>
+		</div>
+	</nav>
+	<div class="tab-content" style="padding: 0px 1rem">
+			<!--1 物料清单 -->
+			<div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="nav-base-tab_one">
+				#render("bommaster_index.html")
+			</div>
+			<!--2 版本记录 -->
+			<div class="tab-pane fade" id="tab-two" role="tabpanel" aria-labelledby="nav-base-tab_two">
+				#ajaxPortal("/admin/bommaster/versionIndex","bommaster_jstree_#(pageId)",true)
 			</div>
 		</div>
-		<div class="col-auto" style="width:70%;">
-			#ajaxPortal("/admin/bomcompare/index","customerBackCategoryPortal_#(pageId)",true)
-		</div>
-	</div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
-	function bommaster_jstree_#(pageId)(tree, data){
-	    debugger;
-        $("#bomCompare_pid").val(data.id);
-        $("#bomCompare_submit").click();
+
+	initTreehandler('');
+
+	function bommaster_jstree(tree, data){
+		$("#bomCompare_pid").val(data.id);
+		$("#bomCompare_submit").click();
+	}
+	function initTreehandler(item) {
+		var treeHtmlStr ="<div " +
+				"					data-jstree" +
+				"                     data-open-level='-1'" +
+				"					  data-curd='false' " +
+				"                     data-async='true'" +
+				"                     data-search-input='searchBackGoodsTypeInput_2'" +
+				"                     data-change-handler='bommaster_jstree'" +
+				"                     data-conditions-form='bomMaster_1_'" +
+				"                     data-read-url='admin/bommaster/getDatas?item='+item>";
+
+		$("#bommasterBackCategoryTree").html(treeHtmlStr);
+		JSTreeUtil.init($("#bommasterBackCategoryTree"));
+	}
+
+	function keyWordsOnChange() {
+		var item = $("#searchBackGoodsTypeInput_2").val()
+		initTreehandler(item);
 	}
 </script>
 #end

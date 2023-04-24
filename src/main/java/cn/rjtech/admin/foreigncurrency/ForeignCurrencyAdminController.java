@@ -18,7 +18,7 @@ import cn.jbolt.core.base.JBoltMsg;
  * @author: WYX
  * @date: 2023-03-20 21:09
  */
-@CheckPermission(PermissionKey.FORGEIGN_CURRENCY_INDEX)
+@CheckPermission(PermissionKey.FOREIGN_CURRENCY_INDEX)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/foreigncurrency", viewPath = "/_view/admin/foreigncurrency")

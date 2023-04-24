@@ -36,7 +36,6 @@
 #include("customer/customer.sql")
 #end
 
-
 #namespace("workclass")
 #include("workclass/workclass.sql")
 #end
@@ -109,11 +108,9 @@
 #include("settlestyle/settlestyle.sql")
 #end
 
-
 #namespace("department")
 #include("department/department.sql")
 #end
-
 
 #namespace("equipment_model")
 #include("equipmentmodel/equipment_model.sql")
@@ -121,6 +118,10 @@
 
 #namespace("uom")
 #include("uom/uom.sql")
+#end
+
+#namespace("inventory")
+#include("inventory/inventory.sql")
 #end
 
 #namespace("inventoryclass")
@@ -244,12 +245,36 @@
 #include("bommaster/bommaster.sql")
 #end
 
+#namespace("rcvdocqcformm")
+#include("rcvdocqcformm/rcvdocqcformm.sql")
+#end
+
+#namespace("bomcompare")
+#include("bomcompare/bomcompare.sql")
+#end
+
 #namespace("manualorderm")
 #include("manualorderm/manualorderm.sql")
 #end
 
 #namespace("containerStockInD")
 #include("containerStockInD/containerStockD.sql")
+#end
+
+#namespace("weekorderm")
+#include("weekorderm/weekorderm.sql")
+#end
+
+#namespace("weekorderd")
+#include("weekorderd/weekorderd.sql")
+#end
+
+#namespace("qcformparam")
+#include("qcformparam/qcformparam.sql")
+#end
+
+#namespace("qcformtableparam")
+#include("qcformtableparam/qcformtableparam.sql")
 #end
 
 #namespace("subcontractsaleorderm")
@@ -260,13 +285,57 @@
 #include("subcontractsaleorderd/subcontractsaleorderd.sql")
 #end
 
-
-#namespace("qcformparam")
-#include("qcformparam/qcformparam.sql")
+#namespace("routing")
+#include("routing/routing.sql")
 #end
 
-#namespace("qcformtableparam")
-#include("qcformtableparam/qcformtableparam.sql")
+
+#namespace("RcvDocDefect")
+#include("RcvDocDefect/RcvDocDefect.sql")
+#end
+
+#namespace("ProcessDefect")
+#include("ProcessDefect/ProcessDefect.sql")
+#end
+
+#namespace("stockoutqcformm")
+#include("stockoutqcformm/stockoutqcformm.sql")
+#end
+
+#namespace("demandplanm")
+#include("demandplanm/demandplanm.sql")
+#end
+
+#namespace("cusordersum")
+#include("cusordersum/cusordersum.sql")
+#end
+
+#namespace("demandpland")
+#include("demandpland/demandpland.sql")
+#end
+
+#namespace("purchaseorderm")
+#include("purchaseorderm/purchaseorderm.sql")
+#end
+
+#namespace("purchaseorderref")
+#include("purchaseorderref/purchaseorderref.sql")
+#end
+
+#namespace("purchaseorderdbatch")
+#include("purchaseorderdbatch/purchaseorderdbatch.sql")
+#end
+
+#namespace("purchaseorderdbatchversion")
+#include("purchaseorderdbatchversion/purchaseorderdbatchversion.sql")
+#end
+
+#namespace("purchaseorderdqty")
+#include("purchaseorderdqty/purchaseorderdqty.sql")
+#end
+
+#namespace("purchaseorderd")
+#include("purchaseorderd/purchaseorderd.sql")
 #end
 
 

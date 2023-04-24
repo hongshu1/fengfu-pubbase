@@ -6,7 +6,7 @@
 <div class="row">
 	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>设备管理-设备档案</h1></div>
 	<div class="col">
-	<form class="form-inline" id="Equipment_form_#(pageId)">
+	<form class="form-inline text-left" id="Equipment_form_#(pageId)">
 <input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入设备编码" maxlength="40" name="cequipmentcode" />
 <input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入设备名称" maxlength="40" name="cequipmentname" />
 
@@ -25,7 +25,7 @@
 	</form>
 	</div>
 	<div class="col-sm-auto text-right">
-	
+
 	</div>
 </div>
 </div>
@@ -75,6 +75,7 @@
 	   data-width="fill"
 	   data-height="fill"
 	   data-ajax="true"
+	   data-column-resize="true"
 	   data-column-prepend="1:checkbox:true"
 	   data-conditions-form="Equipment_form_#(pageId)"
 	   data-url="admin/equipment/datas"

@@ -233,4 +233,8 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 	public List<Record> options() {
 		return dbTemplate("equipment_model.selectEquipmentModels").find();
 	}
+	
+	public EquipmentModel findByName(String equipmentModelName){
+		return findFirst("select * from Bd_EquipmentModel where isDeleted = 0 and cequipmentmodelname = ?", equipmentModelName);
+	}
 }

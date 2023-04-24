@@ -1,0 +1,181 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        <button onclick="approve()" id="approve_By_Edit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-trash"></i> 审批</button>
+                        <button onclick="noApprove()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 反审批</button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-download"></i> 数据导出</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <row ><div class="col-sm-auto"><h7>订单信息：</h7></div></row>
+                <div class="card-body">
+                    <form onsubmit="return false;" id="WeekOrderM_Form" action="#(action)" method="post">
+                        #if(weekOrderM.iAutoId??)
+                        <input type="hidden" name="weekOrderM.iAutoId" value="#(weekOrderM.iautoid??)" />
+                        #end
+
+                        <div class="row">
+                            <div class="col-md">
+                                <div class="form-group row">
+                                    <label class="col-sm col-form-label">订单号:</label>
+                                    <label class=" col-form-label">#(weekOrderM.corderno??)</label>
+                                    <label class="col-sm col-form-label">客户名称:</label>
+                                    <label class=" col-form-label">#(weekOrderM.ccusname??)</label>
+                                    <label class="col-sm col-form-label">订单状态:</label>
+                                    <label class=" col-form-label">#(weekOrderM.iOrderStatus??)</label>
+                                    <label class=" col-sm col-form-label">创建人:</label>
+                                    <label class=" col-form-label">#(weekOrderM.ccreatename??)</label>
+                                    <label class="col-sm col-form-label">创建时间:</label>
+                                    <label class=" col-form-label">#(weekOrderM.dcreatetime??)</label>
+                                </div>
+                            </div>
+                           <!-- <div class="col-md">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">创建时间:</label>
+                                    <label class=" col-form-label">#(mark??)</label>
+                                </div>
+                            </div>-->
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jbolt_page_content">
+    <script type="text/template" id="jboltTable_demotpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.icustomeraddrid}</td>
+            <td>${data.cplancode}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.cinvstd}</td>
+
+            <td>${data.iqty}</td>
+            <td>${data.isalesuomid}</td>
+
+            <td>${data.dplanaogdate}</td>
+            <td>${data.ccode}</td>
+            <td>${data.cversion}</td>
+            <td>${data.cmemo}</td>
+        </tr>
+        {@/each}
+    </script>
+
+    <div class="jbolt_table_toolbar" >
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <form class="form-inline" id="WeekOrder_form_#(pageId)">
+                <div class="input-group d-inline-block text-nowrap">
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=订单号=" name="cOrderNo" value="" />
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=客户部番=" name="cinvcode1" value="" />
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=部品名称=" name="cinvname1" value="" />
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=传票号码=" name="cCode" value="" />
+                    <div class="input-group-prepend">
+                        <input type="text" data-date class="form-control" placeholder="=开始日期="   maxlength="20" name="startTime" value="">
+                        <!--				value="#date((startTime?? DateUtil.getNow()),'yyyy-MM-dd')"-->
+                    </div>
+                    <div class="input-group-append">
+                        <span class="input-group-text">至</span>
+                    </div>
+                    <div class="input-group-append">
+                        <input type="text" data-date class="form-control rounded-left-0"   placeholder="=截止日期="   maxlength="20" name="endTime" value="">
+                    </div>
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+            </form>
+        </div>
+    </div>
+    <table class="jbolt_table thead_font_normal table-bordered table-center"
+           data-jbolttable
+           #if(weekOrderM.iAutoId??)
+           data-ajax="true"
+           data-url="admin/weekorderd/datas?iWeekOrderMid=#(weekOrderM.iAutoId??)"
+           #end
+           id="jbolt_Table_#(pageId)"
+           data-conditions-form="WeekOrder_form_#(pageId)"
+           data-column-resize="true"
+           data-tfoot-fixed="true"
+           data-rowtpl="jboltTable_demotpl_#(pageId)"
+           data-toolbar="WeekOrderM_toolbar_#(pageId)"
+           data-fixed-columns-left="1,2,3"
+    >
+        <thead class="fw_normal">
+        <tr>
+            <th data-width="60" data-column="index">序号</th>
+            <th data-width="100" data-column="iCustomerAddrId">收货地点ID</th>
+            <th data-width="100" data-column="cPlanCode">计划代码</th>
+            <th data-width="100" data-column="iInventoryId">存货编码</th>
+            <th data-width="100" data-column="cDefine1">客户部署</th>
+            <th data-width="100" data-column="cDefine2">部品名称</th>
+            <th data-width="100" data-column="cDefine3">规格</th>
+
+
+            <th data-width="100" data-column="iQty">数量</th>
+            <th data-width="100" data-column="cDefine4">销售单位</th>
+
+            <th data-min-width="160" data-column="dPlanAogDate">计划到货日期</th>
+            <th data-width="100" data-column="cCode">传票号</th>
+            <th data-width="150" data-column="cVersion">版本号</th>
+            <th data-width="150" data-column="cMemo">备注</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+    </div>
+</div>
+<script>
+    // hideAllParentLayerDialogBtn();
+
+    function closeHandler(){
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+    //审批
+    function approve() {
+        Ajax.get('/admin/weekorderm/approve?iAutoId='+$("input[name='weekOrderM.iAutoId']").val()+"&&mark="+2 , function (ret) {
+            if (ret.state === 'ok') {
+                // 刷新
+                parent.refreshPjaxContainer();
+                // 关闭
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
+            } else {
+                LayerMsgBox.success();
+            }
+        });
+    }
+
+    //反审批
+    function noApprove() {
+        Ajax.get('/admin/weekorderm/NoApprove?ids='+$("input[name='weekOrderM.iAutoId']").val(), function (ret) {
+            if (ret.state === 'ok') {
+                // 刷新
+                parent.refreshPjaxContainer();
+                // 关闭
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
+            } else {
+                LayerMsgBox.success();
+            }
+        });
+    }
+
+</script>
+#end

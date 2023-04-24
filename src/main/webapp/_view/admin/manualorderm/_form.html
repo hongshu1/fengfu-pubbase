@@ -66,10 +66,12 @@
         addParentLayerDialogBtn("保存", "lay_success", function () {
             $("#iOrderStatus").val(1)
             jboltTableSubmit("#manualorderd_#(pageId)");
+            parent.refreshPjaxContainer();
         });
         addParentLayerDialogBtn("提交审批", "lay_success", function () {
             $("#iOrderStatus").val(2)
             jboltTableSubmit("#manualorderd_#(pageId)");
+            parent.refreshPjaxContainer();
         });
     }
     #end

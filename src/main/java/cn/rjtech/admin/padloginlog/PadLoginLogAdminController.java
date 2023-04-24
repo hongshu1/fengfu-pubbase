@@ -23,7 +23,7 @@ import java.util.Date;
  * @date: 2023-04-10 10:35
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.PADLOGINLOG)
+@CheckPermission(PermissionKey.PAD_LOGINLOG)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/padloginlog", viewPath = "/_view/admin/padloginlog")
 public class PadLoginLogAdminController extends BaseAdminController {

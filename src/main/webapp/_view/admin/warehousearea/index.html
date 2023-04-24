@@ -1,7 +1,7 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page" data-key="#(pmkey)" data-require-plugin="hiprint">
 
 <div class="jbolt_page_title">
 	<div class="row">
@@ -9,9 +9,22 @@
 <!--	<h1>库区档案</h1>-->
 <!--	</div>-->
 	<div class="col">
-		<form class="form-inline" id="warehouseAreaForm_#(pageId)"   onsubmit="return false;" method="post">
+		<form class="form-inline text-left" id="warehouseAreaForm_#(pageId)"   onsubmit="return false;" method="post">
 			<input type="text" autocomplete="off"  class="form-control"  placeholder="=库区编码=" name="careacode" value="" />
 			<input type="text" autocomplete="off"  class="form-control"  placeholder="=库区名称=" name="careaname" value="" />
+			<select class="form-control"
+					data-autoload
+					name="iwarehouseid"
+					data-select-type="select2"
+					data-tips="所属仓库"
+					data-url="admin/warehouse/list?isDeleted=0"
+					data-text="=所属仓库="
+					data-value=""
+					data-text-attr="cwhcode,cwhname"
+					data-value-attr="iautoid"
+					data-select=""
+			>
+			</select>
 			<select class="form-control"
 					data-autoload
 					data-url="admin/enums/boolchar"
@@ -53,7 +66,8 @@
 
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="warehouseArea_toolbar_#(pageId)">
-	<div class="btn-group" role="group" aria-label="btn-group">
+	<row class="btn-group">
+	<div class="col-sm-auto" role="group" aria-label="btn-group">
 		#permission(PermissionKey.WAREHOUSE_AREA_ADD)
 		<button data-openpage="dialog" data-area="600,450"  data-handler="jboltTablePageToFirst" data-title="新增库区档案"  data-url="admin/warehousearea/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		#end
@@ -64,18 +78,17 @@
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/warehousearea/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
 		#end
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
-	</div>
+
 
 	#permission(PermissionKey.WAREHOUSE_AREA_EXPORT)
-	<div class="btn-group" role="group" aria-label="btn-group">
 		<div class="btn-group dropdown">
 			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuwarehouseareaButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
 			<div class="dropdown-menu" aria-labelledby="exportMenuwarehouseareaButton">
 				<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/warehousearea/dataExport"><i class="fa fa-download"></i> 导出选中</button>
 				<button class="btn dropdown-item" data-downloadbtn data-url="admin/warehousearea/dataExport"  data-form="warehouseAreaForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
+				<button class="btn dropdown-item" data-downloadbtn data-url="admin/warehousearea/dataExport" ><i class="fa fa-download"></i> 全部导出</button>
 			</div>
 		</div>
-	</div>
 	#end
 
 	#permission(PermissionKey.WAREHOUSE_AREA_IMPORT)
@@ -98,7 +111,7 @@
 	</div>
 	#end
 
-	<div class="btn-group" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+	<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
 		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
 				data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
 		</button>
@@ -111,7 +124,8 @@
 		</div>
 
 	</div>
-
+	</div>
+	</row>
 </div>
 
 
