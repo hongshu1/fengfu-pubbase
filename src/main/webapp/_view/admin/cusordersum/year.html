@@ -9,7 +9,7 @@
             <td rowspan="4">${data.cinvname1}</td>
         </tr>
 
-    <tr>
+        <tr>
             <th>客户计划</th>
             {@each data.record1 as record,index}
                 {@if data.record1.length == 12}
@@ -274,6 +274,7 @@
         </tr>
     {@/each}
 </script>
+
 <div class="jbolt_table_toolbar" id="CusOrderSum_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         <div class="btn-group dropdown ">
@@ -290,7 +291,7 @@
        data-jbolttable
        data-column-resize="true"
        data-ajax="true"
-       data-conditions-form="CusOrderSum_form_#(pageId)"
+       data-conditions-form="CusOrderSum_form"
        data-url="admin/cusordersum/datas"
        data-rowtpl="CusOrderSum_tpl_#(pageId)"
        data-copy-to-excel="false"
