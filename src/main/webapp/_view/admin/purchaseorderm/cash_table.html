@@ -1,0 +1,85 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page_content">
+
+    <textarea class="jb_tpl_box" id="cash_tpl_#(pageId)">
+        {@each datas as data,index}
+            <tr data-id="${data.id}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.cinvcode}</td>
+                <td>${data.cinvcode1}</td>
+                <td>${data.cinvname1}</td>
+                <td>${data.dplandate |date_ymd}</td>
+                <td>${data.cbarcode}</td>
+                <td>${data.cversion}</td>
+                <td>${data.iqty}</td>
+                <td>
+                    修改
+                </td>
+            </tr>
+        {@/each}
+        </textarea>
+    <!-- 定义JBoltTable使用的数据渲染模板 -->
+    <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button class="btn btn-danger btn-sm"> 导出PDF</button>
+        </div>
+    </div>
+
+    <table class="jbolt_table jbolt_main_table  table-center "
+           id="PurchaseOrderM_Table_#(pageId)"
+           data-rowtpl="cash_tpl_#(pageId)"
+           data-jbolttable
+           data-width="fill"
+           data-height="fill"
+           data-copy-to-excel="false"
+           data-column-resize="true"
+           data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
+           data-column-prepend="1:checkbox:true:false:false"
+           data-editable="true"
+           data-editable-option="getEditableTableOptions1_#(pageId)"
+    >
+        <thead>
+        <tr>
+            <th data-width="60"  rowspan="2" data-column="index">序号</th>
+            <th data-width="150" rowspan="2" data-column="cInvCode">存货编码</th>
+            <th data-width="150" rowspan="2" data-column="cInvCode1">客户部番</th>
+            <th data-width="150" rowspan="2" data-column="cInvName1">部品名称</th>
+            <th data-width="150" rowspan="2" data-column="dPlanDate">计划到货日期</th>
+            <th data-width="150" rowspan="2" data-column="cBarcode">现品票</th>
+            <th data-width="100" rowspan="2" data-column="cVersion">版本</th>
+            <th data-width="150" rowspan="2" data-column="iQty">数量</th>
+            <th data-width="200" rowspan="2">操作</th>
+        </tr>
+        <tr>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    function getEditableTableOptions1_#(pageId)(){
+        var editableTableOptions={
+            trigger:"click",
+            //初始行数
+            initRowCount:0,
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols:{
+                id:{
+                    submitAttr:"id",
+                },
+                index:{
+                    submitAttr: "index"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>
+#end

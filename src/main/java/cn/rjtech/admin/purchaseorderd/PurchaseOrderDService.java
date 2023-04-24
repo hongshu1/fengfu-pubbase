@@ -202,7 +202,6 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 					// 转换率，默认为1
 					BigDecimal rate = BigDecimal.ONE;
 					// 判断当前存货是否存在物料转换
-					
 					// 统计数量汇总
 					amount = amount.add(qty.multiply(rate));
 					sourceSum = sourceSum.add(qty);

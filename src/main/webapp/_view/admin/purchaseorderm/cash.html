@@ -1,0 +1,225 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+        <form onsubmit="return false;" id="PurchaseOrderM_Form" action="#(action)" method="post">
+            #if(purchaseOrderM.iAutoId??)
+            <input type="hidden" name="iAutoId" value="#(purchaseOrderM.iautoid??)"/>
+            #end
+            <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dbegindate??)"/>
+            <input type="hidden" name="dEndDate" value="#(purchaseOrderM.denddate??)"/>
+            <div class="row">
+
+                <div class="col">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">业务类型</label>
+                        <div class="col-6">
+                            <select class="form-control" name="iBusType" disabled
+                                    data-autoload
+                                    data-rule="required"
+                                    data-url="admin/dictionary/options?key=purchase_business_type"
+                                    data-select-type="select"
+                                    data-select="#(purchaseOrderM.ibustype??)"
+                                    data-text="==请选择=="
+                                    data-text-attr="iautoid"
+                                    data-value-attr="sn">
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">采购类型</label>
+                        <div class="col-6">
+                            <select class="form-control" name="iPurchaseTypeId" disabled
+                                    data-autoload
+                                    data-rule="required"
+                                    data-url="admin/purchaseorderm/findPurchaseType"
+                                    data-select-type="select"
+                                    data-select="#(purchaseOrderM.ipurchasetypeid??)"
+                                    data-text="==请选择=="
+                                    data-value-attr="iautoid"
+                                    data-text-attr="cptname">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">业务员</label>
+                        <div class="col-6">
+                            <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(purchaseOrderM.idutyuserid??)" />
+                            <input type="text" autocomplete="off" value="#(personname??)" class="form-control" disabled
+                                   placeholder="==请选择人员=="
+                                   data-rule="required"
+                                   data-jboltinput
+                                   data-width="600"
+                                   data-height="450"
+                                   data-refresh="true"
+                                   data-hidden-input="ipersonid_#(pageId)"
+                                   data-load-type="ajaxportal"
+                                   data-url="admin/workregionm/personTable"
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">币种</label>
+                        <div class="col-6">
+                            <select class="form-control" name="cCurrency" disabled
+                                    data-autoload
+                                    data-rule="required"
+                                    data-url="admin/purchaseorderm/findForeignCurrencyAll"
+                                    data-select-type="select"
+                                    data-select="#(purchaseOrderM.ccurrency??)"
+                                    data-text="==请选择=="
+                                    data-value=""
+                                    data-value-attr="cexch_name"
+                                    data-text-attr="cexch_name">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">订单日期</label>
+                        <div class="col-6">
+                            <input type="text" readonly data-notnull="true" autocomplete="off" class="form-control" maxlength="20" name="dOrderDate" disabled
+                                   value="#datetime(purchaseOrderM.dorderdate??,'yyyy-MM-dd')"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">供应商名称</label>
+                        <div class="col-6">
+                            <input hidden type="text"  name="iVendorId" value="#(purchaseOrderM.ivendorid??)">
+                            <input readonly type="text" autocomplete="off" class="form-control" value="#(cVenName??)">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">税率</label>
+                        <div class="col-6">
+                            <input type="text" autocomplete="off" class="form-control"
+                                   placeholder="请输入税率" maxlength="40" name="iTaxRate" data-rule="pnumber" data-notnull="false" disabled
+                                   value="#(purchaseOrderM.itaxrate??)"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">汇率</label>
+                        <div class="col-6">
+                            <input type="text" autocomplete="off" class="form-control" data-rule="pnumber" disabled
+                                   placeholder="请输入汇率" maxlength="40" name="iExchangeRate"
+                                   value="#(purchaseOrderM.iexchangerate??)"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">订单编号</label>
+                        <div class="col-6">
+                            <input type="text" data-notnull="true" data-tips="请输入订单编号" autocomplete="off" class="form-control" disabled
+                                   placeholder="请输入订单编号" maxlength="40" name="cOrderNo"  readonly="readonly" value="#(purchaseOrderM.corderno??)"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">部门</label>
+                        <div class="col-6">
+                            <select class="form-control" disabled
+                                    data-autoload
+                                    name="iDepartmentId"
+                                    data-tips="请选择部门"
+                                    data-rule="required"
+                                    data-url="admin/department/getTreeTableDatas"
+                                    data-text="=请选择部门="
+                                    data-value=""
+                                    data-value-attr="iautoid"
+                                    data-text-attr="cdepname"
+                                    data-select="#(purchaseOrderM.idepartmentid??)">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">应付类型</label>
+                        <div class="col-6">
+                            <select class="form-control" name="iPayableType" disabled
+                                    data-autoload
+                                    data-rule="required"
+                                    data-url="admin/dictionary/options?key=purchase_coping_type"
+                                    data-select-type="select"
+                                    data-select="#(purchaseOrderM.ipayabletype??)"
+                                    data-text="==请选择=="
+                                    data-text-attr="name"
+                                    data-value-attr="sn">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">备注</label>
+                        <div class="col-6">
+                            <textarea disabled class="form-control" style="height:80px"  placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="cMemo">#(purchaseOrderM.cmemo??)</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    </form>
+
+
+    #setLocal(jboltTabId=(goods.id?? RandomUtil.random(6)))
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
+            <a class="nav-item nav-link active" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" aria-controls="tab-one" aria-selected="true">订货清单</a>
+            <a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false">传票更改清单</a>
+        </div>
+    </nav>
+    <div class="tab-content" style="padding: 0px 1rem">
+        <!--1 订货清单 -->
+        <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="nav-base-tab_one">
+            #render("cash_table.html")
+        </div>
+        <!--2 传票更改清单 -->
+        <div class="tab-pane fade" id="tab-two" role="tabpanel" aria-labelledby="nav-base-tab_two">
+            #render("cash_version_table.html")
+        </div>
+    </div>
+
+
+    </div>
+</div>
+#end
+
+#define js()
+<script>
+
+
+    function getTableData() {
+        var bomMaster_complete = $("#PurchaseOrderM_Table_");
+        var rows = [];
+        bomMaster_complete.children("tbody").children("tr").each(function () {
+            var row = {};
+            // 获取input标签 class属性还有form-control
+            $(this).find('td').each(function () {
+                var inputs = $(this).find("input[class*='form-control']");
+                getField(row, inputs);
+                var selects = $(this).find("select[class='form-control']");
+                getField(row, selects);
+
+            })
+            rows.push(row);
+        })
+        return rows;
+    };
+
+
+    function getField(row, labels) {
+        if (labels && labels.length > 0) {
+            $.each(labels, function (idx, v) {
+                if (v.name && v.name !== '' && v.value) {
+                    row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
+                }
+            });
+        }
+    }
+
+    // 隐藏第一个按钮
+    hideParentLayerDialogBtn(0);
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="PurchaseOrderM_Form")
+#end
+

@@ -122,6 +122,24 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 		setAttrs(service.getDateMap(purchaseOrderM));
 		render("edit.html");
 	}
+	
+	public void cash(){
+		PurchaseOrderM purchaseOrderM = service.findById(getLong(0));
+		if(purchaseOrderM == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		Person person = personService.findById(purchaseOrderM.getIDutyUserId());
+		if (ObjectUtil.isNotNull(person)){
+			set("personname",person.getCpsnName());
+		}
+		
+		Vendor vendor = vendorService.findById(purchaseOrderM.getIVendorId());
+		ValidationUtils.notNull(vendor, "未找到供应商数据");
+		set(Vendor.CVENNAME, vendor.getCVenName());
+		set("purchaseOrderM",purchaseOrderM);
+		render("cash.html");
+	}
 
    /**
 	* 更新
@@ -209,8 +227,8 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	/**
 	 * 生成现成票
 	 */
-	public void generate(){
-		renderJsonData(service.generate(getLong(0)));
+	public void generateCash(){
+		renderJsonData(service.generateCash(getLong(0)));
 	}
 	
 	/**
@@ -220,8 +238,8 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 		renderJsonData(service.audit(getLong(0)));
 	}
 	
-	public void batchGenerate(@Para(value = "ids") String ids){
-		renderJsonData(service.batchGenerate(ids));
+	public void batchGenerateCash(@Para(value = "ids") String ids){
+		renderJsonData(service.batchGenerateCash(ids));
 	}
 	
 	public void batchDel(@Para(value = "ids") String ids){

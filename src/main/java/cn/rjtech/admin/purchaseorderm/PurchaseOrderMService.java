@@ -15,6 +15,8 @@ import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
+import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
+import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderref.PurchaseOrderRefService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
@@ -69,6 +71,11 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	private VendorAddrService vendorAddrService;
 	@Inject
 	private DictionaryService dictionaryService;
+	@Inject
+	private PurchaseOrderDBatchService purchaseOrderDBatchService;
+	@Inject
+	private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
+	
 	
 	@Override
 	protected PurchaseOrderM dao() {
@@ -655,7 +662,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
 		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
 		ValidationUtils.notNull(orderStatusEnum, "未知状态");
-		ValidationUtils.isTrue(OrderStatusEnum.APPROVED.getValue() != orderStatusEnum.getValue(), "已审核的单据不能关闭");
+		boolean flag = OrderStatusEnum.REJECTED.getValue()!=orderStatusEnum.getValue() && OrderStatusEnum.APPROVED.getValue() <= orderStatusEnum.getValue();
+		ValidationUtils.isTrue(flag, "已审核的单据不能关闭");
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.CLOSE.getValue());
 		purchaseOrderM.update();
 		return SUCCESS;
@@ -666,18 +674,67 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	 * @param id
 	 * @return
 	 */
-	public Ret generate(Long id){
+	public Ret generateCash(Long id){
+		tx(()->{
+			cashNotTransaction(id);
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	/**
+	 * 操作：无事务
+	 * @param id
+	 */
+	public void cashNotTransaction(Long id){
 		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
 		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
 		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
 		ValidationUtils.notNull(orderStatusEnum, "未知状态");
-		ValidationUtils.isTrue(OrderStatusEnum.APPROVED.getValue() != orderStatusEnum.getValue(), "已审核的单据才能生成现成票");
+		boolean flag = OrderStatusEnum.REJECTED.getValue()!=orderStatusEnum.getValue() && OrderStatusEnum.APPROVED.getValue() <= orderStatusEnum.getValue();
+		ValidationUtils.isTrue(flag, "已审核的单据才能生成现成票");
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.GENERATE_CASH_TICKETS.getValue());
 		// 获取细表数据
 		List<Record> byPurchaseOrderMId = purchaseOrderDService.findByPurchaseOrderMId(id);
-		
+		List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
+		// 获取数量表
+		List<Record> purchaseOrderDQtyList = purchaseorderdQtyService.findByPurchaseOrderMid(id);
+		ValidationUtils.notEmpty(purchaseOrderDQtyList, purchaseOrderM.getCOrderNo()+"无现品票生成");
+		for (Record record : purchaseOrderDQtyList){
+			// 源数量
+			BigDecimal sourceSum = record.getBigDecimal(PurchaseOrderD.ISOURCESUM);
+			Long purchaseOrderDId = record.getLong(PurchaseorderdQty.IPURCHASEORDERDID);
+			Long inventoryId = record.getLong(PurchaseOrderD.ISOURCEINVENTORYID);
+			
+			String dateStr = demandPlanDService.getDate(record.getStr(PurchaseorderdQty.IYEAR), record.getInt(PurchaseorderdQty.IMONTH), record.getInt(PurchaseorderdQty.IDATE));
+			DateTime planDate = DateUtil.parse(dateStr, DatePattern.PURE_DATE_PATTERN);
+			// 包装数量
+			BigDecimal pkgQty = record.getBigDecimal(Inventory.IPKGQTY);
+			// 包装数量为空或者为0，生成一张条码，原始数量/打包数量
+			if (ObjectUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceSum.compareTo(pkgQty)<=0){
+				String barCode = purchaseOrderDBatchService.generateBarCode();
+				PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, inventoryId, planDate, sourceSum, barCode);
+				purchaseOrderDBatchList.add(purchaseOrderDBatch);
+				continue;
+			}
+			// 源数量/包装数量 （向上取）
+			int count = sourceSum.divide(pkgQty, 0, BigDecimal.ROUND_UP).intValue();
+			for (int i=0 ;i<count; i++){
+				// count-1： 69/10; 9
+				String barCode = purchaseOrderDBatchService.generateBarCode();
+				if (i == count-1){
+					BigDecimal qty = sourceSum.subtract(BigDecimal.valueOf(i).multiply(pkgQty));
+					PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, inventoryId, planDate, qty, barCode);
+					purchaseOrderDBatchList.add(purchaseOrderDBatch);
+					break;
+				}
+				PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, inventoryId, planDate, pkgQty, barCode);
+				purchaseOrderDBatchList.add(purchaseOrderDBatch);
+			}
+			
+		}
+		purchaseOrderDBatchService.batchSave(purchaseOrderDBatchList);
 		purchaseOrderM.update();
-		return SUCCESS;
 	}
 	
 	/**
@@ -736,7 +793,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
 		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
 		ValidationUtils.notNull(orderStatusEnum, "未知状态");
-		ValidationUtils.isTrue(OrderStatusEnum.APPROVED.getValue() != orderStatusEnum.getValue(), "已审核的单据不能删除");
+		boolean flag = OrderStatusEnum.REJECTED.getValue()!=orderStatusEnum.getValue() && OrderStatusEnum.APPROVED.getValue() <= orderStatusEnum.getValue();
+		ValidationUtils.isTrue(flag, "已审核的单据不能删除");
 		purchaseOrderM.setIsDeleted(true);
 		List<Record> purchaseOrderRefList = purchaseOrderRefService.findByPurchaseOderMId(id);
 		// 修改细表数据
@@ -759,11 +817,13 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	 * @param ids
 	 * @return
 	 */
-	public Ret batchGenerate(String ids) {
+	public Ret batchGenerateCash(String ids) {
 		ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
 		for (String id : ids.split(",")){
 		
 		}
 		return SUCCESS;
 	}
+	
+	
 }
