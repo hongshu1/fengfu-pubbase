@@ -11,6 +11,8 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
+import java.util.List;
+
 /**
  * 采购/委外订单-采购订单明细
  * @ClassName: PurchaseOrderDService
@@ -147,5 +149,13 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 	public int removeByPurchaseOrderMId(Long purchaseOrderMId){
 	    return update("update PS_PurchaseOrderD set isDeleted=1 where iPurchaseOrderMid = ?", purchaseOrderMId);
     }
-
+	
+	/**
+	 * 获取采购细表数据
+	 * @param purchaseOrderMId
+	 * @return
+	 */
+	public List<PurchaseOrderD> findByPurchaseOrderMId(Long purchaseOrderMId){
+		return find("SELECT * FROM PS_PurchaseOrderD WHERE iPurchaseOrderMid = ? AND isDeleted = 0", purchaseOrderMId);
+	}
 }

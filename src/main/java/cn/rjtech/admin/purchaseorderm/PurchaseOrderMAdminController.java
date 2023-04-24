@@ -1,6 +1,5 @@
 package cn.rjtech.admin.purchaseorderm;
 
-import cn.hutool.core.date.DateUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
@@ -67,8 +66,6 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 		Record record = new Record();
 		record.set(PurchaseOrderM.IVENDORID, vendor.getIAutoId());
 		record.set(Vendor.CVENNAME, vendor.getCVenName());
-		record.set(PurchaseOrderM.CORDERNO, service.generateCGCode());
-		record.set(PurchaseOrderM.DORDERDATE, DateUtil.formatDate(DateUtil.date()));
 		record.set(PurchaseOrderM.DBEGINDATE, beginDate);
 		record.set(PurchaseOrderM.DENDDATE, endDate);
 		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType));
@@ -157,13 +154,54 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 		renderJson(service.submit(dataStr, formStr, invTableData, getKv()));
 	}
 	
-	public void del(){
-		renderJsonData(service.del(getLong(0)));
-	}
-	
 	public void operationalState(@Para(value = "id") Long id,
 								 @Para(value = "type") Integer type){
 		renderJsonData(service.operationalState(id, type));
 	}
 	
+	/**
+	 * 删除操作
+	 */
+	public void del(){
+		renderJsonData(service.del(getLong(0)));
+	}
+	
+	/**
+	 * 撤回操作
+	 */
+	public void withdraw(){
+		renderJsonData(service.withdraw(getLong(0)));
+	}
+	
+	/**
+	 * 提审接口
+	 */
+	public void arraignment(){
+		renderJsonData(service.arraignment(getLong(0)));
+	}
+	
+	/**
+	 * 关闭
+	 */
+	public void close(){
+		renderJsonData(service.close(getLong(0)));
+	}
+	
+	/**
+	 * 生成现成票
+	 */
+	public void generate(){
+		renderJsonData(service.generate(getLong(0)));
+	}
+	
+	/**
+	 * 审核接口
+	 */
+	public void audit(){
+		renderJsonData(service.audit(getLong(0)));
+	}
+	
+	public void batchGenerate(@Para(value = "ids") String ids){
+		renderJsonData(service.batchGenerate(ids));
+	}
 }
