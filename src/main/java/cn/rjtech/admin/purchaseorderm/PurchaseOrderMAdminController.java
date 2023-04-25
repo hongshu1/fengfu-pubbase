@@ -7,6 +7,7 @@ import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
+import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
@@ -50,6 +51,8 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	private VendorAddrService vendorAddrService;
 	@Inject
 	private PurchaseOrderDBatchService purchaseOrderDBatchService;
+	@Inject
+	private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
    /**
 	* 首页
 	*/
@@ -264,5 +267,9 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 								 @Para(value = "cVersion") String cVersion,
 								 @Para(value = "qty")BigDecimal qty){
 		renderJsonData(purchaseOrderDBatchService.updateOrderBatch(purchaseOrderMId, id, cVersion, qty));
+	}
+	
+	public void findPurchaseOrderDBatchVersion(){
+		renderJsonData(purchaseOrderDBatchVersionService.findByPurchaseOrderMid(getPageNumber(), getPageSize(), getKv()));
 	}
 }
