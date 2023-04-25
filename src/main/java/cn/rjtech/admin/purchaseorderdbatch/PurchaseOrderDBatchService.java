@@ -12,6 +12,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -157,5 +158,9 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
 		String prefix = "XCP";
 		String format = DateUtil.format(DateUtil.date(), DatePattern.PURE_DATE_FORMAT);
 		return momDataFuncService.getNextNo(prefix.concat(format), 4);
+	}
+	
+	public Page<Record> findByPurchaseOrderMId(int pageNumber, int pageSize, Kv kv){
+		return dbTemplate("purchaseorderdbatch.findByPurchaseOrderMId", kv).paginate(pageNumber, pageSize);
 	}
 }

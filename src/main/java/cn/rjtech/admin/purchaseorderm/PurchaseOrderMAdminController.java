@@ -6,6 +6,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
@@ -44,9 +45,10 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	private DemandPlanMService demandPlanMService;
 	@Inject
 	private PersonService personService;
-	
 	@Inject
 	private VendorAddrService vendorAddrService;
+	@Inject
+	private PurchaseOrderDBatchService purchaseOrderDBatchService;
    /**
 	* 首页
 	*/
@@ -244,5 +246,10 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	
 	public void batchDel(@Para(value = "ids") String ids){
 		renderJsonData(service.batchDel(ids));
+	}
+	
+	
+	public void findPurchaseOrderDBatch(){
+		renderJsonData(purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv()));
 	}
 }
