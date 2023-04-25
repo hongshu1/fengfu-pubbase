@@ -4,10 +4,12 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
-import cn.rjtech.model.momdata.PurchaseOrderD;
-import cn.rjtech.model.momdata.PurchaseOrderM;
-import cn.rjtech.model.momdata.PurchaseorderdQty;
+import cn.rjtech.enums.CompleteTypeEnum;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
@@ -18,11 +20,11 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.DemandPlanM;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 需求计划管理-到货计划主表
@@ -36,6 +38,8 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 	
 	@Inject
 	private PurchaseorderdQtyService purchaseorderdQtyService;
+	@Inject
+	private DemandPlanDService demandPlanDService;
 	
 	
 	@Override
@@ -159,15 +163,27 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 		return findByVendorDate(beginDate, endDate, iVendorId, processType);
 	}
 	
-	public void setVendorDateList(List<Record> vendorDateList , Map<Long, Map<String, BigDecimal>> demandPlanDMap, Map<String, Integer> calendarMap, Map<Long, BigDecimal> invChangeRateMap, Map<Long, Record> invChangeMap){
-		
+	/**
+	 *
+	 * @param vendorDateList 	到货计划主表按存货去重集合
+	 * @param demandPlanDMap	可根据存货对象获取到货计划细表
+	 * @param calendarMap		日期集合
+	 * @param invChangeMap		可根据存货对象获取转换后的对象
+	 * @param puOrderRefMap
+	 */
+	public void setVendorDateList(List<Record> vendorDateList , Map<Long, Map<String, BigDecimal>> demandPlanDMap, Map<String, Integer> calendarMap, Map<Long, Record> invChangeMap, Map<Long, List<PurchaseOrderRef>> puOrderRefMap){
 		// 同一种的存货编码需要汇总在一起。
 		// 将日期设值。
 		for (Record record : vendorDateList){
 			// 存货id
-			Long invId = record.getLong("iInventoryId");
+			Long invId = record.getLong(PurchaseOrderD.ISOURCEINVENTORYID);
+			// 找出对应的到货细表id
+			if (puOrderRefMap.containsKey(invId)){
+				record.set(PurchaseOrderM.PURCHASEORDERREFLIST, puOrderRefMap.get(invId));
+			}
+			
 			BigDecimal[] arr = new BigDecimal[calendarMap.keySet().size()];
-			record.set("arr", arr);
+			record.set(PurchaseOrderM.ARR, arr);
 			// 存货编码为key，可以获取存货编码下 所有日期范围的值
 			if (!demandPlanDMap.containsKey(invId)){
 				continue;
@@ -198,16 +214,17 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 					// 转换率，默认为1
 					BigDecimal rate = BigDecimal.ONE;
 					// 判断当前存货是否存在物料转换
-					if (invChangeRateMap.containsKey(invId)){
-						rate = invChangeRateMap.get(invId);
+					if (invChangeMap.containsKey(invId)){
 						Record invChangeRecord = invChangeMap.get(invId);
+						// 获取转换率
+						rate = invChangeRecord.getBigDecimal(InventoryChange.ICHANGERATE);
 						// 获取转换后的id
-						record.set(PurchaseOrderD.ISOURCEINVENTORYID, invChangeRecord.getLong(PurchaseOrderM.IAFTERINVENTORYID));
+						record.set(PurchaseOrderD.IINVENTORYID, invChangeRecord.getLong(PurchaseOrderM.IAFTERINVENTORYID));
 						// 需更改转换后的数据
 						record.set(PurchaseOrderM.AFTERCINVCODE, invChangeRecord.getLong(PurchaseOrderM.AFTERCINVCODE));
 						record.set(PurchaseOrderM.AFTERCINVCODE1, invChangeRecord.getLong(PurchaseOrderM.AFTERCINVCODE1));
 						record.set(PurchaseOrderM.AFTERCINVNAME1, invChangeRecord.getLong(PurchaseOrderM.AFTERCINVNAME1));
-						record.set(PurchaseOrderM.ISGAVEPRESENT, invChangeRecord.getLong(PurchaseOrderM.ISGAVEPRESENT));
+						record.set(PurchaseOrderD.ISPRESENT, invChangeRecord.getLong(PurchaseOrderD.ISPRESENT));
 						record.set(PurchaseOrderM.IPKGQTY, invChangeRecord.getLong(PurchaseOrderM.IPKGQTY));
 						record.set(PurchaseOrderM.CINVSTD, invChangeRecord.getLong(PurchaseOrderM.CINVSTD));
 						record.set(PurchaseOrderM.CUOMNAME, invChangeRecord.getLong(PurchaseOrderM.CUOMNAME));
@@ -224,6 +241,9 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 					sourceSum = sourceSum.add(qty);
 				}
 			}
+			if (ObjectUtil.isNull(record.getLong(PurchaseOrderD.IINVENTORYID))){
+				record.set(PurchaseOrderD.IINVENTORYID, invId);
+			}
 			// 字段记录
 			if (CollectionUtil.isNotEmpty(purchaseorderdQtyList)){
 				record.set(PurchaseOrderD.PURCHASEORDERD_QTY_LIST, purchaseorderdQtyList);
@@ -232,4 +252,54 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 			record.set(PurchaseOrderD.ISOURCESUM, sourceSum);
 		}
 	}
+	
+	public void updateStatusById(Long id, Integer status){
+		DemandPlanM demandPlanM = findById(id);
+		ValidationUtils.notNull(demandPlanM, JBoltMsg.DATA_NOT_EXIST);
+		
+		// 未完成直接修改
+		if (status == CompleteTypeEnum.COMPLETE.getValue()){
+			update(demandPlanM, status);
+		}
+		
+		// 先去校验子件是否全部做了订单
+		List<Record> demandPlanDList = demandPlanDService.findByDemandPlanMid(id);
+		if (CollectionUtil.isEmpty(demandPlanDList)){
+			return;
+		}
+		// 查询所有细表数据
+		List<Long> demandPlanDIds = demandPlanDList.stream().map(record -> record.getLong(DemandPlanD.IAUTOID)).collect(Collectors.toList());
+		// 排除
+		Integer count = demandPlanDService.queryNotGenOrderNum(id, demandPlanDIds);
+		if (ObjectUtil.isNotNull(count) && count == 0){
+			update(demandPlanM, status);
+		}
+	}
+	
+	private void update(DemandPlanM demandPlanM, Integer status){
+		demandPlanM.setIStatus(status);
+		demandPlanM.setIUpdateBy(JBoltUserKit.getUserId());
+		demandPlanM.setCUpdateName(JBoltUserKit.getUserName());
+		demandPlanM.setDUpdateTime(DateUtil.date());
+		demandPlanM.update();
+	}
+	
+	public void batchUpdateStatusByIds(List<Long> ids, Integer status){
+		if (CollectionUtil.isEmpty(ids)){
+			return;
+		}
+		for (Long id : ids){
+			updateStatusById(id, status);
+		}
+	}
+	
+	/**
+	 * 根据子件id反查 母件数据
+	 * @return
+	 */
+	public List<Long> pegging(List<Long> demandPlanDIds){
+		List<DemandPlanD> ids = demandPlanDService.getListByIds(demandPlanDIds.toArray());
+		return ids.stream().map(DemandPlanD::getIDemandPlanMid).collect(Collectors.toList());
+	}
+	
 }

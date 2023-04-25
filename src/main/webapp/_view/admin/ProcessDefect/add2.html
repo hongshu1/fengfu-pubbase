@@ -7,13 +7,18 @@
             <h5>部品信息</h5>
             <hr/>
             <div class="form-group row">
+                <input type="hidden"  placeholder="领料单ID" name="specMaterialsRcvM.iAutoid" value="#(specMaterialsRcvM.iAutoid??)"/>
+                <input type="hidden"  placeholder="生产工单ID" name="specMaterialsRcvM.imodocid" value="#(specMaterialsRcvM.imodocid??)"/>
+                <input type="hidden"  placeholder="生产部门ID" name="specMaterialsRcvM.idepartmentid" value="#(specMaterialsRcvM.idepartmentid??)"/>
+                <input type="hidden"  placeholder="需求日期" name="specMaterialsRcvM.ddemanddate" value="#(specMaterialsRcvM.ddemanddate??)"/>
+
                 <label class="col-sm-2 col-form-label">异常品单号：</label>
                 <div class="col-sm-2 col-form-label">
                     <input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(processDefect.cdocno??)"/>
                 </div>
                 <label class="col-sm-2 col-form-label">工单号：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(processDefect.imodocid??)"/>
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(specMaterialsRcvM.cspecrcvdocno??)"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -37,10 +42,10 @@
                 </div>
                 <label class="col-sm-2 col-form-label">创建时间：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#date((processDefect.dcreatetime??),'yyyy-MM-dd HH:mm:ss')"/>                </div>
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#date((specMaterialsRcvM.dcreatetime??),'yyyy-MM-dd HH:mm:ss')"/>                </div>
                 <label class="col-sm-2 col-form-label">创建人：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(processDefect.ccreatename??)"/>
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(specMaterialsRcvM.ccreatename??)"/>
                 </div>
             </div>
 
@@ -141,30 +146,32 @@
                 </div>
             </div>
 
-            <h5>异常品判定信息</h5>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">处置区分：</label>
-                <div class="col-sm-8 col-form-label">
-                    <div class="form-group row"
-                         data-radio
-                         data-rule="radio"
-                         data-value="#(processDefect.capproach??)"
-                         data-name="processDefect.capproach"
-                         data-default="true">
-                        <div class="col"  style="padding-top: 1px;">
-                            <div class="radio radio-primary  radio-inline">
-                                <input  id="capproachtrue1" type="radio" name="processDefect.capproach"   value="1"/>
-                                <label for="capproachtrue1">返修</label>
-                            </div>
+<!--            <h5>异常品判定信息</h5>-->
+<!--            <div class="form-group row">-->
+<!--                <label class="col-sm-2 col-form-label">处置区分：</label>-->
+<!--                <div class="col-sm-8 col-form-label">-->
+<!--                    <div class="form-group row"-->
+<!--                         data-radio-->
+<!--                         data-rule="radio"-->
+<!--                         data-value="#(processDefect.capproach??)"-->
+<!--                         data-name="processDefect.capproach"-->
+<!--                         data-default="true">-->
+<!--                        <div class="col"  style="padding-top: 1px;">-->
+<!--                            <div class="radio radio-primary  radio-inline">-->
+<!--                                <input  id="capproachtrue1" type="radio" name="processDefect.capproach"   value="1"/>-->
+<!--                                <label for="capproachtrue1">返修</label>-->
+<!--                            </div>-->
 
-                            <div class="radio radio-primary  radio-inline">
-                                <input  id="capproachfalse1" type="radio" name="processDefect.capproach"   value="0"/>
-                                <label for="capproachfalse1">报废</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!--                            <div class="radio radio-primary  radio-inline">-->
+<!--                                <input  id="capproachfalse1" type="radio" name="processDefect.capproach"   value="0"/>-->
+<!--                                <label for="capproachfalse1">报废</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <inpu>
         </form>
     </div>
 </div>

@@ -51,7 +51,7 @@
 
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="warehousePosition_toolbar_#(pageId)">
-	<div class="" role="group" aria-label="btn-group">
+	<div class="col-sm-auto" role="group" aria-label="btn-group">
 		#permission(PermissionKey.WAREHOUSE_POSITION_ADD)
 		<button data-openpage="dialog" data-area="60%,600"  data-handler="jboltTablePageToFirst" data-title="新增库位档案"  data-url="admin/warehouseposition/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		#end
@@ -62,10 +62,10 @@
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/warehouseposition/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
 		#end
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
-	</div>
+
 
 	#permission(PermissionKey.WAREHOUSE_POSITION_EXPORT)
-	<div class="" role="group" aria-label="btn-group">
+		<div class="btn-group dropdown" role="group" aria-label="btn-group">
 		<div class="btn-group dropdown">
 			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuwarehousepositionButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
 			<div class="dropdown-menu" aria-labelledby="exportMenuwarehousepositionButton">
@@ -96,6 +96,7 @@
 		</div>
 	</div>
 	#end
+	</div>
 
 	<!--#permission(PermissionKey.WAREHOUSE_POSITION_PRINT)
 	<div class="" role="group" aria-label="btn-group">

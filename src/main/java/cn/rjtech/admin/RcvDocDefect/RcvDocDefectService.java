@@ -1,20 +1,17 @@
 package cn.rjtech.admin.RcvDocDefect;
 
-import cn.hutool.core.date.DateUtil;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.rjtech.util.BillNoUtils;
-import cn.rjtech.util.ValidationUtils;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.RcvDocDefect;
+import cn.rjtech.util.BillNoUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.RcvDocDefect;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
@@ -193,36 +190,23 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 				//判断是否有主键id
 				if(isOk(formRecord.getStr("rcvDocDefect.iautoid"))){
 					RcvDocDefect rcvDocDefect = findById(formRecord.getLong("rcvDocDefect.iautoid"));
-					if (rcvDocDefect.getIStatus() == 2){
+					if (rcvDocDefect.getIStatus() == 1){
 						//录入数据
 						rcvDocDefect.setCApproach(formRecord.getStr("rcvDocDefect.capproach"));
-						rcvDocDefect.setIStatus(3);
-						//更新人和时间
-						rcvDocDefect.setIUpdateBy(JBoltUserKit.getUserId());
-						rcvDocDefect.setCUpdateName(JBoltUserKit.getUserName());
-						rcvDocDefect.setDUpdateTime(now);
-
-					}else {
-						//录入数据
-						rcvDocDefect.setIRespType(formRecord.getInt("rcvDocDefect.iresptype"));
-						rcvDocDefect.setIsFirstTime(formRecord.getBoolean("rcvDocDefect.isfirsttime"));
-						rcvDocDefect.setCBadnessSns(formRecord.getStr("rcvDocDefect.cbadnesssns"));
-						rcvDocDefect.setCDesc(formRecord.getStr("rcvDocDefect.cdesc"));
 						rcvDocDefect.setIStatus(2);
 						//更新人和时间
 						rcvDocDefect.setIUpdateBy(JBoltUserKit.getUserId());
 						rcvDocDefect.setCUpdateName(JBoltUserKit.getUserName());
 						rcvDocDefect.setDUpdateTime(now);
+
 					}
 					rcvDocDefect.update();
 				}else{
 					//保存未有主键的数据
-
+					RcvDocfectLinesave(formRecord, now);
 				}
 				return true;
 			});
-
-
 		return SUCCESS;
 	}
 
@@ -233,18 +217,26 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		System.out.println("now==="+now);
 		RcvDocDefect rcvDocDefect = new RcvDocDefect();
 		rcvDocDefect.setIAutoId(formRecord.getLong("rcvDocDefect.iautoid"));
+
+		//质量管理-来料检明细
+		rcvDocDefect.setIRcvDocQcFormMid(formRecord.getLong("rcvDocQcFormM.iautoid"));
+		rcvDocDefect.setIVendorId(formRecord.getLong("rcvDocQcFormM.iinventoryid"));
+		rcvDocDefect.setIInventoryId(formRecord.getLong("rcvDocQcFormM.ivendorid"));
+		rcvDocDefect.setIQcUserId(formRecord.getLong("rcvDocQcFormM.iupdateby"));
+		rcvDocDefect.setDQcTime(formRecord.getDate("rcvDocQcFormM.dUpdateTime"));
+
+		//录入填写的数据
 		rcvDocDefect.setIStatus(1);
-		rcvDocDefect.setIRespType(0);
+		rcvDocDefect.setIDqQty(formRecord.getBigDecimal("rcvDocDefect.idqqty"));
 		rcvDocDefect.setIRespType(formRecord.getInt("rcvDocDefect.iresptype"));
 		rcvDocDefect.setIsFirstTime(formRecord.getBoolean("rcvDocDefect.isfirsttime"));
 		rcvDocDefect.setCBadnessSns(formRecord.getStr("rcvDocDefect.cbadnesssns"));
 		rcvDocDefect.setCDesc(formRecord.getStr("rcvDocDefect.cdesc"));
 
+		//必录入基本数据
 		rcvDocDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		String billNo = BillNoUtils.getcDocNo(getOrgId(), "YCP", 5);
 		rcvDocDefect.setCDocNo(billNo);
-
-
 		rcvDocDefect.setIOrgId(getOrgId());
 		rcvDocDefect.setCOrgCode(getOrgCode());
 		rcvDocDefect.setCOrgName(getOrgName());

@@ -1,20 +1,24 @@
 package cn.rjtech.admin.demandpland;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.DemandPlanD;
 import cn.rjtech.model.momdata.DemandPlanM;
 import cn.rjtech.model.momdata.PurchaseOrderRef;
-import com.beust.ah.A;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.DemandPlanD;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -122,13 +126,13 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 	 *
 	 * @return 获取存货中每个日期下的数量
 	 */
-	public Map<Long, Map<String, BigDecimal>> getDemandPlanDMap(List<Record> demandPlanDList){
+	public Map<Long, Map<String, BigDecimal>> getDemandPlanDMap(List<Record> demandPlanDList, String invIdKey){
 		// key:存货id 年月日 value: (key:, 数量)
 		Map<Long, Map<String, BigDecimal>> demandPlanDMap = new HashMap<>();
 		// 遍历所有日期，到货计划主表 ： List<年月日 : qty>
 		for (Record record : demandPlanDList){
 			// 按存货安全
-			Long invId = record.getLong(DemandPlanM.IINVENTORYID);
+			Long invId = record.getLong(invIdKey);
 			String key = getKey(record);
 			// 记录当前主表下的每一个日期数量
 			Map<String, BigDecimal> map = demandPlanDMap.containsKey(invId) ? demandPlanDMap.get(invId) : new HashMap<>();
@@ -161,18 +165,48 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 	
 	
 	private String getKey(Record record){
-		String yearStr = record.getStr(DemandPlanD.IYEAR);
+		return getDate(record.getStr(DemandPlanD.IYEAR), record.getInt(DemandPlanD.IMONTH), record.getInt(DemandPlanD.IDATE));
+	}
+	
+	public String getDate(String yearStr, int month, int date){
 		String monthStr = "";
-		if (record.getInt(DemandPlanD.IMONTH) <10){
+		// 判断月份是大于10，小于10 补充0
+		if (month <10){
 			monthStr = monthStr.concat("0");
 		}
-		monthStr = monthStr.concat(record.getStr(DemandPlanD.IMONTH));
+		monthStr = monthStr.concat(String.valueOf(month));
 		String dateStr = "";
-		if (record.getInt(DemandPlanD.IDATE) < 10){
+		// 判断日期是大于10，小于10 补充0
+		if (date < 10){
 			dateStr = dateStr.concat("0");
 		}
-		dateStr = dateStr.concat(record.getStr(DemandPlanD.IDATE));
+		dateStr = dateStr.concat(String.valueOf(date));
 		return yearStr.concat(monthStr).concat(dateStr);
+	}
+	
+	public int updateGenTypeById(Long id, Integer genType, Integer status){
+		return update("UPDATE Mrp_DemandPlanD SET iGenType = ?, iStatus = ? where iAutoId = ?", genType, status, id);
+	}
+	
+	public void batchUpdateGenTypeByIds(List<Long> ids, Integer genType, Integer status){
+		if (CollectionUtil.isEmpty(ids)){
+			return;
+		}
+		for (Long id : ids){
+			updateGenTypeById(id, genType, status);
+		}
+	}
+	
+	public Integer queryNotGenOrderNum(Long demandPlanMid, List<Long> demandPlanDIds){
+		return dbTemplate("demandpland.queryNotGenOrderNum", Okv.by(DemandPlanD.IDEMANDPLANMID, demandPlanMid).set("ids", demandPlanDIds)).queryInt();
+	}
+	
+	public List<Record> findAll(Okv okv){
+		return dbTemplate("demandpland.findAll", okv).find();
+	}
+	
+	public List<Record> findByDemandPlanMid(Long demandPlanMid){
+		return dbTemplate("demandpland.findAll", Okv.by(DemandPlanD.IDEMANDPLANMID, demandPlanMid)).find();
 	}
 	
 }

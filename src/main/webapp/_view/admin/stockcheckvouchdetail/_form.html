@@ -1,0 +1,69 @@
+<form onsubmit="return false;" id="Stockcheckvouchdetail_Form" action="#(action)" method="post">
+	#if(stockcheckvouchdetail.AutoID??)
+	<input type="hidden" name="stockcheckvouchdetail.AutoID" value="#(stockcheckvouchdetail.AutoID??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">AutoID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入AutoID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入AutoID" maxlength="40" name="stockcheckvouchdetail.AutoID" value="#(stockcheckvouchdetail.AutoID??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主表ID;T_Sys_StockCheckVouch.AutoID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主表ID;T_Sys_StockCheckVouch.AutoID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主表ID;T_Sys_StockCheckVouch.AutoID" maxlength="40" name="stockcheckvouchdetail.MasID" value="#(stockcheckvouchdetail.MasID??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">来源ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源ID" maxlength="40" name="stockcheckvouchdetail.SourceID" value="#(stockcheckvouchdetail.SourceID??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">库位</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入库位" maxlength="40" name="stockcheckvouchdetail.PosCode" value="#(stockcheckvouchdetail.PosCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">存货编码</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货编码" maxlength="40" name="stockcheckvouchdetail.InvCode" value="#(stockcheckvouchdetail.InvCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">账面数量</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入账面数量"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入账面数量" maxlength="40" name="stockcheckvouchdetail.Qty" value="#(stockcheckvouchdetail.Qty??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">账面件数</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入账面件数"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入账面件数" maxlength="40" name="stockcheckvouchdetail.Num" value="#(stockcheckvouchdetail.Num??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人" maxlength="40" name="stockcheckvouchdetail.CreatePerson" value="#(stockcheckvouchdetail.CreatePerson??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="stockcheckvouchdetail.CreateDate"    value="#datetime(stockcheckvouchdetail.CreateDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="Stockcheckvouchdetail_Form")
+#end
+

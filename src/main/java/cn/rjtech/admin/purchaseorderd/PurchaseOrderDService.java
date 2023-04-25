@@ -1,14 +1,27 @@
 package cn.rjtech.admin.purchaseorderd;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.PurchaseOrderD;
+import cn.rjtech.model.momdata.PurchaseOrderM;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.PurchaseOrderD;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
+
 /**
  * 采购/委外订单-采购订单明细
  * @ClassName: PurchaseOrderDService
@@ -125,5 +138,82 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		*/
 		return null;
 	}
-
+	
+	public PurchaseOrderD createPurchaseOrderD(Long purchaseOrderMid, JSONObject jsonObject){
+        PurchaseOrderD purchaseOrderD = new PurchaseOrderD();
+        purchaseOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
+        purchaseOrderD.setIPurchaseOrderMid(purchaseOrderMid);
+        purchaseOrderD.setIVendorAddrId(jsonObject.getLong(purchaseOrderD.IVENDORADDRID.toLowerCase()));
+        purchaseOrderD.setCAddress(jsonObject.getString(purchaseOrderD.CADDRESS.toLowerCase()));
+        purchaseOrderD.setCMemo(jsonObject.getString(purchaseOrderD.CMEMO.toLowerCase()));
+        purchaseOrderD.setIsPresent(jsonObject.getBoolean(purchaseOrderD.ISPRESENT.toLowerCase()));
+        purchaseOrderD.setIsDeleted(false);
+        purchaseOrderD.setISourceInventoryId(jsonObject.getLong(purchaseOrderD.ISOURCEINVENTORYID.toLowerCase()));
+        purchaseOrderD.setIInventoryId(jsonObject.getLong(purchaseOrderD.IINVENTORYID.toLowerCase()));
+        purchaseOrderD.setISum(jsonObject.getBigDecimal(purchaseOrderD.ISUM.toLowerCase()));
+        purchaseOrderD.setISourceSum(jsonObject.getBigDecimal(purchaseOrderD.ISOURCESUM.toLowerCase()));
+        return purchaseOrderD;
+	}
+	
+	public int removeByPurchaseOrderMId(Long purchaseOrderMId){
+	    return update("update PS_PurchaseOrderD set isDeleted=1 where iPurchaseOrderMid = ?", purchaseOrderMId);
+    }
+	
+	/**
+	 * 获取采购细表数据
+	 * @param purchaseOrderMId
+	 * @return
+	 */
+	public List<Record> findByPurchaseOrderMId(Long purchaseOrderMId){
+		return dbTemplate("purchaseorderd.findAll", Okv.by(PurchaseOrderD.IPURCHASEORDERMID, purchaseOrderMId)).find();
+	}
+	
+	public void setPurchaseOrderDList(Map<String, Integer> calendarMap, Map<Long, Map<String, BigDecimal>>  purchaseOrderdQtyMap, List<Record> purchaseOrderDList){
+		// 同一种的存货编码需要汇总在一起。
+		// 将日期设值。
+		for (Record record : purchaseOrderDList){
+			// 存货id（原存货id）
+			Long invId = record.getLong(PurchaseOrderD.ISOURCEINVENTORYID);
+			
+			BigDecimal[] arr = new BigDecimal[calendarMap.keySet().size()];
+			record.set(PurchaseOrderM.ARR, arr);
+			// 存货编码为key，可以获取存货编码下 所有日期范围的值
+			if (!purchaseOrderdQtyMap.containsKey(invId)){
+				continue;
+			}
+			
+			// 当前日期下的数量
+			Map<String, BigDecimal> dateQtyMap = purchaseOrderdQtyMap.get(invId);
+			// 统计合计数量
+			BigDecimal amount = BigDecimal.ZERO;
+			// 转换前合计数量
+			BigDecimal sourceSum = BigDecimal.ZERO;
+			for (String dateStr : dateQtyMap.keySet()){
+				// 原数量
+				BigDecimal qty = dateQtyMap.get(dateStr);
+				// yyyyMMdd
+				DateTime dateTime = DateUtil.parse(dateStr, DatePattern.PURE_DATE_FORMAT);
+				// yyyy-MM-dd
+				String formatDateStr = DateUtil.format(dateTime, DatePattern.NORM_DATE_PATTERN);
+				// 当前日期存在，则取值
+				if (calendarMap.containsKey(formatDateStr)){
+					Integer index = calendarMap.get(formatDateStr);
+					arr[index] = qty;
+					// 转换率，默认为1
+					BigDecimal rate = BigDecimal.ONE;
+					// 判断当前存货是否存在物料转换
+					// 统计数量汇总
+					amount = amount.add(qty.multiply(rate));
+					sourceSum = sourceSum.add(qty);
+				}
+			}
+			Long inventoryId = record.getLong(PurchaseOrderD.IINVENTORYID);
+			// 判断源存货id是否跟转换后的id一致
+			if (!invId.equals(inventoryId)){
+				record.set(PurchaseOrderM.IPKGQTY, record.getBigDecimal(PurchaseOrderM.AFTERIPKGQTY));
+			}
+			record.set(PurchaseOrderD.ISUM, amount);
+			record.set(PurchaseOrderD.ISOURCESUM, sourceSum);
+		}
+	}
 }

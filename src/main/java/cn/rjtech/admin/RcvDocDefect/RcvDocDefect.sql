@@ -1,8 +1,22 @@
 #sql("paginateAdminDatas")
-SELECT *
-    FROM PL_RcvDocDefect
-WHERE 1 = 1
-  #if(cDocNo)
+SELECT
+    t1.iAutoId AS iRcvDocQcFormMid,
+    t1.cRcvDocQcFormNo,
+    t1.iInventoryId,
+    t1.iVendorId,
+    t2.iStatus,
+    t2.iAutoId,
+    t2.cDocNo,
+    t2.iDqQty,
+    t2.cApproach,
+    t2.cUpdateName,
+    t2.dUpdateTime
+FROM
+    PL_RcvDocQcFormM t1
+        LEFT JOIN PL_RcvDocDefect t2 ON t2.iRcvDocQcFormMid = t1.iAutoId
+WHERE
+        1 = 1
+    #if(cDocNo)
   AND cDocNo like '%#(cDocNo)%'
   #end
 #if(iRcvDocQcFormMid)

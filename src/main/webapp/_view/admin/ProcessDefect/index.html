@@ -43,22 +43,22 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
 	{@if data.istatus==1}
-		<a href="admin/ProcessDefect/add2?iautoid=${data.iautoid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
+		<a href="admin/ProcessDefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
 	{@else if data.istatus==2}
 		<a href="admin/ProcessDefect/add2?iautoid=${data.iautoid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
 	{@else}
-		<a href="admin/ProcessDefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+		<a href="admin/ProcessDefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="检验"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">异常品记录</a>
 	{@/if}
 </td>
-<td>${data.istatus=='1'?'待判定':'已完成'}</td>
+<td>${data.istatus=='1'?'待判定':data.istatus=='2'?'已完成':'待记录'}</td>
 <td>${data.cdocno}</td>
 <td>${data.imodocid}</td>
-<td>${data.iinventoryid}</td>
+<td>存货编码</td>
 <td>部品名称</td>
 <td>客户部番</td>
 <td>${data.processname}</td>
 <td>${data.idqqty}</td>
-<td>${data.capproach}</td>
+<td>${data.capproach=='1'?'返修':'报废'}</td>
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
 </tr>

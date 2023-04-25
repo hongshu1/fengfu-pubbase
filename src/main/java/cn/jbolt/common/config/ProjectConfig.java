@@ -20,13 +20,11 @@ import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.Interceptor.JBoltOnlineUserGlobalInterceptor;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.base.config.JBoltProjectConfig;
-import cn.jbolt.core.bean.Option;
 import cn.jbolt.core.common.enums.DictionaryTypeMode;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.enumutil.JBoltEnumBean;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.kit.*;
-import cn.jbolt.core.model.DictionaryType;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.model.base.JBoltModelConfig;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
@@ -512,4 +510,15 @@ public class ProjectConfig extends JBoltProjectConfig {
     protected JBoltProjectSystemLogProcessor getProjectSystemLogProcessor() {
         return new ProjectSystemLogProcessor();
     }
+
+    @Override
+    protected void onAppStart() {
+
+    }
+
+    @Override
+    protected void onAppStop() {
+
+    }
+    
 }

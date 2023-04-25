@@ -1,0 +1,132 @@
+<form onsubmit="return false;" id="apsWeekscheduledQtyForm" action="#(action)" method="post">
+<input type="hidden" name="apsWeekscheduledQty.iautoid" value="#(apsWeekscheduledQty.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">周计划明细ID</label>
+		<div class="col">
+			<input type="week" data-with-clearbtn="true" autocomplete="off" class="form-control"  data-rule="required"  placeholder="请设置周计划明细ID" data-tips="请设置周计划明细ID" maxlength="19" name="apsWeekscheduledQty.iweekscheduledid" value="#(apsWeekscheduledQty.iweekscheduledid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年" data-tips="请设置年" maxlength="10" name="apsWeekscheduledQty.iyear" value="#(apsWeekscheduledQty.iyear??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">月</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入月"  maxlength="10" name="apsWeekscheduledQty.imonth" value="#(apsWeekscheduledQty.imonth??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入日"  maxlength="10" name="apsWeekscheduledQty.idate" value="#(apsWeekscheduledQty.idate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划使用</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入计划使用"  maxlength="18" name="apsWeekscheduledQty.iqty1" value="#(apsWeekscheduledQty.iqty1??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划/1S</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入计划/1S"  maxlength="18" name="apsWeekscheduledQty.iqty2" value="#(apsWeekscheduledQty.iqty2??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划/2S</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入计划/2S"  maxlength="18" name="apsWeekscheduledQty.iqty3" value="#(apsWeekscheduledQty.iqty3??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划/3S</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入计划/3S"  maxlength="18" name="apsWeekscheduledQty.iqty4" value="#(apsWeekscheduledQty.iqty4??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划在库</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入计划在库"  maxlength="18" name="apsWeekscheduledQty.iqty5" value="#(apsWeekscheduledQty.iqty5??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">在库天数</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入在库天数"  maxlength="18" name="apsWeekscheduledQty.iqty6" value="#(apsWeekscheduledQty.iqty6??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(apsWeekscheduledQty.islocked??)"
+    	data-name="apsWeekscheduledQty.islocked"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否锁定：0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked_true" type="radio" name="apsWeekscheduledQty.islocked" value="true"/>
+					<label for="r_islocked_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked_false" type="radio" name="apsWeekscheduledQty.islocked" value="false"/>
+					<label for="r_islocked_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(apsWeekscheduledQty.isweekend??)"
+    	data-name="apsWeekscheduledQty.isweekend"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否周末: 0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isweekend_true" type="radio" name="apsWeekscheduledQty.isweekend" value="true"/>
+					<label for="r_isweekend_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isweekend_false" type="radio" name="apsWeekscheduledQty.isweekend" value="false"/>
+					<label for="r_isweekend_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(apsWeekscheduledQty.ismodified??)"
+    	data-name="apsWeekscheduledQty.ismodified"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否人工修改：0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_ismodified_true" type="radio" name="apsWeekscheduledQty.ismodified" value="true"/>
+					<label for="r_ismodified_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_ismodified_false" type="radio" name="apsWeekscheduledQty.ismodified" value="false"/>
+					<label for="r_ismodified_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="apsWeekscheduledQtyForm")
+#end
+

@@ -1,0 +1,150 @@
+<form onsubmit="return false;" id="specMaterialsRcvMForm" action="#(action)" method="post">
+<input type="hidden" name="specMaterialsRcvM.iautoid" value="#(specMaterialsRcvM.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="specMaterialsRcvM.iorgid" value="#(specMaterialsRcvM.iorgid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="40" name="specMaterialsRcvM.corgcode" value="#(specMaterialsRcvM.corgcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="50" name="specMaterialsRcvM.corgname" value="#(specMaterialsRcvM.corgname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产工单ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入生产工单ID" maxlength="19" name="specMaterialsRcvM.imodocid" value="#(specMaterialsRcvM.imodocid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">部门ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入部门ID" maxlength="19" name="specMaterialsRcvM.idepartmentid" value="#(specMaterialsRcvM.idepartmentid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">领料单号</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入领料单号" maxlength="30" name="specMaterialsRcvM.cspecrcvdocno" value="#(specMaterialsRcvM.cspecrcvdocno??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">需求日期</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置需求日期" data-tips="请设置需求日期" maxlength="10" name="specMaterialsRcvM.ddemanddate" value="#(specMaterialsRcvM.ddemanddate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">需求原因分析</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入需求原因分析" maxlength="200" name="specMaterialsRcvM.creason" value="#(specMaterialsRcvM.creason??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">处置意见，定义字典SpecAdvice</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入处置意见，定义字典SpecAdvice" maxlength="200" name="specMaterialsRcvM.cspecadvicesns" value="#(specMaterialsRcvM.cspecadvicesns??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">状态：1. 已保存 2. 待审批 3. 已审批</label>
+		<div class="col input-group">
+			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="specMaterialsRcvM.istatus" data-refresh="true"  data-rule="select"  data-tips="请选择状态：1. 已保存 2. 待审批 3. 已审批" data-text="=请选择="  data-value="" data-select="#( specMaterialsRcvM.istatus ??)"></select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批方式：1. 审批状态 2. 审批流</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入审批方式：1. 审批状态 2. 审批流"  maxlength="10" name="specMaterialsRcvM.iauditway" value="#(specMaterialsRcvM.iauditway??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">提审时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置提审时间" data-tips="请设置提审时间" maxlength="23" name="specMaterialsRcvM.dsubmittime" value="#(specMaterialsRcvM.dsubmittime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过</label>
+		<div class="col input-group">
+			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="specMaterialsRcvM.iauditstatus" data-refresh="true"  data-rule="select"  data-tips="请选择审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过" data-text="=请选择="  data-value="" data-select="#( specMaterialsRcvM.iauditstatus ??)"></select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审核时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置审核时间" data-tips="请设置审核时间" maxlength="23" name="specMaterialsRcvM.daudittime" value="#(specMaterialsRcvM.daudittime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人ID" maxlength="19" name="specMaterialsRcvM.icreateby" value="#(specMaterialsRcvM.icreateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="50" name="specMaterialsRcvM.ccreatename" value="#(specMaterialsRcvM.ccreatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="specMaterialsRcvM.dcreatetime" value="#(specMaterialsRcvM.dcreatetime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人ID" maxlength="19" name="specMaterialsRcvM.iupdateby" value="#(specMaterialsRcvM.iupdateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人名称" maxlength="50" name="specMaterialsRcvM.cupdatename" value="#(specMaterialsRcvM.cupdatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="specMaterialsRcvM.dupdatetime" value="#(specMaterialsRcvM.dupdatetime??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(specMaterialsRcvM.isdeleted??)"
+    	data-name="specMaterialsRcvM.isdeleted"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >删除状态：0. 未删除 1. 已删除</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_true" type="radio" name="specMaterialsRcvM.isdeleted" value="true"/>
+					<label for="r_isdeleted_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_false" type="radio" name="specMaterialsRcvM.isdeleted" value="false"/>
+					<label for="r_isdeleted_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="specMaterialsRcvMForm")
+#end
+
