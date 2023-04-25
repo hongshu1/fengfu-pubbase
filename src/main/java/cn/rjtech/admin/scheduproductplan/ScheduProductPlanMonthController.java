@@ -66,6 +66,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
 
         List<String> collist = new ArrayList<>();
         List<String> namelist = new ArrayList<>();
+        List<String> weeklist = new ArrayList<>();
         List<Record> name2list = new ArrayList<>();
         if (StringUtils.isNotBlank(startdate) && StringUtils.isNotBlank(enddate)){
             //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
@@ -82,6 +83,15 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
                 }else {
                     yearMonthMap.put(yearMonth,2);
                 }
+
+                String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
+                if (weekDay.equals("星期一")){weeklist.add("Mon");}
+                if (weekDay.equals("星期二")){weeklist.add("Tue");}
+                if (weekDay.equals("星期三")){weeklist.add("Wed");}
+                if (weekDay.equals("星期四")){weeklist.add("Thu");}
+                if (weekDay.equals("星期五")){weeklist.add("Fri");}
+                if (weekDay.equals("星期六")){weeklist.add("Sat");}
+                if (weekDay.equals("星期日")){weeklist.add("Sun");}
             }
 
             int monthCount = 1;
@@ -123,6 +133,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         }
         set("collist", collist);
         set("colnamelist", namelist);
+        set("weeklist", weeklist);
         set("colname2list", name2list);
         render("planmonthsum.html");
     }

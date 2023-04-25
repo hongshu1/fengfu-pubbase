@@ -75,19 +75,23 @@
 		>
 			<thead class="fw_normal">
 			<tr>
-				<th data-width="60" data-column="index" rowspan="2">序号</th>
-				<th data-width="150" data-column="cworkname" rowspan="2">产线名称</th>
-				<th data-width="150" data-column="cinvcode" rowspan="2">存货编码</th>
-				<th data-width="150" data-column="cinvcode1" rowspan="2">客户部番</th>
-				<th data-width="150" data-column="cinvname1" rowspan="2">部品名称</th>
-
+				<th data-width="60" data-column="index" rowspan="3">序号</th>
+				<th data-width="150" data-column="cworkname" rowspan="3">产线名称</th>
+				<th data-width="150" data-column="cinvcode" rowspan="3">存货编码</th>
+				<th data-width="150" data-column="cinvcode1" rowspan="3">客户部番</th>
+				<th data-width="150" data-column="cinvname1" rowspan="3">部品名称</th>
 				#for(col:colname2list)
-				<th colspan="#(col.colsum)" id="nowYear">#(col.colname)</th>
+				<th colspan="#(col.colsum)">#(col.colname)</th>
 				#end
 			</tr>
 			<tr>
 				#for(colname:colnamelist)
 				<th data-width="50" data-column="nowmonth1">#(colname)</th>
+				#end
+			</tr>
+			<tr>
+				#for(week:weeklist)
+				<th data-width="50" data-column="nowmonth1">#(week)</th>
 				#end
 			</tr>
 			</thead>
