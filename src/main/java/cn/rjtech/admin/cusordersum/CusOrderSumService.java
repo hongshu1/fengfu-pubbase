@@ -310,15 +310,19 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 
     public Object findCusOrderSum(Integer pageNumber, Integer pageSize, Kv para) throws ParseException {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        //结束日期
+        String end = sdf.format(para.getDate("endDate"));
+        String begin = sdf.format(para.getDate("beginDate"));
+
+        Date endDate = new SimpleDateFormat("yyyy-MM").parse(end);//定义结束日期
+        Date beginDate = new SimpleDateFormat("yyyy-MM").parse(begin);//定义起始日期
 
         //起始日期
-        calendar.setTime(para.getDate("beginDate"));
-        //结束日期
-        Date endDate = para.getDate("endDate");
+        calendar.setTime(beginDate);
         List<String> months = new ArrayList<>();
         Map<String, String> dateMap = new HashMap<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-        String end = sdf.format(endDate);
+
 
         while (calendar.getTime().compareTo(endDate) <= 0) {
             // 年月 - 年-月-日
