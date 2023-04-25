@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class CusOrderResultService extends CusOrderSumService {
@@ -28,11 +29,24 @@ public class CusOrderResultService extends CusOrderSumService {
 
         Page<Record> paginate = dbTemplate("cusorderresult.paginate", kv).paginate(pageNumber, pageSize);
 
-        List<String> betweenDate = ScheduProductPlanMonthService.getBetweenDate(kv.getStr("beginDate"), kv.getStr("endDate"));
+        List<String> betweenDateList = ScheduProductPlanMonthService.getBetweenDate(kv.getStr("startdate"), kv.getStr("enddate"));
+        for (Record record : paginate.getList()) {
+            String cInvCode = record.getStr("cInvCode");
+            HashMap<String, List> dateList = new HashMap<>();
+            //查询一个物料的每日汇总的数目
+            List<Record> records = dbTemplate("cusorderresult.paginate", kv).find();
 
+            //放入betweenDateList,根据顺序拼上qtyXX
+
+        }
         return paginate;
     }
     //获得当前月份第一天和最后一天
+
+    /**
+     *
+     * @return kv.startdate  kv.startdate
+     */
     public static Kv  getBeginEndDate() {
         LocalDate now = LocalDate.now();
         LocalDate firstDayOfMonth = now.with(TemporalAdjusters.firstDayOfMonth());
@@ -41,27 +55,11 @@ public class CusOrderResultService extends CusOrderSumService {
         String beginDateStr = firstDayOfMonth.format(formatter);
         String endDateStr = lastDayOfMonth.format(formatter);
         Kv kv = new Kv();
-        kv.set("beginDate", beginDateStr);
-        kv.set("endDate", endDateStr);
+        kv.set("startdate", beginDateStr);
+        kv.set("enddate", endDateStr);
         return kv;
     }
-    public Kv getDateKv (String startDate,String endDate){
-        Kv kv = new Kv();
-        int[] startDateValues = this.parseDate(startDate);
 
-        kv.set("startyear",startDateValues[0]);
-        kv.set("startmonth",startDateValues[1]);
-        kv.set("startday",startDateValues[2]);
-        int[] ints1 = parseDate(endDate);
-        return  kv;
-    }
-    public  int[] parseDate(String dateString) {
-        String[] parts = dateString.split("-");
-        int year = Integer.parseInt(parts[0]);
-        int month = Integer.parseInt(parts[1]);
-        int day = Integer.parseInt(parts[2]);
-        return new int[] { year, month, day };
-    }
 
     public static void main(String[] args) {
 
