@@ -25,12 +25,21 @@
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button class="btn btn-danger btn-sm"> 导出PDF</button>
         </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <form id="form_#(pageId)">
+                <input name="isEffective" id="isEnabled_#(pageId)" value="#(purchaseOrderM.hideinvalid??'1'=='1'?true:false)">
+                <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-text="是:否"  data-nomsg="true" data-value="#(department.isenabled??'1'=='1'?true:false)"/>
+            </form>
+        </div>
     </div>
 
     <table class="jbolt_table jbolt_main_table  table-center "
            id="PurchaseOrderM_Table_#(pageId)"
            data-rowtpl="cash_tpl_#(pageId)"
            data-jbolttable
+           data-ajax="true"
+           data-url="admin/purchaseorderm/findPurchaseOrderDBatch?iPurchaseOrderMid=#(purchaseOrderM.iautoid??)"
+           data-form-control-width="form_#(pageId)"
            data-width="fill"
            data-height="fill"
            data-copy-to-excel="false"
@@ -80,6 +89,10 @@
             }
         };
         return editableTableOptions;
+    }
+    function updateIsEnabled(ele) {
+        $("#isEnabled_#(pageId)").val(ele.data("value"))
+        refreshJBoltTable();
     }
 </script>
 #end
