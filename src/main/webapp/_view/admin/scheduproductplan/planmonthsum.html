@@ -5,16 +5,16 @@
 	<div class="jbolt_page_content">
 		<nav>
 			<div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
-				<a class="nav-item nav-link" onclick="switchTab1(this)" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" aria-controls="tab-one" aria-selected="true">月周生产计划汇总</a>
-				<a class="nav-item nav-link" onclick="switchTab2(this)" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false">月周人数汇总</a>
+				<a class="nav-item nav-link" onclick="switchTab1(this)" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" aria-controls="tab-one" aria-selected="true"><strong>月周生产计划汇总</strong></a>
+				<a class="nav-item nav-link" onclick="switchTab2(this)" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false"><strong>月周人数汇总</strong></a>
 			</div>
 		</nav>
 		<div class="tab-content" style="padding: 0px 1rem;border-bottom: 0px;">
 			<!--1 月周生产计划汇总 start -->
 			<div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="nav-base-tab_one">
 				<div>
-					<div class="py-2" style="padding:.5rem 0rem;">
-						<span class="py-1"><strong>月周生产计划汇总</strong></span>
+					<div class="py-1" style="padding:.5rem 0rem;">
+						<!--<span class="py-1"><strong>月周生产计划汇总</strong></span>-->
 					</div>
 				</div>
 			</div>
@@ -22,8 +22,8 @@
 			<!--2 月周人数汇总 start -->
 			<div class="tab-pane fade" id="tab-two" role="tabpanel" aria-labelledby="nav-base-tab_two">
 				<div>
-					<div class="py-2" style="padding:.5rem 0rem;">
-						<span class="py-1"><strong>月周人数汇总</strong></span>
+					<div class="py-1" style="padding:.5rem 0rem;">
+						<!--<span class="py-1"><strong>月周人数汇总</strong></span>-->
 					</div>
 				</div>
 			</div>
@@ -32,9 +32,6 @@
 	</div>
 	<div class="jbolt_page_title">
 		<div class="row">
-			<!--<div class="col-md-auto">
-				<h1>月周生产计划汇总</h1>
-			</div>-->
 			<div class="col">
 				<form class="form-inline" id="apsAnnualplanmFormsum_#(pageId)"   onsubmit="return false;" method="post">
 					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
