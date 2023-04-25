@@ -574,7 +574,16 @@ WHERE a.isDeleted = '0'
       END AS NVARCHAR(30)) ) <= #para(enddate)
 #end
 
-
+#sql("getInvMergeRateSumList")
+###根据物料集查询默认工艺路线工序的人数汇总
+SELECT a.iAutoId,a.cInvCode,SUM(c.iMergeRate) AS iMergeRateSum
+FROM Bd_Inventory AS a
+         LEFT JOIN Bd_InventoryRouting AS b ON a.iAutoId = b.iInventoryId
+         LEFT JOIN Bd_InventoryRoutingConfig AS c ON b.iAutoId = c.iInventoryRoutingId
+WHERE b.isEnabled = 1 AND c.isEnabled = 1
+  AND a.iAutoId IN #(ids)
+GROUP BY a.iAutoId,a.cInvCode
+#end
 
 
 

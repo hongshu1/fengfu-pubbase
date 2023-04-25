@@ -847,6 +847,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         Map<String,Map<String,Record>> invPlanDateMap = new HashMap<>();
         //本次排产物料id集
         String idsJoin = "(";
+        List<Long> idList = new ArrayList<>();
         for (Record record : getWeekScheduPlanList){
             Long iWorkRegionMid = record.getLong("iWorkRegionMid");
             Long invId = record.getLong("invId");
@@ -877,7 +878,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 dateQtyMap.put(dateKey,record);
                 invPlanDateMap.put(cInvCode,dateQtyMap);
             }
-            idsJoin = idsJoin + invId + ",";
+
+            if (!idList.contains(invId)){
+                idsJoin = idsJoin + invId + ",";
+                idList.add(invId);
+            }
         }
         idsJoin = idsJoin + "601)";
 
@@ -903,6 +908,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
     //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------
 
+    /**
+     * 月周计划汇总
+     */
     public List<Record> getApsMonthPlanSumPage(int pageNumber, int pageSize, Kv kv) {
         List<Record> scheduProductPlanMonthList = new ArrayList<>();
 
@@ -916,6 +924,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
         pageSize = pageSize * 15;
 
+        //TODO:根据日期及条件获取月周生产计划表数据三班汇总
         Page<Record> recordPage = dbTemplate("scheduproductplan.getApsMonthPlanSumPage",kv).paginate(pageNumber,pageSize);
         List<Record> apsYearPlanQtyList = recordPage.getList();
 
@@ -984,9 +993,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     BigDecimal qty = dateQtyMap.get(date);
                     if (monthQtyMap.containsKey(month)){
                         BigDecimal monthSum = monthQtyMap.get(monthQtyMap);
-                        monthQtyMap.put(month,monthSum.add(qty));
+                        monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
                     }else {
-                        monthQtyMap.put(month,qty);
+                        monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
                     }
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
@@ -1035,6 +1044,168 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         page.setList(scheduProductPlanMonthList);
 
         return scheduProductPlanMonthList;
+    }
+    /**
+     * 月周人数汇总
+     */
+    public List<Record> getApsMonthPeopleSumPage(int pageNumber, int pageSize, Kv kv) {
+        List<Record> scheduProductPeopleMonthList = new ArrayList<>();
+
+        String startDate = kv.getStr("startdate");
+        String endDate = kv.getStr("enddate");
+        if (notOk(startDate) || notOk(endDate)){
+            ValidationUtils.isTrue(false,"开始日期-结束日期不能为空！");
+        }
+        //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+        List<String> scheduDateList = getBetweenDate(startDate,endDate);
+
+        pageSize = pageSize * 15;
+
+        //TODO:根据日期及条件获取月周生产计划表数据三班汇总
+        Page<Record> recordPage = dbTemplate("scheduproductplan.getApsMonthPlanSumPage",kv).paginate(pageNumber,pageSize);
+        List<Record> apsYearPlanQtyList = recordPage.getList();
+
+        //key:产线id   value:List物料集
+        Map<Long,List<String>> workInvListMap = new HashMap<>();
+        //key:inv，   value:<yyyy-MM-dd，qty>
+        Map<String,Map<String,BigDecimal>> invPlanDateMap = new HashMap<>();
+        //key:inv   value:info
+        Map<String,Record> invInfoMap = new HashMap<>();
+        //本次排产物料id集
+        String idsJoin = "(";
+        List<Long> idList = new ArrayList<>();
+        for (Record record : apsYearPlanQtyList){
+            Long iWorkRegionMid = record.getLong("iWorkRegionMid");
+            Long invId = record.getLong("invId");
+            String cInvCode = record.getStr("cInvCode");
+            String iYear = record.getStr("iYear");
+            int iMonth = record.getInt("iMonth");
+            int iDate = record.getInt("iDate");
+            BigDecimal planQty = record.getBigDecimal("iQty3");
+            //yyyy-MM-dd
+            String dateKey = iYear;
+            dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+            dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+
+            if (workInvListMap.containsKey(iWorkRegionMid)){
+                List<String> list = workInvListMap.get(iWorkRegionMid);
+                list.add(cInvCode);
+            }else {
+                List<String> list = new ArrayList<>();
+                list.add(cInvCode);
+                workInvListMap.put(iWorkRegionMid,list);
+            }
+
+            if (invPlanDateMap.containsKey(cInvCode)){
+                //key:yyyy-MM-dd   value:qty
+                Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(cInvCode);
+                dateQtyMap.put(dateKey,planQty);
+            }else {
+                Map<String,BigDecimal> dateQtyMap = new HashMap<>();
+                dateQtyMap.put(dateKey,planQty);
+                invPlanDateMap.put(cInvCode,dateQtyMap);
+            }
+            invInfoMap.put(cInvCode,record);
+            if (!idList.contains(invId)){
+                idsJoin = idsJoin + invId + ",";
+                idList.add(invId);
+            }
+        }
+        idsJoin = idsJoin + "601)";
+
+        //TODO:根据物料集查询默认工艺路线工序的人数汇总
+        List<Record> getInvMergeRateSumList = dbTemplate("scheduproductplan.getInvMergeRateSumList",Kv.by("ids",idsJoin)).find();
+        //key:inv   value:mergeRateSum
+        Map<String,BigDecimal> invMergeRateSumMap = new HashMap<>();
+        for (Record record : getInvMergeRateSumList){
+            String cInvCode = record.getStr("cInvCode");
+            BigDecimal iMergeRateSum = record.getBigDecimal("iMergeRateSum");
+            invMergeRateSumMap.put(cInvCode,iMergeRateSum);
+        }
+
+
+
+        //对产线逐个处理
+        for (Long key : workInvListMap.keySet()) {
+            List<String> recordList = workInvListMap.get(key);
+            for (String inv : recordList){
+                //inv信息
+                Record invInfo = invInfoMap.get(inv);
+                //key:yyyy-MM-dd   value:qty
+                Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(inv);
+                //人数汇总
+                BigDecimal mergeRateSum = invMergeRateSumMap.get(inv) != null ? invMergeRateSumMap.get(inv) : BigDecimal.ZERO;
+
+                Record planRecord = new Record();
+                planRecord.set("cInvCode",inv);
+                planRecord.set("cInvCode1",invInfo.getStr("cInvCode1"));
+                planRecord.set("cInvName1",invInfo.getStr("cInvName1"));
+                planRecord.set("cWorkName",invInfo.getStr("cWorkName"));
+
+                //key:yyyy-MM   value:qtySum
+                Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
+                int monthCount = 1;
+                for (int i = 0; i < scheduDateList.size(); i++) {
+                    String date = scheduDateList.get(i);
+                    String month = date.substring(0,7);
+                    BigDecimal qty = dateQtyMap.get(date);
+                    if (qty != null && (qty.compareTo(BigDecimal.ZERO)) == 1){
+                        qty = mergeRateSum;
+                    }
+
+                    if (monthQtyMap.containsKey(month)){
+                        BigDecimal monthSum = monthQtyMap.get(monthQtyMap);
+                        monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                    }else {
+                        monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                    }
+                    int seq = i + 1;
+                    int day = Integer.parseInt(date.substring(8));
+                    if (i != 0 && day == 1){
+                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                        planRecord.set("qty"+seq,qty);
+                        monthCount ++;
+                        continue;
+                    }
+                    if (seq == scheduDateList.size()){
+                        planRecord.set("qty"+seq,qty);
+                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                        continue;
+                    }
+                    planRecord.set("qty"+seq,qty);
+                }
+
+                scheduProductPeopleMonthList.add(planRecord);
+            }
+        }
+
+        Record planRecord = new Record();
+        planRecord.set("cInvCode","物料编码");
+        planRecord.set("cInvCode1","存货");
+        planRecord.set("cInvName1","部番");
+        planRecord.set("cWorkName","产线");
+        planRecord.set("qty1",1);
+        planRecord.set("qty2",1);
+        planRecord.set("qty3",1);
+        planRecord.set("qty4",1);
+        planRecord.set("qty5",1);
+        planRecord.set("qty6",1);
+        planRecord.set("qty7",1);
+        planRecord.set("qty8",1);
+        planRecord.set("qty9",1);
+        planRecord.set("qty10",1);
+
+
+        scheduProductPeopleMonthList.add(planRecord);
+
+        Page<Record> page = new Page<>();
+        page.setPageNumber(recordPage.getPageNumber());
+        page.setPageSize(recordPage.getPageSize() / 15);
+        page.setTotalPage(recordPage.getTotalPage());
+        page.setTotalRow(recordPage.getTotalRow() /15);
+        page.setList(scheduProductPeopleMonthList);
+
+        return scheduProductPeopleMonthList;
     }
 
 

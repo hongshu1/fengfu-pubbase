@@ -17,6 +17,8 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 /**
@@ -57,12 +59,23 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         String cinvcode = get("cinvcode");
         String cinvcode1 = get("cinvcode1");
         String cinvname1 = get("cinvname1");
+        String active = get("active");
+
+        LocalDate localDate = LocalDate.now();
+        if (StringUtils.isBlank(startdate)){
+            startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
+        }
+        if (StringUtils.isBlank(enddate)){
+            enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
+        }
+
         set("startdate",startdate);
         set("enddate",enddate);
         set("cworkname",cworkname);
         set("cinvcode",cinvcode);
         set("cinvcode1",cinvcode1);
         set("cinvname1",cinvname1);
+        set("active", isOk(active) ? active : 1);
 
         List<String> collist = new ArrayList<>();
         List<String> namelist = new ArrayList<>();
@@ -83,15 +96,6 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
                 }else {
                     yearMonthMap.put(yearMonth,2);
                 }
-
-                String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
-                if (weekDay.equals("星期一")){weeklist.add("Mon");}
-                if (weekDay.equals("星期二")){weeklist.add("Tue");}
-                if (weekDay.equals("星期三")){weeklist.add("Wed");}
-                if (weekDay.equals("星期四")){weeklist.add("Thu");}
-                if (weekDay.equals("星期五")){weeklist.add("Fri");}
-                if (weekDay.equals("星期六")){weeklist.add("Sat");}
-                if (weekDay.equals("星期日")){weeklist.add("Sun");}
             }
 
             int monthCount = 1;
@@ -108,6 +112,16 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
                     name2list.add(record);
                 }
 
+                String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
+                String weekType = "";
+                if (weekDay.equals("星期一")){weekType = "Mon";}
+                if (weekDay.equals("星期二")){weekType = "Tue";}
+                if (weekDay.equals("星期三")){weekType = "Wed";}
+                if (weekDay.equals("星期四")){weekType = "Thu";}
+                if (weekDay.equals("星期五")){weekType = "Fri";}
+                if (weekDay.equals("星期六")){weekType = "Sat";}
+                if (weekDay.equals("星期日")){weekType = "Sun";}
+
                 int seq = i + 1;
                 int day = Integer.parseInt(scheduDateList.get(i).substring(8));
                 if (i != 0 && day == 1){
@@ -116,6 +130,9 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
 
                     namelist.add("合计");
                     namelist.add(day+"日");
+
+                    weeklist.add(" ");
+                    weeklist.add(weekType);
                     monthCount ++;
                     continue;
                 }
@@ -125,10 +142,14 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
 
                     namelist.add(day+"日");
                     namelist.add("合计");
+
+                    weeklist.add(weekType);
+                    weeklist.add(" ");
                     continue;
                 }
                 collist.add("qty"+seq);
                 namelist.add(day+"日");
+                weeklist.add(weekType);
             }
         }
         set("collist", collist);
@@ -232,7 +253,12 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
      * 获取月周生产计划汇总
      */
     public void getApsMonthPlanSumPage() {
-        renderJsonData(service.getApsMonthPlanSumPage(getPageNumber(),getPageSize(),getKv()));
+        int active = getInt("active");
+        if (active == 1){
+            renderJsonData(service.getApsMonthPlanSumPage(getPageNumber(),getPageSize(),getKv()));
+        }else {
+            renderJsonData(service.getApsMonthPeopleSumPage(getPageNumber(),getPageSize(),getKv()));
+        }
     }
 
 
