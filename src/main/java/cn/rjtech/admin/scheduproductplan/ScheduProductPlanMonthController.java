@@ -14,6 +14,8 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
 
@@ -62,14 +64,66 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         set("cinvcode1",cinvcode1);
         set("cinvname1",cinvname1);
 
+        List<String> collist = new ArrayList<>();
+        List<String> namelist = new ArrayList<>();
+        List<Record> name2list = new ArrayList<>();
+        if (StringUtils.isNotBlank(startdate) && StringUtils.isNotBlank(enddate)){
+            //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+            List<String> scheduDateList = service.getBetweenDate(startdate,enddate);
+            //页面顶部colspan列  key:2023年1月  value:colspan="13"
+            Map<String,Integer> yearMonthMap = new HashMap<>();
+            for (int i = 0; i < scheduDateList.size(); i++) {
+                String year = scheduDateList.get(i).substring(0,4);
+                int month = Integer.parseInt(scheduDateList.get(i).substring(5,7));
+                String yearMonth = year + "年" + month + "月";
+                if (yearMonthMap.containsKey(yearMonth)){
+                    int count = yearMonthMap.get(yearMonth);
+                    yearMonthMap.put(yearMonth,count + 1);
+                }else {
+                    yearMonthMap.put(yearMonth,2);
+                }
+            }
 
-        List<String> list = new ArrayList<>();
-        list.add("qty1");
-        list.add("qty2");
-        list.add("qty3");
+            int monthCount = 1;
+            List<String> name2listStr = new ArrayList<>();
+            for (int i = 0; i < scheduDateList.size(); i++) {
+                String year = scheduDateList.get(i).substring(0,4);
+                int month = Integer.parseInt(scheduDateList.get(i).substring(5,7));
+                String yearMonth = year + "年" + month + "月";
+                if (!name2listStr.contains(yearMonth)){
+                    name2listStr.add(yearMonth);
+                    Record record = new Record();
+                    record.set("colname",yearMonth);
+                    record.set("colsum",yearMonthMap.get(yearMonth));
+                    name2list.add(record);
+                }
 
-        set("collist", list);
-        //service.getApsMonthPlanSumPage(getPageNumber(),getPageSize(),getKv());
+                int seq = i + 1;
+                int day = Integer.parseInt(scheduDateList.get(i).substring(8));
+                if (i != 0 && day == 1){
+                    collist.add("qtysum"+monthCount);
+                    collist.add("qty"+seq);
+
+                    namelist.add("合计");
+                    namelist.add(day+"日");
+                    monthCount ++;
+                    continue;
+                }
+                if (seq == scheduDateList.size()){
+                    collist.add("qty"+seq);
+                    collist.add("qtysum"+monthCount);
+
+                    namelist.add(day+"日");
+                    namelist.add("合计");
+                    continue;
+                }
+                collist.add("qty"+seq);
+                namelist.add(day+"日");
+            }
+        }
+        set("collist", collist);
+        set("colnamelist", namelist);
+        set("colname2list", name2list);
         render("planmonthsum.html");
     }
 

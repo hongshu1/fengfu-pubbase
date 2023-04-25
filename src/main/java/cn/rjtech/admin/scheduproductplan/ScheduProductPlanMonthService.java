@@ -977,8 +977,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
                 //key:yyyy-MM   value:qtySum
                 Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
-                int count = 0;
-                for (String date : scheduDateList){
+                int monthCount = 1;
+                for (int i = 0; i < scheduDateList.size(); i++) {
+                    String date = scheduDateList.get(i);
                     String month = date.substring(0,7);
                     BigDecimal qty = dateQtyMap.get(date);
                     if (monthQtyMap.containsKey(month)){
@@ -987,7 +988,20 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     }else {
                         monthQtyMap.put(month,qty);
                     }
-                    planRecord.set("qty"+count++,qty);
+                    int seq = i + 1;
+                    int day = Integer.parseInt(date.substring(8));
+                    if (i != 0 && day == 1){
+                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                        planRecord.set("qty"+seq,qty);
+                        monthCount ++;
+                        continue;
+                    }
+                    if (seq == scheduDateList.size()){
+                        planRecord.set("qty"+seq,qty);
+                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                        continue;
+                    }
+                    planRecord.set("qty"+seq,qty);
                 }
 
                 scheduProductPlanMonthList.add(planRecord);
