@@ -310,26 +310,20 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 
     public Object findCusOrderSum(Integer pageNumber, Integer pageSize, Kv para) throws ParseException {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
-//        Date d1 = new SimpleDateFormat("yyyy-MM").parse("2022-3");//定义起始日期
-//
-//        Date endDate = new SimpleDateFormat("yyyy-MM").parse("2023-5");//定义结束日期
 
+        //起始日期
         calendar.setTime(para.getDate("beginDate"));
+        //结束日期
         Date endDate = para.getDate("endDate");
-//        calendar.setTime(d1);
         List<String> months = new ArrayList<>();
         Map<String, String> dateMap = new HashMap<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         String end = sdf.format(endDate);
 
         while (calendar.getTime().compareTo(endDate) <= 0) {
-//        while (calendar.getTime().compareTo(endDate) <= 0) {
             // 年月 - 年-月-日
-
             String str = sdf.format(calendar.getTime());
             String[] strArr = str.split("-");
-            System.out.println(strArr[0]);//输出日期结果
-            System.out.println(strArr[1]);//输出日期结果
             months.add(strArr[1]);
             if (strArr[1].equals("12")) {
                 dateMap.put(strArr[0], StringUtils.join(months, COMMA));
@@ -344,7 +338,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
         para.set("dateMap", dateMap);
         Page<Record> pageData = dbTemplate("cusordersum.paginateAdminDatas", para).paginate(pageNumber, pageSize);
         String str = "01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31";
-
 
         para.set("roleArray", str);
         if (pageData.getTotalRow() > 0) {
