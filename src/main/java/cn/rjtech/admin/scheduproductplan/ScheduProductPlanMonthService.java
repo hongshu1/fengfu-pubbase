@@ -2,6 +2,7 @@ package cn.rjtech.admin.scheduproductplan;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.kit.ConfigKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -10,11 +11,10 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.apsannualpland.ApsAnnualplandService;
 import cn.rjtech.admin.apsannualplandqty.ApsAnnualplandQtyService;
 import cn.rjtech.admin.apsweekschedule.ApsWeekscheduleService;
+import cn.rjtech.admin.apsweekscheduledetails.ApsWeekscheduledetailsService;
+import cn.rjtech.admin.apsweekscheduledqty.ApsWeekscheduledQtyService;
 import cn.rjtech.admin.calendar.CalendarService;
-import cn.rjtech.model.momdata.ApsAnnualpland;
-import cn.rjtech.model.momdata.ApsAnnualplandQty;
-import cn.rjtech.model.momdata.ApsAnnualplanm;
-import cn.rjtech.model.momdata.ApsWeekschedule;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
 import cn.rjtech.util.DateUtils;
@@ -33,6 +33,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Calendar;
 
 /**
  * 生产计划排程 Service
@@ -63,6 +64,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
     @Inject
     private ApsWeekscheduleService apsWeekscheduleService;
+    @Inject
+    private ApsWeekscheduledetailsService apsWeekscheduledetailsService;
+    @Inject
+    private ApsWeekscheduledQtyService apsWeekscheduledQtyService;
 
 
     /**
@@ -221,14 +226,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
     //-----------------------------------------------------------------月周生产计划排产-----------------------------------------------
 
-    public List<Record> getCustomerList() {
-        return findRecord("SELECT iAutoId,cCusName FROM Bd_Customer WHERE isDeleted = '0'");
-    }
-
-
-
-
-
     /**
      * 测试
      * @param kv
@@ -324,6 +321,18 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return scheduProductPlanYearList;
     }
 
+
+
+
+    /**
+     *
+     * 作成计划弹框显示排产纪录
+     */
+    public List<Record> getApsWeekscheduleList() {
+        return dbTemplate("scheduproductplan.getApsWeekscheduleList").find();
+    }
+
+
     /**
      * 月周度生产计划逻辑处理
      * @param level 排产层级
@@ -337,9 +346,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         //TODO:获取当前层级上次排产截止日期+1
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekschedule",Kv.by("level",level)).findFirst();
         //排产开始年月日
-        int startyear;
-        int startmonth;
-        int startday;
         Date startDate;
         if (apsWeekschedule != null){
             Date dScheduleEndTime = apsWeekschedule.getDScheduleEndTime();
@@ -348,218 +354,360 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             calendar.setTime(date);
             calendar.add(Calendar.DATE,1);//日期+1
             startDate = DateUtils.parseDate(DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd"));
-            startyear = Integer.parseInt(DateUtils.formatDate(startDate,"yyyy"));
-            startmonth = Integer.parseInt(DateUtils.formatDate(startDate,"MM"));
-            startday = Integer.parseInt(DateUtils.formatDate(startDate,"dd"));
         }else {
-            startyear = Integer.parseInt(DateUtils.getYear());
-            startmonth = Integer.parseInt(DateUtils.getMonth());
-            startday = Integer.parseInt(DateUtils.getDay());
             startDate = DateUtils.parseDate(DateUtils.formatDate(new Date(),"yyyy-MM-dd"));
         }
+        String startDateStr = DateUtils.formatDate(startDate,"yyyy-MM-dd");
         //排产截止年月日
         Date endDate = DateUtils.parseDate(endDateStr);
-        int endyear = Integer.parseInt(DateUtils.formatDate(endDate,"yyyy"));
-        int endmonth = Integer.parseInt(DateUtils.formatDate(endDate,"MM"));
-        int endday = Integer.parseInt(DateUtils.formatDate(endDate,"dd"));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+        calendar.add(Calendar.DATE,-1);//日期-1
+        //过去一天年月日
+        Date lastDate = DateUtils.parseDate(DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd"));
+        int lastyear = Integer.parseInt(DateUtils.formatDate(lastDate,"yyyy"));
+        int lastmonth = Integer.parseInt(DateUtils.formatDate(lastDate,"MM"));
+        int lastday = Integer.parseInt(DateUtils.formatDate(lastDate,"dd"));
+
+        Calendar calendarMonth = Calendar.getInstance();
+        calendarMonth.setTime(endDate);
+        calendarMonth.add(Calendar.MONTH,1);//月份+1
+        //下一个年月日
+        Date nextDate = DateUtils.parseDate(DateUtils.formatDate(calendarMonth.getTime(),"yyyy-MM-dd"));
+        int nextyear = Integer.parseInt(DateUtils.formatDate(nextDate,"yyyy"));
+        int nextmonth = Integer.parseInt(DateUtils.formatDate(nextDate,"MM"));
+        int nextMonthDaySum = DateUtils.getMonthHasDays(nextDate);
+
         //排产开始日期到截止日期之间的天数 包含开始到结束那天
         int scheduDayNum = ((int) DateUtils.getDistanceOfTwoDate(startDate,endDate)) + 1;
-        //排产开始日期到截止日期之间的日期集 包含开始到结束那天
+        //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
         List<String> scheduDateList = getBetweenDate(DateUtils.formatDate(startDate,"yyyy-MM-dd"),endDateStr);
+
+        //排产日历类型
+        String calendarType = "1";
+        //库存率因子
+        BigDecimal aps_inventoryRate = getConfigValue(Kv.by("configkey","aps_inventoryRate"));
+        Double inventoryRate = aps_inventoryRate != null ? aps_inventoryRate.doubleValue() : 0.7;
+        //加班因子
+        BigDecimal aps_workFactor = getConfigValue(Kv.by("configkey","aps_workFactor"));
+        Double workFactor = aps_workFactor != null ? aps_workFactor.doubleValue() : 0.3;
         Long organizeId = getOrgId();
 
-        //顶层（来源于客户计划汇总中内作销售类型产品（存货档案-销售类型）的计划使用）
+
+        //TODO:根据层级查询本次排产物料集信息
+        List<Record> invInfoByLevelList ;
         if (level == 1){
-            //TODO:根据层级及销售类型获取客户计划汇总表数据
-            Okv okv = Okv.by("ipslevel",level).set("isaletype",1)
-                    .set("startyear",startyear).set("endyear",endyear)
-                    .set("startmonth",startmonth).set("endmonth",endmonth)
-                    .set("startday",startday).set("endday",endday);
-            List<Record> getCusOrderSumList = getCusOrderSumList(okv);
-
-            //根据产线作key依次进行排产  key:产线id，   value<物料，List>
-            Map<Long,Map<String,List<Record>>> workInvListMap = new HashMap<>();
-            String idsJoin = "(";
-            for (Record record : getCusOrderSumList){
-                Long iWorkRegionMid = record.getLong("iWorkRegionMid");
-                String cWorkCode = record.getStr("cWorkCode");
-                Long invId = record.getLong("invId");
-                String cInvCode = record.getStr("cInvCode");
-
-                Map<String,List<Record>> invMap;
-                if (workInvListMap.containsKey(iWorkRegionMid)){
-                    invMap = workInvListMap.get(iWorkRegionMid);
-                    List<Record> list = invMap.containsKey(cInvCode) ? invMap.get(cInvCode) : new ArrayList<>();
-                    list.add(record);
-                    invMap.put(cInvCode,list);
-                }else {
-                    invMap = new HashMap<>();
-                    List<Record> list = new ArrayList<>();
-                    list.add(record);
-                    invMap.put(cInvCode,list);
-                }
-                workInvListMap.put(iWorkRegionMid,invMap);
-                idsJoin = idsJoin + invId + ",";
+            invInfoByLevelList = getInvInfoByLevelList(Okv.by("ipslevel",level).set("isaletype",1));
+        }else {
+            invInfoByLevelList = getInvInfoByLevelList(Okv.by("ipslevel",level));
+        }
+        //根据产线作key依次进行排产
+        //key:产线id   value:List物料集
+        Map<Long,List<String>> workInvListMap = new HashMap<>();
+        //key:inv   value:info
+        Map<String,Record> invInfoMap = new HashMap<>();
+        //本次排产物料id集
+        String idsJoin = "(";
+        for (Record record : invInfoByLevelList){
+            Long iWorkRegionMid = record.getLong("iWorkRegionMid");
+            String cInvCode = record.getStr("cInvCode");
+            Long invId = record.getLong("invId");
+            if (workInvListMap.containsKey(iWorkRegionMid)){
+                List<String> list = workInvListMap.get(iWorkRegionMid);
+                list.add(cInvCode);
+            }else {
+                List<String> list = new ArrayList<>();
+                list.add(cInvCode);
+                workInvListMap.put(iWorkRegionMid,list);
             }
-            idsJoin = idsJoin + "601)";
+            invInfoMap.put(cInvCode,record);
+            idsJoin = idsJoin + invId + ",";
+        }
+        idsJoin = idsJoin + "601)";
 
-            //TODO:根据物料集查询各班次产能
-            List<Record> invCapacityList = dbTemplate("scheduproductplan.getInvCapacityList",Kv.by("ids",idsJoin)).find();
-            //key:inv    value:list
-            Map<String,List<Record>> invCapacityListMap = new HashMap<>();
-            for (Record record : invCapacityList){
-                String cInvCode = record.getStr("cInvCode");
-                if (invCapacityListMap.containsKey(cInvCode)){
-                    List<Record> list = invCapacityListMap.get(cInvCode);
-                    list.add(record);
-                    invCapacityListMap.put(cInvCode,list);
-                }else {
-                    List<Record> list = new ArrayList<>();
-                    list.add(record);
-                    invCapacityListMap.put(cInvCode,list);
-                }
-            }
-
-
-            //循环产线
-            for (Long WorkIdKey : workInvListMap.keySet()){
-                //key:inv  value:List
-                Map<String,List<Record>> invListMap = workInvListMap.get(WorkIdKey);
-
-                //初始化需排产物料
-                String[] invArrar = invListMap.keySet().toArray(new String[0]);
-                //各物料期初库存  key:inv
-                Map<String, Integer> inventory_originalMap = new HashMap<>();
-                //各物料的各班次产量数据  key:inv
-                Map<String, int[]> capabilityMap = new HashMap<>();
-                //各物料月每日需求数
-                Map<String, int[]> planMap = new HashMap<>();
-                //各物料下月平均计划需求数  key:inv
-                Map<String, Integer> plan_nextMonthAverageMap = new HashMap<>();
-
-                //月星期几
-                Weekday[] workday = {Weekday.fri, Weekday.sat, Weekday.sun, Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu, Weekday.fri,
-                        Weekday.sat, Weekday.sun, Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu, Weekday.fri, Weekday.sat, Weekday.sun,
-                        Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu, Weekday.fri, Weekday.sat, Weekday.sun, Weekday.mon, Weekday.tue,
-                        Weekday.wed, Weekday.thu, Weekday.fri, Weekday.sat, Weekday.sun};
-
-                //循环物料
-                for (String inv : invListMap.keySet()){
-                    List<Record> recordPlanList = invListMap.get(inv);//多个月计划
-                    //key:yyyy-MM-dd   value:qty
-                    Map<String,Integer> dateQtyMap = new HashMap<>();
-                    for (Record record : recordPlanList){
-                        String iYear = record.getStr("iYear");
-                        int iMonth = record.getInt("iMonth");
-                        int iDate = record.getInt("iDate");
-                        int planQty = record.getBigDecimal("iQty3").intValue();
-
-                        String date = iYear;
-                        date = iMonth < 10 ? date + "-0" + iMonth : date + "-" + iMonth;
-                        date = iDate < 10 ? date + "-0" + iDate : date + "-" + iDate;
-                        dateQtyMap.put(date,planQty);
-                    }
-
-                    //每日需求数
-                    int[] planArrar = new int[scheduDayNum];
-                    for (int i = 0; i < scheduDateList.size(); i++) {
-                        String date = scheduDateList.get(i);
-                        int planQty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : 0;
-                        planArrar[i] = planQty;
-                    }
-                    planMap.put(inv,planArrar);
-
-
-
-
-                    //期初库存
-                    int stockQty = 1719;
-                    inventory_originalMap.put(inv, stockQty);
-
-
-
-                    //各班次产量数据
-                    int[] capabilityArrar = new int[3];
-                    List<Record> capacityList = invCapacityListMap.get(inv);
-                    for (int i = 0; i < capacityList.size(); i++) {
-                        String cWorkShiftCode = capacityList.get(i).getStr("capacityList");
-                        int iCapacity = capacityList.get(i).getInt("iCapacity");
-                        if (cWorkShiftCode.contains("1S")){
-                            capabilityArrar[0] = iCapacity;
-                        }
-                        if (cWorkShiftCode.contains("2S")){
-                            capabilityArrar[1] = iCapacity;
-                        }
-                        if (cWorkShiftCode.contains("3S")){
-                            capabilityArrar[2] = iCapacity;
-                        }
-                    }
-                    capabilityMap.put(inv, capabilityArrar);
-
-
-
-                    //下月平均计划需求数
-                    int averageQty = 0;
-                    //List<Record> nextPlanList = invYearMonthMap.get(invYearMonthKey);
-                    /*for (Record record : nextPlanList){
-                        int planQty = record.getInt("iQty3");
-                        averageQty += planQty;
-                    }*/
-                    plan_nextMonthAverageMap.put(inv, averageQty);
-
-
-
-                }
-                ApsScheduling apsScheduling = ApsUtil.apsCalculation(invArrar, inventory_originalMap, planMap, 2, plan_nextMonthAverageMap, capabilityMap, workday, 0.7, 0.3);
-
-                String[] productInformationByShift0 = new String[workday.length];
-                int[] productNumberByShift0 = new int[workday.length];
-                apsScheduling.getProductInfo(productInformationByShift0, productNumberByShift0, 0);
-                System.out.println("早班："+ Arrays.toString(productInformationByShift0));
-                System.out.println("早班："+ Arrays.toString(productNumberByShift0));
-                System.out.println();
-
-                String[] productInformationByShift1 = new String[workday.length];
-                int[] productNumberByShift1 = new int[workday.length];
-                apsScheduling.getProductInfo(productInformationByShift1, productNumberByShift1, 1);
-                System.out.println("中班："+ Arrays.toString(productInformationByShift1));
-                System.out.println("中班："+ Arrays.toString(productNumberByShift1));
-                System.out.println();
-
-                String[] productInformationByShift2 = new String[workday.length];
-                int[] productNumberByShift2 = new int[workday.length];
-                apsScheduling.getProductInfo(productInformationByShift2, productNumberByShift2, 2);
-                System.out.println("加班："+ Arrays.toString(productInformationByShift2));
-                System.out.println("加班："+ Arrays.toString(productNumberByShift2));
-                System.out.println();
-
-                String[] productInformationByShift3 = new String[workday.length];
-                int[] productNumberByShift3 = new int[workday.length];
-                apsScheduling.getProductInfo(productInformationByShift3, productNumberByShift3, 3);
-                System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
-                System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
+        //TODO: 根据日历类型字典查询工作日历集合
+        List<String> calendarList = getCalendarDateList(organizeId,calendarType,DateUtils.formatDate(startDate,"yyyy-MM-dd"),endDateStr);
+        //初始化工作日历
+        Weekday[] workday = new Weekday[scheduDayNum];
+        for (int i = 0; i < scheduDateList.size(); i++) {
+            String scheduDate = scheduDateList.get(i);
+            String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDate),"E");
+            if (weekDay.equals("星期一")){workday[i] = Weekday.mon;}
+            if (weekDay.equals("星期二")){workday[i] = Weekday.tue;}
+            if (weekDay.equals("星期三")){workday[i] = Weekday.wed;}
+            if (weekDay.equals("星期四")){workday[i] = Weekday.thu;}
+            if (weekDay.equals("星期五")){workday[i] = Weekday.fri;}
+            if (weekDay.equals("星期六")){workday[i] = Weekday.sat;}
+            if (weekDay.equals("星期日")){workday[i] = Weekday.sun;}
+        }
+        //TODO:根据物料集查询各班次产能
+        List<Record> invCapacityList = dbTemplate("scheduproductplan.getInvCapacityList",Kv.by("ids",idsJoin)).find();
+        //key:inv    value:list
+        Map<String,List<Record>> invCapacityListMap = new HashMap<>();
+        for (Record record : invCapacityList){
+            String cInvCode = record.getStr("cInvCode");
+            if (invCapacityListMap.containsKey(cInvCode)){
+                List<Record> list = invCapacityListMap.get(cInvCode);
+                list.add(record);
+                invCapacityListMap.put(cInvCode,list);
+            }else {
+                List<Record> list = new ArrayList<>();
+                list.add(record);
+                invCapacityListMap.put(cInvCode,list);
             }
         }
-        else if (level == 2){
-
+        //TODO:查询物料集期初在库
+        List<Record> getLastDateZKQtyList = getLastDateZKQtyList(Kv.by("lastyear",lastyear).set("lastmonth",lastmonth).set("lastday",lastday).set("ids",idsJoin));
+        //key:inv   value:qty
+        Map<String,Integer> lastDateZKQtyMap = new HashMap<>();
+        for (Record record : getLastDateZKQtyList){
+            String cInvCode = record.getStr("cInvCode");
+            int iQty5 = record.getBigDecimal("iQty5").intValue();
+            lastDateZKQtyMap.put(cInvCode,iQty5);
+        }
+        //TODO:根据物料集id及年月查询年度生产计划（用于计算下一月平均需求数）
+        List<Record> getYearMonthQtySumByinvList = getYearMonthQtySumByinvList(Kv.by("nextyear",nextyear).set("nextmonth",nextmonth).set("ids",idsJoin));
+        //key:inv   value:qty
+        Map<String,Integer> nextMonthAvgQtyByinvMap = new HashMap<>();
+        for (Record record : getYearMonthQtySumByinvList){
+            String cInvCode = record.getStr("cInvCode");
+            int iQty = record.getInt("iQty");
+            int avgQty = iQty / nextMonthDaySum;
+            nextMonthAvgQtyByinvMap.put(cInvCode,avgQty);
         }
 
 
+        //TODO:根据物料集id及日期获取客户计划汇总表数据
+        List<Record> getCusOrderSumList = getCusOrderSumList(Okv.by("ids",idsJoin).set("startdate",startDateStr).set("enddate",endDateStr));
+        //key:inv，   value:<yyyy-MM-dd，qty>     1、来源于客户计划汇总中内作销售类型产品的计划使用
+        Map<String,Map<String,BigDecimal>> invPlanDateMap = new HashMap<>();
+        for (Record record : getCusOrderSumList){
+            String cInvCode = record.getStr("cInvCode");
+            String iYear = record.getStr("iYear");
+            int iMonth = record.getInt("iMonth");
+            int iDate = record.getInt("iDate");
+            BigDecimal planQty = record.getBigDecimal("iQty3");
+            //yyyy-MM-dd
+            String dateKey = iYear;
+            dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+            dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+
+            if (invPlanDateMap.containsKey(cInvCode)){
+                //key:yyyy-MM-dd   value:qty
+                Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(cInvCode);
+                dateQtyMap.put(dateKey,planQty);
+            }else {
+                Map<String,BigDecimal> dateQtyMap = new HashMap<>();
+                dateQtyMap.put(dateKey,planQty);
+                invPlanDateMap.put(cInvCode,dateQtyMap);
+            }
+        }
+        //key:inv，   value:<yyyy-MM-dd，qty>       2、上一层母件的计划数量*QTY汇总值
+        Map<String,Map<String,BigDecimal>> invPlanListWeekMap = new HashMap<>();
+
+        //顶层（来源于客户计划汇总中内作销售类型产品的计划使用）
+        if (level == 1){}
+        //下层（1.来源于客户汇总表中的计划使用数+2.上一层母件的计划数量*QTY汇总值）
+        else {
+            //TODO:根据物料集id查询父级物料信息及用量
+            List<Record> pinvInfoByinvList = getPinvInfoByinvList(Okv.by("ids",idsJoin));
+            //key:inv   value:List父级物料信息及用量
+            Map<String,List<Record>> pinvListByinvMap = new HashMap<>();
+            //本次排产物料的父级id集
+            String pidsJoin = "(";
+            List<Long> idList = new ArrayList<>();
+            for (Record record : pinvInfoByinvList){
+                String invCode = record.getStr("invCode");
+                Long pinvId = record.getLong("pinvId");
+                if (pinvListByinvMap.containsKey(invCode)){
+                    List<Record> list = pinvListByinvMap.get(invCode);
+                    list.add(record);
+                }else {
+                    List<Record> list = new ArrayList<>();
+                    list.add(record);
+                    pinvListByinvMap.put(invCode,list);
+                }
+                if (!idList.contains(pinvId)){
+                    pidsJoin = pidsJoin + pinvId + ",";
+                    idList.add(pinvId);
+                }
+            }
+            pidsJoin = pidsJoin + "601)";
+
+            //TODO:根据父物料集id及日期获取月周生产计划表数据
+            List<Record> getWeekScheduSumList = getWeekScheduSumList(Okv.by("ids",pidsJoin).set("startdate",startDateStr).set("enddate",endDateStr));
+            //key:pinv，   value:List<多个月计划数>
+            Map<String,List<Record>> pinvPlanListMap = new HashMap<>();
+            for (Record record : getWeekScheduSumList){
+                String cInvCode = record.getStr("cInvCode");
+                if (pinvPlanListMap.containsKey(cInvCode)){
+                    List<Record> list = pinvPlanListMap.get(cInvCode);
+                    list.add(record);
+                }else {
+                    List<Record> list = new ArrayList<>();
+                    list.add(record);
+                    pinvPlanListMap.put(cInvCode,list);
+                }
+            }
+            //将多个父级物料计划数*用量比相加
+            for (String inv : pinvListByinvMap.keySet()){
+                //纪录相同日期的计划数(多个父物料计划*用量相加)  key:yyyy-MM-dd   value:qty
+                Map<String,BigDecimal> dateQtyMap = new HashMap<>();
+
+                for (Record record : pinvListByinvMap.get(inv)){
+                    String pinvCode = record.getStr("pinvCode");
+                    BigDecimal useRate = record.getBigDecimal("iQty");
+                    //父级计划
+                    List<Record> pinvPlanList = pinvPlanListMap.get(pinvCode) != null ? pinvPlanListMap.get(pinvCode) : new ArrayList<>();
+                    for (Record precord : pinvPlanList){
+                        String iYear = precord.getStr("iYear");
+                        int iMonth = precord.getInt("iMonth");
+                        int iDate = precord.getInt("iDate");
+                        BigDecimal iQty3 = precord.getBigDecimal("iQty3");
+                        BigDecimal planQty = iQty3.multiply(useRate);//计划*用量
+                        //yyyy-MM-dd
+                        String dateKey = iYear;
+                        dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+                        dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+                        if (dateQtyMap.containsKey(dateKey)){
+                            BigDecimal sumQty = dateQtyMap.get(dateKey).add(planQty);
+                            dateQtyMap.put(dateKey,sumQty);
+                        }else {
+                            dateQtyMap.put(dateKey,planQty);
+                        }
+                    }
+                }
+                invPlanListWeekMap.put(inv,dateQtyMap);
+            }
+        }
+
+        //循环产线
+        for (Long WorkIdKey : workInvListMap.keySet()){
+            //物料集
+            List<String> invList = workInvListMap.get(WorkIdKey);
+
+            //纪录排产之后1S的计划数
+            Map<String, int[]> invPlanMap1S = new HashMap<>();
+            //纪录排产之后2S的计划数
+            Map<String, int[]> invPlanMap2S = new HashMap<>();
+            //纪录排产之后3S的计划数
+            Map<String, int[]> invPlanMap3S = new HashMap<>();
+
+            //初始化需排产物料
+            String[] invArrar = invList.toArray(new String[0]);
+            //各物料期初库存  key:inv
+            Map<String, Integer> inventory_originalMap = new HashMap<>();
+            //各物料的各班次产量数据  key:inv
+            Map<String, int[]> capabilityMap = new HashMap<>();
+            //各物料月每日需求数
+            Map<String, int[]> planMap = new HashMap<>();
+            //各物料下月平均计划需求数  key:inv
+            Map<String, Integer> plan_nextMonthAverageMap = new HashMap<>();
+
+            //循环物料
+            for (String inv : invList){
+                invPlanMap1S.put(inv, new int[scheduDayNum]);
+                invPlanMap2S.put(inv, new int[scheduDayNum]);
+                invPlanMap3S.put(inv, new int[scheduDayNum]);
+
+                //每日需求数
+                int[] planArrar = new int[scheduDayNum];
+                //key:yyyy-MM-dd   value:qty
+                Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(inv) != null ? invPlanDateMap.get(inv) : new HashMap<>();
+                //key:yyyy-MM-dd   value:qty
+                Map<String,BigDecimal> dateQtyWeekMap = invPlanListWeekMap.get(inv) != null ? invPlanListWeekMap.get(inv) : new HashMap<>();
+                for (int i = 0; i < scheduDateList.size(); i++) {
+                    String scheduDate = scheduDateList.get(i);
+                    int planQty = dateQtyMap.get(scheduDate) != null ? dateQtyMap.get(scheduDate).intValue() : 0;
+                    int planWeekQty = dateQtyWeekMap.get(scheduDate) != null ? dateQtyWeekMap.get(scheduDate).intValue() : 0;
+                    planArrar[i] = planQty + planWeekQty;
+                }
+                planMap.put(inv,planArrar);
+
+                //期初库存
+                int stockQty = lastDateZKQtyMap.get(inv) != null ? lastDateZKQtyMap.get(inv) : 0;
+                inventory_originalMap.put(inv, stockQty);
+
+                //各班次产量数据
+                int[] capabilityArrar = new int[3];
+                List<Record> capacityList = invCapacityListMap.get(inv) != null ? invCapacityListMap.get(inv) : new ArrayList<>();
+                for (int i = 0; i < capacityList.size(); i++) {
+                    String cWorkShiftCode = capacityList.get(i).getStr("capacityList");
+                    int iCapacity = capacityList.get(i).getInt("iCapacity");
+                    if (cWorkShiftCode.contains("1S")){
+                        capabilityArrar[0] = iCapacity;
+                    }
+                    if (cWorkShiftCode.contains("2S")){
+                        capabilityArrar[1] = iCapacity;
+                    }
+                    if (cWorkShiftCode.contains("3S")){
+                        capabilityArrar[2] = iCapacity;
+                    }
+                }
+                capabilityMap.put(inv, capabilityArrar);
+
+                //下月平均计划需求数
+                int averageQty = nextMonthAvgQtyByinvMap.get(inv) != null ? nextMonthAvgQtyByinvMap.get(inv) : 0;
+                plan_nextMonthAverageMap.put(inv, averageQty);
+            }
+            //进行APS算法分析
+            ApsScheduling apsScheduling = ApsUtil.apsCalculation(invArrar, inventory_originalMap, planMap, 2, plan_nextMonthAverageMap, capabilityMap, workday, inventoryRate, workFactor);
+
+            //1S
+            String[] productInformationByShift0 = new String[workday.length];
+            int[] productNumberByShift0 = new int[workday.length];
+            apsScheduling.getProductInfo(productInformationByShift0, productNumberByShift0, 0);
+            //System.out.println("早班："+ Arrays.toString(productInformationByShift0));
+            //System.out.println("早班："+ Arrays.toString(productNumberByShift0));
+            getInvPlanMap(productInformationByShift0,productNumberByShift0,invPlanMap1S);
+            for (String inv : invPlanMap1S.keySet()){
+                System.out.println("1S："+inv+"："+ Arrays.toString(invPlanMap1S.get(inv)));
+            }
+            System.out.println();
+
+            //2S
+            String[] productInformationByShift1 = new String[workday.length];
+            int[] productNumberByShift1 = new int[workday.length];
+            apsScheduling.getProductInfo(productInformationByShift1, productNumberByShift1, 1);
+            //System.out.println("中班："+ Arrays.toString(productInformationByShift1));
+            //System.out.println("中班："+ Arrays.toString(productNumberByShift1));
+            getInvPlanMap(productInformationByShift1,productNumberByShift1,invPlanMap2S);
+            for (String inv : invPlanMap2S.keySet()){
+                System.out.println("2S："+inv+"："+ Arrays.toString(invPlanMap2S.get(inv)));
+            }
+            System.out.println();
+
+            String[] productInformationByShift2 = new String[workday.length];
+            int[] productNumberByShift2 = new int[workday.length];
+            apsScheduling.getProductInfo(productInformationByShift2, productNumberByShift2, 2);
+            System.out.println("加班："+ Arrays.toString(productInformationByShift2));
+            System.out.println("加班："+ Arrays.toString(productNumberByShift2));
+            System.out.println();
+
+            //3S
+            String[] productInformationByShift3 = new String[workday.length];
+            int[] productNumberByShift3 = new int[workday.length];
+            apsScheduling.getProductInfo(productInformationByShift3, productNumberByShift3, 3);
+            //System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
+            //System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
+            getInvPlanMap(productInformationByShift3,productNumberByShift3,invPlanMap3S);
+            for (String inv : invPlanMap3S.keySet()){
+                System.out.println("3S："+inv+"："+ Arrays.toString(invPlanMap3S.get(inv)));
+            }
+        }
 
 
 
+        /*try {
+
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
 
 
-
-
-
-
-
-
-
-
-
-        try {
 
             //同一产线的物料
             String[] product_type = {"a", "b", "c", "d"};
@@ -602,120 +750,283 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             capability.put("d", capability_d);
 
             //月星期几
-            Weekday[] workday = {Weekday.fri, Weekday.sat, Weekday.sun, Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu, Weekday.fri,
+            Weekday[] workdays = {Weekday.fri, Weekday.sat, Weekday.sun, Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu, Weekday.fri,
                     Weekday.sat, Weekday.sun, Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu, Weekday.fri, Weekday.sat, Weekday.sun,
                     Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu, Weekday.fri, Weekday.sat, Weekday.sun, Weekday.mon, Weekday.tue,
                     Weekday.wed, Weekday.thu, Weekday.fri, Weekday.sat, Weekday.sun};
 
 
-            ApsScheduling apsScheduling = ApsUtil.apsCalculation(product_type, inventory_original, plan, 2, plan_nextMonthAverage, capability, workday, 0.7, 0.3);
+            ApsScheduling apsScheduling = ApsUtil.apsCalculation(product_type, inventory_original, plan, 2, plan_nextMonthAverage, capability, workdays, 0.7, 0.3);
 
-            String[] productInformationByShift0 = new String[workday.length];
-            int[] productNumberByShift0 = new int[workday.length];
+            Map<String, int[]> invPlanMap = new HashMap<>();
+            invPlanMap.put("a", new int[31]);
+            invPlanMap.put("b", new int[31]);
+            invPlanMap.put("c", new int[31]);
+            invPlanMap.put("d", new int[31]);
+
+            String[] productInformationByShift0 = new String[workdays.length];
+            int[] productNumberByShift0 = new int[workdays.length];
             apsScheduling.getProductInfo(productInformationByShift0, productNumberByShift0, 0);
             System.out.println("早班："+ Arrays.toString(productInformationByShift0));
             System.out.println("早班："+ Arrays.toString(productNumberByShift0));
+            getInvPlanMap(productInformationByShift0,productNumberByShift0,invPlanMap);
+            System.out.println("早班计划a："+ Arrays.toString(invPlanMap.get("a")));
+            System.out.println("早班计划b："+ Arrays.toString(invPlanMap.get("b")));
+            System.out.println("早班计划c："+ Arrays.toString(invPlanMap.get("c")));
+            System.out.println("早班计划d："+ Arrays.toString(invPlanMap.get("d")));
             System.out.println();
 
-            String[] productInformationByShift1 = new String[workday.length];
-            int[] productNumberByShift1 = new int[workday.length];
+            String[] productInformationByShift1 = new String[workdays.length];
+            int[] productNumberByShift1 = new int[workdays.length];
             apsScheduling.getProductInfo(productInformationByShift1, productNumberByShift1, 1);
             System.out.println("中班："+ Arrays.toString(productInformationByShift1));
             System.out.println("中班："+ Arrays.toString(productNumberByShift1));
             System.out.println();
 
-            String[] productInformationByShift2 = new String[workday.length];
-            int[] productNumberByShift2 = new int[workday.length];
+            String[] productInformationByShift2 = new String[workdays.length];
+            int[] productNumberByShift2 = new int[workdays.length];
             apsScheduling.getProductInfo(productInformationByShift2, productNumberByShift2, 2);
             System.out.println("加班："+ Arrays.toString(productInformationByShift2));
             System.out.println("加班："+ Arrays.toString(productNumberByShift2));
             System.out.println();
 
-            String[] productInformationByShift3 = new String[workday.length];
-            int[] productNumberByShift3 = new int[workday.length];
+            String[] productInformationByShift3 = new String[workdays.length];
+            int[] productNumberByShift3 = new int[workdays.length];
             apsScheduling.getProductInfo(productInformationByShift3, productNumberByShift3, 3);
             System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
             System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
 
+
         }catch (Exception e){
             throw new RuntimeException("排程计划出错！"+e.getMessage());
-        }
+        }*/
         return scheduProductPlanYearList;
     }
-
-
-
-
-
-
-
-
-
-
-
-    //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------
-
+    public void getInvPlanMap(String[] productInformationByShift,int[] productNumberByShift,Map<String, int[]> invPlanMap){
+        for (int i = 0; i < productInformationByShift.length; i++) {
+            String inv = productInformationByShift[i];
+            if (inv.equals("z")){
+                continue;
+            }
+            int qty = productNumberByShift[i];
+            int[] invPlan = invPlanMap.get(inv);
+            invPlan[i] = qty;
+        }
+    }
 
 
 
 
     /**
-     * 日历
-     * @param outCalendarList 工作日历集合
-     * @param mleadTime 生产提前期
-     * @param dateStr 上级汇总数排程日期
-     * @param dateStart 排程开始日期
-     * @return map
+     * 获取计划
      */
-    public Map<String,String> getCalendar(List<String> outCalendarList,int mleadTime,String dateStr,Date dateStart) {
-        Map<String,String> map = new HashMap<>();
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date sdfDate = sdf.parse(dateStr);
+    public List<ScheduProductYearViewDTO> getScheduPlanMonthList(Long iWeekScheduleId) {
 
-            //TODO:计划日期
-            Date planDate = sdfDate;  //takeDate
-            String yearPP = String.format("%tY", planDate);
-            String monPP = String.format("%tm", planDate);
-            String targetmonthPP = yearPP.concat("-").concat(monPP);
-            String dayPP = String.format("%td", planDate);
-            map.put("targetmonthPP", targetmonthPP);
-            map.put("dayPP", dayPP);
-            map.put("plancodePP", "PP");
+        //TODO:查询排产开始日期与截止日期
+        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
+        int iLevel = apsWeekschedule.getILevel();
+        String startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(),"yyyy-MM-dd");
+        String endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(),"yyyy-MM-dd");
 
-            int time = mleadTime;
-            int k = 0;
-            String temporaryDateStr;
-            for (int i = 0;i<time;i++){
-                k++;
-                temporaryDateStr = DateUtils.getDate(planDate,"yyyy-MM-dd",-k,Calendar.DATE);
-                Date sdfDate2 = new SimpleDateFormat("yyyy-MM-dd").parse(temporaryDateStr);
-                if (sdfDate2.getTime() < dateStart.getTime()){
-                    break;
-                }
-                if (!outCalendarList.contains(temporaryDateStr)){
-                    time++;
-                }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(DateUtils.parseDate(startDate));
+        calendar.add(Calendar.DATE,-1);//日期-1
+        //过去一天年月日
+        Date lastDate = DateUtils.parseDate(DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd"));
+        int lastyear = Integer.parseInt(DateUtils.formatDate(lastDate,"yyyy"));
+        int lastmonth = Integer.parseInt(DateUtils.formatDate(lastDate,"MM"));
+        int lastday = Integer.parseInt(DateUtils.formatDate(lastDate,"dd"));
+
+
+        //TODO:根据层级及日期获取月周生产计划表数据
+        List<Record> getWeekScheduPlanList = getWeekScheduPlanList(Okv.by("level",iLevel).set("startdate",startDate).set("enddate",endDate));
+
+        //key:产线id   value:List物料集
+        Map<Long,List<String>> workInvListMap = new HashMap<>();
+        //key:inv，   value:<yyyy-MM-dd，Record>
+        Map<String,Map<String,Record>> invPlanDateMap = new HashMap<>();
+        //本次排产物料id集
+        String idsJoin = "(";
+        for (Record record : getWeekScheduPlanList){
+            Long iWorkRegionMid = record.getLong("iWorkRegionMid");
+            Long invId = record.getLong("invId");
+            String cInvCode = record.getStr("cInvCode");
+            String iYear = record.getStr("iYear");
+            int iMonth = record.getInt("iMonth");
+            int iDate = record.getInt("iDate");
+            //yyyy-MM-dd
+            String dateKey = iYear;
+            dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+            dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+
+            if (workInvListMap.containsKey(iWorkRegionMid)){
+                List<String> list = workInvListMap.get(iWorkRegionMid);
+                list.add(cInvCode);
+            }else {
+                List<String> list = new ArrayList<>();
+                list.add(cInvCode);
+                workInvListMap.put(iWorkRegionMid,list);
             }
-            String dateLTstr = DateUtils.getDate(planDate,"yyyy-MM-dd",-k,Calendar.DATE);
-            Date dateLt = new SimpleDateFormat("yyyy-MM-dd").parse(dateLTstr);
 
-            //TODO:LT日期
-            Date dateLTs = dateLt;
-            String yearMLT = String.format("%tY", dateLTs);
-            String monMLT = String.format("%tm", dateLTs);
-            String targetmonthMLT = yearMLT.concat("-").concat(monMLT);
-            String dayMLT = String.format("%td", dateLTs);
-            map.put("targetmonthMLT", targetmonthMLT);
-            map.put("dayMLT", dayMLT);
-            map.put("plancodeMLT", "MLT");
-            map.put("dateMLT", dateLTstr);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException("工作日历计算出错！"+e.getMessage());
+            if (invPlanDateMap.containsKey(cInvCode)){
+                //key:yyyy-MM-dd   value:qty
+                Map<String,Record> dateQtyMap = invPlanDateMap.get(cInvCode);
+                dateQtyMap.put(dateKey,record);
+            }else {
+                Map<String,Record> dateQtyMap = new HashMap<>();
+                dateQtyMap.put(dateKey,record);
+                invPlanDateMap.put(cInvCode,dateQtyMap);
+            }
+            idsJoin = idsJoin + invId + ",";
         }
-        return map;
+        idsJoin = idsJoin + "601)";
+
+
+
+        //TODO:查询物料集期初在库
+        List<Record> getLastDateZKQtyList = getLastDateZKQtyList(Kv.by("lastyear",lastyear).set("lastmonth",lastmonth).set("lastday",lastday).set("ids",idsJoin));
+        //key:inv   value:qty
+        Map<String,Integer> lastDateZKQtyMap = new HashMap<>();
+        for (Record record : getLastDateZKQtyList){
+            String cInvCode = record.getStr("cInvCode");
+            int iQty5 = record.getBigDecimal("iQty5").intValue();
+            lastDateZKQtyMap.put(cInvCode,iQty5);
+        }
+
+
+
+
+
+
+        return null;
     }
+
+    //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------
+
+    public List<Record> getApsMonthPlanSumPage(int pageNumber, int pageSize, Kv kv) {
+        List<Record> scheduProductPlanMonthList = new ArrayList<>();
+
+        String startDate = kv.getStr("startdate");
+        String endDate = kv.getStr("enddate");
+        if (notOk(startDate) || notOk(endDate)){
+            ValidationUtils.isTrue(false,"开始日期-结束日期不能为空！");
+        }
+        //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+        List<String> scheduDateList = getBetweenDate(startDate,endDate);
+
+        pageSize = pageSize * 15;
+
+        Page<Record> recordPage = dbTemplate("scheduproductplan.getApsMonthPlanSumPage",kv).paginate(pageNumber,pageSize);
+        List<Record> apsYearPlanQtyList = recordPage.getList();
+
+        //key:产线id   value:List物料集
+        Map<Long,List<String>> workInvListMap = new HashMap<>();
+        //key:inv，   value:<yyyy-MM-dd，qty>
+        Map<String,Map<String,BigDecimal>> invPlanDateMap = new HashMap<>();
+        //key:inv   value:info
+        Map<String,Record> invInfoMap = new HashMap<>();
+        for (Record record : apsYearPlanQtyList){
+            Long iWorkRegionMid = record.getLong("iWorkRegionMid");
+            String cInvCode = record.getStr("cInvCode");
+            String iYear = record.getStr("iYear");
+            int iMonth = record.getInt("iMonth");
+            int iDate = record.getInt("iDate");
+            BigDecimal planQty = record.getBigDecimal("iQty3");
+            //yyyy-MM-dd
+            String dateKey = iYear;
+            dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+            dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+
+            if (workInvListMap.containsKey(iWorkRegionMid)){
+                List<String> list = workInvListMap.get(iWorkRegionMid);
+                list.add(cInvCode);
+            }else {
+                List<String> list = new ArrayList<>();
+                list.add(cInvCode);
+                workInvListMap.put(iWorkRegionMid,list);
+            }
+
+            if (invPlanDateMap.containsKey(cInvCode)){
+                //key:yyyy-MM-dd   value:qty
+                Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(cInvCode);
+                dateQtyMap.put(dateKey,planQty);
+            }else {
+                Map<String,BigDecimal> dateQtyMap = new HashMap<>();
+                dateQtyMap.put(dateKey,planQty);
+                invPlanDateMap.put(cInvCode,dateQtyMap);
+            }
+            invInfoMap.put(cInvCode,record);
+        }
+
+
+
+        //对产线逐个处理
+        for (Long key : workInvListMap.keySet()) {
+            List<String> recordList = workInvListMap.get(key);
+            for (String inv : recordList){
+                //inv信息
+                Record invInfo = invInfoMap.get(inv);
+                //key:yyyy-MM-dd   value:qty
+                Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(inv);
+
+                Record planRecord = new Record();
+                planRecord.set("cInvCode",inv);
+                planRecord.set("cInvCode1",invInfo.getStr("cInvCode1"));
+                planRecord.set("cInvName1",invInfo.getStr("cInvName1"));
+                planRecord.set("cWorkName",invInfo.getStr("cWorkName"));
+
+                //key:yyyy-MM   value:qtySum
+                Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
+                int count = 0;
+                for (String date : scheduDateList){
+                    String month = date.substring(0,7);
+                    BigDecimal qty = dateQtyMap.get(date);
+                    if (monthQtyMap.containsKey(month)){
+                        BigDecimal monthSum = monthQtyMap.get(monthQtyMap);
+                        monthQtyMap.put(month,monthSum.add(qty));
+                    }else {
+                        monthQtyMap.put(month,qty);
+                    }
+                    planRecord.set("qty"+count++,qty);
+                }
+
+                scheduProductPlanMonthList.add(planRecord);
+            }
+        }
+
+        Record planRecord = new Record();
+        planRecord.set("cInvCode","物料编码");
+        planRecord.set("cInvCode1","存货");
+        planRecord.set("cInvName1","部番");
+        planRecord.set("cWorkName","产线");
+        planRecord.set("qty1",1);
+        planRecord.set("qty2",2);
+        planRecord.set("qty3",3);
+        planRecord.set("qty4",4);
+        planRecord.set("qty5",5);
+        planRecord.set("qty6",6);
+        planRecord.set("qty7",7);
+        planRecord.set("qty8",8);
+        planRecord.set("qty9",9);
+        planRecord.set("qty10",10);
+
+
+        scheduProductPlanMonthList.add(planRecord);
+
+        Page<Record> page = new Page<>();
+        page.setPageNumber(recordPage.getPageNumber());
+        page.setPageSize(recordPage.getPageSize() / 15);
+        page.setTotalPage(recordPage.getTotalPage());
+        page.setTotalRow(recordPage.getTotalRow() /15);
+        page.setList(scheduProductPlanMonthList);
+
+        return scheduProductPlanMonthList;
+    }
+
+
+
+
+
     /**
      * 获取两个日期字符串之间的日期集合 包含两个日期
      * @param startTime:yyyy-MM-dd
@@ -751,55 +1062,49 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
 
 
-    List<Record> getSourceYearOrderList(Okv okv){
-        return dbTemplate("scheduproductplan.getSourceYearOrderList", okv).find();
+
+
+    List<Record> getInvInfoByLevelList(Okv okv){
+        return dbTemplate("scheduproductplan.getInvInfoByLevelList", okv).find();
     }
-
-    List<Record> getInvInfoList(Okv okv){
-        return dbTemplate("scheduproductplan.getInvInfoList", okv).find();
+    List<Record> getPinvInfoByinvList(Okv okv){
+        return dbTemplate("scheduproductplan.getPinvInfoByinvList", okv).find();
     }
-
-    /**
-     * 根据日期+编码查询查询年度每月的工作天数
-     * @param startYear: yyyy
-     * @return List
-     */
-    public List<Record> getCalendarMonthNumList(Long organizeid, String caledarCode, String startYear, String endYear){
-        Okv okv = Okv.by("csourcecode", caledarCode)  //来源编码
-                .set("icaluedartype", "1")  //日历类型 工作日
-                .set("startyear", startYear)
-                .set("endyear", endYear);
-        return dbTemplate("scheduproductplan.getCalendarMonthNumList", okv).find();
-    }
-    /**
-     * 根据日期+编码查询查询年度的工作天数
-     * @param startYear: yyyy
-     * @return List
-     */
-    public List<Record> getCalendarYearNumList(Long organizeid, String caledarCode, String startYear, String endYear){
-        Okv okv = Okv.by("csourcecode", caledarCode)  //来源编码
-                .set("icaluedartype", "1")  //日历类型 工作日
-                .set("startyear", startYear)
-                .set("endyear", endYear);
-        return dbTemplate("scheduproductplan.getCalendarYearNumList", okv).find();
-    }
-
-    public List<Record> getCusWorkMonthNumList(Long organizeid, Long customerIds, String startYear, String endYear){
-        Okv okv = Okv.by("customerids", customerIds)
-                .set("startyear", startYear)
-                .set("endyear", endYear);
-        return dbTemplate("scheduproductplan.getCusWorkMonthNumList", okv).find();
-    }
-
-    public List<Record> getApsYearPlanQtyList(Kv kv){
-        return dbTemplate("scheduproductplan.getApsYearPlanQtyList", kv).find();
-    }
-
-
-
 
     List<Record> getCusOrderSumList(Okv okv){
         return dbTemplate("scheduproductplan.getCusOrderSumList", okv).find();
+    }
+    List<Record> getWeekScheduSumList(Okv okv){
+        return dbTemplate("scheduproductplan.getWeekScheduSumList", okv).find();
+    }
+
+    List<Record> getWeekScheduPlanList(Okv okv){
+        return dbTemplate("scheduproductplan.getWeekScheduPlanList", okv).find();
+    }
+    /**
+     * 根据日期+编码查询查询工作日期
+     * @param startDate: yyyy-MM-dd
+     * @param endDate: yyyy-MM-dd
+     * @return List
+     */
+    public List<String> getCalendarDateList(Long organizeid, String caledarCode, String startDate, String endDate) {
+        Okv okv = Okv.by("csourcecode", caledarCode)  //来源编码
+                .set("icaluedartype", "1")  //日历类型 工作日
+                .set("startdate", startDate)
+                .set("enddate", endDate);
+        return dbTemplate("scheduproductplan.getCalendarDateList", okv).query();
+    }
+
+    public List<Record> getLastDateZKQtyList(Kv kv){
+        return dbTemplate("scheduproductplan.getLastDateZKQtyList", kv).find();
+    }
+
+    public List<Record> getYearMonthQtySumByinvList(Kv kv){
+        return dbTemplate("scheduproductplan.getYearMonthQtySumByinvList", kv).find();
+    }
+
+    public BigDecimal getConfigValue(Kv kv){
+        return dbTemplate("scheduproductplan.getConfigValue", kv).queryBigDecimal();
     }
 
 }
