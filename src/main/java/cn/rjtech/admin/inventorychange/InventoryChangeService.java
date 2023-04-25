@@ -275,12 +275,7 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 		String beforeInv = String.valueOf(inventoryChange.getIBeforeInventoryId());
 		String afterInv = String.valueOf(inventoryChange.getIAfterInventoryId());
 		ValidationUtils.isTrue(!beforeInv.equals(afterInv), "转换前跟转换后的编码一致，请跟换");
-		String sql = "select * from Bd_InventoryChange where IsDeleted = 0 and iBeforeInventoryId = ?";
-		// 为空校验全部，不为空排除校验自己
-		if (ObjectUtil.isNotNull(inventoryChange.getIAutoId())){
-			sql = sql.concat(" and iAutoId <> "+inventoryChange.getIAutoId());
-		}
-		InventoryChange change = findFirst(sql, inventoryChange.getIBeforeInventoryId());
+		InventoryChange change = findByBeforeInventoryId(inventoryChange.getIBeforeInventoryId(), inventoryChange.getIAutoId());
 		ValidationUtils.isTrue(change == null, JBoltMsg.DATA_SAME_SN_EXIST);
 		ValidationUtils.isTrue(ZERO_BIGDECIMAL.compareTo(inventoryChange.getIChangeRate()) <=0,"转换率不能为空且只能为正数或0");
 	}
@@ -309,5 +304,18 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 	
 	public List<Record> findByOrgList(Long orgId){
 		return dbTemplate("inventorychange.findList", Okv.by("orgId", orgId)).find();
+	}
+	
+	public InventoryChange findByBeforeInventoryId(Long beforeInventoryId, Long id){
+		String sql = "select * from Bd_InventoryChange where IsDeleted = 0 and iBeforeInventoryId = ?";
+		// 为空校验全部，不为空排除校验自己
+		if (ObjectUtil.isNotNull(id)){
+			sql = sql.concat(" and iAutoId <> "+id);
+		}
+		return findFirst(sql, beforeInventoryId);
+	}
+	
+	public InventoryChange findByBeforeInventoryId(Long beforeInventoryId){
+		return findByBeforeInventoryId(beforeInventoryId, null);
 	}
 }

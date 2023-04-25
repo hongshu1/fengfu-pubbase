@@ -310,6 +310,10 @@
 #include("cusordersum/cusordersum.sql")
 #end
 
+#namespace("cusorderresult")
+#include("cusorderresult/cusorderresult.sql")
+#end
+
 #namespace("demandpland")
 #include("demandpland/demandpland.sql")
 #end

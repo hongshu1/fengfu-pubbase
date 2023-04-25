@@ -22,19 +22,18 @@ public class CusOrderResultService extends CusOrderSumService {
     public Page findCusOrderResult(Integer pageNumber, Integer pageSize, Kv kv) {
 
         //默认查询当前月份的
-        if (kv.getDate("beginDate") == null||kv.getDate("endDate") == null){
-            kv.set(setBeginEndDate());
+        if (kv.getDate("startdate") == null||kv.getDate("enddate") == null){
+            kv.set(getBeginEndDate());
         }
-        Date beginDate = kv.getDate("beginDate");
-        Date endDate = kv.getDate("endDate");
 
-        Page<Record> paginate = dbTemplate("cusordersum.getCusOrderSumList", kv).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("cusorderresult.paginate", kv).paginate(pageNumber, pageSize);
+
         List<String> betweenDate = ScheduProductPlanMonthService.getBetweenDate(kv.getStr("beginDate"), kv.getStr("endDate"));
 
         return paginate;
     }
     //获得当前月份第一天和最后一天
-    public static Kv  setBeginEndDate() {
+    public static Kv  getBeginEndDate() {
         LocalDate now = LocalDate.now();
         LocalDate firstDayOfMonth = now.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfMonth = now.with(TemporalAdjusters.lastDayOfMonth());
@@ -68,10 +67,10 @@ public class CusOrderResultService extends CusOrderSumService {
 
         Kv kv = new Kv();
         if (kv.getDate("beginDate") == null||kv.getDate("endDate") == null){
-            kv.set(setBeginEndDate());
+            kv.set(getBeginEndDate());
         }
-        Date beginDate = kv.getDate("beginDate");
-        Date endDate = kv.getDate("endDate");
+        Date beginDate = kv.getDate("startdate");
+        Date endDate = kv.getDate("enddate");
         List<String> betweenDate = ScheduProductPlanMonthService.getBetweenDate(kv.getStr("beginDate"), kv.getStr("endDate"));
         System.out.println(betweenDate.toString());
     }

@@ -1,42 +1,44 @@
-#sql("getCusOrderSumList")
-###根据层级及销售类型获取客户计划汇总表数据
+
+#sql("paginate")
+
 SELECT
-    t.iYear,
-    t.iMonth,
-    t.iDate,
-    t.iQty3,
-    a.iAutoId AS invId,
-    a.cInvCode,
-    a.cInvCode1,  ### 客户部属
-    a.cInvName1,
-    a.iSaleType
 
-FROM Co_CusOrderSum AS t
-         LEFT JOIN Bd_Inventory AS a ON a.iAutoId = t.iInventoryId
+    t.iInventoryId
+FROM
+    dbo.Co_CusOrderSum  t
+where
 
-WHERE 1=1
-
-    AND t.iYear >= #para(startyear) AND t.iYear <= #para(endyear)
-    AND t.iMonth >= #para(startmonth) AND t.iMonth <= #para(endmonth)
-    AND t.iDate >= #para(startday) AND t.iDate <= #para(endday)
-ORDER BY t.iYear,t.iMonth,t.iDate
-    #end
+        (CAST(t.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN t.iMonth<10 THEN '0'+CAST(t.iMonth AS NVARCHAR(30) )
+          ELSE CAST(t.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN t.iDate<10 THEN '0'+CAST(t.iDate AS NVARCHAR(30) )
+            ELSE CAST(t.iDate AS NVARCHAR(30) )
+            END AS NVARCHAR(30)) ) >= #para(beginDate)
+  AND
+        (CAST(t.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN t.iMonth<10 THEN '0'+CAST(t.iMonth AS NVARCHAR(30) )
+        ELSE CAST(t.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN t.iDate<10 THEN '0'+CAST(t.iDate AS NVARCHAR(30) )
+         ELSE CAST(t.iDate AS NVARCHAR(30) )
+         END AS NVARCHAR(30)) ) <= #para(endDate)
 
 
-#sql("paginateAdminDatas")
+    GROUP BY
+    t.iInventoryId
+
+#end
+
+
+#sql("dayDatas")
 SELECT
-    os.*,
-    bi.cInvCode1,  ### 客户部属
+    bi.cInvCode, ### 存货编码
+    bi.cInvCode1,  ### 客户部番
     bi.cInvName1,  ### 部品名称
-    bi.iCustomerMId  ### 客户id
+    cus.cCusName,   ### 客户名称
+    os.*
 FROM
     (
         SELECT
             t.iYear,
             t.iMonth,
             t.iDate,
-            SUM ( t.iQty1 ) AS CustomerPlanCount,
-            SUM ( t.iQty2 ) AS CustomerOrderCount,
+            SUM ( t.iQty2 ) AS CustomerOrderCount,  ### 订单数
             t.iInventoryId
         FROM
             dbo.Co_CusOrderSum  t
@@ -61,5 +63,6 @@ FROM
             iInventoryId
     ) AS os
         LEFT JOIN dbo.Bd_Inventory bi ON os.iInventoryId = bi.iAutoId
+        LEFT JOIN Bd_Customer cus on cus.iAutoId = bi.iCustomerMId
 
     #end

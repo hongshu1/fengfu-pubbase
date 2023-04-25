@@ -20,6 +20,7 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -251,5 +252,17 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	
 	public void findPurchaseOrderDBatch(){
 		renderJsonData(purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv()));
+	}
+	
+	public void updateHideInvalid(@Para(value = "id") Long id,
+								  @Para(value = "hideInvalid") String hideInvalid){
+		renderJsonData(service.updateHideInvalid(id, Boolean.valueOf(hideInvalid)));
+	}
+	
+	public void updateOrderBatch(@Para(value = "purchaseOrderMId") Long purchaseOrderMId,
+								 @Para(value = "id") Long id,
+								 @Para(value = "cVersion") String cVersion,
+								 @Para(value = "qty")BigDecimal qty){
+		renderJsonData(purchaseOrderDBatchService.updateOrderBatch(purchaseOrderMId, id, cVersion, qty));
 	}
 }
