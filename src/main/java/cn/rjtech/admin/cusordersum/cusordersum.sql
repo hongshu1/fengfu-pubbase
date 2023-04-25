@@ -19,12 +19,12 @@ WHERE NOT EXISTS ( SELECT 1 FROM Co_CusOrderSum WHERE iInventoryId = ccs.iInvent
      #if(cinvname1)
       and  bi.cinvname1  LIKE CONCAT('%',#para(cinvname1), '%')
   #end
-  #if(startTime)
-        AND convert(date,ccs.dCreateTime) >= convert(date,#para(startTime))
-    #end
-    #if(endTime)
-        AND convert(date,ccs.dCreateTime) <= convert(date,#para(endTime))
-    #end
+  #if(dateMap)
+    and (
+    #for (d: dateMap)
+       #(for.first ? "" : "or") (iYear = '#(d.key)' and iMonth in ( #(d.value) ))
+    #end )
+  #end
 ORDER BY ccs.dCreateTime
 #end
 
@@ -52,6 +52,12 @@ WHERE 1=1
           #if(iInventoryId)
               and  iInventoryId  = #para(iInventoryId)
           #end
+          #if(dateMap)
+            and (
+            #for (d: dateMap)
+               #(for.first ? "" : "or") (iYear = '#(d.key)' and iMonth in ( #(d.value) ))
+            #end )
+          #end
     GROUP BY
         iMonth,iyear,iInventoryId
     ORDER BY
@@ -69,6 +75,12 @@ WHERE 1=1
         WHERE 1=1
           #if(iInventoryId)
               and  iInventoryId  = #para(iInventoryId)
+          #end
+          #if(dateMap)
+            and (
+            #for (d: dateMap)
+               #(for.first ? "" : "or") (iYear = '#(d.key)' and iMonth in ( #(d.value) ))
+            #end )
           #end
     GROUP BY
         iMonth,iyear,iInventoryId
