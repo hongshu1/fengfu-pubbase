@@ -327,7 +327,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		List<Record> purchaseOrderDList = purchaseOrderDService.findByPurchaseOrderMId(purchaseOrderM.getIAutoId());
 		
 		// 采购订单到货数量明细
-		List<Record> purchaseOrderdQtyList = purchaseorderdQtyService.findByPurchaseOrderMid(purchaseOrderM.getIAutoId());
+		List<Record> purchaseOrderdQtyList = purchaseorderdQtyService.findByPurchaseOrderMId(purchaseOrderM.getIAutoId());
 		
 		// 按存货编码汇总
 		Map<Long, Map<String, BigDecimal>>  purchaseOrderdQtyMap = demandPlanDService.getDemandPlanDMap(purchaseOrderdQtyList, DemandPlanM.IINVENTORYID);
@@ -698,7 +698,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		List<Record> byPurchaseOrderMId = purchaseOrderDService.findByPurchaseOrderMId(id);
 		List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
 		// 获取数量表
-		List<Record> purchaseOrderDQtyList = purchaseorderdQtyService.findByPurchaseOrderMid(id);
+		List<Record> purchaseOrderDQtyList = purchaseorderdQtyService.findByPurchaseOrderMId(id);
 		ValidationUtils.notEmpty(purchaseOrderDQtyList, purchaseOrderM.getCOrderNo()+"无现品票生成");
 		for (Record record : purchaseOrderDQtyList){
 			// 源数量
@@ -826,4 +826,10 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	}
 	
 	
+	public Ret updateHideInvalid(Long id, Boolean isHide) {
+		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
+		purchaseOrderM.setHideInvalid(isHide);
+		purchaseOrderM.update();
+		return SUCCESS;
+	}
 }
