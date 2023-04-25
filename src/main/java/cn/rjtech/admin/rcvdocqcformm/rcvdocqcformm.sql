@@ -65,7 +65,7 @@ where t1.IsDeleted = '0'
 ORDER BY t1.dUpdateTime DESC
 #end
 
-#sql("getQcFormItemAndParamList")
+#sql("getQcFormItemAndParam")
 SELECT t1.*,
        t2.iAutoId iFormParamId,
        t2.iSeq,
@@ -89,7 +89,7 @@ WHERE t1.isDeleted = '0'
 ORDER BY t1.iSeq asc
 #end
 
-#sql("getCheckoutList")
+#sql("getCheckout")
 SELECT t1.*,
        t3.cQcParamName,
        t4.cQcItemName
@@ -104,7 +104,7 @@ WHERE t1.isDeleted = '0'
 ORDER BY t1.iSeq asc
 #end
 
-#sql("findChecoutListByIformParamid")
+#sql("findChecoutByIformParamid")
 SELECT t1.*,
        t3.cQcItemName,
        t4.cQcParamName
@@ -117,4 +117,22 @@ WHERE
     t1.ircvdocqcformmid = #para(ircvdocqcformmid)
     #end
 ORDER BY t1.iSeq asc
+#end
+
+#sql("getonlyseelistByiautoid")
+SELECT
+    t2.*,
+    t3.iautoid lineiautoid,t3.iSeq,t3.cValue,
+    t5.cQcParamName,
+    t6.cQcItemName
+FROM PL_RcvDocQcFormM t1
+         LEFT JOIN PL_RcvDocQcFormD t2 ON t1.iAutoId = t2.iRcvDocQcFormMid
+         LEFT JOIN PL_RcvDocQcFormD_Line t3 ON t2.iAutoId = t3.iRcvDocQcFormDid
+         LEFT JOIN Bd_QcFormParam t4 ON t2.iFormParamId = t4.iAutoId
+         LEFT JOIN Bd_QcParam t5 ON t4.iQcParamId = t5.iAutoId
+         LEFT JOIN Bd_QcItem t6 ON t5.iQcItemId = t6.iAutoId
+WHERE t1.IsDeleted = '0'
+  #if(iautoid)
+  AND t1.iautoid = #para(iautoid)
+#end
 #end

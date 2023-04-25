@@ -148,12 +148,12 @@
             {@each data.cvaluelist as value,indextest}
             <td>
               {@if data.itype == '1'}
-              <input name="cA01" type="number" class="cA01" value="${value.cvalue}"
+              <input name="${value.name}" type="number" class="cA01" value="${value.cvalue}"
                      title="最大值：${data.imaxval}，标准值：${data.istdval}，最小值：${data.iminval}"/>
               {@else if data.itype == '2'}
-              <input name="cA01" type="text" class="cA01" title="${data.coptions}" value="${value.cvalue}"/>
+              <input name="${value.name}" type="text" class="cA01" title="${data.coptions}" value="${value.cvalue}"/>
               {@else if data.itype == '3'}
-              <select name="cA01"
+              <select name="${value.name}"
                       class="form-control"
                       data-url="admin/dictionary/options?key=overallsize"
                       data-autoload
@@ -163,10 +163,10 @@
                       data-select="${value.cvalue}"
                       title="=整体尺寸="></select>
               {@else if data.itype == '4'}
-              <input name="cA01" type="text" class="cA01" title="#{data.coptions??}" value="${value.cvalue}"/>
+              <input name="${value.name}" type="text" class="cA01" title="#{data.coptions??}" value="${value.cvalue}"/>
               {@else if data.itype == '5'}
               <div class="form-group row "
-                   data-name="cA01"
+                   data-name="${value.name}"
                    data-checkbox
                    data-rule="checkbox"
                    data-default=""
@@ -176,14 +176,14 @@
                    data-inline="false"
                    data-value="${value.cvalue}"></div>
               {@else if data.itype == '6'}
-              <select name="cA01" class="form-control" data-url="admin/dictionary/options?key=overallsize" data-autoload
+              <select name="${value.name}" class="form-control" data-url="admin/dictionary/options?key=overallsize" data-autoload
                       data-text="=整体尺寸=" data-value-attr="sn" value="${value.cvalue}" data-select="#(data.coptions??)"></select>
               {@else if data.itype == '7'}
-              <input name="cA01" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+              <input name="${value.name}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
                      class="form-control" placeholder="结束日期" data-tips="结束时间" maxlength="23"
                      value="${value.cvalue}">
               {@else data.itype == '8'}
-              <input name="cA01" type="text" class="form-control" data-date data-type="time" data-fmt="HH:mm:ss"
+              <input name="${value.name}" type="text" class="form-control" data-date data-type="time" data-fmt="HH:mm:ss"
                      value="${value.cvalue}">
               {@/if}
             </td>
@@ -192,6 +192,7 @@
           {@/each}
         </textarea>
 
+        <!--#(rcvdocqcformm.iAutoId??)-->
         <div class="card-body overflow-auto" style="left: 30px;margin-left: 30px;">
           <table id="jbolt_table_checkouttableparam_split_#(pageId)3" class="table-center jbolt_table thead_font_normal"
                  data-jbolttable
@@ -265,6 +266,18 @@
     width: 78px;
   }
 
+  .th {
+    overflow: hidden;
+    height: 100%;
+    width: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    font-family: "宋体", "STLiti";
+    font-style: normal;
+  }
+
   .trd td {
     overflow: hidden;
     height: 100%;
@@ -307,6 +320,28 @@
     mso-protection: locked visible;
   }
 
+  .x70 {
+    mso-style-parent: style0;
+    mso-number-format: General;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    background: white;
+    mso-pattern: auto;
+    color: #000000;
+    font-size: 12pt;
+    font-weight: 700;
+    font-style: normal;
+    font-family: "宋体", "sans-serif";
+    border-top: 1px solid windowtext;
+    border-right: 1px solid windowtext;
+    border-bottom: 1px solid windowtext;
+    border-left: 1px solid windowtext;
+    mso-diagonal-down: none;
+    mso-diagonal-up: none;
+    mso-protection: locked visible;
+  }
+
   .biaotoucolor {
     background-color: #b1dfbb;
   }
@@ -323,12 +358,6 @@
 </script>
 
 <script>
-
-  //1.隐藏确定按钮 （因为这是查看页面，不允许修改）
-  hideParentLayerDialogBtn(0);
-  //2.禁止编辑
-  $("#jbolt_table_checkouttableparam_split_#(pageId)3" + " tr th").find("input").attr("disabled", "disabled");
-  $("#jbolt_table_checkouttableparam_split_#(pageId)3" + " tr th").find("select").attr("disabled", "disabled");
 
   function submitThisForm() {
     //获取整个form的数据
@@ -375,6 +404,7 @@
         istdval: data.istdval,
         isubseq: data.isubseq,
         itype: data.itype,
+        cvaluelist:data.cvaluelist,
         serializeElement: serializeElement
       };
       subMilasUrlArr.push(tableData);
@@ -397,7 +427,7 @@
       isok: isok,
       docqcformmiautoid: iautoid
     }
-    Ajax.post("admin/rcvdocqcformm/editCheckOutTable", submitDatas, function (res) {
+    Ajax.post("admin/rcvdocqcformm/editTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {
           refreshPjaxContainer();
@@ -415,6 +445,7 @@
 <script>
 
 </script>
+
 #end
 
 

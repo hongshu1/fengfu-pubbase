@@ -2,6 +2,8 @@ package cn.rjtech.admin.rcvdocqcformm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.jfinal.aop.Inject;
 
@@ -65,8 +67,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        Page<Record> recordPage = service.pageList(getKv());
-        renderJsonData(recordPage);
+        renderJsonData(service.pageList(getKv()));
     }
 
     /**
@@ -161,27 +162,40 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      * 点击检验时，进入弹窗自动加载table的数据
      * */
     public void getCheckOutTableDatas() {
-        /*List<RcvDocQcFormD> rcvDocQcFormDList = rcvDocQcFormDService.findByIRcvDocQcFormMId(rcvDocQcFormM.getIAutoId());
-        List<Record> recordList = new ArrayList<>();
-        for (RcvDocQcFormD rcvDocQcFormD : rcvDocQcFormDList) {
-            Record record = service.getCheckoutListByIFormParamId(rcvDocQcFormD.getIFormParamId());
-            recordList.add(record);
-        }
-        set("recordList",recordList);
-        set("rcvDocQcFormDList", rcvDocQcFormDList);
-        set("rcvDocQcFormM", rcvDocQcFormM);*/
         renderJsonData(service.getCheckOutTableDatas(getKv()));
     }
 
     /**
-     * 只能查看，不能编辑
+     * 打开onlysee页面
      */
     public void onlysee() {
         RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
         Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+        List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
+        set("docparamlist", docparamlist);
         set("rcvdocqcformm", rcvDocQcFormM);
         set("record", record);
         render("onlysee.html");
+    }
+
+    /**
+     * 打开编辑页面
+     */
+    public void editrcvDocQcFormD() {
+        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
+        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+        List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
+        set("docparamlist", docparamlist);
+        set("rcvdocqcformm", rcvDocQcFormM);
+        set("record", record);
+        render("editTable.html");
+    }
+
+    /**
+     * 点击查看时，进入弹窗自动加载table的数据
+     */
+    public void getonlyseeDatas() {
+        renderJsonData(service.getonlyseelistByiautoid(getKv()));
     }
 
     /*
@@ -195,7 +209,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      * 在检验页面点击确定
      * */
     public void editCheckOutTable(JBoltPara JboltPara) {
-        renderJson(service.editTable(JboltPara));
+        renderJson(service.editCheckOutTable(JboltPara));
     }
 
     /*
