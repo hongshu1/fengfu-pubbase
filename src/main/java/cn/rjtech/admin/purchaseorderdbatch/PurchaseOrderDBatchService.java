@@ -191,12 +191,14 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
         ValidationUtils.notBlank(cVersion, "版本号未获取到");
         ValidationUtils.isTrue(qty!=null && qty.compareTo(BigDecimal.ZERO)>0, "版本号未获取到");
         ValidationUtils.isTrue(!cVersion.equals(orderDBatch.getCVersion()), "版本号不能一致");
-        ValidationUtils.isTrue(qty.compareTo(orderDBatch.getIQty()) > 0, "现品票的数量不可大于包装数量，只可小于包装数量");
+        ValidationUtils.isTrue(qty.compareTo(orderDBatch.getIQty()) <= 0, "现品票的数量不可大于包装数量，只可小于包装数量");
         // 新增一个现成票后，再生产一个版本记录表，及修改详情；
         String barCode = generateBarCode();
         PurchaseOrderDBatch newBatch = createPurchaseOrderDBatch(orderDBatch.getIPurchaseOrderDid(), orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, barCode);
         // 设置新版本号
         newBatch.setCVersion(cVersion);
+        // 添加来源id
+        newBatch.setCSourceld(String.valueOf(id));
         // 将旧的改为失效
         orderDBatch.setIsEffective(false);
 		// 查存货

@@ -10,6 +10,7 @@ import cn.rjtech.model.momdata.PurchaseOrderDBatchVersion;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -129,5 +130,9 @@ public class PurchaseOrderDBatchVersionService extends BaseService<PurchaseOrder
 		purchaseOrderDBatchVersion.setCCreateName(JBoltUserKit.getUserName());
 		purchaseOrderDBatchVersion.setDCreateTime(DateUtil.date());
 		return purchaseOrderDBatchVersion;
+	}
+	
+	public Page<Record> findByPurchaseOrderMid(int pageNumber, int pageSize, Kv kv){
+		return dbTemplate("purchaseorderdbatchversion.findByPurchaseOrderMid", kv).paginate(pageNumber, pageSize);
 	}
 }

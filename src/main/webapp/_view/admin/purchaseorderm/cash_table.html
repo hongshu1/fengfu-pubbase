@@ -18,9 +18,9 @@
                 </td>
                 <td>
                     {@if data.iautoid}
-                        <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="添加一行"  onclick="InsertEmptyRow(${data.iautoid},${data.cversion},${data.iqty}, this)"><i class="fa fa-plus"> 修改</i></a>
+                        <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="添加一行"  onclick="InsertEmptyRow('${data.iautoid}',${data.cversion},${data.iqty}, this)"><i class="fa fa-plus"> 修改</i></a>
                     {@else}
-                        <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="保存当前行"  onclick="saveRow(#(purchaseOrderM.iautoid??),${data.csourceld},${data.cversion})"><i class="fa fa-plus"> 保存</i></a>
+                        <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="保存当前行"  onclick="saveRow('#(purchaseOrderM.iautoid??)','${data.csourceld}','${data.cversion}')"><i class="fa fa-plus"> 保存</i></a>
                         <a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="取消当前行" onclick="removeRow(this)" ><i class="fa fa-trash text-danger"> 取消</i></a>
                     {@/if}
                 </td>
@@ -34,8 +34,8 @@
         </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <form id="form_#(pageId)">
-                <input hidden name="isEffective" id="isEnabled_#(pageId)" value="#(purchaseOrderM.hideinvalid??'1'=='1'?true:false)">
-                <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-text="是:否"  data-nomsg="true" data-value="#(department.isenabled??'1'=='1'?true:false)"/>
+                <input hidden name="isEffective" id="isEnabled_#(pageId)" value="#(purchaseOrderM.hideinvalid??'0'=='1'?true:false)">
+                <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(purchaseOrderM.hideinvalid??'0'=='1'?true:false)"/>已失效隐藏
             </form>
         </div>
     </div>
@@ -53,7 +53,7 @@
            data-toolbar="PurchaseOrderBatch_toolbar_#(pageId)"
            data-editable="true"
            data-editable-option="getEditableTableOptions1_#(pageId)"
-           data-page="PurchaseOrderM_page_#(pageId)"
+           data-page="PurchaseOrderM_page1_#(pageId)"
     >
         <thead>
         <tr>

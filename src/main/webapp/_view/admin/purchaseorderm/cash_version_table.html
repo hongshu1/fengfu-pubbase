@@ -30,12 +30,15 @@
            id="PurchaseOrderM_Table3_#(pageId)"
            data-rowtpl="cashVersion_tpl_#(pageId)"
            data-jbolttable
+           data-ajax="true"
+           data-url="admin/purchaseorderm/findPurchaseOrderDBatchVersion?iPurchaseOrderMid=#(purchaseOrderM.iautoid??)"
            data-width="fill"
            data-height="fill"
            data-copy-to-excel="false"
            data-column-resize="true"
            data-toolbar="PurchaseOrderD_toolbar2_#(pageId)"
            data-column-prepend="1:checkbox:true:false:false"
+           data-page="PurchaseOrderM_page2_#(pageId)"
     >
         <thead>
         <tr>
@@ -50,8 +53,6 @@
             <th data-width="150" rowspan="2" data-column="cSourceBarcode">替代传票</th>
             <th data-width="100" rowspan="2" data-column="cSourceVersion">版本号</th>
             <th data-width="150" rowspan="2" data-column="iSourceQty">数量</th>
-        </tr>
-        <tr>
         </tr>
         </thead>
         <tbody>

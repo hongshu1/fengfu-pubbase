@@ -199,8 +199,11 @@
     }
 
     function saveRow(purchaseOrderMId, id, version) {
-
         var qty = $("#"+id).val();
+        if (qty<=0){
+            LayerMsgBox.alert("包装数量不能小于0",2);
+            return ;
+        }
         Ajax.post('/admin/purchaseorderm/updateOrderBatch', {
             purchaseOrderMId: purchaseOrderMId,
             id: id,
