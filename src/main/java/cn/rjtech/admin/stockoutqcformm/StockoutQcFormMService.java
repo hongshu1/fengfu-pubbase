@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.jfinal.aop.Inject;
@@ -28,6 +29,10 @@ import com.jfinal.upload.UploadFile;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
+import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
+import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
+import cn.rjtech.model.momdata.RcvDocQcFormM;
+import cn.rjtech.model.momdata.RcvdocqcformdLine;
 import cn.rjtech.model.momdata.StockoutQcFormM;
 /**
  * 质量管理-出库检
@@ -39,7 +44,11 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
 	private final StockoutQcFormM dao=new StockoutQcFormM().dao();
 
 	@Inject
-	private RcvDocQcFormMService rcvDocQcFormMService;
+	private RcvDocQcFormMService       rcvDocQcFormMService;
+	@Inject
+	private StockoutqcformdLineService stockoutqcformdLineService;
+	@Inject
+	private StockoutQcFormDService     stockoutQcFormDService;
 
 	@Override
 	protected StockoutQcFormM dao() {
@@ -149,9 +158,54 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
 	}
 
 	/*
-	 * 更新
+	 * 在编辑页面点击确定
 	 * */
-	public Ret updateEditTable(JBoltPara JboltPara) {
+	public Ret editTable(JBoltPara JboltPara) {
+		if (JboltPara == null || JboltPara.isEmpty()) {
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		String docqcformmiautoid = JboltPara.getString("docqcformmiautoid"); //主表id
+		String isok = JboltPara.getString("isok");
+		//是否合格不能为空
+		if (StringUtils.isBlank(isok)) {
+			return fail("请判定是否合格");
+		}
+
+		JSONArray serializeSubmitList = JboltPara.getJSONArray("serializeSubmitList");
+		List<RcvdocqcformdLine> rcvdocqcformdLines = new ArrayList<>();
+		for (int i = 0; i < serializeSubmitList.size(); i++) {
+			JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
+			String iseq = jsonObject.getString("iseq");
+			JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
+			JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
+			JSONArray elementList = serializeElement.getJSONArray(0);
+			for (int j = 0; j < elementList.size(); j++) {
+				JSONObject object = elementList.getJSONObject(j);
+				String name = object.getString("name");
+				String cvalue = object.getString("value");
+				JSONObject cvaluelistJSONObject = cvaluelist.getJSONObject(j);
+				Long lineiautoid = cvaluelistJSONObject.getLong("lineiautoid");
+//				RcvdocqcformdLine rcvdocqcformdLine = rcvdocqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
+//				rcvdocqcformdLine.setCValue(cvalue);
+//				rcvdocqcformdLines.add(rcvdocqcformdLine);
+			}
+		}
+		//更新line
+//		rcvdocqcformdLineService.batchUpdate(rcvdocqcformdLines);
+//
+//		RcvDocQcFormM docQcFormM = findById(docqcformmiautoid);
+//		saveDocQcFormMModel(docQcFormM, JboltPara);
+//		Ret ret = update(docQcFormM);
+//		if (ret.isFail()) {
+//			return ret;
+//		}
+		return ret(true);
+	}
+
+	/*
+	 * 在检验页面点击确定
+	 * */
+	public Ret editCheckOutTable(JBoltPara JboltPara) {
 		if (JboltPara == null || JboltPara.isEmpty()) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
@@ -159,29 +213,46 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
 		String cmeasurepurpose = JboltPara.getString("cmeasurepurpose"); //测定目的
 		String cmeasureunit = JboltPara.getString("cmeasureunit"); //测定单位
 		String cmemo = JboltPara.getString("cmemo"); //备注
-		String isok = JboltPara.getString("isok"); //是否合格
 		String cdcno = JboltPara.getString("cdcno"); //设变号
-		JSONObject tableDataList = JboltPara.getJSONObject("tableDataList");
-		//tableDataList转为map
-		Map<String, Object> innerMap = tableDataList.getInnerMap();
-		//对innerMap排序
-		Map<String, Object> sortMap = rcvDocQcFormMService.sortMapByKey(innerMap);
-		sortMap.forEach((key, value) -> {
-			System.out.println(key);
-			String s = value.toString();
-			List<String> list = rcvDocQcFormMService.oobjectToList(value, String.class)
-				.stream()
-				.filter(e -> StringUtils.isNotBlank(e))
-				.collect(Collectors.toList());
-			System.out.println("list==>" + new Gson().toJson(list));
-			//1、将table数据保存在检验表
+		String docqcformmiautoid = JboltPara.getString("docqcformmiautoid"); //主表id
 
-		});
-		//2、将输入框的数据保存在【来料检表（PL_RcvDocQcFormM）】
-//        RcvDocQcFormM docQcFormM = findById(JboltPara.getString("iautoid"));
-//        saveDocQcFormMModel(docQcFormM,JboltPara);
+		JSONArray serializeSubmitList = JboltPara.getJSONArray("serializeSubmitList");
+		List<RcvdocqcformdLine> rcvdocqcformdLines = new ArrayList<>();
+		for (int i = 0; i < serializeSubmitList.size(); i++) {
+			JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
+			String iautoid = jsonObject.getString("iautoid");
+			String iseq = jsonObject.getString("iseq");
+			JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
+			JSONArray elementList = serializeElement.getJSONArray(0);
+			for (int j = 0; j < elementList.size(); j++) {
+				JSONObject object = elementList.getJSONObject(j);
+				String name = object.getString("name");
+				String cvalue = object.getString("value");
 
+				RcvdocqcformdLine rcvdocqcformdLine = new RcvdocqcformdLine();//质量管理-来料检明细列值表
+//				saveRcvdocqcformdLineModel(rcvdocqcformdLine, docqcformmiautoid, iseq, cvalue);
+				rcvdocqcformdLines.add(rcvdocqcformdLine);
+			}
+		}
+		//保存line
+//		rcvdocqcformdLineService.batchSave(rcvdocqcformdLines);
+
+		/*
+		 * 来料检表（PL_RcvDocQcFormM）
+		 * 1.如果isok=0，代表不合格，将iStatus更新为2，isCompleted更新为1；
+		 * 2.如果isok=1，代表合格，将iStatus更新为3，isCompleted更新为1
+		 * */
+//		RcvDocQcFormM docQcFormM = findById(docqcformmiautoid);
+//		saveDocQcFormMModel(docQcFormM, JboltPara);
+//		update(docQcFormM);
 		return ret(true);
+	}
+
+	/*
+	 * 点击检验时，进入弹窗自动加载table的数据
+	 * */
+	public List<Record> getCheckOutTableDatas(Kv kv) {
+		return rcvDocQcFormMService.clearZero(dbTemplate("rcvdocqcformm.findChecoutListByIformParamid", kv).find());
 	}
 
 }

@@ -1760,4 +1760,20 @@ public class PermissionKey {
 	 * 客户计划汇总
 	 */
 	public static final String CUSORDER_SUM = "cusorder_sum";
+	/**
+	 * 质量管理-出库检明细列值
+	 */
+	public static final String STOCKOUTQCFORMD = "stockoutqcformd";
+	/**
+	 * 质量管理-出库检单行配置
+	 */
+	public static final String STOCKOUTQCFORMD_LINE = "stockoutqcformd_line";
+	/**
+	 * 质量管理-在库检单行配置
+	 */
+	public static final String INSTOCKQCFORMD = "instockqcformd";
+	/**
+	 * 质量管理-在库明细列值
+	 */
+	public static final String INSTOCKQCFORMD_LINE = "instockqcformd_line";
 }
