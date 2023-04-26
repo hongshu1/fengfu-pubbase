@@ -3,12 +3,12 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="PurchaseOrderM_Form" action="#(action)" method="post">
-            #if(purchaseOrderM.iAutoId??)
-            <input type="hidden" name="iAutoId" value="#(purchaseOrderM.iautoid??)"/>
+        <form onsubmit="return false;" id="SubcontractOrderMForm" action="#(action)" method="post">
+            #if(subcontractOrderM.iAutoId??)
+            <input type="hidden" name="iAutoId" value="#(subcontractOrderM.iautoid??)"/>
             #end
-            <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dbegindate??)"/>
-            <input type="hidden" name="dEndDate" value="#(purchaseOrderM.denddate??)"/>
+            <input type="hidden" name="dBeginDate" value="#(subcontractOrderM.dbegindate??)"/>
+            <input type="hidden" name="dEndDate" value="#(subcontractOrderM.denddate??)"/>
             <div class="row">
 
                 <div class="col">
@@ -20,7 +20,7 @@
                                     data-rule="required"
                                     data-url="admin/dictionary/options?key=purchase_business_type"
                                     data-select-type="select"
-                                    data-select="#(purchaseOrderM.ibustype??)"
+                                    data-select="#(subcontractOrderM.ibustype??)"
                                     data-text="==请选择=="
                                     data-text-attr="iautoid"
                                     data-value-attr="sn">
@@ -34,9 +34,9 @@
                             <select class="form-control" name="iPurchaseTypeId" disabled
                                     data-autoload
                                     data-rule="required"
-                                    data-url="admin/purchaseorderm/findPurchaseType"
+                                    data-url="admin/subcontractOrderM/findPurchaseType"
                                     data-select-type="select"
-                                    data-select="#(purchaseOrderM.ipurchasetypeid??)"
+                                    data-select="#(subcontractOrderM.ipurchasetypeid??)"
                                     data-text="==请选择=="
                                     data-value-attr="iautoid"
                                     data-text-attr="cptname">
@@ -46,7 +46,7 @@
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">业务员</label>
                         <div class="col-6">
-                            <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(purchaseOrderM.idutyuserid??)" />
+                            <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(subcontractOrderM.idutyuserid??)" />
                             <input type="text" autocomplete="off" value="#(personname??)" class="form-control" disabled
                                    placeholder="==请选择人员=="
                                    data-rule="required"
@@ -66,9 +66,9 @@
                             <select class="form-control" name="cCurrency" disabled
                                     data-autoload
                                     data-rule="required"
-                                    data-url="admin/purchaseorderm/findForeignCurrencyAll"
+                                    data-url="admin/subcontractOrderM/findForeignCurrencyAll"
                                     data-select-type="select"
-                                    data-select="#(purchaseOrderM.ccurrency??)"
+                                    data-select="#(subcontractOrderM.ccurrency??)"
                                     data-text="==请选择=="
                                     data-value=""
                                     data-value-attr="cexch_name"
@@ -82,13 +82,13 @@
                         <label class="col-sm-3 col-form-label">订单日期</label>
                         <div class="col-6">
                             <input type="text" readonly data-notnull="true" autocomplete="off" class="form-control" maxlength="20" name="dOrderDate" disabled
-                                   value="#datetime(purchaseOrderM.dorderdate??,'yyyy-MM-dd')"/>
+                                   value="#datetime(subcontractOrderM.dorderdate??,'yyyy-MM-dd')"/>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">供应商名称</label>
                         <div class="col-6">
-                            <input hidden type="text"  name="iVendorId" value="#(purchaseOrderM.ivendorid??)">
+                            <input hidden type="text"  name="iVendorId" value="#(subcontractOrderM.ivendorid??)">
                             <input readonly type="text" autocomplete="off" class="form-control" value="#(cVenName??)">
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                         <div class="col-6">
                             <input type="text" autocomplete="off" class="form-control"
                                    placeholder="请输入税率" maxlength="40" name="iTaxRate" data-rule="pnumber" data-notnull="false" disabled
-                                   value="#(purchaseOrderM.itaxrate??)"/>
+                                   value="#(subcontractOrderM.itaxrate??)"/>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -105,7 +105,7 @@
                         <div class="col-6">
                             <input type="text" autocomplete="off" class="form-control" data-rule="pnumber" disabled
                                    placeholder="请输入汇率" maxlength="40" name="iExchangeRate"
-                                   value="#(purchaseOrderM.iexchangerate??)"/>
+                                   value="#(subcontractOrderM.iexchangerate??)"/>
                         </div>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
                         <label class="col-sm-3 col-form-label">订单编号</label>
                         <div class="col-6">
                             <input type="text" data-notnull="true" data-tips="请输入订单编号" autocomplete="off" class="form-control" disabled
-                                   placeholder="请输入订单编号" maxlength="40" name="cOrderNo"  readonly="readonly" value="#(purchaseOrderM.corderno??)"/>
+                                   placeholder="请输入订单编号" maxlength="40" name="cOrderNo"  readonly="readonly" value="#(subcontractOrderM.corderno??)"/>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -130,7 +130,7 @@
                                     data-value=""
                                     data-value-attr="iautoid"
                                     data-text-attr="cdepname"
-                                    data-select="#(purchaseOrderM.idepartmentid??)">
+                                    data-select="#(subcontractOrderM.idepartmentid??)">
                             </select>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
                                     data-rule="required"
                                     data-url="admin/dictionary/options?key=purchase_coping_type"
                                     data-select-type="select"
-                                    data-select="#(purchaseOrderM.ipayabletype??)"
+                                    data-select="#(subcontractOrderM.ipayabletype??)"
                                     data-text="==请选择=="
                                     data-text-attr="name"
                                     data-value-attr="sn">
@@ -152,7 +152,7 @@
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">备注</label>
                         <div class="col-6">
-                            <textarea disabled class="form-control" style="height:80px"  placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="cMemo">#(purchaseOrderM.cmemo??)</textarea>
+                            <textarea disabled class="form-control" style="height:80px"  placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="cMemo">#(subcontractOrderM.cmemo??)</textarea>
                         </div>
                     </div>
                 </div>
@@ -165,7 +165,7 @@
     <nav>
         <div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
             <a class="nav-item nav-link active" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" aria-controls="tab-one" aria-selected="true">订货清单</a>
-            <a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false" onclick="refreshJBoltTable('#PurchaseOrderM_Table3_#(pageId)')">传票更改清单</a>
+            <a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false" onclick="jboltTableRefresh('#subcontractOrderM_Table3_#(pageId)')">传票更改清单</a>
         </div>
     </nav>
     <div class="tab-content" style="padding: 0px 1rem">
@@ -198,14 +198,14 @@
         }
     }
 
-    function saveRow(purchaseOrderMId, id, version) {
+    function saveRow(subcontractOrderMId, id, version) {
         var qty = $("#"+id).val();
         if (qty<=0){
             LayerMsgBox.alert("包装数量不能小于0",2);
             return ;
         }
-        Ajax.post('/admin/purchaseorderm/updateOrderBatch', {
-            purchaseOrderMId: purchaseOrderMId,
+        Ajax.post('/admin/subcontractorderm/updateOrderBatch', {
+            subcontractOrderMId: subcontractOrderMId,
             id: id,
             cVersion: version,
             qty: qty
@@ -289,7 +289,7 @@
         return false;
     }
 
-    function getEditableTableOptions1_#(pageId)(){
+    function getEditableTableOptions2_#(pageId)(){
         var editableTableOptions={
             trigger:"click",
             //初始行数
@@ -308,9 +308,9 @@
     }
     function updateIsEnabled(ele) {
         $("#isEnabled_#(pageId)").val(ele.data("value"));
-        Ajax.post('/admin/purchaseorderm/updateHideInvalid', {
+        Ajax.post('/admin/subcontractorderm/updateHideInvalid', {
             hideInvalid: ele.data("value"),
-            id: '#(purchaseOrderM.iautoid??)'
+            id: '#(subcontractOrderM.iautoid??)'
         },  function(ret) {
             jboltTableRefresh();
         });

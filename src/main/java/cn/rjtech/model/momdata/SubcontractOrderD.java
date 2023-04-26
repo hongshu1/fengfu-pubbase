@@ -11,5 +11,9 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "PS_SubcontractOrderD" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class SubcontractOrderD extends BaseSubcontractOrderD<SubcontractOrderD> {
+    /**
+     * 记录到货日期字段
+     */
+    public static final String SUBCONTRACTORDERD_QTY_LIST = "subcontractOrderDQtyList";
 }
 
