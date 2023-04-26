@@ -7,6 +7,9 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.RcvDocDefect;
+import cn.rjtech.model.momdata.RcvDocQcFormM;
+import cn.rjtech.model.momdata.StockoutDefect;
+import cn.rjtech.model.momdata.StockoutQcFormM;
 import cn.rjtech.util.BillNoUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -14,6 +17,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -247,6 +251,39 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		rcvDocDefect.setCUpdateName(JBoltUserKit.getUserName());
 		rcvDocDefect.setDUpdateTime(now);
 		rcvDocDefect.save();
+	}
+
+	public void saveRcvDocDefectModel(RcvDocDefect rcvDocDefect, RcvDocQcFormM docQcFormM) {
+		rcvDocDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		Date date = new Date();
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		rcvDocDefect.setCDocNo(docQcFormM.getCRcvDocQcFormNo());     //异常品单号
+		rcvDocDefect.setIRcvDocQcFormMid(docQcFormM.getIAutoId());   //出库检id
+		rcvDocDefect.setIInventoryId(docQcFormM.getIInventoryId());  //存货ID
+		rcvDocDefect.setIVendorId(docQcFormM.getIVendorId());        //供应商id
+		rcvDocDefect.setIStatus(1);                                  //状态：1. 待记录 2. 待判定 3. 已完成
+		rcvDocDefect.setIDqQty(new BigDecimal(0));                   //不合格数量
+		rcvDocDefect.setCDesc(docQcFormM.getCMemo());                //不良内容描述
+		rcvDocDefect.setIQcUserId(docQcFormM.getIQcUserId());        //检验用户ID
+		rcvDocDefect.setDQcTime(docQcFormM.getDUpdateTime());        //检验时间
+
+		rcvDocDefect.setICreateBy(userId);
+		rcvDocDefect.setDCreateTime(date);
+		rcvDocDefect.setCCreateName(userName);
+		rcvDocDefect.setIOrgId(getOrgId());
+		rcvDocDefect.setCOrgCode(getOrgCode());
+		rcvDocDefect.setCOrgName(getOrgName());
+		rcvDocDefect.setIUpdateBy(userId);
+		rcvDocDefect.setCUpdateName(userName);
+		rcvDocDefect.setDUpdateTime(date);
+	}
+
+	/*
+	 * 根据来料检id查询异常品质单
+	 * */
+	public RcvDocDefect findStockoutDefectByiRcvDocQcFormMid(Object iRcvDocQcFormMid) {
+		return findFirst("SELECT * FROM PL_RcvDocDefect WHERE iRcvDocQcFormMid = ?", iRcvDocQcFormMid);
 	}
 
 }

@@ -2,9 +2,9 @@
 #define main()
 <div class="jbolt_page">
   <div class="jbolt_page_content">
-    <form onsubmit="return false;" id="rcvdocqcformmform_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
-      #if(rcvdocqcformm.iautoid??)
-      <input type="hidden" name="rcvdocqcformm.iautoid" value="#(rcvdocqcformm.iautoid??)"/>
+    <form onsubmit="return false;" id="stockoutqcformmform_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
+      #if(stockoutqcformm.iautoid??)
+      <input type="hidden" name="stockoutqcformm.iautoid" value="#(stockoutqcformm.iautoid??)"/>
       #end
       <div>
         <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
@@ -77,7 +77,7 @@
                       <div class="row">
                         <div class="col-sm-auto">
                           <div
-                              data-url="admin/rcvdocqcformm/uploadImage"
+                              data-url="admin/stockoutqcformm/uploadImage"
                               data-limit="10"
                               data-align="left"
                               data-multi="true"
@@ -123,8 +123,8 @@
             <button type="button" onclick="inserRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
-            <img data-switchbtn data-value="#(rcvdocqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
-                 data-url="admin/rcvdocqcformm/toggleIsCpkSigned/#(rcvdocqcformm.iautoid??)" style="margin-left: 50px;"/>
+            <img data-switchbtn data-value="#(stockoutqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
+                 data-url="admin/stockoutqcformm/toggleIsCpkSigned/#(stockoutqcformm.iautoid??)" style="margin-left: 50px;"/>
             <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
           </div>
         </table>
@@ -198,11 +198,11 @@
                  data-width="fill"
                  data-height="fill"
                  data-ajax="true"
-                 data-conditions-form="rcvdocqcformmform_#(pageId)"
-                 data-url="admin/rcvdocqcformm/getonlyseeDatas?iautoid=#(rcvdocqcformm.iAutoId??)"
+                 data-conditions-form="stockoutqcformmform_#(pageId)"
+                 data-url="admin/stockoutqcformm/getonlyseeDatas?iautoid=#(stockoutqcformm.iAutoId??)"
                  data-rowtpl="checkoutType_tpl_#(pageId)"
                  data-copy-to-excel="false"
-                 data-toolbar="rcvdocqcformmform_toolbar_#(pageId)">
+                 data-toolbar="stockoutqcformmform_toolbar_#(pageId)">
             <thead>
             <tr class="colspan biaotoucolor">
               <th colspan="4">检查内容</th>
@@ -213,7 +213,7 @@
               <th style="width: 150px;" data-column="cqcitemname">检查项目</th>
               <th style="width: 220px;">规格公差</th>
               <th style="width: 120px">检查方法</th>
-              #for(i = 1; i <= docparamlist.size(); i++)
+              #for(i = 1; i <= stockoutqcformlist.size(); i++)
               <th style="width: 80px">#(i)</th>
               #end
             </tr>
@@ -332,7 +332,7 @@
 
   function submitThisForm() {
     //获取整个form的数据
-    let serializeArray = $("#rcvdocqcformmform_#(pageId)").serializeArray();
+    let serializeArray = $("#stockoutqcformmform_#(pageId)").serializeArray();
     //过滤出只有name=cA的数据
     let filterserializeArray = serializeArray.filter((ele) => {
       return ele.name.startWith("cA");
@@ -370,7 +370,7 @@
         imaxval: data.imaxval,
         iminval: data.iminval,
         iqcformid: data.iqcformid,
-        ircvdocqcformmid: data.ircvdocqcformmid,
+        istockoutqcformmid: data.istockoutqcformmid,
         iseq: data.iseq,
         istdval: data.istdval,
         isubseq: data.isubseq,
@@ -386,7 +386,7 @@
     var isok = $('input[name="isok"]').filter(':checked').val();//是否合格
     var cmemo = $("#cMemo").val(); //备注
     var cdcno = $("#cDcNo").val(); //设变号
-    var iautoid = $('input[name="rcvdocqcformm.iautoid"]').val();//主页面的主键
+    var iautoid = $('input[name="stockoutqcformm.iautoid"]').val();//主页面的主键
     const submitDatas = {
       serializeSubmitList: JSON.stringify(subMilasUrlArr),
       cmeasurereason: cmeasurereason,
@@ -395,9 +395,9 @@
       cmemo: cmemo,
       cdcno: cdcno,
       isok: isok,
-      docqcformmiautoid: iautoid
+      stockqcformmiautoid: iautoid
     }
-    Ajax.post("admin/rcvdocqcformm/editCheckOutTable", submitDatas, function (res) {
+    Ajax.post("admin/stockoutqcformm/editCheckOutTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {
           refreshPjaxContainer();
