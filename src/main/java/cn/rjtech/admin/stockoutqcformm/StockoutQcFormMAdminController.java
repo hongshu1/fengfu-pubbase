@@ -1,19 +1,26 @@
 package cn.rjtech.admin.stockoutqcformm;
 
+import java.util.List;
+
 import com.jfinal.aop.Inject;
 
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.extend.config.ExtendUploadFolder;
+import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
+import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.StockoutQcFormM;
 /**
  * 质量管理-出库检
@@ -28,7 +35,11 @@ import cn.rjtech.model.momdata.StockoutQcFormM;
 public class StockoutQcFormMAdminController extends BaseAdminController {
 
 	@Inject
-	private StockoutQcFormMService service;
+	private StockoutQcFormMService     service;
+	@Inject
+	private StockoutqcformdLineService stockoutqcformdLineService;
+	@Inject
+	private StockoutQcFormDService     stockoutQcFormDService;
 
    /**
 	* 首页
@@ -92,29 +103,34 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	}
 
 	/**
-	 * 检验
+	 * 跳转到检验页面
 	 */
 	public void checkout() {
-		StockoutQcFormM stockoutQcFormM=service.findById(getLong(0));
-		set("stockoutQcFormM",stockoutQcFormM);
+		StockoutQcFormM stockoutQcFormM = service.findById(getLong(0));
+//		Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+		set("stockoutqcformm", stockoutQcFormM);
+//		set("record", record);
 		render("checkout.html");
 	}
 
-	/**
-	 * 查看
-	 */
-	public void onlysee() {
-		StockoutQcFormM stockoutQcFormM=service.findById(getLong(0));
-		set("stockoutQcFormM",stockoutQcFormM);
-		render("onlysee.html");
+	/*
+	 * 点击检验时，进入弹窗自动加载table的数据
+	 * */
+	public void getCheckOutTableDatas() {
+		renderJsonData(service.getCheckOutTableDatas(getKv()));
 	}
 
-	/*
-	 * 生成
-	 * */
-	public void createchecklist(JBoltPara JboltPara){
-		//todo 生成检查表
-        renderJsonData(null);
+	/**
+	 * 打开onlysee页面
+	 */
+	public void onlysee() {
+		StockoutQcFormM stockoutQcFormM = service.findById(getLong(0));
+//		Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+//		List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
+//		set("docparamlist", docparamlist);
+		set("stockoutqcformm", stockoutQcFormM);
+//		set("record", record);
+		render("onlysee.html");
 	}
 
 	/**
@@ -126,9 +142,16 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	}
 
 	/*
-	 * 保存或编辑检验表
+	 * 在编辑页面点击确定
 	 * */
-	public void updateTable(JBoltPara JboltPara) {
-		renderJson(service.updateEditTable(JboltPara));
+	public void editTable(JBoltPara JboltPara) {
+		renderJson(service.editTable(JboltPara));
+	}
+
+	/*
+	 * 在检验页面点击确定
+	 * */
+	public void editCheckOutTable(JBoltPara JboltPara) {
+		renderJson(service.editCheckOutTable(JboltPara));
 	}
 }

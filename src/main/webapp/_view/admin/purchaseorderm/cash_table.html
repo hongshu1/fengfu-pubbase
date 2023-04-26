@@ -1,11 +1,7 @@
-#@jboltLayout()
-#define main()
-#set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_content">
-
     <textarea class="jb_tpl_box" id="cash_tpl_#(pageId)">
         {@each datas as data,index}
-            <tr data-id="${data.id}">
+            <tr data-id="${data.iautoid}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
                 <td>${data.cinvcode}</td>
                 <td>${data.cinvcode1}</td>
@@ -13,73 +9,66 @@
                 <td>${data.dplandate |date_ymd}</td>
                 <td>${data.cbarcode}</td>
                 <td>${data.cversion}</td>
-                <td>${data.iqty}</td>
                 <td>
-                    修改
+                    {@if data.iautoid}
+                        ${data.iqty}
+                    {@else}
+                        <input id="${data.csourceld}" type="text" data-rule="<=${data.iqty}" data-with-clearbtn="true" name="iQty" autocomplete="off" data-rule="number" class="form-control" value="${data.iqty}"/>
+                    {@/if}
+                </td>
+                <td>
+                    {@if data.iautoid}
+                        <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="添加一行"  onclick="InsertEmptyRow('${data.iautoid}',${data.cversion},${data.iqty}, this)"><i class="fa fa-plus"> 修改</i></a>
+                    {@else}
+                        <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="保存当前行"  onclick="saveRow('#(purchaseOrderM.iautoid??)','${data.csourceld}','${data.cversion}')"><i class="fa fa-plus"> 保存</i></a>
+                        <a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="取消当前行" onclick="removeRow(this)" ><i class="fa fa-trash text-danger"> 取消</i></a>
+                    {@/if}
                 </td>
             </tr>
         {@/each}
         </textarea>
     <!-- 定义JBoltTable使用的数据渲染模板 -->
-    <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
+    <div class="jbolt_table_toolbar" id="PurchaseOrderBatch_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button class="btn btn-danger btn-sm"> 导出PDF</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <form id="form_#(pageId)">
+                <input hidden name="isEffective" id="isEnabled_#(pageId)" value="#(purchaseOrderM.hideinvalid??'0'=='1'?true:false)">
+                <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(purchaseOrderM.hideinvalid??'0'=='1'?true:false)"/>已失效隐藏
+            </form>
         </div>
     </div>
 
     <table class="jbolt_table jbolt_main_table  table-center "
-           id="PurchaseOrderM_Table_#(pageId)"
-           data-rowtpl="cash_tpl_#(pageId)"
+           id="PurchaseOrderM_Table2_#(pageId)"
            data-jbolttable
+           data-ajax="true"
            data-width="fill"
            data-height="fill"
-           data-copy-to-excel="false"
+           data-url="admin/purchaseorderm/findPurchaseOrderDBatch?iPurchaseOrderMid=#(purchaseOrderM.iautoid??)"
+           data-conditions-form="form_#(pageId)"
            data-column-resize="true"
-           data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
-           data-column-prepend="1:checkbox:true:false:false"
+           data-rowtpl="cash_tpl_#(pageId)"
+           data-toolbar="PurchaseOrderBatch_toolbar_#(pageId)"
            data-editable="true"
            data-editable-option="getEditableTableOptions1_#(pageId)"
+           data-page="PurchaseOrderM_page1_#(pageId)"
     >
         <thead>
         <tr>
-            <th data-width="60"  rowspan="2" data-column="index">序号</th>
-            <th data-width="150" rowspan="2" data-column="cInvCode">存货编码</th>
-            <th data-width="150" rowspan="2" data-column="cInvCode1">客户部番</th>
-            <th data-width="150" rowspan="2" data-column="cInvName1">部品名称</th>
-            <th data-width="150" rowspan="2" data-column="dPlanDate">计划到货日期</th>
-            <th data-width="150" rowspan="2" data-column="cBarcode">现品票</th>
-            <th data-width="100" rowspan="2" data-column="cVersion">版本</th>
-            <th data-width="150" rowspan="2" data-column="iQty">数量</th>
-            <th data-width="200" rowspan="2">操作</th>
-        </tr>
-        <tr>
+            <th data-width="60" data-column="index">序号</th>
+            <th data-width="150" data-column="cInvCode">存货编码</th>
+            <th data-width="150" data-column="cInvCode1">客户部番</th>
+            <th data-width="150" data-column="cInvName1">部品名称</th>
+            <th data-width="150" data-column="dPlanDate">计划到货日期</th>
+            <th data-width="150" data-column="cBarcode">现品票</th>
+            <th data-width="100" data-column="cVersion">版本</th>
+            <th data-width="150" data-column="iQty">数量</th>
+            <th data-width="200">操作</th>
         </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
 </div>
-#end
-
-#define js()
-<script type="text/javascript">
-    function getEditableTableOptions1_#(pageId)(){
-        var editableTableOptions={
-            trigger:"click",
-            //初始行数
-            initRowCount:0,
-            //插入数据时默认属性值
-            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
-            cols:{
-                id:{
-                    submitAttr:"id",
-                },
-                index:{
-                    submitAttr: "index"
-                }
-            }
-        };
-        return editableTableOptions;
-    }
-</script>
-#end

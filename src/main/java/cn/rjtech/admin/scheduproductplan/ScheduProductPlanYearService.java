@@ -230,6 +230,16 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
         String endYear = sdf.format(calendar.getTime());
         return endYear;
     }
+    public String getLastYear(String startYear){
+        Calendar calendar = Calendar.getInstance();
+        Date date = cn.rjtech.util.DateUtils.parseDate(startYear);
+        calendar.setTime(date);
+        //上一个年份
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        calendar.add(Calendar.YEAR,-1);
+        String lastYear = sdf.format(calendar.getTime());
+        return lastYear;
+    }
 
     //-----------------------------------------------------------------年度生产计划排产-----------------------------------------------
 
@@ -264,6 +274,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
                 ValidationUtils.isTrue(false,"查询条件不能为空!");
             }
             String endYear = getEndYear(startYear);
+            String lastYear = getLastYear(startYear);
 
             Long organizeId = getOrgId();
             String CC = "CC";  //客户行事历
@@ -333,10 +344,14 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
             for (Record record : invInfoList){
                 invInfoMap.put(record.getLong("iAutoId"),record);
             }
-
-            //TODO:查询物料集期初在库 待定
-
-
+            //TODO:查询物料集期初在库
+            List<Record> lastYearZKQtyList = getLastYearZKQtyList(Kv.by("lastyear",lastYear).set("customerids",customerId).set("invids",invIds.toString()));
+            Map<String,BigDecimal> lastYearZKQtyMap = new HashMap<>();
+            for (Record record : lastYearZKQtyList){
+                String cInvCode = record.getStr("cInvCode");
+                BigDecimal iQty = record.getBigDecimal("iQty");
+                lastYearZKQtyMap.put(cInvCode,iQty);
+            }
 
 
             //CC:客户行事历（客户每月工作天数）
@@ -348,10 +363,11 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
             //TODO:查询本次所有客户的订单计划
             for (Record record : sourceYearOrderList) {
                 Long iInventoryId = record.getLong("iInventoryId");
+                String cInvCode = record.getStr("cInvCode");
                 //物料信息
                 Record invInfo = invInfoMap.get(iInventoryId);
                 //期初在库
-                BigDecimal safetyStock = BigDecimal.ZERO;
+                BigDecimal safetyStock = lastYearZKQtyMap.get(cInvCode) != null ? lastYearZKQtyMap.get(cInvCode) : BigDecimal.ZERO;
 
                 //PP:计划使用（来源客户计划汇总中的客户计划）
                 ScheduProductYearViewDTO productYearViewPP = getProductYearViewPP(record,PP,startYear,endYear);
@@ -776,6 +792,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
             kv.set("icustomerid",icustomerid);//必传
 
             String endYear = getEndYear(startYear);
+            String lastYear = getLastYear(startYear);
 
             Long organizeId = getOrgId();
             String CC = "CC";  //客户行事历
@@ -820,9 +837,14 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
             for (Record record : invInfoList){
                 invInfoMap.put(record.getLong("iAutoId"),record);
             }
-            //TODO:查询物料集期初在库 待定
-
-
+            //TODO:查询物料集期初在库
+            List<Record> lastYearZKQtyList = getLastYearZKQtyList(Kv.by("lastyear",lastYear).set("customerids",icustomerid).set("invids",invIds.toString()));
+            Map<String,BigDecimal> lastYearZKQtyMap = new HashMap<>();
+            for (Record record : lastYearZKQtyList){
+                String cInvCode = record.getStr("cInvCode");
+                BigDecimal iQty = record.getBigDecimal("iQty");
+                lastYearZKQtyMap.put(cInvCode,iQty);
+            }
 
 
             //CC:客户行事历（客户每月工作天数）
@@ -857,12 +879,13 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
                 //行转列
                 for (Record record : recordList){
                     Long iInventoryId = record.getLong("iInventoryId");
+                    String cInvCode = record.get("cInvCode");
                     String planTypeCode = record.get("planTypeCode");
                     String iYear = record.getStr("iYear");
                     int iMonth = record.getInt("iMonth");
                     BigDecimal iQty = record.getBigDecimal("iQty");
                     //期初在库
-                    BigDecimal safetyStock = BigDecimal.ZERO;
+                    BigDecimal safetyStock = lastYearZKQtyMap.get(cInvCode) != null ? lastYearZKQtyMap.get(cInvCode) : BigDecimal.ZERO;
 
                     ScheduProductYearViewDTO productYearView;
                     if (yearViewDTOMap.containsKey(planTypeCode)){
@@ -1058,63 +1081,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
 
 
 
-    /**
-     * 日历
-     * @param outCalendarList 工作日历集合
-     * @param mleadTime 生产提前期
-     * @param dateStr 上级汇总数排程日期
-     * @param dateStart 排程开始日期
-     * @return map
-     */
-    public Map<String,String> getCalendar(List<String> outCalendarList,int mleadTime,String dateStr,Date dateStart) {
-        Map<String,String> map = new HashMap<>();
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date sdfDate = sdf.parse(dateStr);
-
-            //TODO:计划日期
-            Date planDate = sdfDate;  //takeDate
-            String yearPP = String.format("%tY", planDate);
-            String monPP = String.format("%tm", planDate);
-            String targetmonthPP = yearPP.concat("-").concat(monPP);
-            String dayPP = String.format("%td", planDate);
-            map.put("targetmonthPP", targetmonthPP);
-            map.put("dayPP", dayPP);
-            map.put("plancodePP", "PP");
-
-            int time = mleadTime;
-            int k = 0;
-            String temporaryDateStr;
-            for (int i = 0;i<time;i++){
-                k++;
-                temporaryDateStr = cn.rjtech.util.DateUtils.getDate(planDate,"yyyy-MM-dd",-k,Calendar.DATE);
-                Date sdfDate2 = new SimpleDateFormat("yyyy-MM-dd").parse(temporaryDateStr);
-                if (sdfDate2.getTime() < dateStart.getTime()){
-                    break;
-                }
-                if (!outCalendarList.contains(temporaryDateStr)){
-                    time++;
-                }
-            }
-            String dateLTstr = cn.rjtech.util.DateUtils.getDate(planDate,"yyyy-MM-dd",-k,Calendar.DATE);
-            Date dateLt = new SimpleDateFormat("yyyy-MM-dd").parse(dateLTstr);
-
-            //TODO:LT日期
-            Date dateLTs = dateLt;
-            String yearMLT = String.format("%tY", dateLTs);
-            String monMLT = String.format("%tm", dateLTs);
-            String targetmonthMLT = yearMLT.concat("-").concat(monMLT);
-            String dayMLT = String.format("%td", dateLTs);
-            map.put("targetmonthMLT", targetmonthMLT);
-            map.put("dayMLT", dayMLT);
-            map.put("plancodeMLT", "MLT");
-            map.put("dateMLT", dateLTstr);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException("工作日历计算出错！"+e.getMessage());
-        }
-        return map;
-    }
 
 
 
@@ -1161,6 +1127,12 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
     public List<Record> getApsYearPlanQtyList(Kv kv){
         return dbTemplate("scheduproductplan.getApsYearPlanQtyList", kv).find();
     }
+
+    public List<Record> getLastYearZKQtyList(Kv kv){
+        return dbTemplate("scheduproductplan.getLastYearZKQtyList", kv).find();
+    }
+
+
 
 
 

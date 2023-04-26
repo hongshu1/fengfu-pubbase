@@ -146,7 +146,11 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 		return list;
 	}
 	
-	public List<Record> findByPurchaseOrderMid(Long purchaseOrderMid){
-		return dbTemplate("purchaseorderdqty.findByPurchaseOrderMid", Okv.by(PurchaseOrderD.IPURCHASEORDERMID, purchaseOrderMid)).find();
+	public List<Record> findByPurchaseOrderMId(Long purchaseOrderMId){
+		return dbTemplate("purchaseorderdqty.findByPurchaseOrderMid", Okv.by(PurchaseOrderD.IPURCHASEORDERMID, purchaseOrderMId)).find();
+	}
+	
+	public List<PurchaseorderdQty> findByPurchaseOrderDId(Long purchaseOrderDId){
+		return find("SELECT * FROM PS_PurchaseOrderD_Qty WHERE iPurchaseOrderDid = ?", purchaseOrderDId);
 	}
 }

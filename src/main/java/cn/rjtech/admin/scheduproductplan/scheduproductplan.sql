@@ -139,6 +139,26 @@ FROM Bd_Inventory AS a
 WHERE a.iAutoId IN (#(invids))
 #end
 
+#sql("getLastYearZKQtyList")
+###根据客户id集查询上一年度12月份的在库计划数
+SELECT a.iCustomerId,d.cCusCode,d.cCusName,
+       b.iInventoryId,e.cInvCode,e.cInvCode1,e.cInvName1,
+       planTypeCode = CASE WHEN c.iType = 3 THEN 'ZK'
+                           ELSE '' END,
+       c.iYear,c.iMonth,c.iQty
+FROM Aps_AnnualPlanM AS a
+         LEFT JOIN Aps_AnnualPlanD AS b ON a.iAutoId = b.iAnnualPlanMid
+         LEFT JOIN Aps_AnnualPlanD_Qty AS c ON b.iAutoId = c.iAnnualPlanDid
+         LEFT JOIN Bd_Customer AS d ON a.iCustomerId = d.iAutoId
+         LEFT JOIN Bd_Inventory AS e ON b.iInventoryId = e.iAutoId
+WHERE a.isDeleted = '0'
+  AND c.iType = 3
+  AND CONVERT(VARCHAR(4),c.iYear,120) = #para(lastyear)
+  AND c.iMonth = '12'
+  AND a.iCustomerId IN (#(customerids))
+  AND b.iInventoryId IN (#(invids))
+#end
+
 #sql("getCusWorkMonthNumList")
 ###根据客户id集查询客户年度每月工作天数
 SELECT iCustomerId,iYear,
@@ -269,13 +289,65 @@ ORDER BY e.cWorkCode,c.cInvCode,b.iType,b.iYear,b.iMonth
 
 ###---------------------------------------------------------月周生产计划排产---------------------
 
+#sql("getInvInfoByLevelList")
+###根据层级查询物料集信息
+SELECT
+    a.iAutoId AS invId, ###物料id
+    a.cInvCode,  ###物料编码
+    a.cInvCode1,  ###客户部番
+    a.cInvName1,  ###部品名称
+    a.iEquipmentModelId,  ###机型id
+    g.cEquipmentModelCode,  ###机型编码
+    g.cEquipmentModelName,  ###机型名称
+    a.iSaleType,  ###销售类型
+    e.cProdCalendarTypeSn,  ###生产日历
+    e.cSupplyCalendarTypeSn,  ###供应日历
+    f.iMinInStockDays,  ###最小在库天数
+    f.iMaxInStockDays,  ###最大在库天数
+    b.iWorkRegionMid,  ###默认产线id
+    c.cWorkCode,  ###产线编码
+    c.cWorkName,  ###产线名称
+    c.iPsLevel,  ###排产层级
+    b.iDepId,  ###部门id
+    d.cDepCode,  ###部门编码
+    d.cDepName  ###部门名称
+FROM Bd_Inventory AS a
+         LEFT JOIN Bd_InventoryWorkRegion AS b ON a.iAutoId = b.iInventoryId AND b.isDefault = 1 AND b.isDeleted = 0
+         LEFT JOIN Bd_WorkRegionM AS c ON b.iWorkRegionMid = c.iAutoId AND c.isDeleted = 0
+         LEFT JOIN Bd_Department AS d ON b.iDepId = d.iAutoId AND d.isDeleted = 0
+         LEFT JOIN Bd_InventoryMfgInfo AS e ON e.iInventoryId = a.iAutoId
+         LEFT JOIN Bd_InventoryPlan AS f ON f.iInventoryId = a.iAutoId
+         LEFT JOIN Bd_EquipmentModel AS g ON a.iEquipmentModelId = g.iAutoId AND g.IsDeleted = 0
+WHERE a.isDeleted = 0
+  AND c.iPsLevel = #para(ipslevel)
+    #if(isaletype)
+        AND a.iSaleType = #para(isaletype)
+    #end
+#end
+
+#sql("getPinvInfoByinvList")
+###根据物料集id查询父级物料信息及用量
+SELECT
+    c.iInventoryId AS invId,
+    d.cInvCode AS invCode,
+    a.iInventoryId AS pinvId,
+    b.cInvCode AS pinvCode,
+    c.iQty
+FROM Bd_BomMaster AS a
+         LEFT JOIN Bd_Inventory AS b ON a.iInventoryId = b.iAutoId
+         LEFT JOIN Bd_BomCompare AS c ON a.iAutoId = c.iBOMMasterId
+         LEFT JOIN Bd_Inventory AS d ON c.iInventoryId = d.iAutoId
+WHERE a.isDeleted = 0 AND isEffective = 1
+  AND c.iInventoryId IN #(ids)
+#end
+
 #sql("getCusOrderSumList")
-###根据层级及销售类型获取客户计划汇总表数据
+###根据物料集id及日期获取客户计划汇总表数据
 SELECT
     t.iYear,
     t.iMonth,
     t.iDate,
-    t.iQty3,
+    ISNULL(t.iQty3,0) AS iQty3,
     a.iAutoId AS invId,
     a.cInvCode,
     a.cInvCode1,
@@ -290,22 +362,70 @@ FROM Co_CusOrderSum AS t
          LEFT JOIN Bd_InventoryWorkRegion AS b ON a.iAutoId = b.iInventoryId AND b.isDefault = 1 AND b.isDeleted = 0
          LEFT JOIN Bd_WorkRegionM AS c ON b.iWorkRegionMid = c.iAutoId AND c.isDeleted = 0
 WHERE
-    c.iPsLevel = #para(ipslevel)
-    #if(isaletype)
-        AND a.iSaleType = #para(isaletype)
-    #end
-    AND t.iYear >= #para(startyear) AND t.iYear <= #para(endyear)
-    AND t.iMonth >= #para(startmonth) AND t.iMonth <= #para(endmonth)
-    AND t.iDate >= #para(startday) AND t.iDate <= #para(endday)
-ORDER BY c.cWorkCode,a.cInvCode,t.iYear,t.iMonth,t.iDate
+    t.iInventoryId IN #(ids)
+    AND
+		(CAST(t.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN t.iMonth<10 THEN '0'+CAST(t.iMonth AS NVARCHAR(30) )
+		ELSE CAST(t.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN t.iDate<10 THEN '0'+CAST(t.iDate AS NVARCHAR(30) )
+		ELSE CAST(t.iDate AS NVARCHAR(30) )
+		END AS NVARCHAR(30)) ) >= #para(startdate)
+	AND
+		(CAST(t.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN t.iMonth<10 THEN '0'+CAST(t.iMonth AS NVARCHAR(30) )
+		ELSE CAST(t.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN t.iDate<10 THEN '0'+CAST(t.iDate AS NVARCHAR(30) )
+		ELSE CAST(t.iDate AS NVARCHAR(30) )
+		END AS NVARCHAR(30)) ) <= #para(enddate)
+#end
+
+#sql("getWeekScheduSumList")
+###根据物料集id及日期获取月周生产计划表数据
+SELECT
+    b.iYear,
+    b.iMonth,
+    b.iDate,
+    (b.iQty2 + b.iQty3 + b.iQty4) AS iQty3,
+    a.iInventoryId AS invId,
+    c.cInvCode,
+    c.cInvCode1,
+    c.cInvName1,
+    c.iSaleType,
+    d.iWorkRegionMid,
+    e.cWorkCode,
+    e.cWorkName,
+    e.iPsLevel
+FROM Aps_WeekScheduleDetails AS a
+         LEFT JOIN Aps_WeekScheduleD_Qty AS b ON a.iAutoId = b.iWeekScheduleDid
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+         LEFT JOIN Bd_InventoryWorkRegion AS d ON c.iAutoId = d.iInventoryId AND d.isDefault = 1 AND d.isDeleted = 0
+         LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId AND e.isDeleted = 0
+WHERE a.isDeleted = '0'
+  AND a.iInventoryId IN #(ids)
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) >= #para(startdate)
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) <= #para(enddate)
 #end
 
 #sql("getApsWeekschedule")
 ###获取当前层级上次排产截止日期
 SELECT TOP 1 iLevel,dScheduleEndTime,dLockEndTime
 FROM Aps_WeekSchedule
-WHERE iLevel = #para(level)
+WHERE IsDeleted = 0 AND iLevel = #para(level)
 ORDER BY dCreateTime DESC
+#end
+
+#sql("getCalendarDateList")
+###根据日历类型字典查询工作日历集合
+SELECT CONVERT(VARCHAR(10),dTakeDate,120) AS dTakeDate
+FROM Bd_Calendar
+WHERE iCaluedarType = '1'
+  AND cSourceCode = #para(csourcecode)
+  AND CONVERT(VARCHAR(10),dTakeDate,120) >= #para(startdate)
+  AND CONVERT(VARCHAR(10),dTakeDate,120) <= #para(enddate)
 #end
 
 #sql("getInvCapacityList")
@@ -316,6 +436,159 @@ FROM Bd_InventoryCapacity AS a
          LEFT JOIN Bd_WorkShiftM AS c ON a.iWorkShiftMid = c.iAutoId
 WHERE a.iInventoryId IN #(ids)
 #end
+
+#sql("getLastDateZKQtyList")
+###根据物料集查询前一天的在库计划数
+SELECT a.iInventoryId,c.cInvCode,
+       b.iYear,b.iMonth,b.iDate,b.iQty5
+FROM Aps_WeekScheduleDetails AS a
+         LEFT JOIN Aps_WeekScheduleD_Qty AS b ON a.iAutoId = b.iWeekScheduleDid
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+WHERE a.isDeleted = '0'
+  AND CONVERT(VARCHAR(4),b.iYear,120) = #para(lastyear)
+  AND b.iMonth = #para(lastmonth)
+  AND b.iDate = #para(lastday)
+  AND a.iInventoryId IN #(ids)
+#end
+
+#sql("getYearMonthQtySumByinvList")
+###根据物料集id及年月查询年度生产计划
+SELECT a.iInventoryId,c.cInvCode,c.cInvCode1,c.cInvName1,
+       planTypeCode = CASE WHEN b.iType = 2 THEN 'CP' ELSE '' END,
+       b.iYear,b.iMonth,SUM(b.iQty) AS iQty
+FROM Aps_AnnualPlanD AS a
+         LEFT JOIN Aps_AnnualPlanD_Qty AS b ON a.iAutoId = b.iAnnualPlanDid
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+         LEFT JOIN Bd_InventoryWorkRegion AS d ON a.iAutoId = d.iInventoryId AND d.isDefault = '1' AND d.isDeleted = '0'
+         LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId
+         LEFT JOIN Aps_AnnualPlanM AS f ON a.iAnnualPlanMid = f.iAutoId
+WHERE b.iType = 2 AND f.isDeleted = '0'
+  AND b.iYear = #para(nextyear)
+  AND b.iMonth = #para(nextmonth)
+  AND a.iInventoryId IN #(ids)
+GROUP BY d.iWorkRegionMid,e.cWorkCode,e.cWorkName,a.iInventoryId,c.cInvCode,c.cInvCode1,c.cInvName1,b.iType,b.iYear,b.iMonth
+ORDER BY e.cWorkCode,c.cInvCode,b.iType,b.iYear,b.iMonth
+#end
+
+#sql("getConfigValue")
+###查询全局参数
+SELECT config_value FROM #(getBaseDbName()).dbo.jb_global_config WHERE config_key = #para(configkey)
+#end
+
+
+#sql("getApsWeekscheduleList")
+###获取月周排产历史纪录
+SELECT *
+FROM Aps_WeekSchedule
+WHERE IsDeleted = 0
+ORDER BY dScheduleEndTime DESC,iLevel ASC
+#end
+
+
+#sql("getWeekScheduPlanList")
+###根据层级及日期获取月周生产计划表数据
+SELECT
+    b.iYear,
+    b.iMonth,
+    b.iDate,
+    b.iQty1,
+    b.iQty2,
+    b.iQty3,
+    b.iQty4,
+    b.iQty5,
+    b.iQty6,
+    b.isLocked,
+    a.iInventoryId AS invId,
+    c.cInvCode,
+    c.cInvCode1,
+    c.cInvName1,
+    d.iWorkRegionMid,
+    e.cWorkCode,
+    e.cWorkName,
+    e.iPsLevel
+FROM Aps_WeekScheduleDetails AS a
+         LEFT JOIN Aps_WeekScheduleD_Qty AS b ON a.iAutoId = b.iWeekScheduleDid
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+         LEFT JOIN Bd_InventoryWorkRegion AS d ON c.iAutoId = d.iInventoryId AND d.isDefault = 1 AND d.isDeleted = 0
+         LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId AND e.isDeleted = 0
+WHERE a.isDeleted = '0'
+  AND a.iLevel = #para(level)
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) >= #para(startdate)
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) <= #para(enddate)
+#end
+
+
+###---------------------------------------------------------月周生产计划汇总---------------------
+
+#sql("getApsMonthPlanSumPage")
+###根据日期及条件获取月周生产计划表数据三班汇总
+SELECT
+    b.iYear,
+    b.iMonth,
+    b.iDate,
+    (b.iQty2 + b.iQty3 + b.iQty4) AS iQty3,
+    a.iInventoryId AS invId,
+    c.cInvCode,
+    c.cInvCode1,
+    c.cInvName1,
+    c.iSaleType,
+    d.iWorkRegionMid,
+    e.cWorkCode,
+    e.cWorkName,
+    e.iPsLevel
+FROM Aps_WeekScheduleDetails AS a
+         LEFT JOIN Aps_WeekScheduleD_Qty AS b ON a.iAutoId = b.iWeekScheduleDid
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+         LEFT JOIN Bd_InventoryWorkRegion AS d ON c.iAutoId = d.iInventoryId AND d.isDefault = 1 AND d.isDeleted = 0
+         LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId AND e.isDeleted = 0
+WHERE a.isDeleted = '0'
+    #if(cworkname)
+        AND e.cWorkName LIKE CONCAT('%', #para(cworkname), '%')
+    #end
+    #if(cinvcode)
+        AND c.cInvCode LIKE CONCAT('%', #para(cinvcode), '%')
+    #end
+    #if(cinvcode1)
+        AND c.cInvCode1 LIKE CONCAT('%', #para(cinvcode1), '%')
+    #end
+    #if(cinvname1)
+        AND c.cInvName1 LIKE CONCAT('%', #para(cinvname1), '%')
+    #end
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) >= #para(startdate)
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) <= #para(enddate)
+#end
+
+#sql("getInvMergeRateSumList")
+###根据物料集查询默认工艺路线工序的人数汇总
+SELECT a.iAutoId,a.cInvCode,SUM(c.iMergeRate) AS iMergeRateSum
+FROM Bd_Inventory AS a
+         LEFT JOIN Bd_InventoryRouting AS b ON a.iAutoId = b.iInventoryId
+         LEFT JOIN Bd_InventoryRoutingConfig AS c ON b.iAutoId = c.iInventoryRoutingId
+WHERE b.isEnabled = 1 AND c.isEnabled = 1
+  AND a.iAutoId IN #(ids)
+GROUP BY a.iAutoId,a.cInvCode
+#end
+
+
+
+
+
 
 
 

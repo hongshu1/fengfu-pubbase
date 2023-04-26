@@ -160,7 +160,7 @@ public abstract class BasePurchaseOrderDBatchVersion<M extends BasePurchaseOrder
 	/**
 	 * 数量
 	 */
-	public M setIQty(java.lang.Integer iQty) {
+	public M setIQty(java.math.BigDecimal iQty) {
 		set("iQty", iQty);
 		return (M)this;
 	}
@@ -168,10 +168,10 @@ public abstract class BasePurchaseOrderDBatchVersion<M extends BasePurchaseOrder
 	/**
 	 * 数量
 	 */
-	@JBoltField(name="iqty" ,columnName="iQty",type="Integer", remark="数量", required=true, maxLength=10, fixed=0, order=8)
+	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=10, fixed=0, order=8)
 	@JSONField(name = "iqty")
-	public java.lang.Integer getIQty() {
-		return getInt("iQty");
+	public java.math.BigDecimal getIQty() {
+		return getBigDecimal("iQty");
 	}
 
 	/**
@@ -211,7 +211,7 @@ public abstract class BasePurchaseOrderDBatchVersion<M extends BasePurchaseOrder
 	/**
 	 * 原数量
 	 */
-	public M setISourceQty(java.lang.Integer iSourceQty) {
+	public M setISourceQty(java.math.BigDecimal iSourceQty) {
 		set("iSourceQty", iSourceQty);
 		return (M)this;
 	}
@@ -219,10 +219,10 @@ public abstract class BasePurchaseOrderDBatchVersion<M extends BasePurchaseOrder
 	/**
 	 * 原数量
 	 */
-	@JBoltField(name="isourceqty" ,columnName="iSourceQty",type="Integer", remark="原数量", required=false, maxLength=10, fixed=0, order=11)
+	@JBoltField(name="isourceqty" ,columnName="iSourceQty",type="BigDecimal", remark="原数量", required=false, maxLength=10, fixed=0, order=11)
 	@JSONField(name = "isourceqty")
-	public java.lang.Integer getISourceQty() {
-		return getInt("iSourceQty");
+	public java.math.BigDecimal getISourceQty() {
+		return getBigDecimal("iSourceQty");
 	}
 
 	/**

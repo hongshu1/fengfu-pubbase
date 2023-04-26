@@ -30,12 +30,14 @@
 {@/each}
 </textarea>
 <div class="jbolt_table_toolbar" id="ContainerClass_toolbar_#(pageId)">
-<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-	<button data-dialogbtn data-area="70%,90%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增仓库建模-容器分类" data-url="/admin/containerclass/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<div class="col-sm-auto" role="group" aria-label="btn-group">
+		<button data-dialogbtn data-area="70%,90%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
+				data-title="新增仓库建模-容器分类" data-url="/admin/containerclass/add" class="btn btn-outline-primary btn-sm"><i
+				class="fa fa-plus"></i> 新增
+		</button>
 
-</div>
 
-	<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+		<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
 		<div class="dropdown-menu" aria-labelledby="importButton">
 			<a data-downloadbtn href="/admin/containerclass/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
@@ -53,7 +55,7 @@
 		</div>
 	</div>
 
-	<div class="" role="group" aria-label="btn-group">
+		<div class="btn-group dropdown" role="group" aria-label="btn-group">
 		<div class="btn-group dropdown">
 			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
 			<div class="dropdown-menu" aria-labelledby="exportButton">
@@ -62,7 +64,7 @@
 			</div>
 		</div>
 	</div>
-
+	</div>
 </div>
 <table class="jbolt_table jbolt_main_table  table-center "
 	   data-jbolttable

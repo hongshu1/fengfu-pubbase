@@ -2,24 +2,25 @@
 #define main()
 <div class="jbolt_page">
   <div class="jbolt_page_content">
-    <form onsubmit="return false;" id="stockoutqcformmForm_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
-      #if(stockoutqcformm.iAutoId??)
-      <input type="hidden" name="stockoutqcformm.iAutoId" value="#(stockoutqcformm.iAutoId??)" />
+    <form onsubmit="return false;" id="rcvdocqcformmform_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
+      #if(rcvdocqcformm.iautoid??)
+      <input type="hidden" name="rcvdocqcformm.iautoid" value="#(rcvdocqcformm.iautoid??)"/>
       #end
       <div>
         <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
-        <table id="table1" border="1" style="text-align: center;left: 60px;margin-left:50px" width="1200">
+        <table id="jbolt_table_checkouttableparam_split__#(pageId)1" border="1"
+               style="text-align: center;left: 60px;margin-left:50px;width: 1300px;">
 
-          <tr height="28" style="mso-height-source:userset;height:21pt" id="r0"><!--"宋体 ",sans-serif";-->
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r0">
             <td height="26" class="x74" width="117" style="height:19.5pt;width:87.75pt;">机型</td>
-            <td class="x71" width="260" style="width:195pt;">#(cequipmentname??)</td>
+            <td class="x71" width="260" style="width:195pt;">#(record.cequipmentname??)</td>
             <td colspan="4" class="x72" width="514" style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;">
               测定目的
             </td>
           </tr>
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r1">
             <td height="26" class="x74" style="height:19.5pt;">客户部番</td>
-            <td class="x71">#(cinvcode1??)</td>
+            <td class="x71">#(record.cinvcode1??)</td>
             <td colspan="4" rowspan="2" height="54" class="x74"
                 style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;height:40.5pt;">
               <div class="form-group row  col-8"
@@ -31,34 +32,33 @@
                    data-value-attr="sn"
                    data-text-attr="cmeasurepurpose"
                    data-inline="true"
-                   data-value="#(cmeasurepurpose??)"
+                   data-value="#(record.cmeasurepurpose??)"
                    data-name="cmeasurepurpose">
               </div>
             </td>
           </tr>
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r2">
             <td height="26" class="x74" style="height:19.5pt;">部品名称</td>
-            <td class="x71">#(cinvname1??)</td>
+            <td>#(record.cinvname1??)</td><!--class="x71"-->
           </tr>
-          <tr height="28" style="mso-height-source:userset;height:21pt" id="r3">
-            <td height="26" class="x74" style="height:19.5pt;">批次号</td>
-            <td class="x71">#(cbatchno??)</td>
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r5">
+            <td>批次号</td>
+            <td>#(record.cbatchno??)</td>
             <td class="x74" width="100px">批次大小</td>
-            <td class="x71" width="250">#(cbatchno??)</td>
+            <td width="250">#(record.cbatchno??)</td>
             <td class="x74" width="100px">检测日期</td>
-            <td class="x71" width="250">#(dupdatetime??)</td>
+            <td width="250">#(record.dupdatetime??)</td>
           </tr>
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r4">
             <td height="26" class="x74" style="height:19.5pt;">测定理由</td>
             <td colspan="3">
               <input id="cMeaSureReason" type="text" autocomplete="off" placeholder="=请输入测定理由=" name="cmeasurereason"
-                     value="#(cmeasurereason??)"
-                     maxlength="355" data-rule="required" style="width: 630px"/>
+                     value="#(record.cmeasurereason??)" maxlength="355" data-rule="required" style="width: 630px"/>
             </td>
             <td class="x74">设变号</td>
             <td class="x71" width="250">
               <input id="cDcNo" type="text" autocomplete="off" placeholder="=请输入设变号=" name="cdcno"
-                     value="#(cdcno??)" maxlength="355" data-rule="required"/>
+                     value="#(record.cdcno??)" maxlength="355" data-rule="required"/>
             </td>
           </tr>
           <tr height="300px">
@@ -68,7 +68,7 @@
                 </div>
 
                 <input type="hidden" id="recordImages" placeholder="=测试==" name="recordImages"
-                       value="#(imgList??)" class="form-control"/>
+                       value="#(record.imgList??)" class="form-control"/>
 
                 <div class="form-group row">
                   <label class="col-form-label col-sm-2 text-left">检验图片：</label>
@@ -76,9 +76,8 @@
                     <div class="j_upload_imgbox_multi">
                       <div class="row">
                         <div class="col-sm-auto">
-                          <!--class="j_img_uploder"-->
                           <div
-                              data-url="admin/stockoutqcformm/uploadImage"
+                              data-url="admin/rcvdocqcformm/uploadImage"
                               data-limit="10"
                               data-align="left"
                               data-multi="true"
@@ -88,7 +87,6 @@
                               data-area="150,150"
                               data-maxsize="2000"
                               style="width: 230px; height: 230px;"></div>
-                          <!--<small class="form-text text-muted text-ceter">单张大小不超200kb，最多10张</small>-->
                         </div>
                         <div class="col pr-3">
                           <ul id="recordBox" class="j_imgbox" data-remove-confirm="true"
@@ -113,521 +111,127 @@
                    data-value-attr="sn"
                    data-text-attr="cmeasureunit"
                    data-inline="true"
-                   data-value="#(cmeasureunit??)"
+                   data-value="#(record.cmeasureunit??)"
                    data-name="cmeasureunit">
               </div>
             </td>
           </tr>
         </table>
-        <table id="table2" border="3" style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
+        <table id="jbolt_table_checkouttableparam_split__#(pageId)2" border="3"
+               style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
           <div style="left: 60px;margin-left:50px;height: 50px;width: 500px;">
             <button type="button" onclick="inserRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
-            <img data-switchbtn data-value="${data.isCpkSigned}" data-handler="refreshJBoltTable"
-                 data-url="admin/stockoutqcformm/toggleIsCpkSigned/${data.iautoid}" style="margin-left: 50px;"/>
+            <img data-switchbtn data-value="#(rcvdocqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
+                 data-url="admin/rcvdocqcformm/toggleIsCpkSigned/#(rcvdocqcformm.iautoid??)" style="margin-left: 50px;"/>
             <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
           </div>
         </table>
 
-        <table id="tableID" style="left: 60px;margin-left: 50px" border="1" align="center" cellspacing="0" cellpadding="10">
-          <div>
+        <!-- 检验表格项目表的的数据模板定义-->
+        <textarea class="jb_tpl_box" id="checkoutType_tpl_#(pageId)">
+          {@each datas as data,index}
+          <tr data-id="${data.iautoid}">
+            <td>${+index+1}</td>
+            <td title="${data.cqcitemname}">${data.cqcitemname}</td>
+            <td title="标准值:${data.istdval}，最大值:${data.imaxval}，最小值:${data.iminval}">
+              {@if data.itype=='1'}
+                <span>(${data.istdval})</span>
+                <span>(${data.imaxval})</span>
+                <span>(${data.iminval})</span>
+              {@else}
+                <span title="${data.coptions}">${data.coptions}</span>
+              {@/if}
+            </td>
+            <td>${data.cqcparamname}</td>
+            {@each data.cvaluelist as value,indextest}
+            <td>
+              {@if data.itype == '1'}
+              <input name="cA01" type="number" class="cA01" value="${value.cvalue}"
+                     title="最大值：${data.imaxval}，标准值：${data.istdval}，最小值：${data.iminval}"/>
+              {@else if data.itype == '2'}
+              <input name="cA01" type="text" class="cA01" title="${data.coptions}" value="${value.cvalue}"/>
+              {@else if data.itype == '3'}
+              <select name="cA01"
+                      class="form-control"
+                      data-url="admin/dictionary/options?key=overallsize"
+                      data-autoload
+                      data-text="=整体尺寸="
+                      data-value-attr="sn"
+                      data-value=""
+                      data-select="${value.cvalue}"
+                      title="=整体尺寸="></select>
+              {@else if data.itype == '4'}
+              <input name="cA01" type="text" class="cA01" title="#{data.coptions??}" value="${value.cvalue}"/>
+              {@else if data.itype == '5'}
+              <div class="form-group row "
+                   data-name="cA01"
+                   data-checkbox
+                   data-rule="checkbox"
+                   data-default=""
+                   data-url="admin/dictionary/options?key=appearance"
+                   data-value-attr="sn"
+                   data-text-attr="appearance"
+                   data-inline="false"
+                   data-value="${value.cvalue}"></div>
+              {@else if data.itype == '6'}
+              <select name="cA01" class="form-control" data-url="admin/dictionary/options?key=overallsize" data-autoload
+                      data-text="=整体尺寸=" data-value-attr="sn" value="${value.cvalue}" data-select="#(data.coptions??)"></select>
+              {@else if data.itype == '7'}
+              <input name="cA01" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+                     class="form-control" placeholder="结束日期" data-tips="结束时间" maxlength="23"
+                     value="${value.cvalue}">
+              {@else data.itype == '8'}
+              <input name="cA01" type="text" class="form-control" data-date data-type="time" data-fmt="HH:mm:ss"
+                     value="${value.cvalue}">
+              {@/if}
+            </td>
+            {@/each}
+          </tr>
+          {@/each}
+        </textarea>
+
+        <div class="card-body overflow-auto" style="left: 30px;margin-left: 30px;">
+          <table id="jbolt_table_checkouttableparam_split_#(pageId)3" class="table-center jbolt_table thead_font_normal"
+                 data-jbolttable
+                 data-width="fill"
+                 data-height="fill"
+                 data-ajax="true"
+                 data-conditions-form="rcvdocqcformmform_#(pageId)"
+                 data-url="admin/rcvdocqcformm/getonlyseeDatas?iautoid=#(rcvdocqcformm.iAutoId??)"
+                 data-rowtpl="checkoutType_tpl_#(pageId)"
+                 data-copy-to-excel="false"
+                 data-toolbar="rcvdocqcformmform_toolbar_#(pageId)">
+            <thead>
             <tr class="colspan biaotoucolor">
-              <th colspan="7">检查内容</th>
+              <th colspan="4">检查内容</th>
               <th colspan="22">检查记录</th>
             </tr>
             <tr class="colspan biaotoucolor">
-              <th>序号</th>
-              <th style="width: 15px;">检查项目</th>
-              <th colspan="3">规格公差</th>
-              <th colspan="2">检查方法</th>
-              <th>1</th>
-              <th>2</th>
-              <th>3</th>
-              <th>4</th>
-              <th>5</th>
-              <th>6</th>
-              <th>7</th>
-              <th>8</th>
-              <th>9</th>
-              <th>10</th>
+              <th data-column="index">序号</th>
+              <th style="width: 150px;" data-column="cqcitemname">检查项目</th>
+              <th style="width: 220px;">规格公差</th>
+              <th style="width: 120px">检查方法</th>
+              #for(i = 1; i <= docparamlist.size(); i++)
+              <th style="width: 80px">#(i)</th>
+              #end
             </tr>
-            <tr id="trd1" class="trd colspan">
-              <td>1</td>
-              <td style="width: 15px;">总长</td>
-              <th>415.6</th>
-              <th>416.6</th>
-              <th>415.6</th>
-              <td colspan="2">检具</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>2</td>
-              <td style="width: 15px;">宽</td>
-              <th>212.1</th>
-              <th>212.6</th>
-              <th>211.6</th>
-              <td colspan="2">检具</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>3</td>
-              <td style="width: 15px;">高</td>
-              <th>496.1</th>
-              <th>495.6</th>
-              <th>495.6</th>
-              <td colspan="2">检具</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>4</td>
-              <td>FR端径外（10mm范围）A</td>
-              <th>47</th>
-              <th>47.2</th>
-              <th>46.8</th>
-              <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>5</td>
-              <td>FR端径外（10mm范围）B</td>
-              <th>47</th>
-              <th>47.2</th>
-              <th>46.8</th>
-              <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>6</td>
-              <td>FR端径外（10mm范围）C</td>
-              <th>47</th>
-              <th>47.2</th>
-              <th>46.8</th>
-              <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>7</td>
-              <td>FR端径外（10mm范围）D</td>
-              <th>47</th>
-              <th>47.2</th>
-              <th>46.8</th>
-              <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>8</td>
-              <td>扩口长度</td>
-              <th>20</th>
-              <th>21</th>
-              <th>19.8</th>
-              <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>9</td>
-              <td>FR端径外（10mm范围）A</td>
-              <th>45</th>
-              <th>45.2</th>
-              <th>44.8</th>
-              <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>10</td>
-              <td>FR端径外（10mm范围）B</td>
-              <th>45</th>
-              <th>45.2</th>
-              <th>44.8</th>
-              <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
 
-            <tr class="trd colspan">
-              <td>11</td>
-              <td>FR端径外（10mm范围）C</td>
-              <th>45</th>
-              <th>45.2</th>
-              <th>44.8</th>
-              <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>12</td>
-              <td>FR端径外（10mm范围）D</td>
-              <th>45</th>
-              <th>45.2</th>
-              <th>44.8</th>
-              <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>13</td>
-              <td>拉薄率（板厚=1.5）</td>
-              <td colspan="3">＜30%</td>
-              <td colspan="2">超声波测厚仪</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>14</td>
-              <td>扁平率
-                （素管Φ45）
-              </td>
-              <td colspan="3">＜6%</td>
-              <td colspan="2">卡尺</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>15</td>
-              <td>整体尺寸</td>
-              <td colspan="3">合检具，无干涉</td>
-              <td colspan="2">检具</td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>16</td>
-              <td>整体尺寸</td>
-              <td colspan="3">合管口斜面＜0.5</td>
-              <td colspan="2">塞尺</td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-              <td><select class="form-control" data-url="admin/dictionary/options?key=overallsize" name="overallsize"
-                          data-autoload
-                          data-text="=整体尺寸=" data-value-attr="sn" data-value="" data-select="#(overallsize)"></select></td>
-            </tr>
-            <tr class="trd colspan">
-              <td>17</td>
-              <td>整体外观</td>
-              <th colspan="3">无异常毛刺、拉花、变形、压伤、开裂、起皱</th>
-              <td colspan="2">目视</td>
-              <td>
-                <div class="form-group row "
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value=""
-                     data-name="appearance"></div><!--#(appearance??)-->
-              </td>
-              <td>
-                <div class="form-group row "
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
-              </td>
-              <td>
-                <div class="form-group row "
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
-              </td>
-              <td>
-                <div class="form-group row "
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
-              </td>
-              <td>
-                <div class="form-group row "
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
-              </td>
-              <td>
-                <div class="form-group row "
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
-              </td>
-              <td>
-                <div class="form-group row "
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
-              </td>
-              <td>
-                <div class="form-group row "
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
-              </td>
-              <td>
-                <div class="form-group row "
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
-              </td>
-              <td>
-                <div class="form-group row "
-                     data-checkbox
-                     data-rule="checkbox"
-                     data-default=""
-                     data-url="admin/dictionary/options?key=appearance"
-                     data-value-attr="sn"
-                     data-text-attr="appearance"
-                     data-inline="false"
-                     data-value="#(appearance??)"
-                     data-name="appearance"></div>
-              </td>
-            </tr>
-            <tr class="trd colspan">
-              <td>18</td>
-              <td>材质</td>
-              <td colspan="3">HSS441-TK</td>
-              <td colspan="2">核对标签</td>
-              <td><input name="cA01" type="text" class="cA01"/></td>
-              <td><input name="cA02" type="text"/></td>
-              <td><input name="cA03" type="text"/></td>
-              <td><input name="cA04" type="text"/></td>
-              <td><input name="cA05" type="text"/></td>
-              <td><input name="cA06" type="text"/></td>
-              <td><input name="cA07" type="text"/></td>
-              <td><input name="cA08" type="text"/></td>
-              <td><input name="cA09" type="text"/></td>
-              <td><input name="cA10" type="text"/></td>
-            </tr>
-          </div>
-        </table>
-
-        <table id="table4" border="1" style="text-align: center;left: 60px;margin-left:50px" width="1200">
+        <table id="jbolt_table_checkouttableparam_split__#(pageId)4" border="1"
+               style="text-align: center;left: 60px;margin-left:50px" width="1200">
           <tr height="60" style="mso-height-source:userset;height:21pt" id="r3">
             <td height="26" class="x74" width="117" style="height:19.5pt;width:87.75pt;">备注</td>
-            <td width="850px"><!--class="x71" width="260" style="width:195pt;"-->
+            <td width="850px">
               <div>
                 <textarea id="cMemo" class="form-control" data-auto-height="100" autocomplete="off" data-show-count
                           placeholder="=请输入备注="
-                          data-tips="请输入备注" maxlength="200" name="cmemo" value="">#(cmemo??)</textarea>
+                          data-tips="请输入备注" maxlength="200" name="cmemo" value="">#(record.cmemo??)</textarea>
               </div>
             </td>
             <td width="300px">
@@ -635,13 +239,13 @@
                    id="isok"
                    data-radio
                    data-rule="radio"
-                   data-label="判定是否合格："
                    data-default=""
+                   data-label="判定是否合格："
                    data-url="admin/dictionary/options?key=isok"
                    data-value-attr="sn"
                    data-text-attr="isok"
                    data-inline="true"
-                   data-value="#(isok??)"
+                   data-value="#(record.isok??)"
                    data-name="isok">
               </div>
             </td>
@@ -658,25 +262,10 @@
 <style>
 
   .cA01 {
-    width: 30px;
-  }
-
-  .th {
-    overflow: hidden;
-    height: 100%;
-    width: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    white-space: nowrap;
-    font-family: "宋体", "STLiti";
-    font-style: normal;
+    width: 78px;
   }
 
   .trd td {
-    /*max-width: 100px;*/
-    /*width: 100px;*/
-    /*width: 80pt;*/
     overflow: hidden;
     height: 100%;
     font-size: 14px;
@@ -690,8 +279,6 @@
     height: 100%;
     font-size: 14px;
     text-align: center;
-    /*border: none;*/
-
   }
 
   .colspan {
@@ -699,28 +286,6 @@
   }
 
   .x71 {
-    mso-style-parent: style0;
-    mso-number-format: General;
-    text-align: center;
-    vertical-align: middle;
-    white-space: nowrap;
-    background: white;
-    mso-pattern: auto;
-    color: #000000;
-    font-size: 12pt;
-    font-weight: 700;
-    font-style: normal;
-    font-family: "宋体", "sans-serif";
-    border-top: 1px solid windowtext;
-    border-right: 1px solid windowtext;
-    border-bottom: 1px solid windowtext;
-    border-left: 1px solid windowtext;
-    mso-diagonal-down: none;
-    mso-diagonal-up: none;
-    mso-protection: locked visible;
-  }
-
-  .x70 {
     mso-style-parent: style0;
     mso-number-format: General;
     text-align: center;
@@ -762,39 +327,57 @@
   //1.隐藏确定按钮 （因为这是查看页面，不允许修改）
   hideParentLayerDialogBtn(0);
   //2.禁止编辑
-  $("#tableID" + " tbody tr").find("input").attr("disabled", "disabled");
-  $("#isNot").find("input").attr("disabled", "disabled");
-  $("#tableID" + " tbody tr").find("select").attr("disabled", "disabled");
-  $("#tableID" + " tbody tr").find("div.checkbox").attr("disabled", "disabled");
+  $("#jbolt_table_checkouttableparam_split_#(pageId)3" + " tr th").find("input").attr("disabled", "disabled");
+  $("#jbolt_table_checkouttableparam_split_#(pageId)3" + " tr th").find("select").attr("disabled", "disabled");
 
   function submitThisForm() {
-    var milasUrl = {};//新建对象，用来存储所有数据
-    var subMilasUrlArr = {};//存储每一行数据
-    var tableData = {};
-
-    //table3
-    $("#tableID" + " tbody tr").each(function (trindex, tritem) {//遍历每一行
-      tableData[trindex] = new Array();
-      //有input框的值 存入
-      $(tritem).find("input").each(function (tdindex, tditem) {
-        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
-        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
-      });
-      //整体尺寸
-      $(tritem).find("select").each(function (tdindex, tditem) {
-        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
-        subMilasUrlArr[trindex] = tableData[trindex];//将每一行的数据存入
-      });
-      //整体外观
-      $(tritem).find("div.checkbox").each(function (tdindex, tditem) {
-        console.log("tditem=========>"+tditem)
-        tableData[trindex][tdindex] = $(tditem).val();//遍历每一个数据，并存入
-        subMilasUrlArr[trindex] = tableData[trindex]//将每一行的数据存入
-      });
+    //获取整个form的数据
+    let serializeArray = $("#rcvdocqcformmform_#(pageId)").serializeArray();
+    //过滤出只有name=cA的数据
+    let filterserializeArray = serializeArray.filter((ele) => {
+      return ele.name.startWith("cA");
     });
 
-    for (var key in subMilasUrlArr) {
-      milasUrl[key] = subMilasUrlArr[key];//将每一行存入对象
+    /*
+    * 把二维数组filterserializeArray分成10个一维数组
+    * */
+    function _chunk(arr, num) {
+      let j = 0,
+          o = j;
+      let newArray = [];
+      while (j < arr.length) {
+        j += num;
+        newArray.push([arr.slice(o, j)]);
+        o = j;
+      }
+      return newArray;
+    }
+
+    var serializeGroupbyList = _chunk(filterserializeArray, 10);
+
+    const allDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
+    var subMilasUrlArr = [];//存储每一行数据
+    for (let i = 0; i < serializeGroupbyList.length; i++) {
+      let data = allDatas[i];
+      let serializeElement = serializeGroupbyList[i];
+      var tableData = {
+        coptions: data.coptions,
+        cqcformparamids: data.cqcformparamids,
+        cqcitemname: data.cqcitemname,
+        cqcparamname: data.cqcparamname,
+        iautoid: data.iautoid,
+        iformparamid: data.iformparamid,
+        imaxval: data.imaxval,
+        iminval: data.iminval,
+        iqcformid: data.iqcformid,
+        ircvdocqcformmid: data.ircvdocqcformmid,
+        iseq: data.iseq,
+        istdval: data.istdval,
+        isubseq: data.isubseq,
+        itype: data.itype,
+        serializeElement: serializeElement
+      };
+      subMilasUrlArr.push(tableData);
     }
 
     var cmeasurereason = $("#cMeaSureReason").val(); //测定理由
@@ -803,22 +386,23 @@
     var isok = $('input[name="isok"]').filter(':checked').val();//是否合格
     var cmemo = $("#cMemo").val(); //备注
     var cdcno = $("#cDcNo").val(); //设变号
-
-    const submitDatas={
-      tableDataList: JSON.stringify(milasUrl),
-      // parameterId: JSON.stringify(parameterData),
-      cmeasurereason:cmeasurereason,
-      cmeasurepurpose:cmeasurepurpose,
-      cmeasureunit:cmeasureunit,
-      cmemo:cmemo,
-      isok:isok
+    var iautoid = $('input[name="rcvdocqcformm.iautoid"]').val();//主页面的主键
+    const submitDatas = {
+      serializeSubmitList: JSON.stringify(subMilasUrlArr),
+      cmeasurereason: cmeasurereason,
+      cmeasurepurpose: cmeasurepurpose,
+      cmeasureunit: cmeasureunit,
+      cmemo: cmemo,
+      cdcno: cdcno,
+      isok: isok,
+      docqcformmiautoid: iautoid
     }
-    Ajax.post("admin/stockoutqcformm/updateTable", submitDatas, function (res) {
+    Ajax.post("admin/rcvdocqcformm/editCheckOutTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {
-          // refreshPjaxContainer();
-          // parent.LayerMsgBox.closeAll();
-          // parent.refreshPjaxContainer();
+          refreshPjaxContainer();
+          parent.LayerMsgBox.closeAll();
+          parent.refreshPjaxContainer();
         });
       } else {
         LayerMsgBox.alert(res.msg, 2);
@@ -830,35 +414,5 @@
 
 <script>
 
-  var parameterData = [];
-  $(function () {
-    Ajax.get("admin/stockoutqcformm/list", function (res) {
-      for (let i = 0; i < res.data.length; i++) {
-        console.log(res.data[i].iautoid)
-        parameterData.push(res.data[i].iautoid);
-      }
-    });
-    Ajax.get("admin/stockoutqcformm/datas?iautoid=#(data.iautoid)", function (res) {
-      console.log(res.data[0].cA01)
-      //根据某列进行赋值
-      for (let i = 0; i < res.data.length - 11; i++) {
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(0)").val(res.data[i].cA01);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(1)").val(res.data[i].cA02);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(2)").val(res.data[i].cA03);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(3)").val(res.data[i].cA04);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(4)").val(res.data[i].cA05);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(5)").val(res.data[i].cA06);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(6)").val(res.data[i].cA07);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(7)").val(res.data[i].cA08);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(8)").val(res.data[i].cA09);
-        $("#tableID" + " tbody tr").eq(i + 2).find("input:eq(9)").val(res.data[i].cA10);
-      }
-    })
-  });
-
-
 </script>
-
 #end
-
-

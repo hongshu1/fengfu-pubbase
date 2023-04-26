@@ -327,7 +327,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		List<Record> purchaseOrderDList = purchaseOrderDService.findByPurchaseOrderMId(purchaseOrderM.getIAutoId());
 		
 		// 采购订单到货数量明细
-		List<Record> purchaseOrderdQtyList = purchaseorderdQtyService.findByPurchaseOrderMid(purchaseOrderM.getIAutoId());
+		List<Record> purchaseOrderdQtyList = purchaseorderdQtyService.findByPurchaseOrderMId(purchaseOrderM.getIAutoId());
 		
 		// 按存货编码汇总
 		Map<Long, Map<String, BigDecimal>>  purchaseOrderdQtyMap = demandPlanDService.getDemandPlanDMap(purchaseOrderdQtyList, DemandPlanM.IINVENTORYID);
@@ -698,11 +698,11 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		List<Record> byPurchaseOrderMId = purchaseOrderDService.findByPurchaseOrderMId(id);
 		List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
 		// 获取数量表
-		List<Record> purchaseOrderDQtyList = purchaseorderdQtyService.findByPurchaseOrderMid(id);
+		List<Record> purchaseOrderDQtyList = purchaseorderdQtyService.findByPurchaseOrderMId(id);
 		ValidationUtils.notEmpty(purchaseOrderDQtyList, purchaseOrderM.getCOrderNo()+"无现品票生成");
 		for (Record record : purchaseOrderDQtyList){
 			// 源数量
-			BigDecimal sourceSum = record.getBigDecimal(PurchaseOrderD.ISOURCESUM);
+			BigDecimal sourceQty = record.getBigDecimal(PurchaseorderdQty.ISOURCEQTY);
 			Long purchaseOrderDId = record.getLong(PurchaseorderdQty.IPURCHASEORDERDID);
 			Long inventoryId = record.getLong(PurchaseOrderD.ISOURCEINVENTORYID);
 			
@@ -711,19 +711,19 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			// 包装数量
 			BigDecimal pkgQty = record.getBigDecimal(Inventory.IPKGQTY);
 			// 包装数量为空或者为0，生成一张条码，原始数量/打包数量
-			if (ObjectUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceSum.compareTo(pkgQty)<=0){
+			if (ObjectUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty)<=0){
 				String barCode = purchaseOrderDBatchService.generateBarCode();
-				PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, inventoryId, planDate, sourceSum, barCode);
+				PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, inventoryId, planDate, sourceQty, barCode);
 				purchaseOrderDBatchList.add(purchaseOrderDBatch);
 				continue;
 			}
 			// 源数量/包装数量 （向上取）
-			int count = sourceSum.divide(pkgQty, 0, BigDecimal.ROUND_UP).intValue();
+			int count = sourceQty.divide(pkgQty, 0, BigDecimal.ROUND_UP).intValue();
 			for (int i=0 ;i<count; i++){
 				// count-1： 69/10; 9
 				String barCode = purchaseOrderDBatchService.generateBarCode();
 				if (i == count-1){
-					BigDecimal qty = sourceSum.subtract(BigDecimal.valueOf(i).multiply(pkgQty));
+					BigDecimal qty = sourceQty.subtract(BigDecimal.valueOf(i).multiply(pkgQty));
 					PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, inventoryId, planDate, qty, barCode);
 					purchaseOrderDBatchList.add(purchaseOrderDBatch);
 					break;
@@ -826,4 +826,10 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	}
 	
 	
+	public Ret updateHideInvalid(Long id, Boolean isHide) {
+		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
+		purchaseOrderM.setHideInvalid(isHide);
+		purchaseOrderM.update();
+		return SUCCESS;
+	}
 }

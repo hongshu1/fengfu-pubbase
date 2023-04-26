@@ -6,6 +6,8 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
+import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
@@ -19,6 +21,7 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -44,9 +47,12 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	private DemandPlanMService demandPlanMService;
 	@Inject
 	private PersonService personService;
-	
 	@Inject
 	private VendorAddrService vendorAddrService;
+	@Inject
+	private PurchaseOrderDBatchService purchaseOrderDBatchService;
+	@Inject
+	private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
    /**
 	* 首页
 	*/
@@ -244,5 +250,26 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	
 	public void batchDel(@Para(value = "ids") String ids){
 		renderJsonData(service.batchDel(ids));
+	}
+	
+	
+	public void findPurchaseOrderDBatch(){
+		renderJsonData(purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv()));
+	}
+	
+	public void updateHideInvalid(@Para(value = "id") Long id,
+								  @Para(value = "hideInvalid") String hideInvalid){
+		renderJsonData(service.updateHideInvalid(id, Boolean.valueOf(hideInvalid)));
+	}
+	
+	public void updateOrderBatch(@Para(value = "purchaseOrderMId") Long purchaseOrderMId,
+								 @Para(value = "id") Long id,
+								 @Para(value = "cVersion") String cVersion,
+								 @Para(value = "qty")BigDecimal qty){
+		renderJsonData(purchaseOrderDBatchService.updateOrderBatch(purchaseOrderMId, id, cVersion, qty));
+	}
+	
+	public void findPurchaseOrderDBatchVersion(){
+		renderJsonData(purchaseOrderDBatchVersionService.findByPurchaseOrderMid(getPageNumber(), getPageSize(), getKv()));
 	}
 }

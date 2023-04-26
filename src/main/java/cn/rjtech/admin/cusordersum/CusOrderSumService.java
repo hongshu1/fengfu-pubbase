@@ -20,14 +20,13 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -310,25 +309,39 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
     }
 
     public Object findCusOrderSum(Integer pageNumber, Integer pageSize, Kv para) throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(para.getDate("beginDate"));
-        List<Integer> months = new ArrayList<>();
-
-        // 年月 - 年-月-日
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-        
-        while (calendar.getTime().before(para.getDate("endDate"))) {
+        //结束日期
+        String end = sdf.format(para.getDate("endDate"));
+        String begin = sdf.format(para.getDate("beginDate"));
+
+        Date endDate = new SimpleDateFormat("yyyy-MM").parse(end);//定义结束日期
+        Date beginDate = new SimpleDateFormat("yyyy-MM").parse(begin);//定义起始日期
+
+        //起始日期
+        calendar.setTime(beginDate);
+        List<String> months = new ArrayList<>();
+        Map<String, String> dateMap = new HashMap<>();
+
+
+        while (calendar.getTime().compareTo(endDate) <= 0) {
+            // 年月 - 年-月-日
             String str = sdf.format(calendar.getTime());
-            System.out.println(str);//输出日期结果
+            String[] strArr = str.split("-");
+            months.add(strArr[1]);
+            if (strArr[1].equals("12")) {
+                dateMap.put(strArr[0], StringUtils.join(months, COMMA));
+                months.clear();
+
+            } else if (end.split("-")[0].equals(strArr[0]) && end.split("-")[1].equals(strArr[1])) {
+                dateMap.put(strArr[0], StringUtils.join(months, COMMA));
+            }
             calendar.add(Calendar.MONTH, 1);
         }
-        
+
+        para.set("dateMap", dateMap);
         Page<Record> pageData = dbTemplate("cusordersum.paginateAdminDatas", para).paginate(pageNumber, pageSize);
-        para.set("iMonth", months);
-        
-//		kv.set("iYear", 2023);
-//		List<Record> record3 = dbTemplate("cusordersum.getIDate", kv).find();
-        String str = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31";
+        String str = "01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31";
 
         para.set("roleArray", str);
         if (pageData.getTotalRow() > 0) {
@@ -346,6 +359,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
                 }
                 record.set("record1", record1);
                 record.set("record2", record2);
+                record.set("dateMap", dateMap);
             }
         }
         return pageData;
