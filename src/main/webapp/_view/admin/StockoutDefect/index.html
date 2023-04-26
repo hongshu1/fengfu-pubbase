@@ -6,14 +6,14 @@
 <div class="jbolt_page_title">
 	<div class="row">
 	<div class="col-md-auto">
-	<h1>制程异常品记录</h1>
+	<h1>出库异常记录</h1>
 	</div>
 	<div class="col">
-		<form class="form-inline" id="processDefectForm_#(pageId)"   onsubmit="return false;" method="post">
+		<form class="form-inline" id="stockoutDefectForm_#(pageId)"   onsubmit="return false;" method="post">
 			<input type="text" autocomplete="off"  class="form-control"  placeholder="异常品单号" name="cDocNo" value="" />
 			<input type="text" autocomplete="off"  class="form-control"  placeholder="工单号" name="iMoDocId" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="客户部番" name="cInvCode" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="存货编码编码" name="cInvCode1" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="客户部番" name="cInvCode1" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="存货编码编码" name="cInvCode" value="" />
 			<input type="text" autocomplete="off"  class="form-control"  placeholder="部品名称" name="cInvName" value="" />
 			<select style="width:150px" class="form-control"
 					data-autoload
@@ -38,40 +38,39 @@
 </div>
 <div class="jbolt_page_content">
 <!-- JBoltTable的数据模板定义-->
-<textarea class="jb_tpl_box" id="processDefectRowtpl_#(pageId)">
+<textarea class="jb_tpl_box" id="stockoutDefectRowtpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
 	{@if data.istatus==1}
-		<a href="admin/ProcessDefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
+		<a href="admin/StockoutDefect/add2?iautoid=${data.iautoid}&istockoutqcformmid=${data.istockoutqcformmid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
 	{@else if data.istatus==2}
-		<a href="admin/ProcessDefect/add2?iautoid=${data.iautoid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+		<a href="admin/StockoutDefect/add2?iautoid=${data.iautoid}&istockoutqcformmid=${data.istockoutqcformmid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
 	{@else}
-		<a href="admin/ProcessDefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="检验"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">异常品记录</a>
+		<a href="admin/StockoutDefect/add2?iautoid=${data.iautoid}&istockoutqcformmid=${data.istockoutqcformmid}" data-area="80%,100%"  tooltip data-title="检验"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">异常品记录</a>
 	{@/if}
 </td>
 <td>${data.istatus=='1'?'待判定':data.istatus=='2'?'已完成':'待记录'}</td>
 <td>${data.cdocno}</td>
-<td>${data.imodocid}</td>
-<td>存货编码</td>
-<td>部品名称</td>
-<td>客户部番</td>
-<td>${data.processname}</td>
+<td>${data.cstockoutqcformno}</td>
+<td>${data.cinvcode}</td>
+<td>${data.cinvname}</td>
+<td>${data.cinvcode1}</td>
 <td>${data.idqqty}</td>
-<td>${data.capproach=='1'?'返修':'报废'}</td>
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
+<td>${data.capproach=='1'?'报废':data.capproach=='2'?'返修':'退货'}</td>
+<td>${data.cupdatename}</td>
+<td>${data.dupdatetime}</td>
 </tr>
 {@/each}
 </textarea>
 
 <!-- 工具条 toolbar -->
-<div class="jbolt_table_toolbar" id="processDefect_toolbar_#(pageId)">
+<div class="jbolt_table_toolbar" id="stockoutDefect_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增制程异常品记录"  data-url="admin/ProcessDefect/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改制程异常品记录" data-check-handler="jboltTableGetCheckedId" data-url="admin/ProcessDefect/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/ProcessDefect/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增出库异常记录"  data-url="admin/StockoutDefect/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改出库异常记录" data-check-handler="jboltTableGetCheckedId" data-url="admin/StockoutDefect/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/StockoutDefect/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 	</div>
 
@@ -84,14 +83,14 @@
 data-jbolttable
 data-height="fill"
 data-ajax="true"
-data-url="admin/ProcessDefect/datas"
+data-url="admin/StockoutDefect/datas"
 data-column-resize="true"
 data-row-click-active="true"
 data-column-prepend="1:checkbox:true"
-data-conditions-form="processDefectForm_#(pageId)"
-data-rowtpl="processDefectRowtpl_#(pageId)"
-data-page="processDefectPage_#(pageId)"
-data-toolbar="processDefect_toolbar_#(pageId)"
+data-conditions-form="stockoutDefectForm_#(pageId)"
+data-rowtpl="stockoutDefectRowtpl_#(pageId)"
+data-page="stockoutDefectPage_#(pageId)"
+data-toolbar="stockoutDefect_toolbar_#(pageId)"
 
 
 
@@ -106,11 +105,10 @@ data-row-dblclick-active="true"
 	<th data-width="200">操作</th>
 	<th data-width="100" data-column="iStatus">状态</th>
 	<th data-width="150" data-column="cDocNo">异常品单号</th>
-	<th data-width="150" data-column="iMoDocId">工单号</th>
-	<th data-width="150" data-column="iInventoryId">存货编码</th>
+	<th data-width="150" data-column="iStockoutQcFormMid">检验单号</th>
+	<th data-width="150" data-column="iInventoryId">存货编码</th>j
 	<th data-width="150" data-column="cInvName">部品名称</th>
 	<th data-width="150" data-column="cInvCode">客户部番</th>
-	<th data-width="150" data-column="ProcessName">工序名称</th>
 	<th data-width="150" data-column="iDqQty">不良数量</th>
 	<th data-width="150" data-column="cApproach">处置区分</th>
 	<th data-width="150" data-column="iQcUserId">检验人</th>
@@ -133,9 +131,9 @@ data-row-dblclick-active="true"
 	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
 		console.log(JSON.stringify(rowData));
 
-		$(tempTr1).data('url', '/admin/admin/ProcessDefect/edit/' + rowData.iautoid)
+		$(tempTr1).data('url', '/admin/admin/StockoutDefect/edit/' + rowData.iautoid)
 			.data('area', '1200,800')
-			.data('title', '制程异常品记录')
+			.data('title', '出库异常记录')
 			.data('btn', '保存,关闭');
 
 		DialogUtil.openBy(tempTr1);

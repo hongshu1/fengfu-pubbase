@@ -1,9 +1,9 @@
 #sql("paginateAdminDatas")
 SELECT
-    t1.iAutoId AS iRcvDocQcFormMid,
-    t1.cRcvDocQcFormNo,
+    t1.iAutoId AS iStockoutQcFormMid,
+    t1.cStockoutQcFormNo,
     t1.iInventoryId,
-    t1.iVendorId,
+    t1.iCustomerId,
     t2.iStatus,
     t2.iAutoId,
     t2.cDocNo,
@@ -15,8 +15,8 @@ SELECT
     t3.cInvName,
     t3.cInvCode1
 FROM
-    PL_RcvDocQcFormM t1
-        LEFT JOIN PL_RcvDocDefect t2 ON t2.iRcvDocQcFormMid = t1.iAutoId
+    PL_StockoutQcFormM t1
+        LEFT JOIN PL_StockoutDefect t2 ON t2.iStockoutQcFormMid = t1.iAutoId
         LEFT JOIN Bd_Inventory t3 ON t3.iAutoId = t1.iInventoryId
 WHERE
         1 = 1
@@ -24,7 +24,10 @@ WHERE
   AND t2.cDocNo like '%#(cDocNo)%'
   #end
     #if(iMoDocId)
-  AND t1.cRcvDocQcFormNo like '%#(iMoDocId)%'
+  AND t1.cStockoutQcFormNo like '%#(iMoDocId)%'
+  #end
+#if(iStockoutQcFormMid)
+  AND t2.iStockoutQcFormMid like '%#(iStockoutQcFormMid)%'
   #end
 #if(cInvCode)
   AND t3.cInvCode like '%#(cInvCode)%'
@@ -35,7 +38,7 @@ WHERE
 #if(cInvName)
   AND t3.cInvName like '%#(cInvName)%'
   #end
-  #if(iStatus != '0' && iStatus)
+   #if(iStatus != '0' && iStatus)
   AND t2.iStatus = '#(iStatus)'
   #end
   #if(iStatus == '0' && iStatus)
