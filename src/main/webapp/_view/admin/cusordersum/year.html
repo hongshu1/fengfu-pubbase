@@ -110,7 +110,7 @@
         <th data-width="100" rowspan="3"></th>
         ### 年月
         #for(d : dateMap)
-        <th colspan="#(d.value.size()+1)">#(d.key)</th>
+        <th colspan="#(d.value.size()+1)">#(d.key.split("_")[0])年#(d.key.split("_")[1])月</th>
         #end
         
     </tr>
@@ -119,9 +119,19 @@
     <tr>
         #for(d : dateMap)
         #for(dt : d.value)
-        <th>#date(dt, 'yyyy-MM-dd')</th>
+        <th>#date(dt, 'yyyy-MM-dd'.split("-")[2])</th>
         #end
         <th>合计</th>
+        #end
+    </tr>
+
+    ### 周几
+    <tr>
+        #for(d : dateMap)
+        #for(dt : d.value)
+        <th>#((dt+"").split(" ")[0])</th>
+        #end
+        <th></th>
         #end
     </tr>
     
