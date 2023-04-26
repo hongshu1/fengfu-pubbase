@@ -17,33 +17,39 @@ FROM
     Mo_SpecMaterialsRcvM t1
     LEFT JOIN Mo_ProcessDefect t2 ON t2.iIssueId = t1.iAutoId
 WHERE 1 = 1
-  #if(cDocNo)
-  AND cDocNo like '%#(cDocNo)%'
+    #if(cDocNo)
+  AND t2.cDocNo like '%#(cDocNo)%'
+  #end
+    #if(iMoDocId)
+  AND t1.cSpecRcvDocNo like '%#(iMoDocId)%'
   #end
 #if(iRcvDocQcFormMid)
-  AND iRcvDocQcFormMid like '%#(iRcvDocQcFormMid)%'
+  AND t2.iRcvDocQcFormMid like '%#(iRcvDocQcFormMid)%'
   #end
 #if(cInvCode)
-  AND cInvCode like '%#(cInvCode)%'
+  AND t3.cInvCode like '%#(cInvCode)%'
   #end
-#if(iInventoryId)
-  AND iInventoryId like '%#(iInventoryId)%'
+#if(cInvCode1)
+  AND t3.cInvCode1 like '%#(cInvCode1)%'
   #end
 #if(cInvName)
-  AND cInvName like '%#(cInvName)%'
+  AND t3.cInvName like '%#(cInvName)%'
   #end
-  #if(iStatus)
-  AND iStatus like '%#(iStatus)%'
+  #if(iStatus != '0' && iStatus)
+  AND t2.iStatus = '#(iStatus)'
+  #end
+  #if(iStatus == '0' && iStatus)
+  AND t2.iStatus  is null
   #end
 
 #if(startdate)
-    and CONVERT(VARCHAR(10),dQcTime,23) >='#(startdate)'
+    and CONVERT(VARCHAR(10),t2.dUpdateTime,23) >='#(startdate)'
 #end
 #if(enddate)
-    and CONVERT(VARCHAR(10),dQcTime,23) <='#(enddate)'
+    and CONVERT(VARCHAR(10),t2.dUpdateTime,23) <='#(enddate)'
 #end
 order by t2.dUpdateTime desc
-#end
+    #end
 
 
 

@@ -1,0 +1,185 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+        <form onsubmit="return false;" id="inStockDefectForm"  action="/admin/InStockDefect/updateEditTable" method="post">
+            <input type="hidden" name="inStockDefect.iautoid" value="#(inStockDefect.iautoid??)" />
+            <h5>部品信息</h5>
+            <hr/>
+            <div class="form-group row">
+                <input type="hidden"  placeholder="出货检ID" name="inStockQcFormM.iAutoid" value="#(inStockQcFormM.iAutoid??)"/>
+                <input type="hidden"  placeholder="供应商ID" name="inStockQcFormM.iCustomerId" value="#(inStockQcFormM.iqcformid??)"/>
+                <input type="hidden"  placeholder="存货ID" name="inStockQcFormM.iInventoryId" value="#(inStockQcFormM.iInventoryId??)"/>
+                <input type="hidden"  placeholder="检验人ID" name="inStockQcFormM.iupdateby" value="#(inStockQcFormM.iupdateby??)"/>
+
+                <label class="col-sm-2 col-form-label">异常品单号：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(inStockDefect.cdocno??)"/>
+                </div>
+                <label class="col-sm-2 col-form-label">检验单号：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(inStockQcFormM.cinvqcformno??)"/>
+                </div>
+                <label class="col-sm-2 col-form-label">供应商名称：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"  placeholder="" value="#(inStockQcFormM.ccusname??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">存货编码：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(inStockQcFormM.cinvcode??)"/>
+                </div>
+                <label class="col-sm-2 col-form-label">客户部番：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(inStockQcFormM.cinvcode1??)"/>
+                </div>
+                <label class="col-sm-2 col-form-label">部品名称：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(inStockQcFormM.cinvname??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">不良数量：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none"  placeholder="" name="inStockDefect.idqqty" value="#(inStockDefect.idqqty??)"/>
+                </div>
+                <label class="col-sm-2 col-form-label">创建时间：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" name="inStockQcFormM.dupdatetime" value="#date((inStockQcFormM.dupdatetime??),'yyyy-MM-dd HH:mm:ss')"/>                </div>
+                <label class="col-sm-2 col-form-label">创建人：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(inStockQcFormM.cupdatename??)"/>
+                </div>
+            </div>
+
+            <h5>不良信息</h5>
+            <div class="form-group row">
+                <input type="hidden" id="cbadnesssns" name="inStockDefect.cbadnesssns" value="#(inStockDefect.cbadnesssns??)"/>
+                <label class="col-sm-2 col-form-label">不良项目：</label>
+                <div class="col-sm-8 col-form-label">
+                    <div class="form-group row"
+                         data-hidden-input="cbadnesssns"
+                         data-checkbox
+                         data-rule="checkbox"
+                         data-default=""
+                         data-url="admin/dictionary/options?key=cBadnessSns"
+                         data-value-attr="name"
+                         data-text-attr="cbadnesssns"
+                         data-inline="true"
+                         data-value="#(inStockDefect.cbadnesssns??)"
+                         data-name="inStockDefect.cbadnesssns">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">首再发：</label>
+                <div class="col-sm-8 col-form-label">
+                    <div class="form-group row"
+                         data-radio
+                         data-rule="radio"
+                         data-value="#(inStockDefect.isfirsttime??)"
+                         data-name="inStockDefect.isfirsttime"
+                         data-default="true">
+                        <div class="col"  style="padding-top: 1px;">
+                            <div class="radio radio-primary  radio-inline">
+                                <input  id="renabletrue1" type="radio" name="inStockDefect.isfirsttime"   value="1"/>
+                                <label for="renabletrue1">首发</label>
+                            </div>
+
+                            <div class="radio radio-primary  radio-inline">
+                                <input  id="renablefalse1" type="radio" name="inStockDefect.isfirsttime"   value="0"/>
+                                <label for="renablefalse1">再发</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">责任区：</label>
+                <div class="col-sm-8 col-form-label">
+                    <div class="form-group row"
+                         data-radio
+                         data-rule="radio"
+                         data-value="#(inStockDefect.iresptype??)"
+                         data-name="inStockDefect.iresptype"
+                         data-default="true">
+                        <div class="col"  style="padding-top: 1px;">
+                            <div class="radio radio-primary  radio-inline">
+                                <input  id="renabletrue" type="radio" name="inStockDefect.iresptype"   value="1"/>
+                                <label for="renabletrue">供应商</label>
+                            </div>
+                            <div class="radio radio-primary  radio-inline">
+                                <input  id="type" type="radio" name="inStockDefect.iresptype"   value="2"/>
+                                <label for="type">工程内</label>
+                            </div>
+
+                            <div class="radio radio-primary  radio-inline">
+                                <input  id="renablefalse" type="radio" name="inStockDefect.iresptype"   value="0"/>
+                                <label for="renablefalse">其他</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">不良内容描述</label>
+                <div class="col">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入不良内容描述" maxlength="500" name="inStockDefect.cdesc" value="#(inStockDefect.cdesc??)"/>
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">创建时间：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#date((inStockDefect.dcreatetime??),'yyyy-MM-dd HH:mm:ss')"/>
+                </div>
+                <label class="col-sm-2 col-form-label">创建人：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(inStockDefect.ccreatename??)"/>
+                </div>
+            </div>
+
+<!--            <h5>异常品判定信息</h5>-->
+<!--            <div class="form-group row">-->
+<!--                <label class="col-sm-2 col-form-label">处置区分：</label>-->
+<!--                <div class="col-sm-8 col-form-label">-->
+<!--                    <div class="form-group row"-->
+<!--                         data-radio-->
+<!--                         data-rule="radio"-->
+<!--                         data-value="#(inStockDefect.capproach??)"-->
+<!--                         data-name="inStockDefect.capproach"-->
+<!--                         data-default="true">-->
+<!--                        <div class="col"  style="padding-top: 1px;">-->
+<!--                            <div class="radio radio-primary  radio-inline">-->
+<!--                                <input  id="capproachtrue1" type="radio" name="inStockDefect.capproach"   value="1"/>-->
+<!--                                <label for="capproachtrue1">返修</label>-->
+<!--                            </div>-->
+
+<!--                            <div class="radio radio-primary  radio-inline">-->
+<!--                                <input  id="capproachfalse1" type="radio" name="inStockDefect.capproach"   value="0"/>-->
+<!--                                <label for="capproachfalse1">报废</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <inpu>
+        </form>
+    </div>
+</div>
+#define js()
+<script>
+    if(isOk('#(type??)')){
+        hideParentLayerDialogBtn(0);
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="inStockDefectForm")
+#end
+#end
+

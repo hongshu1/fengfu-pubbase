@@ -62,20 +62,8 @@
             <div class="form-group row">
                 <input type="hidden" id="cbadnesssns" name="processDefect.cbadnesssns" value="#(cbadnesssns)"/>
                 <label class="col-sm-2 col-form-label">不良项目：</label>
-                <div class="col-sm-8 col-form-label">
-                    <div class="form-group row"
-                         data-hidden-input="cbadnesssns"
-                         data-checkbox
-                         data-rule="checkbox"
-                         onclick="return false"
-                         data-default=""
-                         data-url="admin/dictionary/options?key=cBadnessSns"
-                         data-value-attr="sn"
-                         data-text-attr="cbadnesssns"
-                         data-inline="true"
-                         data-value="#(processDefect.cbadnesssns??)"
-                         data-name="processDefect.cbadnesssns">
-                    </div>
+                <div class="col-sm-2 col-form-label">
+                    #(processDefect.cbadnesssns??)
                 </div>
             </div>
             <div class="form-group row">

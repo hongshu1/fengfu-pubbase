@@ -310,6 +310,10 @@
 #include("cusordersum/cusordersum.sql")
 #end
 
+#namespace("cusorderresult")
+#include("cusorderresult/cusorderresult.sql")
+#end
+
 #namespace("demandpland")
 #include("demandpland/demandpland.sql")
 #end
@@ -336,6 +340,39 @@
 
 #namespace("purchaseorderd")
 #include("purchaseorderd/purchaseorderd.sql")
+#end
+
+#namespace("subcontractorderm")
+#include("subcontractorderm/subcontractorderm.sql")
+#end
+
+#namespace("subcontractorderd")
+#include("subcontractorderd/subcontractorderd.sql")
+#end
+
+#namespace("subcontractorderref")
+#include("subcontractorderref/subcontractorderref.sql")
+#end
+
+#namespace("subcontractorderdqty")
+#include("subcontractorderdqty/subcontractorderdqty.sql")
+#end
+
+
+#namespace("subcontractorderdbatch")
+#include("subcontractorderdbatch/subcontractorderdbatch.sql")
+#end
+
+#namespace("subcontractorderdbatchversion")
+#include("subcontractorderdbatchversion/subcontractorderdbatchversion.sql")
+#end
+
+#namespace("StockoutDefect")
+#include("StockoutDefect/StockoutDefect.sql")
+#end
+
+#namespace("InStockDefect")
+#include("InStockDefect/InStockDefect.sql")
 #end
 
 

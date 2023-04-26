@@ -165,7 +165,7 @@
     <nav>
         <div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
             <a class="nav-item nav-link active" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" aria-controls="tab-one" aria-selected="true">订货清单</a>
-            <a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false">传票更改清单</a>
+            <a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false" onclick="refreshJBoltTable('#PurchaseOrderM_Table3_#(pageId)')">传票更改清单</a>
         </div>
     </nav>
     <div class="tab-content" style="padding: 0px 1rem">
@@ -186,40 +186,135 @@
 
 #define js()
 <script>
+    // 标记是否能修改  1不能进行任何操作
+    var index = 0;
+    // 隐藏第一个按钮
+    hideParentLayerDialogBtn(0);
 
-
-    function getTableData() {
-        var bomMaster_complete = $("#PurchaseOrderM_Table_");
-        var rows = [];
-        bomMaster_complete.children("tbody").children("tr").each(function () {
-            var row = {};
-            // 获取input标签 class属性还有form-control
-            $(this).find('td').each(function () {
-                var inputs = $(this).find("input[class*='form-control']");
-                getField(row, inputs);
-                var selects = $(this).find("select[class='form-control']");
-                getField(row, selects);
-
-            })
-            rows.push(row);
-        })
-        return rows;
-    };
-
-
-    function getField(row, labels) {
-        if (labels && labels.length > 0) {
-            $.each(labels, function (idx, v) {
-                if (v.name && v.name !== '' && v.value) {
-                    row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
-                }
-            });
+    function removeRow(ele) {
+        var flag = jboltTableRemoveRow(ele);
+        if (flag){
+            index = 0;
         }
     }
 
-    // 隐藏第一个按钮
-    hideParentLayerDialogBtn(0);
+    function saveRow(purchaseOrderMId, id, version) {
+        var qty = $("#"+id).val();
+        if (qty<=0){
+            LayerMsgBox.alert("包装数量不能小于0",2);
+            return ;
+        }
+        Ajax.post('/admin/purchaseorderm/updateOrderBatch', {
+            purchaseOrderMId: purchaseOrderMId,
+            id: id,
+            cVersion: version,
+            qty: qty
+        },  function(ret) {
+                if (ret.state == 'ok'){
+                    index = 0;
+                    jboltTableRefresh();
+                }
+        });
+    }
+
+    function InsertEmptyRow(csourceld, version, qty, iseffective,ele,forceTrChange){
+        console.log("id---" +csourceld);
+        if (index == 1){
+            LayerMsgBox.alert("请操作完后，再进行下一步操作",2);
+            return ;
+        }
+        if (iseffective == 0){
+            LayerMsgBox.alert("已失效的现品票，不能再进行下一步操作",2);
+            return ;
+        }
+        var newVersion = Number(version)+1;
+        if (newVersion<10){
+            newVersion = '0' + newVersion;
+        }
+        var table=getJBoltTable(ele);
+        if(isOk(table)){
+            var jboltTable=table.jboltTable("inst");
+            if(jboltTable){
+                var action=getRealJqueryObject(ele),tr;
+                if(isOk(action)){
+                    var success = checkMasterTableId(action);
+                    if(!success){
+                        return false;
+                    }
+                    //如果是在表格里触发的
+                    if(isOk(action.closest("table[data-jbolttable]"))){
+                        tr = action.closest("tr");
+                    }else if(isOk(action.closest(".jbolt_table_fixed"))){
+                        var fixtr = action.closest("tr");
+                        var fixTrIndex = fixtr.index();
+                        tr=jboltTable.tbody.find("tr:nth-child("+(fixTrIndex+1)+")");
+                    }
+                }
+                index = 1;
+                return insertRows(jboltTable,tr,{
+                    cversion: newVersion,
+                    iqty: qty,
+                    csourceld: csourceld
+                },false,forceTrChange);;
+            }
+        }
+        LayerMsgBox.alert("表格组件配置异常",2);
+        return false;
+    }
+
+    function insertRows(table,tr,insertEmptyData,insertToBefore,forceTrChange){
+        var canInsertTr=table.me.checkCanInsertNewTr(table,1);
+        if(canInsertTr){
+            //处理thead里的checkbox uncheck
+            table.me.processUnCheckTheadCheckbox(table);
+            var insertDefaultValues=table.editableOptions.insertDefaultValues;
+            if(insertDefaultValues){
+                insertEmptyData=table.me.deepClone(insertDefaultValues);
+            }
+            var tempTr=table.me.insertRowData(table,tr,insertEmptyData,false,insertToBefore);
+            if(isOk(tempTr)){
+                table.me.processTableIndexColumn(table);
+                table.me.processInsertRowTableListData(table,tempTr,insertEmptyData,insertToBefore);
+                table.me.initEditableHSummarys(table,tempTr);
+                table.me.processTfootSummarys(table);
+                //处理change状态
+                table.me.processNewInsertTrEditableTdsChanged(table,tempTr,insertEmptyData,forceTrChange);
+                //处理新插入的行重新设置宽度
+                table.me.resizeTrByOldWidth(table,tempTr);
+                //处理动态插入数据后的handler
+                table.me.processEditableTableAfterInsertRowHandler(table,tempTr);
+            }
+            return tempTr;
+        }
+        return false;
+    }
+
+    function getEditableTableOptions1_#(pageId)(){
+        var editableTableOptions={
+            trigger:"click",
+            //初始行数
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols:{
+                id:{
+                    submitAttr:"id",
+                },
+                index:{
+                    submitAttr: "index"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+    function updateIsEnabled(ele) {
+        $("#isEnabled_#(pageId)").val(ele.data("value"));
+        Ajax.post('/admin/purchaseorderm/updateHideInvalid', {
+            hideInvalid: ele.data("value"),
+            id: '#(purchaseOrderM.iautoid??)'
+        },  function(ret) {
+            jboltTableRefresh();
+        });
+    }
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="PurchaseOrderM_Form")
 #end
 

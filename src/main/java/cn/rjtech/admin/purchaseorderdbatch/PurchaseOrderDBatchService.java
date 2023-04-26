@@ -2,12 +2,20 @@ package cn.rjtech.admin.purchaseorderdbatch;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.inventorychange.InventoryChangeService;
+import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionService;
+import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
+import cn.rjtech.model.momdata.InventoryChange;
 import cn.rjtech.model.momdata.PurchaseOrderDBatch;
+import cn.rjtech.model.momdata.PurchaseOrderDBatchVersion;
+import cn.rjtech.model.momdata.PurchaseorderdQty;
 import cn.rjtech.service.func.mom.MomDataFuncService;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -16,6 +24,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 采购/委外管理-采购现品票
@@ -28,6 +37,12 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
 	
 	@Inject
 	private MomDataFuncService momDataFuncService;
+	@Inject
+	private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
+    @Inject
+	private PurchaseorderdQtyService purchaseorderdQtyService;
+    @Inject
+    private InventoryChangeService inventoryChangeService;
 	
 	@Override
 	protected PurchaseOrderDBatch dao() {
@@ -161,6 +176,71 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
 	}
 	
 	public Page<Record> findByPurchaseOrderMId(int pageNumber, int pageSize, Kv kv){
+		// 为true 说明是看所有的
+		if (Boolean.valueOf(kv.getStr("isEffective"))){
+			kv.remove("isEffective");
+		}else{
+			kv.set("isEffective", "1");
+		}
 		return dbTemplate("purchaseorderdbatch.findByPurchaseOrderMId", kv).paginate(pageNumber, pageSize);
 	}
+	
+	public Ret updateOrderBatch(Long purchaseOrderMId , Long id, String cVersion, BigDecimal qty){
+        PurchaseOrderDBatch orderDBatch = findById(id);
+        ValidationUtils.notNull(orderDBatch, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.notBlank(cVersion, "版本号未获取到");
+        ValidationUtils.isTrue(qty!=null && qty.compareTo(BigDecimal.ZERO)>0, "版本号未获取到");
+        ValidationUtils.isTrue(!cVersion.equals(orderDBatch.getCVersion()), "版本号不能一致");
+        ValidationUtils.isTrue(qty.compareTo(orderDBatch.getIQty()) <= 0, "现品票的数量不可大于包装数量，只可小于包装数量");
+        // 新增一个现成票后，再生产一个版本记录表，及修改详情；
+        String barCode = generateBarCode();
+        PurchaseOrderDBatch newBatch = createPurchaseOrderDBatch(orderDBatch.getIPurchaseOrderDid(), orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, barCode);
+        // 设置新版本号
+        newBatch.setCVersion(cVersion);
+        // 添加来源id
+        newBatch.setCSourceld(String.valueOf(id));
+        // 将旧的改为失效
+        orderDBatch.setIsEffective(false);
+		// 查存货
+		InventoryChange inventoryChange = inventoryChangeService.findByBeforeInventoryId(orderDBatch.getIinventoryId());
+		
+		// 将计划类型拆分成 年月日
+		String yearStr = DateUtil.format(orderDBatch.getDPlanDate(), "yyyy");
+		String monthStr = DateUtil.format(orderDBatch.getDPlanDate(), "MM");
+		String dateStr = DateUtil.format(orderDBatch.getDPlanDate(), "dd");
+		List<PurchaseorderdQty> purchaseorderdQtyList = purchaseorderdQtyService.findByPurchaseOrderDId(orderDBatch.getIPurchaseOrderDid());
+		
+        tx(()->{
+            // 新增
+            newBatch.save();
+            // 保存记录
+            PurchaseOrderDBatchVersion batchVersion = purchaseOrderDBatchVersionService.createBatchVersion(purchaseOrderMId, id, orderDBatch.getIinventoryId(),
+                    orderDBatch.getDPlanDate(), cVersion, orderDBatch.getCVersion(), barCode, orderDBatch.getCBarcode(), qty, orderDBatch.getIQty());
+            batchVersion.save();
+            // 修改
+            orderDBatch.update();
+            
+			for (PurchaseorderdQty purchaseOrderdQty : purchaseorderdQtyList){
+				Integer year = purchaseOrderdQty.getIYear();
+				Integer month = purchaseOrderdQty.getIMonth();
+				Integer date = purchaseOrderdQty.getIDate();
+				if (yearStr.equals(String.valueOf(year)) && monthStr.equals(String.valueOf(month)) && dateStr.equals(String.valueOf(date))){
+					// 总数量 - 更改的数量
+					BigDecimal num = purchaseOrderdQty.getIQty().subtract(orderDBatch.getIQty().subtract(qty));
+					purchaseOrderdQty.setISourceQty(num);
+					// 默认乘以1
+					BigDecimal rate = BigDecimal.ONE;
+					if (ObjectUtil.isNotNull(inventoryChange)){
+						rate = inventoryChange.getIChangeRate();
+					}
+					// 乘以转换率；
+					purchaseOrderdQty.setIQty(num.multiply(rate));
+					purchaseOrderdQty.update();
+				}
+			}
+            return true;
+        });
+        
+        return SUCCESS;
+    }
 }

@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.date.format.DatePrinter;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -34,14 +33,12 @@ import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Calendar;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -297,7 +294,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		// 获取所有日期集合
 		Map<String, Integer> calendarMap = getCalendarMap(DateUtil.parseDate(beginDate), DateUtil.parseDate(endDate));
 		// 设置到货计划明细数量
-		demandPlanMService.setVendorDateList(vendorDateList, demandPlanDMap, calendarMap, invChangeMap, puOrderRefMap);
+		demandPlanMService.setVendorDateList(OrderGenTypeEnum.PURCHASE_GEN.getValue(), vendorDateList, demandPlanDMap, calendarMap, invChangeMap, puOrderRefMap);
 		
 		// 第一层：年月
 		// 第二层：日
@@ -327,10 +324,10 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		List<Record> purchaseOrderDList = purchaseOrderDService.findByPurchaseOrderMId(purchaseOrderM.getIAutoId());
 		
 		// 采购订单到货数量明细
-		List<Record> purchaseOrderdQtyList = purchaseorderdQtyService.findByPurchaseOrderMid(purchaseOrderM.getIAutoId());
+		List<Record> purchaseOrderdQtyList = purchaseorderdQtyService.findByPurchaseOrderMId(purchaseOrderM.getIAutoId());
 		
 		// 按存货编码汇总
-		Map<Long, Map<String, BigDecimal>>  purchaseOrderdQtyMap = demandPlanDService.getDemandPlanDMap(purchaseOrderdQtyList, DemandPlanM.IINVENTORYID);
+		Map<Long, Map<String, BigDecimal>>  purchaseOrderdQtyMap = demandPlanDService.getDemandPlanDMap(purchaseOrderdQtyList, PurchaseOrderD.ISOURCEINVENTORYID);
 		
 		Map<String, Object> repMap = new HashMap<>();
 		// 获取所有日期集合
@@ -425,7 +422,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 				// 获取中间表对应的物料到货计划数据
 				List<Long> demandPlanDIds = purchaseOrderDRefList.stream().map(record -> record.getLong(PurchaseOrderRef.IDEMANDPLANDID)).collect(Collectors.toList());
 				// 修改到货计划细表状态
-				demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenType.NOT_GEN.getValue(), CompleteTypeEnum.INCOMPLETE.getValue());
+				demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenTypeEnum.NOT_GEN.getValue(), CompleteTypeEnum.INCOMPLETE.getValue());
 				// 修改主表状态
 				List<Long> demandPlanMIds = demandPlanMService.pegging(demandPlanDIds);
 				demandPlanMService.batchUpdateStatusByIds(demandPlanMIds, CompleteTypeEnum.INCOMPLETE.getValue());
@@ -520,7 +517,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			// 判断是否需要更改到货计划主表状态 改为已完成
 			demandPlanMService.batchUpdateStatusByIds(demandPlanMIds, CompleteTypeEnum.COMPLETE.getValue());
 			// 修改到货计划细表状态 改为已完成
-			demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenType.PURCHASE_GEN.getValue(), CompleteTypeEnum.COMPLETE.getValue());
+			demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenTypeEnum.PURCHASE_GEN.getValue(), CompleteTypeEnum.COMPLETE.getValue());
 			purchaseOrderM.setCOrderNo(generateCGCode());
 			purchaseOrderM.setDOrderDate(DateUtil.date());
 			purchaseOrderM.save();
@@ -662,8 +659,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
 		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
 		ValidationUtils.notNull(orderStatusEnum, "未知状态");
-		boolean flag = OrderStatusEnum.REJECTED.getValue()!=orderStatusEnum.getValue() && OrderStatusEnum.APPROVED.getValue() <= orderStatusEnum.getValue();
-		ValidationUtils.isTrue(flag, "已审核的单据不能关闭");
+		boolean flag = OrderStatusEnum.APPROVED.getValue()==orderStatusEnum.getValue() || OrderStatusEnum.GENERATE_CASH_TICKETS.getValue() == orderStatusEnum.getValue();
+		ValidationUtils.isTrue(flag, "已审核或已生成现品表的单据才能关闭");
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.CLOSE.getValue());
 		purchaseOrderM.update();
 		return SUCCESS;
@@ -691,14 +688,14 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
 		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
 		ValidationUtils.notNull(orderStatusEnum, "未知状态");
-		boolean flag = OrderStatusEnum.REJECTED.getValue()!=orderStatusEnum.getValue() && OrderStatusEnum.APPROVED.getValue() <= orderStatusEnum.getValue();
+		boolean flag = OrderStatusEnum.APPROVED.getValue()==orderStatusEnum.getValue();
 		ValidationUtils.isTrue(flag, "已审核的单据才能生成现成票");
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.GENERATE_CASH_TICKETS.getValue());
 		// 获取细表数据
 		List<Record> byPurchaseOrderMId = purchaseOrderDService.findByPurchaseOrderMId(id);
 		List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
 		// 获取数量表
-		List<Record> purchaseOrderDQtyList = purchaseorderdQtyService.findByPurchaseOrderMid(id);
+		List<Record> purchaseOrderDQtyList = purchaseorderdQtyService.findByPurchaseOrderMId(id);
 		ValidationUtils.notEmpty(purchaseOrderDQtyList, purchaseOrderM.getCOrderNo()+"无现品票生成");
 		for (Record record : purchaseOrderDQtyList){
 			// 源数量
@@ -793,8 +790,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		Integer iOrderStatus = purchaseOrderM.getIOrderStatus();
 		OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(iOrderStatus);
 		ValidationUtils.notNull(orderStatusEnum, "未知状态");
-		boolean flag = OrderStatusEnum.REJECTED.getValue()!=orderStatusEnum.getValue() && OrderStatusEnum.APPROVED.getValue() <= orderStatusEnum.getValue();
-		ValidationUtils.isTrue(flag, "已审核的单据不能删除");
+		boolean flag = OrderStatusEnum.REJECTED.getValue() == iOrderStatus || OrderStatusEnum.NOT_AUDIT.getValue() == iOrderStatus;
+		ValidationUtils.isTrue(flag, "只有审核不通过或没审核的数据才能删除");
 		purchaseOrderM.setIsDeleted(true);
 		List<Record> purchaseOrderRefList = purchaseOrderRefService.findByPurchaseOderMId(id);
 		// 修改细表数据
@@ -802,7 +799,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		if (CollectionUtil.isNotEmpty(purchaseOrderRefList)){
 			List<Long> demandPlanDIds = purchaseOrderRefList.stream().map(record -> record.getLong(PurchaseOrderRef.IDEMANDPLANDID)).collect(Collectors.toList());
 			// 修改到货计划细表状态
-			demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenType.NOT_GEN.getValue(), CompleteTypeEnum.INCOMPLETE.getValue());
+			demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenTypeEnum.NOT_GEN.getValue(), CompleteTypeEnum.INCOMPLETE.getValue());
 			// 修改主表状态
 			List<Long> demandPlanMIds = demandPlanMService.pegging(demandPlanDIds);
 			demandPlanMService.batchUpdateStatusByIds(demandPlanMIds, CompleteTypeEnum.INCOMPLETE.getValue());
@@ -820,10 +817,16 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	public Ret batchGenerateCash(String ids) {
 		ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
 		for (String id : ids.split(",")){
-		
+			cashNotTransaction(Long.valueOf(id));
 		}
 		return SUCCESS;
 	}
 	
 	
+	public Ret updateHideInvalid(Long id, Boolean isHide) {
+		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
+		purchaseOrderM.setHideInvalid(isHide);
+		purchaseOrderM.update();
+		return SUCCESS;
+	}
 }
