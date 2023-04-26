@@ -1,4 +1,4 @@
-package cn.rjtech.admin.StockoutDefect;
+package cn.rjtech.admin.stockoutdefect;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -7,6 +7,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.StockoutDefect;
+import cn.rjtech.model.momdata.StockoutQcFormM;
 import cn.rjtech.util.BillNoUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -14,6 +15,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -220,7 +222,6 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 
 		//质量管理-来料检明细
 		stockoutDefect.setIStockoutQcFormMid(formRecord.getLong("stockoutQcFormM.iAutoid"));
-		stockoutDefect.setIVendorId(formRecord.getLong("stockoutQcFormM.iCustomerId"));
 		stockoutDefect.setIInventoryId(formRecord.getLong("stockoutQcFormM.iInventoryId"));
 		stockoutDefect.setIQcUserId(formRecord.getLong("stockoutQcFormM.iupdateby"));
 		stockoutDefect.setDQcTime(formRecord.getDate("stockoutQcFormM.dupdatetime"));
@@ -247,6 +248,37 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 		stockoutDefect.setCUpdateName(JBoltUserKit.getUserName());
 		stockoutDefect.setDUpdateTime(now);
 		stockoutDefect.save();
+	}
+
+	public void savestockoutDefectmodel(StockoutDefect stockoutDefect, StockoutQcFormM stockoutQcFormM) {
+		stockoutDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		Date date = new Date();
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		stockoutDefect.setCDocNo(stockoutQcFormM.getCStockoutQcFormNo());   //异常品单号
+		stockoutDefect.setIStockoutQcFormMid(stockoutQcFormM.getIAutoId()); //出库检id
+		stockoutDefect.setIInventoryId(stockoutQcFormM.getIInventoryId());  //存货ID
+		stockoutDefect.setIStatus(1);                                       //状态：1. 待记录 2. 待判定 3. 已完成
+		stockoutDefect.setCDesc(stockoutQcFormM.getCMemo());                //不良内容描述
+		stockoutDefect.setIQcUserId(stockoutQcFormM.getIQcUserId());        //检验用户ID
+		stockoutDefect.setDQcTime(stockoutQcFormM.getDUpdateTime());        //检验时间
+
+		stockoutDefect.setICreateBy(userId);
+		stockoutDefect.setDCreateTime(date);
+		stockoutDefect.setCCreateName(userName);
+		stockoutDefect.setIOrgId(getOrgId());
+		stockoutDefect.setCOrgCode(getOrgCode());
+		stockoutDefect.setCOrgName(getOrgName());
+		stockoutDefect.setIUpdateBy(userId);
+		stockoutDefect.setCUpdateName(userName);
+		stockoutDefect.setDUpdateTime(date);
+	}
+
+	/*
+	 * 根据出货检id查询异常品质单
+	 * */
+	public StockoutDefect findStockoutDefectByiStockoutQcFormMid(Object iStockoutQcFormMid) {
+		return findFirst("SELECT * FROM PL_StockoutDefect WHERE iStockoutQcFormMid = ?", iStockoutQcFormMid);
 	}
 
 }

@@ -19,7 +19,7 @@ public abstract class BaseSubcontractorderdQty<M extends BaseSubcontractorderdQt
     /**月*/
     public static final String IMONTH = "iMonth";
     /**日*/
-    public static final String IDAY = "iDay";
+    public static final String IDATE = "iDate";
     /**数量*/
     public static final String IQTY = "iQty";
     /**转换前数量*/
@@ -95,18 +95,18 @@ public abstract class BaseSubcontractorderdQty<M extends BaseSubcontractorderdQt
 	/**
 	 * 日
 	 */
-	public M setIDay(java.lang.String iDay) {
-		set("iDay", iDay);
+	public M setIDate(java.lang.Integer iDate) {
+		set("iDate", iDate);
 		return (M)this;
 	}
 
 	/**
 	 * 日
 	 */
-	@JBoltField(name="iday" ,columnName="iDay",type="String", remark="日", required=true, maxLength=255, fixed=0, order=5)
-	@JSONField(name = "iday")
-	public java.lang.String getIDay() {
-		return getStr("iDay");
+	@JBoltField(name="idate" ,columnName="iDate",type="Integer", remark="日", required=true, maxLength=255, fixed=0, order=5)
+	@JSONField(name = "idate")
+	public java.lang.Integer getIDate() {
+		return getInt("iDate");
 	}
 
 	/**

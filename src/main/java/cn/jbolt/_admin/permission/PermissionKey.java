@@ -1769,6 +1769,10 @@ public class PermissionKey {
 	 */
 	public static final String STOCKOUTQCFORMD_LINE = "stockoutqcformd_line";
 	/**
+	 * 质量管理-出库异常品记录
+	 */
+	public static final String STOCKOUTDEFECT = "stockoutdefect";
+	/**
 	 * 质量管理-在库检单行配置
 	 */
 	public static final String INSTOCKQCFORMD = "instockqcformd";

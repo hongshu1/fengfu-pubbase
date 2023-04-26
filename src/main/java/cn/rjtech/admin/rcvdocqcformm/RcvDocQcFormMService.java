@@ -1,26 +1,17 @@
 package cn.rjtech.admin.rcvdocqcformm;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.omg.PortableInterceptor.SUCCESSFUL;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.Page;
@@ -30,21 +21,20 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
-import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import com.sun.corba.se.spi.ior.ObjectKey;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.rjtech.admin.RcvDocDefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
+import cn.rjtech.model.momdata.RcvDocDefect;
 import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.RcvdocqcformdLine;
@@ -64,6 +54,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     private RcvDocQcFormDService     rcvDocQcFormDService; //质量管理-来料检单行配置表
     @Inject
     private RcvdocqcformdLineService rcvdocqcformdLineService; //质量管理-来料检明细列值表
+    @Inject
+    private RcvDocDefectService      rcvDocDefectService;      ////质量管理-来料异常品记录
 
     @Override
     protected RcvDocQcFormM dao() {
@@ -324,18 +316,12 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         if (JboltPara == null || JboltPara.isEmpty()) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        String cmeasurereason = JboltPara.getString("cmeasurereason"); //测定理由
-        String cmeasurepurpose = JboltPara.getString("cmeasurepurpose"); //测定目的
-        String cmeasureunit = JboltPara.getString("cmeasureunit"); //测定单位
-        String cmemo = JboltPara.getString("cmemo"); //备注
-        String cdcno = JboltPara.getString("cdcno"); //设变号
         String docqcformmiautoid = JboltPara.getString("docqcformmiautoid"); //主表id
-
         JSONArray serializeSubmitList = JboltPara.getJSONArray("serializeSubmitList");
         List<RcvdocqcformdLine> rcvdocqcformdLines = new ArrayList<>();
         for (int i = 0; i < serializeSubmitList.size(); i++) {
             JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
-            String iautoid = jsonObject.getString("iautoid");
+            String ircvdocqcformdid = jsonObject.getString("iautoid");
             String iseq = jsonObject.getString("iseq");
             JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
             JSONArray elementList = serializeElement.getJSONArray(0);
@@ -345,7 +331,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
                 String cvalue = object.getString("value");
 
                 RcvdocqcformdLine rcvdocqcformdLine = new RcvdocqcformdLine();//质量管理-来料检明细列值表
-                saveRcvdocqcformdLineModel(rcvdocqcformdLine, docqcformmiautoid, iseq, cvalue);
+                saveRcvdocqcformdLineModel(rcvdocqcformdLine, ircvdocqcformdid, iseq, cvalue);
                 rcvdocqcformdLines.add(rcvdocqcformdLine);
             }
         }
@@ -360,6 +346,15 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         RcvDocQcFormM docQcFormM = findById(docqcformmiautoid);
         saveDocQcFormMModel(docQcFormM, JboltPara);
         update(docQcFormM);
+
+        //
+        RcvDocDefect defect = rcvDocDefectService
+            .findStockoutDefectByiRcvDocQcFormMid(docqcformmiautoid);
+        if (null == defect){
+            RcvDocDefect rcvDocDefect = new RcvDocDefect();
+            rcvDocDefectService.saveRcvDocDefectModel(rcvDocDefect,docQcFormM);
+            rcvDocDefectService.save(rcvDocDefect);
+        }
         return ret(true);
     }
 

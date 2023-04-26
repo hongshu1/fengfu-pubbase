@@ -79,7 +79,7 @@
           <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 
           <!--onclick="clickonlysee(${data.iautoid})"-->
-          <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_onlyseeBtn_#(pageId)"
+          <!--<button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_onlyseeBtn_#(pageId)"
                   data-title="来料检查成绩表" data-url="admin/rcvdocqcformm/onlysee?iautoid=11111"
                   class="btn btn-outline-primary">
             跳转到查看页面
@@ -89,21 +89,20 @@
                   data-title="来料检查成绩表" data-url="admin/rcvdocqcformm/checkout?iautoid=11111"
                   class="btn btn-outline-primary">
             跳转到检验页面
-          </button>
+          </button>-->
+
         </form>
       </div>
     </div>
   </div>
   <div class="jbolt_page_content">
     <!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="rcvDocQcFormMtpl_#(pageId)">
+    <textarea class="jb_tpl_box" id="rcvDocQcFormMtpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
     {@if data.istatus == 0}
-    <!--<a class="text-info mr-1" href="admin/rcvdocqcformm/createTable/${data.iautoid}" data-handler="refreshJBoltTable"
-       data-title="生成">生成</a>-->
     		<button type="button" onclick="createTable(${data.iautoid})" data-handler="refreshJBoltTable"
                 class="btn btn-outline-secondary">生成</button>
     {@/if}
