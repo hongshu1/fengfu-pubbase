@@ -1,0 +1,183 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>采购/委外订单-采购订单主表</h1></div>
+	<div class="col">
+	<form class="form-inline" id="SubcontractOrderM_form_#(pageId)">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+
+<select class="form-control" name="iBusType"
+	data-autoload
+	data-url="admin/dictionary/options?key=null"
+	data-select-type="select"
+	data-text="=业务类型： 1. 普通采购="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+
+<select class="form-control" name="iPurchaseTypeId"
+	data-autoload
+	data-url="admin/dictionary/options?key=null"
+	data-select-type="select"
+	data-text="=采购类型ID，取采购类型档案="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+
+<select class="form-control" name="iPayableType"
+	data-autoload
+	data-url="admin/dictionary/options?key=null"
+	data-select-type="select"
+	data-text="=应付类型：1. 材料费="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+
+<select class="form-control" name="IsDeleted"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=删除状态：0. 未删除 1. 已删除="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+
+<select class="form-control" name="hideInvalid"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=已失效隐藏：0. 否 1. 是="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/subcontractorderm/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增采购/委外订单-采购订单主表"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="SubcontractOrderM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iOrgId}</td>
+<td>${data.cOrgCode}</td>
+<td>${data.cOrgName}</td>
+<td>${data.cOrderNo}</td>
+<td>${data.dOrderDate}</td>
+<td>${data.iBusType}</td>
+<td>${data.iPurchaseTypeId}</td>
+<td>${data.iVendorId}</td>
+<td>${data.iDepartmentId}</td>
+<td>${data.iDutyUserId}</td>
+<td>${data.iTaxRate}</td>
+<td>${data.iPayableType}</td>
+<td>${data.cCurrency}</td>
+<td>${data.iExchangeRate}</td>
+<td>${data.iOrderStatus}</td>
+<td>${data.iAuditStatus}</td>
+<td>${data.dAuditTime}</td>
+<td>${data.cMemo}</td>
+<td>${data.iCreateBy}</td>
+<td>${data.cCreateName}</td>
+<td>${data.dCreateTime}</td>
+<td>${data.iUpdateBy}</td>
+<td>${data.cUpdateName}</td>
+<td>${data.dUpdateTime}</td>
+<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.IsDeleted}"  data-handler="refreshJBoltTable"  data-url="admin/subcontractorderm/toggleIsDeleted/${data.id}"/></td>
+<td><img data-switchbtn data-confirm="确定切换已失效隐藏：0. 否 1. 是？" data-value="${data.hideInvalid}"  data-handler="refreshJBoltTable"  data-url="admin/subcontractorderm/toggleHideInvalid/${data.id}"/></td>
+<td>${data.dBeginDate}</td>
+<td>${data.dEndDate}</td>
+<td>${data.iAuditWay}</td>
+<td>${data.dSubmitTime}</td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/subcontractorderm/edit/${data.id}" data-area="800,600" data-title="查看采购/委外订单-采购订单主表"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/subcontractorderm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑采购/委外订单-采购订单主表"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/subcontractorderm/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="SubcontractOrderM_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增采购/委外订单-采购订单主表" data-url="admin/subcontractorderm/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑采购/委外订单-采购订单主表" data-check-handler="jboltTableGetCheckedId" data-url="admin/subcontractorderm/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/subcontractorderm/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="SubcontractOrderM_form_#(pageId)"
+	   data-url="admin/subcontractorderm/datas"
+	   data-rowtpl="SubcontractOrderM_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="SubcontractOrderM_page"
+	   data-toolbar="SubcontractOrderM_toolbar_#(pageId)"
+>
+<thead>
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="100" data-column="iAutoId">主键ID</th>
+	<th data-width="100" data-column="iOrgId">组织ID</th>
+	<th data-width="150" data-column="cOrgCode">组织编码</th>
+	<th data-width="150" data-column="cOrgName">组织名称</th>
+	<th data-width="150" data-column="cOrderNo">订单编号</th>
+	<th data-min-width="160" data-column="dOrderDate">订单日期</th>
+	<th data-width="100" data-column="iBusType">业务类型： 1. 普通采购</th>
+	<th data-width="100" data-column="iPurchaseTypeId">采购类型ID，取采购类型档案</th>
+	<th data-width="100" data-column="iVendorId">供应商ID</th>
+	<th data-width="100" data-column="iDepartmentId">部门ID</th>
+	<th data-width="100" data-column="iDutyUserId">业务员ID，系统用户ID</th>
+	<th data-width="100" data-column="iTaxRate">税率</th>
+	<th data-width="100" data-column="iPayableType">应付类型：1. 材料费</th>
+	<th data-width="150" data-column="cCurrency">币种</th>
+	<th data-width="100" data-column="iExchangeRate">汇率</th>
+	<th data-width="100" data-column="iOrderStatus">订单状态：1. 已保存 2. 待审批 3. 已审核 4. 审批不通过 5. 已生成现品票 6. 已关闭</th>
+	<th data-width="100" data-column="iAuditStatus">审核状态：1. 审核中 2. 审核通过 3. 审核不通过</th>
+	<th data-min-width="160" data-column="dAuditTime">审核时间</th>
+	<th data-width="150" data-column="cMemo">备注</th>
+	<th data-width="100" data-column="iCreateBy">创建人ID</th>
+	<th data-width="150" data-column="cCreateName">创建人名称</th>
+	<th data-min-width="160" data-column="dCreateTime">创建时间</th>
+	<th data-width="100" data-column="iUpdateBy">更新人ID</th>
+	<th data-width="150" data-column="cUpdateName">更新人名称</th>
+	<th data-min-width="160" data-column="dUpdateTime">更新时间</th>
+	<th data-width="100" data-column="IsDeleted">删除状态：0. 未删除 1. 已删除</th>
+	<th data-width="100" data-column="hideInvalid">已失效隐藏：0. 否 1. 是</th>
+	<th data-min-width="160" data-column="dBeginDate">开始日期</th>
+	<th data-min-width="160" data-column="dEndDate">结束日期</th>
+	<th data-width="100" data-column="iAuditWay">审批方式：1. 审批状态 2. 审批流</th>
+	<th data-min-width="160" data-column="dSubmitTime">提审时间</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
