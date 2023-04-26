@@ -1,25 +1,27 @@
 package cn.rjtech.admin.purchaseorderm;
 
-import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
+import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
+import cn.rjtech.admin.vendoraddr.VendorAddrService;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.PurchaseOrderM;
-
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -29,9 +31,7 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-12 15:19
  */
-@CheckPermission(PermissionKey.PS_PURCHASE_ORDER)
-@UnCheckIfSystemAdmin
-@Before(JBoltAdminAuthInterceptor.class)
+
 @Path(value = "/admin/purchaseorderm", viewPath = "/_view/admin/purchaseorderm")
 public class PurchaseOrderMAdminController extends BaseAdminController {
 
@@ -43,7 +43,16 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	private PurchaseTypeService purchaseTypeService;
 	@Inject
 	private VendorService vendorService;
-
+	@Inject
+	private DemandPlanMService demandPlanMService;
+	@Inject
+	private PersonService personService;
+	@Inject
+	private VendorAddrService vendorAddrService;
+	@Inject
+	private PurchaseOrderDBatchService purchaseOrderDBatchService;
+	@Inject
+	private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
    /**
 	* 首页
 	*/
@@ -54,7 +63,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("cOrderNo"), getInt("iBusType"), getInt("iPurchaseType"), getLong("iVendorId"), getLong("iDepartmentId"), getInt("iPayableType"), getInt("iOrderStatus"), getInt("iAuditStatus")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
 	}
 
    /**
@@ -62,26 +71,28 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	*/
 	public void add(@Para(value = "beginDate") String beginDate,
 					@Para(value = "endDate") String endDate,
-					@Para(value = "iVendorId") String iVendorId) {
+					@Para(value = "iVendorId") String iVendorId,
+					@Para(value = "processType") Integer processType) {
 		
 		Vendor vendor = vendorService.findById(iVendorId);
 		Record record = new Record();
 		record.set(PurchaseOrderM.IVENDORID, vendor.getIAutoId());
 		record.set(Vendor.CVENNAME, vendor.getCVenName());
-		record.set(PurchaseOrderM.CORDERNO, service.generateCGCode());
-		record.set(PurchaseOrderM.DORDERDATE, DateUtil.formatDate(DateUtil.date()));
-		setAttrs(service.getDateMap(beginDate, endDate, iVendorId));
+		record.set(PurchaseOrderM.DBEGINDATE, beginDate);
+		record.set(PurchaseOrderM.DENDDATE, endDate);
+		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType));
 		set("purchaseOrderM", record);
 		render("add.html");
 	}
 	
 	public void checkData(@Para(value = "beginDate") String beginDate,
 						  @Para(value = "endDate") String endDate,
-						  @Para(value = "iVendorId") String iVendorId){
+						  @Para(value = "iVendorId") String iVendorId,
+						  @Para(value = "processType") Integer processType){
 		ValidationUtils.notBlank(beginDate, "请选择日期范围");
 		ValidationUtils.notBlank(endDate, "请选择日期范围");
 		ValidationUtils.notBlank(iVendorId, "请选择供应商");
-		List<Record> list = service.getVendorDateList(beginDate, endDate, iVendorId);
+		List<Record> list = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
 		ValidationUtils.notEmpty(list, "该时间范围未找到该供应商所需求物料");
 		ok();
 	}
@@ -94,16 +105,46 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	}
 
    /**
-	* 编辑
+	* 编辑 isView: 判断是否只有查看功能
 	*/
-	public void edit() {
+	public void edit(@Para(value = "isView") String isView) {
 		PurchaseOrderM purchaseOrderM=service.findById(getLong(0));
 		if(purchaseOrderM == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		Person person = personService.findById(purchaseOrderM.getIDutyUserId());
+		if (ObjectUtil.isNotNull(person)){
+			set("personname",person.getCpsnName());
+		}
+		
+		Vendor vendor = vendorService.findById(purchaseOrderM.getIVendorId());
+		ValidationUtils.notNull(vendor, "未找到供应商数据");
+		set(Vendor.CVENNAME, vendor.getCVenName());
+		if (StrUtil.isNotBlank(isView)){
+			set("isView", 1);
+		}
 		set("purchaseOrderM",purchaseOrderM);
+		setAttrs(service.getDateMap(purchaseOrderM));
 		render("edit.html");
+	}
+	
+	public void cash(){
+		PurchaseOrderM purchaseOrderM = service.findById(getLong(0));
+		if(purchaseOrderM == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		Person person = personService.findById(purchaseOrderM.getIDutyUserId());
+		if (ObjectUtil.isNotNull(person)){
+			set("personname",person.getCpsnName());
+		}
+		
+		Vendor vendor = vendorService.findById(purchaseOrderM.getIVendorId());
+		ValidationUtils.notNull(vendor, "未找到供应商数据");
+		set(Vendor.CVENNAME, vendor.getCVenName());
+		set("purchaseOrderM",purchaseOrderM);
+		render("cash.html");
 	}
 
    /**
@@ -139,5 +180,96 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 	
 	public void findPurchaseType(){
 		renderJsonData(purchaseTypeService.selectAll(getKv()));
+	}
+	
+	public void findByiVendorId(@Para(value = "vendorId") String vendorId,
+								@Para(value = "id") String id){
+		renderJsonData(vendorAddrService.findList(getKv()));
+	}
+	
+	/**
+	 * 保存
+	 */
+	public void submit(@Para(value = "tableData") String dataStr,
+					   @Para(value = "formData") String formStr,
+					   @Para(value = "invTableData") String invTableData,
+					   @Para(value = "type") String type) {
+		renderJson(service.submit(dataStr, formStr, invTableData, type, getKv()));
+	}
+	
+	public void operationalState(@Para(value = "id") Long id,
+								 @Para(value = "type") Integer type){
+		renderJsonData(service.operationalState(id, type));
+	}
+	
+	/**
+	 * 删除操作
+	 */
+	public void del(){
+		renderJsonData(service.del(getLong(0)));
+	}
+	
+	/**
+	 * 撤回操作
+	 */
+	public void withdraw(){
+		renderJsonData(service.withdraw(getLong(0)));
+	}
+	
+	/**
+	 * 提审接口
+	 */
+	public void arraignment(){
+		renderJsonData(service.arraignment(getLong(0)));
+	}
+	
+	/**
+	 * 关闭
+	 */
+	public void close(){
+		renderJsonData(service.close(getLong(0)));
+	}
+	
+	/**
+	 * 生成现成票
+	 */
+	public void generateCash(){
+		renderJsonData(service.generateCash(getLong(0)));
+	}
+	
+	/**
+	 * 审核接口
+	 */
+	public void audit(){
+		renderJsonData(service.audit(getLong(0)));
+	}
+	
+	public void batchGenerateCash(@Para(value = "ids") String ids){
+		renderJsonData(service.batchGenerateCash(ids));
+	}
+	
+	public void batchDel(@Para(value = "ids") String ids){
+		renderJsonData(service.batchDel(ids));
+	}
+	
+	
+	public void findPurchaseOrderDBatch(){
+		renderJsonData(purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv()));
+	}
+	
+	public void updateHideInvalid(@Para(value = "id") Long id,
+								  @Para(value = "hideInvalid") String hideInvalid){
+		renderJsonData(service.updateHideInvalid(id, Boolean.valueOf(hideInvalid)));
+	}
+	
+	public void updateOrderBatch(@Para(value = "purchaseOrderMId") Long purchaseOrderMId,
+								 @Para(value = "id") Long id,
+								 @Para(value = "cVersion") String cVersion,
+								 @Para(value = "qty")BigDecimal qty){
+		renderJsonData(purchaseOrderDBatchService.updateOrderBatch(purchaseOrderMId, id, cVersion, qty));
+	}
+	
+	public void findPurchaseOrderDBatchVersion(){
+		renderJsonData(purchaseOrderDBatchVersionService.findByPurchaseOrderMid(getPageNumber(), getPageSize(), getKv()));
 	}
 }

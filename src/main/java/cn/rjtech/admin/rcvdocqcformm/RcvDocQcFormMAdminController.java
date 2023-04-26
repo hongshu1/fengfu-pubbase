@@ -2,6 +2,8 @@ package cn.rjtech.admin.rcvdocqcformm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.jfinal.aop.Inject;
 
@@ -31,6 +33,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 
 /**
@@ -64,8 +67,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        Page<Record> recordPage = service.pageList(getKv());
-        renderJsonData(recordPage);
+        renderJsonData(service.pageList(getKv()));
     }
 
     /**
@@ -91,7 +93,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("rcvDocQcFormM", rcvDocQcFormM);
+        set("rcvdocqcformm", rcvDocQcFormM);
         render("edit.html");
     }
 
@@ -150,31 +152,64 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      */
     public void checkout() {
         RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
-        set("rcvDocQcFormM", rcvDocQcFormM);
+        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+        set("rcvdocqcformm", rcvDocQcFormM);
+        set("record", record);
         render("checkout.html");
     }
 
+    /*
+     * 点击检验时，进入弹窗自动加载table的数据
+     * */
+    public void getCheckOutTableDatas() {
+        renderJsonData(service.getCheckOutTableDatas(getKv()));
+    }
+
     /**
-     * 只能查看，不能编辑
+     * 打开onlysee页面
      */
     public void onlysee() {
         RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
-        set("rcvDocQcFormM", rcvDocQcFormM);
+        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+        List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
+        set("docparamlist", docparamlist);
+        set("rcvdocqcformm", rcvDocQcFormM);
+        set("record", record);
         render("onlysee.html");
     }
 
+    /**
+     * 打开编辑页面
+     */
+    public void editrcvDocQcFormD() {
+        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
+        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+        List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
+        set("docparamlist", docparamlist);
+        set("rcvdocqcformm", rcvDocQcFormM);
+        set("record", record);
+        render("editTable.html");
+    }
+
+    /**
+     * 点击查看时，进入弹窗自动加载table的数据
+     */
+    public void getonlyseeDatas() {
+        renderJsonData(service.getonlyseelistByiautoid(getKv()));
+    }
+
     /*
-     * 点击编辑
+     * 在编辑页面点击确定
      * */
     public void editTable(JBoltPara JboltPara) {
         renderJson(service.editTable(JboltPara));
     }
 
     /*
-     * 点击检验
+     * 在检验页面点击确定
      * */
-    public void checkoutTable(JBoltPara JboltPara){
-        renderJson(service.editTable(JboltPara));
+    public void editCheckOutTable(JBoltPara JboltPara) {
+        renderJson(service.editCheckOutTable(JboltPara));
     }
 
     /*

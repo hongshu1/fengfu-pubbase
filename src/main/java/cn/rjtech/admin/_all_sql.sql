@@ -301,6 +301,15 @@
 #include("approvald/approvald.sql")
 #end
 
+
+#namespace("RcvDocDefect")
+#include("RcvDocDefect/RcvDocDefect.sql")
+#end
+
+#namespace("ProcessDefect")
+#include("ProcessDefect/ProcessDefect.sql")
+#end
+
 #namespace("stockoutqcformm")
 #include("stockoutqcformm/stockoutqcformm.sql")
 #end
@@ -312,8 +321,37 @@
 #namespace("cusordersum")
 #include("cusordersum/cusordersum.sql")
 #end
+
+#namespace("cusorderresult")
+#include("cusorderresult/cusorderresult.sql")
+#end
+
 #namespace("demandpland")
 #include("demandpland/demandpland.sql")
+#end
+
+#namespace("purchaseorderm")
+#include("purchaseorderm/purchaseorderm.sql")
+#end
+
+#namespace("purchaseorderref")
+#include("purchaseorderref/purchaseorderref.sql")
+#end
+
+#namespace("purchaseorderdbatch")
+#include("purchaseorderdbatch/purchaseorderdbatch.sql")
+#end
+
+#namespace("purchaseorderdbatchversion")
+#include("purchaseorderdbatchversion/purchaseorderdbatchversion.sql")
+#end
+
+#namespace("purchaseorderdqty")
+#include("purchaseorderdqty/purchaseorderdqty.sql")
+#end
+
+#namespace("purchaseorderd")
+#include("purchaseorderd/purchaseorderd.sql")
 #end
 
 

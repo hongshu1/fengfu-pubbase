@@ -19,12 +19,12 @@ WHERE NOT EXISTS ( SELECT 1 FROM Co_CusOrderSum WHERE iInventoryId = ccs.iInvent
      #if(cinvname1)
       and  bi.cinvname1  LIKE CONCAT('%',#para(cinvname1), '%')
   #end
-  #if(startTime)
-        AND convert(date,ccs.dCreateTime) >= convert(date,#para(startTime))
-    #end
-    #if(endTime)
-        AND convert(date,ccs.dCreateTime) <= convert(date,#para(endTime))
-    #end
+  #if(dateMap)
+    and (
+    #for (d: dateMap)
+       #(for.first ? "" : "or") (iYear = '#(d.key)' and iMonth in ( #(d.value) ))
+    #end )
+  #end
 ORDER BY ccs.dCreateTime
 #end
 
@@ -42,7 +42,7 @@ WHERE 1=1
 
 #sql("getiQty1")
     SELECT
-        iMonth,iyear,iInventoryId,SUM (  iQty1  ) as iQty1Sum,
+        iMonth,iyear,iInventoryId,SUM (  iQty1  ) as iQtySum,
         #for (x : roleArray.split(','))
             SUM(CASE iDate WHEN '#(x)' THEN iQty1 ELSE 0 END) as 'iQty#(x)' #(for.last?'':',')
         #end
@@ -51,6 +51,36 @@ WHERE 1=1
         WHERE 1=1
           #if(iInventoryId)
               and  iInventoryId  = #para(iInventoryId)
+          #end
+          #if(dateMap)
+            and (
+            #for (d: dateMap)
+               #(for.first ? "" : "or") (iYear = '#(d.key)' and iMonth in ( #(d.value) ))
+            #end )
+          #end
+    GROUP BY
+        iMonth,iyear,iInventoryId
+    ORDER BY
+	    iMonth
+#end
+
+#sql("getiQty2")
+    SELECT
+        iMonth,iyear,iInventoryId,SUM (  iQty2  ) as iQtySum,
+        #for (x : roleArray.split(','))
+            SUM(CASE iDate WHEN '#(x)' THEN iQty2 ELSE 0 END) as 'iQty#(x)' #(for.last?'':',')
+        #end
+        FROM
+            Co_CusOrderSum
+        WHERE 1=1
+          #if(iInventoryId)
+              and  iInventoryId  = #para(iInventoryId)
+          #end
+          #if(dateMap)
+            and (
+            #for (d: dateMap)
+               #(for.first ? "" : "or") (iYear = '#(d.key)' and iMonth in ( #(d.value) ))
+            #end )
           #end
     GROUP BY
         iMonth,iyear,iInventoryId

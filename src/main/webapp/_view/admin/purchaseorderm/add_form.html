@@ -1,0 +1,338 @@
+#set(pageId=RandomUtil.random(6))
+<form onsubmit="return false;" id="PurchaseOrderM_Form" action="#(action)" method="post">
+    #if(purchaseOrderM.iautoid??)
+    <input type="hidden" name="iAutoId" value="#(purchaseOrderM.iautoid??)"/>
+    #end
+    <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dbegindate??)"/>
+    <input type="hidden" name="dEndDate" value="#(purchaseOrderM.denddate??)"/>
+    <div class="row">
+
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">业务类型</label>
+                <div class="col-6">
+                    <select class="form-control" name="iBusType"
+                            data-autoload
+                            data-rule="required"
+                            data-url="admin/dictionary/options?key=purchase_business_type"
+                            data-select-type="select"
+                            data-text="==请选择=="
+                            data-text-attr="iautoid"
+                            data-value-attr="sn">
+                    </select>
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">采购类型</label>
+                <div class="col-6">
+                    <select class="form-control" name="iPurchaseTypeId"
+                            data-autoload
+                            data-rule="required"
+                            data-url="admin/purchaseorderm/findPurchaseType"
+                            data-select-type="select"
+                            data-text="==请选择=="
+                            data-value-attr="iautoid"
+                            data-text-attr="cptname">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">业务员</label>
+                <div class="col-6">
+                    <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(workregionm.ipersonid??)" />
+                    <input type="text" autocomplete="off" value="#(personname??)" class="form-control"
+                           placeholder="==请选择人员=="
+                           data-rule="required"
+                           data-jboltinput
+                           data-width="600"
+                           data-height="450"
+                           data-refresh="true"
+                           data-hidden-input="ipersonid_#(pageId)"
+                           data-load-type="ajaxportal"
+                           data-url="admin/workregionm/personTable"
+                    />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">币种</label>
+                <div class="col-6">
+                    <select class="form-control" name="cCurrency"
+                            data-autoload
+                            data-rule="required"
+                            data-url="admin/purchaseorderm/findForeignCurrencyAll"
+                            data-select-type="select"
+                            data-text="==请选择=="
+                            data-value=""
+                            data-value-attr="cexch_name"
+                            data-text-attr="cexch_name">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">订单日期</label>
+                <div class="col-6">
+                    <input type="text" readonly data-notnull="true" autocomplete="off" class="form-control" maxlength="20" name="dOrderDate"
+                           value="#datetime(purchaseOrderM.dOrderDate??,'yyyy-MM-dd')"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">供应商名称</label>
+                <div class="col-6">
+                    <input hidden type="text" name="iVendorId" value="#(purchaseOrderM.iVendorId??)">
+                    <input readonly type="text" autocomplete="off" class="form-control" value="#(purchaseOrderM.cVenName??)">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">税率</label>
+                <div class="col-6">
+                    <input type="text" autocomplete="off" class="form-control" data-rule="pnumber"  data-notnull="false"
+                           placeholder="请输入税率" maxlength="40" name="iTaxRate"
+                           value="#(purchaseOrderM.iTaxRate??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">汇率</label>
+                <div class="col-6">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="pnumber"
+                           placeholder="请输入汇率" maxlength="40" name="iExchangeRate"
+                           value="#(purchaseOrderM.iExchangeRate??)"/>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">订单编号</label>
+                <div class="col-6">
+                    <input type="text" data-notnull="true" data-tips="请输入订单编号" autocomplete="off" class="form-control"
+                           placeholder="请输入订单编号" maxlength="40" name="cOrderNo"  readonly="readonly" value="#(purchaseOrderM.cOrderNo??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">部门</label>
+                <div class="col-6">
+                    <select class="form-control"
+                            data-autoload
+                            name="iDepartmentId"
+                            data-tips="请选择部门"
+                            data-rule="required"
+                            data-url="admin/department/getTreeTableDatas"
+                            data-text="=请选择部门="
+                            data-value=""
+                            data-value-attr="iautoid"
+                            data-text-attr="cdepname"
+                            data-select="#(workregionm.idepid??)">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">应付类型</label>
+                <div class="col-6">
+                    <select class="form-control" name="iPayableType"
+                            data-autoload
+                            data-rule="required"
+                            data-url="admin/dictionary/options?key=purchase_coping_type"
+                            data-select-type="select"
+                            data-text="==请选择=="
+                            data-text-attr="name"
+                            data-value-attr="sn">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">备注</label>
+                <div class="col-6">
+                    <textarea class="form-control" style="height:80px"  placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="cMemo">#(purchaseOrderM.cMemo??)</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</form>
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+
+<div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+        </button>
+    </div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+       id="PurchaseOrderM_Table_"
+       data-jbolttable
+       data-width="fill"
+       data-height="fill"
+       data-copy-to-excel="false"
+       data-column-resize="true"
+       data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
+       data-column-prepend="1:checkbox:true:false:false"
+       data-editable="true"
+       data-editable-option="getEditableTableOptions1"
+>
+    <thead>
+    <tr>
+        <th hidden rowspan="2">存货id</th>
+        <th data-width="60"  rowspan="2" data-column="index">序号</th>
+        <th data-width="80"  rowspan="2">操作</th>
+        <th data-width="150" rowspan="2" data-column="cInventoryCode">转换前存货编码</th>
+        <th data-width="150" rowspan="2" data-column="cInvCode1">转换前客户部番</th>
+        <th data-width="150" rowspan="2" data-column="cInvName1">转换前部品名称</th>
+
+        <th data-width="150" rowspan="2" data-column="afterCInvCode">转换后存货编码</th>
+        <th data-width="150" rowspan="2" data-column="aftercinvcode1">转换后客户部番</th>
+        <th data-width="150" rowspan="2" data-column="aftercinvname1">转换后部品名称</th>
+
+        <th data-width="150" rowspan="2" data-column="cInvStd">规格</th>
+        <th data-width="150" rowspan="2" data-column="iPurchaseUomId">采购单位</th>
+        <th data-width="150" rowspan="2" data-column="iPkgQty">包装数量</th>
+        <th data-width="100" rowspan="2" data-column="isPresent">是否赠品</th>
+        <th data-width="150" rowspan="2" data-column="cMemo">备注</th>
+        <th data-width="200" rowspan="2" data-column="iVendorAddrId" class="is_required">供应商地址</th>
+        <!--   显示日期 -->
+        #for(key:tableHeadMap.keySet())
+            <th data-width="80" colspan="#(tableHeadMap.get(key).size())">#(key)</th>
+        #end
+    </tr>
+
+    <tr>
+        #for(data:tableHeadMap.keySet())
+            #for(day: tableHeadMap.get(data))
+              <th data-width="80" data-column="#(day)">#(day)</th>
+            #end
+        #end
+        <th data-width="80">合计</th>
+    </tr>
+    </thead>
+    <tbody>
+        #for(data:tableData)
+            <tr>
+                <td hidden><input name="iInventoryId" autocomplete="off" class="form-control" value="#(data.iinventoryid)"></td>
+                <td>#(for.index+1)</td>
+                <td>
+                    <a tabindex="-1" class="ml-1 " href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash text-danger">删除</i></a>
+                </td>
+                <td>#(data.cinvcode??)</td>
+                <td>#(data.cinvcode1??)</td>
+                <td>#(data.cinvname1??)</td>
+
+                <td>#(data.aftercinvcode??)</td>
+                <td>#(data.aftercinvcode1??)</td>
+                <td>#(data.aftercinvname1??)</td>
+
+                <td>#(data.cinvstd??)</td>
+                <td>#(data.cuomname??)</td>
+                <td>
+                    #(data.ipkgqty??)
+                </td>
+                <td>#boolToStr(data.ispresent?? == 1,"是","否")</td>
+                <td>
+                    <input type="text" data-with-clearbtn="true" name="cMemo" autocomplete="off" class="form-control"
+                           maxlength="200"/>
+                </td>
+                <td>
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/purchaseorderm/findByiVendorId?vendorId=#(purchaseOrderM.iVendorId??)"
+                            data-select-type="select"
+                            data-text="==请选择=="
+                            data-value=""
+                            name="iVendorAddrId"
+                            data-select="#(data.ivendoraddrid??)"
+                            data-text-attr="cdistrictname"
+                            data-value-attr="iautoid"
+                    >
+                    </select>
+                </td>
+                #for(qty:data.arr??)
+                 <td>#(qty)</td>
+                #end
+                <td>#(data.isum??)</td>
+            </tr>
+        #end
+    </tbody>
+</table>
+#define js()
+<script>
+    function getEditableTableOptions1(){
+        var editableTableOptions={
+            trigger:"click",
+            //初始行数
+            initRowCount:0,
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols:{
+                id:{
+                    submitAttr:"id",
+                },
+                index:{
+                    submitAttr: "index"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+
+    function getTableData() {
+        var bomMaster_complete = $("#PurchaseOrderM_Table_");
+        var rows = [];
+        bomMaster_complete.children("tbody").children("tr").each(function () {
+            var row = {};
+            // 获取input标签 class属性还有form-control
+            $(this).find('td').each(function () {
+                var inputs = $(this).find("input[class*='form-control']");
+                getField(row, inputs);
+                var selects = $(this).find("select[class='form-control']");
+                getField(row, selects);
+
+            })
+            rows.push(row);
+        })
+        return rows;
+    };
+
+
+    function getField(row, labels) {
+        if (labels && labels.length > 0) {
+            $.each(labels, function (idx, v) {
+                if (v.name && v.name !== '' && v.value) {
+                    row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
+                }
+            });
+        }
+    }
+
+    // 隐藏第一个按钮
+    hideParentLayerDialogBtn(0);
+
+    #if(view??0 !=1)
+        addParentLayerDialogBtn("保存","lay_success",function(){
+            if (!FormChecker.check("#PurchaseOrderM_Form")){
+                return;
+            }
+            var data = getTableData();
+            if (!data || data.length ==0){
+                LayerMsgBox.alert("表格数据不能为空",2);
+                return;
+            }
+            LayerMsgBox.loading();
+            var formData = formToJson('#PurchaseOrderM_Form');
+            Ajax.post('/admin/purchaseorderm/submit', {
+                formData: JSON.stringify(formData),
+                tableData: '#(tableDataStr)',
+                invTableData: JSON.stringify(data),
+                type: '0'
+            },  function(ret) {
+                LayerMsgBox.success(ret.msg, 1000, function () {
+                    parent.LayerMsgBox.closeAll();
+                    parent.refreshPjaxContainer();
+                });
+            });
+        });
+    #end
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="PurchaseOrderM_Form")
+#end
+

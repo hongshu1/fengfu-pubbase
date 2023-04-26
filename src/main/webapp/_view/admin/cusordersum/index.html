@@ -2,206 +2,57 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
-<div class="jbolt_page_title">
-<div class="row">
-	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>客户计划汇总</h1></div>
-	<div class="col">
-	<form class="form-inline" id="CusOrderSum_form_#(pageId)">
-		<div class="input-group d-inline-block text-nowrap">
-			<div class="input-group-prepend">
-				<input type="text" data-date class="form-control" placeholder="=开始日期="   maxlength="20" name="startTime" value="">
-				<!--				value="#date((startTime?? DateUtil.getNow()),'yyyy-MM-dd')"-->
-			</div>
-			<div class="input-group-append">
-				<span class="input-group-text">至</span>
-			</div>
-			<div class="input-group-append">
-				<input type="text" data-date class="form-control rounded-left-0"   placeholder="=截止日期="   maxlength="20" name="endTime" value="">
-			</div>
-		</div>
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="=存货编码=" name="cinvcode" value="" />
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="=客户部番=" name="cinvcode1" value="" />
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="=部品名称=" name="cinvname1" value="" />
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>客户计划汇总</h1></div>
+            <div class="col">
+                <form class="form-inline" id="CusOrderSum_form" onsubmit="return false;" method="post">
+                    <div class="input-group d-inline-block text-nowrap">
+                        <div class="input-group-prepend">
+                            <input type="text" data-date class="form-control" placeholder="=开始日期=" maxlength="20" id="beginDate" name="beginDate" value="#date(DateUtil.getNow(),'yyyy-MM-dd')" data-rule="required">
+                        </div>
+                        <div class="input-group-append">
+                            <span class="input-group-text">至</span>
+                        </div>
+                        <div class="input-group-append">
+                            <input type="text" data-date class="form-control rounded-left-0" placeholder="=截止日期=" maxlength="20" id="endDate" name="endDate" value="#date(DateUtil.getNow(),'yyyy-MM-dd')" data-rule="required">
+                        </div>
+                    </div>
+                    
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" id="cinvcode" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" id="cinvcode1" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" id="cinvname1" value=""/>
 
-		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-	</form>
-	</div>
-	<div class="col-sm-auto text-right">
-	
-	
-	
-	
-	
-	</div>
-</div>
-</div>
-<div class="jbolt_page_content">
-<!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="CusOrderSum_tpl_#(pageId)">
-	<tr></tr>
-{@each datas as data,index}
-<tr data-id="${data.id}">
-<td rowspan="4" >${pageNumber,pageSize,index | rownum}</td>
-<td rowspan="4">${data.cinvcode}</td>
-<td rowspan="4">${data.cinvcode1}</td>
-<td rowspan="4" >${data.cinvname1}</td>
-</tr>
-	<tr>
-		<th >客户计划</th>
-	{@each data.record2 as record,index}
-	{@if index == record.imonth-1}
-		<td>${record.iqty1}</td>
-		<td>${record.iqty2}</td>
-		<td>${record.iqty3}</td>
-		<td>${record.iqty4}</td>
-		<td>${record.iqty5}</td>
-		<td>${record.iqty6}</td>
-		<td>${record.iqty7}</td>
-		<td>${record.iqty8}</td>
-		<td>${record.iqty9}</td>
-		<td>${record.iqty10}</td>
-		<td>${record.iqty11}</td>
-		<td>${record.iqty12}</td>
-		<td>${record.iqty13}</td>
-		<td>${record.iqty14}</td>
-		<td>${record.iqty15}</td>
-		<td>${record.iqty16}</td>
-		<td>${record.iqty17}</td>
-		<td>${record.iqty18}</td>
-		<td>${record.iqty19}</td>
-		<td>${record.iqty20}</td>
-		<td>${record.iqty21}</td>
-		<td>${record.iqty22}</td>
-		<td>${record.iqty23}</td>
-		<td>${record.iqty24}</td>
-		<td>${record.iqty25}</td>
-		<td>${record.iqty26}</td>
-		<td>${record.iqty27}</td>
-		<td>${record.iqty28}</td>
-		<td>${record.iqty29}</td>
-		<td>${record.iqty30}</td>
-		<td>${record.iqty31}</td>
-		<td>${record.iqty1sum}</td>
-	{@else}
-	#for(i = 1; i <= 12; i++)
-		{@if record.imonth == #(i)}
-			<td>${record.iqty1}</td>
-			<td>${record.iqty2}</td>
-			<td>${record.iqty3}</td>
-			<td>${record.iqty4}</td>
-			<td>${record.iqty5}</td>
-			<td>${record.iqty6}</td>
-			<td>${record.iqty7}</td>
-			<td>${record.iqty8}</td>
-			<td>${record.iqty9}</td>
-			<td>${record.iqty10}</td>
-			<td>${record.iqty11}</td>
-			<td>${record.iqty12}</td>
-			<td>${record.iqty13}</td>
-			<td>${record.iqty14}</td>
-			<td>${record.iqty15}</td>
-			<td>${record.iqty16}</td>
-			<td>${record.iqty17}</td>
-			<td>${record.iqty18}</td>
-			<td>${record.iqty19}</td>
-			<td>${record.iqty20}</td>
-			<td>${record.iqty21}</td>
-			<td>${record.iqty22}</td>
-			<td>${record.iqty23}</td>
-			<td>${record.iqty24}</td>
-			<td>${record.iqty25}</td>
-			<td>${record.iqty26}</td>
-			<td>${record.iqty27}</td>
-			<td>${record.iqty28}</td>
-			<td>${record.iqty29}</td>
-			<td>${record.iqty30}</td>
-			<td>${record.iqty31}</td>
-			<td>${record.iqty1sum}</td>
-		{@else}
-			#for(i = 1; i <= 31; i++)
-				<td></td>
-			#end
-			<td></td>
-		{@/if}
-	#end
-	{@/if}
-	{@/each}
+                    <button type="button" onclick="submitThisForm()" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+            
+            <div class="col-sm-auto text-right">
+            </div>
+        </div>
+    </div>
+    
+    <div class="jbolt_page_content">
 
-</tr>
-	<tr>
-		<th>客户订单</th>
-	#for(i = 1; i <= 12; i++)
-		#for(i = 1; i <= 31; i++)
-		<th></th>
-		#end
-		<th></th>
-	#end
-	</tr>
-	<tr>
-		<th >计划使用</th>
-	#for(i = 1; i <= 12; i++)
-		#for(i = 1; i <= 31; i++)
-		<th></th>
-		#end
-		<th></th>
-	#end
-	</tr>
-
-
-{@/each}
-</textarea>
-<div class="jbolt_table_toolbar" id="CusOrderSum_toolbar_#(pageId)">
-<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-	<div class="btn-group dropdown ">
-		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
-		<div class="dropdown-menu" aria-labelledby="exportContainerButton">
-			<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="/admin/container/dataExport"><i class="fa fa-download"></i> 导出选中</button>
-			<button class="btn dropdown-item" data-downloadbtn data-url="/admin/container/dataExport"  data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
-		</div>
-	</div>
-</div>
-</div>
-<table class="jbolt_table jbolt_main_table  table-center "
-	   data-jbolttable
-	   data-height="fill"
-	   data-ajax="true"
-	   data-conditions-form="CusOrderSum_form_#(pageId)"
-	   data-url="admin/cusordersum/datas"
-	   data-rowtpl="CusOrderSum_tpl_#(pageId)"
-	   data-copy-to-excel="false"
-	   data-page="CusOrderSum_page"
-	   data-toolbar="CusOrderSum_toolbar_#(pageId)"
-	   data-automerge-cell-cols="1,2,3,4"
->
-<thead>
-<tr>
-	<th data-width="60" data-column="index" rowspan="3">序号</th>
-	<th data-width="100" data-column="cinvcode" rowspan="3">存货编码</th>
-	<th data-width="100" data-column="cinvname1" rowspan="3">客户部番</th>
-	<th data-width="100" data-column="iinventoryid" rowspan="3">部品名称</th>
-	<th data-width="100" rowspan="3"></th>
-		#for(i = 1; i <= 12; i++)
-		<th colspan="32">2023年#(i)月</th>
-<!--		<th>合计</th>-->
-		#end
-</tr>
-<tr>
-	#for(i = 1; i <= 12; i++)
-		#for(i = 1; i <= 31; i++)
-		<th>#(i)日</th>
-		#end
-		<th>合计</th>
-	#end
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
+        <div id="cusOrderSumPortal_#(pageId)" data-ajaxportal data-url="admin/cusordersum/getYear" data-form="CusOrderSum_form"></div>
+        
+    </div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
+
+    function submitThisForm() {
+        var $form = $('#CusOrderSum_form');
+
+        if (FormChecker.check($form)) {
+            var formData = formToJson($form);
+            console.log(JSON.stringify(formData));
+
+            AjaxPortalUtil.refresh('cusOrderSumPortal_#(pageId)');
+        }
+    }
 </script>
 #end

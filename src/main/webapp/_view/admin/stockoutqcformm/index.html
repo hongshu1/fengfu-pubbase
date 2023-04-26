@@ -18,6 +18,7 @@
     <div class="row">
       <div class="col">
         <form class="form-inline" id="stockoutqcformmForm_#(pageId)" style="left: 30px;text-align: left">
+          <input type="text" hidden id="iscompleted" name="iscompleted" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="cstockoutqcformno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvaddcode" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
@@ -42,7 +43,7 @@
                   data-text="=检验结果="
                   data-value=""
                   data-value-attr="sn"
-                  data-select="#(istatus)"></select>
+                  data-select="#(istatus??)"></select>
 
           <select class="form-control"
                   name="iscompleted"
@@ -52,7 +53,7 @@
                   data-text="=状态="
                   data-value=""
                   data-value-attr="sn"
-                  data-select="#(iscompleted)"></select>
+                  data-select="#(iscompleted??)"></select>
 
           <select class="form-control" name="cqcformname"
                   data-autoload
@@ -65,10 +66,11 @@
                   data-select="#(qcform.cqcformname??)"></select>
 
           <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
-                 class="form-control" placeholder="开始日期" name="starttime" data-tips="开始时间" maxlength="23" value="">
+                 class="form-control" placeholder="开始日期" name="starttime" data-tips="开始时间" maxlength="23"
+                 value="#(dupdatetiime??)">
           <span class="input-group-text">至</span>
           <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
-                 class="form-control" placeholder="结束日期" name="endtime" data-tips="结束时间" maxlength="23" value="">
+                 class="form-control" placeholder="结束日期" name="endtime" data-tips="结束时间" maxlength="23" value="#(dupdatetiime??)">
 
           <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
           <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -102,18 +104,17 @@
          tooltip title="检验" data-title="检验">检验</a>
     {@/if}
     {@if data.istatus == 2}
-<!--      <a class="text-info mr-1" data-openpage="dialog" href="admin/stockoutqcformm/onlysee/${data.id}" data-area="100%,100%"-->
-<!--         tooltip title="查看">查看</a>-->
-     <a tooltip title="查看" href="admin/stockoutqcformm/onlysee/${data.id}" data-scroll="yes" data-handler="refreshJBoltTable"
+     <a tooltip title="查看出库检成绩表" href="admin/stockoutqcformm/onlysee/${data.id}" data-scroll="yes"
+        data-handler="refreshJBoltTable"
         data-area="100%,100%" class="jbolt_table_editbtn">查看</a>
-      <a tooltip title="编辑"  href="admin/stockoutqcformm/checkout/${data.id}" data-handler="refreshJBoltTable"
+      <a tooltip title="编辑出库检成绩表"  href="admin/stockoutqcformm/checkout/${data.id}" data-handler="refreshJBoltTable"
          data-area="100%,100%"  class="jbolt_table_editbtn">编辑</a>
     {@/if}
     {@if data.istatus == 3}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/stockoutqcformm/onlysee/${data.id}" data-area="100%,100%"
-         data-title="查看">查看</a>
-      <a class="jbolt_table_editbtn" href="javascript:return false;" data-handler="refreshJBoltTable" data-area="100%,100%"
-         tooltip data-title="编辑" disabled="disabled">编辑</a>
+         data-title="查看出库检成绩表">查看</a>
+      <a href="javascript:return false;" data-handler="refreshJBoltTable" tooltip data-title="编辑出库检成绩表"
+         disabled="disabled">编辑</a>
     {@/if}
   </td>
    <td>
@@ -122,20 +123,22 @@
     {@if data.istatus == 2}<span>不合格</span>{/@if}
     {@if data.istatus == 3}<span>合格</span>{/@if}
   </td>
-  {@if data.isCompleted == 0}<td>未完成</td>{@/if}
-  {@if data.isCompleted == 1}<td>已完成</td>{@/if}
-  <td>${data.cstockoutqcformno}</td>
-  <td>${data.cqcformname}</td>
-	<td>${data.cinvaddcode}</td>
-  <td>${data.cinvcode1}</td>
-  <td>${data.cinvname1}</td>
-  <td>${data.cinvstd}</td>
-  <td>${data.iinventoryuomid1}</td>
-	<td>${data.iqty}</td>
-	<td>${data.cbatchno}</td>
-  <td>${data.cbatchno}</td>
-	<td>${data.iqcuserid}</td>
-  <td>${data.dcreatetime}</td>
+  <td>
+    {@if data.iscompleted == 0}<span>未完成</span>{@/if}
+    {@if data.iscompleted == 1}<span>已完成</span>{@/if}
+  </td>
+  <td title="${data.cstockoutqcformno}">${data.cstockoutqcformno}</td>
+  <td title="${data.cqcformname}">${data.cqcformname}</td>
+	<td title="${data.cinvaddcode}">${data.cinvaddcode}</td>
+  <td title="${data.cinvcode1}">${data.cinvcode1}</td>
+  <td title="${data.cinvname1}">${data.cinvname1}</td>
+  <td title="${data.cinvstd}">${data.cinvstd}</td>
+  <td title="${data.iinventoryuomid1}">${data.iinventoryuomid1}</td>
+	<td title="${data.iqty}">${data.iqty}</td>
+	<td title="${data.cbatchno}">${data.cbatchno}</td>
+  <td title="${data.cbatchno}">${data.cbatchno}</td>
+	<td title="${data.iqcuserid}">${data.iqcuserid}</td>
+  <td title="${data.dcreatetime}">${data.dcreatetime}</td>
 </tr>
 {@/each}
 </textarea>
@@ -180,10 +183,9 @@
 <script type="text/javascript">
 
   function selectFinishDocList(iscompleted) {
-    console.log("isCompleted==========>  " + iscompleted)
-    $('#isCompleted').val(iscompleted);
-    $('#stockoutqcformmForm_#(pageId)').submit();
-    console.log();
+    $('#iscompleted').val(iscompleted);
+    $('#rcvDocQcFormMForm_#(pageId)').submit();
+    LayerMsgBox.success();
   }
 
   /*

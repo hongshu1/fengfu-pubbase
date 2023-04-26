@@ -93,6 +93,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
 		manualOrderM.setIAuditStatus(1);
 		manualOrderM.setIOrderStatus(3);
 		Ret stockoutQcFormM = service.createStockoutQcFormM(manualOrderM.getICustomerId(), manualOrderM.getIAutoId());
+        service.handleCusOrderByManual(manualOrderM);
 		if(stockoutQcFormM.isFail())
 			renderJson(stockoutQcFormM);
 		else

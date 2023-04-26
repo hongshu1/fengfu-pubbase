@@ -1,0 +1,234 @@
+<form onsubmit="return false;" id="SubcontractOrderM_Form" action="#(action)" method="post">
+	#if(subcontractOrderM.iAutoId??)
+	<input type="hidden" name="subcontractOrderM.iAutoId" value="#(subcontractOrderM.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="subcontractOrderM.iAutoId" value="#(subcontractOrderM.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织ID" maxlength="40" name="subcontractOrderM.iOrgId" value="#(subcontractOrderM.iOrgId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织编码" maxlength="40" name="subcontractOrderM.cOrgCode" value="#(subcontractOrderM.cOrgCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织名称" maxlength="40" name="subcontractOrderM.cOrgName" value="#(subcontractOrderM.cOrgName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">订单编号</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入订单编号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入订单编号" maxlength="40" name="subcontractOrderM.cOrderNo" value="#(subcontractOrderM.cOrderNo??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">订单日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入订单日期" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入订单日期" maxlength="20" name="subcontractOrderM.dOrderDate"    value="#datetime(subcontractOrderM.dOrderDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">业务类型： 1. 普通采购</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入业务类型： 1. 普通采购"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入业务类型： 1. 普通采购" maxlength="40" name="subcontractOrderM.iBusType" value="#(subcontractOrderM.iBusType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">采购类型ID，取采购类型档案</label>
+
+<div class="col-10">
+    <select class="form-control"
+            data-autoload
+            data-url="admin/dictionary/options?key=null"
+            data-select-type="select"
+            name="subcontractOrderM.iPurchaseTypeId"
+            data-refresh="true"
+            data-rule="select"
+            data-notnull="true"
+            data-tips="请选择采购类型ID，取采购类型档案"
+            data-text="=请选择="
+            data-value=""
+            data-value-attr="sn"
+            data-select="#(subcontractOrderM.iPurchaseTypeId??)"
+            
+    ></select>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">供应商ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入供应商ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入供应商ID" maxlength="40" name="subcontractOrderM.iVendorId" value="#(subcontractOrderM.iVendorId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">部门ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入部门ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入部门ID" maxlength="40" name="subcontractOrderM.iDepartmentId" value="#(subcontractOrderM.iDepartmentId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">业务员ID，系统用户ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入业务员ID，系统用户ID" maxlength="40" name="subcontractOrderM.iDutyUserId" value="#(subcontractOrderM.iDutyUserId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">税率</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入税率" maxlength="40" name="subcontractOrderM.iTaxRate" value="#(subcontractOrderM.iTaxRate??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">应付类型：1. 材料费</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入应付类型：1. 材料费"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入应付类型：1. 材料费" maxlength="40" name="subcontractOrderM.iPayableType" value="#(subcontractOrderM.iPayableType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">币种</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入币种" maxlength="40" name="subcontractOrderM.cCurrency" value="#(subcontractOrderM.cCurrency??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">汇率</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入汇率" maxlength="40" name="subcontractOrderM.iExchangeRate" value="#(subcontractOrderM.iExchangeRate??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">订单状态：1. 已保存 2. 待审批 3. 已审核 4. 审批不通过 5. 已生成现品票 6. 已关闭</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入订单状态：1. 已保存 2. 待审批 3. 已审核 4. 审批不通过 5. 已生成现品票 6. 已关闭"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入订单状态：1. 已保存 2. 待审批 3. 已审核 4. 审批不通过 5. 已生成现品票 6. 已关闭" maxlength="40" name="subcontractOrderM.iOrderStatus" value="#(subcontractOrderM.iOrderStatus??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">审核状态：1. 审核中 2. 审核通过 3. 审核不通过</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入审核状态：1. 审核中 2. 审核通过 3. 审核不通过"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审核状态：1. 审核中 2. 审核通过 3. 审核不通过" maxlength="40" name="subcontractOrderM.iAuditStatus" value="#(subcontractOrderM.iAuditStatus??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">审核时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入审核时间" maxlength="20" name="subcontractOrderM.dAuditTime"    value="#datetime(subcontractOrderM.dAuditTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="subcontractOrderM.cMemo">#(subcontractOrderM.cMemo??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人ID" maxlength="40" name="subcontractOrderM.iCreateBy" value="#(subcontractOrderM.iCreateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="subcontractOrderM.cCreateName" value="#(subcontractOrderM.cCreateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="subcontractOrderM.dCreateTime"    value="#datetime(subcontractOrderM.dCreateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人ID" maxlength="40" name="subcontractOrderM.iUpdateBy" value="#(subcontractOrderM.iUpdateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人名称" maxlength="40" name="subcontractOrderM.cUpdateName" value="#(subcontractOrderM.cUpdateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入更新时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="subcontractOrderM.dUpdateTime"    value="#datetime(subcontractOrderM.dUpdateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="subcontractOrderM.IsDeleted"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态：0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(subcontractOrderM.IsDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态：0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="subcontractOrderM.hideInvalid"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="已失效隐藏：0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(subcontractOrderM.hideInvalid??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入已失效隐藏：0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">开始日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入开始日期" maxlength="20" name="subcontractOrderM.dBeginDate"    value="#datetime(subcontractOrderM.dBeginDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">结束日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入结束日期" maxlength="20" name="subcontractOrderM.dEndDate"    value="#datetime(subcontractOrderM.dEndDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">审批方式：1. 审批状态 2. 审批流</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审批方式：1. 审批状态 2. 审批流" maxlength="40" name="subcontractOrderM.iAuditWay" value="#(subcontractOrderM.iAuditWay??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">提审时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入提审时间" maxlength="20" name="subcontractOrderM.dSubmitTime"    value="#datetime(subcontractOrderM.dSubmitTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="SubcontractOrderM_Form")
+#end
+
