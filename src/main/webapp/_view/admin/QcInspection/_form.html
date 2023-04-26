@@ -1,0 +1,183 @@
+<form onsubmit="return false;" id="qcInspectionForm" action="#(action)" method="post">
+<input type="hidden" name="qcInspection.iautoid" value="#(qcInspection.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="qcInspection.iorgid" value="#(qcInspection.iorgid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="40" name="qcInspection.corgcode" value="#(qcInspection.corgcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="50" name="qcInspection.corgname" value="#(qcInspection.corgname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">连锁号，取自数据字典，编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入连锁号，取自数据字典，编码" maxlength="40" name="qcInspection.cchainno" value="#(qcInspection.cchainno??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">连锁号名称，取自数据字典，名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入连锁号名称，取自数据字典，名称" maxlength="50" name="qcInspection.cchainname" value="#(qcInspection.cchainname??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(qcInspection.isfirstcase??)"
+    	data-name="qcInspection.isfirstcase"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否首发：0. 再发 1. 首发</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isfirstcase_true" type="radio" name="qcInspection.isfirstcase" value="true"/>
+					<label for="r_isfirstcase_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isfirstcase_false" type="radio" name="qcInspection.isfirstcase" value="false"/>
+					<label for="r_isfirstcase_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">发现日期</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置发现日期" data-tips="请设置发现日期" maxlength="10" name="qcInspection.drecorddate" value="#(qcInspection.drecorddate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">品质担当人员ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入品质担当人员ID" maxlength="19" name="qcInspection.iqcdutypersonid" value="#(qcInspection.iqcdutypersonid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">责任科室部门ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入责任科室部门ID" maxlength="19" name="qcInspection.iqcdutydepartmentid" value="#(qcInspection.iqcdutydepartmentid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">位置/区域</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入位置/区域" maxlength="200" name="qcInspection.cplace" value="#(qcInspection.cplace??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">问题点</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入问题点" maxlength="200" name="qcInspection.cproblem" value="#(qcInspection.cproblem??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">原因分析</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入原因分析" maxlength="200" name="qcInspection.canalysis" value="#(qcInspection.canalysis??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">对策</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入对策" maxlength="200" name="qcInspection.cmeasure" value="#(qcInspection.cmeasure??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日期</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="qcInspection.ddate" value="#(qcInspection.ddate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">担当</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入担当" maxlength="19" name="qcInspection.idutypersonid" value="#(qcInspection.idutypersonid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">判定: 1. OK 2. NG</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入判定: 1. OK 2. NG"  maxlength="10" name="qcInspection.iestimate" value="#(qcInspection.iestimate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">对策上传</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入对策上传" maxlength="2147483647" name="qcInspection.cmeasureattachments" value="#(qcInspection.cmeasureattachments??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人ID" maxlength="19" name="qcInspection.icreateby" value="#(qcInspection.icreateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="50" name="qcInspection.ccreatename" value="#(qcInspection.ccreatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="qcInspection.dcreatetime" value="#(qcInspection.dcreatetime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人ID" maxlength="19" name="qcInspection.iupdateby" value="#(qcInspection.iupdateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人名称" maxlength="50" name="qcInspection.cupdatename" value="#(qcInspection.cupdatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="qcInspection.dupdatetime" value="#(qcInspection.dupdatetime??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(qcInspection.isdeleted??)"
+    	data-name="qcInspection.isdeleted"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >删除状态：0. 未删除 1. 已删除</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_true" type="radio" name="qcInspection.isdeleted" value="true"/>
+					<label for="r_isdeleted_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_false" type="radio" name="qcInspection.isdeleted" value="false"/>
+					<label for="r_isdeleted_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="qcInspectionForm")
+#end
+
