@@ -375,4 +375,8 @@
 #include("InStockDefect/InStockDefect.sql")
 #end
 
+#namespace("MoDoc")
+#include("MoDoc/MoDoc.sql")
+#end
+
 
