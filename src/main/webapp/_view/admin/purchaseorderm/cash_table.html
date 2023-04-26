@@ -18,7 +18,7 @@
                 </td>
                 <td>
                     {@if data.iautoid}
-                        <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="添加一行"  onclick="InsertEmptyRow('${data.iautoid}',${data.cversion},${data.iqty}, this)"><i class="fa fa-plus"> 修改</i></a>
+                        <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="添加一行"  onclick="InsertEmptyRow('${data.iautoid}','${data.cversion}','${data.iqty}', '${data.iseffective}', this)"><i class="fa fa-plus"> 修改</i></a>
                     {@else}
                         <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="保存当前行"  onclick="saveRow('#(purchaseOrderM.iautoid??)','${data.csourceld}','${data.cversion}')"><i class="fa fa-plus"> 保存</i></a>
                         <a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="取消当前行" onclick="removeRow(this)" ><i class="fa fa-trash text-danger"> 取消</i></a>

@@ -43,7 +43,7 @@ public class ProcessDefectAdminController extends BaseAdminController {
 		Okv kv =new Okv();
 		kv.setIfNotNull("cDocNo", get("cDocNo"));
 		kv.setIfNotNull("iMoDocId", get("iMoDocId"));
-		kv.setIfNotNull("iInventoryId", get("iInventoryId"));
+		kv.setIfNotNull("cInvCode1", get("cInvCode1"));
 		kv.setIfNotNull("cInvName", get("cInvName"));
 		kv.setIfNotNull("cInvCode", get("cInvCode"));
 		kv.setIfNotNull("iStatus", get("iStatus"));

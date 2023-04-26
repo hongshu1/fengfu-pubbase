@@ -10,38 +10,45 @@ SELECT
     t2.iDqQty,
     t2.cApproach,
     t2.cUpdateName,
-    t2.dUpdateTime
+    t2.dUpdateTime,
+    t3.cInvCode,
+    t3.cInvName,
+    t3.cInvCode1
 FROM
     PL_RcvDocQcFormM t1
         LEFT JOIN PL_RcvDocDefect t2 ON t2.iRcvDocQcFormMid = t1.iAutoId
+        LEFT JOIN Bd_Inventory t3 ON t3.iAutoId = t1.iInventoryId
 WHERE
         1 = 1
     #if(cDocNo)
-  AND cDocNo like '%#(cDocNo)%'
+  AND t2.cDocNo like '%#(cDocNo)%'
   #end
-#if(iRcvDocQcFormMid)
-  AND iRcvDocQcFormMid like '%#(iRcvDocQcFormMid)%'
+    #if(iMoDocId)
+  AND t1.cRcvDocQcFormNo like '%#(iMoDocId)%'
   #end
 #if(cInvCode)
-  AND cInvCode like '%#(cInvCode)%'
+  AND t3.cInvCode like '%#(cInvCode)%'
   #end
-#if(iInventoryId)
-  AND iInventoryId like '%#(iInventoryId)%'
+#if(cInvCode1)
+  AND t3.cInvCode1 like '%#(cInvCode1)%'
   #end
 #if(cInvName)
-  AND cInvName like '%#(cInvName)%'
+  AND t3.cInvName like '%#(cInvName)%'
   #end
-  #if(iStatus)
-  AND iStatus like '%#(iStatus)%'
+  #if(iStatus != '0' && iStatus)
+  AND t2.iStatus = '#(iStatus)'
+  #end
+  #if(iStatus == '0' && iStatus)
+  AND t2.iStatus  is null
   #end
 
 #if(startdate)
-    and CONVERT(VARCHAR(10),dQcTime,23) >='#(startdate)'
+    and CONVERT(VARCHAR(10),t2.dUpdateTime,23) >='#(startdate)'
 #end
 #if(enddate)
-    and CONVERT(VARCHAR(10),dQcTime,23) <='#(enddate)'
+    and CONVERT(VARCHAR(10),t2.dUpdateTime,23) <='#(enddate)'
 #end
-order by dUpdateTime desc
+order by t2.dUpdateTime desc
 #end
 
 

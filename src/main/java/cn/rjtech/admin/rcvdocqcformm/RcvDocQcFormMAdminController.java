@@ -67,7 +67,8 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.pageList(getKv()));
+        Page<Record> recordPage = service.pageList(getKv());
+        renderJsonData(recordPage);
     }
 
     /**

@@ -41,7 +41,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
     public void datas() {
         Okv kv = new Okv();
         kv.setIfNotNull("cDocNo", get("cDocNo"));
-        kv.setIfNotNull("iRcvDocQcFormMid", get("iRcvDocQcFormMid"));
+        kv.setIfNotNull("iMoDocId", get("iMoDocId"));
         kv.setIfNotNull("cInvCode", get("cInvCode"));
         kv.setIfNotNull("iInventoryId", get("iInventoryId"));
         kv.setIfNotNull("cInvName", get("cInvName"));
@@ -62,7 +62,11 @@ public class RcvDocDefectAdminController extends BaseAdminController {
 
     public void add2() {
         RcvDocDefect rcvDocDefect = service.findById(get("iautoid"));
-        RcvDocQcFormM rcvDocQcFormM = rcvDocQcFormMService.findById(get("ircvdocqcformmid"));
+        RcvDocQcFormM rcvDocQcFormM = rcvDocQcFormMService.findFirst("select t1.*, t2.cInvCode, t2.cInvName, t2.cInvCode1, t3.cVenName\n" +
+                "from PL_RcvDocQcFormM t1\n" +
+                "LEFT JOIN Bd_Inventory t2 ON t2.iAutoId = t1.iInventoryId \n" +
+                "LEFT JOIN Bd_Vendor t3 ON t3.iAutoId = t1.iVendorId \n" +
+                "where t1.iAutoId = '"+get("ircvdocqcformmid")+"'");
         set("iautoid", get("iautoid"));
         set("type", get("type"));
         if (isNull(get("iautoid"))) {

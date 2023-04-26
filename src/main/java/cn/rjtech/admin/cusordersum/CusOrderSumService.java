@@ -359,7 +359,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
                 }
                 record.set("record1", record1);
                 record.set("record2", record2);
-                record.set("dateMap", dateMap);
             }
         }
         return pageData;

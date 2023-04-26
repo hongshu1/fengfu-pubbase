@@ -1,0 +1,177 @@
+<form onsubmit="return false;" id="inStockDefectForm" action="#(action)" method="post">
+<input type="hidden" name="inStockDefect.iautoid" value="#(inStockDefect.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="inStockDefect.iorgid" value="#(inStockDefect.iorgid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="40" name="inStockDefect.corgcode" value="#(inStockDefect.corgcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="50" name="inStockDefect.corgname" value="#(inStockDefect.corgname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">异常品单号</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入异常品单号" maxlength="50" name="inStockDefect.cdocno" value="#(inStockDefect.cdocno??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">在库检ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入在库检ID" maxlength="19" name="inStockDefect.iinstockqcformmid" value="#(inStockDefect.iinstockqcformmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">供应商ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入供应商ID" maxlength="19" name="inStockDefect.ivendorid" value="#(inStockDefect.ivendorid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="inStockDefect.iinventoryid" value="#(inStockDefect.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">状态：1. 待记录 2. 待判定 3. 已完成</label>
+		<div class="col input-group">
+			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="inStockDefect.istatus" data-refresh="true"  data-rule="select"  data-tips="请选择状态：1. 待记录 2. 待判定 3. 已完成" data-text="=请选择="  data-value="" data-select="#( inStockDefect.istatus ??)"></select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">不合格数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入不合格数量"  maxlength="18" name="inStockDefect.idqqty" value="#(inStockDefect.idqqty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">处置区分</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入处置区分" maxlength="50" name="inStockDefect.capproach" value="#(inStockDefect.capproach??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">不良项目，字典编码，多个“,”分隔</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入不良项目，字典编码，多个“,”分隔" maxlength="200" name="inStockDefect.cbadnesssns" value="#(inStockDefect.cbadnesssns??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(inStockDefect.isfirsttime??)"
+    	data-name="inStockDefect.isfirsttime"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >不良项目，字典编码，多个“,”分隔</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isfirsttime_true" type="radio" name="inStockDefect.isfirsttime" value="true"/>
+					<label for="r_isfirsttime_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isfirsttime_false" type="radio" name="inStockDefect.isfirsttime" value="false"/>
+					<label for="r_isfirsttime_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">责任区：1. 供应商 2. 其他</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入责任区：1. 供应商 2. 其他"  maxlength="10" name="inStockDefect.iresptype" value="#(inStockDefect.iresptype??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">不良内容描述</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入不良内容描述" maxlength="500" name="inStockDefect.cdesc" value="#(inStockDefect.cdesc??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验用户ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入检验用户ID" maxlength="19" name="inStockDefect.iqcuserid" value="#(inStockDefect.iqcuserid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置检验时间" data-tips="请设置检验时间" maxlength="23" name="inStockDefect.dqctime" value="#(inStockDefect.dqctime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人ID" maxlength="19" name="inStockDefect.icreateby" value="#(inStockDefect.icreateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="50" name="inStockDefect.ccreatename" value="#(inStockDefect.ccreatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="inStockDefect.dcreatetime" value="#(inStockDefect.dcreatetime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人ID" maxlength="19" name="inStockDefect.iupdateby" value="#(inStockDefect.iupdateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人名称" maxlength="50" name="inStockDefect.cupdatename" value="#(inStockDefect.cupdatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="inStockDefect.dupdatetime" value="#(inStockDefect.dupdatetime??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(inStockDefect.isdeleted??)"
+    	data-name="inStockDefect.isdeleted"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >删除状态：0. 未删除 1. 已删除</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_true" type="radio" name="inStockDefect.isdeleted" value="true"/>
+					<label for="r_isdeleted_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_false" type="radio" name="inStockDefect.isdeleted" value="false"/>
+					<label for="r_isdeleted_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="inStockDefectForm")
+#end
+
