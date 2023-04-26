@@ -30,6 +30,9 @@ FROM
     #if(cinvname1)
         AND bi.cInvName1 LIKE CONCAT('%', #para(cinvname1), '%')
     #end
+    #if(cinvname1)
+        AND cus.cCusName LIKE CONCAT('%', #para(cCusName), '%')
+    #end
 #end
 
 
