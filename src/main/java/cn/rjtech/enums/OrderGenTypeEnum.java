@@ -2,7 +2,7 @@ package cn.rjtech.enums;
 
 import java.util.*;
 
-public enum OrderGenType {
+public enum OrderGenTypeEnum {
     
     /**
      * 订单生产类型   0. 未生成 1. 采购订单 2. 委外订单
@@ -11,10 +11,10 @@ public enum OrderGenType {
     PURCHASE_GEN("采购订单", 1),
     SUBCONTRACT_GEN("委外订单", 2);
     
-    private static final Map<Integer, OrderGenType> ORDER_GEN_TYPE_MAP = new HashMap<>();
+    private static final Map<Integer, OrderGenTypeEnum> ORDER_GEN_TYPE_MAP = new HashMap<>();
     
     static {
-        for (OrderGenType typeEnum : OrderGenType.values()) {
+        for (OrderGenTypeEnum typeEnum : OrderGenTypeEnum.values()) {
             ORDER_GEN_TYPE_MAP.put(typeEnum.value, typeEnum);
         }
     }
@@ -22,12 +22,12 @@ public enum OrderGenType {
     private final String text;
     private final int value;
     
-    OrderGenType(String text, int value) {
+    OrderGenTypeEnum(String text, int value) {
         this.text = text;
         this.value = value;
     }
     
-    public static OrderGenType toEnum(int value) {
+    public static OrderGenTypeEnum toEnum(int value) {
         return ORDER_GEN_TYPE_MAP.get(value);
     }
     
@@ -42,7 +42,7 @@ public enum OrderGenType {
     
     @Override
     public String toString() {
-        return "OrderGenType{" +
+        return "OrderGenTypeEnum{" +
                 "text='" + text + '\'' +
                 ", value=" + value +
                 '}';

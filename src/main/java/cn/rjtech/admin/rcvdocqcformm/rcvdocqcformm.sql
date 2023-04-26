@@ -7,23 +7,11 @@ SELECT t1.*,
        t3.iInventoryUomId1,
        t3.cInvAddCode,
        t4.cVenName,
-       t5.iautoid rcvdocqcformdiautoid,
-       t5.iRcvDocQcFormMid,
-       t5.iFormParamId,
-       t5.iSeq,
-       t5.iSubSeq,
-       t5.cQcFormParamIds,
-       t5.iType,
-       t5.iStdVal,
-       t5.iMaxVal,
-       t5.iMinVal,
-       t5.cOptions,
        t6.cEquipmentName
 FROM PL_RcvDocQcFormM t1
          LEFT JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
          LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
          LEFT JOIN Bd_Vendor t4 ON t1.iVendorId = t4.iAutoId
-         LEFT JOIN PL_RcvDocQcFormD t5 ON t1.iRcvDocId = t5.iAutoId
          LEFT JOIN Bd_Equipment t6 ON t3.iEquipmentModelId = t6.iAutoId
 where t1.IsDeleted = '0'
   #if(iautoid)
@@ -59,8 +47,11 @@ where t1.IsDeleted = '0'
   #if(cqcformname)
   AND t2.cqcformname =#para(cqcformname)
   #end
-  #if(dcreatetime)
-  AND t1.dcreatetime =#para(dcreatetime)
+  #if(starttime)
+  AND t1.dcreatetime >= #para(starttime)
+  #end
+  #if(endtime)
+  AND t1.dcreatetime <= #para(endtime)
   #end
 ORDER BY t1.dUpdateTime DESC
 #end
@@ -89,7 +80,7 @@ WHERE t1.isDeleted = '0'
 ORDER BY t1.iSeq asc
 #end
 
-#sql("getCheckout")
+#sql("getCheckoutList")
 SELECT t1.*,
        t3.cQcParamName,
        t4.cQcItemName
@@ -104,7 +95,7 @@ WHERE t1.isDeleted = '0'
 ORDER BY t1.iSeq asc
 #end
 
-#sql("findChecoutByIformParamid")
+#sql("findChecoutListByIformParamid")
 SELECT t1.*,
        t3.cQcItemName,
        t4.cQcParamName

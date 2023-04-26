@@ -22,8 +22,6 @@ public abstract class BaseStockoutDefect<M extends BaseStockoutDefect<M>> extend
     public static final String CDOCNO = "cDocNo";
     /**出货检ID*/
     public static final String ISTOCKOUTQCFORMMID = "iStockoutQcFormMid";
-    /**供应商ID*/
-    public static final String IVENDORID = "iVendorId";
     /**存货ID*/
     public static final String IINVENTORYID = "iInventoryId";
     /**状态：1. 待记录 2. 待判定 3. 已完成*/
@@ -158,23 +156,6 @@ public abstract class BaseStockoutDefect<M extends BaseStockoutDefect<M>> extend
 	@JSONField(name = "istockoutqcformmid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIStockoutQcFormMid() {
 		return getLong("iStockoutQcFormMid");
-	}
-
-	/**
-	 * 供应商ID
-	 */
-	public M setIVendorId(java.lang.Long iVendorId) {
-		set("iVendorId", iVendorId);
-		return (M)this;
-	}
-
-	/**
-	 * 供应商ID
-	 */
-	@JBoltField(name="ivendorid" ,columnName="iVendorId",type="Long", remark="供应商ID", required=true, maxLength=19, fixed=0, order=7)
-	@JSONField(name = "ivendorid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIVendorId() {
-		return getLong("iVendorId");
 	}
 
 	/**

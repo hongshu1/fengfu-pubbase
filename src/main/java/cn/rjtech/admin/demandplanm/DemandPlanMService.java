@@ -8,6 +8,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
+import cn.rjtech.admin.subcontractorderdqty.SubcontractorderdQtyService;
 import cn.rjtech.enums.CompleteTypeEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -38,6 +39,8 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 	
 	@Inject
 	private PurchaseorderdQtyService purchaseorderdQtyService;
+	@Inject
+	private SubcontractorderdQtyService subcontractorderdQtyService;
 	@Inject
 	private DemandPlanDService demandPlanDService;
 	
@@ -171,7 +174,7 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 	 * @param invChangeMap		可根据存货对象获取转换后的对象
 	 * @param puOrderRefMap
 	 */
-	public void setVendorDateList(List<Record> vendorDateList , Map<Long, Map<String, BigDecimal>> demandPlanDMap, Map<String, Integer> calendarMap, Map<Long, Record> invChangeMap, Map<Long, List<PurchaseOrderRef>> puOrderRefMap){
+	public void setVendorDateList(int type, List<Record> vendorDateList , Map<Long, Map<String, BigDecimal>> demandPlanDMap, Map<String, Integer> calendarMap, Map<Long, Record> invChangeMap, Map<Long, List<PurchaseOrderRef>> puOrderRefMap){
 		// 同一种的存货编码需要汇总在一起。
 		// 将日期设值。
 		for (Record record : vendorDateList){
@@ -190,6 +193,9 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 			}
 			// 记录每一个到货日期的数量
 			List<PurchaseorderdQty> purchaseorderdQtyList = new ArrayList<>();
+			
+			List<SubcontractorderdQty> subcontractOrderdQtyList = new ArrayList<>();
+			
 			// 当前日期下的数量
 			Map<String, BigDecimal> dateQtyMap = demandPlanDMap.get(invId);
 			// 统计合计数量
@@ -229,13 +235,24 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 						record.set(PurchaseOrderM.CINVSTD, invChangeRecord.getLong(PurchaseOrderM.CINVSTD));
 						record.set(PurchaseOrderM.CUOMNAME, invChangeRecord.getLong(PurchaseOrderM.CUOMNAME));
 					}
-					PurchaseorderdQty purchaseorderdQty = purchaseorderdQtyService.createPurchaseorderdQty(Integer.parseInt(yearStr),
-							Integer.parseInt(monthStr),
-							Integer.parseInt(dayStr),
-							qty.multiply(rate),
-							qty
-					);
-					purchaseorderdQtyList.add(purchaseorderdQty);
+					// 区分是采购还是委外
+					if (type == 1){
+						PurchaseorderdQty purchaseorderdQty = purchaseorderdQtyService.createPurchaseorderdQty(Integer.parseInt(yearStr),
+								Integer.parseInt(monthStr),
+								Integer.parseInt(dayStr),
+								qty.multiply(rate),
+								qty
+						);
+						purchaseorderdQtyList.add(purchaseorderdQty);
+					}else if (type == 2){
+						SubcontractorderdQty subcontractOrderdQty = subcontractorderdQtyService.createSubcontractOrderdQty(Integer.parseInt(yearStr),
+								Integer.parseInt(monthStr),
+								Integer.parseInt(dayStr),
+								qty.multiply(rate),
+								qty
+						);
+						subcontractOrderdQtyList.add(subcontractOrderdQty);
+					}
 					// 统计数量汇总
 					amount = amount.add(qty.multiply(rate));
 					sourceSum = sourceSum.add(qty);
@@ -244,10 +261,17 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 			if (ObjectUtil.isNull(record.getLong(PurchaseOrderD.IINVENTORYID))){
 				record.set(PurchaseOrderD.IINVENTORYID, invId);
 			}
-			// 字段记录
-			if (CollectionUtil.isNotEmpty(purchaseorderdQtyList)){
-				record.set(PurchaseOrderD.PURCHASEORDERD_QTY_LIST, purchaseorderdQtyList);
+			// 字段记录 判断委外或采购订单数量是否为空
+			if (type == 1){
+				if (CollectionUtil.isNotEmpty(purchaseorderdQtyList)){
+					record.set(PurchaseOrderD.PURCHASEORDERD_QTY_LIST, purchaseorderdQtyList);
+				}
+			}else if (type == 2){
+				if (CollectionUtil.isNotEmpty(subcontractOrderdQtyList)){
+					record.set(SubcontractOrderD.SUBCONTRACTORDERD_QTY_LIST, subcontractOrderdQtyList);
+				}
 			}
+			
 			record.set(PurchaseOrderD.ISUM, amount);
 			record.set(PurchaseOrderD.ISOURCESUM, sourceSum);
 		}
