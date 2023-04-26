@@ -214,7 +214,7 @@ WHERE a.isDeleted = '0'
 ORDER BY f.cEquipmentModelCode,e.cInvCode,c.iType,c.iYear,c.iMonth
 #end
 
-#sql("getApsYearPlanMasterPage")
+#sql("getApsYearPlanMasterList")
 SELECT a.iAutoId,a.iCustomerId,d.cCusCode,d.cCusName,a.iYear,a.cPlanOrderNo,
        a.iPlanOrderStatus,a.iAuditStatus,a.cCreateName,a.dCreateTime
 FROM Aps_AnnualPlanM AS a
@@ -249,7 +249,7 @@ ORDER BY a.cPlanOrderNo DESC
 
 ###---------------------------------------------------------年度生产计划汇总---------------------
 
-#sql("getApsYearPlanSumPage")
+#sql("getApsYearPlanSumList")
 ###年度生产计划汇总
 SELECT d.iWorkRegionMid,e.cWorkCode,e.cWorkName,
        a.iInventoryId,c.cInvCode,c.cInvCode1,c.cInvName1,
@@ -528,7 +528,7 @@ WHERE a.isDeleted = '0'
 
 ###---------------------------------------------------------月周生产计划汇总---------------------
 
-#sql("getApsMonthPlanSumPage")
+#sql("getApsMonthPlanSumList")
 ###根据日期及条件获取月周生产计划表数据三班汇总
 SELECT
     b.iYear,
@@ -585,9 +585,58 @@ WHERE b.isEnabled = 1 AND c.isEnabled = 1
 GROUP BY a.iAutoId,a.cInvCode
 #end
 
+###---------------------------------------------------------生产计划及实绩管理---------------------
 
-
-
+#sql("getApsMonthPlanList")
+###根据日期及条件获取月周生产计划表数据三班汇总
+SELECT
+    b.iYear,
+    b.iMonth,
+    b.iDate,
+    b.iQty1 AS QtyPP,
+    b.iQty2 AS Qty1S,
+    b.iQty3 AS Qty2S,
+    b.iQty4 AS Qty3S,
+    b.iQty5 AS QtyZK,
+    (b.iQty2 + b.iQty3 + b.iQty4) AS QtySUM,
+    a.iInventoryId AS invId,
+    c.cInvCode,
+    c.cInvCode1,
+    c.cInvName1,
+    c.iSaleType,
+    d.iWorkRegionMid,
+    e.cWorkCode,
+    e.cWorkName,
+    e.iPsLevel
+FROM Aps_WeekScheduleDetails AS a
+         LEFT JOIN Aps_WeekScheduleD_Qty AS b ON a.iAutoId = b.iWeekScheduleDid
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+         LEFT JOIN Bd_InventoryWorkRegion AS d ON c.iAutoId = d.iInventoryId AND d.isDefault = 1 AND d.isDeleted = 0
+         LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId AND e.isDeleted = 0
+WHERE a.isDeleted = '0'
+    #if(cworkname)
+        AND e.cWorkName LIKE CONCAT('%', #para(cworkname), '%')
+    #end
+    #if(cinvcode)
+        AND c.cInvCode LIKE CONCAT('%', #para(cinvcode), '%')
+    #end
+    #if(cinvcode1)
+        AND c.cInvCode1 LIKE CONCAT('%', #para(cinvcode1), '%')
+    #end
+    #if(cinvname1)
+        AND c.cInvName1 LIKE CONCAT('%', #para(cinvname1), '%')
+    #end
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) >= #para(startdate)
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) <= #para(enddate)
+#end
 
 
 

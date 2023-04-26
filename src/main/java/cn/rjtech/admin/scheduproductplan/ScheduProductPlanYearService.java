@@ -250,7 +250,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
 
 
     public Page<Record> getApsYearPlanMasterPage(int pageNumber, int pageSize, Kv kv) {
-        return dbTemplate("scheduproductplan.getApsYearPlanMasterPage",kv).paginate(pageNumber,pageSize);
+        return dbTemplate("scheduproductplan.getApsYearPlanMasterList",kv).paginate(pageNumber,pageSize);
     }
 
 
@@ -999,7 +999,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
         pageSize = pageSize * 15;
 
         kv.set("endyear",endYear);
-        Page<Record> recordPage = dbTemplate("scheduproductplan.getApsYearPlanSumPage",kv).paginate(pageNumber,pageSize);
+        Page<Record> recordPage = dbTemplate("scheduproductplan.getApsYearPlanSumList",kv).paginate(pageNumber,pageSize);
         List<Record> apsYearPlanQtyList = recordPage.getList();
 
         try {

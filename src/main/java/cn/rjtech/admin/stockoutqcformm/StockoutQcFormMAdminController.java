@@ -17,6 +17,7 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
@@ -51,7 +52,8 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.pageList(getKv()));
+		Page<Record> recordPage = service.pageList(getKv());
+		renderJsonData(recordPage);
 	}
 
    /**
@@ -73,12 +75,12 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	*/
 	public void edit() {
 		StockoutQcFormM stockoutQcFormM=service.findById(getLong(0));
-		if(stockoutQcFormM == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		set("stockoutQcFormM",stockoutQcFormM);
-		render("edit.html");
+		Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
+		List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(stockoutQcFormM.getIAutoId());
+		set("stockoutqcformlist", stockoutqcformlist);
+		set("stockoutqcformm", stockoutQcFormM);
+		set("record", record);
+		render("editstockoutqcformmTable.html");
 	}
 
    /**
@@ -107,9 +109,9 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	 */
 	public void checkout() {
 		StockoutQcFormM stockoutQcFormM = service.findById(getLong(0));
-//		Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+		Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
 		set("stockoutqcformm", stockoutQcFormM);
-//		set("record", record);
+		set("record", record);
 		render("checkout.html");
 	}
 
@@ -125,11 +127,11 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	 */
 	public void onlysee() {
 		StockoutQcFormM stockoutQcFormM = service.findById(getLong(0));
-//		Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
-//		List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
-//		set("docparamlist", docparamlist);
+		Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
+		List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(stockoutQcFormM.getIAutoId());
+		set("stockoutqcformlist", stockoutqcformlist);
 		set("stockoutqcformm", stockoutQcFormM);
-//		set("record", record);
+		set("record", record);
 		render("onlysee.html");
 	}
 
@@ -153,5 +155,26 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	 * */
 	public void editCheckOutTable(JBoltPara JboltPara) {
 		renderJson(service.editCheckOutTable(JboltPara));
+	}
+
+	/**
+	 * 点击查看时，进入弹窗自动加载table的数据
+	 */
+	public void getonlyseeDatas() {
+		renderJsonData(service.getonlyseelistByiautoid(getKv()));
+	}
+
+	/*
+	 * 生成
+	 * */
+	public void createTable(JBoltPara jBoltPara) {
+		renderJson(service.createTable(jBoltPara));
+	}
+
+	/**
+	 * 切换isCpkSigned
+	 */
+	public void toggleIsCpkSigned() {
+		renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
 	}
 }

@@ -1,4 +1,4 @@
-package cn.rjtech.admin.StockoutDefect;
+package cn.rjtech.admin.stockoutdefect;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -35,7 +35,7 @@ public class StockoutDefectAdminController extends BaseAdminController {
 	public void index() {
 		render("index.html");
 	}
-  	
+
   	/**
 	* 数据源
 	*/
@@ -102,7 +102,7 @@ public class StockoutDefectAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		StockoutDefect stockoutDefect=service.findById(getLong(0)); 
+		StockoutDefect stockoutDefect=service.findById(getLong(0));
 		if(stockoutDefect == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
