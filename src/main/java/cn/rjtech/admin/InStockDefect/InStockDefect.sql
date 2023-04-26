@@ -1,9 +1,8 @@
 #sql("paginateAdminDatas")
 SELECT
-    t1.iAutoId AS iRcvDocQcFormMid,
-    t1.cRcvDocQcFormNo,
+    t1.iAutoId AS iInStockQcFormMid,
+    t1.cInvQcFormNo,
     t1.iInventoryId,
-    t1.iVendorId,
     t2.iStatus,
     t2.iAutoId,
     t2.cDocNo,
@@ -15,22 +14,22 @@ SELECT
     t3.cInvName,
     t3.cInvCode1
 FROM
-    PL_RcvDocQcFormM t1
-        LEFT JOIN PL_RcvDocDefect t2 ON t2.iRcvDocQcFormMid = t1.iAutoId
+    PL_InStockQcFormM t1
+        LEFT JOIN PL_InStockDefect t2 ON t2.iInStockQcFormMid = t1.iAutoId
         LEFT JOIN Bd_Inventory t3 ON t3.iAutoId = t1.iInventoryId
 WHERE
         1 = 1
     #if(cDocNo)
   AND t2.cDocNo like '%#(cDocNo)%'
   #end
-    #if(iMoDocId)
-  AND t1.cRcvDocQcFormNo like '%#(iMoDocId)%'
-  #end
-#if(cInvCode)
-  AND t3.cInvCode like '%#(cInvCode)%'
+#if(iMoDocId)
+  AND  t1.cInvQcFormNo like '%#(iMoDocId)%'
   #end
 #if(cInvCode1)
   AND t3.cInvCode1 like '%#(cInvCode1)%'
+  #end
+#if(iInventoryId)
+  AND t3.cInvCode like '%#(cInvCode)%'
   #end
 #if(cInvName)
   AND t3.cInvName like '%#(cInvName)%'
@@ -49,18 +48,8 @@ WHERE
     and CONVERT(VARCHAR(10),t2.dUpdateTime,23) <='#(enddate)'
 #end
 order by t2.dUpdateTime desc
-#end
-
-
-
-    #sql("AdminDatas")
-SELECT *
-FROM Bd_QcForm
-WHERE 1 = 1
-    #if(cQcFormName)
-  AND cQcFormName like '%#(cQcFormName)%'
-  #end
-order by dUpdateTime desc
     #end
+
+
 
 

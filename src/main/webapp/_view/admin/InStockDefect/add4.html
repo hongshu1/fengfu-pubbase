@@ -2,60 +2,60 @@
 #define main()
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="rcvDocDefectForm"  action="admin/RcvDocDefect/updateEditTable" method="post">
-            <input type="hidden" name="rcvDocDefect.iautoid" value="#(rcvDocDefect.iautoid??)" />
-            <h5>检验信息</h5>
+        <form onsubmit="return false;" id="inStockDefectForm"  action="/admin/InStockDefect/updateEditTable" method="post">
+            <input type="hidden" name="inStockDefect.iautoid" value="#(inStockDefect.iautoid??)" />
+            <h5>部品信息</h5>
             <hr/>
             <div class="form-group row">
 
                 <label class="col-sm-2 col-form-label">异常品单号：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocDefect.cdocno??)
+                    #(inStockDefect.cdocno??)
                 </div>
                 <label class="col-sm-2 col-form-label">检验单号：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocQcFormM.crcvdocqcformno??)
+                    #(inStockQcFormM.cinvqcformno??)
                 </div>
                 <label class="col-sm-2 col-form-label">供应商名称：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocQcFormM.cvenname??)
+                    #(inStockDefect.ivendorid??)
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">存货编码：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocQcFormM.cinvcode??)
-                </div>
-                <label class="col-sm-2 col-form-label">部品名称：</label>
-                <div class="col-sm-2 col-form-label">
-                    #(rcvDocQcFormM.cinvname??)
+                    #(inStockQcFormM.cInvCode??)
                 </div>
                 <label class="col-sm-2 col-form-label">客户部番：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocQcFormM.cinvcode1??)
+                    #(inStockQcFormM.cInvCode1??)
+                </div>
+                <label class="col-sm-2 col-form-label">部品名称：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(inStockQcFormM.cInvName??)
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">不合格数量：</label>
+                <label class="col-sm-2 col-form-label">不良数量：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocDefect.idqqty??)
+                    #(inStockDefect.idqqty??)
                 </div>
-                <label class="col-sm-2 col-form-label">检验人：</label>
+                <label class="col-sm-2 col-form-label">创建时间：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocQcFormM.cupdatename??)
+                    #(inStockQcFormM.dupdatetime??)
                 </div>
-                <label class="col-sm-2 col-form-label">检验时间：</label>
+                <label class="col-sm-2 col-form-label">创建人：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocQcFormM.dupdatetime??)
+                    #(inStockQcFormM.cupdatename??)
                 </div>
             </div>
 
-            <h5>异常品记录信息</h5>
+            <h5>不良信息</h5>
             <div class="form-group row">
-                <input type="hidden" id="cbadnesssns" name="rcvDocDefect.cbadnesssns" value="#(rcvDocDefect.cbadnesssns??)"/>
+                <input type="hidden" id="cbadnesssns" name="inStockDefect.cbadnesssns" value="#(cbadnesssns)"/>
                 <label class="col-sm-2 col-form-label">不良项目：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocDefect.cbadnesssns??)
+                    #(inStockDefect.cbadnesssns??)
                 </div>
             </div>
             <div class="form-group row">
@@ -67,26 +67,22 @@
                 <div class="col-sm-2 col-form-label">
                     #(iresptype??)
                 </div>
-
-
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">不良内容描述：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocDefect.cdesc??)
+                    #(inStockDefect.cdesc??)
                 </div>
             </div>
-
-
             <div class="form-group row">
 
-                <label class="col-sm-2 col-form-label">创建人名称：</label>
+                <label class="col-sm-2 col-form-label">创建人：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocDefect.cupdatename??)
+                    #(inStockDefect.ccreatename??)
                 </div>
                 <label class="col-sm-2 col-form-label">创建时间：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocDefect.dupdatetime??)
+                    #(inStockDefect.dcreatetime??)
                 </div>
             </div>
 
@@ -98,15 +94,15 @@
                     #(capproach??)
                 </div>
             </div>
-            <div class="form-group row">
+            <div class="form-group row" id="6">
 
-                <label class="col-sm-2 col-form-label">创建人名称：</label>
+                <label class="col-sm-2 col-form-label">创建人：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocDefect.cupdatename??)
+                    #(inStockDefect.ccreatename??)
                 </div>
                 <label class="col-sm-2 col-form-label">创建时间：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(rcvDocDefect.dupdatetime??)
+                    #(inStockDefect.dcreatetime??)
                 </div>
             </div>
         </form>
@@ -118,7 +114,7 @@
         hideParentLayerDialogBtn(0);
     }
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="rcvDocDefectForm")
+#include("/_view/_admin/common/_formjs.html",formId="inStockDefectForm")
 #end
 #end
 

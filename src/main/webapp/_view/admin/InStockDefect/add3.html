@@ -2,74 +2,66 @@
 #define main()
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="processDefectForm"  action="/admin/ProcessDefect/ProcessDefectupdateEditTable" method="post">
-            <input type="hidden" name="processDefect.iautoid" value="#(processDefect.iautoid??)" />
+        <form onsubmit="return false;" id="inStockDefectForm"  action="/admin/InStockDefect/updateEditTable" method="post">
+            <input type="hidden" name="inStockDefect.iautoid" value="#(inStockDefect.iautoid??)" />
             <h5>部品信息</h5>
             <hr/>
             <div class="form-group row">
 
                 <label class="col-sm-2 col-form-label">异常品单号：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.cdocno??)
+                    #(inStockDefect.cdocno??)
                 </div>
-                <label class="col-sm-2 col-form-label">工单号：</label>
+                <label class="col-sm-2 col-form-label">检验单号：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.imodocid??)
+                    #(inStockQcFormM.cstockoutqcformno??)
+                </div>
+                <label class="col-sm-2 col-form-label">供应商名称：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(inStockDefect.ivendorid??)
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">存货编码：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.iinventoryid??)
+                    #(inStockQcFormM.cInvCode??)
                 </div>
                 <label class="col-sm-2 col-form-label">客户部番：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.cInvCode1??)
+                    #(inStockQcFormM.cInvCode1??)
                 </div>
                 <label class="col-sm-2 col-form-label">部品名称：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.cInvName1??)
+                    #(inStockQcFormM.cInvName??)
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">不良数量：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.idqqty??)
+                    #(inStockDefect.idqqty??)
                 </div>
                 <label class="col-sm-2 col-form-label">创建时间：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.dcreatetime??)
+                    #(inStockQcFormM.dupdatetime??)
                 </div>
                 <label class="col-sm-2 col-form-label">创建人：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.ccreatename??)
+                    #(inStockQcFormM.cupdatename??)
                 </div>
             </div>
 
             <h5>不良信息</h5>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">工序名称：</label>
-                <div class="col-sm-2 col-form-label">
-                    #(processDefect.processname??)
-                </div>
-                <label class="col-sm-2 col-form-label">不良数量：</label>
-                <div class="col-sm-2 col-form-label">
-                    #(processDefect.idqqty??)
-                </div>
-            </div>
-
-
-            <div class="form-group row">
-                <input type="hidden" id="cbadnesssns" name="processDefect.cbadnesssns" value="#(cbadnesssns)"/>
+                <input type="hidden" id="cbadnesssns" name="inStockDefect.cbadnesssns" value="#(cbadnesssns)"/>
                 <label class="col-sm-2 col-form-label">不良项目：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.cbadnesssns??)
+                    #(inStockDefect.cbadnesssns??)
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">首再发：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(isfirsttime??)
+                    #(istatus??)
                 </div>
                 <label class="col-sm-2 col-form-label">责任区：</label>
                 <div class="col-sm-2 col-form-label">
@@ -79,38 +71,46 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">不良内容描述：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.cdesc??)
+                    #(inStockDefect.cdesc??)
                 </div>
             </div>
             <div class="form-group row">
 
                 <label class="col-sm-2 col-form-label">创建人：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.ccreatename??)
+                    #(inStockQcFormM.dupdatetime??)
                 </div>
                 <label class="col-sm-2 col-form-label">创建时间：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(processDefect.dcreatetime??)
+                    #(inStockQcFormM.dcreatetime??)
                 </div>
             </div>
 
             <h5>异常品判定信息</h5>
             <div class="form-group row">
-
                 <label class="col-sm-2 col-form-label">处置区分：</label>
-                <div class="col-sm-2 col-form-label">
-                    #(capproach??)
-                </div>
-            </div>
-            <div class="form-group row" id="6">
-
-                <label class="col-sm-2 col-form-label">创建人：</label>
-                <div class="col-sm-2 col-form-label">
-                    #(processDefect.ccreatename??)
-                </div>
-                <label class="col-sm-2 col-form-label">创建时间：</label>
-                <div class="col-sm-2 col-form-label">
-                    #(processDefect.dcreatetime??)
+                <div class="col-sm-8 col-form-label">
+                    <div class="form-group row"
+                         data-radio
+                         data-rule="radio"
+                         data-value="#(inStockDefect.capproach??)"
+                         data-name="inStockDefect.capproach"
+                         data-default="true">
+                        <div class="col"  style="padding-top: 1px;">
+                            <div class="radio radio-primary  radio-inline">
+                                <input  id="capproachtrue1" type="radio" name="inStockDefect.capproach"   value="1"/>
+                                <label for="capproachtrue1">报废</label>
+                            </div>
+                            <div class="radio radio-primary  radio-inline">
+                                <input  id="capproachtrue2" type="radio" name="inStockDefect.capproach"   value="2"/>
+                                <label for="capproachtrue2">返修</label>
+                            </div>
+                            <div class="radio radio-primary  radio-inline">
+                                <input  id="capproachfalse1" type="radio" name="inStockDefect.capproach"   value="0"/>
+                                <label for="capproachfalse1">退货</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
@@ -122,7 +122,7 @@
         hideParentLayerDialogBtn(0);
     }
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="processDefectForm")
+#include("/_view/_admin/common/_formjs.html",formId="inStockDefectForm")
 #end
 #end
 
