@@ -1,0 +1,112 @@
+<form onsubmit="return false;" id="moDocForm" action="#(action)" method="post">
+<input type="hidden" name="moDoc.iautoid" value="#(moDoc.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">制造工单任务ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入制造工单任务ID" maxlength="19" name="moDoc.imotaskid" value="#(moDoc.imotaskid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">产线ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入产线ID" maxlength="19" name="moDoc.iworkregionmid" value="#(moDoc.iworkregionmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="moDoc.iinventoryid" value="#(moDoc.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产工单号</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入生产工单号" maxlength="50" name="moDoc.cmodocno" value="#(moDoc.cmodocno??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划日期</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置计划日期" data-tips="请设置计划日期" maxlength="10" name="moDoc.dplandate" value="#(moDoc.dplandate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年" data-tips="请设置年" maxlength="10" name="moDoc.iyear" value="#(moDoc.iyear??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">月</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入月"  maxlength="10" name="moDoc.imonth" value="#(moDoc.imonth??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入日"  maxlength="10" name="moDoc.idate" value="#(moDoc.idate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产部门（系）ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入生产部门（系）ID" maxlength="19" name="moDoc.idepartmentid" value="#(moDoc.idepartmentid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">班次ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入班次ID" maxlength="19" name="moDoc.iworkshiftmid" value="#(moDoc.iworkshiftmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入计划数量"  maxlength="18" name="moDoc.iqty" value="#(moDoc.iqty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">完工数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入完工数量"  maxlength="18" name="moDoc.icompqty" value="#(moDoc.icompqty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">人数</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入人数"  maxlength="10" name="moDoc.ipersonnum" value="#(moDoc.ipersonnum??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">产线组长人员ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入产线组长人员ID" maxlength="19" name="moDoc.idutypersonid" value="#(moDoc.idutypersonid??)"/>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">工艺路线ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入工艺路线ID" maxlength="19" name="moDoc.iinventoryrouting" value="#(moDoc.iinventoryrouting??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">工艺路线名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入工艺路线名称" maxlength="100" name="moDoc.croutingname" value="#(moDoc.croutingname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">工艺路线版本</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入工艺路线版本" maxlength="10" name="moDoc.cversion" value="#(moDoc.cversion??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="moDocForm")
+#end
+
