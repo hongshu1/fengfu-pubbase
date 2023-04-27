@@ -2,6 +2,7 @@ package cn.rjtech.admin.stockoutqcformm;
 
 import java.util.List;
 
+import com.google.gson.Gson;
 import com.jfinal.aop.Inject;
 
 import cn.jbolt.common.config.JBoltUploadFolder;
@@ -17,6 +18,7 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -146,29 +148,32 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	/*
 	 * 在编辑页面点击确定
 	 * */
-	public void editTable(JBoltPara JboltPara) {
-		renderJson(service.editTable(JboltPara));
+	public void saveEditTable(JBoltPara JboltPara) {
+		renderJson(service.saveEditTable(JboltPara));
 	}
 
 	/*
 	 * 在检验页面点击确定
 	 * */
-	public void editCheckOutTable(JBoltPara JboltPara) {
-		renderJson(service.editCheckOutTable(JboltPara));
+	public void saveCheckOutTable(JBoltPara JboltPara) {
+		renderJson(service.saveCheckOutTable(JboltPara));
 	}
 
 	/**
 	 * 点击查看时，进入弹窗自动加载table的数据
 	 */
 	public void getonlyseeDatas() {
-		renderJsonData(service.getonlyseelistByiautoid(getKv()));
+		List<Record> recordList = service.getonlyseelistByiautoid(getKv());
+		System.out.println("recordList=====>"+recordList);
+		renderJsonData(recordList);
 	}
 
 	/*
 	 * 生成
 	 * */
-	public void createTable(JBoltPara jBoltPara) {
-		renderJson(service.createTable(jBoltPara));
+	public void createTable(@Para(value = "iautoid") Long iautoid,
+							@Para(value = "cqcformname") String cqcformname) {
+		renderJson(service.createTable(iautoid,cqcformname));
 	}
 
 	/**

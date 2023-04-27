@@ -426,8 +426,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     /*
      * 根据表格ID生成table
      * */
-    public Ret createTable(JBoltPara jBoltPara) {
-        Long iautoid = jBoltPara.getLong("iautoid");
+    public Ret createTable(Long iautoid,String cqcformname) {
         RcvDocQcFormM rcvDocQcFormM = findById(iautoid);
         if (null == rcvDocQcFormM) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
@@ -435,6 +434,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         //1、根据表格ID查询数据
         Long iQcFormId = rcvDocQcFormM.getIQcFormId();//表格ID
         List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", iQcFormId)).find();
+        if (recordList.isEmpty()) {
+            return fail(cqcformname + "：没有检验项目，无法生成来料检查表");
+        }
         ArrayList<RcvDocQcFormD> rcvDocQcFormDS = new ArrayList<>();
         for (Record record : recordList) {
             RcvDocQcFormD rcvDocQcFormD = new RcvDocQcFormD();//质量管理-来料检单行配置表
