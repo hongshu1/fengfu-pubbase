@@ -36,7 +36,7 @@
   <td>
     <!-- <i class="fa fa-pencil c-primary"></i>-->
     <!-- <i class="fa fa-remove c-danger"></i>-->
-      <a tooltip title="编辑" href="admin/qcparam/checkout/${data.iautoid}" data-scroll="yes" data-handler="refreshJBoltTable"
+      <a tooltip title="编辑" href="admin/qcparam/edit/${data.iautoid}" data-scroll="yes" data-handler="refreshJBoltTable"
          data-title="编辑" data-area="1200,1000" class="jbolt_table_editbtn">编辑</a>
       <a tooltip title="删除" href="admin/qcparam/delete/${data.iautoid}" data-handler="refreshJBoltTable"
          class="jbolt_table_delbtn">删除</a>
@@ -99,6 +99,7 @@
            data-width="fill"
            data-height="fill"
            data-ajax="true"
+           data-column-resize="true"
            data-conditions-form="qcParamFrom_#(pageId)"
            data-url="admin/qcparam/datas"
            data-rowtpl="qcParamRowtpl_#(pageId)"
