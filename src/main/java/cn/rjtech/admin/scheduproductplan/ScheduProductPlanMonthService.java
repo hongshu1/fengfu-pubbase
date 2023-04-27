@@ -906,6 +906,96 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return null;
     }
 
+
+    /**
+     * 获取计划
+     */
+    public List<ScheduProductYearViewDTO> lockScheduPlan(Long iWeekScheduleId) {
+
+        //TODO:查询排产开始日期与截止日期
+        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
+        int iLevel = apsWeekschedule.getILevel();
+        String startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(),"yyyy-MM-dd");
+        String endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(),"yyyy-MM-dd");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(DateUtils.parseDate(startDate));
+        calendar.add(Calendar.DATE,-1);//日期-1
+        //过去一天年月日
+        Date lastDate = DateUtils.parseDate(DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd"));
+        int lastyear = Integer.parseInt(DateUtils.formatDate(lastDate,"yyyy"));
+        int lastmonth = Integer.parseInt(DateUtils.formatDate(lastDate,"MM"));
+        int lastday = Integer.parseInt(DateUtils.formatDate(lastDate,"dd"));
+
+
+        //TODO:根据层级及日期获取月周生产计划表数据
+        List<Record> getWeekScheduPlanList = getWeekScheduPlanList(Okv.by("level",iLevel).set("startdate",startDate).set("enddate",endDate));
+
+        //key:产线id   value:List物料集
+        Map<Long,List<String>> workInvListMap = new HashMap<>();
+        //key:inv，   value:<yyyy-MM-dd，Record>
+        Map<String,Map<String,Record>> invPlanDateMap = new HashMap<>();
+        //本次排产物料id集
+        String idsJoin = "(";
+        List<Long> idList = new ArrayList<>();
+        for (Record record : getWeekScheduPlanList){
+            Long iWorkRegionMid = record.getLong("iWorkRegionMid");
+            Long invId = record.getLong("invId");
+            String cInvCode = record.getStr("cInvCode");
+            String iYear = record.getStr("iYear");
+            int iMonth = record.getInt("iMonth");
+            int iDate = record.getInt("iDate");
+            //yyyy-MM-dd
+            String dateKey = iYear;
+            dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+            dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+
+            if (workInvListMap.containsKey(iWorkRegionMid)){
+                List<String> list = workInvListMap.get(iWorkRegionMid);
+                list.add(cInvCode);
+            }else {
+                List<String> list = new ArrayList<>();
+                list.add(cInvCode);
+                workInvListMap.put(iWorkRegionMid,list);
+            }
+
+            if (invPlanDateMap.containsKey(cInvCode)){
+                //key:yyyy-MM-dd   value:qty
+                Map<String,Record> dateQtyMap = invPlanDateMap.get(cInvCode);
+                dateQtyMap.put(dateKey,record);
+            }else {
+                Map<String,Record> dateQtyMap = new HashMap<>();
+                dateQtyMap.put(dateKey,record);
+                invPlanDateMap.put(cInvCode,dateQtyMap);
+            }
+
+            if (!idList.contains(invId)){
+                idsJoin = idsJoin + invId + ",";
+                idList.add(invId);
+            }
+        }
+        idsJoin = idsJoin + "601)";
+
+
+
+        //TODO:查询物料集期初在库
+        List<Record> getLastDateZKQtyList = getLastDateZKQtyList(Kv.by("lastyear",lastyear).set("lastmonth",lastmonth).set("lastday",lastday).set("ids",idsJoin));
+        //key:inv   value:qty
+        Map<String,Integer> lastDateZKQtyMap = new HashMap<>();
+        for (Record record : getLastDateZKQtyList){
+            String cInvCode = record.getStr("cInvCode");
+            int iQty5 = record.getBigDecimal("iQty5").intValue();
+            lastDateZKQtyMap.put(cInvCode,iQty5);
+        }
+
+
+
+
+
+
+        return null;
+    }
+
     //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------
 
     /**
