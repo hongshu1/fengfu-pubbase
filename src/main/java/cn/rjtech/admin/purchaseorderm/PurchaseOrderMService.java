@@ -338,7 +338,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		
 		// 第一层：年月
 		// 第二层：日
-		Map<String, List<Integer>> dateMap = new HashMap<>();
+		Map<String, List<Integer>> dateMap = new TreeMap<>();
 		for (String dateStr : calendarMap.keySet()){
 			// yyyy-MM-dd
 			DateTime dateTime = DateUtil.parse(dateStr, DatePattern.NORM_DATE_PATTERN);
