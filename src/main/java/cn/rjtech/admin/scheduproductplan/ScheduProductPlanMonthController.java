@@ -351,6 +351,15 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         renderJson(service.getScheduPlanMonthList(iWeekScheduleId));
     }
 
+    /**
+     * 锁定计划
+     */
+    public void lockScheduPlan() {
+        //排产纪录id
+        Long iWeekScheduleId = null;
+        renderJson(service.lockScheduPlan(iWeekScheduleId));
+    }
+
 
 
     //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------

@@ -100,15 +100,6 @@
 
 #define js()
 <script type="text/javascript">
-function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-	$(tempTr1).data('url', '/admin/annualorderm/edit/' + rowData.iautoid)
-		.data('area', '100%,100%')
-		.data('handler','refreshJBoltTable')
-		.data('title', '人员档案')
-		.data('btn', '确认,关闭');
-
-	DialogUtil.openBy(tempTr1);
-}
 
 
 function addViewBtn(ele,cPlanOrderNo,iCustomerId,iYear){

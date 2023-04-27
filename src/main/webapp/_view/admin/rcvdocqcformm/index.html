@@ -103,7 +103,7 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
     {@if data.istatus == 0}
-    		<button type="button" onclick="createTable(${data.iautoid})" data-handler="refreshJBoltTable"
+    		<button type="button" onclick="createTable(${data.iautoid},${data.cqcformname})" data-handler="refreshJBoltTable"
                 class="btn btn-outline-secondary">生成</button>
     {@/if}
     {@if data.istatus == 1}
@@ -207,9 +207,10 @@
   /*
   * 生成
   * */
-  function createTable(iautoid) {
+  function createTable(iautoid,cqcformname) {
     var para = {
-      iautoid: iautoid
+      iautoid: iautoid,
+      cqcformname:cqcformname
     }
 
     Ajax.post('/admin/rcvdocqcformm/createTable', para, function (res) {

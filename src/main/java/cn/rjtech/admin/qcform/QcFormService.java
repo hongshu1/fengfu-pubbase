@@ -242,7 +242,6 @@ public class QcFormService extends BaseService<QcForm> {
 //			}
             return true;
         });
-
         return successWithData(qcForm.keep("iautoid"));
     }
 

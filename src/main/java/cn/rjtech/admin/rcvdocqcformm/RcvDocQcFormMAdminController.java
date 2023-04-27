@@ -26,6 +26,7 @@ import com.jfinal.aop.Before;
 
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -216,7 +217,8 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     /*
      * 生成
      * */
-    public void createTable(JBoltPara jBoltPara) {
-        renderJson(service.createTable(jBoltPara));
+    public void createTable(@Para(value = "iautoid") Long iautoid,
+                            @Para(value = "cqcformname") String cqcformname) {
+        renderJson(service.createTable(iautoid,cqcformname));
     }
 }
