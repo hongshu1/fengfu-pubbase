@@ -7,7 +7,6 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.util.JBoltListMap;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.CusOrderSum;
 import cn.rjtech.util.ValidationUtils;
@@ -15,10 +14,9 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
-
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
+
 
 /**
  * 客户订单-客户计划汇总
@@ -114,11 +112,14 @@ public class CusOrderSumAdminController extends BaseAdminController {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(beginDate);
 
-        JBoltListMap<String, Date> dateMap = new JBoltListMap<>();
+        Map<String, List<Date>> dateMap = new TreeMap<>();
 
         while (DateUtil.compare(endDate, calendar.getTime()) >= 0) {
             // 年月 - 年-月-日
-            dateMap.addItem(calendar.get(Calendar.YEAR) + StrUtil.UNDERLINE + (calendar.get(Calendar.MONTH) + 1), calendar.getTime());
+            String key = calendar.get(Calendar.YEAR) + StrUtil.UNDERLINE + (calendar.get(Calendar.MONTH) + 1);
+            List<Date> dateList = dateMap.containsKey(key) ? dateMap.get(key) : new ArrayList<>();
+            dateList.add(calendar.getTime());
+            dateMap.put(key, dateList);
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
