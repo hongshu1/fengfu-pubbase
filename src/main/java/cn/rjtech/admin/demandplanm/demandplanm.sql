@@ -1,7 +1,7 @@
 #sql("findByVendorDate")
 SELECT DISTINCT
 	a.iVendorId,
-	a.iInventoryId AS iSourceInventoryId,
+	a.iInventoryId,
 	inv.cInvStd,
 	inv.cInvCode,
 	inv.cInvName,

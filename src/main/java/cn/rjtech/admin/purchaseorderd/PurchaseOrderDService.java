@@ -148,10 +148,8 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
         purchaseOrderD.setCMemo(jsonObject.getString(purchaseOrderD.CMEMO.toLowerCase()));
         purchaseOrderD.setIsPresent(jsonObject.getBoolean(purchaseOrderD.ISPRESENT.toLowerCase()));
         purchaseOrderD.setIsDeleted(false);
-        purchaseOrderD.setISourceInventoryId(jsonObject.getLong(purchaseOrderD.ISOURCEINVENTORYID.toLowerCase()));
         purchaseOrderD.setIInventoryId(jsonObject.getLong(purchaseOrderD.IINVENTORYID.toLowerCase()));
         purchaseOrderD.setISum(jsonObject.getBigDecimal(purchaseOrderD.ISUM.toLowerCase()));
-        purchaseOrderD.setISourceSum(jsonObject.getBigDecimal(purchaseOrderD.ISOURCESUM.toLowerCase()));
         return purchaseOrderD;
 	}
 	
@@ -173,7 +171,7 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		// 将日期设值。
 		for (Record record : purchaseOrderDList){
 			// 存货id（原存货id）
-			Long invId = record.getLong(PurchaseOrderD.ISOURCEINVENTORYID);
+			Long invId = record.getLong(PurchaseOrderD.IINVENTORYID);
 			
 			BigDecimal[] arr = new BigDecimal[calendarMap.keySet().size()];
 			record.set(PurchaseOrderM.ARR, arr);
@@ -186,8 +184,7 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 			Map<String, BigDecimal> dateQtyMap = purchaseOrderdQtyMap.get(invId);
 			// 统计合计数量
 			BigDecimal amount = BigDecimal.ZERO;
-			// 转换前合计数量
-			BigDecimal sourceSum = BigDecimal.ZERO;
+			
 			for (String dateStr : dateQtyMap.keySet()){
 				// 原数量
 				BigDecimal qty = dateQtyMap.get(dateStr);
@@ -199,21 +196,13 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 				if (calendarMap.containsKey(formatDateStr)){
 					Integer index = calendarMap.get(formatDateStr);
 					arr[index] = qty;
-					// 转换率，默认为1
-					BigDecimal rate = BigDecimal.ONE;
-					// 判断当前存货是否存在物料转换
 					// 统计数量汇总
-					amount = amount.add(qty.multiply(rate));
-					sourceSum = sourceSum.add(qty);
+					amount = amount.add(qty);
+					
 				}
 			}
-			Long inventoryId = record.getLong(PurchaseOrderD.IINVENTORYID);
-			// 判断源存货id是否跟转换后的id一致
-			if (!invId.equals(inventoryId)){
-				record.set(PurchaseOrderM.IPKGQTY, record.getBigDecimal(PurchaseOrderM.AFTERIPKGQTY));
-			}
+			
 			record.set(PurchaseOrderD.ISUM, amount);
-			record.set(PurchaseOrderD.ISOURCESUM, sourceSum);
 		}
 	}
 }

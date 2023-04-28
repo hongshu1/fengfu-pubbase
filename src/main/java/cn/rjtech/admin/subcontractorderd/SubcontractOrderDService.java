@@ -10,7 +10,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.SubcontractOrderD;
-import cn.rjtech.model.momdata.SubcontractOrderM;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -148,10 +147,8 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 		subcontractOrderD.setCMemo(jsonObject.getString(SubcontractOrderD.CMEMO.toLowerCase()));
 		subcontractOrderD.setIsPresent(jsonObject.getBoolean(SubcontractOrderD.ISPRESENT.toLowerCase()));
 		subcontractOrderD.setIsDeleted(false);
-		subcontractOrderD.setISourceInventoryId(jsonObject.getLong(SubcontractOrderD.ISOURCEINVENTORYID.toLowerCase()));
 		subcontractOrderD.setIInventoryId(jsonObject.getLong(SubcontractOrderD.IINVENTORYID.toLowerCase()));
 		subcontractOrderD.setISum(jsonObject.getBigDecimal(SubcontractOrderD.ISUM.toLowerCase()));
-		subcontractOrderD.setISourceSum(jsonObject.getBigDecimal(SubcontractOrderD.ISOURCESUM.toLowerCase()));
 		return subcontractOrderD;
 	}
 	
@@ -173,7 +170,7 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 		// 将日期设值。
 		for (Record record : subcontractOrderDList){
 			// 存货id（原存货id）
-			Long invId = record.getLong(SubcontractOrderD.ISOURCEINVENTORYID);
+			Long invId = record.getLong(SubcontractOrderD.IINVENTORYID);
 			
 			BigDecimal[] arr = new BigDecimal[calendarMap.keySet().size()];
 			record.set(PurchaseOrderM.ARR, arr);
@@ -186,8 +183,7 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 			Map<String, BigDecimal> dateQtyMap = subcontractOrderdQtyMap.get(invId);
 			// 统计合计数量
 			BigDecimal amount = BigDecimal.ZERO;
-			// 转换前合计数量
-			BigDecimal sourceSum = BigDecimal.ZERO;
+			
 			for (String dateStr : dateQtyMap.keySet()){
 				// 原数量
 				BigDecimal qty = dateQtyMap.get(dateStr);
@@ -200,20 +196,13 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 					Integer index = calendarMap.get(formatDateStr);
 					arr[index] = qty;
 					// 转换率，默认为1
-					BigDecimal rate = BigDecimal.ONE;
 					// 判断当前存货是否存在物料转换
 					// 统计数量汇总
-					amount = amount.add(qty.multiply(rate));
-					sourceSum = sourceSum.add(qty);
+					amount = amount.add(qty);
 				}
 			}
-			Long inventoryId = record.getLong(SubcontractOrderD.IINVENTORYID);
-			// 判断源存货id是否跟转换后的id一致
-			if (!invId.equals(inventoryId)){
-				record.set(SubcontractOrderM.IPKGQTY, record.getBigDecimal(SubcontractOrderM.AFTERIPKGQTY));
-			}
 			record.set(SubcontractOrderD.ISUM, amount);
-			record.set(SubcontractOrderD.ISOURCESUM, sourceSum);
+			
 		}
 	}
 

@@ -2,7 +2,6 @@ package cn.rjtech.admin.purchaseorderdbatch;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
@@ -227,14 +226,7 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
 				if (yearStr.equals(String.valueOf(year)) && monthStr.equals(String.valueOf(month)) && dateStr.equals(String.valueOf(date))){
 					// 总数量 - 更改的数量
 					BigDecimal num = purchaseOrderdQty.getIQty().subtract(orderDBatch.getIQty().subtract(qty));
-					purchaseOrderdQty.setISourceQty(num);
-					// 默认乘以1
-					BigDecimal rate = BigDecimal.ONE;
-					if (ObjectUtil.isNotNull(inventoryChange)){
-						rate = inventoryChange.getIChangeRate();
-					}
-					// 乘以转换率；
-					purchaseOrderdQty.setIQty(num.multiply(rate));
+					purchaseOrderdQty.setIQty(num);
 					purchaseOrderdQty.update();
 				}
 			}

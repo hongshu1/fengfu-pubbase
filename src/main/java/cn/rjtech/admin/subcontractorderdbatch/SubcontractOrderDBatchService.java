@@ -2,15 +2,12 @@ package cn.rjtech.admin.subcontractorderdbatch;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.subcontractorderdbatchversion.SubcontractOrderDBatchVersionService;
 import cn.rjtech.admin.subcontractorderdqty.SubcontractorderdQtyService;
-import cn.rjtech.model.momdata.InventoryChange;
 import cn.rjtech.model.momdata.SubcontractOrderDBatch;
 import cn.rjtech.model.momdata.SubcontractOrderDBatchVersion;
 import cn.rjtech.model.momdata.SubcontractorderdQty;
@@ -41,8 +38,6 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
 	private SubcontractOrderDBatchVersionService subcontractOrderDBatchVersionService;
 	@Inject
 	private SubcontractorderdQtyService subcontractorderdQtyService;
-	@Inject
-	private InventoryChangeService inventoryChangeService;
 	
 	@Override
 	protected SubcontractOrderDBatch dao() {
@@ -193,8 +188,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
 		newBatch.setCSourceld(String.valueOf(id));
 		// 将旧的改为失效
 		orderDBatch.setIsEffective(false);
-		// 查存货
-		InventoryChange inventoryChange = inventoryChangeService.findByBeforeInventoryId(orderDBatch.getIinventoryId());
+		
 		
 		// 将计划类型拆分成 年月日
 		String yearStr = DateUtil.format(orderDBatch.getDPlanDate(), "yyyy");
@@ -219,14 +213,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
 				if (yearStr.equals(String.valueOf(year)) && monthStr.equals(String.valueOf(month)) && dateStr.equals(String.valueOf(date))){
 					// 总数量 - 更改的数量
 					BigDecimal num = subcontractorderdQty.getIQty().subtract(orderDBatch.getIQty().subtract(qty));
-					subcontractorderdQty.setISourceQty(num);
-					// 默认乘以1
-					BigDecimal rate = BigDecimal.ONE;
-					if (ObjectUtil.isNotNull(inventoryChange)){
-						rate = inventoryChange.getIChangeRate();
-					}
-					// 乘以转换率；
-					subcontractorderdQty.setIQty(num.multiply(rate));
+					subcontractorderdQty.setIQty(num);
 					subcontractorderdQty.update();
 				}
 			}

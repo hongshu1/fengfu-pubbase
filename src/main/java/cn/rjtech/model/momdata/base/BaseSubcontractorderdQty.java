@@ -22,8 +22,6 @@ public abstract class BaseSubcontractorderdQty<M extends BaseSubcontractorderdQt
     public static final String IDATE = "iDate";
     /**数量*/
     public static final String IQTY = "iQty";
-    /**转换前数量*/
-    public static final String ISOURCEQTY = "iSourceQty";
 	/**
 	 * 主键ID
 	 */
@@ -103,7 +101,7 @@ public abstract class BaseSubcontractorderdQty<M extends BaseSubcontractorderdQt
 	/**
 	 * 日
 	 */
-	@JBoltField(name="idate" ,columnName="iDate",type="Integer", remark="日", required=true, maxLength=255, fixed=0, order=5)
+	@JBoltField(name="idate" ,columnName="iDate",type="Integer", remark="日", required=true, maxLength=10, fixed=0, order=5)
 	@JSONField(name = "idate")
 	public java.lang.Integer getIDate() {
 		return getInt("iDate");
@@ -124,23 +122,6 @@ public abstract class BaseSubcontractorderdQty<M extends BaseSubcontractorderdQt
 	@JSONField(name = "iqty")
 	public java.math.BigDecimal getIQty() {
 		return getBigDecimal("iQty");
-	}
-
-	/**
-	 * 转换前数量
-	 */
-	public M setISourceQty(java.math.BigDecimal iSourceQty) {
-		set("iSourceQty", iSourceQty);
-		return (M)this;
-	}
-
-	/**
-	 * 转换前数量
-	 */
-	@JBoltField(name="isourceqty" ,columnName="iSourceQty",type="BigDecimal", remark="转换前数量", required=false, maxLength=18, fixed=2, order=7)
-	@JSONField(name = "isourceqty")
-	public java.math.BigDecimal getISourceQty() {
-		return getBigDecimal("iSourceQty");
 	}
 
 }

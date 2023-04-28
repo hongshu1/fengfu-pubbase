@@ -59,8 +59,6 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 	@Inject
 	private DemandPlanDService demandPlanDService;
 	@Inject
-	private InventoryChangeService inventoryChangeService;
-	@Inject
 	private SubcontractorderdQtyService subcontractorderdQtyService;
 	@Inject
 	private SubcontractOrderDService subcontractOrderDService;
@@ -295,17 +293,11 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		// 按存货编码汇总
 		Map<Long, Map<String, BigDecimal>> demandPlanDMap = demandPlanDService.getDemandPlanDMap(demandPlanDList, DemandPlanM.IINVENTORYID);
 		
-		// 获取物料形态转换表
-		List<Record> inventoryChanges = inventoryChangeService.findByOrgList(getOrgId());
-//		Map<Long, BigDecimal> invChangeRateMap = inventoryChanges.stream().collect(Collectors.toMap(r -> r.getLong(InventoryChange.IAFTERINVENTORYID), r -> r.getBigDecimal(InventoryChange.ICHANGERATE), (key1, key2) -> key2));
-//////
-		Map<Long, Record> invChangeMap = inventoryChanges.stream().collect(Collectors.toMap(r -> r.getLong(InventoryChange.IAFTERINVENTORYID),  r -> r, (key1, key2) -> key2));
-		
 		Map<String, Object> repMap = new HashMap<>();
 		// 获取所有日期集合
 		Map<String, Integer> calendarMap = getCalendarMap(DateUtil.parseDate(beginDate), DateUtil.parseDate(endDate));
 		// 设置到货计划明细数量
-		demandPlanMService.setVendorDateList(OrderGenTypeEnum.SUBCONTRACT_GEN.getValue(), vendorDateList, demandPlanDMap, calendarMap, invChangeMap, puOrderRefMap);
+		demandPlanMService.setVendorDateList(OrderGenTypeEnum.SUBCONTRACT_GEN.getValue(), vendorDateList, demandPlanDMap, calendarMap, puOrderRefMap);
 		
 		// 第一层：年月
 		// 第二层：日
@@ -339,7 +331,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		List<Record> purchaseOrderdQtyList = subcontractorderdQtyService.findBySubcontractOrderMId(subcontractOrderM.getIAutoId());
 		
 		// 按存货编码汇总
-		Map<Long, Map<String, BigDecimal>>  purchaseOrderdQtyMap = demandPlanDService.getDemandPlanDMap(purchaseOrderdQtyList, SubcontractOrderD.ISOURCEINVENTORYID);
+		Map<Long, Map<String, BigDecimal>>  purchaseOrderdQtyMap = demandPlanDService.getDemandPlanDMap(purchaseOrderdQtyList, SubcontractOrderD.IVENDORADDRID);
 		
 		Map<String, Object> repMap = new HashMap<>();
 		// 获取所有日期集合
@@ -711,9 +703,9 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		ValidationUtils.notEmpty(purchaseOrderDQtyList, subcontractOrderM.getCOrderNo()+"无现品票生成");
 		for (Record record : purchaseOrderDQtyList){
 			// 源数量
-			BigDecimal sourceQty = record.getBigDecimal(SubcontractorderdQty.ISOURCEQTY);
+			BigDecimal sourceQty = record.getBigDecimal(SubcontractorderdQty.IQTY);
 			Long subcontractOrderDid = record.getLong(SubcontractorderdQty.ISUBCONTRACTORDERDID);
-			Long inventoryId = record.getLong(SubcontractOrderD.ISOURCEINVENTORYID);
+			Long inventoryId = record.getLong(SubcontractOrderD.IVENDORADDRID);
 			
 			String dateStr = demandPlanDService.getDate(record.getStr(PurchaseorderdQty.IYEAR), record.getInt(PurchaseorderdQty.IMONTH), record.getInt(PurchaseorderdQty.IDATE));
 			DateTime planDate = DateUtil.parse(dateStr, DatePattern.PURE_DATE_PATTERN);
