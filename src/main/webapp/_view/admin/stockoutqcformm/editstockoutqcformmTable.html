@@ -393,7 +393,7 @@
       isok: isok,
       stockqcformmiautoid: iautoid
     }
-    Ajax.post("admin/stockoutqcformm/editTable", submitDatas, function (res) {
+    Ajax.post("admin/stockoutqcformm/saveEditTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {
           refreshPjaxContainer();

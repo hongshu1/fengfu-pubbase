@@ -157,7 +157,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     /*
      * 在编辑页面点击确定
      * */
-    public Ret editTable(JBoltPara JboltPara) {
+    public Ret saveEditTable(JBoltPara JboltPara) {
         if (JboltPara == null || JboltPara.isEmpty()) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
@@ -186,8 +186,9 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
             }
         }
         //更新line
-        stockoutqcformdLineService.batchUpdate(stockoutqcformdLines);
-
+        if (!stockoutqcformdLines.isEmpty()){
+            stockoutqcformdLineService.batchUpdate(stockoutqcformdLines);
+        }
         StockoutQcFormM stockoutQcFormM = findById(stockqcformmiautoid);
         saveStockoutQcFormmModel(stockoutQcFormM, JboltPara);
 		Ret ret = update(stockoutQcFormM);
@@ -200,7 +201,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     /*
      * 在检验页面点击确定
      * */
-    public Ret editCheckOutTable(JBoltPara JboltPara) {
+    public Ret saveCheckOutTable(JBoltPara JboltPara) {
         if (JboltPara == null || JboltPara.isEmpty()) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
@@ -225,7 +226,9 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
             }
         }
         //保存line
-        stockoutqcformdLineService.batchSave(stockoutqcformdLines);
+        if (!stockoutqcformdLines.isEmpty()){
+            stockoutqcformdLineService.batchSave(stockoutqcformdLines);
+        }
         /*
          * 出库检表
          * 1.如果isok=0，代表不合格，将iStatus更新为2，isCompleted更新为1；
@@ -349,8 +352,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     /*
      * 根据表格ID生成table
      * */
-    public Ret createTable(JBoltPara jBoltPara) {
-        Long iautoid = jBoltPara.getLong("iautoid");
+    public Ret createTable(Long iautoid,String cqcformname) {
         StockoutQcFormM stockoutQcFormM = findById(iautoid);
         if (null == stockoutQcFormM) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
@@ -359,7 +361,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         Long iQcFormId = stockoutQcFormM.getIQcFormId();//表格ID
         List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", iQcFormId)).find();
         if (recordList.isEmpty()) {
-            return fail(jBoltPara.get("cqcformname") + "：没有检验项目，无法生成出库检验表");
+            return fail(cqcformname + "：没有检验项目，无法生成出库检验表");
         }
         ArrayList<StockoutQcFormD> stockoutQcFormDS = new ArrayList<>();
         for (Record record : recordList) {

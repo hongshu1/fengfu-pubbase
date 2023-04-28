@@ -379,4 +379,8 @@
 #include("QcInspection/QcInspection.sql")
 #end
 
+#namespace("MoDoc")
+#include("MoDoc/MoDoc.sql")
+#end
+
 
