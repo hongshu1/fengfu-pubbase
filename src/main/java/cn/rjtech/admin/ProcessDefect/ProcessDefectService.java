@@ -4,7 +4,6 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.ProcessDefect;
 import cn.rjtech.util.BillNoUtils;
@@ -174,16 +173,16 @@ public class ProcessDefectService extends BaseService<ProcessDefect> {
 	}
 
 	//更新状态并保存数据方法
-	public Ret updateEditTable(JBoltTable jBoltTable, Kv formRecord) {
+	public Ret updateEditTable(Kv formRecord) {
 		Date now = new Date();
 
 		tx(() -> {
 			//判断是否有主键id
-			if(isOk(formRecord.getStr("processDefect.iautoid"))){
-				ProcessDefect processDefect = findById(formRecord.getLong("processDefect.iautoid"));
+			if(isOk(formRecord.getStr("iautoid"))){
+				ProcessDefect processDefect = findById(formRecord.getLong("iautoid"));
 				if (processDefect.getIStatus() == 1){
 					//录入数据
-					processDefect.setCApproach(formRecord.getStr("processDefect.capproach"));
+					processDefect.setCApproach(formRecord.getStr("capproach"));
 					processDefect.setIStatus(2);
 
 
@@ -210,22 +209,22 @@ public class ProcessDefectService extends BaseService<ProcessDefect> {
 	public void processDefectLinesave(Kv formRecord, Date now){
 		System.out.println("formRecord==="+formRecord);
 		ProcessDefect processDefect = new ProcessDefect();
-		processDefect.setIAutoId(formRecord.getLong("processDefect.iautoid"));
+		processDefect.setIAutoId(formRecord.getLong("iautoid"));
 
 		//制造工单-特殊领料单主表明细
-		processDefect.setIIssueId(formRecord.getLong("specMaterialsRcvM.iAutoid"));
-		processDefect.setIMoDocId(formRecord.getLong("specMaterialsRcvM.imodocid"));
-		processDefect.setIDepartmentId(formRecord.getLong("specMaterialsRcvM.idepartmentid"));
-		processDefect.setDDemandDate(formRecord.getDate("specMaterialsRcvM.ddemanddate"));
+		processDefect.setIIssueId(formRecord.getLong("iissueid"));
+		processDefect.setIMoDocId(formRecord.getLong("imodocid"));
+		processDefect.setIDepartmentId(formRecord.getLong("idepartmentid"));
+		processDefect.setDDemandDate(formRecord.getDate("ddemanddate"));
 
 		//录入填写的数据
 		processDefect.setIStatus(1);
-		processDefect.setProcessName(formRecord.getStr("processDefect.processname"));
-		processDefect.setIDqQty(formRecord.getBigDecimal("processDefect.idqqty"));
-		processDefect.setIRespType(formRecord.getInt("processDefect.iresptype"));
-		processDefect.setIsFirstTime(formRecord.getBoolean("processDefect.isfirsttime"));
-		processDefect.setCBadnessSns(formRecord.getStr("processDefect.cbadnesssns"));
-		processDefect.setCDesc(formRecord.getStr("processDefect.cdesc"));
+		processDefect.setProcessName(formRecord.getStr("processname"));
+		processDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
+		processDefect.setIRespType(formRecord.getInt("iresptype"));
+		processDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
+		processDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
+		processDefect.setCDesc(formRecord.getStr("cdesc"));
 
 
 		//必录入基本数据

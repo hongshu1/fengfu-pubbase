@@ -3,7 +3,7 @@
 <div class="jbolt_page">
     <div class="jbolt_page_content">
         <form onsubmit="return false;" id="rcvDocDefectForm"  action="admin/RcvDocDefect/updateEditTable" method="post">
-            <input type="hidden" name="rcvDocDefect.iautoid" value="#(rcvDocDefect.iautoid??)" />
+            <input type="hidden" name="iautoid" value="#(rcvDocDefect.iautoid??)" />
             <h5>检验信息</h5>
             <hr/>
             <div class="form-group row">
@@ -52,7 +52,7 @@
 
             <h5>异常品记录信息</h5>
             <div class="form-group row">
-                <input type="hidden" id="cbadnesssns" name="rcvDocDefect.cbadnesssns" value="#(rcvDocDefect.cbadnesssns??)"/>
+                <input type="hidden" id="cbadnesssns" name="cbadnesssns" value="#(rcvDocDefect.cbadnesssns??)"/>
                 <label class="col-sm-2 col-form-label">不良项目：</label>
                 <div class="col-sm-2 col-form-label">
                 #(rcvDocDefect.cbadnesssns??)
@@ -98,16 +98,16 @@
                          data-radio
                          data-rule="radio"
                          data-value="#(rcvDocDefect.capproach??)"
-                         data-name="rcvDocDefect.capproach"
+                         data-name="capproach"
                          data-default="true">
                         <div class="col"  style="padding-top: 1px;">
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="capproachtrue1" type="radio" name="rcvDocDefect.capproach"   value="1"/>
+                                <input  id="capproachtrue1" type="radio" name="capproach"   value="1"/>
                                 <label for="capproachtrue1">特采</label>
                             </div>
 
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="capproachfalse1" type="radio" name="rcvDocDefect.capproach"   value="0"/>
+                                <input  id="capproachfalse1" type="radio" name="capproach"   value="0"/>
                                 <label for="capproachfalse1">拒收</label>
                             </div>
                         </div>

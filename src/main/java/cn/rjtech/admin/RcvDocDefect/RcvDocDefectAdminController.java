@@ -40,12 +40,12 @@ public class RcvDocDefectAdminController extends BaseAdminController {
      */
     public void datas() {
         Okv kv = new Okv();
-        kv.setIfNotNull("cDocNo", get("cDocNo"));
-        kv.setIfNotNull("iMoDocId", get("iMoDocId"));
-        kv.setIfNotNull("cInvCode", get("cInvCode"));
-        kv.setIfNotNull("iInventoryId", get("iInventoryId"));
-        kv.setIfNotNull("cInvName", get("cInvName"));
-        kv.setIfNotNull("iStatus", get("iStatus"));
+        kv.setIfNotNull("cdocno", get("cdocno"));
+        kv.setIfNotNull("imodocid", get("imodocid"));
+        kv.setIfNotNull("cinvcode", get("cinvcode"));
+        kv.setIfNotNull("cinvcode1", get("cinvcode1"));
+        kv.setIfNotNull("cinvname", get("cinvname"));
+        kv.setIfNotNull("istatus", get("istatus"));
         kv.setIfNotNull("startdate", get("startdate"));
         kv.setIfNotNull("enddate", get("enddate"));
         renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));
@@ -90,8 +90,6 @@ public class RcvDocDefectAdminController extends BaseAdminController {
                 render("add4.html");
             }
         }
-
-
     }
 
     /**
@@ -149,10 +147,23 @@ public class RcvDocDefectAdminController extends BaseAdminController {
         renderJson(service.toggleIsDeleted(getLong(0)));
     }
 
-
+    /**
+     * 保存与更新
+     */
     public void updateEditTable() {
-        renderJson(service.updateEditTable(getJBoltTable(), getKv()));
+        renderJson(service.updateEditTable(getKv()));
     }
 
+    /**
+     * 生成二维码
+     */
+    public void erm() {
+        RcvDocDefect rcvDocDefect = service.findById(getLong(0));
+        if (rcvDocDefect == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        renderQrCode(rcvDocDefect.getCDocNo(),500,600);
+    }
 
 }

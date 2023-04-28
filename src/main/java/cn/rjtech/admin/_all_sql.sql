@@ -367,8 +367,8 @@
 #include("subcontractorderdbatchversion/subcontractorderdbatchversion.sql")
 #end
 
-#namespace("StockoutDefect")
-#include("StockoutDefect/StockoutDefect.sql")
+#namespace("stockoutdefect")
+#include("stockoutdefect/stockoutdefect.sql")
 #end
 
 #namespace("InStockDefect")

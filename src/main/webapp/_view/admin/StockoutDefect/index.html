@@ -68,10 +68,7 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="stockoutDefect_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增出库异常记录"  data-url="admin/StockoutDefect/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改出库异常记录" data-check-handler="jboltTableGetCheckedId" data-url="admin/StockoutDefect/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/StockoutDefect/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/StockoutDefect/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>
 	</div>
 
 	<div class="clearfix"></div>
@@ -106,7 +103,7 @@ data-row-dblclick-active="true"
 	<th data-width="100" data-column="iStatus">状态</th>
 	<th data-width="150" data-column="cDocNo">异常品单号</th>
 	<th data-width="150" data-column="iStockoutQcFormMid">检验单号</th>
-	<th data-width="150" data-column="iInventoryId">存货编码</th>j
+	<th data-width="150" data-column="iInventoryId">存货编码</th>
 	<th data-width="150" data-column="cInvName">部品名称</th>
 	<th data-width="150" data-column="cInvCode">客户部番</th>
 	<th data-width="150" data-column="iDqQty">不良数量</th>

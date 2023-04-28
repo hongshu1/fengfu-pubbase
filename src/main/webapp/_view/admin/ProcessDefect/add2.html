@@ -3,14 +3,14 @@
 <div class="jbolt_page">
     <div class="jbolt_page_content">
         <form onsubmit="return false;" id="processDefectForm"  action="/admin/ProcessDefect/ProcessDefectupdateEditTable" method="post">
-            <input type="hidden" name="processDefect.iautoid" value="#(processDefect.iautoid??)" />
+            <input type="hidden" name="iautoid" value="#(processDefect.iautoid??)" />
             <h5>部品信息</h5>
             <hr/>
             <div class="form-group row">
-                <input type="hidden"  placeholder="领料单ID" name="specMaterialsRcvM.iAutoid" value="#(specMaterialsRcvM.iAutoid??)"/>
-                <input type="hidden"  placeholder="生产工单ID" name="specMaterialsRcvM.imodocid" value="#(specMaterialsRcvM.imodocid??)"/>
-                <input type="hidden"  placeholder="生产部门ID" name="specMaterialsRcvM.idepartmentid" value="#(specMaterialsRcvM.idepartmentid??)"/>
-                <input type="hidden"  placeholder="需求日期" name="specMaterialsRcvM.ddemanddate" value="#(specMaterialsRcvM.ddemanddate??)"/>
+                <input type="hidden"  placeholder="领料单ID" name="iissueid" value="#(specMaterialsRcvM.iAutoid??)"/>
+                <input type="hidden"  placeholder="生产工单ID" name="imodocid" value="#(specMaterialsRcvM.imodocid??)"/>
+                <input type="hidden"  placeholder="生产部门ID" name="idepartmentid" value="#(specMaterialsRcvM.idepartmentid??)"/>
+                <input type="hidden"  placeholder="需求日期" name="ddemanddate" value="#(specMaterialsRcvM.ddemanddate??)"/>
 
                 <label class="col-sm-2 col-form-label">异常品单号：</label>
                 <div class="col-sm-2 col-form-label">
@@ -53,15 +53,15 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">工序名称：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none" name="processDefect.processname"  placeholder="" value="#(processDefect.processname??)"/>
+                    <input type="text" class="form-control border-none" name="processname"  placeholder="" value="#(processDefect.processname??)"/>
                 </div>
                 <label class="col-sm-2 col-form-label">不良数量：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none"  name="processDefect.idqqty"  placeholder="" value="#(processDefect.idqqty??)"/>
+                    <input type="text" class="form-control border-none"  name="idqqty"  placeholder="" value="#(processDefect.idqqty??)"/>
                 </div>
             </div>
             <div class="form-group row">
-                <input type="hidden" id="cbadnesssns" name="processDefect.cbadnesssns" value="#(processDefect.cbadnesssns??)"/>
+                <input type="hidden" id="cbadnesssns" name="cbadnesssns" value="#(processDefect.cbadnesssns??)"/>
                 <label class="col-sm-2 col-form-label">不良项目：</label>
                 <div class="col-sm-8 col-form-label">
                     <div class="form-group row"
@@ -74,7 +74,7 @@
                          data-text-attr="cbadnesssns"
                          data-inline="true"
                          data-value="#(processDefect.cbadnesssns??)"
-                         data-name="processDefect.cbadnesssns">
+                         data-name="cbadnesssns">
                     </div>
                 </div>
             </div>
@@ -85,16 +85,16 @@
                          data-radio
                          data-rule="radio"
                          data-value="#(processDefect.isfirsttime??)"
-                         data-name="processDefect.isfirsttime"
+                         data-name="isfirsttime"
                          data-default="true">
                         <div class="col"  style="padding-top: 1px;">
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renabletrue1" type="radio" name="processDefect.isfirsttime"   value="1"/>
+                                <input  id="renabletrue1" type="radio" name="isfirsttime"   value="1"/>
                                 <label for="renabletrue1">首发</label>
                             </div>
 
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renablefalse1" type="radio" name="processDefect.isfirsttime"   value="0"/>
+                                <input  id="renablefalse1" type="radio" name="isfirsttime"   value="0"/>
                                 <label for="renablefalse1">再发</label>
                             </div>
                         </div>
@@ -110,16 +110,16 @@
                          data-radio
                          data-rule="radio"
                          data-value="#(processDefect.iresptype??)"
-                         data-name="processDefect.iresptype"
+                         data-name="iresptype"
                          data-default="true">
                         <div class="col"  style="padding-top: 1px;">
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renabletrue" type="radio" name="processDefect.iresptype"   value="1"/>
+                                <input  id="renabletrue" type="radio" name="iresptype"   value="1"/>
                                 <label for="renabletrue">本工序</label>
                             </div>
 
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renablefalse" type="radio" name="processDefect.iresptype"   value="0"/>
+                                <input  id="renablefalse" type="radio" name="iresptype"   value="0"/>
                                 <label for="renablefalse">其他</label>
                             </div>
                         </div>
@@ -130,7 +130,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">不良内容描述</label>
                 <div class="col">
-                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入不良内容描述" maxlength="500" name="processDefect.cdesc" value="#(processDefect.cdesc??)"/>
+                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入不良内容描述" maxlength="500" name="cdesc" value="#(processDefect.cdesc??)"/>
                 </div>
             </div>
 
