@@ -375,6 +375,10 @@
 #include("InStockDefect/InStockDefect.sql")
 #end
 
+#namespace("QcInspection")
+#include("QcInspection/QcInspection.sql")
+#end
+
 #namespace("MoDoc")
 #include("MoDoc/MoDoc.sql")
 #end

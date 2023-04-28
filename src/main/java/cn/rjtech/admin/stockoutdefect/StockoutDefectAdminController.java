@@ -1,4 +1,4 @@
-package cn.rjtech.admin.stockoutdefect;
+package cn.rjtech.admin.StockoutDefect;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -24,21 +24,21 @@ import com.jfinal.kit.Okv;
 public class StockoutDefectAdminController extends BaseAdminController {
 
 	@Inject
-	private StockoutDefectService service;
+	private cn.rjtech.admin.stockoutdefect.StockoutDefectService service;
 
 	@Inject
 	private StockoutQcFormMService stockoutQcFormMService;
 
-   /**
-	* 首页
-	*/
+	/**
+	 * 首页
+	 */
 	public void index() {
 		render("index.html");
 	}
 
-  	/**
-	* 数据源
-	*/
+	/**
+	 * 数据源
+	 */
 	public void datas() {
 		Okv kv = new Okv();
 		kv.setIfNotNull("cDocNo", get("cDocNo"));
@@ -56,9 +56,9 @@ public class StockoutDefectAdminController extends BaseAdminController {
 		renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));
 	}
 
-   /**
-	* 新增
-	*/
+	/**
+	 * 新增
+	 */
 	public void add() {
 		render("add.html");
 	}
@@ -98,9 +98,9 @@ public class StockoutDefectAdminController extends BaseAdminController {
 
 	}
 
-   /**
-	* 编辑
-	*/
+	/**
+	 * 编辑
+	 */
 	public void edit() {
 		StockoutDefect stockoutDefect=service.findById(getLong(0));
 		if(stockoutDefect == null){
@@ -111,44 +111,44 @@ public class StockoutDefectAdminController extends BaseAdminController {
 		render("edit.html");
 	}
 
-  /**
-	* 保存
-	*/
+	/**
+	 * 保存
+	 */
 	public void save() {
 		renderJson(service.save(getModel(StockoutDefect.class, "stockoutDefect")));
 	}
 
-   /**
-	* 更新
-	*/
+	/**
+	 * 更新
+	 */
 	public void update() {
 		renderJson(service.update(getModel(StockoutDefect.class, "stockoutDefect")));
 	}
 
-   /**
-	* 批量删除
-	*/
+	/**
+	 * 批量删除
+	 */
 	public void deleteByIds() {
 		renderJson(service.deleteByBatchIds(get("ids")));
 	}
 
-   /**
-	* 删除
-	*/
+	/**
+	 * 删除
+	 */
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
 
-  /**
-	* 切换toggleIsFirstTime
-	*/
+	/**
+	 * 切换toggleIsFirstTime
+	 */
 	public void toggleIsFirstTime() {
 		renderJson(service.toggleIsFirstTime(getLong(0)));
 	}
 
-  /**
-	* 切换toggleIsDeleted
-	*/
+	/**
+	 * 切换toggleIsDeleted
+	 */
 	public void toggleIsDeleted() {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}

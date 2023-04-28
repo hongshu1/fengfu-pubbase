@@ -17,6 +17,8 @@ import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 /**
@@ -60,6 +62,23 @@ public class ScheduProductPlanYearController extends BaseAdminController {
 
 
     public void planyearsum() {
+        String startyear = get("startyear");
+        String cworkname = get("cworkname");
+        String cinvcode = get("cinvcode");
+        String cinvcode1 = get("cinvcode1");
+        String cinvname1 = get("cinvname1");
+
+        if (StringUtils.isBlank(startyear)){
+            startyear = DateUtils.getYear();
+        }
+
+        set("startyear",startyear);
+        set("endyear",Integer.parseInt(startyear)+ 1);
+        set("cworkname",cworkname);
+        set("cinvcode",cinvcode);
+        set("cinvcode1",cinvcode1);
+        set("cinvname1",cinvname1);
+
         render("planyearsum.html");
     }
 

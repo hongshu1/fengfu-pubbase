@@ -588,7 +588,7 @@ GROUP BY a.iAutoId,a.cInvCode
 ###---------------------------------------------------------生产计划及实绩管理---------------------
 
 #sql("getApsMonthPlanList")
-###根据日期及条件获取月周生产计划表数据三班汇总
+###根据日期及条件获取月周生产计划表数据
 SELECT
     b.iYear,
     b.iMonth,
@@ -639,8 +639,58 @@ WHERE a.isDeleted = '0'
 #end
 
 
+#sql("getMoDocMonthActualList")
+###根据物料集及日期及条件获取APS下发的计划工单实绩数(三个班次 已完工数)
+SELECT
+    a.dPlanDate,
+    a.iYear,
+    a.iMonth,
+    a.iDate,
+    a.iQty,
+    a.iCompQty,
+    a.iInventoryId AS invId,
+    c.cInvCode,
+    c.cInvCode1,
+    c.cInvName1,
+    a.iWorkShiftMid,
+    d.cWorkShiftCode,
+    d.cWorkShiftName
+FROM Mo_MoDoc AS a
+         LEFT JOIN Mo_MoTask AS b ON a.iMoTaskId = b.iAutoId
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+         LEFT JOIN Bd_WorkShiftM AS d ON a.iWorkShiftMid = d.iAutoId
+WHERE b.IsDeleted = 0
+  AND a.iType = 1
+  AND a.iInventoryId IN #(ids)
+  AND CONVERT(VARCHAR(10),a.dPlanDate,120) >= #para(startdate)
+  AND CONVERT(VARCHAR(10),a.dPlanDate,120) <= #para(enddate)
+#end
 
-
+#sql("getMoDocMonthActualSumList")
+###根据物料集及日期及条件获取APS下发的计划工单实绩数(三个班次汇总 已完工数)
+SELECT
+    a.dPlanDate,
+    a.iYear,
+    a.iMonth,
+    a.iDate,
+    SUM(a.iQty) AS QtySUM,
+    SUM(a.iCompQty) AS CompQtySUM,
+    a.iInventoryId AS invId,
+    c.cInvCode,
+    c.cInvCode1,
+    c.cInvName1
+FROM Mo_MoDoc AS a
+         LEFT JOIN Mo_MoTask AS b ON a.iMoTaskId = b.iAutoId
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+WHERE b.IsDeleted = 0
+  AND a.iType = 1
+  AND a.iInventoryId IN #(ids)
+  AND CONVERT(VARCHAR(10),a.dPlanDate,120) >= #para(startdate)
+  AND CONVERT(VARCHAR(10),a.dPlanDate,120) <= #para(enddate)
+GROUP BY
+    a.dPlanDate,a.iYear,a.iMonth,a.iDate,
+    a.iInventoryId,c.cInvCode,c.cInvCode1,c.cInvName1
+#end
 
 
 
