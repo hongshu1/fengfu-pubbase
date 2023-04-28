@@ -11,6 +11,8 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoDoc;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.time.LocalDate;
+
 /**
  * 在库检 Service
  * @ClassName: MoDocService
@@ -46,12 +48,14 @@ public class MoDocService extends BaseService<MoDoc> {
 		if(moDoc==null || isOk(moDoc.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		//if(existsName(moDoc.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		moDoc.setIStatus(1);
+		moDoc.setIType(2L);
+		LocalDate date = LocalDate.parse(moDoc.getDPlanDate().toString());
+		moDoc.setIYear(date.getYear());
+		moDoc.setIMonth(date.getMonthValue());
+		moDoc.setIDate(date.getDayOfMonth());
 		boolean success=moDoc.save();
-		if(success) {
-			//添加日志
-			//addSaveSystemLog(moDoc.getIautoid(), JBoltUserKit.getUserId(), moDoc.getName());
-		}
+
 		return ret(success);
 	}
 
@@ -67,12 +71,8 @@ public class MoDocService extends BaseService<MoDoc> {
 		//更新时需要判断数据存在
 		MoDoc dbMoDoc=findById(moDoc.getIAutoId());
 		if(dbMoDoc==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(moDoc.getName(), moDoc.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=moDoc.update();
-		if(success) {
-			//添加日志
-			//addUpdateSystemLog(moDoc.getIautoid(), JBoltUserKit.getUserId(), moDoc.getName());
-		}
+
 		return ret(success);
 	}
 
