@@ -24,7 +24,7 @@ import com.jfinal.kit.Okv;
 public class ProcessDefectAdminController extends BaseAdminController {
 
 	@Inject
-	private ProcessDefectService service;
+	private ProcessdefectService service;
 
 	@Inject
 	private SpecMaterialsRcvMService specMaterialsRcvMService;
@@ -41,12 +41,12 @@ public class ProcessDefectAdminController extends BaseAdminController {
 	*/
 	public void datas() {
 		Okv kv =new Okv();
-		kv.setIfNotNull("cdocno", get("cdocno"));
-		kv.setIfNotNull("imodocid", get("imodocid"));
-		kv.setIfNotNull("cinvcode1", get("cinvcode1"));
-		kv.setIfNotNull("cinvname", get("cinvname"));
-		kv.setIfNotNull("cinvcode", get("cinvcode"));
-		kv.setIfNotNull("istatus", get("istatus"));
+		kv.setIfNotNull("cDocNo", get("cDocNo"));
+		kv.setIfNotNull("iMoDocId", get("iMoDocId"));
+		kv.setIfNotNull("cInvCode1", get("cInvCode1"));
+		kv.setIfNotNull("cInvName", get("cInvName"));
+		kv.setIfNotNull("cInvCode", get("cInvCode"));
+		kv.setIfNotNull("iStatus", get("iStatus"));
 		kv.setIfNotNull("startdate", get("startdate"));
 		kv.setIfNotNull("enddate", get("enddate"));
 		renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));
@@ -140,25 +140,9 @@ public class ProcessDefectAdminController extends BaseAdminController {
 	}
 
 
-	/**
-	 * 保存与更新
-	 */
 	public void ProcessDefectupdateEditTable(){
 		renderJson(service.updateEditTable(getKv()));
 	}
 
-
-
-	/**
-	 * 生成二维码
-	 */
-	public void erm() {
-		ProcessDefect processDefect=service.findById(getLong(0));
-		if(processDefect == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		renderQrCode(processDefect.getCDocNo(),500,600);
-	}
 
 }

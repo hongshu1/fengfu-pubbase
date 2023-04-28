@@ -1,36 +1,14 @@
 package cn.rjtech.admin.rcvdocqcformm;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.JFinal;
-import com.jfinal.plugin.activerecord.Page;
-
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
-import cn.jbolt.core.para.JBoltPara;
-import cn.jbolt.core.util.JBoltRealUrlUtil;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.upload.UploadFile;
-
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.para.JBoltPara;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.util.JBoltRealUrlUtil;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
@@ -38,6 +16,20 @@ import cn.rjtech.model.momdata.RcvDocDefect;
 import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.RcvdocqcformdLine;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.JFinal;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * 质量管理-来料检
@@ -55,7 +47,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     @Inject
     private RcvdocqcformdLineService rcvdocqcformdLineService; //质量管理-来料检明细列值表
     @Inject
-    private RcvDocDefectService      rcvDocDefectService;      ////质量管理-来料异常品记录
+    private RcvDocDefectService rcvDocDefectService;      ////质量管理-来料异常品记录
 
     @Override
     protected RcvDocQcFormM dao() {

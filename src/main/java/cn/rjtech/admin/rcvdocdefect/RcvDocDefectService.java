@@ -189,11 +189,11 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 
 		tx(() -> {
 				//判断是否有主键id
-				if(isOk(formRecord.getStr("iautoid"))){
-					RcvDocDefect rcvDocDefect = findById(formRecord.getLong("iautoid"));
+				if(isOk(formRecord.getStr("rcvDocDefect.iautoid"))){
+					RcvDocDefect rcvDocDefect = findById(formRecord.getLong("rcvDocDefect.iautoid"));
 					if (rcvDocDefect.getIStatus() == 1){
 						//录入数据
-						rcvDocDefect.setCApproach(formRecord.getStr("capproach"));
+						rcvDocDefect.setCApproach(formRecord.getStr("rcvDocDefect.capproach"));
 						rcvDocDefect.setIStatus(2);
 						//更新人和时间
 						rcvDocDefect.setIUpdateBy(JBoltUserKit.getUserId());
@@ -217,22 +217,22 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		System.out.println("formRecord==="+formRecord);
 		System.out.println("now==="+now);
 		RcvDocDefect rcvDocDefect = new RcvDocDefect();
-		rcvDocDefect.setIAutoId(formRecord.getLong("iautoid"));
+		rcvDocDefect.setIAutoId(formRecord.getLong("rcvDocDefect.iautoid"));
 
 		//质量管理-来料检明细
-		rcvDocDefect.setIRcvDocQcFormMid(formRecord.getLong("ircvdocqcformmid"));
-		rcvDocDefect.setIVendorId(formRecord.getLong("iinventoryid"));
-		rcvDocDefect.setIInventoryId(formRecord.getLong("ivendorid"));
-		rcvDocDefect.setIQcUserId(formRecord.getLong("iupdateby"));
-		rcvDocDefect.setDQcTime(formRecord.getDate("dUpdateTime"));
+		rcvDocDefect.setIRcvDocQcFormMid(formRecord.getLong("rcvDocQcFormM.iautoid"));
+		rcvDocDefect.setIVendorId(formRecord.getLong("rcvDocQcFormM.iinventoryid"));
+		rcvDocDefect.setIInventoryId(formRecord.getLong("rcvDocQcFormM.ivendorid"));
+		rcvDocDefect.setIQcUserId(formRecord.getLong("rcvDocQcFormM.iupdateby"));
+		rcvDocDefect.setDQcTime(formRecord.getDate("rcvDocQcFormM.dUpdateTime"));
 
 		//录入填写的数据
 		rcvDocDefect.setIStatus(1);
-		rcvDocDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
-		rcvDocDefect.setIRespType(formRecord.getInt("iresptype"));
-		rcvDocDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
-		rcvDocDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
-		rcvDocDefect.setCDesc(formRecord.getStr("cdesc"));
+		rcvDocDefect.setIDqQty(formRecord.getBigDecimal("rcvDocDefect.idqqty"));
+		rcvDocDefect.setIRespType(formRecord.getInt("rcvDocDefect.iresptype"));
+		rcvDocDefect.setIsFirstTime(formRecord.getBoolean("rcvDocDefect.isfirsttime"));
+		rcvDocDefect.setCBadnessSns(formRecord.getStr("rcvDocDefect.cbadnesssns"));
+		rcvDocDefect.setCDesc(formRecord.getStr("rcvDocDefect.cdesc"));
 
 		//必录入基本数据
 		rcvDocDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());

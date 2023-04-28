@@ -9,16 +9,8 @@ import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
-<<<<<<< HEAD
 import cn.rjtech.entity.vo.stockoutqcformm.*;
-=======
-import cn.rjtech.entity.vo.stockoutqcformm.AutoGetCheckOutTableDatas;
-import cn.rjtech.entity.vo.stockoutqcformm.AutoGetCheckOutTableDatasVo;
-import cn.rjtech.entity.vo.stockoutqcformm.AutoGetOnlyseeTableDatas;
 import cn.rjtech.entity.vo.stockoutqcformm.AutoGetOnlyseeTableDatas.Cvalue;
-import cn.rjtech.entity.vo.stockoutqcformm.AutoGetOnlyseeTableDatasVo;
-import cn.rjtech.entity.vo.stockoutqcformm.StockOutQcFormMApiSaveEdit;
->>>>>>> c49e959840a7e8dd3e3c1f4afdfd99c42f03b9d3
 import cn.rjtech.entity.vo.stockoutqcformm.StockOutQcFormMApiSaveEdit.CValue;
 import cn.rjtech.entity.vo.stockoutqcformm.StockOutQcFormMApiSaveEdit.SerializeElement;
 import cn.rjtech.model.momdata.StockoutDefect;
@@ -51,7 +43,7 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
     @Inject
     private JBoltBaseService           jBoltBaseService;
     @Inject
-    private StockoutDefectService stockoutDefectService; //出库检异常品单
+    private StockoutDefectService      stockoutDefectService; //出库检异常品单
 
     /*
      * 点击左侧导航栏-出库检，显示主页面数据

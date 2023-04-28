@@ -1,5 +1,6 @@
 package cn.rjtech.admin.instockqcformm;
 
+
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -17,7 +18,7 @@ import com.jfinal.core.Path;
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/InStockQcFormM", viewPath = "/_view/admin/InStockQcFormM")
-public class InStockQcFormMAdminController extends BaseAdminController {
+public class inStockQcFormMAdminController extends BaseAdminController {
 
 	@Inject
 	private InStockQcFormMService service;

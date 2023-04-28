@@ -179,16 +179,16 @@ public class InStockDefectService extends BaseService<InStockDefect> {
 	}
 
 	//更新状态并保存数据方法
-	public Ret updateEditTable(Kv formRecord) {
+	public Ret updateEditTable( Kv formRecord) {
 		Date now = new Date();
 
 		tx(() -> {
 			//判断是否有主键id
-			if(isOk(formRecord.getStr("iautoid"))){
-				InStockDefect inStockDefect = findById(formRecord.getLong("iautoid"));
+			if(isOk(formRecord.getStr("inStockDefect.iautoid"))){
+				InStockDefect inStockDefect = findById(formRecord.getLong("inStockDefect.iautoid"));
 				if (inStockDefect.getIStatus() == 1){
 					//录入数据
-					inStockDefect.setCApproach(formRecord.getStr("capproach"));
+					inStockDefect.setCApproach(formRecord.getStr("inStockDefect.capproach"));
 					inStockDefect.setIStatus(2);
 					//更新人和时间
 					inStockDefect.setIUpdateBy(JBoltUserKit.getUserId());
@@ -212,22 +212,22 @@ public class InStockDefectService extends BaseService<InStockDefect> {
 		System.out.println("formRecord==="+formRecord);
 		System.out.println("now==="+now);
 		InStockDefect inStockDefect = new InStockDefect();
-		inStockDefect.setIAutoId(formRecord.getLong("iautoid"));
+		inStockDefect.setIAutoId(formRecord.getLong("inStockDefect.iautoid"));
 
 		//质量管理-来料检明细
-		inStockDefect.setIInStockQcFormMid(formRecord.getLong("iinstockqcformmid"));
-		inStockDefect.setIVendorId(formRecord.getLong("iCustomerId"));
-		inStockDefect.setIInventoryId(formRecord.getLong("iInventoryId"));
-		inStockDefect.setIQcUserId(formRecord.getLong("iupdateby"));
-		inStockDefect.setDQcTime(formRecord.getDate("dupdatetime"));
+		inStockDefect.setIInStockQcFormMid(formRecord.getLong("inStockQcFormM.iAutoid"));
+		inStockDefect.setIVendorId(formRecord.getLong("inStockQcFormM.iCustomerId"));
+		inStockDefect.setIInventoryId(formRecord.getLong("inStockQcFormM.iInventoryId"));
+		inStockDefect.setIQcUserId(formRecord.getLong("inStockQcFormM.iupdateby"));
+		inStockDefect.setDQcTime(formRecord.getDate("inStockQcFormM.dupdatetime"));
 
 		//录入填写的数据
 		inStockDefect.setIStatus(1);
-		inStockDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
-		inStockDefect.setIRespType(formRecord.getInt("iresptype"));
-		inStockDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
-		inStockDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
-		inStockDefect.setCDesc(formRecord.getStr("cdesc"));
+		inStockDefect.setIDqQty(formRecord.getBigDecimal("inStockDefect.idqqty"));
+		inStockDefect.setIRespType(formRecord.getInt("inStockDefect.iresptype"));
+		inStockDefect.setIsFirstTime(formRecord.getBoolean("inStockDefect.isfirsttime"));
+		inStockDefect.setCBadnessSns(formRecord.getStr("inStockDefect.cbadnesssns"));
+		inStockDefect.setCDesc(formRecord.getStr("inStockDefect.cdesc"));
 
 		//必录入基本数据
 		inStockDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());

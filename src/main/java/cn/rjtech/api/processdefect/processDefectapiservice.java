@@ -2,8 +2,8 @@ package cn.rjtech.api.processdefect;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
-import cn.rjtech.admin.ProcessDefect.ProcessDefectService;
-import cn.rjtech.admin.SpecMaterialsRcvM.SpecMaterialsRcvMService;
+import cn.rjtech.admin.processdefect.ProcessdefectService;
+import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
 import cn.rjtech.model.momdata.ProcessDefect;
 import cn.rjtech.model.momdata.SpecMaterialsRcvM;
 import com.jfinal.aop.Inject;
@@ -16,11 +16,11 @@ import static oshi.util.GlobalConfig.set;
  * 制造异常品管理
  *
  */
-public class ProcessDefectapiservice extends JBoltApiBaseService {
+public class processDefectapiservice extends JBoltApiBaseService {
 
 
     @Inject
-    private ProcessDefectService processDefectService;
+    private ProcessdefectService processDefectService;
 
     @Inject
     private SpecMaterialsRcvMService specMaterialsRcvMService;

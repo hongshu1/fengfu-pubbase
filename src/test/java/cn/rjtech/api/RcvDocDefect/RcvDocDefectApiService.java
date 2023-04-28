@@ -29,7 +29,7 @@ public class RcvDocDefectApiService extends JBoltApiBaseService {
     }
 
     public JBoltApiRet update(JBoltTable jBoltTable, Kv formRecord) {
-        Ret list = rcvDocDefectService.updateEditTable(jBoltTable, formRecord);
+        Ret list = rcvDocDefectService.updateEditTable( formRecord);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(list);
     }
 
