@@ -12,7 +12,7 @@ import com.jfinal.plugin.activerecord.Record;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.JBoltBaseService;
-import cn.rjtech.admin.RcvDocDefect.RcvDocDefectService;
+import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
