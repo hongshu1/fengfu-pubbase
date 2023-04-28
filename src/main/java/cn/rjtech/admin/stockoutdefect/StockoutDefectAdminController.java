@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockoutDefect;
@@ -24,7 +25,7 @@ import com.jfinal.kit.Okv;
 public class StockoutDefectAdminController extends BaseAdminController {
 
 	@Inject
-	private cn.rjtech.admin.stockoutdefect.StockoutDefectService service;
+	private StockoutDefectService service;
 
 	@Inject
 	private StockoutQcFormMService stockoutQcFormMService;
@@ -154,8 +155,24 @@ public class StockoutDefectAdminController extends BaseAdminController {
 	}
 
 
+
+	/**
+	 * 保存与更新
+	 */
 	public void updateEditTable() {
 		renderJson(service.updateEditTable(getJBoltTable(), getKv()));
+	}
+
+	/**
+	 * 生成二维码
+	 */
+	public void erm() {
+		StockoutDefect stockoutDefect=service.findById(getLong(0));
+		if(stockoutDefect == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		renderQrCode(stockoutDefect.getCDocNo(),500,600);
 	}
 
 }

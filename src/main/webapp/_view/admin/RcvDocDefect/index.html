@@ -10,15 +10,15 @@
 			</div>
 			<div class="col">
 				<form class="form-inline" id="rcvDocDefectForm_#(pageId)"   onsubmit="return false;" method="post">
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="异常品单号" name="cDocNo" value="" />
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="检验单号" name="iMoDocId" value="" />
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="客户部番" name="cInvCode1" value="" />
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="存货编码编码" name="cInvCode" value="" />
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="部品名称" name="cInvName" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="异常品单号" name="cdocno" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="检验单号" name="imodocid" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="客户部番" name="cinvcode1" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="存货编码编码" name="cinvcode" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="部品名称" name="cinvname" value="" />
 					<select style="width:150px" class="form-control"
 							data-autoload
 							data-text="=状态="
-							name="iStatus"
+							name="istatus"
 					>
 						<option value="">=状态=</option>
 						<option value="0">待记录</option>
@@ -69,10 +69,7 @@
 		<!-- 工具条 toolbar -->
 		<div class="jbolt_table_toolbar" id="rcvDocDefect_toolbar_#(pageId)">
 			<div class="" role="group" aria-label="btn-group">
-				<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增来料异常品记录"  data-url="admin/RcvDocDefect/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-				<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改来料异常品记录" data-check-handler="jboltTableGetCheckedId" data-url="admin/RcvDocDefect/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-				<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/RcvDocDefect/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+				<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/RcvDocDefect/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>
 			</div>
 
 			<div class="clearfix"></div>

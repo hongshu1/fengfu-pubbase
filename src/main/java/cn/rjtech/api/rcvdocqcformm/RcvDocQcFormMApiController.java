@@ -4,14 +4,19 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 
-import cn.jbolt.core.crossorigin.CrossOrigin;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.base.controller.BaseApiController;
+import cn.rjtech.entity.vo.base.NullDataResult;
+import cn.rjtech.entity.vo.rcvdocqcformm.AutoGetRcvOnlyseeTableDatasVo;
+import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMApiCheckOutVo;
+import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMOnlyseeApiVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMPageVo;
-import cn.rjtech.entity.vo.stockoutqcformm.StockoutQcFormMPageVo;
+import cn.rjtech.entity.vo.rcvdocqcformm.AutoGetCheckOutTableDatasVo;
+import cn.rjtech.util.ValidationUtils;
 import io.github.yedaxia.apidocs.ApiDoc;
 
 /**
@@ -77,5 +82,115 @@ public class RcvDocQcFormMApiController  extends BaseApiController {
         kv.set("page", 1);
         kv.set("pageSize", 15);
         renderJBoltApiRet(apiService.getDatas(kv));
+    }
+
+    /*
+     * @desc 点击生成按钮，生成来料检成绩表
+     * @param 参数如下
+     * iautoid：主表id
+     * cqcformname：检验表格名称
+     * */
+    @ApiDoc(NullDataResult.class)
+    @UnCheck
+    public void createTable(@Para(value = "iautoid") Long iautoid,
+                            @Para(value = "cqcformname") String cqcformname) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(cqcformname, JBoltMsg.PARAM_ERROR);
+
+        renderJBoltApiRet(apiService.createTable(iautoid, cqcformname));
+    }
+
+    /*
+     * 点击检验按钮，跳转到检验页面
+     * @param iautoid：主键
+     * */
+    @ApiDoc(RcvDocQcFormMApiCheckOutVo.class)
+    @UnCheck
+    public void jumpCheckout(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.jumpCheckout(iautoid));
+    }
+
+    /*
+     * 跳转到"检验"页面后，自动加载检验页面table的数据
+     * */
+    @ApiDoc(AutoGetCheckOutTableDatasVo.class)
+    @UnCheck
+    public void autoGetRcvCheckOutTableDatas(@Para(value = "ircvdocqcformmid") Long ircvdocqcformmid) {
+        ValidationUtils.notNull(ircvdocqcformmid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.autoGetRcvCheckOutTableDatas(ircvdocqcformmid));
+    }
+
+    /*
+     * 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
+     * @param iautoid：主键
+     * */
+    @ApiDoc(RcvDocQcFormMOnlyseeApiVo.class)
+    @UnCheck
+    public void jumpOnlysee(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.jumpOnlysee(iautoid));
+    }
+
+    /*
+     * 跳转到"查看"页面后，自动加载查看页面table的数据
+     * @param iautoid：主键
+     * */
+    @ApiDoc(AutoGetRcvOnlyseeTableDatasVo.class)
+    @UnCheck
+    public void autoGetRcvOnlyseeTableDatas(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.autoGetRcvOnlyseeTableDatas(iautoid));
+    }
+
+    /*
+     * 点击“检验”按钮，在检验页面点击“确定”按钮，将数据带到后台保存
+     * */
+    @ApiDoc(NullDataResult.class)
+    @UnCheck
+    public void saveCheckOut(@Para(value = "cmeasurepurpose") String cmeasurepurpose, @Para(value = "cdcno") String cdcno,
+                             @Para(value = "ircvdocqcformmiautoid") Long ircvdocqcformmiautoid,
+                             @Para(value = "cmeasureunit") String cmeasureunit,
+                             @Para(value = "isok") String isok, @Para(value = "cmeasurereason") String cmeasurereason,
+                             @Para(value = "serializeSubmitList") String serializeSubmitList,
+                             @Para(value = "cmemo") String cmemo) {
+        ValidationUtils.notNull(cmeasurepurpose, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(ircvdocqcformmiautoid, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(serializeSubmitList, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
+
+        renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, ircvdocqcformmiautoid,
+            cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
+    }
+
+    /*
+     * @desc：点击“编辑”按钮，在编辑页面点击“确定”按钮，将数据带到后台保存
+     * @param 如下
+     * cmeasurepurpose：测试目的 0：定期检查，1：初物检查，2：委托测定，3：特别检查
+     * cdcno：设变号
+     * ircvdocqcformmiautoid：主表id（PL_RcvDocQcFormM）
+     * cmeasureunit：测定单位 0：μm，1：㎜
+     * isok：是否合格 0：合格，1：不合格
+     * cmemo：备注
+     * cmeasurereason：测定理由
+     * serializeSubmitList：table里的数据(传json)
+     * */
+    @ApiDoc(NullDataResult.class)
+    @UnCheck
+    public void saveEdit(@Para(value = "cmeasurepurpose") String cmeasurepurpose, @Para(value = "cdcno") String cdcno,
+                         @Para(value = "ircvdocqcformmiautoid") Long ircvdocqcformmiautoid,
+                         @Para(value = "cmeasureunit") String cmeasureunit,
+                         @Para(value = "isok") String isok, @Para(value = "cmeasurereason") String cmeasurereason,
+                         @Para(value = "serializeSubmitList") String serializeSubmitList,
+                         @Para(value = "cmemo") String cmemo) {
+        ValidationUtils.notNull(cmeasurepurpose, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(ircvdocqcformmiautoid, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(serializeSubmitList, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
+
+        renderJBoltApiRet(apiService.saveEdit(cmeasurepurpose, cdcno, ircvdocqcformmiautoid,
+            cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
     }
 }
