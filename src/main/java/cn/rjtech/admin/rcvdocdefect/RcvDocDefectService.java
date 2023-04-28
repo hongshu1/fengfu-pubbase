@@ -1,4 +1,4 @@
-package cn.rjtech.admin.RcvDocDefect;
+package cn.rjtech.admin.rcvdocdefect;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -8,8 +8,6 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.RcvDocDefect;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
-import cn.rjtech.model.momdata.StockoutDefect;
-import cn.rjtech.model.momdata.StockoutQcFormM;
 import cn.rjtech.util.BillNoUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;

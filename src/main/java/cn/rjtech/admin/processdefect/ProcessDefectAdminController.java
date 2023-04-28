@@ -4,7 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.admin.SpecMaterialsRcvM.SpecMaterialsRcvMService;
+import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.ProcessDefect;
 import cn.rjtech.model.momdata.SpecMaterialsRcvM;

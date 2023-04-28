@@ -1,4 +1,4 @@
-package cn.rjtech.admin.RcvDocDefect;
+package cn.rjtech.admin.rcvdocdefect;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;

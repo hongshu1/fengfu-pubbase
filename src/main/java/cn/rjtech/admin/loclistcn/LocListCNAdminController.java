@@ -1,4 +1,4 @@
-package cn.rjtech.admin.locListCN;
+package cn.rjtech.admin.loclistcn;
 
 import java.util.List;
 

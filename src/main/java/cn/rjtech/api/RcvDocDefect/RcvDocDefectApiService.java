@@ -3,7 +3,7 @@ package cn.rjtech.api.RcvDocDefect;
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.rjtech.admin.RcvDocDefect.RcvDocDefectService;
+import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
