@@ -22,7 +22,7 @@ import java.util.List;
  * @author: RJ
  * @date: 2023-04-21 15:49
  */
-public class ProcessDefectService extends BaseService<ProcessDefect> {
+public class ProcessdefectService extends BaseService<ProcessDefect> {
 
 	private final ProcessDefect dao = new ProcessDefect().dao();
 

@@ -20,10 +20,10 @@ import java.util.Date;
  * @author Kephon
  */
 @ApiDoc
-public class ProcessDefectapicontroller extends BaseApiController {
+public class processDefectapicontroller extends BaseApiController {
 
     @Inject
-    private ProcessDefectapiservice processdefectapiservice;
+    private processDefectapiservice processdefectapiservice;
 
 
     /**

@@ -1,4 +1,4 @@
-package cn.rjtech.api.instockdefect;
+package cn.rjtech.api.rcvdocdefect;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
@@ -15,17 +15,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 工段（产线） API
+ *来料异常品管理
  *
- * @author Kephon
  */
 @ApiDoc
-public class InStockDefectapicontroller extends BaseApiController {
+public class rcvDocDefectapicontroller extends BaseApiController {
 
     @Inject
-    private InStockDefectapiservice instockdefectapiservice;
-
-
+    private rcvDocDefectapiservice rcvDocDefectApiService;
     /**
      * 查询主表明细
      **/
@@ -42,7 +39,7 @@ public class InStockDefectapicontroller extends BaseApiController {
                          ) {
         Okv kv = Okv.by("cdocno", cdocno).set("imodocid", imodocid).set("cinvcode", cinvcode).set("cinvcode1", cinvcode1)
                 .set("cinvname", cinvname).set("istatus", istatus).set("startdate", startdate).set("enddate", enddate);
-        renderJBoltApiRet(instockdefectapiservice.AdminDatas(getPageSize(), getPageNumber() ,kv));
+        renderJBoltApiRet(rcvDocDefectApiService.AdminDatas(getPageSize(), getPageNumber() ,kv));
     }
 
 
@@ -52,11 +49,11 @@ public class InStockDefectapicontroller extends BaseApiController {
     @ApiDoc(RcDocDefectVo.class)
     @UnCheck
     public void add(@Para(value = "iautoid") Long iautoid,
-                            @Para(value = "iinstockqcformmid") Long iinstockqcformmid,
+                            @Para(value = "istockoutqcformmid") Long istockoutqcformmid,
                             @Para(value = "type") String type) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(iinstockqcformmid, JBoltMsg.PARAM_ERROR);
-        renderJBoltApiRet(instockdefectapiservice.add(iautoid,iinstockqcformmid,type));
+        ValidationUtils.notNull(istockoutqcformmid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(rcvDocDefectApiService.add(iautoid,istockoutqcformmid,type));
     }
 
     /**
@@ -72,11 +69,11 @@ public class InStockDefectapicontroller extends BaseApiController {
                                 @Para(value = "cbadnesssns") String  cbadnesssns,
                                 @Para(value = "cdesc") String  cdesc,
                                 //质量管理-来料检明细
-                                @Para(value = "iinstockqcformmid") Long  iinstockqcformmid,
-                                @Para(value = "iCustomerId") Long  iCustomerId,
-                                @Para(value = "iInventoryId") Long  iInventoryId,
+                                @Para(value = "ircvdocqcformmid") Long  ircvdocqcformmid,
+                                @Para(value = "iinventoryid") Long  iinventoryid,
+                                @Para(value = "ivendorid") Long  ivendorid,
                                 @Para(value = "iupdateby") Long  iupdateby,
-                                @Para(value = "dupdatetime") Date  dupdatetime
+                                @Para(value = "dUpdateTime") Date dUpdateTime
                                 ) {
         Kv kv = new Kv();
         kv.set("iautoid", iautoid);
@@ -86,16 +83,15 @@ public class InStockDefectapicontroller extends BaseApiController {
         kv.set("isfirsttime", isfirsttime);
         kv.set("cbadnesssns", cbadnesssns);
         kv.set("cdesc", cdesc);
-
-        kv.set("iinstockqcformmid", iinstockqcformmid);
-        kv.set("iCustomerId", iCustomerId);
-        kv.set("iInventoryId", iInventoryId);
+        kv.set("ircvdocqcformmid", ircvdocqcformmid);
+        kv.set("iinventoryid", iinventoryid);
+        kv.set("ivendorid", ivendorid);
         kv.set("iupdateby", iupdateby);
-        kv.set("dupdatetime", dupdatetime);
-        ValidationUtils.notNull(iautoid, "缺少在库检ID");
-        ValidationUtils.notNull(iCustomerId, "缺少供应商ID");
-        ValidationUtils.notNull(iCustomerId, "生产存货ID");
-        renderJson(instockdefectapiservice.update(kv));
+        kv.set("ivendorid", dUpdateTime);
+        ValidationUtils.notNull(ircvdocqcformmid, "缺少来料检ID");
+        ValidationUtils.notNull(iinventoryid, "缺少供应商ID");
+        ValidationUtils.notNull(ivendorid, "缺少存货ID");
+        renderJson(rcvDocDefectApiService.update(kv));
     }
 
 

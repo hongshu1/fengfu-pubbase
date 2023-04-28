@@ -1730,7 +1730,7 @@ public class PermissionKey {
     /**
 	 * 平板登录日志
 	 */
-    public static final String RCVDOCDEFECT = "RcvDocDefect";
+    public static final String RCVDOCDEFECT = "rcvdocdefect";
 
 	/**
 	 * 出库检

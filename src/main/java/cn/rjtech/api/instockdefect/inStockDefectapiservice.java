@@ -2,8 +2,8 @@ package cn.rjtech.api.instockdefect;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
-import cn.rjtech.admin.InStockDefect.InStockDefectService;
-import cn.rjtech.admin.InStockQcFormM.InStockQcFormMService;
+import cn.rjtech.admin.instockdefect.InStockDefectService;
+import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.model.momdata.InStockDefect;
 import cn.rjtech.model.momdata.InStockQcFormM;
 import com.jfinal.aop.Inject;
@@ -17,7 +17,7 @@ import static oshi.util.GlobalConfig.set;
  *
  * @author Kephon
  */
-public class InStockDefectapiservice extends JBoltApiBaseService {
+public class inStockDefectapiservice extends JBoltApiBaseService {
 
 
     @Inject

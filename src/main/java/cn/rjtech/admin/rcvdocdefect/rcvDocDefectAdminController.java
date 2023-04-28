@@ -20,7 +20,7 @@ import com.jfinal.kit.Okv;
  */
 @CheckPermission(PermissionKey.NONE)
 @Path(value = "/admin/RcvDocDefect", viewPath = "/_view/admin/RcvDocDefect")
-public class RcvDocDefectAdminController extends BaseAdminController {
+public class rcvDocDefectAdminController extends BaseAdminController {
 
     @Inject
     private RcvDocDefectService service;

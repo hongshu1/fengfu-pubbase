@@ -24,7 +24,7 @@ import com.jfinal.kit.Okv;
 public class ProcessDefectAdminController extends BaseAdminController {
 
 	@Inject
-	private ProcessDefectService service;
+	private ProcessdefectService service;
 
 	@Inject
 	private SpecMaterialsRcvMService specMaterialsRcvMService;
