@@ -1,4 +1,4 @@
-package cn.rjtech.admin.QcInspection;
+package cn.rjtech.admin.qcinspection;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;

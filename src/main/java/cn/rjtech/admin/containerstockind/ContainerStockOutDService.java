@@ -1,4 +1,4 @@
-package cn.rjtech.admin.containerStockInD;
+package cn.rjtech.admin.containerstockind;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;

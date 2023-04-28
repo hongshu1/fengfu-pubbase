@@ -1,4 +1,4 @@
-package cn.rjtech.admin.ProcessDefect;
+package cn.rjtech.admin.processdefect;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;

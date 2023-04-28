@@ -1,4 +1,4 @@
-package cn.rjtech.admin.QcInspection;
+package cn.rjtech.admin.qcinspection;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
