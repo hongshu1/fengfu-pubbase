@@ -27,8 +27,8 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
     <a href="admin/QcInspection/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
-	<a href="admin/QcInspection/add?iautoid=${data.iautoid}&biautoid=${data.biautoid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
-	<a href="admin/QcInspection/edit?iautoid=${data.iautoid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改" class="jbolt_table_editbtn">修改</a>
+	<a href="admin/QcInspection/edit2?iautoid=${data.iautoid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+	<a href="admin/QcInspection/edit2?iautoid=${data.iautoid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改" class="jbolt_table_editbtn">修改</a>
 </td>
 <td>${data.iorgid}</td>
 <td>${data.corgcode}</td>

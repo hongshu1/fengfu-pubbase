@@ -375,4 +375,8 @@
 #include("InStockDefect/InStockDefect.sql")
 #end
 
+#namespace("QcInspection")
+#include("QcInspection/QcInspection.sql")
+#end
+
 

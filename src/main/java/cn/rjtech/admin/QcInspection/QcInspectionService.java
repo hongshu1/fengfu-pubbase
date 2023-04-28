@@ -1,12 +1,20 @@
 package cn.rjtech.admin.QcInspection;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.QcInspection;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.Date;
+import java.util.List;
+
 /**
  * 工程内品质巡查 Service
  * @ClassName: QcInspectionService
@@ -170,5 +178,109 @@ public class QcInspectionService extends BaseService<QcInspection> {
 		//这里用来覆盖 检测QcInspection是否被其它表引用
 		return null;
 	}
+
+	/**
+	 * 拉取部门和人员资源
+	 */
+	public List<Record> DepartmentList(Kv kv) {
+		kv.set("orgCode", getOrgCode());
+		return dbTemplate("QcInspection.DepartmentList", kv).find();
+	}
+
+
+	//更新状态并保存数据方法
+	public Ret updateEditTable(JBoltTable jBoltTable, Kv formRecord) {
+		Date now = new Date();
+
+		tx(() -> {
+			//判断是否有主键id
+			if(isOk(formRecord.getStr("qcInspection.iautoid"))){
+				QcInspection qcInspection = findById(formRecord.getLong("qcInspection.iautoid"));
+
+					//录入数据
+					qcInspection.setCChainNo(formRecord.getStr("qcInspection.cchainno"));
+					qcInspection.setCChainName(formRecord.getStr("qcInspection.cchainname"));
+					qcInspection.setIsFirstCase(formRecord.getBoolean("qcInspection.isfirstcase"));
+					qcInspection.setDRecordDate(formRecord.getDate("qcInspection.drecorddate"));
+					qcInspection.setIQcDutyPersonId(formRecord.getLong("psnname"));
+					qcInspection.setIQcDutyDepartmentId(formRecord.getLong("depname"));
+					qcInspection.setCPlace(formRecord.getStr("qcInspection.cplace"));
+					qcInspection.setCProblem(formRecord.getStr("qcInspection.cproblem"));
+					qcInspection.setCAnalysis(formRecord.getStr("qcInspection.canalysis"));
+					qcInspection.setCMeasure(formRecord.getStr("qcInspection.cmeasure"));
+					qcInspection.setCMeasure(formRecord.getStr("qcInspection.cmeasure"));
+					qcInspection.setDDate(formRecord.getDate("qcInspection.ddate"));
+					qcInspection.setIDutyPersonId(formRecord.getLong("qcInspection.idutypersonid"));
+					qcInspection.setIEstimate(formRecord.getInt("qcInspection.iestimate"));
+					qcInspection.setCMeasureAttachments(formRecord.getStr("fileData"));
+
+					//更新人和时间
+					qcInspection.setIUpdateBy(JBoltUserKit.getUserId());
+					qcInspection.setCUpdateName(JBoltUserKit.getUserName());
+					qcInspection.setDUpdateTime(now);
+
+
+				qcInspection.update();
+			}else{
+				//保存未有主键的数据
+				RcvDocfectLinesave(formRecord, now);
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
+
+
+	//未有主键的保存方法
+	public void RcvDocfectLinesave(Kv formRecord, Date now){
+		System.out.println("formRecord==="+formRecord);
+		System.out.println("now==="+now);
+		QcInspection qcInspection = new QcInspection();
+		qcInspection.setIAutoId(formRecord.getLong("qcInspection.iautoid"));
+
+
+		//录入填写的数据
+		qcInspection.setCChainNo(formRecord.getStr("qcInspection.cchainno"));
+		qcInspection.setCChainName(formRecord.getStr("qcInspection.cchainname"));
+		qcInspection.setIsFirstCase(formRecord.getBoolean("qcInspection.isfirstcase"));
+		qcInspection.setDRecordDate(formRecord.getDate("qcInspection.drecorddate"));
+//		qcInspection.setIQcDutyPersonId(formRecord.getLong("psnname"));    //人员
+//		qcInspection.setIQcDutyDepartmentId(formRecord.getLong("depname"));    //部门
+		qcInspection.setCPlace(formRecord.getStr("qcInspection.cplace"));
+		qcInspection.setCProblem(formRecord.getStr("qcInspection.cproblem"));
+		qcInspection.setCAnalysis(formRecord.getStr("qcInspection.canalysis"));
+		qcInspection.setCMeasure(formRecord.getStr("qcInspection.cmeasure"));
+		qcInspection.setCMeasure(formRecord.getStr("qcInspection.cmeasure"));
+		qcInspection.setDDate(formRecord.getDate("qcInspection.ddate"));
+		qcInspection.setIDutyPersonId(formRecord.getLong("qcInspection.idutypersonid"));
+		qcInspection.setIEstimate(formRecord.getInt("qcInspection.iestimate"));
+		if (notNull(formRecord.getStr("fileData"))){
+			qcInspection.setCMeasureAttachments(formRecord.getStr("fileData"));
+		}
+
+		//必录入基本数据
+		qcInspection.setIAutoId(JBoltSnowflakeKit.me.nextId());
+
+		qcInspection.setIOrgId(getOrgId());
+		qcInspection.setCOrgCode(getOrgCode());
+		qcInspection.setCOrgName(getOrgName());
+		qcInspection.setICreateBy(JBoltUserKit.getUserId());
+		qcInspection.setCCreateName(JBoltUserKit.getUserName());
+		qcInspection.setDCreateTime(now);
+		qcInspection.setIUpdateBy(JBoltUserKit.getUserId());
+		qcInspection.setCUpdateName(JBoltUserKit.getUserName());
+		qcInspection.setDUpdateTime(now);
+		qcInspection.save();
+	}
+
+
+	/**
+	 * 获取附件信息
+	 * @return
+	 */
+	public QcInspection getFilesById(String supplierInfoId){
+		return findFirst("SELECT file_name as fileName,id local_url FROM UGCFF_MOM_System.dbo.jb_jbolt_file  WHERE id = '"+supplierInfoId+"'");
+	}
+
 
 }
