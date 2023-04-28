@@ -1,4 +1,4 @@
-package cn.rjtech.entity.vo.stockoutqcformm;
+package cn.rjtech.entity.vo.rcvdocqcformm;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -7,23 +7,25 @@ import java.util.List;
 /**
  * @version 1.0
  * @Author cc
- * @Create 2023/4/27 15:14
+ * @Create 2023/4/28 10:52
  * @Description 跳转到"查看"页面后，自动加载查看页面table的数据
  */
-public class AutoGetOnlyseeTableDatas implements Serializable {
-    private Long iautoid;
-    private Long iformparamid;
-    private Long iqcformid;
-    private String coptions;
-    private String cqcformparamids;
-    private String cqcitemname;
-    private String cqcparamname;
-    private Integer iseq;
-    private Integer isubseq;
-    private Integer itype;
-    private BigDecimal imaxval;
-    private BigDecimal iminval;
-    private BigDecimal istdval;
+public class AutoGetRcvOnlyseeTableDatas implements Serializable {
+
+    private Long                                  iautoid;
+    private Long                                  iformparamid;
+    private Long                                  iqcformid;
+    private Long                                  ircvdocqcformmid;
+    private String                                coptions;
+    private String                                cqcformparamids;
+    private String                                cqcitemname;
+    private String                                cqcparamname;
+    private Integer                               iseq;
+    private Integer                               isubseq;
+    private Integer                               itype;
+    private BigDecimal                            imaxval;
+    private BigDecimal                            iminval;
+    private BigDecimal                            istdval;
     private List<Cvalue> cvaluelist;
 
     public Long getIautoid() {
@@ -48,6 +50,14 @@ public class AutoGetOnlyseeTableDatas implements Serializable {
 
     public void setIqcformid(Long iqcformid) {
         this.iqcformid = iqcformid;
+    }
+
+    public Long getIrcvdocqcformmid() {
+        return ircvdocqcformmid;
+    }
+
+    public void setIrcvdocqcformmid(Long ircvdocqcformmid) {
+        this.ircvdocqcformmid = ircvdocqcformmid;
     }
 
     public String getCoptions() {
@@ -138,21 +148,22 @@ public class AutoGetOnlyseeTableDatas implements Serializable {
         this.cvaluelist = cvaluelist;
     }
 
-    public static class Cvalue{
-        private Long iautoid;
-        private Long iformparamid;
-        private Long iqcformid;
-        private Long istockoutqcformmid;
-        private Long lineiautoid;
-        private String coptions;
-        private String cqcformparamids;
-        private String cqcitemname;
-        private String cqcparamname;
-        private String name;
-        private String cvalue;
-        private Integer iseq;
-        private Integer isubseq;
-        private Integer itype;
+    public static class Cvalue {
+
+        private Long       iautoid;
+        private Long       iformparamid;
+        private Long       iqcformid;
+        private Long       ircvdocqcformmid;
+        private Long       lineiautoid;
+        private String     coptions;
+        private String     cqcformparamids;
+        private String     cqcitemname;
+        private String     cqcparamname;
+        private String     name;
+        private String     cvalue;
+        private Integer    iseq;
+        private Integer    isubseq;
+        private Integer    itype;
         private BigDecimal imaxval;
         private BigDecimal iminval;
         private BigDecimal istdval;
@@ -181,12 +192,12 @@ public class AutoGetOnlyseeTableDatas implements Serializable {
             this.iqcformid = iqcformid;
         }
 
-        public Long getIstockoutqcformmid() {
-            return istockoutqcformmid;
+        public Long getIrcvdocqcformmid() {
+            return ircvdocqcformmid;
         }
 
-        public void setIstockoutqcformmid(Long istockoutqcformmid) {
-            this.istockoutqcformmid = istockoutqcformmid;
+        public void setIrcvdocqcformmid(Long ircvdocqcformmid) {
+            this.ircvdocqcformmid = ircvdocqcformmid;
         }
 
         public Long getLineiautoid() {
@@ -293,5 +304,4 @@ public class AutoGetOnlyseeTableDatas implements Serializable {
             this.istdval = istdval;
         }
     }
-
 }
