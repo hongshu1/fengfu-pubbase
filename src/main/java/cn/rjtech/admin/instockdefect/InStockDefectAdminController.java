@@ -1,10 +1,10 @@
-package cn.rjtech.admin.InStockDefect;
+package cn.rjtech.admin.instockdefect;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.admin.InStockQcFormM.InStockQcFormMService;
+import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InStockDefect;
 import cn.rjtech.model.momdata.InStockQcFormM;

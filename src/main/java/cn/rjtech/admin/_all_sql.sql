@@ -367,20 +367,20 @@
 #include("subcontractorderdbatchversion/subcontractorderdbatchversion.sql")
 #end
 
-#namespace("StockoutDefect")
-#include("StockoutDefect/StockoutDefect.sql")
+#namespace("stockoutdefect")
+#include("stockoutdefect/stockoutdefect.sql")
 #end
 
-#namespace("InStockDefect")
-#include("InStockDefect/InStockDefect.sql")
+#namespace("instockdefect")
+#include("instockdefect/instockdefect.sql")
 #end
 
-#namespace("QcInspection")
-#include("QcInspection/QcInspection.sql")
+#namespace("qcinspection")
+#include("qcinspection/qcinspection.sql")
 #end
 
-#namespace("MoDoc")
-#include("MoDoc/MoDoc.sql")
+#namespace("modoc")
+#include("modoc/modoc.sql")
 #end
 
 

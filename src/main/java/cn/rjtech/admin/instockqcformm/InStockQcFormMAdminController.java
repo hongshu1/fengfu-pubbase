@@ -1,4 +1,4 @@
-package cn.rjtech.admin.InStockQcFormM;
+package cn.rjtech.admin.instockqcformm;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;

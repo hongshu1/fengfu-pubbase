@@ -1,4 +1,4 @@
-package cn.rjtech.admin.InStockDefect;
+package cn.rjtech.admin.instockdefect;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
