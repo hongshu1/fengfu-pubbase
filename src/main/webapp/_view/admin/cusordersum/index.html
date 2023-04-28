@@ -9,16 +9,16 @@
                 <form class="form-inline" id="CusOrderSum_form" onsubmit="return false;" method="post">
                     <div class="input-group d-inline-block text-nowrap">
                         <div class="input-group-prepend">
-                            <input type="text" data-date class="form-control" placeholder="=开始日期=" maxlength="20" id="beginDate" name="beginDate" value="#date(DateUtil.getNow(),'yyyy-MM-dd')" data-rule="required">
+                            <input type="text" data-date class="form-control" placeholder="=开始日期=" maxlength="20" id="beginDate" name="beginDate" value="#date(DateUtil.toDate(beginDate??),'yyyy-MM-dd')" data-rule="required">
                         </div>
                         <div class="input-group-append">
                             <span class="input-group-text">至</span>
                         </div>
                         <div class="input-group-append">
-                            <input type="text" data-date class="form-control rounded-left-0" placeholder="=截止日期=" maxlength="20" id="endDate" name="endDate" value="#date(DateUtil.getNow(),'yyyy-MM-dd')" data-rule="required">
+                            <input type="text" data-date class="form-control rounded-left-0" placeholder="=截止日期=" maxlength="20" id="endDate" name="endDate" value="#date(DateUtil.toDate(endDate??),'yyyy-MM-dd')" data-rule="required">
                         </div>
                     </div>
-                    
+
                     <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" id="cinvcode" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" id="cinvcode1" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" id="cinvname1" value=""/>
@@ -27,16 +27,16 @@
                     <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
                 </form>
             </div>
-            
+
             <div class="col-sm-auto text-right">
             </div>
         </div>
     </div>
-    
+
     <div class="jbolt_page_content">
 
         <div id="cusOrderSumPortal_#(pageId)" data-ajaxportal data-url="admin/cusordersum/getYear" data-form="CusOrderSum_form"></div>
-        
+
     </div>
 </div>
 #end

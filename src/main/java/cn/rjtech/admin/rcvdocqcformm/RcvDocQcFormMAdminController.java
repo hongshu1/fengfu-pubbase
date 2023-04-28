@@ -26,6 +26,7 @@ import com.jfinal.aop.Before;
 
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -61,14 +62,6 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      */
     public void index() {
         render("index.html");
-    }
-
-    /**
-     * 数据源
-     */
-    public void datas() {
-        Page<Record> recordPage = service.pageList(getKv());
-        renderJsonData(recordPage);
     }
 
     /**
@@ -120,32 +113,18 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     }
 
     /**
-     * 切换isCompleted
+     * 数据源
      */
-    public void toggleIsCompleted() {
-        renderJson(service.toggleBoolean(getLong(0), "isCompleted"));
+    public void datas() {
+        renderJsonData(service.pageList(getKv()));
     }
 
-    /**
-     * 切换isCpkSigned
-     */
-    public void toggleIsCpkSigned() {
-        renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
-    }
-
-    /**
-     * 切换isOk
-     */
-    public void toggleIsOk() {
-        renderJson(service.toggleBoolean(getLong(0), "isOk"));
-    }
-
-    /**
-     * 导入图片
-     */
-    public void uploadImage() {
-        String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
-        renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+    /*
+     * 生成
+     * */
+    public void createTable(@Para(value = "iautoid") Long iautoid,
+                            @Para(value = "cqcformname") String cqcformname) {
+        renderJson(service.createTable(iautoid, cqcformname));
     }
 
     /**
@@ -166,6 +145,13 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         renderJsonData(service.getCheckOutTableDatas(getKv()));
     }
 
+    /*
+     * 在检验页面点击确定
+     * */
+    public void saveCheckOutTable(JBoltPara JboltPara) {
+        renderJson(service.saveCheckOutTable(JboltPara));
+    }
+
     /**
      * 打开onlysee页面
      */
@@ -177,6 +163,13 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         set("rcvdocqcformm", rcvDocQcFormM);
         set("record", record);
         render("onlysee.html");
+    }
+
+    /**
+     * 点击查看时，进入弹窗自动加载table的数据
+     */
+    public void getonlyseeDatas() {
+        renderJsonData(service.getonlyseelistByiautoid(getKv()));
     }
 
     /**
@@ -192,31 +185,40 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         render("editTable.html");
     }
 
-    /**
-     * 点击查看时，进入弹窗自动加载table的数据
-     */
-    public void getonlyseeDatas() {
-        renderJsonData(service.getonlyseelistByiautoid(getKv()));
-    }
-
     /*
      * 在编辑页面点击确定
      * */
-    public void editTable(JBoltPara JboltPara) {
-        renderJson(service.editTable(JboltPara));
+    public void saveEditTable(JBoltPara JboltPara) {
+        renderJson(service.saveEditTable(JboltPara));
     }
 
-    /*
-     * 在检验页面点击确定
-     * */
-    public void editCheckOutTable(JBoltPara JboltPara) {
-        renderJson(service.editCheckOutTable(JboltPara));
+    /**
+     * 切换isCompleted
+     */
+    public void toggleIsCompleted() {
+        renderJson(service.toggleBoolean(getLong(0), "isCompleted"));
     }
 
-    /*
-     * 生成
-     * */
-    public void createTable(JBoltPara jBoltPara) {
-        renderJson(service.createTable(jBoltPara));
+    /**
+     * 切换isOk
+     */
+    public void toggleIsOk() {
+        renderJson(service.toggleBoolean(getLong(0), "isOk"));
     }
+
+    /**
+     * 切换isCpkSigned
+     */
+    public void toggleIsCpkSigned() {
+        renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
+    }
+
+    /**
+     * 导入图片
+     */
+    public void uploadImage() {
+        String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
+        renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+    }
+
 }

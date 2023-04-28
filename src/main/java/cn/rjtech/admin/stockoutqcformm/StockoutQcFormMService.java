@@ -87,6 +87,218 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         return dbTemplate("stockoutqcformm.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
     }
 
+    /*
+     * 根据表格ID生成table
+     * */
+    public Ret createTable(Long iautoid, String cqcformname) {
+        StockoutQcFormM stockoutQcFormM = findById(iautoid);
+        if (null == stockoutQcFormM) {
+            return fail(JBoltMsg.DATA_NOT_EXIST);
+        }
+        //1、根据表格ID查询数据
+        Long iQcFormId = stockoutQcFormM.getIQcFormId();//表格ID
+        List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", iQcFormId)).find();
+        if (recordList.isEmpty()) {
+            return fail(cqcformname + "：没有检验项目，无法生成出库检验表");
+        }
+        ArrayList<StockoutQcFormD> stockoutQcFormDS = new ArrayList<>();
+        for (Record record : recordList) {
+            StockoutQcFormD stockoutQcFormD = new StockoutQcFormD();//质量管理-来料检单行配置表
+            stockoutQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
+            stockoutQcFormD.setIStockoutQcFormMid(iautoid);//来料检id
+            stockoutQcFormD.setIQcFormId(iQcFormId);//检验表格ID
+            stockoutQcFormD.setIFormParamId(record.getLong("iFormParamId"));//检验项目ID
+            stockoutQcFormD.setISeq(record.get("iSeq"));
+            stockoutQcFormD.setISubSeq(record.get("iSubSeq"));
+            stockoutQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
+            stockoutQcFormD.setIType(record.get("iType"));
+            stockoutQcFormD.setIStdVal(record.get("iStdVal"));
+            stockoutQcFormD.setIMaxVal(record.get("iMaxVal"));
+            stockoutQcFormD.setIMinVal(record.get("iMinVal"));
+            stockoutQcFormD.setCOptions(record.get("cOptions"));
+            stockoutQcFormDS.add(stockoutQcFormD);
+        }
+        stockoutQcFormDService.batchSave(stockoutQcFormDS);
+
+        //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检-1”
+        stockoutQcFormM.setIStatus(1);
+        Ret ret = update(stockoutQcFormM);
+        if (ret.isFail()) {
+            return ret;
+        }
+        return SUCCESS;
+    }
+
+    /*
+     * 根据iautoid查询数据,并跳到检验页面
+     * */
+    public Record getCheckoutListByIautoId(Long iautoId) {
+        return dbTemplate("stockoutqcformm.list", Kv.by("iautoId", iautoId)).findFirst();
+    }
+
+    /*
+     * 点击检验时，进入弹窗自动加载table的数据
+     * */
+    public List<Record> getCheckOutTableDatas(Kv kv) {
+        return rcvDocQcFormMService.clearZero(dbTemplate("stockoutqcformm.findChecoutListByIformParamid", kv).find());
+    }
+
+    /*
+     * 在检验页面点击确定
+     * */
+    public Ret saveCheckOutTable(JBoltPara JboltPara) {
+        if (JboltPara == null || JboltPara.isEmpty()) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        String stockqcformmiautoid = JboltPara.getString("stockqcformmiautoid"); //主表id
+
+        JSONArray serializeSubmitList = JboltPara.getJSONArray("serializeSubmitList");
+        List<StockoutqcformdLine> stockoutqcformdLines = new ArrayList<>();
+        for (int i = 0; i < serializeSubmitList.size(); i++) {
+            JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
+            String istockoutqcformdid = jsonObject.getString("iautoid");
+            String iseq = jsonObject.getString("iseq");
+            JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
+            JSONArray elementList = serializeElement.getJSONArray(0);
+            for (int j = 0; j < elementList.size(); j++) {
+                JSONObject object = elementList.getJSONObject(j);
+                String name = object.getString("name");
+                String cvalue = object.getString("value");
+
+                StockoutqcformdLine stockoutqcformdLine = new StockoutqcformdLine();//质量管理-出库检明细列值表
+                saveStockQcFormdLineModel(stockoutqcformdLine, istockoutqcformdid, iseq, cvalue);
+                stockoutqcformdLines.add(stockoutqcformdLine);
+            }
+        }
+        //保存line
+        if (!stockoutqcformdLines.isEmpty()) {
+            stockoutqcformdLineService.batchSave(stockoutqcformdLines);
+        }
+        /*
+         * 出库检表
+         * 1.如果isok=0，代表不合格，将iStatus更新为2，isCompleted更新为1；
+         * 2.如果isok=1，代表合格，将iStatus更新为3，isCompleted更新为1
+         * */
+        StockoutQcFormM stockoutQcFormM = findById(stockqcformmiautoid);
+        saveStockoutQcFormmModel(stockoutQcFormM, JboltPara);
+        update(stockoutQcFormM);
+
+        //isok=0，代表检验结果不合格，生成在库异常品记录
+        String isok = JboltPara.getString("isok");
+        if (isok.equals("0")) {
+            StockoutDefect defect = stockoutDefectService
+                .findStockoutDefectByiStockoutQcFormMid(stockqcformmiautoid);
+            if (null == defect) {
+                StockoutDefect stockoutDefect = new StockoutDefect();
+                stockoutDefectService.savestockoutDefectmodel(stockoutDefect, stockoutQcFormM);
+                stockoutDefectService.save(stockoutDefect);
+            }
+        }
+        return ret(true);
+    }
+
+    /**
+     * 打开onlysee页面
+     */
+    public List<Record> getonlyseelistByiautoid(Long iautoid) {
+        Kv kv = new Kv();
+        kv.set("iautoid", iautoid);
+        List<Record> recordList = dbTemplate("stockoutqcformm.getonlyseelistByiautoid", kv).find();
+        List<Record> clearRecordList = clearZero(recordList);
+
+        Map<Object, List<Record>> map = clearRecordList.stream()
+            .collect(Collectors.groupingBy(p -> p.get("iautoid"), Collectors.toList()));
+        List<Record> docparamlist = new ArrayList<>();
+        for (Entry<Object, List<Record>> entry : map.entrySet()) {
+            docparamlist = entry.getValue();
+            break;
+        }
+        return docparamlist;
+    }
+
+    /*
+     * 点击检验时，进入弹窗自动加载table的数据
+     * */
+    public List<Record> getonlyseelistByiautoid(Kv kv) {
+        List<Record> recordList = dbTemplate("stockoutqcformm.getonlyseelistByiautoid", kv).find();
+        List<Record> clearRecordList = clearZero(recordList);
+
+        Map<Object, List<Record>> map = clearRecordList.stream()
+            .collect(Collectors.groupingBy(p -> p.get("iautoid"), Collectors.toList()));
+
+        List<Record> records = new ArrayList<>();
+        for (Entry<Object, List<Record>> entry : map.entrySet()) {
+            List<Record> value = entry.getValue();
+            for (int i = 0; i < value.size(); i++) {
+                value.get(i).set("name", "cA" + (i + 1));
+            }
+            Record record = new Record();
+            Record record1 = value.get(0);
+            record.set("cvalueList", value);
+            record.set("coptions", record1.get("coptions"));
+            record.set("cqcformparamids", record1.get("cqcformparamids"));
+            record.set("cqcitemname", record1.get("cqcitemname"));
+            record.set("cqcparamname", record1.get("cqcparamname"));
+            record.set("iautoid", record1.get("iautoid"));
+            record.set("iformparamid", record1.get("iformparamid  "));
+            record.set("imaxval", record1.get("imaxval"));
+            record.set("iminval", record1.get("iminval"));
+            record.set("iqcformid", record1.get("iqcformid"));
+            record.set("iseq", record1.get("iseq"));
+            record.set("istdval", record1.get("istdval"));
+            record.set("isubseq", record1.get("isubseq"));
+            record.set("itype", record1.get("itype"));
+            records.add(record);
+        }
+        List<Record> resultRecord =
+            records.stream().sorted(Comparator.comparing(e -> e.getInt("iseq"))).collect(Collectors.toList());
+        return resultRecord;
+    }
+
+    /*
+     * 在编辑页面点击确定
+     * */
+    public Ret saveEditTable(JBoltPara JboltPara) {
+        if (JboltPara == null || JboltPara.isEmpty()) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        String stockqcformmiautoid = JboltPara.getString("stockqcformmiautoid"); //主表id
+        String isok = JboltPara.getString("isok");
+        //是否合格不能为空
+        if (StringUtils.isBlank(isok)) {
+            return fail("请判定是否合格");
+        }
+
+        JSONArray serializeSubmitList = JboltPara.getJSONArray("serializeSubmitList");
+        List<StockoutqcformdLine> stockoutqcformdLines = new ArrayList<>();
+        for (int i = 0; i < serializeSubmitList.size(); i++) {
+            JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
+            JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
+            JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
+            JSONArray elementList = serializeElement.getJSONArray(0);
+            for (int j = 0; j < elementList.size(); j++) {
+                JSONObject object = elementList.getJSONObject(j);
+                String cvalue = object.getString("value");
+                JSONObject cvaluelistJSONObject = cvaluelist.getJSONObject(j);
+                Long lineiautoid = cvaluelistJSONObject.getLong("lineiautoid");
+                StockoutqcformdLine stockoutqcformdLine = stockoutqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
+                stockoutqcformdLine.setCValue(cvalue);
+                stockoutqcformdLines.add(stockoutqcformdLine);
+            }
+        }
+        //更新line
+        if (!stockoutqcformdLines.isEmpty()) {
+            stockoutqcformdLineService.batchUpdate(stockoutqcformdLines);
+        }
+        StockoutQcFormM stockoutQcFormM = findById(stockqcformmiautoid);
+        saveStockoutQcFormmModel(stockoutQcFormM, JboltPara);
+        Ret ret = update(stockoutQcFormM);
+        if (ret.isFail()) {
+            return ret;
+        }
+        return ret(true);
+    }
+
     /**
      * 保存
      */
@@ -155,98 +367,6 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     }
 
     /*
-     * 在编辑页面点击确定
-     * */
-    public Ret editTable(JBoltPara JboltPara) {
-        if (JboltPara == null || JboltPara.isEmpty()) {
-            return fail(JBoltMsg.PARAM_ERROR);
-        }
-        String stockqcformmiautoid = JboltPara.getString("stockqcformmiautoid"); //主表id
-        String isok = JboltPara.getString("isok");
-        //是否合格不能为空
-        if (StringUtils.isBlank(isok)) {
-            return fail("请判定是否合格");
-        }
-
-        JSONArray serializeSubmitList = JboltPara.getJSONArray("serializeSubmitList");
-        List<StockoutqcformdLine> stockoutqcformdLines = new ArrayList<>();
-        for (int i = 0; i < serializeSubmitList.size(); i++) {
-            JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
-            JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
-            JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
-            JSONArray elementList = serializeElement.getJSONArray(0);
-            for (int j = 0; j < elementList.size(); j++) {
-                JSONObject object = elementList.getJSONObject(j);
-                String cvalue = object.getString("value");
-                JSONObject cvaluelistJSONObject = cvaluelist.getJSONObject(j);
-                Long lineiautoid = cvaluelistJSONObject.getLong("lineiautoid");
-                StockoutqcformdLine stockoutqcformdLine = stockoutqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
-                stockoutqcformdLine.setCValue(cvalue);
-                stockoutqcformdLines.add(stockoutqcformdLine);
-            }
-        }
-        //更新line
-        stockoutqcformdLineService.batchUpdate(stockoutqcformdLines);
-
-        StockoutQcFormM stockoutQcFormM = findById(stockqcformmiautoid);
-        saveStockoutQcFormmModel(stockoutQcFormM, JboltPara);
-		Ret ret = update(stockoutQcFormM);
-		if (ret.isFail()) {
-			return ret;
-		}
-        return ret(true);
-    }
-
-    /*
-     * 在检验页面点击确定
-     * */
-    public Ret editCheckOutTable(JBoltPara JboltPara) {
-        if (JboltPara == null || JboltPara.isEmpty()) {
-            return fail(JBoltMsg.PARAM_ERROR);
-        }
-        String stockqcformmiautoid = JboltPara.getString("stockqcformmiautoid"); //主表id
-
-        JSONArray serializeSubmitList = JboltPara.getJSONArray("serializeSubmitList");
-        List<StockoutqcformdLine> stockoutqcformdLines = new ArrayList<>();
-        for (int i = 0; i < serializeSubmitList.size(); i++) {
-            JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
-            String istockoutqcformdid = jsonObject.getString("iautoid");
-            String iseq = jsonObject.getString("iseq");
-            JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
-            JSONArray elementList = serializeElement.getJSONArray(0);
-            for (int j = 0; j < elementList.size(); j++) {
-                JSONObject object = elementList.getJSONObject(j);
-                String name = object.getString("name");
-                String cvalue = object.getString("value");
-
-                StockoutqcformdLine stockoutqcformdLine = new StockoutqcformdLine();//质量管理-出库检明细列值表
-                saveStockQcFormdLineModel(stockoutqcformdLine, istockoutqcformdid, iseq, cvalue);
-                stockoutqcformdLines.add(stockoutqcformdLine);
-            }
-        }
-        //保存line
-        stockoutqcformdLineService.batchSave(stockoutqcformdLines);
-        /*
-         * 出库检表
-         * 1.如果isok=0，代表不合格，将iStatus更新为2，isCompleted更新为1；
-         * 2.如果isok=1，代表合格，将iStatus更新为3，isCompleted更新为1
-         * */
-        StockoutQcFormM stockoutQcFormM = findById(stockqcformmiautoid);
-        saveStockoutQcFormmModel(stockoutQcFormM, JboltPara);
-        update(stockoutQcFormM);
-
-        //如果检验结果不合格，生成在库异常品记录
-        StockoutDefect defect = stockoutDefectService
-            .findStockoutDefectByiStockoutQcFormMid(stockqcformmiautoid);
-        if (null == defect) {
-            StockoutDefect stockoutDefect = new StockoutDefect();
-            stockoutDefectService.savestockoutDefectmodel(stockoutDefect, stockoutQcFormM);
-            stockoutDefectService.save(stockoutDefect);
-        }
-        return ret(true);
-    }
-
-    /*
      * 给出库检明细列值表传参
      * */
     public void saveStockQcFormdLineModel(StockoutqcformdLine stockoutqcformdLine, String iautoid, String iseq, String cvalue) {
@@ -272,69 +392,6 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     }
 
     /*
-     * 点击检验时，进入弹窗自动加载table的数据
-     * */
-    public List<Record> getCheckOutTableDatas(Kv kv) {
-        return rcvDocQcFormMService.clearZero(dbTemplate("stockoutqcformm.findChecoutListByIformParamid", kv).find());
-    }
-
-    /*
-     * 点击检验时，进入弹窗自动加载table的数据
-     * */
-    public List<Record> getonlyseelistByiautoid(Kv kv) {
-        List<Record> recordList = dbTemplate("stockoutqcformm.getonlyseelistByiautoid", kv).find();
-        List<Record> clearRecordList = clearZero(recordList);
-
-        Map<Object, List<Record>> map = clearRecordList.stream()
-            .collect(Collectors.groupingBy(p -> p.get("iautoid"), Collectors.toList()));
-
-        List<Record> records = new ArrayList<>();
-        for (Entry<Object, List<Record>> entry : map.entrySet()) {
-            List<Record> value = entry.getValue();
-            for (int i = 0; i < value.size(); i++) {
-                value.get(i).set("name", "cA" + (i + 1));
-            }
-            Record record = new Record();
-            Record record1 = value.get(0);
-            record.set("cvalueList", value);
-            record.set("coptions", record1.get("coptions"));
-            record.set("cqcformparamids", record1.get("cqcformparamids"));
-            record.set("cqcitemname", record1.get("cqcitemname"));
-            record.set("cqcparamname", record1.get("cqcparamname"));
-            record.set("iautoid", record1.get("iautoid"));
-            record.set("iformparamid", record1.get("iformparamid  "));
-            record.set("imaxval", record1.get("imaxval"));
-            record.set("iminval", record1.get("iminval"));
-            record.set("iqcformid", record1.get("iqcformid"));
-            record.set("ircvdocqcformmid", record1.get("ircvdocqcformmid"));
-            record.set("iseq", record1.get("iseq"));
-            record.set("istdval", record1.get("istdval"));
-            record.set("isubseq", record1.get("isubseq"));
-            record.set("itype", record1.get("itype"));
-            records.add(record);
-        }
-        List<Record> resultRecord =
-            records.stream().sorted(Comparator.comparing(e -> e.getInt("iseq"))).collect(Collectors.toList());
-        return resultRecord;
-    }
-
-    public List<Record> getonlyseelistByiautoid(Long iautoid) {
-        Kv kv = new Kv();
-        kv.set("iautoid", iautoid);
-        List<Record> recordList = dbTemplate("stockoutqcformm.getonlyseelistByiautoid", kv).find();
-        List<Record> clearRecordList = clearZero(recordList);
-
-        Map<Object, List<Record>> map = clearRecordList.stream()
-            .collect(Collectors.groupingBy(p -> p.get("iautoid"), Collectors.toList()));
-        List<Record> docparamlist = new ArrayList<>();
-        for (Entry<Object, List<Record>> entry : map.entrySet()) {
-            docparamlist = entry.getValue();
-            break;
-        }
-        return docparamlist;
-    }
-
-    /*
      * 清除多余的零
      * */
     public List<Record> clearZero(List<Record> recordList) {
@@ -346,54 +403,5 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         return recordList;
     }
 
-    /*
-     * 根据表格ID生成table
-     * */
-    public Ret createTable(JBoltPara jBoltPara) {
-        Long iautoid = jBoltPara.getLong("iautoid");
-        StockoutQcFormM stockoutQcFormM = findById(iautoid);
-        if (null == stockoutQcFormM) {
-            return fail(JBoltMsg.DATA_NOT_EXIST);
-        }
-        //1、根据表格ID查询数据
-        Long iQcFormId = stockoutQcFormM.getIQcFormId();//表格ID
-        List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", iQcFormId)).find();
-        if (recordList.isEmpty()) {
-            return fail(jBoltPara.get("cqcformname") + "：没有检验项目，无法生成出库检验表");
-        }
-        ArrayList<StockoutQcFormD> stockoutQcFormDS = new ArrayList<>();
-        for (Record record : recordList) {
-            StockoutQcFormD stockoutQcFormD = new StockoutQcFormD();//质量管理-来料检单行配置表
-            stockoutQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
-            stockoutQcFormD.setIStockoutQcFormMid(iautoid);//来料检id
-            stockoutQcFormD.setIQcFormId(iQcFormId);//检验表格ID
-            stockoutQcFormD.setIFormParamId(record.getLong("iFormParamId"));//检验项目ID
-            stockoutQcFormD.setISeq(record.get("iSeq"));
-            stockoutQcFormD.setISubSeq(record.get("iSubSeq"));
-            stockoutQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
-            stockoutQcFormD.setIType(record.get("iType"));
-            stockoutQcFormD.setIStdVal(record.get("iStdVal"));
-            stockoutQcFormD.setIMaxVal(record.get("iMaxVal"));
-            stockoutQcFormD.setIMinVal(record.get("iMinVal"));
-            stockoutQcFormD.setCOptions(record.get("cOptions"));
-            stockoutQcFormDS.add(stockoutQcFormD);
-        }
-        stockoutQcFormDService.batchSave(stockoutQcFormDS);
-
-        //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检-1”
-        stockoutQcFormM.setIStatus(1);
-        Ret ret = update(stockoutQcFormM);
-        if (ret.isFail()) {
-            return ret;
-        }
-        return SUCCESS;
-    }
-
-    /*
-     * 根据iautoid查询数据,并跳到检验页面
-     * */
-    public Record getCheckoutListByIautoId(Long iautoId) {
-        return dbTemplate("stockoutqcformm.list", Kv.by("iautoId", iautoId)).findFirst();
-    }
 
 }

@@ -384,7 +384,7 @@
       isok: isok,
       stockqcformmiautoid: iautoid
     }
-    Ajax.post("admin/stockoutqcformm/editCheckOutTable", submitDatas, function (res) {
+    Ajax.post("admin/stockoutqcformm/saveCheckOutTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {
           refreshPjaxContainer();

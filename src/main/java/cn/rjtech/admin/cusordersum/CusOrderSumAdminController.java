@@ -38,6 +38,13 @@ public class CusOrderSumAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(DateUtil.date());
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        set("beginDate", calendar.getTime());
+        int lastDayOfMonth = DateUtil.getLastDayOfMonth(DateUtil.date());
+        calendar.set(Calendar.DAY_OF_MONTH, lastDayOfMonth);
+        set("endDate", calendar.getTime());
         render("index.html");
     }
 

@@ -5,9 +5,14 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.util.JBoltListMap;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bomcompare.BomCompareService;
 import cn.rjtech.admin.bommasterinv.BomMasterInvService;
 import cn.rjtech.admin.customer.CustomerService;
@@ -19,21 +24,22 @@ import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SSCellRange;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1401,6 +1407,12 @@ public class BomMasterService extends BaseService<BomMaster> {
 			// 保存最新的一份
 			bomMasterInvService.saveBomMasterInv(bomMasterId, bomMaster.getIInventoryId());
 			update(bomMaster, JBoltUserKit.getUserId(), JBoltUserKit.getUserName(), date);
+			
+//			-----------推送U8-----------------
+			
+			
+			
+			
 			// 删除母件下所有子件数据
 			return true;
 		});
@@ -1477,4 +1489,120 @@ public class BomMasterService extends BaseService<BomMaster> {
 		}
 		return SUCCESS;
 	}
+	
+	/**
+	 *
+	 * @param id
+	 * @return
+	 */
+	public String test(Long id){
+		BomMaster bomMaster = findById(id);
+		// 获取所有数据
+		List<Record> compareList = findRecords("EXEC BD_BOMTree @orgId = ?, @pId =?", getOrgId(), id);
+		JBoltListMap<Long, Record> listMap = new JBoltListMap();
+		for (Record record : compareList){
+			listMap.addItem(record.getLong("pid"), record);
+		}
+		
+		if (CollectionUtil.isEmpty(listMap)){
+			return null;
+		}
+		DateTime date = DateUtil.date();
+		List<Record> repList = new ArrayList<>();
+		
+		for (Record record : compareList){
+			Long bomMasterId = record.getLong("id");
+			if (listMap.containsKey(bomMasterId)){
+				Record masterJson = createMasterJson(bomMaster, date, record, listMap.get(bomMasterId));
+				repList.add(masterJson);
+			}
+		}
+		
+		for (Long masterId : listMap.keySet()){
+			List<Record> list = listMap.get(masterId);
+			// 等于空，说明是成品或半成品
+			if (masterId == null){
+				continue;
+			}
+		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("data", repList);
+		return JSONObject.toJSONString(map, SerializerFeature.WriteMapNullValue);
+	}
+	
+	public Record createMasterJson(BomMaster bomMaster, Date date, Record masterRecord, List<Record> compareList){
+		Record record = new Record();
+		// bom唯一标识
+		record.set("bomid", masterRecord.getStr("id"));
+		// 母件编码
+		record.put("pinvcode", masterRecord.getStr("cInvCode"));
+		// 母件名称
+		record.put("pinvname", masterRecord.getStr("cInvName"));
+		// 规格型号
+		record.put("pinvstd", masterRecord.getStr("cInvStd"));
+		// BOM类别
+		record.put("bomtype", null);
+		// 版本代号
+		record.set("version", bomMaster.getCBomVersion());
+		//
+		record.set("versiondesc", "mes审核推单");
+		// 状态：审核
+		record.set("bomstatus", "审核");
+		// 建档人
+		record.set("CreateUser", bomMaster.getCCreateName());
+		// 建档时间 "2021-02-10 12:29:30"
+		record.set("dCreateDate", DateUtil.formatDateTime(bomMaster.getDCreateTime()));
+		// 修改人
+		record.set("ModifyUser", bomMaster.getCUpdateName());
+		// 修改时间
+		record.set("ModifyDate", DateUtil.formatDateTime(bomMaster.getDUpdateTime()));
+		// 审核人
+		record.set("RelsUser", JBoltUserKit.getUserName());
+		// 审核时间
+		record.set("RelsTime", DateUtil.formatDateTime(date));
+		// 子件
+		record.set("items", getCompareListJson(compareList));
+		return record;
+	}
+	
+	public Record createCompareJson(Record compareRecord){
+		Record record = new Record();
+		// bomId
+		record.set("bomid", compareRecord.getStr("id"));
+		// 子件编号
+		record.set("cinvcode", compareRecord.getStr("cInvCode"));
+		// 子件名称
+		record.set("cinvname", compareRecord.getStr("cInvName"));
+		// 子件规格
+		record.set("cinvstd", compareRecord.getStr("cInvStd"));
+		// 子件行号
+		record.set("SortSeq", compareRecord.getStr("SortSeq"));
+		// 单位
+		record.set("cComUnitName", compareRecord.getStr("cUomName"));
+		// 基本用量
+		record.set("BaseQtyN", compareRecord.getStr("iQty"));
+		// 基础数量
+		record.set("BaseQtyD", "1");
+		record.set("subitems", null);
+		
+		return record;
+	}
+	
+	/**
+	 *
+	 * @param compareList 子件值
+	 * @return
+	 */
+	public List<Record> getCompareListJson(List<Record> compareList){
+		List<Record> jsonList = new ArrayList<>();
+		int index = 1;
+		for (Record record : compareList){
+			// 设置次序
+			record.set("SortSeq", index*10);
+			jsonList.add(createCompareJson(record));
+			index++;
+		}
+		return jsonList;
+	}
+	
 }
