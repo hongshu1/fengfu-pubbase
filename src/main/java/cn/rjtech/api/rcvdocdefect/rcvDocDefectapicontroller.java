@@ -19,7 +19,7 @@ import java.util.Date;
  *
  */
 @ApiDoc
-public class rcvDocDefectapicontroller extends BaseApiController {
+public class rcvDocDefectApiController extends BaseApiController {
 
     @Inject
     private rcvDocDefectapiservice rcvDocDefectApiService;
