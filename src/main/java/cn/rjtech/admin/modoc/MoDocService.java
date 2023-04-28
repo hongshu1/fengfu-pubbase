@@ -47,7 +47,7 @@ public class MoDocService extends BaseService<MoDoc> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		moDoc.setIStatus(1);
-		moDoc.setIType(2L);
+		moDoc.setIType(2);
 		LocalDate date = LocalDate.parse(moDoc.getDPlanDate().toString());
 		moDoc.setIYear(date.getYear());
 		moDoc.setIMonth(date.getMonthValue());
