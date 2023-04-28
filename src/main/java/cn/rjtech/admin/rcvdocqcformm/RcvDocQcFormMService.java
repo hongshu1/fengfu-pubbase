@@ -31,7 +31,7 @@ import com.jfinal.upload.UploadFile;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.admin.RcvDocDefect.RcvDocDefectService;
+import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
 import cn.rjtech.model.momdata.RcvDocDefect;

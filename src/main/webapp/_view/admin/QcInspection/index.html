@@ -1,0 +1,135 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>工程内品质巡查</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="qcInspectionForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="qcInspectionRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+	<td>
+    <a href="admin/QcInspection/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+	<a href="admin/QcInspection/edit2?iautoid=${data.iautoid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+	<a href="admin/QcInspection/edit2?iautoid=${data.iautoid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改" class="jbolt_table_editbtn">修改</a>
+</td>
+<td>${data.iorgid}</td>
+<td>${data.corgcode}</td>
+<td>${data.corgname}</td>
+<td>${data.cchainno}</td>
+<td>${data.cchainname}</td>
+<td><img data-switchbtn data-confirm="确定切换是否首发：0. 再发 1. 首发？" data-value="${data.isfirstcase}"  data-handler="refreshJBoltTable"  data-url="admin/QcInspection/toggleIsfirstcase/${data.id}"/></td>
+<td>${data.drecorddate}</td>
+<td>${data.iqcdutypersonid}</td>
+<td>${data.iqcdutydepartmentid}</td>
+<td>${data.cplace}</td>
+<td>${data.cproblem}</td>
+<td>${data.canalysis}</td>
+<td>${data.cmeasure}</td>
+<td>${data.ddate}</td>
+<td>${data.idutypersonid}</td>
+<td>${data.iestimate}</td>
+<td>${data.cmeasureattachments}</td>
+<td>${data.icreateby}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+<td>${data.iupdateby}</td>
+<td>${data.cupdatename}</td>
+<td>${data.dupdatetime}</td>
+<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/QcInspection/toggleIsdeleted/${data.id}"/></td>
+
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="qcInspection_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增工程内品质巡查"  data-url="admin/QcInspection/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改工程内品质巡查" data-check-handler="jboltTableGetCheckedId" data-url="admin/QcInspection/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/QcInspection/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/QcInspection/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="qcInspectionForm_#(pageId)"
+data-rowtpl="qcInspectionRowtpl_#(pageId)"
+data-page="qcInspectionPage_#(pageId)"
+data-toolbar="qcInspection_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+data-fixed-columns-right="-1"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="100">操作</th>
+	<th data-width="150" data-column="cChainNo">巡查单号</th>
+	<th data-width="150" data-column="cChainNo">连锁号</th>
+	<th data-width="150" data-column="cChainNo">分类</th>
+	<th data-width="150" data-column="isFirstCase">首/再发</th>
+	<th data-width="150" data-column="dRecordDate">发现日期</th>
+	<th data-width="150" data-column="iEstimate">判定</th>
+	<th data-width="150" data-column="cUpdateName">更新人名称</th>
+	<th data-width="150" data-column="dUpdateTime">更新时间</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/QcInspection/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('title', '工程内品质巡查')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end
