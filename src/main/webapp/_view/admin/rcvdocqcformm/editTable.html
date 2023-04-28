@@ -393,7 +393,7 @@
       isok: isok,
       docqcformmiautoid: iautoid
     }
-    Ajax.post("admin/rcvdocqcformm/editTable", submitDatas, function (res) {
+    Ajax.post("admin/rcvdocqcformm/saveEditTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {
           refreshPjaxContainer();

@@ -908,67 +908,99 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
 
     /**
-     * 获取计划
+     * 锁定计划
      */
-    public List<ScheduProductYearViewDTO> lockScheduPlan(Long iWeekScheduleId) {
+    public List<ScheduProductYearViewDTO> lockScheduPlan(Kv kv) {
+        //排产层级
+        int level = kv.getInt("level");
+        //锁定截止日期
+        String lockEndDate = kv.getStr("lockenddate");
 
-        //TODO:查询排产开始日期与截止日期
-        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
-        int iLevel = apsWeekschedule.getILevel();
-        String startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(),"yyyy-MM-dd");
-        String endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(),"yyyy-MM-dd");
+        //TODO:获取当前层级上次排产锁定日期+1
+        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock",Kv.by("level",level)).findFirst();
+        //锁定开始日期
+        Date startDate;
+        if (apsWeekschedule != null){
+            Date dLockEndTime = apsWeekschedule.getDLockEndTime();
+            Calendar calendar = Calendar.getInstance();
+            Date date = cn.rjtech.util.DateUtils.parseDate(dLockEndTime);//yyyy-MM-dd
+            calendar.setTime(date);
+            calendar.add(Calendar.DATE,1);//日期+1
+            startDate = DateUtils.parseDate(DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd"));
+        }else {
+            startDate = DateUtils.parseDate(DateUtils.formatDate(new Date(),"yyyy-MM-dd"));
+        }
+        String lockStartDate = DateUtils.formatDate(startDate,"yyyy-MM-dd");
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(DateUtils.parseDate(startDate));
-        calendar.add(Calendar.DATE,-1);//日期-1
-        //过去一天年月日
-        Date lastDate = DateUtils.parseDate(DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd"));
-        int lastyear = Integer.parseInt(DateUtils.formatDate(lastDate,"yyyy"));
-        int lastmonth = Integer.parseInt(DateUtils.formatDate(lastDate,"MM"));
-        int lastday = Integer.parseInt(DateUtils.formatDate(lastDate,"dd"));
 
-
-        //TODO:根据层级及日期获取月周生产计划表数据
-        List<Record> getWeekScheduPlanList = getWeekScheduPlanList(Okv.by("level",iLevel).set("startdate",startDate).set("enddate",endDate));
-
-        //key:产线id   value:List物料集
-        Map<Long,List<String>> workInvListMap = new HashMap<>();
-        //key:inv，   value:<yyyy-MM-dd，Record>
-        Map<String,Map<String,Record>> invPlanDateMap = new HashMap<>();
+        //TODO:根据层级及日期获取月周生产计划表数据及部门信息
+        List<Record> apsPlanQtyList = dbTemplate("scheduproductplan.getApsScheduPlanList",Kv.by("level",level).set("startdate",lockStartDate).set("enddate",lockEndDate)).find();
+        //key:inv，   value:<yyyy-MM-dd，Qty1S> 计划/1S
+        Map<String,Map<String,BigDecimal>> invPlanDate1SMap = new HashMap<>();
+        //key:inv，   value:<yyyy-MM-dd，Qty2S> 计划/2S
+        Map<String,Map<String,BigDecimal>> invPlanDate2SMap = new HashMap<>();
+        //key:inv，   value:<yyyy-MM-dd，Qty3S> 计划/3S
+        Map<String,Map<String,BigDecimal>> invPlanDate3SMap = new HashMap<>();
+        //key:部门id   value:List物料集
+        Map<Long,List<String>> deptInvListMap = new HashMap<>();
+        //key:inv   value:info
+        Map<String,Record> invInfoMap = new HashMap<>();
         //本次排产物料id集
         String idsJoin = "(";
         List<Long> idList = new ArrayList<>();
-        for (Record record : getWeekScheduPlanList){
-            Long iWorkRegionMid = record.getLong("iWorkRegionMid");
+        for (Record record : apsPlanQtyList){
+            Long iDepId = record.getLong("iDepId");
             Long invId = record.getLong("invId");
             String cInvCode = record.getStr("cInvCode");
             String iYear = record.getStr("iYear");
             int iMonth = record.getInt("iMonth");
             int iDate = record.getInt("iDate");
+            BigDecimal Qty1S = record.getBigDecimal("Qty1S");
+            BigDecimal Qty2S = record.getBigDecimal("Qty2S");
+            BigDecimal Qty3S = record.getBigDecimal("Qty3S");
             //yyyy-MM-dd
             String dateKey = iYear;
             dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
             dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
 
-            if (workInvListMap.containsKey(iWorkRegionMid)){
-                List<String> list = workInvListMap.get(iWorkRegionMid);
+            if (deptInvListMap.containsKey(iDepId)){
+                List<String> list = deptInvListMap.get(iDepId);
                 list.add(cInvCode);
             }else {
                 List<String> list = new ArrayList<>();
                 list.add(cInvCode);
-                workInvListMap.put(iWorkRegionMid,list);
+                deptInvListMap.put(iDepId,list);
             }
 
-            if (invPlanDateMap.containsKey(cInvCode)){
-                //key:yyyy-MM-dd   value:qty
-                Map<String,Record> dateQtyMap = invPlanDateMap.get(cInvCode);
-                dateQtyMap.put(dateKey,record);
+            if (invPlanDate1SMap.containsKey(cInvCode)){
+                //key:yyyy-MM-dd   value:Qty1S
+                Map<String,BigDecimal> dateQty1SMap = invPlanDate1SMap.get(cInvCode);
+                dateQty1SMap.put(dateKey,Qty1S);
+
+                //key:yyyy-MM-dd   value:Qty2S
+                Map<String,BigDecimal> dateQty2SMap = invPlanDate2SMap.get(cInvCode);
+                dateQty2SMap.put(dateKey,Qty2S);
+
+                //key:yyyy-MM-dd   value:Qty3S
+                Map<String,BigDecimal> dateQty3SMap = invPlanDate3SMap.get(cInvCode);
+                dateQty3SMap.put(dateKey,Qty3S);
             }else {
-                Map<String,Record> dateQtyMap = new HashMap<>();
-                dateQtyMap.put(dateKey,record);
-                invPlanDateMap.put(cInvCode,dateQtyMap);
-            }
+                //key:yyyy-MM-dd   value:Qty1S
+                Map<String,BigDecimal> dateQty1SMap = new HashMap<>();
+                dateQty1SMap.put(dateKey,Qty1S);
+                invPlanDate1SMap.put(cInvCode,dateQty1SMap);
 
+                //key:yyyy-MM-dd   value:Qty2S
+                Map<String,BigDecimal> dateQty2SMap = new HashMap<>();
+                dateQty2SMap.put(dateKey,Qty2S);
+                invPlanDate2SMap.put(cInvCode,dateQty2SMap);
+
+                //key:yyyy-MM-dd   value:Qty3S
+                Map<String,BigDecimal> dateQty3SMap = new HashMap<>();
+                dateQty3SMap.put(dateKey,Qty3S);
+                invPlanDate3SMap.put(cInvCode,dateQty3SMap);
+            }
+            invInfoMap.put(cInvCode,record);
             if (!idList.contains(invId)){
                 idsJoin = idsJoin + invId + ",";
                 idList.add(invId);
@@ -978,18 +1010,36 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
 
 
-        //TODO:查询物料集期初在库
-        List<Record> getLastDateZKQtyList = getLastDateZKQtyList(Kv.by("lastyear",lastyear).set("lastmonth",lastmonth).set("lastday",lastday).set("ids",idsJoin));
-        //key:inv   value:qty
-        Map<String,Integer> lastDateZKQtyMap = new HashMap<>();
-        for (Record record : getLastDateZKQtyList){
-            String cInvCode = record.getStr("cInvCode");
-            int iQty5 = record.getBigDecimal("iQty5").intValue();
-            lastDateZKQtyMap.put(cInvCode,iQty5);
+        //对部门逐个处理
+        for (Long deptId : deptInvListMap.keySet()) {
+
+
+
+            List<String> recordList = deptInvListMap.get(deptId);
+            for (String inv : recordList){
+                //inv信息
+                Record invInfo = invInfoMap.get(inv);
+                //key:yyyy-MM-dd   value:qty1S
+                Map<String,BigDecimal> dateQtyMap = invPlanDate1SMap.get(inv);
+
+                Record planRecord = new Record();
+                planRecord.set("cInvCode",inv);
+                planRecord.set("cInvCode1",invInfo.getStr("cInvCode1"));
+                planRecord.set("cInvName1",invInfo.getStr("cInvName1"));
+                planRecord.set("cWorkName",invInfo.getStr("cWorkName"));
+
+                for (String date : dateQtyMap.keySet()) {
+                    Date dPlanDate = DateUtils.parseDate(date);
+                    int year = Integer.parseInt(date.substring(0,4));
+                    int month = Integer.parseInt(date.substring(5,7));
+                    int day = Integer.parseInt(date.substring(8,10));
+                    BigDecimal qty = dateQtyMap.get(date);
+
+
+                }
+
+            }
         }
-
-
-
 
 
 

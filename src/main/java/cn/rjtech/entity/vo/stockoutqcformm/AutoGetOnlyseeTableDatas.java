@@ -14,7 +14,6 @@ public class AutoGetOnlyseeTableDatas implements Serializable {
     private Long iautoid;
     private Long iformparamid;
     private Long iqcformid;
-    private Long ircvdocqcformmid;
     private String coptions;
     private String cqcformparamids;
     private String cqcitemname;
@@ -25,7 +24,7 @@ public class AutoGetOnlyseeTableDatas implements Serializable {
     private BigDecimal imaxval;
     private BigDecimal iminval;
     private BigDecimal istdval;
-    private List<cvalue> cvaluelist;
+    private List<Cvalue> cvaluelist;
 
     public Long getIautoid() {
         return iautoid;
@@ -49,14 +48,6 @@ public class AutoGetOnlyseeTableDatas implements Serializable {
 
     public void setIqcformid(Long iqcformid) {
         this.iqcformid = iqcformid;
-    }
-
-    public Long getIrcvdocqcformmid() {
-        return ircvdocqcformmid;
-    }
-
-    public void setIrcvdocqcformmid(Long ircvdocqcformmid) {
-        this.ircvdocqcformmid = ircvdocqcformmid;
     }
 
     public String getCoptions() {
@@ -139,15 +130,15 @@ public class AutoGetOnlyseeTableDatas implements Serializable {
         this.istdval = istdval;
     }
 
-    public List<cvalue> getCvaluelist() {
+    public List<Cvalue> getCvaluelist() {
         return cvaluelist;
     }
 
-    public void setCvaluelist(List<cvalue> cvaluelist) {
+    public void setCvaluelist(List<Cvalue> cvaluelist) {
         this.cvaluelist = cvaluelist;
     }
 
-    public static class cvalue{
+    public static class Cvalue{
         private Long iautoid;
         private Long iformparamid;
         private Long iqcformid;

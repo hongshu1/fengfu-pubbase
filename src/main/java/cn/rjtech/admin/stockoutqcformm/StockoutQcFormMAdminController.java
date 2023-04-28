@@ -50,60 +50,55 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	public void index() {
 		render("index.html");
 	}
-   /**
-	* 数据源
-	*/
-	public void datas() {
-		Page<Record> recordPage = service.pageList(getKv());
-		renderJsonData(recordPage);
-	}
 
-   /**
-	* 新增
-	*/
+	/**
+	 * 新增
+	 */
 	public void add() {
 		render("add.html");
 	}
 
-   /**
-	* 保存
-	*/
+	/**
+	 * 保存
+	 */
 	public void save() {
 		renderJson(service.save(getModel(StockoutQcFormM.class, "stockoutQcFormM")));
 	}
 
-   /**
-	* 编辑
-	*/
-	public void edit() {
-		StockoutQcFormM stockoutQcFormM=service.findById(getLong(0));
-		Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
-		List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(stockoutQcFormM.getIAutoId());
-		set("stockoutqcformlist", stockoutqcformlist);
-		set("stockoutqcformm", stockoutQcFormM);
-		set("record", record);
-		render("editstockoutqcformmTable.html");
-	}
-
-   /**
-	* 更新
-	*/
+	/**
+	 * 更新
+	 */
 	public void update() {
 		renderJson(service.update(getModel(StockoutQcFormM.class, "stockoutQcFormM")));
 	}
 
-   /**
-	* 批量删除
-	*/
+	/**
+	 * 批量删除
+	 */
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
 
-   /**
-	* 删除
-	*/
+	/**
+	 * 删除
+	 */
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
+	}
+
+   /**
+	* 数据源
+	*/
+	public void datas() {
+		renderJsonData(service.pageList(getKv()));
+	}
+
+	/*
+	 * 生成
+	 * */
+	public void createTable(@Para(value = "iautoid") Long iautoid,
+							@Para(value = "cqcformname") String cqcformname) {
+		renderJson(service.createTable(iautoid,cqcformname));
 	}
 
 	/**
@@ -124,6 +119,13 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 		renderJsonData(service.getCheckOutTableDatas(getKv()));
 	}
 
+	/*
+	 * 在检验页面点击确定
+	 * */
+	public void saveCheckOutTable(JBoltPara JboltPara) {
+		renderJson(service.saveCheckOutTable(JboltPara));
+	}
+
 	/**
 	 * 打开onlysee页面
 	 */
@@ -138,11 +140,23 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	}
 
 	/**
-	 * 导入图片
+	 * 点击查看时，进入弹窗自动加载table的数据
 	 */
-	public void uploadImage() {
-		String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
-		renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+	public void getonlyseeDatas() {
+		renderJsonData(service.getonlyseelistByiautoid(getKv()));
+	}
+
+   /**
+	* 编辑
+	*/
+	public void edit() {
+		StockoutQcFormM stockoutQcFormM=service.findById(getLong(0));
+		Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
+		List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(stockoutQcFormM.getIAutoId());
+		set("stockoutqcformlist", stockoutqcformlist);
+		set("stockoutqcformm", stockoutQcFormM);
+		set("record", record);
+		render("editstockoutqcformmTable.html");
 	}
 
 	/*
@@ -152,28 +166,13 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 		renderJson(service.saveEditTable(JboltPara));
 	}
 
-	/*
-	 * 在检验页面点击确定
-	 * */
-	public void saveCheckOutTable(JBoltPara JboltPara) {
-		renderJson(service.saveCheckOutTable(JboltPara));
-	}
 
 	/**
-	 * 点击查看时，进入弹窗自动加载table的数据
+	 * 导入图片
 	 */
-	public void getonlyseeDatas() {
-		List<Record> recordList = service.getonlyseelistByiautoid(getKv());
-		System.out.println("recordList=====>"+recordList);
-		renderJsonData(recordList);
-	}
-
-	/*
-	 * 生成
-	 * */
-	public void createTable(@Para(value = "iautoid") Long iautoid,
-							@Para(value = "cqcformname") String cqcformname) {
-		renderJson(service.createTable(iautoid,cqcformname));
+	public void uploadImage() {
+		String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
+		renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
 	}
 
 	/**

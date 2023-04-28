@@ -9,7 +9,16 @@ import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
+<<<<<<< HEAD
 import cn.rjtech.entity.vo.stockoutqcformm.*;
+=======
+import cn.rjtech.entity.vo.stockoutqcformm.AutoGetCheckOutTableDatas;
+import cn.rjtech.entity.vo.stockoutqcformm.AutoGetCheckOutTableDatasVo;
+import cn.rjtech.entity.vo.stockoutqcformm.AutoGetOnlyseeTableDatas;
+import cn.rjtech.entity.vo.stockoutqcformm.AutoGetOnlyseeTableDatas.Cvalue;
+import cn.rjtech.entity.vo.stockoutqcformm.AutoGetOnlyseeTableDatasVo;
+import cn.rjtech.entity.vo.stockoutqcformm.StockOutQcFormMApiSaveEdit;
+>>>>>>> c49e959840a7e8dd3e3c1f4afdfd99c42f03b9d3
 import cn.rjtech.entity.vo.stockoutqcformm.StockOutQcFormMApiSaveEdit.CValue;
 import cn.rjtech.entity.vo.stockoutqcformm.StockOutQcFormMApiSaveEdit.SerializeElement;
 import cn.rjtech.model.momdata.StockoutDefect;
@@ -147,7 +156,6 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
             auto.setIautoid(record.get("iautoid"));
             auto.setIformparamid(record.get("iformparamid"));
             auto.setIqcformid(record.get("iqcformid"));
-            auto.setIrcvdocqcformmid(record.get("ircvdocqcformmid"));
             auto.setCoptions(record.get("coptions"));
             auto.setCqcformparamids(record.get("cqcformparamids"));
             auto.setCqcitemname(record.get("cqcitemname"));
@@ -158,7 +166,8 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
             auto.setImaxval(record.get("imaxval"));
             auto.setIminval(record.get("iminval"));
             auto.setIstdval(record.get("istdval"));
-            auto.setCvaluelist(record.get("cvaluelist"));
+            List<Cvalue> cvaluelist = JBoltModelKit.getBeanList(Cvalue.class, JSON.parseArray(record.get("cvaluelist")));
+            auto.setCvaluelist(cvaluelist);
             autoList.add(auto);
         }
         //3、最后返回vo
@@ -226,7 +235,7 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
     }
 
     /*
-     * 点击“检验”按钮，在检验页面点击“确定”按钮，将数据带到后台保存
+     * 点击“编辑”按钮，在编辑页面点击“确定”按钮，将数据带到后台保存
      * */
     public JBoltApiRet saveEdit(String cmeasurepurpose, String cdcno, Long stockqcformmiautoid, String cmeasureunit,
                                 String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
