@@ -70,7 +70,7 @@ public class SysMessageTemplateAdminController extends BaseAdminController {
 	}
 	/**
 	 * 表格提交
-	 * */
+	 */
 	@UnCheck
 	public void submitTable(){
 		renderJson(service.submitTable(getJBoltTable()));

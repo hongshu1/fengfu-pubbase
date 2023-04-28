@@ -90,9 +90,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         return dbTemplate("rcvdocqcformm.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
     }
 
-    /*
+    /**
      * 根据表格ID生成table
-     * */
+     */
     public Ret createTable(Long iautoid,String cqcformname) {
         RcvDocQcFormM rcvDocQcFormM = findById(iautoid);
         if (null == rcvDocQcFormM) {
@@ -132,23 +132,23 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         return SUCCESS;
     }
 
-    /*
+    /**
      * 根据iautoid查询数据,并跳到检验页面
-     * */
+     */
     public Record getCheckoutListByIautoId(Long iautoId) {
         return dbTemplate("rcvdocqcformm.list", Kv.by("iautoId", iautoId)).findFirst();
     }
 
-    /*
+    /**
      * 点击检验时，进入弹窗自动加载table的数据
-     * */
+     */
     public List<Record> getCheckOutTableDatas(Kv kv) {
         return clearZero(dbTemplate("rcvdocqcformm.findChecoutListByIformParamid", kv).find());
     }
 
-    /*
+    /**
      * 在检验页面点击确定
-     * */
+     */
     public Ret saveCheckOutTable(JBoltPara JboltPara) {
         if (JboltPara == null || JboltPara.isEmpty()) {
             return fail(JBoltMsg.PARAM_ERROR);
@@ -179,7 +179,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
          * 来料检表（PL_RcvDocQcFormM）
          * 1.如果isok=0，代表不合格，将iStatus更新为2，isCompleted更新为1；
          * 2.如果isok=1，代表合格，将iStatus更新为3，isCompleted更新为1
-         * */
+         */
         RcvDocQcFormM docQcFormM = findById(docqcformmiautoid);
         saveDocQcFormMModel(docQcFormM, JboltPara);
         update(docQcFormM);
@@ -198,9 +198,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         return ret(true);
     }
 
-    /*
+    /**
      * 点击查看时，进入弹窗自动加载table的数据
-     * */
+     */
     public List<Record> getonlyseelistByiautoid(Kv kv) {
         List<Record> recordList = dbTemplate("rcvdocqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
@@ -254,9 +254,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         return docparamlist;
     }
 
-    /*
+    /**
      * 清除多余的零
-     * */
+     */
     public List<Record> clearZero(List<Record> recordList) {
         recordList.stream().forEach(e -> {
             e.set("istdval", e.getBigDecimal("istdval").stripTrailingZeros().toPlainString());
@@ -357,9 +357,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         return imgList;
     }
 
-    /*
+    /**
      * 在编辑页面点击确定
-     * */
+     */
     public Ret saveEditTable(JBoltPara JboltPara) {
         if (JboltPara == null || JboltPara.isEmpty()) {
             return fail(JBoltMsg.PARAM_ERROR);
@@ -402,9 +402,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         return ret(true);
     }
 
-    /*
+    /**
      * 给主表传参
-     * */
+     */
     public void saveDocQcFormMModel(RcvDocQcFormM docQcFormM, JBoltPara JboltPara) {
         docQcFormM.setCMeasurePurpose(JboltPara.getString("cmeasurepurpose"));//测定目的
         docQcFormM.setCMeasureReason(JboltPara.getString("cmeasurereason"));//测定理由
@@ -417,9 +417,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         docQcFormM.setIsCompleted(true);
     }
 
-    /*
+    /**
      * 给质量管理-来料检明细列值传参
-     * */
+     */
     public void saveRcvdocqcformdLineModel(RcvdocqcformdLine rcvdocqcformdLine,
                                            String iautoid, String iseq, String cvalue) {
         rcvdocqcformdLine.setIAutoId(JBoltSnowflakeKit.me.nextId());

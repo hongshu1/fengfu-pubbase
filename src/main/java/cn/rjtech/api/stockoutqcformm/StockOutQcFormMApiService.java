@@ -35,33 +35,33 @@ import java.util.List;
 public class StockOutQcFormMApiService extends JBoltApiBaseService {
 
     @Inject
-    private StockoutQcFormMService     service;
+    private StockoutQcFormMService service;
     @Inject
     private StockoutqcformdLineService stockoutqcformdLineService;
     @Inject
-    private StockoutQcFormDService     stockoutQcFormDService;
+    private StockoutQcFormDService stockoutQcFormDService;
     @Inject
-    private JBoltBaseService           jBoltBaseService;
+    private JBoltBaseService jBoltBaseService;
     @Inject
-    private StockoutDefectService      stockoutDefectService; //出库检异常品单
+    private StockoutDefectService stockoutDefectService; //出库检异常品单
 
-    /*
+    /**
      * 点击左侧导航栏-出库检，显示主页面数据
-     * */
+     */
     public JBoltApiRet getDatas(Kv kv) {
         return JBoltApiRet.successWithData(service.pageList(kv));
     }
 
-    /*
+    /**
      * 生成
-     * */
+     */
     public JBoltApiRet createTable(Long iautoid, String cqcformname) {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.createTable(iautoid, cqcformname));
     }
 
-    /*
+    /**
      * 点击检验按钮，跳转到检验页面
-     * */
+     */
     public JBoltApiRet jumpCheckout(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
         StockoutQcFormM stockoutQcFormM = service.findById(iautoid);
@@ -77,15 +77,15 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(checkoutVo);
     }
 
-    /*
+    /**
      * 跳转到检验页面后，自动加载table的数据
-     * */
+     */
     public JBoltApiRet autoGetCheckOutTableDatas(Long istockoutqcformmid) {
         //1、查询table的数据
         Kv kv = new Kv();
         kv.set("istockoutqcformmid", istockoutqcformmid);
         List<Record> recordList = service
-            .clearZero(jBoltBaseService.dbTemplate("stockoutqcformm.findChecoutListByIformParamid", kv).find());
+                .clearZero(jBoltBaseService.dbTemplate("stockoutqcformm.findChecoutListByIformParamid", kv).find());
         //2、将数据传到vo
         List<AutoGetCheckOutTableDatas> autoList = new ArrayList<>();
         for (Record record : recordList) {
@@ -113,10 +113,11 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(autoGetCheckOutTableDatasVo);
     }
 
-    /*
+    /**
      * 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
+     *
      * @param iautoid：主键
-     * */
+     */
     public JBoltApiRet jumpOnlysee(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
         StockoutQcFormM stockoutQcFormM = service.findById(iautoid);
@@ -134,10 +135,11 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(stockoutQcFormMOnlyseeVo);
     }
 
-    /*
+    /**
      * 跳转到"查看"页面后，自动加载查看页面table的数据
+     *
      * @param iautoid：主键
-     * */
+     */
     public JBoltApiRet autoGetOnlyseeTableDatas(Long iautoid) {
         //1、调用方法获得table数据
         List<Record> recordList = service.getonlyseelistByiautoid(iautoid);
@@ -169,14 +171,14 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(datasVo);
     }
 
-    /*
+    /**
      * 点击“检验”按钮，在检验页面点击“确定”按钮，将数据带到后台保存
-     * */
+     */
     public JBoltApiRet saveCheckOut(String cmeasurepurpose, String cdcno, Long istockqcformmiautoid, String cmeasureunit,
                                     String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
         //1、将serializeSubmitList转换出来
         List<StockOutQcFormMApiSaveEdit> saveEditList = JBoltModelKit
-            .getBeanList(StockOutQcFormMApiSaveEdit.class, JSON.parseArray(serializeSubmitList));
+                .getBeanList(StockOutQcFormMApiSaveEdit.class, JSON.parseArray(serializeSubmitList));
         //2、开始更新编辑页面的数据
         List<StockoutqcformdLine> stockoutqcformdLines = new ArrayList<>();
         for (StockOutQcFormMApiSaveEdit stock : saveEditList) {
@@ -194,31 +196,31 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
             }
         }
         //3、保存line表
-        if (!stockoutqcformdLines.isEmpty()){
+        if (!stockoutqcformdLines.isEmpty()) {
             stockoutqcformdLineService.batchSave(stockoutqcformdLines);
         }
         /*
          * 4、出库检表
          * 1.如果isok=0，代表不合格，将iStatus更新为2，isCompleted更新为1；
          * 2.如果isok=1，代表合格，将iStatus更新为3，isCompleted更新为1
-         * */
+         */
         StockoutQcFormM stockoutQcFormM = service.findById(istockqcformmiautoid);
-        saveStockoutQcFormmModel(stockoutQcFormM,cmeasurepurpose, cdcno, cmeasureunit, isok, cmeasurereason, cmemo);
+        saveStockoutQcFormmModel(stockoutQcFormM, cmeasurepurpose, cdcno, cmeasureunit, isok, cmeasurereason, cmemo);
         service.update(stockoutQcFormM);
-        //5、如果检验结果不合格，生成在库异常品记录
-        StockoutDefect defect = stockoutDefectService
-            .findStockoutDefectByiStockoutQcFormMid(istockqcformmiautoid);
+        // 5、如果检验结果不合格，生成在库异常品记录
+        StockoutDefect defect = stockoutDefectService.findStockoutDefectByiStockoutQcFormMid(istockqcformmiautoid);
         if (null == defect) {
             StockoutDefect stockoutDefect = new StockoutDefect();
             stockoutDefectService.savestockoutDefectmodel(stockoutDefect, stockoutQcFormM);
             stockoutDefectService.save(stockoutDefect);
         }
-        //6、最后返回成功
+        // 6、最后返回成功
         return JBoltApiRet.API_SUCCESS;
     }
-    /*
+
+    /**
      * 给出库检明细列值表传参
-     * */
+     */
     public void saveStockQcFormdLineModel(StockoutqcformdLine stockoutqcformdLine, Long iautoid, Integer iseq, String cvalue) {
         stockoutqcformdLine.setIAutoId(JBoltSnowflakeKit.me.nextId());
         stockoutqcformdLine.setIStockoutQcFormDid(iautoid);
@@ -226,15 +228,14 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
         stockoutqcformdLine.setCValue(cvalue);
     }
 
-    /*
+    /**
      * 点击“编辑”按钮，在编辑页面点击“确定”按钮，将数据带到后台保存
-     * */
-    public JBoltApiRet saveEdit(String cmeasurepurpose, String cdcno, Long stockqcformmiautoid, String cmeasureunit,
-                                String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
-        //1、将serializeSubmitList转换出来
+     */
+    public JBoltApiRet saveEdit(String cmeasurepurpose, String cdcno, Long stockqcformmiautoid, String cmeasureunit, String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
+        // 1、将serializeSubmitList转换出来
         List<StockOutQcFormMApiSaveEdit> saveEditList = JBoltModelKit
-            .getBeanList(StockOutQcFormMApiSaveEdit.class, JSON.parseArray(serializeSubmitList));
-        //2、开始更新编辑页面的数据
+                .getBeanList(StockOutQcFormMApiSaveEdit.class, JSON.parseArray(serializeSubmitList));
+        // 2、开始更新编辑页面的数据
         List<StockoutqcformdLine> stockoutqcformdLines = new ArrayList<>();
         for (StockOutQcFormMApiSaveEdit stock : saveEditList) {
             List<CValue> cvalueList = stock.getCvalueList();
@@ -248,21 +249,24 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
                 stockoutqcformdLines.add(stockoutqcformdLine);
             }
         }
-        //3、更新line表
+        
+        // 3、更新line表
         if (!stockoutqcformdLines.isEmpty()) {
             stockoutqcformdLineService.batchUpdate(stockoutqcformdLines);
         }
-        //4、更新主表
+        
+        // 4、更新主表
         StockoutQcFormM stockoutQcFormM = service.findById(stockqcformmiautoid);
         saveStockoutQcFormmModel(stockoutQcFormM, cmeasurepurpose, cdcno, cmeasureunit, isok, cmeasurereason, cmemo);
+        
         Ret ret = service.update(stockoutQcFormM);
         //5、最后返回成功
         return JBoltApiRet.API_SUCCESS;
     }
 
-    /*
+    /**
      * 给出库检主表传参
-     * */
+     */
     public void saveStockoutQcFormmModel(StockoutQcFormM stockoutQcFormM, String cmeasurepurpose, String cdcno,
                                          String cmeasureunit, String isok, String cmeasurereason, String cmemo) {
         stockoutQcFormM.setCMeasurePurpose(cmeasurepurpose);//测定目的
@@ -270,8 +274,8 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
         stockoutQcFormM.setCMeasureUnit(cmeasureunit); //测定单位
         stockoutQcFormM.setCMemo(cmemo);//备注
         stockoutQcFormM.setCDcNo(cdcno); //设变号
-        stockoutQcFormM.setIsOk(isok.equalsIgnoreCase("0") ? false : true);//是否合格
-        stockoutQcFormM.setIStatus(isok.equalsIgnoreCase("0") ? 2 : 3);
+        stockoutQcFormM.setIsOk(!"0".equalsIgnoreCase(isok));//是否合格
+        stockoutQcFormM.setIStatus("0".equalsIgnoreCase(isok) ? 2 : 3);
         stockoutQcFormM.setIsCompleted(true);
     }
 

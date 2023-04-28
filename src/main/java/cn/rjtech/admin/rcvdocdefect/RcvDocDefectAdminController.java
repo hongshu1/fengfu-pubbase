@@ -20,11 +20,10 @@ import com.jfinal.kit.Okv;
  */
 @CheckPermission(PermissionKey.NONE)
 @Path(value = "/admin/RcvDocDefect", viewPath = "/_view/admin/RcvDocDefect")
-public class rcvDocDefectAdminController extends BaseAdminController {
+public class RcvDocDefectAdminController extends BaseAdminController {
 
     @Inject
     private RcvDocDefectService service;
-
     @Inject
     private RcvDocQcFormMService rcvDocQcFormMService;
 
@@ -51,7 +50,6 @@ public class rcvDocDefectAdminController extends BaseAdminController {
         renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));
     }
 
-
     /**
      * 新增
      */
@@ -59,14 +57,13 @@ public class rcvDocDefectAdminController extends BaseAdminController {
         render("add.html");
     }
 
-
     public void add2() {
         RcvDocDefect rcvDocDefect = service.findById(get("iautoid"));
         RcvDocQcFormM rcvDocQcFormM = rcvDocQcFormMService.findFirst("select t1.*, t2.cInvCode, t2.cInvName, t2.cInvCode1, t3.cVenName\n" +
                 "from PL_RcvDocQcFormM t1\n" +
                 "LEFT JOIN Bd_Inventory t2 ON t2.iAutoId = t1.iInventoryId \n" +
                 "LEFT JOIN Bd_Vendor t3 ON t3.iAutoId = t1.iVendorId \n" +
-                "where t1.iAutoId = '"+get("ircvdocqcformmid")+"'");
+                "where t1.iAutoId = '" + get("ircvdocqcformmid") + "'");
         set("iautoid", get("iautoid"));
         set("type", get("type"));
         if (isNull(get("iautoid"))) {
@@ -90,8 +87,6 @@ public class rcvDocDefectAdminController extends BaseAdminController {
                 render("add4.html");
             }
         }
-
-
     }
 
     /**
@@ -149,10 +144,8 @@ public class rcvDocDefectAdminController extends BaseAdminController {
         renderJson(service.toggleIsDeleted(getLong(0)));
     }
 
-
     public void updateEditTable() {
-        renderJson(service.updateEditTable( getKv()));
+        renderJson(service.updateEditTable(getKv()));
     }
-
 
 }

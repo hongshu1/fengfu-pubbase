@@ -278,7 +278,7 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 
 	/*
 	 * 根据来料检id查询异常品质单
-	 * */
+	 */
 	public RcvDocDefect findStockoutDefectByiRcvDocQcFormMid(Object iRcvDocQcFormMid) {
 		return findFirst("SELECT * FROM PL_RcvDocDefect WHERE iRcvDocQcFormMid = ?", iRcvDocQcFormMid);
 	}

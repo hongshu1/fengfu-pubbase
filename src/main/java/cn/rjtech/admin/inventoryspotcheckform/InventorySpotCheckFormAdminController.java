@@ -92,7 +92,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
         renderJsonData(recordPage);
     }
 
-    /*
+    /**
      * 新增的data
      * */
     public void addDatas() {
@@ -137,7 +137,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
         render("edit.html");
     }
 
-    /*
+    /**
      * 新增适用存货的弹窗页面
      * */
     public void equipmentqcparamSelect() {

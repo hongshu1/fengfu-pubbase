@@ -107,9 +107,9 @@ public class VendorClassService extends BaseService<VendorClass> {
         return ret(success);
     }
 
-    /*
+    /**
      * 给参数赋值
-     * */
+     */
     public void saveVendorClassModel(VendorClass vendorClass, Date date) {
         Long userId = JBoltUserKit.getUserId();
         String userName = JBoltUserKit.getUserName();
@@ -128,9 +128,9 @@ public class VendorClassService extends BaseService<VendorClass> {
 //        vendorClass.setISourceId();//来源ID，U8为编码
     }
 
-    /*
+    /**
      * 判断上级分类是否存在
-     * */
+     */
     public Ret checkIpidIsEmpty(Long ipid) {
         if (notNull(ipid)) {
             VendorClass isEmptyVendorClass = findById(ipid);
@@ -192,9 +192,9 @@ public class VendorClassService extends BaseService<VendorClass> {
         return null;
     }
 
-    /*
+    /**
      * 供应商分类excel导入数据库
-     * */
+     */
     public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
         Date date = new Date();
@@ -333,9 +333,9 @@ public class VendorClassService extends BaseService<VendorClass> {
             + "WHERE 1=1");
     }
 
-    /*
+    /**
      * 导出excel文件
-     * */
+     */
     public JBoltExcel exportExcelTpl(List<VendorClass> datas) {
         //2、创建JBoltExcel
         JBoltExcel jBoltExcel = JBoltExcel

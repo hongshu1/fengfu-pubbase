@@ -55,23 +55,23 @@ public class RcvDocQcFormMApiService {
     @Inject
     private RcvDocDefectService      rcvDocDefectService;      ////质量管理-来料异常品记录
 
-    /*
+    /**
      * 点击左侧导航栏-出库检，显示主页面数据
-     * */
+     */
     public JBoltApiRet getDatas(Kv kv) {
         return JBoltApiRet.successWithData(service.pageList(kv));
     }
 
-    /*
+    /**
      * 生成
-     * */
+     */
     public JBoltApiRet createTable(Long iautoid, String cqcformname) {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.createTable(iautoid, cqcformname));
     }
 
-    /*
+    /**
      * 点击检验按钮，跳转到检验页面
-     * */
+     */
     public JBoltApiRet jumpCheckout(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
         RcvDocQcFormM rcvDocQcFormM = service.findById(iautoid);
@@ -87,9 +87,9 @@ public class RcvDocQcFormMApiService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(checkoutVo);
     }
 
-    /*
+    /**
      * 跳转到检验页面后，自动加载table的数据
-     * */
+     */
     public JBoltApiRet autoGetRcvCheckOutTableDatas(Long ircvdocqcformmid) {
         //1、查询table的数据
         Kv kv = new Kv();
@@ -123,10 +123,10 @@ public class RcvDocQcFormMApiService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(autoGetCheckOutTableDatasVo);
     }
 
-    /*
+    /**
      * 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
      * @param iautoid：主键
-     * */
+     */
     public JBoltApiRet jumpOnlysee(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
         RcvDocQcFormM rcvDocQcFormM = service.findById(iautoid);
@@ -144,10 +144,10 @@ public class RcvDocQcFormMApiService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(rcvDocQcFormMOnlyseeApiVo);
     }
 
-    /*
+    /**
      * 跳转到"查看"页面后，自动加载查看页面table的数据
      * @param iautoid：主键
-     * */
+     */
     public JBoltApiRet autoGetRcvOnlyseeTableDatas(Long iautoid) {
         //1、调用方法获得table数据
         List<Record> recordList = service.getonlyseelistByiautoid(iautoid);
@@ -184,9 +184,9 @@ public class RcvDocQcFormMApiService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(datasVo);
     }
 
-    /*
+    /**
      * 点击“检验”按钮，在检验页面点击“确定”按钮，将数据带到后台保存
-     * */
+     */
     public JBoltApiRet saveCheckOut(String cmeasurepurpose, String cdcno, Long ircvdocqcformmiautoid, String cmeasureunit,
                                     String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
         //1、将serializeSubmitList转换出来
@@ -233,9 +233,9 @@ public class RcvDocQcFormMApiService {
         return JBoltApiRet.API_SUCCESS;
     }
 
-    /*
+    /**
      * 给Line表传参
-     * */
+     */
     public void saveRcvdocqcformdLineModel(RcvdocqcformdLine rcvdocqcformdLine, Long ircvdocqcformmiautoid,
                                            Integer iseq, String cvalue) {
         rcvdocqcformdLine.setIAutoId(JBoltSnowflakeKit.me.nextId());
@@ -244,9 +244,9 @@ public class RcvDocQcFormMApiService {
         rcvdocqcformdLine.setCValue(cvalue);
     }
 
-    /*
+    /**
      * 给来料检主表传参
-     * */
+     */
     public void saveRcvDocQcFormMModel(RcvDocQcFormM docQcFormM,String cmeasurepurpose,String cdcno,
                                     String cmeasureunit,String isok,String cmeasurereason, String cmemo) {
         docQcFormM.setCMeasurePurpose(cmeasurepurpose);//测定目的
@@ -259,9 +259,9 @@ public class RcvDocQcFormMApiService {
         docQcFormM.setIsCompleted(true);
     }
 
-    /*
+    /**
      * 点击“编辑”按钮，在编辑页面点击“确定”按钮，将数据带到后台保存
-     * */
+     */
     public JBoltApiRet saveEdit(String cmeasurepurpose, String cdcno, Long ircvdocqcformmiautoid, String cmeasureunit,
                                 String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
         //1、将serializeSubmitList转换出来

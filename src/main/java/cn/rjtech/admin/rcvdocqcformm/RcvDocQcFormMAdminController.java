@@ -119,9 +119,9 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         renderJsonData(service.pageList(getKv()));
     }
 
-    /*
+    /**
      * 生成
-     * */
+     */
     public void createTable(@Para(value = "iautoid") Long iautoid,
                             @Para(value = "cqcformname") String cqcformname) {
         renderJson(service.createTable(iautoid, cqcformname));
@@ -138,16 +138,16 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         render("checkout.html");
     }
 
-    /*
+    /**
      * 点击检验时，进入弹窗自动加载table的数据
-     * */
+     */
     public void getCheckOutTableDatas() {
         renderJsonData(service.getCheckOutTableDatas(getKv()));
     }
 
-    /*
+    /**
      * 在检验页面点击确定
-     * */
+     */
     public void saveCheckOutTable(JBoltPara JboltPara) {
         renderJson(service.saveCheckOutTable(JboltPara));
     }
@@ -185,9 +185,9 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         render("editTable.html");
     }
 
-    /*
+    /**
      * 在编辑页面点击确定
-     * */
+     */
     public void saveEditTable(JBoltPara JboltPara) {
         renderJson(service.saveEditTable(JboltPara));
     }

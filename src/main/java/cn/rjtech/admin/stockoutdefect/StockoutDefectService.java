@@ -276,7 +276,7 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 
 	/*
 	 * 根据出货检id查询异常品质单
-	 * */
+	 */
 	public StockoutDefect findStockoutDefectByiStockoutQcFormMid(Object iStockoutQcFormMid) {
 		return findFirst("SELECT * FROM PL_StockoutDefect WHERE iStockoutQcFormMid = ?", iStockoutQcFormMid);
 	}

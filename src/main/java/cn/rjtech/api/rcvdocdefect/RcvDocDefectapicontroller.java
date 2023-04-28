@@ -21,12 +21,12 @@ import java.util.Date;
 public class RcvDocDefectapicontroller extends BaseApiController {
 
     @Inject
-    private RcvDocDefectapiservice rcvDocDefectApiService;
+    private RcvDocDefectApiService rcvDocDefectApiService;
 
     /**
      * 查询主表明细
-     **/
-    @ApiDoc(RcDocDefectVo.class)
+     */
+    @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
     public void optionss(@Para(value = "cdocno") String cdocno,
                          @Para(value = "imodocid") String imodocid,
@@ -35,31 +35,37 @@ public class RcvDocDefectapicontroller extends BaseApiController {
                          @Para(value = "cinvname") String cinvname,
                          @Para(value = "istatus") String istatus,
                          @Para(value = "startdate") String startdate,
-                         @Para(value = "enddate") String enddate
-    ) {
-        Okv kv = Okv.by("cdocno", cdocno).set("imodocid", imodocid).set("cinvcode", cinvcode).set("cinvcode1", cinvcode1)
-                .set("cinvname", cinvname).set("istatus", istatus).set("startdate", startdate).set("enddate", enddate);
-        renderJBoltApiRet(rcvDocDefectApiService.AdminDatas(getPageSize(), getPageNumber(), kv));
+                         @Para(value = "enddate") String enddate) {
+        Okv kv = Okv.by("cdocno", cdocno)
+                .set("imodocid", imodocid)
+                .set("cinvcode", cinvcode)
+                .set("cinvcode1", cinvcode1)
+                .set("cinvname", cinvname)
+                .set("istatus", istatus)
+                .set("startdate", startdate)
+                .set("enddate", enddate);
+        
+        renderJBoltApiRet(rcvDocDefectApiService.getAdminDatas(getPageSize(), getPageNumber(), kv));
     }
-
 
     /**
      * 查询明细表
-     **/
-    @ApiDoc(RcDocDefectVo.class)
+     */
+    @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
     public void add(@Para(value = "iautoid") Long iautoid,
                     @Para(value = "istockoutqcformmid") Long istockoutqcformmid,
                     @Para(value = "type") String type) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(istockoutqcformmid, JBoltMsg.PARAM_ERROR);
+        
         renderJBoltApiRet(rcvDocDefectApiService.add(iautoid, istockoutqcformmid, type));
     }
 
     /**
      * 更新保存
-     **/
-    @ApiDoc(RcDocDefectVo.class)
+     */
+    @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
     public void updateEditTable(@Para(value = "iautoid") Long iautoid,
                                 @Para(value = "capproach") String capproach,
@@ -73,8 +79,7 @@ public class RcvDocDefectapicontroller extends BaseApiController {
                                 @Para(value = "iinventoryid") Long iinventoryid,
                                 @Para(value = "ivendorid") Long ivendorid,
                                 @Para(value = "iupdateby") Long iupdateby,
-                                @Para(value = "dUpdateTime") Date dUpdateTime
-    ) {
+                                @Para(value = "dUpdateTime") Date dUpdateTime) {
         Kv kv = new Kv();
         kv.set("iautoid", iautoid);
         kv.set("capproach", capproach);
@@ -93,6 +98,5 @@ public class RcvDocDefectapicontroller extends BaseApiController {
         ValidationUtils.notNull(ivendorid, "缺少存货ID");
         renderJson(rcvDocDefectApiService.update(kv));
     }
-
 
 }

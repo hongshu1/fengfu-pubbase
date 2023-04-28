@@ -233,7 +233,7 @@ public class SysMessageTemplateService extends BaseService<SysMessageTemplate> {
 
     /**
      * 表格提交
-     * */
+     */
     public Ret submitTable(JBoltTable jBoltTable) {
         SysMessageTemplate sysMessageTemplate = jBoltTable.getFormModel(SysMessageTemplate.class, "sysMessageTemplate");
         ValidationUtils.notNull(sysMessageTemplate, JBoltMsg.PARAM_ERROR);

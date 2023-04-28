@@ -20,16 +20,16 @@ import java.util.Date;
  * @author Kephon
  */
 @ApiDoc
-public class processDefectapicontroller extends BaseApiController {
+public class ProcessDefectApiController extends BaseApiController {
 
     @Inject
-    private processDefectapiservice processdefectapiservice;
+    private ProcessDefectApiService processdefectapiservice;
 
 
     /**
      * 查询主表明细
-     **/
-    @ApiDoc(RcDocDefectVo.class)
+     */
+    @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
     public void optionss(@Para(value = "cdocno") String cdocno,
                          @Para(value = "imodocid") String imodocid,
@@ -42,14 +42,14 @@ public class processDefectapicontroller extends BaseApiController {
                          ) {
         Okv kv = Okv.by("cdocno", cdocno).set("imodocid", imodocid).set("cinvcode", cinvcode).set("cinvcode1", cinvcode1)
                 .set("cinvname", cinvname).set("istatus", istatus).set("startdate", startdate).set("enddate", enddate);
-        renderJBoltApiRet(processdefectapiservice.AdminDatas(getPageSize(), getPageNumber() ,kv));
+        renderJBoltApiRet(processdefectapiservice.getAdminDatas(getPageSize(), getPageNumber() ,kv));
     }
 
 
     /**
      * 查询明细表
-     **/
-    @ApiDoc(RcDocDefectVo.class)
+     */
+    @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
     public void add(@Para(value = "iautoid") Long iautoid,
                             @Para(value = "iissueid") Long iissueid,
@@ -61,8 +61,8 @@ public class processDefectapicontroller extends BaseApiController {
 
     /**
      * 更新保存
-     **/
-    @ApiDoc(RcDocDefectVo.class)
+     */
+    @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
     public void updateEditTable(@Para(value = "iautoid") Long iautoid,
                                 @Para(value = "capproach") String  capproach,

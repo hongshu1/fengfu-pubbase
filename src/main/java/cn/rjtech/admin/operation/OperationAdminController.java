@@ -139,10 +139,9 @@ public class OperationAdminController extends JBoltBaseController {
         renderJsonData(service.pageList(getKv()));
     }
 
-    /*
+    /**
      * 导出选中
-     * */
-    @SuppressWarnings("unchecked")
+     */
     public void exportExcelByIds() throws Exception {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -167,10 +166,9 @@ public class OperationAdminController extends JBoltBaseController {
 //        renderJxls("operation.xlsx", Kv.by("rows", data), "工序(选中导出)_" + DateUtil.today() + ".xlsx");
     }
 
-    /*
+    /**
      * 导出全部
-     * */
-    @SuppressWarnings("unchecked")
+     */
     public void exportExcelAll() throws Exception {
         List<Record> rows = service.list(getKv());
         if (notOk(rows)) {

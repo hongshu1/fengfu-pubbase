@@ -14,35 +14,29 @@ import static oshi.util.GlobalConfig.set;
 
 /**
  * 制造异常品管理
- *
  */
-public class RcvDocDefectapiservice extends JBoltApiBaseService {
+public class RcvDocDefectApiService extends JBoltApiBaseService {
 
 
     @Inject
     private RcvDocDefectService rcvDocDefectService;
-
     @Inject
     private RcvDocQcFormMService rcvDocQcFormMService;
 
-
-
-    /*
+    /**
      * 显示主页面数据
-     * */
-    public JBoltApiRet AdminDatas(int pageSize, int pageNumber, Okv kv) {
+     */
+    public JBoltApiRet getAdminDatas(int pageSize, int pageNumber, Okv kv) {
         return JBoltApiRet.successWithData(rcvDocDefectService.paginateAdminDatas(pageSize, pageNumber, kv));
     }
 
-
-    public JBoltApiRet add(Long iautoid, Long istockoutqcformmid,String type){
-
+    public JBoltApiRet add(Long iautoid, Long istockoutqcformmid, String type) {
         RcvDocDefect rcvDocDefect = rcvDocDefectService.findById(iautoid);
         RcvDocQcFormM rcvDocQcFormM = rcvDocQcFormMService.findFirst("select t1.*, t2.cInvCode, t2.cInvName, t2.cInvCode1, t3.cVenName\n" +
                 "from PL_RcvDocQcFormM t1\n" +
                 "LEFT JOIN Bd_Inventory t2 ON t2.iAutoId = t1.iInventoryId \n" +
                 "LEFT JOIN Bd_Vendor t3 ON t3.iAutoId = t1.iVendorId \n" +
-                "where t1.iAutoId = '"+istockoutqcformmid+"'");
+                "where t1.iAutoId = '" + istockoutqcformmid + "'");
         set("iautoid", iautoid);
         set("type", type);
         if (isNull(iautoid)) {
@@ -69,8 +63,6 @@ public class RcvDocDefectapiservice extends JBoltApiBaseService {
     public JBoltApiRet update(Kv formRecord) {
         return JBoltApiRet.successWithData(rcvDocDefectService.updateEditTable(formRecord));
     }
-
-
 
 
 }

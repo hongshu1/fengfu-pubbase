@@ -14,39 +14,31 @@ import static oshi.util.GlobalConfig.set;
 
 /**
  * 制造异常品管理
- *
  */
-public class processDefectapiservice extends JBoltApiBaseService {
-
+public class ProcessDefectApiService extends JBoltApiBaseService {
 
     @Inject
     private ProcessdefectService processDefectService;
-
     @Inject
     private SpecMaterialsRcvMService specMaterialsRcvMService;
 
-
-
-    /*
+    /**
      * 显示主页面数据
-     * */
-    public JBoltApiRet AdminDatas(int pageSize, int pageNumber, Okv kv) {
+     */
+    public JBoltApiRet getAdminDatas(int pageSize, int pageNumber, Okv kv) {
         return JBoltApiRet.successWithData(processDefectService.paginateAdminDatas(pageSize, pageNumber, kv));
     }
 
-
-    public JBoltApiRet add(Long iautoid, Long iissueid,String type){
-
+    public JBoltApiRet add(Long iautoid, Long iissueid, String type) {
         ProcessDefect processDefect = processDefectService.findById(iautoid);
         SpecMaterialsRcvM specMaterialsRcvM = specMaterialsRcvMService.findById(iissueid);
         set("iautoid", iautoid);
-        set("type",type);
+        set("type", type);
         set("iissueid", iissueid);
-        if (isNull( iautoid)){
+        if (isNull(iautoid)) {
             set("processDefect", processDefect);
             set("specMaterialsRcvM", specMaterialsRcvM);
-
-        }else {
+        } else {
             if (processDefect.getIStatus() == 1) {
                 set("processDefect", processDefect);
                 set("specMaterialsRcvM", specMaterialsRcvM);
@@ -60,7 +52,6 @@ public class processDefectapiservice extends JBoltApiBaseService {
                 set("iresptype", (processDefect.getIRespType() == 1) ? "本工序" : "其他");
                 set("processDefect", processDefect);
                 set("specMaterialsRcvM", specMaterialsRcvM);
-
             }
         }
         return JBoltApiRet.API_SUCCESS;
@@ -69,9 +60,5 @@ public class processDefectapiservice extends JBoltApiBaseService {
     public JBoltApiRet update(Kv formRecord) {
         return JBoltApiRet.successWithData(processDefectService.updateEditTable(formRecord));
     }
-
-
-
-
 
 }
