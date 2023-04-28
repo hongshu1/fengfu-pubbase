@@ -461,20 +461,20 @@ public class BomMasterService extends BaseService<BomMaster> {
         if (StrUtil.isNotBlank(invItemId)){
 			ValidationUtils.notNull(row.getBigDecimal(BomCompare.INVQTY), "部品QTY不能为空");
 		}
-		if (StrUtil.isNotBlank(blankingItemId)){
-			ValidationUtils.notNull(row.getBigDecimal(BomCompare.BLANKINGQTY), "片料可制件数不能为空");
-			ValidationUtils.notNull(row.getBigDecimal(BomCompare.BLANKINGWEIGHT), "片料重量不能为空");
-		}
-		
-		if (StrUtil.isNotBlank(originalItemId)){
-			ValidationUtils.notNull(row.getBigDecimal(BomCompare.ORIGINALQTY), "原材料可制件数不能为空");
-			ValidationUtils.notNull(row.getBigDecimal(BomCompare.ORIGINALWEIGHT), "原材料重量不能为空");
-		}
-		
-		if (StrUtil.isNotBlank(slicingInvItemId)){
-			ValidationUtils.notNull(row.getBigDecimal(BomCompare.SLICINGQTY), "分条料可制件数不能为空");
-			ValidationUtils.notNull(row.getBigDecimal(BomCompare.SLICINGWEIGHT), "分条料重量不能为空");
-		}
+//		if (StrUtil.isNotBlank(blankingItemId)){
+//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.BLANKINGQTY), "片料可制件数不能为空");
+//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.BLANKINGWEIGHT), "片料重量不能为空");
+//		}
+//
+//		if (StrUtil.isNotBlank(originalItemId)){
+//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.ORIGINALQTY), "原材料可制件数不能为空");
+//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.ORIGINALWEIGHT), "原材料重量不能为空");
+//		}
+//
+//		if (StrUtil.isNotBlank(slicingInvItemId)){
+//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.SLICINGQTY), "分条料可制件数不能为空");
+//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.SLICINGWEIGHT), "分条料重量不能为空");
+//		}
 	}
 	
 	

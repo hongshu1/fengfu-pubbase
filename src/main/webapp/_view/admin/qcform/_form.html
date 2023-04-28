@@ -1,98 +1,125 @@
 #set(pageId=RandomUtil.random(6))
 <form onsubmit="return false;" id="QcFormForm" action="#(action)" method="post">
-    
+
     #if(qcForm.iAutoId??)
     <input type="hidden" id="qcFormiAutoId_#(pageId)" name="qcForm.iAutoId" value="#(qcForm.iAutoId??)"/>
     #end
-    
+
     <div class="row">
         <div class="col">
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">检验表格名称</label>
+                <label class="col-sm-1 col-form-label">检验表格名称</label>
                 <div class="col-10">
                     <input type="text" data-rule="required" data-notnull="true" data-tips="请输入检验表格名称" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入检验表格名称" maxlength="40" name="qcForm.cQcFormName" value="#(qcForm.cQcFormName??)"/>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- 检验表格项目表的的form数据定义-->
-            <div class="card">
-                
-                <div class="card-header py-2">
-                    <div class="row">
-                        <div class="col pt-2"><label>表格项目</label></div>
-                        <div class="col-md-auto">
-                            <form id="qcformitemTypeForm_#(pageId)" class="form-inline" onsubmit="return false;">
-                                
-                            </form>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">表格配置</label>
+                <div class="col-10">
+
+                    <!-- 检验表格项目表的的form数据定义-->
+                    <div class="card">
+
+                        <div class="card-header py-2">
+                            <div class="row">
+                                <div class="col pt-2"><label>表格项目</label></div>
+                                <div class="col-md-auto">
+                                    <form id="qcformitemTypeForm_#(pageId)" class="form-inline" onsubmit="return false;">
+
+                                    </form>
+                                </div>
+                            </div>
                         </div>
+
+                        <div class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
+                            #include("_table1.html")
+                        </div>
+
+                    </div>
+
+                    <!-- 检验表格参数表的的form数据定义-->
+                    <div class="card">
+
+                        <div class="card-header py-2">
+                            <div class="row">
+                                <div class="col pt-2"><label>表格内容</label></div>
+                                <div class="col-md-auto">
+                                    <form style="display:none;" id="dictionaryForm_#(pageId)" class="form-inline" onsubmit="return false;">
+                                        <input type="text" name="typeid" id="dicTypeId_#(pageId)" value="#(typeid??)"/>
+
+                                    </form>
+                                </div>
+                                <div class="col pt-2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
+                            #include("_table2.html")
+                        </div>
+
+                    </div>
+
+                    <!-- 检验表格项目表的的form数据定义-->
+                    <div class="card">
+                        <div class="card-header py-2">
+                            <div class="row">
+                                <div class="col pt-2"><label>表格录入方式</label></div>
+                                <div class="col-md-auto">
+                                    <form id="qcformtableparamForm_#(pageId)" class="form-inline" onsubmit="return false;">
+                                        <!-- 工具条 toolbar -->
+                                        <input type="text" name="qcformparamId" id="qcformparamId" value="#(qcformparamId??)"/>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
+                            ###include("_table3.html")
+                        </div>
+
                     </div>
                 </div>
-                
-                <div class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
-                    #include("_table1.html")
-                </div>
-                
             </div>
-            
-            <!-- 检验表格参数表的的form数据定义-->
-            <div class="card">
-                
-                <div class="card-header py-2">
-                    <div class="row">
-                        <div class="col pt-2"><label>表格内容</label></div>
-                        <div class="col-md-auto">
-                            <form style="display:none;" id="dictionaryForm_#(pageId)" class="form-inline" onsubmit="return false;">
-                                <input type="text" name="typeid" id="dicTypeId_#(pageId)" value="#(typeid??)"/>
-                               
-                            </form>
-                        </div>
-                        <div class="col pt-2">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
-                    #include("_table2.html")
-                </div>
-                
-            </div>
+        </div>
+    </div>
 
-            <!-- 检验表格项目表的的form数据定义-->
-            <div class="card">
-                <div class="card-header py-2">
-                    <div class="row">
-                        <div class="col pt-2"><label>表格录入方式</label></div>
-                        <div class="col-md-auto">
-                            <form id="qcformtableparamForm_#(pageId)" class="form-inline" onsubmit="return false;">
-                                <!-- 工具条 toolbar -->
-                                <input type="text" name="qcformparamId" id="qcformparamId" value="#(qcformparamId??)"/>
-                                
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
-                    ###include("_table3.html")
-                </div>
-                
-            </div>
 
+
+    <div class="row">
+        <div class="col">
             <div class="form-group row"
-                 data-radio
-                 data-name="qcForm.isEnabled"
-                 data-value-attr="sn"
-                 data-default="options_first"
-                 data-url="admin/dictionary/options?key=options_enable"
-                 data-label="是否启用"
-                 data-width="col-sm-2,col-10"
-                 data-value="#(qcForm.isEnabled??)"
-                 data-rule="radio"
-                 data-notnull="true"
-                 data-tips="请选择是否启用"
-                 data-inline="true"
+                        data-radio
+                        data-name="qcForm.isEnabled"
+                        data-value-attr="sn"
+                        data-default="options_first"
+                        data-url="admin/dictionary/options?key=options_enable"
+                        data-label="是否启用"
+                        data-width="col-sm-1,col-10"
+                        data-value="#(qcForm.isEnabled??)"
+                        data-rule="radio"
+                        data-notnull="true"
+                        data-tips="请选择是否启用"
+                        data-inline="true"
             ></div>
+        </div>
+    </div>
 
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">备注</label>
+                <div class="col-10">
+                    <textarea  data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="padWorkRegion.cMemo">#(padWorkRegion.cMemo??)</textarea>
+                </div>
+            </div>
         </div>
     </div>
 </form>
@@ -101,9 +128,9 @@
 #include("_table2_js.html")
 #include("_table3_js.html")
 <script>
-    
+
     console.log('#(jboltLayerTop)')
-    
+
     var $dicOptBtns = $("#dicOptBtns_#(pageId)");
 
     // <!--	隐藏一个不需要的按钮-->
@@ -113,12 +140,12 @@
     function QcFormItemsubmit() {
         jboltTableSubmit('#jbolt_table_QcFormItem_split');
     }
-    
+
     //检验表格参数保存
     function QcFormParamsubmit() {
         jboltTableSubmit('#jbolt_table_qcformparam_split');
     }
-    
+
     /**
      * 关闭弹窗
      */
