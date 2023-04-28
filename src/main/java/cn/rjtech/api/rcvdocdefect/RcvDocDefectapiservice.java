@@ -16,7 +16,7 @@ import static oshi.util.GlobalConfig.set;
  * 制造异常品管理
  *
  */
-public class rcvDocDefectapiservice extends JBoltApiBaseService {
+public class RcvDocDefectapiservice extends JBoltApiBaseService {
 
 
     @Inject

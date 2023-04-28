@@ -1,4 +1,4 @@
-package cn.rjtech.api.RcvDocDefect;
+package cn.rjtech.api.rcvdocdefect;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
