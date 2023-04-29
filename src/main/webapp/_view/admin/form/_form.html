@@ -1,0 +1,69 @@
+<form onsubmit="return false;" id="formForm" action="#(action)" method="post">
+<input type="hidden" name="form.iautoid" value="#(form.iautoid??)" />
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">表单类别</label>
+		<div class="col">
+			<select class="form-control"
+					name="form.iformcategoryid"
+					data-autoload
+					data-handler="changeType"
+					data-url="admin/dictionary/options?key=form.form_category"
+					data-value-attr="sn"
+					data-text-attr="name"
+					data-text="请选择"
+					data-select="#(form.iformcategoryid??)">
+			</select>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">表单编码</label>
+		<div class="col">
+			<input type="text" class="form-control"   data-rule="required" placeholder="请输入表单编码" maxlength="40"
+				   name="form.cformcode" value="#(form.cformcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">表单名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入表单名称" maxlength="50" name="form.cformname" value="#(form.cformname??)"/>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">编码字段</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入"
+				   maxlength="50" name="form.ccode" value="#(form.ccode??)"/>
+		</div>
+	</div>
+
+	<div class="form-group row"
+		 data-radio
+		 data-rule="radio"
+		 data-value="#(form.cFormTypeSn??)"
+		 data-name="form.cformtypesn"
+		 data-default="options_first"
+		 data-width="col-sm-2,col"
+	>
+		<label class="col-sm-2 col-form-label" >表单类型</label>
+		<div class="col"  style="padding-top: 1px;">
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isdirectonmissing_true" type="radio" name="form.cformtypesn" value="1"/>
+				<label for="r_isdirectonmissing_true">基础档案类</label>
+			</div>
+
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isdirectonmissing_false" type="radio" name="form.cformtypesn" value="2"/>
+				<label for="r_isdirectonmissing_false">单据类</label>
+			</div>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="formForm")
+#end
+

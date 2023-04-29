@@ -274,7 +274,7 @@ public class PermissionKey {
 	 */
 	public static final String SCHEDUBASEPLAN = "schedubaseplan";
 	/**
-	 * 料品管理
+	 * 物料建模
 	 */
 	public static final String MATERIAL = "material";
 	/**
@@ -285,10 +285,6 @@ public class PermissionKey {
 	 * U9生产计划
 	 */
 	public static final String SCHEDUSOURCEORDER = "schedusourceorder";
-	/**
-	 * 组合件关系
-	 */
-	public static final String COMBINE = "combine";
 	/**
 	 * 仓库建模
 	 */
@@ -322,13 +318,13 @@ public class PermissionKey {
 	 */
 	public static final String OPERATION = "operation";
 	/**
-	 * 车间执行
+	 * 制造管理
 	 */
 	public static final String WORKSHOP_EXECUTE = "workshop_execute";
 	/**
-	 * 生产工单管理
+	 * 制造工单管理
 	 */
-	public static final String PRODUCTION_TICKETS = "production_tickets";
+	public static final String MO_DOC = "mo_doc";
 	/**
 	 * 生产工位派工
 	 */
@@ -378,7 +374,7 @@ public class PermissionKey {
 	 */
 	public static final String QUALITY = "quality";
 	/**
-	 * 点检事项
+	 * 点检建模
 	 */
 	public static final String EQUIPMENTQC = "equipmentqc";
 	/**
@@ -477,14 +473,6 @@ public class PermissionKey {
 	 * 客户档案明细
 	 */
 	public static final String CUSTOMERD = "customerd";
-	/**
-	 * 生产返工单工序
-	 */
-	public static final String MOREWORKOPERATION = "moreworkoperation";
-	/**
-	 * 生产返工单工序物料集
-	 */
-	public static final String MOREWORKOPERATIONINVC = "moreworkoperationinvc";
 	/**
 	 * 分类
 	 */
@@ -684,18 +672,6 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String COMBINE_ADD = "combine_add";
-	/**
-	 * 导出
-	 */
-	public static final String COMBINE_EXPORT = "combine_export";
-	/**
-	 * 导入
-	 */
-	public static final String COMBINE_IMPORT = "combine_import";
-	/**
-	 * 新增
-	 */
 	public static final String WORKCLASS_ADD = "workclass_add";
 	/**
 	 * 编辑
@@ -769,30 +745,6 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String INVENTORYSPOTCHECKFORM_IMPORT = "inventoryspotcheckform_import";
-	/**
-	 * 采购管理
-	 */
-	public static final String PHE_PO_MANAGE = "phe_po_manage";
-	/**
-	 * 送货管理
-	 */
-	public static final String PHE_DELIVERY_MANAGE = "phe_delivery_manage";
-	/**
-	 * 采购订单
-	 */
-	public static final String PHE_PO_HEADER = "phe_po_header";
-	/**
-	 * 采购送货单
-	 */
-	public static final String SRM_PO_DELIVERY = "srm_po_delivery";
-	/**
-	 * 片料委外送货单
-	 */
-	public static final String SRM_FLAKE_OM_DELIVERY = "srm_flake_om_delivery";
-	/**
-	 * 委外送货单
-	 */
-	public static final String SRM_OM_DELIVERY = "srm_om_delivery";
 	/**
 	 * 首末检验记录文件
 	 */
@@ -876,7 +828,7 @@ public class PermissionKey {
 	/**
 	 * 发货管理
 	 */
-	public static final String FH = "fh";
+	public static final String DELIVERY_MANAGE = "delivery_manage";
 	/**
 	 * 导出
 	 */
@@ -1014,10 +966,6 @@ public class PermissionKey {
 	 */
 	public static final String PURCHASE = "purchase";
 	/**
-	 * 条码管理
-	 */
-	public static final String BARCODEENCODING = "barcodeencoding";
-	/**
 	 * 条码管理细表
 	 */
 	public static final String BARCODEENCODINGDETAIL = "barcodeencodingdetail";
@@ -1138,10 +1086,6 @@ public class PermissionKey {
 	 */
 	public static final String FINISHDOC_DELETE = "finishdoc_delete";
 	/**
-	 * 新增返工单1
-	 */
-	public static final String PRODUCTION_TICKETS_ADD = "production_tickets_add";
-	/**
 	 * 导入
 	 */
 	public static final String PARAMETER_IMPORT = "parameter_import";
@@ -1174,25 +1118,13 @@ public class PermissionKey {
 	 */
 	public static final String PRODUCTION_PLAN = "production_plan";
 	/**
-	 * 年度生产计划排产
-	 */
-	public static final String YEAR_PRODUCTION_SCHEDULE = "year_production_schedule";
-	/**
-	 * 年度生产计划汇总
-	 */
-	public static final String SUMMARY_OF_ANNUAL_PRODUCTION_PLAN = "summary_of_annual_production_plan";
-	/**
 	 * 月周生产计划排产
 	 */
 	public static final String MONTHLY_AND_WEEKLY_PRODUCTION_SCHEDULE = "monthly_and_weekly_production_schedule";
 	/**
-	 * 月周生产计划汇总
-	 */
-	public static final String SUMMARY_OF_MONTHLY_AND_WEEKLY_PRODUCTION = "summary_of_monthly_and_weekly_production";
-	/**
 	 * 生产计划及实绩管理
 	 */
-	public static final String PRODUCTION_PLANNING_AND_PERFORMANCE_MANA = "production_planning_and_performance_mana";
+	public static final String PLANANDACTUAL = "planandactual";
 	/**
 	 * 禀议建模
 	 */
@@ -1314,10 +1246,6 @@ public class PermissionKey {
 	 */
 	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
 	/**
-	 * 参数配置
-	 */
-	public static final String 	SYS_CONFIG = "	sys_config";
-	/**
 	 * 实体扩展字段
 	 */
 	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
@@ -1348,7 +1276,7 @@ public class PermissionKey {
 	/**
 	 * 周间客户订单
 	 */
-	public static final String WEEK_ORDERM = "WEEK_ORDERM";
+	public static final String WEEK_ORDERM = "week_orderm";
 	/**
 	 * 手配订单
 	 */
@@ -1358,25 +1286,141 @@ public class PermissionKey {
 	 */
 	public static final String MONTHORDERM = "monthorderm";
 	/**
-	 * 年度生产计划排产2
+	 * 年度生产计划排产
 	 */
 	public static final String SCHEDUPRODUCTPLANYEAR = "scheduproductplanyear";
 	/**
-	 * 年度生产计划汇总2
+	 * 年度生产计划汇总
 	 */
 	public static final String NOME = "nome";
-	/**
-	 * 采购/委外管理
-	 */
-	public static final String PS_MGR = "ps_mgr";
-	/**
-	 * 采购订单管理
-	 */
-	public static final String PS_PURCHASE_ORDER = "ps_purchase_order";
 	/**
 	 * 委外销售订单
 	 */
 	public static final String SUBCONTRACTSALEORDERM = "subcontractsaleorderm";
+	/**
+	 * 入库管理
+	 */
+	public static final String RK = "rk";
+	/**
+	 * 出库管理
+	 */
+	public static final String CHUKU = "chuku";
+	/**
+	 * 条码管理
+	 */
+	public static final String BARCODE = "barcode";
+	/**
+	 * 客户订单汇总
+	 */
+	public static final String CUSORDER_SUM = "cusorder_sum";
+	/**
+	 * 月周生产计划排产2
+	 */
+	public static final String SCHEDUPRODUCTPLANMONTH = "scheduproductplanmonth";
+	/**
+	 * 工艺路线
+	 */
+	public static final String ROUTING_RECORD = "routing_record";
+	/**
+	 * 出库检
+	 */
+	public static final String STOCKOUTQCFORMM = "stockoutqcformm";
+	/**
+	 * 在库检
+	 */
+	public static final String INSTOCKQCFORMM = "instockqcformm";
+	/**
+	 * 来料异常品记录
+	 */
+	public static final String RCVDOCDEFECT = "rcvdocdefect";
+	/**
+	 * 采购/委外管理
+	 */
+	public static final String ORDER_MANAGEMENT = "order_management";
+	/**
+	 * 采购订单管理
+	 */
+	public static final String PU_ORDER_MANAGEMENT = "pu_order_management";
+	/**
+	 * 委外订单管理
+	 */
+	public static final String OM_ORDER_MANAGEMENT = "om_order_management";
+	/**
+	 * 审批管理
+	 */
+	public static final String APPROVAL_CONFIG = "approval_config";
+	/**
+	 * 审批/审核配置
+	 */
+	public static final String AUDITCONFIG = "auditconfig";
+	/**
+	 * 审批流配置
+	 */
+	public static final String APPROVAL_M = "approval_m";
+	/**
+	 * 取货计划管理
+	 */
+	public static final String PICKUP_PLAN_MANAGE = "pickup_plan_manage";
+	/**
+	 * 货款核对管理
+	 */
+	public static final String PAYMENT_CHECK_MANAGE = "payment_check_manage";
+	/**
+	 * 双码扫码出货
+	 */
+	public static final String DOUBLE_CODE_SCANNING_SHIPMENT = "double_code_scanning_shipment";
+	/**
+	 * 扫码出货
+	 */
+	public static final String SCAN_CODE_SHIPMENT = "scan_code_shipment";
+	/**
+	 * 销售出库单列表
+	 */
+	public static final String SALES_DELIVERY_LIST = "sales_delivery_list";
+	/**
+	 * 销售发货单列表
+	 */
+	public static final String SALES_SHIPMENT_LIST = "sales_shipment_list";
+	/**
+	 * 条码报表
+	 */
+	public static final String BARCODE_REPORT = "barcode_report";
+	/**
+	 * 仓库报表
+	 */
+	public static final String WAREHOUSE_REPORT = "warehouse_report";
+	/**
+	 * 库存盘点
+	 */
+	public static final String CURRENTSTOCK = "currentstock";
+	/**
+	 * 制程异常品记录
+	 */
+	public static final String PROCESSDEFECT = "ProcessDefect";
+	/**
+	 * 表单配置
+	 */
+	public static final String FORM_CONFIG = "form_config";
+	/**
+	 * 客户计划及实绩管理
+	 */
+	public static final String CUSORDER_RESULT = "cusorder_result";
+	/**
+	 * 出库异常记录
+	 */
+	public static final String STOCKOUTDEFECT = "StockoutDefect";
+	/**
+	 * 在库异常记录
+	 */
+	public static final String INSTOCKDEFECT = "InStockDefect";
+	/**
+	 * 工程内品质巡查
+	 */
+	public static final String QCINSPECTION = "QcInspection";
+	/**
+	 * 系统字段管理
+	 */
+	public static final String FORM_FIELD = "form_field";
 	/**
 	 * 新增
 	 */
@@ -1705,79 +1749,4 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
-	/**
-	 * 来料检单行配置表
-	 */
-	public static final String INVENTORYQCFORMD = "inventoryqcformd";
-	/**
-	 * 来料检单行配置表
-	 */
-	public static final String RCVDOCQCFORMD = "rcvdocqcformd";
-	/**
-	 * 来料检明细列值表
-	 */
-	public static final String RCVDOCQCFORMD_LINE = "rcvdocqcformdline";
-	/*
-	 * 工作日历明细
-	 */
-	public static final String WORKCALENDARM = "workcalendard";
-	/**
-	 * 平板登录日志
-	 */
-    public static final String PADLOGINLOG = "pad_loginlog";
-
-
-    /**
-	 * 平板登录日志
-	 */
-    public static final String RCVDOCDEFECT = "rcvdocdefect";
-
-	/**
-	 * 出库检
-	 */
-	public static final String STOCKOUTQCFORMM = "stockoutqcformm";
-	/**
-	 * 在库检
-	 */
-	public static final String INSTOCKQCFORMM = "instockqcformm";
-
-	/**
-	 * 审批管理
-	 */
-	public static final String APPROVAL_CONFIG = "approval_config";
-
-	/**
-	 * 审批/审核配置
-	 */
-	public static final String AUDIT_CONFIG = "audit_config";
-
-	/**
-	 * 审批流配置
-	 */
-	public static final String APPROVAL_M = "approval_m";
-
-	/**
-	 * 客户计划汇总
-	 */
-	public static final String CUSORDER_SUM = "cusorder_sum";
-	/**
-	 * 质量管理-出库检明细列值
-	 */
-	public static final String STOCKOUTQCFORMD = "stockoutqcformd";
-	/**
-	 * 质量管理-出库检单行配置
-	 */
-	public static final String STOCKOUTQCFORMD_LINE = "stockoutqcformd_line";
-	/**
-	 * 质量管理-出库异常品记录
-	 */
-	public static final String STOCKOUTDEFECT = "stockoutdefect";
-	/**
-	 * 质量管理-在库检单行配置
-	 */
-	public static final String INSTOCKQCFORMD = "instockqcformd";
-	/**
-	 * 质量管理-在库明细列值
-	 */
-	public static final String INSTOCKQCFORMD_LINE = "instockqcformd_line";
 }

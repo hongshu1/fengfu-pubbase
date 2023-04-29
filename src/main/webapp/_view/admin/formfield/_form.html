@@ -1,0 +1,58 @@
+<form onsubmit="return false;" id="FormField_Form" action="#(action)" method="post">
+    
+    #if(formField.iAutoId??)
+    <input type="hidden" name="formField.iAutoId" value="#(formField.iAutoId??)"/>
+    #end
+    
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">字段编码</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入字段编码" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入字段编码" maxlength="40" name="formField.cFieldCode" value="#(formField.cFieldCode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">字段名称</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入字段名称" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入字段名称" maxlength="40" name="formField.cFieldName" value="#(formField.cFieldName??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">字段类型</label>
+                <div class="col-10">
+                    <select class="form-control"
+                            name="formField.cFieldTypeSn"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=field_type"
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-text="=字段类型="
+                            data-placeholder="=字段类型=">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row"
+                 data-radio
+                 data-name="formField.isImportField"
+                 data-value-attr="sn"
+                 data-default="options_first"
+                 data-url="admin/dictionary/options?key=options_boolean"
+                 data-label="是否导入字段"
+                 data-width="col-sm-2,col-10"
+                 data-value="#(formField.isImportField??)"
+                 data-rule="radio"
+                 data-notnull="true"
+                 data-tips="请选择是否导入字段"
+                 data-inline="true">
+            </div>
+        </div>
+    </div>
+</form>
+
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="FormField_Form")
+#end
+
