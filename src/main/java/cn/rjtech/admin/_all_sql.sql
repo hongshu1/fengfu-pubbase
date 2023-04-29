@@ -291,21 +291,6 @@
 
 #namespace("rcvdocdefect")
 #include("rcvdocdefect/rcvdocdefect.sql")
-#namespace("auditformconfig")
-#include("auditformconfig/auditformconfig.sql")
-#end
-
-#namespace("approvalform")
-#include("approvalform/approvalform.sql")
-#end
-
-#namespace("approvald")
-#include("approvald/approvald.sql")
-#end
-
-
-#namespace("RcvDocDefect")
-#include("RcvDocDefect/RcvDocDefect.sql")
 #end
 
 #namespace("processdefect")
