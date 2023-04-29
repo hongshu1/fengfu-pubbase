@@ -165,7 +165,7 @@
     <nav>
         <div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
             <a class="nav-item nav-link active" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" aria-controls="tab-one" aria-selected="true">订货清单</a>
-            <a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false">传票更改清单</a>
+            <a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false" onclick="refreshJBoltTable('#PurchaseOrderM_Table3_#(pageId)')">传票更改清单</a>
         </div>
     </nav>
     <div class="tab-content" style="padding: 0px 1rem">
@@ -217,10 +217,14 @@
         });
     }
 
-    function InsertEmptyRow(csourceld, version, qty,ele,forceTrChange){
+    function InsertEmptyRow(csourceld, version, qty, iseffective,ele,forceTrChange){
         console.log("id---" +csourceld);
         if (index == 1){
             LayerMsgBox.alert("请操作完后，再进行下一步操作",2);
+            return ;
+        }
+        if (iseffective == 0){
+            LayerMsgBox.alert("已失效的现品票，不能再进行下一步操作",2);
             return ;
         }
         var newVersion = Number(version)+1;

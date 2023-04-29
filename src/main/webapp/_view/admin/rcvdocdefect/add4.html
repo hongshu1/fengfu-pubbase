@@ -1,0 +1,124 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+        <form onsubmit="return false;" id="rcvDocDefectForm"  action="admin/RcvDocDefect/updateEditTable" method="post">
+            <input type="hidden" name="rcvDocDefect.iautoid" value="#(rcvDocDefect.iautoid??)" />
+            <h5>检验信息</h5>
+            <hr/>
+            <div class="form-group row">
+
+                <label class="col-sm-2 col-form-label">异常品单号：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocDefect.cdocno??)
+                </div>
+                <label class="col-sm-2 col-form-label">检验单号：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocQcFormM.crcvdocqcformno??)
+                </div>
+                <label class="col-sm-2 col-form-label">供应商名称：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocQcFormM.cvenname??)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">存货编码：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocQcFormM.cinvcode??)
+                </div>
+                <label class="col-sm-2 col-form-label">部品名称：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocQcFormM.cinvname??)
+                </div>
+                <label class="col-sm-2 col-form-label">客户部番：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocQcFormM.cinvcode1??)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">不合格数量：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocDefect.idqqty??)
+                </div>
+                <label class="col-sm-2 col-form-label">检验人：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocQcFormM.cupdatename??)
+                </div>
+                <label class="col-sm-2 col-form-label">检验时间：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocQcFormM.dupdatetime??)
+                </div>
+            </div>
+
+            <h5>异常品记录信息</h5>
+            <div class="form-group row">
+                <input type="hidden" id="cbadnesssns" name="rcvDocDefect.cbadnesssns" value="#(rcvDocDefect.cbadnesssns??)"/>
+                <label class="col-sm-2 col-form-label">不良项目：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocDefect.cbadnesssns??)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">首再发：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(istatus??)
+                </div>
+                <label class="col-sm-2 col-form-label">责任区：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(iresptype??)
+                </div>
+
+
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">不良内容描述：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocDefect.cdesc??)
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+
+                <label class="col-sm-2 col-form-label">创建人名称：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocDefect.cupdatename??)
+                </div>
+                <label class="col-sm-2 col-form-label">创建时间：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocDefect.dupdatetime??)
+                </div>
+            </div>
+
+            <h5>异常品判定信息</h5>
+            <div class="form-group row">
+
+                <label class="col-sm-2 col-form-label">处置区分：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(capproach??)
+                </div>
+            </div>
+            <div class="form-group row">
+
+                <label class="col-sm-2 col-form-label">创建人名称：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocDefect.cupdatename??)
+                </div>
+                <label class="col-sm-2 col-form-label">创建时间：</label>
+                <div class="col-sm-2 col-form-label">
+                    #(rcvDocDefect.dupdatetime??)
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+#define js()
+<script>
+    if(isOk('#(type??)')){
+        hideParentLayerDialogBtn(0);
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="rcvDocDefectForm")
+#end
+#end
+

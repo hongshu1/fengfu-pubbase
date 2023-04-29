@@ -1,0 +1,231 @@
+<form onsubmit="return false;" id="inStockQcFormMForm" action="#(action)" method="post">
+<input type="hidden" name="inStockQcFormM.iautoid" value="#(inStockQcFormM.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="inStockQcFormM.iorgid" value="#(inStockQcFormM.iorgid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="40" name="inStockQcFormM.corgcode" value="#(inStockQcFormM.corgcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="50" name="inStockQcFormM.corgname" value="#(inStockQcFormM.corgname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验单号</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入检验单号" maxlength="50" name="inStockQcFormM.cinvqcformno" value="#(inStockQcFormM.cinvqcformno??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">质检表格ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入质检表格ID" maxlength="19" name="inStockQcFormM.iqcformid" value="#(inStockQcFormM.iqcformid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="inStockQcFormM.iinventoryid" value="#(inStockQcFormM.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入数量"  maxlength="10" name="inStockQcFormM.iqty" value="#(inStockQcFormM.iqty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">现品票（条码）</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入现品票（条码）" maxlength="100" name="inStockQcFormM.cbarcode" value="#(inStockQcFormM.cbarcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">批次号</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入批次号" maxlength="40" name="inStockQcFormM.cbatchno" value="#(inStockQcFormM.cbatchno??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验结果：0. 未生成 1. 待检 2. 不合格 3. 合格</label>
+		<div class="col input-group">
+			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="inStockQcFormM.istatus" data-refresh="true"  data-rule="select"  data-tips="请选择检验结果：0. 未生成 1. 待检 2. 不合格 3. 合格" data-text="=请选择="  data-value="" data-select="#( inStockQcFormM.istatus ??)"></select>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(inStockQcFormM.iscompleted??)"
+    	data-name="inStockQcFormM.iscompleted"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否已完成：0. 未完成 1. 已完成</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_iscompleted_true" type="radio" name="inStockQcFormM.iscompleted" value="true"/>
+					<label for="r_iscompleted_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_iscompleted_false" type="radio" name="inStockQcFormM.iscompleted" value="false"/>
+					<label for="r_iscompleted_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验员Id, 系统用户ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入检验员Id, 系统用户ID" maxlength="19" name="inStockQcFormM.iqcuserid" value="#(inStockQcFormM.iqcuserid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">测定目的</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入测定目的" maxlength="200" name="inStockQcFormM.cmeasurepurpose" value="#(inStockQcFormM.cmeasurepurpose??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">测定理由</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入测定理由" maxlength="200" name="inStockQcFormM.cmeasurereason" value="#(inStockQcFormM.cmeasurereason??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">设变号</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入设变号" maxlength="200" name="inStockQcFormM.cdcno" value="#(inStockQcFormM.cdcno??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">测定单位</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入测定单位" maxlength="5" name="inStockQcFormM.cmeasureunit" value="#(inStockQcFormM.cmeasureunit??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">检验日期</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置检验日期" data-tips="请设置检验日期" maxlength="10" name="inStockQcFormM.dqcdate" value="#(inStockQcFormM.dqcdate??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(inStockQcFormM.iscpksigned??)"
+    	data-name="inStockQcFormM.iscpksigned"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否CPK数值的输入内容按正负数显示：0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_iscpksigned_true" type="radio" name="inStockQcFormM.iscpksigned" value="true"/>
+					<label for="r_iscpksigned_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_iscpksigned_false" type="radio" name="inStockQcFormM.iscpksigned" value="false"/>
+					<label for="r_iscpksigned_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(inStockQcFormM.isok??)"
+    	data-name="inStockQcFormM.isok"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否判定合格：0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isok_true" type="radio" name="inStockQcFormM.isok" value="true"/>
+					<label for="r_isok_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isok_false" type="radio" name="inStockQcFormM.isok" value="false"/>
+					<label for="r_isok_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">备注</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="inStockQcFormM.cmemo" value="#(inStockQcFormM.cmemo??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人ID" maxlength="19" name="inStockQcFormM.icreateby" value="#(inStockQcFormM.icreateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="50" name="inStockQcFormM.ccreatename" value="#(inStockQcFormM.ccreatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="inStockQcFormM.dcreatetime" value="#(inStockQcFormM.dcreatetime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人ID" maxlength="19" name="inStockQcFormM.iupdateby" value="#(inStockQcFormM.iupdateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人名称" maxlength="50" name="inStockQcFormM.cupdatename" value="#(inStockQcFormM.cupdatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="inStockQcFormM.dupdatetime" value="#(inStockQcFormM.dupdatetime??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(inStockQcFormM.isdeleted??)"
+    	data-name="inStockQcFormM.isdeleted"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >删除状态：0. 未删除 1. 已删除</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_true" type="radio" name="inStockQcFormM.isdeleted" value="true"/>
+					<label for="r_isdeleted_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_false" type="radio" name="inStockQcFormM.isdeleted" value="false"/>
+					<label for="r_isdeleted_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="inStockQcFormMForm")
+#end
+

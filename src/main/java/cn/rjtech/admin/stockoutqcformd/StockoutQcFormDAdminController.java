@@ -1,25 +1,20 @@
 package cn.rjtech.admin.stockoutqcformd;
 
-import com.jfinal.aop.Inject;
-
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockoutQcFormD;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 /**
  * 质量管理-出库检明细列值 Controller
  * @ClassName: StockoutQcFormDAdminController
  * @author: RJ
  * @date: 2023-04-25 16:21
  */
-@CheckPermission(PermissionKey.STOCKOUTQCFORMD)
-@UnCheckIfSystemAdmin
+@UnCheck
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/stockoutqcformd", viewPath = "/_view/admin/stockoutqcformd")
 public class StockoutQcFormDAdminController extends BaseAdminController {

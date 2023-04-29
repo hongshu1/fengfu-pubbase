@@ -46,7 +46,7 @@ public class MessageUserService extends BaseService<MessageUser> {
 	 *	保存可编辑表格的新增行
 	 * @param jBoltTable
 	 * @param iPersonId
-	 * */
+	 */
 	public void addSubmitTableDatas(JBoltTable jBoltTable, Long iPersonId) {
 		List<Record> list = jBoltTable.getSaveRecordList();
 		if(CollUtil.isEmpty(list)) return;
@@ -62,7 +62,7 @@ public class MessageUserService extends BaseService<MessageUser> {
 	/**
 	 *	保存可编辑表格的修改行
 	 * @param jBoltTable
-	 * */
+	 */
 	public void updateSubmitTableDatas(JBoltTable jBoltTable) {
 		List<Record> list = jBoltTable.getUpdateRecordList();
 		if(CollUtil.isEmpty(list)) return;
@@ -76,7 +76,7 @@ public class MessageUserService extends BaseService<MessageUser> {
 	/**
 	 *	保存可编辑表格的删除行
 	 * @param jBoltTable
-	 * */
+	 */
 	public void deleteSubmitTableDatas(JBoltTable jBoltTable) {
 		Object[] ids = jBoltTable.getDelete();
 		if(ArrayUtil.isEmpty(ids)) return;

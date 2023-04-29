@@ -172,9 +172,9 @@ public class QcParamService extends BaseService<QcParam> {
         return toggleBoolean(id, "isEnabled");
     }
 
-    /*
+    /**
      * 导出excel文件
-     * */
+     */
     public JBoltExcel exportExcelTpl(List<QcParam> datas) {
         //2、创建JBoltExcel
         JBoltExcel jBoltExcel = JBoltExcel
@@ -200,9 +200,9 @@ public class QcParamService extends BaseService<QcParam> {
         return jBoltExcel;
     }
 
-    /*
+    /**
      * 上传excel文件
-     * */
+     */
     public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
         JBoltExcel jBoltExcel = JBoltExcel

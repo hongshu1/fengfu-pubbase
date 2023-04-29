@@ -34,7 +34,7 @@ public class CurrentStockService extends BaseU8RecordService {
 
 	/**
 	 * 盘点单物料清单列表
-	 * */
+	 */
 	public Page<Record> invDatas(Integer pageNumber, Integer pageSize, Kv kv) {
 		kv.set("organizecode",getOrgCode());
 		String whcode = kv.getStr("whcode");

@@ -1,4 +1,4 @@
-### 支持在Java源代码目录中定义sql模板，便于快速定位
+### 支持在java源代码目录中定义sql模板，便于快速定位
 ### 定义方式
 ### 1. 在模块包中声明sql模板文件
 ### 2. 在本文件中引入
@@ -257,8 +257,8 @@
 #include("manualorderm/manualorderm.sql")
 #end
 
-#namespace("containerStockInD")
-#include("containerStockInD/containerStockD.sql")
+#namespace("containerstockind")
+#include("containerstockind/containerstockd.sql")
 #end
 
 #namespace("weekorderm")
@@ -289,6 +289,8 @@
 #include("routing/routing.sql")
 #end
 
+#namespace("rcvdocdefect")
+#include("rcvdocdefect/rcvdocdefect.sql")
 #namespace("auditformconfig")
 #include("auditformconfig/auditformconfig.sql")
 #end
@@ -306,8 +308,8 @@
 #include("RcvDocDefect/RcvDocDefect.sql")
 #end
 
-#namespace("ProcessDefect")
-#include("ProcessDefect/ProcessDefect.sql")
+#namespace("processdefect")
+#include("processdefect/processdefect.sql")
 #end
 
 #namespace("stockoutqcformm")
@@ -354,4 +356,42 @@
 #include("purchaseorderd/purchaseorderd.sql")
 #end
 
+#namespace("subcontractorderm")
+#include("subcontractorderm/subcontractorderm.sql")
+#end
 
+#namespace("subcontractorderd")
+#include("subcontractorderd/subcontractorderd.sql")
+#end
+
+#namespace("subcontractorderref")
+#include("subcontractorderref/subcontractorderref.sql")
+#end
+
+#namespace("subcontractorderdqty")
+#include("subcontractorderdqty/subcontractorderdqty.sql")
+#end
+
+#namespace("subcontractorderdbatch")
+#include("subcontractorderdbatch/subcontractorderdbatch.sql")
+#end
+
+#namespace("subcontractorderdbatchversion")
+#include("subcontractorderdbatchversion/subcontractorderdbatchversion.sql")
+#end
+
+#namespace("stockoutdefect")
+#include("stockoutdefect/stockoutdefect.sql")
+#end
+
+#namespace("instockdefect")
+#include("instockdefect/instockdefect.sql")
+#end
+
+#namespace("qcinspection")
+#include("qcinspection/qcinspection.sql")
+#end
+
+#namespace("modoc")
+#include("modoc/modoc.sql")
+#end

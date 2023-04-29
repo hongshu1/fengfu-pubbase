@@ -11,5 +11,17 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "PS_SubcontractOrderM" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class SubcontractOrderM extends BaseSubcontractOrderM<SubcontractOrderM> {
+    // 根据存货id记录中间变数据
+    public static final String PURCHASEORDERREFLIST = "purchaseOrderRefList";
+    
+    public static final String ARR = "arr";
+    
+    public static final String ORDERSTATUS = "orderStatus";
+    
+    public static final String ADUITSTATUSTEXT = "aduitStatusText";
+    
+    public static final String PAYABLETYPETEXT = "payableTypeText";
+    
+    public static final String BUSTYPETEXT = "busTypeText";
 }
 

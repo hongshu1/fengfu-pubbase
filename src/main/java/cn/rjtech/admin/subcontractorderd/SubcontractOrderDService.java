@@ -1,14 +1,26 @@
 package cn.rjtech.admin.subcontractorderd;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.PurchaseOrderM;
+import cn.rjtech.model.momdata.SubcontractOrderD;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.SubcontractOrderD;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 采购/委外订单-采购订单明细
  * @ClassName: SubcontractOrderDService
@@ -124,6 +136,74 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 		}
 		*/
 		return null;
+	}
+	
+	public SubcontractOrderD createSubcontractOrderD(Long iSubcontractOrderMid, JSONObject jsonObject){
+		SubcontractOrderD subcontractOrderD = new SubcontractOrderD();
+		subcontractOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		subcontractOrderD.setISubcontractOrderMid(iSubcontractOrderMid);
+		subcontractOrderD.setIVendorAddrId(jsonObject.getLong(SubcontractOrderD.IVENDORADDRID.toLowerCase()));
+		subcontractOrderD.setCAddress(jsonObject.getString(SubcontractOrderD.CADDRESS.toLowerCase()));
+		subcontractOrderD.setCMemo(jsonObject.getString(SubcontractOrderD.CMEMO.toLowerCase()));
+		subcontractOrderD.setIsPresent(jsonObject.getBoolean(SubcontractOrderD.ISPRESENT.toLowerCase()));
+		subcontractOrderD.setIsDeleted(false);
+		subcontractOrderD.setIInventoryId(jsonObject.getLong(SubcontractOrderD.IINVENTORYID.toLowerCase()));
+		subcontractOrderD.setISum(jsonObject.getBigDecimal(SubcontractOrderD.ISUM.toLowerCase()));
+		return subcontractOrderD;
+	}
+	
+	public int removeBySubcontractOrderMId(Long iSubcontractOrderMid){
+		return update("update PS_SubcontractOrderD set isDeleted=1 where iSubcontractOrderMid = ?", iSubcontractOrderMid);
+	}
+	
+	/**
+	 * 获取采购细表数据
+	 * @param purchaseOrderMId
+	 * @return
+	 */
+	public List<Record> findBySubcontractOrderMId(Long purchaseOrderMId){
+		return dbTemplate("subcontractorderd.findAll", Okv.by(SubcontractOrderD.ISUBCONTRACTORDERMID, purchaseOrderMId)).find();
+	}
+	
+	public void setSubcontractDList(Map<String, Integer> calendarMap, Map<Long, Map<String, BigDecimal>>  subcontractOrderdQtyMap, List<Record> subcontractOrderDList){
+		// 同一种的存货编码需要汇总在一起。
+		// 将日期设值。
+		for (Record record : subcontractOrderDList){
+			// 存货id（原存货id）
+			Long invId = record.getLong(SubcontractOrderD.IINVENTORYID);
+			
+			BigDecimal[] arr = new BigDecimal[calendarMap.keySet().size()];
+			record.set(PurchaseOrderM.ARR, arr);
+			// 存货编码为key，可以获取存货编码下 所有日期范围的值
+			if (!subcontractOrderdQtyMap.containsKey(invId)){
+				continue;
+			}
+			
+			// 当前日期下的数量
+			Map<String, BigDecimal> dateQtyMap = subcontractOrderdQtyMap.get(invId);
+			// 统计合计数量
+			BigDecimal amount = BigDecimal.ZERO;
+			
+			for (String dateStr : dateQtyMap.keySet()){
+				// 原数量
+				BigDecimal qty = dateQtyMap.get(dateStr);
+				// yyyyMMdd
+				DateTime dateTime = DateUtil.parse(dateStr, DatePattern.PURE_DATE_FORMAT);
+				// yyyy-MM-dd
+				String formatDateStr = DateUtil.format(dateTime, DatePattern.NORM_DATE_PATTERN);
+				// 当前日期存在，则取值
+				if (calendarMap.containsKey(formatDateStr)){
+					Integer index = calendarMap.get(formatDateStr);
+					arr[index] = qty;
+					// 转换率，默认为1
+					// 判断当前存货是否存在物料转换
+					// 统计数量汇总
+					amount = amount.add(qty);
+				}
+			}
+			record.set(SubcontractOrderD.ISUM, amount);
+			
+		}
 	}
 
 }

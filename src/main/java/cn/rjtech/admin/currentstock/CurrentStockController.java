@@ -37,7 +37,7 @@ public class CurrentStockController extends BaseMesAdminController {
 
 	/**
 	 * 列表也数据
-	 * */
+	 */
 	public void datas() {
 		renderJsonData(service.datas(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -75,7 +75,7 @@ public class CurrentStockController extends BaseMesAdminController {
 	}
 	/**
 	 * 新增提交
-	 * */
+	 */
    public void save(){
 	   Kv kv = getKv();
 	   //SysStockchekvouch sysStockchekvouch = useIfValid(SysStockchekvouch.class, "sysstockchekvouch");

@@ -230,7 +230,7 @@ public class UserThirdpartyService extends JBoltBaseService<UserThirdparty> {
 
     /**
      * 获取该用户的u9用户名
-     * */
+     */
     public String getU9Name(long userId) {
         List<Record> adminDatas = getAdminDatas(userId);
 

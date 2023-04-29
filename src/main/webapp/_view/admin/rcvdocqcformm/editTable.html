@@ -266,18 +266,6 @@
     width: 78px;
   }
 
-  .th {
-    overflow: hidden;
-    height: 100%;
-    width: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    white-space: nowrap;
-    font-family: "宋体", "STLiti";
-    font-style: normal;
-  }
-
   .trd td {
     overflow: hidden;
     height: 100%;
@@ -299,28 +287,6 @@
   }
 
   .x71 {
-    mso-style-parent: style0;
-    mso-number-format: General;
-    text-align: center;
-    vertical-align: middle;
-    white-space: nowrap;
-    background: white;
-    mso-pattern: auto;
-    color: #000000;
-    font-size: 12pt;
-    font-weight: 700;
-    font-style: normal;
-    font-family: "宋体", "sans-serif";
-    border-top: 1px solid windowtext;
-    border-right: 1px solid windowtext;
-    border-bottom: 1px solid windowtext;
-    border-left: 1px solid windowtext;
-    mso-diagonal-down: none;
-    mso-diagonal-up: none;
-    mso-protection: locked visible;
-  }
-
-  .x70 {
     mso-style-parent: style0;
     mso-number-format: General;
     text-align: center;
@@ -427,7 +393,7 @@
       isok: isok,
       docqcformmiautoid: iautoid
     }
-    Ajax.post("admin/rcvdocqcformm/editTable", submitDatas, function (res) {
+    Ajax.post("admin/rcvdocqcformm/saveEditTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {
           refreshPjaxContainer();

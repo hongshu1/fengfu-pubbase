@@ -11,25 +11,6 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "PS_PurchaseOrderM" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class PurchaseOrderM extends BasePurchaseOrderM<PurchaseOrderM> {
-    
-    public static final String IAFTERINVENTORYID = "iAfterInventoryId";
-    
-    public static final String AFTERCINVCODE = "afterCInvCode";
-    
-    public static final String AFTERCINVCODE1 = "afterCInvCode1";
-    
-    public static final String AFTERCINVNAME = "afterCInvName";
-    
-    public static final String AFTERCINVNAME1 = "afterCInvName1";
-   
-    // 转换后： 包装数量
-    public static final String IPKGQTY = "iPkgQty";
-    
-    public static final String AFTERIPKGQTY = "afterIPkgQty";
-    
-    public static final String CINVSTD = "cInvStd";
-    
-    public static final String CUOMNAME = "cUomName";
     // 根据存货id记录中间变数据
     public static final String PURCHASEORDERREFLIST = "purchaseOrderRefList";
     

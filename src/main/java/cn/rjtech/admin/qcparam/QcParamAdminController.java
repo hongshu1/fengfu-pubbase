@@ -122,7 +122,7 @@ public class QcParamAdminController extends BaseAdminController {
 
 	/*
 	 * 导出选中
-	 * */
+	 */
 	public void exportExcelByIds() {
 		String ids = get("ids");
 		if (notOk(ids)) {
@@ -147,7 +147,7 @@ public class QcParamAdminController extends BaseAdminController {
 
 	/*
 	 * 导出全部
-	 * */
+	 */
 	public void exportExcelAll() {
 		List<Record> rows = service.list(getKv());
 		if (notOk(rows)) {
@@ -167,7 +167,7 @@ public class QcParamAdminController extends BaseAdminController {
 
 	/*
 	 * 数据导入
-	 * */
+	 */
 	public void importExcel(){
 		String uploadPath= JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
 		UploadFile file=getFile("file",uploadPath);

@@ -1,14 +1,25 @@
 package cn.rjtech.admin.subcontractorderdqty;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.SubcontractOrderD;
+import cn.rjtech.model.momdata.SubcontractorderdQty;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.SubcontractorderdQty;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 采购/委外订单-采购订单明细数量
  * @ClassName: SubcontractorderdQtyService
@@ -103,5 +114,41 @@ public class SubcontractorderdQtyService extends BaseService<SubcontractorderdQt
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
 	}
-
+	
+	public SubcontractorderdQty createSubcontractOrderdQty(int year, int month, int day, BigDecimal qty){
+		SubcontractorderdQty subcontractorderdQty = new SubcontractorderdQty();
+		subcontractorderdQty.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		subcontractorderdQty.setIYear(year);
+		subcontractorderdQty.setIMonth(month);
+		subcontractorderdQty.setIDate(day);
+		subcontractorderdQty.setIQty(qty);
+		return subcontractorderdQty;
+	}
+	
+	public List<SubcontractorderdQty> getSubcontractOrderdQty(Long iSubcontractOrderDid, JSONArray subcontractorderdQtyJsonArray){
+		List<SubcontractorderdQty> list = new ArrayList<>();
+		if (CollectionUtil.isEmpty(subcontractorderdQtyJsonArray)){
+			return list;
+		}
+		for (int i=0; i<subcontractorderdQtyJsonArray.size(); i++){
+			JSONObject jsonObject = subcontractorderdQtyJsonArray.getJSONObject(i);
+			SubcontractorderdQty subcontractorderdQty = createSubcontractOrderdQty(
+					jsonObject.getIntValue(SubcontractorderdQty.IYEAR.toLowerCase()),
+					jsonObject.getIntValue(SubcontractorderdQty.IMONTH.toLowerCase()),
+					jsonObject.getIntValue(SubcontractorderdQty.IDATE.toLowerCase()),
+					jsonObject.getBigDecimal(SubcontractorderdQty.IQTY.toLowerCase())
+			);
+			subcontractorderdQty.setISubcontractOrderDid(iSubcontractOrderDid);
+			list.add(subcontractorderdQty);
+		}
+		return list;
+	}
+	
+	public List<Record> findBySubcontractOrderMId(Long iSubcontractOrderMid){
+		return dbTemplate("subcontractorderdqty.findBySubcontractOrderMId", Okv.by(SubcontractOrderD.ISUBCONTRACTORDERMID, iSubcontractOrderMid)).find();
+	}
+	
+	public List<SubcontractorderdQty> findBySubcontractOrderDId(Long iSubcontractOrderDid){
+		return find("SELECT * FROM PS_SubcontractOrderD_Qty WHERE iSubcontractOrderDid = ?", iSubcontractOrderDid);
+	}
 }

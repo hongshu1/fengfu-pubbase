@@ -1,14 +1,24 @@
 package cn.rjtech.admin.subcontractorderref;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.SubcontractOrderD;
+import cn.rjtech.model.momdata.SubcontractOrderRef;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.SubcontractOrderRef;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 采购/委外-委外订单与到货计划关联
  * @ClassName: SubcontractOrderRefService
@@ -103,5 +113,45 @@ public class SubcontractOrderRefService extends BaseService<SubcontractOrderRef>
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
 	}
-
+	
+	public List<SubcontractOrderRef> getSubcontractOrderRefList(Long iSubContractOrderDid, JSONArray orderRefJsonArray){
+		List<SubcontractOrderRef> subcontractOrderRefList = new ArrayList<>();
+		if (CollectionUtil.isEmpty(orderRefJsonArray)){
+			return subcontractOrderRefList;
+		}
+		for (int i=0; i<orderRefJsonArray.size(); i++){
+			JSONObject jsonObject = orderRefJsonArray.getJSONObject(i);
+			SubcontractOrderRef subcontractOrderRef = createSubcontractOrderRef(iSubContractOrderDid, jsonObject.getLong(SubcontractOrderRef.IDEMANDPLANDID.toLowerCase()));
+			subcontractOrderRefList.add(subcontractOrderRef);
+		}
+		return subcontractOrderRefList;
+	}
+	
+	public SubcontractOrderRef createSubcontractOrderRef(Long iSubContractOrderDid, Long demandPlanDid){
+		SubcontractOrderRef subcontractOrderRef = new SubcontractOrderRef();
+		subcontractOrderRef.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		subcontractOrderRef.setISubContractOrderDid(iSubContractOrderDid);
+		subcontractOrderRef.setIDemandPlanDid(demandPlanDid);
+		return subcontractOrderRef;
+	}
+	
+	public List<Record> findBySubContractOrderDIds(List<Long> iSubContractOrderDids){
+		return dbTemplate("subcontractorderref.findBySubContractOrderDIds", Okv.by("ids", iSubContractOrderDids)).find();
+	}
+	
+	public void removeByPurchaseOrderDId(Long iSubContractOrderDid){
+		delete("DELETE PS_SubcontractOrderRef WHERE iSubContractOrderDid = ?", iSubContractOrderDid);
+	}
+	
+	public int removeBySubContractOrderDIds(List<Long> iSubContractOrderDids){
+		return dbTemplate("subcontractorderref.removeBySubContractOrderDIds", Okv.by("ids", iSubContractOrderDids)).delete();
+	}
+	
+	public List<Record> findBySubContractOrderMId(Long iSubContractOrderMid){
+		return dbTemplate("subcontractorderref.findBySubContractOrderMId", Okv.by(SubcontractOrderD.ISUBCONTRACTORDERMID, iSubContractOrderMid)).find();
+	}
+	
+	public int removeByPurchaseOderMId(Long iSubContractOrderMid){
+		return dbTemplate("subcontractorderref.removeBySubContractOrderMId", Okv.by(SubcontractOrderD.ISUBCONTRACTORDERMID, iSubContractOrderMid)).delete();
+	}
 }
