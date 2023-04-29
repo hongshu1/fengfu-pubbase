@@ -1,0 +1,97 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>系统配置-表单字段</h1></div>
+            <div class="col">
+                <form class="form-inline" id="FormField_form_#(pageId)">
+
+                    <select class="form-control" name="cFieldTypeSn"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=field_type"
+                            data-select-type="select"
+                            data-text="=字段类型="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+
+                    <select class="form-control" name="isImportField"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_boolean"
+                            data-select-type="select"
+                            data-text="=是否导入字段="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-light"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+    
+    <div class="jbolt_page_content">
+        
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="FormField_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.cfieldcode}</td>
+            <td>${data.cfieldname}</td>
+            <td>${data.cfieldtypename}</td>
+            <td><img data-switchbtn data-confirm="确定切换是否导入字段？" data-value="${data.isimportfield}"  data-handler="refreshJBoltTable"  data-url="admin/formfield/toggleIsImportField/${data.iautoid}"/></td>
+            <td>
+                <a class="jbolt_table_editbtn" href="admin/formfield/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑系统配置-表单字段">编辑</a>
+                <a class="jbolt_table_delbtn" href="admin/formfield/${data.isdeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" >删除</a>
+            </td>
+        </tr>
+        {@/each}
+        </textarea>
+        
+        <div class="jbolt_table_toolbar" id="FormField_toolbar_#(pageId)">
+            <div class="btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="800,500" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增系统配置-表单字段" data-url="admin/formfield/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-area="800,500" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑系统配置-表单字段" data-check-handler="jboltTableGetCheckedId" data-url="admin/formfield/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/formfield/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+        </div>
+        
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="auto"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="FormField_form_#(pageId)"
+               data-url="admin/formfield/datas"
+               data-rowtpl="FormField_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="FormField_page"
+               data-column-resize="true"
+               data-toolbar="FormField_toolbar_#(pageId)"
+               data-column-prepend="1:checkbox:true:false:false">
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150" data-column="cfieldcode">字段编码</th>
+                <th data-width="150" data-column="cfieldname">字段名称</th>
+                <th data-width="150" data-column="cfieldtypesn">字段类型</th>
+                <th data-width="120" data-column="isimportfield">是否导入字段</th>
+                <th data-width="120">操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
