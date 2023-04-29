@@ -20,25 +20,25 @@ FROM
         LEFT JOIN Bd_Inventory t3 ON t3.iAutoId = t1.iInventoryId
 WHERE
         1 = 1
-    #if(cDocNo)
-  AND t2.cDocNo like '%#(cDocNo)%'
+    #if(cdocno)
+  AND t2.cDocNo like '%#(cdocno)%'
   #end
-    #if(iMoDocId)
-  AND t1.cRcvDocQcFormNo like '%#(iMoDocId)%'
+    #if(imodocid)
+  AND t1.cRcvDocQcFormNo like '%#(imodocid)%'
   #end
-#if(cInvCode)
-  AND t3.cInvCode like '%#(cInvCode)%'
+#if(cinvcode)
+  AND t3.cInvCode like '%#(cinvcode)%'
   #end
-#if(cInvCode1)
-  AND t3.cInvCode1 like '%#(cInvCode1)%'
+#if(cinvcode1)
+  AND t3.cInvCode1 like '%#(cinvcode1)%'
   #end
-#if(cInvName)
-  AND t3.cInvName like '%#(cInvName)%'
+#if(cinvname)
+  AND t3.cInvName like '%#(cinvname)%'
   #end
-  #if(iStatus != '0' && iStatus)
-  AND t2.iStatus = '#(iStatus)'
+  #if(istatus != '0' && istatus)
+  AND t2.iStatus = '#(istatus)'
   #end
-  #if(iStatus == '0' && iStatus)
+  #if(istatus == '0' && istatus)
   AND t2.iStatus  is null
   #end
 

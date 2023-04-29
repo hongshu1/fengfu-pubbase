@@ -19,7 +19,7 @@ import com.jfinal.kit.Okv;
  * @date: 2023-04-18 16:36
  */
 @CheckPermission(PermissionKey.NONE)
-@Path(value = "/admin/RcvDocDefect", viewPath = "/_view/admin/RcvDocDefect")
+@Path(value = "/admin/rcvdocdefect", viewPath = "/_view/admin/rcvdocdefect")
 public class RcvDocDefectAdminController extends BaseAdminController {
 
     @Inject
@@ -36,18 +36,10 @@ public class RcvDocDefectAdminController extends BaseAdminController {
 
     /**
      * 数据源
+     *
      */
     public void datas() {
-        Okv kv = new Okv();
-        kv.setIfNotNull("cDocNo", get("cDocNo"));
-        kv.setIfNotNull("iMoDocId", get("iMoDocId"));
-        kv.setIfNotNull("cInvCode", get("cInvCode"));
-        kv.setIfNotNull("iInventoryId", get("iInventoryId"));
-        kv.setIfNotNull("cInvName", get("cInvName"));
-        kv.setIfNotNull("iStatus", get("iStatus"));
-        kv.setIfNotNull("startdate", get("startdate"));
-        kv.setIfNotNull("enddate", get("enddate"));
-        renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));
+        renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), getKv()));
     }
 
     /**
@@ -98,7 +90,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("rcvDocDefect", rcvDocDefect);
+        set("rcvdocdefect", rcvDocDefect);
         render("edit.html");
     }
 
@@ -106,14 +98,14 @@ public class RcvDocDefectAdminController extends BaseAdminController {
      * 保存
      */
     public void save() {
-        renderJson(service.save(getModel(RcvDocDefect.class, "rcvDocDefect")));
+        renderJson(service.save(getModel(RcvDocDefect.class, "rcvdocdefect")));
     }
 
     /**
      * 更新
      */
     public void update() {
-        renderJson(service.update(getModel(RcvDocDefect.class, "rcvDocDefect")));
+        renderJson(service.update(getModel(RcvDocDefect.class, "rcvdocdefect")));
     }
 
     /**

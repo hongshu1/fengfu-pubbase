@@ -44,11 +44,11 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	{@if data.istatus==1}
-		<a href="admin/RcvDocDefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判断" class="jbolt_table_editbtn">异常品判断</a>
+		<a href="admin/rcvdocdefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判断" class="jbolt_table_editbtn">异常品判断</a>
 	{@else if data.istatus==2}
-		<a href="admin/RcvDocDefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+		<a href="admin/rcvdocdefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
 	{@else}
-		<a href="admin/RcvDocDefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}" data-area="80%,100%"  tooltip data-title="质检"  data-handler="refreshJBoltTable" data-dialog-title="异常品记录" class="jbolt_table_editbtn">异常品记录</a>
+		<a href="admin/rcvdocdefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}" data-area="80%,100%"  tooltip data-title="质检"  data-handler="refreshJBoltTable" data-dialog-title="异常品记录" class="jbolt_table_editbtn">异常品记录</a>
 	{@/if}
 </td>
 <td>${data.istatus=='1'?'待判定':data.istatus=='2'?'已完成':'待记录'}</td>
@@ -81,7 +81,7 @@
 			   data-jbolttable
 			   data-height="fill"
 			   data-ajax="true"
-			   data-url="admin/RcvDocDefect/datas"
+			   data-url="admin/rcvdocdefect/datas"
 			   data-column-resize="true"
 			   data-row-click-active="true"
 			   data-column-prepend="1:checkbox:true"

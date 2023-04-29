@@ -5,9 +5,11 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.model.momdata.RcvDocDefect;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.util.BillNoUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -27,6 +29,9 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 
 	private final RcvDocDefect dao = new RcvDocDefect().dao();
 
+	@Inject
+	private RcvDocQcFormMService rcvDocQcFormMService;      ////质量管理-来料表
+
 	@Override
 	protected RcvDocDefect dao() {
 		return dao;
@@ -39,8 +44,8 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 	 * @param
 	 * @return
 	 */
-	public Page<Record> paginateAdminDatas(int pageSize, int pageNumber, Okv kv) {
-		return dbTemplate(dao()._getDataSourceConfigName(), "RcvDocDefect.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+	public Page<Record> paginateAdminDatas(int pageSize, int pageNumber, Kv kv) {
+		return dbTemplate("rcvdocdefect.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
 	}
 
 
@@ -183,23 +188,25 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 	}
 
 
-	//更新状态并保存数据方法
+	/**
+	 * 更新状态并保存数据方法
+	 * @param formRecord 参数
+	 * @return
+	 */
 	public Ret updateEditTable(Kv formRecord) {
 		Date now = new Date();
-
 		tx(() -> {
 				//判断是否有主键id
-				if(isOk(formRecord.getStr("rcvDocDefect.iautoid"))){
-					RcvDocDefect rcvDocDefect = findById(formRecord.getLong("rcvDocDefect.iautoid"));
+				if(isOk(formRecord.getStr("iautoid"))){
+					RcvDocDefect rcvDocDefect = findById(formRecord.getLong("iautoid"));
 					if (rcvDocDefect.getIStatus() == 1){
 						//录入数据
-						rcvDocDefect.setCApproach(formRecord.getStr("rcvDocDefect.capproach"));
+						rcvDocDefect.setCApproach(formRecord.getStr("capproach"));
 						rcvDocDefect.setIStatus(2);
 						//更新人和时间
 						rcvDocDefect.setIUpdateBy(JBoltUserKit.getUserId());
 						rcvDocDefect.setCUpdateName(JBoltUserKit.getUserName());
 						rcvDocDefect.setDUpdateTime(now);
-
 					}
 					rcvDocDefect.update();
 				}else{
@@ -212,27 +219,33 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 	}
 
 
-	//未有主键的保存方法
+	/**
+	 * 未有主键的保存方法
+	 * @param formRecord 参数
+	 * @param now 时间
+	 * @return
+	 */
 	public void RcvDocfectLinesave(Kv formRecord, Date now){
 		System.out.println("formRecord==="+formRecord);
 		System.out.println("now==="+now);
 		RcvDocDefect rcvDocDefect = new RcvDocDefect();
-		rcvDocDefect.setIAutoId(formRecord.getLong("rcvDocDefect.iautoid"));
+		rcvDocDefect.setIAutoId(formRecord.getLong("iautoid"));
 
 		//质量管理-来料检明细
-		rcvDocDefect.setIRcvDocQcFormMid(formRecord.getLong("rcvDocQcFormM.iautoid"));
-		rcvDocDefect.setIVendorId(formRecord.getLong("rcvDocQcFormM.iinventoryid"));
-		rcvDocDefect.setIInventoryId(formRecord.getLong("rcvDocQcFormM.ivendorid"));
-		rcvDocDefect.setIQcUserId(formRecord.getLong("rcvDocQcFormM.iupdateby"));
-		rcvDocDefect.setDQcTime(formRecord.getDate("rcvDocQcFormM.dUpdateTime"));
+		RcvDocQcFormM rcvDocQcFormM = rcvDocQcFormMService.findById(formRecord.getLong("ircvdocqcformmid"));
+		rcvDocDefect.setIRcvDocQcFormMid(rcvDocQcFormM.getIAutoId());
+		rcvDocDefect.setIVendorId(rcvDocQcFormM.getIInventoryId());
+		rcvDocDefect.setIInventoryId(rcvDocQcFormM.getIVendorId());
+		rcvDocDefect.setIQcUserId(rcvDocQcFormM.getIUpdateBy());
+		rcvDocDefect.setDQcTime(rcvDocQcFormM.getDUpdateTime());
 
 		//录入填写的数据
 		rcvDocDefect.setIStatus(1);
-		rcvDocDefect.setIDqQty(formRecord.getBigDecimal("rcvDocDefect.idqqty"));
-		rcvDocDefect.setIRespType(formRecord.getInt("rcvDocDefect.iresptype"));
-		rcvDocDefect.setIsFirstTime(formRecord.getBoolean("rcvDocDefect.isfirsttime"));
-		rcvDocDefect.setCBadnessSns(formRecord.getStr("rcvDocDefect.cbadnesssns"));
-		rcvDocDefect.setCDesc(formRecord.getStr("rcvDocDefect.cdesc"));
+		rcvDocDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
+		rcvDocDefect.setIRespType(formRecord.getInt("iresptype"));
+		rcvDocDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
+		rcvDocDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
+		rcvDocDefect.setCDesc(formRecord.getStr("cdesc"));
 
 		//必录入基本数据
 		rcvDocDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
@@ -282,5 +295,6 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 	public RcvDocDefect findStockoutDefectByiRcvDocQcFormMid(Object iRcvDocQcFormMid) {
 		return findFirst("SELECT * FROM PL_RcvDocDefect WHERE iRcvDocQcFormMid = ?", iRcvDocQcFormMid);
 	}
+
 
 }
