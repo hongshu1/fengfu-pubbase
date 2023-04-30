@@ -297,6 +297,11 @@ headBox内容自行填写
 </tr>
 #end
 <tr>
+#if(editMode??)
+#if(codeGen.isTablePrependColumn)
+<th>-</th>
+#end
+#end
 <th data-width="60" data-column="index">序号</th>
 #for(col:cols)
 	<th data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" data-column="#(col.colName)">#(col.tableLabel?? col.attrName)</th>
