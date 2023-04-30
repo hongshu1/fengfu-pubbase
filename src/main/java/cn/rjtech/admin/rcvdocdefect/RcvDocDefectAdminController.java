@@ -9,7 +9,9 @@ import cn.rjtech.model.momdata.RcvDocDefect;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 来料异常品记录 Controller
@@ -51,31 +53,23 @@ public class RcvDocDefectAdminController extends BaseAdminController {
 
     public void add2() {
         RcvDocDefect rcvDocDefect = service.findById(get("iautoid"));
-        RcvDocQcFormM rcvDocQcFormM = rcvDocQcFormMService.findFirst("select t1.*, t2.cInvCode, t2.cInvName, t2.cInvCode1, t3.cVenName\n" +
-                "from PL_RcvDocQcFormM t1\n" +
-                "LEFT JOIN Bd_Inventory t2 ON t2.iAutoId = t1.iInventoryId \n" +
-                "LEFT JOIN Bd_Vendor t3 ON t3.iAutoId = t1.iVendorId \n" +
-                "where t1.iAutoId = '" + get("ircvdocqcformmid") + "'");
+        Record rcvDocQcFormM = service.getrcvDocQcFormList(getLong("ircvdocqcformmid"));
         set("iautoid", get("iautoid"));
         set("type", get("type"));
+        set("rcvDocDefect", rcvDocDefect);
+        set("rcvDocQcFormM", rcvDocQcFormM);
         if (isNull(get("iautoid"))) {
-            set("rcvDocDefect", rcvDocDefect);
-            set("rcvDocQcFormM", rcvDocQcFormM);
             render("add2.html");
         } else {
             if (rcvDocDefect.getIStatus() == 1) {
-                set("istatus", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
+                set("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
                 set("iresptype", (rcvDocDefect.getIRespType() == 1) ? "供应商" : "其他");
-                set("rcvDocDefect", rcvDocDefect);
-                set("rcvDocQcFormM", rcvDocQcFormM);
                 render("add3.html");
             } else if (rcvDocDefect.getIStatus() == 2) {
                 int getCApproach = Integer.parseInt(rcvDocDefect.getCApproach());
                 set("capproach", (getCApproach == 1) ? "特采" : "拒收");
-                set("istatus", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
+                set("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
                 set("iresptype", (rcvDocDefect.getIRespType() == 1) ? "供应商" : "其他");
-                set("rcvDocDefect", rcvDocDefect);
-                set("rcvDocQcFormM", rcvDocQcFormM);
                 render("add4.html");
             }
         }
@@ -138,6 +132,19 @@ public class RcvDocDefectAdminController extends BaseAdminController {
 
     public void updateEditTable() {
         renderJson(service.updateEditTable(getKv()));
+    }
+
+
+    /**
+     * 生成二维码
+     */
+    public void erm() {
+        RcvDocDefect rcvDocDefect = service.findById(getLong(0));
+        if (rcvDocDefect == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        renderQrCode(rcvDocDefect.getCDocNo(),500,600);
     }
 
 }

@@ -63,4 +63,11 @@ WHERE 1 = 1
 order by dUpdateTime desc
     #end
 
+#sql("getrcvDocQcFormList")
+select t1.*, t2.cInvCode, t2.cInvName, t2.cInvCode1, t3.cVenName
+from PL_RcvDocQcFormM t1
+         LEFT JOIN Bd_Inventory t2 ON t2.iAutoId = t1.iInventoryId
+         LEFT JOIN Bd_Vendor t3 ON t3.iAutoId = t1.iVendorId
+where t1.iAutoId = '#(iautoid)'
+#end
 

@@ -18,6 +18,9 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 来料异常品记录 Service
@@ -294,6 +297,34 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 	 */
 	public RcvDocDefect findStockoutDefectByiRcvDocQcFormMid(Object iRcvDocQcFormMid) {
 		return findFirst("SELECT * FROM PL_RcvDocDefect WHERE iRcvDocQcFormMid = ?", iRcvDocQcFormMid);
+	}
+
+
+	public Record getrcvDocQcFormList(Long iautoid){
+		return dbTemplate("rcvdocdefect.getrcvDocQcFormList", Kv.by("iautoid",iautoid)).findFirst();
+	}
+
+
+	//API来料异常品查看与编辑
+	public Map<String, Object> getRcvDocDefectListApi(Long iautoid, Long ircvdocqcformmid,String type){
+
+		Map<String, Object> map = new HashMap<>();
+
+		RcvDocDefect rcvDocDefect=findById(iautoid);
+		Record rcvDocQcFormM = getrcvDocQcFormList(ircvdocqcformmid);
+		map.put("rcvDocDefect",rcvDocDefect);
+		map.put("rcvDocQcFormM",rcvDocQcFormM);
+		map.put("type",type);
+		if (rcvDocDefect.getIStatus() == 1) {
+			map.put("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
+			map.put("iresptype", (rcvDocDefect.getIRespType() == 1) ? "供应商" : "其他");
+		} else if (rcvDocDefect.getIStatus() == 2) {
+			int getCApproach = Integer.parseInt(rcvDocDefect.getCApproach());
+			map.put("capproach", (getCApproach == 1) ? "特采" : "拒收");
+			map.put("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
+			map.put("iresptype", (rcvDocDefect.getIRespType() == 1) ? "供应商" : "其他");
+		}
+		return map;
 	}
 
 

@@ -2,6 +2,7 @@ package cn.rjtech.entity.vo.RcDocDefect;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description 来料异常品记录
@@ -41,11 +42,45 @@ public class RcDocDefect implements Serializable {
      * 存货编码编码
      */
     private String cinvcode;
+    /**
+     * 状态
+     */
+    private Integer istatus;
 
     /**
      * 存货编码编码
      */
     private String cinvname;
+
+    /**
+     * 首发再发
+     */
+    private Boolean isfirsttime;
+
+
+    /**
+     * 处置区分
+     */
+    private String capproach;
+
+    /**
+     * 责任区
+     */
+    private Integer iresptype;
+
+
+
+    /**设备点检纪录List**/
+    private List<RcDocDefect> RcDocDefect;
+
+    /**
+     * 开始时间
+     */
+    private Date startdate;
+    /**
+     * 结束时间
+     */
+    private Date enddate;
 
     public Long getIautoid() {
         return iautoid;
@@ -111,6 +146,14 @@ public class RcDocDefect implements Serializable {
         this.cinvcode = cinvcode;
     }
 
+    public Integer getIstatus() {
+        return istatus;
+    }
+
+    public void setIstatus(Integer istatus) {
+        this.istatus = istatus;
+    }
+
     public String getCinvname() {
         return cinvname;
     }
@@ -119,12 +162,36 @@ public class RcDocDefect implements Serializable {
         this.cinvname = cinvname;
     }
 
-    public String getIstatus() {
-        return istatus;
+    public Boolean getIsfirsttime() {
+        return isfirsttime;
     }
 
-    public void setIstatus(String istatus) {
-        this.istatus = istatus;
+    public void setIsfirsttime(Boolean isfirsttime) {
+        this.isfirsttime = isfirsttime;
+    }
+
+    public String getCapproach() {
+        return capproach;
+    }
+
+    public void setCapproach(String capproach) {
+        this.capproach = capproach;
+    }
+
+    public Integer getIresptype() {
+        return iresptype;
+    }
+
+    public void setIresptype(Integer iresptype) {
+        this.iresptype = iresptype;
+    }
+
+    public List<cn.rjtech.entity.vo.RcDocDefect.RcDocDefect> getRcDocDefect() {
+        return RcDocDefect;
+    }
+
+    public void setRcDocDefect(List<cn.rjtech.entity.vo.RcDocDefect.RcDocDefect> rcDocDefect) {
+        RcDocDefect = rcDocDefect;
     }
 
     public Date getStartdate() {
@@ -143,18 +210,22 @@ public class RcDocDefect implements Serializable {
         this.enddate = enddate;
     }
 
-    /**
-     * 状态：1. 待记录 2. 待判定 3. 已完成
-     */
-    private String istatus;
-    /**
-     * 开始时间
-     */
-    private Date startdate;
-    /**
-     * 结束时间
-     */
-    private Date enddate;
-
-
+    public RcDocDefect(Long iautoid, Long istockoutqcformmid, String type, String cOrgName, String cdocno, String imodocid, String cinvcode1, String cinvcode, Integer istatus, String cinvname, Boolean isfirsttime, String capproach, Integer iresptype, List<cn.rjtech.entity.vo.RcDocDefect.RcDocDefect> rcDocDefect, Date startdate, Date enddate) {
+        this.iautoid = iautoid;
+        this.istockoutqcformmid = istockoutqcformmid;
+        this.type = type;
+        this.cOrgName = cOrgName;
+        this.cdocno = cdocno;
+        this.imodocid = imodocid;
+        this.cinvcode1 = cinvcode1;
+        this.cinvcode = cinvcode;
+        this.istatus = istatus;
+        this.cinvname = cinvname;
+        this.isfirsttime = isfirsttime;
+        this.capproach = capproach;
+        this.iresptype = iresptype;
+        RcDocDefect = rcDocDefect;
+        this.startdate = startdate;
+        this.enddate = enddate;
+    }
 }

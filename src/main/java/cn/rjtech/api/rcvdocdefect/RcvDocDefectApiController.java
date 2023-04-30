@@ -33,7 +33,7 @@ public class RcvDocDefectApiController extends BaseApiController {
      */
     @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
-    public void optionss(@Para(value = "pageNumber") Integer pageNumber,
+    public void datas(@Para(value = "pageNumber") Integer pageNumber,
                          @Para(value = "pageSize") Integer pageSize,
                          @Para(value = "selectParam") String selectParam) {
         ValidationUtils.validateIdInt(pageNumber,"页码");
@@ -47,13 +47,12 @@ public class RcvDocDefectApiController extends BaseApiController {
      */
     @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
-    public void add(@Para(value = "iautoid") Long iautoid,
-                    @Para(value = "istockoutqcformmid") Long istockoutqcformmid,
+    public void addlist(@Para(value = "iautoid") Long iautoid,
+                    @Para(value = "ircvdocqcformmid") Long ircvdocqcformmid,
                     @Para(value = "type") String type) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(istockoutqcformmid, JBoltMsg.PARAM_ERROR);
         
-        renderJBoltApiRet(rcvDocDefectApiService.add(iautoid, istockoutqcformmid, type));
+        renderJBoltApiRet(rcvDocDefectApiService.add(iautoid, ircvdocqcformmid, type));
     }
 
     /**
