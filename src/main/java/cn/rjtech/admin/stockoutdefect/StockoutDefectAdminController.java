@@ -1,4 +1,4 @@
-package cn.rjtech.admin.StockoutDefect;
+package cn.rjtech.admin.stockoutdefect;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -20,7 +20,7 @@ import com.jfinal.kit.Okv;
  */
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/StockoutDefect", viewPath = "/_view/admin/StockoutDefect")
+@Path(value = "/admin/stockoutdefect", viewPath = "/_view/admin/stockoutdefect")
 public class StockoutDefectAdminController extends BaseAdminController {
 
 	@Inject
@@ -115,14 +115,14 @@ public class StockoutDefectAdminController extends BaseAdminController {
 	 * 保存
 	 */
 	public void save() {
-		renderJson(service.save(getModel(StockoutDefect.class, "stockoutDefect")));
+		renderJson(service.save(getModel(StockoutDefect.class, "stockoutdefect")));
 	}
 
 	/**
 	 * 更新
 	 */
 	public void update() {
-		renderJson(service.update(getModel(StockoutDefect.class, "stockoutDefect")));
+		renderJson(service.update(getModel(StockoutDefect.class, "stockoutdefect")));
 	}
 
 	/**
@@ -156,6 +156,18 @@ public class StockoutDefectAdminController extends BaseAdminController {
 
 	public void updateEditTable() {
 		renderJson(service.updateEditTable(getJBoltTable(), getKv()));
+	}
+
+	/**
+	 * 生成二维码
+	 */
+	public void erm() {
+		StockoutDefect stockoutDefect=service.findById(getLong(0));
+		if(stockoutDefect == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		renderQrCode(stockoutDefect.getCDocNo(),500,600);
 	}
 
 }

@@ -26,7 +26,7 @@ public class ProcessDefectApiService extends JBoltApiBaseService {
      * 显示主页面数据
      */
     public JBoltApiRet getAdminDatas(int pageSize, int pageNumber, Kv kv) {
-        return JBoltApiRet.successWithData(processDefectService.paginateAdminDatas(pageSize, pageNumber, kv));
+        return JBoltApiRet.successWithData(processDefectService.getPageListApi(pageSize, pageNumber, kv));
     }
 
 

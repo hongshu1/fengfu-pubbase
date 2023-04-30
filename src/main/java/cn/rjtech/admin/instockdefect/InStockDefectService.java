@@ -5,8 +5,14 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
+import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.model.momdata.InStockDefect;
+import cn.rjtech.model.momdata.InStockQcFormM;
+import cn.rjtech.model.momdata.RcvDocDefect;
+import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.util.BillNoUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -14,6 +20,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 在库异常记录 Service
@@ -26,6 +34,8 @@ public class InStockDefectService extends BaseService<InStockDefect> {
 
     private final InStockDefect dao = new InStockDefect().dao();
 
+    @Inject
+    private InStockQcFormMService inStockQcFormMService;      ////质量管理-在库检
     @Override
     protected InStockDefect dao() {
         return dao;
@@ -34,8 +44,8 @@ public class InStockDefectService extends BaseService<InStockDefect> {
     /**
      * 后台管理分页查询
      */
-    public Page<Record> paginateAdminDatas(int pageSize, int pageNumber, Okv kv) {
-        return dbTemplate(dao()._getDataSourceConfigName(), "InStockDefect.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+    public Page<Record> paginateAdminDatas(int pageSize, int pageNumber, Kv kv) {
+        return dbTemplate("instockdefect.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
     }
 
     /**
@@ -200,28 +210,28 @@ public class InStockDefectService extends BaseService<InStockDefect> {
         return SUCCESS;
     }
 
-
-    //未有主键的保存方法
+    /**
+     * 编辑保存
+     */
     public void inStockDefectLinesave(Kv formRecord, Date now) {
-        System.out.println("formRecord===" + formRecord);
-        System.out.println("now===" + now);
         InStockDefect inStockDefect = new InStockDefect();
-        inStockDefect.setIAutoId(formRecord.getLong("inStockDefect.iautoid"));
+        inStockDefect.setIAutoId(formRecord.getLong("iautoid"));
 
         //质量管理-来料检明细
-        inStockDefect.setIInStockQcFormMid(formRecord.getLong("inStockQcFormM.iAutoid"));
-        inStockDefect.setIVendorId(formRecord.getLong("inStockQcFormM.iCustomerId"));
-        inStockDefect.setIInventoryId(formRecord.getLong("inStockQcFormM.iInventoryId"));
-        inStockDefect.setIQcUserId(formRecord.getLong("inStockQcFormM.iupdateby"));
-        inStockDefect.setDQcTime(formRecord.getDate("inStockQcFormM.dupdatetime"));
+        InStockQcFormM inStockQcFormM = inStockQcFormMService.findById(formRecord.getLong("iinstockqcformmid"));
+        inStockDefect.setIInStockQcFormMid(inStockQcFormM.getIAutoId());
+//        inStockDefect.setIVendorId(formRecord.getLong("inStockQcFormM.iCustomerId"));
+        inStockDefect.setIInventoryId(inStockQcFormM.getIInventoryId());
+        inStockDefect.setIQcUserId(inStockQcFormM.getIUpdateBy());
+        inStockDefect.setDQcTime(inStockQcFormM.getDUpdateTime());
 
         //录入填写的数据
         inStockDefect.setIStatus(1);
-        inStockDefect.setIDqQty(formRecord.getBigDecimal("inStockDefect.idqqty"));
-        inStockDefect.setIRespType(formRecord.getInt("inStockDefect.iresptype"));
-        inStockDefect.setIsFirstTime(formRecord.getBoolean("inStockDefect.isfirsttime"));
-        inStockDefect.setCBadnessSns(formRecord.getStr("inStockDefect.cbadnesssns"));
-        inStockDefect.setCDesc(formRecord.getStr("inStockDefect.cdesc"));
+        inStockDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
+        inStockDefect.setIRespType(formRecord.getInt("iresptype"));
+        inStockDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
+        inStockDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
+        inStockDefect.setCDesc(formRecord.getStr("cdesc"));
 
         //必录入基本数据
         inStockDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
@@ -238,5 +248,44 @@ public class InStockDefectService extends BaseService<InStockDefect> {
         inStockDefect.setDUpdateTime(now);
         inStockDefect.save();
     }
+
+    /**
+     * 在库检明细
+     */
+    public Record getinStockQcFormMList(Long iautoid){
+        return dbTemplate("instockdefect.getinStockQcFormMList", Kv.by("iautoid",iautoid)).findFirst();
+    }
+
+    //API在库主页查询
+    public Page<Record> getPageListApi(Integer pageNumber, Integer pageSize, Kv kv) {
+        return dbTemplate("instockdefect.paginateAdminDatasapi",kv).paginate(pageNumber,pageSize);
+    }
+
+    //API在库异常品查看与编辑
+    public Map<String, Object> getInStockDefectListApi(Long iautoid, Long iinstockqcformmid, String type){
+
+        Map<String, Object> map = new HashMap<>();
+
+        InStockDefect inStockDefect=findById(iautoid);
+        Record inStockQcFormM = getinStockQcFormMList(iinstockqcformmid);
+        map.put("inStockDefect",inStockDefect);
+        map.put("inStockQcFormM",inStockQcFormM);
+        map.put("type",type);
+        if (inStockDefect == null){
+            return map;
+        }
+        if (inStockDefect.getIStatus() == 1) {
+            map.put("isfirsttime", (inStockDefect.getIsFirstTime() == true) ? "首发" : "再发");
+            map.put("iresptype", (inStockDefect.getIRespType() == 1) ? "供应商" : "其他");
+        } else if (inStockDefect.getIStatus() == 2) {
+            int getCApproach = Integer.parseInt(inStockDefect.getCApproach());
+            map.put("capproach", (getCApproach == 1) ? "特采" : "拒收");
+            map.put("isfirsttime", (inStockDefect.getIsFirstTime() == true) ? "首发" : "再发");
+            map.put("iresptype", (inStockDefect.getIRespType() == 1) ? "供应商" : "其他");
+        }
+        return map;
+    }
+
+
 
 }

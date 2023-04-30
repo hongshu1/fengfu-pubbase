@@ -4,6 +4,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.RcDocDefect.RcDocDefectVo;
+import cn.rjtech.entity.vo.processdefect.ProcessDefect;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
@@ -32,21 +33,21 @@ public class ProcessDefectApiController extends BaseApiController {
      * @param pageSize 每页显示条数
      * @param selectParam 搜索条件
      */
-    @ApiDoc(result = RcDocDefectVo.class)
+    @ApiDoc(result = ProcessDefect.class)
     @UnCheck
     public void datas(@Para(value = "pageNumber") Integer pageNumber,
                          @Para(value = "pageSize") Integer pageSize,
-                         @Para(value = "selectParam") String selectParam) {
+                         @Para(value = "selectparam") String selectparam) {
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
-        renderJBoltApiRet(processdefectapiservice.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectParam)));
+        renderJBoltApiRet(processdefectapiservice.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam)));
     }
 
 
     /**
      * 查询明细表
      */
-    @ApiDoc(result = RcDocDefectVo.class)
+    @ApiDoc(result = ProcessDefect.class)
     @UnCheck
     public void addlist(@Para(value = "iautoid") Long iautoid,
                         @Para(value = "iissueid") Long iissueid,
@@ -65,7 +66,7 @@ public class ProcessDefectApiController extends BaseApiController {
      * @param cbadnesssns          不良项目，字典编码，多个“,”分隔
      * @param cdesc                工序名称
      */
-    @ApiDoc(result = RcDocDefectVo.class)
+    @ApiDoc(result = ProcessDefect.class)
     @UnCheck
     public void updateEditTable(@Para(value = "iautoid") Long iautoid,
                                 @Para(value = "capproach") String  capproach,
@@ -88,7 +89,7 @@ public class ProcessDefectApiController extends BaseApiController {
         kv.set("cdesc", cdesc);
         kv.set("processname", processname);
         kv.set("iissueid", iissueid);
-        renderJson(processdefectapiservice.update(kv));
+        renderJBoltApiRet(processdefectapiservice.update(kv));
     }
 
 

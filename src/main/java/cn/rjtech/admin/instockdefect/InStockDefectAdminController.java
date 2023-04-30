@@ -11,6 +11,7 @@ import cn.rjtech.model.momdata.InStockQcFormM;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 在库异常记录 Controller
@@ -20,7 +21,7 @@ import com.jfinal.kit.Okv;
  */
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/InStockDefect", viewPath = "/_view/admin/InStockDefect")
+@Path(value = "/admin/instockdefect", viewPath = "/_view/admin/instockdefect")
 public class InStockDefectAdminController extends BaseAdminController {
 
 	@Inject
@@ -40,16 +41,7 @@ public class InStockDefectAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		Okv kv = new Okv();
-		kv.setIfNotNull("cDocNo", get("cDocNo"));
-		kv.setIfNotNull("iMoDocId", get("iMoDocId"));
-		kv.setIfNotNull("cInvCode", get("cInvCode"));
-		kv.setIfNotNull("cInvCode1", get("cInvCode1"));
-		kv.setIfNotNull("cInvName", get("cInvName"));
-		kv.setIfNotNull("iStatus", get("iStatus"));
-		kv.setIfNotNull("startdate", get("startdate"));
-		kv.setIfNotNull("enddate", get("enddate"));
-		renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));
+		renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), getKv()));
 	}
 
    /**
@@ -62,35 +54,26 @@ public class InStockDefectAdminController extends BaseAdminController {
 
 	public void add2() {
 		InStockDefect inStockDefect = service.findById(get("iautoid"));
-		InStockQcFormM inStockQcFormM = inStockQcFormMService.findFirst("select t1.*, t2.cInvCode, t2.cInvName, t2.cInvCode1\n" +
-				"from PL_InStockQcFormM t1\n" +
-				"LEFT JOIN Bd_Inventory t2 ON t2.iAutoId = t1.iInventoryId \n" +
-				"where t1.iAutoId = '"+get("iinstockqcformmid")+"'");
+		Record inStockQcFormM = service.getinStockQcFormMList(getLong("ircvdocqcformmid"));
 		set("iautoid", get("iautoid"));
 		set("type", get("type"));
+		set("inStockDefect", inStockDefect);
+		set("inStockQcFormM", inStockQcFormM);
 		if (isNull(get("iautoid"))) {
-			set("inStockDefect", inStockDefect);
-			set("inStockQcFormM", inStockQcFormM);
 			render("add2.html");
 		} else {
 			if (inStockDefect.getIStatus() == 1) {
-				set("istatus", (inStockDefect.getIsFirstTime() == true) ? "首发" : "再发");
+				set("isfirsttime", (inStockDefect.getIsFirstTime() == true) ? "首发" : "再发");
 				set("iresptype", (inStockDefect.getIRespType() == 1) ? "供应商" : (inStockDefect.getIRespType() == 2 ? "工程内":"其他"));
-				set("inStockDefect", inStockDefect);
-				set("inStockQcFormM", inStockQcFormM);
 				render("add3.html");
 			} else if (inStockDefect.getIStatus() == 2) {
 				int getCApproach = Integer.parseInt(inStockDefect.getCApproach());
 				set("capproach", (getCApproach == 1) ? "报废" : (getCApproach == 2 ? "返修":"退货"));
-				set("istatus", (inStockDefect.getIsFirstTime() == true) ? "首发" : "再发");
+				set("isfirsttime", (inStockDefect.getIsFirstTime() == true) ? "首发" : "再发");
 				set("iresptype", (inStockDefect.getIRespType() == 1) ? "供应商" : (inStockDefect.getIRespType() == 2 ? "工程内":"其他"));
-				set("inStockDefect", inStockDefect);
-				set("inStockQcFormM", inStockQcFormM);
 				render("add4.html");
 			}
 		}
-
-
 	}
 
    /**
@@ -110,14 +93,14 @@ public class InStockDefectAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(InStockDefect.class, "inStockDefect")));
+		renderJson(service.save(getModel(InStockDefect.class, "instockdefect")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(InStockDefect.class, "inStockDefect")));
+		renderJson(service.update(getModel(InStockDefect.class, "instockdefect")));
 	}
 
    /**
@@ -151,6 +134,18 @@ public class InStockDefectAdminController extends BaseAdminController {
 
 	public void updateEditTable() {
 		renderJson(service.updateEditTable( getKv()));
+	}
+
+	/**
+	 * 生成二维码
+	 */
+	public void erm() {
+		InStockDefect stockoutDefect=service.findById(getLong(0));
+		if(stockoutDefect == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		renderQrCode(stockoutDefect.getCDocNo(),500,600);
 	}
 
 }

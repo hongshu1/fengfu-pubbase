@@ -260,6 +260,10 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 		return dbTemplate("ProcessDefect.OneMaterialTitle", Kv.by("iissueid", iissueid)).find();
 	}
 
+	//API制程异常品主页查询
+	public Page<Record> getPageListApi(Integer pageNumber, Integer pageSize, Kv kv) {
+		return dbTemplate("processdefect.paginateAdminDatasapi",kv).paginate(pageNumber,pageSize);
+	}
 
 	/**
 	 * 制程异常品查看明细api

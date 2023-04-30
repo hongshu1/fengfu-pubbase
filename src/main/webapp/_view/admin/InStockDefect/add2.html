@@ -2,13 +2,13 @@
 #define main()
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="inStockDefectForm"  action="/admin/InStockDefect/updateEditTable" method="post">
+        <form onsubmit="return false;" id="inStockDefectForm"  action="/admin/instockdefect/updateEditTable" method="post">
             <input type="hidden" name="iautoid" value="#(inStockDefect.iautoid??)" />
             <h5>部品信息</h5>
             <hr/>
             <div class="form-group row">
                 <input type="hidden"  placeholder="出货检ID" name="iinstockqcformmid" value="#(inStockQcFormM.iAutoid??)"/>
-                <input type="hidden"  placeholder="供应商ID" name="iCustomerId" value="#(inStockQcFormM.iqcformid??)"/>
+<!--                <input type="hidden"  placeholder="供应商ID" name="iCustomerId" value="#(inStockQcFormM.iqcformid??)"/>-->
                 <input type="hidden"  placeholder="存货ID" name="iInventoryId" value="#(inStockQcFormM.iInventoryId??)"/>
                 <input type="hidden"  placeholder="检验人ID" name="iupdateby" value="#(inStockQcFormM.iupdateby??)"/>
 

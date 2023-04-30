@@ -71,3 +71,45 @@ from PL_RcvDocQcFormM t1
 where t1.iAutoId = '#(iautoid)'
 #end
 
+
+#sql("paginateAdminDatasapi")
+SELECT
+        AuditState =
+        CASE WHEN t2.iStatus=1 THEN '待判断'
+             WHEN t2.iStatus=2 THEN '已完成'
+             ELSE '待记录' END,
+    t1.iAutoId AS iRcvDocQcFormMid,
+    t1.cRcvDocQcFormNo,
+    t1.iInventoryId,
+    t1.iVendorId,
+    t2.iStatus,
+    t2.iAutoId,
+    t2.cDocNo,
+    t2.iDqQty,
+    t2.cApproach,
+    t2.cUpdateName,
+    t2.dUpdateTime,
+    t3.cInvCode,
+    t3.cInvName,
+    t3.cInvCode1
+FROM
+    PL_RcvDocQcFormM t1
+        LEFT JOIN PL_RcvDocDefect t2 ON t2.iRcvDocQcFormMid = t1.iAutoId
+        LEFT JOIN Bd_Inventory t3 ON t3.iAutoId = t1.iInventoryId
+WHERE
+        1 = 1
+    #if(selectparam)
+    AND (t2.cDocNo LIKE CONCAT('%',#para(selectparam), '%')
+    OR t1.cRcvDocQcFormNo LIKE CONCAT('%', #para(selectparam), '%')
+    OR t3.cInvCode1 LIKE CONCAT('%', #para(selectparam), '%')
+    OR t3.cInvCode LIKE CONCAT('%',#para(selectparam), '%')
+    OR t3.cInvName LIKE CONCAT('%', #para(selectparam), '%'))
+    #end
+#if(startdate)
+    and CONVERT(VARCHAR(10),t2.dUpdateTime,23) >='#(startdate)'
+#end
+#if(enddate)
+    and CONVERT(VARCHAR(10),t2.dUpdateTime,23) <='#(enddate)'
+#end
+order by t2.dUpdateTime desc
+    #end

@@ -29,17 +29,17 @@ public class RcvDocDefectApiController extends BaseApiController {
      * 查询主表明细
      * @param pageNumber 页码
      * @param pageSize 每页显示条数
-     * @param selectParam 搜索条件
+     * @param selectparam 搜索条件
      */
     @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
     public void datas(@Para(value = "pageNumber") Integer pageNumber,
                          @Para(value = "pageSize") Integer pageSize,
-                         @Para(value = "selectParam") String selectParam) {
+                         @Para(value = "selectparam") String selectparam) {
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
         
-        renderJBoltApiRet(rcvDocDefectApiService.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectParam)));
+        renderJBoltApiRet(rcvDocDefectApiService.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam)));
     }
 
     /**

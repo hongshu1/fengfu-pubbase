@@ -1,7 +1,10 @@
 package cn.rjtech.entity.vo.processdefect;
 
+import cn.rjtech.entity.vo.RcDocDefect.RcDocDefect;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @version 1.0
@@ -43,11 +46,45 @@ public class ProcessDefect implements Serializable {
      * 存货编码编码
      */
     private String cinvcode;
+    /**
+     * 状态
+     */
+    private Integer istatus;
 
     /**
      * 存货编码编码
      */
     private String cinvname;
+
+    /**
+     * 首发再发
+     */
+    private Boolean isfirsttime;
+
+
+    /**
+     * 处置区分
+     */
+    private String capproach;
+
+    /**
+     * 责任区
+     */
+    private Integer iresptype;
+
+
+
+    /**制造异常品记录List**/
+    private List<ProcessDefect> ProcessDefect;
+
+    /**
+     * 开始时间
+     */
+    private Date startdate;
+    /**
+     * 结束时间
+     */
+    private Date enddate;
 
     public Long getIautoid() {
         return iautoid;
@@ -113,6 +150,14 @@ public class ProcessDefect implements Serializable {
         this.cinvcode = cinvcode;
     }
 
+    public Integer getIstatus() {
+        return istatus;
+    }
+
+    public void setIstatus(Integer istatus) {
+        this.istatus = istatus;
+    }
+
     public String getCinvname() {
         return cinvname;
     }
@@ -121,12 +166,36 @@ public class ProcessDefect implements Serializable {
         this.cinvname = cinvname;
     }
 
-    public String getIstatus() {
-        return istatus;
+    public Boolean getIsfirsttime() {
+        return isfirsttime;
     }
 
-    public void setIstatus(String istatus) {
-        this.istatus = istatus;
+    public void setIsfirsttime(Boolean isfirsttime) {
+        this.isfirsttime = isfirsttime;
+    }
+
+    public String getCapproach() {
+        return capproach;
+    }
+
+    public void setCapproach(String capproach) {
+        this.capproach = capproach;
+    }
+
+    public Integer getIresptype() {
+        return iresptype;
+    }
+
+    public void setIresptype(Integer iresptype) {
+        this.iresptype = iresptype;
+    }
+
+    public List<cn.rjtech.entity.vo.processdefect.ProcessDefect> getProcessDefect() {
+        return ProcessDefect;
+    }
+
+    public void setProcessDefect(List<cn.rjtech.entity.vo.processdefect.ProcessDefect> processDefect) {
+        ProcessDefect = processDefect;
     }
 
     public Date getStartdate() {
@@ -145,18 +214,22 @@ public class ProcessDefect implements Serializable {
         this.enddate = enddate;
     }
 
-    /**
-     * 状态：1. 待记录 2. 待判定 3. 已完成
-     */
-    private String istatus;
-    /**
-     * 开始时间
-     */
-    private Date startdate;
-    /**
-     * 结束时间
-     */
-    private Date enddate;
-
-
+    public ProcessDefect(Long iautoid, Long istockoutqcformmid, String type, String cOrgName, String cdocno, String imodocid, String cinvcode1, String cinvcode, Integer istatus, String cinvname, Boolean isfirsttime, String capproach, Integer iresptype, List<cn.rjtech.entity.vo.processdefect.ProcessDefect> processDefect, Date startdate, Date enddate) {
+        this.iautoid = iautoid;
+        this.istockoutqcformmid = istockoutqcformmid;
+        this.type = type;
+        this.cOrgName = cOrgName;
+        this.cdocno = cdocno;
+        this.imodocid = imodocid;
+        this.cinvcode1 = cinvcode1;
+        this.cinvcode = cinvcode;
+        this.istatus = istatus;
+        this.cinvname = cinvname;
+        this.isfirsttime = isfirsttime;
+        this.capproach = capproach;
+        this.iresptype = iresptype;
+        ProcessDefect = processDefect;
+        this.startdate = startdate;
+        this.enddate = enddate;
+    }
 }

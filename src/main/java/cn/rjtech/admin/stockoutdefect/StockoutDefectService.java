@@ -40,7 +40,7 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageSize, int pageNumber, Okv kv) {
-		return dbTemplate(dao()._getDataSourceConfigName(), "StockoutDefect.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+		return dbTemplate(dao()._getDataSourceConfigName(), "stockoutdefect.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
 	}
 
 

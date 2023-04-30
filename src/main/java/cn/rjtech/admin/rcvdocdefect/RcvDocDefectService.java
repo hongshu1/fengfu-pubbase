@@ -304,6 +304,11 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		return dbTemplate("rcvdocdefect.getrcvDocQcFormList", Kv.by("iautoid",iautoid)).findFirst();
 	}
 
+	//API来料异常品主页查询
+	public Page<Record> getPageListApi(Integer pageNumber, Integer pageSize, Kv kv) {
+		return dbTemplate("rcvdocdefect.paginateAdminDatasapi",kv).paginate(pageNumber,pageSize);
+	}
+
 
 	//API来料异常品查看与编辑
 	public Map<String, Object> getRcvDocDefectListApi(Long iautoid, Long ircvdocqcformmid,String type){

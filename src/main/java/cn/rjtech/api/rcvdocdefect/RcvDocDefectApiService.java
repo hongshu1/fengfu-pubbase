@@ -28,8 +28,7 @@ public class RcvDocDefectApiService extends JBoltApiBaseService {
      * 显示主页面数据
      */
     public JBoltApiRet getAdminDatas(int pageSize, int pageNumber, Kv kv) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(rcvDocDefectService.paginateAdminDatas(pageNumber,pageSize,kv));
-
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(rcvDocDefectService.getPageListApi(pageNumber,pageSize,kv));
     }
 
     public JBoltApiRet add(Long iautoid, Long ircvdocqcformmid, String type) {
