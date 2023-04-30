@@ -58,7 +58,7 @@
 <textarea class="jb_tpl_box" id="#(codeGen.modelName)_tpl#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
 {@each datas as data,index}
 #if(codeGenServiceMode)
-<tr data-id="${data.id}">
+<tr data-id="${data.#(toCamelCase(codeGen.mainTablePkey?? 'id'))}">
 #else
 <tr data-id="1">
 #end
