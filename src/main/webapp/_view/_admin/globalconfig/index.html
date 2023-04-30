@@ -51,7 +51,7 @@ ${data.configValue}
 <td>
 {@if data.builtIn}
 {@if data.configKey=="#(GlobalConfigKey.JBOLT_ADMIN_WITH_TABS)" || data.configKey=="#(GlobalConfigKey.SYSTEM_ADMIN_LOGO)" || data.configKey=="#(GlobalConfigKey.SYSTEM_ADMIN_H50)" || data.configKey=="#(GlobalConfigKey.SYSTEM_ADMIN_GLOBAL_SEARCH_SHOW)"}
-<a  tooltip  title="编辑"  href="admin/globalconfig/edit/${data.id}" data-scroll="yes" data-handler="reloadCurrentPage" data-title="编辑" data-area="720,360" class="jbolt_table_editbtn"><i class="fa fa-pencil c-primary"></i></a>
+<a  tooltip  title="编辑"  href="admin/globalconfig/edit/${data.id}" data-scroll="yes" data-handler="reloadCurrentPage" data-title="编辑" data-area="720,400" class="jbolt_table_editbtn"><i class="fa fa-pencil c-primary"></i></a>
 {@else if data.configKey=="#(GlobalConfigKey.ASSETS_VERSION)"}
 <a  tooltip  title="编辑"  href="admin/globalconfig/edit/${data.id}" data-scroll="yes" data-cdrfp="true" data-title="编辑" data-area="720,360" class="jbolt_table_editbtn"><i class="fa fa-pencil c-danger"></i></a>
 {@else if data.configKey=="#(GlobalConfigKey.JBOLT_LOGIN_BGIMG)"}
