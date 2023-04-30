@@ -315,6 +315,9 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		map.put("rcvDocDefect",rcvDocDefect);
 		map.put("rcvDocQcFormM",rcvDocQcFormM);
 		map.put("type",type);
+		if (rcvDocDefect == null){
+			return map;
+		}
 		if (rcvDocDefect.getIStatus() == 1) {
 			map.put("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
 			map.put("iresptype", (rcvDocDefect.getIRespType() == 1) ? "供应商" : "其他");

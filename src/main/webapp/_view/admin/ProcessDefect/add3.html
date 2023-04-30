@@ -2,7 +2,7 @@
 #define main()
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="processDefectForm"  action="/admin/ProcessDefect/ProcessDefectupdateEditTable" method="post">
+        <form onsubmit="return false;" id="processDefectForm"  action="/admin/processdefect/ProcessDefectupdateEditTable" method="post">
             <input type="hidden" name="iautoid" value="#(processDefect.iautoid??)" />
             <h5>部品信息</h5>
             <hr/>
@@ -60,7 +60,7 @@
 
 
             <div class="form-group row">
-                <input type="hidden" id="cbadnesssns" name="processDefect.cbadnesssns" value="#(cbadnesssns)"/>
+                <input type="hidden" id="cbadnesssns" name="cbadnesssns" value="#(cbadnesssns)"/>
                 <label class="col-sm-2 col-form-label">不良项目：</label>
                 <div class="col-sm-2 col-form-label">
                     #(processDefect.cbadnesssns??)

@@ -10,7 +10,9 @@ import cn.rjtech.model.momdata.ProcessDefect;
 import cn.rjtech.model.momdata.SpecMaterialsRcvM;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 制程异常品记录 Controller
@@ -20,7 +22,7 @@ import com.jfinal.kit.Okv;
  */
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/ProcessDefect", viewPath = "/_view/admin/ProcessDefect")
+@Path(value = "/admin/processdefect", viewPath = "/_view/admin/processdefect")
 public class ProcessDefectAdminController extends BaseAdminController {
 
 	@Inject
@@ -40,7 +42,7 @@ public class ProcessDefectAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		Okv kv =new Okv();
+		Kv kv =new Kv();
 		kv.setIfNotNull("cDocNo", get("cDocNo"));
 		kv.setIfNotNull("iMoDocId", get("iMoDocId"));
 		kv.setIfNotNull("cInvCode1", get("cInvCode1"));
@@ -67,14 +69,12 @@ public class ProcessDefectAdminController extends BaseAdminController {
 		set("iautoid", get("iautoid"));
 		set("type", get("type"));
 		set("iissueid", get("iissueid"));
+		set("processDefect", processDefect);
+		set("specMaterialsRcvM", specMaterialsRcvM);
 		if (isNull( get("iautoid"))){
-			set("processDefect", processDefect);
-			set("specMaterialsRcvM", specMaterialsRcvM);
 			render("add2.html");
 		}else {
 			if (processDefect.getIStatus() == 1) {
-				set("processDefect", processDefect);
-				set("specMaterialsRcvM", specMaterialsRcvM);
 				set("isfirsttime", (processDefect.getIsFirstTime() == true) ? "首发" : "再发");
 				set("iresptype", (processDefect.getIRespType() == 1) ? "本工序" : "其他");
 				render("add3.html");
@@ -83,8 +83,6 @@ public class ProcessDefectAdminController extends BaseAdminController {
 				set("capproach", (getCApproach == 1) ? "返修" : "报废");
 				set("isfirsttime", (processDefect.getIsFirstTime() == true) ? "首发" : "再发");
 				set("iresptype", (processDefect.getIRespType() == 1) ? "本工序" : "其他");
-				set("processDefect", processDefect);
-				set("specMaterialsRcvM", specMaterialsRcvM);
 				render("add4.html");
 			}
 		}
@@ -108,14 +106,14 @@ public class ProcessDefectAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(ProcessDefect.class, "processDefect")));
+		renderJson(service.save(getModel(ProcessDefect.class, "processdefect")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(ProcessDefect.class, "processDefect")));
+		renderJson(service.update(getModel(ProcessDefect.class, "processdefect")));
 	}
 
    /**
@@ -144,5 +142,16 @@ public class ProcessDefectAdminController extends BaseAdminController {
 		renderJson(service.updateEditTable(getKv()));
 	}
 
+	/**
+	 * 生成二维码
+	 */
+	public void erm() {
+		ProcessDefect processDefect=service.findById(getLong(0));
+		if(processDefect == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		renderQrCode(processDefect.getCDocNo(),500,600);
+	}
 
 }

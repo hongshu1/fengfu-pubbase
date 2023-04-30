@@ -5,16 +5,20 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
 import cn.rjtech.model.momdata.ProcessDefect;
+import cn.rjtech.model.momdata.SpecMaterialsRcvM;
 import cn.rjtech.util.BillNoUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 制程异常品记录 Service
@@ -25,6 +29,9 @@ import java.util.List;
 public class ProcessdefectService extends BaseService<ProcessDefect> {
 
 	private final ProcessDefect dao = new ProcessDefect().dao();
+
+	@Inject
+	private SpecMaterialsRcvMService specMaterialsRcvMService;      ////制造工单-来料表
 
 	@Override
 	protected ProcessDefect dao() {
@@ -37,8 +44,8 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 	 * @param pageSize
 	 * @return
 	 */
-	public Page<Record> paginateAdminDatas(int pageSize, int pageNumber, Okv kv) {
-		return dbTemplate(dao()._getDataSourceConfigName(), "ProcessDefect.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+	public Page<Record> paginateAdminDatas(int pageSize, int pageNumber, Kv kv) {
+		return dbTemplate("processdefect.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
 	}
 
 	/**
@@ -178,11 +185,11 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 
 		tx(() -> {
 			//判断是否有主键id
-			if(isOk(formRecord.getStr("processDefect.iautoid"))){
-				ProcessDefect processDefect = findById(formRecord.getLong("processDefect.iautoid"));
+			if(isOk(formRecord.getStr("iautoid"))){
+				ProcessDefect processDefect = findById(formRecord.getLong("iautoid"));
 				if (processDefect.getIStatus() == 1){
 					//录入数据
-					processDefect.setCApproach(formRecord.getStr("processDefect.capproach"));
+					processDefect.setCApproach(formRecord.getStr("capproach"));
 					processDefect.setIStatus(2);
 
 
@@ -207,24 +214,24 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 
 	//未有主键的保存方法
 	public void processDefectLinesave(Kv formRecord, Date now){
-		System.out.println("formRecord==="+formRecord);
 		ProcessDefect processDefect = new ProcessDefect();
-		processDefect.setIAutoId(formRecord.getLong("processDefect.iautoid"));
+		processDefect.setIAutoId(formRecord.getLong("iautoid"));
 
 		//制造工单-特殊领料单主表明细
-		processDefect.setIIssueId(formRecord.getLong("specMaterialsRcvM.iAutoid"));
-		processDefect.setIMoDocId(formRecord.getLong("specMaterialsRcvM.imodocid"));
-		processDefect.setIDepartmentId(formRecord.getLong("specMaterialsRcvM.idepartmentid"));
-		processDefect.setDDemandDate(formRecord.getDate("specMaterialsRcvM.ddemanddate"));
+		SpecMaterialsRcvM specMaterialsRcvM = specMaterialsRcvMService.findById(formRecord.getLong("iissueid"));
+		processDefect.setIIssueId(specMaterialsRcvM.getIAutoId());
+		processDefect.setIMoDocId(specMaterialsRcvM.getIMoDocId());
+		processDefect.setIDepartmentId(specMaterialsRcvM.getIDepartmentId());
+		processDefect.setDDemandDate(specMaterialsRcvM.getDDemandDate());
 
 		//录入填写的数据
 		processDefect.setIStatus(1);
-		processDefect.setProcessName(formRecord.getStr("processDefect.processname"));
-		processDefect.setIDqQty(formRecord.getBigDecimal("processDefect.idqqty"));
-		processDefect.setIRespType(formRecord.getInt("processDefect.iresptype"));
-		processDefect.setIsFirstTime(formRecord.getBoolean("processDefect.isfirsttime"));
-		processDefect.setCBadnessSns(formRecord.getStr("processDefect.cbadnesssns"));
-		processDefect.setCDesc(formRecord.getStr("processDefect.cdesc"));
+		processDefect.setProcessName(formRecord.getStr("processname"));
+		processDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
+		processDefect.setIRespType(formRecord.getInt("iresptype"));
+		processDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
+		processDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
+		processDefect.setCDesc(formRecord.getStr("cdesc"));
 
 
 		//必录入基本数据
@@ -253,6 +260,33 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 		return dbTemplate("ProcessDefect.OneMaterialTitle", Kv.by("iissueid", iissueid)).find();
 	}
 
+
+	/**
+	 * 制程异常品查看明细api
+	 */
+	public Map<String, Object> getProcessDefectApi(Long iautoid, Long iissueid,String type){
+
+		Map<String, Object> map = new HashMap<>();
+
+		ProcessDefect processDefect=findById(iautoid);
+		SpecMaterialsRcvM specMaterialsRcvM = specMaterialsRcvMService.findById(iissueid);
+		map.put("type",type );
+		map.put("processDefect", processDefect);
+		map.put("specMaterialsRcvM", specMaterialsRcvM);
+		if (processDefect == null){
+			return map;
+		}
+		if (processDefect.getIStatus() == 1) {
+			map.put("isfirsttime", (processDefect.getIsFirstTime() == true) ? "首发" : "再发");
+			map.put("iresptype", (processDefect.getIRespType() == 1) ? "本工序" : "其他");
+		} else if (processDefect.getIStatus() == 2) {
+			int getCApproach = Integer.parseInt(processDefect.getCApproach());
+			map.put("capproach", (getCApproach == 1) ? "返修" : "报废");
+			map.put("isfirsttime", (processDefect.getIsFirstTime() == true) ? "首发" : "再发");
+			map.put("iresptype", (processDefect.getIRespType() == 1) ? "本工序" : "其他");
+		}
+		return map;
+	}
 
 
 }

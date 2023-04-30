@@ -50,8 +50,6 @@ public class RcvDocDefectApiController extends BaseApiController {
     public void addlist(@Para(value = "iautoid") Long iautoid,
                     @Para(value = "ircvdocqcformmid") Long ircvdocqcformmid,
                     @Para(value = "type") String type) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        
         renderJBoltApiRet(rcvDocDefectApiService.add(iautoid, ircvdocqcformmid, type));
     }
 
@@ -62,7 +60,7 @@ public class RcvDocDefectApiController extends BaseApiController {
      * @param ircvdocqcformmid     来料表ID
      * @param capproach            处置区分
      * @param idqqty               不良数量
-     * @param iresptype            责任区：1. 本工序 2. 其他
+     * @param iresptype            责任区：1. 供应商 2. 其他
      * @param cbadnesssns          不良项目，字典编码，多个“,”分隔
      * @param cdesc                工序名称
      */
@@ -87,8 +85,6 @@ public class RcvDocDefectApiController extends BaseApiController {
         kv.set("cbadnesssns", cbadnesssns);
         kv.set("cdesc", cdesc);
         kv.set("ircvdocqcformmid", ircvdocqcformmid);
-        ValidationUtils.notNull(iautoid, "缺少来料异常品ID");
-        ValidationUtils.notNull(ircvdocqcformmid, "缺少来料检ID");
         renderJBoltApiRet(rcvDocDefectApiService.update(kv));
     }
 

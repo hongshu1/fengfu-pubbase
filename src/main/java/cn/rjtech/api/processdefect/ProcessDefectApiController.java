@@ -28,21 +28,18 @@ public class ProcessDefectApiController extends BaseApiController {
 
     /**
      * 查询主表明细
+     * @param pageNumber 页码
+     * @param pageSize 每页显示条数
+     * @param selectParam 搜索条件
      */
     @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
-    public void optionss(@Para(value = "cdocno") String cdocno,
-                         @Para(value = "imodocid") String imodocid,
-                         @Para(value = "cinvcode") String cinvcode,
-                         @Para(value = "cinvcode1") String cinvcode1,
-                         @Para(value = "cinvname") String cinvname,
-                         @Para(value = "istatus") String istatus,
-                         @Para(value = "startdate") String startdate,
-                         @Para(value = "enddate") String enddate
-                         ) {
-        Okv kv = Okv.by("cdocno", cdocno).set("imodocid", imodocid).set("cinvcode", cinvcode).set("cinvcode1", cinvcode1)
-                .set("cinvname", cinvname).set("istatus", istatus).set("startdate", startdate).set("enddate", enddate);
-        renderJBoltApiRet(processdefectapiservice.getAdminDatas(getPageSize(), getPageNumber() ,kv));
+    public void datas(@Para(value = "pageNumber") Integer pageNumber,
+                         @Para(value = "pageSize") Integer pageSize,
+                         @Para(value = "selectParam") String selectParam) {
+        ValidationUtils.validateIdInt(pageNumber,"页码");
+        ValidationUtils.validateIdInt(pageSize,"每页显示条数");
+        renderJBoltApiRet(processdefectapiservice.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectParam)));
     }
 
 
@@ -51,16 +48,22 @@ public class ProcessDefectApiController extends BaseApiController {
      */
     @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
-    public void add(@Para(value = "iautoid") Long iautoid,
-                            @Para(value = "iissueid") Long iissueid,
-                            @Para(value = "type") String type) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(iissueid, JBoltMsg.PARAM_ERROR);
-        renderJBoltApiRet(processdefectapiservice.add(iautoid,iissueid,type));
+    public void addlist(@Para(value = "iautoid") Long iautoid,
+                        @Para(value = "iissueid") Long iissueid,
+                        @Para(value = "type") String type) {
+        renderJBoltApiRet(processdefectapiservice.add(iautoid, iissueid, type));
     }
 
+
     /**
-     * 更新保存
+     * @param iautoid              来料异常品ID
+     * @param iissueid             制造表ID
+     * @param capproach            处置区分
+     * @param processname          工序名称
+     * @param idqqty               不良数量
+     * @param iresptype            责任区：1. 供应商 2. 其他
+     * @param cbadnesssns          不良项目，字典编码，多个“,”分隔
+     * @param cdesc                工序名称
      */
     @ApiDoc(result = RcDocDefectVo.class)
     @UnCheck
@@ -73,10 +76,7 @@ public class ProcessDefectApiController extends BaseApiController {
                                 @Para(value = "cbadnesssns") String  cbadnesssns,
                                 @Para(value = "cdesc") String  cdesc,
                                 //质量管理-来料检明细
-                                @Para(value = "iissueid") Long  iissueid,
-                                @Para(value = "imodocid") Long  imodocid,
-                                @Para(value = "idepartmentid") Long  idepartmentid,
-                                @Para(value = "ddemanddate") Date  ddemanddate
+                                @Para(value = "iissueid") Long  iissueid
                                 ) {
         Kv kv = new Kv();
         kv.set("iautoid", iautoid);
@@ -87,15 +87,7 @@ public class ProcessDefectApiController extends BaseApiController {
         kv.set("cbadnesssns", cbadnesssns);
         kv.set("cdesc", cdesc);
         kv.set("processname", processname);
-
-
         kv.set("iissueid", iissueid);
-        kv.set("imodocid", imodocid);
-        kv.set("idepartmentid", idepartmentid);
-        kv.set("ddemanddate", ddemanddate);
-        ValidationUtils.notNull(iautoid, "缺少领料单ID");
-        ValidationUtils.notNull(imodocid, "缺少生产工单ID");
-        ValidationUtils.notNull(idepartmentid, "生产部门ID");
         renderJson(processdefectapiservice.update(kv));
     }
 

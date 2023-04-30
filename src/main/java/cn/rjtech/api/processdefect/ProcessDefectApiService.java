@@ -25,37 +25,15 @@ public class ProcessDefectApiService extends JBoltApiBaseService {
     /**
      * 显示主页面数据
      */
-    public JBoltApiRet getAdminDatas(int pageSize, int pageNumber, Okv kv) {
+    public JBoltApiRet getAdminDatas(int pageSize, int pageNumber, Kv kv) {
         return JBoltApiRet.successWithData(processDefectService.paginateAdminDatas(pageSize, pageNumber, kv));
     }
 
-    public JBoltApiRet add(Long iautoid, Long iissueid, String type) {
-        ProcessDefect processDefect = processDefectService.findById(iautoid);
-        SpecMaterialsRcvM specMaterialsRcvM = specMaterialsRcvMService.findById(iissueid);
-        set("iautoid", iautoid);
-        set("type", type);
-        set("iissueid", iissueid);
-        if (isNull(iautoid)) {
-            set("processDefect", processDefect);
-            set("specMaterialsRcvM", specMaterialsRcvM);
-        } else {
-            if (processDefect.getIStatus() == 1) {
-                set("processDefect", processDefect);
-                set("specMaterialsRcvM", specMaterialsRcvM);
-                set("isfirsttime", (processDefect.getIsFirstTime() == true) ? "首发" : "再发");
-                set("iresptype", (processDefect.getIRespType() == 1) ? "本工序" : "其他");
 
-            } else if (processDefect.getIStatus() == 2) {
-                int getCApproach = Integer.parseInt(processDefect.getCApproach());
-                set("capproach", (getCApproach == 1) ? "返修" : "报废");
-                set("isfirsttime", (processDefect.getIsFirstTime() == true) ? "首发" : "再发");
-                set("iresptype", (processDefect.getIRespType() == 1) ? "本工序" : "其他");
-                set("processDefect", processDefect);
-                set("specMaterialsRcvM", specMaterialsRcvM);
-            }
-        }
-        return JBoltApiRet.API_SUCCESS;
+    public JBoltApiRet add(Long iautoid, Long iissueid, String type) {
+        return JBoltApiRet.successWithData(processDefectService.getProcessDefectApi(iautoid,iissueid,type));
     }
+
 
     public JBoltApiRet update(Kv formRecord) {
         return JBoltApiRet.successWithData(processDefectService.updateEditTable(formRecord));
