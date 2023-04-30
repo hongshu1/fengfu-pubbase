@@ -1749,4 +1749,9 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
+
+	/**
+	 * 取货管理-货款核对表
+	 */
+	public static final String PAYMENT_CHECK_MANAGENOT = "payment_check_managenot";
 }

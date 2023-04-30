@@ -380,3 +380,13 @@
 #namespace("modoc")
 #include("modoc/modoc.sql")
 #end
+
+
+#namespace("rcvplanm")
+#include("rcvplanm/rcvplanm.sql")
+#end
+
+#namespace("goodspaymentm")
+#include("goodspaymentm/goodspaymentm.sql")
+#end
+
