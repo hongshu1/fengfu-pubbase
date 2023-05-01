@@ -1,0 +1,12 @@
+alter table `jb_code_gen` add column `thead_bg_color` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '表头背景色';
+alter table `jb_code_gen` add column `thead_fr_color` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '表头文字颜色';
+alter table `jb_code_gen` add column `is_table_row_click_active` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否表格选中定色';
+alter table `jb_code_gen` add column `active_tr_bg_color` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '选中行背景色';
+alter table `jb_code_gen` add column `active_tr_fr_color` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '选中行文字颜色';
+alter table `jb_code_gen` add column `is_gen_cache_util_class` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成缓存工具类';
+alter table `jb_code_gen` add column `cache_class_name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '缓存工具类名';
+alter table `jb_code_gen` add column `cache_class_package` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '缓存工具类包';
+alter table `jb_code_gen` add column `is_cache_get_name` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getName';
+alter table `jb_code_gen` add column `is_cache_get_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getSn';
+alter table `jb_code_gen` add column `is_cache_get_name_by_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getNameBySn(sn)';
+alter table `jb_code_gen` add column `is_cache_get_by_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getBySn(sn)';
