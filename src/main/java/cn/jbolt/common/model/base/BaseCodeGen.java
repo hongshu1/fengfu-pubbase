@@ -294,6 +294,16 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
     public static final String IS_BASE_MODEL_GEN_COL_CONSTANT = "is_base_model_gen_col_constant";
     /**是否在baseModel中生成的字段常量 名称转大写*/
     public static final String IS_BASE_MODEL_GEN_COL_CONSTANT_TO_UPPERCASE = "is_base_model_gen_col_constant_to_uppercase";
+    /**表头背景色*/
+    public static final String THEAD_BG_COLOR = "thead_bg_color";
+    /**表头文字颜色*/
+    public static final String THEAD_FR_COLOR = "thead_fr_color";
+    /**是否表格选中定色*/
+    public static final String IS_TABLE_ROW_CLICK_ACTIVE = "is_table_row_click_active";
+    /**选中行背景色*/
+    public static final String ACTIVE_TR_BG_COLOR = "active_tr_bg_color";
+    /**选中行文字颜色*/
+    public static final String ACTIVE_TR_FR_COLOR = "active_tr_fr_color";
 	/**
 	 * 主键ID
 	 */
@@ -2571,6 +2581,86 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	@JBoltField(name="isBaseModelGenColConstantToUppercase" ,columnName="is_base_model_gen_col_constant_to_uppercase",type="Boolean", remark="是否在baseModel中生成的字段常量 名称转大写", required=true, maxLength=1, fixed=0, order=142)
 	public java.lang.Boolean getIsBaseModelGenColConstantToUppercase() {
 		return getBoolean("is_base_model_gen_col_constant_to_uppercase");
+	}
+
+	/**
+	 * 表头背景色
+	 */
+	public M setTheadBgColor(java.lang.String theadBgColor) {
+		set("thead_bg_color", theadBgColor);
+		return (M)this;
+	}
+	
+	/**
+	 * 表头背景色
+	 */
+	@JBoltField(name="theadBgColor" ,columnName="thead_bg_color",type="String", remark="表头背景色", required=false, maxLength=20, fixed=0, order=143)
+	public java.lang.String getTheadBgColor() {
+		return getStr("thead_bg_color");
+	}
+
+	/**
+	 * 表头文字颜色
+	 */
+	public M setTheadFrColor(java.lang.String theadFrColor) {
+		set("thead_fr_color", theadFrColor);
+		return (M)this;
+	}
+	
+	/**
+	 * 表头文字颜色
+	 */
+	@JBoltField(name="theadFrColor" ,columnName="thead_fr_color",type="String", remark="表头文字颜色", required=false, maxLength=20, fixed=0, order=144)
+	public java.lang.String getTheadFrColor() {
+		return getStr("thead_fr_color");
+	}
+
+	/**
+	 * 是否表格选中定色
+	 */
+	public M setIsTableRowClickActive(java.lang.Boolean isTableRowClickActive) {
+		set("is_table_row_click_active", isTableRowClickActive);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否表格选中定色
+	 */
+	@JBoltField(name="isTableRowClickActive" ,columnName="is_table_row_click_active",type="Boolean", remark="是否表格选中定色", required=true, maxLength=1, fixed=0, order=145)
+	public java.lang.Boolean getIsTableRowClickActive() {
+		return getBoolean("is_table_row_click_active");
+	}
+
+	/**
+	 * 选中行背景色
+	 */
+	public M setActiveTrBgColor(java.lang.String activeTrBgColor) {
+		set("active_tr_bg_color", activeTrBgColor);
+		return (M)this;
+	}
+	
+	/**
+	 * 选中行背景色
+	 */
+	@JBoltField(name="activeTrBgColor" ,columnName="active_tr_bg_color",type="String", remark="选中行背景色", required=false, maxLength=20, fixed=0, order=146)
+	public java.lang.String getActiveTrBgColor() {
+		return getStr("active_tr_bg_color");
+	}
+
+	/**
+	 * 选中行文字颜色
+	 */
+	public M setActiveTrFrColor(java.lang.String activeTrFrColor) {
+		set("active_tr_fr_color", activeTrFrColor);
+		return (M)this;
+	}
+	
+	/**
+	 * 选中行文字颜色
+	 */
+	@JBoltField(name="activeTrFrColor" ,columnName="active_tr_fr_color",type="String", remark="选中行文字颜色", required=false, maxLength=20, fixed=0, order=147)
+	public java.lang.String getActiveTrFrColor() {
+		return getStr("active_tr_fr_color");
 	}
 
 }

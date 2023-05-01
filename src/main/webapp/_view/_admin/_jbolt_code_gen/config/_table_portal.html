@@ -285,8 +285,17 @@ headBox内容自行填写
 	   data-default-sort-column="#(codeGen.tableDefaultSortColumn??)"
 	   #end
 	#end
+	   #if(codeGen.isTableRowClickActive??)
+	   data-row-click-active="true"
+	   #end
+	   #if(codeGen.activeTrBgColor??)
+	   data-row-click-active-bgcolor="#(codeGen.activeTrBgColor??)"
+	   #end
+	   #if(codeGen.activeTrFrColor??)
+	   data-row-click-active-frcolor="#(codeGen.activeTrFrColor??)"
+	   #end
 >
-<thead>
+<thead class="fw-normal" #if(codeGen.theadBgColor && codeGen.theadFrColor) style="background-color: #(codeGen.theadBgColor)!important;color: #(codeGen.theadFrColor)!important;" #end >
 #if(editMode??)
 <tr>
 	<th data-width="60" data-column="index"></th>
