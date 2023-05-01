@@ -304,6 +304,20 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
     public static final String ACTIVE_TR_BG_COLOR = "active_tr_bg_color";
     /**选中行文字颜色*/
     public static final String ACTIVE_TR_FR_COLOR = "active_tr_fr_color";
+    /**是否生成缓存工具类*/
+    public static final String IS_GEN_CACHE_UTIL_CLASS = "is_gen_cache_util_class";
+    /**缓存工具类名*/
+    public static final String CACHE_CLASS_NAME = "cache_class_name";
+    /**缓存工具类包*/
+    public static final String CACHE_CLASS_PACKAGE = "cache_class_package";
+    /**是否生成getName*/
+    public static final String IS_CACHE_GET_NAME = "is_cache_get_name";
+    /**是否生成getSn*/
+    public static final String IS_CACHE_GET_SN = "is_cache_get_sn";
+    /**是否生成getNameBySn(sn)*/
+    public static final String IS_CACHE_GET_NAME_BY_SN = "is_cache_get_name_by_sn";
+    /**是否生成getBySn(sn)*/
+    public static final String IS_CACHE_GET_BY_SN = "is_cache_get_by_sn";
 	/**
 	 * 主键ID
 	 */
@@ -2661,6 +2675,118 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	@JBoltField(name="activeTrFrColor" ,columnName="active_tr_fr_color",type="String", remark="选中行文字颜色", required=false, maxLength=20, fixed=0, order=147)
 	public java.lang.String getActiveTrFrColor() {
 		return getStr("active_tr_fr_color");
+	}
+
+	/**
+	 * 是否生成缓存工具类
+	 */
+	public M setIsGenCacheUtilClass(java.lang.Boolean isGenCacheUtilClass) {
+		set("is_gen_cache_util_class", isGenCacheUtilClass);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成缓存工具类
+	 */
+	@JBoltField(name="isGenCacheUtilClass" ,columnName="is_gen_cache_util_class",type="Boolean", remark="是否生成缓存工具类", required=true, maxLength=1, fixed=0, order=148)
+	public java.lang.Boolean getIsGenCacheUtilClass() {
+		return getBoolean("is_gen_cache_util_class");
+	}
+
+	/**
+	 * 缓存工具类名
+	 */
+	public M setCacheClassName(java.lang.String cacheClassName) {
+		set("cache_class_name", cacheClassName);
+		return (M)this;
+	}
+	
+	/**
+	 * 缓存工具类名
+	 */
+	@JBoltField(name="cacheClassName" ,columnName="cache_class_name",type="String", remark="缓存工具类名", required=false, maxLength=100, fixed=0, order=149)
+	public java.lang.String getCacheClassName() {
+		return getStr("cache_class_name");
+	}
+
+	/**
+	 * 缓存工具类包
+	 */
+	public M setCacheClassPackage(java.lang.String cacheClassPackage) {
+		set("cache_class_package", cacheClassPackage);
+		return (M)this;
+	}
+	
+	/**
+	 * 缓存工具类包
+	 */
+	@JBoltField(name="cacheClassPackage" ,columnName="cache_class_package",type="String", remark="缓存工具类包", required=false, maxLength=200, fixed=0, order=150)
+	public java.lang.String getCacheClassPackage() {
+		return getStr("cache_class_package");
+	}
+
+	/**
+	 * 是否生成getName
+	 */
+	public M setIsCacheGetName(java.lang.Boolean isCacheGetName) {
+		set("is_cache_get_name", isCacheGetName);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成getName
+	 */
+	@JBoltField(name="isCacheGetName" ,columnName="is_cache_get_name",type="Boolean", remark="是否生成getName", required=true, maxLength=1, fixed=0, order=151)
+	public java.lang.Boolean getIsCacheGetName() {
+		return getBoolean("is_cache_get_name");
+	}
+
+	/**
+	 * 是否生成getSn
+	 */
+	public M setIsCacheGetSn(java.lang.Boolean isCacheGetSn) {
+		set("is_cache_get_sn", isCacheGetSn);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成getSn
+	 */
+	@JBoltField(name="isCacheGetSn" ,columnName="is_cache_get_sn",type="Boolean", remark="是否生成getSn", required=true, maxLength=1, fixed=0, order=152)
+	public java.lang.Boolean getIsCacheGetSn() {
+		return getBoolean("is_cache_get_sn");
+	}
+
+	/**
+	 * 是否生成getNameBySn(sn)
+	 */
+	public M setIsCacheGetNameBySn(java.lang.Boolean isCacheGetNameBySn) {
+		set("is_cache_get_name_by_sn", isCacheGetNameBySn);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成getNameBySn(sn)
+	 */
+	@JBoltField(name="isCacheGetNameBySn" ,columnName="is_cache_get_name_by_sn",type="Boolean", remark="是否生成getNameBySn(sn)", required=true, maxLength=1, fixed=0, order=153)
+	public java.lang.Boolean getIsCacheGetNameBySn() {
+		return getBoolean("is_cache_get_name_by_sn");
+	}
+
+	/**
+	 * 是否生成getBySn(sn)
+	 */
+	public M setIsCacheGetBySn(java.lang.Boolean isCacheGetBySn) {
+		set("is_cache_get_by_sn", isCacheGetBySn);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成getBySn(sn)
+	 */
+	@JBoltField(name="isCacheGetBySn" ,columnName="is_cache_get_by_sn",type="Boolean", remark="是否生成getBySn(sn)", required=true, maxLength=1, fixed=0, order=154)
+	public java.lang.Boolean getIsCacheGetBySn() {
+		return getBoolean("is_cache_get_by_sn");
 	}
 
 }
