@@ -165,6 +165,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setSubTableCount(0);
         processCodeGenPrefixAndPackages(codeGen);
         codeGen.setIsAutoCache(false);
+        processCacheSettings(codeGen);
         codeGen.setIsKeyCache(false);
         codeGen.setIsGenModel(true);
         codeGen.setIsTableUseRecord(false);
@@ -198,6 +199,15 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             processCodeGenRecoverById(codeGen.getId());
         }
         return ret(success);
+    }
+
+    private void processCacheSettings(CodeGen codeGen) {
+        boolean hasNameAttr = codeGenModelAttrService.checkHasNameAttr(codeGen.getId());
+        codeGen.setIsCacheGetName(hasNameAttr);
+        boolean hasSnAttr = codeGenModelAttrService.checkHasSnAttr(codeGen.getId());
+        codeGen.setIsCacheGetBySn(hasSnAttr);
+        codeGen.setIsCacheGetNameBySn(hasNameAttr && hasSnAttr);
+        codeGen.setIsCacheGetSn(hasSnAttr);
     }
 
     /**
@@ -259,6 +269,13 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         } else if (mustReplace) {
             codeGen.setServicePackage(codeGen.getServicePackage().replace(oldModelName.toLowerCase(), modelName.toLowerCase()));
         }
+
+        if (notOk(codeGen.getCacheClassPackage())) {
+            codeGen.setCacheClassPackage(mainJavaPackage + "." + modelName.toLowerCase());
+        } else if (mustReplace) {
+            codeGen.setCacheClassPackage(codeGen.getCacheClassPackage().replace(oldModelName.toLowerCase(), modelName.toLowerCase()));
+        }
+
         if (notOk(codeGen.getControllerName())) {
             codeGen.setControllerName(modelName + codeGen.getType() + "Controller");
         } else if (mustReplace) {
@@ -278,6 +295,13 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         } else if (mustReplace) {
             codeGen.setServiceName(codeGen.getServiceName().replace(oldModelName, modelName));
         }
+
+        if (notOk(codeGen.getCacheClassName())) {
+            codeGen.setCacheClassName(modelName + "Cache");
+        } else if (mustReplace) {
+            codeGen.setCacheClassName(codeGen.getCacheClassName().replace(oldModelName, modelName));
+        }
+
     }
 
     public void processVersionSn(CodeGen codeGen) {

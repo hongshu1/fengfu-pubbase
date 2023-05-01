@@ -1283,4 +1283,12 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		attr.update();
 		return SUCCESS;
 	}
+
+	public boolean checkHasNameAttr(Long codeGenId) {
+		return exists(selectSql().eq(CodeGenModelAttr.CODE_GEN_ID,codeGenId).eq(CodeGenModelAttr.ATTR_NAME,"name"));
+	}
+
+	public boolean checkHasSnAttr(Long codeGenId) {
+		return exists(selectSql().eq(CodeGenModelAttr.CODE_GEN_ID,codeGenId).eq(CodeGenModelAttr.ATTR_NAME,"sn"));
+	}
 }
