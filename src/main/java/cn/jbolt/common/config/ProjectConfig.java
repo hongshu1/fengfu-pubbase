@@ -511,14 +511,4 @@ public class ProjectConfig extends JBoltProjectConfig {
         return new ProjectSystemLogProcessor();
     }
 
-    @Override
-    protected void onAppStart() {
-
-    }
-
-    @Override
-    protected void onAppStop() {
-
-    }
-    
 }
