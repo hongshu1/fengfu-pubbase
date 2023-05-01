@@ -1,21 +1,20 @@
 package cn.rjtech.admin.goodspaymentm;
 
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.CheckPermission;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.GoodsPaymentD;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 /**
  * 货款核对明细
  * @ClassName: GoodsPaymentDAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-30 00:13
  */
-@CheckPermission(PermissionKey.PAYMENT_CHECK_MANAGENOT)
+@UnCheck
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/goodspaymentd", viewPath = "/_view/admin/goodspaymentd")
 public class GoodsPaymentDAdminController extends BaseAdminController {

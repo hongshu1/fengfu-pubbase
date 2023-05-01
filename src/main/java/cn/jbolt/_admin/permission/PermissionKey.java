@@ -1396,7 +1396,7 @@ public class PermissionKey {
 	/**
 	 * 制程异常品记录
 	 */
-	public static final String PROCESSDEFECT = "ProcessDefect";
+	public static final String PROCESSDEFECT = "processdefect";
 	/**
 	 * 表单配置
 	 */
@@ -1408,11 +1408,11 @@ public class PermissionKey {
 	/**
 	 * 出库异常记录
 	 */
-	public static final String STOCKOUTDEFECT = "StockoutDefect";
+	public static final String STOCKOUTDEFECT = "stockoutdefect";
 	/**
 	 * 在库异常记录
 	 */
-	public static final String INSTOCKDEFECT = "InStockDefect";
+	public static final String INSTOCKDEFECT = "instockdefect";
 	/**
 	 * 工程内品质巡查
 	 */
@@ -1421,6 +1421,10 @@ public class PermissionKey {
 	 * 系统字段管理
 	 */
 	public static final String FORM_FIELD = "form_field";
+	/**
+	 * 表单类别
+	 */
+	public static final String FORM_CATEGORY = "form_category";
 	/**
 	 * 新增
 	 */
@@ -1749,9 +1753,8 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
-
-	/**
-	 * 取货管理-货款核对表
-	 */
-	public static final String PAYMENT_CHECK_MANAGENOT = "payment_check_managenot";
+    /**
+     * 取货管理-货款核对表
+     */
+    public static final String PAYMENT_CHECK_MANAGENOT = "payment_check_managenot";
 }
