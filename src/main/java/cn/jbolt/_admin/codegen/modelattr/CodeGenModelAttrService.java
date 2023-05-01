@@ -481,7 +481,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			kvs.add(Kv.by("datas",attrs).set("labelWidth",formGroupArr[0]).set("formControlWidth",formGroupArr[1]).set("modelName",StrKit.firstCharToLowerCase(codeGen.getModelName())).set("isFormGroupRow",isFormGroupRow));
 		}else {
 			//每列个数
-			int count = (int) Math.ceil(total/formColumnSize);
+			int count = total / formColumnSize + (total % formColumnSize != 0 ? 1 : 0);
 			int[] arr;
 			if(isOk(formColumnProportion)) {
 				arr = StrUtil.splitToInt(formColumnProportion, ":");
@@ -504,11 +504,17 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 
 			int startIndex = 0;
 			int endIndex = 0;
+			List<CodeGenModelAttr> subList;
 			if(formColumnDirection.equals("v")) {
 				kvs = new ArrayList<>();
 				for(int i=0;i<formColumnSize;i++) {
 					endIndex = startIndex + count;
-					kvs.add(Kv.by("col", arr[i]).set("labelWidth",formGroupArr[0]).set("formControlWidth",formGroupArr[1]).set("modelName",StrKit.firstCharToLowerCase(codeGen.getModelName())).set("isFormGroupRow",isFormGroupRow).set("datas",attrs.subList(startIndex, endIndex)));
+					if(endIndex<=total-1){
+						subList = attrs.subList(startIndex, endIndex);
+					}else{
+						subList = attrs.subList(startIndex,total);
+					}
+					kvs.add(Kv.by("col", arr[i]).set("labelWidth",formGroupArr[0]).set("formControlWidth",formGroupArr[1]).set("modelName",StrKit.firstCharToLowerCase(codeGen.getModelName())).set("isFormGroupRow",isFormGroupRow).set("datas",subList));
 					startIndex = endIndex;
 				}
 			}else {
