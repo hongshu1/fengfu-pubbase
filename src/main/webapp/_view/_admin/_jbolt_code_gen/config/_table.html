@@ -186,6 +186,76 @@
 								</div>
 							</div>
 
+							<fieldset>
+								<legend class="text-center">Thead表头配色</legend>
+								<div class="form-group row">
+									<label class="col-sm-3 col-form-label">表头背景色</label>
+									<div class="col-sm-7 input-group">
+										<input type="text" class="form-control" id="codeGenTheadBgColor" placeholder="请输入背景色" data-with-clearbtn="true" name="codeGen.theadBgColor" value="#(codeGen.theadBgColor??)" autocomplete="off" />
+										<div class="input-group-append">
+											<div class="input-group-text p-0">
+												<input type="color" oninput="$('#codeGenTheadBgColor').val(this.value).change()" style="width: 40px;border:none;" value="#(codeGen.theadBgColor??)"/>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-3 col-form-label">文字颜色</label>
+									<div class="col-sm-7 input-group">
+										<input type="text" class="form-control" id="codeGenTheadFrColor" placeholder="请输入文字颜色" data-with-clearbtn="true" name="codeGen.theadFrColor" value="#(codeGen.theadFrColor??)" autocomplete="off" />
+										<div class="input-group-append">
+											<div class="input-group-text p-0">
+												<input type="color" oninput="$('#codeGenTheadFrColor').val(this.value).change()" style="width: 40px;border:none;" value="#(codeGen.theadFrColor??)"/>
+											</div>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+
+							<fieldset>
+								<legend class="text-center">Tbody选中行配置</legend>
+								<div class="form-group row"
+									 data-radio
+									 data-rule="radio"
+									 data-value="#(codeGen.isTableRowClickActive?? 'false')"
+									 data-name="codeGen.isTableRowClickActive"
+									 data-default="false">
+									<label class="col-sm-3 col-form-label is_required" >行选中变色</label>
+									<div class="col"  style="padding-top: 1px;">
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isTableRowClickActive_true" type="radio" name="codeGen.isTableRowClickActive"   value="true"/>
+											<label for="r_isTableRowClickActive_true">启用</label>
+										</div>
+
+										<div class="radio radio-primary  radio-inline">
+											<input  id="r_isTableRowClickActive_false" type="radio" name="codeGen.isTableRowClickActive"   value="false"/>
+											<label for="r_isTableRowClickActive_false">不启用</label>
+										</div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-3 col-form-label">背景色</label>
+									<div class="col-sm-7 input-group">
+										<input type="text" class="form-control" id="codeGenActiveTrBgColor" placeholder="请输入背景色" data-with-clearbtn="true" name="codeGen.activeTrBgColor" value="#(codeGen.activeTrBgColor??)" autocomplete="off" />
+										<div class="input-group-append">
+											<div class="input-group-text p-0">
+												<input type="color" oninput="$('#codeGenActiveTrBgColor').val(this.value).change()" style="width: 40px;border:none;" value="#(codeGen.activeTrBgColor??)"/>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-3 col-form-label">文字颜色</label>
+									<div class="col-sm-7 input-group">
+										<input type="text" class="form-control" id="codeGenActiveTrFrColor" placeholder="请输入文字颜色" data-with-clearbtn="true" name="codeGen.activeTrFrColor" value="#(codeGen.activeTrFrColor??)" autocomplete="off" />
+										<div class="input-group-append">
+											<div class="input-group-text p-0">
+												<input type="color" oninput="$('#codeGenActiveTrBgColor').val(this.value).change();" style="width: 40px;border:none;" value="#(codeGen.activeTrFrColor??)"/>
+											</div>
+										</div>
+									</div>
+								</div>
+							</fieldset>
 
 							<fieldset>
 								<legend class="text-center">默认排序配置</legend>

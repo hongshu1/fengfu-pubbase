@@ -866,6 +866,18 @@ CREATE TABLE `jb_code_gen`  (
 `form_dialog_area` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '800,600' COMMENT 'form表单的dialog的area属性 长宽',
 `is_base_model_gen_col_constant` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '是否在baseModel中生成字段常量',
 `is_base_model_gen_col_constant_to_uppercase` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '是否在baseModel中生成的字段常量 名称转大写',
+`thead_bg_color` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '表头背景色',
+`thead_fr_color` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '表头文字颜色',
+`is_table_row_click_active` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否表格选中定色',
+`active_tr_bg_color` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '选中行背景色',
+`active_tr_fr_color` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '选中行文字颜色',
+`is_gen_cache_util_class` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成缓存工具类',
+`cache_class_name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '缓存工具类名',
+`cache_class_package` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '缓存工具类包',
+`is_cache_get_name` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getName',
+`is_cache_get_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getSn',
+`is_cache_get_name_by_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getNameBySn(sn)',
+`is_cache_get_by_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getBySn(sn)',
 PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成配置' ROW_FORMAT = Dynamic;
 
