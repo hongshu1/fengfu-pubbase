@@ -1,10 +1,10 @@
-package cn.rjtech.admin.cusfieldmappingform;
+package cn.rjtech.admin.cusfieldsmappingform;
 
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.CusfieldmappingForm;
+import cn.rjtech.model.momdata.CusfieldsmappingForm;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -12,17 +12,17 @@ import com.jfinal.core.Path;
 /**
  * 系统配置-导入字段映射表单
  *
- * @ClassName: CusfieldmappingFormAdminController
+ * @ClassName: CusfieldsmappingFormAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-02 13:52
  */
 @UnCheck
 @Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/cusfieldmappingform", viewPath = "/_view/admin/cusfieldmappingform")
-public class CusfieldmappingFormAdminController extends BaseAdminController {
+@Path(value = "/admin/cusfieldsmappingform", viewPath = "/_view/admin/cusfieldsmappingform")
+public class CusfieldsmappingFormAdminController extends BaseAdminController {
 
     @Inject
-    private CusfieldmappingFormService service;
+    private CusfieldsmappingFormService service;
 
     /**
      * 首页
@@ -49,19 +49,19 @@ public class CusfieldmappingFormAdminController extends BaseAdminController {
      * 保存
      */
     public void save() {
-        renderJson(service.save(getModel(CusfieldmappingForm.class, "cusfieldmappingForm")));
+        renderJson(service.save(getModel(CusfieldsmappingForm.class, "cusfieldsmappingForm")));
     }
 
     /**
      * 编辑
      */
     public void edit() {
-        CusfieldmappingForm cusfieldmappingForm = service.findById(getLong(0));
-        if (cusfieldmappingForm == null) {
+        CusfieldsmappingForm cusfieldsmappingForm = service.findById(getLong(0));
+        if (cusfieldsmappingForm == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("cusfieldmappingForm", cusfieldmappingForm);
+        set("cusfieldsmappingForm", cusfieldsmappingForm);
         render("edit.html");
     }
 
@@ -69,7 +69,7 @@ public class CusfieldmappingFormAdminController extends BaseAdminController {
      * 更新
      */
     public void update() {
-        renderJson(service.update(getModel(CusfieldmappingForm.class, "cusfieldmappingForm")));
+        renderJson(service.update(getModel(CusfieldsmappingForm.class, "cusfieldsmappingForm")));
     }
 
     /**

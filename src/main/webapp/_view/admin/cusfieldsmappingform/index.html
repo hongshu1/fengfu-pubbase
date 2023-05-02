@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>系统配置-导入字段映射表单</h1></div>
             <div class="col">
-                <form class="form-inline" id="CusfieldmappingForm_form_#(pageId)">
+                <form class="form-inline" id="CusfieldsmappingForm_form_#(pageId)">
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
                 </form>
             </div>
@@ -18,7 +18,7 @@
     <div class="jbolt_page_content">
         
         <!-- 定义JBoltTable使用的数据渲染模板 -->
-        <textarea class="jb_tpl_box" id="CusfieldmappingForm_tpl_#(pageId)">
+        <textarea class="jb_tpl_box" id="CusfieldsmappingForm_tpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.iAutoId}">
             <td>${pageNumber,pageSize,index | rownum}</td>
@@ -31,11 +31,11 @@
         {@/each}
         </textarea>
         
-        <div class="jbolt_table_toolbar" id="CusfieldmappingForm_toolbar_#(pageId)">
+        <div class="jbolt_table_toolbar" id="CusfieldsmappingForm_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增系统配置-导入字段映射表单" data-url="admin/cusfieldmappingform/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
-                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑系统配置-导入字段映射表单" data-check-handler="jboltTableGetCheckedId" data-url="admin/cusfieldmappingform/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
-                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/cusfieldmappingform/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增系统配置-导入字段映射表单" data-url="admin/cusfieldsmappingform/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑系统配置-导入字段映射表单" data-check-handler="jboltTableGetCheckedId" data-url="admin/cusfieldsmappingform/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/cusfieldsmappingform/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
             </div>
         </div>
@@ -45,13 +45,13 @@
                data-width="fill"
                data-height="fill"
                data-ajax="true"
-               data-conditions-form="CusfieldmappingForm_form_#(pageId)"
-               data-url="admin/cusfieldmappingform/datas"
-               data-rowtpl="CusfieldmappingForm_tpl_#(pageId)"
+               data-conditions-form="CusfieldsmappingForm_form_#(pageId)"
+               data-url="admin/cusfieldsmappingform/datas"
+               data-rowtpl="CusfieldsmappingForm_tpl_#(pageId)"
                data-copy-to-excel="false"
-               data-page="CusfieldmappingForm_page"
+               data-page="CusfieldsmappingForm_page"
                data-column-resize="true"
-               data-toolbar="CusfieldmappingForm_toolbar_#(pageId)"
+               data-toolbar="CusfieldsmappingForm_toolbar_#(pageId)"
                data-column-prepend="1:checkbox:true:false:false">
             <thead>
             <tr>

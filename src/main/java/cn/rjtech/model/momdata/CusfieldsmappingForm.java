@@ -1,6 +1,6 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseCusfieldmappingForm;
+import cn.rjtech.model.momdata.base.BaseCusfieldsmappingForm;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
 
@@ -10,6 +10,6 @@ import cn.jbolt.core.base.JBoltIDGenMode;
  */
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Bd_CusFieldMapping_Form" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
-public class CusfieldmappingForm extends BaseCusfieldmappingForm<CusfieldmappingForm> {
+public class CusfieldsmappingForm extends BaseCusfieldsmappingForm<CusfieldsmappingForm> {
 }
 

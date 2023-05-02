@@ -52,7 +52,7 @@ public class CusFieldsMappingMAdminController extends BaseAdminController {
      * 保存
      */
     public void save() {
-        renderJson(service.save(getModel(CusFieldsMappingM.class, "cusFieldsMappingM")));
+        renderJson(service.save(getModel(CusFieldsMappingM.class, "cusFieldsMappingM"), get("iformids")));
     }
 
     /**

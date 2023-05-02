@@ -166,6 +166,23 @@ public class FormCategoryService extends BaseService<FormCategory> {
         return convertToModelTree(datas, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
     }
 
+    public List<Record> getTreeDatas() {
+        Sql sql = selectSql().eq(FormCategory.ISDELETED, ZERO_STR);
+        
+        List<Record> datas = findRecord(sql);
+
+        List<Record> allDatas = new ArrayList<>();
+
+        if (CollUtil.isNotEmpty(datas)) {
+            allDatas.addAll(datas);
+            
+            for (Record data : datas) {
+                allDatas.addAll(formService.getTreeDatas(data.getLong("iautoid")));
+            }
+        }
+        return convertToRecordTree(allDatas, "iautoid", "ipid", (p) -> notOk(p.getLong("ipid")));
+    }
+
     public List<JsTreeBean> getJsTreeDatas(int openLevel, String keywords) {
         Sql sql = selectSql()
                 .select("iautoid AS id, ipid AS pid, ccode, cname, 1 AS itype ")

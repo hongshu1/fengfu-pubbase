@@ -4,6 +4,7 @@ import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.FormCategory;
@@ -93,6 +94,7 @@ public class FormCategoryAdminController extends BaseAdminController {
     /**
      * 得到树形结构数据
      */
+    @UnCheck
     public void tree(@Para(value = "keywords") String keywords) {
         renderJsonData(service.getTreeDatas(keywords));
     }
@@ -100,8 +102,17 @@ public class FormCategoryAdminController extends BaseAdminController {
     /**
      * 表单类别 + 表单 JsTree
      */
+    @UnCheck
     public void jstree() {
         renderJsonData(service.getJsTreeDatas(getInt("openLevel", 0), getKeywords()));
+    }
+
+    /**
+     * 表单类别 + 表单 JsTree
+     */
+    @UnCheck
+    public void treeDatas() {
+        renderJsonData(service.getTreeDatas());
     }
 
 }
