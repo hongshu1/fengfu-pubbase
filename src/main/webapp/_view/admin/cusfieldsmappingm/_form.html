@@ -1,0 +1,38 @@
+<form onsubmit="return false;" id="CusFieldsMappingM_Form" action="#(action)" method="post">
+    
+    #if(cusFieldsMappingM.iAutoId??)
+    <input type="hidden" name="cusFieldsMappingM.iAutoId" value="#(cusFieldsMappingM.iAutoId??)"/>
+    #end
+    
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">格式名称</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入格式名称" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入格式名称" maxlength="40" name="cusFieldsMappingM.cFormatName" value="#(cusFieldsMappingM.cFormatName??)"/>
+                </div>
+            </div>
+            <div class="form-group row"
+                 data-radio
+                 data-name="cusFieldsMappingM.isEnabled"
+                 data-value-attr="sn"
+                 data-default="options_first"
+                 data-url="admin/dictionary/options?key=options_enable"
+                 data-label="是否启用"
+                 data-width="col-sm-2,col-10"
+                 data-value="#(cusFieldsMappingM.isEnabled??)"
+                 data-rule="radio"
+                 data-notnull="true"
+                 data-tips="请选择是否启用"
+                 data-inline="true">
+            </div>
+        </div>
+    </div>
+</form>
+
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="CusFieldsMappingM_Form")
+#end
+
