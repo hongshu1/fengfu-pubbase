@@ -878,6 +878,7 @@ CREATE TABLE `jb_code_gen`  (
 `is_cache_get_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getSn',
 `is_cache_get_name_by_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getNameBySn(sn)',
 `is_cache_get_by_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getBySn(sn)',
+`model_title` varchar(40) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '模型名称',
 PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成配置' ROW_FORMAT = Dynamic;
 
