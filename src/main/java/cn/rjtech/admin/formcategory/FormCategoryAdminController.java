@@ -97,4 +97,11 @@ public class FormCategoryAdminController extends BaseAdminController {
         renderJsonData(service.getTreeDatas(keywords));
     }
 
+    /**
+     * 表单类别 + 表单 JsTree
+     */
+    public void jstree() {
+        renderJsonData(service.getJsTreeDatas(getInt("openLevel", 0), getKeywords()));
+    }
+
 }

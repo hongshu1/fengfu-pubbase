@@ -2,6 +2,8 @@
     
     #if(formField.iAutoId??)
     <input type="hidden" name="formField.iAutoId" value="#(formField.iAutoId??)"/>
+    #else
+    <input type="hidden" name="formField.iformid" value="#(formField.iformid??)">
     #end
     
     <div class="row">
@@ -27,6 +29,7 @@
                             data-url="admin/dictionary/options?key=field_type"
                             data-text-attr="name"
                             data-value-attr="sn"
+                            data-select="#(formField.cFieldTypeSn??)"
                             data-text="=字段类型="
                             data-placeholder="=字段类型=">
                     </select>
@@ -52,6 +55,7 @@
 
 #define js()
 <script>
+    console.log(#json(formField))
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="FormField_Form")
 #end

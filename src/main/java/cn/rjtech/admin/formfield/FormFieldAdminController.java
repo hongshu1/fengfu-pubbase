@@ -1,5 +1,6 @@
 package cn.rjtech.admin.formfield;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -7,9 +8,11 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.FormField;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 
 /**
  * 系统配置-表单字段
@@ -30,7 +33,12 @@ public class FormFieldAdminController extends BaseAdminController {
     /**
      * 首页
      */
-    public void index() {
+    public void index(@Para(value = "iformid") Long iformid) {
+        if (ObjUtil.isNull(iformid)) {
+            renderPageFail("请选择表单进行操作");
+            return;
+        }
+        keepPara();
         render("index.html");
     }
 
@@ -44,7 +52,13 @@ public class FormFieldAdminController extends BaseAdminController {
     /**
      * 新增
      */
-    public void add() {
+    public void add(@Para(value = "iformid") Long iformid) {
+        ValidationUtils.validateId(iformid, "表单ID");
+        
+        FormField formField = new FormField()
+                .setIFormId(iformid);
+        
+        set("formField", formField);
         render("add.html");
     }
 
@@ -96,5 +110,11 @@ public class FormFieldAdminController extends BaseAdminController {
         renderJson(service.toggleBoolean(getLong(0), "isImportField"));
     }
 
-
+    /**
+     * 系统字段管理
+     */
+    public void mgr() {
+        render("_mgr.html");
+    }
+        
 }

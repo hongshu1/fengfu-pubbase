@@ -3,16 +3,20 @@ package cn.rjtech.admin.formcategory;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.form.FormService;
 import cn.rjtech.model.momdata.FormCategory;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +30,9 @@ import java.util.List;
 public class FormCategoryService extends BaseService<FormCategory> {
 
     private final FormCategory dao = new FormCategory().dao();
+
+    @Inject
+    private FormService formService;
 
     @Override
     protected FormCategory dao() {
@@ -159,4 +166,31 @@ public class FormCategoryService extends BaseService<FormCategory> {
         return convertToModelTree(datas, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
     }
 
+    public List<JsTreeBean> getJsTreeDatas(int openLevel, String keywords) {
+        Sql sql = selectSql()
+                .select("iautoid AS id, ipid AS pid, ccode, cname, 1 AS itype ")
+                .eq(FormCategory.ISDELETED, ZERO_STR);
+
+        if (StrUtil.isNotBlank(keywords)) {
+            sql.bracketLeft()
+                    .like(FormCategory.CCODE, keywords)
+                    .or()
+                    .like(FormCategory.CNAME, keywords)
+                    .bracketRight();
+        }
+
+        List<Record> datas = findRecord(sql);
+        
+        List<Record> allDatas = new ArrayList<>();
+        
+        if (CollUtil.isNotEmpty(datas)) {
+            allDatas.addAll(datas);
+            
+            for (Record row : datas) {
+                allDatas.addAll(formService.getDatasForJsTree(row.getLong("id")));
+            }
+        }
+        return convertJsRecordTree(allDatas, null, openLevel, null, "cname", null,null, null,"所有表单", true);
+    }
+    
 }

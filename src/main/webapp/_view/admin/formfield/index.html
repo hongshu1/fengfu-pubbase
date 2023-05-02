@@ -4,9 +4,11 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
     <div class="jbolt_page_title">
         <div class="row">
-            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>系统配置-表单字段</h1></div>
+            <!--<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>系统配置-表单字段</h1></div>-->
             <div class="col">
-                <form class="form-inline" id="FormField_form_#(pageId)">
+                <form class="form-inline text-left" id="FormField_form_#(pageId)">
+                    
+                    <input type="hidden" name="iformid" value="#(iformid)">
 
                     <select class="form-control" name="cFieldTypeSn"
                             data-autoload
@@ -55,7 +57,7 @@
         
         <div class="jbolt_table_toolbar" id="FormField_toolbar_#(pageId)">
             <div class="btn-group-sm" role="group" aria-label="btn-group">
-                <button data-dialogbtn data-area="800,500" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增系统配置-表单字段" data-url="admin/formfield/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-area="800,500" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增系统配置-表单字段" data-url="admin/formfield/add?iformid=#(iformid)" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
                 <button data-dialogbtn data-area="800,500" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑系统配置-表单字段" data-check-handler="jboltTableGetCheckedId" data-url="admin/formfield/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/formfield/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
