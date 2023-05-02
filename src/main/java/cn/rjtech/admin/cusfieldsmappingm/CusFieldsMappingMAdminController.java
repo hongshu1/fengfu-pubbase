@@ -1,15 +1,19 @@
 package cn.rjtech.admin.cusfieldsmappingm;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.cusfieldsmappingform.CusfieldsmappingFormService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.CusFieldsMappingM;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 系统配置-导入字段配置
@@ -26,6 +30,8 @@ public class CusFieldsMappingMAdminController extends BaseAdminController {
 
     @Inject
     private CusFieldsMappingMService service;
+    @Inject
+    private CusfieldsmappingFormService cusfieldsmappingFormService;
 
     /**
      * 首页
@@ -38,7 +44,7 @@ public class CusFieldsMappingMAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("cFormatName"), getBoolean("isEnabled")));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("cFormatName"), getBoolean("isEnabled"), get("iformids")));
     }
 
     /**
@@ -65,6 +71,7 @@ public class CusFieldsMappingMAdminController extends BaseAdminController {
             return;
         }
         set("cusFieldsMappingM", cusFieldsMappingM);
+        set("iformids", CollUtil.join(cusfieldsmappingFormService.getIformIdsByMid(cusFieldsMappingM.getIAutoId()), COMMA));
         render("edit.html");
     }
 

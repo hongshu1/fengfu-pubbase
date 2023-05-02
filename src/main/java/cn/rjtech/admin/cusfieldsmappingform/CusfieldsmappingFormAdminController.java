@@ -46,13 +46,6 @@ public class CusfieldsmappingFormAdminController extends BaseAdminController {
     }
 
     /**
-     * 保存
-     */
-    public void save() {
-        renderJson(service.save(getModel(CusfieldsmappingForm.class, "cusfieldsmappingForm")));
-    }
-
-    /**
      * 编辑
      */
     public void edit() {

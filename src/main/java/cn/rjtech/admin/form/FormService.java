@@ -11,6 +11,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.template.stat.ast.For;
 
 import java.util.Date;
 import java.util.List;
@@ -200,6 +201,10 @@ public class FormService extends BaseService<Form> {
                 .eq(Form.IFORMCATEGORYID, iformcategoryid);
 
         return findRecord(sql);
+    }
+
+    public List<String> getNamesByIformids(List<Long> iautoids) {
+        return query(selectSql().select(Form.CFORMNAME).eq(Form.ISDELETED, ZERO_STR).in(Form.IAUTOID, iautoids));
     }
     
 }

@@ -2,6 +2,7 @@ package cn.rjtech.admin.cusfieldsmappingm;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -9,7 +10,9 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingform.CusfieldsmappingFormService;
 import cn.rjtech.admin.form.FormService;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.CusFieldsMappingM;
+import cn.rjtech.model.momdata.CusfieldsmappingForm;
 import cn.rjtech.model.momdata.Form;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -58,20 +61,31 @@ public class CusFieldsMappingMService extends BaseService<CusFieldsMappingM> {
      * @param cFormatName 格式名称
      * @param isEnabled   是否启用：0. 否 1. 是
      */
-    public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, String cFormatName, Boolean isEnabled) {
-        //创建sql对象
-        Sql sql = selectSql().page(pageNumber, pageSize);
-        //sql条件处理
-        sql.eq("cFormatName", cFormatName);
-        sql.eqBooleanToChar("isEnabled", isEnabled);
-        //关键词模糊查询
-        sql.like("cFormatName", keywords);
-        //排序
-        sql.desc("iAutoId");
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, String cFormatName, Boolean isEnabled, String iformids) {
+        // 创建sql对象
+        Sql sql = selectSql()
+                .select(getTableSelectColumnStrWithoutWithPre("m"))
+                .from(table(), "m");
+
+        if (StrUtil.isNotBlank(iformids)) {
+            sql.innerJoin(cusfieldsmappingFormService.table(), "f", "m.iautoid = f.iCusFieldMappingMid ")
+                    .in("f.iformid", iformids);
+        }
+        
+        // sql条件处理
+        sql.eq("m.cFormatName", cFormatName);
+        sql.eqBooleanToChar("m.isEnabled", isEnabled);
+        
+        // 关键词模糊查询
+        sql.like("m.cFormatName", keywords);
+        // 排序
+        sql.desc("m.iAutoId")
+                .page(pageNumber, pageSize);
+        
         Page<Record> page = paginateRecord(sql);
         if (CollUtil.isNotEmpty(page.getList())) {
             for (Record row : page.getList()) {
-//                row.set("cformnames", )
+                row.set("cformnames", formService.getNamesByIformids(cusfieldsmappingFormService.getIformIdsByMid(row.getLong("iautoid"))));
             }
         }
         return page;
@@ -104,13 +118,21 @@ public class CusFieldsMappingMService extends BaseService<CusFieldsMappingM> {
         cusFieldsMappingM.setIUpdateBy(userId);
         cusFieldsMappingM.setCUpdateName(userName);
         cusFieldsMappingM.setDUpdateTime(now);
-        
-        boolean success = cusFieldsMappingM.save();
-        if (success) {
-            // 添加日志
-            // addSaveSystemLog(cusFieldsMappingM.getIAutoId(), JBoltUserKit.getUserId(), cusFieldsMappingM.getName()
-        }
-        return ret(success);
+
+        tx(() -> {
+
+            ValidationUtils.isTrue(cusFieldsMappingM.save(), ErrorMsg.SAVE_FAILED);
+
+            for (String iformid : iformidList) {
+                cusfieldsmappingFormService.save(cusFieldsMappingM.getIAutoId(), Long.parseLong(iformid));
+            }
+            
+            return true;
+        });
+
+        // 添加日志
+        // addSaveSystemLog(cusFieldsMappingM.getIAutoId(), JBoltUserKit.getUserId(), cusFieldsMappingM.getName()
+        return SUCCESS;
     }
 
     /**

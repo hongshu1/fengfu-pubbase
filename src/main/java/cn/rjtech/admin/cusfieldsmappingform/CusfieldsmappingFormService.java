@@ -9,6 +9,8 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
+import java.util.List;
+
 /**
  * 系统配置-导入字段映射表单
  *
@@ -47,17 +49,13 @@ public class CusfieldsmappingFormService extends BaseService<CusfieldsmappingFor
     /**
      * 保存
      */
-    public Ret save(CusfieldsmappingForm cusfieldsmappingForm) {
-        if (cusfieldsmappingForm == null || isOk(cusfieldsmappingForm.getIAutoId())) {
-            return fail(JBoltMsg.PARAM_ERROR);
-        }
-        //if(existsName(cusfieldsmappingForm.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-        boolean success = cusfieldsmappingForm.save();
-        if (success) {
-            //添加日志
-            //addSaveSystemLog(cusfieldsmappingForm.getIAutoId(), JBoltUserKit.getUserId(), cusfieldsmappingForm.getName());
-        }
-        return ret(success);
+    public void save(long iiCusFieldMappingMid, long iformid) {
+        CusfieldsmappingForm form = new CusfieldsmappingForm();
+
+        form.setICusFieldMappingMid(iiCusFieldMappingMid);
+        form.setIFormId(iformid);
+
+        form.save();
     }
 
     /**
@@ -105,4 +103,11 @@ public class CusfieldsmappingFormService extends BaseService<CusfieldsmappingFor
         return null;
     }
 
+    /**
+     * 获取格式关联的表单ID
+     */
+    public List<Long> getIformIdsByMid(long mid) {
+        return query(selectSql().select(CusfieldsmappingForm.IFORMID).eq(CusfieldsmappingForm.ICUSFIELDMAPPINGMID, mid));
+    }
+    
 }

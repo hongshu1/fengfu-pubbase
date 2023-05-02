@@ -9,7 +9,7 @@
                 <form class="form-inline text-left" id="CusFieldsMappingM_form_#(pageId)">
 
                     <select class="form-control"
-                            name="iformid"
+                            name="iformids"
                             data-autoload
                             data-url="admin/formcategory/treeDatas"
                             data-onlyleaf="true"
@@ -43,15 +43,16 @@
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="CusFieldsMappingM_tpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.iAutoId}">
+        <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="导入字段">导入字段</a>
-                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingm/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑">编辑</a>
-                <a class="jbolt_table_delbtn" href="admin/cusfieldsmappingm/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable">删除</a>
+                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="导入字段">导入字段</a>
+                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑">编辑</a>
+                <a class="jbolt_table_delbtn" href="admin/cusfieldsmappingm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable">删除</a>
             </td>
+            <td>${data.cformnames}</td>
             <td>${data.cformatname}</td>
-            <td><img data-switchbtn data-confirm="确定切换是否启用：0. 否 1. 是？" data-value="${data.isenabled}"  data-handler="refreshjbolttable"  data-url="admin/cusfieldsmappingm/toggleisenabled/${data.id}"/></td>
+            <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingm/toggleIsEnabled/${data.iautoid}"/></td>
             <td>${data.ccreatename}</td>
             <td>${data.dcreatetime}</td>
             <td>${data.cupdatename}</td>
