@@ -33,7 +33,7 @@
 	</div>
 	<div class="col-sm-auto text-right">
 	#if(codeGen.isTableMultiConditionsMode)<button onclick="jboltTableToggleHeadbox(this)" class="btn btn-outline-primary btn-sm" #if(!codeGen.isTableMultiConditionsBtnShowTitle) tooltip data-title="切换显示筛选条件"#end><i class="fa fa-filter"></i>#if(codeGen.isTableMultiConditionsBtnShowTitle??) 筛选条件#end</button>#end
-	#if(codeGen.isCrud && codeGen.isPageTitleAddBtn)<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/add'):('admin/codegen/formPortalTest/'+codeGen.id))" data-handler="jboltTablePageToFirst" data-area="#(codeGen.formDialogArea?? '800,600')" tooltip data-title="新增#(codeGen.mainTableRemark??)"><i class="fa fa-plus"></i></button>#end
+	#if(codeGen.isCrud && codeGen.isPageTitleAddBtn)<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/add'):('admin/codegen/formPortalTest/'+codeGen.id))" data-handler="jboltTablePageToFirst" data-area="#(codeGen.formDialogArea?? '800,600')" tooltip data-title="新增#(codeGen.modelTitle?? (codeGen.pageTitle?? codeGen.mainTableRemark??))"><i class="fa fa-plus"></i></button>#end
 	#if(codeGen.isPageTitleRefreshBtn)<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>#end
 	#if(codeGen.isCrud && codeGen.isPageTitleInitRankBtn)<button data-ajaxbtn data-confirm="确认初始化顺序吗？" data-handler="refreshJBoltTable" tooltip data-title="初始化排序" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initSortRank'):('admin/codegen/testAjax'))" class="btn btn-outline-info btn-sm" ><i class="fa fa-sort"></i></button>#end
 	#if(codeGen.isCrud && !codeGen.isToolbar&&codeGen.isImportExcel)<button data-dialogbtn data-btn="close" tooltip data-area="600,400"  data-handler="jboltTablePageToFirst" data-title="导入Excel数据" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/initImportExcel'):('admin/codegen/initImportExcel/'+codeGen.id))" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>#end
@@ -87,7 +87,7 @@
 	{@if data.isDeleted}
 	<a class="text-info mr-1" data-openpage="dialog" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/#(dataIdStr??)" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="查看#(codeGen.mainTableRemark??)"><i class="fa fa-eye"></i></a>
 	{@else}
-	<a class="jbolt_table_editbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/#(dataIdStr??)" data-handler="refreshJBoltTable" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="编辑#(codeGen.mainTableRemark??)"><i class="fa fa-edit"></i></a>
+	<a class="jbolt_table_editbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/#(dataIdStr??)" data-handler="refreshJBoltTable" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="编辑#(codeGen.modelTitle?? (codeGen.pageTitle?? codeGen.mainTableRemark??))"><i class="fa fa-edit"></i></a>
 	{@/if}
 #end
 #if(codeGen.isCrud && codeGen.isShowOptcolDel)
@@ -113,10 +113,10 @@
 <div class="jbolt_table_toolbar" id="#(codeGen.modelName)_toolbar#if(codeGenServiceMode??)_#[[#]]#(pageId)#end">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 #if(codeGen.isCrud && codeGen.isToolbarAddBtn)
-	<button data-dialogbtn data-area="#(codeGen.formDialogArea?? '800,600')"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  data-title="新增#(codeGen.mainTableRemark??)" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/add'):'admin/codegen/formPortalTest/'+codeGen.id)" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="#(codeGen.formDialogArea?? '800,600')"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  data-title="新增#(codeGen.modelTitle?? (codeGen.pageTitle?? codeGen.mainTableRemark??))" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/add'):'admin/codegen/formPortalTest/'+codeGen.id)" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
 #end
 #if(codeGen.isCrud && codeGen.isToolbarEditBtn)
-	<button data-dialogbtn data-area="#(codeGen.formDialogArea?? '800,600')"  data-handler="refreshJBoltTable"  id="toolbar_editBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  data-title="编辑#(codeGen.mainTableRemark??)" data-check-handler="jboltTableGetCheckedId" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/edit/'):'admin/codegen/formPortalTest/'+codeGen.id+'-')" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-dialogbtn data-area="#(codeGen.formDialogArea?? '800,600')"  data-handler="refreshJBoltTable"  id="toolbar_editBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"  data-title="编辑#(codeGen.modelTitle?? (codeGen.pageTitle?? codeGen.mainTableRemark??))" data-check-handler="jboltTableGetCheckedId" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/edit/'):'admin/codegen/formPortalTest/'+codeGen.id+'-')" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
 #end
 #if(codeGen.isCrud && codeGen.isToolbarDelBtn)
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn#if(codeGenServiceMode??)_#[[#]]#(pageId)#end" data-url="#(codeGenServiceMode?(codeGen.controllerPathWithoutFirstSlash+'/deleteByIds?ids='):'admin/codegen/testAjax?ids=')" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>

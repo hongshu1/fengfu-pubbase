@@ -194,6 +194,11 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setHtmlViewPath(FileUtil.normalize("/_view/" + codeGen.getControllerPath()));
         codeGen.setRoutesScanPackage(codeGen.getMainJavaPackage());
         codeGen.setIsNeedAdminInterceptor(true);
+        if (isOk(codeGen.getMainTableRemark())) {
+            codeGen.setModelTitle(codeGen.getMainTableRemark());
+        }else{
+            codeGen.setModelTitle(codeGen.getModelName());
+        }
         boolean success = codeGen.save();
         if (success) {
             codeGenModelAttrService.genMainTableAttrs(codeGen.getId());
@@ -342,6 +347,9 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setState(CodeGenState.NOT_GEN.getValue());
         if(isOk(codeGen.getIsCrud())){
             codeGen.setIsShowOptcol(codeGen.getIsCrud());
+        }
+        if (notOk(codeGen.getModelTitle())) {
+            codeGen.setModelTitle(StrKit.defaultIfBlank(codeGen.getIndexHtmlPageTitle(),codeGen.getModelName()));
         }
         boolean success = codeGen.update();
         if(success){
