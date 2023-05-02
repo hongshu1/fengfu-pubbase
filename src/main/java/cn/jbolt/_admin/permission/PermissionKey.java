@@ -170,7 +170,7 @@ public class PermissionKey {
 	 */
 	public static final String EMAIL_RECEIVER = "email_receiver";
 	/**
-	 * 系统管理
+	 * 系统配置
 	 */
 	public static final String  SYSTEMMGR = " systemmgr";
 	/**
@@ -1425,6 +1425,10 @@ public class PermissionKey {
 	 * 表单类别
 	 */
 	public static final String FORM_CATEGORY = "form_category";
+	/**
+	 * 导入字段配置
+	 */
+	public static final String CUS_FIELDS_MAPPINGM = "cus_fields_mappingm";
 	/**
 	 * 新增
 	 */
