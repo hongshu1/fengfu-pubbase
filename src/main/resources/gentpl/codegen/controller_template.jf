@@ -31,7 +31,7 @@ import #(codeGen.servicePackage+"."+codeGen.serviceName??);
 import com.jfinal.aop.Before;
 #end
 #if(codeGen.isNeedAdminInterceptor??)
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 #end
 #if(codeGen.isCrud??)
 import com.jfinal.plugin.activerecord.tx.Tx;

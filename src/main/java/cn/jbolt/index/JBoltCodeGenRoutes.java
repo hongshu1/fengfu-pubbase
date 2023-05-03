@@ -2,7 +2,7 @@ package cn.jbolt.index;
 
 import cn.jbolt._admin.codegen.CodeGenAdminController;
 import cn.jbolt._admin.codegen.modelattr.CodeGenModelAttrAdminController;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.config.Routes;
 
 /**
