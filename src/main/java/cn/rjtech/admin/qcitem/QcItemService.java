@@ -102,16 +102,16 @@ public class QcItemService extends BaseService<QcItem> {
         return ret(result);
     }
 
-    /*
+    /**
      * 项目编码是否重复
-     * */
+     */
     public Long findQcItemCode(String cqcItemCode) {
         return queryColumn(selectSql().select(QcItem.CQCITEMCODE).eq(QcItem.CQCITEMCODE, cqcItemCode));
     }
 
-    /*
+    /**
      * 检验项目名称
-     * */
+     */
     public List<QcItem> findQcItemName(String cqcItemName) {
         return query(selectSql().select(QcItem.CQCITEMNAME).eq(QcItem.CQCITEMNAME, cqcItemName).eq(QcItem.ISDELETED, "0"));
     }
@@ -191,9 +191,9 @@ public class QcItemService extends BaseService<QcItem> {
         return deleteById(id, true);
     }
 
-    /*
+    /**
      * 导出excel文件
-     * */
+     */
     public JBoltExcel exportExcelTpl(List<QcItem> datas) {
         //2、创建JBoltExcel
         JBoltExcel jBoltExcel = JBoltExcel

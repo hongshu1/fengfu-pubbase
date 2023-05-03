@@ -171,15 +171,14 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 	 * @param vendorDateList 	到货计划主表按存货去重集合
 	 * @param demandPlanDMap	可根据存货对象获取到货计划细表
 	 * @param calendarMap		日期集合
-	 * @param invChangeMap		可根据存货对象获取转换后的对象
 	 * @param puOrderRefMap
 	 */
-	public void setVendorDateList(int type, List<Record> vendorDateList , Map<Long, Map<String, BigDecimal>> demandPlanDMap, Map<String, Integer> calendarMap, Map<Long, Record> invChangeMap, Map<Long, List<PurchaseOrderRef>> puOrderRefMap){
+	public void setVendorDateList(int type, List<Record> vendorDateList , Map<Long, Map<String, BigDecimal>> demandPlanDMap, Map<String, Integer> calendarMap,  Map<Long, List<PurchaseOrderRef>> puOrderRefMap){
 		// 同一种的存货编码需要汇总在一起。
 		// 将日期设值。
 		for (Record record : vendorDateList){
 			// 存货id
-			Long invId = record.getLong(PurchaseOrderD.ISOURCEINVENTORYID);
+			Long invId = record.getLong(PurchaseOrderD.IINVENTORYID);
 			// 找出对应的到货细表id
 			if (puOrderRefMap.containsKey(invId)){
 				record.set(PurchaseOrderM.PURCHASEORDERREFLIST, puOrderRefMap.get(invId));
@@ -200,8 +199,7 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 			Map<String, BigDecimal> dateQtyMap = demandPlanDMap.get(invId);
 			// 统计合计数量
 			BigDecimal amount = BigDecimal.ZERO;
-			// 转换前合计数量
-			BigDecimal sourceSum = BigDecimal.ZERO;
+			
 			for (String dateStr : dateQtyMap.keySet()){
 				// 原数量
 				BigDecimal qty = dateQtyMap.get(dateStr);
@@ -217,30 +215,12 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 				if (calendarMap.containsKey(formatDateStr)){
 					Integer index = calendarMap.get(formatDateStr);
 					arr[index] = qty;
-					// 转换率，默认为1
-					BigDecimal rate = BigDecimal.ONE;
-					// 判断当前存货是否存在物料转换
-					if (invChangeMap.containsKey(invId)){
-						Record invChangeRecord = invChangeMap.get(invId);
-						// 获取转换率
-						rate = invChangeRecord.getBigDecimal(InventoryChange.ICHANGERATE);
-						// 获取转换后的id
-						record.set(PurchaseOrderD.IINVENTORYID, invChangeRecord.getLong(PurchaseOrderM.IAFTERINVENTORYID));
-						// 需更改转换后的数据
-						record.set(PurchaseOrderM.AFTERCINVCODE, invChangeRecord.getLong(PurchaseOrderM.AFTERCINVCODE));
-						record.set(PurchaseOrderM.AFTERCINVCODE1, invChangeRecord.getLong(PurchaseOrderM.AFTERCINVCODE1));
-						record.set(PurchaseOrderM.AFTERCINVNAME1, invChangeRecord.getLong(PurchaseOrderM.AFTERCINVNAME1));
-						record.set(PurchaseOrderD.ISPRESENT, invChangeRecord.getLong(PurchaseOrderD.ISPRESENT));
-						record.set(PurchaseOrderM.IPKGQTY, invChangeRecord.getLong(PurchaseOrderM.IPKGQTY));
-						record.set(PurchaseOrderM.CINVSTD, invChangeRecord.getLong(PurchaseOrderM.CINVSTD));
-						record.set(PurchaseOrderM.CUOMNAME, invChangeRecord.getLong(PurchaseOrderM.CUOMNAME));
-					}
+					
 					// 区分是采购还是委外
 					if (type == 1){
 						PurchaseorderdQty purchaseorderdQty = purchaseorderdQtyService.createPurchaseorderdQty(Integer.parseInt(yearStr),
 								Integer.parseInt(monthStr),
 								Integer.parseInt(dayStr),
-								qty.multiply(rate),
 								qty
 						);
 						purchaseorderdQtyList.add(purchaseorderdQty);
@@ -248,19 +228,16 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 						SubcontractorderdQty subcontractOrderdQty = subcontractorderdQtyService.createSubcontractOrderdQty(Integer.parseInt(yearStr),
 								Integer.parseInt(monthStr),
 								Integer.parseInt(dayStr),
-								qty.multiply(rate),
 								qty
 						);
 						subcontractOrderdQtyList.add(subcontractOrderdQty);
 					}
 					// 统计数量汇总
-					amount = amount.add(qty.multiply(rate));
-					sourceSum = sourceSum.add(qty);
+					
+					amount = amount.add(qty);
 				}
 			}
-			if (ObjectUtil.isNull(record.getLong(PurchaseOrderD.IINVENTORYID))){
-				record.set(PurchaseOrderD.IINVENTORYID, invId);
-			}
+			
 			// 字段记录 判断委外或采购订单数量是否为空
 			if (type == 1){
 				if (CollectionUtil.isNotEmpty(purchaseorderdQtyList)){
@@ -273,7 +250,6 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 			}
 			
 			record.set(PurchaseOrderD.ISUM, amount);
-			record.set(PurchaseOrderD.ISOURCESUM, sourceSum);
 		}
 	}
 	

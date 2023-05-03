@@ -128,9 +128,9 @@ public class QcItemAdminController extends BaseAdminController {
         renderJson(service.deleteByIds(get("ids")));
     }
 
-    /*
+    /**
     * 检查项目是否被引用了
-    * */
+    */
     public String checkQcItemIsUse(Long id){
         String msg = "";
         QcItem qcItem = service.findById(id);
@@ -148,9 +148,9 @@ public class QcItemAdminController extends BaseAdminController {
         renderJson(service.toggleBoolean(getLong(0), "isDeleted"));
     }
 
-    /*
+    /**
      * 导出选中
-     * */
+     */
     public void exportExcelByIds() {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -168,9 +168,9 @@ public class QcItemAdminController extends BaseAdminController {
         renderBytesToExcelXlsFile(jBoltExcel);
     }
 
-    /*
+    /**
      * 导出全部
-     * */
+     */
     public void exportExcelAll() {
         List<Record> rows = service.list(getKv());
         if (notOk(rows)) {

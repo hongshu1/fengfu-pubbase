@@ -65,14 +65,6 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     }
 
     /**
-     * 数据源
-     */
-    public void datas() {
-        Page<Record> recordPage = service.pageList(getKv());
-        renderJsonData(recordPage);
-    }
-
-    /**
      * 新增
      */
     public void add() {
@@ -121,32 +113,18 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     }
 
     /**
-     * 切换isCompleted
+     * 数据源
      */
-    public void toggleIsCompleted() {
-        renderJson(service.toggleBoolean(getLong(0), "isCompleted"));
+    public void datas() {
+        renderJsonData(service.pageList(getKv()));
     }
 
     /**
-     * 切换isCpkSigned
+     * 生成
      */
-    public void toggleIsCpkSigned() {
-        renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
-    }
-
-    /**
-     * 切换isOk
-     */
-    public void toggleIsOk() {
-        renderJson(service.toggleBoolean(getLong(0), "isOk"));
-    }
-
-    /**
-     * 导入图片
-     */
-    public void uploadImage() {
-        String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
-        renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+    public void createTable(@Para(value = "iautoid") Long iautoid,
+                            @Para(value = "cqcformname") String cqcformname) {
+        renderJson(service.createTable(iautoid, cqcformname));
     }
 
     /**
@@ -160,11 +138,18 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         render("checkout.html");
     }
 
-    /*
+    /**
      * 点击检验时，进入弹窗自动加载table的数据
-     * */
+     */
     public void getCheckOutTableDatas() {
         renderJsonData(service.getCheckOutTableDatas(getKv()));
+    }
+
+    /**
+     * 在检验页面点击确定
+     */
+    public void saveCheckOutTable(JBoltPara JboltPara) {
+        renderJson(service.saveCheckOutTable(JboltPara));
     }
 
     /**
@@ -181,6 +166,13 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     }
 
     /**
+     * 点击查看时，进入弹窗自动加载table的数据
+     */
+    public void getonlyseeDatas() {
+        renderJsonData(service.getonlyseelistByiautoid(getKv()));
+    }
+
+    /**
      * 打开编辑页面
      */
     public void editrcvDocQcFormD() {
@@ -194,31 +186,39 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     }
 
     /**
-     * 点击查看时，进入弹窗自动加载table的数据
-     */
-    public void getonlyseeDatas() {
-        renderJsonData(service.getonlyseelistByiautoid(getKv()));
-    }
-
-    /*
      * 在编辑页面点击确定
-     * */
-    public void editTable(JBoltPara JboltPara) {
-        renderJson(service.editTable(JboltPara));
+     */
+    public void saveEditTable(JBoltPara JboltPara) {
+        renderJson(service.saveEditTable(JboltPara));
     }
 
-    /*
-     * 在检验页面点击确定
-     * */
-    public void editCheckOutTable(JBoltPara JboltPara) {
-        renderJson(service.editCheckOutTable(JboltPara));
+    /**
+     * 切换isCompleted
+     */
+    public void toggleIsCompleted() {
+        renderJson(service.toggleBoolean(getLong(0), "isCompleted"));
     }
 
-    /*
-     * 生成
-     * */
-    public void createTable(@Para(value = "iautoid") Long iautoid,
-                            @Para(value = "cqcformname") String cqcformname) {
-        renderJson(service.createTable(iautoid,cqcformname));
+    /**
+     * 切换isOk
+     */
+    public void toggleIsOk() {
+        renderJson(service.toggleBoolean(getLong(0), "isOk"));
     }
+
+    /**
+     * 切换isCpkSigned
+     */
+    public void toggleIsCpkSigned() {
+        renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
+    }
+
+    /**
+     * 导入图片
+     */
+    public void uploadImage() {
+        String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
+        renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+    }
+
 }

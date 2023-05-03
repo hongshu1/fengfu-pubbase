@@ -1,0 +1,64 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+        <div class="row">
+            <div class="col-auto mb-3" style="width:400px;">
+
+                <div class="card">
+                    <div class="card-header py-2">
+                        <span class="d-inline-block py-1">所有表单</span>
+                        <div class="pull-right">
+                            <input type="text" class="form-control" id="searchFormCategoryInput_#(pageId)" placeholder="搜索"/>
+                        </div>
+                    </div>
+                    <div class="card-body overflow-auto" style="min-height:400px;">
+                        <div id="goodsBackCategoryTree"
+                             data-jstree
+                             data-target="portal"
+                             data-search-input="searchFormCategoryInput_#(pageId)"
+                             data-text-attr="cname"
+                             data-value-attr="iautoid"
+                             data-portalid="formcategoryPortal"
+                             data-onlyleaf="true"
+                             ###data-curd="true"
+                             data-open-level="1"
+                             data-read-url="admin/formcategory/jstree"
+                             ###data-add-url="admin/mall/goodsbackcategory/add/"
+                             ###data-edit-url="admin/mall/goodsbackcategory/edit/"
+                             ###data-delete-url="admin/mall/goodsbackcategory/delete/"
+                             ###data-move-url="admin/mall/goodsbackcategory/move/"
+                             data-change-handler="portalEdit_#(pageId)"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto">
+                #ajaxPortal("/admin/formfield","formcategoryPortal",true)
+            </div>
+        </div>
+
+    </div>
+</div>
+#end
+
+#define js()
+<script>
+    
+    function portalEdit_#(pageId)(tree, data) {
+        console.log(JSON.stringify(data));
+
+        var treeData = data.data;
+
+        if (treeData.itype && treeData.itype === 2) {
+            AjaxPortalUtil.go('formcategoryPortal', '/admin/formfield?iformid=' + treeData.id);
+        } else {
+            LayerMsgBox.error('只能选择表单进行操作', 1500);
+        }
+    }
+    
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="FormField_Form")
+#end
+

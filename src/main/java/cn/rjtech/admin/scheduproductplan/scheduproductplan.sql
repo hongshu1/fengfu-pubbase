@@ -525,6 +525,54 @@ WHERE a.isDeleted = '0'
       END AS NVARCHAR(30)) ) <= #para(enddate)
 #end
 
+#sql("getApsWeekscheduleLock")
+###获取当前层级上次排产锁定日期
+SELECT TOP 1 iLevel,dScheduleEndTime,dLockEndTime
+FROM Aps_WeekSchedule
+WHERE IsDeleted = 0 AND iLevel = #para(level)
+ORDER BY dLockEndTime DESC
+#end
+
+#sql("getApsScheduPlanList")
+###根据层级及日期获取月周生产计划表数据及部门信息
+SELECT
+    b.iYear,
+    b.iMonth,
+    b.iDate,
+    b.iQty2 AS Qty1S,
+    b.iQty3 AS Qty2S,
+    b.iQty4 AS Qty3S,
+    b.isLocked,
+    a.iInventoryId AS invId,
+    c.cInvCode,
+    c.cInvCode1,
+    c.cInvName1,
+    d.iWorkRegionMid,
+    e.cWorkCode,
+    e.cWorkName,
+    d.iDepId,
+    f.cDepCode,
+    f.cDepName
+FROM Aps_WeekScheduleDetails AS a
+         LEFT JOIN Aps_WeekScheduleD_Qty AS b ON a.iAutoId = b.iWeekScheduleDid
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+         LEFT JOIN Bd_InventoryWorkRegion AS d ON c.iAutoId = d.iInventoryId AND d.isDefault = 1 AND d.isDeleted = 0
+         LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId AND e.isDeleted = 0
+         LEFT JOIN Bd_Department AS f ON d.iDepId = f.iAutoId
+WHERE a.isDeleted = '0'
+  AND a.iLevel = #para(level)
+  AND
+        (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+        ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+        ELSE CAST(b.iDate AS NVARCHAR(30) )
+        END AS NVARCHAR(30)) ) >= #para(startdate)
+  AND
+        (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+        ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+        ELSE CAST(b.iDate AS NVARCHAR(30) )
+        END AS NVARCHAR(30)) ) <= #para(enddate)
+#end
+
 
 ###---------------------------------------------------------月周生产计划汇总---------------------
 

@@ -585,6 +585,16 @@ function changeIsAutoCache_#(pageId)(r,v){
 	form.find("#r_isKeyCache_false").click();
 }
 
+function changeIsGenCacheUtilClass_#(pageId)(r,v){
+	var fieldset = r.closest("fieldset");
+	var cacheClassCons=fieldset.find(".cache_class_control");
+	if(v=="true"){
+		cacheClassCons.removeClass("d-none");
+	}else{
+		cacheClassCons.addClass("d-none");
+	}
+}
+
 /**
  * 切换radio 是否启用SystemLog
  */

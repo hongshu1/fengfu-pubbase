@@ -67,9 +67,7 @@ public class MoDocService extends BaseService<MoDoc> {
 		}
 		//初始化状态
 		moDoc.setIStatus(1);
-		moDoc.setIType(2L);
-
-
+		moDoc.setIType(2);
 		LocalDate date = LocalDate.parse(moDoc.getDPlanDate().toString());
 		moDoc.setIYear(date.getYear());
 		moDoc.setIMonth(date.getMonthValue());

@@ -97,7 +97,7 @@ public class ForeignCurrencyAdminController extends BaseAdminController {
 	}
 	/**
 	 * 切换toggleIotherused
-	 * */
+	 */
 	public void toggleIotherused() {
 		renderJson(service.toggleIotherused(getLong(0)));
 	}

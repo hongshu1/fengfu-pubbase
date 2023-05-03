@@ -1,6 +1,7 @@
 <div class="card jb_vflex">
 	<div class="card-header jb_vheader_card">
 		<button onclick="ajaxSubmitForm('codeGenBaseForm',function(res){AjaxPortalUtil.refresh('#codegen_table_preview_portal_#(pageId),#codegen_form_preview_portal_#(pageId)');})" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存配置</button>
+		<button class="btn btn-info btn-sm" data-dialogbtn data-area="100%,100%" data-title="系统字典管理" data-btn="close" data-url="admin/dictionary"><i class="fa fa-cogs"></i> 字典数据管理</button>
 	</div>
 	<div class="card-body jb_vbody">
 		<form class="form" onsubmit="return false;" id="codeGenBaseForm" action="admin/codegen/updateBase" method="post">

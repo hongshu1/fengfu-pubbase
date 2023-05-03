@@ -213,9 +213,9 @@ public class WorkClassService extends BaseService<Workclass> {
         return dbTemplate("workclass.list", kv).find();
     }
 
-    /*
+    /**
      * 上传excel文件
-     * */
+     */
     public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
         JBoltExcel jBoltExcel = JBoltExcel
@@ -319,9 +319,9 @@ public class WorkClassService extends BaseService<Workclass> {
                 );
     }
 
-    /*
+    /**
      * 导出excel文件
-     * */
+     */
     public JBoltExcel exportExcelTpl(List<Workclass> datas) {
         // 2、创建JBoltExcel
         JBoltExcel jBoltExcel = JBoltExcel

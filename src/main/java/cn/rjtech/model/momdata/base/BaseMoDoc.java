@@ -12,8 +12,8 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
 public abstract class BaseMoDoc<M extends BaseMoDoc<M>> extends JBoltBaseModel<M>{
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
-	/** 来源类型：1. APS 2. 手工新增 **/
-    public static final String ITYPE = "iType";
+	/**来源类型：1. APS 2. 手工新增*/
+	public static final String ITYPE = "iType";
     /**制造工单任务ID*/
     public static final String IMOTASKID = "iMoTaskId";
     /**产线ID*/
@@ -65,22 +65,6 @@ public abstract class BaseMoDoc<M extends BaseMoDoc<M>> extends JBoltBaseModel<M
 	@JSONField(name = "iautoid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIAutoId() {
 		return getLong("iAutoId");
-	}
-	/**
-	 * 来源类型：1. APS 2. 手工新增
-	 */
-	public M setIType(java.lang.Long iType) {
-		set("iType", iType);
-		return (M)this;
-	}
-
-	/**
-	 * 来源类型：1. APS 2. 手工新增
-	 */
-	@JBoltField(name="itype" ,columnName="iType",type="Int", remark="来源类型", required=true, maxLength=19, fixed=0, order=1)
-	@JSONField(name = "itype", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIType() {
-		return getLong("iType");
 	}
 
 	/**
@@ -389,5 +373,23 @@ public abstract class BaseMoDoc<M extends BaseMoDoc<M>> extends JBoltBaseModel<M
 		return getStr("cVersion");
 	}
 
+
+
+
+	/**
+	 * 来源类型：1. APS 2. 手工新增
+	 */
+	public M setIType(java.lang.Integer iType) {
+		set("iType", iType);
+		return (M)this;
+	}
+	/**
+	 * 来源类型：1. APS 2. 手工新增
+	 */
+	@JBoltField(name="itype" ,columnName="iType",type="Integer", remark="来源类型", required=true, maxLength=10, fixed=0, order=7)
+	@JSONField(name = "itype")
+	public java.lang.Integer getIType() {
+		return getInt("iType");
+	}
 }
 
