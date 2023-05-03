@@ -13,7 +13,7 @@ SELECT md.iAutoId,
        bi.cInvCode, ### 存货编码
        bi.cInvCode1, ### 客户部番
        bi.cInvName1, ### 部品名称
-       bd.cDepName, ### 部门
+       bd.name as cDepName , ### 部门
        wr.cWorkName,  ### 产线名称
        ws.cWorkShiftName ### 班次名称
 FROM dbo.Mo_MoDoc AS md
@@ -22,9 +22,9 @@ FROM dbo.Mo_MoDoc AS md
      ON
          md.iInventoryId = bi.iAutoId
          LEFT JOIN
-     dbo.Bd_Department AS bd
+     #(getBaseDbName()).dbo.jb_dept AS bd
      ON
-         md.iDepartmentId = bd.iAutoId
+         md.iDepartmentId = bd.id
          LEFT JOIN
      dbo.Bd_WorkRegionM AS wr
      ON

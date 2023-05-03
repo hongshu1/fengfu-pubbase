@@ -10,6 +10,8 @@ import cn.rjtech.model.momdata.MoDoc;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * 在库检 Service
@@ -34,7 +36,24 @@ public class MoDocService extends BaseService<MoDoc> {
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv keywords) {
-		return dbTemplate("MoDoc.getPage",keywords).paginate(pageNumber,pageSize);
+		return dbTemplate("modoc.getPage",keywords).paginate(pageNumber,pageSize);
+	}
+	public HashMap<String, String> getStringStringHashMap() {
+		HashMap<String, String> stringStringHashMap = new HashMap<>();
+		stringStringHashMap.put("paln1","1");
+		stringStringHashMap.put("paln2","1");
+		stringStringHashMap.put("paln3","1");
+		stringStringHashMap.put("actual1","2");
+		stringStringHashMap.put("actual2","2");
+		stringStringHashMap.put("actual3","2");
+		stringStringHashMap.put("sate1","未完成");
+		stringStringHashMap.put("sate2","未完成");
+		stringStringHashMap.put("sate3","未完成");
+		String date = new Date().toString();
+		stringStringHashMap.put("time1", date);
+		stringStringHashMap.put("time2", date);
+		stringStringHashMap.put("time3", date);
+		return stringStringHashMap;
 	}
 
 	/**
@@ -46,12 +65,22 @@ public class MoDocService extends BaseService<MoDoc> {
 		if(moDoc==null || isOk(moDoc.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
+		//初始化状态
 		moDoc.setIStatus(1);
 		moDoc.setIType(2L);
+
+
 		LocalDate date = LocalDate.parse(moDoc.getDPlanDate().toString());
 		moDoc.setIYear(date.getYear());
 		moDoc.setIMonth(date.getMonthValue());
 		moDoc.setIDate(date.getDayOfMonth());
+		// 工艺路线先写死
+		moDoc.setIMoTaskId(1000L);
+		moDoc.setIInventoryId(1L);
+		moDoc.setIInventoryRouting(1L);
+		moDoc.setCVersion("2");
+		moDoc.setCRoutingName("测试");
+
 		boolean success=moDoc.save();
 
 		return ret(success);
