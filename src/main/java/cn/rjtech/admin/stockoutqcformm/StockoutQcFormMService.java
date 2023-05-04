@@ -97,36 +97,36 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         }
         //1、根据表格ID查询数据
         Long iQcFormId = stockoutQcFormM.getIQcFormId();//表格ID
-        List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", iQcFormId)).find();
+        List<Record> recordList = dbTemplate("stockoutqcformm.getCheckoutList", Kv.by("iqcformid", iQcFormId)).find();
         if (recordList.isEmpty()) {
             return fail(cqcformname + "：没有检验项目，无法生成出库检验表");
         }
         ArrayList<StockoutQcFormD> stockoutQcFormDS = new ArrayList<>();
-        for (Record record : recordList) {
-            StockoutQcFormD stockoutQcFormD = new StockoutQcFormD();//质量管理-来料检单行配置表
-            stockoutQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
-            stockoutQcFormD.setIStockoutQcFormMid(iautoid);//来料检id
-            stockoutQcFormD.setIQcFormId(iQcFormId);//检验表格ID
-            stockoutQcFormD.setIFormParamId(record.getLong("iFormParamId"));//检验项目ID
-            stockoutQcFormD.setISeq(record.get("iSeq"));
-            stockoutQcFormD.setISubSeq(record.get("iSubSeq"));
-            stockoutQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
-            stockoutQcFormD.setIType(record.get("iType"));
-            stockoutQcFormD.setIStdVal(record.get("iStdVal"));
-            stockoutQcFormD.setIMaxVal(record.get("iMaxVal"));
-            stockoutQcFormD.setIMinVal(record.get("iMinVal"));
-            stockoutQcFormD.setCOptions(record.get("cOptions"));
-            stockoutQcFormDS.add(stockoutQcFormD);
-        }
-        stockoutQcFormDService.batchSave(stockoutQcFormDS);
+        boolean result = tx(() -> {
+            for (Record record : recordList) {
+                StockoutQcFormD stockoutQcFormD = new StockoutQcFormD();//质量管理-来料检单行配置表
+                stockoutQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
+                stockoutQcFormD.setIStockoutQcFormMid(iautoid);//来料检id
+                stockoutQcFormD.setIQcFormId(iQcFormId);//检验表格ID
+                stockoutQcFormD.setIFormParamId(record.getLong("iFormParamId"));//检验项目ID
+                stockoutQcFormD.setISeq(record.get("iSeq"));
+                stockoutQcFormD.setISubSeq(record.get("iSubSeq"));
+                stockoutQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
+                stockoutQcFormD.setIType(record.get("iType"));
+                stockoutQcFormD.setIStdVal(record.get("iStdVal"));
+                stockoutQcFormD.setIMaxVal(record.get("iMaxVal"));
+                stockoutQcFormD.setIMinVal(record.get("iMinVal"));
+                stockoutQcFormD.setCOptions(record.get("cOptions"));
+                stockoutQcFormDS.add(stockoutQcFormD);
+            }
+            stockoutQcFormDService.batchSave(stockoutQcFormDS);
 
-        //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检-1”
-        stockoutQcFormM.setIStatus(1);
-        Ret ret = update(stockoutQcFormM);
-        if (ret.isFail()) {
-            return ret;
-        }
-        return SUCCESS;
+            //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检-1”
+            stockoutQcFormM.setIStatus(1);
+            Ret ret = update(stockoutQcFormM);
+            return true;
+        });
+        return ret(result);
     }
 
     /**
@@ -169,7 +169,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         boolean result = tx(() -> {
             for (int i = 0; i < serializeSubmitList.size(); i++) {
                 JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
-                String istockoutqcformdid = jsonObject.getString("iautoid");
+                Long istockoutqcformdid = jsonObject.getLong("iautoid");
                 String iseq = jsonObject.getString("iseq");
                 JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
                 JSONArray elementList = serializeElement.getJSONArray(0);
@@ -397,7 +397,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     /**
      * 给出库检明细列值表传参
      */
-    public void saveStockQcFormdLineModel(StockoutqcformdLine stockoutqcformdLine, String iautoid, String iseq, String cvalue) {
+    public void saveStockQcFormdLineModel(StockoutqcformdLine stockoutqcformdLine, Long iautoid, String iseq, String cvalue) {
         stockoutqcformdLine.setIAutoId(JBoltSnowflakeKit.me.nextId());
         stockoutqcformdLine.setIStockoutQcFormDid(Long.valueOf(iautoid));
         stockoutqcformdLine.setISeq(Integer.valueOf(iseq));
