@@ -1430,6 +1430,10 @@ public class PermissionKey {
 	 */
 	public static final String CUS_FIELDS_MAPPINGM = "cus_fields_mappingm";
 	/**
+	 * 编码规则配置
+	 */
+	public static final String CODING_RULEM = "coding_rulem";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";

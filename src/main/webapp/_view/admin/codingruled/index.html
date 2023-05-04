@@ -1,0 +1,100 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>系统设置-编码规则明细</h1></div>
+	<div class="col">
+	<form class="form-inline" id="CodingRuleD_form_#(pageId)">
+
+<select class="form-control" name="cCodingType"
+	data-autoload
+	data-url="admin/dictionary/options?key=null"
+	data-select-type="select"
+	data-text="=类型： 1. 手工输入 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/codingruled/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增系统设置-编码规则明细"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="CodingRuleD_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iCodingRuleMid}</td>
+<td>${data.iSeq}</td>
+<td>${data.cCodingType}</td>
+<td>${data.cCodingValue}</td>
+<td>${data.iLength}</td>
+<td>${data.iBeginValue}</td>
+<td>${data.cSperator}</td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/codingruled/edit/${data.id}" data-area="800,600" data-title="查看系统设置-编码规则明细"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/codingruled/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑系统设置-编码规则明细"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/codingruled/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="CodingRuleD_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增系统设置-编码规则明细" data-url="admin/codingruled/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑系统设置-编码规则明细" data-check-handler="jboltTableGetCheckedId" data-url="admin/codingruled/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/codingruled/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="CodingRuleD_form_#(pageId)"
+	   data-url="admin/codingruled/datas"
+	   data-rowtpl="CodingRuleD_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="CodingRuleD_page"
+	   data-toolbar="CodingRuleD_toolbar_#(pageId)"
+>
+<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="100" data-column="iAutoId">主键ID</th>
+	<th data-width="100" data-column="iCodingRuleMid">编码规则主表ID</th>
+	<th data-width="100" data-column="iSeq">序号</th>
+	<th data-width="150" data-column="cCodingType">类型： 1. 手工输入 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日</th>
+	<th data-width="150" data-column="cCodingValue">来源值</th>
+	<th data-width="100" data-column="iLength">长度</th>
+	<th data-width="150" data-column="iBeginValue">起始值</th>
+	<th data-width="150" data-column="cSperator">分隔符</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
