@@ -7,10 +7,9 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InStockDefect;
-import cn.rjtech.model.momdata.InStockQcFormM;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
 
 /**
