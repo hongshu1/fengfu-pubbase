@@ -3,13 +3,13 @@ package cn.rjtech.api.stockoutqcformm;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
+import cn.jbolt.core.kit.JBoltModelKit;
 import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
 import cn.rjtech.entity.vo.stockoutqcformm.*;
 import cn.rjtech.model.momdata.StockoutQcFormM;
-import cn.rjtech.util.JBoltModelKit;
 
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;

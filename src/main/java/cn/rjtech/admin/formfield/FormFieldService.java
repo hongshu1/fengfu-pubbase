@@ -7,11 +7,15 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.config.DictionaryTypeKey;
+import cn.rjtech.model.momdata.Form;
 import cn.rjtech.model.momdata.FormField;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.template.stat.ast.For;
+
+import java.util.List;
 
 /**
  * 系统配置-表单字段
@@ -140,4 +144,14 @@ public class FormFieldService extends BaseService<FormField> {
         return null;
     }
 
+    public List<Record> getAutocompleteList(long iformid, String keywords, Integer limit) {
+        Sql sql = selectSql()
+                .eq(FormField.ISDELETED, ZERO_STR)
+                .eq(FormField.IFORMID, iformid)
+                .likeMulti(keywords, FormField.CFIELDCODE, FormField.CFIELDNAME)
+                .page(1, limit);
+
+        return findRecord(sql);
+    }
+    
 }

@@ -299,7 +299,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 			return;
 		}
 		List<Dictionary> key = JBoltDictionaryCache.me.getListByTypeKey(get("key"), true);
-		Integer month=Integer.valueOf(pid);
+		int month= Integer.parseInt(pid);
 		List<Dictionary> result=new ArrayList<>();
 		switch (month){
 			case 1:
@@ -329,4 +329,9 @@ public class DictionaryAdminController extends JBoltBaseController {
 		}
 		renderJsonData(result);
 	}
+
+    public void map() {
+//        renderJsonData(service.getDictionaryMapByTypeKey());
+    }
+    
 }

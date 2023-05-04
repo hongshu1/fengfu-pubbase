@@ -1,6 +1,6 @@
 package cn.rjtech.util.xml;
 
-import cn.rjtech.base.exception.CommonException;
+import cn.jbolt.core.exception.CommonException;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;

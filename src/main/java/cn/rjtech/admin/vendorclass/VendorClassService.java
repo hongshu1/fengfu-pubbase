@@ -36,7 +36,6 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.QcParam;
 import cn.rjtech.model.momdata.VendorClass;
 import cn.rjtech.model.momdata.Workclass;
-import cn.rjtech.util.JBoltModelKit;
 import cn.rjtech.util.ValidationUtils;
 
 /**

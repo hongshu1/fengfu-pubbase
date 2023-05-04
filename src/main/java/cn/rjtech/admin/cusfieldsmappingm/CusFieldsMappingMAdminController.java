@@ -1,7 +1,7 @@
 package cn.rjtech.admin.cusfieldsmappingm;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -9,9 +9,11 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.cusfieldsmappingform.CusfieldsmappingFormService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.CusFieldsMappingM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -44,7 +46,7 @@ public class CusFieldsMappingMAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("cFormatName"), getBoolean("isEnabled"), get("iformids")));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("cformatname"), getBoolean("isEnabled"), get("iformids")));
     }
 
     /**
@@ -101,6 +103,17 @@ public class CusFieldsMappingMAdminController extends BaseAdminController {
      */
     public void toggleIsEnabled() {
         renderJson(service.toggleBoolean(getLong(0), "isEnabled"));
+    }
+
+    /**
+     * 映射字段列表
+     */
+    public void cusfieldsmappingd(@Para(value = "icusfieldsmappingmid") Long icusfieldsmappingmid) {
+        ValidationUtils.validateId(icusfieldsmappingmid, JBoltMsg.PARAM_ERROR);
+        
+        keepPara();
+        set("iformids", CollUtil.join(cusfieldsmappingFormService.getIformIdsByMid(icusfieldsmappingmid), COMMA));
+        render("_cusfieldsmappingd.html");
     }
 
 }

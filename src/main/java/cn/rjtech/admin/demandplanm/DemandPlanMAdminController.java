@@ -4,7 +4,7 @@ import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.DemandPlanM;
 /**
