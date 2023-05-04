@@ -13,6 +13,7 @@ import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/QcInspection", viewPath = "/_view/admin/QcInspection")
+@Path(value = "/admin/qcinspection", viewPath = "/_view/admin/qcinspection")
 public class QcInspectionAdminController extends BaseAdminController {
 
 	@Inject
@@ -41,12 +42,19 @@ public class QcInspectionAdminController extends BaseAdminController {
 	public void index() {
 		render("index.html");
 	}
-  	
-  	/**
-	* 数据源
-	*/
+
+
+	/**
+	 * 数据源
+	 */
 	public void datas() {
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+		Kv kv =new Kv();
+		kv.setIfNotNull("selectparam", get("cdocno"));
+		kv.setIfNotNull("selectparam", get("cchainname"));
+		kv.setIfNotNull("selectparam", get("cchainno"));
+		kv.setIfNotNull("starttime", get("starttime"));
+		kv.setIfNotNull("endtime", get("endtime"));
+		renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));
 	}
 
    /**
@@ -72,14 +80,15 @@ public class QcInspectionAdminController extends BaseAdminController {
 	public void edit2() {
 		set("iautoid", get("iautoid"));
 		set("type", get("type"));
-		QcInspection qcInspection = service.findById(get("iautoid"));
+		Record qcInspection = service.getQcInspectionList(getLong("iautoid"));
 		if (isNull(get("iautoid"))) {
 			render("add2.html");
 		}else {
-			String supplierInfoId = qcInspection.getCMeasureAttachments();
+			String supplierInfoId = qcInspection.get("cmeasureattachments");
 
-			if (notNull(qcInspection.getCMeasureAttachments())){
-				set("files", service.getFilesById(supplierInfoId));
+			if (notNull(qcInspection.get("cmeasureattachments"))){
+				List<Record> files = service.getFilesById(supplierInfoId);
+				set("files", files);
 			}
 			set("qcInspection", qcInspection);
 			render("edit2.html");
@@ -94,14 +103,14 @@ public class QcInspectionAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(QcInspection.class, "qcInspection")));
+		renderJson(service.save(getModel(QcInspection.class, "qcinspection")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(QcInspection.class, "qcInspection")));
+		renderJson(service.update(getModel(QcInspection.class, "qcinspection")));
 	}
 
    /**
@@ -145,7 +154,7 @@ public class QcInspectionAdminController extends BaseAdminController {
 	}
 
 	public void updateEditTable() {
-		renderJson(service.updateEditTable(getJBoltTable(), getKv()));
+		renderJson(service.updateEditTable(getJBoltTable() ,getKv()));
 	}
 
 
