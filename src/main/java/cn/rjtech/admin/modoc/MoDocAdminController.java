@@ -1,5 +1,7 @@
 package cn.rjtech.admin.modoc;
 
+import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -8,6 +10,9 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoDoc;
+
+import java.util.HashMap;
+
 /**
  * 在库检 Controller
  * @ClassName: MoDocAdminController
@@ -16,7 +21,8 @@ import cn.rjtech.model.momdata.MoDoc;
  */
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/MoDoc", viewPath = "/_view/admin/MoDoc")
+@Before(JBoltAdminAuthInterceptor.class)
+@Path(value = "/admin/modoc", viewPath = "/_view/admin/modoc")
 public class MoDocAdminController extends BaseAdminController {
 
 	@Inject
@@ -44,15 +50,29 @@ public class MoDocAdminController extends BaseAdminController {
 	}
 
    /**
-	* 编辑
+	* 查看
 	*/
-	public void edit() {
+	public void details() {
 		MoDoc moDoc=service.findById(getLong(0));
 		if(moDoc == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
 		set("moDoc",moDoc);
+		//拼上生产任务数据
+		HashMap<String, String> stringStringHashMap = service.getJob(getLong(0));
+		set("productionTasks",stringStringHashMap);
+		// 拼上 科系名称,存货编码,客户部番,部品名称,生产单位,规格,产线名称,班次名称,工艺路线名称
+		render("_detailsform.html");
+	}
+
+
+
+
+	/**
+	 * 新增
+	 */
+	public void edit() {
 		render("edit.html");
 	}
 
@@ -70,19 +90,8 @@ public class MoDocAdminController extends BaseAdminController {
 		renderJson(service.update(getModel(MoDoc.class, "moDoc")));
 	}
 
-   /**
-	* 批量删除
-	*/
-	public void deleteByIds() {
-		renderJson(service.deleteByBatchIds(get("ids")));
-	}
 
-   /**
-	* 删除
-	*/
-	public void delete() {
-		renderJson(service.delete(getLong(0)));
-	}
+
 
 
 }

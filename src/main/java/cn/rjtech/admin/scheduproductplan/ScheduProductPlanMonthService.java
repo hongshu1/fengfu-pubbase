@@ -14,6 +14,8 @@ import cn.rjtech.admin.apsweekschedule.ApsWeekscheduleService;
 import cn.rjtech.admin.apsweekscheduledetails.ApsWeekscheduledetailsService;
 import cn.rjtech.admin.apsweekscheduledqty.ApsWeekscheduledQtyService;
 import cn.rjtech.admin.calendar.CalendarService;
+import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.momotask.MoMotaskService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
@@ -68,6 +70,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     private ApsWeekscheduledetailsService apsWeekscheduledetailsService;
     @Inject
     private ApsWeekscheduledQtyService apsWeekscheduledQtyService;
+    @Inject
+    private MoMotaskService motaskService;
+    @Inject
+    private MoDocService moDocService;
 
 
     /**
@@ -910,7 +916,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     /**
      * 锁定计划
      */
-    public List<ScheduProductYearViewDTO> lockScheduPlan(Kv kv) {
+    public Ret lockScheduPlan(Kv kv) {
         //排产层级
         int level = kv.getInt("level");
         //锁定截止日期
@@ -1009,41 +1015,127 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         idsJoin = idsJoin + "601)";
 
 
-
-        //对部门逐个处理
-        for (Long deptId : deptInvListMap.keySet()) {
-
-
-
-            List<String> recordList = deptInvListMap.get(deptId);
-            for (String inv : recordList){
-                //inv信息
-                Record invInfo = invInfoMap.get(inv);
-                //key:yyyy-MM-dd   value:qty1S
-                Map<String,BigDecimal> dateQtyMap = invPlanDate1SMap.get(inv);
-
-                Record planRecord = new Record();
-                planRecord.set("cInvCode",inv);
-                planRecord.set("cInvCode1",invInfo.getStr("cInvCode1"));
-                planRecord.set("cInvName1",invInfo.getStr("cInvName1"));
-                planRecord.set("cWorkName",invInfo.getStr("cWorkName"));
-
-                for (String date : dateQtyMap.keySet()) {
-                    Date dPlanDate = DateUtils.parseDate(date);
-                    int year = Integer.parseInt(date.substring(0,4));
-                    int month = Integer.parseInt(date.substring(5,7));
-                    int day = Integer.parseInt(date.substring(8,10));
-                    BigDecimal qty = dateQtyMap.get(date);
+        //TODO:周分类
+        //key:1   value:日期集 有序
+        Map<Integer,List<String>> weekDateMap = new HashMap<>();
 
 
-                }
-
+        //TODO:根据物料集查询各班次
+        List<Record> invCapacityList = dbTemplate("scheduproductplan.getInvCapacityList",Kv.by("ids",idsJoin)).find();
+        //key:inv    value:iWorkShiftMid
+        Map<String,Long> invCapacity1SMap = new HashMap<>();
+        //key:inv    value:iWorkShiftMid
+        Map<String,Long> invCapacity2SMap = new HashMap<>();
+        //key:inv    value:iWorkShiftMid
+        Map<String,Long> invCapacity3SMap = new HashMap<>();
+        for (Record record : invCapacityList){
+            String cInvCode = record.getStr("cInvCode");
+            Long iWorkShiftMid = record.getLong("iWorkShiftMid");
+            String cWorkShiftCode = record.getStr("cWorkShiftCode");
+            if (cWorkShiftCode.contains("1S")){
+                invCapacity1SMap.put(cInvCode,iWorkShiftMid);
+            }
+            if (cWorkShiftCode.contains("2S")){
+                invCapacity2SMap.put(cInvCode,iWorkShiftMid);
+            }
+            if (cWorkShiftCode.contains("3S")){
+                invCapacity3SMap.put(cInvCode,iWorkShiftMid);
             }
         }
 
+        List<MoMotask> moTaskList = new ArrayList<>();
+        List<MoDoc> moDocList = new ArrayList<>();
 
+        Date nowDate = new Date();
+        String dateStr = DateUtils.formatDate(nowDate,"yyyyMMdd");
+        //对部门逐个处理
+        for (Long deptId : deptInvListMap.keySet()) {
+            for (Integer week : weekDateMap.keySet()){
+                //当前周日期集
+                List<String> dateList = weekDateMap.get(week);
 
-        return null;
+                //任务单号
+                String planNo = momDataFuncService.getNextRouteNo(1L, "MO"+dateStr, 3);
+                Long taskId = JBoltSnowflakeKit.me.nextId();
+                Date startdate = DateUtils.parseDate(dateList.get(0));
+                Date endDate = DateUtils.parseDate(dateList.get(dateList.size() - 1));
+                //主表
+                MoMotask motask = new MoMotask();
+                motask.setIAutoId(taskId);
+                motask.setIOrgId(deptId);
+                motask.setCMoPlanNo(planNo);
+                motask.setDBeginDate(startdate);
+                motask.setDEndDate(endDate);
+                motask.setIStatus(1);
+                motask.setIAuditStatus(0);
+                motask.setIAuditWay(1);
+                motask.setICreateBy(JBoltUserKit.getUserId());
+                motask.setDCreateTime(nowDate);
+                motask.setCCreateName(JBoltUserKit.getUserName());
+                motask.setIUpdateBy(JBoltUserKit.getUserId());
+                motask.setDUpdateTime(nowDate);
+                motask.setCUpdateName(JBoltUserKit.getUserName());
+                motask.setIOrgId(getOrgId());
+                motask.setCOrgCode(getOrgCode());
+                motask.setCOrgName(getOrgName());
+                moTaskList.add(motask);
+
+                //inv集
+                List<String> recordList = deptInvListMap.get(deptId);
+                for (String inv : recordList){
+                    //inv信息
+                    Record invInfo = invInfoMap.get(inv);
+                    //key:yyyy-MM-dd   value:qty1S
+                    Map<String,BigDecimal> dateQtyMap = invPlanDate1SMap.get(inv);
+                    //班次ID 1S
+                    Long iWorkShiftMid = invCapacity1SMap.get(inv);
+
+                    Long invId = invInfo.getLong("invId");
+                    Long iWorkRegionMid = invInfo.getLong("iWorkRegionMid");
+                    Long iInventoryRoutingId = invInfo.getLong("iInventoryRoutingId");
+                    String cRoutingName = invInfo.getStr("cRoutingName");
+                    String cVersion = invInfo.getStr("cVersion");
+
+                    for (String date : dateList){
+                        Date dPlanDate = DateUtils.parseDate(date);
+                        int year = Integer.parseInt(date.substring(0,4));
+                        int month = Integer.parseInt(date.substring(5,7));
+                        int day = Integer.parseInt(date.substring(8,10));
+                        BigDecimal qty = dateQtyMap.get(date);
+                        if (qty != null && (qty.compareTo(BigDecimal.ZERO) > 0)){
+                            //任务单号
+                            String planNo2 = momDataFuncService.getNextRouteNo(1L, "MOD"+dateStr, 3);
+
+                            MoDoc moDoc = new MoDoc();
+                            moDoc.setIAutoId(JBoltSnowflakeKit.me.nextId());
+                            moDoc.setIType(1);
+                            moDoc.setIMoTaskId(taskId);
+                            moDoc.setIWorkRegionMid(iWorkRegionMid);
+                            moDoc.setIInventoryId(invId);
+                            moDoc.setCMoDocNo(planNo2);
+                            moDoc.setDPlanDate(dPlanDate);
+                            moDoc.setIYear(year);
+                            moDoc.setIMonth(month);
+                            moDoc.setIDate(day);
+                            moDoc.setIDepartmentId(deptId);
+                            moDoc.setIWorkShiftMid(iWorkShiftMid);
+                            moDoc.setIQty(qty);
+                            moDoc.setIStatus(1);
+                            moDoc.setIInventoryRouting(iInventoryRoutingId);
+                            moDoc.setCRoutingName(cRoutingName);
+                            moDoc.setCVersion(cVersion);
+                            moDocList.add(moDoc);
+                        }
+                    }
+                }
+            }
+        }
+        tx(() -> {
+            motaskService.batchSave(moTaskList);
+            moDocService.batchSave(moDocList);
+            return true;
+        });
+        return SUCCESS;
     }
 
     //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------

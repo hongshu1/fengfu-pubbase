@@ -430,7 +430,7 @@ WHERE iCaluedarType = '1'
 
 #sql("getInvCapacityList")
 ###根据物料集查询各班次产能
-SELECT b.cInvCode,c.cWorkShiftCode,c.cWorkShiftName,a.iCapacity
+SELECT b.cInvCode,c.iAutoId AS iWorkShiftMid,c.cWorkShiftCode,c.cWorkShiftName,a.iCapacity
 FROM Bd_InventoryCapacity AS a
          LEFT JOIN Bd_Inventory AS b ON a.iInventoryId = b.iAutoId
          LEFT JOIN Bd_WorkShiftM AS c ON a.iWorkShiftMid = c.iAutoId
@@ -552,13 +552,17 @@ SELECT
     e.cWorkName,
     d.iDepId,
     f.cDepCode,
-    f.cDepName
+    f.cDepName,
+    g.iAutoId AS iInventoryRoutingId,
+    g.cRoutingName,
+    g.cVersion
 FROM Aps_WeekScheduleDetails AS a
          LEFT JOIN Aps_WeekScheduleD_Qty AS b ON a.iAutoId = b.iWeekScheduleDid
          LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
          LEFT JOIN Bd_InventoryWorkRegion AS d ON c.iAutoId = d.iInventoryId AND d.isDefault = 1 AND d.isDeleted = 0
          LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId AND e.isDeleted = 0
          LEFT JOIN Bd_Department AS f ON d.iDepId = f.iAutoId
+         LEFT JOIN Bd_InventoryRouting AS g ON c.iAutoId = g.iInventoryId AND g.isEnabled = 1
 WHERE a.isDeleted = '0'
   AND a.iLevel = #para(level)
   AND
