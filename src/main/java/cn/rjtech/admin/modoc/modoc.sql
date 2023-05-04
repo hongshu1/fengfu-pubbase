@@ -63,3 +63,10 @@ WHERE 1 = 1
     #end
 
  #end
+
+
+#sql("getJob")
+SELECT cMoJobSn, iPlanQty, iRealQty, iStatus, dUpdateTime
+FROM dbo.Mo_MoJob
+WHERE iMoDocId = #para(id)
+#end

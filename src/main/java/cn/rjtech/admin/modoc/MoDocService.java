@@ -12,6 +12,7 @@ import com.jfinal.plugin.activerecord.Record;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * 在库检 Service
@@ -38,22 +39,27 @@ public class MoDocService extends BaseService<MoDoc> {
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv keywords) {
 		return dbTemplate("modoc.getPage",keywords).paginate(pageNumber,pageSize);
 	}
-	public HashMap<String, String> getStringStringHashMap() {
-		HashMap<String, String> stringStringHashMap = new HashMap<>();
-		stringStringHashMap.put("paln1","1");
-		stringStringHashMap.put("paln2","1");
-		stringStringHashMap.put("paln3","1");
-		stringStringHashMap.put("actual1","2");
-		stringStringHashMap.put("actual2","2");
-		stringStringHashMap.put("actual3","2");
-		stringStringHashMap.put("sate1","未完成");
-		stringStringHashMap.put("sate2","未完成");
-		stringStringHashMap.put("sate3","未完成");
-		String date = new Date().toString();
-		stringStringHashMap.put("time1", date);
-		stringStringHashMap.put("time2", date);
-		stringStringHashMap.put("time3", date);
-		return stringStringHashMap;
+
+	/**
+	 * 查询生产任务
+	 * @param id
+	 * @return
+	 */
+	public HashMap<String, String> getJob(Long id ) {
+		List<Record> records = dbTemplate("modoc.getJob", new Kv().set("id", id)).find();
+		HashMap<String, String> map = new HashMap<>();
+		for (Record record : records) {
+			String jobCode = record.getStr("cMoJobSn");
+			String planQty = record.getInt("iPlanQty").toString();
+			String realQty = record.getInt("iRealQty").toString();
+			String status = record.getStr("iStatus").equals("1") ? "未完成" : "已完成";
+			String updateTime = record.getTimestamp("dUpdateTime").toString();
+			map.put("paln" + jobCode, planQty);
+			map.put("actual" + jobCode, realQty);
+			map.put("sate" + jobCode, status);
+			map.put("time" + jobCode, updateTime);
+		}
+		return map;
 	}
 
 	/**

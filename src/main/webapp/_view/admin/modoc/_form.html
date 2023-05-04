@@ -1,4 +1,3 @@
-
 <form onsubmit="return false;" id="moDocForm" action="#(action)" method="post">
     <input type="hidden" name="moDoc.iautoid" value="#(moDoc.iautoid??)"/>
 
@@ -28,7 +27,6 @@
             </select>
         </div>
 
-
         <label class="col-sm-2 col-form-label">产线名称</label>
 
         <div class="col-3">
@@ -51,77 +49,169 @@
         </div>
     </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">班次名称</label>
-            <div class="col-3">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       data-rule="required"
-                       placeholder="请输入班次ID" maxlength="19" name="moDoc.iworkshiftmid"
-                       value="#(moDoc.iworkshiftmid??)"/>
-            </div>
-
-            <label class="col-sm-2 col-form-label">计划日期</label>
-            <div class="col-3">
-                <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
-                       autocomplete="off"
-                       class="form-control" data-rule="required" placeholder="请设置计划日期" data-tips="请设置计划日期"
-                       maxlength="10"
-                       name="moDoc.dplandate" value="#(moDoc.dplandate??)"/>
-            </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">班次名称</label>
+        <div class="col-3">
+            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                   data-rule="required"
+                   placeholder="请输入班次ID" maxlength="19" name="moDoc.iworkshiftmid"
+                   value="#(moDoc.iworkshiftmid??)"/>
         </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">存货编码</label>
-            <div class="col-3">
-                <input type="text"
-                       data-autocomplete
-                       data-rule="required"
-                       data-tips="请选择存货编码"
-                       autocomplete="off"
-                       class="form-control"
-                       placeholder="请选择存货编码"
-                       value="#(moDoc.cinvcode??)"
-                       id="cinvcode"
-                       data-text-attr="cinvcode"
-                       data-hidden-input="cinvcode1,cinvname1,itemid"
-                       data-column-attr="cinvname,cinvcode,cinvcode1,cinvname1,itemid"
-                       maxlength="40"
-                       data-url="admin/bommaster/inventoryAutocomplete"
-                />
-            </div>
-            <input hidden  type="text" id="itemid"  data-value-attr="itemid" name="moDoc.iInventoryId"  />
+        <label class="col-sm-2 col-form-label">计划日期</label>
+        <div class="col-3">
+            <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
+                   autocomplete="off"
+                   class="form-control" data-rule="required" placeholder="请设置计划日期" data-tips="请设置计划日期"
+                   maxlength="10"
+                   name="moDoc.dplandate" value="#(moDoc.dplandate??)"/>
+        </div>
+    </div>
 
-            <label class="col-sm-2 col-form-label">客户部番</label>
-            <div class="col-3">
-                <input id="cinvcode1" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                        placeholder="" maxlength="18"  data-value-attr="cinvcode1"
-                       readonly="readonly"
-                       />
-            </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">存货编码</label>
+        <div class="col-3">
+            <input type="text"
+                   data-autocomplete
+                   data-rule="required"
+                   data-tips="请选择存货编码"
+                   autocomplete="off"
+                   class="form-control"
+                   placeholder="请选择存货编码"
+                   value="#(moDoc.cinvcode??)"
+                   id="cinvcode"
+                   data-text-attr="cinvcode"
+                   data-hidden-input="cinvcode1,cinvname1,itemid,routId"
+                   data-column-attr="cinvname,cinvcode,cinvcode1,cinvname1,itemid,routId"
+                   maxlength="40"
+                   data-url="admin/bommaster/inventoryAutocomplete"
+            />
+        </div>
+        <input hidden type="text" id="itemid" data-value-attr="itemid" name="moDoc.iInventoryId"/>
+        <input  type="text" id="routId" data-value-attr="routId" name="moDoc.iInventoryId"/>
+
+        <label class="col-sm-2 col-form-label">客户部番</label>
+        <div class="col-3">
+            <input id="cinvcode1" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                   placeholder="" maxlength="18" data-value-attr="cinvcode1"
+                   readonly="readonly"
+            />
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">部品名称</label>
+        <div class="col-3">
+            <input id="cinvname1" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                   placeholder="" maxlength="18" data-value-attr="cinvname1"
+                   readonly="readonly"
+            />
         </div>
 
-
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">部品名称</label>
-            <div class="col-3">
-                <input id="cinvname1" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                        placeholder="" maxlength="18"  data-value-attr="cinvname1"
-                       readonly="readonly"
-                       />
-            </div>
-
-            <label class="col-sm-2 col-form-label">计划数量</label>
-            <div class="col-3">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       data-rule="pnumber;fix<=2;" placeholder="请输入计划数量" maxlength="18" name="moDoc.iqty"
-                       value="#(moDoc.iqty??)"/>
-            </div>
+        <label class="col-sm-2 col-form-label">计划数量</label>
+        <div class="col-3">
+            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                   data-rule="pnumber;fix<=2;" placeholder="请输入计划数量" maxlength="18" name="moDoc.iqty"
+                   value="#(moDoc.iqty??)"/>
         </div>
+    </div>
 
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="itemroutingconfigRowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}" >
+            <td hidden>${data.iinventoryid}</td>
+            <td>${data.iseq}</td>
+            <td data-value="${data.coperationname}">${data.coperationname}</td>
+
+            <td>
+                {@if data.invcs == undefined}
+                       <span></span>
+                       {@else}
+                       <span><i class="fa fa-cog"></i>已选${data.invcs}个</span>
+                {@/if}
+            </td>
+            <td>
+                {@if data.equipments == undefined}
+                       <span></span>
+                       {@else}
+                       <span><i class="fa fa-cog"></i>已选${data.equipments}个</span>
+                {@/if}
+            </td>
+
+            <td>
+               {@if data.drawings == undefined}
+                       <span></span>
+                       {@else}
+                       <span><i class="fa fa-cog"></i>已选${data.drawings}个</span>
+                {@/if}
+            </td>
+            <td>生产人员</td>
+            <td>
+                <a href="admin/inventoryroutingconfig/deleteByIds?ids=${data.iautoid}" data-ajaxbtn data-loading="执行中" tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+            </td>
+            </tr>
+            {@/each}
+        </textarea>
+        <h5>工艺路线信息</h5>
+
+        <form class="form-inline" id="itemroutingconfigForm_#(pageId)"   onsubmit="return false;"  method="post">
+
+            <input type="text" id="iinventoryroutingid_#(pageId)" autocomplete="off" class="form-control col-sm-4"
+                   placeholder="料品工艺档案Id" name="iinventoryroutingid" value="#(iinventoryroutingid)" />
+            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+        </form>
+        <table class="jbolt_table jbolt_main_table table-center"
+               id="itemroutingconfigid_#(pageId)"
+               data-jbolttable
+               data-height="62%"
+               data-autoload="false"
+               data-url="admin/inventoryroutingconfig/list"
+               data-column-resize="true"
+               data-ajax="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="itemroutingconfigForm_#(pageId)"
+               data-rowtpl="itemroutingconfigRowtpl_#(pageId)"
+               ###data-editable="true"
+               ###data-editable-option="getEditableTableOptions"
+        >
+            <thead>
+            <tr>
+                <th hidden data-width="120" data-column="iinventoryid">工艺档案id</th>
+                <th data-width="80" data-column="iseq">工序号</th>
+                <th data-width="160" data-column="coperationname">工序名称</th>
+                <th data-width="120" data-column="invcs">所需物料集</th>
+                <th data-width="120" data-column="equipments">所需设备集</th>
+                <th data-width="120" data-column="drawings">作业指导书</th>
+                <th data-width="120" data-column="drawings">生产人员</th>
+                <th data-width="100">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
 
 </form>
 #define js()
 <script>
+
+    $(document).ready(function () {
+        $('#routId').on('change', function () {
+            // 获取输入框元素
+            var input = $(this);
+            // 获取输入框的值
+            var inputValue = input.val();
+            // 对输入框的值进行操作
+            console.log("输入框的值已更改为：" + inputValue);
+            console.log("输入框的值已更改为：" + 'itemroutingconfigid_#(pageId)');
+            $('#iinventoryroutingid_#(pageId)').val('1640986451919179776');
+            var table = $('#itemroutingconfigid_#(pageId)');
+            console.log(table);
+            jboltTableRefresh('#itemroutingconfigid_#(pageId)')
+        });
+    });
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="moDocForm")
 #end

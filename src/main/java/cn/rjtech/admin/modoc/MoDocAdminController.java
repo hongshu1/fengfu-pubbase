@@ -10,9 +10,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoDoc;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -62,7 +60,7 @@ public class MoDocAdminController extends BaseAdminController {
 		}
 		set("moDoc",moDoc);
 		//拼上生产任务数据
-		HashMap<String, String> stringStringHashMap = service.getStringStringHashMap();
+		HashMap<String, String> stringStringHashMap = service.getJob(getLong(0));
 		set("productionTasks",stringStringHashMap);
 		// 拼上 科系名称,存货编码,客户部番,部品名称,生产单位,规格,产线名称,班次名称,工艺路线名称
 		render("_detailsform.html");

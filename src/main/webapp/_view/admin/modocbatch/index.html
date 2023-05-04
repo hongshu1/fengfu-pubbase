@@ -6,7 +6,7 @@
     <div class="jbolt_page_title">
         <div class="row">
             <div class="col-md-auto">
-                <h1>工单管理</h1>
+                <h1>制造工单批量修改</h1>
             </div>
                 <div class="col">
                 <form class="form-inline" id="moDocForm_#(pageId)" onsubmit="return false;" method="post">
@@ -35,14 +35,14 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/modoc/details/${data.iautoid}" data-area="1600,800"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
-	<a href="admin/modoc/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="现品票"  data-handler="refreshJBoltTable" data-dialog-title="现品票" class="jbolt_table_editbtn">现品票</a>
-    <a href="admin/modoc/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">关闭</a>
+	<a href="admin/modocbatch/details/${data.iautoid}" data-area="1600,800"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+	<a href="admin/modocbatch/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="现品票"  data-handler="refreshJBoltTable" data-dialog-title="现品票" class="jbolt_table_editbtn">现品票</a>
+    <a href="admin/modocbatch/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">关闭</a>
 </td>
             <td hidden >${data.iautoid}</td>
             <td>${data.istatus}</td>
             <td>${data.dplandate|date_ymd}</td>
-            <td>${data.cmodocno}</td>
+            <td>${data.cmodocbatchno}</td>
             <td>${data.cdepname}</td>
             <td>${data.cworkname}</td>
             <td>${data.cworkshiftname}</td>
@@ -60,7 +60,7 @@
         <div class="jbolt_table_toolbar" id="moDoc_toolbar_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
                 <button data-openpage="dialog" data-area="1200,800" data-handler="jboltTablePageToFirst"
-                        data-title="新增在库检" data-url="admin/modoc/add" class="btn btn-outline-primary btn-sm"><i
+                        data-title="新增在库检" data-url="admin/modocbatch/add" class="btn btn-outline-primary btn-sm"><i
                         class="fa fa-plus"></i> 新增
                 </button>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i
@@ -76,7 +76,7 @@
                data-jbolttable
                data-height="fill"
                data-ajax="true"
-               data-url="admin/modoc/datas"
+               data-url="admin/modocbatch/datas"
                data-column-resize="true"
                data-row-click-active="true"
                data-column-prepend="1:checkbox:true"
