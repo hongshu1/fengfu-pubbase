@@ -232,13 +232,19 @@ public class RcvPlanMService extends BaseService<RcvPlanM> {
 	private void saveTableSubmitDatas(JBoltTable jBoltTable,RcvPlanM rcvplanm){
 		List<Record> list = jBoltTable.getSaveRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		Date now = new Date();
 		for (int i=0;i<list.size();i++) {
 			Record row = list.get(i);
 			row.set("isdeleted", "0");
 			row.set("ircvplanmid", rcvplanm.getIAutoId());
 			row.set("iautoid", JBoltSnowflakeKit.me.nextId());
+			row.set("dcreatetime", now);
+			row.set("dupdatetime", now);
 			row.remove("cinvcode1");
 			row.remove("cinvname1");
+			row.remove("cinvcode");
+			row.remove("cinvstd");
+			row.remove("cuomname");
 		}
 		planDService.batchSaveRecords(list);
 	}
@@ -246,10 +252,15 @@ public class RcvPlanMService extends BaseService<RcvPlanM> {
 	private void updateTableSubmitDatas(JBoltTable jBoltTable,RcvPlanM rcvplanm){
 		List<Record> list = jBoltTable.getUpdateRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		Date now = new Date();
 		for(int i = 0;i < list.size(); i++){
 			Record row = list.get(i);
+			row.set("dupdatetime", now);
+			row.remove("cinvcode");
 			row.remove("cinvcode1");
 			row.remove("cinvname1");
+			row.remove("cinvstd");
+			row.remove("cuomname");
 		}
 		planDService.batchUpdateRecords(list);
 	}

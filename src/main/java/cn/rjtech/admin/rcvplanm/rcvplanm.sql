@@ -29,12 +29,14 @@ ORDER BY rm.dUpdateTime DESC
 #end
 
 #sql("dList")
-SELECT  a.*
+SELECT  a.*,i.cInvCode,i.cinvcode1,i.cinvname1,i.cinvstd,u.cUomName
 FROM SM_RcvPlanD a
+	left join Bd_Inventory i on a.iInventoryId = i.iautoid
+	left join Bd_Uom u on i.iInventoryUomId1 = u.iautoid
 where 1=1 and a.isdeleted = 0
 	#if(rcvplanmid)
 		and a.iRcvPlanMid = #para(rcvplanmid)
 	#end
-ORDER BY a.cRcvTime DESC
+ORDER BY a.dUpdateTime DESC
 #end
 

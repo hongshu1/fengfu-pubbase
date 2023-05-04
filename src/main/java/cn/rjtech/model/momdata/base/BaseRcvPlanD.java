@@ -32,6 +32,10 @@ public abstract class BaseRcvPlanD<M extends BaseRcvPlanD<M>> extends JBoltBaseM
     public static final String IINVENTORYID = "iInventoryId";
     /**计划数量*/
     public static final String IQTY = "iQty";
+	/**创建时间*/
+	public static final String DCREATETIME = "dCreateTime";
+	/**更新时间*/
+	public static final String DUPDATETIME = "dUpdateTime";
 	/**
 	 * 主键ID
 	 */
@@ -217,6 +221,39 @@ public abstract class BaseRcvPlanD<M extends BaseRcvPlanD<M>> extends JBoltBaseM
 	@JSONField(name = "iqty")
 	public java.math.BigDecimal getIQty() {
 		return getBigDecimal("iQty");
+	}
+
+	/**
+	 * 创建时间
+	 */
+	public M setDCreateTime(java.util.Date dCreateTime) {
+		set("dCreateTime", dCreateTime);
+		return (M)this;
+	}
+
+	/**
+	 * 创建时间
+	 */
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=12)
+	@JSONField(name = "dcreatetime")
+	public java.util.Date getDCreateTime() {
+		return getDate("dCreateTime");
+	}
+	/**
+	 * 更新时间
+	 */
+	public M setDUpdateTime(java.util.Date dUpdateTime) {
+		set("dUpdateTime", dUpdateTime);
+		return (M)this;
+	}
+
+	/**
+	 * 更新时间
+	 */
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=15)
+	@JSONField(name = "dupdatetime")
+	public java.util.Date getDUpdateTime() {
+		return getDate("dUpdateTime");
 	}
 
 }
