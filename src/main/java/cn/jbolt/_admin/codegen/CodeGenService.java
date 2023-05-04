@@ -1787,14 +1787,18 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         if(primarykeyAttr == null){
             throw new RuntimeException("表未设置主键！");
         }
-
-        if(!primarykeyAttr.getColName().equalsIgnoreCase(codeGen.getMainTablePkey())){
-            String pkName = primarykeyAttr.getColName();
+        String pkName = primarykeyAttr.getColName();
+        if(!pkName.equalsIgnoreCase(codeGen.getMainTablePkey())){
             codeGen.setMainTablePkey(pkName);
-            if(notOk(codeGen.getTableDefaultSortColumn()) || (codeGen.getTableDefaultSortColumn().equalsIgnoreCase(ID) && pkName.equalsIgnoreCase(ID))){
+            if(notOk(codeGen.getTableDefaultSortColumn()) || (codeGen.getTableDefaultSortColumn().equalsIgnoreCase(ID) && !pkName.equalsIgnoreCase(ID))){
                 codeGen.setTableDefaultSortColumn(pkName);
             }
             codeGen.update();
+        }else{
+            if(notOk(codeGen.getTableDefaultSortColumn()) || (codeGen.getTableDefaultSortColumn().equalsIgnoreCase(ID) && !pkName.equalsIgnoreCase(ID))){
+                codeGen.setTableDefaultSortColumn(pkName);
+                codeGen.update();
+            }
         }
     }
 }
