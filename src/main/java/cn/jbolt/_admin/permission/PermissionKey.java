@@ -1765,4 +1765,8 @@ public class PermissionKey {
      * 取货管理-货款核对表
      */
     public static final String PAYMENT_CHECK_MANAGENOT = "payment_check_managenot";
+	/**
+	 * 取货管理-双码扫码出货
+	 */
+	public static final String DOUBLECODESCANNINGSHIPMENT = "subcontractsaleorderm";
 }
