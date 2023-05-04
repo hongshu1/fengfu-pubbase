@@ -80,6 +80,9 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		if(tableMeta!=null) {
 			codeGen.setMainTableRemark(tableMeta.remarks);
 			codeGen.setMainTablePkey(tableMeta.primaryKey);
+			if(notOk(codeGen.getTableDefaultSortColumn()) || (codeGen.getTableDefaultSortColumn().equalsIgnoreCase(ID) && tableMeta.primaryKey.equalsIgnoreCase(ID))){
+				codeGen.setTableDefaultSortColumn(tableMeta.primaryKey);
+			}
 			List<ColumnMeta> columnMetas = tableMeta.columnMetas;
 			if(isOk(columnMetas)) {
 				List<CodeGenModelAttr> attrs = new ArrayList<>();

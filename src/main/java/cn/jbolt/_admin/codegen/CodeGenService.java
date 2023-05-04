@@ -1789,7 +1789,11 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         }
 
         if(!primarykeyAttr.getColName().equalsIgnoreCase(codeGen.getMainTablePkey())){
-            codeGen.setMainTablePkey(primarykeyAttr.getColName());
+            String pkName = primarykeyAttr.getColName();
+            codeGen.setMainTablePkey(pkName);
+            if(notOk(codeGen.getTableDefaultSortColumn()) || (codeGen.getTableDefaultSortColumn().equalsIgnoreCase(ID) && pkName.equalsIgnoreCase(ID))){
+                codeGen.setTableDefaultSortColumn(pkName);
+            }
             codeGen.update();
         }
     }
