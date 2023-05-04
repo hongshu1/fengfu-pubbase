@@ -19,7 +19,7 @@ import java.util.HashMap;
  * @author: RJ
  * @date: 2023-04-26 16:15
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MO_DOCBACTH)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/modoc", viewPath = "/_view/admin/modoc")

@@ -1405,6 +1405,7 @@ public class PermissionKey {
 	 * 客户计划及实绩管理
 	 */
 	public static final String CUSORDER_RESULT = "cusorder_result";
+
 	/**
 	 * 出库异常记录
 	 */
@@ -1429,6 +1430,10 @@ public class PermissionKey {
 	 * 导入字段配置
 	 */
 	public static final String CUS_FIELDS_MAPPINGM = "cus_fields_mappingm";
+	/**
+	 * 制造工单批量编辑
+	 */
+	public static final String MO_DOCBACTH = "mo_docbacth";
 	/**
 	 * 新增
 	 */
