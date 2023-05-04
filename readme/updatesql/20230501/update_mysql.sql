@@ -10,3 +10,4 @@ alter table `jb_code_gen` add column `is_cache_get_name` char(1) COLLATE utf8mb4
 alter table `jb_code_gen` add column `is_cache_get_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getSn';
 alter table `jb_code_gen` add column `is_cache_get_name_by_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getNameBySn(sn)';
 alter table `jb_code_gen` add column `is_cache_get_by_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getBySn(sn)';
+alter table `jb_code_gen` add column `model_title` varchar(40) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '模型名称';
