@@ -60,6 +60,8 @@ public abstract class BaseQcInspection<M extends BaseQcInspection<M>> extends JB
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "IsDeleted";
+	/**巡查单号*/
+	public static final String INSPECTIONNO = "InspectionNo";
 	/**
 	 * 主键ID
 	 */
@@ -483,6 +485,24 @@ public abstract class BaseQcInspection<M extends BaseQcInspection<M>> extends JB
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");
+	}
+
+
+	/**
+	 * 巡查单号
+	 */
+	public M setCInspectionNo(java.lang.String InspectionNo) {
+		set("InspectionNo", InspectionNo);
+		return (M)this;
+	}
+
+	/**
+	 * 巡查单号
+	 */
+	@JBoltField(name="inspectionno" ,columnName="InspectionNo",type="String", remark="巡查单号", required=true, maxLength=50, fixed=0, order=5)
+	@JSONField(name = "inspectionno")
+	public java.lang.String getCInspectionNo() {
+		return getStr("InspectionNo");
 	}
 
 }

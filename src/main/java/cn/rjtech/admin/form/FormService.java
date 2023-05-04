@@ -206,5 +206,10 @@ public class FormService extends BaseService<Form> {
     public List<String> getNamesByIformids(List<Long> iautoids) {
         return query(selectSql().select(Form.CFORMNAME).eq(Form.ISDELETED, ZERO_STR).in(Form.IAUTOID, iautoids));
     }
+
+    public String getNameByFormId(String formId) {
+        Form form = findById(formId);
+        return form==null?null:form.getCFormName();
+    }
     
 }

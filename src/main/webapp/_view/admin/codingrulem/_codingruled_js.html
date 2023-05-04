@@ -1,0 +1,54 @@
+<script>
+    function submitThisForm() {
+        jboltTableSubmit('#jbolt_table_#(pageId)');
+    }
+
+    //获得配置参数
+    function getEditableTableOptions_#(pageId)() {
+        var editableTableOptions = {
+            submit: {
+                withForm: ["WeekOrderM_Form"],
+                name: 'WeekOrderMForm',
+                type: "all",
+                url: "/admin/codingrulem/saveTableSubmit",
+                success: function (res) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success("提交成功", 600, function () {
+                            location.href = '/admin/codingrulem/edit/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid",
+                },
+                iseq: {
+                    type: 'input_number',
+                    required: true
+                },
+                ccodingtype: {
+                    type: "select",
+                    url: "admin/dictionary/options?key=cCodingType",
+                    maxLength: 100,
+                    placeholder: "请输入",
+                    textAttr: "name",
+                    valueAttr: "sn",
+                    submitAttr: 'itype'
+                },
+                ccodingvalue: {
+                    type:"input",
+                },
+                cseperator: {
+                    type:"input",
+                    placeholder:'备注',
+                    required: true,
+                },
+
+            }
+        };
+        return editableTableOptions;
+    }
+</script>
