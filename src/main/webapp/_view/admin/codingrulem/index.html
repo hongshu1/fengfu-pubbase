@@ -55,26 +55,17 @@
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="CodingRuleM_tpl_#(pageId)">
             {@each datas as data,index}
-            <tr>
+            <tr data-id="${data.iautoid}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
-                <td>${data.corgcode}</td>
-                <td>${data.corgname}</td>
-                <td>${data.cformtypeSn}</td>
+                <td>
+                <a class="jbolt_table_editbtn" href="admin/codingrulem/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑">编辑</a>
+                <a class="jbolt_table_delbtn" href="admin/codingrulem/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable">删除</a>
+                </td>
+                <td>${data.cformtypesn}</td>
+                <td>${data.iformname}</td>
                 <td>${data.icodingtype}</td>
                 <td>${data.cdemo}</td>
-                <td>${data.ccreatename}</td>
-                <td>${data.dcreatetime}</td>
-                <td>${data.cupdatename}</td>
-                <td>${data.dupdatetime}</td>
-                <td>
-                	{@if data.isDeleted}
-                	<a class="text-info mr-1" data-openpage="dialog" href="admin/codingrulem/edit/${data.id}" data-area="800,600" data-title="查看系统配置-编码规则"><i class="fa fa-eye"></i></a>
-                	{@else}
-                	<a class="jbolt_table_editbtn" href="admin/codingrulem/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑系统配置-编码规则"><i class="fa fa-edit"></i></a>
-                	{@/if}
-                	<a class="jbolt_table_delbtn" href="admin/codingrulem/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
-                </td>
-                </tr>
+            </tr>
             {@/each}
         </textarea>
         
@@ -113,16 +104,11 @@
             <thead>
             <tr>
                 <th data-width="60" data-column="index">序号</th>
-                <th data-width="150" data-column="corgcode">组织编码</th>
-                <th data-width="150" data-column="corgname">组织名称</th>
+                <th data-width="80">操作</th>
                 <th data-width="150" data-column="cformtypesn">业务对象类型</th>
+                <th data-width="150" data-column="iformname">表单名称</th>
                 <th data-width="100" data-column="icodingtype">编码方式</th>
                 <th data-width="150" data-column="cdemo">编码示例</th>
-                <th data-width="150" data-column="ccreatename">创建人名称</th>
-                <th data-min-width="160" data-column="dcreatetime">创建时间</th>
-                <th data-width="150" data-column="cupdatename">更新人名称</th>
-                <th data-min-width="160" data-column="dupdatetime">更新时间</th>
-                <th data-width="80">操作</th>
             </tr>
             </thead>
             <tbody></tbody>

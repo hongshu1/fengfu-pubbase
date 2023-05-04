@@ -164,7 +164,9 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
 	}
 
     public Ret saveTableSubmit(JBoltTable jBoltTable) {
-        CodingRuleM m = jBoltTable.getFormModel(CodingRuleM.class);
+        CodingRuleM m = jBoltTable.getFormModel(CodingRuleM.class,"codingRuleM");
+        ValidationUtils.notNull(m,JBoltMsg.PARAM_ERROR);
+
 
         tx(() -> {
 
@@ -189,6 +191,28 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
     private void doSaveTable(CodingRuleM m, JBoltTable jBoltTable) {
         List<Record> save = jBoltTable.getSaveRecordList();
         ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
+
+		ValidationUtils.notNull(m.getIFormId(), JBoltMsg.PARAM_ERROR);
+		Form form = formService.findById(m.getIFormId());
+		ValidationUtils.notNull(form, "表单参数不合法，请确认选项是否正确");
+
+		String userName = JBoltUserKit.getUserName();
+		Long userId = JBoltUserKit.getUserId();
+		Date now = new Date();
+
+		m.setDCreateTime(now);
+		m.setICreateBy(userId);
+		m.setCCreateName(userName);
+		m.setDUpdateTime(now);
+		m.setIUpdateBy(userId);
+		m.setCUpdateName(userName);
+		m.setIsDeleted(false);
+		m.setIFormId(form.getIAutoId());
+
+		// 组织信息
+		m.setCOrgCode(getOrgCode());
+		m.setCOrgName(getOrgName());
+		m.setIOrgId(getOrgId());
         
         ValidationUtils.isTrue(m.save(), ErrorMsg.SAVE_FAILED);
 

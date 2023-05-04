@@ -7,8 +7,7 @@
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
             submit: {
-                withForm: ["WeekOrderM_Form"],
-                name: 'WeekOrderMForm',
+                withForm: ["CodingRuleM_Form"],
                 type: "all",
                 url: "/admin/codingrulem/saveTableSubmit",
                 success: function (res) {
@@ -36,9 +35,12 @@
                     placeholder: "请输入",
                     textAttr: "name",
                     valueAttr: "sn",
-                    submitAttr: 'itype'
+                    submitAttr: 'ccodingtype'
                 },
                 ccodingvalue: {
+                    type:"input",
+                },
+                ilength: {
                     type:"input",
                 },
                 cseperator: {

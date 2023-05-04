@@ -22,7 +22,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">表单名称</label>
                 <div class="col-10">
-                    <input type="hidden" name="iFormId" value="#(iFormId)" id="iFormId">
+                    <input type="hidden" name="codingRuleM.iFormId" value="#(iFormId)" id="iFormId">
 
                     <select class="form-control"
                             data-rule="select"
@@ -66,10 +66,19 @@
     </div>
 </form>
 
+<div class="form-group row">
+    <label class="col-sm-1 col-form-label" style="left: 20px;">详情配置</label>
+    <div class="col-11" style="left: 17px;">
+        <div class="jbolt_page_content">
+            #render("codingruled.html")
+        </div>
+    </div>
+</div>
+
 #define js()
 #include("_codingruled_js.html")
 <script>
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="CodingRuleM_Form")
+<!--#include("/_view/_admin/common/_formjs.html",formId="CodingRuleM_Form")-->
 #end
 
