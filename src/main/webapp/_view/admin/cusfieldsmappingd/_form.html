@@ -1,0 +1,81 @@
+<form onsubmit="return false;" id="CusFieldsMappingD_Form" action="#(action)" method="post">
+	#if(cusFieldsMappingD.iAutoId??)
+	<input type="hidden" name="cusFieldsMappingD.iAutoId" value="#(cusFieldsMappingD.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="cusFieldsMappingD.iAutoId" value="#(cusFieldsMappingD.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">客户导入字段配置主表ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入客户导入字段配置主表ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入客户导入字段配置主表ID" maxlength="40" name="cusFieldsMappingD.iCusFieldsMappingMid" value="#(cusFieldsMappingD.iCusFieldsMappingMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">系统字段ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入系统字段ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入系统字段ID" maxlength="40" name="cusFieldsMappingD.iFormFieldId" value="#(cusFieldsMappingD.iFormFieldId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">导入字段名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入导入字段名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入导入字段名称" maxlength="40" name="cusFieldsMappingD.cCusFieldName" value="#(cusFieldsMappingD.cCusFieldName??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="cusFieldsMappingD.isEncoded"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否编码字段：0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(cusFieldsMappingD.isEncoded??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否编码字段：0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">编码示例</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入编码示例" maxlength="40" name="cusFieldsMappingD.cDemo" value="#(cusFieldsMappingD.cDemo??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">导入编码字段长度</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入导入编码字段长度" maxlength="40" name="cusFieldsMappingD.iLength" value="#(cusFieldsMappingD.iLength??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="cusFieldsMappingD.isEnabled"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否启用：0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(cusFieldsMappingD.isEnabled??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否启用：0. 否 1. 是"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="CusFieldsMappingD_Form")
+#end
+
