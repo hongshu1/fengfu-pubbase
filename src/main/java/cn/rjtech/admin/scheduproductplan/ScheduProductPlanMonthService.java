@@ -1879,21 +1879,21 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
 
 
-    List<Record> getInvInfoByLevelList(Okv okv){
+    public List<Record> getInvInfoByLevelList(Okv okv){
         return dbTemplate("scheduproductplan.getInvInfoByLevelList", okv).find();
     }
-    List<Record> getPinvInfoByinvList(Okv okv){
+    public List<Record> getPinvInfoByinvList(Okv okv){
         return dbTemplate("scheduproductplan.getPinvInfoByinvList", okv).find();
     }
 
-    List<Record> getCusOrderSumList(Okv okv){
+    public List<Record> getCusOrderSumList(Okv okv){
         return dbTemplate("scheduproductplan.getCusOrderSumList", okv).find();
     }
-    List<Record> getWeekScheduSumList(Okv okv){
+    public List<Record> getWeekScheduSumList(Okv okv){
         return dbTemplate("scheduproductplan.getWeekScheduSumList", okv).find();
     }
 
-    List<Record> getWeekScheduPlanList(Okv okv){
+    public List<Record> getWeekScheduPlanList(Okv okv){
         return dbTemplate("scheduproductplan.getWeekScheduPlanList", okv).find();
     }
     /**
