@@ -1,8 +1,14 @@
 package cn.rjtech.admin.codingrulem;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.rjtech.admin.codingruled.CodingRuleDService;
 import cn.rjtech.admin.form.FormService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.Form;
@@ -22,7 +28,7 @@ import com.jfinal.plugin.activerecord.Record;
 import java.util.Date;
 import java.util.List;
 
-import static cn.hutool.core.text.CharPool.COMMA;
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 系统配置-编码规则
@@ -35,6 +41,8 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
 
 	@Inject
 	private FormService formService;
+    @Inject
+    private CodingRuleDService codingRuleDService;
 
 	@Override
 	protected CodingRuleM dao() {
@@ -154,5 +162,70 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
 	}
+
+    public Ret saveTableSubmit(JBoltTable jBoltTable) {
+        CodingRuleM m = jBoltTable.getFormModel(CodingRuleM.class);
+
+        tx(() -> {
+
+            // 新增
+            if (ObjUtil.isNull(m.getIAutoId())) {
+                doSaveTable(m, jBoltTable);
+            } 
+            // 修改
+            else {
+                doUpdateTable(m, jBoltTable);
+            }
+
+            return true;
+        });
+
+        return successWithData(m.keep("iautoid"));
+    }
+
+    /**
+     * 表格新增
+     */
+    private void doSaveTable(CodingRuleM m, JBoltTable jBoltTable) {
+        List<Record> save = jBoltTable.getSaveRecordList();
+        ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
+        
+        ValidationUtils.isTrue(m.save(), ErrorMsg.SAVE_FAILED);
+
+        for (Record d : save) {
+            d.set("iautoid", JBoltSnowflakeKit.me.nextId())
+                    .set("icodingrulemid", m.getIAutoId());
+        }
+        codingRuleDService.batchSaveRecords(save);
+    }
+
+    /**
+     * 修改表格
+     */
+    private void doUpdateTable(CodingRuleM m, JBoltTable jBoltTable) {
+        ValidationUtils.validateId(m.getIAutoId(), JBoltMsg.PARAM_ERROR);
+        
+        CodingRuleM dbCodingRuleM = findById(m.getIAutoId());
+        ValidationUtils.notNull(dbCodingRuleM, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(!dbCodingRuleM.getIsDeleted(), "编码规则已被删除");
+        
+        // 新增
+        List<Record> save = jBoltTable.getSaveRecordList();
+        if (CollUtil.isNotEmpty(save)) {
+            
+        }
+        
+        // 修改
+        List<Record> update = jBoltTable.getUpdateRecordList();
+        if (CollUtil.isNotEmpty(update)) {
+
+            codingRuleDService.batchUpdateRecords(update);
+        }
+        
+        // 删除
+        if (ArrayUtil.isNotEmpty(jBoltTable.getDelete())) {
+            codingRuleDService.deleteByMultiIds(ArrayUtil.join(jBoltTable.getDelete(), COMMA));
+        }
+    }
 
 }

@@ -107,4 +107,8 @@ public class CodingRuleDService extends BaseService<CodingRuleD> {
 		return null;
 	}
 
+    public void deleteByMultiIds(String ids) {
+        delete("DELETE FROM Bd_CodingRuleD WHERE iautoid IN (" + ids + ")");
+    }
+    
 }

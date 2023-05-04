@@ -87,5 +87,8 @@ public class CodingRuleMAdminController extends BaseAdminController {
 		renderJson(service.deleteById(getLong(0)));
 	}
 
+    public void saveTableSubmit() {
+        renderJson(service.saveTableSubmit(getJBoltTable()));
+    }
 
 }
