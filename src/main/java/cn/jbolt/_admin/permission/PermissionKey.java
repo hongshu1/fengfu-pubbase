@@ -1768,5 +1768,5 @@ public class PermissionKey {
 	/**
 	 * 取货管理-双码扫码出货
 	 */
-	public static final String DOUBLECODESCANNINGSHIPMENT = "subcontractsaleorderm";
+	public static final String DOUBLECODESCANNINGSHIPMENT = "doublecodescanningshipment";
 }
