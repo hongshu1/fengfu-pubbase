@@ -2,8 +2,8 @@
 #define main()
 <div class="jbolt_page">
 <div class="jbolt_page_content">
-    <form onsubmit="return false;" id="qcInspectionForm" action="admin/QcInspection/updateEditTable" method="post">
-        <input type="hidden" name="qcInspection.iautoid" value="#(qcInspection.iautoid??)" />
+    <form onsubmit="return false;" id="qcInspectionForm" action="admin/qcinspection/updateEditTable" method="post">
+        <input type="hidden" name="iautoid" value="#(qcInspection.iautoid??)" />
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
             <div class="col-md-l pt-2" role="group" aria-label="btn-group">
@@ -26,11 +26,11 @@
                                data-sync-ele="#ccname"
                                data-rule="required"
                                data-notnull="true"
-                               autocomplete="off" class="form-control" maxlength="30"  name="qcInspection.cchainno" value="#(qcInspection.cchainno??)"/>
+                               autocomplete="off" class="form-control" maxlength="30"  name="cchainno" value="#(qcInspection.cchainno??)"/>
             </div>
             <label class="col-sm-2 col-form-label">分类：</label>
             <div class="col-sm-2 col-form-label">
-                <input type="text" id="ccname" class="form-control border-none" name="qcInspection.cchainname" placeholder="" value="#(qcInspection.cchainname??)"/>
+                <input type="text" id="ccname" class="form-control border-none" name="cchainname" placeholder="" value="#(qcInspection.cchainname??)"/>
             </div>
 
             <label class="col-sm-2 col-form-label">首再发：</label>
@@ -39,16 +39,16 @@
                      data-radio
                      data-rule="radio"
                      data-value="#(qcInspection.isfirstcase??)"
-                     data-name="qcInspection.isfirstcase"
+                     data-name="isfirstcase"
                      data-default="true">
                     <div class="col"  style="padding-top: 1px;">
                         <div class="radio radio-primary  radio-inline">
-                            <input  id="renabletrue1" type="radio" name="qcInspection.isfirstcase"   value="1"/>
+                            <input  id="renabletrue1" type="radio" name="isfirstcase"   value="1"/>
                             <label for="renabletrue1">首发</label>
                         </div>
 
                         <div class="radio radio-primary  radio-inline">
-                            <input  id="renablefalse1" type="radio" name="qcInspection.isfirstcase"   value="0"/>
+                            <input  id="renablefalse1" type="radio" name="isfirstcase"   value="0"/>
                             <label for="renablefalse1">再发</label>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">发现日期：</label>
             <div class="col-sm-2 col-form-label">
-                <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置发现日期" data-tips="请设置发现日期" maxlength="10" name="qcInspection.drecorddate" value="#(qcInspection.drecorddate??)"/>
+                <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置发现日期" data-tips="请设置发现日期" maxlength="10" name="drecorddate" value="#(qcInspection.drecorddate??)"/>
             </div>
 
             <label class="col-sm-2 col-form-label">品质担当：</label>
@@ -72,46 +72,46 @@
                        data-column-attr="psnname,depname"
                        data-text-attr="psnname"
                        data-value-attr="depname"
-                       data-sync-ele="#depname"
+                       data-sync-ele="#depname,#depnameId,#psnnameId"
+                       data-rule="required"
                        data-notnull="true"
-                       autocomplete="off" class="form-control" maxlength="30"  name="psnname"/>
+                       autocomplete="off" class="form-control" maxlength="30"  name="psnname" value="#(qcInspection.psnname??)"/>
             </div>
 
 
             <label class="col-sm-2 col-form-label">责任科室：</label>
             <div class="col-sm-2 col-form-label">
-                <input type="text" id="depname" class="form-control border-none" name="depname"  placeholder=""/>
+                <input type="text" id="depname" class="form-control border-none" name="depname" value="#(qcInspection.depname??)"/>
+                <input type="hidden" data-sync-attr="iqcdutypersonid" id="depnameId" name="depnameid" value="#(qcInspection.iqcdutypersonid??)" />
+                <input type="hidden" data-sync-attr="iqcdutydepartmentid" id="psnnameId" name="psnnameid" value="#(qcInspection.iqcdutydepartmentid??)" />
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">位置/区域：</label>
             <div class="col-sm-2 col-form-label"  style="margin-right: 100px">
-                <input   style="width: 400px; height: 150px; resize: none" type="text"  class="form-control border-none" name="qcInspection.cplace" value="#(qcInspection.cplace??) "/>
-<!--                <textarea  style="width: 400px; height: 150px; resize: none" type="text" maxlength="300" class="form-control border-none" name="qcInspection.cplace" placeholder="" value="#(qcInspection.cplace??)"></textarea>-->
+                <textarea  style="width: 400px; height: 150px; resize: none" type="text" maxlength="300" class="form-control border-none" name="cplace" placeholder="" value="#(qcInspection.cplace??)">#(qcInspection.cplace??)</textarea>
             </div>
             <div class="col-form-label">
             </div>
 
             <label class="col-sm-2 col-form-label">问题点：</label>
             <div class="col-sm-3 col-form-label">
-                <input   style="width: 400px; height: 150px; resize: none" type="text"  class="form-control border-none" name="qcInspection.cproblem" value="#(qcInspection.cproblem??) "/>
+                <textarea style="width: 400px; height: 150px; resize: none" type="text"  maxlength="300" class="form-control border-none" name="cproblem" placeholder="" value="#(qcInspection.cproblem??)">#(qcInspection.cproblem??)</textarea>
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">原因分析：</label>
             <div class="col-sm-2 col-form-label"  style="margin-right: 100px">
-                <input   style="width: 400px; height: 150px; resize: none" type="text"  class="form-control border-none" name="qcInspection.canalysis" value="#(qcInspection.canalysis??) "/>
-<!--                <textarea  style="width: 400px; height: 150px; resize: none" type="text" maxlength="300" class="form-control border-none" name="qcInspection.canalysis" placeholder="" value="#(qcInspection.canalysis??)"></textarea>-->
+                <textarea  style="width: 400px; height: 150px; resize: none" type="text" maxlength="300" class="form-control border-none" name="canalysis" placeholder="" value="#(qcInspection.canalysis??)">#(qcInspection.canalysis??)</textarea>
             </div>
             <div class="col-form-label">
             </div>
 
             <label class="col-sm-2 col-form-label">对策：</label>
             <div class="col-sm-3 col-form-label">
-                <input   style="width: 400px; height: 150px; resize: none" type="text"  class="form-control border-none" name="qcInspection.cmeasure" value="#(qcInspection.cmeasure??) "/>
-<!--                <textarea style="width: 400px; height: 150px; resize: none" type="text"  maxlength="300" class="form-control border-none" name="qcInspection.cmeasure" placeholder="" value="#(qcInspection.cmeasure??)"></textarea>-->
+                <textarea style="width: 400px; height: 150px; resize: none" type="text"  maxlength="300" class="form-control border-none" name="cmeasure" placeholder="" value="#(qcInspection.cmeasure??)">#(qcInspection.cmeasure??)</textarea>
             </div>
         </div>
 
@@ -120,7 +120,7 @@
 
             <label class="col-sm-2 col-form-label">日期：</label>
             <div class="col-sm-2 col-form-label">
-                <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="qcInspection.ddate" value="#(qcInspection.ddate??)"/>
+                <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="ddate" value="#(qcInspection.ddate??)"/>
             </div>
             <label class="col-sm-2 col-form-label">担当：</label>
             <div class="col-sm-2 col-form-label">
@@ -128,7 +128,7 @@
                         data-autoload
                         data-text="=担当="
                         value="#(qcInspection.idutypersonid??)"
-                        name="qcInspection.idutypersonid">
+                        name="idutypersonid">
                     <option value="">=担当=</option>
                 </select>
             </div>
@@ -139,7 +139,7 @@
                         data-rule="required"
                         data-autoload
                         data-url="admin/dictionary/options?key=iestimate"
-                        name="qcInspection.iestimate"
+                        name="iestimate"
                         data-refresh="false"
                         data-text="=请选择="
                         data-value-attr="sn"
@@ -154,22 +154,21 @@
                 <div id="fileShowFlag" class="j_upload_file_box"
                      data-name="file"
                      data-multi="true"
+                     #if(type=='0') style="display: none" #end
                      data-value-attr="id"
                      data-filebox="filebox_#(pageId)"
                      data-btn-class="btn btn-primary"
                      data-maxsize="20480"
                      data-handler="uploadMultipleFile"
                      data-placeholder="选择附件上传"
-                     data-url="admin/QcInspection/uploadFiles"
+                     data-url="admin/qcinspection/uploadFiles"
                      data-hiddeninput="attachment_#(pageId)"
                 ></div>
                 <div class="j_upload_filebox_multi mt-3">
                     <ul class="j_filebox" id="filebox_#(pageId)" data-remove-confirm="true">
                         #for(data : files)
                         <li data-filebox="filebox_#(pageId)" data-hiddeninput="attachment_#(pageId)"><a target="_blank" data-path="#(data.id)" href="#realImage(data.localUrl)">#(data.filename)</a>
-                            #if(qcInspection.iautoid??)
                             <i  id="fileDelShowFlag" title="删除" onclick="removeUploadFileBoxLi(this)" class="fa fa-trash text-danger ml-3"></i>
-                            #end
                         </li>
                         #end
                     </ul>
@@ -191,11 +190,6 @@
 </div>
 #define js()
 <script>
-
-    //获得配置参数
-    function submitThisForm() {
-        jboltTableSubmit(ele);
-    }
 
     function closeHandler(){
         parent.layer.close(parent.layer.getFrameIndex(window.name));
