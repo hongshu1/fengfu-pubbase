@@ -169,8 +169,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      * 点击查看时，进入弹窗自动加载table的数据
      */
     public void getonlyseeDatas() {
-        List<Record> recordList = service.getonlyseelistByiautoid(getKv());
-        renderJsonData(recordList);
+        renderJsonData(service.getonlyseelistByiautoid(getKv()));
     }
 
     /**
