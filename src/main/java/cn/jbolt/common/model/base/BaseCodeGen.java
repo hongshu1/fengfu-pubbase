@@ -318,6 +318,8 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
     public static final String IS_CACHE_GET_NAME_BY_SN = "is_cache_get_name_by_sn";
     /**是否生成getBySn(sn)*/
     public static final String IS_CACHE_GET_BY_SN = "is_cache_get_by_sn";
+    /**模型名称*/
+    public static final String MODEL_TITLE = "model_title";
 	/**
 	 * 主键ID
 	 */
@@ -2787,6 +2789,22 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	@JBoltField(name="isCacheGetBySn" ,columnName="is_cache_get_by_sn",type="Boolean", remark="是否生成getBySn(sn)", required=true, maxLength=1, fixed=0, order=154)
 	public java.lang.Boolean getIsCacheGetBySn() {
 		return getBoolean("is_cache_get_by_sn");
+	}
+
+	/**
+	 * 模型名称
+	 */
+	public M setModelTitle(java.lang.String modelTitle) {
+		set("model_title", modelTitle);
+		return (M)this;
+	}
+	
+	/**
+	 * 模型名称
+	 */
+	@JBoltField(name="modelTitle" ,columnName="model_title",type="String", remark="模型名称", required=false, maxLength=40, fixed=0, order=155)
+	public java.lang.String getModelTitle() {
+		return getStr("model_title");
 	}
 
 }

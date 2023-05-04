@@ -302,6 +302,10 @@ public class CodeGenAdminController extends JBoltBaseController {
 			renderFormFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		if (notOk(codeGen.getModelTitle())) {
+			codeGen.setModelTitle(StrKit.defaultIfBlank(codeGen.getIndexHtmlPageTitle(),codeGen.getModelName()));
+			codeGen.update();
+		}
 		set("codeGen", codeGen);
 		set("hasIsDeletedColumn",codeGenModelAttrService.checkHasIsDeletedColumn(codeGen.getId()));
 		set("hasIsKeywordsColumn",codeGenModelAttrService.checkHasIsKeywordsColumn(codeGen.getId()));
