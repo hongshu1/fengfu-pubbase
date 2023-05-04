@@ -1149,7 +1149,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         boolean hasIsDeletedColumn = codeGenModelAttrService.checkHasIsDeletedColumn(codeGen.getId());
         data.set("hasIsDeletedColumn",hasIsDeletedColumn);
         // 处理所需生成的方法名
-        data.set("methods", processContrllerGenMethods(codeGen,hasIsDeletedColumn));
+        data.set("methods", processContrllerGenMethods(codeGen,hasIsDeletedColumn,data));
         data.set("getIdType", getGetIdTypeByGenMode(codeGen.getMainTableIdgenmode()));
         data.set("needSort", codeGen.getIsShowOptcol() && codeGen.getIsShowOptcolSort());
         data.set("sortableColumns", codeGenModelAttrService.getSortableColumnsStr(codeGen.getId()));
@@ -1162,6 +1162,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         data.set("conditions", conditions);
         data.set("hasIsKeywordsColumn",isOk(keywordsSearchColumns));
         data.set("permission", JBoltPermissionCache.me.get(codeGen.getPermissionId()));
+
         //执行生成 返回内容
         return engine.getTemplate(controllerTemplate).renderToString(data);
     }
@@ -1302,13 +1303,16 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
      *
      * @param codeGen
      * @param hasIsDeletedColumn
+     * @param data
      * @return
      */
-    private List<CodeGenMethod> processContrllerGenMethods(CodeGen codeGen,boolean hasIsDeletedColumn) {
+    private List<CodeGenMethod> processContrllerGenMethods(CodeGen codeGen,boolean hasIsDeletedColumn,Kv data) {
         // 先得到通用的，然后判断有不需要的就删掉，有特殊的就新增
         List<CodeGenMethod> genMehtods = getCommonControllerMethods(codeGen);
         //处理 需要显示在表格中的boolean字段char(1) 显示为switchBtn 所以生成togglexxx的方法
         processControllerToggleMethods(codeGen, genMehtods);
+        //处理上传类列的methods
+        processControllerUploadMethods(codeGen,genMehtods,data);
         //处理 isDeleted相关
         if(hasIsDeletedColumn){
             //如果启用了toolbar 并且 启用toolbar上的recoverbtn
@@ -1332,6 +1336,27 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             }
         }
         return genMehtods;
+    }
+
+    /**
+     * 处理生成Controller中的关于上传的action
+     * @param codeGen
+     * @param genMehtods
+     * @param data
+     */
+    private void processControllerUploadMethods(CodeGen codeGen, List<CodeGenMethod> genMehtods,Kv data) {
+        List<CodeGenModelAttr> attrs = codeGenModelAttrService.getCodeGenInFormUploadModelAttrs(codeGen.getId());
+        if(notOk(attrs)){return;}
+        CodeGenMethod codeGenMethod;
+        for(CodeGenModelAttr attr:attrs){
+            codeGenMethod = new CodeGenMethod(attr.getFormUploadUrl());
+            codeGenMethod.setIsUploadAction(true);
+            codeGenMethod.setUploadColName(StrKit.firstCharToLowerCase(codeGen.getModelName())+"/"+attr.getAttrName());
+            codeGenMethod.setUploadType(attr.getFormUiType());
+            codeGenMethod.setUploadDataName(attr.getFormLabel());
+            genMehtods.add(codeGenMethod);
+        }
+        data.set("hasUploadFile",true);
     }
 
     /**

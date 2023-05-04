@@ -8,9 +8,18 @@ import org.apache.poi.ss.formula.functions.T;
 import java.util.List;
 
 public class CodeGenMethod {
+    private static final String TYPE_SINGLE_IMG = "imguploader";
+    private static final String TYPE_MULTI_IMG = "imguploader_multi";
+    private static final String TYPE_SINGLE_FILE = "fileuploader";
+    private static final String TYPE_MULTI_FILE = "fileuploader_multi";
     private String name;
     private String value;
     private boolean isToggle;
+    private boolean isUploadAction;
+
+    private String uploadDataName;
+    private String uploadColName;
+    private String uploadType;
     private List<CodeGenModelAttr> headers;
     private String toggleColumnName;//多个是逗号
     public String[] getToggleColumns(){
@@ -82,4 +91,37 @@ public class CodeGenMethod {
     public void setHeaders(List<CodeGenModelAttr> headers) {
         this.headers = headers;
     }
+    public boolean getIsUploadAction() {
+        return isUploadAction;
+    }
+
+    public void setIsUploadAction(boolean uploadAction) {
+        isUploadAction = uploadAction;
+    }
+
+    public String getUploadColName() {
+        return uploadColName;
+    }
+
+    public void setUploadColName(String uploadColName) {
+        this.uploadColName = uploadColName;
+    }
+
+
+    public String getUploadType() {
+        return uploadType;
+    }
+
+    public void setUploadType(String uploadType) {
+        this.uploadType = uploadType;
+    }
+
+    public String getUploadDataName() {
+        return uploadDataName;
+    }
+
+    public void setUploadDataName(String uploadDataName) {
+        this.uploadDataName = uploadDataName;
+    }
+
 }
