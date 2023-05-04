@@ -1,4 +1,4 @@
-/*********jbolt_admin_css_version="3.6.9*************/
+/*********jbolt_admin_css_version="3.7.0*************/
 html, body {
 	margin: 0px;
 	padding: 0px;
@@ -230,7 +230,7 @@ a:hover{
 	height:100%;
 	text-align:center;
 	text-shadow:1px 1px 1px rgba(0,0,0,0.1);
-	letter-spacing:1px;
+	letter-spacing:4px;
 }
  
 .jbolt_admin_logo_box .jbolt_system_name span.main{

@@ -24,10 +24,10 @@
 
 <div class="jbolt_table_toolbar" style="display:none;" id="dicOptBtns_#(pageId)">
     <button data-link-para-ele="#dicTypeId_#(pageId)" onclick="addparam(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
-    <button onclick="QcFormParamsubmit(this)" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存</button>
+<!--    <button onclick="QcFormParamsubmit(this)" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存</button>-->
 </div>
 
-<table id="jbolt_table_qcformparam_split" class="jbolt_table thead_font_normal dictionaryTypes" data-jbolttable data-column-resize="true" data-height="fill_box"
+<table id="jbolt_table_qcformparam_split" class="jbolt_table thead_font_normal dictionaryTypes table-center" data-jbolttable data-column-resize="true" data-height="fill_box"
        data-rowtpl="QcFormParamSplit_tpl_#(pageId)"
        data-ajax="true"
        data-url="/admin/qcform/getQcFormParamListByPId?iqcformid=#(qcForm.iAutoId??)"
@@ -42,8 +42,8 @@
     <thead>
     <tr>
         <th data-width="60" data-column="index">项次</th>
-        <th data-width="130" data-column="cqcitemnames">参数项目名称</th>
-        <th data-width="100" data-column="cqcparamnames">参数名称</th>
+        <th data-width="300" data-column="cqcitemnames">参数项目名称</th>
+        <th data-width="200" data-column="cqcparamnames">参数名称</th>
         <th data-width="180">操作</th>
     </tr>
     </thead>

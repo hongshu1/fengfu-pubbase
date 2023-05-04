@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.3.7";
+var jbolt_table_js_version="3.3.8";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -13192,12 +13192,13 @@ function getScrollBarHeight(ele){
 			var rowDblClickHandler=table.data("row-dblclick-handler");
 			var that=this;
 			if(rowClickActive||rowClickHandler){
+				table.tableActiveRowBgColor = table.data("row-click-active-bgcolor");
+				table.tableActiveRowFrColor = table.data("row-click-active-frcolor");
 				var tempTr,trIndex,trId,jsonData;
 				table.table_box.on("click","table>tbody>tr",function(e){
 					if(e.target.tagName=="A"||e.target.tagName=="BUTTON"||e.target.parentNode.tagName=="A"||e.target.parentNode.tagName=="BUTTON"){
 						e.preventDefault();
 					}else{
-
 						tempTr=$(this);
 						if(rowClickHandler&&isOk(table.currentChooseActiveTr)&&isOk(table.extraColumnForm)){
 							//存在右侧辅助录入区域
@@ -13208,11 +13209,29 @@ function getScrollBarHeight(ele){
 						if(rowClickActive){
 							// table.table_box.find("table>tbody>tr.active").removeClass("active");
 							// table.table_box.find("table>tbody>tr:nth-child("+(trIndex+1)+")").addClass("active");
-							table.table_box.find("table>tbody>tr.active").removeClass("active");
+							var activeTrs = table.table_box.find("table>tbody>tr.active");
+							if(isOk(activeTrs)){
+								activeTrs.removeClass("active");
+								if(table.tableActiveRowBgColor || table.tableActiveRowFrColor){
+									activeTrs.removeAttr("style");
+								}
+							}
 							var tr = table.table_box.find("table>tbody>tr:nth-child("+(trIndex+1)+")");
-							tr.addClass("active");
-							table.activeTrIndex = trIndex;
-							table.activeTrId    = tr.data("id");
+							if(isOk(tr)){
+								tr.addClass("active");
+								if(table.tableActiveRowBgColor || table.tableActiveRowFrColor){
+									var css = "";
+									if(table.tableActiveRowBgColor){
+										css = css+"background-color:"+table.tableActiveRowBgColor+"!important;"
+									}
+									if(table.tableActiveRowFrColor){
+										css = css+"color:"+table.tableActiveRowFrColor+"!important;"
+									}
+									tr.attr("style",css);
+								}
+								table.activeTrIndex = trIndex;
+								table.activeTrId    = tr.data("id");
+							}
 						}
 						if(rowClickHandler){
 							var exe_handler=eval(rowClickHandler);

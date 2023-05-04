@@ -115,14 +115,13 @@ public class SubcontractorderdQtyService extends BaseService<SubcontractorderdQt
 		return null;
 	}
 	
-	public SubcontractorderdQty createSubcontractOrderdQty(int year, int month, int day, BigDecimal qty, BigDecimal sourceQty){
+	public SubcontractorderdQty createSubcontractOrderdQty(int year, int month, int day, BigDecimal qty){
 		SubcontractorderdQty subcontractorderdQty = new SubcontractorderdQty();
 		subcontractorderdQty.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		subcontractorderdQty.setIYear(year);
 		subcontractorderdQty.setIMonth(month);
 		subcontractorderdQty.setIDate(day);
 		subcontractorderdQty.setIQty(qty);
-		subcontractorderdQty.setISourceQty(sourceQty);
 		return subcontractorderdQty;
 	}
 	
@@ -137,8 +136,7 @@ public class SubcontractorderdQtyService extends BaseService<SubcontractorderdQt
 					jsonObject.getIntValue(SubcontractorderdQty.IYEAR.toLowerCase()),
 					jsonObject.getIntValue(SubcontractorderdQty.IMONTH.toLowerCase()),
 					jsonObject.getIntValue(SubcontractorderdQty.IDATE.toLowerCase()),
-					jsonObject.getBigDecimal(SubcontractorderdQty.IQTY.toLowerCase()),
-					jsonObject.getBigDecimal(SubcontractorderdQty.ISOURCEQTY.toLowerCase())
+					jsonObject.getBigDecimal(SubcontractorderdQty.IQTY.toLowerCase())
 			);
 			subcontractorderdQty.setISubcontractOrderDid(iSubcontractOrderDid);
 			list.add(subcontractorderdQty);

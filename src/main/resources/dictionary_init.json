@@ -156,6 +156,10 @@
 	"modeLevel": 1,
 	"typeKey": "code_gen_table_col_format",
 	"dics":[
+			{"name":"Boolean转文字","sn":"boolean_to_str"},
+			{"name":"Boolean转对号[√]","sn":"boolean_to_check"},
+			{"name":"Enable转文字","sn":"enable_to_str"},
+			{"name":"Enable转对号[√]","sn":"enable_to_check"},
 			{"name":"日期_yyyy-MM-dd","sn":"date_ymd"},
 			{"name":"日期_yyyy-MM","sn":"date_ym"},
 			{"name":"日期时间_yyyy-MM-dd HH:mm:ss","sn":"date_ymdhms"},

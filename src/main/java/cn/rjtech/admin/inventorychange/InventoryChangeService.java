@@ -182,8 +182,7 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 				//设置列映射 顺序 标题名称
                 .setHeaders(1,
 						JBoltExcelHeader.create("iBeforeInventoryId", "转换前存货编码"),
-						JBoltExcelHeader.create("iAfterInventoryId", "转换后存货编码"),
-						JBoltExcelHeader.create("iChangeRate", "转换率")
+						JBoltExcelHeader.create("iAfterInventoryId", "转换后存货编码")
                         )//特殊数据转换器
 						.setDataChangeHandler((data,index) ->{
 							String beforeInventoryCode = data.getStr("iBeforeInventoryId");
@@ -248,7 +247,6 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 							JBoltExcelHeader.create("afterinvcode1","转换后客户部番", 20),
 							JBoltExcelHeader.create("afterinvname1","转换后部品名称", 20),
 							JBoltExcelHeader.create("afteruomname","主计量单位", 20),
-							JBoltExcelHeader.create("ichangerate","转换率", 20),
 							JBoltExcelHeader.create("ccreatename","创建人名称", 20),
 							JBoltExcelHeader.create("dcreatetime","创建时间", 20)
                             )
@@ -271,13 +269,12 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 		ValidationUtils.notNull(inventoryChange, JBoltMsg.DATA_NOT_EXIST);
 		ValidationUtils.notNull(inventoryChange.getIBeforeInventoryId(), "转换前存货编码不能为空");
 		ValidationUtils.notNull(inventoryChange.getIAfterInventoryId(), "转换后存货编码不能为空");
-		ValidationUtils.notNull(inventoryChange.getIChangeRate(), "转换率不能为空且只能为正数或0");
+		
 		String beforeInv = String.valueOf(inventoryChange.getIBeforeInventoryId());
 		String afterInv = String.valueOf(inventoryChange.getIAfterInventoryId());
 		ValidationUtils.isTrue(!beforeInv.equals(afterInv), "转换前跟转换后的编码一致，请跟换");
 		InventoryChange change = findByBeforeInventoryId(inventoryChange.getIBeforeInventoryId(), inventoryChange.getIAutoId());
 		ValidationUtils.isTrue(change == null, JBoltMsg.DATA_SAME_SN_EXIST);
-		ValidationUtils.isTrue(ZERO_BIGDECIMAL.compareTo(inventoryChange.getIChangeRate()) <=0,"转换率不能为空且只能为正数或0");
 	}
 	
 	public Long getItemId(String itemCode){

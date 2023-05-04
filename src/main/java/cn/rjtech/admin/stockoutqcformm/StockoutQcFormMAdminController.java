@@ -95,7 +95,7 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 
 	/*
 	 * 生成
-	 * */
+	 */
 	public void createTable(@Para(value = "iautoid") Long iautoid,
 							@Para(value = "cqcformname") String cqcformname) {
 		renderJson(service.createTable(iautoid,cqcformname));
@@ -114,14 +114,14 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 
 	/*
 	 * 点击检验时，进入弹窗自动加载table的数据
-	 * */
+	 */
 	public void getCheckOutTableDatas() {
 		renderJsonData(service.getCheckOutTableDatas(getKv()));
 	}
 
 	/*
 	 * 在检验页面点击确定
-	 * */
+	 */
 	public void saveCheckOutTable(JBoltPara JboltPara) {
 		renderJson(service.saveCheckOutTable(JboltPara));
 	}
@@ -161,7 +161,7 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 
 	/*
 	 * 在编辑页面点击确定
-	 * */
+	 */
 	public void saveEditTable(JBoltPara JboltPara) {
 		renderJson(service.saveEditTable(JboltPara));
 	}

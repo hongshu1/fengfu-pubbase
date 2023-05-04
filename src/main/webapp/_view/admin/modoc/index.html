@@ -35,10 +35,11 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/MoDoc/edit/${data.id}" data-area="1200,800"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="修改在库检" class="jbolt_table_editbtn">查看</a>
-	<a href="admin/MoDoc/edit/${data.id}" data-area="1200,800"  tooltip data-title="现品票"  data-handler="refreshJBoltTable" data-dialog-title="修改在库检" class="jbolt_table_editbtn">现品票</a>
-    <a href="admin/MoDoc/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">关闭</a>
+	<a href="admin/modoc/details/${data.iautoid}" data-area="1600,800"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+	<a href="admin/modoc/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="现品票"  data-handler="refreshJBoltTable" data-dialog-title="现品票" class="jbolt_table_editbtn">现品票</a>
+    <a href="admin/modoc/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">关闭</a>
 </td>
+            <td hidden >${data.iautoid}</td>
             <td>${data.istatus}</td>
             <td>${data.dplandate|date_ymd}</td>
             <td>${data.cmodocno}</td>
@@ -59,7 +60,7 @@
         <div class="jbolt_table_toolbar" id="moDoc_toolbar_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
                 <button data-openpage="dialog" data-area="1200,800" data-handler="jboltTablePageToFirst"
-                        data-title="新增在库检" data-url="admin/MoDoc/add" class="btn btn-outline-primary btn-sm"><i
+                        data-title="新增在库检" data-url="admin/modoc/add" class="btn btn-outline-primary btn-sm"><i
                         class="fa fa-plus"></i> 新增
                 </button>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i
@@ -75,7 +76,7 @@
                data-jbolttable
                data-height="fill"
                data-ajax="true"
-               data-url="admin/MoDoc/datas"
+               data-url="admin/modoc/datas"
                data-column-resize="true"
                data-row-click-active="true"
                data-column-prepend="1:checkbox:true"
@@ -91,6 +92,7 @@
             <tr>
                 <th data-width="60">序号</th>
                 <th data-width="150">操作</th>
+                <th hidden data-width="150" data-column="iAutoId">id</th>
                 <th data-width="150" data-column="iStatus">状态</th>
                 <th data-width="150" data-column="dPlanDate">计划日期</th>
                 <th data-width="150" data-column="cMoDocNo">工单号</th>
@@ -116,19 +118,5 @@
 #define js()
 <script type="text/javascript">
 
-    function jbolt_table_dblclickhandler_
-
-    #
-    (pageId)(table, tempTr1, trId1, rowData)
-    {
-        console.log(JSON.stringify(rowData));
-
-        $(tempTr1).data('url', '/admin/admin/MoDoc/edit/' + rowData.iautoid)
-            .data('area', '1200,800')
-            .data('title', '在库检')
-            .data('btn', '保存,关闭');
-
-        DialogUtil.openBy(tempTr1);
-    }
 </script>
 #end

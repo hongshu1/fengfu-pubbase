@@ -87,9 +87,9 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         return dbTemplate("stockoutqcformm.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
     }
 
-    /*
+    /**
      * 根据表格ID生成table
-     * */
+     */
     public Ret createTable(Long iautoid, String cqcformname) {
         StockoutQcFormM stockoutQcFormM = findById(iautoid);
         if (null == stockoutQcFormM) {
@@ -129,23 +129,23 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         return SUCCESS;
     }
 
-    /*
+    /**
      * 根据iautoid查询数据,并跳到检验页面
-     * */
+     */
     public Record getCheckoutListByIautoId(Long iautoId) {
         return dbTemplate("stockoutqcformm.list", Kv.by("iautoId", iautoId)).findFirst();
     }
 
-    /*
+    /**
      * 点击检验时，进入弹窗自动加载table的数据
-     * */
+     */
     public List<Record> getCheckOutTableDatas(Kv kv) {
         return rcvDocQcFormMService.clearZero(dbTemplate("stockoutqcformm.findChecoutListByIformParamid", kv).find());
     }
 
-    /*
+    /**
      * 在检验页面点击确定
-     * */
+     */
     public Ret saveCheckOutTable(JBoltPara JboltPara) {
         if (JboltPara == null || JboltPara.isEmpty()) {
             return fail(JBoltMsg.PARAM_ERROR);
@@ -178,7 +178,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
          * 出库检表
          * 1.如果isok=0，代表不合格，将iStatus更新为2，isCompleted更新为1；
          * 2.如果isok=1，代表合格，将iStatus更新为3，isCompleted更新为1
-         * */
+         */
         StockoutQcFormM stockoutQcFormM = findById(stockqcformmiautoid);
         saveStockoutQcFormmModel(stockoutQcFormM, JboltPara);
         update(stockoutQcFormM);
@@ -216,9 +216,9 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         return docparamlist;
     }
 
-    /*
+    /**
      * 点击检验时，进入弹窗自动加载table的数据
-     * */
+     */
     public List<Record> getonlyseelistByiautoid(Kv kv) {
         List<Record> recordList = dbTemplate("stockoutqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
@@ -255,7 +255,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         return resultRecord;
     }
 
-    /*
+    /**
      * 在编辑页面点击确定
      * */
     public Ret saveEditTable(JBoltPara JboltPara) {
@@ -366,7 +366,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         return imgList;
     }
 
-    /*
+    /**
      * 给出库检明细列值表传参
      * */
     public void saveStockQcFormdLineModel(StockoutqcformdLine stockoutqcformdLine, String iautoid, String iseq, String cvalue) {
@@ -376,7 +376,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         stockoutqcformdLine.setCValue(cvalue);
     }
 
-    /*
+    /**
      * 给出库检主表传参
      * */
     public void saveStockoutQcFormmModel(StockoutQcFormM stockoutQcFormM, JBoltPara JboltPara) {
@@ -391,7 +391,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         stockoutQcFormM.setIsCompleted(true);
     }
 
-    /*
+    /**
      * 清除多余的零
      * */
     public List<Record> clearZero(List<Record> recordList) {

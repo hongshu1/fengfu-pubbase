@@ -2,16 +2,16 @@
 #define main()
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="rcvDocDefectForm"  action="admin/RcvDocDefect/updateEditTable" method="post">
-            <input type="hidden" name="rcvDocDefect.iautoid" value="#(rcvDocDefect.iautoid??)" />
+        <form onsubmit="return false;" id="rcvDocDefectForm"  action="admin/rcvdocdefect/updateEditTable" method="post">
+            <input type="hidden" name="iautoid" value="#(rcvDocDefect.iautoid??)" />
             <h5>检验信息</h5>
             <hr/>
             <div class="form-group row">
 
-                <input type="hidden"  placeholder="来料检ID" name="rcvDocQcFormM.iautoid" value="#(rcvDocQcFormM.iautoid??)"/>
-                <input type="hidden"  placeholder="供应商ID" name="rcvDocQcFormM.iinventoryid" value="#(rcvDocQcFormM.iinventoryid??)"/>
-                <input type="hidden"  placeholder="存货ID" name="rcvDocQcFormM.ivendorid" value="#(rcvDocQcFormM.ivendorid??)"/>
-                <input type="hidden"  placeholder="检验人ID" name="rcvDocQcFormM.iupdateby" value="#(rcvDocQcFormM.iupdateby??)"/>
+                <input type="hidden"  placeholder="来料检ID" name="ircvdocqcformmid" value="#(rcvDocQcFormM.iautoid??)"/>
+                <input type="hidden"  placeholder="供应商ID" name="iinventoryid" value="#(rcvDocQcFormM.iinventoryid??)"/>
+                <input type="hidden"  placeholder="存货ID" name="ivendorid" value="#(rcvDocQcFormM.ivendorid??)"/>
+                <input type="hidden"  placeholder="检验人ID" name="iupdateby" value="#(rcvDocQcFormM.iupdateby??)"/>
 
                 <label class="col-sm-2 col-form-label">异常品单号：</label>
                 <div class="col-sm-2 col-form-label">
@@ -43,7 +43,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">不合格数量：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none" name="rcvDocDefect.idqqty" placeholder="" value="#(rcvDocDefect.idqqty??)"/>
+                    <input type="text" class="form-control border-none" name="idqqty" placeholder="" value="#(rcvDocDefect.idqqty??)"/>
                 </div>
                 <label class="col-sm-2 col-form-label">检验人：</label>
                 <div class="col-sm-2 col-form-label">
@@ -57,7 +57,7 @@
 
             <h5>异常品记录信息</h5>
             <div class="form-group row">
-                <input type="hidden" id="cbadnesssns" name="rcvDocDefect.cbadnesssns" value="#(rcvDocDefect.cbadnesssns??)"/>
+                <input type="hidden" id="cbadnesssns" name="cbadnesssns" value="#(rcvDocDefect.cbadnesssns??)"/>
                 <label class="col-sm-2 col-form-label">不良项目：</label>
                 <div class="col-sm-8 col-form-label">
                     <div class="form-group row"
@@ -70,7 +70,7 @@
                          data-text-attr="cbadnesssns"
                          data-inline="true"
                          data-value="#(processDefect.cbadnesssns??)"
-                         data-name="processDefect.cbadnesssns">
+                         data-name="cbadnesssns">
                     </div>
                 </div>
             </div>
@@ -83,16 +83,16 @@
                          data-radio
                          data-rule="radio"
                          data-value="#(rcvDocDefect.isfirsttime??)"
-                         data-name="rcvDocDefect.isfirsttime"
+                         data-name="isfirsttime"
                          data-default="true">
                         <div class="col"  style="padding-top: 1px;">
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renabletrue1" type="radio" name="rcvDocDefect.isfirsttime"   value="1"/>
+                                <input  id="renabletrue1" type="radio" name="isfirsttime"   value="1"/>
                                 <label for="renabletrue1">首发</label>
                             </div>
 
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renablefalse1" type="radio" name="rcvDocDefect.isfirsttime"   value="0"/>
+                                <input  id="renablefalse1" type="radio" name="isfirsttime"   value="0"/>
                                 <label for="renablefalse1">再发</label>
                             </div>
                         </div>
@@ -108,16 +108,16 @@
                          data-radio
                          data-rule="radio"
                          data-value="#(rcvDocDefect.iresptype??)"
-                         data-name="rcvDocDefect.iresptype"
+                         data-name="iresptype"
                          data-default="true">
                         <div class="col"  style="padding-top: 1px;">
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renabletrue" type="radio" name="rcvDocDefect.iresptype"   value="1"/>
+                                <input  id="renabletrue" type="radio" name="iresptype"   value="1"/>
                                 <label for="renabletrue">供应商</label>
                             </div>
 
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renablefalse" type="radio" name="rcvDocDefect.iresptype"   value="0"/>
+                                <input  id="renablefalse" type="radio" name="iresptype"   value="0"/>
                                 <label for="renablefalse">其他</label>
                             </div>
                         </div>
@@ -130,7 +130,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">不良内容描述</label>
                 <div class="col">
-                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入不良内容描述" maxlength="500" name="rcvDocDefect.cdesc" value="#(rcvDocDefect.cdesc??)"/>
+                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入不良内容描述" maxlength="500" name="cdesc" value="#(rcvDocDefect.cdesc??)"/>
                 </div>
             </div>
         </form>

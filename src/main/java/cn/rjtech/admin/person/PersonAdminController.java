@@ -1,6 +1,5 @@
 package cn.rjtech.admin.person;
 
-import cn.hutool.core.net.URLEncoder;
 import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
@@ -18,10 +17,7 @@ import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import pres.lnk.jxlss.JxlsBuilder;
 
-import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**

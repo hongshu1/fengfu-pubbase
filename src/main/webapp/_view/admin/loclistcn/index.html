@@ -9,7 +9,7 @@
 	<h1>地区</h1>
 	</div>
 	<div class="col">
-		<form class="form-inline text-left" id="locListCNForm_#(pageId)"   onsubmit="return false;" method="post">
+		<form class="form-inline text-left" id="loclistcnForm_#(pageId)"   onsubmit="return false;" method="post">
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
 		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -21,7 +21,7 @@
 </div>
 <div class="jbolt_page_content">
 <!-- JBoltTable的数据模板定义-->
-<textarea class="jb_tpl_box" id="locListCNRowtpl_#(pageId)">
+<textarea class="jb_tpl_box" id="loclistcnRowtpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
@@ -29,19 +29,19 @@
 <td>${data.name}</td>
 <td>${data.ilevel}</td>
 <td>
-	<a href="admin/locListCN/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改地区" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
-    <a href="admin/locListCN/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+	<a href="admin/loclistcn/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改地区" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+    <a href="admin/loclistcn/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
 </td>
 </tr>
 {@/each}
 </textarea>
 
 <!-- 工具条 toolbar -->
-<div class="jbolt_table_toolbar" id="locListCN_toolbar_#(pageId)">
+<div class="jbolt_table_toolbar" id="loclistcn_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增地区"  data-url="admin/locListCN/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改地区" data-check-handler="jboltTableGetCheckedId" data-url="admin/locListCN/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/locListCN/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增地区"  data-url="admin/loclistcn/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改地区" data-check-handler="jboltTableGetCheckedId" data-url="admin/loclistcn/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/loclistcn/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 	</div>
 
@@ -54,18 +54,14 @@
 data-jbolttable
 data-height="fill"
 data-ajax="true"
-data-url="admin/locListCN/datas"
+data-url="admin/loclistcn/datas"
 data-column-resize="true"
 data-row-click-active="true"
 data-column-prepend="1:checkbox:true"
-data-conditions-form="locListCNForm_#(pageId)"
-data-rowtpl="locListCNRowtpl_#(pageId)"
-data-page="locListCNPage_#(pageId)"
-data-toolbar="locListCN_toolbar_#(pageId)"
-
-
-
-
+data-conditions-form="loclistcnForm_#(pageId)"
+data-rowtpl="loclistcnRowtpl_#(pageId)"
+data-page="loclistcnPage_#(pageId)"
+data-toolbar="loclistcn_toolbar_#(pageId)"
 data-fixed-columns-left="1,2,3"
 data-fixed-columns-right="-1"
 data-row-dblclick-active="true"
@@ -83,9 +79,6 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 <tbody>
 </tbody>
 </table>
-
-
-
 </div>
 </div>
 #end
@@ -96,7 +89,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
 		console.log(JSON.stringify(rowData));
 
-		$(tempTr1).data('url', '/admin/admin/locListCN/edit/' + rowData.iautoid)
+		$(tempTr1).data('url', '/admin/admin/loclistcn/edit/' + rowData.iautoid)
 			.data('area', '1200,800')
 			.data('title', '地区')
 			.data('btn', '保存,关闭');

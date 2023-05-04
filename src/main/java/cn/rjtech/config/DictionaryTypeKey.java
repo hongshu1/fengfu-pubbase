@@ -22,4 +22,8 @@ public class DictionaryTypeKey {
      * 币种
      */
     public static final String CCURRENCY = "cCurrency";
+    /**
+     * 字段类型
+     */
+    public static final String FIELD_TYPE = "field_type";
 }

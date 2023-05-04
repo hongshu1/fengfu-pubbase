@@ -52,7 +52,7 @@ public class DeptService extends JBoltDeptService{
     }
     /**
      * 根据部门编码返回名称
-     * */
+     */
 	public String findNameBySn(String str) {
 		Dept dept = findFirst(selectSql().eq("sn", str));
 		if(dept == null) return null;

@@ -40,7 +40,7 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageSize, int pageNumber, Okv kv) {
-		return dbTemplate(dao()._getDataSourceConfigName(), "StockoutDefect.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+		return dbTemplate(dao()._getDataSourceConfigName(), "stockoutdefect.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
 	}
 
 
@@ -276,7 +276,7 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 
 	/*
 	 * 根据出货检id查询异常品质单
-	 * */
+	 */
 	public StockoutDefect findStockoutDefectByiStockoutQcFormMid(Object iStockoutQcFormMid) {
 		return findFirst("SELECT * FROM PL_StockoutDefect WHERE iStockoutQcFormMid = ?", iStockoutQcFormMid);
 	}
