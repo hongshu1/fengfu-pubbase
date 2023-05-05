@@ -1,6 +1,7 @@
 package cn.rjtech.api.nfcswipecard;
 
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.rjtech.admin.pad.PadService;
 import cn.rjtech.admin.person.PersonService;
@@ -76,6 +77,9 @@ public class NfcSwipeCardApiService extends JBoltApiBaseService {
     }
     personswipelog.setCDepName(record1.getStr("cdepname"));
     personswipelog.save();
-    return null;
+    record.put("cardcode", kv.getStr("cardcode"));
+    record.put("cpsnname", record1.getStr("cpsn_name"));
+    record.put("datetoday", DateUtil.today());
+    return record;
   }
 }
