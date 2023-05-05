@@ -105,7 +105,7 @@
         #else
             #if(codeGen.tableDefaultSortColumn && codeGen.tableDefaultSortType)
         //排序
-        sql.#(codeGen.tableDefaultSortType?? 'desc')("#(codeGen.tableDefaultSortColumn?? 'id')");
+        sql.#(codeGen.tableDefaultSortType?? 'desc')("#(codeGen.tableDefaultSortColumn?? (codeGen.mainTablePkey?? 'id'))");
             #end
         #end
 		return #if(codeGen.isPaginate)paginate(sql)#else find(sql)#end;
@@ -239,7 +239,7 @@
 #define s_tree()
 	public List<#(codeGen.modelName)> getTreeDatas(){
 		List<#(codeGen.modelName)> datas=find(selectSql());
-		return convertToModelTree(datas, "id", "pid", (p)->notOk(p.getPid()));	
+		return convertToModelTree(datas, "#(codeGen.mainTablePkey?? 'id')", "pid", (p)->notOk(p.getPid()));
 	}
 #end
 
