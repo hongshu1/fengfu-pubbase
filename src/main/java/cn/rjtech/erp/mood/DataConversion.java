@@ -289,7 +289,7 @@ public class DataConversion {
             //返回拼接好的数据
             String json = getJsonObject(ts.getStr("masid"), ts.getStr("flag"), ts.getStr("flagtype"), ts.getStr("sourceflag"), null);
             // 将json字符串转换成JsonElement
-            JsonElement jsonElement = new JsonParser().parse(json);
+            JsonElement jsonElement = JsonParser.parseString(json);
             //按照标识加入到json离
             dataJson.add(ts.getStr("flag"), jsonElement);
         }
@@ -304,7 +304,7 @@ public class DataConversion {
                 for(Object key : jsonMap.keySet()){
                     String value = jsonMap.get(key).toString();
                     System.out.println(key+"  "+value);
-                    JsonElement jsonElement = new JsonParser().parse(value);
+                    JsonElement jsonElement = JsonParser.parseString(value);
                     dataJson.add(key.toString(),jsonElement);
                 }
             }
@@ -319,7 +319,7 @@ public class DataConversion {
                 for(Object key : jsonMap.keySet()){
                     String value = jsonMap.get(key).toString();
                     System.out.println(key+"  "+value);
-                    JsonElement jsonElement = new JsonParser().parse(value);
+                    JsonElement jsonElement = JsonParser.parseString(value);
                     dataJson.add(key.toString(),jsonElement);
                 }
             }
@@ -410,7 +410,7 @@ public class DataConversion {
                             //为空用就递归System.out.println(columsmapdetail.getMasid()+"--"+ columsmapdetail.getFlag()+"--"+columsmapdetail.getFlagtype()+"-"+columsmapdetail.getSourceflag()+"-"+record);
                             String obj = getJsonObject(masid, flag1, columsmapdetail.getStr("flagtype"), sf, record.toMap());
 
-                            JsonElement jsonElement = new JsonParser().parse(obj);
+                            JsonElement jsonElement = JsonParser.parseString(obj);
                             //赋值到json
                             bodyObject.add(flag1, jsonElement);
                         } else {
@@ -529,7 +529,7 @@ public class DataConversion {
                             //为空用就递归System.out.println(columsmapdetail.getMasid()+"--"+ columsmapdetail.getFlag()+"--"+columsmapdetail.getFlagtype()+"-"+columsmapdetail.getSourceflag()+"-"+record);
                             String obj = getJsonObject(masid, flag1, columsmapdetail.getStr("flagtype"), sf, record.toMap());
 
-                            JsonElement jsonElement = new JsonParser().parse(obj);
+                            JsonElement jsonElement = JsonParser.parseString(obj);
                             //赋值到json
                             bodyObject.add(flag1, jsonElement);
                         } else {

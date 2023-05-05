@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.dept.DeptService;
 import cn.jbolt._admin.dictionary.DictionaryService;
+import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
@@ -24,7 +25,6 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
 import cn.rjtech.admin.workclass.WorkClassService;
-import cn.rjtech.config.DictionaryTypeKey;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Person;
@@ -383,8 +383,8 @@ public class PersonService extends BaseService<Person> {
             constructPersonModelCheckDatasEffectiveColumnByExcelDatas(rows, errorMsg, startRow);
             ValidationUtils.isTrue(errorMsg.length() == 0, errorMsg.toString());
             //构造model
-            List<Person> personList = new ArrayList<Person>();
-            List<PersonEquipment> PersonEquipmentList = new ArrayList<PersonEquipment>();
+            List<Person> personList = new ArrayList<>();
+            List<PersonEquipment> PersonEquipmentList = new ArrayList<>();
             constructPersonModelByExcelDatas(rows, personList, PersonEquipmentList);
             tx(() -> {
                 batchSave(personList);
@@ -439,7 +439,7 @@ public class PersonService extends BaseService<Person> {
             Integer isex = JBoltStringUtil.isBlank(isexStr) ? null : ("男".equals(isexStr) ? 1 : 2);
             person.setISex(isex);
             //获取封装的事业类型的字典
-            Record rpersontypeDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.RPERSONTYPE);
+            Record rpersontypeDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.rPersonType.name());
             String rpersontype = excelRecord.getStr("rpersontype");
             rpersontype = JBoltStringUtil.isNotBlank(rpersontype) ? rpersontypeDictionaryRecord.getStr(rpersontype) : rpersontype;
             person.setRPersonType(rpersontype);
@@ -447,7 +447,7 @@ public class PersonService extends BaseService<Person> {
             person.setJobNumber(excelRecord.getStr("jobnumber"));
             person.setCEcardNo(excelRecord.getStr("cecardno"));
             person.setCdeptNum(deptService.findNameBySn(excelRecord.getStr("cdeptnum")));
-            Record remploystateDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.JOB_TYPE);
+            Record remploystateDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.job_type.name());
             String remploystate = excelRecord.getStr("remploystate");
             remploystate = JBoltStringUtil.isNotBlank(remploystate) ? remploystateDictionaryRecord.getStr(remploystate) : remploystate;
             person.setVIDNo(remploystate);
