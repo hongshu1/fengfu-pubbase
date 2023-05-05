@@ -141,6 +141,13 @@ public class InStockQcFormMAdminController extends BaseAdminController {
         renderJson(service.saveCheckOutTable(JboltPara));
     }
 
+    /*
+     * 删除在库检查表
+     * */
+    public void deleteCheckoutByIautoid() {
+        renderJson(service.deleteCheckoutByIautoid(getLong(0)));
+    }
+
     /**
      * 点击查看按钮，跳转到onlysee页面
      */
@@ -164,7 +171,7 @@ public class InStockQcFormMAdminController extends BaseAdminController {
     /*
      * 点击编辑按钮，跳转到编辑页面
      * */
-    public void edit() {
+    public void jumpEdit() {
         InStockQcFormM inStockQcFormM = service.findById(getLong(0));
         Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
         List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(inStockQcFormM.getIAutoId());

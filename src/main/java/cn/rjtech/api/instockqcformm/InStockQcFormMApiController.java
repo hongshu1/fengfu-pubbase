@@ -130,8 +130,19 @@ public class InStockQcFormMApiController extends BaseApiController {
                              @Para(value = "cmeasurereason") String cmeasurereason,
                              @Para(value = "serializeSubmitList") String serializeSubmitList,
                              @Para(value = "cmemo") String cmemo) {
+        ValidationUtils.notNull(iinstockqcformmid, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, iinstockqcformmid, cmeasureunit, isok, cmeasurereason,
             serializeSubmitList, cmemo));
+    }
+
+    /*
+     * 删除在库检查表
+     * @param iautoid: PL_InStockQcFormM主表id
+     * */
+    public void deleteCheckoutByIautoid(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.deleteCheckoutByIautoid(iautoid));
     }
 
     /**

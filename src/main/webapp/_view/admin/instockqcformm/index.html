@@ -91,21 +91,23 @@
   <td>${pageNumber,pageSize,index | rownum}</td>
   <td title="${data.iautoid}">
     {@if data.istatus == 0}
-      <button type="button" onclick="createTable('${data.iautoid}',${data.cqcformname})" data-handler="refreshJBoltTable"
+      <button type="button" onclick="createTable('${data.iautoid}','${data.cqcformname}')" data-handler="refreshJBoltTable"
               class="btn btn-outline-secondary">生成</button>
     {@/if}
     {@if data.istatus == 1}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/checkout/${data.iautoid}" data-area="100%,100%"
-         tooltip title="在库检成绩表" data-title="检验">检验</a>
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/jumpCheckOut/${data.iautoid}" data-area="100%,100%"
+         tooltip title="点击检验" data-title="检验">检验</a>
+     <a tooltip href="admin/instockqcformm/deleteCheckoutByIautoid/${data.iautoid}" data-handler="refreshJBoltTable"
+             class="jbolt_table_delbtn" tooltip title="删除在库检成绩表">删除</a>
     {@/if}
     {@if data.istatus == 2}
-     <a tooltip tooltip title="查看出库检成绩表" href="admin/instockqcformm/onlysee/${data.iautoid}" data-scroll="yes"
+     <a tooltip tooltip title="查看出库检成绩表" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}" data-scroll="yes"
         data-handler="refreshJBoltTable" data-area="100%,100%" class="jbolt_table_editbtn">查看</a>
-      <a tooltip title="编辑出库检成绩表" href="admin/instockqcformm/edit/${data.iautoid}" data-handler="refreshJBoltTable"
+      <a tooltip title="编辑出库检成绩表" href="admin/instockqcformm/jumpEdit/${data.iautoid}" data-handler="refreshJBoltTable"
          data-area="100%,100%" class="jbolt_table_editbtn">编辑</a>
     {@/if}
     {@if data.istatus == 3}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/onlysee/${data.iautoid}" data-area="100%,100%"
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}" data-area="100%,100%"
          tooltip data-title="查看出库检成绩表">查看</a>
       <a href="javascript:return false;" data-handler="refreshJBoltTable" tooltip data-title="状态合格不需要编辑"
          disabled="disabled" disabled style="opacity:0.5">编辑</a>
@@ -137,7 +139,7 @@
 </tr>
 {@/each}
 </textarea>
-    <table class="jbolt_table jbolt_main_table table-center hover_info"
+    <table class="jbolt_table jbolt_main_table table-center"
            data-jbolttable
            data-width="fill"
            data-height="fill"
@@ -148,24 +150,24 @@
            data-page="inStockQcFormMPage_#(pageId)"
            data-toolbar="inStockQcFormM_toolbar_#(pageId)">
       <thead>
-        <tr>
-          <th data-width="60" data-column="index">序号</th>
-          <th data-width="150">操作</th>
-          <th data-width="150" data-column="istatus">检验结果</th><!--0. 未生成 1. 待检 2. 不合格 3. 合格-->
-          <th data-width="100" data-column="iscompleted">状态</th>
-          <th data-width="150" data-column="cinvqcformno">检验单号</th>
-          <th data-width="150" data-column="cQcFormName">检验表格名称</th>
-          <th data-width="100" data-column="cInvAddCode">存货编码</th>
-          <th data-width="100" data-column="cinvcode1">客户部番</th>
-          <th data-width="100" data-column="cinvname1">部品名称</th>
-          <th data-width="100" data-column="cInvStd">规格</th>
-          <th data-width="100" data-column="iInventoryUomId1">单位</th>
-          <th data-width="100" data-column="iQty">数量</th>
-          <th data-width="100" data-column="cBarcode">现品票</th>
-          <th data-width="150" data-column="cBatchNo">批次号</th>
-          <th data-width="100" data-column="iQcUserId">检验员</th>
-          <th data-min-width="160" data-column="dCreateTime">创建时间</th>
-        </tr>
+      <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-width="150">操作</th>
+        <th data-width="150" data-column="istatus">检验结果</th><!--0. 未生成 1. 待检 2. 不合格 3. 合格-->
+        <th data-width="100" data-column="iscompleted">状态</th>
+        <th data-width="150" data-column="cinvqcformno">检验单号</th>
+        <th data-width="150" data-column="cQcFormName">检验表格名称</th>
+        <th data-width="100" data-column="cInvAddCode">存货编码</th>
+        <th data-width="100" data-column="cinvcode1">客户部番</th>
+        <th data-width="100" data-column="cinvname1">部品名称</th>
+        <th data-width="100" data-column="cInvStd">规格</th>
+        <th data-width="100" data-column="iInventoryUomId1">单位</th>
+        <th data-width="100" data-column="iQty">数量</th>
+        <th data-width="100" data-column="cBarcode">现品票</th>
+        <th data-width="150" data-column="cBatchNo">批次号</th>
+        <th data-width="100" data-column="iQcUserId">检验员</th>
+        <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+      </tr>
       </thead>
       <tbody>
       </tbody>
@@ -188,10 +190,10 @@
   /*
   * 生成
   * */
-  function createTable(iautoid,cqcformname) {
+  function createTable(iautoid, cqcformname) {
     var para = {
       iautoid: iautoid,
-      cqcformname:cqcformname
+      cqcformname: cqcformname
     }
 
     Ajax.post('/admin/instockqcformm/createTable', para, function (res) {

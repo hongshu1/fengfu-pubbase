@@ -20,14 +20,13 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
 import cn.rjtech.admin.instockqcformdline.InstockqcformdLineService;
+import cn.rjtech.admin.qcform.QcFormService;
 import cn.rjtech.model.momdata.InStockDefect;
 import cn.rjtech.model.momdata.InStockQcFormD;
 import cn.rjtech.model.momdata.InStockQcFormM;
 import cn.rjtech.model.momdata.InstockqcformdLine;
-import cn.rjtech.model.momdata.StockoutDefect;
-import cn.rjtech.model.momdata.StockoutQcFormD;
-import cn.rjtech.model.momdata.StockoutQcFormM;
-import cn.rjtech.model.momdata.StockoutqcformdLine;
+import cn.rjtech.model.momdata.QcForm;
+import cn.rjtech.model.momdata.base.BaseInStockQcFormD;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -38,6 +37,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+import com.sun.corba.se.spi.ior.ObjectKey;
 
 /**
  * 在库检 Service
@@ -56,6 +56,8 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
     private InStockQcFormDService     inStockQcFormDService;
     @Inject
     private InstockqcformdLineService instockqcformdLineService;
+    @Inject
+    private QcFormService             qcFormService;
 
     @Override
     protected InStockQcFormM dao() {
@@ -231,6 +233,11 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         }
         //1、根据表格ID查询数据
         Long iQcFormId = inStockQcFormM.getIQcFormId();//表格ID
+        //2、质检表格是否存在
+        QcForm qcForm = qcFormService.findById(iQcFormId);
+        if (null == qcForm) {
+            return fail(iQcFormId + "：质检表格不存在，无法生成在库检验表");
+        }
         List<Record> recordList = dbTemplate("instockqcformm.getCheckoutList", Kv.by("iqcformid", iQcFormId)).find();
         if (recordList.isEmpty()) {
             return fail(cqcformname + "：没有检验项目，无法生成在库检验表");
@@ -242,9 +249,9 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                 inStockQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
                 inStockQcFormD.setIInStockQcFormMid(iautoid);//来料检id
                 inStockQcFormD.setIQcFormId(iQcFormId);//检验表格ID
-                inStockQcFormD.setIFormParamId(record.getLong("iFormParamId"));//检验项目ID
+                inStockQcFormD.setIFormParamId(record.getLong("iqcformtableitemid"));//Bd_QcFormTableItem的iautoid
                 inStockQcFormD.setISeq(record.get("iSeq"));
-                inStockQcFormD.setISubSeq(record.get("iSubSeq"));
+                inStockQcFormD.setISubSeq(record.get("iSeq"));
                 inStockQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
                 inStockQcFormD.setIType(record.get("iType"));
                 inStockQcFormD.setIStdVal(record.get("iStdVal"));
@@ -332,15 +339,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
             update(inStockQcFormM);
 
             //isok=0，代表检验结果不合格，生成在库异常品记录
-            if (isok.equals("0")) {
-                InStockDefect defect = defectService
-                    .findDefectByiInStockQcFormMid(instockqcformmiautoid);
-                if (null == defect) {
-                    InStockDefect inStockDefect = new InStockDefect();
-                    defectService.saveInStockOutDefectModel(inStockDefect, inStockQcFormM);
-                    defectService.save(inStockDefect);
-                }
-            }
+            saveInDefectModel(isok,instockqcformmiautoid,inStockQcFormM);
             return true;
         });
         return result;
@@ -371,12 +370,42 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         inStockQcFormM.setIsCompleted(true);
     }
 
+    /*
+     * 保存异常品记录
+     * */
+    public void saveInDefectModel(String isok,Long instockqcformmiautoid,InStockQcFormM inStockQcFormM) {
+        if (isok.equals("0")) {
+            InStockDefect defect = defectService.findDefectByiInStockQcFormMid(instockqcformmiautoid);
+            if (null == defect) {
+                InStockDefect inStockDefect = new InStockDefect();
+                defectService.saveInStockOutDefectModel(inStockDefect, inStockQcFormM);
+                boolean save = inStockDefect.save();
+            }
+        }
+    }
+
+    /*
+     * 删除在库检查表
+     * */
+    public Ret deleteCheckoutByIautoid(Long iautoid) {
+        //1、删除
+        List<InStockQcFormD> inStockQcFormDList = inStockQcFormDService.findByIInStockQcFormMid(iautoid);
+        List<Long> collect = inStockQcFormDList.stream().map(BaseInStockQcFormD::getIAutoId).collect(Collectors.toList());
+        String ids = StringUtils.join(collect, ",");
+        Ret ret = inStockQcFormDService.deleteByIds(ids);
+        //2、更新主表状态
+        InStockQcFormM stockQcFormM = findById(iautoid);
+        stockQcFormM.setIStatus(0);
+        update(stockQcFormM);
+        return ret;
+    }
+
     /**
      * 跳转到onlysee页面
      */
     public List<Record> getonlyseelistByiautoid(Long iautoid) {
         Kv kv = new Kv();
-        kv.set("iautoid", iautoid);
+        kv.set("iinstockqcformmid", iautoid);
         List<Record> clearRecordList = clearZero(dbTemplate("instockqcformm.getonlyseelistByiautoid", kv).find());
 
         Map<Object, List<Record>> map = clearRecordList.stream()
@@ -405,6 +434,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * 点击检验时，进入弹窗自动加载table的数据
      */
     public List<Record> getonlyseelistByiautoid(Kv kv) {
+        kv.set("iinstockqcformmid", kv.get("iautoid"));
         List<Record> recordList = dbTemplate("instockqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
 
@@ -464,7 +494,8 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
     /*
      * 实现编辑页面的serializeSubmitList
      * */
-    public Boolean achiveEditSerializeSubmitList(JSONArray serializeSubmitList, Long instockqcformmiautoid, String cmeasurepurpose,
+    public Boolean achiveEditSerializeSubmitList(JSONArray serializeSubmitList, Long instockqcformmiautoid,
+                                                 String cmeasurepurpose,
                                                  String cmeasurereason, String cmeasureunit, String cmemo, String cdcno,
                                                  String isok) {
         List<InstockqcformdLine> instockqcformdLines = new ArrayList<>();
@@ -491,6 +522,10 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
             InStockQcFormM stockQcFormM = findById(instockqcformmiautoid);
             saveInStockoutQcFormmModel(stockQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
             update(stockQcFormM);
+
+            //如果不合格，保存异常品单
+            saveInDefectModel(isok,instockqcformmiautoid,stockQcFormM);
+
             return true;
         });
         return result;

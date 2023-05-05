@@ -5,6 +5,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
@@ -106,6 +107,14 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
         Boolean result = service.achiveChecOutSerializeSubmitList(JSON.parseArray(serializeSubmitList),
             iinstockqcformmid, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
         //2、最后返回成功
+        return JBoltApiRet.API_SUCCESS;
+    }
+
+    /*
+     * 删除在库检查表
+     * */
+    public JBoltApiRet deleteCheckoutByIautoid(Long iautoid){
+        Ret ret = service.deleteCheckoutByIautoid(iautoid);
         return JBoltApiRet.API_SUCCESS;
     }
 

@@ -1,6 +1,7 @@
 package cn.rjtech.routes;
 
 import cn.rjtech.api.instockdefect.InStockDefectApiController;
+import cn.rjtech.api.instockqcformm.InStockQcFormMApiController;
 import cn.rjtech.api.org.OrgApiController;
 import cn.rjtech.api.processdefect.ProcessDefectApiController;
 import cn.rjtech.api.rcvdocdefect.RcvDocDefectApiController;
@@ -27,6 +28,7 @@ public class ApiRoutes extends Routes {
         this.add("/api/processdefect", ProcessDefectApiController.class);
         this.add("/api/instockdefect", InStockDefectApiController.class);
         this.add("/api/stockoutqcformm", StockOutQcFormMApiController.class);
+        this.add("/api/instockqcformm", InStockQcFormMApiController.class);
     }
 
 }

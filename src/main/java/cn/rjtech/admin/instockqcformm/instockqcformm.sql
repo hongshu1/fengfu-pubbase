@@ -50,48 +50,59 @@ ORDER BY t1.dUpdateTime DESC
 
 #sql("getCheckoutList")
 SELECT t1.*,
+       t2.cQcItemName,
        t3.cQcParamName,
-       t4.cQcItemName
-FROM Bd_QcFormTableParam t1
-         LEFT JOIN Bd_QcFormParam t2 ON t1.iFormParamId = t2.iAutoId
-         LEFT JOIN Bd_QcParam t3 ON t2.iQcParamId = t3.iAutoId
-         LEFT JOIN Bd_QcItem t4 ON t3.iQcItemId = t4.iAutoId
+       t4.iQcFormTableParamId,
+       t4.iAutoId as iqcformtableitemid,
+       t5.iStdVal,
+       t5.iMaxVal,
+       t5.iMinVal,
+       t5.cOptions,
+       t5.iSeq,
+       t5.iType
+FROM Bd_QcFormItem t1
+         LEFT JOIN Bd_QcItem t2 ON t1.iQcItemId = t2.iAutoId
+         LEFT JOIN Bd_QcParam t3 ON t2.iAutoId = t3.iQcItemId
+         LEFT JOIN Bd_QcFormTableItem t4 ON t1.iAutoId = t4.iQcFormItemId
+         LEFT JOIN Bd_QcFormTableParam t5 ON t4.iQcFormTableParamId = t5.iAutoId
 WHERE t1.isDeleted = '0'
   #if(iqcformid)
   AND t1.iqcformId = #para(iqcformid)
   #end
-ORDER BY t1.iSeq asc
+ORDER BY t1.iSeq ASC
 #end
 
 #sql("findChecoutListByIformParamid")
-SELECT t1.*,
-       t3.cQcItemName,
-       t4.cQcParamName
+SELECT
+    t1.*,t4.cQcParamName,t5.cQcItemName
 FROM PL_InStockQcFormD t1
-         LEFT JOIN Bd_QcFormParam t2 ON t1.iFormParamId = t2.iautoid
-         LEFT JOIN Bd_QcItem t3 ON t2.iqcformitemid = t3.iAutoId
-         LEFT JOIN Bd_QcParam t4 ON t2.iQcParamId = t4.iAutoId
+         LEFT JOIN Bd_QcFormTableItem t2 on t1.iFormParamId = t2.iAutoId
+         LEFT JOIN Bd_QcFormParam t3 ON t2.iQcFormParamId = t3.iAutoId
+         LEFT JOIN Bd_QcParam t4 ON t3.iQcParamId = t4.iAutoId
+         LEFT JOIN Bd_QcItem t5 ON t4.iQcItemId = t5.iAutoId
 WHERE
-    #if(iinstockqcformmid)
-    t1.iinstockqcformmid = #para(iinstockqcformmid)
-    #end
-ORDER BY t1.iSeq asc
+#if(iinstockqcformmid)
+t1.iinstockqcformmid = #para(iinstockqcformmid)
+#end
+ORDER BY iSeq asc
 #end
 
 #sql("getonlyseelistByiautoid")
-SELECT
-    t2.*,
-    t3.iautoid lineiautoid,t3.iSeq,t3.cValue,
-    t5.cQcParamName,
-    t6.cQcItemName
-FROM PL_InStockQcFormM t1
-         LEFT JOIN PL_InStockQcFormD t2 ON t1.iAutoId = t2.iInStockQcFormMid
-         LEFT JOIN PL_InStockQcFormD_Line t3 ON t2.iAutoId = t3.iInStockQcFormDid
-         LEFT JOIN Bd_QcFormParam t4 ON t2.iFormParamId = t4.iAutoId
-         LEFT JOIN Bd_QcParam t5 ON t4.iQcParamId = t5.iAutoId
-         LEFT JOIN Bd_QcItem t6 ON t5.iQcItemId = t6.iAutoId
-WHERE t1.IsDeleted = '0'
-  #if(iautoid)
-  AND t1.iautoid = #para(iautoid)
+SELECT t1.* ,
+       t2.iautoid lineiautoid,
+       t2.iSeq,
+       t2.cValue,
+       t5.cQcParamName,
+       t6.cQcItemName
+FROM  PL_InStockQcFormD t1
+          LEFT JOIN PL_InStockQcFormD_Line t2 ON t1.iAutoId = t2.iInStockQcFormDid
+          LEFT JOIN Bd_QcFormTableItem t3 ON t1.iFormParamId = t3.iAutoId
+          LEFT JOIN Bd_QcFormParam t4 ON t3.iQcFormParamId = t4.iAutoId
+          LEFT JOIN Bd_QcParam t5 ON t4.iQcParamId = t5.iAutoId
+          LEFT JOIN Bd_QcItem t6 ON t5.iQcItemId = t6.iAutoId
+WHERE
+#if(iinstockqcformmid)
+ t1.iinstockqcformmid = #para(iinstockqcformmid)
 #end
+ORDER BY t1.iSeq asc
 #end
