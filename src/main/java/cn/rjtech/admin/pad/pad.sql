@@ -35,3 +35,17 @@ and a.cPadName = #para(cpadname)
 and a.iWorkRegionMid = #para(iworkregionmid)
 #end
 #end
+
+#sql("getPadWorkRegionByCmac")
+SELECT
+	gion.*,
+	bpad.cPadCode,
+	bpad.cPadName,
+	workm.cWorkName
+FROM
+	Bd_PadWorkRegion gion
+	LEFT JOIN Bd_Pad bpad ON gion.iPadId = bpad.iAutoId
+	LEFT JOIN Bd_WorkRegionM workm ON gion.iWorkRegionMid = workm.iAutoId
+WHERE
+	bpad.cMac = #para(cmac)
+#end
