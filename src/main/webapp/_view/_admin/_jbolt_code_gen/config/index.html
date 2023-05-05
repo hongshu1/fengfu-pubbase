@@ -937,6 +937,7 @@ function processFormEleClickEditorEvent(){
 			eleInput = ele.find("textarea");
 		}
 
+		var colName = ele.data("col-name");
 		var isImgUploader = false;
 		var isUploader = false;
 		var isFileUploader = false;
@@ -990,8 +991,8 @@ function processFormEleClickEditorEvent(){
 
 			var updiv;
 			if(isImgUploader){
+				tplData.formUploadUrl = ele.data("form-upload-url")||StrUtil.camel("upload_"+colName);
 				if(isUploadMulti){
-					tplData.formUploadUrl = "uploadImgs";
 					if(tplData.isUploadToQiniu){
 						updiv = ele.find('[data-handler="uploadMultipleFileToQiniu"]');
 					}else{
@@ -1000,7 +1001,6 @@ function processFormEleClickEditorEvent(){
 					tplData.formImgUploaderArea = updiv.data("area")||"150,150";
 
 				}else{
-					tplData.formUploadUrl = "uploadImg";
 					if(tplData.isUploadToQiniu){
 						updiv = ele.find('[data-handler="uploadFileToQiniu"]');
 					}else{
@@ -1009,15 +1009,14 @@ function processFormEleClickEditorEvent(){
 					tplData.formImgUploaderArea = updiv.data("area")||"200,200";
 				}
 			}else if(isFileUploader){
+				tplData.formUploadUrl = ele.data("form-upload-url")||StrUtil.camel("upload_"+colName);
 				if(isUploadMulti){
-					tplData.formUploadUrl = "uploadFiles";
 					if(tplData.isUploadToQiniu){
 						updiv = ele.find('[data-handler="uploadMultipleFileToQiniu"]');
 					}else{
 						updiv = ele.find('[data-handler="uploadMultipleFile"]');
 					}
 				}else{
-					tplData.formUploadUrl = "uploadFile";
 					if(tplData.isUploadToQiniu){
 						updiv = ele.find('[data-handler="uploadFileToQiniu"]');
 					}else{

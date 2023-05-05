@@ -80,6 +80,9 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		if(tableMeta!=null) {
 			codeGen.setMainTableRemark(tableMeta.remarks);
 			codeGen.setMainTablePkey(tableMeta.primaryKey);
+			if(notOk(codeGen.getTableDefaultSortColumn()) || (codeGen.getTableDefaultSortColumn().equalsIgnoreCase(ID) && tableMeta.primaryKey.equalsIgnoreCase(ID))){
+				codeGen.setTableDefaultSortColumn(tableMeta.primaryKey);
+			}
 			List<ColumnMeta> columnMetas = tableMeta.columnMetas;
 			if(isOk(columnMetas)) {
 				List<CodeGenModelAttr> attrs = new ArrayList<>();
@@ -1290,5 +1293,14 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 
 	public boolean checkHasSnAttr(Long codeGenId) {
 		return exists(selectSql().eq(CodeGenModelAttr.CODE_GEN_ID,codeGenId).eq(CodeGenModelAttr.ATTR_NAME,"sn"));
+	}
+
+	public List<CodeGenModelAttr> getCodeGenInFormUploadModelAttrs(Long codeGenId) {
+		if(notOk(codeGenId)) {return new ArrayList<>();}
+		CodeGen codeGen = codeGenService.findById(codeGenId);
+		if(codeGen == null) {
+			throw new RuntimeException("未找到代码生成的基础配置");
+		}
+		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_form_ele", TRUE).isNotNull(CodeGenModelAttr.FORM_UPLOAD_URL));
 	}
 }
