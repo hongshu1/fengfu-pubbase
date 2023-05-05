@@ -9,6 +9,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingdcodingrule.CusfieldsmappingdCodingruleService;
+import cn.rjtech.admin.formfield.FormFieldService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.CusFieldsMappingD;
 import cn.rjtech.util.ValidationUtils;
@@ -34,6 +35,8 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     private final CusFieldsMappingD dao = new CusFieldsMappingD().dao();
 
     @Inject
+    private FormFieldService formFieldService;
+    @Inject
     private CusfieldsmappingdCodingruleService cusfieldsmappingdCodingruleService;
     
     @Override
@@ -55,17 +58,25 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
      * @param isEncoded  是否编码字段：0. 否 1. 是
      * @param isEnabled  是否启用：0. 否 1. 是
      */
-    public Page<CusFieldsMappingD> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEncoded, Boolean isEnabled) {
-        //创建sql对象
-        Sql sql = selectSql().page(pageNumber, pageSize);
-        //sql条件处理
-        sql.eqBooleanToChar("isEncoded", isEncoded);
-        sql.eqBooleanToChar("isEnabled", isEnabled);
-        //关键词模糊查询
-        sql.like("cCusFieldName", keywords);
-        //排序
-        sql.desc("iAutoId");
-        return paginate(sql);
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEncoded, Boolean isEnabled) {
+        // 创建sql对象
+        Sql sql = selectSql()
+                .select("d.*, f.cfieldname ")
+                .from(table(), "d")
+                .innerJoin(formFieldService.table(), "f", "d.iformfieldid = f.iautoid ")
+                .page(pageNumber, pageSize);
+        
+        // sql条件处理
+        sql.eqBooleanToChar("d.isEncoded", isEncoded);
+        sql.eqBooleanToChar("d.isEnabled", isEnabled);
+        
+        // 关键词模糊查询
+        sql.like("d.cCusFieldName", keywords);
+        
+        // 排序
+        sql.desc("d.iAutoId");
+
+        return paginateRecord(sql);
     }
 
     /**
@@ -180,7 +191,8 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     
     private void doSaveCodingRules(CusFieldsMappingD cusFieldsMappingD, List<Record> save) {
         for (Record row : save) {
-            row.set("iautoid", JBoltSnowflakeKit.me.nextId())
+            row.keep("iseq", "itype", "cseparator", "ilength")
+                    .set("iautoid", JBoltSnowflakeKit.me.nextId())
                     .set("icusfieldsmappingdid", cusFieldsMappingD.getIAutoId());
         }
         cusfieldsmappingdCodingruleService.batchSaveRecords(save);
@@ -189,6 +201,8 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     private void doUpdate(CusFieldsMappingD cusFieldsMappingD, JBoltTable jBoltTable) {
         CusFieldsMappingD dbCusFieldsMappingD = findById(cusFieldsMappingD.getIAutoId());
         ValidationUtils.notNull(dbCusFieldsMappingD, JBoltMsg.DATA_NOT_EXIST);
+
+        ValidationUtils.isTrue(cusFieldsMappingD.update(), ErrorMsg.UPDATE_FAILED);
 
         // 新增
         List<Record> save = jBoltTable.getSaveRecordList();
@@ -199,6 +213,9 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         // 修改
         List<Record> update = jBoltTable.getUpdateRecordList();
         if (CollUtil.isNotEmpty(update)) {
+            for (Record row : update) {
+                row.keep("iseq", "itype", "cseparator", "ilength", "iautoid");
+            }
             cusfieldsmappingdCodingruleService.batchUpdateRecords(update);
         }
         

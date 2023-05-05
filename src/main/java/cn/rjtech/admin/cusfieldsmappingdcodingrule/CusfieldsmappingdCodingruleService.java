@@ -1,6 +1,9 @@
 package cn.rjtech.admin.cusfieldsmappingdcodingrule;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -8,6 +11,7 @@ import cn.rjtech.model.momdata.CusfieldsmappingdCodingrule;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 系统设置-导入字段编码规则
@@ -37,14 +41,21 @@ public class CusfieldsmappingdCodingruleService extends BaseService<Cusfieldsmap
      * @param pageSize   每页几条数据
      * @param iType      编码字符类型：1. 编码 2. 分隔符
      */
-    public Page<CusfieldsmappingdCodingrule> getAdminDatas(int pageNumber, int pageSize, Integer iType) {
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Integer iType) {
         //创建sql对象
         Sql sql = selectSql().page(pageNumber, pageSize);
         //sql条件处理
         sql.eq("iType", iType);
         //排序
-        sql.desc("iAutoId");
-        return paginate(sql);
+        sql.asc("iseq");
+        Page<Record> page = paginateRecord(sql);
+        if (CollUtil.isNotEmpty(page.getList())) {
+            for (Record row : page.getList()) {
+                row.set("cname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.encoding_field_type.name(), row.getStr("itype")));
+                row.set("cchar", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.encoding_field_separator.name(), row.getStr("cseparator")));
+            }
+        }
+        return page;
     }
 
     /**

@@ -6,6 +6,8 @@
     <input type="hidden" name="cusFieldsMappingD.iCusFieldsMappingMid" value="#(cusFieldsMappingD.iCusFieldsMappingMid??)">
     #end
     
+    <input type="hidden" name="cusFieldsMappingD.cdemo" value="#(cusFieldsMappingD.cdemo??)">
+    
     <div class="row">
         <div class="col">
             <div class="form-group row">
@@ -37,7 +39,7 @@
                            data-tips="请选择系统字段"
                            data-header="字段编码,字段名称"
                            maxlength="40"
-                           value="#(cusFieldsMappingD.iFormFieldId??)">
+                           value="#(formField.cfieldname??)">
                 </div>
             </div>
 
@@ -87,6 +89,8 @@
 
 #define js()
 <script>
+
+    console.log('formfield:  #json(formField)');
     
     var loaded = false;
 
@@ -100,7 +104,7 @@
             AjaxPortalUtil.go('cusfieldmappingd_portal_#(pageId)', '/admin/cusfieldsmappingd/codingrule?pageId=#(pageId)&icusfieldsmappingmid=#(cusFieldsMappingD.icusfieldsmappingmid)&isencoded=' + v);
         }
     }
-    
+
     var cseparatorMap;
 
     getDictMap('encoding_field_separator', function (data) {
