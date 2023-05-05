@@ -25,7 +25,7 @@ public class ExchangeTableService extends BaseService<ExchangeTable> {
 
     @Override
     public String dataSourceConfigName() {
-        return U8DataSourceKit.ME.getU8DbName(getOrgCode());
+        return U8DataSourceKit.ME.use(getOrgCode());
     }
 
     @Override
