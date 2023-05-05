@@ -109,8 +109,13 @@ public class CommonController extends BaseRestController {
      * 单据提交
      */
     @JBoltApplyJWT
-    public void test(){
-        Map map = commonService.tmp(getKv());
+    public void vouchProcessSubmit(){
+        Map map = commonService.vouchProcessSubmit(getKv());
+        if ("200".equals(map.get("code").toString())) {
+            renderJsonSuccess(map);
+        } else {
+            renderJson(Kv.by("code", map.get("code").toString()).set("data", map));
+        }
     }
 
     /**
