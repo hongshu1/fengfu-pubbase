@@ -672,7 +672,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                         e.printStackTrace();
                     }
                     // 返回解析
-                    Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message, 1);
+                    Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message);
                     String resultCode = JBoltStringUtil.isBlank(processResult.get("resultCode").toString()) ? "201" : processResult.get("resultCode").toString();
                     String resultInfo = JBoltStringUtil.isBlank(processResult.get("resultInfo").toString()) ? "未知原因" : processResult.get("resultInfo").toString();
                     message = resultInfo;
@@ -835,7 +835,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                             e.printStackTrace();
                         }
                         // 返回解析
-                        Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message, 1);
+                        Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message);
                         String resultCode = JBoltStringUtil.isBlank(processResult.get("resultCode").toString()) ? "201" : processResult.get("resultCode").toString();
                         if (!JBoltStringUtil.isBlank(processResult.get("resultInfo").toString())){
                             message = processResult.get("resultInfo").toString();
@@ -935,7 +935,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                 System.out.println(message);
 
                 // 返回解析
-                Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message, 1);
+                Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message);
                 //System.out.println(processResult.get("resultCode").toString() + processResult.get("resultInfo").toString());
                 String resultCode = processResult.get("resultCode").toString();
                 message = processResult.get("resultInfo").toString();
@@ -986,7 +986,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
                 // 保存日志
                 if (CollUtil.isNotEmpty(saveLogs)) {
-                    tsysLogService.batchSave(saveLogs);
+                    tsysLogService.save(saveLogs.get(0));
                 }
 //                // 交换表
                 if (CollUtil.isNotEmpty(saveExchangeTables)) {
