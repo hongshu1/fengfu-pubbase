@@ -34,7 +34,7 @@ public class YearProductionSummaryAdminController extends JBoltBaseController {
         renderJson();
     }
 
-    /*
+    /**
      * 导出选中
      * */
     public void exportExcelByIds() {
@@ -57,7 +57,7 @@ public class YearProductionSummaryAdminController extends JBoltBaseController {
 //        }
     }
 
-    /*
+    /**
      * 导出全部
      * */
     public void exportExcelAll() {

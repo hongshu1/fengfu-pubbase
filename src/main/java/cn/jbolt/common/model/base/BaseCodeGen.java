@@ -294,6 +294,32 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
     public static final String IS_BASE_MODEL_GEN_COL_CONSTANT = "is_base_model_gen_col_constant";
     /**是否在baseModel中生成的字段常量 名称转大写*/
     public static final String IS_BASE_MODEL_GEN_COL_CONSTANT_TO_UPPERCASE = "is_base_model_gen_col_constant_to_uppercase";
+    /**表头背景色*/
+    public static final String THEAD_BG_COLOR = "thead_bg_color";
+    /**表头文字颜色*/
+    public static final String THEAD_FR_COLOR = "thead_fr_color";
+    /**是否表格选中定色*/
+    public static final String IS_TABLE_ROW_CLICK_ACTIVE = "is_table_row_click_active";
+    /**选中行背景色*/
+    public static final String ACTIVE_TR_BG_COLOR = "active_tr_bg_color";
+    /**选中行文字颜色*/
+    public static final String ACTIVE_TR_FR_COLOR = "active_tr_fr_color";
+    /**是否生成缓存工具类*/
+    public static final String IS_GEN_CACHE_UTIL_CLASS = "is_gen_cache_util_class";
+    /**缓存工具类名*/
+    public static final String CACHE_CLASS_NAME = "cache_class_name";
+    /**缓存工具类包*/
+    public static final String CACHE_CLASS_PACKAGE = "cache_class_package";
+    /**是否生成getName*/
+    public static final String IS_CACHE_GET_NAME = "is_cache_get_name";
+    /**是否生成getSn*/
+    public static final String IS_CACHE_GET_SN = "is_cache_get_sn";
+    /**是否生成getNameBySn(sn)*/
+    public static final String IS_CACHE_GET_NAME_BY_SN = "is_cache_get_name_by_sn";
+    /**是否生成getBySn(sn)*/
+    public static final String IS_CACHE_GET_BY_SN = "is_cache_get_by_sn";
+    /**模型名称*/
+    public static final String MODEL_TITLE = "model_title";
 	/**
 	 * 主键ID
 	 */
@@ -2571,6 +2597,214 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	@JBoltField(name="isBaseModelGenColConstantToUppercase" ,columnName="is_base_model_gen_col_constant_to_uppercase",type="Boolean", remark="是否在baseModel中生成的字段常量 名称转大写", required=true, maxLength=1, fixed=0, order=142)
 	public java.lang.Boolean getIsBaseModelGenColConstantToUppercase() {
 		return getBoolean("is_base_model_gen_col_constant_to_uppercase");
+	}
+
+	/**
+	 * 表头背景色
+	 */
+	public M setTheadBgColor(java.lang.String theadBgColor) {
+		set("thead_bg_color", theadBgColor);
+		return (M)this;
+	}
+	
+	/**
+	 * 表头背景色
+	 */
+	@JBoltField(name="theadBgColor" ,columnName="thead_bg_color",type="String", remark="表头背景色", required=false, maxLength=20, fixed=0, order=143)
+	public java.lang.String getTheadBgColor() {
+		return getStr("thead_bg_color");
+	}
+
+	/**
+	 * 表头文字颜色
+	 */
+	public M setTheadFrColor(java.lang.String theadFrColor) {
+		set("thead_fr_color", theadFrColor);
+		return (M)this;
+	}
+	
+	/**
+	 * 表头文字颜色
+	 */
+	@JBoltField(name="theadFrColor" ,columnName="thead_fr_color",type="String", remark="表头文字颜色", required=false, maxLength=20, fixed=0, order=144)
+	public java.lang.String getTheadFrColor() {
+		return getStr("thead_fr_color");
+	}
+
+	/**
+	 * 是否表格选中定色
+	 */
+	public M setIsTableRowClickActive(java.lang.Boolean isTableRowClickActive) {
+		set("is_table_row_click_active", isTableRowClickActive);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否表格选中定色
+	 */
+	@JBoltField(name="isTableRowClickActive" ,columnName="is_table_row_click_active",type="Boolean", remark="是否表格选中定色", required=true, maxLength=1, fixed=0, order=145)
+	public java.lang.Boolean getIsTableRowClickActive() {
+		return getBoolean("is_table_row_click_active");
+	}
+
+	/**
+	 * 选中行背景色
+	 */
+	public M setActiveTrBgColor(java.lang.String activeTrBgColor) {
+		set("active_tr_bg_color", activeTrBgColor);
+		return (M)this;
+	}
+	
+	/**
+	 * 选中行背景色
+	 */
+	@JBoltField(name="activeTrBgColor" ,columnName="active_tr_bg_color",type="String", remark="选中行背景色", required=false, maxLength=20, fixed=0, order=146)
+	public java.lang.String getActiveTrBgColor() {
+		return getStr("active_tr_bg_color");
+	}
+
+	/**
+	 * 选中行文字颜色
+	 */
+	public M setActiveTrFrColor(java.lang.String activeTrFrColor) {
+		set("active_tr_fr_color", activeTrFrColor);
+		return (M)this;
+	}
+	
+	/**
+	 * 选中行文字颜色
+	 */
+	@JBoltField(name="activeTrFrColor" ,columnName="active_tr_fr_color",type="String", remark="选中行文字颜色", required=false, maxLength=20, fixed=0, order=147)
+	public java.lang.String getActiveTrFrColor() {
+		return getStr("active_tr_fr_color");
+	}
+
+	/**
+	 * 是否生成缓存工具类
+	 */
+	public M setIsGenCacheUtilClass(java.lang.Boolean isGenCacheUtilClass) {
+		set("is_gen_cache_util_class", isGenCacheUtilClass);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成缓存工具类
+	 */
+	@JBoltField(name="isGenCacheUtilClass" ,columnName="is_gen_cache_util_class",type="Boolean", remark="是否生成缓存工具类", required=true, maxLength=1, fixed=0, order=148)
+	public java.lang.Boolean getIsGenCacheUtilClass() {
+		return getBoolean("is_gen_cache_util_class");
+	}
+
+	/**
+	 * 缓存工具类名
+	 */
+	public M setCacheClassName(java.lang.String cacheClassName) {
+		set("cache_class_name", cacheClassName);
+		return (M)this;
+	}
+	
+	/**
+	 * 缓存工具类名
+	 */
+	@JBoltField(name="cacheClassName" ,columnName="cache_class_name",type="String", remark="缓存工具类名", required=false, maxLength=100, fixed=0, order=149)
+	public java.lang.String getCacheClassName() {
+		return getStr("cache_class_name");
+	}
+
+	/**
+	 * 缓存工具类包
+	 */
+	public M setCacheClassPackage(java.lang.String cacheClassPackage) {
+		set("cache_class_package", cacheClassPackage);
+		return (M)this;
+	}
+	
+	/**
+	 * 缓存工具类包
+	 */
+	@JBoltField(name="cacheClassPackage" ,columnName="cache_class_package",type="String", remark="缓存工具类包", required=false, maxLength=200, fixed=0, order=150)
+	public java.lang.String getCacheClassPackage() {
+		return getStr("cache_class_package");
+	}
+
+	/**
+	 * 是否生成getName
+	 */
+	public M setIsCacheGetName(java.lang.Boolean isCacheGetName) {
+		set("is_cache_get_name", isCacheGetName);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成getName
+	 */
+	@JBoltField(name="isCacheGetName" ,columnName="is_cache_get_name",type="Boolean", remark="是否生成getName", required=true, maxLength=1, fixed=0, order=151)
+	public java.lang.Boolean getIsCacheGetName() {
+		return getBoolean("is_cache_get_name");
+	}
+
+	/**
+	 * 是否生成getSn
+	 */
+	public M setIsCacheGetSn(java.lang.Boolean isCacheGetSn) {
+		set("is_cache_get_sn", isCacheGetSn);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成getSn
+	 */
+	@JBoltField(name="isCacheGetSn" ,columnName="is_cache_get_sn",type="Boolean", remark="是否生成getSn", required=true, maxLength=1, fixed=0, order=152)
+	public java.lang.Boolean getIsCacheGetSn() {
+		return getBoolean("is_cache_get_sn");
+	}
+
+	/**
+	 * 是否生成getNameBySn(sn)
+	 */
+	public M setIsCacheGetNameBySn(java.lang.Boolean isCacheGetNameBySn) {
+		set("is_cache_get_name_by_sn", isCacheGetNameBySn);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成getNameBySn(sn)
+	 */
+	@JBoltField(name="isCacheGetNameBySn" ,columnName="is_cache_get_name_by_sn",type="Boolean", remark="是否生成getNameBySn(sn)", required=true, maxLength=1, fixed=0, order=153)
+	public java.lang.Boolean getIsCacheGetNameBySn() {
+		return getBoolean("is_cache_get_name_by_sn");
+	}
+
+	/**
+	 * 是否生成getBySn(sn)
+	 */
+	public M setIsCacheGetBySn(java.lang.Boolean isCacheGetBySn) {
+		set("is_cache_get_by_sn", isCacheGetBySn);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成getBySn(sn)
+	 */
+	@JBoltField(name="isCacheGetBySn" ,columnName="is_cache_get_by_sn",type="Boolean", remark="是否生成getBySn(sn)", required=true, maxLength=1, fixed=0, order=154)
+	public java.lang.Boolean getIsCacheGetBySn() {
+		return getBoolean("is_cache_get_by_sn");
+	}
+
+	/**
+	 * 模型名称
+	 */
+	public M setModelTitle(java.lang.String modelTitle) {
+		set("model_title", modelTitle);
+		return (M)this;
+	}
+	
+	/**
+	 * 模型名称
+	 */
+	@JBoltField(name="modelTitle" ,columnName="model_title",type="String", remark="模型名称", required=false, maxLength=40, fixed=0, order=155)
+	public java.lang.String getModelTitle() {
+		return getStr("model_title");
 	}
 
 }

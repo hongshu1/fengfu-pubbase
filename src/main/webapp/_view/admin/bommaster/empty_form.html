@@ -457,41 +457,41 @@
                 LayerMsgBox.alert("部品QTY不能为空",2);
                 return false;
             }
-            if (!item.invWeight){
-                LayerMsgBox.alert("部品重量不能为空",2);
-                return false;
-            }
+            // if (!item.invWeight){
+            //     LayerMsgBox.alert("部品重量不能为空",2);
+            //     return false;
+            // }
         }
-        if (blankingItemId){
-           if (!item.blankingQty){
-               LayerMsgBox.alert("片料可制件数不能为空",2);
-               return false;
-           }
-            if (!item.blankingWeight){
-                LayerMsgBox.alert("片料重量不能为空",2);
-                return false;
-            }
-        }
-        if (originalItemId){
-            if (!item.originalQty){
-                LayerMsgBox.alert("原材料可制件数不能为空",2);
-                return false;
-            }
-            if (!item.originalWeight){
-                LayerMsgBox.alert("原材料重量不能为空",2);
-                return false;
-            }
-        }
-        if (slicingInvItemId){
-            if (!item.slicingQty){
-                LayerMsgBox.alert("分条料可制件数不能为空",2);
-                return false;
-            }
-            if (!item.slicingWeight){
-                LayerMsgBox.alert("分条料重量不能为空",2);
-                return false;
-            }
-        }
+        // if (blankingItemId){
+        //    if (!item.blankingQty){
+        //        LayerMsgBox.alert("片料可制件数不能为空",2);
+        //        return false;
+        //    }
+        //     if (!item.blankingWeight){
+        //         LayerMsgBox.alert("片料重量不能为空",2);
+        //         return false;
+        //     }
+        // }
+        // if (originalItemId){
+        //     if (!item.originalQty){
+        //         LayerMsgBox.alert("原材料可制件数不能为空",2);
+        //         return false;
+        //     }
+        //     if (!item.originalWeight){
+        //         LayerMsgBox.alert("原材料重量不能为空",2);
+        //         return false;
+        //     }
+        // }
+        // if (slicingInvItemId){
+        //     if (!item.slicingQty){
+        //         LayerMsgBox.alert("分条料可制件数不能为空",2);
+        //         return false;
+        //     }
+        //     if (!item.slicingWeight){
+        //         LayerMsgBox.alert("分条料重量不能为空",2);
+        //         return false;
+        //     }
+        // }
         return true;
     }
 

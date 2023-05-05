@@ -1,0 +1,78 @@
+<script>
+    function getEditableTableOptions_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
+            submit: {
+                type: "all",
+                url: "/admin/container/handleData?mark=",
+                success: function (res) {
+                    if (res.data.state === 'ok') {
+                        LayerMsgBox.success("提交成功", 600, function () {
+                            refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.error(res.data.msg);
+                    }
+
+                }
+                // params:{"mark":document.getElementById('mark').value},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+            },
+            cols: {
+                /*iautoid: {
+                    submitAttr: "iautoid"
+                },*/
+                iseq: {
+                    type: "input_number",
+                    required: true
+                },
+                itype: {
+                    type: "select",
+                    required: true,
+                    url: "admin/dictionary/options?key=encoding_field_type",
+                    valueAttr: "sn",
+                    textAttr: "name",
+                    submitAttr: 'itype',
+                    handler: function (table, td, text, value, trJsonData) {
+                        console.log(value);
+                        // 编码
+                        if (value === '1') {
+                            trJsonData.cseperator = '';
+                            jboltTableUpdateOtherColumns(table, td.parent(), trJsonData, [
+                                {column: 'istartlength', use: 'istartlength', editable: true},
+                                {column: 'iendlength', use: 'iendlength', editable: true},
+                                {column: 'cseperator', use: 'cseperator', editable: false},
+                            ]);
+                        }
+                        // 分隔符
+                        else if (value === '2') {
+                            var data = {
+                                istartlength: '',
+                                iendlength: ''
+                            };
+                            jboltTableUpdateOtherColumns(table, td.parent(), data, [
+                                {column: 'istartlength', use: 'istartlength', editable: false},
+                                {column: 'iendlength', use: 'iendlength', editable: false},
+                                {column: 'cseperator', use: 'cseperator', editable: true}
+                            ]);
+                        }
+                    }
+                },
+                istartlength: {
+                    type: "input_number"
+                },
+                iendlength: {
+                    type: "input_number"
+                },
+                cseperator: {
+                    type: "select",
+                    url: "admin/dictionary/options?key=encoding_field_seperator",
+                    valueAttr: "sn",
+                    textAttr: "name",
+                    submitAttr: 'cseperator'
+                },
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

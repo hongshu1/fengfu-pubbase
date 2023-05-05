@@ -46,6 +46,10 @@ public class JBoltUploadFolder {
 	public static final String SYSNOTICE_FILES = "sysnotice" + SEPARATOR + "files";
 	public static final String IMPORT_EXCEL_TEMP_FOLDER = "exceltemps";
 
+	public static final String PCN_FILE_UPLOADER = "suppliermanage" + SEPARATOR + "fileuploader";
+
+
+
     public static String getUploadPath(String folder) {
         return JFinal.me().getConstants().getBaseUploadPath() + SEPARATOR + folder;
     }

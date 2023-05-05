@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.5.1";
+var jbolt_admin_js_version="6.5.2";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -19353,6 +19353,60 @@ function initJuicer(){
 	juicer.register("colorClassByServiceState",colorClassByServiceState);
 	juicer.register("colorClassByPriorityLevel",colorClassByPriorityLevel);
 	juicer.register("toJsonString",toJsonString);
+	juicer.register("boolean_to_str",booleanToStr);
+	juicer.register("booleanToStr",booleanToStr);
+	juicer.register("boolean_to_check",booleanToCheck);
+	juicer.register("booleanToCheck",booleanToCheck);
+
+	juicer.register("enable_to_str",enableToStr);
+	juicer.register("enableToStr",enableToStr);
+	juicer.register("enable_to_check",enableToCheck);
+	juicer.register("enableToCheck",enableToCheck);
+}
+
+function booleanToCheck(value){
+	var type=typeof(value);
+	if(type=="undefined"){
+		return "-";
+	}
+	if(value.toString()=="true"){
+		return "<i class='fa fa-check text-success'></i>";
+	}
+	return "-";
+}
+
+function booleanToStr(value){
+	var type=typeof(value);
+	if(type=="undefined"){
+		return "-";
+	}
+	if(value.toString()=="true"){
+		return "<span class='badge badge-pill badge-success'>是</span>";
+	}
+	return "-";
+}
+
+
+function enableToCheck(value){
+	var type=typeof(value);
+	if(type=="undefined"){
+		return "-";
+	}
+	if(value.toString()=="true"){
+		return "<i class='fa fa-check text-success'>已启用</i>";
+	}
+	return "-";
+}
+
+function enableToStr(value){
+	var type=typeof(value);
+	if(type=="undefined"){
+		return "-";
+	}
+	if(value.toString()=="true"){
+		return "<span class='badge badge-pill badge-success'>已启用</span>";
+	}
+	return "-";
 }
 
 

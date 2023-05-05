@@ -1,8 +1,8 @@
 package cn.rjtech.cache;
 
 import cn.jbolt.core.cache.JBoltCache;
-import cn.rjtech.admin.application.RjApplicationService;
-import cn.rjtech.model.main.Application;
+import cn.jbolt.core.model.RjApplication;
+import cn.jbolt.core.service.RjApplicationService;
 import com.jfinal.aop.Aop;
 
 /**
@@ -23,7 +23,7 @@ public class RjApplicationCache extends JBoltCache {
         return TYPE_NAME;
     }
 
-    public Application get(long id) {
+    public RjApplication get(long id) {
         return service.findById(id);
     }
 

@@ -1,0 +1,84 @@
+<form onsubmit="return false;" id="CodingRuleM_Form" action="#(action)" method="post">
+    #if(codingRuleM.iAutoId??)
+    <input type="hidden" name="codingRuleM.iAutoId" value="#(codingRuleM.iAutoId??)"/>
+    #end
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">业务对象类型</label>
+                <div class="col">
+                    <select class="form-control"
+                            name="codingRuleM.cFormTypeSn"
+                            data-autoload
+                            data-rule="required"
+                            data-url="admin/dictionary/options?key=business_type"
+                            data-value-attr="sn"
+                            data-text-attr="name"
+                            data-text="=请选择="
+                            data-select="#(codingRuleM.cFormTypeSn??)">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">表单名称</label>
+                <div class="col-10">
+                    <input type="hidden" name="codingRuleM.iFormId" value="#(iFormId)" id="iFormId">
+
+                    <select class="form-control"
+                            data-rule="select"
+                            data-select-type="select2"
+                            data-select="#(iFormId)"
+                            data-autoload
+                            data-url="admin/formcategory/treeDatas"
+                            data-onlyleaf="true"
+                            data-setvalueto="iFormId"
+                            data-text-attr="cname"
+                            data-value-attr="iautoid"
+                            data-text="=表单名称="
+                            data-placeholder="=表单名称=">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">编码方式</label>
+                <div class="col">
+                    <select class="form-control"
+                            name="codingRuleM.iCodingType"
+                            data-autoload
+                            data-rule="required"
+                            data-url="admin/dictionary/options?key=iCoding_type"
+                            data-value-attr="sn"
+                            data-text-attr="name"
+                            data-text="=请选择="
+                            data-select="#(codingRuleM.iCodingType??)">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">编码示例</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入编码示例" maxlength="40" name="codingRuleM.cDemo"
+                           value="#(codingRuleM.cDemo??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="form-group row">
+    <label class="col-sm-1 col-form-label" style="left: 20px;">详情配置</label>
+    <div class="col-11" style="left: 17px;">
+        <div class="jbolt_page_content">
+            #render("codingruled.html")
+        </div>
+    </div>
+</div>
+
+#define js()
+#include("_codingruled_js.html")
+<script>
+</script>
+<!--#include("/_view/_admin/common/_formjs.html",formId="CodingRuleM_Form")-->
+#end
+

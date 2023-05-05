@@ -7,10 +7,10 @@ import cn.rjtech.enums.ErrorEnums;
  * @Author Create by Alvin
  * @Date 2020-10-27 14:02
  */
-public class ParameterException extends CommonException {
+public class ParameterException extends cn.jbolt.core.exception.ParameterException {
 
     public ParameterException(String message) {
-        super("fail", message);
+        super(message);
     }
 
     public ParameterException(ErrorEnums errorEnums) {

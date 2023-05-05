@@ -1,0 +1,122 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h1>工单管理</h1>
+            </div>
+                <div class="col">
+                <form class="form-inline" id="moDocForm_#(pageId)" onsubmit="return false;" method="post">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=工单号=" name="cMoDocNo" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="iInventoryId" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cInvCode1" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cInvName1" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=生产部门=" name="cDepName" value=""/>
+
+                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate_#(pageId)" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
+                        <span style="margin-top: 5px">至</span>
+                    <input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" id="enddate_#(pageId)" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
+
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+                </div>
+                <div class="col-md-auto">
+                </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="moDocRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a href="admin/modoc/details/${data.iautoid}" data-area="1600,800"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+	<a href="admin/modoc/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="现品票"  data-handler="refreshJBoltTable" data-dialog-title="现品票" class="jbolt_table_editbtn">现品票</a>
+    <a href="admin/modoc/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">关闭</a>
+</td>
+            <td hidden >${data.iautoid}</td>
+            <td>${data.istatus}</td>
+            <td>${data.dplandate|date_ymd}</td>
+            <td>${data.cmodocno}</td>
+            <td>${data.cdepname}</td>
+            <td>${data.cworkname}</td>
+            <td>${data.cworkshiftname}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.iqty}</td>
+            <td>${data.icompqty}</td>
+
+</tr>
+{@/each}
+</textarea>
+
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="moDoc_toolbar_#(pageId)">
+            <div class="" role="group" aria-label="btn-group">
+                <button data-openpage="dialog" data-area="1200,800" data-handler="jboltTablePageToFirst"
+                        data-title="新增在库检" data-url="admin/modoc/add" class="btn btn-outline-primary btn-sm"><i
+                        class="fa fa-plus"></i> 新增
+                </button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i
+                        class="fa fa-refresh"></i> 刷新
+                </button>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+
+
+        <table class="jbolt_table jbolt_main_table table-center hover_info"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="admin/modoc/datas"
+               data-column-resize="true"
+               data-row-click-active="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="moDocForm_#(pageId)"
+               data-rowtpl="moDocRowtpl_#(pageId)"
+               data-page="moDocPage_#(pageId)"
+               data-toolbar="moDoc_toolbar_#(pageId)"
+               data-fixed-columns-left="1,2,3"
+               data-row-dblclick-active="false"
+
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150">操作</th>
+                <th hidden data-width="150" data-column="iAutoId">id</th>
+                <th data-width="150" data-column="iStatus">状态</th>
+                <th data-width="150" data-column="dPlanDate">计划日期</th>
+                <th data-width="150" data-column="cMoDocNo">工单号</th>
+                <th data-width="150" data-column="cDepName">生产部门</th>
+                <th data-width="150" data-column="cWorkName">产线名称</th>
+                <th data-width="150" data-column="cWorkShiftName">班次名称</th>
+                <th data-width="150" data-column="cInvCode">存货编码</th>
+                <th data-width="150" data-column="cInvCode1">客户部番</th>
+                <th data-width="150" data-column="cInvName1">部品名称</th>
+                <th data-width="150" data-column="iQty">计划数量</th>
+                <th data-width="150" data-column="iCompQty">完工数量</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+</script>
+#end

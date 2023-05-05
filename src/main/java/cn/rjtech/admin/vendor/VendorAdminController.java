@@ -1,6 +1,5 @@
 package cn.rjtech.admin.vendor;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -18,6 +17,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -126,7 +126,7 @@ public class VendorAdminController extends BaseAdminController {
 
 	/*
 	* 删除供应商地址的关联记录
-	* */
+	*/
 	public void deleteVendorAddrById(Long vendorIautoId){
 		Vendor vendor = service.findById(vendorIautoId);
 		Kv kv = new Kv();

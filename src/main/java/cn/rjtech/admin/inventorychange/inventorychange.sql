@@ -88,7 +88,6 @@ FROM
 SELECT
 	a.iAfterInventoryId,
 	a.iBeforeInventoryId,
-	a.iChangeRate,
 	inv.cInvStd,
 	inv.cInvCode as afterCInvCode,
 	inv.cInvName as afterCInvName,

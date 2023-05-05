@@ -2,8 +2,8 @@
 #define main()
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="processDefectForm"  action="/admin/ProcessDefect/ProcessDefectupdateEditTable" method="post">
-            <input type="hidden" name="processDefect.iautoid" value="#(processDefect.iautoid??)" />
+        <form onsubmit="return false;" id="processDefectForm"  action="/admin/processdefect/ProcessDefectupdateEditTable" method="post">
+            <input type="hidden" name="iautoid" value="#(processDefect.iautoid??)" />
             <h5>部品信息</h5>
             <hr/>
             <div class="form-group row">
@@ -60,22 +60,10 @@
 
 
             <div class="form-group row">
-                <input type="hidden" id="cbadnesssns" name="processDefect.cbadnesssns" value="#(cbadnesssns)"/>
+                <input type="hidden" id="cbadnesssns" name="cbadnesssns" value="#(cbadnesssns)"/>
                 <label class="col-sm-2 col-form-label">不良项目：</label>
-                <div class="col-sm-8 col-form-label">
-                    <div class="form-group row"
-                         data-hidden-input="cbadnesssns"
-                         data-checkbox
-                         data-rule="checkbox"
-                         onclick="return false"
-                         data-default=""
-                         data-url="admin/dictionary/options?key=cBadnessSns"
-                         data-value-attr="sn"
-                         data-text-attr="cbadnesssns"
-                         data-inline="true"
-                         data-value="#(processDefect.cbadnesssns??)"
-                         data-name="processDefect.cbadnesssns">
-                    </div>
+                <div class="col-sm-2 col-form-label">
+                    #(processDefect.cbadnesssns??)
                 </div>
             </div>
             <div class="form-group row">
@@ -114,16 +102,16 @@
                          data-radio
                          data-rule="radio"
                          data-value="#(processDefect.capproach??)"
-                         data-name="processDefect.capproach"
+                         data-name="capproach"
                          data-default="true">
                         <div class="col"  style="padding-top: 1px;">
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="capproachtrue1" type="radio" name="processDefect.capproach"   value="1"/>
+                                <input  id="capproachtrue1" type="radio" name="capproach"   value="1"/>
                                 <label for="capproachtrue1">返修</label>
                             </div>
 
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="capproachfalse1" type="radio" name="processDefect.capproach"   value="0"/>
+                                <input  id="capproachfalse1" type="radio" name="capproach"   value="0"/>
                                 <label for="capproachfalse1">报废</label>
                             </div>
                         </div>

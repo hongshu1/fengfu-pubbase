@@ -4,9 +4,10 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.RjApplication;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.model.main.Application;
+import cn.jbolt.core.service.RjApplicationService;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -48,10 +49,10 @@ public class RjApplicationAdminController extends JBoltBaseController {
      * 新增
      */
     public void add() {
-        Application application = new Application();
-        application.setParentId(getLong(0, 0L));
-        application.setNodeLevel(getInt(1, 1));
-        set("application", application);
+        RjApplication rjApplication = new RjApplication();
+        rjApplication.setParentId(getLong(0, 0L));
+        rjApplication.setNodeLevel(getInt(1, 1));
+        set("application", rjApplication);
         render("add.html");
     }
 
@@ -60,19 +61,19 @@ public class RjApplicationAdminController extends JBoltBaseController {
      */
     @Before(Tx.class)
     public void save() {
-        renderJson(service.save(getModel(Application.class, "application"), JBoltUserKit.getUser(), new Date()));
+        renderJson(service.save(getModel(RjApplication.class, "application"), JBoltUserKit.getUser(), new Date()));
     }
 
     /**
      * 编辑
      */
     public void edit() {
-        Application application = service.findById(getLong(0));
-        if (application == null) {
+        RjApplication rjApplication = service.findById(getLong(0));
+        if (rjApplication == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("application", application);
+        set("application", rjApplication);
         render("edit.html");
     }
 
@@ -81,7 +82,7 @@ public class RjApplicationAdminController extends JBoltBaseController {
      */
     @Before(Tx.class)
     public void update() {
-        renderJson(service.update(getModel(Application.class, "application"), JBoltUserKit.getUser(), new Date()));
+        renderJson(service.update(getModel(RjApplication.class, "application"), JBoltUserKit.getUser(), new Date()));
     }
 
     /**

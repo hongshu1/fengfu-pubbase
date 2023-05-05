@@ -16,7 +16,7 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
 /**
  * 设备管理-设备档案

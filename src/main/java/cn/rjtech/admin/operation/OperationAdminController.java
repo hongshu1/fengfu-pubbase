@@ -1,6 +1,6 @@
 package cn.rjtech.admin.operation;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -139,10 +139,9 @@ public class OperationAdminController extends JBoltBaseController {
         renderJsonData(service.pageList(getKv()));
     }
 
-    /*
+    /**
      * 导出选中
-     * */
-    @SuppressWarnings("unchecked")
+     */
     public void exportExcelByIds() throws Exception {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -167,10 +166,9 @@ public class OperationAdminController extends JBoltBaseController {
 //        renderJxls("operation.xlsx", Kv.by("rows", data), "工序(选中导出)_" + DateUtil.today() + ".xlsx");
     }
 
-    /*
+    /**
      * 导出全部
-     * */
-    @SuppressWarnings("unchecked")
+     */
     public void exportExcelAll() throws Exception {
         List<Record> rows = service.list(getKv());
         if (notOk(rows)) {

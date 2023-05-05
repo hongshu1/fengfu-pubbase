@@ -1,6 +1,6 @@
 package cn.rjtech.admin.currentstock;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.extend.controller.BaseMesAdminController;
 import cn.rjtech.admin.stockcheckvouch.StockCheckVouchService;
@@ -37,7 +37,7 @@ public class CurrentStockController extends BaseMesAdminController {
 
 	/**
 	 * 列表也数据
-	 * */
+	 */
 	public void datas() {
 		renderJsonData(service.datas(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -75,7 +75,7 @@ public class CurrentStockController extends BaseMesAdminController {
 	}
 	/**
 	 * 新增提交
-	 * */
+	 */
    public void save(){
 	   Kv kv = getKv();
 	   //SysStockchekvouch sysStockchekvouch = useIfValid(SysStockchekvouch.class, "sysstockchekvouch");

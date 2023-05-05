@@ -122,9 +122,9 @@ public class RcvDocQcFormDService extends BaseService<RcvDocQcFormD> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-    /*
+    /**
      * 根据iRcvDocQcFormMid查看
-     * */
+     */
     public List<RcvDocQcFormD> findByIRcvDocQcFormMId(Long iRcvDocQcFormMid) {
         return find("select * from PL_RcvDocQcFormD where iRcvDocQcFormMid=?", iRcvDocQcFormMid);
     }

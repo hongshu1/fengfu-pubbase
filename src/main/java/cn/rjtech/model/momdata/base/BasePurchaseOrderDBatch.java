@@ -137,7 +137,7 @@ public abstract class BasePurchaseOrderDBatch<M extends BasePurchaseOrderDBatch<
 	/**
 	 * 数量
 	 */
-	public M setIQty(java.lang.Integer iQty) {
+	public M setIQty(java.math.BigDecimal iQty) {
 		set("iQty", iQty);
 		return (M)this;
 	}
@@ -145,10 +145,10 @@ public abstract class BasePurchaseOrderDBatch<M extends BasePurchaseOrderDBatch<
 	/**
 	 * 数量
 	 */
-	@JBoltField(name="iqty" ,columnName="iQty",type="Integer", remark="数量", required=true, maxLength=10, fixed=0, order=7)
+	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=10, fixed=0, order=7)
 	@JSONField(name = "iqty")
-	public java.lang.Integer getIQty() {
-		return getInt("iQty");
+	public java.math.BigDecimal getIQty() {
+		return getBigDecimal("iQty");
 	}
 
 	/**
