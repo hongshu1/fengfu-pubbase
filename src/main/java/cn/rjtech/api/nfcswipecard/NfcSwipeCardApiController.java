@@ -18,7 +18,7 @@ public class NfcSwipeCardApiController extends BaseApiController {
    * 产线刷卡
    */
   public void nfcswipecard() {
-    renderJsonData(nfcSwipeCardApiService.nfcswipecard(getKv()));
+    renderJBoltApiSuccessWithData(nfcSwipeCardApiService.nfcswipecard(getKv()));
   }
 
 }
