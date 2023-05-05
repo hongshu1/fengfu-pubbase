@@ -75,7 +75,11 @@
 #if(col.isTableSwitchbtn)
 <td><img data-switchbtn data-confirm="确定切换#(col.tableLabel?? col.remark??)？" data-value="${data.#((codeGen.isTableUseRecord&&codeGen.isTableRecordCamelCase!=null&&codeGen.isTableRecordCamelCase==false)?col.colName:col.attrName)}"  data-handler="refreshJBoltTable"  data-url="#(codeGenServiceMode?((codeGen.controllerPathWithoutFirstSlash??)+'/toggle'+(firstCharToUpperCase(col.attrName?? ""))+'/#(dataIdStr??)'):('admin/codegen/testAjax'))"/></td>
 #else if(col.colFormat??)
+#if(col.colFormat == "real_image")
+<td><img data-photobtn tooltip data-title="点击查看大图"  style="width: 60px;height: 60px;" src="${data.#((codeGen.isTableUseRecord&&codeGen.isTableRecordCamelCase!=null&&codeGen.isTableRecordCamelCase==false)?col.colName:col.attrName)|#(col.colFormat??)}" onerror="this.src='assets/img/noimg.png'"/></td>
+#else
 <td>$${data.#((codeGen.isTableUseRecord&&codeGen.isTableRecordCamelCase!=null&&codeGen.isTableRecordCamelCase==false)?col.colName:col.attrName)|#(col.colFormat??)}</td>
+#end
 #else
 <td>${data.#((codeGen.isTableUseRecord&&codeGen.isTableRecordCamelCase!=null&&codeGen.isTableRecordCamelCase==false)?col.colName:col.attrName)}</td>
 #end
