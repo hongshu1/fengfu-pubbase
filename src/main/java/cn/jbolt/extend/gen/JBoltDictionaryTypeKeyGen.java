@@ -3,7 +3,6 @@ package cn.jbolt.extend.gen;
 import cn.hutool.core.io.FileUtil;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.model.DictionaryType;
-import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.util.JBoltStringUtil;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
@@ -16,6 +15,7 @@ import javax.sql.DataSource;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -64,7 +64,7 @@ public class JBoltDictionaryTypeKeyGen {
 		Engine engine = new Engine();
 		engine.addSharedObject("JBoltStringUtil", new JBoltStringUtil());
 		Template template=engine.getTemplate(TPL);
-		BufferedWriter writer=FileUtil.getWriter(TARGET, "utf-8", false);
+		BufferedWriter writer=FileUtil.getWriter(TARGET, StandardCharsets.UTF_8, false);
 		try {
 			writer.write(template.renderToString(Kv.by("types", types)));
 			writer.flush();

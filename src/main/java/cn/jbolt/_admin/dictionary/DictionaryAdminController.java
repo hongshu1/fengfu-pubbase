@@ -7,8 +7,10 @@ import java.util.List;
 
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.common.enums.DictionaryTypeMode;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
@@ -330,8 +332,10 @@ public class DictionaryAdminController extends JBoltBaseController {
 		renderJsonData(result);
 	}
 
-    public void map() {
-//        renderJsonData(service.getDictionaryMapByTypeKey());
+    public void map(@Para(value = "key") String key) {
+        ValidationUtils.notBlank(key, "字典key不能为空");
+        
+        renderJsonData(service.getDictionaryMapByTypeKey(key, Dictionary.TYPE_KEY));
     }
     
 }
