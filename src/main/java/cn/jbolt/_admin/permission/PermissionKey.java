@@ -1769,4 +1769,8 @@ public class PermissionKey {
 	 * 取货管理-双码扫码出货
 	 */
 	public static final String DOUBLECODESCANNINGSHIPMENT = "doublecodescanningshipment";
+	/**
+	 * 入库管理-其他入库单列表
+	 */
+	public static final String OTHER_IN_LIST = "other_in_list";
 }
