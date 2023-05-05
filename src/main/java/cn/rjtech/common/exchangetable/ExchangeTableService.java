@@ -2,6 +2,7 @@ package cn.rjtech.common.exchangetable;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.base.service.BaseService;
 import cn.rjtech.common.model.ExchangeTable;
@@ -21,6 +22,12 @@ import java.util.List;
  */
 public class ExchangeTableService extends BaseService<ExchangeTable> {
     private final ExchangeTable dao = new ExchangeTable().dao();
+
+    @Override
+    public String dataSourceConfigName() {
+        return U8DataSourceKit.ME.getU8DbName(getOrgCode());
+    }
+
     @Override
     protected ExchangeTable dao() {
         return dao;
