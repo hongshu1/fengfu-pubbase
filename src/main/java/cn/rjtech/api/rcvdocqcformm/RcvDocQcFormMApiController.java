@@ -2,6 +2,7 @@ package cn.rjtech.api.rcvdocqcformm;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.rcvdocqcformm.*;
@@ -23,7 +24,7 @@ import io.github.yedaxia.apidocs.ApiDoc;
 public class RcvDocQcFormMApiController extends BaseApiController {
 
     @Inject
-    private RcvDocQcFormMApiService  apiService;
+    private RcvDocQcFormMApiService apiService;
 
     /**
      * 查询参数如下
@@ -144,6 +145,7 @@ public class RcvDocQcFormMApiController extends BaseApiController {
 
     /**
      * 在编辑页面点击“确定”按钮，将数据带到后台保存
+     *
      * @param cmeasurepurpose：测试目的 0：定期检查，1：初物检查，2：委托测定，3：特别检查
      *                             cdcno：设变号
      *                             ircvdocqcformmiautoid：主表id（PL_RcvDocQcFormM）
@@ -169,5 +171,13 @@ public class RcvDocQcFormMApiController extends BaseApiController {
 
         renderJBoltApiRet(apiService.saveEdit(cmeasurepurpose, cdcno, ircvdocqcformmiautoid, cmeasureunit,
             isok, cmeasurereason, serializeSubmitList, cmemo));
+    }
+
+    /*
+     * 自动加载图片
+     * */
+    public void uploadImage() {
+        renderJBoltApiRet(apiService.uploadImage(getFiles(
+            ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
     }
 }

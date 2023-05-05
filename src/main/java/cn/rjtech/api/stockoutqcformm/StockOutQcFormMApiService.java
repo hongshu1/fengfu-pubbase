@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
         //1、查询table的数据
         Kv kv = new Kv();
         kv.set("istockoutqcformmid", istockoutqcformmid);
-        List<Record> recordList = service.clearZero(service.getCheckOutTableDatas(kv));
+        List<Record> recordList = service.getCheckOutTableDatas(kv);
         //2、将数据传到
         for (Record record : recordList) {
             record.keep("iautoid", "iformparamid", "iqcformid", "istockoutqcformmid", "iseq", "isubseq",
@@ -124,13 +125,10 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet saveCheckOut(String cmeasurepurpose, String cdcno, Long istockqcformmiautoid, String cmeasureunit,
                                     String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
-        //1、将serializeSubmitList转换出来
-        List<StockOutQcFormMApiSaveEdit> saveEditList = JBoltModelKit
-            .getBeanList(StockOutQcFormMApiSaveEdit.class, JSON.parseArray(serializeSubmitList));
-        //2、开始更新编辑页面的数据
+        //1、开始更新编辑页面的数据
         Boolean result = service.achiveChecOutSerializeSubmitList(JSON.parseArray(serializeSubmitList), istockqcformmiautoid,
             cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
-        //3、最后返回成功
+        //2、最后返回成功
         return JBoltApiRet.API_SUCCESS;
     }
 
@@ -139,15 +137,18 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet saveEdit(String cmeasurepurpose, String cdcno, Long stockqcformmiautoid, String cmeasureunit, String isok,
                                 String cmeasurereason, String serializeSubmitList, String cmemo) {
-        // 1、将serializeSubmitList转换出来
-        List<StockOutQcFormMApiSaveEdit> saveEditList = JBoltModelKit
-            .getBeanList(StockOutQcFormMApiSaveEdit.class, JSON.parseArray(serializeSubmitList));
-        // 2、开始更新编辑页面的数据
+        // 1、开始更新编辑页面的数据
         Boolean result = service
             .achiveEditSerializeSubmitList(JSON.parseArray(serializeSubmitList), stockqcformmiautoid, cmeasurepurpose,
                 cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
-        //3、最后返回成功
+        //2、最后返回成功
         return JBoltApiRet.API_SUCCESS;
     }
 
+    /*
+     * 自动加载图片
+     * */
+    public JBoltApiRet uploadImage(List<UploadFile> files) {
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.uploadImage(files));
+    }
 }

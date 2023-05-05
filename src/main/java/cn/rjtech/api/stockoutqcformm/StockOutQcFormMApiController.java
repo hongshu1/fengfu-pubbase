@@ -3,6 +3,7 @@ package cn.rjtech.api.stockoutqcformm;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.crossorigin.CrossOrigin;
 import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.stockoutqcformm.*;
@@ -182,6 +183,14 @@ public class StockOutQcFormMApiController extends BaseApiController {
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
         renderJBoltApiRet(apiService.saveEdit(cmeasurepurpose, cdcno, stockqcformmiautoid, cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
+    }
+
+    /*
+     * 自动加载图片
+     * */
+    public void uploadImage() {
+        renderJBoltApiRet(apiService.uploadImage(getFiles(
+            ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
     }
 
 }

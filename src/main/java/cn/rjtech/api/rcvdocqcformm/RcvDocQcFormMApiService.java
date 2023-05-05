@@ -7,6 +7,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
@@ -115,7 +116,7 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
     public JBoltApiRet autoGetRcvOnlyseeTableDatas(Long iautoid) {
         //1、调用方法获得table数据
         Kv kv = new Kv();
-        kv.set("iautoid",iautoid);
+        kv.set("iautoid", iautoid);
         List<Record> recordList = service.getonlyseelistByiautoid(kv);//getonlyseelistByiautoid\getonlyseelistByiautoid
         //2、传到实体类里面
         for (Record record : recordList) {
@@ -147,5 +148,12 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
             cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
         //2、最后返回成功
         return JBoltApiRet.API_SUCCESS;
+    }
+
+    /*
+     * 自动加载图片
+     * */
+    public JBoltApiRet uploadImage(List<UploadFile> files) {
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.uploadImage(files));
     }
 }
