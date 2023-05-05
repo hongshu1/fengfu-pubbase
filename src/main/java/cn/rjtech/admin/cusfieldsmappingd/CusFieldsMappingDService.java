@@ -1,13 +1,26 @@
 package cn.rjtech.admin.cusfieldsmappingd;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingdcodingrule.CusfieldsmappingdCodingruleService;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.CusFieldsMappingD;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 系统配置-导入字段配置明细
@@ -17,8 +30,12 @@ import com.jfinal.plugin.activerecord.Page;
  * @date: 2023-05-02 13:41
  */
 public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
+    
     private final CusFieldsMappingD dao = new CusFieldsMappingD().dao();
 
+    @Inject
+    private CusfieldsmappingdCodingruleService cusfieldsmappingdCodingruleService;
+    
     @Override
     protected CusFieldsMappingD dao() {
         return dao;
@@ -127,6 +144,68 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
          }
          */
         return null;
+    }
+
+    public Ret saveTableSubmit(JBoltTable jBoltTable) {
+        ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
+
+        CusFieldsMappingD cusFieldsMappingD = jBoltTable.getFormModel(CusFieldsMappingD.class, "cusFieldsMappingD");
+        ValidationUtils.notNull(cusFieldsMappingD, JBoltMsg.PARAM_ERROR);
+
+        tx(() -> {
+
+            // 新增
+            if (null == cusFieldsMappingD.getIAutoId()) {
+                doSave(cusFieldsMappingD, jBoltTable);
+            }
+            // 修改
+            else {
+                doUpdate(cusFieldsMappingD, jBoltTable);
+            }
+            
+            return true;
+        });
+        
+        return successWithData(cusFieldsMappingD.keep("iautoid"));
+    }
+
+    private void doSave(CusFieldsMappingD cusFieldsMappingD, JBoltTable jBoltTable) {
+        ValidationUtils.isTrue(cusFieldsMappingD.save(), ErrorMsg.SAVE_FAILED);
+
+        List<Record> save = jBoltTable.getSaveRecordList();
+        ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
+
+        doSaveCodingRules(cusFieldsMappingD, save);
+    }
+    
+    private void doSaveCodingRules(CusFieldsMappingD cusFieldsMappingD, List<Record> save) {
+        for (Record row : save) {
+            row.set("iautoid", JBoltSnowflakeKit.me.nextId())
+                    .set("icusfieldsmappingdid", cusFieldsMappingD.getIAutoId());
+        }
+        cusfieldsmappingdCodingruleService.batchSaveRecords(save);
+    }
+
+    private void doUpdate(CusFieldsMappingD cusFieldsMappingD, JBoltTable jBoltTable) {
+        CusFieldsMappingD dbCusFieldsMappingD = findById(cusFieldsMappingD.getIAutoId());
+        ValidationUtils.notNull(dbCusFieldsMappingD, JBoltMsg.DATA_NOT_EXIST);
+
+        // 新增
+        List<Record> save = jBoltTable.getSaveRecordList();
+        if (CollUtil.isNotEmpty(save)) {
+            doSaveCodingRules(cusFieldsMappingD, save);
+        }
+
+        // 修改
+        List<Record> update = jBoltTable.getUpdateRecordList();
+        if (CollUtil.isNotEmpty(update)) {
+            cusfieldsmappingdCodingruleService.batchUpdateRecords(update);
+        }
+        
+        // 删除
+        if (ArrayUtil.isNotEmpty(jBoltTable.getDelete())) {
+            cusfieldsmappingdCodingruleService.deleteByMultiIds(ArrayUtil.join(jBoltTable.getDelete(), COMMA));
+        }
     }
 
 }

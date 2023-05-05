@@ -16,7 +16,7 @@ public abstract class BaseCodingRuleD<M extends BaseCodingRuleD<M>> extends JBol
     public static final String ICODINGRULEMID = "iCodingRuleMid";
     /**序号*/
     public static final String ISEQ = "iSeq";
-    /**类型： 1. 手工输入 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日*/
+    /**类型： 1. 工单号 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日*/
     public static final String CCODINGTYPE = "cCodingType";
     /**来源值*/
     public static final String CCODINGVALUE = "cCodingValue";
@@ -25,7 +25,7 @@ public abstract class BaseCodingRuleD<M extends BaseCodingRuleD<M>> extends JBol
     /**起始值*/
     public static final String IBEGINVALUE = "iBeginValue";
     /**分隔符*/
-    public static final String CSPERATOR = "cSperator";
+    public static final String CSEPARATOR = "cSeparator";
 	/**
 	 * 主键ID
 	 */
@@ -78,7 +78,7 @@ public abstract class BaseCodingRuleD<M extends BaseCodingRuleD<M>> extends JBol
 	}
 
 	/**
-	 * 类型： 1. 手工输入 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日
+	 * 类型： 1. 工单号 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日
 	 */
 	public M setCCodingType(java.lang.String cCodingType) {
 		set("cCodingType", cCodingType);
@@ -86,9 +86,9 @@ public abstract class BaseCodingRuleD<M extends BaseCodingRuleD<M>> extends JBol
 	}
 
 	/**
-	 * 类型： 1. 手工输入 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日
+	 * 类型： 1. 工单号 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日
 	 */
-	@JBoltField(name="ccodingtype" ,columnName="cCodingType",type="String", remark="类型： 1. 手工输入 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日", required=true, maxLength=10, fixed=0, order=4)
+	@JBoltField(name="ccodingtype" ,columnName="cCodingType",type="String", remark="类型： 1. 工单号 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日", required=true, maxLength=10, fixed=0, order=4)
 	@JSONField(name = "ccodingtype")
 	public java.lang.String getCCodingType() {
 		return getStr("cCodingType");
@@ -148,18 +148,18 @@ public abstract class BaseCodingRuleD<M extends BaseCodingRuleD<M>> extends JBol
 	/**
 	 * 分隔符
 	 */
-	public M setCSperator(java.lang.String cSperator) {
-		set("cSperator", cSperator);
+	public M setCSeparator(java.lang.String cSeparator) {
+		set("cSeparator", cSeparator);
 		return (M)this;
 	}
 
 	/**
 	 * 分隔符
 	 */
-	@JBoltField(name="csperator" ,columnName="cSperator",type="String", remark="分隔符", required=false, maxLength=3, fixed=0, order=8)
-	@JSONField(name = "csperator")
-	public java.lang.String getCSperator() {
-		return getStr("cSperator");
+	@JBoltField(name="cseparator" ,columnName="cSeparator",type="String", remark="分隔符", required=false, maxLength=3, fixed=0, order=8)
+	@JSONField(name = "cseparator")
+	public java.lang.String getCSeparator() {
+		return getStr("cSeparator");
 	}
 
 }

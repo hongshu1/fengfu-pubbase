@@ -335,7 +335,7 @@ public class DictionaryAdminController extends JBoltBaseController {
     public void map(@Para(value = "key") String key) {
         ValidationUtils.notBlank(key, "字典key不能为空");
         
-        renderJsonData(service.getDictionaryMapByTypeKey(key, Dictionary.TYPE_KEY));
+        renderJsonData(service.getDictionaryMapByTypeKey(key, Dictionary.SN, Dictionary.NAME));
     }
     
 }

@@ -7,6 +7,7 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.cusfieldsmappingform.CusfieldsmappingFormService;
 import cn.rjtech.admin.cusfieldsmappingm.CusFieldsMappingMService;
 import cn.rjtech.admin.form.FormService;
+import cn.rjtech.admin.formfield.FormFieldService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.CusFieldsMappingD;
 import cn.rjtech.model.momdata.CusFieldsMappingM;
@@ -36,6 +37,8 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
     private FormService formService;
     @Inject
     private CusFieldsMappingDService service;
+    @Inject
+    private FormFieldService formFieldService;
     @Inject
     private CusFieldsMappingMService cusFieldsMappingMService;
     @Inject
@@ -93,7 +96,19 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
+        
+//        cusFieldsMappingD.getIFormFieldId()
+
+        CusFieldsMappingM m = cusFieldsMappingMService.findById(cusFieldsMappingD.getICusFieldsMappingMid());
+        ValidationUtils.notNull(m, "映射字段配置记录不存在");
+        ValidationUtils.isTrue(!m.getIsDeleted(), "映射字段配置记录已被删除");
+
+        List<Long> iformids = cusfieldsmappingFormService.getIformIdsByMid(m.getIAutoId());
+
+        set("cusfieldsmappingm", m);
         set("cusFieldsMappingD", cusFieldsMappingD);
+        set("iformids", iformids);
+        set("cformnames", CollUtil.join(formService.getNamesByIformids(iformids), COMMA));
         render("edit.html");
     }
 
@@ -137,7 +152,11 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
      */
     public void codingrule() {
         keepPara();
-        render("_coding_role.html");
+        render("_coding_rule.html");
+    }
+
+    public void saveTableSubmit() {
+        renderJson(service.saveTableSubmit(getJBoltTable()));
     }
 
 }

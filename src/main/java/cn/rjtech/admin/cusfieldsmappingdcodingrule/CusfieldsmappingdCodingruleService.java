@@ -58,7 +58,7 @@ public class CusfieldsmappingdCodingruleService extends BaseService<Cusfieldsmap
         boolean success = cusfieldsmappingdCodingrule.save();
         if (success) {
             //添加日志
-            //addSaveSystemLog(cusfieldsmappingdCodingrule.getIAutoId(), JBoltUserKit.getUserId(), cusfieldsmappingdCodingrule.getName());
+            //addSaveSystemLog(cusfieldsmappingdCodingrule.getIAutoId(), JBoltUserKit.getUserId(), cusfieldsmappingdCodingrule.getName())
         }
         return ret(success);
     }
@@ -79,7 +79,7 @@ public class CusfieldsmappingdCodingruleService extends BaseService<Cusfieldsmap
         boolean success = cusfieldsmappingdCodingrule.update();
         if (success) {
             //添加日志
-            //addUpdateSystemLog(cusfieldsmappingdCodingrule.getIAutoId(), JBoltUserKit.getUserId(), cusfieldsmappingdCodingrule.getName());
+            //addUpdateSystemLog(cusfieldsmappingdCodingrule.getIAutoId(), JBoltUserKit.getUserId(), cusfieldsmappingdCodingrule.getName())
         }
         return ret(success);
     }
@@ -92,7 +92,7 @@ public class CusfieldsmappingdCodingruleService extends BaseService<Cusfieldsmap
      */
     @Override
     protected String afterDelete(CusfieldsmappingdCodingrule cusfieldsmappingdCodingrule, Kv kv) {
-        //addDeleteSystemLog(cusfieldsmappingdCodingrule.getIAutoId(), JBoltUserKit.getUserId(),cusfieldsmappingdCodingrule.getName());
+        //addDeleteSystemLog(cusfieldsmappingdCodingrule.getIAutoId(), JBoltUserKit.getUserId(),cusfieldsmappingdCodingrule.getName())
         return null;
     }
 
@@ -108,4 +108,8 @@ public class CusfieldsmappingdCodingruleService extends BaseService<Cusfieldsmap
         return null;
     }
 
+    public void deleteByMultiIds(String ids) {
+        delete("DELETE FROM Bd_CusFieldsMappingD_CodingRule WHERE iautoid IN (" + ids + ")");
+    }
+    
 }
