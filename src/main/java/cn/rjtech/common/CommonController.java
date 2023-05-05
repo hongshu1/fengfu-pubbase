@@ -212,7 +212,7 @@ public class CommonController extends BaseRestController {
         Map map = commonService.findComponentList(paramMap);
         String dataStr = JSONObject.toJSONString(map.get("list"));
         System.out.println(dataStr);
-        JsonElement jsonElement = new JsonParser().parse(dataStr);
+        JsonElement jsonElement = JsonParser.parseString(dataStr);
         List<Map<String, Object>> maps = DataConversion.toListMap(jsonElement.toString());
         result.put("detail",maps);
         result.put("ColumnList",paramMap.get("ResultInfo").toString());
