@@ -101,7 +101,7 @@ public class DataConversion {
                 System.out.println(tagcolumn);
                 if(null != value && !"".equals(value)){
                     for(Field field : fields){
-                        if (field.getName().toLowerCase().equals(tagcolumn.toLowerCase())){
+                        if (field.getName().equalsIgnoreCase(tagcolumn)){
                             //String type = field.getGenericType().toString();
                             setFieldValueByFieldName(field.getName(), exchangetable, value);
                             break;
