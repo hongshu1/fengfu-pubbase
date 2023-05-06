@@ -98,17 +98,86 @@ SELECT
     c.cInvCode,
     c.cInvCode1,
     c.cInvName1,
-    d.iVendorId,
+    b.iVendorId,
     e.cVenCode,
     e.cVenName,
     c.iPkgQty,
     f.iInnerInStockDays
 FROM Mrp_DemandForecastD AS b
          LEFT JOIN Bd_Inventory AS c ON b.iInventoryId = c.iAutoId
-         LEFT JOIN Bd_InventoryStockConfig AS d ON c.iAutoId = d.iInventoryId
-         LEFT JOIN Bd_Vendor AS e ON d.iVendorId = e.iAutoId
+         LEFT JOIN Bd_Vendor AS e ON b.iVendorId = e.iAutoId
          LEFT JOIN Bd_InventoryPlan AS f ON f.iInventoryId = c.iAutoId
 WHERE b.iDemandForecastMid = #para(idemandforecastmid)
+    #if(cvenname)
+        AND e.cVenName LIKE CONCAT('%', #para(cvenname), '%')
+    #end
+    #if(cinvcode)
+        AND c.cInvCode LIKE CONCAT('%', #para(cinvcode), '%')
+    #end
+    #if(cinvcode1)
+        AND c.cInvCode1 LIKE CONCAT('%', #para(cinvcode1), '%')
+    #end
+    #if(cinvname1)
+        AND c.cInvName1 LIKE CONCAT('%', #para(cinvname1), '%')
+    #end
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) >= #para(startdate)
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) <= #para(enddate)
+#end
+
+
+
+//-----------------------------------------------------------------物料到货计划-----------------------------------------------
+
+
+#sql("getMrpDemandPlanMList")
+###查询物料到货计划主表
+SELECT * FROM Mrp_DemandPlanM
+WHERE IsDeleted = 0
+    #if(cplanno)
+        AND cPlanNo LIKE CONCAT('%', #para(cplanno), '%')
+    #end
+     #if(istatus)
+        AND iStatus = #para(istatus)
+    #end
+    #if(startdate)
+        AND CONVERT(VARCHAR(10),dCreateTime,120) >= #para(startdate)
+    #end
+    #if(enddate)
+        AND CONVERT(VARCHAR(10),dCreateTime,120) <= #para(enddate)
+    #end
+ORDER BY dPlanDate DESC
+#end
+
+
+#sql("getMrpDemandPlanDList")
+###根据日期及条件获取物料到货计划子表数据
+SELECT
+    b.iYear,
+    b.iMonth,
+    b.iDate,
+    b.iQty,
+    b.iInventoryId AS invId,
+    c.cInvCode,
+    c.cInvCode1,
+    c.cInvName1,
+    b.iVendorId,
+    e.cVenCode,
+    e.cVenName,
+    c.iPkgQty,
+    f.iInnerInStockDays
+FROM Mrp_DemandPlanD AS b
+         LEFT JOIN Bd_Inventory AS c ON b.iInventoryId = c.iAutoId
+         LEFT JOIN Bd_Vendor AS e ON b.iVendorId = e.iAutoId
+         LEFT JOIN Bd_InventoryPlan AS f ON f.iInventoryId = c.iAutoId
+WHERE b.iDemandPlanMid = #para(idemandplanmid)
     #if(cvenname)
         AND e.cVenName LIKE CONCAT('%', #para(cvenname), '%')
     #end

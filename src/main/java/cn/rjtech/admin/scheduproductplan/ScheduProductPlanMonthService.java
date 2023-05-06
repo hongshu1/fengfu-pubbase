@@ -1243,7 +1243,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
                     if (i != 0 && day == 1){
-                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(DateUtils.parseDate(date));
+                        //上一个月份
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                        calendar.add(Calendar.MONTH,-1);
+                        String preMonth = sdf.format(calendar.getTime());
+
+                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(preMonth));
                         planRecord.set("qty"+seq,qty);
                         monthCount ++;
                         continue;
@@ -1406,7 +1413,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
                     if (i != 0 && day == 1){
-                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(DateUtils.parseDate(date));
+                        //上一个月份
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                        calendar.add(Calendar.MONTH,-1);
+                        String preMonth = sdf.format(calendar.getTime());
+
+                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(preMonth));
                         planRecord.set("qty"+seq,qty);
                         monthCount ++;
                         continue;
@@ -1784,7 +1798,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             int seq = i + 1;
             int day = Integer.parseInt(date.substring(8));
             if (i != 0 && day == 1){
-                planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(DateUtils.parseDate(date));
+                //上一个月份
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                calendar.add(Calendar.MONTH,-1);
+                String preMonth = sdf.format(calendar.getTime());
+
+                planRecord.set("qtysum"+monthCount,monthQtyMap.get(preMonth));
                 planRecord.set("qty"+seq,qty);
                 monthCount ++;
                 continue;
@@ -1836,7 +1857,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             int seq = i + 1;
             int day = Integer.parseInt(date.substring(8));
             if (i != 0 && day == 1){
-                planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(DateUtils.parseDate(date));
+                //上一个月份
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                calendar.add(Calendar.MONTH,-1);
+                String preMonth = sdf.format(calendar.getTime());
+
+                planRecord.set("qtysum"+monthCount,monthQtyMap.get(preMonth));
                 planRecord.set("qty"+seq,qty);
                 monthCount ++;
                 continue;

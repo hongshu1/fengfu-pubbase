@@ -19,6 +19,7 @@ import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static cn.hutool.core.text.StrPool.COMMA;
@@ -492,11 +493,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
 		List<String> scheduDateList = scheduProductPlanMonthService.getBetweenDate(startDate,endDate);
 
-		pageSize = pageSize * 15;
 
 		//TODO:根据日期及条件获取物料需求计划预示子表数据
-		Page<Record> recordPage = dbTemplate("schedudemandplan.getMrpDemandForecastDList",kv).paginate(pageNumber,pageSize);
-		List<Record> apsPlanQtyList = recordPage.getList();
+		List<Record> recordPage = dbTemplate("schedudemandplan.getMrpDemandForecastDList",kv).find();
+		List<Record> apsPlanQtyList = recordPage;
 
 		//key:供应商id   value:List物料集
 		Map<Long,List<String>> vendorInvListMap = new HashMap<>();
@@ -555,10 +555,11 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		}
 
 		Page<Record> page = new Page<>();
-		page.setPageNumber(recordPage.getPageNumber());
-		page.setPageSize(recordPage.getPageSize() / 15);
-		page.setTotalPage(recordPage.getTotalPage());
-		page.setTotalRow(recordPage.getTotalRow() /15);
+		page.setPageNumber(pageNumber);
+		page.setPageSize(pageSize);
+		int num = (int) Math.ceil(scheduProductPlanMonthList.size() / 15);
+		page.setTotalPage(num);
+		page.setTotalRow(scheduProductPlanMonthList.size());
 		page.setList(scheduProductPlanMonthList);
 
 		return scheduProductPlanMonthList;
@@ -600,7 +601,14 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			int seq = i + 1;
 			int day = Integer.parseInt(date.substring(8));
 			if (i != 0 && day == 1){
-				planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(DateUtils.parseDate(date));
+				//上一个月份
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+				calendar.add(Calendar.MONTH,-1);
+				String preMonth = sdf.format(calendar.getTime());
+
+				planRecord.set("qtysum"+monthCount,monthQtyMap.get(preMonth));
 				planRecord.set("qty"+seq,qty);
 				monthCount ++;
 				continue;
@@ -619,11 +627,103 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 
 
-
-
-
-
 	//-----------------------------------------------------------------物料到货计划-----------------------------------------------
+
+	public Page<Record> getMrpDemandPlanMList(int pageNumber, int pageSize, Kv kv) {
+		return dbTemplate("schedudemandplan.getMrpDemandPlanMList",kv).paginate(pageNumber,pageSize);
+	}
+
+	public Ret deleteDemandplanm(Long id) {
+		update("UPDATE Mrp_DemandPlanM SET IsDeleted = '1' WHERE iAutoId = ? ",id);
+		return SUCCESS;
+	}
+
+	/**
+	 * 物料需求计划预示明细
+	 */
+	public List<Record> getMrpDemandPlanDList(int pageNumber, int pageSize, Kv kv) {
+		List<Record> scheduProductPlanMonthList = new ArrayList<>();
+
+		String startDate = kv.getStr("startdate");
+		String endDate = kv.getStr("enddate");
+		if (notOk(startDate) || notOk(endDate)){
+			ValidationUtils.isTrue(false,"开始日期-结束日期不能为空！");
+		}
+		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+		List<String> scheduDateList = scheduProductPlanMonthService.getBetweenDate(startDate,endDate);
+
+
+		//TODO:根据日期及条件获取物料到货计划预示子表数据
+		List<Record> recordPage = dbTemplate("schedudemandplan.getMrpDemandPlanDList",kv).find();
+		List<Record> apsPlanQtyList = recordPage;
+
+		//key:供应商id   value:List物料集
+		Map<Long,List<String>> vendorInvListMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，qty>
+		Map<String,Map<String,BigDecimal>> invPlanDateMap = new HashMap<>();
+		//key:inv   value:info
+		Map<String,Record> invInfoMap = new HashMap<>();
+		for (Record record : apsPlanQtyList){
+			Long iVendorId = record.getLong("iVendorId");
+			String cInvCode = record.getStr("cInvCode");
+			String iYear = record.getStr("iYear");
+			int iMonth = record.getInt("iMonth");
+			int iDate = record.getInt("iDate");
+			BigDecimal planQty = record.getBigDecimal("iQty");
+			//yyyy-MM-dd
+			String dateKey = iYear;
+			dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+			dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+
+			if (vendorInvListMap.containsKey(iVendorId)){
+				List<String> list = vendorInvListMap.get(iVendorId);
+				if (!list.contains(cInvCode)){
+					list.add(cInvCode);
+				}
+			}else {
+				List<String> list = new ArrayList<>();
+				list.add(cInvCode);
+				vendorInvListMap.put(iVendorId,list);
+			}
+
+			if (invPlanDateMap.containsKey(cInvCode)){
+				//key:yyyy-MM-dd   value:qty
+				Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(cInvCode);
+				dateQtyMap.put(dateKey,planQty);
+			}else {
+				Map<String,BigDecimal> dateQtyMap = new HashMap<>();
+				dateQtyMap.put(dateKey,planQty);
+				invPlanDateMap.put(cInvCode,dateQtyMap);
+			}
+			invInfoMap.put(cInvCode,record);
+		}
+
+
+		//对供应商逐个处理
+		for (Long key : vendorInvListMap.keySet()) {
+			List<String> recordList = vendorInvListMap.get(key);
+			for (String inv : recordList){
+				//inv信息
+				Record invInfo = invInfoMap.get(inv);
+				//key:yyyy-MM-dd   value:qty
+				Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(inv);
+
+				//数据处理 行转列并赋值
+				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyMap,"到货计划");
+			}
+		}
+
+		Page<Record> page = new Page<>();
+		page.setPageNumber(pageNumber);
+		page.setPageSize(pageSize);
+		int num = (int) Math.ceil(scheduProductPlanMonthList.size() / 15);
+		page.setTotalPage(num);
+		page.setTotalRow(scheduProductPlanMonthList.size());
+		page.setList(scheduProductPlanMonthList);
+
+		return scheduProductPlanMonthList;
+	}
+
 
 	//-----------------------------------------------------------------物料需求计划汇总-----------------------------------------------
 

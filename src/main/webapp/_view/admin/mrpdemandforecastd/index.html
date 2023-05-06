@@ -1,0 +1,125 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>物料需求预示子表</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="mrpDemandforecastdForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="mrpDemandforecastdRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.idemandforecastmid}</td>
+<td>${data.iyear}</td>
+<td>${data.imonth}</td>
+<td>${data.idate}</td>
+<td>${data.ivendorid}</td>
+<td>${data.iinventoryid}</td>
+<td>${data.iqty1}</td>
+<td>${data.iqty2}</td>
+<td>${data.iqty3}</td>
+<td><img data-switchbtn data-confirm="确定切换是否锁定;0. 否 1. 是？" data-value="${data.islocked1}"  data-handler="refreshJBoltTable"  data-url="admin/mrpdemandforecastd/toggleIslocked1/${data.id}"/></td>
+<td><img data-switchbtn data-confirm="确定切换是否锁定;0. 否 1. 是？" data-value="${data.islocked2}"  data-handler="refreshJBoltTable"  data-url="admin/mrpdemandforecastd/toggleIslocked2/${data.id}"/></td>
+<td><img data-switchbtn data-confirm="确定切换是否锁定;0. 否 1. 是？" data-value="${data.islocked3}"  data-handler="refreshJBoltTable"  data-url="admin/mrpdemandforecastd/toggleIslocked3/${data.id}"/></td>
+<td>
+	<a href="admin/mrpdemandforecastd/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改物料需求预示子表" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+    <a href="admin/mrpdemandforecastd/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="mrpDemandforecastd_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增物料需求预示子表"  data-url="admin/mrpdemandforecastd/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改物料需求预示子表" data-check-handler="jboltTableGetCheckedId" data-url="admin/mrpdemandforecastd/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/mrpdemandforecastd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/mrpdemandforecastd/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="mrpDemandforecastdForm_#(pageId)"
+data-rowtpl="mrpDemandforecastdRowtpl_#(pageId)"
+data-page="mrpDemandforecastdPage_#(pageId)"
+data-toolbar="mrpDemandforecastd_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+data-fixed-columns-right="-1"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-min-width="150" data-column="iDemandForecastMid">物料需求预示计算主表ID</th>
+	<th data-width="150" data-column="iYear">年</th>
+	<th data-width="150" data-column="iMonth">月</th>
+	<th data-width="150" data-column="iDate">日</th>
+	<th data-width="150" data-column="iVendorId">供应商ID</th>
+	<th data-width="150" data-column="iInventoryId">存货ID</th>
+	<th data-width="150" data-column="iQty1">实绩需求数</th>
+	<th data-width="150" data-column="iQty2">到货计划数</th>
+	<th data-width="150" data-column="iQty3">计划在库</th>
+	<th data-width="150" data-column="isLocked1">是否锁定;0. 否 1. 是</th>
+	<th data-width="150" data-column="isLocked2">是否锁定;0. 否 1. 是</th>
+	<th data-width="150" data-column="isLocked3">是否锁定;0. 否 1. 是</th>
+	<th data-width="100">操作</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/mrpdemandforecastd/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('title', '物料需求预示子表')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end
