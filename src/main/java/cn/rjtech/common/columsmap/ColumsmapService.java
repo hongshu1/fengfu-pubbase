@@ -561,13 +561,6 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     if (!"200".equals(result.getStr("code"))) {
                         rollbackProcess(currentSeq.get(), vouchBusinessID, processBusMaps);
                     }
-
-                    tx(exchangeTableService.dataSourceConfigName(), () -> {
-
-                        exchangeTableService.batchSave(saveExchangeTables);
-                        
-                        return true;
-                    });
                 }
             }
 
@@ -758,7 +751,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
         List<VouchRollBackRef> saveVouchRollBackRefs = new ArrayList<>();
 
         List<VouchRollBackRef> updateVouchRollBackRefs = new ArrayList<>();
-
+        saveExchangeTables.clear();
         try {
             // 保存交换表步骤
             if (StrUtil.isBlank(processBusMap.get("processname")) && ObjUtil.isNull(processBusMap.get("url"))) {
@@ -988,9 +981,14 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
             throw new RuntimeException(e.getLocalizedMessage());
         } finally {
+            tx(exchangeTableService.dataSourceConfigName(), () -> {
+                if (CollUtil.isNotEmpty(saveExchangeTables)){
+                    exchangeTableService.batchSave(saveExchangeTables);
+                }
+                return true;
+            });
             // 保存所有日志操作及调用参数记录
             tx(DataSourceConstants.MOMDATA, Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
-
                 // 保存日志
                 if (CollUtil.isNotEmpty(saveLogs)) {
                     tsysLogService.save(saveLogs.get(0));
