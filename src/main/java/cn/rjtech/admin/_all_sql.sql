@@ -399,4 +399,7 @@
 #include("instockqcformm/instockqcformm.sql")
 #end
 
+#namespace("sysotherin")
+#include("sysotherin/sysotherin.sql")
+#end
 
