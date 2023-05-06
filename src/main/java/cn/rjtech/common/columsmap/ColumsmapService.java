@@ -25,7 +25,6 @@ import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.ListUtils;
 import cn.rjtech.wms.utils.StringUtils;
-import cn.rjtech.wms.utils.WebService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -486,6 +485,9 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
         Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
 
+        // 交换表数据保存
+        List<ExchangeTable> saveExchangeTables = new ArrayList<>();
+
         // 外层事务
         tx(erpDbAlias, Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
 
@@ -546,7 +548,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                                 // ERP 生单、审单事务上下文开始
                                 // ---------------------------------------------------------
                                 try {
-                                    txInErp(erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
+                                    txInErp(saveExchangeTables, erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
                                 } catch (Exception e) {
                                     LOG.error(e.getLocalizedMessage());
                                     // 这里不打印异常信息，处理回滚外层事务
@@ -559,6 +561,13 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     if (!"200".equals(result.getStr("code"))) {
                         rollbackProcess(currentSeq.get(), vouchBusinessID, processBusMaps);
                     }
+
+                    tx(exchangeTableService.dataSourceConfigName(), () -> {
+
+                        exchangeTableService.batchSave(saveExchangeTables);
+                        
+                        return true;
+                    });
                 }
             }
 
@@ -672,7 +681,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                         e.printStackTrace();
                     }
                     // 返回解析
-                    Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message, 1);
+                    Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message);
                     String resultCode = JBoltStringUtil.isBlank(processResult.get("resultCode").toString()) ? "201" : processResult.get("resultCode").toString();
                     String resultInfo = JBoltStringUtil.isBlank(processResult.get("resultInfo").toString()) ? "未知原因" : processResult.get("resultInfo").toString();
                     message = resultInfo;
@@ -740,11 +749,9 @@ public class ColumsmapService extends BaseService<Columsmap> {
         });
     }
 
-    private void txInErp(String erpDbAlias, String erpDBName, Record vouchType, String vouchBusinessID, Organize orgApp, Record processBusMap, DataConversion dataConversion, Record userApp, Record processBusPre, String type, Map plugeReturnMap, Kv result, JSONArray mainData, JSONArray detailData, JSONArray extData, String sourceJson, Date now) {
+    private void txInErp(List<ExchangeTable> saveExchangeTables, String erpDbAlias, String erpDBName, Record vouchType, String vouchBusinessID, Organize orgApp, Record processBusMap, DataConversion dataConversion, Record userApp, Record processBusPre, String type, Map plugeReturnMap, Kv result, JSONArray mainData, JSONArray detailData, JSONArray extData, String sourceJson, Date now) {
         // 日志操作记录
         List<Log> saveLogs = new ArrayList<>();
-        // 交换表数据保存
-        List<ExchangeTable> saveExchangeTables = new ArrayList<>();
         // 单据处理节点信息
         List<VouchProcessNote> saveVouchProcessNotes = new ArrayList<>();
         // 单据回滚日志参照表
@@ -835,7 +842,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                             e.printStackTrace();
                         }
                         // 返回解析
-                        Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message, 1);
+                        Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message);
                         String resultCode = JBoltStringUtil.isBlank(processResult.get("resultCode").toString()) ? "201" : processResult.get("resultCode").toString();
                         if (!JBoltStringUtil.isBlank(processResult.get("resultInfo").toString())){
                             message = processResult.get("resultInfo").toString();
@@ -935,7 +942,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                 System.out.println(message);
 
                 // 返回解析
-                Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message, 1);
+                Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message);
                 //System.out.println(processResult.get("resultCode").toString() + processResult.get("resultInfo").toString());
                 String resultCode = processResult.get("resultCode").toString();
                 message = processResult.get("resultInfo").toString();
@@ -986,11 +993,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
                 // 保存日志
                 if (CollUtil.isNotEmpty(saveLogs)) {
-                    tsysLogService.batchSave(saveLogs);
-                }
-//                // 交换表
-                if (CollUtil.isNotEmpty(saveExchangeTables)) {
-                    exchangeTableService.batchSave(saveExchangeTables);
+                    tsysLogService.save(saveLogs.get(0));
                 }
                 // 保存单据操作记录
                 if (CollUtil.isNotEmpty(saveVouchProcessNotes)) {

@@ -1,4 +1,15 @@
 ### 根据UIType字符串 生成input类型html
+#define genFormHtmlEditorTypeByUiTypeStr(isFormGroupRow,modelName,formControlWidth,col)
+#if(isFormGroupRow)
+<div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
+#end
+<div data-editor="summernote" data-height="350" #if(col.formUiType=="summernote_simple") data-toolbar="simple" #end  data-hidden-input="#(modelName)_#(col.attrName)_hidden">#(htmlcontent??)</div>
+#if(isFormGroupRow)
+</div>
+#end
+<textarea id="#(modelName)_#(col.attrName)_hidden" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))"  data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end data-with-clearbtn="true" autocomplete="off"  class="form-control d-none"  placeholder="#(col.placeholder?? ('请输入'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" maxlength="#(col.maxLength?? '200')" name="#(modelName).#(col.attrName)">#if(codeGenServiceMode??)#[[#]]#(#(modelName).#(col.attrName)??)#end</textarea>
+#end
+### 根据UIType字符串 生成input类型html
 #define genFormInputTypeByUiTypeStr(isFormGroupRow,modelName,formControlWidth,col)
 #switch (col.formUiType)
 #case ("input")
@@ -29,11 +40,11 @@
 #if(isFormGroupRow)
 <div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
 #end
-    <input id="#(modelName)_#(col.attrName)" type="hidden" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请上传'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" name="#(modelName).#(col.attrName)" #end />
+    <input id="#(modelName)_#(col.attrName)" type="hidden" #if(col.dataRule || col.isRequired) data-rule="#(col.dataRule?? (col.isRequired?'required':''))" data-notnull="#(col.isRequired)" data-tips="#(col.dataTips?? ('请上传'+(col.formLabel?? (col.tableLabel?? (col.remark?? '')))))" #end  name="#(modelName).#(col.attrName)" value="#[[#]]#(#(modelName).#(col.attrName)??)"/>
     <div data-imguploader
          #if(!col.isUploadToQiniu)
          #if(codeGenServiceMode)
-         data-url="#(col.formUploadUrl??)"
+         data-url="#(codeGen.controllerPath??)/#(col.formUploadUrl??)"
          #else
          data-url="admin/codegen/uploadImg"
          #end
@@ -52,6 +63,7 @@
          #if(col.dataRule || col.isRequired)
          data-rule="required"
          #end
+         data-value="#[[#]]#(#(modelName).#(col.attrName)??)"
     ></div>
     <br/>
     <small class="text-danger">注:上传图片尺寸比例#(col.formImgUploaderArea?? '1:1'),最大#(col.formMaxsize?? '200')KB</small>
@@ -62,7 +74,7 @@
 
 ### 根据UIType字符串 生成form-group div 开始的html
 #define genFormGroupDivStart(isFormGroupRow,formControlWidth,col,hasTagEnd)
-<div class="form-group #(isFormGroupRow?'row':'')" #if(!codeGenServiceMode) data-form-ele-width="#(col.formEleWidth?? (formControlWidth?? 10))" data-form-control-width="#(formControlWidth?? 10)" draggable="true" data-id="#(col.id)" #end #if(hasTagEnd)>#end
+<div class="form-group #(isFormGroupRow?'row':'')" #if(!codeGenServiceMode) data-form-ele-width="#(col.formEleWidth?? (formControlWidth?? 10))" data-form-control-width="#(formControlWidth?? 10)" draggable="true" data-id="#(col.id)" data-col-name="#(col.colName)" #if(col.formUploadUrl??)data-form-upload-url="#(col.formUploadUrl??)" #end #end #if(hasTagEnd)>#end
 #end
 
 ### 根据UIType字符串 生成html5 date input类型html
@@ -295,6 +307,11 @@
 
 #define switchFormColType(isFormGroupRow,modelName,labelWidth,formControlWidth,col,codeGenServiceMode)
 #switch(col.formUiType)
+#case("summernote","summernote_simple")
+#@genFormGroupDivStart(isFormGroupRow,formControlWidth,col,true)
+#@genFormGroupLabel(isFormGroupRow,labelWidth,col)
+#@genFormHtmlEditorTypeByUiTypeStr(isFormGroupRow,modelName,formControlWidth,col)
+#@formDivEnd()
 #case("input","password","number","textarea","calculator")
 #@genFormGroupDivStart(isFormGroupRow,formControlWidth,col,true)
 #@genFormGroupLabel(isFormGroupRow,labelWidth,col)

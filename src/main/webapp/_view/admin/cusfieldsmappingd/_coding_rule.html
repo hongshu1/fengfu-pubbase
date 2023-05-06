@@ -1,5 +1,5 @@
 #if(isencoded == 'true')
-
+#set(pageId=RandomUtil.random(6))
 <div class="card">
     <div class="card-header">导入字段映射编码</div>
     <div class="card-body">
@@ -7,15 +7,17 @@
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="CusfieldsmappingdCodingrule_tpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.iAutoId}">
+        <tr data-id="${data.iautoid}">
             <!--<td>${pageNumber,pageSize,index | rownum}</td>-->
             <!--<td>
             </td>-->
-            <td>${data.iseq}</td>
-            <td>${data.itype}</td>
-            <td>${data.istartlength}</td>
-            <td>${data.iendlength}</td>
-            <td>${data.cseperator}</td>
+            <td>
+                <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true, 'iseq');updateDemoCode();"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></ a>
+                <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true, 'iseq');updateDemoCode();" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></ a>
+            </td>
+            <td>${data.cname}</td>
+            <td>${data.ilength|number_format1}</td>
+            <td>${data.cchar}</td>
         </tr>
         {@/each}
         </textarea>
@@ -28,14 +30,23 @@
             </div>
         </div>
         
+        <form id="CusfieldsmappingdCodingrule_form_#(pageId)">
+            <input type="hidden" name="icusfieldsmappingdid" value="#(icusfieldsmappingdid)">
+        </form>
+        
         <table class="jbolt_table jbolt_main_table  table-center "
                id="jbolt_table_#(pageId)"
+               #if(icusfieldsmappingdid)
+               data-url="admin/cusfieldsmappingdcodingrule/datas"
+               data-ajax-success-handler="tableAjaxSuccessHandler_#(pageId)"
+               #else
+               data-autoload="false"
+               #end
                data-jbolttable
                data-width="auto"
                data-height="250"
                data-ajax="true"
                data-conditions-form="CusfieldsmappingdCodingrule_form_#(pageId)"
-               data-url="admin/cusfieldsmappingdcodingrule/datas"
                data-rowtpl="CusfieldsmappingdCodingrule_tpl_#(pageId)"
                data-copy-to-excel="false"
                data-column-resize="true"
@@ -48,16 +59,30 @@
             <tr>
                 <!--<th data-width="60" data-column="index">序号</th>-->
                 <!--<th data-width="80">操作</th>-->
-                <th data-width="100" data-column="iseq">显示顺序值</th>
+                <th data-width="100" data-column="iseq">操作</th>
                 <th data-width="100" data-column="itype">类型</th>
-                <th data-width="100" data-column="istartlength">起始长度</th>
-                <th data-width="100" data-column="iendlength">结束长度</th>
-                <th data-width="150" data-column="cseperator">分隔符</th>
+                <th data-width="100" data-column="ilength">编码长度</th>
+                <th data-width="150" data-column="cseparator">分隔符</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
 </div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">编码示例</label>
+    <div class="col-10" id="cDemo">
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">编码字段长度</label>
+    <div class="col-10">
+        <span id="ilength"></span>
+    </div>
+</div>
+
 #else
 #end
+#include("_coding_rule_js.html")

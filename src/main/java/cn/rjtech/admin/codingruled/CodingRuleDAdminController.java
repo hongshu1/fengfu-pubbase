@@ -86,5 +86,4 @@ public class CodingRuleDAdminController extends BaseAdminController {
         renderJson(service.deleteById(getLong(0)));
     }
 
-
 }

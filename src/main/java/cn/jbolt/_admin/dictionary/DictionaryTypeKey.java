@@ -563,7 +563,7 @@ public enum DictionaryTypeKey {
     /**
      * 编码字段分隔符
      */
-    encoding_field_seperator,
+    encoding_field_separator,
     /**
      * 业务对象类型
      */

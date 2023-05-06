@@ -33,6 +33,11 @@ import com.jfinal.aop.Before;
 #if(codeGen.isNeedAdminInterceptor??)
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 #end
+#if(hasUploadFile??)
+import cn.jbolt.common.config.JBoltUploadFolder;
+import com.jfinal.upload.UploadFile;
+import cn.jbolt.core.service.JBoltFileService;
+#end
 #if(codeGen.isCrud??)
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
@@ -62,7 +67,10 @@ public class #(codeGen.controllerName??) extends BaseAdminController {
 
 	@Inject
 	private #(codeGen.serviceName??) service;
-
+	#if(hasUploadFile??)
+	@Inject
+    private JBoltFileService jboltFileService;
+	#end
 #if(methods!=null&&methods.size()>0)
 	#for(method:methods)
 	#@genControllerMethod(method)

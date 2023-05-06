@@ -47,3 +47,17 @@ WHERE
         AND A.cPsn_Name LIKE CONCAT('%', #para(cpersonname),'%')
     #end
 #end
+
+#sql("getpersonByCpsnnum")
+SELECT
+	person.*,
+	jbuser.username,
+	jbuser.name,
+	ment.cDepName
+FROM
+	Bd_Person person
+	LEFT JOIN #(getBaseDbName()).dbo.jb_user jbuser ON jbuser.id= person.iUserId
+	LEFT JOIN Bd_Department ment ON ment.cDepCode= person.cDept_num
+WHERE
+	cPsn_Num =#para(cpsnnum)
+#end

@@ -46,7 +46,7 @@
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingm/cusfieldsmappingd?icusfieldsmappingmid=${data.iautoid}" data-handler="refreshJBoltTable" data-area="99%,99%" data-title="导入字段">导入字段</a>
+                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingm/cusfieldsmappingd?icusfieldsmappingmid=${data.iautoid}" data-handler="refreshJBoltTable" data-area="99%,99%" data-btn="close" data-title="导入字段">导入字段</a>
                 <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑">编辑</a>
                 <a class="jbolt_table_delbtn" href="admin/cusfieldsmappingm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable">删除</a>
             </td>

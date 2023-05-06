@@ -61,15 +61,14 @@
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingd/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑导入映射字段"><i class="fa fa-edit"></i></a>
-                <a class="jbolt_table_delbtn" href="admin/cusfieldsmappingd/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingd/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑导入映射字段">编辑</a>
+                <a class="jbolt_table_delbtn" href="admin/cusfieldsmappingd/${data.isdeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" >删除</a>
             </td>
-            <td>${data.iCusFieldsMappingMid}</td>
-            <td>${data.iFormFieldId}</td>
-            <td>${data.cCusFieldName}</td>
-            <td><img data-switchbtn data-confirm="确定切换是否编码字段？" data-value="${data.isEncoded}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEncoded/${data.iautoid}"/></td>
-            <td>${data.cDemo}</td>
-            <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isEnabled}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEnabled/${data.iautoid}"/></td>
+            <td>${data.cfieldname}</td>
+            <td>${data.ccusfieldname}</td>
+            <td><img data-switchbtn data-confirm="确定切换是否编码字段？" data-value="${data.isencoded == '1'}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEncoded/${data.iautoid}"/></td>
+            <td>${data.cdemo}</td>
+            <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled == '1'}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEnabled/${data.iautoid}"/></td>
         </tr>
         {@/each}
         </textarea>
@@ -99,11 +98,10 @@
             <tr>
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="160">操作</th>
-                <th data-width="100" data-column="icusfieldsmappingmid">客户导入字段配置主表id</th>
-                <th data-width="100" data-column="iformfieldid">系统字段id</th>
+                <th data-width="120" data-column="cfieldname">系统字段名称</th>
                 <th data-width="150" data-column="ccusfieldname">导入字段名称</th>
-                <th data-width="100" data-column="isencoded">是否编码字段</th>
-                <th data-width="150" data-column="cdemo">编码示例</th>
+                <th data-width="120" data-column="isencoded">是否编码字段</th>
+                <th data-width="250" data-column="cdemo">编码示例</th>
                 <th data-width="100" data-column="isenabled">是否启用</th>
             </tr>
             </thead>
