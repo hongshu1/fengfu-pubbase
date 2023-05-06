@@ -832,6 +832,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
                         String message = null;
                         try {
+                            System.err.println(jsonData);
                             message = HttpApiUtils.u8Api(processBusMap.get("url"), jsonData);
                         } catch (IOException e) {
                             e.printStackTrace();
