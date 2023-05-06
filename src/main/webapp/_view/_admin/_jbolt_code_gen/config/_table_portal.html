@@ -55,7 +55,7 @@
 </div>
 <div class="jbolt_page_content#(codeGenServiceMode?'':' jb_vbody')">
 	#if(codeGenServiceMode)
-	#set(dataIdStr="${data."+toCamelCase(codeGen.mainTablePkey?? 'id')+"}");
+	#set(dataIdStr="${data."+toCamelCase(codeGen.mainTablePkey?? 'id')+"}")
 		#else
 	#set(dataIdStr="1")
 		#end
