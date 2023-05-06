@@ -1,5 +1,7 @@
 <script>
     function submitThisForm() {
+        updateDemoCode();
+        
         jboltTableSubmit('#jbolt_table_#(pageId)');
     }
 
@@ -8,6 +10,8 @@
         console.log(JSON.stringify(datas));
 
         var $demo = $('#cDemo');
+
+        var cdemo = '';
 
         $demo.empty();
 
@@ -22,24 +26,32 @@
                     str += 'X';
                 }
                 console.log(str);
+                
+                cdemo += str;
 
                 $demo.append('<span>');
                 $demo.append('<span class="col-md-1" style="width:120px">' + str + '</span>');
                 $demo.append('</span>');
 
                 ilength += row.ilength;
+                
             }
             // 分隔符
             else {
+                var cseparator = cseparatorMap[row.cseparator];
+                
                 $demo.append('<span>');
-                $demo.append('<span class="col-md-1" style="width:120px">' + cseparatorMap[row.cseparator] + '</span>');
+                $demo.append('<span class="col-md-1" style="width:120px">' + cseparator + '</span>');
                 $demo.append('</span>');
 
                 ilength += 1;
+
+                cdemo += cseparator;
             }
         });
 
         $('#ilength').html(ilength);
+        $('input[name="cusFieldsMappingD.cdemo"]').val(cdemo);
     }
 
     function tableAjaxSuccessHandler_#(pageId)(table) {
@@ -71,10 +83,10 @@
                 /*iautoid: {
                     submitAttr: "iautoid"
                 },*/
-                iseq: {
+                /*iseq: {
                     type: "input_number",
                     required: true
-                },
+                },*/
                 itype: {
                     type: "select",
                     required: true,

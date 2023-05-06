@@ -11,10 +11,13 @@
             <!--<td>${pageNumber,pageSize,index | rownum}</td>-->
             <!--<td>
             </td>-->
-            <td>${data.iseq}</td>
-            <td>${data.itype}</td>
-            <td>${data.ilength}</td>
-            <td>${data.cseparator}</td>
+            <td>
+                <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true, 'iseq');updateDemoCode();"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></ a>
+                <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true, 'iseq');updateDemoCode();" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></ a>
+            </td>
+            <td>${data.cname}</td>
+            <td>${data.ilength|number_format1}</td>
+            <td>${data.cchar}</td>
         </tr>
         {@/each}
         </textarea>
@@ -56,7 +59,7 @@
             <tr>
                 <!--<th data-width="60" data-column="index">序号</th>-->
                 <!--<th data-width="80">操作</th>-->
-                <th data-width="100" data-column="iseq">顺序值</th>
+                <th data-width="100" data-column="iseq">操作</th>
                 <th data-width="100" data-column="itype">类型</th>
                 <th data-width="100" data-column="ilength">编码长度</th>
                 <th data-width="150" data-column="cseparator">分隔符</th>
@@ -69,9 +72,6 @@
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">编码示例</label>
-
-    <input type="hidden" name="cusFieldsMappingD.cDemo" value="#(cusFieldsMappingD.cDemo??)">
-
     <div class="col-10" id="cDemo">
     </div>
 </div>
