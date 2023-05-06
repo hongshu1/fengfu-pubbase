@@ -482,91 +482,86 @@ public class ColumsmapService extends BaseService<Columsmap> {
         JSONObject preAllocate = (JSONObject) kv.get("preallocate");
 
         //通过数据的分组id，将数据分成多组，分别提交
-        Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> {
-            return ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag");
-        }, Collectors.toList()));
+        Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag"), Collectors.toList()));
 
         Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
 
-        // 外层事务
-        tx(erpDbAlias, Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
+        for (Object flag : groupFlags) {
+            // 获取主数据
+            JSONArray mainData = JSONArray.parseArray(JSON.toJSONString(dataGroup.get(flag)));//(JSONArray) kv.get("maindata");
+            // 获取详细数据
+            JSONArray detailData = (JSONArray) kv.get("DetailData");
+            // 获取扩展数据
+            JSONArray extData = (JSONArray) kv.get("ExtData");
 
-            for (Object flag : groupFlags) {
-                // 获取主数据
-                JSONArray mainData = JSONArray.parseArray(JSON.toJSONString(dataGroup.get(flag)));//(JSONArray) kv.get("maindata");
-                // 获取详细数据
-                JSONArray detailData = (JSONArray) kv.get("DetailData");
-                // 获取扩展数据
-                JSONArray extData = (JSONArray) kv.get("ExtData");
+            ValidationUtils.notEmpty(mainData, "detail没有数据");
 
-                ValidationUtils.notEmpty(mainData, "detail没有数据");
+            Map plugeReturnMap = ListUtils.dealWithReturnData(preAllocate);
 
-                Map plugeReturnMap = ListUtils.dealWithReturnData(preAllocate);
+            String type = plugeReturnMap.get("type").toString();
+            // List<Record> list = findInfoFlag(type)
+            // String synergyTag = list.get(0).getStr("synergytag")
 
-                String type = plugeReturnMap.get("type").toString();
-                // List<Record> list = findInfoFlag(type)
-                // String synergyTag = list.get(0).getStr("synergytag")
+            // 获取对应
+            Record vouchType = findInfoFlag(type).get(0);
+            Integer id1 = vouchType.getInt("autoid");
+            // 获取所有流程
+            List<Record> processBusMaps = processBus(id1);
+            // 流程执行
+            plugeReturnMap.put("ProcessType", vouchType.get("processtype"));
+            plugeReturnMap.put("CreatePersonName", userApp.getStr("user_name"));
+            plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
+            plugeReturnMap.put("organizeCode", kv.get("organizecode"));
+            plugeReturnMap.put("password", userApp.getStr("u8_pwd"));
 
-                // 获取对应
-                Record vouchType = findInfoFlag(type).get(0);
-                Integer id1 = vouchType.getInt("autoid");
-                // 获取所有流程
-                List<Record> processBusMaps = processBus(id1);
-                // 流程执行
-                plugeReturnMap.put("ProcessType", vouchType.get("processtype"));
-                plugeReturnMap.put("CreatePersonName", userApp.getStr("user_name"));
-                plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
-                plugeReturnMap.put("organizeCode", kv.get("organizecode"));
-                plugeReturnMap.put("password", userApp.getStr("u8_pwd"));
+            AtomicInteger currentSeq = new AtomicInteger();
 
-                AtomicInteger currentSeq = new AtomicInteger();
+            try {
+                Map<Object, List<Record>> groupProcessDatas = processBusMaps.stream().collect(
+                        Collectors.groupingBy(p -> p.get("groupseq") == null ? "10" : p.get("groupseq"), Collectors.toList())
+                );//通过配置表的groupseq分组
+                
+                Set<Object> groupSeqs = new TreeSet<>(groupProcessDatas.keySet());
+                Iterator<Object> groupId = groupSeqs.iterator();
+                DataConversion dataConversion = new DataConversion(this, columsmapdetailService);
 
-                try {
-                    Map<Object, List<Record>> groupProcessDatas = processBusMaps.stream().collect(Collectors.groupingBy(p -> p.get("groupseq") == null ? "10" : p.get("groupseq"), Collectors.toList()));//通过配置表的groupseq分组
-                    Set<Object> groupSeqs = new TreeSet<>(groupProcessDatas.keySet());
-                    Iterator<Object> groupId = groupSeqs.iterator();
-                    DataConversion dataConversion = new DataConversion(this, columsmapdetailService);
+                while (groupId.hasNext()) {
+                    // 取出分组中的流程
+                    List<Record> processBusList = groupProcessDatas.get(groupId.next());
 
-                    while (groupId.hasNext()) {
-                        // 取出分组中的流程
-                        List<Record> processBusList = groupProcessDatas.get(groupId.next());
+                    for (int i = 0; i < processBusList.size(); i++) {
+                        Record processBusMap = processBusList.get(i);
 
-                        for (int i = 0; i < processBusList.size(); i++) {
-                            Record processBusMap = processBusList.get(i);
+                        currentSeq.set(processBusMap.getInt("seq"));
 
-                            currentSeq.set(processBusMap.getInt("seq"));
+                        // 预制项配置
+                        plugeReturnMap.put("InitializeMapID", processBusMap.get("initializemapid"));
 
-                            // 预制项配置
-                            plugeReturnMap.put("InitializeMapID", processBusMap.get("initializemapid"));
+                        // 判断流程是否可用
+                        if (StrUtil.isBlank(processBusMap.get("pcloseperson")) && StrUtil.isBlank(processBusMap.get("bcloseperson"))) {
 
-                            // 判断流程是否可用
-                            if (StrUtil.isBlank(processBusMap.get("pcloseperson")) && StrUtil.isBlank(processBusMap.get("bcloseperson"))) {
+                            Record processBusPre = i > 0 ? processBusList.get(i - 1) : null;
 
-                                Record processBusPre = i > 0 ? processBusList.get(i - 1) : null;
-
-                                // ---------------------------------------------------------
-                                // ERP 生单、审单事务上下文开始
-                                // ---------------------------------------------------------
-                                try {
-                                    txInErp(erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
-                                } catch (Exception e) {
-                                    LOG.error(e.getLocalizedMessage());
-                                    e.printStackTrace();
-                                    // 这里不打印异常信息，处理回滚外层事务
-                                    return false;
-                                }
+                            // ---------------------------------------------------------
+                            // ERP 生单、审单事务上下文开始
+                            // ---------------------------------------------------------
+                            try {
+                                txInErp(erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
+                            } catch (Exception e) {
+                                LOG.error(e.getLocalizedMessage());
+                                e.printStackTrace();
+                                // 这里不打印异常信息，处理回滚外层事务
+                                return result;
                             }
                         }
                     }
-                } finally {
-                    if (!"200".equals(result.getStr("code"))) {
-                        rollbackProcess(currentSeq.get(), vouchBusinessID, processBusMaps);
-                    }
+                }
+            } finally {
+                if (!"200".equals(result.getStr("code"))) {
+                    rollbackProcess(currentSeq.get(), vouchBusinessID, processBusMaps);
                 }
             }
-
-            return true;
-        });
+        }
 
         return result;
     }
