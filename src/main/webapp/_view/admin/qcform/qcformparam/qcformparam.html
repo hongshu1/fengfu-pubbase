@@ -11,6 +11,7 @@
                 <form class="form-inline" id="qcformparamForm_#(pageId)" onsubmit="return false;" method="post">
                     <input type="text" autocomplete="off" class="form-control" placeholder="=参数名称=" name="paramname"
                            value=""/>
+                    <input hidden type="text" name="qcFormItemCodes" value="#(qcFormItemCodes??)">
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
                     <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 
@@ -50,12 +51,13 @@
                data-jbolttable
                data-height="fill"
                data-ajax="true"
-               data-url="/admin/qcform/qcformparam/qcformparamlist?FormItemCodes=#(FormItemCodes??)&iqcformitemid=#(iqcformitemid??)"
+               data-url="/admin/qcform/qcformparam/qcformparamlist?ids=#(FormItemCodes??)&iQcItemIds=#(iQcItemIds??)"
                data-column-resize="true"
                data-column-prepend="1:checkbox:true"
                data-conditions-form="qcformparamForm_#(pageId)"
                data-rowtpl="qcformparamRowtpl_#(pageId)"
                data-page="itemmasterPage_#(pageId)"
+               data-ajax-success-handler="ajaxSuccessHandler"
                data-toolbar="qcformparam_toolbar_#(pageId)"
         >
             <thead>
@@ -93,12 +95,14 @@
                     "iqcparamid": data[i].iautoid,
                     "cqcparamnames": data[i].cqcparamname,
                     "iitemseq": data[i].iitemseq,
+                    "iqcitemid": data[i].iqcitemid,
 
                 });
             }
             console.log('insertDatas==='+insertDatas)
             parent.jboltTableInsertRow(parent.$("#jbolt_table_qcformparam_split"), insertDatas);
             // parent.insertRow(insertDatas);
+            parent.updateItemParamSeq();
             parent.layer.close(parent.layer.getFrameIndex(window.name));
         } else {
             //母件选择
@@ -116,6 +120,12 @@
                 parent.layer.close(parent.layer.getFrameIndex(window.name));
             }
         }
+    }
+
+    function ajaxSuccessHandler(table) {
+        $('.jbolt_table').tablesMergeCell({
+            cols: [1]
+        }, true)
     }
 </script>
 #end

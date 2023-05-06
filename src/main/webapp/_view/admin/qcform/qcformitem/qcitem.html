@@ -89,7 +89,7 @@
                 });
             }
             parent.jboltTableInsertRow(parent.$("#jbolt_table_QcFormItem_split"), insertDatas);
-            // parent.insertRow(insertDatas);
+            parent.updateItemSeq();
             parent.layer.close(parent.layer.getFrameIndex(window.name));
         } else {
             //母件选择

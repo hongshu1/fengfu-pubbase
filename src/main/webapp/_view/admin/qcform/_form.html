@@ -94,20 +94,14 @@
 
     <div class="row">
         <div class="col">
-            <div class="form-group row"
-                        data-radio
-                        data-name="qcForm.isEnabled"
-                        data-value-attr="sn"
-                        data-default="options_first"
-                        data-url="admin/dictionary/options?key=options_enable"
-                        data-label="是否启用"
-                        data-width="col-sm-1,col-10"
-                        data-value="#(qcForm.isEnabled??)"
-                        data-rule="radio"
-                        data-notnull="true"
-                        data-tips="请选择是否启用"
-                        data-inline="true"
-            ></div>
+
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">是否启用</label>
+                <div class="col-10">
+                    <input hidden name="isEffective" id="isEnabled_#(pageId)" value="#(qcForm.isenabled??'1'=='1'?true:false)">
+                    <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(qcForm.isenabled??'1'=='1'?true:false)"/>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -117,7 +111,7 @@
             <div class="form-group row">
                 <label class="col-sm-1 col-form-label">备注</label>
                 <div class="col-10">
-                    <textarea  data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="padWorkRegion.cMemo">#(padWorkRegion.cMemo??)</textarea>
+                    <textarea  data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="qcForm.cMemo">#(qcForm.cMemo??)</textarea>
                 </div>
             </div>
         </div>
@@ -154,60 +148,41 @@
     }
 
     // 绑定检验表格参数和检验表格项目关联
-    function clearDicTable_#(pageId)() {
-        $("#selectDicTypeName").text("未选");
-        $("#dicTypeId_#(pageId)").val("");
-        $("#dicKeywords_#(pageId)").val("");
-        $("#dictionaryForm_#(pageId)").hide();
-        $dicOptBtns.hide();
-        refreshJBoltTable("jbolt_table_qcformparam_split");
-    }
+    // function clearDicTable_#(pageId)() {
+    //     $("#selectDicTypeName").text("未选");
+    //     $("#dicTypeId_#(pageId)").val("");
+    //     $("#dicKeywords_#(pageId)").val("");
+    //     refreshJBoltTable("jbolt_table_qcformparam_split");
+    // }
 
-    function clearDicTables_#(pageId)() {
-        $("#qcformparamId").val("");
-        $("#dicKeywords_#(pageId)").val("");
-        refreshJBoltTable("jbolt_table_qcformparam_split");
-    }
-
-    function readqcformparamss(table, tr, typeid, jsonData) {
-        console.log("====1111" + jsonData)
-        $("#qcformparamId").val(jsonData.iautoid);
-        $("#qcformtableparamForm_#(pageId)").show();
-        refreshJBoltTable("jbolt_table_qcformtableparam_split");
-    }
-
-    function readqcformparams(table, tr, typeid, jsonData) {
-        console.log("====" + jsonData)
-        $dicOptBtns.hide();
-        $("#selectDicTypeName").text(jsonData.cqcitemname);
-        $("#dicTypeId_#(pageId)").val(jsonData.iautoid);
-        $("#dicKeywords_#(pageId)").val("");
-        $("#dictionaryForm_#(pageId)").show();
-        $dicOptBtns.show();
-        // $("#mian").text(jsonData.cqcitemname);
-        // if(jsonData.modeLevel==2){
-        //     $("#expandCollapseOpt_#(pageId)").show();
-        // }else{
-        //     $("#expandCollapseOpt_#(pageId)").hide();
-        // }
-        refreshJBoltTable("jbolt_table_qcformparam_split");
-    }
+    // function clearDicTables_#(pageId)() {
+    //     $("#qcformparamId").val("");
+    //     $("#dicKeywords_#(pageId)").val("");
+    //     refreshJBoltTable("jbolt_table_qcformparam_split");
+    // }
 
     // 检验表格项目新增
     function addBomcompareTr(ele) {
+
+        var formItemCodes = getFormItemCodes();
+        const url = "/admin/qcform/qcformitem/qcFormItemDatas?type=1&FormItemCodes=" + formItemCodes;
+        $(ele).data("url", url);
+        DialogUtil.openBy(ele);
+    }
+
+    function getFormItemCodes() {
         const dataList = jboltTableGetAllDatas('#jbolt_table_QcFormItem_split', ['iqcitemid']);
         let FormItemCodes = '';
         if (isOk(dataList)) {
             dataList.forEach((value, index) => {
                 FormItemCodes = FormItemCodes.concat(",").concat(value.iqcitemid);
-            })
+        })
         }
+
         if (isOk(FormItemCodes)) {
             FormItemCodes = FormItemCodes.concat(",");
         }
-        const url = "/admin/qcform/qcformitem/qcFormItemDatas?type=1&FormItemCodes=" + FormItemCodes;
-        $(ele).data("url", url);
-        DialogUtil.openBy(ele);
+        return FormItemCodes;
     }
 
     // 检验表格参数新增
@@ -222,10 +197,116 @@
         if (isOk(FormItemCodes)) {
             FormItemCodes = FormItemCodes.concat(",");
         }
-        const url = "/admin/qcform/qcformparam/qcformparamDatas?type=2&FormItemCodes=" + FormItemCodes;
+
+        var qcFormItemCodes = getFormItemCodes();
+        const url = "/admin/qcform/qcformparam/qcformparamDatas?type=2&FormItemCodes=" + FormItemCodes+"&iQcItemIds="+qcFormItemCodes;
         $(ele).data("url", url);
         DialogUtil.openBy(ele);
     }
+
+    function updateIsEnabled(ele) {
+        $("#isEnabled_#(pageId)").val(ele.data("value"))
+    }
+
+    // 设置表格项目iseq值
+    function updateItemSeq() {
+        var datas = jboltTableGetAllDatas('#jbolt_table_QcFormItem_split');
+        if (isNotEmpty(datas)){
+            var seq = new Number(0);
+            $.each(datas, function (idx, row) {
+                seq+= new Number(10);
+                row['iseq']=seq;
+            });
+            console.log("datas======"+JSON.stringify(datas));
+            // 清空数据
+            jboltTableClear('#jbolt_table_QcFormItem_split')
+            // 添加数据
+            jboltTableInsertRow('#jbolt_table_QcFormItem_split', datas);
+        }
+        // 刷新项目参数数据
+        setItemParamSeq('#jbolt_table_qcformparam_split', jboltTableGetAllDatas('#jbolt_table_qcformparam_split'), datas);
+    }
+
+    function setItemParamSeq(id,itemParamTableData, itemTable) {
+        if (isEmpty(itemTable)){
+            return;
+        }
+        // type两种方式，一种是通过项目名称排序，另一种是通过参数排序
+        if (isNotEmpty(itemParamTableData)){
+            var seq = new Number(0);
+            for(let j=0; j<itemTable.length; j++){
+                var itemData = itemTable[j];
+                for (let i=0; i<itemParamTableData.length; i++){
+                    var paramData = itemParamTableData[i];
+                    if (paramData['iqcitemid'] == itemData['iqcitemid']){
+                        paramData['iitemseq'] = itemData['iseq'];
+                        seq+= new Number(10);
+                        paramData['iitemparamseq'] = seq;
+                    }
+                    // iItemSeq 参数项目顺序值；
+                    // iItemParamSeq 参数名称顺序值；
+                }
+            }
+            jboltTableClear(id);
+            jboltTableInsertRow(id, itemParamSort(itemParamTableData));
+            console.log("itemParamTableData====="+JSON.stringify(itemParamTableData))
+        }
+
+    }
+    function updateItemParamSeq(){
+        var datas = jboltTableGetAllDatas('#jbolt_table_qcformparam_split');
+        if (isNotEmpty(datas)){
+            setItemParamSeq('#jbolt_table_qcformparam_split', datas, itemSort('#jbolt_table_QcFormItem_split'));
+        }
+    }
+
+    function ajaxSuccessHandler(table) {
+        $('.jbolt_table').tablesMergeCell({
+            cols: [1]
+        }, true)
+    }
+
+    // 给表格table参数重新排序
+    function itemParamSort() {
+        var itemSortData = itemSort('#jbolt_table_QcFormItem_split');
+        // 获取数据
+        var itemParamTableData = jboltTableGetAllDatas('#jbolt_table_qcformparam_split');
+
+    }
+
+    // 获取表格项目数据，按iseq排序
+    function itemSort(id) {
+        var itemTableData = jboltTableGetAllDatas(id);
+        for (let i = 0; i < itemTableData.length-1; i+= 1) {
+            // 通过 this.length 次把第一位放到最后,完成排序
+            // -i是因为最后的位置是会动态改变的，当完成一次后,最后一位会变成倒数第二位
+            for (let j = 0; j < this.length - 1 - i; j+= 1) {
+                if (this[j]['iseq'] > this[j + 1]['iseq']) {
+                    const temp = this[j];
+                    this[j] = this[j + 1];
+                    this[j + 1] = temp;
+                }
+            }
+        }
+        return itemTableData;
+    }
+
+    // 获取表格项目数据，按iseq排序
+    function itemParamSort(array) {
+        const len = array.length
+        if (len < 2) return array
+        for (let i = 0; i < len; i++) {
+            for (let j = 0; j < i; j++) {
+                if (array[j]['iitemparamseq'] > array[i]['iitemparamseq']) {
+                    const temp = array[j]
+                    array[j] = array[i]
+                    array[i] = temp
+                }
+            }
+        }
+        return array
+    }
+
 
 </script>
 #end
