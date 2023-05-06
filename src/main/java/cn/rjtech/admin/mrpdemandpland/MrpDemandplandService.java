@@ -41,7 +41,7 @@ public class MrpDemandplandService extends BaseService<MrpDemandpland> {
 	 * @return
 	 */
 	public Ret save(MrpDemandpland mrpDemandpland) {
-		if(mrpDemandpland==null || isOk(mrpDemandpland.getIautoid())) {
+		if(mrpDemandpland==null || isOk(mrpDemandpland.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//if(existsName(mrpDemandpland.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
@@ -59,11 +59,11 @@ public class MrpDemandplandService extends BaseService<MrpDemandpland> {
 	 * @return
 	 */
 	public Ret update(MrpDemandpland mrpDemandpland) {
-		if(mrpDemandpland==null || notOk(mrpDemandpland.getIautoid())) {
+		if(mrpDemandpland==null || notOk(mrpDemandpland.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//更新时需要判断数据存在
-		MrpDemandpland dbMrpDemandpland=findById(mrpDemandpland.getIautoid());
+		MrpDemandpland dbMrpDemandpland=findById(mrpDemandpland.getIAutoId());
 		if(dbMrpDemandpland==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(mrpDemandpland.getName(), mrpDemandpland.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=mrpDemandpland.update();
