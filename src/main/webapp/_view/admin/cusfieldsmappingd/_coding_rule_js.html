@@ -1,0 +1,133 @@
+<script>
+    function submitThisForm() {
+        updateDemoCode();
+        
+        jboltTableSubmit('#jbolt_table_#(pageId)');
+    }
+
+    function updateDemoCode() {
+        var datas = jboltTableGetAllDatas('#jbolt_table_#(pageId)');
+        console.log(JSON.stringify(datas));
+
+        var $demo = $('#cDemo');
+
+        var cdemo = '';
+
+        $demo.empty();
+
+        var ilength = 0;
+
+        $.each(datas, function (idx, row) {
+            // 编码
+            if (row.itype == 1) {
+                var str = '';
+
+                for (var i = 0; i < row.ilength; i++) {
+                    str += 'X';
+                }
+                console.log(str);
+                
+                cdemo += str;
+
+                $demo.append('<span>');
+                $demo.append('<span class="col-md-1" style="width:120px">' + str + '</span>');
+                $demo.append('</span>');
+
+                ilength += row.ilength;
+                
+            }
+            // 分隔符
+            else {
+                var cseparator = cseparatorMap[row.cseparator];
+                
+                $demo.append('<span>');
+                $demo.append('<span class="col-md-1" style="width:120px">' + cseparator + '</span>');
+                $demo.append('</span>');
+
+                ilength += 1;
+
+                cdemo += cseparator;
+            }
+        });
+
+        $('#ilength').html(ilength);
+        $('input[name="cusFieldsMappingD.cdemo"]').val(cdemo);
+    }
+
+    function tableAjaxSuccessHandler_#(pageId)(table) {
+        console.log('tableAjaxSuccessHandler');
+        
+        updateDemoCode('#jbolt_table_#(pageId)');
+    }
+    
+    function getEditableTableOptions_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
+            submit: {
+                type: "all",
+                withForm: ['CusFieldsMappingD_Form'],
+                url: "/admin/cusfieldsmappingd/saveTableSubmit",
+                success: function (res) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success("提交成功", 600, function () {
+                            parent.refreshPjaxContainer();
+                            
+                            location.href = '/admin/cusfieldsmappingd/edit/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                        });
+                    } else {
+                        LayerMsgBox.error(res.data.msg);
+                    }
+                }
+            },
+            cols: {
+                /*iautoid: {
+                    submitAttr: "iautoid"
+                },*/
+                /*iseq: {
+                    type: "input_number",
+                    required: true
+                },*/
+                itype: {
+                    type: "select",
+                    required: true,
+                    url: "admin/dictionary/options?key=encoding_field_type",
+                    valueAttr: "sn",
+                    textAttr: "name",
+                    submitAttr: 'itype',
+                    handler: function (table, td, text, value, trJsonData) {
+                        console.log(value);
+                        // 编码
+                        if (value === '1') {
+                            trJsonData.cseparator = '';
+                            jboltTableUpdateOtherColumns(table, td.parent(), trJsonData, [
+                                {column: 'ilength', use: 'ilength', editable: true},
+                                {column: 'cseparator', use: 'cseparator', editable: false},
+                            ]);
+                        }
+                        // 分隔符
+                        else if (value === '2') {
+                            var data = {
+                                ilength: ''
+                            };
+                            jboltTableUpdateOtherColumns(table, td.parent(), data, [
+                                {column: 'ilength', use: 'ilength', editable: false},
+                                {column: 'cseparator', use: 'cseparator', editable: true}
+                            ]);
+                        }
+                    }
+                },
+                ilength: {
+                    type: "input_number"
+                },
+                cseparator: {
+                    type: "select",
+                    url: "admin/dictionary/options?key=encoding_field_separator",
+                    valueAttr: "sn",
+                    textAttr: "name",
+                    submitAttr: 'cseparator'
+                },
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

@@ -1,0 +1,56 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="CodingRuleD_tpl_#(pageId)">
+    {@each datas as data,index}
+    <tr data-id="${data.iAutoId}">
+        <td>${data.iseq}</td>
+        <td>${data.ccodingtype}</td>
+        <td>${data.ccodingvalue}</td>
+        <td>${data.ilength}</td>
+        <td>${data.ibeginvalue}</td>
+        <td>${data.cseparator}</td>
+        <td>
+            {@if data.isDeleted}
+            <a class="text-info mr-1" data-openpage="dialog" href="admin/codingruled/edit/${data.id}" data-area="800,600" data-title="查看系统设置-编码规则明细"><i class="fa fa-eye"></i></a>
+            {@else}
+            <a class="jbolt_table_editbtn" href="admin/codingruled/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑系统设置-编码规则明细"><i class="fa fa-edit"></i></a>
+            {@/if}
+            <a class="jbolt_table_delbtn" href="admin/codingruled/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+        </td>
+    </tr>
+    {@/each}
+</textarea>
+
+<div class="jbolt_table_toolbar" id="CodingRuleD_toolbar_#(pageId)">
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+        <button onclick="jboltTableRemoveCheckedRow(this,true)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+    </div>
+</div>
+
+<table class="jbolt_table jbolt_main_table  table-center "
+       id="jbolt_table_#(pageId)"
+       data-jbolttable
+       data-width="fill"
+       data-height="250"
+       data-ajax="true"
+       data-conditions-form="CodingRuleD_form_#(pageId)"
+       data-url="admin/codingruled/datas"
+       data-rowtpl="CodingRuleD_tpl_#(pageId)"
+       data-copy-to-excel="false"
+       data-toolbar="CodingRuleD_toolbar_#(pageId)"
+       data-editable="true"
+       data-editable-option="getEditableTableOptions_#(pageId)"
+>
+    <thead>
+    <tr>
+        <th data-width="60" data-column="iseq">序号</th>
+        <th data-width="150" data-column="ccodingtype">类型</th>
+        <th data-width="150" data-column="ccodingvalue">来源值</th>
+        <th data-width="100" data-column="ilength">长度</th>
+        <th data-width="150" data-column="ccodingvalue">起始值</th>
+        <th data-width="150" data-column="cseparator">分隔符</th>
+        <th data-width="80">操作</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>

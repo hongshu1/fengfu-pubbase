@@ -1,7 +1,9 @@
 package cn.jbolt._admin.permission;
 
 import cn.jbolt.core.enumutil.JBoltEnum;
+import cn.jbolt.core.model.RjApplication;
 import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.service.RjApplicationService;
 import cn.jbolt.extend.config.ExtendProjectOfModule;
 import com.jfinal.aop.Inject;
 
@@ -10,8 +12,6 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.admin.application.RjApplicationService;
-import cn.rjtech.model.main.Application;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.core.paragetter.Para;
 
@@ -120,10 +120,10 @@ public class PermissionAdminController extends JBoltBaseController {
         ValidationUtils.validateId(appId, "开发中心应用ID");
 
         // 通过应用编码获取平台应用ID
-        Application application = rjApplicationService.findById(applicationId);
-        ValidationUtils.notNull(application, "系统应用不存在");
+        RjApplication rjApplication = rjApplicationService.findById(applicationId);
+        ValidationUtils.notNull(rjApplication, "系统应用不存在");
 
-        renderJsonData(service.getAllPermissionsOptionsWithLevel(application.getId(), appId));
+        renderJsonData(service.getAllPermissionsOptionsWithLevel(rjApplication.getId(), appId));
     }
 
     public void saveTableSubmit() {

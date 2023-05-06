@@ -1,17 +1,19 @@
 package cn.rjtech.admin.formfield;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.config.DictionaryTypeKey;
 import cn.rjtech.model.momdata.FormField;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 /**
  * 系统配置-表单字段
@@ -58,7 +60,7 @@ public class FormFieldService extends BaseService<FormField> {
         Page<Record> page = paginateRecord(sql);
         if (CollUtil.isNotEmpty(page.getList())) {
             for (Record row : page.getList()) {
-                row.set("cfieldtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.FIELD_TYPE, row.getStr("cfieldtypesn")));
+                row.set("cfieldtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.field_type.name(), row.getStr("cfieldtypesn")));
             }
         }
         return page;
@@ -140,4 +142,14 @@ public class FormFieldService extends BaseService<FormField> {
         return null;
     }
 
+    public List<Record> getAutocompleteList(long iformid, String keywords, Integer limit) {
+        Sql sql = selectSql()
+                .eq(FormField.ISDELETED, ZERO_STR)
+                .eq(FormField.IFORMID, iformid)
+                .likeMulti(keywords, FormField.CFIELDCODE, FormField.CFIELDNAME)
+                .page(1, limit);
+
+        return findRecord(sql);
+    }
+    
 }

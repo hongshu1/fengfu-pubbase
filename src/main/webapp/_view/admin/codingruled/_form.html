@@ -1,0 +1,63 @@
+<form onsubmit="return false;" id="CodingRuleD_Form" action="#(action)" method="post">
+	#if(codingRuleD.iAutoId??)
+	<input type="hidden" name="codingRuleD.iAutoId" value="#(codingRuleD.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="codingRuleD.iAutoId" value="#(codingRuleD.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">编码规则主表ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入编码规则主表ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入编码规则主表ID" maxlength="40" name="codingRuleD.iCodingRuleMid" value="#(codingRuleD.iCodingRuleMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">序号</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入序号" maxlength="40" name="codingRuleD.iSeq" value="#(codingRuleD.iSeq??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">类型： 1.工单号  2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入类型： 1. 工单号 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入类型： 1. 手工输入 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日" maxlength="40" name="codingRuleD.cCodingType" value="#(codingRuleD.cCodingType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">来源值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源值" maxlength="40" name="codingRuleD.cCodingValue" value="#(codingRuleD.cCodingValue??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">长度</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入长度" maxlength="40" name="codingRuleD.iLength" value="#(codingRuleD.iLength??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">起始值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入起始值" maxlength="40" name="codingRuleD.iBeginValue" value="#(codingRuleD.iBeginValue??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">分隔符</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入分隔符" maxlength="40" name="codingRuleD.cSeparator" value="#(codingRuleD.cSeparator??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="CodingRuleD_Form")
+#end
+

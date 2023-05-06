@@ -2,8 +2,8 @@ package cn.rjtech.interceptor;
 
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.exception.CommonException;
 import cn.jbolt.core.kit.JBoltControllerKit;
-import cn.rjtech.base.exception.CommonException;
 import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.util.ExceptionEventUtil;

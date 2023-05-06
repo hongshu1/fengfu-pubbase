@@ -7,6 +7,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.QcInspection;
+import cn.rjtech.util.BillNoUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -34,11 +35,11 @@ public class QcInspectionService extends BaseService<QcInspection> {
 	 * 后台管理分页查询
 	 * @param pageNumber
 	 * @param pageSize
-	 * @param keywords
+	 * @param kv
 	 * @return
 	 */
-	public Page<QcInspection> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+	public Page<Record> paginateAdminDatas(int pageSize, int pageNumber, Kv kv) {
+		return dbTemplate("qcinspection.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
 	}
 
 	/**
@@ -184,34 +185,33 @@ public class QcInspectionService extends BaseService<QcInspection> {
 	 */
 	public List<Record> DepartmentList(Kv kv) {
 		kv.set("orgCode", getOrgCode());
-		return dbTemplate("QcInspection.DepartmentList", kv).find();
+		return dbTemplate("qcinspection.DepartmentList", kv).find();
 	}
 
 
 	//更新状态并保存数据方法
-	public Ret updateEditTable(JBoltTable jBoltTable, Kv formRecord) {
+	public Ret updateEditTable(JBoltTable JBoltTable, Kv formRecord) {
 		Date now = new Date();
 
 		tx(() -> {
 			//判断是否有主键id
-			if(isOk(formRecord.getStr("qcInspection.iautoid"))){
-				QcInspection qcInspection = findById(formRecord.getLong("qcInspection.iautoid"));
-
+			if(isOk(formRecord.getStr("iautoid"))){
+				QcInspection qcInspection = findById(formRecord.getLong("iautoid"));
 					//录入数据
-					qcInspection.setCChainNo(formRecord.getStr("qcInspection.cchainno"));
-					qcInspection.setCChainName(formRecord.getStr("qcInspection.cchainname"));
-					qcInspection.setIsFirstCase(formRecord.getBoolean("qcInspection.isfirstcase"));
-					qcInspection.setDRecordDate(formRecord.getDate("qcInspection.drecorddate"));
-					qcInspection.setIQcDutyPersonId(formRecord.getLong("psnname"));
-					qcInspection.setIQcDutyDepartmentId(formRecord.getLong("depname"));
-					qcInspection.setCPlace(formRecord.getStr("qcInspection.cplace"));
-					qcInspection.setCProblem(formRecord.getStr("qcInspection.cproblem"));
-					qcInspection.setCAnalysis(formRecord.getStr("qcInspection.canalysis"));
-					qcInspection.setCMeasure(formRecord.getStr("qcInspection.cmeasure"));
-					qcInspection.setCMeasure(formRecord.getStr("qcInspection.cmeasure"));
-					qcInspection.setDDate(formRecord.getDate("qcInspection.ddate"));
-					qcInspection.setIDutyPersonId(formRecord.getLong("qcInspection.idutypersonid"));
-					qcInspection.setIEstimate(formRecord.getInt("qcInspection.iestimate"));
+					qcInspection.setCChainNo(formRecord.getStr("cchainno"));
+					qcInspection.setCChainName(formRecord.getStr("cchainname"));
+					qcInspection.setIsFirstCase(formRecord.getBoolean("isfirstcase"));
+					qcInspection.setDRecordDate(formRecord.getDate("drecorddate"));
+					qcInspection.setIQcDutyPersonId(formRecord.getLong("depnameid"));    //人员
+					qcInspection.setIQcDutyDepartmentId(formRecord.getLong("psnnameid"));    //部门
+					qcInspection.setCPlace(formRecord.getStr("cplace"));
+					qcInspection.setCProblem(formRecord.getStr("cproblem"));
+					qcInspection.setCAnalysis(formRecord.getStr("canalysis"));
+					qcInspection.setCMeasure(formRecord.getStr("cmeasure"));
+					qcInspection.setCMeasure(formRecord.getStr("cmeasure"));
+					qcInspection.setDDate(formRecord.getDate("ddate"));
+					qcInspection.setIDutyPersonId(formRecord.getLong("idutypersonid"));
+					qcInspection.setIEstimate(formRecord.getInt("iestimate"));
 					qcInspection.setCMeasureAttachments(formRecord.getStr("fileData"));
 
 					//更新人和时间
@@ -240,20 +240,20 @@ public class QcInspectionService extends BaseService<QcInspection> {
 
 
 		//录入填写的数据
-		qcInspection.setCChainNo(formRecord.getStr("qcInspection.cchainno"));
-		qcInspection.setCChainName(formRecord.getStr("qcInspection.cchainname"));
-		qcInspection.setIsFirstCase(formRecord.getBoolean("qcInspection.isfirstcase"));
-		qcInspection.setDRecordDate(formRecord.getDate("qcInspection.drecorddate"));
-//		qcInspection.setIQcDutyPersonId(formRecord.getLong("psnname"));    //人员
-//		qcInspection.setIQcDutyDepartmentId(formRecord.getLong("depname"));    //部门
-		qcInspection.setCPlace(formRecord.getStr("qcInspection.cplace"));
-		qcInspection.setCProblem(formRecord.getStr("qcInspection.cproblem"));
-		qcInspection.setCAnalysis(formRecord.getStr("qcInspection.canalysis"));
-		qcInspection.setCMeasure(formRecord.getStr("qcInspection.cmeasure"));
-		qcInspection.setCMeasure(formRecord.getStr("qcInspection.cmeasure"));
-		qcInspection.setDDate(formRecord.getDate("qcInspection.ddate"));
-		qcInspection.setIDutyPersonId(formRecord.getLong("qcInspection.idutypersonid"));
-		qcInspection.setIEstimate(formRecord.getInt("qcInspection.iestimate"));
+		qcInspection.setCChainNo(formRecord.getStr("cchainno"));
+		qcInspection.setCChainName(formRecord.getStr("cchainname"));
+		qcInspection.setIsFirstCase(formRecord.getBoolean("isfirstcase"));
+		qcInspection.setDRecordDate(formRecord.getDate("drecorddate"));
+		qcInspection.setIQcDutyPersonId(formRecord.getLong("depnameid"));    //人员
+		qcInspection.setIQcDutyDepartmentId(formRecord.getLong("psnnameid"));    //部门
+		qcInspection.setCPlace(formRecord.getStr("cplace"));
+		qcInspection.setCProblem(formRecord.getStr("cproblem"));
+		qcInspection.setCAnalysis(formRecord.getStr("canalysis"));
+		qcInspection.setCMeasure(formRecord.getStr("cmeasure"));
+		qcInspection.setCMeasure(formRecord.getStr("cmeasure"));
+		qcInspection.setDDate(formRecord.getDate("ddate"));
+		qcInspection.setIDutyPersonId(formRecord.getLong("idutypersonid"));
+		qcInspection.setIEstimate(formRecord.getInt("iestimate"));
 		if (notNull(formRecord.getStr("fileData"))){
 			qcInspection.setCMeasureAttachments(formRecord.getStr("fileData"));
 		}
@@ -261,6 +261,8 @@ public class QcInspectionService extends BaseService<QcInspection> {
 		//必录入基本数据
 		qcInspection.setIAutoId(JBoltSnowflakeKit.me.nextId());
 
+		String billNo = BillNoUtils.getcDocNo(getOrgId(), "QCI", 5);
+		qcInspection.setCInspectionNo(billNo);
 		qcInspection.setIOrgId(getOrgId());
 		qcInspection.setCOrgCode(getOrgCode());
 		qcInspection.setCOrgName(getOrgName());
@@ -273,14 +275,20 @@ public class QcInspectionService extends BaseService<QcInspection> {
 		qcInspection.save();
 	}
 
+	/**
+	 * 获取工程内品质巡查明细
+	 * @return
+	 */
+	public Record getQcInspectionList(Long iautoid){
+		return dbTemplate("qcinspection.getQcInspectionList", Kv.by("iautoid",iautoid)).findFirst();
+	}
+
 
 	/**
 	 * 获取附件信息
 	 * @return
 	 */
-	public QcInspection getFilesById(String supplierInfoId){
-		return findFirst("SELECT file_name as fileName,id local_url FROM UGCFF_MOM_System.dbo.jb_jbolt_file  WHERE id = '"+supplierInfoId+"'");
+	public List<Record> getFilesById(String supplierInfoId){
+		return dbTemplate("qcinspection.getFilesById", Kv.by("supplierInfoId", supplierInfoId)).find();
 	}
-
-
 }

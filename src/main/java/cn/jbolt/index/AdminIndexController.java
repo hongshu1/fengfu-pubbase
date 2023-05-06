@@ -3,7 +3,7 @@ package cn.jbolt.index;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.onlineuser.OnlineUserService;
 import cn.jbolt._admin.topnav.TopnavService;
 import cn.jbolt._admin.user.UserService;

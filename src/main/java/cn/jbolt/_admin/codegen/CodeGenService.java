@@ -55,6 +55,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
     }
 
     private static final String controllerTemplate = "/gentpl/codegen/controller_template.jf";
+    private static final String cacheTemplate = "/gentpl/codegen/cache_template.jf";
     private static final String controllerCommonTemplate = "/gentpl/codegen/controller_common_template.jf";
     private static final String serviceCommonTemplate = "/gentpl/codegen/service_common_template.jf";
     private static final String serviceTemplate = "/gentpl/codegen/service_template.jf";
@@ -195,6 +196,11 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setHtmlViewPath(FileUtil.normalize("/_view/" + codeGen.getControllerPath()));
         codeGen.setRoutesScanPackage(codeGen.getMainJavaPackage());
         codeGen.setIsNeedAdminInterceptor(true);
+        if (isOk(codeGen.getMainTableRemark())) {
+            codeGen.setModelTitle(codeGen.getMainTableRemark());
+        }else{
+            codeGen.setModelTitle(codeGen.getModelName());
+        }
         boolean success = codeGen.save();
         if (success) {
             codeGenModelAttrService.genMainTableAttrs(codeGen.getId());
@@ -343,6 +349,9 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setState(CodeGenState.NOT_GEN.getValue());
         if(isOk(codeGen.getIsCrud())){
             codeGen.setIsShowOptcol(codeGen.getIsCrud());
+        }
+        if (notOk(codeGen.getModelTitle())) {
+            codeGen.setModelTitle(StrKit.defaultIfBlank(codeGen.getIndexHtmlPageTitle(),codeGen.getModelName()));
         }
         boolean success = codeGen.update();
         if(success){
@@ -528,12 +537,14 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         genService(codeGen, cover);
         //4、生成controller
         genController(codeGen, cover);
+        //4.1、生成cache工具类
+        genCache(codeGen, cover);
         //5、路由配置
         genRoutes(codeGen);
         //6、生成html
         genHtml(codeGen, cover);
         //7、更新生成状态
-        if(codeGen.getState().intValue() == CodeGenState.ONLY_MODEL_GEN.getValue()){
+        if(codeGen.getState() == CodeGenState.ONLY_MODEL_GEN.getValue()){
             codeGen.setState(CodeGenState.GENED.getValue());
         }else{
             codeGen.setState(CodeGenState.ONLY_MAIN_LOGIC_GEN.getValue());
@@ -541,6 +552,62 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         boolean success = codeGen.update();
         return success ? success("主逻辑代码生成成功，请刷新项目目录") : fail("主逻辑代码生成异常，请检查后重试");
     }
+
+    /**
+     * 生成cache类
+     * @param codeGen
+     * @param cover
+     */
+    private void genCache(CodeGen codeGen, boolean cover) {
+        if(!codeGen.getIsAutoCache() || !codeGen.getIsGenCacheUtilClass()){
+            JBoltConsoleUtil.printMessageWithDate("检测不满足生成缓存工具类条件,忽略此缓存工具类生成...");
+            return;
+        }
+        String cacheFullPath = FileUtil.normalize(getDirFromPackage(codeGen.getProjectPath(), codeGen.getCacheClassPackage()) + "/" + codeGen.getCacheClassName() + ".java");
+        JBoltConsoleUtil.printMessageWithDate("正在处理生成Cache:" + cacheFullPath);
+        boolean exists = FileUtil.exist(cacheFullPath);
+        if (exists) {
+            if (!cover) {
+                //如果已经存在 并且没有强制覆盖 就直接返回
+                JBoltConsoleUtil.printMessageWithDate("检测Cache已经存在,忽略此Cache生成...");
+                return;
+            }
+            JBoltConsoleUtil.printMessageWithDate("检测Cache已经存在，生成内容将覆盖已存在内容...");
+        } else {
+            JBoltConsoleUtil.printMessageWithDate("检测Cache不存在，直接生成Java文件...");
+        }
+
+        //执行生成Controller的内容
+        String content = genCacheJavaCode(codeGen);
+        if (StrKit.isBlank(content)) {
+            JBoltConsoleUtil.printErrorMessageWithDate("Cache 生成内容为空");
+            throw new RuntimeException("Cache 生成内容为空");
+        }
+
+        //覆盖写入内容
+        File controllerFile = FileUtil.writeUtf8String(content, cacheFullPath);
+        if (controllerFile == null || !controllerFile.exists()) {
+            JBoltConsoleUtil.printErrorMessageWithDate("Cache 生成过程发生异常，未能生成java文件");
+            throw new RuntimeException("Cache 生成过程发生异常，未能生成java文件");
+        }
+    }
+
+    /**
+     * 生成cache工具类的源码
+     * @param codeGen
+     * @return
+     */
+    private String genCacheJavaCode(CodeGen codeGen) {
+        //准备模板引擎
+        Engine engine = getCodeGenTplEngine();
+        // 准备模板数据
+        Kv data = Kv.by("codeGen", codeGen);
+        // 处理所需生成的方法名
+        data.set("paramIdType", getParamIdTypeByGenMode(codeGen.getMainTableIdgenmode()));
+        //执行生成 返回内容
+        return engine.getTemplate(cacheTemplate).renderToString(data);
+    }
+
 
     /**
      * 生成路由设置
@@ -1049,7 +1116,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
                 JBoltConsoleUtil.printMessageWithDate("检测Controller已经存在,忽略此Controller生成...");
                 return;
             }
-            JBoltConsoleUtil.printMessageWithDate("检测Controller是已经存在，生成内容将覆盖已存在内容...");
+            JBoltConsoleUtil.printMessageWithDate("检测Controller已经存在，生成内容将覆盖已存在内容...");
         } else {
             JBoltConsoleUtil.printMessageWithDate("检测Controller不存在，直接生成Java文件...");
         }
@@ -1084,7 +1151,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         boolean hasIsDeletedColumn = codeGenModelAttrService.checkHasIsDeletedColumn(codeGen.getId());
         data.set("hasIsDeletedColumn",hasIsDeletedColumn);
         // 处理所需生成的方法名
-        data.set("methods", processContrllerGenMethods(codeGen,hasIsDeletedColumn));
+        data.set("methods", processContrllerGenMethods(codeGen,hasIsDeletedColumn,data));
         data.set("getIdType", getGetIdTypeByGenMode(codeGen.getMainTableIdgenmode()));
         data.set("needSort", codeGen.getIsShowOptcol() && codeGen.getIsShowOptcolSort());
         data.set("sortableColumns", codeGenModelAttrService.getSortableColumnsStr(codeGen.getId()));
@@ -1097,6 +1164,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         data.set("conditions", conditions);
         data.set("hasIsKeywordsColumn",isOk(keywordsSearchColumns));
         data.set("permission", JBoltPermissionCache.me.get(codeGen.getPermissionId()));
+
         //执行生成 返回内容
         return engine.getTemplate(controllerTemplate).renderToString(data);
     }
@@ -1237,13 +1305,16 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
      *
      * @param codeGen
      * @param hasIsDeletedColumn
+     * @param data
      * @return
      */
-    private List<CodeGenMethod> processContrllerGenMethods(CodeGen codeGen,boolean hasIsDeletedColumn) {
+    private List<CodeGenMethod> processContrllerGenMethods(CodeGen codeGen,boolean hasIsDeletedColumn,Kv data) {
         // 先得到通用的，然后判断有不需要的就删掉，有特殊的就新增
         List<CodeGenMethod> genMehtods = getCommonControllerMethods(codeGen);
         //处理 需要显示在表格中的boolean字段char(1) 显示为switchBtn 所以生成togglexxx的方法
         processControllerToggleMethods(codeGen, genMehtods);
+        //处理上传类列的methods
+        processControllerUploadMethods(codeGen,genMehtods,data);
         //处理 isDeleted相关
         if(hasIsDeletedColumn){
             //如果启用了toolbar 并且 启用toolbar上的recoverbtn
@@ -1267,6 +1338,27 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             }
         }
         return genMehtods;
+    }
+
+    /**
+     * 处理生成Controller中的关于上传的action
+     * @param codeGen
+     * @param genMehtods
+     * @param data
+     */
+    private void processControllerUploadMethods(CodeGen codeGen, List<CodeGenMethod> genMehtods,Kv data) {
+        List<CodeGenModelAttr> attrs = codeGenModelAttrService.getCodeGenInFormUploadModelAttrs(codeGen.getId());
+        if(notOk(attrs)){return;}
+        CodeGenMethod codeGenMethod;
+        for(CodeGenModelAttr attr:attrs){
+            codeGenMethod = new CodeGenMethod(attr.getFormUploadUrl());
+            codeGenMethod.setIsUploadAction(true);
+            codeGenMethod.setUploadColName(StrKit.firstCharToLowerCase(codeGen.getModelName())+"/"+attr.getAttrName());
+            codeGenMethod.setUploadType(attr.getFormUiType());
+            codeGenMethod.setUploadDataName(attr.getFormLabel());
+            genMehtods.add(codeGenMethod);
+        }
+        data.set("hasUploadFile",true);
     }
 
     /**
@@ -1723,10 +1815,18 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         if(primarykeyAttr == null){
             throw new RuntimeException("表未设置主键！");
         }
-
-        if(!primarykeyAttr.getColName().equalsIgnoreCase(codeGen.getMainTablePkey())){
-            codeGen.setMainTablePkey(primarykeyAttr.getColName());
+        String pkName = primarykeyAttr.getColName();
+        if(!pkName.equalsIgnoreCase(codeGen.getMainTablePkey())){
+            codeGen.setMainTablePkey(pkName);
+            if(notOk(codeGen.getTableDefaultSortColumn()) || (codeGen.getTableDefaultSortColumn().equalsIgnoreCase(ID) && !pkName.equalsIgnoreCase(ID))){
+                codeGen.setTableDefaultSortColumn(pkName);
+            }
             codeGen.update();
+        }else{
+            if(notOk(codeGen.getTableDefaultSortColumn()) || (codeGen.getTableDefaultSortColumn().equalsIgnoreCase(ID) && !pkName.equalsIgnoreCase(ID))){
+                codeGen.setTableDefaultSortColumn(pkName);
+                codeGen.update();
+            }
         }
     }
 }

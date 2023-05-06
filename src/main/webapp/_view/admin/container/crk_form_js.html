@@ -7,7 +7,7 @@
                 type: "all",
                 url:"/admin/container/handleData?mark="+document.getElementById('mark').value,
                 success: function (res) {
-                    if (res.data.state == 'fail') {
+                    if (res.state === 'fail') {
                         LayerMsgBox.error(res.data.msg);
                     } else {
                         LayerMsgBox.success("提交成功", 600, function () {

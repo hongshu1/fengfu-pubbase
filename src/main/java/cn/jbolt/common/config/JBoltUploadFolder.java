@@ -41,6 +41,8 @@ public class JBoltUploadFolder {
 	public static final String WECHAT_AUTOREPLY_REPLYCONTENT = "wechat" + SEPARATOR + "mp" + SEPARATOR + "autoreply" + SEPARATOR + "replycontent";
 	public static final String WECHAT_MEDIA = "wechat" + SEPARATOR + "mp" + SEPARATOR + "media";
 	public static final String USER_AVATAR = "user" + SEPARATOR + "avatar";
+	public static final String CODE_GEN_TEST_IMG = "code_gen" + SEPARATOR + "test_imgs";
+	public static final String CODE_GEN_TEST_FILE = "code_gen" + SEPARATOR + "test_files";
 	public static final String DEMO_JBOLTTABLE_EXCEL = "demo" + SEPARATOR + "jbolttable" + SEPARATOR + "excel";
 	public static final String DEMO_APITEST_IMAGE = "demo" + SEPARATOR + "apitest" + SEPARATOR + "image";
 	public static final String SYSNOTICE_FILES = "sysnotice" + SEPARATOR + "files";

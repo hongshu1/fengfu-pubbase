@@ -390,6 +390,13 @@
 #include("goodspaymentm/goodspaymentm.sql")
 #end
 
+
 #namespace("schedudemandplan")
 #include("schedudemandplan/schedudemandplan.sql")
 #end
+
+#namespace("instockqcformm")
+#include("instockqcformm/instockqcformm.sql")
+#end
+
+

@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.5.2";
+var jbolt_admin_js_version="6.5.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -20048,13 +20048,13 @@ var JBoltArrayUtil={
 				return arr.indexOf(item,0) === index;
 				});
 		},
-		moveUp:function(arr, moveIndexArr, toIndex){
-			return this.move(arr,moveIndexArr,toIndex,true);
+		moveUp:function(arr, moveIndexArr, toIndex,jsonAttrName){
+			return this.move(arr,moveIndexArr,toIndex,true,jsonAttrName);
 		},
-		moveDown:function(arr, moveIndexArr, toIndex){
-			return this.move(arr,moveIndexArr,toIndex,false);
+		moveDown:function(arr, moveIndexArr, toIndex,jsonAttrName){
+			return this.move(arr,moveIndexArr,toIndex,false,jsonAttrName);
 		},
-		move:function(arr, moveIndexArr, toIndex,isBeforAfter){
+		move:function(arr, moveIndexArr, toIndex,isBeforAfter,jsonAttrName){
 			var start,arr2,arr3,arr4,firstIndex=moveIndexArr[0],len=arr.length,lastIndex=moveIndexArr[moveIndexArr.length-1];//1,2, 3 ,4,5, 6,7 ,8
 			if(isBeforAfter){
 				start= arr.slice(0,toIndex);
@@ -20067,7 +20067,13 @@ var JBoltArrayUtil={
 				arr3 = arr.slice(firstIndex,moveIndexArr[moveIndexArr.length-1]+1);
 				arr4 = arr.slice(toIndex+1);
 			}
-			return start.concat(arr2).concat(arr3).concat(arr4);
+			var data = start.concat(arr2).concat(arr3).concat(arr4);
+			if(jsonAttrName){
+				for(var i=0;i<data.length;i++){
+					data[i][jsonAttrName]=i+1;
+				}
+			}
+			return data;
 		}
 }
 

@@ -1,8 +1,7 @@
 package cn.jbolt.admin.appdevcenter;
 
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.config.Routes;
-
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 /**
  * admin后台app dev center 应用开发中心 的路由配置
  * @ClassName:  AdminRoutes   

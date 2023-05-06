@@ -10,14 +10,14 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.model.PermissionBtn;
+import cn.jbolt.core.model.RjApplication;
 import cn.jbolt.core.service.ButtonPermissionService;
 import cn.jbolt.core.service.JBoltPermissionService;
 import cn.jbolt.core.service.MenuPermissionService;
+import cn.jbolt.core.service.RjApplicationService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.rjtech.admin.application.RjApplicationService;
 import cn.rjtech.admin.permissionbtn.PermissionBtnService;
 import cn.rjtech.cache.RjApplicationCache;
-import cn.rjtech.model.main.Application;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -253,8 +253,8 @@ public class PermissionService extends JBoltPermissionService {
     public String getTextColumn(Record m, String textColumn, String enableIcon) {
         // 菜单 显示所属应用系统
         if (null == m.get(PermissionBtn.VIEW_TYPE)) {
-            Application application = RjApplicationCache.ME.get(m.getLong("application_id"));
-            return String.format("[%s]%s%s", application.getAppName(), m.getStr(textColumn), StrUtil.blankToDefault(enableIcon, StrUtil.EMPTY));
+            RjApplication rjApplication = RjApplicationCache.ME.get(m.getLong("application_id"));
+            return String.format("[%s]%s%s", rjApplication.getAppName(), m.getStr(textColumn), StrUtil.blankToDefault(enableIcon, StrUtil.EMPTY));
         }
         return String.format("[按钮]%s%s", m.getStr(textColumn), StrUtil.blankToDefault(enableIcon, StrUtil.EMPTY));
     }
@@ -268,10 +268,6 @@ public class PermissionService extends JBoltPermissionService {
             menuPermissions.addAll(btnPermissions);
         }
         return successWithData(Okv.by("ids", CollUtil.join(menuPermissions, COMMA)));
-    }
-
-    public boolean existsApplicationId(long applicationId) {
-        return null != queryColumn(selectSql().select("1").eq("application_id", applicationId).first());
     }
 
     @Override
