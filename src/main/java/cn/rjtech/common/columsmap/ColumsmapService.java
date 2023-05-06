@@ -7,6 +7,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.app.user.service.UserAppService;
@@ -470,7 +471,9 @@ public class ColumsmapService extends BaseService<Columsmap> {
         ValidationUtils.notNull(userApp, "当前组织下没有该用户！");
 
         String erpDBName = orgApp.getErpdbname();
-        String erpDbAlias = orgApp.getErpdbalias();
+        
+        // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
+        String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
 
         // 业务id
         String vouchBusinessID = JBoltSnowflakeKit.me.nextIdStr();
@@ -484,9 +487,6 @@ public class ColumsmapService extends BaseService<Columsmap> {
         }, Collectors.toList()));
 
         Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
-
-        // 交换表数据保存
-        List<ExchangeTable> saveExchangeTables = new ArrayList<>();
 
         // 外层事务
         tx(erpDbAlias, Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
@@ -548,9 +548,10 @@ public class ColumsmapService extends BaseService<Columsmap> {
                                 // ERP 生单、审单事务上下文开始
                                 // ---------------------------------------------------------
                                 try {
-                                    txInErp(saveExchangeTables, erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
+                                    txInErp(erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
                                 } catch (Exception e) {
                                     LOG.error(e.getLocalizedMessage());
+                                    e.printStackTrace();
                                     // 这里不打印异常信息，处理回滚外层事务
                                     return false;
                                 }
@@ -742,24 +743,25 @@ public class ColumsmapService extends BaseService<Columsmap> {
         });
     }
 
-    private void txInErp(List<ExchangeTable> saveExchangeTables, String erpDbAlias, String erpDBName, Record vouchType, String vouchBusinessID, Organize orgApp, Record processBusMap, DataConversion dataConversion, Record userApp, Record processBusPre, String type, Map plugeReturnMap, Kv result, JSONArray mainData, JSONArray detailData, JSONArray extData, String sourceJson, Date now) {
+    private void txInErp(String erpDbAlias, String erpDBName, Record vouchType, String vouchBusinessID, Organize orgApp, Record processBusMap, DataConversion dataConversion, Record userApp, Record processBusPre, String type, Map plugeReturnMap, Kv result, JSONArray mainData, JSONArray detailData, JSONArray extData, String sourceJson, Date now) {
         // 日志操作记录
         List<Log> saveLogs = new ArrayList<>();
+        // 交换表数据保存
+        List<ExchangeTable> saveExchangeTables = new ArrayList<>();
         // 单据处理节点信息
         List<VouchProcessNote> saveVouchProcessNotes = new ArrayList<>();
         // 单据回滚日志参照表
         List<VouchRollBackRef> saveVouchRollBackRefs = new ArrayList<>();
 
         List<VouchRollBackRef> updateVouchRollBackRefs = new ArrayList<>();
-        saveExchangeTables.clear();
+        
         try {
             // 保存交换表步骤
             if (StrUtil.isBlank(processBusMap.get("processname")) && ObjUtil.isNull(processBusMap.get("url"))) {
                 // 创建数据动态交换表list
                 List<ExchangeTable> dt = dataConversion.getTSysExchangetable(type, plugeReturnMap, mainData, detailData, extData);
-                //exchangeTableService.save(dt);
                 saveExchangeTables.addAll(dt);
-
+                
                 VouchProcessNote note = new VouchProcessNote();
                 note.setVouchbusinessid(vouchBusinessID);
                 note.setSeq(processBusMap.getInt("seq"));
@@ -981,14 +983,17 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
             throw new RuntimeException(e.getLocalizedMessage());
         } finally {
-            tx(exchangeTableService.dataSourceConfigName(), () -> {
-                if (CollUtil.isNotEmpty(saveExchangeTables)){
+
+            if (CollUtil.isNotEmpty(saveExchangeTables)){
+                tx(exchangeTableService.dataSourceConfigName(), Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
                     exchangeTableService.batchSave(saveExchangeTables);
-                }
-                return true;
-            });
+                    return true;
+                });
+            }
+
             // 保存所有日志操作及调用参数记录
             tx(DataSourceConstants.MOMDATA, Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
+
                 // 保存日志
                 if (CollUtil.isNotEmpty(saveLogs)) {
                     tsysLogService.save(saveLogs.get(0));
@@ -1111,16 +1116,18 @@ public class ColumsmapService extends BaseService<Columsmap> {
      *
      * @param erpDBName  数据库类型
      * @param exchangeID 交换表exchangeID
-     * @return
      */
     public Map<String, List<Record>> queryExchange(String erpDBName, String erpDBSchemas, String exchangeID) throws RuntimeException {
         Map<String, List<Record>> map = new HashMap<>();
+        
         String[] exchangeIDs = exchangeID.split(",");
+        
         /*Kv kv = Kv.by("erpDBName", erpDBName);
         kv.set("erpDBSchemas", erpDBSchemas);*/
+        
         for (int i = 0; i < exchangeIDs.length; i++) {
             //kv.set("ExchangeID", exchangeIDs[i]);
-            List<Record> list = exchangeTableService.findRecord("SELECT * FROM T_Sys_ExchangeTable WHERE ExchangeID in(" + exchangeIDs[i] + ")");
+            List<Record> list = exchangeTableService.findRecord("SELECT * FROM T_Sys_ExchangeTable WHERE ExchangeID = ? ", false, exchangeIDs[i]);
             switch (i) {
                 case 0:
                     map.put("MainData", list);
