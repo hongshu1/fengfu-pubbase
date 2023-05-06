@@ -1,0 +1,114 @@
+<form onsubmit="return false;" id="mrpDemandcomputedForm" action="#(action)" method="post">
+<input type="hidden" name="mrpDemandcomputed.iautoid" value="#(mrpDemandcomputed.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">物料需求计划计算主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入物料需求计划计算主表ID" maxlength="19" name="mrpDemandcomputed.idemandcomputemid" value="#(mrpDemandcomputed.idemandcomputemid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年" data-tips="请设置年" maxlength="10" name="mrpDemandcomputed.iyear" value="#(mrpDemandcomputed.iyear??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">月</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入月"  maxlength="10" name="mrpDemandcomputed.imonth" value="#(mrpDemandcomputed.imonth??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入日"  maxlength="10" name="mrpDemandcomputed.idate" value="#(mrpDemandcomputed.idate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">实绩需求数</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入实绩需求数"  maxlength="18" name="mrpDemandcomputed.iqty1" value="#(mrpDemandcomputed.iqty1??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">到货计划数</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入到货计划数"  maxlength="18" name="mrpDemandcomputed.iqty2" value="#(mrpDemandcomputed.iqty2??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划在库</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入计划在库"  maxlength="18" name="mrpDemandcomputed.iqty3" value="#(mrpDemandcomputed.iqty3??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(mrpDemandcomputed.islocked1??)"
+    	data-name="mrpDemandcomputed.islocked1"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否锁定：0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked1_true" type="radio" name="mrpDemandcomputed.islocked1" value="true"/>
+					<label for="r_islocked1_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked1_false" type="radio" name="mrpDemandcomputed.islocked1" value="false"/>
+					<label for="r_islocked1_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(mrpDemandcomputed.islocked2??)"
+    	data-name="mrpDemandcomputed.islocked2"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否锁定：0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked2_true" type="radio" name="mrpDemandcomputed.islocked2" value="true"/>
+					<label for="r_islocked2_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked2_false" type="radio" name="mrpDemandcomputed.islocked2" value="false"/>
+					<label for="r_islocked2_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(mrpDemandcomputed.islocked3??)"
+    	data-name="mrpDemandcomputed.islocked3"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否锁定：0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked3_true" type="radio" name="mrpDemandcomputed.islocked3" value="true"/>
+					<label for="r_islocked3_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked3_false" type="radio" name="mrpDemandcomputed.islocked3" value="false"/>
+					<label for="r_islocked3_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="mrpDemandcomputedForm")
+#end
+

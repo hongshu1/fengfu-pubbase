@@ -421,7 +421,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             Long invId = record.getLong("invId");
             if (workInvListMap.containsKey(iWorkRegionMid)){
                 List<String> list = workInvListMap.get(iWorkRegionMid);
-                list.add(cInvCode);
+                if (!list.contains(cInvCode)){
+                    list.add(cInvCode);
+                }
             }else {
                 List<String> list = new ArrayList<>();
                 list.add(cInvCode);
@@ -868,7 +870,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
             if (workInvListMap.containsKey(iWorkRegionMid)){
                 List<String> list = workInvListMap.get(iWorkRegionMid);
-                list.add(cInvCode);
+                if (!list.contains(cInvCode)){
+                    list.add(cInvCode);
+                }
             }else {
                 List<String> list = new ArrayList<>();
                 list.add(cInvCode);
@@ -971,7 +975,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
             if (deptInvListMap.containsKey(iDepId)){
                 List<String> list = deptInvListMap.get(iDepId);
-                list.add(cInvCode);
+                if (!list.contains(cInvCode)){
+                    list.add(cInvCode);
+                }
             }else {
                 List<String> list = new ArrayList<>();
                 list.add(cInvCode);
@@ -1180,7 +1186,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
             if (workInvListMap.containsKey(iWorkRegionMid)){
                 List<String> list = workInvListMap.get(iWorkRegionMid);
-                list.add(cInvCode);
+                if (!list.contains(cInvCode)){
+                    list.add(cInvCode);
+                }
             }else {
                 List<String> list = new ArrayList<>();
                 list.add(cInvCode);
@@ -1227,7 +1235,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     String month = date.substring(0,7);
                     BigDecimal qty = dateQtyMap.get(date);
                     if (monthQtyMap.containsKey(month)){
-                        BigDecimal monthSum = monthQtyMap.get(monthQtyMap);
+                        BigDecimal monthSum = monthQtyMap.get(month);
                         monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
                     }else {
                         monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
@@ -1235,7 +1243,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
                     if (i != 0 && day == 1){
-                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(DateUtils.parseDate(date));
+                        //上一个月份
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                        calendar.add(Calendar.MONTH,-1);
+                        String preMonth = sdf.format(calendar.getTime());
+
+                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(preMonth));
                         planRecord.set("qty"+seq,qty);
                         monthCount ++;
                         continue;
@@ -1323,7 +1338,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
             if (workInvListMap.containsKey(iWorkRegionMid)){
                 List<String> list = workInvListMap.get(iWorkRegionMid);
-                list.add(cInvCode);
+                if (!list.contains(cInvCode)){
+                    list.add(cInvCode);
+                }
             }else {
                 List<String> list = new ArrayList<>();
                 list.add(cInvCode);
@@ -1388,7 +1405,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     }
 
                     if (monthQtyMap.containsKey(month)){
-                        BigDecimal monthSum = monthQtyMap.get(monthQtyMap);
+                        BigDecimal monthSum = monthQtyMap.get(month);
                         monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
                     }else {
                         monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
@@ -1396,7 +1413,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
                     if (i != 0 && day == 1){
-                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(DateUtils.parseDate(date));
+                        //上一个月份
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                        calendar.add(Calendar.MONTH,-1);
+                        String preMonth = sdf.format(calendar.getTime());
+
+                        planRecord.set("qtysum"+monthCount,monthQtyMap.get(preMonth));
                         planRecord.set("qty"+seq,qty);
                         monthCount ++;
                         continue;
@@ -1505,7 +1529,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
             if (workInvListMap.containsKey(iWorkRegionMid)){
                 List<String> list = workInvListMap.get(iWorkRegionMid);
-                list.add(cInvCode);
+                if (!list.contains(cInvCode)){
+                    list.add(cInvCode);
+                }
             }else {
                 List<String> list = new ArrayList<>();
                 list.add(cInvCode);
@@ -1764,7 +1790,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             String month = date.substring(0,7);
             BigDecimal qty = dateQtyMap.get(date);
             if (monthQtyMap.containsKey(month)){
-                BigDecimal monthSum = monthQtyMap.get(monthQtyMap);
+                BigDecimal monthSum = monthQtyMap.get(month);
                 monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
             }else {
                 monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
@@ -1772,7 +1798,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             int seq = i + 1;
             int day = Integer.parseInt(date.substring(8));
             if (i != 0 && day == 1){
-                planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(DateUtils.parseDate(date));
+                //上一个月份
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                calendar.add(Calendar.MONTH,-1);
+                String preMonth = sdf.format(calendar.getTime());
+
+                planRecord.set("qtysum"+monthCount,monthQtyMap.get(preMonth));
                 planRecord.set("qty"+seq,qty);
                 monthCount ++;
                 continue;
@@ -1816,7 +1849,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             qty = qty.subtract(qty2);
 
             if (monthQtyMap.containsKey(month)){
-                BigDecimal monthSum = monthQtyMap.get(monthQtyMap);
+                BigDecimal monthSum = monthQtyMap.get(month);
                 monthQtyMap.put(month,monthSum.add(qty));
             }else {
                 monthQtyMap.put(month, qty);
@@ -1824,7 +1857,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             int seq = i + 1;
             int day = Integer.parseInt(date.substring(8));
             if (i != 0 && day == 1){
-                planRecord.set("qtysum"+monthCount,monthQtyMap.get(month));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(DateUtils.parseDate(date));
+                //上一个月份
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                calendar.add(Calendar.MONTH,-1);
+                String preMonth = sdf.format(calendar.getTime());
+
+                planRecord.set("qtysum"+monthCount,monthQtyMap.get(preMonth));
                 planRecord.set("qty"+seq,qty);
                 monthCount ++;
                 continue;
@@ -1879,21 +1919,21 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
 
 
-    List<Record> getInvInfoByLevelList(Okv okv){
+    public List<Record> getInvInfoByLevelList(Okv okv){
         return dbTemplate("scheduproductplan.getInvInfoByLevelList", okv).find();
     }
-    List<Record> getPinvInfoByinvList(Okv okv){
+    public List<Record> getPinvInfoByinvList(Okv okv){
         return dbTemplate("scheduproductplan.getPinvInfoByinvList", okv).find();
     }
 
-    List<Record> getCusOrderSumList(Okv okv){
+    public List<Record> getCusOrderSumList(Okv okv){
         return dbTemplate("scheduproductplan.getCusOrderSumList", okv).find();
     }
-    List<Record> getWeekScheduSumList(Okv okv){
+    public List<Record> getWeekScheduSumList(Okv okv){
         return dbTemplate("scheduproductplan.getWeekScheduSumList", okv).find();
     }
 
-    List<Record> getWeekScheduPlanList(Okv okv){
+    public List<Record> getWeekScheduPlanList(Okv okv){
         return dbTemplate("scheduproductplan.getWeekScheduPlanList", okv).find();
     }
     /**

@@ -14,7 +14,7 @@
 		<jdk.version>1.8</jdk.version>
 		<junit.version>5.9.3</junit.version>
 		<cglib.version>3.3.0</cglib.version>
-		<jfinal.version>5.0.8-1</jfinal.version>
+		<jfinal.version>5.0.9-1</jfinal.version>
 		<oshi.version>6.4.0</oshi.version>
 		<jna.version>5.13.0</jna.version>
 		<cos.version>2022.2</cos.version>

@@ -319,7 +319,7 @@ public class VendorService extends BaseService<Vendor> {
     }
 
     public List<Record> options() {
-        return dbTemplate("vendor.findColumns", Kv.of("isenabled", "true")).find();
+        return dbTemplate("vendor.findColumns", Kv.of("isenabled", "1")).find();
     }
 
     public void deleteMultiByIds(Object[] deletes) {

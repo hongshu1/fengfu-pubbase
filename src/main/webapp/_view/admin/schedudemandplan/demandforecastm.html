@@ -1,0 +1,99 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <!--<div class="col-md-auto">
+                <h1>年度生产计划排产</h1>
+            </div>-->
+            <div class="col">
+                <form class="form-inline" id="apsAnnualplanmForm_#(pageId)"   onsubmit="return false;" method="post">
+                    <input type="text" autocomplete="off"  class="form-control" data-with-clearbtn="true" placeholder="预示单号" name="cforecastno" value="" />
+
+                    <input type="text" data-date class="form-control ml-2" placeholder="创建日期" maxlength="20" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
+                    <span style="margin-top: 5px">至</span>
+                    <input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
+
+                    <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="apsAnnualplanm_tpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
+                    onclick="setectViewBtn(this,'${data.iautoid}','${data.dbegindate |date_ymd}','${data.denddate |date_ymd}')" data-handler="refreshJBoltTable" data-title="查看预示">查看</a>
+
+                <a class="jbolt_table_delbtn" href="admin/schedudemandplan/deleteDemandforecastm/${data.iautoid}" data-title="删除预示" data-handler="refreshJBoltTable" >删除</a>
+            </td>
+            <td>${data.dplandate}</td>
+            <td>${data.cforecastno}</td>
+            <td>${data.dbegindate |date_ymd}</td>
+            <td>${data.denddate |date_ymd}</td>
+            <td>${data.ccreatename}</td>
+            <td>${data.dcreatetime}</td>
+            </tr>
+            {@/each}
+        </textarea>
+        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="apsAnnualplanmForm_#(pageId)"
+               data-url="admin/schedudemandplan/getMrpDemandForecastMPage"
+               data-rowtpl="apsAnnualplanm_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="apsAnnualplanm_page_#(pageId)"
+               data-toolbar="apsAnnualplanm_toolbar_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150">操作</th>
+                <th data-column="dplandate">计划时间</th>
+                <th data-column="cforecastno">预示单号</th>
+                <th data-column="dbegindate">开始日期</th>
+                <th data-column="denddate">截止日期</th>
+                <th data-column="ccreatename">创建人</th>
+                <th data-width="150" data-column="dcreatetime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+
+function setectViewBtn(ele,iautoid,startdate,enddate){
+    var url="admin/schedudemandplan/demandforecastd?idemandforecastmid="+iautoid+"&startdate="+startdate+"&enddate="+enddate;
+    $(ele).data("url",url);
+    DialogUtil.openBy(ele);
+}
+
+
+
+
+
+
+
+
+
+
+
+</script>
+#end
