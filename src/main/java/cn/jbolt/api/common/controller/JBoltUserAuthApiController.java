@@ -17,7 +17,7 @@ import com.jfinal.kit.Ret;
 
 /**
  * 非微信服务号 小程序环境使用
- * 使用jb_user登录信息 登录拿到jwt授权 使用系统用户登录APP等场景
+ * 使用jb_user登录信息 登录拿到jwt授权 使用系统用户登录APP H5页面等场景
  */
 @CrossOrigin
 @Path("/api/user/auth")
