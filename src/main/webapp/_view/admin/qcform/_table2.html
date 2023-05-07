@@ -15,12 +15,12 @@
         <td hidden>${data.iitemseq}</td>
         <td>
             {@if index>0}
-                <a tooltip data-title="上移" href="javascript:void(0)" class="jbolt_table_btn" onclick="jboltTableTrMoveUp(this, true);updateItemParamSeq();"><i class="fa fa-arrow-up c-info"></i></a>
+                <a tooltip data-title="上移" href="javascript:void(0)" class="jbolt_table_btn" onclick="jboltTableTrMoveUp(this, true);updateItemParamSeq(false);"><i class="fa fa-arrow-up c-info"></i></a>
             {@/if}
             {@if index<datas.length-1}
-                <a tooltip data-title="下移" href="javascript:void(0)" class="jbolt_table_btn" onclick="jboltTableTrMoveDown(this, true);updateItemParamSeq();"><i class="fa fa-arrow-down c-info"></i></a>
+                <a tooltip data-title="下移" href="javascript:void(0)" class="jbolt_table_btn" onclick="jboltTableTrMoveDown(this, true);updateItemParamSeq(false);"><i class="fa fa-arrow-down c-info"></i></a>
             {@/if}
-            <a tooltip data-title="删除" href="javascript:void(0)" class="jbolt_table_delbtn" onclick="jboltTableRemoveRow(this);updateItemParamSeq();"><i class="fa fa-remove  c-danger"></i></a>
+            <a tooltip data-title="删除" href="javascript:void(0)" class="jbolt_table_delbtn" onclick="jboltTableRemoveRow(this);updateItemParamSeq(true);"><i class="fa fa-remove  c-danger"></i></a>
         </td>
     </tr>
     {@/each}

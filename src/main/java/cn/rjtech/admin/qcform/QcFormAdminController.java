@@ -7,14 +7,21 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.QcForm;
 import cn.rjtech.model.momdata.QcParam;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 /**
  * 质量建模-检验表格
@@ -135,10 +142,20 @@ public class QcFormAdminController extends BaseAdminController {
      * 按主表qcformtableparam查询列表
      */
     public void getQcFormTableParamListByPId() {
-        Okv kv = new Okv();
-        kv.setIfNotNull("iqcformid", get("iQcFormId"));
-        Page<Record> recordPage = service.getQcFormTableParamListByPId(getPageNumber(), getPageSize(), kv);
-        renderJsonData(recordPage);
+        /**
+         * 三种情况
+         *  1.新增进来，没有formId也没有新增数据
+         *  2.新增进来的，没有formId 但是有新增数据，将新增数据返回 或 修改进来的，有formId，不管是否有新增还是删除直接将页面的数据传入过来
+         *  3.默认加载时，是没有数据操作的，直接读取数据
+         */
+        // 判断是否有新增的值
+        if (StrUtil.isBlank(get("qcTableParamJsonStr")) && StrUtil.isBlank(get("iqcformid"))){
+            renderJsonData(null);
+            return;
+        }else if (StrUtil.isNotBlank(get("iqcformid")) && StrUtil.isBlank(get("qcTableParamJsonStr")) ){
+            // 查询
+        }
+        renderJsonData(JSONObject.parseArray(get("qcTableParamJsonStr")));
     }
 
     /**
@@ -185,8 +202,38 @@ public class QcFormAdminController extends BaseAdminController {
 	}
     
     
-    public void table3(){
+    public void table3(@Para(value = "qcItemJsonStr") String itemJsonStr,
+                       @Para(value = "qcParamJsonStr") String itemParamJsonStr){
+        // 表头项目
+        if (StrUtil.isNotBlank(itemJsonStr)){
+            JSONArray jsonArray = JSONObject.parseArray(itemJsonStr);
+            // 标题选择值
+            if (StrUtil.isNotBlank(itemParamJsonStr)){
+                JSONArray itemParamJsonArray = JSONObject.parseArray(itemParamJsonStr);
+               
+                Map<Long, List<Object>> itemParamMap = itemParamJsonArray.stream().filter(item -> StrUtil.isNotBlank(((JSONObject)item).getString("iqcitemid"))).collect(Collectors.groupingBy(obj -> ((JSONObject) obj).getLong("iqcitemid")));
+                for (int i=0; i<jsonArray.size(); i++){
+                    JSONObject item = jsonArray.getJSONObject(i);
+                    Long qcItemId = item.getLong("iqcitemid");
+                    if (itemParamMap.containsKey(qcItemId)){
+                        item.put("compares", itemParamMap.get(qcItemId));
+                    }
+                }
+            }
+            jsonArray.sort(Comparator.comparing(obj -> ((JSONObject)obj).getInteger("iseq")));
+            set("columns", jsonArray);
+        }
+       
+        
         render("_table3.html");
     }
     
+    public void getJsonToList(@Para(value = "jsonStr") String jsonStr,
+                              @Para(value = "id") String id){
+        if (StrUtil.isBlank(jsonStr)){
+            renderJsonData(null);
+            return;
+        }
+        renderJsonData(JSONObject.parseArray(jsonStr));
+    }
 }

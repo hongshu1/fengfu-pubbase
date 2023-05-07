@@ -102,7 +102,7 @@
             console.log('insertDatas==='+insertDatas)
             parent.jboltTableInsertRow(parent.$("#jbolt_table_qcformparam_split"), insertDatas);
             // parent.insertRow(insertDatas);
-            parent.updateItemParamSeq();
+            parent.updateItemParamSeq(true);
             parent.layer.close(parent.layer.getFrameIndex(window.name));
         } else {
             //母件选择
