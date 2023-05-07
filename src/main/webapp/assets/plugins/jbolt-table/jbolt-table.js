@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.4.0";
+var jbolt_table_js_version="3.4.1";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -5372,10 +5372,13 @@ function getScrollBarHeight(ele){
 			this.reScrollFixedColumnBox(table);
 		},
 		processTableDatasChangeToUp:function(table,upIndex,targetIndex,jsonAttrName,column){
+			if(table.editableSorting){
+				return;
+			}
 			if(isOk(table.tableListDatas)){
-					// console.log(table.tableListDatas)
+				// console.log(table.tableListDatas)
 				table.tableListDatas = JBoltArrayUtil.moveUp(table.tableListDatas,[upIndex],targetIndex,jsonAttrName);
-					// console.log(table.tableListDatas)
+				// console.log(table.tableListDatas)
 				this.processTableIndexColumn(table);
 				if(column){
 					var upTr = table.find("tbody>tr[data-index='"+targetIndex+"']");
@@ -5389,13 +5392,17 @@ function getScrollBarHeight(ele){
 						this.setCell(table,downTr,column,downSortRankValue,downSortRankValue);
 					}
 				}
+
 			}
 		},
 		processTableDatasChangeToDown:function(table,downIndex,targetIndex,jsonAttrName,column){
+			if(table.editableSorting){
+				return;
+			}
 			if(isOk(table.tableListDatas)){
-					// console.log(table.tableListDatas)
+				// console.log(table.tableListDatas)
 				table.tableListDatas = JBoltArrayUtil.moveDown(table.tableListDatas,[downIndex],targetIndex,jsonAttrName);
-					// console.log(table.tableListDatas)
+				// console.log(table.tableListDatas)
 				this.processTableIndexColumn(table);
 				if(column){
 					var downTr = table.find("tbody>tr[data-index='"+targetIndex+"']");
@@ -5413,68 +5420,100 @@ function getScrollBarHeight(ele){
 		},
 		//tr上移
 		moveUpRow:function(table,tr,forceTrChange,jsonAttrName,column){
-			if(table.isTreeTable){
-				var trPid=tr.data("pid");
-				var trLevel=tr.data("level");
-				var lastPrevTr=tr.prevAll("[data-level='"+trLevel+"'][data-pid='"+trPid+"']:first");
-				if(!isOk(lastPrevTr)){
-					return false;
-				}
+			if(table.isTableSorting){
+				return;
+			}
+			try {
+				table.isTableSorting = true;
+				LayerMsgBox.load(1,3000);
+				if(table.isTreeTable){
+					var trPid=tr.data("pid");
+					var trLevel=tr.data("level");
+					var lastPrevTr=tr.prevAll("[data-level='"+trLevel+"'][data-pid='"+trPid+"']:first");
+					if(!isOk(lastPrevTr)){
+						return false;
+					}
 
-				var upArray=new Array();
-				processTreeTableTrAllNodes(upArray,table.tbody,tr);
-				trChangeToUp(upArray,lastPrevTr,table);
-//					var upIndex= upArray[0].data("index");
-//					var lastIndex = lastPrevTr.eq(0).data("index");
-//					this.processTableDatasChangeToUp(table,upIndex,lastIndex);
-			}else{
-				var prevTr = tr.prev();
-				trChangeToUp(tr,prevTr,table);
-				this.processTableDatasChangeToUp(table,tr.data("index"),prevTr.data("index"),jsonAttrName,column);
-				if(table.editable){
-					this.processEditableTrChangedStatus(table,tr,forceTrChange);
-					this.processEditableTrChangedStatus(table,prevTr,forceTrChange);
+					var upArray=new Array();
+					processTreeTableTrAllNodes(upArray,table.tbody,tr);
+					trChangeToUp(upArray,lastPrevTr,table);
+	//					var upIndex= upArray[0].data("index");
+	//					var lastIndex = lastPrevTr.eq(0).data("index");
+	//					this.processTableDatasChangeToUp(table,upIndex,lastIndex);
+				}else{
+					var prevTr = tr.prev();
+					if(notOk(prevTr)){
+						layer.msg('已经是第一个', {
+							icon: 0,
+							time: 1000 // 设置 1 秒后自动关闭
+						});
+						return false;
+					}
+					trChangeToUp(tr,prevTr,table);
+					this.processTableDatasChangeToUp(table,tr.data("index"),prevTr.data("index"),jsonAttrName,column);
+					if(table.editable){
+						this.processEditableTrChangedStatus(table,tr,forceTrChange);
+						this.processEditableTrChangedStatus(table,prevTr,forceTrChange);
+					}
+	//					if(table.left_fixed){
+	//						var leftTr=table.left_fixed.body.table.find("tbody>tr:eq("+trIndex+")");
+	//						if(isOk(leftTr)){
+	//							trChangeToUp(leftTr,leftTr.prev());
+	//						}
+	//					}
+	//					if(table.right_fixed){
+	//						var rightTr=table.right_fixed.body.table.find("tbody>tr:eq("+trIndex+")");
+	//						if(isOk(rightTr)){
+	//							trChangeToUp(rightTr,rightTr.prev());
+	//						}
+	//					}
 				}
-//					if(table.left_fixed){
-//						var leftTr=table.left_fixed.body.table.find("tbody>tr:eq("+trIndex+")");
-//						if(isOk(leftTr)){
-//							trChangeToUp(leftTr,leftTr.prev());
-//						}
-//					}
-//					if(table.right_fixed){
-//						var rightTr=table.right_fixed.body.table.find("tbody>tr:eq("+trIndex+")");
-//						if(isOk(rightTr)){
-//							trChangeToUp(rightTr,rightTr.prev());
-//						}
-//					}
+			}finally {
+				setTimeout(function(){
+					table.isTableSorting = false;
+					LayerMsgBox.closeLoadNow();
+				},300);
 			}
 
 		},
 		//tr下移
 		moveDownRow:function(table,tr,forceTrChange,jsonAttrName,column){
-			if(table.isTreeTable){
-				var trPid=tr.data("pid");
-				var trLevel=tr.data("level");
-				var lastNextTr=tr.nextAll("[data-level='"+trLevel+"'][data-pid='"+trPid+"']:first");
-				if(!isOk(lastNextTr)){
-					return false;
-				}
+			if(table.isTableSorting){
+				return;
+			}
+			try {
+				table.isTableSorting = true;
+				LayerMsgBox.load(1,3000);
+				if (table.isTreeTable) {
+					var trPid = tr.data("pid");
+					var trLevel = tr.data("level");
+					var lastNextTr = tr.nextAll("[data-level='" + trLevel + "'][data-pid='" + trPid + "']:first");
+					if (!isOk(lastNextTr)) {
+						return false;
+					}
 
-				var downArray=new Array();
-				processTreeTableTrAllNodes(downArray,table.tbody,tr);
+					var downArray = new Array();
+					processTreeTableTrAllNodes(downArray, table.tbody, tr);
 
-				var upArray=new Array();
-				processTreeTableTrAllNodes(upArray,table.tbody,lastNextTr);
-				var currentLastTr=(upArray.length==1)?lastNextTr:upArray[upArray.length-1];
-				trChangeToDown(downArray,currentLastTr,table);
-			}else{
-				var nextTr=tr.next();
-				trChangeToDown(tr,nextTr,table);
-				this.processTableDatasChangeToDown(table,tr.data("index"),nextTr.data("index"),jsonAttrName,column);
-				if(table.editable){
-					this.processEditableTrChangedStatus(table,tr,forceTrChange);
-					this.processEditableTrChangedStatus(table,nextTr,forceTrChange);
-				}
+					var upArray = new Array();
+					processTreeTableTrAllNodes(upArray, table.tbody, lastNextTr);
+					var currentLastTr = (upArray.length == 1) ? lastNextTr : upArray[upArray.length - 1];
+					trChangeToDown(downArray, currentLastTr, table);
+				} else {
+					var nextTr = tr.next();
+					if (notOk(nextTr)) {
+						layer.msg('已经是最后一个', {
+							icon: 0,
+							time: 1000 // 设置 1 秒后自动关闭
+						});
+						return false;
+					}
+					trChangeToDown(tr, nextTr, table);
+					this.processTableDatasChangeToDown(table, tr.data("index"), nextTr.data("index"), jsonAttrName, column);
+					if (table.editable) {
+						this.processEditableTrChangedStatus(table, tr, forceTrChange);
+						this.processEditableTrChangedStatus(table, nextTr, forceTrChange);
+					}
 //					if(table.left_fixed){
 //						var leftTr=table.left_fixed.body.table.find("tbody>tr:eq("+trIndex+")");
 //						if(isOk(leftTr)){
@@ -5487,6 +5526,12 @@ function getScrollBarHeight(ele){
 //							trChangeToDown(rightTr,rightTr.next());
 //						}
 //					}
+				}
+			}finally {
+				setTimeout(function(){
+					table.isTableSorting = false;
+					LayerMsgBox.closeLoadNow();
+				},300);
 			}
 		},
 		//得到实例
