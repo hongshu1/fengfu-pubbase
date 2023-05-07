@@ -216,7 +216,7 @@ public class PadService extends BaseService<Pad> {
    * @param cmac 平板mac地址
    * @return
    */
-  public List<Record> getPadWorkRegionByCmac(String cmac) {
-    return dbTemplate("pad.getPadWorkRegionByCmac", Kv.by("cmac", cmac)).find();
+  public Record getPadWorkRegionByCmac(String cmac) {
+    return dbTemplate("pad.getPadWorkRegionByCmac", Kv.by("cmac", cmac)).findFirst();
   }
 }
