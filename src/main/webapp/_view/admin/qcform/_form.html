@@ -73,7 +73,7 @@
                                 <div class="col-md-auto">
                                     <form id="qcformtableparamForm_#(pageId)" class="form-inline" onsubmit="return false;">
                                         <!-- 工具条 toolbar -->
-                                        <input type="text" name="qcformparamId" id="qcformparamId" value="#(qcformparamId??)"/>
+<!--                                        <input type="text" name="qcformparamId" id="qcformparamId" value="#(qcformparamId??)"/>-->
 
                                     </form>
                                 </div>
@@ -81,7 +81,7 @@
                         </div>
 
                         <div class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
-                            ###include("_table3.html")
+                            #ajaxPortal("/admin/qcform/table3","qcformtable_portal_" + pageId, true)
                         </div>
 
                     </div>
@@ -187,6 +187,12 @@
 
     // 检验表格参数新增
     function addparam(ele) {
+        var qcFormItemCodes = getFormItemCodes();
+        if (isEmpty(qcFormItemCodes)){
+            LayerMsgBox.alert("请选择表格项目",2);
+            return;
+        }
+
         const dataList = jboltTableGetAllDatas('#jbolt_table_qcformparam_split', ['iqcparamid']);
         let FormItemCodes = '';
         if (isOk(dataList)) {
@@ -197,11 +203,72 @@
         if (isOk(FormItemCodes)) {
             FormItemCodes = FormItemCodes.concat(",");
         }
-
-        var qcFormItemCodes = getFormItemCodes();
         const url = "/admin/qcform/qcformparam/qcformparamDatas?type=2&FormItemCodes=" + FormItemCodes+"&iQcItemIds="+qcFormItemCodes;
         $(ele).data("url", url);
         DialogUtil.openBy(ele);
+    }
+
+    function insertTable3EmptyRow(ele) {
+        // var qcFormItemCodes = getFormItemCodes();
+        // if (isEmpty(qcFormItemCodes)){
+        //     LayerMsgBox.alert("请选择表格项目",2);
+        //     return;
+        // }
+        jboltTableInsertRow('#jbolt_table_qcformtableparam_split',  {itype: 1, istdval: 2});
+
+    }
+
+    function insertPrependEmptyRow(ele,forceTrChange) {
+        var table=getJBoltTable(ele);
+        if(isOk(table)){
+            var jboltTable=table.jboltTable("inst");
+            if(jboltTable){
+                var action=getRealJqueryObject(ele);
+                if(isOk(action)){
+                    var success = checkMasterTableId(action);
+                    if(!success){
+                        return false;
+                    }
+                }
+                if(!jboltTable.isEmpty){
+                    var tr=jboltTable.tbody.find("tr:first");
+                    if(isOk(tr)){
+                        return insertRows(jboltTable,tr,{index: 0},true,forceTrChange);
+                    }
+                }
+                return insertRows(jboltTable,null,null,false,forceTrChange);
+            }
+        }
+        LayerMsgBox.alert("表格组件配置异常",2);
+        return false;
+    }
+
+    function insertRows(table,tr,insertEmptyData,insertToBefore,forceTrChange){
+        var canInsertTr=table.me.checkCanInsertNewTr(table,1);
+        if(canInsertTr){
+            //处理thead里的checkbox uncheck
+            table.me.processUnCheckTheadCheckbox(table);
+
+            var insertDefaultValues=table.editableOptions.insertDefaultValues;
+            if(insertDefaultValues){
+                insertEmptyData=table.me.deepClone(insertDefaultValues);
+            }
+            var tempTr=table.me.insertRowData(table,tr,insertEmptyData,false,insertToBefore);
+            if(isOk(tempTr)){
+                table.me.processTableIndexColumn(table);
+                table.me.processInsertRowTableListData(table,tempTr,insertEmptyData,insertToBefore);
+                table.me.initEditableHSummarys(table,tempTr);
+                table.me.processTfootSummarys(table);
+                //处理change状态
+                table.me.processNewInsertTrEditableTdsChanged(table,tempTr,insertEmptyData,forceTrChange);
+                //处理新插入的行重新设置宽度
+                table.me.resizeTrByOldWidth(table,tempTr);
+                //处理动态插入数据后的handler
+                table.me.processEditableTableAfterInsertRowHandler(table,tempTr);
+            }
+            return tempTr;
+        }
+        return false;
     }
 
     function updateIsEnabled(ele) {
