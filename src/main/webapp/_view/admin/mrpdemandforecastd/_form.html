@@ -1,0 +1,126 @@
+<form onsubmit="return false;" id="mrpDemandforecastdForm" action="#(action)" method="post">
+<input type="hidden" name="mrpDemandforecastd.iautoid" value="#(mrpDemandforecastd.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">物料需求预示计算主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入物料需求预示计算主表ID" maxlength="19" name="mrpDemandforecastd.idemandforecastmid" value="#(mrpDemandforecastd.idemandforecastmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年" data-tips="请设置年" maxlength="10" name="mrpDemandforecastd.iyear" value="#(mrpDemandforecastd.iyear??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">月</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入月"  maxlength="10" name="mrpDemandforecastd.imonth" value="#(mrpDemandforecastd.imonth??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入日"  maxlength="10" name="mrpDemandforecastd.idate" value="#(mrpDemandforecastd.idate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">供应商ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入供应商ID" maxlength="19" name="mrpDemandforecastd.ivendorid" value="#(mrpDemandforecastd.ivendorid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="mrpDemandforecastd.iinventoryid" value="#(mrpDemandforecastd.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">实绩需求数</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入实绩需求数"  maxlength="24" name="mrpDemandforecastd.iqty1" value="#(mrpDemandforecastd.iqty1??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">到货计划数</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入到货计划数"  maxlength="24" name="mrpDemandforecastd.iqty2" value="#(mrpDemandforecastd.iqty2??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划在库</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入计划在库"  maxlength="24" name="mrpDemandforecastd.iqty3" value="#(mrpDemandforecastd.iqty3??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(mrpDemandforecastd.islocked1??)"
+    	data-name="mrpDemandforecastd.islocked1"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否锁定;0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked1_true" type="radio" name="mrpDemandforecastd.islocked1" value="true"/>
+					<label for="r_islocked1_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked1_false" type="radio" name="mrpDemandforecastd.islocked1" value="false"/>
+					<label for="r_islocked1_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(mrpDemandforecastd.islocked2??)"
+    	data-name="mrpDemandforecastd.islocked2"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否锁定;0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked2_true" type="radio" name="mrpDemandforecastd.islocked2" value="true"/>
+					<label for="r_islocked2_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked2_false" type="radio" name="mrpDemandforecastd.islocked2" value="false"/>
+					<label for="r_islocked2_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(mrpDemandforecastd.islocked3??)"
+    	data-name="mrpDemandforecastd.islocked3"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否锁定;0. 否 1. 是</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked3_true" type="radio" name="mrpDemandforecastd.islocked3" value="true"/>
+					<label for="r_islocked3_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_islocked3_false" type="radio" name="mrpDemandforecastd.islocked3" value="false"/>
+					<label for="r_islocked3_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="mrpDemandforecastdForm")
+#end
+

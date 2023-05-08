@@ -1,6 +1,7 @@
 package cn.jbolt.wechat.api;
 
 import cn.jbolt._admin.cache.JBoltWechatUserCache;
+import cn.jbolt.base.JBoltWechatApi;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.kit.JBoltHttpSchemeKit;
 import com.jfinal.aop.Inject;
@@ -12,7 +13,6 @@ import com.jfinal.weixin.sdk.api.SnsAccessTokenApi;
 import com.jfinal.weixin.sdk.api.SnsApi;
 
 import cn.jbolt.admin.wechat.user.WechatUserService;
-import cn.jbolt.base.JBoltWechatApi;
 import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltWechatConfigCache;

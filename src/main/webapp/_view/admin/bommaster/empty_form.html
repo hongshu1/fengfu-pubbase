@@ -93,7 +93,6 @@
                         tr=jboltTable.tbody.find("tr:nth-child("+(fixTrIndex+1)+")");
                     }
                 }
-                // return insertRows(jboltTable,tr,{index: index, code1: '23', code2:3},true,forceTrChange);
                 return insertRows(jboltTable,tr,{index: index},true,forceTrChange);
             }
         }
@@ -199,33 +198,33 @@
         return false;
     }
 
-    function InsertEmptyRow(ele,forceTrChange){
-        var table=getJBoltTable(ele);
-        if(isOk(table)){
-            index+=1;
-            var jboltTable=table.jboltTable("inst");
-            if(jboltTable){
-                var action=getRealJqueryObject(ele),tr;
-                if(isOk(action)){
-                    var success = checkMasterTableId(action);
-                    if(!success){
-                        return false;
-                    }
-                    //如果是在表格里触发的
-                    if(isOk(action.closest("table[data-jbolttable]"))){
-                        tr = action.closest("tr");
-                    }else if(isOk(action.closest(".jbolt_table_fixed"))){
-                        var fixtr = action.closest("tr");
-                        var fixTrIndex = fixtr.index();
-                        tr=jboltTable.tbody.find("tr:nth-child("+(fixTrIndex+1)+")");
-                    }
-                }
-                return insertRows(jboltTable,tr,{index: index},false,forceTrChange);;
-            }
-        }
-        LayerMsgBox.alert("表格组件配置异常",2);
-        return false;
-    }
+    // function InsertEmptyRow(ele,forceTrChange){
+    //     var table=getJBoltTable(ele);
+    //     if(isOk(table)){
+    //         index+=1;
+    //         var jboltTable=table.jboltTable("inst");
+    //         if(jboltTable){
+    //             var action=getRealJqueryObject(ele),tr;
+    //             if(isOk(action)){
+    //                 var success = checkMasterTableId(action);
+    //                 if(!success){
+    //                     return false;
+    //                 }
+    //                 //如果是在表格里触发的
+    //                 if(isOk(action.closest("table[data-jbolttable]"))){
+    //                     tr = action.closest("tr");
+    //                 }else if(isOk(action.closest(".jbolt_table_fixed"))){
+    //                     var fixtr = action.closest("tr");
+    //                     var fixTrIndex = fixtr.index();
+    //                     tr=jboltTable.tbody.find("tr:nth-child("+(fixTrIndex+1)+")");
+    //                 }
+    //             }
+    //             return insertRows(jboltTable,tr,{index: index},false,forceTrChange);;
+    //         }
+    //     }
+    //     LayerMsgBox.alert("表格组件配置异常",2);
+    //     return false;
+    // }
 
     function insertRows(table,tr,insertEmptyData,insertToBefore,forceTrChange){
         var canInsertTr=table.me.checkCanInsertNewTr(table,1);

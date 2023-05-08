@@ -2,27 +2,42 @@
 SELECT t1.*,
        t3.cQcItemName AS cqcitemnames,
        t2.cQcParamName AS cqcparamnames
-FROM Bd_QcFormParam t1 
+FROM Bd_QcFormParam t1
     INNER JOIN Bd_QcParam t2 ON t1.iQcParamId = t2.iAutoId
     INNER JOIN Bd_QcItem t3 ON t2.iQcItemId = t3.iAutoId
-WHERE t1.iQcFormItemId = #para(iqcformid)
+WHERE
+    t1.isDeleted = '0'
+    #if(qcFormId)
+        AND t1.iQcFormItemId = #para(qcFormId)
+    #end
 ORDER BY t1.iItemParamSeq
 #end
 
 #sql("qcformparamlist")
-SELECT t2.cQcItemName,
-       t1.*,
-       t3.iSeq AS iItemSeq,
-       t3.iAutoId AS iqcformitemid
-FROM Bd_QcParam t1
-    LEFT JOIN Bd_QcItem t2 ON t1.iQcItemId = t2.iAutoId
-    LEFT JOIN Bd_QcFormItem t3 ON  '#(iqcformitemid)' = t3.iAutoId
-WHERE t2.isDeleted = '0'
-    AND t3.iQcItemId = t2.iAutoId
-    #if(iQcParamId != null)
-        AND CHARINDEX( ','+cast((select t1.iAutoId) as nvarchar(20))+',', #para(iQcParamId) ) =0
-    #end
+SELECT
+	t2.cQcItemCode,
+	t2.cQcItemName,
+	t1.*
+FROM
+	Bd_QcParam t1
+	INNER JOIN Bd_QcItem t2 ON t1.iQcItemId = t2.iAutoId
+WHERE
+	t2.isDeleted = '0'
+	AND t1.isDeleted = '0'
+	#if(iQcItemIds)
+	    AND t2.iAutoId IN (
+	     #for (itemId : iQcItemIds.split(','))
+           '#(itemId)' #(for.last?'':',')
+	     #end
+	    )
+	#end
+	#if(ids)
+	    AND CHARINDEX( ','+cast((select t1.iAutoId) as nvarchar(20))+',', #para(ids) ) =0
+	#end
+	ORDER BY t2.cQcItemCode ASC
 #end
+
+
 
 
 

@@ -1,5 +1,6 @@
 package cn.rjtech.admin.qcformparam;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.rjtech.model.momdata.QcFormItem;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -11,6 +12,8 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.QcFormParam;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 /**
  * 质量建模-检验表格参数
@@ -232,6 +235,12 @@ public class QcFormParamService extends BaseService<QcFormParam> {
 			update("update Bd_QcFormParam set isDeleted =  1 WHERE iAutoId ='"+iAutoId+"'");
 		}
 	}
-
-
+	
+	
+	public List<Record> getQcFormParamListByPId(Long qcFormId) {
+		if (ObjectUtil.isNull(qcFormId)){
+			return null;
+		}
+		return dbTemplate("qcformparam.qcformparamlist", Okv.by("qcFormId", qcFormId)).find();
+	}
 }

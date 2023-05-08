@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 在库检 Service
+ * 工单管理 Service
  * @ClassName: MoDocService
  * @author: RJ
  * @date: 2023-04-26 16:15
@@ -158,4 +158,25 @@ public class MoDocService extends BaseService<MoDoc> {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
+  /**
+   * 根据产线id和人员编码查找指定日期班次人员信息明细表
+   *
+   * @param iworkregionmid 产线id
+   * @param cpsnnum        人员编码
+   * @return
+   */
+  public List<Record> getMoworkshiftdByUserAnRegionid(Long iworkregionmid, String cpsnnum) {
+    return dbTemplate("modoc.getMoworkshiftdByUserAnRegionid", Kv.by("iworkregionmid", iworkregionmid).set("cpsnnum", cpsnnum)).find();
+  }
+
+  /**
+   * 根据产线id和人员编码查找工单工艺人员配置
+   *
+   * @param iworkregionmid 产线id
+   * @param cpsnnum        人员编码
+   * @return
+   */
+  public List<Record> getMoroutingconfigpersonByUserAnRegionid(Long iworkregionmid, String cpsnnum) {
+    return dbTemplate("modoc.getMoroutingconfigpersonByUserAnRegionid", Kv.by("iworkregionmid", iworkregionmid).set("cpsnnum", cpsnnum)).find();
+  }
 }

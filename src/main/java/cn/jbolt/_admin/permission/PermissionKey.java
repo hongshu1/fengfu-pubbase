@@ -1434,6 +1434,10 @@ public class PermissionKey {
 	 */
 	public static final String CODING_RULEM = "coding_rulem";
 	/**
+	 * 制造工单批量编辑
+	 */
+	public static final String MO_DOCBACTH = "mo_docbacth";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -1773,4 +1777,9 @@ public class PermissionKey {
 	 * 入库管理-其他入库单列表
 	 */
 	public static final String OTHER_IN_LIST = "other_in_list";
+
+	/**
+	 * 入库管理-产成品入库单列表
+	 */
+	public static final String PRODUCTINLIST = "productInList";
 }

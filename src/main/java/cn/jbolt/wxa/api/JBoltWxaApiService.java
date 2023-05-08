@@ -1,9 +1,16 @@
 package cn.jbolt.wxa.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cn.jbolt._admin.cache.JBoltWechatUserCache;
+import cn.jbolt.admin.appdevcenter.ApplicationService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.jbolt.admin.wechat.user.WechatUserService;
+import cn.jbolt.base.JBoltWechatApi;
+import cn.jbolt.base.JBoltWechatApi.Type;
+import cn.jbolt.common.model.WechatUser;
+import cn.jbolt.core.api.*;
+import cn.jbolt.core.model.Application;
+import cn.jbolt.core.para.JBoltPara;
+import cn.jbolt.core.util.JBoltArrayUtil;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Ret;
@@ -12,21 +19,8 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.wxaapp.api.WxaUserApi;
 
-import cn.jbolt.admin.appdevcenter.ApplicationService;
-import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
-import cn.jbolt.admin.wechat.user.WechatUserService;
-import cn.jbolt.base.JBoltWechatApi;
-import cn.jbolt.base.JBoltWechatApi.Type;
-import cn.jbolt.common.model.WechatUser;
-import cn.jbolt.common.util.CACHE;
-import cn.jbolt.core.api.JBoltApiBaseService;
-import cn.jbolt.core.api.JBoltApiBindUserBean;
-import cn.jbolt.core.api.JBoltApiKit;
-import cn.jbolt.core.api.JBoltApiRet;
-import cn.jbolt.core.api.JBoltApiUserBean;
-import cn.jbolt.core.model.Application;
-import cn.jbolt.core.para.JBoltPara;
-import cn.jbolt.core.util.JBoltArrayUtil;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * 微信小程序APIService 业务处理
  * @ClassName:  WxaApiService   
@@ -56,7 +50,7 @@ public class JBoltWxaApiService extends JBoltApiBaseService{
 		String wechatAppId=JBoltApiKit.getWechatAppId();
 		Long mpId=JBoltApiKit.getWechatMpId();
 		//执行API调用获取sessionKey和OpenId unionid
-		ApiResult apiResult = JBoltWechatApi.use(wechatAppId,Type.MP_WXA).call(()->WxaUserApi.getSessionKey(code));
+		ApiResult apiResult = JBoltWechatApi.use(wechatAppId, Type.MP_WXA).call(()->WxaUserApi.getSessionKey(code));
 		//调用成功
 		if(apiResult.isSucceed()){
 			String openId=apiResult.getStr("openid");

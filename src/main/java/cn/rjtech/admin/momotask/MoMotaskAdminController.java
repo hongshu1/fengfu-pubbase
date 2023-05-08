@@ -30,12 +30,12 @@ public class MoMotaskAdminController extends BaseAdminController {
 	public void index() {
 		render("index.html");
 	}
-  	
+
   	/**
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
 
    /**
@@ -49,7 +49,7 @@ public class MoMotaskAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		MoMotask moMotask=service.findById(getLong(0)); 
+		MoMotask moMotask=service.findById(getLong(0));
 		if(moMotask == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
