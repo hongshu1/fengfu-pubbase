@@ -439,7 +439,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
      * @return
      */
     public Ret unbindPermission(Long id) {
-        update(updateSql().set("topnav_id", new SqlExpress("NULL")).set("permission_id", new SqlExpress("NULL")));
+        update(updateSql().set("topnav_id", new SqlExpress("NULL")).set("permission_id", new SqlExpress("NULL")).eqId(id));
         return SUCCESS;
     }
 
