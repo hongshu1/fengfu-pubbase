@@ -403,3 +403,7 @@
 #include("sysotherin/sysotherin.sql")
 #end
 
+#namespace("otherout")
+#include("otherout/otherout.sql")
+#end
+
