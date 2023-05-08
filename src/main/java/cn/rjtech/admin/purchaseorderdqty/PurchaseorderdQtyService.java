@@ -115,14 +115,13 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 		return null;
 	}
 	
-	public PurchaseorderdQty createPurchaseorderdQty(int year, int month, int day, BigDecimal qty, BigDecimal sourceQty){
+	public PurchaseorderdQty createPurchaseorderdQty(int year, int month, int day, BigDecimal qty){
 		PurchaseorderdQty purchaseorderdQty = new PurchaseorderdQty();
 		purchaseorderdQty.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		purchaseorderdQty.setIYear(year);
 		purchaseorderdQty.setIMonth(month);
 		purchaseorderdQty.setIDate(day);
 		purchaseorderdQty.setIQty(qty);
-		purchaseorderdQty.setISourceQty(sourceQty);
 		return purchaseorderdQty;
 	}
 	
@@ -137,8 +136,7 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 					jsonObject.getIntValue(PurchaseorderdQty.IYEAR.toLowerCase()),
 					jsonObject.getIntValue(PurchaseorderdQty.IMONTH.toLowerCase()),
 					jsonObject.getIntValue(PurchaseorderdQty.IDATE.toLowerCase()),
-					jsonObject.getBigDecimal(PurchaseorderdQty.IQTY.toLowerCase()),
-					jsonObject.getBigDecimal(PurchaseorderdQty.ISOURCEQTY.toLowerCase())
+					jsonObject.getBigDecimal(PurchaseorderdQty.IQTY.toLowerCase())
 					);
 			purchaseOrderdQty.setIPurchaseOrderDid(purchaseOrderDId);
 			list.add(purchaseOrderdQty);
@@ -146,7 +144,11 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 		return list;
 	}
 	
-	public List<Record> findByPurchaseOrderMid(Long purchaseOrderMid){
-		return dbTemplate("purchaseorderdqty.findByPurchaseOrderMid", Okv.by(PurchaseOrderD.IPURCHASEORDERMID, purchaseOrderMid)).find();
+	public List<Record> findByPurchaseOrderMId(Long purchaseOrderMId){
+		return dbTemplate("purchaseorderdqty.findByPurchaseOrderMid", Okv.by(PurchaseOrderD.IPURCHASEORDERMID, purchaseOrderMId)).find();
+	}
+	
+	public List<PurchaseorderdQty> findByPurchaseOrderDId(Long purchaseOrderDId){
+		return find("SELECT * FROM PS_PurchaseOrderD_Qty WHERE iPurchaseOrderDid = ?", purchaseOrderDId);
 	}
 }

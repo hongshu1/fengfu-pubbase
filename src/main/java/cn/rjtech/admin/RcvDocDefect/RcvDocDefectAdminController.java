@@ -1,4 +1,4 @@
-package cn.rjtech.admin.RcvDocDefect;
+package cn.rjtech.admin.rcvdocdefect;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -9,7 +9,9 @@ import cn.rjtech.model.momdata.RcvDocDefect;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 来料异常品记录 Controller
@@ -19,12 +21,11 @@ import com.jfinal.kit.Okv;
  * @date: 2023-04-18 16:36
  */
 @CheckPermission(PermissionKey.NONE)
-@Path(value = "/admin/RcvDocDefect", viewPath = "/_view/admin/RcvDocDefect")
+@Path(value = "/admin/rcvdocdefect", viewPath = "/_view/admin/rcvdocdefect")
 public class RcvDocDefectAdminController extends BaseAdminController {
 
     @Inject
     private RcvDocDefectService service;
-
     @Inject
     private RcvDocQcFormMService rcvDocQcFormMService;
 
@@ -37,20 +38,11 @@ public class RcvDocDefectAdminController extends BaseAdminController {
 
     /**
      * 数据源
+     *
      */
     public void datas() {
-        Okv kv = new Okv();
-        kv.setIfNotNull("cDocNo", get("cDocNo"));
-        kv.setIfNotNull("iRcvDocQcFormMid", get("iRcvDocQcFormMid"));
-        kv.setIfNotNull("cInvCode", get("cInvCode"));
-        kv.setIfNotNull("iInventoryId", get("iInventoryId"));
-        kv.setIfNotNull("cInvName", get("cInvName"));
-        kv.setIfNotNull("iStatus", get("iStatus"));
-        kv.setIfNotNull("startdate", get("startdate"));
-        kv.setIfNotNull("enddate", get("enddate"));
-        renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));
+        renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), getKv()));
     }
-
 
     /**
      * 新增
@@ -59,35 +51,28 @@ public class RcvDocDefectAdminController extends BaseAdminController {
         render("add.html");
     }
 
-
     public void add2() {
         RcvDocDefect rcvDocDefect = service.findById(get("iautoid"));
-        RcvDocQcFormM rcvDocQcFormM = rcvDocQcFormMService.findById(get("ircvdocqcformmid"));
+        Record rcvDocQcFormM = service.getrcvDocQcFormList(getLong("ircvdocqcformmid"));
         set("iautoid", get("iautoid"));
         set("type", get("type"));
+        set("rcvDocDefect", rcvDocDefect);
+        set("rcvDocQcFormM", rcvDocQcFormM);
         if (isNull(get("iautoid"))) {
-            set("rcvDocDefect", rcvDocDefect);
-            set("rcvDocQcFormM", rcvDocQcFormM);
             render("add2.html");
         } else {
             if (rcvDocDefect.getIStatus() == 1) {
-                set("istatus", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
+                set("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
                 set("iresptype", (rcvDocDefect.getIRespType() == 1) ? "供应商" : "其他");
-                set("rcvDocDefect", rcvDocDefect);
-                set("rcvDocQcFormM", rcvDocQcFormM);
                 render("add3.html");
             } else if (rcvDocDefect.getIStatus() == 2) {
                 int getCApproach = Integer.parseInt(rcvDocDefect.getCApproach());
                 set("capproach", (getCApproach == 1) ? "特采" : "拒收");
-                set("istatus", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
+                set("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
                 set("iresptype", (rcvDocDefect.getIRespType() == 1) ? "供应商" : "其他");
-                set("rcvDocDefect", rcvDocDefect);
-                set("rcvDocQcFormM", rcvDocQcFormM);
                 render("add4.html");
             }
         }
-
-
     }
 
     /**
@@ -99,7 +84,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("rcvDocDefect", rcvDocDefect);
+        set("rcvdocdefect", rcvDocDefect);
         render("edit.html");
     }
 
@@ -107,14 +92,14 @@ public class RcvDocDefectAdminController extends BaseAdminController {
      * 保存
      */
     public void save() {
-        renderJson(service.save(getModel(RcvDocDefect.class, "rcvDocDefect")));
+        renderJson(service.save(getModel(RcvDocDefect.class, "rcvdocdefect")));
     }
 
     /**
      * 更新
      */
     public void update() {
-        renderJson(service.update(getModel(RcvDocDefect.class, "rcvDocDefect")));
+        renderJson(service.update(getModel(RcvDocDefect.class, "rcvdocdefect")));
     }
 
     /**
@@ -145,10 +130,21 @@ public class RcvDocDefectAdminController extends BaseAdminController {
         renderJson(service.toggleIsDeleted(getLong(0)));
     }
 
-
     public void updateEditTable() {
-        renderJson(service.updateEditTable(getJBoltTable(), getKv()));
+        renderJson(service.updateEditTable(getKv()));
     }
 
+
+    /**
+     * 生成二维码
+     */
+    public void erm() {
+        RcvDocDefect rcvDocDefect = service.findById(getLong(0));
+        if (rcvDocDefect == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        renderQrCode(rcvDocDefect.getCDocNo(),500,600);
+    }
 
 }

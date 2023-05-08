@@ -1,0 +1,210 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+  <div class="row">
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" href="javascript:void(0)" id="nav-base-tab_one"
+           onclick="selectFinishDocList(null)">全部</a>
+        <a class="nav-item nav-link" href="javascript:void(0)" id="nav-base-tab_two"
+           onclick="selectFinishDocList(0)">未完成</a>
+        <a class="nav-item nav-link" href="javascript:void(0)" id="nav-base-tab_three"
+           onclick="selectFinishDocList(1)">已完成</a>
+      </div>
+    </nav>
+  </div>
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col">
+        <form class="form-inline" id="inStockQcFormMForm_#(pageId)" onsubmit="return false;" method="post"
+              style="left: 30px;text-align: left">
+          <input type="text" hidden id="iscompleted" name="iscompleted" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="cinvqcformno" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvaddcode" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
+
+          <select class="form-control"
+                  data-autoload
+                  name="name"
+                  data-select-type="select2"
+                  data-tips="检验员"
+                  data-url="admin/user/options"
+                  data-text="=检验员="
+                  data-value=""
+                  data-value-attr="id"
+                  data-select="#(user.name??)">
+          </select>
+
+          <select class="form-control"
+                  name="istatus"
+                  data-autoload
+                  data-url="admin/dictionary/options?key=istatus"
+                  data-select-type="select2"
+                  data-text="=检验结果="
+                  data-value=""
+                  data-value-attr="sn"
+                  data-select="#(istatus??)"></select>
+
+          <select class="form-control"
+                  name="iscompleted"
+                  data-autoload
+                  data-url="admin/dictionary/options?key=iscompleted"
+                  data-select-type="select2"
+                  data-text="=状态="
+                  data-value=""
+                  data-value-attr="sn"
+                  data-select="#(iscompleted)"></select>
+
+          <select class="form-control" name="cqcformname"
+                  data-autoload
+                  data-url="admin/qcform/options"
+                  data-select-type="select2"
+                  data-text="=检验表格名称="
+                  data-value=""
+                  data-value-attr="iautoid"
+                  data-text-attr="cqcformname"
+                  data-select="#(qcform.cqcformname??)"></select>
+
+          <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+                 class="form-control" placeholder="开始日期" name="starttime" data-tips="开始时间" maxlength="23"
+                 value="">
+          <span class="input-group-text">至</span>
+          <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+                 class="form-control" placeholder="结束日期" name="endtime" data-tips="结束时间" maxlength="23" value="">
+
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+
+        </form>
+      </div>
+      <div class="col-md-auto">
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="inStockQcFormMRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+  <td>${pageNumber,pageSize,index | rownum}</td>
+  <td title="${data.iautoid}">
+    {@if data.istatus == 0}
+      <button type="button" onclick="createTable('${data.iautoid}','${data.cqcformname}')" data-handler="refreshJBoltTable"
+              class="btn btn-outline-secondary">生成</button>
+    {@/if}
+    {@if data.istatus == 1}
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/jumpCheckOut/${data.iautoid}" data-area="100%,100%"
+         tooltip title="点击检验" data-title="检验">检验</a>
+     <a tooltip href="admin/instockqcformm/deleteCheckoutByIautoid/${data.iautoid}" data-handler="refreshJBoltTable"
+             class="jbolt_table_delbtn" tooltip title="删除在库检成绩表">删除</a>
+    {@/if}
+    {@if data.istatus == 2}
+     <a tooltip tooltip title="查看出库检成绩表" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}" data-scroll="yes"
+        data-handler="refreshJBoltTable" data-area="100%,100%" class="jbolt_table_editbtn">查看</a>
+      <a tooltip title="编辑出库检成绩表" href="admin/instockqcformm/jumpEdit/${data.iautoid}" data-handler="refreshJBoltTable"
+         data-area="100%,100%" class="jbolt_table_editbtn">编辑</a>
+    {@/if}
+    {@if data.istatus == 3}
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}" data-area="100%,100%"
+         tooltip data-title="查看出库检成绩表">查看</a>
+      <a href="javascript:return false;" data-handler="refreshJBoltTable" tooltip data-title="状态合格不需要编辑"
+         disabled="disabled" disabled style="opacity:0.5">编辑</a>
+    {@/if}
+  </td>
+  <td>
+    {@if data.istatus==0}<span>未有检查表</span>{@/if}
+    {@if data.istatus==1}<span>待检</span>{@/if}
+    {@if data.istatus==2}<span>不合格</span>{@/if}
+    {@if data.istatus==3}<span>合格</span>{@/if}
+  </td>
+  <td>
+     {@if data.iscompleted==0}<span>未完成</span>{@/if}
+    {@if data.iscompleted==1}<span>已完成</span>{@/if}
+  </td>
+  <td title="${data.cinvqcformno}">${data.cinvqcformno}</td>
+  <td title="${data.cqcformname}">${data.cqcformname}</td>
+	<td title="${data.cinvaddcode}">${data.cinvaddcode}</td>
+  <td title="${data.cinvcode1}">${data.cinvcode1}</td>
+  <td title="${data.cinvname1}">${data.cinvname1}</td>
+  <td title="${data.cinvstd}">${data.cinvstd}</td>
+  <td title="${data.iinventoryuomid1}">${data.iinventoryuomid1}</td>
+	<td title="${data.iqty}">${data.iqty}</td>
+	<td title="${data.cBarcode}">${data.cBarcode}</td>
+  <td title="${data.cbatchno}">${data.cbatchno}</td>
+	<td title="${data.iqcuserid}">${data.iqcuserid}</td>
+  <td title="${data.dcreatetime}">${data.dcreatetime}</td>
+
+</tr>
+{@/each}
+</textarea>
+    <table class="jbolt_table jbolt_main_table table-center"
+           data-jbolttable
+           data-width="fill"
+           data-height="fill"
+           data-ajax="true"
+           data-url="admin/instockqcformm/datas"
+           data-conditions-form="inStockQcFormMForm_#(pageId)"
+           data-rowtpl="inStockQcFormMRowtpl_#(pageId)"
+           data-page="inStockQcFormMPage_#(pageId)"
+           data-toolbar="inStockQcFormM_toolbar_#(pageId)">
+      <thead>
+      <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-width="150">操作</th>
+        <th data-width="150" data-column="istatus">检验结果</th><!--0. 未生成 1. 待检 2. 不合格 3. 合格-->
+        <th data-width="100" data-column="iscompleted">状态</th>
+        <th data-width="150" data-column="cinvqcformno">检验单号</th>
+        <th data-width="150" data-column="cQcFormName">检验表格名称</th>
+        <th data-width="100" data-column="cInvAddCode">存货编码</th>
+        <th data-width="100" data-column="cinvcode1">客户部番</th>
+        <th data-width="100" data-column="cinvname1">部品名称</th>
+        <th data-width="100" data-column="cInvStd">规格</th>
+        <th data-width="100" data-column="iInventoryUomId1">单位</th>
+        <th data-width="100" data-column="iQty">数量</th>
+        <th data-width="100" data-column="cBarcode">现品票</th>
+        <th data-width="150" data-column="cBatchNo">批次号</th>
+        <th data-width="100" data-column="iQcUserId">检验员</th>
+        <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+
+  </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+  function selectFinishDocList(iscompleted) {
+    $('#iscompleted').val(iscompleted);
+    $('#inStockQcFormMForm_#(pageId)').submit();
+    LayerMsgBox.success();
+  }
+
+  /*
+  * 生成
+  * */
+  function createTable(iautoid, cqcformname) {
+    var para = {
+      iautoid: iautoid,
+      cqcformname: cqcformname
+    }
+
+    Ajax.post('/admin/instockqcformm/createTable', para, function (res) {
+      if (res.state === "ok") {
+        LayerMsgBox.success(res.msg, 1000, function () {
+          refreshPjaxContainer();
+        });
+      } else {
+        LayerMsgBox.alert(res.msg, 2);
+      }
+    });
+  }
+</script>
+#end

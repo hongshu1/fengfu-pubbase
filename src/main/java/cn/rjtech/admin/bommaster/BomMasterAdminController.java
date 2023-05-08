@@ -252,4 +252,8 @@ public class BomMasterAdminController extends BaseAdminController {
 	public void inventoryPage(){
 		renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
 	}
+	
+	public void test(@Para(value = "id") Long id){
+		renderJson(service.test(id));
+	}
 }

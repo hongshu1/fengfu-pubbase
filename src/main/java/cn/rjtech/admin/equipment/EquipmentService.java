@@ -280,7 +280,7 @@ public class EquipmentService extends BaseService<Equipment> {
 	}
 	/**
 	 * 根据设备编码查询
-	 * */
+	 */
 	public Equipment findModelByCode(String cequipmentcode) {
 		return findFirst(selectSql().eq("cequipmentcode", cequipmentcode));
 	}

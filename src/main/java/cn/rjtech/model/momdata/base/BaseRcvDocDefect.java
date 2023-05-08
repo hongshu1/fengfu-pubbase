@@ -196,7 +196,6 @@ public abstract class BaseRcvDocDefect<M extends BaseRcvDocDefect<M>> extends JB
 
 	/**
 	 * 状态：1. 待记录 2. 待判定 3. 已完成
-	 * @param iStatus
 	 */
 	public M setIStatus(java.lang.Integer iStatus) {
 		set("iStatus", iStatus);
@@ -257,7 +256,7 @@ public abstract class BaseRcvDocDefect<M extends BaseRcvDocDefect<M>> extends JB
 	/**
 	 * 不良项目，字典编码，多个“,”分隔
 	 */
-	@JBoltField(name="cbadnesssns" ,columnName="cBadnessSns",type="String", remark="不良项目，字典编码，多个“,”分隔", required=true, maxLength=200, fixed=0, order=12)
+	@JBoltField(name="cbadnesssns" ,columnName="cBadnessSns",type="String", remark="不良项目，字典编码，多个“,”分隔", required=false, maxLength=200, fixed=0, order=12)
 	@JSONField(name = "cbadnesssns")
 	public java.lang.String getCBadnessSns() {
 		return getStr("cBadnessSns");
@@ -274,7 +273,7 @@ public abstract class BaseRcvDocDefect<M extends BaseRcvDocDefect<M>> extends JB
 	/**
 	 * 不良项目，字典编码，多个“,”分隔
 	 */
-	@JBoltField(name="isfirsttime" ,columnName="isFirstTime",type="Boolean", remark="不良项目，字典编码，多个“,”分隔", required=true, maxLength=1, fixed=0, order=13)
+	@JBoltField(name="isfirsttime" ,columnName="isFirstTime",type="Boolean", remark="不良项目，字典编码，多个“,”分隔", required=false, maxLength=1, fixed=0, order=13)
 	@JSONField(name = "isfirsttime")
 	public java.lang.Boolean getIsFirstTime() {
 		return getBoolean("isFirstTime");
@@ -291,7 +290,7 @@ public abstract class BaseRcvDocDefect<M extends BaseRcvDocDefect<M>> extends JB
 	/**
 	 * 责任区：1. 供应商 2. 其他
 	 */
-	@JBoltField(name="iresptype" ,columnName="iRespType",type="Integer", remark="责任区：1. 供应商 2. 其他", required=true, maxLength=10, fixed=0, order=14)
+	@JBoltField(name="iresptype" ,columnName="iRespType",type="Integer", remark="责任区：1. 供应商 2. 其他", required=false, maxLength=10, fixed=0, order=14)
 	@JSONField(name = "iresptype")
 	public java.lang.Integer getIRespType() {
 		return getInt("iRespType");

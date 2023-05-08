@@ -7,23 +7,11 @@ SELECT t1.*,
        t3.iInventoryUomId1,
        t3.cInvAddCode,
        t4.cVenName,
-       t5.iautoid rcvdocqcformdiautoid,
-       t5.iRcvDocQcFormMid,
-       t5.iFormParamId,
-       t5.iSeq,
-       t5.iSubSeq,
-       t5.cQcFormParamIds,
-       t5.iType,
-       t5.iStdVal,
-       t5.iMaxVal,
-       t5.iMinVal,
-       t5.cOptions,
        t6.cEquipmentName
 FROM PL_RcvDocQcFormM t1
          LEFT JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
          LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
          LEFT JOIN Bd_Vendor t4 ON t1.iVendorId = t4.iAutoId
-         LEFT JOIN PL_RcvDocQcFormD t5 ON t1.iRcvDocId = t5.iAutoId
          LEFT JOIN Bd_Equipment t6 ON t3.iEquipmentModelId = t6.iAutoId
 where t1.IsDeleted = '0'
   #if(iautoid)
@@ -59,62 +47,69 @@ where t1.IsDeleted = '0'
   #if(cqcformname)
   AND t2.cqcformname =#para(cqcformname)
   #end
-  #if(dcreatetime)
-  AND t1.dcreatetime =#para(dcreatetime)
+  #if(starttime)
+  AND t1.dcreatetime >= #para(starttime)
+  #end
+  #if(endtime)
+  AND t1.dcreatetime <= #para(endtime)
   #end
 ORDER BY t1.dUpdateTime DESC
 #end
 
-#sql("getQcFormItemAndParamList")
-SELECT t1.*,
-       t2.iAutoId iFormParamId,
-       t2.iSeq,
-       t2.iSubSeq,
-       t2.iType,
-       t2.iStdVal,
-       t2.iMaxVal,
-       t2.iMinVal,
-       t2.cOptions,
-       t2.cQcFormParamIds,
-       t3.cQcItemName,
-       t4.cQcParamName
-FROM Bd_QcFormItem t1
-         LEFT JOIN Bd_QcFormTableParam t2 ON t1.iQcFormId = t2.iQcFormId
-         LEFT JOIN Bd_QcItem t3 ON t1.iQcItemId = t3.iAutoId
-         LEFT JOIN Bd_QcParam t4 ON t3.iAutoId = t4.iQcItemId
-WHERE t1.isDeleted = '0'
-  #if(iqcformid)
-  AND t1.iqcformid = #para(iqcformid)
-  #end
-ORDER BY t1.iSeq asc
-#end
-
 #sql("getCheckoutList")
 SELECT t1.*,
+       t2.cQcItemName,
        t3.cQcParamName,
-       t4.cQcItemName
-FROM Bd_QcFormTableParam t1
-         LEFT JOIN Bd_QcFormParam t2 ON t1.iFormParamId = t2.iAutoId
-         LEFT JOIN Bd_QcParam t3 ON t2.iQcParamId = t3.iAutoId
-         LEFT JOIN Bd_QcItem t4 ON t3.iQcItemId = t4.iAutoId
+       t4.iQcFormTableParamId,
+       t5.iAutoId as iFormParamId,
+       t5.iStdVal,
+       t5.iMaxVal,
+       t5.iMinVal,
+       t5.cOptions,
+       t5.iSeq,
+       t5.iType
+FROM Bd_QcFormItem t1
+         LEFT JOIN Bd_QcItem t2 ON t1.iQcItemId = t2.iAutoId
+         LEFT JOIN Bd_QcParam t3 ON t2.iAutoId = t3.iQcItemId
+         LEFT JOIN Bd_QcFormTableItem t4 ON t1.iAutoId = t4.iQcFormItemId
+         LEFT JOIN Bd_QcFormTableParam t5 ON t4.iQcFormTableParamId = t5.iAutoId
 WHERE t1.isDeleted = '0'
   #if(iqcformid)
   AND t1.iqcformId = #para(iqcformid)
   #end
-ORDER BY t1.iSeq asc
+ORDER BY t1.iSeq ASC
 #end
 
 #sql("findChecoutListByIformParamid")
-SELECT t1.*,
-       t3.cQcItemName,
-       t4.cQcParamName
-FROM PL_RcvDocQcFormD t1
-         LEFT JOIN Bd_QcFormParam t2 ON t1.iFormParamId = t2.iautoid
-         LEFT JOIN Bd_QcItem t3 ON t2.iqcformitemid = t3.iAutoId
-         LEFT JOIN Bd_QcParam t4 ON t2.iQcParamId = t4.iAutoId
+SELECT
+    t1.*,t4.cQcParamName,t5.cQcItemName
+FROM PL_InStockQcFormD t1
+         LEFT JOIN Bd_QcFormTableItem t2 on t1.iFormParamId = t2.iAutoId
+         LEFT JOIN Bd_QcFormParam t3 ON t2.iQcFormParamId = t3.iAutoId
+         LEFT JOIN Bd_QcParam t4 ON t3.iQcParamId = t4.iAutoId
+         LEFT JOIN Bd_QcItem t5 ON t4.iQcItemId = t5.iAutoId
 WHERE
     #if(ircvdocqcformmid)
     t1.ircvdocqcformmid = #para(ircvdocqcformmid)
     #end
 ORDER BY t1.iSeq asc
+#end
+
+#sql("getonlyseelistByiautoid")
+SELECT t1.* ,
+       t2.iautoid lineiautoid,
+       t2.iSeq,
+       t2.cValue,
+       t5.cQcParamName,
+       t6.cQcItemName
+FROM  PL_InStockQcFormD t1
+          LEFT JOIN PL_InStockQcFormD_Line t2 ON t1.iAutoId = t2.iInStockQcFormDid
+          LEFT JOIN Bd_QcFormTableItem t3 ON t1.iFormParamId = t3.iAutoId
+          LEFT JOIN Bd_QcFormParam t4 ON t3.iQcFormParamId = t4.iAutoId
+          LEFT JOIN Bd_QcParam t5 ON t4.iQcParamId = t5.iAutoId
+          LEFT JOIN Bd_QcItem t6 ON t5.iQcItemId = t6.iAutoId
+WHERE
+  #if(iautoid)
+  AND t1.iautoid = #para(iautoid)
+#end
 #end

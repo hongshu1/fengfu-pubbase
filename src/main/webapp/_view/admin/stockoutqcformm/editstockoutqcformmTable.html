@@ -1,0 +1,417 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+  <div class="jbolt_page_content">
+    <form onsubmit="return false;" id="stockoutqcformmform_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
+      #if(stockoutqcformm.iautoid??)
+      <input type="hidden" name="stockoutqcformm.iautoid" value="#(stockoutqcformm.iautoid??)"/>
+      #end
+      <div>
+        <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
+        <table id="jbolt_table_checkouttableparam_split__#(pageId)1" border="1"
+               style="text-align: center;left: 60px;margin-left:50px;width: 1300px;">
+
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r0">
+            <td height="26" class="x74" width="117" style="height:19.5pt;width:87.75pt;">机型</td>
+            <td class="x71" width="260" style="width:195pt;">#(record.cequipmentname??)</td>
+            <td colspan="4" class="x72" width="514" style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;">
+              测定目的
+            </td>
+          </tr>
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r1">
+            <td height="26" class="x74" style="height:19.5pt;">客户部番</td>
+            <td class="x71">#(record.cinvcode1??)</td>
+            <td colspan="4" rowspan="2" height="54" class="x74"
+                style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;height:40.5pt;">
+              <div class="form-group row  col-8"
+                   id="cMeaSurePurpose"
+                   data-radio
+                   data-rule="radio"
+                   data-default=""
+                   data-url="admin/dictionary/options?key=cmeasurepurpose"
+                   data-value-attr="sn"
+                   data-text-attr="cmeasurepurpose"
+                   data-inline="true"
+                   data-value="#(record.cmeasurepurpose??)"
+                   data-name="cmeasurepurpose">
+              </div>
+            </td>
+          </tr>
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r2">
+            <td height="26" class="x74" style="height:19.5pt;">部品名称</td>
+            <td>#(record.cinvname1??)</td><!--class="x71"-->
+          </tr>
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r5">
+            <td>批次号</td>
+            <td>#(record.cbatchno??)</td>
+            <td class="x74" width="100px">批次大小</td>
+            <td width="250">#(record.cbatchno??)</td>
+            <td class="x74" width="100px">检测日期</td>
+            <td width="250">#(record.dupdatetime??)</td>
+          </tr>
+          <tr height="28" style="mso-height-source:userset;height:21pt" id="r4">
+            <td height="26" class="x74" style="height:19.5pt;">测定理由</td>
+            <td colspan="3">
+              <input id="cMeaSureReason" type="text" autocomplete="off" placeholder="=请输入测定理由=" name="cmeasurereason"
+                     value="#(record.cmeasurereason??)" maxlength="355" data-rule="required" style="width: 630px"/>
+            </td>
+            <td class="x74">设变号</td>
+            <td class="x71" width="250">
+              <input id="cDcNo" type="text" autocomplete="off" placeholder="=请输入设变号=" name="cdcno"
+                     value="#(record.cdcno??)" maxlength="355" data-rule="required"/>
+            </td>
+          </tr>
+          <tr height="300px">
+            <td colspan="6">
+              <div class="col">
+                <div class="py-2" style="padding:.5rem 0rem;">
+                </div>
+
+                <input type="hidden" id="recordImages" placeholder="=测试==" name="recordImages"
+                       value="#(record.imgList??)" class="form-control"/>
+
+                <div class="form-group row">
+                  <label class="col-form-label col-sm-2 text-left">检验图片：</label>
+                  <div class="col">
+                    <div class="j_upload_imgbox_multi">
+                      <div class="row">
+                        <div class="col-sm-auto">
+                          <div
+                              data-url="admin/stockoutqcformm/uploadImage"
+                              data-limit="10"
+                              data-align="left"
+                              data-multi="true"
+                              data-handler="uploadMultipleFile"
+                              data-hidden-input="recordImages"
+                              data-imgbox="recordBox"
+                              data-area="150,150"
+                              data-maxsize="2000"
+                              style="width: 230px; height: 230px;"></div>
+                        </div>
+                        <div class="col pr-3">
+                          <ul id="recordBox" class="j_imgbox" data-remove-confirm="true"
+                              data-imgstyle="width:230px;height:230px;"></ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>测定单位</td>
+            <td>
+              <div class="form-group row  col-8"
+                   id="cMeaSureUnit"
+                   data-radio
+                   data-rule="radio"
+                   data-default=""
+                   data-url="admin/dictionary/options?key=cmeasureunit"
+                   data-value-attr="sn"
+                   data-text-attr="cmeasureunit"
+                   data-inline="true"
+                   data-value="#(record.cmeasureunit??)"
+                   data-name="cmeasureunit">
+              </div>
+            </td>
+          </tr>
+        </table>
+        <table id="jbolt_table_checkouttableparam_split__#(pageId)2" border="3"
+               style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
+          <div style="left: 60px;margin-left:50px;height: 50px;width: 500px;">
+            <button type="button" onclick="inserRow(10)" class="btn btn-success"
+                    style="background-color: #1006F1;margin-top: 11px">新增页
+            </button>
+            <img data-switchbtn data-value="#(stockoutqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
+                 data-url="admin/stockoutqcformm/toggleIsCpkSigned/#(stockoutqcformm.iautoid??)" style="margin-left: 50px;"/>
+            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+          </div>
+        </table>
+
+        <!-- 检验表格项目表的的数据模板定义-->
+        <textarea class="jb_tpl_box" id="checkoutType_tpl_#(pageId)">
+          {@each datas as data,index}
+          <tr data-id="${data.iautoid}">
+            <td>${+index+1}</td>
+            <td title="${data.cqcitemname}">${data.cqcitemname}</td>
+            <td title="标准值:${data.istdval}，最大值:${data.imaxval}，最小值:${data.iminval}">
+              {@if data.itype=='1'}
+                <span>(${data.istdval})</span>
+                <span>(${data.imaxval})</span>
+                <span>(${data.iminval})</span>
+              {@else}
+                <span title="${data.coptions}">${data.coptions}</span>
+              {@/if}
+            </td>
+            <td>${data.cqcparamname}</td>
+            {@each data.cvaluelist as value,indextest}
+            <td>
+              {@if data.itype == '1'}
+              <input name="${value.name}" type="number" class="cA01" value="${value.cvalue}"
+                     title="最大值：${data.imaxval}，标准值：${data.istdval}，最小值：${data.iminval}"/>
+              {@else if data.itype == '2'}
+              <input name="${value.name}" type="text" class="cA01" title="${data.coptions}" value="${value.cvalue}"/>
+              {@else if data.itype == '3'}
+              <select name="${value.name}"
+                      class="form-control"
+                      data-url="admin/dictionary/options?key=overallsize"
+                      data-autoload
+                      data-text="=整体尺寸="
+                      data-value-attr="sn"
+                      data-value=""
+                      data-select="${value.cvalue}"
+                      title="=整体尺寸="></select>
+              {@else if data.itype == '4'}
+              <input name="${value.name}" type="text" class="cA01" title="#{data.coptions??}" value="${value.cvalue}"/>
+              {@else if data.itype == '5'}
+              <div class="form-group row "
+                   data-name="${value.name}"
+                   data-checkbox
+                   data-rule="checkbox"
+                   data-default=""
+                   data-url="admin/dictionary/options?key=appearance"
+                   data-value-attr="sn"
+                   data-text-attr="appearance"
+                   data-inline="false"
+                   data-value="${value.cvalue}"></div>
+              {@else if data.itype == '6'}
+              <select name="${value.name}" class="form-control" data-url="admin/dictionary/options?key=overallsize" data-autoload
+                      data-text="=整体尺寸=" data-value-attr="sn" value="${value.cvalue}" data-select="#(data.coptions??)"></select>
+              {@else if data.itype == '7'}
+              <input name="${value.name}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+                     class="form-control" placeholder="结束日期" data-tips="结束时间" maxlength="23"
+                     value="${value.cvalue}">
+              {@else data.itype == '8'}
+              <input name="${value.name}" type="text" class="form-control" data-date data-type="time" data-fmt="HH:mm:ss"
+                     value="${value.cvalue}">
+              {@/if}
+            </td>
+            {@/each}
+          </tr>
+          {@/each}
+        </textarea>
+
+        <!--#(stockoutqcformm.iAutoId??)-->
+        <div class="card-body overflow-auto" style="left: 30px;margin-left: 30px;">
+          <table id="jbolt_table_checkouttableparam_split_#(pageId)3" class="table-center jbolt_table thead_font_normal"
+                 data-jbolttable
+                 data-width="fill"
+                 data-height="fill"
+                 data-ajax="true"
+                 data-conditions-form="stockoutqcformmform_#(pageId)"
+                 data-url="admin/stockoutqcformm/getonlyseeDatas?iautoid=#(stockoutqcformm.iAutoId??)"
+                 data-rowtpl="checkoutType_tpl_#(pageId)"
+                 data-copy-to-excel="false"
+                 data-toolbar="stockoutqcformmform_toolbar_#(pageId)">
+            <thead>
+            <tr class="colspan biaotoucolor">
+              <th colspan="4">检查内容</th>
+              <th colspan="22">检查记录</th>
+            </tr>
+            <tr class="colspan biaotoucolor">
+              <th data-column="index">序号</th>
+              <th style="width: 150px;" data-column="cqcitemname">检查项目</th>
+              <th style="width: 220px;">规格公差</th>
+              <th style="width: 120px">检查方法</th>
+              #for(i = 1; i <= stockoutqcformlist.size(); i++)
+              <th style="width: 80px">#(i)</th>
+              #end
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <table id="jbolt_table_checkouttableparam_split__#(pageId)4" border="1"
+               style="text-align: center;left: 60px;margin-left:50px" width="1200">
+          <tr height="60" style="mso-height-source:userset;height:21pt" id="r3">
+            <td height="26" class="x74" width="117" style="height:19.5pt;width:87.75pt;">备注</td>
+            <td width="850px">
+              <div>
+                <textarea id="cMemo" class="form-control" data-auto-height="100" autocomplete="off" data-show-count
+                          placeholder="=请输入备注="
+                          data-tips="请输入备注" maxlength="200" name="cmemo" value="">#(record.cmemo??)</textarea>
+              </div>
+            </td>
+            <td width="300px">
+              <div class="form-group row  col-9"
+                   id="isok"
+                   data-radio
+                   data-rule="radio"
+                   data-default=""
+                   data-label="判定是否合格："
+                   data-url="admin/dictionary/options?key=isok"
+                   data-value-attr="sn"
+                   data-text-attr="isok"
+                   data-inline="true"
+                   data-value="#(record.isok??)"
+                   data-name="isok">
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </form>
+
+  </div>
+</div>
+#end
+#define js()
+
+<style>
+
+  .cA01 {
+    width: 78px;
+  }
+
+  .trd td {
+    overflow: hidden;
+    height: 100%;
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .trd td input {
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .colspan {
+    text-align: center;
+  }
+
+  .x71 {
+    mso-style-parent: style0;
+    mso-number-format: General;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    background: white;
+    mso-pattern: auto;
+    color: #000000;
+    font-size: 12pt;
+    font-weight: 700;
+    font-style: normal;
+    font-family: "宋体", "sans-serif";
+    border-top: 1px solid windowtext;
+    border-right: 1px solid windowtext;
+    border-bottom: 1px solid windowtext;
+    border-left: 1px solid windowtext;
+    mso-diagonal-down: none;
+    mso-diagonal-up: none;
+    mso-protection: locked visible;
+  }
+
+  .biaotoucolor {
+    background-color: #b1dfbb;
+  }
+</style>
+
+<script>
+  /*
+* @desc：新增行
+* @param：rows:行数
+* */
+  function inserRow(rows) {
+    alert("测试");
+  }
+</script>
+
+<script>
+
+  function submitThisForm() {
+    //获取整个form的数据
+    let serializeArray = $("#stockoutqcformmform_#(pageId)").serializeArray();
+    //过滤出只有name=cA的数据
+    let filterserializeArray = serializeArray.filter((ele) => {
+      return ele.name.startWith("cA");
+    });
+
+    /*
+    * 把二维数组filterserializeArray分成10个一维数组
+    * */
+    function _chunk(arr, num) {
+      let j = 0,
+          o = j;
+      let newArray = [];
+      while (j < arr.length) {
+        j += num;
+        newArray.push([arr.slice(o, j)]);
+        o = j;
+      }
+      return newArray;
+    }
+
+    var serializeGroupbyList = _chunk(filterserializeArray, 10);
+
+    const allDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
+    var subMilasUrlArr = [];//存储每一行数据
+    for (let i = 0; i < serializeGroupbyList.length; i++) {
+      let data = allDatas[i];
+      let serializeElement = serializeGroupbyList[i];
+      var tableData = {
+        coptions: data.coptions,
+        cqcformparamids: data.cqcformparamids,
+        cqcitemname: data.cqcitemname,
+        cqcparamname: data.cqcparamname,
+        iautoid: data.iautoid,
+        iformparamid: data.iformparamid,
+        imaxval: data.imaxval,
+        iminval: data.iminval,
+        iqcformid: data.iqcformid,
+        istockoutqcformmid: data.istockoutqcformmid,
+        iseq: data.iseq,
+        istdval: data.istdval,
+        isubseq: data.isubseq,
+        itype: data.itype,
+        cvaluelist:data.cvaluelist,
+        serializeElement: serializeElement
+      };
+      subMilasUrlArr.push(tableData);
+    }
+
+    var cmeasurereason = $("#cMeaSureReason").val(); //测定理由
+    var cmeasurepurpose = $('input[name="cmeasurepurpose"]').filter(':checked').val();//测试目的
+    var cmeasureunit = $('input[name="cmeasureunit"]').filter(':checked').val();//测定单位
+    var isok = $('input[name="isok"]').filter(':checked').val();//是否合格
+    var cmemo = $("#cMemo").val(); //备注
+    var cdcno = $("#cDcNo").val(); //设变号
+    var iautoid = $('input[name="stockoutqcformm.iautoid"]').val();//主页面的主键
+    const submitDatas = {
+      serializeSubmitList: JSON.stringify(subMilasUrlArr),
+      cmeasurereason: cmeasurereason,
+      cmeasurepurpose: cmeasurepurpose,
+      cmeasureunit: cmeasureunit,
+      cmemo: cmemo,
+      cdcno: cdcno,
+      isok: isok,
+      stockqcformmiautoid: iautoid
+    }
+    Ajax.post("admin/stockoutqcformm/saveEditTable", submitDatas, function (res) {
+      if (res.state === "ok") {
+        LayerMsgBox.success(res.msg, 1000, function () {
+          refreshPjaxContainer();
+          parent.LayerMsgBox.closeAll();
+          parent.refreshPjaxContainer();
+        });
+      } else {
+        LayerMsgBox.alert(res.msg, 2);
+      }
+    })
+  }
+
+</script>
+
+<script>
+
+</script>
+
+#end
+
+

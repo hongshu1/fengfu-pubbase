@@ -1,6 +1,6 @@
 package cn.rjtech.admin.buttonpermission;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.ButtonPermission;

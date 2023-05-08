@@ -1,27 +1,27 @@
-<form onsubmit="return false;" id="locListCNForm" action="#(action)" method="post">
-<input type="hidden" name="locListCN.iautoid" value="#(locListCN.iautoid??)" />
+<form onsubmit="return false;" id="loclistcnForm" action="#(action)" method="post">
+<input type="hidden" name="loclistcn.iautoid" value="#(loclistcn.iautoid??)" />
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">上级ID</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入上级ID" maxlength="19" name="locListCN.ipid" value="#(locListCN.ipid??)"/>
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入上级ID" maxlength="19" name="loclistcn.ipid" value="#(loclistcn.ipid??)"/>
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">地址</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入地址" maxlength="255" name="locListCN.name" value="#(locListCN.name??)"/>
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入地址" maxlength="255" name="loclistcn.name" value="#(loclistcn.name??)"/>
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">等级 1国家 2省 3城市 4区县</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入等级 1国家 2省 3城市 4区县"  maxlength="10" name="locListCN.ilevel" value="#(locListCN.ilevel??)"/>
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入等级 1国家 2省 3城市 4区县"  maxlength="10" name="loclistcn.ilevel" value="#(loclistcn.ilevel??)"/>
 		</div>
 	</div>
 </form>
 #define js()
 <script>
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="locListCNForm")
+#include("/_view/_admin/common/_formjs.html",formId="loclistcnForm")
 #end
 

@@ -18,6 +18,7 @@
     <div class="row">
       <div class="col">
         <form class="form-inline" id="rcvDocQcFormMForm_#(pageId)" style="left: 30px;text-align: left">
+          <input type="text" hidden id="iscompleted" name="iscompleted" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="crcvdocqcformno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=收料单号=" name="crcvdocno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=供应商名称=" name="cvenname" value=""/>
@@ -46,15 +47,18 @@
                   data-value-attr="sn"
                   data-select="#(iscompleted)"></select>
 
-          <select class="form-control" name="istatus"
+          <select class="form-control"
+                  name="istatus"
                   data-autoload
                   data-url="admin/dictionary/options?key=istatus"
                   data-select-type="select2"
                   data-text="=状态="
                   data-value=""
-                  data-value-attr="sn"></select>
+                  data-value-attr="sn"
+                  data-select="#(istatus??)"></select>
 
-          <select class="form-control" name="cqcformname"
+          <select class="form-control"
+                  name="cqcformname"
                   data-autoload
                   data-url="admin/qcform/options"
                   data-select-type="select2"
@@ -65,26 +69,14 @@
                   data-select="#(qcform.cqcformname??)"></select>
 
           <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
-                 class="form-control" placeholder="开始日期" name="starttime" data-tips="开始时间" maxlength="23" value="">
+                 class="form-control" placeholder="开始日期" name="starttime" data-tips="开始时间" maxlength="23"
+                 value="#(dupdatetiime??)">
           <span class="input-group-text">至</span>
           <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
-                 class="form-control" placeholder="结束日期" name="endtime" data-tips="结束时间" maxlength="23" value="">
+                 class="form-control" placeholder="结束日期" name="endtime" data-tips="结束时间" maxlength="23" value="#(dupdatetiime??)">
 
           <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
           <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-
-          <!--onclick="clickonlysee(${data.iautoid})"-->
-          <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_onlyseeBtn_#(pageId)"
-                  data-title="来料检查成绩表"  data-url="admin/rcvdocqcformm/onlysee?iautoid=11111"
-                  class="btn btn-outline-primary">
-            跳转到查看页面
-          </button>
-
-          <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_checkoutBtn_#(pageId)"
-                  data-title="来料检查成绩表" data-url="admin/rcvdocqcformm/checkout?iautoid=11111"
-                  class="btn btn-outline-primary">
-            跳转到检验页面
-          </button>
 
         </form>
       </div>
@@ -98,27 +90,25 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
     {@if data.istatus == 0}
-      <!--<a class="text-info mr-1" href="admin/rcvdocqcformm/createTable/${data.iautoid}" data-handler="refreshJBoltTable"
-         data-title="生成">生成</a>-->
-    		<button type="button" onclick="createTable(${data.iautoid})" data-handler="refreshJBoltTable"
+    		<button type="button" onclick="createTable(${data.iautoid},${data.cqcformname})" data-handler="refreshJBoltTable"
                 class="btn btn-outline-secondary">生成</button>
     {@/if}
     {@if data.istatus == 1}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/checkout/${data.iautoid}" data-area="100%,100%"
-         data-title="检验成绩表">检验</a>
+         data-title="检验来料成绩表">检验</a>
     {@/if}
     {@if data.istatus == 2}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onlysee/${data.iautoid}" data-area="100%,100%"
-         data-title="查看">查看</a>
-      <a class="jbolt_table_editbtn" href="admin/rcvdocqcformm/checkout/${data.iautoid}"
-         data-handler="refreshJBoltTable"data-area="100%,100%"
-         data-title="编辑">编辑</a>
+         data-title="查看来料检查成绩表">查看</a>
+      <a class="jbolt_table_editbtn" href="admin/rcvdocqcformm/editrcvDocQcFormD/${data.iautoid}"
+         data-handler="refreshJBoltTable" data-area="100%,100%"
+         data-title="编辑来料检查成绩表">编辑</a>
     {@/if}
     {@if data.istatus == 3}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/rcvdocqcformm/onlysee/${data.iautoid}" data-area="100%,100%"
-         data-title="查看">查看</a>
-      <a class="jbolt_table_editbtn" href ="javascript:return false;" data-handler="refreshJBoltTable" data-area="100%,100%"
-         data-title="编辑" disabled="disabled">编辑</a>
+         data-title="查看来料检查成绩表">查看</a>
+      <a href="javascript:return false;" data-handler="refreshJBoltTable"
+         data-title="编辑来料检查成绩表" disabled style="opacity:0.5">编辑</a><!-- class="jbolt_table_editbtn"-->
     {@/if}
   </td>
   <td>
@@ -152,13 +142,13 @@
 </tr>
 {@/each}
 </textarea>
-    <table class="jbolt_table jbolt_main_table  table-center "
+    <table class="jbolt_table jbolt_main_table  table-center"
            data-jbolttable
            data-width="fill"
            data-height="fill"
            data-ajax="true"
            data-conditions-form="rcvDocQcFormMForm_#(pageId)"
-           data-url="admin/rcvdocqcformm/datas"
+           data-url="admin/rcvdocqcformm/datas?"
            data-rowtpl="rcvDocQcFormMtpl_#(pageId)"
            data-copy-to-excel="false"
            data-page="rcvDocQcFormM_page#(pageId)"
@@ -196,18 +186,18 @@
 <script type="text/javascript">
 
   function selectFinishDocList(iscompleted) {
-    console.log("isCompleted==========>  "+iscompleted)
-    $('#isCompleted').val(iscompleted);
+    $('#iscompleted').val(iscompleted);
     $('#rcvDocQcFormMForm_#(pageId)').submit();
-    console.log();
+    LayerMsgBox.success();
   }
 
   /*
   * 生成
   * */
-  function createTable(iautoid) {
-    var para={
-      iautoid:iautoid
+  function createTable(iautoid,cqcformname) {
+    var para = {
+      iautoid: iautoid,
+      cqcformname:cqcformname
     }
 
     Ajax.post('/admin/rcvdocqcformm/createTable', para, function (res) {

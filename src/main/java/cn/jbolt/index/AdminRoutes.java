@@ -1,14 +1,10 @@
 package cn.jbolt.index;
 
-import cn.jbolt._admin.sensitiveword.SensitiveWordAdminController;
-import com.jfinal.config.Routes;
-
 import cn.jbolt._admin.dept.DeptAdminController;
 import cn.jbolt._admin.dictionary.DictionaryAdminController;
 import cn.jbolt._admin.dictionary.DictionaryTypeAdminController;
 import cn.jbolt._admin.globalconfig.GlobalConfigAdminController;
 import cn.jbolt._admin.globalconfig.GlobalConfigTypeAdminController;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.loginlog.LoginLogAdminController;
 import cn.jbolt._admin.monitor.ServerMonitorAdminController;
 import cn.jbolt._admin.msgcenter.JBoltMsgCenterAdminController;
@@ -21,6 +17,7 @@ import cn.jbolt._admin.qiniu.QiniuAdminController;
 import cn.jbolt._admin.qiniu.QiniuBucketAdminController;
 import cn.jbolt._admin.role.RoleAdminController;
 import cn.jbolt._admin.rolepermission.RolePermissionAdminController;
+import cn.jbolt._admin.sensitiveword.SensitiveWordAdminController;
 import cn.jbolt._admin.systemlog.SystemLogAdminController;
 import cn.jbolt._admin.topnav.TopnavAdminController;
 import cn.jbolt._admin.topnav.TopnavMenuAdminController;
@@ -30,6 +27,8 @@ import cn.jbolt.common.controller.NeditorPreviewAdminController;
 import cn.jbolt.common.controller.NeditorUploadAdminController;
 import cn.jbolt.common.controller.SummernoteUploadAdminController;
 import cn.jbolt.common.style.JBoltStyleAdminController;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.config.Routes;
 /**
  * admin后台的路由配置
  * @ClassName:  AdminRoutes   

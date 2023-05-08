@@ -9,7 +9,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.bean.JBoltDateRange;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.tx.Tx;

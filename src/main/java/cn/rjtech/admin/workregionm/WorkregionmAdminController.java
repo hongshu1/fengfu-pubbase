@@ -1,7 +1,7 @@
 package cn.rjtech.admin.workregionm;
 
 import cn.hutool.core.date.DateUtil;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 

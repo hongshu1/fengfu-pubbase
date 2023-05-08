@@ -165,17 +165,22 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 	
 	
 	private String getKey(Record record){
-		String yearStr = record.getStr(DemandPlanD.IYEAR);
+		return getDate(record.getStr(DemandPlanD.IYEAR), record.getInt(DemandPlanD.IMONTH), record.getInt(DemandPlanD.IDATE));
+	}
+	
+	public String getDate(String yearStr, int month, int date){
 		String monthStr = "";
-		if (record.getInt(DemandPlanD.IMONTH) <10){
+		// 判断月份是大于10，小于10 补充0
+		if (month <10){
 			monthStr = monthStr.concat("0");
 		}
-		monthStr = monthStr.concat(record.getStr(DemandPlanD.IMONTH));
+		monthStr = monthStr.concat(String.valueOf(month));
 		String dateStr = "";
-		if (record.getInt(DemandPlanD.IDATE) < 10){
+		// 判断日期是大于10，小于10 补充0
+		if (date < 10){
 			dateStr = dateStr.concat("0");
 		}
-		dateStr = dateStr.concat(record.getStr(DemandPlanD.IDATE));
+		dateStr = dateStr.concat(String.valueOf(date));
 		return yearStr.concat(monthStr).concat(dateStr);
 	}
 	

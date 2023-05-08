@@ -1,0 +1,110 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>系统配置-导入字段配置明细</h1></div>
+            <div class="col">
+                <form class="form-inline" id="CusFieldsMappingD_form_#(pageId)">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords" value=""/>
+
+                    <select class="form-control" name="isEncoded"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=是否编码字段：0. 否 1. 是="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+
+                    <select class="form-control" name="isEnabled"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=是否启用：0. 否 1. 是="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                </form>
+            </div>
+            <div class="col-sm-auto text-right">
+
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="jbolt_page_content">
+        
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="CusFieldsMappingD_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.iautoid}</td>
+            <td>${data.iCusFieldsMappingMid}</td>
+            <td>${data.iFormFieldId}</td>
+            <td>${data.cCusFieldName}</td>
+            <td><img data-switchbtn data-confirm="确定切换是否编码字段：0. 否 1. 是？" data-value="${data.isEncoded}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEncoded/${data.iautoid}"/></td>
+            <td>${data.cDemo}</td>
+            <td>${data.iLength}</td>
+            <td><img data-switchbtn data-confirm="确定切换是否启用：0. 否 1. 是？" data-value="${data.isEnabled}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEnabled/${data.iautoid}"/></td>
+            <td>
+                {@if data.isDeleted}
+                <a class="text-info mr-1" data-openpage="dialog" href="admin/cusfieldsmappingd/edit/${data.iautoid}" data-area="800,600" data-title="查看系统配置-导入字段配置明细"><i class="fa fa-eye"></i></a>
+                {@else}
+                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingd/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑系统配置-导入字段配置明细"><i class="fa fa-edit"></i></a>
+                {@/if}
+                <a class="jbolt_table_delbtn" href="admin/cusfieldsmappingd/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+            </td>
+        </tr>
+        {@/each}
+        </textarea>
+        
+        <div class="jbolt_table_toolbar" id="CusFieldsMappingD_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增系统配置-导入字段配置明细" data-url="admin/cusfieldsmappingd/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑系统配置-导入字段配置明细" data-check-handler="jboltTableGetCheckedId" data-url="admin/cusfieldsmappingd/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/cusfieldsmappingd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+        </div>
+        
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="CusFieldsMappingD_form_#(pageId)"
+               data-url="admin/cusfieldsmappingd/datas"
+               data-rowtpl="CusFieldsMappingD_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="CusFieldsMappingD_page"
+               data-toolbar="CusFieldsMappingD_toolbar_#(pageId)"
+               data-column-prepend="1:checkbox:true:false:false">
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="100" data-column="iautoid">主键id</th>
+                <th data-width="100" data-column="icusfieldsmappingmid">客户导入字段配置主表id</th>
+                <th data-width="100" data-column="iformfieldid">系统字段id</th>
+                <th data-width="150" data-column="ccusfieldname">导入字段名称</th>
+                <th data-width="100" data-column="isencoded">是否编码字段</th>
+                <th data-width="150" data-column="cdemo">编码示例</th>
+                <th data-width="100" data-column="ilength">导入编码字段长度</th>
+                <th data-width="100" data-column="isenabled">是否启用</th>
+                <th data-width="80">操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

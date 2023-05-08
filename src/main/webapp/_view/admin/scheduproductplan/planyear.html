@@ -4,9 +4,9 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
     <div class="jbolt_page_title">
         <div class="row">
-            <div class="col-md-auto">
+            <!--<div class="col-md-auto">
                 <h1>年度生产计划排产</h1>
-            </div>
+            </div>-->
             <div class="col">
                 <form class="form-inline" id="apsAnnualplanmForm_#(pageId)"   onsubmit="return false;" method="post">
                     <input type="text" autocomplete="off"  class="form-control" data-with-clearbtn="true" placeholder="计划单号" name="cplanorderno" value="" />
@@ -77,19 +77,17 @@
                data-page="apsAnnualplanm_page"
                data-toolbar="apsAnnualplanm_toolbar_#(pageId)"
                data-column-prepend="1:checkbox:true"
-               data-row-dblclick-active="true"
-			   data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
         >
             <thead>
             <tr>
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="150">操作</th>
-                <th data-column="iOrderStatus">订单状态</th>
-                <th data-column="cPlanOrderNo">计划单号</th>
-                <th data-width="250" data-column="cCusName">客户名称</th>
-                <th data-column="iYear">年份</th>
-                <th data-column="cCreateName">创建人</th>
-                <th data-width="150" data-column="dCreateTime">创建时间</th>
+                <th data-column="iorderstatus">订单状态</th>
+                <th data-column="cplanorderno">计划单号</th>
+                <th data-width="250" data-column="ccusname">客户名称</th>
+                <th data-column="iyear">年份</th>
+                <th data-column="ccreatename">创建人</th>
+                <th data-width="150" data-column="dcreatetime">创建时间</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -100,15 +98,6 @@
 
 #define js()
 <script type="text/javascript">
-function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-	$(tempTr1).data('url', '/admin/annualorderm/edit/' + rowData.iautoid)
-		.data('area', '100%,100%')
-		.data('handler','refreshJBoltTable')
-		.data('title', '人员档案')
-		.data('btn', '确认,关闭');
-
-	DialogUtil.openBy(tempTr1);
-}
 
 
 function addViewBtn(ele,cPlanOrderNo,iCustomerId,iYear){

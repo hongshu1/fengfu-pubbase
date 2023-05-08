@@ -1,7 +1,3 @@
-#sql("")
-
-#end
-
 #sql("findByInventoryId")
 SELECT
 	a.iAutoId,

@@ -46,7 +46,6 @@ public class UserApiController extends BaseApiController {
         ValidationUtils.notBlank(username, "缺少用户名");
         ValidationUtils.notBlank(password, "缺少密码");
         ValidationUtils.validateId(orgId, "登录组织");
-
         renderJBoltApiRet(service.login(username, password, orgId));
     }
 

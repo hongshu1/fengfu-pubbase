@@ -1,4 +1,4 @@
-package cn.rjtech.admin.SpecMaterialsRcvM;
+package cn.rjtech.admin.specmaterialsrcvm;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;

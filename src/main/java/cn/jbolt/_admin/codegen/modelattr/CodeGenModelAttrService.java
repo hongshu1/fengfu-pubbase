@@ -80,6 +80,9 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		if(tableMeta!=null) {
 			codeGen.setMainTableRemark(tableMeta.remarks);
 			codeGen.setMainTablePkey(tableMeta.primaryKey);
+			if(notOk(codeGen.getTableDefaultSortColumn()) || (codeGen.getTableDefaultSortColumn().equalsIgnoreCase(ID) && tableMeta.primaryKey.equalsIgnoreCase(ID))){
+				codeGen.setTableDefaultSortColumn(tableMeta.primaryKey);
+			}
 			List<ColumnMeta> columnMetas = tableMeta.columnMetas;
 			if(isOk(columnMetas)) {
 				List<CodeGenModelAttr> attrs = new ArrayList<>();
@@ -481,7 +484,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			kvs.add(Kv.by("datas",attrs).set("labelWidth",formGroupArr[0]).set("formControlWidth",formGroupArr[1]).set("modelName",StrKit.firstCharToLowerCase(codeGen.getModelName())).set("isFormGroupRow",isFormGroupRow));
 		}else {
 			//每列个数
-			int count = (int) Math.ceil(total/formColumnSize);
+			int count = total / formColumnSize + (total % formColumnSize != 0 ? 1 : 0);
 			int[] arr;
 			if(isOk(formColumnProportion)) {
 				arr = StrUtil.splitToInt(formColumnProportion, ":");
@@ -504,11 +507,17 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 
 			int startIndex = 0;
 			int endIndex = 0;
+			List<CodeGenModelAttr> subList;
 			if(formColumnDirection.equals("v")) {
 				kvs = new ArrayList<>();
 				for(int i=0;i<formColumnSize;i++) {
 					endIndex = startIndex + count;
-					kvs.add(Kv.by("col", arr[i]).set("labelWidth",formGroupArr[0]).set("formControlWidth",formGroupArr[1]).set("modelName",StrKit.firstCharToLowerCase(codeGen.getModelName())).set("isFormGroupRow",isFormGroupRow).set("datas",attrs.subList(startIndex, endIndex)));
+					if(endIndex<=total-1){
+						subList = attrs.subList(startIndex, endIndex);
+					}else{
+						subList = attrs.subList(startIndex,total);
+					}
+					kvs.add(Kv.by("col", arr[i]).set("labelWidth",formGroupArr[0]).set("formControlWidth",formGroupArr[1]).set("modelName",StrKit.firstCharToLowerCase(codeGen.getModelName())).set("isFormGroupRow",isFormGroupRow).set("datas",subList));
 					startIndex = endIndex;
 				}
 			}else {
@@ -1276,5 +1285,22 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		upAttr.update();
 		attr.update();
 		return SUCCESS;
+	}
+
+	public boolean checkHasNameAttr(Long codeGenId) {
+		return exists(selectSql().eq(CodeGenModelAttr.CODE_GEN_ID,codeGenId).eq(CodeGenModelAttr.ATTR_NAME,"name"));
+	}
+
+	public boolean checkHasSnAttr(Long codeGenId) {
+		return exists(selectSql().eq(CodeGenModelAttr.CODE_GEN_ID,codeGenId).eq(CodeGenModelAttr.ATTR_NAME,"sn"));
+	}
+
+	public List<CodeGenModelAttr> getCodeGenInFormUploadModelAttrs(Long codeGenId) {
+		if(notOk(codeGenId)) {return new ArrayList<>();}
+		CodeGen codeGen = codeGenService.findById(codeGenId);
+		if(codeGen == null) {
+			throw new RuntimeException("未找到代码生成的基础配置");
+		}
+		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_form_ele", TRUE).isNotNull(CodeGenModelAttr.FORM_UPLOAD_URL));
 	}
 }

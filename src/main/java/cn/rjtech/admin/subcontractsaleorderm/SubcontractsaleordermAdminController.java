@@ -6,7 +6,7 @@ import com.jfinal.aop.Inject;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;

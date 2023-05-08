@@ -1,4 +1,4 @@
-package cn.rjtech.admin.SpecMaterialsRcvM;
+package cn.rjtech.admin.specmaterialsrcvm;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;

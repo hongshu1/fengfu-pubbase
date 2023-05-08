@@ -238,7 +238,7 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
         return SUCCESS;
     }
 
-    /*
+    /**
     * 获取存货点检工序表
     * */
     public List<InventoryspotcheckformOperation> getcheckformOperation(JBoltTable jBoltTable ){
@@ -280,7 +280,7 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
             + "ORDER BY t1.dUpdateTime DESC", kv.get("iautoid"));
     }
 
-    /*
+    /**
      * 导出excel文件
      * */
     public JBoltExcel exportExcelTpl(List<InventorySpotCheckForm> datas) {
@@ -327,7 +327,7 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
             );
     }
 
-    /*
+    /**
      * 供应商分类excel导入数据库
      * */
     public Ret importExcelData(File file) {

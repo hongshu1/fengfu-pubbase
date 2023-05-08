@@ -1,11 +1,11 @@
 package cn.rjtech.admin.enums;
 
+import cn.jbolt.core.common.enums.DataSourceEnum;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.enums.AndOrEnum;
 import cn.rjtech.enums.BoolCharEnum;
-import cn.rjtech.enums.DataSourceEnum;
 import cn.rjtech.enums.ThirdpartySystemEnum;
 import com.jfinal.core.Path;
 

@@ -213,6 +213,14 @@ function getTableRowCount(table) {
     return table.tbody.find("tr").length;
 }
 
+var getDictMap = function (key, callback) {
+    Ajax.post('/admin/dictionary/map', {key: key}, function (res) {
+        if (res.state === 'ok') {
+            callback(res.data);
+        }
+    });
+};
+
 /**
  * 自行扩展前端表单校验规则
  * 在jbolt-admin.js的ruleMap基础上加载这里的扩展

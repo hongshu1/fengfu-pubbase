@@ -2,6 +2,8 @@ package cn.rjtech.admin.rcvdocqcformm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.jfinal.aop.Inject;
 
@@ -22,8 +24,9 @@ import com.jfinal.core.JFinal;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -59,14 +62,6 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      */
     public void index() {
         render("index.html");
-    }
-
-    /**
-     * 数据源
-     */
-    public void datas() {
-        Page<Record> recordPage = service.pageList(getKv());
-        renderJsonData(recordPage);
     }
 
     /**
@@ -118,32 +113,18 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     }
 
     /**
-     * 切换isCompleted
+     * 数据源
      */
-    public void toggleIsCompleted() {
-        renderJson(service.toggleBoolean(getLong(0), "isCompleted"));
+    public void datas() {
+        renderJsonData(service.pageList(getKv()));
     }
 
     /**
-     * 切换isCpkSigned
+     * 生成
      */
-    public void toggleIsCpkSigned() {
-        renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
-    }
-
-    /**
-     * 切换isOk
-     */
-    public void toggleIsOk() {
-        renderJson(service.toggleBoolean(getLong(0), "isOk"));
-    }
-
-    /**
-     * 导入图片
-     */
-    public void uploadImage() {
-        String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
-        renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+    public void createTable(@Para(value = "iautoid") Long iautoid,
+                            @Para(value = "cqcformname") String cqcformname) {
+        renderJson(service.createTable(iautoid, cqcformname));
     }
 
     /**
@@ -157,51 +138,87 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         render("checkout.html");
     }
 
-    /*
+    /**
      * 点击检验时，进入弹窗自动加载table的数据
-     * */
+     */
     public void getCheckOutTableDatas() {
-        /*List<RcvDocQcFormD> rcvDocQcFormDList = rcvDocQcFormDService.findByIRcvDocQcFormMId(rcvDocQcFormM.getIAutoId());
-        List<Record> recordList = new ArrayList<>();
-        for (RcvDocQcFormD rcvDocQcFormD : rcvDocQcFormDList) {
-            Record record = service.getCheckoutListByIFormParamId(rcvDocQcFormD.getIFormParamId());
-            recordList.add(record);
-        }
-        set("recordList",recordList);
-        set("rcvDocQcFormDList", rcvDocQcFormDList);
-        set("rcvDocQcFormM", rcvDocQcFormM);*/
         renderJsonData(service.getCheckOutTableDatas(getKv()));
     }
 
     /**
-     * 只能查看，不能编辑
+     * 在检验页面点击确定
+     */
+    public void saveCheckOutTable(JBoltPara JboltPara) {
+        renderJson(service.saveCheckOutTable(JboltPara));
+    }
+
+    /**
+     * 打开onlysee页面
      */
     public void onlysee() {
         RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
         Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+        List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
+        set("docparamlist", docparamlist);
         set("rcvdocqcformm", rcvDocQcFormM);
         set("record", record);
         render("onlysee.html");
     }
 
-    /*
+    /**
+     * 点击查看时，进入弹窗自动加载table的数据
+     */
+    public void getonlyseeDatas() {
+        renderJsonData(service.getonlyseelistByiautoid(getKv()));
+    }
+
+    /**
+     * 打开编辑页面
+     */
+    public void editrcvDocQcFormD() {
+        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
+        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+        List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
+        set("docparamlist", docparamlist);
+        set("rcvdocqcformm", rcvDocQcFormM);
+        set("record", record);
+        render("editTable.html");
+    }
+
+    /**
      * 在编辑页面点击确定
-     * */
-    public void editTable(JBoltPara JboltPara) {
-        renderJson(service.editTable(JboltPara));
+     */
+    public void saveEditTable(JBoltPara JboltPara) {
+        renderJson(service.saveEditTable(JboltPara));
     }
 
-    /*
-     * 在检验页面点击确定
-     * */
-    public void editCheckOutTable(JBoltPara JboltPara) {
-        renderJson(service.editTable(JboltPara));
+    /**
+     * 切换isCompleted
+     */
+    public void toggleIsCompleted() {
+        renderJson(service.toggleBoolean(getLong(0), "isCompleted"));
     }
 
-    /*
-     * 生成
-     * */
-    public void createTable(JBoltPara jBoltPara) {
-        renderJson(service.createTable(jBoltPara));
+    /**
+     * 切换isOk
+     */
+    public void toggleIsOk() {
+        renderJson(service.toggleBoolean(getLong(0), "isOk"));
     }
+
+    /**
+     * 切换isCpkSigned
+     */
+    public void toggleIsCpkSigned() {
+        renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
+    }
+
+    /**
+     * 导入图片
+     */
+    public void uploadImage() {
+        String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
+        renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+    }
+
 }

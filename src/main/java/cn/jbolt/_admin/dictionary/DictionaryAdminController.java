@@ -7,8 +7,10 @@ import java.util.List;
 
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.common.enums.DictionaryTypeMode;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
@@ -299,7 +301,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 			return;
 		}
 		List<Dictionary> key = JBoltDictionaryCache.me.getListByTypeKey(get("key"), true);
-		Integer month=Integer.valueOf(pid);
+		int month= Integer.parseInt(pid);
 		List<Dictionary> result=new ArrayList<>();
 		switch (month){
 			case 1:
@@ -329,4 +331,11 @@ public class DictionaryAdminController extends JBoltBaseController {
 		}
 		renderJsonData(result);
 	}
+
+    public void map(@Para(value = "key") String key) {
+        ValidationUtils.notBlank(key, "字典key不能为空");
+        
+        renderJsonData(service.getDictionaryMapByTypeKey(key, Dictionary.SN, Dictionary.NAME));
+    }
+    
 }

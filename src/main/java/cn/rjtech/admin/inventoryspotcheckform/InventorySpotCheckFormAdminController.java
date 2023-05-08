@@ -24,7 +24,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
@@ -92,7 +92,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
         renderJsonData(recordPage);
     }
 
-    /*
+    /**
      * 新增的data
      * */
     public void addDatas() {
@@ -137,7 +137,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
         render("edit.html");
     }
 
-    /*
+    /**
      * 新增适用存货的弹窗页面
      * */
     public void equipmentqcparamSelect() {

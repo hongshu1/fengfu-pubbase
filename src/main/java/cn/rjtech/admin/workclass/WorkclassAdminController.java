@@ -1,6 +1,6 @@
 package cn.rjtech.admin.workclass;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -113,9 +113,9 @@ public class WorkclassAdminController extends JBoltBaseController {
         renderJson(service.toggleIsdeleted(getLong(0)));
     }
 
-    /*
+    /**
      * 删除工种前判断是否已经被使用了
-     * */
+     */
     public String checkOperationIsUse(Long id){
         String msg = "";
         Workclass workclass = service.findById(id);
@@ -133,9 +133,9 @@ public class WorkclassAdminController extends JBoltBaseController {
         renderJson(service.toggleIsenabled(getLong(0)));
     }
 
-    /*
+    /**
      * 导出选中的数据
-     * */
+     */
     public void exportExcelByIds() {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -153,9 +153,9 @@ public class WorkclassAdminController extends JBoltBaseController {
         renderBytesToExcelXlsFile(jBoltExcel);
     }
 
-    /*
+    /**
      * 导出所有数据
-     * */
+     */
     public void exportExcelAll() {
         List<Workclass> datas = service.findAll();
         if (notOk(datas)) {
@@ -173,9 +173,9 @@ public class WorkclassAdminController extends JBoltBaseController {
         renderBytesToExcelXlsFile(service.getExcelImportTpl().setFileName("工种档案导入模板"));
     }
 
-    /*
+    /**
      * 数据导入
-     * */
+     */
     public void importExcel() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

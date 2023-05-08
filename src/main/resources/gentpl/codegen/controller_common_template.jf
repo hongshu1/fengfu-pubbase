@@ -403,9 +403,32 @@
 	}
 #end
 
+#define c_genUploadActionMethod(name,uploadDataName,uploadColName,uploadType)
+   /**
+	* 上传#(uploadDataName??)
+	*/
+	public void #(name)() {
+        String uploadPath= JBoltUploadFolder.todayFolder("#(uploadColName??)");
+        UploadFile file=getFile("file",uploadPath);
+        #if(uploadType == "imguploader" || uploadType == "imguploader_multi")
+        if(notImage(file)){
+            renderJsonFail("请上传图片类型文件");
+            return;
+        }
+        renderJson(jboltFileService.saveImageFile(file,uploadPath));
+        #end
+        #if(uploadType == "fileuploader" || uploadType == "fileuploader_multi")
+        renderJson(jboltFileService.saveFile(file,uploadPath,JboltFile.FILE_TYPE_ATTACHMENT));
+        #end
+	}
+#end
+
+
 #define c_genOtherMethod(method)
 #if(method.name.indexOf("toggle")!=-1)
 #@c_genToggleMethod(method.name,method.toggleColumnName)
+#elseif(method.isUploadAction)
+#@c_genUploadActionMethod(method.name,method.uploadDataName,method.uploadColName,method.uploadType)
 #else
 	public void #(method.name)(){
 		//TODO 请实现业务逻辑代码	

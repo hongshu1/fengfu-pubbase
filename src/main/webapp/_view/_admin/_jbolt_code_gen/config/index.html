@@ -585,6 +585,16 @@ function changeIsAutoCache_#(pageId)(r,v){
 	form.find("#r_isKeyCache_false").click();
 }
 
+function changeIsGenCacheUtilClass_#(pageId)(r,v){
+	var fieldset = r.closest("fieldset");
+	var cacheClassCons=fieldset.find(".cache_class_control");
+	if(v=="true"){
+		cacheClassCons.removeClass("d-none");
+	}else{
+		cacheClassCons.addClass("d-none");
+	}
+}
+
 /**
  * 切换radio 是否启用SystemLog
  */
@@ -927,6 +937,7 @@ function processFormEleClickEditorEvent(){
 			eleInput = ele.find("textarea");
 		}
 
+		var colName = ele.data("col-name");
 		var isImgUploader = false;
 		var isUploader = false;
 		var isFileUploader = false;
@@ -980,8 +991,8 @@ function processFormEleClickEditorEvent(){
 
 			var updiv;
 			if(isImgUploader){
+				tplData.formUploadUrl = ele.data("form-upload-url")||StrUtil.camel("upload_"+colName);
 				if(isUploadMulti){
-					tplData.formUploadUrl = "uploadImgs";
 					if(tplData.isUploadToQiniu){
 						updiv = ele.find('[data-handler="uploadMultipleFileToQiniu"]');
 					}else{
@@ -990,7 +1001,6 @@ function processFormEleClickEditorEvent(){
 					tplData.formImgUploaderArea = updiv.data("area")||"150,150";
 
 				}else{
-					tplData.formUploadUrl = "uploadImg";
 					if(tplData.isUploadToQiniu){
 						updiv = ele.find('[data-handler="uploadFileToQiniu"]');
 					}else{
@@ -999,15 +1009,14 @@ function processFormEleClickEditorEvent(){
 					tplData.formImgUploaderArea = updiv.data("area")||"200,200";
 				}
 			}else if(isFileUploader){
+				tplData.formUploadUrl = ele.data("form-upload-url")||StrUtil.camel("upload_"+colName);
 				if(isUploadMulti){
-					tplData.formUploadUrl = "uploadFiles";
 					if(tplData.isUploadToQiniu){
 						updiv = ele.find('[data-handler="uploadMultipleFileToQiniu"]');
 					}else{
 						updiv = ele.find('[data-handler="uploadMultipleFile"]');
 					}
 				}else{
-					tplData.formUploadUrl = "uploadFile";
 					if(tplData.isUploadToQiniu){
 						updiv = ele.find('[data-handler="uploadFileToQiniu"]');
 					}else{
