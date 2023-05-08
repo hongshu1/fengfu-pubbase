@@ -164,7 +164,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
 	
 	public Page<Record> findBySubcontractOrderMId(int pageNumber, int pageSize, Kv kv){
 		// 为true 说明是看所有的
-		if (Boolean.valueOf(kv.getStr("isEffective"))){
+		if (Boolean.parseBoolean(kv.getStr("isEffective"))){
 			kv.remove("isEffective");
 		}else{
 			kv.set("isEffective", "1");

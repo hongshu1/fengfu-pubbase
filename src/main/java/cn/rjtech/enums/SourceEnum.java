@@ -3,6 +3,11 @@ package cn.rjtech.enums;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 数据来源
+ *
+ * @author Kephon
+ */
 public enum SourceEnum {
     /**
      * 枚举列表

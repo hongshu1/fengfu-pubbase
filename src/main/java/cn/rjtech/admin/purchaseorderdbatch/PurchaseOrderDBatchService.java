@@ -176,7 +176,7 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
 	
 	public Page<Record> findByPurchaseOrderMId(int pageNumber, int pageSize, Kv kv){
 		// 为true 说明是看所有的
-		if (Boolean.valueOf(kv.getStr("isEffective"))){
+		if (Boolean.parseBoolean(kv.getStr("isEffective"))){
 			kv.remove("isEffective");
 		}else{
 			kv.set("isEffective", "1");
