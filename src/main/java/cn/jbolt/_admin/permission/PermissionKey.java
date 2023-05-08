@@ -1777,4 +1777,9 @@ public class PermissionKey {
 	 * 入库管理-其他入库单列表
 	 */
 	public static final String OTHER_IN_LIST = "other_in_list";
+
+	/**
+	 * 入库管理-产成品入库单列表
+	 */
+	public static final String PRODUCTINLIST = "productInList";
 }
