@@ -7,6 +7,12 @@
       <input type="hidden" name="stockoutqcformm.iautoid" value="#(stockoutqcformm.iautoid??)"/>
       #end
       <div>
+        <div style="left: 60px;margin-left:50px">
+          <button data-downloadbtn class="btn btn-outline-primary btn-sm"
+                  data-url="admin/stockoutqcformm/exportExcel/#(stockoutqcformm.iautoid??)">
+            <i class="fa fa-download"></i>数据导出
+          </button>
+        </div>
         <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
         <table id="jbolt_table_checkouttableparam_split__#(pageId)1" border="1"
                style="text-align: center;left: 60px;margin-left:50px;width: 1300px;">

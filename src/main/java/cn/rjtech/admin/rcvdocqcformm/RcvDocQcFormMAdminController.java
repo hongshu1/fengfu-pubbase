@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.jfinal.aop.Inject;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
@@ -219,6 +220,14 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     public void uploadImage() {
         String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
         renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+    }
+
+    /*
+     * 导出详情页
+     * */
+    public void exportExcel() throws Exception {
+        Kv kv = service.getExportData(getLong(0));//instaockqcformm
+        renderJxls("rcvdocqcformm.xlsx", kv, "来料检_" + DateUtil.today() + "_成绩表.xlsx");
     }
 
 }

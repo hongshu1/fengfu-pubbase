@@ -2,6 +2,7 @@ package cn.rjtech.admin.instockqcformm;
 
 import java.util.List;
 
+import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.para.JBoltPara;
@@ -14,6 +15,7 @@ import cn.rjtech.model.momdata.InStockQcFormM;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 /**
@@ -194,6 +196,14 @@ public class InStockQcFormMAdminController extends BaseAdminController {
     public void uploadImage() {
         String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
         renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+    }
+
+    /*
+     * 导出详情页
+     * */
+    public void exportExcel() throws Exception {
+        Kv kv = service.getExportData(getLong(0));//instaockqcformm
+        renderJxls("instaockqcformm.xlsx", kv, "在库检_" + DateUtil.today() + "_成绩表.xlsx");
     }
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.jfinal.aop.Inject;
 
+import cn.hutool.core.date.DateUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -19,6 +20,7 @@ import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -180,5 +182,14 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
 	 */
 	public void toggleIsCpkSigned() {
 		renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
+	}
+
+
+	/*
+	 * 导出详情页
+	 * */
+	public void exportExcel() throws Exception {
+		Kv kv = service.getExportData(getLong(0));//instaockqcformm
+		renderJxls("stockoutqcformm.xlsx", kv, "出库检_" + DateUtil.today() + "_成绩表.xlsx");
 	}
 }

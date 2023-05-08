@@ -156,4 +156,11 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
     public JBoltApiRet uploadImage(List<UploadFile> files) {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.uploadImage(files));
     }
+
+    /*
+     * 导出详情页
+     * */
+    public JBoltApiRet getExportData(Long iautoid){
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
+    }
 }
