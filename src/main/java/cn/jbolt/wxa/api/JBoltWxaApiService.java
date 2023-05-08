@@ -4,13 +4,13 @@ import cn.jbolt._admin.cache.JBoltWechatUserCache;
 import cn.jbolt.admin.appdevcenter.ApplicationService;
 import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.admin.wechat.user.WechatUserService;
-import cn.jbolt.base.JBoltWechatApi;
-import cn.jbolt.base.JBoltWechatApi.Type;
 import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.model.Application;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.util.JBoltArrayUtil;
+import cn.jbolt.core.wechat.JBoltWechatApi;
+import cn.jbolt.core.wechat.JBoltWechatApi.Type;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Ret;
@@ -50,7 +50,7 @@ public class JBoltWxaApiService extends JBoltApiBaseService{
 		String wechatAppId=JBoltApiKit.getWechatAppId();
 		Long mpId=JBoltApiKit.getWechatMpId();
 		//执行API调用获取sessionKey和OpenId unionid
-		ApiResult apiResult = JBoltWechatApi.use(wechatAppId, Type.MP_WXA).call(()->WxaUserApi.getSessionKey(code));
+		ApiResult apiResult = JBoltWechatApi.use(wechatAppId,Type.MP_WXA).call(()->WxaUserApi.getSessionKey(code));
 		//调用成功
 		if(apiResult.isSucceed()){
 			String openId=apiResult.getStr("openid");

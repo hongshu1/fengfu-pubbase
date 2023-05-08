@@ -1,19 +1,13 @@
 package cn.rjtech.admin.rcvdocqcformm;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.jfinal.aop.Inject;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
@@ -21,7 +15,6 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
 
-import com.jfinal.core.JFinal;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 
@@ -29,13 +22,9 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import com.jfinal.upload.UploadFile;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 
 /**
