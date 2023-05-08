@@ -16,7 +16,7 @@
             {@if index<datas.length-1}
             <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true);updateItemSeq();" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></ a>
             {@/if}
-            <a tooltip data-title="删除" href="javascript:void(0)" onclick="jboltTableRemoveRow(this);updateItemSeq();" class="jbolt_table_btn"><i class="fa fa-remove  c-danger"></i></a>
+            <a tooltip data-title="删除" href="javascript:void(0)" onclick="removeJboltTableRow(this);updateItemSeq();" class="jbolt_table_btn"><i class="fa fa-remove  c-danger"></i></a>
         </td>
     </tr>
     {@/each}

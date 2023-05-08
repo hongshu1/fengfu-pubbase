@@ -1,7 +1,11 @@
 package cn.rjtech.admin.qcform;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -12,6 +16,7 @@ import cn.rjtech.model.momdata.QcForm;
 import cn.rjtech.model.momdata.QcFormItem;
 import cn.rjtech.model.momdata.QcFormParam;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -80,10 +85,24 @@ public class QcFormService extends BaseService<QcForm> {
     /**
      * 保存
      */
-    public Ret save(QcForm qcForm) {
+    public Ret save(QcForm qcForm, Long orgId, Long userId, String orgCode, String orgName, String userName, Date date) {
         if (qcForm == null || isOk(qcForm.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
+        qcForm.setIOrgId(orgId);
+        qcForm.setCOrgCode(orgCode);
+        qcForm.setCOrgName(orgName);
+        
+        
+        qcForm.setICreateBy(userId);
+        qcForm.setCCreateName(userName);
+        qcForm.setDCreateTime(date);
+        
+        qcForm.setIUpdateBy(userId);
+        qcForm.setCUpdateName(userName);
+        qcForm.setDUpdateTime(date);
+        
+        qcForm.setIsDeleted(false);
         //if(existsName(qcForm.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = qcForm.save();
         if (success) {
@@ -96,7 +115,7 @@ public class QcFormService extends BaseService<QcForm> {
     /**
      * 更新
      */
-    public Ret update(QcForm qcForm) {
+    public Ret update(QcForm qcForm, Long userId, String userName, Date date) {
         if (qcForm == null || notOk(qcForm.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
@@ -105,8 +124,14 @@ public class QcFormService extends BaseService<QcForm> {
         if (dbQcForm == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
+        dbQcForm.setCMemo(qcForm.getCMemo());
+        dbQcForm.setCQcFormName(qcForm.getCQcFormName());
+        dbQcForm.setIsEnabled(qcForm.getIsEnabled());
+        dbQcForm.setIUpdateBy(userId);
+        dbQcForm.setCUpdateName(userName);
+        dbQcForm.setDUpdateTime(date);
         //if(existsName(qcForm.getName(), qcForm.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST)}
-        boolean success = qcForm.update();
+        boolean success = dbQcForm.update();
         if (success) {
             //添加日志
             //addUpdateSystemLog(qcForm.getIAutoId(), JBoltUserKit.getUserId(), qcForm.getName())
@@ -334,5 +359,45 @@ public class QcFormService extends BaseService<QcForm> {
     public List<Record> options() {
         return dbTemplate("qcform.AdminDatas", Kv.of("isenabled", "true")).find();
     }
-
+    
+    public Ret submitForm(String formJsonDataStr, String qcItemTableJsonDataStr, String qcParamTableJsonDataStr, String tableJsonDataStr){
+        ValidationUtils.notBlank(formJsonDataStr, JBoltMsg.JBOLTTABLE_IS_BLANK);
+        ValidationUtils.notBlank(qcItemTableJsonDataStr, JBoltMsg.JBOLTTABLE_IS_BLANK);
+        ValidationUtils.notBlank(qcParamTableJsonDataStr, JBoltMsg.JBOLTTABLE_IS_BLANK);
+        ValidationUtils.notBlank(tableJsonDataStr, JBoltMsg.JBOLTTABLE_IS_BLANK);
+    
+        JSONObject formJsonData = JSONObject.parseObject(formJsonDataStr);
+        QcForm qcFom = createQcFom(formJsonData.getLong(QcForm.IAUTOID), formJsonData.getString(QcForm.CQCFORMNAME), formJsonData.getString(QcForm.CMEMO), Boolean.valueOf(formJsonData.getString(QcForm.ISENABLED)));
+    
+        Long orgId = getOrgId();
+        String orgCode = getOrgCode();
+        String orgName = getOrgName();
+    
+        Long userId = JBoltUserKit.getUserId();
+        String userName = JBoltUserKit.getUserName();
+        DateTime date = DateUtil.date();
+        // 新增
+        if (ObjectUtil.isNull(qcFom.getIAutoId())){
+            // 设置id
+            long formId = JBoltSnowflakeKit.me.nextId();
+            qcFom.setIAutoId(formId);
+            // 保存
+//            save(qcFom, orgId, userId, orgCode, orgName, userName, date);
+            qcFormItemService.createQcFormItemList(formId, false, JSONObject.parseArray(qcItemTableJsonDataStr));
+            return SUCCESS;
+        }
+        // 修改
+        
+//        update(qcFom, userId, userName, date);
+        return SUCCESS;
+    }
+    
+    public QcForm createQcFom(Long id, String qcFormName, String memo, Boolean isEnabled){
+        QcForm qcForm = new QcForm();
+        qcForm.setIAutoId(id);
+        qcForm.setCQcFormName(qcFormName);
+        qcForm.setCMemo(memo);
+        qcForm.setIsEnabled(isEnabled);
+        return qcForm;
+    }
 }
