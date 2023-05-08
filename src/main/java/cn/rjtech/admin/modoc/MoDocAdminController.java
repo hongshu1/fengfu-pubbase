@@ -14,7 +14,7 @@ import cn.rjtech.model.momdata.MoDoc;
 import java.util.HashMap;
 
 /**
- * 在库检 Controller
+ * 工单管理 Controller
  * @ClassName: MoDocAdminController
  * @author: RJ
  * @date: 2023-04-26 16:15

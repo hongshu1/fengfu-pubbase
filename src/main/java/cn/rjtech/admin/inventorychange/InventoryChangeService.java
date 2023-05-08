@@ -259,6 +259,7 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 		return dbTemplate("inventorychange.inventoryAutocomplete", kv).paginate(pageNumber, pageSize);
 	}
 	public Page<Record> inventoryAutocompleteNew(int pageNumber, int pageSize, Kv kv) {
+		kv.set("date",new Date());
 		return dbTemplate("inventorychange.inventoryAutocompleteNew", kv).paginate(pageNumber, pageSize);
 	}
 

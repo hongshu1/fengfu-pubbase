@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 在库检 Service
+ * 工单管理 Service
  * @ClassName: MoDocService
  * @author: RJ
  * @date: 2023-04-26 16:15

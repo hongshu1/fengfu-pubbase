@@ -100,12 +100,18 @@ SELECT
 	inv.iCustomerMId,
 	ven.iAutoId AS venid,
 	ven.cVenCode,
-	ven.cVenName
+	ven.cVenName,
+    ir.iAutoId as routId
 FROM
 	Bd_Inventory inv
 	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iInventoryUomId1
 	LEFT JOIN Bd_InventoryStockConfig invstock ON invstock.iInventoryId = inv.iAutoId
 	LEFT JOIN Bd_Vendor ven ON ven.iAutoId = invstock.iVendorId
+    LEFT JOIN Bd_InventoryRouting AS ir ON ir.iInventoryId = inv.iAutoId
+                                               and ir.dFromDate <= #para(date) AND
+                                           ir.dToDate >= #para(date) AND
+                                           ir.isEnabled = '1' AND
+                                           ir.iAuditStatus = '3'
 	WHERE
 	    1 = 1
 	    #if(q)

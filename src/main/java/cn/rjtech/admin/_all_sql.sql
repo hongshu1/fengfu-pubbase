@@ -381,6 +381,10 @@
 #include("modoc/modoc.sql")
 #end
 
+#namespace("modocbatch")
+#include("modocbatch/modocbatch.sql")
+#end
+
 
 #namespace("rcvplanm")
 #include("rcvplanm/rcvplanm.sql")
