@@ -191,7 +191,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         codeGen.setTableDefaultSortColumn("id");
         codeGen.setTableDefaultSortType("desc");
         codeGen.setIsViewUsePath(true);
-        codeGen.setHtmlViewPath(FileUtil.normalize("/_view/" + codeGen.getControllerPath()));
+        codeGen.setHtmlViewPath(FileUtil.normalize("/_view/" + codeGen.getControllerPath().toLowerCase()));
         codeGen.setRoutesScanPackage(codeGen.getMainJavaPackage());
         codeGen.setIsNeedAdminInterceptor(true);
         if (isOk(codeGen.getMainTableRemark())) {
