@@ -4,16 +4,12 @@ import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.api.JBoltApiBaseController;
 import cn.jbolt.core.api.httpmethod.JBoltHttpGet;
 import cn.jbolt.core.api.httpmethod.JBoltHttpPost;
-import cn.jbolt.core.base.config.JBoltConfig;
-import cn.jbolt.core.cache.JBoltCacheType;
 import cn.jbolt.core.crossorigin.CrossOrigin;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.para.JBoltPara;
 import com.jfinal.aop.Inject;
-import com.jfinal.aop.Interceptor;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 
 
 /**
