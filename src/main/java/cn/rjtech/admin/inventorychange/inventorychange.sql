@@ -84,6 +84,59 @@ FROM
 	    #end
 #end
 
+
+#sql("inventoryAutocompleteNew")
+SELECT
+    inv.iAutoId as itemId,
+	inv.iweight,
+	inv.cInvAddCode1,
+	inv.cInvName,
+	inv.cInvStd,
+	inv.cInvCode AS cInvCode,
+	inv.cInvCode1 AS cInvCode1,
+	inv.cInvName1 AS cInvName1,
+	inv.cInvName2 AS cInvName2,
+	uom.cUomName,
+	inv.iCustomerMId,
+	ven.iAutoId AS venid,
+	ven.cVenCode,
+	ven.cVenName,
+    ir.iAutoId as routId
+FROM
+	Bd_Inventory inv
+	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iInventoryUomId1
+	LEFT JOIN Bd_InventoryStockConfig invstock ON invstock.iInventoryId = inv.iAutoId
+	LEFT JOIN Bd_Vendor ven ON ven.iAutoId = invstock.iVendorId
+    LEFT JOIN Bd_InventoryRouting AS ir ON ir.iInventoryId = inv.iAutoId
+                                               and ir.dFromDate <= #para(date) AND
+                                           ir.dToDate >= #para(date) AND
+                                           ir.isEnabled = '1' AND
+                                           ir.iAuditStatus = '3'
+	WHERE
+	    1 = 1
+	    #if(q)
+            AND (inv.cInvCode LIKE CONCAT('%', #para(q), '%') OR inv.cInvCode1 LIKE CONCAT('%', #para(q), '%') OR inv.cInvName1 LIKE CONCAT('%', #para(q), '%'))
+	    #end
+	    #if(itemId)
+	        AND inv.iautoId = #para(itemId)
+	    #end
+	    #if(iEquipmentModelId)
+	        AND INV.iEquipmentModelId = #para(iEquipmentModelId)
+	    #end
+	    #if(cInvCode)
+             AND inv.cInvCode LIKE CONCAT('%', #para(cInvCode), '%')
+	    #end
+	    #if(cInvCode1)
+             AND inv.cInvCode LIKE CONCAT('%', #para(cInvCode1), '%')
+	    #end
+	    #if(cInvName)
+             AND inv.cInvName LIKE CONCAT('%', #para(cInvName), '%')
+	    #end
+	    #if(cVenName)
+	        AND ven.cVenName LIKE CONCAT('%', #para(cVenName), '%')
+	    #end
+#end
+
 #sql("findList")
 SELECT
 	a.iAfterInventoryId,

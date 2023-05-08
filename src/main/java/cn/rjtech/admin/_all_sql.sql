@@ -381,6 +381,10 @@
 #include("modoc/modoc.sql")
 #end
 
+#namespace("modocbatch")
+#include("modocbatch/modocbatch.sql")
+#end
+
 
 #namespace("rcvplanm")
 #include("rcvplanm/rcvplanm.sql")
@@ -403,7 +407,13 @@
 #include("sysotherin/sysotherin.sql")
 #end
 
+
 #namespace("otherout")
 #include("otherout/otherout.sql")
+#end
+
+
+#namespace("sysproductin")
+#include("sysproductin/sysproductin.sql")
 #end
 

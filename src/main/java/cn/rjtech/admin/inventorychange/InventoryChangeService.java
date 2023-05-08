@@ -59,7 +59,7 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 		kv.set("orgId", getOrgId());
 		return dbTemplate("inventorychange.list", kv.set("sortColumn", sortColumn).set("sortType", sortType)).paginate(pageNumber, pageSize);
 	}
-	
+
 	public List<Record> findAll(String sortColumn, String sortType, Kv kv){
 		kv.set("orgId", getOrgId());
 		return dbTemplate("inventorychange.list", kv.set("sortColumn", sortColumn).set("sortType", sortType)).find();
@@ -88,7 +88,7 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 		inventoryChange.setCUpdateName(userName);
 		inventoryChange.setDUpdateTime(now);
 		inventoryChange.setIsDeleted(false);
-		
+
 		boolean success=inventoryChange.save();
 		if(success) {
 			//添加日志
@@ -165,7 +165,7 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
                     );
     }
 
-    
+
     /**
 	 * 读取excel文件
 	 * @param file
@@ -254,33 +254,37 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
     		    	.setRecordDatas(2,datas)
     		    );
 	}
-	
+
 	public Page<Record> inventoryAutocomplete(int pageNumber, int pageSize, Kv kv) {
 		return dbTemplate("inventorychange.inventoryAutocomplete", kv).paginate(pageNumber, pageSize);
 	}
-	
+	public Page<Record> inventoryAutocompleteNew(int pageNumber, int pageSize, Kv kv) {
+		kv.set("date",new Date());
+		return dbTemplate("inventorychange.inventoryAutocompleteNew", kv).paginate(pageNumber, pageSize);
+	}
+
 	public Record findByIdRecord(String id){
 		ValidationUtils.notBlank(id, JBoltMsg.PARAM_ERROR);
 		Kv kv = Kv.by("ids", Util.getInSqlByIds(id));
 		return dbTemplate("inventorychange.list", kv).findFirst();
 	}
-	
+
 	public void verifyData(InventoryChange inventoryChange){
 		ValidationUtils.notNull(inventoryChange, JBoltMsg.DATA_NOT_EXIST);
 		ValidationUtils.notNull(inventoryChange.getIBeforeInventoryId(), "转换前存货编码不能为空");
 		ValidationUtils.notNull(inventoryChange.getIAfterInventoryId(), "转换后存货编码不能为空");
-		
+
 		String beforeInv = String.valueOf(inventoryChange.getIBeforeInventoryId());
 		String afterInv = String.valueOf(inventoryChange.getIAfterInventoryId());
 		ValidationUtils.isTrue(!beforeInv.equals(afterInv), "转换前跟转换后的编码一致，请跟换");
 		InventoryChange change = findByBeforeInventoryId(inventoryChange.getIBeforeInventoryId(), inventoryChange.getIAutoId());
 		ValidationUtils.isTrue(change == null, JBoltMsg.DATA_SAME_SN_EXIST);
 	}
-	
+
 	public Long getItemId(String itemCode){
 		return queryLong("SELECT IAUTOID FROM Bd_Inventory WHERE cInvCode=?", itemCode);
 	}
-	
+
 	public Ret removeByIds(String ids){
 		DateTime date = DateUtil.date();
 		Long userId = JBoltUserKit.getUserId();
@@ -298,11 +302,11 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 		});
 		return SUCCESS;
 	}
-	
+
 	public List<Record> findByOrgList(Long orgId){
 		return dbTemplate("inventorychange.findList", Okv.by("orgId", orgId)).find();
 	}
-	
+
 	public InventoryChange findByBeforeInventoryId(Long beforeInventoryId, Long id){
 		String sql = "select * from Bd_InventoryChange where IsDeleted = 0 and iBeforeInventoryId = ?";
 		// 为空校验全部，不为空排除校验自己
@@ -311,7 +315,7 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 		}
 		return findFirst(sql, beforeInventoryId);
 	}
-	
+
 	public InventoryChange findByBeforeInventoryId(Long beforeInventoryId){
 		return findByBeforeInventoryId(beforeInventoryId, null);
 	}

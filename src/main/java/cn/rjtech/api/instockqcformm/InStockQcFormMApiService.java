@@ -113,7 +113,7 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
     /*
      * 删除在库检查表
      * */
-    public JBoltApiRet deleteCheckoutByIautoid(Long iautoid){
+    public JBoltApiRet deleteCheckoutByIautoid(Long iautoid) {
         Ret ret = service.deleteCheckoutByIautoid(iautoid);
         return JBoltApiRet.API_SUCCESS;
     }
@@ -168,5 +168,19 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
      * */
     public JBoltApiRet uploadImage(List<UploadFile> files) {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.uploadImage(files));
+    }
+
+    /*
+     * 获取导出数据
+     * */
+    public JBoltApiRet exportExcel(Long iautoid) {
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
+    }
+
+    /*
+     * 导出详情页
+     * */
+    public JBoltApiRet getExportData(Long iautoid){
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
     }
 }

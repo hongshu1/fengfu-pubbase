@@ -13,6 +13,7 @@ import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
+import cn.rjtech.entity.vo.instockqcformm.GetExportExcelVo;
 import cn.rjtech.entity.vo.instockqcformm.InStockAutoGetCheckOutTableDatasVo;
 import cn.rjtech.entity.vo.instockqcformm.InStockAutoGetOnlyseeTableDatasVo;
 import cn.rjtech.entity.vo.instockqcformm.InStockQcFormMApiJumpCheckOutVo;
@@ -178,6 +179,8 @@ public class InStockQcFormMApiController extends BaseApiController {
      * @param cmeasurereason      测定理由
      * @param serializeSubmitList table里的数据(传json)
      */
+    @ApiDoc(result =NullDataResult.class)
+    @UnCheck
     public void saveEdit(@Para(value = "cmeasurepurpose") String cmeasurepurpose,
                          @Para(value = "cdcno") String cdcno,
                          @Para(value = "iinstockqcformmid") Long iinstockqcformmid,
@@ -199,8 +202,21 @@ public class InStockQcFormMApiController extends BaseApiController {
     /*
      * 自动加载图片
      * */
+    @ApiDoc
+    @UnCheck
     public void uploadImage() {
         renderJBoltApiRet(apiService.uploadImage(getFiles(
             ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
     }
+
+    /*
+     * 导出在库检详情页数据
+     * */
+    @ApiDoc(GetExportExcelVo.class)
+    @UnCheck
+    public void exportExcel(@Para(value = "iautoid") Long iautoid){
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.exportExcel(iautoid));
+    }
+
 }
