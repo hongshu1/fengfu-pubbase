@@ -1,7 +1,7 @@
 package cn.rjtech.common.exchangetable;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.OrgAccessKit;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.base.service.BaseService;
 import cn.rjtech.common.model.ExchangeTable;
@@ -9,7 +9,6 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Ret;
 
-import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +19,19 @@ import java.util.List;
  * @Desc:
  */
 public class ExchangeTableService extends BaseService<ExchangeTable> {
+    
     private final ExchangeTable dao = new ExchangeTable().dao();
+
+    @Override
+    public String dataSourceConfigName() {
+        return OrgAccessKit.getU8DbAlias();
+    }
+
+    @Override
+    protected String database() {
+        return OrgAccessKit.getU8DbName();
+    }
+
     @Override
     protected ExchangeTable dao() {
         return dao;
@@ -45,18 +56,4 @@ public class ExchangeTableService extends BaseService<ExchangeTable> {
         return SUCCESS;
     }
 
-    public void saveInTx(List<ExchangeTable> exchangeTables) {
-        if (CollUtil.isEmpty(exchangeTables)){
-            return;
-        }
-
-        for (ExchangeTable exchangeTable : exchangeTables) {
-            exchangeTable.setCreateDate(new Date());
-        }
-
-        tx(Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
-            batchSave(exchangeTables);
-            return true;
-        });
-    }
 }

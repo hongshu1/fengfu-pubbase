@@ -18,13 +18,13 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
     public static final String IFORMFIELDID = "iFormFieldId";
     /**导入字段名称*/
     public static final String CCUSFIELDNAME = "cCusFieldName";
-    /**是否编码字段：0. 否 1. 是*/
+    /**是否编码字段;0. 否 1. 是*/
     public static final String ISENCODED = "isEncoded";
     /**编码示例*/
     public static final String CDEMO = "cDemo";
     /**导入编码字段长度*/
     public static final String ILENGTH = "iLength";
-    /**是否启用：0. 否 1. 是*/
+    /**是否启用;0. 否 1. 是*/
     public static final String ISENABLED = "isEnabled";
 	/**
 	 * 主键ID
@@ -88,14 +88,14 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	/**
 	 * 导入字段名称
 	 */
-	@JBoltField(name="ccusfieldname" ,columnName="cCusFieldName",type="String", remark="导入字段名称", required=true, maxLength=50, fixed=0, order=4)
+	@JBoltField(name="ccusfieldname" ,columnName="cCusFieldName",type="String", remark="导入字段名称", required=true, maxLength=40, fixed=0, order=4)
 	@JSONField(name = "ccusfieldname")
 	public java.lang.String getCCusFieldName() {
 		return getStr("cCusFieldName");
 	}
 
 	/**
-	 * 是否编码字段：0. 否 1. 是
+	 * 是否编码字段;0. 否 1. 是
 	 */
 	public M setIsEncoded(java.lang.Boolean isEncoded) {
 		set("isEncoded", isEncoded);
@@ -103,9 +103,9 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	}
 
 	/**
-	 * 是否编码字段：0. 否 1. 是
+	 * 是否编码字段;0. 否 1. 是
 	 */
-	@JBoltField(name="isencoded" ,columnName="isEncoded",type="Boolean", remark="是否编码字段：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=5)
+	@JBoltField(name="isencoded" ,columnName="isEncoded",type="Boolean", remark="是否编码字段;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=5)
 	@JSONField(name = "isencoded")
 	public java.lang.Boolean getIsEncoded() {
 		return getBoolean("isEncoded");
@@ -122,7 +122,7 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	/**
 	 * 编码示例
 	 */
-	@JBoltField(name="cdemo" ,columnName="cDemo",type="String", remark="编码示例", required=false, maxLength=50, fixed=0, order=6)
+	@JBoltField(name="cdemo" ,columnName="cDemo",type="String", remark="编码示例", required=false, maxLength=200, fixed=0, order=6)
 	@JSONField(name = "cdemo")
 	public java.lang.String getCDemo() {
 		return getStr("cDemo");
@@ -146,7 +146,7 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	}
 
 	/**
-	 * 是否启用：0. 否 1. 是
+	 * 是否启用;0. 否 1. 是
 	 */
 	public M setIsEnabled(java.lang.Boolean isEnabled) {
 		set("isEnabled", isEnabled);
@@ -154,9 +154,9 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	}
 
 	/**
-	 * 是否启用：0. 否 1. 是
+	 * 是否启用;0. 否 1. 是
 	 */
-	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否启用：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=8)
+	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否启用;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=8)
 	@JSONField(name = "isenabled")
 	public java.lang.Boolean getIsEnabled() {
 		return getBoolean("isEnabled");

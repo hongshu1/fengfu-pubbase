@@ -5,10 +5,10 @@ import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionService;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.model.PermissionBtn;
+import cn.jbolt.core.model.RjApplication;
 import cn.jbolt.core.service.JBoltRolePermissionService;
 import cn.rjtech.admin.permissionbtn.PermissionBtnService;
 import cn.rjtech.cache.RjApplicationCache;
-import cn.rjtech.model.main.Application;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -46,8 +46,8 @@ public class RolePermissionService extends JBoltRolePermissionService {
     public String getTextColumn(Record m, String textColumn, String enableIcon) {
         // 菜单 显示所属应用系统
         if (null == m.get(PermissionBtn.VIEW_TYPE)) {
-            Application application = RjApplicationCache.ME.get(m.getLong("application_id"));
-            return String.format("[%s]%s%s", application.getAppName(), m.getStr(textColumn), StrUtil.blankToDefault(enableIcon, StrUtil.EMPTY));
+            RjApplication rjApplication = RjApplicationCache.ME.get(m.getLong("application_id"));
+            return String.format("[%s]%s%s", rjApplication.getAppName(), m.getStr(textColumn), StrUtil.blankToDefault(enableIcon, StrUtil.EMPTY));
         }
         return String.format("[按钮]%s%s", m.getStr(textColumn), StrUtil.blankToDefault(enableIcon, StrUtil.EMPTY));
     }

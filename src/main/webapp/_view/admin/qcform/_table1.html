@@ -7,13 +7,16 @@
         {@else}
         <td>${+index+1}</td>
         {@/if}
-        <!--<td>${data.cqcformname}</td>-->
         <td hidden>${data.iqcitemid}</td>
         <td data-editable="false">${data.cqcitemname}</td>
         <td>
-            <a href="/admin/qcform/qcformitem/up/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp" class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
-            <a href="/admin/qcform/qcformitem/down/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
-            <a href="/admin/qcform/qcformitem/deletes/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+            {@if index>0}
+            <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true);updateItemSeq();" class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></ a>
+            {@/if}
+            {@if index<datas.length-1}
+            <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true);updateItemSeq();" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></ a>
+            {@/if}
+            <a tooltip data-title="删除" href="javascript:void(0)" onclick="jboltTableRemoveRow(this);updateItemSeq();" class="jbolt_table_btn"><i class="fa fa-remove  c-danger"></i></a>
         </td>
     </tr>
     {@/each}
@@ -23,7 +26,6 @@
 <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
     <div class="col-md-l pt-2" role="group" aria-label="btn-group">
         <button onclick="addBomcompareTr(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
-        <button onclick="QcFormItemsubmit(this)" data-confirm="确认同步吗？" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 同步</button>
     </div>
 </div>
 
@@ -33,8 +35,6 @@
        data-url="/admin/qcform/getItemCombinedListByPId?iqcformid=#(qcForm.iAutoId??)"
        data-conditions-form="qcformitemTypeForm_#(pageId)"
        data-toolbar="bomcompare_split_toolbar_#(pageId)"
-       data-row-click-handler="readqcformparams"
-       data-ajax-success-handler="clearDicTable_#(pageId)"
        data-width="auto"
        data-editable="true"
        data-editable-option="getQcFormItemTableOptions_split"
@@ -45,7 +45,7 @@
         <!--<th data-width="100" data-column="cqcformname">检验表格</th>-->
         <th data-width="100" data-column="iqcitemid" hidden>检验项目id</th>
         <th data-width="300" data-column="cqcitemname">检验项目</th>
-        <th data-width="120">操作</th>
+        <th data-width="120" data-column="iseq">操作</th>
     </tr>
     </thead>
     <tbody>

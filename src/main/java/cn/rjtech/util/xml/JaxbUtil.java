@@ -1,7 +1,7 @@
 package cn.rjtech.util.xml;
 
 import cn.hutool.core.util.StrUtil;
-import cn.rjtech.base.exception.CommonException;
+import cn.jbolt.core.exception.CommonException;
 
 import javax.xml.bind.*;
 import javax.xml.bind.annotation.XmlAnyElement;

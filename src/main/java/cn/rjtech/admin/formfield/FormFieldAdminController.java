@@ -1,7 +1,7 @@
 package cn.rjtech.admin.formfield;
 
 import cn.hutool.core.util.ObjUtil;
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -115,6 +115,10 @@ public class FormFieldAdminController extends BaseAdminController {
      */
     public void mgr() {
         render("_mgr.html");
+    }
+
+    public void autocomplete() {
+        renderJsonData(service.getAutocompleteList(getLong("iformid"), getKeywords(), getInt("limit", 10)));
     }
         
 }

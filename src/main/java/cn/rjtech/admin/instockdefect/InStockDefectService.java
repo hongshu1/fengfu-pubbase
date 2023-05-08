@@ -11,6 +11,7 @@ import cn.rjtech.model.momdata.InStockDefect;
 import cn.rjtech.model.momdata.InStockQcFormM;
 import cn.rjtech.model.momdata.RcvDocDefect;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
+import cn.rjtech.model.momdata.StockoutDefect;
 import cn.rjtech.util.BillNoUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -286,6 +287,35 @@ public class InStockDefectService extends BaseService<InStockDefect> {
         return map;
     }
 
+    public void saveInStockOutDefectModel(InStockDefect inStockDefect, InStockQcFormM inStockQcFormM) {
+        inStockDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
+        Date date = new Date();
+        Long userId = JBoltUserKit.getUserId();
+        String userName = JBoltUserKit.getUserName();
+        inStockDefect.setCDocNo(inStockQcFormM.getCDcNo());   //异常品单号
+        inStockDefect.setIInStockQcFormMid(inStockQcFormM.getIAutoId()); //在库检id
+        inStockDefect.setIInventoryId(inStockQcFormM.getIInventoryId());  //存货ID
+        inStockDefect.setIStatus(1);                                       //状态：1. 待记录 2. 待判定 3. 已完成
+        inStockDefect.setCDesc(inStockQcFormM.getCMemo());                //不良内容描述
+        inStockDefect.setIQcUserId(inStockQcFormM.getIQcUserId());        //检验用户ID
+        inStockDefect.setDQcTime(inStockQcFormM.getDUpdateTime());        //检验时间
 
+        inStockDefect.setICreateBy(userId);
+        inStockDefect.setDCreateTime(date);
+        inStockDefect.setCCreateName(userName);
+        inStockDefect.setIOrgId(getOrgId());
+        inStockDefect.setCOrgCode(getOrgCode());
+        inStockDefect.setCOrgName(getOrgName());
+        inStockDefect.setIUpdateBy(userId);
+        inStockDefect.setCUpdateName(userName);
+        inStockDefect.setDUpdateTime(date);
+    }
+
+    /*
+     * 根据出货检id查询异常品质单
+     */
+    public InStockDefect findDefectByiInStockQcFormMid(Object iInStockQcFormMid) {
+        return findFirst("SELECT * FROM PL_InStockDefect WHERE iInStockQcFormMid = ?", iInStockQcFormMid);
+    }
 
 }

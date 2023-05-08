@@ -24,7 +24,7 @@ import com.jfinal.core.JFinal;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;

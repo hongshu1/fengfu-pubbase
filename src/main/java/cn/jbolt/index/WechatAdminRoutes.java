@@ -2,7 +2,7 @@ package cn.jbolt.index;
 
 import com.jfinal.config.Routes;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.admin.wechat.autoreply.WechatAutoReplyAdminController;
 import cn.jbolt.admin.wechat.autoreply.WechatKeywordsAdminController;
 import cn.jbolt.admin.wechat.autoreply.WechatReplyContentAdminController;

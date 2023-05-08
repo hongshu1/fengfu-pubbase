@@ -16,12 +16,12 @@ public abstract class BaseCusfieldsmappingdCodingrule<M extends BaseCusfieldsmap
     public static final String ICUSFIELDSMAPPINGDID = "iCusFieldsMappingDid";
     /**显示顺序值*/
     public static final String ISEQ = "iSeq";
-    /**编码字符类型：1. 编码 2. 分隔符*/
+    /**编码字符类型;1. 编码 2. 分隔符*/
     public static final String ITYPE = "iType";
-    /**编码长度，编码字符类型为2时，分隔符，支持空格、“”*/
-    public static final String CSEPERATOR = "cSeperator";
-    /**编码长度，编码字符类型为1时，存在*/
-    public static final String ICODELENGTH = "iCodeLength";
+    /**分隔符;编码字符类型为2时，分隔符，支持空格、“”*/
+    public static final String CSEPARATOR = "cSeparator";
+    /**编码长度*/
+    public static final String ILENGTH = "iLength";
 	/**
 	 * 主键ID
 	 */
@@ -74,7 +74,7 @@ public abstract class BaseCusfieldsmappingdCodingrule<M extends BaseCusfieldsmap
 	}
 
 	/**
-	 * 编码字符类型：1. 编码 2. 分隔符
+	 * 编码字符类型;1. 编码 2. 分隔符
 	 */
 	public M setIType(java.lang.Integer iType) {
 		set("iType", iType);
@@ -82,46 +82,46 @@ public abstract class BaseCusfieldsmappingdCodingrule<M extends BaseCusfieldsmap
 	}
 
 	/**
-	 * 编码字符类型：1. 编码 2. 分隔符
+	 * 编码字符类型;1. 编码 2. 分隔符
 	 */
-	@JBoltField(name="itype" ,columnName="iType",type="Integer", remark="编码字符类型：1. 编码 2. 分隔符", required=true, maxLength=10, fixed=0, order=4)
+	@JBoltField(name="itype" ,columnName="iType",type="Integer", remark="编码字符类型;1. 编码 2. 分隔符", required=true, maxLength=10, fixed=0, order=4)
 	@JSONField(name = "itype")
 	public java.lang.Integer getIType() {
 		return getInt("iType");
 	}
 
 	/**
-	 * 编码长度，编码字符类型为2时，分隔符，支持空格、“”
+	 * 分隔符;编码字符类型为2时，分隔符，支持空格、“”
 	 */
-	public M setCSeperator(java.lang.String cSeperator) {
-		set("cSeperator", cSeperator);
+	public M setCSeparator(java.lang.String cSeparator) {
+		set("cSeparator", cSeparator);
 		return (M)this;
 	}
 
 	/**
-	 * 编码长度，编码字符类型为2时，分隔符，支持空格、“”
+	 * 分隔符;编码字符类型为2时，分隔符，支持空格、“”
 	 */
-	@JBoltField(name="cseperator" ,columnName="cSeperator",type="String", remark="编码长度，编码字符类型为2时，分隔符，支持空格、“”", required=false, maxLength=4, fixed=0, order=5)
-	@JSONField(name = "cseperator")
-	public java.lang.String getCSeperator() {
-		return getStr("cSeperator");
+	@JBoltField(name="cseparator" ,columnName="cSeparator",type="String", remark="分隔符;编码字符类型为2时，分隔符，支持空格、“”", required=false, maxLength=4, fixed=0, order=5)
+	@JSONField(name = "cseparator")
+	public java.lang.String getCSeparator() {
+		return getStr("cSeparator");
 	}
 
 	/**
-	 * 编码长度，编码字符类型为1时，存在
+	 * 编码长度
 	 */
-	public M setICodeLength(java.lang.Integer iCodeLength) {
-		set("iCodeLength", iCodeLength);
+	public M setILength(java.lang.Integer iLength) {
+		set("iLength", iLength);
 		return (M)this;
 	}
 
 	/**
-	 * 编码长度，编码字符类型为1时，存在
+	 * 编码长度
 	 */
-	@JBoltField(name="icodelength" ,columnName="iCodeLength",type="Integer", remark="编码长度，编码字符类型为1时，存在", required=false, maxLength=10, fixed=0, order=6)
-	@JSONField(name = "icodelength")
-	public java.lang.Integer getICodeLength() {
-		return getInt("iCodeLength");
+	@JBoltField(name="ilength" ,columnName="iLength",type="Integer", remark="编码长度", required=false, maxLength=10, fixed=0, order=6)
+	@JSONField(name = "ilength")
+	public java.lang.Integer getILength() {
+		return getInt("iLength");
 	}
 
 }

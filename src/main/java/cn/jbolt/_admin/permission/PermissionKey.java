@@ -1405,7 +1405,6 @@ public class PermissionKey {
 	 * 客户计划及实绩管理
 	 */
 	public static final String CUSORDER_RESULT = "cusorder_result";
-
 	/**
 	 * 出库异常记录
 	 */
@@ -1430,6 +1429,10 @@ public class PermissionKey {
 	 * 导入字段配置
 	 */
 	public static final String CUS_FIELDS_MAPPINGM = "cus_fields_mappingm";
+	/**
+	 * 编码规则配置
+	 */
+	public static final String CODING_RULEM = "coding_rulem";
 	/**
 	 * 制造工单批量编辑
 	 */
@@ -1766,4 +1769,12 @@ public class PermissionKey {
      * 取货管理-货款核对表
      */
     public static final String PAYMENT_CHECK_MANAGENOT = "payment_check_managenot";
+	/**
+	 * 取货管理-双码扫码出货
+	 */
+	public static final String DOUBLECODESCANNINGSHIPMENT = "doublecodescanningshipment";
+	/**
+	 * 入库管理-其他入库单列表
+	 */
+	public static final String OTHER_IN_LIST = "other_in_list";
 }

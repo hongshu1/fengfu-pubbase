@@ -158,4 +158,25 @@ public class MoDocService extends BaseService<MoDoc> {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
+  /**
+   * 根据产线id和人员编码查找指定日期班次人员信息明细表
+   *
+   * @param iworkregionmid 产线id
+   * @param cpsnnum        人员编码
+   * @return
+   */
+  public List<Record> getMoworkshiftdByUserAnRegionid(Long iworkregionmid, String cpsnnum) {
+    return dbTemplate("modoc.getMoworkshiftdByUserAnRegionid", Kv.by("iworkregionmid", iworkregionmid).set("cpsnnum", cpsnnum)).find();
+  }
+
+  /**
+   * 根据产线id和人员编码查找工单工艺人员配置
+   *
+   * @param iworkregionmid 产线id
+   * @param cpsnnum        人员编码
+   * @return
+   */
+  public List<Record> getMoroutingconfigpersonByUserAnRegionid(Long iworkregionmid, String cpsnnum) {
+    return dbTemplate("modoc.getMoroutingconfigpersonByUserAnRegionid", Kv.by("iworkregionmid", iworkregionmid).set("cpsnnum", cpsnnum)).find();
+  }
 }

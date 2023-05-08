@@ -217,12 +217,19 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
 	private void saveTableSubmitDatas(JBoltTable jBoltTable,GoodsPaymentM rcvplanm){
 		List<Record> list = jBoltTable.getSaveRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		Date now = new Date();
 		for (int i=0;i<list.size();i++) {
 			Record row = list.get(i);
 			row.set("isdeleted", "0");
 			row.set("iGoodsPaymentMid", rcvplanm.getIAutoId());
 			row.set("iautoid", JBoltSnowflakeKit.me.nextId());
-			row.remove("iinventoryname");
+			row.set("dcreatetime", now);
+			row.set("dupdatetime", now);
+			row.remove("cinvcode1");
+			row.remove("cinvname1");
+			row.remove("cinvcode");
+			row.remove("cinvstd");
+			row.remove("cuomname");
 		}
 		goodsPaymentDservice.batchSaveRecords(list);
 	}
@@ -230,9 +237,15 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
 	private void updateTableSubmitDatas(JBoltTable jBoltTable,GoodsPaymentM rcvplanm){
 		List<Record> list = jBoltTable.getUpdateRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		Date now = new Date();
 		for(int i = 0;i < list.size(); i++){
 			Record row = list.get(i);
-			row.remove("iinventoryname");
+			row.set("dupdatetime", now);
+			row.remove("cinvcode1");
+			row.remove("cinvname1");
+			row.remove("cinvcode");
+			row.remove("cinvstd");
+			row.remove("cuomname");
 		}
 		goodsPaymentDservice.batchUpdateRecords(list);
 	}

@@ -1,25 +1,17 @@
 package cn.jbolt._admin.msgcenter;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.JBoltDictionaryService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.rjtech.enums.DataSourceEnum;
-import cn.rjtech.enums.SourceEnum;
-import cn.rjtech.model.main.Application;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.util.ModelMap;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.common.model.SysMessageTemplate;
 import com.jfinal.plugin.activerecord.Record;

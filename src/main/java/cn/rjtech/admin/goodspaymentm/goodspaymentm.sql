@@ -30,8 +30,10 @@ ORDER BY rm.dUpdateTime DESC
 
 
 #sql("dList")
-SELECT  a.*
+SELECT  a.*,i.cInvCode,i.cinvcode1,i.cinvname1,i.cinvstd,u.cUomName
 FROM SM_GoodsPaymentD a
+	left join Bd_Inventory i on a.iInventoryId = i.iautoid
+	left join Bd_Uom u on i.iInventoryUomId1 = u.iautoid
 where 1=1 and a.isdeleted = 0
 	#if(goodspaymentmid)
 		and a.iGoodsPaymentMid = #para(goodspaymentmid)

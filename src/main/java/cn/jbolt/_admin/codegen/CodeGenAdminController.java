@@ -7,6 +7,7 @@ import cn.jbolt._admin.cache.JBoltCodeGenCache;
 import cn.jbolt._admin.codegen.modelattr.CodeGenModelAttrService;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.common.model.CodeGen;
 import cn.jbolt.common.model.CodeGenModelAttr;
 import cn.jbolt.core.base.JBoltMsg;
@@ -17,6 +18,7 @@ import cn.jbolt.core.cache.JBoltCacheKit;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.db.datasource.JBoltDataSourceUtil;
 import cn.jbolt.core.enumutil.JBoltEnum;
+import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.model.base.JBoltBaseModel;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
@@ -24,12 +26,14 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.service.JBoltFileService;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.ehcache.IDataLoader;
+import com.jfinal.upload.UploadFile;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -288,6 +292,18 @@ public class CodeGenAdminController extends JBoltBaseController {
 		renderJson(JBoltDataSourceUtil.me.reloadDatasourceTables(get("datasource")));
 	}
 
+	@Inject
+	JBoltFileService jboltFileService;
+	public void uploadImg(){
+		String uploadPath= JBoltUploadFolder.todayFolder(JBoltUploadFolder.CODE_GEN_TEST_IMG);
+		UploadFile file=getFile("file",uploadPath);
+		if(notImage(file)){
+			renderJsonFail("请上传图片类型文件");
+			return;
+		}
+		renderJson(jboltFileService.saveFile(file,uploadPath, JboltFile.FILE_TYPE_ATTACHMENT));
+	}
+
 	/**
 	 * 进入代码生成详细配置UI
 	 */
@@ -301,6 +317,10 @@ public class CodeGenAdminController extends JBoltBaseController {
 		if(codeGen == null) {
 			renderFormFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
+		}
+		if (notOk(codeGen.getModelTitle())) {
+			codeGen.setModelTitle(StrKit.defaultIfBlank(codeGen.getIndexHtmlPageTitle(),codeGen.getModelName()));
+			codeGen.update();
 		}
 		set("codeGen", codeGen);
 		set("hasIsDeletedColumn",codeGenModelAttrService.checkHasIsDeletedColumn(codeGen.getId()));

@@ -10,7 +10,7 @@
 				<div class="jbolt_tab_view jb_vflex">
 					<div class="jbolt_tab_links  jb_vheader text-center text-nowrap" style="overflow-x: auto;overflow-y: hidden;">
 						<a class="jbolt_tab_link active"  href="#table_base_#(pageId)">基础</a>
-						<a class="jbolt_tab_link"  href="#table_page_title_#(pageId)">Page Title</a>
+						<a class="jbolt_tab_link"  href="#table_page_title_#(pageId)">页面Header</a>
 						<a class="jbolt_tab_link"  href="#table_box_#(pageId)">Box</a>
 						<a class="jbolt_tab_link"  href="#table_optcol_#(pageId)">操作列</a>
 						<a class="jbolt_tab_link"  href="#table_toolbar_#(pageId)">Toolbar</a>
@@ -18,6 +18,13 @@
 					</div>
 					<div class="jbolt_tab_contents jb_vbody">
 						<div class="jbolt_tab_content pd15 active overflow-auto" id="table_base_#(pageId)">
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label">数据名称</label>
+								<div class="col">
+									<input type="text" class="form-control" placeholder="请输入数据名称" name="codeGen.modelTitle" value="#(codeGen.modelTitle?? (codeGen.indexHtmlPageTitle?? codeGen.mainTableRemark))" autocomplete="off" />
+									<small class="text-danger">数据名称用于新增、修改、删除按钮的title显示和dialog表单标题</small>
+								</div>
+							</div>
 							<div class="form-group row"
 								 data-radio
 								 data-rule="radio"

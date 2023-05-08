@@ -1,6 +1,6 @@
 package cn.rjtech.admin.modoc;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;

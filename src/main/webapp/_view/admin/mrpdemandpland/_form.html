@@ -1,0 +1,63 @@
+<form onsubmit="return false;" id="mrpDemandplandForm" action="#(action)" method="post">
+<input type="hidden" name="mrpDemandpland.iautoid" value="#(mrpDemandpland.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">到货计划主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入到货计划主表ID" maxlength="19" name="mrpDemandpland.idemandplanmid" value="#(mrpDemandpland.idemandplanmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置年" data-tips="请设置年" maxlength="10" name="mrpDemandpland.iyear" value="#(mrpDemandpland.iyear??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">月</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入月"  maxlength="10" name="mrpDemandpland.imonth" value="#(mrpDemandpland.imonth??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入日"  maxlength="10" name="mrpDemandpland.idate" value="#(mrpDemandpland.idate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">供应商ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入供应商ID" maxlength="19" name="mrpDemandpland.ivendorid" value="#(mrpDemandpland.ivendorid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货ID" maxlength="19" name="mrpDemandpland.iinventoryid" value="#(mrpDemandpland.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">到货计划数</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入到货计划数"  maxlength="24" name="mrpDemandpland.iqty" value="#(mrpDemandpland.iqty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">状态;1. 未完成 2. 已完成</label>
+		<div class="col input-group">
+			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="mrpDemandpland.istatus" data-refresh="true"  data-rule="select"  data-tips="请选择状态;1. 未完成 2. 已完成" data-text="=请选择="  data-value="" data-select="#( mrpDemandpland.istatus ??)"></select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生成类型;0. 未生成 1. 采购订单 2. 销售订单</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入生成类型;0. 未生成 1. 采购订单 2. 销售订单"  maxlength="10" name="mrpDemandpland.igentype" value="#(mrpDemandpland.igentype??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="mrpDemandplandForm")
+#end
+

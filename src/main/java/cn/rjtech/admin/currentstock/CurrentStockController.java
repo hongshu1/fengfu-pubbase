@@ -1,6 +1,6 @@
 package cn.rjtech.admin.currentstock;
 
-import cn.jbolt._admin.interceptor.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.extend.controller.BaseMesAdminController;
 import cn.rjtech.admin.stockcheckvouch.StockCheckVouchService;

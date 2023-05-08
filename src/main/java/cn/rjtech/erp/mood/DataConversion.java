@@ -16,6 +16,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jfinal.plugin.activerecord.Record;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -99,7 +101,7 @@ public class DataConversion {
                 System.out.println(tagcolumn);
                 if(null != value && !"".equals(value)){
                     for(Field field : fields){
-                        if (field.getName().toLowerCase().equals(tagcolumn.toLowerCase())){
+                        if (field.getName().equalsIgnoreCase(tagcolumn)){
                             //String type = field.getGenericType().toString();
                             setFieldValueByFieldName(field.getName(), exchangetable, value);
                             break;
@@ -289,7 +291,7 @@ public class DataConversion {
             //返回拼接好的数据
             String json = getJsonObject(ts.getStr("masid"), ts.getStr("flag"), ts.getStr("flagtype"), ts.getStr("sourceflag"), null);
             // 将json字符串转换成JsonElement
-            JsonElement jsonElement = new JsonParser().parse(json);
+            JsonElement jsonElement = JsonParser.parseString(json);
             //按照标识加入到json离
             dataJson.add(ts.getStr("flag"), jsonElement);
         }
@@ -304,7 +306,7 @@ public class DataConversion {
                 for(Object key : jsonMap.keySet()){
                     String value = jsonMap.get(key).toString();
                     System.out.println(key+"  "+value);
-                    JsonElement jsonElement = new JsonParser().parse(value);
+                    JsonElement jsonElement = JsonParser.parseString(value);
                     dataJson.add(key.toString(),jsonElement);
                 }
             }
@@ -319,7 +321,7 @@ public class DataConversion {
                 for(Object key : jsonMap.keySet()){
                     String value = jsonMap.get(key).toString();
                     System.out.println(key+"  "+value);
-                    JsonElement jsonElement = new JsonParser().parse(value);
+                    JsonElement jsonElement = JsonParser.parseString(value);
                     dataJson.add(key.toString(),jsonElement);
                 }
             }
@@ -410,7 +412,7 @@ public class DataConversion {
                             //为空用就递归System.out.println(columsmapdetail.getMasid()+"--"+ columsmapdetail.getFlag()+"--"+columsmapdetail.getFlagtype()+"-"+columsmapdetail.getSourceflag()+"-"+record);
                             String obj = getJsonObject(masid, flag1, columsmapdetail.getStr("flagtype"), sf, record.toMap());
 
-                            JsonElement jsonElement = new JsonParser().parse(obj);
+                            JsonElement jsonElement = JsonParser.parseString(obj);
                             //赋值到json
                             bodyObject.add(flag1, jsonElement);
                         } else {
@@ -529,7 +531,7 @@ public class DataConversion {
                             //为空用就递归System.out.println(columsmapdetail.getMasid()+"--"+ columsmapdetail.getFlag()+"--"+columsmapdetail.getFlagtype()+"-"+columsmapdetail.getSourceflag()+"-"+record);
                             String obj = getJsonObject(masid, flag1, columsmapdetail.getStr("flagtype"), sf, record.toMap());
 
-                            JsonElement jsonElement = new JsonParser().parse(obj);
+                            JsonElement jsonElement = JsonParser.parseString(obj);
                             //赋值到json
                             bodyObject.add(flag1, jsonElement);
                         } else {
@@ -625,5 +627,158 @@ public class DataConversion {
             }
         }
         return result;//输出解析后的数据
+    }
+
+    /**
+     * 通过result标识解析返回值
+     */
+    public Map processResult(String resultType,String msg){
+        String resultCode = null;
+        String resultInfo = null;
+        String resultEst=null;
+        Object domMsg=null;
+        String docNo=null;
+        String docID=null;
+        Map map=new HashMap();
+        switch (resultType.toLowerCase()){
+            case "u9erprec":
+                Map jsonMap= com.alibaba.fastjson.JSON.parseObject(msg,HashMap.class);
+                String jsonMapStr=jsonMap.get("d")==null?null:jsonMap.get("d").toString();
+                Map jsonMap2=null;
+                boolean ifisSuccess=false;
+                if(null!=jsonMapStr){
+                    jsonMap2= com.alibaba.fastjson.JSON.parseObject(org.apache.commons.lang.StringUtils.strip(jsonMapStr,"[]"),HashMap.class);
+                    Object isSuccess = jsonMap2.get("IsSuccess")==null?null:jsonMap2.get("IsSuccess");
+                    ifisSuccess=isSuccess==null?false:(boolean)isSuccess;
+                }
+                if(ifisSuccess){
+                    resultCode="200";
+                    resultInfo="单号："+jsonMap2.get("U9DocNo")+"\n创建单成功！";
+                    docNo=jsonMap2.get("U9DocNo").toString();
+                }else{
+                    resultCode="201";
+                    resultInfo=jsonMap2.get("Msg").toString();
+                    if(null==resultInfo){
+                        resultInfo=jsonMap.toString();
+                    }
+                }
+                break;
+            case "u9erprecaudit":
+                Map jsonMapAutdit= com.alibaba.fastjson.JSON.parseObject(msg,HashMap.class);
+                String jsonMapStrAutid=jsonMapAutdit.get("d")==null?null:jsonMapAutdit.get("d").toString();
+                Map jsonMap2Autid=null;
+                boolean ifisSuccessAutid=false;
+                if(null!=jsonMapStrAutid){
+                    jsonMap2Autid= com.alibaba.fastjson.JSON.parseObject(StringUtils.strip(jsonMapStrAutid,"[]"),HashMap.class);
+                    Object isSuccessAutid = jsonMap2Autid.get("IsSuccess");
+                    ifisSuccessAutid=isSuccessAutid==null?false:(boolean)isSuccessAutid;
+                }
+                if(ifisSuccessAutid){
+                    resultCode="200";
+                    resultInfo="单号："+jsonMap2Autid.get("DocNo")+"\n审核成功!";
+                }else{
+                    resultCode="201";
+                    if(null!=jsonMap2Autid){
+                        resultInfo=jsonMap2Autid.get("Msg").toString();
+                    }
+                    if(null==resultInfo){
+                        resultInfo=jsonMapAutdit.toString();
+                    }
+                }
+                break;
+            case "u9erp":
+                Map jsonMapErp= com.alibaba.fastjson.JSON.parseObject(msg,Map.class);
+                String jsonMapStrErp=jsonMapErp.get("d")==null?null:jsonMapErp.get("d").toString();
+                Map jsonMap2Erp=null;
+                boolean ifisSuccessErp=false;
+                if(null!=jsonMapStrErp){
+                    jsonMap2Erp= com.alibaba.fastjson.JSON.parseObject(jsonMapStrErp,HashMap.class);
+                    Object isSuccessErp = jsonMap2Erp.get("IsSuccess")==null?null:jsonMap2Erp.get("IsSuccess");
+                    ifisSuccessErp=isSuccessErp==null?false:(boolean)isSuccessErp;
+                }
+                if(ifisSuccessErp){
+                    resultCode="200";
+                    resultInfo="单号：:"+jsonMap2Erp.get("DocNo")+"\n"+jsonMap2Erp.get("ReTag");
+                    docNo=jsonMap2Erp.get("DocNo").toString();
+                }else{
+                    resultCode="201";
+                    if(null!=jsonMap2Erp){
+                        resultInfo=jsonMap2Erp.get("ReTag").toString();
+                    }
+                    if(null==resultInfo){
+                        resultInfo=jsonMapErp.toString();
+                    }
+                }
+                break;
+            case "u9erpreceiveinspect":
+
+                break;
+            case "u9erpreceiveinspectprocess":
+
+                break;
+            case "u8erp":
+                String text= StringEscapeUtils.unescapeJava(msg);
+                System.out.println(text);
+                Map u8erpMap1= parseJSONstr2Map(text.replaceAll("[\b\r\n\t]*", ""));
+
+                if("200".equals(u8erpMap1.get("code"))){
+                    resultCode=u8erpMap1.get("code").toString();
+                    docID=u8erpMap1.get("VouchId")==null?"":u8erpMap1.get("VouchId").toString();
+                    docNo=u8erpMap1.get("VouchNo")==null?"":u8erpMap1.get("VouchNo").toString();
+                    String message=u8erpMap1.get("message")==null?"":u8erpMap1.get("message").toString();
+                    resultInfo="单号："+docNo+"\n"+message;
+                    List<Map> domMsgs=new ArrayList<>();
+                    domMsg=u8erpMap1.get("dommessage")==null?domMsgs:u8erpMap1.get("dommessage");
+                }else{
+                    resultCode=u8erpMap1.get("code").toString();
+                    resultInfo=u8erpMap1.get("message")==null?"":u8erpMap1.get("message").toString();
+                    List<Map> domMsgs=new ArrayList<>();
+                    domMsg=u8erpMap1.get("dommessage")==null?domMsgs:u8erpMap1.get("dommessage");
+                }
+                break;
+
+        }
+        map.put("resultCode",resultCode);
+        map.put("resultInfo",resultInfo);
+        map.put("resultEst",resultEst);
+        map.put("domMsg",domMsg);
+        map.put("docNo",docNo);
+        map.put("docID",docID);
+        return map;
+    }
+
+    /**
+     * 将json对象转换为HashMap
+     */
+    public static Map<String, Object> parseJSON2Map(JSONObject json) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        // 最外层解析
+        for (Object k : json.keySet()) {
+            Object v = json.get(k);
+            // 如果内层还是json数组的话，继续解析
+            if (v instanceof JSONArray) {
+                List<Map<String, Object>> list = new ArrayList<>();
+                for (Object o : (JSONArray) v) {
+                    JSONObject json2 = (JSONObject) o;
+                    list.add(parseJSON2Map(json2));
+                }
+                map.put(k.toString(), list);
+            } else if (v instanceof JSONObject) {
+                // 如果内层是json对象的话，继续解析
+                map.put(k.toString(), parseJSON2Map((JSONObject) v));
+            } else {
+                // 如果内层是普通对象的话，直接放入map中
+                map.put(k.toString(), v);
+            }
+        }
+        return map;
+    }
+
+    /**
+     * 将json字符串转换为Map
+     */
+    public static Map<String, Object> parseJSONstr2Map(String jsonStr) {
+        JSONObject json = JSONObject.parseObject(jsonStr);
+        return parseJSON2Map(json);
     }
 }

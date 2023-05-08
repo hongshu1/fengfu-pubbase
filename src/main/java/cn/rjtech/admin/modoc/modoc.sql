@@ -70,3 +70,33 @@ SELECT cMoJobSn, iPlanQty, iRealQty, iStatus, dUpdateTime
 FROM dbo.Mo_MoJob
 WHERE iMoDocId = #para(id)
 #end
+
+#sql("getMoworkshiftdByUserAnRegionid")
+SELECT
+	shiftd.*
+FROM
+	Mo_MoDoc doc
+	LEFT JOIN Mo_MoTask task ON doc.iMoTaskId= task.iAutoId
+	LEFT JOIN Mo_MoWorkShiftM shiftm ON shiftm.iMoTaskId= task.iAutoId
+	LEFT JOIN Mo_MoWorkShiftD shiftd ON shiftd.iMoWorkShiftMid= shiftm.iAutoId
+WHERE
+	task.IsDeleted= 0
+	AND task.iStatus = 4
+	AND doc.iStatus IN ( 4, 5, 6, 7 )
+	AND shiftd.iPersonId= ( SELECT iAutoId FROM Bd_Person WHERE cPsn_Num = #para(cpsnnum) )
+	AND doc.iWorkRegionMid= #(iworkregionmid)
+#end
+
+#sql("getMoroutingconfigpersonByUserAnRegionid")
+SELECT
+	person.*
+FROM
+	Mo_MoDoc moc
+	LEFT JOIN Mo_MoRouting ting ON moc.iAutoId = ting.iMoDocId
+	LEFT JOIN Mo_MoRoutingConfig config ON ting.iAutoId = config.iMoRoutingId
+	LEFT JOIN Mo_MoRoutingConfig_Person person ON config.iAutoId = person.iMoRoutingConfigId
+WHERE
+	doc.iStatus IN ( 4, 5, 6, 7 )
+	AND doc.iWorkRegionMid= #(iworkregionmid)
+	AND person.iPersonId= ( SELECT iAutoId FROM Bd_Person WHERE cPsn_Num = #para(cpsnnum) )
+#end
