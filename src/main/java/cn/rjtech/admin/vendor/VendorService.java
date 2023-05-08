@@ -1,52 +1,31 @@
 package cn.rjtech.admin.vendor;
 
-import static cn.hutool.core.text.StrPool.COMMA;
-
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.beust.ah.A;
-import com.google.gson.Gson;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.NotAction;
-import com.jfinal.plugin.activerecord.Page;
-
 import cn.hutool.core.util.ArrayUtil;
-import cn.jbolt._admin.dept.DeptService;
-import cn.jbolt.core.kit.JBoltControllerKit;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
-import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.Dept;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Record;
-import com.spire.ms.System.Collections.ArrayList;
-
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.admin.vendorclass.VendorClassService;
 import cn.rjtech.admin.warehouse.WarehouseService;
-import cn.rjtech.model.momdata.Department;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.Vendor;
-import cn.rjtech.model.momdata.VendorAddr;
-import cn.rjtech.model.momdata.VendorClass;
-import cn.rjtech.model.momdata.Warehouse;
-import cn.rjtech.model.momdata.base.BaseVendorAddr;
+import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Date;
+import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 往来单位-供应商档案
@@ -67,13 +46,13 @@ public class VendorService extends BaseService<Vendor> {
     @Inject
     private VendorClassService vendorClassService;
     @Inject
-    private VendorAddrService  vendorAddrService;
+    private VendorAddrService vendorAddrService;
     @Inject
-    private WarehouseService   warehouseService;
+    private WarehouseService warehouseService;
     @Inject
-    private PersonService      personService;
+    private PersonService personService;
     @Inject
-    private DepartmentService  departmentService;
+    private DepartmentService departmentService;
 
     @Override
     protected int systemLogTargetType() {
@@ -120,12 +99,7 @@ public class VendorService extends BaseService<Vendor> {
         Page<Record> recordPage = dbTemplate("vendor.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
         List<Record> list = recordPage.getList();
         for (Record record : list) {
-            String isource = record.get("isource").toString().trim();
-            if (isource.equals("1")) {
-                record.set("isource", "MES");
-            } else if (isource.equals("0")) {
-                record.set("isource", "U8");
-            }
+            record.set("isource", SourceEnum.toEnum(record.getInt("isource")).getValue());
         }
         return recordPage;
     }
@@ -163,7 +137,7 @@ public class VendorService extends BaseService<Vendor> {
         vendor.setCOrgCode(getOrgCode());//StringUtils.isNotBlank(getOrgCode())?getOrgCode():"999"
         vendor.setIsDeleted(false);
         vendor.setIsEnabled(true);
-        vendor.setISource(1);
+        vendor.setISource(SourceEnum.MES.getValue());
         vendor.setIOMWhId(warehouse.getIAutoId());//委外仓id
         vendor.setCOMWhCode(warehouse.getCWhCode());//委外仓编码
         vendor.setCCountry(StringUtils.isNotBlank(vendor.getCCountry()) ? vendor.getCCountry() : "中国");
@@ -209,7 +183,7 @@ public class VendorService extends BaseService<Vendor> {
 
                 }
                 Record record = vendorClassService.findRecordByCVCCode(vendor.getCVCCode());
-                vendor.setIVendorClassId(record != null ? record.get("iautoid"):new Long(0));
+                vendor.setIVendorClassId(record != null ? record.get("iautoid") : new Long(0));
                 //供应商分类id
                 //表头保存
                 Ret retVendor = save(vendor);
@@ -232,7 +206,7 @@ public class VendorService extends BaseService<Vendor> {
             Vendor vendor1 = findById(vendor.getIAutoId());
             if (!vendor1.getCVenCode().equals(vendor.getCVenCode())) {
                 ValidationUtils
-                    .isTrue(StringUtils.isBlank(findcVenCodeInfo(vendor.getCVenCode())), vendor.getCVenCode() + " 供应商编码不能重复！");
+                        .isTrue(StringUtils.isBlank(findcVenCodeInfo(vendor.getCVenCode())), vendor.getCVenCode() + " 供应商编码不能重复！");
             }
             if (StringUtils.isNotBlank(vendor.getCProvince())) {
                 String[] split = vendor.getCProvince().split(",");
@@ -337,5 +311,5 @@ public class VendorService extends BaseService<Vendor> {
         return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvenname = ?", vendorName);
     }
 
-    
+
 }

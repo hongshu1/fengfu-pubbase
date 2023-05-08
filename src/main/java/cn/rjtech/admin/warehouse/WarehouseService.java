@@ -125,8 +125,7 @@ public class WarehouseService extends BaseService<Warehouse> {
         warehouse.setCOrgCode(getOrgCode());
         warehouse.setCOrgName(getOrgName());
         warehouse.setIOrgId(getOrgId());
-        //TODO 来源1.MES 2.U8  现默认MES
-        warehouse.setISource(1);
+        warehouse.setISource(SourceEnum.MES.getValue());
         //默认未删除
         warehouse.setIsDeleted(false);
         boolean success = warehouse.save();

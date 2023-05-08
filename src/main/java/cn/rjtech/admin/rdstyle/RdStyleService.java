@@ -2,6 +2,7 @@ package cn.rjtech.admin.rdstyle;
 
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.InventoryClass;
 import cn.rjtech.model.momdata.SaleType;
 import cn.rjtech.util.ValidationUtils;
@@ -92,7 +93,7 @@ public class RdStyleService extends BaseService<RdStyle> {
 		Date date = new Date();
 		rdStyle.setDCreateTime(date);	//创建时间
 		rdStyle.setDUpdateTime(date);	//更新时间
-		rdStyle.setISource(1);	//来源 1.MES 2.U8
+        rdStyle.setISource(SourceEnum.MES.getValue());
 		return rdStyle;
 	}
 
