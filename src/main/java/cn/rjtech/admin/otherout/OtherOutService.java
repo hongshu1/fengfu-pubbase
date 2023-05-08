@@ -9,6 +9,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.OtherOut;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 出库管理-特殊领料单列表 Service
  * @ClassName: OtherOutService
@@ -123,6 +127,10 @@ public class OtherOutService extends BaseService<OtherOut> {
 	@Override
 	protected int systemLogTargetType() {
 		return ProjectSystemLogTargetType.NONE.getValue();
+	}
+
+	public List<Record> getAutocompleteData(String q, Integer limit) {
+		return dbTemplate("otherout.getAutocompleteData",Kv.by("q", q).set("limit",limit)).find();
 	}
 
 }
