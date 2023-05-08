@@ -75,7 +75,7 @@
                                 <div class="col-md-auto">
                                     <form id="qcformtableparamForm" method="post" class="form-inline" onsubmit="return false;">
                                         <!-- 工具条 toolbar -->
-                                        <input type="text" hidden name="iqcformid" id="iqcformid" value="#(iautoid??)"/>
+                                        <input type="text" hidden name="iqcformid" id="iqcformid" value="#(qcForm.iAutoId??)"/>
                                         <input type="text" hidden name="qcItemJsonStr" id="qcItemJsonStr" value=""/>
                                         <input type="text" hidden name="qcParamJsonStr" id="qcParamJsonStr" value=""/>
                                         <input type="text" hidden name="qcTableParamJsonStr" id="qcTableParamJsonStr" value=""/>
@@ -85,7 +85,7 @@
                         </div>
 
                         <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
-                            #ajaxPortal("/admin/qcform/table3","qcformtable_portal_" + pageId, true)
+                            #ajaxPortal("/admin/qcform/table3?iqcformid="+'#(qcForm.iautoid??)',"qcformtable_portal_" + pageId, true)
                         </div>
 
                     </div>
@@ -147,13 +147,23 @@
                 return;
             }
 
-
             var tableData = getTableData();
+            debugger;
             if (!tableData || tableData.length ==0){
                 LayerMsgBox.alert("表格录入方式数据不能为空",2);
                 return;
             }
 
+            var seq = new Number(0);
+            for(let i in tableData){
+                let rowdata = tableData[i];
+                if (!rowdata.itype){
+                    LayerMsgBox.alert("参数录入方式不能为空",2);
+                    return;
+                }
+                seq+= new Number(10);
+                rowdata['iseq'] = seq;
+            }
             // 表体的值
             var formData1 = formToJson('#QcFormForm');
             var formData2 = formToJson('#QcFormForm_2');
@@ -305,8 +315,8 @@
                 setTableJsonStr();
             }
         }
-
     }
+
     function updateItemParamSeq(isRefresh){
         var datas = jboltTableGetAllDatas('#jbolt_table_qcformparam_split');
         if (isNotEmpty(datas)){
@@ -365,6 +375,25 @@
             }
         }
         return array
+    }
+
+    function itemTableSort() {
+        var tableData = getTableData();
+        if (isEmpty(tableData)){
+            return tableData
+        }
+        const len = tableData.length
+        if (len < 2) return tableData
+
+        for (let i = 0; i < len; i++) {
+            for (let j = 0; j < i; j++) {
+                if (tableData[j]['iitemparamseq'] > tableData[i]['iitemparamseq']) {
+                    const temp = tableData[j]
+                    tableData[j] = tableData[i]
+                    tableData[i] = temp
+                }
+            }
+        }
     }
 
     // 将所有表格数据转为JSON
@@ -477,7 +506,6 @@
                     if(!success){
                         return false;
                     }
-                    debugger;
                     //如果是在表格里触发的
                     if(isOk(action.closest("table[data-jbolttable]"))){
                         tr = action.closest("tr");

@@ -1,14 +1,23 @@
 package cn.rjtech.admin.qcformtableitem;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.QcFormTableItem;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 质量建模-检验表格行记录
  * @ClassName: QcFormTableItemService
@@ -102,6 +111,51 @@ public class QcFormTableItemService extends BaseService<QcFormTableItem> {
 	public String checkInUse(QcFormTableItem qcFormTableItem, Kv kv) {
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
+	}
+	
+	public QcFormTableItem createQcFormTableItem(Long id, Long qcFormId, Long qcFormItemId, Long qcFormParamId, Long qcFormTableParamId){
+		QcFormTableItem qcFormTableItem = new QcFormTableItem();
+		if (ObjectUtil.isNull(id)){
+			id = JBoltSnowflakeKit.me.nextId();
+		}
+		qcFormTableItem.setIAutoId(id);
+		qcFormTableItem.setIQCFormId(qcFormId);
+		qcFormTableItem.setIQcFormItemId(qcFormItemId);
+		qcFormTableItem.setIQcFormParamId(qcFormParamId);
+		qcFormTableItem.setIQcFormTableParamId(qcFormTableParamId);
+		return qcFormTableItem;
+	}
+	
+	public List<QcFormTableItem> createQcFormTableItemList(Long qcFormId, JSONArray jsonArray){
+		if (CollectionUtil.isEmpty(jsonArray)){
+			return null;
+		}
+		List<QcFormTableItem> qcFormTableItemList = new ArrayList<>();
+		//
+		for (Object obj : jsonArray){
+			JSONObject jsonObject = (JSONObject)obj;
+			for (String key :jsonObject.keySet()){
+				if (NumberUtil.isNumber(key)){
+					long id = NumberUtil.parseLong(key);
+					QcFormTableItem qcFormTableItem = createQcFormTableItem(
+							null,
+							qcFormId,
+							id,
+							jsonObject.getLong(key),
+							jsonObject.getLong(QcFormTableItem.IQCFORMTABLEPARAMID.toLowerCase()));
+					qcFormTableItemList.add(qcFormTableItem);
+				}
+			}
+		}
+		return qcFormTableItemList;
+	}
+	
+	public void removeByQcFormId(Long formId){
+		delete("DELETE Bd_QcFormTableItem WHERE iQCFormId = ?", formId);
+	}
+	
+	public List<QcFormTableItem> findByFormId(Long formId){
+		return find("SELECT * FROM Bd_QcFormTableItem WHERE iQcFormId = ?", formId);
 	}
 
 }

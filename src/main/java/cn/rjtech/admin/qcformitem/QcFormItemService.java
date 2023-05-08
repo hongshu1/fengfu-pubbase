@@ -275,10 +275,18 @@ public class QcFormItemService extends BaseService<QcFormItem> {
 		List<QcFormItem> list = new ArrayList<>();
 		for (Object obj : formItemArray){
 			JSONObject jsonObject = (JSONObject)obj;
-			QcFormItem qcFormItem = createQcFormItem(jsonObject.getLong(QcFormItem.IAUTOID.toLowerCase()), qcFormId, jsonObject.getLong(QcFormItem.IQCITEMID.toLowerCase()),
-					jsonObject.getInteger(QcFormItem.IAUTOID.toLowerCase()), isDelete);
+			QcFormItem qcFormItem = createQcFormItem(
+					jsonObject.getLong(QcFormItem.IAUTOID.toLowerCase()),
+					qcFormId,
+					jsonObject.getLong(QcFormItem.IQCITEMID.toLowerCase()),
+					jsonObject.getInteger(QcFormItem.ISEQ.toLowerCase()),
+					isDelete);
 			list.add(qcFormItem);
 		}
 		return list;
+	}
+	
+	public void removeByQcFormId(Long formId){
+		delete("DELETE Bd_QcFormItem WHERE iQCFormId = ?", formId);
 	}
 }

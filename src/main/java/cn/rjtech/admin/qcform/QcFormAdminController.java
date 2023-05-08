@@ -1,9 +1,12 @@
 package cn.rjtech.admin.qcform;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.rjtech.admin.qcformtableparam.QcFormTableParamService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.QcForm;
 import cn.rjtech.model.momdata.QcParam;
@@ -36,6 +39,8 @@ public class QcFormAdminController extends BaseAdminController {
 
     @Inject
     private QcFormService service;
+    @Inject
+    private QcFormTableParamService qcFormTableParamService;
 
     /**
      * 首页
@@ -205,7 +210,7 @@ public class QcFormAdminController extends BaseAdminController {
     public void table3(@Para(value = "qcItemJsonStr") String itemJsonStr,
                        @Para(value = "qcParamJsonStr") String itemParamJsonStr,
                        @Para(value = "qcTableParamJsonStr") String tableParamJsonStr,
-                       @Para(value = "iqcformid") String formId){
+                       @Para(value = "iqcformid") Long formId){
         // 表头项目
         if (StrUtil.isNotBlank(itemJsonStr)){
             JSONArray jsonArray = JSONObject.parseArray(itemJsonStr);
@@ -233,13 +238,16 @@ public class QcFormAdminController extends BaseAdminController {
          *  3.默认加载时，是没有数据操作的，直接读取数据
          */
         // 判断是否有新增的值
-       if (StrUtil.isNotBlank(formId) && StrUtil.isBlank(tableParamJsonStr) ){
+       if (ObjectUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
             // 查询
-            set("dataList", "");
+           List<Record> recordList = qcFormTableParamService.findByFormId(formId);
+           set("dataList", recordList);
+           
+           
         }else if(StrUtil.isNotBlank(tableParamJsonStr)){
             JSONArray jsonArray = JSONObject.parseArray(tableParamJsonStr);
             if (!jsonArray.isEmpty()){
-                set("dataList", tableParamJsonStr);
+                set("dataList", jsonArray);
             }
         }
         render("_table3.html");

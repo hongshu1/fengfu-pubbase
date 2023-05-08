@@ -4,9 +4,13 @@
     {@each datas as data,index}
     <tr data-id="${data.iautoid}">
         {@if pageSize&&pageSize>0}
-        <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
+        <td>
+            ${((pageNumber-1)*pageSize)+(+index+1)}
+        </td>
         {@else}
-        <td>${+index+1}</td>
+        <td>
+            ${+index+1}
+        </td>
         {@/if}
         #for(item:columns??)
         <td>
@@ -23,7 +27,7 @@
         </td>
         <td>
             <select class="form-control" data-url="admin/dictionary/options?key=rcvDocQcFormd_itype" name="itype" data-autoload
-                    data-text="=请选择=" data-value-attr="sn"  data-value="" data-select="${data.itype}"></select>
+                    data-text="=请选择=" data-value-attr="sn" data-select="${data.itype}"></select>
         </td>
         <td>
             <input type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="false"  maxlength="10" name="istdval" value="${data.istdval}">
@@ -88,7 +92,9 @@
     <tbody>
         #for(data:dataList??)
         <tr data-id="#(data.iautoid??)">
-            <td>#(for.count)</td>
+            <td>
+                #(for.count)
+            </td>
             #for(item:columns??)
             <td>
                 #set(flag = true)
@@ -97,7 +103,7 @@
                     #for(va : item.compares)
                         #if(data)
                             #for(map:data)
-                                #if(item.iqcitemid == map.key)
+                                #if(item.iqcitemid == map.key??)
                                     #if( map.value == va.iqcparamid)
                                             #set(flag = false)
                                         <option selected value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
@@ -106,9 +112,9 @@
                                     #end
                                 #end
                             #end
-                            #if(flag)
-                                <option value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
-                            #end
+                    ###if(flag)
+                    ###<option value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
+                    ###end
                         #else
                              <option value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
                         #end
@@ -121,8 +127,8 @@
                 <input type="text" autocomplete="off"  class="form-control" name="iseq" value="#(data.iseq??)">
             </td>
             <td>
-                <select class="form-control" data-url="admin/dictionary/options?key=rcvDocQcFormd_itype" name="itype" data-autoload data-rule="required"
-                        data-text="=请选择=" data-value-attr="sn"  data-value="" data-select="#(data.itype??)"></select>
+                <select class="form-control" name="itype" data-url="admin/dictionary/options?key=rcvDocQcFormd_itype" data-autoload data-rule="required"
+                        data-text="=请选择=" data-value-attr="sn" data-select="#(data.itype??)"></select>
             </td>
             <td>
                 <input type="text" autocomplete="off"  class="form-control" data-rule="number" data-notnull="false"  maxlength="10" name="istdval" value="#(data.istdval??)">
