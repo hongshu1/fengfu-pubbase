@@ -5,6 +5,7 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
+import cn.rjtech.entity.vo.instockqcformm.GetExportExcelVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.*;
 import cn.rjtech.util.ValidationUtils;
 
@@ -176,8 +177,20 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     /*
      * 自动加载图片
      * */
+    @ApiDoc
+    @UnCheck
     public void uploadImage() {
         renderJBoltApiRet(apiService.uploadImage(getFiles(
             ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+    }
+
+    /*
+     * 导出详情页
+     * */
+    @ApiDoc(GetExportExcelVo.class)
+    @UnCheck
+    public void exportExcel(@Para(value = "iauoid") Long iauoid){
+        ValidationUtils.notNull(iauoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.getExportData(iauoid));
     }
 }

@@ -11,5 +11,14 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Mo_MoTask" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class MoMotask extends BaseMoMotask<MoMotask> {
+    private String deptname;
+
+    public String getDeptname() {
+        return deptname;
+    }
+
+    public void setDeptname(String deptname) {
+        this.deptname = deptname;
+    }
 }
 

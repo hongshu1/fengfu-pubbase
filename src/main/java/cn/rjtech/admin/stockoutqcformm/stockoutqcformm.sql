@@ -97,14 +97,15 @@ SELECT t1.* ,
        t2.cValue,
        t5.cQcParamName,
        t6.cQcItemName
-FROM  PL_InStockQcFormD t1
-          LEFT JOIN PL_InStockQcFormD_Line t2 ON t1.iAutoId = t2.iInStockQcFormDid
+FROM  PL_StockoutQcFormD t1
+          LEFT JOIN PL_StockoutQcFormD_Line t2 ON t1.iAutoId = t2.iStockoutQcFormDid
           LEFT JOIN Bd_QcFormTableItem t3 ON t1.iFormParamId = t3.iAutoId
           LEFT JOIN Bd_QcFormParam t4 ON t3.iQcFormParamId = t4.iAutoId
           LEFT JOIN Bd_QcParam t5 ON t4.iQcParamId = t5.iAutoId
           LEFT JOIN Bd_QcItem t6 ON t5.iQcItemId = t6.iAutoId
 WHERE
-  #if(iautoid)
-  AND t1.iautoid = #para(iautoid)
+  #if(istockoutqcformmid)
+  t1.istockoutqcformmid = #para(istockoutqcformmid)
 #end
+ORDER BY t1.iSeq asc
 #end

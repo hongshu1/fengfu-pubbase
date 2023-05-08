@@ -44,10 +44,10 @@ public class CusOrderResultService extends CusOrderSumService {
         }
         return paginate;
     }
-    //获得当前月份第一天和最后一天
+
 
     /**
-     *
+     *获得当前月份第一天和最后一天
      * @return kv.startdate  kv.startdate
      */
     public static Kv  getBeginEndDate() {
@@ -84,18 +84,18 @@ public class CusOrderResultService extends CusOrderSumService {
     }
 
     public static void main(String[] args) {
-
-        List<String> list1 = Arrays.asList("A1", "A2", "A3");
-        List<String> list2 = Arrays.asList("B1", "B2", "B3");
-        List<String> list3 = Arrays.asList("C1", "C2", "C3");
-        List<List<String>> lists = new ArrayList<>();
-        lists.add(list1);
-        lists.add(list2);
-        lists.add(list3);
-
-        Inventory inventory = new Inventory();
-        Map map = addInventory("code1", "customer1", lists);
-
-        System.out.println(map.toString());
+        System.out.println(ScheduProductPlanMonthService.getBetweenDate("2023-1-4", "2023-3-8"));
+        //List<String> list1 = Arrays.asList("A1", "A2", "A3");
+        //List<String> list2 = Arrays.asList("B1", "B2", "B3");
+        //List<String> list3 = Arrays.asList("C1", "C2", "C3");
+        //List<List<String>> lists = new ArrayList<>();
+        //lists.add(list1);
+        //lists.add(list2);
+        //lists.add(list3);
+        //
+        //Inventory inventory = new Inventory();
+        //Map map = addInventory("code1", "customer1", lists);
+        //
+        //System.out.println(map.toString());
     }
 }
