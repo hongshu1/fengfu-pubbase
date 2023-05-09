@@ -1,22 +1,20 @@
 package cn.rjtech.admin.momotask;
 
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.JBoltDictionaryService;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
-import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.MoMotask;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.MoMotask;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
@@ -104,12 +102,11 @@ public class MoMotaskService extends BaseService<MoMotask> {
 	 *编辑人员页面列表
 	 */
 	public Page<Record> findDoc(int pageNumber, int pageSize,Long iAutoId) {
-		Page<Record> moMotaskPage = dbTemplate("modocbatch.getPersonPage",new Kv().set("iAutoId",iAutoId)).paginate(pageNumber,pageSize);
-		return moMotaskPage;
+        return dbTemplate("modocbatch.getPersonPage",Okv.by("iAutoId",iAutoId)).paginate(pageNumber,pageSize);
 	}
 
 	public List<Record> findRoutingConfig(String docId) {
-		return dbTemplate("modocbatch,findRoutingConfig",new Kv().set("docId",docId)).find();
+		return dbTemplate("modocbatch.findRoutingConfig",Okv.by("docId",docId)).find();
 	}
 
 	/**
