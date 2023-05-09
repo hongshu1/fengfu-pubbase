@@ -99,9 +99,12 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
             return;
         }
 
-        FormField formField = formFieldService.findById(cusFieldsMappingD.getIFormFieldId());
-        ValidationUtils.notNull(formField, "表单字段不存在");
-        ValidationUtils.isTrue(!formField.getIsDeleted(), "表单字段已被删除");
+        if (ObjUtil.isNotNull(cusFieldsMappingD.getIFormFieldId())) {
+            FormField formField = formFieldService.findById(cusFieldsMappingD.getIFormFieldId());
+            ValidationUtils.notNull(formField, "表单字段不存在");
+            ValidationUtils.isTrue(!formField.getIsDeleted(), "表单字段已被删除");
+            set("formField", formField);
+        }
         
         CusFieldsMappingM m = cusFieldsMappingMService.findById(cusFieldsMappingD.getICusFieldsMappingMid());
         ValidationUtils.notNull(m, "映射字段配置记录不存在");
@@ -112,7 +115,6 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
         set("cusfieldsmappingm", m);
         set("cusFieldsMappingD", cusFieldsMappingD);
         set("iformids", iformids);
-        set("formField", formField);
         set("cformnames", CollUtil.join(formService.getNamesByIformids(iformids), COMMA));
         render("edit.html");
     }
@@ -167,15 +169,29 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
     /**
      * 定制规则
      */
-    public void rule(@Para(value = "icusfieldsmappingdid") Long icusfieldsmappingdid) {
-        if (ObjUtil.isNotNull(icusfieldsmappingdid)) {
-            CusFieldsMappingD d = service.findById(icusfieldsmappingdid);
-            ValidationUtils.notNull(d, JBoltMsg.DATA_NOT_EXIST);
-
-            set("cusFieldsMappingD", d);
-        }
+    public void rule(@Para(value = "icusfieldsmappingdid") Long icusfieldsmappingdid,
+                     @Para(value = "icusfieldsmappingmid") Long icusfieldsmappingmid) {
+        ValidationUtils.validateId(icusfieldsmappingmid, JBoltMsg.PARAM_ERROR);
         
+        if (ObjUtil.isNotNull(icusfieldsmappingdid)) {
+            CusFieldsMappingD cusFieldsMappingD = service.findById(icusfieldsmappingdid);
+            ValidationUtils.notNull(cusFieldsMappingD, JBoltMsg.DATA_NOT_EXIST);
+
+            if (ObjUtil.isNotNull(cusFieldsMappingD.getIFormFieldId())) {
+                FormField formField = formFieldService.findById(cusFieldsMappingD.getIFormFieldId());
+                ValidationUtils.notNull(formField, "表单字段不存在");
+                ValidationUtils.isTrue(!formField.getIsDeleted(), "表单字段已被删除");
+                set("formField", formField);
+            }
+
+            set("cusFieldsMappingD", cusFieldsMappingD);
+        }
+
         keepPara();
+        
+        List<Long> iformids = cusfieldsmappingFormService.getIformIdsByMid(icusfieldsmappingmid);
+        set("iformids", iformids);
+        set("cformnames", CollUtil.join(formService.getNamesByIformids(iformids), COMMA));
         render("rule.html");
     }
     

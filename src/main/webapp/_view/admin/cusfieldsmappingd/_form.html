@@ -22,52 +22,27 @@
                     <input type="text" value="#(cformnames)" disabled/>
                 </div>
             </div>
-            
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">系统字段名称</label>
-                <div class="col-10">
-                    <input type="hidden" name="cusFieldsMappingD.iFormFieldId" value="#(cusFieldsMappingD.iFormFieldId??)" id="iFormFieldId" data-sync-attr="iautoid"/>
 
-                    <input type="text" class="form-control"
-                           data-autocomplete
-                           data-url="admin/formfield/autocomplete?iformid=#(iformids[0])"
-                           data-rule="required"
-                           data-sync-ele="#iFormFieldId"
-                           data-text-attr="cfieldname"
-                           data-column-attr="cfieldcode,cfieldname"
-                           placeholder="请选择系统字段"
-                           data-tips="请选择系统字段"
-                           data-header="字段编码,字段名称"
-                           maxlength="40"
-                           value="#(formField.cfieldname??)">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">定制规则</label>
+                <div class="col-10">
+                    <select class="form-control"
+                            data-rule="select"
+                            name="cusFieldsMappingD.iruletype"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=cusmappingd_rule_type"
+                            data-select-type="select"
+                            ###data-text="=定制规则="
+                            data-select="#(cusFieldsMappingD.iruletype??)"
+                            data-value-attr="sn"
+                            data-text-attr="name"
+                            data-handler="changeIruleType_#(pageId)"
+                    ></select>
                 </div>
             </div>
 
-            <div class="form-group row"
-                 data-radio
-                 data-name="cusFieldsMappingD.isEncoded"
-                 data-value-attr="sn"
-                 data-default="options_first"
-                 data-url="admin/dictionary/options?key=options_boolean"
-                 data-label="是否编码字段"
-                 data-width="col-sm-2,col-10"
-                 data-value="#(cusFieldsMappingD.isEncoded??)"
-                 data-rule="radio"
-                 data-notnull="true"
-                 data-tips="请输入是否编码字段"
-                 data-handler="changeIsEncoded_#(pageId)"
-                 data-inline="true">
-            </div>
+            #ajaxPortal("/admin/cusfieldsmappingd/rule?icusfieldsmappingdid=" + (cusFieldsMappingD.iautoid??'') + '&icusfieldsmappingmid=' + (cusFieldsMappingD.iCusFieldsMappingMid??) + '&pageId=' + pageId + '&iruletype=' + (cusFieldsMappingD.iruletype??1), "cusfieldmappingd_tportal_" + pageId, true)
 
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">导入字段名称</label>
-                <div class="col-10">
-                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入导入字段名称" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入导入字段名称" maxlength="40" name="cusFieldsMappingD.cCusFieldName" value="#(cusFieldsMappingD.cCusFieldName??)"/>
-                </div>
-            </div>
-
-            #ajaxPortal("/admin/cusfieldsmappingd/codingrule?icusfieldsmappingdid=" + (cusFieldsMappingD.iautoid??) + "&isencoded=" + (cusFieldsMappingD.isencoded??'1' == '1'),"cusfieldmappingd_portal_" + pageId, true)
-            
             <div class="form-group row"
                  data-radio
                  data-name="cusFieldsMappingD.isEnabled"
@@ -83,14 +58,45 @@
                  data-inline="true"
             >
             </div>
+            
         </div>
     </div>
 </form>
 
 #define js()
+#include("_coding_rule_js.html")
+###include("/_view/_admin/common/_formjs.html", formId="CusFieldsMappingD_Form")
 <script>
+    
+    function submitThisForm() {
+        var formData = formToJson($('#CusFieldsMappingD_Form'));
 
-    console.log('formfield:  #json(formField)');
+        var iruletype = formData['cusFieldsMappingD.iruletype'];
+        var isEncoded = formData['cusFieldsMappingD.isEncoded'];
+        
+        // 定制 || 非编码字段
+        if (parseInt(iruletype) > 1 || isEncoded === '0') {
+            ajaxSubmitForm('#CusFieldsMappingD_Form', function (ret) {
+                parent.refreshPjaxContainer();
+                location.href = '/admin/cusfieldsmappingd/edit/' + ret.data.iautoid + '-_jb_rqtype_dialog';
+            });
+        } else {
+            $('#mapping_coding_rule_btn').click();
+        }
+    }
+
+    var typeLoaded = false;
+
+    function changeIruleType_#(pageId)(r, v) {
+        if (!typeLoaded) {
+            typeLoaded = true;
+            return;
+        }
+
+        if (typeLoaded) {
+            AjaxPortalUtil.go("cusfieldmappingd_tportal_#(pageId)", '/admin/cusfieldsmappingd/rule?pageId=#(pageId)&icusfieldsmappingdid=#(cusFieldsMappingD.iautoid)&icusfieldsmappingmid=#(cusFieldsMappingD.iCusFieldsMappingMid??)&iruletype=' + $(r).val());
+        }
+    }
     
     var loaded = false;
 
@@ -111,7 +117,6 @@
         cseparatorMap = data;
         console.log(cseparatorMap);
     });
-    
 </script>
 #end
 
