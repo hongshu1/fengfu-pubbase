@@ -315,11 +315,41 @@
 
 <script>
   /*
-* @desc：新增行
-* @param：rows:行数
-* */
+ * @desc：新增行
+ * @param：rows:行数
+ * */
   function inserRow(rows) {
-    alert("测试");
+    let jboltTableAllDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
+    for (let i = 0; i < jboltTableAllDatas.length; i++) {
+      let cvaluelist = jboltTableAllDatas[i].cvaluelist;
+      let element = cvaluelist[0];
+      //给cvaluelist添加10列
+      let cvalueLength = cvaluelist.length;
+      for (let arr = 0; arr < 10; arr++) {
+        var cvalue={
+          coptions: element.coptions,
+          cqcitemname: element.cqcitemname,
+          cqcparamname: element.cqcparamname,
+          cvalue: "",
+          iautoid: "",
+          iformparamid: element.iformparamid,
+          iinstockqcformmid: element.iinstockqcformmid,
+          imaxval: element.imaxval,
+          iminval: element.iminval,
+          iqcformid: element.iqcformid,
+          iseq: element.iseq,
+          istdval: element.istdval,
+          isubseq: element.isubseq,
+          itype: element.itype,
+          lineiautoid: "",
+          name: "cA"+cvalueLength+1
+        };
+        cvaluelist.push(cvalue);
+      }
+      // jboltTableAllDatas[i].cvaluelist = cvaluelist;
+      console.log("===========cvaluelist============="+cvaluelist);
+    }
+    console.log("===========测试=============");
   }
 </script>
 
@@ -392,7 +422,7 @@
       cdcno: cdcno,
       isok: isok,
       instockqcformmiautoid: iautoid
-    }
+    };
     Ajax.post("admin/instockqcformm/saveEditTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {

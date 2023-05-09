@@ -94,7 +94,7 @@ public class VendorAdminController extends BaseAdminController {
 		String addr = vendor.getCProvince()+","+vendor.getCCity()+","+vendor.getCCounty();
 		vendor.setCProvince(addr);
 		set("vendor",vendor);
-		set("vendoraddr",list.get(0));
+		set("vendoraddr",!list.isEmpty()?list.get(0):"");
 		render("edit.html");
 	}
 
