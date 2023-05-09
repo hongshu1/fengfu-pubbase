@@ -44,6 +44,7 @@ SELECT
 	t1.cQcParamName AS cqcparamnames,
 	t1.iAutoId AS iqcparamid,
 	t3.iItemSeq,
+	t3.iItemParamSeq,
 	t1.*
 FROM
 	Bd_QcParam t1

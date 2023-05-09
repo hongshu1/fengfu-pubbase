@@ -212,24 +212,8 @@ public class QcFormAdminController extends BaseAdminController {
                        @Para(value = "qcTableParamJsonStr") String tableParamJsonStr,
                        @Para(value = "iqcformid") Long formId){
         // 表头项目
-        if (StrUtil.isNotBlank(itemJsonStr)){
-            JSONArray jsonArray = JSONObject.parseArray(itemJsonStr);
-            // 标题选择值
-            if (StrUtil.isNotBlank(itemParamJsonStr)){
-                JSONArray itemParamJsonArray = JSONObject.parseArray(itemParamJsonStr);
-               
-                Map<Long, List<Object>> itemParamMap = itemParamJsonArray.stream().filter(item -> StrUtil.isNotBlank(((JSONObject)item).getString("iqcitemid"))).collect(Collectors.groupingBy(obj -> ((JSONObject) obj).getLong("iqcitemid")));
-                for (int i=0; i<jsonArray.size(); i++){
-                    JSONObject item = jsonArray.getJSONObject(i);
-                    Long qcItemId = item.getLong("iqcitemid");
-                    if (itemParamMap.containsKey(qcItemId)){
-                        item.put("compares", itemParamMap.get(qcItemId));
-                    }
-                }
-            }
-            jsonArray.sort(Comparator.comparing(obj -> ((JSONObject)obj).getInteger("iseq")));
-            set("columns", jsonArray);
-        }
+        List tableHeadData = service.getTableHeadData(formId, itemJsonStr, itemParamJsonStr);
+        set("columns", tableHeadData);
     
         /**
          * 三种情况
@@ -239,11 +223,10 @@ public class QcFormAdminController extends BaseAdminController {
          */
         // 判断是否有新增的值
        if (ObjectUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
-            // 查询
-           List<Record> recordList = qcFormTableParamService.findByFormId(formId);
+            // 查询表格行记录
+           List<Map<String, Object>> recordList = qcFormTableParamService.findByFormId(formId);
+           // 查询表头数据及参数数据
            set("dataList", recordList);
-           
-           
         }else if(StrUtil.isNotBlank(tableParamJsonStr)){
             JSONArray jsonArray = JSONObject.parseArray(tableParamJsonStr);
             if (!jsonArray.isEmpty()){

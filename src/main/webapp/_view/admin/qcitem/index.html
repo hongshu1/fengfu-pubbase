@@ -68,6 +68,7 @@
 
     </div>
     <table class="jbolt_table jbolt_main_table  table-center "
+           id="chooseDataTable_#(pageId)"
            data-jbolttable
            data-height="fill"
            data-ajax="true"
@@ -98,5 +99,17 @@
 
 #define js()
 <script type="text/javascript">
+  function submitThisForm(callback){
+    var data=getJboltTableCheckedData("chooseDataTable_#(pageId)");
+    console.log('data===>',data);
+    if(data){
+      // LayerMsgBox.confirm("确认选择此数据?",function(){
+      parent.setChooseDialogSelectResultFromData(data);
+      if(callback){
+        callback();
+      }
+      // });
+    }
+  }
 </script>
 #end

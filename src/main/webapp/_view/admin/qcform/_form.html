@@ -85,7 +85,7 @@
                         </div>
 
                         <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
-                            #ajaxPortal("/admin/qcform/table3?iqcformid="+'#(qcForm.iautoid??)',"qcformtable_portal_" + pageId, true)
+                            #ajaxPortal("/admin/qcform/table3?iqcformid="+qcForm.iAutoId,"qcformtable_portal_" + pageId, true)
                         </div>
 
                     </div>
@@ -99,9 +99,9 @@
         <div class="col">
 
             <div class="form-group row">
-                <label class="col-sm-1 col-form-label">是否启用</label>
+                <label class="col-sm-1 col-form-label">是否启用#(qcForm.isenabled??)</label>
                 <div class="col-10">
-                    <input hidden name="isEffective" id="isEnabled_#(pageId)" value="#(qcForm.isenabled??'1'=='1'?true:false)">
+                    <input hidden name="isEnabled" id="isEnabled_#(pageId)" value="#(qcForm.isenabled??'1'=='1'?true:false)">
                     <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(qcForm.isenabled??'1'=='1'?true:false)"/>
                 </div>
             </div>
@@ -148,7 +148,7 @@
             }
 
             var tableData = getTableData();
-            debugger;
+
             if (!tableData || tableData.length ==0){
                 LayerMsgBox.alert("表格录入方式数据不能为空",2);
                 return;

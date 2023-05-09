@@ -1,8 +1,10 @@
 package cn.rjtech.admin.qcform;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -16,6 +18,7 @@ import cn.rjtech.admin.qcformtableitem.QcFormTableItemService;
 import cn.rjtech.admin.qcformtableparam.QcFormTableParamService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -25,9 +28,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -476,4 +477,64 @@ public class QcFormService extends BaseService<QcForm> {
         qcFormTableItemService.removeByQcFormId(id);
     }
     
+    public List<Map<String, Object>> getTableHeadData(Long formId, String itemJsonStr, String itemParamJsonStr) {
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        if (StrUtil.isNotBlank(itemJsonStr)){
+            JSONArray jsonArray = JSONObject.parseArray(itemJsonStr);
+            // 标题选择值
+            if (StrUtil.isNotBlank(itemParamJsonStr)){
+                JSONArray itemParamJsonArray = JSONObject.parseArray(itemParamJsonStr);
+            
+//                Map<String, List<JSONObject>> itemParamMap = itemParamJsonArray.stream().filter(item -> StrUtil.isNotBlank(((JSONObject)item).getString("iqcitemid"))).collect(Collectors.groupingBy(obj -> ((JSONObject) obj).getString("iqcitemid")));
+                for (int i=0; i<jsonArray.size(); i++){
+                    JSONObject item = jsonArray.getJSONObject(i);
+                    String qcItemId = item.getString("iqcitemid");
+                    
+                    boolean flag = false;
+                    List<Map<String, Object>> itemParamList = new ArrayList<>();
+                    for (Object object :itemParamJsonArray){
+                       JSONObject itemParamJson = (JSONObject)object;
+                        if (qcItemId.equals(itemParamJson.getString("iqcitemid"))){
+                            flag = true;
+                            itemParamList.add(itemParamJson.getInnerMap());
+                        }
+                    }
+//                    if (itemParamMap.containsKey(qcItemId)){
+//                        List<Map<String, Object>> objects =(List<Map<String, Object>>) itemParamMap.get(qcItemId);
+//                        item.put("compares", objects);
+//                    }
+                    if (flag){
+                        item.put("compares", itemParamList);
+                    }
+                    mapList.add(item.getInnerMap());
+                }
+            }
+            mapList.sort(Comparator.comparing(obj -> ((JSONObject)obj).getInteger("iseq")));
+            
+        }else if (ObjectUtil.isNotNull(formId)){
+            List<Record> qcFormItemList = getItemCombinedListByPId(Kv.by("iqcformid", formId));
+            List<Record> qcFormParamList = qcFormParamService.getQcFormParamListByPId(formId);
+            Map<Long, List<Record>> itemParamByItemMap = qcFormParamList.stream().collect(Collectors.groupingBy(obj -> obj.getLong("iqcitemid")));
+            for (Record qcFormItemRecord : qcFormItemList){
+                Long qcItemId = qcFormItemRecord.getLong("iqcitemid");
+                if (itemParamByItemMap.containsKey(qcItemId)){
+                    List<Record> list = itemParamByItemMap.get(qcItemId);
+                    List<Map<String, Object>> maps = new ArrayList<>();
+                    
+                    for (Record itemRecord : list){
+                        maps.add(itemRecord.getColumns());
+                    }
+                    qcFormItemRecord.set("compares", maps);
+                }
+                mapList.add(qcFormItemRecord.getColumns());
+            }
+        }
+        
+        if (CollectionUtil.isNotEmpty(mapList)){
+            
+            
+            return mapList;
+        }
+        return null;
+    }
 }
