@@ -1,17 +1,5 @@
 package cn.rjtech.admin.annualorderm;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import cn.rjtech.admin.cusordersum.CusOrderSumService;
-import com.jfinal.aop.Inject;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -22,11 +10,25 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.annualorderd.AnnualOrderDService;
 import cn.rjtech.admin.annualorderdqty.AnnualorderdQtyService;
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AnnualOrderStatusEnum;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.AnnualOrderD;
 import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.AnnualorderdQty;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 年度计划订单
@@ -42,8 +44,9 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
     @Inject
     private AnnualorderdQtyService annualorderdQtyService;
 
-	@Inject
-	private CusOrderSumService cusOrderSumService;
+    @Inject
+    private CusOrderSumService cusOrderSumService;
+
     @Override
     protected AnnualOrderM dao() {
         return dao;
@@ -53,13 +56,14 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
+
     /**
      * 后台管理数据查询
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
-    	para.set("iorgid",getOrgId());
-    	Page<Record> pageList = dbTemplate("annualorderm.paginateAdminDatas",para).paginate(pageNumber, pageSize);
-    	return pageList;
+        para.set("iorgid", getOrgId());
+        Page<Record> pageList = dbTemplate("annualorderm.paginateAdminDatas", para).paginate(pageNumber, pageSize);
+        return pageList;
     }
 
     /**
@@ -80,12 +84,14 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         }
         return ret(success);
     }
-	/**
-	 * 删除
-	 */
-	public Ret delete(Long id) {
-		return updateColumn(id, "isdeleted", true);
-	}
+
+    /**
+     * 删除
+     */
+    public Ret delete(Long id) {
+        return updateColumn(id, "isdeleted", true);
+    }
+
     /**
      * 更新
      *
@@ -143,124 +149,137 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      * @return
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-    	AnnualOrderM annualOrderM = jBoltTable.getFormModel(AnnualOrderM.class,"annualOrderM");
-    	User user = JBoltUserKit.getUser();
-    	Date now = new Date();
-    	tx(()->{
-	    	if(annualOrderM.getIAutoId() == null){
-		    	annualOrderM.setIOrgId(getOrgId());
-		    	annualOrderM.setCOrgCode(getOrgCode());
-		    	annualOrderM.setCOrgName(getOrgName());
-		    	annualOrderM.setICreateBy(user.getId());
-		    	annualOrderM.setCCreateName(user.getName());
-		    	annualOrderM.setDCreateTime(now);
-		    	annualOrderM.setIUpdateBy(user.getId());
-		    	annualOrderM.setCUpdateName(user.getName());
-		    	annualOrderM.setDUpdateTime(now);
-		    	ValidationUtils.isTrue(annualOrderM.save(), ErrorMsg.SAVE_FAILED);
-	    	}else{
-	    		annualOrderM.setIUpdateBy(user.getId());
-		    	annualOrderM.setCUpdateName(user.getName());
-		    	annualOrderM.setDUpdateTime(now);
-		    	ValidationUtils.isTrue(annualOrderM.update(), ErrorMsg.UPDATE_FAILED);
-	    	}
-	    	saveTableSubmitDatas(jBoltTable,annualOrderM);
-	    	updateTableSubmitDatas(jBoltTable,annualOrderM);
-	    	deleteTableSubmitDatas(jBoltTable);
-	    	return true;
-    	});
+        AnnualOrderM annualOrderM = jBoltTable.getFormModel(AnnualOrderM.class, "annualOrderM");
+        User user = JBoltUserKit.getUser();
+        Date now = new Date();
+        tx(() -> {
+            if (annualOrderM.getIAutoId() == null) {
+                annualOrderM.setIOrgId(getOrgId());
+                annualOrderM.setCOrgCode(getOrgCode());
+                annualOrderM.setCOrgName(getOrgName());
+                annualOrderM.setICreateBy(user.getId());
+                annualOrderM.setCCreateName(user.getName());
+                annualOrderM.setDCreateTime(now);
+                annualOrderM.setIUpdateBy(user.getId());
+                annualOrderM.setCUpdateName(user.getName());
+                annualOrderM.setDUpdateTime(now);
+                ValidationUtils.isTrue(annualOrderM.save(), ErrorMsg.SAVE_FAILED);
+            } else {
+                annualOrderM.setIUpdateBy(user.getId());
+                annualOrderM.setCUpdateName(user.getName());
+                annualOrderM.setDUpdateTime(now);
+                ValidationUtils.isTrue(annualOrderM.update(), ErrorMsg.UPDATE_FAILED);
+            }
+            saveTableSubmitDatas(jBoltTable, annualOrderM);
+            updateTableSubmitDatas(jBoltTable, annualOrderM);
+            deleteTableSubmitDatas(jBoltTable);
+            return true;
+        });
         return SUCCESS;
     }
+
     //可编辑表格提交-新增数据
-    private void saveTableSubmitDatas(JBoltTable jBoltTable,AnnualOrderM annualOrderM){
-    	List<Record> list = jBoltTable.getSaveRecordList();
-    	if(CollUtil.isEmpty(list)) return;
-    	for (int i=0;i<list.size();i++) {
-    		Record record = list.get(i);
-			AnnualOrderD annualOrderD = new AnnualOrderD();
-			annualOrderD.setIAnnualOrderMid(annualOrderM.getIAutoId());
-			annualOrderD.setIInventoryId(record .getLong("iinventoryid"));
-			annualOrderD.setIYear1(annualOrderM.getIYear());
-			annualOrderD.setIYear1Sum(record.getBigDecimal("inowyearmonthamounttotal"));
-			annualOrderD.setIYear2(annualOrderM.getIYear()+1);
-			annualOrderD.setIYear2Sum(record.getBigDecimal("inextyearmonthamounttotal"));
-			annualOrderD.setIsDeleted(false);
-			ValidationUtils.isTrue(annualOrderD.save(), ErrorMsg.SAVE_FAILED);
-			saveAnnualOrderDModel(record,annualOrderM,annualOrderD);
-		}
-    	return;
+    private void saveTableSubmitDatas(JBoltTable jBoltTable, AnnualOrderM annualOrderM) {
+        List<Record> list = jBoltTable.getSaveRecordList();
+        if (CollUtil.isEmpty(list)) return;
+        for (int i = 0; i < list.size(); i++) {
+            Record record = list.get(i);
+            AnnualOrderD annualOrderD = new AnnualOrderD();
+            annualOrderD.setIAnnualOrderMid(annualOrderM.getIAutoId());
+            annualOrderD.setIInventoryId(record.getLong("iinventoryid"));
+            annualOrderD.setIYear1(annualOrderM.getIYear());
+            annualOrderD.setIYear1Sum(record.getBigDecimal("inowyearmonthamounttotal"));
+            annualOrderD.setIYear2(annualOrderM.getIYear() + 1);
+            annualOrderD.setIYear2Sum(record.getBigDecimal("inextyearmonthamounttotal"));
+            annualOrderD.setIsDeleted(false);
+            ValidationUtils.isTrue(annualOrderD.save(), ErrorMsg.SAVE_FAILED);
+            saveAnnualOrderDModel(record, annualOrderM, annualOrderD);
+        }
+        return;
     }
+
     //可编辑表格提交-修改数据
-    private void updateTableSubmitDatas(JBoltTable jBoltTable,AnnualOrderM annualOrderM){
-    	List<Record> list = jBoltTable.getUpdateRecordList();
-    	if(CollUtil.isEmpty(list)) return;
-    	for(int i = 0;i < list.size(); i++){
-    		Record record = list.get(i);
-			Long iAnnualOrderDid = record.getLong("iautoid");
-			AnnualOrderD annualOrderD = annualOrderDService.findById(iAnnualOrderDid);
-			ValidationUtils.notNull(annualOrderD, JBoltMsg.DATA_NOT_EXIST);
-			annualOrderD.setIInventoryId(record .getLong("iinventoryid"));
-			annualOrderD.setIYear1(annualOrderM.getIYear());
-			annualOrderD.setIYear1Sum(record.getBigDecimal("inowyearmonthamounttotal"));
-			annualOrderD.setIYear2(annualOrderM.getIYear()+1);
-			annualOrderD.setIYear2Sum(record.getBigDecimal("inextyearmonthamounttotal"));
-			ValidationUtils.isTrue(annualOrderD.update(), ErrorMsg.UPDATE_FAILED);
-			annualorderdQtyService.deleteBy(Okv.by("iannualorderdid", annualOrderD.getIAutoId()));
-			saveAnnualOrderDModel(record,annualOrderM,annualOrderD);
-    	}
+    private void updateTableSubmitDatas(JBoltTable jBoltTable, AnnualOrderM annualOrderM) {
+        List<Record> list = jBoltTable.getUpdateRecordList();
+        if (CollUtil.isEmpty(list)) return;
+        for (int i = 0; i < list.size(); i++) {
+            Record record = list.get(i);
+            Long iAnnualOrderDid = record.getLong("iautoid");
+            AnnualOrderD annualOrderD = annualOrderDService.findById(iAnnualOrderDid);
+            ValidationUtils.notNull(annualOrderD, JBoltMsg.DATA_NOT_EXIST);
+            annualOrderD.setIInventoryId(record.getLong("iinventoryid"));
+            annualOrderD.setIYear1(annualOrderM.getIYear());
+            annualOrderD.setIYear1Sum(record.getBigDecimal("inowyearmonthamounttotal"));
+            annualOrderD.setIYear2(annualOrderM.getIYear() + 1);
+            annualOrderD.setIYear2Sum(record.getBigDecimal("inextyearmonthamounttotal"));
+            ValidationUtils.isTrue(annualOrderD.update(), ErrorMsg.UPDATE_FAILED);
+            annualorderdQtyService.deleteBy(Okv.by("iannualorderdid", annualOrderD.getIAutoId()));
+            saveAnnualOrderDModel(record, annualOrderM, annualOrderD);
+        }
     }
+
     //可编辑表格提交-删除数据
-    private void deleteTableSubmitDatas(JBoltTable jBoltTable){
-    	Object[] ids = jBoltTable.getDelete();
-    	if(ArrayUtil.isEmpty(ids)) return;
-    	for (Object id : ids) {
-    		annualorderdQtyService.deleteBy(Okv.by("iannualorderdid", id));
-			annualOrderDService.deleteById(id);
-		}
+    private void deleteTableSubmitDatas(JBoltTable jBoltTable) {
+        Object[] ids = jBoltTable.getDelete();
+        if (ArrayUtil.isEmpty(ids)) return;
+        for (Object id : ids) {
+            annualorderdQtyService.deleteBy(Okv.by("iannualorderdid", id));
+            annualOrderDService.deleteById(id);
+        }
     }
-    private void saveAnnualOrderDModel(Record record,AnnualOrderM annualOrderM,AnnualOrderD annualOrderD){
-    	AnnualorderdQty AnnualorderdQty;
-		for (int j=1; j <= 12; j++) {
-			AnnualorderdQty = new AnnualorderdQty();
-			AnnualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
-			AnnualorderdQty.setIYear(annualOrderM.getIYear());
-			AnnualorderdQty.setIMonth(j);
-			BigDecimal inowyearmonthamount= record.getBigDecimal("inowyearmonthamount"+j);
-			AnnualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
-			AnnualorderdQty.setIsDeleted(false);
-			ValidationUtils.isTrue(AnnualorderdQty.save(), ErrorMsg.SAVE_FAILED);
-		}
-		for (int m=1; m <= 3; m++) {
-			AnnualorderdQty = new AnnualorderdQty();
-			AnnualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
-			AnnualorderdQty.setIYear(annualOrderM.getIYear()+1);
-			AnnualorderdQty.setIMonth(m);
-			BigDecimal inowyearmonthamount= record.getBigDecimal("inextyearmonthamount"+m);
-			AnnualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
-			AnnualorderdQty.setIsDeleted(false);
-			ValidationUtils.isTrue(AnnualorderdQty.save(), ErrorMsg.SAVE_FAILED);
-		}
+
+    private void saveAnnualOrderDModel(Record record, AnnualOrderM annualOrderM, AnnualOrderD annualOrderD) {
+        AnnualorderdQty AnnualorderdQty;
+        for (int j = 1; j <= 12; j++) {
+            AnnualorderdQty = new AnnualorderdQty();
+            AnnualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
+            AnnualorderdQty.setIYear(annualOrderM.getIYear());
+            AnnualorderdQty.setIMonth(j);
+            BigDecimal inowyearmonthamount = record.getBigDecimal("inowyearmonthamount" + j);
+            AnnualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
+            AnnualorderdQty.setIsDeleted(false);
+            ValidationUtils.isTrue(AnnualorderdQty.save(), ErrorMsg.SAVE_FAILED);
+        }
+        for (int m = 1; m <= 3; m++) {
+            AnnualorderdQty = new AnnualorderdQty();
+            AnnualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
+            AnnualorderdQty.setIYear(annualOrderM.getIYear() + 1);
+            AnnualorderdQty.setIMonth(m);
+            BigDecimal inowyearmonthamount = record.getBigDecimal("inextyearmonthamount" + m);
+            AnnualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
+            AnnualorderdQty.setIsDeleted(false);
+            ValidationUtils.isTrue(AnnualorderdQty.save(), ErrorMsg.SAVE_FAILED);
+        }
     }
+
     /**
      * 根据年份生成动态日期头
      */
     public void dateHeader(int iYear) {
 
 
-
     }
 
-	public Ret approve(Long id) {
-		AnnualOrderM annualOrderM = superFindById(id);
-		//2. 审核通过
-		annualOrderM.setIAuditStatus(2);
-		// 3. 已审批
-		annualOrderM.setIOrderStatus(3);
-		annualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-		annualOrderM.setCUpdateName(JBoltUserKit.getUserName());
-		annualOrderM.setDUpdateTime(new Date());
-		annualOrderM.update();
-		//审批通过生成客户计划汇总
-		return cusOrderSumService.approve(annualOrderM);
-	}
+    public Ret approve(Long id) {
+        AnnualOrderM annualOrderM = superFindById(id);
+        //2. 审核通过
+        annualOrderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+        // 3. 已审批
+        annualOrderM.setIOrderStatus(AnnualOrderStatusEnum.AUDITTED.getValue());
+        annualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+        annualOrderM.setCUpdateName(JBoltUserKit.getUserName());
+        annualOrderM.setDUpdateTime(new Date());
+        annualOrderM.update();
+        //审批通过生成客户计划汇总
+        return cusOrderSumService.approve(annualOrderM);
+    }
+
+    public Ret importExcel(File file) {
+        StringBuilder errorMsg = new StringBuilder();
+        
+        
+        
+        return SUCCESS;
+    }
+
 }

@@ -1782,4 +1782,9 @@ public class PermissionKey {
 	 * 入库管理-产成品入库单列表
 	 */
 	public static final String PRODUCTINLIST = "productInList";
+
+	/**
+	 * 入库管理-形态转换单
+	 */
+	public static final String FORMCONVERSIONLIST = "formconversionlist";
 }
