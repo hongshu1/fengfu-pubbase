@@ -12,14 +12,8 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
 public abstract class BaseQcFormTableParam<M extends BaseQcFormTableParam<M>> extends JBoltBaseModel<M>{
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
-    /**检验项目ID，固定取参数项目名为“项目”的参数名称ID, Bd_QcFormParam.iAutoId*/
-    public static final String IFORMPARAMID = "iFormParamId";
-    /**项目次序，固定取参数项目名为“项目”的参数名称次序值*/
+    /**，固定取参数项目名为“项目”的参数名称次序值*/
     public static final String ISEQ = "iSeq";
-    /**子次序*/
-    public static final String ISUBSEQ = "iSubSeq";
-    /**除项目外，其他表格项目（检验表头栏目）*/
-    public static final String CQCFORMITEMIDS = "cQcFormItemIds";
     /**参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间*/
     public static final String ITYPE = "iType";
     /**标准值*/
@@ -32,6 +26,8 @@ public abstract class BaseQcFormTableParam<M extends BaseQcFormTableParam<M>> ex
     public static final String COPTIONS = "cOptions";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**检验表格ID*/
+    public static final String IQCFORMID = "iQcFormId";
 	/**
 	 * 主键ID
 	 */
@@ -50,24 +46,7 @@ public abstract class BaseQcFormTableParam<M extends BaseQcFormTableParam<M>> ex
 	}
 
 	/**
-	 * 检验项目ID，固定取参数项目名为“项目”的参数名称ID, Bd_QcFormParam.iAutoId
-	 */
-	public M setIFormParamId(java.lang.Long iFormParamId) {
-		set("iFormParamId", iFormParamId);
-		return (M)this;
-	}
-
-	/**
-	 * 检验项目ID，固定取参数项目名为“项目”的参数名称ID, Bd_QcFormParam.iAutoId
-	 */
-	@JBoltField(name="iformparamid" ,columnName="iFormParamId",type="Long", remark="检验项目ID，固定取参数项目名为“项目”的参数名称ID, Bd_QcFormParam.iAutoId", required=true, maxLength=19, fixed=0, order=2)
-	@JSONField(name = "iformparamid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIFormParamId() {
-		return getLong("iFormParamId");
-	}
-
-	/**
-	 * 项目次序，固定取参数项目名为“项目”的参数名称次序值
+	 * ，固定取参数项目名为“项目”的参数名称次序值
 	 */
 	public M setISeq(java.lang.Integer iSeq) {
 		set("iSeq", iSeq);
@@ -75,46 +54,12 @@ public abstract class BaseQcFormTableParam<M extends BaseQcFormTableParam<M>> ex
 	}
 
 	/**
-	 * 项目次序，固定取参数项目名为“项目”的参数名称次序值
+	 * ，固定取参数项目名为“项目”的参数名称次序值
 	 */
-	@JBoltField(name="iseq" ,columnName="iSeq",type="Integer", remark="项目次序，固定取参数项目名为“项目”的参数名称次序值", required=true, maxLength=10, fixed=0, order=3)
+	@JBoltField(name="iseq" ,columnName="iSeq",type="Integer", remark="，固定取参数项目名为“项目”的参数名称次序值", required=true, maxLength=10, fixed=0, order=2)
 	@JSONField(name = "iseq")
 	public java.lang.Integer getISeq() {
 		return getInt("iSeq");
-	}
-
-	/**
-	 * 子次序
-	 */
-	public M setISubSeq(java.lang.Integer iSubSeq) {
-		set("iSubSeq", iSubSeq);
-		return (M)this;
-	}
-
-	/**
-	 * 子次序
-	 */
-	@JBoltField(name="isubseq" ,columnName="iSubSeq",type="Integer", remark="子次序", required=true, maxLength=10, fixed=0, order=4)
-	@JSONField(name = "isubseq")
-	public java.lang.Integer getISubSeq() {
-		return getInt("iSubSeq");
-	}
-
-	/**
-	 * 除项目外，其他表格项目（检验表头栏目）
-	 */
-	public M setCQcFormItemIds(java.lang.String cQcFormItemIds) {
-		set("cQcFormItemIds", cQcFormItemIds);
-		return (M)this;
-	}
-
-	/**
-	 * 除项目外，其他表格项目（检验表头栏目）
-	 */
-	@JBoltField(name="cqcformitemids" ,columnName="cQcFormItemIds",type="String", remark="除项目外，其他表格项目（检验表头栏目）", required=false, maxLength=500, fixed=0, order=5)
-	@JSONField(name = "cqcformitemids")
-	public java.lang.String getCQcFormItemIds() {
-		return getStr("cQcFormItemIds");
 	}
 
 	/**
@@ -128,7 +73,7 @@ public abstract class BaseQcFormTableParam<M extends BaseQcFormTableParam<M>> ex
 	/**
 	 * 参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间
 	 */
-	@JBoltField(name="itype" ,columnName="iType",type="Integer", remark="参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间", required=true, maxLength=10, fixed=0, order=6)
+	@JBoltField(name="itype" ,columnName="iType",type="Integer", remark="参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间", required=true, maxLength=10, fixed=0, order=3)
 	@JSONField(name = "itype")
 	public java.lang.Integer getIType() {
 		return getInt("iType");
@@ -145,7 +90,7 @@ public abstract class BaseQcFormTableParam<M extends BaseQcFormTableParam<M>> ex
 	/**
 	 * 标准值
 	 */
-	@JBoltField(name="istdval" ,columnName="iStdVal",type="BigDecimal", remark="标准值", required=true, maxLength=20, fixed=7, order=7)
+	@JBoltField(name="istdval" ,columnName="iStdVal",type="BigDecimal", remark="标准值", required=false, maxLength=20, fixed=7, order=4)
 	@JSONField(name = "istdval")
 	public java.math.BigDecimal getIStdVal() {
 		return getBigDecimal("iStdVal");
@@ -162,7 +107,7 @@ public abstract class BaseQcFormTableParam<M extends BaseQcFormTableParam<M>> ex
 	/**
 	 * 最大设定值
 	 */
-	@JBoltField(name="imaxval" ,columnName="iMaxVal",type="BigDecimal", remark="最大设定值", required=true, maxLength=20, fixed=7, order=8)
+	@JBoltField(name="imaxval" ,columnName="iMaxVal",type="BigDecimal", remark="最大设定值", required=false, maxLength=20, fixed=7, order=5)
 	@JSONField(name = "imaxval")
 	public java.math.BigDecimal getIMaxVal() {
 		return getBigDecimal("iMaxVal");
@@ -179,7 +124,7 @@ public abstract class BaseQcFormTableParam<M extends BaseQcFormTableParam<M>> ex
 	/**
 	 * 最小设定值
 	 */
-	@JBoltField(name="iminval" ,columnName="iMinVal",type="BigDecimal", remark="最小设定值", required=true, maxLength=20, fixed=7, order=9)
+	@JBoltField(name="iminval" ,columnName="iMinVal",type="BigDecimal", remark="最小设定值", required=false, maxLength=20, fixed=7, order=6)
 	@JSONField(name = "iminval")
 	public java.math.BigDecimal getIMinVal() {
 		return getBigDecimal("iMinVal");
@@ -196,7 +141,7 @@ public abstract class BaseQcFormTableParam<M extends BaseQcFormTableParam<M>> ex
 	/**
 	 * 列表可选值，多个";"分隔
 	 */
-	@JBoltField(name="coptions" ,columnName="cOptions",type="String", remark="列表可选值，多个;分隔", required=false, maxLength=500, fixed=0, order=10)
+	@JBoltField(name="coptions" ,columnName="cOptions",type="String", remark="列表可选值，多个分隔", required=false, maxLength=500, fixed=0, order=7)
 	@JSONField(name = "coptions")
 	public java.lang.String getCOptions() {
 		return getStr("cOptions");
@@ -213,10 +158,27 @@ public abstract class BaseQcFormTableParam<M extends BaseQcFormTableParam<M>> ex
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=11)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=8)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 检验表格ID
+	 */
+	public M setIQcFormId(java.lang.Long iQcFormId) {
+		set("iQcFormId", iQcFormId);
+		return (M)this;
+	}
+
+	/**
+	 * 检验表格ID
+	 */
+	@JBoltField(name="iqcformid" ,columnName="iQcFormId",type="Long", remark="检验表格ID", required=false, maxLength=19, fixed=0, order=9)
+	@JSONField(name = "iqcformid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIQcFormId() {
+		return getLong("iQcFormId");
 	}
 
 }

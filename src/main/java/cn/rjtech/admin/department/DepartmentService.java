@@ -236,4 +236,8 @@ public class DepartmentService extends BaseService<Department> {
                 }).setRecordDatas(2, datas)).setFileName("部门档案" + "_" + DateUtil.today());
     }
 
+    public Department findByCdepcode(Long orgId, String cdepcode) {
+        return findFirst(selectSql().eq(Department.IORGID, orgId).eq(Department.CDEPCODE, cdepcode).eq(Department.ISDELETED, ZERO_STR).first());
+    }
+    
 }

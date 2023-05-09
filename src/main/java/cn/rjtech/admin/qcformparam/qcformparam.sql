@@ -37,6 +37,28 @@ WHERE
 	ORDER BY t2.cQcItemCode ASC
 #end
 
+#sql("findByFormId")
+SELECT
+	t2.cQcItemCode,
+	t2.cQcItemName AS cqcitemnames,
+	t1.cQcParamName AS cqcparamnames,
+	t1.iAutoId AS iqcparamid,
+	t3.iItemSeq,
+	t3.iItemParamSeq,
+	t1.*
+FROM
+	Bd_QcParam t1
+	INNER JOIN Bd_QcItem t2 ON t1.iQcItemId = t2.iAutoId
+	INNER JOIN  Bd_QcFormParam t3 on t3.iQcParamId = t1.iAutoId
+WHERE
+	t2.isDeleted = '0'
+	AND t1.isDeleted = '0'
+	#if(qcFormId)
+	    AND t3.iQcFormId = #para(qcFormId)
+	#end
+	ORDER BY t3.iItemSeq,t3.iItemParamSeq ASC
+#end
+
 
 
 

@@ -188,11 +188,11 @@ public class InStockDefectService extends BaseService<InStockDefect> {
 
         tx(() -> {
             // 判断是否有主键id
-            if (isOk(formRecord.getStr("inStockDefect.iautoid"))) {
-                InStockDefect inStockDefect = findById(formRecord.getLong("inStockDefect.iautoid"));
+            if (isOk(formRecord.getStr("iautoid"))) {
+                InStockDefect inStockDefect = findById(formRecord.getLong("iautoid"));
                 if (inStockDefect.getIStatus() == 1) {
                     //录入数据
-                    inStockDefect.setCApproach(formRecord.getStr("inStockDefect.capproach"));
+                    inStockDefect.setCApproach(formRecord.getStr("capproach"));
                     inStockDefect.setIStatus(2);
                     //更新人和时间
                     inStockDefect.setIUpdateBy(JBoltUserKit.getUserId());

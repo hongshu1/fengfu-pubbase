@@ -3,7 +3,6 @@ package cn.rjtech.api.stockoutqcformm;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
-import cn.jbolt.core.kit.JBoltModelKit;
 import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
@@ -109,7 +108,7 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet autoGetOnlyseeTableDatas(Long iautoid) {
         Kv kv = new Kv();
-        kv.set("iautoid",iautoid);
+        kv.set("iautoid", iautoid);
         //1、调用方法获得table数据
         List<Record> recordList = service.getonlyseelistByiautoid(kv);
         //2、传到实体类里面
@@ -150,5 +149,12 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      * */
     public JBoltApiRet uploadImage(List<UploadFile> files) {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.uploadImage(files));
+    }
+
+    /*
+     * 导出详情页
+     * */
+    public JBoltApiRet getExportData(Long iautoid){
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
     }
 }

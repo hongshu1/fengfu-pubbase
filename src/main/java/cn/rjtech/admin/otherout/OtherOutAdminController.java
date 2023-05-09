@@ -1,5 +1,6 @@
 package cn.rjtech.admin.otherout;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -84,6 +85,16 @@ public class OtherOutAdminController extends BaseAdminController {
 	*/
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
+	}
+
+	/**
+	 * 获取存货档案列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	@UnCheck
+	public void autocomplete() {
+		renderJsonData(service.getAutocompleteData(get("q"), getInt("limit",10)));
 	}
 
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.rjtech.enums.SourceEnum;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.csp.sentinel.util.AssertUtil;
@@ -123,8 +124,7 @@ public class VendorClassService extends BaseService<VendorClass> {
         vendorClass.setCOrgCode(getOrgCode());
         vendorClass.setCOrgName(getOrgName());
         vendorClass.setIsDeleted(false);
-        vendorClass.setISource(1); //来源： 1. MES 2. U8
-//        vendorClass.setISourceId();//来源ID，U8为编码
+        vendorClass.setISource(SourceEnum.MES.getValue());
     }
 
     /**
@@ -218,7 +218,7 @@ public class VendorClassService extends BaseService<VendorClass> {
                         //子级供应商编码不能重复
                         ValidationUtils.isTrue(StringUtils.isBlank(findCVCCodeInfo(data.getStr("cvccode"))),
                             data.getStr("cvccode")+" 供应商分类编码重复");
-                        if (!data.getStr("ipid").equals("父级供应商分类编码")){
+                        if (!"父级供应商分类编码".equals(data.getStr("ipid"))){
                             VendorClass vendorClass = findFirst(Okv.by("cVCCode", data.getStr("ipid")), "iautoid", "desc");
                             ValidationUtils.isTrue(null != vendorClass, data.getStr("ipid")+" 父级供应商分类不存在，请手动添加！");
                         }
@@ -234,7 +234,7 @@ public class VendorClassService extends BaseService<VendorClass> {
                     //从第2行开始读取
                     .setDataStartRow(2)
             );
-        //从指定的sheet工作表里读取数据
+        // 从指定的sheet工作表里读取数据
         List<VendorClass> models = JBoltExcelUtil.readModels(jBoltExcel, "供应商分类", VendorClass.class, errorMsg);
         if (notOk(models)) {
             if (errorMsg.length() > 0) {
@@ -243,7 +243,7 @@ public class VendorClassService extends BaseService<VendorClass> {
                 return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
             }
         }
-        //读取数据没有问题后判断必填字段
+        // 读取数据没有问题后判断必填字段
         if (models.size() > 0) {
             Date now = new Date();
             for (VendorClass vendorClass : models) {
@@ -254,17 +254,20 @@ public class VendorClassService extends BaseService<VendorClass> {
                 vendorClass.setCOrgCode(getOrgCode());
                 vendorClass.setCOrgName(getOrgName());
                 vendorClass.setIsDeleted(false);
-                vendorClass.setISource(1); //来源： 1. MES 2. U8
+                vendorClass.setISource(SourceEnum.MES.getValue());
             }
         }
+        
         //执行批量操作
         boolean success = tx(() -> {
             batchSave(models);
             return true;
         });
+        
         if (!success) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL);
         }
+        
         return SUCCESS;
     }
 

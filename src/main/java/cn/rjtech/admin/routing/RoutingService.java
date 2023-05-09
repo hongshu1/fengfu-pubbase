@@ -19,6 +19,7 @@ import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
@@ -116,7 +117,7 @@ public class RoutingService extends BaseService<BomMaster> {
 		bomMaster.setCCreateName(userName);
 		bomMaster.setDCreateTime(now);
 		
-		bomMaster.setISource(1);
+		bomMaster.setISource(SourceEnum.MES.getValue());
 		bomMaster.setIUpdateBy(userId);
 		bomMaster.setCUpdateName(userName);
 		bomMaster.setDUpdateTime(now);

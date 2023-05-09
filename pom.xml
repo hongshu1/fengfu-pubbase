@@ -78,6 +78,7 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-text.version>1.10.0</commons-text.version>
+        <auto-excel.version>2.0.0</auto-excel.version>
 
         <aliyun-java-sdk-core.version>4.6.3</aliyun-java-sdk-core.version>
         <aliyun-java-sdk-sms.version>3.0.0-rc1</aliyun-java-sdk-sms.version>
@@ -665,6 +666,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${commons-text.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.fenghaitao</groupId>
+            <artifactId>auto-excel</artifactId>
+            <version>${auto-excel.version}</version>
         </dependency>
 
     </dependencies>
