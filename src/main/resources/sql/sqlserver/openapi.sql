@@ -37,3 +37,13 @@ from T_Sys_VouchProcessDynamic p
 where MasID=#para(masID) and VersionID=#para(seqBusinessID) and p.stat=0
 ORDER BY p.GroupSeq,p.Seq
 #end
+
+#sql("allProcessBusDynamic")
+select p.Autoid,p.MasID,p.GroupSeq,p.Seq,p.ExechgeSeq,p.ReturnSeq,p.ProcessID,p.ProcessFlag,p.ClosePerson as pClosePerson,b.CreatePerson as bClosePerson,
+             b.MapID as InitializeMapID,b.ProcessName,b.ProcessFlag as BProcessFlag,api.Code,api.Tag,api.Url,api.ResultType,b.Memo,AutoRollback,IgnoreFailure
+from T_Sys_VouchProcessDynamic p
+left join t_sys_vouchbusiness b on p.ProcessID=b.AutoID
+left join t_sys_openapi api on b.APIID=api.AutoID
+where MasID=#para(masID) and VersionID=#para(seqBusinessID)
+ORDER BY p.GroupSeq,p.Seq
+#end
