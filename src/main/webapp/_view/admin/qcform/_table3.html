@@ -103,8 +103,8 @@
                     #for(va : item.compares)
                         #if(data)
                             #for(map:data)
-                                #if(item.iqcitemid == map.key??)
-                                    #if( map.value == va.iqcparamid)
+                                #if(isEquals(item.iqcitemid, map.key))
+                                    #if(isEquals(map.value, va.iqcparamid))
                                             #set(flag = false)
                                         <option selected value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
                                     #else
@@ -112,9 +112,6 @@
                                     #end
                                 #end
                             #end
-                    ###if(flag)
-                    ###<option value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
-                    ###end
                         #else
                              <option value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
                         #end
