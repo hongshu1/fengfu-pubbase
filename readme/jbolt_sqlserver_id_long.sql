@@ -5641,7 +5641,7 @@ CREATE TABLE [dbo].[jb_code_gen_model_attr] (
     [java_type] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NOT NULL,
     [attr_length] int DEFAULT 20 NOT NULL,
     [attr_fixed] int DEFAULT 0 NULL,
-    [attr_default_value] nvarchar(40) COLLATE Chinese_PRC_CI_AS  NULL,
+    [attr_default_value] nvarchar(100) COLLATE Chinese_PRC_CI_AS  NULL,
     [sort_rank] int DEFAULT 1 NOT NULL,
     [sort_rank_intable] int DEFAULT 1 NOT NULL,
     [sort_rank_inform] int DEFAULT 1 NOT NULL,

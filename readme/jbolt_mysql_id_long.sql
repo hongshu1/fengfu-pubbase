@@ -894,7 +894,7 @@ CREATE TABLE `jb_code_gen_model_attr`  (
 `java_type` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '属性类型',
 `attr_length` int(11) NOT NULL DEFAULT 20 COMMENT '属性长度',
 `attr_fixed` int(11) NULL DEFAULT 0 COMMENT '属性小数点',
-`attr_default_value` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '默认值',
+`attr_default_value` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '默认值',
 `sort_rank` int(11) NOT NULL DEFAULT 1 COMMENT '数据表内默认顺序',
 `sort_rank_intable` int(11) NOT NULL DEFAULT 1 COMMENT '表格中的排序',
 `sort_rank_inform` int(11) NOT NULL DEFAULT 1 COMMENT '表单中的排序',
