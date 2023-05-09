@@ -44,11 +44,11 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
 	{@if data.istatus==1}
-		<a href="admin/stockoutdefect/add2?iautoid=${data.iautoid}&istockoutqcformmid=${data.istockoutqcformmid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
+		<a href="admin/stockoutdefect/add2?iautoid=${data.iautoid}&stockoutQcFormMid=${data.stockoutqcformmid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
 	{@else if data.istatus==2}
-		<a href="admin/stockoutdefect/add2?iautoid=${data.iautoid}&istockoutqcformmid=${data.istockoutqcformmid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+		<a href="admin/stockoutdefect/add2?iautoid=${data.iautoid}&stockoutQcFormMid=${data.stockoutqcformmid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
 	{@else}
-		<a href="admin/stockoutdefect/add2?iautoid=${data.iautoid}&istockoutqcformmid=${data.istockoutqcformmid}" data-area="80%,100%"  tooltip data-title="检验"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">异常品记录</a>
+		<a href="admin/stockoutdefect/add2?iautoid=${data.iautoid}&stockoutQcFormMid=${data.stockoutqcformmid}" data-area="80%,100%"  tooltip data-title="检验"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">异常品记录</a>
 	{@/if}
 </td>
 <td>${data.istatus=='1'?'待判定':data.istatus=='2'?'已完成':'待记录'}</td>
@@ -102,7 +102,7 @@ data-row-dblclick-active="true"
 	<th data-width="200">操作</th>
 	<th data-width="100" data-column="iStatus">状态</th>
 	<th data-width="150" data-column="cDocNo">异常品单号</th>
-	<th data-width="150" data-column="iStockoutQcFormMid">检验单号</th>
+	<th data-width="150" data-column="stockoutQcFormMid">检验单号</th>
 	<th data-width="150" data-column="iInventoryId">存货编码</th>
 	<th data-width="150" data-column="cInvName">部品名称</th>
 	<th data-width="150" data-column="cInvCode">客户部番</th>

@@ -3,7 +3,8 @@
 <div class="jbolt_page">
     <div class="jbolt_page_content">
         <form onsubmit="return false;" id="stockoutDefectForm"  action="/admin/stockoutdefect/updateEditTable" method="post">
-            <input type="hidden" name="stockoutDefect.iautoid" value="#(stockoutDefect.iautoid??)" />
+            <input type="hidden" name="iautoid" value="#(stockoutDefect.iautoid??)" />
+            <input type="hidden"  placeholder="出货检ID" name="stockoutqcformmid" value="#(stockoutQcFormM.iAutoid??)"/>
             <h5>部品信息</h5>
             <hr/>
             <div class="form-group row">
@@ -18,21 +19,21 @@
                 </div>
                 <label class="col-sm-2 col-form-label">供应商名称：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(stockoutDefect.ivendorid??)
+                    #(stockoutQcFormM.ccusname??)
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">存货编码：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(stockoutDefect.iinventoryid??)
+                    #(stockoutQcFormM.cinvcode??)
                 </div>
                 <label class="col-sm-2 col-form-label">客户部番：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(stockoutDefect.cInvCode1??)
+                    #(stockoutQcFormM.cinvcode1??)
                 </div>
                 <label class="col-sm-2 col-form-label">部品名称：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(stockoutDefect.cInvName1??)
+                    #(stockoutQcFormM.cinvname??)
                 </div>
             </div>
             <div class="form-group row">
