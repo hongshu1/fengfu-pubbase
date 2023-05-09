@@ -26,6 +26,10 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
     public static final String ILENGTH = "iLength";
     /**是否启用;0. 否 1. 是*/
     public static final String ISENABLED = "isEnabled";
+    /**顺序值*/
+    public static final String ISEQ = "iSeq";
+    /**定制规则：1. 规则 2. 年度 3. 月度 4. 周间*/
+    public static final String IRULETYPE = "iRuleType";
 	/**
 	 * 主键ID
 	 */
@@ -160,6 +164,40 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	@JSONField(name = "isenabled")
 	public java.lang.Boolean getIsEnabled() {
 		return getBoolean("isEnabled");
+	}
+
+	/**
+	 * 顺序值
+	 */
+	public M setISeq(java.lang.Integer iSeq) {
+		set("iSeq", iSeq);
+		return (M)this;
+	}
+
+	/**
+	 * 顺序值
+	 */
+	@JBoltField(name="iseq" ,columnName="iSeq",type="Integer", remark="顺序值", required=true, maxLength=10, fixed=0, order=9)
+	@JSONField(name = "iseq")
+	public java.lang.Integer getISeq() {
+		return getInt("iSeq");
+	}
+
+	/**
+	 * 定制规则：1. 规则 2. 年度 3. 月度 4. 周间
+	 */
+	public M setIRuleType(java.lang.Integer iRuleType) {
+		set("iRuleType", iRuleType);
+		return (M)this;
+	}
+
+	/**
+	 * 定制规则：1. 规则 2. 年度 3. 月度 4. 周间
+	 */
+	@JBoltField(name="iruletype" ,columnName="iRuleType",type="Integer", remark="定制规则：1. 规则 2. 年度 3. 月度 4. 周间", required=true, maxLength=10, fixed=0, order=10)
+	@JSONField(name = "iruletype")
+	public java.lang.Integer getIRuleType() {
+		return getInt("iRuleType");
 	}
 
 }
