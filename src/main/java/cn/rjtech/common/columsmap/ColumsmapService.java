@@ -547,6 +547,9 @@ public class ColumsmapService extends BaseService<Columsmap> {
                             // ---------------------------------------------------------
                             try {
                                 txInErp(erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
+                                if (result.containsKey("isBreak") && result.getInt("isBreak") == 1){
+                                    break;
+                                }
                             } catch (Exception e) {
                                 LOG.error(e.getLocalizedMessage());
                                 e.printStackTrace();
@@ -819,7 +822,17 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     saveLogs.add(log);
 
                     // 失败，则提回滚 返回错误信息
-                    if (result.getInt("state") == 1) {
+                    if (result.getInt("state") == 1 && "200".equals(map.getStr("resultcode"))) {
+                        //成功，但是可以跳出当前步骤或者跳出循环
+                        if (map.toMap().containsKey("isBreak") && map.getInt("isBreak") == 1){
+                            result.set("isBreak", 1);
+                        } else if (map.toMap().containsKey("isContinue") && map.getInt("isContinue") == 1){
+                            result.set("isContinue", 1);
+                        }else {
+                            result.set("isBreak", 1);
+                        }
+                    }else {
+                        // 失败，则提回滚 返回错误信息
                         throw new RuntimeException(result.getStr("message"));
                     }
                 } else {
@@ -971,7 +984,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     Log log = new Log();
 
                     dataConversion.recordLog(orgApp.getOrganizecode(), vouchBusinessID, vouchType.getStr("vouchcode"), processBusMap.getStr("seq"), result.getStr("resultExchangeID"), "", state, source, message, logUrl, memo, userApp.getStr("user_name"), log);
-                    result.set("code", "201").set("message", message);
+                    result.set("code", "200").set("message", message);
                     saveLogs.add(log);
                 } else {
                     result.set("code", "201").set("message", message);
@@ -1159,12 +1172,6 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     if (!"200".equals(result.getStr("code"))){
                         rollbackProcess(currentSeq.get(), seqBusinessID, getAllProcessBusDynamic(id1, seqBusinessID), dataConversion, userApp, type);
                     }
-                    tx(exchangeTableService.dataSourceConfigName(), () -> {
-
-                        exchangeTableService.batchSave(saveExchangeTables);
-
-                        return true;
-                    });
                 }
                 return true;
             });
