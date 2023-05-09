@@ -1062,7 +1062,8 @@ public class ColumsmapService extends BaseService<Columsmap> {
         ValidationUtils.notNull(userApp, "当前组织下没有该用户！");
 
         String erpDBName = orgApp.getErpdbname();
-        String erpDbAlias = orgApp.getErpdbalias();
+        // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
+        String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
         String mesdbalias = orgApp.getMesdbalias();
 
         //获取所有钟工组件返回的u8单据类型值
@@ -1110,6 +1111,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
             plugeReturnMap.put("CreatePersonName", userApp.getStr("user_name"));
             plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
             plugeReturnMap.put("organizeCode", kv.get("organizecode"));
+            plugeReturnMap.put("password", userApp.getStr("u8_pwd"));
             AtomicInteger currentSeq = new AtomicInteger();//用于回滚
             DataConversion dataConversion = new DataConversion(this, columsmapdetailService);
             // 内层事务,当异常条件下，对已执行的子事务提交，并返回错误信息
