@@ -10,9 +10,9 @@
                            name="keywords" value="" />
                     <input type="text" autocomplete="off"  class="form-control"
                            placeholder="客户部番"
-                           name="CustomerManager" value="" />
+                           name="CustomerName" value="" />
                     <input type="hidden" name="itemHidden" value="#(itemHidden??)"/>
-                    <input type="text" class="form-control" name="componentName" value="" placeholder="部品名称"/>
+                    <input type="text" class="form-control" name="cInvName1" value="" placeholder="部品名称"/>
                     <button type="submit" class="btn btn-light" ><i class="fa fa-search"></i> 查询</button>
                     <button type="reset" class="btn btn-light"><i class="fa fa-reset"></i> 重置</button>
                 </form>
@@ -30,13 +30,13 @@
                 {@else}
                 <td>${+index+1}</td>
                 {@/if}
-                <td>${data.iinventorycode}</td>
-                <td>${data.iinventoryname}</td>
-                <td>${data.customermanager}</td>
-                <td>${data.componentname}</td>
-                <td>${data.specs}</td>
-                <td>${data.unit}</td>
-                <td>${data.machinetype}</td>
+                <td>${data.cinvcode}</td>
+                <td>${data.cinvname}</td>
+                <td>${data.cinvcode1}</td>
+                <td>${data.cinvname1}</td>
+                <td>${data.cinvstd}</td>
+                <td>${data.cuomname}</td>
+                <td>${data.machinename}</td>
             </tr>
             {@/each}
         </script>
@@ -57,13 +57,13 @@
             <thead>
             <tr>
                 <th data-width="60">序号</th>
-                <th data-width="150" data-column="iInventoryCode">存货编码</th>
-                <th data-width="150" data-column="iInventoryName">存货名称</th>
-                <th data-min-width="160" data-column="CustomerManager">客户部番</th>
-                <th data-width="150" data-column="componentName">部品名称</th>
-                <th data-width="160" data-column="specs">规格</th>
-                <th data-min-width="160" data-column="unit">库存单位</th>
-                <th data-width="120" data-column="machineType">机型</th>
+                <th data-width="150" data-column="cinvcode">存货编码</th>
+                <th data-width="150" data-column="cinvname">存货名称</th>
+                <th data-min-width="160" data-column="cinvcode1">客户部番</th>
+                <th data-width="150" data-column="cinvname1">部品名称</th>
+                <th data-width="160" data-column="cinvstd">规格</th>
+                <th data-min-width="160" data-column="cUomName">库存单位</th>
+                <th data-width="120" data-column="machinename">机型</th>
             </thead>
             <tbody></tbody>
         </table>
@@ -84,7 +84,7 @@
             var action=parent.DialogUtil.getCurrentTriggerEle();
             if(isOk(action)){
                 //var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,insertType,false,false,true);
-                var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,'prepend');
+                var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,'prepend',false, false, true);
                 if(success){
                     parent.layer.closeAll();
                     parent.tableDataSuccess();
@@ -114,7 +114,7 @@
      */
     function dbClickCheckData(table,tempTr1,trId1,rowData) {
         var action=parent.DialogUtil.getCurrentTriggerEle();
-        var success=parent.jboltTableInsertRowsByDialogChooser(action,rowData,'prepend');
+        var success=parent.jboltTableInsertRowsByDialogChooser(action,rowData,'prepend',false, false, true);
         if(success){
             parent.layer.closeAll();
             parent.tableDataSuccess();

@@ -42,6 +42,10 @@ public abstract class BaseInventoryQcForm<M extends BaseInventoryQcForm<M>> exte
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "IsDeleted";
+    /**类型，多个","分隔*/
+    public static final String CTYPEIDS = "cTypeIds";
+    /**类型名称，多个","分隔*/
+    public static final String CTYPENAMES = "cTypeNames";
 	/**
 	 * 主键ID
 	 */
@@ -155,7 +159,7 @@ public abstract class BaseInventoryQcForm<M extends BaseInventoryQcForm<M>> exte
 	/**
 	 * 检验图片，多张","分隔
 	 */
-	@JBoltField(name="cpics" ,columnName="cPics",type="String", remark="检验图片，多张分隔", required=false, maxLength=500, fixed=0, order=7)
+	@JBoltField(name="cpics" ,columnName="cPics",type="String", remark="检验图片，多张','分隔", required=false, maxLength=500, fixed=0, order=7)
 	@JSONField(name = "cpics")
 	public java.lang.String getCPics() {
 		return getStr("cPics");
@@ -313,5 +317,40 @@ public abstract class BaseInventoryQcForm<M extends BaseInventoryQcForm<M>> exte
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");
 	}
+
+	/**
+	 * 类型，多个","分隔
+	 */
+	public M setCTypeIds(java.lang.String cTypeIds) {
+		set("cTypeIds", cTypeIds);
+		return (M)this;
+	}
+
+	/**
+	 * 类型，多个","分隔
+	 */
+	@JBoltField(name="ctypeids" ,columnName="cTypeIds",type="String", remark="类型，多个','分隔", required=true, maxLength=50, fixed=0, order=17)
+	@JSONField(name = "ctypeids")
+	public java.lang.String getCTypeIds() {
+		return getStr("cTypeIds");
+	}
+
+	/**
+	 * 类型名称，多个","分隔
+	 */
+	public M setCTypeNames(java.lang.String cTypeNames) {
+		set("cTypeNames", cTypeNames);
+		return (M)this;
+	}
+
+	/**
+	 * 类型名称，多个","分隔
+	 */
+	@JBoltField(name="ctypenames" ,columnName="cTypeNames",type="String", remark="类型名称，多个','分隔", required=true, maxLength=50, fixed=0, order=18)
+	@JSONField(name = "ctypenames")
+	public java.lang.String getCTypeNames() {
+		return getStr("cTypeNames");
+	}
+
 }
 

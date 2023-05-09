@@ -1,26 +1,29 @@
 package cn.rjtech.admin.inventoryqcform;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
-import cn.jbolt.core.model.JboltFile;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.service.JBoltFileService;
-import cn.jbolt.extend.config.ExtendUploadFolder;
+import cn.rjtech.admin.qcform.QcFormService;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.InventoryQcForm;
+import cn.rjtech.model.momdata.QcForm;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.upload.UploadFile;
-import cn.rjtech.model.momdata.InventoryQcForm;
 import com.jfinal.plugin.activerecord.Page;
-import java.util.List;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.InventoryQcForm;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 质量建模-检验适用标准
@@ -37,6 +40,10 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	private InventoryQcFormService service;
 	@Inject
 	private JBoltFileService jBoltFileService;
+	@Inject
+	private QcFormService qcFormService;
+	
+
 
    /**
 	* 首页
@@ -49,13 +56,13 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	*/
 	public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(),getKv()));
-//	    renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getSortColumn("iAutoId"), getSortType("desc"), getBoolean("IsDeleted"), get("machineType"), get("inspectionType")));
 	}
 
    /**
 	* 新增
 	*/
 	public void add() {
+		set("isAdd", 1);
 		render("add.html");
 	}
 
@@ -74,6 +81,10 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 		if(inventoryQcForm == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
+		}
+		QcForm qcForm = qcFormService.findById(inventoryQcForm.getIQcFormId());
+		if (ObjectUtil.isNotNull(qcForm)){
+			set("qcFormName", qcForm.getCQcFormName());
 		}
 		set("inventoryQcForm",inventoryQcForm);
 		render("edit.html");
@@ -260,16 +271,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	 * 获取资源的数据源
 	 */
 	public void resourceList(){
-		String itemHidden = get("itemHidden");
-		String keywords = StringUtils.trim(get("keywords"));
-		String customerManager = StringUtils.trim(get("CustomerManager"));
-		String componentName = StringUtils.trim(get("componentName"));
-		Kv kv = new Kv();
-		kv.setIfNotNull("itemHidden", itemHidden);
-		kv.setIfNotNull("customerManager", customerManager);
-		kv.setIfNotNull("keywords", keywords);
-		kv.setIfNotNull("componentName", componentName);
-		renderJsonData(service.resourceList(kv,getPageNumber(),getPageSize()));
+		renderJsonData(service.resourceList(getKv(),getPageNumber(),getPageSize()));
 	}
 
 	/**
@@ -282,17 +284,8 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	/**
 	 * 打开文件上传Dialog
 	 */
-	public void openFileDialog(){
-		Long lineId = getLong(0);
-		set("lineId", lineId);
-		InventoryQcForm inventoryQcForm=service.findById(lineId);
-		if(inventoryQcForm == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-
-		List<JboltFile> jboltFiles = jBoltFileService.getListByIds(inventoryQcForm.getCPics());
-		set("files", jboltFiles);
+	public void openFileDialog(@Para(value = "invId") Long invId, @Para(value = "cpics") String cpics){
+		keepPara();
 		render("file_dialog.html");
 	}
 
@@ -300,20 +293,46 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	 * 多文件上传
 	 */
 	public void uploadFileAndSave(){
+		
 		//上传到今天的文件夹下
-		String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.SRM_JL_PO_DELIVERY_FILE);
-		List<UploadFile> files = getFiles(uploadPath);
-		if (files == null || files.size() == 0) {
-			renderJsonFail("请选择文件后上传");
+		String uploadPath=JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_IMAGE_UPLOADER);
+		List<UploadFile> files=getFiles(uploadPath);
+		if(files==null || files.size()==0) {
+			renderJsonFail("请选择图片后上传");
 			return;
 		}
-
-		Long lineId = getLong("lineId");
-		//保存文件 并 保存到行数据里
-		Ret ret = service.saveFileAndUpdateLine(files, uploadPath, lineId);
-		List<JboltFile> res = ret.isOk()? (List<JboltFile>) ret.get("data") :null;
-		renderJsonData(res,ret.getStr("msg"));
+		StringBuilder msg = new StringBuilder();
+		files.forEach(file->{
+			if(notImage(file)){
+				msg.append(file.getFileName()+"不是图片类型文件;");
+			}
+		});
+		if(msg.length()>0) {
+			renderJsonFail(msg.toString());
+			return;
+		}
+		
+		List<String> retFiles=new ArrayList<String>();
+		Ret ret;
+		StringBuilder errormsg = new StringBuilder();
+		for(UploadFile uploadFile:files) {
+			ret=jBoltFileService.saveImageFile(uploadFile,uploadPath);
+			if(ret.isOk()){
+				retFiles.add(ret.getStr("data"));
+			}else {
+				errormsg.append(uploadFile.getOriginalFileName()+"上传失败;");
+			}
+		}
+		if(retFiles.size()==0) {
+			renderJsonFail(errormsg.toString());
+			return;
+		}
+		renderJsonData(retFiles,errormsg.toString());
+		
 	}
+	
+	
+	
 
 	/**
 	 * 删除文件信息

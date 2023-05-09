@@ -1,13 +1,13 @@
 package cn.rjtech.admin.qcformtableitem;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.QcFormItem;
 import cn.rjtech.model.momdata.QcFormTableItem;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -17,6 +17,9 @@ import com.jfinal.plugin.activerecord.Page;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 质量建模-检验表格行记录
@@ -126,26 +129,42 @@ public class QcFormTableItemService extends BaseService<QcFormTableItem> {
 		return qcFormTableItem;
 	}
 	
-	public List<QcFormTableItem> createQcFormTableItemList(Long qcFormId, JSONArray jsonArray){
+	public List<QcFormTableItem> createQcFormTableItemList(Long qcFormId, List<QcFormItem> qcFormItemList, JSONArray jsonArray){
 		if (CollectionUtil.isEmpty(jsonArray)){
 			return null;
 		}
+		Map<Long, QcFormItem> qcItemMap = qcFormItemList.stream().collect(Collectors.toMap(QcFormItem::getIQcItemId, Function.identity(), (key1, key2) -> key2));
 		List<QcFormTableItem> qcFormTableItemList = new ArrayList<>();
 		//
 		for (Object obj : jsonArray){
 			JSONObject jsonObject = (JSONObject)obj;
-			for (String key :jsonObject.keySet()){
-				if (NumberUtil.isNumber(key)){
-					long id = NumberUtil.parseLong(key);
+			
+			for (Long itemId : qcItemMap.keySet()){
+				if (jsonObject.containsKey(itemId)){
 					QcFormTableItem qcFormTableItem = createQcFormTableItem(
 							null,
 							qcFormId,
-							id,
-							jsonObject.getLong(key),
+							itemId,
+							jsonObject.getLong(String.valueOf(itemId)),
 							jsonObject.getLong(QcFormTableItem.IQCFORMTABLEPARAMID.toLowerCase()));
 					qcFormTableItemList.add(qcFormTableItem);
+					continue;
 				}
+				
+				QcFormTableItem qcFormTableItem = createQcFormTableItem(
+						null,
+						qcFormId,
+						itemId,
+						null,
+						jsonObject.getLong(QcFormTableItem.IQCFORMTABLEPARAMID.toLowerCase()));
+				qcFormTableItemList.add(qcFormTableItem);
 			}
+//			for (String key :jsonObject.keySet()){
+//				// 判断key是否为id
+//				if (NumberUtil.isNumber(key)){
+//
+//				}
+//			}
 		}
 		return qcFormTableItemList;
 	}
