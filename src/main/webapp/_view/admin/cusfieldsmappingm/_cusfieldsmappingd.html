@@ -61,12 +61,16 @@
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingd/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑导入映射字段">编辑</a>
+                <a class="jbolt_table_editbtn" href="admin/cusfieldsmappingd/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑导入映射字段" data-close-handler="refreshJBoltTable">编辑</a>
                 <a class="jbolt_table_delbtn" href="admin/cusfieldsmappingd/${data.isdeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" >删除</a>
             </td>
             <td>${data.cfieldname}</td>
             <td>${data.ccusfieldname}</td>
-            <td><img data-switchbtn data-confirm="确定切换是否编码字段？" data-value="${data.isencoded == '1'}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEncoded/${data.iautoid}"/></td>
+            <td>
+                {@if data.iruletype == 1}
+                <img data-switchbtn data-confirm="确定切换是否编码字段？" data-value="${data.isencoded == '1'}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEncoded/${data.iautoid}"/>
+                {@/if}
+            </td>
             <td>${data.cdemo}</td>
             <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled == '1'}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEnabled/${data.iautoid}"/></td>
         </tr>

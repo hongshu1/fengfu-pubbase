@@ -1,12 +1,6 @@
 <script>
-    function submitThisForm() {
-        updateDemoCode();
-        
-        jboltTableSubmit('#jbolt_table_#(pageId)');
-    }
-
-    function updateDemoCode() {
-        var datas = jboltTableGetAllDatas('#jbolt_table_#(pageId)');
+    function updateDemoCode(table) {
+        var datas = jboltTableGetAllDatas(table);
         console.log(JSON.stringify(datas));
 
         var $demo = $('#cDemo');
@@ -54,13 +48,19 @@
         $('input[name="cusFieldsMappingD.cdemo"]').val(cdemo);
     }
 
-    function tableAjaxSuccessHandler_#(pageId)(table) {
+    function tableAjaxSuccessHandler(table) {
         console.log('tableAjaxSuccessHandler');
         
-        updateDemoCode('#jbolt_table_#(pageId)');
+        updateDemoCode(table);
+    }
+
+    function saveTableSubmit(ele) {
+        updateDemoCode(ele);
+
+        jboltTableSubmit(ele);
     }
     
-    function getEditableTableOptions_#(pageId)() {
+    function getEditableTableOptions_coding_rule() {
         var editableTableOptions = {
             trigger: "click",
             submit: {
@@ -70,8 +70,6 @@
                 success: function (res) {
                     if (res.state === 'ok') {
                         LayerMsgBox.success("提交成功", 600, function () {
-                            parent.refreshPjaxContainer();
-                            
                             location.href = '/admin/cusfieldsmappingd/edit/' + res.data.iautoid + '-_jb_rqtype_dialog';
                         });
                     } else {
