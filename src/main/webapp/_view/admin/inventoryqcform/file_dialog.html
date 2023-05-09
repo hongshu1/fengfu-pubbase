@@ -4,41 +4,60 @@
   <div class="jbolt_page_content">
     <input type="hidden" readonly="readonly" name="fileUploaderIds" id="fileUploaderIds_#(pageId)" value="#(fileUploaderIds??)" class="form-control"/>
     <div class="col-sm-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="j_upload_file_box"
-               data-name="file"
-               data-multi="true"
-               data-limit="10"
-               data-value-attr="id"
-               data-filebox="filebox_#(pageId)"
-               data-btn-class="btn btn-primary"
-               data-maxsize="20480"
-               data-handler="uploadMultipleFile"
-               data-placeholder="选择文件上传,文件大小限制20M以内"
-               data-url="admin/inventoryqcform/uploadFileAndSave?lineId=#(lineId??)"
-               data-remove-url="admin/inventoryqcform/deleteFile?fileId=[file]&lineId=#(lineId??)"
-               data-hiddeninput="fileUploaderIds_#(pageId)"
-          ></div>
+<!--      <div class="card">-->
+<!--        <div class="card-body">-->
+<!--          <div class="j_upload_file_box"-->
+<!--               data-name="file"-->
+<!--               data-multi="true"-->
+<!--               data-limit="10"-->
+<!--               data-value-attr="id"-->
+<!--               data-filebox="filebox_#(pageId)"-->
+<!--               data-btn-class="btn btn-primary"-->
+<!--               data-maxsize="20480"-->
+<!--               data-handler="uploadMultipleFile"-->
+<!--               data-placeholder="选择文件上传,文件大小限制20M以内"-->
+<!--               data-url="admin/inventoryqcform/uploadFileAndSave?lineId=#(lineId??)"-->
+<!--               data-remove-url="admin/inventoryqcform/deleteFile?fileId=[file]&lineId=#(lineId??)"-->
+<!--               data-hiddeninput="fileUploaderIds_#(pageId)"-->
+<!--          ></div>-->
 
-          <div class="j_upload_filebox_multi  mt-3">
-            <ul class="j_filebox" id="filebox_#(pageId)" data-remove-confirm="true">
-              #for(data : files)
-              <li data-filebox="filebox_#(pageId)" data-hiddeninput="fileUploaderIds_#(pageId)"><a target="_blank" data-path="#(data.id)" href="#realImage(data.localUrl)">#(data.fileName)</a><i title="删除" onclick="removeUploadFileBoxLi(this)" class="fa fa-trash text-danger ml-3"></i></li>
-              #end
-            </ul>
+<!--          <div class="j_upload_filebox_multi  mt-3">-->
+<!--            <ul class="j_filebox" id="filebox_#(pageId)" data-remove-confirm="true">-->
+<!--              #for(data : files)-->
+<!--                <li data-filebox="filebox_#(pageId)" data-hiddeninput="fileUploaderIds_#(pageId)"><a target="_blank" data-path="#(data.id)" href="#realImage(data.localUrl)">#(data.fileName)</a><i title="删除" onclick="removeUploadFileBoxLi(this)" class="fa fa-trash text-danger ml-3"></i></li>-->
+<!--              #end-->
+<!--            </ul>-->
+<!--          </div>-->
+
+<!--        </div>-->
+<!--      </div>-->
+
+      <input name="cpics" id="cattachments1" value="#(cpics??)">
+      <fieldset class="form-page-fieldset">
+        <div class="j_upload_imgbox_multi row">
+          <div class="col-sm-6">
+            <div class="j_img_uploder" data-multi="true" data-imgbox="imgbox" data-upload-success-handler="uploadHandler" data-url="/admin/inventoryqcform/uploadFileAndSave"   data-handler="uploadMultipleFile"  data-hiddeninput="cattachments1"  data-area="80,80" data-maxsize="2000" data-type=""></div>
+          </div>
+          <div class="col-sm-6">
+            <ul class="j_imgbox" style="border:1px dashed #ddd;" id="imgbox" data-remove-confirm="true" data-imgstyle="width:100px;height:100px;" ></ul>
           </div>
         </div>
-      </div>
+      </fieldset>
     </div>
   </div>
 </div>
 #end
 
 <script>
+
+  function uploadHandler(type,fileInput,res){
+    //alert(JSON.stringify(res))
+  }
   function submitThisForm(callback){
-    parent.RefreshJboltTable();
-    parent.layer.close(parent.layer.getFrameIndex(window.name));
+      parent.jboltTableProcessTdByDialogChooser("cpics", '#(invId)',$("#cattachments1").val());
+      parent.test('#(invId)',$("#cattachments1").val());
+      // parent.RefreshJboltTable();
+      parent.layer.close(parent.layer.getFrameIndex(window.name));
   }
   /**
    * 选中按钮

@@ -84,7 +84,7 @@
             var action=parent.DialogUtil.getCurrentTriggerEle();
             if(isOk(action)){
                 //var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,insertType,false,false,true);
-                var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,'prepend');
+                var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,'prepend', true);
                 if(success){
                     parent.layer.closeAll();
                     parent.tableDataSuccess();
@@ -114,7 +114,7 @@
      */
     function dbClickCheckData(table,tempTr1,trId1,rowData) {
         var action=parent.DialogUtil.getCurrentTriggerEle();
-        var success=parent.jboltTableInsertRowsByDialogChooser(action,rowData,'prepend');
+        var success=parent.jboltTableInsertRowsByDialogChooser(action,rowData,'prepend', true);
         if(success){
             parent.layer.closeAll();
             parent.tableDataSuccess();

@@ -1,5 +1,6 @@
 package cn.rjtech.admin.inventoryqcform;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -427,7 +428,7 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
      *
      * @return
      */
-    public Ret saveFileAndUpdateLine(List<UploadFile> files, String uploadPath, Long lineId) {
+    public Ret saveFileAndUpdateLine(List<UploadFile> files, String uploadPath) {
         Ret ret = new Ret();
         tx(() -> {
             List<JboltFile> retFiles = new ArrayList<>();
@@ -445,19 +446,19 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
                 ret.setFail().set("msg", errorMsg.toString());
                 return false;
             }
-
-            // 保存文件 获取fileId
-            Long fileId = jboltFile.getId();
-            InventoryQcForm inventoryQcForm = findById(lineId);
-            String cPics = inventoryQcForm.getCPics();
-            if (cPics != null) {
-                cPics = cPics.concat(",").concat(Long.toString(fileId));
-            } else {
-                cPics = Long.toString(fileId);
-            }
-            inventoryQcForm.setCPics(cPics);
-            inventoryQcForm.update();
-
+//            if (ObjectUtil.isNotNull(lineId)){
+//                // 保存文件 获取fileId
+//                Long fileId = jboltFile.getId();
+//                InventoryQcForm inventoryQcForm = findById(lineId);
+//                String cPics = inventoryQcForm.getCPics();
+//                if (cPics != null) {
+//                    cPics = cPics.concat(",").concat(Long.toString(fileId));
+//                } else {
+//                    cPics = Long.toString(fileId);
+//                }
+//                inventoryQcForm.setCPics(cPics);
+//                inventoryQcForm.update();
+//            }
             ret.setOk().set("data", retFiles);
             return true;
         });

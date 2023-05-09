@@ -2,7 +2,7 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="PheDeliveryLines_tpl_#(pageId)">
     {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
+        <tr data-id="${data.iinventoryid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td data-editable="false">${data.iinventorycode}</td>
             <td>${data.iinventoryname}</td>
@@ -11,15 +11,15 @@
             <td>${data.componentname}</td>
             <td>${data.specs}</td>
             <td>${data.unit}</td>
-            <td>${data.inspectionname}</td>
             <td>
-            <a tooltip title="上传图片" href="admin/inventoryqcform/openFileDialog/${data.iautoid}"
-               data-btn="yes" data-title="上传图片" data-area="30%,60%" class="jbolt_table_editbtn">
-                    {@if data.cpics} <i class="fa fa-files-o c-primary"></i>
-                    {@else}
-                   <i class="fa fa-files-o c-danger"></i>
-                   {@/if}
-               </a>
+                ${data.cpics}
+<!--            <a tooltip title="上传图片" href=""-->
+<!--               data-btn="yes" data-title="上传图片" data-area="30%,60%" class="jbolt_table_editbtn">-->
+<!--                    {@if data.cpics} <i class="fa fa-files-o c-primary"></i>-->
+<!--                    {@else}-->
+<!--                   <i class="fa fa-files-o c-danger"></i>-->
+<!--                   {@/if}-->
+<!--               </a>-->
             </td>
             <td>${data.cdccode}</td>
             <td>${data.cmeasure}</td>
@@ -92,8 +92,8 @@
                         <th data-width="120" data-column="componentname">部品名称</th>
                         <th data-width="120" data-column="specs">规格</th>
                         <th data-width="120" data-column="unit">主计量单位</th>
-                        <th data-min-width="200" data-column="inspectiontype">检验类型</th>
-                        <th data-width="120" data-column="cpics">图片</th>
+<!--                        <th data-min-width="200" data-column="inspectiontype">检验类型</th>-->
+                        <th data-width="120" data-column="cpicsstr">图片</th>
                         <th data-width="120" data-column="cdccode">设变号</th>
                         <th data-width="120" data-column="cmeasure">测试理由</th>
                     </tr>
@@ -106,6 +106,7 @@
 </div>
 
 <script>
+
 
     /**
      * 打印方法
@@ -135,6 +136,23 @@
         });
     }
 
+    function test(id, value) {
+        var table=getJBoltTable('jbolt_table_pheDeliveryLines_#(pageId)');
+
+        var tr = table.find("tbody>tr[data-id='"+id+"']>");
+
+        if (!tr){
+            return;
+        }
+        var index = tr.closest("tr").index();
+        var data = jboltTableGetRowJsonData('jbolt_table_pheDeliveryLines_#(pageId)', index);
+        if (data){
+            console.log(data)
+        }
+
+        // jboltTable.tbody.find("tr:nth-child("+(fixTrIndex+1)+")");
+
+    }
 
     /**
      * 标签打印
@@ -180,6 +198,10 @@
         jboltTableRefresh(getJboltId());
     }
 
+    function getParentTableId() {
+        return "jbolt_table_pheDeliveryLines_#(pageId)";
+    }
+
     /**
      * 获取已选数据函数
      * */
@@ -220,6 +242,9 @@
                 }
             },
             cols: {
+                iinventoryid: {
+                    submitAttr: "iinventoryid"
+                },
                 iautoid: {
                     submitAttr: "iAutoId"
                 },
@@ -245,16 +270,28 @@
                 unit: {
                     submitAttr: "unit"
                 },
-                inspectiontype: {
-                    submitAttr: "inspectionType",
-                    type: "select2",
-                    url: "admin/dictionary/options?key=inspection_type",
-                    valueAttr: "sn",
-                    textAttr: "name",
-                    multiple:"multiple"
+                // inspectiontype: {
+                //     submitAttr: "inspectionType",
+                //     type: "select2",
+                //     url: "admin/dictionary/options?key=inspection_type",
+                //     valueAttr: "sn",
+                //     textAttr: "name",
+                //     multiple:"multiple"
+                // },
+                cpicsstr: {
+                    submitAttr: "cpicsstr",
+                    type:"dialogbtn",
+                    placeholder:"上传图片",
+                    linkColumn:'iinventoryid,cpics',
+                    dialog:{
+                        url:"admin/inventoryqcform/openFileDialog",
+                        area:"95%,95%",
+                        title:"上传图片",
+                        btn:"确定,关闭"
+                    }
                 },
-                cpics: {
-                    submitAttr: "cPics"
+                cpics:{
+                    submitAttr: "cpics",
                 },
                 cdccode: {
                     type:"input",
