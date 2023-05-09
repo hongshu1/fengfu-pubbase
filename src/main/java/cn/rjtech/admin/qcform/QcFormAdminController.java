@@ -1,9 +1,12 @@
 package cn.rjtech.admin.qcform;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.rjtech.admin.qcformtableparam.QcFormTableParamService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.QcForm;
 import cn.rjtech.model.momdata.QcParam;
@@ -36,6 +39,8 @@ public class QcFormAdminController extends BaseAdminController {
 
     @Inject
     private QcFormService service;
+    @Inject
+    private QcFormTableParamService qcFormTableParamService;
 
     /**
      * 首页
@@ -68,12 +73,12 @@ public class QcFormAdminController extends BaseAdminController {
         render("add.html");
     }
 
-    /**
-     * 保存
-     */
-    public void save() {
-        renderJson(service.save(getModel(QcForm.class, "qcForm")));
-    }
+//    /**
+//     * 保存
+//     */
+//    public void save() {
+//        renderJson(service.save(getModel(QcForm.class, "qcForm")));
+//    }
 
     /**
      * 编辑
@@ -96,12 +101,12 @@ public class QcFormAdminController extends BaseAdminController {
         render("edit.html");
     }
 
-    /**
-     * 更新
-     */
-    public void update() {
-        renderJson(service.update(getModel(QcForm.class, "qcForm")));
-    }
+//    /**
+//     * 更新
+//     */
+//    public void update() {
+//        renderJson(service.update(getModel(QcForm.class, "qcForm")));
+//    }
 
     /**
      * 批量删除
@@ -203,7 +208,9 @@ public class QcFormAdminController extends BaseAdminController {
     
     
     public void table3(@Para(value = "qcItemJsonStr") String itemJsonStr,
-                       @Para(value = "qcParamJsonStr") String itemParamJsonStr){
+                       @Para(value = "qcParamJsonStr") String itemParamJsonStr,
+                       @Para(value = "qcTableParamJsonStr") String tableParamJsonStr,
+                       @Para(value = "iqcformid") Long formId){
         // 表头项目
         if (StrUtil.isNotBlank(itemJsonStr)){
             JSONArray jsonArray = JSONObject.parseArray(itemJsonStr);
@@ -223,17 +230,34 @@ public class QcFormAdminController extends BaseAdminController {
             jsonArray.sort(Comparator.comparing(obj -> ((JSONObject)obj).getInteger("iseq")));
             set("columns", jsonArray);
         }
-       
-        
+    
+        /**
+         * 三种情况
+         *  1.新增进来，没有formId也没有新增数据
+         *  2.新增进来的，没有formId 但是有新增数据，将新增数据返回 或 修改进来的，有formId，不管是否有新增还是删除直接将页面的数据传入过来
+         *  3.默认加载时，是没有数据操作的，直接读取数据
+         */
+        // 判断是否有新增的值
+       if (ObjectUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
+            // 查询
+           List<Record> recordList = qcFormTableParamService.findByFormId(formId);
+           set("dataList", recordList);
+           
+           
+        }else if(StrUtil.isNotBlank(tableParamJsonStr)){
+            JSONArray jsonArray = JSONObject.parseArray(tableParamJsonStr);
+            if (!jsonArray.isEmpty()){
+                set("dataList", jsonArray);
+            }
+        }
         render("_table3.html");
     }
     
-    public void getJsonToList(@Para(value = "jsonStr") String jsonStr,
-                              @Para(value = "id") String id){
-        if (StrUtil.isBlank(jsonStr)){
-            renderJsonData(null);
-            return;
-        }
-        renderJsonData(JSONObject.parseArray(jsonStr));
+    public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
+                           @Para(value = "qcItemTableJsonData") String qcItemTableJsonDataStr,
+                           @Para(value = "qcParamTableJsonData") String qcParamTableJsonDataStr,
+                           @Para(value = "tableJsonData") String tableJsonDataStr){
+        renderJsonData(service.submitForm(formJsonDataStr, qcItemTableJsonDataStr, qcParamTableJsonDataStr, tableJsonDataStr));
     }
+  
 }

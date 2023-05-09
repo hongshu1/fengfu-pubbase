@@ -59,14 +59,14 @@
             <th data-width="60" data-column="index">序号</th>
             <th data-width="80">操作</th>
             <th data-width="150" data-column="cEquipmentModelName">现品票</th>
-            <th data-width="150" data-column="cinvcode">存货编码</th>
-            <th data-width="150" data-cInvCode1="cPhone">客户部番</th>
-            <th data-width="150" data-column="cInvName1">部品名称</th>
-            <th data-width="150" data-column="cInvStd">规格型号</th>
-            <th data-width="150" data-column="cuomname">主计量单位</th><!--iInventoryUomId1-->
+              <th data-width="150" data-column="cinvcode">存货编码</th>
+              <th data-width="150" data-column="cinvcode1">客户部番</th>
+              <th data-width="150" data-column="cinvname1">部品名称</th>
+              <th data-width="150" data-column="cinvstd">规格</th>
+              <th data-width="100" data-column="cuomclassname">库存主单位</th>
             <th data-width="150" data-column="cuomname">数量</th><!--iInventoryUomId1-->
-            <th data-width="150" data-column="ioperationid">项目大类编码</th>
-            <th data-width="150" data-column="ioperationid">项目大类名称</th>
+            <th data-width="150" data-column="cinvccode">项目大类编码</th>
+            <th data-width="150" data-column="cinvcname">项目大类名称</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -76,12 +76,6 @@
   </div>
 </div>
 <script>
-  /*新增*/
-  function addBomcompareTr(ele){
-    var url="/admin/inventoryspotcheckform/equipmentqcparamSelect";
-    $(ele).data("url",url).attr("data-area","90%,90%").attr("data-title","关联点检参数");
-    DialogUtil.openBy(ele);
-  }
   /*去后端执行提交功能*/
   function getEditableTableOptions_split_#(pageId)(){
     var editableTableOptions = {
@@ -116,20 +110,20 @@
           textAttr:"coperationname" //coperationname\ioperationid
         },
           cinvcode: {
-              type:"autocomplete",
-              url: "admin/inventory/autocomplete",
+              type: "autocomplete",
+              url: "admin/otherout/autocomplete",
               maxLength: 100,
               required: true,
               placeholder: "请选择",
               textAttr: "cinvcode",
-              limit: 10,
-              width: 500,
+              width: 800,
               valueAttr: "cinvcode",
-              columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,isalesuomid",
-              header:'存货编码,客户部署,部品名称,规格,销售单位',
-              changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cDefine1", use: "cinvcode1"},
-                  {column: "cDefine2", use: "cinvname1"},{column: "cDefine3", use: "cinvstd"},
-                  {column: "cDefine4", use: "isalesuomid"},{column: "iInventoryId", use: "iautoid"}]
+              columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomclassname,cinvccode,cinvcname",
+              header:'存货编码,客户部番,部品名称,规格型号,库存主单位,项目大类编码,项目大类名称',
+              changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
+                  {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
+                  {column: "cinvccode", use: "cinvccode"},{column: "cinvcname", use: "cinvcname"},
+                  {column: "cuomclassname", use: "cuomclassname"},{column: "iinventoryid", use: "iautoid"}]
           },
       }
     };

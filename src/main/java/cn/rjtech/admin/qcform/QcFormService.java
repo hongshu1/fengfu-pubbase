@@ -1,17 +1,23 @@
 package cn.rjtech.admin.qcform;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.qcformitem.QcFormItemService;
 import cn.rjtech.admin.qcformparam.QcFormParamService;
-import cn.rjtech.model.momdata.QcForm;
-import cn.rjtech.model.momdata.QcFormItem;
-import cn.rjtech.model.momdata.QcFormParam;
+import cn.rjtech.admin.qcformtableitem.QcFormTableItemService;
+import cn.rjtech.admin.qcformtableparam.QcFormTableParamService;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -21,6 +27,9 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 质量建模-检验表格
@@ -47,6 +56,10 @@ public class QcFormService extends BaseService<QcForm> {
     private QcFormItemService qcFormItemService;
     @Inject
     private QcFormParamService qcFormParamService;
+    @Inject
+    private QcFormTableParamService qcFormTableParamService;
+    @Inject
+    private QcFormTableItemService qcFormTableItemService;
 
     /**
      * 后台管理数据查询
@@ -80,10 +93,26 @@ public class QcFormService extends BaseService<QcForm> {
     /**
      * 保存
      */
-    public Ret save(QcForm qcForm) {
-        if (qcForm == null || isOk(qcForm.getIAutoId())) {
+    public Ret save(QcForm qcForm, Long orgId, Long userId, String orgCode, String orgName, String userName, Date date) {
+        if (qcForm == null) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
+        qcForm.setIOrgId(orgId);
+        qcForm.setCOrgCode(orgCode);
+        qcForm.setCOrgName(orgName);
+        
+        qcForm.setICreateBy(userId);
+        qcForm.setCCreateName(userName);
+        qcForm.setDCreateTime(date);
+        
+        qcForm.setIUpdateBy(userId);
+        qcForm.setCUpdateName(userName);
+        qcForm.setDUpdateTime(date);
+        qcForm.setIsDeleted(false);
+    
+        QcForm obj = queryByQcName(qcForm.getCQcFormName(), null);
+        ValidationUtils.isTrue(ObjectUtil.isEmpty(obj), "表格名称不能重复");
+        ValidationUtils.notNull(qcForm.getIAutoId(), "未获取到主键id");
         //if(existsName(qcForm.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = qcForm.save();
         if (success) {
@@ -92,11 +121,20 @@ public class QcFormService extends BaseService<QcForm> {
         }
         return ret(success);
     }
+    
+    public QcForm queryByQcName(String qcFormName, Long id){
+        ValidationUtils.notBlank(qcFormName, "表格名称不能为空");
+        String sqlStr = "SELECT * FROM Bd_QcForm WHERE cQcFormName = ?";
+        if (ObjectUtil.isNotNull(id)){
+            sqlStr = sqlStr+" AND iAutoId <> '"+id+"'";
+        }
+        return findFirst(sqlStr, qcFormName);
+    }
 
     /**
      * 更新
      */
-    public Ret update(QcForm qcForm) {
+    public Ret update(QcForm qcForm, Long userId, String userName, Date date) {
         if (qcForm == null || notOk(qcForm.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
@@ -105,8 +143,16 @@ public class QcFormService extends BaseService<QcForm> {
         if (dbQcForm == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
+        dbQcForm.setCMemo(qcForm.getCMemo());
+        dbQcForm.setCQcFormName(qcForm.getCQcFormName());
+        dbQcForm.setIsEnabled(qcForm.getIsEnabled());
+        dbQcForm.setIUpdateBy(userId);
+        dbQcForm.setCUpdateName(userName);
+        dbQcForm.setDUpdateTime(date);
+        QcForm obj = queryByQcName(dbQcForm.getCQcFormName(), dbQcForm.getIAutoId());
+        ValidationUtils.isTrue(ObjectUtil.isEmpty(obj), "表格名称不能重复");
         //if(existsName(qcForm.getName(), qcForm.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST)}
-        boolean success = qcForm.update();
+        boolean success = dbQcForm.update();
         if (success) {
             //添加日志
             //addUpdateSystemLog(qcForm.getIAutoId(), JBoltUserKit.getUserId(), qcForm.getName())
@@ -334,5 +380,100 @@ public class QcFormService extends BaseService<QcForm> {
     public List<Record> options() {
         return dbTemplate("qcform.AdminDatas", Kv.of("isenabled", "true")).find();
     }
-
+    
+    public Ret submitForm(String formJsonDataStr, String qcItemTableJsonDataStr, String qcParamTableJsonDataStr, String tableJsonDataStr){
+        ValidationUtils.notBlank(formJsonDataStr, JBoltMsg.JBOLTTABLE_IS_BLANK);
+        ValidationUtils.notBlank(qcItemTableJsonDataStr, JBoltMsg.JBOLTTABLE_IS_BLANK);
+        ValidationUtils.notBlank(qcParamTableJsonDataStr, JBoltMsg.JBOLTTABLE_IS_BLANK);
+        ValidationUtils.notBlank(tableJsonDataStr, JBoltMsg.JBOLTTABLE_IS_BLANK);
+        
+        JSONArray qcParamJsonData = JSONObject.parseArray(qcParamTableJsonDataStr);
+        ValidationUtils.notEmpty(qcParamJsonData, JBoltMsg.JBOLTTABLE_IS_BLANK);
+    
+        JSONObject formJsonData = JSONObject.parseObject(formJsonDataStr);
+        QcForm qcFom = createQcFom(formJsonData.getLong(QcForm.IAUTOID), formJsonData.getString(QcForm.CQCFORMNAME), formJsonData.getString(QcForm.CMEMO), Boolean.valueOf(formJsonData.getString(QcForm.ISENABLED)));
+        // 用于记录新增是的主键id
+        QcForm qcFormNew = new QcForm();
+        Long orgId = getOrgId();
+        String orgCode = getOrgCode();
+        String orgName = getOrgName();
+    
+        Long userId = JBoltUserKit.getUserId();
+        String userName = JBoltUserKit.getUserName();
+        DateTime date = DateUtil.date();
+        Long formId = qcFom.getIAutoId();
+        // 判断是否新增
+        
+        if (ObjectUtil.isNull(formId)){
+            formId = JBoltSnowflakeKit.me.nextId();
+            qcFormNew.setIAutoId(formId);
+        }
+        
+        List<QcFormItem> qcFormItemList = qcFormItemService.createQcFormItemList(formId, false, JSONObject.parseArray(qcItemTableJsonDataStr));
+        Map<Long, QcFormItem> qcFormItemMap = qcFormItemList.stream().collect(Collectors.toMap(QcFormItem::getIQcItemId, Function.identity(), (key1, key2) -> key2));
+        for (int i=0; i<qcParamJsonData.size(); i++){
+            JSONObject jsonObject = qcParamJsonData.getJSONObject(i);
+            Long qcItemId = jsonObject.getLong(QcFormParam.IQCITEMID.toLowerCase());
+            if (qcFormItemMap.containsKey(qcItemId)){
+                QcFormItem qcFormItem = qcFormItemMap.get(qcItemId);
+                jsonObject.put(QcFormParam.IQCFORMITEMID.toLowerCase(), qcFormItem.getIAutoId());
+            }
+        }
+    
+        List<QcFormParam> qcFormParamList = qcFormParamService.createQcFormParamList(formId, qcParamJsonData);
+        JSONArray tableJsonData = JSONObject.parseArray(tableJsonDataStr);
+        List<QcFormTableParam> qcFormTableParamList = qcFormTableParamService.createQcFormTableParamList(formId, tableJsonData);
+        List<QcFormTableItem> qcFormTableItemList = qcFormTableItemService.createQcFormTableItemList(formId, tableJsonData);
+    
+        
+        tx(() -> {
+            // 新增
+            if (ObjectUtil.isNull(qcFom.getIAutoId())){
+                qcFom.setIAutoId(qcFormNew.getIAutoId());
+                save(qcFom, orgId, userId, orgCode, orgName, userName, date);
+            }else {
+                // 先删除后添加
+                removeById(qcFom.getIAutoId());
+                
+                update(qcFom, userId, userName, date);
+            }
+           
+            // 保存项目
+            qcFormItemService.batchSave(qcFormItemList);
+            // 保存参数
+            qcFormParamService.batchSave(qcFormParamList);
+            // 保存记录行数据
+            qcFormTableParamService.batchSave(qcFormTableParamList);
+            // 保存记录行数据中间表
+            qcFormTableItemService.batchSave(qcFormTableItemList);
+            return true;
+        });
+        
+        // 修改 removeById
+        
+//
+        return SUCCESS;
+    }
+    
+    
+    public QcForm createQcFom(Long id, String qcFormName, String memo, Boolean isEnabled){
+        QcForm qcForm = new QcForm();
+        qcForm.setIAutoId(id);
+        qcForm.setCQcFormName(qcFormName);
+        qcForm.setCMemo(memo);
+        qcForm.setIsEnabled(isEnabled);
+        return qcForm;
+    }
+    
+    /**
+     * 删除关联表数据，重新添加
+     * @param id
+     */
+    public void removeById(Long id){
+        qcFormItemService.removeByQcFormId(id);
+        qcFormParamService.removeByQcFormId(id);
+        qcFormTableParamService.removeByQcFormId(id);
+        qcFormTableItemService.removeByQcFormId(id);
+    }
+    
 }

@@ -1,6 +1,7 @@
 package cn.rjtech.admin.qcformitem;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
@@ -14,6 +15,8 @@ import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.model.momdata.QcForm;
 import cn.rjtech.util.StreamUtils;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -251,6 +254,39 @@ public class QcFormItemService extends BaseService<QcFormItem> {
 			update("update Bd_QcFormItem set isDeleted =  1 WHERE iAutoId ='"+iAutoId+"'");
 		}
 	}
+	
+	public QcFormItem createQcFormItem(Long qcFormItemId, Long qcFormId, Long qcItemId, Integer seq, Boolean isDeleted){
+		QcFormItem qcFormItem = new QcFormItem();
+		if (ObjectUtil.isNull(qcFormItemId)){
+			qcFormItemId = JBoltSnowflakeKit.me.nextId();
+		}
+		qcFormItem.setIAutoId(qcFormItemId);
+		qcFormItem.setIQcFormId(qcFormId);
+		qcFormItem.setIQcItemId(qcItemId);
+		qcFormItem.setISeq(seq);
+		qcFormItem.setIsDeleted(isDeleted);
+		return qcFormItem;
+	}
 
-
+	public List<QcFormItem> createQcFormItemList(Long qcFormId, boolean isDelete , JSONArray formItemArray){
+		if (CollectionUtil.isEmpty(formItemArray)){
+			return null;
+		}
+		List<QcFormItem> list = new ArrayList<>();
+		for (Object obj : formItemArray){
+			JSONObject jsonObject = (JSONObject)obj;
+			QcFormItem qcFormItem = createQcFormItem(
+					jsonObject.getLong(QcFormItem.IAUTOID.toLowerCase()),
+					qcFormId,
+					jsonObject.getLong(QcFormItem.IQCITEMID.toLowerCase()),
+					jsonObject.getInteger(QcFormItem.ISEQ.toLowerCase()),
+					isDelete);
+			list.add(qcFormItem);
+		}
+		return list;
+	}
+	
+	public void removeByQcFormId(Long formId){
+		delete("DELETE Bd_QcFormItem WHERE iQCFormId = ?", formId);
+	}
 }

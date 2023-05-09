@@ -2,7 +2,7 @@
 <form onsubmit="return false;" id="QcFormForm" action="#(action)" method="post">
 
     #if(qcForm.iAutoId??)
-    <input type="hidden" id="qcFormiAutoId_#(pageId)" name="qcForm.iAutoId" value="#(qcForm.iAutoId??)"/>
+    <input type="hidden" id="qcFormiAutoId_#(pageId)" name="iAutoId" value="#(qcForm.iAutoId??)"/>
     #end
 
     <div class="row">
@@ -10,12 +10,14 @@
             <div class="form-group row">
                 <label class="col-sm-1 col-form-label">检验表格名称</label>
                 <div class="col-10">
-                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入检验表格名称" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入检验表格名称" maxlength="40" name="qcForm.cQcFormName" value="#(qcForm.cQcFormName??)"/>
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入检验表格名称" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入检验表格名称" maxlength="40" name="cQcFormName" value="#(qcForm.cQcFormName??)"/>
                 </div>
             </div>
         </div>
     </div>
 
+</form>
+<form onsubmit="return false;">
     <div class="row">
         <div class="col">
             <div class="form-group row">
@@ -73,7 +75,7 @@
                                 <div class="col-md-auto">
                                     <form id="qcformtableparamForm" method="post" class="form-inline" onsubmit="return false;">
                                         <!-- 工具条 toolbar -->
-                                        <input type="text" hidden name="iqcformid" id="iqcformid" value="#(iautoid??)"/>
+                                        <input type="text" hidden name="iqcformid" id="iqcformid" value="#(qcForm.iAutoId??)"/>
                                         <input type="text" hidden name="qcItemJsonStr" id="qcItemJsonStr" value=""/>
                                         <input type="text" hidden name="qcParamJsonStr" id="qcParamJsonStr" value=""/>
                                         <input type="text" hidden name="qcTableParamJsonStr" id="qcTableParamJsonStr" value=""/>
@@ -83,7 +85,7 @@
                         </div>
 
                         <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
-                            #ajaxPortal("/admin/qcform/table3","qcformtable_portal_" + pageId, true)
+                            #ajaxPortal("/admin/qcform/table3?iqcformid="+'#(qcForm.iautoid??)',"qcformtable_portal_" + pageId, true)
                         </div>
 
                     </div>
@@ -91,9 +93,8 @@
             </div>
         </div>
     </div>
-
-
-
+</form>
+<form id="QcFormForm_2" onsubmit="return false;">
     <div class="row">
         <div class="col">
 
@@ -107,13 +108,12 @@
         </div>
     </div>
 
-
     <div class="row">
         <div class="col">
             <div class="form-group row">
                 <label class="col-sm-1 col-form-label">备注</label>
                 <div class="col-10">
-                    <textarea  data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="qcForm.cMemo">#(qcForm.cMemo??)</textarea>
+                    <textarea  data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="cMemo">#(qcForm.cMemo??)</textarea>
                 </div>
             </div>
         </div>
@@ -129,6 +129,65 @@
 
     // <!--	隐藏一个不需要的按钮-->
     hideParentLayerDialogBtn(0);
+    // 保存操作！
+    #if(view??0 !=1)
+        addParentLayerDialogBtn("保存","lay_success",function(){
+            if (!FormChecker.check("#QcFormForm")){
+                return;
+            }
+            var qcFormItemTable = getJboltTableAllDatas("#jbolt_table_QcFormItem_split");
+            if (!qcFormItemTable || qcFormItemTable.length ==0){
+                LayerMsgBox.alert("表格项目数据不能为空",2);
+                return;
+            }
+
+            var qcFormParamTable = getJboltTableAllDatas("#jbolt_table_qcformparam_split");
+            if (!qcFormParamTable || qcFormParamTable.length ==0){
+                LayerMsgBox.alert("表格内容数据不能为空",2);
+                return;
+            }
+
+            var tableData = getTableData();
+            debugger;
+            if (!tableData || tableData.length ==0){
+                LayerMsgBox.alert("表格录入方式数据不能为空",2);
+                return;
+            }
+
+            var seq = new Number(0);
+            for(let i in tableData){
+                let rowdata = tableData[i];
+                if (!rowdata.itype){
+                    LayerMsgBox.alert("参数录入方式不能为空",2);
+                    return;
+                }
+                seq+= new Number(10);
+                rowdata['iseq'] = seq;
+            }
+            // 表体的值
+            var formData1 = formToJson('#QcFormForm');
+            var formData2 = formToJson('#QcFormForm_2');
+            var formData = $.extend({}, formData1, formData2);
+
+            Ajax.post('/admin/qcform/submitForm', {
+                formJsonData: JSON.stringify(formData),
+                qcItemTableJsonData: JSON.stringify(qcFormItemTable),
+                qcParamTableJsonData: JSON.stringify(qcFormParamTable),
+                tableJsonData: JSON.stringify(tableData)
+            }, function (ret) {
+                if (ret.state === 'ok') {
+                    LayerMsgBox.success(ret.msg, 1000, function () {
+                        parent.LayerMsgBox.closeAll();
+                        parent.refreshPjaxContainer();
+                    });
+                } else {
+                    LayerMsgBox.alert(ret.msg, 2);
+                }
+            });
+
+        });
+    #end
+
 
     //检验表格项目保存
     function QcFormItemsubmit() {
@@ -256,8 +315,8 @@
                 setTableJsonStr();
             }
         }
-
     }
+
     function updateItemParamSeq(isRefresh){
         var datas = jboltTableGetAllDatas('#jbolt_table_qcformparam_split');
         if (isNotEmpty(datas)){
@@ -318,6 +377,25 @@
         return array
     }
 
+    function itemTableSort() {
+        var tableData = getTableData();
+        if (isEmpty(tableData)){
+            return tableData
+        }
+        const len = tableData.length
+        if (len < 2) return tableData
+
+        for (let i = 0; i < len; i++) {
+            for (let j = 0; j < i; j++) {
+                if (tableData[j]['iitemparamseq'] > tableData[i]['iitemparamseq']) {
+                    const temp = tableData[j]
+                    tableData[j] = tableData[i]
+                    tableData[i] = temp
+                }
+            }
+        }
+    }
+
     // 将所有表格数据转为JSON
     function setTableJsonStr() {
         var itemSortData = itemSort('#jbolt_table_QcFormItem_split');
@@ -341,6 +419,7 @@
         $("#qcItemJsonStr").val(JSON.stringify(itemSortData));
         $("#qcParamJsonStr").val(JSON.stringify(itemParamTableData));
          $("#qcTableParamJsonStr").val(JSON.stringify(tableData));
+         //  $("#qcTableParamJsonStr").val('[{"itype":"1","istdval":"1","imaxval":"2","iminval":"3"},{"itype":"1","istdval":"2","imaxval":"2","iminval":"3"}]');
         var qcformtable_portal_#(pageId) = $('#qcformtable_portal_#(pageId)');
         qcformtable_portal_#(pageId).data("conditions-form", "qcformtableparamForm");
         qcformtable_portal_#(pageId).ajaxPortal(true,"/admin/qcform/table3",false);
@@ -407,30 +486,43 @@
 
     }
 
-    function insertPrependEmptyRow(ele,forceTrChange) {
+    function insertEmptyRowAfter(itemRow,ele,forceTrChange) {
+        console.log("itemRow========"+ JSON.stringify(itemRow));
+        // var data = {
+        //     itype:itemRow.itype,
+        //     istdval: itemRow.istdval,
+        //     imaxval: itemRow.imaxval,
+        //     iminval: itemRow.iminval,
+        //     coptions: itemRow.coptions
+        // }
+
         var table=getJBoltTable(ele);
         if(isOk(table)){
             var jboltTable=table.jboltTable("inst");
             if(jboltTable){
-                var action=getRealJqueryObject(ele);
+                var action=getRealJqueryObject(ele),tr;
                 if(isOk(action)){
                     var success = checkMasterTableId(action);
                     if(!success){
                         return false;
                     }
-                }
-                if(!jboltTable.isEmpty){
-                    var tr=jboltTable.tbody.find("tr:first");
-                    if(isOk(tr)){
-                        return insertRows(jboltTable,tr,{itype:'7', itypestr: '日期'},true,forceTrChange);
+                    //如果是在表格里触发的
+                    if(isOk(action.closest("table[data-jbolttable]"))){
+                        tr = action.closest("tr");
+                    }else if(isOk(action.closest(".jbolt_table_fixed"))){
+                        var fixtr = action.closest("tr");
+                        var fixTrIndex = fixtr.index();
+                        tr=jboltTable.tbody.find("tr:nth-child("+(fixTrIndex+1)+")");
                     }
                 }
-                return insertRows(jboltTable,null,null,false,forceTrChange);
+
+                return table.me.copyCheckedRowInsertAfter(table,true, tr);
+                // return insertRows(jboltTable,tr,{},false,forceTrChange);
             }
         }
         LayerMsgBox.alert("表格组件配置异常",2);
-        return false;
     }
+
 
     function insertRows(table,tr,insertEmptyData,insertToBefore,forceTrChange){
         var canInsertTr=table.me.checkCanInsertNewTr(table,1);
@@ -486,6 +578,54 @@
             return tempTr;
         }
         return false;
+    }
+
+
+    function removeJboltTableRow(ele){
+        var table=getJBoltTable(ele);
+        if(isOk(table)){
+            if(!table.data("editable")){
+                LayerMsgBox.alert("表格组件配置异常 data-editable=\"true\"",2);
+                return false;
+            }
+            var jboltTable=table.jboltTable("inst");
+            if(jboltTable){
+                var action=getRealJqueryObject(ele);
+                if(isOk(action)){
+                    var success = checkMasterTableId(action);
+                    if(!success){
+                        return false;
+                    }
+                }
+                if(isOk(action)&&(isOk(action.closest("table[data-jbolttable]"))||isOk(action.closest(".jbolt_table_fixed")))){
+                    var tr=action.closest("tr");
+                    jboltTable.me.removeRow(jboltTable,tr.data("index"));
+                    return true;
+                }
+            }
+        }
+        LayerMsgBox.alert("表格组件配置异常",2);
+        return false;
+    }
+
+    function removeJboltTableCheckedRow(ele,confirm){
+        var action=getRealJqueryObject(ele);
+        if(isOk(action)){
+            var success = checkMasterTableId(action);
+            if(!success){
+                return false;
+            }
+        }
+        var isCheckedNone=jboltTableIsCheckedNone(ele);
+        if(isCheckedNone){
+            LayerMsgBox.alert("请至少选择一行数据",2);
+        }else{
+            removeJBoltTableCheckedTr(ele,confirm);
+            return true;
+
+        }
+        return false;
+
     }
 
 </script>

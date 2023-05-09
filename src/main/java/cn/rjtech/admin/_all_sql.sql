@@ -407,3 +407,13 @@
 #include("sysotherin/sysotherin.sql")
 #end
 
+
+#namespace("otherout")
+#include("otherout/otherout.sql")
+#end
+
+
+#namespace("sysproductin")
+#include("sysproductin/sysproductin.sql")
+#end
+

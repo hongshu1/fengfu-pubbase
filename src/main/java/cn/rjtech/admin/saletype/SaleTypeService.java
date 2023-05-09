@@ -3,6 +3,7 @@ package cn.rjtech.admin.saletype;
 
 import cn.jbolt.common.model.CodeGenModelAttr;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.RdStyle;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Okv;
@@ -97,7 +98,7 @@ public class SaleTypeService extends BaseService<SaleType> {
 		Date date = new Date();
 		saleType.setDCreateTime(date);	//创建时间
 		saleType.setDUpdateTime(date);	//更新时间
-		saleType.setISource(1);	//来源 1.MES 2.U8
+		saleType.setISource(SourceEnum.MES.getValue());
 		List<SaleType> crdcode = find("select cRdCode from Bd_Rd_Style where iAutoId = ?",saleType.getIRdStyleId());
 		saleType.setCRdCode(crdcode.get(0).getCRdCode());	//0：下标，，第一个
 		return saleType;
