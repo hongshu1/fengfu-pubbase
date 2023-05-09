@@ -1,6 +1,7 @@
 package cn.rjtech.admin.cusfieldsmappingd;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
@@ -163,4 +164,19 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
         renderJson(service.saveTableSubmit(getJBoltTable()));
     }
 
+    /**
+     * 定制规则
+     */
+    public void rule(@Para(value = "icusfieldsmappingdid") Long icusfieldsmappingdid) {
+        if (ObjUtil.isNotNull(icusfieldsmappingdid)) {
+            CusFieldsMappingD d = service.findById(icusfieldsmappingdid);
+            ValidationUtils.notNull(d, JBoltMsg.DATA_NOT_EXIST);
+
+            set("cusFieldsMappingD", d);
+        }
+        
+        keepPara();
+        render("rule.html");
+    }
+    
 }

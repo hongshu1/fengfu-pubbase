@@ -1,6 +1,7 @@
 package cn.rjtech.admin.modoc;
 
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -10,6 +11,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoDoc;
+import com.jfinal.kit.Ret;
 
 import java.util.HashMap;
 
@@ -79,8 +81,19 @@ public class MoDocAdminController extends BaseAdminController {
   /**
 	* 保存
 	*/
-	public void save() {
-		renderJson(service.save(getModel(MoDoc.class, "moDoc")));
+	public void save(JBoltTable jBoltTable) {
+		MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
+		renderJson(service.save(moDoc));
+	}
+	public void persondialog(){
+		Long iautoid = getLong("iautoid");
+		set("configid", iautoid);
+		render("persondialog.html");
+	}
+	public void savepersonadd(JBoltTable jBoltTable, Long configid){
+
+
+		renderJson(service.savePerson(jBoltTable,configid));
 	}
 
    /**
