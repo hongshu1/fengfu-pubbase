@@ -1,0 +1,55 @@
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+ <textarea class="jb_tpl_box" id="jbolt_table_rowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td hidden >${data.id}</td>
+
+<td>${data.username}</td>
+
+ <td hidden >${data.user_id}</td>
+
+<td>${data.name}</td>
+<td>${data.email}</td>
+<td> <a data-ajaxbtn href="/admin/person/deleteByAjax" data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a></td>
+</tr>
+{@/each}
+</textarea>
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+
+            <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>
+                新增
+            </button>
+        </div>
+    </div>
+    <table class="jbolt_table thead_font_normal table-bordered hover_info"
+           id="jbolt_Table_#(pageId)"
+           data-height="400"
+           data-width="auto"
+           data-column-resize="true"
+           data-rowtpl="jbolt_table_rowtpl_#(pageId)"
+           data-toolbar="jbolt_table_toolbar_#(pageId)"
+           data-url="admin/modoc/savepersonadd?configid=#(configid??)"
+           data-autoload="false"
+           data-ajax="true"
+           data-editable="true"
+           data-editable-option="getEditableTableOptions_#(pageId)"
+    >
+        <thead>
+        <tr>
+            <th data-width="60">序号</th>
+            <th hidden data-column="id" >id</th>
+            <th data-column="username" data-width="150">用户名</th>
+            <th hidden data-column="user_id" >用户id</th>
+            <th data-column="name" data-width="100">姓名</th>
+            <th data-column="email" data-width="120">E-Mail</th>
+            <th data-width="100">操作</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
