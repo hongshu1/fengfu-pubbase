@@ -1352,7 +1352,7 @@ public class PermissionKey {
 	/**
 	 * 审批/审核配置
 	 */
-	public static final String AUDITCONFIG = "auditconfig";
+	public static final String AUDIT_CONFIG = "audit_config";
 	/**
 	 * 审批流配置
 	 */
@@ -1788,3 +1788,4 @@ public class PermissionKey {
 	 */
 	public static final String FORMCONVERSIONLIST = "formconversionlist";
 }
+
