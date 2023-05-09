@@ -85,7 +85,7 @@
                         </div>
 
                         <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
-                            #ajaxPortal("/admin/qcform/table3?iqcformid="+qcForm.iAutoId,"qcformtable_portal_" + pageId, true)
+                            #ajaxPortal("/admin/qcform/table3?iqcformid="+(qcForm.iAutoId??''),"qcformtable_portal_" + pageId, true)
                         </div>
 
                     </div>
@@ -436,7 +436,7 @@
             $(this).find('td').each(function () {
                 var inputs = $(this).find("input[class*='form-control']");
                 getField(row, inputs);
-                var selects = $(this).find("select[class='form-control']");
+                var selects = $(this).find("select[class*='form-control']");
                 getField(row, selects);
 
             })

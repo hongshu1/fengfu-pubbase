@@ -1,0 +1,39 @@
+<form onsubmit="return false;" id="InventoryQcFormType_Form" action="#(action)" method="post">
+	#if(inventoryQcFormType.iAutoId??)
+	<input type="hidden" name="inventoryQcFormType.iAutoId" value="#(inventoryQcFormType.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="inventoryQcFormType.iAutoId" value="#(inventoryQcFormType.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">存货质检表格记录ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入存货质检表格记录ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货质检表格记录ID" maxlength="40" name="inventoryQcFormType.iInventoryQcFormId" value="#(inventoryQcFormType.iInventoryQcFormId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">类型：1. 来料检 2. 在库检 3. 出库检</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入类型：1. 来料检 2. 在库检 3. 出库检"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入类型：1. 来料检 2. 在库检 3. 出库检" maxlength="40" name="inventoryQcFormType.iType" value="#(inventoryQcFormType.iType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">类型名称</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入类型名称" maxlength="40" name="inventoryQcFormType.cTypeName" value="#(inventoryQcFormType.cTypeName??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="InventoryQcFormType_Form")
+#end
+

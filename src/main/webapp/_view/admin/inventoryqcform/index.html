@@ -8,8 +8,8 @@
 	<div class="col">
 	<form class="form-inline text-left" id="InventoryQcForm_form_#(pageId)">
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入标准表格名称" name="keywords" value="" />
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入客户部番" name="customer" value="" />
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入部品名称" name="component" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入客户部番" name="cInvCode1" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入部品名称" name="cInvName1" value="" />
 
 		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 	</form>
@@ -28,20 +28,17 @@
 <textarea class="jb_tpl_box" id="InventoryQcForm_tpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.iautoid}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.iinventoryname}</td>
-<td>${data.iqcformname}</td>
-<td>${data.cdccode}</td>
-<td>${data.cmeasure}</td>
-	<td>${data.machineType}</td>
-	<td>${data.componentname}</td>
-	<td>${data.specs}</td>
-	<td>${data.unit}</td>
-<!--		<td>${data.inspectiontype}</td>-->
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
-<td>${data.cupdatename}</td>
-<td>${data.dupdatetime}</td>
+	<td>${pageNumber,pageSize,index | rownum}</td>
+	<td>${data.cqcformname}</td>
+	<td>${data.cinvname}</td>
+	<td>${data.cinvcode1}</td>
+	<td>${data.cinvname1}</td>
+	<td>${data.ctypenames}</td>
+	<td>${data.cpics}</td>
+	<td>${data.cdccode}</td>
+	<td>${data.cmeasure}</td>
+	<td>${data.ccreatename}</td>
+	<td>${data.dcreatetime}</td>
 </tr>
 {@/each}
 </textarea>
@@ -83,20 +80,17 @@
 >
 <thead>
 <tr>
-<th data-width="60" data-column="index">序号</th>
-	<th data-width="150" data-column="iInventoryId">存货名称</th>
-	<th data-width="150" data-column="iQcFormId">标准表格名称</th>
+	<th data-width="60" data-column="index">序号</th>
+	<th data-width="150" data-column="cqcformname">标准表格名称</th>
+	<th data-width="150" data-column="cinvname">存货名称</th>
+	<th data-width="150" data-column="cinvcode1">客户部番</th>
+	<th data-width="150" data-column="cinvname1">部品名称</th>
+	<th data-width="160" data-column="ctypename">检验类型</th>
+	<th data-width="150" data-column="cpics">检验图片</th>
 	<th data-width="120" data-column="cDcCode">设变号</th>
 	<th data-width="150" data-column="cMeasure">测定理由</th>
-	<th data-width="150" data-column="machineType">机型</th>
-	<th data-width="150" data-column="componentName">部品名称</th>
-	<th data-width="150" data-column="specs">规格</th>
-	<th data-width="150" data-column="unit">主计量单位</th>
-<!--	<th data-width="150" data-column="inspectionType">检验类型</th>-->
 	<th data-width="120" data-column="cCreateName">创建人名称</th>
 	<th data-min-width="160" data-column="dCreateTime">创建时间</th>
-	<th data-width="120" data-column="cUpdateName">更新人名称</th>
-	<th data-min-width="160" data-column="dUpdateTime">更新时间</th>
 </tr>
 </thead>
 <tbody></tbody>

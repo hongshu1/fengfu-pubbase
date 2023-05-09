@@ -1,13 +1,16 @@
 package cn.rjtech.admin.inventoryqcform;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.service.JBoltFileService;
+import cn.rjtech.admin.qcform.QcFormService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InventoryQcForm;
+import cn.rjtech.model.momdata.QcForm;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -15,6 +18,7 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,6 +40,9 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	private InventoryQcFormService service;
 	@Inject
 	private JBoltFileService jBoltFileService;
+	@Inject
+	private QcFormService qcFormService;
+	
 
 
    /**
@@ -49,13 +56,13 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	*/
 	public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(),getKv()));
-//	    renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getSortColumn("iAutoId"), getSortType("desc"), getBoolean("IsDeleted"), get("machineType"), get("inspectionType")));
 	}
 
    /**
 	* 新增
 	*/
 	public void add() {
+		set("isAdd", 1);
 		render("add.html");
 	}
 
@@ -74,6 +81,10 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 		if(inventoryQcForm == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
+		}
+		QcForm qcForm = qcFormService.findById(inventoryQcForm.getIQcFormId());
+		if (ObjectUtil.isNotNull(qcForm)){
+			set("qcFormName", qcForm.getCQcFormName());
 		}
 		set("inventoryQcForm",inventoryQcForm);
 		render("edit.html");
@@ -260,16 +271,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	 * 获取资源的数据源
 	 */
 	public void resourceList(){
-		String itemHidden = get("itemHidden");
-		String keywords = StringUtils.trim(get("keywords"));
-		String customerManager = StringUtils.trim(get("CustomerManager"));
-		String componentName = StringUtils.trim(get("componentName"));
-		Kv kv = new Kv();
-		kv.setIfNotNull("itemHidden", itemHidden);
-		kv.setIfNotNull("customerManager", customerManager);
-		kv.setIfNotNull("keywords", keywords);
-		kv.setIfNotNull("componentName", componentName);
-		renderJsonData(service.resourceList(kv,getPageNumber(),getPageSize()));
+		renderJsonData(service.resourceList(getKv(),getPageNumber(),getPageSize()));
 	}
 
 	/**

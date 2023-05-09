@@ -1,9 +1,12 @@
 package cn.rjtech.admin.inventoryqcform;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.poi.excel.JBoltExcel;
@@ -17,10 +20,14 @@ import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.core.util.JBoltUploadFileUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.inventoryqcformtype.InventoryQcFormTypeService;
 import cn.rjtech.model.momdata.InventoryQcForm;
+import cn.rjtech.model.momdata.InventoryQcFormType;
+import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.IAtom;
@@ -30,9 +37,7 @@ import com.jfinal.upload.UploadFile;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,6 +62,10 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
     @Inject
     private JBoltFileService jboltFileService;
+    @Inject
+    private DictionaryService dictionaryService;
+    @Inject
+    private InventoryQcFormTypeService inventoryQcFormTypeService;
 
     /**
      * 后台管理数据查询
@@ -93,9 +102,8 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
      * @param kv
      * @return
      */
-    public Page<InventoryQcForm> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        Page<InventoryQcForm> paginate = daoTemplate("inventoryqcform.pageList", kv).paginate(pageNumber, pageSize);
-        System.out.println("paginate===>" + paginate.getList());
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+        Page<Record> paginate = dbTemplate("inventoryqcform.pageList", kv).paginate(pageNumber, pageSize);
         return paginate;
     }
 
@@ -340,7 +348,29 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
             JSONObject formBean = jBoltTable.getForm();
             String iQcFormId = formBean.getString("inventoryQcForm.iQcFormId");
             String iQcFormName = formBean.getString("inventoryQcForm.iQcFormName");
-
+            // Id值
+            String cTypeSN = formBean.getString("cTypeNames");
+            ValidationUtils.notBlank(cTypeSN, "检验类型不能为空");
+            // 检验类型
+            List<Dictionary> inspectionList = dictionaryService.getListByTypeKey("inspection_type");
+            ValidationUtils.notEmpty(inspectionList, "检验类型【inspection_type】字典未配置");
+            String[] typeNames = cTypeSN.split(",");
+            // 记录名称类型
+            String typeNameStr = "";
+            Map<String, String> inspectionMap = new HashMap<>();
+            for (Dictionary dictionary : inspectionList){
+                String sn = dictionary.getSn();
+                for (String typeName :typeNames){
+                    if (typeName.equals(sn)){
+                        typeNameStr+=dictionary.getName()+",";
+                        inspectionMap.put(sn, dictionary.getName());
+                    }
+                }
+            }
+            if (StrUtil.isNotBlank(typeNameStr)){
+                typeNameStr = typeNameStr.substring(0, typeNameStr.length()-1);
+            }
+            String newTypeNameStr = typeNameStr;
             if (jBoltTable.saveIsNotBlank()) {
                 List<InventoryQcForm> saveModelList = jBoltTable.getSaveModelList(InventoryQcForm.class);
                 List<InventoryQcForm> saveList = new ArrayList<>();
@@ -355,9 +385,13 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
                     inventoryQcForm.setIOrgId(orgId);
                     inventoryQcForm.setCOrgCode(orgCode);
                     inventoryQcForm.setCOrgName(orgName);
+                    inventoryQcForm.setCTypeIds(cTypeSN);
+                    inventoryQcForm.setCTypeNames(newTypeNameStr);
                     saveList.add(inventoryQcForm);
                 });
                 batchSave(saveList);
+                List<InventoryQcFormType> qcFormTypeList = inventoryQcFormTypeService.getQcFormTypeList(saveList, inspectionMap);
+                inventoryQcFormTypeService.batchSave(qcFormTypeList);
             }
 
             if (jBoltTable.updateIsNotBlank()) {
@@ -368,18 +402,28 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
                     inventoryQcForm.setIUpdateBy(user.getId());
                     inventoryQcForm.setCUpdateName(user.getName());
                     inventoryQcForm.setDUpdateTime(nowDate);
+                    inventoryQcForm.setCTypeIds(cTypeSN);
+                    inventoryQcForm.setCTypeNames(newTypeNameStr);
                     updateList.add(inventoryQcForm);
                 });
                 batchUpdate(updateList);
+                List<Long> ids = updateList.stream().map(inventoryQcForm -> inventoryQcForm.getIAutoId()).collect(Collectors.toList());
+                // 先删除后添加
+                inventoryQcFormTypeService.removeByInventoryQcFormId(ids);
+                List<InventoryQcFormType> qcFormTypeList = inventoryQcFormTypeService.getQcFormTypeList(updateList, inspectionMap);
+                inventoryQcFormTypeService.batchSave(qcFormTypeList);
             }
 
             if (jBoltTable.deleteIsNotBlank()) {
                 deleteByIds(jBoltTable.getDelete());
+                inventoryQcFormTypeService.removeByInventoryQcFormId(CollectionUtil.toList(jBoltTable.getDelete()));
             }
             return true;
         });
         return SUCCESS;
     }
+    
+    
 
     /**
      * 检验表格数据源
@@ -505,6 +549,10 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
             return SUCCESS;
         }
         return FAIL;
+    }
+    
+    public Record findByQcFormId(Long id){
+        return dbTemplate("inventoryqcform.pageList", Okv.by("iQcFormId", id)).findFirst();
     }
 
 }
