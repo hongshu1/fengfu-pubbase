@@ -7,8 +7,8 @@
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">参数项目名称</label>
         <div class="col-sm-6 input-group">
-            <select class="form-control" data-rule="required" data-tips="请输入参数项目名称" data-url="admin/qcitem/options"
-                    name="qcParam.iqcitemid" data-autoload data-text="=请输入参数项目名称=" data-value-attr="iautoid"
+            <select class="form-control" data-rule="required" data-tips="请输入参数项目名称" data-url="admin/qcitem/options" id="select_iQcItemId"
+                    name="qcParam.iqcitemid" data-autoload  data-value-attr="iautoid"
                     data-text-attr="cqcitemname" data-value="" data-select="#(qcParam.iQcItemId??)">
           </select>
           <button class="btn btn-success" data-dialogbtn data-area="1000,900" data-title="新增参数项目" data-url="admin/qcitem/index"><i
@@ -44,6 +44,18 @@
 </form>
 #define js()
 <script>
+  /**
+   * 获取检验项目数据
+   * @param data
+   */
+  function setChooseDialogSelectResultFromData(data) {
+    SelectUtil.refresh("select_iQcItemId");
+    var selectVal = data.iautoid;
+    console.log(selectVal)
+    console.log(data)
+    SelectUtil.setValue("select_iQcItemId", selectVal);
+
+  }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="QcParam_Form")
 #end
