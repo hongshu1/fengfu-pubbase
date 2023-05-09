@@ -3,14 +3,11 @@
 <div class="jbolt_page">
     <div class="jbolt_page_content">
         <form onsubmit="return false;" id="stockoutDefectForm"  action="/admin/stockoutdefect/updateEditTable" method="post">
-            <input type="hidden" name="stockoutDefect.iautoid" value="#(stockoutDefect.iautoid??)" />
+            <input type="hidden" name="iautoid" value="#(stockoutDefect.iautoid??)" />
             <h5>部品信息</h5>
             <hr/>
             <div class="form-group row">
-                <input type="hidden"  placeholder="出货检ID" name="stockoutQcFormM.iAutoid" value="#(stockoutQcFormM.iAutoid??)"/>
-                <input type="hidden"  placeholder="供应商ID" name="stockoutQcFormM.iCustomerId" value="#(stockoutQcFormM.iCustomerId??)"/>
-                <input type="hidden"  placeholder="存货ID" name="stockoutQcFormM.iInventoryId" value="#(stockoutQcFormM.iInventoryId??)"/>
-                <input type="hidden"  placeholder="检验人ID" name="stockoutQcFormM.iupdateby" value="#(stockoutQcFormM.iupdateby??)"/>
+                <input type="hidden"  placeholder="出货检ID" name="stockoutqcformmid" value="#(stockoutQcFormM.iAutoid??)"/>
 
                 <label class="col-sm-2 col-form-label">异常品单号：</label>
                 <div class="col-sm-2 col-form-label">
@@ -42,7 +39,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">不良数量：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none"  placeholder="" name="stockoutDefect.idqqty" value="#(stockoutDefect.idqqty??)"/>
+                    <input type="text" class="form-control border-none"  placeholder="" name="idqqty" value="#(stockoutDefect.idqqty??)"/>
                 </div>
                 <label class="col-sm-2 col-form-label">创建时间：</label>
                 <div class="col-sm-2 col-form-label">
@@ -55,7 +52,7 @@
 
             <h5>不良信息</h5>
             <div class="form-group row">
-                <input type="hidden" id="cbadnesssns" name="stockoutDefect.cbadnesssns" value="#(stockoutDefect.cbadnesssns??)"/>
+                <input type="hidden" id="cbadnesssns" name="cbadnesssns" value="#(stockoutDefect.cbadnesssns??)"/>
                 <label class="col-sm-2 col-form-label">不良项目：</label>
                 <div class="col-sm-8 col-form-label">
                     <div class="form-group row"
@@ -68,7 +65,7 @@
                          data-text-attr="cbadnesssns"
                          data-inline="true"
                          data-value="#(stockoutDefect.cbadnesssns??)"
-                         data-name="stockoutDefect.cbadnesssns">
+                         data-name="cbadnesssns">
                     </div>
                 </div>
             </div>
@@ -79,16 +76,16 @@
                          data-radio
                          data-rule="radio"
                          data-value="#(stockoutDefect.isfirsttime??)"
-                         data-name="stockoutDefect.isfirsttime"
+                         data-name="isfirsttime"
                          data-default="true">
                         <div class="col"  style="padding-top: 1px;">
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renabletrue1" type="radio" name="stockoutDefect.isfirsttime"   value="1"/>
+                                <input  id="renabletrue1" type="radio" name="isfirsttime"   value="1"/>
                                 <label for="renabletrue1">首发</label>
                             </div>
 
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renablefalse1" type="radio" name="stockoutDefect.isfirsttime"   value="0"/>
+                                <input  id="renablefalse1" type="radio" name="isfirsttime"   value="0"/>
                                 <label for="renablefalse1">再发</label>
                             </div>
                         </div>
@@ -104,20 +101,20 @@
                          data-radio
                          data-rule="radio"
                          data-value="#(stockoutDefect.iresptype??)"
-                         data-name="stockoutDefect.iresptype"
+                         data-name="iresptype"
                          data-default="true">
                         <div class="col"  style="padding-top: 1px;">
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renabletrue" type="radio" name="stockoutDefect.iresptype"   value="1"/>
+                                <input  id="renabletrue" type="radio" name="iresptype"   value="1"/>
                                 <label for="renabletrue">供应商</label>
                             </div>
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="type" type="radio" name="stockoutDefect.iresptype"   value="2"/>
+                                <input  id="type" type="radio" name="iresptype"   value="2"/>
                                 <label for="type">工程内</label>
                             </div>
 
                             <div class="radio radio-primary  radio-inline">
-                                <input  id="renablefalse" type="radio" name="stockoutDefect.iresptype"   value="0"/>
+                                <input  id="renablefalse" type="radio" name="iresptype"   value="0"/>
                                 <label for="renablefalse">其他</label>
                             </div>
                         </div>
@@ -128,7 +125,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">不良内容描述</label>
                 <div class="col">
-                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入不良内容描述" maxlength="500" name="stockoutDefect.cdesc" value="#(stockoutDefect.cdesc??)"/>
+                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入不良内容描述" maxlength="500" name="cdesc" value="#(stockoutDefect.cdesc??)"/>
                 </div>
             </div>
 
