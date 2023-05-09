@@ -18,6 +18,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.springframework.ui.Model;
 
 import java.util.List;
 
@@ -180,7 +181,17 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         return successWithData(cusFieldsMappingD.keep("iautoid"));
     }
 
+    private int getMaxIseq(Long iCusFieldsMappingMid) {
+        Integer iseq = queryInt(selectSql().select("MAX(iseq)").eq(CusFieldsMappingD.ICUSFIELDSMAPPINGMID, iCusFieldsMappingMid));
+        return (null ==  iseq ? 0 : iseq) + 1;
+    }
+
     private void doSave(CusFieldsMappingD cusFieldsMappingD, JBoltTable jBoltTable) {
+        System.out.println(cusFieldsMappingD instanceof Model);
+        
+        // 获取序号
+        int iseq = getMaxIseq(cusFieldsMappingD.getICusFieldsMappingMid());
+        
         ValidationUtils.isTrue(cusFieldsMappingD.save(), ErrorMsg.SAVE_FAILED);
 
         List<Record> save = jBoltTable.getSaveRecordList();
