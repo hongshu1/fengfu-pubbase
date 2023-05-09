@@ -345,7 +345,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
                 List<InventoryQcForm> saveList = new ArrayList<>();
                 saveModelList.forEach(inventoryQcForm -> {
                     inventoryQcForm.setIQcFormId(Long.parseLong(iQcFormId));
-                    inventoryQcForm.setIQcFormName(iQcFormName);
                     inventoryQcForm.setICreateBy(user.getId());
                     inventoryQcForm.setCCreateName(user.getName());
                     inventoryQcForm.setDCreateTime(nowDate);
@@ -365,7 +364,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
                 List<InventoryQcForm> updateList = new ArrayList<>();
                 updateModelList.forEach(inventoryQcForm -> {
                     inventoryQcForm.setIQcFormId(Long.parseLong(iQcFormId));
-                    inventoryQcForm.setIQcFormName(iQcFormName);
                     inventoryQcForm.setIUpdateBy(user.getId());
                     inventoryQcForm.setCUpdateName(user.getName());
                     inventoryQcForm.setDUpdateTime(nowDate);
@@ -507,5 +505,5 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
         }
         return FAIL;
     }
-    
+
 }
