@@ -97,23 +97,21 @@
             </td>
             #for(item:columns??)
             <td>
-                #set(flag = true)
                 <select class="form-control" name="#(item.iqcitemid)" >
                     <option value="">=请选择#(item.cqcitemname??)=</option>
                     #for(va : item.compares)
-                        #if(data)
+                        #if(ObjectUtil.isEmpty(data))
+                            <option value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
+                        #else
                             #for(map:data)
-                                #if(isEquals(item.iqcitemid, map.key))
+                                #if(isEquals(item.iqcitemid, map.key??))
                                     #if(isEquals(map.value, va.iqcparamid))
-                                            #set(flag = false)
                                         <option selected value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
-                                    #else
+                                     #else
                                         <option value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
                                     #end
                                 #end
-                            #end
-                        #else
-                             <option value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
+                             #end
                         #end
                     #end
 

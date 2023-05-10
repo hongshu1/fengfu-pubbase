@@ -86,7 +86,7 @@ public class QcInspectionAdminController extends BaseAdminController {
 		}else {
 			String supplierInfoId = qcInspection.get("cmeasureattachments");
 
-			if (notNull(qcInspection.get("cmeasureattachments"))){
+			if (qcInspection.get("cmeasureattachments") != null){
 				List<Record> files = service.getFilesById(supplierInfoId);
 				set("files", files);
 			}
@@ -154,7 +154,7 @@ public class QcInspectionAdminController extends BaseAdminController {
 	}
 
 	public void updateEditTable() {
-		renderJson(service.updateEditTable(getJBoltTable() ,getKv()));
+		renderJson(service.updateEditTable(getKv()));
 	}
 
 

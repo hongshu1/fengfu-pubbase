@@ -1,0 +1,399 @@
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+                                class="fa fa-refresh"></i> 保存</button>
+                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批
+                        </button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 关闭
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form onsubmit="return false;" id="sysAssem_#(pageId)" action="#(action)" method="post">
+                        #if(sysAssem.AutoID??)
+                        <input type="hidden" name="sysAssem.AutoID" value="#(sysAssem.AutoID??)" />
+                        #end
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">单据号</label>
+                                    <div class="col-9">
+                                        <input type="text"  data-notnull="true"
+                                            data-tips="请输入单据号" data-with-clearbtn="true" autocomplete="off"
+                                            class="form-control" placeholder="请输入单据号" maxlength="40"
+                                            name="sysAssem.BillNo" value="#(sysAssem.BillNo??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">日期</label>
+                                    <div class="col-9">
+                                        <input type="text" data-date class="form-control ml-2" placeholder="日期" maxlength="20" name="sysAssem.CreateDate" value="#(sysAssem.CreateDate??)"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">转换方式</label>
+                                    <div class="col-9">
+                                        <select class="form-control" name="SourceBillType"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=null"
+                                        data-select-type="select"
+                                        data-text="=转换方式="
+                                        data-value=""
+                                        data-value-attr="sn"
+                                        ></select>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">仓库名称</label>
+                                    <div class="col-9">
+                                        <select class="form-control" name="SourceBillType"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=null"
+                                        data-select-type="select"
+                                        data-text="=仓库名称="
+                                        data-value=""
+                                        data-value-attr="sn"
+                                        ></select>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">入库类别</label>
+                                    <div class="col-9">
+                                        <select class="form-control" name="SourceBillType"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=null"
+                                        data-select-type="select"
+                                        data-text="=入库类别="
+                                        data-value=""
+                                        data-value-attr="sn"
+                                        ></select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">生产部门</label>
+                                    <div class="col-9">
+                                        <select class="form-control" name="SourceBillType"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=null"
+                                        data-select-type="select"
+                                        data-text="=生产部门="
+                                        data-value=""
+                                        data-value-attr="sn"
+                                        ></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">出库类别</label>
+                                    <div class="col-9">
+                                        <select class="form-control" name="SourceBillType"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=null"
+                                        data-select-type="select"
+                                        data-text="=出库类别="
+                                        data-value=""
+                                        data-value-attr="sn"
+                                        ></select>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">审批日期</label>
+                                    <div class="col-9">
+                                        <input type="text" data-date class="form-control ml-2" placeholder="审批日期" maxlength="20" name="sysAssem.AuditDate" value="#(sysAssem.AuditDate??)"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">备注</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true"
+                                            data-tips="请输入备注" data-with-clearbtn="true" autocomplete="off"
+                                            class="form-control" placeholder="请输入备注" maxlength="40"
+                                            name="sysAssem.Memo" value="#(sysAssem.Memo??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">制单人</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true"
+                                            data-tips="请输制单人" data-with-clearbtn="true" autocomplete="off"
+                                            class="form-control" placeholder="请输制单人" maxlength="40"
+                                            name="sysAssem.CreatePerson" value="#(sysAssem.CreatePerson??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">审核人</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true"
+                                            data-tips="请输审核人" data-with-clearbtn="true" autocomplete="off"
+                                            class="form-control" placeholder="请输审核人" maxlength="40"
+                                            name="sysAssem.AuditPerson" value="#(sysAssem.AuditPerson??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jbolt_page_content">
+    <script type="text/template" id="sysAssem_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.autoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a href="admin/sysAssemdetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " 
+                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
+                class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+   
+            </td>
+            <td>${data.spotticket}</td>
+            <td>${data.whcodename}</td>
+            <td>${data.qty}</td>
+            <td>${data.inventorycode}</td>
+            <td>${data.cversion}</td>
+            <td>${data.caddress}</td>
+            <td>${data.cinvcode2}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.cinvname2}</td>
+
+            <td>${data.spotticketh}</td>
+            <td>${data.whcodehname}</td>
+            <td>${data.qtyh}</td>
+            <td>${data.inventoryhcode}</td>
+            <td>${data.cversionh}</td>
+            <td>${data.caddressh}</td>
+            <td>${data.cinvcode2h}</td>
+            <td>${data.cinvcode1h}</td>
+            <td>${data.cinvname1h}</td>
+            <td>${data.cinvname2h}</td>
+
+
+        </tr>
+        {@/each}
+    </script>
+    <div class="jbolt_table_toolbar" id="sysAssem_toolbar_#(pageId)">
+        <div class="col-md-4">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">现品票扫码</label>
+                <div class="col-9">
+                    <input type="text"  data-notnull="true"
+                        data-tips="请输入现品票扫码" data-with-clearbtn="true" autocomplete="off"
+                        class="form-control" placeholder="请输入现品票扫码" maxlength="40"
+                        name="sysAssem.warehousingNo" value="#(sysAssem.warehousingNo??)" />
+                </div>
+            </div>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">搜索</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysAssemdetail/deleteByIds?ids=" data-confirm="确定删除选中数据？"
+                class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
+        </div>
+
+    </div>
+
+    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysAssem.AutoID??)
+        data-ajax="true" data-url="admin/sysAssemdetail/findEditTableDatas?masid=#(sysAssem.AutoID??)" #end
+        id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
+        data-rowtpl="sysAssem_tpl_#(pageId)" data-toolbar="sysAssem_toolbar_#(pageId)" data-editable="true"
+        data-page="sysAssem_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
+        <thead class="fw_normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150">操作</th>
+                <th data-width="100" data-column="spotTicket">现品票</th>
+                <th data-width="100" data-column="whcodename">仓库名称</th>
+                <th data-width="100" data-column="qty">数量</th>
+                <th data-width="100" data-column="inventorycode">存货编码</th>
+                <th data-width="100" data-column="cversion">存货名称</th>
+                <th data-width="100" data-column="caddress">客户部番</th>
+                <th data-width="100" data-column="cinvcode2">部品名称</th>
+                <th data-width="100" data-column="cinvcode1">规格型号</th>
+                <th data-width="100" data-column="cinvname1">主计量单位</th>
+                <th data-width="100" data-column="cinvname2">所属机型</th>
+
+                <th data-width="100" data-column="spotticketh">现品票(转换后)</th>
+                <th data-width="100" data-column="whcodehname">仓库名称(转换后)</th>
+                <th data-width="100" data-column="qtyh">数量(转换后)</th>
+                <th data-width="100" data-column="inventoryhcode">存货编码(转换后)</th>
+                <th data-width="100" data-column="cversionh">存货名称(转换后)</th>
+                <th data-width="100" data-column="caddressh">客户部番(转换后)</th>
+                <th data-width="100" data-column="cinvcode2h">部品名称(转换后)</th>
+                <th data-width="100" data-column="cinvcode1h">规格型号(转换后)</th>
+                <th data-width="100" data-column="cinvname1h">主计量单位(转换后)</th>
+                <th data-width="100" data-column="cinvname2h">所属机型(转换后)</th>
+            </tr>
+        </thead>
+    </table>
+
+</div>
+#define js()
+<script>
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+    function submitThisForm() {
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+
+    function getJBoltTableEditableColsOpton() {
+        var editableTableOptions = {
+
+            submit: {
+                withForm: ["sysAssem_#(pageId)"],
+                name: 'sysAssem',
+                type: "all",
+                url: "/admin/formConversionList/submitAll",
+                success: function (res) {
+                    LayerMsgBox.success("提交成功", 600, function () {
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
+                    });
+                }
+            },
+            cols: {
+                AutoID: {
+                    submitAttr: "AutoID",
+                },
+                spotTicket: {
+                    type: "input",//类型
+                    placeholder: "现品票", //输入提示，里面
+                    tooltip: "现品票",//输入提示，上方
+                },
+                spotticketh: {
+                    type: "input",//类型
+                    placeholder: "现品票(转换后)", //输入提示，里面
+                    tooltip: "现品票(转换后)",//输入提示，上方
+                },
+
+                whcodename: {
+                    type: "input",//类型
+                    placeholder: "仓库名称", //输入提示，里面
+                    tooltip: "仓库名称",//输入提示，上方
+                },
+                whcodehname: {
+                    type: "input",//类型
+                    placeholder: "仓库名称(转换后)", //输入提示，里面
+                    tooltip: "仓库名称(转换后)",//输入提示，上方
+                },
+
+                qty: {
+                    type: "amount",//类型
+                    placeholder: "数量", //输入提示，里面
+                    tooltip: "数量",//输入提示，上方
+                },
+                qtyh: {
+                    type: "amount",//类型
+                    placeholder: "数量(转换后)", //输入提示，里面
+                    tooltip: "数量(转换后)",//输入提示，上方
+                },
+                
+                inventorycode: {
+                    // type:"select",
+                    // url:admin/inventory/autocomplete,//url地址
+                    //valueAttr:"",//显示的字段，可以设置多个
+                    //onlyleaf:true,//树形结构只能选择叶子节点
+                    //required:true,//必填
+                    // changeColumns:[{column: "iinventoryid",//显示绑定的字段
+                    //                 use: "cinvcode"        //数据源的字段
+                    //                 }
+                    // ]   
+                    type: "autocomplete",
+                    url: "admin/inventory/autocomplete",
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "请选择存货编码",
+                    textAttr: "cinvcode",
+                    width: 500,
+                    valueAttr: "cinvcode",//选择赋值的字段
+                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
+                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
+                    changeColumns: [{ column: "inventorycode", use: "cinvcode" }, { column: "caddress", use: "cinvcode1" },
+                    { column: "cinvcode2", use: "cinvname1" }, { column: "cinvcode1", use: "cinvstd" },
+                    { column: "cinvname1", use: "cuomname" }]
+                },
+                inventoryhcode: {
+                    // type:"select",
+                    // url:admin/inventory/autocomplete,//url地址
+                    //valueAttr:"",//显示的字段，可以设置多个
+                    //onlyleaf:true,//树形结构只能选择叶子节点
+                    //required:true,//必填
+                    // changeColumns:[{column: "iinventoryid",//显示绑定的字段
+                    //                 use: "cinvcode"        //数据源的字段
+                    //                 }
+                    // ]   
+                    type: "autocomplete",
+                    url: "admin/inventory/autocomplete",
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "请选择存货编码",
+                    textAttr: "cinvcode",
+                    width: 500,
+                    valueAttr: "inventoryhcode",//选择赋值的字段
+                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
+                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
+                    changeColumns: [{ column: "inventoryhcode", use: "cinvcode" }, { column: "caddressh", use: "cinvcode1" },
+                    { column: "cinvcode2h", use: "cinvname1" }, { column: "cinvcode1h", use: "cinvstd" },
+                    { column: "cinvname1h", use: "cuomname" }]
+                },
+            }
+        };
+        return editableTableOptions;
+    }
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+</script>
+#end

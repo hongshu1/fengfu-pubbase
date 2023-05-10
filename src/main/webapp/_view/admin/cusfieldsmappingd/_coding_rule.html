@@ -1,11 +1,11 @@
-#if(isencoded == 'true')
-#set(pageId=RandomUtil.random(6))
+#if(isencoded??'true' == 'true')
+###set(pageId=RandomUtil.random(6))
 <div class="card">
     <div class="card-header">导入字段映射编码</div>
     <div class="card-body">
         
         <!-- 定义JBoltTable使用的数据渲染模板 -->
-        <textarea class="jb_tpl_box" id="CusfieldsmappingdCodingrule_tpl_#(pageId)">
+        <textarea class="jb_tpl_box" id="CusfieldsmappingdCodingrule_tpl">
         {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <!--<td>${pageNumber,pageSize,index | rownum}</td>-->
@@ -22,23 +22,23 @@
         {@/each}
         </textarea>
         
-        <div class="jbolt_table_toolbar" id="CusfieldsmappingdCodingrule_toolbar_#(pageId)">
+        <div class="jbolt_table_toolbar" id="CusfieldsmappingdCodingrule_toolbar">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                 <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
                 <button onclick="jboltTableRemoveCheckedRow(this,true)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
                 <button onclick="updateDemoCode(this)" class="btn btn-outline-primary btn-sm">预览编码</button>
+                <button onclick="saveTableSubmit(this)" hidden id="mapping_coding_rule_btn"></button>
             </div>
         </div>
         
-        <form id="CusfieldsmappingdCodingrule_form_#(pageId)">
+        <form id="CusfieldsmappingdCodingrule_form">
             <input type="hidden" name="icusfieldsmappingdid" value="#(icusfieldsmappingdid)">
         </form>
         
         <table class="jbolt_table jbolt_main_table  table-center "
-               id="jbolt_table_#(pageId)"
                #if(icusfieldsmappingdid)
                data-url="admin/cusfieldsmappingdcodingrule/datas"
-               data-ajax-success-handler="tableAjaxSuccessHandler_#(pageId)"
+               data-ajax-success-handler="tableAjaxSuccessHandler"
                #else
                data-autoload="false"
                #end
@@ -46,14 +46,14 @@
                data-width="auto"
                data-height="250"
                data-ajax="true"
-               data-conditions-form="CusfieldsmappingdCodingrule_form_#(pageId)"
-               data-rowtpl="CusfieldsmappingdCodingrule_tpl_#(pageId)"
+               data-conditions-form="CusfieldsmappingdCodingrule_form"
+               data-rowtpl="CusfieldsmappingdCodingrule_tpl"
                data-copy-to-excel="false"
                data-column-resize="true"
-               data-toolbar="CusfieldsmappingdCodingrule_toolbar_#(pageId)"
+               data-toolbar="CusfieldsmappingdCodingrule_toolbar"
                data-column-prepend="1:checkbox:true:false:false"
                data-editable="true"
-               data-editable-option="getEditableTableOptions_#(pageId)"
+               data-editable-option="getEditableTableOptions_coding_rule"
         >
             <thead>
             <tr>
@@ -82,7 +82,5 @@
         <span id="ilength"></span>
     </div>
 </div>
-
 #else
 #end
-#include("_coding_rule_js.html")

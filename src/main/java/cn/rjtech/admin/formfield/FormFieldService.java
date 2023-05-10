@@ -41,20 +41,26 @@ public class FormFieldService extends BaseService<FormField> {
      *
      * @param pageNumber    第几页
      * @param pageSize      每页几条数据
+     * @param iformid
      * @param keywords      关键词
      * @param cFieldTypeSn  字段类型
      * @param isImportField 是否导入字段
      * @param isDeleted     删除状态
      */
-    public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, String cFieldTypeSn, Boolean isImportField, Boolean isDeleted) {
-        //创建sql对象
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Long iformid, String keywords, String cFieldTypeSn, Boolean isImportField, Boolean isDeleted) {
+        // 创建sql对象
         Sql sql = selectSql().page(pageNumber, pageSize);
+
+        sql.eq(FormField.IFORMID, iformid);
+        
         //sql条件处理
         sql.eq("cFieldTypeSn", cFieldTypeSn);
         sql.eqBooleanToChar("isImportField", isImportField);
         sql.eqBooleanToChar("isDeleted", isDeleted);
+        
         //关键词模糊查询
         sql.like("cFieldName", keywords);
+        
         //排序
         sql.desc("iAutoId");
         Page<Record> page = paginateRecord(sql);
@@ -142,10 +148,11 @@ public class FormFieldService extends BaseService<FormField> {
         return null;
     }
 
-    public List<Record> getAutocompleteList(long iformid, String keywords, Integer limit) {
+    public List<Record> getAutocompleteList(long iformid, String isimportfield, String keywords, Integer limit) {
         Sql sql = selectSql()
                 .eq(FormField.ISDELETED, ZERO_STR)
                 .eq(FormField.IFORMID, iformid)
+                .eq(FormField.ISIMPORTFIELD, isimportfield)
                 .likeMulti(keywords, FormField.CFIELDCODE, FormField.CFIELDNAME)
                 .page(1, limit);
 

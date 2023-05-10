@@ -7,7 +7,9 @@
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
             <div class="col-md-l pt-2" role="group" aria-label="btn-group">
-                <button onclick="submitThisForm()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+                #if(type!='0'??)
+                <button onclick="save(this)" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+                #end
                 <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
             </div>
         </div>
@@ -67,7 +69,7 @@
                 <input type="text"
                        #if(qcInspection.autoid??) disabled #end
                        data-autocomplete
-                       data-url="admin/QcInspection/DepartmentList"
+                       data-url="admin/qcinspection/DepartmentList"
                        data-header="人员,部门"
                        data-column-attr="psnname,depname"
                        data-text-attr="psnname"
@@ -167,9 +169,12 @@
                 <div class="j_upload_filebox_multi mt-3">
                     <ul class="j_filebox" id="filebox_#(pageId)" data-remove-confirm="true">
                         #for(data : files)
-                        <li data-filebox="filebox_#(pageId)" data-hiddeninput="attachment_#(pageId)"><a target="_blank" data-path="#(data.id)" href="#realImage(data.localUrl)">#(data.filename)</a>
+                        <li data-filebox="filebox_#(pageId)" data-hiddeninput="attachment_#(pageId)">
+                            <a target="_blank" data-path="#(data.id)" href="#realImage(data.localNrl)">#(data.filename)</a>
+                            <a class="btn btn-primary btn-sm" target="_blank"  data-path="#(data.id)" href="#realImage(data.localNrl)">下载</a>
                             <i  id="fileDelShowFlag" title="删除" onclick="removeUploadFileBoxLi(this)" class="fa fa-trash text-danger ml-3"></i>
                         </li>
+
                         #end
                     </ul>
                 </div>
@@ -191,6 +196,17 @@
 #define js()
 <script>
 
+    /**
+     * 保存
+     * @param ele
+     */
+    function save(ele) {
+        submitThisForm(ele);
+        parent.refreshPjaxContainer();
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+
+    }
+
     function closeHandler(){
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
@@ -199,6 +215,7 @@
     if(isOk('#(type??)')){
         hideParentLayerDialogBtn(0);
     }
+
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="qcInspectionForm")
 #end

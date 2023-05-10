@@ -424,7 +424,7 @@ public class QcFormService extends BaseService<QcForm> {
         List<QcFormParam> qcFormParamList = qcFormParamService.createQcFormParamList(formId, qcParamJsonData);
         JSONArray tableJsonData = JSONObject.parseArray(tableJsonDataStr);
         List<QcFormTableParam> qcFormTableParamList = qcFormTableParamService.createQcFormTableParamList(formId, tableJsonData);
-        List<QcFormTableItem> qcFormTableItemList = qcFormTableItemService.createQcFormTableItemList(formId, tableJsonData);
+        List<QcFormTableItem> qcFormTableItemList = qcFormTableItemService.createQcFormTableItemList(formId, qcFormItemList, tableJsonData);
     
         
         tx(() -> {
@@ -509,8 +509,7 @@ public class QcFormService extends BaseService<QcForm> {
                     mapList.add(item.getInnerMap());
                 }
             }
-            mapList.sort(Comparator.comparing(obj -> ((JSONObject)obj).getInteger("iseq")));
-            
+//            jsonArray.sort(Comparator.comparing(obj -> ((JSONObject)obj).getInteger("iseq")));
         }else if (ObjectUtil.isNotNull(formId)){
             List<Record> qcFormItemList = getItemCombinedListByPId(Kv.by("iqcformid", formId));
             List<Record> qcFormParamList = qcFormParamService.getQcFormParamListByPId(formId);
@@ -531,8 +530,15 @@ public class QcFormService extends BaseService<QcForm> {
         }
         
         if (CollectionUtil.isNotEmpty(mapList)){
-            
-            
+    
+            Collections.sort(mapList, new Comparator<Map<String, Object>>() {
+                @Override
+                public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+                    Integer map1 = Integer.valueOf(o1.get("iseq").toString());
+                    Integer map2 = Integer.valueOf(o2.get("iseq").toString());
+                    return map1.compareTo(map2);
+                }
+            });
             return mapList;
         }
         return null;

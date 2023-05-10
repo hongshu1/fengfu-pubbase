@@ -260,7 +260,7 @@ public class QcFormItemService extends BaseService<QcFormItem> {
 		for (Object obj : formItemArray){
 			JSONObject jsonObject = (JSONObject)obj;
 			QcFormItem qcFormItem = createQcFormItem(
-					jsonObject.getLong(QcFormItem.IAUTOID.toLowerCase()),
+					null,
 					qcFormId,
 					jsonObject.getLong(QcFormItem.IQCITEMID.toLowerCase()),
 					jsonObject.getInteger(QcFormItem.ISEQ.toLowerCase()),

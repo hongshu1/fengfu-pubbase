@@ -1,6 +1,6 @@
 package cn.jbolt.extend.config;
 
-import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.setting.Setting;
 import cn.jbolt.core.cache.JBoltDeptCache;
@@ -141,6 +141,7 @@ public class ExtendProjectConfig {
         me.addSharedObject("OrgCache", OrgCache.ME);
         // 添加部门缓存
         me.addSharedObject("DeptCache", JBoltDeptCache.me);
+        me.addSharedObject("ObjectUtil", new ObjectUtil());
 		
 		me.addSharedStaticMethod(Util.class);
         me.addSharedMethod(new ReflectionTemplateFn());

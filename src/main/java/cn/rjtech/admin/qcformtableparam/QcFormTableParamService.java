@@ -170,7 +170,7 @@ public class QcFormTableParamService extends BaseService<QcFormTableParam> {
 			QcFormTableParam qcFormTableParam = null;
 			if ("1".equals(type)){
 				qcFormTableParam = createQcFormTableParam(
-						jsonObject.getLong(QcFormTableParam.IAUTOID.toLowerCase()),
+						null,
 						qcFormId,
 						jsonObject.getInteger(QcFormTableParam.ISEQ.toLowerCase()),
 						jsonObject.getInteger(QcFormTableParam.ITYPE.toLowerCase()),

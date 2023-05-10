@@ -4,16 +4,16 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">表单类别</label>
 		<div class="col">
-			<select class="form-control"
-					name="form.iformcategoryid"
-					data-autoload
-					data-handler="changeType"
-					data-url="admin/dictionary/options?key=form.form_category"
-					data-value-attr="sn"
-					data-text-attr="name"
-					data-text="请选择"
-					data-select="#(form.iformcategoryid??)">
-			</select>
+            <select class="form-control"
+                    name="form.iformcategoryid"
+                    data-autoload
+                    data-url="admin/formcategory/tree"
+                    data-onlyleaf="true"
+                    data-text-attr="cname"
+                    data-value-attr="iautoid"
+                    data-select="#(form.iformcategoryid??)"
+                    data-text="=表单名称=">
+            </select>
 		</div>
 	</div>
 

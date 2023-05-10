@@ -1,0 +1,56 @@
+#if(iruletype??'1' == '1')
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">字段编码</label>
+    <div class="col-10">
+        <input type="hidden" name="cusFieldsMappingD.iFormFieldId" value="#(cusFieldsMappingD.iFormFieldId??)" id="iFormFieldId" data-sync-attr="iautoid"/>
+        
+        <input type="text" class="form-control"
+               data-autocomplete
+               name="cusFieldsMappingD.cformfieldcode"
+               data-mustmatch="false"
+               data-url="admin/formfield/autocomplete?iformid=#(iformids[0])&isimportfield=1"
+               data-rule="required"
+               data-sync-ele="#iFormFieldId,#cFormFieldCode,#cFormFieldName"
+               data-text-attr="cfieldcode"
+               data-value-attr="cfieldcode"
+               data-column-attr="cfieldcode,cfieldname"
+               data-tips="请选择系统字段"
+               data-header="字段编码,字段名称"
+               maxlength="40"
+               value="#(cusFieldsMappingD.cformfieldcode??)">
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">字段名称</label>
+    <div class="col-10">
+        <input type="text" name="cusFieldsMappingD.cformfieldname" class="form-control" id="cformfieldname" data-sync-attr="cformfieldname" data-rule="required" maxlength="40" value="#(cusFieldsMappingD.cformfieldname??)">
+    </div>
+</div>
+
+<div class="form-group row"
+     data-radio
+     data-name="cusFieldsMappingD.isEncoded"
+     data-value-attr="sn"
+     data-default="options_first"
+     data-url="admin/dictionary/options?key=options_boolean"
+     data-label="是否编码字段"
+     data-width="col-sm-2,col-10"
+     data-value="#(cusFieldsMappingD.isEncoded??)"
+     data-rule="radio"
+     data-notnull="true"
+     data-tips="请输入是否编码字段"
+     data-handler="changeIsEncoded_#(pageId)"
+     data-inline="true">
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">导入字段名称</label>
+    <div class="col-10">
+        <input type="text" data-rule="required" data-notnull="true" data-tips="请输入导入字段名称" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="40" name="cusFieldsMappingD.cCusFieldName" value="#(cusFieldsMappingD.cCusFieldName??)"/>
+    </div>
+</div>
+
+#ajaxPortal("/admin/cusfieldsmappingd/codingrule?icusfieldsmappingdid=" + (cusFieldsMappingD.iautoid??'') + "&isencoded=" + (cusFieldsMappingD.isencoded??'1' == '1'),"cusfieldmappingd_portal_" + pageId, true)
+#else
+#end
