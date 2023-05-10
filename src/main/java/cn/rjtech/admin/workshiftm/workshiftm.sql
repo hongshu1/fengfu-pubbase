@@ -17,6 +17,19 @@ WHERE wm.iOrgId = #para(iOrgId)
 ORDER BY wm.dCreateTime DESC
 #end
 
+#sql("getSelect")
+SELECT 	wm.iAutoId,
+          wm.cWorkShiftCode,
+          wm.cWorkShiftName
+FROM Bd_WorkShiftM wm
+WHERE
+
+     wm.isDeleted = '0'
+    AND wm.isEnabled = '1'
+
+ORDER BY wm.dCreateTime DESC
+#end
+
 #sql("getDataExport")
 SELECT
 	m.*,
