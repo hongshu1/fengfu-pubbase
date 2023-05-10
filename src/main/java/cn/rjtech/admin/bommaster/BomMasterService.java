@@ -28,6 +28,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -1604,6 +1605,16 @@ public class BomMasterService extends BaseService<BomMaster> {
 			index++;
 		}
 		return jsonList;
+	}
+	
+	public Record getBomMasterByInvId(Long orgId, Long invId){
+		return dbTemplate("bommaster.getBomMasterByInvId", Okv.by("orgId", orgId).set("invId", invId)).findFirst();
+	}
+	
+	
+	public Page<Record> findBomCompareByBomMasterInvId(Kv kv, Integer pageNumber, Integer pageSize){
+		Okv okv = Okv.by("orgId", getOrgId()).set(kv);
+		return dbTemplate("bommaster.findBomCompareByBomMasterInvId", okv).paginate(pageNumber, pageSize);
 	}
 	
 }
