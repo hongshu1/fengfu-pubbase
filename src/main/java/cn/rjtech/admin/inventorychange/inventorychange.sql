@@ -49,16 +49,19 @@ SELECT
 	inv.cInvCode1 AS cInvCode1,
 	inv.cInvName1 AS cInvName1,
 	inv.cInvName2 AS cInvName2,
+	inv.iEquipmentModelId,
 	uom.cUomName,
 	inv.iCustomerMId,
 	ven.iAutoId AS venid,
 	ven.cVenCode,
-	ven.cVenName
+	ven.cVenName,
+	t2.cEquipmentModelName
 FROM
 	Bd_Inventory inv
 	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iInventoryUomId1
 	LEFT JOIN Bd_InventoryStockConfig invstock ON invstock.iInventoryId = inv.iAutoId
 	LEFT JOIN Bd_Vendor ven ON ven.iAutoId = invstock.iVendorId
+	left join Bd_EquipmentModel t2 on inv.iEquipmentModelId = t2.iAutoId
 	WHERE
 	    1 = 1
 	    #if(q)

@@ -146,7 +146,7 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 	}
 
 
-	public Ret saveItemRoutingConfig(Long iitemroutingid, Integer iseq) {
+	public Ret saveItemRoutingConfig(Long iitemroutingid, Integer iseq, Long iPid, String cParentInvName) {
 		tx(() -> {
 			//新增
 			InventoryRoutingConfig itemroutingconfig = new InventoryRoutingConfig();
@@ -158,6 +158,8 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 			itemroutingconfig.setICreateBy(JBoltUserKit.getUserId());
 			itemroutingconfig.setCCreateName(JBoltUserKit.getUserName());
 			itemroutingconfig.setDCreateTime(new Date());
+			itemroutingconfig.setIPid(iPid);
+			itemroutingconfig.setCParentInvName(cParentInvName);
 			itemroutingconfig.save();
 
 			//修改工序配置顺序号

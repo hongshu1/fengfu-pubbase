@@ -1,16 +1,15 @@
 package cn.rjtech.admin.inventoryrouting;
 
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InventoryRouting;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 /**
  * 物料建模-存货工艺档案
  * @ClassName: InventoryRoutingAdminController
@@ -50,12 +49,13 @@ public class InventoryRoutingAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void dialog_index() {
-		Long iinventoryid=getLong("iinventoryid");
-		String citemcode=get("citemcode");
-		String citemname=get("citemname");
-		set("iinventoryid",iinventoryid);
-		set("citemcode",citemcode);
-		set("citemname",citemname);
+//		Long iinventoryid=getLong("iinventoryid");
+//		String citemcode=get("citemcode");
+//		String citemname=get("citemname");
+//		set("iinventoryid",iinventoryid);
+//		set("citemcode",citemcode);
+//		set("citemname",citemname);
+		keepPara();
 		render("dialog_index.html");
 	}
 
