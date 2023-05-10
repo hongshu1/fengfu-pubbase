@@ -1,13 +1,11 @@
 package cn.rjtech.admin.cusorderresult;
 
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.util.DateUtils;
+import cn.rjtech.util.Util;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -15,8 +13,10 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
-import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -44,7 +44,7 @@ public class CusOrderResultController extends BaseAdminController {
             String enddate = "";
         //默认查询当前月份的
         if (getDate("startdate") == null||getDate("enddate") == null){
-            Kv kv = orderResultService.getBeginEndDate();
+            Kv kv = Util.getBeginEndDate();
             startdate = kv.getStr("beginDate");
             enddate = kv.getStr("endDate");
         }
@@ -66,7 +66,7 @@ public class CusOrderResultController extends BaseAdminController {
             List<Record> name2list = new ArrayList<>();
             if (StringUtils.isNotBlank(startdate) && StringUtils.isNotBlank(enddate)){
                 //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-                List<String> scheduDateList = service.getBetweenDate(startdate,enddate);
+                List<String> scheduDateList = Util.getBetweenDate(startdate,enddate);
                 //页面顶部colspan列  key:2023年1月  value:colspan="13"
                 Map<String,Integer> yearMonthMap = new HashMap<>();
                 for (int i = 0; i < scheduDateList.size(); i++) {

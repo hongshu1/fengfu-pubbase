@@ -12,6 +12,7 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.MoMotask;
 import cn.rjtech.util.DateUtils;
+import cn.rjtech.util.Util;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Page;
@@ -62,7 +63,7 @@ public class MoDocBatchController extends BaseAdminController {
         //表头日期
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //星期
-        List<String> betweenDate = ScheduProductPlanMonthService.getBetweenDate(sdf.format(moMotask.getDBeginDate()), sdf.format(moMotask.getDEndDate()));
+        List<String> betweenDate = Util.getBetweenDate(sdf.format(moMotask.getDBeginDate()), sdf.format(moMotask.getDEndDate()));
         set("daylist",betweenDate);
         List<String> weeklist = new ArrayList<>();
         for (String s : betweenDate) {
@@ -96,7 +97,7 @@ public class MoDocBatchController extends BaseAdminController {
         //拼日期  weeklist  colnamelist colname2list
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //星期
-        List<String> betweenDate = ScheduProductPlanMonthService.getBetweenDate(sdf.format(moMotask.getDBeginDate()), sdf.format(moMotask.getDEndDate()));
+        List<String> betweenDate = Util.getBetweenDate(sdf.format(moMotask.getDBeginDate()), sdf.format(moMotask.getDEndDate()));
         set("daylist",betweenDate);
         List<String> weeklist = new ArrayList<>();
         List<String> classlist = new ArrayList<>();

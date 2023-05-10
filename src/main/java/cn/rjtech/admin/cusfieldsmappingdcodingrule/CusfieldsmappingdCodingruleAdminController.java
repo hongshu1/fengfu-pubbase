@@ -35,7 +35,7 @@ public class CusfieldsmappingdCodingruleAdminController extends BaseAdminControl
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getInt("iType")));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getLong("icusfieldsmappingdid"), getInt("iType")));
     }
 
     /**

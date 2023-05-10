@@ -1,0 +1,130 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)"  id="moMorouting_mspage_#(pageId)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>制造工单-生产工艺路线</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="moMoroutingForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<div class="jbolttable_master_slave_box">
+<div class="split master">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="moMoroutingRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" onclick="masterTableTrTriggerShowSlave(this,'${data.id}')">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.imodocid}</td>
+<td>${data.iinventoryroutingid}</td>
+<td>${data.iinventoryid}</td>
+<td>${data.croutingname}</td>
+<td>${data.cversion}</td>
+<td>${data.ifinishedrate}</td>
+<td>${data.crequirement}</td>
+<td>${data.cmemo}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="moMorouting_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-height="fill_box"
+data-ajax="true"
+data-url="admin/morouting/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-conditions-form="moMoroutingForm_#(pageId)"
+data-rowtpl="moMoroutingRowtpl_#(pageId)"
+data-page="moMoroutingPage_#(pageId)"
+data-toolbar="moMorouting_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-min-width="150" data-column="iMoDocId">生产工单ID</th>
+	<th data-width="150" data-column="iInventoryRoutingId">存货工艺路线ID</th>
+	<th data-width="150" data-column="iInventoryId">存货ID</th>
+	<th data-width="150" data-column="cRoutingName">工艺路线名称</th>
+	<th data-width="150" data-column="cVersion">工艺路线版本</th>
+	<th data-width="150" data-column="iFinishedRate">成品率</th>
+	<th data-width="150" data-column="cRequirement">工艺要求</th>
+	<th data-width="150" data-column="cMemo">备注</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+</div>
+<!-- 从表区域 -->
+<div class="split slave">
+<div class="jbolt_tab_view">
+	<div class="jbolt_tab_links">
+		<a class="jbolt_tab_link active"  href="#moMorouting_tbc1_#(pageId)">从表一</a>
+		<a class="jbolt_tab_link"  href="#moMorouting_tbc2_#(pageId)">从表二</a>
+	</div>
+	<div class="jbolt_tab_contents">
+	  <div class="jbolt_tab_content active" id="moMorouting_tbc1_#(pageId)">
+	  从表一内容
+	  </div>
+	  <div class="jbolt_tab_content" id="moMorouting_tbc2_#(pageId)">
+	  从表二内容
+	  </div>
+	</div>
+</div>
+
+</div>
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+	$(function(){
+		MasterSlaveUtil.initJBoltTable("moMorouting_mspage_#(pageId)");
+	});
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/morouting/edit/' + rowData.iautoid)
+			.data('area', '800,700')
+			.data('title', '制造工单-生产工艺路线')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end
