@@ -32,7 +32,7 @@
 		<!-- 定义JBoltTable使用的数据渲染模板 -->
 		<textarea class="jb_tpl_box" id="SysProductin_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.AutoID}">
+<tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a href="admin/productInList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑产成品入库单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>

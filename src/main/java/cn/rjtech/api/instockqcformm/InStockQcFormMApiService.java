@@ -171,13 +171,6 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
     }
 
     /*
-     * 获取导出数据
-     * */
-    public JBoltApiRet exportExcel(Long iautoid) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
-    }
-
-    /*
      * 导出详情页
      * */
     public JBoltApiRet getExportData(Long iautoid){

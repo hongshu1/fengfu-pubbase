@@ -46,7 +46,7 @@ public class FormFieldAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("cFieldTypeSn"), getBoolean("isImportField"), getBoolean("isDeleted")));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getLong("iformid"), getKeywords(), get("cFieldTypeSn"), getBoolean("isImportField"), getBoolean("isDeleted")));
     }
 
     /**
@@ -118,7 +118,7 @@ public class FormFieldAdminController extends BaseAdminController {
     }
 
     public void autocomplete() {
-        renderJsonData(service.getAutocompleteList(getLong("iformid"), getKeywords(), getInt("limit", 10)));
+        renderJsonData(service.getAutocompleteList(getLong("iformid"), get("isimportfield"), getKeywords(), getInt("limit", 10)));
     }
         
 }

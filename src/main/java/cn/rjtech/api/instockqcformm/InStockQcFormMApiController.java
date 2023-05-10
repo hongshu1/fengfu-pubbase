@@ -216,7 +216,7 @@ public class InStockQcFormMApiController extends BaseApiController {
     @UnCheck
     public void exportExcel(@Para(value = "iautoid") Long iautoid){
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        renderJBoltApiRet(apiService.exportExcel(iautoid));
+        renderJBoltApiRet(apiService.getExportData(iautoid));
     }
 
 }

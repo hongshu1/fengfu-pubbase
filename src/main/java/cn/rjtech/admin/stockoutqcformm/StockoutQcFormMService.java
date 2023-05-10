@@ -1,6 +1,7 @@
 package cn.rjtech.admin.stockoutqcformm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -145,7 +146,16 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
      * 点击检验时，进入弹窗自动加载table的数据
      */
     public List<Record> getCheckOutTableDatas(Kv kv) {
-        return rcvDocQcFormMService.clearZero(dbTemplate("stockoutqcformm.findChecoutListByIformParamid", kv).find());
+        List<Record> recordList = rcvDocQcFormMService
+            .clearZero(dbTemplate("stockoutqcformm.findChecoutListByIformParamid", kv).find());
+        recordList.stream().forEach(record -> {
+            record.set("cvaluelist", getCvaluelist());
+        });
+        return recordList;
+    }
+
+    public List<Integer> getCvaluelist() {
+        return Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
     }
 
     /**
@@ -222,7 +232,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
      */
     public List<Record> getonlyseelistByiautoid(Long iautoid) {
         Kv kv = new Kv();
-        kv.set("istockoutqcformmid",iautoid);
+        kv.set("istockoutqcformmid", iautoid);
         List<Record> recordList = dbTemplate("stockoutqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
 
@@ -240,7 +250,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
      * 点击检验时，进入弹窗自动加载table的数据
      */
     public List<Record> getonlyseelistByiautoid(Kv kv) {
-        kv.set("istockoutqcformmid",kv.get("iautoid"));
+        kv.set("istockoutqcformmid", kv.get("iautoid"));
         List<Record> recordList = dbTemplate("stockoutqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
 
@@ -251,7 +261,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         for (Entry<Object, List<Record>> entry : map.entrySet()) {
             List<Record> value = entry.getValue();
             for (int i = 0; i < value.size(); i++) {
-                value.get(i).set("name", "cA" + (i + 1));
+                value.get(i).set("name", (i + 1));
             }
             Record record = new Record();
             Record record1 = value.get(0);
@@ -304,11 +314,14 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     public Boolean achiveEditSerializeSubmitList(JSONArray serializeSubmitList, Long stockqcformmiautoid, String cmeasurepurpose,
                                                  String cmeasurereason, String cmeasureunit, String cmemo, String cdcno,
                                                  String isok) {
-        List<StockoutqcformdLine> stockoutqcformdLines = new ArrayList<>();
+        List<StockoutqcformdLine> updateStockoutqcformdLines = new ArrayList<>();
+        List<StockoutqcformdLine> saveStockoutqcformdLines = new ArrayList<>();
         boolean result = tx(() -> {
             for (int i = 0; i < serializeSubmitList.size(); i++) {
                 JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
                 JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
+                Long istockoutqcformdid = jsonObject.getLong("iautoid");
+                String iseq = jsonObject.getString("iseq");
                 JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
                 JSONArray elementList = serializeElement.getJSONArray(0);
                 for (int j = 0; j < elementList.size(); j++) {
@@ -316,14 +329,23 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
                     String cvalue = object.getString("value");
                     JSONObject cvaluelistJSONObject = cvaluelist.getJSONObject(j);
                     Long lineiautoid = cvaluelistJSONObject.getLong("lineiautoid");
-                    StockoutqcformdLine stockoutqcformdLine = stockoutqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
-                    stockoutqcformdLine.setCValue(cvalue);
-                    stockoutqcformdLines.add(stockoutqcformdLine);
+                    if (lineiautoid != null) {
+                        StockoutqcformdLine stockoutqcformdLine = stockoutqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
+                        stockoutqcformdLine.setCValue(cvalue);
+                        updateStockoutqcformdLines.add(stockoutqcformdLine);
+                    } else {
+                        StockoutqcformdLine stockoutqcformdLine = new StockoutqcformdLine();
+                        saveStockQcFormdLineModel(stockoutqcformdLine, istockoutqcformdid, iseq, cvalue);
+                    }
+
                 }
             }
             //更新line
-            if (!stockoutqcformdLines.isEmpty()) {
-                stockoutqcformdLineService.batchUpdate(stockoutqcformdLines);
+            if (!updateStockoutqcformdLines.isEmpty()) {
+                stockoutqcformdLineService.batchUpdate(updateStockoutqcformdLines);
+            }
+            if (!saveStockoutqcformdLines.isEmpty()) {
+                stockoutqcformdLineService.batchSave(saveStockoutqcformdLines);
             }
             StockoutQcFormM stockoutQcFormM = findById(stockqcformmiautoid);
             saveStockoutQcFormmModel(stockoutQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
@@ -459,8 +481,16 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         //3、主表数据
         StockoutQcFormM stockoutQcFormM = findById(iautoid);
         //测定目的
-        stockoutQcFormM
-            .setCMeasurePurpose(CMeasurePurposeEnum.toEnum(Integer.valueOf(stockoutQcFormM.getCMeasurePurpose())).getText());
+        String cMeasurePurpose = "";
+        String[] split = stockoutQcFormM.getCMeasurePurpose().split(",");
+        for (int i = 0; i < split.length; i++) {
+            if (StringUtils.isNotBlank(split[i])) {
+                String text = CMeasurePurposeEnum.toEnum(Integer.valueOf(split[i])).getText();
+                cMeasurePurpose += text + ",";
+            }
+        }
+        stockoutQcFormM.setCMeasurePurpose(StringUtils.isNotBlank(cMeasurePurpose)
+            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose);
         //4、明细表数据
         List<Record> recordList = getonlyseelistByiautoid(Kv.by("iautoid", iautoid));
         //5、如果cvalue的列数>10行，分多个页签

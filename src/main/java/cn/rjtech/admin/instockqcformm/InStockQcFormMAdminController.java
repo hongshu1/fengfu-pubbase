@@ -124,7 +124,6 @@ public class InStockQcFormMAdminController extends BaseAdminController {
     public void jumpCheckOut() {
         InStockQcFormM inStockQcFormM = service.findById(getLong(0));
         Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
-        set("cvaluelist",10);
         set("instockqcformm", inStockQcFormM);
         set("record", record);
         render("checkout.html");
