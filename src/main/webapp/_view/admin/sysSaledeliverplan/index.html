@@ -40,7 +40,7 @@
 		<tr data-id="${data.AutoID}">
 			<td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/salesShipmentList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑采购收料单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+                <a href="admin/salesShipmentList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑销售出货(计划)" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
                 <a href="admin/salesShipmentList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
             </td>
 			<td>${data.autoid}</td>
