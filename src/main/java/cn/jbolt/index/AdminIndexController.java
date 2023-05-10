@@ -3,7 +3,6 @@ package cn.jbolt.index;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.onlineuser.OnlineUserService;
 import cn.jbolt._admin.topnav.TopnavService;
 import cn.jbolt._admin.user.UserService;
@@ -23,10 +22,12 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.*;
 import cn.jbolt.core.para.JBoltNoUrlPara;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltLoginLogUtil;
 import cn.jbolt.core.service.JBoltOrgService;
+import cn.rjtech.admin.userorg.UserOrgService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
@@ -49,6 +50,8 @@ import java.io.File;
 public class AdminIndexController extends JBoltBaseController {
 	@Inject
 	private UserService userService;
+    @Inject
+    private UserOrgService userOrgService;
 	@Inject
 	private GlobalConfigService globalConfigService;
 	@Inject
@@ -176,7 +179,7 @@ public class AdminIndexController extends JBoltBaseController {
 
         // 校验组织权限
         if (!user.getIsSystemAdmin()) {
-            ValidationUtils.isTrue(userService.checkUserHasOrg(user.getId(), orgId), ErrorMsg.ORG_ACCESS_DENIED);
+            ValidationUtils.isTrue(userOrgService.checkUserHasOrg(user.getId(), orgId), ErrorMsg.ORG_ACCESS_DENIED);
         }
 
 		log.setUserId(user.getId());

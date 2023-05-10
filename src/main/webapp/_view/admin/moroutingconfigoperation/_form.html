@@ -1,0 +1,27 @@
+<form onsubmit="return false;" id="moMoroutingconfigOperationForm" action="#(action)" method="post">
+<input type="hidden" name="moMoroutingconfigOperation.iautoid" value="#(moMoroutingconfigOperation.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">工单工艺路线ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入工单工艺路线ID" maxlength="19" name="moMoroutingconfigOperation.imoinventoryroutingid" value="#(moMoroutingconfigOperation.imoinventoryroutingid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货工艺路线ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货工艺路线ID" maxlength="19" name="moMoroutingconfigOperation.iinventoryroutingconfigid" value="#(moMoroutingconfigOperation.iinventoryroutingconfigid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">工序ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入工序ID" maxlength="19" name="moMoroutingconfigOperation.ioperationid" value="#(moMoroutingconfigOperation.ioperationid??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="moMoroutingconfigOperationForm")
+#end
+

@@ -1,0 +1,359 @@
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+                                class="fa fa-refresh"></i> 保存</button>
+                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批
+                        </button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 关闭
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form onsubmit="return false;" id="sysPuinstore_#(pageId)" action="#(action)" method="post">
+                        #if(sysPuinstore.AutoID??)
+                        <input type="hidden" name="sysPuinstore.AutoID" value="#(sysPuinstore.AutoID??)" />
+                        #end
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">入库单号</label>
+                                    <div class="col-9">
+                                        <input type="text"  data-notnull="true"
+                                            data-tips="请输入入库单号" data-with-clearbtn="true" autocomplete="off"
+                                            class="form-control" placeholder="请输入入库单号" maxlength="40"
+                                            name="sysPuinstore.BillNo" value="#(sysPuinstore.BillNo??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">入库日期</label>
+                                    <div class="col-9">
+                                        <input type="text" data-date class="form-control ml-2" placeholder="入库日期" maxlength="20" name="sysPuinstore.createdate" value="#(sysPuinstore.createdate??)"/>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">仓库名称</label>
+                                    <div class="col-9">
+                                        <select class="form-control" name="SourceBillType"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=null"
+                                        data-select-type="select"
+                                        data-text="=仓库名称="
+                                        data-value=""
+                                        data-value-attr="sn"
+                                        ></select>
+                                    </div>
+                                </div>
+                            </div>
+                
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">订单号</label>
+                                        <div class="col-9">
+                                            <input type="text"  data-notnull="true"
+                                                data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off"
+                                                class="form-control" placeholder="请输入订单号" maxlength="40"
+                                                name="sysPuinstore.indent" value="#(sysPuinstore.indent??)" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">部门</label>
+                                        <div class="col-9">
+                                            <select class="form-control" name="SourceBillType"
+                                            data-autoload
+                                            data-url="admin/dictionary/options?key=null"
+                                            data-select-type="select"
+                                            data-text="=部门="
+                                            data-value=""
+                                            data-value-attr="sn"
+                                            ></select>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">采购类型</label>
+                                        <div class="col-9">
+                                            <select class="form-control" name="SourceBillType"
+                                            data-autoload
+                                            data-url="admin/dictionary/options?key=null"
+                                            data-select-type="select"
+                                            data-text="=采购类型="
+                                            data-value=""
+                                            data-value-attr="sn"
+                                            ></select>
+                                        </div>
+                                    </div>
+                                </div> 
+
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">供货单位</label>
+                                        <div class="col-9">
+                                            <input type="text"  data-notnull="true"
+                                                data-tips="请输入供货单位" data-with-clearbtn="true" autocomplete="off"
+                                                class="form-control" placeholder="请输入供货单位" maxlength="40"
+                                                name="sysPuinstore.VenCode" value="#(sysPuinstore.VenCode??)" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">审批日期</label>
+                                        <div class="col-9">
+                                            <input type="text" data-date class="form-control ml-2" placeholder="审批日期" maxlength="20" name="sysPuinstore.AuditDate" value="#(sysPuinstore.AuditDate??)"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">入库类别</label>
+                                    <div class="col-9">
+                                        <select class="form-control" name="SourceBillType"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=null"
+                                        data-select-type="select"
+                                        data-text="=入库类别="
+                                        data-value=""
+                                        data-value-attr="sn"
+                                        ></select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">备注</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true"
+                                            data-tips="请输入备注" data-with-clearbtn="true" autocomplete="off"
+                                            class="form-control" placeholder="请输入备注" maxlength="40"
+                                            name="sysPuinstore.remark" value="#(sysPuinstore.remark??)" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">业务员</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true"
+                                            data-tips="请输业务员" data-with-clearbtn="true" autocomplete="off"
+                                            class="form-control" placeholder="请输业务员" maxlength="40"
+                                            name="sysPuinstore.createperson" value="#(sysPuinstore.createperson??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">制单人</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true"
+                                            data-tips="请输制单人" data-with-clearbtn="true" autocomplete="off"
+                                            class="form-control" placeholder="请输制单人" maxlength="40"
+                                            name="sysPuinstore.createperson" value="#(sysPuinstore.createperson??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">审核人</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true"
+                                            data-tips="请输审核人" data-with-clearbtn="true" autocomplete="off"
+                                            class="form-control" placeholder="请输审核人" maxlength="40"
+                                            name="sysPuinstore.auditperson" value="#(sysPuinstore.auditperson??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jbolt_page_content">
+    <script type="text/template" id="sysPuinstore_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.autoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a href="admin/sysPuinstoredetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " 
+                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
+                class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+   
+            </td>
+            <td>${data.spotticket}</td>
+            <td>${data.invcode}</td>
+            <td>${data.crcvdate}</td>
+            <td>${data.crcvtime}</td>
+            <td>${data.cbarcode}</td>
+            <td>${data.cversion}</td>
+            <td>${data.caddress}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.qty}</td>
+            <td>${data.memo}</td>
+
+
+        </tr>
+        {@/each}
+    </script>
+    <div class="jbolt_table_toolbar" id="sysPuinstore_toolbar_#(pageId)">
+        <div class="col-md-4">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">现品票扫码</label>
+                <div class="col-9">
+                    <input type="text"  data-notnull="true"
+                        data-tips="请输入现品票扫码" data-with-clearbtn="true" autocomplete="off"
+                        class="form-control" placeholder="请输入现品票扫码" maxlength="40"
+                        name="sysPuinstore.warehousingNo" value="#(sysPuinstore.warehousingNo??)" />
+                </div>
+            </div>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">搜索</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysPuinstoredetail/deleteByIds?ids=" data-confirm="确定删除选中数据？"
+                class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
+        </div>
+
+    </div>
+
+    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysPuinstore.AutoID??)
+        data-ajax="true" data-url="admin/sysPuinstoredetail/findEditTableDatas?masid=#(sysPuinstore.AutoID??)" #end
+        id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
+        data-rowtpl="sysPuinstore_tpl_#(pageId)" data-toolbar="sysPuinstore_toolbar_#(pageId)" data-editable="true"
+        data-page="sysPuinstore_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
+        <thead class="fw_normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150">操作</th>
+                <th data-width="100" data-column="spotticket">现品票</th>
+                <th data-width="100" data-column="invcode">存货编码</th>
+                <th data-width="100" data-column="cversion">存货名称</th>
+                <th data-width="100" data-column="cversion">客户部番</th>
+                <th data-width="100" data-column="cversion">部品名称</th>
+                <th data-width="100" data-column="cversion">规格型号</th>
+                <th data-width="100" data-column="caddress">品牌</th>
+                <th data-width="100" data-column="cinvcode2">采购单位</th>
+                <th data-width="100" data-column="qty">数量</th>
+                <th data-width="100" data-column="memo">备注</th>
+
+            </tr>
+        </thead>
+    </table>
+
+</div>
+#define js()
+<script>
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+    function submitThisForm() {
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+
+    function getJBoltTableEditableColsOpton() {
+        var editableTableOptions = {
+
+            submit: {
+                withForm: ["sysPuinstore_#(pageId)"],
+                name: 'sysPuinstore',
+                type: "all",
+                url: "/admin/purchaseReceiptList/submitAll",
+                success: function (res) {
+                    LayerMsgBox.success("提交成功", 600, function () {
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
+                    });
+                }
+            },
+            cols: {
+                AutoID: {
+                    submitAttr: "AutoID",
+                },
+                spotticket: {
+                    type: "input",//类型
+                    placeholder: "现品票", //输入提示，里面
+                    tooltip: "现品票",//输入提示，上方
+                },
+                invcode: {
+                    type: "input",//类型
+                    placeholder: "存货编码", //输入提示，里面
+                    tooltip: "存货编码",//输入提示，上方
+                },
+                qty: {
+                    type: "amount",//类型
+                    placeholder: "数量", //输入提示，里面
+                    tooltip: "数量",//输入提示，上方
+                },
+                memo: {
+                    type: "input",//类型
+                    placeholder: "备注", //输入提示，里面
+                    tooltip: "备注",//输入提示，上方
+                },
+                
+                cinvcode: {
+                    // type:"select",
+                    // url:admin/inventory/autocomplete,//url地址
+                    //valueAttr:"",//显示的字段，可以设置多个
+                    //onlyleaf:true,//树形结构只能选择叶子节点
+                    //required:true,//必填
+                    // changeColumns:[{column: "iinventoryid",//显示绑定的字段
+                    //                 use: "cinvcode"        //数据源的字段
+                    //                 }
+                    // ]   
+                    type: "autocomplete",
+                    url: "admin/inventory/autocomplete",
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "请选择存货编码",
+                    textAttr: "cinvcode",
+                    width: 500,
+                    valueAttr: "cinvcode",//选择赋值的字段
+                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
+                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
+                    changeColumns: [{ column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
+                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
+                    { column: "cuomname", use: "cuomname" }, { column: "iinventoryid", use: "AutoID" }]
+                },
+            }
+        };
+        return editableTableOptions;
+    }
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+</script>
+#end

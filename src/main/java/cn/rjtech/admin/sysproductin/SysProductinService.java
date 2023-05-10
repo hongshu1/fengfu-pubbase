@@ -264,7 +264,7 @@ public class SysProductinService extends BaseService<SysProductin> {
 		Object[] ids = jBoltTable.getDelete();
 		if(ArrayUtil.isEmpty(ids)) return;
 		for (Object id : ids) {
-			update("update T_Sys_OtherInDetail  set  IsDeleted = 1 where  AutoID = ?",id);
+			update("update T_Sys_ProductInDetail  set  IsDeleted = 1 where  AutoID = ?",id);
 		}
 	}
 }

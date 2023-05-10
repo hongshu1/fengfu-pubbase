@@ -8,7 +8,6 @@ import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
-import cn.jbolt.core.service.OrgService;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -277,6 +276,10 @@ public class UserOrgService extends JBoltBaseService<UserOrg> {
                 .eq("uo.user_id", userId);
 
         return findRecord(sql, false);
+    }
+
+    public boolean checkUserHasOrg(long userId, Long orgId) {
+        return null != queryInt(selectSql().select("1").eq(UserOrg.USER_ID, userId).eq(UserOrg.ORG_ID, orgId).eq(UserOrg.IS_DELETED, ZERO_STR).first()) ;
     }
 
 }

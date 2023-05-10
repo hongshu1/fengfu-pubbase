@@ -5,7 +5,9 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.RcDocDefect.RcDocDefectVo;
+import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockdefect.InStockDefect;
+import cn.rjtech.entity.vo.stockoutdefect.StockoutDefectVo;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
@@ -29,7 +31,7 @@ public class StockoutDefectApiController extends BaseApiController {
      * @param pageSize 每页显示条数
      * @param selectparam 搜索条件
      */
-    @ApiDoc(result = RcDocDefectVo.class)
+    @ApiDoc(result = StockoutDefectVo.class)
     @UnCheck
     public void datas(@Para(value = "pageNumber") Integer pageNumber,
                       @Para(value = "pageSize") Integer pageSize,
@@ -47,7 +49,7 @@ public class StockoutDefectApiController extends BaseApiController {
     /**
      * 查询明细表
      */
-    @ApiDoc(result = InStockDefect.class)
+    @ApiDoc(result = StockoutDefectVo.class)
     @UnCheck
     public void addlist(@Para(value = "iautoid") Long iautoid,
                     @Para(value = "stockoutqcformmid") Long stockoutqcformmid,
@@ -68,7 +70,7 @@ public class StockoutDefectApiController extends BaseApiController {
      * @param cbadnesssns          不良项目，字典编码，多个“,”分隔
      * @param isfirsttime          首发再发
      */
-    @ApiDoc(result = RcDocDefectVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @UnCheck
     public void updateEditTable(@Para(value = "iautoid") Long iautoid,
                                 @Para(value = "capproach") String capproach,

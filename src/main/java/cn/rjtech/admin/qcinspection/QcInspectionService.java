@@ -32,7 +32,7 @@ public class QcInspectionService extends BaseService<QcInspection> {
 	}
 
 	/**
-	 * 后台管理分页查询
+	 * 工程内品质巡查主页查询
 	 * @param pageNumber
 	 * @param pageSize
 	 * @param kv
@@ -190,7 +190,7 @@ public class QcInspectionService extends BaseService<QcInspection> {
 
 
 	//更新状态并保存数据方法
-	public Ret updateEditTable(JBoltTable JBoltTable, Kv formRecord) {
+	public Ret updateEditTable(Kv formRecord) {
 		Date now = new Date();
 
 		tx(() -> {
@@ -208,12 +208,12 @@ public class QcInspectionService extends BaseService<QcInspection> {
 					qcInspection.setCProblem(formRecord.getStr("cproblem"));
 					qcInspection.setCAnalysis(formRecord.getStr("canalysis"));
 					qcInspection.setCMeasure(formRecord.getStr("cmeasure"));
-					qcInspection.setCMeasure(formRecord.getStr("cmeasure"));
 					qcInspection.setDDate(formRecord.getDate("ddate"));
 					qcInspection.setIDutyPersonId(formRecord.getLong("idutypersonid"));
 					qcInspection.setIEstimate(formRecord.getInt("iestimate"));
+				if (notNull(formRecord.getStr("fileData"))) {
 					qcInspection.setCMeasureAttachments(formRecord.getStr("fileData"));
-
+				}
 					//更新人和时间
 					qcInspection.setIUpdateBy(JBoltUserKit.getUserId());
 					qcInspection.setCUpdateName(JBoltUserKit.getUserName());
@@ -236,7 +236,7 @@ public class QcInspectionService extends BaseService<QcInspection> {
 		System.out.println("formRecord==="+formRecord);
 		System.out.println("now==="+now);
 		QcInspection qcInspection = new QcInspection();
-		qcInspection.setIAutoId(formRecord.getLong("qcInspection.iautoid"));
+		qcInspection.setIAutoId(formRecord.getLong("iautoid"));
 
 
 		//录入填写的数据
@@ -249,7 +249,6 @@ public class QcInspectionService extends BaseService<QcInspection> {
 		qcInspection.setCPlace(formRecord.getStr("cplace"));
 		qcInspection.setCProblem(formRecord.getStr("cproblem"));
 		qcInspection.setCAnalysis(formRecord.getStr("canalysis"));
-		qcInspection.setCMeasure(formRecord.getStr("cmeasure"));
 		qcInspection.setCMeasure(formRecord.getStr("cmeasure"));
 		qcInspection.setDDate(formRecord.getDate("ddate"));
 		qcInspection.setIDutyPersonId(formRecord.getLong("idutypersonid"));

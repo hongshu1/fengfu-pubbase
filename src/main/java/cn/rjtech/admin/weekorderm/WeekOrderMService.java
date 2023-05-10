@@ -1,27 +1,22 @@
 package cn.rjtech.admin.weekorderm;
 
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
-import cn.rjtech.model.momdata.CustomerClass;
 import cn.rjtech.model.momdata.WeekOrderD;
+import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import cn.jbolt.core.kit.JBoltUserKit;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.WeekOrderM;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -230,9 +225,8 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     	return toggleBoolean(id, "IsDeleted");
 	}
 
-	public Object weekOrderMData(Kv kv) {
-		ValidationUtils.notNull(kv.getLong("iWeekOrderMid"), JBoltMsg.PARAM_ERROR);
-		return dbTemplate("weekorderm.weekOrderMData",kv).find();
+	public List<Record> weekOrderMData(Long iWeekOrderMid) {
+		return dbTemplate("weekorderm.weekOrderMData", Okv.by("iWeekOrderMid", iWeekOrderMid)).find();
 	}
 
 	public List<Record> findByIdToShow(Long id) {

@@ -46,6 +46,10 @@ public abstract class BaseInventoryRoutingConfig<M extends BaseInventoryRoutingC
     public static final String DCREATETIME = "dCreateTime";
     /**是否启用*/
     public static final String ISENABLED = "isEnabled";
+    /**上级ID*/
+    public static final String IPID = "iPid";
+    /**上级半成品名称*/
+    public static final String CPARENTINVNAME = "cParentInvName";
 	/**
 	 * 主键
 	 */
@@ -159,7 +163,7 @@ public abstract class BaseInventoryRoutingConfig<M extends BaseInventoryRoutingC
 	/**
 	 * 半成品/成品ID
 	 */
-	@JBoltField(name="irsinventoryid" ,columnName="iRsInventoryId",type="Long", remark="半成品/成品ID", required=true, maxLength=19, fixed=0, order=7)
+	@JBoltField(name="irsinventoryid" ,columnName="iRsInventoryId",type="Long", remark="半成品/成品ID", required=false, maxLength=19, fixed=0, order=7)
 	@JSONField(name = "irsinventoryid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIRsInventoryId() {
 		return getLong("iRsInventoryId");
@@ -350,6 +354,40 @@ public abstract class BaseInventoryRoutingConfig<M extends BaseInventoryRoutingC
 	@JSONField(name = "isenabled")
 	public java.lang.Boolean getIsEnabled() {
 		return getBoolean("isEnabled");
+	}
+
+	/**
+	 * 上级ID
+	 */
+	public M setIPid(java.lang.Long iPid) {
+		set("iPid", iPid);
+		return (M)this;
+	}
+
+	/**
+	 * 上级ID
+	 */
+	@JBoltField(name="ipid" ,columnName="iPid",type="Long", remark="上级ID", required=false, maxLength=19, fixed=0, order=19)
+	@JSONField(name = "ipid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIPid() {
+		return getLong("iPid");
+	}
+
+	/**
+	 * 上级半成品名称
+	 */
+	public M setCParentInvName(java.lang.String cParentInvName) {
+		set("cParentInvName", cParentInvName);
+		return (M)this;
+	}
+
+	/**
+	 * 上级半成品名称
+	 */
+	@JBoltField(name="cparentinvname" ,columnName="cParentInvName",type="String", remark="上级半成品名称", required=false, maxLength=200, fixed=0, order=20)
+	@JSONField(name = "cparentinvname")
+	public java.lang.String getCParentInvName() {
+		return getStr("cParentInvName");
 	}
 
 }

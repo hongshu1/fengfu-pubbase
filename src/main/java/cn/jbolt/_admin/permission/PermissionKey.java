@@ -1787,5 +1787,17 @@ public class PermissionKey {
 	 * 入库管理-形态转换单
 	 */
 	public static final String FORMCONVERSIONLIST = "formconversionlist";
+
+
+	/**
+	 * 入库管理-采购入库单
+	 */
+	public static final String PURCHASERECEIPTLIST = "purchasereceiptlist";
+
+	/**
+	 * 入库管理-采购收料单
+	 */
+	public static final String MATERIALRECEIPTLIST = "materialreceiptlist";
+
 }
 

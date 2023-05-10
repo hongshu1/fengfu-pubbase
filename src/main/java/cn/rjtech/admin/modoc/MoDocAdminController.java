@@ -81,20 +81,14 @@ public class MoDocAdminController extends BaseAdminController {
   /**
 	* 保存
 	*/
-	public void save(JBoltTable jBoltTable) {
-		MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
-		renderJson(service.save(moDoc));
+	public void save() {
+
+		renderJson(service.save(getJBoltTable()));
 	}
 	public void persondialog(){
-		Long iautoid = getLong("iautoid");
-		set("configid", iautoid);
 		render("persondialog.html");
 	}
-	public void savepersonadd(JBoltTable jBoltTable, Long configid){
 
-
-		renderJson(service.savePerson(jBoltTable,configid));
-	}
 
    /**
 	* 更新
