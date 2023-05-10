@@ -157,14 +157,24 @@ public class InStockQcFormMApiController extends BaseApiController {
     }
 
     /**
-     * 跳转到onlysee页面，自动加载table数据
+     * 跳转到onlysee或者edit页面，自动加载table数据
      */
     @ApiDoc(result = InStockAutoGetOnlyseeTableDatasVo.class)
     @UnCheck
-    public void autoGetOnlySeeTableDatas(@Para(value = "iautoid") Long iautoid) {
+    public void autoGetOnlySeeOrEditTableDatas(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.autoGetOnlySeeTableDatas(iautoid));
+        renderJBoltApiRet(apiService.autoGetOnlySeeOrEditTableDatas(iautoid));
+    }
+
+    /*
+     * 点击编辑按钮，跳转到编辑页面
+     * */
+    @ApiDoc(result = InStockQcFormMApiJumpOnlySeeVo.class)
+    @UnCheck
+    public void jumpEdit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.jumpEdit(iautoid));
     }
 
     /*
