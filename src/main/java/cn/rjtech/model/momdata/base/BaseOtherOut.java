@@ -333,5 +333,40 @@ public abstract class BaseOtherOut<M extends BaseOtherOut<M>> extends JBoltBaseM
 		return getDate("ModifyDate");
 	}
 
+
+	/**
+	 * 订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
+	 */
+	public M setIOrderStatus(java.lang.Integer iOrderStatus) {
+		set("iOrderStatus", iOrderStatus);
+		return (M)this;
+	}
+
+	/**
+	 * 订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
+	 */
+	@JBoltField(name="iorderstatus" ,columnName="iOrderStatus",type="Integer", remark="订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭", required=true, maxLength=10, fixed=0, order=6)
+	@JSONField(name = "iorderstatus")
+	public java.lang.Integer getIOrderStatus() {
+		return getInt("iOrderStatus");
+	}
+
+	/**
+	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+	 */
+	public M setIAuditStatus(java.lang.Integer iAuditStatus) {
+		set("iAuditStatus", iAuditStatus);
+		return (M)this;
+	}
+
+	/**
+	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+	 */
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=7)
+	@JSONField(name = "iauditstatus")
+	public java.lang.Integer getIAuditStatus() {
+		return getInt("iAuditStatus");
+	}
+
 }
 
