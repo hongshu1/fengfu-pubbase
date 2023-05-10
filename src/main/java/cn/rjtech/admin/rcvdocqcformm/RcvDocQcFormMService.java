@@ -150,7 +150,16 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
      * 点击检验时，进入弹窗自动加载table的数据
      */
     public List<Record> getCheckOutTableDatas(Kv kv) {
-        return clearZero(dbTemplate("rcvdocqcformm.findChecoutListByIformParamid", kv).find());
+        List<Record> recordList = clearZero(dbTemplate("rcvdocqcformm.findChecoutListByIformParamid", kv).find());
+        recordList.stream().forEach(record -> {
+            record.set("cvaluelist",10);
+            record.set("cvaluelist", getCvaluelist());
+        });
+        return recordList;
+    }
+
+    public List<Integer> getCvaluelist() {
+        return Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
     }
 
     /**
@@ -236,7 +245,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         for (Entry<Object, List<Record>> entry : map.entrySet()) {
             List<Record> value = entry.getValue();
             for (int i = 0; i < value.size(); i++) {
-                value.get(i).set("name", "cA" + (i + 1));
+                value.get(i).set("name", (i + 1));
             }
             Record record = new Record();
             Record record1 = value.get(0);
@@ -408,11 +417,13 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
      * */
     public Boolean achiveEditSerializeSubmitList(JSONArray serializeSubmitList, Long docqcformmiautoid, String cmeasurepurpose,
                                                  String cmeasurereason, String cmeasureunit, String cmemo, String cdcno, String isok) {
-        List<RcvdocqcformdLine> rcvdocqcformdLines = new ArrayList<>();
+        List<RcvdocqcformdLine> editRcvdocqcformdLines = new ArrayList<>();
+        List<RcvdocqcformdLine> saveRcvdocqcformdLines = new ArrayList<>();
         boolean result = tx(() -> {
             for (int i = 0; i < serializeSubmitList.size(); i++) {
                 JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
                 String iseq = jsonObject.getString("iseq");
+                Long ircvdocqcformmid = jsonObject.getLong("iautoid");
                 JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
                 JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
                 JSONArray elementList = serializeElement.getJSONArray(0);
@@ -422,13 +433,24 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
                     String cvalue = object.getString("value");
                     JSONObject cvaluelistJSONObject = cvaluelist.getJSONObject(j);
                     Long lineiautoid = cvaluelistJSONObject.getLong("lineiautoid");
-                    RcvdocqcformdLine rcvdocqcformdLine = rcvdocqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
-                    rcvdocqcformdLine.setCValue(cvalue);
-                    rcvdocqcformdLines.add(rcvdocqcformdLine);
+                    if (lineiautoid != null) {
+                        RcvdocqcformdLine rcvdocqcformdLine = rcvdocqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
+                        rcvdocqcformdLine.setCValue(cvalue);
+                        editRcvdocqcformdLines.add(rcvdocqcformdLine);
+                    } else {
+                        //如果没有，代表是新增页的数据
+                        RcvdocqcformdLine rcvdocqcformdLine = new RcvdocqcformdLine();//质量管理-出库检明细列值表
+                        saveRcvdocqcformdLineModel(rcvdocqcformdLine, String.valueOf(ircvdocqcformmid), iseq, cvalue);
+                        saveRcvdocqcformdLines.add(rcvdocqcformdLine);
+                    }
                 }
             }
             //更新line
-            rcvdocqcformdLineService.batchUpdate(rcvdocqcformdLines);
+            if (!editRcvdocqcformdLines.isEmpty()){
+                rcvdocqcformdLineService.batchUpdate(editRcvdocqcformdLines);
+            }if (!saveRcvdocqcformdLines.isEmpty()){
+                rcvdocqcformdLineService.batchSave(saveRcvdocqcformdLines);
+            }
 
             RcvDocQcFormM docQcFormM = findById(docqcformmiautoid);
             saveDocQcFormMModel(docQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
@@ -518,8 +540,16 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         //3、主表数据
         RcvDocQcFormM rcvDocQcFormM = findById(iautoid);
         //测定目的
-        rcvDocQcFormM
-            .setCMeasurePurpose(CMeasurePurposeEnum.toEnum(Integer.valueOf(rcvDocQcFormM.getCMeasurePurpose())).getText());
+        String cMeasurePurpose = "";
+        String[] split = rcvDocQcFormM.getCMeasurePurpose().split(",");
+        for (int i = 0; i < split.length; i++) {
+            if (StringUtils.isNotBlank(split[i])) {
+                String text = CMeasurePurposeEnum.toEnum(Integer.valueOf(split[i])).getText();
+                cMeasurePurpose += text + ",";
+            }
+        }
+        rcvDocQcFormM.setCMeasurePurpose(StringUtils.isNotBlank(cMeasurePurpose)
+            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose);
         //4、明细表数据
         List<Record> recordList = getonlyseelistByiautoid(Kv.by("iautoid", iautoid));
         //5、如果cvalue的列数>10行，分多个页签

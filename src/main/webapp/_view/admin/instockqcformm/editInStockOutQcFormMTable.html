@@ -367,7 +367,7 @@
   function submitThisForm() {
     //获取整个form的数据
     let serializeArray = $("#instockqcformmform_#(pageId)").serializeArray();
-    //过滤出只有name=cA的数据
+    //过滤出只有name=cA和appearance的数据
     let filterserializeArray = serializeArray.filter((ele) => {
       return ele.name.startWith("cA") || ele.name.startWith("appearance");
     });
