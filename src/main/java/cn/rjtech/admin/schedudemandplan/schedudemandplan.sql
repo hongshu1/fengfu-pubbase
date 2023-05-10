@@ -66,6 +66,14 @@ where a.isDeleted = 0 AND a.isEffective = 1
   AND b.iInventoryId in #(ids)
 #end
 
+#sql("getScheduEndDateList")
+###查询各个排产层级的最大排产日期
+SELECT iLevel,MAX(dScheduleEndTime) AS dScheduleEndTime
+FROM Aps_WeekSchedule
+WHERE IsDeleted = 0
+GROUP BY iLevel
+#end
+
 
 //-----------------------------------------------------------------物料需求计划预示-----------------------------------------------
 

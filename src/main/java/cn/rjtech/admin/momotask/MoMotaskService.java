@@ -9,6 +9,7 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.model.momdata.MoMotask;
+import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -37,6 +38,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
 	private DepartmentService departmentService;
 	@Inject
 	private MoDocService moDocService;
+    @Inject
+    private ScheduProductPlanMonthService scheduProductPlanMonthService;
 
 	@Override
 	protected MoMotask dao() {
@@ -67,7 +70,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
 
 
 			//对齐前端拼的数据
-			List<String> betweenDate = ScheduProductPlanMonthService.getBetweenDate(sdf.format(motask.getDBeginDate()), sdf.format(motask.getDEndDate()));
+			List<String> betweenDate = Util.getBetweenDate(sdf.format(motask.getDBeginDate()), sdf.format(motask.getDEndDate()));
 			List<String> planList = new ArrayList<>();
 			List<String> docnoList = new ArrayList<>();
 			Map<String, Map> map = new HashMap<>();
@@ -165,7 +168,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
 			ValidationUtils.isTrue(false,"开始日期-结束日期不能为空！");
 		}
 		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-		List<String> scheduDateList = ScheduProductPlanMonthService.getBetweenDate(startDate,endDate);
+		List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
 
 		pageSize = pageSize * 15;
 

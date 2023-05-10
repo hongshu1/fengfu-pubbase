@@ -1,0 +1,76 @@
+body,
+p {
+	margin: 0px;
+	padding: 0px;
+	font-size: 12px;
+	color: black;
+}
+
+#box {
+	width: 2163px;
+	height: 100vh;
+	font-weight: bold;
+}
+
+/* 头部用户数据 */
+.nav_title {
+	text-indent: 1rem;
+	padding: 10px 0px;
+	font-size: 0.9rem;
+	color: #5C5C5C;
+	border: 1px solid #CCCCCC;
+}
+
+.search {
+	display: flex;
+	padding: 10px 0px;
+	border: 1px solid #77979;
+}
+
+/* 下拉框文字样式 */
+.select {
+	margin-right: 15px;
+}
+
+.span {
+	color: #333333;
+}
+
+.select:nth-child(1) {
+	margin-left: 10px;
+}
+
+/* 搜索重置按钮样式 */
+.button {
+	margin: 0px 10px;
+	padding: 3px 10px;
+	background-color: #fff;
+	border: #797979 1px solid;
+}
+
+/* 表格工具 */
+.but_box {
+	width: 100vw;
+	padding: 15px 0px;
+	/* border: #797979 1px solid; */
+	padding-left: 15px;
+	border-bottom: none;
+}
+
+/* 表格按钮 */
+.but_box button {
+	padding: 3px 10px;
+	margin-right: 8px;
+	background-color: #fff;
+	border: #797979 1px solid;
+	border-radius: 5px;
+}
+
+/* 表格样式 */
+.table_box {
+	border: 1px solid #797979;
+}
+
+#table {
+	border-collapse: collapse;
+}
