@@ -1,0 +1,110 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto">
+                <form class="form-inline" id="SysSaledeliver_form_#(pageId)">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="出库单号"
+                           name="BillNo" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="客户简称"
+                           name="cCusCode" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="whname"
+                           value="" />
+                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" name="startTime" value="#datetime(startTime??,'yyyy-MM-dd')"/>
+                    <span class="ml-1 mr-1">至</span>
+                    <input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20" name="endTime" value="#datetime(endTime??,'yyyy-MM-dd')"/>
+                    <div class="btn-group text-center mx-1">
+                        <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
+                        <button type="button" onclick="form.reset();refreshJBoltTable(this);"
+                                class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="SysSaledeliver_tpl_#(pageId)">
+			{@each datas as data,index}
+			<tr data-id="${data.AutoID}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.AutoID}</td>
+                <td>${data.BillNo}</td>
+                <td>${data.BillNo}</td>
+                <td>${data.SourceBillType}</td>
+                <td>${data.SourceBillType}</td>
+                <td>${data.RdCode}</td>
+                <td>${data.OrganizeCode}</td>
+                <td>${data.BillNo}</td>
+                <td>${data.BillType}</td>
+                <td>${data.BillDate}</td>
+                <td>${data.DeptCode}</td>
+                <td>${data.AuditDate}</td>
+                <td>${data.CreatePerson}</td>
+                <td>${data.CreateDate}</td>
+			</tr>
+			{@/each}
+		</textarea>
+        <div class="jbolt_table_toolbar" id="SysSaledeliver_toolbar_#(pageId)">
+            <div class="btn-group dropdown">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+                </button>
+                <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+                    <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                            data-url="admin/salesDeliveryList/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
+                    </button>
+                    <button class="btn dropdown-item" data-downloadbtn data-url="admin/salesDeliveryList/exportExcelAll"
+                            data-form="SysSaledeliver_form_#(pageId)"><i class="fa fa-download"></i> 导出全部
+                    </button>
+                </div>
+            </div>
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
+                </button>
+            </div>
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="SysSaledeliver_form_#(pageId)"
+               data-url="admin/salesDeliveryList/datas"
+               data-rowtpl="SysSaledeliver_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="SysSaledeliver_page"
+               data-toolbar="SysSaledeliver_toolbar_#(pageId)"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="80">操作</th>
+                <th data-width="150" data-column="BillNo">出库单号</th>
+                <th data-width="150" data-column="SourceBillType">出库日期</th>
+                <th data-width="150" data-column="SourceBillDid">仓库名称</th>
+                <th data-width="150" data-column="RdCode">出库类别</th>
+                <th data-width="150" data-column="BillType">业务类型</th>
+                <th data-width="150" data-column="OrganizeCode">业务号</th>
+                <th data-width="150" data-column="BillNo">销售部门</th>
+                <th data-width="150" data-column="BillDate">业务员</th>
+                <th data-width="150" data-column="DeptCode">客户简称</th>
+                <th data-width="150" data-column="AuditDate">审核日期</th>
+                <th data-width="150" data-column="ExchName">备注</th>
+                <th data-width="150" data-column="CreatePerson">创建人</th>
+                <th data-min-width="160" data-column="CreateDate">创建时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

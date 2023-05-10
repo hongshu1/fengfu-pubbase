@@ -20,8 +20,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 质量建模-检验表格参数录入配置
@@ -171,7 +170,7 @@ public class QcFormTableParamService extends BaseService<QcFormTableParam> {
 			QcFormTableParam qcFormTableParam = null;
 			if ("1".equals(type)){
 				qcFormTableParam = createQcFormTableParam(
-						jsonObject.getLong(QcFormTableParam.IAUTOID.toLowerCase()),
+						null,
 						qcFormId,
 						jsonObject.getInteger(QcFormTableParam.ISEQ.toLowerCase()),
 						jsonObject.getInteger(QcFormTableParam.ITYPE.toLowerCase()),
@@ -218,19 +217,22 @@ public class QcFormTableParamService extends BaseService<QcFormTableParam> {
 		delete("DELETE Bd_QcFormTableParam WHERE iQCFormId = ?", formId);
 	}
 	
-	public List<Record> findByFormId(Long formId){
+	public List<Map<String, Object>> findByFormId(Long formId){
 		List<Record> records = findRecords("SELECT * FROM Bd_QcFormTableParam WHERE iQcFormId = ?  ORDER BY iSeq ASC", formId);
 		List<QcFormTableItem> qcFormTableItemList = qcFormTableItemService.findByFormId(formId);
+		
+		List<Map<String, Object>> mapList = new ArrayList<>();
 		
 		for (Record record : records){
 			Long id = record.getLong(QcFormTableParam.IAUTOID);
 			for (QcFormTableItem qcFormTableItem : qcFormTableItemList){
 				// 校验当前id是否存在
-				if (id.equals(qcFormTableItem.getIQcFormParamId())){
+				if (id.equals(qcFormTableItem.getIQcFormTableParamId())){
 					record.set(String.valueOf(qcFormTableItem.getIQcFormItemId()), qcFormTableItem.getIQcFormParamId());
 				}
 			}
+			mapList.add(record.getColumns());
 		}
-		return records;
+		return mapList;
 	}
 }

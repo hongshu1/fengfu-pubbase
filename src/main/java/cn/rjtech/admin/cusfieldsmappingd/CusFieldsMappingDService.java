@@ -63,7 +63,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         Sql sql = selectSql()
                 .select("d.*, f.cfieldname ")
                 .from(table(), "d")
-                .innerJoin(formFieldService.table(), "f", "d.iformfieldid = f.iautoid ")
+                .leftJoin(formFieldService.table(), "f", "d.iformfieldid = f.iautoid ")
                 .page(pageNumber, pageSize);
         
         // sql条件处理
@@ -74,7 +74,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         sql.like("d.cCusFieldName", keywords);
         
         // 排序
-        sql.desc("d.iAutoId");
+        sql.asc("d.iseq");
 
         return paginateRecord(sql);
     }
@@ -86,13 +86,20 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         if (cusFieldsMappingD == null || isOk(cusFieldsMappingD.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        //if(existsName(cusFieldsMappingD.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-        boolean success = cusFieldsMappingD.save();
-        if (success) {
-            //添加日志
-            //addSaveSystemLog(cusFieldsMappingD.getIAutoId(), JBoltUserKit.getUserId(), cusFieldsMappingD.getName());
-        }
-        return ret(success);
+
+        tx(() -> {
+            // 获取序号
+            int iseq = getMaxIseq(cusFieldsMappingD.getICusFieldsMappingMid());
+            cusFieldsMappingD.setISeq(iseq);
+
+            ValidationUtils.isTrue(cusFieldsMappingD.save(), ErrorMsg.SAVE_FAILED);
+            
+            return true;
+        });
+        
+        // 添加日志
+        // addSaveSystemLog(cusFieldsMappingD.getIAutoId(), JBoltUserKit.getUserId(), cusFieldsMappingD.getName())
+        return successWithData(cusFieldsMappingD.keep("iautoid"));
     }
 
     /**
@@ -102,18 +109,24 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         if (cusFieldsMappingD == null || notOk(cusFieldsMappingD.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
+        
         //更新时需要判断数据存在
         CusFieldsMappingD dbCusFieldsMappingD = findById(cusFieldsMappingD.getIAutoId());
         if (dbCusFieldsMappingD == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
+
+        tx(() -> {
+            ValidationUtils.isTrue(cusFieldsMappingD.update(), ErrorMsg.UPDATE_FAILED);
+            
+            return true;
+        });
+        
         //if(existsName(cusFieldsMappingD.getName(), cusFieldsMappingD.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-        boolean success = cusFieldsMappingD.update();
-        if (success) {
-            //添加日志
-            //addUpdateSystemLog(cusFieldsMappingD.getIAutoId(), JBoltUserKit.getUserId(), cusFieldsMappingD.getName());
-        }
-        return ret(success);
+        
+        // 添加日志
+        // addUpdateSystemLog(cusFieldsMappingD.getIAutoId(), JBoltUserKit.getUserId(), cusFieldsMappingD.getName())
+        return successWithData(cusFieldsMappingD.keep("iautoid"));
     }
 
     /**
@@ -180,7 +193,16 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         return successWithData(cusFieldsMappingD.keep("iautoid"));
     }
 
+    private int getMaxIseq(Long iCusFieldsMappingMid) {
+        Integer iseq = queryInt(selectSql().select("MAX(iseq)").eq(CusFieldsMappingD.ICUSFIELDSMAPPINGMID, iCusFieldsMappingMid));
+        return (null ==  iseq ? 0 : iseq) + 1;
+    }
+
     private void doSave(CusFieldsMappingD cusFieldsMappingD, JBoltTable jBoltTable) {
+        // 获取序号
+        int iseq = getMaxIseq(cusFieldsMappingD.getICusFieldsMappingMid());
+        cusFieldsMappingD.setISeq(iseq);
+        
         ValidationUtils.isTrue(cusFieldsMappingD.save(), ErrorMsg.SAVE_FAILED);
 
         List<Record> save = jBoltTable.getSaveRecordList();

@@ -1,0 +1,188 @@
+<form onsubmit="return false;" id="SysSaledeliverplandetail_Form" action="#(action)" method="post">
+    #if(sysSaledeliverplandetail.AutoID??)
+    <input type="hidden" name="sysSaledeliverplandetail.AutoID" value="#(sysSaledeliverplandetail.AutoID??)"/>
+    #end
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">AutoID</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入AutoID"
+                           data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入AutoID"
+                           maxlength="40" name="sysSaledeliverplandetail.AutoID"
+                           value="#(sysSaledeliverplandetail.AutoID??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">MasID</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入MasID" maxlength="40" name="sysSaledeliverplandetail.MasID"
+                           value="#(sysSaledeliverplandetail.MasID??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">仓库编码</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入仓库编码" maxlength="40" name="sysSaledeliverplandetail.WhCode"
+                           value="#(sysSaledeliverplandetail.WhCode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">仓位编码</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入仓位编码" maxlength="40" name="sysSaledeliverplandetail.PosCode"
+                           value="#(sysSaledeliverplandetail.PosCode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">条码</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入条码" maxlength="40" name="sysSaledeliverplandetail.Barcode"
+                           value="#(sysSaledeliverplandetail.Barcode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">存货编码</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入存货编码" maxlength="40" name="sysSaledeliverplandetail.InvCode"
+                           value="#(sysSaledeliverplandetail.InvCode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">无税单价</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入无税单价" maxlength="40" name="sysSaledeliverplandetail.Price"
+                           value="#(sysSaledeliverplandetail.Price??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">件数</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入件数" maxlength="40" name="sysSaledeliverplandetail.Num"
+                           value="#(sysSaledeliverplandetail.Num??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">数量</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入数量" maxlength="40" name="sysSaledeliverplandetail.Qty"
+                           value="#(sysSaledeliverplandetail.Qty??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">收容数量</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入收容数量" maxlength="40" name="sysSaledeliverplandetail.PackRate"
+                           value="#(sysSaledeliverplandetail.PackRate??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">跟单类型</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入跟单类型" maxlength="40" name="sysSaledeliverplandetail.TrackType"
+                           value="#(sysSaledeliverplandetail.TrackType??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">来源单据类型</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入来源单据类型" maxlength="40"
+                           name="sysSaledeliverplandetail.SourceBillType"
+                           value="#(sysSaledeliverplandetail.SourceBillType??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">来源单号</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入来源单号" maxlength="40" name="sysSaledeliverplandetail.SourceBillNo"
+                           value="#(sysSaledeliverplandetail.SourceBillNo??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">来源单号+行号</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入来源单号+行号" maxlength="40"
+                           name="sysSaledeliverplandetail.SourceBIllNoRow"
+                           value="#(sysSaledeliverplandetail.SourceBIllNoRow??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">来源单据ID</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入来源单据ID" maxlength="40" name="sysSaledeliverplandetail.SourceBillID"
+                           value="#(sysSaledeliverplandetail.SourceBillID??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">来源单据Did</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入来源单据Did" maxlength="40" name="sysSaledeliverplandetail.SourceBillDid"
+                           value="#(sysSaledeliverplandetail.SourceBillDid??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">备注</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入备注" maxlength="40" name="sysSaledeliverplandetail.Memo"
+                           value="#(sysSaledeliverplandetail.Memo??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">创建人</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入创建人" maxlength="40" name="sysSaledeliverplandetail.CreatePerson"
+                           value="#(sysSaledeliverplandetail.CreatePerson??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">创建时间</label>
+                <div class="col-10">
+                    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd"
+                           readonly="readonly" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入创建时间" maxlength="20" name="sysSaledeliverplandetail.CreateDate"
+                           value="#datetime(sysSaledeliverplandetail.CreateDate??,'yyyy-MM-dd')"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">更新人</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入更新人" maxlength="40" name="sysSaledeliverplandetail.ModifyPerson"
+                           value="#(sysSaledeliverplandetail.ModifyPerson??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">更新时间</label>
+                <div class="col-10">
+                    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd"
+                           readonly="readonly" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入更新时间" maxlength="20" name="sysSaledeliverplandetail.ModifyDate"
+                           value="#datetime(sysSaledeliverplandetail.ModifyDate??,'yyyy-MM-dd')"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="SysSaledeliverplandetail_Form")
+#end
+

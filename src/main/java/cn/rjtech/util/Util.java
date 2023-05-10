@@ -1,5 +1,6 @@
 package cn.rjtech.util;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.jfinal.kit.StrKit;
@@ -148,5 +149,11 @@ public class Util {
             e.printStackTrace();
         }
     }
-
+    
+    public static boolean isEquals(Object o1, Object o2) {
+        if (ObjUtil.equals(o1, o2)) {
+            return true;
+        }
+        return String.valueOf(o1).equals(String.valueOf(o2));
+    }
 }

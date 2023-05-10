@@ -1,16 +1,43 @@
 #sql("pageList")
-select * from Bd_InventoryQcForm t1 where 1=1 and t1.IsDeleted = '0'
-#if(keywords)
- and t1.iQcFormName like '%#(keywords)%'
-#end
-#if(customer)
- and t1.CustomerManager like '%#(customer)%'
-#end
-#if(component)
- and t1.componentName like '%#(component)%'
-#end
-order by t1.dUpdateTime desc
-#end
+SELECT
+	qc.cQcFormName,
+	inv.cInvCode,
+	inv.cInvCode1,
+	inv.cInvName,
+	inv.cInvName1,
+	inv.cInvStd,
+	uom.cUomName,
+	t2.cEquipmentModelName as machineName,
+	t1.*
+FROM
+	Bd_InventoryQcForm t1
+	INNER JOIN Bd_QcForm qc ON qc.iAutoId = t1.iQcFormId
+	INNER JOIN Bd_Inventory inv on inv.iAutoId = t1.iInventoryId
+	LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iUomClassId
+	left join Bd_EquipmentModel t2 on inv.iEquipmentModelId = t2.iAutoId
+WHERE
+	 t1.IsDeleted = '0'
+    #if(keywords)
+        and qc.cQcFormName like '%#(keywords)%'
+    #end
+    #if(item)
+         and (inv.cInvCode like CONCAT('%', #para(item), '%') or inv.cInvName like CONCAT('%', #para(item), '%'))
+    #end
+
+    #if(cInvCode1)
+        and inv.cInvCode1 like '%#(cInvCode1)%'
+    #end
+    #if(cInvName1)
+         and inv.cInvName1 like '%#(cInvName1)%'
+    #end
+    #if(iQcFormId)
+         and t1.iQcFormId = '#(iQcFormId)'
+    #end
+    #if(isAdd)
+        and t1.iQcFormId = ' '
+    #end
+        order by t1.dUpdateTime desc
+    #end
 
 #sql("listData")
 select * from Bd_InventoryQcForm t1 where t1.IsDeleted = '0'
@@ -36,13 +63,13 @@ select * from Bd_InventoryQcForm t1 where t1.IsDeleted = '0'
 #sql("resourceList")
 SELECT
     t1.iAutoId as iInventoryId,
-    t1.cInvCode as iInventoryCode,
-    t1.cInvName as iInventoryName,
-    t1.cInvName1 as componentName,
-    t1.cInvCode1 as CustomerManager,
-    t1.cInvStd as specs,
-    t3.cUomName as unit,
-    t2.cEquipmentModelName as machineType
+    t1.cInvCode as cInvCode,
+    t1.cInvName as cInvName,
+    t1.cInvName1 as cInvName1,
+    t1.cInvCode1 as cInvCode1,
+    t1.cInvStd as cInvStd,
+    t3.cUomName as cUomName,
+    t2.cEquipmentModelName as machineName
     from
     Bd_Inventory t1
     left join Bd_EquipmentModel t2 on t1.iEquipmentModelId = t2.iAutoId
@@ -58,11 +85,11 @@ SELECT
 #if(keywords)
     and (t1.cInvCode like CONCAT('%', #para(keywords), '%') or t1.cInvName like CONCAT('%', #para(keywords), '%'))
 #end
-#if(customerManager)
-    and t1.cInvCode1 like CONCAT('%',#para(customerManager),'%' )
+#if(cInvCode1)
+    and t1.cInvCode1 like CONCAT('%',#para(cInvCode1),'%' )
 #end
-#if(componentName)
-    and t1.cInvName1 like CONCAT('%', #para(componentName), '%')
+#if(cInvName1)
+    and t1.cInvName1 like CONCAT('%', #para(cInvName1), '%')
 #end
 #end
 

@@ -53,7 +53,7 @@ public class InStockDefectAdminController extends BaseAdminController {
 
 	public void add2() {
 		InStockDefect inStockDefect = service.findById(get("iautoid"));
-		Record inStockQcFormM = service.getinStockQcFormMList(getLong("ircvdocqcformmid"));
+		Record inStockQcFormM = service.getinStockQcFormMList(getLong("iinstockqcformmid"));
 		set("iautoid", get("iautoid"));
 		set("type", get("type"));
 		set("inStockDefect", inStockDefect);

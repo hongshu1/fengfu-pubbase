@@ -1,5 +1,6 @@
 package cn.rjtech.admin.modoc;
 
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -179,4 +180,8 @@ public class MoDocService extends BaseService<MoDoc> {
   public List<Record> getMoroutingconfigpersonByUserAnRegionid(Long iworkregionmid, String cpsnnum) {
     return dbTemplate("modoc.getMoroutingconfigpersonByUserAnRegionid", Kv.by("iworkregionmid", iworkregionmid).set("cpsnnum", cpsnnum)).find();
   }
+
+	public Ret savePerson(JBoltTable jBoltTable, Long configid) {
+		return SUCCESS;
+	}
 }

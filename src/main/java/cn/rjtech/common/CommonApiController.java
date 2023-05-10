@@ -30,4 +30,17 @@ public class CommonApiController extends BaseApiController {
         }
     }
 
+    /**
+     * 动态单据提交
+     */
+    @UnCheck
+    public void vouchProcessDynamicSubmit() {
+        Map map = commonService.vouchProcessDynamicSubmit(getKv());
+        if ("200".equals(map.get("code").toString())) {
+            renderJBoltApiRet(JBoltApiRet.API_SUCCESS_WITH_DATA(map));
+        } else {
+            renderJson(Kv.by("code", map.get("code").toString()).set("data", map));
+        }
+    }
+
 }

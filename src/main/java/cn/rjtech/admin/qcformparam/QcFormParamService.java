@@ -272,7 +272,7 @@ public class QcFormParamService extends BaseService<QcFormParam> {
 		for (Object obj : formParamArray){
 			JSONObject jsonObject=  (JSONObject)obj;
 			QcFormParam qcFormParam = createQcFormParam(
-					jsonObject.getLong(QcFormParam.IAUTOID.toLowerCase()),
+					null,
 					qcFormId,
 					jsonObject.getLong(QcFormParam.IQCFORMITEMID.toLowerCase()),
 					jsonObject.getLong(QcFormParam.IQCITEMID.toLowerCase()),
