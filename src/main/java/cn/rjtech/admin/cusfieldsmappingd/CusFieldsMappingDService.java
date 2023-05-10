@@ -11,6 +11,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingdcodingrule.CusfieldsmappingdCodingruleService;
 import cn.rjtech.admin.formfield.FormFieldService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.CusFieldsMappingRuleEnum;
 import cn.rjtech.model.momdata.CusFieldsMappingD;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -79,7 +80,13 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         // 排序
         sql.asc("d.iseq");
 
-        return paginateRecord(sql);
+        Page<Record> page = paginateRecord(sql);
+        if (CollUtil.isNotEmpty(page.getList())) {
+            for (Record row : page.getList()) {
+                row.set("cruletypename", CusFieldsMappingRuleEnum.toEnum(row.getInt("iruletype")).getText());
+            }
+        }
+        return page;
     }
 
     /**
@@ -212,8 +219,21 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         ValidationUtils.notEmpty(save, "编码字段必须定义编码规则");
 
         doSaveCodingRules(cusFieldsMappingD, save);
+
+        // 校验字段是否重复
+        ValidationUtils.isTrue(notExistsDuplicate(cusFieldsMappingD.getICusFieldsMappingMid(), cusFieldsMappingD.getCFormFieldCode()), "字段重复错误");
     }
-    
+
+    private boolean notExistsDuplicate(Long iCusFieldsMappingMid, String cFormFieldCode) {
+        Sql sql = selectSql().select(CusFieldsMappingD.CFORMFIELDCODE)
+                .eq(CusFieldsMappingD.ICUSFIELDSMAPPINGMID, iCusFieldsMappingMid)
+                .eq(CusFieldsMappingD.CFORMFIELDCODE, cFormFieldCode)
+                .groupBy(CusFieldsMappingD.CFORMFIELDCODE)
+                .having("COUNT(*) > 1");
+        
+        return CollUtil.isEmpty(query(sql));
+    }
+
     private void doSaveCodingRules(CusFieldsMappingD cusFieldsMappingD, List<Record> save) {
         // 获取当前的最大序号
         int maxSeq = cusfieldsmappingdCodingruleService.getMaxIseq(cusFieldsMappingD.getIAutoId());
@@ -255,6 +275,9 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
             }
             cusfieldsmappingdCodingruleService.batchUpdateRecords(update);
         }
+
+        // 校验字段是否重复
+        ValidationUtils.isTrue(notExistsDuplicate(cusFieldsMappingD.getICusFieldsMappingMid(), cusFieldsMappingD.getCFormFieldCode()), "字段重复错误");
     }
 
 }
