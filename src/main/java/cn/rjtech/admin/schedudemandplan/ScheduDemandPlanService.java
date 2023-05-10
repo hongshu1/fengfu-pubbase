@@ -9,6 +9,7 @@ import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.model.momdata.BomMaster;
 import cn.rjtech.model.momdata.MrpDemandcomputem;
 import cn.rjtech.util.DateUtils;
+import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -302,7 +303,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		//开始日期
 		String startDate = DateUtils.formatDate(new Date(),"yyyy-MM-dd");
 		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-		List<String> scheduDateList = scheduProductPlanMonthService.getBetweenDate(startDate,endDate);
+		List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
 
 		//TODO:查询物料集信息 (销售类型不为null)
 		List<Record> invInfoList = dbTemplate("schedudemandplan.getInvInfoList").find();
@@ -488,10 +489,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		String startDate = kv.getStr("startdate");
 		String endDate = kv.getStr("enddate");
 		if (notOk(startDate) || notOk(endDate)){
-			ValidationUtils.isTrue(false,"开始日期-结束日期不能为空！");
+			ValidationUtils.error("开始日期-结束日期不能为空！");
 		}
 		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-		List<String> scheduDateList = scheduProductPlanMonthService.getBetweenDate(startDate,endDate);
+		List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
 
 
 		//TODO:根据日期及条件获取物料需求计划预示子表数据
@@ -647,10 +648,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		String startDate = kv.getStr("startdate");
 		String endDate = kv.getStr("enddate");
 		if (notOk(startDate) || notOk(endDate)){
-			ValidationUtils.isTrue(false,"开始日期-结束日期不能为空！");
+			ValidationUtils.error("开始日期-结束日期不能为空！");
 		}
 		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-		List<String> scheduDateList = scheduProductPlanMonthService.getBetweenDate(startDate,endDate);
+		List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
 
 
 		//TODO:根据日期及条件获取物料到货计划预示子表数据
