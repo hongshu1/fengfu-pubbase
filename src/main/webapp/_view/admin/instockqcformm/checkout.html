@@ -120,7 +120,7 @@
         <table id="jbolt_table_checkouttableparam_split__#(pageId)2" border="3"
                style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
           <div style="left: 60px;margin-left:50px;height: 50px;width: 500px;">
-            <button type="button" onclick="inserRow(10)" class="btn btn-success"
+            <button type="button" onclick="insertRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
             <img data-switchbtn data-value="#(instockqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
@@ -145,7 +145,7 @@
               {@/if}
             </td>
             <td>${data.cqcparamname}</td>
-            #for(i = 1; i <= 10; i++)
+            #for(i = 1; i <= cvaluelist; i++)
             <td>
               {@if data.itype == '1'}
               <input name="cA#(i)" type="number" class="cA01" value="#(data.cvalue??)"
@@ -153,12 +153,13 @@
               {@else if data.itype == '2'}
               <input name="cA#(i)" type="text" class="cA01" title="${data.coptions}" value="#(data.cvalue??)"/>
               {@else if data.itype == '3'}
-              <select name="cA#(i)" class="form-control" data-url="admin/dictionary/options?key=overallsize" data-autoload
-                      data-text="=整体尺寸=" data-value-attr="sn" value="#(data.cvalue??)" data-select="#(data.cvalue??)" title="=整体尺寸="></select>
+              <select name="cA#(i)" class="form-control cA01" data-url="admin/dictionary/options?key=overallsize" data-autoload
+                      data-text="=整体尺寸=" data-value-attr="sn" value="#(data.cvalue??)" data-select="#(data.cvalue??)"
+                      title="=整体尺寸="></select>
               {@else if data.itype == '4'}
               <input name="cA#(i)" type="text" class="cA01" title="#{data.coptions??}"/>
               {@else if data.itype == '5'}
-              <div class="form-group row "
+              <div class="form-group row cA01"
                    data-name="cA#(i)"
                    data-checkbox
                    data-rule="checkbox"
@@ -169,14 +170,15 @@
                    data-inline="false"
                    data-value="#(data.cvalue??)"></div>
               {@else if data.itype == '6'}
-              <select name="cA#(i)" class="form-control" data-url="admin/dictionary/options?key=overallsize" data-autoload
-                      data-text="=整体尺寸=" data-value-attr="sn" data-value="#(data.cvalue??)" data-select="#(data.coptions??)"></select>
+              <select name="cA#(i)" class="form-control cA01" data-url="admin/dictionary/options?key=overallsize" data-autoload
+                      data-text="=整体尺寸=" data-value-attr="sn" data-value="#(data.cvalue??)"
+                      data-select="#(data.coptions??)"></select>
               {@else if data.itype == '7'}
               <input name="cA#(i)" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
-                     class="form-control" placeholder="结束日期" data-tips="结束时间" maxlength="23"
+                     class="form-control cA01" placeholder="结束日期" data-tips="结束时间" maxlength="23"
                      value="#(data.cvalue??)">
               {@else data.itype == '8'}
-              <input name="cA#(i)" type="text" class="form-control" data-date data-type="time" data-fmt="HH:mm:ss"
+              <input name="cA#(i)" type="text" class="form-control cA01" data-date data-type="time" data-fmt="HH:mm:ss"
                      value="#(data.cvalue??)">
               {@/if}
             </td>
@@ -191,6 +193,7 @@
                  data-width="fill"
                  data-height="fill"
                  data-ajax="true"
+                 data-editable="true"
                  data-conditions-form="instockqcformmForm_#(pageId)"
                  data-url="admin/instockqcformm/autoGetCheckOutTableDatas?iinstockqcformmid=#(instockqcformm.iAutoId??)"
                  data-rowtpl="checkoutType_tpl_#(pageId)"
@@ -198,16 +201,12 @@
                  data-toolbar="instockqcformmForm_toolbar_#(pageId)">
             <thead>
             <tr class="colspan biaotoucolor">
-              <th colspan="4">检查内容</th>
-              <th colspan="22">检查记录</th>
-            </tr>
-            <tr class="colspan biaotoucolor">
               <th data-column="index">序号</th>
-              <th style="width: 150px;" data-column="cqcitemname">检查项目</th>
-              <th style="width: 220px;">规格公差</th>
-              <th style="width: 120px">检查方法</th>
-              #for(i = 1; i <= 10; i++)
-              <th style="width: 80px">#(i)</th>
+              <th style="width: 120px;" data-column="cqcitemname">检查项目</th><!--data-column="cqcitemname"-->
+              <th style="width: 220px;" data-column="coptions">规格公差</th>
+              <th style="width: 120px" data-column="cqcparamname">检查方法</th>
+              #for(i = 1; i <= cvaluelist; i++)
+              <th style="width: 100px">#(i)</th>
               #end
             </tr>
             </thead>
@@ -303,15 +302,39 @@
   .biaotoucolor {
     background-color: #b1dfbb;
   }
+
+  .setStyle {
+    width: 100px;
+  }
 </style>
 
 <script>
   /*
-* @desc：新增行
-* @param：rows:行数
-* */
-  function inserRow(rows) {
-    alert("测试");
+ * @desc：新增行
+ * @param：rows:行数
+ * */
+  function insertRow(rows) {
+    let jboltTableAllDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
+    var form = $("#instockqcformmForm_#(pageId)");
+    form.find("[name='cvaluelist']").val(20);
+
+    //添加10列到表头
+    let length = jboltTableAllDatas[0].cvaluelist;
+    for (let col = 0; col < rows; col++) {
+      let newVar = length + col + 1;
+      var firstLie = '<th class="setStyle">' + newVar + '</th>';
+      $(".table>thead>tr").append(firstLie);
+    }
+
+    for (let i = 0; i < jboltTableAllDatas.length; i++) {
+      //将cvaluelist加10即可
+      let newVar = jboltTableAllDatas[i].cvaluelist + 10;
+      jboltTableAllDatas[i].cvaluelist = newVar;
+    }
+    //jboltTableInsertRow
+    clearJboltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
+    var success = jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, true,
+        true);
   }
 </script>
 

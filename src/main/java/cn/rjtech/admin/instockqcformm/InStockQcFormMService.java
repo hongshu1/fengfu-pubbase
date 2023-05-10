@@ -34,8 +34,10 @@ import cn.rjtech.model.momdata.base.BaseInStockQcFormD;
 import cn.rjtech.util.excel.SheetPage;
 
 import com.alibaba.fastjson.JSON;
+
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseInStockQcFormD;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -45,6 +47,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -297,7 +300,11 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * 点击检验按钮，跳转到checkout页面后，自动加载table的数据
      */
     public List<Record> getCheckOutTableDatas(Kv kv) {
-        return clearZero(dbTemplate("instockqcformm.findChecoutListByIformParamid", kv).find());
+        List<Record> recordList = clearZero(dbTemplate("instockqcformm.findChecoutListByIformParamid", kv).find());
+        recordList.stream().forEach(record -> {
+            record.set("cvaluelist",10);
+        });
+        return recordList;
     }
 
     /**
@@ -516,10 +523,13 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                                                  String cmeasurepurpose,
                                                  String cmeasurereason, String cmeasureunit, String cmemo, String cdcno,
                                                  String isok) {
-        List<InstockqcformdLine> instockqcformdLines = new ArrayList<>();
+        List<InstockqcformdLine> updateInstockqcformdLines = new ArrayList<>();
+        List<InstockqcformdLine> saveInstockqcformdLines = new ArrayList<>();
         boolean result = tx(() -> {
             for (int i = 0; i < serializeSubmitList.size(); i++) {
                 JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
+                String iseq = jsonObject.getString("iseq");
+                Long instockoutqcformdid = jsonObject.getLong("iautoid");
                 JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
                 JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
                 JSONArray elementList = serializeElement.getJSONArray(0);
@@ -528,14 +538,24 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                     String cvalue = object.getString("value");
                     JSONObject cvaluelistJSONObject = cvaluelist.getJSONObject(j);
                     Long lineiautoid = cvaluelistJSONObject.getLong("lineiautoid");
-                    InstockqcformdLine instockqcformdLine = instockqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
-                    instockqcformdLine.setCValue(cvalue);
-                    instockqcformdLines.add(instockqcformdLine);
+                    if (lineiautoid != null) {
+                        InstockqcformdLine instockqcformdLine = instockqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
+                        instockqcformdLine.setCValue(cvalue);
+                        updateInstockqcformdLines.add(instockqcformdLine);
+                    } else {
+                        //如果没有，代表是新增页的数据
+                        InstockqcformdLine instockqcformdLine = new InstockqcformdLine();//质量管理-出库检明细列值表
+                        saveInStockQcFormdLineModel(instockqcformdLine, instockoutqcformdid, iseq, cvalue);
+                        saveInstockqcformdLines.add(instockqcformdLine);
+                    }
                 }
             }
             //更新line
-            if (!instockqcformdLines.isEmpty()) {
-                instockqcformdLineService.batchUpdate(instockqcformdLines);
+            if (!updateInstockqcformdLines.isEmpty()) {
+                instockqcformdLineService.batchUpdate(updateInstockqcformdLines);
+            }
+            if (!saveInstockqcformdLines.isEmpty()){
+                instockqcformdLineService.batchSave(saveInstockqcformdLines);
             }
             InStockQcFormM stockQcFormM = findById(instockqcformmiautoid);
             saveInStockoutQcFormmModel(stockQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
