@@ -22,13 +22,17 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import net.fenghaitao.imports.DataSet;
 import net.fenghaitao.parameters.FieldSetting;
+import net.fenghaitao.parameters.ImportPara;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static cn.hutool.core.text.StrPool.COMMA;
+import static oshi.PlatformEnum.getValue;
 
 /**
  * 系统配置-导入字段配置明细
@@ -288,13 +292,20 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         ValidationUtils.isTrue(notExistsDuplicate(cusFieldsMappingD.getICusFieldsMappingMid(), cusFieldsMappingD.getCFormFieldCode()), "字段重复错误");
     }
 
-//    /**
-//     * 导入映射
-//     */
-//    public Ret getImportDatas(File file) {
-//
-//        AutoExcelUtil.readExcel(file.getAbsolutePath(), )
-//    }
+    /**
+     * 导入映射
+     */
+    public Ret getImportDatas(File file, String cformatname) {
+        List<ImportPara> importParas = new ArrayList<ImportPara>() {{
+            add(new ImportPara(0, genFieldSettings(cformatname), 1, 2));
+        }};
+        
+        DataSet dataSet = AutoExcelUtil.readExcel(file.getAbsolutePath(), importParas);
+        List<Map<String, Object>> sheet1 = dataSet.get("sheet1");
+        
+        ValidationUtils.notEmpty(sheet1, "导入数据不能为空");
+        return successWithData(sheet1);
+    }
 
     public List<FieldSetting> genFieldSettings(String cformatname) {
         // 根据指定的模板名，获取导入的字段
@@ -306,7 +317,46 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         List<CusFieldsMappingD> cusFieldsMappingDs = findByIcusFieldsMappingMid(m.getIAutoId());
         ValidationUtils.notEmpty(cusFieldsMappingDs, "导入字段列表未定义");
 
+        // -------------------------------------
+        // 标准字段映射导入
+        // -------------------------------------
         List<FieldSetting> fieldSettings = new ArrayList<>();
+        for (CusFieldsMappingD d : cusFieldsMappingDs) {
+            // 非定制规则字段
+            if (CusFieldsMappingRuleEnum.toEnum(d.getIRuleType()) == CusFieldsMappingRuleEnum.NONE) {
+                // 字段名、导入字段名
+                fieldSettings.add(new FieldSetting(d.getCFormFieldCode(), d.getCCusFieldName()));
+            }
+        }
+
+        // -------------------------------------
+        // 定制字段类型处理
+        // -------------------------------------
+        CusFieldsMappingD lastCusFieldsMappingD = cusFieldsMappingDs.get(cusFieldsMappingDs.size() - 1);
+        
+        CusFieldsMappingRuleEnum ruleType = CusFieldsMappingRuleEnum.toEnum(lastCusFieldsMappingD.getIRuleType());
+        
+        switch (ruleType) {
+            case NONE:
+            default:
+                break;
+            case ANNUAL:
+                for (int i = 1; i <= 12; i++) {
+                    fieldSettings.add(new FieldSetting("iqty" + i, i + "月"));
+                }
+                break;
+            case MONTHLY:
+                for (int i = 1; i <= 31; i++) {
+                    fieldSettings.add(new FieldSetting("iqty" + i, i + "日"));
+                }
+                break;
+            case WEEKLY:
+                for (int i = 1; i <= 7; i++) {
+                    fieldSettings.add(new FieldSetting("iqty" + i, i + "日"));
+                }
+                break;
+        }
+        
         return fieldSettings;
     }
 
