@@ -417,3 +417,16 @@
 #include("sysproductin/sysproductin.sql")
 #end
 
+#namespace("sysassem")
+#include("sysassem/sysassem.sql")
+#end
+
+#namespace("syspuinstore")
+#include("syspuinstore/syspuinstore.sql")
+#end
+
+#namespace("syspureceive")
+#include("syspureceive/syspureceive.sql")
+#end
+
+
