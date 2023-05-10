@@ -37,15 +37,18 @@ public class CusfieldsmappingdCodingruleService extends BaseService<Cusfieldsmap
     /**
      * 后台管理数据查询
      *
-     * @param pageNumber 第几页
-     * @param pageSize   每页几条数据
-     * @param iType      编码字符类型：1. 编码 2. 分隔符
+     * @param pageNumber           第几页
+     * @param pageSize             每页几条数据
+     * @param icusfieldsmappingdid
+     * @param iType                编码字符类型：1. 编码 2. 分隔符
      */
-    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Integer iType) {
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Long icusfieldsmappingdid, Integer iType) {
         //创建sql对象
         Sql sql = selectSql().page(pageNumber, pageSize);
         //sql条件处理
-        sql.eq("iType", iType);
+        sql.eq("iType", iType)
+                .eq(CusfieldsmappingdCodingrule.ICUSFIELDSMAPPINGDID, icusfieldsmappingdid);
+        
         //排序
         sql.asc("iseq");
         Page<Record> page = paginateRecord(sql);
@@ -121,6 +124,11 @@ public class CusfieldsmappingdCodingruleService extends BaseService<Cusfieldsmap
 
     public void deleteByMultiIds(String ids) {
         delete("DELETE FROM Bd_CusFieldsMappingD_CodingRule WHERE iautoid IN (" + ids + ")");
+    }
+
+    public int getMaxIseq(Long iCusFieldsMappingDid) {
+        Integer maxSeq = queryInt(selectSql().select(CusfieldsmappingdCodingrule.ISEQ).eq(CusfieldsmappingdCodingrule.ICUSFIELDSMAPPINGDID, iCusFieldsMappingDid));
+        return null == maxSeq ? 0 : maxSeq;
     }
     
 }

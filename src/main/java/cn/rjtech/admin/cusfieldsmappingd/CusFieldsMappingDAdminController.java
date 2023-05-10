@@ -57,7 +57,7 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEncoded"), getBoolean("isEnabled")));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getLong("icusfieldsmappingmid"), getKeywords(), getBoolean("isEncoded"), getBoolean("isEnabled")));
     }
 
     /**

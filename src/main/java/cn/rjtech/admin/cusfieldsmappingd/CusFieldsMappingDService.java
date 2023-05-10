@@ -52,19 +52,22 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     /**
      * 后台管理数据查询
      *
-     * @param pageNumber 第几页
-     * @param pageSize   每页几条数据
-     * @param keywords   关键词
-     * @param isEncoded  是否编码字段：0. 否 1. 是
-     * @param isEnabled  是否启用：0. 否 1. 是
+     * @param pageNumber           第几页
+     * @param pageSize             每页几条数据
+     * @param icusfieldsmappingmid
+     * @param keywords             关键词
+     * @param isEncoded            是否编码字段：0. 否 1. 是
+     * @param isEnabled            是否启用：0. 否 1. 是
      */
-    public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEncoded, Boolean isEnabled) {
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Long icusfieldsmappingmid, String keywords, Boolean isEncoded, Boolean isEnabled) {
         // 创建sql对象
         Sql sql = selectSql()
                 .select("d.*, f.cfieldname ")
                 .from(table(), "d")
                 .leftJoin(formFieldService.table(), "f", "d.iformfieldid = f.iautoid ")
                 .page(pageNumber, pageSize);
+
+        sql.eq("d.icusfieldsmappingmid", icusfieldsmappingmid);
         
         // sql条件处理
         sql.eqBooleanToChar("d.isEncoded", isEncoded);
@@ -206,13 +209,20 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         ValidationUtils.isTrue(cusFieldsMappingD.save(), ErrorMsg.SAVE_FAILED);
 
         List<Record> save = jBoltTable.getSaveRecordList();
-        ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notEmpty(save, "编码字段必须定义编码规则");
 
         doSaveCodingRules(cusFieldsMappingD, save);
     }
     
     private void doSaveCodingRules(CusFieldsMappingD cusFieldsMappingD, List<Record> save) {
+        // 获取当前的最大序号
+        int maxSeq = cusfieldsmappingdCodingruleService.getMaxIseq(cusFieldsMappingD.getIAutoId());
+        
         for (Record row : save) {
+            maxSeq++;
+            
+            row.set("iseq", maxSeq);
+            
             row.keep("iseq", "itype", "cseparator", "ilength")
                     .set("iautoid", JBoltSnowflakeKit.me.nextId())
                     .set("icusfieldsmappingdid", cusFieldsMappingD.getIAutoId());
@@ -225,6 +235,11 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         ValidationUtils.notNull(dbCusFieldsMappingD, JBoltMsg.DATA_NOT_EXIST);
 
         ValidationUtils.isTrue(cusFieldsMappingD.update(), ErrorMsg.UPDATE_FAILED);
+
+        // 删除
+        if (ArrayUtil.isNotEmpty(jBoltTable.getDelete())) {
+            cusfieldsmappingdCodingruleService.deleteByMultiIds(ArrayUtil.join(jBoltTable.getDelete(), COMMA));
+        }
 
         // 新增
         List<Record> save = jBoltTable.getSaveRecordList();
@@ -239,11 +254,6 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
                 row.keep("iseq", "itype", "cseparator", "ilength", "iautoid");
             }
             cusfieldsmappingdCodingruleService.batchUpdateRecords(update);
-        }
-        
-        // 删除
-        if (ArrayUtil.isNotEmpty(jBoltTable.getDelete())) {
-            cusfieldsmappingdCodingruleService.deleteByMultiIds(ArrayUtil.join(jBoltTable.getDelete(), COMMA));
         }
     }
 

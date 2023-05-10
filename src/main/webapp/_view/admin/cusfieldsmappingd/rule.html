@@ -6,7 +6,7 @@
 
         <input type="text" class="form-control"
                data-autocomplete
-               data-url="admin/formfield/autocomplete?iformid=#(iformids[0])"
+               data-url="admin/formfield/autocomplete?iformid=#(iformids[0])&isimportfield=1"
                data-rule="required"
                data-sync-ele="#iFormFieldId"
                data-text-attr="cfieldname"
@@ -42,6 +42,6 @@
     </div>
 </div>
 
-#ajaxPortal("/admin/cusfieldsmappingd/codingrule?icusfieldsmappingdid=" + (cusFieldsMappingD.iautoid??) + "&isencoded=" + (cusFieldsMappingD.isencoded??'1' == '1'),"cusfieldmappingd_portal_" + pageId, true)
+#ajaxPortal("/admin/cusfieldsmappingd/codingrule?icusfieldsmappingdid=" + (cusFieldsMappingD.iautoid??'') + "&isencoded=" + (cusFieldsMappingD.isencoded??'1' == '1'),"cusfieldmappingd_portal_" + pageId, true)
 #else
 #end

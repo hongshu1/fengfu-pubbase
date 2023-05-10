@@ -28,9 +28,14 @@
                             data-text-attr="cname"
                             data-value-attr="iautoid"
                             data-setvalueto="ipid"
-                            data-text="=上级类别="
+                            
+                            #if(formCategory.iPid??0)
                             data-select="#(formCategory.iPid??0)"
-                            data-value=""
+                            #else
+                            data-text="=上级类别="
+                            #end
+                            
+                            data-value="#(formCategory.iPid??0)"
                     ></select>
                 </div>
             </div>
