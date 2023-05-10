@@ -188,7 +188,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
             annualOrderD.setIAnnualOrderMid(annualOrderM.getIAutoId());
             annualOrderD.setIInventoryId(record.getLong("iinventoryid"));
             annualOrderD.setIYear1(annualOrderM.getIYear());
-            annualOrderD.setIYear1Sum(record.getBigDecimal("inowyearmonthamounttotal"));
+            annualOrderD.setIYear1Sum(record.getBigDecimal("iqtytotal"));
             annualOrderD.setIYear2(annualOrderM.getIYear() + 1);
             annualOrderD.setIYear2Sum(record.getBigDecimal("inextyearmonthamounttotal"));
             annualOrderD.setIsDeleted(false);
@@ -209,7 +209,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
             ValidationUtils.notNull(annualOrderD, JBoltMsg.DATA_NOT_EXIST);
             annualOrderD.setIInventoryId(record.getLong("iinventoryid"));
             annualOrderD.setIYear1(annualOrderM.getIYear());
-            annualOrderD.setIYear1Sum(record.getBigDecimal("inowyearmonthamounttotal"));
+            annualOrderD.setIYear1Sum(record.getBigDecimal("iqtytotal"));
             annualOrderD.setIYear2(annualOrderM.getIYear() + 1);
             annualOrderD.setIYear2Sum(record.getBigDecimal("inextyearmonthamounttotal"));
             ValidationUtils.isTrue(annualOrderD.update(), ErrorMsg.UPDATE_FAILED);

@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import static cn.hutool.core.text.StrPool.COMMA;
-import static oshi.PlatformEnum.getValue;
 
 /**
  * 系统配置-导入字段配置明细
@@ -302,7 +301,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         
         DataSet dataSet = AutoExcelUtil.readExcel(file.getAbsolutePath(), importParas);
         List<Map<String, Object>> sheet1 = dataSet.get("sheet1");
-        
+
         ValidationUtils.notEmpty(sheet1, "导入数据不能为空");
         return successWithData(sheet1);
     }
@@ -324,8 +323,8 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         for (CusFieldsMappingD d : cusFieldsMappingDs) {
             // 非定制规则字段
             if (CusFieldsMappingRuleEnum.toEnum(d.getIRuleType()) == CusFieldsMappingRuleEnum.NONE) {
-                // 字段名、导入字段名
-                fieldSettings.add(new FieldSetting(d.getCFormFieldCode(), d.getCCusFieldName()));
+                // 字段名（使用小写）、导入字段名
+                fieldSettings.add(new FieldSetting(d.getCFormFieldCode().toLowerCase(), d.getCCusFieldName()));
             }
         }
 
