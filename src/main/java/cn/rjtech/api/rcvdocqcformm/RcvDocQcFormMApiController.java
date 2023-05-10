@@ -114,13 +114,13 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     }
 
     /**
-     * 跳转到"查看"页面后，自动加载查看页面table的数据
+     * 跳转到"查看"页面或者“编辑”页面后，自动加载查看页面table的数据
      */
     @ApiDoc(result = AutoGetRcvOnlyseeTableDatasVo.class)
     @UnCheck
-    public void autoGetRcvOnlyseeTableDatas(@Para(value = "iautoid") Long iautoid) {
+    public void autoGetRcvOnlyseeOrEditTableDatas(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        renderJBoltApiRet(apiService.autoGetRcvOnlyseeTableDatas(iautoid));
+        renderJBoltApiRet(apiService.autoGetRcvOnlyseeOrEditTableDatas(iautoid));
     }
 
     /**
@@ -142,6 +142,16 @@ public class RcvDocQcFormMApiController extends BaseApiController {
 
         renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, ircvdocqcformmiautoid, cmeasureunit,
             isok, cmeasurereason, serializeSubmitList, cmemo));
+    }
+
+    /*
+     * 点击编辑按钮，跳转到编辑页面
+     * */
+    @ApiDoc(result = RcvDocQcFormMOnlyseeApiVo.class)
+    @UnCheck
+    public void jumpEdit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.jumpEdit(iautoid));
     }
 
     /**
