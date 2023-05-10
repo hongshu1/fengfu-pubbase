@@ -187,6 +187,9 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		return null;
 	}
 
+
+	//-----------------------------------------------------------------物料需求计划计算-----------------------------------------------
+
 	/**
 	 * 递归 从上往下展 查询该母件id集下所有层级的子件物料
 	 * compareidList 子件物料集
@@ -209,18 +212,19 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		}
 
 		//根据母件id查询子表
-		List<Record> bomcompareList = findRecord("select \n" +
+		List<Record> bomcompareList = findRecord("select\n" +
 				"a.iInventoryId as invId,c.cInvCode as invCode,\n" +
 				"c.cInvCode1,\n" +
 				"c.cInvName1,\n" +
 				"c.iSaleType,\n" +
+				"i.iPsLevel,\n" +
 				"e.iVendorId,\n" +
 				"f.cVenCode,\n" +
 				"f.cVenName,\n" +
 				"c.iPkgQty,\n" +
 				"g.iInnerInStockDays,\n" +
 				"b.iInventoryId as pinvId,d.cInvCode as pinvCode,\n" +
-				"a.iQty as useRate \n" +
+				"a.iQty as useRate\n" +
 				"from Bd_BomCompare as a  \n" +
 				"left join Bd_BomMaster as b on a.iBOMMasterId = b.iAutoId \n" +
 				"left join Bd_Inventory as c on a.iInventoryId = c.iAutoId\n" +
@@ -228,6 +232,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				"left join Bd_InventoryStockConfig as e on d.iAutoId = e.iInventoryId\n" +
 				"left join Bd_Vendor as f on e.iVendorId = f.iAutoId\n" +
 				"left join Bd_InventoryPlan as g on g.iInventoryId = d.iAutoId\n" +
+				"LEFT JOIN Bd_InventoryWorkRegion AS h ON c.iAutoId = h.iInventoryId AND h.isDefault = 1 AND h.isDeleted = 0\n" +
+				"LEFT JOIN Bd_WorkRegionM AS i ON h.iWorkRegionMid = i.iAutoId AND i.isDeleted = 0\n" +
 				"where b.isDeleted = 0 and b.isEffective = 1 \n" +
 				"and a.iBOMMasterId in (" + CollUtil.join(masterids, COMMA) + ") \n" +
 				"order by c.cInvCode ");
@@ -256,6 +262,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			scheduDemandTempDTO.setcInvCode1(record.getStr("cInvCode1"));
 			scheduDemandTempDTO.setcInvName1(record.getStr("cInvName1"));
 			scheduDemandTempDTO.setiSaleType(record.getInt("iSaleType"));
+			scheduDemandTempDTO.setiLevel(record.getInt("iPsLevel"));
 			scheduDemandTempDTO.setiVendorId(record.getLong("iVendorId"));
 			scheduDemandTempDTO.setcVenCode(record.getStr("cVenCode"));
 			scheduDemandTempDTO.setcVenName(record.getStr("cVenName"));
@@ -280,17 +287,55 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			}
 		}
 		//将物料Map转为List并排序
-		String idsJoin2 = "(";
 		List<ScheduDemandTempDTO> newInvList = new ArrayList<>();
 		for (ScheduDemandTempDTO dto : invListMap.values()){
-			Long invId = dto.getInvId();
-			idsJoin2 = idsJoin2 + invId + ",";
 			newInvList.add(dto);
 		}
-		idsJoin2 = idsJoin2 + "601)";
 		newInvList.sort(Comparator.comparing(ScheduDemandTempDTO::getSort));
 
 		return newInvList;
+	}
+
+	public static void main(String[] arg){
+
+		List<ScheduDemandTempDTO> list = new ArrayList<>();
+
+		ScheduDemandTempDTO dto = new ScheduDemandTempDTO();
+		dto.setInvCode("C-1");dto.setPinvCode("B-1");
+		list.add(dto);
+
+		ScheduDemandTempDTO dto2 = new ScheduDemandTempDTO();
+		dto2.setInvCode("C-2");dto2.setPinvCode("B-1");
+		list.add(dto2);
+
+		ScheduDemandTempDTO dto3 = new ScheduDemandTempDTO();
+		dto3.setInvCode("B-1");dto3.setPinvCode("A-1");
+		list.add(dto3);
+
+		ScheduDemandTempDTO dto4 = new ScheduDemandTempDTO();
+		dto4.setInvCode("B-2");dto4.setPinvCode("A-1");
+		list.add(dto4);
+
+		ScheduDemandTempDTO dto5 = new ScheduDemandTempDTO();
+		dto5.setInvCode("C-1");dto5.setPinvCode("B-1");
+		list.add(dto5);
+
+		ScheduDemandTempDTO dto6 = new ScheduDemandTempDTO();
+		dto6.setInvCode("C-2");dto6.setPinvCode("B-1");
+		list.add(dto6);
+
+		ScheduDemandTempDTO dto7 = new ScheduDemandTempDTO();
+		dto7.setInvCode("C-3");dto7.setPinvCode("B-2");
+		list.add(dto7);
+
+		System.out.println(list);
+
+		/*for (int i = 0; i < list.size(); i++) {
+			ScheduDemandTempDTO tempDTO = list.get(i);
+
+		}*/
+
+		System.out.println(list);
 	}
 
 	/**
@@ -301,10 +346,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	public synchronized Ret apsScheduDemandPlan(String endDate) {
 		//开始日期
 		String startDate = DateUtils.formatDate(new Date(),"yyyy-MM-dd");
-		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+		//计算开始日期到截止日期之间的日期集 包含开始到结束那天 有序
 		List<String> scheduDateList = scheduProductPlanMonthService.getBetweenDate(startDate,endDate);
 
-		//TODO:查询物料集信息 (销售类型不为null)
+		//TODO:查询物料集信息 (销售类型不为null)内作、外作、外购
 		List<Record> invInfoList = dbTemplate("schedudemandplan.getInvInfoList").find();
 		//本次内作物料id集
 		String idsInJoin = "(";
@@ -332,6 +377,17 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		idsInJoin = idsInJoin + "601)";
 		idsOutJoin = idsOutJoin + "601)";
 		idsJoin = idsJoin + "601)";
+
+
+		//key: iLevel   value:yyyy-MM-dd
+		Map<Integer,String> scheduEndDateByLevelMap = new HashMap<>();
+		//TODO: 查询各个排产层级的最大排产日期
+		List<Record> getScheduEndDateList = dbTemplate("schedudemandplan.getScheduEndDateList").find();
+		for (Record record : getScheduEndDateList){
+			int iLevel = record.getInt("iLevel");
+			String dScheduEndDate = DateUtils.formatDate(record.getDate("dScheduleEndTime"),"yyyy-MM-dd");
+			scheduEndDateByLevelMap.put(iLevel,dScheduEndDate);
+		}
 
 
 		//TODO:根据物料集id及日期查询月周排产计划数据三班汇总  （内作）
@@ -385,79 +441,242 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			}
 		}
 
-		//TODO：所需进行物料计算的物料（内作）
+
+
+		//本次所需计算物料需求计划
+		//key:inv，   value:<yyyy-MM-dd，qty>
+		Map<String,Map<String,BigDecimal>> invPlanDateInAllMap = new HashMap<>();
+
+		//----------------------------------------------------------------------内作销售-----------------------------------------------------------------------------
+		//1、当前日期到生产计划截止日期，取月周生产计划。  从生产计划截止日期到物料需求截止日期，取客户计划汇总表中计划使用数量。
+		//2、当前日期到生产计划截止日期范围展算方式：每次只展算下一级外购件及外作件，如外购件及外作件有BOM继续展算，依次类推。
+		//3、从生产计划截止日期到物料需求截止日期范围展算方式：全阶BOM展算。
+
+
+		//TODO：所需进行物料计算的物料（内作Bom）
 		List<Record> compareInList = new ArrayList<>();
-		compareInList = dataBomScheduList(compareInList,invIdInList,2);
+
+		compareInList = dataBomScheduList(compareInList,invIdInList,1);
 		List<ScheduDemandTempDTO> groupInList = groupMergedList(compareInList);
+		//将物料Map转为List并排序
+		String idsInJoin2 = "(";
+		for (ScheduDemandTempDTO dto : groupInList){
+			Long invId = dto.getInvId();
+			idsInJoin2 = idsInJoin2 + invId + ",";
+		}
+		idsInJoin2 = idsInJoin2 + "601)";
 
-
-		//TODO：所需进行物料计算的物料（外作外购）
-		List<Record> compareOutList = new ArrayList<>();
-
-		compareOutList = dataBomScheduList(compareOutList,invIdInList,2);
-		List<ScheduDemandTempDTO> groupOutList = groupMergedList(compareOutList);
-
-
-
-		//TODO:获取当前排程物料的父级与用量   key: inv   value:<pinv,Record>
-		Map<String,Map<String,Record>> pInvByInvMap = new HashMap<>();
+		//TODO:获取当前物料集的父级与用量   key: inv   value:<pinv,Record>
+		Map<String,Map<String,Record>> pInvByInvInMap = new HashMap<>();
 		//查询本次排程所有物料的所有父级物料及其用量提前期信息
-		List<Record> pInvInfoList = dbTemplate("schedudemandplan.getPinvInfoList",Okv.by("ids","idsJoin2")).find();
+		List<Record> pInvInfoList = dbTemplate("schedudemandplan.getPinvInfoList",Okv.by("ids",idsInJoin2)).find();
 		for (Record record : pInvInfoList){
 			String inv = record.get("invCode");
 			String pinv = record.get("pInvCode");
-			if (pInvByInvMap.containsKey(inv)) {
-				Map<String,Record> map = pInvByInvMap.get(inv);
+			if (pInvByInvInMap.containsKey(inv)) {
+				Map<String,Record> map = pInvByInvInMap.get(inv);
 				map.put(pinv,record);
-				pInvByInvMap.put(inv, map);
+				pInvByInvInMap.put(inv, map);
 			} else {
 				Map<String,Record> map = new HashMap<>();
 				map.put(pinv,record);
-				pInvByInvMap.put(inv, map);
+				pInvByInvInMap.put(inv, map);
 			}
 		}
 
-		//逻辑处理
+		//TODO: 判断该件是否为内作件：
+				//是则找出该件层级的排产截止日期，小于等于截止日期取月周计划，大于截止日期则取客户计划+(父级qty*用量)。
+				//否则直接取父级qty*用量。
 		for (ScheduDemandTempDTO invInfo : groupInList){
 			Long invId = invInfo.getInvId();
 			String cInvCode = invInfo.getInvCode();
 			Long iVendorId = invInfo.getiVendorId();
 			int iInnerInStockDays = invInfo.getiInnerInStockDays();
+			int iSaleType = invInfo.getiSaleType();
+			int iPsLevel = invInfo.getiLevel();
 
+			//月周计划汇总（内作）
+			Map<String,BigDecimal> dateQtyApsMap = invPlanDateApsMap.get(cInvCode);
+			//客户计划
+			Map<String,BigDecimal> dateQtyCusMap = invPlanDateCusMap.get(cInvCode);
 
-			//当前物料的父级Map   key: pinvcode   value: Record
-			Map<String,Record> pInvMap = pInvByInvMap.get(cInvCode) != null ? pInvByInvMap.get(cInvCode) : new HashMap<>();
-			for (String pInv : pInvMap.keySet()){
-				BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
-				int piSaleType = pInvMap.get(pInv).getInt("piSaleType");
+			//本次所计算物料的key:yyyy-MM-dd  value:Qty
+			Map<String,BigDecimal> dateQtyMap = new HashMap<>();
 
-				//key:yyyy-MM-dd   value:qty  月周计划汇总
-				Map<String,BigDecimal> dateQtyApsMap = invPlanDateApsMap.get(pInv);
-				//key:yyyy-MM-dd   value:qty  客户计划汇总
-				Map<String,BigDecimal> dateQtyCusMap = invPlanDateCusMap.get(pInv);
+			//if当前件为内作则：找出该件层级的排产截止日期，小于等于截止日期取月周计划，大于截止日期则取客户计划+(父级qty*用量)
+			if (iSaleType == 1){
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(DateUtils.parseDate(startDate));
+				calendar.add(Calendar.DATE,-1);//日期-1
+				String yesterday = DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd");
+				String scheduEndDate = scheduEndDateByLevelMap.get(iPsLevel) != null ? scheduEndDateByLevelMap.get(iPsLevel) : yesterday;
 
-				//内作销售
-				//1、当前日期到生产计划截止日期，取月周生产计划。  从生产计划截止日期到物料需求截止日期，取客户计划汇总表中计划使用数量。
-				//2、当前日期到生产计划截止日期范围展算方式：每次只展算下一级外购件及外作件，如外购件及外作件有BOM继续展算，依次类推。
-				//3、从生产计划截止日期到物料需求截止日期范围展算方式：全阶BOM展算。
-				if (piSaleType == 1){
-					for (String date : scheduDateList){
-
+				for (String date : scheduDateList){
+					//取月周计划
+					if (DateUtils.parseDate(date).getTime() <= DateUtils.parseDate(scheduEndDate).getTime()){
+						BigDecimal qty = dateQtyApsMap.get(date) != null ? dateQtyApsMap.get(date) : BigDecimal.ZERO;
+						dateQtyMap.put(date,qty);
+					}
+					//取客户计划+(父级qty*用量)
+					else {
+						BigDecimal cusQty = dateQtyCusMap.get(date) != null ? dateQtyCusMap.get(date) : BigDecimal.ZERO;
+						BigDecimal sumPQty = BigDecimal.ZERO;
+						//循环父级并相加
+						Map<String,Record> pInvMap = pInvByInvInMap.get(cInvCode);
+						for (String pInv : pInvMap.keySet()){
+							BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
+							//父级需求计划
+							Map<String,BigDecimal> datePQtyAllMap = invPlanDateInAllMap.get(pInv);
+							BigDecimal pQty = datePQtyAllMap.get(date);
+							if (pQty != null){
+								BigDecimal qty = pQty.multiply(realQty);
+								sumPQty = sumPQty.add(qty);
+							}
+						}
+						dateQtyMap.put(date,cusQty.add(sumPQty));
 					}
 				}
-				//外作、外购销售
-				//1、从当前日期到物料需求计划截止日期取客户计划汇总表中计划使用数量。
-				//2、展算方式：全阶BOM展算。
-				else {
-					for (String date : scheduDateList){
-
-					}
-				}
-
-
 			}
-
+			//其他件则：直接取父级qty*用量
+			else {
+				for (String date : scheduDateList){
+					BigDecimal sumPQty = BigDecimal.ZERO;
+					//循环父级并相加
+					Map<String,Record> pInvMap = pInvByInvInMap.get(cInvCode);
+					for (String pInv : pInvMap.keySet()){
+						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
+						//父级需求计划
+						Map<String,BigDecimal> datePQtyAllMap = invPlanDateInAllMap.get(pInv);
+						BigDecimal pQty = datePQtyAllMap.get(date);
+						if (pQty != null){
+							BigDecimal qty = pQty.multiply(realQty);
+							sumPQty = sumPQty.add(qty);
+						}
+					}
+					dateQtyMap.put(date,sumPQty);
+				}
+			}
+			invPlanDateInAllMap.put(cInvCode,dateQtyMap);
 		}
+
+
+		//本次所需计算物料需求计划2
+		//key:inv，   value:<yyyy-MM-dd，qty>
+		Map<String,Map<String,BigDecimal>> invPlanDateOutAllMap = new HashMap<>();
+
+		//----------------------------------------------------------------------外作外购-----------------------------------------------------------------------------
+		//1、从当前日期到物料需求计划截止日期取客户计划汇总表中计划使用数量，全阶BOM展算。
+
+		//TODO：所需进行物料计算的物料（外作外购Bom）
+		List<Record> compareOutList = new ArrayList<>();
+
+		compareOutList = dataBomScheduList(compareOutList,invIdOutList,2);
+		List<ScheduDemandTempDTO> groupOutList = groupMergedList(compareOutList);
+
+		//将物料Map转为List并排序
+		String idsOutJoin2 = "(";
+		for (ScheduDemandTempDTO dto : groupOutList){
+			Long invId = dto.getInvId();
+			idsOutJoin2 = idsOutJoin2 + invId + ",";
+		}
+		idsOutJoin2 = idsOutJoin2 + "601)";
+
+		//TODO:获取当前物料集的父级与用量   key: inv   value:<pinv,Record>
+		Map<String,Map<String,Record>> pInvByInvOutMap = new HashMap<>();
+		//查询本次排程所有物料的所有父级物料及其用量提前期信息
+		List<Record> pInvInfoOutList = dbTemplate("schedudemandplan.getPinvInfoList",Okv.by("ids",idsOutJoin2)).find();
+		for (Record record : pInvInfoOutList){
+			String inv = record.get("invCode");
+			String pinv = record.get("pInvCode");
+			if (pInvByInvOutMap.containsKey(inv)) {
+				Map<String,Record> map = pInvByInvOutMap.get(inv);
+				map.put(pinv,record);
+				pInvByInvOutMap.put(inv, map);
+			} else {
+				Map<String,Record> map = new HashMap<>();
+				map.put(pinv,record);
+				pInvByInvOutMap.put(inv, map);
+			}
+		}
+
+		//TODO: 判断该件是否为外作外购件：
+		//是则取客户计划+(父级qty*用量)。
+		//否则直接取父级qty*用量。
+		for (ScheduDemandTempDTO invInfo : groupOutList){
+			Long invId = invInfo.getInvId();
+			String cInvCode = invInfo.getInvCode();
+			Long iVendorId = invInfo.getiVendorId();
+			int iInnerInStockDays = invInfo.getiInnerInStockDays();
+			int iSaleType = invInfo.getiSaleType();
+			int iPsLevel = invInfo.getiLevel();
+
+			//客户计划
+			Map<String,BigDecimal> dateQtyCusMap = invPlanDateCusMap.get(cInvCode);
+
+			//本次所计算物料的key:yyyy-MM-dd  value:Qty
+			Map<String,BigDecimal> dateQtyMap = new HashMap<>();
+
+			//if当前件为外购外作则：找出该件层级的排产截止日期，小于等于截止日期取月周计划，大于截止日期则取客户计划+(父级qty*用量)
+			if (iSaleType == 2 || iSaleType == 3){
+				for (String date : scheduDateList){
+					//取客户计划+(父级qty*用量)
+					BigDecimal cusQty = dateQtyCusMap.get(date) != null ? dateQtyCusMap.get(date) : BigDecimal.ZERO;
+					BigDecimal sumPQty = BigDecimal.ZERO;
+					//循环父级并相加
+					Map<String,Record> pInvMap = pInvByInvOutMap.get(cInvCode);
+					for (String pInv : pInvMap.keySet()){
+						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
+						//父级需求计划
+						Map<String,BigDecimal> datePQtyAllMap = invPlanDateOutAllMap.get(pInv);
+						BigDecimal pQty = datePQtyAllMap.get(date);
+						if (pQty != null){
+							BigDecimal qty = pQty.multiply(realQty);
+							sumPQty = sumPQty.add(qty);
+						}
+					}
+					dateQtyMap.put(date,cusQty.add(sumPQty));
+				}
+			}
+			//其他件则：直接取父级qty*用量
+			else {
+				for (String date : scheduDateList){
+					BigDecimal sumPQty = BigDecimal.ZERO;
+					//循环父级并相加
+					Map<String,Record> pInvMap = pInvByInvOutMap.get(cInvCode);
+					for (String pInv : pInvMap.keySet()){
+						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
+						//父级需求计划
+						Map<String,BigDecimal> datePQtyAllMap = invPlanDateOutAllMap.get(pInv);
+						BigDecimal pQty = datePQtyAllMap.get(date);
+						if (pQty != null){
+							BigDecimal qty = pQty.multiply(realQty);
+							sumPQty = sumPQty.add(qty);
+						}
+					}
+					dateQtyMap.put(date,sumPQty);
+				}
+			}
+			invPlanDateOutAllMap.put(cInvCode,dateQtyMap);
+		}
+
+
+		//两种算法相同物料数量相加
+		for (String inv : invPlanDateOutAllMap.keySet()){
+			Map<String,BigDecimal> datePlanOutMap = invPlanDateOutAllMap.get(inv); //2
+			//判断两个计划Map是否存在相同的物料 存在则数量相加，没有则将2添加进1
+			if (invPlanDateInAllMap.containsKey(inv)){
+				Map<String,BigDecimal> datePlanInMap = invPlanDateInAllMap.get(inv); //1
+				for (String date : scheduDateList){
+					BigDecimal qty2 = datePlanOutMap.get(date);
+					BigDecimal qty = datePlanInMap.get(date);
+					datePlanInMap.put(date,qty.add(qty2));
+				}
+				invPlanDateInAllMap.put(inv,datePlanInMap);
+			}else {
+				invPlanDateInAllMap.put(inv,datePlanOutMap);
+			}
+		}
+
 
 
 
@@ -726,6 +945,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 
 	//-----------------------------------------------------------------物料需求计划汇总-----------------------------------------------
+
+
 
 }
 

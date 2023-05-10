@@ -356,8 +356,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         if (apsWeekschedule != null){
             Date dScheduleEndTime = apsWeekschedule.getDScheduleEndTime();
             Calendar calendar = Calendar.getInstance();
-            Date date = cn.rjtech.util.DateUtils.parseDate(dScheduleEndTime);//yyyy-MM-dd
-            calendar.setTime(date);
+            //Date date = cn.rjtech.util.DateUtils.parseDate(dScheduleEndTime);//yyyy-MM-dd
+            calendar.setTime(dScheduleEndTime);
             calendar.add(Calendar.DATE,1);//日期+1
             startDate = DateUtils.parseDate(DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd"));
         }else {
@@ -703,6 +703,19 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             for (String inv : invPlanMap3S.keySet()){
                 System.out.println("3S："+inv+"："+ Arrays.toString(invPlanMap3S.get(inv)));
             }
+
+
+
+            List<Record> recordList = new ArrayList<>();
+
+            //循环物料
+            for (String inv : invList){
+                Record invInfo = invInfoMap.get(inv);
+
+
+            }
+
+
         }
 
 

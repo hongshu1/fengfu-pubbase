@@ -106,6 +106,8 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
 
+	//-----------------------------------------------------------------物料需求计划计算-----------------------------------------------
+
 
 
 	//-----------------------------------------------------------------物料需求计划预示-----------------------------------------------
@@ -348,4 +350,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 	public void getMrpDemandPlanDPage() {
 		renderJsonData(service.getMrpDemandPlanDList(getPageNumber(),getPageSize(),getKv()));
 	}
+
+
+	//-----------------------------------------------------------------物料需求计划汇总-----------------------------------------------
 }
