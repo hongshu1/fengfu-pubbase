@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @Description 来料异常品记录
+ * @Description 工程内品质巡查
  */
 
 public class QcInspectionDatas implements Serializable {
