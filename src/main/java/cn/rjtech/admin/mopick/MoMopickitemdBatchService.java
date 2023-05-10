@@ -4,7 +4,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
-import cn.rjtech.model.mopick.MoMopickitemdBatch;
+import cn.rjtech.model.momdata.MoMopickitemdBatch;
 /**
  * 材料耗用 Service
  * @ClassName: MoMopickitemdBatchService

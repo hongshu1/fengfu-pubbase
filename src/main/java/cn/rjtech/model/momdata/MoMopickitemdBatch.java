@@ -1,6 +1,6 @@
-package cn.rjtech.model.mopick;
+package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.mopick.base.BaseMoMopickitemdBatch;
+import cn.rjtech.model.momdata.base.BaseMoMopickitemdBatch;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
 

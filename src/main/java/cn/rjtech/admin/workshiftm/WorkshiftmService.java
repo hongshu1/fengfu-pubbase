@@ -56,6 +56,12 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
 		return dbTemplate("workshiftm.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
 		//return paginateByKeywords("iautoid","DESC", pageNumber, pageSize, keywords, "iautoid");
 	}
+	/**
+	 * 后台管理分页查询
+	 */
+	public List<Record> getSelect() {
+		return dbTemplate("workshiftm.getSelect").find();
+	}
 
 	public List<Record> getDataExport(Kv kv){
 		List<Record> list = dbTemplate("workshiftm.getDataExport", kv).find();

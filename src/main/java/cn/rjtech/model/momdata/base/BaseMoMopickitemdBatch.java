@@ -1,4 +1,4 @@
-package cn.rjtech.model.mopick.base;
+package cn.rjtech.model.momdata.base;
 import cn.jbolt.core.model.base.JBoltBaseModel;
 import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
