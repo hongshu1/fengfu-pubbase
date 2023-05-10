@@ -1,6 +1,11 @@
 package cn.rjtech.admin.qcformparam;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.rjtech.model.momdata.QcFormItem;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -11,6 +16,8 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.QcFormParam;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.util.*;
 
 /**
  * 质量建模-检验表格参数
@@ -232,6 +239,54 @@ public class QcFormParamService extends BaseService<QcFormParam> {
 			update("update Bd_QcFormParam set isDeleted =  1 WHERE iAutoId ='"+iAutoId+"'");
 		}
 	}
-
-
+	
+	
+	public List<Record> getQcFormParamListByPId(Long qcFormId) {
+		if (ObjectUtil.isNull(qcFormId)){
+			return null;
+		}
+		return dbTemplate("qcformparam.findByFormId", Okv.by("qcFormId", qcFormId)).find();
+	}
+	
+	public QcFormParam createQcFormParam(Long id, Long qcFormId, Long qcFormItemId, Long qcItemId, Long qcParamId, Integer itemSeq, Integer itemParamSeq, Boolean isDeleted){
+		QcFormParam qcFormParam = new QcFormParam();
+		if (ObjectUtil.isNull(id)){
+			id = JBoltSnowflakeKit.me.nextId();
+		}
+		qcFormParam.setIAutoId(id);
+		qcFormParam.setIQcFormId(qcFormId);
+		qcFormParam.setIQcFormItemId(qcFormItemId);
+		qcFormParam.setIQcItemId(qcItemId);
+		qcFormParam.setIQcParamId(qcParamId);
+		qcFormParam.setIItemSeq(itemSeq);
+		qcFormParam.setIItemParamSeq(itemParamSeq);
+		qcFormParam.setIsDeleted(isDeleted);
+		return qcFormParam;
+	}
+	
+	public List<QcFormParam> createQcFormParamList(Long qcFormId, JSONArray formParamArray){
+		if (CollectionUtil.isEmpty(formParamArray)){
+			return null;
+		}
+		List<QcFormParam> qcFormParamList = new ArrayList<>();
+		for (Object obj : formParamArray){
+			JSONObject jsonObject=  (JSONObject)obj;
+			QcFormParam qcFormParam = createQcFormParam(
+					null,
+					qcFormId,
+					jsonObject.getLong(QcFormParam.IQCFORMITEMID.toLowerCase()),
+					jsonObject.getLong(QcFormParam.IQCITEMID.toLowerCase()),
+					jsonObject.getLong(QcFormParam.IQCPARAMID.toLowerCase()),
+					jsonObject.getInteger(QcFormParam.IITEMSEQ.toLowerCase()),
+					jsonObject.getInteger(QcFormParam.IITEMPARAMSEQ.toLowerCase()),
+					false
+			);
+			qcFormParamList.add(qcFormParam);
+		}
+		return qcFormParamList;
+	}
+	
+	public void removeByQcFormId(Long formId){
+		delete("DELETE Bd_QcFormParam WHERE iQCFormId = ?", formId);
+	}
 }

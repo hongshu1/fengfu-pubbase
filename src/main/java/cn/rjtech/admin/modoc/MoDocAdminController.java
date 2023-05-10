@@ -1,6 +1,7 @@
 package cn.rjtech.admin.modoc;
 
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -10,16 +11,17 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoDoc;
+import com.jfinal.kit.Ret;
 
 import java.util.HashMap;
 
 /**
- * 在库检 Controller
+ * 工单管理 Controller
  * @ClassName: MoDocAdminController
  * @author: RJ
  * @date: 2023-04-26 16:15
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MO_DOCBACTH)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/modoc", viewPath = "/_view/admin/modoc")
@@ -80,8 +82,13 @@ public class MoDocAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(MoDoc.class, "moDoc")));
+
+		renderJson(service.save(getJBoltTable()));
 	}
+	public void persondialog(){
+		render("persondialog.html");
+	}
+
 
    /**
 	* 更新

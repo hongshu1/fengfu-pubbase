@@ -63,7 +63,7 @@ public class BomMasterAdminController extends BaseAdminController {
 		render("add.html");
 	}
 
-   
+
 
    /**
 	* 编辑
@@ -72,7 +72,7 @@ public class BomMasterAdminController extends BaseAdminController {
 		getBomMaster(getLong(0));
 		render("edit.html");
 	}
-	
+
 	private void getBomMaster(Long id){
 		BomMaster bomMaster=service.findById(id);
 		if(bomMaster == null){
@@ -84,7 +84,7 @@ public class BomMasterAdminController extends BaseAdminController {
 		set("inventory", inventoryService.findById(bomMaster.getIInventoryId()));
 		set("bomMaster",bomMaster);
 	}
-	
+
 	/**
 	 * 查看
 	 */
@@ -93,7 +93,7 @@ public class BomMasterAdminController extends BaseAdminController {
 		set("view",1);
 		render("edit.html");
 	}
-	
+
 	public void findByBomMasterId(){
 		renderJsonData(bomCompareService.findByBomMasterId(getLong(0)));
 	}
@@ -125,7 +125,7 @@ public class BomMasterAdminController extends BaseAdminController {
 	public void toggleIsDeleted() {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
-	
+
 	/**
 	 * 默认给1-100个数据
 	 */
@@ -134,88 +134,96 @@ public class BomMasterAdminController extends BaseAdminController {
 		Page<Record> recordPage = inventoryChangeService.inventoryAutocomplete(getPageNumber(), pageSize, getKv());
 		renderJsonData(recordPage.getList());
 	}
-	
+	/**
+	 * 默认给1-100,带上最新的工艺路线
+	 */
+	public void inventoryAutocompleteNew(){
+		Integer pageSize = getInt("pageSize", 100);
+		Page<Record> recordPage = inventoryChangeService.inventoryAutocompleteNew(getPageNumber(), pageSize, getKv());
+		renderJsonData(recordPage.getList());
+	}
+
 	public void submitForm(@Para(value = "formJsonData") String formJsonData,
 						   @Para(value = "tableJsonData") String tableJsonData,
 						   @Para(value="commonInvData") String commonInvData,
 						   @Para(value = "flag") Boolean flag){
-		
+
 		renderJsonData(service.submitForm(formJsonData, tableJsonData, commonInvData, flag));
 	}
-	
+
 	public void findEquipmentModelAll(){
 		renderJsonData(equipmentModelService.getAdminDataNoPage(getKv()));
 	}
-	
+
 	public void getDatas(){
 		renderJsonData(service.getDatas(getKv()));
 	}
-	
+
 	public void getPageData(){
 		renderJsonData(service.getPageData(getPageNumber(), getPageSize(), getKv()));
 	}
-	
+
 	public void testDel(){
 		ok();
 	}
-	
+
 	public void copyForm(){
 		ValidationUtils.notNull(get(0), "未获取到指定产品id");
 		set("oldId", get(0));
 		render("_copy_form.html");
 	}
-	
+
 	// 拷贝
 	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "oldId") Long oldId){
 		renderJson(service.saveCopy(oldId, cVersion));
 	}
-	
+
 	public void importExcelFile() throws IOException {
 		//上传到今天的文件夹下
 		String uploadFile= JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_FILE_UPLOADER);
 		UploadFile file=getFile("file", uploadFile);
-		
+
 		if (notExcel(file)) {
 			renderJsonFail("请上传excel文件");
 			return;
 		}
 		renderJsonData(service.importExcelFile(file));
 	}
-	
+
 	public void bomMasterIndex(){
 		render("bommaster_index.html");
 	}
-	
+
 	public void versionIndex(){
 		render("version_index.html");
 	}
-	
+
 	public void getVersionRecord(){
 		renderJsonData(service.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
 	}
-	
+
 	public void del(){
 		renderJson(service.del(getLong(0)));
 	}
-	
+
 	public void audit(@Para(value = "bomMasterId") Long bomMasterId,
 					  @Para(value = "status") Integer status){
 		renderJson(service.audit(bomMasterId, status));
 	}
-	
+
 	public void checkCommonInv(@Para(value = "bomMasterId") Long bomMasterId,
 							   @Para(value = "tableJsonData") String tableJsonData){
 		renderJsonData(service.checkCommonInv(bomMasterId, tableJsonData));
 	}
-	
+
 	public void findCustomerList(){
 		renderJsonData(customerService.getAdminDatas(getKv()));
 	}
-	
+
 	public void findVendorList(){
 		renderJsonData(customerService.findVendorList(getKv()));
 	}
-	
+
 	public void inventoryDialogIndex(@Para(value = "index") String index, @Para(value = "type") String type){
 		ValidationUtils.notBlank(index, JBoltMsg.PARAM_ERROR);
 		ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
@@ -227,7 +235,7 @@ public class BomMasterAdminController extends BaseAdminController {
 		String slicingInvItemId = get("slicingInvItemId");
 		// 落料存货id
 		String blankingItemId = get("blankingItemId");
-		
+
 		String invId = null;
 		if (StrUtil.isNotBlank(invItemId)){
 			invId= invItemId;
@@ -245,14 +253,14 @@ public class BomMasterAdminController extends BaseAdminController {
 		keepPara();
 		render("inventory_dialog_index.html");
 	}
-	
+
 	/**
 	 * 默认给1-100个数据
 	 */
 	public void inventoryPage(){
 		renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
 	}
-	
+
 	public void test(@Para(value = "id") Long id){
 		renderJson(service.test(id));
 	}

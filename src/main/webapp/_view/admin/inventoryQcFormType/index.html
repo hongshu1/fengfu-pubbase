@@ -1,0 +1,105 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>质量建模-检验适用标准类型</h1></div>
+	<div class="col">
+	<form class="form-inline" id="InventoryQcFormType_form_#(pageId)">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+
+<select class="form-control" name="iType"
+	data-autoload
+	data-url="admin/dictionary/options?key=null"
+	data-select-type="select"
+	data-text="=类型：1. 来料检 2. 在库检 3. 出库检="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+
+<select class="form-control" name="cTypeName"
+	data-autoload
+	data-url="admin/dictionary/options?key=null"
+	data-select-type="select"
+	data-text="=类型名称="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<div class="btn-group text-center mx-1">
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/inventoryQcFormType/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增质量建模-检验适用标准类型"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="InventoryQcFormType_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iInventoryQcFormId}</td>
+<td>${data.iType}</td>
+<td>${data.cTypeName}</td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/inventoryQcFormType/edit/${data.iAutoId}" data-area="800,600" data-title="查看质量建模-检验适用标准类型"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/inventoryQcFormType/edit/${data.iAutoId}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑质量建模-检验适用标准类型"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/inventoryQcFormType/${data.isDeleted?'realDelete':'delete'}/${data.iAutoId}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="InventoryQcFormType_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增质量建模-检验适用标准类型" data-url="admin/inventoryQcFormType/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑质量建模-检验适用标准类型" data-check-handler="jboltTableGetCheckedId" data-url="admin/inventoryQcFormType/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/inventoryQcFormType/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="InventoryQcFormType_form_#(pageId)"
+	   data-url="admin/inventoryQcFormType/datas"
+	   data-rowtpl="InventoryQcFormType_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="InventoryQcFormType_page"
+	   data-toolbar="InventoryQcFormType_toolbar_#(pageId)"
+>
+<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="100" data-column="iAutoId">主键ID</th>
+	<th data-width="100" data-column="iInventoryQcFormId">存货质检表格记录ID</th>
+	<th data-width="100" data-column="iType">类型：1. 来料检 2. 在库检 3. 出库检</th>
+	<th data-width="150" data-column="cTypeName">类型名称</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

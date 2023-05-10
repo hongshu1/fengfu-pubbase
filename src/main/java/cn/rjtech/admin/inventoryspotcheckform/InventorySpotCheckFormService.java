@@ -391,10 +391,11 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                 vendorClass.setCOrgCode(getOrgCode());
                 vendorClass.setCOrgName(getOrgName());
                 vendorClass.setIsDeleted(false);
-                vendorClass.setISource(1); //来源： 1. MES 2. U8
+                vendorClass.setISource(SourceEnum.MES.getValue());
             }*/
         }
-        //执行批量操作
+        
+        // 执行批量操作
         boolean success = tx(() -> {
             batchSave(models);
             return true;

@@ -1,12 +1,14 @@
 package cn.rjtech.admin.instockqcformm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import cn.hutool.core.io.FileUtil;
@@ -21,11 +23,20 @@ import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
 import cn.rjtech.admin.instockqcformdline.InstockqcformdLineService;
 import cn.rjtech.admin.qcform.QcFormService;
+import cn.rjtech.enums.AppearanceEnum;
+import cn.rjtech.enums.CMeasurePurposeEnum;
+import cn.rjtech.enums.OverallSizeEnum;
 import cn.rjtech.model.momdata.InStockDefect;
 import cn.rjtech.model.momdata.InStockQcFormD;
 import cn.rjtech.model.momdata.InStockQcFormM;
 import cn.rjtech.model.momdata.InstockqcformdLine;
 import cn.rjtech.model.momdata.QcForm;
+import cn.rjtech.model.momdata.base.BaseInStockQcFormD;
+import cn.rjtech.util.excel.SheetPage;
+
+import com.alibaba.fastjson.JSON;
+
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseInStockQcFormD;
 
 import com.alibaba.fastjson.JSONArray;
@@ -37,7 +48,15 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import com.sun.corba.se.spi.ior.ObjectKey;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * 在库检 Service
@@ -282,7 +301,15 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * 点击检验按钮，跳转到checkout页面后，自动加载table的数据
      */
     public List<Record> getCheckOutTableDatas(Kv kv) {
-        return clearZero(dbTemplate("instockqcformm.findChecoutListByIformParamid", kv).find());
+        List<Record> recordList = clearZero(dbTemplate("instockqcformm.findChecoutListByIformParamid", kv).find());
+        recordList.stream().forEach(record -> {
+            record.set("cvaluelist", getCvaluelist());
+        });
+        return recordList;
+    }
+
+    public List<Integer> getCvaluelist() {
+        return Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
     }
 
     /**
@@ -339,7 +366,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
             update(inStockQcFormM);
 
             //isok=0，代表检验结果不合格，生成在库异常品记录
-            saveInDefectModel(isok,instockqcformmiautoid,inStockQcFormM);
+            saveInDefectModel(isok, instockqcformmiautoid, inStockQcFormM);
             return true;
         });
         return result;
@@ -355,6 +382,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
 
     public void saveInStockoutQcFormmModel(InStockQcFormM inStockQcFormM, String cmeasurepurpose, String cmeasurereason,
                                            String cmeasureunit, String cmemo, String cdcno, String isok) {
+        //测定目的
         inStockQcFormM.setCMeasurePurpose(cmeasurepurpose);
         //测定理由
         inStockQcFormM.setCMeasureReason(cmeasurereason);
@@ -368,12 +396,14 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         inStockQcFormM.setIsOk(isok.equals("0") ? false : true);
         inStockQcFormM.setIStatus(isok.equals("0") ? 2 : 3);
         inStockQcFormM.setIsCompleted(true);
+        inStockQcFormM.setIsCpkSigned(false);
+
     }
 
     /*
      * 保存异常品记录
      * */
-    public void saveInDefectModel(String isok,Long instockqcformmiautoid,InStockQcFormM inStockQcFormM) {
+    public void saveInDefectModel(String isok, Long instockqcformmiautoid, InStockQcFormM inStockQcFormM) {
         if (isok.equals("0")) {
             InStockDefect defect = defectService.findDefectByiInStockQcFormMid(instockqcformmiautoid);
             if (null == defect) {
@@ -445,7 +475,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         for (Entry<Object, List<Record>> entry : map.entrySet()) {
             List<Record> value = entry.getValue();
             for (int i = 0; i < value.size(); i++) {
-                value.get(i).set("name", "cA" + (i + 1));
+                value.get(i).set("name", (i + 1));
             }
             Record record = new Record();
             Record record1 = value.get(0);
@@ -495,13 +525,15 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * 实现编辑页面的serializeSubmitList
      * */
     public Boolean achiveEditSerializeSubmitList(JSONArray serializeSubmitList, Long instockqcformmiautoid,
-                                                 String cmeasurepurpose,
-                                                 String cmeasurereason, String cmeasureunit, String cmemo, String cdcno,
-                                                 String isok) {
-        List<InstockqcformdLine> instockqcformdLines = new ArrayList<>();
+                                                 String cmeasurepurpose, String cmeasurereason, String cmeasureunit,
+                                                 String cmemo, String cdcno, String isok) {
+        List<InstockqcformdLine> updateInstockqcformdLines = new ArrayList<>();
+        List<InstockqcformdLine> saveInstockqcformdLines = new ArrayList<>();
         boolean result = tx(() -> {
             for (int i = 0; i < serializeSubmitList.size(); i++) {
                 JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
+                String iseq = jsonObject.getString("iseq");
+                Long instockoutqcformdid = jsonObject.getLong("iautoid");
                 JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
                 JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
                 JSONArray elementList = serializeElement.getJSONArray(0);
@@ -510,21 +542,31 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                     String cvalue = object.getString("value");
                     JSONObject cvaluelistJSONObject = cvaluelist.getJSONObject(j);
                     Long lineiautoid = cvaluelistJSONObject.getLong("lineiautoid");
-                    InstockqcformdLine instockqcformdLine = instockqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
-                    instockqcformdLine.setCValue(cvalue);
-                    instockqcformdLines.add(instockqcformdLine);
+                    if (lineiautoid != null) {
+                        InstockqcformdLine instockqcformdLine = instockqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
+                        instockqcformdLine.setCValue(cvalue);
+                        updateInstockqcformdLines.add(instockqcformdLine);
+                    } else {
+                        //如果没有，代表是新增页的数据
+                        InstockqcformdLine instockqcformdLine = new InstockqcformdLine();//质量管理-出库检明细列值表
+                        saveInStockQcFormdLineModel(instockqcformdLine, instockoutqcformdid, iseq, cvalue);
+                        saveInstockqcformdLines.add(instockqcformdLine);
+                    }
                 }
             }
             //更新line
-            if (!instockqcformdLines.isEmpty()) {
-                instockqcformdLineService.batchUpdate(instockqcformdLines);
+            if (!updateInstockqcformdLines.isEmpty()) {
+                instockqcformdLineService.batchUpdate(updateInstockqcformdLines);
+            }
+            if (!saveInstockqcformdLines.isEmpty()) {
+                instockqcformdLineService.batchSave(saveInstockqcformdLines);
             }
             InStockQcFormM stockQcFormM = findById(instockqcformmiautoid);
             saveInStockoutQcFormmModel(stockQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
             update(stockQcFormM);
 
             //如果不合格，保存异常品单
-            saveInDefectModel(isok,instockqcformmiautoid,stockQcFormM);
+            saveInDefectModel(isok, instockqcformmiautoid, stockQcFormM);
 
             return true;
         });
@@ -547,4 +589,136 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         return imgList;
     }
 
+    /*
+     * 获取导出数据
+     * */
+    public Kv getExportData(Long iautoid) {
+        //1、所有sheet
+        List<SheetPage<Record>> pages = new ArrayList<>();
+        //2、每个sheet的名字
+        List<String> sheetNames = new ArrayList<>();
+        sheetNames.add("sheet1");
+        sheetNames.add("sheet2");
+        sheetNames.add("sheet3");
+        //3、主表数据
+        InStockQcFormM inStockQcFormM = findById(iautoid);
+        //测定目的
+        String cMeasurePurpose = "";
+        String[] split = inStockQcFormM.getCMeasurePurpose().split(",");
+        for (int i = 0; i < split.length; i++) {
+            if (StringUtils.isNotBlank(split[i])) {
+                String text = CMeasurePurposeEnum.toEnum(Integer.valueOf(split[i])).getText();
+                cMeasurePurpose += text + ",";
+            }
+        }
+        inStockQcFormM.setCMeasurePurpose(StringUtils.isNotBlank(cMeasurePurpose)
+            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose);
+        //4、明细表数据
+        List<Record> recordList = getonlyseelistByiautoid(Kv.by("iautoid", iautoid));
+        //5、如果cvalue的列数>10行，分多个页签
+        Record data = recordList.get(0);
+        //核心业务逻辑，对列数进行分组
+        commonPageMethod(data, recordList, inStockQcFormM, pages);
+
+        return Kv.by("pages", pages).set("sheetNames", sheetNames);
+    }
+
+    /*
+     * 公共方法，在库检、来料检、出库检都可以调用
+     * */
+    public void commonPageMethod(Record data, List<Record> recordList, Object obj, List<SheetPage<Record>> pages) {
+        List<List<Object>> partition = ListUtils.partition(objToList(data.getObject("cvaluelist")), 10);
+        for (int i = 0; i < partition.size(); i++) {
+            ArrayList<Record> records = new ArrayList<>();
+            int iseq = 1;
+            for (Record record : recordList) {
+                List<List<Object>> partitionList = ListUtils.partition(objToList(record.getObject("cvaluelist")), 10);
+                Record childRecord = new Record();
+                List<Object> objects = partitionList.get(i);
+                List<String> cvaluelist = new ArrayList<>();
+                objects.stream().forEach(object -> {
+                    JSONObject jsonObject = (JSONObject) JSON.toJSON(object);
+                    /*
+                     * 1、如果itype=3，是“整体尺寸”的OverallSizeEnum下拉框
+                     * 2、如果itype=5，是“整体外观”的下拉框,多选框
+                     * */
+                    switch (jsonObject.getInteger("itype")) {
+                        case 3:
+                            if (checkCValueIsNotBlank(jsonObject.getString("cvalue"))) {
+                                cvaluelist.add(OverallSizeEnum.toEnum(jsonObject.getInteger("cvalue")).getText());
+                            } else {
+                                cvaluelist.add(jsonObject.getString("cvalue"));
+                            }
+                            break;
+                        case 5:
+                            //多选框的话，把所有选中的值都查出来
+                            String[] cvalues = jsonObject.getString("cvalue").split(",");
+                            String cvalue = "";
+                            for (int valueLength = 0; valueLength < cvalues.length; valueLength++) {
+                                if (StringUtils.isNotBlank(cvalues[valueLength])) {
+                                    String text = AppearanceEnum.toEnum(Integer.valueOf(cvalues[valueLength])).getText();
+                                    cvalue += text + ",";
+                                }
+                            }
+                            cvaluelist.add(StringUtils.isNotBlank(cvalue) ?
+                                cvalue.substring(0, cvalue.lastIndexOf(",")) : cvalue);
+                            break;
+                        default:
+                            cvaluelist.add(jsonObject.getString("cvalue"));
+                            break;
+                    }
+                });
+                childRecord.set("cqcitemname", record.get("cqcitemname"));
+                childRecord.set("cqcparamname", record.get("cqcparamname"));
+                childRecord.set("imaxval", record.get("imaxval"));
+                childRecord.set("iminval", record.get("iminval"));
+                childRecord.set("istdval", record.get("istdval"));
+                childRecord.set("itype", record.get("itype"));
+                if (record.getStr("itype").equals("1")) {
+                    String coptions = "(" + record.getStr("imaxval") + ")" +
+                        "(" + record.getStr("istdval") + ")" + "(" + record.getStr("iminval") + ")";
+                    childRecord.set("options", coptions);
+                } else {
+                    childRecord.set("options", record.get("coptions"));
+                }
+                childRecord.set("seq", iseq);
+                childRecord.set("cvaluelist", cvaluelist);
+                records.add(childRecord);
+                iseq = iseq + 1;
+            }
+            //records有项目，每个项目有分组的列值，以10列为一组
+            SheetPage<Record> page = new SheetPage<>();
+            // sheet名称
+            String sheetName = "sheet" + (i + 1);
+            page.setSheetName(sheetName);
+
+            // 主表
+            page.setMaster(obj);
+            // 明细
+            page.setDetails(records);
+            pages.add(page);
+        }
+    }
+
+    public boolean checkCValueIsNotBlank(String cvalue) {
+        boolean isblank = false;
+        if (StringUtils.isNotBlank(cvalue)) {
+            return isblank = true;
+        }
+        return isblank;
+    }
+
+    /*
+     * 将object对象转为list
+     * */
+    public List<Object> objToList(Object obj) {
+        List<Object> list = new ArrayList<Object>();
+        if (obj instanceof ArrayList<?>) {
+            for (Object o : (List<?>) obj) {
+                list.add(o);
+            }
+            return list;
+        }
+        return null;
+    }
 }

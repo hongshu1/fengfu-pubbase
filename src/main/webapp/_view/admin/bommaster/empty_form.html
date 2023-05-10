@@ -10,7 +10,7 @@
         <label class="col-2 col-form-label" style="margin-left: -5%">客户名称：</label>
         <div class="col-2">
             <select class="form-control" data-url="admin/bommaster/findCustomerList" name="iCustomerId" data-autoload
-                    data-text="=请选择=" data-value-attr="sn" id="cUstomerName" data-text-attr="ccusname" data-value="iautoid" data-select="#(bomMaster.icustomerid??)"></select>
+                    data-text="=请选择=" data-value-attr="sn" id="cUstomerName" data-text-attr="ccusname"  data-select="#(bomMaster.icustomerid??)"></select>
         </div>
         <label class="col-2 col-form-label">备注共用件：</label>
         <div class="col-2">
@@ -72,7 +72,7 @@
         }
     }
 
-    function insertEmptyRow(ele,forceTrChange) {
+    function insertEmptyRow(ele,forceTrChange){
         var table=getJBoltTable(ele);
         if(isOk(table)){
             index+=1;
@@ -93,7 +93,6 @@
                         tr=jboltTable.tbody.find("tr:nth-child("+(fixTrIndex+1)+")");
                     }
                 }
-                // return insertRows(jboltTable,tr,{index: index, code1: '23', code2:3},true,forceTrChange);
                 return insertRows(jboltTable,tr,{index: index},true,forceTrChange);
             }
         }
@@ -199,7 +198,7 @@
         return false;
     }
 
-    function InsertEmptyRow(ele,forceTrChange){
+    function addEmptyRow(ele,forceTrChange){
         var table=getJBoltTable(ele);
         if(isOk(table)){
             index+=1;
@@ -220,7 +219,7 @@
                         tr=jboltTable.tbody.find("tr:nth-child("+(fixTrIndex+1)+")");
                     }
                 }
-                return insertRows(jboltTable,tr,{index: index},false,forceTrChange);;
+                return insertRows(jboltTable,tr,{index: index},false,forceTrChange);
             }
         }
         LayerMsgBox.alert("表格组件配置异常",2);

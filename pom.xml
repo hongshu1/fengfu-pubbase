@@ -14,8 +14,9 @@
 		<jdk.version>1.8</jdk.version>
 		<junit.version>5.9.3</junit.version>
 		<cglib.version>3.3.0</cglib.version>
-		<jfinal.version>5.0.8-1</jfinal.version>
-		<oshi.version>6.4.0</oshi.version>
+		<javassist.version>3.29.2-GA</javassist.version>
+		<jfinal.version>5.1.0-1</jfinal.version>
+		<oshi.version>6.4.1</oshi.version>
 		<jna.version>5.13.0</jna.version>
 		<cos.version>2022.2</cos.version>
 		<emoji-java.version>5.1.1</emoji-java.version>
@@ -37,7 +38,7 @@
 		<hutool.version>5.8.15</hutool.version>
 		<slf4j.version>2.0.6</slf4j.version>
 		<log4j2.version>2.20.0</log4j2.version>
-		<jfinalundertow.version>3.4</jfinalundertow.version>
+		<jfinalundertow.version>3.5</jfinalundertow.version>
 		<thumbnailator.version>0.4.17</thumbnailator.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
 		<commonslang.version>3.12.0</commonslang.version>
@@ -77,6 +78,7 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-text.version>1.10.0</commons-text.version>
+        <auto-excel.version>2.0.0</auto-excel.version>
 
         <aliyun-java-sdk-core.version>4.6.3</aliyun-java-sdk-core.version>
         <aliyun-java-sdk-sms.version>3.0.0-rc1</aliyun-java-sdk-sms.version>
@@ -128,55 +130,62 @@
         </repository>
     </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!--如果config.properties配置动态代理类型为cglib 就解开注释-->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>${cglib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jfinal</groupId>
-            <artifactId>cos</artifactId>
-            <version>${cos.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>${jsoup.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.deepoove</groupId>
-            <artifactId>codehighlight</artifactId>
-            <version>${codehighlight.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vdurmont</groupId>
-            <artifactId>emoji-java</artifactId>
-            <version>${emoji-java.version}</version>
-        </dependency>
-        <!-- <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency> -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commonslang.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <version>${druid.version}</version>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+    		<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!--如果config.properties配置动态代理类型为cglib 就解开注释-->
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<version>${cglib.version}</version>
+		</dependency>
+
+		<!--如果config.properties配置动态代理类型为javassist 就解开注释-->
+		<!--<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>${javassist.version}</version>
+		</dependency>-->
+		<dependency>
+			<groupId>com.jfinal</groupId>
+			<artifactId>cos</artifactId>
+			<version>${cos.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>${jsoup.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deepoove</groupId>
+			<artifactId>codehighlight</artifactId>
+			<version>${codehighlight.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+		  <groupId>com.vdurmont</groupId>
+		  <artifactId>emoji-java</artifactId>
+		  <version>${emoji-java.version}</version>
+		</dependency>
+		<!-- <dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency> -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commonslang.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>${druid.version}</version>
+		</dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -657,6 +666,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${commons-text.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.fenghaitao</groupId>
+            <artifactId>auto-excel</artifactId>
+            <version>${auto-excel.version}</version>
         </dependency>
 
     </dependencies>

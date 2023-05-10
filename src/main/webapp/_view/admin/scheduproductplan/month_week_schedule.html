@@ -1,0 +1,674 @@
+#@jboltLayout()
+#define css()
+<link rel="stylesheet" href="assets/css/aps/monthweekschedule/Console.css">
+#end
+
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+    <div class="jbolt_page_title">
+        
+        <!-- 头部标题开始 -->
+        <nav>
+            <p class="nav_title">月周生产计划</p>
+        </nav>
+
+        <!-- 头部标题结束 -->
+        <!-- 搜索工具类开始 -->
+        <div class="search">
+            <div class="select">
+                <span class="span">排产层级:</span>
+                <select style="width:150px;height:25px;">
+                    <option value=""></option>
+                </select>
+            </div>
+            <div class="select">
+                <span>产线名称:</span>
+                <input style="width:150px;height:20px;"/>
+            </div>
+            <div class="select">
+                <span>存货编码:</span>
+                <input style="width:150px;height:20px;"/>
+            </div>
+            <div class="select">
+                <span>客户部番:</span>
+                <input style="width:150px;height:20px;"/>
+            </div>
+            <div class="select">
+                <span>部品名称:</span>
+                <input style="width:150px;height:20px;"/>
+            </div>
+            <button class="button">搜索</button>
+            <button class="button">重置</button>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+        <!-- 月周生产计划 -->
+        <div id="box">
+
+            <!-- 搜索工具类结束 -->
+            <!-- 表格 -->
+            <div id="table-tool">
+                <!-- 表格工具开始 -->
+                <div class="but_box">
+                    <button>排产</button>
+                    <button>数据导出</button>
+                    <button>数据导入</button>
+                    <button>保存层级</button>
+                    <button>计划使用刷新</button>
+                    <button>锁定</button>
+                    <button>解锁</button>
+                </div>
+                <!-- 表格工具结束 -->
+                <!-- 表格数据开始 -->
+                <div class="table_box">
+                    <table id="table" border="1px">
+                        <tr bgColor="#F2F2F2" align="center">
+                            <td width="40px" rowspan="3">
+                                <input name="Checkbox" type="checkbox">
+                            </td>
+                            <td width="60px" height="23px" rowspan="3">序号</td>
+                            <td width="80px" height="23px" rowspan="3">排产层级</td>
+                            <td width="90px" height="23px" rowspan="3">厂线名称</td>
+                            <td width="90px" height="23px" rowspan="3">存货编码</td>
+                            <td width="120px" height="23px" rowspan="3">客户部署</td>
+                            <td width="150px" height="23px" rowspan="3">部门名称</td>
+                            <td width="80px" height="23px"></td>
+                            <td width="60px" height="23px"></td>
+                            <td width="80px" height="23px" colspan="17">2023年1月</td>
+                        </tr>
+                        <tr align="center" bgColor="#F2F2F2">
+                            <td></td>
+                            <td></td>
+                            <td width="60px">1日</td>
+                            <td width="60px">2日</td>
+                            <td width="60px">3日</td>
+                            <td width="60px">4日</td>
+                            <td width="60px">5日</td>
+                            <td width="60px">6日</td>
+                            <td width="60px">7日</td>
+                            <td width="60px">8日</td>
+                            <td width="60px">9日</td>
+                            <td width="60px">10日</td>
+                            <td width="60px">11日</td>
+                            <td width="60px">12日</td>
+                            <td width="60px">...</td>
+                            <td width="60px">29日</td>
+                            <td width="60px">30日</td>
+                            <td width="60px">31日</td>
+                            <td width="60px">合计</td>
+                        </tr>
+                        <tr align="center" bgColor="#F2F2F2">
+                            <td></td>
+                            <td></td>
+                            <td>Sun</td>
+                            <td>Mon</td>
+                            <td>Tue</td>
+                            <td>Wed</td>
+                            <td>Thu</td>
+                            <td>Fri</td>
+                            <td>Sat</td>
+                            <td>Sun</td>
+                            <td>Mon</td>
+                            <td>Tue</td>
+                            <td>Wed</td>
+                            <td>Thu</td>
+                            <td>...</td>
+                            <td>Sat</td>
+                            <td>Sun</td>
+                            <td>Mon</td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td rowspan="6">
+                                <input name="Checkbox" type="checkbox">
+                            </td>
+                            <td rowspan="6">1</td>
+                            <td rowspan="6">1</td>
+                            <td rowspan="6">冷端 A排#1</td>
+                            <td rowspan="6">400414</td>
+                            <td rowspan="6">18210TRN H501</td>
+                            <td rowspan="6">成品</td>
+                            <td>计划使用</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/1S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/2S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/3S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划在库</td>
+                            <td>236</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>在库天数</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td rowspan="6">
+                                <input name="Checkbox" type="checkbox">
+                            </td>
+                            <td rowspan="6">2</td>
+                            <td rowspan="6">1</td>
+                            <td rowspan="18">冷端 A排#2</td>
+                            <td rowspan="6">400417</td>
+                            <td rowspan="6">18210TRN H501</td>
+                            <td rowspan="6">成品</td>
+                            <td>计划使用</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/1S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/2S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/3S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划在库</td>
+                            <td>236</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>在库天数</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td rowspan="6">
+                                <input name="Checkbox" type="checkbox">
+                            </td>
+                            <td rowspan="6">3</td>
+                            <td rowspan="6">1</td>
+                            <td rowspan="6">4004</td>
+                            <td rowspan="6">2TRN H50</td>
+                            <td rowspan="6">半成品</td>
+                            <td>计划使用</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/1S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/2S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/3S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划在库</td>
+                            <td>236</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>在库天数</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td rowspan="6">
+                                <input name="Checkbox" type="checkbox">
+                            </td>
+                            <td rowspan="6">4</td>
+                            <td rowspan="6">1</td>
+                            <td rowspan="6">4004</td>
+                            <td rowspan="6">2TRN H502</td>
+                            <td rowspan="6">半成品</td>
+                            <td>计划使用</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/1S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/2S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划/3S</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>计划在库</td>
+                            <td>236</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="center">
+                            <td>在库天数</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- 表格数据结束 -->
+            </div>
+        </div>
+    </div>
+    
+</div>
+#end
+
+#define js()
+<script src="assets/js/aps/monthweekschedule/Console.js" defer="true"></script>
+#end

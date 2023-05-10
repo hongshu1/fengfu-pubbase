@@ -13,23 +13,42 @@
 	<input type="hidden" name="inventoryQcForm.iAutoId" value="#(inventoryQcForm.iAutoId??)" />
 	#end
     <div class="form-group row">
-        <label class="col-sm-1 col-form-label">检验表格名称</label>
+    <label class="col-sm-1 col-form-label">检验表格名称</label>
+    <div class="col-sm-2 input-group">
+        <input id="versionFormName" type="text" readonly="readonly" data-rule="required"  autocomplete="off"
+               class="form-control"
+               placeholder="" maxlength="30" name="inventoryQcForm.iQcFormName"
+               value="#(qcFormName??)">
+        <div class="input-group-append">
+            <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
+                    data-area="90%,90%"  data-title="选择数据（单选）"
+                    id="qcButton" #if(type=="edit") disabled #end
+                    data-url="/admin/inventoryqcform/chooseFormData"><i
+                    class="fa fa-search mr-1"></i></button>
+        </div>
+        <input id="versionFormId" type="hidden" class="form-control"
+               name="inventoryQcForm.iQcFormId"
+               data-value-attr="formId"
+               placeholder="检验表格ID" readonly="readonly" value="#(inventoryQcForm.iQcFormId??)"/>
+    </div>
+</div>
+
+    <div class="form-group row">
+        <input type="text" name="cTypeNames" id="typeSN_#(pageId)" value="#(inventoryQcForm.cTypeIds??)" hidden>
+        <label class="col-sm-1 col-form-label">检验类型</label>
         <div class="col-sm-2 input-group">
-            <input id="versionFormName" type="text" readonly="readonly" data-rule="required"  autocomplete="off"
-                   class="form-control"
-                   placeholder="" maxlength="30" name="inventoryQcForm.iQcFormName"
-                   value="#(inventoryQcForm.iQcFormName??)">
-            <div class="input-group-append">
-                <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
-                        data-area="90%,90%"  data-title="选择数据（单选）"
-                        id="qcButton" #if(type=="edit") disabled #end
-                        data-url="/admin/inventoryqcform/chooseFormData"><i
-                        class="fa fa-search mr-1"></i></button>
-            </div>
-            <input id="versionFormId" type="hidden" class="form-control"
-                   name="inventoryQcForm.iQcFormId"
-                   data-value-attr="formId"
-                   placeholder="检验表格ID" readonly="readonly" value="#(inventoryQcForm.iQcFormId??)"/>
+            <select class="form-control" data-rule="required"
+                    name="cTypeName" multiple="multiple"
+                    data-autoload
+                    data-url="admin/dictionary/options?key=inspection_type"
+                    data-select-type="select2"
+                    data-text="=检验类型="
+                    data-value=""
+                    data-value-attr="sn"
+                    data-text-attr="name"
+                    data-setvalueto="typeSN_#(pageId)"
+                    data-select="#(inventoryQcForm.cTypeIds??)"></select>
+
         </div>
     </div>
 </form>
@@ -54,6 +73,11 @@
      * 提交方法
      */
     function submitTableAndForm_#(pageId)(ele) {
+        var datas = getJboltTableAllDatas(getJboltId());
+        if (!datas || datas.length ==0){
+            LayerMsgBox.alert("表格数据不能为空",2);
+            return;
+        }
         jboltTableSubmit(getJboltId());
     }
 

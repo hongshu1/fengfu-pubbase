@@ -7,6 +7,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.app.user.service.UserAppService;
@@ -470,7 +471,9 @@ public class ColumsmapService extends BaseService<Columsmap> {
         ValidationUtils.notNull(userApp, "当前组织下没有该用户！");
 
         String erpDBName = orgApp.getErpdbname();
-        String erpDbAlias = orgApp.getErpdbalias();
+        
+        // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
+        String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
 
         // 业务id
         String vouchBusinessID = JBoltSnowflakeKit.me.nextIdStr();
@@ -479,93 +482,89 @@ public class ColumsmapService extends BaseService<Columsmap> {
         JSONObject preAllocate = (JSONObject) kv.get("preallocate");
 
         //通过数据的分组id，将数据分成多组，分别提交
-        Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> {
-            return ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag");
-        }, Collectors.toList()));
+        Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag"), Collectors.toList()));
 
         Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
 
-        // 交换表数据保存
-        List<ExchangeTable> saveExchangeTables = new ArrayList<>();
+        for (Object flag : groupFlags) {
+            // 获取主数据
+            JSONArray mainData = JSONArray.parseArray(JSON.toJSONString(dataGroup.get(flag)));//(JSONArray) kv.get("maindata");
+            // 获取详细数据
+            JSONArray detailData = (JSONArray) kv.get("DetailData");
+            // 获取扩展数据
+            JSONArray extData = (JSONArray) kv.get("ExtData");
 
-        // 外层事务
-        tx(erpDbAlias, Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
+            ValidationUtils.notEmpty(mainData, "detail没有数据");
 
-            for (Object flag : groupFlags) {
-                // 获取主数据
-                JSONArray mainData = JSONArray.parseArray(JSON.toJSONString(dataGroup.get(flag)));//(JSONArray) kv.get("maindata");
-                // 获取详细数据
-                JSONArray detailData = (JSONArray) kv.get("DetailData");
-                // 获取扩展数据
-                JSONArray extData = (JSONArray) kv.get("ExtData");
+            Map plugeReturnMap = ListUtils.dealWithReturnData(preAllocate);
 
-                ValidationUtils.notEmpty(mainData, "detail没有数据");
+            String type = plugeReturnMap.get("type").toString();
+            // List<Record> list = findInfoFlag(type)
+            // String synergyTag = list.get(0).getStr("synergytag")
 
-                Map plugeReturnMap = ListUtils.dealWithReturnData(preAllocate);
+            // 获取对应
+            Record vouchType = findInfoFlag(type).get(0);
+            Integer id1 = vouchType.getInt("autoid");
+            // 获取所有流程
+            List<Record> processBusMaps = processBus(id1);
+            // 流程执行
+            plugeReturnMap.put("ProcessType", vouchType.get("processtype"));
+            plugeReturnMap.put("CreatePersonName", userApp.getStr("user_name"));
+            plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
+            plugeReturnMap.put("organizeCode", kv.get("organizecode"));
+            plugeReturnMap.put("password", userApp.getStr("u8_pwd"));
 
-                String type = plugeReturnMap.get("type").toString();
-                // List<Record> list = findInfoFlag(type)
-                // String synergyTag = list.get(0).getStr("synergytag")
+            AtomicInteger currentSeq = new AtomicInteger();
 
-                // 获取对应
-                Record vouchType = findInfoFlag(type).get(0);
-                Integer id1 = vouchType.getInt("autoid");
-                // 获取所有流程
-                List<Record> processBusMaps = processBus(id1);
-                // 流程执行
-                plugeReturnMap.put("ProcessType", vouchType.get("processtype"));
-                plugeReturnMap.put("CreatePersonName", userApp.getStr("user_name"));
-                plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
-                plugeReturnMap.put("organizeCode", kv.get("organizecode"));
-                plugeReturnMap.put("password", userApp.getStr("u8_pwd"));
+            DataConversion dataConversion = new DataConversion(this, columsmapdetailService);
+            try {
+                Map<Object, List<Record>> groupProcessDatas = processBusMaps.stream().collect(
+                        Collectors.groupingBy(p -> p.get("groupseq") == null ? "10" : p.get("groupseq"), Collectors.toList())
+                );//通过配置表的groupseq分组
 
-                AtomicInteger currentSeq = new AtomicInteger();
+                Set<Object> groupSeqs = new TreeSet<>(groupProcessDatas.keySet());
+                Iterator<Object> groupId = groupSeqs.iterator();
 
-                try {
-                    Map<Object, List<Record>> groupProcessDatas = processBusMaps.stream().collect(Collectors.groupingBy(p -> p.get("groupseq") == null ? "10" : p.get("groupseq"), Collectors.toList()));//通过配置表的groupseq分组
-                    Set<Object> groupSeqs = new TreeSet<>(groupProcessDatas.keySet());
-                    Iterator<Object> groupId = groupSeqs.iterator();
-                    DataConversion dataConversion = new DataConversion(this, columsmapdetailService);
+                while (groupId.hasNext()) {
+                    // 取出分组中的流程
+                    List<Record> processBusList = groupProcessDatas.get(groupId.next());
 
-                    while (groupId.hasNext()) {
-                        // 取出分组中的流程
-                        List<Record> processBusList = groupProcessDatas.get(groupId.next());
+                    for (int i = 0; i < processBusList.size(); i++) {
+                        Record processBusMap = processBusList.get(i);
 
-                        for (int i = 0; i < processBusList.size(); i++) {
-                            Record processBusMap = processBusList.get(i);
+                        currentSeq.set(processBusMap.getInt("seq"));
 
-                            currentSeq.set(processBusMap.getInt("seq"));
+                        // 预制项配置
+                        plugeReturnMap.put("InitializeMapID", processBusMap.get("initializemapid"));
 
-                            // 预制项配置
-                            plugeReturnMap.put("InitializeMapID", processBusMap.get("initializemapid"));
+                        // 判断流程是否可用
+                        if (StrUtil.isBlank(processBusMap.get("pcloseperson")) && StrUtil.isBlank(processBusMap.get("bcloseperson"))) {
 
-                            // 判断流程是否可用
-                            if (StrUtil.isBlank(processBusMap.get("pcloseperson")) && StrUtil.isBlank(processBusMap.get("bcloseperson"))) {
+                            Record processBusPre = i > 0 ? processBusList.get(i - 1) : null;
 
-                                Record processBusPre = i > 0 ? processBusList.get(i - 1) : null;
-
-                                // ---------------------------------------------------------
-                                // ERP 生单、审单事务上下文开始
-                                // ---------------------------------------------------------
-                                try {
-                                    txInErp(saveExchangeTables, erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
-                                } catch (Exception e) {
-                                    LOG.error(e.getLocalizedMessage());
-                                    // 这里不打印异常信息，处理回滚外层事务
-                                    return false;
+                            // ---------------------------------------------------------
+                            // ERP 生单、审单事务上下文开始
+                            // ---------------------------------------------------------
+                            try {
+                                txInErp(erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
+                                if (result.containsKey("isBreak") && result.getInt("isBreak") == 1){
+                                    break;
                                 }
+                            } catch (Exception e) {
+                                LOG.error(e.getLocalizedMessage());
+                                e.printStackTrace();
+                                // 这里不打印异常信息，处理回滚外层事务
+                                return result;
                             }
                         }
                     }
-                } finally {
-                    if (!"200".equals(result.getStr("code"))) {
-                        rollbackProcess(currentSeq.get(), vouchBusinessID, processBusMaps);
-                    }
+                }
+            } finally {
+                if (!"200".equals(result.getStr("code"))) {
+                    rollbackProcess(currentSeq.get(), vouchBusinessID, processBusMaps, dataConversion, userApp, type);
                 }
             }
-
-            return true;
-        });
+        }
 
         return result;
     }
@@ -575,7 +574,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
      * @param currentSeq     流程id
      * @param processBusMaps 流程集合
      */
-    private void rollbackProcess(Integer currentSeq, String seqBusinessID, List<Record> processBusMaps) {
+    private void rollbackProcess(Integer currentSeq, String seqBusinessID, List<Record> processBusMaps, DataConversion dataConversion, Record userApp, String type) {
         while (currentSeq > 10) {
             Integer finalCurrentSeq = currentSeq;
             List<Record> list = processBusMaps.stream().filter(p -> Objects.equals(p.getInt("seq"), finalCurrentSeq)).collect(Collectors.toList());
@@ -603,8 +602,21 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     roapimaps.add(roapimap);
                     //u9调用
                     if (rojsonObject != null){
+                        String message = null;
                         try {
-                            HttpApiUtils.u8Api(roapimap.get("url").toString(), rojsonObject);
+                            message = HttpApiUtils.u8Api(roapimap.get("url").toString(), rojsonObject);
+                            Map processResult = dataConversion.processResult("u9erprecdelete", message);
+                            System.err.println("回滚：" + message);
+                            String resultCode = processResult.get("resultCode").toString();
+                            message = processResult.get("resultInfo").toString();
+                            //日志保存
+                            Log log = new Log();
+                            String source = rojsonObject.toString();
+                            String memo = "系统回滚";
+                            String logUrl = roapimap.get("url").toString();
+                            String logResult = message;
+                            dataConversion.recordLog("", seqBusinessID, type, String.valueOf(currentSeq), "", "", 1, source, logResult, logUrl, memo, userApp.getStr("user_code"), log);
+                            tsysLogService.save(log);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -742,24 +754,25 @@ public class ColumsmapService extends BaseService<Columsmap> {
         });
     }
 
-    private void txInErp(List<ExchangeTable> saveExchangeTables, String erpDbAlias, String erpDBName, Record vouchType, String vouchBusinessID, Organize orgApp, Record processBusMap, DataConversion dataConversion, Record userApp, Record processBusPre, String type, Map plugeReturnMap, Kv result, JSONArray mainData, JSONArray detailData, JSONArray extData, String sourceJson, Date now) {
+    private void txInErp(String erpDbAlias, String erpDBName, Record vouchType, String vouchBusinessID, Organize orgApp, Record processBusMap, DataConversion dataConversion, Record userApp, Record processBusPre, String type, Map plugeReturnMap, Kv result, JSONArray mainData, JSONArray detailData, JSONArray extData, String sourceJson, Date now) {
         // 日志操作记录
         List<Log> saveLogs = new ArrayList<>();
+        // 交换表数据保存
+        List<ExchangeTable> saveExchangeTables = new ArrayList<>();
         // 单据处理节点信息
         List<VouchProcessNote> saveVouchProcessNotes = new ArrayList<>();
         // 单据回滚日志参照表
         List<VouchRollBackRef> saveVouchRollBackRefs = new ArrayList<>();
 
         List<VouchRollBackRef> updateVouchRollBackRefs = new ArrayList<>();
-        saveExchangeTables.clear();
+        
         try {
             // 保存交换表步骤
             if (StrUtil.isBlank(processBusMap.get("processname")) && ObjUtil.isNull(processBusMap.get("url"))) {
                 // 创建数据动态交换表list
                 List<ExchangeTable> dt = dataConversion.getTSysExchangetable(type, plugeReturnMap, mainData, detailData, extData);
-                //exchangeTableService.save(dt);
                 saveExchangeTables.addAll(dt);
-
+                
                 VouchProcessNote note = new VouchProcessNote();
                 note.setVouchbusinessid(vouchBusinessID);
                 note.setSeq(processBusMap.getInt("seq"));
@@ -809,7 +822,17 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     saveLogs.add(log);
 
                     // 失败，则提回滚 返回错误信息
-                    if (result.getInt("state") == 1) {
+                    if (result.getInt("state") == 1 && "200".equals(map.getStr("resultcode"))) {
+                        //成功，但是可以跳出当前步骤或者跳出循环
+                        if (map.toMap().containsKey("isBreak") && map.getInt("isBreak") == 1){
+                            result.set("isBreak", 1);
+                        } else if (map.toMap().containsKey("isContinue") && map.getInt("isContinue") == 1){
+                            result.set("isContinue", 1);
+                        }else {
+                            result.set("isBreak", 1);
+                        }
+                    }else {
+                        // 失败，则提回滚 返回错误信息
                         throw new RuntimeException(result.getStr("message"));
                     }
                 } else {
@@ -830,6 +853,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
                         String message = null;
                         try {
+                            System.err.println(jsonData);
                             message = HttpApiUtils.u8Api(processBusMap.get("url"), jsonData);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -960,6 +984,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     Log log = new Log();
 
                     dataConversion.recordLog(orgApp.getOrganizecode(), vouchBusinessID, vouchType.getStr("vouchcode"), processBusMap.getStr("seq"), result.getStr("resultExchangeID"), "", state, source, message, logUrl, memo, userApp.getStr("user_name"), log);
+                    result.set("code", "200").set("message", message);
                     saveLogs.add(log);
                 } else {
                     result.set("code", "201").set("message", message);
@@ -981,14 +1006,17 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
             throw new RuntimeException(e.getLocalizedMessage());
         } finally {
-            tx(exchangeTableService.dataSourceConfigName(), () -> {
-                if (CollUtil.isNotEmpty(saveExchangeTables)){
+
+            if (CollUtil.isNotEmpty(saveExchangeTables)){
+                tx(exchangeTableService.dataSourceConfigName(), Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
                     exchangeTableService.batchSave(saveExchangeTables);
-                }
-                return true;
-            });
+                    return true;
+                });
+            }
+
             // 保存所有日志操作及调用参数记录
             tx(DataSourceConstants.MOMDATA, Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
+
                 // 保存日志
                 if (CollUtil.isNotEmpty(saveLogs)) {
                     tsysLogService.save(saveLogs.get(0));
@@ -1023,25 +1051,32 @@ public class ColumsmapService extends BaseService<Columsmap> {
         return processFlag;
     }
 
-    public Map tmp(Kv kv) {
-        //默认代码为200
-        int code = 200;
-        //返回的数据
-        String message = "成功";
-        Map result = new HashMap();
-        Organize orgApp = organizeService.getOrgByCode(kv.getStr("organizecode"));
-        Record userApp = userAppService.getUserByUserCode(orgApp.getErpdbname(), orgApp.getErpdbschemas(), kv.getStr("usercode"));
+    public Map vouchProcessDynamicSubmit(Kv k) {
+        CaseInsensitiveMap<String, Object> kv = new CaseInsensitiveMap<String, Object>(k);
+        String SourceJson = k.toJson().toString();
+
+        Kv result = Kv.create();
+        Date now = new Date();
+        Organize orgApp = organizeService.getOrgByCode((String) kv.get("organizecode"));
+        Record userApp = userAppService.getUserByUserCode(orgApp.getErpdbname(), orgApp.getErpdbschemas(), (String) kv.get("usercode"));
         ValidationUtils.notNull(userApp, "当前组织下没有该用户！");
 
         String erpDBName = orgApp.getErpdbname();
+        // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
+        String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
+        String mesdbalias = orgApp.getMesdbalias();
 
         //获取所有钟工组件返回的u8单据类型值
-        JSONObject preAllocate = JSONObject.parseObject(kv.getStr("PreAllocate"));
+        JSONObject preAllocate = (JSONObject) kv.get("preallocate");
         //通过数据的分组id，将数据分成多组，分别提交
-        Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("MainData")).stream().collect(Collectors.groupingBy(p -> {
+        Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> {
+            Map<String, Object> a = (Map) p;
             return ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag");
         }, Collectors.toList()));
         Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
+        Iterator groupFlag = groupFlags.iterator();
+        // 交换表数据保存
+        List<ExchangeTable> saveExchangeTables = new ArrayList<>();
         for (Object flag : groupFlags) {
             //业务id
             String vouchBusinessID = String.valueOf(JBoltSnowflakeKit.me.nextId());
@@ -1049,9 +1084,9 @@ public class ColumsmapService extends BaseService<Columsmap> {
             //获取主数据
             JSONArray mainData = JSONArray.parseArray(JSON.toJSONString(dataGroup.get(flag)));//JSONArray.parseArray(kv.getStr("maindata"));
             // 获取详细数据
-            JSONArray detailData = JSONArray.parseArray(kv.getStr("DetailData"));
+            JSONArray detailData = (JSONArray) kv.get("detaildata");
             // 获取扩展数据
-            JSONArray extData = JSONArray.parseArray(kv.getStr("ExtData"));
+            JSONArray extData = (JSONArray) kv.get("extdata");
             //判断主数据是否有数据
             ValidationUtils.isTrue(mainData.size() > 0, "detail没有数据");
             Map plugeReturnMap = ListUtils.dealWithReturnData(preAllocate);
@@ -1069,41 +1104,92 @@ public class ColumsmapService extends BaseService<Columsmap> {
             update("INSERT INTO dbo.T_Sys_VouchProcessDynamic(AutoID, MasID, Seq, ExechgeSeq, ReturnSeq, GroupSeq, AutoRollback, IgnoreFailure, ProcessID, ProcessFlag, Memo, ClosePerson, CreatePerson, CreateDate, ModifyPerson, ModifyDate,VersionID)\n" +
                     "SELECT *," + seqBusinessID + " FROM dbo.T_Sys_VouchProcess WHERE MasID=" + id1);
 
-            List<ExchangeTable> dt = null;
             //获取所有流程
-            List<Record> processBusMaps = processBusDynamic(id1, seqBusinessID);
-            Map<String, List<Record>> recordMap = null;
-            Record map = null;
-            //日志状态
-            int state = 0;
+            //List<Record> processBusMaps = processBusDynamic(id1, seqBusinessID);
             //流程执行
             plugeReturnMap.put("ProcessType", vouchType.get("processtype"));
             plugeReturnMap.put("CreatePersonName", userApp.getStr("user_name"));
             plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
-            plugeReturnMap.put("organizeCode", kv.getStr("organizeCode"));
-            List<Record> processBusMap = new ArrayList<>();
-            while (true) {
-                List<Record> dynamic = processBusDynamic(id1, seqBusinessID);
-                if (dynamic.isEmpty()) {
-                    break;
-                }
-                String autoid = dynamic.get(0).getStr("autoid");
-                update("UPDATE dbo.T_Sys_VouchProcessDynamic SET stat=1 WHERE MasID=? AND VersionID=? AND AutoID=?", id1, seqBusinessID, autoid);
-
-            }
-            /*Map<Object, List<Record>> groupProcessDatas = processBusMaps.stream().collect(Collectors.groupingBy(p -> p.get("groupseq") == null ? "10" : p.get("groupseq"), Collectors.toList()));//通过配置表的groupseq分组
-            Set<Object> groupSeqs = new TreeSet<>(groupProcessDatas.keySet());
-            Iterator groupId = groupSeqs.iterator();
+            plugeReturnMap.put("organizeCode", kv.get("organizecode"));
+            plugeReturnMap.put("password", userApp.getStr("u8_pwd"));
+            AtomicInteger currentSeq = new AtomicInteger();//用于回滚
             DataConversion dataConversion = new DataConversion(this, columsmapdetailService);
-            while (groupId.hasNext()){
-                processBusMap = groupProcessDatas.get(groupId.next());//取出分组中的流程
-                tsysLog = new Log();
-            }*/
-            result.put("code", code);
-            result.put("message", message);
+            // 内层事务,当异常条件下，对已执行的子事务提交，并返回错误信息
+            tx(erpDbAlias, Connection.TRANSACTION_READ_UNCOMMITTED, () -> {
+                // 默认代码为200
+                int code = 200;
+                // 返回的数据
+                String message = "成功";
+
+                // 日志状态
+                int state = 0;
+                Record map = new Record();
+                Map<String, List<Record>> recordMap = null;
+
+                List<ExchangeTable> dt = null;
+                List<Record> processBusMap = new ArrayList<>();
+                Record prevProcessBus = null;
+
+                try {
+                    while (true) {
+                        processBusMap = processBusDynamic(id1, seqBusinessID);
+                        if (processBusMap.isEmpty()) {
+                            break;
+                        }
+                        Record processBusMapData = processBusMap.get(0);
+                        currentSeq.set(processBusMapData.getInt("seq"));
+                        //预制项配置
+                        plugeReturnMap.put("InitializeMapID", processBusMapData.get("initializemapid"));
+                        //判断流程是否可用
+                        if(StrUtil.isBlank(processBusMapData.get("pcloseperson")) && StrUtil.isBlank(processBusMapData.get("bcloseperson"))) {
+                            // ---------------------------------------------------------
+                            // ERP 生单、审单事务上下文开始
+                            // ---------------------------------------------------------
+                            try {
+                                txInErp(erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMapData, dataConversion, userApp, prevProcessBus, type, plugeReturnMap, result, mainData, detailData, extData, SourceJson, now);
+                                if (result.containsKey("isBreak") && result.getInt("isBreak") == 1){
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                LOG.error(e.getLocalizedMessage());
+                                // 这里不打印异常信息，处理回滚外层事务
+                                return false;
+                            }
+
+                        }
+
+
+                        String autoid = processBusMapData.getStr("autoid");
+                        update("UPDATE dbo.T_Sys_VouchProcessDynamic SET stat=1 WHERE MasID=? AND VersionID=? AND AutoID=?", id1, seqBusinessID, autoid);
+
+                        prevProcessBus = processBusMap.get(0);//上一次的步骤信息，留下次步骤使用
+                    }
+                    //result.set("code", code).set("message", message);
+                }catch (Exception e){
+                    // 内层循环出异常，则外层事务不提交
+                    e.printStackTrace();
+                    // 回滚外层事务
+                    return false;
+                }finally {
+                    if (!"200".equals(result.getStr("code"))){
+                        rollbackProcess(currentSeq.get(), seqBusinessID, getAllProcessBusDynamic(id1, seqBusinessID), dataConversion, userApp, type);
+                    }
+                }
+                return true;
+            });
         }
 
         return result;
+    }
+
+    /**
+     * 读取动态流程表当前需要执行的步骤
+     * @param masID
+     * @return
+     */
+    public List<Record> getAllProcessBusDynamic(Integer masID, String seqBusinessID){
+        Kv kv = Kv.by("masID", masID).set("seqBusinessID", seqBusinessID);
+        return dbTemplate("openapi.allProcessBusDynamic", kv).find();
     }
 
     /**
@@ -1111,16 +1197,18 @@ public class ColumsmapService extends BaseService<Columsmap> {
      *
      * @param erpDBName  数据库类型
      * @param exchangeID 交换表exchangeID
-     * @return
      */
     public Map<String, List<Record>> queryExchange(String erpDBName, String erpDBSchemas, String exchangeID) throws RuntimeException {
         Map<String, List<Record>> map = new HashMap<>();
+        
         String[] exchangeIDs = exchangeID.split(",");
+        
         /*Kv kv = Kv.by("erpDBName", erpDBName);
         kv.set("erpDBSchemas", erpDBSchemas);*/
+        
         for (int i = 0; i < exchangeIDs.length; i++) {
             //kv.set("ExchangeID", exchangeIDs[i]);
-            List<Record> list = exchangeTableService.findRecord("SELECT * FROM T_Sys_ExchangeTable WHERE ExchangeID in(" + exchangeIDs[i] + ")");
+            List<Record> list = exchangeTableService.findRecord("SELECT * FROM T_Sys_ExchangeTable WHERE ExchangeID = ? ", false, exchangeIDs[i]);
             switch (i) {
                 case 0:
                     map.put("MainData", list);

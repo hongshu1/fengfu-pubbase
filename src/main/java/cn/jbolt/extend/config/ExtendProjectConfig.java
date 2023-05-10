@@ -1,5 +1,6 @@
 package cn.jbolt.extend.config;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.setting.Setting;
 import cn.jbolt.core.cache.JBoltDeptCache;
@@ -13,6 +14,7 @@ import cn.rjtech.kit.ReflectionTemplateFn;
 import cn.rjtech.routes.ApiRoutes;
 import cn.rjtech.routes.ExtendAdminRoutes;
 import cn.rjtech.serializer.StringRedisSerializer;
+import cn.rjtech.util.Util;
 import com.jfinal.config.*;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
@@ -139,7 +141,9 @@ public class ExtendProjectConfig {
         me.addSharedObject("OrgCache", OrgCache.ME);
         // 添加部门缓存
         me.addSharedObject("DeptCache", JBoltDeptCache.me);
-
+        me.addSharedObject("ObjectUtil", new ObjectUtil());
+		
+		me.addSharedStaticMethod(Util.class);
         me.addSharedMethod(new ReflectionTemplateFn());
 	}
 

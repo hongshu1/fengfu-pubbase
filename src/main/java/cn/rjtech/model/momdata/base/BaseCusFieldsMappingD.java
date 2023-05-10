@@ -14,8 +14,16 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
     public static final String IAUTOID = "iAutoId";
     /**客户导入字段配置主表ID*/
     public static final String ICUSFIELDSMAPPINGMID = "iCusFieldsMappingMid";
+    /**顺序值*/
+    public static final String ISEQ = "iSeq";
+    /**定制规则;1. 非定制 2. 年度 3. 月度 4. 周间*/
+    public static final String IRULETYPE = "iRuleType";
     /**系统字段ID*/
     public static final String IFORMFIELDID = "iFormFieldId";
+    /**字段编码*/
+    public static final String CFORMFIELDCODE = "cFormFieldCode";
+    /**字段名称*/
+    public static final String CFORMFIELDNAME = "cFormFieldName";
     /**导入字段名称*/
     public static final String CCUSFIELDNAME = "cCusFieldName";
     /**是否编码字段;0. 否 1. 是*/
@@ -61,6 +69,40 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	}
 
 	/**
+	 * 顺序值
+	 */
+	public M setISeq(java.lang.Integer iSeq) {
+		set("iSeq", iSeq);
+		return (M)this;
+	}
+
+	/**
+	 * 顺序值
+	 */
+	@JBoltField(name="iseq" ,columnName="iSeq",type="Integer", remark="顺序值", required=true, maxLength=10, fixed=0, order=3)
+	@JSONField(name = "iseq")
+	public java.lang.Integer getISeq() {
+		return getInt("iSeq");
+	}
+
+	/**
+	 * 定制规则;1. 非定制 2. 年度 3. 月度 4. 周间
+	 */
+	public M setIRuleType(java.lang.Integer iRuleType) {
+		set("iRuleType", iRuleType);
+		return (M)this;
+	}
+
+	/**
+	 * 定制规则;1. 非定制 2. 年度 3. 月度 4. 周间
+	 */
+	@JBoltField(name="iruletype" ,columnName="iRuleType",type="Integer", remark="定制规则;1. 非定制 2. 年度 3. 月度 4. 周间", required=true, maxLength=10, fixed=0, order=4)
+	@JSONField(name = "iruletype")
+	public java.lang.Integer getIRuleType() {
+		return getInt("iRuleType");
+	}
+
+	/**
 	 * 系统字段ID
 	 */
 	public M setIFormFieldId(java.lang.Long iFormFieldId) {
@@ -71,10 +113,44 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	/**
 	 * 系统字段ID
 	 */
-	@JBoltField(name="iformfieldid" ,columnName="iFormFieldId",type="Long", remark="系统字段ID", required=true, maxLength=19, fixed=0, order=3)
+	@JBoltField(name="iformfieldid" ,columnName="iFormFieldId",type="Long", remark="系统字段ID", required=false, maxLength=19, fixed=0, order=5)
 	@JSONField(name = "iformfieldid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIFormFieldId() {
 		return getLong("iFormFieldId");
+	}
+
+	/**
+	 * 字段编码
+	 */
+	public M setCFormFieldCode(java.lang.String cFormFieldCode) {
+		set("cFormFieldCode", cFormFieldCode);
+		return (M)this;
+	}
+
+	/**
+	 * 字段编码
+	 */
+	@JBoltField(name="cformfieldcode" ,columnName="cFormFieldCode",type="String", remark="字段编码", required=false, maxLength=255, fixed=0, order=6)
+	@JSONField(name = "cformfieldcode")
+	public java.lang.String getCFormFieldCode() {
+		return getStr("cFormFieldCode");
+	}
+
+	/**
+	 * 字段名称
+	 */
+	public M setCFormFieldName(java.lang.String cFormFieldName) {
+		set("cFormFieldName", cFormFieldName);
+		return (M)this;
+	}
+
+	/**
+	 * 字段名称
+	 */
+	@JBoltField(name="cformfieldname" ,columnName="cFormFieldName",type="String", remark="字段名称", required=false, maxLength=40, fixed=0, order=7)
+	@JSONField(name = "cformfieldname")
+	public java.lang.String getCFormFieldName() {
+		return getStr("cFormFieldName");
 	}
 
 	/**
@@ -88,7 +164,7 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	/**
 	 * 导入字段名称
 	 */
-	@JBoltField(name="ccusfieldname" ,columnName="cCusFieldName",type="String", remark="导入字段名称", required=true, maxLength=40, fixed=0, order=4)
+	@JBoltField(name="ccusfieldname" ,columnName="cCusFieldName",type="String", remark="导入字段名称", required=true, maxLength=40, fixed=0, order=8)
 	@JSONField(name = "ccusfieldname")
 	public java.lang.String getCCusFieldName() {
 		return getStr("cCusFieldName");
@@ -105,7 +181,7 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	/**
 	 * 是否编码字段;0. 否 1. 是
 	 */
-	@JBoltField(name="isencoded" ,columnName="isEncoded",type="Boolean", remark="是否编码字段;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=5)
+	@JBoltField(name="isencoded" ,columnName="isEncoded",type="Boolean", remark="是否编码字段;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=9)
 	@JSONField(name = "isencoded")
 	public java.lang.Boolean getIsEncoded() {
 		return getBoolean("isEncoded");
@@ -122,7 +198,7 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	/**
 	 * 编码示例
 	 */
-	@JBoltField(name="cdemo" ,columnName="cDemo",type="String", remark="编码示例", required=false, maxLength=200, fixed=0, order=6)
+	@JBoltField(name="cdemo" ,columnName="cDemo",type="String", remark="编码示例", required=false, maxLength=200, fixed=0, order=10)
 	@JSONField(name = "cdemo")
 	public java.lang.String getCDemo() {
 		return getStr("cDemo");
@@ -139,7 +215,7 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	/**
 	 * 导入编码字段长度
 	 */
-	@JBoltField(name="ilength" ,columnName="iLength",type="Integer", remark="导入编码字段长度", required=false, maxLength=10, fixed=0, order=7)
+	@JBoltField(name="ilength" ,columnName="iLength",type="Integer", remark="导入编码字段长度", required=false, maxLength=10, fixed=0, order=11)
 	@JSONField(name = "ilength")
 	public java.lang.Integer getILength() {
 		return getInt("iLength");
@@ -156,7 +232,7 @@ public abstract class BaseCusFieldsMappingD<M extends BaseCusFieldsMappingD<M>> 
 	/**
 	 * 是否启用;0. 否 1. 是
 	 */
-	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否启用;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=8)
+	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否启用;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=12)
 	@JSONField(name = "isenabled")
 	public java.lang.Boolean getIsEnabled() {
 		return getBoolean("isEnabled");

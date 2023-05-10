@@ -381,6 +381,10 @@
 #include("modoc/modoc.sql")
 #end
 
+#namespace("modocbatch")
+#include("modocbatch/modocbatch.sql")
+#end
+
 
 #namespace("rcvplanm")
 #include("rcvplanm/rcvplanm.sql")
@@ -397,6 +401,32 @@
 
 #namespace("instockqcformm")
 #include("instockqcformm/instockqcformm.sql")
+#end
+
+#namespace("sysotherin")
+#include("sysotherin/sysotherin.sql")
+#end
+
+
+#namespace("otherout")
+#include("otherout/otherout.sql")
+#end
+
+
+#namespace("sysproductin")
+#include("sysproductin/sysproductin.sql")
+#end
+
+#namespace("sysassem")
+#include("sysassem/sysassem.sql")
+#end
+
+#namespace("syspuinstore")
+#include("syspuinstore/syspuinstore.sql")
+#end
+
+#namespace("syspureceive")
+#include("syspureceive/syspureceive.sql")
 #end
 
 

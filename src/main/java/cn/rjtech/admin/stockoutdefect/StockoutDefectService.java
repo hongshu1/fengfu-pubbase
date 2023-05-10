@@ -6,9 +6,13 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
+import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
+import cn.rjtech.model.momdata.InStockQcFormM;
 import cn.rjtech.model.momdata.StockoutDefect;
 import cn.rjtech.model.momdata.StockoutQcFormM;
 import cn.rjtech.util.BillNoUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -32,6 +36,8 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 	protected StockoutDefect dao() {
 		return dao;
 	}
+	@Inject
+	private StockoutQcFormMService stockoutQcFormMService;      ////质量管理-在库检
 
 	/**
 	 * 后台管理分页查询
@@ -185,16 +191,16 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 
 
 	//更新状态并保存数据方法
-	public Ret updateEditTable(JBoltTable jBoltTable, Kv formRecord) {
+	public Ret updateEditTable(Kv formRecord) {
 		Date now = new Date();
 
 		tx(() -> {
 			//判断是否有主键id
-			if(isOk(formRecord.getStr("stockoutDefect.iautoid"))){
-				StockoutDefect stockoutDefect = findById(formRecord.getLong("stockoutDefect.iautoid"));
+			if(isOk(formRecord.getStr("iautoid"))){
+				StockoutDefect stockoutDefect = findById(formRecord.getLong("iautoid"));
 				if (stockoutDefect.getIStatus() == 1){
 					//录入数据
-					stockoutDefect.setCApproach(formRecord.getStr("stockoutDefect.capproach"));
+					stockoutDefect.setCApproach(formRecord.getStr("capproach"));
 					stockoutDefect.setIStatus(2);
 					//更新人和时间
 					stockoutDefect.setIUpdateBy(JBoltUserKit.getUserId());
@@ -218,21 +224,23 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 		System.out.println("formRecord==="+formRecord);
 		System.out.println("now==="+now);
 		StockoutDefect stockoutDefect = new StockoutDefect();
-		stockoutDefect.setIAutoId(formRecord.getLong("stockoutDefect.iautoid"));
+		stockoutDefect.setIAutoId(formRecord.getLong("iautoid"));
 
-		//质量管理-来料检明细
-		stockoutDefect.setIStockoutQcFormMid(formRecord.getLong("stockoutQcFormM.iAutoid"));
-		stockoutDefect.setIInventoryId(formRecord.getLong("stockoutQcFormM.iInventoryId"));
-		stockoutDefect.setIQcUserId(formRecord.getLong("stockoutQcFormM.iupdateby"));
-		stockoutDefect.setDQcTime(formRecord.getDate("stockoutQcFormM.dupdatetime"));
+		//质量管理-在库检明细
+		StockoutQcFormM stockoutQcFormM = stockoutQcFormMService.findById(formRecord.getLong("stockoutqcformmid"));
+
+		stockoutDefect.setIStockoutQcFormMid(stockoutQcFormM.getIAutoId());
+		stockoutDefect.setIInventoryId(stockoutQcFormM.getIInventoryId());
+		stockoutDefect.setIQcUserId(stockoutQcFormM.getIUpdateBy());
+		stockoutDefect.setDQcTime(stockoutQcFormM.getDUpdateTime());
 
 		//录入填写的数据
 		stockoutDefect.setIStatus(1);
-		stockoutDefect.setIDqQty(formRecord.getBigDecimal("stockoutDefect.idqqty"));
-		stockoutDefect.setIRespType(formRecord.getInt("stockoutDefect.iresptype"));
-		stockoutDefect.setIsFirstTime(formRecord.getBoolean("stockoutDefect.isfirsttime"));
-		stockoutDefect.setCBadnessSns(formRecord.getStr("stockoutDefect.cbadnesssns"));
-		stockoutDefect.setCDesc(formRecord.getStr("stockoutDefect.cdesc"));
+		stockoutDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
+		stockoutDefect.setIRespType(formRecord.getInt("iresptype"));
+		stockoutDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
+		stockoutDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
+		stockoutDefect.setCDesc(formRecord.getStr("cdesc"));
 
 		//必录入基本数据
 		stockoutDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
@@ -279,6 +287,20 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 	 */
 	public StockoutDefect findStockoutDefectByiStockoutQcFormMid(Object iStockoutQcFormMid) {
 		return findFirst("SELECT * FROM PL_StockoutDefect WHERE iStockoutQcFormMid = ?", iStockoutQcFormMid);
+	}
+
+	/**
+	 * API在库异常品主页查询
+	 */
+	public Page<Record> getPageListApi(Integer pageNumber, Integer pageSize, Kv kv) {
+		return dbTemplate("stockoutdefect.paginateAdminDatasapi",kv).paginate(pageNumber,pageSize);
+	}
+
+	/**
+	 * 在库检明细
+	 */
+	public Record getstockoutQcFormMList(Long iautoid){
+		return dbTemplate("stockoutdefect.getstockoutQcFormMList", Kv.by("iautoid",iautoid)).findFirst();
 	}
 
 }

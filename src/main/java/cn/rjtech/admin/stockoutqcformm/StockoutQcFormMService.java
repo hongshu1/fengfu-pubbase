@@ -30,14 +30,17 @@ import com.jfinal.upload.UploadFile;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
+import cn.rjtech.enums.CMeasurePurposeEnum;
 import cn.rjtech.model.momdata.StockoutDefect;
 import cn.rjtech.model.momdata.StockoutQcFormD;
 import cn.rjtech.model.momdata.StockoutQcFormM;
 import cn.rjtech.model.momdata.StockoutqcformdLine;
+import cn.rjtech.util.excel.SheetPage;
 
 /**
  * 质量管理-出库检
@@ -58,6 +61,8 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     private StockoutQcFormDService     stockoutQcFormDService;
     @Inject
     private StockoutDefectService      stockoutDefectService; //出库检异常品单
+    @Inject
+    private InStockQcFormMService      inStockQcFormMService;
 
     @Override
     protected StockoutQcFormM dao() {
@@ -217,7 +222,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
      */
     public List<Record> getonlyseelistByiautoid(Long iautoid) {
         Kv kv = new Kv();
-        kv.set("iautoid", iautoid);
+        kv.set("istockoutqcformmid",iautoid);
         List<Record> recordList = dbTemplate("stockoutqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
 
@@ -235,6 +240,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
      * 点击检验时，进入弹窗自动加载table的数据
      */
     public List<Record> getonlyseelistByiautoid(Kv kv) {
+        kv.set("istockoutqcformmid",kv.get("iautoid"));
         List<Record> recordList = dbTemplate("stockoutqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
 
@@ -423,6 +429,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         stockoutQcFormM.setIsOk(isok.equalsIgnoreCase("0") ? false : true);
         stockoutQcFormM.setIStatus(isok.equalsIgnoreCase("0") ? 2 : 3);
         stockoutQcFormM.setIsCompleted(true);
+        stockoutQcFormM.setIsCpkSigned(false);
     }
 
     /**
@@ -438,4 +445,29 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     }
 
 
+    /*
+     * 获取导出数据
+     * */
+    public Kv getExportData(Long iautoid) {
+        //1、所有sheet
+        List<SheetPage<Record>> pages = new ArrayList<>();
+        //2、每个sheet的名字
+        List<String> sheetNames = new ArrayList<>();
+        sheetNames.add("sheet1");
+        sheetNames.add("sheet2");
+        sheetNames.add("sheet3");
+        //3、主表数据
+        StockoutQcFormM stockoutQcFormM = findById(iautoid);
+        //测定目的
+        stockoutQcFormM
+            .setCMeasurePurpose(CMeasurePurposeEnum.toEnum(Integer.valueOf(stockoutQcFormM.getCMeasurePurpose())).getText());
+        //4、明细表数据
+        List<Record> recordList = getonlyseelistByiautoid(Kv.by("iautoid", iautoid));
+        //5、如果cvalue的列数>10行，分多个页签
+        Record data = recordList.get(0);
+        //核心业务逻辑，对列数进行分组
+        inStockQcFormMService.commonPageMethod(data, recordList, stockoutQcFormM, pages);
+
+        return Kv.by("pages", pages).set("sheetNames", sheetNames);
+    }
 }

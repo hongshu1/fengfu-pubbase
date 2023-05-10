@@ -9,13 +9,16 @@ import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
+import cn.rjtech.enums.CMeasurePurposeEnum;
 import cn.rjtech.model.momdata.RcvDocDefect;
 import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.RcvdocqcformdLine;
+import cn.rjtech.util.excel.SheetPage;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -50,6 +53,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     private RcvdocqcformdLineService rcvdocqcformdLineService; //质量管理-来料检明细列值表
     @Inject
     private RcvDocDefectService      rcvDocDefectService;      ////质量管理-来料异常品记录
+    @Inject
+    private InStockQcFormMService    inStockQcFormMService;
 
     @Override
     protected RcvDocQcFormM dao() {
@@ -220,6 +225,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
      * 点击查看时，进入弹窗自动加载table的数据
      */
     public List<Record> getonlyseelistByiautoid(Kv kv) {
+        kv.set("ircvdocqcformmid",kv.get("iautoid"));
         List<Record> recordList = dbTemplate("rcvdocqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
 
@@ -258,7 +264,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 
     public List<Record> getonlyseelistByiautoid(Long iautoid) {
         Kv kv = new Kv();
-        kv.set("iautoid", iautoid);
+        kv.set("ircvdocqcformmid",iautoid);
         List<Record> recordList = dbTemplate("rcvdocqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
 
@@ -445,6 +451,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         docQcFormM.setIsOk(isok.equalsIgnoreCase("0") ? false : true);//是否合格
         docQcFormM.setIStatus(isok.equalsIgnoreCase("0") ? 2 : 3);
         docQcFormM.setIsCompleted(true);
+        docQcFormM.setIsCpkSigned(false);
     }
 
     /**
@@ -495,6 +502,32 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             return result;
         }
         return null;
+    }
+
+    /*
+     * 获取导出数据
+     * */
+    public Kv getExportData(Long iautoid) {
+        //1、所有sheet
+        List<SheetPage<Record>> pages = new ArrayList<>();
+        //2、每个sheet的名字
+        List<String> sheetNames = new ArrayList<>();
+        sheetNames.add("sheet1");
+        sheetNames.add("sheet2");
+        sheetNames.add("sheet3");
+        //3、主表数据
+        RcvDocQcFormM rcvDocQcFormM = findById(iautoid);
+        //测定目的
+        rcvDocQcFormM
+            .setCMeasurePurpose(CMeasurePurposeEnum.toEnum(Integer.valueOf(rcvDocQcFormM.getCMeasurePurpose())).getText());
+        //4、明细表数据
+        List<Record> recordList = getonlyseelistByiautoid(Kv.by("iautoid", iautoid));
+        //5、如果cvalue的列数>10行，分多个页签
+        Record data = recordList.get(0);
+        //核心业务逻辑，对列数进行分组
+        inStockQcFormMService.commonPageMethod(data, recordList, rcvDocQcFormM, pages);
+
+        return Kv.by("pages", pages).set("sheetNames", sheetNames);
     }
 
 }

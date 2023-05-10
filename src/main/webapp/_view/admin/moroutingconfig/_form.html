@@ -1,0 +1,111 @@
+<form onsubmit="return false;" id="moMoroutingconfigForm" action="#(action)" method="post">
+<input type="hidden" name="moMoroutingconfig.iautoid" value="#(moMoroutingconfig.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产工单工艺ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入生产工单工艺ID" maxlength="19" name="moMoroutingconfig.imoroutingid" value="#(moMoroutingconfig.imoroutingid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货工艺档案ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货工艺档案ID" maxlength="19" name="moMoroutingconfig.iinventoryroutingid" value="#(moMoroutingconfig.iinventoryroutingid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">序号</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入序号"  maxlength="10" name="moMoroutingconfig.iseq" value="#(moMoroutingconfig.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">合并工序</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入合并工序" maxlength="20" name="moMoroutingconfig.cmergedseq" value="#(moMoroutingconfig.cmergedseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">工序名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入工序名称" maxlength="90" name="moMoroutingconfig.coperationname" value="#(moMoroutingconfig.coperationname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">工序类型: 1. 串序 2. 并序</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入工序类型: 1. 串序 2. 并序"  maxlength="10" name="moMoroutingconfig.itype" value="#(moMoroutingconfig.itype??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">半成品/成品ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入半成品/成品ID" maxlength="19" name="moMoroutingconfig.irsinventoryid" value="#(moMoroutingconfig.irsinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产方式(字典值) 内作/外作</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入生产方式(字典值) 内作/外作" maxlength="10" name="moMoroutingconfig.cproductsn" value="#(moMoroutingconfig.cproductsn??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产工艺： 1. 冲压 2. 弯管 3. 焊接</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入生产工艺： 1. 冲压 2. 弯管 3. 焊接" maxlength="10" name="moMoroutingconfig.cproducttechsn" value="#(moMoroutingconfig.cproducttechsn??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">合并要员（人）</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入合并要员（人）"  maxlength="10" name="moMoroutingconfig.imergednum" value="#(moMoroutingconfig.imergednum??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">要员（人）</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=4;"  data-notnull="false" placeholder="请输入要员（人）"  maxlength="5" name="moMoroutingconfig.imergerate" value="#(moMoroutingconfig.imergerate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">合并工时（秒）</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入合并工时（秒）"  maxlength="10" name="moMoroutingconfig.imergesecs" value="#(moMoroutingconfig.imergesecs??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">单工时（秒）</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入单工时（秒）"  maxlength="10" name="moMoroutingconfig.isecs" value="#(moMoroutingconfig.isecs??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">备注</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="moMoroutingconfig.cmemo" value="#(moMoroutingconfig.cmemo??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人" maxlength="19" name="moMoroutingconfig.icreateby" value="#(moMoroutingconfig.icreateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="50" name="moMoroutingconfig.ccreatename" value="#(moMoroutingconfig.ccreatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="moMoroutingconfig.dcreatetime" value="#(moMoroutingconfig.dcreatetime??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="moMoroutingconfigForm")
+#end
+

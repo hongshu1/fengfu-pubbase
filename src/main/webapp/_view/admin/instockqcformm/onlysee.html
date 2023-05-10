@@ -7,6 +7,12 @@
       <input type="hidden" name="instockqcformm.iautoid" value="#(instockqcformm.iautoid??)"/>
       #end
       <div>
+        <div style="left: 60px;margin-left:50px">
+          <button data-downloadbtn class="btn btn-outline-primary btn-sm"
+                  data-url="admin/instockqcformm/exportExcel/#(instockqcformm.iautoid??)">
+            <i class="fa fa-download"></i>数据导出
+          </button>
+        </div>
         <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
         <table id="jbolt_table_checkouttableparam_split__#(pageId)1" border="1"
                style="text-align: center;left: 60px;margin-left:50px;width: 1300px;">
@@ -20,19 +26,19 @@
           </tr>
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r1">
             <td height="26" class="x74" style="height:19.5pt;">客户部番</td>
-            <td class="x71">#(record.cinvcode1??)</td>
+            <td>#(record.cinvcode1??)</td>
             <td colspan="4" rowspan="2" height="54" class="x74"
                 style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;height:40.5pt;">
               <div class="form-group row  col-8"
                    id="cMeaSurePurpose"
-                   data-radio
-                   data-rule="radio"
+                   data-checkbox
+                   data-rule="checkbox"
                    data-default=""
                    data-url="admin/dictionary/options?key=cmeasurepurpose"
                    data-value-attr="sn"
                    data-text-attr="cmeasurepurpose"
                    data-inline="true"
-                   data-value="#(record.cmeasurepurpose??)"
+                   data-value="#(instockqcformm.cmeasurepurpose??)"
                    data-name="cmeasurepurpose">
               </div>
             </td>
@@ -117,17 +123,6 @@
             </td>
           </tr>
         </table>
-        <table id="jbolt_table_checkouttableparam_split__#(pageId)2" border="3"
-               style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
-          <div style="left: 60px;margin-left:50px;height: 50px;width: 500px;">
-            <button type="button" onclick="inserRow(10)" class="btn btn-success"
-                    style="background-color: #1006F1;margin-top: 11px">新增页
-            </button>
-            <img data-switchbtn data-value="#(instockqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
-                 data-url="admin/instockqcformm/toggleIsCpkSigned/#(instockqcformm.iautoid??)" style="margin-left: 50px;"/>
-            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
-          </div>
-        </table>
 
         <!-- 检验表格项目表的的数据模板定义-->
         <textarea class="jb_tpl_box" id="checkoutType_tpl_#(pageId)">
@@ -165,16 +160,10 @@
               {@else if data.itype == '4'}
               <input name="cA01" type="text" class="cA01" title="#{data.coptions??}" value="${value.cvalue}"/>
               {@else if data.itype == '5'}
-              <div class="form-group row "
-                   data-name="cA01"
-                   data-checkbox
-                   data-rule="checkbox"
-                   data-default=""
-                   data-url="admin/dictionary/options?key=appearance"
-                   data-value-attr="sn"
-                   data-text-attr="appearance"
-                   data-inline="false"
-                   data-value="${value.cvalue}"></div>
+              <select name="appearance${value}" class="form-control cA01" data-url="admin/dictionary/options?key=appearance"
+                      data-autoload data-text="=整体外观=" data-value-attr="sn" data-value="" multiple
+                      data-select-type="select2"
+                      data-select="${value.cvalue}" title="=整体外观="></select>
               {@else if data.itype == '6'}
               <select name="cA01" class="form-control" data-url="admin/dictionary/options?key=overallsize" data-autoload
                       data-text="=整体尺寸=" data-value-attr="sn" value="${value.cvalue}" data-select="#(data.coptions??)"></select>
@@ -311,16 +300,6 @@
     background-color: #b1dfbb;
   }
 </style>
-
-<script>
-  /*
-* @desc：新增行
-* @param：rows:行数
-* */
-  function inserRow(rows) {
-    alert("测试");
-  }
-</script>
 
 <script>
 

@@ -8,6 +8,7 @@ import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MrpDemandcomputem;
 import cn.rjtech.util.DateUtils;
+import cn.rjtech.util.Util;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
@@ -146,20 +147,20 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		List<Record> name2list = new ArrayList<>();
 		if (StringUtils.isNotBlank(startdate) && StringUtils.isNotBlank(enddate)){
 			//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-			List<String> scheduDateList = scheduProductPlanMonthService.getBetweenDate(startdate,enddate);
+			List<String> scheduDateList = Util.getBetweenDate(startdate,enddate);
 			//页面顶部colspan列  key:2023年1月  value:colspan="13"
 			Map<String,Integer> yearMonthMap = new HashMap<>();
-			for (int i = 0; i < scheduDateList.size(); i++) {
-				String year = scheduDateList.get(i).substring(0,4);
-				int month = Integer.parseInt(scheduDateList.get(i).substring(5,7));
-				String yearMonth = year + "年" + month + "月";
-				if (yearMonthMap.containsKey(yearMonth)){
-					int count = yearMonthMap.get(yearMonth);
-					yearMonthMap.put(yearMonth,count + 1);
-				}else {
-					yearMonthMap.put(yearMonth,2);
-				}
-			}
+            for (String s : scheduDateList) {
+                String year = s.substring(0, 4);
+                int month = Integer.parseInt(s.substring(5, 7));
+                String yearMonth = year + "年" + month + "月";
+                if (yearMonthMap.containsKey(yearMonth)) {
+                    int count = yearMonthMap.get(yearMonth);
+                    yearMonthMap.put(yearMonth, count + 1);
+                } else {
+                    yearMonthMap.put(yearMonth, 2);
+                }
+            }
 
 			int monthCount = 1;
 			List<String> name2listStr = new ArrayList<>();
@@ -267,20 +268,20 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		List<Record> name2list = new ArrayList<>();
 		if (StringUtils.isNotBlank(startdate) && StringUtils.isNotBlank(enddate)){
 			//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-			List<String> scheduDateList = scheduProductPlanMonthService.getBetweenDate(startdate,enddate);
+			List<String> scheduDateList = Util.getBetweenDate(startdate,enddate);
 			//页面顶部colspan列  key:2023年1月  value:colspan="13"
 			Map<String,Integer> yearMonthMap = new HashMap<>();
-			for (int i = 0; i < scheduDateList.size(); i++) {
-				String year = scheduDateList.get(i).substring(0,4);
-				int month = Integer.parseInt(scheduDateList.get(i).substring(5,7));
-				String yearMonth = year + "年" + month + "月";
-				if (yearMonthMap.containsKey(yearMonth)){
-					int count = yearMonthMap.get(yearMonth);
-					yearMonthMap.put(yearMonth,count + 1);
-				}else {
-					yearMonthMap.put(yearMonth,2);
-				}
-			}
+            for (String s : scheduDateList) {
+                String year = s.substring(0, 4);
+                int month = Integer.parseInt(s.substring(5, 7));
+                String yearMonth = year + "年" + month + "月";
+                if (yearMonthMap.containsKey(yearMonth)) {
+                    int count = yearMonthMap.get(yearMonth);
+                    yearMonthMap.put(yearMonth, count + 1);
+                } else {
+                    yearMonthMap.put(yearMonth, 2);
+                }
+            }
 
 			int monthCount = 1;
 			List<String> name2listStr = new ArrayList<>();

@@ -22,6 +22,10 @@ public abstract class BaseQcFormParam<M extends BaseQcFormParam<M>> extends JBol
     public static final String IITEMPARAMSEQ = "iItemParamSeq";
     /**删除状态: 0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**检验表格ID*/
+    public static final String IQCFORMID = "iQcFormId";
+    /**检验项目ID*/
+    public static final String IQCITEMID = "iQcItemId";
 	/**
 	 * 主键ID
 	 */
@@ -122,6 +126,40 @@ public abstract class BaseQcFormParam<M extends BaseQcFormParam<M>> extends JBol
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 检验表格ID
+	 */
+	public M setIQcFormId(java.lang.Long iQcFormId) {
+		set("iQcFormId", iQcFormId);
+		return (M)this;
+	}
+
+	/**
+	 * 检验表格ID
+	 */
+	@JBoltField(name="iqcformid" ,columnName="iQcFormId",type="Long", remark="检验表格ID", required=false, maxLength=19, fixed=0, order=7)
+	@JSONField(name = "iqcformid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIQcFormId() {
+		return getLong("iQcFormId");
+	}
+
+	/**
+	 * 检验项目ID
+	 */
+	public M setIQcItemId(java.lang.Long iQcItemId) {
+		set("iQcItemId", iQcItemId);
+		return (M)this;
+	}
+
+	/**
+	 * 检验项目ID
+	 */
+	@JBoltField(name="iqcitemid" ,columnName="iQcItemId",type="Long", remark="检验项目ID", required=false, maxLength=19, fixed=0, order=8)
+	@JSONField(name = "iqcitemid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIQcItemId() {
+		return getLong("iQcItemId");
 	}
 
 }

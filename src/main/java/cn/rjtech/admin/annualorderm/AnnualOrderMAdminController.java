@@ -1,21 +1,23 @@
 package cn.rjtech.admin.annualorderm;
 
 import cn.hutool.core.date.DateUtil;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
-
-import cn.rjtech.admin.customer.CustomerService;
-import cn.rjtech.base.controller.BaseAdminController;
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
+import cn.rjtech.admin.customer.CustomerService;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.Customer;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import java.util.Date;
 
@@ -36,6 +38,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     private AnnualOrderMService service;
     @Inject
     private CustomerService customerService;
+
     /**
      * 首页
      */
@@ -46,6 +49,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -75,7 +79,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
         }
         Record annualOrderMRc = annualOrderM.toRecord();
         Customer customer = customerService.findById(annualOrderM.getICustomerId());
-        annualOrderMRc.set("ccusname", customer == null ? null:customer.getCCusName());
+        annualOrderMRc.set("ccusname", customer == null ? null : customer.getCCusName());
         set("annualOrderM", annualOrderMRc);
         render("edit.html");
     }
@@ -97,7 +101,6 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 新增-可编辑表格-批量提交
      */
-    @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
@@ -115,9 +118,17 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 审批
      */
-     public void approve() {
-         renderJson(service.approve(getLong(0)));
-     }
+    public void approve() {
+        renderJson(service.approve(getLong(0)));
+    }
 
+    /**
+     * 导入Excel数据
+     */
+    public void importExcel(@Para(value = "file") UploadFile file) {
+        ValidationUtils.notNull(file, JBoltMsg.PARAM_ERROR);
+
+        renderJson(service.importExcel(file.getFile()));
+    }
 
 }

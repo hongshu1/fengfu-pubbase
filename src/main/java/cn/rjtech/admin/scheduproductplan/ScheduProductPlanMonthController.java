@@ -8,12 +8,9 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.ApsAnnualplanm;
 import cn.rjtech.util.DateUtils;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import cn.rjtech.util.Util;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.JsonKit;
-import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
@@ -83,7 +80,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         List<Record> name2list = new ArrayList<>();
         if (StringUtils.isNotBlank(startdate) && StringUtils.isNotBlank(enddate)){
             //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-            List<String> scheduDateList = service.getBetweenDate(startdate,enddate);
+            List<String> scheduDateList = Util.getBetweenDate(startdate,enddate);
             //页面顶部colspan列  key:2023年1月  value:colspan="13"
             Map<String,Integer> yearMonthMap = new HashMap<>();
             for (int i = 0; i < scheduDateList.size(); i++) {
@@ -191,7 +188,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         List<Record> name2list = new ArrayList<>();
         if (StringUtils.isNotBlank(startdate) && StringUtils.isNotBlank(enddate)){
             //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-            List<String> scheduDateList = service.getBetweenDate(startdate,enddate);
+            List<String> scheduDateList = Util.getBetweenDate(startdate,enddate);
             //页面顶部colspan列  key:2023年1月  value:colspan="13"
             Map<String,Integer> yearMonthMap = new HashMap<>();
             for (int i = 0; i < scheduDateList.size(); i++) {
@@ -423,6 +420,8 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         render("selectaprm.html");
     }
 
-
+    public void monthweekSchedule() {
+        render("month_week_schedule.html");
+    }
 
 }

@@ -5,8 +5,10 @@ import cn.rjtech.api.instockdefect.InStockDefectApiController;
 import cn.rjtech.api.instockqcformm.InStockQcFormMApiController;
 import cn.rjtech.api.org.OrgApiController;
 import cn.rjtech.api.processdefect.ProcessDefectApiController;
+import cn.rjtech.api.qcinspection.QcInspectionApiController;
 import cn.rjtech.api.rcvdocdefect.RcvDocDefectApiController;
 import cn.rjtech.api.rcvdocqcformm.RcvDocQcFormMApiController;
+import cn.rjtech.api.stockoutdefect.StockoutDefectApiController;
 import cn.rjtech.api.stockoutqcformm.StockOutQcFormMApiController;
 import cn.rjtech.api.user.UserApiController;
 import cn.rjtech.common.CommonApiController;
@@ -33,6 +35,8 @@ public class ApiRoutes extends Routes {
     this.add("/api/instockdefect", InStockDefectApiController.class);
     this.add("/api/stockoutqcformm", StockOutQcFormMApiController.class);
     this.add("/api/instockqcformm", InStockQcFormMApiController.class);
+    this.add("/api/stockoutdefect", StockoutDefectApiController.class);
+    this.add("/api/qcinspection", QcInspectionApiController.class);
   }
 
 }

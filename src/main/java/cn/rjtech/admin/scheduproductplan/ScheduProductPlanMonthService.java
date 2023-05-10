@@ -20,6 +20,7 @@ import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
 import cn.rjtech.util.DateUtils;
+import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
@@ -51,13 +52,15 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     protected ApsAnnualplanm dao() {
         return dao;
     }
+    
     @Inject
     private CalendarService calendarService;
     @Inject
     private DateQueryInvTotalFuncService dateQueryInvTotalFuncService;
     @Inject
+    private ScheduProductPlanMonthService scheduProductPlanMonthService;
+    @Inject
     private MomDataFuncService momDataFuncService;
-
     @Inject
     private ApsAnnualplandService apsAnnualplandService;
     @Inject
@@ -388,7 +391,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         //排产开始日期到截止日期之间的天数 包含开始到结束那天
         int scheduDayNum = ((int) DateUtils.getDistanceOfTwoDate(startDate,endDate)) + 1;
         //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-        List<String> scheduDateList = getBetweenDate(DateUtils.formatDate(startDate,"yyyy-MM-dd"),endDateStr);
+        List<String> scheduDateList = Util.getBetweenDate(DateUtils.formatDate(startDate,"yyyy-MM-dd"),endDateStr);
 
         //排产日历类型
         String calendarType = "1";
@@ -1168,10 +1171,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         String startDate = kv.getStr("startdate");
         String endDate = kv.getStr("enddate");
         if (notOk(startDate) || notOk(endDate)){
-            ValidationUtils.isTrue(false,"开始日期-结束日期不能为空！");
+            ValidationUtils.error("开始日期-结束日期不能为空！");
         }
         //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-        List<String> scheduDateList = getBetweenDate(startDate,endDate);
+        List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
 
         pageSize = pageSize * 15;
 
@@ -1316,10 +1319,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         String startDate = kv.getStr("startdate");
         String endDate = kv.getStr("enddate");
         if (notOk(startDate) || notOk(endDate)){
-            ValidationUtils.isTrue(false,"开始日期-结束日期不能为空！");
+            ValidationUtils.error("开始日期-结束日期不能为空！");
         }
         //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-        List<String> scheduDateList = getBetweenDate(startDate,endDate);
+        List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
 
         pageSize = pageSize * 15;
 
@@ -1492,10 +1495,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         String startDate = kv.getStr("startdate");
         String endDate = kv.getStr("enddate");
         if (notOk(startDate) || notOk(endDate)){
-            ValidationUtils.isTrue(false,"开始日期-结束日期不能为空！");
+            ValidationUtils.error("开始日期-结束日期不能为空！");
         }
         //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-        List<String> scheduDateList = getBetweenDate(startDate,endDate);
+        List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
 
         pageSize = pageSize * 15;
 
@@ -1894,44 +1897,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
 
 
-
     /**
      * 获取两个日期字符串之间的日期集合 包含两个日期
      * @param startTime:yyyy-MM-dd
      * @param endTime:yyyy-MM-dd
      * @return list:yyyy-MM-dd
      */
-    public static List<String> getBetweenDate(String startTime, String endTime){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        // 声明保存日期集合
-        List<String> list = new ArrayList<String>();
-        try {
-            // 转化成日期类型
-            Date startDate = sdf.parse(startTime);
-            Date endDate = sdf.parse(endTime);
-            //用Calendar 进行日期比较判断
-            Calendar calendar = Calendar.getInstance();
-            while (startDate.getTime()<=endDate.getTime()){
-                // 把日期添加到集合
-                list.add(sdf.format(startDate));
-                // 设置日期
-                calendar.setTime(startDate);
-                //把日期增加一天
-                calendar.add(Calendar.DATE, 1);
-                // 获取增加后的日期
-                startDate=calendar.getTime();
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-            throw new RuntimeException("计划锁定出错！"+e.getMessage());
-        }
-        return list;
-    }
-
-
-
-
-
+    
     public List<Record> getInvInfoByLevelList(Okv okv){
         return dbTemplate("scheduproductplan.getInvInfoByLevelList", okv).find();
     }

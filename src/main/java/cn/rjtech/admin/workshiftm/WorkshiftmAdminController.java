@@ -49,6 +49,12 @@ public class WorkshiftmAdminController extends JBoltBaseController {
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
+	/**
+	* 数据源
+	*/
+	public void getSelect() {
+		renderJsonData(service.getSelect());
+	}
 
    /**
 	* 新增

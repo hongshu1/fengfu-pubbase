@@ -3,6 +3,7 @@ package cn.rjtech.admin.bomcompare;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -157,7 +158,7 @@ public class BomCompareService extends BaseService<BomCompare> {
 		bomCompare.setISeq(seq);
 		bomCompare.setILevel(Level);
 		bomCompare.setCInvLev(invLev);
-		bomCompare.setISource(1);
+		bomCompare.setISource(SourceEnum.MES.getValue());
 		
 		bomCompare.setIPid(pid);
 		

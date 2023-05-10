@@ -252,7 +252,8 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         if (isOk(tableRemovePrefix)) {
             mainTableName = StrUtil.removePrefixIgnoreCase(mainTableName, tableRemovePrefix);
         }
-        String modelName = mainTableName.contains(StrUtil.UNDERLINE) ? StrUtil.upperFirst(StrUtil.toCamelCase(mainTableName)) : StrUtil.upperFirst(mainTableName);
+        String mainTableNameCamelCase = StrUtil.toCamelCase(mainTableName);
+        String modelName = StrUtil.upperFirst(mainTableNameCamelCase);
         String oldModelName = codeGen.getModelName();
         boolean mustReplace = StrKit.notBlank(oldModelName) && !modelName.equals(oldModelName);
         codeGen.setModelName(modelName);
@@ -290,9 +291,9 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
             codeGen.setControllerName(codeGen.getControllerName().replace(oldModelName, modelName));
         }
         if (notOk(codeGen.getControllerPath())) {
-            codeGen.setControllerPath("/" + codeGen.getType().toLowerCase() + "/" + StrUtil.toCamelCase(modelName).toLowerCase());
+            codeGen.setControllerPath("/" + codeGen.getType().toLowerCase() + "/" + StrKit.firstCharToLowerCase(modelName));
         } else if (mustReplace) {
-            String newPath = codeGen.getControllerPath().replace(StrUtil.toCamelCase(oldModelName).toLowerCase(), StrUtil.toCamelCase(modelName).toLowerCase());
+            String newPath = codeGen.getControllerPath().replace(StrKit.firstCharToLowerCase(oldModelName), StrKit.firstCharToLowerCase(modelName));
             if (newPath.charAt(0) != '/') {
                 newPath = "/" + newPath;
             }

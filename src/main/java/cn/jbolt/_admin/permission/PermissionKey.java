@@ -1352,7 +1352,7 @@ public class PermissionKey {
 	/**
 	 * 审批/审核配置
 	 */
-	public static final String AUDITCONFIG = "auditconfig";
+	public static final String AUDIT_CONFIG = "audit_config";
 	/**
 	 * 审批流配置
 	 */
@@ -1433,6 +1433,10 @@ public class PermissionKey {
 	 * 编码规则配置
 	 */
 	public static final String CODING_RULEM = "coding_rulem";
+	/**
+	 * 制造工单批量编辑
+	 */
+	public static final String MO_DOCBACTH = "mo_docbacth";
 	/**
 	 * 新增
 	 */
@@ -1773,4 +1777,27 @@ public class PermissionKey {
 	 * 入库管理-其他入库单列表
 	 */
 	public static final String OTHER_IN_LIST = "other_in_list";
+
+	/**
+	 * 入库管理-产成品入库单列表
+	 */
+	public static final String PRODUCTINLIST = "productInList";
+
+	/**
+	 * 入库管理-形态转换单
+	 */
+	public static final String FORMCONVERSIONLIST = "formconversionlist";
+
+
+	/**
+	 * 入库管理-采购入库单
+	 */
+	public static final String PURCHASERECEIPTLIST = "purchasereceiptlist";
+
+	/**
+	 * 入库管理-采购收料单
+	 */
+	public static final String MATERIALRECEIPTLIST = "materialreceiptlist";
+
 }
+

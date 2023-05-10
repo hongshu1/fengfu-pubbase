@@ -1,0 +1,21 @@
+<form onsubmit="return false;" id="moMoroutingequipmentForm" action="#(action)" method="post">
+<input type="hidden" name="moMoroutingequipment.iautoid" value="#(moMoroutingequipment.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">工单工艺配置ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入工单工艺配置ID" maxlength="19" name="moMoroutingequipment.imoroutingconfigid" value="#(moMoroutingequipment.imoroutingconfigid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">设备ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入设备ID" maxlength="19" name="moMoroutingequipment.iequipmentid" value="#(moMoroutingequipment.iequipmentid??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="moMoroutingequipmentForm")
+#end
+

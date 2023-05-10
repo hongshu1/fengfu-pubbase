@@ -1,6 +1,7 @@
 package cn.rjtech.admin.purchasetype;
 
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.SaleType;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
@@ -94,7 +95,7 @@ public class PurchaseTypeService extends BaseService<PurchaseType> {
 		Date date = new Date();
 		purchaseType.setDCreateTime(date);	//创建时间
 		purchaseType.setDUpdateTime(date);	//更新时间
-		purchaseType.setISource(1);	//来源 1.MES 2.U8
+		purchaseType.setISource(SourceEnum.MES.getValue());
 		List<PurchaseType> cptcode = find("select cRdCode from Bd_Rd_Style where iAutoId = ?",purchaseType.getIRdStyleId());
 		purchaseType.setCRdCode(cptcode.get(0).getCRdCode());	//0：下标，，第一个
 		return purchaseType;

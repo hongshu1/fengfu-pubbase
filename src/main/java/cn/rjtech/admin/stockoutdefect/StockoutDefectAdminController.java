@@ -11,6 +11,7 @@ import cn.rjtech.model.momdata.StockoutQcFormM;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 出库异常记录 Controller
@@ -66,31 +67,23 @@ public class StockoutDefectAdminController extends BaseAdminController {
 
 	public void add2() {
 		StockoutDefect stockoutDefect = service.findById(get("iautoid"));
-		StockoutQcFormM stockoutQcFormM = stockoutQcFormMService.findFirst("select t1.*, t2.cInvCode, t2.cInvName, t2.cInvCode1, t3.cCusName\n" +
-				"from PL_StockoutQcFormM t1\n" +
-				"LEFT JOIN Bd_Inventory t2 ON t2.iAutoId = t1.iInventoryId \n" +
-				"LEFT JOIN Bd_Customer t3 ON t3.iAutoId = t1.iCustomerId \n" +
-				"where t1.iAutoId = '"+get("istockoutqcformmid")+"'");
+		Record stockoutQcFormM = service.getstockoutQcFormMList(getLong("stockoutQcFormMid"));
 		set("iautoid", get("iautoid"));
 		set("type", get("type"));
+		set("stockoutDefect", stockoutDefect);
+		set("stockoutQcFormM", stockoutQcFormM);
 		if (isNull(get("iautoid"))) {
-			set("stockoutDefect", stockoutDefect);
-			set("stockoutQcFormM", stockoutQcFormM);
 			render("add2.html");
 		} else {
 			if (stockoutDefect.getIStatus() == 1) {
 				set("istatus", (stockoutDefect.getIsFirstTime() == true) ? "首发" : "再发");
 				set("iresptype", (stockoutDefect.getIRespType() == 1) ? "供应商" : (stockoutDefect.getIRespType() == 2 ? "工程内":"其他"));
-				set("stockoutDefect", stockoutDefect);
-				set("stockoutQcFormM", stockoutQcFormM);
 				render("add3.html");
 			} else if (stockoutDefect.getIStatus() == 2) {
 				int getCApproach = Integer.parseInt(stockoutDefect.getCApproach());
 				set("capproach", (getCApproach == 1) ? "报废" : (getCApproach == 2 ? "返修":"退货"));
 				set("istatus", (stockoutDefect.getIsFirstTime() == true) ? "首发" : "再发");
 				set("iresptype", (stockoutDefect.getIRespType() == 1) ? "供应商" : (stockoutDefect.getIRespType() == 2 ? "工程内":"其他"));
-				set("stockoutDefect", stockoutDefect);
-				set("stockoutQcFormM", stockoutQcFormM);
 				render("add4.html");
 			}
 		}
@@ -155,7 +148,7 @@ public class StockoutDefectAdminController extends BaseAdminController {
 
 
 	public void updateEditTable() {
-		renderJson(service.updateEditTable(getJBoltTable(), getKv()));
+		renderJson(service.updateEditTable(getKv()));
 	}
 
 	/**
