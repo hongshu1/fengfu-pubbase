@@ -391,4 +391,13 @@ public class InventoryAdminController extends BaseAdminController {
 	public void findBomCompareByBomMasterInvId(@Para(value = "") Long invId){
 		renderJsonData(bomMasterService.findBomCompareByBomMasterInvId(getKv(), getPageNumber(), getPageSize()));
 	}
+
+    public void batchFetch(@Para(value = "column") String column,
+                           @Para(value = "values") String values) {
+        ValidationUtils.notBlank(column, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notBlank(values, JBoltMsg.PARAM_ERROR);
+        
+        renderJson(service.batchFetch(column, values));
+    }
+    
 }
