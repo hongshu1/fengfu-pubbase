@@ -1,16 +1,21 @@
 package cn.rjtech.admin.syspureceive;
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.sysenumeration.SysEnumerationService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPureceive;
+import cn.rjtech.model.momdata.SysPureceivedetail;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.tx.Tx;
+import cn.rjtech.admin.sysenumeration.SysEnumerationService;
 /**
  * 采购收料单
  * @ClassName: SysPureceiveAdminController
@@ -25,6 +30,14 @@ public class SysPureceiveAdminController extends BaseAdminController {
 
 	@Inject
 	private SysPureceiveService service;
+	@Inject
+	private UserService userService;
+	@Inject
+	private SysPureceivedetailService syspureceivedetailservice;
+
+	@Inject
+	private SysEnumerationService sysenumerationservice;
+
    /**
 	* 首页
 	*/
@@ -61,6 +74,15 @@ public class SysPureceiveAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		//todo （仓库数据在从表） 关联查询出仓库编码,然后换数据源U8 查其名称
+		SysPureceivedetail first = syspureceivedetailservice.findFirst("select * from  T_Sys_PUReceiveDetail where MasID = ?", sysPureceive.getAutoID());
+		if(first != null){
+			set("whname",sysenumerationservice.getWhname(first.getWhcode()));
+		}
+		//todo 关联查询用户名字
+		set("username",sysenumerationservice.getUserName(sysPureceive.getCreatePerson()));
+		//todo 换数据源U8 查供应商名称
+		set("venname",sysenumerationservice.getVenName(sysPureceive.getVenCode()));
 		set("sysPureceive",sysPureceive);
 		render("edit.html");
 	}
@@ -108,4 +130,11 @@ public class SysPureceiveAdminController extends BaseAdminController {
 		renderJsonData(service.getVenCodeDatas(getKv()));
 	}
 
+
+	/**
+	 *  仓库数据源
+	 */
+	public void Whcode() {
+		renderJsonData(service.getWhcodeDatas(getKv()));
+	}
 }

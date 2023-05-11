@@ -45,38 +45,42 @@
                             </div>
 
 
-                            <!-- <div class="col-md-4">
+
+                            <div class="col-md-4">
                                 <div class="form-group row">
+                                    <input type="hidden" name="Whcode" value="#(Whcode??)"
+                                    id="whcode" data-value-attr="whcode" />
                                     <label class="col-sm-3 col-form-label">仓库名称</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=仓库名称="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/SysEnumeration/wareHouse" data-rule="required"
+                                            data-hidden-input="whcode" data-text-attr="whname"
+                                            data-column-attr="whcode,whname" placeholder="请选择仓库名称"
+                                            data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
+                                            value="#(whname??)">
                                     </div>
                                 </div>
-                            </div> -->
+                            </div>
+
 
 
                             <div class="col-md-4">
                                 <div class="form-group row">
+                                    <input type="hidden" name="sysPureceive.VenCode" value="#(sysPureceive.VenCode??)"
+                                    id="vencode" data-value-attr="vencode" />
                                     <label class="col-sm-3 col-form-label">供应商名称</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="venCode"
-                                        data-autoload
-                                        data-url="admin/materialReceiptList/venCode"
-                                        data-select-type="select"
-                                        data-text="=供应商名称="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/SysEnumeration/vendor" data-rule="required"
+                                            data-hidden-input="vencode" data-text-attr="venname"
+                                            data-column-attr="vencode,venname" placeholder="请选择供应商名称"
+                                            data-tips="请选择供应商名称" data-header="供应商编码,供应商名称" maxlength="40"
+                                            value="#(venname??)">
                                     </div>
                                 </div>
                             </div>
+
+
 
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -85,7 +89,7 @@
                                         <input type="text" data-notnull="true"
                                             data-tips="请输收料人" data-with-clearbtn="true" autocomplete="off"
                                             class="form-control" placeholder="请输收料人" maxlength="40"
-                                            name="sysPureceive.createperson" value="#(sysPureceive.createperson??)" />
+                                            name="username" value="#(username??)" />
                                     </div>
                                 </div>
                             </div>

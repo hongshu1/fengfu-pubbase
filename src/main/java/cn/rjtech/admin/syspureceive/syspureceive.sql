@@ -46,7 +46,17 @@ ORDER BY a.ModifyDate DESC
 SELECT  a.*
 FROM V_Sys_Vendor a
 where 1=1
-	#if(key)
-		and a.VenName like concat('%',#para(key),'%')
+	#if(q)
+		and (a.VenCode like concat('%',#para(q),'%') OR a.VenName like concat('%',#para(q),'%'))
+	#end
+#end
+
+
+#sql("Whcode")
+SELECT  a.*
+FROM V_Sys_WareHouse a
+where 1=1
+	#if(q)
+		and (a.whcode like concat('%',#para(q),'%') OR a.whName like concat('%',#para(q),'%'))
 	#end
 #end

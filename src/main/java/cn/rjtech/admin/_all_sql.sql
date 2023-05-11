@@ -449,3 +449,8 @@
 #namespace("formapprovald")
 #include("formapprovald/formapprovald.sql")
 #end
+
+
+#namespace("sysEnumeration")
+#include("sysEnumeration/sysEnumeration.sql")
+#end
