@@ -1,0 +1,304 @@
+#set(pageId=RandomUtil.random(6))
+<form onsubmit="return false;" id="approvalDForm" action="#(action)" method="post">
+<input type="hidden" name="formApprovalD.iautoid" value="#(formApprovalD.iautoid??)" />
+	<input type="hidden" name="formApprovalD.iformapprovalid" value="#(formApprovalD.iformapprovalid??)" />
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批节点</label>
+		<div class="col">
+			<select class="form-control"
+					name="formApprovalD.istep"
+					data-autoload
+					data-rule="select"
+					data-url="admin/dictionary/options?key=approval_d_name"
+					data-value-attr="sn"
+					data-text-attr="name"
+					data-text="=请选择="
+					data-select="#(formApprovalD.istep??)">
+			</select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批顺序</label>
+		<div class="col">
+			<input type="text" readonly="readonly" data-with-clearbtn="true"  autocomplete="off"  class="form-control"
+				   data-rule="pnumber" placeholder="请输入审批顺序"  maxlength="10" name="formApprovalD.iseq" value="#(formApprovalD.iseq??)"/>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批内容</label>
+		<div class="col">
+			<input type="text"  autocomplete="off"  class="form-control"
+				   placeholder="请输入审批内容" name="formApprovalD.cname"
+				   value="#(formApprovalD.cname??)"/>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批人设置</label>
+		<div class="col">
+			<select class="form-control"
+					name="formApprovalD.itype"
+					data-autoload
+					data-handler="changeType"
+					data-url="admin/dictionary/options?key=approval_person_config"
+					data-value-attr="sn"
+					data-text-attr="name"
+					data-text=""
+					data-select="#(formApprovalD.itype??)">
+			</select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批方式</label>
+		<div class="col">
+			<select class="form-control"
+					name="formApprovalD.iapprovalway"
+					data-autoload
+					data-url="admin/dictionary/options?key=approval_type"
+					data-value-attr="sn"
+					data-text-attr="name"
+					data-text=""
+					data-select="#(formApprovalD.iapprovalway??)">
+			</select>
+		</div>
+	</div>
+	<div class="form-group row" id="selfChooseDiv">
+		<label class="col-sm-2 col-form-label"></label>
+		<div class="col">
+			<input class="form-control" value="自己作为审批人处理审批" readonly="readonly"/>
+		</div>
+	</div>
+	<div class="form-group row" id="isupervisortypeDiv">
+		<label class="col-sm-2 col-form-label">发起人的</label>
+		<div class="col">
+			<select class="form-control"
+					name="formApprovalD.isupervisortype"
+					data-autoload
+					data-url="admin/dictionary/options?key=isupervisortype"
+					data-value-attr="sn"
+					data-text-attr="name"
+					data-text=""
+					data-select="#(formApprovalD.isupervisortype??)">
+			</select>
+		</div>
+	</div>
+	<div class="form-group row" id="isdirectonmissingDiv"
+		 data-radio
+		 data-rule="radio"
+		 data-value="#(formApprovalD.isDirectOnMissing??)"
+		 data-name="formApprovalD.isdirectonmissing"
+		 data-default="options_first"
+		 data-width="col-sm-2,col"
+	>
+		<label class="col-sm-2 col-form-label" >找不到主管时，由上级主管代审批</label>
+		<div class="col"  style="padding-top: 1px;">
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isdirectonmissing_true" type="radio" name="formApprovalD.isdirectonmissing" value="true"/>
+				<label for="r_isdirectonmissing_true">是</label>
+			</div>
+
+			<div class="radio radio-primary  radio-inline">
+				<input  id="r_isdirectonmissing_false" type="radio" name="formApprovalD.isdirectonmissing" value="false"/>
+				<label for="r_isdirectonmissing_false">否</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row" id="iskiponDiv"
+		 data-radio
+		 data-rule="radio"
+		 data-handler="changeKiPon"
+		 data-value="#(formApprovalD.iskipon??)"
+		 data-name="formApprovalD.iskipon"
+		 data-default="options_first"
+		 data-width="col-sm-2,col"
+	>
+		<label class="col-sm-2 col-form-label">审批人为空时</label>
+		<div class="col"  style="padding-top: 1px;">
+			<div class="radio radio-primary  radio-inline">
+				<input  id="k_isdirectonmissing_true" type="radio" name="formApprovalD.iskipon" value="1"/>
+				<label for="k_isdirectonmissing_true">自动通过</label>
+			</div>
+
+			<div class="radio radio-primary  radio-inline">
+				<input  id="k_isdirectonmissing_false" type="radio" name="formApprovalD.iskipon" value="2"/>
+				<label for="k_isdirectonmissing_false">指定人员审批</label>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group row" id="ispecuseridDiv">
+		<label class="col-sm-2 col-form-label">选择人员</label>
+		<div class="col">
+		<select class="form-control"
+				data-autoload
+				data-select-type="select2"
+				data-url="admin/approvald/selectPerson"
+				data-text="=请选择="
+				data-value=""
+				data-setvalueto="odeptcode"
+				data-text-attr="cpsnname"
+				data-value-attr="ipersonid"
+				data-select="#(formApprovalD.ispecuserid??)">
+		</select>
+		</div>
+		<input type="hidden" id="odeptcode" autocomplete="off" name="formApprovalD.ispecuserid"
+			   value="#(formApprovalD.ispecuserid??)">
+
+	</div>
+</form>
+
+<div class="form-group row" id="table_line">
+	<label class="col-sm-2 col-form-label"></label>
+	<div class="col">
+		<div class="jbolt_page_content">
+			#render("_table_line.html")
+		</div>
+	</div>
+</div>
+
+<div class="form-group row" id="table_role">
+	<label class="col-sm-2 col-form-label"></label>
+	<div class="col">
+		<div class="jbolt_page_content">
+			#render("_table_role.html")
+		</div>
+	</div>
+</div>
+
+#define js()
+<script>
+
+	hideParentLayerDialogBtn(0);
+	addParentLayerDialogBtn("保存","lay_primary",function () {
+		submitThisForm_approval_d();
+	})
+
+	/**
+	 * 提交方法
+	 */
+	function submitThisForm_approval_d() {
+		// jboltTableSubmit('#jbolt_table_customerd_split_#(pageId)');
+		// if (checkTd()){
+			var tables = [getJboltId(),getJboltId2()];
+			jboltTableSubmitMulti(tables, "/admin/formapprovald/submit", function (res) {
+				// alert("看到这个消息说明多个表格都提交成功了");
+				if (res.state === 'ok') {
+					LayerMsgBox.success(res.msg, 1000, function () {
+						// refreshPjaxContainer();
+						parent.LayerMsgBox.closeAll();
+						parent.refreshPjaxContainer();
+					});
+				} else {
+					LayerMsgBox.alert(res.msg, 2);
+				}
+			});
+		// }
+	}
+
+	/**
+	 * 审批人设置 回调函数
+	 * @param ele
+	 */
+	function changeType(ele) {
+		var val = ele.val();
+		var number = parseInt(val);
+		switch (number) {
+			case 1: //指定人员
+				$("#table_line").show(); //选择人员
+
+				$("#ispecuseridDiv").hide(); //选择指定人员
+				$("#isupervisortypeDiv").hide();  //发起人的
+				$("#isdirectonmissingDiv").hide(); //找不到主管时，由上级主管代审批
+				$("#iskiponDiv").hide(); // 审核人为空时
+				$("#table_role").hide(); //角色
+				$("#selfChooseDiv").hide(); //选择自己作为审批人
+				break;
+			case 2: //部门主管
+				$("#isupervisortypeDiv").show();  //发起人的
+				$("#isdirectonmissingDiv").show(); //找不到主管时，由上级主管代审批
+				$("#iskiponDiv").show(); // 审核人为空时
+				// $("input[name='formApprovalD.iskipon']").get(0).checked=true; //默认自动通过
+
+				$("select[name='formApprovalD.isupervisortype']").val(1); //默认直接主管
+				var checked = $("input[name='formApprovalD.iskipon']").get(1).checked;
+				console.log('checked111',checked);
+				if (checked){
+					$("#ispecuseridDiv").show(); //选择指定人员
+				} else {
+					$("#ispecuseridDiv").hide(); //选择指定人员
+				}
+
+				$("#table_line").hide(); //选择人员
+				$("#table_role").hide(); //角色
+				$("#selfChooseDiv").hide(); //选择自己作为审批人
+				break;
+			case 3: //直属主管
+				$("#isupervisortypeDiv").show();  //发起人的
+				$("#isdirectonmissingDiv").show(); //找不到主管时，由上级主管代审批
+				$("#iskiponDiv").show(); // 审核人为空时
+				// $("input[name='formApprovalD.iskipon']").get(0).checked=true; //默认自动通过
+				$("select[name='formApprovalD.isupervisortype']").val(1); //默认直接主管
+
+				var checked = $("input[name='formApprovalD.iskipon']").get(1).checked;
+				console.log('checked',checked);
+				if (checked){
+					$("#ispecuseridDiv").show(); //选择指定人员
+				} else {
+					$("#ispecuseridDiv").hide(); //选择指定人员
+				}
+
+
+				$("#isdirectonmissingDiv").hide(); //找不到主管时，由上级主管代审批
+				$("#table_line").hide(); //选择人员
+				$("#table_role").hide(); //角色
+				$("#selfChooseDiv").hide(); //选择自己作为审批人
+				break;
+			case 4:
+				$("#selfChooseDiv").show(); //选择自己作为审批人
+
+				$("#ispecuseridDiv").hide(); //选择指定人员
+				$("#isupervisortypeDiv").hide();  //发起人的
+				$("#isdirectonmissingDiv").hide(); //找不到主管时，由上级主管代审批
+				$("#iskiponDiv").hide(); // 审核人为空时
+				$("#table_line").hide(); //选择人员
+				$("#table_role").hide(); //角色
+				break;
+			case 5:
+				$("#table_role").show(); //角色
+
+				$("#ispecuseridDiv").hide(); //选择指定人员
+				$("#isupervisortypeDiv").hide();  //发起人的
+				$("#isdirectonmissingDiv").hide(); //找不到主管时，由上级主管代审批
+				$("#iskiponDiv").hide(); // 审核人为空时
+				$("#table_line").hide(); //选择人员
+				$("#selfChooseDiv").hide(); //选择自己作为审批人
+				break;
+			default:
+				$("#table_line").show(); //选择人员
+
+				$("#ispecuseridDiv").hide(); //选择指定人员
+				$("#isupervisortypeDiv").hide();  //发起人的
+				$("#isdirectonmissingDiv").hide(); //找不到主管时，由上级主管代审批
+				$("#iskiponDiv").hide(); // 审核人为空时
+				$("#table_role").hide(); //角色
+				$("#selfChooseDiv").hide(); //选择自己作为审批人
+				break;
+		}
+	}
+
+	function changeKiPon() {
+		var val = $("input[name='formApprovalD.iskipon']").filter(':checked').val();
+
+		if (val === '1'){
+			$("#ispecuseridDiv").hide(); //选择指定人员
+		} else {
+			$("#ispecuseridDiv").show(); //选择指定人员
+		}
+
+	}
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="approvalDForm")
+#end
+

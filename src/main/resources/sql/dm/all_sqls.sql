@@ -1,7 +1,7 @@
 ### 定义order排序处理规则
 #define order()
 #if(orderColumns?? && orderTypes??)
- #for(col:orderColumns)#(for.first?" order by ":"")#(col) #if(orderTypes!=null&&orderTypes.length>0)#(orderTypes[for.index])#end #(for.last?"":",")#end
+ #for(col:orderColumns)#(for.first?" order by ":"")"#(col)" #if(orderTypes!=null&&orderTypes.length>0)#(orderTypes[for.index])#end #(for.last?"":",")#end
 #end
 #end
 

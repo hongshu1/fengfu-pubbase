@@ -1,0 +1,111 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-12">
+                <form onsubmit="return false;" class="form-inline" id="chooseDataForm"  method="post">
+                    <input type="text" autocomplete="off"  class="form-control"
+                           placeholder="表单编码/名称"
+                           name="keywords" value="" />
+                    <input type="hidden" name="itemHidden" value="#(itemHidden??)"/>
+                    <button type="submit" class="btn btn-light" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-light"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable -->
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_demotpl">
+            {@each datas as data,index}
+            <tr data-id="${data.iformid}">
+                {@if pageSize&&pageSize>0}
+                <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
+                {@else}
+                <td>${+index+1}</td>
+                {@/if}
+                <td>${data.cformsn}</td>
+                <td>${data.cformname}</td>
+            </tr>
+            {@/each}
+        </script>
+        <table class="thead_font_normal"
+               id="chooseDataTable"
+               data-jbolttable
+               data-column-resize="true"
+               data-ajax="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="chooseDataForm"
+               data-page="jboltTablePage_ajax"
+               data-pagesize="50"
+               data-url="/admin/auditformconfig/resourceList"
+               data-rowtpl="jboltTable_demotpl"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="dbClickCheckData"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150" data-column="cformsn">表单编码</th>
+                <th data-width="150" data-column="cformname">表单名称</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script>
+
+    //点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+    function chooseAndInsert(){
+        var datas=getJboltTableCheckedDatas("chooseDataTable");
+        console.log('datas===',datas);
+
+        if(datas){
+            // LayerMsgBox.confirm("确认选择此数据?",function(){
+            var action=parent.DialogUtil.getCurrentTriggerEle();
+            if(isOk(action)){
+                //var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,insertType,false,false,true);
+                var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,'prepend');
+                if(success){
+                    parent.layer.closeAll();
+                    parent.tableDataSuccess();
+                }
+            }
+            // });
+        }
+    }
+
+    /**
+     * 选中按钮
+     */
+    $(function(){
+        hideParentLayerDialogBtn(0);
+        addParentLayerDialogBtn("选中","lay_primary text-white",function(){
+            chooseAndInsert();
+        });
+
+    });
+
+    /**
+     * 双击选中方法
+     * @param table
+     * @param tempTr1
+     * @param trId1
+     * @param rowData
+     */
+    function dbClickCheckData(table,tempTr1,trId1,rowData) {
+        var action=parent.DialogUtil.getCurrentTriggerEle();
+        var success=parent.jboltTableInsertRowsByDialogChooser(action,rowData,'prepend');
+        if(success){
+            parent.layer.closeAll();
+            parent.tableDataSuccess();
+        }
+    }
+
+</script>
+#end

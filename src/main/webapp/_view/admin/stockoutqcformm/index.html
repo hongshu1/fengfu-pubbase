@@ -181,10 +181,10 @@
   /*
   * 生成
   * */
-  function createTable(iautoid,cqcformname) {
+  function createTable(iautoid, cqcformname) {
     var para = {
       iautoid: iautoid,
-      cqcformname:cqcformname
+      cqcformname: cqcformname
     }
 
     Ajax.post('/admin/stockoutqcformm/createTable', para, function (res) {

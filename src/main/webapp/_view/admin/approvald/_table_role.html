@@ -1,0 +1,150 @@
+
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="PheDeliveryLines_tpl2_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+             <td>${data.rolesn}</td>
+            <td>${data.rolename}</td>
+            <td>
+                <a  tooltip  href="admin/approvald/roleUsers/${data.iroleid}" data-dialogbtn data-btn="close"
+                    data-scroll="yes"
+                    data-title="用户列表" data-area="90%,90%" class="jbolt_table_btn"><i
+                        class="fa fa-users c-danger"></i></a>
+            </td>
+            <td style="display: none">${data.iroleid}</td>
+        </tr>
+    {@/each}
+</textarea>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- 工具条 toolbar -->
+                <div class="jbolt_table_toolbar" id="PheDeliveryLines_toolbar2_#(pageId)" style="display: flex">
+                    <div class="" role="group" aria-label="btn-group">
+                        <button onclick="chooseRole(this)"
+                                data-url="/admin/approvald/chooseRole"
+                                data-dialogbtn
+                                data-link-para-ele="#roleHidden" id="buttonDialog_#(pageId)"
+                                data-area="90%,90%" data-btn="选中,取消" data-title="选择角色"
+                                class="btn btn-success btn-sm"><i
+                                class="fa fa-folder-open-o"></i> 选择角色
+                        </button>
+                        <button onclick="jboltTableRemoveCheckedRow(this, true)"
+                                class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                        <input type="hidden" id="roleHidden" name="roleHidden" value="#(roleHidden??)"/>
+                    </div>
+                </div>
+
+                <table class="jbolt_table jbolt_main_table  table-center"
+                       id="jbolt_table_pheDeliveryLines2_#(pageId)"
+                       data-jbolttable
+                       data-ajax-success-handler="tableDataSuccess2()"
+                       data-width="auto"
+                       data-height="fill"
+                       data-ajax="true"
+                       data-page="PheDeliveryLines2_page_#(pageId)"
+                       data-column-prepend="1:checkbox:true"
+                       data-toolbar="PheDeliveryLines_toolbar2_#(pageId)"
+                       data-url="admin/approvald/roleDatas"
+                       data-conditions-form="approvalDForm"
+                       data-rowtpl="PheDeliveryLines_tpl2_#(pageId)"
+                       data-column-resize="true"
+                       data-editable="true"
+                       data-editable-option="getEditableTableOptions2_#(pageId)"
+                >
+                    <thead>
+                    <tr>
+                        <th data-width="60" data-column="index">序号</th>
+                        <th data-min-width="100" data-column="rolesn">角色编码</th>
+                        <th data-min-width="200" data-column="rolename">角色名称</th>
+                        <th data-min-width="200" data-column="rolesuser">用户列表</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    /**
+     * 打开选择角色dialog
+     * */
+    function chooseRole(ele) {
+        tableDataSuccess2();
+        jboltTableChooseAndInsert(ele);
+    }
+
+
+    /**
+     * 返回 jbolttable的id
+     * */
+    function getJboltId2(){
+        var id = "jbolt_table_pheDeliveryLines2_#(pageId)";
+        return id;
+    }
+
+    /**
+     * 刷新jbolttable
+     * */
+    function RefreshJboltTable() {
+        jboltTableRefresh(getJboltId2());
+    }
+
+    /**
+     * 获取已选数据函数
+     * */
+    function tableDataSuccess2() {
+        let result = jboltTableGetAllDatas(getJboltId2(), ["iroleid"]);
+        console.log('result==>',result);
+        let array = new Array();
+        if (result != null) {
+            for (let i = 0; i < result.length; i++) {
+                array.push("'" + result[i].iroleid + "'");
+            }
+            let codes = array.join(',');
+            $("#roleHidden").val(codes);
+        }
+        console.log('iroleid===',$("#roleHidden").val());
+    }
+
+</script>
+
+<script>
+    function getEditableTableOptions2_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
+            insertDefaultValues: {username:'#(JBoltUserKit.getUserName())'},
+            submit: {
+                withForm: ["approvalDForm"],
+                type:"multi",//cell|all|multi
+                name:"table2"
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iAutoId"
+                },
+                rolesn: {
+                    type: "input",
+                    submitAttr:"roleSn"
+                },
+                rolename: {
+                    type:"input",
+                    submitAttr: "roleName"
+                },
+                iroleid: {
+                    submitAttr: "iRoleId"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+
+</script>
+
+

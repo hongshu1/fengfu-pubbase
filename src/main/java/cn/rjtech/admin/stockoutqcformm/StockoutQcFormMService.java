@@ -37,6 +37,7 @@ import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
 import cn.rjtech.enums.CMeasurePurposeEnum;
+import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.model.momdata.StockoutDefect;
 import cn.rjtech.model.momdata.StockoutQcFormD;
 import cn.rjtech.model.momdata.StockoutQcFormM;
@@ -114,9 +115,9 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
                 stockoutQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
                 stockoutQcFormD.setIStockoutQcFormMid(iautoid);//来料检id
                 stockoutQcFormD.setIQcFormId(iQcFormId);//检验表格ID
-                stockoutQcFormD.setIFormParamId(record.getLong("iFormParamId"));//检验项目ID
+                stockoutQcFormD.setIFormParamId(record.getLong("iqcformtableitemid"));//检验项目ID
                 stockoutQcFormD.setISeq(record.get("iSeq"));
-                stockoutQcFormD.setISubSeq(record.get("iSubSeq"));
+//                stockoutQcFormD.setISubSeq(record.get("iSubSeq"));
                 stockoutQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
                 stockoutQcFormD.setIType(record.get("iType"));
                 stockoutQcFormD.setIStdVal(record.get("iStdVal"));
@@ -213,7 +214,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
             update(stockoutQcFormM);
 
             //isok=0，代表检验结果不合格，生成在库异常品记录
-            if (isok.equals("0")) {
+            if (Integer.valueOf(isok).equals(IsOkEnum.NO.getValue())) {
                 StockoutDefect defect = stockoutDefectService
                     .findStockoutDefectByiStockoutQcFormMid(stockqcformmiautoid);
                 if (null == defect) {
@@ -303,7 +304,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         Boolean result = achiveEditSerializeSubmitList(serializeSubmitList, stockqcformmiautoid,
             JboltPara.getString("cmeasurepurpose"), JboltPara.getString("cmeasurereason"),
             JboltPara.getString("cmeasureunit"), JboltPara.getString("cmemo"),
-            JboltPara.getString("cdcno"), JboltPara.getString("isok"));
+            JboltPara.getString("cdcno"), isok);
 
         return ret(result);
     }
@@ -448,8 +449,9 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         //设变号
         stockoutQcFormM.setCDcNo(cdcno);
         //是否合格
-        stockoutQcFormM.setIsOk(isok.equalsIgnoreCase("0") ? false : true);
-        stockoutQcFormM.setIStatus(isok.equalsIgnoreCase("0") ? 2 : 3);
+        Integer isOk = Integer.valueOf(isok);
+        stockoutQcFormM.setIsOk(IsOkEnum.toEnum(isOk).getText());
+        stockoutQcFormM.setIStatus(isOk.equals(IsOkEnum.NO.getValue()) ? 2 : 3);
         stockoutQcFormM.setIsCompleted(true);
         stockoutQcFormM.setIsCpkSigned(false);
     }
