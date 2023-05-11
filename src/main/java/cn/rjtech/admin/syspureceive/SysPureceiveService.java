@@ -2,23 +2,21 @@ package cn.rjtech.admin.syspureceive;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.SysPureceive;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
@@ -31,7 +29,9 @@ import java.util.List;
  * @date: 2023-05-10 10:01
  */
 public class SysPureceiveService extends BaseService<SysPureceive> {
+    
 	private final SysPureceive dao=new SysPureceive().dao();
+    
 	@Override
 	protected SysPureceive dao() {
 		return dao;
@@ -151,8 +151,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-		Page<Record> paginate = dbTemplate("syspureceive.recpor", kv).paginate(pageNumber, pageSize);
-		return paginate;
+        return dbTemplate("syspureceive.recpor", kv).paginate(pageNumber, pageSize);
 	}
 	/**
 	 * 批量删除主从表
@@ -281,4 +280,5 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 	public List<Record> getVenCodeDatas(Kv kv) {
 		return dbTemplate(u8SourceConfigName(), "syspureceive.venCode", kv).find();
 	}
+    
 }
