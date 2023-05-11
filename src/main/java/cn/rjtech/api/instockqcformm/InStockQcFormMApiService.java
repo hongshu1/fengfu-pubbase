@@ -68,7 +68,7 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
         //1、查找子页面需要的传参
         InStockQcFormM inStockQcFormM = service.findById(iautoid);
         Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
-        record.set("cbarcode",inStockQcFormM.getCBarcode());
+        record.set("cbarcode", inStockQcFormM.getCBarcode());
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -123,12 +123,12 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
     /*
      * 点击编辑按钮，跳转到编辑页面
      * */
-    public JBoltApiRet jumpEdit(Long iautoid){
+    public JBoltApiRet jumpEdit(Long iautoid) {
         InStockQcFormM inStockQcFormM = service.findById(iautoid);
         Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
         List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(inStockQcFormM.getIAutoId());
         record.set("size", stockoutqcformlist.size());
-        record.set("cbarcode",inStockQcFormM.getCBarcode());
+        record.set("cbarcode", inStockQcFormM.getCBarcode());
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
