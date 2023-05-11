@@ -1,0 +1,27 @@
+<form onsubmit="return false;" id="approvaldUserForm" action="#(action)" method="post">
+<input type="hidden" name="approvaldUser.iautoid" value="#(approvaldUser.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批节点ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入审批节点ID" maxlength="19" name="approvaldUser.iapprovaldid" value="#(approvaldUser.iapprovaldid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">顺序</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入顺序" maxlength="19" name="approvaldUser.iseq" value="#(approvaldUser.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入审批人ID" maxlength="19" name="approvaldUser.iuserid" value="#(approvaldUser.iuserid??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="approvaldUserForm")
+#end
+
