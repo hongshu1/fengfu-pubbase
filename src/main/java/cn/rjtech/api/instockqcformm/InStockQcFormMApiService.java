@@ -116,6 +116,7 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
         InStockQcFormM inStockQcFormM = service.findById(iautoid);
         Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
         List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(inStockQcFormM.getIAutoId());
+        record.set("cbarcode", inStockQcFormM.getCBarcode());
         record.set("size", stockoutqcformlist.size());
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }

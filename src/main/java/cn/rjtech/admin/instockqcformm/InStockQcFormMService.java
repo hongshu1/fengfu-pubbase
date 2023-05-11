@@ -271,7 +271,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                 inStockQcFormD.setIQcFormId(iQcFormId);//检验表格ID
                 inStockQcFormD.setIFormParamId(record.getLong("iqcformtableitemid"));//Bd_QcFormTableItem的iautoid
                 inStockQcFormD.setISeq(record.get("iSeq"));
-                inStockQcFormD.setISubSeq(record.get("iSeq"));
+//                inStockQcFormD.setISubSeq(record.get("iSeq"));
                 inStockQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
                 inStockQcFormD.setIType(record.get("iType"));
                 inStockQcFormD.setIStdVal(record.get("iStdVal"));

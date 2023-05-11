@@ -56,7 +56,7 @@ SELECT t1.*,
        t2.cQcItemName,
        t3.cQcParamName,
        t4.iQcFormTableParamId,
-       t5.iAutoId as iFormParamId,
+       t4.iAutoId as iqcformtableitemid,
        t5.iStdVal,
        t5.iMaxVal,
        t5.iMinVal,
@@ -78,7 +78,7 @@ ORDER BY t1.iSeq ASC
 #sql("findChecoutListByIformParamid")
 SELECT
     t1.*,t4.cQcParamName,t5.cQcItemName
-FROM PL_InStockQcFormD t1
+FROM PL_StockoutQcFormD t1
          LEFT JOIN Bd_QcFormTableItem t2 on t1.iFormParamId = t2.iAutoId
          LEFT JOIN Bd_QcFormParam t3 ON t2.iQcFormParamId = t3.iAutoId
          LEFT JOIN Bd_QcParam t4 ON t3.iQcParamId = t4.iAutoId

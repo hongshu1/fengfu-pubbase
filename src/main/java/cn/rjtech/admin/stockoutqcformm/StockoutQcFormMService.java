@@ -115,9 +115,9 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
                 stockoutQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
                 stockoutQcFormD.setIStockoutQcFormMid(iautoid);//来料检id
                 stockoutQcFormD.setIQcFormId(iQcFormId);//检验表格ID
-                stockoutQcFormD.setIFormParamId(record.getLong("iFormParamId"));//检验项目ID
+                stockoutQcFormD.setIFormParamId(record.getLong("iqcformtableitemid"));//检验项目ID
                 stockoutQcFormD.setISeq(record.get("iSeq"));
-                stockoutQcFormD.setISubSeq(record.get("iSubSeq"));
+//                stockoutQcFormD.setISubSeq(record.get("iSubSeq"));
                 stockoutQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
                 stockoutQcFormD.setIType(record.get("iType"));
                 stockoutQcFormD.setIStdVal(record.get("iStdVal"));

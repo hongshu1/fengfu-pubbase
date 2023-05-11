@@ -128,9 +128,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             rcvDocQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
             rcvDocQcFormD.setIRcvDocQcFormMid(iautoid);//来料检id
             rcvDocQcFormD.setIQcFormId(iQcFormId);//检验表格ID
-            rcvDocQcFormD.setIFormParamId(record.getLong("iFormParamId"));//检验项目ID
+            rcvDocQcFormD.setIFormParamId(record.getLong("iqcformtableitemid"));//检验项目ID
             rcvDocQcFormD.setISeq(record.get("iSeq"));
-            rcvDocQcFormD.setISubSeq(record.get("iSubSeq"));
+//            rcvDocQcFormD.setISubSeq(record.get("iSubSeq"));
             rcvDocQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
             rcvDocQcFormD.setIType(record.get("iType"));
             rcvDocQcFormD.setIStdVal(record.get("iStdVal"));
@@ -163,7 +163,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     public List<Record> getCheckOutTableDatas(Kv kv) {
         List<Record> recordList = clearZero(dbTemplate("rcvdocqcformm.findChecoutListByIformParamid", kv).find());
         recordList.stream().forEach(record -> {
-            record.set("cvaluelist", 10);
             record.set("cvaluelist", getCvaluelist());
         });
         return recordList;
@@ -227,7 +226,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             update(docQcFormM);
 
             //判断生成异常品单，还是采购入库单
-            Ret ret = saveSysPuinstore(isok, docqcformmiautoid, docQcFormM);
+            saveSysPuinstore(isok, docqcformmiautoid, docQcFormM);
             return true;
         });
         return result;
@@ -236,23 +235,24 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     /*
      * 判断生成异常品单，还是采购入库单
      * */
-    public Ret saveSysPuinstore(String isok, Long docqcformmiautoid, RcvDocQcFormM docQcFormM) {
-        Ret ret = new Ret();
-        ret.isOk();
+    public Boolean saveSysPuinstore(String isok, Long docqcformmiautoid, RcvDocQcFormM docQcFormM) {
+        boolean flag = true;
         if (Integer.valueOf(isok).equals(IsOkEnum.NO.getValue())) {//如果结果为不合格，记录不良品
             RcvDocDefect defect = rcvDocDefectService
                 .findStockoutDefectByiRcvDocQcFormMid(docqcformmiautoid);
             if (null == defect) {
                 RcvDocDefect rcvDocDefect = new RcvDocDefect();
                 rcvDocDefectService.saveRcvDocDefectModel(rcvDocDefect, docQcFormM);
-                ret = rcvDocDefectService.save(rcvDocDefect);
+                Ret success = rcvDocDefectService.save(rcvDocDefect);
+                flag = success.isOk();
             }
         } else if (Integer.valueOf(isok).equals(IsOkEnum.YES.getValue())) {//如果合格，自动生成采购入库单
             SysPuinstore sysPuinstore = new SysPuinstore();
             saveSysPuinstoreModel(sysPuinstore, docQcFormM);
-            //ret = sysPuinstoreService.save(sysPuinstore);
+            // Ret success = sysPuinstoreService.save(sysPuinstore);
+            //flag =success.isOk();
         }
-        return ret;
+        return flag;
     }
 
     /*

@@ -120,12 +120,12 @@
         <table id="jbolt_table_checkouttableparam_split__#(pageId)2" border="3"
                style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
           <div style="left: 60px;margin-left:50px;height: 50px;width: 500px;">
-            <button type="button" onclick="inserRow(10)" class="btn btn-success"
+            <button type="button" onclick="insertRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
-            <img data-switchbtn data-value="#(rcvdocqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
+            <!--<img data-switchbtn data-value="#(rcvdocqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
                  data-url="admin/rcvdocqcformm/toggleIsCpkSigned/#(rcvdocqcformm.iautoid??)" style="margin-left: 50px;"/>
-            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>-->
           </div>
         </table>
 
@@ -208,14 +208,10 @@
                  data-toolbar="rcvdocqcformmform_toolbar_#(pageId)">
             <thead>
             <tr class="colspan biaotoucolor">
-              <th colspan="4">检查内容</th>
-              <th colspan="22">检查记录</th>
-            </tr>
-            <tr class="colspan biaotoucolor">
               <th data-column="index">序号</th>
-              <th style="width: 150px;" data-column="cqcitemname">检查项目</th>
-              <th style="width: 220px;">规格公差</th>
-              <th style="width: 120px">检查方法</th>
+              <th style="width: 120px;" data-column="cqcitemname">检查项目</th>
+              <th style="width: 220px;" data-column="coptions">规格公差</th>
+              <th style="width: 120px" data-column="cqcparamname">检查方法</th>
               #for(i = 1; i <= 10; i++)
               <th style="width: 80px">#(i)</th>
               #end
@@ -343,7 +339,12 @@
       }
     }
     clearJboltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
-    jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, false, false);
+    var success = jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, false, false);
+    if (success){
+      window.alert("新增页成功");
+    } else {
+      window.alert("新增页失败");
+    }
   }
 </script>
 

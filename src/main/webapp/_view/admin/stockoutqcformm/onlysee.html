@@ -26,7 +26,7 @@
           </tr>
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r1">
             <td height="26" class="x74" style="height:19.5pt;">客户部番</td>
-            <td >#(record.cinvcode1??)</td>
+            <td>#(record.cinvcode1??)</td>
             <td colspan="4" rowspan="2" height="54" class="x74"
                 style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;height:40.5pt;">
               <div class="form-group row  col-8"
@@ -124,6 +124,15 @@
           </tr>
         </table>
 
+        <table id="jbolt_table_checkouttableparam_split__#(pageId)2" border="3"
+               style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
+          <div style="margin-top: 20px">
+            <!--data-url="admin/rcvdocqcformm/toggleIsCpkSigned/#(rcvdocqcformm.iautoid??)"-->
+            <img data-switchbtn data-value="#(stockoutqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
+                 onclick="changeCpkStatus('#(stockoutqcformm.iscpksigned??)')" style="margin-left: 50px;"/>
+            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+          </div>
+        </table>
         <!-- 检验表格项目表的的数据模板定义-->
         <textarea class="jb_tpl_box" id="checkoutType_tpl_#(pageId)">
           {@each datas as data,index}
@@ -186,6 +195,7 @@
                  data-jbolttable
                  data-width="fill"
                  data-height="fill"
+                 data-editable="true"
                  data-ajax="true"
                  data-conditions-form="stockoutqcformmform_#(pageId)"
                  data-url="admin/stockoutqcformm/getonlyseeDatas?iautoid=#(stockoutqcformm.iAutoId??)"
@@ -193,10 +203,6 @@
                  data-copy-to-excel="false"
                  data-toolbar="stockoutqcformmform_toolbar_#(pageId)">
             <thead>
-            <tr class="colspan biaotoucolor">
-              <th colspan="4">检查内容</th>
-              <th colspan="22">检查记录</th>
-            </tr>
             <tr class="colspan biaotoucolor">
               <th data-column="index">序号</th>
               <th style="width: 150px;" data-column="cqcitemname">检查项目</th>
@@ -300,6 +306,35 @@
     background-color: #b1dfbb;
   }
 </style>
+
+<script>
+  /*
+   * 切换cpk的状态
+   * */
+  function changeCpkStatus(status) {
+    let jboltTableAllDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
+    for (let i = 0; i < jboltTableAllDatas.length; i++) {
+      let jbotTableData = jboltTableAllDatas[i];
+      if (jbotTableData.itype == '1') {
+        let istdval = jbotTableData.istdval;//标准值
+        //用标准值计算cvaluelist每个cvalue的公差
+        let cvaluelist = jbotTableData.cvaluelist;
+        for (let j = 0; j < cvaluelist.length; j++) {
+          let cvalue = cvaluelist[j].cvalue;
+          if (cvalue) {
+            //开始计算,比标准值大显示整数，比标准值小显示负数
+            let number = cvalue - istdval;
+            cvaluelist[j].cvalue = number.toFixed(1);
+          }
+        }
+        jboltTableAllDatas[i].cvaluelist = cvaluelist;
+      }
+    }
+    //jboltTableInsertRow
+    clearJboltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
+    jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, false, false);
+  }
+</script>
 
 <script>
 
