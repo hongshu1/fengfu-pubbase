@@ -131,6 +131,7 @@
             <img data-switchbtn data-value="#(stockoutqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
                  onclick="changeCpkStatus('#(stockoutqcformm.iscpksigned??)')" style="margin-left: 50px;"/>
             <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+            <input type="text" hidden id="getiscpksigned" value="#(stockoutqcformm.iscpksigned??)"/>
           </div>
         </table>
         <!-- 检验表格项目表的的数据模板定义-->
@@ -158,7 +159,7 @@
               <input name="cA01" type="text" class="cA01" title="${data.coptions}" value="${value.cvalue}"/>
               {@else if data.itype == '3'}
               <select name="cA01"
-                      class="form-control"
+                      class="form-control cA01"
                       data-url="admin/dictionary/options?key=overallsize"
                       data-autoload
                       data-text="=整体尺寸="
@@ -174,14 +175,14 @@
                       data-select-type="select2"
                       data-select="${value.cvalue}" title="=整体外观="></select>
               {@else if data.itype == '6'}
-              <select name="cA01" class="form-control" data-url="admin/dictionary/options?key=overallsize" data-autoload
+              <select name="cA01" class="form-control cA01" data-url="admin/dictionary/options?key=overallsize" data-autoload
                       data-text="=整体尺寸=" data-value-attr="sn" value="${value.cvalue}" data-select="#(data.coptions??)"></select>
               {@else if data.itype == '7'}
               <input name="cA01" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
-                     class="form-control" placeholder="结束日期" data-tips="结束时间" maxlength="23"
+                     class="form-control cA01" placeholder="结束日期" data-tips="结束时间" maxlength="23"
                      value="${value.cvalue}">
               {@else data.itype == '8'}
-              <input name="cA01" type="text" class="form-control" data-date data-type="time" data-fmt="HH:mm:ss"
+              <input name="cA01" type="text" class="form-control cA01" data-date data-type="time" data-fmt="HH:mm:ss"
                      value="${value.cvalue}">
               {@/if}
             </td>
@@ -205,11 +206,11 @@
             <thead>
             <tr class="colspan biaotoucolor">
               <th data-column="index">序号</th>
-              <th style="width: 150px;" data-column="cqcitemname">检查项目</th>
-              <th style="width: 220px;">规格公差</th>
-              <th style="width: 120px">检查方法</th>
+              <th style="width: 120px;" data-column="cqcitemname">检查项目</th>
+              <th style="width: 220px;" data-column="coptions">规格公差</th>
+              <th style="width: 120px" data-column="cqcparamname">检查方法</th>
               #for(i = 1; i <= stockoutqcformlist.size(); i++)
-              <th style="width: 80px">#(i)</th>
+              <th class="cA01">#(i)</th>
               #end
             </tr>
             </thead>
@@ -312,27 +313,36 @@
    * 切换cpk的状态
    * */
   function changeCpkStatus(status) {
-    let jboltTableAllDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
-    for (let i = 0; i < jboltTableAllDatas.length; i++) {
-      let jbotTableData = jboltTableAllDatas[i];
-      if (jbotTableData.itype == '1') {
-        let istdval = jbotTableData.istdval;//标准值
-        //用标准值计算cvaluelist每个cvalue的公差
-        let cvaluelist = jbotTableData.cvaluelist;
-        for (let j = 0; j < cvaluelist.length; j++) {
-          let cvalue = cvaluelist[j].cvalue;
-          if (cvalue) {
-            //开始计算,比标准值大显示整数，比标准值小显示负数
-            let number = cvalue - istdval;
-            cvaluelist[j].cvalue = number.toFixed(1);
+    let cpkvalue = $("#getiscpksigned").val();
+    if (cpkvalue == '0') {
+      let jboltTableAllDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
+      for (let i = 0; i < jboltTableAllDatas.length; i++) {
+        let jbotTableData = jboltTableAllDatas[i];
+        if (jbotTableData.itype == '1') {
+          let istdval = jbotTableData.istdval;//标准值
+          //用标准值计算cvaluelist每个cvalue的公差
+          let cvaluelist = jbotTableData.cvaluelist;
+          for (let j = 0; j < cvaluelist.length; j++) {
+            let cvalue = cvaluelist[j].cvalue;
+            if (cvalue) {
+              //开始计算,比标准值大显示整数，比标准值小显示负数
+              let number = cvalue - istdval;
+              cvaluelist[j].cvalue = number.toFixed(1);
+            }
           }
+          jboltTableAllDatas[i].cvaluelist = cvaluelist;
         }
-        jboltTableAllDatas[i].cvaluelist = cvaluelist;
       }
+      //jboltTableInsertRow
+      clearJboltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
+      jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, false, false);
+
+      $("#getiscpksigned").val('1');
+
+    } else if (cpkvalue == '1') {
+      refreshJBoltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
+      $("#getiscpksigned").val('0');
     }
-    //jboltTableInsertRow
-    clearJboltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
-    jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, false, false);
   }
 </script>
 
