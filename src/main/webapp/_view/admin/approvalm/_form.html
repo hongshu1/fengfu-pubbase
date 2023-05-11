@@ -1,26 +1,24 @@
 #set(pageId=RandomUtil.random(6))
-<style>
+<!--<style>
 	.jbolt_table_body{
 		height: 230px!important;
 		min-height: 230px !important;
 	}
-</style>
+</style>-->
+
 <div class="jbolt_righttop_btn_group" style="top:0px;margin-left: auto" id="jbolt_righttop_btn_group_#(pageId)">
-
-	<button onclick="submitTableAndForm_#(pageId)(this)" data-value="save"
-			class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存
-	</button>
-
-	<button onclick="dialogClose()" class="btn btn-danger btn-sm"><i class="fa fa-close"></i> 关闭
-	</button>
+	<button onclick="submitTableAndForm_#(pageId)(this)" data-value="save" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存</button>
+	<button onclick="dialogClose()" class="btn btn-danger btn-sm"><i class="fa fa-close"></i> 关闭</button>
 </div>
+
 <form onsubmit="return false;" id="approvalMForm" action="#(action)" method="post">
-<input type="hidden" name="approvalM.iautoid" value="#(approvalM.iautoid??)" />
+    
+    <input type="hidden" name="approvalM.iautoid" value="#(approvalM.iautoid??)" />
+    
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">审批流名称</label>
 		<div class="col">
-			<input type="text" data-rule="required" data-with-clearbtn="true" autocomplete="off"  class="form-control"
-				   data-rule="required" placeholder="请输入审批流名称" maxlength="50" name="approvalM.capprovalname" value="#(approvalM.capprovalname??)"/>
+			<input type="text" data-rule="required" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审批流名称" maxlength="50" name="approvalM.capprovalname" value="#(approvalM.capprovalname??)"/>
 		</div>
 	</div>
 

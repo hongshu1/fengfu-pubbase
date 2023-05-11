@@ -11,69 +11,55 @@
     {@/each}
 </textarea>
 
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <!-- 工具条 toolbar -->
-                <div class="jbolt_table_toolbar" id="PheDeliveryLines_toolbar_#(pageId)" style="display: flex">
-                    <div class="" role="group" aria-label="btn-group">
-                        <button onclick="jboltTableChooseAndInsert(this)"
-                                data-url="/admin/approvalform/chooseForm"
-                                data-dialogbtn
-                                data-link-para-ele="#itemHidden" id="buttonDialog_#(pageId)"
-                                data-area="90%,90%" data-btn="选中,取消" data-title="选择表单"
-                                class="btn btn-success btn-sm"><i
-                                class="fa fa-folder-open-o"></i> 选择表单
-                        </button>
-                        <button onclick="jboltTableRemoveCheckedRow(this, true)"
-                                class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
-                        <input type="hidden" id="itemHidden" name="itemHidden" value="#(itemHidden??)"/>
-                    </div>
-                </div>
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="PheDeliveryLines_toolbar_#(pageId)" style="display: flex">
+    <div class="" role="group" aria-label="btn-group">
+        <button onclick="jboltTableChooseAndInsert(this)"
+                data-url="/admin/approvalform/chooseForm"
+                data-dialogbtn
+                data-link-para-ele="#itemHidden" id="buttonDialog_#(pageId)"
+                data-area="90%,90%" data-btn="选中,取消" data-title="选择表单"
+                class="btn btn-success btn-sm"><i class="fa fa-folder-open-o"></i> 选择表单</button>
+        <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
 
-                <table class="jbolt_table jbolt_main_table  table-center"
-                       id="jbolt_table_pheDeliveryLines_#(pageId)"
-                       data-jbolttable
-                       data-ajax-success-handler="tableDataSuccess()"
-                       data-width="auto"
-                       data-height="fill"
-                       data-ajax="true"
-                       data-page="PheDeliveryLines_page_#(pageId)"
-                       data-column-prepend="1:checkbox:true"
-                       data-toolbar="PheDeliveryLines_toolbar_#(pageId)"
-                       data-url="admin/approvalform/datas"
-                       data-conditions-form="approvalMForm"
-                       data-rowtpl="PheDeliveryLines_tpl_#(pageId)"
-                       data-column-resize="true"
-                       data-editable="true"
-                       data-editable-option="getEditableTableOptions_#(pageId)"
-                >
-                    <thead>
-                    <tr>
-                        <th data-width="60" data-column="index">序号</th>
-                        <th data-min-width="200" data-column="cformsn">表单编码</th>
-                        <th data-min-width="200" data-column="cformname">表单名称</th>
-
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
+        <input type="hidden" id="itemHidden" name="itemHidden" value="#(itemHidden??)"/>
     </div>
 </div>
 
+<table class="jbolt_table jbolt_main_table  table-center"
+       id="jbolt_table_pheDeliveryLines_#(pageId)"
+       data-jbolttable
+       data-ajax-success-handler="tableDataSuccess()"
+       data-width="auto"
+       data-height="250"
+       data-ajax="true"
+       data-page="PheDeliveryLines_page_#(pageId)"
+       data-column-prepend="1:checkbox:true"
+       data-toolbar="PheDeliveryLines_toolbar_#(pageId)"
+       data-url="admin/approvalform/datas"
+       data-conditions-form="approvalMForm"
+       data-rowtpl="PheDeliveryLines_tpl_#(pageId)"
+       data-column-resize="true"
+       data-editable="true"
+       data-editable-option="getEditableTableOptions_#(pageId)"
+>
+    <thead>
+    <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-min-width="200" data-column="cformsn">表单编码</th>
+        <th data-min-width="200" data-column="cformname">表单名称</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
 <script>
-
-
-
+    
     /**
      * 返回 jbolttable的id
      * */
     function getJboltId(){
-        var id = "jbolt_table_pheDeliveryLines_#(pageId)";
-        return id;
+        return "jbolt_table_pheDeliveryLines_#(pageId)";
     }
 
     /**
@@ -88,7 +74,7 @@
      * */
     function tableDataSuccess() {
         let result = jboltTableGetAllDatas(getJboltId(), ["iformid"]);
-        let array = new Array();
+        let array = [];
         if (result != null) {
             for (let i = 0; i < result.length; i++) {
                 array.push("'" + result[i].iformid + "'");
