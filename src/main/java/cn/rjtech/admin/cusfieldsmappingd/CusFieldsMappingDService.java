@@ -2,19 +2,24 @@ package cn.rjtech.admin.cusfieldsmappingd;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.util.JBoltListMap;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingdcodingrule.CusfieldsmappingdCodingruleService;
 import cn.rjtech.admin.cusfieldsmappingm.CusFieldsMappingMService;
 import cn.rjtech.admin.formfield.FormFieldService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.CusFieldsMappingRuleEnum;
+import cn.rjtech.enums.CusfieldsMappingCharEnum;
+import cn.rjtech.enums.SeparatorCharEnum;
 import cn.rjtech.model.momdata.CusFieldsMappingD;
 import cn.rjtech.model.momdata.CusFieldsMappingM;
+import cn.rjtech.model.momdata.CusfieldsmappingdCodingrule;
 import cn.rjtech.util.AutoExcelUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -28,8 +33,10 @@ import net.fenghaitao.parameters.ImportPara;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -68,15 +75,14 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
      * @param pageSize             每页几条数据
      * @param icusfieldsmappingmid
      * @param keywords             关键词
-     * @param isEncoded            是否编码字段：0. 否 1. 是
+     * @param isEncoded            是否转换编码：0. 否 1. 是
      * @param isEnabled            是否启用：0. 否 1. 是
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Long icusfieldsmappingmid, String keywords, Boolean isEncoded, Boolean isEnabled) {
         // 创建sql对象
         Sql sql = selectSql()
-                .select("d.*, f.cfieldname ")
+                .select("d.*")
                 .from(table(), "d")
-                .leftJoin(formFieldService.table(), "f", "d.iformfieldid = f.iautoid ")
                 .page(pageNumber, pageSize);
 
         sql.eq("d.icusfieldsmappingmid", icusfieldsmappingmid);
@@ -135,6 +141,16 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         CusFieldsMappingD dbCusFieldsMappingD = findById(cusFieldsMappingD.getIAutoId());
         if (dbCusFieldsMappingD == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
+        }
+
+        // 非定制
+        if (CusFieldsMappingRuleEnum.toEnum(cusFieldsMappingD.getIRuleType()) == CusFieldsMappingRuleEnum.NONE) {
+            if (!cusFieldsMappingD.getIsEncoded()) {
+                cusFieldsMappingD.setCDemo(StrUtil.EMPTY);
+            }
+        } else {
+            cusFieldsMappingD.setIsEncoded(false);
+            cusFieldsMappingD.setCDemo(StrUtil.EMPTY);
         }
 
         tx(() -> {
@@ -265,6 +281,16 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         CusFieldsMappingD dbCusFieldsMappingD = findById(cusFieldsMappingD.getIAutoId());
         ValidationUtils.notNull(dbCusFieldsMappingD, JBoltMsg.DATA_NOT_EXIST);
 
+        // 非定制
+        if (CusFieldsMappingRuleEnum.toEnum(cusFieldsMappingD.getIRuleType()) == CusFieldsMappingRuleEnum.NONE) {
+            if (!cusFieldsMappingD.getIsEncoded()) {
+                cusFieldsMappingD.setCDemo(StrUtil.EMPTY);
+            }
+        } else {
+            cusFieldsMappingD.setIsEncoded(false);
+            cusFieldsMappingD.setCDemo(StrUtil.EMPTY);
+        }
+
         ValidationUtils.isTrue(cusFieldsMappingD.update(), ErrorMsg.UPDATE_FAILED);
 
         // 删除
@@ -295,27 +321,105 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
      * 导入映射
      */
     public Ret getImportDatas(File file, String cformatname) {
-        List<ImportPara> importParas = new ArrayList<ImportPara>() {{
-            add(new ImportPara(0, genFieldSettings(cformatname), 1, 2));
-        }};
-        
-        DataSet dataSet = AutoExcelUtil.readExcel(file.getAbsolutePath(), importParas);
-        List<Map<String, Object>> sheet1 = dataSet.get("sheet1");
-
-        ValidationUtils.notEmpty(sheet1, "导入数据不能为空");
-        return successWithData(sheet1);
-    }
-
-    public List<FieldSetting> genFieldSettings(String cformatname) {
         // 根据指定的模板名，获取导入的字段
         CusFieldsMappingM m = cusFieldsMappingMService.findByCformatName(cformatname);
         ValidationUtils.notNull(m, "导入模板不存在");
         ValidationUtils.isTrue(!m.getIsDeleted(), "导入模板已被删除");
-        
+
         // 获取导入字段列表
         List<CusFieldsMappingD> cusFieldsMappingDs = findByIcusFieldsMappingMid(m.getIAutoId());
         ValidationUtils.notEmpty(cusFieldsMappingDs, "导入字段列表未定义");
 
+        List<ImportPara> importParas = new ArrayList<ImportPara>() {{
+            add(new ImportPara(0, genFieldSettings(cusFieldsMappingDs), 1, 2));
+        }};
+        
+        DataSet dataSet = AutoExcelUtil.readExcel(file.getAbsolutePath(), importParas);
+        List<Map<String, Object>> rows = dataSet.get("sheet1");
+        
+        ValidationUtils.notEmpty(rows, "导入数据不能为空");
+
+        // 转换编码规则
+        Map<String, Pattern> patternMap = new HashMap<>(10);
+        // 编码规则
+        JBoltListMap<String, CusfieldsmappingdCodingrule> ruleMap = new JBoltListMap<>();
+        
+        // 检查是否存在编码转换的字段
+        for (CusFieldsMappingD cusFieldsMappingD : cusFieldsMappingDs) {
+            // 编码字段
+            if (cusFieldsMappingD.getIsEncoded()) {
+
+                List<CusfieldsmappingdCodingrule> rules = cusfieldsmappingdCodingruleService.findByIcusfieldsMappingDid(cusFieldsMappingD.getIAutoId());
+
+                StringBuilder regBuilder = new StringBuilder();
+
+                for (CusfieldsmappingdCodingrule r :  rules) {
+                    switch (CusfieldsMappingCharEnum.toEnum(r.getIType())) {
+                        case CODE:
+                            regBuilder.append(String.format("\\S{%d}", r.getILength()));
+                            break;
+                        case SEPARATOR:
+                            regBuilder.append(SeparatorCharEnum.toEnum(r.getCSeparator()).getText());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                String filed = cusFieldsMappingD.getCFormFieldCode().toLowerCase();
+
+                // 转换为正则表达式
+                patternMap.put(filed, Pattern.compile(regBuilder.toString()));
+                ruleMap.addItems(filed, rules);
+            }
+        }
+        
+        if (CollUtil.isNotEmpty(patternMap)) {
+            // 转换编码字段
+            for (Map<String, Object> row : rows) {
+                
+                // 遍历行数据
+                for (Map.Entry<String, Object> entry : row.entrySet()) {
+                    
+                    if (patternMap.containsKey(entry.getKey())) {
+                        
+                        Pattern pattern = patternMap.get(entry.getKey());
+                        
+                        String value = (String) entry.getValue();
+                        
+                        if (pattern.matcher(value).matches()) {
+                            List<CusfieldsmappingdCodingrule> rules = ruleMap.get(entry.getKey());
+
+                            StringBuilder newCode = new StringBuilder();
+                            
+                            int length = 0;
+                            
+                            for (CusfieldsmappingdCodingrule rule : rules) {
+                                switch (CusfieldsMappingCharEnum.toEnum(rule.getIType())) {
+                                    case CODE:
+                                        newCode.append(value, length, length + rule.getILength());
+                                        length += rule.getILength();
+                                        break;
+                                    case SEPARATOR:
+                                        length++;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            
+                            entry.setValue(newCode);
+                        }
+                    }
+                }
+                
+            }
+        }
+        
+        return successWithData(rows);
+    }
+
+    public List<FieldSetting> genFieldSettings(List<CusFieldsMappingD> cusFieldsMappingDs) {
         // -------------------------------------
         // 标准字段映射导入
         // -------------------------------------

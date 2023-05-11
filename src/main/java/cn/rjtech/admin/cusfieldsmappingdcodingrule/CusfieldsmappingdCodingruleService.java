@@ -13,6 +13,8 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.List;
+
 /**
  * 系统设置-导入字段编码规则
  *
@@ -129,6 +131,10 @@ public class CusfieldsmappingdCodingruleService extends BaseService<Cusfieldsmap
     public int getMaxIseq(Long iCusFieldsMappingDid) {
         Integer maxSeq = queryInt(selectSql().select(CusfieldsmappingdCodingrule.ISEQ).eq(CusfieldsmappingdCodingrule.ICUSFIELDSMAPPINGDID, iCusFieldsMappingDid));
         return null == maxSeq ? 0 : maxSeq;
+    }
+
+    public List<CusfieldsmappingdCodingrule> findByIcusfieldsMappingDid(long iCusFieldsMappingDid) {
+        return find(selectSql().eq(CusfieldsmappingdCodingrule.ICUSFIELDSMAPPINGDID, iCusFieldsMappingDid).asc("iseq"));
     }
     
 }
