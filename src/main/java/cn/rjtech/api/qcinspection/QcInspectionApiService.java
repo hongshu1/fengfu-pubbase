@@ -4,8 +4,6 @@ import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.rjtech.admin.qcinspection.QcInspectionService;
 import cn.rjtech.common.upload.UploadController;
-import cn.rjtech.entity.vo.qcinspection.QcInspectionDatas;
-import cn.rjtech.entity.vo.qcinspection.QcInspectionVo;
 import cn.rjtech.model.momdata.QcInspection;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -49,16 +47,8 @@ public class QcInspectionApiService extends JBoltApiBaseService {
             supplierInfoId = "0";
         }
         List<Record> files = qcInspectionService.getFilesById(supplierInfoId);
+        return JBoltApiRet.API_SUCCESS;
 
-        //2、set到实体类
-        QcInspectionDatas qcInspectionDatas = new QcInspectionDatas();
-        qcInspectionDatas.setQcInspection(qcInspection);
-        qcInspectionDatas.setFiles(files);
-        //3、最后返回vo
-        QcInspectionVo qcInspectionVo = new QcInspectionVo();
-        qcInspectionVo.setCode(0);
-        qcInspectionVo.setData(qcInspectionDatas);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(qcInspectionVo);
     }
 
     /**

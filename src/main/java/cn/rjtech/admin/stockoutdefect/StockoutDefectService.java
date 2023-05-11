@@ -9,6 +9,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
 import cn.rjtech.model.momdata.InStockQcFormM;
+import cn.rjtech.model.momdata.RcvDocDefect;
 import cn.rjtech.model.momdata.StockoutDefect;
 import cn.rjtech.model.momdata.StockoutQcFormM;
 import cn.rjtech.util.BillNoUtils;
@@ -21,6 +22,8 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 出库异常记录 Service
@@ -301,6 +304,31 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 	 */
 	public Record getstockoutQcFormMList(Long iautoid){
 		return dbTemplate("stockoutdefect.getstockoutQcFormMList", Kv.by("iautoid",iautoid)).findFirst();
+	}
+
+	//API在库异常品查看与编辑
+	public Map<String, Object> getstockoutDefectListApi(Long iautoid, Long stockoutqcformmid, String type){
+
+		Map<String, Object> map = new HashMap<>();
+
+		StockoutDefect stockoutDefect=findById(iautoid);
+		Record stockoutQcFormM = getstockoutQcFormMList(stockoutqcformmid);
+		map.put("stockoutDefect",stockoutDefect);
+		map.put("stockoutQcFormM",stockoutQcFormM);
+		map.put("type",type);
+		if (stockoutDefect == null){
+			return map;
+		}
+		if (stockoutDefect.getIStatus() == 1) {
+			map.put("isfirsttime", (stockoutDefect.getIsFirstTime() == true) ? "首发" : "再发");
+			map.put("iresptype", (stockoutDefect.getIRespType() == 1) ? "供应商" : "其他");
+		} else if (stockoutDefect.getIStatus() == 2) {
+			int getCApproach = Integer.parseInt(stockoutDefect.getCApproach());
+			map.put("capproach", (getCApproach == 1) ? "特采" : "拒收");
+			map.put("isfirsttime", (stockoutDefect.getIsFirstTime() == true) ? "首发" : "再发");
+			map.put("iresptype", (stockoutDefect.getIRespType() == 1) ? "供应商" : "其他");
+		}
+		return map;
 	}
 
 }

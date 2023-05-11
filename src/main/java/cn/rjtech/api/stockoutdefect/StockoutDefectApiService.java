@@ -2,19 +2,16 @@ package cn.rjtech.api.stockoutdefect;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
-import cn.rjtech.entity.vo.stockoutdefect.StockoutDefectDatas;
-import cn.rjtech.entity.vo.stockoutdefect.StockoutDefectVo;
 import cn.rjtech.model.momdata.StockoutDefect;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
-
-import java.util.List;
 
 /**
- * 制造异常品管理
+ * 出库异常品管理api接口
  */
 public class StockoutDefectApiService extends JBoltApiBaseService {
 
@@ -32,23 +29,9 @@ public class StockoutDefectApiService extends JBoltApiBaseService {
     }
 
 
-    /**
-     * 点击编辑或者查看，跳转页面明细
-     */
     public JBoltApiRet add(Long iautoid, Long stockoutqcformmid, String type) {
-        StockoutDefect  stockoutDefect = stockoutDefectService.findById(iautoid);
-        Record stockoutQcFormM = stockoutDefectService.getstockoutQcFormMList(stockoutqcformmid);
-        //2、set到实体类
-        StockoutDefectDatas stockoutDefectDatas = new StockoutDefectDatas();
-        stockoutDefectDatas.setStockoutQcFormM(stockoutQcFormM);
-        stockoutDefectDatas.setStockoutDefect(stockoutDefect);
-        //3、最后返回vo
-        StockoutDefectVo stockoutDefectVo = new StockoutDefectVo();
-        stockoutDefectVo.setCode(0);
-        stockoutDefectVo.setData(stockoutDefectDatas);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(stockoutDefectVo);
+        return JBoltApiRet.successWithData(stockoutDefectService.getstockoutDefectListApi(iautoid,stockoutqcformmid,type));
     }
-
     /**
      * 点击保存，保存页面明细信息
      */
@@ -56,5 +39,11 @@ public class StockoutDefectApiService extends JBoltApiBaseService {
         return JBoltApiRet.successWithData(stockoutDefectService.updateEditTable(formRecord));
     }
 
+    public String stockoutDefectId(Long id){
+        ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
+        StockoutDefect byId = stockoutDefectService.findById(id);
+        String cDocNo = byId.getCDocNo();
+        return cDocNo;
+    }
 
 }
