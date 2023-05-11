@@ -1,7 +1,7 @@
 <form onsubmit="return false;" id="moDocForm_#(pageId)" action="#(action)" method="post">
-    
-    <input type="hidden" name="moDoc.iautoid" value="#(moDoc.iautoid??)"/>
-    
+
+<!--    <input type="hidden" name="moDoc.iautoid" value="#(moDoc.iautoid??)"/>-->
+
     <button type="submit"  onclick="submitThisForm()" class="btn btn-primary btn-sm"><i class="fa fa-save"></i>保存</button>
 
     <div class="form-group row">
@@ -24,7 +24,7 @@
                     data-text="=请选择="
                     data-text-attr="name"
                     data-value-attr="id"
-                    data-select="#(moDoc.iDepartmentId??)">
+                    data-select="#(moDoc.idepartmentid??)">
             </select>
         </div>
 
@@ -34,7 +34,7 @@
                     data-autoload
                     data-url="admin/equipment/selectLine"
                     data-select-type="select"
-                    name="moDoc.iWorkRegionMid"
+                    name="moDoc.iworkregionmid"
                     data-refresh="true"
                     data-rule="select"
                     data-notnull="true"
@@ -43,7 +43,7 @@
                     data-value=""
                     data-value-attr="iautoid"
                     data-text-attr="cworkname"
-                    data-select="#(moDoc.iWorkRegionMid??)"
+                    data-select="#(moDoc.iworkregionMid??)"
             ></select>
         </div>
     </div>
@@ -51,10 +51,25 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">班次名称</label>
         <div class="col-3">
-            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                   data-rule="required"
-                   placeholder="请输入班次ID" maxlength="19" name="moDoc.iworkshiftmid"
-                   value="#(moDoc.iworkshiftmid??)"/>
+            <select class="form-control"
+                    data-autoload
+                    data-url="admin/workshiftm/getSelect"
+                    data-select-type="select"
+                    name="moDoc.iworkshiftmid"
+                    data-refresh="true"
+                    data-rule="select"
+                    data-notnull="true"
+                    data-tips="请选择班次"
+                    data-text="=请选择="
+                    data-value=""
+                    data-value-attr="iautoid"
+                    data-text-attr="cworkshiftname"
+                    data-select="#(moDoc.iworkshiftmid??)"
+            ></select>
+<!--            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"-->
+<!--                   data-rule="required"-->
+<!--                   placeholder="请输入班次ID" maxlength="19" name="moDoc.iworkshiftmid"-->
+<!--                   value="#(moDoc.iworkshiftmid??)"/>-->
         </div>
 
         <label class="col-sm-2 col-form-label">计划日期</label>
@@ -87,9 +102,9 @@
             />
         </div>
 
-        <input  type="hidden" placeholder="存货id" id="itemid" data-value-attr="itemid" name="moDoc.iInventoryId"/>
-        <input  type="hidden" placeholder="工艺id" id="routid" data-value-attr="routid" name="moDoc.routid"/>
-        <input type="hidden" id="iinventoryroutingid_#(pageId)" autocomplete="off" class="form-control col-sm-4"
+        <input  type="hidden" placeholder="存货id" id="itemid" data-value-attr="itemid" name="moDoc.iinventoryid"/>
+        <input  type="hidden" placeholder="工艺id" id="routid" data-value-attr="routid" name="moDoc.iinventoryrouting"/>
+        <input type="hidden" disabled id="iinventoryroutingid_#(pageId)" autocomplete="off" class="form-control col-sm-4"
                placeholder="料品工艺档案Id" name="iinventoryroutingid" value="#(iinventoryroutingid)" />
 
         <label class="col-sm-2 col-form-label">客户部番</label>
@@ -123,7 +138,7 @@
     <td hidden>${data.iinventoryid}</td>
     <td>${data.iseq}</td>
     <td data-value="${data.coperationname}">${data.coperationname}</td>
-    
+
     <td>
         {@if data.invcs == undefined}
            <span></span>
@@ -131,7 +146,7 @@
            <span><i class="fa fa-cog"></i>已选${data.invcs}个</span>
         {@/if}
     </td>
-    
+
     <td>
         {@if data.equipments}
             <span><i class="fa fa-cog"></i>已选${data.equipments}个</span>
@@ -141,7 +156,7 @@
     </td>
 
     {@if data.drawings}
-        <td><span><i class="fa fa-cog"></i>已选${data.drawings}个</span></td>    
+        <td><span><i class="fa fa-cog"></i>已选${data.drawings}个</span></td>
     {@else}
         <td><span></span></td>
     {@/if}
@@ -151,7 +166,7 @@
     {@else}
         <td data-editable= flase>不可选</td>
     {@/if}
-    
+
     <td></td>
 
 </tr>
@@ -197,7 +212,7 @@
         console.log("得到存货id"+itemidValue)
         return itemidValue;
     }
-    
+
     function getEditableTableOptionsModocFirst(){
         var editableTableOptions1={
             trigger:"click",
@@ -281,7 +296,7 @@
 
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-    
+
     $(document).ready(function () {
         $('#routid').on('change', function () {
             var input = $(this);
@@ -289,7 +304,7 @@
 
             var $iinventoryroutingid = $('#iinventoryroutingid_#(pageId)');
             $iinventoryroutingid.val(inputValue);
-            
+
             let iinventoryroutingidValue = $iinventoryroutingid.val();
 
             $.ajax({
@@ -298,7 +313,7 @@
                 success: function (ret) {
                     if (ret.state === 'ok') {
                         var data = ret.data;
-                        
+
                         jboltTableClear('#itemroutingconfigid_#(pageId)');
 
                         jboltTableInsertRow('#itemroutingconfigid_#(pageId)', data, false, false, true);
@@ -312,7 +327,7 @@
             // refreshJBoltTable('#itemroutingconfigid_#(pageId)');
         });
     });
-    
+
     function submitThisForm() {
         console.log("提交表单")
         jboltTableSubmit("#itemroutingconfigid_#(pageId)");

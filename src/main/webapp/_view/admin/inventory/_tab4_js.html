@@ -48,7 +48,7 @@
         DialogUtil.openBy(ele);
     }
 
-    function addTableRow(ele){
+    function addTableRow4(ele){
         //获取表格数据
         let iitemroutingid = $("#iinventoryroutingid").val();
         if (iitemroutingid == ''){
@@ -57,18 +57,26 @@
         }
         let seq = 0;
         var tableDatas = getJboltTableAllDatas(ele);
+        var iPid ='';
+        var cParentInvName = ''
         if (tableDatas != null){
             var data = tableDatas[tableDatas.length - 1];
             seq = data.iseq;
+            iPid = data.iautoid;
+            // 默认为【虚拟件+工序名称】，有选择半成品就 赋 半成品名称
+            cParentInvName = '【虚拟件 - '+data.coperationname+'】'
+            if (data.irsinventoryid){
+                cParentInvName = data.rsinventoryname;
+            }
         }
-        let url = "admin/inventoryroutingconfig/saveItemRoutingConfig?iitemroutingid="+iitemroutingid+"&iseq="+Number(seq+10);
+        let url = "admin/inventoryroutingconfig/saveItemRoutingConfig?iitemroutingid="+iitemroutingid+"&iseq="+Number(seq+10)+"&cParentInvName="+cParentInvName+"&iPid="+iPid;
         Ajax.get(url,function(res){
             refreshJBoltTable("#itemroutingconfigid");
         });
     }
     var isroutingreportValue = '';
     var isubsupplieridValue = '';
-    function getEditableTableOptions(){
+    function getEditableTableOptions4(){
         var editableTableOptions={
             trigger:"click",
             initRowCount:0,
@@ -117,9 +125,10 @@
                     type:"dialogbtn",
                     placeholder:"选择存货",
                     maxLength:100,
+                    linkColumn:"coperationname",
                     linkPara:"#iautoid,#cinvcode,#cinvcode1,#cinvname1,#cinvstd,#iInventoryUomId1",
                     dialog:{
-                        url:"admin/inventoryroutingconfig/inventory_dialog_index",
+                        url:"admin/inventoryroutingconfig/inventory_dialog_index?invId=#(inventory.iAutoId)",
                         jbt_link_ele_id:"iautoid,cinvcode,cinvcode1,cinvname1,cinvstd,iInventoryUomId1",
                         area:"60%,70%",
                         title:"选择存货",

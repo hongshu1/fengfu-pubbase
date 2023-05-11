@@ -13,7 +13,7 @@ select so.AutoID, CASE so.state
 				so.warehousingType as warehousingtype,so.AuditDate,so.BillType,so.remark,p.name
 FROM T_Sys_ProductIn so
 LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.username
-where 1=1 and so.IsDeleted = '0'
+where so.IsDeleted = '0'
 	#if(billno)
 		and so.BillNo like concat('%',#para(billno),'%')
 	#end
@@ -37,7 +37,7 @@ ORDER BY so.ModifyDate DESC
 SELECT  a.*
 FROM T_Sys_ProductInDetail a
 left join T_Sys_ProductIn i on a.MasID = i.AutoID
-where 1=1 and a.isdeleted = 0
+where a.isDeleted = '0'
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end

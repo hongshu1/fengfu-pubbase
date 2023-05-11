@@ -3,7 +3,7 @@
 	from bd_personequipment bpe
 		left join bd_equipment be on bpe.iequipmentid = be.iautoid 
 		left join bd_workregionm bwrm on bwrm.iautoid = be.iworkregionmid
-		where bpe.isdeleted = 0
+		where bpe.isDeleted = '0'
 	#if(iPersonId)
 		and bpe.iPersonId = #para(iPersonId) 
 	#end
@@ -23,7 +23,7 @@ FROM
 	LEFT JOIN bd_equipment be ON bpe.iequipmentid = be.iautoid
 	LEFT JOIN bd_workregionm bwrm ON bwrm.iautoid = be.iworkregionmid
 WHERE
-	bpe.isdeleted = 0
+	bpe.isDeleted = '0'
 	AND person.cPsn_Num= #para(cpsnnum)
 	AND bwrm.cWorkCode= ( SELECT cWorkCode FROM Bd_WorkRegionM WHERE iAutoId = #(iautoid))
 #end

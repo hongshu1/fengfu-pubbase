@@ -195,4 +195,11 @@ public class CusFieldsMappingMService extends BaseService<CusFieldsMappingM> {
         return null;
     }
 
+    /**
+     * 根据格式名 获取模板
+     */
+    public CusFieldsMappingM findByCformatName(String cformatname) {
+        return findFirst(selectSql().eq(CusFieldsMappingM.IORGID, getOrgId()).eq(CusFieldsMappingM.CFORMATNAME, cformatname).first());
+    }
+    
 }

@@ -14,10 +14,6 @@ import cn.jbolt.core.api.JBoltApiRet;
 import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
-import cn.rjtech.entity.vo.instockqcformm.InStockQcFormMApiJumpCheckOut;
-import cn.rjtech.entity.vo.instockqcformm.InStockQcFormMApiJumpCheckOutVo;
-import cn.rjtech.entity.vo.instockqcformm.InStockQcFormMApiJumpOnlySee;
-import cn.rjtech.entity.vo.instockqcformm.InStockQcFormMApiJumpOnlySeeVo;
 import cn.rjtech.model.momdata.InStockQcFormM;
 
 /**
@@ -72,14 +68,8 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
         //1、查找子页面需要的传参
         InStockQcFormM inStockQcFormM = service.findById(iautoid);
         Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
-        //2、赋值
-        InStockQcFormMApiJumpCheckOut jumpCheckOut = new InStockQcFormMApiJumpCheckOut();
-        jumpCheckOut.setInStockQcFormM(inStockQcFormM);
-        jumpCheckOut.setRecord(record);
-        //3、返回
-        InStockQcFormMApiJumpCheckOutVo apiJumpCheckOutVo = new InStockQcFormMApiJumpCheckOutVo();
-        apiJumpCheckOutVo.setData(jumpCheckOut);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(apiJumpCheckOutVo);
+        record.set("cbarcode",inStockQcFormM.getCBarcode());
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
     /*
@@ -126,21 +116,26 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
         InStockQcFormM inStockQcFormM = service.findById(iautoid);
         Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
         List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(inStockQcFormM.getIAutoId());
-        //2、传参
-        InStockQcFormMApiJumpOnlySee jumpOnlySee = new InStockQcFormMApiJumpOnlySee();
-        jumpOnlySee.setInStockQcFormM(inStockQcFormM);
-        jumpOnlySee.setRecord(record);
-        jumpOnlySee.setStockoutqcformlist(stockoutqcformlist);
-        //3、返回
-        InStockQcFormMApiJumpOnlySeeVo jumpOnlySeeVo = new InStockQcFormMApiJumpOnlySeeVo();
-        jumpOnlySeeVo.setData(jumpOnlySee);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(jumpOnlySeeVo);
+        record.set("size", stockoutqcformlist.size());
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
+    }
+
+    /*
+     * 点击编辑按钮，跳转到编辑页面
+     * */
+    public JBoltApiRet jumpEdit(Long iautoid){
+        InStockQcFormM inStockQcFormM = service.findById(iautoid);
+        Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
+        List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(inStockQcFormM.getIAutoId());
+        record.set("size", stockoutqcformlist.size());
+        record.set("cbarcode",inStockQcFormM.getCBarcode());
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
     /**
      * 跳转到onlysee页面，自动加载table数据
      */
-    public JBoltApiRet autoGetOnlySeeTableDatas(Long iautoid) {
+    public JBoltApiRet autoGetOnlySeeOrEditTableDatas(Long iautoid) {
         Kv kv = new Kv();
         kv.set("iautoid", iautoid);
         //1、查询
@@ -171,16 +166,9 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
     }
 
     /*
-     * 获取导出数据
-     * */
-    public JBoltApiRet exportExcel(Long iautoid) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
-    }
-
-    /*
      * 导出详情页
      * */
-    public JBoltApiRet getExportData(Long iautoid){
+    public JBoltApiRet getExportData(Long iautoid) {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
     }
 }
