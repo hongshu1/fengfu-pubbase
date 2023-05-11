@@ -38,14 +38,15 @@ import java.util.List;
  * @date: 2023-03-23 17:23
  */
 public class AnnualOrderMService extends BaseService<AnnualOrderM> {
+    
     private final AnnualOrderM dao = new AnnualOrderM().dao();
+
+    @Inject
+    private CusOrderSumService cusOrderSumService;
     @Inject
     private AnnualOrderDService annualOrderDService;
     @Inject
     private AnnualorderdQtyService annualorderdQtyService;
-
-    @Inject
-    private CusOrderSumService cusOrderSumService;
 
     @Override
     protected AnnualOrderM dao() {
@@ -62,8 +63,8 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
         para.set("iorgid", getOrgId());
-        Page<Record> pageList = dbTemplate("annualorderm.paginateAdminDatas", para).paginate(pageNumber, pageSize);
-        return pageList;
+        
+        return dbTemplate("annualorderm.paginateAdminDatas", para).paginate(pageNumber, pageSize);
     }
 
     /**
@@ -178,13 +179,17 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         return SUCCESS;
     }
 
-    //可编辑表格提交-新增数据
+    /**
+     * 可编辑表格提交-新增数据
+     */
     private void saveTableSubmitDatas(JBoltTable jBoltTable, AnnualOrderM annualOrderM) {
         List<Record> list = jBoltTable.getSaveRecordList();
-        if (CollUtil.isEmpty(list)) return;
-        for (int i = 0; i < list.size(); i++) {
-            Record record = list.get(i);
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        for (Record record : list) {
             AnnualOrderD annualOrderD = new AnnualOrderD();
+
             annualOrderD.setIAnnualOrderMid(annualOrderM.getIAutoId());
             annualOrderD.setIInventoryId(record.getLong("iinventoryid"));
             annualOrderD.setIYear1(annualOrderM.getIYear());
@@ -192,36 +197,48 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
             annualOrderD.setIYear2(annualOrderM.getIYear() + 1);
             annualOrderD.setIYear2Sum(record.getBigDecimal("inextyearmonthamounttotal"));
             annualOrderD.setIsDeleted(false);
+
             ValidationUtils.isTrue(annualOrderD.save(), ErrorMsg.SAVE_FAILED);
+
             saveAnnualOrderDModel(record, annualOrderM, annualOrderD);
         }
-        return;
     }
 
-    //可编辑表格提交-修改数据
+    /**
+     * 可编辑表格提交-修改数据
+     */
     private void updateTableSubmitDatas(JBoltTable jBoltTable, AnnualOrderM annualOrderM) {
         List<Record> list = jBoltTable.getUpdateRecordList();
-        if (CollUtil.isEmpty(list)) return;
-        for (int i = 0; i < list.size(); i++) {
-            Record record = list.get(i);
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+
+        for (Record record : list) {
             Long iAnnualOrderDid = record.getLong("iautoid");
+
             AnnualOrderD annualOrderD = annualOrderDService.findById(iAnnualOrderDid);
             ValidationUtils.notNull(annualOrderD, JBoltMsg.DATA_NOT_EXIST);
+
             annualOrderD.setIInventoryId(record.getLong("iinventoryid"));
             annualOrderD.setIYear1(annualOrderM.getIYear());
             annualOrderD.setIYear1Sum(record.getBigDecimal("iqtytotal"));
-            annualOrderD.setIYear2(annualOrderM.getIYear() + 1);
-            annualOrderD.setIYear2Sum(record.getBigDecimal("inextyearmonthamounttotal"));
+
             ValidationUtils.isTrue(annualOrderD.update(), ErrorMsg.UPDATE_FAILED);
+
             annualorderdQtyService.deleteBy(Okv.by("iannualorderdid", annualOrderD.getIAutoId()));
+
             saveAnnualOrderDModel(record, annualOrderM, annualOrderD);
         }
     }
 
-    //可编辑表格提交-删除数据
+    /**
+     * 可编辑表格提交-删除数据
+     */
     private void deleteTableSubmitDatas(JBoltTable jBoltTable) {
         Object[] ids = jBoltTable.getDelete();
-        if (ArrayUtil.isEmpty(ids)) return;
+        if (ArrayUtil.isEmpty(ids)) {
+            return;
+        }
         for (Object id : ids) {
             annualorderdQtyService.deleteBy(Okv.by("iannualorderdid", id));
             annualOrderDService.deleteById(id);
@@ -229,35 +246,20 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
     }
 
     private void saveAnnualOrderDModel(Record record, AnnualOrderM annualOrderM, AnnualOrderD annualOrderD) {
-        AnnualorderdQty AnnualorderdQty;
+        AnnualorderdQty annualorderdQty;
         for (int j = 1; j <= 12; j++) {
-            AnnualorderdQty = new AnnualorderdQty();
-            AnnualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
-            AnnualorderdQty.setIYear(annualOrderM.getIYear());
-            AnnualorderdQty.setIMonth(j);
-            BigDecimal inowyearmonthamount = record.getBigDecimal("inowyearmonthamount" + j);
-            AnnualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
-            AnnualorderdQty.setIsDeleted(false);
-            ValidationUtils.isTrue(AnnualorderdQty.save(), ErrorMsg.SAVE_FAILED);
+            annualorderdQty = new AnnualorderdQty();
+
+            annualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
+            annualorderdQty.setIYear(annualOrderM.getIYear());
+            annualorderdQty.setIMonth(j);
+
+            BigDecimal iqty = record.getBigDecimal("iqty" + j);
+            annualorderdQty.setIQty(iqty == null ? BigDecimal.ZERO : iqty);
+            annualorderdQty.setIsDeleted(false);
+
+            ValidationUtils.isTrue(annualorderdQty.save(), ErrorMsg.SAVE_FAILED);
         }
-        for (int m = 1; m <= 3; m++) {
-            AnnualorderdQty = new AnnualorderdQty();
-            AnnualorderdQty.setIAnnualOrderDid(annualOrderD.getIAutoId());
-            AnnualorderdQty.setIYear(annualOrderM.getIYear() + 1);
-            AnnualorderdQty.setIMonth(m);
-            BigDecimal inowyearmonthamount = record.getBigDecimal("inextyearmonthamount" + m);
-            AnnualorderdQty.setIQty(inowyearmonthamount == null ? BigDecimal.ZERO : inowyearmonthamount);
-            AnnualorderdQty.setIsDeleted(false);
-            ValidationUtils.isTrue(AnnualorderdQty.save(), ErrorMsg.SAVE_FAILED);
-        }
-    }
-
-    /**
-     * 根据年份生成动态日期头
-     */
-    public void dateHeader(int iYear) {
-
-
     }
 
     public Ret approve(Long id) {
@@ -276,9 +278,8 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
 
     public Ret importExcel(File file) {
         StringBuilder errorMsg = new StringBuilder();
-        
-        
-        
+
+
         return SUCCESS;
     }
 
