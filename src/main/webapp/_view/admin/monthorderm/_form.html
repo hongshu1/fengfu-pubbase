@@ -1,29 +1,44 @@
 #set(pageId=RandomUtil.random(6))
 #set(iYear=DateUtil.getYear())
 <div class="jbolt_page_title">
+    
     <div class="row">
+        
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
                         <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
+                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" ><i class="fa fa-refresh"></i> 保存</button>
                         <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>
             </div>
         </div>
+        
+    </div>
+    
+</div>
+
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId??0, formSn="Co_MonthOrderM", btnNeed=1)
+
+<div class="jbolt_page_content">
+
+    <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <form onsubmit="return false;" id="MonthOrderM_Form_#(pageId)" action="#(action)" method="post">
+
                         #if(monthorderm.iAutoId??)
                         <input type="hidden" name="monthorderm.iAutoId" value="#(monthorderm.iAutoId??)"/>
                         #end
+
                         <input type="hidden" name="monthorderm.iOrderStatus" value="#(monthorderm.iOrderStatus??1)"/>
                         <input type="hidden" name="monthorderm.iAuditStatus" value="#(monthorderm.iAuditStatus??0)"/>
                         <input type="hidden" name="monthorderm.isDeleted" value="#(monthorderm.isDeleted??0)"/>
+
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -35,22 +50,21 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                	<input type="hidden" name="monthorderm.iCustomerId" value="#(monthorderm.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
+                                    <input type="hidden" name="monthorderm.iCustomerId" value="#(monthorderm.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
                                     <label class="col-sm-3 col-form-label">客户名称</label>
                                     <div class="col-9">
-										<input type="text" class="form-control"
-											   data-autocomplete
-											   data-url="admin/customer/autocomplete"
-											   data-rule="required"
-											   data-hidden-input="iCustomerId"
-											   data-text-attr="ccusname"
-											   data-column-attr="ccuscode,ccusname,ccusabbname"
-											   placeholder="请选择"
-											   data-tips="请选择"
-											   data-header="客户编码,客户名称,客户简称"
-											   maxlength="40"
-											   value="#(monthorderm.ccusname??)"
-											   >
+                                        <input type="text" class="form-control"
+                                               data-autocomplete
+                                               data-url="admin/customer/autocomplete"
+                                               data-rule="required"
+                                               data-hidden-input="iCustomerId"
+                                               data-text-attr="ccusname"
+                                               data-column-attr="ccuscode,ccusname,ccusabbname"
+                                               placeholder="请选择"
+                                               data-tips="请选择"
+                                               data-header="客户编码,客户名称,客户简称"
+                                               maxlength="40"
+                                               value="#(monthorderm.ccusname??)">
                                     </div>
                                 </div>
                             </div>
@@ -76,24 +90,24 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group row">
-                            		<label class="col-sm-3 col-form-label">月份</label>
+                                    <label class="col-sm-3 col-form-label">月份</label>
                                     <div class="col-9">
-										<select class="form-control" data-autoload name="monthorderm.iMonth"
-											data-select="#datetime(monthorderm.iMonth??DateUtil.getNow(),'M')">
-	                                        <option value="">=月份=</option>
-	                                        <option value="1">1月</option>
-	                                        <option value="2">2月</option>
-	                                        <option value="3">3月</option>
-	                                        <option value="4">4月</option>
-	                                        <option value="5">5月</option>
-	                                        <option value="6">6月</option>
-	                                        <option value="7">7月</option>
-	                                        <option value="8">8月</option>
-	                                        <option value="9">9月</option>
-	                                        <option value="10">10月</option>
-	                                        <option value="11">11月</option>
-	                                        <option value="12">12月</option>
-	                                    </select>
+                                        <select class="form-control" data-autoload name="monthorderm.iMonth"
+                                                data-select="#datetime(monthorderm.iMonth??DateUtil.getNow(),'M')">
+                                            <option value="">=月份=</option>
+                                            <option value="1">1月</option>
+                                            <option value="2">2月</option>
+                                            <option value="3">3月</option>
+                                            <option value="4">4月</option>
+                                            <option value="5">5月</option>
+                                            <option value="6">6月</option>
+                                            <option value="7">7月</option>
+                                            <option value="8">8月</option>
+                                            <option value="9">9月</option>
+                                            <option value="10">10月</option>
+                                            <option value="11">11月</option>
+                                            <option value="12">12月</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -103,11 +117,7 @@
             </div>
         </div>
     </div>
-</div>
-<div class="jbolt_page_content">
-	#include("/_view/admin/approvalm/form_approval_flow.html",formAutoId=monthorderm.iAutoId??0,formSn="Co_MonthOrderM",btnNeed=1)
-</div>
-<div class="jbolt_page_content">
+
     <script type="text/template" id="jboltTable_demotpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.iautoid}">
@@ -155,11 +165,13 @@
         </tr>
         {@/each}
     </script>
+    
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
         </div>
     </div>
+    
     <table class="jbolt_table thead_font_normal table-bordered table-center"
            data-jbolttable
            #if(monthorderm.iAutoId??)
@@ -267,11 +279,13 @@
 </div>
 #define js()
 <script>
-hideParentLayerDialogBtn(0);
-hideParentLayerDialogBtn(1);
-function submitThisForm(){
-	jboltTableSubmit("#jbolt_Table_#(pageId)");
-}
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+    
+    function submitThisForm(){
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+    
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
@@ -288,7 +302,7 @@ function submitThisForm(){
                 }
             },
             cols: {
-            	iautoid: {
+                iautoid: {
                     submitAttr: "iautoid",
                 },
                 cinvcode: {
@@ -301,368 +315,373 @@ function submitThisForm(){
                     width: 500,
                     valueAttr: "cinvcode",
                     columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
-                    header:'存货编码,客户部番,部品名称,规格,库存主单位',
-                    changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
-                                   {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
-                                   {column: "cuomname", use: "cuomname"},{column: "iinventoryid", use: "iautoid"}]
+                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
+                    changeColumns: [
+                        {column: "cinvcode", use: "cinvcode"},
+                        {column: "cinvcode1", use: "cinvcode1"},
+                        {column: "cinvname1", use: "cinvname1"},
+                        {column: "cinvstd", use: "cinvstd"},
+                        {column: "cuomname", use: "cuomname"},
+                        {column: "iinventoryid", use: "iautoid"}
+                    ]
                 },
                 iqty1: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty2: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty3: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty4: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty5: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty6: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty7: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty8: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty9: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty10: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty11: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty12: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty13: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty14: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty15: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty16: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty17: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty18: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty19: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty20: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty21: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty22: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty23: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty24: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty25: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty26: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty27: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty28: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty29: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty30: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty31: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				isum: {
-					summary:[{
-						dir:"h",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"iqty1+iqty2+iqty3+iqty4+iqty5+iqty6+iqty7+iqty8+iqty9+iqty10+iqty11+iqty12+iqty13+iqty14+iqty15+iqty16+iqty17+iqty18+iqty19+iqty20+iqty21+iqty22+iqty23+iqty24+iqty25+iqty26+iqty27+iqty28+iqty29+iqty30+iqty31"
-					}],
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				}
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty2: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty3: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty4: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty5: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty6: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty7: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty8: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty9: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty10: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty11: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty12: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty13: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty14: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty15: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty16: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty17: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty18: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty19: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty20: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty21: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty22: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty23: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty24: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty25: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty26: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty27: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty28: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty29: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty30: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty31: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                isum: {
+                    summary: [{
+                        dir: "h",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "iqty1+iqty2+iqty3+iqty4+iqty5+iqty6+iqty7+iqty8+iqty9+iqty10+iqty11+iqty12+iqty13+iqty14+iqty15+iqty16+iqty17+iqty18+iqty19+iqty20+iqty21+iqty22+iqty23+iqty24+iqty25+iqty26+iqty27+iqty28+iqty29+iqty30+iqty31"
+                    },
+                    {
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }],
+                }
             }
         };
         return editableTableOptions;
@@ -672,6 +691,7 @@ function submitThisForm(){
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
+    
 </script>
 #end
 

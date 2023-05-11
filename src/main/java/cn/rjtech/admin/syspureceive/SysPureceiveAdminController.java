@@ -1,16 +1,16 @@
 package cn.rjtech.admin.syspureceive;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPureceive;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.plugin.activerecord.tx.Tx;
 /**
  * 采购收料单
  * @ClassName: SysPureceiveAdminController
@@ -100,4 +100,12 @@ public class SysPureceiveAdminController extends BaseAdminController {
 	public void submitAll() {
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
 	}
+
+	/**
+	 *  供应商数据源
+	 */
+	public void venCode() {
+		renderJsonData(service.getVenCodeDatas(getKv()));
+	}
+
 }
