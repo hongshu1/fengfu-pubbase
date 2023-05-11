@@ -190,6 +190,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 	 */
 	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
 		SysPureceive sysotherin = jBoltTable.getFormModel(SysPureceive.class,"sysPureceive");
+		String whcode = jBoltTable.getForm().getString("Whcode");
 		//获取当前用户信息？
 		User user = JBoltUserKit.getUser();
 		Date now = new Date();
@@ -199,6 +200,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 				sysotherin.setOrganizeCode(getOrgCode());
 				sysotherin.setCreatePerson(user.getUsername());
 				sysotherin.setCreateDate(now);
+				sysotherin.setBillDate(now.toString());
 				sysotherin.setModifyPerson(user.getUsername());
 				sysotherin.setState("1");
 				sysotherin.setModifyDate(now);
@@ -280,5 +282,15 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 	public List<Record> getVenCodeDatas(Kv kv) {
 		return dbTemplate(u8SourceConfigName(), "syspureceive.venCode", kv).find();
 	}
-    
+
+
+	/**
+	 * 后台管理数据查询
+	 * @return
+	 */
+	public List<Record> getWhcodeDatas(Kv kv) {
+		return dbTemplate(u8SourceConfigName(), "syspureceive.Whcode", kv).find();
+	}
+
+
 }
