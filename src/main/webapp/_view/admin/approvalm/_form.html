@@ -1,0 +1,139 @@
+#set(pageId=RandomUtil.random(6))
+<style>
+	.jbolt_table_body{
+		height: 230px!important;
+		min-height: 230px !important;
+	}
+</style>
+<div class="jbolt_righttop_btn_group" style="top:0px;margin-left: auto" id="jbolt_righttop_btn_group_#(pageId)">
+
+	<button onclick="submitTableAndForm_#(pageId)(this)" data-value="save"
+			class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存
+	</button>
+
+	<button onclick="dialogClose()" class="btn btn-danger btn-sm"><i class="fa fa-close"></i> 关闭
+	</button>
+</div>
+<form onsubmit="return false;" id="approvalMForm" action="#(action)" method="post">
+<input type="hidden" name="approvalM.iautoid" value="#(approvalM.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批流名称</label>
+		<div class="col">
+			<input type="text" data-rule="required" data-with-clearbtn="true" autocomplete="off"  class="form-control"
+				   data-rule="required" placeholder="请输入审批流名称" maxlength="50" name="approvalM.capprovalname" value="#(approvalM.capprovalname??)"/>
+		</div>
+	</div>
+
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(approvalM.isEnabled??)"
+    	data-name="approvalM.isEnabled"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否启用:</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isenabled_true" type="radio" name="approvalM.isEnabled" value="true"/>
+					<label for="r_isenabled_true">是</label>
+				</div>
+
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isenabled_false" type="radio" name="approvalM.isEnabled" value="false"/>
+					<label for="r_isenabled_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(approvalM.isSkippedOnDuplicate??)"
+    	data-name="approvalM.isSkippedOnDuplicate"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否自动去重:</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isskippedonduplicate_true" type="radio" name="approvalM.isSkippedOnDuplicate" value="true"/>
+					<label for="r_isskippedonduplicate_true">是</label>
+				</div>
+
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isskippedonduplicate_false" type="radio" name="approvalM.isSkippedOnDuplicate" value="false"/>
+					<label for="r_isskippedonduplicate_false">否</label>
+				</div>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(approvalM.isApprovedOnSame??)"
+    	data-name="approvalM.isApprovedOnSame"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否自动通过:</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isapprovedonsame_true" type="radio" name="approvalM.isApprovedOnSame" value="true"/>
+					<label for="r_isapprovedonsame_true">是</label>
+				</div>
+
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isapprovedonsame_false" type="radio" name="approvalM.isApprovedOnSame" value="false"/>
+					<label for="r_isapprovedonsame_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">备注</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="approvalM.cmemo" value="#(approvalM.cmemo??)"/>
+		</div>
+	</div>
+</form>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">选择表单:</label>
+	<div class="col">
+		<div class="jbolt_page_content">
+			#render("_table_line.html")
+		</div>
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">流程配置:</label>
+	<div class="col">
+		<div class="jbolt_page_content">
+			#render("_table_line2.html")
+		</div>
+	</div>
+</div>
+
+#define js()
+<script>
+
+	/**
+	 * 提交方法
+	 */
+	function submitTableAndForm_#(pageId)(ele) {
+		jboltTableSubmit(getJboltId());
+	}
+
+	/**
+	 * 关闭弹窗方法
+	 * */
+	function dialogClose() {
+		parent.refreshPjaxContainer();
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
+	}
+
+	//隐藏dialog按钮
+	hideParentLayerDialogBtn(0);
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="approvalMForm")
+#end
+

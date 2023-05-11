@@ -50,7 +50,7 @@
 											   data-header="客户编码,客户名称,客户简称"
 											   maxlength="40"
 											   value="#(monthorderm.ccusname??)"
-											   >                                        
+											   >
                                     </div>
                                 </div>
                             </div>
@@ -78,7 +78,7 @@
                                 <div class="form-group row">
                             		<label class="col-sm-3 col-form-label">月份</label>
                                     <div class="col-9">
-										<select class="form-control" data-autoload name="monthorderm.iMonth" 
+										<select class="form-control" data-autoload name="monthorderm.iMonth"
 											data-select="#datetime(monthorderm.iMonth??DateUtil.getNow(),'M')">
 	                                        <option value="">=月份=</option>
 	                                        <option value="1">1月</option>
@@ -104,7 +104,9 @@
         </div>
     </div>
 </div>
-
+<div class="jbolt_page_content">
+	#include("/_view/admin/approvalm/form_approval_flow.html",formAutoId=monthorderm.iAutoId??0,formSn="Co_MonthOrderM",btnNeed=1)
+</div>
 <div class="jbolt_page_content">
     <script type="text/template" id="jboltTable_demotpl_#(pageId)">
         {@each datas as data,index}
@@ -228,7 +230,7 @@
 			<th></th>
 			<th></th>
 			<th></th>
-			<th></th>			
+			<th></th>
             <th></th>
             <th></th>
 			<th></th>

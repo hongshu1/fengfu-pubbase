@@ -1,0 +1,127 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>审批流节点</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="approvalDForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="approvalDRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iapprovalmid}</td>
+<td>${data.istep}</td>
+<td>${data.iseq}</td>
+<td>${data.cname}</td>
+<td>${data.itype}</td>
+<td>${data.iapprovalway}</td>
+<td>${data.isupervisortype}</td>
+<td><img data-switchbtn data-confirm="确定切换是否找不到主管时，由上级主管代审批： 0. 否 1. 是？" data-value="${data.isdirectonmissing}"  data-handler="refreshJBoltTable"  data-url="admin/approvald/toggleIsdirectonmissing/${data.id}"/></td>
+<td>${data.iskipon}</td>
+<td>${data.ispecuserid}</td>
+<td>${data.iselfselectway}</td>
+<td>${data.isingletype}</td>
+<td>${data.isingleid}</td>
+<td>
+	<a href="admin/approvald/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改审批流节点" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+    <a href="admin/approvald/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="approvalD_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增审批流节点"  data-url="admin/approvald/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改审批流节点" data-check-handler="jboltTableGetCheckedId" data-url="admin/approvald/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/approvald/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/approvald/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="approvalDForm_#(pageId)"
+data-rowtpl="approvalDRowtpl_#(pageId)"
+data-page="approvalDPage_#(pageId)"
+data-toolbar="approvalD_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+data-fixed-columns-right="-1"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-min-width="150" data-column="iApprovalMid">审批流主表ID</th>
+	<th data-width="150" data-column="iStep">审批阶段：1. 承认 2. 确认 3. 作成</th>
+	<th data-width="150" data-column="iSeq">审批顺序</th>
+	<th data-width="150" data-column="cName">审批名</th>
+	<th data-width="150" data-column="iType">审批人类型：1. 指定成员 2. 部门主管 3. 直属主管 4. 发起人自己 5. 角色 6. 发起人自选</th>
+	<th data-width="150" data-column="iApprovalWay">多人审批时采用的审批方式: 1. 依次审批 2. 会签（需所有审批人同意） 3. 或签（一名审批人同意或拒绝即可）</th>
+	<th data-width="150" data-column="iSupervisorType">主管类型，指定审批人为部门主管/直属主管时，定义：1. 直接主管 2. 一级主管 3. 二级主管</th>
+	<th data-width="150" data-column="isDirectOnMissing">是否找不到主管时，由上级主管代审批： 0. 否 1. 是</th>
+	<th data-width="150" data-column="iSkipOn">审批人为空时：1. 自动通过 2. 指定人员审批</th>
+	<th data-width="150" data-column="iSpecUserId">指定审批人ID</th>
+	<th data-width="150" data-column="iSelfSelectWay">自选审批人方式：1. 自选多个人 2. 自选1人</th>
+	<th data-width="150" data-column="iSingleType">自选一人的方式：1. 指定成员 2. 指定角色</th>
+	<th data-width="150" data-column="iSingleId">自选一人方式为1时，为用户ID，为2时，为角色ID</th>
+	<th data-width="100">操作</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/approvald/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('title', '审批流节点')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end

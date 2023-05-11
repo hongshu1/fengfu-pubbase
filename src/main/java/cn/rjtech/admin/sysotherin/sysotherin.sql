@@ -14,7 +14,7 @@ select so.AutoID, CASE so.state
 ,p.name
 FROM T_Sys_OtherIn so
 LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.id
-where 1=1 and so.IsDeleted = '0'
+where so.IsDeleted = '0'
 	#if(warehousingno)
 		and so.warehousingNo like concat('%',#para(warehousingno),'%')
 	#end
@@ -40,7 +40,7 @@ ORDER BY so.ModifyDate DESC
 SELECT  a.*
 FROM T_Sys_OtherInDetail a
 left join T_Sys_OtherIn i on a.MasID = i.AutoID
-where 1=1 and a.isdeleted = 0
+where a.isDeleted = '0'
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end
