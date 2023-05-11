@@ -180,7 +180,8 @@
 			{"name":"金额_保留1位","sn":"money_1"},
 			{"name":"金额_保留2位","sn":"money_2"},
 			{"name":"金额_保留3位","sn":"money_3"},
-			{"name":"金额_保留4位","sn":"money_4"}
+			{"name":"金额_保留4位","sn":"money_4"},
+			{"name":"弹出查看静态内容Dialog按钮","sn":"static_view_content_dialog_btn"}
 	]
 },{
 	"name": "组件数据类型",
