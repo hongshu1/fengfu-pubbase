@@ -14,7 +14,7 @@ select so.AutoID, CASE so.state
 FROM T_Sys_Assem so
 LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.username
 LEFT JOIN #(getBaseDbName()).dbo.jb_user s on so.AuditPerson = s.username
-where 1=1 and so.IsDeleted = '0'
+where so.IsDeleted = '0'
 	#if(billno)
 		and so.BillNo like concat('%',#para(billno),'%')
 	#end
@@ -36,7 +36,7 @@ ORDER BY so.ModifyDate DESC
 #sql("dList")
 SELECT  a.*
 FROM T_Sys_AssemDetail a
-where 1=1 and a.isdeleted = 0
+where a.isDeleted = '0'
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end

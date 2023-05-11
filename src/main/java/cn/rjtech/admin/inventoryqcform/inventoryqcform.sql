@@ -97,7 +97,7 @@ SELECT
 select
  iAutoId as iQcFormId,
  cQcFormName as iQcFormName
- from Bd_QcForm t1 where 1=1 and isDeleted = '0'
+ from Bd_QcForm t1 where isDeleted = '0'
  and not exists (select 1 from Bd_InventoryQcForm t2 where t1.iAutoId = t2.iQcFormId)
 #if(keywords)
 and t1.cQcFormName like '%#(keywords)%'

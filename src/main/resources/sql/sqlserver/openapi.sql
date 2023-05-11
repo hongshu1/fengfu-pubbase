@@ -12,8 +12,7 @@ where 1=1
 #sql("findByCodeAndTag")
 SELECT *
 FROM T_Sys_OpenAPI
-where 1=1
-AND Code = #para(code)
+where Code = #para(code)
 AND tag = #para(tag)
 #end
 
