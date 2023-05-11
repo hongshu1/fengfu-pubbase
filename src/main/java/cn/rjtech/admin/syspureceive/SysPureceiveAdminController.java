@@ -8,6 +8,8 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.SysPureceive;
@@ -100,4 +102,12 @@ public class SysPureceiveAdminController extends BaseAdminController {
 	public void submitAll() {
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
 	}
+
+	/**
+	 *  供应商数据源
+	 */
+	public void venCode() {
+		renderJsonData(service.getVenCodeDatas(getKv()));
+	}
+
 }

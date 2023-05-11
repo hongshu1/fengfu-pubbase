@@ -159,10 +159,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 	 */
 	public Ret deleteRmRdByIds(String ids) {
 		tx(() -> {
+			deleteRmRdByIds(ids);
 			String[] split = ids.split(",");
 			for(String s : split){
-				updateColumn(s, "isdeleted", true);
-				update("update T_Sys_PUReceiveDetail  set  IsDeleted = 1 where  MasID = ?",s);
+				delete("DELETE T_Sys_PUReceiveDetail   where  MasID = ?",s);
 			}
 			return true;
 		});
@@ -176,8 +176,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 	 */
 	public Ret delete(Long id) {
 		tx(() -> {
-			updateColumn(id, "isdeleted", true);
-			update("update T_Sys_PUReceiveDetail  set  IsDeleted = 1 where  MasID = ?",id);
+			deleteById(id);
+			delete("DELETE T_Sys_PUReceiveDetail   where  MasID = ?",id);
 			return true;
 		});
 		return ret(true);
@@ -272,5 +272,13 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 		for (Object id : ids) {
 			update("update T_Sys_PUInStoreDetail  set  IsDeleted = 1 where  AutoID = ?",id);
 		}
+	}
+
+	/**
+	 * 后台管理数据查询
+	 * @return
+	 */
+	public List<Record> getVenCodeDatas(Kv kv) {
+		return dbTemplate(u8SourceConfigName(), "syspureceive.venCode", kv).find();
 	}
 }
