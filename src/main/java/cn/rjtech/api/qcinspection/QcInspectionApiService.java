@@ -3,27 +3,13 @@ package cn.rjtech.api.qcinspection;
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.rjtech.admin.qcinspection.QcInspectionService;
-import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
-import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
-import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
-import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.common.upload.UploadController;
-import cn.rjtech.entity.vo.qcinspection.QcInspectionDatas;
-import cn.rjtech.entity.vo.qcinspection.QcInspectionVo;
-import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMApiCheckOut;
-import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMApiCheckOutVo;
-import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMOnlyseeApi;
-import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMOnlyseeApiVo;
 import cn.rjtech.model.momdata.QcInspection;
-import cn.rjtech.model.momdata.RcvDocQcFormM;
-import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,16 +47,8 @@ public class QcInspectionApiService extends JBoltApiBaseService {
             supplierInfoId = "0";
         }
         List<Record> files = qcInspectionService.getFilesById(supplierInfoId);
+        return JBoltApiRet.API_SUCCESS;
 
-        //2、set到实体类
-        QcInspectionDatas qcInspectionDatas = new QcInspectionDatas();
-        qcInspectionDatas.setQcInspection(qcInspection);
-        qcInspectionDatas.setFiles(files);
-        //3、最后返回vo
-        QcInspectionVo qcInspectionVo = new QcInspectionVo();
-        qcInspectionVo.setCode(0);
-        qcInspectionVo.setData(qcInspectionDatas);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(qcInspectionVo);
     }
 
     /**

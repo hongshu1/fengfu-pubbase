@@ -2,19 +2,16 @@ package cn.rjtech.api.rcvdocdefect;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.model.momdata.RcvDocDefect;
-import cn.rjtech.model.momdata.RcvDocQcFormM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.plugin.activerecord.Record;
-
-import static oshi.util.GlobalConfig.set;
 
 /**
- * 制造异常品管理
+ * 来料异常品管理api接口
  */
 public class RcvDocDefectApiService extends JBoltApiBaseService {
 
@@ -37,6 +34,13 @@ public class RcvDocDefectApiService extends JBoltApiBaseService {
 
     public JBoltApiRet update(Kv formRecord) {
         return JBoltApiRet.successWithData(rcvDocDefectService.updateEditTable(formRecord));
+    }
+
+    public String rcvDocDefectId(Long id){
+        ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
+        RcvDocDefect byId = rcvDocDefectService.findById(id);
+        String cDocNo = byId.getCDocNo();
+        return cDocNo;
     }
 
 

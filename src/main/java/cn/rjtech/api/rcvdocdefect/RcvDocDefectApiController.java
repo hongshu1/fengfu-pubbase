@@ -1,20 +1,16 @@
 package cn.rjtech.api.rcvdocdefect;
 
-import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.RcDocDefect.RcDocDefectVo;
+import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import io.github.yedaxia.apidocs.ApiDoc;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import java.math.BigDecimal;
-import java.util.Date;
+
 
 /**
  * 来料异常品管理api接口
@@ -87,5 +83,22 @@ public class RcvDocDefectApiController extends BaseApiController {
         kv.set("ircvdocqcformmid", ircvdocqcformmid);
         renderJBoltApiRet(rcvDocDefectApiService.update(kv));
     }
+
+    /**
+     * 二维码
+     * @param iautoid     来料异常品ID
+     * @param width       宽
+     * @param height      高
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void qrcode(
+            @Para(value = "width", defaultValue = "200") Integer width,
+            @Para(value = "height", defaultValue = "200") Integer height,
+            @Para(value = "iautoid") Long iautoid){
+        String code = rcvDocDefectApiService.rcvDocDefectId(iautoid);
+        renderQrCode(code, width, height);
+    }
+
 
 }

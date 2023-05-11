@@ -2,20 +2,18 @@ package cn.rjtech.api.instockdefect;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
+
+
 import cn.rjtech.model.momdata.InStockDefect;
-import cn.rjtech.model.momdata.InStockQcFormM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-
-import static oshi.util.GlobalConfig.set;
 
 /**
- * 工段（产线） API Service
- *
- * @author Kephon
+ *在库异常品管理api接口
  */
 public class InStockDefectApiService extends JBoltApiBaseService {
 
@@ -37,6 +35,14 @@ public class InStockDefectApiService extends JBoltApiBaseService {
 
     public JBoltApiRet update(Kv formRecord) {
         return JBoltApiRet.successWithData(inStockDefectService.updateEditTable(formRecord));
+    }
+
+
+    public String inStockDefectId(Long id){
+        ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
+        InStockDefect byId = inStockDefectService.findById(id);
+        String cDocNo = byId.getCDocNo();
+        return cDocNo;
     }
 
 

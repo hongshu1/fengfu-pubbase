@@ -2,24 +2,22 @@ package cn.rjtech.api.instockdefect;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.base.controller.BaseApiController;
-import cn.rjtech.entity.vo.RcDocDefect.RcDocDefectVo;
+import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockdefect.InStockDefect;
-import cn.rjtech.entity.vo.processdefect.ProcessDefect;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import io.github.yedaxia.apidocs.ApiDoc;
 
+
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
- * 工段（产线） API
+ * 在库异常品管理api接口
  *
- * @author Kephon
  */
 @ApiDoc
 public class InStockDefectApiController extends BaseApiController {
@@ -27,11 +25,14 @@ public class InStockDefectApiController extends BaseApiController {
     @Inject
     private InStockDefectApiService inStockDefectApiService;
 
+    @Inject
+    private InStockDefectService inStockDefectService;
+
     /**
      * 查询主表明细
      *
      */
-    @ApiDoc(result = InStockDefect.class)
+    @ApiDoc(result = NullDataResult.class)
     @UnCheck
     public void datas(@Para(value = "pageNumber") Integer pageNumber,
                          @Para(value = "pageSize") Integer pageSize,
@@ -87,6 +88,24 @@ public class InStockDefectApiController extends BaseApiController {
         kv.set("iinstockqcformmid", iinstockqcformmid);
         renderJBoltApiRet(inStockDefectApiService.update(kv));
     }
+
+
+    /**
+     * 二维码
+     * @param iautoid     来料异常品ID
+     * @param width       宽
+     * @param height      高
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void qrcode(
+                       @Para(value = "width", defaultValue = "200") Integer width,
+                       @Para(value = "height", defaultValue = "200") Integer height,
+                       @Para(value = "iautoid") Long iautoid){
+         String code = inStockDefectApiService.inStockDefectId(iautoid);
+         renderQrCode(code, width, height);
+    }
+
 
 
 }

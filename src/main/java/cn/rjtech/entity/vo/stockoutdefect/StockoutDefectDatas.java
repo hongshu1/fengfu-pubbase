@@ -73,8 +73,6 @@ public class StockoutDefectDatas implements Serializable {
     private Integer iresptype;
 
 
-    private Record stockoutQcFormM;
-
     private StockoutDefect stockoutDefect;
 
     /**
@@ -182,13 +180,6 @@ public class StockoutDefectDatas implements Serializable {
         this.iresptype = iresptype;
     }
 
-    public Record getStockoutQcFormM() {
-        return stockoutQcFormM;
-    }
-
-    public void setStockoutQcFormM(Record stockoutQcFormM) {
-        this.stockoutQcFormM = stockoutQcFormM;
-    }
 
     public StockoutDefect getStockoutDefect() {
         return stockoutDefect;

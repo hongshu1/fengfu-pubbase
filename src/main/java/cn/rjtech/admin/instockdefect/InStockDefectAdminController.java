@@ -6,6 +6,7 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.base.controller.CommonController;
 import cn.rjtech.model.momdata.InStockDefect;
 
 import com.jfinal.aop.Inject;
@@ -139,12 +140,12 @@ public class InStockDefectAdminController extends BaseAdminController {
 	 * 生成二维码
 	 */
 	public void erm() {
-		InStockDefect stockoutDefect=service.findById(getLong(0));
-		if(stockoutDefect == null){
+		InStockDefect inStockDefect=service.findById(getLong(0));
+		if(inStockDefect == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		renderQrCode(stockoutDefect.getCDocNo(),500,600);
+		renderQrCode(inStockDefect.getCDocNo(),500,600);
 	}
 
 }

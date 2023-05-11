@@ -2,11 +2,8 @@ package cn.rjtech.api.stockoutdefect;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.base.controller.BaseApiController;
-import cn.rjtech.entity.vo.RcDocDefect.RcDocDefectVo;
 import cn.rjtech.entity.vo.base.NullDataResult;
-import cn.rjtech.entity.vo.instockdefect.InStockDefect;
 import cn.rjtech.entity.vo.stockoutdefect.StockoutDefectVo;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -17,7 +14,7 @@ import io.github.yedaxia.apidocs.ApiDoc;
 import java.math.BigDecimal;
 
 /**
- * 来料异常品管理api接口
+ * 出库异常品管理api接口
  */
 @ApiDoc
 public class StockoutDefectApiController extends BaseApiController {
@@ -92,6 +89,22 @@ public class StockoutDefectApiController extends BaseApiController {
         kv.set("cdesc", cdesc);
         kv.set("ircvdocqcformmid", stockoutqcformmid);
         renderJBoltApiRet(stockoutDefectApiService.update(kv));
+    }
+
+    /**
+     * 二维码
+     * @param iautoid     来料异常品ID
+     * @param width       宽
+     * @param height      高
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void qrcode(
+            @Para(value = "width", defaultValue = "200") Integer width,
+            @Para(value = "height", defaultValue = "200") Integer height,
+            @Para(value = "iautoid") Long iautoid){
+        String code = stockoutDefectApiService.stockoutDefectId(iautoid);
+        renderQrCode(code, width, height);
     }
 
 }
