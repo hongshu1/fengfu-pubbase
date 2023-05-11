@@ -337,7 +337,7 @@ CREATE TABLE "JBOLT"."jb_code_gen_model_attr"
     "java_type" VARCHAR(40) NOT NULL,
     "attr_length" INT DEFAULT 20 NOT NULL,
     "attr_fixed" INT DEFAULT 0,
-    "attr_default_value" VARCHAR(40),
+    "attr_default_value" VARCHAR(100),
     "sort_rank" INT DEFAULT 1 NOT NULL,
     "sort_rank_intable" INT DEFAULT 1 NOT NULL,
     "sort_rank_inform" INT DEFAULT 1 NOT NULL,

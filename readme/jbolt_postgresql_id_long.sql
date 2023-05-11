@@ -1872,7 +1872,7 @@ CREATE TABLE "public"."jb_code_gen_model_attr" (
 "java_type" varchar(40) COLLATE "pg_catalog"."default" NOT NULL,
 "attr_length" int4 NOT NULL,
 "attr_fixed" int4,
-"attr_default_value" varchar(40) COLLATE "pg_catalog"."default",
+"attr_default_value" varchar(100) COLLATE "pg_catalog"."default",
 "sort_rank" int4 NOT NULL,
 "sort_rank_intable" int4 NOT NULL,
 "sort_rank_inform" int4 NOT NULL,
