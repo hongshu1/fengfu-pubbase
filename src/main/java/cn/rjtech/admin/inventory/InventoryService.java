@@ -1,5 +1,6 @@
 package cn.rjtech.admin.inventory;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.StrSplitter;
@@ -36,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -572,5 +574,40 @@ public class InventoryService extends BaseService<Inventory> {
         return findRecord(sql);
     }
 
+    public int getCinvcode1Count(String cinvcode1) {
+        return queryInt("SELECT COUNT(*) FROM Bd_Inventory WHERE iorgid = ? AND cinvcode1 = ? AND isDeleted = ? ", getOrgId(), cinvcode1, ZERO_STR);
+    }
+
+    public Record findFirstByCinvcode1WithUom(String cinvcode1) {
+        Sql sql = selectSql()
+                .select("i.*, u.cuomname")
+                .from(table(), "i")
+                .leftJoin(uomService.table(), "u", "i.iInventoryUomId1 = u.iautoid")
+                .eq(Inventory.CINVCODE1, cinvcode1)
+                .first();
+
+        return findFirstRecord(sql);
+    }
+
+    public Ret fetchByCinvcode1s(String cinvcode1) {
+        List<String> codes = StrSplitter.split(cinvcode1, COMMA, true, true);
+
+        // 去重后的客户部番
+        codes = CollUtil.distinct(codes);
+
+        List<Record> list = new ArrayList<>();
+
+        for (String code : codes) {
+            int cnt = getCinvcode1Count(code);
+            if (cnt == 0 || cnt > 1) {
+                list.add(new Record().set("cinvcode1", code).set("cnt", cnt));
+            } else {
+                list.add(findFirstByCinvcode1WithUom(code).set("cnt", 1));
+            }
+        }
+
+        return successWithData(list);
+    }
+    
 }
 

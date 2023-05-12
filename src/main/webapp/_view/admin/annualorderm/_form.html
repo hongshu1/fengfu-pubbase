@@ -91,7 +91,7 @@
     
     <script type="text/template" id="jboltTable_demotpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}">
+        <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
@@ -232,30 +232,52 @@
         });
 
         var para = {
-            column: 'cinvcode1',
-            values: arr.join(',')
+            cinvcode1: arr.join(',')
         };
 
         var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
 
-        Ajax.post('admin/inventory/batchFetch', para, function (ret) {
+        Ajax.post('admin/inventory/fetchByCinvcode1s', para, function (ret) {
             
             LayerMsgBox.close(index);
             
             if (ret.state === 'ok') {
                 
+                // 导入行数据
                 $.each(data, function (idx, r) {
                     
-                    $.each(ret.data, function (i, row) {
-                        
+                    // 存货数据
+                    $.each(ret.data, function (idx, row) {
+
                         if (r.cinvcode1 === row.cinvcode1) {
-                            r.iinventoryid = row.iautoid;
-                            r.cinvcode = row.cinvcode;
-                            r.cinvname1 = row.cinvname1;
-                            r.cinvstd = row.cinvstd;
-                            r.cuomname = row.cuomname;
+                            if (row.cnt === 0) {
+                                r.error = '部品番号不存在！';
+                            } else if (row.cnt === 1) {
+                                r.iinventoryid = row.iautoid;
+                                r.cinvcode = row.cinvcode;
+                                r.cinvname1 = row.cinvname1;
+                                r.cinvstd = row.cinvstd;
+                                r.cuomname = row.cuomname;
+                            } else {
+                                r.error = '存在' + row.cnt + '条匹配的存货记录，请手工选择存货！';
+                            }
                         }
-                        
+
+                    });
+
+                    if (r.cinvcode1 && !r.iinventoryid) {
+                        r.error = '部品番号缺少对应存货！';
+                    } else {
+                        r.error = '缺少部品番号！';
+                    }
+
+                    // 数量精度处理
+                    $.each(r, function (key, val) {
+                        if (key.startsWith('iqty')) {
+                            var iqty = parseFloat(val);
+                            iqty = parseFloat(iqty);
+                            r[key] = iqty.toFixed(0);
+                        }
                     });
                     
                 });
