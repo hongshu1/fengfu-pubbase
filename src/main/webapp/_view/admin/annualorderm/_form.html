@@ -216,7 +216,40 @@
 
     function uploadHandler(uploader, type, fileInput, res) {
         jboltTableClear("#jbolt_Table_#(pageId)");
-        jboltTableInsertRow('#jbolt_Table_#(pageId)', res.data);
+        
+        var data = res.data;
+
+        var arr = [];
+        
+        $.each(data, function (idx, row) {
+            arr.push(row.cinvcode1);
+        });
+
+        var para = {
+            column: 'cinvcode1',
+            values: arr.join(',')
+        };
+
+        Ajax.post('admin/inventory/batchFetch', para, function (ret) {
+            if (ret.state === 'ok') {
+                
+                $.each(data, function (idx, r) {
+                    
+                    $.each(ret.data, function (i, row) {
+                        r.iinventoryid = row.iautoid;
+                        r.cinvcode = row.cinvcode;
+                        r.cinvname1 = row.cinvname1;
+                        r.cinvstd = row.cinvstd;
+                        r.cuomname = row.cuomname;
+                    });
+                    
+                });
+
+                jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        });
     }
     
     //获得配置参数

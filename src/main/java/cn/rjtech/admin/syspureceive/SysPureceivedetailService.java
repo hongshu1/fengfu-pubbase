@@ -1,6 +1,7 @@
 package cn.rjtech.admin.syspureceive;
 
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -133,8 +134,10 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
 	public List<Record> findEditTableDatas(Kv para) {
 		ValidationUtils.notNull(para.getLong("masid"), JBoltMsg.PARAM_ERROR);
 		List<Record> records = dbTemplate("syspureceive.dList", para).find();
+
 		return records;
 	}
+
 	/**
 	 * 批量删除主从表
 	 */
@@ -157,4 +160,10 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
 		updateColumn(id, "isdeleted", true);
 		return ret(true);
 	}
+
+	public List<Record> getwhname(String id) {
+		Record first = Db.use(u8SourceConfigName()).findFirst("select * from V_Sys_WareHouse where WhCode=?", id);
+		return null;
+	}
+
 }

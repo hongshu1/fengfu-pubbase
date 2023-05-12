@@ -32,7 +32,7 @@
                             data-autoload
                             data-url="admin/dictionary/options?key=options_enable"
                             data-select-type="select"
-                            data-text="=是否编码字段="
+                            data-text="=是否转换编码="
                             data-value=""
                             data-value-attr="sn"
                     ></select>
@@ -65,11 +65,11 @@
                 <a class="jbolt_table_delbtn" href="admin/cusfieldsmappingd/${data.isdeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" >删除</a>
             </td>
             <td>${data.cruletypename}</td>
-            <td>${data.cfieldname}</td>
+            <td>${data.cformfieldname}</td>
             <td>${data.ccusfieldname}</td>
             <td>
                 {@if data.iruletype == 1}
-                    <img data-switchbtn data-confirm="确定切换是否编码字段？" data-value="${data.isencoded == '1'}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEncoded/${data.iautoid}"/>
+                    <img data-switchbtn data-confirm="确定切换是否转换编码？" data-value="${data.isencoded == '1'}"  data-handler="refreshJBoltTable"  data-url="admin/cusfieldsmappingd/toggleIsEncoded/${data.iautoid}"/>
                 {@/if}
             </td>
             <td>${data.cdemo}</td>
@@ -104,9 +104,9 @@
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="160">操作</th>
                 <th data-width="120" data-column="iruletype">定制规则</th>
-                <th data-width="120" data-column="cfieldname">系统字段名称</th>
+                <th data-width="120" data-column="cformfieldname">系统字段名称</th>
                 <th data-width="150" data-column="ccusfieldname">导入字段名称</th>
-                <th data-width="120" data-column="isencoded">是否编码字段</th>
+                <th data-width="120" data-column="isencoded">是否转换编码</th>
                 <th data-width="250" data-column="cdemo">编码示例</th>
                 <th data-width="100" data-column="isenabled">是否启用</th>
             </tr>
