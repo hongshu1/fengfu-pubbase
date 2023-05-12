@@ -14,8 +14,6 @@ import java.util.List;
 
 /**
  * @version 1.0
- * @Author cc
- * @Create 2023/4/27 17:41
  * @Description 工程内品质巡查api接口
  */
 public class QcInspectionApiService extends JBoltApiBaseService {
@@ -30,7 +28,7 @@ public class QcInspectionApiService extends JBoltApiBaseService {
      * 显示主页面数据
      */
     public JBoltApiRet getAdminDatas(int pageSize, int pageNumber, Kv kv) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(qcInspectionService.paginateAdminDatas(pageNumber,pageSize,kv));
+        return JBoltApiRet.successWithData(qcInspectionService.paginateAdminDatas(pageNumber,pageSize,kv));
     }
 
 
@@ -55,14 +53,16 @@ public class QcInspectionApiService extends JBoltApiBaseService {
      * 点击保存，保存页面明细信息
      */
     public JBoltApiRet update(Kv formRecord) {
-        return JBoltApiRet.successWithData(qcInspectionService.updateEditTable(formRecord));
+        qcInspectionService.updateEditTable(formRecord);
+        return JBoltApiRet.API_SUCCESS;
     }
 
     /**
      * 删除工程内品质巡查表
      * */
     public JBoltApiRet deletes(String ids) {
-        return JBoltApiRet.successWithData(qcInspectionService.deleteByBatchIds(ids));
+        qcInspectionService.deleteByBatchIds(ids);
+        return JBoltApiRet.API_SUCCESS;
     }
 
     /**

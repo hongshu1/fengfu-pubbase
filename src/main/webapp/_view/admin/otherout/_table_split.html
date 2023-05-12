@@ -4,7 +4,7 @@
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.barcode}</td> <!--条码-->
-            <td>${data.cinvaddcode}</td> <!--存货编码-->
+            <td>${data.cinvcode}</td> <!--存货编码-->
             <td>${data.cinvcode1}</td> <!--客户部番-->
             <td>${data.cinvname1}</td> <!--部品名称-->
             <td>${data.cinvstd}</td> <!--规格-->
@@ -59,7 +59,7 @@
           <tr>
             <th data-width="60" data-column="index">序号</th>
             <th data-width="150" data-column="barcode">现品票</th>
-              <th data-width="150" data-column="invcode">存货编码</th>
+              <th data-width="150" data-column="cinvcode">存货编码</th>
               <th data-width="150" data-column="cinvcode1">客户部番</th>
               <th data-width="150" data-column="cinvname1">部品名称</th>
               <th data-width="150" data-column="cinvstd">规格</th>
@@ -111,7 +111,7 @@
                   {column: "cuomclassname", use: "cuomclassname"},{column: "iinventoryid", use: "iautoid"},{column: "sourcebilltype", use: "sourcebilltype"}]
 
           },
-          invcode: {
+          cinvcode: {
               type: "autocomplete",
               url: "admin/otherout/autocomplete",
               maxLength: 100,

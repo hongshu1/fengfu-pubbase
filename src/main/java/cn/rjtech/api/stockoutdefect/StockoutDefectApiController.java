@@ -30,16 +30,16 @@ public class StockoutDefectApiController extends BaseApiController {
      */
     @ApiDoc(result = StockoutDefectVo.class)
     @UnCheck
-    public void datas(@Para(value = "pageNumber") Integer pageNumber,
-                      @Para(value = "pageSize") Integer pageSize,
+    public void datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                      @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
                       @Para(value = "selectparam") String selectparam,
-                      @Para(value = "starttime") String starttime, @Para(value = "endtime") String endtime) {
+                      @Para(value = "startdate") String startdate, @Para(value = "enddate") String enddate) {
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
         Kv kv = new Kv();
         kv.set("selectparam", selectparam);
-        kv.set("starttime", starttime);
-        kv.set("endtime", endtime);
+        kv.set("startdate", startdate);
+        kv.set("enddate", enddate);
         renderJBoltApiRet(stockoutDefectApiService.getAdminDatas(pageNumber,pageSize,kv));
     }
 
@@ -103,7 +103,9 @@ public class StockoutDefectApiController extends BaseApiController {
             @Para(value = "width", defaultValue = "200") Integer width,
             @Para(value = "height", defaultValue = "200") Integer height,
             @Para(value = "iautoid") Long iautoid){
+        ValidationUtils.notNull(iautoid, "缺少参数iautoid");
         String code = stockoutDefectApiService.stockoutDefectId(iautoid);
+        ValidationUtils.notBlank(code, "缺少参数code");
         renderQrCode(code, width, height);
     }
 

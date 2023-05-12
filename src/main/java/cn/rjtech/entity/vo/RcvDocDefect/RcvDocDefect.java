@@ -1,4 +1,4 @@
-package cn.rjtech.entity.vo.RcDocDefect;
+package cn.rjtech.entity.vo.RcvDocDefect;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -8,7 +8,7 @@ import java.util.List;
  * @Description 来料异常品记录
  */
 
-public class RcDocDefect implements Serializable {
+public class RcvDocDefect implements Serializable {
 
     /**
      * 主键ID
@@ -17,11 +17,32 @@ public class RcDocDefect implements Serializable {
     /**
      * 质量管理-来料检id
      */
-    private Long istockoutqcformmid;
+    private Long ircvdocqcformmid;
+    /**
+     * 存货ID
+     */
+    private Long iinventoryid;
+    /**
+     * 供应商ID
+     */
+    private Long ivendorid;
     /**
      * 查看状态
      */
     private String type;
+    /**
+     * 不合格数量
+     */
+    private Integer idqqty;
+
+    /**
+     * 状态名称
+     */
+    private String auditstate;
+    /**
+     * 检验单号
+     */
+    private String crcvdocqcformno;
     /**
      * 组织名称
      */
@@ -70,17 +91,17 @@ public class RcDocDefect implements Serializable {
 
 
 
-    /**设备点检纪录List**/
-    private List<RcDocDefect> RcDocDefect;
+    /**来料异常品记录List**/
+    private List<RcvDocDefect> RcDocDefect;
 
     /**
-     * 开始时间
+     * 更新名称
      */
-    private Date startdate;
+    private String cupdatename;
     /**
-     * 结束时间
+     * 更新时间
      */
-    private Date enddate;
+    private Date dupdatetime;
 
     public Long getIautoid() {
         return iautoid;
@@ -90,12 +111,28 @@ public class RcDocDefect implements Serializable {
         this.iautoid = iautoid;
     }
 
-    public Long getIstockoutqcformmid() {
-        return istockoutqcformmid;
+    public Long getIrcvdocqcformmid() {
+        return ircvdocqcformmid;
     }
 
-    public void setIstockoutqcformmid(Long istockoutqcformmid) {
-        this.istockoutqcformmid = istockoutqcformmid;
+    public void setIrcvdocqcformmid(Long ircvdocqcformmid) {
+        this.ircvdocqcformmid = ircvdocqcformmid;
+    }
+
+    public Long getIinventoryid() {
+        return iinventoryid;
+    }
+
+    public void setIinventoryid(Long iinventoryid) {
+        this.iinventoryid = iinventoryid;
+    }
+
+    public Long getIvendorid() {
+        return ivendorid;
+    }
+
+    public void setIvendorid(Long ivendorid) {
+        this.ivendorid = ivendorid;
     }
 
     public String getType() {
@@ -104,6 +141,30 @@ public class RcDocDefect implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Integer getIdqqty() {
+        return idqqty;
+    }
+
+    public void setIdqqty(Integer idqqty) {
+        this.idqqty = idqqty;
+    }
+
+    public String getAuditstate() {
+        return auditstate;
+    }
+
+    public void setAuditstate(String auditstate) {
+        this.auditstate = auditstate;
+    }
+
+    public String getCrcvdocqcformno() {
+        return crcvdocqcformno;
+    }
+
+    public void setCrcvdocqcformno(String crcvdocqcformno) {
+        this.crcvdocqcformno = crcvdocqcformno;
     }
 
     public String getcOrgName() {
@@ -186,46 +247,27 @@ public class RcDocDefect implements Serializable {
         this.iresptype = iresptype;
     }
 
-    public List<cn.rjtech.entity.vo.RcDocDefect.RcDocDefect> getRcDocDefect() {
+    public List<RcvDocDefect> getRcDocDefect() {
         return RcDocDefect;
     }
 
-    public void setRcDocDefect(List<cn.rjtech.entity.vo.RcDocDefect.RcDocDefect> rcDocDefect) {
+    public void setRcDocDefect(List<RcvDocDefect> rcDocDefect) {
         RcDocDefect = rcDocDefect;
     }
 
-    public Date getStartdate() {
-        return startdate;
+    public String getCupdatename() {
+        return cupdatename;
     }
 
-    public void setStartdate(Date startdate) {
-        this.startdate = startdate;
+    public void setCupdatename(String cupdatename) {
+        this.cupdatename = cupdatename;
     }
 
-    public Date getEnddate() {
-        return enddate;
+    public Date getDupdatetime() {
+        return dupdatetime;
     }
 
-    public void setEnddate(Date enddate) {
-        this.enddate = enddate;
-    }
-
-    public RcDocDefect(Long iautoid, Long istockoutqcformmid, String type, String cOrgName, String cdocno, String imodocid, String cinvcode1, String cinvcode, Integer istatus, String cinvname, Boolean isfirsttime, String capproach, Integer iresptype, List<cn.rjtech.entity.vo.RcDocDefect.RcDocDefect> rcDocDefect, Date startdate, Date enddate) {
-        this.iautoid = iautoid;
-        this.istockoutqcformmid = istockoutqcformmid;
-        this.type = type;
-        this.cOrgName = cOrgName;
-        this.cdocno = cdocno;
-        this.imodocid = imodocid;
-        this.cinvcode1 = cinvcode1;
-        this.cinvcode = cinvcode;
-        this.istatus = istatus;
-        this.cinvname = cinvname;
-        this.isfirsttime = isfirsttime;
-        this.capproach = capproach;
-        this.iresptype = iresptype;
-        RcDocDefect = rcDocDefect;
-        this.startdate = startdate;
-        this.enddate = enddate;
+    public void setDupdatetime(Date dupdatetime) {
+        this.dupdatetime = dupdatetime;
     }
 }

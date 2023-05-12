@@ -449,3 +449,7 @@
 #namespace("formapprovald")
 #include("formapprovald/formapprovald.sql")
 #end
+
+#namespace("transvouch")
+#include("transvouch/transvouch.sql")
+#end
