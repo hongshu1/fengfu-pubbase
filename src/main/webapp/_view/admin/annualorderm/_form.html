@@ -91,7 +91,7 @@
     
     <script type="text/template" id="jboltTable_demotpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
+        <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
@@ -236,7 +236,12 @@
             values: arr.join(',')
         };
 
+        var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
+
         Ajax.post('admin/inventory/batchFetch', para, function (ret) {
+            
+            LayerMsgBox.close(index);
+            
             if (ret.state === 'ok') {
                 
                 $.each(data, function (idx, r) {
@@ -259,6 +264,8 @@
             } else {
                 LayerMsgBox.alert(ret.msg, 2);
             }
+        }, function () {
+            LayerMsgBox.close(index);
         });
     }
     
