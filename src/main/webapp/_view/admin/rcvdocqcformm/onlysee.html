@@ -188,6 +188,7 @@
             <img data-switchbtn data-value="#(rcvdocqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
                  onclick="changeCpkStatus('#(rcvdocqcformm.iscpksigned??)')" style="margin-left: 50px;"/>
             <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+            <input type="text" hidden id="getiscpksigned" value="#(rcvdocqcformm.iscpksigned??)"/>
           </div>
         </table>
 
@@ -313,27 +314,37 @@
    * 切换cpk的状态
    * */
   function changeCpkStatus(status) {
-    let jboltTableAllDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
-    for (let i = 0; i < jboltTableAllDatas.length; i++) {
-      let jbotTableData = jboltTableAllDatas[i];
-      if (jbotTableData.itype == '1') {
-        let istdval = jbotTableData.istdval;//标准值
-        //用标准值计算cvaluelist每个cvalue的公差
-        let cvaluelist = jbotTableData.cvaluelist;
-        for (let j = 0; j < cvaluelist.length; j++) {
-          let cvalue = cvaluelist[j].cvalue;
-          if (cvalue) {
-            //开始计算,比标准值大显示整数，比标准值小显示负数
-            let number = cvalue - istdval;
-            cvaluelist[j].cvalue = number.toFixed(1);
+    let cpkvalue = $("#getiscpksigned").val();
+    if (cpkvalue == '0') {
+      let jboltTableAllDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
+      for (let i = 0; i < jboltTableAllDatas.length; i++) {
+        let jbotTableData = jboltTableAllDatas[i];
+        if (jbotTableData.itype == '1') {
+          let istdval = jbotTableData.istdval;//标准值
+          //用标准值计算cvaluelist每个cvalue的公差
+          let cvaluelist = jbotTableData.cvaluelist;
+          for (let j = 0; j < cvaluelist.length; j++) {
+            let cvalue = cvaluelist[j].cvalue;
+            if (cvalue) {
+              //开始计算,比标准值大显示整数，比标准值小显示负数
+              let number = cvalue - istdval;
+              cvaluelist[j].cvalue = number.toFixed(1);
+            }
           }
+          jboltTableAllDatas[i].cvaluelist = cvaluelist;
         }
-        jboltTableAllDatas[i].cvaluelist = cvaluelist;
       }
+      //jboltTableInsertRow
+      clearJboltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
+      jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, false, false);
+
+      $("#getiscpksigned").val('1');
+
+    }else if (cpkvalue=='1'){
+      refreshJBoltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
+      $("#getiscpksigned").val('0');
     }
-    //jboltTableInsertRow
-    clearJboltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
-    jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, false, false);
+
   }
 </script>
 

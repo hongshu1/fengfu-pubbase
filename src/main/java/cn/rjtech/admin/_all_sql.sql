@@ -453,3 +453,8 @@
 #namespace("transvouch")
 #include("transvouch/transvouch.sql")
 #end
+
+
+#namespace("sysenumeration")
+#include("sysenumeration/sysenumeration.sql")
+#end

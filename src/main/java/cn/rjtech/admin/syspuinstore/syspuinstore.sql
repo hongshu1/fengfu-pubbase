@@ -44,3 +44,7 @@ where a.isDeleted = '0'
 	#end
 ORDER BY a.ModifyDate DESC
 #end
+
+#sql("getWareHouseName")
+    select * from V_Sys_WareHouse
+#end

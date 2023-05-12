@@ -1,42 +1,48 @@
 package cn.rjtech.admin.inventory;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.poi.excel.JBoltExcelUtil;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.inventoryplan.InventoryPlanService;
-import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
 import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
 import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
+import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.model.momdata.*;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.JFinal;
-import com.jfinal.plugin.activerecord.Page;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.List;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import java.io.File;
 import com.jfinal.plugin.activerecord.IAtom;
-import java.sql.SQLException;
-import java.util.concurrent.atomic.AtomicReference;
-
-import cn.jbolt.core.poi.excel.*;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 物料建模-存货档案
@@ -45,21 +51,22 @@ import org.apache.commons.lang3.StringUtils;
  * @date: 2023-03-23 09:35
  */
 public class InventoryService extends BaseService<Inventory> {
+    
 	private final Inventory dao=new Inventory().dao();
 
-	@Inject
+    @Inject
+    private UomService uomService;
+    @Inject
 	private InventoryStockConfigService inventoryStockConfigService;
-	@Inject
+    @Inject
 	private InventoryMfgInfoService inventoryMfgInfoService;
-	@Inject
+    @Inject
 	private InventoryPlanService inventoryPlanService;
-	@Inject
+    @Inject
 	private InventoryAdditionService inventoryAdditionService;
-	@Inject
+    @Inject
 	private InventoryWorkRegionService inventoryWorkRegionService;
-	@Inject
-	private InventoryRoutingService inventoryRoutingService;
-	@Inject
+    @Inject
 	private DictionaryService dictionaryService;
 
 	@Override
@@ -84,15 +91,15 @@ public class InventoryService extends BaseService<Inventory> {
 		if(isEnabled != null)
 			kv.set("isEnabled",isEnabled?"1":"0");
 		Long id = kv.getLong("iInventoryClassId");
-		if(id != null && id.longValue() == 1l){
+		if(id != null && id == 1L){
 			kv.remove("iInventoryClassId");
 		}
 		String iInventoryClassCode = kv.getStr("iInventoryClassCode");
 		if(StringUtils.isNotBlank(iInventoryClassCode)){
-			if(iInventoryClassCode.indexOf("[") < 0)
+			if(!iInventoryClassCode.contains("["))
 				kv.remove("iInventoryClassCode");
 			else
-				kv.put("iInventoryClassCode",iInventoryClassCode.substring(1,iInventoryClassCode.indexOf("]")));
+				kv.set("iInventoryClassCode",iInventoryClassCode.substring(1,iInventoryClassCode.indexOf("]")));
 		}
 		return dbTemplate("inventoryclass.inventoryList",kv).paginate(pageNumber,pageSize);
 	}
@@ -126,19 +133,18 @@ public class InventoryService extends BaseService<Inventory> {
 		if(dictionaries != null && dictionaries.size() > 0){
 			for (Dictionary dictionary : dictionaries) {
 				Method[] m = inventory.getClass().getMethods();
-				for(int i = 0;i < m.length;i++){
-					if(("get"+dictionary.getName()).toLowerCase().equals(m[i].getName().toLowerCase())){
-						try {
-							Boolean invoke = (Boolean) m[i].invoke(inventory);
-							if(invoke)
-							{
-								itemAttributes.append(dictionary.getSn()).append(",");
-							}
-						} catch (Exception e) {
-							continue;
-						}
-					}
-				}
+                for (Method method : m) {
+                    if (("get" + dictionary.getName()).equalsIgnoreCase(method.getName())) {
+                        try {
+                            Boolean invoke = (Boolean) method.invoke(inventory);
+                            if (invoke) {
+                                itemAttributes.append(dictionary.getSn()).append(",");
+                            }
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
+                }
 			}
 		}
 		inventory.setItemAttributes(itemAttributes.length()>1?itemAttributes.substring(0,itemAttributes.length()-1):"");
@@ -155,26 +161,26 @@ public class InventoryService extends BaseService<Inventory> {
 		if(dictionaries != null && dictionaries.size() > 0){
 			for (Dictionary dictionary : dictionaries) {
 				Method[] m = inventory.getClass().getMethods();
-				for(int i = 0;i < m.length;i++){
-					if(("set"+dictionary.getName()).toLowerCase().equals(m[i].getName().toLowerCase())){
-						try {
-							m[i].invoke(inventory,false);
-							if(itemAttribute != null){
-								for (String s : itemAttribute) {
-									if(s.equals(dictionary.getSn())){
-										try {
-											m[i].invoke(inventory,true);
-										} catch (IllegalAccessException e) {
-											continue;
-										}
-									}
-								}
-							}
-						} catch (Exception e) {
-							continue;
-						}
-					}
-				}
+                for (Method method : m) {
+                    if (("set" + dictionary.getName()).equalsIgnoreCase(method.getName())) {
+                        try {
+                            method.invoke(inventory, false);
+                            if (itemAttribute != null) {
+                                for (String s : itemAttribute) {
+                                    if (s.equals(dictionary.getSn())) {
+                                        try {
+                                            method.invoke(inventory, true);
+                                        } catch (IllegalAccessException e) {
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
+                }
 
 			}
 		}
@@ -540,8 +546,7 @@ public class InventoryService extends BaseService<Inventory> {
 	 * @return
 	 */
 	public List<Record> inventorySpotCheckList(Kv kv) {
-		List<Record> recordList = dbTemplate("inventoryclass.inventorySpotCheckList", kv).find();
-		return recordList;
+        return dbTemplate("inventoryclass.inventorySpotCheckList", kv).find();
 	}
 	
 	/**
@@ -551,5 +556,58 @@ public class InventoryService extends BaseService<Inventory> {
 	public Inventory findBycInvAddCode(String cInvAddCode){
 		return findFirst("SELECT * FROM Bd_Inventory WHERE cInvCode1 = ? OR cInvAddCode1 = ?", cInvAddCode, cInvAddCode);
 	}
+
+    public Ret batchFetch(String column, String values) {
+        List<Record> inventories = findByColumnsAndValues(column, values);
+        return successWithData(inventories);
+    }
+
+    public List<Record> findByColumnsAndValues(String column, String values) {
+        List<String> codes = StrSplitter.split(values, COMMA, true, true);
+
+        Sql sql = selectSql()
+                .select("i.*, u.cuomname")
+                .from(table(), "i")
+                .leftJoin(uomService.table(), "u", "i.iInventoryUomId1 = u.iautoid")
+                .in(column, codes);
+        
+        return findRecord(sql);
+    }
+
+    public int getCinvcode1Count(String cinvcode1) {
+        return queryInt("SELECT COUNT(*) FROM Bd_Inventory WHERE iorgid = ? AND cinvcode1 = ? AND isDeleted = ? ", getOrgId(), cinvcode1, ZERO_STR);
+    }
+
+    public Record findFirstByCinvcode1WithUom(String cinvcode1) {
+        Sql sql = selectSql()
+                .select("i.*, u.cuomname")
+                .from(table(), "i")
+                .leftJoin(uomService.table(), "u", "i.iInventoryUomId1 = u.iautoid")
+                .eq(Inventory.CINVCODE1, cinvcode1)
+                .first();
+
+        return findFirstRecord(sql);
+    }
+
+    public Ret fetchByCinvcode1s(String cinvcode1) {
+        List<String> codes = StrSplitter.split(cinvcode1, COMMA, true, true);
+
+        // 去重后的客户部番
+        codes = CollUtil.distinct(codes);
+
+        List<Record> list = new ArrayList<>();
+
+        for (String code : codes) {
+            int cnt = getCinvcode1Count(code);
+            if (cnt == 0 || cnt > 1) {
+                list.add(new Record().set("cinvcode1", code).set("cnt", cnt));
+            } else {
+                list.add(findFirstByCinvcode1WithUom(code).set("cnt", 1));
+            }
+        }
+
+        return successWithData(list);
+    }
+    
 }
 
