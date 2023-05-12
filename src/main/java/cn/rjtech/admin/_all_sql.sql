@@ -450,6 +450,10 @@
 #include("formapprovald/formapprovald.sql")
 #end
 
+#namespace("transvouch")
+#include("transvouch/transvouch.sql")
+#end
+
 
 #namespace("sysenumeration")
 #include("sysenumeration/sysenumeration.sql")

@@ -321,12 +321,12 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 		}
 		if (stockoutDefect.getIStatus() == 1) {
 			map.put("isfirsttime", (stockoutDefect.getIsFirstTime() == true) ? "首发" : "再发");
-			map.put("iresptype", (stockoutDefect.getIRespType() == 1) ? "供应商" : "其他");
+			map.put("iresptype", (stockoutDefect.getIRespType() == 1) ? "供应商" : (stockoutDefect.getIRespType() == 2 ? "工程内":"其他"));
 		} else if (stockoutDefect.getIStatus() == 2) {
 			int getCApproach = Integer.parseInt(stockoutDefect.getCApproach());
-			map.put("capproach", (getCApproach == 1) ? "特采" : "拒收");
+			map.put("capproach", (getCApproach == 1) ? "报废" : (getCApproach == 2 ? "返修":"退货"));
 			map.put("isfirsttime", (stockoutDefect.getIsFirstTime() == true) ? "首发" : "再发");
-			map.put("iresptype", (stockoutDefect.getIRespType() == 1) ? "供应商" : "其他");
+			map.put("iresptype", (stockoutDefect.getIRespType() == 1) ? "供应商" : (stockoutDefect.getIRespType() == 2 ? "工程内":"其他"));
 		}
 		return map;
 	}

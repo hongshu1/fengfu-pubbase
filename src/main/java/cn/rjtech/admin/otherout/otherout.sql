@@ -26,6 +26,7 @@ select top #(limit)
        t1.BarcodeID as SourceBillID,
        t1.MasID as SourceBillDid,
        i.*,
+
        u.cUomClassName,
        t3.cInvCCode,
        t3.cInvCName
@@ -41,6 +42,7 @@ where 1=1
 			or u.cUomClassName like concat('%',#para(q),'%') or t1.Barcode like concat('%',#para(q),'%')
 		)
 	#end
+	 AND t1.OrganizeCode = #(orgCode)
 #end
 
 

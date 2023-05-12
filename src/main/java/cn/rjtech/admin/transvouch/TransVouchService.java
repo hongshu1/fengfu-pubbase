@@ -9,6 +9,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.TransVouch;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 出库管理-调拨单列表 Service
  * @ClassName: TransVouchService
@@ -123,6 +127,14 @@ public class TransVouchService extends BaseService<TransVouch> {
 	@Override
 	protected int systemLogTargetType() {
 		return ProjectSystemLogTargetType.NONE.getValue();
+	}
+
+	/**
+	 * 拉取产线和产线编码
+	 */
+	public List<Record> workRegionMList(Kv kv) {
+		kv.set("orgCode", getOrgCode());
+		return dbTemplate("transvouch.workRegionMList", kv).find();
 	}
 
 }

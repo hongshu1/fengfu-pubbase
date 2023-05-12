@@ -24,8 +24,8 @@ public class StockoutDefectApiService extends JBoltApiBaseService {
     /**
      * 显示主页面数据
      */
-    public JBoltApiRet getAdminDatas(int pageSize, int pageNumber, Kv kv) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(stockoutDefectService.getPageListApi(pageNumber,pageSize,kv));
+    public JBoltApiRet getAdminDatas(int pageNumber ,int pageSize, Kv kv) {
+        return JBoltApiRet.successWithData(stockoutDefectService.getPageListApi(pageNumber,pageSize,kv));
     }
 
 
@@ -36,7 +36,8 @@ public class StockoutDefectApiService extends JBoltApiBaseService {
      * 点击保存，保存页面明细信息
      */
     public JBoltApiRet update(Kv formRecord) {
-        return JBoltApiRet.successWithData(stockoutDefectService.updateEditTable(formRecord));
+        stockoutDefectService.updateEditTable(formRecord);
+        return JBoltApiRet.API_SUCCESS;
     }
 
     public String stockoutDefectId(Long id){

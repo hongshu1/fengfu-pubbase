@@ -76,13 +76,13 @@ public class StockoutDefectAdminController extends BaseAdminController {
 			render("add2.html");
 		} else {
 			if (stockoutDefect.getIStatus() == 1) {
-				set("istatus", (stockoutDefect.getIsFirstTime() == true) ? "首发" : "再发");
+				set("isfirsttime", (stockoutDefect.getIsFirstTime() == true) ? "首发" : "再发");
 				set("iresptype", (stockoutDefect.getIRespType() == 1) ? "供应商" : (stockoutDefect.getIRespType() == 2 ? "工程内":"其他"));
 				render("add3.html");
 			} else if (stockoutDefect.getIStatus() == 2) {
 				int getCApproach = Integer.parseInt(stockoutDefect.getCApproach());
 				set("capproach", (getCApproach == 1) ? "报废" : (getCApproach == 2 ? "返修":"退货"));
-				set("istatus", (stockoutDefect.getIsFirstTime() == true) ? "首发" : "再发");
+				set("isfirsttime", (stockoutDefect.getIsFirstTime() == true) ? "首发" : "再发");
 				set("iresptype", (stockoutDefect.getIRespType() == 1) ? "供应商" : (stockoutDefect.getIRespType() == 2 ? "工程内":"其他"));
 				render("add4.html");
 			}
