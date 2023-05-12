@@ -63,34 +63,34 @@ public class SysEnumerationService  extends BaseService {
 
 
     public List<Record> getwareHouseDatas(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "sysEnumeration.wareHouse", kv).find();
+        return dbTemplate(u8SourceConfigName(), "sysenumeration.wareHouse", kv).find();
     }
 
     public List<Record> getvendorDatas(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "sysEnumeration.vendor", kv).find();
+        return dbTemplate(u8SourceConfigName(), "sysenumeration.vendor", kv).find();
     }
 
     public List<Record>  getbarcodedetailDatas(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "sysEnumeration.barcodedetail", kv).find();
+        return dbTemplate(u8SourceConfigName(), "sysenumeration.barcodedetail", kv).find();
     }
 
     public Object getinventoryDatas(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "sysEnumeration.inventory", kv).find();
+        return dbTemplate(u8SourceConfigName(), "sysenumeration.inventory", kv).find();
     }
 
     public Object getmodetailDatas(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "sysEnumeration.modetail", kv).find();
+        return dbTemplate(u8SourceConfigName(), "sysenumeration.modetail", kv).find();
     }
 
     public Object getpodetailDatas(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "sysEnumeration.podetail", kv).find();
+        return dbTemplate(u8SourceConfigName(), "sysenumeration.podetail", kv).find();
     }
 
     public Object getpositionDatas(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "sysEnumeration.position", kv).find();
+        return dbTemplate(u8SourceConfigName(), "sysenumeration.position", kv).find();
     }
 
     public Object getcustomerDatas(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "sysEnumeration.customer", kv).find();
+        return dbTemplate(u8SourceConfigName(), "sysenumeration.customer", kv).find();
     }
 }
