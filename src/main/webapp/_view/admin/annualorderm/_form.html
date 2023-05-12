@@ -266,10 +266,10 @@
 
                     });
 
-                    if (r.cinvcode1 && !r.iinventoryid) {
-                        r.error = '部品番号缺少对应存货！';
-                    } else {
-                        r.error = '缺少部品番号！';
+                    if (!r.error) {
+                        if (r.cinvcode1 && !r.iinventoryid) {
+                            r.error = '部品番号缺少对应存货！';
+                        }
                     }
 
                     // 数量精度处理
