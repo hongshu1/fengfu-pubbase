@@ -451,6 +451,6 @@
 #end
 
 
-#namespace("sysEnumeration")
-#include("sysEnumeration/sysEnumeration.sql")
+#namespace("sysenumeration")
+#include("sysenumeration/sysenumeration.sql")
 #end
