@@ -218,11 +218,17 @@
         jboltTableClear("#jbolt_Table_#(pageId)");
         
         var data = res.data;
+        if (!data || data.length === 0) {
+            LayerMsgBox.alert('导入数据不能为空', 2);
+            return;
+        }
 
         var arr = [];
         
         $.each(data, function (idx, row) {
-            arr.push(row.cinvcode1);
+            if (row.cinvcode1) {
+                arr.push(row.cinvcode1);
+            }
         });
 
         var para = {
@@ -236,11 +242,15 @@
                 $.each(data, function (idx, r) {
                     
                     $.each(ret.data, function (i, row) {
-                        r.iinventoryid = row.iautoid;
-                        r.cinvcode = row.cinvcode;
-                        r.cinvname1 = row.cinvname1;
-                        r.cinvstd = row.cinvstd;
-                        r.cuomname = row.cuomname;
+                        
+                        if (r.cinvcode1 === row.cinvcode1) {
+                            r.iinventoryid = row.iautoid;
+                            r.cinvcode = row.cinvcode;
+                            r.cinvname1 = row.cinvname1;
+                            r.cinvstd = row.cinvstd;
+                            r.cuomname = row.cuomname;
+                        }
+                        
                     });
                     
                 });
