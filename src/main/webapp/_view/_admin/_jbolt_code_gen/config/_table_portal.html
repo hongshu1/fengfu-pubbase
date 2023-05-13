@@ -94,21 +94,29 @@
 #if(codeGen.isShowOptcol)
 <td>
 #if(codeGen.isCrud && codeGen.isShowOptcolEdit)
+	#if(hasIsDeletedColumn)
 	{@if data.isDeleted}
 	<a class="text-info mr-1" data-openpage="dialog" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/#(dataIdStr??)" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="查看#(codeGen.mainTableRemark??)"><i class="fa fa-eye"></i></a>
 	{@else}
+	#end
 	<a class="jbolt_table_editbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/#(dataIdStr??)" data-handler="refreshJBoltTable" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="编辑#(codeGen.modelTitle?? (codeGen.pageTitle?? codeGen.mainTableRemark??))"><i class="fa fa-edit"></i></a>
+	#if(codeGen.isCrud && hasIsDeletedColumn && codeGen.isToolbarRecoverBtn)
 	{@/if}
+	#end
 #end
 #if(codeGen.isCrud && codeGen.isShowOptcolDel)
+	#if(hasIsDeletedColumn)
 	<a class="jbolt_table_delbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/${data.isDeleted?'realDelete':'delete'}/#(dataIdStr??)" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+	#else
+	<a class="jbolt_table_delbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/delete/#(dataIdStr??)" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+	#end
 #end
-#if(codeGen.isCrud && codeGen.isShowOptcolRecover)
+#if(codeGen.isCrud && hasIsDeletedColumn && codeGen.isShowOptcolRecover)
 	{@if data.isDeleted}
 	<a class="text-info mr-1" data-ajaxbtn data-confirm="确认恢复此数据?" href="#(codeGen.controllerPathWithoutFirstSlash)/recover/#(dataIdStr??)" data-handler="refreshJBoltTable" ><i class="fa fa-reply"></i></a>
 	{@/if}
 #end
-#if(codeGen.isCrud && codeGen.isShowOptcolSort)
+#if(codeGen.isCrud && hasIsDeletedColumn && codeGen.isShowOptcolSort)
 	{@if !data.isDeleted}
 	<a href="#(codeGen.controllerPathWithoutFirstSlash)/up/#(dataIdStr??)" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
 	<a href="#(codeGen.controllerPathWithoutFirstSlash)/down/#(dataIdStr??)" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
