@@ -458,3 +458,7 @@
 #namespace("sysenumeration")
 #include("sysenumeration/sysenumeration.sql")
 #end
+
+#namespace("materialsout")
+#include("materialsout/materialsout.sql")
+#end
