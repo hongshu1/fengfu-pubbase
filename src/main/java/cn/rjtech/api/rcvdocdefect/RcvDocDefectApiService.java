@@ -24,8 +24,8 @@ public class RcvDocDefectApiService extends JBoltApiBaseService {
     /**
      * 显示主页面数据
      */
-    public JBoltApiRet getAdminDatas(int pageSize, int pageNumber, Kv kv) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(rcvDocDefectService.getPageListApi(pageNumber,pageSize,kv));
+    public JBoltApiRet getAdminDatas(int pageNumber ,int pageSize, Kv kv) {
+        return JBoltApiRet.successWithData(rcvDocDefectService.getPageListApi(pageNumber,pageSize,kv));
     }
 
     public JBoltApiRet add(Long iautoid, Long ircvdocqcformmid, String type) {
@@ -33,7 +33,8 @@ public class RcvDocDefectApiService extends JBoltApiBaseService {
     }
 
     public JBoltApiRet update(Kv formRecord) {
-        return JBoltApiRet.successWithData(rcvDocDefectService.updateEditTable(formRecord));
+        rcvDocDefectService.updateEditTable(formRecord);
+        return JBoltApiRet.API_SUCCESS;
     }
 
     public String rcvDocDefectId(Long id){

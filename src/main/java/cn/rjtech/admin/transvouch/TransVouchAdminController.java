@@ -1,5 +1,6 @@
 package cn.rjtech.admin.transvouch;
 
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -7,6 +8,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.TransVouch;
@@ -35,6 +37,13 @@ public class TransVouchAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
+		Kv kv =new Kv();
+		kv.setIfNotNull("selectparam", get("billno"));
+		kv.setIfNotNull("selectparam", get("deptname"));
+		kv.setIfNotNull("selectparam", get("sourcebilltype"));
+		kv.setIfNotNull("iorderstatus", get("iorderstatus"));
+		kv.setIfNotNull("startdate", get("startdate"));
+		kv.setIfNotNull("enddate", get("enddate"));
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
 	}
 
@@ -55,6 +64,7 @@ public class TransVouchAdminController extends BaseAdminController {
 			return;
 		}
 		set("transVouch",transVouch);
+		set("type", get("type"));
 		render("edit.html");
 	}
 
@@ -84,6 +94,18 @@ public class TransVouchAdminController extends BaseAdminController {
 	*/
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
+	}
+
+	/**
+	 * 拉取产线和产线编码
+	 */
+	public void workRegionMList() {
+		//列表排序
+		String cus = get("q");
+		Kv kv = new Kv();
+		kv.set("cus", StringUtils.trim(cus));
+		renderJsonData(service.workRegionMList(kv));
+
 	}
 
 

@@ -187,8 +187,8 @@ public class OtherOutService extends BaseService<OtherOut> {
 	 * 通过关键字匹配
 	 * autocomplete组件使用
 	 */
-	public List<Record> getBarcodeDatas(String q, Integer limit) {
-		return dbTemplate("otherout.getBarcodeDatas",Kv.by("q", q).set("limit",limit)).find();
+	public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode) {
+		return dbTemplate("otherout.getBarcodeDatas",Kv.by("q", q).set("limit",limit).set("orgCode",orgCode)).find();
 	}
 
 	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, String param, String revokeVal,String autoid) {

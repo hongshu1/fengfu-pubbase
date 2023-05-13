@@ -11,6 +11,7 @@ import cn.rjtech.model.momdata.InStockDefect;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 
 /**
  *在库异常品管理api接口
@@ -34,7 +35,8 @@ public class InStockDefectApiService extends JBoltApiBaseService {
     }
 
     public JBoltApiRet update(Kv formRecord) {
-        return JBoltApiRet.successWithData(inStockDefectService.updateEditTable(formRecord));
+        inStockDefectService.updateEditTable(formRecord);
+        return JBoltApiRet.API_SUCCESS;
     }
 
 

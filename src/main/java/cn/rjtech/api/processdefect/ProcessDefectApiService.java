@@ -36,7 +36,8 @@ public class ProcessDefectApiService extends JBoltApiBaseService {
 
 
     public JBoltApiRet update(Kv formRecord) {
-        return JBoltApiRet.successWithData(processDefectService.updateEditTable(formRecord));
+        processDefectService.updateEditTable(formRecord);
+        return JBoltApiRet.API_SUCCESS;
     }
 
     public String processdefectId(Long id){

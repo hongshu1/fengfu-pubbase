@@ -1,6 +1,7 @@
 package cn.rjtech.admin.cusfieldsmappingd;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -337,7 +338,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         DataSet dataSet = AutoExcelUtil.readExcel(file.getAbsolutePath(), importParas);
         List<Map<String, Object>> rows = dataSet.get("sheet1");
         
-        ValidationUtils.notEmpty(rows, "导入数据不能为空");
+        ValidationUtils.notEmpty(rows, "Excel工作簿sheet1，导入数据不能为空");
 
         // 转换编码规则
         Map<String, Pattern> patternMap = new HashMap<>(10);
@@ -373,27 +374,38 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
                 ruleMap.addItems(filed, rules);
             }
         }
+
+        List<Map<String, Object>> rowDatas = new ArrayList<>();
+        
+        // 处理空行数据
+        for (Map<String, Object> rowData : rows) {
+            // 移除null的所有键值对
+            MapUtil.removeNullValue(rowData);
+            
+            if (MapUtil.isNotEmpty(rowData)) {
+                rowDatas.add(rowData);
+            }
+        }
         
         if (CollUtil.isNotEmpty(patternMap)) {
             // 转换编码字段
-            for (Map<String, Object> row : rows) {
-                
+            for (Map<String, Object> row : rowDatas) {
                 // 遍历行数据
                 for (Map.Entry<String, Object> entry : row.entrySet()) {
-                    
+
                     if (patternMap.containsKey(entry.getKey())) {
-                        
+
                         Pattern pattern = patternMap.get(entry.getKey());
-                        
+
                         String value = (String) entry.getValue();
-                        
+
                         if (pattern.matcher(value).matches()) {
                             List<CusfieldsmappingdCodingrule> rules = ruleMap.get(entry.getKey());
 
                             StringBuilder newCode = new StringBuilder();
-                            
+
                             int length = 0;
-                            
+
                             for (CusfieldsmappingdCodingrule rule : rules) {
                                 switch (CusfieldsMappingCharEnum.toEnum(rule.getIType())) {
                                     case CODE:
@@ -407,16 +419,15 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
                                         break;
                                 }
                             }
-                            
+
                             entry.setValue(newCode);
                         }
                     }
                 }
-                
             }
         }
-        
-        return successWithData(rows);
+
+        return successWithData(rowDatas);
     }
 
     public List<FieldSetting> genFieldSettings(List<CusFieldsMappingD> cusFieldsMappingDs) {

@@ -127,7 +127,8 @@ public class OtherOutAdminController extends BaseAdminController {
 	 */
 	@UnCheck
 	public void barcodeDatas() {
-		renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10)));
+		String orgCode =  getOrgCode();
+		renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode)));
 	}
 
 
