@@ -32,12 +32,14 @@ public class ProcessDefectApiController extends BaseApiController {
      */
     @ApiDoc(result = ProcessDefect.class)
     @UnCheck
-    public void datas(@Para(value = "pageNumber") Integer pageNumber,
-                         @Para(value = "pageSize") Integer pageSize,
-                         @Para(value = "selectparam") String selectparam) {
+    public void datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                      @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
+                      @Para(value = "selectparam") String selectparam,
+                      @Para(value = "startdate") String startdate,
+                      @Para(value = "enddate") String enddate) {
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
-        renderJBoltApiRet(processdefectapiservice.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam)));
+        renderJBoltApiRet(processdefectapiservice.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam).set("startdate",startdate).set("enddate",enddate)));
     }
 
 
@@ -63,7 +65,7 @@ public class ProcessDefectApiController extends BaseApiController {
      * @param cbadnesssns          不良项目，字典编码，多个“,”分隔
      * @param cdesc                工序名称
      */
-    @ApiDoc(result = ProcessDefect.class)
+    @ApiDoc(result = NullDataResult.class)
     @UnCheck
     public void updateEditTable(@Para(value = "iautoid") Long iautoid,
                                 @Para(value = "capproach") String  capproach,

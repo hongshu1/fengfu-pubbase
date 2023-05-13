@@ -399,5 +399,14 @@ public class InventoryAdminController extends BaseAdminController {
         
         renderJson(service.batchFetch(column, values));
     }
+
+    /**
+     * 批量获取指定参数
+     */
+    public void fetchByCinvcode1s(@Para(value = "cinvcode1") String cinvcode1) {
+        ValidationUtils.notBlank(cinvcode1, JBoltMsg.PARAM_ERROR);
+        
+        renderJson(service.fetchByCinvcode1s(cinvcode1));
+    }
     
 }

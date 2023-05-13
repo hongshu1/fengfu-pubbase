@@ -57,8 +57,7 @@ public class QcInspectionDatas implements Serializable {
     /**主表*/
     private QcInspection qcInspection;
 
-    /**文件*/
-    private List<Record> files;
+
 
     public Long getIautoid() {
         return iautoid;
@@ -220,11 +219,4 @@ public class QcInspectionDatas implements Serializable {
         this.qcInspection = qcInspection;
     }
 
-    public List<Record> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<Record> files) {
-        this.files = files;
-    }
 }

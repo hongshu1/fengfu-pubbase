@@ -277,12 +277,12 @@ public class InStockDefectService extends BaseService<InStockDefect> {
         }
         if (inStockDefect.getIStatus() == 1) {
             map.put("isfirsttime", (inStockDefect.getIsFirstTime() == true) ? "首发" : "再发");
-            map.put("iresptype", (inStockDefect.getIRespType() == 1) ? "供应商" : "其他");
+            map.put("iresptype", (inStockDefect.getIRespType() == 1) ? "供应商" : (inStockDefect.getIRespType() == 2 ? "工程内":"其他"));
         } else if (inStockDefect.getIStatus() == 2) {
             int getCApproach = Integer.parseInt(inStockDefect.getCApproach());
-            map.put("capproach", (getCApproach == 1) ? "特采" : "拒收");
+            map.put("capproach", (getCApproach == 1) ? "报废" : (getCApproach == 2 ? "返修":"退货"));
             map.put("isfirsttime", (inStockDefect.getIsFirstTime() == true) ? "首发" : "再发");
-            map.put("iresptype", (inStockDefect.getIRespType() == 1) ? "供应商" : "其他");
+            map.put("iresptype", (inStockDefect.getIRespType() == 1) ? "供应商" : (inStockDefect.getIRespType() == 2 ? "工程内":"其他"));
         }
         return map;
     }

@@ -20,53 +20,90 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">单据号：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(otherOut.cdocno??)"/>
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(transVouch.billno??)"/>
 		</div>
 		<label class="col-sm-2 col-form-label">日期</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置需求日期" data-tips="请设置需求日期" maxlength="10" name="billdate" value="#(otherOut.billdate??)"/>
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置需求日期" data-tips="请设置需求日期" maxlength="10" name="billdate" value="#(transVouch.billdate??)"/>
 		</div>
 		<label class="col-sm-2 col-form-label">出库类别</label>
-		<div class="col-sm-2 col-form-label">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置需求日期" data-tips="请设置需求日期" maxlength="10" name="billdate" value="#(otherOut.billdate??)"/>
-		</div>
+			<div class="col-sm-2 col-form-label">
+				<select  class="form-control"
+						data-autoload
+						data-text="=出库类别="
+						value="#(transVouch.ordcode??)"
+						name="ordcode">
+					<option value="">=出库类别=</option>
+				</select>
+			</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">转入仓库：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(otherOut.cdocno??)"/>
+			<input type="text"
+				   #if(transVouch.autoid??) disabled #end
+				   data-autocomplete
+				   data-url="admin/transvouch/workRegionMList"
+				   data-header="产线编码,产线名称"
+				   data-column-attr="cworkcode,cworkname"
+				   data-text-attr="cworkname"
+				   data-value-attr="cworkcode"
+				   data-sync-ele="#iwhcode"
+				   data-rule="required"
+				   data-notnull="true"
+				   autocomplete="off" class="form-control" maxlength="30"  name="cworkname"/>
+			<input type="hidden" id="iwhcode" autocomplete="off" name="iwhcode" value="#(transVouch.iwhcode??)">
 		</div>
 		<label class="col-sm-2 col-form-label">转出仓库：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(otherOut.cdocno??)"/>
+			<input type="text"
+				   #if(transVouch.autoid??) disabled #end
+				   data-autocomplete
+				   data-url="admin/transvouch/workRegionMList"
+				   data-header="产线编码,产线名称"
+				   data-column-attr="cworkcode,cworkname"
+				   data-text-attr="cworkname"
+				   data-value-attr="cworkcode"
+				   data-sync-ele="#owhcode"
+				   data-rule="required"
+				   data-notnull="true"
+				   autocomplete="off" class="form-control" maxlength="30"  name="cworkname"/>
+			<input type="hidden" id="owhcode" autocomplete="off" name="iwhcode" value="#(transVouch.owhcode??)">
 		</div>
+
 		<label class="col-sm-2 col-form-label">入库类别：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置需求日期" data-tips="请设置需求日期" maxlength="10" name="billdate" value="#(otherOut.billdate??)"/>
+				<select class="form-control"
+						data-autoload
+						data-text="=入库类别="
+						value="#(transVouch.irdcode??)"
+						name="irdcode">
+					<option value="">=入库类别=</option>
+				</select>
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">生产产品（单品）：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(otherOut.cdocno??)"/>
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(transVouch.cdocno??)"/>
 		</div>
 		<label class="col-sm-2 col-form-label">生产数量：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(otherOut.cdocno??)"/>
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(transVouch.cdocno??)"/>
 		</div>
 		<label class="col-sm-2 col-form-label">审核日期：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#date((otherOut.dcreatetime??),'yyyy-MM-dd HH:mm:ss')"/>
+			<input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#date((transVouch.auditdate??),'yyyy-MM-dd HH:mm:ss')"/>
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">备注：</label>
-		<div class="col-sm-2 col-form-label"  style="margin-right: 100px">
-			<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入备注=" type="text" maxlength="300" class="form-control border-none" name="cplace" placeholder="" value="#(otherOut.cplace??)">#(otherOut.cplace??)</textarea>
+		<div class="col-sm-2 col-form-label"  >
+			<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入备注=" type="text" maxlength="300" class="form-control border-none" name="cplace" placeholder="" value="#(transVouch.memo??)">#(transVouch.cplace??)</textarea>
 		</div>
 		<label class="col-sm-2 col-form-label">产品：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(otherOut.cdocno??)"/>
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(transVouch.cdocno??)"/>
 		</div>
 	</div>
 

@@ -145,7 +145,7 @@ public class InStockDefectAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		renderQrCode(inStockDefect.getCDocNo(),500,600);
+		renderQrCode(inStockDefect.getCDocNo(),200,200);
 	}
 
 }

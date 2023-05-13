@@ -30,16 +30,22 @@ public class InStockDefectApiController extends BaseApiController {
 
     /**
      * 查询主表明细
-     *
+     * @param pageNumber 页码
+     * @param pageSize 每页显示条数
+     * @param selectparam 搜索条件
+     * @param startdate 開始時間
+     * @param enddate 結束時間
      */
-    @ApiDoc(result = NullDataResult.class)
+    @ApiDoc(result = InStockDefect.class)
     @UnCheck
-    public void datas(@Para(value = "pageNumber") Integer pageNumber,
-                         @Para(value = "pageSize") Integer pageSize,
-                         @Para(value = "selectparam") String selectparam){
+    public void datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                         @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
+                         @Para(value = "selectparam") String selectparam,
+                         @Para(value = "startdate") String startdate,
+                         @Para(value = "enddate") String enddate){
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
-        renderJBoltApiRet(inStockDefectApiService.AdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam)));
+        renderJBoltApiRet(inStockDefectApiService.AdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam).set("startdate",startdate).set("enddate",enddate)));
     }
 
     /**
@@ -47,9 +53,9 @@ public class InStockDefectApiController extends BaseApiController {
      */
     @ApiDoc(result = InStockDefect.class)
     @UnCheck
-    public void add(@Para(value = "iautoid") Long iautoid,
+    public void addlist(@Para(value = "iautoid") Long iautoid,
                     @Para(value = "iinstockqcformmid") Long iinstockqcformmid,
-                    @Para(value = "type") String type) {
+                    @Para(value = "type", defaultValue = "0") String type) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(iinstockqcformmid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(inStockDefectApiService.add(iautoid, iinstockqcformmid, type));
@@ -65,7 +71,7 @@ public class InStockDefectApiController extends BaseApiController {
      * @param cbadnesssns          不良项目，字典编码，多个“,”分隔
      * @param cdesc                工序名称
      */
-    @ApiDoc(result = InStockDefect.class)
+    @ApiDoc(result = NullDataResult.class)
     @UnCheck
     public void updateEditTable(@Para(value = "iautoid") Long iautoid,
                                 @Para(value = "capproach") String capproach,
@@ -102,7 +108,9 @@ public class InStockDefectApiController extends BaseApiController {
                        @Para(value = "width", defaultValue = "200") Integer width,
                        @Para(value = "height", defaultValue = "200") Integer height,
                        @Para(value = "iautoid") Long iautoid){
+         ValidationUtils.notNull(iautoid, "缺少参数iautoid");
          String code = inStockDefectApiService.inStockDefectId(iautoid);
+         ValidationUtils.notBlank(code, "缺少参数code");
          renderQrCode(code, width, height);
     }
 
