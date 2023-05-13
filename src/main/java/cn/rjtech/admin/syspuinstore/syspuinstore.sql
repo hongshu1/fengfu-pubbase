@@ -10,13 +10,13 @@ select so.AutoID, CASE so.state
 				WHEN 4 THEN
         '审批不通过'
         END AS statename,so.state,so.BillNo as billno,so.CreateDate as createdate,
-        so.repository,so.repositoryname,so.indent,
+        so.indent,
         so.dept ,so.deptName as deptname,so.procureType as procuretype,
 		so.AuditDate as auditdate,so.warehousingType as warehousingtype,so.remark,p.name,s.name as sname
 FROM T_Sys_PUInStore so
 LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.username
 LEFT JOIN #(getBaseDbName()).dbo.jb_user s on so.AuditPerson = s.username
-where so.IsDeleted = '0'
+where 1=1
 	#if(billno)
 		and so.BillNo like concat('%',#para(billno),'%')
 	#end
@@ -38,7 +38,7 @@ ORDER BY so.ModifyDate DESC
 #sql("dList")
 SELECT  a.*
 FROM T_Sys_PUInStoreDetail a
-where a.isDeleted = '0'
+where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end
@@ -47,4 +47,17 @@ ORDER BY a.ModifyDate DESC
 
 #sql("getWareHouseName")
     select * from V_Sys_WareHouse
+#end
+
+#sql("pageDetailList")
+    SELECT  a.*
+    FROM T_Sys_PUInStoreDetail a
+    where 1=1
+     #if(masid)
+    and a.MasID = #para(masid)
+     #end
+     #if(spotticket)
+    and a.spotticket = #para(spotticket)
+     #end
+    ORDER BY a.ModifyDate DESC
 #end

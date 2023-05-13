@@ -1,5 +1,6 @@
 package cn.rjtech.routes;
 
+import cn.rjtech.api.modoc.ModocApiController;
 import cn.rjtech.api.nfcswipecard.NfcSwipeCardApiController;
 import cn.rjtech.api.instockdefect.InStockDefectApiController;
 import cn.rjtech.api.instockqcformm.InStockQcFormMApiController;
@@ -28,7 +29,10 @@ public class ApiRoutes extends Routes {
     this.add("/api/erp/common", CommonApiController.class);
 
     //NFC刷卡
-    this.add("/api/mes/nfcswipecard", NfcSwipeCardApiController.class);
+    this.add("/api/nfcswipecard", NfcSwipeCardApiController.class);
+    //制造工单
+    this.add("/api/modoc", ModocApiController.class);
+
     this.add("/api/rcvdocqcformm", RcvDocQcFormMApiController.class);
     this.add("/api/rcvdocdefect", RcvDocDefectApiController.class);
     this.add("/api/processdefect", ProcessDefectApiController.class);
@@ -37,6 +41,7 @@ public class ApiRoutes extends Routes {
     this.add("/api/instockqcformm", InStockQcFormMApiController.class);
     this.add("/api/stockoutdefect", StockoutDefectApiController.class);
     this.add("/api/qcinspection", QcInspectionApiController.class);
+
   }
 
 }
