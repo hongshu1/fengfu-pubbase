@@ -10,7 +10,7 @@ select so.AutoID, CASE so.state
 				WHEN 4 THEN
         '审批不通过'
         END AS statename,so.state,so.BillNo as billno,so.CreateDate as createdate,
-        so.repository,so.repositoryname,so.indent,
+        so.indent,
         so.dept ,so.deptName as deptname,so.procureType as procuretype,
 		so.AuditDate as auditdate,so.warehousingType as warehousingtype,so.remark,p.name,s.name as sname
 FROM T_Sys_PUInStore so
