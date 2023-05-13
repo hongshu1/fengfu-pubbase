@@ -6,8 +6,8 @@
     <div class="row">
       <div class="col">
         <form class="form-inline" id="SysPuinstore_form_#(pageId)" style="left: 30px;text-align: left">
-          <input type="text" autocomplete="off" class="form-control" placeholder="入库单号" name="billno" value=""/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="订单号" name="indent" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=入库单号=" name="billno" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=订单号=" name="indent" value=""/>
           <select class="form-control"
                   name="cvenname"
                   data-autoload
@@ -19,15 +19,15 @@
                   data-text-attr="cvenname"
                   data-select="#(cvenname??)"></select>
           <select class="form-control"
-                  name="cwhname"
+                  name="whname"
                   data-autoload
-                  data-url="admin/warehouse/options"
+                  data-url="admin/SysEnumeration/wareHouse"
                   data-select-type="select2"
                   data-text="=仓库名称="
                   data-value=""
-                  data-value-attr="iautoid"
-                  data-text-attr="cwhname"
-                  data-select="#(cwhname??)"></select>
+                  data-value-attr="whcode"
+                  data-text-attr="whname"
+                  data-select="#(whname??)"></select>
           <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvaddcode" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
@@ -42,17 +42,13 @@
                   data-value-attr="sn"
                   data-select="#(state??)"></select>
 
-          <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20"
+          <input type="text" data-date class="form-control ml-2" placeholder="=开始日期=" maxlength="20"
                  name="startTime" value=""/>
           <span class="ml-1 mr-1">至</span>
-          <input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20" name="endTime"
+          <input type="text" data-date class="form-control" placeholder="截止日期=" maxlength="20" name="endTime"
                  value=""/>
-          <div class="btn-group text-center mx-1">
-            <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
-            <button type="button" onclick="form.reset();refreshJBoltTable(this);"
-                    class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
-            </button>
-          </div>
+          <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置</button>
         </form>
       </div>
     </div>
@@ -71,9 +67,10 @@
   </td>
   <td title="${data.statename}">${data.statename}</td>
   <td title="${data.billno}">${data.billno}</td>
-  <td title="${data.indent}">${data.indent}</td>
+  <td title="${data.u8}">${data.u8}</td>
+  <td title="${data.sourcebillno}">${data.sourcebillno}</td>
   <td title="${data.createdate}">${data.createdate}</td>
-  <td title="${data.repositoryname}">${data.repositoryname}</td>
+  <td title="${data.whname}">${data.whname}</td>
   <td title="${data.deptname}">${data.deptname}</td>
   <td title="${data.procuretype}">${data.procuretype}</td>
   <td title="${data.warehousingtype}">${data.warehousingtype}</td>
@@ -109,19 +106,30 @@
       </div>
 
     </div>
-    <table class="jbolt_table jbolt_main_table  table-center " data-jbolttable data-width="fill" data-height="fill"
-           data-ajax="true" data-conditions-form="SysPuinstore_form_#(pageId)" data-url="admin/purchaseReceiptList/datas"
-           data-rowtpl="SysPuinstore_tpl_#(pageId)" data-copy-to-excel="false" data-page="SysPuinstore_page"
-           data-toolbar="SysPuinstore_toolbar_#(pageId)" data-column-prepend="1:checkbox:true" data-column-resize="true">
+    <table id="syspuinstore_table_#(pageId)"
+           class="jbolt_table jbolt_main_table  table-center "
+           data-jbolttable
+           data-width="fill"
+           data-height="fill"
+           data-ajax="true"
+           data-conditions-form="SysPuinstore_form_#(pageId)"
+           data-url="admin/purchaseReceiptList/datas"
+           data-rowtpl="SysPuinstore_tpl_#(pageId)"
+           data-copy-to-excel="false"
+           data-page="SysPuinstore_page"
+           data-toolbar="SysPuinstore_toolbar_#(pageId)"
+           data-column-prepend="1:checkbox:true"
+           data-column-resize="true">
       <thead class="fw-normal">
       <tr>
         <th data-width="60" data-column="index">序号</th>
         <th data-width="150" data-column="AutoID">操作</th>
         <th data-width="150" data-column="state">状态</th>
         <th data-width="150" data-column="BillNo">入库单号</th>
-        <th data-width="150" data-column="indent">订单号</th>
+        <th data-width="150" data-column="SourceBillNo">订单号</th>
+        <th data-width="150" data-column="U8BillNo">U8单号</th>
         <th data-min-width="160" data-column="BillDate">入库日期</th>
-        <th data-width="150" data-column="repositoryName">仓库名称</th>
+        <th data-width="150" data-column="whname">仓库名称</th>
         <th data-width="150" data-column="deptName">部门名称</th>
         <th data-width="150" data-column="procureType">采购类型</th>
         <th data-width="150" data-column="warehousingType">入库类型</th>

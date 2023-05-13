@@ -274,15 +274,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setAuditDate(date);//审核日期
         sysPuinstore.setModifyDate(date);//修改日期
         sysPuinstore.setModifyPerson("");//修改人
-        sysPuinstore.setIsDeleted(false);
-        sysPuinstore.setRepository("");//仓库
-        sysPuinstore.setRepositoryName("");//仓库名
-        sysPuinstore.setIndent("");//订单号
-        sysPuinstore.setDept("");//生产部门
-        sysPuinstore.setDeptName("");//生产部门名字
-        sysPuinstore.setProcureType("");//采购类型
-        sysPuinstore.setWarehousingType("");//入库类别
-        sysPuinstore.setRemark("来料检合格自动生成采购入库单");//备注
         sysPuinstore.setState("1");//状态 1已保存 2待审批 3已审批 4审批不通过
     }
 

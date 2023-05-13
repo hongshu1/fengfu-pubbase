@@ -60,17 +60,15 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * @param pageSize        每页几条数据
      * @param keywords        关键词
      * @param BillType        到货单类型;采购PO  委外OM
-     * @param IsDeleted       删除状态：0. 未删除 1. 已删除
      * @param procureType     采购类型
      * @param warehousingType 入库类别
      */
-    public Page<SysPuinstore> getAdminDatas(int pageNumber, int pageSize, String keywords, String BillType, Boolean IsDeleted,
-                                            String procureType, String warehousingType) {
+    public Page<SysPuinstore> getAdminDatas(int pageNumber, int pageSize, String keywords, String BillType, String procureType,
+                                            String warehousingType) {
         //创建sql对象
         Sql sql = selectSql().page(pageNumber, pageSize);
         //sql条件处理
         sql.eq("BillType", BillType);
-        sql.eqBooleanToChar("IsDeleted", IsDeleted);
         sql.eq("procureType", procureType);
         sql.eq("warehousingType", warehousingType);
         //关键词模糊查询
@@ -163,8 +161,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * @param pageSize   每页几条数据
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("syspuinstore.recpor", kv).paginate(pageNumber, pageSize);
-        return paginate;
+        return dbTemplate("syspuinstore.recpor", kv).paginate(pageNumber, pageSize);
     }
 
     /**
@@ -172,8 +169,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      */
     public Ret delete(Long id) {
         tx(() -> {
-            updateColumn(id, "isdeleted", true);
-            update("update T_Sys_PUInStoreDetail  set  IsDeleted = 1 where  MasID = ?", id);
+            //todo 删除主表和字表的数据
             return true;
         });
         return ret(true);
@@ -185,9 +181,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     public Ret deleteRmRdByIds(String ids) {
         tx(() -> {
             String[] split = ids.split(",");
-            for (String s : split) {
-                updateColumn(s, "isdeleted", true);
-                update("update T_Sys_PUInStoreDetail  set  IsDeleted = 1 where  MasID = ?", s);
+            for (String id : split) {
+                //todo 先删除自表，再删除主表
             }
             return true;
         });
@@ -202,7 +197,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         //获取当前用户信息？
         User user = JBoltUserKit.getUser();
         Date now = new Date();
-        tx(() -> {
+        /*tx(() -> {
             //通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
                 sysotherin.setOrganizeCode(getOrgCode());
@@ -227,7 +222,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             //获取删除数据（执行删除，通过 getDelete）
             deleteTableSubmitDatas(jBoltTable);
             return true;
-        });
+        });*/
         return SUCCESS;
     }
 
@@ -240,7 +235,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         Date now = new Date();
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
-            row.set("IsDeleted", "0");
             row.set("MasID", sysotherin.getAutoID());
             row.set("AutoID", JBoltSnowflakeKit.me.nextId());
             row.set("CreateDate", now);
@@ -286,7 +280,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             return;
         }
         for (Object id : ids) {
-            update("update T_Sys_PUInStoreDetail  set  IsDeleted = 1 where  AutoID = ?", id);
+
         }
     }
 

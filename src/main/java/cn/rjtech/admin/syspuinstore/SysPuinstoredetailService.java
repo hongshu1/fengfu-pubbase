@@ -1,5 +1,6 @@
 package cn.rjtech.admin.syspuinstore;
 
+import cn.rjtech.model.momdata.SysPureceivedetail;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -10,6 +11,8 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+import cn.rjtech.wms.utils.StringUtils;
+
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.List;
@@ -135,6 +138,26 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
 		List<Record> records = dbTemplate("syspuinstore.dList", para).find();
 		return records;
 	}
+
+	public Page<SysPuinstoredetail> findSysPuinstoreDetailTableDatas(int pageNumber, int pageSize, String spotticket, String masid) {
+		//创建sql对象
+		Sql sql = selectSql().page(pageNumber, pageSize);
+		//sql条件处理
+		sql.eq("spotticket", spotticket);//现品票
+		sql.eq("masid", masid); //主键
+		sql.eqBooleanToChar("isDeleted", false);
+		//排序
+		sql.desc("CreateDate");
+		return paginate(sql);
+	}
+
+	public Page<Record> pageDetailList(Kv kv) {
+		if (StringUtils.isBlank(kv.getStr("masid")) && StringUtils.isBlank(kv.getStr("spotticket"))){
+			return null;
+		}
+		return dbTemplate("syspuinstore.pageDetailList", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
+	}
+
 	/**
 	 * 删除
 	 * @param id

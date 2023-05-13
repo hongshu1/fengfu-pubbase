@@ -38,6 +38,9 @@ where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end
+     #if(spotticket)
+    and a.spotticket = #para(spotticket)
+     #end
 ORDER BY a.ModifyDate DESC
 #end
 
