@@ -7,19 +7,19 @@
       <div class="col">
         <form class="form-inline" id="SysPuinstore_form_#(pageId)" style="left: 30px;text-align: left">
           <input type="text" autocomplete="off" class="form-control" placeholder="=入库单号=" name="billno" value=""/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="=订单号=" name="indent" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=订单号=" name="sourcebillno" value=""/>
           <select class="form-control"
-                  name="cvenname"
+                  name="vencode"
                   data-autoload
                   data-url="admin/vendor/options"
                   data-select-type="select2"
                   data-text="=请选择供应商="
                   data-value=""
-                  data-value-attr="iautoid"
+                  data-value-attr="vencode"
                   data-text-attr="cvenname"
                   data-select="#(cvenname??)"></select>
           <select class="form-control"
-                  name="whname"
+                  name="whcode"
                   data-autoload
                   data-url="admin/SysEnumeration/wareHouse"
                   data-select-type="select2"
@@ -43,9 +43,9 @@
                   data-select="#(state??)"></select>
 
           <input type="text" data-date class="form-control ml-2" placeholder="=开始日期=" maxlength="20"
-                 name="startTime" value=""/>
+                 name="starttime" value=""/>
           <span class="ml-1 mr-1">至</span>
-          <input type="text" data-date class="form-control" placeholder="截止日期=" maxlength="20" name="endTime"
+          <input type="text" data-date class="form-control" placeholder="截止日期=" maxlength="20" name="endtime"
                  value=""/>
           <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
           <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置</button>
@@ -60,10 +60,29 @@
 <tr data-id="${data.autoid}">
   <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
-    <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
-       data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
+    {@if data.state == 1}
+      <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
+         data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
       <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
          data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+    {@/if}
+    {@if data.state == 2}
+      <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
+         data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
+      <a href="admin/purchaseReceiptList/audit/${data.autoid}" data-area="100%,100%" tooltip data-title="审核"
+        data-handler="refreshJBoltTable" data-dialog-title="审核采购入库单列表" class="jbolt_table_editbtn">审核</a>
+      <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
+         data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+    {@/if}
+    {@if data.state == 3}
+      <a href="admin/purchaseReceiptList/onlysee/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
+         data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
+      <a href="admin/purchaseReceiptList/audit/${data.autoid}" data-area="100%,100%" tooltip data-title="审核"
+         data-handler="refreshJBoltTable" data-dialog-title="审核采购入库单列表" class="jbolt_table_editbtn">审核</a>
+      <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
+    {@/if}
+    {@if data.state == 4}<span>审批不通过 </span>{@/if}
+
   </td>
   <td title="${data.state}">
     {@if data.state == 1}<span>已保存</span>{@/if}
@@ -76,10 +95,10 @@
   <td title="${data.sourcebillno}">${data.sourcebillno}</td>
   <td title="${data.createdate}">${data.createdate}</td>
   <td title="${data.whname}">${data.whname}</td>
-  <td title="${data.deptname}">${data.deptname}</td>
-  <td title="${data.procuretype}">${data.procuretype}</td>
-  <td title="${data.warehousingtype}">${data.warehousingtype}</td>
-  <td title="${data.billtype}">${data.billtype}</td>
+  <td title="${data.cdepname}">${data.cdepname}</td>
+  <td title="${data.cptname}">${data.cptname}</td>
+  <td title="${data.crdname}">${data.crdname}</td>
+  <td title="${data.iBusType}">${data.iBusType}</td>
   <td title="${data.cvencode}">${data.cvencode}</td>
   <td title="${data.cvenname}">${data.cvenname}</td>
   <td title="${data.memo}">${data.memo}</td>
@@ -106,7 +125,7 @@
         </button>
         <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                 id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseReceiptList/deleteByIds?ids="
-                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
+                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
         </button>
       </div>
 
@@ -135,10 +154,10 @@
         <th data-width="150" data-column="U8BillNo">U8单号</th>
         <th data-min-width="160" data-column="BillDate">入库日期</th>
         <th data-width="150" data-column="whname">仓库名称</th>
-        <th data-width="150" data-column="deptName">部门名称</th>
-        <th data-width="150" data-column="procureType">采购类型</th>
-        <th data-width="150" data-column="warehousingType">入库类型</th>
-        <th data-width="150" data-column="BillType">业务类型</th>
+        <th data-width="150" data-column="cDepName">部门名称</th>
+        <th data-width="150" data-column="cPTName">采购类型</th>
+        <th data-width="150" data-column="cRdName">入库类型</th>
+        <th data-width="150" data-column="iBusType">业务类型</th>
         <th data-width="150" data-column="cVenCode">供应商编码</th>
         <th data-width="150" data-column="cVenName">供应商名称</th>
         <th data-width="150" data-column="memo">备注</th>
