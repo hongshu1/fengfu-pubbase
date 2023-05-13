@@ -1,7 +1,5 @@
 package cn.rjtech.admin.syspuinstore;
 
-import java.util.List;
-
 import com.jfinal.aop.Inject;
 
 import cn.rjtech.base.controller.BaseAdminController;
@@ -14,7 +12,6 @@ import com.jfinal.aop.Before;
 
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 
-import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import cn.jbolt.core.base.JBoltMsg;
@@ -75,6 +72,33 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         }
         set("sysPuinstore", sysPuinstore);
         render("edit.html");
+    }
+
+    /*
+     * 审核
+     * */
+    public void autit() {
+        renderJson(service.autit(getLong(0)));
+    }
+
+    /*
+     * 查看
+     * */
+    public void onlysee() {
+        SysPuinstore sysPuinstore = service.findById(getLong(0));
+        if (sysPuinstore == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        set("sysPuinstore", sysPuinstore);
+        render("onlysee.html");
+    }
+
+    /*
+     * 点开查看页面，自动加载table数据
+     * */
+    public void autoGetOnlySeeDatas(){
+        renderJson();
     }
 
     /**

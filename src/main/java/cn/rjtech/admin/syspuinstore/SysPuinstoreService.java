@@ -1,13 +1,11 @@
 package cn.rjtech.admin.syspuinstore;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.SysAssem;
+import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
 
 import com.jfinal.aop.Inject;
@@ -17,17 +15,17 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.SysPuinstore;
 
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 采购入库单
@@ -92,6 +90,14 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             //addSaveSystemLog(sysPuinstore.getAutoID(), JBoltUserKit.getUserId(), sysPuinstore.getName());
         }
         return ret(success);
+    }
+
+    /*
+     * 审核
+     * */
+    public Ret autit(Long autoid) {
+        SysPuinstore sysPuinstore = findById(autoid);
+        return ret(true);
     }
 
     /**
@@ -169,9 +175,21 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      */
     public Ret delete(Long id) {
         tx(() -> {
-            //todo 删除主表和字表的数据
+            //从表的数据
+            deleteSysPuinstoredetailByMasId(String.valueOf(id));
+            //删除主表数据
+            delete(id);
             return true;
         });
+        return ret(true);
+    }
+
+    public Ret deleteSysPuinstoredetailByMasId(String id) {
+        List<SysPuinstoredetail> puinstoredetails = syspuinstoredetailservice.findDetailByMasID(id);
+        if (!puinstoredetails.isEmpty()) {
+            List<String> collect = puinstoredetails.stream().map(SysPuinstoredetail::getAutoID).collect(Collectors.toList());
+            syspuinstoredetailservice.deleteByIds(String.join(",", collect));
+        }
         return ret(true);
     }
 
@@ -182,8 +200,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         tx(() -> {
             String[] split = ids.split(",");
             for (String id : split) {
-                //todo 先删除自表，再删除主表
+                //删除从表
+                deleteSysPuinstoredetailByMasId(id);
             }
+            //删除主表
+            deleteByIds(split);
             return true;
         });
         return ret(true);
@@ -193,95 +214,57 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * 执行JBoltTable表格整体提交
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-        SysPuinstore sysotherin = jBoltTable.getFormModel(SysPuinstore.class, "sysPuinstore");
+        SysPuinstore sysPuinstore = jBoltTable.getFormModel(SysPuinstore.class);
         //获取当前用户信息？
         User user = JBoltUserKit.getUser();
         Date now = new Date();
-        /*tx(() -> {
-            //通过 id 判断是新增还是修改
-            if (sysotherin.getAutoID() == null) {
-                sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setCreatePerson(user.getUsername());
-                sysotherin.setCreateDate(now);
-                sysotherin.setModifyPerson(user.getUsername());
-                sysotherin.setState("1");
-                sysotherin.setModifyDate(now);
-                //主表新增
-                ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
+        tx(() -> {
+            //1、如果存在autoid，更新
+            if (isOk(sysPuinstore.getAutoID())) {
+                //更新主表
+
+                //更明细表
             } else {
-                sysotherin.setModifyPerson(user.getUsername());
-                sysotherin.setModifyDate(now);
-                //主表修改
-                ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
+                //2、否则新增
+                //新增主表
+                Record record = jBoltTable.getFormRecord();
+                SysPuinstore puinstore = new SysPuinstore();
+                saveSysPuinstoreModel(puinstore,record);
+                ValidationUtils.isTrue(puinstore.save(), JBoltMsg.FAIL);
+                //新增明细表
+                List<Record> saveRecordList = jBoltTable.getSaveRecordList();
+                List<SysPuinstoredetail> detailList = new ArrayList<>();
+                syspuinstoredetailservice.saveSysPuinstoredetailModel(detailList,saveRecordList,puinstore);
+                int[] ints = syspuinstoredetailservice.batchSave(detailList);
+                System.out.println(ints);
+//                ValidationUtils.notNull(syspuinstoredetailservice.batchSave(detailList), JBoltMsg.FAIL);
             }
-            //从表的操作
-            // 获取保存数据（执行保存，通过 getSaveRecordList）
-            saveTableSubmitDatas(jBoltTable, sysotherin);
-            //获取修改数据（执行修改，通过 getUpdateRecordList）
-            updateTableSubmitDatas(jBoltTable, sysotherin);
-            //获取删除数据（执行删除，通过 getDelete）
-            deleteTableSubmitDatas(jBoltTable);
             return true;
-        });*/
+        });
         return SUCCESS;
     }
 
-    //可编辑表格提交-新增数据
-    private void saveTableSubmitDatas(JBoltTable jBoltTable, SysPuinstore sysotherin) {
-        List<Record> list = jBoltTable.getSaveRecordList();
-        if (CollUtil.isEmpty(list)) {
-            return;
-        }
-        Date now = new Date();
-        for (int i = 0; i < list.size(); i++) {
-            Record row = list.get(i);
-            row.set("MasID", sysotherin.getAutoID());
-            row.set("AutoID", JBoltSnowflakeKit.me.nextId());
-            row.set("CreateDate", now);
-            row.set("ModifyDate", now);
-//			row.set("inventorycode",row.get("cinvcode"));
-//			row.set("inventorycodeh",row.get("cinvcodeh"));
-            row.remove("crcvdate");
-            row.remove("crcvtime");
-            row.remove("cbarcode");
-            row.remove("cversion");
-            row.remove("caddress");
-            row.remove("cinvcode");
-        }
-        syspuinstoredetailservice.batchSaveRecords(list);
-    }
+    public void saveSysPuinstoreModel(SysPuinstore puinstore,Record record){
+        Date date = new Date();
+        puinstore.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
+        puinstore.setBillType(record.get("billtype"));//采购类型
+        puinstore.setOrganizeCode(getOrgCode());
+        puinstore.setBillNo(record.get("billno"));
+//        puinstore.setBillDate(record.get("")); //单据日期
+        puinstore.setRdCode(record.get("rdcode"));
+        puinstore.setDeptCode(record.get("deptcode"));
+        puinstore.setSourceBillNo(record.get("sourcebillno"));//来源单号（订单号）
+        puinstore.setSourceBillID(record.get("sourcebillno"));//来源单据id
+        puinstore.setVenCode(record.get("vencode"));
+        puinstore.setMemo(record.get("memo"));
+        puinstore.setCreatePerson(JBoltUserKit.getUserName());
+        puinstore.setCreateDate(date);
+//        puinstore.setAuditPerson(getOrgName());
+//        puinstore.setAuditDate();
+        puinstore.setModifyPerson(JBoltUserKit.getUserName());
+        puinstore.setModifyDate(date);
+        puinstore.setState("1");
 
-    //可编辑表格提交-修改数据
-    private void updateTableSubmitDatas(JBoltTable jBoltTable, SysPuinstore sysotherin) {
-        List<Record> list = jBoltTable.getUpdateRecordList();
-        if (CollUtil.isEmpty(list)) {
-            return;
-        }
-        Date now = new Date();
-        for (int i = 0; i < list.size(); i++) {
-            Record row = list.get(i);
-            row.set("ModifyDate", now);
-
-            row.remove("crcvdate");
-            row.remove("crcvtime");
-            row.remove("cbarcode");
-            row.remove("cversion");
-            row.remove("caddress");
-            row.remove("cinvcode");
-
-        }
-        syspuinstoredetailservice.batchUpdateRecords(list);
-    }
-
-    //可编辑表格提交-删除数据
-    private void deleteTableSubmitDatas(JBoltTable jBoltTable) {
-        Object[] ids = jBoltTable.getDelete();
-        if (ArrayUtil.isEmpty(ids)) {
-            return;
-        }
-        for (Object id : ids) {
-
-        }
     }
 
     /*
