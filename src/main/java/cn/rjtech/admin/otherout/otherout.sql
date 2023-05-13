@@ -23,6 +23,7 @@ select top #(limit)
        t1.Barcode,
        t1.SourceID as SourceBIllNoRow,
        t1.SourceBillType as SourceBillType,
+       t1.SourceBillNo,
        t1.BarcodeID as SourceBillID,
        t1.MasID as SourceBillDid,
        i.*,
