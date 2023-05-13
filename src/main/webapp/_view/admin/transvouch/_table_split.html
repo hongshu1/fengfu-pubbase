@@ -3,15 +3,15 @@
     {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>${data.barcode}</td> <!--条码-->
-            <td>${data.cinvaddcode}</td> <!--存货编码-->
+            <td>${data.barcode}</td> <!--现品票-->
+            <td>${data.invcode}</td> <!--存货编码-->
             <td>${data.cinvcode1}</td> <!--客户部番-->
             <td>${data.cinvname1}</td> <!--部品名称-->
             <td>${data.cinvstd}</td> <!--规格-->
-            <td>${data.cuomname}</td> <!--主计量单位iinventoryuomid1-->
+            <td>${data.caddress}</td> <!--品牌-->
+            <td>${data.cinvcode2}</td> <!--采购单位-->
             <td>${data.qty}</td> <!--数量-->
-            <td>${data.cinvccode}</td> <!--项目大类编码-->
-            <td>${data.cinvcname}</td> <!--项目大类名称-->
+            <td>${data.memo}</td> <!--备注-->
             <td  style="display: none">${data.sourcebilltype}</td> <!--来源单据类型-->
             <td  style="display: none">${data.sourcebillnorow}</td> <!--来源单号+行号-->
             <td  style="display: none">${data.sourcebillid}</td> <!--来源单据ID-->
@@ -43,12 +43,12 @@
 
         <!---->
         <table class="jbolt_table jbolt_main_table table-center"
-               id="jbolt_table_inventory_split_#(pageId)"
+               id="jbolt_table_transvouch_split_#(pageId)"
                data-jbolttable
                data-height="200"
                data-ajax="true"
                data-column-resize="true"
-               data-url="admin/otherout/getOtherOutLines?autoid=#(otherOut.autoid??)"
+               data-url="admin/transvouch/getTransVouchLines?autoid=#(transVouch.autoid??)"
                data-column-prepend="1:checkbox:true"
                data-conditions-form="inventoryForm_#(pageId)"
                data-rowtpl="inventorySplit_tpl_#(pageId)"
@@ -63,10 +63,10 @@
               <th data-width="150" data-column="cinvcode1">客户部番</th>
               <th data-width="150" data-column="cinvname1">部品名称</th>
               <th data-width="150" data-column="cinvstd">规格型号</th>
-              <th data-width="100" data-column="cuomclassname">品牌</th>
-              <th data-width="100" data-column="cuomclassname">采购单位</th>
+              <th data-width="100" data-column="caddress">品牌</th>
+              <th data-width="100" data-column="cinvcode2">采购单位</th>
             <th data-width="150" data-column="qty">数量</th><!--iInventoryUomId1-->
-            <th data-width="150" data-column="cinvcname">备注</th>
+            <th data-width="150" data-column="memo">备注</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -85,7 +85,7 @@
           maxRowCount:1000,
           trigger:"click",
           submit:{
-              withForm: ["otherOutForm"],
+              withForm: ["transVouchForm"],
               type:"multi",//cell|all|multi
               name:"table2"
           },
@@ -95,7 +95,7 @@
         },
           barcode: { //条码
               maxLength: 100,
-              required: true,
+              // required: true,
               placeholder: "=请选择=",
               type:"autocomplete",
               url: "admin/otherout/barcodeDatas",
@@ -103,29 +103,28 @@
               width: 800,
               sync:"" ,
               valueAttr: "barcode",
-              columnAttr: "barcode,cinvcode,cinvcode1,cinvname1,cinvstd,cuomclassname,cinvccode,cinvcname,sourcebilltype",
-              header:'条码,存货编码,客户部番,部品名称,规格型号,库存主单位,项目大类编码,项目大类名称',
-              changeColumns:[{column: "barcode", use: "barcode"},{column: "cinvcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
+              columnAttr: "barcode,cinvcode,cinvcode1,cinvname1,cinvstd,caddress,cinvcode2",
+              header:'条码,存货编码,客户部番,部品名称,规格型号,品牌,采购单位',
+              changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
                   {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
-                  {column: "cinvccode", use: "cinvccode"},{column: "cinvcname", use: "cinvcname"},
-                  {column: "cuomclassname", use: "cuomclassname"},{column: "iinventoryid", use: "iautoid"},{column: "sourcebilltype", use: "sourcebilltype"}]
+                  {column: "caddress", use: "caddress"},{column: "cinvcode2", use: "cinvcode2"},
+                  ]
 
           },
           invcode: {
               type: "autocomplete",
               url: "admin/otherout/autocomplete",
               maxLength: 100,
-              required: true,
+              // required: true,
               placeholder: "=请选择=",
               textAttr: "cinvcode",
               width: 800,
-              valueAttr: "cinvcode",
-              columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomclassname,cinvccode,cinvcname",
-              header:'存货编码,客户部番,部品名称,规格型号,库存主单位,项目大类编码,项目大类名称',
+              valueAttr: "invcode",
+              columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,caddress,cinvcode2",
+              header:'存货编码,客户部番,部品名称,规格型号,品牌,采购单位',
               changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
                   {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
-                  {column: "cinvccode", use: "cinvccode"},{column: "cinvcname", use: "cinvcname"},
-                  {column: "cuomclassname", use: "cuomclassname"},{column: "iinventoryid", use: "iautoid"}]
+                  {column: "caddress", use: "caddress"},{column: "cinvcode2", use: "cinvcode2"}]
           },
           qty: {
               type:"amount",
@@ -139,6 +138,10 @@
                   formula:"sum"
               }]
           },
+          memo:{
+              type:"input",
+              submitAttr:"memo"
+          }
       }
     };
     return editableTableOptions;

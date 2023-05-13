@@ -265,10 +265,14 @@ public class OtherOutService extends BaseService<OtherOut> {
 					save(otherOut);
 					headerId = otherOut.getAutoID();
 				} else {
-					//审核状态：1. 待审核
-					otherOut.setIAuditStatus(1);
-					//订单状态：2. 待审批
-					otherOut.setIOrderStatus(2);
+					if ("save".equals(revokeVal)){
+						otherOut.setIAuditStatus(0);
+					}else {
+						//审核状态：1. 待审核
+						otherOut.setIAuditStatus(1);
+						//订单状态：2. 待审批
+						otherOut.setIOrderStatus(2);
+					}
 					otherOut.setModifyDate(nowDate);
 					otherOut.setModifyPerson(userName);
 					update(otherOut);
