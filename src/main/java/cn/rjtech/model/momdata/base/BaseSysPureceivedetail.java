@@ -47,13 +47,9 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
     /**修改时间*/
     public static final String MODIFYDATE = "ModifyDate";
     /**现品票*/
-    public static final String SPOTTICKET = "spotTicket";
-    /**存货编码*/
-    public static final String INVCODE = "invCode";
-    /**计划到货日期*/
-    public static final String PLANDATE = "planDate";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "IsDeleted";
+    public static final String BARCODE = "Barcode";
+    /**是否初物*/
+    public static final String ISINITIAL = "IsInitial";
 	/**
 	 * AutoID
 	 */
@@ -363,69 +359,35 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
 	/**
 	 * 现品票
 	 */
-	public M setSpotTicket(java.lang.String spotTicket) {
-		set("spotTicket", spotTicket);
+	public M setBarcode(java.lang.String Barcode) {
+		set("Barcode", Barcode);
 		return (M)this;
 	}
 
 	/**
 	 * 现品票
 	 */
-	@JBoltField(name="spotticket" ,columnName="spotTicket",type="String", remark="现品票", required=false, maxLength=50, fixed=0, order=19)
-	@JSONField(name = "spotticket")
-	public java.lang.String getSpotTicket() {
-		return getStr("spotTicket");
+	@JBoltField(name="barcode" ,columnName="Barcode",type="String", remark="现品票", required=false, maxLength=30, fixed=0, order=19)
+	@JSONField(name = "barcode")
+	public java.lang.String getBarcode() {
+		return getStr("Barcode");
 	}
 
 	/**
-	 * 存货编码
+	 * 是否初物
 	 */
-	public M setInvCode(java.lang.String invCode) {
-		set("invCode", invCode);
+	public M setIsInitial(java.lang.String IsInitial) {
+		set("IsInitial", IsInitial);
 		return (M)this;
 	}
 
 	/**
-	 * 存货编码
+	 * 是否初物
 	 */
-	@JBoltField(name="invcode" ,columnName="invCode",type="String", remark="存货编码", required=false, maxLength=30, fixed=0, order=20)
-	@JSONField(name = "invcode")
-	public java.lang.String getInvCode() {
-		return getStr("invCode");
-	}
-
-	/**
-	 * 计划到货日期
-	 */
-	public M setPlanDate(java.util.Date planDate) {
-		set("planDate", planDate);
-		return (M)this;
-	}
-
-	/**
-	 * 计划到货日期
-	 */
-	@JBoltField(name="plandate" ,columnName="planDate",type="Date", remark="计划到货日期", required=false, maxLength=23, fixed=3, order=21)
-	@JSONField(name = "plandate")
-	public java.util.Date getPlanDate() {
-		return getDate("planDate");
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	public M setIsDeleted(java.lang.Boolean IsDeleted) {
-		set("IsDeleted", IsDeleted);
-		return (M)this;
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=false, maxLength=1, fixed=0, order=22)
-	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("IsDeleted");
+	@JBoltField(name="isinitial" ,columnName="IsInitial",type="String", remark="是否初物", required=false, maxLength=30, fixed=0, order=20)
+	@JSONField(name = "isinitial")
+	public java.lang.String getIsInitial() {
+		return getStr("IsInitial");
 	}
 
 }

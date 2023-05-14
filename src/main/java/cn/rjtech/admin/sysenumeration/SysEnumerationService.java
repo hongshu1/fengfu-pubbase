@@ -36,6 +36,9 @@ public class SysEnumerationService  extends BaseService {
      */
     public String getWhname(String whCode) {
         Record first = Db.use(u8SourceConfigName()).findFirst("select * from V_Sys_WareHouse where WhCode=?", whCode);
+        if ((null==first)){
+            return "";
+        }
         return first.get("whname");
     }
 
@@ -47,6 +50,9 @@ public class SysEnumerationService  extends BaseService {
      */
     public String getVenName(String vencode) {
         Record first = Db.use(u8SourceConfigName()).findFirst("select * from V_Sys_Vendor where VenCode=?", vencode);
+        if ((null==first)){
+            return "";
+        }
         return first.get("VenName");
     }
 

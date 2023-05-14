@@ -23,6 +23,9 @@ where 1=1
 SELECT  a.*
 FROM v_Sys_BarcodeDetail a
 where 1=1
+	#if(vencode)
+		and a.VenCode like concat('%',#para(vencode),'%')
+	#end
 	#if(q)
 		and (a.BarcodeID like concat('%',#para(q),'%') OR a.Barcode like concat('%',#para(q),'%'))
 	#end

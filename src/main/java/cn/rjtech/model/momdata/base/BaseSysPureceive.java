@@ -36,16 +36,8 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
     public static final String MODIFYPERSON = "ModifyPerson";
     /**修改时间*/
     public static final String MODIFYDATE = "ModifyDate";
-    /**仓库*/
-    public static final String REPOSITORY = "repository";
-    /**仓库名称*/
-    public static final String REPOSITORYNAME = "repositoryName";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "IsDeleted";
-	/**状态 1已保存 2待审批 3已审批 4审批不通过 */
-	public static final String STATE = "state";
-	/**供应商编码*/
-	public static final String VENNAME = "VenName";
+    /**状态 1已保存 2待审批 3已审批 4审批不通过 */
+    public static final String STATE = "state";
 	/**
 	 * 主键ID
 	 */
@@ -268,58 +260,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	}
 
 	/**
-	 * 仓库
-	 */
-	public M setRepository(java.lang.String repository) {
-		set("repository", repository);
-		return (M)this;
-	}
-
-	/**
-	 * 仓库
-	 */
-	@JBoltField(name="repository" ,columnName="repository",type="String", remark="仓库", required=false, maxLength=30, fixed=0, order=14)
-	@JSONField(name = "repository")
-	public java.lang.String getRepository() {
-		return getStr("repository");
-	}
-
-	/**
-	 * 仓库名称
-	 */
-	public M setRepositoryName(java.lang.String repositoryName) {
-		set("repositoryName", repositoryName);
-		return (M)this;
-	}
-
-	/**
-	 * 仓库名称
-	 */
-	@JBoltField(name="repositoryname" ,columnName="repositoryName",type="String", remark="仓库名称", required=false, maxLength=30, fixed=0, order=15)
-	@JSONField(name = "repositoryname")
-	public java.lang.String getRepositoryName() {
-		return getStr("repositoryName");
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	public M setIsDeleted(java.lang.Boolean IsDeleted) {
-		set("IsDeleted", IsDeleted);
-		return (M)this;
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=false, maxLength=1, fixed=0, order=16)
-	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("IsDeleted");
-	}
-
-	/**
-	 * 状态 1已保存 2待审批 3已审批 4审批不通过
+	 * 状态 1已保存 2待审批 3已审批 4审批不通过 
 	 */
 	public M setState(java.lang.String state) {
 		set("state", state);
@@ -327,30 +268,12 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	}
 
 	/**
-	 * 状态 1已保存 2待审批 3已审批 4审批不通过
+	 * 状态 1已保存 2待审批 3已审批 4审批不通过 
 	 */
 	@JBoltField(name="state" ,columnName="state",type="String", remark="状态 1已保存 2待审批 3已审批 4审批不通过 ", required=false, maxLength=30, fixed=0, order=14)
 	@JSONField(name = "state")
 	public java.lang.String getState() {
 		return getStr("state");
-	}
-
-
-	/**
-	 * 供应商名称
-	 */
-	public M setVenName(java.lang.String VenName) {
-		set("VenName", VenName);
-		return (M)this;
-	}
-
-	/**
-	 * 供应商名称
-	 */
-	@JBoltField(name="venname" ,columnName="VenName",type="String", remark="供应商名称", required=false, maxLength=30, fixed=0, order=6)
-	@JSONField(name = "venname")
-	public java.lang.String getVenName() {
-		return getStr("VenName");
 	}
 
 }
