@@ -10,6 +10,19 @@ select t1.*,
  iSeq asc
 #end
 
+#sql("findRecordsByFormIdHistory")
+select t1.*,
+ case when iStatus=2 then '已通过' when iStatus=3 then '不通过' else '待审批' end as status,
+ t2.name as stepname,t3.name as way from Bd_FormApprovalD t1
+ left join #(getBaseDbName()).dbo.jb_dictionary t2 on t2.type_key = 'approval_d_name' and t2.sn = t1.iStep
+ left join #(getBaseDbName()).dbo.jb_dictionary t3 on t3.type_key = 'approval_person_config' and t3.sn = t1.iType
+ where iFormApprovalId = (select top 1 iAutoId from Bd_FormApproval approval where approval.iFormObjectId = '#(formId)' and
+ approval.isDeleted =
+  '1' order by approval.dCreateTime desc )
+  order by
+ iSeq asc
+#end
+
 #sql("userDatas")
 select t1.*,t2.username,t2.name,
   case when t1.iAuditStatus=2 then '已通过' when t1.iAuditStatus=3 then '不通过' else '待审批' end as status from

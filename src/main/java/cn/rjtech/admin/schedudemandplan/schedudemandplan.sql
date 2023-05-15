@@ -121,7 +121,7 @@ GROUP BY iLevel
 
 #sql("getDemandComputeDQtyList")
 ###根据日期查询物料需求计划
-SELECT c.cInvCode, a.iQty1,a.iQty2,a.iQty3
+SELECT c.cInvCode, a.iQty1,a.iQty2,a.iQty3,a.iQty4,a.iQty5
 FROM Mrp_DemandComputeD AS a
          LEFT JOIN Mrp_DemandComputeM AS b ON a.iDemandComputeMid = b.iAutoId
          LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId

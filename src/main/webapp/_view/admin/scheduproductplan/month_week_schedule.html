@@ -155,7 +155,6 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
-    window.onload = function () {
         var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {
             sheetCount: 1
         });
@@ -172,8 +171,8 @@
         spread.getSheet(0).setRowCount(500); //设置一列单元格的个数
         spread.getSheet(0).setColumnCount(115); //设置一行有多少个单元格
 
-        var colCount = sheet.getColumnCount(GC.Spread.Sheets.SheetArea.viewport);//获取列数
-        var rowCount = sheet.getRowCount();//获取行数
+        // var colCount = sheet.getColumnCount(GC.Spread.Sheets.SheetArea.viewport);//获取列数
+        // var rowCount = sheet.getRowCount();//获取行数
 
 
         var parmsDefault = {
@@ -182,6 +181,7 @@
             monthday: [],			//每月天数
             rowindex:0,				//x轴索引
             columnindex:0,			//y轴索引
+            dataStartCol: 7,		//日期开始列索引前的列数
             data: [],				//数据
             currentRow: 0,			//当前选中的单元格行
             currentCol: 0,			//当前选中的单元格列
@@ -196,6 +196,7 @@
         var parms = parmsArr[0];
         loadInit(parms)
         initData(parms,sheet)
+        loadDay()
         // //设置全局表单的背景颜色
         spread.options.grayAreaBackColor = '#fff';
 
@@ -247,21 +248,21 @@
         //勾选check按钮
         // sheet.getCell(0, 0	).value(1);
         /*工作簿暂停活性*/
-        // function spreadSuspend() {
-        //     console.log("1111111111")
-        //     spread.suspendPaint(); //渲染前失活(提升性能)
-        //     spread.suspendCalcService(); //暂停计算服务
-        // }
-        // /*工作簿开启活性*/
-        // function spreadResume() {
-        //     spread.resumeCalcService(); //开启计算服务
-        //     spread.resumePaint(); //恢复绘制
-        // }
+        function spreadSuspend() {
+            spread.suspendPaint(); //渲染前失活(提升性能)
+            spread.suspendCalcService(); //暂停计算服务
+        }
+        /*工作簿开启活性*/
+        function spreadResume() {
+            spread.resumeCalcService(); //开启计算服务
+            spread.resumePaint(); //恢复绘制
+        }
         //初始化数据
         function initData(parms,sheet) {
             let url = "http://localhost:8081/admin/scheduproductplanmonth/getTableHead";
             //获取接口数据
             Ajax.get(url,(res)=>{
+                spreadSuspend()
                 console.log(res)
                 parms.data = res.data;
                 parms.dayLength = res.data.day.length;
@@ -274,10 +275,20 @@
                     sheet.setValue(1,parms.dayRow++,parms.data.day[i]);
                     sheet.setValue(2,parms.weekRow++,parms.data.week[i]);
                 }
+                //设置周六日背景色条件格式
+                let style3Sat = new GC.Spread.Sheets.Style();
+                style3Sat.foreColor = '#000';
+                style3Sat.backColor = "#00FFFF";
+                parms.activeSheet.conditionalFormats.addSpecificTextRule(GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,'Sat',style3Sat,[new GC.Spread.Sheets.Range(2, 14, 1, 31)]);
+                let style3Sun = new GC.Spread.Sheets.Style();
+                style3Sun.foreColor = '#000';
+                style3Sun.backColor = "#00FFFF";
+                parms.activeSheet.conditionalFormats.addSpecificTextRule(GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,'Sun',style3Sun,[new GC.Spread.Sheets.Range(2, 14, 1, 31)]);
+                spreadResume()
             });
         }
-    }
+        function  loadDay(){
 
-
+        }
 </script>
 #end

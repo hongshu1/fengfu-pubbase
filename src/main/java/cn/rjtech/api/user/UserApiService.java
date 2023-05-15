@@ -2,9 +2,6 @@ package cn.rjtech.api.user;
 
 import cn.jbolt._admin.permission.PermissionService;
 import cn.jbolt._admin.user.UserService;
-import cn.jbolt.admin.wechat.user.WechatUserService;
-import cn.jbolt.common.model.WechatUser;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.common.enums.JBoltLoginState;
 import cn.jbolt.core.model.Org;
@@ -13,7 +10,6 @@ import cn.rjtech.admin.org.OrgService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 
 /**
  * 用户API
@@ -26,8 +22,6 @@ public class UserApiService extends JBoltApiBaseService {
     private OrgService orgService;
     @Inject
     private UserService userService;
-    @Inject
-    private WechatUserService wechatUserService;
     @Inject
     private PermissionService permissionService;
 
@@ -52,23 +46,10 @@ public class UserApiService extends JBoltApiBaseService {
             return JBoltApiRet.API_FAIL(JBoltLoginState.USERNAME_PWD_ERROR.getText());
         }
 
-        // 公众平台ID
-        Long mpId = JBoltApiKit.getApplication().getLinkTargetId();
-        // 微信用户
-        WechatUser wechatUser = CACHE.me.getApiWechatUserByApiUserId(mpId, user.getId());
-
-        // 通过系统用户查询当前用户是否存在于WechatUser中
-        if (null == wechatUser) {
-            Ret ret = wechatUserService.addSysWechatUser(mpId, user.getId(), user.getName());
-            wechatUser = ret.getAs("data");
-        }
-
-        JBoltApiUserBean userBean = new JBoltApiUserBean(JBoltApiKit.getApplicationId(), user.getId(), user.getName(), user.getIsSystemAdmin(), orgId, org.getOrgCode());
-
-        JBoltApiUser apiUser = JBoltApiKit.processBindUser(userBean, wechatUser.getBindUser());
+        JBoltApiUserBean userBean = new JBoltApiUserBean(JBoltApiKit.getApplicationId(), user.getId(), user.getName(), true, orgId, org.getOrgCode());
 
         // 创建JWT
-        String[] jwts = JBoltApiJwtManger.me().createJBoltApiTokens(JBoltApiKit.getApplication(), apiUser, JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL, JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL * 2);
+        String[] jwts = JBoltApiJwtManger.me().createJBoltApiTokens(JBoltApiKit.getApplication(), userBean, JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL, JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL * 2);
         ValidationUtils.notEmpty(jwts, "生成jwt失败");
 
         Okv ret = Okv.by(JBoltApiJwtManger.JBOLT_API_TOKEN_KEY, jwts[0])

@@ -459,6 +459,18 @@
 #include("sysenumeration/sysenumeration.sql")
 #end
 
+#namespace("mopickitem")
+#include("mopickitemd/mopickitem.sql")
+#end
+
+#namespace("materialsprepare")
+#include("sysmaterialsprepare/materialsprepare.sql")
+#end
+
 #namespace("materialsout")
 #include("materialsout/materialsout.sql")
+#end
+
+#namespace("scancodereceive")
+#include("scancodereceive/scancodereceive.sql")
 #end

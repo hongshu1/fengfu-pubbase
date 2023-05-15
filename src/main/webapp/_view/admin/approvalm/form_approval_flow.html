@@ -5,37 +5,37 @@
 -->
 
 <div class="jbolt_page_content" style="height: 430px">
-    
+
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body">
-                    
-                    <div class="jbolt_tab_view" >
-                        
+                <div class="card-body" style="height: 420px">
+
+                    <div class="jbolt_tab_view">
+
                         <div class="jbolt_tab_links">
                             <a class="jbolt_tab_link active" href="#jbolt_tabcontent1">审批进度</a>
                             <a class="jbolt_tab_link" href="#jbolt_tabcontent2">审批历史</a>
                         </div>
-                        
-                        <div class="jbolt_tab_contents">
+
+                        <div class="jbolt_tab_contents" style="height: 360px">
                             <div class="jbolt_tab_content active" id="jbolt_tabcontent1">
                                 <!--明细页签-->
                                 #include("/_view/admin/approvalm/approval_process.html")
                             </div>
                             <div class="jbolt_tab_content" id="jbolt_tabcontent2">
                                 <!--合行页签-->
-                                #render("_table_line.html")
+                                #include("/_view/admin/approvalm/approval_history.html")
                             </div>
                         </div>
-                        
+
                     </div>
-                    
+
                 </div>
             </div>
         </div>
     </div>
-    
+
 </div>
 
 <script>
