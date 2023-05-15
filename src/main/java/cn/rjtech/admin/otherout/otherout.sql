@@ -36,7 +36,7 @@ select top #(limit)
 
        (SELECT cUomName FROM Bd_Uom WHERE i.iInventoryUomId1 = iautoid) as InventorycUomName,
        (SELECT cUomName FROM Bd_Uom WHERE i.iPurchaseUomId = iautoid) as PurchasecUomName,
-       (SELECT cUomName FROM Bd_Container WHERE i.iContainerClassId = iautoid) as cContainerCode,
+       (SELECT cContainerCode FROM Bd_Container WHERE i.iContainerClassId = iautoid) as cContainerCode,
        u.cUomClassName,
        t3.cInvCCode,
        t3.cInvCName,
