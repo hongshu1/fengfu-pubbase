@@ -1,15 +1,12 @@
 package cn.rjtech.admin.routing;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.admin.bommaster.BomMasterService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.BomMaster;
-import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 
 /**
  * 物料建模-工艺路线
@@ -33,12 +30,6 @@ public class RoutingAdminController extends BaseAdminController {
 	public void index() {
 		render("index.html");
 	}
-	/**
-	 * 数据源
-	 */
-	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled"), getBoolean("isDeleted")));
-	}
 
 	/**
 	 * 新增
@@ -46,8 +37,6 @@ public class RoutingAdminController extends BaseAdminController {
 	public void add() {
 		render("add.html");
 	}
-
-
 
 	/**
 	 * 编辑
@@ -102,32 +91,17 @@ public class RoutingAdminController extends BaseAdminController {
 		renderJsonData(equipmentModelService.getAdminDataNoPage(getKv()));
 	}
 
-	public void getDatas(){
-		renderJsonData(service.getDatas(getKv()));
-	}
+	
 
 	public void getPageData(){
 		renderJsonData(service.getPageData(getPageNumber(), getPageSize(), getKv()));
 	}
-
-	public void testDel(){
-		ok();
-	}
-
-	public void copyForm(){
-		ValidationUtils.notNull(get(0), "未获取到指定产品id");
-		set("oldId", get(0));
-		render("_copy_form.html");
-	}
-
-	// 拷贝
-	public void saveCopy(@Para(value = "oldId") String oldId){
-
-	}
+	
+	
 
 	// 工艺路线
-	public void getMasterData() {
-		renderJsonData(service.getMaster());
+	public void findRoutingAll() {
+		renderJsonData(service.findRoutingAll(getKv()));
 	}
 
 }
