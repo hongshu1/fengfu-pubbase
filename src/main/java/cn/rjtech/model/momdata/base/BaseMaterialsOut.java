@@ -168,7 +168,7 @@ public abstract class BaseMaterialsOut<M extends BaseMaterialsOut<M>> extends JB
 	/**
 	 * 单据日期
 	 */
-	public M setBillDate(java.lang.String BillDate) {
+	public M setBillDate(java.util.Date BillDate) {
 		set("BillDate", BillDate);
 		return (M)this;
 	}
@@ -176,10 +176,10 @@ public abstract class BaseMaterialsOut<M extends BaseMaterialsOut<M>> extends JB
 	/**
 	 * 单据日期
 	 */
-	@JBoltField(name="billdate" ,columnName="BillDate",type="String", remark="单据日期", required=false, maxLength=30, fixed=0, order=8)
+	@JBoltField(name="billdate" ,columnName="BillDate",type="Date", remark="单据日期", required=false, maxLength=30, fixed=0, order=8)
 	@JSONField(name = "billdate")
-	public java.lang.String getBillDate() {
-		return getStr("BillDate");
+	public java.util.Date getBillDate() {
+		return getDate("BillDate");
 	}
 
 	/**
@@ -253,7 +253,7 @@ public abstract class BaseMaterialsOut<M extends BaseMaterialsOut<M>> extends JB
 	/**
 	 * 审核日期
 	 */
-	public M setAuditDate(java.lang.String AuditDate) {
+	public M setAuditDate(java.util.Date AuditDate) {
 		set("AuditDate", AuditDate);
 		return (M)this;
 	}
@@ -261,10 +261,10 @@ public abstract class BaseMaterialsOut<M extends BaseMaterialsOut<M>> extends JB
 	/**
 	 * 审核日期
 	 */
-	@JBoltField(name="auditdate" ,columnName="AuditDate",type="String", remark="审核日期", required=false, maxLength=30, fixed=0, order=13)
+	@JBoltField(name="auditdate" ,columnName="AuditDate",type="Date", remark="审核日期", required=false, maxLength=30, fixed=0, order=13)
 	@JSONField(name = "auditdate")
-	public java.lang.String getAuditDate() {
-		return getStr("AuditDate");
+	public java.util.Date getAuditDate() {
+		return getDate("AuditDate");
 	}
 
 	/**
@@ -338,7 +338,7 @@ public abstract class BaseMaterialsOut<M extends BaseMaterialsOut<M>> extends JB
 	/**
 	 * 状态1=已保存，2=待审核，3=已审核
 	 */
-	public M setState(java.lang.String state) {
+	public M setState(java.lang.Integer state) {
 		set("state", state);
 		return (M)this;
 	}
@@ -346,10 +346,10 @@ public abstract class BaseMaterialsOut<M extends BaseMaterialsOut<M>> extends JB
 	/**
 	 * 状态1=已保存，2=待审核，3=已审核
 	 */
-	@JBoltField(name="state" ,columnName="state",type="String", remark="状态1=已保存，2=待审核，3=已审核", required=false, maxLength=255, fixed=0, order=18)
+	@JBoltField(name="state" ,columnName="state",type="Integer", remark="状态1=已保存，2=待审核，3=已审核", required=false, maxLength=255, fixed=0, order=18)
 	@JSONField(name = "state")
-	public java.lang.String getState() {
-		return getStr("state");
+	public java.lang.Integer getState() {
+		return getInt("state");
 	}
 
 }

@@ -26,6 +26,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -100,70 +101,7 @@ public class RoutingService extends BaseService<BomMaster> {
         sql.desc("iAutoId");
 		return paginate(sql);
 	}
-
-	/**
-	 * 保存
-	 * @param bomMaster
-	 * @param userId
-	 * @param userName
-	 * @param now
-	 * @return
-	 */
-	public Ret save(BomMaster bomMaster, Long userId, String userName, Date now, int auditState) {
-		if(bomMaster==null) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		bomMaster.setICreateBy(userId);
-		bomMaster.setCCreateName(userName);
-		bomMaster.setDCreateTime(now);
-		
-		bomMaster.setISource(SourceEnum.MES.getValue());
-		bomMaster.setIUpdateBy(userId);
-		bomMaster.setCUpdateName(userName);
-		bomMaster.setDUpdateTime(now);
-		bomMaster.setIsDeleted(false);
-		bomMaster.setIsEnabled(true);
-		bomMaster.setIOrgId(getOrgId());
-		bomMaster.setCOrgCode(getOrgCode());
-		bomMaster.setCOrgName(getOrgName());
-		bomMaster.setIsEffective(false);
-		// 设置默认审批流
-		bomMaster.setIAuditStatus(auditState);
-		//if(existsName(bomMaster.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		boolean success=bomMaster.save();
-		if(success) {
-			//添加日志
-			//addSaveSystemLog(bomMaster.getIAutoId(), JBoltUserKit.getUserId(), bomMaster.getName());
-		}
-		return ret(success);
-	}
-
-	/**
-	 * 更新
-	 * @param bomMaster
-	 * @param userId
-	 * @param userName
-	 * @param now
-	 * @return
-	 */
-	public Ret update(BomMaster bomMaster, Long userId, String userName, Date now) {
-		if(bomMaster==null || notOk(bomMaster.getIAutoId())) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		bomMaster.setCUpdateName(userName);
-		bomMaster.setIUpdateBy(userId);
-		bomMaster.setDUpdateTime(now);
-		//更新时需要判断数据存在
-		BomMaster dbBomMaster=findById(bomMaster.getIAutoId());
-		if(dbBomMaster==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(bomMaster.getName(), bomMaster.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		boolean success=bomMaster.update();
-		if(success) {
-			//添加日志
-			//addUpdateSystemLog(bomMaster.getIAutoId(), JBoltUserKit.getUserId(), bomMaster.getName());
-		}
-		return ret(success);
-	}
+	
 
 	/**
 	 * 删除数据后执行的回调
@@ -209,7 +147,66 @@ public class RoutingService extends BaseService<BomMaster> {
     public List<JsTreeBean> findRoutingAll(Kv kv){
     	kv.set("orgId", getOrgId());
 		List<Record> recordList = dbTemplate("routing.findRoutingAll", kv).find();
-        if (StrUtil.isBlank(kv.getStr("keyWords"))){
+		if (CollectionUtil.isEmpty(recordList)){
+			return null;
+		}
+	
+		Map<Long, List<Record>> listMap = recordList.stream().filter(record -> ObjectUtil.isNotNull(record.getLong(InvPart.IPARENTINVID)))
+				.collect(Collectors.groupingBy(record -> record.getLong(InvPart.IPARENTINVID)));
+		
+		List<Record> commonList = new ArrayList<>();
+		
+		for (Record record : recordList){
+			Long iInventoryId = record.getLong(InvPart.IINVENTORYID);
+			Long pId = record.getLong(InvPart.IPID);
+			Long iAutoId = record.getLong(InvPart.IAUTOID);
+			// 虚拟机跳过。父级id为空跳过
+			if (ObjectUtil.isNull(iInventoryId) || ObjectUtil.isNull(pId)){
+				continue;
+			}
+			
+			// 复制值。
+			if (listMap.containsKey(iInventoryId)){
+				
+				List<Record> list = new ArrayList<>();
+				Map<Long, List<Record>> map = listMap.get(iInventoryId).stream().filter(obj -> ObjectUtil.isNotNull(obj.getLong(InvPart.IPID))).collect(Collectors.groupingBy(obj -> obj.getLong(InvPart.IPID)));
+				Map<Long, Long> newIdMap = new HashMap<>();
+				for (Record partRecord : listMap.get(iInventoryId)){
+					Long iPId = partRecord.getLong(InvPart.IPID);
+					Long newId = iAutoId;
+					if (ObjectUtil.isNotNull(iPId)){
+						newId = JBoltSnowflakeKit.me.nextId();
+					}
+					newIdMap.put(partRecord.getLong(InvPart.IAUTOID), newId);
+				}
+				
+				for (Record partRecord : listMap.get(iInventoryId)){
+					
+					Long iPId = partRecord.getLong(InvPart.IPID);
+					// 父id为空跳过
+					if (ObjectUtil.isNull(iPId)){
+						continue;
+					}
+					
+					// 主键id
+					Long id = partRecord.getLong(InvPart.IAUTOID);
+					// 获取新id
+					Long newId = newIdMap.get(id);
+					Record newRecord = new Record();
+					newRecord.setColumns(partRecord);
+					newRecord.set(InvPart.IAUTOID, newId);
+					Long newPId = newIdMap.get(iPId);
+					newRecord.set(InvPart.IPID, newPId);
+					list.add(newRecord);
+				}
+				commonList.addAll(list);
+			}
+		}
+	
+		// 添加共用子件
+		recordList.addAll(commonList);
+		
+		if (StrUtil.isBlank(kv.getStr("keyWords"))){
             return createJsTreeBean(kv.getStr("enableIcon"), recordList);
         }
         
@@ -239,12 +236,9 @@ public class RoutingService extends BaseService<BomMaster> {
         for (Record record : recordList){
             String id = record.getStr(InventoryRoutingConfig.IAUTOID);
 			String pid = record.getStr(InventoryRoutingConfig.IPID);
-			String invName = record.getStr(Inventory.CINVNAME);
-			if (StrUtil.isBlank(invName)){
-				String cOperationName = record.getStr(InventoryRoutingConfig.COPERATIONNAME);
-				invName = "【虚拟件".concat(": ").concat(cOperationName).concat("】");
-			}
-			StringBuilder text = new StringBuilder(invName);
+			String partName = record.getStr(InvPart.CPARTNAME);
+			
+			StringBuilder text = new StringBuilder(partName);
             if (pid == null) {
                 pid = "#";
                 if (StrUtil.isNotBlank(enableIconStr)){
@@ -297,48 +291,8 @@ public class RoutingService extends BaseService<BomMaster> {
 		
 	}
 	
-	/**
-	 * 升级版本号
-	 * @param bomVersion
-	 * @return
-	 */
-	public String upgradeVersion(String bomVersion){
-		return bomVersion.concat("1");
-	}
-	
-	public Ret audit(Long bomMasterId, Integer status) {
-		ValidationUtils.notNull(bomMasterId, JBoltMsg.JBOLTTABLE_IS_BLANK);
-		ValidationUtils.notNull(status, JBoltMsg.JBOLTTABLE_IS_BLANK);
-		BomMaster bomMaster = findById(bomMasterId);
-		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
-		DateTime date = DateUtil.date();
-		bomMaster.setIAuditStatus(status);
-		bomMaster.setDAuditTime(date);
-		update(bomMaster, JBoltUserKit.getUserId(), JBoltUserKit.getUserName(), date);
-		tx(() -> {
-			bomMaster.setIsEffective(true);
-			// 将生效的bom改为失效
-			updateNotEffective(bomMaster.getIInventoryId());
-			BomMaster first = findFirst("select * from Bd_BomMaster where isEffective = 1 and iInventoryId = ?", bomMaster.getIInventoryId());
-			if (ObjectUtil.isNotNull(first)){
-				// 将失效的bom母件记录删除
-				bomMasterInvService.deleteByBomMasterId(first.getIAutoId());
-			}
-			// 保存最新的一份
-			bomMasterInvService.saveBomMasterInv(bomMasterId, bomMaster.getIInventoryId());
-			update(bomMaster, JBoltUserKit.getUserId(), JBoltUserKit.getUserName(), date);
-			// 删除母件下所有子件数据
-			return true;
-		});
-		return SUCCESS;
-	}
-	
-	/**
-	 * 将其余生效的改为失效
-	 * @param inventoryId
-	 */
-	public void updateNotEffective(long	inventoryId){
-		update("UPDATE Bd_BomMaster SET isEffective = 0 WHERE iInventoryId = ?", inventoryId);
+	public List<Record> findParentAll (){
+		return dbTemplate("routing.findRoutingAll", Okv.by("orgId", getOrgId())).find();
 	}
 	
 }

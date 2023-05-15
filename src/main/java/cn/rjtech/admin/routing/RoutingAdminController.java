@@ -97,11 +97,9 @@ public class RoutingAdminController extends BaseAdminController {
 		renderJsonData(service.getPageData(getPageNumber(), getPageSize(), getKv()));
 	}
 	
-	
-
 	// 工艺路线
 	public void findRoutingAll() {
 		renderJsonData(service.findRoutingAll(getKv()));
 	}
-
+	
 }

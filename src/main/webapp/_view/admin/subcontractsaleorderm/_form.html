@@ -7,9 +7,14 @@
                 <div class="card-body">
                     <div class="col">
                         <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
-                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+                                class="fa fa-refresh"></i> 保存
+                        </button>
+                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批
+                        </button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 关闭
+                        </button>
                     </div>
                 </div>
             </div>
@@ -17,170 +22,192 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form onsubmit="return false;" id="subcontractsaleorderm_Form_#(pageId)" action="#(action)" method="post">
+                    <form onsubmit="return false;" id="subcontractsaleorderm_Form_#(pageId)" action="#(action)"
+                          method="post">
                         #if(subcontractsaleorderm.iAutoId??)
-                        <input type="hidden" name="subcontractsaleorderm.iAutoId" value="#(subcontractsaleorderm.iAutoId??)"/>
+                        <input type="hidden" name="subcontractsaleorderm.iAutoId"
+                               value="#(subcontractsaleorderm.iAutoId??)"/>
                         #end
-                        <input type="hidden" name="subcontractsaleorderm.iOrderStatus" value="#(subcontractsaleorderm.iOrderStatus??1)"/>
-                        <input type="hidden" name="subcontractsaleorderm.iAuditStatus" value="#(subcontractsaleorderm.iAuditStatus??0)"/>
-                        <input type="hidden" name="subcontractsaleorderm.isDeleted" value="#(subcontractsaleorderm.isDeleted??0)"/>
-                        <input type="hidden" name="subcontractsaleorderm.dOrderDate" value="#datetime(subcontractsaleorderm.dOrderDate??DateUtil.getNow(),'yyyy-MM-dd')"/>
-						<div class="form-group row">
-							<label class="col-sm-1 col-form-label">订单号</label>
-							<div class="col">
-								<input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="subcontractsaleorderm.cOrderNo" value="#(subcontractsaleorderm.cOrderNo??)"/>	
-							</div>	
-							<label class="col-sm-1 col-form-label">订单日期</label>
-							<div class="col">
-	                            <input type="text"
-	                                   data-rule="required"
-	                                   data-date
-	                                   autocomplete="off"
-	                                   class="form-control"
-	                                   disabled
-	                                   maxlength="20"
-	                                   value="#datetime(subcontractsaleorderm.dOrderDate??DateUtil.getNow(),'yyyy-MM-dd')"/>								
-							</div>
-							<label class="col-sm-1 col-form-label">业务类型</label>
-							<div class="col">
-								<select class="form-control"
-										name="subcontractsaleorderm.iBusType"
-										data-autoload
-										data-url="admin/dictionary/options?key=iBusType"
-										data-value-attr="sn"
-										data-text-attr="name"
-										data-text="=请选择="				
-										data-select="#(subcontractsaleorderm.iBusType??)">
-								</select>								
-							</div>
-							<label class="col-sm-1 col-form-label">销售类型</label>
-							<div class="col">
-								<select class="form-control"
-										name="subcontractsaleorderm.iSaleTypeId"
-										data-autoload
-										data-url="admin/dictionary/options?key=iSaleTypeId"
-										data-value-attr="sn"
-										data-text-attr="name"
-										data-text="=请选择="				
-										data-select="#(subcontractsaleorderm.iSaleTypeId??)">
-								</select>								
-							</div>	
-						</div>
-						<div class="form-group row">
-							<input type="hidden" name="subcontractsaleorderm.iCustomerId" value="#(subcontractsaleorderm.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
-							<label class="col-sm-1 col-form-label">客户名称</label>
-							<div class="col">
-								<input type="text" class="form-control"
-									   data-autocomplete
-									   data-url="admin/customer/autocomplete"
-									   data-rule="required"
-									   data-hidden-input="iCustomerId"
-									   data-text-attr="ccusname"
-									   data-column-attr="ccuscode,ccusname,ccusabbname"
-									   placeholder="请选择"
-									   data-tips="请选择"
-									   data-header="客户编码,客户名称,客户简称"
-									   maxlength="40"
-									   value="#(subcontractsaleorderm.ccusname??)"
-									   >     	
-							</div>	
-							<label class="col-sm-1 col-form-label">付款条件</label>
-							<div class="col">
-								<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入付款条件" maxlength="100" name="subcontractsaleorderm.cPaymentTerm" value="#(subcontractsaleorderm.cPaymentTerm??)"/>
-							</div>
-							<label class="col-sm-1 col-form-label">销售部门</label>
-							<div class="col">
-								<select class="form-control" name="subcontractsaleorderm.iDepartmentId"
-									data-autoload
-									data-with-clearbtn="true"
-									data-select-type="select2"
-									data-tips="请选择"
-									data-url="admin/dept/enableOptions"
-									data-text="=请选择="
-									data-text-attr="name"
-									data-value-attr="id"
-									data-width="218"
-									data-select="#(subcontractsaleorderm.iDepartmentId??)"
-									>
-								</select>									
-							</div>		
-							<input type="hidden" name="subcontractsaleorderm.iBusUserId" value="#(subcontractsaleorderm.iBusUserId??)" id="iBusUserId" data-value-attr="id"/>
-							<label class="col-sm-1 col-form-label">业务员</label>
-							<div class="col">
-								<input type="text" class="form-control"
-									   data-autocomplete
-									   data-url="admin/user/autocomplete"
-									   data-hidden-input="iBusUserId"
-									   data-text-attr="name"
-									   data-column-attr="username,name,phone"
-									   placeholder="请选择"
-									   data-tips="请选择"
-									   data-header="用户名,姓名,电话"
-									   maxlength="40"
-									   value="#(subcontractsaleorderm.cbususername??)"
-									   >		
-							</div>							
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-1 col-form-label">税率</label>
-							<div class="col">
-								<input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入税率" maxlength="6" name="subcontractsaleorderm.iTaxRate" value="#(subcontractsaleorderm.iTaxRate??)"/>		  	
-							</div>	
-							<label class="col-sm-1 col-form-label">币种</label>
-							<div class="col">
-								<select class="form-control"
-										name="subcontractsaleorderm.cCurrency"
-										data-autoload
-										data-url="admin/dictionary/options?key=cCurrency"
-										data-value-attr="sn"
-										data-text-attr="name"
-										data-text="=请选择="				
-										data-select="#(subcontractsaleorderm.cCurrency??)">
-								</select>									
-							</div>
-							<label class="col-sm-1 col-form-label">汇率</label>
-							<div class="col">
-								<input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入汇率" maxlength="10" name="subcontractsaleorderm.iExchangeRate" value="#(subcontractsaleorderm.iExchangeRate??)"/>		  									
-							</div>		
-							<label class="col-sm-1 col-form-label">备注</label>
-							<div class="col">
-								<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入备注" maxlength="200" name="subcontractsaleorderm.cMemo" value="#(subcontractsaleorderm.cMemo??)"/>		
-							</div>							
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-1 col-form-label">年份</label>
-							<div class="col-2">
-	                            <input type="text"
-	                                   data-rule="required"
-	                                   data-date
-	                                   data-type="year"
-	                                   data-fmt="yyyy"
-	                                   autocomplete="off"
-	                                   class="form-control"
-	                                   maxlength="20"
-	                                   name="subcontractsaleorderm.iYear"
-	                                   value="#datetime(subcontractsaleorderm.iYear??DateUtil.getNow(),'yyyy')"/>										  	
-							</div>	
-							<label class="col-sm-1 col-form-label">月份</label>
-							<div class="col-2">
-								<select class="form-control" data-autoload name="subcontractsaleorderm.iMonth" 
-									data-select="#datetime(subcontractsaleorderm.iMonth??DateUtil.getNow(),'M')">
-	                                      <option value="">=月份=</option>
-	                                      <option value="1">1月</option>
-	                                      <option value="2">2月</option>
-	                                      <option value="3">3月</option>
-	                                      <option value="4">4月</option>
-	                                      <option value="5">5月</option>
-	                                      <option value="6">6月</option>
-	                                      <option value="7">7月</option>
-	                                      <option value="8">8月</option>
-	                                      <option value="9">9月</option>
-	                                      <option value="10">10月</option>
-	                                      <option value="11">11月</option>
-	                                      <option value="12">12月</option>
-	                                  </select>								
-							</div>
-						</div>															            
+                        <input type="hidden" name="subcontractsaleorderm.iOrderStatus"
+                               value="#(subcontractsaleorderm.iOrderStatus??1)"/>
+                        <input type="hidden" name="subcontractsaleorderm.iAuditStatus"
+                               value="#(subcontractsaleorderm.iAuditStatus??0)"/>
+                        <input type="hidden" name="subcontractsaleorderm.isDeleted"
+                               value="#(subcontractsaleorderm.isDeleted??0)"/>
+                        <input type="hidden" name="subcontractsaleorderm.dOrderDate"
+                               value="#datetime(subcontractsaleorderm.dOrderDate??DateUtil.getNow(),'yyyy-MM-dd')"/>
+                        <div class="form-group row">
+                            <label class="col-sm-1 col-form-label">订单号</label>
+                            <div class="col">
+                                <input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单号"
+                                       data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                       placeholder="请输入订单号" maxlength="40" name="subcontractsaleorderm.cOrderNo"
+                                       value="#(subcontractsaleorderm.cOrderNo??)"/>
+                            </div>
+                            <label class="col-sm-1 col-form-label">订单日期</label>
+                            <div class="col">
+                                <input type="text"
+                                       data-rule="required"
+                                       data-date
+                                       autocomplete="off"
+                                       class="form-control"
+                                       disabled
+                                       maxlength="20"
+                                       value="#datetime(subcontractsaleorderm.dOrderDate??DateUtil.getNow(),'yyyy-MM-dd')"/>
+                            </div>
+                            <label class="col-sm-1 col-form-label">业务类型</label>
+                            <div class="col">
+                                <select class="form-control"
+                                        name="subcontractsaleorderm.iBusType"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=iBusType"
+                                        data-value-attr="sn"
+                                        data-text-attr="name"
+                                        data-text="=请选择="
+                                        data-select="#(subcontractsaleorderm.iBusType??)">
+                                </select>
+                            </div>
+                            <label class="col-sm-1 col-form-label">销售类型</label>
+                            <div class="col">
+                                <select class="form-control"
+                                        name="subcontractsaleorderm.iSaleTypeId"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=iSaleTypeId"
+                                        data-value-attr="sn"
+                                        data-text-attr="name"
+                                        data-text="=请选择="
+                                        data-select="#(subcontractsaleorderm.iSaleTypeId??)">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <input type="hidden" name="subcontractsaleorderm.iCustomerId"
+                                   value="#(subcontractsaleorderm.iCustomerId??)" id="iCustomerId"
+                                   data-value-attr="iautoid"/>
+                            <label class="col-sm-1 col-form-label">客户名称</label>
+                            <div class="col">
+                                <input type="text" class="form-control"
+                                       data-autocomplete
+                                       data-url="admin/customer/autocomplete"
+                                       data-rule="required"
+                                       data-hidden-input="iCustomerId"
+                                       data-text-attr="ccusname"
+                                       data-column-attr="ccuscode,ccusname,ccusabbname"
+                                       placeholder="请选择"
+                                       data-tips="请选择"
+                                       data-header="客户编码,客户名称,客户简称"
+                                       maxlength="40"
+                                       value="#(subcontractsaleorderm.ccusname??)"
+                                >
+                            </div>
+                            <label class="col-sm-1 col-form-label">付款条件</label>
+                            <div class="col">
+                                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                       placeholder="请输入付款条件" maxlength="100" name="subcontractsaleorderm.cPaymentTerm"
+                                       value="#(subcontractsaleorderm.cPaymentTerm??)"/>
+                            </div>
+                            <label class="col-sm-1 col-form-label">销售部门</label>
+                            <div class="col">
+                                <select class="form-control" name="subcontractsaleorderm.iDepartmentId"
+                                        data-autoload
+                                        data-with-clearbtn="true"
+                                        data-select-type="select2"
+                                        data-tips="请选择"
+                                        data-url="admin/dept/enableOptions"
+                                        data-text="=请选择="
+                                        data-text-attr="name"
+                                        data-value-attr="id"
+                                        data-width="218"
+                                        data-select="#(subcontractsaleorderm.iDepartmentId??)"
+                                >
+                                </select>
+                            </div>
+                            <input type="hidden" name="subcontractsaleorderm.iBusUserId"
+                                   value="#(subcontractsaleorderm.iBusUserId??)" id="iBusUserId" data-value-attr="id"/>
+                            <label class="col-sm-1 col-form-label">业务员</label>
+                            <div class="col">
+                                <input type="text" class="form-control"
+                                       data-autocomplete
+                                       data-url="admin/user/autocomplete"
+                                       data-hidden-input="iBusUserId"
+                                       data-text-attr="name"
+                                       data-column-attr="username,name,phone"
+                                       placeholder="请选择"
+                                       data-tips="请选择"
+                                       data-header="用户名,姓名,电话"
+                                       maxlength="40"
+                                       value="#(subcontractsaleorderm.cbususername??)"
+                                >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-1 col-form-label">税率</label>
+                            <div class="col">
+                                <input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false"
+                                       autocomplete="off" class="form-control" placeholder="请输入税率" maxlength="6"
+                                       name="subcontractsaleorderm.iTaxRate"
+                                       value="#(subcontractsaleorderm.iTaxRate??)"/>
+                            </div>
+                            <label class="col-sm-1 col-form-label">币种</label>
+                            <div class="col">
+                                <select class="form-control"
+                                        name="subcontractsaleorderm.cCurrency"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=cCurrency"
+                                        data-value-attr="sn"
+                                        data-text-attr="name"
+                                        data-text="=请选择="
+                                        data-select="#(subcontractsaleorderm.cCurrency??)">
+                                </select>
+                            </div>
+                            <label class="col-sm-1 col-form-label">汇率</label>
+                            <div class="col">
+                                <input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false"
+                                       autocomplete="off" class="form-control" placeholder="请输入汇率" maxlength="10"
+                                       name="subcontractsaleorderm.iExchangeRate"
+                                       value="#(subcontractsaleorderm.iExchangeRate??)"/>
+                            </div>
+                            <label class="col-sm-1 col-form-label">备注</label>
+                            <div class="col">
+                                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                       placeholder="请输入备注" maxlength="200" name="subcontractsaleorderm.cMemo"
+                                       value="#(subcontractsaleorderm.cMemo??)"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-1 col-form-label">年份</label>
+                            <div class="col-2">
+                                <input type="text"
+                                       data-rule="required"
+                                       data-date
+                                       data-type="year"
+                                       data-fmt="yyyy"
+                                       autocomplete="off"
+                                       class="form-control"
+                                       maxlength="20"
+                                       name="subcontractsaleorderm.iYear"
+                                       value="#datetime(subcontractsaleorderm.iYear??DateUtil.getNow(),'yyyy')"/>
+                            </div>
+                            <label class="col-sm-1 col-form-label">月份</label>
+                            <div class="col-2">
+                                <select class="form-control" data-autoload name="subcontractsaleorderm.iMonth"
+                                        data-select="#datetime(subcontractsaleorderm.iMonth??DateUtil.getNow(),'M')">
+                                    <option value="">=月份=</option>
+                                    <option value="1">1月</option>
+                                    <option value="2">2月</option>
+                                    <option value="3">3月</option>
+                                    <option value="4">4月</option>
+                                    <option value="5">5月</option>
+                                    <option value="6">6月</option>
+                                    <option value="7">7月</option>
+                                    <option value="8">8月</option>
+                                    <option value="9">9月</option>
+                                    <option value="10">10月</option>
+                                    <option value="11">11月</option>
+                                    <option value="12">12月</option>
+                                </select>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -199,46 +226,60 @@
             <td>${data.cinvstd}</td>
             <td>${data.cuomname}</td>
             <td>${data.iqty1}</td>
-			<td>${data.iqty2}</td>
-			<td>${data.iqty3}</td>
-			<td>${data.iqty4}</td>
-			<td>${data.iqty5}</td>
-			<td>${data.iqty6}</td>
-			<td>${data.iqty7}</td>
-			<td>${data.iqty8}</td>
-			<td>${data.iqty9}</td>
-			<td>${data.iqty10}</td>
-			<td>${data.iqty11}</td>
-			<td>${data.iqty12}</td>
-			<td>${data.iqty13}</td>
-			<td>${data.iqty14}</td>
-			<td>${data.iqty15}</td>
-			<td>${data.iqty16}</td>
-			<td>${data.iqty17}</td>
-			<td>${data.iqty18}</td>
-			<td>${data.iqty19}</td>
-			<td>${data.iqty20}</td>
-			<td>${data.iqty21}</td>
-			<td>${data.iqty22}</td>
-			<td>${data.iqty23}</td>
-			<td>${data.iqty24}</td>
-			<td>${data.iqty25}</td>
-			<td>${data.iqty26}</td>
-			<td>${data.iqty27}</td>
-			<td>${data.iqty28}</td>
-			<td>${data.iqty29}</td>
-			<td>${data.iqty30}</td>
-			<td>${data.iqty31}</td>
-			<td>${data.isum}</td>
-			<td>
-    			<a href="admin/person/deleteByAjax" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">移除行</i></a>
-			</td>
+            <td>${data.iqty2}</td>
+            <td>${data.iqty3}</td>
+            <td>${data.iqty4}</td>
+            <td>${data.iqty5}</td>
+            <td>${data.iqty6}</td>
+            <td>${data.iqty7}</td>
+            <td>${data.iqty8}</td>
+            <td>${data.iqty9}</td>
+            <td>${data.iqty10}</td>
+            <td>${data.iqty11}</td>
+            <td>${data.iqty12}</td>
+            <td>${data.iqty13}</td>
+            <td>${data.iqty14}</td>
+            <td>${data.iqty15}</td>
+            <td>${data.iqty16}</td>
+            <td>${data.iqty17}</td>
+            <td>${data.iqty18}</td>
+            <td>${data.iqty19}</td>
+            <td>${data.iqty20}</td>
+            <td>${data.iqty21}</td>
+            <td>${data.iqty22}</td>
+            <td>${data.iqty23}</td>
+            <td>${data.iqty24}</td>
+            <td>${data.iqty25}</td>
+            <td>${data.iqty26}</td>
+            <td>${data.iqty27}</td>
+            <td>${data.iqty28}</td>
+            <td>${data.iqty29}</td>
+            <td>${data.iqty30}</td>
+            <td>${data.iqty31}</td>
+            <td>${data.isum}</td>
+            <td>
+                <a href="admin/person/deleteByAjax" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行"
+                   data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i
+                        class="fa fa-remove c-danger">移除行</i></a>
+            </td>
         </tr>
         {@/each}
     </script>
     <div class="jbolt_table_toolbar" id="subcontractsaleorderm_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+            <div class="j_upload_file_box"
+                 data-name="file"
+                 data-btn-class="btn dropdown-item"
+                 data-placeholder="上传导入"
+                 data-form="subcontractsaleorderm_Form_#(pageId)"
+                 data-confirm="确认导入数据？"
+                 data-accept="excel"
+                 data-maxsize="20480"
+                 data-handler="uploadFile"
+                 data-upload-success-handler="uploadHandler"
+                 data-url="/admin/dataimport/importExcelData">
+            </div>
         </div>
     </div>
     <table class="jbolt_table thead_font_normal table-bordered table-center"
@@ -277,26 +318,26 @@
             <th data-column="iqty10">10日</th>
             <th data-column="iqty11">11日</th>
             <th data-column="iqty12">12日</th>
-        	<th data-column="iqty13">13日</th>
-       		<th data-column="iqty14">14日</th>
-       		<th data-column="iqty15">15日</th>
-       		<th data-column="iqty16">16日</th>
-       		<th data-column="iqty17">17日</th>
-       		<th data-column="iqty18">18日</th>
-       		<th data-column="iqty19">19日</th>
-       		<th data-column="iqty20">20日</th>
-       		<th data-column="iqty21">21日</th>
-       		<th data-column="iqty22">22日</th>
-       		<th data-column="iqty23">23日</th>
-       		<th data-column="iqty24">24日</th>
-       		<th data-column="iqty25">25日</th>
-       		<th data-column="iqty26">26日</th>
-       		<th data-column="iqty27">27日</th>
-       		<th data-column="iqty28">28日</th>
-       		<th data-column="iqty29">29日</th>
-       		<th data-column="iqty30">30日</th>
-        	<th data-column="iqty31">31日</th>
-        	<th data-column="isum">合计</th>
+            <th data-column="iqty13">13日</th>
+            <th data-column="iqty14">14日</th>
+            <th data-column="iqty15">15日</th>
+            <th data-column="iqty16">16日</th>
+            <th data-column="iqty17">17日</th>
+            <th data-column="iqty18">18日</th>
+            <th data-column="iqty19">19日</th>
+            <th data-column="iqty20">20日</th>
+            <th data-column="iqty21">21日</th>
+            <th data-column="iqty22">22日</th>
+            <th data-column="iqty23">23日</th>
+            <th data-column="iqty24">24日</th>
+            <th data-column="iqty25">25日</th>
+            <th data-column="iqty26">26日</th>
+            <th data-column="iqty27">27日</th>
+            <th data-column="iqty28">28日</th>
+            <th data-column="iqty29">29日</th>
+            <th data-column="iqty30">30日</th>
+            <th data-column="iqty31">31日</th>
+            <th data-column="isum">合计</th>
             <th data-width="100">操作</th>
         </tr>
         </thead>
@@ -305,57 +346,60 @@
         <tr>
             <th></th>
             <th>合计</th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>			
             <th></th>
             <th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
             <th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
             <th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
         <tr>
         </tfoot>
     </table>
 </div>
 #define js()
 <script>
-hideParentLayerDialogBtn(0);
-hideParentLayerDialogBtn(1);
-function submitThisForm(){
-	jboltTableSubmit("#jbolt_Table_#(pageId)");
-}
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+
+    function submitThisForm() {
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+
     //获得配置参数
-    function getEditableTableOptions_#(pageId)() {
+    function getEditableTableOptions_#(pageId)()
+    {
         var editableTableOptions = {
             submit: {
                 withForm: ["subcontractsaleorderm_Form_#(pageId)"],
@@ -370,7 +414,7 @@ function submitThisForm(){
                 }
             },
             cols: {
-            	iautoid: {
+                iautoid: {
                     submitAttr: "iautoid",
                 },
                 cinvcode: {
@@ -383,375 +427,453 @@ function submitThisForm(){
                     width: 500,
                     valueAttr: "cinvcode",
                     columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
-                    header:'存货编码,客户部番,部品名称,规格,库存主单位',
-                    changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
-                                   {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
-                                   {column: "cuomname", use: "cuomname"},{column: "iinventoryid", use: "iautoid"}]
+                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
+                    changeColumns: [{column: "cinvcode", use: "cinvcode"}, {column: "cinvcode1", use: "cinvcode1"},
+                        {column: "cinvname1", use: "cinvname1"}, {column: "cinvstd", use: "cinvstd"},
+                        {column: "cuomname", use: "cuomname"}, {column: "iinventoryid", use: "iautoid"}]
                 },
                 iqty1: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty2: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty3: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty4: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty5: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty6: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty7: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty8: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty9: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty10: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty11: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty12: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty13: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty14: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty15: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty16: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty17: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty18: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty19: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty20: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty21: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty22: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty23: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty24: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty25: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty26: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty27: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty28: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty29: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty30: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				iqty31: {
-					type:"amount",
-					placeholder:'数量',
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				isum: {
-					summary:[{
-						dir:"h",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"iqty1+iqty2+iqty3+iqty4+iqty5+iqty6+iqty7+iqty8+iqty9+iqty10+iqty11+iqty12+iqty13+iqty14+iqty15+iqty16+iqty17+iqty18+iqty19+iqty20+iqty21+iqty22+iqty23+iqty24+iqty25+iqty26+iqty27+iqty28+iqty29+iqty30+iqty31"
-					}],
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				}
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty2: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty3: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty4: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty5: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty6: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty7: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty8: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty9: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty10: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty11: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty12: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty13: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty14: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty15: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty16: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty17: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty18: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty19: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty20: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty21: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty22: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty23: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty24: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty25: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty26: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty27: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty28: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty29: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty30: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                iqty31: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                isum: {
+                    summary: [{
+                        dir: "h",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "iqty1+iqty2+iqty3+iqty4+iqty5+iqty6+iqty7+iqty8+iqty9+iqty10+iqty11+iqty12+iqty13+iqty14+iqty15+iqty16+iqty17+iqty18+iqty19+iqty20+iqty21+iqty22+iqty23+iqty24+iqty25+iqty26+iqty27+iqty28+iqty29+iqty30+iqty31"
+                    }],
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                }
             }
         };
         return editableTableOptions;
     }
 
-    function closeHandler(){
-    	parent.layer.close(parent.layer.getFrameIndex(window.name));
+    function uploadHandler(uploader, type, fileInput, res) {
+        jboltTableClear("#jbolt_Table_#(pageId)");
+
+        var data = res.data;
+        console.log(data)
+        if (!data || data.length === 0) {
+            LayerMsgBox.alert('导入数据不能为空', 2);
+            return;
+        }
+
+        var arr = [];
+
+        $.each(data, function (idx, row) {
+            if (row.cinvcode1) {
+                arr.push(row.cinvcode1);
+            }
+        });
+
+        var para = {
+            cinvcode1: arr.join(',')
+        };
+
+        var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
+
+        Ajax.post('admin/inventory/fetchByCinvcode1s', para, function (ret) {
+
+            LayerMsgBox.close(index);
+
+            if (ret.state === 'ok') {
+
+                // 导入行数据
+                $.each(data, function (idx, r) {
+
+                    // 存货数据
+                    $.each(ret.data, function (idx, row) {
+
+                        if (r.cinvcode1 === row.cinvcode1) {
+                            if (row.cnt === 0) {
+                                r.error = '部品番号不存在！';
+                            } else if (row.cnt === 1) {
+                                r.iinventoryid = row.iautoid;
+                                r.cinvcode = row.cinvcode;
+                                r.cinvname1 = row.cinvname1;
+                                r.cinvstd = row.cinvstd;
+                                r.cuomname = row.cuomname;
+                            } else {
+                                r.error = '存在' + row.cnt + '条匹配的存货记录，请手工选择存货！';
+                            }
+                        }
+
+                    });
+
+                    if (!r.error) {
+                        if (r.cinvcode1 && !r.iinventoryid) {
+                            r.error = '部品番号缺少对应存货！';
+                        }
+                    }
+
+                    // 数量精度处理
+                    $.each(r, function (key, val) {
+                        if (key.startsWith('iqty')) {
+                            var iqty = parseFloat(val);
+                            iqty = parseFloat(iqty);
+                            r[key] = iqty.toFixed(0);
+                        }
+                    });
+
+                });
+
+                jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        }, function () {
+            LayerMsgBox.close(index);
+        });
+    }
+
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
 </script>

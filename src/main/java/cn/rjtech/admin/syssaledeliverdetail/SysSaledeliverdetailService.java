@@ -59,12 +59,7 @@ public class SysSaledeliverdetailService extends BaseService<SysSaledeliverdetai
         if (sysSaledeliverdetail == null || isOk(sysSaledeliverdetail.getAutoID())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        // if(existsName(sysSaledeliverdetail.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = sysSaledeliverdetail.save();
-        if (success) {
-            // 添加日志
-            // addSaveSystemLog(sysSaledeliverdetail.getAutoID(), JBoltUserKit.getUserId(), sysSaledeliverdetail.getName());
-        }
         return ret(success);
     }
 
@@ -83,12 +78,7 @@ public class SysSaledeliverdetailService extends BaseService<SysSaledeliverdetai
         if (dbSysSaledeliverdetail == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
-        // if(existsName(sysSaledeliverdetail.getName(), sysSaledeliverdetail.getAutoID())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = sysSaledeliverdetail.update();
-        if (success) {
-            // 添加日志
-            // addUpdateSystemLog(sysSaledeliverdetail.getAutoID(), JBoltUserKit.getUserId(), sysSaledeliverdetail.getName());
-        }
         return ret(success);
     }
 
