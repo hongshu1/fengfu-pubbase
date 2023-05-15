@@ -2,7 +2,6 @@ package cn.rjtech.admin.sysenumeration;
 
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.UnCheck;
-import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 

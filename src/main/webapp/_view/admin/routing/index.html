@@ -2,247 +2,56 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" >
-	<div class="jbolt_page_title">
-		<div class="row">
-			<div class="col-sm-auto">
-				<h1><i class="jbicon2 jbi-tags"></i> 工艺路线</h1>
-			</div>
-			<div class="col">
-			</div>
-			<div class="col-sm-auto">
-			</div>
-		</div>
-	</div>
 	<div class="jbolt_page_content">
-		<div class="row">
-			<div class="col-auto mb-3" style="width:28%;">
-				<div class="card">
-					<div class="card-header py-2">
-						<div class="pull-left">
-							<input type="text" class="form-control" id="searchBackGoodsTypeInput_#(pageId)"  placeholder="搜索关键字过滤" />
-						</div>
-					</div>
-					<div class="card-header py-2">
-						<div>
-							<div class="" role="group" aria-label="btn-group">
-								<button data-area="580,520" data-title="新增工艺路线分类" onclick="addBtn(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-
-								<button data-area="580,520" data-title="修改工艺路线分类" onclick="updateBtn(this)"  class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-
-								<button onclick="deleteBtn(this)" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-
-								<button data-downloadbtn class="btn btn-outline-primary btn-sm" data-url="admin/uomclass/exportExcelAll"><i class="fa fa-download"></i> 导出</button>
-
-								<div class="btn-group dropdown">
-									<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入</button>
-									<div class="dropdown-menu" aria-labelledby="importMenuButton">
-										<a data-downloadbtn href="/admin/uomclass/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
-										<div class="j_upload_file_box"
-											 data-name="file"
-											 data-btn-class="btn dropdown-item"
-											 data-placeholder="上传导入"
-											 data-confirm="确认导入数据？"
-											 data-accept="excel"
-											 data-maxsize="20480"
-											 data-handler="uploadFile"
-											 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-											 data-url="/admin/uomclass/importExcel">
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-					</div>
-					<div class="card-body overflow-auto" style="min-height:450px; max-height: 750px">
-						<div id="goodsBackCategoryTree"
-							 data-jstree
-							 data-target="portal"
-							 data-search-input="searchBackGoodsTypeInput_#(pageId)"
-							 data-portalid="goodsBackCategoryPortal"
-							 data-curd="false"
-							 data-open-level="-1"
-							 data-read-url="admin/routing/getMasterData/"
-							 data-change-handler="jstreeClike">
-						</div>
-					</div>
-				</div>
+		#setLocal(jboltTabId=(goods.id?? RandomUtil.random(6)))
+		<nav>
+			<div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
+				<a class="nav-item nav-link active" id="nav-base-tab_one_#(pageId)" data-toggle="tab" href="#tab-one_#(pageId)" role="tab" onclick="refreshPjaxContainer()" aria-controls="tab-one" aria-selected="true">工艺路线</a>
+				<a class="nav-item nav-link" id="nav-base-tab_two_#(pageId)" data-toggle="tab" href="#tab-two_#(pageId)" role="tab" onclick="refreshJBoltTable()" aria-controls="tab-two" aria-selected="false">版本记录</a>
 			</div>
-			<div class="col-auto card " style="width:72%; margin-top: 0px">
-
-				<!--存货档案列表-->
-				<!--#ajaxPortal("/admin/itemmaster/index","goodsBackCategoryPortal",true)-->
-				<div class="jbolt_page" data-key="#(pmkey??)">
-					<div class="jbolt_page_title">
-						<div class="row">
-							<div class="col">
-								<form class="form-inline text-left" id="Inventory_form_#(pageId)">
-									<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="存货分类id" id="inventoryclassid" name="iInventoryClassId" value="" />
-									<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="存货分类编码" id="inventoryclasscode" name="iInventoryClassCode" value="" />
-
-									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货编码" maxlength="40" name="cInvCode" />
-									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货名称" maxlength="40" name="cInvName" />
-									<select class="form-control" name="isEnabled"
-											data-autoload
-											data-url="admin/dictionary/options?key=options_enable"
-											data-select-type="select"
-											data-text="=是否启用="
-											data-value=""
-											data-value-attr="sn"
-									></select>
-									<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入客户部番" maxlength="40" name="cInvCode1" />
-
-
-									<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-									<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-								</form>
-							</div>
-							<div class="col-sm-auto text-right">
-
-
-							</div>
-						</div>
-					</div>
-					<div class="jbolt_page_content">
-						<!-- 定义JBoltTable使用的数据渲染模板 -->
-						<textarea class="jb_tpl_box" id="Inventory_tpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.iautoid}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-
-
-<td>${data.cinvcode}</td>
-<td>${data.cinvname}</td>
-<td>${data.cinvcode1}</td>
-<td>${data.cinvaddcode1}</td>
-<td>${data.cinvname1}</td>
-<td>${data.cinvname2}</td>
-<td>${data.cinvstd}</td>
-<td>${data.cinvcname}</td>
-<td>
-	{@if data.isource == 1}
-	MES
-	{@else if data.isource == 2}
-	U8
-	{@else}
-	${data.isource}
-	{@/if}
-</td>
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
-</tr>
-{@/each}
-</textarea>
-						<div class="jbolt_table_toolbar" id="Inventory_toolbar_#(pageId)">
-							<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-								<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增存货档案" data-url="admin/inventory/add?" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-
-							</div>
-							<div class="float-right" role="group" aria-label="btn-group">
-								<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" tooltip data-title="导入Excel数据" data-url="admin/inventory/initImportExcel" data-btn="close" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>
-								<div class="btn-group btn-group-sm">
-									<button tooltip data-title="导出Excel(查询结果)" data-form="Inventory_form_#(pageId)" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="admin/inventory/exportExcelByForm"><i class="fa fa-download"></i></button>
-									<button tooltip data-title="导出Excel(选中行数据)" data-usecheckedids="true" class="btn btn-outline-success btn-sm" data-downloadbtn data-url="admin/inventory/exportExcelByCheckedIds"><i class="fa fa-download"></i></button>
-									<button tooltip data-title="导出Excel(所有数据)" class="btn btn-outline-info btn-sm" data-downloadbtn data-url="admin/inventory/exportExcelAll"><i class="fa fa-download"></i></button>
-								</div>
-							</div>
-
-						</div>
-						<table class="jbolt_table jbolt_main_table  table-center "
-							   data-jbolttable
-							   data-width="fill"
-							   data-height="fill"
-							   data-ajax="true"
-							   data-conditions-form="Inventory_form_#(pageId)"
-							   data-url="admin/inventory/datas"
-							   data-rowtpl="Inventory_tpl_#(pageId)"
-							   data-copy-to-excel="false"
-							   data-page="Inventory_page"
-							   data-toolbar="Inventory_toolbar_#(pageId)"
-						>
-							<thead>
-							<tr>
-								<th data-width="60" data-column="index">序号</th>
-								<th data-width="120">操作</th>
-								<th data-width="150" data-column="cInvCode">存货编码</th>
-								<th data-width="300" data-column="cInvName">存货名称</th>
-								<th data-width="150" data-column="cInvCode1">客户部番</th>
-								<th data-width="150" data-column="cInvAddCode1">UG部番</th>
-								<th data-width="150" data-column="cInvName1">部品名称</th>
-								<th data-width="150" data-column="cInvName2">UG部品名称</th>
-								<th data-width="150" data-column="cInvStd">规格</th>
-
-								<th data-width="150" data-column="iInventoryClassId">分类</th>
-								<th data-width="100" data-column="iSource">来源</th>
-								<th data-width="150" data-column="cCreateName">创建人名称</th>
-								<th data-min-width="160" data-column="dCreateTime">创建时间</th>
-							</tr>
-							</thead>
-							<tbody></tbody>
-						</table>
-					</div>
-				</div>
+		</nav>
+		<div class="tab-content" style="padding: 0px 1rem">
+			<!--1 物料清单 -->
+			<div class="tab-pane fade show active" id="tab-one_#(pageId)" role="tabpanel" aria-labelledby="nav-base-tab_one_#(pageId)">
+				#render("routing_index.html")
+			</div>
+			<!--2 版本记录 -->
+			<div class="tab-pane fade" id="tab-two_#(pageId)" role="tabpanel" aria-labelledby="nav-base-tab_two_#(pageId)">
+				###ajaxPortal("/admin/bommaster/versionIndex","bommaster_jstree_#(pageId)",true)
 			</div>
 		</div>
 	</div>
-
-
-	<script>
-		/*存货分类*/
-		var autoid = "";
-		function jstreeClike(tree,data){
-			console.log(tree)
-			console.log(data)
-			autoid = data.id;
-			$("#inventoryclassid").val(autoid);
-			$("#inventoryclasscode").val(data.text);
-			jboltTablePageToFirst();
-		}
-		function addBtn(ele){
-			var url="admin/inventoryclass/add/"+autoid;
-			$(ele).data("url",url);
-			DialogUtil.openBy(ele);
-		}
-		function updateBtn(ele){
-			if (autoid == ""){
-				LayerMsgBox.alert("请先选择需要修改的存货分类！");
-				return;
-			}
-			var url="admin/inventoryclass/edit/"+autoid;
-			$(ele).data("url",url);
-			DialogUtil.openBy(ele);
-		}
-		function deleteBtn(ele){
-			if (autoid == ""){
-				LayerMsgBox.alert("请先选择需要删除的存货分类！");
-				return;
-			}
-			LayerMsgBox.confirm("确定删除选中数据？",function(){
-				let url = "admin/inventoryclass/deleteByIds?ids="+autoid
-				Ajax.get(url,function(res){
-					window.parent.refreshPjaxContainer();
-				});
-			});
-		}
-		/*function refreshBtn(ele){
-			window.parent.refreshPjaxContainer();
-		}*/
-		/*新增计量单位*/
-		function addUomBtn(ele){
-			if (autoid == ""){
-				LayerMsgBox.alert("请先选择需要新增的存货分类！");
-				return;
-			}
-			var url="admin/inventoryclass/add?iautoid="+autoid;
-			$(ele).data("url",url);
-			DialogUtil.openBy(ele);
-		}
-
-	</script>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
+
+	initTreehandler('');
+
+	function bommaster_jstree1(tree, data){
+		// $("#bomCompare_pid").val(data.id);
+		// $("#bomCompare_submit").click();
+	}
+
+	function initTreehandler(item) {
+		var treeHtmlStr ="<div " +
+				"					data-jstree" +
+				"                     data-open-level='-1'" +
+				"					  data-curd='false' " +
+				"                     data-async='true'" +
+				"                     data-search-input='searchBackGoodsTypeInput_3'" +
+				"                     data-change-handler='bommaster_jstree1'" +
+				"                     data-conditions-form='routing_1_Form'" +
+				"                     data-read-url='admin/routing/findRoutingAll?item='+item>";
+
+		$("#bommasterBackCategoryTree").html(treeHtmlStr);
+		JSTreeUtil.init($("#bommasterBackCategoryTree"));
+	}
+
+	function keyWordsOnChange() {
+		var item = $("#searchBackGoodsTypeInput_3").val()
+		initTreehandler(item);
+	}
 </script>
 #end
