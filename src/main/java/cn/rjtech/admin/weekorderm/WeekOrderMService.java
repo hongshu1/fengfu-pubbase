@@ -160,7 +160,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 	 * @return
 	 */
 	private Ret updateWeekOrderDs(String mark , JBoltTable jBoltTable,WeekOrderM weekOrderM) {
-		List<WeekOrderD> weekOrderDs = null;
+		List<WeekOrderD> weekOrderDs;
 		switch (mark) {
 			//修改
 			case "edit":
@@ -185,6 +185,8 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 						addSaveSystemLog(weekOrderM.getIAutoId(), JBoltUserKit.getUserId(), weekOrderM.getIAutoId().toString());
 					}
 				}
+            default:
+                break;
 		}
 
 		return SUCCESS;
