@@ -765,13 +765,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		calendar.setTime(DateUtils.parseDate(startDate));
 		calendar.add(Calendar.DATE,-1);//日期-1
 		//前一天
-		String beforeDay = DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd");
-
-		Calendar calendar2 = Calendar.getInstance();
-		calendar2.setTime(DateUtils.parseDate(startDate));
-		calendar2.add(Calendar.DATE,-2);//日期-2
-		//前二天
-		String beforeDay2 = DateUtils.formatDate(calendar2.getTime(),"yyyy-MM-dd");
+		String beforeDayStr = DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd");
 
 
 		//第三步：先算前1天的到货实绩，算完后再算前一天的到货差异，（先判断如果前1天此物料有入库取实际入库数量，如没有则取到货计划，作为到货实绩；
@@ -785,25 +779,28 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 
 
-		//前一天实绩入库
+		//物料期初实绩入库
 		Map<String,BigDecimal> inStorageQtyMap = new HashMap<>();
-		//前一天需求计划
-		Map<String,BigDecimal> beforeDayQty1Map = new HashMap<>();
-		//前一天到货计划
-		Map<String,BigDecimal> beforeDayQty2Map = new HashMap<>();
-		//前一天在库计划
-		Map<String,BigDecimal> beforeDayQty3Map = new HashMap<>();
+		//物料期初需求计划
+		Map<String,BigDecimal> qichuDayQty1Map = new HashMap<>();
+		//物料期初到货计划
+		Map<String,BigDecimal> qichuDayQty2Map = new HashMap<>();
+		//物料期初在库计划
+		Map<String,BigDecimal> qichuDayQty5Map = new HashMap<>();
+		//物料期初到货实绩
+		Map<String,BigDecimal> qichuDayQty3Map = new HashMap<>();
+		//物料期初差异数量
+		Map<String,BigDecimal> qichuDayQty4Map = new HashMap<>();
 
 		//TODO:根据日期查询物料集需求计划
-		List<Record> demandList = dbTemplate("schedudemandplan.getDemandComputeDQtyList",Okv.by("ids",idsAllJoin).set("startdate",beforeDay)).find();
+		List<Record> demandList = dbTemplate("schedudemandplan.getDemandComputeDQtyList",Okv.by("ids",idsAllJoin).set("startdate",beforeDayStr)).find();
 		for (Record record : demandList){
-			beforeDayQty1Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty1"));
-			beforeDayQty2Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty2"));
-			beforeDayQty3Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty3"));
+			qichuDayQty1Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty1"));
+			qichuDayQty2Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty2"));
+			qichuDayQty5Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty5"));
+			qichuDayQty3Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty3"));
+			qichuDayQty4Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty4"));
 		}
-
-		//前1天到货差异数=前1天需求计划-前1天到货实绩+前2天的到货差异
-
 
 
 		//本次所需计算物料到货计划
@@ -812,11 +809,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		//本次所需计算物料在库计划
 		//key:inv，   value:<yyyy-MM-dd，qty>
 		Map<String,Map<String,BigDecimal>> invZaiKuDateMap = new HashMap<>();
-
 		//本次所需计算物料到货实绩
 		//key:inv，   value:<yyyy-MM-dd，qty>
 		Map<String,Map<String,BigDecimal>> invShiJiDateMap = new HashMap<>();
-		//本次所需计算物料到货差异
+		//本次所需计算物料差异数量
 		//key:inv，   value:<yyyy-MM-dd，qty>
 		Map<String,Map<String,BigDecimal>> invChaYiDateMap = new HashMap<>();
 
@@ -827,41 +823,39 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 
 			//期初实绩入库
-			BigDecimal beforeDayQtyIn = inStorageQtyMap.get(inv);
+			BigDecimal qiChuDayQtyIn = inStorageQtyMap.get(inv);
 			//期初需求计划
-			BigDecimal beforeDayQty1 = beforeDayQty1Map.get(inv);
+			BigDecimal qiChuXuQiuQty = qichuDayQty1Map.get(inv);
 			//期初到货计划
-			BigDecimal beforeDayQty2 = beforeDayQty2Map.get(inv);
+			BigDecimal qiChuDaoHuoQty = qichuDayQty2Map.get(inv);
 			//期初在库计划
-			BigDecimal beforeDayQty3 = beforeDayQty3Map.get(inv);
-			//期初到货差异
-			BigDecimal beforeDayQtyChayi = beforeDayQty3Map.get(inv);
+			BigDecimal qiChuZaiKuQty = qichuDayQty5Map.get(inv);
+			//期初到货实绩
+			BigDecimal qiChuShiJiQty = qichuDayQty3Map.get(inv);
+			//期初差异数量
+			BigDecimal qiChuChaYiQty = qichuDayQty4Map.get(inv);
 
-			Map<String,BigDecimal> daoHuoMap = new HashMap<>();//到货计划
-			Map<String,BigDecimal> zaiKuMap = new HashMap<>();//在库计划
 
-			//Map<String,BigDecimal> zaiKuMap = new HashMap<>();//在库计划
+			Map<String,BigDecimal> daoHuoMap = new HashMap<>();//每日到货计划
+			Map<String,BigDecimal> zaiKuMap = new HashMap<>();//每日在库计划
+			Map<String,BigDecimal> shiJiMap = new HashMap<>();//每日到货实绩
+			Map<String,BigDecimal> chaYiMap = new HashMap<>();//每日差异数量
+
 			for (int i = 0; i < scheduDateList.size(); i++) {
-
-				//前一天的到货实绩
-				BigDecimal beforeShiji = BigDecimal.ZERO;
-				if (i == 0){
-					beforeShiji = beforeDayQtyIn != null ? beforeDayQtyIn : beforeDayQty2;
-				}else {
-					BigDecimal qty1 =  inStorageMap.get(i - 1);//前一天实绩入库
-					BigDecimal qty2 =  daoHuoMap.get(i - 1);//前一天到货计划
-					beforeShiji = qty1 != null ? qty1 : qty2;
-				}
+				String toDay = scheduDateList.get(i); //当天
+				String beforeDay = scheduDateList.get(i); //前一天
+				String beforeTwoDay = scheduDateList.get(i); //前两天
 
 				//前一天的物料需求
 				BigDecimal beforeXuqiu = BigDecimal.ZERO;
 				if (i == 0){
-					beforeXuqiu = beforeDayQtyIn != null ? beforeDayQtyIn : beforeDayQty2;
+					beforeXuqiu = qiChuDayQtyIn != null ? qiChuDayQtyIn : qiChuDaoHuoQty;
 				}else {
 					beforeXuqiu = planMap.get(i - 1);
 				}
 
-				BigDecimal toDayPlanQty = planMap.get(scheduDateList.get(i));//当天的需求
+
+				BigDecimal toDayPlanQty = planMap.get(toDay);//当天的需求
 				BigDecimal afterPlan1 = BigDecimal.ZERO;//后一天需求
 				BigDecimal afterPlan2 = BigDecimal.ZERO;//后二天需求
 				if (i == scheduDateList.size() - 1){ //
@@ -877,15 +871,17 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				BigDecimal beforeInStore = BigDecimal.ZERO;//前一天的计划在库
 				if (i == 0){ //1号时算前一天计划在库
 					//期初
-					beforeInStore = beforeDayQty3;
+					beforeInStore = qiChuZaiKuQty;
 				}else if (i == 1){ //2号时算前一天计划在库
 					//前一天计划在库 = 前两天的计划在库(期初)+前一天的到货实绩(1号)+前两天的到货差异(期初)-前一天的物料需求(1号)
-					//beforeInStore = beforeDayQty3.add(beforeShiji).add().subtract(beforeXuqiu);
-					zaiKuMap.put(scheduDateList.get(i -1),beforeInStore);
+					BigDecimal beforeShiji = shiJiMap.get(beforeDay);
+					beforeInStore = qiChuZaiKuQty.add(beforeShiji).add(qiChuChaYiQty).subtract(beforeXuqiu);
+					zaiKuMap.put(beforeDay,beforeInStore);
 				}else { //3号时算前一天计划在库
 					//前一天计划在库 = 前两天的计划在库(1号)+前一天的到货实绩(2号)+前两天的到货差异(1号)-前一天的物料需求(2号)
-					//beforeInStore = zaiKuMap.get(scheduDateList.get(i - 2)).add(beforeShiji).add().subtract(beforeXuqiu);
-					zaiKuMap.put(scheduDateList.get(i -1),beforeInStore);
+					BigDecimal beforeShiji = shiJiMap.get(beforeDay);
+					//beforeInStore = zaiKuMap.get(beforeTwoDay).add(beforeShiji).add().subtract(beforeXuqiu);
+					zaiKuMap.put(beforeDay,beforeInStore);
 				}
 
 				//第五步-当天到货计划计算：当天的到货计划（等于当天的需求+后两天的需求-前一天的计划在库，为正数则订购，为小于等于0时则不订购）
@@ -894,10 +890,29 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				if (qty.compareTo(BigDecimal.ZERO) > 0){
 					AOGQty = qty;
 				}
-				daoHuoMap.put(scheduDateList.get(i),AOGQty);
+				daoHuoMap.put(toDay,AOGQty);
+
+				//到货实绩（实绩入库有值则取，无则取到货计划）
+				BigDecimal qty1 =  inStorageMap.get(toDay);//实绩入库
+				BigDecimal qty2 =  daoHuoMap.get(toDay);//到货计划
+				BigDecimal shiji = qty1 != null ? qty1 : qty2;
+				shiJiMap.put(toDay,shiji);
+
+				//到货差异（需求计划-到货实绩+前1天的到货差异）
+				BigDecimal chayi = BigDecimal.ZERO;
+				if (i == 0){
+					chayi = toDayPlanQty.subtract(shiji).add(qiChuChaYiQty);
+				}else {
+					BigDecimal beforeShiji = shiJiMap.get(beforeDay);
+					chayi = toDayPlanQty.subtract(shiji).add(beforeShiji);
+				}
+				chaYiMap.put(toDay,chayi);
+
+
 			}
 			invDaoHuoDateMap.put(inv,daoHuoMap);
 			invZaiKuDateMap.put(inv,zaiKuMap);
+			invShiJiDateMap.put(inv,shiJiMap);
 		}
 
 
