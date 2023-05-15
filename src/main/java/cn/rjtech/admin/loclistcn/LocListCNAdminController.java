@@ -1,24 +1,27 @@
 package cn.rjtech.admin.loclistcn;
 
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.LocListCN;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+
 import java.util.List;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.LocListCN;
+
 /**
  * 地区 Controller
+ *
  * @ClassName: LocListCNAdminController
  * @author: RJ
  * @date: 2023-03-27 11:03
  */
-@CheckPermission(PermissionKey.NONE)
-@UnCheckIfSystemAdmin
-@Path(value = "/admin/locListCN", viewPath = "/_view/admin/locListCN")
+@UnCheck
+@Before(JBoltAdminAuthInterceptor.class)
+@Path(value = "/admin/loclistcn", viewPath = "/_view/admin/loclistcn")
 public class LocListCNAdminController extends BaseAdminController {
 
     @Inject
@@ -35,7 +38,7 @@ public class LocListCNAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+        renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
     }
 
     /**
@@ -49,12 +52,12 @@ public class LocListCNAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        LocListCN locListCN=service.findById(getLong(0));
-        if(locListCN == null){
+        LocListCN locListCN = service.findById(getLong(0));
+        if (locListCN == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("locListCN",locListCN);
+        set("locListCN", locListCN);
         render("edit.html");
     }
 
@@ -79,7 +82,7 @@ public class LocListCNAdminController extends BaseAdminController {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
 
-    public void QQI18NLocListSave(){
+    public void QQI18NLocListSave() {
         renderJson(service.QQI18NLocListSave());
     }
 
@@ -90,30 +93,31 @@ public class LocListCNAdminController extends BaseAdminController {
         renderJson(service.delete(getLong(0)));
     }
 
-    public void findByIPid(){
+    public void findByIPid() {
         Long ipid = 0L;
         String ipid1 = get("ipid");
-        if(isOk(get("ccountry"))){
+        if (isOk(get("ccountry"))) {
             ipid = getLong("ccountry");
-        }else if(isOk(get("cprovince"))){
+        } else if (isOk(get("cprovince"))) {
             ipid = getLong("cprovince");
-        }else if(isOk(get("ccity"))){
+        } else if (isOk(get("ccity"))) {
             ipid = getLong("ccity");
         }
         List<LocListCN> list = service.findByIPid(ipid);
         renderJsonData(list);
     }
 
-    public void findByNameChild(){
+    public void findByNameChild() {
         String name = null;
-        if(isOk(get("ccountry"))){ //
+        if (isOk(get("ccountry"))) { //
             name = get("ccountry");
-        }else if(isOk(get("cprovince"))){
+        } else if (isOk(get("cprovince"))) {
             name = get("cprovince");
-        }else if(isOk(get("ccity"))){
+        } else if (isOk(get("ccity"))) {
             name = get("ccity");
         }
         List<LocListCN> byNameChild = service.findByNameChild(name);
         renderJsonData(byNameChild);
     }
+    
 }
