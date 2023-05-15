@@ -63,7 +63,6 @@ public class WeekOrderMAdminController extends BaseAdminController {
      */
     public void save(String mark) {
         JBoltTable jBoltTable = getJBoltTable();
-//		String mark = jBoltTable.getParamToStr("mark");
         if (StringUtils.isEmpty(mark)) {
             renderFail(JBoltMsg.PARAM_ERROR);
         } else if ("ADD".equals(mark)) {

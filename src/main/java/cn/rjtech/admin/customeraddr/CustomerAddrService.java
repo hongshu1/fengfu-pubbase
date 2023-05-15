@@ -5,10 +5,8 @@ import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.CustomerAddr;
 
 import java.util.List;
@@ -44,8 +42,8 @@ public class CustomerAddrService extends BaseService<CustomerAddr> {
 		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
 	}
 
-	public List<CustomerAddr> list(Kv kv){
-		return find("SELECT * FROM Bd_CustomerAddr WHERE iCustomerId = ?", kv.get("icustomermid"));
+	public List<CustomerAddr> list(Long icustomermid){
+		return find("SELECT * FROM Bd_CustomerAddr WHERE iCustomerId = ?", icustomermid);
 	}
 
 	/**
