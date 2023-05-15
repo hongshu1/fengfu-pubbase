@@ -4,10 +4,11 @@
 ###查询物料集信息 销售类型不为null
 SELECT
     a.iAutoId AS invId, ###物料id
-    a.cInvCode,  ###物料编码
+    a.cInvCode AS invCode,  ###物料编码
     a.cInvCode1,  ###客户部番
     a.cInvName1,  ###部品名称
     a.iSaleType,  ###销售类型
+    i.iPsLevel,  ###排产层级
     b.iVendorId,  ###供应商id
     c.cVenCode,  ###供应商编码
     c.cVenName,  ###供应商名称
@@ -17,9 +18,52 @@ FROM Bd_Inventory AS a
          LEFT JOIN Bd_InventoryStockConfig AS b ON a.iAutoId = b.iInventoryId
          LEFT JOIN Bd_Vendor AS c ON b.iVendorId = c.iAutoId
          LEFT JOIN Bd_InventoryPlan AS d ON d.iInventoryId = a.iAutoId
+         LEFT JOIN Bd_InventoryWorkRegion AS h ON a.iAutoId = h.iInventoryId AND h.isDefault = 1 AND h.isDeleted = 0
+		 LEFT JOIN Bd_WorkRegionM AS i ON h.iWorkRegionMid = i.iAutoId AND i.isDeleted = 0
 WHERE a.isDeleted = 0 AND a.iSaleType IS NOT NULL
 #end
 
+#sql("getInvInfoByidsList")
+###查询物料集信息
+SELECT
+    a.iAutoId AS invId, ###物料id
+    a.cInvCode AS invCode,  ###物料编码
+    a.cInvCode1,  ###客户部番
+    a.cInvName1,  ###部品名称
+    a.iSaleType,  ###销售类型
+    i.iPsLevel,  ###排产层级
+    b.iVendorId,  ###供应商id
+    c.cVenCode,  ###供应商编码
+    c.cVenName,  ###供应商名称
+    a.iPkgQty,  ###包装数量
+    d.iInnerInStockDays  ###标准在库天数
+FROM Bd_Inventory AS a
+         LEFT JOIN Bd_InventoryStockConfig AS b ON a.iAutoId = b.iInventoryId
+         LEFT JOIN Bd_Vendor AS c ON b.iVendorId = c.iAutoId
+         LEFT JOIN Bd_InventoryPlan AS d ON d.iInventoryId = a.iAutoId
+         LEFT JOIN Bd_InventoryWorkRegion AS h ON a.iAutoId = h.iInventoryId AND h.isDefault = 1 AND h.isDeleted = 0
+         LEFT JOIN Bd_WorkRegionM AS i ON h.iWorkRegionMid = i.iAutoId AND i.isDeleted = 0
+WHERE a.isDeleted = 0 AND a.iAutoId IN #(ids)
+#end
+
+#sql("selectBOMCompare")
+SELECT
+    bomc.iBOMMasterId,
+    bomc.iInventoryId ,
+    iUsageUOM = ISNULL(bomc.iQty, 1),
+    iBOMMasterIdListStr= (
+        STUFF(
+                (SELECT ',' + cast(iAutoId as varchar)
+                 FROM Bd_BOMMaster
+                 WHERE iInventoryId= bomc.iInventoryId
+                    FOR xml path('')
+            ),1,1,''
+                    )
+        )
+FROM
+    Bd_BOMCompare AS bomc
+WHERE isDeleted = '0' AND isEffective = 1
+#end
 
 #sql("getApsMonthPlanSumList")
 ###根据日期及条件获取月周生产计划表数据三班汇总
@@ -72,6 +116,22 @@ SELECT iLevel,MAX(dScheduleEndTime) AS dScheduleEndTime
 FROM Aps_WeekSchedule
 WHERE IsDeleted = 0
 GROUP BY iLevel
+#end
+
+
+#sql("getDemandComputeDQtyList")
+###根据日期查询物料需求计划
+SELECT c.cInvCode, a.iQty1,a.iQty2,a.iQty3
+FROM Mrp_DemandComputeD AS a
+         LEFT JOIN Mrp_DemandComputeM AS b ON a.iDemandComputeMid = b.iAutoId
+         LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
+WHERE b.IsDeleted = 0
+  AND a.iInventoryId IN #(ids)
+  AND
+        (CAST(a.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN a.iMonth<10 THEN '0'+CAST(a.iMonth AS NVARCHAR(30) )
+        ELSE CAST(a.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN a.iDate<10 THEN '0'+CAST(a.iDate AS NVARCHAR(30) )
+        ELSE CAST(a.iDate AS NVARCHAR(30) )
+        END AS NVARCHAR(30)) ) = #para(startdate)
 #end
 
 
