@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.5.5";
+var jbolt_admin_js_version="6.5.6";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -18937,6 +18937,13 @@ var real_image=function(url){
 
 }
 
+var static_view_content_dialog_btn=function(content,width,height){
+	if(!width){width=600;}
+	if(!height){height=400;}
+	var area = width+","+height;
+	return "<a tooltip class='btn btn-outline-info btn-sm' data-dialogbtn data-area='"+area+"' data-content='"+content+"' data-btn='close' data-title='查看'><i class='fa fa-eye mr-1'></i>查看</a>";
+}
+
 /**
  * 金额 保留1位
  * @param number
@@ -19320,6 +19327,7 @@ function initJuicer(){
 	juicer.register("date_ymdhm",date_ymdhm);
 	juicer.register("date_ymdhms",date_ymdhms);
 	juicer.register("real_image",real_image);
+	juicer.register("static_view_content_dialog_btn",static_view_content_dialog_btn);
 	juicer.register("real_url",real_image);
 	juicer.register("pretty_time",prettyTime);
 	juicer.register("number_format",numberFormat);

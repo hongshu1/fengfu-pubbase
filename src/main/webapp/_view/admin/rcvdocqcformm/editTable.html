@@ -32,7 +32,7 @@
                    data-value-attr="sn"
                    data-text-attr="cmeasurepurpose"
                    data-inline="true"
-                   data-value="#(instockqcformm.cmeasurepurpose??)"
+                   data-value="#(rcvdocqcformm.cmeasurepurpose??)"
                    data-name="cmeasurepurpose">
               </div>
             </td>
@@ -43,22 +43,22 @@
           </tr>
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r5">
             <td>批次号</td>
-            <td>#(record.cbatchno??)</td>
+            <td>#(rcvdocqcformm.cbatchno??)</td>
             <td class="x74" width="100px">批次大小</td>
             <td width="250">#(record.cbatchno??)</td>
             <td class="x74" width="100px">检测日期</td>
-            <td width="250">#(record.dupdatetime??)</td>
+            <td width="250">#(rcvdocqcformm.dupdatetime??)</td>
           </tr>
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r4">
             <td height="26" class="x74" style="height:19.5pt;">测定理由</td>
             <td colspan="3">
               <input id="cMeaSureReason" type="text" autocomplete="off" placeholder="=请输入测定理由=" name="cmeasurereason"
-                     value="#(record.cmeasurereason??)" maxlength="355" data-rule="required" style="width: 630px"/>
+                     value="#(rcvdocqcformm.cmeasurereason??)" maxlength="355" data-rule="required" style="width: 630px"/>
             </td>
             <td class="x74">设变号</td>
             <td class="x71" width="250">
               <input id="cDcNo" type="text" autocomplete="off" placeholder="=请输入设变号=" name="cdcno"
-                     value="#(record.cdcno??)" maxlength="355" data-rule="required"/>
+                     value="#(rcvdocqcformm.cdcno??)" maxlength="355" data-rule="required"/>
             </td>
           </tr>
           <tr height="300px">
@@ -111,7 +111,7 @@
                    data-value-attr="sn"
                    data-text-attr="cmeasureunit"
                    data-inline="true"
-                   data-value="#(record.cmeasureunit??)"
+                   data-value="#(rcvdocqcformm.cmeasureunit??)"
                    data-name="cmeasureunit">
               </div>
             </td>
@@ -123,9 +123,9 @@
             <button type="button" onclick="inserRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
-            <img data-switchbtn data-value="#(rcvdocqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
+            <!--<img data-switchbtn data-value="#(rcvdocqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
                  data-url="admin/rcvdocqcformm/toggleIsCpkSigned/#(rcvdocqcformm.iautoid??)" style="margin-left: 50px;"/>
-            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>-->
           </div>
         </table>
 
@@ -204,14 +204,10 @@
                  data-toolbar="rcvdocqcformmform_toolbar_#(pageId)">
             <thead>
             <tr class="colspan biaotoucolor">
-              <th colspan="4">检查内容</th>
-              <th colspan="22">检查记录</th>
-            </tr>
-            <tr class="colspan biaotoucolor">
               <th data-column="index">序号</th>
-              <th style="width: 150px;" data-column="cqcitemname">检查项目</th>
-              <th style="width: 220px;">规格公差</th>
-              <th style="width: 120px">检查方法</th>
+              <th style="width: 120px;" data-column="cqcitemname">检查项目</th>
+              <th style="width: 220px;" data-column="coptions">规格公差</th>
+              <th style="width: 120px" data-column="cqcparamname">检查方法</th>
               #for(i = 1; i <= docparamlist.size(); i++)
               <th style="width: 80px">#(i)</th>
               #end
@@ -230,7 +226,7 @@
               <div>
                 <textarea id="cMemo" class="form-control" data-auto-height="100" autocomplete="off" data-show-count
                           placeholder="=请输入备注="
-                          data-tips="请输入备注" maxlength="200" name="cmemo" value="">#(record.cmemo??)</textarea>
+                          data-tips="请输入备注" maxlength="200" name="cmemo" value="">#(rcvdocqcformm.cmemo??)</textarea>
               </div>
             </td>
             <td width="300px">
@@ -244,7 +240,7 @@
                    data-value-attr="sn"
                    data-text-attr="isok"
                    data-inline="true"
-                   data-value="#(record.isok??)"
+                   data-value="#(rcvdocqcformm.isok??)"
                    data-name="isok">
               </div>
             </td>

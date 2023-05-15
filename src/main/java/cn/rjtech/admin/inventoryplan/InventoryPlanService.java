@@ -1,14 +1,13 @@
 package cn.rjtech.admin.inventoryplan;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.InventoryPlan;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 /**
  * 料品计划档案
  * @ClassName: InventoryPlanService
@@ -103,5 +102,9 @@ public class InventoryPlanService extends BaseService<InventoryPlan> {
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
 	}
+
+    public void test() {
+        System.out.println(u8SourceConfigName());
+    }
 
 }

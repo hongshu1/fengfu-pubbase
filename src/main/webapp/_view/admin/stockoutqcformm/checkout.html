@@ -20,7 +20,7 @@
           </tr>
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r1">
             <td height="26" class="x74" style="height:19.5pt;">客户部番</td>
-            <td >#(record.cinvcode1??)</td>
+            <td>#(record.cinvcode1??)</td>
             <td colspan="4" rowspan="2" height="54" class="x74"
                 style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;height:40.5pt;">
               <div class="form-group row  col-8"
@@ -123,9 +123,9 @@
             <button type="button" onclick="inserRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
-            <img data-switchbtn data-value="#(stockoutqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
+            <!--<img data-switchbtn data-value="#(stockoutqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
                  data-url="admin/stockoutqcformm/toggleIsCpkSigned/#(stockoutqcformm.iautoid??)" style="margin-left: 50px;"/>
-            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>-->
           </div>
         </table>
 
@@ -163,18 +163,6 @@
                       data-autoload data-text="=整体外观=" data-value-attr="sn" value="#(data.cvalue??)" multiple
                       data-select-type="select2"
                       data-select="#(data.cvalue??)" title="=整体外观="></select>
-              <!--<select class="form-control cA01"
-                      name="appearance"
-                      data-autoload
-                      multiple
-                      data-text-attr="appearance"
-                      data-value-attr="sn"
-                      data-select-type="select2"
-                      data-tips="请选择"
-                      data-url="admin/dictionary/options?key=appearance"
-                      data-value=""
-                      data-select="#(data.cvalue??)">
-              </select>-->
               {@else if data.itype == '6'}
               <select name="cA${value}" class="form-control cA01" data-url="admin/dictionary/options?key=overallsize"
                       data-autoload data-text="=整体尺寸=" data-value-attr="sn" data-value="#(data.cvalue??)"
@@ -207,14 +195,10 @@
                  data-toolbar="stockoutqcformmForm_toolbar_#(pageId)">
             <thead>
             <tr class="colspan biaotoucolor">
-              <th colspan="4">检查内容</th>
-              <th colspan="22">检查记录</th>
-            </tr>
-            <tr class="colspan biaotoucolor">
               <th data-column="index">序号</th>
-              <th style="width: 150px;" data-column="cqcitemname">检查项目</th>
-              <th style="width: 220px;">规格公差</th>
-              <th style="width: 120px">检查方法</th>
+              <th style="width: 120px;" data-column="cqcitemname">检查项目</th>
+              <th style="width: 220px;" data-column="coptions">规格公差</th>
+              <th style="width: 120px" data-column="cqcparamname">检查方法</th>
               #for(i = 1; i <= 10; i++)
               <th style="width: 80px">#(i)</th>
               #end

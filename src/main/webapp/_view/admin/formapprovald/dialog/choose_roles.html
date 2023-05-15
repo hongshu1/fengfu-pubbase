@@ -1,0 +1,60 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page">
+
+    <div class="jbolt_page_content" style="height: calc(100vh - 140px)">
+        <div class="row">
+            <div class="col-xl-7">
+                <div class="card">
+<!--                            <div class="card-body overflow-auto jbolt_table_fill_box" style="height: calc(100vh - 200px);">-->
+                        #include("roles_source.html")
+<!--                            </div>-->
+                </div>
+            </div>
+            <div class="col-xl-5">
+                <div class="card">
+<!--                            <div class="card-body overflow-auto jbolt_table_fill_box" style="height: calc(100vh - 200px);">-->
+                        #include("roles_target.html")
+<!--                            </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+#end
+
+#define js()
+<script>
+
+    function submitThisForm(callback) {
+        //点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+        // var data=jboltTableGetCheckedDatas("chooseDataTable");
+
+        let data = getJboltTableAllDatas("jbolt_table_toolbar_#(pageId)_dia");
+        console.log('data: ', data);
+
+        if(data){
+            //LayerMsgBox.confirm("确认选择此数据?",function(){
+            // parent.jboltTableProcessTdByDialogChooser(data.invcode, data.invcode, data);
+
+            var action=parent.DialogUtil.getCurrentTriggerEle();
+            if(isOk(action)){
+                //var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,insertType,false,false,true);
+                var success=parent.jboltTableInsertRowsByDialogChooser(action,data,"prepend");
+                if(success){
+                    parent.layer.closeAll();
+                }
+            }
+
+            // if(callback){
+            //     callback();
+            // }
+            //});
+        }
+    }
+
+
+</script>
+#end

@@ -1,27 +1,61 @@
 package cn.rjtech.entity.vo.processdefect;
 
-import cn.rjtech.entity.vo.RcDocDefect.RcDocDefect;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
- * @version 1.0
- * @Author cc
  * @Description 制造异常品记录
  */
 
 public class ProcessDefect implements Serializable {
 
+
+    /**组织编码*/
+    private  String corgcode;
+
+
+
+    /**生产部门ID*/
+    private Long idepartmentid;
+    /**需求日期*/
+    private Date ddemanddate;
+    /**状态名称：1. 已保存 2. 待审批 3. 已审批*/
+    private String auditstate;
+    /**创建人ID*/
+    private Long icreateby;
+    /**创建人名称*/
+    private String ccreatename;
+    /**创建时间*/
+    private Date dcreatetime;
+    /**更新人ID*/
+    private Long iupdateby;
+    /**更新人名称*/
+    private String cupdatename;
+    /**更新时间*/
+    private Date dupdatetime;
+    /**删除状态：0. 未删除 1. 已删除*/
+    private  Boolean isdeleted;
+
+    /**不良数量*/
+    private Integer idqqty;
+
+    /**不良项目，字典编码，多个“,”分隔*/
+    private String cbadnesssns;
+
+    /**不良内容描述*/
+    private String cdesc;
+    /**工序名称*/
+    private String processname;
+    /**存货ID*/
+    private Long iinventoryid;
+
     /**
      * 主键ID
      */
     private Long iautoid;
-    /**
-     * 质量管理-来料检id
-     */
-    private Long istockoutqcformmid;
+    /**领料单ID*/
+    private Long iissueid;
     /**
      * 查看状态
      */
@@ -77,14 +111,133 @@ public class ProcessDefect implements Serializable {
     /**制造异常品记录List**/
     private List<ProcessDefect> ProcessDefect;
 
-    /**
-     * 开始时间
-     */
-    private Date startdate;
-    /**
-     * 结束时间
-     */
-    private Date enddate;
+    public String getCorgcode() {
+        return corgcode;
+    }
+
+    public void setCorgcode(String corgcode) {
+        this.corgcode = corgcode;
+    }
+
+    public Long getIdepartmentid() {
+        return idepartmentid;
+    }
+
+    public void setIdepartmentid(Long idepartmentid) {
+        this.idepartmentid = idepartmentid;
+    }
+
+    public Date getDdemanddate() {
+        return ddemanddate;
+    }
+
+    public void setDdemanddate(Date ddemanddate) {
+        this.ddemanddate = ddemanddate;
+    }
+
+    public String getAuditstate() {
+        return auditstate;
+    }
+
+    public void setAuditstate(String auditstate) {
+        this.auditstate = auditstate;
+    }
+
+    public Long getIcreateby() {
+        return icreateby;
+    }
+
+    public void setIcreateby(Long icreateby) {
+        this.icreateby = icreateby;
+    }
+
+    public String getCcreatename() {
+        return ccreatename;
+    }
+
+    public void setCcreatename(String ccreatename) {
+        this.ccreatename = ccreatename;
+    }
+
+    public Date getDcreatetime() {
+        return dcreatetime;
+    }
+
+    public void setDcreatetime(Date dcreatetime) {
+        this.dcreatetime = dcreatetime;
+    }
+
+    public Long getIupdateby() {
+        return iupdateby;
+    }
+
+    public void setIupdateby(Long iupdateby) {
+        this.iupdateby = iupdateby;
+    }
+
+    public String getCupdatename() {
+        return cupdatename;
+    }
+
+    public void setCupdatename(String cupdatename) {
+        this.cupdatename = cupdatename;
+    }
+
+    public Date getDupdatetime() {
+        return dupdatetime;
+    }
+
+    public void setDupdatetime(Date dupdatetime) {
+        this.dupdatetime = dupdatetime;
+    }
+
+    public Boolean getIsdeleted() {
+        return isdeleted;
+    }
+
+    public void setIsdeleted(Boolean isdeleted) {
+        this.isdeleted = isdeleted;
+    }
+
+    public Integer getIdqqty() {
+        return idqqty;
+    }
+
+    public void setIdqqty(Integer idqqty) {
+        this.idqqty = idqqty;
+    }
+
+    public String getCbadnesssns() {
+        return cbadnesssns;
+    }
+
+    public void setCbadnesssns(String cbadnesssns) {
+        this.cbadnesssns = cbadnesssns;
+    }
+
+    public String getCdesc() {
+        return cdesc;
+    }
+
+    public void setCdesc(String cdesc) {
+        this.cdesc = cdesc;
+    }
+
+    public String getProcessname() {
+        return processname;
+    }
+
+    public void setProcessname(String processname) {
+        this.processname = processname;
+    }
+
+    public Long getIinventoryid() {
+        return iinventoryid;
+    }
+
+    public void setIinventoryid(Long iinventoryid) {
+        this.iinventoryid = iinventoryid;
+    }
 
     public Long getIautoid() {
         return iautoid;
@@ -94,12 +247,12 @@ public class ProcessDefect implements Serializable {
         this.iautoid = iautoid;
     }
 
-    public Long getIstockoutqcformmid() {
-        return istockoutqcformmid;
+    public Long getIissueid() {
+        return iissueid;
     }
 
-    public void setIstockoutqcformmid(Long istockoutqcformmid) {
-        this.istockoutqcformmid = istockoutqcformmid;
+    public void setIissueid(Long iissueid) {
+        this.iissueid = iissueid;
     }
 
     public String getType() {
@@ -196,40 +349,5 @@ public class ProcessDefect implements Serializable {
 
     public void setProcessDefect(List<cn.rjtech.entity.vo.processdefect.ProcessDefect> processDefect) {
         ProcessDefect = processDefect;
-    }
-
-    public Date getStartdate() {
-        return startdate;
-    }
-
-    public void setStartdate(Date startdate) {
-        this.startdate = startdate;
-    }
-
-    public Date getEnddate() {
-        return enddate;
-    }
-
-    public void setEnddate(Date enddate) {
-        this.enddate = enddate;
-    }
-
-    public ProcessDefect(Long iautoid, Long istockoutqcformmid, String type, String cOrgName, String cdocno, String imodocid, String cinvcode1, String cinvcode, Integer istatus, String cinvname, Boolean isfirsttime, String capproach, Integer iresptype, List<cn.rjtech.entity.vo.processdefect.ProcessDefect> processDefect, Date startdate, Date enddate) {
-        this.iautoid = iautoid;
-        this.istockoutqcformmid = istockoutqcformmid;
-        this.type = type;
-        this.cOrgName = cOrgName;
-        this.cdocno = cdocno;
-        this.imodocid = imodocid;
-        this.cinvcode1 = cinvcode1;
-        this.cinvcode = cinvcode;
-        this.istatus = istatus;
-        this.cinvname = cinvname;
-        this.isfirsttime = isfirsttime;
-        this.capproach = capproach;
-        this.iresptype = iresptype;
-        ProcessDefect = processDefect;
-        this.startdate = startdate;
-        this.enddate = enddate;
     }
 }

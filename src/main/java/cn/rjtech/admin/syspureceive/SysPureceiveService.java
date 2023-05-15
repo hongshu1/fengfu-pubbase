@@ -2,25 +2,32 @@ package cn.rjtech.admin.syspureceive;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
+import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.model.momdata.RcvDocQcFormM;
+import cn.rjtech.model.momdata.SysPureceive;
+import cn.rjtech.model.momdata.SysPureceivedetail;
+import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.SysPureceive;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +38,9 @@ import java.util.List;
  * @date: 2023-05-10 10:01
  */
 public class SysPureceiveService extends BaseService<SysPureceive> {
+    
 	private final SysPureceive dao=new SysPureceive().dao();
+    
 	@Override
 	protected SysPureceive dao() {
 		return dao;
@@ -39,6 +48,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
 	@Inject
 	private SysPureceivedetailService syspureceivedetailservice;
+
+	@Inject
+	private RcvDocQcFormMService rcvdocqcformmservice;
+
+	@Inject
+	private VendorService vendorservice;
 
 	@Override
     protected int systemLogTargetType() {
@@ -151,18 +166,17 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-		Page<Record> paginate = dbTemplate("syspureceive.recpor", kv).paginate(pageNumber, pageSize);
-		return paginate;
+        return dbTemplate("syspureceive.recpor", kv).paginate(pageNumber, pageSize);
 	}
 	/**
 	 * 批量删除主从表
 	 */
 	public Ret deleteRmRdByIds(String ids) {
 		tx(() -> {
+			deleteByIds(ids);
 			String[] split = ids.split(",");
 			for(String s : split){
-				updateColumn(s, "isdeleted", true);
-				update("update T_Sys_PUReceiveDetail  set  IsDeleted = 1 where  MasID = ?",s);
+				delete("DELETE T_Sys_PUReceiveDetail   where  MasID = ?",s);
 			}
 			return true;
 		});
@@ -176,8 +190,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 	 */
 	public Ret delete(Long id) {
 		tx(() -> {
-			updateColumn(id, "isdeleted", true);
-			update("update T_Sys_PUReceiveDetail  set  IsDeleted = 1 where  MasID = ?",id);
+			deleteById(id);
+			delete("DELETE T_Sys_PUReceiveDetail   where  MasID = ?",id);
 			return true;
 		});
 		return ret(true);
@@ -191,6 +205,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 	 */
 	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
 		SysPureceive sysotherin = jBoltTable.getFormModel(SysPureceive.class,"sysPureceive");
+		String whcode = jBoltTable.getForm().getString("Whcode");
 		//获取当前用户信息？
 		User user = JBoltUserKit.getUser();
 		Date now = new Date();
@@ -200,6 +215,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 				sysotherin.setOrganizeCode(getOrgCode());
 				sysotherin.setCreatePerson(user.getUsername());
 				sysotherin.setCreateDate(now);
+				sysotherin.setBillDate(dateToString(now));
 				sysotherin.setModifyPerson(user.getUsername());
 				sysotherin.setState("1");
 				sysotherin.setModifyDate(now);
@@ -211,66 +227,182 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 				//主表修改
 				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
 			}
+			//查出供应商id
+			Long veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", sysotherin.getVenCode()).getIAutoId();
 			//从表的操作
 			// 获取保存数据（执行保存，通过 getSaveRecordList）
-			saveTableSubmitDatas(jBoltTable,sysotherin);
+			saveTableSubmitDatas(jBoltTable,sysotherin,veniAutoId);
 			//获取修改数据（执行修改，通过 getUpdateRecordList）
-			updateTableSubmitDatas(jBoltTable,sysotherin);
+			updateTableSubmitDatas(jBoltTable,sysotherin,veniAutoId);
 			//获取删除数据（执行删除，通过 getDelete）
 			deleteTableSubmitDatas(jBoltTable);
+			if("submit".equals(jBoltTable.getForm().getString("operationType"))){
+				sysotherin.setState("2");
+				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
+			}
 			return true;
 		});
 		return SUCCESS;
 	}
 
 	//可编辑表格提交-新增数据
-	private void saveTableSubmitDatas(JBoltTable jBoltTable,SysPureceive sysotherin){
+	private void saveTableSubmitDatas(JBoltTable jBoltTable,SysPureceive sysotherin,Long veniAutoId){
 		List<Record> list = jBoltTable.getSaveRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
 		Date now = new Date();
 		for (int i=0;i<list.size();i++) {
+			SysPureceivedetail sysPureceivedetail = new SysPureceivedetail();
 			Record row = list.get(i);
-			row.set("IsDeleted", "0");
 			row.set("MasID", sysotherin.getAutoID());
 			row.set("AutoID", JBoltSnowflakeKit.me.nextId());
 			row.set("CreateDate", now);
 			row.set("ModifyDate", now);
-//			row.set("inventorycode",row.get("cinvcode"));
-//			row.set("inventorycodeh",row.get("cinvcodeh"));
-			row.remove("crcvdate");
-			row.remove("crcvtime");
-			row.remove("cbarcode");
-			row.remove("cversion");
-			row.remove("caddress");
-			row.remove("cinvcode");
+			if(null == list.get(i).get("isinitial") || "".equals(list.get(i).get("isinitial"))){
+				row.set("IsInitial", false);
+				sysPureceivedetail.setIsInitial("0");
+			}else {
+				//推送初物 PL_RcvDocQcFormM 来料
+				this.insertRcvDocQcFormM(row,sysotherin,veniAutoId);
+				sysPureceivedetail.setIsInitial("1");
+			}
+			sysPureceivedetail.setMasID(sysotherin.getAutoID());
+			sysPureceivedetail.setSourceBillType(row.getStr("sourcebilltype"));
+			sysPureceivedetail.setSourceBillNo(row.getStr("sourcebillno"));
+			sysPureceivedetail.setSourceBillNoRow(row.getStr("sourcebillnorow"));
+			sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
+			sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
+//			sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
+			sysPureceivedetail.setWhcode(row.getStr("whcode"));
+			sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
+			sysPureceivedetail.setBarcode(row.get("barcode"));
+			sysPureceivedetail.setCreateDate(now);
+			sysPureceivedetail.setModifyDate(now);
+
+			sysdetaillist.add(sysPureceivedetail);
+
 		}
-		syspureceivedetailservice.batchSaveRecords(list);
+		syspureceivedetailservice.batchSave(sysdetaillist);
 	}
 	//可编辑表格提交-修改数据
-	private void updateTableSubmitDatas(JBoltTable jBoltTable,SysPureceive sysotherin){
+	private void updateTableSubmitDatas(JBoltTable jBoltTable,SysPureceive sysotherin,Long veniAutoId){
 		List<Record> list = jBoltTable.getUpdateRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
 		Date now = new Date();
 		for(int i = 0;i < list.size(); i++){
+			SysPureceivedetail sysPureceivedetail = new SysPureceivedetail();
 			Record row = list.get(i);
 			row.set("ModifyDate", now);
 
-			row.remove("crcvdate");
-			row.remove("crcvtime");
-			row.remove("cbarcode");
-			row.remove("cversion");
-			row.remove("caddress");
-			row.remove("cinvcode");
+			if(null == list.get(i).get("isinitial") || "".equals(list.get(i).get("isinitial"))){
+				row.set("IsInitial", false);
+			}else {
+				//推送初物 PL_RcvDocQcFormM 来料
+				this.insertRcvDocQcFormM(row,sysotherin,veniAutoId);
+				sysPureceivedetail.setIsInitial("1");
+			}
+			sysPureceivedetail.setMasID(sysotherin.getAutoID());
+			sysPureceivedetail.setSourceBillType(row.getStr("sourcebilltype"));
+			sysPureceivedetail.setSourceBillNo(row.getStr("sourcebillno"));
+			sysPureceivedetail.setSourceBillNoRow(row.getStr("sourcebillnorow"));
+			sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
+			sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
+//			sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
+			sysPureceivedetail.setWhcode(row.getStr("whcode"));
+			sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
+			sysPureceivedetail.setBarcode(row.get("barcode"));
+			sysPureceivedetail.setCreateDate(now);
+			sysPureceivedetail.setModifyDate(now);
+
+			sysdetaillist.add(sysPureceivedetail);
 
 		}
-		syspureceivedetailservice.batchUpdateRecords(list);
+		syspureceivedetailservice.batchUpdate(sysdetaillist);
 	}
 	//可编辑表格提交-删除数据
 	private void deleteTableSubmitDatas(JBoltTable jBoltTable){
 		Object[] ids = jBoltTable.getDelete();
 		if(ArrayUtil.isEmpty(ids)) return;
-		for (Object id : ids) {
-			update("update T_Sys_PUInStoreDetail  set  IsDeleted = 1 where  AutoID = ?",id);
-		}
+		syspureceivedetailservice.deleteByIds(ids);
 	}
+
+	/**
+	 * 后台管理数据查询
+	 * @return
+	 */
+	public List<Record> getVenCodeDatas(Kv kv) {
+		List<Record> records = dbTemplate("syspureceive.venCode", kv).find();
+		return records;
+	}
+
+
+	/**
+	 * 后台管理数据查询
+	 * @return
+	 */
+	public List<Record> getWhcodeDatas(Kv kv) {
+		return dbTemplate(u8SourceConfigName(), "syspureceive.Whcode", kv).find();
+	}
+
+	/**
+	 * 时间转字符串
+	 */
+	public String dateToString(Date date) {
+		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return sdf3.format(date);
+	}
+	/**
+	 * 字符串转时间
+	 */
+	public Date stringToDate(String str) throws ParseException {
+		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return sdf3.parse(str);
+	}
+
+
+	/**
+	 * 推送 PL_RcvDocQcFormM ;//来料检验
+	 */
+	public void insertRcvDocQcFormM(Record row,SysPureceive sys,Long veniAutoId){
+		Date date = new Date();
+		RcvDocQcFormM rcvDocQcFormM = new RcvDocQcFormM();
+		rcvDocQcFormM.setIOrgId(getOrgId());
+		rcvDocQcFormM.setCOrgCode(getOrgCode());
+		rcvDocQcFormM.setCOrgName(getOrgName());
+		if(null == row.getStr("sourcebillno") || "".equals(row.getStr("sourcebillno"))){
+			rcvDocQcFormM.setCRcvDocQcFormNo("test");
+		}else {
+			rcvDocQcFormM.setCRcvDocQcFormNo(row.getStr("sourcebillno"));
+		}
+		//质检表格ID
+		rcvDocQcFormM.setIQcFormId(1L);
+		rcvDocQcFormM.setIRcvDocId(Long.valueOf(sys.getAutoID()));
+		rcvDocQcFormM.setCRcvDocNo(sys.getBillNo());
+		if(null == row.getStr("iinventoryid") || "".equals(row.getStr("iinventoryid"))){
+			rcvDocQcFormM.setIInventoryId(100L);
+		}else {
+			rcvDocQcFormM.setIInventoryId(Long.valueOf(row.getStr("iinventoryid").trim()));
+		}
+		rcvDocQcFormM.setIVendorId(veniAutoId);
+		rcvDocQcFormM.setDRcvDate(sys.getCreateDate());
+		rcvDocQcFormM.setIQty(Double.valueOf(String.valueOf(row.getStr("qty").trim())).intValue());
+		//批次号
+		rcvDocQcFormM.setCBatchNo("1111111Test");
+		rcvDocQcFormM.setIStatus(0);
+		rcvDocQcFormM.setIsCpkSigned(false);
+		rcvDocQcFormM.setIMask(2);
+		rcvDocQcFormM.setIsCpkSigned(false);
+		rcvDocQcFormM.setICreateBy(JBoltUserKit.getUser().getId());
+		rcvDocQcFormM.setCCreateName(JBoltUserKit.getUser().getName());
+		rcvDocQcFormM.setDCreateTime(date);
+		rcvDocQcFormM.setIUpdateBy(JBoltUserKit.getUser().getId());
+		rcvDocQcFormM.setCUpdateName(JBoltUserKit.getUser().getName());
+		rcvDocQcFormM.setDUpdateTime(date);
+		rcvDocQcFormM.setIsDeleted(false);
+		rcvdocqcformmservice.save(rcvDocQcFormM);
+	}
+
+
+
 }

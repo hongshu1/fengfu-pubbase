@@ -1,20 +1,16 @@
 package cn.rjtech.api.rcvdocdefect;
 
-import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
-import cn.rjtech.entity.vo.RcDocDefect.RcDocDefectVo;
+import cn.rjtech.entity.vo.RcvDocDefect.RcvDocDefectVo;
+import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import io.github.yedaxia.apidocs.ApiDoc;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import java.math.BigDecimal;
-import java.util.Date;
+
 
 /**
  * 来料异常品管理api接口
@@ -31,21 +27,23 @@ public class RcvDocDefectApiController extends BaseApiController {
      * @param pageSize 每页显示条数
      * @param selectparam 搜索条件
      */
-    @ApiDoc(result = RcDocDefectVo.class)
+    @ApiDoc(result = RcvDocDefectVo.class)
     @UnCheck
-    public void datas(@Para(value = "pageNumber") Integer pageNumber,
-                         @Para(value = "pageSize") Integer pageSize,
-                         @Para(value = "selectparam") String selectparam) {
+    public void datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                      @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
+                         @Para(value = "selectparam") String selectparam,
+                      @Para(value = "startdate") String startdate,
+                      @Para(value = "enddate") String enddate) {
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
         
-        renderJBoltApiRet(rcvDocDefectApiService.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam)));
+        renderJBoltApiRet(rcvDocDefectApiService.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam).set("startdate",startdate).set("enddate",enddate)));
     }
 
     /**
      * 查询明细表
      */
-    @ApiDoc(result = RcDocDefectVo.class)
+    @ApiDoc(result = RcvDocDefectVo.class)
     @UnCheck
     public void addlist(@Para(value = "iautoid") Long iautoid,
                     @Para(value = "ircvdocqcformmid") Long ircvdocqcformmid,
@@ -64,7 +62,7 @@ public class RcvDocDefectApiController extends BaseApiController {
      * @param cbadnesssns          不良项目，字典编码，多个“,”分隔
      * @param cdesc                工序名称
      */
-    @ApiDoc(result = RcDocDefectVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @UnCheck
     public void updateEditTable(@Para(value = "iautoid") Long iautoid,
                                 @Para(value = "capproach") String capproach,
@@ -87,5 +85,22 @@ public class RcvDocDefectApiController extends BaseApiController {
         kv.set("ircvdocqcformmid", ircvdocqcformmid);
         renderJBoltApiRet(rcvDocDefectApiService.update(kv));
     }
+
+    /**
+     * 二维码
+     * @param iautoid     来料异常品ID
+     * @param width       宽
+     * @param height      高
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void qrcode(
+            @Para(value = "width", defaultValue = "200") Integer width,
+            @Para(value = "height", defaultValue = "200") Integer height,
+            @Para(value = "iautoid") Long iautoid){
+        String code = rcvDocDefectApiService.rcvDocDefectId(iautoid);
+        renderQrCode(code, width, height);
+    }
+
 
 }

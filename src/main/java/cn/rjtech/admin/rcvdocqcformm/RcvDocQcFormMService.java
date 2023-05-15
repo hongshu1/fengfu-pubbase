@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
@@ -13,11 +14,16 @@ import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
+import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
+import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.CMeasurePurposeEnum;
+import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.model.momdata.RcvDocDefect;
 import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.RcvdocqcformdLine;
+import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.excel.SheetPage;
 
 import com.alibaba.fastjson.JSONArray;
@@ -48,13 +54,17 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     private final RcvDocQcFormM dao = new RcvDocQcFormM().dao();
 
     @Inject
-    private RcvDocQcFormDService     rcvDocQcFormDService; //质量管理-来料检单行配置表
+    private RcvDocQcFormDService     rcvDocQcFormDService;     //质量管理-来料检单行配置表
     @Inject
     private RcvdocqcformdLineService rcvdocqcformdLineService; //质量管理-来料检明细列值表
     @Inject
-    private RcvDocDefectService      rcvDocDefectService;      ////质量管理-来料异常品记录
+    private RcvDocDefectService      rcvDocDefectService;      //质量管理-来料异常品记录
     @Inject
     private InStockQcFormMService    inStockQcFormMService;
+    @Inject
+    private SysPuinstoreService      sysPuinstoreService;      //采购入库单
+    @Inject
+    private VendorService            vendorService;                       //供应商档案
 
     @Override
     protected RcvDocQcFormM dao() {
@@ -97,7 +107,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         return dbTemplate("rcvdocqcformm.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
     }
 
-    /**·
+    /**
+     * ·
      * 根据表格ID生成table
      */
     public Ret createTable(Long iautoid, String cqcformname) {
@@ -117,9 +128,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             rcvDocQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
             rcvDocQcFormD.setIRcvDocQcFormMid(iautoid);//来料检id
             rcvDocQcFormD.setIQcFormId(iQcFormId);//检验表格ID
-            rcvDocQcFormD.setIFormParamId(record.getLong("iFormParamId"));//检验项目ID
+            rcvDocQcFormD.setIFormParamId(record.getLong("iqcformtableitemid"));//检验项目ID
             rcvDocQcFormD.setISeq(record.get("iSeq"));
-            rcvDocQcFormD.setISubSeq(record.get("iSubSeq"));
+//            rcvDocQcFormD.setISubSeq(record.get("iSubSeq"));
             rcvDocQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
             rcvDocQcFormD.setIType(record.get("iType"));
             rcvDocQcFormD.setIStdVal(record.get("iStdVal"));
@@ -152,7 +163,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     public List<Record> getCheckOutTableDatas(Kv kv) {
         List<Record> recordList = clearZero(dbTemplate("rcvdocqcformm.findChecoutListByIformParamid", kv).find());
         recordList.stream().forEach(record -> {
-            record.set("cvaluelist",10);
             record.set("cvaluelist", getCvaluelist());
         });
         return recordList;
@@ -215,26 +225,63 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             saveDocQcFormMModel(docQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
             update(docQcFormM);
 
-            //如果结果为不合格，记录不良品
-            if (isok.equals("0")) {
-                RcvDocDefect defect = rcvDocDefectService
-                    .findStockoutDefectByiRcvDocQcFormMid(docqcformmiautoid);
-                if (null == defect) {
-                    RcvDocDefect rcvDocDefect = new RcvDocDefect();
-                    rcvDocDefectService.saveRcvDocDefectModel(rcvDocDefect, docQcFormM);
-                    rcvDocDefectService.save(rcvDocDefect);
-                }
-            }
+            //判断生成异常品单，还是采购入库单
+            saveSysPuinstore(isok, docqcformmiautoid, docQcFormM);
             return true;
         });
         return result;
+    }
+
+    /*
+     * 判断生成异常品单，还是采购入库单
+     * */
+    public Boolean saveSysPuinstore(String isok, Long docqcformmiautoid, RcvDocQcFormM docQcFormM) {
+        boolean flag = true;
+        if (Integer.valueOf(isok).equals(IsOkEnum.NO.getValue())) {//如果结果为不合格，记录不良品
+            RcvDocDefect defect = rcvDocDefectService
+                .findStockoutDefectByiRcvDocQcFormMid(docqcformmiautoid);
+            if (null == defect) {
+                RcvDocDefect rcvDocDefect = new RcvDocDefect();
+                rcvDocDefectService.saveRcvDocDefectModel(rcvDocDefect, docQcFormM);
+                Ret success = rcvDocDefectService.save(rcvDocDefect);
+                flag = success.isOk();
+            }
+        } else if (Integer.valueOf(isok).equals(IsOkEnum.YES.getValue())) {//如果合格，自动生成采购入库单
+            SysPuinstore sysPuinstore = new SysPuinstore();
+            saveSysPuinstoreModel(sysPuinstore, docQcFormM);
+            // Ret success = sysPuinstoreService.save(sysPuinstore);
+            //flag =success.isOk();
+        }
+        return flag;
+    }
+
+    /*
+     * 传给采购入库单的参数
+     * */
+    public void saveSysPuinstoreModel(SysPuinstore sysPuinstore, RcvDocQcFormM docQcFormM) {
+        Date date = new Date();
+        Vendor vendor = vendorService.findById(docQcFormM.getIVendorId());
+        sysPuinstore.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
+        sysPuinstore.setBillType("");//到货单类型：采购PO  委外OM
+        sysPuinstore.setOrganizeCode(getOrgCode());//组织编码
+        sysPuinstore.setBillNo(""); //入库单号
+        sysPuinstore.setBillDate(new Date().toString()); //入库日期
+        sysPuinstore.setVenCode(vendor.getCVenCode()); //供应商编码
+        sysPuinstore.setMemo("");
+        sysPuinstore.setCreatePerson(JBoltUserKit.getUserName());
+        sysPuinstore.setCreateDate(date);
+        sysPuinstore.setAuditPerson("");//审核人
+        sysPuinstore.setAuditDate(date);//审核日期
+        sysPuinstore.setModifyDate(date);//修改日期
+        sysPuinstore.setModifyPerson("");//修改人
+        sysPuinstore.setState("1");//状态 1已保存 2待审批 3已审批 4审批不通过
     }
 
     /**
      * 点击查看时，进入弹窗自动加载table的数据
      */
     public List<Record> getonlyseelistByiautoid(Kv kv) {
-        kv.set("ircvdocqcformmid",kv.get("iautoid"));
+        kv.set("ircvdocqcformmid", kv.get("iautoid"));
         List<Record> recordList = dbTemplate("rcvdocqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
 
@@ -273,7 +320,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 
     public List<Record> getonlyseelistByiautoid(Long iautoid) {
         Kv kv = new Kv();
-        kv.set("ircvdocqcformmid",iautoid);
+        kv.set("ircvdocqcformmid", iautoid);
         List<Record> recordList = dbTemplate("rcvdocqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
 
@@ -403,11 +450,11 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         if (StringUtils.isBlank(isok)) {
             return fail("请判定是否合格");
         }
-        System.out.println("serializeSubmitList=======>"+JboltPara.getString("serializeSubmitList"));
+        System.out.println("serializeSubmitList=======>" + JboltPara.getString("serializeSubmitList"));
         Boolean result = achiveEditSerializeSubmitList(JboltPara.getJSONArray("serializeSubmitList"), docqcformmiautoid,
             JboltPara.getString("cmeasurepurpose"), JboltPara.getString("cmeasurereason"),
             JboltPara.getString("cmeasureunit"), JboltPara.getString("cmemo"),
-            JboltPara.getString("cdcno"), JboltPara.getString("isok"));
+            JboltPara.getString("cdcno"), isok);
 
         return ret(result);
     }
@@ -416,7 +463,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
      * 实现编辑页面的SerializeSubmitList
      * */
     public Boolean achiveEditSerializeSubmitList(JSONArray serializeSubmitList, Long docqcformmiautoid, String cmeasurepurpose,
-                                                 String cmeasurereason, String cmeasureunit, String cmemo, String cdcno, String isok) {
+                                                 String cmeasurereason, String cmeasureunit, String cmemo, String cdcno,
+                                                 String isok) {
         List<RcvdocqcformdLine> editRcvdocqcformdLines = new ArrayList<>();
         List<RcvdocqcformdLine> saveRcvdocqcformdLines = new ArrayList<>();
         boolean result = tx(() -> {
@@ -446,12 +494,13 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
                 }
             }
             //更新line
-            if (!editRcvdocqcformdLines.isEmpty()){
+            if (!editRcvdocqcformdLines.isEmpty()) {
                 rcvdocqcformdLineService.batchUpdate(editRcvdocqcformdLines);
-            }if (!saveRcvdocqcformdLines.isEmpty()){
+            }
+            if (!saveRcvdocqcformdLines.isEmpty()) {
                 rcvdocqcformdLineService.batchSave(saveRcvdocqcformdLines);
             }
-
+            //更新来料检主表
             RcvDocQcFormM docQcFormM = findById(docqcformmiautoid);
             saveDocQcFormMModel(docQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
             update(docQcFormM);
@@ -470,8 +519,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         docQcFormM.setCMeasureUnit(cmeasureunit); //测定单位
         docQcFormM.setCMemo(cmemo);//备注
         docQcFormM.setCDcNo(cdcno); //设变号
-        docQcFormM.setIsOk(isok.equalsIgnoreCase("0") ? false : true);//是否合格
-        docQcFormM.setIStatus(isok.equalsIgnoreCase("0") ? 2 : 3);
+        Integer isOk = Integer.valueOf(isok);
+        docQcFormM.setIsOk(IsOkEnum.toEnum(isOk).getText());//是否合格
+        docQcFormM.setIStatus(isOk.equals(IsOkEnum.NO.getValue()) ? 2 : 3);
         docQcFormM.setIsCompleted(true);
         docQcFormM.setIsCpkSigned(false);
     }

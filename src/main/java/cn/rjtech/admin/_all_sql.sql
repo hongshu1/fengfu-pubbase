@@ -430,3 +430,35 @@
 #end
 
 
+#namespace("auditformconfig")
+#include("auditformconfig/auditformconfig.sql")
+#end
+
+#namespace("approvalform")
+#include("approvalform/approvalform.sql")
+#end
+
+#namespace("approvald")
+#include("approvald/approvald.sql")
+#end
+
+#namespace("formapproval")
+#include("formapproval/formapproval.sql")
+#end
+
+#namespace("formapprovald")
+#include("formapprovald/formapprovald.sql")
+#end
+
+#namespace("transvouch")
+#include("transvouch/transvouch.sql")
+#end
+
+
+#namespace("sysenumeration")
+#include("sysenumeration/sysenumeration.sql")
+#end
+
+#namespace("materialsout")
+#include("materialsout/materialsout.sql")
+#end

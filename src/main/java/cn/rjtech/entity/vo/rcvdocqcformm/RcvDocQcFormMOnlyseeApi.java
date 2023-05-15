@@ -20,6 +20,7 @@ public class RcvDocQcFormMOnlyseeApi implements Serializable {
     /*批次号*/
     private String  cbatchno;
     private String  ccreatename;
+    /*设变号*/
     private String  cdcno;
     /*机型*/
     private String  cequipmentname;
@@ -65,7 +66,7 @@ public class RcvDocQcFormMOnlyseeApi implements Serializable {
     /*供应商档案主表id，bd_vendor*/
     private Long    ivendorid;
     /*收料单号*/
-    private String cRcvDocNo;
+    private String  cRcvDocNo;
     private Integer istatus;
     /*标记：1. 正常 2. 初物*/
     private Integer imask;
@@ -73,7 +74,18 @@ public class RcvDocQcFormMOnlyseeApi implements Serializable {
     private Date    dqcdate;
     private Date    dupdatetime;
     private Date    drcvdate;
-    private int     size; //数量
+    /*检测日期*/
+    private Date    dqctime;
+    /*循环列数，1-10或1-20或1-30*/
+    private int     size;
+
+    public Date getDqctime() {
+        return dqctime;
+    }
+
+    public void setDqctime(Date dqctime) {
+        this.dqctime = dqctime;
+    }
 
     public String getcRcvDocNo() {
         return cRcvDocNo;

@@ -3,7 +3,7 @@
 		c.cCusName,aom.iyear,aom.imonth,aom.cCreateName,aom.dCreateTime
 	from co_monthorderm aom
 		left join Bd_Customer c on aom.iCustomerId = c.iautoid
-	where 1=1 and aom.isdeleted = 0
+	where aom.isDeleted = '0'
 	#if(iorgid)
 		and aom.iorgid = #para(iorgid)
 	#end

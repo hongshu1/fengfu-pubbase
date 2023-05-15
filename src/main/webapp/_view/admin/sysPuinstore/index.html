@@ -2,102 +2,172 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
-	<div class="jbolt_page_title">
-		<div class="row">
-			<div class="col-sm-auto">
-				<h1><i class="jbicon2 jbi-appstore"></i>采购入库单</h1>
-			</div>
-			<div class="col">
-				<form class="form-inline" id="SysPuinstore_form_#(pageId)">
-					<input type="text" autocomplete="off" class="form-control" placeholder="入库单号" name="billno"
-						value="" />
-					<input type="text" autocomplete="off" class="form-control" placeholder="订单号" name="indent"
-						value="" />	
-					<select class="form-control" name="state" data-autoload data-url="admin/dictionary/options?key=null"
-						data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select>
-					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20"
-						name="startTime" value="" />
-					<span class="ml-1 mr-1">至</span>
-					<input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20" name="endTime"
-						value="" />
-					<div class="btn-group text-center mx-1">
-						<button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
-						<button type="button" onclick="form.reset();refreshJBoltTable(this);"
-							class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<div class="jbolt_page_content">
-		<!-- 定义JBoltTable使用的数据渲染模板 -->
-		<textarea class="jb_tpl_box" id="SysPuinstore_tpl_#(pageId)">
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col">
+        <form class="form-inline" id="SysPuinstore_form_#(pageId)" style="left: 30px;text-align: left">
+          <input type="text" autocomplete="off" class="form-control" placeholder="=入库单号=" name="billno" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=订单号=" name="sourcebillno" value=""/>
+          <select class="form-control"
+                  name="vencode"
+                  data-autoload
+                  data-url="admin/vendor/options"
+                  data-select-type="select2"
+                  data-text="=请选择供应商="
+                  data-value=""
+                  data-value-attr="vencode"
+                  data-text-attr="cvenname"
+                  data-select="#(cvenname??)"></select>
+          <select class="form-control"
+                  name="whcode"
+                  data-autoload
+                  data-url="admin/SysEnumeration/wareHouse"
+                  data-select-type="select2"
+                  data-text="=仓库名称="
+                  data-value=""
+                  data-value-attr="whcode"
+                  data-text-attr="whname"
+                  data-select="#(whname??)"></select>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvaddcode" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
+
+          <select class="form-control"
+                  name="state"
+                  data-autoload
+                  data-url="admin/dictionary/options?key=puinstore_state"
+                  data-select-type="select2"
+                  data-text="=状态="
+                  data-value=""
+                  data-value-attr="sn"
+                  data-select="#(state??)"></select>
+
+          <input type="text" data-date class="form-control ml-2" placeholder="=开始日期=" maxlength="20"
+                 name="starttime" value=""/>
+          <span class="ml-1 mr-1">至</span>
+          <input type="text" data-date class="form-control" placeholder="截止日期=" maxlength="20" name="endtime"
+                 value=""/>
+          <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- 定义JBoltTable使用的数据渲染模板 -->
+    <textarea class="jb_tpl_box" id="SysPuinstore_tpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>
-	<a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
-    <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-</td>
-<td>${data.statename}</td>
-<td>${data.billno}</td>
-<td>${data.indent}</td>
-<td>${data.createdate}</td>
-<td>${data.repositoryname}</td>
-<td>${data.deptname}</td>
-<td>${data.procuretype}</td>
-<td>${data.warehousingtype}</td>
-<td>${data.remark}</td>
-<td>${data.name}</td>
-<td>${data.createdate}</td>
+  <td>${pageNumber,pageSize,index | rownum}</td>
+  <td>
+    {@if data.state == 1}
+      <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
+         data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
+      <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
+         data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+    {@/if}
+    {@if data.state == 2}
+      <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
+         data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
+      <a href="admin/purchaseReceiptList/audit/${data.autoid}" data-area="100%,100%" tooltip data-title="审核"
+        data-handler="refreshJBoltTable" data-dialog-title="审核采购入库单列表" class="jbolt_table_editbtn">审核</a>
+      <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
+         data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+    {@/if}
+    {@if data.state == 3}
+      <a href="admin/purchaseReceiptList/onlysee/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
+         data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
+      <a href="admin/purchaseReceiptList/audit/${data.autoid}" data-area="100%,100%" tooltip data-title="审核"
+         data-handler="refreshJBoltTable" data-dialog-title="审核采购入库单列表" class="jbolt_table_editbtn">审核</a>
+      <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
+    {@/if}
+    {@if data.state == 4}<span>审批不通过 </span>{@/if}
 
-
+  </td>
+  <td title="${data.state}">
+    {@if data.state == 1}<span>已保存</span>{@/if}
+    {@if data.state == 2}<span>待审批</span>{@/if}
+    {@if data.state == 3}<span>已审批</span>{@/if}
+    {@if data.state == 4}<span>审批不通过 </span>{@/if}
+  </td>
+  <td title="${data.billno}">${data.billno}</td>
+  <td title="${data.u8}">${data.u8}</td>
+  <td title="${data.sourcebillno}">${data.sourcebillno}</td>
+  <td title="${data.createdate}">${data.createdate}</td>
+  <td title="${data.whname}">${data.whname}</td>
+  <td title="${data.cdepname}">${data.cdepname}</td>
+  <td title="${data.cptname}">${data.cptname}</td>
+  <td title="${data.crdname}">${data.crdname}</td>
+  <td title="${data.iBusType}">${data.iBusType}</td>
+  <td title="${data.cvencode}">${data.cvencode}</td>
+  <td title="${data.cvenname}">${data.cvenname}</td>
+  <td title="${data.memo}">${data.memo}</td>
+  <td title="${data.createperson}">${data.createperson}</td>
+  <td title="${data.createdate}">${data.createdate}</td>
 </tr>
 {@/each}
 </textarea>
-		<div class="jbolt_table_toolbar" id="SysPuinstore_toolbar_#(pageId)">
-			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-				<button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
-					id="toolbar_addBtn_#(pageId)" data-title="新增采购入库单" data-url="admin/purchaseReceiptList/add"
-					class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
-				<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
-					id="toolbar_editBtn_#(pageId)" data-title="批量审批采购入库单列表" data-check-handler="jboltTableGetCheckedId"
-					data-url="admin/formConversionList/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i>
-					批量审批</button>
-				<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
-					id="side_toolbar_editBtn_#(pageId)" data-title="批量反审批-采购入库单列表"
-					data-check-handler="jboltTableGetCheckedId" data-url="admin/formConversionList/edit/"
-					class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量反审批</button>
-				<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-					id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseReceiptList/deleteByIds?ids="
-					data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
-			</div>
+    <div class="jbolt_table_toolbar" id="SysPuinstore_toolbar_#(pageId)">
+      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
+                id="toolbar_addBtn_#(pageId)" data-title="新增采购入库单" data-url="admin/purchaseReceiptList/add"
+                class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
+        </button>
+        <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
+                id="toolbar_editBtn_#(pageId)" data-title="批量审批采购入库单列表" data-check-handler="jboltTableGetCheckedId"
+                data-url="admin/formConversionList/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i>
+          批量审批
+        </button>
+        <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
+                id="side_toolbar_editBtn_#(pageId)" data-title="批量反审批-采购入库单列表"
+                data-check-handler="jboltTableGetCheckedId" data-url="admin/formConversionList/edit/"
+                class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量反审批
+        </button>
+        <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseReceiptList/deleteByIds?ids="
+                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
+        </button>
+      </div>
 
-		</div>
-		<table class="jbolt_table jbolt_main_table  table-center " data-jbolttable data-width="fill" data-height="fill"
-			data-ajax="true" data-conditions-form="SysPuinstore_form_#(pageId)" data-url="admin/purchaseReceiptList/datas"
-			data-rowtpl="SysPuinstore_tpl_#(pageId)" data-copy-to-excel="false" data-page="SysPuinstore_page"
-			data-toolbar="SysPuinstore_toolbar_#(pageId)" data-column-prepend="1:checkbox:true" data-column-resize="true"  >
-			<thead class="fw-normal">
-				<tr>
-					<th data-width="60" data-column="index">序号</th>
-					<th data-width="150" data-column="AutoID">操作</th>
-					<th data-width="150" data-column="state">状态</th>
-					<th data-width="150" data-column="BillNo">入库单号</th>
-					<th data-width="150" data-column="indent">订单号</th>
-					<th data-min-width="160" data-column="CreateDate">创建日期</th>
-					<th data-width="150" data-column="repositoryName">仓库名称</th>
-					<th data-width="150" data-column="deptName">生产部门名称</th>
-					<th data-width="150" data-column="procureType">采购类型</th>
-					<th data-width="150" data-column="warehousingType">入库类别</th>
-					<th data-width="150" data-column="remark">备注</th>
-					<th data-width="150" data-column="CreatePerson">创建人</th>
-					<th data-min-width="160" data-column="CreateDate">创建日期</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-	</div>
+    </div>
+    <table id="syspuinstore_table_#(pageId)"
+           class="jbolt_table jbolt_main_table  table-center "
+           data-jbolttable
+           data-width="fill"
+           data-height="fill"
+           data-ajax="true"
+           data-conditions-form="SysPuinstore_form_#(pageId)"
+           data-url="admin/purchaseReceiptList/datas"
+           data-rowtpl="SysPuinstore_tpl_#(pageId)"
+           data-copy-to-excel="false"
+           data-page="SysPuinstore_page"
+           data-toolbar="SysPuinstore_toolbar_#(pageId)"
+           data-column-prepend="1:checkbox:true"
+           data-column-resize="true">
+      <thead class="fw-normal">
+      <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-width="150" data-column="AutoID">操作</th>
+        <th data-width="150" data-column="State">状态</th>
+        <th data-width="150" data-column="BillNo">入库单号</th>
+        <th data-width="150" data-column="SourceBillNo">订单号</th>
+        <th data-width="150" data-column="U8BillNo">U8单号</th>
+        <th data-min-width="160" data-column="BillDate">入库日期</th>
+        <th data-width="150" data-column="whname">仓库名称</th>
+        <th data-width="150" data-column="cDepName">部门名称</th>
+        <th data-width="150" data-column="cPTName">采购类型</th>
+        <th data-width="150" data-column="cRdName">入库类型</th>
+        <th data-width="150" data-column="iBusType">业务类型</th>
+        <th data-width="150" data-column="cVenCode">供应商编码</th>
+        <th data-width="150" data-column="cVenName">供应商名称</th>
+        <th data-width="150" data-column="memo">备注</th>
+        <th data-width="150" data-column="CreatePerson">创建人</th>
+        <th data-min-width="160" data-column="CreateDate">创建日期</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </div>
 #end
 

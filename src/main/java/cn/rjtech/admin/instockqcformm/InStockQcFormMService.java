@@ -25,6 +25,7 @@ import cn.rjtech.admin.instockqcformdline.InstockqcformdLineService;
 import cn.rjtech.admin.qcform.QcFormService;
 import cn.rjtech.enums.AppearanceEnum;
 import cn.rjtech.enums.CMeasurePurposeEnum;
+import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.enums.OverallSizeEnum;
 import cn.rjtech.model.momdata.InStockDefect;
 import cn.rjtech.model.momdata.InStockQcFormD;
@@ -270,7 +271,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                 inStockQcFormD.setIQcFormId(iQcFormId);//检验表格ID
                 inStockQcFormD.setIFormParamId(record.getLong("iqcformtableitemid"));//Bd_QcFormTableItem的iautoid
                 inStockQcFormD.setISeq(record.get("iSeq"));
-                inStockQcFormD.setISubSeq(record.get("iSeq"));
+//                inStockQcFormD.setISubSeq(record.get("iSeq"));
                 inStockQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
                 inStockQcFormD.setIType(record.get("iType"));
                 inStockQcFormD.setIStdVal(record.get("iStdVal"));
@@ -388,23 +389,22 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         inStockQcFormM.setCMeasureReason(cmeasurereason);
         //测定单位
         inStockQcFormM.setCMeasureUnit(cmeasureunit);
-        //备注
         inStockQcFormM.setCMemo(cmemo);
         //设变号
         inStockQcFormM.setCDcNo(cdcno);
         //是否合格
-        inStockQcFormM.setIsOk(isok.equals("0") ? false : true);
-        inStockQcFormM.setIStatus(isok.equals("0") ? 2 : 3);
+        Integer isOk = Integer.valueOf(isok);
+        inStockQcFormM.setIsOk(IsOkEnum.toEnum(isOk).getText());
+        inStockQcFormM.setIStatus(isOk.equals(IsOkEnum.NO.getValue()) ? 2 : 3);
         inStockQcFormM.setIsCompleted(true);
         inStockQcFormM.setIsCpkSigned(false);
-
     }
 
     /*
      * 保存异常品记录
      * */
     public void saveInDefectModel(String isok, Long instockqcformmiautoid, InStockQcFormM inStockQcFormM) {
-        if (isok.equals("0")) {
+        if (Integer.valueOf(isok).equals(IsOkEnum.NO.getValue())) {
             InStockDefect defect = defectService.findDefectByiInStockQcFormMid(instockqcformmiautoid);
             if (null == defect) {
                 InStockDefect inStockDefect = new InStockDefect();
@@ -564,7 +564,6 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
             InStockQcFormM stockQcFormM = findById(instockqcformmiautoid);
             saveInStockoutQcFormmModel(stockQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
             update(stockQcFormM);
-
             //如果不合格，保存异常品单
             saveInDefectModel(isok, instockqcformmiautoid, stockQcFormM);
 

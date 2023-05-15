@@ -1,0 +1,27 @@
+<form onsubmit="return false;" id="approvaldRoleForm" action="#(action)" method="post">
+<input type="hidden" name="approvaldRole.iautoid" value="#(approvaldRole.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批节点ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入审批节点ID" maxlength="19" name="approvaldRole.iapprovaldid" value="#(approvaldRole.iapprovaldid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">顺序</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入顺序"  maxlength="10" name="approvaldRole.iseq" value="#(approvaldRole.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">角色ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入角色ID" maxlength="19" name="approvaldRole.iroleid" value="#(approvaldRole.iroleid??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="approvaldRoleForm")
+#end
+

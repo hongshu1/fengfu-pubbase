@@ -100,3 +100,31 @@ WHERE
 	AND doc.iWorkRegionMid= #(iworkregionmid)
 	AND person.iPersonId= ( SELECT iAutoId FROM Bd_Person WHERE cPsn_Num = #para(cpsnnum) )
 #end
+
+#sql("getapicoperationnamebymodocid")
+SELECT DISTINCT
+	roufing.iAutoId,
+	roufing.cOperationName
+FROM
+	Bd_InventoryRoutingConfig roufing
+	LEFT JOIN Bd_InventoryRouting invrouting ON roufing.iInventoryRoutingId = invrouting.iAutoId
+	LEFT JOIN Mo_MoRouting morouting ON morouting.iInventoryRoutingId = invrouting.iAutoId
+WHERE
+	roufing.cOperationName IS NOT NULL
+	AND roufing.cOperationName <> ''
+	AND morouting.iAutoId = #para(modocid)
+#end
+
+#sql("getmoroutingsopbyinventoryroutingconfigid")
+SELECT
+	sop.cName,
+	sop.cPath,
+	sop.cSuffix,
+	sop.iVersion,
+	sop.dFromDate,
+	sop.dToDate
+FROM
+	Bd_MoRoutingSop sop
+WHERE
+    sop.iInventoryRoutingConfigId=#(inventoryroutingconfigid)
+#end

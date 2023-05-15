@@ -1,0 +1,84 @@
+<!--
+<div class="jbolt_page_content">
+	####include("/_view/admin/approvalm/form_approval_flow.html",formAutoId=monthorderm.iAutoId,btnNeed=1)
+</div>
+-->
+
+<div class="jbolt_page_content" style="height: 430px">
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    
+                    <div class="jbolt_tab_view" >
+                        
+                        <div class="jbolt_tab_links">
+                            <a class="jbolt_tab_link active" href="#jbolt_tabcontent1">审批进度</a>
+                            <a class="jbolt_tab_link" href="#jbolt_tabcontent2">审批历史</a>
+                        </div>
+                        
+                        <div class="jbolt_tab_contents">
+                            <div class="jbolt_tab_content active" id="jbolt_tabcontent1">
+                                <!--明细页签-->
+                                #include("/_view/admin/approvalm/approval_process.html")
+                            </div>
+                            <div class="jbolt_tab_content" id="jbolt_tabcontent2">
+                                <!--合行页签-->
+                                #render("_table_line.html")
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<script>
+    /**
+     * 提交审批
+     */
+    function judgeType_#(pageId)(ele) {
+        var action = getRealJqueryObject(ele);
+        var formSn = action.data("formsn");
+        var formAutoId = action.data("formautoid");
+        var index = LayerMsgBox.loading('执行中...');
+        Ajax.post("/admin/formapproval/judgeType",{"formSn":formSn,"formAutoId":formAutoId},function (res) {
+            LayerMsgBox.close(index);
+            LayerMsgBox.success(res.msg,1500,function () {
+                parent.refreshPjaxContainer();
+                parent.layer.closeAll();
+            })
+        },function (err) {
+            LayerMsgBox.close(index);
+            // LayerMsgBox.error(err.msg,2000);
+        })
+    }
+
+    /**
+     * 审批/审核
+     */
+    function approveT_#(pageId)(ele) {
+        var action = getRealJqueryObject(ele);
+        var formSn = action.data("formsn");
+        var formAutoId = action.data("formautoid");
+        var status = action.data("status");
+        var index = LayerMsgBox.loading('执行中...');
+        Ajax.post("/admin/formapproval/approve",{"formSn":formSn,"formAutoId":formAutoId,"status":status},function (res) {
+            LayerMsgBox.close(index);
+            LayerMsgBox.success(res.msg,1500,function () {
+                parent.refreshPjaxContainer();
+                parent.layer.closeAll();
+            })
+        },function (err) {
+            LayerMsgBox.close(index);
+            // LayerMsgBox.error(err.msg,2000);
+        })
+
+    }
+</script>
+

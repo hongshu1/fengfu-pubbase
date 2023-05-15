@@ -1,0 +1,46 @@
+<div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)_dia">
+    <button onclick="jboltTableRemoveCheckedRow(this,false,false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+</div>
+
+<div class="jbolt_page_content" id="printInfo_dia">
+
+    <!-- JBoltTable的数据模板定义-->
+    <script type="text/template" id="jboltTable_demotpl_#(pageId)_dia">
+        {@each datas as data,index}
+        <tr data-id="${data.poHeaderId}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.username}</td>
+            <td>${data.cpsnname}</td>
+            <td>${data.cdeptname}</td>
+            <td style="display: none">${data.ipersonid}</td>
+            <td style="display: none">${data.iuserid}</td>
+        </tr>
+        {@/each}
+    </script>
+
+    <table class="table-center"
+           id="jbolt_orderItemTable_otherreturn_#(pageId)_dia"
+           data-jbolttable
+           data-ajax="true"
+           data-column-resize="true"
+           data-tfoot-fixed="true"
+           data-column-prepend="1:checkbox"
+           data-conditions-form="otherreturnLineForm_#(pageId)_dia"
+           data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+           data-url="/admin/approvald/returnNull"
+           data-rowtpl="jboltTable_demotpl_#(pageId)_dia"
+           data-toolbar="jbolt_table_toolbar_#(pageId)_dia"
+           data-editable="true"
+    >
+        <thead class="fw_normal">
+        <tr>
+            <th data-width="60" data-column="index">序号</th>
+            <th data-min-width="100" data-column="username">用户名</th>
+            <th data-min-width="200" data-column="cpsnname">姓名</th>
+            <th data-min-width="200" data-column="cdeptname">所属部门</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+</div>

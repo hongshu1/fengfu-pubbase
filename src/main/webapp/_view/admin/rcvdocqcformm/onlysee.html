@@ -26,7 +26,7 @@
           </tr>
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r1">
             <td height="26" class="x74" style="height:19.5pt;">客户部番</td>
-            <td >#(record.cinvcode1??)</td>
+            <td>#(record.cinvcode1??)</td>
             <td colspan="4" rowspan="2" height="54" class="x74"
                 style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;height:40.5pt;">
               <div class="form-group row  col-8"
@@ -59,12 +59,12 @@
             <td height="26" class="x74" style="height:19.5pt;">测定理由</td>
             <td colspan="3">
               <input id="cMeaSureReason" type="text" autocomplete="off" placeholder="=请输入测定理由=" name="cmeasurereason"
-                     value="#(record.cmeasurereason??)" maxlength="355" data-rule="required" style="width: 630px"/>
+                     value="#(rcvdocqcformm.cmeasurereason??)" maxlength="355" data-rule="required" style="width: 630px"/>
             </td>
             <td class="x74">设变号</td>
             <td class="x71" width="250">
               <input id="cDcNo" type="text" autocomplete="off" placeholder="=请输入设变号=" name="cdcno"
-                     value="#(record.cdcno??)" maxlength="355" data-rule="required"/>
+                     value="#(rcvdocqcformm.cdcno??)" maxlength="355" data-rule="required"/>
             </td>
           </tr>
           <tr height="300px">
@@ -181,11 +181,23 @@
           {@/each}
         </textarea>
 
+        <table id="jbolt_table_checkouttableparam_split__#(pageId)2" border="3"
+               style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
+          <div style="margin-top: 20px">
+            <!--data-url="admin/rcvdocqcformm/toggleIsCpkSigned/#(rcvdocqcformm.iautoid??)"-->
+            <img data-switchbtn data-value="#(rcvdocqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
+                 onclick="changeCpkStatus('#(rcvdocqcformm.iscpksigned??)')" style="margin-left: 50px;"/>
+            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+            <input type="text" hidden id="getiscpksigned" value="#(rcvdocqcformm.iscpksigned??)"/>
+          </div>
+        </table>
+
         <div class="card-body overflow-auto" style="left: 30px;margin-left: 30px;">
           <table id="jbolt_table_checkouttableparam_split_#(pageId)3" class="table-center jbolt_table thead_font_normal"
                  data-jbolttable
                  data-width="fill"
                  data-height="fill"
+                 data-editable="true"
                  data-ajax="true"
                  data-conditions-form="rcvdocqcformmform_#(pageId)"
                  data-url="admin/rcvdocqcformm/getonlyseeDatas?iautoid=#(rcvdocqcformm.iAutoId??)"
@@ -194,14 +206,10 @@
                  data-toolbar="rcvdocqcformmform_toolbar_#(pageId)">
             <thead>
             <tr class="colspan biaotoucolor">
-              <th colspan="4">检查内容</th>
-              <th colspan="22">检查记录</th>
-            </tr>
-            <tr class="colspan biaotoucolor">
               <th data-column="index">序号</th>
-              <th style="width: 150px;" data-column="cqcitemname">检查项目</th>
-              <th style="width: 220px;">规格公差</th>
-              <th style="width: 120px">检查方法</th>
+              <th style="width: 120px;" data-column="cqcitemname">检查项目</th>
+              <th style="width: 220px;" data-column="coptions">规格公差</th>
+              <th style="width: 120px" data-column="cqcparamname">检查方法</th>
               #for(i = 1; i <= docparamlist.size(); i++)
               <th style="width: 80px">#(i)</th>
               #end
@@ -219,8 +227,8 @@
             <td width="850px">
               <div>
                 <textarea id="cMemo" class="form-control" data-auto-height="100" autocomplete="off" data-show-count
-                          placeholder="=请输入备注="
-                          data-tips="请输入备注" maxlength="200" name="cmemo" value="">#(record.cmemo??)</textarea>
+                          placeholder="=请输入备注=" data-tips="请输入备注" maxlength="200" name="cmemo"
+                          value="">#(rcvdocqcformm.cmemo??)</textarea>
               </div>
             </td>
             <td width="300px">
@@ -234,7 +242,7 @@
                    data-value-attr="sn"
                    data-text-attr="isok"
                    data-inline="true"
-                   data-value="#(record.isok??)"
+                   data-value="#(rcvdocqcformm.isok??)"
                    data-name="isok">
               </div>
             </td>
@@ -300,6 +308,45 @@
     background-color: #b1dfbb;
   }
 </style>
+
+<script>
+  /*
+   * 切换cpk的状态
+   * */
+  function changeCpkStatus(status) {
+    let cpkvalue = $("#getiscpksigned").val();
+    if (cpkvalue == '0') {
+      let jboltTableAllDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
+      for (let i = 0; i < jboltTableAllDatas.length; i++) {
+        let jbotTableData = jboltTableAllDatas[i];
+        if (jbotTableData.itype == '1') {
+          let istdval = jbotTableData.istdval;//标准值
+          //用标准值计算cvaluelist每个cvalue的公差
+          let cvaluelist = jbotTableData.cvaluelist;
+          for (let j = 0; j < cvaluelist.length; j++) {
+            let cvalue = cvaluelist[j].cvalue;
+            if (cvalue) {
+              //开始计算,比标准值大显示整数，比标准值小显示负数
+              let number = cvalue - istdval;
+              cvaluelist[j].cvalue = number.toFixed(1);
+            }
+          }
+          jboltTableAllDatas[i].cvaluelist = cvaluelist;
+        }
+      }
+      //jboltTableInsertRow
+      clearJboltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
+      jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, false, false);
+
+      $("#getiscpksigned").val('1');
+
+    }else if (cpkvalue=='1'){
+      refreshJBoltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
+      $("#getiscpksigned").val('0');
+    }
+
+  }
+</script>
 
 <script>
 

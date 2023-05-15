@@ -56,7 +56,10 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
         //1、查询跳转到另一页面需要的数据
         RcvDocQcFormM rcvDocQcFormM = service.findById(iautoid);
         Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
-
+        record.set("crcvdocno",rcvDocQcFormM.getCRcvDocNo());
+        record.set("drcvdate",rcvDocQcFormM.getDRcvDate());
+        record.set("imask",rcvDocQcFormM.getIMask());
+        record.set("dqctime",rcvDocQcFormM.getDQcTime());//检测日期
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -87,9 +90,10 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
         Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
         List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
         record.set("size", docparamlist.size());
-        record.set("cRcvDocNo",rcvDocQcFormM.getCRcvDocNo());
+        record.set("crcvdocno",rcvDocQcFormM.getCRcvDocNo());
         record.set("drcvdate",rcvDocQcFormM.getDRcvDate());
         record.set("imask",rcvDocQcFormM.getIMask());
+        record.set("dqctime",rcvDocQcFormM.getDQcTime());//检测日期
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -101,9 +105,10 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
         Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
         List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
         record.set("size", stockoutqcformlist.size());
-        record.set("cRcvDocNo",rcvDocQcFormM.getCRcvDocNo());
+        record.set("crcvdocno",rcvDocQcFormM.getCRcvDocNo());
         record.set("drcvdate",rcvDocQcFormM.getDRcvDate());
         record.set("imask",rcvDocQcFormM.getIMask());
+        record.set("dqctime",rcvDocQcFormM.getDQcTime());
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 

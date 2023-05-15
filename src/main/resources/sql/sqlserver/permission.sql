@@ -59,8 +59,7 @@ UNION ALL
  WHERE
   p.is_menu = '1'
  ) a
-WHERE 1=1
- AND a.id IN ( #(ids) )
+WHERE a.id IN ( #(ids) )
  #if(permissionkey)
     AND a.permission_key = #para(permissionkey)
  #end
