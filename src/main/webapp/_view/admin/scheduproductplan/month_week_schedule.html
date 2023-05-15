@@ -259,23 +259,17 @@
         // }
         //初始化数据
         function initData(parms,sheet) {
-            console.log(parms,"parms")
             let url = "http://localhost:8081/admin/scheduproductplanmonth/getTableHead";
             //获取接口数据
             Ajax.get(url,(res)=>{
-                // debugger
                 console.log(res)
                 parms.data = res.data;
-                let dataArray = [parms.data];
-                console.log(dataArray[0],"4545")
                 parms.dayLength = res.data.day.length;
                 let date = new Date();//获取当前年月
-                sheet.setValue(parms.rowindex, parms.columnindex+9,date);
+                sheet.setValue(parms.rowindex, parms.columnindex+9,date);//插入数据
                 sheet.setFormatter(parms.rowindex, parms.columnindex+9,"YYY年MM月");//转换日期格式
                 parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
-                console.log(parms.day)
                 sheet.addSpan(0,9,1,parms.dayLength);//跨行列
-                var index = 9;
                 for (let i = 0; i < parms.dayLength; i++) {
                     sheet.setValue(1,parms.dayRow++,parms.data.day[i]);
                     sheet.setValue(2,parms.weekRow++,parms.data.week[i]);
