@@ -27,8 +27,6 @@
 #define js()
 <script type="text/javascript">
 
-	initTreehandler_1('');
-
 	function routing_jstree1(tree, data){
 		// $("#bomCompare_pid").val(data.id);
 		// $("#bomCompare_submit").click();
@@ -37,25 +35,29 @@
 		}
 	}
 
-	function initTreehandler_1(item) {
-		var treeHtmlStr ="<div " +
-				"					data-jstree" +
-				"                     data-open-level='-1'" +
-				"					  data-curd='false' " +
-				"                     data-async='true'" +
-				// "					  data-onlyleaf='true'"+
-				"                     data-search-input='searchBackGoodsTypeInput_3'" +
-				"                     data-change-handler='routing_jstree1'" +
-				"                     data-conditions-form='routing_2_Form'" +
-				"                     data-read-url='admin/routing/findRoutingAll?item='+item>";
+    var $tree = $("#bommasterBackCategoryTree1");
 
-		$("#bommasterBackCategoryTree1").html(treeHtmlStr);
-		JSTreeUtil.init($("#bommasterBackCategoryTree1"));
+	function initTreehandler_1(item) {
+		var treeHtmlStr ="<div data-jstree" +
+				"              data-open-level='-1'" +
+				"			   data-curd='false' " +
+				"              data-async='true'" +
+				// "					  data-onlyleaf='true'"+
+				"              data-search-input='searchBackGoodsTypeInput_3'" +
+				"              data-change-handler='routing_jstree1'" +
+				"              data-conditions-form='routing_2_Form'" +
+				"              data-read-url='admin/routing/findRoutingAll?item='" + item + ">";
+
+        $tree.html(treeHtmlStr);
+		JSTreeUtil.init($tree);
 	}
 
 	function keyWordsOnChange() {
 		var item = $("#searchBackGoodsTypeInput_3").val()
 		initTreehandler_1(item);
 	}
+
+    // initTreehandler_1('');
+    
 </script>
 #end
