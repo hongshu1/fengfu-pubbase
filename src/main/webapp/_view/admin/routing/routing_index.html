@@ -2,24 +2,24 @@
     <div class="col-auto mb-3" style="width:30%;">
         <div class="card">
             <div class="card-header py-2">
-                <span class="d-inline-block py-1">母件物料清单</span>
+                <span class="d-inline-block py-1">工艺路线</span>
                 <div class="pull-right">
-                    <form class="form-inline" autocomplete="off" id="routing_1_Form"  onsubmit="return false;" method="post">
+                    <form class="form-inline" autocomplete="off" id="routing_2_Form"  onsubmit="return false;" method="post">
                         <input type="text" class="form-control"  id="searchBackGoodsTypeInput_3"
                                placeholder="输入关键字过滤" name="keyWords" value="" oninput="keyWordsOnChange()"/>
 
                         <input type="hidden" name="enableIcon"
-                               value="<a tooltip='' data-title='查看' data-dialogbtn='' data-area='90%,90%' href='admin/routing/info/?'> <i class='fa fa-eye c-info' style='position: absolute;left: 71%;'></i></a>">
+                               value="<a tooltip='' data-title='查看' data-dialogbtn='' data-area='90%,90%' href='admin/routing/info/?'> <i class='fa fa-eye c-info' style='position: absolute;left: 95%;'></i></a>">
                     </form>
                 </div>
             </div>
             <div class="card-body overflow-auto" style="width:600px; max-height: 750px">
-                <div id="bommasterBackCategoryTree"></div>
+                <div id="bommasterBackCategoryTree1"></div>
             </div>
         </div>
     </div>
     <div class="col-auto mb-3" style="width:70%;">
-        ###ajaxPortal("/admin/bomcompare/index","customerBackCategoryPortal_#(pageId)",true)
+
     </div>
 </div>
 

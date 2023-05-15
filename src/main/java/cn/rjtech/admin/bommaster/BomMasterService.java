@@ -363,7 +363,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		// 普通校验
 		ValidationUtils.notBlank(inventoryId, "产品存货编码为空");
 		ValidationUtils.notBlank(formData.getString(BomMaster.CBOMVERSION), "版本/版次为空");
-		ValidationUtils.notBlank(equipmentModelId, "机型为空");
+//		ValidationUtils.notBlank(equipmentModelId, "机型为空");
 		ValidationUtils.notBlank(formData.getString(BomMaster.CDOCNAME), "文件名称为空");
 		ValidationUtils.notBlank(formData.getString(BomMaster.CDOCCODE), "文件编码为空");
 		ValidationUtils.notBlank(formData.getString(BomMaster.DENABLEDATE), "启用日期为空");
@@ -371,7 +371,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		// 校验当前存货是否为当前选择机型下的
 		Inventory inventory = inventoryService.findById(inventoryId);
 		ValidationUtils.notNull(inventory, JBoltMsg.DATA_NOT_EXIST);
-		ValidationUtils.isTrue(equipmentModelId.equals(String.valueOf(inventory.getIEquipmentModelId())), "机型跟产品编码不匹配");
+//		ValidationUtils.isTrue(equipmentModelId.equals(String.valueOf(inventory.getIEquipmentModelId())), "机型跟产品编码不匹配");
 	}
 	
 	/**
