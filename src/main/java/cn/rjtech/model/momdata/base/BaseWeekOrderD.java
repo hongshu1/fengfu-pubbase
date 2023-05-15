@@ -69,7 +69,7 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 计划代码
 	 */
-	public M setCPlanCode(java.lang.Boolean cPlanCode) {
+	public M setCPlanCode(java.lang.String cPlanCode) {
 		set("cPlanCode", cPlanCode);
 		return (M)this;
 	}
@@ -77,10 +77,10 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 计划代码
 	 */
-	@JBoltField(name="cplancode" ,columnName="cPlanCode",type="Boolean", remark="计划代码", required=false, maxLength=1, fixed=0, order=3)
+	@JBoltField(name="cplancode" ,columnName="cPlanCode",type="String", remark="计划代码", required=false, maxLength=40, fixed=0, order=3)
 	@JSONField(name = "cplancode")
-	public java.lang.Boolean getCPlanCode() {
-		return getBoolean("cPlanCode");
+	public java.lang.String getCPlanCode() {
+		return getStr("cPlanCode");
 	}
 
 	/**
@@ -154,7 +154,7 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 传票号
 	 */
-	public M setCCode(java.lang.Boolean cCode) {
+	public M setCCode(java.lang.String cCode) {
 		set("cCode", cCode);
 		return (M)this;
 	}
@@ -162,10 +162,10 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 传票号
 	 */
-	@JBoltField(name="ccode" ,columnName="cCode",type="Boolean", remark="传票号", required=true, maxLength=1, fixed=0, order=8)
+	@JBoltField(name="ccode" ,columnName="cCode",type="String", remark="传票号", required=true, maxLength=40, fixed=0, order=8)
 	@JSONField(name = "ccode")
-	public java.lang.Boolean getCCode() {
-		return getBoolean("cCode");
+	public java.lang.String getCCode() {
+		return getStr("cCode");
 	}
 
 	/**

@@ -348,9 +348,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * @param endDateStr 截止时间yyyy-MM-dd
      * @return
      */
-    public synchronized List<ScheduProductYearViewDTO> scheduPlanMonth(Integer level,String endDateStr) {
-        //年度生产计划集合
-        List<ScheduProductYearViewDTO> scheduProductPlanYearList = new ArrayList<>();
+    public synchronized List<Map<String,Object>> scheduPlanMonth(Integer level,String endDateStr) {
+        //月周生产计划集合
+        List<Map<String,Object>> dataList = new ArrayList<>();
 
         //TODO:获取当前层级上次排产截止日期+1
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekschedule",Kv.by("level",level)).findFirst();
@@ -593,6 +593,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
 
+        int seq = 0;
         //循环产线
         for (Long WorkIdKey : workInvListMap.keySet()){
             //物料集
@@ -672,9 +673,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             //System.out.println("早班："+ Arrays.toString(productInformationByShift0));
             //System.out.println("早班："+ Arrays.toString(productNumberByShift0));
             getInvPlanMap(productInformationByShift0,productNumberByShift0,invPlanMap1S);
-            for (String inv : invPlanMap1S.keySet()){
-                System.out.println("1S："+inv+"："+ Arrays.toString(invPlanMap1S.get(inv)));
-            }
             System.out.println();
 
             //2S
@@ -684,9 +682,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             //System.out.println("中班："+ Arrays.toString(productInformationByShift1));
             //System.out.println("中班："+ Arrays.toString(productNumberByShift1));
             getInvPlanMap(productInformationByShift1,productNumberByShift1,invPlanMap2S);
-            for (String inv : invPlanMap2S.keySet()){
-                System.out.println("2S："+inv+"："+ Arrays.toString(invPlanMap2S.get(inv)));
-            }
             System.out.println();
 
             String[] productInformationByShift2 = new String[workday.length];
@@ -703,25 +698,50 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             //System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
             //System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
             getInvPlanMap(productInformationByShift3,productNumberByShift3,invPlanMap3S);
-            for (String inv : invPlanMap3S.keySet()){
-                System.out.println("3S："+inv+"："+ Arrays.toString(invPlanMap3S.get(inv)));
-            }
 
 
 
-            List<Record> recordList = new ArrayList<>();
 
             //循环物料
             for (String inv : invList){
-                Record invInfo = invInfoMap.get(inv);
+                Record info = invInfoMap.get(inv);
+
+                Map<String,Object> map = new HashMap<>();
+                map.put("seq",seq++);
+                map.put("iPsLevel",info.getInt("iPsLevel"));
+                map.put("cWorkName",info.getStr("cWorkName"));
+                map.put("cInvCode",info.getStr("cInvCode"));
+                map.put("cInvCode1",info.getStr("cInvCode1"));
+                map.put("cInvName1",info.getStr("cInvName1"));
 
 
+                Map<String,Object> dayMap = new HashMap<>();
+
+                System.out.println("需求："+inv+"："+ Arrays.toString(planMap.get(inv)));
+                int[] invPlan = planMap.get(inv);
+
+                System.out.println("1S："+inv+"："+ Arrays.toString(invPlanMap1S.get(inv)));
+                int[] invPlan1S = invPlanMap1S.get(inv);
+
+                System.out.println("2S："+inv+"："+ Arrays.toString(invPlanMap2S.get(inv)));
+                int[] invPlan2S = invPlanMap2S.get(inv);
+
+                System.out.println("3S："+inv+"："+ Arrays.toString(invPlanMap3S.get(inv)));
+                int[] invPlan3S = invPlanMap3S.get(inv);
+
+                for (int i = 0; i < scheduDateList.size(); i++) {
+                    Map<String,Object> record = new HashMap<>();
+                    record.put("iQty1",invPlan[i]);
+                    record.put("iQty2",invPlan1S[i]);
+                    record.put("iQty3",invPlan2S[i]);
+                    record.put("iQty4",invPlan3S[i]);
+
+                    dayMap.put(scheduDateList.get(i),record);
+                }
+                map.put("day",dayMap);
+                dataList.add(map);
             }
-
-
         }
-
-
 
         /*try {
 
@@ -824,7 +844,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         }catch (Exception e){
             throw new RuntimeException("排程计划出错！"+e.getMessage());
         }*/
-        return scheduProductPlanYearList;
+        return dataList;
     }
     public void getInvPlanMap(String[] productInformationByShift,int[] productNumberByShift,Map<String, int[]> invPlanMap){
         for (int i = 0; i < productInformationByShift.length; i++) {
@@ -844,7 +864,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     /**
      * 获取计划
      */
-    public List<ScheduProductYearViewDTO> getScheduPlanMonthList(Long iWeekScheduleId) {
+    public List<Map<String,Object>> getScheduPlanMonthList(Long iWeekScheduleId) {
 
         //TODO:查询排产开始日期与截止日期
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
@@ -869,6 +889,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         Map<Long,List<String>> workInvListMap = new HashMap<>();
         //key:inv，   value:<yyyy-MM-dd，Record>
         Map<String,Map<String,Record>> invPlanDateMap = new HashMap<>();
+        //key:inv   value:invInfo
+        Map<String,Record> invInfoMap = new HashMap<>();
         //本次排产物料id集
         String idsJoin = "(";
         List<Long> idList = new ArrayList<>();
@@ -905,6 +927,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 invPlanDateMap.put(cInvCode,dateQtyMap);
             }
 
+            if (!invInfoMap.containsKey(cInvCode)) {
+                invInfoMap.put(cInvCode,record);
+            }
+
             if (!idList.contains(invId)){
                 idsJoin = idsJoin + invId + ",";
                 idList.add(invId);
@@ -925,11 +951,40 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         }
 
 
+        List<Map<String,Object>> dataList = new ArrayList<>();
 
 
+        int seq = 0;
+        //循环产线
+        for (Long WorkIdKey : workInvListMap.keySet()){
+            //物料集
+            List<String> invList = workInvListMap.get(WorkIdKey);
 
+            //循环物料
+            for (String inv : invList){
+                Record info = invInfoMap.get(inv);
 
-        return null;
+                Map<String,Object> map = new HashMap<>();
+                map.put("seq",seq++);
+                map.put("iPsLevel",info.getInt("iPsLevel"));
+                map.put("cWorkName",info.getStr("cWorkName"));
+                map.put("cInvCode",info.getStr("cInvCode"));
+                map.put("cInvCode1",info.getStr("cInvCode1"));
+                map.put("cInvName1",info.getStr("cInvName1"));
+
+                Map<String,Object> dayMap = new HashMap<>();
+
+                Map<String,Record> planDateMap = invPlanDateMap.get(inv);
+                for(String date : planDateMap.keySet()){
+                    Record record = planDateMap.get(date);
+                    dayMap.put(date,record);
+                }
+                map.put("day",dayMap);
+                dataList.add(map);
+            }
+
+        }
+        return dataList;
     }
 
 
@@ -1896,13 +1951,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     }
 
 
-
-    /**
-     * 获取两个日期字符串之间的日期集合 包含两个日期
-     * @param startTime:yyyy-MM-dd
-     * @param endTime:yyyy-MM-dd
-     * @return list:yyyy-MM-dd
-     */
     
     public List<Record> getInvInfoByLevelList(Okv okv){
         return dbTemplate("scheduproductplan.getInvInfoByLevelList", okv).find();

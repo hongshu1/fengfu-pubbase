@@ -5,7 +5,7 @@
 				<div class="card-body">
 					<div class="col" >
 						<button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-file-excel-o"></i> 数据导入</button>
-						<button onclick="submitThisForm()"class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+						<button onclick="submitThisForm()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
 						<button onclick="approve()" id="approve_By_Edit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
 						<button onclick="approveByAdd()"  id="approve_By_Add" type="submit"  class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
 						<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
@@ -27,20 +27,23 @@
 									<div class="col-8">
 										<input type="hidden" name="mark" id="mark" value="#(mark??)" />
 										<input type="hidden" name="approve" id="approve" value="111" />
-										<input type="text" readonly data-rule="required" data-notnull="true" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control"  maxlength="40" name="weekOrderM.cOrderNo" value="#(weekOrderM.corderno??)"/>
+
+										<input type="text" data-rule="required" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control"  maxlength="40" name="weekOrderM.cOrderNo" value="#(weekOrderM.corderno??)"/>
 									</div>
 								</div>
 							</div>
 							<div class="col-md-5">
 								<div class="form-group row">
-									<input type="hidden" name="weekOrderM.iCustomerId" value="#(weekOrderM.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
+									<input type="hidden" name="weekOrderM.icustomerid" value="#(weekOrderM.icustomerid??)" id="icustomerid" data-sync-attr="iautoid" />
+									<input type="hidden" name="icustomermid" value="#(weekOrderM.icustomerid??)" id="icustomerid2" data-sync-attr="iautoid"/>
+
 									<label class="col-sm-2 col-form-label">客户名称</label>
 									<div class="col-8">
 										<input type="text" class="form-control"
 											   data-autocomplete
 											   data-url="admin/customer/autocomplete"
 											   data-rule="required"
-											   data-hidden-input="iCustomerId"
+                                               data-sync-ele="#icustomerid,icustomerid2"
 											   data-text-attr="ccusname"
 											   data-value-attr="iautoid"
 											   data-column-attr="ccuscode,ccusname"
@@ -60,14 +63,16 @@
 		</div>
 		<div class="col-12">
 			<div class="card">
-				<row ><div class="col-sm-auto"><h7>表头拓展字段：</h7></div></row>
+                <div class="row">
+                    <div class="col-sm-auto"><h7>表头拓展字段：</h7></div>
+                </div>
 				<div class="card-body">
 						<div class="row">
 							<div class="col-md-5">
 								<div class="form-group row">
 									<label class="col-sm-2 col-form-label">拓展字段</label>
 									<div class="col-8">
-										<input type="text"  data-tips="" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="" maxlength="40" name="weekOrderM.cDefine5" value="#(weekOrderM.cDefine5??)"/>
+                                        <input type="text" data-tips="" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="" maxlength="40" name="weekOrderM.cDefine5" value="#(weekOrderM.cDefine5??)"/>
 									</div>
 								</div>
 							</div>
@@ -91,7 +96,7 @@
 		{@each datas as data,index}
 		<tr data-id="${data.iautoid}">
 			<td>${pageNumber,pageSize,index | rownum}</td>
-			<td>${data.icustomeraddrid}</td>
+			<td>${data.cdistrictname}</td>
 			<td>${data.cplancode}</td>
 			<td>${data.cinvcode}</td>
 			<td>${data.cinvcode1}</td>
@@ -111,11 +116,25 @@
 		</tr>
 		{@/each}
 	</script>
+
 	<div class="jbolt_table_toolbar" id="WeekOrderM_toolbar_#(pageId)">
 		<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 			<button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+			<div class="j_upload_file_box"
+				 data-name="file"
+				 data-btn-class="btn dropdown-item"
+				 data-placeholder="上传导入"
+				 data-form="WeekOrderM_Form"
+				 data-confirm="确认导入数据？"
+				 data-accept="excel"
+				 data-maxsize="20480"
+				 data-handler="uploadFile"
+				 data-upload-success-handler="uploadHandler"
+				 data-url="/admin/dataimport/importExcelData">
+			</div>
 		</div>
 	</div>
+
 	<table class="jbolt_table thead_font_normal table-bordered table-center"
 		   data-jbolttable
 		   #if(weekOrderM.iAutoId??)
@@ -133,21 +152,18 @@
 		<thead>
 		<tr>
 			<th data-width="60" data-column="index">序号</th>
-			<th data-width="100" data-column="iCustomerAddrId">收货地点ID</th>
-			<th data-width="100" data-column="cPlanCode">计划代码</th>
+			<th data-width="100" data-column="cdistrictname">收货地点</th>
+			<th data-width="100" data-column="cplancode">计划代码</th>
 			<th data-width="100" data-column="cinvcode">存货编码</th>
-			<th data-width="100" data-column="cDefine1">客户部署</th>
-			<th data-width="100" data-column="cDefine2">部品名称</th>
-			<th data-width="100" data-column="cDefine3">规格</th>
-
-
-			<th data-width="100" data-column="iQty">数量</th>
-			<th data-width="100" data-column="cDefine4">销售单位</th>
-
-			<th data-min-width="160" data-column="dPlanAogDate">计划到货日期</th>
-			<th data-width="100" data-column="cCode">传票号</th>
-			<th data-width="150" data-column="cVersion">版本号</th>
-			<th data-width="150" data-column="cMemo">备注</th>
+			<th data-width="100" data-column="cdefine1">客户部署</th>
+			<th data-width="100" data-column="cdefine2">部品名称</th>
+			<th data-width="100" data-column="cdefine3">规格</th>
+			<th data-width="100" data-column="iqty">数量</th>
+			<th data-width="100" data-column="cdefine4">销售单位</th>
+			<th data-width="160" data-column="dplanaogdate">计划到货日期</th>
+			<th data-width="100" data-column="ccode">传票号</th>
+			<th data-width="150" data-column="cversion">版本号</th>
+			<th data-width="150" data-column="cmemo">备注</th>
 			<th data-width="150" name="yichuhang">操作</th>
 		</tr>
 		</thead>
@@ -158,9 +174,9 @@
 	hideParentLayerDialogBtn();
 
 	let mark = $("#mark").val();
-	if (mark == 'EDIT') {
+	if (mark === 'EDIT') {
 		$("#approve_By_Add").hide();
-	}else if (mark == 'ADD') {
+	}else if (mark === 'ADD') {
 		$("#approve_By_Edit").hide()
 	}
 
@@ -171,7 +187,7 @@
 				withForm: ["WeekOrderM_Form"],
 				name: 'WeekOrderMForm',
 				type: "all",
-				url: "/admin/weekorderm/save?mark="+document.getElementById('mark').value,
+                url: "/admin/weekorderm/save?mark=" + document.getElementById('mark').value,
 				success: function (res) {
 					LayerMsgBox.success("提交成功", 600, function () {
 						parent.refreshPjaxContainer();
@@ -183,14 +199,16 @@
 				iautoid: {
 					submitAttr: "iautoid",
 				},
-				iCustomerAddrId: {
-					// type: "autocomplete",
-					type: "input",
-					maxLength: 100,
-					required: true,
-					placeholder: "请选择",
-				},
-				cPlanCode: {
+                cdistrictname: {
+                    type: "select",
+                    linkPara: 'input[name="icustomermid"]',
+                    url: "/admin/customeraddr/list",
+                    valueAttr: "cdistrictname",
+                    textAttr: "cdistrictname",
+                    placeholder: "=请选择=",
+                    required: true
+                },
+				cplancode: {
 					type:"input",
 					placeholder:'计划代码'
 				},
@@ -210,22 +228,22 @@
 						{column: "cDefine2", use: "cinvname1"},{column: "cDefine3", use: "cinvstd"},
 						{column: "cDefine4", use: "isalesuomid"},{column: "iInventoryId", use: "iautoid"}]
 				},
-				cDefine1: {
+				cdefine1: {
 					type:"text",
 					placeholder:'客户部署',
 					valueAttr: "cinvcode1",
 				},
-				cDefine2: {
+				cdefine2: {
 					type:"text",
 					placeholder:'部品名称',
 					valueAttr: "cinvname1",
 				},
-				cDefine3: {
+				cdefine3: {
 					type:"text",
 					placeholder:'规格',
 					valueAttr: "cinvstd",
 				},
-				iQty: {
+				iqty: {
 					type:"amount",
 					placeholder:'数量',
 					required:true,
@@ -237,17 +255,17 @@
 						formula:"sum"
 					}]
 				},
-				cDefine4: {
+				cdefine4: {
 					type:"text",
 					placeholder:'销售单位',
 					valueAttr: "isalesuomid",
 				},
-				dPlanAogDate: {
+				dplanaogdate: {
 					type:"date",
 					placeholder:'计划到货日期',
 					required: true,
 				},
-				cCode: {
+				ccode: {
 					type:"input",
 					placeholder:'传票号',
 					required: true,
@@ -259,7 +277,7 @@
 						formula:"sum"
 					}]
 				},
-				cVersion: {
+				cversion: {
 					type:"input",
 					placeholder:'版本号',
 					required: true,
@@ -271,15 +289,35 @@
 						formula:"sum"
 					}]
 				},
-				cMemo: {
+				cmemo: {
 					type:"input",
-					placeholder:'备注',
-					required: true,
+					placeholder:'备注'
 				}
 			}
 		};
 		return editableTableOptions;
 	}
+	function uploadHandler(uploader, type, fileInput, res) {
+		jboltTableClear("#jbolt_Table_#(pageId)");
+
+		var data = res.data;
+
+		if (!data || data.length === 0) {
+			LayerMsgBox.alert('导入数据不能为空', 2);
+			return;
+		}
+
+		$.each(data, function (idx, row) {
+			row.dplanaogdate = row.dplanaogdate.split(' ')[0]
+		});
+		console.log(data)
+
+		var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
+		jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
+
+
+	}
+
 
 	function submitThisForm(){
 		console.log("......执行");

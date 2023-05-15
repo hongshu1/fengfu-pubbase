@@ -127,7 +127,7 @@ public class LocListCNService extends BaseService<LocListCN> {
 	}
 
 	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType 
+	 * 设置返回二开业务所属的关键systemLog的targetType
 	 * @return
 	 */
 	@Override

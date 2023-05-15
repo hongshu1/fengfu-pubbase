@@ -110,6 +110,7 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	public void invc_dialog_index(){
 		set("configid",getLong("iautoid"));
 		set("iinventoryid",getLong("iinventoryid"));
+		set("isAdd", get("isAdd"));
 		render("invc_dialog_index.html");
 	}
 
@@ -120,6 +121,7 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 
 	public void drawing_dialog_index(){
 		set("configid",getLong("iautoid"));
+		
 		render("drawing_dialog_index.html");
 	}
 

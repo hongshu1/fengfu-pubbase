@@ -169,6 +169,18 @@
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+            <div class="j_upload_file_box"
+                 data-name="file"
+                 data-btn-class="btn dropdown-item"
+                 data-placeholder="上传导入"
+                 data-form="MonthOrderM_Form_#(pageId)"
+                 data-confirm="确认导入数据？"
+                 data-accept="excel"
+                 data-maxsize="20480"
+                 data-handler="uploadFile"
+                 data-upload-success-handler="uploadHandler"
+                 data-url="/admin/dataimport/importExcelData">
+            </div>
         </div>
     </div>
     
@@ -189,12 +201,12 @@
     >
         <thead>
         <tr>
-            <th data-width="60" data-column="index">序号</th>
-            <th data-width="150" data-column="cinvcode">存货编码</th>
-            <th data-width="150" data-column="cinvcode1">客户部番</th>
-            <th data-width="150" data-column="cinvname1">部品名称</th>
-            <th data-width="150" data-column="cinvstd">规格</th>
-            <th data-width="100" data-column="cuomname">库存主单位</th>
+            <th data-width="60" data-column="index" rowspan="2">序号</th>
+            <th data-width="150" data-column="cinvcode" rowspan="2">存货编码</th>
+            <th data-width="150" data-column="cinvcode1" rowspan="2">客户部番</th>
+            <th data-width="150" data-column="cinvname1" rowspan="2">部品名称</th>
+            <th data-width="150" data-column="cinvstd" rowspan="2">规格</th>
+            <th data-width="100" data-column="cuomname" rowspan="2">库存主单位</th>
             <th data-column="iqty1">1日</th>
             <th data-column="iqty2">2日</th>
             <th data-column="iqty3">3日</th>
@@ -685,6 +697,83 @@
             }
         };
         return editableTableOptions;
+    }
+    function uploadHandler(uploader, type, fileInput, res) {
+        jboltTableClear("#jbolt_Table_#(pageId)");
+
+        var data = res.data;
+        console.log(data)
+        if (!data || data.length === 0) {
+            LayerMsgBox.alert('导入数据不能为空', 2);
+            return;
+        }
+
+        var arr = [];
+
+        $.each(data, function (idx, row) {
+            if (row.cinvcode1) {
+                arr.push(row.cinvcode1);
+            }
+        });
+
+        var para = {
+            cinvcode1: arr.join(',')
+        };
+
+        var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
+
+        Ajax.post('admin/inventory/fetchByCinvcode1s', para, function (ret) {
+
+            LayerMsgBox.close(index);
+
+            if (ret.state === 'ok') {
+
+                // 导入行数据
+                $.each(data, function (idx, r) {
+
+                    // 存货数据
+                    $.each(ret.data, function (idx, row) {
+
+                        if (r.cinvcode1 === row.cinvcode1) {
+                            if (row.cnt === 0) {
+                                r.error = '部品番号不存在！';
+                            } else if (row.cnt === 1) {
+                                r.iinventoryid = row.iautoid;
+                                r.cinvcode = row.cinvcode;
+                                r.cinvname1 = row.cinvname1;
+                                r.cinvstd = row.cinvstd;
+                                r.cuomname = row.cuomname;
+                            } else {
+                                r.error = '存在' + row.cnt + '条匹配的存货记录，请手工选择存货！';
+                            }
+                        }
+
+                    });
+
+                    if (!r.error) {
+                        if (r.cinvcode1 && !r.iinventoryid) {
+                            r.error = '部品番号缺少对应存货！';
+                        }
+                    }
+
+                    // 数量精度处理
+                    $.each(r, function (key, val) {
+                        if (key.startsWith('iqty')) {
+                            var iqty = parseFloat(val);
+                            iqty = parseFloat(iqty);
+                            r[key] = iqty.toFixed(0);
+                        }
+                    });
+
+                });
+
+                jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        }, function () {
+            LayerMsgBox.close(index);
+        });
     }
 
     function closeHandler(){
