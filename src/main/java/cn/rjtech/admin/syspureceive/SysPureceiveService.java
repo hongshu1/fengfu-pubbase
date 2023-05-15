@@ -300,6 +300,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 			}else {
 				//推送初物 PL_RcvDocQcFormM 来料
 				this.insertRcvDocQcFormM(row,sysotherin,veniAutoId);
+				sysPureceivedetail.setIsInitial("1");
 			}
 			sysPureceivedetail.setMasID(sysotherin.getAutoID());
 			sysPureceivedetail.setSourceBillType(row.getStr("sourcebilltype"));

@@ -83,8 +83,8 @@ function loadDay(parms) {
     //     parms.isExpand = true;
     // }
     //日期前面头部信息初始化
-    parms.activeSheet.addSpan(0, 0, 3, 1, GC.Spread.Sheets.SheetArea.colHeader);
     parms.activeSheet.addSpan(0, 1, 3, 1, GC.Spread.Sheets.SheetArea.colHeader);
+    parms.activeSheet.addSpan(1, 2, 3, 1, GC.Spread.Sheets.SheetArea.colHeader);
     parms.activeSheet.addSpan(0, 2, 3, 1, GC.Spread.Sheets.SheetArea.colHeader);
     parms.activeSheet.addSpan(0, 3, 3, 1, GC.Spread.Sheets.SheetArea.colHeader);
     parms.activeSheet.addSpan(0, 4, 3, 1, GC.Spread.Sheets.SheetArea.colHeader);
