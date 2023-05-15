@@ -194,23 +194,27 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         return find("select * from T_Sys_PUInStoreDetail where masid=?", masid);
     }
 
+    /*
+     * 采购入库单明细表的model
+     * */
     public void saveSysPuinstoredetailModel(List<SysPuinstoredetail> detailList, List<Record> saveRecordList,
-                                            SysPuinstore puinstore){
-        for (Record record : saveRecordList) {
+                                            SysPuinstore puinstore,String whcode) {
+        for (int i = 0; i < saveRecordList.size(); i++) {
+            Record record = saveRecordList.get(i);
             SysPuinstoredetail detail = new SysPuinstoredetail();
             detail.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
-            detail.setSourceBillType("");
-            detail.setSourceBillNo("");
-            detail.setSourceBillNoRow("");
-            detail.setSourceBillID("");
-            detail.setSourceBillDid("");
-            detail.setRowNo(1);
-            detail.setMasID(puinstore.getAutoID());
-            detail.setWeight("");
-            detail.setWhcode("");
-            detail.setPosCode("");
-            detail.setQty(new BigDecimal(1));
-            detail.setTrackType("");
+            detail.setSourceBillType("");//采购PO  委外OM（采购类型）
+            detail.setSourceBillNo(puinstore.getSourceBillNo()); //来源单号（订单号）
+            detail.setSourceBillNoRow(puinstore.getSourceBillNo() +"-"+ i); //来源单号+行号
+            detail.setSourceBillID(puinstore.getSourceBillNo()); //来源单据ID(订单id)
+            detail.setSourceBillDid(puinstore.getSourceBillNo()); //来源单据DID;采购或委外单身ID
+            detail.setRowNo(i);  //行号
+            detail.setMasID(puinstore.getAutoID()); //主表ID;T_Sys_PUInStore.AutoID
+            //detail.setWeight(""); //重量
+            detail.setWhcode(whcode); //仓库
+            //detail.setPosCode(""); //库位
+            detail.setQty(new BigDecimal(1)); //入库数量
+            //detail.setTrackType(""); //跟单类型
             detail.setMemo(record.get("memo"));
             detail.setCreatePerson(JBoltUserKit.getUserName());
             detail.setCreateDate(puinstore.getCreateDate());

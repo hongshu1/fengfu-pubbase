@@ -6,8 +6,13 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
+import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.Main;
+import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.PreAllocate;
+import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.ValidationUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 
@@ -97,7 +102,16 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * */
     public Ret autit(Long autoid) {
         SysPuinstore sysPuinstore = findById(autoid);
-        return ret(true);
+        //1、更新审核人、审核时间、状态
+        sysPuinstore.setAuditPerson(JBoltUserKit.getUserName());
+        sysPuinstore.setAuditDate(new Date());
+        sysPuinstore.setState("2");
+        //2、推送u8入库
+        String json = getSysPuinstoreDto(sysPuinstore);
+        String post = new BaseInU8Util().base_in(json);
+        System.out.println(post);
+        Ret ret = update(sysPuinstore);
+        return ret;
     }
 
     /**
@@ -229,12 +243,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 //新增主表
                 Record record = jBoltTable.getFormRecord();
                 SysPuinstore puinstore = new SysPuinstore();
-                saveSysPuinstoreModel(puinstore,record);
+                saveSysPuinstoreModel(puinstore, record);
                 ValidationUtils.isTrue(puinstore.save(), JBoltMsg.FAIL);
                 //新增明细表
                 List<Record> saveRecordList = jBoltTable.getSaveRecordList();
                 List<SysPuinstoredetail> detailList = new ArrayList<>();
-                syspuinstoredetailservice.saveSysPuinstoredetailModel(detailList,saveRecordList,puinstore);
+                syspuinstoredetailservice
+                    .saveSysPuinstoredetailModel(detailList, saveRecordList, puinstore, record.get("whcode"));
                 int[] ints = syspuinstoredetailservice.batchSave(detailList);
                 System.out.println(ints);
 //                ValidationUtils.notNull(syspuinstoredetailservice.batchSave(detailList), JBoltMsg.FAIL);
@@ -244,7 +259,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         return SUCCESS;
     }
 
-    public void saveSysPuinstoreModel(SysPuinstore puinstore,Record record){
+    public void saveSysPuinstoreModel(SysPuinstore puinstore, Record record) {
         Date date = new Date();
         puinstore.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
         puinstore.setBillType(record.get("billtype"));//采购类型
@@ -259,8 +274,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         puinstore.setMemo(record.get("memo"));
         puinstore.setCreatePerson(JBoltUserKit.getUserName());
         puinstore.setCreateDate(date);
-//        puinstore.setAuditPerson(getOrgName());
-//        puinstore.setAuditDate();
+        puinstore.setAuditPerson(getOrgName()); //审核人
+        puinstore.setAuditDate(date); //审核时间
         puinstore.setModifyPerson(JBoltUserKit.getUserName());
         puinstore.setModifyDate(date);
         puinstore.setState("1");
@@ -272,5 +287,35 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * */
     public List<Record> getWareHouseName(Kv kv) {
         return dbTemplate(u8SourceConfigName(), "syspuinstore.getWareHouseName", kv).find();
+    }
+
+    /*
+     * 组推送u8的json
+     * */
+    public String getSysPuinstoreDto(SysPuinstore puinstore) {
+        String json = "";
+        SysPuinstoreDTO dto = new SysPuinstoreDTO();
+        //主数据
+        ArrayList<Main> MainData = new ArrayList<>();
+        Main main = new Main();
+
+        MainData.add(main);
+        //其它数据
+        PreAllocate preAllocate = new PreAllocate();
+        preAllocate.setCreatePerson(puinstore.getCreatePerson());
+        preAllocate.setCreatePersonName(puinstore.getCreatePerson());
+        preAllocate.setLoginDate(String.valueOf(puinstore.getCreateDate()));
+        preAllocate.setOrganizeCode(puinstore.getOrganizeCode());
+        preAllocate.setTag("PUInStore");
+        preAllocate.setType("PUInStore");
+        preAllocate.setUserCode(puinstore.getCreatePerson());
+        //放入dto
+        dto.setMainData(MainData);
+        dto.setPreAllocate(preAllocate);
+        dto.setUserCode(puinstore.getCreatePerson());
+        dto.setOrganizeCode(puinstore.getOrganizeCode());
+        dto.setToken("");
+        //返回
+        return JSON.toJSONString(dto);
     }
 }
