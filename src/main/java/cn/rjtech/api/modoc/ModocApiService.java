@@ -1,11 +1,13 @@
 package cn.rjtech.api.modoc;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
+import cn.jbolt.core.api.JBoltApiRet;
 import cn.rjtech.admin.modoc.MoDocService;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.Date;
 import java.util.List;
 
 public class ModocApiService extends JBoltApiBaseService {
@@ -31,5 +33,10 @@ public class ModocApiService extends JBoltApiBaseService {
   public List<Record> getMoroutingsopByInventoryroutingconfigId(String inventoryroutingconfigid){
     return moDocService.getMoroutingsopByInventoryroutingconfigId(inventoryroutingconfigid);
   }
-
+  public JBoltApiRet page(Integer page, Integer pageSize, String cmodocno, String cinvaddcode, String cinvcode1,
+                          String cinvname1,
+                          String cdepname, Long iworkregionmid, Integer status, Date starttime, Date endtime) {
+    return JBoltApiRet.API_SUCCESS_WITH_DATA(moDocService.page(page, pageSize, cmodocno, cinvaddcode,
+            cinvcode1, cinvname1, cdepname, iworkregionmid, status, starttime, endtime));
+  }
 }
