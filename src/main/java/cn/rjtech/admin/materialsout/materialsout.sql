@@ -24,3 +24,26 @@ WHERE 1 = 1
 order by t1.ModifyDate desc
     #end
 
+#sql("getMaterialsOutLines")
+SELECT t2.*,
+       i.*,
+       u.cUomClassName,
+       t3.cInvCCode,
+       t3.cInvCName
+FROM T_Sys_MaterialsOut t1,
+     T_Sys_MaterialsOutDetail t2
+         LEFT JOIN bd_inventory i ON i.cinvcode = t2.Invcode
+         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
+         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
+WHERE
+        t1.AutoID = t2.MasID AND  t1.AutoID = '#(autoid)'
+    #end
+
+
+
+#sql("moDetailData")
+SELECT *
+
+FROM V_Sys_MODetail
+WHERE 1 = 1
+#end
