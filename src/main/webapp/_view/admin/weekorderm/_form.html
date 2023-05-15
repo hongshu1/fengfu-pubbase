@@ -27,7 +27,7 @@
 									<div class="col-8">
 										<input type="hidden" name="mark" id="mark" value="#(mark??)" />
 										<input type="hidden" name="approve" id="approve" value="111" />
-                                        
+
 										<input type="text" data-rule="required" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control"  maxlength="40" name="weekOrderM.cOrderNo" value="#(weekOrderM.corderno??)"/>
 									</div>
 								</div>
@@ -36,7 +36,7 @@
 								<div class="form-group row">
 									<input type="hidden" name="weekOrderM.icustomerid" value="#(weekOrderM.icustomerid??)" id="icustomerid" data-sync-attr="iautoid" />
 									<input type="hidden" name="icustomermid" value="#(weekOrderM.icustomerid??)" id="icustomerid2" data-sync-attr="iautoid"/>
-                                    
+
 									<label class="col-sm-2 col-form-label">客户名称</label>
 									<div class="col-8">
 										<input type="text" class="form-control"
@@ -116,13 +116,25 @@
 		</tr>
 		{@/each}
 	</script>
-    
+
 	<div class="jbolt_table_toolbar" id="WeekOrderM_toolbar_#(pageId)">
 		<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 			<button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+			<div class="j_upload_file_box"
+				 data-name="file"
+				 data-btn-class="btn dropdown-item"
+				 data-placeholder="上传导入"
+				 data-form="WeekOrderM_Form"
+				 data-confirm="确认导入数据？"
+				 data-accept="excel"
+				 data-maxsize="20480"
+				 data-handler="uploadFile"
+				 data-upload-success-handler="uploadHandler"
+				 data-url="/admin/dataimport/importExcelData">
+			</div>
 		</div>
 	</div>
-    
+
 	<table class="jbolt_table thead_font_normal table-bordered table-center"
 		   data-jbolttable
 		   #if(weekOrderM.iAutoId??)
@@ -159,7 +171,6 @@
 </div>
 #define js()
 <script>
-    
 	hideParentLayerDialogBtn();
 
 	let mark = $("#mark").val();
@@ -286,6 +297,27 @@
 		};
 		return editableTableOptions;
 	}
+	function uploadHandler(uploader, type, fileInput, res) {
+		jboltTableClear("#jbolt_Table_#(pageId)");
+
+		var data = res.data;
+
+		if (!data || data.length === 0) {
+			LayerMsgBox.alert('导入数据不能为空', 2);
+			return;
+		}
+
+		$.each(data, function (idx, row) {
+			row.dplanaogdate = row.dplanaogdate.split(' ')[0]
+		});
+		console.log(data)
+
+		var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
+		jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
+
+
+	}
+
 
 	function submitThisForm(){
 		console.log("......执行");
