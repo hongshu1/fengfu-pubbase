@@ -206,44 +206,41 @@ WHERE
 
 #sql("findBomCompareByBomMasterInvId")
 SELECT
-	bbc.iAutoId AS id,
-	a.cBomVersion,
-	bbc.iInventoryId,
+	bom.masterInvId,
 	ic.cInvCName cinvcname,
 	manuuom.cUomName manufactureuom,
 	purUom.cUomName purchaseuom,
-	minv.*
+	inv.*
 FROM
-	Bd_BomCompare bbc
-	INNER JOIN Bd_Inventory minv ON minv.iAutoId = bbc.iInventoryId
-	INNER JOIN Bd_InventoryClass ic on minv.iInventoryClassId = ic.iautoid
-	LEFT JOIN Bd_Uom manuuom ON manuuom.iAutoId = minv.iManufactureUomId
-	LEFT JOIN Bd_Uom puruom ON puruom.iAutoId = minv.iPurchaseUomId
-	INNER JOIN Bd_BomMaster a ON a.iAutoId = bbc.iBOMMasterId
-	AND a.dEnableDate <= GETDATE()
-	AND a.dDisableDate >= GETDATE()
-WHERE
-	bbc.IsDeleted = '0'
-	AND a.IsDeleted = '0'
-	AND a.isEnabled = '1'
-	AND a.iAuditStatus = 2
-	AND a.isEffective = 1
+	Bd_Inventory inv
+	INNER JOIN Bd_InventoryClass ic ON ic.iautoid = inv.iInventoryClassId
+	LEFT JOIN Bd_Uom manuuom ON manuuom.iAutoId = inv.iManufactureUomId
+	LEFT JOIN Bd_Uom puruom ON puruom.iAutoId = inv.iPurchaseUomId
+	INNER JOIN V_Bd_BomMasterInvId bom ON bom.iInventoryId = inv.iAutoId
+	WHERE
+	    1 = 1
 	#if(orgId)
-	    AND a.iOrgId = #para(orgId)
+	    AND bom.iOrgId = #para(orgId)
 	#end
-	#if(invId)
-        AND a.iInventoryId = #para(invId)
-    #else
-        AND a.iInventoryId = ''
+
+    #if(isAdd)
+         #if(invId)
+            AND bom.masterInvId = #para(invId)
+        #else
+            AND bom.masterInvId = ''
+	    #end
+    #end
+	#if(masterInvId)
+       AND bom.masterInvId = #para(masterInvId) OR inv.iAutoId = #para(masterInvId)
 	#end
 	#if(cInvCode1)
-         AND minv.cInvCode1 like CONCAT('%', #para(cInvCode1), '%')
+         AND inv.cInvCode1 like CONCAT('%', #para(cInvCode1), '%')
     #end
     #if(cInvName)
-        AND minv.cInvName like CONCAT('%', #para(cInvName), '%')
+        AND inv.cInvName like CONCAT('%', #para(cInvName), '%')
     #end
     #if(cInvCode)
-        AND minv.cInvCode like CONCAT('%', #para(cInvCode), '%')
+        AND inv.cInvCode like CONCAT('%', #para(cInvCode), '%')
     #end
 
 #end
