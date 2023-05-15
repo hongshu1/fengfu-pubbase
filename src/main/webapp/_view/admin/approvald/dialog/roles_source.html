@@ -1,0 +1,96 @@
+#define css()
+<style>
+    .jbolt_page{
+        padding: 10px!important;
+    }
+</style>
+#end
+<div class="jbolt_page">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-xl-10">
+
+                <form onsubmit="return false;" class="form-inline" id="chooseDataForm"  method="post">
+                    <input type="hidden" value="#(roleHidden??)" name="roleHidden" autocomplete="off"
+                           class="form-control" id="version"/>
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=角色编码/名称="
+                           name="keywords" value="" />
+                    <button id="selectButtonBingAllKeywords" type="submit" class="btn btn-light" ><i class="fa fa-search"></i> 查询</button>
+                </form>
+
+            </div>
+
+            <div class="col-xl-1">
+
+                <button class="btn btn-success btn-sm" onclick="chooseData(this)" id="button" data-jbolt-table-id="jbolt_table_toolbar__dia">选中 <i class="fa fa-caret-right fa-lg"></i><i class="fa fa-caret-right fa-lg"></i><i class="fa fa-caret-right fa-lg"></i></button>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- JBoltTable -->
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_demotpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.poHeaderId}">
+                {@if pageSize&&pageSize>0}
+                <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
+                {@else}
+                <td>${+index+1}</td>
+                {@/if}
+                <td>${data.rolesn}</td>
+                <td>${data.rolename}</td>
+                <!--<td>
+                    <a  tooltip  href="admin/role/users/${iroleid}" data-dialogbtn data-btn="close" data-scroll="yes"
+                        data-title="角色【${rolename}】-用户列表" data-area="99%,99%" class="jbolt_table_btn"><i
+                            class="fa fa-users c-danger"></i></a>
+                </td>-->
+                <td style="display: none">${data.iroleid}</td>
+            </tr>
+            {@/each}
+        </script>
+
+        <table class="thead_font_normal thin"
+               id="chooseDataTable_#(pageId)"
+               data-jbolttable
+               data-fixed-columns-left="1,2,3"
+               data-column-resize="true"
+               data-ajax="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="chooseDataForm"
+               data-page="jboltTablePage_ajax"
+               data-pagesize="50"
+               data-url="/admin/approvald/getRole"
+               data-rowtpl="jboltTable_demotpl_#(pageId)"
+               ###data-ajax-success-handler="tableAjaxSuccessHandler"
+               data-sortable-columns="username"
+               data-default-sort-column="username"
+               data-sort="#(sortColumn):#(sortType)"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-min-width="100" data-column="rolesn">角色编码</th>
+                <th data-min-width="200" data-column="rolename">角色名称</th>
+<!--                <th data-min-width="200" data-column="rolesuser">用户列表</th>-->
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function chooseData() {
+        //点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+        var data=jboltTableGetCheckedDatas("chooseDataTable_#(pageId)");
+        console.log('souurcedata===>',data)
+        if(data){
+            var success=jboltTablePrependRow('#jbolt_orderItemTable_otherreturn_#(pageId)_dia',data);
+            if (success) {
+                console.log('true')
+            }
+        }
+    }
+</script>

@@ -19,6 +19,7 @@ SELECT
 	inv.cInvName2,
 	inv.cInvAddCode,
 	inv.cInvAddCode1,
+	a.iVendorId,
 	ven.cVenName
 FROM
 	Bd_BomCompare a

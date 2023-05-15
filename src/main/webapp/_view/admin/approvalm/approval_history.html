@@ -1,0 +1,69 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="PheDeliveryLines_tpl2_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.stepname}</td>
+            <td>${data.cname}</td>
+            <td>${data.way}</td>
+            <td>${data.status}</td>
+            <td>
+                <a  tooltip  href="admin/formapprovald/userList/${data.iautoid}" data-dialogbtn data-btn="close"
+                    data-scroll="yes"
+                    data-title="审批人列表" data-area="90%,90%" class="jbolt_table_btn"><i
+                        class="fa fa-users c-danger"></i></a>
+            </td>
+           <td>
+	<a href="admin/approvald/edit/${data.iautoid}" data-area="95%,95%"  tooltip data-title="编辑"
+       data-handler="refreshJBoltTable" data-dialog-title="修改审批节点" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+</td>
+        </tr>
+    {@/each}
+</textarea>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- 工具条 toolbar -->
+                <div class="jbolt_table_toolbar" id="PheDeliveryLines_toolbar2_#(pageId)" style="display: flex">
+                    <div class="" role="group" aria-label="btn-group">
+
+                    </div>
+                </div>
+
+                <table class="jbolt_table jbolt_main_table table-center"
+                       id="jbolt_table_pheDeliveryLines2_#(pageId)"
+                       data-jbolttable
+                       data-ajax-success-handler="tableDataSuccess2()"
+                       data-width="auto"
+                       data-height="fill"
+                       data-ajax="true"
+                       data-page="PheDeliveryLines2_page_#(pageId)"
+                       data-column-prepend="1:checkbox:true"
+                       data-toolbar="PheDeliveryLines_toolbar2_#(pageId)"
+                       data-url="admin/formapprovald/datas"
+                       data-conditions-form="approvalMForm_#(pageId)"
+                       data-rowtpl="PheDeliveryLines_tpl2_#(pageId)"
+                       data-column-resize="true"
+                       ###data-editable="true"
+                       ###data-editable-option="getEditableTableOptions2_#(pageId)"
+                >
+                    <thead>
+                    <tr>
+                        <th data-width="100" data-column="index">审批顺序</th>
+                        <th data-min-width="200" data-column="stepname">审批节点</th>
+                        <th data-min-width="200" data-column="cname">审批内容</th>
+                        <th data-min-width="200" data-column="way">审批人设置</th>
+                        <th data-min-width="200" data-column="status">状态</th>
+                        <th data-min-width="200" data-column="person">审批人</th>
+                        <th data-min-width="200" data-column="index">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

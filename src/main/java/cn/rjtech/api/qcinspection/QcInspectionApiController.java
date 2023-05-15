@@ -29,8 +29,8 @@ public class QcInspectionApiController extends BaseApiController{
      */
     @ApiDoc(result = QcInspectionVo.class)
     @UnCheck
-    public void datas(@Para(value = "pageNumber") Integer pageNumber,
-                      @Para(value = "pageSize") Integer pageSize,
+    public void datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                      @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
                       @Para(value = "selectparam") String selectparam,
                       @Para(value = "starttime") String starttime, @Para(value = "endtime") String endtime) {
         ValidationUtils.validateIdInt(pageNumber,"页码");

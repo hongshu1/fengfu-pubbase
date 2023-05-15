@@ -7,7 +7,6 @@ import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
-import cn.rjtech.entity.vo.stockoutqcformm.*;
 import cn.rjtech.model.momdata.StockoutQcFormM;
 
 import com.alibaba.fastjson.JSON;
@@ -56,15 +55,8 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
         //1、查询跳转到另一页面需要的数据
         StockoutQcFormM stockoutQcFormM = service.findById(iautoid);
         Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
-        //2、set到实体类
-        StockoutQcFormMCheckout stockoutQcFormMCheckout = new StockoutQcFormMCheckout();
-        stockoutQcFormMCheckout.setStockoutQcFormM(stockoutQcFormM);
-        stockoutQcFormMCheckout.setRecord(record);
-        //3、最后返回vo
-        StockoutQcFormMCheckoutVo checkoutVo = new StockoutQcFormMCheckoutVo();
-        checkoutVo.setCode(0);
-        checkoutVo.setData(stockoutQcFormMCheckout);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(checkoutVo);
+        record.set("cstockoutqcformno",stockoutQcFormM.getCStockoutQcFormNo());
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
     /**
@@ -91,22 +83,26 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
         StockoutQcFormM stockoutQcFormM = service.findById(iautoid);
         Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
         List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(stockoutQcFormM.getIAutoId());
-        //2、set到实体类
-        StockoutQcFormMOnlysee onlysee = new StockoutQcFormMOnlysee();
-        onlysee.setStockoutQcFormM(stockoutQcFormM);
-        onlysee.setRecord(record);
-        onlysee.setStockoutqcformlist(stockoutqcformlist);
-        //3、最后返回vo
-        StockoutQcFormMOnlyseeVo stockoutQcFormMOnlyseeVo = new StockoutQcFormMOnlyseeVo();
-        stockoutQcFormMOnlyseeVo.setCode(0);
-        stockoutQcFormMOnlyseeVo.setData(onlysee);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(stockoutQcFormMOnlyseeVo);
+        record.set("size",stockoutqcformlist.size());
+        record.set("cstockoutqcformno",stockoutQcFormM.getCStockoutQcFormNo());
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
+    }
+
+    /*
+     * 点击编辑按钮，跳转到编辑页面
+     * */
+    public JBoltApiRet jumpEdit(Long iautoid){
+        StockoutQcFormM stockoutQcFormM = service.findById(iautoid);
+        Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
+        List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(stockoutQcFormM.getIAutoId());
+        record.set("size", stockoutqcformlist.size());
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
     /**
      * 跳转到"查看"页面后，自动加载查看页面table的数据
      */
-    public JBoltApiRet autoGetOnlyseeTableDatas(Long iautoid) {
+    public JBoltApiRet autoGetOnlyseeOrEditTableDatas(Long iautoid) {
         Kv kv = new Kv();
         kv.set("iautoid", iautoid);
         //1、调用方法获得table数据

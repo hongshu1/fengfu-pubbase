@@ -127,10 +127,10 @@ public class StockOutQcFormMApiController extends BaseApiController {
      */
     @ApiDoc(result = AutoGetOnlyseeTableDatasVo.class)
     @UnCheck
-    public void autoGetOnlyseeTableDatas(@Para(value = "iautoid") Long iautoid) {
+    public void autoGetOnlyseeOrEditTableDatas(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.autoGetOnlyseeTableDatas(iautoid));
+        renderJBoltApiRet(apiService.autoGetOnlyseeOrEditTableDatas(iautoid));
     }
 
     /**
@@ -153,6 +153,16 @@ public class StockOutQcFormMApiController extends BaseApiController {
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
         renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, stockqcformmiautoid, cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
+    }
+
+    /*
+     * 点击编辑按钮，跳转到编辑页面
+     * */
+    @ApiDoc(result = StockoutQcFormMOnlyseeVo.class)
+    @UnCheck
+    public void jumpEdit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.jumpEdit(iautoid));
     }
 
     /**

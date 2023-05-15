@@ -1,0 +1,151 @@
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page">
+<div class="jbolt_page_content">
+<form onsubmit="return false;" id="transVouchForm" action="#(action)" method="post">
+	<div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
+		<div class="col-md-l pt-2" role="group" aria-label="btn-group">
+			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审核</button>
+			<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+		</div>
+	</div>
+
+
+	#if(transVouch.autoid??)
+	<input type="hidden" name="autoid" value="#(transVouch.autoid??)" />
+	#end
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">单据号：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(transVouch.billno??)"/>
+		</div>
+		<label class="col-sm-2 col-form-label">日期：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置需求日期" data-tips="请设置需求日期" maxlength="10" name="billdate" value="#(transVouch.billdate??)"/>
+		</div>
+		<label class="col-sm-2 col-form-label">出库类别：</label>
+			<div class="col-sm-2 col-form-label">
+				<select  class="form-control"
+						data-autoload
+						data-text="=出库类别="
+						value="#(transVouch.ordcode??)"
+						name="ordcode">
+					<option value="">=出库类别=</option>
+				</select>
+			</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">转入仓库：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text"
+				   data-autocomplete
+				   required
+				   data-url="admin/transvouch/workRegionMList"
+				   data-header="产线编码,产线名称"
+				   data-column-attr="cworkcode,cworkname"
+				   data-text-attr="cworkname"
+				   data-value-attr="cworkcode"
+				   data-sync-ele="#iwhcode"
+				   data-rule="required"
+				   data-notnull="true"
+				   autocomplete="off" class="form-control" maxlength="30" value="#(transVouch.iwhcode??)"/>
+			<input type="hidden" data-sync-attr="cworkcode" id="iwhcode" name="iwhcode" value="#(transVouch.iwhcode??)" />
+		</div>
+		<label class="col-sm-2 col-form-label">转出仓库：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text"
+				   data-autocomplete
+				   data-url="admin/transvouch/workRegionMList"
+				   data-header="产线编码,产线名称"
+				   data-column-attr="cworkcode,cworkname"
+				   data-text-attr="cworkname"
+				   data-value-attr="cworkcode"
+				   data-sync-ele="#owhcode"
+				   data-rule="required"
+				   data-notnull="true"
+				   autocomplete="off" class="form-control" maxlength="30" value="#(transVouch.owhcode??)"/>
+			<input type="hidden" data-sync-attr="cworkcode" id="owhcode" name="owhcode" value="#(transVouch.iwhcode??)" />
+		</div>
+
+		<label class="col-sm-2 col-form-label">入库类别：</label>
+		<div class="col-sm-2 col-form-label">
+				<select class="form-control"
+						data-autoload
+						data-text="=入库类别="
+						value="#(transVouch.irdcode??)"
+						name="irdcode">
+					<option value="">=入库类别=</option>
+				</select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产产品（单品）：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(transVouch.cdocno??)"/>
+		</div>
+		<label class="col-sm-2 col-form-label">生产数量：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(transVouch.cdocno??)"/>
+		</div>
+		<label class="col-sm-2 col-form-label">审核日期：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#date((transVouch.auditdate??),'yyyy-MM-dd HH:mm:ss')"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">备注：</label>
+		<div class="col-sm-2 col-form-label"  >
+			<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入备注=" type="text" maxlength="300" class="form-control border-none" name="memo" placeholder="" value="#(transVouch.memo??)">#(transVouch.memo??)</textarea>
+		</div>
+		<label class="col-sm-2 col-form-label">产品：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(transVouch.cdocno??)"/>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<div class="col-11" style="left: 17px;">
+			<div class="jbolt_page_content">
+				#render("_table_split.html")
+			</div>
+		</div>
+	</div>
+</form>
+</div>
+</div>
+#define js()
+<script>
+	hideParentLayerDialogBtn();
+
+
+
+	function submitAllTables_#(pageId)(ele){
+		var action = getRealJqueryObject(ele);
+
+		var id = action.data("id");
+		var value = action.data("value");
+		var tables = ["jbolt_table_transvouch_split_#(pageId)"];
+
+		jboltTableSubmitMulti(tables, "admin/transvouch/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+			if (res.state == "ok") {
+				LayerMsgBox.success(res.msg, 600, function () {
+					parent.refreshPjaxContainer();
+					parent.layer.close(parent.layer.getFrameIndex(window.name));
+				})
+			} else {
+				LayerMsgBox.error(res.msg);
+			}
+		});
+
+	}
+
+
+
+	function closeHandler(){
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
+		window.parent.refreshJBoltTable();
+	}
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="transVouchForm")
+#end
+

@@ -12,21 +12,15 @@
     <tbody>
     <tr>
         <td>
-            <input hidden id="iEquipmentModelId" name="iEquipmentModelId" data-sync-attr="iautoid" value="#(bomMaster.iequipmentmodelid??)">
+            <input hidden id="iEquipmentModelId" name="iEquipmentModelId" data-sync-attr="iequipmentmodelid" value="#(bomMaster.iequipmentmodelid??)">
             <input type="text"
+                   readonly
                    id="iEquipmentModelName"
+                   data-sync-attr="cequipmentmodelname"
                    value="#(equipmentModel.cequipmentmodelname??)"
-                   data-autocomplete
-                   data-rule="required"
-                   data-tips="请选择机型"
                    autocomplete="off"
                    class="form-control"
-                   placeholder="请选择机型"
                    maxlength="40"
-                   data-url="admin/bommaster/findEquipmentModelAll"
-                   data-sync-ele="#iEquipmentModelId"
-                   data-text-attr="cequipmentmodelname"
-                   data-column-attr="cequipmentmodelname,cequipmentmodelcode"
             />
         </td>
         <td>

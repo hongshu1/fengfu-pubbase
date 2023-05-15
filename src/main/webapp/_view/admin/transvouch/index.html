@@ -1,0 +1,143 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>出库管理-调拨单列表</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="transVouchForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=调拨单号=" name="billno" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=转入仓库=" name="iwhcode" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=转出仓库=" name="owhcode" value="" />
+			<select style="width:150px" class="form-control"
+					data-autoload
+					data-text="=状态="
+					name="iorderstatus">
+				<option value="">=状态=</option>
+				<option value="1">已保存</option>
+				<option value="2">待审核</option>
+				<option value="3">已审核</option>
+			</select>
+			<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=开始时间=" name="startdate" data-tips="开始时间" maxlength="23" value="">至
+			<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=结束时间=" name="enddate" data-tips="结束时间" maxlength="23" value="">
+			<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="transVouchRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.autoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a class="jbolt_table_editbtn" href="admin/transvouch/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="调拨单列表详情">查看</i></a>
+	 {@if data.state == '1'||data.state == '4'}
+	<a class="jbolt_table_editbtn" href="admin/transvouch/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑调拨单列表">编辑</i></a>
+	 {@else if data.state == '2'}
+	<a class="jbolt_table_delbtn" href="admin/transvouch/approve?mark=2&&iAutoId=${data.autoid}"  data-confirm="确定审核此选项？"  data-fs="true" data-handler="refreshJBoltTable"  data-title="审核调拨单列表">审核</i></a>
+	<a class="jbolt_table_delbtn" href="admin/transvouch/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
+	 {@/if}
+</td>
+<td>${data.state|iOrderStatus}</td>
+<td>${data.billtype}</td>
+<td>${data.billno}</td>
+<td>${data.billdate}</td>
+<td>${data.ordcode}</td>
+<td>${data.iwhcode}</td>
+<td>${data.owhcode}</td>
+<td>${data.irdcode}</td>
+<td>生产产品（单品）</td>
+<td>生产数量</td>
+<td>${data.createperson}</td>
+<td>${data.createdate}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="transVouch_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增出库管理-调拨单列表"  data-url="admin/transvouch/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/transvouch/approve?mark=2&&iAutoId=" data-confirm="确定审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审核</button>
+		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/transvouch/NoApprove?ids=" data-confirm="确定反审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审核</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/transvouch/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/transvouch/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="transVouchForm_#(pageId)"
+data-rowtpl="transVouchRowtpl_#(pageId)"
+data-page="transVouchPage_#(pageId)"
+data-toolbar="transVouch_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+data-fixed-columns-right="-1"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="150">操作</th>
+	<th data-width="100">状态</th>
+	<th data-min-width="150" data-column="SourceBillType">调拨类别</th>
+	<th data-width="150" data-column="BillNo">调拨单号</th>
+	<th data-width="150" data-column="BillDate">日期</th>
+	<th data-width="150" data-column="ORdCode">出库类别</th>
+	<th data-width="150" data-column="IPosCode">转入仓库</th>
+	<th data-width="150" data-column="DeptCode">转出仓库</th>
+	<th data-width="150" data-column="IRdCode">入库类别</th>
+	<th data-width="150" data-column="CreatePerson">生产产品（单品）</th>
+	<th data-width="150" data-column="ProdQty">生产数量</th>
+	<th data-width="150" data-column="CreatePerson">创建人</th>
+	<th data-width="150" data-column="CreateDate">创建时间</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/transvouch/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('title', '出库管理-调拨单列表')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end

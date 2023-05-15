@@ -14,10 +14,6 @@ import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
-import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMApiCheckOut;
-import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMApiCheckOutVo;
-import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMOnlyseeApi;
-import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMOnlyseeApiVo;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 
 /**
@@ -60,15 +56,11 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
         //1、查询跳转到另一页面需要的数据
         RcvDocQcFormM rcvDocQcFormM = service.findById(iautoid);
         Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
-        //2、set到实体类
-        RcvDocQcFormMApiCheckOut rcvDocQcFormMApiCheckOut = new RcvDocQcFormMApiCheckOut();
-        rcvDocQcFormMApiCheckOut.setRcvDocQcFormM(rcvDocQcFormM);
-        rcvDocQcFormMApiCheckOut.setRecord(record);
-        //3、最后返回vo
-        RcvDocQcFormMApiCheckOutVo checkoutVo = new RcvDocQcFormMApiCheckOutVo();
-        checkoutVo.setCode(0);
-        checkoutVo.setData(rcvDocQcFormMApiCheckOut);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(checkoutVo);
+        record.set("crcvdocno",rcvDocQcFormM.getCRcvDocNo());
+        record.set("drcvdate",rcvDocQcFormM.getDRcvDate());
+        record.set("imask",rcvDocQcFormM.getIMask());
+        record.set("dqctime",rcvDocQcFormM.getDQcTime());//检测日期
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
     /**
@@ -97,22 +89,33 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
         RcvDocQcFormM rcvDocQcFormM = service.findById(iautoid);
         Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
         List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
-        //2、set到实体类
-        RcvDocQcFormMOnlyseeApi rcvDocQcFormMOnlyseeApi = new RcvDocQcFormMOnlyseeApi();
-        rcvDocQcFormMOnlyseeApi.setRcvDocQcFormM(rcvDocQcFormM);
-        rcvDocQcFormMOnlyseeApi.setRecord(record);
-        rcvDocQcFormMOnlyseeApi.setDocparamlist(docparamlist);
-        //3、最后返回vo
-        RcvDocQcFormMOnlyseeApiVo rcvDocQcFormMOnlyseeApiVo = new RcvDocQcFormMOnlyseeApiVo();
-        rcvDocQcFormMOnlyseeApiVo.setCode(0);
-        rcvDocQcFormMOnlyseeApiVo.setData(rcvDocQcFormMOnlyseeApi);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(rcvDocQcFormMOnlyseeApiVo);
+        record.set("size", docparamlist.size());
+        record.set("crcvdocno",rcvDocQcFormM.getCRcvDocNo());
+        record.set("drcvdate",rcvDocQcFormM.getDRcvDate());
+        record.set("imask",rcvDocQcFormM.getIMask());
+        record.set("dqctime",rcvDocQcFormM.getDQcTime());//检测日期
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
+    }
+
+    /*
+     * 点击编辑按钮，跳转到编辑页面
+     * */
+    public JBoltApiRet jumpEdit(Long iautoid){
+        RcvDocQcFormM rcvDocQcFormM = service.findById(iautoid);
+        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+        List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
+        record.set("size", stockoutqcformlist.size());
+        record.set("crcvdocno",rcvDocQcFormM.getCRcvDocNo());
+        record.set("drcvdate",rcvDocQcFormM.getDRcvDate());
+        record.set("imask",rcvDocQcFormM.getIMask());
+        record.set("dqctime",rcvDocQcFormM.getDQcTime());
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
     /**
      * 跳转到"查看"页面后，自动加载查看页面table的数据
      */
-    public JBoltApiRet autoGetRcvOnlyseeTableDatas(Long iautoid) {
+    public JBoltApiRet autoGetRcvOnlyseeOrEditTableDatas(Long iautoid) {
         //1、调用方法获得table数据
         Kv kv = new Kv();
         kv.set("iautoid", iautoid);
@@ -159,7 +162,7 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
     /*
      * 导出详情页
      * */
-    public JBoltApiRet getExportData(Long iautoid){
+    public JBoltApiRet getExportData(Long iautoid) {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
     }
 }

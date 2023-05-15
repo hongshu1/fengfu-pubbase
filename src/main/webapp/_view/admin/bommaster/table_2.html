@@ -22,23 +22,26 @@
                 <tr>
                     <td><input autocomplete="off" class="form-control" name="cNo1" value="#(bomMaster.cno1??)"></td>
                     <td>
-                        <input type="text" name="iInventoryId" value="#(bomMaster.iinventoryid??)" hidden data-sync-attr="itemid" id="iBeforeInveId"  data-notnull="true" data-tips="请输入转换前存货ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
-                        <input type="text"
-                               data-autocomplete
-                               data-rule="required"
-                               data-tips="请选择存货编码"
-                               autocomplete="off"
-                               class="form-control"
-                               placeholder="请选择存货编码"
-                               value="#(inventory.cinvcode??)"
-                               id="inventoryName"
-                               maxlength="40"
-                               data-link-para-ele="#iEquipmentModelId"
-                               data-url="admin/bommaster/inventoryAutocomplete"
-                               data-sync-ele="#beforeInvCode,#Weight,#iBeforeInveId"
-                               data-text-attr="cinvcode"
-                               data-column-attr="cinvcode"
-                        />
+                        <input type="text" name="iInventoryId" value="#(bomMaster.iinventoryid??)" hidden data-sync-attr="itemid" id="iBeforeInveId"  data-notnull="true" data-tips="请输入转换前存货ID" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
+                        <div class="input-group">
+                            <input type="text"
+                                   data-autocomplete
+                                   data-rule="required"
+                                   data-tips="请选择存货编码"
+                                   autocomplete="off"
+                                   class="form-control"
+                                   placeholder="请选择存货编码"
+                                   value="#(inventory.cinvcode??)"
+                                   id="inventoryName"
+                                   data-url="admin/bommaster/inventoryAutocomplete"
+                                   data-sync-ele="#beforeInvCode,#Weight,#iBeforeInveId,#iEquipmentModelId,#iEquipmentModelName"
+                                   data-text-attr="cinvcode"
+                                   data-column-attr="cinvcode"
+                            />
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#iBeforeInveId" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex?index=${data.index}&type=4"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
                     </td>
                     <td>
                         <input id="beforeInvCode" type="text"    data-notnull="true" data-sync-attr="cinvcode1"   data-with-clearbtn="true" autocomplete="off"  class="form-control" disabled value="#(inventory.cinvcode1??)"/>

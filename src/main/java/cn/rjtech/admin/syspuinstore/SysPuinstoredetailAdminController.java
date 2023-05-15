@@ -7,9 +7,13 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+
 /**
  * 采购入库单明细
  * @ClassName: SysPuinstoredetailAdminController
@@ -94,5 +98,10 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
 
 	public void findEditTableDatas(){
 		renderJsonData(service.findEditTableDatas(getKv()));
+	}
+
+		public void finddetaildatas(){
+		Page<Record> recordPage = service.pageDetailList(getKv());
+		renderJsonData(recordPage);
 	}
 }

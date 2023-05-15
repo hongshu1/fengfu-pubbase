@@ -11,19 +11,43 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @Description 来料异常品记录
+ * @Description 出库异常品记录
  */
 
 public class StockoutDefectDatas implements Serializable {
-
     /**
      * 主键ID
      */
     private Long iautoid;
+
+    /**
+     * 客户ID
+     */
+    private Long icustomerid;
+    /**
+     * 存货ID
+     */
+    private Long iinventoryid;
+
+    /**
+     * 不合格数量
+     */
+
+    private Integer idqqty;
+
+    /**
+     * 状态名称
+     */
+    private String auditstate;
+
+    /**
+     * 检验单号
+     */
+    private String cstockoutqcformno;
     /**
      * 质量管理-出库检id
      */
-    private Long istockoutqcformmid;
+    private Long stockoutqcformmid;
     /**
      * 查看状态
      */
@@ -60,7 +84,6 @@ public class StockoutDefectDatas implements Serializable {
      */
     private Boolean isfirsttime;
 
-
     /**
      * 处置区分
      */
@@ -73,18 +96,17 @@ public class StockoutDefectDatas implements Serializable {
     private Integer iresptype;
 
 
-    private Record stockoutQcFormM;
-
     private StockoutDefect stockoutDefect;
 
+
     /**
-     * 开始时间
+     * 更新名称
      */
-    private Date startdate;
+    private String cupdatename;
     /**
-     * 结束时间
+     * 更新时间
      */
-    private Date enddate;
+    private Date dupdatetime;
 
     public Long getIautoid() {
         return iautoid;
@@ -94,12 +116,52 @@ public class StockoutDefectDatas implements Serializable {
         this.iautoid = iautoid;
     }
 
-    public Long getIstockoutqcformmid() {
-        return istockoutqcformmid;
+    public Long getIcustomerid() {
+        return icustomerid;
     }
 
-    public void setIstockoutqcformmid(Long istockoutqcformmid) {
-        this.istockoutqcformmid = istockoutqcformmid;
+    public void setIcustomerid(Long icustomerid) {
+        this.icustomerid = icustomerid;
+    }
+
+    public Long getIinventoryid() {
+        return iinventoryid;
+    }
+
+    public void setIinventoryid(Long iinventoryid) {
+        this.iinventoryid = iinventoryid;
+    }
+
+    public Integer getIdqqty() {
+        return idqqty;
+    }
+
+    public void setIdqqty(Integer idqqty) {
+        this.idqqty = idqqty;
+    }
+
+    public String getAuditstate() {
+        return auditstate;
+    }
+
+    public void setAuditstate(String auditstate) {
+        this.auditstate = auditstate;
+    }
+
+    public String getCstockoutqcformno() {
+        return cstockoutqcformno;
+    }
+
+    public void setCstockoutqcformno(String cstockoutqcformno) {
+        this.cstockoutqcformno = cstockoutqcformno;
+    }
+
+    public Long getStockoutqcformmid() {
+        return stockoutqcformmid;
+    }
+
+    public void setStockoutqcformmid(Long stockoutqcformmid) {
+        this.stockoutqcformmid = stockoutqcformmid;
     }
 
     public String getType() {
@@ -182,14 +244,6 @@ public class StockoutDefectDatas implements Serializable {
         this.iresptype = iresptype;
     }
 
-    public Record getStockoutQcFormM() {
-        return stockoutQcFormM;
-    }
-
-    public void setStockoutQcFormM(Record stockoutQcFormM) {
-        this.stockoutQcFormM = stockoutQcFormM;
-    }
-
     public StockoutDefect getStockoutDefect() {
         return stockoutDefect;
     }
@@ -198,19 +252,19 @@ public class StockoutDefectDatas implements Serializable {
         this.stockoutDefect = stockoutDefect;
     }
 
-    public Date getStartdate() {
-        return startdate;
+    public String getCupdatename() {
+        return cupdatename;
     }
 
-    public void setStartdate(Date startdate) {
-        this.startdate = startdate;
+    public void setCupdatename(String cupdatename) {
+        this.cupdatename = cupdatename;
     }
 
-    public Date getEnddate() {
-        return enddate;
+    public Date getDupdatetime() {
+        return dupdatetime;
     }
 
-    public void setEnddate(Date enddate) {
-        this.enddate = enddate;
+    public void setDupdatetime(Date dupdatetime) {
+        this.dupdatetime = dupdatetime;
     }
 }

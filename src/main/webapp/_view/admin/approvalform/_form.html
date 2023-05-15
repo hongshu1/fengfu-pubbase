@@ -1,0 +1,21 @@
+<form onsubmit="return false;" id="approvalFormForm" action="#(action)" method="post">
+<input type="hidden" name="approvalForm.iautoid" value="#(approvalForm.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批流主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入审批流主表ID" maxlength="19" name="approvalForm.iapprovalmid" value="#(approvalForm.iapprovalmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">表单ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入表单ID" maxlength="19" name="approvalForm.iformid" value="#(approvalForm.iformid??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="approvalFormForm")
+#end
+

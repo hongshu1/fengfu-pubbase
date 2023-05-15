@@ -1,6 +1,5 @@
 package cn.rjtech.admin.annualorderm;
 
-import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -18,8 +17,6 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-
-import java.util.Date;
 
 /**
  * 年度计划订单
@@ -103,16 +100,6 @@ public class AnnualOrderMAdminController extends BaseAdminController {
      */
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
-    }
-
-    public void dateHeader() {
-        Integer iYear = getInt("iYear");
-        if (iYear == null) {
-            iYear = DateUtil.year(new Date());
-        }
-        service.dateHeader(iYear);
-
-        render("add.html");
     }
 
     /**

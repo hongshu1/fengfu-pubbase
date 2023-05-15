@@ -32,7 +32,7 @@
                    data-value-attr="sn"
                    data-text-attr="cmeasurepurpose"
                    data-inline="true"
-                   data-value="#(record.cmeasurepurpose??)"
+                   data-value="#(instockqcformm.cmeasurepurpose??)"
                    data-name="cmeasurepurpose">
               </div>
             </td>
@@ -123,9 +123,9 @@
             <button type="button" onclick="insertRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
-            <img data-switchbtn data-value="#(instockqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
+            <!--<img data-switchbtn data-value="#(instockqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
                  data-url="admin/instockqcformm/toggleIsCpkSigned/#(instockqcformm.iautoid??)" style="margin-left: 50px;"/>
-            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>-->
           </div>
         </table>
 
@@ -261,7 +261,7 @@
 <style>
 
   .cA01 {
-    width: 80px;
+    width: 78px;
   }
 
   .trd td {
@@ -349,7 +349,7 @@
   function submitThisForm() {
     //获取整个form的数据
     let serializeArray = $("#instockqcformmForm_#(pageId)").serializeArray();
-    //过滤出只有name=cA的数据
+    //过滤出只有name=cA和appearance的数据
     let filterserializeArray = serializeArray.filter((ele) => {
       return ele.name.startWith("cA") || ele.name.startWith("appearance");
     });
@@ -376,6 +376,7 @@
         }
       }
     }
+
     /*
     * 把二维数组filterserializeArray分成10个一维数组
     * */

@@ -69,7 +69,7 @@ SELECT
         CASE WHEN t2.iStatus=1 THEN '待判断'
              WHEN t2.iStatus=2 THEN '已完成'
              ELSE '待记录' END,
-        t1.iAutoId AS iStockoutQcFormMid,
+        t1.iAutoId AS stockoutqcformmid,
         t1.cStockoutQcFormNo,
         t1.iInventoryId,
         t1.iCustomerId,

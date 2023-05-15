@@ -90,7 +90,7 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
     {@if data.istatus == 0}
-    		<button type="button" onclick="createTable(${data.iautoid},${data.cqcformname})" data-handler="refreshJBoltTable"
+    		<button type="button" onclick="createTable('${data.iautoid}','${data.cqcformname}')" data-handler="refreshJBoltTable"
                 class="btn btn-outline-secondary">生成</button>
     {@/if}
     {@if data.istatus == 1}
@@ -186,18 +186,19 @@
 <script type="text/javascript">
 
   function selectFinishDocList(iscompleted) {
-    $('#iscompleted').val(iscompleted);
-    $('#rcvDocQcFormMForm_#(pageId)').submit();
+    console.log(iscompleted);
+    let val = $('#iscompleted').val(iscompleted);
+    $('#stockoutqcformmForm_#(pageId)').submit();
     LayerMsgBox.success();
   }
 
   /*
   * 生成
   * */
-  function createTable(iautoid,cqcformname) {
+  function createTable(iautoid, cqcformname) {
     var para = {
       iautoid: iautoid,
-      cqcformname:cqcformname
+      cqcformname: cqcformname
     }
 
     Ajax.post('/admin/rcvdocqcformm/createTable', para, function (res) {
