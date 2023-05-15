@@ -32,6 +32,9 @@
 	function routing_jstree1(tree, data){
 		// $("#bomCompare_pid").val(data.id);
 		// $("#bomCompare_submit").click();
+		if (!(data.parent=='#')){
+			LayerMsgBox.error('只能选择根节点进行操作', 500);
+		}
 	}
 
 	function initTreehandler_1(item) {
