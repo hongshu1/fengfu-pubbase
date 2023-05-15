@@ -112,7 +112,7 @@
 			<td>${data.iqty12}</td>
 			<td>${data.iqtytotal}</td>
 			<td>
-    			<a href="admin/person/deleteByAjax" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+    			<a href="admin/annualorderd/deleteByIds?ids=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
 			</td>
         </tr>
         {@/each}
@@ -120,6 +120,12 @@
     <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbar_#(pageId)">
         <div class="btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-secondary btn-sm">添加行</button>
+
+            <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
+                    data-url="admin/annualorderd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
+                <i class="fa fa-trash"></i> 删除</button>
+
+
             <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
             
             <div class="j_upload_file_box"
