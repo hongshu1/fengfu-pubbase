@@ -119,16 +119,16 @@
             <button class="button">搜索</button>
             <button class="button">重置</button>
         </div>
-        
+
     </div>
 
     <div class="jbolt_page_content">
 
         <div class="sample-container">
-            
+
             <!-- 表格 -->
             <div id="table-tool">
-                
+
                 <!-- 表格工具开始 -->
                 <div class="but_box">
                     <button>排产</button>
@@ -139,122 +139,151 @@
                     <button>锁定</button>
                     <button>解锁</button>
                 </div>
-                
+
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
                 <div id="ss" class="spread-container"></div>
                 <div id="statusBar" class="gc-statusbar"></div>
             </div>
-            
+
         </div>
-        
+
     </div>
-    
+
 </div>
 #end
 
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
-    var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {
-        sheetCount: 1
-    });
-    //设置状态栏
-    var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
-    var sheet = spread.getSheet(0);//按照下标获取表单
-    //状态栏
-    statusBar.bind(spread);
-    var tableDate = [{
-        xuhao: "序号",
-        schedulingLevel: "排产层级",
-        productionLineName: "产线名称",
-        stockCode: "存货编码",
-        customerPartNumber: "客户部番",
-        partsName: "部品名称",
-    }]
-    sheet.bindColumns(tableDate);
-    spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-    spread.getSheet(0).setRowCount(500); //设置一列单元格的个数
-    spread.getSheet(0).setColumnCount(115); //设置一行有多少个单元格
+    window.onload = function () {
+        var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {
+            sheetCount: 1
+        });
+        //设置状态栏
+        var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
+        var sheet = spread.getSheet(0);//按照下标获取表单
+        //设置全局内容水平垂直居中
+        sheet.getRange(-1,-1,-1,-1).hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
+        //设置全局的字体样式
+        sheet.getRange(-1, -1,-1,-1).font('宋体 bold 10px');
+        //状态栏
+        statusBar.bind(spread);
+        spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
+        spread.getSheet(0).setRowCount(500); //设置一列单元格的个数
+        spread.getSheet(0).setColumnCount(115); //设置一行有多少个单元格
 
-    var colCount = sheet.getColumnCount(GC.Spread.Sheets.SheetArea.viewport);//获取列数
-    var rowCount = sheet.getRowCount();//获取行数
-    // sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
-    // 	console.log(e,info);
-    //            if (info.sheetArea === GC.Spread.Sheets.SheetArea.viewport) {
-    //             //    alert("Clicked cell index (" + info.row + "," + info.col + ")");
-    //                //获取存在于指定索引位置的规则单元格的坐标信息
-    //                var cellRect = sheet.getCellRect(info.row, info.col);
-    //            }
-    //        });
-    //勾选check按钮
-    // sheet.getCell(0, 0	).value(1);
-    // /*工作簿暂停活性*/
-    // function spreadSuspend() {
-    // 	spread.suspendPaint(); //渲染前失活(提升性能)
-    // 	spread.suspendCalcService(); //暂停计算服务
-    // }
-    // /*工作簿开启活性*/
-    // function spreadResume() {
-    // 	spread.resumeCalcService(); //开启计算服务
-    // 	spread.resumePaint(); //恢复绘制
-    // }
-    // //参数集合
-    var parmsDefault = {
-        resourcesList: [],//资源列表
-        countday: 93,			//展示天数
-        monthday: [],			//每月天数
-        totalListedArr: [],		//TotalListed行索引
-        subAssyArr: [],			//SubAssy行索引
-        selectDataList: {},		//查询条件
-        rowindex:0,				//x轴索引
-        columnindex:0,			//y轴索引
-        data: [],				//数据
-        currentRow: 0,			//当前选中的单元格行
-        currentCol: 0,			//当前选中的单元格列
-    };
-    var parmsArr = [Object.assign({},parmsDefault)];
-    //添加属性
-    parmsArr[0]['spread'] = spread;
-    parmsArr[0]['activeSheet'] = spread.getSheet(0);//获取指定的表单
-    var parms = parmsArr[0];
-    loadInit(parms)
+        var colCount = sheet.getColumnCount(GC.Spread.Sheets.SheetArea.viewport);//获取列数
+        var rowCount = sheet.getRowCount();//获取行数
 
-    // //设置全局表单的背景颜色
-    spread.options.grayAreaBackColor = '#fff';
 
-    // //初始化表格数据
-    function loadInit(parms){
-        sheet.defaults.colWidth = 60;//设置全局的列宽
-        var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
-        //设置value值和该单元格的对齐方式
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType).hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
-        parms.activeSheet.setColumnWidth(parms.columnindex, 40);//设置指定单元格的width
-        sheet.addSpan(0,0,3,1);
-        // 设置对应行的行高
-        sheet.setRowHeight(0, 25);
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+1).text("序号").hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
-        parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
-        parms.activeSheet.addSpan(0,1,3,1);
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+2).text("排产层级").hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
-        parms.activeSheet.addSpan(0,2,3,1);
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+3).text("产线名称").hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
-        parms.activeSheet.addSpan(0,3,3,1);
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+4).text("存货编码").hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
-        parms.activeSheet.addSpan(0,4,3,1);
-        parms.activeSheet.setColumnWidth(parms.columnindex+4, 100);//设置指定单元格的width
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+5).text("客户部番").hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
-        parms.activeSheet.addSpan(0,5,3,1);
-        parms.activeSheet.setColumnWidth(parms.columnindex+5, 120);//设置指定单元格的width
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+6).text("部品名称").hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
-        parms.activeSheet.addSpan(0,6,3,1);
-        parms.activeSheet.setColumnWidth(parms.columnindex+6, 150);//设置指定单元格的width
-        parms.activeSheet.setColumnWidth(parms.columnindex+8, 70);//设置指定单元格的width
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+9).text("2023年5月13号").hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
-        parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
-        sheet.addSpan(0,9,1,17);
-        // getRange()---按指定工作表区域中的行信息和列信息获取单元格区域
-        // sheet.getRange(0, 0, 1, rowCount, GC.Spread.Sheets.SheetArea.viewport).setBorder(new GC.Spread.Sheets.LineBorder("#D0D7E5",GC.Spread.Sheets.LineStyle.thick), { all:true });
+        var parmsDefault = {
+            resourcesList: [],      //资源列表
+            countday: 93,			//展示天数
+            monthday: [],			//每月天数
+            rowindex:0,				//x轴索引
+            columnindex:0,			//y轴索引
+            data: [],				//数据
+            currentRow: 0,			//当前选中的单元格行
+            currentCol: 0,			//当前选中的单元格列
+            dayLength:0,            //当月时间长度
+            dayRow:9,               //day渲染起始下标
+            weekRow:9               //week渲染起始下标
+        };
+        var parmsArr = [Object.assign({},parmsDefault)];
+        //添加属性
+        parmsArr[0]['spread'] = spread;
+        parmsArr[0]['activeSheet'] = spread.getSheet(0);//获取指定的表单
+        var parms = parmsArr[0];
+        loadInit(parms)
+        initData(parms,sheet)
+        // //设置全局表单的背景颜色
+        spread.options.grayAreaBackColor = '#fff';
 
+        // //初始化表格数据
+        function loadInit(){
+            sheet.defaults.colWidth = 80;//设置全局的列宽
+            var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
+            //设置value值和该单元格的对齐方式
+            parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType);
+            parms.activeSheet.setColumnWidth(parms.columnindex, 40);//设置指定单元格的width
+            sheet.addSpan(0,0,3,1);
+            // 设置对应行的行高
+            sheet.setRowHeight(0, 25);
+            parms.activeSheet.getCell(parms.rowindex, parms.columnindex+1).text("序号");
+            parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
+            parms.activeSheet.addSpan(0,1,3,1);
+            parms.activeSheet.getCell(parms.rowindex, parms.columnindex+2).text("排产层级");
+            parms.activeSheet.addSpan(0,2,3,1);
+            parms.activeSheet.getCell(parms.rowindex, parms.columnindex+3).text("产线名称");
+            parms.activeSheet.addSpan(0,3,3,1);
+            parms.activeSheet.getCell(parms.rowindex, parms.columnindex+4).text("存货编码");
+            parms.activeSheet.addSpan(0,4,3,1);
+            parms.activeSheet.setColumnWidth(parms.columnindex+4, 100);//设置指定单元格的width
+            parms.activeSheet.getCell(parms.rowindex, parms.columnindex+5).text("客户部番");
+            parms.activeSheet.addSpan(0,5,3,1);
+            parms.activeSheet.setColumnWidth(parms.columnindex+5, 120);//设置指定单元格的width
+            parms.activeSheet.getCell(parms.rowindex, parms.columnindex+6).text("部品名称");
+            parms.activeSheet.addSpan(0,6,3,1);
+            parms.activeSheet.setColumnWidth(parms.columnindex+6, 150);//设置指定单元格的width
+            parms.activeSheet.setColumnWidth(parms.columnindex+8, 70);//设置指定单元格的width
+
+            parms.activeSheet.getCell(parms.rowindex+3, parms.columnindex+7).text("计划使用");
+            parms.activeSheet.setColumnWidth(parms.columnindex+7, 70);//设置指定单元格的width
+            parms.activeSheet.getCell(parms.rowindex+4, parms.columnindex+7).text("计划/1S");
+            parms.activeSheet.getCell(parms.rowindex+5, parms.columnindex+7).text("计划/2S");
+            parms.activeSheet.getCell(parms.rowindex+6, parms.columnindex+7).text("计划/3S");
+            parms.activeSheet.getCell(parms.rowindex+7, parms.columnindex+7).text("计划在库");
+            parms.activeSheet.getCell(parms.rowindex+8, parms.columnindex+7).text("在库天数");
+        }
+        //获取当前点击的单元格
+        // sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
+        // 	console.log(e,info);
+        //            if (info.sheetArea === GC.Spread.Sheets.SheetArea.viewport) {
+        //             //    alert("Clicked cell index (" + info.row + "," + info.col + ")");
+        //                //获取存在于指定索引位置的规则单元格的坐标信息
+        //                var cellRect = sheet.getCellRect(info.row, info.col);
+        //            }
+        //        });
+        //勾选check按钮
+        // sheet.getCell(0, 0	).value(1);
+        /*工作簿暂停活性*/
+        // function spreadSuspend() {
+        //     console.log("1111111111")
+        //     spread.suspendPaint(); //渲染前失活(提升性能)
+        //     spread.suspendCalcService(); //暂停计算服务
+        // }
+        // /*工作簿开启活性*/
+        // function spreadResume() {
+        //     spread.resumeCalcService(); //开启计算服务
+        //     spread.resumePaint(); //恢复绘制
+        // }
+        //初始化数据
+        function initData(parms,sheet) {
+            console.log(parms,"parms")
+            let url = "http://localhost:8081/admin/scheduproductplanmonth/getTableHead";
+            //获取接口数据
+            Ajax.get(url,(res)=>{
+                // debugger
+                console.log(res)
+                parms.data = res.data;
+                let dataArray = [parms.data];
+                console.log(dataArray[0],"4545")
+                parms.dayLength = res.data.day.length;
+                let date = new Date();//获取当前年月
+                sheet.setValue(parms.rowindex, parms.columnindex+9,date);
+                sheet.setFormatter(parms.rowindex, parms.columnindex+9,"YYY年MM月");//转换日期格式
+                parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
+                console.log(parms.day)
+                sheet.addSpan(0,9,1,parms.dayLength);//跨行列
+                var index = 9;
+                for (let i = 0; i < parms.dayLength; i++) {
+                    sheet.setValue(1,parms.dayRow++,parms.data.day[i]);
+                    sheet.setValue(2,parms.weekRow++,parms.data.week[i]);
+                }
+            });
+        }
     }
+
+
 </script>
 #end
