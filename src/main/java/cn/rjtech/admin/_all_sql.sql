@@ -474,3 +474,8 @@
 #namespace("scancodereceive")
 #include("scancodereceive/scancodereceive.sql")
 #end
+
+###出库列表
+#namespace("sysSaleDeliver")
+#include("syssaledeliver/sysSaleDeliver.sql")
+#end
