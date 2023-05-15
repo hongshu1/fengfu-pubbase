@@ -462,3 +462,7 @@
 #namespace("materialsout")
 #include("materialsout/materialsout.sql")
 #end
+
+#namespace("scancodereceive")
+#include("scancodereceive/scancodereceive.sql")
+#end

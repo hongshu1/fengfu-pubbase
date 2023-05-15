@@ -1799,5 +1799,9 @@ public class PermissionKey {
 	 */
 	public static final String MATERIALRECEIPTLIST = "materialreceiptlist";
 
+	/**
+	 * 入库管理-双单位扫码收货
+	 */
+	public static final String SCANCODERECEIVE = "scancodereceive";
 }
 
