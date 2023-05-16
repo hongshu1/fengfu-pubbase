@@ -1,3 +1,4 @@
+#set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_title">
 	<div class="row">
 		<div class="col-12">
@@ -136,12 +137,12 @@
 	</div>
 
 	<table class="jbolt_table thead_font_normal table-bordered table-center"
+           id="jbolt_Table_#(pageId)"
 		   data-jbolttable
 		   #if(weekOrderM.iAutoId??)
 		   data-ajax="true"
 		   data-url="admin/weekorderd/datas?iWeekOrderMid=#(weekOrderM.iAutoId??)"
 		   #end
-		   id="jbolt_Table_#(pageId)"
 		   data-column-resize="true"
 		   data-tfoot-fixed="true"
 		   data-rowtpl="jboltTable_demotpl_#(pageId)"
@@ -195,6 +196,7 @@
 					});
 				}
 			},
+            maxRowCount: 9999,
 			cols: {
 				iautoid: {
 					submitAttr: "iautoid",
@@ -297,6 +299,7 @@
 		};
 		return editableTableOptions;
 	}
+    
 	function uploadHandler(uploader, type, fileInput, res) {
 		jboltTableClear("#jbolt_Table_#(pageId)");
 
@@ -307,29 +310,40 @@
 			return;
 		}
 
+        let reg =  /([\u4e00-\u9fa5]|[\ufe30-\uffa0])/;
+        
 		$.each(data, function (idx, row) {
-			row.dplanaogdate = row.dplanaogdate.split(' ')[0]
+
+            $.each(row, function (k, v) {
+                if (reg.test(k)) {
+                    delete row[k];
+                } else {
+                    if (k === 'dplanaogdate') {
+                        if (row.dplanaogdate) {
+                            row.dplanaogdate = row.dplanaogdate.split(' ')[0];
+                        }
+                    } else {
+                        row[k] = $.trim(row[k]);
+                    }
+                }
+            });
 		});
-		console.log(data)
-
-		var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
-		jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
-
-
+        
+        jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
 	}
-
 
 	function submitThisForm(){
 		console.log("......执行");
 		jboltTableSubmit("#jbolt_Table_#(pageId)");
 	}
 
+    var $approve = $('#approve');
+    
 	function approveByAdd(){
-		$("#approve").val("approve");
-		console.log($("#approve").val());
+        $approve.val("approve");
+		console.log($approve.val());
 		submitThisForm();
 	}
-
 
 	function closeHandler(){
 		parent.layer.close(parent.layer.getFrameIndex(window.name));
@@ -348,7 +362,7 @@
 			}
 		});
 	}
+    
 </script>
-<!--#include("/_view/_admin/common/_formjs.html",formId="WeekOrderM_Form")-->
 #end
 

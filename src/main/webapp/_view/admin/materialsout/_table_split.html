@@ -25,7 +25,7 @@
         <div class="btn-group">
           <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
             <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
-                   maxlength="50" name="cinvaddcode" value="#(cinvaddcode??)"/>
+                   maxlength="50" name="barcode" value="#(barcode??)"/>
             <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>
             <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>
           </form>
@@ -46,7 +46,7 @@
                data-height="200"
                data-ajax="true"
                data-column-resize="true"
-               data-url="admin/materialDeliveryList/getMaterialsOutLines?autoid=#(transVouch.autoid??)"
+               data-url="admin/materialDeliveryList/getMaterialsOutLines?autoid=#(materialsOut.autoid??)"
                data-column-prepend="1:checkbox:true"
                data-conditions-form="inventoryForm_#(pageId)"
                data-rowtpl="inventorySplit_tpl_#(pageId)"
@@ -99,7 +99,7 @@
               width: 800,
               sync:"" ,
               valueAttr: "barcode",
-              columnAttr: "barcode,cinvcode,cinvdddcode,cinvname,cuomclassname,qty,cequipmentmodelname",
+              columnAttr: "barcode,cinvcode,cinvaddcode,cinvname,cuomclassname,qty,cequipmentmodelname",
               header:'现品票,材料编码,材料代码,材料名称,主计量单位,数量,所属机型',
               changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "cinvcode"},{column: "cinvaddcode", use: "cinvaddcode"},
                   {column: "cinvname", use: "cinvname"},{column: "cuomclassname", use: "cuomclassname"},
