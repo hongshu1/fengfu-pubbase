@@ -50,6 +50,8 @@ public class ModocApiController extends BaseApiController {
 
   /**
    *
+   *  *制造工单查询API
+   *
    * @param page  页数 必要参数
    * @param pageSize 条数 必要参数
    * @param cmodocno 工单号
