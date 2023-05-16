@@ -7,7 +7,9 @@
             <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
                 class="fa fa-refresh"></i> 保存
             </button>
-            <button onclick="submitApprove()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审核</button>
+            <button onclick="submitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
+                class="fa fa-window-maximize"></i> 提交审核
+            </button>
             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
           </div>
         </div>
@@ -386,9 +388,8 @@
   * 提交审批，推送至u8入库
   *
   * */
-  function submitApprove() {
+  function submitApprove(autoid) {
 
-    let autoid = $("#autoid").var();
     if (!autoid) {
       LayerMsgBox.alert("请先保存，再提交审批！", 2);
     }
@@ -396,7 +397,7 @@
       autoid: autoid
     };
 
-    Ajax.post('/admin/purchaseReceiptList/autit', {"autoid": autoid}, function (ret) {
+    Ajax.post('/admin/purchaseReceiptList/autit?autoid=' + autoid, para, function (ret) {
       if (ret.state === 'ok') {
         parent.LayerMsgBox.closeAll();
         parent.refreshPjaxContainer();

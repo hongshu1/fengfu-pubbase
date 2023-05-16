@@ -2,16 +2,18 @@ package cn.rjtech.admin.syspuinstore;
 
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.User;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.rjtech.admin.materialsout.MaterialsOutService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
+import cn.rjtech.admin.rdstyle.RdStyleService;
+import cn.rjtech.model.momdata.MaterialsOut;
 import cn.rjtech.model.momdata.PurchaseType;
+import cn.rjtech.model.momdata.RdStyle;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.Main;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.PreAllocate;
-import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.ValidationUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -29,6 +31,8 @@ import cn.jbolt.core.db.sql.Sql;
 
 import com.jfinal.plugin.activerecord.Record;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +58,10 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     private SysPuinstoredetailService syspuinstoredetailservice;
     @Inject
     private PurchaseTypeService       purchaseTypeService;
+    @Inject
+    private MaterialsOutService       materialsOutService;
+    @Inject
+    private RdStyleService            rdStyleService;
 
     @Override
     protected int systemLogTargetType() {
@@ -118,20 +126,67 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     }
 
     /*
+     * 批量反审批
+     * */
+    public Ret resetAutitByIds(String ids) {
+        tx(() -> {
+            String[] split = ids.split(",");
+            for (String id : split) {
+                resetAutitById(id);
+            }
+            return true;
+        });
+        return ret(true);
+    }
+
+    public Ret resetAutitById(String autoid) {
+        SysPuinstore sysPuinstore = findById(autoid);
+        if (sysPuinstore.getState().equals("4")) {
+            return fail("当前状态为审批不通过，无法继续审批!");
+        }
+        //1、更新审核人、审核时间、状态
+        Date date = new Date();
+        sysPuinstore.setAuditPerson(JBoltUserKit.getUserName());
+        sysPuinstore.setAuditDate(date);
+        sysPuinstore.setModifyPerson(JBoltUserKit.getUserName());
+        sysPuinstore.setModifyDate(date);
+        sysPuinstore.setState(countDeleteState(sysPuinstore.getState()));
+        Ret ret = update(sysPuinstore);
+        return ret;
+    }
+
+    /*
      * 审批
      * */
     public Ret autit(Long autoid) {
         SysPuinstore sysPuinstore = findById(autoid);
         //1、更新审核人、审核时间、状态
+        Date date = new Date();
         sysPuinstore.setAuditPerson(JBoltUserKit.getUserName());
-        sysPuinstore.setAuditDate(new Date());
-        sysPuinstore.setState("2");
-        //2、推送u8入库
-        String json = getSysPuinstoreDto(sysPuinstore);
-        String post = new BaseInU8Util().base_in(json);
-        System.out.println(post);
+        sysPuinstore.setAuditDate(date);
+        sysPuinstore.setModifyPerson(JBoltUserKit.getUserName());
+        sysPuinstore.setModifyDate(date);
+        sysPuinstore.setState(countAddState(sysPuinstore.getState()));
         Ret ret = update(sysPuinstore);
+        //2、推送u8入库
+        /*String json = getSysPuinstoreDto(sysPuinstore);
+        String post = new BaseInU8Util().base_in(json);
+        System.out.println(post);*/
         return ret;
+    }
+
+    /*
+     * 修改审批的状态
+     * */
+    public String countAddState(String state) {
+        return String.valueOf((Integer.valueOf(state) + 1));
+    }
+
+    /*
+     * 修改批量反审批的状态
+     * */
+    public String countDeleteState(String state) {
+        return String.valueOf((Integer.valueOf(state) - 1));
     }
 
     /**
@@ -305,6 +360,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 if (!detailList.isEmpty()) {
                     ValidationUtils.isTrue(syspuinstoredetailservice.batchSave(detailList).length != 0, "保存采购入库单失败");
                 }
+                //外作件入库后倒扣加工供应商仓库存，按物料清单生成材料出库单
+                try {
+                    createMaterialsOut(updateSysPuinstore, whcode, detailByParam);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             } else {
                 List<Record> saveRecordList = jBoltTable.getSaveRecordList();
                 if (saveRecordList == null) {
@@ -326,10 +388,49 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 if (!detailList.isEmpty()) {
                     ValidationUtils.isTrue(syspuinstoredetailservice.batchSave(detailList).length != 0, "保存采购入库单失败");
                 }
+                //外作件入库后倒扣加工供应商仓库存，按物料清单生成材料出库单
+                try {
+                    createMaterialsOut(puinstore, whcode, detailByParam);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //
             }
             return true;
         });
         return SUCCESS;
+    }
+
+    /*
+     * 1、外作件入库后倒扣加工供应商仓库存，按物料清单生成材料出库单
+     * */
+    public void createMaterialsOut(SysPuinstore puinstore, String whcode, Record detailByParam) throws Exception {
+        RdStyle rdStyle = rdStyleService.findBycSTCode(puinstore.getRdCode());
+        if (!rdStyle.getCRdName().equals("外作品入库")) {
+            return;
+        }
+        MaterialsOut materials = new MaterialsOut();
+        materials.setAutoID(JBoltSnowflakeKit.me.nextId());
+        materials.setSourceBillType(detailByParam.getStr("sourcebilltype"));
+        materials.setSourceBillDid(detailByParam.getStr("sourcebilldid"));
+        materials.setRdCode(puinstore.getRdCode());
+        materials.setOrganizeCode(getOrgCode());
+        materials.setBillNo(puinstore.getBillNo());
+        materials.setBillType(puinstore.getBillType());
+        materials.setBillDate(getBillDate(puinstore.getBillDate()));
+        materials.setDeptCode(puinstore.getDeptCode());
+        materials.setWhcode(whcode);
+        materials.setVenCode(puinstore.getVenCode());
+        materials.setAuditPerson(puinstore.getAuditPerson());
+        materials.setAuditDate(puinstore.getAuditDate());
+        materials.setCreatePerson(puinstore.getCreatePerson());
+        materials.setCreateDate(puinstore.getCreateDate());
+        materials.setModifyPerson(puinstore.getModifyPerson());
+        materials.setModifyDate(puinstore.getModifyDate());
+        materials.setState(Integer.valueOf(puinstore.getState()));
+//        materials.setMemo();
+        materialsOutService.save(materials);
     }
 
     public Kv getKv(String billno, String sourcebillno) {
@@ -337,6 +438,16 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         kv.set("billno", billno);
         kv.set("sourcebillno", sourcebillno);
         return kv;
+    }
+
+    public Date getBillDate(String billDate) {
+        SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+        try {
+            return format.parse(billDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void saveSysPuinstoreModel(SysPuinstore puinstore, Record record, Record detailByParam) {
@@ -414,10 +525,10 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             main.setCreatePerson(detail.getCreatePerson());
             main.setBarCode(detail.getSpotTicket()); //现品票
             main.setBillNo(puinstore.getBillNo());
-            main.setBillID(podetail.get("billid"));
-            main.setBillNoRow(podetail.get("billnorow"));
+            main.setBillID(podetail.getStr("billid"));
+            main.setBillNoRow(podetail.getStr("billnorow"));
             main.setBillDate(puinstore.getBillDate());
-            main.setBillDid(podetail.get("billdid"));
+            main.setBillDid(podetail.getStr("billdid"));
             main.setSourceBillNo(detail.getSourceBillNo());
             main.setSourceBillDid(detail.getSourceBillDid());
             main.setSourceBillType(detail.getSourceBillType());
