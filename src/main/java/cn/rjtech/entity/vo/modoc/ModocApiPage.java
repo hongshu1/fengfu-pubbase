@@ -215,4 +215,12 @@ public class ModocApiPage {
     public void setcWorkShiftName(String cWorkShiftName) {
         this.cWorkShiftName = cWorkShiftName;
     }
+
+    public String getiStatusName() {
+        return iStatusName;
+    }
+
+    public void setiStatusName(String iStatusName) {
+        this.iStatusName = iStatusName;
+    }
 }

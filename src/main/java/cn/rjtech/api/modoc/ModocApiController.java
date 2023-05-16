@@ -77,7 +77,7 @@ public class ModocApiController extends BaseApiController {
                    @Para(value = "endtime") Date endtime){
     ValidationUtils.validateIdInt(page,"缺少页数");
     ValidationUtils.validateIdInt(pageSize,"缺少条数");
-    ValidationUtils.notNull(iworkregionmid,"缺少产线ID");
+   // ValidationUtils.notNull(iworkregionmid,"缺少产线ID");
     renderJBoltApiRet(moDocApiService.page(page,pageSize,cmodocno,cinvcode,cinvcode1,cinvname1,
             cdepname,iworkregionmid,status,starttime,endtime));
   }
