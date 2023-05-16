@@ -200,10 +200,8 @@
 
     <table class="jbolt_table thead_font_normal table-bordered table-center"
            data-jbolttable
-           #if(sysSaledeliver.autoid??)
            data-ajax="true"
-           data-url="admin/salesDeliveryList/getLineData?masId=#(sysSaledeliver.autoid??)"
-           #end
+           data-url="admin/salesDeliveryList/getLineData"
            id="jbolt_Table_#(pageId)"
            data-column-resize="true"
            data-tfoot-fixed="true"

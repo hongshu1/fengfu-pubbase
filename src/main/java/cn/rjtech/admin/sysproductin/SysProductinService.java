@@ -8,6 +8,8 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.SysOtherin;
+import cn.rjtech.model.momdata.SysProductindetail;
+import cn.rjtech.model.momdata.SysPureceivedetail;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
@@ -21,6 +23,8 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.SysProductin;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -166,10 +170,10 @@ public class SysProductinService extends BaseService<SysProductin> {
 	 */
 	public Ret deleteRmRdByIds(String ids) {
 		tx(() -> {
+			deleteByIds(ids);
 			String[] split = ids.split(",");
 			for(String s : split){
-				updateColumn(s, "isdeleted", true);
-				update("update T_Sys_ProductInDetail  set  IsDeleted = 1 where  MasID = ?",s);
+				delete("DELETE T_Sys_ProductInDetail   where  MasID = ?",s);
 			}
 			return true;
 		});
@@ -183,8 +187,8 @@ public class SysProductinService extends BaseService<SysProductin> {
 	 */
 	public Ret delete(Long id) {
 		tx(() -> {
-			updateColumn(id, "isdeleted", true);
-			update("update T_Sys_ProductInDetail  set  IsDeleted = 1 where  MasID = ?",id);
+			deleteById(id);
+			delete("DELETE T_Sys_ProductInDetail   where  MasID = ?",id);
 			return true;
 		});
 		return ret(true);
@@ -197,6 +201,9 @@ public class SysProductinService extends BaseService<SysProductin> {
 	 * @return
 	 */
 	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
+		if(jBoltTable.getSaveRecordList()==null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList()==null){
+			return Ret.msg("行数据不能为空");
+		}
 		SysProductin sysotherin = jBoltTable.getFormModel(SysProductin.class,"sysProductin");
 		//获取当前用户信息？
 		User user = JBoltUserKit.getUser();
@@ -205,15 +212,16 @@ public class SysProductinService extends BaseService<SysProductin> {
 			//通过 id 判断是新增还是修改
 			if(sysotherin.getAutoID() == null){
 				sysotherin.setOrganizeCode(getOrgCode());
-				sysotherin.setCreatePerson(user.getId().toString());
+				sysotherin.setCreatePerson(user.getUsername());
 				sysotherin.setCreateDate(now);
-				sysotherin.setModifyPerson(user.getId().toString());
+				sysotherin.setModifyPerson(user.getUsername());
+				sysotherin.setAuditPerson(user.getUsername());
 				sysotherin.setState("1");
 				sysotherin.setModifyDate(now);
 				//主表新增
 				ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
 			}else{
-				sysotherin.setModifyPerson(user.getId().toString());
+				sysotherin.setModifyPerson(user.getUsername());
 				sysotherin.setModifyDate(now);
 				//主表修改
 				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
@@ -234,37 +242,71 @@ public class SysProductinService extends BaseService<SysProductin> {
 	private void saveTableSubmitDatas(JBoltTable jBoltTable,SysProductin sysotherin){
 		List<Record> list = jBoltTable.getSaveRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		ArrayList<SysProductindetail> sysproductindetail = new ArrayList<>();
 		Date now = new Date();
 		for (int i=0;i<list.size();i++) {
 			Record row = list.get(i);
-			row.set("IsDeleted", "0");
-			row.set("MasID", sysotherin.getAutoID());
-			row.set("AutoID", JBoltSnowflakeKit.me.nextId());
-			row.set("CreateDate", now);
-			row.set("ModifyDate", now);
-
-
+			SysProductindetail sysdetail = new SysProductindetail();
+			sysdetail.setBarcode(row.get("barcode"));
+			sysdetail.setInvCode(row.get("cinvcode"));
+			sysdetail.setQty(new BigDecimal(row.get("qty").toString()));
+			sysdetail.setMasID(sysotherin.getAutoID());
+			sysdetail.setSourceBillType(row.getStr("sourcebilltype"));
+			sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
+			sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
+			sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
+			sysdetail.setCreateDate(now);
+			sysdetail.setModifyDate(now);
+			sysproductindetail.add(sysdetail);
 		}
-		sysproductindetailservice.batchSaveRecords(list);
+		sysproductindetailservice.batchSave(sysproductindetail);
 	}
 	//可编辑表格提交-修改数据
 	private void updateTableSubmitDatas(JBoltTable jBoltTable,SysProductin sysotherin){
 		List<Record> list = jBoltTable.getUpdateRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		ArrayList<SysProductindetail> sysproductindetail = new ArrayList<>();
 		Date now = new Date();
 		for(int i = 0;i < list.size(); i++){
 			Record row = list.get(i);
-			row.set("ModifyDate", now);
+			SysProductindetail sysdetail = new SysProductindetail();
+			sysdetail.setBarcode(row.get("barcode"));
+			sysdetail.setInvCode(row.get("cinvcode"));
+			sysdetail.setQty(row.get("qty"));
+			sysdetail.setMasID(sysotherin.getAutoID());
+			sysdetail.setSourceBillType(row.getStr("sourcebilltype"));
+			sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
+			sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
+			sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
+			sysdetail.setCreateDate(now);
+			sysdetail.setModifyDate(now);
+			sysproductindetail.add(sysdetail);
 
 		}
-		sysproductindetailservice.batchUpdateRecords(list);
+		sysproductindetailservice.batchUpdate(sysproductindetail);
 	}
 	//可编辑表格提交-删除数据
 	private void deleteTableSubmitDatas(JBoltTable jBoltTable){
 		Object[] ids = jBoltTable.getDelete();
 		if(ArrayUtil.isEmpty(ids)) return;
-		for (Object id : ids) {
-			update("update T_Sys_ProductInDetail  set  IsDeleted = 1 where  AutoID = ?",id);
-		}
+		sysproductindetailservice.deleteByIds(ids);
+	}
+
+	public List<Record> getwareHouseDatas(Kv kv) {
+		return dbTemplate("sysproductin.wareHouse", kv).find();
+	}
+
+	public List<Record> getRdStyleDatas(Kv kv) {
+		return dbTemplate("sysproductin.RdStyle", kv).find();
+	}
+
+	public List<Record> getDepartmentDatas(Kv kv) {
+		return dbTemplate("sysproductin.Department", kv).find();
+	}
+
+	public Record selectName(String username) {
+		Kv kv = new Kv();
+		kv.set("username",username);
+		return dbTemplate( "sysproductin.selectname", kv).findFirst();
 	}
 }
