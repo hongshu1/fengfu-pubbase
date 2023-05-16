@@ -1,0 +1,92 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col-12">
+        <form onsubmit="return false;" class="form-inline" id="chooseDataForm" method="post">
+          <input style="width: 400px" type="text" autocomplete="off" class="form-control" placeholder="订单号"
+                 name="keywords" value=""/>
+          #if(sysPuinstore.AutoID??)
+          <input id="autoid" type="hidden" name="autoid" value="#(sysPuinstore.autoid??)"/>
+          #end
+          <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-light"><i class="fa fa-undo"></i> 重置</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <script type="text/template" id="jboltTable_demotpl">
+      {@each datas as data,index}
+      <tr data-id="${data.id}">
+        <td>${pageNumber,pageSize,index | rownum}</td>
+        <td>${data.sourcebillno}</td>
+        <td>${data.billid}</td>
+        <td>${data.billno}</td>
+        <td>${data.billdate}</td>
+        <td>${data.venname}</td>
+        <td>${data.deptname}</td>
+        <td>${data.invname}</td>
+        <td>${data.defwhname}</td>
+      </tr>
+      {@/each}
+    </script>
+    <table id="chooseDataTable"
+           class="jbolt_table jbolt_main_table  table-center"
+           data-jbolttable
+           data-ajax="true"
+           data-url="admin/purchaseReceiptList/getSysPODetail"
+           data-height="300"
+           data-column-resize="true"
+           data-conditions-form="chooseDataForm"
+           data-page="jboltTablePage_ajax"
+           data-column-prepend="1:checkbox:true"
+           data-rowtpl="jboltTable_demotpl"
+           data-row-dblclick-handler="dbClickCheckData"
+           data-pagesize="30">
+      <!--
+           data-fixed-columns-left="1,2"
+           data-fixed-columns-right="6,7"
+           data-row-dblclick-active="true"-->
+      <thead>
+      <tr>
+        <th data-width="60">序号</th>
+        <th data-width="160" data-column="sourcebillno">来源单号</th>
+        <th data-min-width="160" data-column="billid">来源单据id</th>
+        <th data-min-width="160" data-column="billno">入库单号</th>
+        <th data-min-width="160" data-column="billdate">单据日期</th>
+        <th data-min-width="160" data-column="venname">供应商名称</th>
+        <th data-min-width="160" data-column="deptname">部门名称</th>
+        <th data-min-width="160" data-column="invname">存货名称</th>
+        <th data-min-width="160" data-column="defwhname">供货单位</th>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+#end
+
+#define js()
+<script>
+  //点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+  function submitThisForm(callback) {
+    var data = getJboltTableCheckedData("chooseDataTable");
+    if (data) {
+      // LayerMsgBox.confirm("确认选择此数据?",function(){
+      parent.setChooseDialogSelectResultFromSupplier(data);
+      if (callback) {
+        callback();
+      }
+      // });
+    }
+  }
+
+  function dbClickCheckData(table, tempTr1, trId1, rowData) {
+    parent.setChooseDialogSelectResultFromSupplier(rowData);
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+  }
+
+</script>
+#end

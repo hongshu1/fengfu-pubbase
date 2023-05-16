@@ -1,19 +1,33 @@
 #sql("paginateAdminDatas")
 SELECT
-    t1.*
+    t1.*,
+    t3.InvCode as MoInvCode,
+    t3.MONoRow,
+    t3.qty as Moqty,
+    t4.cDepName,
+    t2.cWhName,
+    t5.cVenName
 FROM
-    T_Sys_MaterialsOut t1
+    #(getMomdataDbName()).dbo.T_Sys_MaterialsOut t1
+    LEFT JOIN V_Sys_MODetail t3 ON t3.MOId = t1.SourceBillDid
+    LEFT JOIN UGCFF_MOM_DATA.dbo.Bd_Warehouse t2 ON t2.cWhCode = t1.Whcode
+    LEFT JOIN UGCFF_MOM_DATA.dbo.Bd_Department t4 ON t4.cDepCode = t1.DeptCode
+    LEFT JOIN UGCFF_MOM_DATA.dbo.Bd_Vendor t5 ON t5.cVenCode = t1.VenCode
 WHERE 1 = 1
 
     #if(selectparam)
     AND (t1.BillNo LIKE CONCAT('%',#para(selectparam), '%')
-    OR t1.Whcode LIKE CONCAT('%', #para(selectparam), '%')
-    OR t1.SourceBillDid LIKE CONCAT('%', #para(selectparam), '%')
-    OR (SELECT cDepName FROM Bd_Department WHERE cDepCode = #para(selectparam)) LIKE CONCAT('%', #para(selectparam), '%')
+    OR t2.cWhName LIKE CONCAT('%', #para(selectparam), '%')
+    OR t3.MONoRow LIKE CONCAT('%', #para(selectparam), '%')
+    OR  t4.cDepName LIKE CONCAT('%', #para(selectparam), '%')
+    OR t5.cVenName LIKE CONCAT('%', #para(selectparam), '%')
     )
     #end
    #if(iorderstatus)
         AND t1.State = #para(iorderstatus)
+    #end
+    #if(OrgCode)
+        AND t1.OrganizeCode = #para(OrgCode)
     #end
 #if(startdate)
     and CONVERT(VARCHAR(10),t1.ModifyDate,23) >='#(startdate)'
@@ -36,14 +50,35 @@ FROM T_Sys_MaterialsOut t1,
          LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
          LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
 WHERE
-        t1.AutoID = t2.MasID AND  t1.AutoID = '#(autoid)'
+    t1.AutoID = t2.MasID
+    AND  t1.AutoID = '#(autoid)'
+    #if(OrgCode)
+        AND t1.OrganizeCode = #para(OrgCode)
+    #end
     #end
 
 
 
 #sql("moDetailData")
 SELECT *
-
 FROM V_Sys_MODetail
 WHERE 1 = 1
+    #if(monorow)
+        AND MONoRow like '%#(monorow)%'
+    #end
+#end
+
+
+#sql("getrcvMODetailList")
+SELECT *
+FROM V_Sys_MODetail
+WHERE MOId = #(iautoid)
+#end
+
+#sql("getRDStyleDatas")
+SELECT cRdCode,
+       cRdName
+FROM Bd_Rd_Style
+WHERE cOrgCode = #(OrgCode)
+AND bRdFlag = #(bRdFlag)
 #end

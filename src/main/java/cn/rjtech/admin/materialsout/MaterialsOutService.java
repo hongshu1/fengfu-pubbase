@@ -1,5 +1,6 @@
 package cn.rjtech.admin.materialsout;
 
+import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
@@ -22,6 +23,8 @@ import com.jfinal.plugin.activerecord.Record;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 出库管理-材料出库单列表 Service
@@ -49,7 +52,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
-		return dbTemplate("materialsout.paginateAdminDatas",kv).paginate(pageNumber, pageSize);
+		return dbTemplate(u8SourceConfigName(),"materialsout.paginateAdminDatas",kv).paginate(pageNumber, pageSize);
 	}
 
 	/**
@@ -97,7 +100,24 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
-		return deleteByIds(ids,true);
+
+		tx(() -> {
+			for (String idStr : StrSplitter.split(ids, COMMA, true, true)) {
+				String autoId = idStr;
+				MaterialsOut materialsOut = findById(autoId);
+				ValidationUtils.notNull(materialsOut, JBoltMsg.DATA_NOT_EXIST);
+
+				// TODO 可能需要补充校验组织账套权限
+				// TODO 存在关联使用时，校验是否仍在使用
+
+				//删除行数据
+				materialsOutDetailService.deleteByBatchIds(autoId);
+				ValidationUtils.isTrue(materialsOut.delete(), JBoltMsg.FAIL);
+
+			}
+			return true;
+		});
+		return SUCCESS;
 	}
 
 	/**
@@ -192,7 +212,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 			Long headerId = null;
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
-				MaterialsOut materialsOut = jBoltTable.getFormBean(MaterialsOut.class);
+				MaterialsOut materialsOut = jBoltTable.getFormModel(MaterialsOut.class,"materialsOut");
 
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
@@ -351,6 +371,24 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	 */
 	public Page<Record> moDetailData(int pageNumber, int pageSize, Kv kv) {
 		return dbTemplate(u8SourceConfigName(),"materialsout.moDetailData",kv).paginate(pageNumber, pageSize);
+	}
+
+
+	/**
+	 * 材料出库单生产工单明细查询
+	 * @param iautoid
+	 * @return
+	 */
+	public Record getrcvMODetailList(String iautoid){
+		System.out.println(iautoid);
+		return dbTemplate(u8SourceConfigName(),"materialsout.getrcvMODetailList", Kv.by("iautoid",iautoid)).findFirst();
+	}
+
+	/**
+	 *  收发类别数据源
+	 */
+	public List<Record>  getRDStyleDatas(Kv kv) {
+		return dbTemplate("materialsout.getRDStyleDatas", kv).find();
 	}
 
 

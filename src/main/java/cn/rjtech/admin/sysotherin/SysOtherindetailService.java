@@ -127,20 +127,14 @@ public class SysOtherindetailService extends BaseService<SysOtherindetail> {
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		updateColumn(id, "isdeleted", true);
+		deleteById(id);
 		return ret(true);
 	}
 	/**
 	 * 批量删除
 	 */
 	public Ret deleteRmRdByIds(String ids) {
-		tx(() -> {
-			String[] split = ids.split(",");
-			for(String s : split){
-				updateColumn(s, "isdeleted", true);
-			}
-			return true;
-		});
+		deleteByIds(ids);
 		return ret(true);
 	}
 

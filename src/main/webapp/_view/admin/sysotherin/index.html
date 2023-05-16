@@ -9,9 +9,9 @@
 			</div>
 			<div class="col">
 				<form class="form-inline" id="SysOtherin_form_#(pageId)">
-					<input type="text" autocomplete="off" class="form-control" placeholder="入库单号" name="warehousingNo"
+					<input type="text" autocomplete="off" class="form-control" placeholder="入库单号" name="billno"
 						value="" />
-					<input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="repositoryName"
+					<input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="whname"
 						value="" />
 					<input type="text" autocomplete="off" class="form-control" placeholder="生产部门" name="deptName"
 						value="" />
@@ -35,33 +35,33 @@
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/otherInList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑取货计划管理" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+	<a href="admin/otherInList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑其它入库单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
     <a href="admin/otherInList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 </td>
-<td>${data.state}</td>
-<td>${data.warehousingno}</td>
+<td>${data.statename}</td>
+<td>${data.billno}</td>
 <td>${data.createdate}</td>
-<td>${data.repositoryname}</td>
-<td>${data.warehousingtype}</td>
+<td>${data.whname}</td>
+<td>${data.rdcodename}</td>
 <td>${data.billtype}</td>
 <td>${data.billno}</td>
 <td>${data.venname}</td>
-<td>${data.modifydate}</td>
-<td>${data.remark}</td>
-<td>${data.name}</td>
+<td>${data.auditdate}</td>
+<td>${data.memo}</td>
+<td>${data.createperson}</td>
 <td>${data.createdate}</td>
 </tr>
 {@/each}
 </textarea>
 		<div class="jbolt_table_toolbar" id="SysOtherin_toolbar_#(pageId)">
 			<button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
-				id="toolbar_addBtn_#(pageId)" data-title="新增发货管理-取货计划主表" data-url="admin/otherInList/add"
+				id="toolbar_addBtn_#(pageId)" data-title="新增发货管理-其它入库单表" data-url="admin/otherInList/add"
 				class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
 			<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)"
-				data-title="批量审批取货计划主表" data-check-handler="jboltTableGetCheckedId" data-url="admin/otherInList/edit/"
+				data-title="批量审批其它入库单表" data-check-handler="jboltTableGetCheckedId" data-url="admin/otherInList/edit/"
 				class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量审批</button>
 			<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
-				id="side_toolbar_editBtn_#(pageId)" data-title="批量反审批-取货计划主表"
+				id="side_toolbar_editBtn_#(pageId)" data-title="批量反审批-其它入库单表"
 				data-check-handler="jboltTableGetCheckedId" data-url="admin/otherInList/edit/"
 				class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量反审批</button>
 			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"

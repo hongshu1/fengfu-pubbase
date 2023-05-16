@@ -11,37 +11,23 @@
 				<form class="form-inline" id="SysProductin_form_#(pageId)">
 					<input type="text" autocomplete="off" class="form-control" placeholder="入库单号" name="billno"
 						value="" />
-					<!-- <div class="col-md-4">
-						<div class="form-group row">
-							<input type="hidden" name="whcode" value="#(whcode??)" id="cwhcode"
-								data-value-attr="cwhcode" />
-							<label class="col-sm-3 col-form-label">仓库名称</label>
-							<div class="col-9">
-								<input type="text" class="form-control" data-autocomplete
-									data-url="admin/productInList/getWarehouse" data-hidden-input="cwhcode"
-									data-text-attr="cwhname" data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称"
-									data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40" value="#(cwhname??)">
-							</div>
-						</div>
-					</div> -->
-					<input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="repositoryname"
-						value="" />
-					<!-- <div class="col-md-4">
-						<div class="form-group row">
-							<input type="hidden" name="deptcode" value="#(deptcode??)" id="cdepcode"
-								data-value-attr="cdepcode" />
-							<label class="col-sm-3 col-form-label">生产部门</label>
-							<div class="col-9">
-								<input type="text" class="form-control" data-autocomplete
-									data-url="admin/productInList/getDepartment" data-hidden-input="cdepcode"
-									data-text-attr="cdepname" data-column-attr="cdepcode,cdepname" placeholder="请选择生产部门"
-									data-tips="请选择生产部门" data-header="生产部门编码,生产部门" maxlength="40" value="#(cdepname??)">
-							</div>
-						</div>
-					</div> -->
+					<input type="hidden" name="whcode" value="#(whcode??)" id="cwhcode" data-value-attr="cwhcode" />
+					<input type="text" class="form-control" data-autocomplete
+						data-url="admin/productInList/getWarehouse" data-hidden-input="cwhcode" data-text-attr="cwhname"
+						data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称" data-tips="请选择仓库名称"
+						data-header="仓库编码,仓库名称" maxlength="40" value="#(cwhname??)" />
 
-					<input type="text" autocomplete="off" class="form-control" placeholder="生产部门" name="deptname"
-						value="" />
+					<input type="hidden" name="deptcode" value="#(deptcode??)" id="cdepcode" data-value-attr="cdepcode" />
+					<input type="text" class="form-control" data-autocomplete
+						data-url="admin/productInList/getDepartment" data-hidden-input="cdepcode"
+						data-text-attr="cdepname" data-column-attr="cdepcode,cdepname" placeholder="请选择生产部门"
+						data-tips="请选择生产部门" data-header="生产部门编码,生产部门" maxlength="40" value="#(cdepname??)" />
+
+
+					<!-- <input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="repositoryname"
+						value="" /> -->
+					<!-- <input type="text" autocomplete="off" class="form-control" placeholder="生产部门" name="deptname"
+						value="" /> -->
 					<select class="form-control" name="state" data-autoload data-url="admin/dictionary/options?key=null"
 						data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select>
 					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20"
