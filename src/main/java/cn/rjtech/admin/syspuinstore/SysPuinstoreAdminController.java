@@ -12,6 +12,8 @@ import com.jfinal.aop.Before;
 
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import cn.jbolt.core.base.JBoltMsg;
@@ -75,7 +77,21 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /*
-     * 审核
+     * 批量审批
+     * */
+    public void autitByIds() {
+        renderJson(service.autitByIds(get("ids")));
+    }
+
+    /*
+     * 批量反审批
+     * */
+    public void resetAutitByIds() {
+        renderJson(service.autitByIds(get("ids")));
+    }
+
+    /*
+     * 审批
      * */
     public void autit() {
         renderJson(service.autit(getLong(0)));
@@ -97,7 +113,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     /*
      * 点开查看页面，自动加载table数据
      * */
-    public void autoGetOnlySeeDatas(){
+    public void autoGetOnlySeeDatas() {
         renderJson();
     }
 
@@ -135,6 +151,21 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
+    }
+
+    /**
+     * 订单号的选择数据Dialog
+     */
+    public void chooseSysPuinstoreData() {
+        render("sysPuinstoreDialog.html");
+    }
+
+    /*
+     * 获取采购订单视图的订单号
+     * */
+    public void getSysPODetail() {
+        Page<Record> recordPage = service.getSysPODetail(getKv(), getPageNumber(), getPageSize());
+        renderJsonData(recordPage);
     }
 
     /*

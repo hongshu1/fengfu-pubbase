@@ -7,6 +7,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.model.momdata.SysOtherindetail;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
@@ -20,6 +21,8 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.SysOtherin;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +53,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+		//查业务类型
 		Page<Record> paginate = dbTemplate("sysotherin.recpor", kv).paginate(pageNumber, pageSize);
 		return paginate;
 	}
@@ -123,8 +127,8 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 	 */
 	public Ret delete(Long id) {
 		tx(() -> {
-			updateColumn(id, "isdeleted", true);
-			update("update T_Sys_OtherInDetail  set  IsDeleted = 1 where  MasID = ?",id);
+			deleteById(id);
+			delete("DELETE T_Sys_OtherInDetail   where  MasID = ?",id);
 			return true;
 		});
 		return ret(true);
@@ -135,10 +139,10 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 	 */
 	public Ret deleteRmRdByIds(String ids) {
 		tx(() -> {
+			deleteByIds(ids);
 			String[] split = ids.split(",");
 			for(String s : split){
-				updateColumn(s, "isdeleted", true);
-				update("update T_Sys_OtherInDetail  set  IsDeleted = 1 where  MasID = ?",s);
+				delete("DELETE T_Sys_OtherInDetail   where  MasID = ?",s);
 			}
 			return true;
 		});
@@ -153,6 +157,9 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 	 * @return
 	 */
 	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
+		if(jBoltTable.getSaveRecordList()==null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList()==null){
+			return Ret.msg("行数据不能为空");
+		}
 		SysOtherin sysotherin = jBoltTable.getFormModel(SysOtherin.class,"sysotherin");
 		//获取当前用户信息？
 		User user = JBoltUserKit.getUser();
@@ -161,15 +168,16 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 			//通过 id 判断是新增还是修改
 			if(sysotherin.getAutoID() == null){
 				sysotherin.setOrganizeCode(getOrgCode());
-				sysotherin.setCreatePerson(user.getId().toString());
+				sysotherin.setCreatePerson(user.getName());
 				sysotherin.setCreateDate(now);
-				sysotherin.setModifyPerson(user.getId().toString());
+				sysotherin.setModifyPerson(user.getName());
+				sysotherin.setAuditPerson(user.getName());
 				sysotherin.setState("1");
 				sysotherin.setModifyDate(now);
 				//主表新增
 				ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
 			}else{
-				sysotherin.setModifyPerson(user.getId().toString());
+				sysotherin.setModifyPerson(user.getName());
 				sysotherin.setModifyDate(now);
 				//主表修改
 				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
@@ -190,37 +198,61 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 	private void saveTableSubmitDatas(JBoltTable jBoltTable,SysOtherin sysotherin){
 		List<Record> list = jBoltTable.getSaveRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		ArrayList<SysOtherindetail> systailsList = new ArrayList<>();
 		Date now = new Date();
 		for (int i=0;i<list.size();i++) {
 			Record row = list.get(i);
-			row.set("IsDeleted", "0");
-			row.set("MasID", sysotherin.getAutoID());
-			row.set("AutoID", JBoltSnowflakeKit.me.nextId());
-			row.set("CreateDate", now);
-			row.set("ModifyDate", now);
+			SysOtherindetail sysOtherindetail = new SysOtherindetail();
+			sysOtherindetail.setMasID(Long.valueOf(sysotherin.getAutoID()));
+			sysOtherindetail.setModifyPerson(JBoltUserKit.getUser().getName());
+			sysOtherindetail.setModifyDate(now);
+			sysOtherindetail.setModifyDate(now);
+			sysOtherindetail.setCreateDate(now);
+			sysOtherindetail.setCreatePerson(JBoltUserKit.getUser().getName());
+			sysOtherindetail.setBarcode(row.get("barcode"));
+			sysOtherindetail.setInvCode(row.get("cinvcode"));
+			sysOtherindetail.setQty(new BigDecimal(row.get("qty").toString()));
+			sysOtherindetail.setSourceBillType(row.getStr("sourcebilltype"));
+			sysOtherindetail.setSourceBillNo(row.getStr("sourcebillno"));
+			sysOtherindetail.setSourceBillDid(row.getStr("sourcebilldid"));
+			sysOtherindetail.setSourceBillID(row.getStr("sourcebilldid"));
 
+			systailsList.add(sysOtherindetail);
 
 		}
-		sysotherindetailservice.batchSaveRecords(list);
+		sysotherindetailservice.batchSave(systailsList);
 	}
 	//可编辑表格提交-修改数据
 	private void updateTableSubmitDatas(JBoltTable jBoltTable,SysOtherin sysotherin){
 		List<Record> list = jBoltTable.getUpdateRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		ArrayList<SysOtherindetail> systailsList = new ArrayList<>();
 		Date now = new Date();
 		for(int i = 0;i < list.size(); i++){
 			Record row = list.get(i);
-			row.set("ModifyDate", now);
+			SysOtherindetail sysOtherindetail = new SysOtherindetail();
+			sysOtherindetail.setMasID(Long.valueOf(sysotherin.getAutoID()));
+			sysOtherindetail.setModifyPerson(JBoltUserKit.getUser().getName());
+			sysOtherindetail.setModifyDate(now);
+			sysOtherindetail.setCreatePerson(JBoltUserKit.getUser().getName());
+			sysOtherindetail.setBarcode(row.get("barcode"));
+			sysOtherindetail.setInvCode(row.get("cinvcode"));
+			sysOtherindetail.setQty(new BigDecimal(row.get("qty").toString()));
+			sysOtherindetail.setSourceBillType(row.getStr("sourcebilltype"));
+			sysOtherindetail.setSourceBillNo(row.getStr("sourcebillno"));
+			sysOtherindetail.setSourceBillDid(row.getStr("sourcebilldid"));
+			sysOtherindetail.setSourceBillID(row.getStr("sourcebilldid"));
+
+			systailsList.add(sysOtherindetail);
 
 		}
-		sysotherindetailservice.batchUpdateRecords(list);
+		sysotherindetailservice.batchUpdate(systailsList);
 	}
 	//可编辑表格提交-删除数据
 	private void deleteTableSubmitDatas(JBoltTable jBoltTable){
 		Object[] ids = jBoltTable.getDelete();
 		if(ArrayUtil.isEmpty(ids)) return;
-		for (Object id : ids) {
-			update("update T_Sys_OtherInDetail  set  IsDeleted = 1 where  AutoID = ?",id);
-		}
+		sysotherindetailservice.deleteByIds(ids);
+
 	}
 }

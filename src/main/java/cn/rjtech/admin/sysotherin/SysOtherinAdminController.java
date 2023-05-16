@@ -1,6 +1,12 @@
 package cn.rjtech.admin.sysotherin;
 
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.rjtech.admin.rdstyle.RdStyleService;
+import cn.rjtech.admin.vendor.VendorService;
+import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.model.momdata.RdStyle;
+import cn.rjtech.model.momdata.Vendor;
+import cn.rjtech.model.momdata.Warehouse;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -27,6 +33,15 @@ public class SysOtherinAdminController extends BaseAdminController {
 
 	@Inject
 	private SysOtherinService service;
+
+	@Inject
+	private WarehouseService warehouseservice;
+
+	@Inject
+	private RdStyleService rdstyleservice;
+
+	@Inject
+	private VendorService vendorservice;
 
    /**
 	* 首页
@@ -63,6 +78,22 @@ public class SysOtherinAdminController extends BaseAdminController {
 		if(sysOtherin == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
+		}
+
+		//仓库
+		Warehouse first = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", sysOtherin.getWhcode());
+		if (null != first.getCWhName()) {
+			set("cwhname", first.getCWhName());
+		}
+		//入库类型
+		RdStyle first1 = rdstyleservice.findFirst("select * from Bd_Rd_Style where crdcode=?", sysOtherin.getRdCode());
+		if (null != first1.getCRdName()) {
+			set("crdname", first1.getCRdName());
+		}
+		//查供应商名称
+		if (null != sysOtherin.getVenCode()) {
+			Vendor first2 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", sysOtherin.getVenCode());
+			set("venname", first2.getCVenName());
 		}
 		set("sysotherin",sysOtherin);
 		render("edit.html");

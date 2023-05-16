@@ -51,7 +51,9 @@ public class StockOutQcFormMApiController extends BaseApiController {
                          @Para(value = "iscompleted") String iscompleted,
                          @Para(value = "cqcformname") String cqcformname,
                          @Para(value = "starttime") String starttime,
-                         @Para(value = "endtime") String endtime) {
+                         @Para(value = "endtime") String endtime,
+                         @Para(value = "page") String page,
+                         @Para(value = "pageSize") String pageSize) {
         Kv kv = new Kv();
         kv.set("cstockoutqcformno", cstockoutqcformno);
         kv.set("cinvaddcode", cinvaddcode);
@@ -63,8 +65,8 @@ public class StockOutQcFormMApiController extends BaseApiController {
         kv.set("cqcformname", cqcformname);
         kv.set("starttime", starttime);
         kv.set("endtime", endtime);
-        kv.set("page", 1);
-        kv.set("pageSize", 15);
+        kv.set("page", page);
+        kv.set("pageSize", pageSize);
         renderJBoltApiRet(apiService.getDatas(kv));
     }
 
