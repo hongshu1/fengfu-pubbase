@@ -3,6 +3,7 @@ package cn.rjtech.admin.cusfieldsmappingd;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -33,10 +34,7 @@ import net.fenghaitao.parameters.FieldSetting;
 import net.fenghaitao.parameters.ImportPara;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static cn.hutool.core.text.StrPool.COMMA;
@@ -315,7 +313,9 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         }
 
         // 校验字段是否重复
-        ValidationUtils.isTrue(notExistsDuplicate(cusFieldsMappingD.getICusFieldsMappingMid(), cusFieldsMappingD.getCFormFieldCode()), "字段重复错误");
+        if (ObjUtil.notEqual(cusFieldsMappingD.getCFormFieldCode(), dbCusFieldsMappingD.getCFormFieldCode())) {
+            ValidationUtils.isTrue(notExistsDuplicate(cusFieldsMappingD.getICusFieldsMappingMid(), cusFieldsMappingD.getCFormFieldCode()), "字段重复错误");
+        }
     }
 
     /**
@@ -336,9 +336,15 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         }};
         
         DataSet dataSet = AutoExcelUtil.readExcel(file.getAbsolutePath(), importParas);
-        List<Map<String, Object>> rows = dataSet.get("sheet1");
         
-        ValidationUtils.notEmpty(rows, "Excel工作簿sheet1，导入数据不能为空");
+        Set<String> set = dataSet.getSheets();
+        ValidationUtils.isTrue(set.size() == 1, "导入Excel的工作簿只能定义一个");
+
+        String sheet = set.iterator().next();
+
+        List<Map<String, Object>> rows = dataSet.get(sheet);
+        
+        ValidationUtils.notEmpty(rows, String.format("Excel工作簿 “%s”，导入数据不能为空", sheet));
 
         // 转换编码规则
         Map<String, Pattern> patternMap = new HashMap<>(10);

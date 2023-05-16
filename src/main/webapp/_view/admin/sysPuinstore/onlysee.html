@@ -1,14 +1,19 @@
+#@jboltLayout()
+#define main()
 <div class="jbolt_page_title">
   <div class="row">
     <div class="col-12">
       <div class="card">
         <div class="card-body">
           <div class="col">
-            <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
-                class="fa fa-refresh"></i> 保存
-            </button>
-            <button onclick="submitApprove()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+            <button onclick="printSysPuinstore()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 打印</button>
+            <button onclick="submitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
+                class="fa fa-window-maximize"></i> 审核
+            </button>
+            <button onclick="resetSubmitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
+                class="fa fa-window-maximize"></i> 反审核
+            </button>
           </div>
         </div>
       </div>
@@ -18,14 +23,14 @@
         <div class="card-body">
           <form onsubmit="return false;" id="sysPuinstore_#(pageId)" action="#(action)" method="post">
             #if(sysPuinstore.AutoID??)
-            <input type="hidden" name="sysPuinstore.autoid" value="#(sysPuinstore.autoid??)"/>
+            <input id="autoid" type="hidden" name="autoid" value="#(sysPuinstore.autoid??)"/>
             #end
             <div class="row">
               <div class="col-md-4">
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">入库单号</label>
                   <div class="col-9">
-                    <input name="billno" type="text" data-with-clearbtn="true" autocomplete="off"
+                    <input id="billno" name="billno" type="text" readonly autocomplete="off"
                            class="form-control" maxlength="40" value="#(sysPuinstore.billno??)"/>
                   </div>
                 </div>
@@ -35,7 +40,7 @@
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">入库日期</label>
                   <div class="col-9">
-                    <input type="text" data-date class="form-control ml-2" maxlength="20" readonly="readonly"
+                    <input type="text" class="form-control ml-2" maxlength="20" readonly="readonly"
                            name="createdate" value="#(sysPuinstore.createdate??)"/>
                   </div>
                 </div>
@@ -55,17 +60,26 @@
                             data-value=""
                             data-value-attr="whcode"
                             data-text-attr="whname"
-                            data-select="#(whname??)"></select>
+                            data-select="#(sysPuinstore.cwhname??)"></select>
                   </div>
                 </div>
               </div>
 
               <div class="col-md-4">
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">订单号</label>
-                  <div class="col-9">
-                    <input name="sourcebillno" type="text" data-notnull="true" data-with-clearbtn="true" autocomplete="off"
+                <div class="form-group row input-group">
+                  <label class="col-sm-4 col-form-label" style="right: 30px;">订单号</label>
+                  <div class="col-7" style="right: 28px;">
+                    <input id="sourcebillno" name="sourcebillno" type="text" data-notnull="true" data-with-clearbtn="true"
+                           autocomplete="off" readonly="readonly"
                            class="form-control" maxlength="40" value="#(sysPuinstore.sourcebillno??)"/>
+                  </div>
+
+                  <div style="max-width:2px;right: 40px;" class="input-group-append">
+                    <button class="btn btn-primary" data-dialogbtn data-link-para-ele="" style="right: 40px;"
+                            data-area="90%,90%" data-title="选择数据（单选）"
+                            id="sysButton" #if(type=="edit") disabled #end
+                            data-url="/admin/purchaseReceiptList/chooseSysPuinstoreData"><i
+                        class="fa fa-search mr-1"></i></button>
                   </div>
                 </div>
               </div>
@@ -74,8 +88,9 @@
               <div class="col-md-4">
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">部门</label>
-                  <div class="col-4">
+                  <div class="col-4" style="left: 7px;">
                     <select class="form-control ml-4"
+                            id="deptcode"
                             name="deptcode"
                             data-autoload
                             data-url="admin/department/getTreeTableDatas"
@@ -83,7 +98,7 @@
                             data-text="=请选择部门="
                             data-value-attr="cdepcode"
                             data-text-attr="cdepname"
-                            data-select="#(deptname??)">
+                            data-select="#(sysPuinstore.deptcode??)">
                     </select>
                   </div>
                 </div>
@@ -102,7 +117,7 @@
                             data-value=""
                             data-value-attr="iautoid"
                             data-text-attr="cptname"
-                            data-select="#(billtype??)"></select>
+                            data-select="#(sysPuinstore.billtype??)"></select>
                   </div>
                 </div>
               </div>
@@ -111,8 +126,10 @@
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">供货单位</label>
                   <div class="col-9">
-                    <input name="vencode" type="text" readonly="readonly" data-with-clearbtn="true" autocomplete="off"
-                           class="form-control" maxlength="40" value="#(sysPuinstore.vencode??)"/>
+                    <input id="venname" name="cvenname" type="text" readonly="readonly"
+                           autocomplete="off" class="form-control" maxlength="40" value="#(sysPuinstore.cvenname??)"/>
+                    <input id="vencode" name="vencode" type="hidden" readonly="readonly"
+                           autocomplete="off" class="form-control" maxlength="40" value="#(sysPuinstore.vencode??)"/>
                   </div>
                 </div>
               </div>
@@ -141,7 +158,7 @@
                             data-value=""
                             data-value-attr="crdcode"
                             data-text-attr="crdname"
-                            data-select="#(warehousingType??)"></select>
+                            data-select="#(sysPuinstore.rdcode??)"></select>
                   </div>
                 </div>
               </div>
@@ -150,9 +167,9 @@
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">备注</label>
                   <div class="col-9">
-                    <textarea id="memo" name="memo" class="form-control" data-auto-height="20" autocomplete="off"
-                              data-show-count placeholder="=请输入备注=" maxlength="200" value="#(sysPuinstore.memo??)">
                     </textarea>
+                    <textarea id="memo" name="memo" class="form-control" placeholder="=请输入备注="
+                              type="text" maxlength="300" value="#(sysPuinstore.memo??)">#(sysPuinstore.memo??)</textarea>
                   </div>
                 </div>
               </div>
@@ -254,15 +271,15 @@
         </table>
 
         <div class="form-group row">
-          <label class="col-sm-2 col-form-label">制单人：</label>
+          <label class="col-sm-2 col-form-label" style="margin-top: 7px">制单人：</label>
           <div class="col-sm-2 col-form-label">
             <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
-                   value="#(sysPuinstore.ccreatename??)"/>
+                   placeholder="" value="#(sysPuinstore.createperson??)"/>
           </div>
-          <label class="col-sm-2 col-form-label">审核人：</label>
+          <label class="col-sm-2 col-form-label" style="margin-top: 7px">审核人：</label>
           <div class="col-sm-2 col-form-label">
             <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
-                   value="#(sysPuinstore.auditperson??)"/>
+                   placeholder="" value="#(sysPuinstore.createperson??)"/>
           </div>
         </div>
       </div>
@@ -277,6 +294,10 @@
   hideParentLayerDialogBtn(1);
 
   function submitThisForm() {
+    let vencode = $("#vencode").val();
+    console.log(vencode);
+    let venname = $("#venname").val();
+    console.log(venname);
     jboltTableSubmit("#sysPuinstoreform_TableId_#(pageId)");
   }
 
@@ -291,6 +312,7 @@
         success: function (res) {
           LayerMsgBox.success("提交成功", 600, function () {
             parent.refreshPjaxContainer();
+            refreshAllDatas();
             // parent.layer.closeAll();
           });
         }
@@ -305,7 +327,7 @@
           placeholder: "=请选择=",
           type: "autocomplete",
           url: "admin/otherout/barcodeDatas",
-          textAttr: "barcode",
+          textAttr: "spotticket",
           width: 800,
           sync: "",
           valueAttr: "spotticket",
@@ -327,7 +349,7 @@
           maxLength: 100,
           required: false,
           placeholder: "=请选择=",
-          textAttr: "invCode",
+          textAttr: "invcode",
           width: 800,
           valueAttr: "invcode",
           columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid",
@@ -340,6 +362,11 @@
             {column: "pingpai", use: "cinvname1"},
             {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
         },
+        /*        ipurchaseuomid: {
+                  type: "amount",//类型
+                  placeholder: "采购单位",
+                  tooltip: "采购单位",
+                },*/
         qty: {
           type: "amount",//类型
           placeholder: "数量",
@@ -364,8 +391,62 @@
   * 提交审批，推送至u8入库
   *
   * */
-  function submitApprove() {
+  function submitApprove(autoid) {
 
+    if (!autoid) {
+      LayerMsgBox.alert("请先保存，再提交审批！", 2);
+    }
+    var para = {
+      autoid: autoid
+    };
+
+    Ajax.post('/admin/purchaseReceiptList/autit?autoid=' + autoid, para, function (ret) {
+      if (ret.state === 'ok') {
+        parent.LayerMsgBox.closeAll();
+        parent.refreshPjaxContainer();
+      } else {
+        LayerMsgBox.alert(ret.msg, 2);
+      }
+    });
+
+  }
+
+  /*
+  * 反审核
+  * */
+  function resetSubmitApprove(autoid) {
+    var para = {
+      autoid: autoid
+    };
+
+    Ajax.post('/admin/purchaseReceiptList/resetAutitById?autoid=' + autoid, para, function (ret) {
+      if (ret.state === 'ok') {
+        parent.LayerMsgBox.closeAll();
+        parent.refreshPjaxContainer();
+      } else {
+        LayerMsgBox.alert(ret.msg, 2);
+      }
+    });
+  }
+
+  /*
+  * 打印
+  * */
+  function printSysPuinstore(autoid) {
+
+    alert("电脑端暂无打印功能");
+    /*var para = {
+      autoid: autoid
+    };
+
+    Ajax.post('/admin/purchaseReceiptList/printSysPuinstore?autoid=' + autoid, para, function (ret) {
+      if (ret.state === 'ok') {
+        parent.LayerMsgBox.closeAll();
+        parent.refreshPjaxContainer();
+      } else {
+        LayerMsgBox.alert(ret.msg, 2);
+      }
+    });*/
   }
 
   /**
@@ -400,5 +481,22 @@
     return false;
   }
 
+  /**
+   * 获得选中的订单号数据
+   * @param data
+   */
+  function setChooseDialogSelectResultFromSupplier(data) {
+    $("#deptcode").val(data.deptcode);
+    $("#deptname").val(data.deptname);
+    $("#deptcode").val(data.deptcode);
+    $("#venname").val(data.venname);
+    $("#vencode").val(data.vencode);
+    $("#invname").val(data.invname);
+    $("#defwhname").val(data.defwhname);
+    $("#sourcebillno").val(data.sourcebillno);
+    $("#billno").val(data.billno);
+  }
+
 </script>
+#end
 #end

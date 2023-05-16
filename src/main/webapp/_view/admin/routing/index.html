@@ -17,7 +17,7 @@
 			</div>
 			<!--2 版本记录 -->
 			<div class="tab-pane fade" id="tab-two_2" role="tabpanel" aria-labelledby="nav-base-tab_two_2">
-
+				#ajaxPortal("/admin/routing/versionTable","routingVersionPortal_#(pageId)",true)
 			</div>
 		</div>
 	</div>
@@ -28,11 +28,12 @@
 <script type="text/javascript">
 
 	function routing_jstree1(tree, data){
-		// $("#bomCompare_pid").val(data.id);
-		// $("#bomCompare_submit").click();
 		if (!(data.parent=='#')){
 			LayerMsgBox.error('只能选择根节点进行操作', 500);
+			return;
 		}
+		$("#bomCompare_pid1").val(data.id);
+		$("#bomCompare_submit1").click();
 	}
 
     var $tree = $("#bommasterBackCategoryTree1");
@@ -58,6 +59,6 @@
 	}
 
     // initTreehandler_1('');
-    
+
 </script>
 #end

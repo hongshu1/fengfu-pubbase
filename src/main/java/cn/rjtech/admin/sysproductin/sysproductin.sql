@@ -81,7 +81,7 @@ where 1=1
 #sql("RdStyle")
 SELECT  a.*
 FROM Bd_Rd_Style a
-where 1=1
+where a.bRdFlag = '1'
 	#if(q)
 		and (a.cRdCode like concat('%',#para(q),'%') OR a.cRdName like concat('%',#para(q),'%'))
 	#end

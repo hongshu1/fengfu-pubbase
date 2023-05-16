@@ -5,11 +5,13 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bomcompare.BomCompareService;
@@ -17,8 +19,11 @@ import cn.rjtech.admin.bommasterinv.BomMasterInvService;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
+import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -69,6 +74,12 @@ public class RoutingService extends BaseService<BomMaster> {
 	private BomMasterInvService bomMasterInvService;
 	@Inject
 	private CustomerService customerService;
+	@Inject
+	private InvPartService invPartService;
+	@Inject
+	private DictionaryService dictionaryService;
+	@Inject
+	private InventoryRoutingService inventoryRoutingService;
 	
 	@Override
 	protected BomMaster dao() {
@@ -153,79 +164,13 @@ public class RoutingService extends BaseService<BomMaster> {
 	
 		Map<Long, List<Record>> listMap = recordList.stream().filter(record -> ObjectUtil.isNotNull(record.getLong(InvPart.IPARENTINVID)))
 				.collect(Collectors.groupingBy(record -> record.getLong(InvPart.IPARENTINVID)));
-		
-		List<Record> commonList = new ArrayList<>();
-		
-		for (Record record : recordList){
-			Long iInventoryId = record.getLong(InvPart.IINVENTORYID);
-			Long pId = record.getLong(InvPart.IPID);
-			Long iAutoId = record.getLong(InvPart.IAUTOID);
-			// 虚拟机跳过。父级id为空跳过
-			if (ObjectUtil.isNull(iInventoryId) || ObjectUtil.isNull(pId)){
-				continue;
-			}
-			
-			// 复制值。
-			if (listMap.containsKey(iInventoryId)){
-				
-				List<Record> list = new ArrayList<>();
-				Map<Long, List<Record>> map = listMap.get(iInventoryId).stream().filter(obj -> ObjectUtil.isNotNull(obj.getLong(InvPart.IPID))).collect(Collectors.groupingBy(obj -> obj.getLong(InvPart.IPID)));
-				Map<Long, Long> newIdMap = new HashMap<>();
-				for (Record partRecord : listMap.get(iInventoryId)){
-					Long iPId = partRecord.getLong(InvPart.IPID);
-					Long newId = iAutoId;
-					if (ObjectUtil.isNotNull(iPId)){
-						newId = JBoltSnowflakeKit.me.nextId();
-					}
-					newIdMap.put(partRecord.getLong(InvPart.IAUTOID), newId);
-				}
-				
-				for (Record partRecord : listMap.get(iInventoryId)){
-					
-					Long iPId = partRecord.getLong(InvPart.IPID);
-					// 父id为空跳过
-					if (ObjectUtil.isNull(iPId)){
-						continue;
-					}
-					
-					// 主键id
-					Long id = partRecord.getLong(InvPart.IAUTOID);
-					// 获取新id
-					Long newId = newIdMap.get(id);
-					Record newRecord = new Record();
-					newRecord.setColumns(partRecord);
-					newRecord.set(InvPart.IAUTOID, newId);
-					Long newPId = newIdMap.get(iPId);
-					newRecord.set(InvPart.IPID, newPId);
-					list.add(newRecord);
-				}
-				commonList.addAll(list);
-			}
-		}
 	
-		// 添加共用子件
-		recordList.addAll(commonList);
+		subordinate(recordList, listMap);
 		
 		if (StrUtil.isBlank(kv.getStr("keyWords"))){
             return createJsTreeBean(kv.getStr("enableIcon"), recordList);
         }
-        
-        Map<String, Record> bomCompareMap = new HashMap<>();
-        
-  		for (Record record : recordList){
-			String pid = record.getStr("pid");
-			String id = record.getStr("id");
-			// pid等于空说明 当前为产品/半成品
-			if (StrUtil.isBlank(pid)){
-				bomCompareMap.put(id, record);
-				continue;
-			}
-			// 已近包含了父级
-			if (bomCompareMap.containsKey(pid)){
-				continue;
-			}
-			bomCompareMap.put(id, record);
-		}
+		
   
 		List<Record> allRecordList = new ArrayList<>();
     	return createJsTreeBean(kv.getStr("enableIcon"), allRecordList);
@@ -253,6 +198,68 @@ public class RoutingService extends BaseService<BomMaster> {
        return trees;
     }
 	
+	
+	/**
+	 * 根节
+	 * @param recordList
+	 */
+	public void subordinate(List<Record> recordList, Map<Long, List<Record>> listMap){
+		
+		if (CollectionUtil.isEmpty(recordList)){
+			return;
+		}
+		
+		List<Record> commonList = new ArrayList<>();
+		
+		for (Record record : recordList){
+			Long iInventoryId = record.getLong(InvPart.IINVENTORYID);
+			Long pId = record.getLong(InvPart.IPID);
+			Long iAutoId = record.getLong(InvPart.IAUTOID);
+			// 虚拟机跳过。父级id为空跳过
+			if (ObjectUtil.isNull(iInventoryId) || ObjectUtil.isNull(pId)){
+				continue;
+			}
+		
+			// 复制值。
+			if (listMap.containsKey(iInventoryId)){
+				
+				Map<Long, List<Record>> map = listMap.get(iInventoryId).stream().filter(obj -> ObjectUtil.isNotNull(obj.getLong(InvPart.IPID))).collect(Collectors.groupingBy(obj -> obj.getLong(InvPart.IPID)));
+				Map<Long, Long> newIdMap = new HashMap<>();
+				for (Record partRecord : listMap.get(iInventoryId)){
+					Long iPId = partRecord.getLong(InvPart.IPID);
+					Long newId = iAutoId;
+					if (ObjectUtil.isNotNull(iPId)){
+						newId = JBoltSnowflakeKit.me.nextId();
+					}
+					newIdMap.put(partRecord.getLong(InvPart.IAUTOID), newId);
+				}
+			
+				for (Record partRecord : listMap.get(iInventoryId)){
+				
+					Long iPId = partRecord.getLong(InvPart.IPID);
+					// 父id为空跳过
+					if (ObjectUtil.isNull(iPId)){
+						continue;
+					}
+					// 主键id
+					Long id = partRecord.getLong(InvPart.IAUTOID);
+					// 获取新id
+					Long newId = newIdMap.get(id);
+					Record newRecord = new Record();
+					newRecord.setColumns(partRecord);
+					newRecord.set(InvPart.IAUTOID, newId);
+					Long newPId = newIdMap.get(iPId);
+					newRecord.set(InvPart.IPID, newPId);
+					commonList.add(newRecord);
+				}
+			}
+		}
+		
+		if (CollectionUtil.isNotEmpty(commonList)){
+			recordList.addAll(commonList);
+		}
+	}
+ 
 	public Page<Record> getPageData(int pageNumber, int pageSize, Kv kv){
 		int end = pageNumber * pageSize;
 		if (end <= 0) {
@@ -291,8 +298,117 @@ public class RoutingService extends BaseService<BomMaster> {
 		
 	}
 	
-	public List<Record> findParentAll (){
-		return dbTemplate("routing.findRoutingAll", Okv.by("orgId", getOrgId())).find();
+	public List<Record> detail (Kv kv){
+		kv.set("orgId", getOrgId());
+		return dbTemplate("routing.getRoutingDetails", kv).find();
 	}
 	
+	public List<Record> getRoutingDetails(Kv kv){
+		
+		if (StrUtil.isBlank(kv.getStr(InvPart.IAUTOID))){
+			return null;
+		}
+		
+		// 查询当前日期
+		InvPart invPart = invPartService.findById(kv.getStr(InvPart.IAUTOID));
+		ValidationUtils.notNull(invPart, JBoltMsg.DATA_NOT_EXIST);
+		kv.set(InvPart.IPARENTINVID, invPart.getIParentInvId());
+		List<Record> details = detail(kv);
+		
+		if (CollectionUtil.isEmpty(details)){
+			return null;
+		}
+		
+		// 查询所有工艺路线
+		kv.remove(InvPart.IPARENTINVID);
+		List<Record> records = detail(kv);
+		
+		Map<Long, List<Record>> listMap = records.stream().filter(record -> ObjectUtil.isNotNull(record.getLong(InvPart.IPARENTINVID)))
+				.collect(Collectors.groupingBy(record -> record.getLong(InvPart.IPARENTINVID)));
+		
+		subordinate(details, listMap);
+		
+		List<Dictionary> processTypeList = dictionaryService.getListByTypeKey("process_type");
+		ValidationUtils.notNull(processTypeList, "数字字典未配置【工序类型-process_type】项");
+		
+		List<Dictionary> productTypeList = dictionaryService.getListByTypeKey("cproductsn_type");
+		ValidationUtils.notNull(productTypeList, "数字字典未配置【生产方式-cproductsn_type】项");
+		// 工序类型
+		Map<String, Dictionary> processTypeMap = processTypeList.stream().collect(Collectors.toMap(dictionary -> dictionary.getSn(), dictionary -> dictionary));
+		// 生产方式
+		Map<String, Dictionary> productTypeMap = productTypeList.stream().collect(Collectors.toMap(dictionary -> dictionary.getSn(), dictionary -> dictionary));
+		
+		for (Record record :details){
+			
+			String typeStr = record.getStr(InventoryRoutingConfig.ITYPE);
+			String cProductSn = record.getStr(InventoryRoutingConfig.CPRODUCTSN);
+			
+			if (processTypeMap.containsKey(typeStr)){
+				record.set(InventoryRoutingConfig.ITYPE, processTypeMap.get(typeStr).getName());
+			}
+			
+			if (productTypeMap.containsKey(cProductSn)){
+				record.set(InventoryRoutingConfig.CPRODUCTSN, productTypeMap.get(cProductSn).getName());
+			}
+		}
+		
+		return details;
+	}
+	
+	public Page<Record> findRoutingVersion(int pageNumber, int pageSize, Kv kv){
+		kv.set("orgId", getOrgId());
+		Page<Record> paginate = dbTemplate("routing.findRoutingVersion", kv).paginate(pageNumber, pageSize);
+		changeData(paginate.getList());
+		return paginate;
+	}
+	
+	public Record findByIdRoutingVersion(Long id){
+		Okv okv = Okv.by("orgId", getOrgId()).set("id", id);
+		return dbTemplate("routing.findRoutingVersion", okv).findFirst();
+	}
+	
+	
+	public void changeData(List<Record> recordList){
+		if (CollectionUtil.isEmpty(recordList)){
+			return;
+		}
+		for (Record record : recordList){
+			Boolean isEnable = record.getBoolean(InventoryRouting.ISENABLED);
+			Integer iAuditStatus = record.getInt(InventoryRouting.IAUDITSTATUS);
+			AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
+			record.set(InventoryRouting.CAUDITSTATUSTEXT, auditStatusEnum.getText());
+		}
+	}
+	
+	public Ret audit(Long routingId, Integer status) {
+		// 先校验是否存在
+		InventoryRouting inventoryRouting = inventoryRoutingService.findById(routingId);
+		ValidationUtils.notNull(inventoryRouting, "工艺路线记录不存在");
+		ValidationUtils.notNull(status, "缺少状态字段");
+		
+		AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(inventoryRouting.getIAuditStatus());
+		// 校验是否存在审批中的数据，存在审批中的数据不允许审批
+		Integer count = inventoryRoutingService.queryAwaitAudit(routingId, inventoryRouting.getIInventoryId());
+		ValidationUtils.isTrue(count==null || count==0, "当前存货存在审批中的工艺路线数据");
+		
+		DateTime date = DateUtil.date();
+//		String userName = JBoltUserKit.getUserName();
+//		Long userId = JBoltUserKit.getUserId();
+		
+		inventoryRouting.setIAuditStatus(status);
+		inventoryRouting.setDSubmitTime(date);
+		// 默认为1
+		inventoryRouting.setIAuditWay(1);
+		tx(()->{
+			// 审核通过需要更改状态（当前存货）
+			if (AuditStatusEnum.APPROVED.getValue() == status){
+				//
+				inventoryRoutingService.updateEnable(inventoryRouting.getIInventoryId(), IsOkEnum.NO.getValue());
+				inventoryRouting.setIsEnabled(true);
+			}
+			inventoryRouting.update();
+			return true;
+		});
+		return SUCCESS;
+	}
 }

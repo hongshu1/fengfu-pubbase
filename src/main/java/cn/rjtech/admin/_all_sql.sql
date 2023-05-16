@@ -479,3 +479,8 @@
 #namespace("sysSaleDeliver")
 #include("syssaledeliver/sysSaleDeliver.sql")
 #end
+
+
+#namespace("syssaledeliverplan")
+#include("syssaledeliverplan/syssaledeliverplan.sql")
+#end

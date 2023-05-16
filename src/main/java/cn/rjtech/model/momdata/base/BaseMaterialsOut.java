@@ -352,5 +352,22 @@ public abstract class BaseMaterialsOut<M extends BaseMaterialsOut<M>> extends JB
 		return getInt("state");
 	}
 
+	/**
+	 * 备注
+	 */
+	public M setMemo(java.lang.String Memo) {
+		set("Memo", Memo);
+		return (M)this;
+	}
+
+	/**
+	 * 备注
+	 */
+	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=15)
+	@JSONField(name = "memo")
+	public java.lang.String getMemo() {
+		return getStr("Memo");
+	}
+
 }
 
