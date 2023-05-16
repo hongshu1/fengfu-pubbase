@@ -7,26 +7,38 @@
             <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产备料</h1></div>
             <div class="col-sm-auto">
                 <form class="form-inline" id="SysMaterialsprepare_form_#(pageId)">
-                    <input type="text" data-date class="form-control ml-2" placeholder="日期"
+                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期"
                            maxlength="20"
-                           name="dplandate" value=""/>
-                    <select class="form-control" name="BillType"
+                           name="startTime" value=""/>
+                    <span>至</span>
+                    <input type="text" data-date class="form-control ml-2" placeholder="截止日期"
+                           maxlength="20"
+                           name="endTime" value=""/>
+                    <select class="form-control"
+                            name="cworkcode"
                             data-autoload
-                            data-url="admin/dictionary/options?key=null"
-                            data-select-type="select"
+                            data-url="admin/productionMaterial/options"
+                            data-select-type="select2"
                             data-text="=产线名称="
                             data-value=""
-                            data-value-attr="sn"></select>
-                    <select class="form-control" name="BillType"
+                            data-value-attr="cworkcode"
+                            data-text-attr="cworkname"
+                            data-select="#(cWorkName??)"></select>
+                    <select class="form-control"
+                            name="cworkshiftcode"
                             data-autoload
-                            data-url="admin/dictionary/options?key=null"
-                            data-select-type="select"
+                            data-url="admin/productionMaterial/options1"
+                            data-select-type="select2"
                             data-text="=班次名称="
                             data-value=""
-                            data-value-attr="sn"></select>
+                            data-value-attr="cworkshiftcode"
+                            data-text-attr="cworkshiftname"
+                            data-select="#(cWorkShiftName??)"></select>
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询
                     </button>
                     <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置
+                    </button>
+                    <button type="submit" class="btn btn-outline-secondary"> 提交备料
                     </button>
                 </form>
             </div>
@@ -49,18 +61,18 @@
 <td>
 	<a class="jbolt_table_editbtn" href="admin/productionMaterial/edit/${data.AutoID}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑材料备料表"><i class="fa fa-edit">备料</i></a>
 </td>
-<td>${data.auditdate}</td>
+<td>${data.statename}</td>
 <td>${data.auditperson}</td>
-<td>${data.billdate}</td>
-<td>${data.billno}</td>
-<td>${data.billtype}</td>
-<td>${data.createdate}</td>
-<td>${data.createperson}</td>
-<td>${data.modifydate}</td>
-<td>${data.modifyperson}</td>
+<td>${data.imotaskid}</td>
+<td>${data.idepartmentid}</td>
+<td>${data.iworkshiftmid}</td>
+<td>${data.dplandate}</td>
+<td>${data.invcode}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
 <td>${data.organizecode}</td>
 <td>${data.organizecode}</td>
-<td>${data.organizecode}</td>
+<td>${data.qty}</td>
 <td>${data.organizecode}</td>
 </tr>
 {@/each}
@@ -121,13 +133,20 @@
 {@/each}
 </textarea>
             <div class="jbolt_table_toolbar" id="SysMaterialsprepare1_toolbar_#(pageId)">
-                备料明细
-                <form class="form-inline" id="SysOtherin_form_#(pageId)" style="margin-top: 10px">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="现品票扫码"
-                           name="warehousingNo"
-                           value=""/>
-                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
-                </form>
+                <div class="row">
+
+                    <div class="col-auto">
+                        <form class="form-inline" id="SysOtherin_form_#(pageId)" >
+                            <div style="margin-right: 30px">
+                                <label>备料明细</label>
+                            </div>
+                            <input type="text" autocomplete="off" class="form-control" placeholder="现品票扫码"
+                                   name="warehousingNo"
+                                   value=""/>
+                            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
+                        </form>
+                    </div>
+                </div>
             </div>
             <table class="jbolt_table jbolt_main_table  table-center "
                    data-jbolttable

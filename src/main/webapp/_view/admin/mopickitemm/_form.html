@@ -146,7 +146,9 @@
 <td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
 <td>${data.coriinventoryuomid1gname}</td>
-<td>${data.iplanqty}</td>
+<td>
+     <input type="text" class="form-control " placeholder="" maxlength="20" name="iplanqty" value=""/>
+</td>
 <td>
 	<a class="jbolt_table_delbtn" href="admin/materialPreparationList/${data.isDeleted?'realDelete':'delete'}/${data.iAutoId}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger">移除</i></a>
 </td>
@@ -185,6 +187,7 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
+
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
