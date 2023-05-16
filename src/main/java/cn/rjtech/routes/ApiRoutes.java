@@ -12,6 +12,7 @@ import cn.rjtech.api.rcvdocqcformm.RcvDocQcFormMApiController;
 import cn.rjtech.api.stockoutdefect.StockoutDefectApiController;
 import cn.rjtech.api.stockoutqcformm.StockOutQcFormMApiController;
 import cn.rjtech.api.user.UserApiController;
+import cn.rjtech.api.workregion.WorkRegionmApiController;
 import cn.rjtech.common.CommonApiController;
 import com.jfinal.config.Routes;
 
@@ -41,6 +42,8 @@ public class ApiRoutes extends Routes {
     this.add("/api/instockqcformm", InStockQcFormMApiController.class);
     this.add("/api/stockoutdefect", StockoutDefectApiController.class);
     this.add("/api/qcinspection", QcInspectionApiController.class);
+    this.add("/api/workregionm", WorkRegionmApiController.class);//产线
+
 
   }
 

@@ -3,6 +3,9 @@
 <!--    <input type="hidden" name="moDoc.iautoid" value="#(moDoc.iautoid??)"/>-->
 
     <button type="submit"  onclick="submitThisForm()" class="btn btn-primary btn-sm"><i class="fa fa-save"></i>保存</button>
+   <!-- <button type="submit"  onclick="submitThisForm()" class="btn btn-danger btn-sm"><i class="fa fa-save"></i>确认</button>-->
+    <button onclick="submitApprove()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交</button>
+    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">工单号</label>
@@ -20,10 +23,12 @@
                     data-with-clearbtn="true"
                     data-select-type="select2"
                     data-tips="请选择"
-                    data-url="admin/dept/enableOptions"
-                    data-text="=请选择="
-                    data-text-attr="name"
-                    data-value-attr="id"
+                    data-url="admin/department/getTreeTableDatas"
+                    data-text="=请选择生产部门="
+                    data-text-attr="cdepname"
+                    data-value-attr="iautoid"
+                    data-linkage="true"
+                    data-sonid="workregion"
                     data-select="#(moDoc.idepartmentid??)">
             </select>
         </div>
@@ -32,13 +37,15 @@
         <div class="col-3">
             <select class="form-control"
                     data-autoload
-                    data-url="admin/equipment/selectLine"
-                    data-select-type="select"
+                    id="workregion"
+                    data-url="admin/workregionm/getOptionsByDept?pid="
+                    data-select-type="select2"
                     name="moDoc.iworkregionmid"
-                    data-refresh="true"
-                    data-rule="select"
+                    data-refresh="required"
+                    data-rule="required"
                     data-notnull="true"
-                    data-tips="请选择产线ID"
+                    data-linkage="true"
+                    data-tips="请选择产线"
                     data-text="=请选择="
                     data-value=""
                     data-value-attr="iautoid"
@@ -331,6 +338,10 @@
     function submitThisForm() {
         console.log("提交表单")
         jboltTableSubmit("#itemroutingconfigid_#(pageId)");
+    }
+    function closeHandler(){
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
     }
 </script>
 #end
