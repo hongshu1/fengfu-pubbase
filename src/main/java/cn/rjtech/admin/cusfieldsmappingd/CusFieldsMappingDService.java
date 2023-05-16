@@ -3,6 +3,7 @@ package cn.rjtech.admin.cusfieldsmappingd;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -315,7 +316,9 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         }
 
         // 校验字段是否重复
-        ValidationUtils.isTrue(notExistsDuplicate(cusFieldsMappingD.getICusFieldsMappingMid(), cusFieldsMappingD.getCFormFieldCode()), "字段重复错误");
+        if (ObjUtil.notEqual(cusFieldsMappingD.getCFormFieldCode(), dbCusFieldsMappingD.getCFormFieldCode())) {
+            ValidationUtils.isTrue(notExistsDuplicate(cusFieldsMappingD.getICusFieldsMappingMid(), cusFieldsMappingD.getCFormFieldCode()), "字段重复错误");
+        }
     }
 
     /**

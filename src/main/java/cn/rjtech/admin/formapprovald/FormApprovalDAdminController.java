@@ -44,6 +44,16 @@ public class FormApprovalDAdminController extends BaseAdminController {
 		renderJsonData(service.datas(getPageNumber(),getPageSize(),kv));
 	}
 
+	/**
+	 * 历史数据源
+	 */
+	public void historyDatas() {
+		String iFormObjectId = get("iFormObjectId");
+		Kv kv = new Kv();
+		kv.set("formId",isOk(iFormObjectId)?iFormObjectId:' ');
+		renderJsonData(service.historyDatas(getPageNumber(),getPageSize(),kv));
+	}
+
    /**
 	* 新增
 	*/

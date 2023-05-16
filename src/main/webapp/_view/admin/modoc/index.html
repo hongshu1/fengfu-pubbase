@@ -14,7 +14,17 @@
                     <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="iInventoryId" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cInvCode1" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cInvName1" value=""/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="=生产部门=" name="cDepName" value=""/>
+                    <!--<input type="text" autocomplete="off" class="form-control" placeholder="=生产部门=" name="cDepName" value=""/>-->
+                    <select class="form-control"
+                            data-autoload
+                            name="iDepartmentId"
+                            data-url="admin/department/getTreeTableDatas"
+                            data-text="=生产部门="
+                            data-text-attr="cdepname"
+                            data-value-attr="iautoid"
+                            data-value="cdepname"
+                            data-value-attr="iautoid">
+                    </select>
 
                     <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate_#(pageId)" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
                         <span style="margin-top: 5px">至</span>

@@ -1,5 +1,7 @@
 package cn.rjtech.admin.syssaledeliver;
 
+import cn.hutool.core.date.DateUtil;
+import cn.rjtech.util.Util;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -8,9 +10,14 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.SysSaledeliver;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * 销售出库
@@ -38,7 +45,71 @@ public class SysSaledeliverAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("SourceBillType"), get("BillType")));
+        //获取参数
+        Kv kv = getKv();
+        String sortColumn = getSortColumn("createDate");
+        String sortType = getSortType("desc");
+        kv.setIfNotNull("sortColumn", sortColumn);
+        kv.setIfNotNull("sortType", sortType);
+        String billNo = StringUtils.trim(kv.getStr("BillNo"));
+        String cCusCode = StringUtils.trim(kv.getStr("cCusCode"));
+        String whName = StringUtils.trim(kv.getStr("whName"));
+        kv.setIfNotNull("billNo",billNo);
+        kv.setIfNotNull("cCusCode",cCusCode);
+        kv.setIfNotNull("whName",whName);
+        setDefaultSortInfo(sortColumn, sortType);
+        renderJsonData(service.getAdminDatas(kv));
+    }
+
+    /**
+     * 执行导出excel 根据查询form表单
+     */
+    public void exportExcelByForm() {
+        //获取参数
+        Kv kv = getKv();
+        String billNo = StringUtils.trim(kv.getStr("BillNo"));
+        String cCusCode = StringUtils.trim(kv.getStr("cCusCode"));
+        String whName = StringUtils.trim(kv.getStr("whName"));
+        kv.setIfNotNull("billNo",billNo);
+        kv.setIfNotNull("cCusCode",cCusCode);
+        kv.setIfNotNull("whName",whName);
+        List<Record> rows = service.getAdminDataOfRecord(kv);
+        if (notOk(rows)) {
+            renderJsonFail("无有效数据导出");
+            return;
+        }
+        renderBytesToExcelXlsxFile(service.exportExcel(rows).setFileName("销售出库单列表_" + DateUtil.today()));
+    }
+
+    /**
+     * 执行导出excel 根据表格选中数据
+     */
+    public void exportExcelByCheckedIds() {
+        String ids = get("ids");
+        if(notOk(ids)){
+            renderJsonFail("未选择有效数据，无法导出");
+            return;
+        }
+        List<Record> rows = service.getAdminDataOfRecord(Kv.create().setIfNotBlank("ids", Util.getInSqlByIds(ids)));
+        if(notOk(rows)){
+            renderJsonFail("无有效数据导出");
+            return;
+        }
+        renderBytesToExcelXlsxFile(service.exportExcel(rows).setFileName("销售出库单列表_" + DateUtil.today()));
+    }
+
+    /**
+     * 获取行数据
+     */
+    public void getLineData() {
+        Long masId = useIfPresent(getLong("sysSaledeliver.masId",1L));
+        if (notOk(masId)){
+            renderJsonFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        Kv kv = new Kv();
+        kv.set("masId", masId);
+        renderJsonData(service.getLineData(getPageNumber(),getPageSize(),kv));
     }
 
     /**

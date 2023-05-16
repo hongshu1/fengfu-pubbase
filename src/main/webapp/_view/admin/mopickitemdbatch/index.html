@@ -1,0 +1,107 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产订单-备料单存货现品票明细</h1></div>
+            <div class="col">
+                <form class="form-inline" id="MopickitemdBatch_form_#(pageId)">
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                </form>
+            </div>
+            <div class="col-sm-auto text-right">
+
+                <button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/mopickitemdbatch/add"
+                        data-handler="jboltTablePageToFirst" data-area="800,600" tooltip
+                        data-title="新增生产订单-备料单存货现品票明细"><i class="fa fa-plus"></i></button>
+                <button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip
+                        data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        ;
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="MopickitemdBatch_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iMoPickItemDid}</td>
+<td>${data.iInventoryId}</td>
+<td>${data.iWarehouseAreaId}</td>
+<td>${data.cBarcode}</td>
+<td>${data.iQty}</td>
+<td>${data.cBatch}</td>
+<td>${data.dProdDate}</td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/mopickitemdbatch/edit/${data.iAutoId}" data-area="800,600" data-title="查看生产订单-备料单存货现品票明细"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/mopickitemdbatch/edit/${data.iAutoId}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑生产订单-备料单存货现品票明细"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/mopickitemdbatch/${data.isDeleted?'realDelete':'delete'}/${data.iAutoId}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+        <div class="jbolt_table_toolbar" id="MopickitemdBatch_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst"
+                        id="toolbar_addBtn_#(pageId)" data-title="新增生产订单-备料单存货现品票明细"
+                        data-url="admin/mopickitemdbatch/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i>
+                    新增
+                </button>
+                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable"
+                        id="toolbar_editBtn_#(pageId)" data-title="编辑生产订单-备料单存货现品票明细"
+                        data-check-handler="jboltTableGetCheckedId" data-url="admin/mopickitemdbatch/edit/"
+                        class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑
+                </button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                        id="toolbar_deleteBtn_#(pageId)" data-url="admin/mopickitemdbatch/deleteByIds?ids="
+                        data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
+                </button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
+                </button>
+            </div>
+
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="MopickitemdBatch_form_#(pageId)"
+               data-url="admin/mopickitemdbatch/datas"
+               data-rowtpl="MopickitemdBatch_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="MopickitemdBatch_page"
+               data-toolbar="MopickitemdBatch_toolbar_#(pageId)"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="100" data-column="iAutoId">主键ID</th>
+                <th data-width="100" data-column="iMoPickItemDid">备料单明细ID</th>
+                <th data-width="100" data-column="iInventoryId">存货ID</th>
+                <th data-width="100" data-column="iWarehouseAreaId">库区ID</th>
+                <th data-width="150" data-column="cBarcode">现品票</th>
+                <th data-width="100" data-column="iQty">数量</th>
+                <th data-width="150" data-column="cBatch">批次号</th>
+                <th data-min-width="160" data-column="dProdDate">生产日期</th>
+                <th data-width="80">操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

@@ -4,6 +4,7 @@ p {
 	padding: 0px;
 	font-size: 12px;
 	color: black;
+	background-color: #FFFFFF;
 }
 
 #box {
@@ -29,7 +30,8 @@ p {
 
 /* 下拉框文字样式 */
 .select {
-	margin-right: 15px;
+	margin-right: 8px;
+	display: flex;
 }
 
 .span {
@@ -42,7 +44,7 @@ p {
 
 /* 搜索重置按钮样式 */
 .button {
-	margin: 0px 10px;
+	margin: 0px 5px;
 	padding: 3px 10px;
 	background-color: #fff;
 	border: #797979 1px solid;

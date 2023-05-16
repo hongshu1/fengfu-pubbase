@@ -1,5 +1,6 @@
 package cn.rjtech.admin.annualorderd;
 
+import cn.hutool.core.util.ArrayUtil;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -13,6 +14,9 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.AnnualOrderD;
 import cn.rjtech.util.ValidationUtils;
+
+import static cn.hutool.core.text.StrPool.COMMA;
+
 /**
  * 年度计划订单年汇总 Service
  * @ClassName: AnnualOrderDService
@@ -84,7 +88,12 @@ public class AnnualOrderDService extends BaseService<AnnualOrderD> {
 	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
-		return deleteByIds(ids,true);
+		tx(() -> {
+			String[] idarry = ids.split(",");
+			update("UPDATE Co_AnnualOrderD SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
+			return true;
+		});
+		return SUCCESS;
 	}
 
 	/**
