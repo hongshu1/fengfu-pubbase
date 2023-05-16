@@ -9,20 +9,19 @@ select so.AutoID, CASE so.state
         '已审批'
 				WHEN 4 THEN
         '审批不通过'
-        END AS statename,so.state,so.warehousingNo as warehousingno,so.CreateDate,so.repositoryName as repositoryname,
-				so.warehousingType as warehousingtype,so.BillType,so.BillNo,so.VenCode,so.venName as venname,so.ModifyDate,so.remark
-,p.name
+        END AS statename,so.state,so.BillNo,so.CreateDate,so.Whcode,ck.cWhName as whname,so.RdCode,rd.cRdName as rdcodename,
+			so.BillType,so.VenCode,v.cVenName as venname,so.ModifyDate,so.memo,so.ModifyPerson,so.CreatePerson,so.AuditPerson,
+			so.AuditDate
 FROM T_Sys_OtherIn so
-LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.id
-where so.IsDeleted = '0'
-	#if(warehousingno)
-		and so.warehousingNo like concat('%',#para(warehousingno),'%')
+LEFT JOIN Bd_Warehouse ck on so.Whcode = ck.cWhCode
+LEFT JOIN Bd_Rd_Style rd on so.RdCode = rd.cRdCode
+LEFT JOIN Bd_Vendor v on so.VenCode = v.cVenCode
+where 1=1
+	#if(billno)
+		and so.BillNo like concat('%',#para(billno),'%')
 	#end
-	#if(repositoryname)
-		and so.repositoryName like concat('%',#para(repositoryname),'%')
-	#end
-	#if(deptname)
-		and so.deptName like concat('%',#para(deptname),'%')
+	#if(whname)
+		and ck.cWhName like concat('%',#para(whname),'%')
 	#end
 	#if(state)
 		and so.state = #para(state)
@@ -37,10 +36,29 @@ ORDER BY so.ModifyDate DESC
 #end
 
 #sql("dList")
-SELECT  a.*
+SELECT  a.*, t1.Barcode,
+       t1.SourceID as SourceBIllNoRow,
+       t1.SourceBillType as SourceBillType,
+       t1.SourceBillNo,t1.Qty,t1.BarcodeDate,
+       t1.BarcodeID as SourceBillID,
+       t1.MasID as SourceBillDid,
+       t1.pat,
+       i.*,
+
+       (SELECT cUomName FROM Bd_Uom WHERE i.iInventoryUomId1 = iautoid) as InventorycUomName,
+       (SELECT cUomName FROM Bd_Uom WHERE i.iPurchaseUomId = iautoid) as PurchasecUomName,
+       (SELECT cContainerCode FROM Bd_Container WHERE i.iContainerClassId = iautoid) as cContainerCode,
+       u.cUomClassName,
+       t3.cInvCCode,
+       t3.cInvCName,
+       t4.cEquipmentModelName
 FROM T_Sys_OtherInDetail a
-left join T_Sys_OtherIn i on a.MasID = i.AutoID
-where a.isDeleted = '0'
+left join  V_Sys_BarcodeDetail t1 on t1.Barcode = a.Barcode
+         LEFT JOIN bd_inventory i ON i.cinvcode = t1.Invcode
+         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
+         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
+         LEFT JOIN Bd_EquipmentModel t4 ON i.iEquipmentModelId = t4.iautoid
+where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end
