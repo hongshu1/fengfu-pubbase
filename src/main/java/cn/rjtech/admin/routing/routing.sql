@@ -91,3 +91,35 @@ WHERE
 ORDER BY
 	a.iSeq ASC
 #end
+
+#sql("findRoutingVersion")
+SELECT
+	inv.cInvCode,
+	inv.cInvCode1,
+	inv.cInvName,
+	inv.cInvName1,
+	routing.*
+FROM
+	Bd_InventoryRouting routing
+	LEFT JOIN Bd_Inventory inv ON inv.iAutoId = routing.iInventoryId
+WHERE
+    1 = 1
+    #if(orgId)
+        AND inv.iOrgId = #para(orgId)
+    #end
+    #if(id)
+         AND routing.iAutoId = #para(id)
+    #end
+    #if(cRoutingName)
+        AND (routing.cRoutingName LIKE CONCAT('%',#para(cRoutingName),'%'))
+    #end
+    #if(cInvCode)
+	   AND (inv.cInvCode LIKE CONCAT('%',#para(cInvCode),'%'))
+	#end
+	#if(cInvCode1)
+	   AND (inv.cInvCode1 LIKE CONCAT('%',#para(cInvCode1),'%'))
+	#end
+	#if(cInvName1)
+	   AND (inv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%'))
+	#end
+#end

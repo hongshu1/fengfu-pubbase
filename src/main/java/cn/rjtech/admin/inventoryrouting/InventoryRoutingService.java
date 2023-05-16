@@ -2,6 +2,7 @@ package cn.rjtech.admin.inventoryrouting;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
@@ -420,4 +421,16 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
         return findFirst(selectSql().eq("iInventoryId",iAutoId).ge("dToDate",date).le("dFromDate",date));
     }
 
+    public int updateEnable(Long invId, Integer isEnable){
+		return update(" UPDATE Bd_InventoryRouting SET isEnabled = ? WHERE iInventoryId = ?", isEnable, invId);
+	}
+	
+	
+	public Integer queryAwaitAudit(Long id, Long invId){
+		String sqlStr = "SELECT * FROM Bd_InventoryRouting WHERE iInventoryId = ? AND iAuditStatus IN (1)";
+		if (ObjectUtil.isNotNull(id)){
+			sqlStr = sqlStr.concat(" AND iAutoId <> "+id);
+		}
+		return queryInt(sqlStr, invId);
+	}
 }

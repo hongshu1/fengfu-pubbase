@@ -19,9 +19,11 @@ import cn.rjtech.admin.bommasterinv.BomMasterInvService;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
 import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -76,6 +78,8 @@ public class RoutingService extends BaseService<BomMaster> {
 	private InvPartService invPartService;
 	@Inject
 	private DictionaryService dictionaryService;
+	@Inject
+	private InventoryRoutingService inventoryRoutingService;
 	
 	@Override
 	protected BomMaster dao() {
@@ -349,5 +353,62 @@ public class RoutingService extends BaseService<BomMaster> {
 		}
 		
 		return details;
+	}
+	
+	public Page<Record> findRoutingVersion(int pageNumber, int pageSize, Kv kv){
+		kv.set("orgId", getOrgId());
+		Page<Record> paginate = dbTemplate("routing.findRoutingVersion", kv).paginate(pageNumber, pageSize);
+		changeData(paginate.getList());
+		return paginate;
+	}
+	
+	public Record findByIdRoutingVersion(Long id){
+		Okv okv = Okv.by("orgId", getOrgId()).set("id", id);
+		return dbTemplate("routing.findRoutingVersion", okv).findFirst();
+	}
+	
+	
+	public void changeData(List<Record> recordList){
+		if (CollectionUtil.isEmpty(recordList)){
+			return;
+		}
+		for (Record record : recordList){
+			Boolean isEnable = record.getBoolean(InventoryRouting.ISENABLED);
+			Integer iAuditStatus = record.getInt(InventoryRouting.IAUDITSTATUS);
+			AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
+			record.set(InventoryRouting.CAUDITSTATUSTEXT, auditStatusEnum.getText());
+		}
+	}
+	
+	public Ret audit(Long routingId, Integer status) {
+		// 先校验是否存在
+		InventoryRouting inventoryRouting = inventoryRoutingService.findById(routingId);
+		ValidationUtils.notNull(inventoryRouting, "工艺路线记录不存在");
+		ValidationUtils.notNull(status, "缺少状态字段");
+		
+		AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(inventoryRouting.getIAuditStatus());
+		// 校验是否存在审批中的数据，存在审批中的数据不允许审批
+		Integer count = inventoryRoutingService.queryAwaitAudit(routingId, inventoryRouting.getIInventoryId());
+		ValidationUtils.isTrue(count==null || count==0, "当前存货存在审批中的工艺路线数据");
+		
+		DateTime date = DateUtil.date();
+//		String userName = JBoltUserKit.getUserName();
+//		Long userId = JBoltUserKit.getUserId();
+		
+		inventoryRouting.setIAuditStatus(status);
+		inventoryRouting.setDSubmitTime(date);
+		// 默认为1
+		inventoryRouting.setIAuditWay(1);
+		tx(()->{
+			// 审核通过需要更改状态（当前存货）
+			if (AuditStatusEnum.APPROVED.getValue() == status){
+				//
+				inventoryRoutingService.updateEnable(inventoryRouting.getIInventoryId(), IsOkEnum.NO.getValue());
+				inventoryRouting.setIsEnabled(true);
+			}
+			inventoryRouting.update();
+			return true;
+		});
+		return SUCCESS;
 	}
 }
