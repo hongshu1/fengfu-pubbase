@@ -429,7 +429,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         materials.setModifyPerson(puinstore.getModifyPerson());
         materials.setModifyDate(puinstore.getModifyDate());
         materials.setState(Integer.valueOf(puinstore.getState()));
-//        materials.setMemo();
+        materials.setMemo(puinstore.getMemo());
         materialsOutService.save(materials);
     }
 
