@@ -77,7 +77,7 @@ public class SysPuinstoreDTO {
         /**/
         @XmlElement(name = "Num")
         @JSONField(name = "Num")
-        private String Num;
+        private Integer Num;
         /**/
         @XmlElement(name = "index")
         @JSONField(name = "index")
@@ -89,7 +89,7 @@ public class SysPuinstoreDTO {
         /**/
         @XmlElement(name = "ISsurplusqty")
         @JSONField(name = "ISsurplusqty")
-        private String ISsurplusqty;
+        private Boolean ISsurplusqty;
         /*创建人*/
         @XmlElement(name = "CreatePerson")
         @JSONField(name = "CreatePerson")
@@ -216,11 +216,11 @@ public class SysPuinstoreDTO {
             InvCode = invCode;
         }
 
-        public String getNum() {
+        public Integer getNum() {
             return Num;
         }
 
-        public void setNum(String num) {
+        public void setNum(Integer num) {
             Num = num;
         }
 
@@ -240,11 +240,11 @@ public class SysPuinstoreDTO {
             PackRate = packRate;
         }
 
-        public String getISsurplusqty() {
+        public boolean getISsurplusqty() {
             return ISsurplusqty;
         }
 
-        public void setISsurplusqty(String ISsurplusqty) {
+        public void setISsurplusqty(boolean ISsurplusqty) {
             this.ISsurplusqty = ISsurplusqty;
         }
 

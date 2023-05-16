@@ -5,8 +5,8 @@
         <div class="row">
             <div class="col-12">
                 <form onsubmit="return false;" class="form-inline" id="chooseDataForm"  method="post">
-                    <input style="width: 400px" type="text" autocomplete="off"  class="form-control"  placeholder="供应商名称/供应商编码"
-                           name="keywords" value="" />
+                    <input style="width: 400px" type="text" autocomplete="off"  class="form-control"  placeholder="=订单号="
+                           name="monorow" value="" />
                     <button type="submit" class="btn btn-light" ><i class="fa fa-search"></i> 查询</button>
                     <button type="reset" class="btn btn-light" ><i class="fa fa-undo"></i> 重置</button>
                 </form>
@@ -18,13 +18,15 @@
         <!-- JBoltTable的数据模板定义-->
         <script type="text/template" id="jboltTable_demotpl">
             {@each datas as data,index}
-            <tr data-id="${data.supplierId}">
+            <tr data-id="${data.moid}">
                 {@if pageSize&&pageSize>0}
                 <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
                 {@else}
                 <td>${+index+1}</td>
                 {@/if}
-                <td>${data.mOnorow}</td>
+                <td>${data.monorow}</td>
+                <td>${data.cuscode}</td>
+                <td>${data.cusname}</td>
                 <td>${data.invcode}</td>
                 <td>${data.invname}</td>
                 <td>${data.qty}</td>
@@ -51,10 +53,12 @@
             <thead>
             <tr>
                 <th data-width="60">序号</th>
-                <th data-width="160" data-column="MONoRow">供应商编号</th>
-                <th data-min-width="160" data-column="InvCode">供应商名称</th>
-                <th data-min-width="160" data-column="InvName">供应商名称</th>
-                <th data-min-width="160" data-column="qty">供应商名称</th>
+                <th data-width="160" data-column="MONoRow">订单号</th>
+                <th data-width="160" data-column="CusCode">供应商编号</th>
+                <th data-min-width="160" data-column="CusName">供应商名称</th>
+                <th data-min-width="160" data-column="InvCode">产生编号</th>
+                <th data-min-width="160" data-column="InvName">产生名称</th>
+                <th data-min-width="160" data-column="qty">生产数量</th>
                 <th data-min-width="160" data-column="ReceivedQty">入库数量</th>
             </thead>
             <tbody></tbody>
