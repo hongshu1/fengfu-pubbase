@@ -11,5 +11,6 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Bd_InventoryRouting" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class InventoryRouting extends BaseInventoryRouting<InventoryRouting> {
+    public static final String CAUDITSTATUSTEXT = "cAuditStatusText";
 }
 
