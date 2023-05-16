@@ -9,6 +9,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MaterialsOut;
@@ -72,7 +73,11 @@ public class MaterialsOutAdminController extends BaseAdminController {
 		if(materialsOut == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
-		}
+		};
+		System.out.println(materialsOut.getSourceBillDid());
+		Record MODetail = service.getrcvMODetailList(materialsOut.getSourceBillDid());
+		set("type", get("type"));
+		set("MODetail",MODetail);
 		set("materialsOut",materialsOut);
 		render("edit.html");
 	}
@@ -151,8 +156,10 @@ public class MaterialsOutAdminController extends BaseAdminController {
 	 */
 	public void getMaterialsOutLines() {
 		String autoid = get("autoid");
+		String OrgCode = getOrgCode();
 		Kv kv = new Kv();
 		kv.set("autoid",autoid== null? "" :autoid);
+		kv.set("OrgCode",OrgCode);
 		renderJsonData(service.getMaterialsOutLines(getPageNumber(), getPageSize(), kv));
 	}
 
@@ -164,18 +171,23 @@ public class MaterialsOutAdminController extends BaseAdminController {
 	}
 
 	/**
-	 * 数据源
+	 * 生產工單数据源
 	 */
 	public void moDetailData() {
 		Kv kv =new Kv();
-		kv.setIfNotNull("selectparam", get("billno"));
-		kv.setIfNotNull("selectparam", get("sourcebillno"));
-		kv.setIfNotNull("selectparam", get("whname"));
-		kv.setIfNotNull("selectparam", get("deptname"));
-		kv.setIfNotNull("iorderstatus", get("iorderstatus"));
-		kv.setIfNotNull("startdate", get("startdate"));
-		kv.setIfNotNull("enddate", get("enddate"));
+		kv.setIfNotNull("monorow", get("monorow"));
 		renderJsonData(service.moDetailData(getPageNumber(),getPageSize(),kv));
+	}
+
+	/**
+	 *  收发类别数据源
+	 */
+	public void RDStyle() {
+		String OrgCode = getOrgCode();
+		Kv kv =new Kv();
+		kv.setIfNotNull("OrgCode", OrgCode);
+		kv.setIfNotNull("bRdFlag", get("bRdFlag"));
+		renderJsonData(service.getRDStyleDatas(kv));
 	}
 
 

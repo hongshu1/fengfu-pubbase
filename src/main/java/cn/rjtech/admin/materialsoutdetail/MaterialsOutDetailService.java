@@ -1,5 +1,6 @@
 package cn.rjtech.admin.materialsoutdetail;
 
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -80,7 +81,12 @@ public class MaterialsOutDetailService extends BaseService<MaterialsOutDetail> {
 	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
-		return deleteByIds(ids,true);
+		tx(() -> {
+			ValidationUtils.notNull(ids, JBoltMsg.DATA_NOT_EXIST);
+			delete("delete from T_Sys_MaterialsOutDetail where MasID = '"+ids+"'");
+			return true;
+		});
+		return SUCCESS;
 	}
 
 	/**
