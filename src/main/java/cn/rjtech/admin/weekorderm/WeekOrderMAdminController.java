@@ -97,7 +97,8 @@ public class WeekOrderMAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        //订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
+        
+        // 订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
         switch (weekOrderM.get(0).getInt("iorderstatus")) {
             case 1:
                 weekOrderM.get(0).set("iorderstatus", "已保存");
@@ -119,7 +120,11 @@ public class WeekOrderMAdminController extends BaseAdminController {
                 break;
             case 7:
                 weekOrderM.get(0).set("iorderstatus", "已关闭");
+                break;
+            default:
+                break;
         }
+        
         set("weekOrderM", weekOrderM.get(0));
         set("mark", "SHOW");
         render("showWeekOrder.html");

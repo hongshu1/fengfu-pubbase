@@ -388,6 +388,8 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
 
                         String value = (String) entry.getValue();
 
+                        int valueLength = value.length();
+
                         StringBuilder newCode = new StringBuilder();
 
                         int length = 0;
@@ -395,11 +397,13 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
                         for (CusfieldsmappingdCodingrule rule : rules) {
                             switch (CusfieldsMappingCharEnum.toEnum(rule.getIType())) {
                                 case CODE:
-                                    newCode.append(value, length, length + rule.getILength());
+                                    newCode.append(value, length, Math.min(valueLength, length + rule.getILength()));
                                     length += rule.getILength();
                                     break;
                                 case SEPARATOR:
-                                    newCode.append(SeparatorCharEnum.toEnum(rule.getCSeparator()).getText());
+                                    if (valueLength > length) {
+                                        newCode.append(SeparatorCharEnum.toEnum(rule.getCSeparator()).getText());
+                                    }
                                     break;
                                 default:
                                     break;
