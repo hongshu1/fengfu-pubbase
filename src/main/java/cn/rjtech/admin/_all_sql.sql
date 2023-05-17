@@ -484,3 +484,7 @@
 #namespace("syssaledeliverplan")
 #include("syssaledeliverplan/syssaledeliverplan.sql")
 #end
+
+#namespace("otherdeliverylist")
+#include("otherdeliverylist/otherdeliverylist.sql")
+#end

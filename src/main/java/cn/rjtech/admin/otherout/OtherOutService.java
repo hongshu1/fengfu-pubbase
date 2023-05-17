@@ -213,7 +213,6 @@ public class OtherOutService extends BaseService<OtherOut> {
 		String userName = JBoltUserKit.getUserName();
 		Date nowDate = new Date();
 		String OrgCode =getOrgCode();
-		String billNo = BillNoUtils.getcDocNo(getOrgId(), "SCD", 5);
 
 
 		System.out.println("saveTable===>" + jBoltTable.getSave());
@@ -239,7 +238,8 @@ public class OtherOutService extends BaseService<OtherOut> {
 			String headerId = null;
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
-				OtherOut otherOut = jBoltTable.getFormBean(OtherOut.class);
+				OtherOut otherOut = jBoltTable.getFormModel(OtherOut.class,"transVouch");
+
 
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
@@ -248,30 +248,34 @@ public class OtherOutService extends BaseService<OtherOut> {
 					}
 				}
 
+				if ("submit".equals(revokeVal) && otherOut.getAutoID() == null) {
+					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
+				}
 				System.out.println("====="+otherOut.getAutoID());
 
 				if (otherOut.getAutoID() == null && "save".equals(revokeVal)) {
 					//保存
 					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-					otherOut.setIAuditStatus(0);
+					otherOut.setAuditStatus(0);
 					//订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
-					otherOut.setIOrderStatus(1);
+					otherOut.setStatus(1);
 					otherOut.setCreateDate(nowDate);
 					otherOut.setOrganizeCode(OrgCode);
 					otherOut.setCreatePerson(userName);
 					otherOut.setModifyDate(nowDate);
 					otherOut.setModifyPerson(userName);
-					otherOut.setBillNo(billNo);
+					otherOut.setType("OtherOutMES");
+					otherOut.setSourceBillType("手动新增");
 					save(otherOut);
 					headerId = otherOut.getAutoID();
 				} else {
 					if ("save".equals(revokeVal)){
-						otherOut.setIAuditStatus(0);
+						otherOut.setStatus(1);
 					}else {
 						//审核状态：1. 待审核
-						otherOut.setIAuditStatus(1);
+						otherOut.setAuditStatus(1);
 						//订单状态：2. 待审批
-						otherOut.setIOrderStatus(2);
+						otherOut.setStatus(2);
 					}
 					otherOut.setModifyDate(nowDate);
 					otherOut.setModifyPerson(userName);
@@ -328,9 +332,9 @@ public class OtherOutService extends BaseService<OtherOut> {
 				return fail(JBoltMsg.PARAM_ERROR);
 			}
 			//订单状态：2. 待审批
-			otherOut.setIOrderStatus(2);
+			otherOut.setStatus(2);
 			//审核状态： 1. 待审核
-			otherOut.setIAuditStatus(1);
+			otherOut.setAuditStatus(1);
 			success = otherOut.update();
 			if (success) {
 				//添加日志
@@ -341,13 +345,13 @@ public class OtherOutService extends BaseService<OtherOut> {
 			//TODO 由于审批流程暂未开发 先审批提审即通过
 			if (listByIds.size() > 0) {
 				for (OtherOut otherOut : listByIds) {
-					if (otherOut.getIOrderStatus() != 2) {
+					if (otherOut.getStatus() != 2) {
 						return warn("订单："+otherOut.getBillNo()+"状态不支持审批操作！");
 					}
 					//订单状态：3. 已审批
-					otherOut.setIOrderStatus(3);
+					otherOut.setStatus(3);
 					//审核状态：2. 审核通过
-					otherOut.setIAuditStatus(2);
+					otherOut.setAuditStatus(2);
 					success= otherOut.update();
 //					if(success) {
 //						//添加日志
@@ -374,13 +378,13 @@ public class OtherOutService extends BaseService<OtherOut> {
 		//TODO数据同步暂未开发 现只修改状态
 		for (OtherOut otherOut :  getListByIds(ids)) {
 			//订单状态： 3. 已审批
-			if (otherOut.getIOrderStatus() != 3) {
+			if (otherOut.getStatus() != 3) {
 				return warn("订单："+otherOut.getBillNo()+"状态不支持反审批操作！");
 			}
 			//审核状态：1. 待审核
-			otherOut.setIAuditStatus(1);
+			otherOut.setAuditStatus(1);
 			//订单状态： 2. 待审批
-			otherOut.setIOrderStatus(2);
+			otherOut.setStatus(2);
 			otherOut.update();
 		}
 		return SUCCESS;
@@ -397,7 +401,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 		}
 		OtherOut otherOut = findById(iAutoId);
 		//订单状态：7. 已关闭
-		otherOut.setIOrderStatus(7);
+		otherOut.setStatus(7);
 		boolean result = otherOut.update();
 		return ret(result);
 
@@ -414,9 +418,9 @@ public class OtherOutService extends BaseService<OtherOut> {
 		}
 		OtherOut otherOut = findById(iAutoId);
 		//订单状态：2. 待审批
-		otherOut.setIOrderStatus(1);
+		otherOut.setStatus(1);
 		//审核状态： 1. 待审核
-		otherOut.setIAuditStatus(0);
+		otherOut.setAuditStatus(0);
 		boolean result = otherOut.update();
 		return ret(result);
 	}

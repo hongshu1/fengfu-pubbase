@@ -1,6 +1,7 @@
 package cn.rjtech.admin.otherout;
 
 import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.util.BillNoUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -13,6 +14,8 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.OtherOut;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Date;
 
 /**
  * 出库管理-特殊领料单列表 Controller
@@ -64,6 +67,12 @@ public class OtherOutAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
+		OtherOut otherOut = new OtherOut();
+		String billNo = BillNoUtils.getcDocNo(getOrgId(), "LLD", 5);
+		Date nowDate = new Date();
+		otherOut.setBillNo(billNo);
+		otherOut.setBillDate(nowDate);
+		set("otherOut",otherOut);
 		render("add.html");
 	}
 
