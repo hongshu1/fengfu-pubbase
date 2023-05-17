@@ -213,7 +213,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
 		    	ValidationUtils.isTrue(monthorderm.update(), ErrorMsg.UPDATE_FAILED);
 	    	}
 	    	saveTableSubmitDatas(jBoltTable,monthorderm);
-	    	updateTableSubmitDatas(jBoltTable,monthorderm);
+	    	updateTableSubmitDatas(jBoltTable);
 	    	deleteTableSubmitDatas(jBoltTable);
 	    	return true;
     	});
@@ -235,27 +235,32 @@ public class MonthordermService extends BaseService<Monthorderm> {
     		        }
     		    }
     		}
-    		row.keep("iautoid","iinventoryid","iqty1","iqty2","iqty3","iqty4","iqty5","iqty6","iqty7","iqty8","iqty9","iqty10","iqty11","iqty12",
+    		row.keep("iinventoryid","iqty1","iqty2","iqty3","iqty4","iqty5","iqty6","iqty7","iqty8","iqty9","iqty10","iqty11","iqty12",
     				"iqty13","iqty14","iqty15","iqty16","iqty17","iqty18","iqty19","iqty20","iqty21","iqty22","iqty23","iqty24","iqty25",
-    				"iqty26","iqty27","iqty28","iqty29","iqty30","iqty31","isum");
+    				"iqty26","iqty27","iqty28","iqty29","iqty30","iqty31","isum", "cinvcode", "cinvname", "cinvcode1", "cinvname1", "cinvstd", "imonth1qty", "imonth2qty");
     		row.set("isdeleted", "0");
     		row.set("imonthordermid", monthorderm.getIAutoId());
     		row.set("iautoid", JBoltSnowflakeKit.me.nextId());
 		}
     	monthorderdService.batchSaveRecords(list);
     }
+    
     //可编辑表格提交-修改数据
-    private void updateTableSubmitDatas(JBoltTable jBoltTable,Monthorderm monthorderm){
+    private void updateTableSubmitDatas(JBoltTable jBoltTable){
     	List<Record> list = jBoltTable.getUpdateRecordList();
-    	if(CollUtil.isEmpty(list)) return;
-    	for(int i = 0;i < list.size(); i++){
-    		Record row = list.get(i);
-    		row.keep("iautoid","iinventoryid","iqty1","iqty2","iqty3","iqty4","iqty5","iqty6","iqty7","iqty8","iqty9","iqty10","iqty11","iqty12",
-    				"iqty13","iqty14","iqty15","iqty16","iqty17","iqty18","iqty19","iqty20","iqty21","iqty22","iqty23","iqty24","iqty25",
-    				"iqty26","iqty27","iqty28","iqty29","iqty30","iqty31","isum");
-    	}
+    	if(CollUtil.isEmpty(list)) {
+            return;
+        }
+        
+        for (Record row : list) {
+            row.keep("iautoid", "iinventoryid", "iqty1", "iqty2", "iqty3", "iqty4", "iqty5", "iqty6", "iqty7", "iqty8", "iqty9", "iqty10", "iqty11", "iqty12",
+                    "iqty13", "iqty14", "iqty15", "iqty16", "iqty17", "iqty18", "iqty19", "iqty20", "iqty21", "iqty22", "iqty23", "iqty24", "iqty25",
+                    "iqty26", "iqty27", "iqty28", "iqty29", "iqty30", "iqty31", "isum", "cinvcode", "cinvname", "cinvcode1", "cinvname1", "cinvstd", "imonth1qty", "imonth2qty");
+        }
+        
     	monthorderdService.batchUpdateRecords(list);
     }
+    
     //可编辑表格提交-删除数据
     private void deleteTableSubmitDatas(JBoltTable jBoltTable){
     	Object[] ids = jBoltTable.getDelete();

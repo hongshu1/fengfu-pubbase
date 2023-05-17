@@ -102,17 +102,18 @@
 			<td>${data.cinvcode}</td>
 			<td>${data.cinvcode1}</td>
 			<td>${data.cinvname1}</td>
-			<td>${data.cinvstd}</td>
+			<!--<td>${data.cinvstd}</td>-->
 
 			<td>${data.iqty}</td>
-			<td>${data.isalesuomid}</td>
+			<!--<td>${data.isalesuomid}</td>-->
 
 			<td>${data.dplanaogdate}</td>
+			<td>${data.cplanaogtime}</td>
 			<td>${data.ccode}</td>
 			<td>${data.cversion}</td>
 			<td>${data.cmemo}</td>
 			<td>
-				<a href="admin/weekorderd/delete/${data.iautoid}" name="yichuhang" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+				<a href="admin/weekorderd/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
 			</td>
 		</tr>
 		{@/each}
@@ -156,16 +157,17 @@
 			<th data-width="100" data-column="cdistrictname">收货地点</th>
 			<th data-width="100" data-column="cplancode">计划代码</th>
 			<th data-width="100" data-column="cinvcode">存货编码</th>
-			<th data-width="100" data-column="cdefine1">客户部署</th>
+			<th data-width="100" data-column="cdefine1">客户部番</th>
 			<th data-width="100" data-column="cdefine2">部品名称</th>
-			<th data-width="100" data-column="cdefine3">规格</th>
+			<!--<th data-width="100" data-column="cinvstd">规格</th>-->
 			<th data-width="100" data-column="iqty">数量</th>
-			<th data-width="100" data-column="cdefine4">销售单位</th>
+			<!--<th data-width="100" data-column="cdefine4">销售单位</th>-->
 			<th data-width="160" data-column="dplanaogdate">计划到货日期</th>
+			<th data-width="160" data-column="cplanaogtime">计划到货时间</th>
 			<th data-width="100" data-column="ccode">传票号</th>
 			<th data-width="150" data-column="cversion">版本号</th>
 			<th data-width="150" data-column="cmemo">备注</th>
-			<th data-width="150" name="yichuhang">操作</th>
+			<th data-width="150">操作</th>
 		</tr>
 		</thead>
 	</table>
@@ -225,14 +227,14 @@
 					width: 500,
 					valueAttr: "cinvcode",
 					columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,isalesuomid",
-					header:'存货编码,客户部署,部品名称,规格,销售单位',
+					header:'存货编码,客户部番,部品名称,规格,销售单位',
 					changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cdefine1", use: "cinvcode1"},
 						{column: "cdefine2", use: "cinvname1"},{column: "cdefine3", use: "cinvstd"},
 						{column: "cdefine4", use: "isalesuomid"},{column: "iInventoryId", use: "iautoid"}]
 				},
 				cdefine1: {
 					type:"text",
-					placeholder:'客户部署',
+					placeholder:'客户部番',
 					valueAttr: "cinvcode1",
 				},
 				cdefine2: {
@@ -267,6 +269,11 @@
 					placeholder:'计划到货日期',
 					required: true,
 				},
+                cplanaogtime: {
+                    type: "datetime",
+                    placeholder: '计划到货时间',
+                    required: true,
+                },
 				ccode: {
 					type:"input",
 					placeholder:'传票号',
