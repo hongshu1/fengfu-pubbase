@@ -1,8 +1,7 @@
-package cn.rjtech.admin.transvouch;
+package cn.rjtech.admin.otherdeliverylist;
 
-
+import cn.rjtech.model.momdata.MaterialsOut;
 import cn.rjtech.util.BillNoUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -13,23 +12,23 @@ import com.jfinal.aop.Before;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.TransVouch;
+import cn.rjtech.model.momdata.OtherOut;
 
 import java.util.Date;
 
 /**
- * 出库管理-调拨单列表 Controller
- * @ClassName: TransVouchAdminController
+ * 出库管理-其他出库单列表 Controller
+ * @ClassName: OtherOutAdminController
  * @author: RJ
- * @date: 2023-05-11 14:54
+ * @date: 2023-05-17 09:35
  */
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/transvouch", viewPath = "/_view/admin/transvouch")
-public class TransVouchAdminController extends BaseAdminController {
+@Path(value = "/admin/otherdeliverylist", viewPath = "/_view/admin/otherdeliverylist")
+public class OtherOutAdminController extends BaseAdminController {
 
 	@Inject
-	private TransVouchService service;
+	private OtherOutService service;
 
    /**
 	* 首页
@@ -44,38 +43,36 @@ public class TransVouchAdminController extends BaseAdminController {
 	public void datas() {
 		Kv kv =new Kv();
 		kv.setIfNotNull("selectparam", get("billno"));
-		kv.setIfNotNull("selectparam", get("iwhcode"));
-		kv.setIfNotNull("selectparam", get("owhcode"));
+		kv.setIfNotNull("selectparam", get("whname"));
+		kv.setIfNotNull("selectparam", get("deptname"));
 		kv.setIfNotNull("iorderstatus", get("iorderstatus"));
 		kv.setIfNotNull("startdate", get("startdate"));
 		kv.setIfNotNull("enddate", get("enddate"));
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),kv));
+		renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), kv));
+
 	}
 
 
 	/**
-	 * 调拨单列表明细
+	 * 其他出库单列表-明细
 	 */
-	public void getTransVouchLines() {
+	public void getOtherOutLines() {
 		String autoid = get("autoid");
 		Kv kv = new Kv();
 		kv.set("autoid",autoid== null? "null" :autoid);
-		renderJsonData(service.getTransVouchLines(getPageNumber(), getPageSize(), kv));
+		renderJsonData(service.getOtherOutLines(getPageNumber(), getPageSize(), kv));
 
 	}
-
-
-
    /**
 	* 新增
 	*/
 	public void add() {
-		TransVouch transVouch = new TransVouch();
-		String billNo = BillNoUtils.getcDocNo(getOrgId(), "LLD", 5);
+		OtherOut otherOut = new OtherOut();
+		String billNo = BillNoUtils.getcDocNo(getOrgId(), "QTCK", 5);
 		Date nowDate = new Date();
-		transVouch.setBillNo(billNo);
-		transVouch.setBillDate(nowDate);
-		set("transVouch",transVouch);
+		otherOut.setBillNo(billNo);
+		otherOut.setBillDate(nowDate);
+		set("otherOut",otherOut);
 		render("add.html");
 	}
 
@@ -83,12 +80,12 @@ public class TransVouchAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		TransVouch transVouch=service.findById(getLong(0)); 
-		if(transVouch == null){
+		OtherOut otherOut=service.findById(getLong(0));
+		if(otherOut == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("transVouch",transVouch);
+		set("otherOut",otherOut);
 		set("type", get("type"));
 		render("edit.html");
 	}
@@ -97,14 +94,14 @@ public class TransVouchAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(TransVouch.class, "transVouch")));
+		renderJson(service.save(getModel(OtherOut.class, "otherOut")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(TransVouch.class, "transVouch")));
+		renderJson(service.update(getModel(OtherOut.class, "otherOut")));
 	}
 
    /**
@@ -122,24 +119,11 @@ public class TransVouchAdminController extends BaseAdminController {
 	}
 
 	/**
-	 * 拉取产线和产线编码
-	 */
-	public void workRegionMList() {
-		//列表排序
-		String cus = get("q");
-		Kv kv = new Kv();
-		kv.set("cus", StringUtils.trim(cus));
-		renderJsonData(service.workRegionMList(kv));
-
-	}
-
-	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
 	 */
-	public void submitMulti(Integer param, String revokeVal) {
-		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal));
+	public void submitMulti(Integer param, String revokeVal ,String autoid) {
+		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal,autoid));
 	}
-
 
 	/**
 	 * 审核
@@ -174,6 +158,8 @@ public class TransVouchAdminController extends BaseAdminController {
 		}
 		renderJson(service.recall(iAutoId));
 	}
+
+
 
 
 }

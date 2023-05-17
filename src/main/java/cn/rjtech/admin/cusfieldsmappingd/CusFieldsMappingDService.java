@@ -34,8 +34,10 @@ import net.fenghaitao.parameters.FieldSetting;
 import net.fenghaitao.parameters.ImportPara;
 
 import java.io.File;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -346,8 +348,6 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         
         ValidationUtils.notEmpty(rows, String.format("Excel工作簿 “%s”，导入数据不能为空", sheet));
 
-        // 转换编码规则
-        Map<String, Pattern> patternMap = new HashMap<>(10);
         // 编码规则
         JBoltListMap<String, CusfieldsmappingdCodingrule> ruleMap = new JBoltListMap<>();
         
@@ -357,26 +357,10 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
             if (cusFieldsMappingD.getIsEncoded()) {
 
                 List<CusfieldsmappingdCodingrule> rules = cusfieldsmappingdCodingruleService.findByIcusfieldsMappingDid(cusFieldsMappingD.getIAutoId());
-
-                StringBuilder regBuilder = new StringBuilder();
-
-                for (CusfieldsmappingdCodingrule r :  rules) {
-                    switch (CusfieldsMappingCharEnum.toEnum(r.getIType())) {
-                        case CODE:
-                            regBuilder.append(String.format("\\S{%d}", r.getILength()));
-                            break;
-                        case SEPARATOR:
-                            regBuilder.append(SeparatorCharEnum.toEnum(r.getCSeparator()).getText());
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                ValidationUtils.notEmpty(rules, "缺少编码转换规则");
 
                 String filed = cusFieldsMappingD.getCFormFieldCode().toLowerCase();
 
-                // 转换为正则表达式
-                patternMap.put(filed, Pattern.compile(regBuilder.toString()));
                 ruleMap.addItems(filed, rules);
             }
         }
@@ -393,41 +377,41 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
             }
         }
         
-        if (CollUtil.isNotEmpty(patternMap)) {
+        if (CollUtil.isNotEmpty(ruleMap)) {
             // 转换编码字段
             for (Map<String, Object> row : rowDatas) {
                 // 遍历行数据
                 for (Map.Entry<String, Object> entry : row.entrySet()) {
 
-                    if (patternMap.containsKey(entry.getKey())) {
+                    if (ruleMap.containsKey(entry.getKey())) {
 
-                        Pattern pattern = patternMap.get(entry.getKey());
+                        List<CusfieldsmappingdCodingrule> rules = ruleMap.get(entry.getKey());
 
                         String value = (String) entry.getValue();
 
-                        if (pattern.matcher(value).matches()) {
-                            List<CusfieldsmappingdCodingrule> rules = ruleMap.get(entry.getKey());
+                        int valueLength = value.length();
 
-                            StringBuilder newCode = new StringBuilder();
+                        StringBuilder newCode = new StringBuilder();
 
-                            int length = 0;
+                        int length = 0;
 
-                            for (CusfieldsmappingdCodingrule rule : rules) {
-                                switch (CusfieldsMappingCharEnum.toEnum(rule.getIType())) {
-                                    case CODE:
-                                        newCode.append(value, length, length + rule.getILength());
-                                        length += rule.getILength();
-                                        break;
-                                    case SEPARATOR:
-                                        length++;
-                                        break;
-                                    default:
-                                        break;
-                                }
+                        for (CusfieldsmappingdCodingrule rule : rules) {
+                            switch (CusfieldsMappingCharEnum.toEnum(rule.getIType())) {
+                                case CODE:
+                                    newCode.append(value, length, Math.min(valueLength, length + rule.getILength()));
+                                    length += rule.getILength();
+                                    break;
+                                case SEPARATOR:
+                                    if (valueLength > length) {
+                                        newCode.append(SeparatorCharEnum.toEnum(rule.getCSeparator()).getText());
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
-
-                            entry.setValue(newCode);
                         }
+
+                        entry.setValue(newCode);
                     }
                 }
             }

@@ -12,26 +12,31 @@
 
 
 	#if(transVouch.autoid??)
-	<input type="hidden" name="autoid" value="#(transVouch.autoid??)" />
+	<input type="hidden" name="transVouch.autoid" value="#(transVouch.autoid??)" />
 	#end
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">单据号：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(transVouch.billno??)"/>
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" name="transVouch.billno" value="#(transVouch.billno??)"/>
 		</div>
 		<label class="col-sm-2 col-form-label">日期：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置需求日期" data-tips="请设置需求日期" maxlength="10" name="billdate" value="#(transVouch.billdate??)"/>
+			<input type="text"  data-date  id="purchaseDate"  class="form-control"
+				   placeholder="请输入出库日期" maxlength="30" name="transVouch.billdate"
+				   value="#datetime(transVouch.billdate??,'yyyy-MM-dd')">
 		</div>
 		<label class="col-sm-2 col-form-label">出库类别：</label>
 			<div class="col-sm-2 col-form-label">
-				<select  class="form-control"
+				<select class="form-control"
+						name="transVouch.ordcode"
 						data-autoload
-						data-text="=出库类别="
-						value="#(transVouch.ordcode??)"
-						name="ordcode">
-					<option value="">=出库类别=</option>
-				</select>
+						data-url="admin/materialDeliveryList/RDStyle?bRdFlag=0"
+						data-select-type="select2"
+						data-text="=请选择出库类别="
+						data-value=""
+						data-value-attr="crdcode"
+						data-text-attr="crdname"
+						data-select="#(transVouch.ordcode??)"></select>
 			</div>
 	</div>
 	<div class="form-group row">
@@ -49,7 +54,7 @@
 				   data-rule="required"
 				   data-notnull="true"
 				   autocomplete="off" class="form-control" maxlength="30" value="#(transVouch.iwhcode??)"/>
-			<input type="hidden" data-sync-attr="cworkcode" id="iwhcode" name="iwhcode" value="#(transVouch.iwhcode??)" />
+			<input type="hidden" data-sync-attr="cworkcode" id="iwhcode" name="transVouch.iwhcode" value="#(transVouch.iwhcode??)" />
 		</div>
 		<label class="col-sm-2 col-form-label">转出仓库：</label>
 		<div class="col-sm-2 col-form-label">
@@ -64,18 +69,21 @@
 				   data-rule="required"
 				   data-notnull="true"
 				   autocomplete="off" class="form-control" maxlength="30" value="#(transVouch.owhcode??)"/>
-			<input type="hidden" data-sync-attr="cworkcode" id="owhcode" name="owhcode" value="#(transVouch.iwhcode??)" />
+			<input type="hidden" data-sync-attr="cworkcode" id="owhcode" name="transVouch.owhcode" value="#(transVouch.iwhcode??)" />
 		</div>
 
 		<label class="col-sm-2 col-form-label">入库类别：</label>
 		<div class="col-sm-2 col-form-label">
-				<select class="form-control"
-						data-autoload
-						data-text="=入库类别="
-						value="#(transVouch.irdcode??)"
-						name="irdcode">
-					<option value="">=入库类别=</option>
-				</select>
+			<select class="form-control"
+					name="transVouch.irdcode"
+					data-autoload
+					data-url="admin/materialDeliveryList/RDStyle?bRdFlag=1"
+					data-select-type="select2"
+					data-text="=请选择入库类别="
+					data-value=""
+					data-value-attr="crdcode"
+					data-text-attr="crdname"
+					data-select="#(transVouch.irdcode??)"></select>
 		</div>
 	</div>
 	<div class="form-group row">
@@ -95,7 +103,7 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">备注：</label>
 		<div class="col-sm-2 col-form-label"  >
-			<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入备注=" type="text" maxlength="300" class="form-control border-none" name="memo" placeholder="" value="#(transVouch.memo??)">#(transVouch.memo??)</textarea>
+			<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入备注=" type="text" maxlength="300" class="form-control border-none" name="transVouch.memo" placeholder="" value="#(transVouch.memo??)">#(transVouch.memo??)</textarea>
 		</div>
 		<label class="col-sm-2 col-form-label">产品：</label>
 		<div class="col-sm-2 col-form-label">
@@ -104,7 +112,7 @@
 	</div>
 
 	<div class="form-group row">
-		<div class="col-11" style="left: 17px;">
+		<div class="col-11" style="margin-left: 180px;">
 			<div class="jbolt_page_content">
 				#render("_table_split.html")
 			</div>

@@ -480,11 +480,18 @@
 #include("syssaledeliver/sysSaleDeliver.sql")
 #end
 
-
 #namespace("syssaledeliverplan")
 #include("syssaledeliverplan/syssaledeliverplan.sql")
 #end
 
 #namespace("splitbarcode")
 #include("splitbarcode/splitbarcode.sql")
+#end
+
+#namespace("meragebarcode")
+#include("meragebarcode/meragebarcode.sql")
+#end
+
+#namespace("otherdeliverylist")
+#include("otherdeliverylist/otherdeliverylist.sql")
 #end
