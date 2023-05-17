@@ -444,29 +444,6 @@
     //     if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) monarr[1] = "29";
     //     console.log("本月还剩 " + (monarr[month]-now) + " 天！");
     // }
-    //锁定计划事件
-    // function lock(){
-    //     for (let i = 0; i < parms.lockCells.length; i++) {
-    //         //设置边框线
-    //         var border = new GC.Spread.Sheets.LineBorder
-    //         border.color = "#000";
-    //         border.style = GC.Spread.Sheets.LineStyle.thin;
-    //         var cell = sheet.getCell(parms.lockCells[i].row, parms.lockCells[i].col, GC.Spread.Sheets.SheetArea.viewport);
-    //         cell.setBorder(new GC.Spread.Sheets.LineBorder("#D0D7E5",GC.Spread.Sheets.LineStyle.thick), { all:true });
-    //     }
-    // }
-    //解锁计划事件
-    // function unLock(){
-    //     // for (let i = 0; i < parms.lockCells.length; i++) {
-    //         //设置边框线
-    //         // var border = new GC.Spread.Sheets.LineBorder
-    //         // border.color = "#fff";
-    //         // border.style = GC.Spread.Sheets.LineStyle.thin;
-    //         // var cell = sheet.getCell(parms.lockCells[i].row, parms.lockCells[i].col, GC.Spread.Sheets.SheetArea.viewport);
-    //         // cell.setBorder(new GC.Spread.Sheets.LineBorder("#fff",GC.Spread.Sheets.LineStyle.thick), { all:true });
-    //     // }
-    //     // parms.lockCells.length=0;
-    // }
     //测试向后端发送数据
     function edit(){
         // let url = "http://localhost:8081/admin/scheduproductplanyear/getApsYearPlanList";
@@ -483,61 +460,6 @@
         parms.ColumnCount=row;
         spreadResume();
     }
-    //获取年份
-    // function inYear() {
-    //     var pro1 = document.getElementById("yy");
-    //     var year = new Date().getFullYear();
-    //     var year1 = new Array();
-    //     for (var i = year - 30; i <= year + 30; i++) {
-    //         year1[i - (year - 30)] = new Option(i);
-    //         pro1.options[i - (year - 30)] = year1[i - (year - 30)];
-    //     }
-    // }
-    // //获取月份
-    // function inMonth() {
-    //     var pro2 = document.getElementById("month");
-    //     for (var i = 1; i <= 12; i++) {
-    //         pro2.options[i - 1] = new Option(i);
-    //     }
-    // }
-    // // 获取日
-    // function inDay(){
-    //     var pro3=document.getElementById("day");
-    //     for(var i = 1; i <= 31; i++){
-    //         pro3.options[i-1]=new Option(i);
-    //     }
-    // }
-    // function  append(x,y){
-    //     var option=new Option(y,y);
-    //     x.options.add(option);
-    // }
-    // function  inDate(){
-    //     var y = document.getElementsByName("year")[0].value;
-    //     var m = document.getElementsByName("month")[0].value;
-    //     var day=document.getElementsByName("day")[0];
-    //     day.innerHTML="";
-    //
-    //     if(m==1||m==3| m==5||m==7||m==8||m==10||m==12){
-    //         for(var j = 1; j <= 31; j++){
-    //             append(day,j);
-    //         }
-    //     }else if(m==4||m==6||m==9||m==11){
-    //         for(var j = 1; j <= 30; j++){
-    //             append(day,j);
-    //         }
-    //     }else if(m==2){
-    //         var flag=(y%4==0)&&(y%100!=0)||(y%400==0);
-    //         if(flag){
-    //             for(var j = 1; j <= 29; j++){
-    //                 append(day,j);
-    //             }
-    //         }else{
-    //             for(var j = 1;j <= 28; j++){
-    //                 append(day,j);
-    //             }
-    //         }
-    //     }
-    // }
 
 </script>
 #end
