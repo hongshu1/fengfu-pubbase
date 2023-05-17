@@ -1,6 +1,9 @@
 package cn.rjtech.admin.inventoryrouting;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -16,7 +19,9 @@ import cn.rjtech.admin.inventoryroutingconfigoperation.InventoryroutingconfigOpe
 import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentService;
 import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.inventoryroutingsop.InventoryRoutingSopService;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -159,76 +164,92 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 	}
 
     public List<Record> dataList(Long iinventoryid) {
-		return dbTemplate("inventoryclass.getRouings", Okv.by("iinventoryid", iinventoryid)).find();
+		List<Record> list = dbTemplate("inventoryclass.getRouings", Okv.by("iinventoryid", iinventoryid)).find();
+		if (CollectionUtil.isNotEmpty(list)){
+			for (Record record :list){
+				Integer iAuditStatus = record.getInt(InventoryRouting.IAUDITSTATUS);
+				ValidationUtils.notNull(iAuditStatus, "该工艺路线缺少审批状态！");
+				AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
+				ValidationUtils.notNull(auditStatusEnum, "未知审批状态");
+				record.set(InventoryRouting.CAUDITSTATUSTEXT, auditStatusEnum.getText());
+			}
+		}
+		return list;
 	}
 
 	public Ret saveItemRouting(JBoltTable jBoltTable, Long masterautoid) {
 		tx(() -> {
 			//新增
-			List<InventoryRouting> saveRecords = jBoltTable.getSaveModelList(InventoryRouting.class);
-			if (CollUtil.isNotEmpty(saveRecords)) {
-				for (int i = 0; i < saveRecords.size(); i++) {
+			List<InventoryRouting> inventoryRoutingList = jBoltTable.getSaveModelList(InventoryRouting.class);
+			Long userId = JBoltUserKit.getUserId();
+			String userName = JBoltUserKit.getUserName();
+			DateTime date = DateUtil.date();
+			if (CollUtil.isNotEmpty(inventoryRoutingList)) {
+				for (int i = 0; i < inventoryRoutingList.size(); i++) {
+					InventoryRouting inventoryRouting = inventoryRoutingList.get(i);
 					//被复制工艺的id 用于查询子表数据
-					Long preroutingid = saveRecords.get(i).getIAutoId();
-					Long autoid = JBoltSnowflakeKit.me.nextId();  //新生成工序的id
-					saveRecords.get(i).setIAutoId(autoid);
-					saveRecords.get(i).setIInventoryId(masterautoid);
-					saveRecords.get(i).setIsEnabled(true);
-					saveRecords.get(i).setICreateBy(JBoltUserKit.getUserId());
-					saveRecords.get(i).setCCreateName(JBoltUserKit.getUserName());
-					saveRecords.get(i).setDCreateTime(new Date());
-					if (isOk(preroutingid)) {
+					Long preRoutingId = inventoryRouting.getIAutoId();
+					Long autoId = JBoltSnowflakeKit.me.nextId();  //新生成工序的id
+					inventoryRouting.setIAutoId(autoId);
+					inventoryRouting.setIInventoryId(masterautoid);
+					inventoryRouting.setIsEnabled(false);
+					inventoryRouting.setICreateBy(userId);
+					inventoryRouting.setCCreateName(userName);
+					inventoryRouting.setDCreateTime(date);
+					inventoryRouting.setIsDeleted(false);
+					inventoryRouting.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+					if (isOk(preRoutingId)) {
 						//更新被复制工艺为停用状态
-						update("UPDATE Bd_InventoryRouting SET isEnabled = 0 WHERE iAutoId = ?",preroutingid);
+//						update("UPDATE Bd_InventoryRouting SET isEnabled = 0 WHERE iAutoId = ?",preroutingid);
 						//工序配置子表   .set("isEnabled",1)
-						List<InventoryRoutingConfig> itemroutingconfigList = inventoryRoutingConfigService.getCommonList(Okv.by("iInventoryRoutingId", preroutingid));
-						for (InventoryRoutingConfig itemroutingconfig : itemroutingconfigList) {
-							Long preconfigid = itemroutingconfig.getIAutoId();  //被复制工序配置的id
-							Long newconfigid = JBoltSnowflakeKit.me.nextId();
-							itemroutingconfig.setIAutoId(newconfigid);
-							itemroutingconfig.setIInventoryRoutingId(autoid);
+						List<InventoryRoutingConfig> inventoryRoutingConfigList = inventoryRoutingConfigService.getCommonList(Okv.by("iInventoryRoutingId", preRoutingId));
+						for (InventoryRoutingConfig inventoryRoutingConfig : inventoryRoutingConfigList) {
+							Long preConfigId = inventoryRoutingConfig.getIAutoId();  //被复制工序配置的id
+							Long newConfigId = JBoltSnowflakeKit.me.nextId();
+							inventoryRoutingConfig.setIAutoId(newConfigId);
+							inventoryRoutingConfig.setIInventoryRoutingId(autoId);
 
 							//工序子表
-							List<InventoryroutingconfigOperation> itemroutingoperationList = inventoryroutingconfigOperationService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
-							for (InventoryroutingconfigOperation table : itemroutingoperationList) {
-								Long newid = JBoltSnowflakeKit.me.nextId();
-								table.setIAutoId(newid);
-								table.setIInventoryRoutingConfigId(newconfigid);
+							List<InventoryroutingconfigOperation> inventoryRoutingConfigOperationList = inventoryroutingconfigOperationService.getCommonList(Okv.by("iInventoryRoutingConfigId", preConfigId));
+							for (InventoryroutingconfigOperation inventoryRoutingConfigOperation : inventoryRoutingConfigOperationList) {
+								Long id = JBoltSnowflakeKit.me.nextId();
+								inventoryRoutingConfigOperation.setIAutoId(id);
+								inventoryRoutingConfigOperation.setIInventoryRoutingConfigId(newConfigId);
 							}
-							inventoryroutingconfigOperationService.batchSave(itemroutingoperationList);
+							inventoryroutingconfigOperationService.batchSave(inventoryRoutingConfigOperationList);
 
 							//设备集子表
-							List<InventoryRoutingEquipment> itemroutingequipmentList = inventoryRoutingEquipmentService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
-							for (InventoryRoutingEquipment table : itemroutingequipmentList) {
-								Long newid = JBoltSnowflakeKit.me.nextId();
-								table.setIAutoId(newid);
-								table.setIInventoryRoutingConfigId(newconfigid);
+							List<InventoryRoutingEquipment> inventoryRoutingEquipmentList = inventoryRoutingEquipmentService.getCommonList(Okv.by("iInventoryRoutingConfigId", preConfigId));
+							for (InventoryRoutingEquipment inventoryRoutingEquipment : inventoryRoutingEquipmentList) {
+								Long id = JBoltSnowflakeKit.me.nextId();
+								inventoryRoutingEquipment.setIAutoId(id);
+								inventoryRoutingEquipment.setIInventoryRoutingConfigId(newConfigId);
 							}
-							inventoryRoutingEquipmentService.batchSave(itemroutingequipmentList);
+							inventoryRoutingEquipmentService.batchSave(inventoryRoutingEquipmentList);
 
 							//存货工艺工序物料集
-							List<InventoryRoutingInvc> inventoryRoutingInvcs = inventoryRoutingInvcService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
-							for (InventoryRoutingInvc table : inventoryRoutingInvcs) {
-								Long newid = JBoltSnowflakeKit.me.nextId();
-								table.setIAutoId(newid);
-								table.setIInventoryRoutingConfigId(newconfigid);
+							List<InventoryRoutingInvc> inventoryRoutingInvcList = inventoryRoutingInvcService.getCommonList(Okv.by("iInventoryRoutingConfigId", preConfigId));
+							for (InventoryRoutingInvc inventoryRoutingInvc : inventoryRoutingInvcList) {
+								Long id = JBoltSnowflakeKit.me.nextId();
+								inventoryRoutingInvc.setIAutoId(id);
+								inventoryRoutingInvc.setIInventoryRoutingConfigId(newConfigId);
 							}
-							inventoryRoutingInvcService.batchSave(inventoryRoutingInvcs);
+							inventoryRoutingInvcService.batchSave(inventoryRoutingInvcList);
 
 							//存货工序作业指导书
-							List<InventoryRoutingSop> inventoryRoutingSops = inventoryRoutingSopService.getCommonList(Okv.by("iInventoryRoutingConfigId", preconfigid));
-							for (InventoryRoutingSop table : inventoryRoutingSops) {
-								Long newid = JBoltSnowflakeKit.me.nextId();
-								table.setIAutoId(newid);
-								table.setIInventoryRoutingConfigId(newconfigid);
+							List<InventoryRoutingSop> inventoryRoutingSopList = inventoryRoutingSopService.getCommonList(Okv.by("iInventoryRoutingConfigId", preConfigId));
+							for (InventoryRoutingSop inventoryRoutingSop : inventoryRoutingSopList) {
+								Long id = JBoltSnowflakeKit.me.nextId();
+								inventoryRoutingSop.setIAutoId(id);
+								inventoryRoutingSop.setIInventoryRoutingConfigId(newConfigId);
 							}
-							inventoryRoutingSopService.batchSave(inventoryRoutingSops);
+							inventoryRoutingSopService.batchSave(inventoryRoutingSopList);
 
 						}
-						inventoryRoutingConfigService.batchSave(itemroutingconfigList);
+						inventoryRoutingConfigService.batchSave(inventoryRoutingConfigList);
 					}
 				}
-				batchSave(saveRecords, 500);
+				batchSave(inventoryRoutingList, 500);
 			}
 			//修改
 			List<InventoryRouting> updateRecords = jBoltTable.getUpdateModelList(InventoryRouting.class);
@@ -264,7 +285,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 	}
 
 	public void deleteMultiByIds(Object[] deletes) {
-		delete("DELETE FROM Bd_InventoryRouting WHERE iautoid IN (" + ArrayUtil.join(deletes, COMMA) + ") ");
+		delete("UPDATE Bd_InventoryRouting SET isDeleted = 1 WHERE iautoid IN (" + ArrayUtil.join(deletes, COMMA) + ") ");
 	}
 
 	public String getprocessViewStr(Long iinventoryroutingid) {

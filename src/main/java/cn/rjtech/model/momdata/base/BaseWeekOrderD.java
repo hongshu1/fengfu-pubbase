@@ -10,40 +10,42 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltBaseModel<M>{
-	/**主键ID*/
-	public static final String IAUTOID = "iAutoId";
-	/**周间客户订单主表ID*/
-	public static final String IWEEKORDERMID = "iWeekOrderMid";
-	/**计划代码*/
-	public static final String CPLANCODE = "cPlanCode";
-	/**收货地点ID*/
-	public static final String ICUSTOMERADDRID = "iCustomerAddrId";
-	/**存货ID*/
-	public static final String IINVENTORYID = "iInventoryId";
-	/**数量*/
-	public static final String IQTY = "iQty";
-	/**计划到货日期*/
-	public static final String DPLANAOGDATE = "dPlanAogDate";
-	/**传票号*/
-	public static final String CCODE = "cCode";
-	/**版本号*/
-	public static final String CVERSION = "cVersion";
-	/**备注*/
-	public static final String CMEMO = "cMemo";
-	/**删除状态：0. 未删除 1. 已删除*/
-	public static final String ISDELETED = "isDeleted";
-	/**存货编码*/
-	public static final String CINVCODE = "cInvCode";
-	/**存货名称*/
-	public static final String CINVNAME = "cInvName";
-	/**客户部番*/
-	public static final String CINVCODE1 = "cInvCode1";
-	/**部品名称*/
-	public static final String CINVNAME1 = "cInvName1";
-	/**规格*/
-	public static final String CINVSTD = "cInvStd";
-	/**收货地点*/
-	public static final String CDISTRICTNAME = "cDistrictName";
+    /**主键ID*/
+    public static final String IAUTOID = "iAutoId";
+    /**周间客户订单主表ID*/
+    public static final String IWEEKORDERMID = "iWeekOrderMid";
+    /**计划代码*/
+    public static final String CPLANCODE = "cPlanCode";
+    /**收货地点ID*/
+    public static final String ICUSTOMERADDRID = "iCustomerAddrId";
+    /**存货ID*/
+    public static final String IINVENTORYID = "iInventoryId";
+    /**数量*/
+    public static final String IQTY = "iQty";
+    /**计划到货日期*/
+    public static final String DPLANAOGDATE = "dPlanAogDate";
+    /**传票号*/
+    public static final String CCODE = "cCode";
+    /**版本号*/
+    public static final String CVERSION = "cVersion";
+    /**备注*/
+    public static final String CMEMO = "cMemo";
+    /**删除状态：0. 未删除 1. 已删除*/
+    public static final String ISDELETED = "isDeleted";
+    /**存货编码*/
+    public static final String CINVCODE = "cInvCode";
+    /**存货名称*/
+    public static final String CINVNAME = "cInvName";
+    /**客户部番*/
+    public static final String CINVCODE1 = "cInvCode1";
+    /**部品名称*/
+    public static final String CINVNAME1 = "cInvName1";
+    /**规格*/
+    public static final String CINVSTD = "cInvStd";
+    /**收货地点*/
+    public static final String CDISTRICTNAME = "cDistrictName";
+    /**计划到货时间*/
+    public static final String CPLANAOGTIME = "cPlanAogTime";
 	/**
 	 * 主键ID
 	 */
@@ -331,6 +333,23 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	@JSONField(name = "cdistrictname")
 	public java.lang.String getCDistrictName() {
 		return getStr("cDistrictName");
+	}
+
+	/**
+	 * 计划到货时间
+	 */
+	public M setCPlanAogTime(java.lang.String cPlanAogTime) {
+		set("cPlanAogTime", cPlanAogTime);
+		return (M)this;
+	}
+
+	/**
+	 * 计划到货时间
+	 */
+	@JBoltField(name="cplanaogtime" ,columnName="cPlanAogTime",type="String", remark="计划到货时间", required=false, maxLength=10, fixed=0, order=18)
+	@JSONField(name = "cplanaogtime")
+	public java.lang.String getCPlanAogTime() {
+		return getStr("cPlanAogTime");
 	}
 
 }
