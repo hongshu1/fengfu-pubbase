@@ -85,8 +85,8 @@
             submit:{
 
                 /*withForm:[""],*/
-                type:"cell",//cell|all
-                //params:{"orderId":3},//携带其他额外参数
+                type:"all",//cell|all
+                params:{"inventoryrouting":'#(inventoryrouting??)'},//携带其他额外参数
                 //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
                 url:"admin/inventoryroutingconfig/updateRoutingConfig",
                 success:function(res){
