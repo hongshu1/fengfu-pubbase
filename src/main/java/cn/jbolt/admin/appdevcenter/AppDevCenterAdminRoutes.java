@@ -4,7 +4,7 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.config.Routes;
 /**
  * admin后台app dev center 应用开发中心 的路由配置
- * @ClassName:  AdminRoutes   
+ * @ClassName:  AppDevCenterAdminRoutes
  * @author: JFinal学院-小木 QQ：909854136 
  * @date:   2019年3月26日 下午12:25:20   
  */
