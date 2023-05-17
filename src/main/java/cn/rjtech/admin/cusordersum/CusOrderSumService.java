@@ -14,6 +14,8 @@ import cn.rjtech.admin.annualorderm.AnnualOrderMService;
 import cn.rjtech.admin.customerworkdays.CustomerWorkDaysService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.DateUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -153,6 +155,105 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
         return null;
     }
 
+    public Ret algorithmSum(){
+
+        //当前年
+        String curYear = DateUtils.getYear();
+        //TODO:根据年份获取客户年度订单（相同客户相同物料相同年月汇总）
+        List<Record> getYearOrderList = dbTemplate("cusordersum.getYearOrderList",Kv.by("year",curYear)).find();
+        for (Record record : getYearOrderList){
+            Long iCustomerId = record.getLong("iCustomerId");
+            String cInvCode = record.getStr("cInvCode");
+            String year = record.getStr("year");
+            //循环月份
+            for (int i = 1; i <= 12; i++) {
+                BigDecimal month1Qty = record.getBigDecimal("month"+i);
+
+            }
+        }
+
+
+        //key:inv+2023-01   value:<day,qty>
+        Map<String,Map<String,BigDecimal>> invMonthMap = new HashMap<>();
+        //TODO:根据年份获取客户月度订单-每一天-月（相同客户相同物料相同年月日汇总）
+        List<Record> getMonthOrderList = dbTemplate("cusordersum.getMonthOrderList",Kv.by("year",curYear)).find();
+        for (Record record : getMonthOrderList){
+            Long iCustomerId = record.getLong("iCustomerId");
+            String cInvCode = record.getStr("cInvCode");
+            String year = record.getStr("year");
+            int month = record.getInt("month");
+            String yearMonth = year + (month < 10 ? "0"+month : month);
+
+            String key = cInvCode + yearMonth;
+            //key:day  value:qty
+            Map<String,BigDecimal> dayMap = invMonthMap.containsKey(key) ? invMonthMap.get(key) : new HashMap<>();
+
+            for (int i = 1; i <= 31; i++) {
+                String day = String.valueOf(i);
+                BigDecimal dayQty = record.getBigDecimal("day"+i) != null ? record.getBigDecimal("day"+i) : BigDecimal.ZERO;
+                if (dayMap.containsKey(day)){
+                    BigDecimal qty = dayMap.get(day).add(dayQty);
+                    dayMap.put(day,qty);
+                }else {
+                    dayMap.put(day,dayQty);
+                }
+            }
+            invMonthMap.put(key,dayMap);
+
+
+            Date date = DateUtils.parseDate(yearMonth + "01");
+            Calendar calendarMonth1 = Calendar.getInstance();
+            calendarMonth1.setTime(date);
+            calendarMonth1.add(Calendar.MONTH,1);//月份+1
+            String nextYearMonth1 = DateUtils.formatDate(calendarMonth1.getTime(),"yyyy-MM");
+            BigDecimal nextMonth1Qty = record.getBigDecimal("nextMonth1Qty");
+
+            BigDecimal nextMonth2Qty = record.getBigDecimal("nextMonth2Qty");
+        }
+
+        for (Record record : getMonthOrderList){
+            Long iCustomerId = record.getLong("iCustomerId");
+            String cInvCode = record.getStr("cInvCode");
+            String year = record.getStr("year");
+            int month = record.getInt("month");
+            String yearMonth = year + (month < 10 ? "0"+month : month);
+
+            String key = cInvCode + yearMonth;
+            //key:day  value:qty
+            Map<String,BigDecimal> dayMap = invMonthMap.containsKey(key) ? invMonthMap.get(key) : new HashMap<>();
+
+            for (int i = 1; i <= 31; i++) {
+                String day = String.valueOf(i);
+                BigDecimal dayQty = record.getBigDecimal("day"+i) != null ? record.getBigDecimal("day"+i) : BigDecimal.ZERO;
+                if (dayMap.containsKey(day)){
+                    BigDecimal qty = dayMap.get(day).add(dayQty);
+                    dayMap.put(day,qty);
+                }else {
+                    dayMap.put(day,dayQty);
+                }
+            }
+            invMonthMap.put(key,dayMap);
+
+
+            Date date = DateUtils.parseDate(yearMonth + "01");
+            Calendar calendarMonth1 = Calendar.getInstance();
+            calendarMonth1.setTime(date);
+            calendarMonth1.add(Calendar.MONTH,1);//月份+1
+            String nextYearMonth1 = DateUtils.formatDate(calendarMonth1.getTime(),"yyyy-MM");
+            BigDecimal nextMonth1Qty = record.getBigDecimal("nextMonth1Qty");
+
+            BigDecimal nextMonth2Qty = record.getBigDecimal("nextMonth2Qty");
+        }
+
+
+
+
+        //CustomerWorkDays customerWorkDays = workDaysService.findByICustomerId(annualOrderM.getICustomerId());
+
+
+        return SUCCESS;
+    }
+
     /**
      * 审批
      *
@@ -160,6 +261,9 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
      * @return
      */
     public Ret approve(AnnualOrderM annualOrderM) {
+
+        List<CusOrderSum> cusOrderSumList = new ArrayList<>();
+
         CusOrderSum cusOrderSum = createCusOrderSum();
 
         List<AnnualOrderD> iAnnualOrderDList = annualOrderDService.findByMid(annualOrderM.getIAutoId());
@@ -224,7 +328,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
                         //  2. 待审核
                         annualOrderM.setIOrderStatus(2);
                         annualOrderM.update();
-                        return fail("请配置客户档案工作天数！");
+                        ValidationUtils.error("请配置客户档案工作天数！");
                     }
                     //月
                     cusOrderSum.setIMonth(annualorderdQty.getIMonth());
@@ -240,6 +344,11 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
             }
 
         }
+
+        tx(() -> {
+
+            return true;
+        });
         return SUCCESS;
     }
 
