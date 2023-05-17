@@ -357,6 +357,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
             if (cusFieldsMappingD.getIsEncoded()) {
 
                 List<CusfieldsmappingdCodingrule> rules = cusfieldsmappingdCodingruleService.findByIcusfieldsMappingDid(cusFieldsMappingD.getIAutoId());
+                ValidationUtils.notEmpty(rules, "缺少编码转换规则");
 
                 String filed = cusFieldsMappingD.getCFormFieldCode().toLowerCase();
 
