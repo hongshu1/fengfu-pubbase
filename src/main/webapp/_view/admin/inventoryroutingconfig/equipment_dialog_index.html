@@ -20,30 +20,34 @@
 		<!-- JBoltTable的数据模板定义-->
 		<textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iautoid}" >
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.cequipmentcode}</td>
-<td hidden>${data.iequipmentid}</td>
-<td>${data.cequipmentname}</td>
-<td>${data.cdepname}</td>
-<td>${data.workname}</td>
-<td>${data.cmemo}</td>
-	<td>
-	<a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger"></i></a>
-</td>
-</tr>
+	<tr data-id="${data.iautoid}" >
+		<td>${pageNumber,pageSize,index | rownum}</td>
+		<td>${data.cequipmentcode}</td>
+		<td hidden>${data.iequipmentid}</td>
+		<td>${data.cequipmentname}</td>
+		<td>${data.cdepname}</td>
+		<td>${data.workname}</td>
+		<td>${data.cmemo}</td>
+		#if(ObjectUtil.isEmpty(routingId))
+			<td>
+				<a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger"></i></a>
+			</td>
+		#end
+	</tr>
 {@/each}
 </textarea>
 		<!-- 工具条 toolbar -->
 		<div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
 			<div class="" role="group" aria-label="btn-group">
 				<div>
-					<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-						<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
-						<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
-						<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
-						<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
-					</div>
+					#if(ObjectUtil.isEmpty(routingId))
+						<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+							<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+							<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+							<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+							<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
+						</div>
+					#end
 				</div>
 			</div>
 			<div class="clearfix"></div>
@@ -73,7 +77,9 @@
 				<th data-column="cdepname">使用部门</th>
 				<th data-column="workname">产线名称</th>
 				<th data-column="cmemo">备注</th>
-				<th >操作</th>
+				#if(ObjectUtil.isEmpty(routingId))
+					<th >操作</th>
+				#end
 			</tr>
 			</thead>
 			<tbody>

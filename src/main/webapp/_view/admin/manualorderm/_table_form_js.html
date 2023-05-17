@@ -4,7 +4,7 @@
         var editableTableOptions={
             trigger:"click",
             initRowCount:0,
-            maxRowCount:30,
+            maxRowCount:9999,
             //keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
             submit:{
                 withForm:["ManualOrderM_Form_#(pageId)"],
@@ -376,5 +376,85 @@
         };
         return editableTableOptions;
     }
+
+    function uploadHandler(uploader, type, fileInput, res) {
+        jboltTableClear("#manualorderd_#(pageId)");
+
+        var data = res.data;
+        if (!data || data.length === 0) {
+            LayerMsgBox.alert('导入数据不能为空', 2);
+            return;
+        }
+
+        var arr = [];
+
+        $.each(data, function (idx, row) {
+            if (row.cinvcode1) {
+                arr.push(row.cinvcode1);
+            }
+        });
+
+        var para = {
+            cinvcode1: arr.join(',')
+        };
+
+        var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
+
+        Ajax.post('admin/inventory/fetchByCinvcode1s', para, function (ret) {
+
+            LayerMsgBox.close(index);
+
+            if (ret.state === 'ok') {
+
+                // 导入行数据
+                $.each(data, function (idx, r) {
+
+                    // 存货数据
+                    $.each(ret.data, function (idx, row) {
+
+                        if (r.cinvcode1 === row.cinvcode1) {
+                            if (row.cnt === 0) {
+                                r.error = '部品番号不存在！';
+                            } else if (row.cnt === 1) {
+                                r.iinventoryid = row.iautoid;
+                                r.cinvcode = row.cinvcode;
+                                r.cinvname1 = row.cinvname1;
+                                r.cinvstd = row.cinvstd;
+                                r.cuomname = row.cuomname;
+                            } else {
+                                r.error = '存在' + row.cnt + '条匹配的存货记录，请手工选择存货！';
+                            }
+                        }
+
+                    });
+
+                    if (!r.error) {
+                        if (r.cinvcode1 && !r.iinventoryid) {
+                            r.error = '部品番号缺少对应存货！';
+                        }
+                    }
+
+                    // 数量精度处理
+                    $.each(r, function (key, val) {
+                        if (key.startsWith('iqty')) {
+                            var iqty = parseFloat(val);
+                            iqty = parseFloat(iqty);
+                            r[key] = iqty.toFixed(0);
+                        }
+                    });
+
+                });
+                console.log(data)
+
+                jboltTableInsertRow('#manualorderd_#(pageId)', data);
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        }, function () {
+            LayerMsgBox.close(index);
+        });
+    }
+
+
 
 </script>

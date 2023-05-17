@@ -715,8 +715,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 map.put("cInvName1",info.getStr("cInvName1"));
 
 
-                Map<String,Object> dayMap = new HashMap<>();
-
                 System.out.println("需求："+inv+"："+ Arrays.toString(planMap.get(inv)));
                 int[] invPlan = planMap.get(inv);
 
@@ -729,16 +727,24 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 System.out.println("3S："+inv+"："+ Arrays.toString(invPlanMap3S.get(inv)));
                 int[] invPlan3S = invPlanMap3S.get(inv);
 
+                Map<String,Object> dayMap = new HashMap<>();
+
+                List<Object> objectList = new ArrayList<>();
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     Map<String,Object> record = new HashMap<>();
-                    record.put("iQty1",invPlan[i]);
-                    record.put("iQty2",invPlan1S[i]);
-                    record.put("iQty3",invPlan2S[i]);
-                    record.put("iQty4",invPlan3S[i]);
+                    record.put("shiyong",invPlan[i]);
+                    record.put("1S",invPlan1S[i]);
+                    record.put("2S",invPlan2S[i]);
+                    record.put("3S",invPlan3S[i]);
+                    record.put("zaiku",0);
+                    record.put("tianshu",0);
 
-                    dayMap.put(scheduDateList.get(i),record);
+                    record.put("date",scheduDateList.get(i));//
+
+                    objectList.add(record);
+                    //dayMap.put(scheduDateList.get(i),record);
                 }
-                map.put("day",dayMap);
+                map.put("day",objectList);
                 dataList.add(map);
             }
         }

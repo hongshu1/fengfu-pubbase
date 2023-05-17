@@ -108,20 +108,20 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	}
 
 	public void invc_dialog_index(){
+		keepPara();
 		set("configid",getLong("iautoid"));
-		set("iinventoryid",getLong("iinventoryid"));
-		set("isAdd", get("isAdd"));
 		render("invc_dialog_index.html");
 	}
 
 	public void equipment_dialog_index(){
+		keepPara();
 		set("configid",getLong("iautoid"));
 		render("equipment_dialog_index.html");
 	}
 
 	public void drawing_dialog_index(){
+		keepPara();
 		set("configid",getLong("iautoid"));
-		
 		render("drawing_dialog_index.html");
 	}
 

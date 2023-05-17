@@ -31,9 +31,11 @@
 <td>${data.cpath}</td>
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
-	<td>
-	<a class="btn" onclick="jboltTableRemoveRow(this)"  ><i class="fa fa-remove c-danger"></i></a>
-</td>
+	#if(ObjectUtil.isEmpty(routingId))
+		<td>
+			<a class="btn" onclick="jboltTableRemoveRow(this)"  ><i class="fa fa-remove c-danger"></i></a>
+		</td>
+	#end
 </tr>
 {@/each}
 </textarea>
@@ -41,12 +43,14 @@
 		<div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
 			<div class="" role="group" aria-label="btn-group">
 				<div>
-					<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-						<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
-						<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
-						<button onclick="refreshPjaxContainer(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
-						<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
-					</div>
+					#if(ObjectUtil.isEmpty(routingId))
+						<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+							<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+							<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+							<button onclick="refreshPjaxContainer(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+							<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
+						</div>
+					#end
 				</div>
 			</div>
 			<div class="clearfix"></div>
@@ -79,7 +83,9 @@
 				<th data-width="150" data-column="cpath">路径</th>
 				<th data-width="120" data-column="ccreatename">创建人</th>
 				<th data-width="150" data-column="dcreatetime">创建时间</th>
-				<th data-width="80" >操作</th>
+				#if(ObjectUtil.isEmpty(routingId))
+					<th data-width="80" >操作</th>
+				#end
 			</tr>
 			</thead>
 			<tbody>

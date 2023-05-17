@@ -11,6 +11,8 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.SysMaterialsprepare;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.List;
+
 /**
  * 材料备料表
  *
@@ -36,7 +38,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
      *
      * @param pageNumber 第几页
      * @param pageSize   每页几条数据
-     * @param BillType   单据类型;MO 生产订单  SoDeliver销售发货单
+     * @param   ;MO 生产订单  SoDeliver销售发货单
      * @return
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
@@ -113,4 +115,11 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         return null;
     }
 
+    public List<Record> options() {
+        return dbTemplate("materialsprepare.findColumns", Kv.of("isenabled", "1")).find();
+    }
+
+    public List<Record> options1() {
+        return dbTemplate("materialsprepare.findColumns1", Kv.of("isenabled", "1")).find();
+    }
 }

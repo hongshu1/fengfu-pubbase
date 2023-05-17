@@ -12,6 +12,7 @@ import com.jfinal.aop.Before;
 
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -80,7 +81,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * 批量审批
      * */
     public void autitByIds() {
-        renderJson(service.autitByIds(get("ids")));
+        renderJson(service.resetAutitByIds(get("ids")));
     }
 
     /*
@@ -91,10 +92,26 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /*
+     * 反审批
+     * */
+    public void resetAutitById() {
+        Kv kv = getKv();
+        service.resetAutitById(kv.getStr("autoid"));
+    }
+
+    /*
      * 审批
      * */
     public void autit() {
-        renderJson(service.autit(getLong(0)));
+        Kv kv = getKv();
+        Long aLong = getLong(0);
+        Long autoid = null;
+        if (kv.getLong("autoid") != null) {
+            autoid = kv.getLong("autoid");
+        } else if (aLong != null) {
+            autoid = aLong;
+        }
+        renderJson(service.autit(autoid));
     }
 
     /*
@@ -111,10 +128,10 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /*
-     * 点开查看页面，自动加载table数据
+     * 打印
      * */
-    public void autoGetOnlySeeDatas() {
-        renderJson();
+    public void printSysPuinstore() {
+
     }
 
     /**

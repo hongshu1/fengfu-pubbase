@@ -10,78 +10,86 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JBoltBaseModel<M>{
-    /**主键ID*/
-    public static final String IAUTOID = "iAutoId";
-    /**手配订单主表ID*/
-    public static final String IMANUALORDERMID = "iManualOrderMid";
-    /**存货ID*/
-    public static final String IINVENTORYID = "iInventoryId";
-    /**1日数量*/
-    public static final String IQTY1 = "iQty1";
-    /**2日数量*/
-    public static final String IQTY2 = "iQty2";
-    /**3日数量*/
-    public static final String IQTY3 = "iQty3";
-    /**4日数量*/
-    public static final String IQTY4 = "iQty4";
-    /**5日数量*/
-    public static final String IQTY5 = "iQty5";
-    /**6日数量*/
-    public static final String IQTY6 = "iQty6";
-    /**7日数量*/
-    public static final String IQTY7 = "iQty7";
-    /**8日数量*/
-    public static final String IQTY8 = "iQty8";
-    /**9日数量*/
-    public static final String IQTY9 = "iQty9";
-    /**10日数量*/
-    public static final String IQTY10 = "iQty10";
-    /**11日数量*/
-    public static final String IQTY11 = "iQty11";
-    /**12日数量*/
-    public static final String IQTY12 = "iQty12";
-    /**13日数量*/
-    public static final String IQTY13 = "iQty13";
-    /**14日数量*/
-    public static final String IQTY14 = "iQty14";
-    /**15日数量*/
-    public static final String IQTY15 = "iQty15";
-    /**16日数量*/
-    public static final String IQTY16 = "iQty16";
-    /**17日数量*/
-    public static final String IQTY17 = "iQty17";
-    /**18日数量*/
-    public static final String IQTY18 = "iQty18";
-    /**19日数量*/
-    public static final String IQTY19 = "iQty19";
-    /**20日数量*/
-    public static final String IQTY20 = "iQty20";
-    /**21日数量*/
-    public static final String IQTY21 = "iQty21";
-    /**22日数量*/
-    public static final String IQTY22 = "iQty22";
-    /**23日数量*/
-    public static final String IQTY23 = "iQty23";
-    /**24日数量*/
-    public static final String IQTY24 = "iQty24";
-    /**25日数量*/
-    public static final String IQTY25 = "iQty25";
-    /**26日数量*/
-    public static final String IQTY26 = "iQty26";
-    /**27日数量*/
-    public static final String IQTY27 = "iQty27";
-    /**28日数量*/
-    public static final String IQTY28 = "iQty28";
-    /**29日数量*/
-    public static final String IQTY29 = "iQty29";
-    /**30日数量*/
-    public static final String IQTY30 = "iQty30";
-    /**31日数量*/
-    public static final String IQTY31 = "iQty31";
-    /**合计数量*/
-    public static final String ISUM = "iSum";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "isDeleted";
+	/**主键ID*/
+	public static final String IAUTOID = "iAutoId";
+	/**手配订单主表ID*/
+	public static final String IMANUALORDERMID = "iManualOrderMid";
+	/**存货ID*/
+	public static final String IINVENTORYID = "iInventoryId";
+	/**1日数量*/
+	public static final String IQTY1 = "iQty1";
+	/**2日数量*/
+	public static final String IQTY2 = "iQty2";
+	/**3日数量*/
+	public static final String IQTY3 = "iQty3";
+	/**4日数量*/
+	public static final String IQTY4 = "iQty4";
+	/**5日数量*/
+	public static final String IQTY5 = "iQty5";
+	/**6日数量*/
+	public static final String IQTY6 = "iQty6";
+	/**7日数量*/
+	public static final String IQTY7 = "iQty7";
+	/**8日数量*/
+	public static final String IQTY8 = "iQty8";
+	/**9日数量*/
+	public static final String IQTY9 = "iQty9";
+	/**10日数量*/
+	public static final String IQTY10 = "iQty10";
+	/**11日数量*/
+	public static final String IQTY11 = "iQty11";
+	/**12日数量*/
+	public static final String IQTY12 = "iQty12";
+	/**13日数量*/
+	public static final String IQTY13 = "iQty13";
+	/**14日数量*/
+	public static final String IQTY14 = "iQty14";
+	/**15日数量*/
+	public static final String IQTY15 = "iQty15";
+	/**16日数量*/
+	public static final String IQTY16 = "iQty16";
+	/**17日数量*/
+	public static final String IQTY17 = "iQty17";
+	/**18日数量*/
+	public static final String IQTY18 = "iQty18";
+	/**19日数量*/
+	public static final String IQTY19 = "iQty19";
+	/**20日数量*/
+	public static final String IQTY20 = "iQty20";
+	/**21日数量*/
+	public static final String IQTY21 = "iQty21";
+	/**22日数量*/
+	public static final String IQTY22 = "iQty22";
+	/**23日数量*/
+	public static final String IQTY23 = "iQty23";
+	/**24日数量*/
+	public static final String IQTY24 = "iQty24";
+	/**25日数量*/
+	public static final String IQTY25 = "iQty25";
+	/**26日数量*/
+	public static final String IQTY26 = "iQty26";
+	/**27日数量*/
+	public static final String IQTY27 = "iQty27";
+	/**28日数量*/
+	public static final String IQTY28 = "iQty28";
+	/**29日数量*/
+	public static final String IQTY29 = "iQty29";
+	/**30日数量*/
+	public static final String IQTY30 = "iQty30";
+	/**31日数量*/
+	public static final String IQTY31 = "iQty31";
+	/**合计数量*/
+	public static final String ISUM = "iSum";
+	/**删除状态：0. 未删除 1. 已删除*/
+	public static final String ISDELETED = "isDeleted";
+	/**存货编码*/
+	public static final String CINVCODE = "cInvCode";
+	/**客户部番*/
+	public static final String CINVCODE1 = "cInvCode1";
+	/**部品名称*/
+	public static final String CINVNAME1 = "cInvName1";
+	/**规格*/
+	public static final String CINVSTD = "cInvStd";
 	/**
 	 * 主键ID
 	 */
@@ -144,7 +152,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 1日数量
 	 */
-	@JBoltField(name="iqty1" ,columnName="iQty1",type="BigDecimal", remark="1日数量", required=false, maxLength=18, fixed=2, order=4)
+	@JBoltField(name="iqty1" ,columnName="iQty1",type="BigDecimal", remark="1日数量", required=false, maxLength=24, fixed=6, order=4)
 	@JSONField(name = "iqty1")
 	public java.math.BigDecimal getIQty1() {
 		return getBigDecimal("iQty1");
@@ -161,7 +169,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 2日数量
 	 */
-	@JBoltField(name="iqty2" ,columnName="iQty2",type="BigDecimal", remark="2日数量", required=false, maxLength=18, fixed=2, order=5)
+	@JBoltField(name="iqty2" ,columnName="iQty2",type="BigDecimal", remark="2日数量", required=false, maxLength=24, fixed=6, order=5)
 	@JSONField(name = "iqty2")
 	public java.math.BigDecimal getIQty2() {
 		return getBigDecimal("iQty2");
@@ -178,7 +186,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 3日数量
 	 */
-	@JBoltField(name="iqty3" ,columnName="iQty3",type="BigDecimal", remark="3日数量", required=false, maxLength=18, fixed=2, order=6)
+	@JBoltField(name="iqty3" ,columnName="iQty3",type="BigDecimal", remark="3日数量", required=false, maxLength=24, fixed=6, order=6)
 	@JSONField(name = "iqty3")
 	public java.math.BigDecimal getIQty3() {
 		return getBigDecimal("iQty3");
@@ -195,7 +203,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 4日数量
 	 */
-	@JBoltField(name="iqty4" ,columnName="iQty4",type="BigDecimal", remark="4日数量", required=false, maxLength=18, fixed=2, order=7)
+	@JBoltField(name="iqty4" ,columnName="iQty4",type="BigDecimal", remark="4日数量", required=false, maxLength=24, fixed=6, order=7)
 	@JSONField(name = "iqty4")
 	public java.math.BigDecimal getIQty4() {
 		return getBigDecimal("iQty4");
@@ -212,7 +220,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 5日数量
 	 */
-	@JBoltField(name="iqty5" ,columnName="iQty5",type="BigDecimal", remark="5日数量", required=false, maxLength=18, fixed=2, order=8)
+	@JBoltField(name="iqty5" ,columnName="iQty5",type="BigDecimal", remark="5日数量", required=false, maxLength=24, fixed=6, order=8)
 	@JSONField(name = "iqty5")
 	public java.math.BigDecimal getIQty5() {
 		return getBigDecimal("iQty5");
@@ -229,7 +237,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 6日数量
 	 */
-	@JBoltField(name="iqty6" ,columnName="iQty6",type="BigDecimal", remark="6日数量", required=false, maxLength=18, fixed=2, order=9)
+	@JBoltField(name="iqty6" ,columnName="iQty6",type="BigDecimal", remark="6日数量", required=false, maxLength=24, fixed=6, order=9)
 	@JSONField(name = "iqty6")
 	public java.math.BigDecimal getIQty6() {
 		return getBigDecimal("iQty6");
@@ -246,7 +254,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 7日数量
 	 */
-	@JBoltField(name="iqty7" ,columnName="iQty7",type="BigDecimal", remark="7日数量", required=false, maxLength=18, fixed=2, order=10)
+	@JBoltField(name="iqty7" ,columnName="iQty7",type="BigDecimal", remark="7日数量", required=false, maxLength=24, fixed=6, order=10)
 	@JSONField(name = "iqty7")
 	public java.math.BigDecimal getIQty7() {
 		return getBigDecimal("iQty7");
@@ -263,7 +271,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 8日数量
 	 */
-	@JBoltField(name="iqty8" ,columnName="iQty8",type="BigDecimal", remark="8日数量", required=false, maxLength=18, fixed=2, order=11)
+	@JBoltField(name="iqty8" ,columnName="iQty8",type="BigDecimal", remark="8日数量", required=false, maxLength=24, fixed=6, order=11)
 	@JSONField(name = "iqty8")
 	public java.math.BigDecimal getIQty8() {
 		return getBigDecimal("iQty8");
@@ -280,7 +288,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 9日数量
 	 */
-	@JBoltField(name="iqty9" ,columnName="iQty9",type="BigDecimal", remark="9日数量", required=false, maxLength=18, fixed=2, order=12)
+	@JBoltField(name="iqty9" ,columnName="iQty9",type="BigDecimal", remark="9日数量", required=false, maxLength=24, fixed=6, order=12)
 	@JSONField(name = "iqty9")
 	public java.math.BigDecimal getIQty9() {
 		return getBigDecimal("iQty9");
@@ -297,7 +305,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 10日数量
 	 */
-	@JBoltField(name="iqty10" ,columnName="iQty10",type="BigDecimal", remark="10日数量", required=false, maxLength=18, fixed=2, order=13)
+	@JBoltField(name="iqty10" ,columnName="iQty10",type="BigDecimal", remark="10日数量", required=false, maxLength=24, fixed=6, order=13)
 	@JSONField(name = "iqty10")
 	public java.math.BigDecimal getIQty10() {
 		return getBigDecimal("iQty10");
@@ -314,7 +322,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 11日数量
 	 */
-	@JBoltField(name="iqty11" ,columnName="iQty11",type="BigDecimal", remark="11日数量", required=false, maxLength=18, fixed=2, order=14)
+	@JBoltField(name="iqty11" ,columnName="iQty11",type="BigDecimal", remark="11日数量", required=false, maxLength=24, fixed=6, order=14)
 	@JSONField(name = "iqty11")
 	public java.math.BigDecimal getIQty11() {
 		return getBigDecimal("iQty11");
@@ -331,7 +339,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 12日数量
 	 */
-	@JBoltField(name="iqty12" ,columnName="iQty12",type="BigDecimal", remark="12日数量", required=false, maxLength=18, fixed=2, order=15)
+	@JBoltField(name="iqty12" ,columnName="iQty12",type="BigDecimal", remark="12日数量", required=false, maxLength=24, fixed=6, order=15)
 	@JSONField(name = "iqty12")
 	public java.math.BigDecimal getIQty12() {
 		return getBigDecimal("iQty12");
@@ -348,7 +356,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 13日数量
 	 */
-	@JBoltField(name="iqty13" ,columnName="iQty13",type="BigDecimal", remark="13日数量", required=false, maxLength=18, fixed=2, order=16)
+	@JBoltField(name="iqty13" ,columnName="iQty13",type="BigDecimal", remark="13日数量", required=false, maxLength=24, fixed=6, order=16)
 	@JSONField(name = "iqty13")
 	public java.math.BigDecimal getIQty13() {
 		return getBigDecimal("iQty13");
@@ -365,7 +373,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 14日数量
 	 */
-	@JBoltField(name="iqty14" ,columnName="iQty14",type="BigDecimal", remark="14日数量", required=false, maxLength=18, fixed=2, order=17)
+	@JBoltField(name="iqty14" ,columnName="iQty14",type="BigDecimal", remark="14日数量", required=false, maxLength=24, fixed=6, order=17)
 	@JSONField(name = "iqty14")
 	public java.math.BigDecimal getIQty14() {
 		return getBigDecimal("iQty14");
@@ -382,7 +390,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 15日数量
 	 */
-	@JBoltField(name="iqty15" ,columnName="iQty15",type="BigDecimal", remark="15日数量", required=false, maxLength=18, fixed=2, order=18)
+	@JBoltField(name="iqty15" ,columnName="iQty15",type="BigDecimal", remark="15日数量", required=false, maxLength=24, fixed=6, order=18)
 	@JSONField(name = "iqty15")
 	public java.math.BigDecimal getIQty15() {
 		return getBigDecimal("iQty15");
@@ -399,7 +407,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 16日数量
 	 */
-	@JBoltField(name="iqty16" ,columnName="iQty16",type="BigDecimal", remark="16日数量", required=false, maxLength=18, fixed=2, order=19)
+	@JBoltField(name="iqty16" ,columnName="iQty16",type="BigDecimal", remark="16日数量", required=false, maxLength=24, fixed=6, order=19)
 	@JSONField(name = "iqty16")
 	public java.math.BigDecimal getIQty16() {
 		return getBigDecimal("iQty16");
@@ -416,7 +424,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 17日数量
 	 */
-	@JBoltField(name="iqty17" ,columnName="iQty17",type="BigDecimal", remark="17日数量", required=false, maxLength=18, fixed=2, order=20)
+	@JBoltField(name="iqty17" ,columnName="iQty17",type="BigDecimal", remark="17日数量", required=false, maxLength=24, fixed=6, order=20)
 	@JSONField(name = "iqty17")
 	public java.math.BigDecimal getIQty17() {
 		return getBigDecimal("iQty17");
@@ -433,7 +441,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 18日数量
 	 */
-	@JBoltField(name="iqty18" ,columnName="iQty18",type="BigDecimal", remark="18日数量", required=false, maxLength=18, fixed=2, order=21)
+	@JBoltField(name="iqty18" ,columnName="iQty18",type="BigDecimal", remark="18日数量", required=false, maxLength=24, fixed=6, order=21)
 	@JSONField(name = "iqty18")
 	public java.math.BigDecimal getIQty18() {
 		return getBigDecimal("iQty18");
@@ -450,7 +458,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 19日数量
 	 */
-	@JBoltField(name="iqty19" ,columnName="iQty19",type="BigDecimal", remark="19日数量", required=false, maxLength=18, fixed=2, order=22)
+	@JBoltField(name="iqty19" ,columnName="iQty19",type="BigDecimal", remark="19日数量", required=false, maxLength=24, fixed=6, order=22)
 	@JSONField(name = "iqty19")
 	public java.math.BigDecimal getIQty19() {
 		return getBigDecimal("iQty19");
@@ -467,7 +475,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 20日数量
 	 */
-	@JBoltField(name="iqty20" ,columnName="iQty20",type="BigDecimal", remark="20日数量", required=false, maxLength=18, fixed=2, order=23)
+	@JBoltField(name="iqty20" ,columnName="iQty20",type="BigDecimal", remark="20日数量", required=false, maxLength=24, fixed=6, order=23)
 	@JSONField(name = "iqty20")
 	public java.math.BigDecimal getIQty20() {
 		return getBigDecimal("iQty20");
@@ -484,7 +492,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 21日数量
 	 */
-	@JBoltField(name="iqty21" ,columnName="iQty21",type="BigDecimal", remark="21日数量", required=false, maxLength=18, fixed=2, order=24)
+	@JBoltField(name="iqty21" ,columnName="iQty21",type="BigDecimal", remark="21日数量", required=false, maxLength=24, fixed=6, order=24)
 	@JSONField(name = "iqty21")
 	public java.math.BigDecimal getIQty21() {
 		return getBigDecimal("iQty21");
@@ -501,7 +509,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 22日数量
 	 */
-	@JBoltField(name="iqty22" ,columnName="iQty22",type="BigDecimal", remark="22日数量", required=false, maxLength=18, fixed=2, order=25)
+	@JBoltField(name="iqty22" ,columnName="iQty22",type="BigDecimal", remark="22日数量", required=false, maxLength=24, fixed=6, order=25)
 	@JSONField(name = "iqty22")
 	public java.math.BigDecimal getIQty22() {
 		return getBigDecimal("iQty22");
@@ -518,7 +526,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 23日数量
 	 */
-	@JBoltField(name="iqty23" ,columnName="iQty23",type="BigDecimal", remark="23日数量", required=false, maxLength=18, fixed=2, order=26)
+	@JBoltField(name="iqty23" ,columnName="iQty23",type="BigDecimal", remark="23日数量", required=false, maxLength=24, fixed=6, order=26)
 	@JSONField(name = "iqty23")
 	public java.math.BigDecimal getIQty23() {
 		return getBigDecimal("iQty23");
@@ -535,7 +543,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 24日数量
 	 */
-	@JBoltField(name="iqty24" ,columnName="iQty24",type="BigDecimal", remark="24日数量", required=false, maxLength=18, fixed=2, order=27)
+	@JBoltField(name="iqty24" ,columnName="iQty24",type="BigDecimal", remark="24日数量", required=false, maxLength=24, fixed=6, order=27)
 	@JSONField(name = "iqty24")
 	public java.math.BigDecimal getIQty24() {
 		return getBigDecimal("iQty24");
@@ -552,7 +560,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 25日数量
 	 */
-	@JBoltField(name="iqty25" ,columnName="iQty25",type="BigDecimal", remark="25日数量", required=false, maxLength=18, fixed=2, order=28)
+	@JBoltField(name="iqty25" ,columnName="iQty25",type="BigDecimal", remark="25日数量", required=false, maxLength=24, fixed=6, order=28)
 	@JSONField(name = "iqty25")
 	public java.math.BigDecimal getIQty25() {
 		return getBigDecimal("iQty25");
@@ -569,7 +577,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 26日数量
 	 */
-	@JBoltField(name="iqty26" ,columnName="iQty26",type="BigDecimal", remark="26日数量", required=false, maxLength=18, fixed=2, order=29)
+	@JBoltField(name="iqty26" ,columnName="iQty26",type="BigDecimal", remark="26日数量", required=false, maxLength=24, fixed=6, order=29)
 	@JSONField(name = "iqty26")
 	public java.math.BigDecimal getIQty26() {
 		return getBigDecimal("iQty26");
@@ -586,7 +594,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 27日数量
 	 */
-	@JBoltField(name="iqty27" ,columnName="iQty27",type="BigDecimal", remark="27日数量", required=false, maxLength=18, fixed=2, order=30)
+	@JBoltField(name="iqty27" ,columnName="iQty27",type="BigDecimal", remark="27日数量", required=false, maxLength=24, fixed=6, order=30)
 	@JSONField(name = "iqty27")
 	public java.math.BigDecimal getIQty27() {
 		return getBigDecimal("iQty27");
@@ -603,7 +611,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 28日数量
 	 */
-	@JBoltField(name="iqty28" ,columnName="iQty28",type="BigDecimal", remark="28日数量", required=false, maxLength=18, fixed=2, order=31)
+	@JBoltField(name="iqty28" ,columnName="iQty28",type="BigDecimal", remark="28日数量", required=false, maxLength=24, fixed=6, order=31)
 	@JSONField(name = "iqty28")
 	public java.math.BigDecimal getIQty28() {
 		return getBigDecimal("iQty28");
@@ -620,7 +628,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 29日数量
 	 */
-	@JBoltField(name="iqty29" ,columnName="iQty29",type="BigDecimal", remark="29日数量", required=false, maxLength=18, fixed=2, order=32)
+	@JBoltField(name="iqty29" ,columnName="iQty29",type="BigDecimal", remark="29日数量", required=false, maxLength=24, fixed=6, order=32)
 	@JSONField(name = "iqty29")
 	public java.math.BigDecimal getIQty29() {
 		return getBigDecimal("iQty29");
@@ -637,7 +645,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 30日数量
 	 */
-	@JBoltField(name="iqty30" ,columnName="iQty30",type="BigDecimal", remark="30日数量", required=false, maxLength=18, fixed=2, order=33)
+	@JBoltField(name="iqty30" ,columnName="iQty30",type="BigDecimal", remark="30日数量", required=false, maxLength=24, fixed=6, order=33)
 	@JSONField(name = "iqty30")
 	public java.math.BigDecimal getIQty30() {
 		return getBigDecimal("iQty30");
@@ -654,7 +662,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 31日数量
 	 */
-	@JBoltField(name="iqty31" ,columnName="iQty31",type="BigDecimal", remark="31日数量", required=false, maxLength=18, fixed=2, order=34)
+	@JBoltField(name="iqty31" ,columnName="iQty31",type="BigDecimal", remark="31日数量", required=false, maxLength=24, fixed=6, order=34)
 	@JSONField(name = "iqty31")
 	public java.math.BigDecimal getIQty31() {
 		return getBigDecimal("iQty31");
@@ -671,7 +679,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 合计数量
 	 */
-	@JBoltField(name="isum" ,columnName="iSum",type="BigDecimal", remark="合计数量", required=false, maxLength=18, fixed=2, order=35)
+	@JBoltField(name="isum" ,columnName="iSum",type="BigDecimal", remark="合计数量", required=false, maxLength=24, fixed=6, order=35)
 	@JSONField(name = "isum")
 	public java.math.BigDecimal getISum() {
 		return getBigDecimal("iSum");
@@ -693,6 +701,75 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
 	}
+
+	/**
+	 * 存货编码
+	 */
+	public M setCInvCode(java.lang.String cInvCode) {
+		set("cInvCode", cInvCode);
+		return (M)this;
+	}
+
+	/**
+	 * 存货编码
+	 */
+	@JBoltField(name="cinvcode" ,columnName="cInvCode",type="String", remark="存货编码", required=false, maxLength=200, fixed=0, order=37)
+	@JSONField(name = "cinvcode")
+	public java.lang.String getCInvCode() {
+		return getStr("cInvCode");
+	}
+
+	/**
+	 * 客户部番
+	 */
+	public M setCInvCode1(java.lang.String cInvCode1) {
+		set("cInvCode1", cInvCode1);
+		return (M)this;
+	}
+
+	/**
+	 * 客户部番
+	 */
+	@JBoltField(name="cinvcode1" ,columnName="cInvCode1",type="String", remark="客户部番", required=false, maxLength=200, fixed=0, order=38)
+	@JSONField(name = "cinvcode1")
+	public java.lang.String getCInvCode1() {
+		return getStr("cInvCode1");
+	}
+
+	/**
+	 * 部品名称
+	 */
+	public M setCInvName1(java.lang.String cInvName1) {
+		set("cInvName1", cInvName1);
+		return (M)this;
+	}
+
+	/**
+	 * 部品名称
+	 */
+	@JBoltField(name="cinvname1" ,columnName="cInvName1",type="String", remark="部品名称", required=false, maxLength=200, fixed=0, order=39)
+	@JSONField(name = "cinvname1")
+	public java.lang.String getCInvName1() {
+		return getStr("cInvName1");
+	}
+
+	/**
+	 * 规格
+	 */
+	public M setCInvStd(java.lang.String cInvStd) {
+		set("cInvStd", cInvStd);
+		return (M)this;
+	}
+
+	/**
+	 * 规格
+	 */
+	@JBoltField(name="cinvstd" ,columnName="cInvStd",type="String", remark="规格", required=false, maxLength=200, fixed=0, order=40)
+	@JSONField(name = "cinvstd")
+	public java.lang.String getCInvStd() {
+		return getStr("cInvStd");
+	}
+
 
 }
 

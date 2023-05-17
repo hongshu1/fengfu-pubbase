@@ -22,6 +22,7 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 	<td>${pageNumber,pageSize,index | rownum}</td>
+	<td>${data.cauditstatustext}</td>
 	<td>${data.croutingname}</td>
 	<td>${data.cversion}</td>
 	<td>${data.dfromdate |date_ymd}</td>
@@ -30,8 +31,8 @@
 	<td>${data.crequirement}</td>
 	<td>${data.cmemo}</td>
 	<td>
-		<button onclick="selectBtn('${data.iautoid}','${data.croutingname}','${data.cversion}','${data.dtodate}','${data.isenabled}')" class="btn btn-outline-info btn-sm" > 选择</button>
-		<button onclick="refBtn('${data.iautoid}','${data.croutingname}','${data.croutingtypesn}','${data.itype}','${data.ifinishedrate}')" class="btn btn-outline-info btn-sm" > 复制</button>
+		<button onclick="selectBtn('${data.iautoid}','${data.croutingname}','${data.cversion}','${data.dtodate}')" class="btn btn-outline-info btn-sm" > 选择</button>
+		<button onclick="refBtn('${data.iautoid}','${data.croutingname}','${data.croutingtypesn}','${data.itype}','${data.ifinishedrate}','${data.iauditstatus}')" class="btn btn-outline-info btn-sm" > 复制</button>
 	</td>
 </tr>
 {@/each}
@@ -41,8 +42,8 @@
 			<div class="" role="group" aria-label="btn-group">
 				<div>
 					<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-						<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增工艺版本行</button>
-						<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+						<button onclick="addTableRow(this)" #(isAdd??'0'=='1'?'disabled':'' ) id="addTableRow" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增工艺版本行</button>
+						<button onclick="tableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
 						<button onclick="refreshPjaxContainer(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 						<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
 					</div>
@@ -64,12 +65,12 @@
 			   data-toolbar="itemrouting_toolbar_#(pageId)"
 			   data-editable="true"
 			   data-editable-option="getEditableTableOptions_itemrouting"
-
 			   data-fixed-columns-right="-1"
 		>
 			<thead>
 			<tr>
 				<th data-width="60" data-column="index">序号</th>
+				<th data-width="120" data-column="iauditstatus">审核状态</th>
 				<th data-width="150" data-column="croutingname">工艺路线名称</th>
 				<th data-width="100" data-column="cversion">工艺版本</th>
 				<th data-width="120" data-column="dfromdate">启用日期</th>
@@ -93,7 +94,7 @@
 			//获取表格数据
 			let rowdata = getJboltTableCheckedData('#itemRoutingid')
 			if (rowdata){
-				selectBtn(rowdata.iautoid,rowdata.croutingname,rowdata.cversion,rowdata.dtodate,rowdata.isenabled);
+				selectBtn(rowdata.iautoid,rowdata.croutingname,rowdata.cversion,rowdata.dtodate);
 			}
 		});
 	});
@@ -117,12 +118,15 @@
 			version = data.cversion;
 			toDate = data.dtodate;
 			//表格新增行/带参数
-			jboltTableInsertRow(ele,{cversion:(Number(version) +0.1).toFixed(1),dfromdate:toDate})
+			jboltTableInsertRow(ele,{cversion:(Number(version) +0.1).toFixed(1),dfromdate:toDate, iauditstatus:2})
 		}else {
 			//表格新增行/带参数
 			let croutingname = "#(citemcode)" + "#(citemname)";
 			jboltTableInsertRow(ele,{croutingname:croutingname,cversion:'1.0'})
 		}
+		// 添加完后禁用新增按钮
+		const addTableRow = document.getElementById("addTableRow");
+		addTableRow.setAttribute("disabled", "true");  //禁用
 	}
 
 	function getEditableTableOptions_itemrouting(){
@@ -199,6 +203,7 @@
 		};
 		return editableTableOptions;
 	}
+
 	/*function compareDate(){
 		var dateAStr=$("input[name=dateA]").val();
 		var arrA=dateAStr.split("-");
@@ -214,17 +219,22 @@
 			alert("A非大于B");
 		}
 	}*/
-	function refBtn(id,name,croutingtypesn,itype,ifinishedrate){
+
+	function refBtn(id,name,croutingtypesn,itype,ifinishedrate,iauditstatus){
 		//获取表格数据
 		var tableDatas = getJboltTableAllDatas('#itemRoutingid');
+		if (iauditstatus != 2){
+			LayerMsgBox.alert("只能选着已审核的数据进行复制！", 2)
+			return;
+		}
 		if (tableDatas != null){
 			var data = tableDatas[tableDatas.length - 1];
 			if (!data.cversion){
-				LayerMsgBox.alert("请先输入工艺版本！");
+				LayerMsgBox.alert("请先输入工艺版本！", 2);
 				return;
 			}
 			if (!data.dtodate){
-				LayerMsgBox.alert("请先选择停用日期！");
+				LayerMsgBox.alert("请先选择停用日期！", 2);
 				return;
 			}
 			version = data.cversion;
@@ -237,7 +247,8 @@
 			jboltTableInsertRow('#itemRoutingid',{cversion:'1.0'})
 		}
 	}
-	function selectBtn(id,cname,cversion,dtodate,isenabled){
+
+	function selectBtn(id,cname,cversion,dtodate){
 		if (!id){
 			LayerMsgBox.alert("请先保存工艺后选择！");
 			return;
@@ -246,16 +257,71 @@
 			LayerMsgBox.alert("该工艺已到停用日期，不能选择！");
 			return;
 		}
-		if (isenabled == 0){
-			LayerMsgBox.alert("该工艺已停用，不能选择！");
-			return;
-		}
+		// if (isenabled == 0){
+		// 	LayerMsgBox.alert("该工艺已停用，不能选择！");
+		// 	return;
+		// }
 		parent.$("#iinventoryroutingid").val(id);
 		parent.$("#iitemroutingname").val(cname+"（"+cversion+"）");
 		parent.$("#itemroutingconfigFormBtn").click();
 		parent.getDatas()
 		parent.LayerMsgBox.closeAll();
 
+	}
+
+	/**
+	 * 删除选中的行
+	 * @param ele
+	 * @param confirm
+	 * @param callback
+	 * @returns
+	 */
+	function tableRemoveCheckedRow(ele, confirm, callback) {
+
+		var action = getRealJqueryObject(ele);
+		if (isOk(action)) {
+			var success = checkMasterTableId(action);
+			if (!success) {
+				return false;
+			}
+		}
+
+		var isCheckedNone = jboltTableIsCheckedNone(ele);
+		if (isCheckedNone) {
+			LayerMsgBox.alert("请至少选择一行数据", 2);
+			return false;
+		}
+
+		var datas = jboltTableGetCheckedDatas(ele);
+		// 先校验是否存在已审核的工艺路线
+		var flag = false;
+		for (var i=0; i<datas.length; i++){
+			var data = datas[i];
+			if (data.iauditstatus == 1 || data.iauditstatus == 2){
+				flag = true;
+			}
+		}
+
+		if (flag){
+			LayerMsgBox.alert("不能删除已审核或审核中的数据", 2)
+			return false;
+		}
+		var msg = "确定删除所选数据吗？";
+		var ids = jboltTableGetCheckedIds(ele, true);
+		if (ids) {
+			msg = "所选数据中包含数据库已存数据，确定删除吗？";
+		}
+		LayerMsgBox.confirm(msg, function () {
+			removeJBoltTableCheckedTr(ele, false, callback);
+			var tableDatas = jboltTableGetAllDatas(ele);
+			// 删除完后，校验工艺路线是否为空，为空则表示可以新增
+			if (tableDatas == null ||tableDatas.length == 0){
+				// 添加完后禁用新增按钮
+				const addTableRow = document.getElementById("addTableRow");
+				addTableRow.removeAttribute("disabled");  //禁用
+			}
+		});
+		return true;
 	}
 </script>
 #end
