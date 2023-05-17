@@ -204,6 +204,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 	 * @return
 	 */
 	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
+		if(jBoltTable.getSaveRecordList()==null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList()==null){
+			return Ret.msg("行数据不能为空");
+		}
 		SysPureceive sysotherin = jBoltTable.getFormModel(SysPureceive.class,"sysPureceive");
 		String whcode = jBoltTable.getForm().getString("Whcode");
 		//获取当前用户信息？

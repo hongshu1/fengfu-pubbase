@@ -65,13 +65,13 @@ WHERE 1=1
 #end
 #end
 
-#sql("getLineDatas")
+#sql("getLineData")
 SELECT
     t1.*
 FROM
     T_Sys_SaleDeliverDetail t1
 where 1=1
-#if(null!=masId)
-and t.MasID = #para(masId)
+#if(masId)
+    and t1.MasID = #para(masId)
 #end
 #end

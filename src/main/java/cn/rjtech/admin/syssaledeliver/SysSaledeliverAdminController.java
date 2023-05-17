@@ -102,7 +102,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
      * 获取行数据
      */
     public void getLineData() {
-        Long masId = useIfPresent(getLong("masId",1L));
+        Long masId = useIfPresent(getLong("sysSaledeliver.masId",1L));
         if (notOk(masId)){
             renderJsonFail(JBoltMsg.PARAM_ERROR);
             return;
@@ -135,7 +135,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("sysSaleDeliver", sysSaledeliver);
+        set("sysSaledeliver", sysSaledeliver);
         render("edit.html");
     }
 

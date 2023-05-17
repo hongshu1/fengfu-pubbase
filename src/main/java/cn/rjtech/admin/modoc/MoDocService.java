@@ -60,7 +60,6 @@ public class MoDocService extends BaseService<MoDoc> {
   @Inject
   private MoMoroutinginvcService moMoroutinginvcService;
 
-
   private final MoDoc dao = new MoDoc().dao();
 
   @Override
@@ -177,7 +176,7 @@ public class MoDocService extends BaseService<MoDoc> {
         }
         //设备
         List<InventoryRoutingEquipment> iInventoryEquipments = inventoryRoutingEquipmentService
-            .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+                .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
         for (InventoryRoutingEquipment iInventoryEquipment : iInventoryEquipments) {
           Long iEquipmentId = iInventoryEquipment.getIEquipmentId();
           MoMoroutingequipment moMoroutingequipment = new MoMoroutingequipment();
@@ -187,7 +186,7 @@ public class MoDocService extends BaseService<MoDoc> {
         }
         //物料集
         List<InventoryRoutingInvc> iInventoryRoutingInvcs = inventoryRoutingInvcService
-            .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+                .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
         for (InventoryRoutingInvc iInventoryRoutingInvc : iInventoryRoutingInvcs) {
           MoMoroutinginvc moMoroutinginvc = new MoMoroutinginvc();
           moMoroutinginvc.setIInventoryRoutingConfigId(inventoryRoutingConfigServiceById.getIAutoId());
@@ -324,5 +323,20 @@ public class MoDocService extends BaseService<MoDoc> {
    */
   public List<Record> getMoroutingsopByInventoryroutingconfigId(String inventoryroutingconfigid) {
     return dbTemplate("modoc.getmoroutingsopbyinventoryroutingconfigid", Kv.by("inventoryroutingconfigid", inventoryroutingconfigid)).find();
+  }
+
+  public Page<Record> page(Integer page, Integer pageSize, String cmodocno,
+                           String cinvcode, String cinvcode1, String cinvname1,
+                           String cdepname, Long iworkregionmid, Integer istatus,
+                           Date starttime, Date endtime) {
+    return dbTemplate("modoc.getPage", Kv.by("cMoDocNo", cmodocno).set("cInvCode", cinvcode).
+            set("cInvCode1", cinvcode1).
+            set("cinvname1", cinvname1).
+            set("cDepName", cdepname).
+            set("iWorkRegionMid", iworkregionmid).
+            set("istatus", istatus).
+            set("startdate", starttime).
+            set("enddate", endtime)).paginate(page, pageSize);
+
   }
 }

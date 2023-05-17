@@ -30,7 +30,7 @@
                                         <input type="text"  data-notnull="true"
                                             data-tips="请输入入库单号" data-with-clearbtn="true" autocomplete="off"
                                             class="form-control" placeholder="请输入入库单号" maxlength="40"
-                                            name="sysotherin.warehousingNo" value="#(sysotherin.warehousingNo??)" />
+                                            name="sysotherin.BillNo" value="#(sysotherin.BillNo??)" />
                                     </div>
                                 </div>
                             </div>
@@ -47,36 +47,37 @@
 
                             <div class="col-md-4">
                                 <div class="form-group row">
+                                    <input type="hidden" name="sysotherin.Whcode" value="#(sysotherin.Whcode??)"
+                                        id="cwhcode" data-value-attr="cwhcode" />
                                     <label class="col-sm-3 col-form-label">仓库名称</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=仓库名称="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/productInList/getWarehouse" data-rule="required"
+                                            data-hidden-input="cwhcode" data-text-attr="cwhname"
+                                            data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称"
+                                            data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
+                                            value="#(cwhname??)">
                                     </div>
                                 </div>
                             </div>
-
 
                             <div class="col-md-4">
                                 <div class="form-group row">
+                                    <input type="hidden" name="sysotherin.RdCode" value="#(sysotherin.RdCode??)"
+                                        id="crdcode" data-value-attr="crdcode" />
                                     <label class="col-sm-3 col-form-label">入库类别</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=入库类别="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/productInList/getRdStyle" data-rule="required"
+                                            data-hidden-input="crdcode" data-text-attr="crdname"
+                                            data-column-attr="crdcode,crdname" placeholder="请选择入库类别"
+                                            data-tips="请选择入库类别" data-header="入库编码,入库类别" maxlength="40"
+                                            value="#(crdname??)">
                                     </div>
                                 </div>
                             </div>
+
+                            
 
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -101,23 +102,23 @@
                                         <input type="text"  data-notnull="true"
                                             data-tips="请输入业务号" data-with-clearbtn="true" autocomplete="off"
                                             class="form-control" placeholder="请输入业务号" maxlength="40"
-                                            name="sysotherin.BillNo" value="#(sysotherin.BillNo??)" />
+                                            name="yw" value="#(sysotherin.BillNo??)" />
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">供应商</label>
+                                    <input type="hidden" name="sysotherin.VenCode" value="#(sysotherin.VenCode??)"
+                                        id="vencode" data-value-attr="vencode" />
+                                    <label class="col-sm-3 col-form-label">供应商名称</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=供应商="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/materialReceiptList/venCode" data-rule="required"
+                                            data-hidden-input="vencode" data-text-attr="venname"
+                                            data-column-attr="vencode,venname" placeholder="请选择供应商名称"
+                                            data-tips="请选择供应商名称" data-header="供应商编码,供应商名称" maxlength="40"
+                                            value="#(venname??)">
                                     </div>
                                 </div>
                             </div>
@@ -138,7 +139,7 @@
                                         <input type="text" data-notnull="true"
                                             data-tips="请输入备注" data-with-clearbtn="true" autocomplete="off"
                                             class="form-control" placeholder="请输入备注" maxlength="40"
-                                            name="sysotherin.remark" value="#(sysotherin.remark??)" />
+                                            name="sysotherin.memo" value="#(sysotherin.memo??)" />
                                     </div>
                                 </div>
                             </div>
@@ -187,16 +188,16 @@
                 class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
    
             </td>
-            <td>${data.spotticket}</td>
-            <td>${data.invcode}</td>
-            <td>${data.crcvdate}</td>
-            <td>${data.crcvtime}</td>
-            <td>${data.cbarcode}</td>
-            <td>${data.cversion}</td>
-            <td>${data.caddress}</td>
+            <td>${data.barcode}</td>
             <td>${data.cinvcode}</td>
-            <td>${data.projecttypecode}</td>
-            <td>${data.projecttypename}</td>
+            <td>${data.cinvdddcode}</td>
+            <td>${data.cinvname}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.inventorycuomname}</td>
+            <td>${data.qty}</td>
+            <td>${data.pat}</td>
+            <td>${data.cinvccode}</td>
+            <td>${data.cinvcname}</td>
 
 
         </tr>
@@ -237,16 +238,16 @@
             <tr>
                 <th data-width="60">序号</th>
                 <th data-width="150">操作</th>
-                <th data-width="100" data-column="spotticket">现品票</th>
-                <th data-width="100" data-column="invcode">存货编码</th>
-                <th data-width="100" data-column="cbarcode">存货代码</th>
-                <th data-width="100" data-column="cversion">存货名称</th>
-                <th data-width="100" data-column="caddress">规格型号</th>
-                <th data-width="100" data-column="cinvcode2">主计量单位</th>
-                <th data-width="100" data-column="cinvcode1">数量</th>
-                <th data-width="100" data-column="cinvname1">批号</th>
-                <th data-width="100" data-column="project_type_code">项目大类编码</th>
-                <th data-width="100" data-column="project_type_name">项目大类名称</th>
+                <th data-width="100" data-column="barcode">现品票</th>
+                <th data-width="100" data-column="cinvcode">存货编码</th>
+                <th data-width="100" data-column="cinvdddcode">存货代码</th>
+                <th data-width="100" data-column="cinvname">存货名称</th>
+                <th data-width="100" data-column="cinvstd">规格型号</th>
+                <th data-width="100" data-column="inventorycuomname">主计量单位</th>
+                <th data-width="100" data-column="qty">数量</th>
+                <th data-width="100" data-column="pat">批号</th>
+                <th data-width="100" data-column="cinvccode">项目大类编码</th>
+                <th data-width="100" data-column="cinvcname">项目大类名称</th>
             </tr>
         </thead>
     </table>
@@ -279,50 +280,29 @@
                 AutoID: {
                     submitAttr: "AutoID",
                 },
-                spotticket: {
-                    type: "input",//类型
-                    placeholder: "现品票", //输入提示，里面
-                    tooltip: "现品票",//输入提示，上方
-                },
-                invcode: {
-                    type: "input",//类型
-                    placeholder: "存货编码", //输入提示，里面
-                    tooltip: "存货编码",//输入提示，上方
-                },
-                project_type_code: {
-                    type: "input",//类型
-                    placeholder: "项目大类编码", //输入提示，里面
-                    tooltip: "项目大类编码",//输入提示，上方
-                },
-                project_type_name: {
-                    type: "input",//类型
-                    placeholder: "项目大类名称", //输入提示，里面
-                    tooltip: "项目大类名称",//输入提示，上方
-                },
-                
-                cinvcode: {
-                    // type:"select",
-                    // url:admin/inventory/autocomplete,//url地址
-                    //valueAttr:"",//显示的字段，可以设置多个
-                    //onlyleaf:true,//树形结构只能选择叶子节点
-                    //required:true,//必填
-                    // changeColumns:[{column: "iinventoryid",//显示绑定的字段
-                    //                 use: "cinvcode"        //数据源的字段
-                    //                 }
-                    // ]   
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
+
+            
+                barcode: { //条码
                     maxLength: 100,
                     required: true,
-                    placeholder: "请选择存货编码",
-                    textAttr: "cinvcode",
-                    width: 500,
-                    valueAttr: "cinvcode",//选择赋值的字段
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
-                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
-                    changeColumns: [{ column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
+                    placeholder: "=请选择=",
+                    type: "autocomplete",
+                    url: "admin/otherout/barcodeDatas",
+                    textAttr: "barcode",
+                    width: 800,
+                    sync: "",
+                    valueAttr: "barcode",
+                    columnAttr: "barcode,cinvcode,cinvdddcode,cinvname,cinvstd,inventorycuomname,qty,cequipmentmodelname",
+                    header: '现品票,存货编码,存货代码,存货名称,规格型号,主计量单位,数量,所属机型',
+                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
                     { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
-                    { column: "cuomname", use: "cuomname" }, { column: "iinventoryid", use: "AutoID" }]
+                    { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
+                    { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
+                    {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
+                    {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "cinvdddcode", use: "cinvdddcode"},
+                    {column: "cinvname", use: "cinvname"},{column: "inventorycuomname", use: "inventorycuomname"},
+                    {column: "sourcebillid", use: "sourcebillid"},{column: "qty", use: "qty"},{column: "pat", use: "pat"}]
+
                 },
             }
         };

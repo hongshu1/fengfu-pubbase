@@ -8,7 +8,12 @@
                 <div class="card" style="margin-bottom: 5px">
                     <div class="card-body">
                         <div class="col">
-                            <button onclick="submitThisForm()"
+                            <button data-check-handler="jboltTableGetCheckedId"
+                                    data-dialogbtn data-area="100%,100%"
+                                    data-handler="refreshJBoltTable"
+                                    id="toolbar_editBtn_#(pageId)"
+                                    data-title="备料一览表详情"
+                                    data-url="admin/materialPreparationList/edit1/"
                                     class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 生成备料单
                             </button>
                             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
@@ -19,15 +24,15 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <div class="col">
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                            <form class="form-inline" id="MoPickItemM_form_#(pageId)">
-                                计划日期：<input type="text" data-date class="form-control " placeholder=""
-                                                maxlength="20" name="dplandate" value=""/>
-                                <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
-                            </form>
-                                </div>
+                        <div class="row">
+                            <div class="col-auto">
+                                <form class="form-inline" id="MoPickItemM_form_#(pageId)">
+                                    <input type="text" data-date class="form-control " placeholder="计划日期"
+                                           maxlength="20" name="dplandate" value=""/>
+                                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>
+                                        搜索
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -37,7 +42,7 @@
     </div>
     <div class="jbolt_page_content">
         <!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
+        <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
@@ -92,6 +97,7 @@
 <script type="text/javascript">
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
+
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();

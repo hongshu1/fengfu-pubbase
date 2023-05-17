@@ -1,5 +1,13 @@
 package cn.rjtech.admin.syssaledeliverplan;
 
+import cn.rjtech.admin.customer.CustomerService;
+import cn.rjtech.admin.customeraddr.CustomerAddrService;
+import cn.rjtech.admin.customerclass.CustomerClassService;
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
+import cn.rjtech.admin.rdstyle.RdStyleService;
+import cn.rjtech.admin.saletype.SaleTypeService;
+import cn.rjtech.admin.settlestyle.SettleStyleService;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -89,5 +97,54 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         renderJson(service.deleteById(getLong(0)));
     }
 
+
+
+    @Inject
+    private SaleTypeService saletypeservice;
+    /**
+     * 获取销售类型下拉  /admin/saletype/selectData
+     */
+
+    @Inject
+    private DepartmentService departmentservice;
+    /**
+     * 获取销售部门下拉 Bd_Department   admin/productInList/getDepartment
+     */
+
+    @Inject
+    private CustomerAddrService customeraddrservice;
+    /**
+     * /admin/customeraddr/list/{icustomermid}
+     * 获取地址下拉 Bd_CustomerAddr
+     */
+
+    @Inject
+    private RdStyleService rdstyleservice;
+    /**
+     * 获取发运方式下拉
+     */
+
+    @Inject
+    private SettleStyleService settlestyleservice;
+    /**
+     * 获取付款条件下拉
+     */
+
+    @Inject
+    private ForeignCurrencyService foreigncurrencyservice;
+    /**
+     * 获取币种下拉
+     */
+
+    @Inject
+    private CustomerService customerservice;
+    /**
+     * 获取客户下拉 Bd_Customer
+     */
+
+
+    /**
+     * 获取订单号下拉 与 现品票一致
+     */
 
 }

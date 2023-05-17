@@ -1,0 +1,96 @@
+<div class="jbolt_page_content">
+    <form onsubmit="return false;" id="BarcodeByForm_#(pageId)" action="#(action)" method="post">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">选择品名：</label>
+            <div class="col-sm-2  input-group">
+                <input type="text" id="cpackcode" hidden class="form-control" readonly="readonly"
+                       placeholder="选择数据"/>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" data-dialogbtn data-link-para-ele="#versionId" data-area="1280,600"
+                            data-title="（单选）" data-url="/admin/splitBarcode/barcodeIndex"><i
+                            class="fa fa-search mr-1"></i> 选择
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-1 col-form-label">实物编码</label>
+            <div class="col-2">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="barcodes"
+                       maxlength="100" readonly/>
+            </div>
+            <label class="col-1 col-form-label">数量</label>
+            <div class="col-2">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="qtys"
+                       maxlength="100" readonly/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-1 col-form-label">料号</label>
+            <div class="col-2">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="invcodes"
+                       maxlength="100" readonly/>
+            </div>
+            <label class="col-1 col-form-label">品名</label>
+            <div class="col-2">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="invnames"
+                       maxlength="100" readonly/>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="qcsettingreportRowtpl_#(pageId)">
+		{@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+			<td>${pageNumber,pageSize,index | rownum}</td>
+			<td>${data.number}</td>
+			<td>
+                <a onclick="jboltTableRemoveRow(this)"><i class="fa fa-trash"></i> 删除</a>
+            </td>
+		</tr>
+		{@/each}
+	</textarea>
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="qcsettingreport_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>新增行
+            </button>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <table class="jbolt_table jbolt_main_table table-center"
+           id="jbolt_Barcodetable_#(pageId)"
+           data-jbolttable
+           data-height="300"
+           data-ajax="true"
+           data-width="auto"
+           data-url="admin/splitBarcode/datas"
+           data-column-resize="true"
+           data-column-prepend="1:checkbox:true"
+           data-conditions-form="BarcodeByForm_#(pageId)"
+           data-rowtpl="qcsettingreportRowtpl_#(pageId)"
+           data-toolbar="qcsettingreport_toolbar_#(pageId)"
+           data-editable-option="getEditableTableOptions_#(pageId)"
+           data-editable="true"
+    >
+        <thead>
+        <tr>
+            <th data-width="60" data-column="index">序号</th>
+            <th data-width="350" data-column="number">数量</th>
+            <th data-width="150">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <button onclick="submitThisFormBarcode(this)" style="width: 60px;width: 80px;margin: 10px 20px;font-size: 19px"
+            class="btn btn-primary btn-sm">提交
+    </button>
+</div>
+
+
+
+

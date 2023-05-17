@@ -1,40 +1,228 @@
+#set(pageId=RandomUtil.random(6))
 <form onsubmit="return false;" id="InventoryClass_Form" action="#(action)" method="post">
-	#if(inventoryClass.iAutoId??)
-	<input type="hidden" name="inventoryClass.iAutoId" value="#(inventoryClass.iAutoId??)" />
-	#end
-	<div class="row">
-		<div class="col" >
-			<div class="form-group row" >
-				<label class="col-sm-2 col-form-label">分类编码</label>
-				<div class="col-10">
-					<input type="text"    data-rule="required" data-notnull="true" data-tips="请输入分类编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入分类编码" maxlength="40" name="inventoryClass.cInvCCode" value="#(inventoryClass.cInvCCode??)"/>
-				</div>
-			</div>
-			<div class="form-group row" >
-				<label class="col-sm-2 col-form-label">分类名称</label>
-				<div class="col-10">
-					<input type="text"    data-rule="required" data-notnull="true" data-tips="请输入分类名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入分类名称" maxlength="40" name="inventoryClass.cInvCName" value="#(inventoryClass.cInvCName??)"/>
-				</div>
-			</div>
-			<div class="form-group row" >
-				<label class="col-sm-2 col-form-label">上级分类</label>
-				<div class="col-10">
-					<select class="form-control" name="inventoryClass.iPid"
-							data-autoload
-							data-url="admin/inventoryclass/options?ipid=#(inventoryClass.iAutoid??)"
-							data-select-type="select"
-							data-text="=上级分类="
-							data-value=""
-							data-select="#(pid??''==''?inventoryClass.iPid:pid)"
-							data-value-attr="iautoid"
-							data-text-attr="cinvcname"
-					></select></div>
-			</div>
+	<div class="py-2">
+		<span class="py-1"><strong>基本信息</strong></span>
+	</div>
+
+	<div class="row mt-3 text-secondary">
+		<div class="col-sm-3 py-2">
+			<span><strong>客户部番：#(routing.cinvcode1??)</strong></span>
+		</div>
+		<div class="col-sm-3 py-2">
+			<span><strong>部品名称：#(routing.cinvname1??)</strong></span>
+		</div>
+	</div>
+
+	<div class="row mt-3 text-secondary">
+		<div class="col-sm-3 py-2">
+			<span><strong>工艺路线名称：#(routing.croutingname??)</strong></span>
+		</div>
+		<div class="col-sm-3 py-2">
+			<span><strong>工艺版本名称：#(routing.cversion??)</strong></span>
+		</div>
+	</div>
+
+	<div class="row mt-3 text-secondary">
+		<div class="col-sm-3 py-2">
+			<span><strong>启用日期：#date(DateUtil.toDate(routing.dfromdate??),'yyyy-MM-dd')</strong></span>
+		</div>
+		<div class="col-sm-3 py-2">
+			<span><strong>停用日期：#date(DateUtil.toDate(routing.dtodate??),'yyyy-MM-dd')</strong></span>
+		</div>
+	</div>
+
+	<div class="row mt-3 text-secondary">
+		<div class="col-sm-3 py-2">
+			<span><strong>工艺要求：#(routing.crequirement??)</strong></span>
+		</div>
+		<div class="col-sm-3 py-2">
+			<span><strong>说明：#(routing.cmemo??)</strong></span>
+		</div>
+	</div>
+
+	<div class="row mt-3 text-secondary">
+		<div class="col-sm-3 py-2">
+			<span><strong>创建人：#(routing.ccreatename??)</strong></span>
+		</div>
+		<div class="col-sm-3 py-2">
+			<span><strong>创建时间：#(routing.dcreatetime??)</strong></span>
 		</div>
 	</div>
 </form>
+
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="itemroutingconfigRowtpl_#(pageId)">
+	{@each datas as data,index}
+		<tr data-id="${data.iautoid}" >
+		<td>${data.iseq}</td>
+		<td>${data.cmergedseq}</td>
+		<td data-value="${data.coperationname}">${data.coperationname}</td>
+		<td data-value="${data.itype}">
+			{@if data.itype == '1'}
+			   <span>串序</span>
+			   {@else if data.itype == '2'}
+			   <span>并序</span>
+			{@/if}</td>
+		<td>${data.rsinventoryname}</td>
+		<td >
+		   {@if data.cproductsn == '1'}
+			   <span>内作</span>
+			   {@else if data.cproductsn == '2'}
+			   <span>外作</span>
+		  {@/if}
+		</td>
+		<td >${data.cproducttechsn}
+			{@if data.cproducttechsn == '1'}
+			   <span>冲压</span>
+			   {@else if data.cproducttechsn == '2'}
+			   <span>弯管</span>
+			   {@else if data.cproducttechsn == '3'}
+			   <span>焊接</span>
+			{@/if}
+		</td>
+		<td>${data.imergednum}</td>
+		<td>${data.imergerate}</td>
+		<td>${data.imergesecs}</td>
+		<td>${data.isecs}</td>
+		<td>
+			{@if data.invcs == undefined}
+				   <span></span>
+				   {@else}
+				   <span><i class="fa fa-cog"></i>已选${data.invcs}个</span>
+			{@/if}
+		</td>
+		<td>
+			{@if data.equipments == undefined}
+				   <span></span>
+				   {@else}
+				   <span><i class="fa fa-cog"></i>已选${data.equipments}个</span>
+			{@/if}
+		</td>
+
+		<td>
+		   {@if data.drawings == undefined}
+				   <span></span>
+				   {@else}
+				   <span><i class="fa fa-cog"></i>已选${data.drawings}个</span>
+			{@/if}
+		</td>
+		</tr>
+	{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="itemroutingconfig_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<div>
+
+			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+				<button onclick="technologicalStructureBtn_#(pageId)(this)" class="btn btn-primary btn-sm" ><i class="fa fa-file-image-o"></i> 工艺结构图</button>
+				<button data-title="工序可视图" data-area="40%,90%" onclick="processViewBtn_#(pageId)(this)" class="btn btn-primary btn-sm" >工序可视图</button>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<table class="jbolt_table jbolt_main_table table-center"
+	   data-jbolttable
+	   data-height="62%"
+	   data-ajax="true"
+	   data-url="admin/routing/getRoutingConfigDetail/#(routing.iautoid??)"
+	   data-column-resize="true"
+	   data-rowtpl="itemroutingconfigRowtpl_#(pageId)"
+	   data-toolbar="itemroutingconfig_toolbar_#(pageId)"
+	   data-editable="true"
+	   data-editable-option="getEditableTableOptions_#(pageId)"
+>
+	<thead>
+	<tr>
+		<th data-width="80" data-column="iseq">工序号</th>
+		<th data-width="160" data-column="cmergedseq">合并工序</th>
+		<th data-width="160" data-column="coperationname">工序名称</th>
+		<th data-width="120" data-column="itype">工序类型</th>
+		<th data-width="150" data-column="irsinventoryid">半成品/成品名称</th>
+		<th data-width="120" data-column="cproductsn">生产方式</th>
+		<th data-width="120" data-column="cproducttechsn">生产工艺</th>
+		<th data-width="120" data-column="imergednum">合并要员（人）</th>
+		<th data-width="120" data-column="imergerate">要员（人）</th>
+		<th data-width="120" data-column="imergesecs">合并工时（秒）</th>
+		<th data-width="120" data-column="isecs">单工时（秒）</th>
+		<th data-width="120" data-column="invcs">所需物料集</th>
+		<th data-width="120" data-column="equipments">所需设备集</th>
+		<th data-width="120" data-column="drawings">作业指导书</th>
+	</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+
+
 #define js()
 <script>
+
+	hideParentLayerDialogBtn(0);
+
+	function technologicalStructureBtn_#(pageId)(ele){
+
+		var url="admin/inventoryrouting/technological_Structure?iinventoryroutingid=#(routing.iautoid??)&cInvName1=#(routing.cinvname1??)&cInvCode1=#(routing.cinvcode1??)";
+		$(ele).data("url",url);
+		DialogUtil.openBy(ele);
+	}
+
+	function processViewBtn_#(pageId)(ele){
+
+		var url="admin/inventoryrouting/process_view?iinventoryroutingid=#(routing.iautoid??)&cInvCode=#(routing.cinvcode??)&cInvName1=#(routing.cinvname1??)&cInvCode1=#(routing.cinvcode1??)";
+		$(ele).data("url",url);
+		DialogUtil.openBy(ele);
+	}
+
+	function getEditableTableOptions_#(pageId)(){
+		var editableTableOptions={
+			trigger:"click",
+			initRowCount:0,
+			maxRowCount:30,
+			cols:{
+				id:{
+					submitAttr:"iautoid",
+				},
+				invcs:{  //所需物料集
+					type:"dialogbtn",
+					placeholder:"设置物料集",
+					linkColumn:'iautoid',
+					dialog:{
+						url:"admin/inventoryroutingconfig/invc_dialog_index?routingId=#(routing.iautoid??)",
+						area:"95%,95%",
+						title:"工序物料集",
+						btn:"no"
+					}
+				},
+				equipments:{  //所需设备集
+					type:"dialogbtn",
+					placeholder:"工序设备集",
+					linkColumn:'iautoid',
+					dialog:{
+						url:"admin/inventoryroutingconfig/equipment_dialog_index?routingId=#(routing.iautoid??)",
+						area:"95%,95%",
+						title:"选择设备",
+						btn:"no"
+					}
+				},
+				drawings:{  //工艺文件
+					type:"dialogbtn",
+					placeholder:"工艺文件",
+					linkColumn:'iautoid',
+					dialog:{
+						url:"admin/inventoryroutingconfig/drawing_dialog_index?routingId=#(routing.iautoid??)",
+						area:"95%,95%",
+						title:"工艺文件",
+						btn:"no"
+					}
+				}
+			}
+		};
+		return editableTableOptions;
+	}
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="Routing_Form")
 #end

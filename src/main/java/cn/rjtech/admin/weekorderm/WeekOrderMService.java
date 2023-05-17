@@ -68,13 +68,15 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 		if (jBoltTable == null || jBoltTable.isBlank()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
-		WeekOrderM weekOrderM = jBoltTable.getFormModel(WeekOrderM.class,"weekOrderM");
-		String approve = jBoltTable.getForm().getString("approve");
-		if(weekOrderM==null || isOk(weekOrderM.getIAutoId())) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		//主表保存
-		saveContant(weekOrderM,approve);
+
+        WeekOrderM weekOrderM = jBoltTable.getFormModel(WeekOrderM.class, "weekOrderM");
+        String approve = jBoltTable.getForm().getString("approve");
+        if (weekOrderM == null || isOk(weekOrderM.getIAutoId())) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        
+        //主表保存
+        saveContant(weekOrderM, approve);
 
 		if (null!=jBoltTable.getSave()) {
 			return updateWeekOrderDs("save", jBoltTable, weekOrderM);
@@ -113,10 +115,10 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 		weekOrderM.setDUpdateTime(new Date());
 		weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
 		boolean success=weekOrderM.save();
-		if(success) {
-			//添加日志
-			addSaveSystemLog(weekOrderM.getIAutoId(), JBoltUserKit.getUserId(), weekOrderM.getIAutoId().toString());
-		}
+//		if(success) {
+//			//添加日志
+//			addSaveSystemLog(weekOrderM.getIAutoId(), JBoltUserKit.getUserId(), weekOrderM.getIAutoId().toString());
+//		}
 	}
 
 	/**
@@ -162,33 +164,25 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 	private Ret updateWeekOrderDs(String mark , JBoltTable jBoltTable,WeekOrderM weekOrderM) {
 		List<WeekOrderD> weekOrderDs;
 		switch (mark) {
-			//修改
+			// 修改
 			case "edit":
 				weekOrderDs = jBoltTable.getUpdateModelList(WeekOrderD.class);
-				for (WeekOrderD weekOrderD : weekOrderDs) {
-					weekOrderD.update();
-				}
+                
+                weekOrderDService.batchUpdate(weekOrderDs);
 				break;
-			//保存
+			// 保存
 			case "save":
 				weekOrderDs = jBoltTable.getSaveModelList(WeekOrderD.class);
 				for (WeekOrderD weekOrderD : weekOrderDs) {
-					if(weekOrderD==null || isOk(weekOrderD.getIAutoId())) {
-						return fail(JBoltMsg.PARAM_ERROR);
-					}
-					//主表id
+					// 主表id
 					weekOrderD.setIWeekOrderMid(weekOrderM.getIAutoId());
 					weekOrderD.setIsDeleted(false);
-					boolean success=weekOrderD.save();
-					if(success) {
-						//添加日志
-						addSaveSystemLog(weekOrderM.getIAutoId(), JBoltUserKit.getUserId(), weekOrderM.getIAutoId().toString());
-					}
 				}
+
+                weekOrderDService.batchSave(weekOrderDs);
             default:
                 break;
 		}
-
 		return SUCCESS;
 	}
 

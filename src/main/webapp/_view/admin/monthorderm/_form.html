@@ -159,6 +159,8 @@
 			<td>${data.iqty30}</td>
 			<td>${data.iqty31}</td>
 			<td>${data.isum}</td>
+			<td>${data.imonth1qty}</td>
+			<td>${data.imonth2qty}</td>
 			<td>
     			<a href="admin/person/deleteByAjax" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">移除行</i></a>
 			</td>
@@ -239,6 +241,8 @@
        		<th data-column="iqty30">30日</th>
         	<th data-column="iqty31">31日</th>
         	<th data-column="isum">合计</th>
+        	<th data-column="imonth1qty">下月数量</th>
+        	<th data-column="imonth2qty">下下月数量</th>
             <th data-width="100">操作</th>
         </tr>
         </thead>
@@ -277,6 +281,8 @@
 			<th></th>
 			<th></th>
             <th></th>
+			<th></th>
+			<th></th>
 			<th></th>
 			<th></th>
 			<th></th>
@@ -693,7 +699,29 @@
                         removezero: true,
                         formula: "sum"
                     }],
-                }
+                },
+                imonth1qty: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                imonth2qty: {
+                    type: "amount",
+                    placeholder: '数量',
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
             }
         };
         return editableTableOptions;

@@ -48,10 +48,6 @@ public abstract class BaseSysProductindetail<M extends BaseSysProductindetail<M>
     public static final String MODIFYPERSON = "ModifyPerson";
     /**更新时间*/
     public static final String MODIFYDATE = "ModifyDate";
-    /**现品票*/
-    public static final String SPOTTICKET = "spotTicket";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "IsDeleted";
 	/**
 	 * AutoID
 	 */
@@ -373,40 +369,6 @@ public abstract class BaseSysProductindetail<M extends BaseSysProductindetail<M>
 	@JSONField(name = "modifydate")
 	public java.util.Date getModifyDate() {
 		return getDate("ModifyDate");
-	}
-
-	/**
-	 * 现品票
-	 */
-	public M setSpotTicket(java.lang.String spotTicket) {
-		set("spotTicket", spotTicket);
-		return (M)this;
-	}
-
-	/**
-	 * 现品票
-	 */
-	@JBoltField(name="spotticket" ,columnName="spotTicket",type="String", remark="现品票", required=false, maxLength=50, fixed=0, order=20)
-	@JSONField(name = "spotticket")
-	public java.lang.String getSpotTicket() {
-		return getStr("spotTicket");
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	public M setIsDeleted(java.lang.Boolean IsDeleted) {
-		set("IsDeleted", IsDeleted);
-		return (M)this;
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=false, maxLength=1, fixed=0, order=21)
-	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("IsDeleted");
 	}
 
 }

@@ -86,5 +86,12 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
 		renderJson(service.deleteById(getLong(0)));
 	}
 
+	public void options() {
+		renderJsonData(service.options());
+	}
+
+	public void options1() {
+		renderJsonData(service.options1());
+	}
 
 }
