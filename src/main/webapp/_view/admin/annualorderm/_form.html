@@ -8,7 +8,7 @@
                     <div class="col">
                         <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
                         <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
-                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        <button onclick="submitApproveYear()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                     <form onsubmit="return false;" id="AnnualOrderD_Form_#(pageId)" action="#(action)" method="post">
                         
                         #if(annualOrderM.iAutoId??)
-                        <input type="hidden" name="annualOrderM.iAutoId" value="#(annualOrderM.iAutoId??)"/>
+                        <input type="hidden" name="annualOrderM.iAutoId" id="yeariautoid" value="#(annualOrderM.iAutoId??)"/>
                         #end
                         
                         <input type="hidden" name="annualOrderM.iOrderStatus" value="#(annualOrderM.iOrderStatus??1)"/>
@@ -112,7 +112,7 @@
 			<td>${data.iqty12}</td>
 			<td>${data.iqtytotal}</td>
 			<td>
-    			<a href="admin/person/deleteByAjax" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+    			<a href="admin/annualorderd/deleteByIds?ids=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
 			</td>
         </tr>
         {@/each}
@@ -120,6 +120,12 @@
     <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbar_#(pageId)">
         <div class="btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-secondary btn-sm">添加行</button>
+
+            <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
+                    data-url="admin/annualorderd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
+                <i class="fa fa-trash"></i> 删除行</button>
+
+
             <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
             
             <div class="j_upload_file_box"
@@ -214,6 +220,15 @@
     function submitThisForm() {
         jboltTableSubmit("#jbolt_Table_#(pageId)");
     }
+
+    function submitApproveYear() {
+        let yeariautoid = $("#yeariautoid").val();
+        let url = "admin/annualorderm/approve?id="+yeariautoid;
+        Ajax.get(url,function(res){
+            LayerMsgBox.success("写入计划汇总表成功!");
+        });
+    }
+
 
     function uploadHandler(uploader, type, fileInput, res) {
         jboltTableClear("#jbolt_Table_#(pageId)");

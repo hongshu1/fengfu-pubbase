@@ -1,5 +1,10 @@
 package cn.rjtech.admin.syssaledeliver;
 
+import cn.hutool.core.date.DateUtil;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +14,10 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.SysSaledeliver;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 销售出库
@@ -30,31 +39,82 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
     }
 
     /**
-     * 后台管理数据查询
-     *
-     * @param pageNumber     第几页
-     * @param pageSize       每页几条数据
-     * @param keywords       关键词
-     * @param SourceBillType 来源类型;MO生产工单
-     * @param BillType       业务类型
+     * 查询
+     * @param kv
      * @return
      */
-    public Page<SysSaledeliver> getAdminDatas(int pageNumber, int pageSize, String keywords, String SourceBillType, String BillType) {
-        // 创建sql对象
-        Sql sql = selectSql().page(pageNumber, pageSize);
-        // sql条件处理
-        sql.eq("SourceBillType", SourceBillType);
-        sql.eq("BillType", BillType);
-        // 关键词模糊查询
-        sql.like("ExchName", keywords);
-        // 排序
-        sql.desc("AutoID");
-        return paginate(sql);
+    public Page<Record> getAdminDatas(Kv kv) {
+        Page<Record> recordPage = dbTemplate("sysSaleDeliver.pageList", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
+        JBoltCamelCaseUtil.keyToCamelCase(recordPage.getList());
+        return recordPage;
     }
 
     /**
+     * 返回List<Record>列表
+     * @param kv
+     * @return
+     */
+    public List<Record> getAdminDataOfRecord(Kv kv) {
+        List<Record> lists = dbTemplate("sysSaleDeliver.exportList", kv).find();
+        JBoltCamelCaseUtil.keyToCamelCase(lists);
+        return lists;
+    }
+
+    /**
+     * 获取行数据
+     * @param pageNumber
+     * @param pageSize
+     * @param kv
+     * @return
+     */
+    public Page<Record> getLineData(int pageNumber, int pageSize, Kv kv) {
+        Page<Record> paginate = dbTemplate("sysSaleDeliver.getLineData",kv).paginate(pageNumber, pageSize);
+        JBoltCamelCaseUtil.keyToCamelCase(paginate.getList());
+        return	paginate;
+    }
+
+    /**
+     * 生成要导出的Excel
+     * @return
+     */
+    public JBoltExcel exportExcel(List<Record> records) {
+        return JBoltExcel
+                // 创建
+                .create()
+                // 设置工作表
+                .setSheets(
+                        // 设置工作表 列映射 顺序 标题名称
+                        JBoltExcelSheet
+                                .create()
+                                // 表头映射关系
+                                .setHeaders(1,
+                                        JBoltExcelHeader.create("billNo", "出库单号", 15),
+                                        JBoltExcelHeader.create("erpBillNo", "ERP单据号", 15),
+                                        JBoltExcelHeader.create("billdate", "出库日期", 15),
+                                        JBoltExcelHeader.create("whName", "仓库名称", 15),
+                                        JBoltExcelHeader.create("rdName", "出库类别", 15),
+                                        JBoltExcelHeader.create("billType", "业务类型", 15),
+                                        JBoltExcelHeader.create("deptName", "销售部门", 15),
+                                        JBoltExcelHeader.create("saleName", "业务员", 15),
+                                        JBoltExcelHeader.create("cCusName", "客户简称", 15),
+                                        JBoltExcelHeader.create("auditDate", "审核日期", 15),
+                                        JBoltExcelHeader.create("memo", "备注", 15),
+                                        JBoltExcelHeader.create("createPerson", "创建人", 15),
+                                        JBoltExcelHeader.create("createDate", "创建时间", 15)
+                                ).setDataChangeHandler((data,index) ->{
+                                    Date createdTime = data.getDate("createDate");
+                                    String fmtCreatedTime= DateUtil.format(createdTime, "yyyy-MM-dd");
+                                    data.put("createdTime",fmtCreatedTime);
+                                })
+                                // 设置导出的数据源 来自于数据库查询出来的Model List
+                                .setRecordDatas(2, records)
+                );
+    }
+
+
+
+    /**
      * 保存
-     *
      * @param sysSaledeliver
      * @return
      */

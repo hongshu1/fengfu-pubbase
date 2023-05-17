@@ -459,10 +459,32 @@
 #include("sysenumeration/sysenumeration.sql")
 #end
 
+#namespace("mopickitem")
+#include("mopickitemd/mopickitem.sql")
+#end
+
+#namespace("materialsprepare")
+#include("sysmaterialsprepare/materialsprepare.sql")
+#end
+
 #namespace("materialsout")
 #include("materialsout/materialsout.sql")
 #end
 
 #namespace("scancodereceive")
 #include("scancodereceive/scancodereceive.sql")
+#end
+
+###出库列表
+#namespace("sysSaleDeliver")
+#include("syssaledeliver/sysSaleDeliver.sql")
+#end
+
+
+#namespace("syssaledeliverplan")
+#include("syssaledeliverplan/syssaledeliverplan.sql")
+#end
+
+#namespace("otherdeliverylist")
+#include("otherdeliverylist/otherdeliverylist.sql")
 #end

@@ -154,7 +154,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
      * 根据iautoid查询数据,并跳到检验页面
      */
     public Record getCheckoutListByIautoId(Long iautoId) {
-        return dbTemplate("rcvdocqcformm.list", Kv.by("iautoId", iautoId)).findFirst();
+        return dbTemplate("rcvdocqcformm.list", Kv.by("iautoid", iautoId)).findFirst();
     }
 
     /**

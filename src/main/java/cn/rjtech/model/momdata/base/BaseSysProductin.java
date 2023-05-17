@@ -16,7 +16,7 @@ public abstract class BaseSysProductin<M extends BaseSysProductin<M>> extends JB
     public static final String SOURCEBILLTYPE = "SourceBillType";
     /**来源单据Did*/
     public static final String SOURCEBILLDID = "SourceBillDid";
-    /**收发类别*/
+    /**收发类别(入库类别)*/
     public static final String RDCODE = "RdCode";
     /**组织代码*/
     public static final String ORGANIZECODE = "OrganizeCode";
@@ -46,16 +46,8 @@ public abstract class BaseSysProductin<M extends BaseSysProductin<M>> extends JB
     public static final String MODIFYDATE = "ModifyDate";
     /**状态 1已保存 2待审批 3已审批 4审批不通过 */
     public static final String STATE = "state";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "IsDeleted";
-    /**生产部门名称*/
-    public static final String DEPTNAME = "deptName";
-    /**入库类别*/
-    public static final String WAREHOUSINGTYPE = "warehousingType";
     /**备注*/
-    public static final String REMARK = "remark";
-    /**仓库名称*/
-    public static final String REPOSITORYNAME = "repositoryName";
+    public static final String MEMO = "Memo";
 	/**
 	 * AutoID
 	 */
@@ -108,7 +100,7 @@ public abstract class BaseSysProductin<M extends BaseSysProductin<M>> extends JB
 	}
 
 	/**
-	 * 收发类别
+	 * 收发类别(入库类别)
 	 */
 	public M setRdCode(java.lang.String RdCode) {
 		set("RdCode", RdCode);
@@ -116,9 +108,9 @@ public abstract class BaseSysProductin<M extends BaseSysProductin<M>> extends JB
 	}
 
 	/**
-	 * 收发类别
+	 * 收发类别(入库类别)
 	 */
-	@JBoltField(name="rdcode" ,columnName="RdCode",type="String", remark="收发类别", required=false, maxLength=30, fixed=0, order=4)
+	@JBoltField(name="rdcode" ,columnName="RdCode",type="String", remark="收发类别(入库类别)", required=false, maxLength=30, fixed=0, order=4)
 	@JSONField(name = "rdcode")
 	public java.lang.String getRdCode() {
 		return getStr("RdCode");
@@ -363,88 +355,20 @@ public abstract class BaseSysProductin<M extends BaseSysProductin<M>> extends JB
 	}
 
 	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	public M setIsDeleted(java.lang.Boolean IsDeleted) {
-		set("IsDeleted", IsDeleted);
-		return (M)this;
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=false, maxLength=1, fixed=0, order=19)
-	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("IsDeleted");
-	}
-
-	/**
-	 * 生产部门名称
-	 */
-	public M setDeptName(java.lang.String deptName) {
-		set("deptName", deptName);
-		return (M)this;
-	}
-
-	/**
-	 * 生产部门名称
-	 */
-	@JBoltField(name="deptname" ,columnName="deptName",type="String", remark="生产部门名称", required=false, maxLength=55, fixed=0, order=20)
-	@JSONField(name = "deptname")
-	public java.lang.String getDeptName() {
-		return getStr("deptName");
-	}
-
-	/**
-	 * 入库类别
-	 */
-	public M setWarehousingType(java.lang.String warehousingType) {
-		set("warehousingType", warehousingType);
-		return (M)this;
-	}
-
-	/**
-	 * 入库类别
-	 */
-	@JBoltField(name="warehousingtype" ,columnName="warehousingType",type="String", remark="入库类别", required=false, maxLength=30, fixed=0, order=21)
-	@JSONField(name = "warehousingtype")
-	public java.lang.String getWarehousingType() {
-		return getStr("warehousingType");
-	}
-
-	/**
 	 * 备注
 	 */
-	public M setRemark(java.lang.String remark) {
-		set("remark", remark);
+	public M setMemo(java.lang.String Memo) {
+		set("Memo", Memo);
 		return (M)this;
 	}
 
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="remark" ,columnName="remark",type="String", remark="备注", required=false, maxLength=255, fixed=0, order=22)
-	@JSONField(name = "remark")
-	public java.lang.String getRemark() {
-		return getStr("remark");
-	}
-
-	/**
-	 * 仓库名称
-	 */
-	public M setRepositoryName(java.lang.String repositoryName) {
-		set("repositoryName", repositoryName);
-		return (M)this;
-	}
-
-	/**
-	 * 仓库名称
-	 */
-	@JBoltField(name="repositoryname" ,columnName="repositoryName",type="String", remark="仓库名称", required=false, maxLength=30, fixed=0, order=23)
-	@JSONField(name = "repositoryname")
-	public java.lang.String getRepositoryName() {
-		return getStr("repositoryName");
+	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=255, fixed=0, order=19)
+	@JSONField(name = "memo")
+	public java.lang.String getMemo() {
+		return getStr("Memo");
 	}
 
 }

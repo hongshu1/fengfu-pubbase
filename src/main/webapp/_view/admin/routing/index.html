@@ -6,18 +6,18 @@
 		#setLocal(jboltTabId=(goods.id?? RandomUtil.random(6)))
 		<nav>
 			<div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
-				<a class="nav-item nav-link active" id="nav-base-tab_one_#(pageId)" data-toggle="tab" href="#tab-one_#(pageId)" role="tab" onclick="refreshPjaxContainer()" aria-controls="tab-one" aria-selected="true">工艺路线</a>
-				<a class="nav-item nav-link" id="nav-base-tab_two_#(pageId)" data-toggle="tab" href="#tab-two_#(pageId)" role="tab" onclick="refreshJBoltTable()" aria-controls="tab-two" aria-selected="false">版本记录</a>
+				<a class="nav-item nav-link active" id="nav-base-tab_one_2" data-toggle="tab" href="#tab-one_2" role="tab" onclick="refreshPjaxContainer()" aria-controls="tab-one" aria-selected="true">工艺路线</a>
+				<a class="nav-item nav-link" id="nav-base-tab_two_2" data-toggle="tab" href="#tab-two_2" role="tab" onclick="refreshJBoltTable()" aria-controls="tab-two" aria-selected="false">版本记录</a>
 			</div>
 		</nav>
 		<div class="tab-content" style="padding: 0px 1rem">
 			<!--1 物料清单 -->
-			<div class="tab-pane fade show active" id="tab-one_#(pageId)" role="tabpanel" aria-labelledby="nav-base-tab_one_#(pageId)">
+			<div class="tab-pane fade show active" id="tab-one_2" role="tabpanel" aria-labelledby="nav-base-tab_one_2">
 				#render("routing_index.html")
 			</div>
 			<!--2 版本记录 -->
-			<div class="tab-pane fade" id="tab-two_#(pageId)" role="tabpanel" aria-labelledby="nav-base-tab_two_#(pageId)">
-				###ajaxPortal("/admin/bommaster/versionIndex","bommaster_jstree_#(pageId)",true)
+			<div class="tab-pane fade" id="tab-two_2" role="tabpanel" aria-labelledby="nav-base-tab_two_2">
+				#ajaxPortal("/admin/routing/versionTable","routingVersionPortal_#(pageId)",true)
 			</div>
 		</div>
 	</div>
@@ -27,31 +27,38 @@
 #define js()
 <script type="text/javascript">
 
-	initTreehandler('');
-
-	function bommaster_jstree1(tree, data){
-		// $("#bomCompare_pid").val(data.id);
-		// $("#bomCompare_submit").click();
+	function routing_jstree1(tree, data){
+		if (!(data.parent=='#')){
+			LayerMsgBox.error('只能选择根节点进行操作', 500);
+			return;
+		}
+		$("#bomCompare_pid1").val(data.id);
+		$("#bomCompare_submit1").click();
 	}
 
-	function initTreehandler(item) {
-		var treeHtmlStr ="<div " +
-				"					data-jstree" +
-				"                     data-open-level='-1'" +
-				"					  data-curd='false' " +
-				"                     data-async='true'" +
-				"                     data-search-input='searchBackGoodsTypeInput_3'" +
-				"                     data-change-handler='bommaster_jstree1'" +
-				"                     data-conditions-form='routing_1_Form'" +
-				"                     data-read-url='admin/routing/findRoutingAll?item='+item>";
+    var $tree = $("#bommasterBackCategoryTree1");
 
-		$("#bommasterBackCategoryTree").html(treeHtmlStr);
-		JSTreeUtil.init($("#bommasterBackCategoryTree"));
+	function initTreehandler_1(item) {
+		var treeHtmlStr ="<div data-jstree" +
+				"              data-open-level='-1'" +
+				"			   data-curd='false' " +
+				"              data-async='true'" +
+				// "					  data-onlyleaf='true'"+
+				"              data-search-input='searchBackGoodsTypeInput_3'" +
+				"              data-change-handler='routing_jstree1'" +
+				"              data-conditions-form='routing_2_Form'" +
+				"              data-read-url='admin/routing/findRoutingAll?item='" + item + ">";
+
+        $tree.html(treeHtmlStr);
+		JSTreeUtil.init($tree);
 	}
 
 	function keyWordsOnChange() {
 		var item = $("#searchBackGoodsTypeInput_3").val()
-		initTreehandler(item);
+		initTreehandler_1(item);
 	}
+
+    // initTreehandler_1('');
+
 </script>
 #end

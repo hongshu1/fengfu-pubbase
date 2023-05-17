@@ -8,9 +8,13 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.sysenumeration.SysEnumerationService;
+import cn.rjtech.admin.vendor.VendorService;
+import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.model.momdata.SysPureceivedetail;
+import cn.rjtech.model.momdata.Vendor;
+import cn.rjtech.model.momdata.Warehouse;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -39,6 +43,12 @@ public class SysPureceiveAdminController extends BaseAdminController {
 
     @Inject
     private SysEnumerationService sysenumerationservice;
+
+    @Inject
+    private VendorService vendorservice;
+
+    @Inject
+    private WarehouseService warehouseservice;
 
     /**
      * 首页
@@ -77,18 +87,20 @@ public class SysPureceiveAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        //todo （仓库数据在从表） 关联查询出仓库编码,然后换数据源U8 查其名称
+        //关联查询出仓库编码,然后换数据源U8 查其名称
         SysPureceivedetail first = syspureceivedetailservice.findFirst("select * from  T_Sys_PUReceiveDetail where MasID = ?", sysPureceive.getAutoID());
         if (first != null && null != first.getWhcode()) {
-            set("whname", sysenumerationservice.getWhname(first.getWhcode()));
+            Warehouse first1 = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", first.getWhcode());
+            set("whname", first1.getCWhName());
         }
-        //todo 关联查询用户名字
+        // 关联查询用户名字
         if (null != sysPureceive.getCreatePerson()) {
             set("username", sysenumerationservice.getUserName(sysPureceive.getCreatePerson()));
         }
-        //todo 换数据源U8 查供应商名称
+        //查供应商名称
         if (null != sysPureceive.getVenCode()) {
-            set("venname", sysenumerationservice.getVenName(sysPureceive.getVenCode()));
+            Vendor first1 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", sysPureceive.getVenCode());
+            set("venname", first1.getCVenName());
         }
         set("sysPureceive", sysPureceive);
         render("edit.html");

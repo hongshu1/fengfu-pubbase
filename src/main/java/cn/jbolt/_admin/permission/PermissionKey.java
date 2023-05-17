@@ -1803,5 +1803,15 @@ public class PermissionKey {
 	 * 入库管理-双单位扫码收货
 	 */
 	public static final String SCANCODERECEIVE = "scancodereceive";
+	/**
+	 * 出库管理-备料一览表
+	 */
+	public static final String ADMIN_MOPICKITEMD = "materialPreparationList";
+
+	/**
+	 * 出库管理-生产备料
+	 */
+	public static final String ADMIN_SYSMATERIALSPREPARE = "productionMaterial";
+
 }
 

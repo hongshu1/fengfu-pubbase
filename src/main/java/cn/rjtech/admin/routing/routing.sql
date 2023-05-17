@@ -1,88 +1,125 @@
 #sql("findRoutingAll")
 SELECT
-	inv.cInvName,
+    a.iAutoId as iSourceId,
+    a.*
+FROM Bd_InvPart a
+LEFT JOIN Bd_Inventory inv on inv.iAutoId = a.iInventoryId
+WHERE a.iOrgId = #para(orgId)
+	 #if(keyWords)
+        AND (
+           (inv.cInvCode LIKE CONCAT('%',#para(keyWords),'%')) OR ( inv.cInvName LIKE CONCAT('%',#para(keyWords),'%') )
+          OR (inv.cInvCode1 LIKE CONCAT('%',#para(keyWords),'%')) OR ( inv.cInvAddCode1 LIKE CONCAT('%',#para(keyWords),'%') )
+          OR (inv.cInvName1 LIKE CONCAT('%',#para(keyWords),'%')) OR ( inv.cInvName2 LIKE CONCAT('%',#para(keyWords),'%') )
+          OR (a.cPartName LIKE CONCAT('%',#para(keyWords),'%'))
+        )
+	  #end
+	ORDER BY a.iSeq ASC
+#end
+
+#sql("findParentAll")
+SELECT * FROM Bd_InvPart a WHERE a.iOrgId = #para(orgId) AND ISNULL(a.iPid, '') = ''
+#end
+
+#sql("getRoutingDetails")
+SELECT
+    *
+FROM (
+SELECT
+	a.iAutoId,
+	a.cPartName,
+	a.iInventoryId,
+	a.iPid,
+	a.iParentInvId,
+CASE
+	WHEN ISNULL( inv.cInvName, '' ) = '' THEN
+		'【虚拟件-' + routingc.cOperationName+ '】' ELSE inv.cInvName
+	END AS rsinventoryname,
 	inv.cInvCode,
 	inv.cInvCode1,
-	inv.cInvAddCode,
-	inv.cInvAddCode1,
 	inv.cInvName1,
-	inv.cInvName2,
-	a.*
+	STUFF(
+		(
+		SELECT
+			', ' + be.cEquipmentName
+		FROM
+			Bd_InventoryRoutingConfig birc2
+			LEFT JOIN Bd_InventoryRoutingEquipment bire ON birc2.iAutoId = bire.iInventoryRoutingConfigId
+			LEFT JOIN Bd_Equipment be ON be.iAutoId = bire.iEquipmentId
+		WHERE
+			birc2.iAutoId = routingc.iAutoId FOR XML PATH ( '' )
+		),
+		1,
+		2,
+		''
+	) AS cequipmentnames,
+	routingc.iSeq,
+    routingc.cMergedSeq,
+    routingc.cOperationName,
+    routingc.iType,
+    routingc.iRsInventoryId,
+    routingc.cProductSn,
+    routingc.cProductTechSn,
+    routingc.iMergedNum,
+    routingc.iMergeRate,
+    routingc.iMergeSecs,
+    routingc.iSecs,
+routingc.cMemo
 FROM
-	(
-	SELECT
-		routingc.iRsInventoryId invId,
-		routingc.iAutoId,
-		NULL AS iPid,
-		routingc.iSeq,
-		routingc.cMergedSeq,
-		routingc.cOperationName,
-		routingc.iType,
-		routingc.cProductSn,
-		routingc.cProductTechSn,
-		routingc.iMergedNum,
-		routingc.iMergeRate,
-		routingc.iMergeSecs,
-		routingc.iSecs,
-		routingc.cMemo
-	FROM
-		Bd_InventoryRoutingConfig routingc
-		INNER JOIN Bd_InventoryRouting routing ON routing.iAutoId = routingc.iInventoryRoutingId
-		AND routing.isEnabled = 1
-		INNER JOIN Bd_Inventory inv ON inv.iAutoId = routing.iInventoryId
-		AND inv.iAutoId = routingc.iRsInventoryId
-	WHERE
-		routingc.isEnabled = 1
-		AND inv.iAutoId = 451617187998654 UNION ALL
-	SELECT
-		NULL invId,
-		routingc.iAutoId,
-		routingc.iPid AS iPid,
-		routingc.iSeq,
-		routingc.cMergedSeq,
-		routingc.cOperationName,
-		routingc.iType,
-		routingc.cProductSn,
-		routingc.cProductTechSn,
-		routingc.iMergedNum,
-		routingc.iMergeRate,
-		routingc.iMergeSecs,
-		routingc.iSecs,
-		routingc.cMemo
-	FROM
-		Bd_InventoryRoutingConfig routingc
-		INNER JOIN Bd_InventoryRouting routing ON routing.iAutoId = routingc.iInventoryRoutingId
-		AND routing.isEnabled = 1
-	WHERE
-		routingc.isEnabled = 1
-		AND ISNULL( routingc.iRsInventoryId, '' ) = ''
-		AND routing.iInventoryId = 451617187998654 UNION ALL
-	SELECT
-		routinginvc.iInventoryId invId,
-		routinginvc.iAutoId,
-		routinginvc.iInventoryRoutingConfigId AS iPid,
-		routingc.iSeq,
-		routingc.cMergedSeq,
-		routingc.cOperationName,
-		routingc.iType,
-		routingc.cProductSn,
-		routingc.cProductTechSn,
-		routingc.iMergedNum,
-		routingc.iMergeRate,
-		routingc.iMergeSecs,
-		routingc.iSecs,
-		routingc.cMemo
-	FROM
-		Bd_InventoryRoutingInvc routinginvc
-		INNER JOIN Bd_InventoryRoutingConfig routingc ON routingc.iAutoId = routinginvc.iInventoryRoutingConfigId
-		INNER JOIN Bd_InventoryRouting routing ON routing.iAutoId = routingc.iInventoryRoutingId
-		AND routing.isEnabled = 1
-	WHERE
-		routingc.isEnabled = 1
-		AND routing.iInventoryId = 451617187998654
-	) a
-	LEFT JOIN Bd_Inventory inv ON inv.iAutoId = a.invId
+	Bd_InvPart a
+	INNER JOIN Bd_InventoryRoutingConfig routingc ON routingc.iAutoId = a.iInventoryRoutingConfigId
+	LEFT JOIN Bd_Inventory inv ON inv.iAutoId = routingc.iRsInventoryId
+WHERE
+	1 = 1
+	#if(orgId)
+	    AND a.iOrgId = #para(orgId)
+	#end
+	#if(iParentInvId)
+	   AND a.iParentInvId = #para(iParentInvId)
+	#end
+) a
+WHERE
+    1 = 1
+	#if(cInvCode)
+	   AND (a.cInvCode LIKE CONCAT('%',#para(cInvCode),'%'))
+	#end
+	#if(cInvCode1)
+	   AND (a.cInvCode1 LIKE CONCAT('%',#para(cInvCode1),'%'))
+	#end
+	#if(cInvName1)
+	   AND (a.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%'))
+	#end
 ORDER BY
-	a.iSeq,
-	a.cMergedSeq ASC
+	a.iSeq ASC
+#end
+
+#sql("findRoutingVersion")
+SELECT
+	inv.cInvCode,
+	inv.cInvCode1,
+	inv.cInvName,
+	inv.cInvName1,
+	routing.*
+FROM
+	Bd_InventoryRouting routing
+	LEFT JOIN Bd_Inventory inv ON inv.iAutoId = routing.iInventoryId
+WHERE
+    1 = 1
+    #if(orgId)
+        AND inv.iOrgId = #para(orgId)
+    #end
+    #if(id)
+         AND routing.iAutoId = #para(id)
+    #end
+    #if(cRoutingName)
+        AND (routing.cRoutingName LIKE CONCAT('%',#para(cRoutingName),'%'))
+    #end
+    #if(cInvCode)
+	   AND (inv.cInvCode LIKE CONCAT('%',#para(cInvCode),'%'))
+	#end
+	#if(cInvCode1)
+	   AND (inv.cInvCode1 LIKE CONCAT('%',#para(cInvCode1),'%'))
+	#end
+	#if(cInvName1)
+	   AND (inv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%'))
+	#end
 #end

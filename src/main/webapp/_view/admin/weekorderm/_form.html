@@ -1,3 +1,4 @@
+#set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_title">
 	<div class="row">
 		<div class="col-12">
@@ -101,17 +102,18 @@
 			<td>${data.cinvcode}</td>
 			<td>${data.cinvcode1}</td>
 			<td>${data.cinvname1}</td>
-			<td>${data.cinvstd}</td>
+			<!--<td>${data.cinvstd}</td>-->
 
 			<td>${data.iqty}</td>
-			<td>${data.isalesuomid}</td>
+			<!--<td>${data.isalesuomid}</td>-->
 
 			<td>${data.dplanaogdate}</td>
+			<td>${data.cplanaogtime}</td>
 			<td>${data.ccode}</td>
 			<td>${data.cversion}</td>
 			<td>${data.cmemo}</td>
 			<td>
-				<a href="admin/weekorderd/delete/${data.iautoid}" name="yichuhang" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+				<a href="admin/weekorderd/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
 			</td>
 		</tr>
 		{@/each}
@@ -136,12 +138,12 @@
 	</div>
 
 	<table class="jbolt_table thead_font_normal table-bordered table-center"
+           id="jbolt_Table_#(pageId)"
 		   data-jbolttable
 		   #if(weekOrderM.iAutoId??)
 		   data-ajax="true"
 		   data-url="admin/weekorderd/datas?iWeekOrderMid=#(weekOrderM.iAutoId??)"
 		   #end
-		   id="jbolt_Table_#(pageId)"
 		   data-column-resize="true"
 		   data-tfoot-fixed="true"
 		   data-rowtpl="jboltTable_demotpl_#(pageId)"
@@ -155,16 +157,17 @@
 			<th data-width="100" data-column="cdistrictname">收货地点</th>
 			<th data-width="100" data-column="cplancode">计划代码</th>
 			<th data-width="100" data-column="cinvcode">存货编码</th>
-			<th data-width="100" data-column="cdefine1">客户部署</th>
+			<th data-width="100" data-column="cdefine1">客户部番</th>
 			<th data-width="100" data-column="cdefine2">部品名称</th>
-			<th data-width="100" data-column="cdefine3">规格</th>
+			<!--<th data-width="100" data-column="cinvstd">规格</th>-->
 			<th data-width="100" data-column="iqty">数量</th>
-			<th data-width="100" data-column="cdefine4">销售单位</th>
+			<!--<th data-width="100" data-column="cdefine4">销售单位</th>-->
 			<th data-width="160" data-column="dplanaogdate">计划到货日期</th>
+			<th data-width="160" data-column="cplanaogtime">计划到货时间</th>
 			<th data-width="100" data-column="ccode">传票号</th>
 			<th data-width="150" data-column="cversion">版本号</th>
 			<th data-width="150" data-column="cmemo">备注</th>
-			<th data-width="150" name="yichuhang">操作</th>
+			<th data-width="150">操作</th>
 		</tr>
 		</thead>
 	</table>
@@ -195,6 +198,7 @@
 					});
 				}
 			},
+            maxRowCount: 9999,
 			cols: {
 				iautoid: {
 					submitAttr: "iautoid",
@@ -223,14 +227,14 @@
 					width: 500,
 					valueAttr: "cinvcode",
 					columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,isalesuomid",
-					header:'存货编码,客户部署,部品名称,规格,销售单位',
-					changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cDefine1", use: "cinvcode1"},
-						{column: "cDefine2", use: "cinvname1"},{column: "cDefine3", use: "cinvstd"},
-						{column: "cDefine4", use: "isalesuomid"},{column: "iInventoryId", use: "iautoid"}]
+					header:'存货编码,客户部番,部品名称,规格,销售单位',
+					changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cdefine1", use: "cinvcode1"},
+						{column: "cdefine2", use: "cinvname1"},{column: "cdefine3", use: "cinvstd"},
+						{column: "cdefine4", use: "isalesuomid"},{column: "iInventoryId", use: "iautoid"}]
 				},
 				cdefine1: {
 					type:"text",
-					placeholder:'客户部署',
+					placeholder:'客户部番',
 					valueAttr: "cinvcode1",
 				},
 				cdefine2: {
@@ -265,6 +269,11 @@
 					placeholder:'计划到货日期',
 					required: true,
 				},
+                cplanaogtime: {
+                    type: "datetime",
+                    placeholder: '计划到货时间',
+                    required: true,
+                },
 				ccode: {
 					type:"input",
 					placeholder:'传票号',
@@ -297,6 +306,7 @@
 		};
 		return editableTableOptions;
 	}
+    
 	function uploadHandler(uploader, type, fileInput, res) {
 		jboltTableClear("#jbolt_Table_#(pageId)");
 
@@ -306,30 +316,103 @@
 			LayerMsgBox.alert('导入数据不能为空', 2);
 			return;
 		}
+		var arr = [];
 
+        let reg =  /([\u4e00-\u9fa5]|[\ufe30-\uffa0])/;
+        
 		$.each(data, function (idx, row) {
-			row.dplanaogdate = row.dplanaogdate.split(' ')[0]
+            $.each(row, function (k, v) {
+                if (reg.test(k)) {
+                    delete row[k];
+                } else {
+                    if (k === 'dplanaogdate') {
+                        if (row.dplanaogdate) {
+                            row.dplanaogdate = row.dplanaogdate.split(' ')[0];
+                        }
+                    } else {
+                        row[k] = $.trim(row[k]);
+                    }
+                }
+
+            });
+			if (row.cinvcode1) {
+				arr.push(row.cinvcode1);
+			}
 		});
-		console.log(data)
+
+		var para = {
+			cinvcode1: arr.join(',')
+		};
 
 		var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
-		jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
 
+		Ajax.post('admin/inventory/fetchByCinvcode1s', para, function (ret) {
 
+			LayerMsgBox.close(index);
+
+			if (ret.state === 'ok') {
+
+				// 导入行数据
+				$.each(data, function (idx, r) {
+
+					// 存货数据
+					$.each(ret.data, function (idx, row) {
+						console.log(row)
+
+						if (r.cinvcode1 === row.cinvcode1) {
+							if (row.cnt === 0) {
+								r.error = '部品番号不存在！';
+							} else if (row.cnt === 1) {
+								r.iinventoryid = row.iautoid;
+								r.cinvcode = row.cinvcode;
+								r.cinvname1 = row.cinvname1;
+								r.cinvstd = row.cinvstd;
+								r.cuomname = row.cuomname;
+							} else {
+								r.error = '存在' + row.cnt + '条匹配的存货记录，请手工选择存货！';
+							}
+						}
+
+					});
+
+					if (!r.error) {
+						if (r.cinvcode1 && !r.iinventoryid) {
+							r.error = '部品番号缺少对应存货！';
+						}
+					}
+
+					// 数量精度处理
+					$.each(r, function (key, val) {
+						if (key.startsWith('iqty')) {
+							var iqty = parseFloat(val);
+							iqty = parseFloat(iqty);
+							r[key] = iqty.toFixed(0);
+						}
+					});
+
+				});
+
+				jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
+			} else {
+				LayerMsgBox.alert(ret.msg, 2);
+			}
+		}, function () {
+			LayerMsgBox.close(index);
+		});
 	}
-
 
 	function submitThisForm(){
 		console.log("......执行");
 		jboltTableSubmit("#jbolt_Table_#(pageId)");
 	}
 
+    var $approve = $('#approve');
+    
 	function approveByAdd(){
-		$("#approve").val("approve");
-		console.log($("#approve").val());
+        $approve.val("approve");
+		console.log($approve.val());
 		submitThisForm();
 	}
-
 
 	function closeHandler(){
 		parent.layer.close(parent.layer.getFrameIndex(window.name));
@@ -348,7 +431,7 @@
 			}
 		});
 	}
+    
 </script>
-<!--#include("/_view/_admin/common/_formjs.html",formId="WeekOrderM_Form")-->
 #end
 
