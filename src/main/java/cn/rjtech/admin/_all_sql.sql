@@ -484,3 +484,7 @@
 #namespace("syssaledeliverplan")
 #include("syssaledeliverplan/syssaledeliverplan.sql")
 #end
+
+#namespace("splitbarcode")
+#include("splitbarcode/splitbarcode.sql")
+#end
