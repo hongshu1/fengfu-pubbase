@@ -40,7 +40,7 @@ public class InventoryStockConfigAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -60,7 +60,7 @@ public class InventoryStockConfigAdminController extends BaseAdminController {
 			return;
 		}
 		set("inventoryStockConfig",inventoryStockConfig);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

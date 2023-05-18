@@ -62,7 +62,7 @@ public class MaterialsOutAdminController extends BaseAdminController {
 		materialsOut.setBillNo(billNo);
 		materialsOut.setBillDate(nowDate);
 		set("materialsOut",materialsOut);
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -79,7 +79,7 @@ public class MaterialsOutAdminController extends BaseAdminController {
 		set("type", get("type"));
 		set("MODetail",MODetail);
 		set("materialsOut",materialsOut);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

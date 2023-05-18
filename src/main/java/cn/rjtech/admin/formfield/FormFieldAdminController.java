@@ -59,7 +59,7 @@ public class FormFieldAdminController extends BaseAdminController {
                 .setIFormId(iformid);
         
         set("formField", formField);
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -79,7 +79,7 @@ public class FormFieldAdminController extends BaseAdminController {
             return;
         }
         set("formField", formField);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

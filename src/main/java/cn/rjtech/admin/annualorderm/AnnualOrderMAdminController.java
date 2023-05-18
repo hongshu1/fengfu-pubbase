@@ -55,7 +55,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -78,7 +78,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
         Customer customer = customerService.findById(annualOrderM.getICustomerId());
         annualOrderMRc.set("ccusname", customer == null ? null : customer.getCCusName());
         set("annualOrderM", annualOrderMRc);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

@@ -42,7 +42,7 @@ public class RcvDocQcFormDAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -55,7 +55,7 @@ public class RcvDocQcFormDAdminController extends BaseAdminController {
 			return;
 		}
 		set("rcvDocQcFormD",rcvDocQcFormD);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

@@ -48,7 +48,7 @@ public class InventoryRoutingSopAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -68,7 +68,7 @@ public class InventoryRoutingSopAdminController extends BaseAdminController {
 			return;
 		}
 		set("inventoryRoutingSop",inventoryRoutingSop);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

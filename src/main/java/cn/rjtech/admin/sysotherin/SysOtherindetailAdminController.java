@@ -41,7 +41,7 @@ public class SysOtherindetailAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -61,7 +61,7 @@ public class SysOtherindetailAdminController extends BaseAdminController {
 			return;
 		}
 		set("sysOtherindetail",sysOtherindetail);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

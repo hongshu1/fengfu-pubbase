@@ -42,7 +42,7 @@ public class SysAssemAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -62,7 +62,7 @@ public class SysAssemAdminController extends BaseAdminController {
 			return;
 		}
 		set("sysAssem",sysAssem);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

@@ -59,7 +59,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -81,7 +81,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
             return;
         }
         set("manualOrderM", manualOrderM);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**
@@ -140,7 +140,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
         }
         set("manualOrderM", manualOrderM);
         set("view", 1);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

@@ -60,7 +60,7 @@ public class WorkshiftmAdminController extends JBoltBaseController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -73,7 +73,7 @@ public class WorkshiftmAdminController extends JBoltBaseController {
 			return;
 		}
 		set("workshiftm",workshiftm);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

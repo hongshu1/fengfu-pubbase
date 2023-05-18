@@ -77,7 +77,7 @@ public class MergeBarCodeAdminController extends BaseAdminController {
             return;
         }
         set("bill", byLogId);
-        render("edit().html");
+        render("edit.html");
     }
 
     /*

@@ -67,7 +67,7 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -111,7 +111,7 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         //付款方式
         SettleStyle first4 = settlestyleservice.findFirst("select * from Bd_SettleStyle where cSSCode =?", sysSaledeliverplan.getCondition());
         if(null != first4 && null !=first4.getCSSName()){ set("cssname",first4.getCSSName());}
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

@@ -53,7 +53,7 @@ public class CusFieldsMappingMAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -74,7 +74,7 @@ public class CusFieldsMappingMAdminController extends BaseAdminController {
         }
         set("cusFieldsMappingM", cusFieldsMappingM);
         set("iformids", CollUtil.join(cusfieldsmappingFormService.getIformIdsByMid(cusFieldsMappingM.getIAutoId()), COMMA));
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

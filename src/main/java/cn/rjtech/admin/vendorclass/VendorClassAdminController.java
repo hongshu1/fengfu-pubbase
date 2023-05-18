@@ -59,7 +59,7 @@ public class VendorClassAdminController extends BaseAdminController {
 			VendorClass vendorClass = service.findById(get("iautoid"));
 			set("vendorclass", vendorClass);
 		}
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -80,7 +80,7 @@ public class VendorClassAdminController extends BaseAdminController {
 		}
 		set("pid", vendorClass.getIPid());
 		set("vendorClass",vendorClass);
-		render("edit().html");
+		render("edit.html");
 	}
 
 	/**

@@ -41,7 +41,7 @@ public class QcFormParamAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -61,7 +61,7 @@ public class QcFormParamAdminController extends BaseAdminController {
 			return;
 		}
 		set("qcFormParam",qcFormParam);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

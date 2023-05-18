@@ -34,7 +34,7 @@ public class SubcontractorderdQtyAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -54,7 +54,7 @@ public class SubcontractorderdQtyAdminController extends BaseAdminController {
 			return;
 		}
 		set("subcontractorderdQty",subcontractorderdQty);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

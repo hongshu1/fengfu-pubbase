@@ -48,7 +48,7 @@ public class VendorAddrAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -68,7 +68,7 @@ public class VendorAddrAdminController extends BaseAdminController {
 			return;
 		}
 		set("vendorAddr",vendorAddr);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

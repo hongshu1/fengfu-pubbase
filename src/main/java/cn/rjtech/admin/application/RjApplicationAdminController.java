@@ -53,7 +53,7 @@ public class RjApplicationAdminController extends JBoltBaseController {
         rjApplication.setParentId(getLong(0, 0L));
         rjApplication.setNodeLevel(getInt(1, 1));
         set("application", rjApplication);
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -74,7 +74,7 @@ public class RjApplicationAdminController extends JBoltBaseController {
             return;
         }
         set("application", rjApplication);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

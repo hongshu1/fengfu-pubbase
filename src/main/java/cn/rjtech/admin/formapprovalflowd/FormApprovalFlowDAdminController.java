@@ -42,7 +42,7 @@ public class FormApprovalFlowDAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -55,7 +55,7 @@ public class FormApprovalFlowDAdminController extends BaseAdminController {
 			return;
 		}
 		set("formApprovalFlowD",formApprovalFlowD);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

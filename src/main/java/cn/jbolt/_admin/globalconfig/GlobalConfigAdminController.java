@@ -83,7 +83,7 @@ public class GlobalConfigAdminController extends JBoltBaseController {
 			set("imgs", getLoginBgimgs());
 			set("videos", getLoginBgvideos());
 		}
-		render("edit().html");
+		render("edit.html");
 	}
 	/**
 	 * 更新

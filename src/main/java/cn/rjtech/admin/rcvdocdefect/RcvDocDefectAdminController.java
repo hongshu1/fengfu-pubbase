@@ -48,7 +48,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     public void add2() {
@@ -85,7 +85,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
             return;
         }
         set("rcvdocdefect", rcvDocDefect);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

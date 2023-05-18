@@ -79,7 +79,7 @@ public class MoDocBatchController extends BaseAdminController {
             // 工序对应的人员
 
         }
-        render("_form().html");
+        render("_form.html");
     }
     /**
      * 编辑计划

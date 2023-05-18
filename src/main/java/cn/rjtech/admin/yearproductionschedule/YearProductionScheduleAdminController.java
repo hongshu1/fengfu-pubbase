@@ -29,7 +29,7 @@ public class YearProductionScheduleAdminController extends JBoltBaseController {
     }
 
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     public void chooseData() {

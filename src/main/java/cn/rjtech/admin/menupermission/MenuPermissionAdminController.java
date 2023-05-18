@@ -50,7 +50,7 @@ public class MenuPermissionAdminController extends JBoltBaseController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -71,7 +71,7 @@ public class MenuPermissionAdminController extends JBoltBaseController {
             return;
         }
         set("menuPermission", menuPermission);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

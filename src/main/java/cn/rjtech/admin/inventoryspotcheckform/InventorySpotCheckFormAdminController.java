@@ -108,7 +108,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -134,7 +134,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
         set("inventory", inventory);//存货档案
         set("equipmentModel", equipmentModel);//机型档案
         set("spotCheckForm", spotCheckForm); //点检表格
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

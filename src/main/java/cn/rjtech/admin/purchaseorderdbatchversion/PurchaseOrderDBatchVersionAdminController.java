@@ -37,7 +37,7 @@ public class PurchaseOrderDBatchVersionAdminController extends BaseAdminControll
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -57,7 +57,7 @@ public class PurchaseOrderDBatchVersionAdminController extends BaseAdminControll
 			return;
 		}
 		set("purchaseOrderDBatchVersion",purchaseOrderDBatchVersion);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

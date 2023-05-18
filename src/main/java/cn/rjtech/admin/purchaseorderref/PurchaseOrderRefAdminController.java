@@ -40,7 +40,7 @@ public class PurchaseOrderRefAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -60,7 +60,7 @@ public class PurchaseOrderRefAdminController extends BaseAdminController {
 			return;
 		}
 		set("purchaseOrderRef",purchaseOrderRef);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

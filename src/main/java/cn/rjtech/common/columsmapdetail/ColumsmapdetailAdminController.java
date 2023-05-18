@@ -45,7 +45,7 @@ public class ColumsmapdetailAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -58,7 +58,7 @@ public class ColumsmapdetailAdminController extends BaseAdminController {
 			return;
 		}
 		set("columsmapdetail",columsmapdetail);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

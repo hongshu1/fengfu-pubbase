@@ -49,7 +49,7 @@ public class InventoryClassAdminController extends BaseAdminController {
 	public void add() {
 		Long aLong = getLong(0);
 		set("pid",aLong);
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -69,7 +69,7 @@ public class InventoryClassAdminController extends BaseAdminController {
 			return;
 		}
 		set("inventoryClass",inventoryClass);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

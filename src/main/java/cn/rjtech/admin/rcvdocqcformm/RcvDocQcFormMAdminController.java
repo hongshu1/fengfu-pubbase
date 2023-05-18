@@ -58,7 +58,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -78,7 +78,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
             return;
         }
         set("rcvdocqcformm", rcvDocQcFormM);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

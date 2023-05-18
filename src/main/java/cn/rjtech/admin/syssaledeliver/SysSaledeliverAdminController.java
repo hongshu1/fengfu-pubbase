@@ -116,7 +116,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -136,7 +136,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
             return;
         }
         set("sysSaledeliver", sysSaledeliver);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

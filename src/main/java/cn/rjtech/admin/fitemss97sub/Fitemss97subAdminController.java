@@ -44,7 +44,7 @@ public class Fitemss97subAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -57,7 +57,7 @@ public class Fitemss97subAdminController extends BaseAdminController {
 			return;
 		}
 		set("fitemss97sub",fitemss97sub);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

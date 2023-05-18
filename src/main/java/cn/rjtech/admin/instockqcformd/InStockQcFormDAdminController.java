@@ -42,7 +42,7 @@ public class InStockQcFormDAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -55,7 +55,7 @@ public class InStockQcFormDAdminController extends BaseAdminController {
 			return;
 		}
 		set("inStockQcFormD",inStockQcFormD);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

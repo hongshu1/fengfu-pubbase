@@ -56,7 +56,7 @@ public class HiprintAdminController extends JBoltBaseController {
 	 */
 	public void tpl() {
 		keepPara("selectedId");
-		render("tpl/index().html");
+		render("tpl/index.html");
 	}
 	/**
 	 * 模板获取
@@ -111,7 +111,7 @@ public class HiprintAdminController extends JBoltBaseController {
 	 */
 	@ActionKey("tpl/add")
 	public void tplAdd() {
-		render("tpl/add().html");
+		render("tpl/add.html");
 	}
 	/**
 	 * 编辑模板
@@ -129,7 +129,7 @@ public class HiprintAdminController extends JBoltBaseController {
 			return;
 		}
 		set("tpl", tpl);
-		render("tpl/edit().html");
+		render("tpl/edit.html");
 	}
 	/**
 	 * 提交模板

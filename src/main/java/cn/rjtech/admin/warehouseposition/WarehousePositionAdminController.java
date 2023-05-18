@@ -53,7 +53,7 @@ public class WarehousePositionAdminController extends JBoltBaseController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -66,7 +66,7 @@ public class WarehousePositionAdminController extends JBoltBaseController {
 			return;
 		}
 		set("warehousePosition",warehousePosition);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

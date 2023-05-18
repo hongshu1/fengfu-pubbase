@@ -42,7 +42,7 @@ public class CusfieldsmappingdCodingruleAdminController extends BaseAdminControl
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -62,7 +62,7 @@ public class CusfieldsmappingdCodingruleAdminController extends BaseAdminControl
             return;
         }
         set("cusfieldsmappingdCodingrule", cusfieldsmappingdCodingrule);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

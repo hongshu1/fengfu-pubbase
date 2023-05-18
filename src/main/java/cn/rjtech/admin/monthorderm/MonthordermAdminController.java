@@ -50,7 +50,7 @@ public class MonthordermAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -66,7 +66,7 @@ public class MonthordermAdminController extends BaseAdminController {
         Customer customer = customerService.findById(monthorderm.getICustomerId());
         monthordermRc.set("ccusname", customer == null ? null:customer.getCCusName());
 		set("monthorderm",monthordermRc);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

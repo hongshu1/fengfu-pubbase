@@ -48,7 +48,7 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
 	public void saveItemRoutingConfig() {
@@ -72,7 +72,7 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 			return;
 		}
 		set("inventoryRoutingConfig",inventoryRoutingConfig);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

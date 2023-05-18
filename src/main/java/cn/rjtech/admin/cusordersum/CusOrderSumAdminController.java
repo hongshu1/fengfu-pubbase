@@ -63,7 +63,7 @@ public class CusOrderSumAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -83,7 +83,7 @@ public class CusOrderSumAdminController extends BaseAdminController {
             return;
         }
         set("cusOrderSum", cusOrderSum);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

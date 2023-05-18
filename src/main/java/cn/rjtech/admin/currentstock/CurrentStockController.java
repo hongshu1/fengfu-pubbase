@@ -48,7 +48,7 @@ public class CurrentStockController extends BaseAdminController {
 
 
    public void add(){
-		render("add().html");
+		render("add.html");
    }
    /**
     * 继续盘点页面*/

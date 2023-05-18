@@ -54,7 +54,7 @@ public class CustomerClassAdminController extends BaseAdminController {
 			CustomerClass customerclass=service.findById(get("autoid"));
 			set("pid", customerclass.getIAutoId());
 		}
-		render("add().html");
+		render("add.html");
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class CustomerClassAdminController extends BaseAdminController {
 		}
 		set("pid", customerclass.getIPid());
 		set("customerclass",customerclass);
-		render("edit().html");
+		render("edit.html");
 	}
 
 	/**

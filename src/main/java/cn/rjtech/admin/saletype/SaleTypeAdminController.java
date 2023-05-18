@@ -46,7 +46,7 @@ public class SaleTypeAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -59,7 +59,7 @@ public class SaleTypeAdminController extends BaseAdminController {
             return;
         }
         set("saleType", saleType);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

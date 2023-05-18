@@ -61,7 +61,7 @@ public class StockoutDefectAdminController extends BaseAdminController {
 	 * 新增
 	 */
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
 
@@ -101,7 +101,7 @@ public class StockoutDefectAdminController extends BaseAdminController {
 			return;
 		}
 		set("stockoutDefect",stockoutDefect);
-		render("edit().html");
+		render("edit.html");
 	}
 
 	/**

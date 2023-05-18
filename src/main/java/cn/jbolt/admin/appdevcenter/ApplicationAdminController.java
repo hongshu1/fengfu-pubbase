@@ -77,7 +77,7 @@ public class ApplicationAdminController extends JBoltBaseController {
 	}
 
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 	@Before(ApplicationValidator.class)
 	public void edit() {
@@ -88,7 +88,7 @@ public class ApplicationAdminController extends JBoltBaseController {
 			return;
 		}
 		setAttr("application", application);
-		render("edit().html");
+		render("edit.html");
 	}
 	/**
 	 * 保存

@@ -82,7 +82,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 		record.set(PurchaseOrderM.DENDDATE, endDate);
 		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType));
 		set("purchaseOrderM", record);
-		render("add().html");
+		render("add.html");
 	}
 	
 	public void checkData(@Para(value = "beginDate") String beginDate,
@@ -126,7 +126,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 		}
 		set("purchaseOrderM",purchaseOrderM);
 		setAttrs(service.getDateMap(purchaseOrderM));
-		render("edit().html");
+		render("edit.html");
 	}
 	
 	public void cash(){

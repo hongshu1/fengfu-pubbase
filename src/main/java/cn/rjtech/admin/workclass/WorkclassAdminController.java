@@ -61,7 +61,7 @@ public class WorkclassAdminController extends JBoltBaseController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -74,7 +74,7 @@ public class WorkclassAdminController extends JBoltBaseController {
             return;
         }
         set("workclass", workclass);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

@@ -62,7 +62,7 @@ public class WechatMpinfoAdminController extends JBoltBaseController {
 	 * 进入新增表单
 	 */
 	public void add(){
-		render("add().html");
+		render("add.html");
 	}
 	/**
 	 * 保存
@@ -79,7 +79,7 @@ public class WechatMpinfoAdminController extends JBoltBaseController {
 			renderFormFail(JBoltMsg.DATA_NOT_EXIST);
 		}else{
 			set("wechatMpinfo",wechatMpinfo);
-			render("edit().html");
+			render("edit.html");
 		}
 	}
 	/**

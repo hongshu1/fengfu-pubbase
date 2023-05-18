@@ -74,7 +74,7 @@ public class PatchWorkBarCodeAdminController extends BaseAdminController {
         BigDecimal hbqty = qty.subtract(curqty);
         byLogId.set("hbqty",hbqty);*/
         set("bill", byLogId);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**
