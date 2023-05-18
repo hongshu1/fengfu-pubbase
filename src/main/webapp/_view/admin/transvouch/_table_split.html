@@ -9,7 +9,7 @@
             <td>${data.cinvname1}</td> <!--部品名称-->
             <td>${data.cinvstd}</td> <!--规格-->
             <td>${data.caddress}</td> <!--品牌-->
-            <td>${data.cinvcode2}</td> <!--采购单位-->
+            <td>${data.inventorycuomname}</td> <!--采购单位-->
             <td>${data.qty}</td> <!--数量-->
             <td>${data.memo}</td> <!--备注-->
             <td  style="display: none">${data.sourcebilltype}</td> <!--来源单据类型-->
@@ -64,7 +64,7 @@
               <th data-width="150" data-column="cinvname1">部品名称</th>
               <th data-width="150" data-column="cinvstd">规格型号</th>
               <th data-width="100" data-column="caddress">品牌</th>
-              <th data-width="100" data-column="cinvcode2">采购单位</th>
+              <th data-width="100" data-column="inventorycuomname">采购单位</th>
             <th data-width="150" data-column="qty">数量</th><!--iInventoryUomId1-->
             <th data-width="150" data-column="memo">备注</th>
           </tr>
@@ -103,11 +103,11 @@
               width: 800,
               sync:"" ,
               valueAttr: "barcode",
-              columnAttr: "barcode,cinvcode,cinvcode1,cinvname1,cinvstd,caddress,cinvcode2",
-              header:'条码,存货编码,客户部番,部品名称,规格型号,品牌,采购单位',
+              columnAttr: "barcode,cinvcode,cinvcode1,cinvname1,cinvstd,caddress,inventorycuomname,qty",
+              header:'条码,存货编码,客户部番,部品名称,规格型号,品牌,采购单位,数量',
               changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
-                  {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
-                  {column: "caddress", use: "caddress"},{column: "cinvcode2", use: "cinvcode2"},
+                  {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},{column: "qty", use: "qty"},
+                  {column: "caddress", use: "caddress"},{column: "inventorycuomname", use: "inventorycuomname"},
                   ]
 
           },

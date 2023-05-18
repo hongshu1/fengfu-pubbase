@@ -1,6 +1,8 @@
 #sql("paginateAdminDatas")
 SELECT
-    t1.*
+    t1.*,
+    ( SELECT t5.cRdName FROM Bd_Rd_Style t5 WHERE t5.cRdCode = t1.IRdCode ) AS IRdName,
+    ( SELECT t5.cRdName FROM Bd_Rd_Style t5 WHERE t5.cRdCode = t1.ORdCode ) AS ORdName
 FROM
     T_Sys_TransVouch t1
 WHERE 1 = 1

@@ -83,7 +83,7 @@ public class ApprovalMAdminController extends BaseAdminController {
 	* 删除
 	*/
 	public void delete() {
-		renderJson(service.delete(getLong(0)));
+		renderJson(service.delete(getLong("id")));
 	}
 
   /**

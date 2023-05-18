@@ -11,26 +11,36 @@
 		</div>
 	</div>
 	#if(otherOut.autoid??)
-	<input type="hidden" id="otherOutautoid" name="autoid" value="#(otherOut.autoid??)" />
+	<input type="hidden" id="otherOutautoid" name="otherOut.autoid" value="#(otherOut.autoid??)" />
 	#end
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">领料单号：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(otherOut.cdocno??)"/>
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder=""  name="otherOut.billno" value="#(otherOut.billno??)"/>
 		</div>
 		<label class="col-sm-2 col-form-label">需求日期</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置需求日期" data-tips="请设置需求日期" maxlength="10" name="billdate" value="#(otherOut.billdate??)"/>
+			<input type="text"  data-date  id="purchaseDate"  class="form-control"
+				   placeholder="请输入需求日期" maxlength="30" name="otherOut.billdate"
+				   value="#datetime(otherOut.billdate??,'yyyy-MM-dd')">
 		</div>
 
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">生产部门：</label>
 		<div class="col-sm-2 col-form-label">
-			<select class="form-control" id="idepid" data-tips="请选择生产部门" data-url="admin/dept/datas"
-					data-text-attr="name" data-value-attr="id"
-					name="deptcode" data-autoload data-text="=请选择生产部门=" data-value=""
-					data-select="#(otherOut.deptcode??)"></select>
+			<select class="form-control"
+					data-autoload
+					name="otherOut.deptcode"
+					data-tips="请选择部门"
+					data-rule="required"
+					data-url="admin/department/getTreeTableDatas"
+					data-text="=请选择部门="
+					data-value=""
+					data-value-attr="iautoid"
+					data-text-attr="cdepname"
+					data-select="#(otherOut.deptcode??)">
+			</select>
 		</div>
 		<input type="hidden" id="cbadnesssns" name="cbadnesssns" value="#(otherOut.cbadnesssns??)"/>
 		<label class="col-sm-2 col-form-label">处置意见：</label>
@@ -54,7 +64,7 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">要求原因分析：</label>
 			<div class="col-sm-2 col-form-label"  style="margin-right: 100px">
-				<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入要求原因分析=" type="text" maxlength="300" class="form-control border-none" name="cplace" placeholder="" value="#(otherOut.cplace??)">#(otherOut.cplace??)</textarea>
+				<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入要求原因分析=" type="text" maxlength="300" class="form-control border-none" name="otherOut.memo" placeholder="" value="#(otherOut.memo??)">#(otherOut.memo??)</textarea>
 			</div>
 	</div>
 
@@ -87,24 +97,22 @@
 
 
 	function submitAllTables_#(pageId)(ele){
-		debugger;
 		var action = getRealJqueryObject(ele);
-
+debugger
 		var id = action.data("id");
+		var autoid = $("#otherOutautoid").val();
 		var value = action.data("value");
 		var tables = ["jbolt_table_inventory_split_#(pageId)"];
-
-		jboltTableSubmitMulti(tables, "admin/otherout/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
-			if (res.state == "ok") {
-				LayerMsgBox.success(res.msg, 600, function () {
-					parent.refreshPjaxContainer();
-					parent.layer.close(parent.layer.getFrameIndex(window.name));
-				})
-			} else {
-				LayerMsgBox.error(res.msg);
-			}
-		});
-
+			jboltTableSubmitMulti(tables, "admin/otherout/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+				if (res.state == "ok") {
+					LayerMsgBox.success(res.msg, 600, function () {
+						parent.refreshPjaxContainer();
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					})
+				} else {
+					LayerMsgBox.error(res.msg);
+				}
+			});
 	}
 
 

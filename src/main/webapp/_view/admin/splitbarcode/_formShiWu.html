@@ -1,139 +1,136 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_title">
-    <div class="row">
-
-        <div class="col-12 form-inline">
-
-        </div>
-
+  <div class="row">
+    <div class="col-12 form-inline">
     </div>
+
+  </div>
 </div>
 <h5>料品信息</h5>
 <div class="jbolt_page_content">
 
-    <form onsubmit="return false;" id="BarcodeDetailForm_#(pageId)" action="#(action)" method="post">
+  <form onsubmit="return false;" id="BarcodeDetailForm_#(pageId)" action="#(action)" method="post">
+    <input id="ccourseid" type="hidden" name="ccourseid" value="#(bill.csourceid??)"/>
+    <div class="form-group row">
+      <label class="col-1 col-form-label">存货编码</label>
+      <div class="col-2">
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+               maxlength="100" readonly
+               value="#(bill.invcode??)"/>
+      </div>
+      <label class="col-1 col-form-label">存货名称</label>
+      <div class="col-2">
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+               maxlength="100" readonly
+               value="#(bill.invname??)"/>
+      </div>
 
-        <div class="form-group row">
-            <label class="col-1 col-form-label">料号</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                         maxlength="100"  readonly
-                       value="#(bill.invcode??)"/>
-            </div>
-            <label class="col-1 col-form-label">品名</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.invname??)"/>
-            </div>
+    </div>
+    <dic class="form-group row">
+      <label class="col-1 col-form-label">规格</label>
+      <div class="col-2">
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+               maxlength="100" readonly
+               value="#(bill.invstd??)"/>
+      </div>
+      <label class="col-1 col-form-label">库存单位</label>
+      <div class="col-2">
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+               maxlength="100" readonly
+               value="#(bill.unitname??)"/>
+      </div>
+    </dic>
 
-        </div>
-        <dic class="form-group row">
-            <label class="col-1 col-form-label">规格</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.invstd??)"/>
-            </div>
-            <label class="col-1 col-form-label">库存单位</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.unitname??)"/>
-            </div>
-        </dic>
+    <div class="form-group row">
+      <label class="col-1 col-form-label">创建人</label>
+      <div class="col-2">
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+               maxlength="100" readonly
+               value="#(bill.createperson??)"/>
+      </div>
+      <label class="col-1 col-form-label">创建时间</label>
+      <div class="col-2">
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+               maxlength="50" readonly
+               value="#date(bill.createdate??)"/>
+      </div>
+    </div>
+    <h5>原现品票</h5>
 
-        <div class="form-group row">
-            <label class="col-1 col-form-label">创建人</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.createperson??)"/>
-            </div>
-            <label class="col-1 col-form-label">创建时间</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="50" readonly
-                       value="#date(bill.createdate??)"/>
-            </div>
-        </div>
-        <h5>原实物编码</h5>
-        <div class="form-group row">
-            <label class="col-1 col-form-label">实物编码</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.barcode??)"/>
-            </div>
-   <!--         <label class="col-1 col-form-label">载具编码</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                         maxlength="100"  readonly
-                       value="#(bill.createperson??)"/>
+    <div class="form-group row">
+      <label class="col-1 col-form-label">现品票</label>
+      <div class="col-2">
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+               maxlength="100" readonly value="#(bill.barcode??)"/>
+      </div>
+      <label class="col-1 col-form-label">批次号</label>
+      <div class="col-2">
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+               maxlength="100" readonly value="#(bill.batchno??)"/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-1 col-form-label">剩余数量</label>
+      <div class="col-2">
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+               maxlength="100" readonly value="#(bill.qty??)"/>
+      </div>
+      <!--<label class="col-1 col-form-label">总数量</label>
+      <div class="col-2">
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+               maxlength="100" readonly value="#(bill.allqty??)"/>
+      </div>-->
+    </div>
 
-            </div>-->
-            <label class="col-1 col-form-label">数量</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.qty??)"/>
-            </div>
 
-        </div>
-
-    </form>
+  </form>
 </div>
 
 <div class="jbolt_page_content">
 
-    <!-- JBoltTable的数据模板定义-->
-    <textarea class="jb_tpl_box" id="AppVouchDetailRowtpl_#(pageId)">
+  <!-- JBoltTable的数据模板定义-->
+  <textarea class="jb_tpl_box" id="AppVouchDetailRowtpl_#(pageId)">
 		{@each datas as data,index}
-        <tr data-id="${data.sourceid}">
-            <td>${pageNumber,pageSize,index | rownum}</td>
-			<td>${data.barcode}</td>
-<!--
-			<td>${data.pbarcode}</td>
--->
-			<td>${data.qty}</td>
+     <tr data-id="${data.sourceid}">
+      <td>${pageNumber,pageSize,index | rownum}</td>
+			<td title="${data.cbarcode}">${data.cbarcode}</td>
+			<td title="${data.iqty}">${data.iqty}</td>
+      <td title="${data.batch}">${data.batch}</td>
 		</tr>
 		{@/each}
 	</textarea>
 
-<h5>新实物编码</h5>
-    <table class="jbolt_table jbolt_main_table table-center"
-           id="jbolt_table_#(pageId)"
-           data-jbolttable
-           data-height="400"
-           data-ajax="true"
-           data-width="auto"
-           data-url="admin/barcode/detailDatas?logno=#(bill.logno??)"
-           data-column-resize="true"
-           data-column-prepend="1:checkbox:true"
-           data-conditions-form="BarcodeDetailForm_#(pageId)"
-           data-rowtpl="AppVouchDetailRowtpl_#(pageId)"
-           data-toolbar="AppVouchDetail_toolbar_#(pageId)"
-    >
-        <thead>
-        <tr>
-            <th data-width="70" data-column="index">序号</th>
-            <th data-width="150" data-column="barcode">实物编码</th>
-<!--
-            <th data-width="150" data-column="pbarcode">载具编码</th>
--->
-            <th data-width="150" data-column="qty">数量</th>
-
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+  <h5>新现品票</h5>
+  <table class="jbolt_table jbolt_main_table table-center"
+         id="jbolt_table_#(pageId)"
+         data-jbolttable
+         data-height="400"
+         data-ajax="true"
+         data-width="auto"
+         data-url="admin/splitBarcode/detailDatas?csourceid=#(bill.csourceid??)"
+         data-column-resize="true"
+         data-column-prepend="1:checkbox:true"
+         data-conditions-form="BarcodeDetailForm_#(pageId)"
+         data-rowtpl="AppVouchDetailRowtpl_#(pageId)"
+         data-toolbar="AppVouchDetail_toolbar_#(pageId)"
+  >
+    <thead>
+    <tr>
+      <th data-width="70" data-column="index">序号</th>
+      <th data-width="170" data-column="cbarcode">现品票</th>
+      <th data-width="150" data-column="iqty">数量</th>
+      <th data-width="150" data-column="batch">批次号</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
 </div>
 #define js()
 <script>
-    function submitThisForm() {
-        jboltTableSubmit('#jbolt_table_#(pageId)');
-    }
+  function submitThisForm() {
+    jboltTableSubmit('#jbolt_table_#(pageId)');
+  }
 </script>
 #end
 

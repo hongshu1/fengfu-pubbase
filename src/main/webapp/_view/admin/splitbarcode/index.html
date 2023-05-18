@@ -2,165 +2,169 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)">
-    <div class="split slave">
-        <div class="jbolt_tab_view">
-            <div class="jbolt_tab_links">
-                <a class="jbolt_tab_link active" href="#jbolt_tabcontent1_cf#(pageId)">拆分条码</a>
-                <a class="jbolt_tab_link " href="#jbolt_tabcontent2_cf#(pageId)">拆分条码记录</a>
-            </div>
-            <div class="jbolt_tab_contents">
-                <div class="jbolt_tab_content active" style="height:50px" id="jbolt_tabcontent1_cf#(pageId)">
-                    #render("_form.html")
-                </div>
-                <div class="jbolt_tab_content" style="height:50px" id="jbolt_tabcontent2_cf#(pageId)">
-                    <div class="jbolt_page_title">
-                        <div class="row">
-                            <div class="col-12 text-left">
-                                <form class="form-inline text-left" id="BarcodeCfForm_#(pageId)"
-                                      onsubmit="return false;" method="post">
-                                    <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码="
-                                           name="cInvCode" value=""/>
-                                    <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番="
-                                           name="cInvCode1" value=""/>
-                                    <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询
-                                    </button>
-                                    <button type="reset" class="btn btn-light"><i class="jbicon jb-11zhongzhi"></i> 重置
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="jbolt_page_content">
-                        <!-- JBoltTable的数据模板定义-->
-                        <script type="text/template" id="fhRowtpl_#(pageId)">
-                            {@each datas as data,index}
-                            <tr data-id="${data.autoid}">
-                                <td>${pageNumber,pageSize,index | rownum}</td>
-                                <td>
-                                    <a href="admin/splitBarcode/edit?autoid=${data.autoid}" data-area="1200,800" tooltip
-                                       data-title="查看" data-handler="refreshJBoltTable" data-btn="close"
-                                       data-dialog-title="查看"
-                                       class="jbolt_table_editbtn">查看</a>
-                                </td>
-                                <td>${data.splitbillno}</td>
-                                <td>${data.invcode}</td>
-                                <td>${data.cinvcode1}</td>
-                                <td>${data.cinvname1}</td>
-                                <td>${data.invstd}</td>
-                                <td>${data.unitname}</td>
-                                <td>${data.createperson}</td>
-                                <td>${data.createdate}</td>
-                            </tr>
-                            {@/each}
-                        </script>
-                        <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
-                            <div class="btn-group" role="group" aria-label="btn-group">
-                            </div>
-                        </div>
-                        <div class="jbolt_table_view">
-                            <div class="jbolt_table_box">
-                                <div class="jbolt_table_body">
-                                    <table class="jbolt_table jbolt_main_table table_striped thead_font_normal table-center"
-                                           data-jbolttable
-                                           data-ajax="true"
-                                           data-column-prepend="1:checkbox:true"
-                                           data-column-resize="true"
-                                           data-bind-elements="#fhAddBtn_#(pageId)"
-                                           data-url="admin/splitBarcode/barcodeDatas"
-                                           data-conditions-form="BarcodeCfForm_#(pageId)"
-                                           data-rowtpl="fhRowtpl_#(pageId)"
-                                           data-toolbar="jbolt_table_toolbar_#(pageId)"
-                                           data-page="fhPage_#(pageId)"
-                                           data-row-dblclick-active="true"
-                                           data-row-dblclick-handler="BarcodeDblclick"
-                                    >
-                                        <thead>
-                                            <tr>
-                                                <th data-width="30" data-min-width="60" data-column="index">序号</th>
-                                                <th data-width="150">操作</th>
-                                                <th data-width="150" data-column="splitBillNo">拆分单号</th>
-                                                <th data-width="150" data-column="invcode">存货编码</th>
-                                                <th data-width="300" data-column="cInvCode1">客户部番</th>
-                                                <th data-width="250" data-column="cInvName1">部品名称</th>
-                                                <th data-width="150" data-column="invstd">规格</th>
-                                                <th data-width="150" data-column="unitname">库存单位</th>
-                                                <th data-width="150" data-column="createperson">创建人</th>
-                                                <th data-width="150" data-column="createdate">创建时间</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="split slave">
+    <div class="jbolt_tab_view">
+      <div class="jbolt_tab_links">
+        <a class="jbolt_tab_link active" href="#jbolt_tabcontent1_cf#(pageId)">拆分条码</a>
+        <a class="jbolt_tab_link " href="#jbolt_tabcontent2_cf#(pageId)">拆分条码记录</a>
+      </div>
+      <div class="jbolt_tab_contents">
+
+        <!--拆分条码-->
+        <div class="jbolt_tab_content active" style="height:50px" id="jbolt_tabcontent1_cf#(pageId)">
+          #render("_form.html")
         </div>
+
+        <!--拆分条码记录-->
+        <div class="jbolt_tab_content" style="height:50px" id="jbolt_tabcontent2_cf#(pageId)">
+          <div class="jbolt_page_title">
+            <div class="row">
+              <div class="col-12 text-left">
+                <form class="form-inline text-left" id="BarcodeCfForm_#(pageId)"
+                      onsubmit="return false;" method="post">
+                  <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码="
+                         name="invcode" value=""/>
+                  <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番="
+                         name="cinvcode1" value=""/>
+                  <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询
+                  </button>
+                  <button type="reset" class="btn btn-light"><i class="jbicon jb-11zhongzhi"></i> 重置
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="jbolt_page_content">
+            <!-- JBoltTable的数据模板定义-->
+            <script type="text/template" id="fhRowtpl_#(pageId)">
+              {@each datas as data,index}
+              <tr data-id="${data.iautoid}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>
+                  <a href="admin/splitBarcode/edit?logno=${data.logno}" data-area="1200,800" tooltip
+                     data-title="查看" data-handler="refreshJBoltTable" data-btn="close"
+                     data-dialog-title="查看"
+                     class="jbolt_table_editbtn">查看</a>
+                </td>
+                <td title="${data.logno}">${data.logno}</td>
+                <td title="${data.invcode}">${data.invcode}</td>
+                <td title="${data.cinvcode1}">${data.cinvcode1}</td>
+                <td title="${data.cinvname1}">${data.cinvname1}</td>
+                <td title="${data.invstd}">${data.invstd}</td>
+                <td title="${data.unitname}">${data.unitname}</td>
+                <td title="${data.createperson}">${data.createperson}</td>
+                <td title="${data.createdate}">${data.createdate}</td>
+              </tr>
+              {@/each}
+            </script>
+            <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
+              <div class="btn-group" role="group" aria-label="btn-group">
+              </div>
+            </div>
+            <div class="jbolt_table_view">
+              <div class="jbolt_table_box">
+                <div class="jbolt_table_body">
+                  <table class="jbolt_table jbolt_main_table table_striped thead_font_normal table-center"
+                         data-jbolttable
+                         data-ajax="true"
+                         data-column-prepend="1:checkbox:true"
+                         data-column-resize="true"
+                         data-bind-elements="#fhAddBtn_#(pageId)"
+                         data-url="admin/splitBarcode/barcodeDatas"
+                         data-conditions-form="BarcodeCfForm_#(pageId)"
+                         data-rowtpl="fhRowtpl_#(pageId)"
+                         data-toolbar="jbolt_table_toolbar_#(pageId)"
+                         data-page="fhPage_#(pageId)"
+                         data-row-dblclick-active="true"
+                         data-row-dblclick-handler="BarcodeDblclick"
+                  >
+                    <thead>
+                    <tr>
+                      <th data-width="30" data-min-width="60" data-column="index">序号</th>
+                      <th data-width="150">操作</th>
+                      <th data-width="150" data-column="logno">拆分单号</th>
+                      <th data-width="150" data-column="invcode">存货编码</th>
+                      <th data-width="300" data-column="cinvcode1">客户部番</th>
+                      <th data-width="250" data-column="cinvname1">部品名称</th>
+                      <th data-width="150" data-column="invstd">规格</th>
+                      <th data-width="150" data-column="unitname">库存单位</th>
+                      <th data-width="150" data-column="createperson">创建人</th>
+                      <th data-width="150" data-column="createdate">创建时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 #end
 #define js()
 <script>
 
-    function submitThisFormBarcode() {
-        //jboltTableSubmit('#jbolt_Barcodetable_#(pageId)');
-        var datas = getJboltTableAllDatas('#jbolt_Barcodetable_#(pageId)');
-        var barcodes = $('#barcodes').val();
-        var qtys = $('#qtys').val();
-        var invcodes = $('#invcodes').val();
-        var invnames = $('#invnames').val();
-        LayerMsgBox.loading("正在提交,请稍等...", 30000);
-        Ajax.post('admin/splitBarcode/SubmitForm', {
-            datas: JSON.stringify(datas),
-            barcodes,
-            qtys,
-            invcodes,
-            invnames
-        }, function (ret) {
-            var json = JSON.parse(ret.data);
-            if (json.code == '200') {
-                LayerMsgBox.alert("提交成功！", 1);
-                //刷新
-                parent.refreshJBoltTable();
-            } else {
-                LayerMsgBox.alert(ret.msg, 2);
-            }
-        });
-    }
+  function submitThisFormBarcode() {
+    //jboltTableSubmit('#jbolt_Barcodetable_#(pageId)');
+    var datas = getJboltTableAllDatas('#jbolt_Barcodetable_#(pageId)');
+    var cbarcode = $('#cbarcode').val();
+    var iqty = $('#iqty').val();
+    var cinvcode = $('#cinvcode').val();
+    var cinvname = $('#cinvname').val();
+    LayerMsgBox.loading("正在提交,请稍等...", 30000);
+    Ajax.post('admin/splitBarcode/SubmitForm', {
+      datas: JSON.stringify(datas),
+      cbarcode,
+      iqty,
+      cinvcode,
+      cinvname
+    }, function (ret) {
+      var json = JSON.parse(ret.data);
+      if (json.code == '200') {
+        LayerMsgBox.alert("提交成功！", 1);
+        //刷新
+        parent.refreshJBoltTable();
+      } else {
+        LayerMsgBox.alert(ret.msg, 2);
+      }
+    });
+  }
 
-    function getEditableTableOptions_#(pageId)(){
-        var editableTableOptions = {
-            trigger: "click",
-            //初始行数
-            initRowCount: 0,
-            submit: {
-                withForm: ["BarcodeByForm_#(pageId)"],
-                type: "all",//cell|all
-                url: "admin/splitBarcode/saveTableSubmit",
-                success: function (res) {
-                    if (res.state === 'ok') {
-                        LayerMsgBox.success("提交成功", 600, function () {
-                            parent.layer.close(parent.layer.getFrameIndex(window.name));
-                            window.parent.refreshJBoltTable();
-                        });
-                    } else {
-                        LayerMsgBox.alert(res.msg, 2);
-                    }
-                }
-            },
-            //插入数据时默认属性值
-            //insertDefaultValues:{},
-            cols: {
-                number: {
-                    type: "input_number",
-                    placeholder: "数量",
-                    maxLength: 100,
-                }
-            }
-        };
-        return editableTableOptions;
-    }
+  function getEditableTableOptions_#(pageId)(){
+    var editableTableOptions = {
+      trigger: "click",
+      //初始行数
+      initRowCount: 0,
+      submit: {
+        withForm: ["BarcodeByForm_#(pageId)"],
+        type: "all",//cell|all
+        url: "admin/splitBarcode/SubmitForm",
+        success: function (res) {
+          if (res.state === 'ok') {
+            LayerMsgBox.success("提交成功", 600, function () {
+              parent.layer.close(parent.layer.getFrameIndex(window.name));
+              window.parent.refreshJBoltTable();
+            });
+          } else {
+            LayerMsgBox.alert(res.msg, 2);
+          }
+        }
+      },
+      //插入数据时默认属性值
+      //insertDefaultValues:{},
+      cols: {
+        number: {
+          type: "input_number",
+          placeholder: "数量",
+          maxLength: 100,
+        }
+      }
+    };
+    return editableTableOptions;
+  }
 </script>
 #end
