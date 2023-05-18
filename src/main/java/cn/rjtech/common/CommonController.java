@@ -239,8 +239,8 @@ public class CommonController extends BaseRestController {
     }
 
     @UnCheck
-    public void vouchProcessDynamicSubmit() {
-        Map map = commonService.vouchProcessDynamicSubmit(getKv());
+    public void vouchProcessDynamicSubmit(@Para("") JSONObject para) {
+        Map map = commonService.vouchProcessDynamicSubmit(Kv.create().set(para));
         if ("200".equals(map.get("code").toString())) {
             renderJsonData(JBoltApiRet.API_SUCCESS_WITH_DATA(map));
         } else {
