@@ -31,7 +31,7 @@ public class FormApprovalDAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
 
   	/**
@@ -58,7 +58,7 @@ public class FormApprovalDAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 
    /**
@@ -71,7 +71,7 @@ public class FormApprovalDAdminController extends BaseAdminController {
 			return;
 		}
 		set("formApprovalD",approvalD);
-		render("edit.html");
+		render("edit().html");
 	}
 
   /**

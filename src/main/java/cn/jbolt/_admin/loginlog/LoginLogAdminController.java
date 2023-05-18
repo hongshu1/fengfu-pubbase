@@ -32,7 +32,7 @@ public class LoginLogAdminController extends JBoltBaseController {
 		set("pageData", service.paginateAdminList(getPageNumber(),getPageSize(JBoltPageSize.PAGESIZE_ADMIN_LIST_30),keywords,startTime,endTime));
 		setKeywords(keywords);
 		setDateRange(dateRange,JBoltDateUtil.format(startTime, JBoltDateUtil.YMD)+" ~ "+JBoltDateUtil.format(endTime, JBoltDateUtil.YMD));
-		render("index.html");
+		render("index().html");
 	}
 	/**
 	 * 查看详情 

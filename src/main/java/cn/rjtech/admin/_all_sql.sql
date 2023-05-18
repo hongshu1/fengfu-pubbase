@@ -459,9 +459,6 @@
 #include("sysenumeration/sysenumeration.sql")
 #end
 
-#namespace("mopickitem")
-#include("mopickitemd/mopickitem.sql")
-#end
 
 #namespace("materialsprepare")
 #include("sysmaterialsprepare/materialsprepare.sql")

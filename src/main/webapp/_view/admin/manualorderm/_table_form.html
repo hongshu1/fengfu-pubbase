@@ -20,7 +20,9 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}" >
             <td>${pageNumber,pageSize,index | rownum}</td>
-            <td><a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger"></i></a></td>
+            <td>
+                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+            </td>
             <td>${data.cinvcode}</td>
             <td hidden>${data.iinventoryid}</td>
             <td>${data.cinvcode1}</td>
@@ -68,6 +70,11 @@
                 <div>
                     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                         <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+
+                        <button onclick="jboltTableRemoveCheckedRow(this, true, false)"
+                                data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
+                            <i class="fa fa-trash"></i> 删除行</button>
+
                         <div class="j_upload_file_box"
                              data-name="file"
                              data-btn-class="btn dropdown-item"
@@ -93,7 +100,7 @@
                data-ajax="true"
                data-url="admin/manualorderd/dataList?imanualordermid=#(manualOrderM.iAutoId??)"
                data-column-resize="true"
-               ##data-column-prepend="1:checkbox:true"
+               data-column-prepend="1:checkbox:true"
                data-conditions-form="itemroutingForm_#(pageId)"
                data-rowtpl="itemroutingRowtpl_#(pageId)"
                data-toolbar="itemrouting_toolbar_#(pageId)"

@@ -21,7 +21,7 @@ public class SubcontractOrderDBatchVersionAdminController extends BaseAdminContr
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
    /**
 	* 数据源
@@ -34,7 +34,7 @@ public class SubcontractOrderDBatchVersionAdminController extends BaseAdminContr
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 
    /**
@@ -54,7 +54,7 @@ public class SubcontractOrderDBatchVersionAdminController extends BaseAdminContr
 			return;
 		}
 		set("subcontractOrderDBatchVersion",subcontractOrderDBatchVersion);
-		render("edit.html");
+		render("edit().html");
 	}
 
    /**

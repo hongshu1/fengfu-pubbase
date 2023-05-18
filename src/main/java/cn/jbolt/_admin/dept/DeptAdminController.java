@@ -31,7 +31,7 @@ public class DeptAdminController extends JBoltBaseController {
 	* 首页
 	*/
 	public void index() {
-		String html = "index.html";
+		String html = "index().html";
 		JBoltDeptMgrType type = JBoltGlobalConfigCache.me.getSystemDeptMgrType();
 		if(type == JBoltDeptMgrType.JS_TREE){
 			html = "treemgr.html";
@@ -80,7 +80,7 @@ public class DeptAdminController extends JBoltBaseController {
 		set("pid", getLong(0,0L));
 		JBoltDeptMgrType type = JBoltGlobalConfigCache.me.getSystemDeptMgrType();
 		set("showPortalBtn",type == JBoltDeptMgrType.JS_TREE);
-		render("add.html");
+		render("add().html");
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class DeptAdminController extends JBoltBaseController {
 	 */
 	public void addInDialog() {
 		set("pid", getLong(0,0L));
-		render("add.html");
+		render("add().html");
 	}
 
   /**
@@ -107,7 +107,7 @@ public class DeptAdminController extends JBoltBaseController {
 		}
 		set("dept",dept);
 		set("showPortalBtn",type == JBoltDeptMgrType.JS_TREE);
-		render("edit.html");
+		render("edit().html");
 	}
 
   /**

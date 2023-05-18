@@ -28,7 +28,7 @@ public class FormapprovaldRoleAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
 
   	/**
@@ -42,7 +42,7 @@ public class FormapprovaldRoleAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 
    /**
@@ -55,7 +55,7 @@ public class FormapprovaldRoleAdminController extends BaseAdminController {
 			return;
 		}
 		set("formapprovaldRole",formapprovaldRole);
-		render("edit.html");
+		render("edit().html");
 	}
 
   /**

@@ -49,7 +49,7 @@ public class DictionaryTypeAdminController extends JBoltBaseController {
 	}
 	
 	public void add(){
-		render("add.html");
+		render("add().html");
 	}
 	public void edit(){
 		Long id=getLong(0);
@@ -67,7 +67,7 @@ public class DictionaryTypeAdminController extends JBoltBaseController {
 			return;
 		}
 		set("dictionaryType",type);
-		render("edit.html");
+		render("edit().html");
 	}
 	public void save(){
 		renderJson(service.save(getModel(DictionaryType.class, "dictionaryType")));

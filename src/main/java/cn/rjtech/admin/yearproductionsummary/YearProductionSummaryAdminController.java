@@ -27,7 +27,7 @@ public class YearProductionSummaryAdminController extends JBoltBaseController {
 
     public void index() {
         set("layYear", JBoltDateUtil.getYear());
-        render("index.html");
+        render("index().html");
     }
 
     public void datas() {

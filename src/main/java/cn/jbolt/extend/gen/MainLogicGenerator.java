@@ -57,7 +57,7 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		Class<? extends Model<?>> modelClass = InstockqcformdLine.class;
 		//是否需要分页查询
 		boolean needPaginate             = true;
-		//index.html 是否需要启用表格的工具条 toolbar
+		//index().html 是否需要启用表格的工具条 toolbar
 		boolean needToolbar              = true;
 		//执行删除时是否做检测校验
 		boolean checkDelete              = true;

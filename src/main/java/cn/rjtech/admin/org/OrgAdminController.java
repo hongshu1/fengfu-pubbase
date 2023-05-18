@@ -46,7 +46,7 @@ public class OrgAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index.html");
+        render("index().html");
     }
 
     /**
@@ -61,7 +61,7 @@ public class OrgAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add.html");
+        render("add().html");
     }
 
     /**
@@ -72,7 +72,7 @@ public class OrgAdminController extends BaseAdminController {
         ValidationUtils.notNull(org, JBoltMsg.DATA_NOT_EXIST);
 
         set("org", org);
-        render("edit.html");
+        render("edit().html");
     }
 
     /**

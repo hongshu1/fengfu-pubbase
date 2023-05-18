@@ -33,7 +33,7 @@ public class MergeBarCodeAdminController extends BaseAdminController {
      * 合并条码记录
      */
     public void index() {
-        render("index.html");
+        render("index().html");
     }
 
     /*
@@ -77,7 +77,7 @@ public class MergeBarCodeAdminController extends BaseAdminController {
             return;
         }
         set("bill", byLogId);
-        render("edit.html");
+        render("edit().html");
     }
 
     /*

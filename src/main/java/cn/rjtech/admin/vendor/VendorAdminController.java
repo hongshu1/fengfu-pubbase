@@ -46,7 +46,7 @@ public class VendorAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
    /**
 	* 数据源
@@ -62,7 +62,7 @@ public class VendorAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 
    /**
@@ -96,7 +96,7 @@ public class VendorAdminController extends BaseAdminController {
 		vendor.setCProvince(addr);
 		set("vendor",vendor);
 		set("vendoraddr",!list.isEmpty()?list.get(0):"");
-		render("edit.html");
+		render("edit().html");
 	}
 
    /**
