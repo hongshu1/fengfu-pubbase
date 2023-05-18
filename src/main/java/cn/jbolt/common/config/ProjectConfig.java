@@ -8,6 +8,7 @@ import cn.jbolt._admin.onlineuser.JBoltOnlineUserClearTask;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.systemlog.ProjectSystemLogProcessor;
 import cn.jbolt.admin.appdevcenter.AppDevCenterAdminRoutes;
+import cn.jbolt.admin.devdoc.database.DevDocAdminRoutes;
 import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoType;
 import cn.jbolt.apitest.ApiTestRoutes;
 import cn.jbolt.base.JBoltDruidStatViewHandler;
@@ -96,6 +97,7 @@ public class ProjectConfig extends JBoltProjectConfig {
 
         // 后台管理 系统Api应用开发中心模块路由配置
         me.add(new AppDevCenterAdminRoutes());
+        me.add(new DevDocAdminRoutes());
 
         // 后台管理 系统微信API路由配置
         me.add(new WechatApiRoutes());

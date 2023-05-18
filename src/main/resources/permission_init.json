@@ -380,6 +380,26 @@
 		"sortRank": 5,
 		"title": "代码生成器",
 		"url": "admin/codegen"
+	},{
+		"isMenu": true,
+		"isSystemAdminDefault": true,
+		"isTargetBlank": false,
+		"openType": 1,
+		"permissionKey": "admin_dev_doc",
+		"permissionLevel": 2,
+		"sortRank": 6,
+		"title": "开发文档",
+		"items": [{
+			"isMenu": true,
+			"isSystemAdminDefault": true,
+			"isTargetBlank": false,
+			"openType": 1,
+			"permissionKey": "admin_dev_doc_database",
+			"permissionLevel": 3,
+			"sortRank": 1,
+			"title": "数据库文档",
+			"url": "admin/devdoc/database"
+		}]
 	}],
 	"openType": 1,
 	"permissionKey": "dev_platform",
