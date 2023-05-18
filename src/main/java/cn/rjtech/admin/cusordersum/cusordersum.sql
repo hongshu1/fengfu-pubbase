@@ -244,4 +244,62 @@ ORDER BY a.iYear,a.iMonth
 #end
 
 
+#sql("getWeekOrderList")
+###根据年份获取客户周间订单 相同物料相同年月日汇总
+SELECT b.iInventoryId,c.cInvCode,c.cInvCode1,c.cInvName1,
+       CONVERT(VARCHAR(10),b.dPlanAogDate,120) AS dPlanAogDate,SUM(b.iQty) AS iQty
+FROM Co_WeekOrderM AS a
+         LEFT JOIN Co_WeekOrderD AS b ON a.iAutoId = b.iWeekOrderMid
+         LEFT JOIN Bd_Inventory AS c ON b.iInventoryId = c.iAutoId
+WHERE a.IsDeleted = 0 AND a.iAuditStatus = 2 AND b.isDeleted = 0
+  AND b.dPlanAogDate >= #para(year)
+GROUP BY
+    b.iInventoryId,c.cInvCode,c.cInvCode1,c.cInvName1,b.dPlanAogDate
+#end
 
+
+#sql("getManualOrderList")
+###根据年份获取客户手配订单 相同物料相同年月日汇总
+SELECT
+    b.iInventoryId,e.cInvCode,e.cInvCode1,e.cInvName1,
+    a.iYear AS year,a.iMonth AS month,
+             SUM(b.iQty1) AS day1,SUM(b.iQty2) AS day2,SUM(b.iQty3) AS day3,SUM(b.iQty4) AS day4,SUM(b.iQty5) AS day5,
+             SUM(b.iQty6) AS day6,SUM(b.iQty7) AS day7,SUM(b.iQty8) AS day8,SUM(b.iQty9) AS day9,SUM(b.iQty10) AS day10,
+             SUM(b.iQty11) AS day11,SUM(b.iQty12) AS day12,SUM(b.iQty13) AS day13,SUM(b.iQty14) AS day14,SUM(b.iQty15) AS day15,
+             SUM(b.iQty16) AS day16,SUM(b.iQty17) AS day17,SUM(b.iQty18) AS day18,SUM(b.iQty19) AS day19,SUM(b.iQty20) AS day20,
+             SUM(b.iQty21) AS day21,SUM(b.iQty22) AS day22,SUM(b.iQty23) AS day23,SUM(b.iQty24) AS day24,
+             SUM(b.iQty25) AS day25,SUM(b.iQty26) AS day26,SUM(b.iQty27) AS day27,SUM(b.iQty28) AS day28,SUM(b.iQty29) AS day29,
+             SUM(b.iQty30) AS day30,SUM(b.iQty31) AS day31
+FROM Co_ManualOrderM AS a
+    LEFT JOIN Co_ManualOrderD AS b ON a.iAutoId = b.iManualOrderMid
+    LEFT JOIN Bd_Inventory AS e ON b.iInventoryId = e.iAutoId
+WHERE a.IsDeleted = 0 AND a.iAuditStatus = 2
+  AND a.iYear >= #para(year)
+GROUP BY
+    b.iInventoryId,e.cInvCode,e.cInvCode1,e.cInvName1,
+    a.iYear,a.iMonth
+ORDER BY a.iYear,a.iMonth
+#end
+
+#sql("getSubcontractSaleOrderList")
+###根据年份获取客户委外销售订单 相同物料相同年月日汇总
+SELECT
+    b.iInventoryId,e.cInvCode,e.cInvCode1,e.cInvName1,
+    a.iYear AS year,a.iMonth AS month,
+             SUM(b.iQty1) AS day1,SUM(b.iQty2) AS day2,SUM(b.iQty3) AS day3,SUM(b.iQty4) AS day4,SUM(b.iQty5) AS day5,
+             SUM(b.iQty6) AS day6,SUM(b.iQty7) AS day7,SUM(b.iQty8) AS day8,SUM(b.iQty9) AS day9,SUM(b.iQty10) AS day10,
+             SUM(b.iQty11) AS day11,SUM(b.iQty12) AS day12,SUM(b.iQty13) AS day13,SUM(b.iQty14) AS day14,SUM(b.iQty15) AS day15,
+             SUM(b.iQty16) AS day16,SUM(b.iQty17) AS day17,SUM(b.iQty18) AS day18,SUM(b.iQty19) AS day19,SUM(b.iQty20) AS day20,
+             SUM(b.iQty21) AS day21,SUM(b.iQty22) AS day22,SUM(b.iQty23) AS day23,SUM(b.iQty24) AS day24,
+             SUM(b.iQty25) AS day25,SUM(b.iQty26) AS day26,SUM(b.iQty27) AS day27,SUM(b.iQty28) AS day28,SUM(b.iQty29) AS day29,
+             SUM(b.iQty30) AS day30,SUM(b.iQty31) AS day31
+FROM Co_SubcontractSaleOrderM AS a
+    LEFT JOIN Co_SubcontractSaleOrderD AS b ON a.iAutoId = b.iSubcontractSaleOrderMid
+    LEFT JOIN Bd_Inventory AS e ON b.iInventoryId = e.iAutoId
+WHERE a.IsDeleted = 0 AND a.iAuditStatus = 2
+  AND a.iYear >= #para(year)
+GROUP BY
+    b.iInventoryId,e.cInvCode,e.cInvCode1,e.cInvName1,
+    a.iYear,a.iMonth
+ORDER BY a.iYear,a.iMonth
+#end

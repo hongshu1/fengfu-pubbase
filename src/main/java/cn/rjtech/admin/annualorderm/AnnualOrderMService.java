@@ -273,7 +273,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         annualOrderM.setDUpdateTime(new Date());
         annualOrderM.update();
         //审批通过生成客户计划汇总
-        return cusOrderSumService.approve(annualOrderM);
+        return cusOrderSumService.algorithmSum();
     }
 
     public Ret importExcel(File file) {
