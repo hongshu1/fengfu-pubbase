@@ -4,8 +4,10 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.admin.approvalform.ApprovalFormService;
+import cn.rjtech.admin.auditformconfig.AuditFormConfigService;
 import cn.rjtech.model.momdata.ApprovalForm;
 import cn.rjtech.model.momdata.AuditFormConfig;
+import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
@@ -40,6 +42,8 @@ public class ApprovalMService extends BaseService<ApprovalM> {
 
 	@Inject
 	private ApprovalFormService approvalFormService;
+	@Inject
+	private AuditFormConfigService auditFormConfigService;
 
 	/**
 	 * 后台管理分页查询
@@ -97,6 +101,9 @@ public class ApprovalMService extends BaseService<ApprovalM> {
 	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
+
+
+
 		return deleteByIds(ids,true);
 	}
 
@@ -107,6 +114,18 @@ public class ApprovalMService extends BaseService<ApprovalM> {
 	 */
 	public Ret delete(Long id) {
 		boolean success = tx(()->{
+
+			List<AuditFormConfig> formConfigs = auditFormConfigService.find("select * from Bd_AuditFormConfig where " +
+					"iFormId in (select iFormId from " +
+					"Bd_ApprovalForm where iApprovalMid = " + id + ")");
+
+			if (formConfigs.size()>0){
+				formConfigs.forEach(auditFormConfig -> {
+					ValidationUtils.isTrue(auditFormConfig.getIType()!=1, "删除审批流需将表单["+auditFormConfig.getCFormName()+
+							"]的审批类型改成审核或者删除");
+				});
+			}
+
 
 //			并删除所有子表的数据
 			delete("delete from Bd_ApprovalD where iApprovalMid = "+id);

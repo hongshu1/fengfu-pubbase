@@ -5,16 +5,17 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.math.BigDecimal;
 
 /**
  * 合并条码 Controller
+ *
  * @ClassName: MergeBarCodeAdminController
  * @author: 佛山市瑞杰科技有限公司
  */
@@ -23,6 +24,7 @@ import java.math.BigDecimal;
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/mergeBarcode", viewPath = "_view/admin/mergebarcode")
 public class MergeBarCodeAdminController extends BaseAdminController {
+
     @Inject
     private MergeBarCodeService service;
 
@@ -38,7 +40,6 @@ public class MergeBarCodeAdminController extends BaseAdminController {
     }
 
     public void StripSelectDatas() {
-        BigDecimal zero = BigDecimal.ZERO;
         renderJsonData(service.StripSelectDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
@@ -68,10 +69,6 @@ public class MergeBarCodeAdminController extends BaseAdminController {
         Kv kv = getKv();
         String logid = kv.getStr("logid");
         Record byLogId = service.findByLogId(logid);
-  /*      BigDecimal qty = byLogId.getBigDecimal("qty");
-        BigDecimal curqty = byLogId.getBigDecimal("curqty");
-        BigDecimal hbqty = qty.subtract(curqty);
-        byLogId.set("hbqty",hbqty);*/
         set("bill", byLogId);
         render("edit.html");
     }
