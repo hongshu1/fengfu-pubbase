@@ -1,0 +1,162 @@
+#set(pageId=RandomUtil.random(6))
+<!--<div class="col-md-auto">-->
+<!--	<h1>出库管理-其他出库单列表</h1>-->
+<!--</div>-->
+<div class="jbolt_page">
+	<div class="jbolt_page_content">
+<form onsubmit="return false;" id="otherDeliveryListForm" action="#(action)" method="post">
+	<div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
+		<div class="col-md-l pt-2" role="group" aria-label="btn-group">
+			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+			<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+		</div>
+	</div>
+	#if(otherOut.autoid??)
+		<input type="hidden" id="otherOutautoid" name="otherOut.autoid" value="#(otherOut.autoid??)" />
+	#end
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">出库单号：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" name="otherOut.billno" value="#(otherOut.billno??)"/>
+		</div>
+		<label class="col-sm-2 col-form-label">出库日期：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text"  data-date  id="purchaseDate"  class="form-control"
+				   placeholder="请输入出库日期" maxlength="30" name="otherOut.billdate"
+				   value="#datetime(otherOut.billdate??,'yyyy-MM-dd')">
+		</div>
+		<label class="col-sm-2 col-form-label">仓库名称：</label>
+		<div class="col-sm-2 col-form-label">
+			<select class="form-control"
+					name="otherOut.whcode"
+					data-autoload
+					data-url="admin/SysEnumeration/wareHouse"
+					data-select-type="select2"
+					data-text="=请选择仓库名称="
+					data-value=""
+					data-value-attr="whcode"
+					data-text-attr="whname"
+					data-select="#(otherOut.whcode??)"></select>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">出库类别：</label>
+		<div class="col-sm-2 col-form-label">
+			<select class="form-control"
+					name="otherOut.rdcode"
+					data-autoload
+					data-url="admin/materialDeliveryList/RDStyle?bRdFlag=0"
+					data-select-type="select2"
+					data-text="=请选择出库类别="
+					data-value=""
+					data-value-attr="crdcode"
+					data-text-attr="crdname"
+					data-select="#(otherOut.rdcode??)"></select>
+		</div>
+		<label class="col-sm-2 col-form-label">业务类型：</label>
+		<div class="col-sm-2 col-form-label">
+			<select class="form-control" name="otherOut.billtype"
+					data-autoload
+					data-url="admin/dictionary/options?key=null"
+					data-select-type="select"
+					data-text="=业务类型="
+					data-value=""
+					data-value-attr="sn"
+					value="#(otherOut.billtype??)"
+			></select>
+		</div>
+		<label class="col-sm-2 col-form-label">业务号：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value=""/>
+		</div>
+	</div>
+
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">出库部门：</label>
+		<div  class="col-sm-2 col-form-label">
+			<select class="form-control"
+					data-autoload
+					name="otherOut.deptcode"
+					data-tips="请选择部门"
+					data-rule="required"
+					data-url="admin/department/getTreeTableDatas"
+					data-text="=请选择部门="
+					data-value=""
+					data-value-attr="iautoid"
+					data-text-attr="cdepname"
+					data-select="#(otherOut.deptcode??)">
+			</select>
+		</div>
+		<label class="col-sm-2 col-form-label">审核日期：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+				   placeholder="" value="#date((otherOut.auditdate??),'yyyy-MM-dd HH:mm:ss')"/>
+		</div>
+		<label class="col-sm-2 col-form-label">备注：</label>
+		<div class="col-sm-2 col-form-label">
+                    <textarea style="width: 210px; height: 100px; resize: none" placeholder="=请输入备注=" type="text"
+							  maxlength="300" class="form-control border-none" name="otherOut.memo" placeholder=""
+							  value="#(otherOut.memo??)">#(otherOut.memo??)</textarea>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<div class="col-11" style="margin-left: 180px;">
+			<div class="jbolt_page_content">
+				#render("_table_split.html")
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">制单人：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" class="form-control border-none" readonly="readonly" placeholder=""
+				   value="#(otherOut.createperson??)"/>
+		</div>
+		<label class="col-sm-2 col-form-label">审核人：</label>
+		<div class="col-sm-2 col-form-label">
+			<input type="text" class="form-control border-none" readonly="readonly" placeholder=""
+				   value="#(otherOut.auditperson??)"/>
+		</div>
+	</div>
+</form>
+	</div>
+</div>
+#define js()
+<script>
+	hideParentLayerDialogBtn();
+
+
+	function submitAllTables_#(pageId)(ele){
+		var action = getRealJqueryObject(ele);
+		var autoid = $("#otherOutautoid").val();
+
+		var id = action.data("id");
+		var value = action.data("value");
+		var tables = ["jbolt_table_otherdeliverylist_split_#(pageId)"];
+
+		jboltTableSubmitMulti(tables, "admin/otherdeliverylist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+			if (res.state == "ok") {
+				LayerMsgBox.success(res.msg, 600, function () {
+					parent.refreshPjaxContainer();
+					parent.layer.close(parent.layer.getFrameIndex(window.name));
+				})
+			} else {
+				LayerMsgBox.error(res.msg);
+			}
+		});
+	}
+
+
+	function closeHandler() {
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
+		window.parent.refreshJBoltTable();
+	}
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="otherOutForm")
+#end
+
