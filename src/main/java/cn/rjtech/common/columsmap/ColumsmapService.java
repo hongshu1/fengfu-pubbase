@@ -1077,12 +1077,9 @@ public class ColumsmapService extends BaseService<Columsmap> {
         Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag"), Collectors.toList()));
         Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
         
-        // 交换表数据保存
-        List<ExchangeTable> saveExchangeTables = new ArrayList<>();
-        
         for (Object flag : groupFlags) {
             //业务id
-            String vouchBusinessID = String.valueOf(JBoltSnowflakeKit.me.nextId());
+            String vouchBusinessID = JBoltSnowflakeKit.me.nextIdStr();
             String seqBusinessID = vouchBusinessID;
             //获取主数据
             JSONArray mainData = JSONArray.parseArray(JSON.toJSONString(dataGroup.get(flag)));//JSONArray.parseArray(kv.getStr("maindata"));

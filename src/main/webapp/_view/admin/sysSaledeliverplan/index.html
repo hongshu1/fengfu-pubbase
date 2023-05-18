@@ -9,15 +9,17 @@
             </div>
             <div class="col">
                 <form class="form-inline" id="SysSaledeliverplan_form_#(pageId)">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="发货单号" name="keywords"
+                    <input type="text" autocomplete="off" class="form-control" placeholder="发货单号" name="billno"
                         value="" />
 
-                    <input type="text" autocomplete="off" class="form-control" placeholder="部门名称" name="keywords"
+                    <input type="text" autocomplete="off" class="form-control" placeholder="部门名称" name="cdepname"
                         value="" />
-                    <input type="text" autocomplete="off" class="form-control" placeholder="客户简称" name="keywords"
+                    <input type="text" autocomplete="off" class="form-control" placeholder="客户简称" name="ccusname"
                         value="" />
-                    <select class="form-control" name="state" data-autoload data-url="admin/dictionary/options?key=null"
-                        data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="状态" name="state"
+                        value="" />
+                    <!-- <select class="form-control" name="state" data-autoload data-url="admin/dictionary/options?key=null"
+                        data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select> -->
                     <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20"
                         name="startTime" value="" />
                     <span class="ml-1 mr-1">至</span>
@@ -43,20 +45,20 @@
                 <a href="admin/salesShipmentList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑销售出货(计划)" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
                 <a href="admin/salesShipmentList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
             </td>
-			<td>${data.autoid}</td>
-			<td>${data.sourcebilltype}</td>
 			<td>${data.sourcebilldid}</td>
-			<td>${data.rdcode}</td>
-			<td>${data.organizecode}</td>
 			<td>${data.billno}</td>
+			<td>${data.predeliverdate}</td>
 			<td>${data.billtype}</td>
-			<td>${data.billdate}</td>
-			<td>${data.deptcode}</td>
-			<td>${data.exchname}</td>
-			<td>${data.exchrate}</td>
-			<td>${data.taxrate}</td>
+			<td>${data.cstname}</td>
+			<td>${data.billno}</td>
+			<td>${data.ccusname}</td>
+
+			<td>${data.cdepname}</td>
+			<td>${data.createperson}</td>
 			<td>${data.shipaddress}</td>
-			<td>${data.receiveaddress}</td>
+			<td>${data.issue}</td>
+			<td>${data.createperson}</td>
+			<td>${data.createdate}</td>
 
 		</tr>
 		{@/each}
@@ -68,13 +70,13 @@
                     class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
                 </button>
                 <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
-                id="toolbar_editBtn_#(pageId)" data-title="批量审批销售出货(计划)" data-check-handler="jboltTableGetCheckedId"
-                data-url="admin/salesShipmentList/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i>
-                批量审批</button>
-            <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
-                id="side_toolbar_editBtn_#(pageId)" data-title="批量反审批-销售出货(计划)"
-                data-check-handler="jboltTableGetCheckedId" data-url="admin/salesShipmentList/edit/"
-                class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量反审批</button>
+                    id="toolbar_editBtn_#(pageId)" data-title="批量审批销售出货(计划)" data-check-handler="jboltTableGetCheckedId"
+                    data-url="admin/salesShipmentList/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i>
+                    批量审批</button>
+                <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
+                    id="side_toolbar_editBtn_#(pageId)" data-title="批量反审批-销售出货(计划)"
+                    data-check-handler="jboltTableGetCheckedId" data-url="admin/salesShipmentList/edit/"
+                    class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量反审批</button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                     id="toolbar_deleteBtn_#(pageId)" data-url="admin/salesShipmentList/deleteByIds?ids="
                     data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
@@ -92,18 +94,18 @@
                 <tr>
                     <th data-width="60" data-column="index">序号</th>
                     <th data-width="150" data-column="AutoID">操作</th>
-                    <th data-width="150" data-column="SourceBillType">状态</th>
+                    <!-- <th data-width="150" data-column="SourceBillType">状态</th> -->
                     <th data-width="150" data-column="SourceBillDid">来源</th>
-                    <th data-width="150" data-column="RdCode">发货单号</th>
-                    <th data-width="150" data-column="OrganizeCode">发货日期</th>
+                    <th data-width="150" data-column="BillNo">发货单号</th>
+                    <th data-width="150" data-column="PreDeliverDate">发货日期</th>
                     <th data-width="150" data-column="BillType">业务类型</th>
-                    <th data-width="150" data-column="BillDate">销售类型</th>
-                    <th data-width="150" data-column="DeptCode">订单号</th>
-                    <th data-width="150" data-column="ExchName">客户简称</th>
-                    <th data-width="100" data-column="ExchRate">销售部门</th>
-                    <th data-width="100" data-column="TaxRate">业务员</th>
+                    <th data-width="150" data-column="RdCode">销售类型</th>
+                    <th data-width="150" data-column="BillNo">订单号</th>
+                    <th data-width="150" data-column="iCustomerId">客户简称</th>
+                    <th data-width="100" data-column="DeptCode">销售部门</th>
+                    <th data-width="100" data-column="CreatePerson">业务员</th>
                     <th data-width="150" data-column="ShipAddress">发货地址</th>
-                    <th data-width="150" data-column="ReceiveAddress">发运方式</th>
+                    <th data-width="150" data-column="Issue">发运方式</th>
                     <th data-width="150" data-column="CreatePerson">创建人</th>
                     <th data-min-width="160" data-column="CreateDate">创建时间</th>
                 </tr>

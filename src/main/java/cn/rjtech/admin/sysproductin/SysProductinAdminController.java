@@ -83,29 +83,30 @@ public class SysProductinAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
+        // todo 待优化
         //仓库
         Warehouse first = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", sysProductin.getWhcode());
-        if (null != first.getCWhName()) {
+        if (null != first && null != first.getCWhName()) {
             set("cwhname", first.getCWhName());
         }
         //入库类型
         RdStyle first1 = rdstyleservice.findFirst("select * from Bd_Rd_Style where crdcode=?", sysProductin.getRdCode());
-        if (null != first1.getCRdName()) {
+        if (null != first1 && null != first1.getCRdName()) {
             set("crdname", first1.getCRdName());
         }
         //生产部门
         Department first2 = departmentservice.findFirst("select * from Bd_Department where cDepCode=?", sysProductin.getDeptCode());
-        if (null != first2.getCDepName()) {
+        if (null !=first2 && null != first2.getCDepName()) {
             set("cdepname", first2.getCDepName());
         }
         //制单人
         Record record = service.selectName(sysProductin.getCreatePerson());
-        if (null != record.get("name")) {
+        if ( null != record && null != record.get("name")) {
             set("name", record.get("name"));
         }
         //审核人
         Record record1 = service.selectName(sysProductin.getAuditPerson());
-        if (null != record1.get("name")) {
+        if (null != record1 && null != record1.get("name")) {
             set("sname", record1.get("name"));
         }
         set("sysProductin", sysProductin);
