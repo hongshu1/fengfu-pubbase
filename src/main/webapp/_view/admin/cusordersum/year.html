@@ -16,9 +16,9 @@
             {@each data.record1 as record,index}
             {@if#(d.key.split("_")[0])==record.iyear && record.imonth == #(d.key.split("_")[1])}
             #for(dt : d.value)
-            <td>${record.iqty#date(dt, 'yyyy-MM-dd'.split("-")[2])}</td>
+            <td>${record.iqty#date(dt, 'yyyy-MM-dd'.split("-")[2]),0|number_format}</td>
             #end
-            <td>${record.iqtysum}</td>
+            <td>${record.iqtysum,0|number_format}</td>
             ${mark=2}
             {@/if}
             {@/each}
@@ -38,9 +38,9 @@
                 {@each data.record2 as record,index}
             {@if#(d.key.split("_")[0])==record.iyear && record.imonth == #(d.key.split("_")[1])}
             #for(dt : d.value)
-            <td>${record.iqty#date(dt, 'yyyy-MM-dd'.split("-")[2])}</td>
+            <td>${record.iqty#date(dt, 'yyyy-MM-dd'.split("-")[2]),0|number_format}</td>
             #end
-                    <td>${record.iqtysum}</td>
+                    <td>${record.iqtysum,0|number_format}</td>
                     ${mark=2}
                     {@/if}
                 {@/each}
@@ -60,9 +60,9 @@
                 {@each data.record3 as record,index}
             {@if#(d.key.split("_")[0])==record.iyear && record.imonth == #(d.key.split("_")[1])}
             #for(dt : d.value)
-            <td>${record.iqty#date(dt, 'yyyy-MM-dd'.split("-")[2])}</td>
+            <td>${record.iqty#date(dt, 'yyyy-MM-dd'.split("-")[2]),0|number_format}</td>
             #end
-            <td>${record.iqtysum}</td>
+            <td>${record.iqtysum,0|number_format}</td>
             ${mark=2}
                     {@/if}
                 {@/each}
