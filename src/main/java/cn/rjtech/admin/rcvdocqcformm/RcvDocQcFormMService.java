@@ -28,6 +28,7 @@ import cn.rjtech.util.excel.SheetPage;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.Kv;
@@ -450,7 +451,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         if (StringUtils.isBlank(isok)) {
             return fail("请判定是否合格");
         }
-        System.out.println("serializeSubmitList=======>" + JboltPara.getString("serializeSubmitList"));
         Boolean result = achiveEditSerializeSubmitList(JboltPara.getJSONArray("serializeSubmitList"), docqcformmiautoid,
             JboltPara.getString("cmeasurepurpose"), JboltPara.getString("cmeasurereason"),
             JboltPara.getString("cmeasureunit"), JboltPara.getString("cmemo"),
@@ -470,6 +470,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         boolean result = tx(() -> {
             for (int i = 0; i < serializeSubmitList.size(); i++) {
                 JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
+                System.out.println("new Gson().toJson(jsonObject)====>"+new Gson().toJson(jsonObject));
                 String iseq = jsonObject.getString("iseq");
                 Long ircvdocqcformmid = jsonObject.getLong("iautoid");
                 JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
@@ -477,7 +478,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
                 JSONArray elementList = serializeElement.getJSONArray(0);
                 for (int j = 0; j < elementList.size(); j++) {
                     JSONObject object = elementList.getJSONObject(j);
-                    String name = object.getString("name");
                     String cvalue = object.getString("value");
                     JSONObject cvaluelistJSONObject = cvaluelist.getJSONObject(j);
                     Long lineiautoid = cvaluelistJSONObject.getLong("lineiautoid");

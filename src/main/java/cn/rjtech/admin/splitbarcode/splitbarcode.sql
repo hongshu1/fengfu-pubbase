@@ -39,7 +39,7 @@ order by t2.cSeq
 #sql("barcodeDatas")
 SELECT log.*,inv.invname,inv.invstd,inv.unitname,
        t3.cInvCode1,t3.cInvName1,t3.iInventoryUomId1,
-       t4.iautoid csourceid
+       t4.iautoid csourceid,t4.ipurchaseorderdid
 from  T_Sys_ScanLog log
 LEFT JOIN UFDATA_001_2023.dbo.v_sys_inventory inv on inv.invcode = log.invcode
 LEFT JOIN Bd_Inventory t3 on log.invcode = t3.cInvCode

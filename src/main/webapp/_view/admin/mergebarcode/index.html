@@ -31,21 +31,19 @@
               {@each datas as data,index}
               <tr data-id="${data.billno}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>
+                  <a data-btn="close" href="admin/mergeBarcode/findByLogno?logno=${data.logno}"
+                     data-area="1200,800" tooltip data-title="查看" data-handler="refreshJBoltTable"
+                     data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+                </td>
+                <td title="${data.ipurchaseorderdid}">${data.ipurchaseorderdid}</td>
                 <td>${data.invcode}</td>
                 <td>${data.invname}</td>
                 <td>${data.invstd}</td>
                 <td>${data.unitname}</td>
-                <td>${data.barcode}</td>
-                <td>${data.pbarcode}</td>
-                <td>${data.batch}</td>
                 <td>${data.qty, 2|number_format}</td>
                 <td>${data.createperson}</td>
                 <td>${data.createdate}</td>
-                <td>
-                  <a data-btn="close" href="admin/mergeBarcode/findByLogId?logid=${data.logid}"
-                     data-area="1200,800" tooltip data-title="查看" data-handler="refreshJBoltTable"
-                     data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
-                </td>
               </tr>
               {@/each}
             </script>
@@ -75,17 +73,16 @@
                     <thead>
                     <tr>
                       <th data-width="30" data-min-width="60" data-column="index">序号</th>
+                      <th data-width="150">操作</th>
+                      <th data-width="150" data-column="ipurchaseorderdid">合并单号</th>
                       <th data-width="150" data-column="invcode">存货编码</th>
-                      <th data-width="150" data-column="invname">料品名称</th>
+                      <th data-width="150" data-column="cInvCode1">客户部番</th>
+                      <th data-width="150" data-column="cInvName1">部品名称</th>
                       <th data-width="150" data-column="invstd">规格</th>
                       <th data-width="150" data-column="unitname">库存单位</th>
-                      <th data-width="150" data-column="barcode">现品票</th>
-                      <th data-width="150" data-column="pbarcode">载具编码</th>
-                      <th data-width="150" data-column="batch">批次号</th>
                       <th data-width="150" data-column="qty">合并数量</th>
                       <th data-width="150" data-column="createperson">创建人</th>
                       <th data-width="150" data-column="createdate">创建时间</th>
-                      <th data-width="150">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -139,15 +136,7 @@
         }
       },
       //插入数据时默认属性值
-      //insertDefaultValues:{},
       cols: {
-        /*"cworkregionmids": {
-            type: "select2",
-            url: "admin/workposition/workregionmOptions",
-            valueAttr: "iautoid",
-            textAttr: "cworkname",
-            multiple:"multiple"
-        },*/
         sums: {
           type: "input_number",
           placeholder: "=合并数量=",

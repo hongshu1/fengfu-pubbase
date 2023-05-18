@@ -1,6 +1,7 @@
 package cn.rjtech.admin.mergebarcode;
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -68,10 +69,13 @@ public class MergeBarCodeAdminController extends BaseAdminController {
     /*
      * 点击查看按钮，跳转到查看页面
      * */
-    public void findByLogId() {
+    public void findByLogno() {
         Kv kv = getKv();
-        String logid = kv.getStr("logid");
-        Record byLogId = service.findByLogId(logid);
+        Record byLogId = service.findByLogId(kv.getStr("logno"));
+        if (null == byLogId) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
         set("bill", byLogId);
         render("edit.html");
     }
@@ -81,17 +85,7 @@ public class MergeBarCodeAdminController extends BaseAdminController {
      * */
     public void detailDatas() {
         Kv kv = getKv();
-        String sourceid = kv.getStr("sourceid");
-        renderJsonData(service.findListByShiWu(sourceid));
-    }
-
-    /**
-     * 合并条码详情列表页
-     */
-    public void formdatas() {
-        Kv kv = getKv();
-        String logno = kv.getStr("logno");
-        renderJsonData(service.formdatas(logno));
+        renderJsonData(service.findShiWuByCSourceId(kv.getStr("csourceid")));
     }
 
 }
