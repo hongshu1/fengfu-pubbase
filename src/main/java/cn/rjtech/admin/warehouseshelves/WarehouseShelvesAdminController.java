@@ -39,7 +39,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
      * 首页
      */
     public void index() {
-        render("index.html");
+        render("index().html");
     }
 
     /**
@@ -57,7 +57,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
      * 新增
      */
     public void add() {
-        render("add.html");
+        render("add().html");
     }
 
     /**
@@ -70,7 +70,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
             return;
         }
         set("warehouseShelves",warehouseShelves);
-        render("edit.html");
+        render("edit().html");
     }
 
     /**

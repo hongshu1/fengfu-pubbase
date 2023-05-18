@@ -56,7 +56,7 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 	 * 首页
 	 */
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
 	/**
 	 * 数据源
@@ -81,7 +81,7 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 		record.set(SubcontractOrderM.DENDDATE, endDate);
 		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType));
 		set("subcontractOrderM", record);
-		render("add.html");
+		render("add().html");
 	}
 	
 	public void checkData(@Para(value = "beginDate") String beginDate,
@@ -119,7 +119,7 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 		}
 		set("subcontractOrderM",subcontractOrderM);
 		setAttrs(service.getDateMap(subcontractOrderM));
-		render("edit.html");
+		render("edit().html");
 	}
 	
 	public void cash(){

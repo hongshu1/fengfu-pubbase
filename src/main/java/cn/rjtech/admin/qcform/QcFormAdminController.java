@@ -45,7 +45,7 @@ public class QcFormAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index.html");
+        render("index().html");
     }
 
     /**
@@ -69,7 +69,7 @@ public class QcFormAdminController extends BaseAdminController {
         qcParam.setCOrgCode(orgCode);
         qcParam.setCOrgName(orgName);
         set("qcparam", qcParam);
-        render("add.html");
+        render("add().html");
     }
 
 //    /**
@@ -97,7 +97,7 @@ public class QcFormAdminController extends BaseAdminController {
         set("rowTwoList", rowTwoList);
 
         set("qcForm", qcForm);
-        render("edit.html");
+        render("edit().html");
     }
 
 //    /**

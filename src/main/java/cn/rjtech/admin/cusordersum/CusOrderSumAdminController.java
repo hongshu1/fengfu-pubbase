@@ -45,7 +45,7 @@ public class CusOrderSumAdminController extends BaseAdminController {
         int lastDayOfMonth = DateUtil.getLastDayOfMonth(DateUtil.date());
         calendar.set(Calendar.DAY_OF_MONTH, lastDayOfMonth);
         set("endDate", calendar.getTime());
-        render("index.html");
+        render("index().html");
     }
 
     /**
@@ -63,7 +63,7 @@ public class CusOrderSumAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add.html");
+        render("add().html");
     }
 
     /**
@@ -83,7 +83,7 @@ public class CusOrderSumAdminController extends BaseAdminController {
             return;
         }
         set("cusOrderSum", cusOrderSum);
-        render("edit.html");
+        render("edit().html");
     }
 
     /**

@@ -26,7 +26,7 @@ public class BomCompareAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
    /**
 	* 数据源
@@ -39,7 +39,7 @@ public class BomCompareAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 
    /**
@@ -59,7 +59,7 @@ public class BomCompareAdminController extends BaseAdminController {
 			return;
 		}
 		set("bomCompare",bomCompare);
-		render("edit.html");
+		render("edit().html");
 	}
 
    /**
