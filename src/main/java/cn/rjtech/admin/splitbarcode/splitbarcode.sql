@@ -29,9 +29,9 @@ INNER JOIN (
     SELECT iSubcontractOrderDid,iinventoryId,cBarcode,iQty,cSourceld,cSourceBarcode,cSeq from PS_SubcontractOrderDBatch
 ) t2 on log.barcode = t2.cSourceBarcode
 left join T_Sys_BarcodeDetail t3 on log.InvCode = t3.Invcode and log.Barcode = t3.Barcode
-where
+where 1=1
 #if(csourceid)
-t2.cSourceld = #para(csourceid)
+and t2.cSourceld = #para(csourceid)
 #end
 order by t2.cSeq
 #end

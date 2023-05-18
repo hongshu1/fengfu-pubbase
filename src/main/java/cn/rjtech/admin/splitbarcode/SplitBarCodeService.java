@@ -10,6 +10,7 @@ import cn.rjtech.common.organize.OrganizeService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -147,7 +148,9 @@ public class SplitBarCodeService extends BaseService<Inventory> {
     }
 
     public List<Record> findListByCsourceid(String csourceid) {
-        List<Record> list = dbTemplate("splitbarcode.findByListCsourceid", Kv.by("csourceid", csourceid)).find();
-        return list;
+        if (StringUtils.isBlank(csourceid)){
+            return null;
+        }
+        return dbTemplate("splitbarcode.findByListCsourceid", Kv.by("csourceid", csourceid)).find();
     }
 }

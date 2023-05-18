@@ -66,7 +66,7 @@ public class AppConfig {
      * U8推单地址(推送采购入库单到U8系统)
      */
     public static String getVouchProcessDynamicSubmitUrl() {
-        String url = "http://localhost:8081/api/erp/common/vouchProcessDynamicSubmit";
+        String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
         //JBoltConfig.prop.get("u8.api.url") + "/api/erp/common/vouchProcessDynamicSubmit"
         return url;
     }
