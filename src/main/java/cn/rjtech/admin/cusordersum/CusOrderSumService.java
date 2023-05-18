@@ -263,7 +263,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
                 if (monthQty.compareTo(BigDecimal.ZERO) > 0){
                     int workSum = monthDays.get("iMonth" + i + "Days");//月工作天数
                     //平均数量
-                    BigDecimal avgQty = monthQty.divide(BigDecimal.valueOf(workSum),BigDecimal.ROUND_UP);
+                    BigDecimal avgQty = monthQty.divide(BigDecimal.valueOf(workSum),0,BigDecimal.ROUND_UP);
                     //当月天数
                     int curMonthNum = DateUtils.getMonthHasDays(DateUtils.parseDate(yearMonth + "-01"));
                     for (int j = 1; j <= curMonthNum; j++) {
@@ -476,6 +476,30 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
             if (cusOrderSum.getIQty2() == null){
                 cusOrderSum.setIQty2(BigDecimal.ZERO);
             }
+        }
+        if (cusOrderSumList.size() == 0){
+            tx(() -> {
+                delete("DELETE FROM Co_CusOrderSum WHERE iYear >= ? ",curYear);
+                List<List<CusOrderSum>> groupCusOrderSumList = CollectionUtils.partition(cusOrderSumList,300);
+                CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
+                ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
+                for(List<CusOrderSum> cusOrderSums :groupCusOrderSumList){
+                    executorService.execute(()->{
+                        batchSave(cusOrderSums);
+                    });
+                    countDownLatch.countDown();
+                }
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                executorService.shutdown();
+
+                // batchSave(cusOrderSumList,500);
+                return true;
+            });
+            return SUCCESS;
         }
 
         tx(() -> {

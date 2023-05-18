@@ -100,6 +100,10 @@ public class CusOrderSumAdminController extends BaseAdminController {
         renderJson(service.deleteByIds(get("ids")));
     }
 
+    public void algorithmSum() {
+        renderJson(service.algorithmSum());
+    }
+
     /**
      * 获取表格
      */
