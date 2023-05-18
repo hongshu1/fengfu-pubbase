@@ -83,7 +83,7 @@ public class RolePermissionAdminController extends JBoltBaseController {
 
     public void index() {
         keepPara();
-        render("index().html");
+        render("index.html");
     }
 
     /**

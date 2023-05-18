@@ -39,7 +39,7 @@ public class FormFieldAdminController extends BaseAdminController {
             return;
         }
         keepPara();
-        render("index().html");
+        render("index.html");
     }
 
     /**

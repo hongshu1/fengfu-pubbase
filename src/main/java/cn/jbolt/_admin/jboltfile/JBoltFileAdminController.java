@@ -20,7 +20,7 @@ public class JBoltFileAdminController extends JBoltBaseController {
 	public void index(){
 		Page<JboltFile> pageData=service.paginateAdminData(getPageNumber(),getPageSize(JBoltPageSize.PAGESIZE_ADMIN_LIST_20));
 		set("pageData", pageData);
-		render("index().html");
+		render("index.html");
 	}
 	
 }

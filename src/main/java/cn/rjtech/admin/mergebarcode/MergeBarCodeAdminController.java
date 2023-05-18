@@ -33,7 +33,7 @@ public class MergeBarCodeAdminController extends BaseAdminController {
      * 合并条码记录
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /*

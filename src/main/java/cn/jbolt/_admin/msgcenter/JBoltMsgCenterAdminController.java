@@ -40,7 +40,7 @@ public class JBoltMsgCenterAdminController extends JBoltBaseController {
 	public void index() {
 		setDefaultSortInfos(new SortInfo("sysNotice", "create_time", "desc"),new SortInfo("todo", "create_time", "desc"));
 		set("tabIndex", getInt(0,0));
-		render("index().html");
+		render("index.html");
 	}
 	/**
 	 * 个人右上角消息中心layer弹出层

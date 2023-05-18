@@ -21,7 +21,7 @@ import java.util.Date;
 public class YearProductionScheduleAdminController extends JBoltBaseController {
 
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     public void datas() {

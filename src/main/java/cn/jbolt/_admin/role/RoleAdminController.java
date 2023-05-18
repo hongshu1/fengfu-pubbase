@@ -24,7 +24,7 @@ public class RoleAdminController extends JBoltBaseController {
 	 * 管理首页
 	 */
 	public void index(){
-		render("index().html");
+		render("index.html");
 	}
 
 	public void datas() {

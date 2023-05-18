@@ -39,7 +39,7 @@ public class SysNoticeAdminController extends JBoltBaseController {
 	*/
 	public void index() {
 		setDefaultSortInfo("create_time","desc");
-		render("index().html");
+		render("index.html");
 	}
   	
   	/**

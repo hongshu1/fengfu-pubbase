@@ -30,7 +30,7 @@ public class VouchRdContraposeAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
   	
   	/**

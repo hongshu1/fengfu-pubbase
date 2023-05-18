@@ -46,7 +46,7 @@ public class WechatMediaAdminController extends JBoltBaseController {
 		keepPara("keywords");
 		set("mpId", mpId);
 		set("type", type);
-		render("index().html");
+		render("index.html");
 	}
 	@Before(WechatMediaMgrValidator.class)
 	public void download() {

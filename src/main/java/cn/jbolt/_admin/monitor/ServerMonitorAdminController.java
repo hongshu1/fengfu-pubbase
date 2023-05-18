@@ -38,7 +38,7 @@ import java.util.List;
 public class ServerMonitorAdminController extends JBoltBaseController {
 	
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
 	
 	public void disk() {

@@ -61,7 +61,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	 */
 	public void index() {
 		setDefaultSortInfo("update_time", "desc");
-		render("index().html");
+		render("index.html");
 	}
 	/**
 	 * codeGen数据源

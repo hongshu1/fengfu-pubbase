@@ -2,9 +2,7 @@ package cn.jbolt.index;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.onlineuser.OnlineUserService;
-import cn.jbolt._admin.topnav.TopnavService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.api.HttpMethod;
 import cn.jbolt.core.base.JBoltGlobalConfigKey;
@@ -53,17 +51,13 @@ public class AdminIndexController extends JBoltBaseController {
     @Inject
     private UserOrgService userOrgService;
 	@Inject
-	private GlobalConfigService globalConfigService;
-	@Inject
-	private TopnavService topnavService;
-	@Inject
 	private OnlineUserService onlineUserService;
     @Inject
     private JBoltOrgService orgService;
 	@UnCheck
 	@Before(JBoltNoUrlPara.class)
 	public void index(){
-		render("index().html");
+		render("index.html");
 	}
 
 	@UnCheck

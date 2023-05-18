@@ -37,7 +37,7 @@ public class EquipmentAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
    /**
 	* 数据源

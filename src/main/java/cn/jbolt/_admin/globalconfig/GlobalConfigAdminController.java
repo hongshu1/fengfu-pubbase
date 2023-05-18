@@ -31,7 +31,7 @@ public class GlobalConfigAdminController extends JBoltBaseController {
 	
 	public void index(){
 		service.checkAndInit();
-		render("index().html");
+		render("index.html");
 	}
 	/**
 	 * 数据源

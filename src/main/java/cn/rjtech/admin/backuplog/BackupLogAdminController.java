@@ -46,7 +46,7 @@ public class BackupLogAdminController extends BaseAdminController {
 			backupConfig.setIsAutoBackupEnabled(true);
 		}
 		set("backupConfig",backupConfig);
-		render("index().html");
+		render("index.html");
 	}
    /**
 	* 数据源

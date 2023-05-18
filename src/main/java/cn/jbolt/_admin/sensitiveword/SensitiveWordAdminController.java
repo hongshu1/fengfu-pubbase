@@ -21,7 +21,7 @@ public class SensitiveWordAdminController extends JBoltBaseController {
     @Inject
     JBoltSensitiveWordService service;
     public void index(){
-        render("index().html");
+        render("index.html");
     }
 
     public void counts(){

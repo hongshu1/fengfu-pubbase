@@ -135,7 +135,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 				set("dataTotalCount", service.getCountByTypeId(typeId));
 				set("showId", dictionaryId);
 				//TODO #mmm 前端页面实现show效果
-				render("index().html");
+				render("index.html");
 			}
 			
 		}

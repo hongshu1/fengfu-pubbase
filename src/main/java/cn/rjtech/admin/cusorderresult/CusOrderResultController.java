@@ -133,7 +133,7 @@ public class CusOrderResultController extends BaseAdminController {
             set("colname2list", name2list);
 
 
-        render("index().html");
+        render("index.html");
     }
     /**
      * 数据源

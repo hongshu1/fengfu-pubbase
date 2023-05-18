@@ -39,7 +39,7 @@ public class QiniuAdminController extends JBoltBaseController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
 	/**
 	 * 作为其他组件的选项列表

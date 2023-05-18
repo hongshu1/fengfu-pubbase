@@ -30,7 +30,7 @@ public class BackupConfigAdminController extends BaseAdminController {
 	* 首页ss
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
    /**
 	* 数据源

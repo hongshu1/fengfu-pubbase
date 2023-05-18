@@ -28,7 +28,7 @@ public class SysOtherindetailAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
    /**
 	* 数据源

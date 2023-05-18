@@ -77,14 +77,15 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
         sql.likeMulti(keywords,"cOrgName", "cCreateName", "cUpdateName");
         //排序
         sql.desc("iAutoId");
-		Page<Record> paginates = paginateRecord(sql);
-		List<Record> list = paginates.getList();
-		list.forEach(row -> {
-			row.set("cformname",formService.getNameByFormId(row.getStr("iformid")));
-			row.set("cformtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.business_type.name(), row.getStr("cformtypesn")));
-			row.set("icodingtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.iCoding_type.name(), row.getStr("icodingtype")));
-		});
-		return paginates;
+		Page<Record> page = paginateRecord(sql);
+        if (CollUtil.isNotEmpty(page.getList())) {
+            page.getList().forEach(row -> {
+                row.set("cformname",formService.getNameByFormId(row.getStr("iformid")));
+                row.set("cformtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.business_type.name(), row.getStr("cformtypesn")));
+                row.set("ccodingtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.iCoding_type.name(), row.getStr("icodingtype")));
+            });
+        }
+		return page;
 	}
 
 	/**

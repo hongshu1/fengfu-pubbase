@@ -30,7 +30,7 @@ public class HiprintAdminController extends JBoltBaseController {
 	 * 设计器
 	 */
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
 	/**
 	 * 设计器
@@ -48,7 +48,7 @@ public class HiprintAdminController extends JBoltBaseController {
 			return;
 		}
 		set("tpl", tpl);
-		render("index().html");
+		render("index.html");
 	}
 	
 	/**

@@ -45,7 +45,7 @@ public class WechatReplyContentAdminController extends JBoltBaseController {
 		if(ret.isFail()) {renderDialogFailRet(ret);return;}
 		set("datas", service.getListByAutoReplyId(autoReplyId));
 		set("autoReplyId", autoReplyId);
-		render("index().html");
+		render("index.html");
 	}
 	
 

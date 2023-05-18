@@ -28,7 +28,7 @@ public class InventoryspotcheckformOperationAdminController extends BaseAdminCon
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
   	
   	/**

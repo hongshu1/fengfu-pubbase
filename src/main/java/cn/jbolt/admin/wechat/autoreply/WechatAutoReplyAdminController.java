@@ -65,7 +65,7 @@ public class WechatAutoReplyAdminController extends JBoltBaseController {
 		set("mpId", mpId);
 		set("type", type);
 		set("keywords", keywords);
-		render("index().html");
+		render("index.html");
 	}
 	@UnCheck
 	@Before(WechatAutoReplyMpIdAndTypeValidator.class)

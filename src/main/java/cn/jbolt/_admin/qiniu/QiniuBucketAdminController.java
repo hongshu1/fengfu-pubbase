@@ -32,7 +32,7 @@ public class QiniuBucketAdminController extends JBoltBaseController {
 	*/
 	public void index() {
 		set("qiniuId", getLong("qiniuId"));
-		render("index().html");
+		render("index.html");
 	}
   	
 	/**
