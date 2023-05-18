@@ -203,6 +203,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 		for (int i=0;i<list.size();i++) {
 			Record row = list.get(i);
 			SysOtherindetail sysOtherindetail = new SysOtherindetail();
+
 			sysOtherindetail.setMasID(Long.valueOf(sysotherin.getAutoID()));
 			sysOtherindetail.setModifyPerson(JBoltUserKit.getUser().getName());
 			sysOtherindetail.setModifyDate(now);
@@ -235,6 +236,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 			sysOtherindetail.setModifyPerson(JBoltUserKit.getUser().getName());
 			sysOtherindetail.setModifyDate(now);
 			sysOtherindetail.setCreatePerson(JBoltUserKit.getUser().getName());
+			sysOtherindetail.setAutoID(Long.valueOf(row.get("autoid")));
 			sysOtherindetail.setBarcode(row.get("barcode"));
 			sysOtherindetail.setInvCode(row.get("cinvcode"));
 			sysOtherindetail.setQty(new BigDecimal(row.get("qty").toString()));

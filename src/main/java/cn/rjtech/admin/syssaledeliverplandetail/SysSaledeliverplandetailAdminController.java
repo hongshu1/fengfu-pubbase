@@ -19,6 +19,7 @@ import cn.rjtech.model.momdata.SysSaledeliverplandetail;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 10:13
  */
+@CheckPermission(PermissionKey.SALES_SHIPMENT_LIST)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/sysSaledeliverplandetail", viewPath = "/_view/admin/sysSaledeliverplandetail")
@@ -89,5 +90,7 @@ public class SysSaledeliverplandetailAdminController extends BaseAdminController
         renderJson(service.deleteById(getLong(0)));
     }
 
-
+    public void findEditTableDatas(){
+        renderJsonData(service.findEditTableDatas(getKv()));
+    }
 }

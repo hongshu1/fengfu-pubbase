@@ -5,9 +5,12 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.CodingRuleD;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
  * 系统设置-编码规则明细
@@ -34,8 +37,10 @@ public class CodingRuleDAdminController extends BaseAdminController {
     /**
      * 数据源
      */
-    public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("cCodingType")));
+    public void datas(@Para(value = "icodingrulemid") Long icodingrulemid) {
+        ValidationUtils.validateId(icodingrulemid, "ID参数错误");
+
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), icodingrulemid));
     }
 
     /**

@@ -18,252 +18,271 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form onsubmit="return false;" id="sysPureceive_#(pageId)" action="#(action)" method="post">
-                        #if(sysPureceive.AutoID??)
-                        <input type="hidden" name="sysPureceive.AutoID" value="#(sysPureceive.AutoID??)" />
+                    <form onsubmit="return false;" id="syssaledeliverplan_#(pageId)" action="#(action)" method="post">
+                        #if(syssaledeliverplan.AutoID??)
+                        <input type="hidden" name="syssaledeliverplan.AutoID" value="#(syssaledeliverplan.AutoID??)" />
                         #end
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">发货单号</label>
                                     <div class="col-9">
-                                        <input type="text"  data-notnull="true"
-                                            data-tips="请输入发货单号" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输入发货单号" maxlength="40"
-                                            name="sysPureceive.BillNo" value="#(sysPureceive.BillNo??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输入发货单号" disabled
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输入发货单号" maxlength="40" value="#(syssaledeliverplan.billno??)" />
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">发货日期</label>
                                     <div class="col-9">
-                                        <input type="text" data-date class="form-control ml-2" placeholder="发货日期" maxlength="20" name="sysPureceive.createdate" value="#(sysPureceive.createdate??)"/>
+                                        <input type="text" data-date class="form-control ml-2" placeholder="发货日期"
+                                            maxlength="20" name="syssaledeliverplan.predeliverdate"
+                                            value="#(syssaledeliverplan.predeliverdate??)" />
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group row">
+                                    <input type="hidden" name="syssaledeliverplan.BillType"
+                                        value="#(syssaledeliverplan.BillType??)" id="cwhcode"
+                                        data-value-attr="cwhcode" />
                                     <label class="col-sm-3 col-form-label">业务类型</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=业务类型="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/productInList/getWarehouse" data-rule="required"
+                                            data-hidden-input="cwhcode" data-text-attr="cwhname"
+                                            data-column-attr="cwhcode,cwhname" placeholder="请选择业务类型" data-tips="请选择业务类型"
+                                            data-header="业务类型编码,业务类型" maxlength="40" value="#(cwhname??)">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+
+                            <div class="col-md-3">
                                 <div class="form-group row">
+                                    <input type="hidden" name="syssaledeliverplan.RdCode"
+                                        value="#(syssaledeliverplan.RdCode??)" id="cstcode" data-value-attr="cstcode" />
                                     <label class="col-sm-3 col-form-label">销售类型</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=销售类型="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/salesShipmentList/saletype" data-rule="required"
+                                            data-hidden-input="cstcode" data-text-attr="cstname"
+                                            data-column-attr="cstcode,cstname" placeholder="请选择业务类型" data-tips="请选择业务类型"
+                                            data-header="业务类型编码,业务类型" maxlength="40" value="#(cstname??)">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+
+
+                            <div class="col-md-3">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">订单号</label>
-                                    <div class="col-9">
-                                        <input type="text"  data-notnull="true"
-                                            data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输入订单号" maxlength="40"
-                                            name="sysPureceive.BillNo" value="#(sysPureceive.BillNo??)" />
-                                    </div>
+                                    <label class="col-sm-4 col-form-label">订单号</label>
+                                    <input type="hidden" id="billno2" class="form-control border-none"
+                                        readonly="readonly" name="syssaledeliverplan.billno" placeholder=""
+                                        value="#(syssaledeliverplan.billno??)" />
+                                    <input type="text" data-notnull="true" data-tips="请输入订单号" id="billno"
+                                        data-with-clearbtn="true" autocomplete="off" class="form-control" disabled
+                                        placeholder="请输入订单号" maxlength="40" name="billno"
+                                        value="#(syssaledeliverplan.billno??)" />
+                                    <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
+                                        data-area="80%,80%" data-title="选择数据（单选）" id="supplierButton"
+                                        data-url="/admin/salesShipmentList/orderData"><i
+                                            class="fa fa-search mr-1"></i></button>
+
+
+
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <input type="hidden" name="cunameiautoid" value="#(cunameiautoid??)"
+                                        id="cunameiautoid" data-value-attr="cunameiautoid" />
+                                    <label class="col-sm-3 col-form-label">客户简称</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true" id="cuname" disabled
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            maxlength="40" name="cuname" value="#(cuname??)" />
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">发票号</label>
                                     <div class="col-9">
-                                        <input type="text"  data-notnull="true"
-                                            data-tips="请输入发票号" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输入发票号" maxlength="40"
-                                            name="sysPureceive.BillNo" value="#(sysPureceive.BillNo??)" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">客户简称</label>
-                                    <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=客户简称="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" data-notnull="true" data-tips="请输入发票号"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输入发票号" maxlength="40" name="syssaledeliverplan.invoice"
+                                            value="#(syssaledeliverplan.invoice??)" />
                                     </div>
                                 </div>
                             </div>
 
 
-                            <div class="col-md-4">
+
+                            <div class="col-md-3">
                                 <div class="form-group row">
+                                    <input type="hidden" name="syssaledeliverplan.DeptCode"
+                                        value="#(syssaledeliverplan.DeptCode??)" id="cdepcode"
+                                        data-value-attr="cdepcode" />
                                     <label class="col-sm-3 col-form-label">销售部门</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=销售部门="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/salesShipmentList/department" data-rule="required"
+                                            data-hidden-input="cdepcode" data-text-attr="cdepname"
+                                            data-column-attr="cdepcode,cdepname" placeholder="请选销售部门" data-tips="请选销售部门"
+                                            data-header="销售部门编码,销售部门名称" maxlength="40" value="#(cdepname??)">
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+
+                            <div class="col-md-3">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">业务员</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true"
-                                            data-tips="请输业务员" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输业务员" maxlength="40"
-                                            name="sysPureceive.createperson" value="#(sysPureceive.createperson??)" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">发货地址</label>
-                                    <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=发货地址="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">发运方式</label>
-                                    <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=发运方式="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">付款条件</label>
-                                    <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=付款条件="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">税率</label>
-                                    <div class="col-9">
-                                        <input type="text" data-notnull="true"
-                                            data-tips="请输税率" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输税率" maxlength="40"
-                                            name="sysPureceive.createperson" value="#(sysPureceive.createperson??)" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">币种</label>
-                                    <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=币种="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">汇率</label>
-                                    <div class="col-9">
-                                        <input type="text" data-notnull="true"
-                                            data-tips="请输汇率" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输汇率" maxlength="40"
-                                            name="sysPureceive.createperson" value="#(sysPureceive.createperson??)" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">备注</label>
-                                    <div class="col-9">
-                                        <input type="text" data-notnull="true"
-                                            data-tips="请输备注" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输备注" maxlength="40"
-                                            name="sysPureceive.createperson" value="#(sysPureceive.createperson??)" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">制单人</label>
-                                    <div class="col-9">
-                                        <input type="text" data-notnull="true"
-                                            data-tips="请输制单人" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输制单人" maxlength="40"
-                                            name="sysPuinstore.createperson" value="#(sysPuinstore.createperson??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输业务员"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输业务员" maxlength="40" name="syssaledeliverplan.createperson"
+                                            value="#(syssaledeliverplan.createperson??)" />
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">审核人</label>
+                                    <input type="hidden" name="syssaledeliverplan.ShipAddress"
+                                        value="#(syssaledeliverplan.ShipAddress??)" id="cdistrictcode"
+                                        data-value-attr="cdistrictcode" />
+                                    <label class="col-sm-3 col-form-label">发货地址</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true"
-                                            data-tips="请输审核人" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输审核人" maxlength="40"
-                                            name="sysPuinstore.auditperson" value="#(sysPuinstore.auditperson??)" />
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/salesShipmentList/customeraddr" data-rule="required"
+                                            data-hidden-input="cdistrictcode" data-text-attr="cdistrictname"
+                                            data-column-attr="cdistrictcode,cdistrictname" placeholder="请选择发货地址"
+                                            data-tips="请选择发货地址" data-header="发货地址编码,发货地址名称" maxlength="40"
+                                            value="#(cdistrictname??)">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <input type="hidden" name="syssaledeliverplan.Issue"
+                                        value="#(syssaledeliverplan.Issue??)" id="crdcode" data-value-attr="crdcode" />
+                                    <label class="col-sm-3 col-form-label">发运方式</label>
+                                    <div class="col-9">
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/salesShipmentList/rdstyle" data-rule="required"
+                                            data-hidden-input="crdcode" data-text-attr="crdname"
+                                            data-column-attr="crdcode,crdname" placeholder="请选择发运方式" data-tips="请选择发运方式"
+                                            data-header="发运方式编码,发运方式名称" maxlength="40" value="#(crdname??)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <input type="hidden" name="syssaledeliverplan.Condition"
+                                        value="#(syssaledeliverplan.Condition??)" id="csscode"
+                                        data-value-attr="csscode" />
+                                    <label class="col-sm-3 col-form-label">付款方式</label>
+                                    <div class="col-9">
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/salesShipmentList/settlestyle" data-rule="required"
+                                            data-hidden-input="csscode" data-text-attr="cssname"
+                                            data-column-attr="csscode,cssname" placeholder="请选择付款方式" data-tips="请选择付款方式"
+                                            data-header="付款方式编码,付款方式名称" maxlength="40" value="#(cssname??)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">税率</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true" data-tips="请输税率"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输税率" maxlength="40" name="syssaledeliverplan.taxrate"
+                                            value="#(syssaledeliverplan.taxrate??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <input type="hidden" name="syssaledeliverplan.ExchName"
+                                        value="#(syssaledeliverplan.ExchName??)" id="cexchname"
+                                        data-value-attr="cexchname" />
+                                    <label class="col-sm-3 col-form-label">币种</label>
+                                    <div class="col-9">
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/salesShipmentList/foreigncurrency" data-rule="required"
+                                            data-hidden-input="cexchname" data-text-attr="cexchname"
+                                            data-column-attr="cexchcode,cexchname" placeholder="请选择币种" data-tips="请选择币种"
+                                            data-header="币种编码,币种名称" maxlength="40"
+                                            value="#(syssaledeliverplan.exchname??)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">汇率</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true" data-tips="请输汇率"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输汇率" maxlength="40" name="syssaledeliverplan.ExchRate"
+                                            value="#(syssaledeliverplan.exchrate??)" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">备注</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true" data-tips="请输备注"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输备注" maxlength="40" name="syssaledeliverplan.Memo"
+                                            value="#(syssaledeliverplan.memo??)" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">制单人</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true" data-tips="请输制单人"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输制单人" maxlength="40" name="syssaledeliverplan.CreatePerson"
+                                            value="#(syssaledeliverplan.createperson??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">审核人</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true" data-tips="请输审核人"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输审核人" maxlength="40" name="syssaledeliverplan.AuditPerson"
+                                            value="#(syssaledeliverplan.auditperson??)" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">关闭人</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true"
-                                            data-tips="请输关闭人" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输关闭人" maxlength="40"
-                                            name="sysPuinstore.auditperson" value="#(sysPuinstore.auditperson??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输关闭人"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输关闭人" maxlength="40" name="syssaledeliverplan.ModifyPerson"
+                                            value="#(syssaledeliverplan.modifyperson??)" />
                                     </div>
                                 </div>
                             </div>
@@ -275,39 +294,40 @@
     </div>
 </div>
 <div class="jbolt_page_content">
-    <script type="text/template" id="sysPureceive_tpl_#(pageId)">
+    <script type="text/template" id="syssaledeliverplan_tpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/sysPureceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " 
+                <a href="admin/sysSaledeliverplandetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " 
                 tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
                 class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
    
             </td>
-            <td>${data.sourcebillno}</td>
-            <td>${data.spotticket}</td>
-            <td>${data.invcode}</td>
-            <td>${data.crcvtime}</td>
-            <td>${data.cbarcode}</td>
-            <td>${data.plandate}</td>
-            <td>${data.caddress}</td>
-            <td>${data.qty}</td>
             <td>${data.whcode}</td>
+            <td>${data.whname}</td>
+            <td>${data.barcode}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.qty}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.inventorycuomname}</td>
+            <td>${data.whcode}</td>
+
 
 
         </tr>
         {@/each}
     </script>
-    <div class="jbolt_table_toolbar" id="sysPureceive_toolbar_#(pageId)">
-        <div class="col-md-4">
+    <div class="jbolt_table_toolbar" id="syssaledeliverplan_toolbar_#(pageId)">
+        <div class="col-md-3">
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">现品票扫码</label>
                 <div class="col-9">
-                    <input type="text"  data-notnull="true"
-                        data-tips="请输入现品票扫码" data-with-clearbtn="true" autocomplete="off"
-                        class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                        name="sysPureceive.warehousingNo" value="#(sysPureceive.warehousingNo??)" />
+                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
+                        autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
+                        name="syssaledeliverplan.warehousingNo" value="#(syssaledeliverplan.warehousingNo??)" />
                 </div>
             </div>
         </div>
@@ -319,31 +339,33 @@
         </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysPureceivedetail/deleteByIds?ids=" data-confirm="确定删除选中数据？"
-                class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
+                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysSaledeliverplandetail/deleteByIds?ids="
+                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
         </div>
 
     </div>
 
-    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysPureceive.AutoID??)
-        data-ajax="true" data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" #end
+    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable
+        #if(syssaledeliverplan.AutoID??) data-ajax="true"
+        data-url="admin/sysSaledeliverplandetail/findEditTableDatas?masid=#(syssaledeliverplan.AutoID??)" #end
         id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
-        data-rowtpl="sysPureceive_tpl_#(pageId)" data-toolbar="sysPureceive_toolbar_#(pageId)" data-editable="true"
-        data-page="sysPureceive_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
+        data-rowtpl="syssaledeliverplan_tpl_#(pageId)" data-toolbar="syssaledeliverplan_toolbar_#(pageId)"
+        data-editable="true" data-page="syssaledeliverplan_tpl_#(pageId)"
+        data-editable-option="getJBoltTableEditableColsOpton">
         <thead class="fw_normal">
             <tr>
                 <th data-width="60">序号</th>
                 <th data-width="150">操作</th>
-                <th data-width="100" data-column="sourcebillno">仓库编码</th>
-                <th data-width="100" data-column="spotticket">仓库名称</th>
-                <th data-width="100" data-column="invcode">现品票</th>
-                <th data-width="100" data-column="cversion">存货编码</th>
-                <th data-width="100" data-column="cversion">客户部番</th>
-                <th data-width="100" data-column="planDate">部品名称</th>
-                <th data-width="100" data-column="caddress">数量</th>
-                <th data-width="100" data-column="qty">规格型号</th>
-                <th data-width="100" data-column="whcode">主计量单位</th>
-                <th data-width="100" data-column="whcode">预计发货日期</th>
+                <th data-width="100" data-column="whcode">入库库区</th>
+                <th data-width="100" data-column="whname">仓库名称</th>
+                <th data-width="100" data-column="barcode">现品票</th>
+                <th data-width="100" data-column="cinvcode">存货编码</th>
+                <th data-width="100" data-column="cinvcode1">客户部番</th>
+                <th data-width="100" data-column="cinvname1">部品名称</th>
+                <th data-width="100" data-column="qty">数量</th>
+                <th data-width="100" data-column="cinvstd">规格型号</th>
+                <th data-width="100" data-column="inventorycuomname">主计量单位</th>
+                <th data-width="100" data-column="whcoWQde">预计发货日期</th>
             </tr>
         </thead>
     </table>
@@ -361,10 +383,10 @@
         var editableTableOptions = {
 
             submit: {
-                withForm: ["sysPureceive_#(pageId)"],
-                name: 'sysPureceive',
+                withForm: ["syssaledeliverplan_#(pageId)"],
+                name: 'syssaledeliverplan',
                 type: "all",
-                url: "/admin/materialReceiptList/submitAll",
+                url: "/admin/salesShipmentList/submitAll",
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
                         parent.refreshPjaxContainer();
@@ -386,45 +408,44 @@
                     placeholder: "现品票", //输入提示，里面
                     tooltip: "现品票",//输入提示，上方
                 },
-                invcode: {
-                    type: "input",//类型
-                    placeholder: "存货编码", //输入提示，里面
-                    tooltip: "存货编码",//输入提示，上方
-                },
-                qty: {
-                    type: "amount",//类型
-                    placeholder: "数量", //输入提示，里面
-                    tooltip: "数量",//输入提示，上方
-                },
                 whcode: {
-                    type: "input",//类型
-                    placeholder: "备注", //输入提示，里面
-                    tooltip: "备注",//输入提示，上方
-                },
-                
-                cinvcode: {
-                    // type:"select",
-                    // url:admin/inventory/autocomplete,//url地址
-                    //valueAttr:"",//显示的字段，可以设置多个
-                    //onlyleaf:true,//树形结构只能选择叶子节点
-                    //required:true,//必填
-                    // changeColumns:[{column: "iinventoryid",//显示绑定的字段
-                    //                 use: "cinvcode"        //数据源的字段
-                    //                 }
-                    // ]   
+                    placeholder: "仓库", //输入提示，里面
+                    tooltip: "仓库",//输入提示，上方
                     type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
+                    //目前供应商都是空的无法过滤
+
+                    url: "admin/SysEnumeration/wareHouse",
                     maxLength: 100,
                     required: true,
-                    placeholder: "请选择存货编码",
-                    textAttr: "cinvcode",
+                    placeholder: "请选择仓库编码",
+                    textAttr: "whcode",
                     width: 500,
-                    valueAttr: "cinvcode",//选择赋值的字段
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
-                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
-                    changeColumns: [{ column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
+                    valueAttr: "whcode",//选择赋值的字段
+                    columnAttr: "whcode,whname",//下来看的时候显示哪些字段
+                    header: '仓库编码,仓库名称',
+                    changeColumns: [{ column: "whcode", use: "whcode" },{ column: "whname", use: "whname" }]
+                },
+                barcode: { //条码
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "=请选择=",
+                    type: "autocomplete",
+                    url: "admin/otherout/barcodeDatas",
+                    textAttr: "barcode",
+                    width: 800,
+                    sync: "",
+                    valueAttr: "barcode",
+                    columnAttr: "barcode,cinvcode,cinvdddcode,cinvname,cinvstd,inventorycuomname,qty,cequipmentmodelname",
+                    header: '现品票,存货编码,存货代码,存货名称,规格型号,主计量单位,数量,所属机型',
+                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
                     { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
-                    { column: "cuomname", use: "cuomname" }, { column: "iinventoryid", use: "AutoID" }]
+                    { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
+                    { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
+                    { column: "sourcebillno", use: "sourcebillno" }, { column: "sourcebilldid", use: "sourcebilldid" },
+                    { column: "sourcebillnorow", use: "sourcebillnorow" }, { column: "sourcebillid", use: "sourcebillid" }, { column: "cinvdddcode", use: "cinvdddcode" },
+                    { column: "cinvname", use: "cinvname" }, { column: "inventorycuomname", use: "inventorycuomname" },
+                    { column: "sourcebillid", use: "sourcebillid" }, { column: "qty", use: "qty" }]
+
                 },
             }
         };
@@ -433,6 +454,19 @@
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
+    }
+
+    /**
+    * 获得选中的供应商数据
+    * @param data
+    */
+    function setChooseDialogSelectResultFromSupplier(data) {
+        console.log(data)
+        $("#billno").val(data.corderno);
+        $("#billno2").val(data.corderno);
+        $("#cuname").val(data.cuname);
+        $("#cunameiautoid").val(data.iautoid);
+
     }
 
 </script>
