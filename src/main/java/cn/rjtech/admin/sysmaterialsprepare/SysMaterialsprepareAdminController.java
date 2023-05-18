@@ -33,7 +33,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /**
@@ -47,7 +47,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -67,7 +67,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
             return;
         }
         set("sysMaterialsprepare", sysMaterialsprepare);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**
@@ -97,46 +97,6 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
 
     public void options1() {
         renderJsonData(service.options1());
-    }
-
-    /**
-     * 编辑
-     */
-    public void edit1() {
-        SysMaterialsprepare sysMaterialsprepare = service.findById(getLong(0));
-        if (sysMaterialsprepare == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        set("sysMaterialsprepare", sysMaterialsprepare);
-        render("edit1().html");
-    }
-
-    /**
-     * 编辑
-     */
-    public void edit2() {
-        SysMaterialsprepare sysMaterialsprepare = service.findById(getLong(0));
-        if (sysMaterialsprepare == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        set("sysMaterialsprepare", sysMaterialsprepare);
-        render("edit2().html");
-    }
-
-    /**
-     * 自动生成
-     */
-    public void auto() {
-        render("auto().html");
-    }
-
-    /**
-     * 手动生成
-     */
-    public void manual() {
-        render("manual().html");
     }
 
 
