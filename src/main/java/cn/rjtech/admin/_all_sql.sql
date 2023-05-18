@@ -488,8 +488,8 @@
 #include("splitbarcode/splitbarcode.sql")
 #end
 
-#namespace("meragebarcode")
-#include("meragebarcode/meragebarcode.sql")
+#namespace("mergebarcode")
+#include("mergebarcode/mergebarcode.sql")
 #end
 
 #namespace("otherdeliverylist")

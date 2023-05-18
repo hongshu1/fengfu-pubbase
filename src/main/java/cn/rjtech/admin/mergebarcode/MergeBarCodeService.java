@@ -51,7 +51,7 @@ public class MergeBarCodeService extends BaseService<Inventory> {
      */
     public Page<Record> StripSelectDatas(Integer pageNumber, Integer pageSize, Kv kv) {
         kv.set("organizecode", getOrgCode());
-        Page<Record> paginate = dbTemplate("meragebarcode.barcodeSelectDatas", kv).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("mergebarcode.barcodeSelectDatas", kv).paginate(pageNumber, pageSize);
         return paginate;
     }
 
@@ -146,16 +146,16 @@ public class MergeBarCodeService extends BaseService<Inventory> {
     }
 
     public Page<Record> barcodeDatas(Integer pageNumber, Integer pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("meragebarcode.barcodeDatas", kv).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("mergebarcode.barcodeDatas", kv).paginate(pageNumber, pageSize);
         return paginate;
     }
 
     public Record findByShiWu(String sourceid) {
-        return dbTemplate("meragebarcode.findByShiWu", Kv.by("sourceid", sourceid)).findFirst();
+        return dbTemplate("mergebarcode.findByShiWu", Kv.by("sourceid", sourceid)).findFirst();
     }
 
     public List<Record> findListByShiWu(String sourceid) {
-        List<Record> list = dbTemplate("meragebarcode.findByShiWu", Kv.by("sourceid", sourceid)).find();
+        List<Record> list = dbTemplate("mergebarcode.findByShiWu", Kv.by("sourceid", sourceid)).find();
         return list;
     }
 
@@ -163,17 +163,17 @@ public class MergeBarCodeService extends BaseService<Inventory> {
      * 合并条码记录
      */
     public Page<Record> datas(Integer pageNumber, Integer pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("meragebarcode.datas", kv).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("mergebarcode.datas", kv).paginate(pageNumber, pageSize);
         return paginate;
     }
 
     public Record findByLogId(String logid) {
-        return dbTemplate("meragebarcode.findByLogId", Kv.by("logid", logid)).findFirst();
+        return dbTemplate("mergebarcode.findByLogId", Kv.by("logid", logid)).findFirst();
     }
 
 
     public List<Record> formdatas(String logno) {
-        List<Record> list = dbTemplate("meragebarcode.formdatas", Kv.by("logno", logno)).find();
+        List<Record> list = dbTemplate("mergebarcode.formdatas", Kv.by("logno", logno)).find();
         return list;
     }
 
