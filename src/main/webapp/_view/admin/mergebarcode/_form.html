@@ -6,7 +6,7 @@
                     <div class="input-group">
                     <input type="text" autocomplete="off" class="form-control" placeholder="现品票扫描" name="barcode" value=""/>
                     <div class="input-group-append">
-                    <button type="submit" class="btn btn-light"><i class="fa fa-plus"></i>添加</button>
+                    <button onclick="addFunction()" class="btn btn-light" type="button" ><i class="fa fa-plus"></i>添加</button>
                     </div>
                     </div>
                 </form>
@@ -39,8 +39,7 @@
             <!--<button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>新增
             </button>-->
             <button class="btn btn-primary" data-dialogbtn data-link-para-ele="#versionId" data-area="1280,600"
-                     data-url="/admin/mergeBarcode/barcodeIndex"><i
-                    class="fa fa-plus"></i>新增
+                     data-url="/admin/mergeBarcode/stripbarcodeSelect"><i class="fa fa-plus"></i>新增
             </button>
         </div>
         <div class="clearfix"></div>
@@ -94,3 +93,9 @@
             class="btn btn-primary btn-sm">提交
     </button>
 </div>
+
+<script>
+    function addFunction() {
+        alert("电脑端暂无扫描功能，请使用新增功能");
+    }
+</script>

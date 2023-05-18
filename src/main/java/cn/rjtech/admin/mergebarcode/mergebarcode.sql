@@ -1,5 +1,5 @@
 #sql("barcodeSelectDatas")
-
+select * from
 #end
 
 #sql("barcodeDatas")

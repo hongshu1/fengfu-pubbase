@@ -5,7 +5,6 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
 import cn.rjtech.base.service.BaseService;
-import cn.rjtech.common.organize.OrganizeService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.erp.mood.CollectorsUtil;
 import cn.rjtech.model.momdata.Inventory;
@@ -42,8 +41,6 @@ public class MergeBarCodeService extends BaseService<Inventory> {
     }
 
     @Inject
-    OrganizeService       organizeService;
-    @Inject
     UserThirdpartyService userThirdpartyService;
 
     /**
@@ -64,7 +61,7 @@ public class MergeBarCodeService extends BaseService<Inventory> {
         String invnames = kv.getStr("invname");
         String datas = kv.getStr("datas");
         List<Kv> jsonArray = JSON.parseArray(datas, Kv.class);
-        String organizecode = organizeService.getOrganizecode();
+        String organizecode = getOrgCode();
         String u9Name = userThirdpartyService.getU9Name(JBoltUserKit.getUserId());
         Date now = new Date();
         String loginDate = JBoltDateUtil.format(now, "yyyy-MM-dd");

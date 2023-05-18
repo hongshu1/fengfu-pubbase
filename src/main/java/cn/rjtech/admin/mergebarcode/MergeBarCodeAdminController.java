@@ -35,10 +35,13 @@ public class MergeBarCodeAdminController extends BaseAdminController {
         render("index.html");
     }
 
-    public void barcodeIndex() {
+    public void stripbarcodeSelect() {
         render("stripbarcode_select.html");
     }
 
+    /*
+    * 新增
+    * */
     public void StripSelectDatas() {
         renderJsonData(service.StripSelectDatas(getPageNumber(), getPageSize(), getKv()));
     }
