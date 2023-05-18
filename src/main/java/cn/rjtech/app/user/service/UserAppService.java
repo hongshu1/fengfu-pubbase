@@ -22,22 +22,12 @@ public class UserAppService extends BaseU8RecordService {
      * @param userCode 用户编码
      * @return 用户对象
      */
-    public Record getUserByUserCode(String erpDBName, String erpDBSchemas, String userCode) {
-        Kv para = Kv.by("erpDBName", erpDBName)
-                .set("erpDBSchemas", erpDBSchemas)
+    public Record getUserByUserCode(String erpDbAlias, String erpDbName, String erpDbSchemas, String userCode) {
+        Kv para = Kv.by("erpDBName", erpDbName)
+                .set("erpDBSchemas", erpDbSchemas)
                 .set("userCode", userCode);
 
-        return dbTemplate("userapp.getUserByUserCode", para).findFirst();
+        return dbTemplate(erpDbAlias, "userapp.getUserByUserCode", para).findFirst();
     }
-
-    /**
-     * 通过组织编码、用户编码查询权限列表
-     * @param organizeCode
-     * @param userCode
-     * @return
-     */
-    /*public List<Map> getPermissionList(String organizeCode, String userCode){
-        return userDao.getPermissionList(organizeCode,userCode);
-    }*/
 
 }
