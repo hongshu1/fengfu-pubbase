@@ -480,23 +480,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
         if (cusOrderSumList.size() == 0){
             tx(() -> {
                 delete("DELETE FROM Co_CusOrderSum WHERE iYear >= ? ",curYear);
-                List<List<CusOrderSum>> groupCusOrderSumList = CollectionUtils.partition(cusOrderSumList,300);
-                CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
-                ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
-                for(List<CusOrderSum> cusOrderSums :groupCusOrderSumList){
-                    executorService.execute(()->{
-                        batchSave(cusOrderSums);
-                    });
-                    countDownLatch.countDown();
-                }
-                try {
-                    countDownLatch.await();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                executorService.shutdown();
-
-                // batchSave(cusOrderSumList,500);
                 return true;
             });
             return SUCCESS;
