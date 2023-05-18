@@ -1,8 +1,5 @@
-package cn.rjtech.admin.mopickitemd;
+package cn.rjtech.admin.sysmaterialsprepare.mopickitemd;
 
-import cn.rjtech.admin.mopickitemd.MoPickItemMService;
-import cn.rjtech.model.momdata.Customer;
-import cn.rjtech.model.momdata.RcvPlanM;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -13,7 +10,6 @@ import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoPickItemM;
-import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 生产订单-备料单主表
@@ -21,9 +17,7 @@ import com.jfinal.plugin.activerecord.Record;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 15:30
  */
-@CheckPermission(PermissionKey.ADMIN_MOPICKITEMD)
-@UnCheckIfSystemAdmin
-@Before(JBoltAdminAuthInterceptor.class)
+
 @Path(value = "/admin/materialPreparationList", viewPath = "/_view/admin/mopickitemm")
 public class MoPickItemMAdminController extends BaseAdminController {
 

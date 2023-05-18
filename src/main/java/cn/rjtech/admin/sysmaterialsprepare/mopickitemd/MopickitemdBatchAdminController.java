@@ -1,4 +1,4 @@
-package cn.rjtech.admin.mopickitemd;
+package cn.rjtech.admin.sysmaterialsprepare.mopickitemd;
 
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -16,9 +16,7 @@ import cn.rjtech.model.momdata.MopickitemdBatch;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 15:29
  */
-@CheckPermission(PermissionKey.ADMIN_MOPICKITEMD)
-@UnCheckIfSystemAdmin
-@Before(JBoltAdminAuthInterceptor.class)
+
 @Path(value = "/admin/mopickitemdbatch", viewPath = "/_view/admin/mopickitemdbatch")
 public class MopickitemdBatchAdminController extends BaseAdminController {
 

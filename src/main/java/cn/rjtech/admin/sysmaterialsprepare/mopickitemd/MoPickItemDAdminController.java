@@ -1,4 +1,4 @@
-package cn.rjtech.admin.mopickitemd;
+package cn.rjtech.admin.sysmaterialsprepare.mopickitemd;
 
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -8,7 +8,6 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoPickItemD;
 /**
@@ -17,9 +16,7 @@ import cn.rjtech.model.momdata.MoPickItemD;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 15:28
  */
-@CheckPermission(PermissionKey.ADMIN_MOPICKITEMD)
-@UnCheckIfSystemAdmin
-@Before(JBoltAdminAuthInterceptor.class)
+
 @Path(value = "/admin/mopickitemd", viewPath = "/_view/admin/mopickitemd")
 public class MoPickItemDAdminController extends BaseAdminController {
 

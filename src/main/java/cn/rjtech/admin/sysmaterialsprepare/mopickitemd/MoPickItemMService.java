@@ -1,4 +1,4 @@
-package cn.rjtech.admin.mopickitemd;
+package cn.rjtech.admin.sysmaterialsprepare.mopickitemd;
 
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
