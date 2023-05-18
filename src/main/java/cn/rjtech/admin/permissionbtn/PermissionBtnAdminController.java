@@ -36,7 +36,7 @@ public class PermissionBtnAdminController extends JBoltBaseController {
      * 首页
      */
     public void index() {
-        render("index.html");
+        render("index().html");
     }
 
     /**
@@ -50,7 +50,7 @@ public class PermissionBtnAdminController extends JBoltBaseController {
      * 新增
      */
     public void add() {
-        render("add.html");
+        render("add().html");
     }
 
     /**
@@ -71,7 +71,7 @@ public class PermissionBtnAdminController extends JBoltBaseController {
             return;
         }
         set("permissionBtn", permissionBtn);
-        render("edit.html");
+        render("edit().html");
     }
 
     /**

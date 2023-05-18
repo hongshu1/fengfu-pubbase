@@ -35,7 +35,7 @@ public class RdStyleAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
   	
   	/**
@@ -48,7 +48,7 @@ public class RdStyleAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 
    /**
@@ -61,7 +61,7 @@ public class RdStyleAdminController extends BaseAdminController {
 			return;
 		}
 		set("rdStyle",rdStyle);
-		render("edit.html");
+		render("edit().html");
 	}
 
 	public void selectRdStyle() {

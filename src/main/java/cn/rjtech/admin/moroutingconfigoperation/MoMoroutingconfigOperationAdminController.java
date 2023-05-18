@@ -26,7 +26,7 @@ public class MoMoroutingconfigOperationAdminController extends BaseAdminControll
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
 
   	/**
@@ -40,7 +40,7 @@ public class MoMoroutingconfigOperationAdminController extends BaseAdminControll
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 
    /**
@@ -53,7 +53,7 @@ public class MoMoroutingconfigOperationAdminController extends BaseAdminControll
 			return;
 		}
 		set("moMoroutingconfigOperation",moMoroutingconfigOperation);
-		render("edit.html");
+		render("edit().html");
 	}
 
   /**

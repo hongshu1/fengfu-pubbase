@@ -32,7 +32,7 @@ public class MergeBarCodeAdminController extends BaseAdminController {
      * 合并条码记录
      */
     public void index() {
-        render("index.html");
+        render("index().html");
     }
 
     public void barcodeIndex() {
@@ -70,7 +70,7 @@ public class MergeBarCodeAdminController extends BaseAdminController {
         String logid = kv.getStr("logid");
         Record byLogId = service.findByLogId(logid);
         set("bill", byLogId);
-        render("edit.html");
+        render("edit().html");
     }
 
     /**

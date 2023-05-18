@@ -32,7 +32,7 @@ public class PadAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
    /**
 	* 数据源
@@ -49,7 +49,7 @@ public class PadAdminController extends BaseAdminController {
 		{
 			renderFail("未选择组织!");
 		}else
-		render("add.html");
+		render("add().html");
 	}
 
    /**
@@ -69,7 +69,7 @@ public class PadAdminController extends BaseAdminController {
 			return;
 		}
 		set("pad",pad);
-		render("edit.html");
+		render("edit().html");
 	}
 
    /**

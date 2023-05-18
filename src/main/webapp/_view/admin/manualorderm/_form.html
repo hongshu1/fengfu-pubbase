@@ -3,48 +3,68 @@
 	<input type="hidden" name="manualOrderM.iAutoId" value="#(manualOrderM.iAutoId??)" />
 	#end
 
-    <input type="hidden" name="manualOrderM.iOrderStatus" value="#(manualOrderM.iOrderStatus??)" id="iOrderStatus"/>
-<div class="row">
-<div class="form-group row col-6" >
-<label class="col-sm-3 col-form-label">客户名称</label>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="col">
+                    <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
+                    <button onclick="submitApproveYear()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="col-9">
-    <select class="form-control"
-            data-autoload
-            data-url="/admin/customer/list"
-            data-select-type="select"
-            name="manualOrderM.iCustomerId"
-            data-refresh="true"
-            data-rule="select"
-            data-notnull="true"
-            data-tips="请选择客户ID"
-            data-text="=请选择="
-            data-value-attr="iautoid"
-            data-text-attr="ccusname"
-            data-value=""
-            data-select="#(manualOrderM.iCustomerId??)"
-            
-    ></select>
-</div>
-</div>
-<div class="form-group row col-6" >
-<label class="col-sm-3 col-form-label">订单号</label>
-<div class="col-9">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入订单号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入订单号" maxlength="40" name="manualOrderM.cOrderNo" value="#(manualOrderM.cOrderNo??)"/>
-</div>
-</div>
-<div class="form-group row col-6" >
-<label class="col-sm-3 col-form-label">年份</label>
-<div class="col-9">
-    <input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入年份" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入年份" maxlength="20" name="manualOrderM.iYear"    value="#datetime(manualOrderM.iYear??,'yyyy')"/>
-</div>
-</div>
-<div class="form-group row col-6" >
-<label class="col-sm-3 col-form-label">月份</label>
-<div class="col-9">
-    <input type="text" data-date data-type="month" data-with-clearbtn="true" data-fmt="MM" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入月份" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入月份" maxlength="20" name="manualOrderM.iMonth"    value="#datetime(manualOrderM.iMonth??,'MM')"/>
-</div>
-</div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <input type="hidden" name="manualOrderM.iOrderStatus" value="#(manualOrderM.iOrderStatus??)" id="iOrderStatus"/>
+                <div class="row">
+                    <div class="form-group row col-6" >
+                        <label class="col-sm-3 col-form-label">客户名称</label>
+
+                        <div class="col-9">
+                            <select class="form-control"
+                                    data-autoload
+                                    data-url="/admin/customer/list"
+                                    data-select-type="select"
+                                    name="manualOrderM.iCustomerId"
+                                    data-refresh="true"
+                                    data-rule="select"
+                                    data-notnull="true"
+                                    data-tips="请选择客户ID"
+                                    data-text="=请选择="
+                                    data-value-attr="iautoid"
+                                    data-text-attr="ccusname"
+                                    data-value=""
+                                    data-select="#(manualOrderM.iCustomerId??)"
+
+                            ></select>
+                        </div>
+                    </div>
+                    <div class="form-group row col-6" >
+                        <label class="col-sm-3 col-form-label">订单号</label>
+                        <div class="col-9">
+                            <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入订单号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入订单号" maxlength="40" name="manualOrderM.cOrderNo" value="#(manualOrderM.cOrderNo??)"/>
+                        </div>
+                    </div>
+                    <div class="form-group row col-6" >
+                        <label class="col-sm-3 col-form-label">年份</label>
+                        <div class="col-9">
+                            <input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入年份" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入年份" maxlength="20" name="manualOrderM.iYear"    value="#datetime(manualOrderM.iYear??,'yyyy')"/>
+                        </div>
+                    </div>
+                    <div class="form-group row col-6" >
+                        <label class="col-sm-3 col-form-label">月份</label>
+                        <div class="col-9">
+                            <input type="text" data-date data-type="month" data-with-clearbtn="true" data-fmt="MM" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入月份" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入月份" maxlength="20" name="manualOrderM.iMonth"    value="#datetime(manualOrderM.iMonth??,'MM')"/>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+
 <div class="form-group col-12" >
     #render("_table_form.html")
 </div>
@@ -54,10 +74,28 @@
 #define js()
 #render("_table_form_js.html")
 <script>
-    function submitThisForm(){
+
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+
+    function submitThisForm() {
+        $("#iOrderStatus").val(1)
         jboltTableSubmit("#manualorderd_#(pageId)");
+        parent.refreshPjaxContainer();
     }
-    hideParentLayerDialogBtn( 0 );
+
+    function submitApproveYear() {
+        $("#iOrderStatus").val(2)
+        jboltTableSubmit("#manualorderd_#(pageId)");
+        parent.refreshPjaxContainer();
+    }
+
+    function closeHandler(){
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+    /*hideParentLayerDialogBtn( 0 );
     #if(view??0 != 1)
     {
         addParentLayerDialogBtn("数据导入", "lay_success", function () {
@@ -74,7 +112,7 @@
             parent.refreshPjaxContainer();
         });
     }
-    #end
+    #end*/
 </script>
 ###include("/_view/_admin/common/_formjs.html",formId="ManualOrderM_Form")
 #end

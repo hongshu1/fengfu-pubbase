@@ -6,7 +6,6 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
                         <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
                                 class="fa fa-refresh"></i> 保存
                         </button>
@@ -200,6 +199,9 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+            </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
@@ -237,9 +239,6 @@
             <td>${data.iqty30}</td>
             <td>${data.iqty31}</td>
             <td>${data.isum}</td>
-            <td>
-                <a href="admin/person/deleteByAjax" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">移除行</i></a>
-            </td>
         </tr>
         {@/each}
     </script>
@@ -247,6 +246,11 @@
     <div class="jbolt_table_toolbar" id="subcontractsaleorderm_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+
+            <button onclick="jboltTableRemoveCheckedRow(this, true, false)"
+                    data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
+                <i class="fa fa-trash"></i> 删除行</button>
+
             <div class="j_upload_file_box"
                  data-name="file"
                  data-btn-class="btn dropdown-item"

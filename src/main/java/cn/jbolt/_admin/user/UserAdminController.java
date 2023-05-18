@@ -187,7 +187,7 @@ public class UserAdminController extends JBoltBaseController {
 	 */
 	public void add(){
 		set("roles", roleService.findAll());
-		render("add.html");
+		render("add().html");
 	}
 
 	/**
@@ -250,7 +250,7 @@ public class UserAdminController extends JBoltBaseController {
 			return;
 		}
 		set("user", user);
-		render("edit.html");
+		render("edit().html");
 	}
 	/**
 	 * 保存

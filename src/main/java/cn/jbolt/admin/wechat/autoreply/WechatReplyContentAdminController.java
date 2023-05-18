@@ -45,7 +45,7 @@ public class WechatReplyContentAdminController extends JBoltBaseController {
 		if(ret.isFail()) {renderDialogFailRet(ret);return;}
 		set("datas", service.getListByAutoReplyId(autoReplyId));
 		set("autoReplyId", autoReplyId);
-		render("index.html");
+		render("index().html");
 	}
 	
 
@@ -64,7 +64,7 @@ public class WechatReplyContentAdminController extends JBoltBaseController {
 		
 		set("mpId", mpId);
 		set("autoReplyId", autoReplyId);
-		render("add.html");
+		render("add().html");
 	}
 	
 	@UnCheck
@@ -91,7 +91,7 @@ public class WechatReplyContentAdminController extends JBoltBaseController {
 		if(wechatReplyContent.getMpId().longValue()!=wechatAutoreply.getMpId().longValue()) {renderDialogFail("参数异常:公众平台mpId");return;}
 		if(wechatReplyContent.getAutoReplyId().longValue()!=autoReplyId.longValue()) {renderDialogFail("参数异常:所属规则 autoReplyId");return;}
 		set("wechatReplyContent", wechatReplyContent);
-		render("edit.html");
+		render("edit().html");
 	}
 	@UnCheck
 	@Before(WechatReplyContentMgrValidator.class)

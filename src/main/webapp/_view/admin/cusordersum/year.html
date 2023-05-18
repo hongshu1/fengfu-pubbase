@@ -85,6 +85,7 @@
                 <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="/admin/container/dataExport"><i class="fa fa-download"></i> 导出选中</button>
                 <button class="btn dropdown-item" data-downloadbtn data-url="/admin/container/dataExport" data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
             </div>
+            <button class="btn dropdown-item" onclick="refreshBtnCusSum(this)"><i class="fa fa-refresh"></i> 刷新</button>
         </div>
     </div>
 </div>
@@ -139,3 +140,12 @@
     <tbody>
     </tbody>
 </table>
+<script>
+    function refreshBtnCusSum(ele){
+        let url = "admin/cusordersum/algorithmSum";
+        Ajax.get(url,function(res){
+            refreshJBoltTable(ele);
+            //LayerMsgBox.success("刷新成功!");
+        });
+    }
+</script>

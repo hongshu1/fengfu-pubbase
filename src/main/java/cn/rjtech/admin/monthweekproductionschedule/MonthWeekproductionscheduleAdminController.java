@@ -33,7 +33,7 @@ public class MonthWeekproductionscheduleAdminController extends JBoltBaseControl
     private MonthWeekproductionscheduleService service;
 
     public void index() {
-        render("index.html");
+        render("index().html");
     }
 
     @UnCheck
