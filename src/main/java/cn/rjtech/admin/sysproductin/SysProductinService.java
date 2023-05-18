@@ -270,9 +270,10 @@ public class SysProductinService extends BaseService<SysProductin> {
 		for(int i = 0;i < list.size(); i++){
 			Record row = list.get(i);
 			SysProductindetail sysdetail = new SysProductindetail();
+			sysdetail.setAutoID(row.get("autoid").toString());
 			sysdetail.setBarcode(row.get("barcode"));
 			sysdetail.setInvCode(row.get("cinvcode"));
-			sysdetail.setQty(row.get("qty"));
+			sysdetail.setQty(new BigDecimal(row.get("qty").toString()));
 			sysdetail.setMasID(sysotherin.getAutoID());
 			sysdetail.setSourceBillType(row.getStr("sourcebilltype"));
 			sysdetail.setSourceBillNo(row.getStr("sourcebillno"));

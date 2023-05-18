@@ -16,7 +16,7 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
     public static final String SOURCEBILLTYPE = "SourceBillType";
     /**来源单据Did*/
     public static final String SOURCEBILLDID = "SourceBillDid";
-    /**收发类别*/
+    /**收发类别(销售类型)*/
     public static final String RDCODE = "RdCode";
     /**组织代码*/
     public static final String ORGANIZECODE = "OrganizeCode";
@@ -52,6 +52,16 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
     public static final String MODIFYPERSON = "ModifyPerson";
     /**更新时间*/
     public static final String MODIFYDATE = "ModifyDate";
+    /**发货日期*/
+    public static final String PREDELIVERDATE = "PreDeliverDate";
+    /**发票*/
+    public static final String INVOICE = "Invoice";
+    /**备注*/
+    public static final String MEMO = "Memo";
+    /**付款条件*/
+    public static final String CONDITION = "Condition";
+    /**发运方式*/
+    public static final String ISSUE = "Issue";
 	/**
 	 * AutoID
 	 */
@@ -104,7 +114,7 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
 	}
 
 	/**
-	 * 收发类别
+	 * 收发类别(销售类型)
 	 */
 	public M setRdCode(java.lang.String RdCode) {
 		set("RdCode", RdCode);
@@ -112,9 +122,9 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
 	}
 
 	/**
-	 * 收发类别
+	 * 收发类别(销售类型)
 	 */
-	@JBoltField(name="rdcode" ,columnName="RdCode",type="String", remark="收发类别", required=false, maxLength=30, fixed=0, order=4)
+	@JBoltField(name="rdcode" ,columnName="RdCode",type="String", remark="收发类别(销售类型)", required=false, maxLength=30, fixed=0, order=4)
 	@JSONField(name = "rdcode")
 	public java.lang.String getRdCode() {
 		return getStr("RdCode");
@@ -407,6 +417,91 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
 	@JSONField(name = "modifydate")
 	public java.util.Date getModifyDate() {
 		return getDate("ModifyDate");
+	}
+
+	/**
+	 * 发货日期
+	 */
+	public M setPreDeliverDate(java.lang.String PreDeliverDate) {
+		set("PreDeliverDate", PreDeliverDate);
+		return (M)this;
+	}
+
+	/**
+	 * 发货日期
+	 */
+	@JBoltField(name="predeliverdate" ,columnName="PreDeliverDate",type="String", remark="发货日期", required=false, maxLength=30, fixed=0, order=22)
+	@JSONField(name = "predeliverdate")
+	public java.lang.String getPreDeliverDate() {
+		return getStr("PreDeliverDate");
+	}
+
+	/**
+	 * 发票
+	 */
+	public M setInvoice(java.lang.String Invoice) {
+		set("Invoice", Invoice);
+		return (M)this;
+	}
+
+	/**
+	 * 发票
+	 */
+	@JBoltField(name="invoice" ,columnName="Invoice",type="String", remark="发票", required=false, maxLength=30, fixed=0, order=23)
+	@JSONField(name = "invoice")
+	public java.lang.String getInvoice() {
+		return getStr("Invoice");
+	}
+
+	/**
+	 * 备注
+	 */
+	public M setMemo(java.lang.String Memo) {
+		set("Memo", Memo);
+		return (M)this;
+	}
+
+	/**
+	 * 备注
+	 */
+	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=24)
+	@JSONField(name = "memo")
+	public java.lang.String getMemo() {
+		return getStr("Memo");
+	}
+
+	/**
+	 * 付款条件
+	 */
+	public M setCondition(java.lang.String Condition) {
+		set("Condition", Condition);
+		return (M)this;
+	}
+
+	/**
+	 * 付款条件
+	 */
+	@JBoltField(name="condition" ,columnName="Condition",type="String", remark="付款条件", required=false, maxLength=30, fixed=0, order=25)
+	@JSONField(name = "condition")
+	public java.lang.String getCondition() {
+		return getStr("Condition");
+	}
+
+	/**
+	 * 发运方式
+	 */
+	public M setIssue(java.lang.String Issue) {
+		set("Issue", Issue);
+		return (M)this;
+	}
+
+	/**
+	 * 发运方式
+	 */
+	@JBoltField(name="issue" ,columnName="Issue",type="String", remark="发运方式", required=false, maxLength=30, fixed=0, order=26)
+	@JSONField(name = "issue")
+	public java.lang.String getIssue() {
+		return getStr("Issue");
 	}
 
 }
