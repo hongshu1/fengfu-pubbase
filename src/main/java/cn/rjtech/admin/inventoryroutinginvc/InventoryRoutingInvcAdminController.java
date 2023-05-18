@@ -30,7 +30,7 @@ public class InventoryRoutingInvcAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
    /**
 	* 数据源
@@ -43,7 +43,7 @@ public class InventoryRoutingInvcAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -68,7 +68,7 @@ public class InventoryRoutingInvcAdminController extends BaseAdminController {
 			return;
 		}
 		set("inventoryRoutingInvc",inventoryRoutingInvc);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

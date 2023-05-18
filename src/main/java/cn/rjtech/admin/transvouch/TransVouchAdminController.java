@@ -35,7 +35,7 @@ public class TransVouchAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
   	
   	/**
@@ -76,7 +76,7 @@ public class TransVouchAdminController extends BaseAdminController {
 		transVouch.setBillNo(billNo);
 		transVouch.setBillDate(nowDate);
 		set("transVouch",transVouch);
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -90,7 +90,7 @@ public class TransVouchAdminController extends BaseAdminController {
 		}
 		set("transVouch",transVouch);
 		set("type", get("type"));
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

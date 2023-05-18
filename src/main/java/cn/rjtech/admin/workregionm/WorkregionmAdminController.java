@@ -58,7 +58,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /**
@@ -72,7 +72,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -92,7 +92,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
         }
        
         set("workregionm", workregionm);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

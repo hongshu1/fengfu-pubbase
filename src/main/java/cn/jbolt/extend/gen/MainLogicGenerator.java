@@ -5,10 +5,7 @@ import cn.jbolt.core.gen.JBoltMainLogicBean;
 import cn.jbolt.core.gen.JBoltMainLogicGenerator;
 import cn.jbolt.core.gen.SystemLogTargetType;
 import cn.jbolt.core.model.Permission;
-import cn.rjtech.model.momdata.InStockQcFormD;
-import cn.rjtech.model.momdata.InStockQcFormM;
 import cn.rjtech.model.momdata.InstockqcformdLine;
-
 import com.jfinal.plugin.activerecord.Model;
 
 import java.util.ArrayList;
@@ -42,7 +39,7 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		 */
 		IndexHtmlLayoutType indexHtmlLayoutType = IndexHtmlLayoutType.NORMAL_CRUD;
 		//生成java代码里的作者信息 默认 JBolt-Generator
-		String author                    = "RJ";
+		String author                    = "佛山市瑞杰科技有限公司";
 		//controller service等java代码生成的报名 路径
 		String packageName               = "cn.rjtech.admin.instockqcformdline";
 		//在路由配置里的controllerPath参数 也用在生成其它URL的前缀
@@ -57,7 +54,7 @@ public class MainLogicGenerator extends JBoltMainLogicGenerator{
 		Class<? extends Model<?>> modelClass = InstockqcformdLine.class;
 		//是否需要分页查询
 		boolean needPaginate             = true;
-		//index().html 是否需要启用表格的工具条 toolbar
+		//index.html 是否需要启用表格的工具条 toolbar
 		boolean needToolbar              = true;
 		//执行删除时是否做检测校验
 		boolean checkDelete              = true;

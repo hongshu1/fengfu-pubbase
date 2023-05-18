@@ -34,7 +34,7 @@ public class ApprovalDAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
 
   	/**
@@ -65,7 +65,7 @@ public class ApprovalDAdminController extends BaseAdminController {
 		approvalD.setIApprovalMid(Long.parseLong(id));
 		approvalD.setISeq(iSeq);
 		set("approvalD",approvalD);
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -78,7 +78,7 @@ public class ApprovalDAdminController extends BaseAdminController {
 			return;
 		}
 		set("approvalD",approvalD);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

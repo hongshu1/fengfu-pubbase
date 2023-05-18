@@ -48,7 +48,7 @@ public class CustomerAdminController extends BaseAdminController {
 	 * 首页
 	 */
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class CustomerAdminController extends BaseAdminController {
 
 		set("icustomerclassid", get("autoid"));
 		set("customerm",new Customer());
-		render("add().html");
+		render("add.html");
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class CustomerAdminController extends BaseAdminController {
 		set("centityname", "customerm");
 //		set("icustomerclassid",customerm.getIcustomerclassid());
 		set("customerm",customerm);
-		render("edit().html");
+		render("edit.html");
 	}
 
 	/**

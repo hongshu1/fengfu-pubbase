@@ -68,7 +68,7 @@ public class InventoryAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
    /**
 	* 数据源
@@ -104,7 +104,7 @@ public class InventoryAdminController extends BaseAdminController {
 		set("iinventoryid", autoid);
 		inventory.setIAutoId(autoid);
 		set("inventory", inventory);
-		render("add().html");
+		render("add.html");
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class InventoryAdminController extends BaseAdminController {
 			set("iinventoryroutingid",inventoryRouting.getIAutoId());
 			set("iitemroutingname",inventoryRouting.getCRoutingName());
 		}
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

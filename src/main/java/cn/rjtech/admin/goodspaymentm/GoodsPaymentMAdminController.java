@@ -36,7 +36,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
    /**
 	* 数据源
@@ -49,7 +49,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -72,7 +72,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
 		Customer customer = customerService.findById(goodsPaymentM.getICustomerId());
 		goodspaymentm.set("ccusname", customer == null ? null:customer.getCCusName());
 		set("goodspaymentm",goodspaymentm);
-		render("edit().html");
+		render("edit.html");
 
 
 

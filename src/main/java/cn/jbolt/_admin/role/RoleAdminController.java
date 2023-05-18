@@ -24,7 +24,7 @@ public class RoleAdminController extends JBoltBaseController {
 	 * 管理首页
 	 */
 	public void index(){
-		render("index().html");
+		render("index.html");
 	}
 
 	public void datas() {
@@ -53,14 +53,14 @@ public class RoleAdminController extends JBoltBaseController {
 	 * 新增
 	 */
 	public void add(){
-		render("add().html");
+		render("add.html");
 	}
 	/**
 	 * 新增Item
 	 */
 	public void addItem(){
 		set("pid", getLong(0,0L));
-		render("add().html");
+		render("add.html");
 	}
 	/**
 	 * 编辑
@@ -73,7 +73,7 @@ public class RoleAdminController extends JBoltBaseController {
 		}
 		set("role", role);
 		set("pid", role.getPid());
-		render("edit().html");
+		render("edit.html");
 	}
 	/**
 	 * 保存

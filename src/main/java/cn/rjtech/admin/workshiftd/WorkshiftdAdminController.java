@@ -31,7 +31,7 @@ public class WorkshiftdAdminController extends JBoltBaseController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
 
   	/**
@@ -45,7 +45,7 @@ public class WorkshiftdAdminController extends JBoltBaseController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -58,7 +58,7 @@ public class WorkshiftdAdminController extends JBoltBaseController {
 			return;
 		}
 		set("workshiftd",workshiftd);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

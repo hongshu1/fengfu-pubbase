@@ -32,7 +32,7 @@ public class QiniuBucketAdminController extends JBoltBaseController {
 	*/
 	public void index() {
 		set("qiniuId", getLong("qiniuId"));
-		render("index().html");
+		render("index.html");
 	}
   	
 	/**
@@ -72,7 +72,7 @@ public class QiniuBucketAdminController extends JBoltBaseController {
 	*/
 	public void add() {
 		set("qiniuId", getLong("qiniuId"));
-		render("add().html");
+		render("add.html");
 	}
 	
    /**
@@ -85,7 +85,7 @@ public class QiniuBucketAdminController extends JBoltBaseController {
 			return;
 		}
 		set("qiniuBucket",qiniuBucket);
-		render("edit().html");
+		render("edit.html");
 	}
 	
    /**

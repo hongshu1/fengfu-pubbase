@@ -37,7 +37,7 @@ public class MoDocBatchController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
     /**
      * 数据源
@@ -79,7 +79,7 @@ public class MoDocBatchController extends BaseAdminController {
             // 工序对应的人员
 
         }
-        render("_form().html");
+        render("_form.html");
     }
     /**
      * 编辑计划

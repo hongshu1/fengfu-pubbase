@@ -50,7 +50,7 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /**
@@ -79,7 +79,7 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
         set("cusFieldsMappingD", cusFieldsMappingD);
         set("iformids", iformids);
         set("cformnames", CollUtil.join(formService.getNamesByIformids(iformids), COMMA));
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -116,7 +116,7 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
         set("cusFieldsMappingD", cusFieldsMappingD);
         set("iformids", iformids);
         set("cformnames", CollUtil.join(formService.getNamesByIformids(iformids), COMMA));
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

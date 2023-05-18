@@ -65,7 +65,7 @@ public class WechatAutoReplyAdminController extends JBoltBaseController {
 		set("mpId", mpId);
 		set("type", type);
 		set("keywords", keywords);
-		render("index().html");
+		render("index.html");
 	}
 	@UnCheck
 	@Before(WechatAutoReplyMpIdAndTypeValidator.class)
@@ -80,7 +80,7 @@ public class WechatAutoReplyAdminController extends JBoltBaseController {
 		}
 		set("mpId", mpId);
 		set("type", type);
-		render("add().html");
+		render("add.html");
 	}
 	@UnCheck
 	@Before(WechatAutoReplyMpIdAndTypeValidator.class)
@@ -104,7 +104,7 @@ public class WechatAutoReplyAdminController extends JBoltBaseController {
 		set("wechatAutoreply", wechatAutoreply);
 		set("mpId", mpId);
 		set("type", type);
-		render("edit().html");
+		render("edit.html");
 	}
 	
 	@UnCheck

@@ -54,7 +54,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /**
@@ -68,7 +68,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -103,7 +103,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
             set("venname", first1.getCVenName());
         }
         set("sysPureceive", sysPureceive);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

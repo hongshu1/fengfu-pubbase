@@ -32,7 +32,7 @@ public class ColumsmapAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /**
@@ -46,7 +46,7 @@ public class ColumsmapAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -57,7 +57,7 @@ public class ColumsmapAdminController extends BaseAdminController {
         ValidationUtils.notNull(columsmap, JBoltMsg.DATA_NOT_EXIST);
 
         set("columsmap", columsmap);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

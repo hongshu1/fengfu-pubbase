@@ -42,7 +42,7 @@ public class PersonAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /**
@@ -56,7 +56,7 @@ public class PersonAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -73,7 +73,7 @@ public class PersonAdminController extends BaseAdminController {
         rc.set("cusername", user == null ? null : user.getName());
         rc.set("sysworkage", service.calcSysworkage(rc.getDate("dhiredate")));
         set("person", rc);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

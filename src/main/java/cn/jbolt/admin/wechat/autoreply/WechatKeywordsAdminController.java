@@ -40,7 +40,7 @@ public class WechatKeywordsAdminController extends JBoltBaseController {
 		Long autoReplyId=getLong(0);
 		set("datas", service.getListByAutoReplyId(autoReplyId));
 		set("autoReplyId", autoReplyId);
-		render("index().html");
+		render("index.html");
 	}
 	
 	
@@ -56,7 +56,7 @@ public class WechatKeywordsAdminController extends JBoltBaseController {
 		Long mpId=checkResultKv.getLong("mpId");
 		set("autoReplyId",autoReplyId);
 		set("mpId", mpId);
-		render("add().html");
+		render("add.html");
 	}
 	
 	
@@ -81,7 +81,7 @@ public class WechatKeywordsAdminController extends JBoltBaseController {
 		set("wechatKeywords", wechatKeywords);
 		set("autoReplyId",autoReplyId);
 		set("mpId",mpId);
-		render("edit().html");
+		render("edit.html");
 	}
 	
 	public void types() {

@@ -42,7 +42,7 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /**
@@ -56,7 +56,7 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -89,7 +89,7 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
             set("venname", sysenumerationservice.getVenName(sysPureceive.getVenCode()));
         }
         set("sysPureceive", sysPureceive);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

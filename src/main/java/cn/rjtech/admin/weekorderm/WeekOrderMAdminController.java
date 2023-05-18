@@ -37,7 +37,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /**
@@ -55,7 +55,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
         WeekOrderM addData = new WeekOrderM();
         set("weekOrderM", addData);
         set("mark", "ADD");
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -85,7 +85,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
         }
         set("weekOrderM", weekOrderM.get(0));
         set("mark", "EDIT");
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

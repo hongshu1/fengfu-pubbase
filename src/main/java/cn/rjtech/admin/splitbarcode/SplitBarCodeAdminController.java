@@ -33,7 +33,7 @@ public class SplitBarCodeAdminController extends BaseAdminController {
      * 拆分条码记录
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     public void datas(){
@@ -75,7 +75,7 @@ public class SplitBarCodeAdminController extends BaseAdminController {
 //        Integer qty = byShiWu.getInt("qty");
 //        byShiWu.set("allqty","");
         set("bill", byShiWu);
-        render("edit().html");
+        render("edit.html");
     }
 
     public void detailDatas() {

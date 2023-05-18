@@ -30,7 +30,7 @@ public class DescflexsegvaluesetvalueAdminController extends JBoltBaseController
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
 
   	/**
@@ -44,7 +44,7 @@ public class DescflexsegvaluesetvalueAdminController extends JBoltBaseController
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -57,7 +57,7 @@ public class DescflexsegvaluesetvalueAdminController extends JBoltBaseController
 			return;
 		}
 		set("descflexsegvaluesetvalue",descflexsegvaluesetvalue);
-		render("edit().html");
+		render("edit.html");
 	}
 
   /**

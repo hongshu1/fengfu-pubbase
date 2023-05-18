@@ -23,6 +23,6 @@ public class SystemLogAdminController extends JBoltBaseController {
 		set("startTime", startTime);
 		set("endTime", endTime);
 		setKeywords(keywords);
-		render("index().html");
+		render("index.html");
 	}
 }

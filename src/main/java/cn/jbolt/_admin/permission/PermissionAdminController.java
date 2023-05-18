@@ -58,7 +58,7 @@ public class PermissionAdminController extends JBoltBaseController {
             set("permission", permission);
         }
 
-		render("add().html");
+		render("add.html");
 	}
 	 
 	public void edit(){
@@ -70,7 +70,7 @@ public class PermissionAdminController extends JBoltBaseController {
 		set("pid",permission.getPid());
 		set("level", permission.getPermissionLevel());
 		set("permission", permission);
-		render("edit().html");
+		render("edit.html");
 	}
 	
 	public void save(){

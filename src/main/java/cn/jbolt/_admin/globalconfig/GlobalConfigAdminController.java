@@ -31,7 +31,7 @@ public class GlobalConfigAdminController extends JBoltBaseController {
 	
 	public void index(){
 		service.checkAndInit();
-		render("index().html");
+		render("index.html");
 	}
 	/**
 	 * 数据源
@@ -83,7 +83,7 @@ public class GlobalConfigAdminController extends JBoltBaseController {
 			set("imgs", getLoginBgimgs());
 			set("videos", getLoginBgvideos());
 		}
-		render("edit().html");
+		render("edit.html");
 	}
 	/**
 	 * 更新

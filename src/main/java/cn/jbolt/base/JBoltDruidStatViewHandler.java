@@ -72,9 +72,9 @@ public class JBoltDruidStatViewHandler extends Handler {
 				target = this.ctx + target;
 			}
 			
-			if (target.equals(finalVisitPath) && !target.endsWith("/index().html")) {
+			if (target.equals(finalVisitPath) && !target.endsWith("/index.html")) {
 				StringBuilder basePath=JBoltBaseHandler.processBasepathStrBuilder(request,false);
-				basePath.append(target).append("/index().html");
+				basePath.append(target).append("/index.html");
 				HandlerKit.redirect(basePath.toString(), request, response, isHandled);
 				return ;
 			}
@@ -123,15 +123,15 @@ public class JBoltDruidStatViewHandler extends Handler {
 
 	        if ("".equals(path)) {
 	            if (contextPath == null || contextPath.equals("") || contextPath.equals("/")) {
-	                response.sendRedirect("/druid/index().html");
+	                response.sendRedirect("/druid/index.html");
 	            } else {
-	                response.sendRedirect("druid/index().html");
+	                response.sendRedirect("druid/index.html");
 	            }
 	            return;
 	        }
 
 	        if ("/".equals(path)) {
-	            response.sendRedirect("index().html");
+	            response.sendRedirect("index.html");
 	            return;
 	        }
 

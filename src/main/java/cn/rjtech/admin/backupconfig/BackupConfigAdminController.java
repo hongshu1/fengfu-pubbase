@@ -30,7 +30,7 @@ public class BackupConfigAdminController extends BaseAdminController {
 	* 首页ss
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
    /**
 	* 数据源
@@ -43,7 +43,7 @@ public class BackupConfigAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -63,7 +63,7 @@ public class BackupConfigAdminController extends BaseAdminController {
 			return;
 		}
 		set("backupConfig",backupConfig);
-		render("edit().html");
+		render("edit.html");
 	}
 
    /**

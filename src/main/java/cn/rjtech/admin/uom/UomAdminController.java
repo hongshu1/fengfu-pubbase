@@ -43,7 +43,7 @@ public class UomAdminController extends JBoltBaseController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /**
@@ -72,7 +72,7 @@ public class UomAdminController extends JBoltBaseController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -85,7 +85,7 @@ public class UomAdminController extends JBoltBaseController {
             return;
         }
         set("uom", uom);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

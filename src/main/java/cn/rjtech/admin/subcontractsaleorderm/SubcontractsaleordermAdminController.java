@@ -38,7 +38,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index().html");
+        render("index.html");
     }
 
     /**
@@ -52,7 +52,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        render("add().html");
+        render("add.html");
     }
 
     /**
@@ -69,7 +69,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
         subcontractsaleordermRc.set("ccusname", customer == null ? null : customer.getCCusName());
         subcontractsaleordermRc.set("cbususername", JBoltUserCache.me.getUserName(subcontractsaleorderm.getIBusUserId()));
         set("subcontractsaleorderm", subcontractsaleordermRc);
-        render("edit().html");
+        render("edit.html");
     }
 
     /**

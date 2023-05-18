@@ -21,7 +21,7 @@ public class SensitiveWordAdminController extends JBoltBaseController {
     @Inject
     JBoltSensitiveWordService service;
     public void index(){
-        render("index().html");
+        render("index.html");
     }
 
     public void counts(){
@@ -37,7 +37,7 @@ public class SensitiveWordAdminController extends JBoltBaseController {
     }
 
     public void add(){
-        render("add().html");
+        render("add.html");
     }
 
     public void edit(){
@@ -47,7 +47,7 @@ public class SensitiveWordAdminController extends JBoltBaseController {
             return;
         }
         set("sensitiveWord",word);
-        render("edit().html");
+        render("edit.html");
     }
 
     public void reload(){

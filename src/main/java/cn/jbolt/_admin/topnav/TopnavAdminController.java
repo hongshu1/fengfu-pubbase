@@ -27,7 +27,7 @@ public class TopnavAdminController extends JBoltBaseController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class TopnavAdminController extends JBoltBaseController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 	
   /**
@@ -61,7 +61,7 @@ public class TopnavAdminController extends JBoltBaseController {
 			return;
 		}
 		set("topnav",topnav);
-		render("edit().html");
+		render("edit.html");
 	}
 	
   /**

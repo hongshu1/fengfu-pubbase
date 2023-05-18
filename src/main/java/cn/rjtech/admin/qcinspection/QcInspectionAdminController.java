@@ -40,7 +40,7 @@ public class QcInspectionAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index().html");
+		render("index.html");
 	}
 
 
@@ -61,7 +61,7 @@ public class QcInspectionAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add().html");
+		render("add.html");
 	}
 
    /**
@@ -74,7 +74,7 @@ public class QcInspectionAdminController extends BaseAdminController {
 			return;
 		}
 		set("qcInspection",qcInspection);
-		render("edit().html");
+		render("edit.html");
 	}
 
 	public void edit2() {
@@ -91,7 +91,7 @@ public class QcInspectionAdminController extends BaseAdminController {
 				set("files", files);
 			}
 			set("qcInspection", qcInspection);
-			render("edit2().html");
+			render("edit2.html");
 		}
 
 

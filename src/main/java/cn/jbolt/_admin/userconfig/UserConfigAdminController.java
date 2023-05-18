@@ -21,7 +21,7 @@ public class UserConfigAdminController extends JBoltBaseController {
 	@UnCheck
 	public void index() {
 		set("userConfigs", service.getAdminList(JBoltUserKit.getUserId()));
-		render("index().html");
+		render("index.html");
 	}
 	@UnCheck
 	public void toggleBooleanConfig() {

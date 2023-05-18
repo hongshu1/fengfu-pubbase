@@ -61,7 +61,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	 */
 	public void index() {
 		setDefaultSortInfo("update_time", "desc");
-		render("index().html");
+		render("index.html");
 	}
 	/**
 	 * codeGen数据源
@@ -185,7 +185,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	public void add() {
 		set("isSubTable", false);
 		set("projectPath",FileUtil.normalize(System.getProperty("user.dir")));
-		render("add().html");
+		render("add.html");
 	}
 	/**
 	 * 添加子表配置
@@ -204,7 +204,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("pid", pid);
 		set("isSubTable", false);
 		set("projectPath", System.getProperty("user.dir"));
-		render("add().html");
+		render("add.html");
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("isSubTable", codeGen.getIsSubTable());
 		set("projectPath", System.getProperty("user.dir"));
 		set("tableFullName", codeGen.getMainTableName()+(StrKit.isBlank(codeGen.getMainTableRemark())?"":("["+codeGen.getMainTableRemark()+"]")));
-		render("edit().html");
+		render("edit.html");
 	}
 
 	/**
@@ -327,7 +327,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("hasIsKeywordsColumn",codeGenModelAttrService.checkHasIsKeywordsColumn(codeGen.getId()));
 		set("codeGenId", codeGenId);
 		set("tableFullName", StrKit.isBlank(codeGen.getMainTableRemark())?null:(codeGen.getMainTableName()+"["+codeGen.getMainTableRemark()+"]"));
-		render("config/index().html");
+		render("config/index.html");
 	}
 
 	/**
@@ -368,7 +368,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 //			permission.setTitle(codeGen.getMainTableRemark());
 //			permission.setPermissionKey(codeGen.getModelName().toLowerCase());
 //			set("permission", permission);
-			render("/_view/_admin/permission/add().html");
+			render("/_view/_admin/permission/add.html");
 		}
 	}
 	/**

@@ -135,7 +135,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 				set("dataTotalCount", service.getCountByTypeId(typeId));
 				set("showId", dictionaryId);
 				//TODO #mmm 前端页面实现show效果
-				render("index().html");
+				render("index.html");
 			}
 			
 		}
@@ -161,7 +161,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 		if(dictionaryType.getModeLevel()==DictionaryTypeMode.LEVEL_MULTI.getValue()) {
 			set("needPidSelect",true);
 		}
-		render("add().html");
+		render("add.html");
 	}
 	/**
 	 * 新增
@@ -183,7 +183,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 		}
 		set("typeId",typeId);
 		set("pid", pid);
-		render("add().html");
+		render("add.html");
 	}
 	/**
 	 * 编辑
@@ -211,7 +211,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 		set("dictionary",dictionary );
 		set("typeId", typeId);
 		set("pid", dictionary.getPid());
-		render("edit().html");
+		render("edit.html");
 	}
 	/**
 	 * 编辑
@@ -239,7 +239,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 		set("typeId", typeId);
 		set("dictionary",dictionary );
 		set("pid", dictionary.getPid());
-		render("edit().html");
+		render("edit.html");
 	}
 	/**
 	 * 保存
