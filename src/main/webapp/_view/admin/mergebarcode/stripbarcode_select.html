@@ -31,15 +31,14 @@
     <textarea class="jb_tpl_box" id="barcodeRowtpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.iautoid}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.invcode}</td>
-<td>${data.invname}</td>
-<td>${data.invstd}</td>
-<td>${data.unitname}</td>
-<td>${data.barcode}</td>
-<td>${data.pbarcode}</td>
-<td>${data.batch}</td>
-<td>${data.qty, 2|number_format}</td>
+  <td>${pageNumber,pageSize,index | rownum}</td>
+  <td>${data.invcode}</td>
+  <td>${data.invname}</td>
+  <td>${data.invstd}</td>
+  <td>${data.unitname}</td>
+  <td>${data.barcode}</td>
+  <td>${data.qty, 2|number_format}</td>
+  <td>${data.batch}</td>
 </tr>
 {@/each}
 </textarea>
@@ -74,9 +73,8 @@
         <th data-width="150" data-column="invstd">规格</th>
         <th data-width="150" data-column="unitname">单位</th>
         <th data-width="150" data-column="barcode">现品票</th>
-        <th data-width="150" data-column="pbarcode">载具编码</th>
-        <th data-width="150" data-column="batch">批次</th>
         <th data-width="150" data-column="qty">数量</th>
+        <th data-width="150" data-column="batch">批次</th>
       </tr>
       </thead>
       <tbody>

@@ -35,21 +35,18 @@ public class MergeBarCodeAdminController extends BaseAdminController {
         render("index.html");
     }
 
+    /*
+     * 跳转到新增页面
+     * */
     public void stripbarcodeSelect() {
         render("stripbarcode_select.html");
     }
 
     /*
-    * 新增
-    * */
+     * 新增页面自动加载table数据
+     * */
     public void StripSelectDatas() {
         renderJsonData(service.StripSelectDatas(getPageNumber(), getPageSize(), getKv()));
-    }
-
-    public void detailDatas() {
-        Kv kv = getKv();
-        String sourceid = kv.getStr("sourceid");
-        renderJsonData(service.findListByShiWu(sourceid));
     }
 
     /**
@@ -68,12 +65,24 @@ public class MergeBarCodeAdminController extends BaseAdminController {
         renderJsonData(service.datas(getPageNumber(), getPageSize(), getKv()));
     }
 
+    /*
+     * 点击查看按钮，跳转到查看页面
+     * */
     public void findByLogId() {
         Kv kv = getKv();
         String logid = kv.getStr("logid");
         Record byLogId = service.findByLogId(logid);
         set("bill", byLogId);
         render("edit.html");
+    }
+
+    /*
+     * 跳转到“查看”页面自动加载数据
+     * */
+    public void detailDatas() {
+        Kv kv = getKv();
+        String sourceid = kv.getStr("sourceid");
+        renderJsonData(service.findListByShiWu(sourceid));
     }
 
     /**
