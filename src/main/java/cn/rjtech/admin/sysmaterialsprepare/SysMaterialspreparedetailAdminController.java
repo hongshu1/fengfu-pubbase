@@ -16,7 +16,7 @@ import cn.rjtech.model.momdata.SysMaterialspreparedetail;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-12 18:31
  */
-@CheckPermission(PermissionKey.ADMIN_SYSMATERIALSPREPARE)
+@CheckPermission(PermissionKey.ADMIN_MOPICKITEMD)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/sysmaterialspreparedetail", viewPath = "/_view/admin/sysmaterialspreparedetail")
