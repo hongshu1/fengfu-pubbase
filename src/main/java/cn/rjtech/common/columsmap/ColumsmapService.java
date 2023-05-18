@@ -467,14 +467,14 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
         Organize orgApp = organizeService.getOrgByCode((String) kv.get("organizecode"));
 
-        // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
-        String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
-
-        Record userApp = userAppService.getUserByUserCode(erpDbAlias, orgApp.getErpdbname(), orgApp.getErpdbschemas(), (String) kv.get("usercode"));
+        Record userApp = userAppService.getUserByUserCode(orgApp.getErpdbname(), orgApp.getErpdbschemas(), (String) kv.get("usercode"));
         ValidationUtils.notNull(userApp, "当前组织下没有该用户！");
 
         String erpDBName = orgApp.getErpdbname();
         
+        // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
+        String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
+
         // 业务id
         String vouchBusinessID = JBoltSnowflakeKit.me.nextIdStr();
 
@@ -1053,33 +1053,30 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
     public Map vouchProcessDynamicSubmit(Kv k) {
         CaseInsensitiveMap<String, Object> kv = new CaseInsensitiveMap<String, Object>(k);
-        
-        String SourceJson = k.toJson();
+        String SourceJson = k.toJson().toString();
 
         Kv result = Kv.create();
-        
         Date now = new Date();
-        
         Organize orgApp = organizeService.getOrgByCode((String) kv.get("organizecode"));
-
-        // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
-        String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
-        
-        Record userApp = userAppService.getUserByUserCode(erpDbAlias, orgApp.getErpdbname(), orgApp.getErpdbschemas(), (String) kv.get("usercode"));
+        Record userApp = userAppService.getUserByUserCode(orgApp.getErpdbname(), orgApp.getErpdbschemas(), (String) kv.get("usercode"));
         ValidationUtils.notNull(userApp, "当前组织下没有该用户！");
 
         String erpDBName = orgApp.getErpdbname();
-        
-        // 获取所有钟工组件返回的u8单据类型值
+        // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
+        String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
+        String mesdbalias = orgApp.getMesdbalias();
+
+        //获取所有钟工组件返回的u8单据类型值
         JSONObject preAllocate = (JSONObject) kv.get("preallocate");
-        
         //通过数据的分组id，将数据分成多组，分别提交
-        Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag"), Collectors.toList()));
+        Map<Object, List<Object>> dataGroup = ((JSONArray) kv.get("maindata")).stream().collect(Collectors.groupingBy(p -> {
+            Map<String, Object> a = (Map) p;
+            return ((Map<?, ?>) p).get("GroupFlag") == null ? "10" : ((Map<?, ?>) p).get("GroupFlag");
+        }, Collectors.toList()));
         Set<Object> groupFlags = new TreeSet<>(dataGroup.keySet());
-        
+        Iterator groupFlag = groupFlags.iterator();
         // 交换表数据保存
         List<ExchangeTable> saveExchangeTables = new ArrayList<>();
-        
         for (Object flag : groupFlags) {
             //业务id
             String vouchBusinessID = String.valueOf(JBoltSnowflakeKit.me.nextId());

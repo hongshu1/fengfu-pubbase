@@ -4,8 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
-import cn.jbolt._admin.dictionary.DictionaryTypeKey;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
@@ -81,8 +79,6 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
 		List<Record> list = paginates.getList();
 		list.forEach(row -> {
 			row.set("cformname",formService.getNameByFormId(row.getStr("iformid")));
-			row.set("cformtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.business_type.name(), row.getStr("cformtypesn")));
-			row.set("icodingtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.iCoding_type.name(), row.getStr("icodingtype")));
 		});
 		return paginates;
 	}
@@ -172,8 +168,6 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
         ValidationUtils.notNull(m,JBoltMsg.PARAM_ERROR);
 
 
-
-
         tx(() -> {
 
             // 新增
@@ -219,7 +213,7 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
 		m.setCOrgCode(getOrgCode());
 		m.setCOrgName(getOrgName());
 		m.setIOrgId(getOrgId());
-
+        
         ValidationUtils.isTrue(m.save(), ErrorMsg.SAVE_FAILED);
 
         for (Record d : save) {
@@ -248,9 +242,7 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
         // 修改
         List<Record> update = jBoltTable.getUpdateRecordList();
         if (CollUtil.isNotEmpty(update)) {
-			for (int i=0;i<update.size();i++) {
-				Record row = update.get(i);
-			}
+
             codingRuleDService.batchUpdateRecords(update);
         }
         

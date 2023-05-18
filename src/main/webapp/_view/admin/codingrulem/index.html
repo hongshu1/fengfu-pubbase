@@ -7,38 +7,36 @@
             <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>系统配置-编码规则</h1></div>
             <div class="col">
                 <form class="form-inline" id="CodingRuleM_form_#(pageId)">
-                    <!--<input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords"-->
-                           <!--value=""/>-->
-                    业务对象：
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords"
+                           value=""/>
+
                     <select class="form-control" name="cFormTypeSn"
                             data-autoload
-                            data-url="admin/dictionary/options?key=business_type"
+                            data-url="admin/dictionary/options?key=null"
                             data-select-type="select"
-                            data-text="=业务对象类型="
+                            data-text="=业务对象类型：1. 单据类型 2. 条码号="
                             data-value=""
                             data-value-attr="sn"
                     ></select>
-                    <h1></h1>业务字段：
 
-                    <input type="text"
-                           data-with-clearbtn="true"
-                           autocomplete="off"
-                           class="form-control"
-                           placeholder="请输入业务字段"
-                           maxlength="40"
-                           name="cOrgName" />
-                    <h1></h1>编码方式：
                     <select class="form-control" name="iCodingType"
                             data-autoload
-                            data-url="admin/dictionary/options?key=iCoding_type"
+                            data-url="admin/dictionary/options?key=null"
                             data-select-type="select"
-                            data-text="=编码方式="
+                            data-text="=编码方式: 1. 自动生成编码，允许手工修改 2. 完全手工编码="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+
+                    <select class="form-control" name="IsDeleted"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=删除状态：0. 未删除 1. 已删除="
                             data-value=""
                             data-value-attr="sn"
                     ></select>
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
-                    <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-
                 </form>
             </div>
             <div class="col-sm-auto text-right">
@@ -60,25 +58,24 @@
             <tr data-id="${data.iautoid}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
                 <td>
-                <a class="jbolt_table_editbtn" href="admin/codingrulem/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="1500,1300" data-title="编辑">编辑</a>
+                <a class="jbolt_table_editbtn" href="admin/codingrulem/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑">编辑</a>
                 <a class="jbolt_table_delbtn" href="admin/codingrulem/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable">删除</a>
                 </td>
-                <td>${data.cformtypename}</td>
-                <td>${data.cOrgName}</td>
-                <td>${data.icodingtypename}</td>
+                <td>${data.cformtypesn}</td>
+                <td>${data.iformname}</td>
+                <td>${data.icodingtype}</td>
                 <td>${data.cdemo}</td>
-                <td>${data.dupdatetime}</td>
             </tr>
             {@/each}
         </textarea>
         
         <div class="jbolt_table_toolbar" id="CodingRuleM_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst"
                         id="toolbar_addBtn_#(pageId)" data-title="新增系统配置-编码规则" data-url="admin/codingrulem/add"
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
                 </button>
-                <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
+                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable"
                         id="toolbar_editBtn_#(pageId)" data-title="编辑系统配置-编码规则"
                         data-check-handler="jboltTableGetCheckedId" data-url="admin/codingrulem/edit/"
                         class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑
@@ -107,12 +104,11 @@
             <thead>
             <tr>
                 <th data-width="60" data-column="index">序号</th>
-                <th data-width="140">操作</th>
-                <th data-width="140" data-column="cformtypesn">业务对象类型</th>
-                <th data-width="140" data-column="cOrgName">业务字段</th>
-                <th data-width="220" data-column="icodingtype">编码方式</th>
-                <th data-min-width="300" data-column="cdemo">编码示例</th>
-                <th data-width="250" data-column="dUpdateTime">编辑时间</th>
+                <th data-width="80">操作</th>
+                <th data-width="150" data-column="cformtypesn">业务对象类型</th>
+                <th data-width="150" data-column="iformname">表单名称</th>
+                <th data-width="100" data-column="icodingtype">编码方式</th>
+                <th data-width="150" data-column="cdemo">编码示例</th>
             </tr>
             </thead>
             <tbody></tbody>
