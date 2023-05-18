@@ -2,7 +2,6 @@ package cn.rjtech.admin.cusordersum;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.OrderBy;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -162,15 +161,22 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
         //当前年
         String curYear = DateUtils.getYear();
 
-        //TODO:获取所有客户月度工作天数
-        List<CustomerWorkDays> getCusWorkDaysList = workDaysService.getCusWorkDaysList(Integer.parseInt(curYear));
-        //key:cusId + year
-        Map<String,CustomerWorkDays> cusWorkMonthDaysMap = new HashMap<>();
-        for (CustomerWorkDays workDays : getCusWorkDaysList){
-            Long iCustomerId = workDays.getICustomerId();
-            String iYear = String.valueOf(workDays.getIYear());
-            String key = iCustomerId + iYear;
-            cusWorkMonthDaysMap.put(key,workDays);
+        //TODO:获取排产日历工作日
+        List<Record> getCalendarByYearList = dbTemplate("cusordersum.getCalendarByYearList",Kv.by("year",curYear).set("csourcecode",1)).find();
+        //key:yyyy-MM   value:List<dd>
+        Map<String,List<Integer>> workMonthDaysMap = new HashMap<>();
+        for (Record workDays : getCalendarByYearList){
+            String dTakeYearMonth = workDays.getStr("dTakeYearMonth");
+            String dTakeDate = workDays.getStr("dTakeDate");
+            int day = Integer.parseInt(dTakeDate.substring(8, 10));
+            if (workMonthDaysMap.containsKey(dTakeYearMonth)){
+                List<Integer> list = workMonthDaysMap.get(dTakeYearMonth);
+                list.add(day);
+            }else {
+                List<Integer> list = new ArrayList<>();
+                list.add(day);
+                workMonthDaysMap.put(dTakeYearMonth,list);
+            }
         }
 
         //物料信息
@@ -251,7 +257,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
             String cInvCode = record.getStr("cInvCode");
             String year = record.getStr("year");
 
-            CustomerWorkDays monthDays = cusWorkMonthDaysMap.get(iCustomerId + year);
             //循环月份
             for (int i = 1; i <= 12; i++) {
                 String yearMonth = year + "-" + (i < 10 ? "0"+i : i);
@@ -261,13 +266,12 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 
                 BigDecimal monthQty = record.getBigDecimal("month"+i);//月总数量
                 if (monthQty.compareTo(BigDecimal.ZERO) > 0){
-                    int workSum = monthDays.get("iMonth" + i + "Days");//月工作天数
+                    List<Integer> dayList = workMonthDaysMap.get(yearMonth) != null ? workMonthDaysMap.get(yearMonth) : new ArrayList<>();
+                    int workSum = dayList.size();//月工作天数
                     //平均数量
                     BigDecimal avgQty = monthQty.divide(BigDecimal.valueOf(workSum),0,BigDecimal.ROUND_UP);
-                    //当月天数
-                    int curMonthNum = DateUtils.getMonthHasDays(DateUtils.parseDate(yearMonth + "-01"));
-                    for (int j = 1; j <= curMonthNum; j++) {
-                        int day = j;
+
+                    for (Integer day : dayList){
                         if (dayMap.containsKey(day)){
                             BigDecimal qty = dayMap.get(day).add(avgQty);
                             dayMap.put(day,qty);

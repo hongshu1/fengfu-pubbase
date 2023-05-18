@@ -303,3 +303,17 @@ GROUP BY
     a.iYear,a.iMonth
 ORDER BY a.iYear,a.iMonth
 #end
+
+
+#sql("getCalendarByYearList")
+###根据年份获取排产工作日历
+SELECT
+    CONVERT(VARCHAR(7),dTakeDate,120) AS dTakeYearMonth,
+    CONVERT(VARCHAR(10),dTakeDate,120) AS dTakeDate
+FROM Bd_Calendar
+WHERE iCaluedarType = '1'
+  AND cSourceCode = #para(csourcecode)
+  AND CONVERT(VARCHAR(4),dTakeDate,120) >= #para(year)
+ORDER BY
+    CONVERT(VARCHAR(4),dTakeDate,120)
+#end
