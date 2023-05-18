@@ -917,7 +917,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
      * @param cover
      */
     private void genFormHtml(CodeGen codeGen, boolean cover) {
-        String htmlFilePath = FileUtil.normalize(codeGen.getProjectPath() + "/src/main/webapp" + codeGen.getHtmlViewPath() + "/_form.html");
+        String htmlFilePath = FileUtil.normalize(codeGen.getProjectPath() + "/src/main/webapp" + codeGen.getHtmlViewPath() + "/_form().html");
         JBoltConsoleUtil.printMessageWithDate("正在生_form.html,路径:" + htmlFilePath);
         if (FileUtil.exist(htmlFilePath) && !cover) {
             JBoltConsoleUtil.printMessageWithDate("_form.html已存在,忽略生成...");
@@ -936,7 +936,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
      * @param cover
      */
     private void genEditHtml(CodeGen codeGen, boolean cover) {
-        String htmlFilePath = FileUtil.normalize(codeGen.getProjectPath() + "/src/main/webapp" + codeGen.getHtmlViewPath() + "/edit.html");
+        String htmlFilePath = FileUtil.normalize(codeGen.getProjectPath() + "/src/main/webapp" + codeGen.getHtmlViewPath() + "/edit().html");
         JBoltConsoleUtil.printMessageWithDate("正在生成edit.html,路径:" + htmlFilePath);
         if (FileUtil.exist(htmlFilePath) && !cover) {
             JBoltConsoleUtil.printMessageWithDate("edit.html已存在,忽略生成...");
@@ -955,7 +955,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
      * @param cover
      */
     private void genAddHtml(CodeGen codeGen, boolean cover) {
-        String htmlFilePath = FileUtil.normalize(codeGen.getProjectPath() + "/src/main/webapp" + codeGen.getHtmlViewPath() + "/add.html");
+        String htmlFilePath = FileUtil.normalize(codeGen.getProjectPath() + "/src/main/webapp" + codeGen.getHtmlViewPath() + "/add().html");
         JBoltConsoleUtil.printMessageWithDate("正在生成add.html,路径:" + htmlFilePath);
         if (FileUtil.exist(htmlFilePath) && !cover) {
             JBoltConsoleUtil.printMessageWithDate("add.html已存在,忽略生成...");
@@ -1008,7 +1008,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
      * @param cover
      */
     private void genIndexHtml(CodeGen codeGen, boolean cover) {
-        String htmlFilePath = FileUtil.normalize(codeGen.getProjectPath() + "/src/main/webapp" + codeGen.getHtmlViewPath() + "/index.html");
+        String htmlFilePath = FileUtil.normalize(codeGen.getProjectPath() + "/src/main/webapp" + codeGen.getHtmlViewPath() + "/index().html");
         JBoltConsoleUtil.printMessageWithDate("正在生index.html,路径:" + htmlFilePath);
         if (FileUtil.exist(htmlFilePath) && !cover) {
             JBoltConsoleUtil.printMessageWithDate("index.html已存在,忽略生成...");

@@ -26,7 +26,7 @@ public class TodoAdminController extends JBoltBaseController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 	
    /**
@@ -39,7 +39,7 @@ public class TodoAdminController extends JBoltBaseController {
 			return;
 		}
 		set("todo",todo);
-		render("edit.html");
+		render("edit().html");
 	}
 	
   /**

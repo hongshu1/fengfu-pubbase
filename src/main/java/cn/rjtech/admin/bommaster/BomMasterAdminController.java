@@ -47,7 +47,7 @@ public class BomMasterAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
    /**
 	* 数据源
@@ -60,7 +60,7 @@ public class BomMasterAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 
 
@@ -70,7 +70,7 @@ public class BomMasterAdminController extends BaseAdminController {
 	*/
 	public void edit() {
 		getBomMaster(getLong(0));
-		render("edit.html");
+		render("edit().html");
 	}
 
 	private void getBomMaster(Long id){
@@ -91,7 +91,7 @@ public class BomMasterAdminController extends BaseAdminController {
 	public void info(){
 		getBomMaster(getLong(0));
 		set("view",1);
-		render("edit.html");
+		render("edit().html");
 	}
 
 	public void findByBomMasterId(){

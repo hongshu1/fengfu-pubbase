@@ -26,7 +26,7 @@ public class MoMoroutingequipmentAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
 
   	/**
@@ -40,7 +40,7 @@ public class MoMoroutingequipmentAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 
    /**
@@ -53,7 +53,7 @@ public class MoMoroutingequipmentAdminController extends BaseAdminController {
 			return;
 		}
 		set("moMoroutingequipment",moMoroutingequipment);
-		render("edit.html");
+		render("edit().html");
 	}
 
   /**

@@ -6,7 +6,6 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
                         <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
                         <button onclick="submitApproveYear()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
@@ -91,8 +90,11 @@
     
     <script type="text/template" id="jboltTable_demotpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.iautoid}"  class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
+        <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+            </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
@@ -111,9 +113,6 @@
 			<td>${data.iqty11}</td>
 			<td>${data.iqty12}</td>
 			<td>${data.iqtytotal}</td>
-			<td>
-    			<a href="admin/annualorderd/deleteByIds?ids=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
-			</td>
         </tr>
         {@/each}
     </script>
@@ -121,10 +120,9 @@
         <div class="btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-secondary btn-sm">添加行</button>
 
-            <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
-                    data-url="admin/annualorderd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
+            <button onclick="jboltTableRemoveCheckedRow(this, true, false)"
+                    data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
                 <i class="fa fa-trash"></i> 删除行</button>
-
 
             <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
             
@@ -161,13 +159,13 @@
         <thead>
         <tr>
             <th data-width="60" data-column="index" rowspan="2">序号</th>
+            <th data-width="100" rowspan="2">操作</th>
             <th data-width="150" data-column="cinvcode" rowspan="2">存货编码</th>
             <th data-width="150" data-column="cinvcode1" rowspan="2">客户部番</th>
             <th data-width="150" data-column="cinvname1" rowspan="2">部品名称</th>
             <th data-width="150" data-column="cinvstd" rowspan="2">规格</th>
             <th data-width="100" data-column="cuomname" rowspan="2">库存主单位</th>
             <th colspan="13" id="nowYear">#(iYear)年</th>
-            <th data-width="100" rowspan="2">操作</th>
         </tr>
         <tr>
                 <th data-column="iqty1">1月</th>
@@ -225,7 +223,7 @@
         let yeariautoid = $("#yeariautoid").val();
         let url = "admin/annualorderm/approve?id="+yeariautoid;
         Ajax.get(url,function(res){
-            LayerMsgBox.success("写入计划汇总表成功!");
+            LayerMsgBox.success("审批成功!");
         });
     }
 

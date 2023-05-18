@@ -13,6 +13,6 @@ public class JBoltWechatTestApiController extends JBoltBaseController {
 	 * 进入测试首页
 	 */
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
 }

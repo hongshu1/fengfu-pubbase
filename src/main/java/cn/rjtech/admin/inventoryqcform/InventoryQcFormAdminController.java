@@ -49,7 +49,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
    /**
 	* 数据源
@@ -63,7 +63,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	*/
 	public void add() {
 		set("isAdd", 1);
-		render("add.html");
+		render("add().html");
 	}
 
    /**
@@ -87,7 +87,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 			set("qcFormName", qcForm.getCQcFormName());
 		}
 		set("inventoryQcForm",inventoryQcForm);
-		render("edit.html");
+		render("edit().html");
 	}
 
    /**

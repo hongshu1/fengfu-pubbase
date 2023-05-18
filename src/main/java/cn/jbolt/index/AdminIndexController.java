@@ -63,7 +63,7 @@ public class AdminIndexController extends JBoltBaseController {
 	@UnCheck
 	@Before(JBoltNoUrlPara.class)
 	public void index(){
-		render("index.html");
+		render("index().html");
 	}
 
 	@UnCheck

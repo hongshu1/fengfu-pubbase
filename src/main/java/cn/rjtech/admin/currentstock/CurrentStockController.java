@@ -31,7 +31,7 @@ public class CurrentStockController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class CurrentStockController extends BaseAdminController {
 
 
    public void add(){
-		render("add.html");
+		render("add().html");
    }
    /**
     * 继续盘点页面*/

@@ -41,7 +41,7 @@ public class WechatUserAdminController extends JBoltBaseController {
 		set("mpId", mpId);
 		WechatMpinfo mpinfo=getAttr("mpinfo");
 		set("isNotWxa", mpinfo.getType().intValue()!=WechatMpinfoType.XCX.getValue());
-		render("index.html");
+		render("index().html");
 	}
 	@UnCheck
 	public void sexOptions() {

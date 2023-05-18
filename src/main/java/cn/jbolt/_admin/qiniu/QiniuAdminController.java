@@ -39,7 +39,7 @@ public class QiniuAdminController extends JBoltBaseController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		render("index().html");
 	}
 	/**
 	 * 作为其他组件的选项列表
@@ -60,7 +60,7 @@ public class QiniuAdminController extends JBoltBaseController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 	/**
 	 * 检查是否存在冲突默认数据
@@ -79,7 +79,7 @@ public class QiniuAdminController extends JBoltBaseController {
 			return;
 		}
 		set("qiniu",qiniu);
-		render("edit.html");
+		render("edit().html");
 	}
 	
     /**

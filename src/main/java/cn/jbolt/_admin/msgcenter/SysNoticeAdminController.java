@@ -39,7 +39,7 @@ public class SysNoticeAdminController extends JBoltBaseController {
 	*/
 	public void index() {
 		setDefaultSortInfo("create_time","desc");
-		render("index.html");
+		render("index().html");
 	}
   	
   	/**
@@ -53,7 +53,7 @@ public class SysNoticeAdminController extends JBoltBaseController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		render("add().html");
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class SysNoticeAdminController extends JBoltBaseController {
 		service.processReceiverValues(sysNotice);
 		set("sysNotice",sysNotice);
 		set("files",jBoltFileService.getListByIds(sysNotice.getFiles()));
-		render("edit.html");
+		render("edit().html");
 	}
 	/**
 	 * 查看附件列表
