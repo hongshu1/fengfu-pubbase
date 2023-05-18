@@ -1,0 +1,116 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>备料一览表</h1></div>
+            <div class="col-sm-auto">
+                <form class="form-inline" id="MoPickItemM_form_#(pageId)">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="备料单号"
+                           name="cmopickno" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="工单号"
+                           name="cmodocno" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="存货编码"
+                           name="cinvcode" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="客户部番"
+                           name="cinvcode1" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="部品名称"
+                           name="cinvname1" value=""/>
+                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期"
+                           maxlength="20" name="startTime" value=""/>
+                    <span class="ml-1 mr-1">至</span>
+                    <input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20"
+                           name="endTime" value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/materialPreparationList/edit1/${data.iautoid}" data-area="100%,100%" data-title="备料一览表详情"><i class="fa fa-eye">查看</i></a>
+    <a class="jbolt_table_delbtn" href="admin/materialPreparationList/delete/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger">删除</i></a>
+</td>
+<td>${data.statename}</td>
+<td>${data.cmopickno}</td>
+<td>${data.cmodocno}</td>
+<td>${data.cinvname1}</td>
+<td>${data.iworkshiftmid}</td>
+<td>${data.dplandate}</td>
+<td>${data.cinvcode}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cdepname}</td>
+<td>${data.imanufactureuomid}</td>
+<td>${data.iplanqty}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+        <div class="jbolt_table_toolbar" id="MoPickItemM_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="100%,100%"
+                        data-handler="jboltTablePageToFirst"
+                        id="toolbar_addBtn_#(pageId)"
+                        data-title="备料一览表自动作成"
+                        data-url="admin/materialPreparationList/auto"
+                        class="btn btn-outline-primary"><i class="fa "></i> 自动作成
+                </button>
+                <button data-check-handler="jboltTableGetCheckedId"
+                        data-dialogbtn data-area="100%,100%"
+                        data-handler="refreshJBoltTable"
+                        id="toolbar_editBtn_#(pageId)"
+                        data-title="备料一览表手工作成"
+                        data-url="admin/materialPreparationList/edit/"
+                        class="btn btn-outline-primary"><i class="fa "></i> 手工作成
+                </button>
+            </div>
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="MoPickItemM_form_#(pageId)"
+               data-url="admin/materialPreparationList/datas"
+               data-rowtpl="MoPickItemM_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="MoPickItemM_page"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-toolbar="MoPickItemM_toolbar_#(pageId)"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150" data-column="">操作</th>
+                <th data-width="150" data-column="">状态</th>
+                <th data-width="150" data-column="">备料单号</th>
+                <th data-width="150" data-column="">工单号</th>
+                <th data-width="150" data-column="">生产部门</th>
+                <th data-width="150" data-column="">生产班次</th>
+                <th data-width="150" data-column="dPlanDate">计划日期</th>
+                <th data-width="150" data-column="iInventoryId">存货编码</th>
+                <th data-min-width="160" data-column="">客户部番</th>
+                <th data-width="150" data-column="">部门名称</th>
+                <th data-width="150" data-column="">生产单位</th>
+                <th data-width="150" data-column="iPlanQty">计划数量</th>
+                <th data-width="150" data-column="cCreateName">创建人</th>
+                <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+#define js()
+<script type="text/javascript">
+</script>
+#end

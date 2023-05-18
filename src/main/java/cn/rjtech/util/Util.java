@@ -1,8 +1,10 @@
 package cn.rjtech.util;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Record;
@@ -14,10 +16,12 @@ import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
 
 /**
  * @Description TODO
@@ -156,4 +160,43 @@ public class Util {
         }
         return String.valueOf(o1).equals(String.valueOf(o2));
     }
+
+    public static List<String> getBetweenDate(String startDateStr, String endDateStr){
+        // 声明保存日期集合
+        List<String> list = new ArrayList<>();
+        
+        // 转化成日期类型
+        Date startDate = DateUtil.parseDate(startDateStr);
+        Date endDate = DateUtil.parseDate(endDateStr);
+        
+        // 用Calendar 进行日期比较判断
+        Calendar calendar = Calendar.getInstance();
+        while (startDate.getTime()<=endDate.getTime()){
+            // 把日期添加到集合
+            list.add(DateUtil.formatDate(startDate));
+            // 设置日期
+            calendar.setTime(startDate);
+            //把日期增加一天
+            calendar.add(Calendar.DATE, 1);
+            // 获取增加后的日期
+            startDate=calendar.getTime();
+        }
+        return list;
+    }
+
+    /**
+     *获得当前月份第一天和最后一天
+     * @return kv.startdate  kv.startdate
+     */
+    public static Kv getBeginEndDate() {
+        LocalDate now = LocalDate.now();
+        LocalDate firstDayOfMonth = now.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfMonth = now.with(TemporalAdjusters.lastDayOfMonth());
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String beginDateStr = firstDayOfMonth.format(formatter);
+        String endDateStr = lastDayOfMonth.format(formatter);
+        return Kv.by("startdate", beginDateStr).set("enddate", endDateStr);
+    }
+    
 }

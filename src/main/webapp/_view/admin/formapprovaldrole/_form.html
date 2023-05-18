@@ -1,0 +1,45 @@
+<form onsubmit="return false;" id="formapprovaldRoleForm" action="#(action)" method="post">
+<input type="hidden" name="formapprovaldRole.iautoid" value="#(formapprovaldRole.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">单据审批节点ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入单据审批节点ID" maxlength="19" name="formapprovaldRole.iformapprovalid" value="#(formapprovaldRole.iformapprovalid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">顺序</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入顺序"  maxlength="10" name="formapprovaldRole.iseq" value="#(formapprovaldRole.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">角色ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入角色ID" maxlength="19" name="formapprovaldRole.iroleid" value="#(formapprovaldRole.iroleid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批人ID, 实际审核人</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入审批人ID, 实际审核人" maxlength="19" name="formapprovaldRole.iuserid" value="#(formapprovaldRole.iuserid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审核状态：1. 待审核 2. 审核通过 3. 审核不通过</label>
+		<div class="col input-group">
+			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="formapprovaldRole.iauditstatus" data-refresh="true"  data-rule="select"  data-tips="请选择审核状态：1. 待审核 2. 审核通过 3. 审核不通过" data-text="=请选择="  data-value="" data-select="#( formapprovaldRole.iauditstatus ??)"></select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审核时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置审核时间" data-tips="请设置审核时间" maxlength="23" name="formapprovaldRole.iauudittime" value="#(formapprovaldRole.iauudittime??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="formapprovaldRoleForm")
+#end
+

@@ -2,7 +2,7 @@
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">字段编码</label>
     <div class="col-10">
-        <input type="hidden" name="cusFieldsMappingD.iFormFieldId" value="#(cusFieldsMappingD.iFormFieldId??)" id="iFormFieldId" data-sync-attr="iautoid"/>
+        <input type="hidden" name="cusFieldsMappingD.iFormFieldId" value="#(cusFieldsMappingD.iFormFieldId??)" id="iformfieldid" data-sync-attr="iautoid"/>
         
         <input type="text" class="form-control"
                data-autocomplete
@@ -10,13 +10,14 @@
                data-mustmatch="false"
                data-url="admin/formfield/autocomplete?iformid=#(iformids[0])&isimportfield=1"
                data-rule="required"
-               data-sync-ele="#iFormFieldId,#cFormFieldCode,#cFormFieldName"
+               data-sync-ele="#iformfieldid,#cformfieldcode,#cformfieldname"
                data-text-attr="cfieldcode"
                data-value-attr="cfieldcode"
                data-column-attr="cfieldcode,cfieldname"
                data-tips="请选择系统字段"
                data-header="字段编码,字段名称"
                maxlength="40"
+               data-height="160"
                value="#(cusFieldsMappingD.cformfieldcode??)">
     </div>
 </div>
@@ -24,7 +25,7 @@
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">字段名称</label>
     <div class="col-10">
-        <input type="text" name="cusFieldsMappingD.cformfieldname" class="form-control" id="cformfieldname" data-sync-attr="cformfieldname" data-rule="required" maxlength="40" value="#(cusFieldsMappingD.cformfieldname??)">
+        <input type="text" name="cusFieldsMappingD.cformfieldname" class="form-control" id="cformfieldname" data-sync-attr="cfieldname" data-rule="required" maxlength="40" value="#(cusFieldsMappingD.cformfieldname??)">
     </div>
 </div>
 
@@ -34,12 +35,12 @@
      data-value-attr="sn"
      data-default="options_first"
      data-url="admin/dictionary/options?key=options_boolean"
-     data-label="是否编码字段"
+     data-label="是否转换编码"
      data-width="col-sm-2,col-10"
      data-value="#(cusFieldsMappingD.isEncoded??)"
      data-rule="radio"
      data-notnull="true"
-     data-tips="请输入是否编码字段"
+     data-tips="请输入是否转换编码"
      data-handler="changeIsEncoded_#(pageId)"
      data-inline="true">
 </div>

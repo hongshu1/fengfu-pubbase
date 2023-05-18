@@ -11,10 +11,23 @@
 				<form class="form-inline" id="SysProductin_form_#(pageId)">
 					<input type="text" autocomplete="off" class="form-control" placeholder="入库单号" name="billno"
 						value="" />
-					<input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="repositoryname"
-						value="" />
-					<input type="text" autocomplete="off" class="form-control" placeholder="生产部门" name="deptname"
-						value="" />
+					<input type="hidden" name="whcode" value="#(whcode??)" id="cwhcode" data-value-attr="cwhcode" />
+					<input type="text" class="form-control" data-autocomplete
+						data-url="admin/productInList/getWarehouse" data-hidden-input="cwhcode" data-text-attr="cwhname"
+						data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称" data-tips="请选择仓库名称"
+						data-header="仓库编码,仓库名称" maxlength="40" value="#(cwhname??)" />
+
+					<input type="hidden" name="deptcode" value="#(deptcode??)" id="cdepcode" data-value-attr="cdepcode" />
+					<input type="text" class="form-control" data-autocomplete
+						data-url="admin/productInList/getDepartment" data-hidden-input="cdepcode"
+						data-text-attr="cdepname" data-column-attr="cdepcode,cdepname" placeholder="请选择生产部门"
+						data-tips="请选择生产部门" data-header="生产部门编码,生产部门" maxlength="40" value="#(cdepname??)" />
+
+
+					<!-- <input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="repositoryname"
+						value="" /> -->
+					<!-- <input type="text" autocomplete="off" class="form-control" placeholder="生产部门" name="deptname"
+						value="" /> -->
 					<select class="form-control" name="state" data-autoload data-url="admin/dictionary/options?key=null"
 						data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select>
 					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20"
@@ -43,9 +56,9 @@
 <td>${data.createdate}</td>
 <td>${data.repositoryname}</td>
 <td>${data.deptname}</td>
-<td>${data.warehousingtype}</td>
+<td>${data.rdcodename}</td>
 <td>${data.auditdate}</td>
-<td>${data.remark}</td>
+<td>${data.memo}</td>
 <td>${data.name}</td>
 <td>${data.createdate}</td>
 
@@ -55,16 +68,16 @@
 		<div class="jbolt_table_toolbar" id="SysProductin_toolbar_#(pageId)">
 			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 				<button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
-					id="toolbar_addBtn_#(pageId)"  data-url="admin/productInList/add"
-					class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+					id="toolbar_addBtn_#(pageId)" data-url="admin/productInList/add" class="btn btn-outline-primary"><i
+						class="fa fa-plus"></i> 新增</button>
 				<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
-					id="toolbar_editBtn_#(pageId)"  data-check-handler="jboltTableGetCheckedId"
+					id="toolbar_editBtn_#(pageId)" data-check-handler="jboltTableGetCheckedId"
 					data-url="admin/productInList/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i>
 					批量审批</button>
 				<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
-					id="side_toolbar_editBtn_#(pageId)" 
-					data-check-handler="jboltTableGetCheckedId" data-url="admin/productInList/edit/"
-					class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量反审批</button>
+					id="side_toolbar_editBtn_#(pageId)" data-check-handler="jboltTableGetCheckedId"
+					data-url="admin/productInList/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i>
+					批量反审批</button>
 				<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
 					id="toolbar_deleteBtn_#(pageId)" data-url="admin/productInList/deleteByIds?ids="
 					data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
@@ -84,9 +97,9 @@
 					<th data-min-width="160" data-column="CreateDate">入库日期</th>
 					<th data-width="150" data-column="repositoryName">仓库名称</th>
 					<th data-width="150" data-column="deptName">生产部门名称</th>
-					<th data-width="150" data-column="warehousingType">入库类别</th>
+					<th data-width="150" data-column="rdcodename">入库类别</th>
 					<th data-width="150" data-column="AuditDate">审核日期</th>
-					<th data-width="150" data-column="remark">备注</th>
+					<th data-width="150" data-column="memo">备注</th>
 					<th data-width="150" data-column="CreatePerson">创建人</th>
 					<th data-min-width="160" data-column="CreateDate">创建时间</th>
 				</tr>

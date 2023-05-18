@@ -14,7 +14,7 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
     public static final String AUTOID = "AutoID";
     /**来源类型;PO 采购 OM委外*/
     public static final String SOURCEBILLTYPE = "SourceBillType";
-    /**来源单号*/
+    /**来源单号（订单号）*/
     public static final String SOURCEBILLNO = "SourceBillNo";
     /**来源单号+行号*/
     public static final String SOURCEBILLNOROW = "SourceBillNoRow";
@@ -48,10 +48,6 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
     public static final String MODIFYDATE = "ModifyDate";
     /**现品票*/
     public static final String SPOTTICKET = "spotTicket";
-    /**存货编码*/
-    public static final String INVCODE = "invCode";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "IsDeleted";
 	/**
 	 * AutoID
 	 */
@@ -87,7 +83,7 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 	}
 
 	/**
-	 * 来源单号
+	 * 来源单号（订单号）
 	 */
 	public M setSourceBillNo(java.lang.String SourceBillNo) {
 		set("SourceBillNo", SourceBillNo);
@@ -95,9 +91,9 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 	}
 
 	/**
-	 * 来源单号
+	 * 来源单号（订单号）
 	 */
-	@JBoltField(name="sourcebillno" ,columnName="SourceBillNo",type="String", remark="来源单号", required=false, maxLength=30, fixed=0, order=3)
+	@JBoltField(name="sourcebillno" ,columnName="SourceBillNo",type="String", remark="来源单号（订单号）", required=false, maxLength=30, fixed=0, order=3)
 	@JSONField(name = "sourcebillno")
 	public java.lang.String getSourceBillNo() {
 		return getStr("SourceBillNo");
@@ -373,40 +369,6 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 	@JSONField(name = "spotticket")
 	public java.lang.String getSpotTicket() {
 		return getStr("spotTicket");
-	}
-
-	/**
-	 * 存货编码
-	 */
-	public M setInvCode(java.lang.String invCode) {
-		set("invCode", invCode);
-		return (M)this;
-	}
-
-	/**
-	 * 存货编码
-	 */
-	@JBoltField(name="invcode" ,columnName="invCode",type="String", remark="存货编码", required=false, maxLength=30, fixed=0, order=20)
-	@JSONField(name = "invcode")
-	public java.lang.String getInvCode() {
-		return getStr("invCode");
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	public M setIsDeleted(java.lang.Boolean IsDeleted) {
-		set("IsDeleted", IsDeleted);
-		return (M)this;
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=false, maxLength=1, fixed=0, order=21)
-	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("IsDeleted");
 	}
 
 }

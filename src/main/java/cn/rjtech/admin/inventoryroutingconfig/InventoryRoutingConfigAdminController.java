@@ -1,20 +1,16 @@
 package cn.rjtech.admin.inventoryroutingconfig;
 
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.model.momdata.Inventory;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InventoryRoutingConfig;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.plugin.activerecord.Record;
 /**
  * 物料建模-存货工艺配置
  * @ClassName: InventoryRoutingConfigAdminController
@@ -56,7 +52,7 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	}
 
 	public void saveItemRoutingConfig() {
-		renderJson(service.saveItemRoutingConfig(getLong("iitemroutingid"), getInt("iseq")));
+		renderJson(service.saveItemRoutingConfig(getLong("iitemroutingid"), getInt("iseq"), getLong("iPid"), get("cParentInvName")));
 	}
 
    /**
@@ -112,29 +108,32 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	}
 
 	public void invc_dialog_index(){
+		keepPara();
 		set("configid",getLong("iautoid"));
-		set("iinventoryid",getLong("iinventoryid"));
 		render("invc_dialog_index.html");
 	}
 
 	public void equipment_dialog_index(){
+		keepPara();
 		set("configid",getLong("iautoid"));
 		render("equipment_dialog_index.html");
 	}
 
 	public void drawing_dialog_index(){
+		keepPara();
 		set("configid",getLong("iautoid"));
 		render("drawing_dialog_index.html");
 	}
 
 	public void inventory_dialog_index(){
-		Kv kv = getKv();
-		set("inventoryid",kv.getStr("iAutoId"));
-		set("cinvcode",kv.getStr("cInvCode"));
-		set("cinvcode1",kv.getStr("cInvCode1"));
-		set("cinvname1",kv.getStr("cInvName1"));
-		set("cinvstd",kv.getStr("cInvStd"));
-		set("iinventoryuomid1",kv.getStr("iInventoryUomId1"));
+//		Kv kv = getKv();
+//		set("inventoryid",kv.getStr("iAutoId"));
+//		set("cinvcode",kv.getStr("cInvCode"));
+//		set("cinvcode1",kv.getStr("cInvCode1"));
+//		set("cinvname1",kv.getStr("cInvName1"));
+//		set("cinvstd",kv.getStr("cInvStd"));
+//		set("iinventoryuomid1",kv.getStr("iInventoryUomId1"));
+		keepPara();
 		render("inventory_dialog_index.html");
 	}
 

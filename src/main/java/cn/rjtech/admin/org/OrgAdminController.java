@@ -1,16 +1,16 @@
 package cn.rjtech.admin.org;
 
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Org;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.service.JBoltOrgService;
-import cn.jbolt.extend.controller.BaseMesAdminController;
 import cn.rjtech.admin.userorg.UserOrgService;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Clear;
 import com.jfinal.aop.Inject;
@@ -25,7 +25,8 @@ import com.jfinal.kit.Okv;
 @UnCheck
 @CheckPermission(PermissionKey.ORGMGR)
 @Path(value = "/admin/org", viewPath = "/_view/admin/org")
-public class OrgAdminController extends BaseMesAdminController {
+public class OrgAdminController extends BaseAdminController {
+    
     @Inject
     private JBoltOrgService services;
     @Inject

@@ -538,7 +538,6 @@
     }
 
     function setFormValue(head) {
-
         $("#iEquipmentModelId").val(head.iequipmentmodelid);
         $("#iEquipmentModelName").val(head.equipmentModelName);
         $("#cDocName").val(head.cdocname);
@@ -592,6 +591,13 @@
             $("#originalInvSup"+index).val(data.cvenname);
             $("#originalInvStd"+index).val(data.cinvstd);
             $("#originalWeight"+index).val(data.iweight);
+        }else if (type ==4){
+            $("#iBeforeInveId").val(data.itemid);
+            $("#inventoryName").val(data.cinvcode);
+            $("#beforeInvCode").val(data.cinvcode1);
+            $("#Weight").val(data.iweight);
+            $("#iEquipmentModelId").val(data.iequipmentmodelid);
+            $("#iEquipmentModelName").val(data.cequipmentmodelname);
         }
     }
 

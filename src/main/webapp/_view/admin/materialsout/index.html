@@ -1,0 +1,153 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>出库管理-材料出库单列表</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="materialsOutForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=出库单号=" name="billno" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=订单号=" name="sourcebillno" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=仓库名称=" name="whname" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=部门名称=" name="deptname" value="" />
+			<select style="width:150px" class="form-control"
+					data-autoload
+					data-text="=状态="
+					name="iorderstatus"
+			>
+				<option value="">=状态=</option>
+				<option value="1">已保存</option>
+				<option value="2">待审核</option>
+				<option value="3">已审核</option>
+			</select>
+			<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=开始时间=" name="startdate" data-tips="开始时间" maxlength="23" value="">至
+			<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=结束时间=" name="enddate" data-tips="结束时间" maxlength="23" value="">
+			<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="materialsOutRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.autoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="材料出库单列表详情">查看</i></a>
+	 {@if data.state == '1'||data.state == '4'}
+	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑材料出库单列表">编辑</i></a>
+	 {@else if data.state == '2'}
+	<a class="jbolt_table_delbtn" href="admin/materialDeliveryList/approve?mark=2&&iAutoId=${data.autoid}"  data-confirm="确定审核此选项？"  data-fs="true" data-handler="refreshJBoltTable"  data-title="审核材料出库单列表">审核</i></a>
+	<a class="jbolt_table_delbtn" href="admin/materialDeliveryList/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
+	 {@/if}
+</td>
+<td>${data.state|iOrderStatus}</td>
+<td>${data.billno}</td>
+<td>${data.sourcebilldid}</td><!--ERP单据号-->
+<td>${data.billdate}</td>
+<td>${data.cwhname}</td>!--仓库-->
+<td>${data.monorow}</td><!--订单号-->
+<td>${data.moinvcode}</td>
+<td>${data.moqty}</td>
+<td>${data.rdcode}</td><!--出库类别-->
+<td>${data.cdepname}</td><!--部门名称-->
+<td>${data.billtype}</td>
+<td>${data.cvenname}</td><!--委外商-->
+<td>${data.auditdate}</td><!--审批日期-->
+<td>${data.memo}</td><!--备注-->
+<td>${data.createperson}</td>
+<td>${data.createdate}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="materialsOut_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增出库管理-材料出库单列表"  data-url="admin/materialDeliveryList/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/materialDeliveryList/approve?mark=2&&iAutoId=" data-confirm="确定审批选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审批</button>
+		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/materialDeliveryList/NoApprove?ids=" data-confirm="确定反审批选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审批</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/materialDeliveryList/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/materialDeliveryList/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="materialsOutForm_#(pageId)"
+data-rowtpl="materialsOutRowtpl_#(pageId)"
+data-page="materialsOutPage_#(pageId)"
+data-toolbar="materialsOut_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+data-fixed-columns-right="-1"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="150">操作</th>
+	<th data-width="100">状态</th>
+	<th data-width="150" data-column="BillNo">出库单号</th>
+	<th data-width="150" data-column="BillNo">ERP单据号</th>
+	<th data-width="150" data-column="BillDate">出库时间</th>
+	<th data-width="150" data-column="WhName">仓库名称</th>
+	<th data-width="150" data-column="SourceBillNo">订单号</th>
+	<th data-width="150" data-column="CreatePerson">生产产品（单品）</th>
+	<th data-width="150" data-column="ProdQty">生产数量</th>
+	<th data-width="150" data-column="cRdCode">出库类别</th>
+	<th data-width="150" data-column="DeptName">部门名称</th>
+	<th data-width="150" data-column="BillType">业务类型</th>
+	<th data-width="150" data-column="VenCode">委外商</th>
+	<th data-width="150" data-column="AuditDate">审批日期</th>
+	<th data-width="150" data-column="Memo">备注</th>
+	<th data-width="150" data-column="CreatePerson">创建人</th>
+	<th data-width="150" data-column="CreateDate">创建时间</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/materialsout/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('title', '出库管理-材料出库单列表')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end

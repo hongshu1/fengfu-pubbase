@@ -1,26 +1,43 @@
 package cn.rjtech.admin.cusfieldsmappingd;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.util.JBoltListMap;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingdcodingrule.CusfieldsmappingdCodingruleService;
+import cn.rjtech.admin.cusfieldsmappingm.CusFieldsMappingMService;
 import cn.rjtech.admin.formfield.FormFieldService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.CusFieldsMappingRuleEnum;
+import cn.rjtech.enums.CusfieldsMappingCharEnum;
+import cn.rjtech.enums.SeparatorCharEnum;
 import cn.rjtech.model.momdata.CusFieldsMappingD;
+import cn.rjtech.model.momdata.CusFieldsMappingM;
+import cn.rjtech.model.momdata.CusfieldsmappingdCodingrule;
+import cn.rjtech.util.AutoExcelUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import net.fenghaitao.imports.DataSet;
+import net.fenghaitao.parameters.FieldSetting;
+import net.fenghaitao.parameters.ImportPara;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -32,14 +49,16 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @date: 2023-05-02 13:41
  */
 public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
-    
+
     private final CusFieldsMappingD dao = new CusFieldsMappingD().dao();
 
     @Inject
     private FormFieldService formFieldService;
     @Inject
+    private CusFieldsMappingMService cusFieldsMappingMService;
+    @Inject
     private CusfieldsmappingdCodingruleService cusfieldsmappingdCodingruleService;
-    
+
     @Override
     protected CusFieldsMappingD dao() {
         return dao;
@@ -57,26 +76,25 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
      * @param pageSize             每页几条数据
      * @param icusfieldsmappingmid
      * @param keywords             关键词
-     * @param isEncoded            是否编码字段：0. 否 1. 是
+     * @param isEncoded            是否转换编码：0. 否 1. 是
      * @param isEnabled            是否启用：0. 否 1. 是
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Long icusfieldsmappingmid, String keywords, Boolean isEncoded, Boolean isEnabled) {
         // 创建sql对象
         Sql sql = selectSql()
-                .select("d.*, f.cfieldname ")
+                .select("d.*")
                 .from(table(), "d")
-                .leftJoin(formFieldService.table(), "f", "d.iformfieldid = f.iautoid ")
                 .page(pageNumber, pageSize);
 
         sql.eq("d.icusfieldsmappingmid", icusfieldsmappingmid);
-        
+
         // sql条件处理
         sql.eqBooleanToChar("d.isEncoded", isEncoded);
         sql.eqBooleanToChar("d.isEnabled", isEnabled);
-        
+
         // 关键词模糊查询
         sql.like("d.cCusFieldName", keywords);
-        
+
         // 排序
         sql.asc("d.iseq");
 
@@ -103,10 +121,10 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
             cusFieldsMappingD.setISeq(iseq);
 
             ValidationUtils.isTrue(cusFieldsMappingD.save(), ErrorMsg.SAVE_FAILED);
-            
+
             return true;
         });
-        
+
         // 添加日志
         // addSaveSystemLog(cusFieldsMappingD.getIAutoId(), JBoltUserKit.getUserId(), cusFieldsMappingD.getName())
         return successWithData(cusFieldsMappingD.keep("iautoid"));
@@ -119,21 +137,31 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         if (cusFieldsMappingD == null || notOk(cusFieldsMappingD.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        
+
         //更新时需要判断数据存在
         CusFieldsMappingD dbCusFieldsMappingD = findById(cusFieldsMappingD.getIAutoId());
         if (dbCusFieldsMappingD == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
 
+        // 非定制
+        if (CusFieldsMappingRuleEnum.toEnum(cusFieldsMappingD.getIRuleType()) == CusFieldsMappingRuleEnum.NONE) {
+            if (!cusFieldsMappingD.getIsEncoded()) {
+                cusFieldsMappingD.setCDemo(StrUtil.EMPTY);
+            }
+        } else {
+            cusFieldsMappingD.setIsEncoded(false);
+            cusFieldsMappingD.setCDemo(StrUtil.EMPTY);
+        }
+
         tx(() -> {
             ValidationUtils.isTrue(cusFieldsMappingD.update(), ErrorMsg.UPDATE_FAILED);
-            
+
             return true;
         });
-        
+
         //if(existsName(cusFieldsMappingD.getName(), cusFieldsMappingD.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-        
+
         // 添加日志
         // addUpdateSystemLog(cusFieldsMappingD.getIAutoId(), JBoltUserKit.getUserId(), cusFieldsMappingD.getName())
         return successWithData(cusFieldsMappingD.keep("iautoid"));
@@ -196,23 +224,23 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
             else {
                 doUpdate(cusFieldsMappingD, jBoltTable);
             }
-            
+
             return true;
         });
-        
+
         return successWithData(cusFieldsMappingD.keep("iautoid"));
     }
 
     private int getMaxIseq(Long iCusFieldsMappingMid) {
         Integer iseq = queryInt(selectSql().select("MAX(iseq)").eq(CusFieldsMappingD.ICUSFIELDSMAPPINGMID, iCusFieldsMappingMid));
-        return (null ==  iseq ? 0 : iseq) + 1;
+        return (null == iseq ? 0 : iseq) + 1;
     }
 
     private void doSave(CusFieldsMappingD cusFieldsMappingD, JBoltTable jBoltTable) {
         // 获取序号
         int iseq = getMaxIseq(cusFieldsMappingD.getICusFieldsMappingMid());
         cusFieldsMappingD.setISeq(iseq);
-        
+
         ValidationUtils.isTrue(cusFieldsMappingD.save(), ErrorMsg.SAVE_FAILED);
 
         List<Record> save = jBoltTable.getSaveRecordList();
@@ -230,19 +258,19 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
                 .eq(CusFieldsMappingD.CFORMFIELDCODE, cFormFieldCode)
                 .groupBy(CusFieldsMappingD.CFORMFIELDCODE)
                 .having("COUNT(*) > 1");
-        
+
         return CollUtil.isEmpty(query(sql));
     }
 
     private void doSaveCodingRules(CusFieldsMappingD cusFieldsMappingD, List<Record> save) {
         // 获取当前的最大序号
         int maxSeq = cusfieldsmappingdCodingruleService.getMaxIseq(cusFieldsMappingD.getIAutoId());
-        
+
         for (Record row : save) {
             maxSeq++;
-            
+
             row.set("iseq", maxSeq);
-            
+
             row.keep("iseq", "itype", "cseparator", "ilength")
                     .set("iautoid", JBoltSnowflakeKit.me.nextId())
                     .set("icusfieldsmappingdid", cusFieldsMappingD.getIAutoId());
@@ -253,6 +281,16 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     private void doUpdate(CusFieldsMappingD cusFieldsMappingD, JBoltTable jBoltTable) {
         CusFieldsMappingD dbCusFieldsMappingD = findById(cusFieldsMappingD.getIAutoId());
         ValidationUtils.notNull(dbCusFieldsMappingD, JBoltMsg.DATA_NOT_EXIST);
+
+        // 非定制
+        if (CusFieldsMappingRuleEnum.toEnum(cusFieldsMappingD.getIRuleType()) == CusFieldsMappingRuleEnum.NONE) {
+            if (!cusFieldsMappingD.getIsEncoded()) {
+                cusFieldsMappingD.setCDemo(StrUtil.EMPTY);
+            }
+        } else {
+            cusFieldsMappingD.setIsEncoded(false);
+            cusFieldsMappingD.setCDemo(StrUtil.EMPTY);
+        }
 
         ValidationUtils.isTrue(cusFieldsMappingD.update(), ErrorMsg.UPDATE_FAILED);
 
@@ -277,7 +315,157 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         }
 
         // 校验字段是否重复
-        ValidationUtils.isTrue(notExistsDuplicate(cusFieldsMappingD.getICusFieldsMappingMid(), cusFieldsMappingD.getCFormFieldCode()), "字段重复错误");
+        if (ObjUtil.notEqual(cusFieldsMappingD.getCFormFieldCode(), dbCusFieldsMappingD.getCFormFieldCode())) {
+            ValidationUtils.isTrue(notExistsDuplicate(cusFieldsMappingD.getICusFieldsMappingMid(), cusFieldsMappingD.getCFormFieldCode()), "字段重复错误");
+        }
     }
 
+    /**
+     * 导入映射
+     */
+    public Ret getImportDatas(File file, String cformatname) {
+        // 根据指定的模板名，获取导入的字段
+        CusFieldsMappingM m = cusFieldsMappingMService.findByCformatName(cformatname);
+        ValidationUtils.notNull(m, "导入模板不存在");
+        ValidationUtils.isTrue(!m.getIsDeleted(), "导入模板已被删除");
+
+        // 获取导入字段列表
+        List<CusFieldsMappingD> cusFieldsMappingDs = findByIcusFieldsMappingMid(m.getIAutoId());
+        ValidationUtils.notEmpty(cusFieldsMappingDs, "导入字段列表未定义");
+
+        List<ImportPara> importParas = new ArrayList<ImportPara>() {{
+            add(new ImportPara(0, genFieldSettings(cusFieldsMappingDs), 1, 2));
+        }};
+        
+        DataSet dataSet = AutoExcelUtil.readExcel(file.getAbsolutePath(), importParas);
+        
+        Set<String> set = dataSet.getSheets();
+        ValidationUtils.isTrue(set.size() == 1, "导入Excel的工作簿只能定义一个");
+
+        String sheet = set.iterator().next();
+
+        List<Map<String, Object>> rows = dataSet.get(sheet);
+        
+        ValidationUtils.notEmpty(rows, String.format("Excel工作簿 “%s”，导入数据不能为空", sheet));
+
+        // 编码规则
+        JBoltListMap<String, CusfieldsmappingdCodingrule> ruleMap = new JBoltListMap<>();
+        
+        // 检查是否存在编码转换的字段
+        for (CusFieldsMappingD cusFieldsMappingD : cusFieldsMappingDs) {
+            // 编码字段
+            if (cusFieldsMappingD.getIsEncoded()) {
+
+                List<CusfieldsmappingdCodingrule> rules = cusfieldsmappingdCodingruleService.findByIcusfieldsMappingDid(cusFieldsMappingD.getIAutoId());
+                ValidationUtils.notEmpty(rules, "缺少编码转换规则");
+
+                String filed = cusFieldsMappingD.getCFormFieldCode().toLowerCase();
+
+                ruleMap.addItems(filed, rules);
+            }
+        }
+
+        List<Map<String, Object>> rowDatas = new ArrayList<>();
+        
+        // 处理空行数据
+        for (Map<String, Object> rowData : rows) {
+            // 移除null的所有键值对
+            MapUtil.removeNullValue(rowData);
+            
+            if (MapUtil.isNotEmpty(rowData)) {
+                rowDatas.add(rowData);
+            }
+        }
+        
+        if (CollUtil.isNotEmpty(ruleMap)) {
+            // 转换编码字段
+            for (Map<String, Object> row : rowDatas) {
+                // 遍历行数据
+                for (Map.Entry<String, Object> entry : row.entrySet()) {
+
+                    if (ruleMap.containsKey(entry.getKey())) {
+
+                        List<CusfieldsmappingdCodingrule> rules = ruleMap.get(entry.getKey());
+
+                        String value = (String) entry.getValue();
+
+                        int valueLength = value.length();
+
+                        StringBuilder newCode = new StringBuilder();
+
+                        int length = 0;
+
+                        for (CusfieldsmappingdCodingrule rule : rules) {
+                            switch (CusfieldsMappingCharEnum.toEnum(rule.getIType())) {
+                                case CODE:
+                                    newCode.append(value, length, Math.min(valueLength, length + rule.getILength()));
+                                    length += rule.getILength();
+                                    break;
+                                case SEPARATOR:
+                                    if (valueLength > length) {
+                                        newCode.append(SeparatorCharEnum.toEnum(rule.getCSeparator()).getText());
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        entry.setValue(newCode);
+                    }
+                }
+            }
+        }
+
+        return successWithData(rowDatas);
+    }
+
+    public List<FieldSetting> genFieldSettings(List<CusFieldsMappingD> cusFieldsMappingDs) {
+        // -------------------------------------
+        // 标准字段映射导入
+        // -------------------------------------
+        List<FieldSetting> fieldSettings = new ArrayList<>();
+        for (CusFieldsMappingD d : cusFieldsMappingDs) {
+            // 非定制规则字段
+            if (CusFieldsMappingRuleEnum.toEnum(d.getIRuleType()) == CusFieldsMappingRuleEnum.NONE) {
+                // 字段名（使用小写）、导入字段名
+                fieldSettings.add(new FieldSetting(d.getCFormFieldCode().toLowerCase(), d.getCCusFieldName()));
+            }
+        }
+
+        // -------------------------------------
+        // 定制字段类型处理
+        // -------------------------------------
+        CusFieldsMappingD lastCusFieldsMappingD = cusFieldsMappingDs.get(cusFieldsMappingDs.size() - 1);
+        
+        CusFieldsMappingRuleEnum ruleType = CusFieldsMappingRuleEnum.toEnum(lastCusFieldsMappingD.getIRuleType());
+        
+        switch (ruleType) {
+            case NONE:
+            default:
+                break;
+            case ANNUAL:
+                for (int i = 1; i <= 12; i++) {
+                    fieldSettings.add(new FieldSetting("iqty" + i, i + "月"));
+                }
+                break;
+            case MONTHLY:
+                for (int i = 1; i <= 31; i++) {
+                    fieldSettings.add(new FieldSetting("iqty" + i, i + "日"));
+                }
+                break;
+            case WEEKLY:
+                for (int i = 1; i <= 7; i++) {
+                    fieldSettings.add(new FieldSetting("iqty" + i, i + "日"));
+                }
+                break;
+        }
+        
+        return fieldSettings;
+    }
+
+    private List<CusFieldsMappingD> findByIcusFieldsMappingMid(long iCusFieldsMappingMid) {
+        return find(selectSql().eq(CusFieldsMappingD.ICUSFIELDSMAPPINGMID, iCusFieldsMappingMid).asc("iseq"));
+    }
+    
 }

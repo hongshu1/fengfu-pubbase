@@ -1,6 +1,7 @@
 package cn.rjtech.admin.instockqcformm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import cn.rjtech.admin.instockqcformdline.InstockqcformdLineService;
 import cn.rjtech.admin.qcform.QcFormService;
 import cn.rjtech.enums.AppearanceEnum;
 import cn.rjtech.enums.CMeasurePurposeEnum;
+import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.enums.OverallSizeEnum;
 import cn.rjtech.model.momdata.InStockDefect;
 import cn.rjtech.model.momdata.InStockQcFormD;
@@ -269,7 +271,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                 inStockQcFormD.setIQcFormId(iQcFormId);//检验表格ID
                 inStockQcFormD.setIFormParamId(record.getLong("iqcformtableitemid"));//Bd_QcFormTableItem的iautoid
                 inStockQcFormD.setISeq(record.get("iSeq"));
-                inStockQcFormD.setISubSeq(record.get("iSeq"));
+//                inStockQcFormD.setISubSeq(record.get("iSeq"));
                 inStockQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
                 inStockQcFormD.setIType(record.get("iType"));
                 inStockQcFormD.setIStdVal(record.get("iStdVal"));
@@ -302,9 +304,13 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
     public List<Record> getCheckOutTableDatas(Kv kv) {
         List<Record> recordList = clearZero(dbTemplate("instockqcformm.findChecoutListByIformParamid", kv).find());
         recordList.stream().forEach(record -> {
-            record.set("cvaluelist",10);
+            record.set("cvaluelist", getCvaluelist());
         });
         return recordList;
+    }
+
+    public List<Integer> getCvaluelist() {
+        return Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
     }
 
     /**
@@ -383,23 +389,22 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         inStockQcFormM.setCMeasureReason(cmeasurereason);
         //测定单位
         inStockQcFormM.setCMeasureUnit(cmeasureunit);
-        //备注
         inStockQcFormM.setCMemo(cmemo);
         //设变号
         inStockQcFormM.setCDcNo(cdcno);
         //是否合格
-        inStockQcFormM.setIsOk(isok.equals("0") ? false : true);
-        inStockQcFormM.setIStatus(isok.equals("0") ? 2 : 3);
+        Integer isOk = Integer.valueOf(isok);
+        inStockQcFormM.setIsOk(IsOkEnum.toEnum(isOk).getText());
+        inStockQcFormM.setIStatus(isOk.equals(IsOkEnum.NO.getValue()) ? 2 : 3);
         inStockQcFormM.setIsCompleted(true);
         inStockQcFormM.setIsCpkSigned(false);
-
     }
 
     /*
      * 保存异常品记录
      * */
     public void saveInDefectModel(String isok, Long instockqcformmiautoid, InStockQcFormM inStockQcFormM) {
-        if (isok.equals("0")) {
+        if (Integer.valueOf(isok).equals(IsOkEnum.NO.getValue())) {
             InStockDefect defect = defectService.findDefectByiInStockQcFormMid(instockqcformmiautoid);
             if (null == defect) {
                 InStockDefect inStockDefect = new InStockDefect();
@@ -470,7 +475,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         for (Entry<Object, List<Record>> entry : map.entrySet()) {
             List<Record> value = entry.getValue();
             for (int i = 0; i < value.size(); i++) {
-                value.get(i).set("name", "cA" + (i + 1));
+                value.get(i).set("name", (i + 1));
             }
             Record record = new Record();
             Record record1 = value.get(0);
@@ -520,9 +525,8 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * 实现编辑页面的serializeSubmitList
      * */
     public Boolean achiveEditSerializeSubmitList(JSONArray serializeSubmitList, Long instockqcformmiautoid,
-                                                 String cmeasurepurpose,
-                                                 String cmeasurereason, String cmeasureunit, String cmemo, String cdcno,
-                                                 String isok) {
+                                                 String cmeasurepurpose, String cmeasurereason, String cmeasureunit,
+                                                 String cmemo, String cdcno, String isok) {
         List<InstockqcformdLine> updateInstockqcformdLines = new ArrayList<>();
         List<InstockqcformdLine> saveInstockqcformdLines = new ArrayList<>();
         boolean result = tx(() -> {
@@ -554,13 +558,12 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
             if (!updateInstockqcformdLines.isEmpty()) {
                 instockqcformdLineService.batchUpdate(updateInstockqcformdLines);
             }
-            if (!saveInstockqcformdLines.isEmpty()){
+            if (!saveInstockqcformdLines.isEmpty()) {
                 instockqcformdLineService.batchSave(saveInstockqcformdLines);
             }
             InStockQcFormM stockQcFormM = findById(instockqcformmiautoid);
             saveInStockoutQcFormmModel(stockQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
             update(stockQcFormM);
-
             //如果不合格，保存异常品单
             saveInDefectModel(isok, instockqcformmiautoid, stockQcFormM);
 
@@ -599,8 +602,16 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         //3、主表数据
         InStockQcFormM inStockQcFormM = findById(iautoid);
         //测定目的
-        inStockQcFormM
-            .setCMeasurePurpose(CMeasurePurposeEnum.toEnum(Integer.valueOf(inStockQcFormM.getCMeasurePurpose())).getText());
+        String cMeasurePurpose = "";
+        String[] split = inStockQcFormM.getCMeasurePurpose().split(",");
+        for (int i = 0; i < split.length; i++) {
+            if (StringUtils.isNotBlank(split[i])) {
+                String text = CMeasurePurposeEnum.toEnum(Integer.valueOf(split[i])).getText();
+                cMeasurePurpose += text + ",";
+            }
+        }
+        inStockQcFormM.setCMeasurePurpose(StringUtils.isNotBlank(cMeasurePurpose)
+            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose);
         //4、明细表数据
         List<Record> recordList = getonlyseelistByiautoid(Kv.by("iautoid", iautoid));
         //5、如果cvalue的列数>10行，分多个页签
@@ -642,16 +653,14 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                             //多选框的话，把所有选中的值都查出来
                             String[] cvalues = jsonObject.getString("cvalue").split(",");
                             String cvalue = "";
-                            if (cvalues.length > 1) {
-                                for (String value : cvalues) {
-                                    if (checkCValueIsNotBlank(value)) {
-                                        cvalue += AppearanceEnum.toEnum(Integer.valueOf(value)).getText() + ",";
-                                    }
+                            for (int valueLength = 0; valueLength < cvalues.length; valueLength++) {
+                                if (StringUtils.isNotBlank(cvalues[valueLength])) {
+                                    String text = AppearanceEnum.toEnum(Integer.valueOf(cvalues[valueLength])).getText();
+                                    cvalue += text + ",";
                                 }
-                            } else {
-                                cvalue = AppearanceEnum.toEnum(jsonObject.getInteger("cvalue")).getText();
                             }
-                            cvaluelist.add(cvalue);
+                            cvaluelist.add(StringUtils.isNotBlank(cvalue) ?
+                                cvalue.substring(0, cvalue.lastIndexOf(",")) : cvalue);
                             break;
                         default:
                             cvaluelist.add(jsonObject.getString("cvalue"));

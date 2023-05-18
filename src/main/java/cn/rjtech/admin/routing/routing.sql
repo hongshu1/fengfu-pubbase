@@ -1,229 +1,125 @@
-#sql("datas")
-SELECT * FROM (SELECT
-	master.iAutoId AS id,
-	master.cBomVersion,
-	minv.cInvCode,
-	minv.cInvName,
-	minv.cInvStd,
-	minv.cInvCode1,
-	minv.cInvAddCode1,
-	minv.cInvName1,
-	minv.cInvName2,
-	uom.cUomName,
-    NULL iQty,
-    minv.iweight,
-    master.iOrgId,
-	NULL pid
-FROM
-	Bd_BomMaster master
-	INNER JOIN Bd_Inventory minv ON minv.iAutoId = master.iInventoryId
-	LEFT JOIN Bd_Uom uom ON uom.iAutoId = minv.iUomClassId
-WHERE
-	master.IsDeleted = '0'
-	AND master.isEnabled = '1'
-	AND master.dEnableDate <= GETDATE()
-	AND master.dDisableDate >= GETDATE()
-	AND master.iAuditStatus = 2
-	AND master.isEffective = 1
-UNION ALL
+#sql("findRoutingAll")
 SELECT
-	bbc.iAutoId AS id,
-	a.cBomVersion,
-	minv.cInvCode,
-	minv.cInvName,
-	minv.cInvStd,
-	minv.cInvCode1,
-	minv.cInvAddCode1,
-	minv.cInvName1,
-	minv.cInvName2,
-	uom2.cUomName,
-	bbc.iQty,
-	bbc.iWeight,
-	a.iOrgId,
-	bbc.iPid pid
-FROM
-	Bd_BomCompare bbc
-	INNER JOIN Bd_Inventory minv ON minv.iAutoId = bbc.iInventoryId
-	LEFT JOIN Bd_Uom uom2 ON uom2.iAutoId = minv.iUomClassId
-	INNER JOIN Bd_BomMaster a ON a.iAutoId = bbc.iBOMMasterId AND a.dEnableDate <= GETDATE() AND a.dDisableDate >= GETDATE()
-WHERE
-	bbc.IsDeleted = '0'
-	AND a.IsDeleted = '0'
-	AND a.isEnabled = '1'
-	AND a.iAuditStatus = 2
-	AND a.isEffective = 1
-	  ) a
-	   WHERE 1 = 1
-	  #if(orgId)
-	    AND a.iOrgId = #para(orgId)
-	  #end
-	  #if(pid)
-        AND (a.id = #para(pid) OR a.pid = #para(pid))
-	  #end
-	  #if(keyWords)
+    a.iAutoId as iSourceId,
+    a.*
+FROM Bd_InvPart a
+LEFT JOIN Bd_Inventory inv on inv.iAutoId = a.iInventoryId
+WHERE a.iOrgId = #para(orgId)
+	 #if(keyWords)
         AND (
-           (a.cInvCode LIKE CONCAT('%',#para(keyWords),'%')) OR ( a.cInvName LIKE CONCAT('%',#para(keyWords),'%') )
-          OR (a.cInvCode1 LIKE CONCAT('%',#para(keyWords),'%')) OR ( a.cInvAddCode1 LIKE CONCAT('%',#para(keyWords),'%') )
-          OR (a.cInvName1 LIKE CONCAT('%',#para(keyWords),'%')) OR ( a.cInvName2 LIKE CONCAT('%',#para(keyWords),'%') )
+           (inv.cInvCode LIKE CONCAT('%',#para(keyWords),'%')) OR ( inv.cInvName LIKE CONCAT('%',#para(keyWords),'%') )
+          OR (inv.cInvCode1 LIKE CONCAT('%',#para(keyWords),'%')) OR ( inv.cInvAddCode1 LIKE CONCAT('%',#para(keyWords),'%') )
+          OR (inv.cInvName1 LIKE CONCAT('%',#para(keyWords),'%')) OR ( inv.cInvName2 LIKE CONCAT('%',#para(keyWords),'%') )
+          OR (a.cPartName LIKE CONCAT('%',#para(keyWords),'%'))
         )
 	  #end
+	ORDER BY a.iSeq ASC
 #end
 
-#sql("getVersionRecord")
+#sql("findParentAll")
+SELECT * FROM Bd_InvPart a WHERE a.iOrgId = #para(orgId) AND ISNULL(a.iPid, '') = ''
+#end
+
+#sql("getRoutingDetails")
 SELECT
-	master.iAutoId AS id,
-	master.cBomVersion,
-	master.dEnableDate,
-	master.dDisableDate,
-	master.iAuditStatus,
-	master.cCreateName,
-	master.dCreateTime,
-	minv.cInvCode,
-	minv.cInvName,
-	minv.cInvStd,
-	minv.cInvCode1,
-	minv.cInvAddCode1,
-	minv.cInvName1,
-	minv.cInvName2,
-	uom.cUomName
-FROM
-	Bd_BomMaster master
-	INNER JOIN Bd_Inventory minv ON minv.iAutoId = master.iInventoryId
-	LEFT JOIN Bd_Uom uom ON uom.iAutoId = minv.iUomClassId
-WHERE
-	master.IsDeleted = '0'
-	AND master.isEnabled = '1'
-	#if(orgId)
-	AND  master.iOrgId = #para(orgId)
-	#end
-	#if(cInvCode)
-	    AND minv.cInvCode LIKE CONCAT('%',#para(cInvCode),'%')
-	#end
-	#if(cInvCode1)
-	    AND minv.minv.cInvCode1 LIKE CONCAT('%',#para(cInvCode1),'%')
-	#end
-	#if(cInvName1)
-	    AND minv.minv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%')
-	#end
-	ORDER BY master.dCreateTime ASC
-#end
-
-#sql("queryBomMasterId")
-SELECT a.id FROM (SELECT
-	master.iAutoId AS id,
-	minv.cInvCode,
-	minv.cInvName,
-	minv.cInvStd,
-	minv.cInvCode1,
-	minv.cInvAddCode1,
-	minv.cInvName1,
-	minv.cInvName2,
-    master.iOrgId
-FROM
-	Bd_BomMaster master
-	INNER JOIN Bd_Inventory minv ON minv.iAutoId = master.iInventoryId
-	LEFT JOIN Bd_Uom uom ON uom.iAutoId = minv.iUomClassId
-WHERE
-	master.IsDeleted = '0'
-	AND master.isEnabled = '1'
-	AND master.dEnableDate <= GETDATE()
-	AND master.dDisableDate >= GETDATE()
-UNION ALL
+    *
+FROM (
 SELECT
-	bbc.iBOMMasterId AS id,
-	minv.cInvCode,
-	minv.cInvName,
-	minv.cInvStd,
-	minv.cInvCode1,
-	minv.cInvAddCode1,
-	minv.cInvName1,
-	minv.cInvName2,
-	a.iOrgId
-FROM
-	Bd_BomCompare bbc
-	INNER JOIN Bd_Inventory minv ON minv.iAutoId = bbc.iInventoryId
-	INNER JOIN Bd_BomMaster a ON a.iAutoId = bbc.iBOMMasterId AND a.dEnableDate <= GETDATE() AND a.dDisableDate >= GETDATE()
-WHERE
-	bbc.IsDeleted = '0'
-	AND a.IsDeleted = '0'
-	AND a.isEnabled = '1'
-	  ) a
-	   WHERE 1 = 1
-	  #if(orgId)
-	    AND a.iOrgId = #para(orgId)
-	  #end
-	  #if(keyWords)
-        AND (
-           (a.cInvCode LIKE CONCAT('%',#para(keyWords),'%')) OR ( a.cInvName LIKE CONCAT('%',#para(keyWords),'%') )
-          OR (a.cInvCode1 LIKE CONCAT('%',#para(keyWords),'%')) OR ( a.cInvAddCode1 LIKE CONCAT('%',#para(keyWords),'%') )
-          OR (a.cInvName1 LIKE CONCAT('%',#para(keyWords),'%')) OR ( a.cInvName2 LIKE CONCAT('%',#para(keyWords),'%') )
-        )
-	  #end
-	  group by a.id
-#end
-
-#sql("getMaster")
-SELECT DISTINCT
-    birc.iSeq,birc.cOperationName,
-    birc.iType,
-    birc.cMergedSeq,
-    birc.cProductSn,
-    birc.iMergedNum,
-    birc.iMergeRate,
-    birc.iMergeSecs,
-    birc.iSecs,
-    bi.cInvName,
-    birc.iInventoryId,
-    STUFF(
-            (
-                SELECT
-                        ', ' + be.cEquipmentName
-                FROM
-                    Bd_InventoryRoutingConfig birc2
-                        left JOIN Bd_InventoryRoutingEquipment bire ON birc2.iAutoId = bire.iInventoryRoutingConfigId
-                        left JOIN Bd_Equipment be ON be.iAutoId = bire.iEquipmentId
-                WHERE
-                        birc2.iAutoId = birc.iAutoId FOR XML PATH ( '' )
-        ),
+	a.iAutoId,
+	a.cPartName,
+	a.iInventoryId,
+	a.iPid,
+	a.iParentInvId,
+CASE
+	WHEN ISNULL( inv.cInvName, '' ) = '' THEN
+		'【虚拟件-' + routingc.cOperationName+ '】' ELSE inv.cInvName
+	END AS rsinventoryname,
+	inv.cInvCode,
+	inv.cInvCode1,
+	inv.cInvName1,
+	STUFF(
+		(
+		SELECT
+			', ' + be.cEquipmentName
+		FROM
+			Bd_InventoryRoutingConfig birc2
+			LEFT JOIN Bd_InventoryRoutingEquipment bire ON birc2.iAutoId = bire.iInventoryRoutingConfigId
+			LEFT JOIN Bd_Equipment be ON be.iAutoId = bire.iEquipmentId
+		WHERE
+			birc2.iAutoId = routingc.iAutoId FOR XML PATH ( '' )
+		),
 		1,
 		2,
 		''
-	) AS cEquipmentName
-
+	) AS cequipmentnames,
+	routingc.iSeq,
+    routingc.cMergedSeq,
+    routingc.cOperationName,
+    routingc.iType,
+    routingc.iRsInventoryId,
+    routingc.cProductSn,
+    routingc.cProductTechSn,
+    routingc.iMergedNum,
+    routingc.iMergeRate,
+    routingc.iMergeSecs,
+    routingc.iSecs,
+routingc.cMemo
 FROM
-    Bd_Inventory bi
-        LEFT JOIN Bd_InventoryRouting bir ON bi.iAutoId = bir.iInventoryId
-        LEFT JOIN (
-        SELECT
-            birc.iSeq,
-            birc.cOperationName,
-            birc.iType,
-            birc.cMergedSeq,
-            birc.cProductSn,
-            birc.iMergedNum,
-            birc.iMergeRate,
-            birc.iMergeSecs,
-            birc.iSecs,
-            be.cEquipmentName,
-            birc.iRsInventoryId,
-            biri.iInventoryId,
-            birc.iAutoId
-        FROM
-            Bd_InventoryRoutingConfig birc
-                LEFT JOIN Bd_InventoryRoutingEquipment bire ON birc.iAutoId = bire.iInventoryRoutingConfigId
-                LEFT JOIN Bd_Equipment be ON be.iAutoId = bire.iEquipmentId
-                LEFT JOIN Bd_InventoryRoutingInvc biri ON birc.iAutoId = biri.iInventoryRoutingConfigId
-    ) birc ON bi.iAutoId = birc.iRsInventoryId
+	Bd_InvPart a
+	INNER JOIN Bd_InventoryRoutingConfig routingc ON routingc.iAutoId = a.iInventoryRoutingConfigId
+	LEFT JOIN Bd_Inventory inv ON inv.iAutoId = routingc.iRsInventoryId
 WHERE
-        bir.isEnabled = 1 and
-        CONVERT ( VARCHAR, GETDATE( ), 23 ) > bir.dToDate
+	1 = 1
+	#if(orgId)
+	    AND a.iOrgId = #para(orgId)
+	#end
+	#if(iParentInvId)
+	   AND a.iParentInvId = #para(iParentInvId)
+	#end
+) a
+WHERE
+    1 = 1
+	#if(cInvCode)
+	   AND (a.cInvCode LIKE CONCAT('%',#para(cInvCode),'%'))
+	#end
+	#if(cInvCode1)
+	   AND (a.cInvCode1 LIKE CONCAT('%',#para(cInvCode1),'%'))
+	#end
+	#if(cInvName1)
+	   AND (a.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%'))
+	#end
+ORDER BY
+	a.iSeq ASC
 #end
 
-#sql("getCompare")
+#sql("findRoutingVersion")
 SELECT
-    bi.iAutoId,
-    bi.cInvName
+	inv.cInvCode,
+	inv.cInvCode1,
+	inv.cInvName,
+	inv.cInvName1,
+	routing.*
 FROM
-    Bd_Inventory bi
-        LEFT JOIN Bd_BomCompare bbc ON bi.iAutoId = bbc.iInventoryId
+	Bd_InventoryRouting routing
+	LEFT JOIN Bd_Inventory inv ON inv.iAutoId = routing.iInventoryId
+WHERE
+    1 = 1
+    #if(orgId)
+        AND inv.iOrgId = #para(orgId)
+    #end
+    #if(id)
+         AND routing.iAutoId = #para(id)
+    #end
+    #if(cRoutingName)
+        AND (routing.cRoutingName LIKE CONCAT('%',#para(cRoutingName),'%'))
+    #end
+    #if(cInvCode)
+	   AND (inv.cInvCode LIKE CONCAT('%',#para(cInvCode),'%'))
+	#end
+	#if(cInvCode1)
+	   AND (inv.cInvCode1 LIKE CONCAT('%',#para(cInvCode1),'%'))
+	#end
+	#if(cInvName1)
+	   AND (inv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%'))
+	#end
 #end

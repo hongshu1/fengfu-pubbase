@@ -65,7 +65,9 @@ public class InStockQcFormMApiController extends BaseApiController {
                          @Para(value = "iscompleted") String iscompleted,
                          @Para(value = "cqcformname") String cqcformname,
                          @Para(value = "starttime") String starttime,
-                         @Para(value = "endtime") String endtime) {
+                         @Para(value = "endtime") String endtime,
+                         @Para(value = "page") String page,
+                         @Para(value = "pageSize") String pageSize) {
         Kv kv = new Kv();
         kv.set("cinvqcformno", cinvqcformno);
         kv.set("cinvaddcode", cinvaddcode);
@@ -77,8 +79,8 @@ public class InStockQcFormMApiController extends BaseApiController {
         kv.set("cqcformname", cqcformname);
         kv.set("starttime", starttime);
         kv.set("endtime", endtime);
-        kv.set("page", 1);
-        kv.set("pageSize", 15);
+        kv.set("page", page);
+        kv.set("pageSize", pageSize);
         renderJBoltApiRet(apiService.getDatas(kv));
     }
 
@@ -157,14 +159,24 @@ public class InStockQcFormMApiController extends BaseApiController {
     }
 
     /**
-     * 跳转到onlysee页面，自动加载table数据
+     * 跳转到onlysee或者edit页面，自动加载table数据
      */
     @ApiDoc(result = InStockAutoGetOnlyseeTableDatasVo.class)
     @UnCheck
-    public void autoGetOnlySeeTableDatas(@Para(value = "iautoid") Long iautoid) {
+    public void autoGetOnlySeeOrEditTableDatas(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.autoGetOnlySeeTableDatas(iautoid));
+        renderJBoltApiRet(apiService.autoGetOnlySeeOrEditTableDatas(iautoid));
+    }
+
+    /*
+     * 点击编辑按钮，跳转到编辑页面
+     * */
+    @ApiDoc(result = InStockQcFormMApiJumpOnlySeeVo.class)
+    @UnCheck
+    public void jumpEdit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.jumpEdit(iautoid));
     }
 
     /*
@@ -216,7 +228,7 @@ public class InStockQcFormMApiController extends BaseApiController {
     @UnCheck
     public void exportExcel(@Para(value = "iautoid") Long iautoid){
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        renderJBoltApiRet(apiService.exportExcel(iautoid));
+        renderJBoltApiRet(apiService.getExportData(iautoid));
     }
 
 }

@@ -4,7 +4,7 @@ import net.fenghaitao.AutoExcel;
 import net.fenghaitao.imports.DataSet;
 import net.fenghaitao.parameters.ImportPara;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * AutoExcel工具类
@@ -20,8 +20,8 @@ public class AutoExcelUtil {
      * @param paras     Sheet参数
      * @return 数据集合
      */
-    public static DataSet readExcel(String excelPath, ImportPara... paras) {
-        return AutoExcel.read(excelPath, Arrays.asList(paras));
+    public static DataSet readExcel(String excelPath, List<ImportPara> paras) {
+        return AutoExcel.read(excelPath, paras);
     }
 
 }

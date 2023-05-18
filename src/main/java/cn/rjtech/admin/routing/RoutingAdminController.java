@@ -1,15 +1,14 @@
 package cn.rjtech.admin.routing;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.admin.bommaster.BomMasterService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
+import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.BomMaster;
-import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 物料建模-工艺路线
@@ -27,17 +26,13 @@ public class RoutingAdminController extends BaseAdminController {
 	private InventoryChangeService inventoryChangeService;
 	@Inject
 	private EquipmentModelService equipmentModelService;
+	@Inject
+	private InventoryRoutingConfigService inventoryRoutingConfigService;
 	/**
 	 * 首页
 	 */
 	public void index() {
 		render("index.html");
-	}
-	/**
-	 * 数据源
-	 */
-	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled"), getBoolean("isDeleted")));
 	}
 
 	/**
@@ -47,18 +42,16 @@ public class RoutingAdminController extends BaseAdminController {
 		render("add.html");
 	}
 
-
-
 	/**
 	 * 编辑
 	 */
 	public void edit() {
-		BomMaster bomMaster=service.findById(getLong(0));
-		if(bomMaster == null){
+		Record routing = service.findByIdRoutingVersion(getLong(0));
+		if(routing == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("bomMaster",bomMaster);
+		set("routing",routing);
 		render("edit.html");
 	}
 
@@ -102,32 +95,35 @@ public class RoutingAdminController extends BaseAdminController {
 		renderJsonData(equipmentModelService.getAdminDataNoPage(getKv()));
 	}
 
-	public void getDatas(){
-		renderJsonData(service.getDatas(getKv()));
+	
+
+	public void getRoutingDetails(){
+		renderJsonData(service.getRoutingDetails(getKv()));
 	}
-
-	public void getPageData(){
-		renderJsonData(service.getPageData(getPageNumber(), getPageSize(), getKv()));
-	}
-
-	public void testDel(){
-		ok();
-	}
-
-	public void copyForm(){
-		ValidationUtils.notNull(get(0), "未获取到指定产品id");
-		set("oldId", get(0));
-		render("_copy_form.html");
-	}
-
-	// 拷贝
-	public void saveCopy(@Para(value = "oldId") String oldId){
-
-	}
-
+	
 	// 工艺路线
-	public void getMasterData() {
-		renderJsonData(service.getMaster());
+	public void findRoutingAll() {
+		renderJsonData(service.findRoutingAll(getKv()));
 	}
-
+	
+	public void table(){
+		render("table.html");
+	}
+	
+	public void versionTable(){
+		render("version_table.html");
+	}
+	
+	public void versionAll(){
+		renderJsonData(service.findRoutingVersion(getPageNumber(), getPageSize(), getKv()));
+	}
+	
+	public void getRoutingConfigDetail(){
+		renderJsonData(inventoryRoutingConfigService.dataList(getLong(0)));
+	}
+	
+	public void audit(@Para(value = "routingId") Long routingId,
+					  @Para(value = "status") Integer status){
+		renderJsonData(service.audit(routingId, status));
+	}
 }

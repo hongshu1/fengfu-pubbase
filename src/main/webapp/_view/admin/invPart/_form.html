@@ -1,0 +1,57 @@
+<form onsubmit="return false;" id="InvPart_Form" action="#(action)" method="post">
+	#if(invPart.iAutoId??)
+	<input type="hidden" name="invPart.iAutoId" value="#(invPart.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="invPart.iAutoId" value="#(invPart.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">物料类型;1. 存货 2. 虚拟件</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入物料类型;1. 存货 2. 虚拟件"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入物料类型;1. 存货 2. 虚拟件" maxlength="40" name="invPart.iType" value="#(invPart.iType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">物料编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入物料编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入物料编码" maxlength="40" name="invPart.cPartCode" value="#(invPart.cPartCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">物料名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入物料名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入物料名称" maxlength="40" name="invPart.cPartName" value="#(invPart.cPartName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">存货ID;物料类型为1时，有该值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货ID;物料类型为1时，有该值" maxlength="40" name="invPart.iInventoryId" value="#(invPart.iInventoryId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">上级物料ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入上级物料ID" maxlength="40" name="invPart.iPid" value="#(invPart.iPid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">工艺配置ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入工艺配置ID" maxlength="40" name="invPart.iInventoryRoutingConfigId" value="#(invPart.iInventoryRoutingConfigId??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="InvPart_Form")
+#end
+

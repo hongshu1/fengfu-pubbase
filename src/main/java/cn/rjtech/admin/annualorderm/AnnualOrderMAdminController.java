@@ -1,10 +1,10 @@
 package cn.rjtech.admin.annualorderm;
 
-import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -16,10 +16,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
-
-import java.util.Date;
 
 /**
  * 年度计划订单
@@ -49,6 +46,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -100,26 +98,15 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 新增-可编辑表格-批量提交
      */
-    @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
-    }
-
-    public void dateHeader() {
-        Integer iYear = getInt("iYear");
-        if (iYear == null) {
-            iYear = DateUtil.year(new Date());
-        }
-        service.dateHeader(iYear);
-
-        render("add.html");
     }
 
     /**
      * 审批
      */
     public void approve() {
-        renderJson(service.approve(getLong(0)));
+        renderJson(service.approve(getLong("id")));
     }
 
     /**
@@ -130,6 +117,5 @@ public class AnnualOrderMAdminController extends BaseAdminController {
 
         renderJson(service.importExcel(file.getFile()));
     }
-
 
 }

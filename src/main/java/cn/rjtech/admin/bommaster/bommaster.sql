@@ -2,6 +2,7 @@
 SELECT * FROM (SELECT
 	master.iAutoId AS id,
 	master.cBomVersion,
+	master.iInventoryId,
 	minv.cInvCode,
 	minv.cInvName,
 	minv.cInvStd,
@@ -29,6 +30,7 @@ UNION ALL
 SELECT
 	bbc.iAutoId AS id,
 	a.cBomVersion,
+	bbc.iInventoryId,
 	minv.cInvCode,
 	minv.cInvName,
 	minv.cInvStd,
@@ -57,6 +59,11 @@ WHERE
 	  #if(orgId)
 	    AND a.iOrgId = #para(orgId)
 	  #end
+
+	  #if(invId)
+        AND a.iInventoryId = #para(invId)
+      #end
+
 	  #if(pid)
         AND (a.id = #para(pid) OR a.pid = #para(pid))
 	  #end
@@ -160,6 +167,118 @@ WHERE
         )
 	  #end
 	  group by a.id
+#end
+
+#sql("getBomMasterByInvId")
+SELECT
+	master.iAutoId AS id,
+	master.cBomVersion,
+	minv.cInvCode,
+	minv.cInvName,
+	minv.cInvStd,
+	minv.cInvCode1,
+	minv.cInvAddCode1,
+	minv.cInvName1,
+	minv.cInvName2,
+	uom.cUomName,
+    NULL iQty,
+    minv.iweight,
+    master.iOrgId,
+	NULL pid
+FROM
+	Bd_BomMaster master
+	INNER JOIN Bd_Inventory minv ON minv.iAutoId = master.iInventoryId
+	LEFT JOIN Bd_Uom uom ON uom.iAutoId = minv.iUomClassId
+WHERE
+	master.IsDeleted = '0'
+	AND master.isEnabled = '1'
+	AND master.dEnableDate <= GETDATE()
+	AND master.dDisableDate >= GETDATE()
+	AND master.iAuditStatus = 2
+	AND master.isEffective = 1
+	#if(orgId)
+	    AND master.iOrgId = #para(orgId)
+	#end
+    #if(invId)
+        AND master.iInventoryId = #para(invId)
+    #end
+#end
+
+#sql("findBomCompareByBomMasterInvId")
+SELECT
+	bom.masterInvId,
+	ic.cInvCName cinvcname,
+	manuuom.cUomName manufactureuom,
+	purUom.cUomName purchaseuom,
+	inv.*
+FROM
+	Bd_Inventory inv
+	INNER JOIN Bd_InventoryClass ic ON ic.iautoid = inv.iInventoryClassId
+	LEFT JOIN Bd_Uom manuuom ON manuuom.iAutoId = inv.iManufactureUomId
+	LEFT JOIN Bd_Uom puruom ON puruom.iAutoId = inv.iPurchaseUomId
+	INNER JOIN V_Bd_BomMasterInvId bom ON bom.iInventoryId = inv.iAutoId
+	WHERE
+	    1 = 1
+	#if(orgId)
+	    AND bom.iOrgId = #para(orgId)
+	#end
+
+    #if(isAdd)
+         #if(invId)
+            AND bom.masterInvId = #para(invId)
+        #else
+            AND bom.masterInvId = ''
+	    #end
+    #end
+	#if(masterInvId)
+       AND bom.masterInvId = #para(masterInvId) OR inv.iAutoId = #para(masterInvId)
+	#end
+	#if(cInvCode1)
+         AND inv.cInvCode1 like CONCAT('%', #para(cInvCode1), '%')
+    #end
+    #if(cInvName)
+        AND inv.cInvName like CONCAT('%', #para(cInvName), '%')
+    #end
+    #if(cInvCode)
+        AND inv.cInvCode like CONCAT('%', #para(cInvCode), '%')
+    #end
+
+#end
+
+#sql("")
+SELECT
+	bom.masterInvId,
+	ic.cInvCName cinvcname,
+	manuuom.cUomName manufactureuom,
+	purUom.cUomName purchaseuom,
+	inv.*
+FROM
+	Bd_Inventory inv
+	INNER JOIN Bd_InventoryClass ic ON ic.iautoid = inv.iInventoryClassId
+	LEFT JOIN Bd_Uom manuuom ON manuuom.iAutoId = inv.iManufactureUomId
+	LEFT JOIN Bd_Uom puruom ON puruom.iAutoId = inv.iPurchaseUomId
+	INNER JOIN V_Bd_BomMasterInvId bom ON bom.iInventoryId = inv.iAutoId
+WHERE
+	bom.ipid = 451617187998654
+
+	#if(invId)
+        AND a.iInventoryId = #para(invId)
+    #else
+        AND a.iInventoryId = ''
+	#end
+
+	#if(orgId)
+	    AND a.iOrgId = #para(orgId)
+	#end
+	#if(cInvCode1)
+         AND minv.cInvCode1 like CONCAT('%', #para(cInvCode1), '%')
+    #end
+    #if(cInvName)
+        AND minv.cInvName like CONCAT('%', #para(cInvName), '%')
+    #end
+    #if(cInvCode)
+        AND minv.cInvCode like CONCAT('%', #para(cInvCode), '%')
+    #end
 #end
 
 #sql("getMaster")

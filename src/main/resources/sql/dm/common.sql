@@ -7,7 +7,7 @@ delete from #(table) #@where()
 #end
 
 #sql("optionlist")
-select #(value) as value,#(text) as text from #(table) #@where()
+select "#(value)" as value,"#(text)" as text from #(table) #@where()
 #end
 
 #sql("count")

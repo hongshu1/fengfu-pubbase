@@ -1,0 +1,126 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="PheDeliveryLines_tpl2_#(pageId)">
+    {@each datas as data,index}
+    <tr data-id="${data.iautoid}">
+        <td>${pageNumber,pageSize,index | rownum}</td>
+        <td>${data.stepname}</td>
+        <td>${data.cname}</td>
+        <td>${data.way}</td>
+        <td>${data.status}</td>
+        <td>
+            <a tooltip href="admin/formapprovald/userList/${data.iautoid}" data-dialogbtn data-btn="close"
+               data-scroll="yes" data-title="审批人列表" data-area="90%,90%" class="jbolt_table_btn"><i class="fa fa-users c-danger"></i></a>
+        </td>
+        <td>
+            <a href="admin/formapprovald/edit/${data.iautoid}" data-area="95%,95%"  tooltip data-title="编辑" data-handler="refreshJBoltTable" data-dialog-title="修改审批节点" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+        </td>
+    </tr>
+    {@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="PheDeliveryLines_toolbar2_#(pageId)" style="display: flex;">
+    <div class="" role="group" aria-label="btn-group">
+
+        <form onsubmit="return false;" id="approvalMForm_#(pageId)" action="#(action)" method="post">
+            <input type="hidden" name="iFormObjectId" value="#(formAutoId??0)" />
+        </form>
+
+        #if(btnNeed==1??)
+        <button onclick="judgeType_#(pageId)(this)" data-formsn="#(formSn??1)" data-formautoid="#(formAutoId??1)" class="btn btn-outline-secondary"> 提交审批</button>
+        <button onclick="approveT_#(pageId)(this)" data-formsn="#(formSn??)" data-formautoid="#(formAutoId??)" data-status="2" class="btn btn-outline-secondary"> 审批</button>
+        <button onclick="approveT_#(pageId)(this)" data-formsn="#(formSn??)" data-formautoid="#(formAutoId??)"
+                data-status="3" class="btn btn-outline-secondary"> 拒审</button>
+        #end
+
+    </div>
+</div>
+
+<table class="jbolt_table jbolt_main_table table-center"
+       id="jbolt_table_pheDeliveryLines2_#(pageId)"
+       data-jbolttable
+       data-ajax-success-handler="tableDataSuccess2()"
+       data-width="auto"
+       data-height="250"
+       data-ajax="true"
+       data-page="PheDeliveryLines2_page_#(pageId)"
+       data-column-prepend="1:checkbox:true"
+       data-toolbar="PheDeliveryLines_toolbar2_#(pageId)"
+       data-url="admin/formapprovald/datas"
+       data-conditions-form="approvalMForm_#(pageId)"
+       data-rowtpl="PheDeliveryLines_tpl2_#(pageId)"
+       data-column-resize="true"
+       ###data-editable="true"
+       ###data-editable-option="getEditableTableOptions2_#(pageId)"
+>
+    <thead>
+    <tr>
+        <th data-width="100" data-column="index">审批顺序</th>
+        <th data-min-width="200" data-column="stepname">审批节点</th>
+        <th data-min-width="200" data-column="cname">审批内容</th>
+        <th data-min-width="200" data-column="way">审批人设置</th>
+        <th data-min-width="200" data-column="status">状态</th>
+        <th data-min-width="200" data-column="person">审批人</th>
+        <th data-min-width="200" data-column="index">操作</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    /**
+     * 返回 jbolttable的id
+     * */
+    function getJboltId2(){
+        return "jbolt_table_pheDeliveryLines2_#(pageId)";
+    }
+
+    /**
+     * 刷新jbolttable
+     */
+    function RefreshJboltTable() {
+        jboltTableRefresh(getJboltId2());
+    }
+
+    /**
+     * 获取已选数据函数
+     */
+    function tableDataSuccess2() {
+    }
+
+    function getEditableTableOptions2_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
+            insertDefaultValues: {username: '#(JBoltUserKit.getUserName())'},
+            submit: {
+                withForm: ["approvalMForm"],
+                type: "all",
+                url: "/admin/auditformconfig/submit",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            refreshPjaxContainer();
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iAutoId"
+                },
+                cformname: {
+                    type: "input",
+                    submitAttr: "cFormName"
+                },
+                cformsn: {
+                    submitAttr: "cFormSn"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

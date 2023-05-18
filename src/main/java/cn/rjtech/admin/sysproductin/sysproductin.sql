@@ -9,19 +9,23 @@ select so.AutoID, CASE so.state
         '已审批'
 				WHEN 4 THEN
         '审批不通过'
-        END AS statename,so.state,so.BillNo as billno,so.CreateDate,so.repositoryName as repositoryname,so.deptName as deptname,
-				so.warehousingType as warehousingtype,so.AuditDate,so.BillType,so.remark,p.name
+        END AS statename,so.state,so.BillNo as billno,so.CreateDate,so.Whcode,ck.cWhName as repositoryname,so.DeptCode,dept.cDepName as deptname,
+				so.RdCode,rd.cRdName as rdcodename, so.AuditDate,so.BillType,so.Memo,p.name,s.name as sname
 FROM T_Sys_ProductIn so
 LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.username
-where 1=1 and so.IsDeleted = '0'
+LEFT JOIN #(getBaseDbName()).dbo.jb_user s on so.AuditPerson = s.username
+LEFT JOIN Bd_Warehouse ck on so.Whcode = ck.cWhCode
+LEFT JOIN Bd_Department dept on so.DeptCode =dept.cDepCode
+LEFT JOIN Bd_Rd_Style rd on so.RdCode = rd.cRdCode
+where 1=1
 	#if(billno)
 		and so.BillNo like concat('%',#para(billno),'%')
 	#end
-	#if(deptname)
-		and so.deptName like concat('%',#para(deptname),'%')
+	#if(deptcode)
+		and so.DeptCode = #para(deptcode)
 	#end
-	#if(repositoryname)
-		and so.repositoryName like concat('%',#para(repositoryname),'%')
+	#if(whcode)
+		and so.Whcode = #para(whcode)
 	#end
 	#if(startTime)
 		and so.CreateDate >= #para(startTime)
@@ -34,12 +38,70 @@ ORDER BY so.ModifyDate DESC
 
 
 #sql("dList")
-SELECT  a.*
+SELECT  a.*, t1.Barcode,
+       t1.SourceID as SourceBIllNoRow,
+       t1.SourceBillType as SourceBillType,
+       t1.SourceBillNo,t1.Qty,t1.BarcodeDate,
+       t1.BarcodeID as SourceBillID,
+       t1.MasID as SourceBillDid,
+       t1.pat,
+       i.*,
+
+       (SELECT cUomName FROM Bd_Uom WHERE i.iInventoryUomId1 = iautoid) as InventorycUomName,
+       (SELECT cUomName FROM Bd_Uom WHERE i.iPurchaseUomId = iautoid) as PurchasecUomName,
+       (SELECT cContainerCode FROM Bd_Container WHERE i.iContainerClassId = iautoid) as cContainerCode,
+       u.cUomClassName,
+       t3.cInvCCode,
+       t3.cInvCName,
+       t4.cEquipmentModelName
 FROM T_Sys_ProductInDetail a
-left join T_Sys_ProductIn i on a.MasID = i.AutoID
-where 1=1 and a.isdeleted = 0
+left join  V_Sys_BarcodeDetail t1 on t1.Barcode = a.Barcode
+         LEFT JOIN bd_inventory i ON i.cinvcode = t1.Invcode
+         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
+         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
+         LEFT JOIN Bd_EquipmentModel t4 ON i.iEquipmentModelId = t4.iautoid
+where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end
 ORDER BY a.ModifyDate DESC
+#end
+
+#sql("wareHouse")
+SELECT  a.*
+FROM Bd_Warehouse a
+where 1=1
+	#if(q)
+		and (a.cWhCode like concat('%',#para(q),'%') OR a.cWhName like concat('%',#para(q),'%'))
+	#end
+#end
+
+
+
+#sql("RdStyle")
+SELECT  a.*
+FROM Bd_Rd_Style a
+where a.bRdFlag = '1'
+	#if(q)
+		and (a.cRdCode like concat('%',#para(q),'%') OR a.cRdName like concat('%',#para(q),'%'))
+	#end
+#end
+
+
+#sql("Department")
+SELECT  a.*
+FROM Bd_Department a
+where 1=1
+	#if(q)
+		and (a.cdepCode like concat('%',#para(q),'%') OR a.cdepName like concat('%',#para(q),'%'))
+	#end
+#end
+
+#sql("selectname")
+SELECT  u.*
+FROM #(getBaseDbName()).dbo.jb_user u
+where 1=1
+	#if(username)
+		and u.username= #para(username)
+	#end
 #end

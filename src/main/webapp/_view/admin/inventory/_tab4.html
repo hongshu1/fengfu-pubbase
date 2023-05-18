@@ -34,7 +34,7 @@
 									   {@else if data.itype == '2'}
 									   <span>并序</span>
 								  	{@/if}</td>
-								<td data-value="${data.irsinventoryid}">${data.rsinventoryname}</td>
+								<td>${data.rsinventoryname}</td>
 								<td >
 								   {@if data.cproductsn == '1'}
 									   <span>内作</span>
@@ -78,8 +78,8 @@
 									{@/if}
 								</td>
 								<td>
-									<a tooltip data-title="上移"  href="javascript:void(0)" onclick="moveUpBtn(this,'${data.iautoid}',${data.iseq})"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
-									<a tooltip data-title="下移"  href="javascript:void(0)" onclick="moveDownBtn(this,'${data.iautoid}',${data.iseq})"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+<!--									<a tooltip data-title="上移"  href="javascript:void(0)" onclick="moveUpBtn(this,'${data.iautoid}','${data.iseq}')"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>-->
+<!--									<a tooltip data-title="下移"  href="javascript:void(0)" onclick="moveDownBtn(this,'${data.iautoid}','${data.iseq}')"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>-->
 									<a href="admin/inventoryroutingconfig/deleteByIds?ids=${data.iautoid}" data-ajaxbtn data-loading="执行中" tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
 								</td>
 								</tr>
@@ -97,7 +97,7 @@
                         <button data-area="95%,95%" data-title="设置工艺路线" onclick="addRoutingBtn(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-cog"></i> 设置工艺路线</button>
                         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                                <button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+                                <button onclick="addTableRow4(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
                             </div>
 <!--
                             <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" data-url="admin/itemroutingconfig/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
@@ -121,7 +121,7 @@
                    data-rowtpl="itemroutingconfigRowtpl_#(pageId)"
                    data-toolbar="itemroutingconfig_toolbar_#(pageId)"
                    data-editable="true"
-                   data-editable-option="getEditableTableOptions"
+                   data-editable-option="getEditableTableOptions4"
                    id="itemroutingconfigid"
             >
                 <thead>
@@ -148,6 +148,7 @@
                 </thead>
                 <tbody>
                 </tbody>
+
             </table>
         </div>
     </div>

@@ -32,6 +32,20 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
     public static final String CMEMO = "cMemo";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**存货编码*/
+    public static final String CINVCODE = "cInvCode";
+    /**存货名称*/
+    public static final String CINVNAME = "cInvName";
+    /**客户部番*/
+    public static final String CINVCODE1 = "cInvCode1";
+    /**部品名称*/
+    public static final String CINVNAME1 = "cInvName1";
+    /**规格*/
+    public static final String CINVSTD = "cInvStd";
+    /**收货地点*/
+    public static final String CDISTRICTNAME = "cDistrictName";
+    /**计划到货时间*/
+    public static final String CPLANAOGTIME = "cPlanAogTime";
 	/**
 	 * 主键ID
 	 */
@@ -69,7 +83,7 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 计划代码
 	 */
-	public M setCPlanCode(java.lang.Boolean cPlanCode) {
+	public M setCPlanCode(java.lang.String cPlanCode) {
 		set("cPlanCode", cPlanCode);
 		return (M)this;
 	}
@@ -77,10 +91,10 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 计划代码
 	 */
-	@JBoltField(name="cplancode" ,columnName="cPlanCode",type="Boolean", remark="计划代码", required=false, maxLength=1, fixed=0, order=3)
+	@JBoltField(name="cplancode" ,columnName="cPlanCode",type="String", remark="计划代码", required=false, maxLength=40, fixed=0, order=3)
 	@JSONField(name = "cplancode")
-	public java.lang.Boolean getCPlanCode() {
-		return getBoolean("cPlanCode");
+	public java.lang.String getCPlanCode() {
+		return getStr("cPlanCode");
 	}
 
 	/**
@@ -94,7 +108,7 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 收货地点ID
 	 */
-	@JBoltField(name="icustomeraddrid" ,columnName="iCustomerAddrId",type="Long", remark="收货地点ID", required=true, maxLength=19, fixed=0, order=4)
+	@JBoltField(name="icustomeraddrid" ,columnName="iCustomerAddrId",type="Long", remark="收货地点ID", required=false, maxLength=19, fixed=0, order=4)
 	@JSONField(name = "icustomeraddrid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICustomerAddrId() {
 		return getLong("iCustomerAddrId");
@@ -154,7 +168,7 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 传票号
 	 */
-	public M setCCode(java.lang.Boolean cCode) {
+	public M setCCode(java.lang.String cCode) {
 		set("cCode", cCode);
 		return (M)this;
 	}
@@ -162,10 +176,10 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 传票号
 	 */
-	@JBoltField(name="ccode" ,columnName="cCode",type="Boolean", remark="传票号", required=true, maxLength=1, fixed=0, order=8)
+	@JBoltField(name="ccode" ,columnName="cCode",type="String", remark="传票号", required=true, maxLength=40, fixed=0, order=8)
 	@JSONField(name = "ccode")
-	public java.lang.Boolean getCCode() {
-		return getBoolean("cCode");
+	public java.lang.String getCCode() {
+		return getStr("cCode");
 	}
 
 	/**
@@ -217,6 +231,125 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 存货编码
+	 */
+	public M setCInvCode(java.lang.String cInvCode) {
+		set("cInvCode", cInvCode);
+		return (M)this;
+	}
+
+	/**
+	 * 存货编码
+	 */
+	@JBoltField(name="cinvcode" ,columnName="cInvCode",type="String", remark="存货编码", required=false, maxLength=60, fixed=0, order=12)
+	@JSONField(name = "cinvcode")
+	public java.lang.String getCInvCode() {
+		return getStr("cInvCode");
+	}
+
+	/**
+	 * 存货名称
+	 */
+	public M setCInvName(java.lang.String cInvName) {
+		set("cInvName", cInvName);
+		return (M)this;
+	}
+
+	/**
+	 * 存货名称
+	 */
+	@JBoltField(name="cinvname" ,columnName="cInvName",type="String", remark="存货名称", required=false, maxLength=255, fixed=0, order=13)
+	@JSONField(name = "cinvname")
+	public java.lang.String getCInvName() {
+		return getStr("cInvName");
+	}
+
+	/**
+	 * 客户部番
+	 */
+	public M setCInvCode1(java.lang.String cInvCode1) {
+		set("cInvCode1", cInvCode1);
+		return (M)this;
+	}
+
+	/**
+	 * 客户部番
+	 */
+	@JBoltField(name="cinvcode1" ,columnName="cInvCode1",type="String", remark="客户部番", required=false, maxLength=255, fixed=0, order=14)
+	@JSONField(name = "cinvcode1")
+	public java.lang.String getCInvCode1() {
+		return getStr("cInvCode1");
+	}
+
+	/**
+	 * 部品名称
+	 */
+	public M setCInvName1(java.lang.String cInvName1) {
+		set("cInvName1", cInvName1);
+		return (M)this;
+	}
+
+	/**
+	 * 部品名称
+	 */
+	@JBoltField(name="cinvname1" ,columnName="cInvName1",type="String", remark="部品名称", required=false, maxLength=255, fixed=0, order=15)
+	@JSONField(name = "cinvname1")
+	public java.lang.String getCInvName1() {
+		return getStr("cInvName1");
+	}
+
+	/**
+	 * 规格
+	 */
+	public M setCInvStd(java.lang.String cInvStd) {
+		set("cInvStd", cInvStd);
+		return (M)this;
+	}
+
+	/**
+	 * 规格
+	 */
+	@JBoltField(name="cinvstd" ,columnName="cInvStd",type="String", remark="规格", required=false, maxLength=255, fixed=0, order=16)
+	@JSONField(name = "cinvstd")
+	public java.lang.String getCInvStd() {
+		return getStr("cInvStd");
+	}
+
+	/**
+	 * 收货地点
+	 */
+	public M setCDistrictName(java.lang.String cDistrictName) {
+		set("cDistrictName", cDistrictName);
+		return (M)this;
+	}
+
+	/**
+	 * 收货地点
+	 */
+	@JBoltField(name="cdistrictname" ,columnName="cDistrictName",type="String", remark="收货地点", required=false, maxLength=200, fixed=0, order=17)
+	@JSONField(name = "cdistrictname")
+	public java.lang.String getCDistrictName() {
+		return getStr("cDistrictName");
+	}
+
+	/**
+	 * 计划到货时间
+	 */
+	public M setCPlanAogTime(java.lang.String cPlanAogTime) {
+		set("cPlanAogTime", cPlanAogTime);
+		return (M)this;
+	}
+
+	/**
+	 * 计划到货时间
+	 */
+	@JBoltField(name="cplanaogtime" ,columnName="cPlanAogTime",type="String", remark="计划到货时间", required=false, maxLength=10, fixed=0, order=18)
+	@JSONField(name = "cplanaogtime")
+	public java.lang.String getCPlanAogTime() {
+		return getStr("cPlanAogTime");
 	}
 
 }

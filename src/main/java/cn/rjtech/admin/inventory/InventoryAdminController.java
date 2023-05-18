@@ -11,6 +11,7 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.config.ExtendUploadFolder;
+import cn.rjtech.admin.bommaster.BomMasterService;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.inventoryplan.InventoryPlanService;
@@ -23,6 +24,7 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -59,6 +61,8 @@ public class InventoryAdminController extends BaseAdminController {
 	private InventoryWorkRegionService inventoryWorkRegionService;
 	@Inject
 	private InventoryRoutingService inventoryRoutingService;
+	@Inject
+	private BomMasterService bomMasterService;
 
    /**
 	* 首页
@@ -315,8 +319,8 @@ public class InventoryAdminController extends BaseAdminController {
 		renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("物料建模-存货档案"));
 	}
 	/**
-	  * 获取存货档案列表 
-	  * 通过关键字匹配 
+	  * 获取存货档案列表
+	  * 通过关键字匹配
 	 * autocomplete组件使用
 	 */
 	@UnCheck
@@ -384,4 +388,25 @@ public class InventoryAdminController extends BaseAdminController {
 		renderJsonData(service.inventorySpotCheckList(getKv()));
 	}
 
+	public void findBomCompareByBomMasterInvId(@Para(value = "") Long invId){
+		renderJsonData(bomMasterService.findBomCompareByBomMasterInvId(getKv(), getPageNumber(), getPageSize()));
+	}
+
+    public void batchFetch(@Para(value = "column") String column,
+                           @Para(value = "values") String values) {
+        ValidationUtils.notBlank(column, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notBlank(values, JBoltMsg.PARAM_ERROR);
+        
+        renderJson(service.batchFetch(column, values));
+    }
+
+    /**
+     * 批量获取指定参数
+     */
+    public void fetchByCinvcode1s(@Para(value = "cinvcode1") String cinvcode1) {
+        ValidationUtils.notBlank(cinvcode1, JBoltMsg.PARAM_ERROR);
+        
+        renderJson(service.fetchByCinvcode1s(cinvcode1));
+    }
+    
 }

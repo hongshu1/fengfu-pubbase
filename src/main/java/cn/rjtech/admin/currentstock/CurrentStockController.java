@@ -2,8 +2,8 @@ package cn.rjtech.admin.currentstock;
 
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.extend.controller.BaseMesAdminController;
 import cn.rjtech.admin.stockcheckvouch.StockCheckVouchService;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockCheckVouch;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -20,13 +20,12 @@ import com.jfinal.kit.Kv;
 @Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/currentstock", viewPath = "_view/admin/currentstock")
-public class CurrentStockController extends BaseMesAdminController {
+public class CurrentStockController extends BaseAdminController {
 
 	@Inject
-	CurrentStockService service;
+	private CurrentStockService service;
 	@Inject
-	StockCheckVouchService stockCheckVouchService;
-
+	private StockCheckVouchService stockCheckVouchService;
 
    /**
 	* 首页

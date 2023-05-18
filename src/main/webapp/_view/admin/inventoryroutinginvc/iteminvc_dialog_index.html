@@ -11,7 +11,8 @@
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货编码" name="cInvCode" value="#(cInvCode)" />
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货名称" name="cInvName" value="#(cInvName)" />
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入客户部番" name="cInvCode1" value="#(cInvCode1)" />
-					<input type="hidden" autocomplete="off"  class="form-control"  placeholder="料品id" name="masterautoid" value="#(masterautoid)" />
+					<input type="hidden" autocomplete="off"  class="form-control"  placeholder="料品id" name="invId" value="#(iinventoryid)" />
+					<input type="hidden" autocomplete="off" class=" " name="isAdd" value="#(isAdd)" >
 					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 				</form>
 			</div>
@@ -41,7 +42,7 @@
 			   data-jbolttable
 			   data-height="fill"
 			   data-ajax="true"
-			   data-url="admin/inventory/datas"
+			   data-url="admin/inventory/findBomCompareByBomMasterInvId"
 			   data-column-resize="true"
 			   data-column-prepend="1:radio"
 			   data-conditions-form="itemmasterForm_#(pageId)"

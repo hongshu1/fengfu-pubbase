@@ -1,8 +1,12 @@
 package cn.rjtech.admin.inventoryroutingconfig;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.model.momdata.InventoryRouting;
 import cn.rjtech.model.momdata.InventoryroutingconfigOperation;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.plugin.activerecord.Page;
@@ -142,26 +146,29 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 	}
 
 	public List<Record> dataList(Long iinventoryroutingid) {
-		return dbTemplate("inventoryclass.getRouingConfigs", Okv.by("iinventoryroutingid", iinventoryroutingid)).find();
+		List<Record> list = dbTemplate("inventoryclass.getRouingConfigs", Okv.by("iinventoryroutingid", iinventoryroutingid)).find();
+		return list;
 	}
 
 
-	public Ret saveItemRoutingConfig(Long iitemroutingid, Integer iseq) {
+	public Ret saveItemRoutingConfig(Long inventoryRoutingId, Integer iseq, Long iPid, String cParentInvName) {
 		tx(() -> {
 			//新增
-			InventoryRoutingConfig itemroutingconfig = new InventoryRoutingConfig();
-			Long autoid = JBoltSnowflakeKit.me.nextId();
-			itemroutingconfig.setIAutoId(autoid);
-			itemroutingconfig.setIInventoryRoutingId(iitemroutingid);
-			itemroutingconfig.setISeq(iseq);
-			itemroutingconfig.setIsEnabled(true);
-			itemroutingconfig.setICreateBy(JBoltUserKit.getUserId());
-			itemroutingconfig.setCCreateName(JBoltUserKit.getUserName());
-			itemroutingconfig.setDCreateTime(new Date());
-			itemroutingconfig.save();
+			InventoryRoutingConfig inventoryRoutingConfig = new InventoryRoutingConfig();
+			Long id = JBoltSnowflakeKit.me.nextId();
+			inventoryRoutingConfig.setIAutoId(id);
+			inventoryRoutingConfig.setIInventoryRoutingId(inventoryRoutingId);
+			inventoryRoutingConfig.setISeq(iseq);
+			inventoryRoutingConfig.setIsEnabled(true);
+			inventoryRoutingConfig.setICreateBy(JBoltUserKit.getUserId());
+			inventoryRoutingConfig.setCCreateName(JBoltUserKit.getUserName());
+			inventoryRoutingConfig.setDCreateTime(new Date());
+			inventoryRoutingConfig.setIPid(iPid);
+			inventoryRoutingConfig.setCParentInvName(cParentInvName);
+			inventoryRoutingConfig.save();
 
 			//修改工序配置顺序号
-			updateSeq(iitemroutingid);
+			updateSeq(inventoryRoutingId);
 
 			return true;
 		});
@@ -175,20 +182,17 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
-		if (!JBoltUserKit.isSystemAdmin()){
-			ValidationUtils.isTrue(false,"当前账号为非超级管理员，不能删除!");
-		}
 		tx(() -> {
 			String[] idarry = ids.split(",");
 			InventoryRoutingConfig inventoryRoutingConfig = findById(idarry[0]);
-			//工序子表
-			deleteMultiByConfigidsOper(idarry);
-			//设备集子表
-			deleteMultiByConfigidsEquipment(idarry);
-			//存货工艺工序
-			deleteMultiByConfigidsInvcs(idarry);
-			//存货工艺工序物料集
-			deleteMultiByConfigidsSops(idarry);
+//			//工序子表
+//			deleteMultiByConfigidsOper(idarry);
+//			//设备集子表
+//			deleteMultiByConfigidsEquipment(idarry);
+//			//存货工艺工序
+//			deleteMultiByConfigidsInvcs(idarry);
+//			//存货工艺工序物料集
+//			deleteMultiByConfigidsSops(idarry);
 
 			//工艺配置主表
 			//deleteByIds(ids, true);

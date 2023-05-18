@@ -1,0 +1,33 @@
+<form onsubmit="return false;" id="formApprovalFlowDForm" action="#(action)" method="post">
+<input type="hidden" name="formApprovalFlowD.iautoid" value="#(formApprovalFlowD.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">单据审批流程主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入单据审批流程主表ID" maxlength="19" name="formApprovalFlowD.iformapprovalflowmid" value="#(formApprovalFlowD.iformapprovalflowmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">顺序值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入顺序值"  maxlength="10" name="formApprovalFlowD.iseq" value="#(formApprovalFlowD.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批人，系统用户ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入审批人，系统用户ID" maxlength="19" name="formApprovalFlowD.iuserid" value="#(formApprovalFlowD.iuserid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审核状态;1. 待审核 2. 审核通过 3. 审核不通过</label>
+		<div class="col input-group">
+			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="formApprovalFlowD.iauditstatus" data-refresh="true"  data-rule="select"  data-tips="请选择审核状态;1. 待审核 2. 审核通过 3. 审核不通过" data-text="=请选择="  data-value="" data-select="#( formApprovalFlowD.iauditstatus ??)"></select>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="formApprovalFlowDForm")
+#end
+

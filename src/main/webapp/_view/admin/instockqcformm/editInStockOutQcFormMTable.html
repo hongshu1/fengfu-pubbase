@@ -20,19 +20,19 @@
           </tr>
           <tr height="28" style="mso-height-source:userset;height:21pt" id="r1">
             <td height="26" class="x74" style="height:19.5pt;">客户部番</td>
-            <td class="x71">#(record.cinvcode1??)</td>
+            <td>#(record.cinvcode1??)</td>
             <td colspan="4" rowspan="2" height="54" class="x74"
                 style="border-right:1px solid windowtext;border-bottom:1px solid windowtext;height:40.5pt;">
               <div class="form-group row  col-8"
                    id="cMeaSurePurpose"
-                   data-radio
-                   data-rule="radio"
+                   data-checkbox
+                   data-rule="checkbox"
                    data-default=""
                    data-url="admin/dictionary/options?key=cmeasurepurpose"
                    data-value-attr="sn"
                    data-text-attr="cmeasurepurpose"
                    data-inline="true"
-                   data-value="#(record.cmeasurepurpose??)"
+                   data-value="#(instockqcformm.cmeasurepurpose??)"
                    data-name="cmeasurepurpose">
               </div>
             </td>
@@ -123,9 +123,9 @@
             <button type="button" onclick="inserRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
-            <img data-switchbtn data-value="#(instockqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
+            <!--<img data-switchbtn data-value="#(instockqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
                  data-url="admin/instockqcformm/toggleIsCpkSigned/#(instockqcformm.iautoid??)" style="margin-left: 50px;"/>
-            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
+            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>-->
           </div>
         </table>
 
@@ -148,12 +148,12 @@
             {@each data.cvaluelist as value,indextest}
             <td>
               {@if data.itype == '1'}
-              <input name="${value.name}" type="number" class="cA01" value="${value.cvalue}"
+              <input name="cA${value.name}" type="number" class="cA01" value="${value.cvalue}"
                      title="最大值：${data.imaxval}，标准值：${data.istdval}，最小值：${data.iminval}"/>
               {@else if data.itype == '2'}
-              <input name="${value.name}" type="text" class="cA01" title="${data.coptions}" value="${value.cvalue}"/>
+              <input name="cA${value.name}" type="text" class="cA01" title="${data.coptions}" value="${value.cvalue}"/>
               {@else if data.itype == '3'}
-              <select name="${value.name}"
+              <select name="cA${value.name}"
                       class="form-control cA01"
                       data-url="admin/dictionary/options?key=overallsize"
                       data-autoload
@@ -163,28 +163,24 @@
                       data-select="${value.cvalue}"
                       title="=整体尺寸="></select>
               {@else if data.itype == '4'}
-              <input name="${value.name}" type="text" class="cA01" title="#{data.coptions??}" value="${value.cvalue}"/>
+              <input name="cA${value.name}" type="text" class="cA01" title="#{data.coptions??}" value="${value.cvalue}"/>
               {@else if data.itype == '5'}
-              <div class="form-group row cA01"
-                   data-name="${value.name}"
-                   data-checkbox
-                   data-rule="checkbox"
-                   data-default=""
-                   data-url="admin/dictionary/options?key=appearance"
-                   data-value-attr="sn"
-                   data-text-attr="appearance"
-                   data-inline="false"
-                   data-value="${value.cvalue}"></div>
+              <select name="appearance${value.name}" class="form-control cA01" data-url="admin/dictionary/options?key=appearance"
+                      data-autoload data-text="=整体外观=" data-value-attr="sn" data-value="" multiple
+                      data-select-type="select2"
+                      data-select="${value.cvalue}" title="=整体外观="></select>
+              </select>
               {@else if data.itype == '6'}
-              <select name="${value.name}" class="form-control cA01" data-url="admin/dictionary/options?key=overallsize"
+              <select name="cA${value.name}" class="form-control cA01" data-url="admin/dictionary/options?key=overallsize"
                       data-autoload
                       data-text="=整体尺寸=" data-value-attr="sn" value="${value.cvalue}" data-select="#(data.coptions??)"></select>
               {@else if data.itype == '7'}
-              <input name="${value.name}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+              <input name="cA${value.name}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
+                     autocomplete="off"
                      class="form-control cA01" placeholder="结束日期" data-tips="结束时间" maxlength="23"
                      value="${value.cvalue}">
               {@else data.itype == '8'}
-              <input name="${value.name}" type="text" class="form-control cA01" data-date data-type="time" data-fmt="HH:mm:ss"
+              <input name="cA${value.name}" type="text" class="form-control cA01" data-date data-type="time" data-fmt="HH:mm:ss"
                      value="${value.cvalue}">
               {@/if}
             </td>
@@ -327,7 +323,6 @@
     let length = jboltTableAllDatas[0].cvaluelist.length;
     for (let col = 0; col < rows; col++) {
       let newVar = length + col + 1;
-      // $col = $("<th style='width: 150px'>" + newVar + "</th>");
       var firstLie = '<th class="setStyle">' + newVar + '</th>';
       $(".table>thead>tr").append(firstLie);
     }
@@ -363,7 +358,7 @@
     }
     //jboltTableInsertRow
     clearJboltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
-    var success = jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, true, true);
+    jboltTableInsertRow("#jbolt_table_checkouttableparam_split_#(pageId)3", jboltTableAllDatas, false, false, false);
   }
 </script>
 
@@ -372,10 +367,33 @@
   function submitThisForm() {
     //获取整个form的数据
     let serializeArray = $("#instockqcformmform_#(pageId)").serializeArray();
-    //过滤出只有name=cA的数据
+    //过滤出只有name=cA和appearance的数据
     let filterserializeArray = serializeArray.filter((ele) => {
-      return ele.name.startWith("cA");
+      return ele.name.startWith("cA") || ele.name.startWith("appearance");
     });
+
+    //如果是多选框，让参数放在同一个cA上
+    for (let ele = 0; ele < filterserializeArray.length; ele++) {
+      if (filterserializeArray[ele].name.startsWith('appearance')) {
+        let lastElement = filterserializeArray[ele];
+        let nextElement = filterserializeArray[ele + 1];
+        if (nextElement == undefined || nextElement == null) {
+          continue;
+        }
+        if (lastElement.name == nextElement.name) {
+          if (lastElement.value != '' && nextElement.value != '') {
+            filterserializeArray[ele].value = lastElement.value + "," + nextElement.value;
+          } else if (lastElement.value == '' && nextElement.value != '') {
+            filterserializeArray[ele].value = nextElement.value;
+          } else if (lastElement.value != '' && nextElement.value == '') {
+            filterserializeArray[ele].value = lastElement.value;
+          }
+          //移除下一个同名的cA
+          filterserializeArray.splice(ele + 1, 1);
+          ele = ele - 1;
+        }
+      }
+    }
 
     /*
     * 把二维数组filterserializeArray分成10个一维数组
@@ -421,8 +439,16 @@
       subMilasUrlArr.push(tableData);
     }
 
+    //测试目的
+    var cmeasurepurpose = "";
+    let cmeasurereasonList = serializeArray.filter((ele) => {
+      return ele.name == 'cmeasurepurpose';
+    });
+    for (let purpose = 0; purpose < cmeasurereasonList.length; purpose++) {
+      cmeasurepurpose += cmeasurereasonList[purpose].value + ",";
+    }
+    let cmeasurepurpose2 = cmeasurepurpose.substring(0, cmeasurepurpose.lastIndexOf(','));
     var cmeasurereason = $("#cMeaSureReason").val(); //测定理由
-    var cmeasurepurpose = $('input[name="cmeasurepurpose"]').filter(':checked').val();//测试目的
     var cmeasureunit = $('input[name="cmeasureunit"]').filter(':checked').val();//测定单位
     var isok = $('input[name="isok"]').filter(':checked').val();//是否合格
     var cmemo = $("#cMemo").val(); //备注
@@ -431,7 +457,7 @@
     const submitDatas = {
       serializeSubmitList: JSON.stringify(subMilasUrlArr),
       cmeasurereason: cmeasurereason,
-      cmeasurepurpose: cmeasurepurpose,
+      cmeasurepurpose: cmeasurepurpose2,
       cmeasureunit: cmeasureunit,
       cmemo: cmemo,
       cdcno: cdcno,

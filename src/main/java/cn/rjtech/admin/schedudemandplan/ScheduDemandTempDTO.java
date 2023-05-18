@@ -20,6 +20,8 @@ public class ScheduDemandTempDTO implements Serializable {
 	private String cInvName1;
 	//子件销售类型
 	private Integer iSaleType;
+	//自己层级
+	private Integer iLevel;
 	//子件供应商id
 	private Long iVendorId;
 	//子件供应商编码
@@ -40,6 +42,14 @@ public class ScheduDemandTempDTO implements Serializable {
 	//顺序号
 	private Integer sort;
 
+
+	public Integer getiLevel() {
+		return iLevel;
+	}
+
+	public void setiLevel(Integer iLevel) {
+		this.iLevel = iLevel;
+	}
 
 	public Integer getiPkgQty() {
 		return iPkgQty;

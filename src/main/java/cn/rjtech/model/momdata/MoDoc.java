@@ -11,5 +11,6 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Mo_MoDoc" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class MoDoc extends BaseMoDoc<MoDoc> {
+
 }
 

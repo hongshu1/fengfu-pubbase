@@ -1,0 +1,66 @@
+#@jboltLayout()
+#set(pageId=RandomUtil.random(6))
+#define main()
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<form class="form-inline d-none" id="user_form_#(pageId)">
+<input type="hidden" name="approvalDid" value="#(approvalDid??)"/>
+</form>
+</div>
+<div class="jbolt_page_content">
+
+<!-- JBoltTable的数据模板定义-->
+<script type="text/template" id="user_rowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.name}</td>
+<td>${data.username}</td>
+<td>${data.status}</td>
+</tr>
+{@/each}
+</script>
+
+    <div class="jbolt_table_toolbar" id="jbolt_toolbar_#(pageId)">
+
+        <!--<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增角色用户" data-url="admin/role/chooseUsers?roleId=#(roleId)" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+            <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+        </div>-->
+
+    </div>
+
+<table class="table-center"
+data-jbolttable
+id="role_users_table_#(pageId)"
+data-ajax="true"
+data-width="auto"
+data-height="fill"
+data-toolbar="jbolt_toolbar_#(pageId)"
+data-url="admin/formapprovald/userDatas"
+data-rowtpl="user_rowtpl_#(pageId)"
+data-page="userPage_#(pageId)"
+data-conditions-form="user_form_#(pageId)"
+data-ajax-success-handler="initDialogBtns_#(pageId)"
+>
+<thead>
+<tr><th data-width="60">序号</th><th data-min-width="120">姓名</th><th data-min-width="120">用户名</th><th data-width="100">
+    状态</th></tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</div>
+</div>
+#end
+#define js()
+<script type="text/javascript">
+$(function(){
+	//系统超管才能出
+})
+
+function initDialogBtns_#(pageId)(table){
+
+}
+</script>
+#end

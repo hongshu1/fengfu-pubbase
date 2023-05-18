@@ -1,21 +1,64 @@
 package cn.rjtech.entity.vo.instockdefect;
 
-import cn.rjtech.entity.vo.RcDocDefect.RcDocDefect;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
- * @Description 来料异常品记录
+ * @Description 在库异常品记录
  */
 
 public class InStockDefect implements Serializable {
+
+
+    /**
+     * 不良项目，字典编码，多个“,”分隔
+     */
+    private  String cbadnesssns;
+    /**
+     * 创建人
+     */
+    private  String ccreatename;
+    /**不良内容描述*/
+    private String cdesc;
+
+    /**组织编码*/
+    private  String corgcode;
+
+    /**创建时间*/
+    private  Date dcreatetime;
+
+    /**检验时间*/
+    private  Date dqctime;
+
+    /**检验用户ID*/
+    private  Long iqcuserid;
+
+    /**删除状态*/
+    private  Boolean isdeleted;
+
+    /**质检表格ID*/
+    private  Long iQcFormId;
+
+    /**质检表格ID*/
+    private  Integer iqty;
+
+
 
     /**
      * 主键ID
      */
     private Long iautoid;
+
+    /**
+     * 状态名称
+     */
+    private String auditstate;
+
+    /**
+     * 状态编号
+     */
+    private String istatus;
     /**
      * 质量管理-在库检id
      */
@@ -44,10 +87,7 @@ public class InStockDefect implements Serializable {
      * 存货编码编码
      */
     private String cinvcode;
-    /**
-     * 状态
-     */
-    private Integer istatus;
+
 
     /**
      * 存货编码编码
@@ -55,7 +95,7 @@ public class InStockDefect implements Serializable {
     private String cinvname;
 
     /**
-     * 首发再发
+     * 首发再发编码
      */
     private Boolean isfirsttime;
 
@@ -77,31 +117,100 @@ public class InStockDefect implements Serializable {
     private List<InStockDefect> inStockDefects;
 
     /**
-     * 开始时间
+     * 检验时间
      */
-    private Date startdate;
+    private Date  cinvqcformno;
     /**
-     * 结束时间
+     * 更新时间
      */
-    private Date enddate;
+    private Date dupdatetime;
+    /**
+     * 更新人
+     */
+    private String cupdatename;
+    /**
+     * 存货id
+     */
+    private Long iinventoryid;
 
-    public InStockDefect(Long iautoid, Long iinstockqcformmid, String type, String cOrgName, String cdocno, String imodocid, String cinvcode1, String cinvcode, Integer istatus, String cinvname, Boolean isfirsttime, String capproach, Integer iresptype, List<InStockDefect> inStockDefects, Date startdate, Date enddate) {
-        this.iautoid = iautoid;
-        this.iinstockqcformmid = iinstockqcformmid;
-        this.type = type;
-        this.cOrgName = cOrgName;
-        this.cdocno = cdocno;
-        this.imodocid = imodocid;
-        this.cinvcode1 = cinvcode1;
-        this.cinvcode = cinvcode;
-        this.istatus = istatus;
-        this.cinvname = cinvname;
-        this.isfirsttime = isfirsttime;
-        this.capproach = capproach;
-        this.iresptype = iresptype;
-        this.inStockDefects = inStockDefects;
-        this.startdate = startdate;
-        this.enddate = enddate;
+    public String getCbadnesssns() {
+        return cbadnesssns;
+    }
+
+    public void setCbadnesssns(String cbadnesssns) {
+        this.cbadnesssns = cbadnesssns;
+    }
+
+    public String getCcreatename() {
+        return ccreatename;
+    }
+
+    public void setCcreatename(String ccreatename) {
+        this.ccreatename = ccreatename;
+    }
+
+    public String getCdesc() {
+        return cdesc;
+    }
+
+    public void setCdesc(String cdesc) {
+        this.cdesc = cdesc;
+    }
+
+    public String getCorgcode() {
+        return corgcode;
+    }
+
+    public void setCorgcode(String corgcode) {
+        this.corgcode = corgcode;
+    }
+
+    public Date getDcreatetime() {
+        return dcreatetime;
+    }
+
+    public void setDcreatetime(Date dcreatetime) {
+        this.dcreatetime = dcreatetime;
+    }
+
+    public Date getDqctime() {
+        return dqctime;
+    }
+
+    public void setDqctime(Date dqctime) {
+        this.dqctime = dqctime;
+    }
+
+    public Long getIqcuserid() {
+        return iqcuserid;
+    }
+
+    public void setIqcuserid(Long iqcuserid) {
+        this.iqcuserid = iqcuserid;
+    }
+
+    public Boolean getIsdeleted() {
+        return isdeleted;
+    }
+
+    public void setIsdeleted(Boolean isdeleted) {
+        this.isdeleted = isdeleted;
+    }
+
+    public Long getiQcFormId() {
+        return iQcFormId;
+    }
+
+    public void setiQcFormId(Long iQcFormId) {
+        this.iQcFormId = iQcFormId;
+    }
+
+    public Integer getIqty() {
+        return iqty;
+    }
+
+    public void setIqty(Integer iqty) {
+        this.iqty = iqty;
     }
 
     public Long getIautoid() {
@@ -110,6 +219,22 @@ public class InStockDefect implements Serializable {
 
     public void setIautoid(Long iautoid) {
         this.iautoid = iautoid;
+    }
+
+    public String getAuditstate() {
+        return auditstate;
+    }
+
+    public void setAuditstate(String auditstate) {
+        this.auditstate = auditstate;
+    }
+
+    public String getIstatus() {
+        return istatus;
+    }
+
+    public void setIstatus(String istatus) {
+        this.istatus = istatus;
     }
 
     public Long getIinstockqcformmid() {
@@ -168,14 +293,6 @@ public class InStockDefect implements Serializable {
         this.cinvcode = cinvcode;
     }
 
-    public Integer getIstatus() {
-        return istatus;
-    }
-
-    public void setIstatus(Integer istatus) {
-        this.istatus = istatus;
-    }
-
     public String getCinvname() {
         return cinvname;
     }
@@ -216,20 +333,36 @@ public class InStockDefect implements Serializable {
         this.inStockDefects = inStockDefects;
     }
 
-    public Date getStartdate() {
-        return startdate;
+    public Date getCinvqcformno() {
+        return cinvqcformno;
     }
 
-    public void setStartdate(Date startdate) {
-        this.startdate = startdate;
+    public void setCinvqcformno(Date cinvqcformno) {
+        this.cinvqcformno = cinvqcformno;
     }
 
-    public Date getEnddate() {
-        return enddate;
+    public Date getDupdatetime() {
+        return dupdatetime;
     }
 
-    public void setEnddate(Date enddate) {
-        this.enddate = enddate;
+    public void setDupdatetime(Date dupdatetime) {
+        this.dupdatetime = dupdatetime;
+    }
+
+    public String getCupdatename() {
+        return cupdatename;
+    }
+
+    public void setCupdatename(String cupdatename) {
+        this.cupdatename = cupdatename;
+    }
+
+    public Long getIinventoryid() {
+        return iinventoryid;
+    }
+
+    public void setIinventoryid(Long iinventoryid) {
+        this.iinventoryid = iinventoryid;
     }
 }
 

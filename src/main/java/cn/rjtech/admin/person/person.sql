@@ -1,5 +1,5 @@
 #sql("paginateAdminDatas")
-select * from bd_person where 1=1 and isdeleted = 0
+select * from bd_person where 1=1 and isDeleted = '0'
 	#if(iorgid)
 		and iorgid = #para(iorgid)
 	#end
