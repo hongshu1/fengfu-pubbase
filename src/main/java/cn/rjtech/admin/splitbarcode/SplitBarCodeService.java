@@ -53,7 +53,7 @@ public class SplitBarCodeService extends BaseService<Inventory> {
      * 拆框载具选择
      */
     public Page<Record> BarCodeSelectDatas(Integer pageNumber, Integer pageSize, Kv kv) {
-        kv.set("organizecode",organizeService.getOrganizecode());
+        kv.set("organizecode",getOrgCode());
         Page<Record> paginate = dbTemplate("splitbarcode.BarCodeSelectDatas", kv).paginate(pageNumber, pageSize);
         return paginate;
     }
@@ -65,7 +65,7 @@ public class SplitBarCodeService extends BaseService<Inventory> {
         BigDecimal qtys = kv.getBigDecimal("iqty");
         String invnames = kv.getStr("cinvname");
         List<Kv> jsonArray = JSON.parseArray(datas, Kv.class);
-        String organizecode = organizeService.getOrganizecode();
+        String organizecode = getOrgCode();
         String u9Name = userThirdpartyService.getU9Name(JBoltUserKit.getUserId());
         Date now = new Date();
         String loginDate = JBoltDateUtil.format(now, "yyyy-MM-dd");
@@ -137,17 +137,17 @@ public class SplitBarCodeService extends BaseService<Inventory> {
     }
 
     public Page<Record> barcodeDatas(Kv kv) {
-        kv.set("organizecode",organizeService.getOrganizecode());
+        kv.set("organizecode",getOrgCode());
         Page<Record> paginate = dbTemplate("splitbarcode.barcodeDatas", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
         return paginate;
     }
 
-    public Record findByShiWu(String autoid) {
-        return dbTemplate("splitbarcode.findByShiWu", Kv.by("autoid", autoid)).findFirst();
+    public Record findByShiWu(String logno) {
+        return dbTemplate("splitbarcode.findByShiWu", Kv.by("logno", logno)).findFirst();
     }
 
-    public List<Record> findListBylogno(String logno) {
-        List<Record> list = dbTemplate("splitbarcode.findByListlogno", Kv.by("logno", logno)).find();
+    public List<Record> findListByCsourceid(String csourceid) {
+        List<Record> list = dbTemplate("splitbarcode.findByListCsourceid", Kv.by("csourceid", csourceid)).find();
         return list;
     }
 }
