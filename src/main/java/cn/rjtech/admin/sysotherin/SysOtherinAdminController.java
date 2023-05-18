@@ -79,21 +79,23 @@ public class SysOtherinAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-
+		// todo 待优化
 		//仓库
 		Warehouse first = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", sysOtherin.getWhcode());
-		if (null != first.getCWhName()) {
+		if (null != first && null != first.getCWhName()) {
 			set("cwhname", first.getCWhName());
 		}
 		//入库类型
 		RdStyle first1 = rdstyleservice.findFirst("select * from Bd_Rd_Style where crdcode=?", sysOtherin.getRdCode());
-		if (null != first1.getCRdName()) {
+		if (null != first1 && null != first1.getCRdName()) {
 			set("crdname", first1.getCRdName());
 		}
 		//查供应商名称
 		if (null != sysOtherin.getVenCode()) {
 			Vendor first2 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", sysOtherin.getVenCode());
-			set("venname", first2.getCVenName());
+			if(null != first2){
+				set("venname", first2.getCVenName());
+			}
 		}
 		set("sysotherin",sysOtherin);
 		render("edit.html");
