@@ -4,7 +4,7 @@
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.barcode}</td> <!--条码-->
-            <td>${data.cinvcode}</td> <!--存货编码-->
+            <td>${data.invcode}</td> <!--存货编码-->
             <td>${data.cinvcode1}</td> <!--客户部番-->
             <td>${data.cinvname1}</td> <!--部品名称-->
             <td>${data.cinvstd}</td> <!--规格-->
@@ -58,8 +58,8 @@
           <thead class="fw-normal">
           <tr>
             <th data-width="60" data-column="index">序号</th>
-            <th data-width="150" data-column="barcode">现品票</th>
-              <th data-width="150" data-column="cinvcode">存货编码</th>
+            <th data-width="180" data-column="barcode">现品票</th>
+              <th data-width="150" data-column="invcode">存货编码</th>
               <th data-width="150" data-column="cinvcode1">客户部番</th>
               <th data-width="150" data-column="cinvname1">部品名称</th>
               <th data-width="150" data-column="cinvstd">规格</th>
@@ -95,7 +95,6 @@
         },
           barcode: { //条码
               maxLength: 100,
-              required: true,
               placeholder: "=请选择=",
               type:"autocomplete",
               url: "admin/otherout/barcodeDatas",
@@ -103,29 +102,30 @@
               width: 800,
               sync:"" ,
               valueAttr: "barcode",
-              columnAttr: "barcode,cinvcode,cinvcode1,cinvname1,cinvstd,inventorycuomname,cinvccode,cinvcname",
-              header:'条码,存货编码,客户部番,部品名称,规格型号,库存主单位,项目大类编码,项目大类名称',
-              changeColumns:[{column: "barcode", use: "barcode"},{column: "cinvcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
+              columnAttr: "barcode,cinvcode,cinvcode1,cinvname1,cinvstd,inventorycuomname,qty,cinvccode,cinvcname",
+              header:'条码,存货编码,客户部番,部品名称,规格型号,库存主单位,数量,项目大类编码,项目大类名称',
+              changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
                   {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
-                  {column: "cinvccode", use: "cinvccode"},{column: "cinvcname", use: "cinvcname"},
-                  {column: "inventorycuomname", use: "inventorycuomname"},{column: "iinventoryid", use: "iautoid"}]
+                  {column: "cinvccode", use: "cinvccode"},{column: "cinvcname", use: "cinvcname"},{column: "qty", use: "qty"},
+                  {column: "cuomclassname", use: "cuomclassname"},{column: "iinventoryid", use: "iautoid"}
+              ]
 
           },
-          cinvcode: {
+          invcode: {
               type: "autocomplete",
               url: "admin/otherout/autocomplete",
               maxLength: 100,
-              required: true,
               placeholder: "=请选择=",
               textAttr: "cinvcode",
               width: 800,
               valueAttr: "cinvcode",
               columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomclassname,cinvccode,cinvcname",
               header:'存货编码,客户部番,部品名称,规格型号,库存主单位,项目大类编码,项目大类名称',
-              changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
+              changeColumns:[{column: "invcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
                   {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
                   {column: "cinvccode", use: "cinvccode"},{column: "cinvcname", use: "cinvcname"},
-                  {column: "cuomclassname", use: "cuomclassname"},{column: "iinventoryid", use: "iautoid"}]
+                  {column: "cuomclassname", use: "cuomclassname"},{column: "iinventoryid", use: "iautoid"}
+              ]
           },
           qty: {
               type:"amount",

@@ -1,13 +1,13 @@
-package cn.rjtech.admin.materialsout;
+package cn.rjtech.admin.otherdeliverylist;
 
 import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
-import cn.rjtech.admin.materialsoutdetail.MaterialsOutDetailService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
-import cn.rjtech.model.momdata.*;
-import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.model.momdata.MaterialsOut;
+import cn.rjtech.model.momdata.MaterialsOutDetail;
+import cn.rjtech.model.momdata.OtherOutDetail;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
@@ -18,6 +18,7 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.rjtech.model.momdata.OtherOut;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
@@ -27,22 +28,22 @@ import java.util.List;
 import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
- * 出库管理-材料出库单列表 Service
- * @ClassName: MaterialsOutService
+ * 出库管理-其他出库单列表 Service
+ * @ClassName: OtherOutService
  * @author: RJ
- * @date: 2023-05-13 16:16
+ * @date: 2023-05-17 09:35
  */
-public class MaterialsOutService extends BaseService<MaterialsOut> {
+public class OtherOutService extends BaseService<OtherOut> {
 
-	private final MaterialsOut dao = new MaterialsOut().dao();
+	private final OtherOut dao = new OtherOut().dao();
 
 	@Override
-	protected MaterialsOut dao() {
+	protected OtherOut dao() {
 		return dao;
 	}
 
 	@Inject
-	private MaterialsOutDetailService materialsOutDetailService;
+	private OtherOutDetailService otherOutDetailService;
 
 	/**
 	 * 后台管理分页查询
@@ -52,44 +53,55 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
-		return dbTemplate(u8SourceConfigName(),"materialsout.paginateAdminDatas",kv).paginate(pageNumber, pageSize);
+		return dbTemplate("otherdeliverylist.paginateAdminDatas",kv).paginate(pageNumber, pageSize);
 	}
 
 	/**
-	 * 保存
-	 * @param materialsOut
+	 * 其他出库单列表 明细
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param kv
 	 * @return
 	 */
-	public Ret save(MaterialsOut materialsOut) {
-		if(materialsOut==null || isOk(materialsOut.getAutoID())) {
+	public Page<Record> getOtherOutLines(int pageNumber, int pageSize, Kv kv){
+		return dbTemplate("otherdeliverylist.getOtherOutLines",kv).paginate(pageNumber, pageSize);
+
+	}
+	/**
+	 * 保存
+	 * @param otherOut
+	 * @return
+	 */
+	public Ret save(OtherOut otherOut) {
+		if(otherOut==null || isOk(otherOut.getAutoID())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		//if(existsName(materialsOut.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		boolean success=materialsOut.save();
+		//if(existsName(otherOut.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		boolean success=otherOut.save();
 		if(success) {
 			//添加日志
-			//addSaveSystemLog(materialsOut.getAutoid(), JBoltUserKit.getUserId(), materialsOut.getName());
+			//addSaveSystemLog(otherOut.getAutoid(), JBoltUserKit.getUserId(), otherOut.getName());
 		}
 		return ret(success);
 	}
 
 	/**
 	 * 更新
-	 * @param materialsOut
+	 * @param otherOut
 	 * @return
 	 */
-	public Ret update(MaterialsOut materialsOut) {
-		if(materialsOut==null || notOk(materialsOut.getAutoID())) {
+	public Ret update(OtherOut otherOut) {
+		if(otherOut==null || notOk(otherOut.getAutoID())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//更新时需要判断数据存在
-		MaterialsOut dbMaterialsOut=findById(materialsOut.getAutoID());
-		if(dbMaterialsOut==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(materialsOut.getName(), materialsOut.getAutoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		boolean success=materialsOut.update();
+		OtherOut dbOtherOut=findById(otherOut.getAutoID());
+		if(dbOtherOut==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
+		//if(existsName(otherOut.getName(), otherOut.getAutoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		boolean success=otherOut.update();
 		if(success) {
 			//添加日志
-			//addUpdateSystemLog(materialsOut.getAutoid(), JBoltUserKit.getUserId(), materialsOut.getName());
+			//addUpdateSystemLog(otherOut.getAutoid(), JBoltUserKit.getUserId(), otherOut.getName());
 		}
 		return ret(success);
 	}
@@ -100,19 +112,18 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
-
 		tx(() -> {
 			for (String idStr : StrSplitter.split(ids, COMMA, true, true)) {
 				String autoId = idStr;
-				MaterialsOut materialsOut = findById(autoId);
-				ValidationUtils.notNull(materialsOut, JBoltMsg.DATA_NOT_EXIST);
+				OtherOut otherOut = findById(autoId);
+				ValidationUtils.notNull(otherOut, JBoltMsg.DATA_NOT_EXIST);
 
 				// TODO 可能需要补充校验组织账套权限
 				// TODO 存在关联使用时，校验是否仍在使用
 
 				//删除行数据
-				materialsOutDetailService.deleteByBatchIds(autoId);
-				ValidationUtils.isTrue(materialsOut.delete(), JBoltMsg.FAIL);
+				otherOutDetailService.deleteByBatchIds(autoId);
+				ValidationUtils.isTrue(otherOut.delete(), JBoltMsg.FAIL);
 
 			}
 			return true;
@@ -131,26 +142,26 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 
 	/**
 	 * 删除数据后执行的回调
-	 * @param materialsOut 要删除的model
+	 * @param otherOut 要删除的model
 	 * @param kv 携带额外参数一般用不上
 	 * @return
 	 */
 	@Override
-	protected String afterDelete(MaterialsOut materialsOut, Kv kv) {
-		//addDeleteSystemLog(materialsOut.getAutoid(), JBoltUserKit.getUserId(),materialsOut.getName());
+	protected String afterDelete(OtherOut otherOut, Kv kv) {
+		//addDeleteSystemLog(otherOut.getAutoid(), JBoltUserKit.getUserId(),otherOut.getName());
 		return null;
 	}
 
 	/**
 	 * 检测是否可以删除
-	 * @param materialsOut 要删除的model
+	 * @param otherOut 要删除的model
 	 * @param kv 携带额外参数一般用不上
 	 * @return
 	 */
 	@Override
-	public String checkCanDelete(MaterialsOut materialsOut, Kv kv) {
+	public String checkCanDelete(OtherOut otherOut, Kv kv) {
 		//如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
-		return checkInUse(materialsOut, kv);
+		return checkInUse(otherOut, kv);
 	}
 
 	/**
@@ -161,8 +172,6 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	protected int systemLogTargetType() {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
-
-
 
 	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, Integer param, String revokeVal, String autoid) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
@@ -209,53 +218,54 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		}
 
 		tx(()->{
-			Long headerId = null;
+			String headerId = null;
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
-				MaterialsOut materialsOut = jBoltTable.getFormModel(MaterialsOut.class,"materialsOut");
+				OtherOut otherOut = jBoltTable.getFormModel(OtherOut.class,"otherOut");
 
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
-					if (materialsOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
+					if (otherOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
 						ValidationUtils.isTrue(false, "请先添加行数据！");
 					}
 				}
 
-				if ("submit".equals(revokeVal) && materialsOut.getAutoID() == null) {
+				if ("submit".equals(revokeVal) && otherOut.getAutoID() == null) {
 					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
 				}
 
 
-				if (materialsOut.getAutoID() == null && "save".equals(revokeVal)) {
+				if (otherOut.getAutoID() == null && "save".equals(revokeVal)) {
 //					保存
 //					订单状态：1=已保存，2=待审核，3=已审核
-					materialsOut.setState(param);
+					otherOut.setStatus(param);
 
-					materialsOut.setCreateDate(nowDate);
-					materialsOut.setOrganizeCode(OrgCode);
-					materialsOut.setCreatePerson(userName);
-					materialsOut.setModifyDate(nowDate);
-					materialsOut.setModifyPerson(userName);
-					save(materialsOut);
-					headerId = materialsOut.getAutoID();
+					otherOut.setCreateDate(nowDate);
+					otherOut.setOrganizeCode(OrgCode);
+					otherOut.setCreatePerson(userName);
+					otherOut.setModifyDate(nowDate);
+					otherOut.setModifyPerson(userName);
+					otherOut.setType("OtherOut");
+					save(otherOut);
+					headerId = otherOut.getAutoID();
 				}else {
 					if ( param == 2 ){
-						materialsOut.setAuditDate(nowDate);
-						materialsOut.setAuditPerson(userName);
+						otherOut.setAuditDate(nowDate);
+						otherOut.setAuditPerson(userName);
 					}
-					materialsOut.setState(param);
-					materialsOut.setModifyDate(nowDate);
-					materialsOut.setModifyPerson(userName);
-					update(materialsOut);
-					headerId = materialsOut.getAutoID();
+					otherOut.setStatus(param);
+					otherOut.setModifyDate(nowDate);
+					otherOut.setModifyPerson(userName);
+					update(otherOut);
+					headerId = otherOut.getAutoID();
 				}
 			}
 
 			// 获取待保存数据 执行保存
 			if (jBoltTable.saveIsNotBlank()) {
-				List<MaterialsOutDetail> lines = jBoltTable.getSaveModelList(MaterialsOutDetail.class);
+				List<OtherOutDetail> lines = jBoltTable.getSaveModelList(OtherOutDetail.class);
 
-				Long finalHeaderId = headerId;
+				String finalHeaderId = headerId;
 				lines.forEach(otherOutDetail -> {
 					otherOutDetail.setMasID(finalHeaderId);
 					otherOutDetail.setCreateDate(nowDate);
@@ -263,21 +273,21 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 					otherOutDetail.setModifyDate(nowDate);
 					otherOutDetail.setModifyPerson(userName);
 				});
-				materialsOutDetailService.batchSave(lines);
+				otherOutDetailService.batchSave(lines);
 			}
 			// 获取待更新数据 执行更新
 			if (jBoltTable.updateIsNotBlank()) {
-				List<MaterialsOutDetail> lines = jBoltTable.getUpdateModelList(MaterialsOutDetail.class);
+				List<OtherOutDetail> lines = jBoltTable.getUpdateModelList(OtherOutDetail.class);
 
 				lines.forEach(materialsOutDetail -> {
 					materialsOutDetail.setModifyDate(nowDate);
 					materialsOutDetail.setModifyPerson(userName);
 				});
-				materialsOutDetailService.batchUpdate(lines);
+				otherOutDetailService.batchUpdate(lines);
 			}
 			// 获取待删除数据 执行删除
 			if (jBoltTable.deleteIsNotBlank()) {
-				materialsOutDetailService.deleteByIds(jBoltTable.getDelete());
+				otherOutDetailService.deleteByIds(jBoltTable.getDelete());
 			}
 
 			return true;
@@ -295,17 +305,17 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		boolean success = false;
 		String userName = JBoltUserKit.getUserName();
 		Date nowDate = new Date();
-		List<MaterialsOut> listByIds = getListByIds(iAutoId);
+		List<OtherOut> listByIds = getListByIds(iAutoId);
 		if (listByIds.size() > 0) {
-			for (MaterialsOut materialsOut : listByIds) {
-				if (materialsOut.getState() != 2) {
-					return warn("订单："+materialsOut.getBillNo()+"状态不支持审核操作！");
+			for (OtherOut otherOut : listByIds) {
+				if (otherOut.getStatus() != 2) {
+					return warn("订单："+otherOut.getBillNo()+"状态不支持审核操作！");
 				}
 				//订单状态：3. 已审核
-				materialsOut.setState(3);
-				materialsOut.setAuditDate(nowDate);
-				materialsOut.setAuditPerson(userName);
-				success= materialsOut.update();
+				otherOut.setStatus(3);
+				otherOut.setAuditDate(nowDate);
+				otherOut.setAuditPerson(userName);
+				success= otherOut.update();
 			}
 		}
 
@@ -320,15 +330,15 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	 */
 	public Ret NoApprove(String ids) {
 		//TODO数据同步暂未开发 现只修改状态
-		for (MaterialsOut materialsOut :  getListByIds(ids)) {
+		for (OtherOut otherOut :  getListByIds(ids)) {
 //			订单状态： 3. 已审批
-			if (materialsOut.getState() != 3) {
-				return warn("订单："+materialsOut.getBillNo()+"状态不支持反审批操作！");
+			if (otherOut.getStatus() != 3) {
+				return warn("订单："+otherOut.getBillNo()+"状态不支持反审批操作！");
 			}
 
 			//订单状态： 2. 待审批
-			materialsOut.setState(2);
-			materialsOut.update();
+			otherOut.setStatus(2);
+			otherOut.update();
 		}
 		return SUCCESS;
 	}
@@ -344,55 +354,13 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		if( notOk(iAutoId)) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		MaterialsOut materialsOut = findById(iAutoId);
+		OtherOut otherOut = findById(iAutoId);
 		//订单状态：2. 待审批
-		materialsOut.setState(1);
-		materialsOut.setAuditDate(null);
-		materialsOut.setAuditPerson(null);
-		boolean result = materialsOut.update();
+		otherOut.setStatus(1);
+		otherOut.setAuditDate(null);
+		otherOut.setAuditPerson(null);
+		boolean result = otherOut.update();
 		return ret(result);
-	}
-
-	/**
-	 * 材料出库单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
-	 */
-	public Page<Record> getMaterialsOutLines(int pageNumber, int pageSize, Kv kv){
-		return dbTemplate("materialsout.getMaterialsOutLines",kv).paginate(pageNumber, pageSize);
-
-	}
-
-
-	/**
-	 * 生产工单查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
-	 */
-	public Page<Record> moDetailData(int pageNumber, int pageSize, Kv kv) {
-		return dbTemplate(u8SourceConfigName(),"materialsout.moDetailData",kv).paginate(pageNumber, pageSize);
-	}
-
-
-	/**
-	 * 材料出库单生产工单明细查询
-	 * @param iautoid
-	 * @return
-	 */
-	public Record getrcvMODetailList(String iautoid){
-		System.out.println(iautoid);
-		return dbTemplate(u8SourceConfigName(),"materialsout.getrcvMODetailList", Kv.by("iautoid",iautoid)).findFirst();
-	}
-
-	/**
-	 *  收发类别数据源
-	 */
-	public List<Record>  getRDStyleDatas(Kv kv) {
-		return dbTemplate("materialsout.getRDStyleDatas", kv).find();
 	}
 
 

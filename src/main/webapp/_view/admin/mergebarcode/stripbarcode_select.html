@@ -3,34 +3,34 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)">
 
-    <div class="jbolt_page_title">
-        <div class="row">
-            <div class="col-md-auto">
-                <h6><strong>选择</strong></h6>
-            </div>
-            <div class="col-md-auto">
-            </div>
-        </div>
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col-md-auto">
+        <h6><strong>选择</strong></h6>
+      </div>
+      <div class="col-md-auto">
+      </div>
     </div>
-    <div class="jbolt_page_title">
-        <div class="row">
-            <div class="col-12 text-left">
-                <form class="form-inline text-left" id="stirpitemmasterForm_#(pageId)" onsubmit="return false;" method="post">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="=料号=" name="invcodes" value=""/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="=品名=" name="invnames" value=""/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="=实物编码=" name="barcodes" value=""/>
-                    <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
-                    <button type="reset" class="btn btn-light"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+  </div>
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col-12 text-left">
+        <form class="form-inline text-left" id="stirpitemmasterForm_#(pageId)" onsubmit="return false;" method="post">
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="invcode" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货名称=" name="invname" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="barcode" value=""/>
+          <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-light"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
 
-                </form>
-            </div>
-        </div>
+        </form>
+      </div>
     </div>
-    <div class="jbolt_page_content">
-<!-- JBoltTable的数据模板定义-->
-<textarea class="jb_tpl_box" id="barcodeRowtpl_#(pageId)">
+  </div>
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="barcodeRowtpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iautoid}" >
+<tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.invcode}</td>
 <td>${data.invname}</td>
@@ -43,67 +43,62 @@
 </tr>
 {@/each}
 </textarea>
-
-
-        <div class="jbolt_table_toolbar" id="stripbarcode_toolbar_#(pageId)">
-            <div class="btn-group" hidden role="group" aria-label="btn-group">
-                <button data-btn onclick="getCheckedStrip(this)" id="btnclick" data-title="选择"
-                        class="btn btn-secondary"><i class="fa fa-check"></i> 选择
-                </button>
-            </div>
-        </div>
-
-
-        <table class="jbolt_table jbolt_main_table table-center"
-               id="bomitemPage_#(pageId)"
-               data-jbolttable
-               data-height="fill"
-               data-ajax="true"
-               data-url="admin/stripbarcode/StripSelectDatas"
-               data-column-resize="true"
-               data-column-prepend="1:checkbox:true"
-               data-bind-elements="#barcodeAddBtn_#(pageId)"
-               data-conditions-form="stirpitemmasterForm_#(pageId)"
-               data-rowtpl="barcodeRowtpl_#(pageId)"
-               data-page="itemmasterPage_#(pageId)"
-               data-toolbar="stripbarcode_toolbar_#(pageId)"
-               data-pagesize="30"
-        >
-            <thead>
-            <tr>
-                <th data-width="60">序号</th>
-                <th data-width="150" data-column="invcode">料号</th>
-                <th data-width="150" data-column="invname">品名</th>
-                <th data-width="150" data-column="invstd">规格</th>
-                <th data-width="150" data-column="unitname">单位</th>
-                <th data-width="150" data-column="barcode">实物编码</th>
-                <th data-width="150" data-column="pbarcode">载具编码</th>
-                <th data-width="150" data-column="batch">批次</th>
-                <th data-width="150" data-column="qty">数量</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-
-
+    <div class="jbolt_table_toolbar" id="stripbarcode_toolbar_#(pageId)">
+      <div class="btn-group" hidden role="group" aria-label="btn-group">
+        <button data-btn onclick="getCheckedStrip(this)" id="btnclick" data-title="选择"
+                class="btn btn-secondary"><i class="fa fa-check"></i> 选择
+        </button>
+      </div>
     </div>
+
+    <table class="jbolt_table jbolt_main_table table-center"
+           id="bomitemPage_#(pageId)"
+           data-jbolttable
+           data-height="fill"
+           data-ajax="true"
+           data-url="admin/stripbarcode/StripSelectDatas"
+           data-column-resize="true"
+           data-column-prepend="1:checkbox:true"
+           data-bind-elements="#barcodeAddBtn_#(pageId)"
+           data-conditions-form="stirpitemmasterForm_#(pageId)"
+           data-rowtpl="barcodeRowtpl_#(pageId)"
+           data-page="itemmasterPage_#(pageId)"
+           data-toolbar="stripbarcode_toolbar_#(pageId)"
+           data-pagesize="30"
+    >
+      <thead>
+      <tr>
+        <th data-width="60">序号</th>
+        <th data-width="150" data-column="invcode">存货编码</th>
+        <th data-width="150" data-column="invname">料品名称</th>
+        <th data-width="150" data-column="invstd">规格</th>
+        <th data-width="150" data-column="unitname">单位</th>
+        <th data-width="150" data-column="barcode">现品票</th>
+        <th data-width="150" data-column="pbarcode">载具编码</th>
+        <th data-width="150" data-column="batch">批次</th>
+        <th data-width="150" data-column="qty">数量</th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+
+  </div>
 </div>
 #end
 #define js()
 <script>
-    hideParentLayerDialogBtn(0)
-    addParentLayerDialogBtn("确定", "lay_success", function (data) {
-        $("#btnclick").click();
-    });
+  hideParentLayerDialogBtn(0)
+  addParentLayerDialogBtn("确定", "lay_success", function (data) {
+    $("#btnclick").click();
+  });
 
-    function getCheckedStrip(o) {
-        var data = jboltTableGetCheckedDatas(o);
-
-        parent.insertTaleRow(data);
-
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-    }
+  function getCheckedStrip(o) {
+    var data = jboltTableGetCheckedDatas(o);
+    parent.insertTaleRow(data);
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+  }
 </script>
 #end
 
