@@ -265,11 +265,14 @@
     }
 
     function submitApproveYear() {
-        let yeariautoid = $("#yeariautoid").val();
-        let url = "admin/annualorderm/approve?id="+yeariautoid;
-        Ajax.get(url,function(res){
-            LayerMsgBox.success("审批成功!");
-        });
+        let result = jboltTableSubmit("#jbolt_Table_#(pageId)");
+        if (result){
+            let yeariautoid = $("#yeariautoid").val();
+            let url = "admin/annualorderm/approve?id="+yeariautoid;
+            Ajax.get(url,function(res){
+                LayerMsgBox.success("审批成功!");
+            });
+        }
     }
     
     function uploadHandler(uploader, type, fileInput, res) {

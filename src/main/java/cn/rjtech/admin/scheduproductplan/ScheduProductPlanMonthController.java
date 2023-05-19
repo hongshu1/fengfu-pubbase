@@ -24,7 +24,7 @@ import java.util.*;
  * @author: chentao
  * @date: 2023-03-30 11:26
  */
-@CheckPermission(PermissionKey.NOME)
+@CheckPermission(PermissionKey.SCHEDUPRODUCTPLANMONTH)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/scheduproductplanmonth", viewPath = "/_view/admin/scheduproductplan")
 public class ScheduProductPlanMonthController extends BaseAdminController {

@@ -18,7 +18,6 @@ import cn.rjtech.model.momdata.SysPuinstoredetail;
 
 /**
  * 采购入库单明细
- *
  * @ClassName: SysPuinstoredetailAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 15:39
@@ -44,7 +43,7 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
      */
     public void datas() {
         renderJsonData(service
-            .getAdminDatas(getPageNumber(), getPageSize(), get("SourceBillType"), get("TrackType"), getBoolean("IsDeleted")));
+                .getAdminDatas(getPageNumber(), getPageSize(), get("SourceBillType"), get("TrackType"), getBoolean("IsDeleted")));
     }
 
     /**

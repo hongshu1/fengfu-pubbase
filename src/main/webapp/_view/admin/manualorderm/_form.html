@@ -1,6 +1,6 @@
 <form onsubmit="return false;" id="ManualOrderM_Form_#(pageId)" action="#(action)" method="post">
 	#if(manualOrderM.iAutoId??)
-	<input type="hidden" name="manualOrderM.iAutoId" value="#(manualOrderM.iAutoId??)" />
+	<input type="hidden" name="manualOrderM.iAutoId" id="manualiautoid" value="#(manualOrderM.iAutoId??)" />
 	#end
 
     <div class="col-12">
@@ -8,7 +8,7 @@
             <div class="card-body">
                 <div class="col">
                     <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
-                    <button onclick="submitApproveYear()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                    <button onclick="submitApproveManual()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
                     <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                 </div>
             </div>
@@ -84,10 +84,16 @@
         parent.refreshPjaxContainer();
     }
 
-    function submitApproveYear() {
+    function submitApproveManual() {
         $("#iOrderStatus").val(2)
-        jboltTableSubmit("#manualorderd_#(pageId)");
-        parent.refreshPjaxContainer();
+        let result = jboltTableSubmit("#manualorderd_#(pageId)");
+        if (result){
+            let manualiautoid = $("#manualiautoid").val();
+            let url = "admin/manualorderm/audit?id="+manualiautoid;
+            Ajax.get(url,function(res){
+                LayerMsgBox.success("审批成功!");
+            });
+        }
     }
 
     function closeHandler(){

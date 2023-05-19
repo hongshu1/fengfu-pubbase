@@ -119,7 +119,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
      * 审批
      */
     public void approve() {
-        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong(0));
+        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong("id"));
         if (subcontractsaleorderm == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
