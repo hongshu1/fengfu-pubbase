@@ -88,12 +88,12 @@ public class ManualOrderMAdminController extends BaseAdminController {
      * 审核
      */
     public void audit() {
-        ManualOrderM manualOrderM = service.findById(getLong(0));
+        ManualOrderM manualOrderM = service.findById(getLong("id"));
         if (manualOrderM == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        manualOrderM.setIAuditStatus(1);
+        manualOrderM.setIAuditStatus(2);
         manualOrderM.setIOrderStatus(3);
         Ret stockoutQcFormM = service.createStockoutQcFormM(manualOrderM.getICustomerId(), manualOrderM.getIAutoId());
         service.handleCusOrderByManual(manualOrderM);
