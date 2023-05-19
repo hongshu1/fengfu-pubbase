@@ -174,10 +174,6 @@
         <div id="alert">
             <p class="alert_title"><span id="title"></span><span id="close">X</span></p>
             <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
-                <!--                <span class="span">截止日期：</span>-->
-                <!--                <select style="width:150px;height:25px;">-->
-                <!--                    <option value=""></option>-->
-                <!--                </select>-->
                 <label class="col-form-label " >指定月：</label>
                 <input type="text" class="form-control" style="display: inline-block; width: 200px" id="laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="layMonth" value="#(layMonth??)">
             </div>
@@ -325,7 +321,7 @@
             type:'get',
             dataType:'json',
             success:function (res){
-                console.log(res)
+                console.log(res);
                 spreadSuspend();//暂停绘制
                 let rowIndex = 3;
                 let colIndex=0;
@@ -378,7 +374,6 @@
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划在库");
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("在库天数");
 
-                    //日计划排版
                     let shiyongRow = 3;//计划使用行下标
                     let shiyongCol = 9;
                     let yisRow = 4;//1s使用行下标
@@ -391,26 +386,64 @@
                     let zaikuCol = 8;
                     let tianshuRow = 8;//在库天数行下标
                     let tianshuCol = 9;
-                    for (let j = 0; j < res[i].day.length; j++) {
-                        console.log(res[i].day[j])
-                        sheet.setValue(shiyongRow,shiyongCol++,res[i].day[j].shiyong);
-                        sheet.setValue(yisRow,yisCol++,res[i].day[j].one);
-                        sheet.setValue(ersRow,ersCol++,res[i].day[j].two);
-                        sheet.setValue(sansRow,sansCol++,res[i].day[j].three);
-                        sheet.setValue(zaikuRow,zaikuCol,res[i].day[j].zaiku);
-                        sheet.setValue(tianshuRow,tianshuCol++,res[i].day[j].tianshu);
+                    console.log(res[i].day.length)
+                    for (var j = 0; j < res[i].day.length; j++) {
+                        // console.log(j+"d")
+                    // setValue第一个参数代表要插入的行，第二个参数代表要插入的列，第三个参数代表要插入的值
+                    // console.log() 6
+                        if(i==0){
+                            sheet.setValue(shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
+                            sheet.setValue(yisRow,yisCol+j,res[i].day[j].one);
+                            sheet.setValue(ersRow,ersCol+j,res[i].day[j].two);
+                            sheet.setValue(sansRow,sansCol+j,res[i].day[j].three);
+                            sheet.setValue(zaikuRow,zaikuCol,res[i].day[j].zaiku);
+                            sheet.setValue(tianshuRow,tianshuCol+j,res[i].day[j].tianshu);
+                        }else{
+                            sheet.setValue(6*i+shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
+                            sheet.setValue(6*i+yisRow,yisCol+j,res[i].day[j].one);
+                            sheet.setValue(6*i+ersRow,ersCol+j,res[i].day[j].two);
+                            sheet.setValue(6*i+sansRow,sansCol+j,res[i].day[j].three);
+                            sheet.setValue(6*i+zaikuRow,zaikuCol,res[i].day[j].zaiku);
+                            sheet.setValue(6*i+tianshuRow,tianshuCol+j,res[i].day[j].tianshu);
+                        }
+
+
+                        // sheet.setValue(yisRow,shiyongCol,res[i].day[j].one);
+                        // sheet.setValue(ersRow,shiyongCol,res[i].day[j].two);
+                        // sheet.setValue(sansRow,shiyongCol,res[i].day[j].three);
+                        // sheet.setValue(zaikuRow,zaikuCol,res[i].day[j].zaiku);
+                        // sheet.setValue(tianshuRow,shiyongCol++,res[i].day[j].tianshu);
+
                     }
                 }
+
+                //日计划排版
+                // let shiyongRow = 3;//计划使用行下标
+                // let shiyongCol = 9;
+                // let yisRow = 4;//1s使用行下标
+                // let yisCol = 9;
+                // let ersRow = 5;//2s使用行下标
+                // let ersCol = 9;
+                // let sansRow = 6;//3s使用行下标
+                // let sansCol = 9;
+                // let zaikuRow = 7;//计划在库行下标
+                // let zaikuCol = 8;
+                // let tianshuRow = 8;//在库天数行下标
+                // let tianshuCol = 9;
+                //     for (let j = 0; j < res[l].day.length; j++) {
+                //         sheet.setValue(shiyongRow,shiyong++,res[l].day[j].shiyong);
+                //         shiyong=shiyongCol;
+                //         // sheet.setValue(yisRow,shiyong,res[l].day[j].one);
+                //         // sheet.setValue(ersRow,shiyong,res[l].day[j].two);
+                //         // sheet.setValue(sansRow,shiyong,res[l].day[j].three);
+                //         // sheet.setValue(zaikuRow,shiyong,res[l].day[j].zaiku);
+                //         // sheet.setValue(tianshuRow,shiyong,res[l].day[j].tianshu);
+                //     }
                 spreadResume();// 恢复绘制
             },error: function() {
                 console.log('error')
             }
         })
-        initIPsLevelData();
-    }
-    //初始化排产数据
-    function initIPsLevelData(){
-
     }
     //获取当前点击的单元格
     // sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
