@@ -5,15 +5,13 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="save()" class="btn btn-success btn-sm"><i
-                                class=" fa fa-refresh"></i> 保存</button>
-                        <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 提交
-                        </button>
+                        <button onclick="save()" class="btn btn-success btn-sm"><i class=" fa fa-refresh"></i> 保存</button>
+                        <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交</button>
                     </div>
                 </div>
             </div>
         </div>
+        
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
@@ -81,21 +79,14 @@
                                 </div>
                             </div>
 
-
-
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">收料人</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true" data-tips="请输收料人"
-                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
-                                            placeholder="请输收料人" maxlength="40" name="username" value="#(username??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输收料人" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输收料人" maxlength="40" name="username" value="#(username??)" />
                                     </div>
                                 </div>
                             </div>
-
-
-
 
                         </div>
                         <input id="operationType" type="hidden" name="operationType" value="#(operationType??)">
@@ -105,16 +96,14 @@
         </div>
     </div>
 </div>
+
 <div class="jbolt_page_content">
     <script type="text/template" id="sysPureceive_tpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/scancodereceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
-                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
-                class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-
+                <a href="admin/scancodereceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
             </td>
             <td>${data.sourcebillno}</td>
             <td>${data.barcode}</td>
@@ -126,19 +115,16 @@
             <td>${data.qty}</td>
             <td>${data.whcode}</td>
             <td><img data-switchbtn data-value="${data.isinitial}" data-handler="switchEditableTd"/></td>
-
         </tr>
         {@/each}
     </script>
+    
     <div class="jbolt_table_toolbar" id="sysPureceive_toolbar_#(pageId)">
         <div class="col-md-4">
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">现品票扫码</label>
                 <div class="col-6">
-                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
-                        autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                        name="sysPureceive.warehousingNo" value="#(sysPureceive.warehousingNo??)" />
-
+                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40" name="sysPureceive.warehousingNo" value="#(sysPureceive.warehousingNo??)" />
                 </div>
                 <div class="btn-group text-center mx-1">
                     <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">搜索</button>
@@ -150,19 +136,19 @@
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
         </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                id="toolbar_deleteBtn_#(pageId)" data-url="admin/scancodereceivedetail/deleteByIds?ids="
-                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
+            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/scancodereceivedetail/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
         </div>
 
     </div>
 
-    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysPureceive.AutoID??)
-        data-ajax="true" data-url="admin/scancodereceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" #end
+    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable 
+           #if(sysPureceive.AutoID??)
+            data-ajax="true" data-url="admin/scancodereceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" 
+           #end
         id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
         data-rowtpl="sysPureceive_tpl_#(pageId)" data-toolbar="sysPureceive_toolbar_#(pageId)" data-editable="true"
         data-page="sysPureceive_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton_#(pageId)">
-        <thead class="fw_normal">
+        <thead>
             <tr>
                 <th data-width="60">序号</th>
                 <th data-width="150">操作</th>
@@ -185,18 +171,21 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
+    
     function save() {
         jboltTableSubmit("#jbolt_Table_#(pageId)");
     }
+    
+    var $operationType = $("#operationType");
+    
     function submitThisForm() {
-        $("#operationType").val("submit");
+        $operationType.val("submit");
         jboltTableSubmit("#jbolt_Table_#(pageId)");
-        $("#operationType").val();
+        $operationType.val();
     }
 
     function getJBoltTableEditableColsOpton_#(pageId)() {
         var editableTableOptions = {
-
             submit: {
                 withForm: ["sysPureceive_#(pageId)"],
                 name: 'sysPureceive',
@@ -224,11 +213,9 @@
                     tooltip: "仓库",//输入提示，上方
                     type: "autocomplete",
                     //目前供应商都是空的无法过滤
-
                     url: "admin/SysEnumeration/wareHouse",
                     maxLength: 100,
                     required: true,
-                    placeholder: "请选择仓库编码",
                     textAttr: "whcode",
                     width: 500,
                     valueAttr: "whcode",//选择赋值的字段
@@ -236,7 +223,6 @@
                     header: '仓库编码,仓库名称',
                     changeColumns: [{ column: "whcode", use: "whcode" }]
                 },
-
                 barcode: { //条码
                     maxLength: 100,
                     required: true,
@@ -249,18 +235,29 @@
                     valueAttr: "barcode",
                     columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,cuomclassname,cinvccode,cinvcname,sourcebilltype",
                     header: '订单编号,条码,存货编码,客户部番,部品名称,规格型号,库存主单位,项目大类编码,项目大类名称',
-                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
-                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
-                    { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
-                    { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
-                    {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
-                    {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "qtys", use: "qty"}]
-
+                    changeColumns: [
+                        {column: "barcode", use: "barcode"},
+                        {column: "cinvcode", use: "cinvcode"},
+                        {column: "cinvcode1", use: "cinvcode1"},
+                        {column: "cinvname1", use: "cinvname1"},
+                        {column: "cinvstd", use: "cinvstd"},
+                        {column: "cinvccode", use: "cinvccode"},
+                        {column: "cinvcname", use: "cinvcname"},
+                        {column: "cuomclassname", use: "cuomclassname"},
+                        {column: "iinventoryid", use: "iautoid"},
+                        {column: "sourcebilltype", use: "sourcebilltype"},
+                        {column: "sourcebillno", use: "sourcebillno"},
+                        {column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"},
+                        {column: "sourcebillid", use: "sourcebillid"},
+                        {column: "qtys", use: "qty"}
+                    ]
                 },
             }
         };
         return editableTableOptions;
     }
+    
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
