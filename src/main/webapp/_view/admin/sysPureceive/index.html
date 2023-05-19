@@ -5,11 +5,8 @@
 	<div class="jbolt_page_title">
 		<div class="row">
 			<div class="col-sm-auto">
-				<h1><i class="jbicon2 jbi-appstore"></i>收料列表</h1>
-			</div>
-			<div class="col">
 				<form class="form-inline" id="materialReceiptList_form_#(pageId)">
-					<input type="text" autocomplete="off" class="form-control" placeholder="收料单号" name="billno"
+					<input type="text" autocomplete="off" class="form-control" placeholder="=收料单号=" name="billno"
 						value="" />
 					<select class="form-control" name="state" data-autoload data-url="admin/dictionary/options?key=null"
 						data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select>
@@ -20,8 +17,7 @@
 						value="" />
 					<div class="btn-group text-center mx-1">
 						<button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
-						<button type="button" onclick="form.reset();refreshJBoltTable(this);"
-							class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置</button>
+						<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置</button>
 					</div>
 				</form>
 			</div>
@@ -30,23 +26,22 @@
 	<div class="jbolt_page_content">
 		<!-- 定义JBoltTable使用的数据渲染模板 -->
 		<textarea class="jb_tpl_box" id="materialReceiptList_tpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.autoid}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>
-	<a href="admin/materialReceiptList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑收料单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
-    <a href="admin/materialReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-</td>
-<td>${data.statename}</td>
-<td>${data.billno}</td>
-<!-- <td>${data.repositoryname}</td> -->
-<td>${data.venname}</td>
-<td>${data.name}</td>
-<td>${data.createdate}</td>
-
-</tr>
-{@/each}
-</textarea>
+			{@each datas as data,index}
+				<tr data-id="${data.autoid}">
+					<td>${pageNumber,pageSize,index | rownum}</td>
+					<td>
+						<a href="admin/materialReceiptList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑收料单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+						<a href="admin/materialReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+					</td>
+					<td>${data.statename}</td>
+					<td>${data.billno}</td>
+					<!-- <td>${data.repositoryname}</td> -->
+					<td>${data.venname}</td>
+					<td>${data.name}</td>
+					<td>${data.createdate}</td>
+				</tr>
+			{@/each}
+		</textarea>
 		<div class="jbolt_table_toolbar" id="materialReceiptList_toolbar_#(pageId)">
 			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 				<button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
@@ -63,9 +58,7 @@
 				<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
 					id="toolbar_deleteBtn_#(pageId)" data-url="admin/materialReceiptList/deleteByIds?ids="
 					data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
-
 			</div>
-
 		</div>
 		<table class="jbolt_table jbolt_main_table  table-center " data-jbolttable data-width="fill" data-height="fill"
 			data-ajax="true" data-conditions-form="materialReceiptList_form_#(pageId)" data-url="admin/materialReceiptList/datas"

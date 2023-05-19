@@ -69,43 +69,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     }
 
     /**
-     * 后台管理数据查询
-     *
-     * @param pageNumber      第几页
-     * @param pageSize        每页几条数据
-     * @param keywords        关键词
-     * @param BillType        到货单类型;采购PO  委外OM
-     * @param procureType     采购类型
-     * @param warehousingType 入库类别
-     */
-    public Page<SysPuinstore> getAdminDatas(int pageNumber, int pageSize, String keywords, String BillType, String procureType,
-                                            String warehousingType) {
-        //创建sql对象
-        Sql sql = selectSql().page(pageNumber, pageSize);
-        //sql条件处理
-        sql.eq("BillType", BillType);
-        sql.eq("procureType", procureType);
-        sql.eq("warehousingType", warehousingType);
-        //关键词模糊查询
-        sql.likeMulti(keywords, "repositoryName", "deptName", "remark");
-        //排序
-        sql.desc("AutoID");
-        return paginate(sql);
-    }
-
-    /**
      * 保存
      */
     public Ret save(SysPuinstore sysPuinstore) {
         if (sysPuinstore == null || isOk(sysPuinstore.getAutoID())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        //if(existsName(sysPuinstore.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = sysPuinstore.save();
-        if (success) {
-            //添加日志
-            //addSaveSystemLog(sysPuinstore.getAutoID(), JBoltUserKit.getUserId(), sysPuinstore.getName());
-        }
         return ret(success);
     }
 
@@ -201,12 +171,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         if (dbSysPuinstore == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
-        //if(existsName(sysPuinstore.getName(), sysPuinstore.getAutoID())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = sysPuinstore.update();
-        if (success) {
-            //添加日志
-            //addUpdateSystemLog(sysPuinstore.getAutoID(), JBoltUserKit.getUserId(), sysPuinstore.getName());
-        }
         return ret(success);
     }
 
@@ -218,7 +183,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      */
     @Override
     protected String afterDelete(SysPuinstore sysPuinstore, Kv kv) {
-        //addDeleteSystemLog(sysPuinstore.getAutoID(), JBoltUserKit.getUserId(),sysPuinstore.getName());
         return null;
     }
 
@@ -239,19 +203,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      */
     @Override
     protected String afterToggleBoolean(SysPuinstore sysPuinstore, String column, Kv kv) {
-        //addUpdateSystemLog(sysPuinstore.getAutoID(), JBoltUserKit.getUserId(), sysPuinstore.getName(),"的字段["+column+"]值:"+sysPuinstore.get(column));
-        /**
-         switch(column){
-         case "IsDeleted":
-         break;
-         }
-         */
         return null;
     }
 
     /**
      * 后台管理数据查询
-     *
      * @param pageNumber 第几页
      * @param pageSize   每页几条数据
      */
@@ -266,9 +222,14 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             podetailKv.set("sourcebillid", record.get("sourcebillid"));
             Record detailByParam = findSysPODetailByParam(podetailKv);
             record.set("invname", detailByParam.get("invname"));
-//            record.set("venname", detailByParam.get("venname"));
-            record.set("cptcode", purchaseType.getCPTCode());
-            record.set("cptname", purchaseType.getCPTName());
+           // record.set("venname", detailByParam.get("venname"));
+            if (null != purchaseType){
+                record.set("cptcode", purchaseType.getCPTCode());
+                record.set("cptname", purchaseType.getCPTName());
+            } else {
+                record.set("cptcode", "");
+                record.set("cptname", "");
+            }
         }
         return paginate;
     }
@@ -366,7 +327,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             } else {
                 List<Record> saveRecordList = jBoltTable.getSaveRecordList();
                 if (saveRecordList == null) {
@@ -394,8 +354,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                //
             }
             return true;
         });
@@ -467,7 +425,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         puinstore.setAuditPerson(getOrgName()); //审核人
         puinstore.setAuditDate(date); //审核时间
         puinstore.setState("1");
-
     }
 
     /*
@@ -503,9 +460,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         kv.set("sourcebillno", puinstore.getSourceBillNo());
         kv.set("sourcebilldid", puinstore.getSourceBillID());
         kv.set("deptcode", puinstore.getDeptCode());
-
         Record podetail = findSysPODetailByParam(kv);
-
         List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
         int i = 1;
         for (SysPuinstoredetail detail : detailList) {
@@ -539,7 +494,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             MainData.add(main);
             i = i + 1;
         }
-
         //其它数据
         PreAllocate preAllocate = new PreAllocate();
         preAllocate.setCreatePerson(puinstore.getCreatePerson());
