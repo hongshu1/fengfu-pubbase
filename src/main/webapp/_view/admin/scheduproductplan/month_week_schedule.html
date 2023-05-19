@@ -214,10 +214,10 @@
         rowindex:0,				//x轴索引
         columnindex:0,			//y轴索引
         dataStartCol: 7,		//日期开始列索引前的列数
-        data: [],				//数据
+        data: [],				//当月时间数据
+        dayLength:0,            //获取接口返回的当月天数长度
         currentRow: 0,			//当前选中的单元格行
         currentCol: 0,			//当前选中的单元格列
-        dayLength:0,            //获取接口返回的当月天数长度
         dayRow:9,               //day渲染起始下标
         weekRow:9,              //week渲染起始下标
         info:{},                //存储单击之后的单元格
@@ -319,13 +319,13 @@
     }
     //
     function initData(){
-        let url = "http://localhost:8081/admin/scheduproductplanmonth/scheduPlanMonth";
+        let url = "http://localhost:8081/admin/scheduproductplanmonth/scheduPlanMonth?level=1&endDate=2023-06-21";
         $.ajax({
             url,
             type:'get',
             dataType:'json',
-            success:function(data){
-                console.log(data,'success');
+            success:function (res){
+                console.log(res)
                 spreadSuspend();//暂停绘制
                 parms.activeSheet.getCell(parms.planListRowIndex, parms.planListColIndex).text("计划使用");
                 parms.activeSheet.setColumnWidth(parms.planListRowIndex, 70);//设置指定单元格的width
@@ -334,51 +334,78 @@
                 parms.activeSheet.getCell(parms.planListRowIndex+3, parms.planListColIndex).text("计划/3S");
                 parms.activeSheet.getCell(parms.planListRowIndex+4, parms.planListColIndex).text("计划在库");
                 parms.activeSheet.getCell(parms.planListRowIndex+5, parms.planListColIndex).text("在库天数");
-
-                let length = data.length;//接收返回的数据长度
-                var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
-                let row = 0,col=0;
-                for (let i = 1; i < length; i++) {
-                    //     //设置value值和该单元格的对齐方式
-                    parms.activeSheet.getCell(row, col).cellType(cellType);
-                    parms.activeSheet.setColumnWidth(col, 40);//设置指定单元格的width
-                    sheet.addSpan(row+3,col,6,1);
-                    console.log(row);
-                    //     parms.activeSheet.getCell(parms.rowindex, parms.columnindex+1).text("序号");
-                    //     parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
-                    //     parms.activeSheet.addSpan(0,1,3,1);
+                var rowIndex = 3;
+                var colIndex=0;
+                var serialRow = 3;
+                var serialCol = 1;
+                var iPsLevelRow = 3;
+                var iPsLevelCol = 2;
+                var cWorkNameRow = 3;
+                var cWorkNameCol = 3;
+                var cInvCodeRow = 3;
+                var cInvCodeCol = 4;
+                var cInvName1Row = 3;
+                var cInvName1Col = 5;
+                var cInvCode1Row = 3;
+                var cInvCode1Col = 6;
+                for (let i = 0; i <res.length; i++) {
+                    //设置value值和该单元格的对齐方式
+                    var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
+                    parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
+                    sheet.addSpan(rowIndex,colIndex,6,1);
+                    rowIndex+=6;
+                    sheet.setValue(serialRow, serialCol,i);//插入数据
+                    parms.activeSheet.addSpan(serialRow,serialCol,6,1);
+                    serialRow+=6;
+                    sheet.setValue(iPsLevelRow, iPsLevelCol,res[i].iPsLevel);//插入数据
+                    parms.activeSheet.addSpan(iPsLevelRow,iPsLevelCol,6,1);
+                    iPsLevelRow+=6;
+                    sheet.setValue(cWorkNameRow, cWorkNameCol,res[i].cWorkName);//插入数据
+                    parms.activeSheet.addSpan(cWorkNameRow,cWorkNameCol,6,1);
+                    parms.activeSheet.setColumnWidth(cWorkNameCol, 120);//设置指定单元格的width
+                    cWorkNameRow+=6;
+                    sheet.setValue(cInvCodeRow, cInvCodeCol,res[i].cInvCode);//插入数据
+                    parms.activeSheet.addSpan(cInvCodeRow,cInvCodeCol,6,1);
+                    parms.activeSheet.setColumnWidth(cInvCodeCol, 120);//设置指定单元格的width
+                    cInvCodeRow+=6;
+                    sheet.setValue(cInvName1Row, cInvName1Col,res[i].cInvName1);//插入数据
+                    parms.activeSheet.addSpan(cInvName1Row,cInvName1Col,6,1);
+                    parms.activeSheet.setColumnWidth(cInvName1Col, 180);//设置指定单元格的width
+                    cInvName1Row+=6;
+                    sheet.setValue(cInvCode1Row, cInvCode1Col,res[i].cInvCode);//插入数据
+                    parms.activeSheet.addSpan(cInvCode1Row,cInvCode1Col,6,1);
+                    parms.activeSheet.setColumnWidth(cInvCode1Col, 100);//设置指定单元格的width
+                    cInvCode1Row+=6;
                 }
-
                 spreadResume();// 恢复绘制
-            },
-            error: function() {
-                // console.log('error')
+            },error: function() {
+                console.log('error')
             }
         })
     }
     //获取当前点击的单元格
-    sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
-        if (info.sheetArea === GC.Spread.Sheets.SheetArea.viewport) {
-            parms.info=info;
-            let {row,col} = parms.info;
-            let a = {
-                row:row,
-                col:col
-            }
-            //每次添加之后往数组内进行存储
-            parms.lockCells.push(a);
-            //数组去重处理
-            const unique = [];
-            for (const item of parms.lockCells) {
-                const duplicate = unique.find((key) => key.row === item.row && key.col === item.col);
-                if (!duplicate) {
-                    unique.push(item);
-                }
-            }
-            parms.lockCells=unique;
-            console.log(parms.lockCells,"获取当前点击的单元格")
-        }
-    });
+    // sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
+    //     if (info.sheetArea === GC.Spread.Sheets.SheetArea.viewport) {
+    //         parms.info=info;
+    //         let {row,col} = parms.info;
+    //         let a = {
+    //             row:row,
+    //             col:col
+    //         }
+    //         //每次添加之后往数组内进行存储
+    //         parms.lockCells.push(a);
+    //         //数组去重处理
+    //         const unique = [];
+    //         for (const item of parms.lockCells) {
+    //             const duplicate = unique.find((key) => key.row === item.row && key.col === item.col);
+    //             if (!duplicate) {
+    //                 unique.push(item);
+    //             }
+    //         }
+    //         parms.lockCells=unique;
+    //         console.log(parms.lockCells,"获取当前点击的单元格")
+    //     }
+    // });
     //获取表格中输入或修改的值
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         let a = {
