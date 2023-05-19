@@ -101,4 +101,22 @@ public class SysAssemAdminController extends BaseAdminController {
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
 	}
 
+	//获取转换方式数据源 jb_dictionary 存id
+	public void dictionary(){
+		renderJsonData(service.getdictionary(getKv()));
+	}
+
+	//获取出入库类别数据源 Bd_Rd_Style 存 cRdCode; 路径拼接 brdflag=0(发),1(收)
+	public void style(){
+		renderJsonData(service.style(getKv()));
+	}
+
+	//获取现品下拉以及转换后的 数据源
+	public void barcodeDatas() {
+		String orgCode =  getOrgCode();
+		renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode)));
+	}
+
+
+
 }

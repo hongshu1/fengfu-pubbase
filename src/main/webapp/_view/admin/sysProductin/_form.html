@@ -5,7 +5,8 @@
                 <div class="card-body">
                     <div class="col">
                         <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
-                                class="fa fa-refresh"></i> 保存</button>
+                                class="fa fa-refresh"></i> 保存
+                        </button>
                         <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批
                         </button>
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
@@ -20,17 +21,17 @@
                 <div class="card-body">
                     <form onsubmit="return false;" id="sysProductin_#(pageId)" action="#(action)" method="post">
                         #if(sysProductin.AutoID??)
-                        <input type="hidden" name="sysProductin.AutoID" value="#(sysProductin.AutoID??)" />
+                        <input type="hidden" name="sysProductin.AutoID" value="#(sysProductin.AutoID??)"/>
                         #end
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">入库单号</label>
                                     <div class="col-9">
-                                        <input type="text"  data-notnull="true"
-                                            data-tips="请输入入库单号" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输入入库单号" maxlength="40"
-                                            name="sysProductin.BillNo" value="#(sysProductin.BillNo??)" />
+                                        <input type="text" data-notnull="true"
+                                               data-tips="请输入入库单号" data-with-clearbtn="true" autocomplete="off"
+                                               class="form-control" placeholder="请输入入库单号" maxlength="40"
+                                               name="sysProductin.BillNo" value="#(sysProductin.BillNo??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -39,71 +40,69 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">入库日期</label>
                                     <div class="col-9">
-                                        <input type="text" data-date class="form-control ml-2" placeholder="入库日期" maxlength="20" name="sysProductin.CreateDate" value="#(sysProductin.CreateDate??)"/>
+                                        <input type="text" data-date class="form-control ml-2" placeholder="入库日期"
+                                               maxlength="20" name="sysProductin.CreateDate"
+                                               value="#(sysProductin.CreateDate??)"/>
                                     </div>
                                 </div>
                             </div>
-
-
 
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <input type="hidden" name="sysProductin.Whcode" value="#(sysProductin.Whcode??)"
-                                        id="cwhcode" data-value-attr="cwhcode" />
+                                           id="cwhcode" data-value-attr="cwhcode"/>
                                     <label class="col-sm-3 col-form-label">仓库名称</label>
                                     <div class="col-9">
                                         <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/productInList/getWarehouse" data-rule="required"
-                                            data-hidden-input="cwhcode" data-text-attr="cwhname"
-                                            data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称"
-                                            data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
-                                            value="#(cwhname??)">
+                                               data-url="admin/productInList/getWarehouse" data-rule="required"
+                                               data-hidden-input="cwhcode" data-text-attr="cwhname"
+                                               data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称"
+                                               data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
+                                               value="#(cwhname??)">
                                     </div>
                                 </div>
                             </div>
-  
-
 
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <input type="hidden" name="sysProductin.RdCode" value="#(sysProductin.RdCode??)"
-                                        id="crdcode" data-value-attr="crdcode" />
+                                           id="crdcode" data-value-attr="crdcode"/>
                                     <label class="col-sm-3 col-form-label">入库类别</label>
                                     <div class="col-9">
                                         <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/productInList/getRdStyle" data-rule="required"
-                                            data-hidden-input="crdcode" data-text-attr="crdname"
-                                            data-column-attr="crdcode,crdname" placeholder="请选择入库类别"
-                                            data-tips="请选择入库类别" data-header="入库编码,入库类别" maxlength="40"
-                                            value="#(crdname??)">
+                                               data-url="admin/productInList/getRdStyle" data-rule="required"
+                                               data-hidden-input="crdcode" data-text-attr="crdname"
+                                               data-column-attr="crdcode,crdname" placeholder="请选择入库类别"
+                                               data-tips="请选择入库类别" data-header="入库编码,入库类别" maxlength="40"
+                                               value="#(crdname??)">
                                     </div>
                                 </div>
                             </div>
-
-
 
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <input type="hidden" name="sysProductin.DeptCode" value="#(sysProductin.DeptCode??)"
-                                        id="cdepcode" data-value-attr="cdepcode" />
+                                           id="cdepcode" data-value-attr="cdepcode"/>
                                     <label class="col-sm-3 col-form-label">生产部门</label>
                                     <div class="col-9">
                                         <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/productInList/getDepartment" data-rule="required"
-                                            data-hidden-input="cdepcode" data-text-attr="cdepname"
-                                            data-column-attr="cdepcode,cdepname" placeholder="请选择生产部门"
-                                            data-tips="请选择生产部门" data-header="生产部门编码,生产部门" maxlength="40"
-                                            value="#(cdepname??)">
+                                               data-url="admin/productInList/getDepartment" data-rule="required"
+                                               data-hidden-input="cdepcode" data-text-attr="cdepname"
+                                               data-column-attr="cdepcode,cdepname" placeholder="请选择生产部门"
+                                               data-tips="请选择生产部门" data-header="生产部门编码,生产部门"
+                                               maxlength="40"
+                                               value="#(cdepname??)">
                                     </div>
                                 </div>
                             </div>
-
 
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">审批日期</label>
                                     <div class="col-9">
-                                        <input type="text" data-date class="form-control ml-2" placeholder="审批日期" maxlength="20" name="sysProductin.AuditDate" value="#(sysProductin.AuditDate??)"/>
+                                        <input type="text" data-date class="form-control ml-2" placeholder="审批日期"
+                                               maxlength="20" name="sysProductin.AuditDate"
+                                               value="#(sysProductin.AuditDate??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -113,22 +112,21 @@
                                     <label class="col-sm-3 col-form-label">备注</label>
                                     <div class="col-9">
                                         <input type="text" data-notnull="true"
-                                            data-tips="请输入备注" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输入备注" maxlength="40"
-                                            name="sysProductin.memo" value="#(sysProductin.memo??)" />
+                                               data-tips="请输入备注" data-with-clearbtn="true" autocomplete="off"
+                                               class="form-control" placeholder="请输入备注" maxlength="40"
+                                               name="sysProductin.memo" value="#(sysProductin.memo??)"/>
                                     </div>
                                 </div>
                             </div>
-
 
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">制单人</label>
                                     <div class="col-9">
                                         <input type="text" data-notnull="true"
-                                            data-tips="请输制单人" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输制单人" maxlength="40"
-                                            name="sysProductin.createperson" value="#(name??)" />
+                                               data-tips="请输制单人" data-with-clearbtn="true" autocomplete="off"
+                                               class="form-control" placeholder="请输制单人" maxlength="40"
+                                               name="sysProductin.createperson" value="#(name??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -138,14 +136,12 @@
                                     <label class="col-sm-3 col-form-label">审核人</label>
                                     <div class="col-9">
                                         <input type="text" data-notnull="true"
-                                            data-tips="请输审核人" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输审核人" maxlength="40"
-                                            name="sysProductin.auditperson" value="#(sname??)" />
+                                               data-tips="请输审核人" data-with-clearbtn="true" autocomplete="off"
+                                               class="form-control" placeholder="请输审核人" maxlength="40"
+                                               name="sysProductin.auditperson" value="#(sname??)"/>
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </form>
                 </div>
@@ -159,10 +155,9 @@
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/sysProductindetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " 
-                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
-                class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-   
+                <a href="admin/sysProductindetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
+                   tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
+                   class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
             </td>
             <td>${data.barcode}</td>
             <td>${data.cinvcode}</td>
@@ -172,8 +167,6 @@
             <td>${data.inventorycuomname}</td>
             <td>${data.qty}</td>
             <td>${data.cequipmentmodelname}</td>
-
-
         </tr>
         {@/each}
     </script>
@@ -182,10 +175,10 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">现品票扫码</label>
                 <div class="col-9">
-                    <input type="text"  data-notnull="true"
-                        data-tips="请输入现品票扫码" data-with-clearbtn="true" autocomplete="off"
-                        class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                        name="sysProductin.warehousingNo" value="#(sysProductin.warehousingNo??)" />
+                    <input type="text" data-notnull="true"
+                           data-tips="请输入现品票扫码" data-with-clearbtn="true" autocomplete="off"
+                           class="form-control" placeholder="请输入现品票扫码" maxlength="40"
+                           name="sysProductin.warehousingNo" value="#(sysProductin.warehousingNo??)"/>
                 </div>
             </div>
         </div>
@@ -197,30 +190,30 @@
         </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysProductindetail/deleteByIds?ids=" data-confirm="确定删除选中数据？"
-                class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
+                    id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysProductindetail/deleteByIds?ids="
+                    data-confirm="确定删除选中数据？"
+                    class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
+            </button>
         </div>
-
     </div>
-
     <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysProductin.AutoID??)
-        data-ajax="true" data-url="admin/sysProductindetail/findEditTableDatas?masid=#(sysProductin.AutoID??)" #end
-        id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
-        data-rowtpl="sysProductin_tpl_#(pageId)" data-toolbar="sysProductin_toolbar_#(pageId)" data-editable="true"
-        data-page="sysProductin_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
+           data-ajax="true" data-url="admin/sysProductindetail/findEditTableDatas?masid=#(sysProductin.AutoID??)" #end
+           id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
+           data-rowtpl="sysProductin_tpl_#(pageId)" data-toolbar="sysProductin_toolbar_#(pageId)" data-editable="true"
+           data-page="sysProductin_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
         <thead class="fw_normal">
-            <tr>
-                <th data-width="60">序号</th>
-                <th data-width="150">操作</th>
-                <th data-width="100" data-column="barcode">现品票</th>
-                <th data-width="150" data-column="cinvcode">存货编码</th>
-                <th data-width="150" data-column="cinvdddcode">存货代码</th>
-                <th data-width="150" data-column="cinvname">存货名称</th>
-                <th data-width="150" data-column="cinvstd">规格型号</th>
-                <th data-width="100" data-column="inventorycuomname">主计量单位</th>
-                <th data-width="100" data-column="qty">数量</th>
-                <th data-width="100" data-column="cequipmentmodelname">所属机型</th>
-            </tr>
+        <tr>
+            <th data-width="60">序号</th>
+            <th data-width="150">操作</th>
+            <th data-width="100" data-column="barcode">现品票</th>
+            <th data-width="150" data-column="cinvcode">存货编码</th>
+            <th data-width="150" data-column="cinvdddcode">存货代码</th>
+            <th data-width="150" data-column="cinvname">存货名称</th>
+            <th data-width="150" data-column="cinvstd">规格型号</th>
+            <th data-width="100" data-column="inventorycuomname">主计量单位</th>
+            <th data-width="100" data-column="qty">数量</th>
+            <th data-width="100" data-column="cequipmentmodelname">所属机型</th>
+        </tr>
         </thead>
     </table>
 
@@ -229,13 +222,13 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
+
     function submitThisForm() {
         jboltTableSubmit("#jbolt_Table_#(pageId)");
     }
 
     function getJBoltTableEditableColsOpton() {
         var editableTableOptions = {
-
             submit: {
                 withForm: ["sysProductin_#(pageId)"],
                 name: 'sysProductin',
@@ -257,13 +250,11 @@
                     placeholder: "现品票", //输入提示，里面
                     tooltip: "现品票",//输入提示，上方
                 },
-
                 memo: {
                     type: "input",//类型
                     placeholder: "用途", //输入提示，里面
                     tooltip: "用途",//输入提示，上方
                 },
-                
                 barcode: { //条码
                     maxLength: 100,
                     required: true,
@@ -276,20 +267,30 @@
                     valueAttr: "barcode",
                     columnAttr: "barcode,cinvcode,cinvdddcode,cinvname,cinvstd,inventorycuomname,qty,cequipmentmodelname",
                     header: '现品票,存货编码,存货代码,存货名称,规格型号,主计量单位,数量,所属机型',
-                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
-                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
-                    { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
-                    { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
-                    {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
-                    {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "cinvdddcode", use: "cinvdddcode"},
-                    {column: "cinvname", use: "cinvname"},{column: "inventorycuomname", use: "inventorycuomname"},
-                    {column: "sourcebillid", use: "sourcebillid"},{column: "qty", use: "qty"}]
+                    changeColumns: [{column: "barcode", use: "barcode"}, {
+                        column: "cinvcode",
+                        use: "cinvcode"
+                    }, {column: "cinvcode1", use: "cinvcode1"},
+                        {column: "cinvname1", use: "cinvname1"}, {column: "cinvstd", use: "cinvstd"},
+                        {column: "cinvccode", use: "cinvccode"}, {column: "cinvcname", use: "cinvcname"},
+                        {column: "cuomclassname", use: "cuomclassname"}, {
+                            column: "iinventoryid",
+                            use: "iautoid"
+                        }, {column: "sourcebilltype", use: "sourcebilltype"},
+                        {column: "sourcebillno", use: "sourcebillno"}, {column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"}, {
+                            column: "sourcebillid",
+                            use: "sourcebillid"
+                        }, {column: "cinvdddcode", use: "cinvdddcode"},
+                        {column: "cinvname", use: "cinvname"}, {column: "inventorycuomname", use: "inventorycuomname"},
+                        {column: "sourcebillid", use: "sourcebillid"}, {column: "qty", use: "qty"}]
 
                 },
             }
         };
         return editableTableOptions;
     }
+
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();

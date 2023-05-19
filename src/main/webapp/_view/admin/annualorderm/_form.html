@@ -6,8 +6,12 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
+                        <button onclick="submitThisForm()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+                        #if(annualOrderM.iAutoId??)
                         <button onclick="submitApproveYear()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #else
+                        <button onclick="submitApproveYear()" disabled class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #end
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>
@@ -125,6 +129,8 @@
                 <i class="fa fa-trash"></i> 删除行</button>
 
             <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
+
+            <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
             
             <div class="j_upload_file_box"
                  data-name="file"
@@ -142,6 +148,7 @@
         </div>
     </div>
     <table class="jbolt_table thead_font_normal table-bordered table-center"
+           data-id="jbolt_table_#(pageId)"
            data-jbolttable
            #if(annualOrderM.iAutoId??)
            data-ajax="true"
@@ -215,19 +222,63 @@
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
+    function removeClass(idx) {
+        var $tr = $('tr[data-index="' + idx + '"]');
+        $tr.removeAttr('tooltip');
+        $tr.removeAttr('title');
+        $tr.removeClass('table-danger');
+    }
+
+    function removeEmptyRow(ele, datas) {
+        var count = 0;
+
+        $.each(datas, function (idx, row) {
+            if (!row.iiventoryid) {
+                count++;
+            }
+        });
+
+        for (var i = 0; i < count; i++) {
+            delRow(ele);
+        }
+    }
+
+    function delRow(ele) {
+        var datas = jboltTableGetAllDatas(ele);
+        console.log('delRow， datas: ' + datas);
+        
+        if (datas && datas.length > 0) {
+            var jboltTable = getJBoltTable(ele)
+
+            var table = getJBoltTableInst(jboltTable);
+
+            for (var i = 0; i < datas.length; i++) {
+                var data = datas[i];
+                if (!data.iinventoryid) {
+                    table.me.removeRow(table, i);
+                    break;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     function submitThisForm() {
-        jboltTableSubmit("#jbolt_Table_#(pageId)");
+        $('#save_btn_#(pageId)').click();
     }
 
     function submitApproveYear() {
-        let yeariautoid = $("#yeariautoid").val();
-        let url = "admin/annualorderm/approve?id="+yeariautoid;
-        Ajax.get(url,function(res){
-            LayerMsgBox.success("审批成功!");
-        });
+        let result = jboltTableSubmit("#jbolt_Table_#(pageId)");
+        if (result){
+            let yeariautoid = $("#yeariautoid").val();
+            let url = "admin/annualorderm/approve?id="+yeariautoid;
+            Ajax.get(url,function(res){
+                LayerMsgBox.success("审批成功!");
+            });
+        }
     }
-
-
+    
     function uploadHandler(uploader, type, fileInput, res) {
         jboltTableClear("#jbolt_Table_#(pageId)");
         
@@ -316,10 +367,7 @@
             $.each(rowDatas, function (idx, row) {
 
                 if (row.iinventoryid) {
-                    var $tr = $('tr[data-index="' + idx + '"]');
-                    $tr.removeAttr('tooltip');
-                    $tr.removeAttr('title');
-                    $tr.removeClass('table-danger');
+                    removeClass(idx);
                 }
                 
             });
@@ -327,7 +375,16 @@
             LayerMsgBox.alert('请维护导入数据!', 2);
         }
     }
-    
+
+    function saveData(ele) {
+        var rowDatas = jboltTableGetAllDatas(ele);
+        console.log(JSON.stringify(rowDatas));
+
+        removeEmptyRow(ele, rowDatas);
+
+        jboltTableSubmit(ele);
+    }
+
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {

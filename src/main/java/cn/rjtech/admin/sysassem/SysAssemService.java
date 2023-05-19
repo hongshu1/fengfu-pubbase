@@ -160,10 +160,10 @@ public class SysAssemService extends BaseService<SysAssem> {
 	 */
 	public Ret deleteRmRdByIds(String ids) {
 		tx(() -> {
+			deleteByIds(ids);
 			String[] split = ids.split(",");
 			for(String s : split){
-				updateColumn(s, "isdeleted", true);
-				update("update T_Sys_AssemDetail  set  IsDeleted = 1 where  MasID = ?",s);
+				delete("DELETE T_Sys_AssemDetail   where  MasID = ?",s);
 			}
 			return true;
 		});
@@ -176,8 +176,8 @@ public class SysAssemService extends BaseService<SysAssem> {
 	 */
 	public Ret delete(Long id) {
 		tx(() -> {
-			updateColumn(id, "isdeleted", true);
-			update("update T_Sys_AssemDetail  set  IsDeleted = 1 where  MasID = ?",id);
+			deleteById(id);
+			delete("DELETE T_Sys_AssemDetail   where  MasID = ?",id);
 			return true;
 		});
 		return ret(true);
@@ -198,15 +198,15 @@ public class SysAssemService extends BaseService<SysAssem> {
 			//通过 id 判断是新增还是修改
 			if(sysotherin.getAutoID() == null){
 				sysotherin.setOrganizeCode(getOrgCode());
-				sysotherin.setCreatePerson(user.getUsername());
+				sysotherin.setCreatePerson(user.getName());
 				sysotherin.setCreateDate(now);
-				sysotherin.setModifyPerson(user.getUsername());
+				sysotherin.setModifyPerson(user.getName());
 				sysotherin.setState("1");
 				sysotherin.setModifyDate(now);
 				//主表新增
 				ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
 			}else{
-				sysotherin.setModifyPerson(user.getUsername());
+				sysotherin.setModifyPerson(user.getName());
 				sysotherin.setModifyDate(now);
 				//主表修改
 				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
@@ -286,4 +286,17 @@ public class SysAssemService extends BaseService<SysAssem> {
 			update("update T_Sys_AssemDetail  set  IsDeleted = 1 where  AutoID = ?",id);
 		}
 	}
+
+	public List<Record> getdictionary(Kv kv) {
+		return dbTemplate("sysassem.dictionary", kv).find();
+	}
+
+	public List<Record> style(Kv kv) {
+		return dbTemplate("sysassem.style", kv).find();
+	}
+
+	public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode) {
+		return dbTemplate("sysassem.getBarcodeDatas",Kv.by("q", q).set("limit",limit).set("orgCode",orgCode)).find();
+	}
+
 }

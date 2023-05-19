@@ -9,7 +9,11 @@
                 <div class="card-body">
                     <div class="col">
                         <button onclick="submitThisForm()" class="btn btn-success btn-sm" ><i class="fa fa-refresh"></i> 保存</button>
-                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #if(monthorderm.iAutoId??)
+                        <button onclick="submitApproveMonth()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #else
+                        <button onclick="submitApproveMonth()" disabled class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #end
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>
@@ -31,7 +35,7 @@
                     <form onsubmit="return false;" id="MonthOrderM_Form_#(pageId)" action="#(action)" method="post">
 
                         #if(monthorderm.iAutoId??)
-                        <input type="hidden" name="monthorderm.iAutoId" value="#(monthorderm.iAutoId??)"/>
+                        <input type="hidden" id="monthiautoid" name="monthorderm.iAutoId" value="#(monthorderm.iAutoId??)"/>
                         #end
 
                         <input type="hidden" name="monthorderm.iOrderStatus" value="#(monthorderm.iOrderStatus??1)"/>
@@ -306,6 +310,17 @@
     
     function submitThisForm(){
         jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+
+    function submitApproveMonth() {
+        let result = jboltTableSubmit("#jbolt_Table_#(pageId)");
+        if (result){
+            let monthiautoid = $("#monthiautoid").val();
+            let url = "admin/monthorderm/approve?id="+monthiautoid;
+            Ajax.get(url,function(res){
+                LayerMsgBox.success("审批成功!");
+            });
+        }
     }
     
     //获得配置参数
