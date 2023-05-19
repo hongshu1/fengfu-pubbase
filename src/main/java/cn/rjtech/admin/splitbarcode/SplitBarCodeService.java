@@ -46,8 +46,6 @@ public class SplitBarCodeService extends BaseService<Inventory> {
     }
 
     @Inject
-    OrganizeService       organizeService;
-    @Inject
     UserThirdpartyService userThirdpartyService;
 
     /**

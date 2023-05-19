@@ -96,7 +96,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * */
     public void resetAutitById() {
         Kv kv = getKv();
-        service.resetAutitById(kv.getStr("autoid"));
+        renderJson(service.resetAutitById(kv.getStr("autoid")));
     }
 
     /*
@@ -131,7 +131,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * 打印
      * */
     public void printSysPuinstore() {
-
+        //TODO 待定
     }
 
     /**

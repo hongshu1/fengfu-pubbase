@@ -1813,5 +1813,10 @@ public class PermissionKey {
 	 */
 	public static final String ADMIN_SYSMATERIALSPREPARE = "productionMaterial";
 
+	/**
+	 * 补打条码
+	 */
+	public static final String PATCHWORKBARCODE  = "patchwork_barcode ";
+
 }
 

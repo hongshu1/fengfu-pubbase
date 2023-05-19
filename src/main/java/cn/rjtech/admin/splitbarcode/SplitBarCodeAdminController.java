@@ -72,8 +72,6 @@ public class SplitBarCodeAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-//        Integer qty = byShiWu.getInt("qty");
-//        byShiWu.set("allqty","");
         set("bill", byShiWu);
         render("edit.html");
     }
