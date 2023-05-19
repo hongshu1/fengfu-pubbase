@@ -10,6 +10,7 @@ import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.SysProductindetail;
+
 /**
  * 产成品入库单明细
  * @ClassName: SysProductindetailAdminController
@@ -22,77 +23,79 @@ import cn.rjtech.model.momdata.SysProductindetail;
 @Path(value = "/admin/sysProductindetail", viewPath = "/_view/admin/sysProductindetail")
 public class SysProductindetailAdminController extends BaseAdminController {
 
-	@Inject
-	private SysProductindetailService service;
-   /**
-	* 首页
-	*/
-	public void index() {
-		render("index.html");
-	}
-   /**
-	* 数据源
-	*/
-	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("TrackType"), get("SourceBillType"), getBoolean("IsDeleted")));
-	}
+    @Inject
+    private SysProductindetailService service;
 
-   /**
-	* 新增
-	*/
-	public void add() {
-		render("add.html");
-	}
+    /**
+     * 首页
+     */
+    public void index() {
+        render("index.html");
+    }
 
-   /**
-	* 保存
-	*/
-	public void save() {
-		renderJson(service.save(getModel(SysProductindetail.class, "sysProductindetail")));
-	}
+    /**
+     * 数据源
+     */
+    public void datas() {
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("TrackType"), get("SourceBillType"), getBoolean("IsDeleted")));
+    }
 
-   /**
-	* 编辑
-	*/
-	public void edit() {
-		SysProductindetail sysProductindetail=service.findById(getLong(0));
-		if(sysProductindetail == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		set("sysProductindetail",sysProductindetail);
-		render("edit.html");
-	}
+    /**
+     * 新增
+     */
+    public void add() {
+        render("add.html");
+    }
 
-   /**
-	* 更新
-	*/
-	public void update() {
-		renderJson(service.update(getModel(SysProductindetail.class, "sysProductindetail")));
-	}
+    /**
+     * 保存
+     */
+    public void save() {
+        renderJson(service.save(getModel(SysProductindetail.class, "sysProductindetail")));
+    }
 
-   /**
-	* 批量删除
-	*/
-	public void deleteByIds() {
-		renderJson(service.deleteRmRdByIds(get("ids")));
-	}
+    /**
+     * 编辑
+     */
+    public void edit() {
+        SysProductindetail sysProductindetail = service.findById(getLong(0));
+        if (sysProductindetail == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        set("sysProductindetail", sysProductindetail);
+        render("edit.html");
+    }
 
-   /**
-	* 删除
-	*/
-	public void delete() {
-		renderJson(service.delete(getLong(0)));
-	}
+    /**
+     * 更新
+     */
+    public void update() {
+        renderJson(service.update(getModel(SysProductindetail.class, "sysProductindetail")));
+    }
 
-   /**
-	* 切换IsDeleted
-	*/
-	public void toggleIsDeleted() {
-	    renderJson(service.toggleBoolean(getLong(0),"IsDeleted"));
-	}
+    /**
+     * 批量删除
+     */
+    public void deleteByIds() {
+        renderJson(service.deleteRmRdByIds(get("ids")));
+    }
 
-	public void findEditTableDatas(){
-		renderJsonData(service.findEditTableDatas(getKv()));
-	}
+    /**
+     * 删除
+     */
+    public void delete() {
+        renderJson(service.delete(getLong(0)));
+    }
+
+    /**
+     * 切换IsDeleted
+     */
+    public void toggleIsDeleted() {
+        renderJson(service.toggleBoolean(getLong(0), "IsDeleted"));
+    }
+
+    public void findEditTableDatas() {
+        renderJsonData(service.findEditTableDatas(getKv()));
+    }
 }
