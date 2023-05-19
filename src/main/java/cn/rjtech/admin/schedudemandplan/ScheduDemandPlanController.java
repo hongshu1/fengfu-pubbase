@@ -109,6 +109,9 @@ public class ScheduDemandPlanController extends BaseAdminController {
 
 	//-----------------------------------------------------------------物料需求计划计算-----------------------------------------------
 
+	public void demandalgorithm() {
+		render("demandalgorithm.html");
+	}
 
 	public void apsScheduDemandPlan() {
 		String endDate = getKv().getStr("endDate");

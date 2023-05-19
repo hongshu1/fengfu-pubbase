@@ -356,24 +356,26 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     }
 
 
+    /**
+     * 获取表格表头日期展示
+     */
     public void getTableHead() {
-
-        String startdate = get("startdate");
-        String enddate = get("enddate");
+        String startDate = get("startDate");
+        String endDate = get("endDate");
 
         LocalDate localDate = LocalDate.now();
-        if (StringUtils.isBlank(startdate)){
-            startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
+        if (StringUtils.isBlank(startDate)){
+            startDate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
         }
-        if (StringUtils.isBlank(enddate)){
-            enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
+        if (StringUtils.isBlank(endDate)){
+            endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
         }
 
         List<String> namelist = new ArrayList<>();
         List<String> weeklist = new ArrayList<>();
-        if (StringUtils.isNotBlank(startdate) && StringUtils.isNotBlank(enddate)){
+        if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)){
             //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-            List<String> scheduDateList = Util.getBetweenDate(startdate,enddate);
+            List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
             //页面顶部colspan列  key:2023年1月  value:colspan="13"
             Map<String,Integer> yearMonthMap = new HashMap<>();
             for (String s : scheduDateList) {
@@ -406,9 +408,6 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
                 weeklist.add(weekType);
             }
         }
-        //set("colnamelist", namelist);
-        //set("weeklist", weeklist);
-
         Map<String,Object> map = new HashMap<>();
         map.put("day",namelist);
         map.put("week",weeklist);

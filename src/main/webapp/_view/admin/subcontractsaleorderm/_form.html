@@ -7,7 +7,11 @@
                 <div class="card-body">
                     <div class="col">
                         <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
+                        #if(subcontractsaleorderm.iAutoId??)
                         <button onclick="submitApproveSubSale()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #else
+                        <button onclick="submitApproveSubSale()" disabled class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #end
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>

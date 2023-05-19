@@ -395,6 +395,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	 * @return
 	 */
 	public synchronized Ret apsScheduDemandPlan(String endDate) {
+		if (StringUtils.isBlank(endDate)){
+			return fail("截止日期不能为空！");
+		}
+
 		//开始日期
 		String startDate = DateUtils.formatDate(new Date(),"yyyy-MM-dd");
 		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
@@ -530,7 +534,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		for (ScheduDemandTempDTO dto : groupInList){
 			Long invId = dto.getInvId();
 			idsInJoin2 = idsInJoin2 + invId + ",";
-			if (dto.getiSaleType() != 1){
+			if (dto.getiSaleType() == null || dto.getiSaleType() != 1){
 				idsAllJoin = idsAllJoin + invId + ",";
 			}
 		}
@@ -561,14 +565,14 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			Long invId = invInfo.getInvId();
 			String cInvCode = invInfo.getInvCode();
 			Long iVendorId = invInfo.getiVendorId();
-			int iInnerInStockDays = invInfo.getiInnerInStockDays();
+			int iInnerInStockDays = invInfo.getiInnerInStockDays() != null ? invInfo.getiInnerInStockDays() : 1;
 			int iSaleType = invInfo.getiSaleType();
 			int iPsLevel = invInfo.getiLevel();
 
 			//月周计划汇总（内作）
-			Map<String,BigDecimal> dateQtyApsMap = invPlanDateApsMap.get(cInvCode);
+			Map<String,BigDecimal> dateQtyApsMap = invPlanDateApsMap.get(cInvCode) != null ? invPlanDateApsMap.get(cInvCode) : new HashMap<>();
 			//客户计划
-			Map<String,BigDecimal> dateQtyCusMap = invPlanDateCusMap.get(cInvCode);
+			Map<String,BigDecimal> dateQtyCusMap = invPlanDateCusMap.get(cInvCode) != null ? invPlanDateCusMap.get(cInvCode) : new HashMap<>();
 
 			//本次所计算物料的key:yyyy-MM-dd  value:Qty
 			Map<String,BigDecimal> dateQtyMap = new HashMap<>();
@@ -596,7 +600,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 						for (String pInv : pInvMap.keySet()){
 							BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
 							//父级需求计划
-							Map<String,BigDecimal> datePQtyAllMap = invPlanDateInAllMap.get(pInv);
+							Map<String,BigDecimal> datePQtyAllMap = invPlanDateInAllMap.get(pInv) != null ? invPlanDateInAllMap.get(pInv) : new HashMap<>();
 							BigDecimal pQty = datePQtyAllMap.get(date);
 							if (pQty != null){
 								BigDecimal qty = pQty.multiply(realQty);
@@ -870,6 +874,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			invShiJiDateMap.put(inv,shiJiMap);
 			invChaYiDateMap.put(inv,chaYiMap);
 		}
+
+
 
 
 		return SUCCESS;

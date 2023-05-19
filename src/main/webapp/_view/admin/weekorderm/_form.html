@@ -6,8 +6,11 @@
 				<div class="card-body">
 					<div class="col" >
 						<button onclick="submitThisForm()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
-						<button onclick="approve()" id="approve_By_Edit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
-						<button onclick="approveByAdd()"  id="approve_By_Add" type="submit"  class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+						#if(weekOrderM.iAutoId??)
+						<button onclick="submitApproveWeek()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+						#else
+						<button onclick="submitApproveWeek()" disabled class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+						#end
 						<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
 					</div>
 				</div>
@@ -424,7 +427,7 @@
 		window.parent.refreshJBoltTable();
 	}
 	
-	function approve() {
+	function submitApproveWeek() {
 		Ajax.get('/admin/weekorderm/approve?iAutoId='+$("input[name='weekOrderM.iAutoId']").val()+"&&mark="+1 , function (ret) {
 			if (ret.state === 'ok') {
 				// 刷新
