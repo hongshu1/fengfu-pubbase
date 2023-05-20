@@ -492,3 +492,8 @@
 #namespace("otherdeliverylist")
 #include("otherdeliverylist/otherdeliverylist.sql")
 #end
+
+#namespace("patchworkbarcode")
+#include("patchworkbarcode/patchworkbarcode.sql")
+#end
+

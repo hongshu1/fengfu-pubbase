@@ -174,10 +174,6 @@
         <div id="alert">
             <p class="alert_title"><span id="title"></span><span id="close">X</span></p>
             <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
-                <!--                <span class="span">截止日期：</span>-->
-                <!--                <select style="width:150px;height:25px;">-->
-                <!--                    <option value=""></option>-->
-                <!--                </select>-->
                 <label class="col-form-label " >指定月：</label>
                 <input type="text" class="form-control" style="display: inline-block; width: 200px" id="laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="layMonth" value="#(layMonth??)">
             </div>
@@ -325,7 +321,7 @@
             type:'get',
             dataType:'json',
             success:function (res){
-                console.log(res)
+                console.log(res);
                 spreadSuspend();//暂停绘制
                 let rowIndex = 3;
                 let colIndex=0;
@@ -377,7 +373,6 @@
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/3S");
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划在库");
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("在库天数");
-
                     //日计划排版
                     let shiyongRow = 3;//计划使用行下标
                     let shiyongCol = 9;
@@ -391,14 +386,23 @@
                     let zaikuCol = 8;
                     let tianshuRow = 8;//在库天数行下标
                     let tianshuCol = 9;
-                    for (let j = 0; j < res[i].day.length; j++) {
-                        console.log(res[i].day[j])
-                        sheet.setValue(shiyongRow,shiyongCol++,res[i].day[j].shiyong);
-                        sheet.setValue(yisRow,yisCol++,res[i].day[j].one);
-                        sheet.setValue(ersRow,ersCol++,res[i].day[j].two);
-                        sheet.setValue(sansRow,sansCol++,res[i].day[j].three);
-                        sheet.setValue(zaikuRow,zaikuCol,res[i].day[j].zaiku);
-                        sheet.setValue(tianshuRow,tianshuCol++,res[i].day[j].tianshu);
+                    //渲染计划数据
+                    for (var j = 0; j < res[i].day.length; j++) {
+                        if(i==0){
+                            sheet.setValue(shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
+                            sheet.setValue(yisRow,yisCol+j,res[i].day[j].one);
+                            sheet.setValue(ersRow,ersCol+j,res[i].day[j].two);
+                            sheet.setValue(sansRow,sansCol+j,res[i].day[j].three);
+                            sheet.setValue(zaikuRow,zaikuCol,res[i].day[j].zaiku);
+                            sheet.setValue(tianshuRow,tianshuCol+j,res[i].day[j].tianshu);
+                        }else{
+                            sheet.setValue(6*i+shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
+                            sheet.setValue(6*i+yisRow,yisCol+j,res[i].day[j].one);
+                            sheet.setValue(6*i+ersRow,ersCol+j,res[i].day[j].two);
+                            sheet.setValue(6*i+sansRow,sansCol+j,res[i].day[j].three);
+                            sheet.setValue(6*i+zaikuRow,zaikuCol,res[i].day[j].zaiku);
+                            sheet.setValue(6*i+tianshuRow,tianshuCol+j,res[i].day[j].tianshu);
+                        }
                     }
                 }
                 spreadResume();// 恢复绘制
@@ -406,35 +410,7 @@
                 console.log('error')
             }
         })
-        initIPsLevelData();
     }
-    //初始化排产数据
-    function initIPsLevelData(){
-
-    }
-    //获取当前点击的单元格
-    // sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
-    //     if (info.sheetArea === GC.Spread.Sheets.SheetArea.viewport) {
-    //         parms.info=info;
-    //         let {row,col} = parms.info;
-    //         let a = {
-    //             row:row,
-    //             col:col
-    //         }
-    //         //每次添加之后往数组内进行存储
-    //         parms.lockCells.push(a);
-    //         //数组去重处理
-    //         const unique = [];
-    //         for (const item of parms.lockCells) {
-    //             const duplicate = unique.find((key) => key.row === item.row && key.col === item.col);
-    //             if (!duplicate) {
-    //                 unique.push(item);
-    //             }
-    //         }
-    //         parms.lockCells=unique;
-    //         console.log(parms.lockCells,"获取当前点击的单元格")
-    //     }
-    // });
     //获取表格中输入或修改的值
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         let a = {
@@ -454,7 +430,6 @@
     var alertTitle = document.getElementById("title");
     //锁定打开弹出层
     reg.onclick = function(){
-        // getDays();
         myAlert.style.display = "block";
         alertTitle.innerText = "锁定计划";
         myAlert.style.position = "absolute";
@@ -474,10 +449,6 @@
         mybg.style.opacity = "0.3";
         document.body.appendChild(mybg);
         document.body.style.overflow = "hidden";
-        let sdate=new Date();//new一个日对象
-        let year= sdate.Format("yyyy");//获取年
-        let month = sdate.Format("MM");//获取月
-        let day = sdate.Format("dd");//获取天
     }
     //弹出层关闭事件
     mClose.onclick = function(){
@@ -489,17 +460,27 @@
         myAlert.style.display = "none";
         mybg.style.display = "none";
     }
-    //获取当月剩余天数
-    // function getDays(){
-    //     let today = new Date();
-    //     let now = today.getDate();
-    //     let year = today.getYear();
-    //     if (year < 2000) year += 1900;
-    //     let month = today.getMonth();
-    //     let monarr = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
-    //     if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) monarr[1] = "29";
-    //     console.log("本月还剩 " + (monarr[month]-now) + " 天！");
-    // }
+    function unLock(){
+        myAlert.style.display = "block";
+        alertTitle.innerText = "解锁计划";
+        myAlert.style.position = "absolute";
+        myAlert.style.top = "50%";
+        myAlert.style.left = "50%";
+        myAlert.style.marginTop = "-75px";
+        myAlert.style.marginLeft = "-150px";
+        mybg = document.createElement("div");
+        mybg.setAttribute("id", "mybg");
+        mybg.style.background = "#000";
+        mybg.style.width = "100%";
+        mybg.style.height = "100%";
+        mybg.style.position = "absolute";
+        mybg.style.top = "0";
+        mybg.style.left = "0";
+        mybg.style.zIndex = "500";
+        mybg.style.opacity = "0.3";
+        document.body.appendChild(mybg);
+        document.body.style.overflow = "hidden";
+    }
     //测试向后端发送数据
     function edit(){
         // let url = "http://localhost:8081/admin/scheduproductplanyear/getApsYearPlanList";
@@ -516,6 +497,5 @@
         parms.ColumnCount=row;
         spreadResume();
     }
-
 </script>
 #end

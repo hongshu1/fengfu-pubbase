@@ -145,13 +145,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 	 * 批量删除主从表
 	 */
 	public Ret deleteRmRdByIds(String ids) {
-		tx(() -> {
-			String[] split = ids.split(",");
-			for(String s : split){
-				updateColumn(s, "isdeleted", true);
-			}
-			return true;
-		});
+		deleteByIds(ids);
 		return ret(true);
 	}
 
@@ -161,7 +155,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		updateColumn(id, "isdeleted", true);
+		deleteById(id);
 		return ret(true);
 	}
 }

@@ -106,18 +106,20 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     }
 
     /**
-     * 跳转到"检验"页面后，自动加载检验页面table的数据
+     * @desc 跳转到"检验"页面后，自动加载检验页面table的数据
+     * @param ircvdocqcformmid 主表的主键
      */
     @ApiDoc(result = AutoGetCheckOutTableDatasVo.class)
     @UnCheck
     public void autoGetRcvCheckOutTableDatas(@Para(value = "ircvdocqcformmid") Long ircvdocqcformmid) {
         ValidationUtils.notNull(ircvdocqcformmid, JBoltMsg.PARAM_ERROR);
-        
+
         renderJBoltApiRet(apiService.autoGetRcvCheckOutTableDatas(ircvdocqcformmid));
     }
 
     /**
-     * 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
+     * @desc 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
+     * @param iautoid
      */
     @ApiDoc(result = RcvDocQcFormMOnlyseeApiVo.class)
     @UnCheck
@@ -128,7 +130,8 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     }
 
     /**
-     * 跳转到"查看"页面或者“编辑”页面后，自动加载查看页面table的数据
+     * @desc 跳转到"查看"页面或者“编辑”页面后，自动加载查看页面table的数据
+     * @param iautoid 主键
      */
     @ApiDoc(result = AutoGetRcvOnlyseeTableDatasVo.class)
     @UnCheck
@@ -139,7 +142,7 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     }
 
     /**
-     * 在检验页面点击“确定”按钮，将数据带到后台保存
+     * @desc 在检验页面点击“确定”按钮，将数据带到后台保存
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
