@@ -1,14 +1,9 @@
 package cn.rjtech.entity.vo.stockoutdefect;
 
-import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.StockoutDefect;
-import cn.rjtech.model.momdata.StockoutQcFormM;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @Description 出库异常品记录

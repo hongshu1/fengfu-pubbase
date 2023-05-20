@@ -11,7 +11,6 @@ import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.util.BillNoUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -19,7 +18,6 @@ import com.jfinal.plugin.activerecord.Record;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

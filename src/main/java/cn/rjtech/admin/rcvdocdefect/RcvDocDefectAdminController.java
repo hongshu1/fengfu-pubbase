@@ -3,14 +3,14 @@ package cn.rjtech.admin.rcvdocdefect;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.RcvDocDefect;
-import cn.rjtech.model.momdata.RcvDocQcFormM;
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
 
 /**
@@ -20,7 +20,9 @@ import com.jfinal.plugin.activerecord.Record;
  * @author: RJ
  * @date: 2023-04-18 16:36
  */
+@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.NONE)
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/rcvdocdefect", viewPath = "/_view/admin/rcvdocdefect")
 public class RcvDocDefectAdminController extends BaseAdminController {
 

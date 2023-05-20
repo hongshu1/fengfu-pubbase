@@ -1,7 +1,6 @@
 package cn.rjtech.u9;
 
 
-import cn.rjtech.config.AppConfig;
 import cn.rjtech.config.U9ApiConfigKey;
 import cn.rjtech.util.ValidationUtils;
 

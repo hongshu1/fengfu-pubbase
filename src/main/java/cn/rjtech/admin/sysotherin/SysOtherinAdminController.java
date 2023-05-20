@@ -1,23 +1,22 @@
 package cn.rjtech.admin.sysotherin;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.RdStyle;
+import cn.rjtech.model.momdata.SysOtherin;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.model.momdata.Warehouse;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
-
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.SysOtherin;
 
 /**
  * 其它入库单

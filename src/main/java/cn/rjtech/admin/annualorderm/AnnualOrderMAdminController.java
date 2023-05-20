@@ -25,8 +25,8 @@ import com.jfinal.upload.UploadFile;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-23 17:23
  */
-@CheckPermission(PermissionKey.ANNUALORDERM)
 @UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.ANNUALORDERM)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/annualorderm", viewPath = "/_view/admin/annualorderm")
 public class AnnualOrderMAdminController extends BaseAdminController {

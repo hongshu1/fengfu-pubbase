@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseCusfieldsmappingdCodingrule;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.momdata.base.BaseCusfieldsmappingdCodingrule;
 
 /**
  * 系统设置-导入字段编码规则

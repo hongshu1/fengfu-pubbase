@@ -1,52 +1,34 @@
 package cn.rjtech.admin.scheduproductplan;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.base.BaseService;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.apsannualpland.ApsAnnualplandService;
 import cn.rjtech.admin.apsannualplandqty.ApsAnnualplandQtyService;
 import cn.rjtech.admin.calendar.CalendarService;
-import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
-import cn.rjtech.constants.DataSourceConstants;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.ApsAnnualpland;
+import cn.rjtech.model.momdata.ApsAnnualplandQty;
+import cn.rjtech.model.momdata.ApsAnnualplanm;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.kit.TypeKit;
-import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 
 import java.math.BigDecimal;
-import java.rmi.MarshalledObject;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Calendar;
-import java.util.stream.Collectors;
 import java.util.*;
-
-import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 生产计划排程 Service

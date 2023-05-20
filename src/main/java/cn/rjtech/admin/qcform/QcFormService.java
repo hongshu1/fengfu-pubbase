@@ -18,7 +18,6 @@ import cn.rjtech.admin.qcformtableitem.QcFormTableItemService;
 import cn.rjtech.admin.qcformtableparam.QcFormTableParamService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;

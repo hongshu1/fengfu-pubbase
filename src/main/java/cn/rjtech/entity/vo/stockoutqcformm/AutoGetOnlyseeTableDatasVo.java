@@ -1,8 +1,8 @@
 package cn.rjtech.entity.vo.stockoutqcformm;
 
-import java.util.List;
-
 import cn.rjtech.entity.vo.base.ResultVo;
+
+import java.util.List;
 
 /**
  * @version 1.0

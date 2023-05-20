@@ -1,22 +1,24 @@
 package cn.rjtech.admin.sysproductin;
 
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
-import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.warehouse.WarehouseService;
-import cn.rjtech.model.momdata.*;
-import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
+import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.RdStyle;
+import cn.rjtech.model.momdata.SysProductin;
+import cn.rjtech.model.momdata.Warehouse;
 import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
 
 /**
  * 产成品入库单

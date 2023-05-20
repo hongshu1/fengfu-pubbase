@@ -12,6 +12,7 @@ import cn.jbolt.core.service.JBoltOrgService;
 import cn.rjtech.admin.userorg.UserOrgService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -24,6 +25,7 @@ import com.jfinal.kit.Okv;
  */
 @UnCheck
 @CheckPermission(PermissionKey.ORGMGR)
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/org", viewPath = "/_view/admin/org")
 public class OrgAdminController extends BaseAdminController {
     

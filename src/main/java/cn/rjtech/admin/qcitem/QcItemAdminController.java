@@ -1,37 +1,25 @@
 package cn.rjtech.admin.qcitem;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.jfinal.aop.Inject;
-
-import cn.hutool.core.date.DateUtil;
-import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelMerge;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.rjtech.admin.qcparam.QcParamService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-
-import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import com.jfinal.upload.UploadFile;
-
-import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.QcItem;
 import cn.rjtech.model.momdata.QcParam;
 import cn.rjtech.util.Util;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * 质量建模-检验项目（分类）
@@ -40,8 +28,8 @@ import cn.rjtech.util.Util;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-17 15:31
  */
-@CheckPermission(PermissionKey.QCITEM)
 @UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.QCITEM)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/qcitem", viewPath = "/_view/admin/qcitem")
 public class QcItemAdminController extends BaseAdminController {

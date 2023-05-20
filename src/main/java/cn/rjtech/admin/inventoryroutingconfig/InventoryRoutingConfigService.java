@@ -1,23 +1,18 @@
 package cn.rjtech.admin.inventoryroutingconfig;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.model.momdata.InventoryRouting;
-import cn.rjtech.model.momdata.InventoryroutingconfigOperation;
-import cn.rjtech.util.ValidationUtils;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.InventoryRoutingConfig;
+import cn.rjtech.model.momdata.InventoryroutingconfigOperation;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.InventoryRoutingConfig;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 

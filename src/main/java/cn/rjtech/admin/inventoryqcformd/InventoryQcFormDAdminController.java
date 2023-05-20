@@ -1,7 +1,7 @@
 package cn.rjtech.admin.inventoryqcformd;
 
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InventoryQcFormD;

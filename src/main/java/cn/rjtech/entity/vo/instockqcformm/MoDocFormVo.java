@@ -1,7 +1,5 @@
 package cn.rjtech.entity.vo.instockqcformm;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
 import java.io.Serializable;
 
 public class MoDocFormVo implements Serializable {

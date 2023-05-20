@@ -1,33 +1,27 @@
 package cn.rjtech.admin.operation;
 
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
-import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-//import cn.rjtech.admin.operationbadness.OperationbadnessService;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.rjtech.admin.qcparam.QcParamService;
 import cn.rjtech.admin.workclass.WorkClassService;
 import cn.rjtech.model.momdata.Operation;
 import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.Util;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 料品工序档案配置 Controller
@@ -36,9 +30,9 @@ import org.apache.commons.lang3.StringUtils;
  * @author: chentao
  * @date: 2022-11-09 19:17
  */
+@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.OPERATION)
 @Before(JBoltAdminAuthInterceptor.class)
-@UnCheckIfSystemAdmin
 @Path(value = "/admin/operation", viewPath = "/_view/admin/operation")
 public class OperationAdminController extends JBoltBaseController {
 

@@ -3,9 +3,6 @@ package cn.rjtech.entity.vo.instockqcformm;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-
-import cn.rjtech.entity.vo.base.ResultVo;
 
 /**
  * @version 1.0

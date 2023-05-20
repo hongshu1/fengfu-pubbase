@@ -1,9 +1,9 @@
 package cn.rjtech.admin.appversion;
 
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -20,9 +20,9 @@ import com.jfinal.plugin.activerecord.Page;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2020-09-16 17:03
  */
-@Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.APPVERSION)
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/appversion", viewPath = "/_view/admin/appversion")
 public class AppversionAdminController extends BaseAdminController {
 

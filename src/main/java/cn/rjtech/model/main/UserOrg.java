@@ -1,8 +1,8 @@
 package cn.rjtech.model.main;
 
-import cn.rjtech.model.main.base.BaseUserOrg;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.main.base.BaseUserOrg;
 
 /**
  * 用户组织关系

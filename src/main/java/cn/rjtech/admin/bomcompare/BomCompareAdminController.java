@@ -1,21 +1,24 @@
 package cn.rjtech.admin.bomcompare;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.BomCompare;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+
 /**
  * 物料建模-Bom清单
+ *
  * @ClassName: BomCompareAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-01 10:50
  */
+@CheckPermission(PermissionKey.NOME)
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/bomcompare", viewPath = "/_view/admin/bomcompare")
 public class BomCompareAdminController extends BaseAdminController {
 
