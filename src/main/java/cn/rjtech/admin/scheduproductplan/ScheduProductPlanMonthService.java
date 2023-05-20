@@ -1,11 +1,8 @@
 package cn.rjtech.admin.scheduproductplan;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
-import cn.jbolt.core.kit.ConfigKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.apsannualpland.ApsAnnualplandService;
@@ -22,21 +19,21 @@ import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueue;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Calendar;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 生产计划排程 Service
@@ -348,10 +345,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * @param endDateStr 截止时间yyyy-MM-dd
      * @return
      */
-    public synchronized List<Map<String,Object>> scheduPlanMonth(Integer level,String endDateStr) {
-        //月周生产计划集合
-        List<Map<String,Object>> dataList = new ArrayList<>();
-
+    public synchronized Ret scheduPlanMonth(Integer level,String endDateStr) {
         //TODO:获取当前层级上次排产截止日期+1
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekschedule",Kv.by("level",level)).findFirst();
         //排产开始年月日
@@ -369,6 +363,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         String startDateStr = DateUtils.formatDate(startDate,"yyyy-MM-dd");
         //排产截止年月日
         Date endDate = DateUtils.parseDate(endDateStr);
+        if (startDate.getTime() >= endDate.getTime()){
+            return fail("截止日期不能小于上次排产截止日期");
+        }
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startDate);
@@ -593,6 +590,36 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
 
+        Long userId = JBoltUserKit.getUserId();
+        String userName = JBoltUserKit.getUserName();
+        Date newDate = new Date();
+        String orgCode = getOrgCode();
+        String orgName = getOrgName();
+        Long orgId = getOrgId();
+        Long iWeekScheduleId = JBoltSnowflakeKit.me.nextId();
+
+        //排产主表
+        ApsWeekschedule weekschedule = new ApsWeekschedule();
+        weekschedule.setIOrgId(orgId);
+        weekschedule.setCOrgCode(orgCode);
+        weekschedule.setCOrgName(orgName);
+        weekschedule.setICreateBy(userId);
+        weekschedule.setCCreateName(userName);
+        weekschedule.setDCreateTime(newDate);
+        weekschedule.setIUpdateBy(userId);
+        weekschedule.setCUpdateName(userName);
+        weekschedule.setDUpdateTime(newDate);
+        weekschedule.setIAutoId(iWeekScheduleId);
+        weekschedule.setILevel(level);
+        weekschedule.setDScheduleBeginTime(startDate);
+        weekschedule.setDScheduleEndTime(endDate);
+        weekschedule.setIsLocked(false);
+
+        //排产物料明细表
+        List<ApsWeekscheduledetails> detailsList = new ArrayList<>();
+        //排产数量明细表
+        List<ApsWeekscheduledQty> detailsQtyList = new ArrayList<>();
+
         int seq = 1;
         //循环产线
         for (Long WorkIdKey : workInvListMap.keySet()){
@@ -700,54 +727,75 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             getInvPlanMap(productInformationByShift3,productNumberByShift3,invPlanMap3S);
 
 
-
-
             //循环物料
             for (String inv : invList){
                 Record info = invInfoMap.get(inv);
 
-                Map<String,Object> map = new HashMap<>();
-                map.put("seq",seq++);
-                map.put("iPsLevel",info.getInt("iPsLevel"));
-                map.put("cWorkName",info.getStr("cWorkName"));
-                map.put("cInvCode",info.getStr("cInvCode"));
-                map.put("cInvCode1",info.getStr("cInvCode1"));
-                map.put("cInvName1",info.getStr("cInvName1"));
+                Long iWeekScheduleDid = JBoltSnowflakeKit.me.nextId();
+                ApsWeekscheduledetails scheduleDetails = new ApsWeekscheduledetails();
+                scheduleDetails.setIOrgId(orgId);
+                scheduleDetails.setCOrgCode(orgCode);
+                scheduleDetails.setCOrgName(orgName);
+                scheduleDetails.setICreateBy(userId);
+                scheduleDetails.setCCreateName(userName);
+                scheduleDetails.setDCreateTime(newDate);
+                scheduleDetails.setIUpdateBy(userId);
+                scheduleDetails.setCUpdateName(userName);
+                scheduleDetails.setDUpdateTime(newDate);
+                scheduleDetails.setIAutoId(iWeekScheduleDid);
+                scheduleDetails.setIWeekScheduleId(iWeekScheduleId);
+                scheduleDetails.setILevel(level);
+                scheduleDetails.setIInventoryId(info.getLong("invId"));
+                detailsList.add(scheduleDetails);
 
-
-                System.out.println("需求："+inv+"："+ Arrays.toString(planMap.get(inv)));
                 int[] invPlan = planMap.get(inv);
-
-                System.out.println("1S："+inv+"："+ Arrays.toString(invPlanMap1S.get(inv)));
                 int[] invPlan1S = invPlanMap1S.get(inv);
-
-                System.out.println("2S："+inv+"："+ Arrays.toString(invPlanMap2S.get(inv)));
                 int[] invPlan2S = invPlanMap2S.get(inv);
-
-                System.out.println("3S："+inv+"："+ Arrays.toString(invPlanMap3S.get(inv)));
                 int[] invPlan3S = invPlanMap3S.get(inv);
 
-                Map<String,Object> dayMap = new HashMap<>();
-
-                List<Object> objectList = new ArrayList<>();
                 for (int i = 0; i < scheduDateList.size(); i++) {
-                    Map<String,Object> record = new HashMap<>();
-                    record.put("shiyong",invPlan[i]);
-                    record.put("one",invPlan1S[i]);
-                    record.put("two",invPlan2S[i]);
-                    record.put("three",invPlan3S[i]);
-                    record.put("zaiku",0);
-                    record.put("tianshu",0);
+                    String date = scheduDateList.get(i);
+                    int year = Integer.parseInt(date.substring(0,4));
+                    int month = Integer.parseInt(date.substring(5,7));
+                    int day = Integer.parseInt(date.substring(8,10));
 
-                    record.put("date",scheduDateList.get(i));//
-
-                    objectList.add(record);
-                    //dayMap.put(scheduDateList.get(i),record);
+                    ApsWeekscheduledQty scheduledQty = new ApsWeekscheduledQty();
+                    scheduledQty.setIWeekScheduleDid(iWeekScheduleDid);
+                    scheduledQty.setIYear(year);
+                    scheduledQty.setIMonth(month);
+                    scheduledQty.setIDate(day);
+                    scheduledQty.setIQty1(BigDecimal.valueOf(invPlan[i]));
+                    scheduledQty.setIQty2(BigDecimal.valueOf(invPlan1S[i]));
+                    scheduledQty.setIQty3(BigDecimal.valueOf(invPlan2S[i]));
+                    scheduledQty.setIQty4(BigDecimal.valueOf(invPlan3S[i]));
+                    scheduledQty.setIQty5(BigDecimal.valueOf(0));
+                    scheduledQty.setIQty6(BigDecimal.valueOf(0));
+                    detailsQtyList.add(scheduledQty);
                 }
-                map.put("day",objectList);
-                dataList.add(map);
             }
         }
+        tx(() -> {
+            weekschedule.save();
+            apsWeekscheduledetailsService.batchSave(detailsList);
+            if (detailsQtyList.size() > 0){
+                List<List<ApsWeekscheduledQty>> groupCusOrderSumList = CollectionUtils.partition(detailsQtyList,300);
+                CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
+                ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
+                for(List<ApsWeekscheduledQty> cusOrderSums :groupCusOrderSumList){
+                    executorService.execute(()->{
+                        apsWeekscheduledQtyService.batchSave(cusOrderSums);
+                    });
+                    countDownLatch.countDown();
+                }
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                executorService.shutdown();
+            }
+            return true;
+        });
 
         /*try {
 
@@ -850,7 +898,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         }catch (Exception e){
             throw new RuntimeException("排程计划出错！"+e.getMessage());
         }*/
-        return dataList;
+        return SUCCESS;
     }
     public void getInvPlanMap(String[] productInformationByShift,int[] productNumberByShift,Map<String, int[]> invPlanMap){
         for (int i = 0; i < productInformationByShift.length; i++) {
@@ -928,7 +976,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 Map<String,Record> dateQtyMap = invPlanDateMap.get(cInvCode);
                 dateQtyMap.put(dateKey,record);
             }else {
-                Map<String,Record> dateQtyMap = new HashMap<>();
+                Map<String,Record> dateQtyMap = new LinkedHashMap<>();
                 dateQtyMap.put(dateKey,record);
                 invPlanDateMap.put(cInvCode,dateQtyMap);
             }
@@ -945,7 +993,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         idsJoin = idsJoin + "601)";
 
 
-
         //TODO:查询物料集期初在库
         List<Record> getLastDateZKQtyList = getLastDateZKQtyList(Kv.by("lastyear",lastyear).set("lastmonth",lastmonth).set("lastday",lastday).set("ids",idsJoin));
         //key:inv   value:qty
@@ -958,9 +1005,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
 
         List<Map<String,Object>> dataList = new ArrayList<>();
-
-
-        int seq = 0;
+        int seq = 1;
         //循环产线
         for (Long WorkIdKey : workInvListMap.keySet()){
             //物料集
@@ -978,17 +1023,24 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 map.put("cInvCode1",info.getStr("cInvCode1"));
                 map.put("cInvName1",info.getStr("cInvName1"));
 
-                Map<String,Object> dayMap = new HashMap<>();
-
+                List<Object> objectList = new ArrayList<>();
                 Map<String,Record> planDateMap = invPlanDateMap.get(inv);
                 for(String date : planDateMap.keySet()){
                     Record record = planDateMap.get(date);
-                    dayMap.put(date,record);
+
+                    Map<String,Object> dataMap = new HashMap<>();
+                    dataMap.put("shiyong",record.getBigDecimal("iQty1"));
+                    dataMap.put("one",record.getBigDecimal("iQty2"));
+                    dataMap.put("two",record.getBigDecimal("iQty3"));
+                    dataMap.put("three",record.getBigDecimal("iQty4"));
+                    dataMap.put("zaiku",record.getBigDecimal("iQty5"));
+                    dataMap.put("tianshu",record.getBigDecimal("iQty6"));
+                    dataMap.put("date",date);
+                    objectList.add(dataMap);
                 }
-                map.put("day",dayMap);
+                map.put("day",objectList);
                 dataList.add(map);
             }
-
         }
         return dataList;
     }
