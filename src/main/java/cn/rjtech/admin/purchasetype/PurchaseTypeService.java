@@ -1,18 +1,16 @@
 package cn.rjtech.admin.purchasetype;
 
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.rjtech.enums.SourceEnum;
-import cn.rjtech.model.momdata.SaleType;
-import cn.rjtech.util.ValidationUtils;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.model.momdata.PurchaseType;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.PurchaseType;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;

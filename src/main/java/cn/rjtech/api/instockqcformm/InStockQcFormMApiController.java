@@ -1,9 +1,5 @@
 package cn.rjtech.api.instockqcformm;
 
-import com.jfinal.aop.Inject;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.kit.Kv;
-
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.crossorigin.CrossOrigin;
 import cn.jbolt.core.permission.UnCheck;
@@ -13,13 +9,11 @@ import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
-import cn.rjtech.entity.vo.instockqcformm.GetExportExcelVo;
-import cn.rjtech.entity.vo.instockqcformm.InStockAutoGetCheckOutTableDatasVo;
-import cn.rjtech.entity.vo.instockqcformm.InStockAutoGetOnlyseeTableDatasVo;
-import cn.rjtech.entity.vo.instockqcformm.InStockQcFormMApiJumpCheckOutVo;
-import cn.rjtech.entity.vo.instockqcformm.InStockQcFormMApiJumpOnlySeeVo;
-import cn.rjtech.entity.vo.instockqcformm.InStockQcFormMApiPageVo;
+import cn.rjtech.entity.vo.instockqcformm.*;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import io.github.yedaxia.apidocs.ApiDoc;
 
 /**

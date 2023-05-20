@@ -16,7 +16,6 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.model.momdata.SysPureceivedetail;
-import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;

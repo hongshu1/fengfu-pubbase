@@ -3,12 +3,11 @@ package cn.rjtech.admin.patchworkbarcode;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.Inventory;
-
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.*;
+import java.util.List;
 
 public class PatchWorkBarCodeService extends BaseService<Inventory> {
 

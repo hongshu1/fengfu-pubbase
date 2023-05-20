@@ -1,16 +1,5 @@
 package cn.rjtech.admin.instockqcformm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -27,19 +16,10 @@ import cn.rjtech.enums.AppearanceEnum;
 import cn.rjtech.enums.CMeasurePurposeEnum;
 import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.enums.OverallSizeEnum;
-import cn.rjtech.model.momdata.InStockDefect;
-import cn.rjtech.model.momdata.InStockQcFormD;
-import cn.rjtech.model.momdata.InStockQcFormM;
-import cn.rjtech.model.momdata.InstockqcformdLine;
-import cn.rjtech.model.momdata.QcForm;
-import cn.rjtech.model.momdata.base.BaseInStockQcFormD;
-import cn.rjtech.util.excel.SheetPage;
-
-import com.alibaba.fastjson.JSON;
-
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseInStockQcFormD;
-
+import cn.rjtech.util.excel.SheetPage;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -49,13 +29,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 

@@ -1,10 +1,8 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseInventory;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
-
-import java.util.List;
+import cn.rjtech.model.momdata.base.BaseInventory;
 
 /**
  * 物料建模-存货档案

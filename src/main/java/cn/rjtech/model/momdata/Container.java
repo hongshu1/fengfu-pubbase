@@ -1,11 +1,8 @@
 package cn.rjtech.model.momdata;
 
-import cn.jbolt.core.gen.JBoltField;
-import cn.rjtech.model.momdata.base.BaseContainer;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.alibaba.fastjson.serializer.ToStringSerializer;
+import cn.rjtech.model.momdata.base.BaseContainer;
 
 /**
  * 仓库建模-容器档案

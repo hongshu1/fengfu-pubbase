@@ -98,9 +98,7 @@
 	{@if data.isDeleted}
 	<a class="text-info mr-1" data-openpage="dialog" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/#(dataIdStr??)" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="查看#(codeGen.mainTableRemark??)"><i class="fa fa-eye"></i></a>
 	{@else}
-	#end
 	<a class="jbolt_table_editbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/#(dataIdStr??)" data-handler="refreshJBoltTable" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="编辑#(codeGen.modelTitle?? (codeGen.pageTitle?? codeGen.mainTableRemark??))"><i class="fa fa-edit"></i></a>
-	#if(codeGen.isCrud && hasIsDeletedColumn && codeGen.isToolbarRecoverBtn)
 	{@/if}
 	#end
 #end

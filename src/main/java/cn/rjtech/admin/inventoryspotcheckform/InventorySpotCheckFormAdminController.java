@@ -1,15 +1,13 @@
 package cn.rjtech.admin.inventoryspotcheckform;
 
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.jfinal.aop.Inject;
-
 import cn.jbolt._admin.dictionary.DictionaryService;
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
@@ -18,29 +16,16 @@ import cn.rjtech.admin.inventoryspotcheckformOperation.InventoryspotcheckformOpe
 import cn.rjtech.admin.operation.OperationService;
 import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-
-import com.jfinal.core.Path;
+import cn.rjtech.model.momdata.*;
 import com.jfinal.aop.Before;
-
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-
-import com.jfinal.kit.Kv;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.EquipmentModel;
-import cn.rjtech.model.momdata.Inventory;
-import cn.rjtech.model.momdata.InventorySpotCheckForm;
-import cn.rjtech.model.momdata.InventoryspotcheckformOperation;
-import cn.rjtech.model.momdata.Operation;
-import cn.rjtech.model.momdata.SpotCheckForm;
-import cn.rjtech.model.momdata.VendorClass;
-import cn.rjtech.model.momdata.base.BaseInventoryspotcheckformOperation;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 质量建模-点检适用标准

@@ -10,7 +10,6 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
-import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
  * 系统设置-编码规则明细

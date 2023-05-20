@@ -1,22 +1,20 @@
 package cn.rjtech.admin.transvouch;
 
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
-
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.transvouchdetail.TransVouchDetailService;
-import cn.rjtech.model.momdata.OtherOut;
+import cn.rjtech.model.momdata.TransVouch;
 import cn.rjtech.model.momdata.TransVouchDetail;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.TransVouch;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;

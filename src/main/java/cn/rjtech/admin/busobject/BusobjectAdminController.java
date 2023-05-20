@@ -1,12 +1,12 @@
 package cn.rjtech.admin.busobject;
 
-import cn.jbolt.core.model.Busobject;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Busobject;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.BusobjectService;
 import com.jfinal.aop.Before;
@@ -24,9 +24,9 @@ import java.util.Date;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-11-23 13:41
  */
+@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.BUS_OBJECT)
 @Before(JBoltAdminAuthInterceptor.class)
-@UnCheckIfSystemAdmin
 @Path(value = "/admin/busobject", viewPath = "/_view/admin/busobject")
 public class BusobjectAdminController extends JBoltBaseController {
 

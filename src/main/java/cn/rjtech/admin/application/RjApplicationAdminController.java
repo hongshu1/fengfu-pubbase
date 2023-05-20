@@ -6,6 +6,7 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.RjApplication;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.RjApplicationService;
 import com.jfinal.aop.Before;
@@ -22,8 +23,9 @@ import java.util.Date;
  * @author: Kephon
  * @date: 2022-11-07 13:49
  */
-@CheckPermission(PermissionKey.RJ_APPLICATION)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
+@CheckPermission(PermissionKey.RJ_APPLICATION)
 @Path(value = "/admin/application", viewPath = "/_view/admin/application")
 public class RjApplicationAdminController extends JBoltBaseController {
 

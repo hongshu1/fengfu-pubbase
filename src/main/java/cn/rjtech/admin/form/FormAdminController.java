@@ -3,10 +3,12 @@ package cn.rjtech.admin.form;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Form;
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 
@@ -17,8 +19,9 @@ import com.jfinal.core.Path;
  * @author: RJ
  * @date: 2023-04-18 17:24
  */
-@CheckPermission(PermissionKey.FORM_CONFIG)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
+@CheckPermission(PermissionKey.FORM_CONFIG)
 @Path(value = "/admin/form", viewPath = "/_view/admin/form")
 public class FormAdminController extends BaseAdminController {
 

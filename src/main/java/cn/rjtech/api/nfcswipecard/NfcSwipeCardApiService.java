@@ -9,7 +9,6 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
 import cn.rjtech.model.momdata.Personswipelog;
 import com.jfinal.aop.Inject;
-import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 

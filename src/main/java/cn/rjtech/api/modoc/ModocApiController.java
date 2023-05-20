@@ -5,7 +5,6 @@ import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.modoc.ModocApiPageVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocGetCoperationnameByModocIdVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocGetMoroutingsopByInventoryroutingconfigIdVo;
-import cn.rjtech.model.momdata.Personswipelog;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;

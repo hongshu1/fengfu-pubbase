@@ -1,7 +1,5 @@
 package cn.rjtech.entity.vo.rcvdocqcformm;
 
-import java.util.List;
-
 import cn.rjtech.entity.vo.base.ResultVo;
 
 /**

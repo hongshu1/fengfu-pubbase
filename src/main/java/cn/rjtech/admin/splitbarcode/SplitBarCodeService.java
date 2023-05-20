@@ -6,12 +6,10 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
-import cn.rjtech.common.organize.OrganizeService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.ParameterException;

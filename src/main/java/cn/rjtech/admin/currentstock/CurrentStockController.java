@@ -1,5 +1,7 @@
 package cn.rjtech.admin.currentstock;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.stockcheckvouch.StockCheckVouchService;
@@ -17,8 +19,9 @@ import com.jfinal.kit.Kv;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-10-31 14:38
  */
-@Before(JBoltAdminAuthInterceptor.class)
+@CheckPermission(PermissionKey.NOME)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/currentstock", viewPath = "_view/admin/currentstock")
 public class CurrentStockController extends BaseAdminController {
 
