@@ -22,10 +22,6 @@ public abstract class BaseMrpDemandcomputem<M extends BaseMrpDemandcomputem<M>> 
     public static final String DBEGINDATE = "dBeginDate";
     /**结束日期*/
     public static final String DENDDATE = "dEndDate";
-    /**供应商ID*/
-    public static final String IVENDORID = "iVendorId";
-    /**存货ID*/
-    public static final String IINVENTORYID = "iInventoryId";
     /**创建人ID*/
     public static final String ICREATEBY = "iCreateBy";
     /**创建人名称*/
@@ -143,40 +139,6 @@ public abstract class BaseMrpDemandcomputem<M extends BaseMrpDemandcomputem<M>> 
 	}
 
 	/**
-	 * 供应商ID
-	 */
-	public M setIVendorId(java.lang.Long iVendorId) {
-		set("iVendorId", iVendorId);
-		return (M)this;
-	}
-
-	/**
-	 * 供应商ID
-	 */
-	@JBoltField(name="ivendorid" ,columnName="iVendorId",type="Long", remark="供应商ID", required=true, maxLength=19, fixed=0, order=7)
-	@JSONField(name = "ivendorid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIVendorId() {
-		return getLong("iVendorId");
-	}
-
-	/**
-	 * 存货ID
-	 */
-	public M setIInventoryId(java.lang.Long iInventoryId) {
-		set("iInventoryId", iInventoryId);
-		return (M)this;
-	}
-
-	/**
-	 * 存货ID
-	 */
-	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="存货ID", required=true, maxLength=19, fixed=0, order=8)
-	@JSONField(name = "iinventoryid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIInventoryId() {
-		return getLong("iInventoryId");
-	}
-
-	/**
 	 * 创建人ID
 	 */
 	public M setICreateBy(java.lang.Long iCreateBy) {
@@ -187,7 +149,7 @@ public abstract class BaseMrpDemandcomputem<M extends BaseMrpDemandcomputem<M>> 
 	/**
 	 * 创建人ID
 	 */
-	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=9)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=7)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
@@ -204,7 +166,7 @@ public abstract class BaseMrpDemandcomputem<M extends BaseMrpDemandcomputem<M>> 
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=10)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=8)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
@@ -221,7 +183,7 @@ public abstract class BaseMrpDemandcomputem<M extends BaseMrpDemandcomputem<M>> 
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=11)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=9)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
@@ -238,7 +200,7 @@ public abstract class BaseMrpDemandcomputem<M extends BaseMrpDemandcomputem<M>> 
 	/**
 	 * 更新人ID
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=12)
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=10)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
@@ -255,7 +217,7 @@ public abstract class BaseMrpDemandcomputem<M extends BaseMrpDemandcomputem<M>> 
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=13)
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=11)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
@@ -272,7 +234,7 @@ public abstract class BaseMrpDemandcomputem<M extends BaseMrpDemandcomputem<M>> 
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=14)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=12)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
@@ -289,7 +251,7 @@ public abstract class BaseMrpDemandcomputem<M extends BaseMrpDemandcomputem<M>> 
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=15)
+	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=13)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");

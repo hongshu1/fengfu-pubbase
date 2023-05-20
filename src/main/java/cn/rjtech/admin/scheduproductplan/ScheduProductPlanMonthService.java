@@ -593,7 +593,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
 
-        int seq = 0;
+        int seq = 1;
         //循环产线
         for (Long WorkIdKey : workInvListMap.keySet()){
             //物料集

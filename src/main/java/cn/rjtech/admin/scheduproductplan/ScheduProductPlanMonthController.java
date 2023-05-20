@@ -335,7 +335,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         int level = 1;
         //截止日期
         String endDate = "2023-06-21";
-        renderJson(service.scheduPlanMonth(level,endDate));
+        renderJsonData(service.scheduPlanMonth(level,endDate));
     }
 
 
@@ -343,9 +343,15 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
      * 查看计划
      */
     public void getScheduPlanMonthList() {
-        //排产纪录id
+        /*//排产纪录id
         Long iWeekScheduleId = null;
-        renderJson(service.getScheduPlanMonthList(iWeekScheduleId));
+        renderJson(service.getScheduPlanMonthList(iWeekScheduleId));*/
+
+        //排产层级
+        int level = 1;
+        //截止日期
+        String endDate = "2023-06-21";
+        renderJsonData(service.scheduPlanMonth(level,endDate));
     }
 
     /**
