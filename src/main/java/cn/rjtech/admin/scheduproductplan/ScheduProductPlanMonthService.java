@@ -1,11 +1,8 @@
 package cn.rjtech.admin.scheduproductplan;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
-import cn.jbolt.core.kit.ConfigKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.apsannualpland.ApsAnnualplandService;
@@ -16,27 +13,26 @@ import cn.rjtech.admin.apsweekscheduledqty.ApsWeekscheduledQtyService;
 import cn.rjtech.admin.calendar.CalendarService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.momotask.MoMotaskService;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.ApsAnnualplanm;
+import cn.rjtech.model.momdata.ApsWeekschedule;
+import cn.rjtech.model.momdata.MoDoc;
+import cn.rjtech.model.momdata.MoMotask;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueue;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Calendar;
 
 /**
  * 生产计划排程 Service

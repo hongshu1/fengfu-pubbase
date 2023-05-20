@@ -1,7 +1,11 @@
 package cn.rjtech.api.instockqcformm;
 
-import java.util.List;
-
+import cn.jbolt.core.api.JBoltApiBaseService;
+import cn.jbolt.core.api.JBoltApiRet;
+import cn.rjtech.admin.instockdefect.InStockDefectService;
+import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
+import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
+import cn.rjtech.model.momdata.InStockQcFormM;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -9,12 +13,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
-import cn.jbolt.core.api.JBoltApiBaseService;
-import cn.jbolt.core.api.JBoltApiRet;
-import cn.rjtech.admin.instockdefect.InStockDefectService;
-import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
-import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
-import cn.rjtech.model.momdata.InStockQcFormM;
+import java.util.List;
 
 /**
  * @version 1.0

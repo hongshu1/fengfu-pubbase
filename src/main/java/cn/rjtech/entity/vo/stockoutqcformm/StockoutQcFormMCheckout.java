@@ -3,10 +3,6 @@ package cn.rjtech.entity.vo.stockoutqcformm;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.jfinal.plugin.activerecord.Record;
-
-import cn.rjtech.model.momdata.StockoutQcFormM;
-
 /**
  * @version 1.0
  * @Author cc

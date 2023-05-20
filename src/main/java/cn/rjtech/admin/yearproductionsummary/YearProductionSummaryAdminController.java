@@ -1,17 +1,9 @@
 package cn.rjtech.admin.yearproductionsummary;
 
-import cn.hutool.core.date.DateUtil;
-import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.controller.base.JBoltBaseController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.util.JBoltDateUtil;
-import cn.rjtech.util.Util;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
-
-import java.util.List;
 
 /**
  * 年度生产计划汇总

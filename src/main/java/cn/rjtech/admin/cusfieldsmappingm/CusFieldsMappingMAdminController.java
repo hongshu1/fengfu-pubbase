@@ -1,10 +1,10 @@
 package cn.rjtech.admin.cusfieldsmappingm;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.cusfieldsmappingform.CusfieldsmappingFormService;
 import cn.rjtech.base.controller.BaseAdminController;

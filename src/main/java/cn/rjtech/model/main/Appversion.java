@@ -1,8 +1,8 @@
 package cn.rjtech.model.main;
 
-import cn.rjtech.model.main.base.BaseAppversion;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.main.base.BaseAppversion;
 
 /**
  * 应用版本

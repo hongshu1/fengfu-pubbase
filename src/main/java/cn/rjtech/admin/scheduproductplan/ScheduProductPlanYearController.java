@@ -3,23 +3,19 @@ package cn.rjtech.admin.scheduproductplan;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.controller.base.JBoltBaseController;
-import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.ApsAnnualplanm;
 import cn.rjtech.util.DateUtils;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 生产计划排程 Controller

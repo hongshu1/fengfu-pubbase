@@ -1,10 +1,9 @@
 package cn.rjtech.util;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
 import cn.hutool.http.HttpUtil;
 import cn.rjtech.config.AppConfig;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * @version 1.0

@@ -9,7 +9,6 @@ import cn.rjtech.config.AppConfig;
 import cn.rjtech.erp.mood.CollectorsUtil;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;

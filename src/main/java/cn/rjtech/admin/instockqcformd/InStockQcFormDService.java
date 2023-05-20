@@ -1,19 +1,14 @@
 package cn.rjtech.admin.instockqcformd;
 
-import java.util.List;
-
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.InStockQcFormD;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.InStockQcFormD;
+import java.util.List;
 
 /**
  * 质量管理-在库检单行配置 Service

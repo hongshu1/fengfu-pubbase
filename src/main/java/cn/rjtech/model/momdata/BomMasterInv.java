@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseBomMasterInv;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.momdata.base.BaseBomMasterInv;
 
 /**
  * 基础档案-母件物料存货集（新增/修改版本变更时处理，定时处理更新）
