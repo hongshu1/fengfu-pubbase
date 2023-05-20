@@ -90,6 +90,7 @@
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
+        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
 	</properties>
 
     <!-- 使用阿里 maven 库 -->
