@@ -335,7 +335,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         int level = 1;
         //截止日期
         String endDate = "2023-06-21";
-        renderJson(service.scheduPlanMonth(level,endDate));
+        renderJsonData(service.scheduPlanMonth(level,endDate));
     }
 
 

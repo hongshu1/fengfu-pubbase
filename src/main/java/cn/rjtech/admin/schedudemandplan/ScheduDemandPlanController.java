@@ -118,6 +118,10 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		renderJsonData(service.apsScheduDemandPlan(endDate));
 	}
 
+	public void getDemandList() {
+		renderJsonData(service.getDemandList(getKv()));
+	}
+
 	//-----------------------------------------------------------------物料需求计划预示-----------------------------------------------
 
 	public void demandforecastm() {
