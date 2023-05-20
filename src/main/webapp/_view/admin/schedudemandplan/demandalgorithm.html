@@ -84,16 +84,16 @@
         z-index: 1000;
         position: absolute;
         display: none;
+        box-shadow: 5px -5px 5px rgba(0,0,0,0.5);
     }
     #alert .alert_title{
-        display: flex;
         font-size: 14px;
         border-bottom: 3px solid rgba(215, 215, 215, 1);
-        padding: 7px 0px;
+        padding-bottom: 30px;
         text-indent: 0.8rem
     }
-    #alert .alert_title span:nth-child(1){
-        flex: 1;
+    #alert .alert_title span{
+        float: right;
     }
     #alert .alert_title #close{
         font-size: 18px;
@@ -104,12 +104,49 @@
         width: 100%;
     }
     #alert .alert_but button{
-        margin: 10px 10px;
+        margin: 10px 15px;
         padding: 3px 13px;
         background-color: #fff;
         border: #797979 1px solid;
+        margin-bottom: 0px;
         border-radius: 5px;
-        float: right;
+    }
+    /*  预示保存弹出框样式  */
+    #indicate_Mode{
+        border: 1px solid rgba(215, 215, 215, 1);
+        background-color:#fff;
+        width: 430px;
+        height: 170px;
+        z-index: 1000;
+        position: absolute;
+        display: none;
+        box-shadow: 5px -5px 5px rgba(0,0,0,0.5);
+    }
+    #indicate_Mode .indicate_title{
+        display: flex;
+        font-size: 14px;
+        border-bottom: 3px solid rgba(215, 215, 215, 1);
+        padding-bottom: 30px;
+        text-indent: 0.8rem
+    }
+    #indicate_Mode .indicate_title span{
+        flex: 1;
+    }
+    #indicate_Mode .indicate_title #close_indicate{
+        font-size: 18px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+    #indicate_Mode .indicate_but{
+        width: 100%;
+    }
+    #indicate_Mode .indicate_but button{
+        margin: 10px 15px;
+        padding: 3px 13px;
+        background-color: #fff;
+        border: #797979 1px solid;
+        margin-bottom: 0px;
+        border-radius: 5px;
     }
 </style>
 #end
@@ -117,20 +154,16 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
     <div class="jbolt_page_title">
         <nav>
-            <p class="nav_title">月周生产计划</p>
+            <p class="nav_title">物料需求计划计算</p>
         </nav>
         <!-- 头部标题结束 -->
         <!-- 搜索工具类开始 -->
         <div class="search">
             <div class="select">
-                <span class="span">排产层级:</span>
+                <span class="span">供应商名称:</span>
                 <select style="width:150px;height:25px;">
                     <option value=""></option>
                 </select>
-            </div>
-            <div class="select">
-                <span>产线名称:</span>
-                <input style="width:150px;height:20px;" />
             </div>
             <div class="select">
                 <span>存货编码:</span>
@@ -148,21 +181,18 @@
             <button class="button">重置</button>
         </div>
     </div>
-    
+
     <div class="jbolt_page_content">
-        
+
         <div class="sample-container">
             <!-- 表格 -->
             <div id="table-tool">
                 <!-- 表格工具开始 -->
                 <div class="but_box">
-                    <button onClick="edit()">排产</button>
+                    <button id="content">计划生成</button>
                     <button>数据导出</button>
-                    <button>数据导入</button>
-                    <button>保存层级</button>
-                    <button>计划使用刷新</button>
-                    <button id="content">锁定</button>
-                    <button onClick="unLock()">解锁</button>
+                    <button id="indicate_save">预示保存</button>
+                    <button>到货计划保存</button>
                 </div>
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
                 <div id="ss" class="spread-container"></div>
@@ -170,21 +200,26 @@
             </div>
 
         </div>
-        
-        <!--锁定弹框-->
+
+        <!--计划生成弹框-->
         <div id="alert">
-            <p class="alert_title"><span id="title"></span><span id="close">X</span></p>
+            <p class="alert_title"><span id="close">X</span></p>
+            <p class="alert_but"><button id="close_but">确定</button></p>
             <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
-                <label class="col-form-label " >指定月：</label>
+                <label class="col-form-label " >截止日期：</label>
                 <input type="text" class="form-control" style="display: inline-block; width: 200px" id="laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="layMonth" value="#(layMonth??)">
             </div>
-            <div style="text-indent: 1.5rem">
-                <span>周次：</span>
-                <span>第二周</span>
-            </div>
-            <p class="alert_but"><button id="close_but">取消</button><button>确定</button></p>
+
         </div>
-        
+        <!--预示保存弹框-->
+        <div id="indicate_Mode">
+            <p class="indicate_title"><span id="indicate_title"></span><span id="close_indicate">X</span></p>
+            <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
+                <label class="col-form-label " >截止日期：</label>
+                <input type="text" class="form-control" style="display: inline-block; width: 200px" id="indicate_laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="indicate_layMonth" value="#(indicate_layMonth??)">
+            </div>
+            <p class="alert_but"><button>取消</button><button id="close_indicate_but">确定</button></p>
+        </div>
     </div>
 </div>
 #end
@@ -203,7 +238,7 @@
     //状态栏
     statusBar.bind(spread);
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-    
+
     var parmsDefault = {
         resourcesList: [],      //资源列表
         RowCount:500,           //一列多少单元格
@@ -225,7 +260,7 @@
         planListRowIndex:3,     //计划排产列表起始行下标
         planListColIndex:7,     //计划排产列表起始列下标
     };
-    
+
     var parmsArr = [Object.assign({},parmsDefault)];
     //添加属性
     parmsArr[0]['spread'] = spread;
@@ -234,7 +269,7 @@
     loadInit(parms);
     initDate(parms,sheet);
     initData();
-    
+
     //设置全局表单的背景颜色
     spread.options.grayAreaBackColor = '#fff';
 
@@ -271,7 +306,7 @@
         parms.activeSheet.setColumnWidth(parms.columnindex+6, 150);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+8, 70);//设置指定单元格的width
     }
-    
+
     //勾选check按钮
     // sheet.getCell(0, 0	).value(1);
     /*工作簿暂停活性*/
@@ -279,13 +314,13 @@
         spread.suspendPaint(); //渲染前失活(提升性能)
         spread.suspendCalcService(); //暂停计算服务
     }
-    
+
     /*工作簿开启活性*/
     function spreadResume() {
         spread.resumeCalcService(); //开启计算服务
         spread.resumePaint(); //恢复绘制
     }
-    
+
     //获取接口返回的日期数据
     function initDate(parms,sheet) {
         let url = "http://localhost:8081/admin/scheduproductplanmonth/getTableHead";
@@ -321,10 +356,10 @@
             spreadResume();// 恢复绘制
         });
     }
-    
+
     //初始化产线数据
     function initData(){
-        let url = "http://localhost:8081/admin/scheduproductplanmonth/scheduPlanMonth?level=1&endDate=2023-06-21";
+        let url = "http://localhost:8081/admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=&cinvcode=&cinvcode1=&cinvname1=";
         $.ajax({
             url,
             type:'get',
@@ -396,71 +431,29 @@
                     let tianshuRow = 8;//在库天数行下标
                     let tianshuCol = 9;
                     for (var j = 0; j < res[i].day.length; j++) {
-                        sheet.setValue(shiyongRow,shiyongCol++,res[i].day[j].shiyong);
-                        sheet.setValue(yisRow,yisCol++,res[i].day[j].one);
-                        sheet.setValue(ersRow,ersCol++,res[i].day[j].two);
-                        sheet.setValue(sansRow,sansCol++,res[i].day[j].three);
-                        sheet.setValue(zaikuRow,zaikuCol,res[i].day[j].zaiku);
-                        sheet.setValue(tianshuRow,tianshuCol++,res[i].day[j].tianshu);
+                        if(i==0){
+                            sheet.setValue(shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
+                            sheet.setValue(yisRow,yisCol+j,res[i].day[j].one);
+                            sheet.setValue(ersRow,ersCol+j,res[i].day[j].two);
+                            sheet.setValue(sansRow,sansCol+j,res[i].day[j].three);
+                            sheet.setValue(zaikuRow,zaikuCol,res[i].day[j].zaiku);
+                            sheet.setValue(tianshuRow,tianshuCol+j,res[i].day[j].tianshu);
+                        }else{
+                            sheet.setValue(6*i+shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
+                            sheet.setValue(6*i+yisRow,yisCol+j,res[i].day[j].one);
+                            sheet.setValue(6*i+ersRow,ersCol+j,res[i].day[j].two);
+                            sheet.setValue(6*i+sansRow,sansCol+j,res[i].day[j].three);
+                            sheet.setValue(6*i+zaikuRow,zaikuCol,res[i].day[j].zaiku);
+                            sheet.setValue(6*i+tianshuRow,tianshuCol+j,res[i].day[j].tianshu);
+                        }
                     }
                 }
-
-                //日计划排版
-                // let shiyongRow = 3;//计划使用行下标
-                // let shiyongCol = 9;
-                // let yisRow = 4;//1s使用行下标
-                // let yisCol = 9;
-                // let ersRow = 5;//2s使用行下标
-                // let ersCol = 9;
-                // let sansRow = 6;//3s使用行下标
-                // let sansCol = 9;
-                // let zaikuRow = 7;//计划在库行下标
-                // let zaikuCol = 8;
-                // let tianshuRow = 8;//在库天数行下标
-                // let tianshuCol = 9;
-                //     for (let j = 0; j < res[l].day.length; j++) {
-                //         sheet.setValue(shiyongRow,shiyong++,res[l].day[j].shiyong);
-                //         shiyong=shiyongCol;
-                //         // sheet.setValue(yisRow,shiyong,res[l].day[j].one);
-                //         // sheet.setValue(ersRow,shiyong,res[l].day[j].two);
-                //         // sheet.setValue(sansRow,shiyong,res[l].day[j].three);
-                //         // sheet.setValue(zaikuRow,shiyong,res[l].day[j].zaiku);
-                //         // sheet.setValue(tianshuRow,shiyong,res[l].day[j].tianshu);
-                //     }
                 spreadResume();// 恢复绘制
             },error: function() {
                 console.log('error')
             }
         })
-        initIPsLevelData();
     }
-    //初始化排产数据
-    function initIPsLevelData(){
-
-    }
-    //获取当前点击的单元格
-    // sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
-    //     if (info.sheetArea === GC.Spread.Sheets.SheetArea.viewport) {
-    //         parms.info=info;
-    //         let {row,col} = parms.info;
-    //         let a = {
-    //             row:row,
-    //             col:col
-    //         }
-    //         //每次添加之后往数组内进行存储
-    //         parms.lockCells.push(a);
-    //         //数组去重处理
-    //         const unique = [];
-    //         for (const item of parms.lockCells) {
-    //             const duplicate = unique.find((key) => key.row === item.row && key.col === item.col);
-    //             if (!duplicate) {
-    //                 unique.push(item);
-    //             }
-    //         }
-    //         parms.lockCells=unique;
-    //         console.log(parms.lockCells,"获取当前点击的单元格")
-    //     }
-    // });
     //获取表格中输入或修改的值
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         let a = {
@@ -477,12 +470,9 @@
     var reg = document.getElementById("content");
     var mClose = document.getElementById("close");
     var mClose_But = document.getElementById("close_but");
-    var alertTitle = document.getElementById("title");
     //锁定打开弹出层
     reg.onclick = function(){
-        // getDays();
         myAlert.style.display = "block";
-        alertTitle.innerText = "锁定计划";
         myAlert.style.position = "absolute";
         myAlert.style.top = "50%";
         myAlert.style.left = "50%";
@@ -500,10 +490,6 @@
         mybg.style.opacity = "0.3";
         document.body.appendChild(mybg);
         document.body.style.overflow = "hidden";
-        let sdate=new Date();//new一个日对象
-        let year= sdate.Format("yyyy");//获取年
-        let month = sdate.Format("MM");//获取月
-        let day = sdate.Format("dd");//获取天
     }
     //弹出层关闭事件
     mClose.onclick = function(){
@@ -514,6 +500,44 @@
     mClose_But.onclick = function(){
         myAlert.style.display = "none";
         mybg.style.display = "none";
+    }
+
+    var myIndicate = document.getElementById("indicate_Mode");
+    var save = document.getElementById("indicate_save");
+    var closeNdicate = document.getElementById("close_indicate");
+    var closeIndicate = document.getElementById("close_indicate_but");
+    var indicateTitle = document.getElementById("indicate_title");
+    //锁定打开弹出层
+    save.onclick = function() {
+        myIndicate.style.display = "block";
+        myIndicate.style.position = "absolute";
+        indicateTitle.innerText = '保存确认';
+        myIndicate.style.top = "50%";
+        myIndicate.style.left = "50%";
+        myIndicate.style.marginTop = "-75px";
+        myIndicate.style.marginLeft = "-150px";
+        mybg = document.createElement("div");
+        mybg.setAttribute("id", "mybg");
+        mybg.style.background = "#000";
+        mybg.style.width = "100%";
+        mybg.style.height = "100%";
+        mybg.style.position = "absolute";
+        mybg.style.top = "0";
+        mybg.style.left = "0";
+        mybg.style.zIndex = "500";
+        mybg.style.opacity = "0.3";
+        document.body.appendChild(mybg);
+        document.body.style.overflow = "hidden";
+    }
+    //弹出层关闭事件
+    closeNdicate.onclick = function(){
+        myIndicate.style.display = "none";
+        myIndicate.style.display = "none";
+    }
+    //取消按钮事件
+    closeIndicate.onclick = function(){
+        myIndicate.style.display = "none";
+        myIndicate.style.display = "none";
     }
 </script>
 #end
