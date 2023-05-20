@@ -6,9 +6,12 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
-                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        <button onclick="submitThisForm()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+                        #if(annualOrderM.iAutoId??)
+                        <button onclick="submitApproveYear()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #else
+                        <button onclick="submitApproveYear()" disabled class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #end
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>
@@ -20,7 +23,7 @@
                     <form onsubmit="return false;" id="AnnualOrderD_Form_#(pageId)" action="#(action)" method="post">
                         
                         #if(annualOrderM.iAutoId??)
-                        <input type="hidden" name="annualOrderM.iAutoId" value="#(annualOrderM.iAutoId??)"/>
+                        <input type="hidden" name="annualOrderM.iAutoId" id="yeariautoid" value="#(annualOrderM.iAutoId??)"/>
                         #end
                         
                         <input type="hidden" name="annualOrderM.iOrderStatus" value="#(annualOrderM.iOrderStatus??1)"/>
@@ -91,8 +94,11 @@
     
     <script type="text/template" id="jboltTable_demotpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.iautoid}"  class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
+        <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+            </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
@@ -111,9 +117,6 @@
 			<td>${data.iqty11}</td>
 			<td>${data.iqty12}</td>
 			<td>${data.iqtytotal}</td>
-			<td>
-    			<a href="admin/annualorderd/deleteByIds?ids=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
-			</td>
         </tr>
         {@/each}
     </script>
@@ -121,12 +124,13 @@
         <div class="btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-secondary btn-sm">添加行</button>
 
-            <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
-                    data-url="admin/annualorderd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
+            <button onclick="jboltTableRemoveCheckedRow(this, true, false)"
+                    data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
                 <i class="fa fa-trash"></i> 删除行</button>
 
-
             <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
+
+            <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
             
             <div class="j_upload_file_box"
                  data-name="file"
@@ -144,6 +148,7 @@
         </div>
     </div>
     <table class="jbolt_table thead_font_normal table-bordered table-center"
+           data-id="jbolt_table_#(pageId)"
            data-jbolttable
            #if(annualOrderM.iAutoId??)
            data-ajax="true"
@@ -161,13 +166,13 @@
         <thead>
         <tr>
             <th data-width="60" data-column="index" rowspan="2">序号</th>
+            <th data-width="100" rowspan="2">操作</th>
             <th data-width="150" data-column="cinvcode" rowspan="2">存货编码</th>
             <th data-width="150" data-column="cinvcode1" rowspan="2">客户部番</th>
             <th data-width="150" data-column="cinvname1" rowspan="2">部品名称</th>
             <th data-width="150" data-column="cinvstd" rowspan="2">规格</th>
             <th data-width="100" data-column="cuomname" rowspan="2">库存主单位</th>
             <th colspan="13" id="nowYear">#(iYear)年</th>
-            <th data-width="100" rowspan="2">操作</th>
         </tr>
         <tr>
                 <th data-column="iqty1">1月</th>
@@ -217,10 +222,63 @@
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
-    function submitThisForm() {
-        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    function removeClass(idx) {
+        var $tr = $('tr[data-index="' + idx + '"]');
+        $tr.removeAttr('tooltip');
+        $tr.removeAttr('title');
+        $tr.removeClass('table-danger');
     }
 
+    function removeEmptyRow(ele, datas) {
+        var count = 0;
+
+        $.each(datas, function (idx, row) {
+            if (!row.iiventoryid) {
+                count++;
+            }
+        });
+
+        for (var i = 0; i < count; i++) {
+            delRow(ele);
+        }
+    }
+
+    function delRow(ele) {
+        var datas = jboltTableGetAllDatas(ele);
+        console.log('delRow， datas: ' + datas);
+        
+        if (datas && datas.length > 0) {
+            var jboltTable = getJBoltTable(ele)
+
+            var table = getJBoltTableInst(jboltTable);
+
+            for (var i = 0; i < datas.length; i++) {
+                var data = datas[i];
+                if (!data.iinventoryid) {
+                    table.me.removeRow(table, i);
+                    break;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    function submitThisForm() {
+        $('#save_btn_#(pageId)').click();
+    }
+
+    function submitApproveYear() {
+        let result = jboltTableSubmit("#jbolt_Table_#(pageId)");
+        if (result){
+            let yeariautoid = $("#yeariautoid").val();
+            let url = "admin/annualorderm/approve?id="+yeariautoid;
+            Ajax.get(url,function(res){
+                LayerMsgBox.success("审批成功!");
+            });
+        }
+    }
+    
     function uploadHandler(uploader, type, fileInput, res) {
         jboltTableClear("#jbolt_Table_#(pageId)");
         
@@ -309,10 +367,7 @@
             $.each(rowDatas, function (idx, row) {
 
                 if (row.iinventoryid) {
-                    var $tr = $('tr[data-index="' + idx + '"]');
-                    $tr.removeAttr('tooltip');
-                    $tr.removeAttr('title');
-                    $tr.removeClass('table-danger');
+                    removeClass(idx);
                 }
                 
             });
@@ -320,10 +375,20 @@
             LayerMsgBox.alert('请维护导入数据!', 2);
         }
     }
-    
+
+    function saveData(ele) {
+        var rowDatas = jboltTableGetAllDatas(ele);
+        console.log(JSON.stringify(rowDatas));
+
+        removeEmptyRow(ele, rowDatas);
+
+        jboltTableSubmit(ele);
+    }
+
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
+            trigger: 'click',
             submit: {
                 withForm: ["AnnualOrderD_Form_#(pageId)"],
                 name: 'annualOrderDForm',

@@ -14,6 +14,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 拆分条码 Controller
+ *
  * @ClassName: SplitBarCodeAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-10-31 14:38
@@ -23,8 +24,6 @@ import com.jfinal.plugin.activerecord.Record;
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/splitBarcode", viewPath = "_view/admin/splitbarcode")
 public class SplitBarCodeAdminController extends BaseAdminController {
-    // @Inject
-    // CKService ckService;
 
     @Inject
     private SplitBarCodeService service;
@@ -36,8 +35,12 @@ public class SplitBarCodeAdminController extends BaseAdminController {
         render("index.html");
     }
 
+    public void datas(){
+        renderJsonData(null);
+    }
 
-    public void barcodeIndex() {
+
+    public void barcodeSelect() {
         render("barcode_select.html");
     }
 
@@ -45,24 +48,25 @@ public class SplitBarCodeAdminController extends BaseAdminController {
      * 实物编码选择数据
      */
     public void barcodeSelectDatas() {
-        renderJsonData(service.BarCodeSelectDatas(getPageNumber(), getPageSize(), getKv()));
+        renderJsonData(service.BarCodeSelectDatas(getPageNumber(),getPageSize(),getKv()));
     }
 
 
     public void SubmitForm() {
-        Kv kv = getKv();
-        renderJsonData(service.SubmitForm(kv));
+        renderJsonData(service.SubmitForm(getKv()));
 
     }
 
+    /*
+     * 查询拆分条码记录
+     * */
     public void barcodeDatas() {
-        renderJsonData(service.barcodeDatas(getPageNumber(), getPageSize(), getKv()));
+        renderJsonData(service.barcodeDatas(getKv()));
     }
 
     public void edit() {
         Kv kv = getKv();
-        String autoid = kv.getStr("autoid");
-        Record byShiWu = service.findByShiWu(autoid);
+        Record byShiWu = service.findByShiWu(kv.getStr("logno"));
         if (byShiWu == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -73,7 +77,6 @@ public class SplitBarCodeAdminController extends BaseAdminController {
 
     public void detailDatas() {
         Kv kv = getKv();
-        String logno = kv.getStr("logno");
-        renderJsonData(service.findListBylogno(logno));
+        renderJsonData(service.findListByCsourceid(kv.getStr("csourceid")));
     }
 }

@@ -2,11 +2,6 @@ package cn.rjtech.entity.vo.rcvdocqcformm;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-
-import com.jfinal.plugin.activerecord.Record;
-
-import cn.rjtech.model.momdata.RcvDocQcFormM;
 
 /**
  * @version 1.0

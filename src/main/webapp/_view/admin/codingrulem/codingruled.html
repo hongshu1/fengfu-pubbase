@@ -7,14 +7,12 @@
         <td>${data.ccodingvalue}</td>
         <td>${data.ilength}</td>
         <td>${data.ibeginvalue}</td>
-        <td>${data.cseparator}</td>
+        <td>${data.cseparatorname}</td>
         <td>
-            {@if data.isDeleted}
-            <a class="text-info mr-1" data-openpage="dialog" href="admin/codingruled/edit/${data.id}" data-area="800,600" data-title="查看系统设置-编码规则明细"><i class="fa fa-eye"></i></a>
-            {@else}
-            <a class="jbolt_table_editbtn" href="admin/codingruled/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑系统设置-编码规则明细"><i class="fa fa-edit"></i></a>
-            {@/if}
-            <a class="jbolt_table_delbtn" href="admin/codingruled/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+            <a class="jbolt_table_editbtn" href="admin/codingruled/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑系统设置-编码规则明细"><i class="fa fa-edit"></i></a>
+            <a class="jbolt_table_delbtn" href="admin/codingruled/delete/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+            <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true);" class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></ a>
+            <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true);" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></ a>
         </td>
     </tr>
     {@/each}
@@ -22,10 +20,15 @@
 
 <div class="jbolt_table_toolbar" id="CodingRuleD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-        <button onclick="jboltTableRemoveCheckedRow(this,true)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+        <button onclick="jboltTableInsertEmptyRowAfterChecked(this)" class="btn btn-outline-secondary btn-sm" ><i class="fa fa-arrow-right"></i>插入行</button>
+        <button onclick="jboltTableRemoveCheckedRow(this,true)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除行</button>
     </div>
 </div>
+
+<form id="CodingRuleD_form_#(pageId)" onsubmit="return false">
+    <input type="hidden" name="icodingrulemid" value="#(codingRuleM.iautoid??)">
+</form>
 
 <table class="jbolt_table jbolt_main_table  table-center "
        id="jbolt_table_#(pageId)"
@@ -40,6 +43,7 @@
        data-toolbar="CodingRuleD_toolbar_#(pageId)"
        data-editable="true"
        data-editable-option="getEditableTableOptions_#(pageId)"
+       data-column-prepend="checkbox"
 >
     <thead>
     <tr>
@@ -49,7 +53,7 @@
         <th data-width="100" data-column="ilength">长度</th>
         <th data-width="150" data-column="ccodingvalue">起始值</th>
         <th data-width="150" data-column="cseparator">分隔符</th>
-        <th data-width="80">操作</th>
+        <th data-width="120">操作</th>
     </tr>
     </thead>
     <tbody></tbody>

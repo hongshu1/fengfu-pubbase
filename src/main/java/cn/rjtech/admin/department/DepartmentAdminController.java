@@ -1,10 +1,10 @@
 package cn.rjtech.admin.department;
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.person.PersonService;
@@ -29,9 +29,9 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-22 11:55
  */
-@Before(JBoltAdminAuthInterceptor.class)
-@CheckPermission(PermissionKey.DEPARTMENT)
 @UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.DEPARTMENT)
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/department", viewPath = "/_view/admin/department")
 public class DepartmentAdminController extends BaseAdminController {
 
@@ -223,5 +223,5 @@ public class DepartmentAdminController extends BaseAdminController {
 
         renderJsonData(service.getCommonList(kv, "dCreateTime", "desc"));
     }
-    
+
 }

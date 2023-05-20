@@ -1,10 +1,10 @@
 package cn.rjtech.admin.morouting;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
+import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 /**
  * 制造工单-生产工艺路线 Controller

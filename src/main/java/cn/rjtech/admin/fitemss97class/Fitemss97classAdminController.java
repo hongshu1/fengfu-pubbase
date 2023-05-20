@@ -1,24 +1,23 @@
 package cn.rjtech.admin.fitemss97class;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.Fitemss97class;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.Fitemss97class;
 /**
  * 项目管理项目分类目录 Controller
  * @ClassName: Fitemss97classAdminController
  * @author: WYX
  * @date: 2023-03-25 16:44
  */
-@CheckPermission(PermissionKey.FITEMSS97CLASS)
 @UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.FITEMSS97CLASS)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/fitemss97class", viewPath = "/_view/admin/fitemss97class")
 public class Fitemss97classAdminController extends BaseAdminController {

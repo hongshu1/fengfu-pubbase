@@ -8,9 +8,12 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
                         <button onclick="submitThisForm()" class="btn btn-success btn-sm" ><i class="fa fa-refresh"></i> 保存</button>
-                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #if(monthorderm.iAutoId??)
+                        <button onclick="submitApproveMonth()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #else
+                        <button onclick="submitApproveMonth()" disabled class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #end
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>
@@ -32,7 +35,7 @@
                     <form onsubmit="return false;" id="MonthOrderM_Form_#(pageId)" action="#(action)" method="post">
 
                         #if(monthorderm.iAutoId??)
-                        <input type="hidden" name="monthorderm.iAutoId" value="#(monthorderm.iAutoId??)"/>
+                        <input type="hidden" id="monthiautoid" name="monthorderm.iAutoId" value="#(monthorderm.iAutoId??)"/>
                         #end
 
                         <input type="hidden" name="monthorderm.iOrderStatus" value="#(monthorderm.iOrderStatus??1)"/>
@@ -122,6 +125,9 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+            </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
@@ -161,9 +167,6 @@
 			<td>${data.isum}</td>
 			<td>${data.imonth1qty}</td>
 			<td>${data.imonth2qty}</td>
-			<td>
-    			<a href="admin/person/deleteByAjax" data-ajaxbtn data-loading="执行中 " tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">移除行</i></a>
-			</td>
         </tr>
         {@/each}
     </script>
@@ -171,6 +174,11 @@
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+
+            <button onclick="jboltTableRemoveCheckedRow(this, true, false)"
+                    data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
+                <i class="fa fa-trash"></i> 删除行</button>
+
             <div class="j_upload_file_box"
                  data-name="file"
                  data-btn-class="btn dropdown-item"
@@ -204,6 +212,7 @@
         <thead>
         <tr>
             <th data-width="60" data-column="index" rowspan="2">序号</th>
+            <th data-width="100">操作</th>
             <th data-width="150" data-column="cinvcode" rowspan="2">存货编码</th>
             <th data-width="150" data-column="cinvcode1" rowspan="2">客户部番</th>
             <th data-width="150" data-column="cinvname1" rowspan="2">部品名称</th>
@@ -243,7 +252,6 @@
         	<th data-column="isum">合计</th>
         	<th data-column="imonth1qty">下月数量</th>
         	<th data-column="imonth2qty">下下月数量</th>
-            <th data-width="100">操作</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -302,6 +310,17 @@
     
     function submitThisForm(){
         jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+
+    function submitApproveMonth() {
+        let result = jboltTableSubmit("#jbolt_Table_#(pageId)");
+        if (result){
+            let monthiautoid = $("#monthiautoid").val();
+            let url = "admin/monthorderm/approve?id="+monthiautoid;
+            Ajax.get(url,function(res){
+                LayerMsgBox.success("审批成功!");
+            });
+        }
     }
     
     //获得配置参数

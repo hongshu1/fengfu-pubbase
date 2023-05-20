@@ -1,13 +1,9 @@
 package cn.rjtech.entity.vo.qcinspection;
 
 import cn.rjtech.model.momdata.QcInspection;
-import cn.rjtech.model.momdata.RcvDocQcFormM;
-import cn.rjtech.model.momdata.StockoutDefect;
-import com.jfinal.plugin.activerecord.Record;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @Description 工程内品质巡查

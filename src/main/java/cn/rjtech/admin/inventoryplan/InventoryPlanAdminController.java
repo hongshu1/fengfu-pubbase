@@ -16,6 +16,7 @@ import com.jfinal.core.Path;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-24 13:57
  */
+@UnCheck
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/inventoryplan", viewPath = "/_view/admin/inventoryplan")
 public class InventoryPlanAdminController extends BaseAdminController {

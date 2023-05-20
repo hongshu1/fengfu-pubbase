@@ -1,6 +1,12 @@
 #sql("paginateAdminDatas")
 SELECT
-    t1.*
+        AuditState =
+        CASE WHEN t1.State=1 THEN '已保存'
+             WHEN t1.State=2 THEN '待审核'
+             WHEN t1.State=3 THEN '已审核' END,
+    t1.*,
+    ( SELECT t5.cRdName FROM Bd_Rd_Style t5 WHERE t5.cRdCode = t1.IRdCode ) AS IRdName,
+    ( SELECT t5.cRdName FROM Bd_Rd_Style t5 WHERE t5.cRdCode = t1.ORdCode ) AS ORdName
 FROM
     T_Sys_TransVouch t1
 WHERE 1 = 1

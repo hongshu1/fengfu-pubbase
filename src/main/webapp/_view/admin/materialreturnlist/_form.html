@@ -1,0 +1,217 @@
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page">`
+    <div class="col">采购入库单</div>
+    <div class="jbolt_page_content">
+        <form onsubmit="return false;" id="PuinstoreForm" action="#(action)" method="post">
+            <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
+                <div class="col-md-l pt-2" role="group" aria-label="btn-group">
+                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
+                            data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i>
+                        保存
+                    </button>
+                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
+                            data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
+                            class="fa fa-window-maximize"></i> 提交审核
+                    </button>
+                    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
+                        关闭
+                    </button>
+                </div>
+            </div>
+            #if(puinstore.AutoID??)
+            <input type="hidden" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
+            #end
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">入库单号：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input id="billno" name="puinstore.billno" type="text" readonly autocomplete="off"
+                           class="form-control" maxlength="40" value="#(puinstore.billno??)"/>
+                </div>
+                <label class="col-sm-2 col-form-label">入库日期：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input type="text"  id="purchaseDate"  class="form-control"
+                           placeholder="请输入入库日期" maxlength="30" name="puinstore.billdate"
+                           value="#datetime(puinstore.billdate??,'yyyy-MM-dd')">
+                </div>
+                <label class="col-sm-2 col-form-label">仓库名称：</label>
+                <div class="col-sm-2 col-form-label">
+                    <select class="form-control"
+                            name="whcode"
+                            data-autoload
+                            data-url="admin/SysEnumeration/wareHouse"
+                            data-select-type="select2"
+                            data-text="=请选择仓库名称="
+                            data-value=""
+                            data-value-attr="whcode"
+                            data-text-attr="whname"
+                            data-select="#(puinstore.cwhname??)"></select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">订单号：</label>
+                <div class="col-sm-2 col-form-label">
+                    <div class="input-group-append">
+                        <input required type="text" id="sourcebillno" name="puinstore.sourcebillno" class="form-control border-none"
+                               readonly="readonly" placeholder=""
+                               value="#(puinstore.sourcebillno??)"/>
+                        <input type="hidden" id="moid" class="form-control border-none" readonly="readonly"
+                               name="materialsOut.sourcebilldid" placeholder=""
+                               value="#(materialsOut.sourcebilldid??)"/>
+                        <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
+                                data-area="90%,90%" data-title="选择数据（单选）"
+                                id="supplierButton"
+                                data-url="/admin/purchaseReceiptList/chooseSysPuinstoreData"><i
+                                class="fa fa-search mr-1"></i></button>
+                    </div>
+                </div>
+
+
+                <label class="col-sm-2 col-form-label">部门：</label>
+                <div class="col-sm-2 col-form-label">
+                    <select class="form-control ml-4"
+                            id="deptcode"
+                            name="puinstore.deptcode"
+                            data-autoload
+                            data-url="admin/department/getTreeTableDatas"
+                            data-select-type="select2"
+                            data-text="=请选择部门="
+                            data-value-attr="cdepcode"
+                            data-text-attr="cdepname"
+                            data-select="#(puinstore.deptcode??)">
+                    </select>
+                </div>
+
+                <label class="col-sm-2 col-form-label">采购类型：</label>
+                <div class="col-sm-2 col-form-label">
+                    <select class="form-control"
+                            name="puinstore.billtype"
+                            data-autoload
+                            data-url="admin/purchasetype/selectAll"
+                            data-select-type="select2"
+                            data-text="=请选择采购类型="
+                            data-value=""
+                            data-value-attr="iautoid"
+                            data-text-attr="cptname"
+                            data-select="#(puinstore.billtype??)"></select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">供货单位：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input id="venname" name="cvenname" type="text" readonly="readonly"
+                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.cvenname??)"/>
+                    <input id="vencode" name="puinstore.vencode" type="hidden" readonly="readonly"
+                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.vencode??)"/>
+                </div>
+
+                <label class="col-sm-2 col-form-label">审批日期：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input class="form-control ml-2" name="puinstore.auditdate" type="text" readonly="readonly" maxlength="20"
+                           value="#(puinstore.AuditDate??)"/>
+                </div>
+
+                <label class="col-sm-2 col-form-label">入库类别：</label>
+                <div class="col-sm-2 col-form-label">
+                    <select class="form-control"
+                            name="puinstore.rdcode"
+                            data-autoload
+                            data-url="admin/purchasetype/selectAll"
+                            data-select-type="select2"
+                            data-text="=请选择采购类型="
+                            data-value=""
+                            data-value-attr="crdcode"
+                            data-text-attr="crdname"
+                            data-select="#(puinstore.rdcode??)"></select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">备注：</label>
+                <div class="col-sm-2 col-form-label">
+                    </textarea>
+                    <textarea id="memo" name="puinstore.memo" class="form-control" placeholder="=请输入备注="
+                              type="text" maxlength="300"
+                              value="#(puinstore.memo??)">#(puinstore.memo??)</textarea>
+                </div>
+
+                <label class="col-sm-2 col-form-label">业务员：</label>
+                <div class="col-sm-2 col-form-label">
+                    <input name="createperson" type="text" readonly="readonly" class="form-control ml-2" maxlength="20"
+                           value="#(puinstore.createperson??)"/>
+                </div>
+			</div>
+			<div class="form-group row">
+				<div class="col-11" style="margin-left: 180px;">
+					<div class="jbolt_page_content">
+						#render("_table_split.html")
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">制单人：</label>
+				<div class="col-sm-2 col-form-label">
+					<input type="text" class="form-control border-none" readonly="readonly" placeholder=""
+						   value="#(puinstore.createperson??)"/>
+				</div>
+				<label class="col-sm-2 col-form-label">审核人：</label>
+				<div class="col-sm-2 col-form-label">
+					<input type="text" class="form-control border-none" readonly="readonly" placeholder=""
+						   value="#(puinstore.auditperson??)"/>
+				</div>
+			</div>
+		</form>
+    </div>
+</div>
+#define js()
+<script>
+    hideParentLayerDialogBtn();
+
+
+    function submitAllTables_#(pageId)(ele){
+        var action = getRealJqueryObject(ele);
+        debugger;
+        var id = action.data("id");
+        var value = action.data("value");
+        var tables = ["Puinstoreform_TableId_#(pageId)"];
+        if (checkTds()) {
+            jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+                if (res.state == "ok") {
+                    LayerMsgBox.success(res.msg, 600, function () {
+                        parent.refreshPjaxContainer();
+                        parent.layer.close(parent.layer.getFrameIndex(window.name));
+                    })
+                } else {
+                    LayerMsgBox.error(res.msg);
+                }
+            });
+        }
+
+    }
+
+
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+    /**
+     * 获得选中的订单号数据
+     * @param data
+     */
+    function setChooseDialogSelectResultFromSupplier(data) {
+        $("#deptcode").val(data.deptcode);
+        $("#deptname").val(data.deptname);
+        $("#venname").val(data.venname);
+        $("#vencode").val(data.vencode);
+        $("#invname").val(data.invname);
+        $("#defwhname").val(data.defwhname);
+        $("#sourcebillno").val(data.sourcebillno);
+        $("#billno").val(data.billno);
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="PuinstoreForm")
+#end
+

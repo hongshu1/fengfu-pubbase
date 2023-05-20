@@ -1,28 +1,22 @@
 package cn.rjtech.admin.syspuinstore;
 
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.otherout.OtherOutService;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
-
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.wms.utils.StringUtils;
-
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -54,7 +48,6 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
 
     /**
      * 后台管理数据查询
-     *
      * @param pageNumber     第几页
      * @param pageSize       每页几条数据
      * @param SourceBillType 来源类型;PO 采购 OM委外
@@ -81,12 +74,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         if (sysPuinstoredetail == null || isOk(sysPuinstoredetail.getAutoID())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        //if(existsName(sysPuinstoredetail.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = sysPuinstoredetail.save();
-        if (success) {
-            //添加日志
-            //addSaveSystemLog(sysPuinstoredetail.getAutoID(), JBoltUserKit.getUserId(), sysPuinstoredetail.getName());
-        }
         return ret(success);
     }
 
@@ -102,30 +90,22 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         if (dbSysPuinstoredetail == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
-        //if(existsName(sysPuinstoredetail.getName(), sysPuinstoredetail.getAutoID())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = sysPuinstoredetail.update();
-        if (success) {
-            //添加日志
-            //addUpdateSystemLog(sysPuinstoredetail.getAutoID(), JBoltUserKit.getUserId(), sysPuinstoredetail.getName());
-        }
         return ret(success);
     }
 
     /**
      * 删除数据后执行的回调
-     *
      * @param sysPuinstoredetail 要删除的model
      * @param kv                 携带额外参数一般用不上
      */
     @Override
     protected String afterDelete(SysPuinstoredetail sysPuinstoredetail, Kv kv) {
-        //addDeleteSystemLog(sysPuinstoredetail.getAutoID(), JBoltUserKit.getUserId(),sysPuinstoredetail.getName());
         return null;
     }
 
     /**
      * 检测是否可以删除
-     *
      * @param sysPuinstoredetail model
      * @param kv                 携带额外参数一般用不上
      */
@@ -140,13 +120,6 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
      */
     @Override
     protected String afterToggleBoolean(SysPuinstoredetail sysPuinstoredetail, String column, Kv kv) {
-        //addUpdateSystemLog(sysPuinstoredetail.getAutoID(), JBoltUserKit.getUserId(), sysPuinstoredetail.getName(),"的字段["+column+"]值:"+sysPuinstoredetail.get(column));
-        /**
-         switch(column){
-         case "IsDeleted":
-         break;
-         }
-         */
         return null;
     }
 

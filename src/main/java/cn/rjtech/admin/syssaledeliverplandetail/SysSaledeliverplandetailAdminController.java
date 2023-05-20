@@ -1,16 +1,15 @@
 package cn.rjtech.admin.syssaledeliverplandetail;
 
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysSaledeliverplandetail;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 
 /**
  * 销售出货(计划)明细
@@ -19,6 +18,7 @@ import cn.rjtech.model.momdata.SysSaledeliverplandetail;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 10:13
  */
+@CheckPermission(PermissionKey.SALES_SHIPMENT_LIST)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/sysSaledeliverplandetail", viewPath = "/_view/admin/sysSaledeliverplandetail")
@@ -89,5 +89,7 @@ public class SysSaledeliverplandetailAdminController extends BaseAdminController
         renderJson(service.deleteById(getLong(0)));
     }
 
-
+    public void findEditTableDatas(){
+        renderJsonData(service.findEditTableDatas(getKv()));
+    }
 }

@@ -8,13 +8,16 @@
 
 <div class="jbolt_righttop_btn_group" style="top:0px;margin-left: auto" id="jbolt_righttop_btn_group_#(pageId)">
 	<button onclick="submitTableAndForm_#(pageId)(this)" data-value="save" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存</button>
+	<button onclick="deleteApproval_#(pageId)(this)" data-id="#(approvalM.iautoid??)" class="btn btn-danger btn-sm"><i
+			class="fa fa-close"></i> 删除
+	</button>
 	<button onclick="dialogClose()" class="btn btn-danger btn-sm"><i class="fa fa-close"></i> 关闭</button>
 </div>
 
 <form onsubmit="return false;" id="approvalMForm" action="#(action)" method="post">
-    
+
     <input type="hidden" name="approvalM.iautoid" value="#(approvalM.iautoid??)" />
-    
+
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">审批流名称</label>
 		<div class="col">
@@ -113,6 +116,27 @@
 
 #define js()
 <script>
+	/**
+	 * 删除方法
+	 * @private
+	 */
+	function deleteApproval_#(pageId)(ele) {
+		var action = getRealJqueryObject(ele);
+		var headerId = action.data("id");
+		LayerMsgBox.confirm("确定删除？",function () {
+			var index = LayerMsgBox.loading('执行中...');
+			Ajax.post("/admin/approvalm/delete",{"id":headerId},function (res) {
+				LayerMsgBox.close(index);
+				LayerMsgBox.success(res.msg,1500,function () {
+					parent.refreshPjaxContainer();
+					parent.layer.closeAll();
+				})
+			},function (err) {
+				LayerMsgBox.close(index);
+				// LayerMsgBox.error(err.msg,2000);
+		})
+	})
+	}
 
 	/**
 	 * 提交方法

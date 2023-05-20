@@ -1,26 +1,27 @@
 package cn.rjtech.admin.sysproductin;
 
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
-import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.warehouse.WarehouseService;
-import cn.rjtech.model.momdata.*;
-import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
+import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.RdStyle;
+import cn.rjtech.model.momdata.SysProductin;
+import cn.rjtech.model.momdata.Warehouse;
 import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
 
 /**
  * 产成品入库单
- *
  * @ClassName: SysProductinAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-08 09:56
@@ -83,29 +84,30 @@ public class SysProductinAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        //仓库
+        // todo 待优化
+        // 仓库
         Warehouse first = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", sysProductin.getWhcode());
-        if (null != first.getCWhName()) {
+        if (null != first && null != first.getCWhName()) {
             set("cwhname", first.getCWhName());
         }
-        //入库类型
+        // 入库类型
         RdStyle first1 = rdstyleservice.findFirst("select * from Bd_Rd_Style where crdcode=?", sysProductin.getRdCode());
-        if (null != first1.getCRdName()) {
+        if (null != first1 && null != first1.getCRdName()) {
             set("crdname", first1.getCRdName());
         }
-        //生产部门
+        // 生产部门
         Department first2 = departmentservice.findFirst("select * from Bd_Department where cDepCode=?", sysProductin.getDeptCode());
-        if (null != first2.getCDepName()) {
+        if (null != first2 && null != first2.getCDepName()) {
             set("cdepname", first2.getCDepName());
         }
-        //制单人
+        // 制单人
         Record record = service.selectName(sysProductin.getCreatePerson());
-        if (null != record.get("name")) {
+        if (null != record && null != record.get("name")) {
             set("name", record.get("name"));
         }
-        //审核人
+        // 审核人
         Record record1 = service.selectName(sysProductin.getAuditPerson());
-        if (null != record1.get("name")) {
+        if (null != record1 && null != record1.get("name")) {
             set("sname", record1.get("name"));
         }
         set("sysProductin", sysProductin);

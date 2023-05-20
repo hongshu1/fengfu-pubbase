@@ -1,14 +1,17 @@
 package cn.rjtech.admin.syssaledeliverplandetail;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.SysSaledeliverplandetail;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 /**
  * 销售出货(计划)明细
@@ -116,6 +119,12 @@ public class SysSaledeliverplandetailService extends BaseService<SysSaledeliverp
     public String checkInUse(SysSaledeliverplandetail sysSaledeliverplandetail, Kv kv) {
         // 这里用来覆盖 检测是否被其它表引用
         return null;
+    }
+
+    public List<Record> findEditTableDatas(Kv kv) {
+        ValidationUtils.notNull(kv.getLong("masid"), JBoltMsg.PARAM_ERROR);
+        List<Record> records = dbTemplate("syssaledeliverplan.dList", kv).find();
+        return records;
     }
 
 }

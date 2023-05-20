@@ -3,6 +3,7 @@ package cn.rjtech.admin.userthirdparty;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.model.main.UserThirdparty;
 import com.jfinal.aop.Before;
@@ -21,6 +22,7 @@ import java.util.List;
  * @date: 2022-11-14 21:06
  */
 @UnCheck
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/userthirdparty", viewPath = "/_view/admin/userthirdparty")
 public class UserThirdpartyAdminController extends JBoltBaseController {
 

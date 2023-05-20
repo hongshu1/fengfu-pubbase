@@ -1,11 +1,8 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_title">
     <div class="row">
-
         <div class="col-12 form-inline">
-
         </div>
-
     </div>
 </div>
 <h5>料品信息</h5>
@@ -14,32 +11,28 @@
     <form onsubmit="return false;" id="StripBarcodesForm_#(pageId)" action="#(action)" method="post">
 
         <div class="form-group row">
-            <label class="col-1 col-form-label">料号</label>
+            <label class="col-1 col-form-label">存货编码</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                         maxlength="100"  readonly
-                       value="#(bill.invcode??)"/>
+                         maxlength="100"  readonly value="#(invcode??)"/>
             </div>
-            <label class="col-1 col-form-label">品名</label>
+            <label class="col-1 col-form-label">存货名称</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.invname??)"/>
+                       maxlength="100"  readonly value="#(invname??)"/>
             </div>
-
         </div>
         <dic class="form-group row">
             <label class="col-1 col-form-label">规格</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
                        maxlength="100"  readonly
-                       value="#(bill.invstd??)"/>
+                       value="#(invstd??)"/>
             </div>
             <label class="col-1 col-form-label">库存单位</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.unitname??)"/>
+                       maxlength="100"  readonly value="#(unitname??)"/>
             </div>
         </dic>
 
@@ -47,97 +40,51 @@
             <label class="col-1 col-form-label">创建人</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.createperson??)"/>
+                       maxlength="100"  readonly value="#(createperson??)"/>
             </div>
             <label class="col-1 col-form-label">创建时间</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="50" readonly
-                       value="#date(bill.createdate??)"/>
+                       maxlength="50" readonly value="#date(createdate??)"/>
             </div>
         </div>
-        <h5>新实物编码</h5>
+        <h5>新现品票</h5>
 
         <div class="form-group row">
-            <label class="col-1 col-form-label">实物编码</label>
+            <label class="col-1 col-form-label">现品票</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.barcode??)"/>
-
+                       maxlength="100"  readonly value="#(barcode??)"/>
             </div>
-            <label class="col-1 col-form-label">载具编码</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.pbarcode??)"/>
-
-            </div>
-
         </div>
         <div class="form-group row">
             <label class="col-1 col-form-label">批次号</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.batch??)"/>
-
+                       maxlength="100"  readonly value="#(batch??)"/>
             </div>
             <label class="col-1 col-form-label">合并数量</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#number(bill.qtys??)"/>
-
+                       maxlength="100"  readonly value="#number(qtys??)"/>
             </div>
-
         </div>
-
-        <!--<div class="form-group row">
-            <label class="col-1 col-form-label">实物编码</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.sourceid??)"/>
-            </div>
-            <label class="col-1 col-form-label">载具编码</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                         maxlength="100"  readonly
-                       value="#(bill.createperson??)"/>
-
-            </div>
-            </div>
-
-            <div class="form-group row">
-            <label class="col-1 col-form-label">数量</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly
-                       value="#(bill.qtys??)"/>
-            </div>
-
-        </div>
--->
     </form>
 </div>
 
 <div class="jbolt_page_content">
-
     <!-- JBoltTable的数据模板定义-->
     <textarea class="jb_tpl_box" id="AppVouchDetailRowtpl_#(pageId)">
 		{@each datas as data,index}
-        <tr data-id="${data.logno}">
-            <td>${pageNumber,pageSize,index | rownum}</td>
+    <tr data-id="${data.logno}">
+      <td>${pageNumber,pageSize,index | rownum}</td>
 			<td>${data.barcode}</td>
-			<td>${data.pbarcode}</td>
 			<td>${data.batch}</td>
 			<td>${data.qty, 2|number_format}</td>
 		</tr>
 		{@/each}
 	</textarea>
-    <h5>原实物编码</h5>
+    <h5>原现品票</h5>
 
     <table class="jbolt_table jbolt_main_table table-center"
            id="jbolt_table_#(pageId)"
@@ -145,7 +92,7 @@
            data-height="400"
            data-ajax="true"
            data-width="auto"
-           data-url="admin/stripbarcode/formdatas?logno=#(bill.logno??)"
+           data-url="admin/mergeBarcode/detailDatas?logno=#(logno??)"
            data-column-resize="true"
            data-column-prepend="1:checkbox:true"
            data-conditions-form="StripBarcodesForm_#(pageId)"
@@ -155,11 +102,9 @@
         <thead>
         <tr>
             <th data-width="70" data-column="index">序号</th>
-            <th data-width="200" data-column="barcode">实物编码</th>
-            <th data-width="200" data-column="pbarcode">载具编码</th>
+            <th data-width="200" data-column="barcode">现品票</th>
             <th data-width="200" data-column="batch">批次号</th>
             <th data-width="100" data-column="qty">数量</th>
-
         </tr>
         </thead>
         <tbody>

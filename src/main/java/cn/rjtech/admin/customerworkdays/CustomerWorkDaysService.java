@@ -1,16 +1,14 @@
 package cn.rjtech.admin.customerworkdays;
 
 import cn.hutool.core.util.ArrayUtil;
-import cn.rjtech.model.momdata.CustomerAddr;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.CustomerWorkDays;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 
 import java.util.List;
 
@@ -126,4 +124,8 @@ public class CustomerWorkDaysService extends BaseService<CustomerWorkDays> {
     public CustomerWorkDays findByICustomerId(Long iCustomerId) {
 		return findFirst(selectSql().eq("iCustomerId", iCustomerId));
     }
+
+	public List<CustomerWorkDays> getCusWorkDaysList(Integer year){
+		return find("SELECT * FROM Bd_CustomerWorkDays WHERE iYear >= ? ",year);
+	}
 }

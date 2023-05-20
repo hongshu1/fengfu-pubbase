@@ -10,7 +10,6 @@ import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
-import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;

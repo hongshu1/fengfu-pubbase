@@ -1,6 +1,7 @@
 package cn.rjtech.admin.mergebarcode;
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -11,10 +12,10 @@ import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.math.BigDecimal;
 
 /**
  * 合并条码 Controller
+ *
  * @ClassName: MergeBarCodeAdminController
  * @author: 佛山市瑞杰科技有限公司
  */
@@ -23,6 +24,7 @@ import java.math.BigDecimal;
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/mergeBarcode", viewPath = "_view/admin/mergebarcode")
 public class MergeBarCodeAdminController extends BaseAdminController {
+
     @Inject
     private MergeBarCodeService service;
 
@@ -33,19 +35,18 @@ public class MergeBarCodeAdminController extends BaseAdminController {
         render("index.html");
     }
 
-    public void barcodeIndex() {
+    /*
+     * 跳转到新增页面
+     * */
+    public void stripbarcodeSelect() {
         render("stripbarcode_select.html");
     }
 
+    /*
+     * 新增页面自动加载table数据
+     * */
     public void StripSelectDatas() {
-        BigDecimal zero = BigDecimal.ZERO;
         renderJsonData(service.StripSelectDatas(getPageNumber(), getPageSize(), getKv()));
-    }
-
-    public void detailDatas() {
-        Kv kv = getKv();
-        String sourceid = kv.getStr("sourceid");
-        renderJsonData(service.findListByShiWu(sourceid));
     }
 
     /**
@@ -64,25 +65,26 @@ public class MergeBarCodeAdminController extends BaseAdminController {
         renderJsonData(service.datas(getPageNumber(), getPageSize(), getKv()));
     }
 
-    public void findByLogId() {
+    /*
+     * 点击查看按钮，跳转到查看页面
+     * */
+    public void findByLogno() {
         Kv kv = getKv();
-        String logid = kv.getStr("logid");
-        Record byLogId = service.findByLogId(logid);
-  /*      BigDecimal qty = byLogId.getBigDecimal("qty");
-        BigDecimal curqty = byLogId.getBigDecimal("curqty");
-        BigDecimal hbqty = qty.subtract(curqty);
-        byLogId.set("hbqty",hbqty);*/
+        Record byLogId = service.findByLogId(kv.getStr("logno"));
+        if (null == byLogId) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
         set("bill", byLogId);
         render("edit.html");
     }
 
-    /**
-     * 合并条码详情列表页
-     */
-    public void formdatas() {
+    /*
+     * 跳转到“查看”页面自动加载数据
+     * */
+    public void detailDatas() {
         Kv kv = getKv();
-        String logno = kv.getStr("logno");
-        renderJsonData(service.formdatas(logno));
+        renderJsonData(service.findShiWuByCSourceId(kv.getStr("csourceid")));
     }
 
 }

@@ -5,13 +5,11 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
-
-import java.math.BigDecimal;
 
 /**
  * 补打条码 Controller
@@ -19,71 +17,54 @@ import java.math.BigDecimal;
  * @ClassName: PatchWorkBarCodeAdminController
  * @author: 佛山市瑞杰科技有限公司
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.PATCHWORK_BARCODE)
 @Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/patchworkBarcode", viewPath = "_view/admin/patchworkbarcode")
 public class PatchWorkBarCodeAdminController extends BaseAdminController {
+
     @Inject
-    PatchWorkBarCodeService service;
+    private PatchWorkBarCodeService service;
 
     /**
-     * 合并条码记录
+     * index主页面
      */
     public void index() {
         render("index.html");
     }
 
-    public void barcodeIndex() {
-        render("stripbarcode_select.html");
-    }
-
-    public void StripSelectDatas() {
-        BigDecimal zero = BigDecimal.ZERO;
-        renderJsonData(service.StripSelectDatas(getPageNumber(), getPageSize(), getKv()));
-    }
-
-    public void detailDatas() {
-        Kv kv = getKv();
-        String sourceid = kv.getStr("sourceid");
-        renderJsonData(service.findListByShiWu(sourceid));
-    }
-
     /**
-     * 合并条码提交
-     */
-    public void SubmitStripForm() {
-        Kv kv = getKv();
-        renderJsonData(service.SubmitStripForm(kv));
-
-    }
-
-    /**
-     * 合并条码记录
+     * 加载现品票信息
      */
     public void datas() {
-        renderJsonData(service.datas(getPageNumber(), getPageSize(), getKv()));
-    }
-
-    public void findByLogId() {
         Kv kv = getKv();
-        String logid = kv.getStr("logid");
-        Record byLogId = service.findByLogId(logid);
-  /*      BigDecimal qty = byLogId.getBigDecimal("qty");
-        BigDecimal curqty = byLogId.getBigDecimal("curqty");
-        BigDecimal hbqty = qty.subtract(curqty);
-        byLogId.set("hbqty",hbqty);*/
-        set("bill", byLogId);
-        render("edit.html");
+        String cinvcode = kv.getStr("cinvcode");
+        if (StringUtils.isBlank(cinvcode)) {
+            renderJsonData(null);
+            return;
+        }
+        renderJsonData(service.datas(cinvcode));
     }
 
     /**
-     * 合并条码详情列表页
+     * 跳到选择页面
      */
-    public void formdatas() {
-        Kv kv = getKv();
-        String logno = kv.getStr("logno");
-        renderJsonData(service.formdatas(logno));
+    public void barcodeSelect() {
+        render("patchworkbarcode_select.html");
     }
 
+    /**
+     * 加载选择页面的数据
+     */
+    public void selectDatas() {
+        renderJsonData(service.selectDatas(getPageNumber(), getPageSize(), getKv()));
+    }
+
+    /**
+     * 提交打印标签
+     */
+    public void SubmitForm() {
+        Kv kv = getKv();
+        renderJsonData(service.SubmitStripForm(kv));
+    }
 }

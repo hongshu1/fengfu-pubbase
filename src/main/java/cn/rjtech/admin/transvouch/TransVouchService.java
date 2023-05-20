@@ -1,21 +1,20 @@
 package cn.rjtech.admin.transvouch;
 
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
-
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.transvouchdetail.TransVouchDetailService;
+import cn.rjtech.model.momdata.TransVouch;
 import cn.rjtech.model.momdata.TransVouchDetail;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.TransVouch;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
@@ -212,13 +211,17 @@ public class TransVouchService extends BaseService<TransVouch> {
 			String headerId = null;
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
-				TransVouch transVouch = jBoltTable.getFormBean(TransVouch.class);
+				TransVouch transVouch = jBoltTable.getFormModel(TransVouch.class,"transVouch");
+
 
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
 					if (transVouch.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
 						ValidationUtils.isTrue(false, "请先添加行数据！");
 					}
+				}
+				if ("submit".equals(revokeVal) && transVouch.getAutoID() == null) {
+					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
 				}
 
 				if (transVouch.getAutoID() == null) {

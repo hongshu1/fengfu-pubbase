@@ -1,13 +1,13 @@
 package cn.rjtech.admin.moroutingconfigperson;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MoMoroutingconfigPerson;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 /**
  * 制造工单-工单工艺人员配置 Controller
  * @ClassName: MoMoroutingconfigPersonAdminController

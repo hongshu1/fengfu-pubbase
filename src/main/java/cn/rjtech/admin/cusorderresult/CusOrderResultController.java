@@ -1,5 +1,7 @@
 package cn.rjtech.admin.cusorderresult;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
@@ -18,12 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * 客户计划汇总及实绩管理
  */
-//@CheckPermission(PermissionKey.CUSORDER_RESULT)
 @UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.NONE)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/cusorderresult", viewPath = "/_view/admin/cusorderresult")
 public class CusOrderResultController extends BaseAdminController {
@@ -32,7 +33,6 @@ public class CusOrderResultController extends BaseAdminController {
     private CusOrderResultService orderResultService;
     @Inject
     private ScheduProductPlanMonthService service;
-
 
     /**
      * 首页

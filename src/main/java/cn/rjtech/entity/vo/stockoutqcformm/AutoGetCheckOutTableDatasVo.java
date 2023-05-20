@@ -1,9 +1,8 @@
 package cn.rjtech.entity.vo.stockoutqcformm;
 
-import java.util.List;
-import javax.naming.spi.DirStateFactory.Result;
-
 import cn.rjtech.entity.vo.base.ResultVo;
+
+import java.util.List;
 
 /**
  * @version 1.0

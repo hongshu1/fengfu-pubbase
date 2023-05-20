@@ -1,8 +1,6 @@
 package cn.rjtech.model.momdata;
 
 import cn.rjtech.model.momdata.base.BaseFormapprovaldPerson;
-import cn.jbolt.core.annotation.TableBind;
-import cn.jbolt.core.base.JBoltIDGenMode;
 
 /**
  * 单据审批-实际审批人

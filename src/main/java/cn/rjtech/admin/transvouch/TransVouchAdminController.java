@@ -1,17 +1,20 @@
 package cn.rjtech.admin.transvouch;
 
+
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.TransVouch;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.TransVouch;
+
+import java.util.Date;
+
 /**
  * 出库管理-调拨单列表 Controller
  * @ClassName: TransVouchAdminController
@@ -65,6 +68,12 @@ public class TransVouchAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
+		TransVouch transVouch = new TransVouch();
+		String billNo = BillNoUtils.getcDocNo(getOrgId(), "LLD", 5);
+		Date nowDate = new Date();
+		transVouch.setBillNo(billNo);
+		transVouch.setBillDate(nowDate);
+		set("transVouch",transVouch);
 		render("add.html");
 	}
 

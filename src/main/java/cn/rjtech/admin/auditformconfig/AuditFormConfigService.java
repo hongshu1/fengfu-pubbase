@@ -1,21 +1,18 @@
 package cn.rjtech.admin.auditformconfig;
 
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.jbolt.core.util.JBoltArrayUtil;
-import cn.jbolt.core.util.JBoltCamelCaseUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.jfinal.kit.StrKit;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.AuditFormConfig;
+import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.AuditFormConfig;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
@@ -233,6 +230,19 @@ public class AuditFormConfigService extends BaseService<AuditFormConfig> {
 				List<AuditFormConfig> saveModelList = jBoltTable.getSaveModelList(AuditFormConfig.class);
 				List<AuditFormConfig> saveList = new ArrayList<>();
 				saveModelList.forEach(auditFormConfig -> {
+
+					/**
+					 * 类型为 审批 的话 需要先定义审批流
+					 */
+					if (iType==1){
+
+						Long iFormId = auditFormConfig.getIFormId();
+						String cFormName = auditFormConfig.getCFormName();
+						List<Record> record = findRecord("select * from Bd_ApprovalForm where iFormId = " + iFormId);
+						ValidationUtils.isTrue(record.size() > 0, "需要先在审批流配置定义表单"+cFormName+"的审批流");
+
+					}
+
 					auditFormConfig.setIsEnabled(isEnabled);
 					auditFormConfig.setIType(iType);
 					auditFormConfig.setICreateBy(user.getId());
@@ -253,6 +263,19 @@ public class AuditFormConfigService extends BaseService<AuditFormConfig> {
 				List<AuditFormConfig> updateModelList = jBoltTable.getUpdateModelList(AuditFormConfig.class);
 				List<AuditFormConfig> updateList = new ArrayList<>();
 				updateModelList.forEach(auditFormConfig -> {
+
+					/**
+					 * 类型为 审批 的话 需要先定义审批流
+					 */
+					if (iType==1){
+
+						Long iFormId = auditFormConfig.getIFormId();
+						String cFormName = auditFormConfig.getCFormName();
+						List<Record> record = findRecord("select * from Bd_ApprovalForm where iFormId = " + iFormId);
+						ValidationUtils.isTrue(record.size() > 0, "需要先在审批流配置定义表单["+cFormName+"]的审批流");
+
+					}
+
 					auditFormConfig.setIsEnabled(isEnabled);
 					auditFormConfig.setIType(iType);
 					auditFormConfig.setIUpdateBy(user.getId());

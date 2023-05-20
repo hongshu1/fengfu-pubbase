@@ -459,9 +459,6 @@
 #include("sysenumeration/sysenumeration.sql")
 #end
 
-#namespace("mopickitem")
-#include("mopickitemd/mopickitem.sql")
-#end
 
 #namespace("materialsprepare")
 #include("sysmaterialsprepare/materialsprepare.sql")
@@ -480,7 +477,27 @@
 #include("syssaledeliver/sysSaleDeliver.sql")
 #end
 
-
 #namespace("syssaledeliverplan")
 #include("syssaledeliverplan/syssaledeliverplan.sql")
 #end
+
+#namespace("splitbarcode")
+#include("splitbarcode/splitbarcode.sql")
+#end
+
+#namespace("mergebarcode")
+#include("mergebarcode/mergebarcode.sql")
+#end
+
+#namespace("otherdeliverylist")
+#include("otherdeliverylist/otherdeliverylist.sql")
+#end
+
+#namespace("materialreturnlist")
+#include("materialreturnlist/materialreturnlist.sql")
+#end
+
+#namespace("patchworkbarcode")
+#include("patchworkbarcode/patchworkbarcode.sql")
+#end
+

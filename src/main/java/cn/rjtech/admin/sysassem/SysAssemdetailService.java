@@ -1,15 +1,14 @@
 package cn.rjtech.admin.sysassem;
 
-import cn.rjtech.util.ValidationUtils;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.SysAssemdetail;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.List;
@@ -145,13 +144,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 	 * 批量删除主从表
 	 */
 	public Ret deleteRmRdByIds(String ids) {
-		tx(() -> {
-			String[] split = ids.split(",");
-			for(String s : split){
-				updateColumn(s, "isdeleted", true);
-			}
-			return true;
-		});
+		deleteByIds(ids);
 		return ret(true);
 	}
 
@@ -161,7 +154,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		updateColumn(id, "isdeleted", true);
+		deleteById(id);
 		return ret(true);
 	}
 }

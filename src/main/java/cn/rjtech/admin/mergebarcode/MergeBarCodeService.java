@@ -4,10 +4,10 @@ import cn.hutool.http.HttpUtil;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
-import cn.rjtech.base.service.BaseU9RecordService;
-import cn.rjtech.common.organize.OrganizeService;
+import cn.rjtech.base.service.BaseService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.erp.mood.CollectorsUtil;
+import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -25,48 +25,48 @@ import java.util.stream.Collectors;
  *
  * @author: 佛山市瑞杰科技有限公司
  */
-public class MergeBarCodeService extends BaseU9RecordService {
-    @Inject
-    OrganizeService organizeService;
+public class MergeBarCodeService extends BaseService<Inventory> {
+
+    private final Inventory dao = new Inventory().dao();
+
+    @Override
+    protected Inventory dao() {
+        return dao;
+    }
+
+    @Override
+    protected int systemLogTargetType() {
+        return 0;
+    }
+
     @Inject
     UserThirdpartyService userThirdpartyService;
-
-    @Override
-    protected String getTableName() {
-        return "";
-    }
-
-    @Override
-    protected String getPrimaryKey() {
-        return null;
-    }
 
     /**
      * 合并条码实物编码选择选择
      */
     public Page<Record> StripSelectDatas(Integer pageNumber, Integer pageSize, Kv kv) {
         kv.set("organizecode", getOrgCode());
-        Page<Record> paginate = dbTemplate("stripbarcode.barcodeSelectDatas", kv).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("mergebarcode.barcodeSelectDatas", kv).paginate(pageNumber, pageSize);
         return paginate;
     }
 
 
     public String SubmitStripForm(Kv kv) {
-    /*	获取表头数据
-        String invcodes = kv.getStr("invcodes");
-        String barcodes = kv.getStr("barcodes");
+        //获取表头数据
+        String invcodes = kv.getStr("cinvcode");
+        String barcodes = kv.getStr("cbarcode");
         int qtys = kv.getInt("qtys");
-        String invnames = kv.getStr("invnames");*/
+        String invnames = kv.getStr("cinvname");
         String datas = kv.getStr("datas");
         List<Kv> jsonArray = JSON.parseArray(datas, Kv.class);
-        String organizecode = organizeService.getOrganizecode();
+        String organizecode = getOrgCode();
         String u9Name = userThirdpartyService.getU9Name(JBoltUserKit.getUserId());
         Date now = new Date();
         String loginDate = JBoltDateUtil.format(now, "yyyy-MM-dd");
         Kv target = new Kv();
         target.set("organizeCode", organizecode);
         target.set("userCode", u9Name);
-
 
         Kv PreAllocate = new Kv();
         PreAllocate.set("usercode", u9Name);
@@ -78,18 +78,19 @@ public class MergeBarCodeService extends BaseU9RecordService {
 
         List<Map> MainData = new ArrayList<>();
         // 获取传过来的料号去重后的集合，判断是否存在不一致的情况
-        List<String> invCodes = jsonArray.stream().map(m -> m.getStr("invcode")).distinct().collect(Collectors.toList());
+        List<String> invCodes = jsonArray.stream().map(m -> m.getStr("cinvcode")).distinct().collect(Collectors.toList());
         // 判断料号是否不一致,重复提醒重新选择
         if (invCodes.size() > 1) {
             throw new RuntimeException("料号不一致，请重新选择！");
         }
         // 按实物编码前缀一致为一组，先特殊处理实物编码，将实物编码后面的“H202302280001-01”的数据切割成H202302280001
         jsonArray.stream().forEach(f -> {
-            String barcode = f.getStr("barcode").split("-")[0];
-            f.set("barcode", barcode);
+            String barcode = f.getStr("cbarcode").split("-")[0];
+            f.set("cbarcode", barcode);
         });
         // 处理完成实物编码后，进行分组排序
-        Map<String, List<Kv>> groupMap = jsonArray.stream().collect(Collectors.groupingBy(g -> g.getStr("barcode"), LinkedHashMap::new, Collectors.toList()));
+        Map<String, List<Kv>> groupMap = jsonArray.stream()
+            .collect(Collectors.groupingBy(g -> g.getStr("cbarcode"), LinkedHashMap::new, Collectors.toList()));
         BigDecimal totalNum = jsonArray.stream().collect(CollectorsUtil.summingBigDecimal(s -> new BigDecimal(s.getStr("qty"))));
         boolean isFisrt = true;
         Kv items = jsonArray.get(0);// 获取到第一条数
@@ -109,17 +110,15 @@ public class MergeBarCodeService extends BaseU9RecordService {
                         mian.set("qty", 0);
                     }
 
-                    mian.set("barcode", item.getStr("barcode"));// 实物编码
-                    mian.set("invcode", item.getStr("invcode"));
-                    mian.set("invname", item.getStr("invname"));
+                    mian.set("barcode", item.getStr("cbarcode"));// 实物编码
+                    mian.set("invcode", item.getStr("cinvcode"));
+                    mian.set("invname", item.getStr("cinvname"));
                     mian.set("pqty", item.getStr("qty"));
                     mian.set("Tag", "BarcodeMerge");
-                    mian.set("PBarCode", items.getStr("barcode"));// 第一条的实物编码
+                    mian.set("PBarCode", items.getStr("cbarcode"));// 第一条的实物编码
                     MainData.add(mian);
                 }
-
             }
-
         }
         target.set("MainData", MainData);
         System.out.println(JSON.toJSONString(target) + 666);
@@ -128,7 +127,7 @@ public class MergeBarCodeService extends BaseU9RecordService {
 
 
     public String base_inBarCode(String json) {
-        String post = HttpUtil.post(AppConfig.getVouchSumbmitUrl(), json);
+        String post = HttpUtil.post(AppConfig.getVouchProcessDynamicSubmitUrl(), json);
         JSONObject res = JSON.parseObject(post);
         ValidationUtils.notNull(res, "解析JSON为空");
 
@@ -137,23 +136,18 @@ public class MergeBarCodeService extends BaseU9RecordService {
         if (message == null) {
             message = res.getString("msg");
         }
-
         ValidationUtils.notNull(code, "json:" + json + ";" + message);
         ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
         return post;
     }
 
     public Page<Record> barcodeDatas(Integer pageNumber, Integer pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("barcode.barcodeDatas", kv).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("mergebarcode.barcodeDatas", kv).paginate(pageNumber, pageSize);
         return paginate;
     }
 
-    public Record findByShiWu(String sourceid) {
-        return dbTemplate("barcode.findByShiWu", Kv.by("sourceid", sourceid)).findFirst();
-    }
-
-    public List<Record> findListByShiWu(String sourceid) {
-        List<Record> list = dbTemplate("barcode.findByShiWu", Kv.by("sourceid", sourceid)).find();
+    public List<Record> findShiWuByCSourceId(String csourceid) {
+        List<Record> list = dbTemplate("mergebarcode.findShiWuByCSourceId", Kv.by("csourceid", csourceid)).find();
         return list;
     }
 
@@ -161,17 +155,12 @@ public class MergeBarCodeService extends BaseU9RecordService {
      * 合并条码记录
      */
     public Page<Record> datas(Integer pageNumber, Integer pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("stripbarcode.datas", kv).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("mergebarcode.datas", kv).paginate(pageNumber, pageSize);
         return paginate;
     }
 
-    public Record findByLogId(String logid) {
-        return dbTemplate("stripbarcode.findByLogId", Kv.by("logid", logid)).findFirst();
+    public Record findByLogId(String logno) {
+        return dbTemplate("mergebarcode.findByLogno", Kv.by("logno", logno)).findFirst();
     }
 
-
-    public List<Record> formdatas(String logno) {
-        List<Record> list = dbTemplate("stripbarcode.formdatas", Kv.by("logno", logno)).find();
-        return list;
-    }
 }

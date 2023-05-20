@@ -1,39 +1,39 @@
 <div class="jbolt_page_content">
     <form onsubmit="return false;" id="BarcodeByForm_#(pageId)" action="#(action)" method="post">
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">选择品名：</label>
+            <label class="col-sm-2 col-form-label">选择存货：</label>
             <div class="col-sm-2  input-group">
                 <input type="text" id="cpackcode" hidden class="form-control" readonly="readonly"
                        placeholder="选择数据"/>
                 <div class="input-group-append">
                     <button class="btn btn-primary" data-dialogbtn data-link-para-ele="#versionId" data-area="1280,600"
-                            data-title="（单选）" data-url="/admin/splitBarcode/barcodeIndex"><i
+                            data-title="（单选）" data-url="/admin/splitBarcode/barcodeSelect"><i
                             class="fa fa-search mr-1"></i> 选择
                     </button>
                 </div>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-1 col-form-label">实物编码</label>
+            <label class="col-1 col-form-label">现品票</label>
             <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="barcodes"
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="cbarcode" name="cbarcode"
                        maxlength="100" readonly/>
             </div>
             <label class="col-1 col-form-label">数量</label>
             <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="qtys"
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="iqty" name="iqty"
                        maxlength="100" readonly/>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-1 col-form-label">料号</label>
+            <label class="col-1 col-form-label">存货编码</label>
             <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="invcodes"
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="cinvcode" name="cinvcode"
                        maxlength="100" readonly/>
             </div>
-            <label class="col-1 col-form-label">品名</label>
+            <label class="col-1 col-form-label">存货名称</label>
             <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="invnames"
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="cinvname" name="cinvname"
                        maxlength="100" readonly/>
             </div>
         </div>
@@ -47,8 +47,8 @@
 			<td>${pageNumber,pageSize,index | rownum}</td>
 			<td>${data.number}</td>
 			<td>
-                <a onclick="jboltTableRemoveRow(this)"><i class="fa fa-trash"></i> 删除</a>
-            </td>
+          <a onclick="jboltTableRemoveRow(this)"><i class="fa fa-trash"></i> 删除</a>
+      </td>
 		</tr>
 		{@/each}
 	</textarea>

@@ -1,17 +1,20 @@
 package cn.rjtech.admin.codingruled;
 
+import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.admin.form.FormService;
 import cn.rjtech.model.momdata.CodingRuleD;
-import cn.rjtech.model.momdata.CusFieldsMappingD;
-import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 /**
  * 系统设置-编码规则明细
@@ -21,8 +24,11 @@ import com.jfinal.plugin.activerecord.Page;
  * @date: 2023-05-04 13:56
  */
 public class CodingRuleDService extends BaseService<CodingRuleD> {
-    
+
     private final CodingRuleD dao = new CodingRuleD().dao();
+
+    @Inject
+    private FormService formService;
 
     @Override
     protected CodingRuleD dao() {
@@ -37,18 +43,23 @@ public class CodingRuleDService extends BaseService<CodingRuleD> {
     /**
      * 后台管理数据查询
      *
-     * @param pageNumber  第几页
-     * @param pageSize    每页几条数据
-     * @param cCodingType 类型： 1. 手工输入 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日
+     * @param pageNumber     第几页
+     * @param pageSize       每页几条数据
+     * @param icodingrulemid 类型： 1. 手工输入 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日
      */
-    public Page<CodingRuleD> getAdminDatas(int pageNumber, int pageSize, String cCodingType) {
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Long icodingrulemid) {
         //创建sql对象
         Sql sql = selectSql().page(pageNumber, pageSize);
         //sql条件处理
-        sql.eq("cCodingType", cCodingType);
+        sql.eq("icodingrulemid", icodingrulemid);
         //排序
         sql.desc("iAutoId");
-        return paginate(sql);
+        Page<Record> paginates = paginateRecord(sql);
+        List<Record> list = paginates.getList();
+        list.forEach(row -> {
+            row.set("cseparatorname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.encoding_field_separator.name(), row.getStr("cseparator")));
+        });
+        return paginates;
     }
 
     /**
