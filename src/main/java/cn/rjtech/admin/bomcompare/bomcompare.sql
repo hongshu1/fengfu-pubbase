@@ -66,8 +66,8 @@ WHERE
 	AND inv.IsDeleted = '0'
 	AND master.IsDeleted = '0'
 	AND master.isEnabled = '1'
-	AND master.dEnableDate <= GETDATE()
-	AND master.dDisableDate >= GETDATE()
+	AND CONVERT(DATE, master.dEnableDate) <= CONVERT(DATE,  GETDATE())
+	AND CONVERT(DATE, master.dDisableDate) >= CONVERT(DATE,  GETDATE())
 	AND a.iInventoryId = #para(invId)
 	#if(iAuditStatus)
 	AND master.iAuditStatus = #para(iAuditStatus)

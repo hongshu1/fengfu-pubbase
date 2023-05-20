@@ -30,6 +30,10 @@ public abstract class BaseInvPart<M extends BaseInvPart<M>> extends JBoltBaseMod
     public static final String IINVENTORYROUTINGCONFIGID = "iInventoryRoutingConfigId";
     /**母件存货ID*/
     public static final String IPARENTINVID = "iParentInvId";
+    /**是否生效：0. 否 1. 是*/
+    public static final String ISEFFECTIVE = "isEffective";
+    /**工艺ID*/
+    public static final String IINVENTORYROUTINGID = "iInventoryRoutingId";
 	/**
 	 * 主键ID
 	 */
@@ -198,6 +202,40 @@ public abstract class BaseInvPart<M extends BaseInvPart<M>> extends JBoltBaseMod
 	@JSONField(name = "iparentinvid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIParentInvId() {
 		return getLong("iParentInvId");
+	}
+
+	/**
+	 * 是否生效：0. 否 1. 是
+	 */
+	public M setIsEffective(java.lang.Boolean isEffective) {
+		set("isEffective", isEffective);
+		return (M)this;
+	}
+
+	/**
+	 * 是否生效：0. 否 1. 是
+	 */
+	@JBoltField(name="iseffective" ,columnName="isEffective",type="Boolean", remark="是否生效：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=11)
+	@JSONField(name = "iseffective")
+	public java.lang.Boolean getIsEffective() {
+		return getBoolean("isEffective");
+	}
+
+	/**
+	 * 工艺ID
+	 */
+	public M setIInventoryRoutingId(java.lang.Long iInventoryRoutingId) {
+		set("iInventoryRoutingId", iInventoryRoutingId);
+		return (M)this;
+	}
+
+	/**
+	 * 工艺ID
+	 */
+	@JBoltField(name="iinventoryroutingid" ,columnName="iInventoryRoutingId",type="Long", remark="工艺ID", required=true, maxLength=19, fixed=0, order=12)
+	@JSONField(name = "iinventoryroutingid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIInventoryRoutingId() {
+		return getLong("iInventoryRoutingId");
 	}
 
 }
