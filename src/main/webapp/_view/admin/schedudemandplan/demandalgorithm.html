@@ -204,7 +204,7 @@
         <!--计划生成弹框-->
         <div id="alert">
             <p class="alert_title"><span id="close">X</span></p>
-            <p class="alert_but"><button id="close_but">确定</button></p>
+            <p class="alert_but"><button id="alert_save">确定</button></p>
             <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
                 <label class="col-form-label " >截止日期：</label>
                 <input type="text" class="form-control" style="display: inline-block; width: 200px" id="laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="layMonth" value="#(layMonth??)">
@@ -218,7 +218,7 @@
                 <label class="col-form-label " >截止日期：</label>
                 <input type="text" class="form-control" style="display: inline-block; width: 200px" id="indicate_laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="indicate_layMonth" value="#(indicate_layMonth??)">
             </div>
-            <p class="alert_but"><button>取消</button><button id="close_indicate_but">确定</button></p>
+            <p class="alert_but"><button id="close_indicate_but">取消</button><button>确定</button></p>
         </div>
     </div>
 </div>
@@ -230,7 +230,7 @@
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
-    var sheet = spread.getSheet(0);//按照下标获取表单
+    var sheet = spread.getSheet(0);//按照下标获取活动表单
     //设置全局内容水平垂直居中
     sheet.getRange(-1,-1,-1,-1).hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
     //设置全局的字体样式
@@ -242,7 +242,7 @@
     var parmsDefault = {
         resourcesList: [],      //资源列表
         RowCount:500,           //一列多少单元格
-        ColumnCount:41,         //一行多少单元格
+        ColumnCount:42,         //一行多少单元格
         countday: 93,			//展示天数
         monthday: [],			//每月天数
         rowindex:0,				//x轴索引
@@ -252,13 +252,14 @@
         dayLength:0,            //获取接口返回的当月天数长度
         currentRow: 0,			//当前选中的单元格行
         currentCol: 0,			//当前选中的单元格列
-        dayRow:9,               //day渲染起始下标
-        weekRow:9,              //week渲染起始下标
+        dayRow:10,              //day渲染起始下标
+        weekRow:10,             //week渲染起始下标
         info:{},                //存储单击之后的单元格
         lockCells:[],           //存储选中的单元格
         tableData:[],           //接收添加的数据
         planListRowIndex:3,     //计划排产列表起始行下标
         planListColIndex:7,     //计划排产列表起始列下标
+        planGenerator:'',       //保存计划生成日期
     };
 
     var parmsArr = [Object.assign({},parmsDefault)];
@@ -273,9 +274,6 @@
     //设置全局表单的背景颜色
     spread.options.grayAreaBackColor = '#fff';
 
-    // var colCount = sheet.getColumnCount(GC.Spread.Sheets.SheetArea.viewport);//获取列数
-    // var rowCount = sheet.getRowCount();//获取行数
-
     //初始化表格数据
     function loadInit(){
         //设置全局的列宽行高
@@ -284,27 +282,32 @@
         spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
         spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
         var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
-        //设置value值和该单元格的对齐方式
+        //设置value值
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType);
-        parms.activeSheet.setColumnWidth(parms.columnindex, 40);//设置指定单元格的width
         sheet.addSpan(0,0,3,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+1).text("序号");
-        parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
         parms.activeSheet.addSpan(0,1,3,1);
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+2).text("排产层级");
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+2).text("供应商名称");
         parms.activeSheet.addSpan(0,2,3,1);
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+3).text("产线名称");
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+3).text("存货编码");
         parms.activeSheet.addSpan(0,3,3,1);
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+4).text("存货编码");
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+4).text("客户部番");
         parms.activeSheet.addSpan(0,4,3,1);
-        parms.activeSheet.setColumnWidth(parms.columnindex+4, 100);//设置指定单元格的width
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+5).text("客户部番");
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+5).text("部品名称");
         parms.activeSheet.addSpan(0,5,3,1);
-        parms.activeSheet.setColumnWidth(parms.columnindex+5, 120);//设置指定单元格的width
-        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+6).text("部品名称");
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+6).text("包装数量");
         parms.activeSheet.addSpan(0,6,3,1);
-        parms.activeSheet.setColumnWidth(parms.columnindex+6, 150);//设置指定单元格的width
-        parms.activeSheet.setColumnWidth(parms.columnindex+8, 70);//设置指定单元格的width
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+7).text("标准在库天数");
+        parms.activeSheet.addSpan(0,7,3,1);
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+8).text("项目");
+        parms.activeSheet.addSpan(0,8,3,1);
+        parms.activeSheet.setColumnWidth(parms.columnindex, 40);//设置指定单元格的width
+        parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
+        parms.activeSheet.setColumnWidth(parms.columnindex+2, 100);//设置指定单元格的width
+        parms.activeSheet.setColumnWidth(parms.columnindex+4, 150);//设置指定单元格的width
+        parms.activeSheet.setColumnWidth(parms.columnindex+6, 100);//设置指定单元格的width
+        parms.activeSheet.setColumnWidth(parms.columnindex+7, 120);//设置指定单元格的width
+        parms.activeSheet.setColumnWidth(parms.columnindex+8, 150);//设置指定单元格的width
     }
 
     //勾选check按钮
@@ -321,7 +324,7 @@
         spread.resumePaint(); //恢复绘制
     }
 
-    //获取接口返回的日期数据
+    //获取接口返回的日期数据渲染
     function initDate(parms,sheet) {
         let url = "http://localhost:8081/admin/scheduproductplanmonth/getTableHead";
         //获取接口数据
@@ -330,14 +333,18 @@
             parms.data = res.data;
             parms.dayLength = res.data.day.length;
             let date = new Date();//获取当前年月
-            sheet.setValue(parms.rowindex, parms.columnindex+9,date);//插入数据
-            sheet.setFormatter(parms.rowindex, parms.columnindex+9,"YYY年MM月");//转换日期格式
+            sheet.setValue(parms.rowindex, parms.columnindex+10,date);//插入数据
+            sheet.setFormatter(parms.rowindex, parms.columnindex+10,"YYY年MM月");//转换日期格式
             parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
-            sheet.addSpan(0,9,1,parms.dayLength);//跨行列
+            sheet.addSpan(0,10,1,parms.dayLength+1);//跨行列
             for (let i = 0; i < parms.dayLength; i++) {
                 sheet.setValue(1,parms.dayRow++,parms.data.day[i]);
                 sheet.setValue(2,parms.weekRow++,parms.data.week[i]);
             }
+            //期初数量
+            parms.activeSheet.getCell(2,9).text("期初数量");
+            //设置合计字段
+            parms.activeSheet.getCell(1, 41).text("合计");
             //设置周六日背景色条件格式
             let style3Sat = new GC.Spread.Sheets.Style();
             style3Sat.foreColor = '#000';
@@ -357,7 +364,7 @@
         });
     }
 
-    //初始化产线数据
+    //渲染表格数据
     function initData(){
         let url = "http://localhost:8081/admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=&cinvcode=&cinvcode1=&cinvname1=";
         $.ajax({
@@ -365,92 +372,63 @@
             type:'get',
             dataType:'json',
             success:function (res){
-                console.log(res);
                 spreadSuspend();//暂停绘制
                 let rowIndex = 3;
                 let colIndex=0;
-                let serialRow = 3;
                 let serialCol = 1;
-                let iPsLevelRow = 3;
                 let iPsLevelCol = 2;
-                let cWorkNameRow = 3;
-                let cWorkNameCol = 3;
-                let cInvCodeRow = 3;
-                let cInvCodeCol = 4;
-                let cInvName1Row = 3;
+                let cInvCodeCol = 3;
                 let cInvName1Col = 5;
-                let cInvCode1Row = 3;
-                let cInvCode1Col = 6;
-                for (let i = 0; i <res.length; i++) {
+                let cInvCode1Col = 4;
+                let iPkgQtyCol = 6;
+                let iInnerInStockDaysCol = 7;
+                for (let i = 0; i <res.data.length; i++) {
                     //设置value值和该单元格的对齐方式
                     var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
                     parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
-                    sheet.addSpan(rowIndex,colIndex,6,1);
-                    rowIndex+=6;
-                    sheet.setValue(serialRow, serialCol,i);//序号
-                    parms.activeSheet.addSpan(serialRow,serialCol,6,1);
-                    serialRow+=6;
-                    sheet.setValue(iPsLevelRow, iPsLevelCol,res[i].iPsLevel);//排产层级
-                    parms.activeSheet.addSpan(iPsLevelRow,iPsLevelCol,6,1);
-                    iPsLevelRow+=6;
-                    sheet.setValue(cWorkNameRow, cWorkNameCol,res[i].cWorkName);//产线名称
-                    parms.activeSheet.addSpan(cWorkNameRow,cWorkNameCol,6,1);
-                    parms.activeSheet.setColumnWidth(cWorkNameCol, 120);//设置指定单元格的width
-                    cWorkNameRow+=6;
-                    sheet.setValue(cInvCodeRow, cInvCodeCol,res[i].cInvCode);//存货编码
-                    parms.activeSheet.addSpan(cInvCodeRow,cInvCodeCol,6,1);
-                    parms.activeSheet.setColumnWidth(cInvCodeCol, 120);//设置指定单元格的width
-                    cInvCodeRow+=6;
-                    sheet.setValue(cInvName1Row, cInvName1Col,res[i].cInvName1);//客户部番
-                    parms.activeSheet.addSpan(cInvName1Row,cInvName1Col,6,1);
-                    parms.activeSheet.setColumnWidth(cInvName1Col, 180);//设置指定单元格的width
-                    cInvName1Row+=6;
-                    sheet.setValue(cInvCode1Row, cInvCode1Col,res[i].cInvCode);//部品名称
-                    parms.activeSheet.addSpan(cInvCode1Row,cInvCode1Col,6,1);
-                    parms.activeSheet.setColumnWidth(cInvCode1Col, 100);//设置指定单元格的width
-                    cInvCode1Row+=6;
+                    sheet.addSpan(rowIndex,colIndex,3,1);
+                    sheet.setValue(rowIndex, serialCol,res.data[i].seq);//序号
+                    parms.activeSheet.addSpan(rowIndex,serialCol,3,1);
+                    sheet.setValue(rowIndex, iPsLevelCol,res.data[i].cVenName);//供应商名称
+                    parms.activeSheet.addSpan(rowIndex,iPsLevelCol,3,1);
+                    sheet.setValue(rowIndex, cInvCodeCol,res.data[i].cInvCode);//存货编码
+                    parms.activeSheet.addSpan(rowIndex,cInvCodeCol,3,1);
+                    sheet.setValue(rowIndex, cInvCode1Col,res.data[i].cInvCode1);//客户部番
+                    parms.activeSheet.addSpan(rowIndex,cInvCode1Col,3,1);
+                    parms.activeSheet.setColumnWidth(cInvCode1Col, 120);//设置指定单元格的width
+                    sheet.setValue(rowIndex, cInvName1Col,res.data[i].cInvName1);//部品名称
+                    parms.activeSheet.addSpan(rowIndex,cInvName1Col,3,1);
+                    parms.activeSheet.setColumnWidth(cInvName1Col, 120);//设置指定单元格的width
+                    sheet.setValue(rowIndex, iPkgQtyCol,res.data[i].iPkgQty);//包装数量
+                    parms.activeSheet.addSpan(rowIndex,iPkgQtyCol,3,1);
+                    sheet.setValue(rowIndex, iInnerInStockDaysCol,res.data[i].iInnerInStockDays);//标准在库天数
+                    parms.activeSheet.addSpan(rowIndex,iInnerInStockDaysCol,3,1);
+                    parms.activeSheet.setColumnWidth(iInnerInStockDaysCol, 120);//设置指定单元格的width
+                    rowIndex+=3;
 
-                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex+1).text("实绩需求");
                     parms.activeSheet.setColumnWidth(parms.planListRowIndex, 70);//设置指定单元格的width
-                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/1S");
-                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/2S");
-                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/3S");
-                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划在库");
-                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("在库天数");
-
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex+1).text("到货计划");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex+1).text("计划在库");
                     let shiyongRow = 3;//计划使用行下标
-                    let shiyongCol = 9;
                     let yisRow = 4;//1s使用行下标
-                    let yisCol = 9;
                     let ersRow = 5;//2s使用行下标
-                    let ersCol = 9;
-                    let sansRow = 6;//3s使用行下标
-                    let sansCol = 9;
-                    let zaikuRow = 7;//计划在库行下标
-                    let zaikuCol = 8;
-                    let tianshuRow = 8;//在库天数行下标
-                    let tianshuCol = 9;
-                    for (var j = 0; j < res[i].day.length; j++) {
+                    let shiyongCol = 10;
+                    for (var j = 0; j < res.data[i].day.length; j++) {
                         if(i==0){
-                            sheet.setValue(shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
-                            sheet.setValue(yisRow,yisCol+j,res[i].day[j].one);
-                            sheet.setValue(ersRow,ersCol+j,res[i].day[j].two);
-                            sheet.setValue(sansRow,sansCol+j,res[i].day[j].three);
-                            sheet.setValue(zaikuRow,zaikuCol,res[i].day[j].zaiku);
-                            sheet.setValue(tianshuRow,tianshuCol+j,res[i].day[j].tianshu);
+                            sheet.setValue(shiyongRow,shiyongCol+j,res.data[i].day[j].xuqiu);
+                            sheet.setValue(yisRow,shiyongCol+j,res.data[i].day[j].jihua);
+                            sheet.setValue(ersRow,shiyongCol+j,res.data[i].day[j].zaiku);
                         }else{
-                            sheet.setValue(6*i+shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
-                            sheet.setValue(6*i+yisRow,yisCol+j,res[i].day[j].one);
-                            sheet.setValue(6*i+ersRow,ersCol+j,res[i].day[j].two);
-                            sheet.setValue(6*i+sansRow,sansCol+j,res[i].day[j].three);
-                            sheet.setValue(6*i+zaikuRow,zaikuCol,res[i].day[j].zaiku);
-                            sheet.setValue(6*i+tianshuRow,tianshuCol+j,res[i].day[j].tianshu);
+                            sheet.setValue(3*i+shiyongRow,shiyongCol+j,res.data[i].day[j].xuqiu);
+                            sheet.setValue(3*i+yisRow,shiyongCol+j,res.data[i].day[j].jihua);
+                            sheet.setValue(3*i+ersRow,shiyongCol+j,res.data[i].day[j].zaiku);
                         }
                     }
                 }
                 spreadResume();// 恢复绘制
-            },error: function() {
-                console.log('error')
+            },error: function(error) {
+                console.log(error);
             }
         })
     }
@@ -469,7 +447,7 @@
     var myAlert = document.getElementById("alert");
     var reg = document.getElementById("content");
     var mClose = document.getElementById("close");
-    var mClose_But = document.getElementById("close_but");
+    var mClose_But = document.getElementById("alert_save");
     //锁定打开弹出层
     reg.onclick = function(){
         myAlert.style.display = "block";
@@ -496,10 +474,29 @@
         myAlert.style.display = "none";
         mybg.style.display = "none";
     }
-    //取消按钮事件
+    //计划生成确定按钮事件
     mClose_But.onclick = function(){
         myAlert.style.display = "none";
         mybg.style.display = "none";
+        var myVal=document.getElementById("laymonth").value;
+        console.log(myVal)
+        let url = "http://localhost:8081/admin/schedudemandplan/apsScheduDemandPlan?endDate=2023-06-30";
+        $.ajax({
+            url,
+            data:{
+                endDate:myVal
+            },
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                console.log(res);
+                // spreadSuspend();//暂停绘制
+                // console.log(parms.planGenerator)
+                // spreadResume();// 恢复绘制
+            },error: function(error) {
+                console.log(error);
+            }
+        })
     }
 
     var myIndicate = document.getElementById("indicate_Mode");
