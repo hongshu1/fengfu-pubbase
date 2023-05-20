@@ -1813,5 +1813,10 @@ public class PermissionKey {
 	 */
 	public static final String ADMIN_SYSMATERIALSPREPARE = "productionMaterial";
 
+	/**
+	 * 出库管理-物料退货单列表
+	 */
+	public static final String MATERIAL_RETURN_LIST = "material_return_list";
+
 }
 

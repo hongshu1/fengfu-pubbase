@@ -238,7 +238,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 			String headerId = null;
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
-				OtherOut otherOut = jBoltTable.getFormModel(OtherOut.class,"transVouch");
+				OtherOut otherOut = jBoltTable.getFormModel(OtherOut.class,"otherOut");
 
 
 				//	行数据为空 不保存

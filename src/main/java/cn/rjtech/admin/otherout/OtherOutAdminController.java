@@ -1,7 +1,9 @@
 package cn.rjtech.admin.otherout;
 
 import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.model.momdata.ProcessDefect;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -194,5 +196,23 @@ public class OtherOutAdminController extends BaseAdminController {
 	}
 
 
+	/**
+	 * 生成二维码
+	 */
+	public void erm() {
+		OtherOut otherOut=service.findById(getLong(0));
+		if(otherOut == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+
+			return;
+		}
+		if (otherOut.getStatus() == 3){
+			renderQrCode(otherOut.getBillNo(),200,200);
+		}else {
+			renderFail("请审批再打印！！！");
+			return;
+		}
+
+	}
 
 }
