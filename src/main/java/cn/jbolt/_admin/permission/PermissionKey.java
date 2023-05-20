@@ -1270,10 +1270,6 @@ public class PermissionKey {
 	 */
 	public static final String PAD_LOGINLOG = "pad_loginlog";
 	/**
-	 * 工艺路线
-	 */
-	public static final String PROUTING = "prouting";
-	/**
 	 * 周间客户订单
 	 */
 	public static final String WEEK_ORDERM = "week_orderm";
@@ -1346,17 +1342,9 @@ public class PermissionKey {
 	 */
 	public static final String OM_ORDER_MANAGEMENT = "om_order_management";
 	/**
-	 * 审批管理
-	 */
-	public static final String APPROVAL_CONFIG = "approval_config";
-	/**
-	 * 审批/审核配置
+	 * 审批流/审批配置
 	 */
 	public static final String AUDIT_CONFIG = "audit_config";
-	/**
-	 * 审批流配置
-	 */
-	public static final String APPROVAL_M = "approval_m";
 	/**
 	 * 取货计划管理
 	 */
@@ -1392,7 +1380,7 @@ public class PermissionKey {
 	/**
 	 * 库存盘点
 	 */
-	public static final String CURRENTSTOCK = "currentstock";
+	public static final String INVENTORY_CHECK = "inventory_check";
 	/**
 	 * 制程异常品记录
 	 */
@@ -1406,6 +1394,10 @@ public class PermissionKey {
 	 */
 	public static final String CUSORDER_RESULT = "cusorder_result";
 	/**
+	 * 月周生产计划汇总
+	 */
+	public static final String SCHEDUPRODUCTPLANMONTH_PLAN_MONTH_SUM = "scheduproductplanmonth_plan_month_sum";
+	/**
 	 * 出库异常记录
 	 */
 	public static final String STOCKOUTDEFECT = "stockoutdefect";
@@ -1416,7 +1408,7 @@ public class PermissionKey {
 	/**
 	 * 工程内品质巡查
 	 */
-	public static final String QCINSPECTION = "QcInspection";
+	public static final String QCINSPECTION = "qcinspection";
 	/**
 	 * 系统字段管理
 	 */
@@ -1430,13 +1422,173 @@ public class PermissionKey {
 	 */
 	public static final String CUS_FIELDS_MAPPINGM = "cus_fields_mappingm";
 	/**
+	 * 制造工单批量编辑
+	 */
+	public static final String MO_DOCBATCH = "mo_docbatch";
+	/**
+	 * 备料一览表
+	 */
+	public static final String MATERIALPREPARATIONLIST = "materialPreparationList";
+	/**
 	 * 编码规则配置
 	 */
 	public static final String CODING_RULEM = "coding_rulem";
 	/**
-	 * 制造工单批量编辑
+	 * 双码扫码出货
 	 */
-	public static final String MO_DOCBACTH = "mo_docbacth";
+	public static final String DOUBLECODESCANNINGSHIPMENT = "doubleCodeScanningShipment";
+	/**
+	 * 双码扫码出货1
+	 */
+	public static final String DOUBLECODESCANNINGSHIPMENT1 = "doubleCodeScanningShipment1";
+	/**
+	 * 收料单列表
+	 */
+	public static final String MATERIAL_RECEIPT_LIST = "material_receipt_list";
+	/**
+	 * 采购入库单列表
+	 */
+	public static final String PURCHASE_RECEIPT_LIST = "purchase_receipt_list";
+	/**
+	 * 形态转换单列表
+	 */
+	public static final String FORM_CONVERSION_LIST = "form_conversion_list";
+	/**
+	 * 产成品入库单列表
+	 */
+	public static final String RODUCT_IN_LIST = "roduct_in_list";
+	/**
+	 * 其他入库单列表
+	 */
+	public static final String OTHER_IN_LIST = "other_in_list";
+	/**
+	 * 生产备料
+	 */
+	public static final String PRODUCTION_MATERIAL = "production_material";
+	/**
+	 * 材料出库单列表
+	 */
+	public static final String MATERIAL_DELIVERY_LIST = "material_delivery_list";
+	/**
+	 * 其他出库单列表
+	 */
+	public static final String OTHER_DELIVERY_LIST = "other_delivery_list";
+	/**
+	 * 物料退货列表
+	 */
+	public static final String MATERIAL_RETURN_LIST = "material_return_list";
+	/**
+	 * 调拨单列表
+	 */
+	public static final String TRANSVOUCH = "transvouch";
+	/**
+	 * 特殊领料单列表
+	 */
+	public static final String OTHEROUT = "otherout";
+	/**
+	 * 条码生成
+	 */
+	public static final String GENERATION_BARCODE = "generation_barcode";
+	/**
+	 * 拆分条码
+	 */
+	public static final String SPLIT_BARCODE = "split_barcode";
+	/**
+	 * 合并条码
+	 */
+	public static final String MERGE_BARCODE = "merge_barcode";
+	/**
+	 * 其他入库单列表
+	 */
+	public static final String MATERIAL_RECEIPT_LIST1 = "material_receipt_list1";
+	/**
+	 * 需求计划管理
+	 */
+	public static final String DEMAND_PLAN = "demand_plan";
+	/**
+	 * 物料需求计划预示
+	 */
+	public static final String DEMAND_FORECAST = "demand_forecast";
+	/**
+	 * 物料到货计划
+	 */
+	public static final String DEMAND_PLAN2 = "demand_plan2";
+	/**
+	 * 材料出库单
+	 */
+	public static final String ADMIN_SYSMATERIALSOUT = "ADMIN_SYSMATERIALSOUT";
+	/**
+	 * 产成品入库单列表
+	 */
+	public static final String PRODUCTINLIST = "productInList";
+	/**
+	 * 形态转换单列表
+	 */
+	public static final String FORMCONVERSIONLIST = "formConversionList";
+	/**
+	 * 形态转换单从表
+	 */
+	public static final String FORMCONVERSIONLIST1 = "formConversionList1";
+	/**
+	 * 生产订单-备料单明细
+	 */
+	public static final String ADMIN_MOPICKITEMD = "ADMIN_MOPICKITEMD";
+	/**
+	 * 生产订单-备料单存货现品票明细
+	 */
+	public static final String ADMIN_MOPICKITEMDBATCH = "ADMIN_MOPICKITEMDBATCH";
+	/**
+	 * 生产订单-备料单主表
+	 */
+	public static final String ADMIN_MOPICKITEMM = "ADMIN_MOPICKITEMM";
+	/**
+	 * 采购入库单列表
+	 */
+	public static final String PURCHASERECEIPTLIST = "purchaseReceiptList";
+	/**
+	 * 采购入库单列表1
+	 */
+	public static final String PURCHASERECEIPTLIST1 = "purchaseReceiptList1";
+	/**
+	 * 收料单列表
+	 */
+	public static final String MATERIALRECEIPTLIST = "materialReceiptList";
+	/**
+	 * 收料单列表
+	 */
+	public static final String MATERIALRECEIPTLIST1 = "materialReceiptList1";
+	/**
+	 * 材料备料表
+	 */
+	public static final String ADMIN_SYSMATERIALSPREPARE = "ADMIN_SYSMATERIALSPREPARE";
+	/**
+	 * 备料单明细
+	 */
+	public static final String ADMIN_SYSMATERIALSPREPAREDETAIL = "ADMIN_SYSMATERIALSPREPAREDETAIL";
+	/**
+	 * 开发文档
+	 */
+	public static final String ADMIN_DEV_DOC = "admin_dev_doc";
+	/**
+	 * 系统管理-枚举值
+	 */
+	public static final String ENUM_VALS = "enum_vals";
+	/**
+	 * 物料需求计划计算
+	 */
+	public static final String DEMAND_ALGORITHM = "demand_algorithm";
+	/**
+	 * 补打条码
+	 */
+	public static final String PATCHWORK_BARCODE = "patchwork_barcode";
+	/**
+	 * 系统管理-枚举类别
+	 */
+	public static final String ENUM_TYPE = "enum_type";
+	/**
+	 * 月周排产记录时间
+	 */
+	public static final String APS_WEEK_SCHEDULE = "aps_week_schedule";
 	/**
 	 * 新增
 	 */
@@ -1765,58 +1917,8 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String ANNUALORDERM_ADD = "annualorderm_add";
-    /**
-     * 取货管理-货款核对表
-     */
-    public static final String PAYMENT_CHECK_MANAGENOT = "payment_check_managenot";
 	/**
-	 * 取货管理-双码扫码出货
+	 * 审批流列表
 	 */
-	public static final String DOUBLECODESCANNINGSHIPMENT = "doublecodescanningshipment";
-	/**
-	 * 入库管理-其他入库单列表
-	 */
-	public static final String OTHER_IN_LIST = "other_in_list";
-
-	/**
-	 * 入库管理-产成品入库单列表
-	 */
-	public static final String PRODUCTINLIST = "productInList";
-
-	/**
-	 * 入库管理-形态转换单
-	 */
-	public static final String FORMCONVERSIONLIST = "formconversionlist";
-
-
-	/**
-	 * 入库管理-采购入库单
-	 */
-	public static final String PURCHASERECEIPTLIST = "purchasereceiptlist";
-
-	/**
-	 * 入库管理-采购收料单
-	 */
-	public static final String MATERIALRECEIPTLIST = "materialreceiptlist";
-
-	/**
-	 * 入库管理-双单位扫码收货
-	 */
-	public static final String SCANCODERECEIVE = "scancodereceive";
-	/**
-	 * 出库管理-备料一览表
-	 */
-	public static final String ADMIN_MOPICKITEMD = "materialPreparationList";
-
-	/**
-	 * 出库管理-生产备料
-	 */
-	public static final String ADMIN_SYSMATERIALSPREPARE = "productionMaterial";
-
-	/**
-	 * 补打条码
-	 */
-	public static final String PATCHWORKBARCODE  = "patchwork_barcode ";
-
+	public static final String APPROVALM = "approvalm";
 }
-

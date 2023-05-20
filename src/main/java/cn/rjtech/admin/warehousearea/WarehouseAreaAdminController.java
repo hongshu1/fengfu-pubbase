@@ -1,12 +1,12 @@
 package cn.rjtech.admin.warehousearea;
 
 import cn.hutool.core.date.DateUtil;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.model.momdata.WarehouseArea;
 import com.jfinal.aop.Before;
@@ -25,9 +25,9 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-11-02 20:43
  */
-@CheckPermission(PermissionKey.WAREHOUSE_AREA)
-@Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
+@CheckPermission(PermissionKey.WAREHOUSE_AREA)
 @Path(value = "/admin/warehousearea", viewPath = "/_view/admin/warehousearea")
 public class WarehouseAreaAdminController extends JBoltBaseController {
 

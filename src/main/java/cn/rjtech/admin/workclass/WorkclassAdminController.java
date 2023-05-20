@@ -1,16 +1,15 @@
 package cn.rjtech.admin.workclass;
 
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.rjtech.admin.operation.OperationService;
 import cn.rjtech.model.momdata.Operation;
-import cn.rjtech.model.momdata.QcParam;
 import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.Util;
 import com.jfinal.aop.Before;
@@ -20,20 +19,20 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * 工种档案 Controller
+ *
  * @ClassName: WorkclassAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-11-09 16:21
  */
+@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.WORKCLASS)
 @Before(JBoltAdminAuthInterceptor.class)
-@UnCheckIfSystemAdmin
 @Path(value = "/admin/workclass", viewPath = "/_view/admin/workclass")
 public class WorkclassAdminController extends JBoltBaseController {
 
@@ -98,7 +97,7 @@ public class WorkclassAdminController extends JBoltBaseController {
         String[] ids = get("ids").split(",");
         for (String id : ids) {
             String checkResult = checkOperationIsUse(Long.valueOf(id));
-            if(StringUtils.isNotBlank(checkResult)){
+            if (StringUtils.isNotBlank(checkResult)) {
                 renderFail(checkResult);
                 return;
             }
@@ -116,12 +115,12 @@ public class WorkclassAdminController extends JBoltBaseController {
     /**
      * 删除工种前判断是否已经被使用了
      */
-    public String checkOperationIsUse(Long id){
+    public String checkOperationIsUse(Long id) {
         String msg = "";
         Workclass workclass = service.findById(id);
         List<Operation> operations = operationService.findByIworkclassId(workclass.getIautoid());
-        if (!operations.isEmpty()){
-            msg = workclass.getCworkclassname()+ " 已经在【工序档案】页面使用了，不能删除";
+        if (!operations.isEmpty()) {
+            msg = workclass.getCworkclassname() + " 已经在【工序档案】页面使用了，不能删除";
         }
         return msg;
     }

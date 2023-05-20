@@ -6,7 +6,6 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.wms.utils.StringUtils;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -18,7 +17,7 @@ import com.jfinal.kit.Kv;
  * @ClassName: PatchWorkBarCodeAdminController
  * @author: 佛山市瑞杰科技有限公司
  */
-@CheckPermission(PermissionKey.PATCHWORKBARCODE)
+@CheckPermission(PermissionKey.PATCHWORK_BARCODE)
 @Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/patchworkBarcode", viewPath = "_view/admin/patchworkbarcode")
@@ -47,16 +46,16 @@ public class PatchWorkBarCodeAdminController extends BaseAdminController {
         renderJsonData(service.datas(cinvcode));
     }
 
-    /*
+    /**
      * 跳到选择页面
-     * */
+     */
     public void barcodeSelect() {
         render("patchworkbarcode_select.html");
     }
 
-    /*
+    /**
      * 加载选择页面的数据
-     * */
+     */
     public void selectDatas() {
         renderJsonData(service.selectDatas(getPageNumber(), getPageSize(), getKv()));
     }

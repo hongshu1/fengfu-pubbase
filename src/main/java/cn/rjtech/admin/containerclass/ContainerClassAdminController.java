@@ -1,11 +1,11 @@
 package cn.rjtech.admin.containerclass;
 
 import cn.hutool.core.date.DateUtil;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.ContainerClass;
@@ -27,8 +27,8 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-22 16:16
  */
-@CheckPermission(PermissionKey.CONTAINERCLASS)
 @UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.CONTAINERCLASS)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/containerclass", viewPath = "/_view/admin/containerclass")
 public class ContainerClassAdminController extends BaseAdminController {

@@ -1,11 +1,8 @@
 package cn.rjtech.admin.monthorderd;
 
-import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Monthorderd;
 import com.jfinal.aop.Before;
@@ -19,8 +16,7 @@ import com.jfinal.core.Path;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-10 18:20
  */
-@CheckPermission(PermissionKey.NONE)
-@UnCheckIfSystemAdmin
+@UnCheck
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/monthorderd", viewPath = "/_view/admin/monthorderd")
 public class MonthorderdAdminController extends BaseAdminController {

@@ -3,6 +3,7 @@ package cn.rjtech.admin.userorg;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.model.main.UserOrg;
 import cn.rjtech.util.ValidationUtils;
@@ -23,6 +24,7 @@ import java.util.List;
  * @date: 2022-11-14 16:02
  */
 @UnCheck
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/userorg", viewPath = "/_view/admin/userorg")
 public class UserOrgAdminController extends JBoltBaseController {
 

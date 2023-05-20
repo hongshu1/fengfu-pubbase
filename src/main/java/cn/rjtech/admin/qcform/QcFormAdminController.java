@@ -6,13 +6,15 @@ import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.qcformtableparam.QcFormTableParamService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.PurchaseOrderD;
 import cn.rjtech.model.momdata.QcForm;
 import cn.rjtech.model.momdata.QcParam;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
@@ -24,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 /**
  * 质量建模-检验表格
  *
@@ -32,7 +33,9 @@ import java.util.stream.Collectors;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-27 17:53
  */
+@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.QCFORM)
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/qcform", viewPath = "/_view/admin/qcform")
 public class QcFormAdminController extends BaseAdminController {
 

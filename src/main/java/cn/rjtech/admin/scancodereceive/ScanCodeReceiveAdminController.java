@@ -13,7 +13,6 @@ import cn.rjtech.model.momdata.SysPureceivedetail;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
  * 双单位扫码收货
@@ -22,7 +21,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-10 10:01
  */
-@CheckPermission(PermissionKey.SCANCODERECEIVE)
+@CheckPermission(PermissionKey.DOUBLE_CODE_SCANNING_SHIPMENT)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/scancodereceive", viewPath = "/_view/admin/scancodereceive")
@@ -123,7 +122,6 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
     /**
      * 新增-可编辑表格-批量提交
      */
-    @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
@@ -135,11 +133,11 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
         renderJsonData(service.getVenCodeDatas(getKv()));
     }
 
-
     /**
      * 仓库数据源
      */
     public void Whcode() {
         renderJsonData(service.getWhcodeDatas(getKv()));
     }
+    
 }
