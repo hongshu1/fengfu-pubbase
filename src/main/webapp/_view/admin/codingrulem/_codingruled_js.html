@@ -1,19 +1,20 @@
 <script>
     function submitThisForm() {
-        jboltTableSubmit('#jbolt_table_#(pageId)');
+        jboltTableSubmit("#jbolt_table_#(pageId)");
     }
 
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
+            trigger: 'click',
             submit: {
                 withForm: ["CodingRuleM_Form"],
                 type: "all",
                 url: "/admin/codingrulem/saveTableSubmit",
                 success: function (res) {
-                    if (res.state === 'ok') {
+                    if (res.state === "ok") {
                         LayerMsgBox.success("提交成功", 600, function () {
-                            location.href = '/admin/codingrulem/edit/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                            location.href = "/admin/codingrulem/edit/" + res.data.iautoid + "-_jb_rqtype_dialog";
                         });
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
@@ -25,7 +26,7 @@
                     submitAttr: "iautoid",
                 },
                 iseq: {
-                    type: 'input_number',
+                    type: "input_number",
                     required: true
                 },
                 ccodingtype: {
@@ -35,7 +36,7 @@
                     placeholder: "请输入",
                     textAttr: "name",
                     valueAttr: "sn",
-                    submitAttr: 'ccodingtype'
+                    submitAttr: "ccodingtype"
                 },
                 ccodingvalue: {
                     type:"input",
@@ -44,9 +45,13 @@
                     type:"input",
                 },
                 cseparator: {
-                    type:"input",
-                    placeholder:'备注',
+                    type:"select",
+                    url: "admin/dictionary/options?key=encoding_field_separator",
+                    placeholder:"备注",
                     required: true,
+                    textAttr: "name",
+                    valueAttr: "sn",
+                    submitAttr: "cseparator"
                 },
 
             }

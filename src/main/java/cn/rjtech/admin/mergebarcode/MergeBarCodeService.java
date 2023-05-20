@@ -5,7 +5,6 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
 import cn.rjtech.base.service.BaseService;
-import cn.rjtech.common.organize.OrganizeService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.erp.mood.CollectorsUtil;
 import cn.rjtech.model.momdata.Inventory;
@@ -42,8 +41,6 @@ public class MergeBarCodeService extends BaseService<Inventory> {
     }
 
     @Inject
-    OrganizeService       organizeService;
-    @Inject
     UserThirdpartyService userThirdpartyService;
 
     /**
@@ -58,13 +55,13 @@ public class MergeBarCodeService extends BaseService<Inventory> {
 
     public String SubmitStripForm(Kv kv) {
         //获取表头数据
-        String invcodes = kv.getStr("invcode");
-        String barcodes = kv.getStr("barcode");
+        String invcodes = kv.getStr("cinvcode");
+        String barcodes = kv.getStr("cbarcode");
         int qtys = kv.getInt("qtys");
-        String invnames = kv.getStr("invname");
+        String invnames = kv.getStr("cinvname");
         String datas = kv.getStr("datas");
         List<Kv> jsonArray = JSON.parseArray(datas, Kv.class);
-        String organizecode = organizeService.getOrganizecode();
+        String organizecode = getOrgCode();
         String u9Name = userThirdpartyService.getU9Name(JBoltUserKit.getUserId());
         Date now = new Date();
         String loginDate = JBoltDateUtil.format(now, "yyyy-MM-dd");
@@ -82,19 +79,19 @@ public class MergeBarCodeService extends BaseService<Inventory> {
 
         List<Map> MainData = new ArrayList<>();
         // 获取传过来的料号去重后的集合，判断是否存在不一致的情况
-        List<String> invCodes = jsonArray.stream().map(m -> m.getStr("invcode")).distinct().collect(Collectors.toList());
+        List<String> invCodes = jsonArray.stream().map(m -> m.getStr("cinvcode")).distinct().collect(Collectors.toList());
         // 判断料号是否不一致,重复提醒重新选择
         if (invCodes.size() > 1) {
             throw new RuntimeException("料号不一致，请重新选择！");
         }
         // 按实物编码前缀一致为一组，先特殊处理实物编码，将实物编码后面的“H202302280001-01”的数据切割成H202302280001
         jsonArray.stream().forEach(f -> {
-            String barcode = f.getStr("barcode").split("-")[0];
-            f.set("barcode", barcode);
+            String barcode = f.getStr("cbarcode").split("-")[0];
+            f.set("cbarcode", barcode);
         });
         // 处理完成实物编码后，进行分组排序
         Map<String, List<Kv>> groupMap = jsonArray.stream()
-            .collect(Collectors.groupingBy(g -> g.getStr("barcode"), LinkedHashMap::new, Collectors.toList()));
+            .collect(Collectors.groupingBy(g -> g.getStr("cbarcode"), LinkedHashMap::new, Collectors.toList()));
         BigDecimal totalNum = jsonArray.stream().collect(CollectorsUtil.summingBigDecimal(s -> new BigDecimal(s.getStr("qty"))));
         boolean isFisrt = true;
         Kv items = jsonArray.get(0);// 获取到第一条数
@@ -114,12 +111,12 @@ public class MergeBarCodeService extends BaseService<Inventory> {
                         mian.set("qty", 0);
                     }
 
-                    mian.set("barcode", item.getStr("barcode"));// 实物编码
-                    mian.set("invcode", item.getStr("invcode"));
-                    mian.set("invname", item.getStr("invname"));
+                    mian.set("barcode", item.getStr("cbarcode"));// 实物编码
+                    mian.set("invcode", item.getStr("cinvcode"));
+                    mian.set("invname", item.getStr("cinvname"));
                     mian.set("pqty", item.getStr("qty"));
                     mian.set("Tag", "BarcodeMerge");
-                    mian.set("PBarCode", items.getStr("barcode"));// 第一条的实物编码
+                    mian.set("PBarCode", items.getStr("cbarcode"));// 第一条的实物编码
                     MainData.add(mian);
                 }
             }
@@ -150,12 +147,8 @@ public class MergeBarCodeService extends BaseService<Inventory> {
         return paginate;
     }
 
-    public Record findByShiWu(String sourceid) {
-        return dbTemplate("mergebarcode.findByShiWu", Kv.by("sourceid", sourceid)).findFirst();
-    }
-
-    public List<Record> findListByShiWu(String sourceid) {
-        List<Record> list = dbTemplate("mergebarcode.findByShiWu", Kv.by("sourceid", sourceid)).find();
+    public List<Record> findShiWuByCSourceId(String csourceid) {
+        List<Record> list = dbTemplate("mergebarcode.findShiWuByCSourceId", Kv.by("csourceid", csourceid)).find();
         return list;
     }
 
@@ -167,14 +160,8 @@ public class MergeBarCodeService extends BaseService<Inventory> {
         return paginate;
     }
 
-    public Record findByLogId(String logid) {
-        return dbTemplate("mergebarcode.findByLogId", Kv.by("logid", logid)).findFirst();
-    }
-
-
-    public List<Record> formdatas(String logno) {
-        List<Record> list = dbTemplate("mergebarcode.formdatas", Kv.by("logno", logno)).find();
-        return list;
+    public Record findByLogId(String logno) {
+        return dbTemplate("mergebarcode.findByLogno", Kv.by("logno", logno)).findFirst();
     }
 
 }

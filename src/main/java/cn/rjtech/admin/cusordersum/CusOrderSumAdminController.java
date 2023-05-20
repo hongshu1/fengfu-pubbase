@@ -100,6 +100,10 @@ public class CusOrderSumAdminController extends BaseAdminController {
         renderJson(service.deleteByIds(get("ids")));
     }
 
+    public void algorithmSum() {
+        renderJson(service.algorithmSum());
+    }
+
     /**
      * 获取表格
      */
@@ -119,7 +123,7 @@ public class CusOrderSumAdminController extends BaseAdminController {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(beginDate);
 
-        Map<String, List<Date>> dateMap = new TreeMap<>();
+        Map<String, List<Date>> dateMap = new LinkedHashMap<>();
 
         while (DateUtil.compare(endDate, calendar.getTime()) >= 0) {
             // 年月 - 年-月-日

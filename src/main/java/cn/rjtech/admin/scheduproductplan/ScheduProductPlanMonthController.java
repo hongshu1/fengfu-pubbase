@@ -24,7 +24,7 @@ import java.util.*;
  * @author: chentao
  * @date: 2023-03-30 11:26
  */
-@CheckPermission(PermissionKey.NOME)
+@CheckPermission(PermissionKey.SCHEDUPRODUCTPLANMONTH)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/scheduproductplanmonth", viewPath = "/_view/admin/scheduproductplan")
 public class ScheduProductPlanMonthController extends BaseAdminController {
@@ -335,7 +335,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         int level = 1;
         //截止日期
         String endDate = "2023-06-21";
-        renderJson(service.scheduPlanMonth(level,endDate));
+        renderJsonData(service.scheduPlanMonth(level,endDate));
     }
 
 
@@ -343,9 +343,15 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
      * 查看计划
      */
     public void getScheduPlanMonthList() {
-        //排产纪录id
+        /*//排产纪录id
         Long iWeekScheduleId = null;
-        renderJson(service.getScheduPlanMonthList(iWeekScheduleId));
+        renderJson(service.getScheduPlanMonthList(iWeekScheduleId));*/
+
+        //排产层级
+        int level = 1;
+        //截止日期
+        String endDate = "2023-06-21";
+        renderJsonData(service.scheduPlanMonth(level,endDate));
     }
 
     /**
@@ -356,24 +362,26 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     }
 
 
+    /**
+     * 获取表格表头日期展示
+     */
     public void getTableHead() {
-
-        String startdate = get("startdate");
-        String enddate = get("enddate");
+        String startDate = get("startDate");
+        String endDate = get("endDate");
 
         LocalDate localDate = LocalDate.now();
-        if (StringUtils.isBlank(startdate)){
-            startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
+        if (StringUtils.isBlank(startDate)){
+            startDate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
         }
-        if (StringUtils.isBlank(enddate)){
-            enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
+        if (StringUtils.isBlank(endDate)){
+            endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
         }
 
         List<String> namelist = new ArrayList<>();
         List<String> weeklist = new ArrayList<>();
-        if (StringUtils.isNotBlank(startdate) && StringUtils.isNotBlank(enddate)){
+        if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)){
             //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-            List<String> scheduDateList = Util.getBetweenDate(startdate,enddate);
+            List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
             //页面顶部colspan列  key:2023年1月  value:colspan="13"
             Map<String,Integer> yearMonthMap = new HashMap<>();
             for (String s : scheduDateList) {
@@ -406,9 +414,6 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
                 weeklist.add(weekType);
             }
         }
-        //set("colnamelist", namelist);
-        //set("weeklist", weeklist);
-
         Map<String,Object> map = new HashMap<>();
         map.put("day",namelist);
         map.put("week",weeklist);

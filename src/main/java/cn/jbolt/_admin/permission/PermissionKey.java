@@ -1818,5 +1818,10 @@ public class PermissionKey {
 	 */
 	public static final String MATERIAL_RETURN_LIST = "material_return_list";
 
+	/**
+	 * 补打条码
+	 */
+	public static final String PATCHWORKBARCODE  = "patchwork_barcode ";
+
 }
 

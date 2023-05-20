@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.5.6";
+var jbolt_admin_js_version="6.6.0";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -450,6 +450,7 @@ function launchFullscreen(element) {
     element.msRequestFullscreen();
     element.isFullscreen=true;
   }
+	$(element).addClass("jb_fs");
 }
 /**
  * 取消全屏
@@ -471,6 +472,7 @@ function exitFullscreen(element) {
 	  document.webkitExitFullscreen();
 	  element.isFullscreen=false;
   }
+	$(element).removeClass("jb_fs");
 }
 
 /**
@@ -487,6 +489,7 @@ function toggleFullScreen(element){
 	}else{
 		launchFullscreen(element);
 	}
+	return element.isFullscreen;
 }
 
 /**
@@ -654,9 +657,12 @@ var jboltlog=function(msg){
  */
 var FullScreenBtnUtil={
 	init:function(){
-		jboltBody.on("click",'[data-fullscreenbtn]',function(){
+		jboltBody.on("click",'[data-fullscreenbtn]',function(event){
+			event.preventDefault();
+			event.stopPropagation();
 			var btn=$(this);
 			var target=btn.data("target");
+			var fs = false;
 			if(target){
 				var targetEle;
 				if(target.startWith("parent")){
@@ -666,7 +672,7 @@ var FullScreenBtnUtil={
 					targetEle=jboltBody.find(target);
 				}
 				if(isOk(targetEle)){
-					toggleFullScreen(targetEle[0]);
+					fs = toggleFullScreen(targetEle[0]);
 					var icon=btn.find("i.jbicon2.jbi-fullscreen,i.jbicon2.jbi-fullscreen-exit");
 					if(isOk(icon)){
 						icon.toggleClass("jbi-fullscreen");
@@ -675,7 +681,7 @@ var FullScreenBtnUtil={
 					disposeTooltip(btn);
 				}
 			}else{
-				toggleFullScreen();
+				fs = toggleFullScreen();
 				var icon=btn.find("i.jbicon2.jbi-fullscreen,i.jbicon2.jbi-fullscreen-exit");
 				if(isOk(icon)){
 					icon.toggleClass("jbi-fullscreen");
@@ -683,6 +689,14 @@ var FullScreenBtnUtil={
 				}
 				disposeTooltip(btn);
 			}
+			var handler = btn.data("handler");
+			if(handler){
+				var exe_hanlder=eval(handler);
+				if(exe_hanlder&&typeof(exe_hanlder)=="function"){
+					exe_hanlder(btn,fs);
+				}
+			}
+			return false;
 		});
 	}
 }
@@ -8434,7 +8448,7 @@ var LayerPhotoUtil={
 									Ajax.get(l_url,function(res){
 										var html = juicer(tplc,{res:res});
 										AjaxPortalUtil.processContent(portal,html,res,url,replaceOldUrl,insertType,callback);
-										if(isOk(portal.pages)==false){
+										if(notOk(portal.pages)){
 											AjaxPortalUtil.initPage(portal,res.data);
 										}
 									},function(xhr){
@@ -12799,7 +12813,7 @@ function trMoveDown(currentTr) {
  * @param ele
  */
 function processRefreshAjaxPortalHandler(ele){
-	var portalId=ele.data("portal")||ele.data("portalid");
+	var portalId=ele.data("portal")||ele.data("portal-id")||ele.data("portalid");
 	if(portalId){
 		if(portalId == "parentPortal"){
 			if(ele){
@@ -12809,6 +12823,7 @@ function processRefreshAjaxPortalHandler(ele){
 				}
 			}
 		}else{
+
 			$("#"+portalId).ajaxPortal(true);
 		}
 	}
@@ -17668,7 +17683,7 @@ function onwindowReisze(){
 /**
  * 切换元素的可见属性
  * @param cssSelector
- * @param full
+ * @param ele
  * @returns
  */
 function toggleVisiable(cssSelector,ele){

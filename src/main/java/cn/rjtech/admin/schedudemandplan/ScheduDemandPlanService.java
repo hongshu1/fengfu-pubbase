@@ -3,12 +3,17 @@ package cn.rjtech.admin.schedudemandplan;
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bommaster.BomMasterService;
+import cn.rjtech.admin.cusordersum.CollectionUtils;
+import cn.rjtech.admin.mrpdemandcomputed.MrpDemandcomputedService;
+import cn.rjtech.admin.scheduproductplan.ApsScheduling;
+import cn.rjtech.admin.scheduproductplan.ApsUtil;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
-import cn.rjtech.model.momdata.BomMaster;
-import cn.rjtech.model.momdata.MrpDemandcomputem;
+import cn.rjtech.admin.scheduproductplan.Weekday;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
@@ -23,7 +28,13 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.Calendar;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
@@ -43,6 +54,9 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 	@Inject
 	private BomMasterService bomMasterService;
+
+	@Inject
+	private MrpDemandcomputedService mrpDemandcomputedService;
 
 	@Override
 	protected MrpDemandcomputem dao() {
@@ -142,7 +156,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	}
 
 	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType 
+	 * 设置返回二开业务所属的关键systemLog的targetType
 	 * @return
 	 */
 	@Override
@@ -395,6 +409,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	 * @return
 	 */
 	public synchronized Ret apsScheduDemandPlan(String endDate) {
+		if (StringUtils.isBlank(endDate)){
+			return fail("截止日期不能为空！");
+		}
+
 		//开始日期
 		String startDate = DateUtils.formatDate(new Date(),"yyyy-MM-dd");
 		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
@@ -530,7 +548,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		for (ScheduDemandTempDTO dto : groupInList){
 			Long invId = dto.getInvId();
 			idsInJoin2 = idsInJoin2 + invId + ",";
-			if (dto.getiSaleType() != 1){
+			if (dto.getiSaleType() == null || dto.getiSaleType() != 1){
 				idsAllJoin = idsAllJoin + invId + ",";
 			}
 		}
@@ -561,14 +579,14 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			Long invId = invInfo.getInvId();
 			String cInvCode = invInfo.getInvCode();
 			Long iVendorId = invInfo.getiVendorId();
-			int iInnerInStockDays = invInfo.getiInnerInStockDays();
-			int iSaleType = invInfo.getiSaleType();
-			int iPsLevel = invInfo.getiLevel();
+			int iInnerInStockDays = invInfo.getiInnerInStockDays() != null ? invInfo.getiInnerInStockDays() : 1;
+			int iSaleType = invInfo.getiSaleType() != null ? invInfo.getiSaleType() : -1;
+			int iPsLevel = invInfo.getiLevel() != null ? invInfo.getiLevel() : -1;
 
 			//月周计划汇总（内作）
-			Map<String,BigDecimal> dateQtyApsMap = invPlanDateApsMap.get(cInvCode);
+			Map<String,BigDecimal> dateQtyApsMap = invPlanDateApsMap.get(cInvCode) != null ? invPlanDateApsMap.get(cInvCode) : new HashMap<>();
 			//客户计划
-			Map<String,BigDecimal> dateQtyCusMap = invPlanDateCusMap.get(cInvCode);
+			Map<String,BigDecimal> dateQtyCusMap = invPlanDateCusMap.get(cInvCode) != null ? invPlanDateCusMap.get(cInvCode) : new HashMap<>();
 
 			//本次所计算物料的key:yyyy-MM-dd  value:Qty
 			Map<String,BigDecimal> dateQtyMap = new HashMap<>();
@@ -596,7 +614,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 						for (String pInv : pInvMap.keySet()){
 							BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
 							//父级需求计划
-							Map<String,BigDecimal> datePQtyAllMap = invPlanDateInAllMap.get(pInv);
+							Map<String,BigDecimal> datePQtyAllMap = invPlanDateInAllMap.get(pInv) != null ? invPlanDateInAllMap.get(pInv) : new HashMap<>();
 							BigDecimal pQty = datePQtyAllMap.get(date);
 							if (pQty != null){
 								BigDecimal qty = pQty.multiply(realQty);
@@ -646,7 +664,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		for (ScheduDemandTempDTO dto : groupOutList){
 			Long invId = dto.getInvId();
 			idsOutJoin2 = idsOutJoin2 + invId + ",";
-			if (dto.getiSaleType() != 1){
+			if (dto.getiSaleType() == null || dto.getiSaleType() != 1){
 				idsAllJoin = idsAllJoin + invId + ",";
 			}
 		}
@@ -678,12 +696,12 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			Long invId = invInfo.getInvId();
 			String cInvCode = invInfo.getInvCode();
 			Long iVendorId = invInfo.getiVendorId();
-			int iInnerInStockDays = invInfo.getiInnerInStockDays();
-			int iSaleType = invInfo.getiSaleType();
-			int iPsLevel = invInfo.getiLevel();
+			int iInnerInStockDays = invInfo.getiInnerInStockDays() != null ? invInfo.getiInnerInStockDays() : 1;
+			int iSaleType = invInfo.getiSaleType() != null ? invInfo.getiSaleType() : -1;
+			int iPsLevel = invInfo.getiLevel() != null ? invInfo.getiLevel() : -1;
 
 			//客户计划
-			Map<String,BigDecimal> dateQtyCusMap = invPlanDateCusMap.get(cInvCode);
+			Map<String,BigDecimal> dateQtyCusMap = invPlanDateCusMap.get(cInvCode) != null ? invPlanDateCusMap.get(cInvCode) : new HashMap<>();
 
 			//本次所计算物料的key:yyyy-MM-dd  value:Qty
 			Map<String,BigDecimal> dateQtyMap = new HashMap<>();
@@ -695,7 +713,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 					BigDecimal cusQty = dateQtyCusMap.get(date) != null ? dateQtyCusMap.get(date) : BigDecimal.ZERO;
 					BigDecimal sumPQty = BigDecimal.ZERO;
 					//循环父级并相加
-					Map<String,Record> pInvMap = pInvByInvOutMap.get(cInvCode);
+					Map<String,Record> pInvMap = pInvByInvOutMap.get(cInvCode) != null ? pInvByInvOutMap.get(cInvCode) : new HashMap<>();
 					for (String pInv : pInvMap.keySet()){
 						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
 						//父级需求计划
@@ -716,7 +734,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 					//循环父级并相加
 					Map<String,Record> pInvMap = pInvByInvOutMap.get(cInvCode);
 					for (String pInv : pInvMap.keySet()){
-						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
+						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty") != null ? pInvMap.get(pInv).getBigDecimal("Realqty") : BigDecimal.ONE;
 						//父级需求计划
 						Map<String,BigDecimal> datePQtyAllMap = invPlanDateOutAllMap.get(pInv);
 						BigDecimal pQty = datePQtyAllMap.get(date);
@@ -801,13 +819,13 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		Map<String,Map<String,BigDecimal>> invChaYiDateMap = new HashMap<>();
 		for (String inv : invInfoMap.keySet()){
 			Record invInfo = invInfoMap.get(inv);
-			Map<String,BigDecimal> planMap = invPlanDateInAllMap.get(inv);//每日需求计划
-			Map<String,BigDecimal> inStorageMap = inStorageQtyListMap.get(inv);//每日实绩入库
+			Map<String,BigDecimal> planMap = invPlanDateInAllMap.get(inv) != null ? invPlanDateInAllMap.get(inv) : new HashMap<>();//每日需求计划
+			Map<String,BigDecimal> inStorageMap = inStorageQtyListMap.get(inv) != null ? inStorageQtyListMap.get(inv) : new HashMap<>();//每日实绩入库
 
 			//期初在库计划
-			BigDecimal qiChuZaiKuQty = qichuDayQty5Map.get(inv);
+			BigDecimal qiChuZaiKuQty = qichuDayQty5Map.get(inv) != null ? qichuDayQty5Map.get(inv) : BigDecimal.ZERO;
 			//期初差异数量
-			BigDecimal qiChuChaYiQty = qichuDayQty4Map.get(inv);
+			BigDecimal qiChuChaYiQty = qichuDayQty4Map.get(inv) != null ? qichuDayQty4Map.get(inv) : BigDecimal.ZERO;
 
 			Map<String,BigDecimal> daoHuoMap = new HashMap<>();//纪录每日到货计划
 			Map<String,BigDecimal> zaiKuMap = new HashMap<>();//纪录每日在库计划
@@ -820,9 +838,9 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				BigDecimal toDayPlanQty = planMap.get(toDay);//当天的需求
 				BigDecimal afterPlan1;//后一天需求
 				BigDecimal afterPlan2 = BigDecimal.ZERO;//后二天需求
-				if (i == scheduDateList.size() - 1){ //
+				if (i == scheduDateList.size() - 2){ //
 					afterPlan1 = planMap.get(scheduDateList.get(i + 1));
-				}else if (i == scheduDateList.size()){
+				}else if (i == scheduDateList.size() - 1){
 					afterPlan1 = BigDecimal.ZERO;
 					afterPlan2 = BigDecimal.ZERO;
 				}else {
@@ -831,7 +849,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				}
 				//第五步-当天到货计划计算（等于当天的需求+后两天的需求-前一天的计划在库，为正数则订购，为小于等于0时则不订购）
 				BigDecimal AOGQty = BigDecimal.ZERO;
-				BigDecimal beforeZaiku = i == 0 ? qiChuZaiKuQty : zaiKuMap.get(beforeDay);
+				BigDecimal beforeZaiku = i == 0 ? qiChuZaiKuQty : (zaiKuMap.get(beforeDay) != null ? zaiKuMap.get(beforeDay) : BigDecimal.ZERO);
 				BigDecimal qty = toDayPlanQty.add(afterPlan1).add(afterPlan2).subtract(beforeZaiku);
 				if (qty.compareTo(BigDecimal.ZERO) > 0){
 					AOGQty = qty;
@@ -860,7 +878,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 					zaiku = qiChuZaiKuQty.add(shiji).add(qiChuChaYiQty).subtract(toDayPlanQty);
 				}else {
 					BigDecimal beforeChayi = chaYiMap.get(beforeDay);
-					zaiku = zaiKuMap.get(beforeDay).add(shiji).add(beforeChayi).subtract(toDayPlanQty);
+					BigDecimal beforeZaiKu = zaiKuMap.get(beforeDay) != null ? zaiKuMap.get(beforeDay) : BigDecimal.ZERO;
+					zaiku = beforeZaiKu.add(shiji).add(beforeChayi).subtract(toDayPlanQty);
 				}
 				zaiKuMap.put(toDay,zaiku);
 
@@ -872,7 +891,282 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		}
 
 
+		//key:inv+yyyy-MM-dd   value:MrpDemandcomputed
+		Map<String, MrpDemandcomputed> mrpDemandMap = new HashMap<>();
+
+		//实绩需求
+		for (String inv : invPlanDateInAllMap.keySet()){
+			Record invInfo = invInfoMap.get(inv);
+			if (invInfo == null){
+				continue;
+			}
+			Long invId = invInfo.getLong("invId");
+			Long iVendorId = invInfo.getLong("iVendorId");
+
+			Map<String,BigDecimal> dateQtyMap = invPlanDateInAllMap.get(inv);
+			for (String date : dateQtyMap.keySet()){
+				String key = inv + "+" + date;
+				int year = Integer.parseInt(date.substring(0,4));
+				int month = Integer.parseInt(date.substring(5,7));
+				int day = Integer.parseInt(date.substring(8,10));
+				BigDecimal qty = dateQtyMap.get(date);
+
+				MrpDemandcomputed demandcomputed = new MrpDemandcomputed();
+				demandcomputed.setIDemandComputeMid(1L);
+				demandcomputed.setIVendorId(iVendorId);
+				demandcomputed.setIInventoryId(invId);
+				demandcomputed.setIYear(year);
+				demandcomputed.setIMonth(month);
+				demandcomputed.setIDate(day);
+				demandcomputed.setIQty1(qty);
+				mrpDemandMap.put(key,demandcomputed);
+			}
+		}
+		//到货计划
+		for (String inv : invDaoHuoDateMap.keySet()){
+			Record invInfo = invInfoMap.get(inv);
+			Long invId = invInfo.getLong("invId");
+			Long iVendorId = invInfo.getLong("iVendorId");
+
+			Map<String,BigDecimal> dateQtyMap = invDaoHuoDateMap.get(inv);
+			for (String date : dateQtyMap.keySet()){
+				String key = inv + "+" + date;
+				int year = Integer.parseInt(date.substring(0,4));
+				int month = Integer.parseInt(date.substring(5,7));
+				int day = Integer.parseInt(date.substring(8,10));
+				BigDecimal qty = dateQtyMap.get(date);
+
+				MrpDemandcomputed demandcomputed;
+				if (mrpDemandMap.containsKey(date)){
+					demandcomputed = mrpDemandMap.get(date);
+					demandcomputed.setIQty2(qty);
+				}else {
+					demandcomputed = new MrpDemandcomputed();
+					demandcomputed.setIDemandComputeMid(1L);
+					demandcomputed.setIVendorId(iVendorId);
+					demandcomputed.setIInventoryId(invId);
+					demandcomputed.setIYear(year);
+					demandcomputed.setIMonth(month);
+					demandcomputed.setIDate(day);
+					demandcomputed.setIQty2(qty);
+				}
+				mrpDemandMap.put(key,demandcomputed);
+			}
+		}
+		//到货实绩
+		for (String inv : invShiJiDateMap.keySet()){
+			Record invInfo = invInfoMap.get(inv);
+			Long invId = invInfo.getLong("invId");
+			Long iVendorId = invInfo.getLong("iVendorId");
+
+			Map<String,BigDecimal> dateQtyMap = invShiJiDateMap.get(inv);
+			for (String date : dateQtyMap.keySet()){
+				String key = inv + "+" + date;
+				int year = Integer.parseInt(date.substring(0,4));
+				int month = Integer.parseInt(date.substring(5,7));
+				int day = Integer.parseInt(date.substring(8,10));
+				BigDecimal qty = dateQtyMap.get(date);
+
+				MrpDemandcomputed demandcomputed;
+				if (mrpDemandMap.containsKey(date)){
+					demandcomputed = mrpDemandMap.get(date);
+					demandcomputed.setIQty3(qty);
+				}else {
+					demandcomputed = new MrpDemandcomputed();
+					demandcomputed.setIDemandComputeMid(1L);
+					demandcomputed.setIVendorId(iVendorId);
+					demandcomputed.setIInventoryId(invId);
+					demandcomputed.setIYear(year);
+					demandcomputed.setIMonth(month);
+					demandcomputed.setIDate(day);
+					demandcomputed.setIQty3(qty);
+				}
+				mrpDemandMap.put(key,demandcomputed);
+			}
+		}
+		//差异数量
+		for (String inv : invChaYiDateMap.keySet()){
+			Record invInfo = invInfoMap.get(inv);
+			Long invId = invInfo.getLong("invId");
+			Long iVendorId = invInfo.getLong("iVendorId");
+
+			Map<String,BigDecimal> dateQtyMap = invChaYiDateMap.get(inv);
+			for (String date : dateQtyMap.keySet()){
+				String key = inv + "+" + date;
+				int year = Integer.parseInt(date.substring(0,4));
+				int month = Integer.parseInt(date.substring(5,7));
+				int day = Integer.parseInt(date.substring(8,10));
+				BigDecimal qty = dateQtyMap.get(date);
+
+				MrpDemandcomputed demandcomputed;
+				if (mrpDemandMap.containsKey(date)){
+					demandcomputed = mrpDemandMap.get(date);
+					demandcomputed.setIQty4(qty);
+				}else {
+					demandcomputed = new MrpDemandcomputed();
+					demandcomputed.setIDemandComputeMid(1L);
+					demandcomputed.setIVendorId(iVendorId);
+					demandcomputed.setIInventoryId(invId);
+					demandcomputed.setIYear(year);
+					demandcomputed.setIMonth(month);
+					demandcomputed.setIDate(day);
+					demandcomputed.setIQty4(qty);
+				}
+				mrpDemandMap.put(key,demandcomputed);
+			}
+		}
+		//计划在库
+		for (String inv : invZaiKuDateMap.keySet()){
+			Record invInfo = invInfoMap.get(inv);
+			Long invId = invInfo.getLong("invId");
+			Long iVendorId = invInfo.getLong("iVendorId");
+
+			Map<String,BigDecimal> dateQtyMap = invZaiKuDateMap.get(inv);
+			for (String date : dateQtyMap.keySet()){
+				String key = inv + "+" + date;
+				int year = Integer.parseInt(date.substring(0,4));
+				int month = Integer.parseInt(date.substring(5,7));
+				int day = Integer.parseInt(date.substring(8,10));
+				BigDecimal qty = dateQtyMap.get(date);
+
+				MrpDemandcomputed demandcomputed;
+				if (mrpDemandMap.containsKey(date)){
+					demandcomputed = mrpDemandMap.get(date);
+					demandcomputed.setIQty5(qty);
+				}else {
+					demandcomputed = new MrpDemandcomputed();
+					demandcomputed.setIDemandComputeMid(1L);
+					demandcomputed.setIVendorId(iVendorId);
+					demandcomputed.setIInventoryId(invId);
+					demandcomputed.setIYear(year);
+					demandcomputed.setIMonth(month);
+					demandcomputed.setIDate(day);
+					demandcomputed.setIQty5(qty);
+				}
+				mrpDemandMap.put(key,demandcomputed);
+			}
+		}
+
+		List<MrpDemandcomputed> list = new ArrayList<>();
+		for (MrpDemandcomputed demandcomputed : mrpDemandMap.values()){
+			list.add(demandcomputed);
+		}
+		if (list.size() > 0){
+			MrpDemandcomputed demandcomputed = list.get(0);
+			if (demandcomputed.getIQty1() == null){
+				demandcomputed.setIQty1(BigDecimal.ZERO);
+			}
+			if (demandcomputed.getIQty2() == null){
+				demandcomputed.setIQty2(BigDecimal.ZERO);
+			}
+			if (demandcomputed.getIQty3() == null){
+				demandcomputed.setIQty3(BigDecimal.ZERO);
+			}
+			if (demandcomputed.getIQty4() == null){
+				demandcomputed.setIQty4(BigDecimal.ZERO);
+			}
+			if (demandcomputed.getIQty5() == null){
+				demandcomputed.setIQty5(BigDecimal.ZERO);
+			}
+		}
+		if (list.size() == 0){
+			tx(() -> {
+				int num = dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
+				return true;
+			});
+			return SUCCESS;
+		}
+
+		tx(() -> {
+			int num = dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
+			List<List<MrpDemandcomputed>> groupCusOrderSumList = CollectionUtils.partition(list,300);
+			CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
+			ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
+			for(List<MrpDemandcomputed> cusOrderSums :groupCusOrderSumList){
+				executorService.execute(()->{
+					mrpDemandcomputedService.batchSave(cusOrderSums);
+				});
+				countDownLatch.countDown();
+			}
+			try {
+				countDownLatch.await();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+			executorService.shutdown();
+
+			return true;
+		});
 		return SUCCESS;
+	}
+
+	public synchronized List<Map<String,Object>> getDemandList(Kv kv) {
+		//物料需求计划
+		List<Map<String,Object>> dataList = new ArrayList<>();
+
+		String startDate = kv.getStr("startdate");
+		String endDate = kv.getStr("enddate");
+
+		LocalDate localDate = LocalDate.now();
+		if (StringUtils.isBlank(startDate)){
+			startDate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
+		}
+		if (StringUtils.isBlank(endDate)){
+			endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
+		}
+
+		//开始日期到截止日期集合
+		List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
+
+		List<Record> demandList = dbTemplate("schedudemandplan.getDemandComputeDList",kv).find();
+		Map<String,Record> invInfoMap = new HashMap<>();
+		Map<String,Map<String,Record>> invPlanMap = new HashMap<>();
+		for (Record record : demandList){
+			String inv = record.getStr("cInvCode");
+			String planDate = record.getStr("planDate");
+			invInfoMap.put(inv,record);
+			if (invPlanMap.containsKey(inv)){
+				Map<String,Record> dateMap = invPlanMap.get(inv);
+				dateMap.put(planDate,record);
+			}else {
+				Map<String,Record> dateMap = new HashMap<>();
+				dateMap.put(planDate,record);
+				invPlanMap.put(inv,dateMap);
+			}
+		}
+
+		int seq = 1;
+		//循环物料
+		for (String inv : invInfoMap.keySet()){
+			Record info = invInfoMap.get(inv);
+
+			Map<String,Object> map = new HashMap<>();
+			map.put("seq",seq++);
+			map.put("cVenName",info.getInt("cVenName"));
+			map.put("cInvCode",info.getStr("cInvCode"));
+			map.put("cInvCode1",info.getStr("cInvCode1"));
+			map.put("cInvName1",info.getStr("cInvName1"));
+			map.put("iPkgQty",info.getStr("iPkgQty"));
+			map.put("iInnerInStockDays",info.getStr("iInnerInStockDays"));
+
+			Map<String,Record> planMap = invPlanMap.get(inv);
+
+			List<Object> objectList = new ArrayList<>();
+			for (String date : scheduDateList) {
+				Record qtyInfo = planMap.get(date) != null ? planMap.get(date) : new Record();
+
+				Map<String,Object> record = new HashMap<>();
+				record.put("xuqiu",qtyInfo.get("iQty1") != null ? qtyInfo.get("iQty1") : BigDecimal.ZERO);
+				record.put("jihua",qtyInfo.get("iQty2") != null ? qtyInfo.get("iQty2") : BigDecimal.ZERO);
+				record.put("zaiku",qtyInfo.get("iQty5") != null ? qtyInfo.get("iQty5") : BigDecimal.ZERO);
+				record.put("date",date);
+
+				objectList.add(record);
+			}
+			map.put("day",objectList);
+			dataList.add(map);
+		}
+		return dataList;
 	}
 
 

@@ -1,143 +1,189 @@
 <form onsubmit="return false;" id="SysOtherindetail_Form" action="#(action)" method="post">
-	#if(sysOtherindetail.AutoID??)
-	<input type="hidden" name="sysOtherindetail.AutoID" value="#(sysOtherindetail.AutoID??)" />
-	#end
-<div class="row">
-<div class="col" >
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">AutoID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入AutoID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入AutoID" maxlength="40" name="sysOtherindetail.AutoID" value="#(sysOtherindetail.AutoID??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">MasID</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入MasID" maxlength="40" name="sysOtherindetail.MasID" value="#(sysOtherindetail.MasID??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">仓位</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入仓位" maxlength="40" name="sysOtherindetail.PosCode" value="#(sysOtherindetail.PosCode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">条码</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入条码" maxlength="40" name="sysOtherindetail.Barcode" value="#(sysOtherindetail.Barcode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">存货编码</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货编码" maxlength="40" name="sysOtherindetail.InvCode" value="#(sysOtherindetail.InvCode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">件数</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入件数" maxlength="40" name="sysOtherindetail.Num" value="#(sysOtherindetail.Num??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">数量</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入数量" maxlength="40" name="sysOtherindetail.Qty" value="#(sysOtherindetail.Qty??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">收容数量</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入收容数量" maxlength="40" name="sysOtherindetail.PackRate" value="#(sysOtherindetail.PackRate??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">跟单类型</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入跟单类型" maxlength="40" name="sysOtherindetail.TrackType" value="#(sysOtherindetail.TrackType??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">来源单据类型</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源单据类型" maxlength="40" name="sysOtherindetail.SourceBillType" value="#(sysOtherindetail.SourceBillType??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">来源单号</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源单号" maxlength="40" name="sysOtherindetail.SourceBillNo" value="#(sysOtherindetail.SourceBillNo??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">来源单号+行号</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源单号+行号" maxlength="40" name="sysOtherindetail.SourceBIllNoRow" value="#(sysOtherindetail.SourceBIllNoRow??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">来源单据ID</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源单据ID" maxlength="40" name="sysOtherindetail.SourceBillID" value="#(sysOtherindetail.SourceBillID??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">来源单据Did</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源单据Did" maxlength="40" name="sysOtherindetail.SourceBillDid" value="#(sysOtherindetail.SourceBillDid??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">备注</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入备注" maxlength="40" name="sysOtherindetail.Memo" value="#(sysOtherindetail.Memo??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">创建人</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人" maxlength="40" name="sysOtherindetail.CreatePerson" value="#(sysOtherindetail.CreatePerson??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">创建时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="sysOtherindetail.CreateDate"    value="#datetime(sysOtherindetail.CreateDate??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">更新人</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人" maxlength="40" name="sysOtherindetail.ModifyPerson" value="#(sysOtherindetail.ModifyPerson??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">更新时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="sysOtherindetail.ModifyDate"    value="#datetime(sysOtherindetail.ModifyDate??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">现品票</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入现品票" maxlength="40" name="sysOtherindetail.spotTicket" value="#(sysOtherindetail.spotTicket??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">项目大类编码</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入项目大类编码" maxlength="40" name="sysOtherindetail.projectTypeCode" value="#(sysOtherindetail.projectTypeCode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">项目大类名称</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入项目大类名称" maxlength="40" name="sysOtherindetail.projectTypeName" value="#(sysOtherindetail.projectTypeName??)"/>
-</div>
-</div>
-</div>
-</div>
+    #if(sysOtherindetail.AutoID??)
+    <input type="hidden" name="sysOtherindetail.AutoID" value="#(sysOtherindetail.AutoID??)"/>
+    #end
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">AutoID</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入AutoID"
+                           data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入AutoID"
+                           maxlength="40" name="sysOtherindetail.AutoID" value="#(sysOtherindetail.AutoID??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">MasID</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入MasID" maxlength="40" name="sysOtherindetail.MasID"
+                           value="#(sysOtherindetail.MasID??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">仓位</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入仓位" maxlength="40" name="sysOtherindetail.PosCode"
+                           value="#(sysOtherindetail.PosCode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">条码</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入条码" maxlength="40" name="sysOtherindetail.Barcode"
+                           value="#(sysOtherindetail.Barcode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">存货编码</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入存货编码" maxlength="40" name="sysOtherindetail.InvCode"
+                           value="#(sysOtherindetail.InvCode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">件数</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入件数" maxlength="40" name="sysOtherindetail.Num"
+                           value="#(sysOtherindetail.Num??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">数量</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入数量" maxlength="40" name="sysOtherindetail.Qty"
+                           value="#(sysOtherindetail.Qty??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">收容数量</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入收容数量" maxlength="40" name="sysOtherindetail.PackRate"
+                           value="#(sysOtherindetail.PackRate??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">跟单类型</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入跟单类型" maxlength="40" name="sysOtherindetail.TrackType"
+                           value="#(sysOtherindetail.TrackType??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">来源单据类型</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入来源单据类型" maxlength="40" name="sysOtherindetail.SourceBillType"
+                           value="#(sysOtherindetail.SourceBillType??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">来源单号</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入来源单号" maxlength="40" name="sysOtherindetail.SourceBillNo"
+                           value="#(sysOtherindetail.SourceBillNo??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">来源单号+行号</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入来源单号+行号" maxlength="40" name="sysOtherindetail.SourceBIllNoRow"
+                           value="#(sysOtherindetail.SourceBIllNoRow??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">来源单据ID</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入来源单据ID" maxlength="40" name="sysOtherindetail.SourceBillID"
+                           value="#(sysOtherindetail.SourceBillID??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">来源单据Did</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入来源单据Did" maxlength="40" name="sysOtherindetail.SourceBillDid"
+                           value="#(sysOtherindetail.SourceBillDid??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">备注</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入备注" maxlength="40" name="sysOtherindetail.Memo"
+                           value="#(sysOtherindetail.Memo??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">创建人</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入创建人" maxlength="40" name="sysOtherindetail.CreatePerson"
+                           value="#(sysOtherindetail.CreatePerson??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">创建时间</label>
+                <div class="col-10">
+                    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd"
+                           readonly="readonly" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入创建时间" maxlength="20" name="sysOtherindetail.CreateDate"
+                           value="#datetime(sysOtherindetail.CreateDate??,'yyyy-MM-dd')"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">更新人</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入更新人" maxlength="40" name="sysOtherindetail.ModifyPerson"
+                           value="#(sysOtherindetail.ModifyPerson??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">更新时间</label>
+                <div class="col-10">
+                    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd"
+                           readonly="readonly" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入更新时间" maxlength="20" name="sysOtherindetail.ModifyDate"
+                           value="#datetime(sysOtherindetail.ModifyDate??,'yyyy-MM-dd')"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">现品票</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入现品票" maxlength="40" name="sysOtherindetail.spotTicket"
+                           value="#(sysOtherindetail.spotTicket??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">项目大类编码</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入项目大类编码" maxlength="40" name="sysOtherindetail.projectTypeCode"
+                           value="#(sysOtherindetail.projectTypeCode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">项目大类名称</label>
+                <div class="col-10">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="请输入项目大类名称" maxlength="40" name="sysOtherindetail.projectTypeName"
+                           value="#(sysOtherindetail.projectTypeName??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 #define js()
 <script>

@@ -459,9 +459,6 @@
 #include("sysenumeration/sysenumeration.sql")
 #end
 
-#namespace("mopickitem")
-#include("mopickitemd/mopickitem.sql")
-#end
 
 #namespace("materialsprepare")
 #include("sysmaterialsprepare/materialsprepare.sql")
@@ -499,3 +496,8 @@
 #namespace("materialreturnlist")
 #include("materialreturnlist/materialreturnlist.sql")
 #end
+
+#namespace("patchworkbarcode")
+#include("patchworkbarcode/patchworkbarcode.sql")
+#end
+

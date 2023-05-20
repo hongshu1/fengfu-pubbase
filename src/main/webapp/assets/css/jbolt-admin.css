@@ -1,4 +1,4 @@
-/*********jbolt_admin_css_version="3.7.0*************/
+/*********jbolt_admin_css_version="3.7.1*************/
 html, body {
 	margin: 0px;
 	padding: 0px;
@@ -4472,4 +4472,21 @@ div[data-edit-mode="true"] .form_control_box>div.form-group:hover{
 	background-color: rgba(0, 0, 0, 0.1);
 	border-radius: 0px 0px 4px 4px;
 	padding: 8px 12px;
+}
+
+.card.jb_datasource_table_card .card-header{
+	height: 40px;
+	line-height: 40px;
+	padding: 0px;
+}
+.card.jb_datasource_table_card .card-header .row{
+	margin-left: 0px;
+	margin-right: 0px;
+}
+.card.jb_datasource_table_card .card-header .row>div{
+	padding-left: 15px;
+	padding-right: 15px;
+}
+.card.jb_datasource_table_card:hover{
+	border-color: #007bff!important;
 }

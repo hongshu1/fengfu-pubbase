@@ -1,8 +1,8 @@
 package cn.rjtech.wms.utils;
 
+import cn.hutool.setting.Setting;
 import cn.jbolt.core.base.config.JBoltConfig;
-import cn.jbolt.core.db.datasource.JBoltDataSourceUtil;
-import cn.jbolt.core.db.datasource.JBoltDatasource;
+import cn.jbolt.core.base.config.JBoltExtendDatabaseConfig;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.log.Log;
@@ -42,13 +42,13 @@ public class DBUtils {
      * @return 数据库连接
      */
     public static Connection getConnection(String dbAlias) {
-        JBoltDatasource dataSource = JBoltDataSourceUtil.me.getJBoltDatasource(dbAlias);
-        ValidationUtils.notNull(dataSource, String.format("指定的数据源‘%s’不存在", dbAlias));
-
-        String url = dataSource.getJdbcUrl();
-        String driver = JBoltConfig.getDriverClass(dataSource.getDbType());
-        String username = dataSource.getUser();
-        String password = dataSource.getPassword();
+        Setting setting = JBoltExtendDatabaseConfig.me().getSetting().getSetting(dbAlias);
+        ValidationUtils.notNull(setting, String.format("指定的数据源‘%s’不存在", dbAlias));
+        
+        String url = setting.get("jdbc_url");
+        String driver = JBoltConfig.getDriverClass(setting.get("db_type"));
+        String username = setting.get("user");
+        String password = setting.get("password");
 
 //        if ("ds1".equals(dbAlias) || dbAlias == null) {
 //            url = AppConfig.globalGetProperty("jdbc.url");
@@ -74,14 +74,16 @@ public class DBUtils {
      * @return 数据库连接
      */
     public static Connection getConnection(String dbAlias, String jdbcUrl) {
-        JBoltDatasource dataSource = JBoltDataSourceUtil.me.getJBoltDatasource(dbAlias);
-        ValidationUtils.notNull(dataSource, String.format("指定的数据源‘%s’不存在", dbAlias));
+        Setting setting = JBoltExtendDatabaseConfig.me().getSetting().getSetting(dbAlias);
+        ValidationUtils.notNull(setting, String.format("指定的数据源‘%s’不存在", dbAlias));
 
-        String driver = JBoltConfig.getDriverClass(dataSource.getDbType());
-        String username = dataSource.getUser();
-        String password = dataSource.getPassword();
+        String url = setting.get("jdbc_url");
+        String driver = JBoltConfig.getDriverClass(setting.get("db_type"));
+        String username = setting.get("user");
+        String password = setting.get("password");
+        
         if(JBoltStringUtil.isBlank(jdbcUrl)){
-            jdbcUrl = dataSource.getJdbcUrl();
+            jdbcUrl = url;
         }
 
 //        if ("ds1".equals(dbAlias) || dbAlias == null) {

@@ -1,96 +1,99 @@
 <div class="jbolt_page_content">
-    <div class="jbolt_page_title">
-        <div class="input-group row">
-            <div class="col-4 text-left">
-                <form onsubmit="return false;" id="mergeBarcodeForm_#(pageId)" action="#(action)" method="post">
-                    <div class="input-group">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="现品票扫描" name="barcode" value=""/>
-                    <div class="input-group-append">
-                    <button type="submit" class="btn btn-light"><i class="fa fa-plus"></i>添加</button>
-                    </div>
-                    </div>
-                </form>
+  <div class="jbolt_page_title">
+    <div class="input-group row">
+      <div class="col-4 text-left">
+        <form onsubmit="return false;" id="mergeBarcodeForm_#(pageId)" action="#(action)" method="post">
+          <div class="input-group">
+            <input type="text" autocomplete="off" class="form-control" placeholder="现品票扫描" name="barcode" value=""/>
+            <div class="input-group-append">
+              <button onclick="addFunction()" class="btn btn-light" type="button"><i class="fa fa-plus"></i>添加</button>
             </div>
-        </div>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 <div class="jbolt_page_content">
-    <!-- JBoltTable的数据模板定义-->
-    <textarea class="jb_tpl_box" id="mergeBarcodeRowtpl_#(pageId)">
+  <!-- JBoltTable的数据模板定义-->
+  <textarea class="jb_tpl_box" id="mergeBarcodeRowtpl_#(pageId)">
 		{@each datas as data,index}
      <tr data-id="${data.iautoid}">
 			<td>${pageNumber,pageSize,index | rownum}</td>
       <td>
           <a onclick="jboltTableRemoveRow(this)"><i class="fa fa-trash"></i> 删除</a>
       </td>
-			<td>${data.invcode}</td>
-			<td>${data.invname}</td>
-			<td>${data.invstd}</td>
+			<td>${data.cinvcode}</td>
+			<td>${data.cinvname}</td>
+			<td>${data.cinvstd}</td>
 			<td>${data.unitname}</td>
-			<td>${data.barcode}</td>
+			<td>${data.cbarcode}</td>
 			<td>${data.qty, 2|number_format}</td>
 			<td>${data.batch}</td>
 		</tr>
 		{@/each}
 	</textarea>
-    <!-- 工具条 toolbar -->
-    <div class="jbolt_table_toolbar" id="qcsettingreport_toolbar_#(pageId)">
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <!--<button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>新增
-            </button>-->
-            <button class="btn btn-primary" data-dialogbtn data-link-para-ele="#versionId" data-area="1280,600"
-                     data-url="/admin/mergeBarcode/barcodeIndex"><i
-                    class="fa fa-plus"></i>新增
-            </button>
-        </div>
-        <div class="clearfix"></div>
+  <!-- 工具条 toolbar -->
+  <div class="jbolt_table_toolbar" id="qcsettingreport_toolbar_#(pageId)">
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+      <button class="btn btn-primary" data-dialogbtn data-link-para-ele="#versionId" data-area="1280,600"
+              data-url="/admin/mergeBarcode/stripbarcodeSelect"><i class="fa fa-plus"></i>新增
+      </button>
     </div>
-    <table class="jbolt_table jbolt_main_table table-center"
-           id="jbolt_table_strip#(pageId)"
-           data-jbolttable
-           data-height="300"
-           data-ajax="true"
-           data-width="auto"
-           data-url="admin/mergeBarcode/datas"
-           data-column-resize="true"
-           data-column-prepend="1:checkbox:true"
-           data-conditions-form="mergeBarcodeForm_#(pageId)"
-           data-rowtpl="mergeBarcodeRowtpl_#(pageId)"
-           data-toolbar="qcsettingreport_toolbar_#(pageId)"
-           data-editable-option="getEditableTableOptions_#(pageId)"
-           data-editable="true"
-    >
-        <thead>
-        <tr>
-            <th data-width="100" data-column="index">序号</th>
-            <th data-width="100">操作</th>
-            <th data-width="200" data-column="invcode">存货编码</th>
-            <th data-width="220" data-column="invname">料品名称</th>
-            <th data-width="180" data-column="invstd">规格</th>
-            <th data-width="150" data-column="unitname">单位</th>
-            <th data-width="150" data-column="barcode">现品票</th>
-            <th data-width="150" data-column="qty">数量</th>
-            <th data-width="200" data-column="batch">批次号</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-        <tfoot>
-        ### 汇总数据
-        <tr>
-            <th></th>
-            <th>合并数量:</th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-        </tfoot>
-    </table>
-    <button onclick="submitThisFormBut(this)" style="width: 60px;width: 80px;margin: 10px 20px;font-size: 19px"
-            class="btn btn-primary btn-sm">提交
-    </button>
+    <div class="clearfix"></div>
+  </div>
+  <table class="jbolt_table jbolt_main_table table-center"
+         id="jbolt_table_strip#(pageId)"
+         data-jbolttable
+         data-height="300"
+         data-ajax="true"
+         data-width="auto"
+         data-url="admin/mergeBarcode/datas"
+         data-column-resize="true"
+         data-column-prepend="1:checkbox:true"
+         data-conditions-form="mergeBarcodeForm_#(pageId)"
+         data-rowtpl="mergeBarcodeRowtpl_#(pageId)"
+         data-toolbar="qcsettingreport_toolbar_#(pageId)"
+         data-editable-option="getEditableTableOptions_#(pageId)"
+         data-editable="true"
+  >
+    <thead>
+    <tr>
+      <th data-width="100" data-column="index">序号</th>
+      <th data-width="100">操作</th>
+      <th data-width="200" data-column="cinvcode">存货编码</th>
+      <th data-width="220" data-column="cinvname">料品名称</th>
+      <th data-width="180" data-column="cinvstd">规格</th>
+      <th data-width="150" data-column="unitname">单位</th>
+      <th data-width="150" data-column="cbarcode">现品票</th>
+      <th data-width="150" data-column="qty">数量</th>
+      <th data-width="200" data-column="batch">批次号</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <tfoot>
+    ### 汇总数据
+    <tr>
+      <th></th>
+      <th>合并数量:</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+    </tfoot>
+  </table>
+  <button onclick="submitThisFormBut(this)" style="width: 60px;width: 80px;margin: 10px 20px;font-size: 19px"
+          class="btn btn-primary btn-sm">提交
+  </button>
 </div>
+
+<script>
+  function addFunction() {
+    alert("电脑端暂无扫描功能，请使用新增功能");
+  }
+</script>

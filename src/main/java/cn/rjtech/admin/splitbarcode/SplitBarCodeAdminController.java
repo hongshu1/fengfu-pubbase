@@ -67,7 +67,7 @@ public class SplitBarCodeAdminController extends BaseAdminController {
 
     public void edit() {
         Kv kv = getKv();
-        Record byShiWu = service.findByShiWu(kv.getStr("autoid"));
+        Record byShiWu = service.findByShiWu(kv.getStr("logno"));
         if (byShiWu == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -78,6 +78,6 @@ public class SplitBarCodeAdminController extends BaseAdminController {
 
     public void detailDatas() {
         Kv kv = getKv();
-        renderJsonData(service.findListBylogno(kv.getStr("logno")));
+        renderJsonData(service.findListByCsourceid(kv.getStr("csourceid")));
     }
 }

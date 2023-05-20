@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.4.1";
+var jbolt_table_js_version="3.4.2";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -5210,7 +5210,7 @@ function getScrollBarHeight(ele){
 		setCell:function(table,tr,column,text,value,dontExeValueChangeHandler){
 			//设置单元格数据
 			var dataIndex = table.columnIndexMap[column];
-			if(typeof(dataIndex)!=undefined && typeof(dataIndex)!="undefined" && dataIndex>=0){
+			if(typeof(dataIndex)!="undefined" && dataIndex>=0){
 				var td = tr.find("td[data-col-index='"+dataIndex+"']");
 				return this.processEditableTdChooseData(table,td,text,value,dontExeValueChangeHandler);
 			}
@@ -5222,7 +5222,7 @@ function getScrollBarHeight(ele){
 			}
 			var dataIndex = tr.data("index");
 			//设置属性数据
-			if(typeof(dataIndex)!=undefined && typeof(dataIndex)!="undefined" && dataIndex>=0){
+			if(typeof(dataIndex)!="undefined" && dataIndex>=0){
 				JBoltArrayUtil.changeOneItemAttrValue(table.tableListDatas,dataIndex,attrName,value);
 				return true;
 			}
@@ -5231,7 +5231,7 @@ function getScrollBarHeight(ele){
 		setCellEditable:function(table,tr,column,editable,falseClear,clearValue,dontExeValueChangeHandler){
 			//设置单元格数据
 			var dataIndex = table.columnIndexMap[column];
-			if(typeof(dataIndex)!=undefined  && typeof(dataIndex)!="undefined" && dataIndex>=0){
+			if(typeof(dataIndex)!="undefined" && dataIndex>=0){
 				var td = tr.find("td[data-col-index='"+dataIndex+"']");
 				if(isOk(td)){
 					td.data("editable",(editable||false)).attr("data-editable",editable||false);
@@ -5249,7 +5249,7 @@ function getScrollBarHeight(ele){
 		setColEditable:function(table,column,editable){
 			//设置单元格数据
 			var dataIndex = table.columnIndexMap[column];
-			if(typeof(dataIndex)!=undefined  && typeof(dataIndex)!="undefined" && dataIndex>=0){
+			if(typeof(dataIndex)!="undefined" && dataIndex>=0){
 				var tds = table.tbody.find("td[data-col-index='"+dataIndex+"']");
 				if(isOk(tds)){
 					tds.data("editable",(editable||false)).attr("data-editable",editable||false);
@@ -8040,6 +8040,7 @@ function getScrollBarHeight(ele){
 			var formula=summaryTd.data("formula");
 			if(!formula){
 				summaryTd.attr("data-value",0).data("value",0);
+				summaryTd.attr("data-text",0).data("text",0);
 				summaryTd.text("0");
 				return;
 			}
@@ -8070,6 +8071,7 @@ function getScrollBarHeight(ele){
 			}else{
 				value=0;
 			}
+			summaryTd.attr("data-text",value).data("text",value);
 			summaryTd.text(value);
 			//如果指定要立马执行纵向计算的话 就执行
 			if(withVSummary){

@@ -593,7 +593,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
 
-        int seq = 0;
+        int seq = 1;
         //循环产线
         for (Long WorkIdKey : workInvListMap.keySet()){
             //物料集
@@ -733,9 +733,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     Map<String,Object> record = new HashMap<>();
                     record.put("shiyong",invPlan[i]);
-                    record.put("1S",invPlan1S[i]);
-                    record.put("2S",invPlan2S[i]);
-                    record.put("3S",invPlan3S[i]);
+                    record.put("one",invPlan1S[i]);
+                    record.put("two",invPlan2S[i]);
+                    record.put("three",invPlan3S[i]);
                     record.put("zaiku",0);
                     record.put("tianshu",0);
 

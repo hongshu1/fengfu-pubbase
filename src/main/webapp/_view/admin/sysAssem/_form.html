@@ -27,10 +27,10 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">单据号</label>
                                     <div class="col-9">
-                                        <input type="text"  data-notnull="true"
-                                            data-tips="请输入单据号" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输入单据号" maxlength="40"
-                                            name="sysAssem.BillNo" value="#(sysAssem.BillNo??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输入单据号"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输入单据号" maxlength="40" name="sysAssem.BillNo"
+                                            value="#(sysAssem.BillNo??)" />
                                     </div>
                                 </div>
                             </div>
@@ -39,23 +39,25 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">日期</label>
                                     <div class="col-9">
-                                        <input type="text" data-date class="form-control ml-2" placeholder="日期" maxlength="20" name="sysAssem.CreateDate" value="#(sysAssem.CreateDate??)"/>
+                                        <input type="text" data-date class="form-control ml-2" placeholder="日期"
+                                            maxlength="20" name="sysAssem.BillDate"
+                                            value="#(sysAssem.BillDate??)" />
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="form-group row">
+                                    <input type="hidden" name="sysProductin.BillType" value="#(sysProductin.BillType??)"
+                                        id="idcode" data-value-attr="id" />
                                     <label class="col-sm-3 col-form-label">转换方式</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=转换方式="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/formConversionList/dictionary" data-rule="required"
+                                            data-hidden-input="idcode" data-text-attr="name"
+                                            data-column-attr="id,name" placeholder="请选择转换方式"
+                                            data-tips="请选择转换方式" data-header="转换方式编码,转换方式" maxlength="40"
+                                            value="#(zhname??)">
                                     </div>
                                 </div>
                             </div>
@@ -63,74 +65,63 @@
 
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">仓库名称</label>
-                                    <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=仓库名称="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="col-md-4">
-                                <div class="form-group row">
+                                    <input type="hidden" name="sysProductin.IRdCode" value="#(sysProductin.IRdCode??)"
+                                        id="crdcode" data-value-attr="crdcode" />
                                     <label class="col-sm-3 col-form-label">入库类别</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=入库类别="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/formConversionList/style?brdflag=1" data-rule="required"
+                                            data-hidden-input="crdcode" data-text-attr="crdname"
+                                            data-column-attr="crdcode,crdname" placeholder="请选择入库类别"
+                                            data-tips="请选择入库类别" data-header="入库类别编码,入库类别" maxlength="40"
+                                            value="#(rkname??)">
                                     </div>
                                 </div>
                             </div>
 
+
+
                             <div class="col-md-4">
                                 <div class="form-group row">
+                                    <input type="hidden" name="sysProductin.DeptCode" value="#(sysProductin.DeptCode??)"
+                                        id="cdepcode" data-value-attr="cdepcode" />
                                     <label class="col-sm-3 col-form-label">生产部门</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=生产部门="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/productInList/getDepartment" data-rule="required"
+                                            data-hidden-input="cdepcode" data-text-attr="cdepname"
+                                            data-column-attr="cdepcode,cdepname" placeholder="请选择生产部门"
+                                            data-tips="请选择生产部门" data-header="生产部门编码,生产部门" maxlength="40"
+                                            value="#(cdepname??)">
                                     </div>
                                 </div>
                             </div>
+
+
                             <div class="col-md-4">
                                 <div class="form-group row">
+                                    <input type="hidden" name="sysProductin.ORdCode" value="#(sysProductin.ORdCode??)"
+                                        id="crdcode1" data-value-attr="crdcode" />
                                     <label class="col-sm-3 col-form-label">出库类别</label>
                                     <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                        data-autoload
-                                        data-url="admin/dictionary/options?key=null"
-                                        data-select-type="select"
-                                        data-text="=出库类别="
-                                        data-value=""
-                                        data-value-attr="sn"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                            data-url="admin/formConversionList/style?brdflag=0" data-rule="required"
+                                            data-hidden-input="crdcode1" data-text-attr="crdname"
+                                            data-column-attr="crdcode,crdname" placeholder="请选择出库类别"
+                                            data-tips="请选择出库类别" data-header="出库类别编码,出库类别" maxlength="40"
+                                            value="#(ckname??)">
                                     </div>
                                 </div>
                             </div>
+
 
 
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">审批日期</label>
                                     <div class="col-9">
-                                        <input type="text" data-date class="form-control ml-2" placeholder="审批日期" maxlength="20" name="sysAssem.AuditDate" value="#(sysAssem.AuditDate??)"/>
+                                        <input type="text" data-date class="form-control ml-2" placeholder="审批日期"
+                                            maxlength="20" name="sysAssem.AuditDate" value="#(sysAssem.AuditDate??)" />
                                     </div>
                                 </div>
                             </div>
@@ -139,10 +130,10 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">备注</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true"
-                                            data-tips="请输入备注" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输入备注" maxlength="40"
-                                            name="sysAssem.Memo" value="#(sysAssem.Memo??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输入备注"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输入备注" maxlength="40" name="sysAssem.Memo"
+                                            value="#(sysAssem.Memo??)" />
                                     </div>
                                 </div>
                             </div>
@@ -152,10 +143,10 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">制单人</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true"
-                                            data-tips="请输制单人" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输制单人" maxlength="40"
-                                            name="sysAssem.CreatePerson" value="#(sysAssem.CreatePerson??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输制单人"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输制单人" maxlength="40" name="sysAssem.CreatePerson"
+                                            value="#(sysAssem.CreatePerson??)" />
                                     </div>
                                 </div>
                             </div>
@@ -164,10 +155,10 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">审核人</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true"
-                                            data-tips="请输审核人" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输审核人" maxlength="40"
-                                            name="sysAssem.AuditPerson" value="#(sysAssem.AuditPerson??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输审核人"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            placeholder="请输审核人" maxlength="40" name="sysAssem.AuditPerson"
+                                            value="#(sysAssem.AuditPerson??)" />
                                     </div>
                                 </div>
                             </div>
@@ -222,9 +213,8 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">现品票扫码</label>
                 <div class="col-9">
-                    <input type="text"  data-notnull="true"
-                        data-tips="请输入现品票扫码" data-with-clearbtn="true" autocomplete="off"
-                        class="form-control" placeholder="请输入现品票扫码" maxlength="40"
+                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
+                        autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
                         name="sysAssem.warehousingNo" value="#(sysAssem.warehousingNo??)" />
                 </div>
             </div>
@@ -237,8 +227,8 @@
         </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysAssemdetail/deleteByIds?ids=" data-confirm="确定删除选中数据？"
-                class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
+                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysAssemdetail/deleteByIds?ids="
+                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
         </div>
 
     </div>
@@ -250,29 +240,30 @@
         data-page="sysAssem_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
         <thead class="fw_normal">
             <tr>
-                <th data-width="60">序号</th>
+                <th data-width="60" data-column="index">序号</th>
                 <th data-width="150">操作</th>
-                <th data-width="100" data-column="spotTicket">现品票</th>
-                <th data-width="100" data-column="whcodename">仓库名称</th>
-                <th data-width="100" data-column="qty">数量</th>
-                <th data-width="100" data-column="inventorycode">存货编码</th>
-                <th data-width="100" data-column="cversion">存货名称</th>
-                <th data-width="100" data-column="caddress">客户部番</th>
-                <th data-width="100" data-column="cinvcode2">部品名称</th>
-                <th data-width="100" data-column="cinvcode1">规格型号</th>
-                <th data-width="100" data-column="cinvname1">主计量单位</th>
-                <th data-width="100" data-column="cinvname2">所属机型</th>
+                <th class="barcode" data-width="100" data-column="barcode">现品票</th>
+                <th class="whcodename" data-width="100" data-column="whcodename">仓库名称</th>
+                <th class="qty" data-width="100" data-column="qty">数量</th>
+                <th class="cinvcode" data-width="100" data-column="cinvcode">存货编码</th>
+                <th class="cinvname" data-width="100" data-column="cinvname">存货名称</th>
+                <th class="caddress" data-width="100" data-column="caddress">客户部番</th>
+                <th class="cinvcode2" data-width="100" data-column="cinvcode2">部品名称</th>
+                <th class="cinvstd" data-width="100" data-column="cinvstd">规格型号</th>
+                <th class="inventorycuomname" data-width="100" data-column="inventorycuomname">主计量单位</th>
+                <th class="cequipmentmodelname" data-width="100" data-column="cequipmentmodelname">所属机型</th>
 
-                <th data-width="100" data-column="spotticketh">现品票(转换后)</th>
-                <th data-width="100" data-column="whcodehname">仓库名称(转换后)</th>
-                <th data-width="100" data-column="qtyh">数量(转换后)</th>
-                <th data-width="100" data-column="inventoryhcode">存货编码(转换后)</th>
-                <th data-width="100" data-column="cversionh">存货名称(转换后)</th>
-                <th data-width="100" data-column="caddressh">客户部番(转换后)</th>
-                <th data-width="100" data-column="cinvcode2h">部品名称(转换后)</th>
-                <th data-width="100" data-column="cinvcode1h">规格型号(转换后)</th>
-                <th data-width="100" data-column="cinvname1h">主计量单位(转换后)</th>
-                <th data-width="100" data-column="cinvname2h">所属机型(转换后)</th>
+
+                <th class="spotticketh" data-width="100" data-column="spotticketh">现品票(转换后)</th>
+                <th class="whcodehname" data-width="100" data-column="whcodehname">仓库名称(转换后)</th>
+                <th class="qtyh" data-width="100" data-column="qtyh">数量(转换后)</th>
+                <th class="inventoryhcode" data-width="100" data-column="inventoryhcode">存货编码(转换后)</th>
+                <th class="cversionh" data-width="100" data-column="cversionh">存货名称(转换后)</th>
+                <th class="caddressh" data-width="100" data-column="caddressh">客户部番(转换后)</th>
+                <th class="cinvcode2h" data-width="100" data-column="cinvcode2h">部品名称(转换后)</th>
+                <th class="cinvcode1h" data-width="100" data-column="cinvcode1h">规格型号(转换后)</th>
+                <th class="cinvname1h" data-width="100" data-column="cinvname1h" >主计量单位(转换后)</th>
+                <th class="cinvname2h" data-width="100" data-column="cinvname2h">所属机型(转换后)</th>
             </tr>
         </thead>
     </table>
@@ -337,7 +328,7 @@
                     placeholder: "数量(转换后)", //输入提示，里面
                     tooltip: "数量(转换后)",//输入提示，上方
                 },
-                
+
                 inventorycode: {
                     // type:"select",
                     // url:admin/inventory/autocomplete,//url地址
@@ -349,7 +340,7 @@
                     //                 }
                     // ]   
                     type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
+                    url: "admin/formConversionList/barcodeDatas",
                     maxLength: 100,
                     required: true,
                     placeholder: "请选择存货编码",
@@ -358,34 +349,40 @@
                     valueAttr: "cinvcode",//选择赋值的字段
                     columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
                     header: '存货编码,客户部番,部品名称,规格,库存主单位',
-                    changeColumns: [{ column: "inventorycode", use: "cinvcode" }, { column: "caddress", use: "cinvcode1" },
-                    { column: "cinvcode2", use: "cinvname1" }, { column: "cinvcode1", use: "cinvstd" },
-                    { column: "cinvname1", use: "cuomname" }]
+                    valueAttr: "barcode",
+                    columnAttr: "barcode,cinvcode,cinvdddcode,cinvname,cinvstd,inventorycuomname,qty,cequipmentmodelname",
+                    header: '现品票,存货编码,存货代码,存货名称,规格型号,主计量单位,数量,所属机型',
+                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
+                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
+                    { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
+                    { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
+                    {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
+                    {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "cinvdddcode", use: "cinvdddcode"},
+                    {column: "cinvname", use: "cinvname"},{column: "inventorycuomname", use: "inventorycuomname"},
+                    {column: "sourcebillid", use: "sourcebillid"},{column: "qty", use: "qty"}],
+                    handler: function (table, td, text, value, trJsonData) {
+                        //逻辑：先判断当前行选择数据的时候能否添加下一行 ;(或者在以上的表格通过disabled处理)
+                        //能，添加行，通过当前行获取下一行然后赋值
+                        //不能，通过当前行获取下一行然后赋值
+                        jboltTableAppendEmptyRow1(table, td, text, value, trJsonData);
+                        var dq = td.parent();  console.log('dq',dq);
+                        var down = td.parent().parent().next();  console.log('down',down);
+                        
+                        // 获取当前行第二个td元素（索引为1）的value值
+                        var value = down.find('td:eq(13)').text();
+                        console.log('value',value);
+                        down.find('.cinvname2').text(value);
+                        //获取所有的序号
+                        var datas = jboltTableGetAllDatas("jbolt_Table_#(pageId)");
+                        console.log('table',table);//整个表格
+                        console.log('datas',datas);//整个表格数据
+                        console.log('trJsonData',trJsonData);//当前行数据
+                        //获当前行的序号
+               
+                      
+                    }
                 },
-                inventoryhcode: {
-                    // type:"select",
-                    // url:admin/inventory/autocomplete,//url地址
-                    //valueAttr:"",//显示的字段，可以设置多个
-                    //onlyleaf:true,//树形结构只能选择叶子节点
-                    //required:true,//必填
-                    // changeColumns:[{column: "iinventoryid",//显示绑定的字段
-                    //                 use: "cinvcode"        //数据源的字段
-                    //                 }
-                    // ]   
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
-                    maxLength: 100,
-                    required: true,
-                    placeholder: "请选择存货编码",
-                    textAttr: "cinvcode",
-                    width: 500,
-                    valueAttr: "inventoryhcode",//选择赋值的字段
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
-                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
-                    changeColumns: [{ column: "inventoryhcode", use: "cinvcode" }, { column: "caddressh", use: "cinvcode1" },
-                    { column: "cinvcode2h", use: "cinvname1" }, { column: "cinvcode1h", use: "cinvstd" },
-                    { column: "cinvname1h", use: "cuomname" }]
-                },
+          
             }
         };
         return editableTableOptions;
@@ -393,6 +390,32 @@
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
+    }
+
+
+    function jboltTableAppendEmptyRow1(ele, forceTrChange,text, value, trJsonData) {
+        var table = getJBoltTable(ele);
+        if (isOk(table)) {
+            var jboltTable = table.jboltTable("inst");
+            if (jboltTable) {
+                var action = getRealJqueryObject(ele);
+                if (isOk(action)) {
+                    var success = checkMasterTableId(action);
+                    if (!success) {
+                        return false;
+                    }
+                }
+                if (!jboltTable.isEmpty) {
+                    var tr = jboltTable.tbody.find("tr:last");
+                    if (isOk(tr)) {
+                        return jboltTable.me.insertEmptyRow(jboltTable, tr, false, forceTrChange);
+                    }
+                }
+                return jboltTable.me.insertEmptyRow(jboltTable, null, false, forceTrChange);
+            }
+        }
+        LayerMsgBox.alert("表格组件配置异常", 2);
+        return false;
     }
 
 </script>

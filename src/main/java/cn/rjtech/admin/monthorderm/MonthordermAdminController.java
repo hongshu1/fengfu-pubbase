@@ -117,6 +117,6 @@ public class MonthordermAdminController extends BaseAdminController {
 	 */
 	@Before(Tx.class)
 	public void approve() {
-		renderJson(service.approve(getLong(0)));
+		renderJson(service.approve(getLong("id")));
 	}
 }

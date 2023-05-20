@@ -2,103 +2,108 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
-	<div class="jbolt_page_title">
-		<div class="row">
-			<div class="col-sm-auto">
-				<h1><i class="jbicon2 jbi-appstore"></i>其它入库单</h1>
-			</div>
-			<div class="col">
-				<form class="form-inline" id="SysOtherin_form_#(pageId)">
-					<input type="text" autocomplete="off" class="form-control" placeholder="入库单号" name="billno"
-						value="" />
-					<input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="whname"
-						value="" />
-					<input type="text" autocomplete="off" class="form-control" placeholder="生产部门" name="deptName"
-						value="" />
-					<select class="form-control" name="state" data-autoload data-url="admin/dictionary/options?key=null"
-						data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select>
-					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20"
-						name="startTime" value="" />
-					<span class="ml-1 mr-1">至</span>
-					<input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20" name="endTime"
-						value="" />
-					<button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
-					<button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-				</form>
-			</div>
-		</div>
-	</div>
-	<div class="jbolt_page_content">
-		<!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="SysOtherin_tpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.autoid}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>
-	<a href="admin/otherInList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑其它入库单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
-    <a href="admin/otherInList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-</td>
-<td>${data.statename}</td>
-<td>${data.billno}</td>
-<td>${data.createdate}</td>
-<td>${data.whname}</td>
-<td>${data.rdcodename}</td>
-<td>${data.billtype}</td>
-<td>${data.billno}</td>
-<td>${data.venname}</td>
-<td>${data.auditdate}</td>
-<td>${data.memo}</td>
-<td>${data.createperson}</td>
-<td>${data.createdate}</td>
-</tr>
-{@/each}
-</textarea>
-		<div class="jbolt_table_toolbar" id="SysOtherin_toolbar_#(pageId)">
-			<button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
-				id="toolbar_addBtn_#(pageId)" data-title="新增发货管理-其它入库单表" data-url="admin/otherInList/add"
-				class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
-			<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)"
-				data-title="批量审批其它入库单表" data-check-handler="jboltTableGetCheckedId" data-url="admin/otherInList/edit/"
-				class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量审批</button>
-			<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
-				id="side_toolbar_editBtn_#(pageId)" data-title="批量反审批-其它入库单表"
-				data-check-handler="jboltTableGetCheckedId" data-url="admin/otherInList/edit/"
-				class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量反审批</button>
-			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-				id="toolbar_deleteBtn_#(pageId)" data-url="admin/otherInList/deleteByIds?ids=" data-confirm="确定删除选中数据？"
-				class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
-		</div>
-		<table class="jbolt_table jbolt_main_table  table-center " 
-			data-jbolttable data-width="fill" 
-			data-height="fill"
-			data-ajax="true" 
-			data-conditions-form="SysOtherin_form_#(pageId)" 
-			data-url="admin/otherInList/datas"
-			data-rowtpl="SysOtherin_tpl_#(pageId)" 
-			data-copy-to-excel="false" data-page="SysOtherin_page" 
-			data-column-resize="true"      data-column-prepend="1:checkbox:true"
-			data-toolbar="SysOtherin_toolbar_#(pageId)">
-			<thead class="fw-normal">
-				<tr>
-					<th data-width="60" data-column="index">序号</th>
-					<th data-width="150" data-column="autoid">操作</th>
-					<th data-width="150" data-column="state">状态</th>
-					<th data-width="150" data-column="warehousingNo">入库单号</th>
-					<th data-min-width="160" data-column="CreateDate">入库时间</th>
-					<th data-width="150" data-column="repositoryName">仓库名称</th>
-					<th data-width="150" data-column="warehousingType">入库类别</th>
-					<th data-width="150" data-column="BillType">业务类型</th>
-					<th data-width="150" data-column="BillNo">业务单号</th>
-					<th data-width="150" data-column="venName">供应商名称</th>
-					<th data-width="150" data-column="AuditDate">审核日期</th>
-					<th data-width="150" data-column="remark">备注</th>
-					<th data-width="150" data-column="name">创建人</th>
-					<th data-min-width="160" data-column="CreateDate">创建时间</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-	</div>
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto">
+                <form class="form-inline" id="SysOtherin_form_#(pageId)">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="入库单号" name="billno"
+                           value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="whname"
+                           value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="生产部门" name="deptName"
+                           value=""/>
+                    <select class="form-control" name="state" data-autoload data-url="admin/dictionary/options?key=null"
+                            data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select>
+                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20"
+                           name="startTime" value=""/>
+                    <span class="ml-1 mr-1">至</span>
+                    <input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20"
+                           name="endTime"
+                           value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="SysOtherin_tpl_#(pageId)">
+		{@each datas as data,index}
+			<tr data-id="${data.autoid}">
+				<td>${pageNumber,pageSize,index | rownum}</td>
+				<td>
+					<a href="admin/otherInList/edit/${data.autoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑其它入库单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+					<a href="admin/otherInList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+				</td>
+				<td>${data.statename}</td>
+				<td>${data.billno}</td>
+				<td>${data.createdate}</td>
+				<td>${data.whname}</td>
+				<td>${data.rdcodename}</td>
+				<td>${data.billtype}</td>
+				<td>${data.billno}</td>
+				<td>${data.venname}</td>
+				<td>${data.auditdate}</td>
+				<td>${data.memo}</td>
+				<td>${data.createperson}</td>
+				<td>${data.createdate}</td>
+			</tr>
+		{@/each}
+		</textarea>
+        <div class="jbolt_table_toolbar" id="SysOtherin_toolbar_#(pageId)">
+            <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
+                    id="toolbar_addBtn_#(pageId)" data-title="新增发货管理-其它入库单表"
+                    data-url="admin/otherInList/add"
+                    class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
+            </button>
+            <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)"
+                    data-title="批量审批其它入库单表" data-check-handler="jboltTableGetCheckedId"
+                    data-url="admin/otherInList/edit/"
+                    class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量审批
+            </button>
+            <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"
+                    id="side_toolbar_editBtn_#(pageId)" data-title="批量反审批-其它入库单表"
+                    data-check-handler="jboltTableGetCheckedId" data-url="admin/otherInList/edit/"
+                    class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量反审批
+            </button>
+            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                    id="toolbar_deleteBtn_#(pageId)" data-url="admin/otherInList/deleteByIds?ids="
+                    data-confirm="确定删除选中数据？"
+                    class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
+            </button>
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="SysOtherin_form_#(pageId)"
+               data-url="admin/otherInList/datas"
+               data-rowtpl="SysOtherin_tpl_#(pageId)"
+               data-copy-to-excel="false" data-page="SysOtherin_page"
+               data-column-resize="true" data-column-prepend="1:checkbox:true"
+               data-toolbar="SysOtherin_toolbar_#(pageId)">
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150" data-column="autoid">操作</th>
+                <th data-width="150" data-column="state">状态</th>
+                <th data-width="150" data-column="warehousingNo">入库单号</th>
+                <th data-min-width="160" data-column="CreateDate">入库时间</th>
+                <th data-width="150" data-column="repositoryName">仓库名称</th>
+                <th data-width="150" data-column="warehousingType">入库类别</th>
+                <th data-width="150" data-column="BillType">业务类型</th>
+                <th data-width="150" data-column="BillNo">业务单号</th>
+                <th data-width="150" data-column="venName">供应商名称</th>
+                <th data-width="150" data-column="AuditDate">审核日期</th>
+                <th data-width="150" data-column="remark">备注</th>
+                <th data-width="150" data-column="name">创建人</th>
+                <th data-min-width="160" data-column="CreateDate">创建时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 #end
 

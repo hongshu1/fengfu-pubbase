@@ -267,8 +267,10 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             Record detailByParam = findSysPODetailByParam(podetailKv);
             record.set("invname", detailByParam.get("invname"));
 //            record.set("venname", detailByParam.get("venname"));
-            record.set("cptcode", purchaseType.getCPTCode());
-            record.set("cptname", purchaseType.getCPTName());
+            if (null != purchaseType){
+                record.set("cptcode", purchaseType.getCPTCode());
+                record.set("cptname", purchaseType.getCPTName());
+            }
         }
         return paginate;
     }

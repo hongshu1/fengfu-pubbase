@@ -22,7 +22,6 @@ import cn.rjtech.model.momdata.SysPuinstore;
 
 /**
  * 采购入库单
- *
  * @ClassName: SysPuinstoreAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 15:38
@@ -96,7 +95,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * */
     public void resetAutitById() {
         Kv kv = getKv();
-        service.resetAutitById(kv.getStr("autoid"));
+        renderJson(service.resetAutitById(kv.getStr("autoid")));
     }
 
     /*
@@ -131,7 +130,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * 打印
      * */
     public void printSysPuinstore() {
-
+        //TODO 待定
     }
 
     /**

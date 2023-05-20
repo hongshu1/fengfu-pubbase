@@ -41,19 +41,19 @@
               <tr data-id="${data.iautoid}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
                 <td>
-                  <a href="admin/splitBarcode/edit?autoid=${data.iautoid}" data-area="1200,800" tooltip
+                  <a href="admin/splitBarcode/edit?logno=${data.logno}" data-area="1200,800" tooltip
                      data-title="查看" data-handler="refreshJBoltTable" data-btn="close"
                      data-dialog-title="查看"
                      class="jbolt_table_editbtn">查看</a>
                 </td>
-                <td>${data.barcode}</td>
-                <td>${data.invcode}</td>
-                <td>${data.cinvcode1}</td>
-                <td>${data.cinvname1}</td>
-                <td>${data.invstd}</td>
-                <td>${data.unitname}</td>
-                <td>${data.createperson}</td>
-                <td>${data.createdate}</td>
+                <td title="${data.ipurchaseorderdid}">${data.ipurchaseorderdid}</td>
+                <td title="${data.invcode}">${data.invcode}</td>
+                <td title="${data.cinvcode1}">${data.cinvcode1}</td>
+                <td title="${data.cinvname1}">${data.cinvname1}</td>
+                <td title="${data.invstd}">${data.invstd}</td>
+                <td title="${data.unitname}">${data.unitname}</td>
+                <td title="${data.createperson}">${data.createperson}</td>
+                <td title="${data.createdate}">${data.createdate}</td>
               </tr>
               {@/each}
             </script>
@@ -82,7 +82,7 @@
                     <tr>
                       <th data-width="30" data-min-width="60" data-column="index">序号</th>
                       <th data-width="150">操作</th>
-                      <th data-width="150" data-column="barcode">拆分单号</th>
+                      <th data-width="150" data-column="ipurchaseorderdid">拆分单号</th>
                       <th data-width="150" data-column="invcode">存货编码</th>
                       <th data-width="300" data-column="cinvcode1">客户部番</th>
                       <th data-width="250" data-column="cinvname1">部品名称</th>
