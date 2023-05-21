@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseApsAnnualpland;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.momdata.base.BaseApsAnnualpland;
 
 /**
  * 生产计划-年度计划排产明细

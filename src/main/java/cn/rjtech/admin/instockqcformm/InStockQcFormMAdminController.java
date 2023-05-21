@@ -1,22 +1,23 @@
 package cn.rjtech.admin.instockqcformm;
 
-import java.util.List;
-
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InStockQcFormM;
-
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 /**
  * 在库检 Controller
@@ -25,8 +26,9 @@ import com.jfinal.plugin.activerecord.Record;
  * @author: RJ
  * @date: 2023-04-25 15:00
  */
-@CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.NONE)
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/instockqcformm", viewPath = "/_view/admin/instockqcformm")
 public class InStockQcFormMAdminController extends BaseAdminController {
 

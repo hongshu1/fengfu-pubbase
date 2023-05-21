@@ -1,15 +1,13 @@
 package cn.rjtech.admin.sysassem;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysAssemdetail;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 /**
  * 组装拆卸及形态转换单明细
  * @ClassName: SysAssemdetailAdminController

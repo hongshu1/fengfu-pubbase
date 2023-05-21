@@ -6,7 +6,6 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -72,8 +71,6 @@ public class SplitBarCodeAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-//        Integer qty = byShiWu.getInt("qty");
-//        byShiWu.set("allqty","");
         set("bill", byShiWu);
         render("edit.html");
     }

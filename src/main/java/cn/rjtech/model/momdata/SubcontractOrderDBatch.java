@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseSubcontractOrderDBatch;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.momdata.base.BaseSubcontractOrderDBatch;
 
 /**
  * 采购/委外管理-采购现品票

@@ -3,7 +3,6 @@ package cn.rjtech.admin.syspureceive;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -19,11 +18,9 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.rjtech.admin.sysenumeration.SysEnumerationService;
 
 /**
  * 采购收料单
- *
  * @ClassName: SysPureceiveAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-10 10:01
@@ -87,7 +84,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        //关联查询出仓库编码,然后换数据源U8 查其名称
+        // 关联查询出仓库编码,然后换数据源U8 查其名称
         SysPureceivedetail first = syspureceivedetailservice.findFirst("select * from  T_Sys_PUReceiveDetail where MasID = ?", sysPureceive.getAutoID());
         if (first != null && null != first.getWhcode()) {
             Warehouse first1 = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", first.getWhcode());
@@ -97,7 +94,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
         if (null != sysPureceive.getCreatePerson()) {
             set("username", sysenumerationservice.getUserName(sysPureceive.getCreatePerson()));
         }
-        //查供应商名称
+        // 查供应商名称
         if (null != sysPureceive.getVenCode()) {
             Vendor first1 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", sysPureceive.getVenCode());
             set("venname", first1.getCVenName());

@@ -4,14 +4,9 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="save()" class="btn btn-success btn-sm" "><i
-                                class=" fa fa-refresh"></i> 保存</button>
-                        <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 提交审批
-                        </button>
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 关闭
-                        </button>
+                        <button onclick="save()" class="btn btn-success btn-sm"><i class=" fa fa-refresh"></i>保存</button>
+                        <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>提交审批</button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>关闭</button>
                     </div>
                 </div>
             </div>
@@ -35,7 +30,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">收料日期</label>
@@ -46,9 +40,7 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- 
-
+                            <!--
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <input type="hidden" name="Whcode" value="#(Whcode??)"
@@ -64,9 +56,6 @@
                                     </div>
                                 </div>
                             </div> -->
-
-
-
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <input type="hidden" name="sysPureceive.VenCode" value="#(sysPureceive.VenCode??)"
@@ -82,9 +71,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
-
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">收料人</label>
@@ -95,10 +81,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
-
-
                         </div>
                         <input id="operationType" type="hidden" name="operationType" value="#(operationType??)">
                     </form>
@@ -128,7 +110,6 @@
             <td>${data.qty}</td>
             <td>${data.whcode}</td>
             <td><img data-switchbtn data-value="${data.isinitial}" data-handler="switchEditableTd"/></td>
-
         </tr>
         {@/each}
     </script>
@@ -154,9 +135,7 @@
                 id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysPureceivedetail/deleteByIds?ids="
                 data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
         </div>
-
     </div>
-
     <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysPureceive.AutoID??)
         data-ajax="true" data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" #end
         id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
@@ -179,7 +158,6 @@
             </tr>
         </thead>
     </table>
-
 </div>
 #define js()
 <script>
@@ -196,7 +174,6 @@
 
     function getJBoltTableEditableColsOpton() {
         var editableTableOptions = {
-
             submit: {
                 withForm: ["sysPureceive_#(pageId)"],
                 name: 'sysPureceive',
@@ -236,7 +213,6 @@
                     header: '仓库编码,仓库名称',
                     changeColumns: [{ column: "whcode", use: "whcode" }]
                 },
-
                 barcode: { //条码
                     maxLength: 100,
                     required: true,

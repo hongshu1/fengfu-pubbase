@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseVouchRdContrapose;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.momdata.base.BaseVouchRdContrapose;
 
 /**
  * 基础档案-单据类型与收发类别对照表

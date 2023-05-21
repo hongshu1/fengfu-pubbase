@@ -13,7 +13,6 @@ import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.base.service.BaseService;
-import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Uomclass;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;

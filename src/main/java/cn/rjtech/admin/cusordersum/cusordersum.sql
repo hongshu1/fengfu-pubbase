@@ -88,6 +88,30 @@ WHERE 1=1
 	    iMonth
 #end
 
+#sql("getiQty3")
+SELECT
+    iMonth,iyear,iInventoryId,SUM (  iQty3  ) as iQtySum,
+    #for (x : roleArray.split(','))
+    SUM(CASE iDate WHEN '#(x)' THEN iQty3 ELSE 0 END) as 'iQty#(x)' #(for.last?'':',')
+        #end
+FROM
+    Co_CusOrderSum
+WHERE 1=1
+    #if(iInventoryId)
+  and  iInventoryId  = #para(iInventoryId)
+    #end
+    #if(dateMap)
+  and (
+    #for (d: dateMap)
+    #(for.first ? "" : "or") (iYear = '#(d.key)' and iMonth in ( #(d.value) ))
+    #end )
+    #end
+GROUP BY
+    iMonth,iyear,iInventoryId
+ORDER BY
+    iMonth
+#end
+
 #sql("getIDate")
    SELECT
 	iDate

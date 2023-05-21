@@ -1,13 +1,18 @@
 package cn.rjtech.admin.inventory;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.poi.excel.JBoltExcel;
@@ -15,15 +20,26 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.inventoryplan.InventoryPlanService;
+import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
+import cn.rjtech.admin.inventoryroutingconfigoperation.InventoryroutingconfigOperationService;
+import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
 import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
+import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.admin.uom.UomService;
+import cn.rjtech.enums.InvPartTypeEnum;
+import cn.rjtech.enums.InventoryTableTypeEnum;
+import cn.rjtech.enums.OperationTypeEnum;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.Kv;
@@ -37,10 +53,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -51,7 +66,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @date: 2023-03-23 09:35
  */
 public class InventoryService extends BaseService<Inventory> {
-    
+ 
 	private final Inventory dao=new Inventory().dao();
 
     @Inject
@@ -68,6 +83,15 @@ public class InventoryService extends BaseService<Inventory> {
 	private InventoryWorkRegionService inventoryWorkRegionService;
     @Inject
 	private DictionaryService dictionaryService;
+    @Inject
+    private InvPartService invPartService;
+    @Inject
+    private InventoryRoutingConfigService inventoryRoutingConfigService;
+    @Inject
+    private InventoryRoutingInvcService inventoryRoutingInvcService;
+	
+	@Inject
+	private InventoryroutingconfigOperationService inventoryroutingconfigOperationService;
 
 	@Override
 	protected Inventory dao() {
@@ -412,25 +436,52 @@ public class InventoryService extends BaseService<Inventory> {
 		return  itempicture ;
 	}
 
-	public Ret updateForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo, InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions, List<InventoryWorkRegion> newInventoryWorkRegions, Object[] delete) {
-		AtomicReference<Ret> res = new AtomicReference<>();
-		res.set(SUCCESS);
+	public Ret updateForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo,
+						  InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions, List<InventoryWorkRegion> newInventoryWorkRegions,
+						  Object[] delete, JBoltTable inventoryRoutingJboltTable) {
 		tx(() -> {
 			Ret inventoryRet = update(inventory);
+			// 存货档案-附加
 			inventoryAddition.setIInventoryId(inventory.getIAutoId());
-			Ret additionRet = inventoryAdditionService.update(inventoryAddition);
+			
+			if (ObjectUtil.isNull(inventoryAddition.getIAutoId())){
+				inventoryAdditionService.save(inventoryAddition);
+			}else if (ObjectUtil.isNotNull(inventoryAddition.getIAutoId())){
+				inventoryAdditionService.update(inventoryAddition);
+			}
+			
+			// 料品计划档案
 			inventoryPlan.setIInventoryId(inventory.getIAutoId());
-			Ret planRet = inventoryPlanService.update(inventoryPlan);
+			if (ObjectUtil.isNull(inventoryPlan.getIAutoId())){
+				inventoryPlanService.save(inventoryPlan);
+			}else if (ObjectUtil.isNotNull(inventoryPlan.getIAutoId())){
+				inventoryPlanService.update(inventoryPlan);
+			}
+			
+			// 料品生产档案
 			inventoryMfgInfo.setIInventoryId(inventory.getIAutoId());
-			Ret mfgInfoRet = inventoryMfgInfoService.update(inventoryMfgInfo);
+			if (ObjectUtil.isNull(inventoryMfgInfo.getIAutoId())){
+				inventoryMfgInfoService.save(inventoryMfgInfo);
+			}else if (ObjectUtil.isNotNull(inventoryMfgInfo.getIAutoId())){
+				inventoryMfgInfoService.update(inventoryMfgInfo);
+			}
+			
+			// 料品库存档案
 			inventorystockconfig.setIInventoryId(inventory.getIAutoId());
-			Ret stockRet = inventoryStockConfigService.update(inventorystockconfig);
+			if (ObjectUtil.isNull(inventorystockconfig.getIAutoId())){
+				inventoryStockConfigService.save(inventorystockconfig);
+			}else if (ObjectUtil.isNotNull(inventorystockconfig.getIAutoId())){
+				inventoryStockConfigService.update(inventorystockconfig);
+			}
+			
+			// 料品生产--所属生产线修改
 			if(inventoryWorkRegions != null && inventoryWorkRegions.size() > 0){
 				for (InventoryWorkRegion workRegion : inventoryWorkRegions) {
 					workRegion.setIInventoryId(inventory.getIAutoId());
 				}
 				int[] ints = inventoryWorkRegionService.batchUpdate(inventoryWorkRegions);
 			}
+			// 所属产线新增
 			if(newInventoryWorkRegions != null && newInventoryWorkRegions.size() >0){
 				for (InventoryWorkRegion workRegion : newInventoryWorkRegions) {
 					workRegion.setIInventoryId(inventory.getIAutoId());
@@ -438,21 +489,422 @@ public class InventoryService extends BaseService<Inventory> {
 				}
 				inventoryWorkRegionService.batchSave(newInventoryWorkRegions);
 			}
-			// 删除
+			// 删除 料品生产--所属生产线
 			if (ArrayUtil.isNotEmpty(delete)) {
 				deleteMultiByIds(delete);
 			}
+			// 工艺路线操作
+			inventoryRoutingOperation(inventory, inventoryRoutingJboltTable);
 			return true;
 		});
 
-		return res.get();
+		return SUCCESS;
 	}
-
+	
+	/**
+	 *
+	 * @param inventory 存货
+	 * @param inventoryRoutingJboltTable
+	 */
+	public void  inventoryRoutingOperation(Inventory inventory, JBoltTable inventoryRoutingJboltTable){
+		List<Record> recordList = new ArrayList<>();
+		ValidationUtils.notNull(inventory, "未获取到存货档案数据");
+		ValidationUtils.notNull(inventory.getIAutoId(), "未获取到存货档案id数据");
+		Long masterInvId = inventory.getIAutoId();
+		// 获取新增数据
+		List<Record> saveRecordList = inventoryRoutingJboltTable.getSaveRecordList();
+		// 获取修改数据
+		List<Record> updateModelList = inventoryRoutingJboltTable.getUpdateRecordList();
+		
+		if (CollectionUtil.isNotEmpty(saveRecordList)){
+			recordList.addAll(saveRecordList);
+		}
+		
+		if (CollectionUtil.isNotEmpty(updateModelList)){
+			recordList.addAll(updateModelList);
+		}
+		
+		// 获取删除数据
+		Object[] deleteRoutingConfig = inventoryRoutingJboltTable.getDelete();
+		// 为空无需操作
+		if (CollectionUtil.isEmpty(recordList)){
+			return;
+		}
+		// 判断当前工序是否与1， 大于1则按seq排序
+		if (CollectionUtil.isNotEmpty(recordList) && recordList.size() >1){
+			CollectionUtil.sort(recordList, new Comparator<Record>() {
+				@Override
+				public int compare(Record u1, Record u2) {
+					return Integer.compare(u1.getInt(InventoryRoutingConfig.ISEQ), u2.getInt(InventoryRoutingConfig.ISEQ));
+				}
+			});
+		}
+		
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		DateTime date = DateUtil.date();
+		Long orgId = getOrgId();
+		
+		// 添加物料中间表
+		List<InvPart> invPartList = operation(masterInvId, recordList);
+		// 先删除
+		if (ArrayUtil.isNotEmpty(deleteRoutingConfig)){
+			inventoryRoutingConfigService.deleteByIds(deleteRoutingConfig);
+			// 先删除改工艺路线下所有物料数据
+			invPartService.deleteByRoutingConfigIds(deleteRoutingConfig);
+			// 关联工序表删除
+			inventoryroutingconfigOperationService.deleteByRoutingConfigIds(deleteRoutingConfig);
+			// 物料集
+			inventoryRoutingInvcService.deleteByRoutingConfigIds(deleteRoutingConfig);
+			// 设备集
+			
+			// 作业指导书
+			
+		}
+		// 保存
+		invPartService.batchSave(invPartList);
+		
+		// 保存工序表及工序关联表
+		inventoryRoutingConfigService.saveRoutingConfigAndOperation(orgId, userId, userName, date, recordList);
+		// 物料集
+		inventoryRoutingInvcService.saveRoutingInv(userId, userName, date, recordList);
+		// 保存设备集
+		
+		// 保存作业指导书
+		
+	}
+	
+	
+	public List<InvPart> operation(Long masterInvId, List<Record> recordList){
+		/*// 第一道工序次序
+		Integer minSeq = getMinSeq(recordList);
+		// 最后一道工序次序
+		Integer maxSeq = getMaxSeq(recordList);*/
+		Long orgId = getOrgId();
+		// 获取第一个第一个物料集
+		Map<Integer, Record> seqMap = recordList.stream().collect(Collectors.toMap(record -> record.getInt(InventoryRoutingConfig.ISEQ.toLowerCase()), record -> record));
+		// 记录中间表数据（存货物料表）
+		List<InvPart> invPartList = new ArrayList<>();
+		// 从后往前执行
+		for (int i=recordList.size()-1; i>=0; i--){
+			Record record = recordList.get(i);
+			
+			Long routingId = record.getLong(InventoryRoutingConfig.IINVENTORYROUTINGID);
+			
+			ValidationUtils.notNull(routingId, "缺少工艺路线id");
+			// 标识是否为新增
+			boolean isAdd = false;
+			Long routingConfigId = record.getLong(InventoryRoutingConfig.IAUTOID);
+			if (ObjectUtil.isNull(routingConfigId)){
+				routingConfigId = JBoltSnowflakeKit.me.nextId();
+				isAdd = true;
+			}
+			record.set(InventoryRoutingConfig.ISADD, isAdd);
+			record.set(InventoryRoutingConfig.IAUTOID, routingConfigId);
+			// 半成品
+			Long iRsInventoryId = record.getLong(InventoryRoutingConfig.IRSINVENTORYID);
+			
+			// 工序名称
+			String cOperationName = getCOperationName(record.getStr(InventoryRoutingConfig.COPERATIONNAME));
+			
+			// 物料类型
+			int invPartType = InvPartTypeEnum.inventory.getValue();
+			// 半成品为空说明是虚拟件
+			if (ObjectUtil.isNull(iRsInventoryId)){
+				invPartType = InvPartTypeEnum.virtual.getValue();
+			}
+			
+			// 工序次序
+			Integer seq = record.getInt(InventoryRoutingConfig.ISEQ);
+			// 生产工艺
+			String cProductTechSn = record.getStr(InventoryRoutingConfig.CPRODUCTTECHSN);
+			// 生产方式
+			String cProductSn = record.getStr(InventoryRoutingConfig.CPRODUCTSN);
+			// 工序类型: 1. 串序 2. 并序
+			Integer type = record.getInt(InventoryRoutingConfig.ITYPE);
+			Integer perSeq = seq+10;
+			// (没有上一级key，说明是最后一到工序)
+			Integer nextSeq = seq-10;
+			
+			Object itemJson = record.get(InventoryRoutingConfig.ITEMJSONSTR);
+			List<JSONObject> itemList = null;
+			if (itemJson instanceof List) {
+				itemList = (List<JSONObject>) itemJson;
+			}
+			
+			String prefixErrorMsg = "当前工序【"+seq+"】";
+			// 校验
+			int count = 0;
+			// 最后一到工序
+			if (i == recordList.size()-1){
+				/**
+				 * 最后一到工序校验逻辑：
+				 * 	1.必须为串序
+				 * 	2.半成品名称必须为产品名称
+				 * 	3.当前物料集必须包含上一级半成品
+				 */
+				ValidationUtils.isTrue(OperationTypeEnum.bunchSequence.getValue() == type, "最后一道工序的工序类型，必须为串序");
+				ValidationUtils.isTrue(masterInvId.equals(iRsInventoryId) , "最后一道工序的半成品名称，必须为当前产品存货名称");
+			}
+			// 校验
+			checkRoutingInv(prefixErrorMsg, count, type, nextSeq, masterInvId, iRsInventoryId, itemList, seqMap);
+			
+			Long pid = null;
+			
+			// 只有最后一道工序才会创建)
+			if (i == recordList.size()-1 ){
+				Inventory inventory = findById(iRsInventoryId);
+				ValidationUtils.notNull(inventory, "未匹配到半成品存货");
+				String partCode = inventory.getCInvCode();
+				String partName = inventory.getCInvName();
+				InvPart invPart = invPartService.createInvPart(routingId, orgId, iRsInventoryId, masterInvId, null, routingConfigId,
+						invPartType, null, partCode, partName);
+				invPartList.add(invPart);
+				pid = invPart.getIAutoId();
+			}
+			// 获取上一级id
+			if (ObjectUtil.isNull(pid)){
+				// 默认为虚拟件
+				String partName = new StringBuilder("【虚拟件-").append(cOperationName).append("】").toString();
+				if (ObjectUtil.isNotNull(iRsInventoryId)){
+					Inventory inventory = findById(iRsInventoryId);
+					ValidationUtils.notNull(inventory, "未匹配到半成品存货");
+					partName = inventory.getCInvName();
+				}
+				pid = getInvPartPId(type, seq+10, partName, invPartList, seqMap);
+			}
+			// 添加半成品下的物料记录
+			List<InvPart> childInvPartList = createInvPartList(routingId, orgId, masterInvId, pid, routingConfigId, invPartType, seq, itemList, seqMap);
+			if (CollectionUtil.isNotEmpty(childInvPartList)){
+				invPartList.addAll(childInvPartList);
+			}
+			
+		}
+		return invPartList;
+	}
+	
+	/**
+	 * 查找上一级父id
+	 * @param type
+	 * @param nextSeq
+	 * @param partName
+	 * @param invPartList
+	 * @param seqMap
+	 * @return
+	 */
+	public Long getInvPartPId(int type, Integer nextSeq, String partName, List<InvPart> invPartList, Map<Integer, Record> seqMap){
+		// 并序
+		int parallelSequenceValue = OperationTypeEnum.parallelSequence.getValue();
+		int bunchSequenceValue = OperationTypeEnum.bunchSequence.getValue();
+		// 串序：直接默认取上一级
+		if (type == bunchSequenceValue){
+			// 通过次序分组
+			return getPId(partName, nextSeq, invPartList);
+		}
+		// 判断上一级工序是否并行，并行就继续往上找
+		if (seqMap.containsKey(nextSeq)){
+			Record nextRecord = seqMap.get(nextSeq);
+			Integer nextType = nextRecord.getInt(InventoryRoutingConfig.ITYPE);
+			if (nextType == bunchSequenceValue){
+				return getPId(partName, nextSeq, invPartList);
+			}
+			return getInvPartPId(nextType, nextSeq+10, partName, invPartList, seqMap);
+		}
+		return null;
+	}
+	
+	private Long getPId(String partName, Integer nextSeq, List<InvPart> invPartList){
+		List<InvPart> invParts = invPartList.stream().filter(invPart -> nextSeq.equals(invPart.getISeq())).collect(Collectors.toList());
+		for (InvPart invPart : invParts){
+			String cPartName = invPart.getCPartName();
+			if (partName.equals(cPartName)){
+				return invPart.getIAutoId();
+			}
+		}
+		return null;
+	}
+	
+	public List<InvPart> createInvPartList(Long routingId, Long orgId, Long parentInvId, Long pid, Long routingConfigId, int invPartType, int seq, List<JSONObject> itemList, Map<Integer, Record> seqMap){
+		if (CollectionUtil.isEmpty(itemList)){
+			return null;
+		}
+		
+		List<InvPart> invPartList = new ArrayList<>();
+		for (JSONObject jsonObject : itemList){
+			Long iInventoryId = jsonObject.getLong(InventoryRoutingInvc.IINVENTORYID.toLowerCase());
+			String partCode = jsonObject.getString(Inventory.CINVCODE.toLowerCase());
+			String partName = jsonObject.getString(Inventory.CINVNAME.toLowerCase());
+			InvPart invPart = invPartService.createInvPart(routingId, orgId, iInventoryId, parentInvId, pid, routingConfigId, invPartType, seq, partCode, partName);
+			invPartList.add(invPart);
+		}
+		// 查找虚拟件 setInvPartList
+		// 下一道为串序，判断下一道 半成品是否为空
+		createVirtualInvPartList(0, seq, seq-10, seqMap, invPartList);
+		
+		invPartService.setInvPartList(routingId, orgId, parentInvId, pid, routingConfigId, seq, invPartList);
+		return invPartList;
+	}
+	
+	public void createVirtualInvPartList(int count, int thisSeq, int perSeq, Map<Integer, Record> seqMap, List<InvPart> invPartList){
+		// 串序：找上一级所有并序（不包含串序）是否存在虚拟件
+		// 并序：只需要找上一级是否为串序（不是串序不用管，是串序就判断是不是虚拟件）
+		if (!seqMap.containsKey(perSeq)){
+			return;
+		}
+		Record record = seqMap.get(thisSeq);
+		// 当前类型
+		Integer thisType = record.getInt(InventoryRoutingConfig.ITYPE);
+		
+		Record perConfig = seqMap.get(perSeq);
+		Long iRsInventoryId = perConfig.getLong(InventoryRoutingConfig.IRSINVENTORYID);
+		
+		String cOperationName =getCOperationName(perConfig.getStr(InventoryRoutingConfig.COPERATIONNAME));
+		
+		String partName = new StringBuilder("【虚拟件-").append(cOperationName).append("】").toString();
+		Integer type = perConfig.getInt(InventoryRoutingConfig.ITYPE);
+		
+		// 并序
+		int parallelSequenceValue = OperationTypeEnum.parallelSequence.getValue();
+		int bunchSequenceValue = OperationTypeEnum.bunchSequence.getValue();
+		
+		// 当前是并序的，下一道也是并序的
+		if ( thisType == parallelSequenceValue && parallelSequenceValue == type) {
+			return;
+		}else if (thisType == bunchSequenceValue && parallelSequenceValue == type){
+			createVirtualInvPartList(count, thisSeq, perSeq-10, seqMap, invPartList);
+		}
+		
+		if (count > 0 && bunchSequenceValue == type){
+			return;
+		}
+		
+		if (ObjectUtil.isNull(iRsInventoryId)){
+			InvPart invPart = invPartService.createInvPart(InvPartTypeEnum.virtual.getValue(), partName);
+			invPartList.add(invPart);
+		}
+	}
+	
+	/**
+	 *
+	 * @param perSeq 前工序次序
+	 * @param itemList
+	 * @param seqMap
+	 */
+	public void checkRoutingInv(String prefixErrorMsg, int count, int thisType, Integer perSeq, Long masterInvId, Long rsInventoryId, List<JSONObject> itemList, Map<Integer, Record> seqMap){
+		ValidationUtils.notEmpty(itemList, "未设置物料集！");
+		if (!seqMap.containsKey(perSeq)){
+			// 不包含上一级次序，说明是第一到工序
+			checkRouting(masterInvId, rsInventoryId, null, prefixErrorMsg, itemList);
+			return;
+		}
+		
+		Record routingConfigRecord = seqMap.get(perSeq);
+		
+		Integer type = routingConfigRecord.getInt(InventoryRoutingConfig.ITYPE);
+		
+		OperationTypeEnum operationTypeEnum = OperationTypeEnum.toEnum(type);
+		ValidationUtils.notNull(operationTypeEnum, prefixErrorMsg+"未知工序类型！！！");
+		
+		/**
+		 * 当前为并序
+		 * 		1.找上一级是否为并序。为并序无需校验
+		 * 		2.上一级为串序，才校验物料集是否有包含
+		 */
+		
+		// 并序
+		int parallelSequenceValue = OperationTypeEnum.parallelSequence.getValue();
+		int bunchSequenceValue = OperationTypeEnum.bunchSequence.getValue();
+		// 当前工序为并序 上一道也为并行，无需校验
+		if (thisType == parallelSequenceValue && parallelSequenceValue == operationTypeEnum.getValue()){
+			return;
+		}else if (thisType == bunchSequenceValue && parallelSequenceValue == operationTypeEnum.getValue()){
+			count+=1;
+			checkRoutingInv(prefixErrorMsg, count, thisType, perSeq-10, masterInvId, rsInventoryId, itemList, seqMap);
+		}
+//		else if (thisType == parallelSequenceValue || thisType == bunchSequenceValue && bunchSequenceValue == operationTypeEnum.getValue()){
+//
+//		}
+		
+		// 判断当前是第几层进入并行
+		if (count > 0 && bunchSequenceValue == operationTypeEnum.getValue()){
+			return;
+		}
+		// 半成品，虚拟件跳过
+		Long iRsInventoryId = routingConfigRecord.getLong(InventoryRoutingConfig.IRSINVENTORYID);
+		if (ObjectUtil.isNull(iRsInventoryId)){
+			return;
+		}
+		checkRouting(masterInvId, rsInventoryId, iRsInventoryId, prefixErrorMsg, itemList);
+	}
+	
+	private void checkRouting(Long masterInvId, Long rsInventoryId, Long iRsInventoryId, String prefixErrorMsg, List<JSONObject> itemList){
+		boolean flag = itemList.stream()
+				.map(obj -> obj.getLong(InventoryRoutingInvc.IINVENTORYID.toLowerCase()))
+				.distinct()
+				.count() == itemList.size();
+		ValidationUtils.isTrue(flag, prefixErrorMsg+"物料集中存在相同的存货");
+		Map<Long, JSONObject> recordMap = itemList.stream().collect(Collectors.toMap(record -> record.getLong(InventoryRoutingInvc.IINVENTORYID.toLowerCase()), record -> record));
+		ValidationUtils.isTrue(!recordMap.containsKey(masterInvId), prefixErrorMsg+"物料集不能存在成品存货");
+		
+		if (ObjectUtil.isNotNull(rsInventoryId)){
+			ValidationUtils.isTrue(!recordMap.containsKey(rsInventoryId), prefixErrorMsg+"物料集不能当前半成品存货");
+		}
+		
+		if (ObjectUtil.isNotNull(iRsInventoryId)){
+			ValidationUtils.isTrue(recordMap.containsKey(iRsInventoryId), prefixErrorMsg+"物料集没有包含上一级工序半成品");
+		}
+	}
+	
+	public Integer getMinSeq(List<Record> recordList){
+		if (CollectionUtil.isEmpty(recordList)){
+			return 0;
+		}
+		if (recordList.size() == 1){
+			return recordList.get(0).getInt(InventoryRoutingConfig.ISEQ);
+		}
+		Record minRecord = Collections.min(recordList, new Comparator<Record>() {
+			@Override
+			public int compare(Record u1, Record u2) {
+				return Integer.compare(u1.getInt(InventoryRoutingConfig.ISEQ), u2.getInt(InventoryRoutingConfig.ISEQ));
+			}
+		});
+		return minRecord.getInt(InventoryRoutingConfig.ISEQ);
+	}
+	
+	
+	public Integer getMaxSeq(List<Record> recordList){
+		if (CollectionUtil.isEmpty(recordList)){
+			return 0;
+		}
+		if (recordList.size() == 1){
+			return recordList.get(0).getInt(InventoryRoutingConfig.ISEQ);
+		}
+		Record manRecord = Collections.max(recordList, new Comparator<Record>() {
+			@Override
+			public int compare(Record u1, Record u2) {
+				return Integer.compare(u1.getInt(InventoryRoutingConfig.ISEQ), u2.getInt(InventoryRoutingConfig.ISEQ));
+			}
+		});
+		return manRecord.getInt(InventoryRoutingConfig.ISEQ);
+	}
+	
+	/**
+	 *
+	 * @param masterInvId 存货id
+	 * @param partInvIds 上一级子件半成品
+	 * @param invList 当前物料集数据
+	 * @return
+	 */
+	public boolean checkInvPartList(Long masterInvId, List<Long> partInvIds, List<Record> invList){
+		return false;
+	}
+	
 	public void deleteMultiByIds(Object[] deletes) {
-		delete("DELETE FROM Bd_InventoryWorkRegion WHERE iAutoId IN (" + ArrayUtil.join(deletes, ",") + ") ");
+		delete("update Bd_InventoryWorkRegion set isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(deletes, ",") + ") ");
 	}
 
-	public Ret saveForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo, InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions) {
+	public Ret saveForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo,
+						InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions, JBoltTable inventoryRoutingJboltTable) {
 		AtomicReference<Ret> res = new AtomicReference<>();
 		res.set(SUCCESS);
 		tx(() -> {
@@ -461,30 +913,39 @@ public class InventoryService extends BaseService<Inventory> {
 				res.set(inventoryRet);
 				return false;
 			}
+			// 存货档案-附加
 			inventoryAddition.setIInventoryId(inventory.getIAutoId());
 			Ret additionRet = inventoryAdditionService.save(inventoryAddition);
 			if(additionRet.isFail()){
 				res.set(additionRet);
 				return false;
 			}
+			
+			// 料品计划档案
 			inventoryPlan.setIInventoryId(inventory.getIAutoId());
 			Ret planRet = inventoryPlanService.save(inventoryPlan);
 			if(planRet.isFail()){
 				res.set(planRet);
 				return false;
 			}
+			
+			// 料品生产档案
 			inventoryMfgInfo.setIInventoryId(inventory.getIAutoId());
 			Ret mfgInfoRet = inventoryMfgInfoService.save(inventoryMfgInfo);
 			if(mfgInfoRet.isFail()){
 				res.set(mfgInfoRet);
 				return false;
 			}
+			
+			// 料品库存档案
 			inventorystockconfig.setIInventoryId(inventory.getIAutoId());
 			Ret stockRet = inventoryStockConfigService.save(inventorystockconfig);
 			if(stockRet.isFail()){
 				res.set(stockRet);
 				return false;
 			}
+			
+			// 所属产线新增
 			if(inventoryWorkRegions != null && inventoryWorkRegions.size() > 0){
 				for (InventoryWorkRegion workRegion : inventoryWorkRegions) {
 					workRegion.setIInventoryId(inventory.getIAutoId());
@@ -497,6 +958,8 @@ public class InventoryService extends BaseService<Inventory> {
 					return false;
 				}
 			}
+			// 工艺路线操作
+			inventoryRoutingOperation(inventory, inventoryRoutingJboltTable);
 			return true;
 		});
 
@@ -608,6 +1071,86 @@ public class InventoryService extends BaseService<Inventory> {
 
         return successWithData(list);
     }
-    
+	
+	/**
+	 * 多个可编辑表格同时提交
+	 * @param jboltTableMulti
+	 * @return
+	 */
+	public Ret submitMulti(JBoltTableMulti jboltTableMulti) {
+		if(jboltTableMulti==null||jboltTableMulti.isEmpty()) {
+			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
+		}
+		//这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
+		
+		JBoltTable inventoryRoutingJboltTable = getJboltTable(jboltTableMulti, InventoryTableTypeEnum.INVENTORROUTING.getText());
+		
+		JBoltTable inventoryWorkRegionJboltTable = getJboltTable(jboltTableMulti, InventoryTableTypeEnum.INVENTORYWORKREGION.getText());
+		
+		ValidationUtils.notNull(inventoryWorkRegionJboltTable, "未获取到产线table");
+		ValidationUtils.notNull(inventoryRoutingJboltTable, "未获取到工序table");
+		
+		Inventory inventory = inventoryWorkRegionJboltTable.getFormBean(Inventory.class, "inventory");
+		
+		InventoryStockConfig inventorystockconfig = inventoryWorkRegionJboltTable.getFormBean(InventoryStockConfig.class, "inventorystockconfig");
+		InventoryPlan inventoryPlan = inventoryWorkRegionJboltTable.getFormBean(InventoryPlan.class, "inventoryplan");
+		InventoryAddition inventoryAddition = inventoryWorkRegionJboltTable.getFormBean(InventoryAddition.class, "inventoryaddition");
+		InventoryMfgInfo inventoryMfgInfo = inventoryWorkRegionJboltTable.getFormBean(InventoryMfgInfo.class, "inventorymfginfo");
+		// 判断当前存货是否存在
+		Inventory byId = findById(inventory.getIAutoId());
+		// 新增
+		if (inventory != null && byId != null){
+			List<InventoryWorkRegion> inventoryWorkRegions = inventoryWorkRegionJboltTable.getUpdateBeanList(InventoryWorkRegion.class);
+			List<InventoryWorkRegion> saveBeanList = inventoryWorkRegionJboltTable.getSaveBeanList(InventoryWorkRegion.class);
+			Object[] delete = inventoryWorkRegionJboltTable.getDelete();
+			return updateForm(inventory,inventoryAddition,inventoryPlan,inventoryMfgInfo,inventorystockconfig,inventoryWorkRegions,saveBeanList,delete, inventoryRoutingJboltTable);
+		}
+		List<InventoryWorkRegion> inventoryWorkRegions = inventoryWorkRegionJboltTable.getSaveBeanList(InventoryWorkRegion.class);
+		return	saveForm(inventory,inventoryAddition,inventoryPlan,inventoryMfgInfo,inventorystockconfig,inventoryWorkRegions, inventoryRoutingJboltTable);
+	}
+	
+	public JBoltTable getJboltTable(JBoltTableMulti jboltTableMulti, String type){
+		
+		if (CollectionUtil.isNotEmpty(jboltTableMulti)){
+			for (String tableKey : jboltTableMulti.keySet()){
+				if (type.equals(tableKey)){
+					/*//获取额外传递参数 比如订单ID等信息 在下面数据里可能用到
+						if(jBoltTable.paramsIsNotBlank()) {
+							System.out.println(jBoltTable.getParams().toJSONString());
+						}
+						//获取Form对应的数据
+						if(jBoltTable.formIsNotBlank()) {
+			
+						}
+						//获取待保存数据 执行保存
+						if(jBoltTable.saveIsNotBlank()) {
+			//				batchSave(jBoltTable.getSaveModelList(Demotable.class));
+						}
+						//获取待更新数据 执行更新
+						if(jBoltTable.updateIsNotBlank()) {
+			//				batchUpdate(jBoltTable.getUpdateModelList(Demotable.class));
+						}
+						//获取待删除数据 执行删除
+						if(jBoltTable.deleteIsNotBlank()) {
+							deleteByIds(jBoltTable.getDelete());
+						}*/
+					
+					return jboltTableMulti.getJBoltTable(type);
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	
+ 
+	public String getCOperationName(String cOperationName){
+		String[] splitCOperationName = inventoryRoutingConfigService.getSplitCOperationName(cOperationName);
+		if (ArrayUtil.isEmpty(splitCOperationName)){
+			return null;
+		}
+		return splitCOperationName[0];
+	}
 }
 

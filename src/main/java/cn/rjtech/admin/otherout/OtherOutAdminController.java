@@ -1,18 +1,16 @@
 package cn.rjtech.admin.otherout;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.util.BillNoUtils;
 import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.OtherOut;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
@@ -194,5 +192,23 @@ public class OtherOutAdminController extends BaseAdminController {
 	}
 
 
+	/**
+	 * 生成二维码
+	 */
+	public void erm() {
+		OtherOut otherOut=service.findById(getLong(0));
+		if(otherOut == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+
+			return;
+		}
+		if (otherOut.getStatus() == 3){
+			renderQrCode(otherOut.getBillNo(),200,200);
+		}else {
+			renderFail("请审批再打印！！！");
+			return;
+		}
+
+	}
 
 }

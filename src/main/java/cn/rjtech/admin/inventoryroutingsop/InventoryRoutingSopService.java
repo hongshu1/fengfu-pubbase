@@ -1,28 +1,40 @@
 package cn.rjtech.admin.inventoryroutingsop;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.consts.JBoltConst;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
-import com.jfinal.core.JFinal;
-import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
+import cn.rjtech.model.momdata.Equipment;
+import cn.rjtech.model.momdata.InventoryRoutingConfig;
+import cn.rjtech.model.momdata.InventoryRoutingSop;
+import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import cn.rjtech.model.momdata.InventoryRoutingSop;
+
+import com.jfinal.core.JFinal;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.InventoryRoutingSop;
+import com.jfinal.plugin.activerecord.Page;
+
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -173,8 +185,35 @@ public class InventoryRoutingSopService extends BaseService<InventoryRoutingSop>
 		return itemroutingdrawing;
 	}
 
-	public List<InventoryRoutingSop> dataList(Long configId) {
-		return getCommonList(Okv.by("iInventoryRoutingConfigId",configId),"iAutoId","ASC");
+	public List<InventoryRoutingSop> dataList(Kv kv) {
+		
+		/*if (StrUtil.isNotBlank(kv.getStr(InventoryRoutingConfig.ROUTINGSOPJSON))){
+			String str = kv.getStr(InventoryRoutingConfig.ROUTINGSOPJSON);
+			JSONArray jsonArray = JSONObject.parseArray(str);
+			if (CollectionUtil.isEmpty(jsonArray)){
+				return null;
+			}
+			List<Record> recordList = new ArrayList<>();
+			for (int i=0; i<jsonArray.size(); i++){
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+				Record record = new Record();
+				record.setColumns(jsonObject.getInnerMap());
+				
+				Long equipmentId = jsonObject.getLong("iequipmentid");
+//				if (ObjectUtil.isNotNull(equipmentId)){
+//					Equipment equipment = equipmentService.findById(equipmentId);
+//					ValidationUtils.notNull(equipment, "未找到设备信息");
+//					record.set(equipment.CEQUIPMENTCODE, equipment.getCEquipmentCode());
+//				}
+				recordList.add(record);
+			}
+			return recordList;
+		}*/
+		
+		if (StrUtil.isBlank(kv.getStr("configid"))){
+			return null;
+		}
+		return getCommonList(Okv.by("iInventoryRoutingConfigId",kv.getLong("configId")),"iAutoId","ASC");
 	}
 
 	public Ret saveDrawing(JBoltTable jBoltTable, Long iitemroutingconfigid) {

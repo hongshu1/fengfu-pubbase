@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseMoMoroutinginvc;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.momdata.base.BaseMoMoroutinginvc;
 
 /**
  * 制造工单-工艺工序物料集

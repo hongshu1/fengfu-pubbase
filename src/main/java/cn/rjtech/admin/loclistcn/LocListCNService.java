@@ -1,24 +1,18 @@
 package cn.rjtech.admin.loclistcn;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.List;
-
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.LocListCN;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jfinal.plugin.activerecord.Page;
-
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.LocListCN;
+import com.jfinal.plugin.activerecord.Page;
+
+import java.io.*;
+import java.util.List;
 /**
  * 地区 Service
  * @ClassName: LocListCNService

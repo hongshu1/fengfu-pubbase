@@ -1,23 +1,26 @@
 package cn.rjtech.admin.momotask;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MoMotask;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+
 /**
  * 制造工单任务 Controller
+ *
  * @ClassName: MoMotaskAdminController
  * @author: chentao
  * @date: 2023-04-28 15:19
  */
-@CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.NONE)
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/momotask", viewPath = "/_view/admin/momotask")
 public class MoMotaskAdminController extends BaseAdminController {
 

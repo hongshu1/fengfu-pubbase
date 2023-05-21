@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseSpotCheckForm;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.momdata.base.BaseSpotCheckForm;
 
 /**
  * 质量建模-点检表格

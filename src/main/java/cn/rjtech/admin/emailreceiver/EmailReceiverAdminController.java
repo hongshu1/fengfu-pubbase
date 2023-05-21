@@ -1,10 +1,10 @@
 package cn.rjtech.admin.emailreceiver;
 
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.model.EmailReceiver;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.util.ValidationUtils;
@@ -20,10 +20,10 @@ import com.jfinal.core.paragetter.Para;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-03-03 09:23
  */
-@Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
 @CheckPermission(PermissionKey.EMAIL_RECEIVER)
-@Path(value = "/admin/emailreceiver",viewPath = "/_view/admin/emailreceiver")
+@Path(value = "/admin/emailreceiver", viewPath = "/_view/admin/emailreceiver")
 public class EmailReceiverAdminController extends BaseAdminController {
 
     @Inject

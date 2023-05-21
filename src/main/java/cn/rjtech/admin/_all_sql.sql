@@ -492,3 +492,12 @@
 #namespace("otherdeliverylist")
 #include("otherdeliverylist/otherdeliverylist.sql")
 #end
+
+#namespace("materialreturnlist")
+#include("materialreturnlist/materialreturnlist.sql")
+#end
+
+#namespace("patchworkbarcode")
+#include("patchworkbarcode/patchworkbarcode.sql")
+#end
+

@@ -12,6 +12,7 @@ import cn.rjtech.admin.annualorderdqty.AnnualorderdQtyService;
 import cn.rjtech.admin.annualorderm.AnnualOrderMService;
 import cn.rjtech.admin.customerworkdays.CustomerWorkDaysService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
+import cn.rjtech.admin.scheduproductplan.CollectionUtils;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
@@ -26,8 +27,8 @@ import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.Calendar;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -480,6 +481,9 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
             if (cusOrderSum.getIQty2() == null){
                 cusOrderSum.setIQty2(BigDecimal.ZERO);
             }
+            if (cusOrderSum.getIQty3() == null){
+                cusOrderSum.setIQty3(BigDecimal.ZERO);
+            }
         }
         if (cusOrderSumList.size() == 0){
             tx(() -> {
@@ -715,15 +719,17 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
                 para.set("iInventoryId", iinventoryid);
                 List<Record> record1 = dbTemplate("cusordersum.getiQty1", para).find();
                 List<Record> record2 = dbTemplate("cusordersum.getiQty2", para).find();
-                List<CusOrderSum> cusOrderSums = find(selectSql().eq("iYear", record.getStr("iYear")).
+                List<Record> record3 = dbTemplate("cusordersum.getiQty3", para).find();
+                /*List<CusOrderSum> cusOrderSums = find(selectSql().eq("iYear", record.getStr("iYear")).
                         eq("iInventoryId", iinventoryid).isNotNull("iQty2"));
                 if (cusOrderSums.size() > 0) {
                     record.set("record3", record2);
                 } else {
                     record.set("record3", record1);
-                }
+                }*/
                 record.set("record1", record1);
                 record.set("record2", record2);
+                record.set("record3", record3);
             }
         }
         return pageData;

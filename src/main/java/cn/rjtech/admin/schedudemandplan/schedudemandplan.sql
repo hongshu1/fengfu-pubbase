@@ -134,6 +134,67 @@ WHERE b.IsDeleted = 0
         END AS NVARCHAR(30)) ) = #para(startdate)
 #end
 
+#sql("deleteDemandComputeD")
+###根据日期删除物料需求计划
+DELETE FROM Mrp_DemandComputeD
+WHERE (CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )
+        ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )
+        ELSE CAST(iDate AS NVARCHAR(30) )
+        END AS NVARCHAR(30)) ) >= #para(startdate)
+#end
+
+#sql("getDemandComputeDList")
+###根据条件查询物料需求计划
+SELECT
+    (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+    ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+    ELSE CAST(b.iDate AS NVARCHAR(30) )
+    END AS NVARCHAR(30)) ) AS planDate,
+    b.iYear,
+    b.iMonth,
+    b.iDate,
+    b.iQty1,
+    b.iQty2,
+    b.iQty3,
+    b.iQty4,
+    b.iQty5,
+    b.iInventoryId AS invId,
+    c.cInvCode,
+    c.cInvCode1,
+    c.cInvName1,
+    b.iVendorId,
+    e.cVenCode,
+    e.cVenName,
+    c.iPkgQty,
+    f.iInnerInStockDays
+FROM Mrp_DemandComputeD AS b
+         LEFT JOIN Bd_Inventory AS c ON b.iInventoryId = c.iAutoId
+         LEFT JOIN Bd_Vendor AS e ON b.iVendorId = e.iAutoId
+         LEFT JOIN Bd_InventoryPlan AS f ON f.iInventoryId = c.iAutoId
+WHERE 1 = 1
+    #if(cvenname)
+        AND e.cVenName LIKE CONCAT('%', #para(cvenname), '%')
+    #end
+    #if(cinvcode)
+        AND c.cInvCode LIKE CONCAT('%', #para(cinvcode), '%')
+    #end
+    #if(cinvcode1)
+        AND c.cInvCode1 LIKE CONCAT('%', #para(cinvcode1), '%')
+    #end
+    #if(cinvname1)
+        AND c.cInvName1 LIKE CONCAT('%', #para(cinvname1), '%')
+    #end
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) >= #para(startdate)
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) <= #para(enddate)
+#end
 
 //-----------------------------------------------------------------物料需求计划预示-----------------------------------------------
 

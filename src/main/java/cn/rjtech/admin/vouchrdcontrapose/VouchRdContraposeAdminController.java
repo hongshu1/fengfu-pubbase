@@ -1,16 +1,15 @@
 package cn.rjtech.admin.vouchrdcontrapose;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.VouchRdContrapose;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.VouchRdContrapose;
 /**
  * 单据类型与收发类别对照表 Controller
  * @ClassName: VouchRdContraposeAdminController

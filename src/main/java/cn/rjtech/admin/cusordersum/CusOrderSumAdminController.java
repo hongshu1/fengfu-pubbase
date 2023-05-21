@@ -2,10 +2,10 @@ package cn.rjtech.admin.cusordersum;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.CusOrderSum;
@@ -14,6 +14,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+
 import java.text.ParseException;
 import java.util.*;
 
@@ -123,7 +124,7 @@ public class CusOrderSumAdminController extends BaseAdminController {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(beginDate);
 
-        Map<String, List<Date>> dateMap = new TreeMap<>();
+        Map<String, List<Date>> dateMap = new LinkedHashMap<>();
 
         while (DateUtil.compare(endDate, calendar.getTime()) >= 0) {
             // 年月 - 年-月-日

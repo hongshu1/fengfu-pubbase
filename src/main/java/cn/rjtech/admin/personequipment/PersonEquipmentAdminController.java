@@ -1,16 +1,15 @@
 package cn.rjtech.admin.personequipment;
 
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.PersonEquipment;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
-
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.PersonEquipment;
 /**
  * 人员设备档案 Controller
  * @ClassName: PersonEquipmentAdminController

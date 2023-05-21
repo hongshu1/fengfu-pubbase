@@ -12,7 +12,6 @@ import cn.rjtech.admin.cusfieldsmappingform.CusfieldsmappingFormService;
 import cn.rjtech.admin.form.FormService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.CusFieldsMappingM;
-import cn.rjtech.model.momdata.CusfieldsmappingForm;
 import cn.rjtech.model.momdata.Form;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
