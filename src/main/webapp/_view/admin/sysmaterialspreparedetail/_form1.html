@@ -23,8 +23,8 @@
         <div class="card" style="margin-bottom: 5px">
             <div class="card-body">
                 <form onsubmit="return false;" id="MoPickItemM_Form" action="#(action)" method="post">
-                    #if(moPickItemM.iAutoId??)
-                    <input type="hidden" name="moPickItemM.iAutoId" value="#(moPickItemM.iAutoId??)"/>
+                    #if(sysMaterialsprepare.AutoID??)
+                    <input type="hidden" name="sysMaterialsprepare.iAutoId" value="#(sysMaterialsprepare.AutoID??)"/>
                     #end
                     <div class="row">
                         <div class="col-md-4">
@@ -37,7 +37,7 @@
                                            class="form-control" placeholder=""
                                            maxlength="40" name="moPickItemM.cMoPickNo"
                                            readonly
-                                           value="#(moPickItemM.cMoPickNo??)"/>
+                                           value="#(sysMaterialsprepare.cMoPickNo??)"/>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                                            class="form-control" placeholder=""
                                            maxlength="40" name="moPickItemM.cMoDocNo"
                                            readonly
-                                           value="#(moPickItemM.cMoDocNo??)"/>
+                                           value="#(sysMaterialsprepare.cMoDocNo??)"/>
                                 </div>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.cDepName"
                                            readonly
-                                           value="#(moPickItemM.cDepName??)"/>
+                                           value="#(sysMaterialsprepare.cDepName??)"/>
                                 </div>
                             </div>
                         </div>
@@ -79,7 +79,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.iEquipmentModelId"
                                            readonly
-                                           value="#(moPickItemM.iEquipmentModelId??)"/>
+                                           value="#(sysMaterialsprepare.iEquipmentModelId??)"/>
                                 </div>
                             </div>
                         </div>
@@ -93,7 +93,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.cInvCode1"
                                            readonly
-                                           value="#(moPickItemM.cInvCode1??)"/>
+                                           value="#(sysMaterialsprepare.cInvCode1??)"/>
                                 </div>
                             </div>
                         </div>
@@ -107,7 +107,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.cDepName"
                                            readonly
-                                           value="#(moPickItemM.cDepName??)"/>
+                                           value="#(sysMaterialsprepare.cDepName??)"/>
                                 </div>
                             </div>
                         </div>
@@ -121,7 +121,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.dPlanDate"
                                            readonly
-                                           value="#(moPickItemM.dPlanDate??)"/>
+                                           value="#(sysMaterialsprepare.dPlanDate??)"/>
                                 </div>
                             </div>
                         </div>
@@ -135,7 +135,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.iPlanQty"
                                            readonly
-                                           value="#(moPickItemM.iPlanQty??)"/>
+                                           value="#(sysMaterialsprepare.iPlanQty??)"/>
                                 </div>
                             </div>
                         </div>
@@ -149,7 +149,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.iWorkShiftMid"
                                            readonly
-                                           value="#(moPickItemM.iWorkShiftMid??)"/>
+                                           value="#(sysMaterialsprepare.iWorkShiftMid??)"/>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +163,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.cCreateName"
                                            readonly
-                                           value="#(moPickItemM.cCreateName)"/>
+                                           value="#(sysMaterialsprepare.cCreateName)"/>
                                 </div>
                             </div>
                         </div>
@@ -177,7 +177,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.cCreateName"
                                            readonly
-                                           value="#(moPickItemM.cCreateName??)"/>
+                                           value="#(sysMaterialsprepare.cCreateName??)"/>
                                 </div>
                             </div>
                         </div>
@@ -191,7 +191,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.dCreateTime"
                                            readonly
-                                           value="#(moPickItemM.dCreateTime??)"/>
+                                           value="#(sysMaterialsprepare.dCreateTime??)"/>
                                 </div>
                             </div>
                         </div>
@@ -203,10 +203,10 @@
 </div>
 <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iautoid}">
+<tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysmaterialspreparedetail/edit2/${data.iautoid}" data-area="100%,100%" data-title="现品票明细"><i class="fa fa-eye">现品票明细</i></a>
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysmaterialspreparedetail/edit2/${data.autoid}" data-area="700,800" data-title="现品票明细"><i class="fa fa-eye">现品票明细</i></a>
 </td>
 <td>${data.cinvcode}</td>
 <td>${data.cinvcode1}</td>
@@ -231,10 +231,9 @@
 <table class="jbolt_table jbolt_main_table table-center"
        data-jbolttable
        data-width="fill"
-       data-height="fill"
+       data-height="43%"
        data-ajax="true"
-       data-conditions-form="MoPickItemM_form_#(pageId)"
-       data-url="admin/sysmaterialspreparedetail/datas?cmodocno=#(moPickItemM.cMoDocNo??)"
+       data-url="admin/sysmaterialspreparedetail/datas?cmodocno=#(sysMaterialsprepare.cMoDocNo??)"
        data-rowtpl="MoPickItemM_tpl_#(pageId)"
        data-copy-to-excel="false"
        data-page="MoPickItemM_page"
@@ -243,20 +242,20 @@
 >
     <thead class="fw-normal">
     <tr>
-        <th data-width="60" data-column="iautoid">序号</th>
-        <th data-width="150" data-column="corgcode">操作</th>
+        <th data-width="60" data-column="">序号</th>
+        <th data-width="150" data-column="">操作</th>
         <th data-width="100" data-column="">存货编码</th>
         <th data-width="150" data-column="">客户部番</th>
         <th data-width="150" data-column="">部品名称</th>
         <th data-width="100" data-column="">规格</th>
         <th data-width="150" data-column="">库存单位</th>
-        <th data-width="100" data-column="dPlanDate">计划数量</th>
-        <th data-width="100" data-column="dPlanDate">出库仓库</th>
-        <th data-width="100" data-column="dPlanDate">出库库区</th>
-        <th data-width="100" data-column="dPlanDate">已备料数量</th>
-        <th data-width="150" data-column="dPlanDate">剩余备料数量</th>
-        <th data-width="100" data-column="dPlanDate">可用批次号</th>
-        <th data-width="100" data-column="dPlanDate">齐料扫码检查</th>
+        <th data-width="100" data-column="">计划数量</th>
+        <th data-width="100" data-column="">出库仓库</th>
+        <th data-width="100" data-column="">出库库区</th>
+        <th data-width="100" data-column="">已备料数量</th>
+        <th data-width="150" data-column="">剩余备料数量</th>
+        <th data-width="100" data-column="">可用批次号</th>
+        <th data-width="100" data-column="">齐料扫码检查</th>
     </tr>
     </thead>
     <tbody></tbody>

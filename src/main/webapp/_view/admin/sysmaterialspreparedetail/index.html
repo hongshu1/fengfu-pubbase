@@ -8,11 +8,11 @@
             <div class="col-sm-auto">
                 <form class="form-inline" id="MoPickItemM_form_#(pageId)">
                     <input type="text" autocomplete="off" class="form-control" placeholder="备料单号"
-                           name="cmopickno" value=""/>
+                           name="billno" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="工单号"
                            name="cmodocno" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="存货编码"
-                           name="cinvcode" value=""/>
+                           name="invcode" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="客户部番"
                            name="cinvcode1" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="部品名称"
@@ -32,25 +32,24 @@
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iautoid}">
+<tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysmaterialspreparedetail/edit1/${data.iautoid}" data-area="100%,100%" data-title="备料一览表详情"><i class="fa fa-eye">查看</i></a>
-    <a class="jbolt_table_delbtn" href="admin/sysmaterialspreparedetail/delete/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger">删除</i></a>
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysmaterialspreparedetail/edit1/${data.autoid}" data-area="100%,100%" data-title="备料一览表详情"><i class="fa fa-eye">查看</i></a>
 </td>
-<td>${data.statename}</td>
-<td>${data.cmopickno}</td>
+<td>${data.billno}</td>
+<td>${data.billno}</td>
 <td>${data.cmodocno}</td>
-<td>${data.cinvname1}</td>
-<td>${data.iworkshiftmid}</td>
+<td>${data.cdepname}</td>
+<td>${data.cworkshiftname}</td>
 <td>${data.dplandate}</td>
-<td>${data.cinvcode}</td>
+<td>${data.invcode}</td>
 <td>${data.cinvcode1}</td>
 <td>${data.cdepname}</td>
-<td>${data.imanufactureuomid}</td>
-<td>${data.iplanqty}</td>
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
+<td>${data.cuomname}</td>
+<td>${data.iqty}</td>
+<td>${data.createperson}</td>
+<td>${data.createdate}</td>
 </tr>
 {@/each}
 </textarea>
@@ -88,21 +87,21 @@
         >
             <thead class="fw-normal">
             <tr>
-                <th data-width="60" data-column="index">序号</th>
+                <th data-width="60" data-column="">序号</th>
                 <th data-width="150" data-column="">操作</th>
                 <th data-width="150" data-column="">状态</th>
                 <th data-width="150" data-column="">备料单号</th>
                 <th data-width="150" data-column="">工单号</th>
                 <th data-width="150" data-column="">生产部门</th>
                 <th data-width="150" data-column="">生产班次</th>
-                <th data-width="150" data-column="dPlanDate">计划日期</th>
-                <th data-width="150" data-column="iInventoryId">存货编码</th>
+                <th data-width="150" data-column="">计划日期</th>
+                <th data-width="150" data-column="">存货编码</th>
                 <th data-min-width="160" data-column="">客户部番</th>
                 <th data-width="150" data-column="">部门名称</th>
                 <th data-width="150" data-column="">生产单位</th>
-                <th data-width="150" data-column="iPlanQty">计划数量</th>
-                <th data-width="150" data-column="cCreateName">创建人</th>
-                <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+                <th data-width="150" data-column="">计划数量</th>
+                <th data-width="150" data-column="">创建人</th>
+                <th data-min-width="160" data-column="">创建时间</th>
             </tr>
             </thead>
             <tbody></tbody>
