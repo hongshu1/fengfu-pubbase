@@ -81,7 +81,7 @@
         background-color:#fff;
         width: 430px;
         height: 170px;
-        z-index: 1000;
+        z-index: 500;
         position: absolute;
         display: none;
         box-shadow: 5px -5px 5px rgba(0,0,0,0.5);
@@ -116,7 +116,7 @@
         border: 1px solid rgba(215, 215, 215, 1);
         background-color:#fff;
         width: 430px;
-        height: 170px;
+        height: 200px;
         z-index: 1000;
         position: absolute;
         display: none;
@@ -126,10 +126,9 @@
         display: flex;
         font-size: 14px;
         border-bottom: 3px solid rgba(215, 215, 215, 1);
-        padding-bottom: 30px;
         text-indent: 0.8rem
     }
-    #indicate_Mode .indicate_title span{
+    #indicate_Mode .indicate_title span:nth-child(1){
         flex: 1;
     }
     #indicate_Mode .indicate_title #close_indicate{
@@ -146,6 +145,7 @@
         background-color: #fff;
         border: #797979 1px solid;
         margin-bottom: 0px;
+        float: right;
         border-radius: 5px;
     }
 </style>
@@ -206,19 +206,36 @@
             <p class="alert_title"><span id="close">X</span></p>
             <p class="alert_but"><button id="alert_save">确定</button></p>
             <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
-                <label class="col-form-label " >截止日期：</label>
+                <label class="col-form-label" >截止日期：</label>
                 <input type="text" class="form-control" style="display: inline-block; width: 200px" id="laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="layMonth" value="#(layMonth??)">
             </div>
-
         </div>
         <!--预示保存弹框-->
         <div id="indicate_Mode">
             <p class="indicate_title"><span id="indicate_title"></span><span id="close_indicate">X</span></p>
-            <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
-                <label class="col-form-label " >截止日期：</label>
-                <input type="text" class="form-control" style="display: inline-block; width: 200px" id="indicate_laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="indicate_layMonth" value="#(indicate_layMonth??)">
-            </div>
-            <p class="alert_but"><button id="close_indicate_but">取消</button><button>确定</button></p>
+            <form onsubmit="return false;" id="demandalgorithm" action="#(action)" method="post">
+                <div class="form-group row" style="margin-top: 20px">
+                    <label class="col-sm-2 col-form-label">日期：</label>
+                    <div class="col" style="display:flex;">
+                        <input type="datetime-local" id="start-time" name="start-time">
+                        <p style="width: 30px"></p>
+                        <input type="datetime-local" id="end-time" name="end-time">
+                    </div>
+                </div>
+                <div style="margin-top: 20px">
+                    <div>
+                        <label style="margin-left: 10px">选择供应商：</label>
+                        <input name="Fruit1" id="all" class="chBox" type="checkbox" style="vertical-align:middle;" onClick="checkAll()"/><span>全选</span>
+                    </div>
+                    <div style="display: flex;">
+                        <label style="margin-left:85px"></label>
+                        <select style="width:260px;height: 30px" id="project_id" onClick='supplierChange()' name="col">
+                            <option>请选择供应商</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <p class="indicate_but"><button id="close_indicate_but">取消</button><button onClick="indicateSave()">确定</button></p>
         </div>
     </div>
 </div>
@@ -227,6 +244,41 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
+    // function checkAll(){
+    //     //获取id的dom元素
+    //     let Id = document.getElementById('all');
+    //     //获取类名为chBox的dom元素
+    //     let chBox = document.getElementsByClassName('chBox');
+    //     let len = chBox.length;
+    //     for(let i=0;i<len;i++){
+    //         //当全选按钮为true时，全部按钮都为true，否则相反
+    //         if(Id.checked){
+    //             chBox[i].checked=true;
+    //         }else {
+    //             chBox[i].checked=false;
+    //         }
+    //     }
+    // }
+    // //单个按钮的点击事件
+    // function checkOne(){
+    //     let count=0;
+    //     let chBox = document.getElementsByClassName('chBox');
+    //     let len = chBox.length;
+    //     for(let i=0;i<len;i++){
+    //         //记录单选按钮为true的数量
+    //         if(chBox[i].checked){
+    //             count++;
+    //         }
+    //     }
+    //     //当单选按钮都为true时，全选按钮也为true，否则为false
+    //     if(count==len-1){
+    //         document.getElementById('all').checked = true;
+    //         console.log("111")
+    //     }else {
+    //         document.getElementById('all').checked = false;
+    //         console.log("222")
+    //     }
+    // }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
@@ -260,6 +312,7 @@
         planListRowIndex:3,     //计划排产列表起始行下标
         planListColIndex:7,     //计划排产列表起始列下标
         planGenerator:'',       //保存计划生成日期
+        supplierValueArray:[],  //存储当前点击选中的供应商
     };
 
     var parmsArr = [Object.assign({},parmsDefault)];
@@ -441,7 +494,6 @@
         }
         //每次添加之后往数组内进行存储
         parms.tableData.push(a);
-        console.log(parms.tableData,'获取表格中输入或修改的值');
     });
     //锁定弹出框
     var myAlert = document.getElementById("alert");
@@ -450,24 +502,27 @@
     var mClose_But = document.getElementById("alert_save");
     //锁定打开弹出层
     reg.onclick = function(){
-        myAlert.style.display = "block";
-        myAlert.style.position = "absolute";
-        myAlert.style.top = "50%";
-        myAlert.style.left = "50%";
-        myAlert.style.marginTop = "-75px";
-        myAlert.style.marginLeft = "-150px";
-        mybg = document.createElement("div");
-        mybg.setAttribute("id", "mybg");
-        mybg.style.background = "#000";
-        mybg.style.width = "100%";
-        mybg.style.height = "100%";
-        mybg.style.position = "absolute";
-        mybg.style.top = "0";
-        mybg.style.left = "0";
-        mybg.style.zIndex = "500";
-        mybg.style.opacity = "0.3";
-        document.body.appendChild(mybg);
-        document.body.style.overflow = "hidden";
+        //防止出现多个弹框
+        if(myIndicate.style.display !== "block"){
+            myAlert.style.display = "block";
+            myAlert.style.position = "absolute";
+            myAlert.style.top = "50%";
+            myAlert.style.left = "50%";
+            myAlert.style.marginTop = "-75px";
+            myAlert.style.marginLeft = "-150px";
+            mybg = document.createElement("div");
+            mybg.setAttribute("id", "mybg");
+            mybg.style.background = "#000";
+            mybg.style.width = "100%";
+            mybg.style.height = "100%";
+            mybg.style.position = "absolute";
+            mybg.style.top = "0";
+            mybg.style.left = "0";
+            mybg.style.zIndex = "1000";
+            mybg.style.opacity = "0.3";
+            document.body.appendChild(mybg);
+            document.body.style.overflow = "hidden";
+        }
     }
     //弹出层关闭事件
     mClose.onclick = function(){
@@ -479,7 +534,7 @@
         myAlert.style.display = "none";
         mybg.style.display = "none";
         var myVal=document.getElementById("laymonth").value;
-        console.log(myVal)
+        console.log(myVal);
         let url = "http://localhost:8081/admin/schedudemandplan/apsScheduDemandPlan?endDate=2023-06-30";
         $.ajax({
             url,
@@ -490,11 +545,8 @@
             dataType:'json',
             success:function (res){
                 console.log(res);
-                // spreadSuspend();//暂停绘制
-                // console.log(parms.planGenerator)
-                // spreadResume();// 恢复绘制
             },error: function(error) {
-                console.log(error);
+                console.log(error,"计划生成确定按钮事件");
             }
         })
     }
@@ -504,27 +556,75 @@
     var closeNdicate = document.getElementById("close_indicate");
     var closeIndicate = document.getElementById("close_indicate_but");
     var indicateTitle = document.getElementById("indicate_title");
-    //锁定打开弹出层
+    //预示保存弹出层
     save.onclick = function() {
-        myIndicate.style.display = "block";
-        myIndicate.style.position = "absolute";
-        indicateTitle.innerText = '保存确认';
-        myIndicate.style.top = "50%";
-        myIndicate.style.left = "50%";
-        myIndicate.style.marginTop = "-75px";
-        myIndicate.style.marginLeft = "-150px";
-        mybg = document.createElement("div");
-        mybg.setAttribute("id", "mybg");
-        mybg.style.background = "#000";
-        mybg.style.width = "100%";
-        mybg.style.height = "100%";
-        mybg.style.position = "absolute";
-        mybg.style.top = "0";
-        mybg.style.left = "0";
-        mybg.style.zIndex = "500";
-        mybg.style.opacity = "0.3";
-        document.body.appendChild(mybg);
-        document.body.style.overflow = "hidden";
+        //防止出现多个弹框
+        if(myAlert.style.display !== "block"){
+            myIndicate.style.display = "block";
+            myIndicate.style.position = "absolute";
+            indicateTitle.innerText = '保存确认';
+            myIndicate.style.top = "50%";
+            myIndicate.style.left = "50%";
+            myIndicate.style.marginTop = "-75px";
+            myIndicate.style.marginLeft = "-150px";
+            mybg = document.createElement("div");
+            mybg.setAttribute("id", "mybg");
+            mybg.style.background = "#000";
+            mybg.style.width = "100%";
+            mybg.style.height = "100%";
+            mybg.style.position = "absolute";
+            mybg.style.top = "0";
+            mybg.style.left = "0";
+            mybg.style.zIndex = "500";
+            mybg.style.opacity = "0.3";
+            document.body.appendChild(mybg);
+            document.body.style.overflow = "hidden";
+            let url = "http://localhost:8081/admin/schedudemandplan/getSupplierList";
+            $.ajax({
+                url,
+                type:'get',
+                dataType:'json',
+                success:function (res){
+                    console.log(res);
+                    for (var i = 0; i < res.data.length; i++) {
+                        var jsonObj = res.data[i];
+                        $("#project_id").append(`<option value='${jsonObj.iautoid}'>${jsonObj.cvenname}</option>`);
+                    }
+                },error: function(error) {
+                    console.log(error,"预示保存弹出层");
+                }
+            })
+        }
+    }
+    //获取当前点击选中的供应商
+    function supplierChange() {
+        var supplierValue = document.all['col'].value;
+        let index = parms.supplierValueArray.findIndex(item => item==supplierValue);
+        if (supplierValue!="请选择供应商") {
+            if (index == -1) {
+                parms.supplierValueArray.push(supplierValue);
+            }
+        }
+    }
+    //预示保存确定按钮事件
+    function indicateSave(){
+        let startTime = document.getElementById('start-time').value.substring(0,10);//获取开始时间
+        let endTime = document.getElementById('end-time').value.substring(0,10);//获取结束时间
+        if(startTime!=""&&endTime!=""){
+            if(parms.supplierValueArray.length!=0){
+                let url = `http://localhost:8081/admin/schedudemandplan/saveForetell?startdate=${startTime}&enddate=${endTime}&data=${JSON.stringify(parms.supplierValueArray)}`
+                $.ajax({
+                    url,
+                    type: 'get',
+                    dataType: 'json',
+                    success:function (res){
+                        console.log(res,"sssssssssssss");
+                    },error: function(error) {
+                        console.log(error,"wwwwwwwwwwww");
+                    }
+                })
+            }
+        }
     }
     //弹出层关闭事件
     closeNdicate.onclick = function(){
@@ -536,5 +636,6 @@
         myIndicate.style.display = "none";
         myIndicate.style.display = "none";
     }
+
 </script>
 #end

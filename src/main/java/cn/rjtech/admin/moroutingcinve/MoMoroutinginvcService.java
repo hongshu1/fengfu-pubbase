@@ -1,12 +1,30 @@
 package cn.rjtech.admin.moroutingcinve;
 
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.db.sql.Sql;
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.equipment.EquipmentService;
+import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.inventoryclass.InventoryClassService;
+import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
+import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
+import cn.rjtech.admin.org.OrgService;
+import cn.rjtech.admin.uom.UomService;
+import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.model.momdata.Equipment;
+import cn.rjtech.model.momdata.Inventory;
+import cn.rjtech.model.momdata.Person;
+import com.jfinal.aop.Inject;
+import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.model.momdata.MoMoroutinginvc;
+import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.rjtech.model.momdata.MoMoroutinginvc;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 制造工单-生产工艺路线物料 Service
  * @ClassName: MoMoroutinginvcService
@@ -21,16 +39,39 @@ public class MoMoroutinginvcService extends BaseService<MoMoroutinginvc> {
 	protected MoMoroutinginvc dao() {
 		return dao;
 	}
+	@Inject
+	private InventoryService inventoryService; //存货档案
+	;
+	@Inject
+	private UomService uomService ;
+
+	@Inject
+	private MoMoroutingconfigService moMoroutingconfigService;
 
 	/**
 	 * 后台管理分页查询
 	 * @param pageNumber
 	 * @param pageSize
-	 * @param keywords
+	 * @param kv
 	 * @return
 	 */
-	public Page<MoMoroutinginvc> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
+		Sql sql=selectSql().select("distinct b.iAutoId, b.cInvCode, b.cInvName, b.cInvStd, b.cInvName1" +
+						", u1.cUomName as purchaseuom, u2.cUomName as manufactureuom").from(table(),"a").
+				leftJoin(inventoryService.table(),"b",
+						"b.iAutoId=a.iInventoryId").
+				leftJoin(uomService.table(),"u1","u1.iAutoId = b.iPurchaseUomId")
+				.leftJoin(uomService.table(),"u2","u2.iAutoId = b.iPurchaseUomId")
+				.innerJoin(moMoroutingconfigService.table(),"c","c.iAutoId=a.iMoRoutingConfigId").
+				like("b."+ Inventory.CINVCODE,kv.getStr("cinvcode")).
+				like("b."+ Inventory.CINVNAME,kv.getStr("cinvname"))
+				.eq("c.iAutoId",kv.getStr("imoroutingconfigid")).
+
+				orderBy("b.iautoid",true).page(pageNumber,pageSize);
+
+
+		return paginateRecord(sql);
+		//return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
 	}
 
 	/**
@@ -121,6 +162,21 @@ public class MoMoroutinginvcService extends BaseService<MoMoroutinginvc> {
 	@Override
 	protected int systemLogTargetType() {
 		return ProjectSystemLogTargetType.NONE.getValue();
+	}
+	public List<Record> dataList(Kv kv) {
+		Sql sql=selectSql().select("distinct b.iAutoId, b.cInvCode, b.cInvName, b.cInvStd, b.cInvName1" +
+						", u1.cUomName as purchaseuom, u2.cUomName as manufactureuom").from(table(),"a").
+				leftJoin(inventoryService.table(),"b",
+						"b.iAutoId=a.iInventoryId").
+				leftJoin(uomService.table(),"u1","u1.iAutoId = b.iPurchaseUomId")
+				.leftJoin(uomService.table(),"u2","u2.iAutoId = b.iPurchaseUomId")
+				.innerJoin(moMoroutingconfigService.table(),"c","c.iAutoId=a.iMoRoutingConfigId").
+				like("b."+ Inventory.CINVCODE,kv.getStr("cinvcode")).
+				like("b."+ Inventory.CINVNAME,kv.getStr("cinvname"))
+				.eq("c.iAutoId",kv.getStr("configid")).
+
+				orderBy("b.iautoid",true);
+		return  findRecord(sql);
 	}
 
 }

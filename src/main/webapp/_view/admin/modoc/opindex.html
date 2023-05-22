@@ -1,0 +1,107 @@
+#@jboltLayout()
+
+<div class="jbolt_page" data-key="#(pmkey)">
+<div class="jbolt_page_title">
+	<div class="row">
+		<!--<div class="col-sm-auto"><h1><i class="jbicon2 jbi-container"></i>人员安排</h1></div>-->
+		<div class="col"></div>
+		<div class="col-sm-auto">
+		<!--<button class="btn btn-outline-primary btn-sm" data-ajaxbtn data-url="admin/dictionary/checkandinit" data-handler="refreshPjaxContainer" data-confirm="确认检测系统默认内置数据"><i class="fa fa-eject"></i> 检测并初始化</button>-->
+		</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<div class="row">
+<div class="col-12 col-xl-5 col-lg-6 col-md-6">
+<div class="card mb-3">
+  <div class="card-header">
+    设备信息
+    <a href="admin/dictionarytype/add" tooltip class="pull-right" data-handler="refreshPortal" data-portal="dictionaryTypePortal" data-dialogbtn data-area="500,400" data-title="添加新数据分类"><i class="fa fa-plus text-primary"></i></a>
+  </div>
+   <!--<div class="card-body overflow-auto jbolt_table_fill_box" style="height: calc(100vh - 220px);">-->
+       #include("operation/equipmentindex.html")
+   <!-- </div>-->
+</div>
+</div>
+<div  class="col-12 col-xl-7 col-lg-6 col-md-6">
+<div class="card" >
+  <div class="card-header">人员列表 : <span id="selectDicTypeName" class="text-danger"></span>
+      <a href="admin/dictionarytype/add" tooltip class="pull-right" data-handler="refreshPortal" data-portal="dictionaryTypePortal" data-dialogbtn data-area="500,400" data-title="添加新数据分类"><i class="fa fa-plus text-primary">加入生产人员</i></a>
+  </div>
+
+<!--<div class="card-body overflow-auto jbolt_table_fill_box" style="height: calc(100vh - 220px);">-->
+    #include("operation/personindex.html")
+
+<!-- </div>-->
+ </div>
+</div>
+</div>
+</div>
+</div>
+
+
+#define js()
+<script>
+
+	function readDictionarys(type,typeId,title){
+		$(".dictionaryTypes tr.active").removeClass("active");
+		$(type).addClass("active");
+		  $("#selectDicTypeName").text(title);
+		  $("#dictionaryPortal").ajaxPortal(true,"/admin/dictionary/mgr/"+typeId,true);
+	}
+
+	function refreshAllPortal(){
+		LayerMsgBox.load(3,300);
+		$("#dictionaryTypePortal").ajaxPortal(true);
+		$("#dictionaryPortal").ajaxPortal(true);
+		}
+    $(function(){
+        hideParentLayerDialogBtn(0);
+        changepage()
+        setTimeout(function(){
+            var s=jboltTableGetAllDatas('quipmenttableid')
+            //alert("s"+JSON.stringify(s))
+            var cequipmentcodes;
+            let jumlah = [];
+            for (i in s) {
+                console.log(i + "=" + s[i].cequipmentcode);
+                cequipmentcodes=s[i].cequipmentcode+","
+                jumlah.push(s[i].cequipmentcode)
+            }
+            console.log(jumlah.join(', '));
+            $("#cequipmentcodes").val(jumlah.join(', '));
+            $('#persontable').attr("data-ajax","true");
+            $('#searchperson').click();
+            //alert("ddddddd")
+        }, 500);
+
+
+
+     /*   addParentLayerDialogBtn("保存","lay_success",function(data){
+            //获取表格数据
+            //var tableDatas = getJboltTableAllDatas('#quipmenttableid');
+
+            jboltTableSubmit('#quipmenttableid');
+        });*/
+    });
+
+
+    //点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+    function chooseAndInsert(insertType){
+        var datas=getJboltTableCheckedDatas("persontable",["cpsn_num:cpsn_num","cpsn_name:cpsn_name","isex:isex"
+            ,"cpsnmobilephone:cpsnmobilephone","jobnumber:jobnumber"]);
+
+        if(datas){
+            LayerMsgBox.confirm("确认选择此数据?",function(){
+                var action=parent.DialogUtil.getCurrentTriggerEle();
+                if(isOk(action)){
+                    var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,insertType);
+                    if(success){
+                        parent.layer.closeAll();
+                    }
+                }
+            });
+        }
+    }
+</script>
+#end
