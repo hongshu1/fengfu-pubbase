@@ -501,7 +501,14 @@
 #include("patchworkbarcode/patchworkbarcode.sql")
 #end
 
+
 #namespace("otheroutreturnlist")
 #include("otheroutreturnlist/otheroutreturnlist.sql")
+
+#namespace("stockcheckvouch")
+#include("stockcheckvouch/stockcheckvouch.sql")
+
+#namespace("momaterialsscansum")
+#include("momaterialsscansum/momaterialsscansum.sql")
 #end
 

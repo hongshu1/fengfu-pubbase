@@ -1168,7 +1168,17 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		return dataList;
 	}
 
+	public List<Record> getSupplierList(Kv kv) {
+		List<Record> supplierList = findRecord("SELECT iAutoId,cVenName FROM Bd_Vendor WHERE isDeleted = 0 ");
+		return supplierList;
+	}
 
+	public Ret saveForetell(Kv kv) {
+		return SUCCESS;
+	}
+	public Ret saveArrival(Kv kv) {
+		return SUCCESS;
+	}
 
 
 	//-----------------------------------------------------------------物料需求计划预示-----------------------------------------------

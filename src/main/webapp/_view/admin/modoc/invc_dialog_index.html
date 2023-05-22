@@ -1,0 +1,164 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col">
+		<form class="form-inline text-left" id="itemroutingForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品工艺档案配置Id" name="configid" value="#(configid)" />
+			<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品档案Id" name="iinventoryid" value="#(iinventoryid)" />
+			<input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+			<input type="hidden" id="iMoDocId" value="#(imdocid??)">
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cinvcode}</td>
+<td hidden>${data.iinventoryid}</td>
+<td>${data.cinvname}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
+<td>${data.manufactureuom}</td>
+<td>${data.purchaseuom}</td>
+<td>${data.iusageuom}</td>
+<td>
+	<a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+		<!-- 工具条 toolbar -->
+		<div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
+			<div class="" role="group" aria-label="btn-group">
+				<div>
+					<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+
+						<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+
+
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<table class="jbolt_table jbolt_main_table table-center"
+			   id="invctableid"
+			   data-jbolttable
+			   data-height="fill"
+			   data-ajax="true"
+			   #if(imdocid??)
+			   data-url="admin/moroutingcinve/dataList"
+			   #else
+			   data-url="admin/modoc/inventoryroutinginvcDataList"
+			   ###data-url="admin/modoc/inventoryroutingsopDataList"
+			   #end
+			   data-column-resize="true"
+			   data-column-prepend="1:checkbox:true"
+			   data-conditions-form="itemroutingForm_#(pageId)"
+			   data-rowtpl="itemroutingRowtpl_#(pageId)"
+			   data-toolbar="itemrouting_toolbar_#(pageId)"
+			   data-editable="true"
+			   data-editable-option="getEditableTableOptions_workposition"
+		>
+			<thead class="fw-normal">
+			<tr>
+				<!--<th data-min-width="150" data-column="iItemId">料品档案ID</th>-->
+				<th data-width="60" data-min-width="60" data-column="index">序号</th>
+				<th data-min-width="150" data-column="cinvcode">子件料号</th>
+				<th data-min-width="150" data-column="iinventoryid" hidden>子件料号</th>
+				<th data-width="150" data-column="cinvname">子件品名</th>
+				<th data-width="150" data-column="cinvname1">部品名称</th>
+				<th data-width="150" data-column="cinvstd">规格</th>
+				<th data-width="100" data-column="manufactureuom">生产单位</th>
+				<th data-width="100" data-column="purchaseuom">采购单位</th>
+				<th data-width="100" data-column="iusageuom">基本用量</th>
+				<th data-width="100">操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+	</div>
+</div>
+<script>
+
+
+	$(function(){
+		hideParentLayerDialogBtn(0);
+		/*addParentLayerDialogBtn("保存","lay_success",function(data){
+
+			jboltTableSubmit('#invctableid');
+		});*/
+	});
+
+	function addTableRow(ele){
+		jboltTableInsertRow(ele)
+	}
+
+	function getEditableTableOptions_workposition(){
+		var editableTableOptions={
+			trigger:"click",
+			initRowCount:0,
+			maxRowCount:30,
+			//keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+			submit:{
+				// withForm:[""],
+				type:"all",//cell|all
+				//params:{"masterautoid":'#(masterautoid)'},//携带其他额外参数
+				//commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+				url:"admin/inventoryroutinginvc/saveInvc?configid=#(configid)",
+				success:function(res){
+					LayerMsgBox.success("提交成功",600,function(){
+						//refreshPjaxContainer();
+						parent.refreshJBoltTable("#itemroutingconfigid");
+						parent.LayerMsgBox.closeAll();
+					});
+				}
+			},
+			//插入数据时默认属性值
+			//insertDefaultValues:{age:10},
+			cols:{
+				iautoid:{
+					submitAttr:"iautoid",
+				},
+				cinvcode:{
+					type:"dialogbtn",
+					placeholder:"选择料品",
+					required:true,
+					dialog:{
+						url:"admin/inventoryroutinginvc/iteminvc_dialog_index?iinventoryid=#(iinventoryid)",
+						area:"95%,95%",
+						title:"选择料品",
+						btn:"确定,关闭"
+					},
+					header: "子件品名,别名,规格,生产单位,采购单位,基本用量,母件底数,损耗率",
+					columnAttr:"cinvcode,cinvname,cinvname1,cinvstd,manufactureuom,purchaseuom",
+					changeColumns:[{column:"cinvname",use:"cinvname"},{column:"cinvname1",use:"cinvname1"},
+						{column:"cinvstd",use:"cinvstd"},{column:"manufactureuom",use:"manufactureuom"},
+						{column:"purchaseuom",use:"purchaseuom"},{column:"iinventoryid",use: "iautoid"}],
+				},
+				iusageuom:{type:"input_number", rule:"number",required:true, placeholder:"0"},
+				iparentqty:{type:"input_number", rule:"number",required:true, placeholder:"0"},
+				ilossrate:{type:"input_number", rule:"number", required:true, placeholder:"0.00"},
+			}
+		};
+		return editableTableOptions;
+	}
+
+</script>
+#end
+
+

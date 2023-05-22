@@ -62,7 +62,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         for (Record row : pageList.getList()) {
             Dept dept = deptService.findById(row.getLong("idepartmentid"));
             row.set("cdepname", dept == null ? null : dept.getName());
-            row.set("cbususername", JBoltUserCache.me.getUserName(row.getLong("iBusUserId")));
+            row.set("cbususername", JBoltUserCache.me.getUserName(row.getLong("iBusPersonId")));
             row.set("ccurrencyname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.ccurrency.name(), row.getStr("cCurrency")));
         }
         return pageList;
