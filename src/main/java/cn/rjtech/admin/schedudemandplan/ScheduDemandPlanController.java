@@ -122,6 +122,10 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		renderJsonData(service.getDemandList(getKv()));
 	}
 
+	public void getSupplierList() {
+		renderJsonData(service.getSupplierList(getKv()));
+	}
+
 	//-----------------------------------------------------------------物料需求计划预示-----------------------------------------------
 
 	public void demandforecastm() {
