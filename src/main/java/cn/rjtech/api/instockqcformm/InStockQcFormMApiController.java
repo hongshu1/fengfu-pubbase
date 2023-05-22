@@ -11,9 +11,11 @@ import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockqcformm.*;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+
 import io.github.yedaxia.apidocs.ApiDoc;
 
 /**
@@ -185,7 +187,7 @@ public class InStockQcFormMApiController extends BaseApiController {
      * @param cmeasurereason      测定理由
      * @param serializeSubmitList table里的数据(传json)
      */
-    @ApiDoc(result =NullDataResult.class)
+    @ApiDoc(result = NullDataResult.class)
     @UnCheck
     public void saveEdit(@Para(value = "cmeasurepurpose") String cmeasurepurpose,
                          @Para(value = "cdcno") String cdcno,
@@ -220,9 +222,18 @@ public class InStockQcFormMApiController extends BaseApiController {
      * */
     @ApiDoc(GetExportExcelVo.class)
     @UnCheck
-    public void exportExcel(@Para(value = "iautoid") Long iautoid){
+    public void exportExcel(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(apiService.getExportData(iautoid));
+    }
+
+    /*
+     * @desc 扫描现品票，点击“确定”按钮，表体增加1行在库检任务；如果此存货没有配置检验项目，
+     *       需维护相关设置后点击“生成”按钮，生成检查成绩表。
+     * @param cbarcode：现品票
+     * */
+    public void createInStockQcFormByCbarcode(@Para(value = "cbarcode") String cbarcode){
+        renderJBoltApiRet(apiService.createInStockQcFormByCbarcode(cbarcode));
     }
 
 }

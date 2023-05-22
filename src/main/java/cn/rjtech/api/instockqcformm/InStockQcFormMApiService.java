@@ -6,6 +6,7 @@ import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.model.momdata.InStockQcFormM;
+
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -170,5 +171,14 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
      * */
     public JBoltApiRet getExportData(Long iautoid) {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
+    }
+
+    /*
+     * @desc 扫描现品票，点击“确定”按钮，表体增加1行在库检任务；如果此存货没有配置检验项目，
+     *       需维护相关设置后点击“生成”按钮，生成检查成绩表。
+     * @param cbarcode：现品票
+     * */
+    public JBoltApiRet createInStockQcFormByCbarcode(String cbarcode) {
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.createInStockQcFormByCbarcode(cbarcode));
     }
 }

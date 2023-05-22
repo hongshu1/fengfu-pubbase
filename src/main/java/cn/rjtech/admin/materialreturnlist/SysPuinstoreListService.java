@@ -389,4 +389,11 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 	}
 
+	/**
+	 * 获取入库订单
+	 * */
+	public Page<Record> getSysPODetail(Kv kv, int size, int PageSize) {
+		return dbTemplate("materialreturnlist.getSysPODetail", kv).paginate(size, PageSize);
+	}
+
 }

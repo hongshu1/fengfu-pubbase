@@ -4,7 +4,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.Monthorderd;
+import cn.rjtech.model.momdata.MonthOrderD;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -50,7 +50,7 @@ public class MonthorderdAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        Monthorderd monthorderd = service.findById(getLong(0));
+        MonthOrderD monthorderd = service.findById(getLong(0));
         if (monthorderd == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -63,14 +63,14 @@ public class MonthorderdAdminController extends BaseAdminController {
      * 保存
      */
     public void save() {
-        renderJson(service.save(getModel(Monthorderd.class, "monthorderd")));
+        renderJson(service.save(getModel(MonthOrderD.class, "monthorderd")));
     }
 
     /**
      * 更新
      */
     public void update() {
-        renderJson(service.update(getModel(Monthorderd.class, "monthorderd")));
+        renderJson(service.update(getModel(MonthOrderD.class, "monthorderd")));
     }
 
     /**
