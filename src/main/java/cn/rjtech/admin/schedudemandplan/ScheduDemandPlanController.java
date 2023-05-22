@@ -132,7 +132,6 @@ public class ScheduDemandPlanController extends BaseAdminController {
 	 */
 	public void saveForetell() {
 		String dataStr = get("startdate");
-		//JSONArray dataJSONArr = JSONArray.parseArray(dataStr);
 		renderJson(service.saveForetell(getKv()));
 	}
 	/**
