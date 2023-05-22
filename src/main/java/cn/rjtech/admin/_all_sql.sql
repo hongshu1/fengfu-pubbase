@@ -501,3 +501,7 @@
 #include("patchworkbarcode/patchworkbarcode.sql")
 #end
 
+#namespace("stockcheckvouch")
+#include("stockcheckvouch/stockcheckvouch.sql")
+#end
+
