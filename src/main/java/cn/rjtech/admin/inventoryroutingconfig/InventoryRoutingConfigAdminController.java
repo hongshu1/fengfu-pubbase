@@ -7,10 +7,14 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InventoryRoutingConfig;
+import cn.rjtech.wms.utils.EncodeUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.io.UnsupportedEncodingException;
+
 /**
  * 物料建模-存货工艺配置
  * @ClassName: InventoryRoutingConfigAdminController
@@ -52,7 +56,7 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 	}
 
 	public void saveItemRoutingConfig() {
-		renderJson(service.saveItemRoutingConfig(getLong("iitemroutingid"), getInt("iseq"), getLong("iPid"), get("cParentInvName")));
+		renderJson(service.saveItemRoutingConfig(getLong("iitemroutingid"), getInt("iseq")));
 	}
 
    /**
@@ -107,32 +111,28 @@ public class InventoryRoutingConfigAdminController extends BaseAdminController {
 		render("operation_dialog_index.html");
 	}
 
-	public void invc_dialog_index(){
+	public void invc_dialog_index() throws UnsupportedEncodingException {
 		keepPara();
 		set("configid",getLong("iautoid"));
+		set(InventoryRoutingConfig.ITEMJSON, EncodeUtils.encodeUrl(get(InventoryRoutingConfig.ITEMJSON), EncodeUtils.UTF_8) );
 		render("invc_dialog_index.html");
 	}
 
 	public void equipment_dialog_index(){
 		keepPara();
 		set("configid",getLong("iautoid"));
+		set(InventoryRoutingConfig.EQUIPMENTJSON, EncodeUtils.encodeUrl(get(InventoryRoutingConfig.EQUIPMENTJSON), EncodeUtils.UTF_8) );
 		render("equipment_dialog_index.html");
 	}
 
 	public void drawing_dialog_index(){
 		keepPara();
 		set("configid",getLong("iautoid"));
+		set(InventoryRoutingConfig.ROUTINGSOPJSON, EncodeUtils.encodeUrl(get(InventoryRoutingConfig.ROUTINGSOPJSON), EncodeUtils.UTF_8) );
 		render("drawing_dialog_index.html");
 	}
 
 	public void inventory_dialog_index(){
-//		Kv kv = getKv();
-//		set("inventoryid",kv.getStr("iAutoId"));
-//		set("cinvcode",kv.getStr("cInvCode"));
-//		set("cinvcode1",kv.getStr("cInvCode1"));
-//		set("cinvname1",kv.getStr("cInvName1"));
-//		set("cinvstd",kv.getStr("cInvStd"));
-//		set("iinventoryuomid1",kv.getStr("iInventoryUomId1"));
 		keepPara();
 		render("inventory_dialog_index.html");
 	}

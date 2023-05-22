@@ -7,6 +7,7 @@
 	<div class="row">
 	<div class="col">
 		<form class="form-inline text-left" id="itemroutingForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="hidden" autocomplete="off" class="form-control" name="equipmentJson" value="#(equipmentJson)">
 			<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品工艺档案配置Id" name="configid" value="#(configid)" />
 			<input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
 		<button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
@@ -89,26 +90,44 @@
 	</div>
 </div>
 <script>
-	/*function submitThisForm(callback){
-		var data=getJboltTableCheckedDatas("workpositionid");
-		if(data){
-			//LayerMsgBox.confirm("确认选择此数据?",function(){
-			parent.jboltTableProcessTdByDialogChooser(data.coperationname,data.iautoid,data);
-			if(callback){
+	function submitThisForm(callback){
+		var datas=getJboltTableAllDatas("quipmenttableid");
+		if(datas){
+
+			var count = 0;
+			var items = [];
+			for (var i=0; i<datas.length; i++){
+				var msg ='第'+(i+1)+'行的';
+				var item = datas[i];
+				if (item.iequipmentid){
+					count=Number(count+1);
+					items.push(item);
+				}else{
+					LayerMsgBox.alert(msg+"请先选择设备！", 2);
+					return;
+				}
+			}
+			var data={
+				equipmentJsonStr: items,
+				equipmentJson: encodeURIComponent(JSON.stringify(items))
+			};
+			if (count > 0){
+				parent.jboltTableProcessTdByDialogChooser('已选'+count+'个',count, data);
+			}
+			if(count > 0 && callback){
 				callback();
 			}
-			//});
 		}
-	}*/
+	}
 
-	$(function(){
+/*	$(function(){
 		hideParentLayerDialogBtn(0);
 		addParentLayerDialogBtn("保存","lay_success",function(data){
 			//获取表格数据
 			//var tableDatas = getJboltTableAllDatas('#quipmenttableid');
 			jboltTableSubmit('#quipmenttableid');
 		});
-	});
+	});*/
 
 	function addTableRow(ele){
 		jboltTableInsertRow(ele)

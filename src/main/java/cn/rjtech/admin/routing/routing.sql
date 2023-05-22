@@ -4,7 +4,7 @@ SELECT
     a.*
 FROM Bd_InvPart a
 LEFT JOIN Bd_Inventory inv on inv.iAutoId = a.iInventoryId
-WHERE a.iOrgId = #para(orgId)
+WHERE a.iOrgId = #para(orgId) AND a.isEffective = '1'
 	 #if(keyWords)
         AND (
            (inv.cInvCode LIKE CONCAT('%',#para(keyWords),'%')) OR ( inv.cInvName LIKE CONCAT('%',#para(keyWords),'%') )
@@ -17,7 +17,7 @@ WHERE a.iOrgId = #para(orgId)
 #end
 
 #sql("findParentAll")
-SELECT * FROM Bd_InvPart a WHERE a.iOrgId = #para(orgId) AND ISNULL(a.iPid, '') = ''
+SELECT * FROM Bd_InvPart a WHERE a.iOrgId = #para(orgId) AND ISNULL(a.iPid, '') = '' AND a.isEffective = '1'
 #end
 
 #sql("getRoutingDetails")
@@ -69,7 +69,7 @@ FROM
 	INNER JOIN Bd_InventoryRoutingConfig routingc ON routingc.iAutoId = a.iInventoryRoutingConfigId
 	LEFT JOIN Bd_Inventory inv ON inv.iAutoId = routingc.iRsInventoryId
 WHERE
-	1 = 1
+	a.isEffective = '1'
 	#if(orgId)
 	    AND a.iOrgId = #para(orgId)
 	#end

@@ -8,8 +8,8 @@ import cn.jbolt.core.enumutil.JBoltEnableEnum;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.model.Org;
+import cn.rjtech.base.service.BaseService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.base.BaseMesService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -27,7 +27,7 @@ import static cn.hutool.core.util.StrUtil.COMMA;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2021-01-25 16:59
  */
-public class OrgService extends BaseMesService<Org> {
+public class OrgService extends BaseService<Org> {
 
     private final Org dao = new Org().dao();
 

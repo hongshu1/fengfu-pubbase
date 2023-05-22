@@ -1,13 +1,21 @@
 package cn.rjtech.admin.inventoryroutingconfigoperation;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.InventoryroutingconfigOperation;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+
+import java.util.Date;
+
+import static cn.hutool.core.text.StrPool.COMMA;
+
 /**
  * 物料建模-存货工艺工序
  * @ClassName: InventoryroutingconfigOperationService
@@ -105,5 +113,20 @@ public class InventoryroutingconfigOperationService extends BaseService<Inventor
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
 	}
+	
+	public InventoryroutingconfigOperation create(Long iInventoryRoutingConfigId, Long iOperationId, Long iCreateBy, String cCreateName, String cMemo, Date dCreateTime){
+		InventoryroutingconfigOperation inventoryroutingconfigOperation = new InventoryroutingconfigOperation();
+		inventoryroutingconfigOperation.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		inventoryroutingconfigOperation.setIInventoryRoutingConfigId(iInventoryRoutingConfigId);
+		inventoryroutingconfigOperation.setIOperationId(iOperationId);
+		inventoryroutingconfigOperation.setICreateBy(iCreateBy);
+		inventoryroutingconfigOperation.setCCreateName(cCreateName);
+		inventoryroutingconfigOperation.setCMemo(cMemo);
+		inventoryroutingconfigOperation.setDCreateTime(dCreateTime);
+		return inventoryroutingconfigOperation;
+	}
 
+	public void deleteByRoutingConfigIds(Object[] routingConfigIds){
+		delete("DELETE Bd_InventoryRoutingConfig_Operation WHERE iInventoryRoutingConfigId IN (" + ArrayUtil.join(routingConfigIds, COMMA) +")");
+	}
 }

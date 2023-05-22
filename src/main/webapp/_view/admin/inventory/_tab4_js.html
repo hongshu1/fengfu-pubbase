@@ -1,9 +1,13 @@
 <script>
 
+    var isroutingreportValue = '';
+    var isubsupplieridValue = '';
+
     function getDatas() {
         var data = jboltTableGetAllDatas('#itemroutingconfigid');
         console.log(JSON.stringify(data));
     }
+
     function addRoutingBtn(ele){
 /*
         let iitemattribute = $("#iitemattribute").val();
@@ -21,6 +25,7 @@
         $(ele).data("url",url);
         DialogUtil.openBy(ele);
     }
+
     function processViewBtn(ele){
         let iinventoryroutingid = $("#iinventoryroutingid").val();
         if(!iinventoryroutingid){
@@ -34,6 +39,7 @@
         $(ele).data("url",url);
         DialogUtil.openBy(ele);
     }
+
     function technologicalStructureBtn(ele){
         let iinventoryroutingid = $("#iinventoryroutingid").val();
         if(!iinventoryroutingid){
@@ -50,9 +56,9 @@
 
     function addTableRow4(ele){
         //获取表格数据
-        let iitemroutingid = $("#iinventoryroutingid").val();
-        if (iitemroutingid == ''){
-            LayerMsgBox.alert("请先设置工艺路线！");
+        let routingId = $("#iinventoryroutingid").val();
+        if (routingId == ''){
+            LayerMsgBox.alert("请先设置工艺路线！",2);
             return;
         }
         let seq = 0;
@@ -60,22 +66,20 @@
         var iPid ='';
         var cParentInvName = ''
         if (tableDatas != null){
-            var data = tableDatas[tableDatas.length - 1];
-            seq = data.iseq;
-            iPid = data.iautoid;
-            // 默认为【虚拟件+工序名称】，有选择半成品就 赋 半成品名称
-            cParentInvName = '【虚拟件 - '+data.coperationname+'】'
-            if (data.irsinventoryid){
-                cParentInvName = data.rsinventoryname;
-            }
+            seq = tableDatas.length * 10;
         }
-        let url = "admin/inventoryroutingconfig/saveItemRoutingConfig?iitemroutingid="+iitemroutingid+"&iseq="+Number(seq+10)+"&cParentInvName="+cParentInvName+"&iPid="+iPid;
-        Ajax.get(url,function(res){
-            refreshJBoltTable("#itemroutingconfigid");
-        });
+        var data = {
+            iseq: Number(seq+10),
+            iinventoryroutingid: routingId
+        };
+        insertRoutingOperationDataRow('itemroutingconfigid', data);
+
+        // let url = "admin/inventoryroutingconfig/saveItemRoutingConfig?iitemroutingid="+routingId+"&iseq="+Number(seq+10)+"&cParentInvName="+cParentInvName+"&iPid="+iPid;
+        // Ajax.get(url,function(res){
+        //     refreshJBoltTable("#itemroutingconfigid");
+        // });
     }
-    var isroutingreportValue = '';
-    var isubsupplieridValue = '';
+
     function getEditableTableOptions4(){
         var editableTableOptions={
             trigger:"click",
@@ -86,6 +90,7 @@
 
                 /*withForm:[""],*/
                 type:"all",//cell|all
+                name: "inventorRouting",
                 params:{"inventoryrouting":'#(inventoryrouting??)'},//携带其他额外参数
                 //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
                 url:"admin/inventoryroutingconfig/updateRoutingConfig",
@@ -128,7 +133,7 @@
                     linkColumn:"coperationname",
                     linkPara:"#iautoid,#cinvcode,#cinvcode1,#cinvname1,#cinvstd,#iInventoryUomId1",
                     dialog:{
-                        url:"admin/inventoryroutingconfig/inventory_dialog_index?invId=#(inventory.iAutoId)",
+                        url:"admin/inventoryroutingconfig/inventory_dialog_index?masterInvId=#(inventory.iAutoId)",
                         jbt_link_ele_id:"iautoid,cinvcode,cinvcode1,cinvname1,cinvstd,iInventoryUomId1",
                         area:"60%,70%",
                         title:"选择存货",
@@ -162,7 +167,15 @@
                 invcs:{  //所需物料集
                     type:"dialogbtn",
                     placeholder:"设置物料集",
-                    linkColumn:'iautoid',
+                    linkColumn:'iautoid,itemJson',
+                    changeColumns:[
+                        {
+                            column: 'itemJsonStr', use : 'itemJsonStr'
+                        },
+                        {
+                            column: 'itemJson', use : 'itemJson'
+                        }
+                    ],
                     dialog:{
                         url:"admin/inventoryroutingconfig/invc_dialog_index?iinventoryid=#(inventory.iAutoId)&isAdd=1",
                         area:"95%,95%",
@@ -173,7 +186,15 @@
                 equipments:{  //所需设备集
                     type:"dialogbtn",
                     placeholder:"工序设备集",
-                    linkColumn:'iautoid',
+                    linkColumn:'iautoid,equipmentJson',
+                    changeColumns:[
+                        {
+                            column: 'equipmentJsonStr', use : 'equipmentJsonStr'
+                        },
+                        {
+                            column: 'equipmentJson', use : 'equipmentJson'
+                        }
+                    ],
                     dialog:{
                         url:"admin/inventoryroutingconfig/equipment_dialog_index",
                         area:"95%,95%",
@@ -184,7 +205,15 @@
                 drawings:{  //工艺文件
                     type:"dialogbtn",
                     placeholder:"工艺文件",
-                    linkColumn:'iautoid',
+                    linkColumn:'iautoid,routingSopJson',
+                    changeColumns:[
+                        {
+                            column: 'routingSopJsonStr', use : 'routingSopJsonStr'
+                        },
+                        {
+                            column: 'routingSopJson', use : 'routingSopJson'
+                        }
+                    ],
                     dialog:{
                         url:"admin/inventoryroutingconfig/drawing_dialog_index",
                         area:"95%,95%",
@@ -196,6 +225,7 @@
         };
         return editableTableOptions;
     }
+
     function moveUpBtn(ele,id,seq){
         let iinventoryroutingid = $("#iinventoryroutingid").val();
         let url = "admin/inventoryroutingconfig/moveUp?iinventoryroutingid="+iinventoryroutingid+"&iitemroutingconfigid="+id+"&seq="+seq;
@@ -204,6 +234,7 @@
         });
         //jboltTableTrMoveDown(ele);
     }
+
     function moveDownBtn(ele,id,seq){
         let iinventoryroutingid = $("#iinventoryroutingid").val();
         let url = "admin/inventoryroutingconfig/moveDown?iinventoryroutingid="+iinventoryroutingid+"&iitemroutingconfigid="+id+"&seq="+seq;
@@ -211,6 +242,88 @@
             refreshJBoltTable("#itemroutingconfigid");
         });
         //jboltTableTrMoveDown(ele);
+    }
+
+    function insertRoutingOperationDataRow(ele, data) {
+        var table=getJBoltTable(ele);
+        if(isOk(table)){
+            var jboltTable=table.jboltTable("inst");
+            if(jboltTable){
+                var action=getRealJqueryObject(ele),tr;
+                if(isOk(action)){
+                    var success = checkMasterTableId(action);
+                    if(!success){
+                        return false;
+                    }
+                    //如果是在表格里触发的
+                    if(isOk(action.closest("table[data-jbolttable]"))){
+                        tr = action.closest("tr");
+                    }else if(isOk(action.closest(".jbolt_table_fixed"))){
+                        var fixtr = action.closest("tr");
+                        var fixTrIndex = fixtr.index();
+                        tr=jboltTable.tbody.find("tr:nth-child("+(fixTrIndex+1)+")");
+                    }
+                }
+                return insertRoutingOperationRows(jboltTable,tr,data,true,null);
+            }
+        }
+    }
+
+    function removeRow(ele) {
+        if (jboltTableRemoveRow(ele)){
+            batchSetColumns('#itemroutingconfigid');
+        }
+    }
+
+    function batchSetColumns(tableEle,dontExeValueChangeHandler){
+        var table=getJBoltTable(tableEle);
+        if(isOk(table)){
+            var jboltTable=table.jboltTable("inst");
+            if(jboltTable){
+                jboltTable.me.processEditingTds(jboltTable);
+                var trs = jboltTable.tbody.find("tr[data-index]");
+                var seq = Number(0);
+                if(isOk(trs)){
+                    var tr;
+                    trs.each(function(){
+                        tr=$(this);
+                        seq = Number(10+seq);
+                        jboltTable.me.setCell(jboltTable,tr,'iseq',seq,seq,dontExeValueChangeHandler);
+                    });
+                    return;
+                }
+                return;
+            }
+        }
+        LayerMsgBox.alert("表格组件配置异常",2);
+    }
+
+    function insertRoutingOperationRows(table,tr,insertEmptyData,insertToBefore,forceTrChange){
+        var canInsertTr=table.me.checkCanInsertNewTr(table,1);
+        if(canInsertTr){
+            //处理thead里的checkbox uncheck
+            table.me.processUnCheckTheadCheckbox(table);
+
+            var insertDefaultValues=table.editableOptions.insertDefaultValues;
+            if(insertDefaultValues){
+                insertEmptyData=table.me.deepClone(insertDefaultValues);
+            }
+            var tempTr=table.me.insertRowData(table,tr,insertEmptyData,false,insertToBefore);
+            if(isOk(tempTr)){
+                table.me.processTableIndexColumn(table);
+                table.me.processInsertRowTableListData(table,tempTr,insertEmptyData,insertToBefore);
+                table.me.initEditableHSummarys(table,tempTr);
+                table.me.processTfootSummarys(table);
+                //处理change状态
+                table.me.processNewInsertTrEditableTdsChanged(table,tempTr,insertEmptyData,forceTrChange);
+                //处理新插入的行重新设置宽度
+                table.me.resizeTrByOldWidth(table,tempTr);
+                //处理动态插入数据后的handler
+                table.me.processEditableTableAfterInsertRowHandler(table,tempTr);
+            }
+            return tempTr;
+        }
+        return false;
     }
 
 </script>

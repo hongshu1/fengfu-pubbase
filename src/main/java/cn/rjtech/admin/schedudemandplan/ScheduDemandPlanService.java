@@ -5,12 +5,14 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bommaster.BomMasterService;
-import cn.rjtech.admin.cusordersum.CollectionUtils;
+import cn.rjtech.admin.scheduproductplan.CollectionUtils;
 import cn.rjtech.admin.mrpdemandcomputed.MrpDemandcomputedService;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
+
 import cn.rjtech.model.momdata.BomMaster;
 import cn.rjtech.model.momdata.MrpDemandcomputed;
 import cn.rjtech.model.momdata.MrpDemandcomputem;
+
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
@@ -28,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.Calendar;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -1142,8 +1145,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			map.put("cInvCode",info.getStr("cInvCode"));
 			map.put("cInvCode1",info.getStr("cInvCode1"));
 			map.put("cInvName1",info.getStr("cInvName1"));
-			map.put("iPkgQty",info.getStr("iPkgQty"));
-			map.put("iInnerInStockDays",info.getStr("iInnerInStockDays"));
+			map.put("iPkgQty", info.get("iPkgQty") != null ? info.get("iPkgQty") : 0);
+			map.put("iInnerInStockDays", info.get("iInnerInStockDays") != null ? info.get("iInnerInStockDays") : 0);
 
 			Map<String,Record> planMap = invPlanMap.get(inv);
 

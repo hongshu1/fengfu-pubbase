@@ -1,0 +1,191 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col">
+                            <button onclick="submitThisForm()"
+                                    class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存
+                            </button>
+                            <button onclick="closeHandler()"
+                                    class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <form onsubmit="return false;" id="mopickitemm_#(pageId)" action="#(action)" method="post">
+                                #if(mopickitemm.AutoID??)
+                                <input type="hidden" name="mopickitemm.AutoID" value="#(sysMaterialsprepare.AutoID??)"/>
+                                #end
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">备料单号：</label>
+                                            <div class="col-9">
+                                                <input type="text" data-notnull="true"
+                                                       data-tips="请输入入库单号" data-with-clearbtn="true"
+                                                       autocomplete="off"
+                                                       class="form-control" placeholder="备料单号" maxlength="40"
+                                                       name="mopickitemm.warehousingNo"
+                                                       value="#(sysMaterialsprepare.warehousingNo??)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">工单号：</label>
+                                            <div class="col-9">
+                                                <input type="text" data-date class="form-control ml-2"
+                                                       placeholder="工单号"
+                                                       maxlength="40" name="mopickitemm.createdate"
+                                                       value="#(sysMaterialsprepare.createdate??)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">生产部门：</label>
+                                            <div class="col-9">
+                                                <input type="text" data-date class="form-control ml-2"
+                                                       placeholder="生产部门"
+                                                       maxlength="40" name="mopickitemm.createdate"
+                                                       value="#(sysMaterialsprepare.createdate??)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">机型：</label>
+                                            <div class="col-9">
+                                                <input type="text" data-date class="form-control ml-2"
+                                                       placeholder="机型"
+                                                       maxlength="40" name="mopickitemm.createdate"
+                                                       value="#(sysMaterialsprepare.createdate??)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">客户部番：</label>
+                                            <div class="col-9">
+                                                <input type="text" data-date class="form-control ml-2"
+                                                       placeholder="客户部番"
+                                                       maxlength="40" name="mopickitemm.createdate"
+                                                       value="#(sysMaterialsprepare.createdate??)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">部门名称：</label>
+                                            <div class="col-9">
+                                                <input type="text" data-notnull="true"
+                                                       data-tips="请输入业务号" data-with-clearbtn="true"
+                                                       autocomplete="off"
+                                                       class="form-control" placeholder="部门名称" maxlength="40"
+                                                       name="mopickitemm.BillNo" value="#(sysMaterialsprepare.BillNo??)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">计划日期：</label>
+                                            <div class="col-9">
+                                                <input type="text" data-date class="form-control ml-2"
+                                                       placeholder="计划日期"
+                                                       maxlength="40" name="mopickitemm.createdate"
+                                                       value="#(sysMaterialsprepare.createdate??)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">生产批次：</label>
+                                            <div class="col-9">
+                                                <input type="text" data-date class="form-control ml-2"
+                                                       placeholder="生产批次"
+                                                       maxlength="40" name="mopickitemm.AuditDate"
+                                                       value="#(sysMaterialsprepare.AuditDate??)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.corgcode}</td>
+<td>${data.corgname}</td>
+<td>${data.iorgid}</td>
+<td>${data.istatus}</td>
+<td>${data.itype}</td>
+<td>${data.imodocid}</td>
+<td>
+	{@if data.isDeleted}
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysmaterialspreparedetail/edit/${data.iAutoId}" data-area="800,600" data-title="查看生产订单-备料单主表"><i class="fa fa-eye"></i></a>
+	{@else}
+	<a class="jbolt_table_editbtn" href="admin/sysmaterialspreparedetail/edit/${data.iAutoId}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑生产订单-备料单主表"><i class="fa fa-edit"></i></a>
+	{@/if}
+	<a class="jbolt_table_delbtn" href="admin/sysmaterialspreparedetail/${data.isDeleted?'realDelete':'delete'}/${data.iAutoId}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="MoPickItemM_form_#(pageId)"
+               data-url="admin/sysmaterialspreparedetail/datas"
+               data-rowtpl="MoPickItemM_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="MoPickItemM_page"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-toolbar="MoPickItemM_toolbar_#(pageId)"
+               data-row-click-active="true"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" data-column="iautoid">序号</th>
+                <th data-width="100" data-column="corgcode">存货编码</th>
+                <th data-width="100" data-column="">客户部番</th>
+                <th data-width="150" data-column="">部品名称</th>
+                <th data-width="150" data-column="">规格</th>
+                <th data-width="100" data-column="">库存单位</th>
+                <th data-width="150" data-column="">计划数量</th>
+                <th data-width="100" data-column="dPlanDate">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+#end
+#define js()
+<script type="text/javascript">
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+</script>
+#end

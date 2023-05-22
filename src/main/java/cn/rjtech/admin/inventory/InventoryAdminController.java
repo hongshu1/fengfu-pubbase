@@ -30,6 +30,7 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class InventoryAdminController extends BaseAdminController {
 	 * 新增或编辑料品
 	 */
 	public void formSubmit(){
-		JBoltTable jBoltTable = getJBoltTable();
+		/*JBoltTable jBoltTable = getJBoltTable();
 		Inventory inventory = jBoltTable.getFormBean(Inventory.class, "inventory");
 		InventoryStockConfig inventorystockconfig = jBoltTable.getFormBean(InventoryStockConfig.class, "inventorystockconfig");
 		InventoryPlan inventoryPlan = jBoltTable.getFormBean(InventoryPlan.class, "inventoryplan");
@@ -125,13 +126,12 @@ public class InventoryAdminController extends BaseAdminController {
 			List<InventoryWorkRegion> saveBeanList = jBoltTable.getSaveBeanList(InventoryWorkRegion.class);
 			Object[] delete = jBoltTable.getDelete();
 			result = service.updateForm(inventory,inventoryAddition,inventoryPlan,inventoryMfgInfo,inventorystockconfig,inventoryWorkRegions,saveBeanList,delete);
-
 		}else {
 			List<InventoryWorkRegion> inventoryWorkRegions = jBoltTable.getSaveBeanList(InventoryWorkRegion.class);
 			result = service.saveForm(inventory,inventoryAddition,inventoryPlan,inventoryMfgInfo,inventorystockconfig,inventoryWorkRegions);
 		}
 
-		renderJson(result);
+		renderJson(result);*/
 	}
 
    /**
@@ -239,7 +239,7 @@ public class InventoryAdminController extends BaseAdminController {
 				inventoryWorkRegion.setIAutoId(null);
 			}
 
-		Ret ret = service.saveForm(inventory, inventoryAddition, inventoryplan, inventoryMfgInfo, inventorystockconfig, inventoryWorkRegions);
+		Ret ret = service.saveForm(inventory, inventoryAddition, inventoryplan, inventoryMfgInfo, inventorystockconfig, inventoryWorkRegions, null);
 		inventoryRoutingService.copy(iAutoId,inventory.getIAutoId());
 		renderJson(ret);
 	}
@@ -388,7 +388,7 @@ public class InventoryAdminController extends BaseAdminController {
 		renderJsonData(service.inventorySpotCheckList(getKv()));
 	}
 
-	public void findBomCompareByBomMasterInvId(@Para(value = "") Long invId){
+	public void findBomCompareByBomMasterInvId(){
 		renderJsonData(bomMasterService.findBomCompareByBomMasterInvId(getKv(), getPageNumber(), getPageSize()));
 	}
 
@@ -409,4 +409,7 @@ public class InventoryAdminController extends BaseAdminController {
         renderJson(service.fetchByCinvcode1s(cinvcode1));
     }
     
+	public void submitMulti() {
+		renderJson(service.submitMulti(getJBoltTables()));
+	}
 }
