@@ -67,7 +67,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
         Record subcontractsaleordermRc = subcontractsaleorderm.toRecord();
         Customer customer = customerService.findById(subcontractsaleorderm.getICustomerId());
         subcontractsaleordermRc.set("ccusname", customer == null ? null : customer.getCCusName());
-        subcontractsaleordermRc.set("cbususername", JBoltUserCache.me.getUserName(subcontractsaleorderm.getIBusUserId()));
+        subcontractsaleordermRc.set("cbususername", JBoltUserCache.me.getUserName(subcontractsaleorderm.getIBusPersonId()));
         set("subcontractsaleorderm", subcontractsaleordermRc);
         render("edit.html");
     }
