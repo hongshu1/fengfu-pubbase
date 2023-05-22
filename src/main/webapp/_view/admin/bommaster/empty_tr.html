@@ -237,16 +237,25 @@
         <button onclick="insertEmptyRowAfterChecked(this)" class="btn btn-primary btn-sm" >后插空 <i class="fa fa-arrow-right"></i></button>
         <button onclick="insertAppendEmptyRow(this)" class="btn btn-primary btn-sm" >尾插空 <i class="fa fa-arrow-down"></i></button>
     </div>
-    <div class="j_upload_file_box btn-group-sm"
-         data-name="file"
-         data-btn-class="btn dropdown-item"
-         data-placeholder="上传导入"
-         data-confirm="确认导入数据？"
-         data-accept="excel"
-         data-handler="uploadFile"
-         data-upload-success-handler="uploadSuccessHandler"
-         data-url="/admin/bommaster/importExcelFile">
+
+
+    <div class="btn-group dropdown">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importBomButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+        <div class="dropdown-menu" aria-labelledby="importBomButton">
+            <a data-downloadbtn href="/admin/bommaster/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+            <div class="j_upload_file_box"
+                 data-name="file"
+                 data-btn-class="btn dropdown-item"
+                 data-placeholder="上传导入"
+                 data-confirm="确认导入数据？"
+                 data-accept="excel"
+                 data-handler="uploadFile"
+                 data-upload-success-handler="uploadSuccessHandler"
+                 data-url="/admin/bommaster/importExcelFile">
+            </div>
+        </div>
     </div>
+
 </div>
 #end
 <table class="jbolt_table jbolt_main_table table-center thead_font_normal"
