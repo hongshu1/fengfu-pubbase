@@ -1,7 +1,10 @@
 package cn.rjtech.admin.inventoryroutingequipment;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -9,12 +12,23 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.equipment.EquipmentService;
+import cn.rjtech.model.momdata.Equipment;
+import cn.rjtech.model.momdata.Inventory;
+import cn.rjtech.model.momdata.InventoryRoutingConfig;
+import cn.rjtech.model.momdata.InventoryRoutingEquipment;
+import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Okv;
 import cn.rjtech.model.momdata.InventoryRoutingEquipment;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +42,9 @@ import static cn.hutool.core.text.StrPool.COMMA;
  */
 public class InventoryRoutingEquipmentService extends BaseService<InventoryRoutingEquipment> {
 	private final InventoryRoutingEquipment dao=new InventoryRoutingEquipment().dao();
+	
+	@Inject
+	private EquipmentService equipmentService;
 	@Override
 	protected InventoryRoutingEquipment dao() {
 		return dao;
@@ -155,6 +172,38 @@ public class InventoryRoutingEquipmentService extends BaseService<InventoryRouti
 	}
 
 	public List<Record> dataList(Kv kv) {
-		return dbTemplate("inventory.getRoutingEqps",kv).find();
+		
+		if (StrUtil.isNotBlank(kv.getStr(InventoryRoutingConfig.EQUIPMENTJSON))){
+			String str = kv.getStr(InventoryRoutingConfig.EQUIPMENTJSON);
+			JSONArray jsonArray = JSONObject.parseArray(str);
+			if (CollectionUtil.isEmpty(jsonArray)){
+				return null;
+			}
+			List<Record> recordList = new ArrayList<>();
+			for (int i=0; i<jsonArray.size(); i++){
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+				Record record = new Record();
+				record.setColumns(jsonObject.getInnerMap());
+				
+				Long equipmentId = jsonObject.getLong("iequipmentid");
+				if (ObjectUtil.isNotNull(equipmentId)){
+					Equipment equipment = equipmentService.findById(equipmentId);
+					ValidationUtils.notNull(equipment, "未找到设备信息");
+					record.set(equipment.CEQUIPMENTCODE, equipment.getCEquipmentCode());
+				}
+				recordList.add(record);
+			}
+			return recordList;
+		}
+		
+		if (StrUtil.isBlank(kv.getStr("configid"))){
+			return null;
+		}
+		List<Record> recordList = dbTemplate("inventory.getRoutingEqps", kv).find();
+		return recordList;
+	}
+	
+	public List<Record> findRoutingConfigId(Long routingConfigId){
+		return dbTemplate("inventory.getRoutingEqps", Okv.by("configid", routingConfigId)).find();
 	}
 }

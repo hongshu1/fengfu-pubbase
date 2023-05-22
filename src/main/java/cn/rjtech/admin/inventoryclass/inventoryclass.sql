@@ -24,13 +24,13 @@ WHERE 1=1
  AND i.isenabled = #para(isEnabled)
 #end
 #if(cInvCode1)
- AND i.cInvCode1 = #para(cInvCode1)
+ AND i.cInvCode1 like CONCAT('%', #para(cInvCode1), '%')
 #end
 #if(cInvName)
  AND i.cInvName like CONCAT('%', #para(cInvName), '%')
 #end
 #if(cInvCode)
- AND i.cInvCode = #para(cInvCode)
+ AND i.cInvCode like CONCAT('%', #para(cInvCode), '%')
 #end
 #if(sqlids)
  AND i.iAutoId in (#(sqlids))
@@ -78,7 +78,7 @@ ORDER BY a.iSeq ASC
 SELECT
     ir.*
 FROM Bd_InventoryRouting ir
-WHERE ir.iinventoryid = #para(iinventoryid)
+WHERE ir.iinventoryid = #para(iinventoryid) AND ir.isDeleted = '0'
 #end
 
 #sql("inventorySpotCheckList")

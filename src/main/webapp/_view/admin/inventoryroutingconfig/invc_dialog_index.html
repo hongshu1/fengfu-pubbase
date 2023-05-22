@@ -7,6 +7,7 @@
 	<div class="row">
 	<div class="col">
 		<form class="form-inline text-left" id="itemroutingForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="hidden" autocomplete="off" class="form-control" name="itemJson" value="#(itemJson)">
 			<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品工艺档案配置Id" name="configid" value="#(configid)" />
 			<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品档案Id" name="iinventoryid" value="#(iinventoryid)" />
 			<input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
@@ -48,7 +49,9 @@
 						<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
 						<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
 						<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+						#if(configid)
 						<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
+						#end
 					</div>
 					#end
 				</div>
@@ -106,14 +109,55 @@
 		}
 	}*/
 
-	$(function(){
-		hideParentLayerDialogBtn(0);
-		addParentLayerDialogBtn("保存","lay_success",function(data){
-			//获取表格数据
-			//var tableDatas = getJboltTableAllDatas('#invctableid');
-			jboltTableSubmit('#invctableid');
-		});
-	});
+	// $(function(){
+	// 	hideParentLayerDialogBtn(0);
+	// 	addParentLayerDialogBtn("保存","lay_success",function(data){
+	// 		//获取表格数据
+	// 		var data = getJboltTableAllDatas('#invctableid');
+	// 		// jboltTableSubmit('#invctableid');
+	// 		debugger;
+	// 		if(data){
+	// 			parent.jboltTableProcessTdByDialogChooser('','',{});
+	// 			if(callback){
+	// 				callback();
+	// 			}
+	// 		}
+	// 	});
+	// });
+
+	function submitThisForm(callback){
+		var datas=getJboltTableAllDatas("invctableid");
+		console.log(JSON.stringify(datas));
+		if(datas){
+			var count = 0;
+			var items = [];
+			for (var i=0; i<datas.length; i++){
+				var msg ='第'+(i+1)+'行的';
+				var item = datas[i];
+				if (item.iinventoryid){
+					count=Number(count+1);
+					items.push(item);
+				}else{
+					LayerMsgBox.alert(msg+"料品请先选择！", 2);
+					return;
+				}
+				if (item.iusageuom <=0 || !item.iusageuom){
+					LayerMsgBox.alert(msg+"基本用量为必填且必须大于0！", 2);
+					return;
+				}
+			}
+			var data={
+				itemJsonStr: items,
+				itemJson: encodeURIComponent(JSON.stringify(items))
+			};
+			if (count > 0){
+				parent.jboltTableProcessTdByDialogChooser('已选'+count+'个',count, data);
+			}
+			if(count > 0 && callback){
+				callback();
+			}
+		}
+	}
 
 	function addTableRow(ele){
 		jboltTableInsertRow(ele)

@@ -22,8 +22,8 @@ FROM
 WHERE
 	master.IsDeleted = '0'
 	AND master.isEnabled = '1'
-	AND master.dEnableDate <= GETDATE()
-	AND master.dDisableDate >= GETDATE()
+	AND CONVERT(DATE, master.dEnableDate) <= CONVERT(DATE,  GETDATE())
+	AND CONVERT(DATE, master.dDisableDate) >= CONVERT(DATE,  GETDATE())
 	AND master.iAuditStatus = 2
 	AND master.isEffective = 1
 UNION ALL
@@ -47,7 +47,7 @@ FROM
 	Bd_BomCompare bbc
 	INNER JOIN Bd_Inventory minv ON minv.iAutoId = bbc.iInventoryId
 	LEFT JOIN Bd_Uom uom2 ON uom2.iAutoId = minv.iUomClassId
-	INNER JOIN Bd_BomMaster a ON a.iAutoId = bbc.iBOMMasterId AND a.dEnableDate <= GETDATE() AND a.dDisableDate >= GETDATE()
+	INNER JOIN Bd_BomMaster a ON a.iAutoId = bbc.iBOMMasterId AND CONVERT(DATE, a.dEnableDate) <= CONVERT(DATE,  GETDATE()) AND CONVERT(DATE, a.dDisableDate) >= CONVERT(DATE,  GETDATE())
 WHERE
 	bbc.IsDeleted = '0'
 	AND a.IsDeleted = '0'
@@ -133,8 +133,8 @@ FROM
 WHERE
 	master.IsDeleted = '0'
 	AND master.isEnabled = '1'
-	AND master.dEnableDate <= GETDATE()
-	AND master.dDisableDate >= GETDATE()
+	AND CONVERT(DATE, master.dEnableDate) <= CONVERT(DATE,  GETDATE())
+	AND CONVERT(DATE, master.dDisableDate) >= CONVERT(DATE,  GETDATE())
 UNION ALL
 SELECT
 	bbc.iBOMMasterId AS id,
@@ -149,7 +149,7 @@ SELECT
 FROM
 	Bd_BomCompare bbc
 	INNER JOIN Bd_Inventory minv ON minv.iAutoId = bbc.iInventoryId
-	INNER JOIN Bd_BomMaster a ON a.iAutoId = bbc.iBOMMasterId AND a.dEnableDate <= GETDATE() AND a.dDisableDate >= GETDATE()
+	INNER JOIN Bd_BomMaster a ON a.iAutoId = bbc.iBOMMasterId AND CONVERT(DATE, a.dEnableDate) <= CONVERT(DATE,  GETDATE()) AND CONVERT(DATE, a.dDisableDate) >= CONVERT(DATE,  GETDATE())
 WHERE
 	bbc.IsDeleted = '0'
 	AND a.IsDeleted = '0'
@@ -192,8 +192,8 @@ FROM
 WHERE
 	master.IsDeleted = '0'
 	AND master.isEnabled = '1'
-	AND master.dEnableDate <= GETDATE()
-	AND master.dDisableDate >= GETDATE()
+	AND CONVERT(DATE, master.dEnableDate) <= CONVERT(DATE,  GETDATE())
+	AND CONVERT(DATE, master.dDisableDate) >= CONVERT(DATE,  GETDATE())
 	AND master.iAuditStatus = 2
 	AND master.isEffective = 1
 	#if(orgId)

@@ -16,37 +16,36 @@ SELECT mp.AutoID,
        mpd.InvCode,
        mpd.Barcode,
        mpd.Qty,
-       it.cInvName1,
+       md.cMoDocNo,
        it.cInvCode1,
-       it.cInvAddCode1,
-       md.iWorkShiftMid,
-       CASE md.iStatus
-           WHEN 1 THEN
-               '未安排人员'
-           WHEN 2 THEN
-               '已安排人员'
-           WHEN 3 THEN
-               '生成备料单'
-           WHEN 4 THEN
-               '待生产'
-           WHEN 5 THEN
-               '生产中'
-           WHEN 6 THEN
-               '已完工'
-           WHEN 7 THEN
-               '已关闭'
-           WHEN 8 THEN
-               '已取消'
-           END AS statename
+       it.cInvName1,
+       dpm.cDepName,
+       wsm.cWorkShiftName,
+       md.dPlanDate,
+       uom.cUomName,
+       md.iQty,
+       wrm.cWorkName,
+       it.cInvStd
 FROM T_Sys_MaterialsPrepare mp
-         LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.MasID = mp.AutoID
-         LEFT JOIN Mo_MoDoc md ON md.iMoTaskId = mp.SourceBillID
-         LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
-where 1 = 1 #if(startTime)
+    LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.MasID = mp.AutoID
+    LEFT JOIN Mo_MoDoc md ON md.iMoTaskId = mp.SourceBillID
+    LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
+    LEFT JOIN Bd_Department dpm ON dpm.iAutoId = md.iDepartmentId
+    LEFT JOIN Bd_WorkShiftM wsm ON wsm.iAutoId = md.iWorkShiftMid
+    LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
+    LEFT JOIN Bd_WorkRegionM wrm ON wrm.iAutoId = md.iWorkRegionMid
+     WHERE 1 = 1
+  #if(cmodocno)
+  AND cMoDocNo = #para(cmodocno)
+  #end
+  #if(startTime)
   AND dPlanDate >= #para(startTime)
   #end
   #if(endTime)
   AND dPlanDate <= #para(endTime)
+  #end
+  #if(dplandate)
+  AND dPlanDate = #para(dplandate)
   #end
 ORDER BY mp.CreateDate DESC
     #end

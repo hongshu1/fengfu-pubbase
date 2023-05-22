@@ -105,7 +105,7 @@ public class InventoryRoutingSopAdminController extends BaseAdminController {
 	}
 
 	public void dataList(){
-		renderJsonData(service.dataList(getLong("configid")));
+		renderJsonData(service.dataList(getKv()));
 	}
 
 	/**

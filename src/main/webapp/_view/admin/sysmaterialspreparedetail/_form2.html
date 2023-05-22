@@ -1,0 +1,109 @@
+<div class="row">
+    <div class="col">
+        <div class="card" style="margin-bottom: 5px">
+            <div class="card-body">
+                <form onsubmit="return false;" id="MoPickItemM_Form" action="#(action)" method="post">
+                    #if(sysMaterialsprepare.AutoID??)
+                    <input type="hidden" name="moPickItemM.iAutoId" value="#(sysMaterialsprepare.AutoID??)"/>
+                    #end
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">存货编码：</label>
+                                <div class="col-10">
+                                    <input type="text" data-rule="required" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control" placeholder=""
+                                           maxlength="40" name="moPickItemM.cInvCode"
+                                           readonly
+                                           value="#(sysMaterialsprepare.cInvCode??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">客户部番：</label>
+                                <div class="col-10">
+                                    <input type="text" data-rule="required" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control" placeholder=""
+                                           maxlength="40" name="moPickItemM.cInvCode1"
+                                           readonly
+                                           value="#(sysMaterialsprepare.cInvCode1??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">部品名称：</label>
+                                <div class="col-10">
+                                    <input type="text" data-rule="required" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control" placeholder=""
+                                           maxlength="40" name="moPickItemM.cInvName1"
+                                           readonly
+                                           value="#(sysMaterialsprepare.cInvName1??)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.autoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iWarehouseAreaId}</td>
+<td>${data.cbarcode}</td>
+<td>${data.qty}</td>
+<td>${data.iinventoryuomid1}</td>
+<td>${data.cbatch}</td>
+<td>${data.dproddate}</td>
+</tr>
+{@/each}
+</textarea>
+<table class="jbolt_table jbolt_main_table table-center"
+       data-jbolttable
+       data-width="fill"
+       data-height="60%"
+       data-ajax="true"
+       data-url="admin/sysmaterialspreparedetail/datas?cmodocno=#(sysMaterialsprepare.cMoDocNo??)"
+       data-rowtpl="MoPickItemM_tpl_#(pageId)"
+       data-copy-to-excel="false"
+       data-page="MoPickItemM_page"
+       data-column-resize="true"
+       data-toolbar="MoPickItemM_toolbar_#(pageId)"
+>
+    <thead class="fw-normal">
+    <tr>
+        <th data-width="60" data-column="">序号</th>
+        <th data-width="150" data-column="">出库库区</th>
+        <th data-width="150" data-column="">现品票</th>
+        <th data-width="150" data-column="">数量</th>
+        <th data-width="150" data-column="">库存单位</th>
+        <th data-width="150" data-column="">批次号</th>
+        <th data-width="150" data-column="">生产日期</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+#define js()
+<script>
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="MoPickItemM_Form")
+#end
+
