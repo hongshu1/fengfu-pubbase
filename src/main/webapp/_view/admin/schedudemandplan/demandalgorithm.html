@@ -206,7 +206,7 @@
             <p class="alert_title"><span id="close">X</span></p>
             <p class="alert_but"><button id="alert_save">确定</button></p>
             <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
-                <label class="col-form-label " >截止日期：</label>
+                <label class="col-form-label" >截止日期：</label>
                 <input type="text" class="form-control" style="display: inline-block; width: 200px" id="laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="layMonth" value="#(layMonth??)">
             </div>
         </div>
@@ -217,9 +217,9 @@
                 <div class="form-group row" style="margin-top: 20px">
                     <label class="col-sm-2 col-form-label">日期：</label>
                     <div class="col" style="display:flex;">
-                        <select>
-                            <option></option>
-                        </select>
+                        <input type="datetime-local" id="start-time" name="start-time">
+                        <p style="width: 30px"></p>
+                        <input type="datetime-local" id="end-time" name="end-time">
                     </div>
                 </div>
                 <div style="margin-top: 20px">
@@ -229,12 +229,13 @@
                     </div>
                     <div style="display: flex;">
                         <label style="margin-left:85px"></label>
-                        <p style="margin-right: 20px"><input name="Fruit2" class="chBox" type="checkbox" style="vertical-align: middle;" onClick="checkOne()"/><span>佛山富惟</span></p>
-                        <p><input name="Fruit3" class="chBox" type="checkbox" style="vertical-align: middle;" onClick="checkOne()"/><span>武汉金丰</span></p>
+                        <select style="width: 180px">
+                            <option>fvw</option>
+                        </select>
                     </div>
                 </div>
             </form>
-            <p class="indicate_but"><button id="close_indicate_but">取消</button><button>确定</button></p>
+            <p class="indicate_but"><button id="close_indicate_but">取消</button><button onClick="indicateSave()">确定</button></p>
         </div>
     </div>
 </div>
@@ -243,42 +244,56 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
+    //预示保存确定按钮事件
+    function indicateSave(){
+        let startTime = document.getElementById('start-time').value.substring(0,10);//获取开始时间
+        let endTime = document.getElementById('end-time').value.substring(0,10);//获取结束时间
+        if(startTime!=""&&endTime!=""){
+            console.log(startTime,endTime)
 
-    function checkAll(){
-        //获取id的dom元素
-        let Id = document.getElementById('all');
-        //获取类名为chBox的dom元素
-        let chBox = document.getElementsByClassName('chBox');
-        let len = chBox.length;
-        for(let i=0;i<len;i++){
-            //当全选按钮为true时，全部按钮都为true，否则相反
-            if(Id.checked){
-                chBox[i].checked=true;
-            }else {
-                chBox[i].checked=false;
-            }
         }
+        // $.ajax({
+        //     type: "GET",
+        //     url: "https://api.github.com/repos/Grape/Grape",
+        //     data: JSON.stringify(indicateSave)
+        // });
     }
-    //单个按钮的点击事件
-    function checkOne(){
-        let count=0;
-        let chBox = document.getElementsByClassName('chBox');
-        let len = chBox.length;
-        for(let i=0;i<len;i++){
-            //记录单选按钮为true的数量
-            if(chBox[i].checked){
-                count++;
-            }
-        }
-        //当单选按钮都为true时，全选按钮也为true，否则为false
-        if(count==len-1){
-            document.getElementById('all').checked = true;
-            console.log("111")
-        }else {
-            document.getElementById('all').checked = false;
-            console.log("222")
-        }
-    }
+
+    // function checkAll(){
+    //     //获取id的dom元素
+    //     let Id = document.getElementById('all');
+    //     //获取类名为chBox的dom元素
+    //     let chBox = document.getElementsByClassName('chBox');
+    //     let len = chBox.length;
+    //     for(let i=0;i<len;i++){
+    //         //当全选按钮为true时，全部按钮都为true，否则相反
+    //         if(Id.checked){
+    //             chBox[i].checked=true;
+    //         }else {
+    //             chBox[i].checked=false;
+    //         }
+    //     }
+    // }
+    // //单个按钮的点击事件
+    // function checkOne(){
+    //     let count=0;
+    //     let chBox = document.getElementsByClassName('chBox');
+    //     let len = chBox.length;
+    //     for(let i=0;i<len;i++){
+    //         //记录单选按钮为true的数量
+    //         if(chBox[i].checked){
+    //             count++;
+    //         }
+    //     }
+    //     //当单选按钮都为true时，全选按钮也为true，否则为false
+    //     if(count==len-1){
+    //         document.getElementById('all').checked = true;
+    //         console.log("111")
+    //     }else {
+    //         document.getElementById('all').checked = false;
+    //         console.log("222")
+    //     }
+    // }
 
 
 
@@ -581,6 +596,17 @@
             mybg.style.opacity = "0.3";
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
+            let url = "http://localhost:8081/admin/schedudemandplan/getSupplierList";
+            $.ajax({
+                url,
+                type:'get',
+                dataType:'json',
+                success:function (res){
+                    console.log(res);
+                },error: function(error) {
+                    console.log(error,"预示保存弹出层");
+                }
+            })
         }
     }
     //弹出层关闭事件
