@@ -1485,6 +1485,11 @@ public class PermissionKey {
 	 * 特殊领料单列表
 	 */
 	public static final String OTHEROUT = "otherout";
+
+	/**
+	 * 特殊领料单出库
+	 */
+	public static final String OTHER_OUT_RETURN_LIST = "other_out_return_list";
 	/**
 	 * 条码生成
 	 */

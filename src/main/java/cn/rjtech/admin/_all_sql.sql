@@ -501,3 +501,7 @@
 #include("patchworkbarcode/patchworkbarcode.sql")
 #end
 
+#namespace("otheroutreturnlist")
+#include("otheroutreturnlist/otheroutreturnlist.sql")
+#end
+
