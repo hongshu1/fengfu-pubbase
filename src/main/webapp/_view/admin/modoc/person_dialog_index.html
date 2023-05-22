@@ -1,0 +1,234 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col">
+		<form class="form-inline text-left" id="itemroutingForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品工艺档案配置Id" name="configid" value="#(configid??)" />
+			<input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+			<input type="hidden" id="iMoDocId" value="#(imdocid??)">
+			<input type="hidden" id="rowid" value="#(configid??)">
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<!--<td>${pageNumber,pageSize,index | rownum}</td>-->
+<td>${data.cpsn_num}</td>
+<td>${data.cpsn_name}</td>
+<td>${data.isex|iSex}</td>
+<td>${data.cpsnmobilephone}</td>
+<td>${data.jobnumber}</td>
+</tr>
+{@/each}
+</textarea>
+		<!-- 工具条 toolbar -->
+		<div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
+			<div class="" role="group" aria-label="btn-group">
+				<div>
+					<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+						<!--<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>-->
+						<button onclick="jboltTableChooseAndInsert(this)" data-url="admin/modoc/persondialog?iautoid=#(configid??)&imdocid=#(imdocid??)" data-area="50%,100%" data-btn="" data-title="批量选择并插入" class="btn btn-success btn-sm" ><i class="fa fa-plus-square-o"></i> 批量插入</button>
+						<button onclick="jboltTableRemoveCheckedRows(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+						<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+						<button onclick="jboltTableSubmits(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
+
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<table class="jbolt_table jbolt_main_table table-center"
+			   id="moroutingconfigperson"
+			   data-jbolttable
+			   data-height="fill"
+			   data-ajax="true"
+			   data-url="/admin/moroutingconfigperson/datas?imoroutingconfigid=#(configid??)"
+			   data-column-resize="true"
+			   data-column-prepend="1:checkbox:true"
+			   data-conditions-form="itemroutingForm_#(pageId)"
+			   data-rowtpl="itemroutingRowtpl_#(pageId)"
+			   data-toolbar="itemrouting_toolbar_#(pageId)"
+			   data-editable="true"
+
+			   data-editable-option="getEditableTableOptions_workposition"
+		>
+			<thead class="fw-normal">
+			<tr>
+				<!--<th data-width="60">序号</th>-->
+
+				<th data-width="150" data-column="cPsn_Num">编码</th>
+				<th data-width="150" data-column="cPsn_Name">姓名</th>
+				<th data-width="150" data-column="iSex">性别</th>
+				<th data-width="150" data-column="cPsnMobilePhone">手机</th>
+				<th data-width="150" data-column="jobnumber">工号</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+	</div>
+</div>
+#end
+<script>
+	/*function submitThisForm(callback){
+		var data=getJboltTableCheckedDatas("workpositionid");
+		if(data){
+			//LayerMsgBox.confirm("确认选择此数据?",function(){
+			parent.jboltTableProcessTdByDialogChooser(data.coperationname,data.iautoid,data);
+			if(callback){
+				callback();
+			}
+			//});
+		}
+	}*/
+
+	$(function(){
+		hideParentLayerDialogBtn(0);
+		//addParentLayerDialogBtn("保存","lay_success",function(data){
+			//获取表格数据
+			/*var tableDatas = getJboltTableAllDatas('moroutingconfigperson');
+			alert("s"+JSON.stringify(tableDatas))
+			jboltTableSubmit('#moroutingconfigperson');*/
+		//});
+	});
+function jboltTableSubmits(){
+	hideParentLayerDialogBtn(0);
+	var tableDatas = getJboltTableAllDatas('moroutingconfigperson');
+	var rowid=$("#rowid").val();
+	//alert("s"+JSON.stringify(tableDatas))
+	LayerMsgBox.confirm("确定提交？",function(){
+		if(!tableDatas){
+			return LayerMsgBox.alert("请选择人员信息")
+		}
+		LayerMsgBox.loading("更新中...",5000);
+		var data = {};
+		var s={"delete":null,"update":null,"save":tableDatas,
+			"form":null}
+		s={"rowid":rowid,"persons":tableDatas}
+		data.jboltTable =JSON.stringify(s);
+		parent.saveDoc(tableDatas,rowid);
+		//parent.getTbleData("sssss");
+		parent.LayerMsgBox.closeAll();
+
+		/*Ajax.post("admin/moroutingconfigperson/saveEquipmentPerson?configid=#(configid)",data,function(res){
+			LayerMsgBox.success("提交成功",600,function(){*/
+				//refreshPjaxContainer();
+				//parent.refreshJBoltTable("#modoctable");
+				//parent.refreshJBoltTable();
+			/*	parent.getTbleData("sssss");
+				parent.LayerMsgBox.closeAll();
+			});
+		});*/
+	});
+	//jboltTableSubmit('#moroutingconfigperson');
+
+}
+	function addTableRow(ele){
+		jboltTableInsertRow(ele)
+	}
+
+	function getEditableTableOptions_workposition(){
+		var editableTableOptions={
+			trigger:"click",
+			initRowCount:0,
+			maxRowCount:30,
+			//keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+			submit:{
+				 withForm:["itemroutingForm_#(pageId)"],
+				type:"all",//cell|all
+				//params:{"masterautoid":'#(masterautoid)'},//携带其他额外参数
+				//commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+				url:"admin/personequipment/saveEquipmentPerson?configid=#(configid)",
+				success:function(res){
+					LayerMsgBox.success("提交成功",600,function(){
+						//refreshPjaxContainer();
+						parent.refreshJBoltTable("#itemroutingconfigid");
+						parent.LayerMsgBox.closeAll();
+					});
+				}
+			},
+			//插入数据时默认属性值
+			//insertDefaultValues:{age:10},
+			cols:{
+				iautoid:{
+					submitAttr:"iautoid",
+				},
+				cpsn_num:{  //设备id
+					type:"dialogbtn",
+					placeholder:"选择人员",
+					linkColumn:'iworkpositionid',
+					dialog:{
+						url:"admin/inventoryroutingequipment/equ_dialog_index",
+						area:"95%,95%",
+						title:"选择设备",
+						btn:"确定,关闭"
+					},
+					header: "设备名称,型号",
+					columnAttr:"iequipmentid,workname,cdepname,cequipmentname",
+					changeColumns:[,{column:"cpsn_num",use:"cpsn_num"},
+						{column:"cpsn_name",use:"cpsn_name"}],
+				},
+				cmemo:{type:"input", placeholder:"备注"},
+			}
+		};
+		return editableTableOptions;
+	}
+	/**
+	 * 删除选中的行
+	 * @param ele
+	 * @param confirm
+	 * @param callback
+	 * @returns
+	 */
+	function jboltTableRemoveCheckedRows(ele, confirm, callback) {
+		var iMoDocId=$("#iMoDocId").val();
+		var action = getRealJqueryObject(ele);
+		if (isOk(action)) {
+			var success = checkMasterTableId(action);
+			if (!success) {
+				return false;
+			}
+		}
+		var isCheckedNone = jboltTableIsCheckedNone(ele);
+		if (isCheckedNone) {
+			LayerMsgBox.alert("请至少选择一行数据", 2);
+		} else {
+			var ids = jboltTableGetCheckedIds(ele, true);
+
+			if (ids) {
+				LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？", function () {
+					Ajax.post("admin/moroutingconfigperson/deleteByIds?ids="+ids+"&imodocid="+iMoDocId, function (res) {
+						//alert("js"+JSON.stringify(res));
+						//LayerMsgBox.success("提交成功", 100, function () {
+							parent.reqTableDate("admin/modoc/getDocdetail?imodocid="+iMoDocId);
+
+							//parent.layer.closeAll();
+
+						///});
+					});
+					removeJBoltTableCheckedTr(ele, false, callback);
+				});
+			} else {
+				removeJBoltTableCheckedTr(ele, confirm, callback);
+			}
+			return true;
+		}
+		return false;
+	}
+</script>
+
+
+
