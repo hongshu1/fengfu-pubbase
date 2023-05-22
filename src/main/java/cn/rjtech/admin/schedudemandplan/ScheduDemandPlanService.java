@@ -1168,6 +1168,11 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		return dataList;
 	}
 
+	public List<Record> getSupplierList(Kv kv) {
+		List<Record> supplierList = findRecord("SELECT iAutoId,cVenName FROM Bd_Vendor WHERE isDeleted = 0 ");
+		return supplierList;
+	}
+
 
 
 
