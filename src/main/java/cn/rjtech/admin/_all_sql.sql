@@ -504,9 +504,11 @@
 
 #namespace("otheroutreturnlist")
 #include("otheroutreturnlist/otheroutreturnlist.sql")
+#end
 
 #namespace("stockcheckvouch")
 #include("stockcheckvouch/stockcheckvouch.sql")
+#end
 
 #namespace("momaterialsscansum")
 #include("momaterialsscansum/momaterialsscansum.sql")
