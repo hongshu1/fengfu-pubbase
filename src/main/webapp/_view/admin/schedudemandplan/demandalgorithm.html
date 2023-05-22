@@ -250,6 +250,7 @@
         let endTime = document.getElementById('end-time').value.substring(0,10);//获取结束时间
         if(startTime!=""&&endTime!=""){
             console.log(startTime,endTime)
+
         }
         // $.ajax({
         //     type: "GET",
@@ -258,41 +259,41 @@
         // });
     }
 
-    function checkAll(){
-        //获取id的dom元素
-        let Id = document.getElementById('all');
-        //获取类名为chBox的dom元素
-        let chBox = document.getElementsByClassName('chBox');
-        let len = chBox.length;
-        for(let i=0;i<len;i++){
-            //当全选按钮为true时，全部按钮都为true，否则相反
-            if(Id.checked){
-                chBox[i].checked=true;
-            }else {
-                chBox[i].checked=false;
-            }
-        }
-    }
-    //单个按钮的点击事件
-    function checkOne(){
-        let count=0;
-        let chBox = document.getElementsByClassName('chBox');
-        let len = chBox.length;
-        for(let i=0;i<len;i++){
-            //记录单选按钮为true的数量
-            if(chBox[i].checked){
-                count++;
-            }
-        }
-        //当单选按钮都为true时，全选按钮也为true，否则为false
-        if(count==len-1){
-            document.getElementById('all').checked = true;
-            console.log("111")
-        }else {
-            document.getElementById('all').checked = false;
-            console.log("222")
-        }
-    }
+    // function checkAll(){
+    //     //获取id的dom元素
+    //     let Id = document.getElementById('all');
+    //     //获取类名为chBox的dom元素
+    //     let chBox = document.getElementsByClassName('chBox');
+    //     let len = chBox.length;
+    //     for(let i=0;i<len;i++){
+    //         //当全选按钮为true时，全部按钮都为true，否则相反
+    //         if(Id.checked){
+    //             chBox[i].checked=true;
+    //         }else {
+    //             chBox[i].checked=false;
+    //         }
+    //     }
+    // }
+    // //单个按钮的点击事件
+    // function checkOne(){
+    //     let count=0;
+    //     let chBox = document.getElementsByClassName('chBox');
+    //     let len = chBox.length;
+    //     for(let i=0;i<len;i++){
+    //         //记录单选按钮为true的数量
+    //         if(chBox[i].checked){
+    //             count++;
+    //         }
+    //     }
+    //     //当单选按钮都为true时，全选按钮也为true，否则为false
+    //     if(count==len-1){
+    //         document.getElementById('all').checked = true;
+    //         console.log("111")
+    //     }else {
+    //         document.getElementById('all').checked = false;
+    //         console.log("222")
+    //     }
+    // }
 
 
 
@@ -595,6 +596,17 @@
             mybg.style.opacity = "0.3";
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
+            let url = "http://localhost:8081/admin/schedudemandplan/getSupplierList";
+            $.ajax({
+                url,
+                type:'get',
+                dataType:'json',
+                success:function (res){
+                    console.log(res);
+                },error: function(error) {
+                    console.log(error,"预示保存弹出层");
+                }
+            })
         }
     }
     //弹出层关闭事件
