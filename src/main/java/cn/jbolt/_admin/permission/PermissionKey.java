@@ -1378,9 +1378,9 @@ public class PermissionKey {
 	 */
 	public static final String WAREHOUSE_REPORT = "warehouse_report";
 	/**
-	 * 库存盘点
+	 * 盘点单
 	 */
-	public static final String INVENTORY_CHECK = "inventory_check";
+	public static final String STOCKCHECKVUCH = "stockcheckvouch";
 	/**
 	 * 制程异常品记录
 	 */
@@ -1921,4 +1921,5 @@ public class PermissionKey {
 	 * 审批流列表
 	 */
 	public static final String APPROVALM = "approvalm";
+
 }

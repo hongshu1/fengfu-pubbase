@@ -22,6 +22,15 @@ public class MoDocFormVo implements Serializable {
         private int itype;
         private String itypename;
         private String rsinventoryname;
+        private  String personnames;
+
+    public String getPersonnames() {
+        return personnames;
+    }
+
+    public void setPersonnames(String personnames) {
+        this.personnames = personnames;
+    }
 
     public String getConfigperson() {
         return configperson;
@@ -176,4 +185,6 @@ public class MoDocFormVo implements Serializable {
         public void setRsinventoryname(String rsinventoryname) {
             this.rsinventoryname = rsinventoryname;
         }
+
+
     }
