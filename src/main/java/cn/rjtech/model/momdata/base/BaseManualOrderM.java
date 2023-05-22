@@ -49,6 +49,9 @@ public abstract class BaseManualOrderM<M extends BaseManualOrderM<M>> extends JB
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "IsDeleted";
+    /**订单日期*/
+    public static final String DORDERDATE="dOrderDate";
+
 	/**
 	 * 主键ID
 	 */
@@ -370,6 +373,23 @@ public abstract class BaseManualOrderM<M extends BaseManualOrderM<M>> extends JB
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");
+	}
+
+	/**
+	 * 订单日期
+	 */
+	public M setdOrderDate(java.util.Date  dOrderDate) {
+		set("dOrderDate", dOrderDate);
+		return (M)this;
+	}
+
+	/**
+	 * 订单日期
+	 */
+	@JBoltField(name="dorderdate" ,columnName="dOrderDate",type="Date", remark="订单日期", required=true, maxLength=23, fixed=3, order=15)
+	@JSONField(name = "dorderdate")
+	public java.util.Date getdOrderDate() {
+		return getDate("dOrderDate");
 	}
 
 }

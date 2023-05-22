@@ -1,12 +1,26 @@
 package cn.rjtech.admin.moroutingconfigperson;
 
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.base.exception.ParameterException;
+import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.StringUtils;
+import com.jfinal.aop.Inject;
+import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.model.momdata.MoMoroutingconfigPerson;
+import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
+import cn.jbolt.core.base.JBoltMsg;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 制造工单-工单工艺人员配置 Service
  * @ClassName: MoMoroutingconfigPersonService
@@ -14,6 +28,12 @@ import com.jfinal.plugin.activerecord.Page;
  * @date: 2023-05-09 16:48
  */
 public class MoMoroutingconfigPersonService extends BaseService<MoMoroutingconfigPerson> {
+	@Inject
+	private PersonService personService;//人员
+	@Inject
+	private MoMoroutingconfigService moMoroutingconfigService; //工单工艺配置
+	@Inject
+	private MoDocService moDocService;
 
 	private final MoMoroutingconfigPerson dao = new MoMoroutingconfigPerson().dao();
 
@@ -22,17 +42,65 @@ public class MoMoroutingconfigPersonService extends BaseService<MoMoroutingconfi
 		return dao;
 	}
 
+
 	/**
 	 * 后台管理分页查询
 	 * @param pageNumber
 	 * @param pageSize
-	 * @param keywords
+	 * @param kv
 	 * @return
 	 */
-	public Page<MoMoroutingconfigPerson> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
+		Sql sql=selectSql().select("distinct a.iAutoId as iautoid,b.cPsn_Num, b.cPsn_Name ," +
+						"b.JobNumber as jobnumber,b.iSex,b.cpsnmobilephone").from(table(),"a").
+				leftJoin(personService.table(),"b",
+						"b.iAutoId=a.iPersonId").
+				innerJoin(moMoroutingconfigService.table(),"c","c.iAutoId=a.iMoRoutingConfigId").
+				like("b."+Person.CPSN_NUM,kv.getStr("cpsnnum"))
+				.like("b."+Person.CPSN_NAME,kv.getStr("cpsname"))
+				.like("b."+Person.JOBNUMBER,kv.getStr("jobmumber"))
+				.eq("c.iAutoId",kv.getStr("imoroutingconfigid")).
+				orderBy("a."+MoMoroutingconfigPerson.IAUTOID,true).page(pageNumber,pageSize);
+
+
+		return paginateRecord(sql);
+
+		//return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
 	}
 
+	/**
+	 *   获取工单工艺配置相关人员信息
+	 * @param imoroutingconfigid
+	 * @return
+	 */
+	public String getMoMoroutingconfigPersonNameData(Long  imoroutingconfigid){
+		if(!isOk(imoroutingconfigid)){
+			return  "";
+		}
+		Sql sql=selectSql().select("distinct b.iAutoId as iautoid,b.cPsn_Num, b.cPsn_Name"
+				).from(table(),"a").
+				leftJoin(personService.table(),"b",
+						"b.iAutoId=a.iPersonId").
+				innerJoin(moMoroutingconfigService.table(),"c","c.iAutoId=a.iMoRoutingConfigId")
+				.eq("c.iAutoId",imoroutingconfigid).
+				orderBy("b."+Person.IAUTOID,true);
+		List<Record> recordList=findRecord(sql);
+		StringBuilder s=new StringBuilder();
+
+		if(!recordList.isEmpty()){
+			if(recordList.size()>1) {
+				for (Record record : recordList) {
+					if (StringUtils.isNotBlank(record.getStr("cpsn_name"))) {
+						s = s.append(record.getStr("cpsn_name")).append(",");
+					}
+				}
+			}else{
+				s.append(recordList.get(0).getStr("cpsn_name"));
+			}
+		}
+		return  s.toString();
+
+	}
 	/**
 	 * 保存
 	 * @param moMoroutingconfigPerson
@@ -76,8 +144,38 @@ public class MoMoroutingconfigPersonService extends BaseService<MoMoroutingconfi
 	 * @param ids
 	 * @return
 	 */
-	public Ret deleteByBatchIds(String ids) {
-		return deleteByIds(ids,true);
+	public Ret deleteByBatchIds(String ids,Long imdocid) {
+	  if(StringUtils.isBlank(ids))	{
+		  return  fail("未选中数据，不允许操作");
+	  }
+		String[] idsStrs = ids.split(",");
+		MoDoc moDoc = null;
+		if (isOk(imdocid)) {
+			moDoc = moDocService.findById(imdocid);
+			if (moDoc != null) {
+				if (moDoc.getIStatus().equals(7)) {
+					return fail("工单已经关闭，不允许操作");
+				}
+			}
+		}
+		MoDoc finalMoDoc = moDoc;
+		tx(() -> {
+
+			Ret ret = deleteByIds(ids, true);
+			if (ret.isOk() == true) {
+				if (finalMoDoc != null) {
+					finalMoDoc.setIPersonNum(finalMoDoc.getIPersonNum() - idsStrs.length);
+					if (finalMoDoc.getIPersonNum() == 0) {
+						finalMoDoc.setIStatus(1);
+					}
+					finalMoDoc.update();
+				}
+			}
+
+			return  true;
+		});
+
+		return SUCCESS;
 	}
 
 	/**
@@ -121,5 +219,43 @@ public class MoMoroutingconfigPersonService extends BaseService<MoMoroutingconfi
 	protected int systemLogTargetType() {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
+	public Ret saveEquipmentPerson(JBoltTable jBoltTable, Long configid) {
+		if (isOk(jBoltTable.getSave())) {
+			ValidationUtils.error("缺少人员信息");
+		}
+		List<Record> saveRecordList = jBoltTable.getSaveRecordList();
 
+		tx(() -> {
+
+			MoMoroutingconfigPerson moMoroutingconfigPerson;
+			for (Record record : saveRecordList) {
+				Long iPersonId = null;
+				if (isOk(record.getLong("ipersonid"))) {
+					Person p = personService.findById(record.getLong("ipersonid"));
+					if (p == null) {
+						throw new ParameterException("存在无效人员信息");
+					}
+					iPersonId = p.getIAutoId();
+				} else {
+					if (StringUtils.isNotBlank(record.getStr("cpsn_num"))) {
+						Record p = personService.getpersonByCpsnnum(record.getStr("cpsn_num"));
+						if (p == null) {
+							throw new ParameterException("存在无效人员信息");
+						}
+						iPersonId = p.getLong("iautoid");
+					}
+
+				}
+				moMoroutingconfigPerson=new MoMoroutingconfigPerson();
+				moMoroutingconfigPerson.setIPersonId(iPersonId);
+				moMoroutingconfigPerson.setIMoRoutingConfigId(configid);
+				moMoroutingconfigPerson.save();
+			}
+
+			return true;
+
+		});
+		return SUCCESS;
+
+	}
 }

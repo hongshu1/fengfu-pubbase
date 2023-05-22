@@ -1,28 +1,45 @@
 package cn.rjtech.admin.modoc;
 
-import cn.jbolt.core.base.JBoltMsg;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
 import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentService;
 import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
+import cn.rjtech.admin.inventoryroutingsop.InventoryRoutingSopService;
+import cn.rjtech.admin.momoroutingsop.MoMoroutingsopService;
 import cn.rjtech.admin.morouting.MoMoroutingService;
 import cn.rjtech.admin.moroutingcinve.MoMoroutinginvcService;
 import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
 import cn.rjtech.admin.moroutingconfigequipment.MoMoroutingequipmentService;
 import cn.rjtech.admin.moroutingconfigperson.MoMoroutingconfigPersonService;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.entity.vo.instockqcformm.MoDocFormVo;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.MoMorouting;
+import cn.rjtech.model.momdata.MoMoroutinginvc;
+import cn.rjtech.model.momdata.MoMoroutingconfig;
+import cn.rjtech.model.momdata.MoMoroutingequipment;
+import cn.rjtech.model.momdata.MoMoroutingconfigPerson;
+import cn.rjtech.service.func.mom.MomDataFuncService;
+import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Page;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
+import cn.jbolt.core.base.JBoltMsg;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,11 +66,25 @@ public class MoDocService extends BaseService<MoDoc> {
   @Inject
   private MoMoroutingconfigService moMoroutingconfigService;
   @Inject
-  private MoMoroutingconfigPersonService moMoroutingconfigPersonService;
+  private MoMoroutingconfigPersonService moMoroutingconfigPersonService; //工单人员
   @Inject
-  private MoMoroutingequipmentService moroutingequipmentService;
+  private MoMoroutingequipmentService moroutingequipmentService; //工单设备
   @Inject
-  private MoMoroutinginvcService moMoroutinginvcService;
+  private MoMoroutinginvcService moMoroutinginvcService; //工单物料
+
+  @Inject
+  private MomDataFuncService momDataFuncService;
+  @Inject
+  private PersonService personService;//人员
+  @Inject
+  private InventoryRoutingSopService inventoryRoutingSopService; //物料-作业指导书
+
+  @Inject
+  private MoMoroutingsopService moMoroutingsopService;//工单作业指导书
+
+  @Inject
+  private InventoryService inventoryService; //存货档案
+
 
   private final MoDoc dao = new MoDoc().dao();
 
@@ -123,6 +154,7 @@ public class MoDocService extends BaseService<MoDoc> {
     Date dCreateTime = new Date();
     String userName = JBoltUserKit.getUserName();
     Long userId = JBoltUserKit.getUserId();
+    moDoc.setCMoDocNo(generateBarCode());
     tx(() -> {
       moDoc.save();
       // 工艺路线
@@ -199,7 +231,516 @@ public class MoDocService extends BaseService<MoDoc> {
     });
     return ret(true);
   }
+  /**
+   * 保存
+   *
+   * @param
+   * @return
+   */
+  public Ret addDoc(JBoltTable jBoltTable,String  rowid) {
+    MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
+    if (moDoc == null || isOk(moDoc.getIAutoId())) {
+      System.out.print("dddddddddds------------------------------------");
+      return fail(JBoltMsg.PARAM_ERROR);
+    }
 
+    //初始化状态
+    moDoc.setIStatus(1);
+    moDoc.setIType(2);
+    //计划日期
+    if(moDoc.getDPlanDate()!=null) {
+      Date date = moDoc.getDPlanDate();
+      java.util.Calendar ca =  java.util.Calendar.getInstance();
+      ca.setTime(date);
+
+      moDoc.setIYear(ca.get(java.util.Calendar.YEAR));
+      moDoc.setIMonth(ca.get(Calendar.MONTH)+1);
+      moDoc.setIDate(ca.get(Calendar.DATE));
+    }
+    moDoc.setIPersonNum(0);
+
+    moDoc.setIMoTaskId(1001L);//手工新增没有任务,先占着
+
+    Date dCreateTime = new Date();
+    String userName = JBoltUserKit.getUserName();
+    Long userId = JBoltUserKit.getUserId();
+    moDoc.setCMoDocNo(generateBarCode());
+    moDoc.setIcreateby(userId);
+    moDoc.setCCreateName(userName);
+    moDoc.setDCreateTime(dCreateTime);
+    // 工艺路线
+    MoMorouting moMorouting = new MoMorouting();
+    moMorouting.setIMoDocId(moDoc.getIAutoId());
+    moMorouting.setIInventoryId(moDoc.getIInventoryId());
+    moMorouting.setIInventoryRoutingId(moDoc.getIInventoryRouting());
+    if(isOk(moDoc.getIInventoryRouting())){
+      InventoryRouting byId = inventoryRoutingService.findById(moDoc.getIInventoryRouting());
+      moDoc.setCVersion(byId.getCVersion());
+      moDoc.setCRoutingName(byId.getCRoutingName());
+      moMorouting.setCVersion(byId.getCVersion());
+      moMorouting.setCRoutingName(byId.getCRoutingName());
+      moMorouting.setIFinishedRate(byId.getIFinishedRate());
+    }
+
+    tx(() -> {
+      moDoc.save();
+
+      moMorouting.setIMoDocId(moDoc.getIAutoId());
+
+
+      moMoroutingService.save(moMorouting);
+      //存工艺路线工序,人员,设备,物料集
+      List<MoDocFormVo> saveModelList1 = jBoltTable.getSaveModelList(MoDocFormVo.class);
+      Long iMoRoutingConfigId = null;
+      MoMoroutingconfig moMoroutingconfig;
+      for (MoDocFormVo record : saveModelList1){
+        String iautoid = record.getIautoid();
+        System.out.print("iautoid"+iautoid);
+        InventoryRoutingConfig inventoryRoutingConfigServiceById = inventoryRoutingConfigService.findById(iautoid);
+        if(inventoryRoutingConfigServiceById!=null) {
+
+          //工序
+          moMoroutingconfig = new MoMoroutingconfig();
+          moMoroutingconfig.setIMoRoutingId(moMorouting.getIAutoId());
+          moMoroutingconfig.setIInventoryRoutingId(inventoryRoutingConfigServiceById.getIInventoryRoutingId());
+          moMoroutingconfig.setISecs(record.getIseq());
+          moMoroutingconfig.setCMergedSeq(record.getCmergedseq());
+          moMoroutingconfig.setCCreateName(record.getCcreatename());
+          moMoroutingconfig.setCOperationName(record.getCoperationname());
+          moMoroutingconfig.setIMergedNum(record.getImergednum());
+          if (record.getImergerate() != null) {
+            moMoroutingconfig.setIMergeRate(new BigDecimal(record.getImergerate()));//要员
+          }
+          moMoroutingconfig.setIMergeSecs(record.getImergesecs());
+          //moMoroutingconfig.setIRsInventoryId(Long.parseLong(record.getIrsinventoryid()));
+          moMoroutingconfig.setIType(record.getItype());
+          moMoroutingconfig.setICreateBy(userId);
+          moMoroutingconfig.setDCreateTime(dCreateTime);
+          moMoroutingconfigService.save(moMoroutingconfig);
+          if (StringUtils.isNotBlank(rowid)&&rowid.equals(iautoid)) {
+            iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
+          }
+
+          //设备
+          List<InventoryRoutingEquipment> iInventoryEquipments = inventoryRoutingEquipmentService
+                  .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+          if (!iInventoryEquipments.isEmpty()) {
+            MoMoroutingequipment moMoroutingequipment;
+            for (InventoryRoutingEquipment iInventoryEquipment : iInventoryEquipments) {
+              if(isOk(iInventoryEquipment.getIEquipmentId())) {
+                Long iEquipmentId = iInventoryEquipment.getIEquipmentId();
+                moMoroutingequipment = new MoMoroutingequipment();
+                moMoroutingequipment.setIEquipmentId(iEquipmentId);
+                moMoroutingequipment.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
+                moroutingequipmentService.save(moMoroutingequipment);
+              }
+            }
+          }
+          //物料集
+          List<InventoryRoutingInvc> iInventoryRoutingInvcs = inventoryRoutingInvcService
+                  .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+          if (!iInventoryRoutingInvcs.isEmpty()) {
+            MoMoroutinginvc moMoroutinginvc;
+            for (InventoryRoutingInvc iInventoryRoutingInvc : iInventoryRoutingInvcs) {
+              moMoroutinginvc = new MoMoroutinginvc();
+              moMoroutinginvc.setIInventoryRoutingConfigId(inventoryRoutingConfigServiceById.getIAutoId());
+              moMoroutinginvc.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
+              moMoroutinginvc.setIInventoryId(iInventoryRoutingInvc.getIInventoryId());
+              moMoroutinginvc.setIUsageUOM(iInventoryRoutingInvc.getIUsageUOM());
+              moMoroutinginvc.setCMemo(iInventoryRoutingInvc.getCMemo());
+              moMoroutinginvc.setICreateBy(userId);
+              moMoroutinginvc.setCCreateName(userName);
+              moMoroutinginvc.setDCreateTime(dCreateTime);
+              moMoroutinginvcService.save(moMoroutinginvc);
+            }
+          }
+          //作业指导书
+          List<InventoryRoutingSop> moMoroutinginvcs = inventoryRoutingSopService.getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+          if(!moMoroutinginvcs.isEmpty()){
+            MoMoroutingsop moMoroutingsop;
+            for(InventoryRoutingSop inventoryRoutingSop:moMoroutinginvcs){
+              moMoroutingsop=new MoMoroutingsop();
+              moMoroutingsop.setIInventoryRoutingConfigId(inventoryRoutingConfigServiceById.getIAutoId());
+              moMoroutingsop.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
+              moMoroutingsop.setCName(inventoryRoutingSop.getCName());
+              moMoroutingsop.setCPath(inventoryRoutingSop.getCPath());
+              moMoroutingsop.setCSuffix(inventoryRoutingSop.getCSuffix());
+              moMoroutingsop.setISize(inventoryRoutingSop.getISize());
+              moMoroutingsop.setIVersion(inventoryRoutingSop.getIVersion());
+              moMoroutingsop.setDFromDate(inventoryRoutingSop.getDFromDate());
+              moMoroutingsop.setDToDate(inventoryRoutingSop.getDToDate());
+              moMoroutingsopService.save(moMoroutingsop);
+            }
+          }
+        }
+      }
+
+
+      if(isOk(iMoRoutingConfigId)) {
+        if (jBoltTable.getUpdate() != null){
+          int   iPersonNum=0;
+          List<Record> recordList = jBoltTable.getUpdateRecordList();
+          if (!recordList.isEmpty()) {
+            MoMoroutingconfigPerson moMoroutingconfigPerson;
+            for (Record r : recordList) {
+              Long iPersonId = null;
+              if (isOk(r.getLong("ipersonid"))) {
+                Person p = personService.findById(r.getLong("ipersonid"));
+                if (p == null) {
+                  throw new ParameterException("存在无效人员信息");
+                }
+
+                iPersonId = p.getIAutoId();
+              } else {
+                if (StringUtils.isNotBlank(r.getStr("cpsn_num"))) {
+                  Record p = personService.getpersonByCpsnnum(r.getStr("cpsn_num"));
+                  if (p == null) {
+                    throw new ParameterException("存在无效人员信息");
+                  }
+
+                  iPersonId = p.getLong("iautoid");
+                }
+
+              }
+              moMoroutingconfigPerson = new MoMoroutingconfigPerson();
+              moMoroutingconfigPerson.setIPersonId(iPersonId);
+              moMoroutingconfigPerson.setIMoRoutingConfigId(iMoRoutingConfigId);
+              moMoroutingconfigPerson.save();
+              iPersonNum++;
+            }
+            System.out.print("iPersonNu........................................"+iPersonNum);
+            if(iPersonNum>0){
+              moDoc.setIPersonNum(iPersonNum);
+              moDoc.setIStatus(2);
+              moDoc.update();
+            }
+          }
+        }
+      }
+      return true;
+    });
+    return successWithData(moDoc);
+  }
+  public Ret saveDoc(JBoltTable jBoltTable,String rowid){
+    MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
+    if (moDoc == null) {
+      System.out.print("dddddddddds");
+      return fail(JBoltMsg.PARAM_ERROR);
+    }
+    /// checkDoc(moDoc);
+    if(!isOk(moDoc.getIInventoryId())){
+      return Ret.fail("缺少产线,请重新选择人员在提交");
+    }
+    if(!isOk(moDoc.getIDepartmentId())){
+      return Ret.fail("缺少部门,请重新选择人员在提交");
+    }
+    if(!isOk(moDoc.getIInventoryId())){
+      return Ret.fail("缺少存货编号,请重新选择人员在提交");
+    }
+    if(!isOk(moDoc.getIQty())){
+      return Ret.fail("缺少计划数,请重新选择人员在提交");
+    }
+    if(!isOk(moDoc.getDPlanDate())){
+      return Ret.fail("缺少计划日期,请重新选择人员在提交");
+    }
+    if(!isOk(moDoc.getIAutoId())&&StringUtils.isBlank(moDoc.getCMoDocNo())){
+      return addDoc(jBoltTable, rowid);
+    }
+    MoDoc oldModoc=findById(moDoc.getIAutoId());
+    if(oldModoc==null){
+      oldModoc=findFirst(Okv.create().setIfNotBlank(MoDoc.CMODOCNO,moDoc.getCMoDocNo()));
+      if(oldModoc==null){
+        return addDoc(jBoltTable, rowid);
+      }
+
+
+    }
+    //初始化状态
+    //moDoc.setIStatus(1);
+    //moDoc.setIType(2);
+    if(moDoc.getDPlanDate()!=null) {
+      Date date = moDoc.getDPlanDate();
+      java.util.Calendar ca =  java.util.Calendar.getInstance();
+      ca.setTime(date);
+
+      oldModoc.setIYear(ca.get(java.util.Calendar.YEAR));
+      oldModoc.setIMonth(ca.get(Calendar.MONTH)+1);
+      oldModoc.setIDate(ca.get(Calendar.DATE));
+    }
+
+    Date dCreateTime = new Date();
+    String userName = JBoltUserKit.getUserName();
+    Long userId = JBoltUserKit.getUserId();
+    //moDoc.setCMoDocNo(generateBarCode());
+    oldModoc.setIUpdateBy(userId);
+    oldModoc.setCUpdateName(userName);
+    oldModoc.setDUpdateTime(dCreateTime);
+    oldModoc.setIWorkRegionMid(moDoc.getIWorkRegionMid());//产线
+    oldModoc.setIDepartmentId(moDoc.getIDepartmentId());
+    oldModoc.setIQty(moDoc.getIQty()); //数量
+    // oldModoc.setIInventoryRouting(moDoc.getIInventoryRouting());//工艺路线ID
+
+    //存货ID发变化则清除原来数据
+    Inventory inventory=inventoryService.findById(moDoc.getIInventoryId());
+    if(inventory==null){
+      return  fail("无效存货档案信息");
+    }
+    if(!inventory.getIAutoId().equals(oldModoc.getIInventoryId())){
+
+      return clearAndSaveLines(oldModoc, jBoltTable, rowid,dCreateTime);
+    }
+    // 工艺路线
+   /* MoMorouting moMorouting = new MoMorouting();
+    moMorouting.setIMoDocId(moDoc.getIAutoId());
+    moMorouting.setIInventoryId(moDoc.getIInventoryId());//存货ID
+    moMorouting.setIInventoryRoutingId(moDoc.getIInventoryRouting());
+    if(isOk(moDoc.getIInventoryRouting())){
+      InventoryRouting byId = inventoryRoutingService.findById(moDoc.getIInventoryRouting());
+      moDoc.setCVersion(byId.getCVersion());
+      moDoc.setCRoutingName(byId.getCRoutingName());
+      moMorouting.setCVersion(byId.getCVersion());
+      moMorouting.setCRoutingName(byId.getCRoutingName());
+      moMorouting.setIFinishedRate(byId.getIFinishedRate());
+    }*/
+
+    MoDoc finalOldModoc = oldModoc;
+    tx(() -> {
+
+      update(finalOldModoc);
+
+      //moMorouting.setIMoDocId(moDoc.getIAutoId());
+      //moMoroutingService.save(moMorouting)
+      MoMorouting moMorouting=moMoroutingService.findFirst(Okv.create().set(MoMorouting.IMODOCID,finalOldModoc.getIAutoId()),
+              MoMorouting.IAUTOID,"desc");
+      savelines(jBoltTable, rowid, moMorouting.getIAutoId(), dCreateTime);
+      return true;
+
+    });
+
+
+
+    return successWithData(finalOldModoc);
+  }
+
+  public Ret subSave(JBoltTable jBoltTable,String rowid){
+    Ret ret=saveDoc(jBoltTable,rowid);
+    MoDoc modoc=(MoDoc)ret.get("data");
+    if(modoc!=null&&modoc.getIStatus().equals(7)){
+      return  fail("已经是关闭状态");
+    }
+    // modoc.setIStatus(3);
+    modoc.setIUpdateBy(JBoltUserKit.getUserId());
+    modoc.setCUpdateName(JBoltUserKit.getUserName());
+    modoc.setDUpdateTime(new Date());
+    tx(() -> {
+      modoc.update();
+      return true;
+    });
+    return successWithData(modoc);
+  }
+
+
+  private Ret clearAndSaveLines(MoDoc oldModoc,JBoltTable jBoltTable, String rowid,Date dCreateTime ) {
+
+    MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
+    // 工艺路线
+
+    MoMorouting oldmoMorouting = moMoroutingService.findFirst(Okv.create().set(MoMorouting.IMODOCID,oldModoc.getIAutoId()),MoMorouting.IAUTOID,"desc");
+    /*if(oldmoMorouting!=null&&oldmoMorouting.getIInventoryId().equals(moDoc.getIInventoryId())) {
+      return  successWithData(oldModoc);
+    }*/
+
+    oldmoMorouting.setIInventoryId(moDoc.getIInventoryId());//存货ID
+    Long iInventoryRoutingId=oldmoMorouting.getIInventoryRoutingId();
+    if(isOk(moDoc.getIInventoryRouting())) {
+      oldmoMorouting.setIInventoryRoutingId(moDoc.getIInventoryRouting());
+      InventoryRouting byId = inventoryRoutingService.findById(moDoc.getIInventoryRouting());
+      if (byId != null) {
+        oldModoc.setIInventoryRouting(byId.getIAutoId());
+        oldModoc.setCVersion(byId.getCVersion());
+        oldModoc.setCRoutingName(byId.getCRoutingName());
+        oldmoMorouting.setCVersion(byId.getCVersion());
+        oldmoMorouting.setCRoutingName(byId.getCRoutingName());
+        oldmoMorouting.setIFinishedRate(byId.getIFinishedRate());
+      }
+    }
+    tx(() -> {
+      oldModoc.update();//更新单据主表
+
+      //工艺路线
+      moMoroutingService.updateOneColumn(oldmoMorouting);
+      //删除原装载数据
+      //工序信息
+      //工序
+      /* List<MoMoroutingconfig> moMoroutingconfigs =moMoroutingconfigService.getCommonList(Okv.create().
+              set(MoMoroutingconfig.IMOROUTINGID,oldmoMorouting.getIAutoId()),MoMoroutingconfig.IAUTOID);
+        if(!moMoroutingconfigs.isEmpty()) {
+          for(MoMoroutingconfig moMoroutingconfig:moMoroutingconfigs) {*/
+      // moMoroutingconfigService.deleteBy(Okv.create().set(MoMoroutingconfig.IINVENTORYROUTINGID, iInventoryRoutingId));
+      //物料信息
+      //moMoroutinginvcService.deleteBy(Okv.create().set(MoMoroutinginvc.IINVENTORYROUTINGCONFIGID, iInventoryRoutingId));
+      //设备信息
+      // moroutingequipmentService.deleteBy(Okv.create().set(MoMoroutingequipment.IMOROUTINGCONFIGID, iInventoryRoutingId));
+      //作业指导书
+      // moMoroutingsopService.deleteBy(Okv.create().set(MoMoroutingsop.IMOROUTINGCONFIGID, iInventoryRoutingId));
+      //人员信息
+      // moMoroutingconfigPersonService.deleteBy(Okv.create().set(MoMoroutingconfigPerson.IMOROUTINGCONFIGID, moMoroutingconfig.getIAutoId()));
+      // }
+      // }
+      Integer iPersonNum = savelines(jBoltTable, rowid, oldmoMorouting.getIAutoId(), dCreateTime);
+      if (iPersonNum > 0){
+        oldModoc.setIPersonNum(iPersonNum);
+        oldModoc.setIStatus(2);
+        oldModoc.update();
+      }
+
+
+
+      return true;
+    });
+
+
+
+
+    return  SUCCESS;
+  }
+  public  Integer savelines(JBoltTable jBoltTable,String rowid,Long imoroutingid,Date dCreateTime){
+
+
+//存工艺路线工序,人员,设备,物料集
+    List<MoDocFormVo> saveModelList1 = jBoltTable.getSaveModelList(MoDocFormVo.class);
+    Long iMoRoutingConfigId = null;
+    MoMoroutingconfig moMoroutingconfig;
+    for (MoDocFormVo record : saveModelList1){
+      String iautoid = record.getIautoid();
+      System.out.print("iautoid"+iautoid);
+      InventoryRoutingConfig inventoryRoutingConfigServiceById = inventoryRoutingConfigService.findById(iautoid);
+      if(inventoryRoutingConfigServiceById!=null) {
+
+        //工序
+        moMoroutingconfig = new MoMoroutingconfig();
+        moMoroutingconfig.setIMoRoutingId(imoroutingid);
+        moMoroutingconfig.setIInventoryRoutingId(inventoryRoutingConfigServiceById.getIInventoryRoutingId());
+        moMoroutingconfig.setISecs(record.getIseq());
+        moMoroutingconfig.setCMergedSeq(record.getCmergedseq());
+        moMoroutingconfig.setCCreateName(record.getCcreatename());
+        moMoroutingconfig.setCOperationName(record.getCoperationname());
+        moMoroutingconfig.setIMergedNum(record.getImergednum());
+        if (record.getImergerate() != null) {
+          moMoroutingconfig.setIMergeRate(new BigDecimal(record.getImergerate()));//要员
+        }
+        moMoroutingconfig.setIMergeSecs(record.getImergesecs());
+        //moMoroutingconfig.setIRsInventoryId(Long.parseLong(record.getIrsinventoryid()));
+        moMoroutingconfig.setIType(record.getItype());
+        moMoroutingconfig.setICreateBy(JBoltUserKit.getUserId());
+        moMoroutingconfig.setCCreateName(JBoltUserKit.getUserName());
+        moMoroutingconfig.setDCreateTime(dCreateTime);
+        moMoroutingconfigService.save(moMoroutingconfig);
+        if (StringUtils.isNotBlank(rowid)&&rowid.equals(iautoid)) {
+          iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
+        }
+
+        //设备
+        List<InventoryRoutingEquipment> iInventoryEquipments = inventoryRoutingEquipmentService
+                .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+        if (!iInventoryEquipments.isEmpty()) {
+          MoMoroutingequipment moMoroutingequipment;
+          for (InventoryRoutingEquipment iInventoryEquipment : iInventoryEquipments) {
+            Long iEquipmentId = iInventoryEquipment.getIEquipmentId();
+            moMoroutingequipment = new MoMoroutingequipment();
+            moMoroutingequipment.setIEquipmentId(iEquipmentId);
+            moMoroutingequipment.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
+            moroutingequipmentService.save(moMoroutingequipment);
+          }
+        }
+        //物料集
+        List<InventoryRoutingInvc> iInventoryRoutingInvcs = inventoryRoutingInvcService
+                .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+        if (!iInventoryRoutingInvcs.isEmpty()) {
+          MoMoroutinginvc moMoroutinginvc;
+          for (InventoryRoutingInvc iInventoryRoutingInvc : iInventoryRoutingInvcs) {
+            moMoroutinginvc = new MoMoroutinginvc();
+            moMoroutinginvc.setIInventoryRoutingConfigId(inventoryRoutingConfigServiceById.getIAutoId());
+            moMoroutinginvc.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
+            moMoroutinginvc.setIInventoryId(iInventoryRoutingInvc.getIInventoryId());
+            moMoroutinginvc.setIUsageUOM(iInventoryRoutingInvc.getIUsageUOM());
+            moMoroutinginvc.setCMemo(iInventoryRoutingInvc.getCMemo());
+            moMoroutinginvc.setICreateBy(JBoltUserKit.getUserId());
+            moMoroutinginvc.setCCreateName(JBoltUserKit.getUserName());
+            moMoroutinginvc.setDCreateTime(dCreateTime);
+            moMoroutinginvcService.save(moMoroutinginvc);
+          }
+        }
+        //作业指导书
+        List<InventoryRoutingSop> moMoroutinginvcs = inventoryRoutingSopService.getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+        if(!moMoroutinginvcs.isEmpty()){
+          MoMoroutingsop moMoroutingsop;
+          for(InventoryRoutingSop inventoryRoutingSop:moMoroutinginvcs){
+            moMoroutingsop=new MoMoroutingsop();
+            moMoroutingsop.setIInventoryRoutingConfigId(inventoryRoutingConfigServiceById.getIAutoId());
+            moMoroutingsop.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
+            moMoroutingsop.setCName(inventoryRoutingSop.getCName());
+            moMoroutingsop.setCPath(inventoryRoutingSop.getCPath());
+            moMoroutingsop.setCSuffix(inventoryRoutingSop.getCSuffix());
+            moMoroutingsop.setISize(inventoryRoutingSop.getISize());
+            moMoroutingsop.setIVersion(inventoryRoutingSop.getIVersion());
+            moMoroutingsop.setDFromDate(inventoryRoutingSop.getDFromDate());
+            moMoroutingsop.setDToDate(inventoryRoutingSop.getDToDate());
+            moMoroutingsopService.save(moMoroutingsop);
+          }
+        }
+      }else{
+        moMoroutingconfig=moMoroutingconfigService.findById(iautoid);
+        if(moMoroutingconfig!=null){
+          if (StringUtils.isNotBlank(rowid)&&rowid.equals(iautoid)) {
+            iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
+            //删除原有人员信息
+            moMoroutingconfigPersonService.deleteBy(Okv.create().set(MoMoroutingconfigPerson.IMOROUTINGCONFIGID, moMoroutingconfig.getIAutoId()));
+
+          }
+        }
+      }
+    }
+    int  iPersonNum=0;
+    if(isOk(iMoRoutingConfigId)) {
+      //人员处理
+      if(jBoltTable.getUpdate()!=null) {
+        List<Record> recordList = jBoltTable.getUpdateRecordList();
+        if(!recordList.isEmpty()){
+
+          MoMoroutingconfigPerson moMoroutingconfigPerson;
+          for (Record r : recordList) {
+            Long iPersonId = null;
+            if (isOk(r.getLong("ipersonid"))) {
+              Person p = personService.findById(r.getLong("ipersonid"));
+              if (p == null) {
+                throw new ParameterException("存在无效人员信息");
+              }
+
+              iPersonId = p.getIAutoId();
+            } else {
+              if (StringUtils.isNotBlank(r.getStr("cpsn_num"))) {
+                Record p = personService.getpersonByCpsnnum(r.getStr("cpsn_num"));
+                if (p == null) {
+                  throw new ParameterException("存在无效人员信息");
+                }
+
+                iPersonId = p.getLong("iautoid");
+              }
+
+            }
+            moMoroutingconfigPerson = new MoMoroutingconfigPerson();
+            moMoroutingconfigPerson.setIPersonId(iPersonId);
+            moMoroutingconfigPerson.setIMoRoutingConfigId(iMoRoutingConfigId);
+            moMoroutingconfigPerson.save();
+            iPersonNum++;
+          }
+        }
+      }
+    }
+    System.out.print("iPersonNu........................................"+iPersonNum);
+    return  iPersonNum;
+  }
   /**
    * 更新
    *
@@ -333,5 +874,78 @@ public class MoDocService extends BaseService<MoDoc> {
             set("startdate", starttime).
             set("enddate", endtime)).paginate(page, pageSize);
 
+  }
+
+  public String generateBarCode() {
+    String prefix = "SCGD";
+    String format = DateUtil.format(DateUtil.date(), DatePattern.PURE_DATE_FORMAT);
+    String s= momDataFuncService.getNextNo(prefix.concat(format), 4);
+
+    return  momDataFuncService.getNextRouteNo(1L, "SCGD", 6);
+  }
+  public List<Record> getDocdetail(Long imodocid,Long iinventoryroutingid) {
+    List<Record> records= dbTemplate("modoc.findDocdetail",   Okv.by("iMoDocId", imodocid).set("iInventoryRoutingId",iinventoryroutingid)).find();
+    if(!records.isEmpty()){
+      for(Record r:records){
+        if(isOk(r.getLong("iautoid"))){
+          r.set("personnames",moMoroutingconfigPersonService.getMoMoroutingconfigPersonNameData(r.getLong("iautoid")));
+        }
+      }
+    }
+    return  records;
+
+
+  }
+
+  public Ret checkDoc(MoDoc moDoc){
+    if(!isOk(moDoc.getIInventoryId())){
+      return Ret.fail("缺少产线");
+    }
+    if(!isOk(moDoc.getIDepartmentId())){
+      return Ret.fail("缺少部门");
+    }
+    if(!isOk(moDoc.getIInventoryId())){
+      return Ret.fail("缺少存货编号");
+    }
+    if(!isOk(moDoc.getIQty())){
+      return Ret.fail("缺少计划数");
+    }
+    if(!isOk(moDoc.getDPlanDate())){
+      return Ret.fail("缺少计划日期");
+    }
+    return SUCCESS;
+  }
+
+  public Ret stopSave(JBoltTable jBoltTable, String rowid) {
+
+    Ret ret=saveDoc(jBoltTable,rowid);
+    MoDoc modoc=(MoDoc)ret.get("data");
+    if(modoc!=null&&modoc.getIStatus().equals(7)){
+      return  fail("已经是关闭状态");
+    }
+    modoc.setIStatus(7);
+    modoc.setIUpdateBy(JBoltUserKit.getUserId());
+    modoc.setCUpdateName(JBoltUserKit.getUserName());
+    modoc.setDUpdateTime(new Date());
+    tx(() -> {
+      modoc.update();
+      return true;
+    });
+
+    return SUCCESS;
+  }
+  public Ret updateStatus(MoDoc modoc){
+    if(modoc!=null&&modoc.getIStatus().equals(7)){
+      return  fail("已经是关闭状态");
+    }
+    modoc.setIStatus(7);
+    modoc.setIUpdateBy(JBoltUserKit.getUserId());
+    modoc.setCUpdateName(JBoltUserKit.getUserName());
+    modoc.setDUpdateTime(new Date());
+    tx(() -> {
+      modoc.update();
+      return true;
+    });
+    return  SUCCESS;
   }
 }

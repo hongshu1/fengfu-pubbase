@@ -11,6 +11,8 @@ import cn.rjtech.util.BillNoUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,14 +58,18 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	 */
 	public void add() {
 		SysPuinstore puinstore = new SysPuinstore();
-		String billNo = BillNoUtils.getcDocNo(getOrgId(), "WLTK", 5);
 		Date nowDate = new Date();
-		puinstore.setBillNo(billNo);
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String time = format.format(nowDate);
 		puinstore.setBillDate(time);
 		set("puinstore",puinstore);
-		render("add.html");
+		String edit = get("edit");
+		if ("2".equals(edit)) {
+			render("edit2.html");
+		}else {
+			render("add.html");
+		}
+
 	}
 
 	/**
@@ -160,10 +166,38 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 		kv.set("OrgCode",OrgCode);
 		renderJsonData(service.getmaterialReturnListLines(getPageNumber(), getPageSize(), kv));
 	}
+	/**
+	 * 整单退货出库单列表明细
+	 */
+	public void getmaterialLines() {
+		String autoid = get("puinstore.autoid");
+		String OrgCode = getOrgCode();
+		Kv kv = new Kv();
+		kv.set("autoid",autoid== null? "" :autoid);
+		kv.set("OrgCode",OrgCode);
+		renderJsonData(service.getmaterialReturnListLines(getPageNumber(), getPageSize(), kv));
+	}
 
 
 	public void deleteList() {
 		renderJson(service.deleteList(get(0)));
+	}
+
+
+
+	/**
+	 * 入库号的选择数据Dialog
+	 */
+	public void choosePuinstoreData() {
+		render("sysPuinstoreDialog.html");
+	}
+
+	/**
+	 * 获取入库号明细
+	 * */
+	public void getSysPODetail() {
+		Page<Record> recordPage = service.getSysPODetail(getKv(), getPageNumber(), getPageSize());
+		renderJsonData(recordPage);
 	}
 
 
