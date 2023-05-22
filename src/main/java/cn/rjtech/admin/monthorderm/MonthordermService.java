@@ -13,7 +13,7 @@ import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.Monthorderd;
-import cn.rjtech.model.momdata.Monthorderm;
+import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -31,15 +31,15 @@ import java.util.Set;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-10 18:20
  */
-public class MonthordermService extends BaseService<Monthorderm> {
+public class MonthordermService extends BaseService<MonthOrderM> {
 
-	private final Monthorderm dao = new Monthorderm().dao();
+	private final MonthOrderM dao = new MonthOrderM().dao();
 	@Inject
 	private MonthorderdService monthorderdService;
 	@Inject
 	private CusOrderSumService cusOrderSumService;
 	@Override
-	protected Monthorderm dao() {
+	protected MonthOrderM dao() {
 		return dao;
 	}
 
@@ -60,7 +60,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	 * @param monthorderm
 	 * @return
 	 */
-	public Ret save(Monthorderm monthorderm) {
+	public Ret save(MonthOrderM monthorderm) {
 		if(monthorderm==null || isOk(monthorderm.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
@@ -78,12 +78,12 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	 * @param monthorderm
 	 * @return
 	 */
-	public Ret update(Monthorderm monthorderm) {
+	public Ret update(MonthOrderM monthorderm) {
 		if(monthorderm==null || notOk(monthorderm.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//更新时需要判断数据存在
-		Monthorderm dbMonthorderm=findById(monthorderm.getIAutoId());
+		MonthOrderM dbMonthorderm=findById(monthorderm.getIAutoId());
 		if(dbMonthorderm==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(monthorderm.getName(), monthorderm.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=monthorderm.update();
@@ -119,7 +119,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	 * @return
 	 */
 	@Override
-	protected String afterDelete(Monthorderm monthorderm, Kv kv) {
+	protected String afterDelete(MonthOrderM monthorderm, Kv kv) {
 		//addDeleteSystemLog(monthorderm.getIautoid(), JBoltUserKit.getUserId(),monthorderm.getName());
 		return null;
 	}
@@ -131,7 +131,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	 * @return
 	 */
 	@Override
-	public String checkCanDelete(Monthorderm monthorderm, Kv kv) {
+	public String checkCanDelete(MonthOrderM monthorderm, Kv kv) {
 		//如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
 		return checkInUse(monthorderm, kv);
 	}
@@ -160,7 +160,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	 * @return
 	 */
 	@Override
-	public String checkCanToggle(Monthorderm monthorderm,String column, Kv kv) {
+	public String checkCanToggle(MonthOrderM monthorderm, String column, Kv kv) {
 		//没有问题就返回null  有问题就返回提示string 字符串
 		return null;
 	}
@@ -169,7 +169,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	 * toggle操作执行后的回调处理
 	 */
 	@Override
-	protected String afterToggleBoolean(Monthorderm monthorderm, String column, Kv kv) {
+	protected String afterToggleBoolean(MonthOrderM monthorderm, String column, Kv kv) {
 		//addUpdateSystemLog(monthorderm.getIautoid(), JBoltUserKit.getUserId(), monthorderm.getName(),"的字段["+column+"]值:"+monthorderm.get(column));
 		return null;
 	}
@@ -181,7 +181,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	 * @return
 	 */
 	@Override
-	public String checkInUse(Monthorderm monthorderm, Kv kv) {
+	public String checkInUse(MonthOrderM monthorderm, Kv kv) {
 		//这里用来覆盖 检测Monthorderm是否被其它表引用
 		return null;
 	}
@@ -192,7 +192,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
      * @return
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-    	Monthorderm monthorderm = jBoltTable.getFormModel(Monthorderm.class,"monthorderm");
+    	MonthOrderM monthorderm = jBoltTable.getFormModel(MonthOrderM.class,"monthorderm");
     	User user = JBoltUserKit.getUser();
     	Date now = new Date();
     	tx(()->{
@@ -222,7 +222,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
     }
 
     //可编辑表格提交-新增数据
-    private void saveTableSubmitDatas(JBoltTable jBoltTable,Monthorderm monthorderm){
+    private void saveTableSubmitDatas(JBoltTable jBoltTable, MonthOrderM monthorderm){
     	List<Record> list = jBoltTable.getSaveRecordList();
     	if(CollUtil.isEmpty(list)) return;
     	for (int i=0;i<list.size();i++) {
@@ -277,7 +277,7 @@ public class MonthordermService extends BaseService<Monthorderm> {
 	 * @return
 	 */
 	public Ret approve(Long id) {
-		Monthorderm monthorderm = findById(id);
+		MonthOrderM monthorderm = findById(id);
 
 		//2. 审核通过
 		monthorderm.setIAuditStatus(2);
