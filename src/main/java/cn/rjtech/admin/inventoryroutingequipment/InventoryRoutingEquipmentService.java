@@ -14,20 +14,20 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.model.momdata.Equipment;
-import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.InventoryRoutingConfig;
 import cn.rjtech.model.momdata.InventoryRoutingEquipment;
+import cn.rjtech.model.momdata.InventoryRoutingInvc;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
-import com.jfinal.kit.Okv;
-import cn.rjtech.model.momdata.InventoryRoutingEquipment;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -205,5 +205,57 @@ public class InventoryRoutingEquipmentService extends BaseService<InventoryRouti
 	
 	public List<Record> findRoutingConfigId(Long routingConfigId){
 		return dbTemplate("inventory.getRoutingEqps", Okv.by("configid", routingConfigId)).find();
+	}
+	
+	public void deleteByRoutingConfigIds(Object[] routingConfigIds) {
+		String sqlStr = "DELETE "+
+				"FROM " +
+				"Bd_InventoryRoutingEquipment " +
+				"WHERE " +
+				"iInventoryRoutingConfigId IN ( "+ArrayUtil.join(routingConfigIds, COMMA)+" )";
+		delete(sqlStr);
+	}
+	
+	public void saveRoutingEquipment(Long userId, String userName, Date date, List<Record> recordList){
+		List<InventoryRoutingEquipment> equipmentList = new ArrayList<>();
+		for (Record record : recordList){
+			Long routingConfigId = record.getLong(InventoryRoutingConfig.IAUTOID);
+			Object object = record.get(InventoryRoutingConfig.EQUIPMENTJSONSTR);
+			if (ObjectUtil.isEmpty(object)){
+				continue;
+			}
+			List<JSONObject> itemJson = null;
+			if (object instanceof List){
+				itemJson =(List<JSONObject> )object;
+			}
+			if (CollectionUtil.isEmpty(itemJson)){
+				continue;
+			}
+			
+			for (JSONObject jsonObject : itemJson){
+				Long id = JBoltSnowflakeKit.me.nextId();
+				Long iEquipmentId = jsonObject.getLong(InventoryRoutingEquipment.IEQUIPMENTID.toLowerCase());
+				String cMemo = jsonObject.getString(InventoryRoutingEquipment.CMEMO.toLowerCase());
+				InventoryRoutingEquipment inventoryRoutingEquipment = create(id, iEquipmentId, routingConfigId, userId,  userName, cMemo, date);
+				equipmentList.add(inventoryRoutingEquipment);
+			}
+			
+		}
+		if (CollectionUtil.isNotEmpty(equipmentList)){
+			batchSave(equipmentList, 500);
+		}
+	}
+	
+	public InventoryRoutingEquipment create(Long id, Long iEquipmentId, Long iInventoryRoutingConfigId, Long userId,  String userName, String cMemo, Date date){
+		InventoryRoutingEquipment inventoryRoutingEquipment = new InventoryRoutingEquipment();
+		inventoryRoutingEquipment.setIAutoId(id);
+		inventoryRoutingEquipment.setIInventoryRoutingConfigId(iInventoryRoutingConfigId);
+		inventoryRoutingEquipment.setIEquipmentId(iEquipmentId);
+		inventoryRoutingEquipment.setICreateBy(userId);
+		inventoryRoutingEquipment.setCCreateName(userName);
+		inventoryRoutingEquipment.setCMemo(cMemo);
+		inventoryRoutingEquipment.setDCreateTime(date);
+		
+		return inventoryRoutingEquipment;
 	}
 }
