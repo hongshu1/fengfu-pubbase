@@ -1173,7 +1173,12 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		return supplierList;
 	}
 
-
+	public Ret saveForetell(Kv kv) {
+		return SUCCESS;
+	}
+	public Ret saveArrival(Kv kv) {
+		return SUCCESS;
+	}
 
 
 	//-----------------------------------------------------------------物料需求计划预示-----------------------------------------------
