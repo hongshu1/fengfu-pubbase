@@ -3,15 +3,22 @@ package cn.rjtech.admin.personequipment;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.equipment.EquipmentService;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.model.momdata.Equipment;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PersonEquipment;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -31,16 +38,42 @@ public class PersonEquipmentService extends BaseService<PersonEquipment> {
     return dao;
   }
 
+  @Inject
+  private PersonService personService; //人员信息
+
+  @Inject
+  private EquipmentService equipmentService;
+
+
   /**
    * 后台管理分页查询
    *
    * @param pageNumber
    * @param pageSize
-   * @param keywords
+   * @param kv
    * @return
    */
-  public Page<PersonEquipment> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-    return paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "iAutoId");
+  public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
+    if (StringUtils.isBlank(kv.getStr("cequipmentcodes"))) {
+      return new Page<Record>();
+    }
+    Sql sql = selectSql().select("distinct b.iAutoId as iPersonId,b.cPsn_Num, b.cPsn_Name ," +
+                    "b.JobNumber as jobnumber,b.iSex,b.cpsnmobilephone,c.iAutoId as iEquipmentId, c.cEquipmentCode,c.cEquipmentName").from(table(), "a").
+            innerJoin(personService.table(), "b",
+                    "b.iAutoId=a.iPersonId").
+
+            innerJoin(equipmentService.table(), "c", "a.iEquipmentId=c.iAutoId").
+            // leftJoin() 工单工艺配置
+                    like("b." + Person.CPSN_NUM, kv.getStr("cpsnnum"))
+            .like("b." + Person.CPSN_NAME, kv.getStr("cpsname"))
+            .like("b." + Person.JOBNUMBER, kv.getStr("jobmumber"))
+            .like("c." + Equipment.CEQUIPMENTCODE, kv.getStr("cequipmentcode"))
+            .like("c." + Equipment.CEQUIPMENTNAME, kv.getStr("cequipmentname")).
+            in("c.cequipmentcode", kv.getStr("cequipmentcodes")).
+            orderBy("b." + Person.IAUTOID, true).page(pageNumber, pageSize);
+
+    return paginateRecord(sql);
+
   }
 
   /**

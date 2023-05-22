@@ -185,6 +185,10 @@ public class InventoryRoutingSopService extends BaseService<InventoryRoutingSop>
 		return itemroutingdrawing;
 	}
 
+    public List<InventoryRoutingSop> dataList(Long configId) {
+        return getCommonList(Okv.by("iInventoryRoutingConfigId", configId), "iAutoId", "ASC");
+    }
+
 	public List<InventoryRoutingSop> dataList(Kv kv) {
 		
 		/*if (StrUtil.isNotBlank(kv.getStr(InventoryRoutingConfig.ROUTINGSOPJSON))){

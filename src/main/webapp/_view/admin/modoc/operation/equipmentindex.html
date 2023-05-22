@@ -1,0 +1,180 @@
+
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col">
+		<form class="form-inline text-left" id="itemroutingForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="" autocomplete="off" class="form-control col-sm-4"  placeholder="料品工艺档案配置Id" name="configid" value="#(configid)" />
+			<input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+			<input type="" id="iMoDocId" name="imdocid" value="#(imdocid??)">
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cequipmentcode}</td>
+<td hidden>${data.iequipmentid}</td>
+<td>${data.cequipmentname}</td>
+<td>${data.cdepname}</td>
+<td>${data.workname}</td>
+<!--<td>${data.cmemo}</td>
+	<td>
+	<a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger"></i></a>
+</td>-->
+</tr>
+{@/each}
+</textarea>
+		<!-- 工具条 toolbar -->
+		<div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
+			<div class="" role="group" aria-label="btn-group">
+				<div>
+					<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+						<!--<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+						<button onclick="jboltTableChooseAndInsert(this,true, false)" data-url="admin/inventoryroutingequipment/equ_dialog_index" data-area="50%,90%" data-btn="选中,取消" data-title="批量选择并插入" class="btn btn-success btn-sm" ><i class="fa fa-plus-square-o"></i> 批量插入</button>
+						<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>-->
+						<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+						<!--<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>-->
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<table class="jbolt_table jbolt_main_table table-center"
+			   id="quipmenttableid"
+			   data-jbolttable
+			   data-height="fill"
+			   data-ajax="true"
+			   data-url="admin/modoc/inventoryroutingequipmentDataList"
+			   data-column-resize="true"
+			   data-column-prepend="1:checkbox:true"
+			   data-conditions-form="itemroutingForm_#(pageId)"
+			   data-rowtpl="itemroutingRowtpl_#(pageId)"
+			   data-toolbar="itemrouting_toolbar_#(pageId)"
+			   data-editable="true"
+			   data-editable-option="getEditableTableOptions_workposition"
+		>
+			<thead class="fw-normal">
+			<tr>
+				<!--<th data-min-width="150" data-column="iItemId">料品档案ID</th>-->
+				<th data-width="60" data-min-width="60" data-column="index">序号</th>
+				<th data-column="cequipmentcode">设备编码</th>
+				<th data-column="iequipmentid" hidden>设备编码</th>
+				<th data-column="cequipmentname">设备名称</th>
+				<th data-column="cdepname">使用部门</th>
+				<th data-column="workname">产线名称</th>
+				<!--<th data-column="cmemo">备注</th>
+				<th >操作</th>-->
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+	</div>
+</div>
+<script>
+	/*function submitThisForm(callback){
+		var data=getJboltTableCheckedDatas("workpositionid");
+		if(data){
+			//LayerMsgBox.confirm("确认选择此数据?",function(){
+			parent.jboltTableProcessTdByDialogChooser(data.coperationname,data.iautoid,data);
+			if(callback){
+				callback();
+			}
+			//});
+		}
+	}*/
+
+
+
+	function addTableRow(ele){
+		jboltTableInsertRow(ele)
+	}
+
+	function getEditableTableOptions_workposition(){
+		var editableTableOptions={
+			trigger:"click",
+			initRowCount:0,
+			maxRowCount:30,
+			//keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+			submit:{
+				// withForm:[""],
+				type:"all",//cell|all
+				//params:{"masterautoid":'#(masterautoid)'},//携带其他额外参数
+				//commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+				url:"admin/inventoryroutingequipment/saveEquipment?configid=#(configid)",
+				success:function(res){
+					LayerMsgBox.success("提交成功",600,function(){
+						//refreshPjaxContainer();
+						parent.refreshJBoltTable("#itemroutingconfigid");
+						parent.LayerMsgBox.closeAll();
+					});
+				}
+			},
+			//插入数据时默认属性值
+			//insertDefaultValues:{age:10},
+			cols:{
+				iautoid:{
+					submitAttr:"iautoid",
+				},
+				cequipmentcode:{  //设备id
+					type:"dialogbtn",
+					placeholder:"选择设备",
+					linkColumn:'iworkpositionid',
+					dialog:{
+						url:"admin/inventoryroutingequipment/equ_dialog_index",
+						area:"95%,95%",
+						title:"选择设备",
+						btn:"确定,关闭"
+					},
+					header: "设备名称,型号",
+					columnAttr:"iequipmentid,workname,cdepname,cequipmentname",
+					changeColumns:[{column:"iequipmentid",use:"iautoid"},{column:"workname",use:"workname"},
+						{column:"cdepname",use:"cdepname"},{column:"cequipmentname",use:"cequipmentname"}],
+				},
+				cmemo:{type:"input", placeholder:"备注"},
+			}
+		};
+		return editableTableOptions;
+	}
+	function  changepage(){
+
+		hideParentLayerDialogBtn(0);
+
+		addParentLayerDialogBtn("选中","lay_primary text-white",function(){
+			chooseAndInsert();
+		});
+		/*addParentLayerDialogBtn("Replace","lay_primary text-white",function(){
+			chooseAndInsert("replace");
+		});
+		addParentLayerDialogBtn("Merge","lay_primary text-white",function(){
+			chooseAndInsert("merge");
+		});
+		addParentLayerDialogBtn("<i class='fa fa-arrow-up'></i> 首行插","lay_info text-white",function(){
+			chooseAndInsert("prepend");
+		});
+		addParentLayerDialogBtn("<i class='fa fa-arrow-left'></i> 前插","lay_info text-white",function(){
+			chooseAndInsert("before");
+		});
+		addParentLayerDialogBtn("后插 <i class='fa fa-arrow-right'></i>","lay_info text-white",function(){
+			chooseAndInsert("after");
+		});
+		addParentLayerDialogBtn("尾行插 <i class='fa fa-arrow-down'></i>","lay_info text-white",function(){
+			chooseAndInsert("append");*/
+	}
+
+
+</script>
+
+
+

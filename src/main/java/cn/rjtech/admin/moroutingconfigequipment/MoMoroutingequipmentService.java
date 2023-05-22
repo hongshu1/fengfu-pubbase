@@ -1,12 +1,27 @@
 package cn.rjtech.admin.moroutingconfigequipment;
 
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.db.sql.Sql;
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.equipment.EquipmentService;
+import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
+import cn.rjtech.admin.org.OrgService;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.model.momdata.Equipment;
+import cn.rjtech.model.momdata.Person;
+import com.jfinal.aop.Inject;
+import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.model.momdata.MoMoroutingequipment;
+import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.rjtech.model.momdata.MoMoroutingequipment;
+import com.jfinal.plugin.activerecord.Record;
+import com.sun.jna.platform.win32.Winevt;
+
+import java.util.List;
+
 /**
  * 制造工单-生产工艺路线设备 Service
  * @ClassName: MoMoroutingequipmentService
@@ -21,16 +36,45 @@ public class MoMoroutingequipmentService extends BaseService<MoMoroutingequipmen
 	protected MoMoroutingequipment dao() {
 		return dao;
 	}
+	@Inject
+	private EquipmentService equipmentService;
+	@Inject
+	private WorkregionmService workregionmService;
+	@Inject
+	private DepartmentService departmentService;
+
+	@Inject
+	private MoMoroutingconfigService moMoroutingconfigService;
+	@Inject
+	private OrgService orgService;
 
 	/**
 	 * 后台管理分页查询
 	 * @param pageNumber
 	 * @param pageSize
-	 * @param keywords
+	 * @param kv
 	 * @return
 	 */
-	public Page<MoMoroutingequipment> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
+		Sql sql=selectSql().select("distinct b.iAutoId as iautoid,b.cEquipmentCode, b.cEquipmentName, " +
+						"d.cWorkName,e.cDepName").from(table(),"a").
+				leftJoin(equipmentService.table(),"b",
+						"b.iAutoId=a.iEquipmentId").
+				leftJoin(workregionmService.table(),"d","d.iautoid=b.iWorkRegionmId")
+				.leftJoin(departmentService.table(),"e","e.iautoid=d.iDepId")
+				.leftJoin("[UGCFF_MOM_System].dbo.[jb_org]","f","e.cOrgCode=f.org_code")
+				.innerJoin(moMoroutingconfigService.table(),"c","c.iAutoId=a.iMoRoutingConfigId").
+				like("b."+ Equipment.CEQUIPMENTCODE,kv.getStr("cequipmentcode"))
+				.like("b."+Equipment.CEQUIPMENTNAME,kv.getStr("cequipmentname"))
+
+				//.eq("c.iAutoId",kv.getStr("imoroutingconfigid")).
+				.eq("c.iAutoId",kv.getStr("configid")).
+				// eq("e.cOrgCode",getOrgCode()).
+						orderBy("b.iAutoId",true).page(pageNumber,pageSize);
+
+
+		return paginateRecord(sql);
+		//return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
 	}
 
 	/**
@@ -123,4 +167,22 @@ public class MoMoroutingequipmentService extends BaseService<MoMoroutingequipmen
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
+	public List<Record> dataList(Kv kv) {
+		Sql sql=selectSql().select("distinct b.iAutoId as iautoid,b.cEquipmentCode, b.cEquipmentName, " +
+						"d.cWorkName,e.cDepName").from(table(),"a").
+				leftJoin(equipmentService.table(),"b",
+						"b.iAutoId=a.iEquipmentId").
+				leftJoin(workregionmService.table(),"d","d.iautoid=b.iWorkRegionmId")
+				.leftJoin(departmentService.table(),"e","e.iautoid=d.iDepId")
+				.leftJoin("[UGCFF_MOM_System].dbo.[jb_org]","f","e.cOrgCode=f.org_code")
+				.innerJoin(moMoroutingconfigService.table(),"c","c.iAutoId=a.iMoRoutingConfigId").
+				like("b."+ Equipment.CEQUIPMENTCODE,kv.getStr("cequipmentcode"))
+				.like("b."+Equipment.CEQUIPMENTNAME,kv.getStr("cequipmentname"))
+
+				//.eq("c.iAutoId",kv.getStr("imoroutingconfigid")).
+				.eq("c.iAutoId",kv.getStr("configid")).
+				// eq("e.cOrgCode",getOrgCode()).
+						orderBy("b.iAutoId",true);
+		return  findRecord(sql);
+	}
 }
