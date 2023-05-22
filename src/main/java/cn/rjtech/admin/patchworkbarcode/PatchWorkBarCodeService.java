@@ -3,10 +3,14 @@ package cn.rjtech.admin.patchworkbarcode;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.Inventory;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PatchWorkBarCodeService extends BaseService<Inventory> {
@@ -43,13 +47,22 @@ public class PatchWorkBarCodeService extends BaseService<Inventory> {
     /*
      * 打印条码
      * */
-    public String SubmitStripForm(Kv kv) {
+    public List<Record> SubmitStripForm(Kv kv) {
         //TODO 打印条码
         String cinvcode = kv.getStr("cinvcode");//存货编码
         String cinvcode1 = kv.getStr("cinvcode1"); //客户部番
-        int cinvname1 = kv.getInt("cinvname1"); //部品名称
+        String cinvname1 = kv.getStr("cinvname1"); //部品名称
         String datas = kv.getStr("datas"); //现品票
-        return "";
+        List<Kv> jsonArray = JSON.parseArray(datas, Kv.class);
+        ArrayList<Record> records = new ArrayList<>();
+        for (Kv value : jsonArray) {
+            Record record = new Record();
+            record.set("cbarcode",value.getStr("cbarcode"));
+            record.set("iqty",value.getStr("iqty"));
+            //添加
+            records.add(record);
+        }
+        return records;
     }
 
 }
