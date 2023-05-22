@@ -229,8 +229,8 @@
                     </div>
                     <div style="display: flex;">
                         <label style="margin-left:85px"></label>
-                        <select style="width: 180px">
-                            <option>fvw</option>
+                        <select style="width:260px;height: 30px" id="project_id" onClick='supplierChange()' name="col">
+                            <option>请选择供应商</option>
                         </select>
                     </div>
                 </div>
@@ -244,21 +244,6 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
-    //预示保存确定按钮事件
-    function indicateSave(){
-        let startTime = document.getElementById('start-time').value.substring(0,10);//获取开始时间
-        let endTime = document.getElementById('end-time').value.substring(0,10);//获取结束时间
-        if(startTime!=""&&endTime!=""){
-            console.log(startTime,endTime)
-
-        }
-        // $.ajax({
-        //     type: "GET",
-        //     url: "https://api.github.com/repos/Grape/Grape",
-        //     data: JSON.stringify(indicateSave)
-        // });
-    }
-
     // function checkAll(){
     //     //获取id的dom元素
     //     let Id = document.getElementById('all');
@@ -294,9 +279,6 @@
     //         console.log("222")
     //     }
     // }
-
-
-
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
@@ -330,6 +312,7 @@
         planListRowIndex:3,     //计划排产列表起始行下标
         planListColIndex:7,     //计划排产列表起始列下标
         planGenerator:'',       //保存计划生成日期
+        supplierValueArray:[],  //存储当前点击选中的供应商
     };
 
     var parmsArr = [Object.assign({},parmsDefault)];
@@ -603,10 +586,44 @@
                 dataType:'json',
                 success:function (res){
                     console.log(res);
+                    for (var i = 0; i < res.data.length; i++) {
+                        var jsonObj = res.data[i];
+                        $("#project_id").append(`<option value='${jsonObj.iautoid}'>${jsonObj.cvenname}</option>`);
+                    }
                 },error: function(error) {
                     console.log(error,"预示保存弹出层");
                 }
             })
+        }
+    }
+    //获取当前点击选中的供应商
+    function supplierChange() {
+        var supplierValue = document.all['col'].value;
+        let index = parms.supplierValueArray.findIndex(item => item==supplierValue);
+        if (supplierValue!="请选择供应商") {
+            if (index == -1) {
+                parms.supplierValueArray.push(supplierValue);
+            }
+        }
+    }
+    //预示保存确定按钮事件
+    function indicateSave(){
+        let startTime = document.getElementById('start-time').value.substring(0,10);//获取开始时间
+        let endTime = document.getElementById('end-time').value.substring(0,10);//获取结束时间
+        if(startTime!=""&&endTime!=""){
+            if(parms.supplierValueArray.length!=0){
+                let url = `http://localhost:8081/admin/schedudemandplan/saveForetell?startdate=${startTime}&enddate=${endTime}&data=${JSON.stringify(parms.supplierValueArray)}`
+                $.ajax({
+                    url,
+                    type: 'get',
+                    dataType: 'json',
+                    success:function (res){
+                        console.log(res,"sssssssssssss");
+                    },error: function(error) {
+                        console.log(error,"wwwwwwwwwwww");
+                    }
+                })
+            }
         }
     }
     //弹出层关闭事件
