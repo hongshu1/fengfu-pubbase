@@ -128,5 +128,14 @@ public class MonthordermAdminController extends BaseAdminController {
         
         renderJson(service.submit(iautoid));
     }
+
+    /**
+     * 撤回
+     */
+    public void withdraw(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.validateId(iautoid, "ID");
+
+        renderJson(service.withdraw(iautoid));
+    }
     
 }
