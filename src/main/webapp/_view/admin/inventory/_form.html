@@ -222,20 +222,46 @@
 </form>
 #define js()
 #render("_table_split_js.html")
+#render("_capacity_table_js.html")
 #render("_tab4_js.html")
 <script>
     function submitThisForm() {
-        var tables = ["jbolt_table_workshiftd_split_#(pageId)","itemroutingconfigid"];
+
+        var datas = getJboltTableAllDatas('#jbolt_table_capacity_#(pageId)');
+        if (datas){
+
+            for (var i=0; i<datas.length; i++){
+                var item = datas[i];
+                if (!item.iworkshiftmid){
+                    LayerMsgBox.alert("请选择班次！！！", 2);
+                    return;
+                }
+                if (!item.icapacity){
+                    LayerMsgBox.alert("选择班次后，请输入班次产能！！！", 2);
+                    return;
+                }
+            }
+
+            const hasDuplicate = datas.some((item, index, array) => {
+                return array.filter((obj) => obj.iworkshiftmid === item.iworkshiftmid).length > 1;
+            });
+            if (hasDuplicate){
+                LayerMsgBox.alert("存在相同的班次产能！");
+                return;
+            }
+        }
+
+        var tables = ["jbolt_table_workshiftd_split_#(pageId)","itemroutingconfigid", "jbolt_table_capacity_#(pageId)"];
         jboltTableSubmitMulti(tables,"/admin/inventory/submitMulti",function(res){
-            alert("看到这个消息说明多个表格都提交成功了");
-            // refreshJBoltTables(tables);
+            // alert("看到这个消息说明多个表格都提交成功了");
+            refreshPjaxContainer();
         });
     }
 
     function jianBtn(ele, idField) {
         let value = $("#" + idField).val();
         if (value < 2) {
-            LayerMsgBox.alert("必须为正数！");
+            LayerMsgBox.alert("必须为正数！", 2);
             return;
         }
         $("#" + idField).val(Number(value) - 1)

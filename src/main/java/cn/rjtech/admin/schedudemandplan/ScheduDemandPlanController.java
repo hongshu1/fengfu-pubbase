@@ -9,6 +9,7 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MrpDemandcomputem;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
+import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
@@ -120,6 +121,26 @@ public class ScheduDemandPlanController extends BaseAdminController {
 
 	public void getDemandList() {
 		renderJsonData(service.getDemandList(getKv()));
+	}
+
+	public void getSupplierList() {
+		renderJsonData(service.getSupplierList(getKv()));
+	}
+
+	/**
+	 * 预示保存
+	 */
+	public void saveForetell() {
+		String dataStr = get("startdate");
+		renderJson(service.saveForetell(getKv()));
+	}
+	/**
+	 * 到货保存
+	 */
+	public void saveArrival() {
+		String dataStr = get("startdate");
+		//JSONArray dataJSONArr = JSONArray.parseArray(dataStr);
+		renderJson(service.saveArrival(getKv()));
 	}
 
 	//-----------------------------------------------------------------物料需求计划预示-----------------------------------------------

@@ -2,20 +2,24 @@ package cn.rjtech.admin.schedudemandplan;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bommaster.BomMasterService;
+import cn.rjtech.admin.mrpdemandforecastd.MrpDemandforecastdService;
+import cn.rjtech.admin.mrpdemandpland.MrpDemandplandService;
 import cn.rjtech.admin.scheduproductplan.CollectionUtils;
 import cn.rjtech.admin.mrpdemandcomputed.MrpDemandcomputedService;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 
-import cn.rjtech.model.momdata.BomMaster;
-import cn.rjtech.model.momdata.MrpDemandcomputed;
-import cn.rjtech.model.momdata.MrpDemandcomputem;
+import cn.rjtech.model.momdata.*;
 
+import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -56,6 +60,15 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 	@Inject
 	private MrpDemandcomputedService mrpDemandcomputedService;
+
+	@Inject
+	private MomDataFuncService momDataFuncService;
+
+	@Inject
+	private MrpDemandforecastdService mrpDemandforecastdService;
+
+	@Inject
+	private MrpDemandplandService mrpDemandplandService;
 
 	@Override
 	protected MrpDemandcomputem dao() {
@@ -1168,7 +1181,194 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		return dataList;
 	}
 
+	public List<Record> getSupplierList(Kv kv) {
+		List<Record> supplierList = findRecord("SELECT iAutoId,cVenName FROM Bd_Vendor WHERE isDeleted = 0 ");
+		return supplierList;
+	}
 
+	public Ret saveForetell(Kv kv) {
+		String startdate = kv.getStr("startdate");
+		String enddate = kv.getStr("enddate");
+		//供应商id数组json
+		String data = kv.getStr("data");
+		if (StringUtils.isBlank(startdate) || StringUtils.isBlank(enddate) || data.equals("[]")){
+			return fail("请先选择保存条件！");
+		}
+
+		JSONArray idJSONArr = JSONArray.parseArray(data);
+		String iVendorIds = "(601";
+		for (int i = 0; i < idJSONArr.size(); i++) {
+			iVendorIds = iVendorIds + "," + idJSONArr.get(i);
+		}
+		iVendorIds = iVendorIds + ")";
+
+		//TODO:根据供应商集查询物料需求计划
+		List<MrpDemandcomputed> demandcomputedList = mrpDemandcomputedService.daoTemplate("schedudemandplan.getDemandComputeDByVendorIdList",
+				Kv.by("ivendorids",iVendorIds).set("startdate",startdate).set("enddate",enddate)).find();
+
+
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date newDate = new Date();
+		String orgCode = getOrgCode();
+		String orgName = getOrgName();
+		Long orgId = getOrgId();
+		Long iDemandForecastMid = JBoltSnowflakeKit.me.nextId();
+
+		//计划单号
+		String dateStr = DateUtils.formatDate(new Date(),"yyyyMMdd");
+		String planNo = momDataFuncService.getNextRouteNo(1L, "YS"+dateStr, 2);
+		//预示主表
+		MrpDemandforecastm forecastm = new MrpDemandforecastm();
+		forecastm.setIOrgId(orgId);
+		forecastm.setCOrgCode(orgCode);
+		forecastm.setCOrgName(orgName);
+		forecastm.setICreateBy(userId);
+		forecastm.setCCreateName(userName);
+		forecastm.setDCreateTime(newDate);
+		forecastm.setIUpdateBy(userId);
+		forecastm.setCUpdateName(userName);
+		forecastm.setDUpdateTime(newDate);
+		forecastm.setIAutoId(iDemandForecastMid);
+		forecastm.setDBeginDate(DateUtils.parseDate(startdate));
+		forecastm.setDEndDate(DateUtils.parseDate(enddate));
+		forecastm.setCForecastNo(planNo);
+		forecastm.setDPlanDate(new Date());
+		//预示子表
+		List<MrpDemandforecastd> forecastdList = new ArrayList<>();
+		for (MrpDemandcomputed computed : demandcomputedList){
+			MrpDemandforecastd forecastd = new MrpDemandforecastd();
+			forecastd.setIDemandForecastMid(iDemandForecastMid);
+			forecastd.setIYear(computed.getIYear());
+			forecastd.setIMonth(computed.getIMonth());
+			forecastd.setIDate(computed.getIDate());
+			forecastd.setIVendorId(computed.getIVendorId());
+			forecastd.setIInventoryId(computed.getIInventoryId());
+			forecastd.setIQty1(computed.getIQty1());
+			forecastd.setIQty2(computed.getIQty2());
+			forecastd.setIQty3(computed.getIQty5());
+			forecastdList.add(forecastd);
+		}
+
+		tx(() -> {
+			//int num = dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
+			forecastm.save();
+			if (forecastdList.size() == 0){
+				return true;
+			}
+			List<List<MrpDemandforecastd>> groupCusOrderSumList = CollectionUtils.partition(forecastdList,300);
+			CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
+			ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
+			for(List<MrpDemandforecastd> cusOrderSums :groupCusOrderSumList){
+				executorService.execute(()->{
+					mrpDemandforecastdService.batchSave(cusOrderSums);
+				});
+				countDownLatch.countDown();
+			}
+			try {
+				countDownLatch.await();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+			executorService.shutdown();
+
+			return true;
+		});
+
+		return SUCCESS;
+	}
+	public Ret saveArrival(Kv kv) {
+		String startdate = kv.getStr("startdate");
+		String enddate = kv.getStr("enddate");
+		//供应商id数组json
+		String data = kv.getStr("data");
+		if (StringUtils.isBlank(startdate) || StringUtils.isBlank(enddate) || data.equals("[]")){
+			return fail("请先选择保存条件！");
+		}
+
+		JSONArray idJSONArr = JSONArray.parseArray(data);
+		String iVendorIds = "(601";
+		for (int i = 0; i < idJSONArr.size(); i++) {
+			iVendorIds = iVendorIds + "," + idJSONArr.get(i);
+		}
+		iVendorIds = iVendorIds + ")";
+
+		//TODO:根据供应商集查询物料需求计划
+		List<MrpDemandcomputed> demandcomputedList = mrpDemandcomputedService.daoTemplate("schedudemandplan.getDemandComputeDByVendorIdList",
+				Kv.by("ivendorids",iVendorIds).set("startdate",startdate).set("enddate",enddate)).find();
+
+
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date newDate = new Date();
+		String orgCode = getOrgCode();
+		String orgName = getOrgName();
+		Long orgId = getOrgId();
+		Long iDemandPlanMid = JBoltSnowflakeKit.me.nextId();
+
+		//计划单号
+		String dateStr = DateUtils.formatDate(new Date(),"yyyyMMdd");
+		String planNo = momDataFuncService.getNextRouteNo(1L, "DH"+dateStr, 2);
+		//到货主表
+		MrpDemandplanm planm = new MrpDemandplanm();
+		planm.setIOrgId(orgId);
+		planm.setCOrgCode(orgCode);
+		planm.setCOrgName(orgName);
+		planm.setICreateBy(userId);
+		planm.setCCreateName(userName);
+		planm.setDCreateTime(newDate);
+		planm.setIUpdateBy(userId);
+		planm.setCUpdateName(userName);
+		planm.setDUpdateTime(newDate);
+		planm.setIAutoId(iDemandPlanMid);
+		planm.setDBeginDate(DateUtils.parseDate(startdate));
+		planm.setDEndDate(DateUtils.parseDate(enddate));
+		planm.setCPlanNo(planNo);
+		planm.setIStatus(1);
+		planm.setDPlanDate(new Date());
+		//到货子表
+		List<MrpDemandpland> forecastdList = new ArrayList<>();
+		for (MrpDemandcomputed computed : demandcomputedList){
+			MrpDemandpland pland = new MrpDemandpland();
+			pland.setIDemandPlanMid(iDemandPlanMid);
+			pland.setIYear(computed.getIYear());
+			pland.setIMonth(computed.getIMonth());
+			pland.setIDate(computed.getIDate());
+			pland.setIVendorId(computed.getIVendorId());
+			pland.setIInventoryId(computed.getIInventoryId());
+			pland.setIQty(computed.getIQty2());
+			pland.setIStatus(1);
+			pland.setIGenType(0);
+			forecastdList.add(pland);
+		}
+
+		tx(() -> {
+			//int num = dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
+			planm.save();
+			if (forecastdList.size() == 0){
+				return true;
+			}
+			List<List<MrpDemandpland>> groupCusOrderSumList = CollectionUtils.partition(forecastdList,300);
+			CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
+			ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
+			for(List<MrpDemandpland> cusOrderSums :groupCusOrderSumList){
+				executorService.execute(()->{
+					mrpDemandplandService.batchSave(cusOrderSums);
+				});
+				countDownLatch.countDown();
+			}
+			try {
+				countDownLatch.await();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+			executorService.shutdown();
+
+			return true;
+		});
+
+		return SUCCESS;
+	}
 
 
 	//-----------------------------------------------------------------物料需求计划预示-----------------------------------------------

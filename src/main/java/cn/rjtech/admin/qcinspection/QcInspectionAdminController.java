@@ -53,9 +53,9 @@ public class QcInspectionAdminController extends BaseAdminController {
      */
     public void datas() {
         Kv kv = new Kv();
-        kv.setIfNotNull("selectparam", get("cdocno"));
-        kv.setIfNotNull("selectparam", get("cchainname"));
-        kv.setIfNotNull("selectparam", get("cchainno"));
+        kv.setIfNotNull("cdocno", get("cdocno"));
+        kv.setIfNotNull("cchainname", get("cchainname"));
+        kv.setIfNotNull("cchainno", get("cchainno"));
         kv.setIfNotNull("starttime", get("starttime"));
         kv.setIfNotNull("endtime", get("endtime"));
         renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));

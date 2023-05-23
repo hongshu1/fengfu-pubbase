@@ -5,6 +5,7 @@ import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.modoc.ModocApiPageVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocGetCoperationnameByModocIdVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocGetMoroutingsopByInventoryroutingconfigIdVo;
+import cn.rjtech.model.momdata.Personswipelog;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
@@ -69,7 +70,7 @@ public class ModocApiController extends BaseApiController {
                    @Para(value = "pageSize") Integer pageSize,
                    @Para(value = "cmodocno") String cmodocno,
                    @Para(value = "cinvcode") String cinvcode,
-                   @Para(value = "cinvcode") String cinvcode1,
+                   @Para(value = "cinvcode1") String cinvcode1,
                    @Para(value = "cinvname1") String cinvname1,
                    @Para(value = "cdepname") String cdepname,
                    @Para(value = "iworkregionmid") Long iworkregionmid,
@@ -78,7 +79,7 @@ public class ModocApiController extends BaseApiController {
                    @Para(value = "endtime") Date endtime){
     ValidationUtils.validateIdInt(page,"缺少页数");
     ValidationUtils.validateIdInt(pageSize,"缺少条数");
-   // ValidationUtils.notNull(iworkregionmid,"缺少产线ID");
+    // ValidationUtils.notNull(iworkregionmid,"缺少产线ID");
     renderJBoltApiRet(moDocApiService.page(page,pageSize,cmodocno,cinvcode,cinvcode1,cinvname1,
             cdepname,iworkregionmid,status,starttime,endtime));
   }

@@ -2,136 +2,126 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
-<div class="jbolt_page_title">
-<div class="row">
-	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>周间客户订单</h1></div>
-	<div class="col">
-	<form class="form-inline" id="WeekOrderM_form_#(pageId)">
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="=订单号=" name="corderno" value="" />
-		<select class="form-control"
-				data-autoload
-				name="ccuscode"
-				data-select-type="select2"
-				data-tips="客户名称"
-				data-url="admin/customer/autocomplete"
-				data-text="=客户名称="
-				data-value=""
-				data-text-attr="ccuscode,ccusname"
-				data-value-attr="iautoid"
-				data-select=""
-				data-min-width="200"
-		></select>
-		<select class="form-control"
-		data-autoload
-		name="iorderstatus"
-		data-url="admin/dictionary/options?key=iorder_status"
-		data-select-type="select"
-		data-text="=订单状态="
-		data-value=""
-		data-value-attr="sn"
-		></select>
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="=创建人=" name="cCreateName" value="" />
-		<div class="input-group d-inline-block text-nowrap">
-			<div class="input-group-prepend">
-				<input type="text" data-date class="form-control" placeholder="=开始日期="   maxlength="20" name="startTime" value="">
-<!--				value="#date((startTime?? DateUtil.getNow()),'yyyy-MM-dd')"-->
-			</div>
-			<div class="input-group-append">
-				<span class="input-group-text">至</span>
-			</div>
-			<div class="input-group-append">
-				<input type="text" data-date class="form-control rounded-left-0"   placeholder="=截止日期="   maxlength="20" name="endTime" value="">
-			</div>
-		</div>
-		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-	</form>
-	</div>
-	<div class="col-sm-auto text-right">
-	</div>
-</div>
-</div>
-<div class="jbolt_page_content">
-<!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="WeekOrderM_tpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.iautoid}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>
-	<a class="jbolt_table_editbtn" href="admin/weekorderm/showData/${data.iautoid}"  data-fs="true" data-handler="refreshJBoltTable" data-title="周间客户订单详情">查看</i></a>
-	 {@if data.iorderstatus == '1'||data.iorderstatus == '4'}
-	<a class="jbolt_table_editbtn" href="admin/weekorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑周间客户订单">编辑</i></a>
-	<a class="jbolt_table_delbtn" href="admin/weekorderm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" >删除</i></a>
-	 {@else if data.iorderstatus == '2'}
-	<a class="jbolt_table_delbtn" href="admin/weekorderm/approve?mark=2&&iAutoId=${data.iautoid}"  data-confirm="确定审批此选项？"  data-fs="true" data-handler="refreshJBoltTable"  data-title="审批周间客户订单">审批</i></a>
-	<a class="jbolt_table_delbtn" href="admin/weekorderm/recall?iAutoId=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
-	 {@else if data.iorderstatus == '3'}
-	<a class="jbolt_table_delbtn" href="admin/weekorderm/closeWeekOrder?iAutoId=${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" >关闭</i></a>
-	 {@/if}
-</td>
-<td>${data.iorderstatus|iOrderStatus}</td>
-<td>${data.corderno}</td>
-<td>${data.ccusname}</td>
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>周间客户订单</h1></div>
+            <div class="col">
+                <form class="form-inline" id="WeekOrderM_form_#(pageId)">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=订单号=" name="corderno" value=""/>
+                    <select class="form-control"
+                            data-autoload
+                            name="ccuscode"
+                            data-select-type="select2"
+                            data-tips="客户名称"
+                            data-url="admin/customer/autocomplete"
+                            data-text="=客户名称="
+                            data-value=""
+                            data-text-attr="ccuscode,ccusname"
+                            data-value-attr="iautoid"
+                            data-select=""
+                            data-min-width="200"
+                    ></select>
+                    <select class="form-control"
+                            data-autoload
+                            name="iorderstatus"
+                            data-url="admin/dictionary/options?key=iorder_status"
+                            data-select-type="select"
+                            data-text="=订单状态="
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=创建人=" name="cCreateName" value=""/>
+                    <div class="input-group d-inline-block text-nowrap">
+                        <div class="input-group-prepend">
+                            <input type="text" data-date class="form-control" placeholder="=开始日期=" maxlength="20" name="startTime" value="">
+                            <!--				value="#date((startTime?? DateUtil.getNow()),'yyyy-MM-dd')"-->
+                        </div>
+                        <div class="input-group-append">
+                            <span class="input-group-text">至</span>
+                        </div>
+                        <div class="input-group-append">
+                            <input type="text" data-date class="form-control rounded-left-0" placeholder="=截止日期=" maxlength="20" name="endTime" value="">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-sm-auto text-right">
+            </div>
+        </div>
+    </div>
+    
+    <div class="jbolt_page_content">
+        
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="WeekOrderM_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a class="jbolt_table_editbtn" href="admin/weekorderm/showData/${data.iautoid}"  data-fs="true" data-handler="refreshJBoltTable" data-title="周间客户订单详情">查看</i></a>
+            
+                {@if data.iorderstatus == '1'||data.iorderstatus == '4'}
+                    <a class="jbolt_table_editbtn" href="admin/weekorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑周间客户订单">编辑</i></a>
+                    <a class="jbolt_table_delbtn" href="admin/weekorderm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" >删除</i></a>
+                 {@else if data.iorderstatus == '2'}
+                    <a class="jbolt_table_delbtn" href="admin/weekorderm/approve?ids=${data.iautoid}"  data-confirm="确定审批此选项？"  data-fs="true" data-handler="refreshJBoltTable"  data-title="审批周间客户订单">审批</i></a>
+                    <a class="jbolt_table_delbtn" href="admin/weekorderm/recall?iAutoId=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
+                 {@else if data.iorderstatus == '3'}
+                    <a class="jbolt_table_delbtn" href="admin/weekorderm/closeWeekOrder?iAutoId=${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" >关闭</i></a>
+                 {@/if}
+            </td>
+            <td>${data.iorderstatus|iOrderStatus}</td>
+            <td>${data.corderno}</td>
+            <td>${data.ccusname}</td>
+            <td>${data.ccreatename}</td>
+            <td>${data.dcreatetime}</td>
+        </tr>
+        {@/each}
+        </textarea>
 
-</tr>
-{@/each}
-</textarea>
-<div class="jbolt_table_toolbar" id="WeekOrderM_toolbar_#(pageId)">
-<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-	<button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true"
-			data-title="新增周间客户订单" data-url="admin/weekorderm/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
-	</button>
-	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/weekorderm/approve?mark=2&&iAutoId=" data-confirm="确定审批选中数据？" class="btn btn-outline-info" ><i class="fa fa-edit"></i> 批量审批</button>
-	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/weekorderm/NoApprove?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-info" ><i class="fa fa-edit"></i> 批量反审批</button>
-<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/weekorderm/deleteByIds?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 批量删除</button>
-</div>
-
-</div>
-<table class="jbolt_table jbolt_main_table  table-center "
-	   data-jbolttable
-	   data-width="fill"
-	   data-height="fill"
-	   data-ajax="true"
-	   data-column-resize="true"
-	   data-column-prepend="1:checkbox:true"
-	   data-conditions-form="WeekOrderM_form_#(pageId)"
-	   data-url="admin/weekorderm/datas"
-	   data-rowtpl="WeekOrderM_tpl_#(pageId)"
-	   data-copy-to-excel="false"
-	   data-page="WeekOrderM_page"
-	   data-toolbar="WeekOrderM_toolbar_#(pageId)"
->
-<thead>
-<tr>
-<th data-width="60" data-column="index">序号</th>
-	<th data-width="150">操作</th>
-	<th data-width="100" data-column="iOrderStatus">订单状态</th>
-	<th data-width="200" data-column="cOrderNo">订单号</th>
-	<th data-width="200" data-column="iCustomerId">客户名称</th>
-	<th data-width="200" data-column="cCreateName">创建人名称</th>
-	<th data-min-width="100" data-column="dCreateTime">创建时间</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
+        <div class="jbolt_table_toolbar" id="WeekOrderM_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true" data-title="新增周间客户订单" data-url="admin/weekorderm/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/weekorderm/approve?ids=" data-confirm="确定审批选中数据？" class="btn btn-outline-info"><i class="fa fa-edit"></i> 批量审批</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" data-url="admin/weekorderm/NoApprove?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-info"><i class="fa fa-edit"></i> 批量反审批</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/weekorderm/deleteByIds?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
+            </div>
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="WeekOrderM_form_#(pageId)"
+               data-url="admin/weekorderm/datas"
+               data-rowtpl="WeekOrderM_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="WeekOrderM_page"
+               data-toolbar="WeekOrderM_toolbar_#(pageId)"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150">操作</th>
+                <th data-width="100" data-column="iOrderStatus">订单状态</th>
+                <th data-width="200" data-column="cOrderNo">订单号</th>
+                <th data-width="200" data-column="iCustomerId">客户名称</th>
+                <th data-width="200" data-column="cCreateName">创建人名称</th>
+                <th data-min-width="100" data-column="dCreateTime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
-	function approve() {
-		Ajax.get('/admin/weekorderm/approve?iAutoId='+jboltTableGetCheckedIds+"&&mark="+2 , function (ret) {
-			if (ret.data.state=== 'fail') {
-
-				LayerMsgBox.error(res.data.msg);
-			} else {
-				parent.refreshPjaxContainer();
-				LayerMsgBox.success();
-			}
-		});
-	}
+    
 </script>
 #end

@@ -29,7 +29,7 @@
     function processViewBtn(ele){
         let iinventoryroutingid = $("#iinventoryroutingid").val();
         if(!iinventoryroutingid){
-            LayerMsgBox.alert("请先选择工艺路线！");
+            LayerMsgBox.alert("请先选择工艺路线！", 2);
             return;
         }
         let cInvName1 = $("#cinvname1").val();
@@ -43,7 +43,7 @@
     function technologicalStructureBtn(ele){
         let iinventoryroutingid = $("#iinventoryroutingid").val();
         if(!iinventoryroutingid){
-            LayerMsgBox.alert("请先选择工艺路线！");
+            LayerMsgBox.alert("请先选择工艺路线！", 2);
             return;
         }
 
@@ -110,10 +110,29 @@
                 },
                 iitemroutingid:{type:"input", required:true},
                 cmergedseq:{type:"input"},
-                imergednum:{type:"input_number"},
-                imergerate:{type:"input_number"},
-                imergesecs:{type:"input_number"},
-                isecs:{type:"input_number"},
+                imergednum:{
+                    type:"input_number",
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
+                    }},
+                imergerate:{
+                    type:"input_number",
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
+                    }
+                },
+                imergesecs:{
+                    type:"input_number",
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
+                    }
+                },
+                isecs:{
+                    type:"input_number",
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
+                    }
+                },
                 //iseq:{type:"input", required:true},
                 coperationname:{  //工序名称
                     type:"dialogbtn",
@@ -124,6 +143,9 @@
                         area:"60%,70%",
                         title:"选择工序",
                         btn:"选择,关闭"
+                    },
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
                     }
                 },
                 irsinventoryid:{  //半成品/成品名称
@@ -138,6 +160,9 @@
                         area:"60%,70%",
                         title:"选择存货",
                         btn:"选择,关闭"
+                    },
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
                     }
                 },
                 itype:{  //工序类型
@@ -147,6 +172,9 @@
                     placeholder:"请输入",
                     textAttr: "name",
                     valueAttr:"sn",
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
+                    }
                 },
                 cproducttechsn:{  //工序类型
                     type:"select",
@@ -155,6 +183,9 @@
                     placeholder:"请输入",
                     textAttr: "name",
                     valueAttr:"sn",
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
+                    }
                 },
                 cproductsn:{  //生产方式
                     type:"select",
@@ -163,6 +194,9 @@
                     placeholder:"请输入",
                     textAttr: "name",
                     valueAttr:"sn",
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
+                    }
                 },
                 invcs:{  //所需物料集
                     type:"dialogbtn",
@@ -181,6 +215,9 @@
                         area:"95%,95%",
                         title:"工序物料集",
                         btn:"确定,关闭"
+                    },
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
                     }
                 },
                 equipments:{  //所需设备集
@@ -200,6 +237,9 @@
                         area:"95%,95%",
                         title:"选择设备",
                         btn:"确定,关闭"
+                    },
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
                     }
                 },
                 drawings:{  //工艺文件
@@ -219,6 +259,9 @@
                         area:"95%,95%",
                         title:"工艺文件",
                         btn:"确定,关闭"
+                    },
+                    handler:function(table,td,text,value,trJsonData){
+                        batchSetColumns('#itemroutingconfigid');
                     }
                 }
             }

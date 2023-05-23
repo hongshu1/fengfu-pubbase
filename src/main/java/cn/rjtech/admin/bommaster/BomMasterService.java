@@ -792,7 +792,12 @@ public class BomMasterService extends BaseService<BomMaster> {
 		record.set(BomMaster.CBOMVERSION, getStringCellValue(bomVersionCell));
 		// 停用日期
 		XSSFCell disableCell = sheet.getRow(2).getCell(19);
-		record.set(BomMaster.DDISABLEDATE, getDateConventStr(disableCell.getDateCellValue()));
+		String disableDateStr = disableCell.getStringCellValue();
+		Date disableDate = null;
+		if (StrUtil.isNotBlank(disableDateStr)){
+			disableDate = DateUtil.parseDate(disableDateStr);
+		}
+		record.set(BomMaster.DDISABLEDATE, getDateConventStr(disableDate));
 		// 设变号1
 		XSSFCell dcNo1Cell = sheet.getRow(5).getCell(15);
 		record.set(BomMaster.CDCNO1, getStringCellValue(dcNo1Cell));

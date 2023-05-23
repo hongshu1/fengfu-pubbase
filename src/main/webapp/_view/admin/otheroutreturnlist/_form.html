@@ -1,0 +1,118 @@
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page">
+	<div class="jbolt_page_content">
+		<form onsubmit="return false;" id="otherOutForm"  action="#(action)" method="post">
+
+			<div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
+				<div class="col-md-l pt-2" role="group" aria-label="btn-group">
+					<button onclick="submitAllTables_#(pageId)(this)" #if(status =="5") style="display: none" #end data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+					<button onclick="submitAllTables_#(pageId)(this)" #if(status =="5") style="display: none" #end data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交出库</button>
+					<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+				</div>
+			</div>
+			#if(otherOut.autoid??)
+			<input type="hidden" id="otherOutautoid" name="otherOut.autoid" value="#(otherOut.autoid??)" />
+			#end
+
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">领料单号：</label>
+				<div class="col-sm-2 col-form-label">
+					<input type="text" class="form-control border-none"  readonly="readonly"  placeholder=""  name="otherOut.billno" value="#(otherOut.billno??)"/>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">出库类别：</label>
+				<div class="col-sm-2 col-form-label">
+					<select class="form-control"
+							name="otherOut.rdcode"
+							data-autoload
+							data-url="admin/materialDeliveryList/RDStyle?bRdFlag=0"
+							data-select-type="select2"
+							data-text="=请选择出库类别="
+							data-value=""
+							data-value-attr="crdcode"
+							data-text-attr="crdname"
+							data-select="#(otherOut.rdcode??)"></select>
+				</div>
+				<label class="col-sm-2 col-form-label">出库部门：</label>
+				<div class="col-sm-2 col-form-label">
+					<select class="form-control"
+							data-autoload
+							name="otherOut.deptcode"
+							data-tips="请选择部门"
+							data-rule="required"
+							data-url="admin/department/getTreeTableDatas"
+							data-text="=请选择部门="
+							data-value=""
+							data-value-attr="iautoid"
+							data-text-attr="cdepname"
+							data-select="#(otherOut.deptcode??)">
+					</select>
+				</div>
+				<input type="hidden" id="cbadnesssns" name="cbadnesssns" value="#(otherOut.cbadnesssns??)"/>
+			</div>
+
+
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">备注：</label>
+				<div class="col-sm-2 col-form-label"  style="margin-right: 100px">
+					<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请备注=" type="text" maxlength="300" class="form-control border-none" name="otherOut.memo" placeholder="" value="#(otherOut.memo??)">#(otherOut.memo??)</textarea>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<div class="col-11" style="left: 17px;">
+					<div class="jbolt_page_content">
+						#render("_table_split.html")
+					</div>
+				</div>
+			</div>
+
+
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">制单人：</label>
+				<div class="col-sm-2 col-form-label">
+					<input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(otherOut.ccreatename??)"/>
+				</div>
+				<label class="col-sm-2 col-form-label">制单时间：</label>
+				<div class="col-sm-2 col-form-label">
+					<input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#date((otherOut.dcreatetime??),'yyyy-MM-dd HH:mm:ss')"/>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+#define js()
+<script>
+	hideParentLayerDialogBtn();
+
+
+
+	function submitAllTables_#(pageId)(ele){
+		var action = getRealJqueryObject(ele);
+		var id = action.data("id");
+		var autoid = $("#otherOutautoid").val();
+		var value = action.data("value");
+		var tables = ["jbolt_table_inventory_split_#(pageId)"];
+		jboltTableSubmitMulti(tables, "admin/otheroutreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+			if (res.state == "ok") {
+				LayerMsgBox.success(res.msg, 600, function () {
+					parent.refreshPjaxContainer();
+					parent.layer.close(parent.layer.getFrameIndex(window.name));
+				})
+			} else {
+				LayerMsgBox.error(res.msg);
+			}
+		});
+	}
+
+
+
+	function closeHandler(){
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
+		window.parent.refreshJBoltTable();
+	}
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="otherOutForm")
+#end
+

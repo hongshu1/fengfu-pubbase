@@ -4,6 +4,7 @@ import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
+import jdk.internal.dynalink.beans.StaticClass;
 
 /**
  * 客户订单-委外销售订单主表
@@ -34,7 +35,7 @@ public abstract class BaseSubcontractsaleorderm<M extends BaseSubcontractsaleord
     /**销售部门ID*/
     public static final String IDEPARTMENTID = "iDepartmentId";
     /**业务员ID，系统用户ID*/
-    public static final String IBUSUSERID = "iBusUserId";
+    public static final String IBUSPERSONRID = "iBusPersonId";
     /**税率（小数）*/
     public static final String ITAXRATE = "iTaxRate";
     /**币种*/
@@ -67,6 +68,8 @@ public abstract class BaseSubcontractsaleorderm<M extends BaseSubcontractsaleord
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "IsDeleted";
+
+
 	/**
 	 * 主键ID
 	 */
@@ -254,22 +257,6 @@ public abstract class BaseSubcontractsaleorderm<M extends BaseSubcontractsaleord
 		return getLong("iDepartmentId");
 	}
 
-	/**
-	 * 业务员ID，系统用户ID
-	 */
-	public M setIBusUserId(java.lang.Long iBusUserId) {
-		set("iBusUserId", iBusUserId);
-		return (M)this;
-	}
-
-	/**
-	 * 业务员ID，系统用户ID
-	 */
-	@JBoltField(name="ibususerid" ,columnName="iBusUserId",type="Long", remark="业务员ID，系统用户ID", required=false, maxLength=19, fixed=0, order=12)
-	@JSONField(name = "ibususerid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIBusUserId() {
-		return getLong("iBusUserId");
-	}
 
 	/**
 	 * 税率（小数）
@@ -542,6 +529,25 @@ public abstract class BaseSubcontractsaleorderm<M extends BaseSubcontractsaleord
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");
 	}
+
+
+	/**
+	 * 业务人员ID
+	 */
+	public M setIBusPersonId(java.lang.Long iBusPersonId) {
+		set("iBusPersonId", iBusPersonId);
+		return (M)this;
+	}
+
+	/**
+	 * 业务人员ID
+	 */
+	@JBoltField(name="ibuspersonid" ,columnName="iBusPersonId",type="Long", remark="业务人员ID", required=false, maxLength=19, fixed=0, order=11)
+	@JSONField(name = "ibuspersonid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIBusPersonId() {
+		return getLong("iBusPersonId");
+	}
+
 
 }
 
