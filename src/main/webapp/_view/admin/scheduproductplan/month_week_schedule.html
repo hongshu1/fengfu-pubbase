@@ -3,7 +3,7 @@
 <link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
 <style>
     .spread-container {
-        height: 500px;
+        height:75.5vh;
     }
 
     .gc-statusbar {
@@ -442,33 +442,17 @@
             mybg.style.opacity = "0.3";
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
-            //开始日期
-            // let url = "http://localhost:8081/admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=1659809519734398976";
-            // $.ajax({
-            //     url,
-            //     type:'post',
-            //     dataType:'json',
-            //     success:function (res){
-            //         const datetimeLocalInput = document.getElementById('datetime-local');
-            //         var now = new Date();
-            //         let dates = parseFloat(res.data.lockDate);//转为数字类型
-            //         const isoString = new Date(dates).toISOString();
-            //         datetimeLocalInput.value = isoString.slice(0, 16);
-            //         parms.openBoxTime=isoString.slice(0, 16);
-            //     },error: function(error) {
-            //         console.log(error);
-            //     }
-            // })
-            //截止日期
-            let url = "http://localhost:8081/admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=1659809519734398976";
+            //锁定截止日期
+            let url = "http://localhost:8081/admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=1659809519734398976";
             $.ajax({
                 url,
                 type:'post',
                 dataType:'json',
                 success:function (res){
+                    console.log(res)
                     const datetimeLocalInput = document.getElementById('datetime-local');
                     var now = new Date();
-                    let dates = parseFloat(res.data.unLockDate);//转为数字类型
+                    let dates = parseFloat(res.data.lockDate);//转为数字类型
                     const isoString = new Date(dates).toISOString();
                     datetimeLocalInput.value = isoString.slice(0, 16);
                     parms.openBoxTime=isoString.slice(0, 16);
@@ -476,20 +460,48 @@
                     console.log(error);
                 }
             })
+            // //解锁日期
+            // let url = "http://localhost:8081/admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=1659809519734398976";
+            // $.ajax({
+            //     url,
+            //     type:'post',
+            //     dataType:'json',
+            //     success:function (res){
+            //         console.log(res)
+            //         const datetimeLocalInput = document.getElementById('datetime-local');
+            //         var now = new Date();
+            //         let dates = parseFloat(res.data.unLockDate);//转为数字类型
+            //         const isoString = new Date(dates).toISOString();
+            //         datetimeLocalInput.value = isoString.slice(0, 16);
+            //         parms.openBoxTime=isoString.slice(0, 16);
+            //     },error: function(error) {
+            //         console.log(error);
+            //     }
+            // })
         }
     }
     //锁定确定按钮事件
     function save(){
-        const time = new Date(datetimeLocalInput.value)-new Date(parms.openBoxTime);
-        const days = Math.floor(time / (24 * 60 * 60 * 1000));
-        const now = new Date(new Date(datetimeLocalInput.value));
-        const dayOfWeek = now.getDay(); // 获取当前星期几，0表示星期天，1表示星期一
-        const daysLeftInWeek = 7 - dayOfWeek; // 当前星期还剩几天
-        const daysUntilSunday = dayOfWeek === 0 ? 7 : 7 - dayOfWeek; // 距离下个星期天还差几天
-        console.log(daysLeftInWeek,daysUntilSunday);
+        // const now = new Date();
+        // const dayOfWeek = now.getDay(); // 获取当前星期几，0表示星期天，1表示星期一
+        // const daysLeftInWeek = 7 - dayOfWeek; // 当前星期还剩几天
+        // const daysUntilSunday = dayOfWeek === 0 ? 7 : 7 - dayOfWeek; // 距离下个星期天还差几天
         // const timestamp = Date.parse(startTime);
         // const oneDay = 24 * 60 * 60 * 1000; // 拿到一天的毫秒数
-        // console.log(timestamp);
+        const datetimeLocalInput = document.getElementById('datetime-local');
+        const myVal = datetimeLocalInput.value.substring(0,10);
+        console.log(myVal)
+        let url = `http://localhost:8081/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`;
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                console.log(res)
+            },error: function(error) {
+                console.log(error);
+            }
+        })
     }
     //弹出层关闭事件
     mClose.onclick = function(){
