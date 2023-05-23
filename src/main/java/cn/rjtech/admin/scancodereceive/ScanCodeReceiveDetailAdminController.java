@@ -8,6 +8,7 @@ import cn.rjtech.model.momdata.SysPureceivedetail;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 
 /**
  * 双单位扫码收货明细
@@ -94,6 +95,10 @@ public class ScanCodeReceiveDetailAdminController extends BaseAdminController {
     }
 
     public void findEditTableDatas() {
-        renderJsonData(service.findEditTableDatas(getKv()));
+        Kv kv = new Kv();
+        Long id = getLong("sysPureceive.AutoID");
+        kv.setIfNotNull("id", id==null?' ':id);
+        System.out.println("id===>"+id);
+        renderJsonData(service.findEditTableDatas(kv));
     }
 }

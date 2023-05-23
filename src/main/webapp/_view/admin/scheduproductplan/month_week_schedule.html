@@ -3,7 +3,7 @@
 <link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
 <style>
     .spread-container {
-        height: 600px;
+        height: 500px;
     }
 
     .gc-statusbar {
@@ -170,6 +170,14 @@
             </div>
 
         </div>
+<!--        <div id="production">-->
+<!--            <p class="production_title"><span id="production_close">X</span></p>-->
+<!--            <p class="production_but"><button id="production_save">确定</button></p>-->
+<!--            <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">-->
+<!--                <label class="col-form-label" >截止日期：</label>-->
+<!--                <input type="datetime-local" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">-->
+<!--            </div>-->
+<!--        </div>-->
         <!--锁定弹框-->
         <div id="alert">
             <p class="alert_title"><span id="title"></span><span id="close">X</span></p>
@@ -368,16 +376,7 @@
                     //日计划排版
                     let shiyongRow = 3;//计划使用行下标
                     let shiyongCol = 9;
-                    // let yisRow = 4;//1s使用行下标
-                    // let yisCol = 9;
-                    // let ersRow = 5;//2s使用行下标
-                    // let ersCol = 9;
-                    // let sansRow = 6;//3s使用行下标
-                    // let sansCol = 9;
-                    // let zaikuRow = 7;//计划在库行下标
                     let zaikuCol = 8;
-                    // let tianshuRow = 8;//在库天数行下标
-                    // let tianshuCol = 9;
                     //渲染计划数据
                     for (var j = 0; j < res[i].day.length; j++) {
                         if(i==0){
@@ -420,7 +419,7 @@
     var mClose = document.getElementById("close");
     var mClose_But = document.getElementById("close_but");
     var alertTitle = document.getElementById("title");
-    const datetimeLocalInput = document.getElementById('datetime-local');
+
     //锁定打开弹出层
     reg.onclick = function(){
         if(myAlert.style.display !== "block"){
@@ -443,13 +442,40 @@
             mybg.style.opacity = "0.3";
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
-
-            const now = new Date();
-            const timestamp = now.getTime();
-            const isoString = new Date(timestamp).toISOString();
-            datetimeLocalInput.value = isoString.slice(0, 16);
-            console.log(datetimeLocalInput.value,"1");
-            parms.openBoxTime=isoString.slice(0, 16);
+            //开始日期
+            // let url = "http://localhost:8081/admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=1659809519734398976";
+            // $.ajax({
+            //     url,
+            //     type:'post',
+            //     dataType:'json',
+            //     success:function (res){
+            //         const datetimeLocalInput = document.getElementById('datetime-local');
+            //         var now = new Date();
+            //         let dates = parseFloat(res.data.lockDate);//转为数字类型
+            //         const isoString = new Date(dates).toISOString();
+            //         datetimeLocalInput.value = isoString.slice(0, 16);
+            //         parms.openBoxTime=isoString.slice(0, 16);
+            //     },error: function(error) {
+            //         console.log(error);
+            //     }
+            // })
+            //截止日期
+            let url = "http://localhost:8081/admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=1659809519734398976";
+            $.ajax({
+                url,
+                type:'post',
+                dataType:'json',
+                success:function (res){
+                    const datetimeLocalInput = document.getElementById('datetime-local');
+                    var now = new Date();
+                    let dates = parseFloat(res.data.unLockDate);//转为数字类型
+                    const isoString = new Date(dates).toISOString();
+                    datetimeLocalInput.value = isoString.slice(0, 16);
+                    parms.openBoxTime=isoString.slice(0, 16);
+                },error: function(error) {
+                    console.log(error);
+                }
+            })
         }
     }
     //锁定确定按钮事件
@@ -499,8 +525,17 @@
     //测试向后端发送数据
     function edit(){
         let url = "http://localhost:8081/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=2023-05-28";
-        Ajax.post(url,parms.tableData,(res)=>{
-            console.log(res,'success')
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                console.log(res);
+                // myAlert.style.display = "none";
+                // mybg.style.display = "none";
+            },error: function(error) {
+                console.log(error);
+            }
         })
         spreadSuspend();
         var addCol = 100,addRow = 32;
