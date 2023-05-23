@@ -1,10 +1,10 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
     {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
+        <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
+                <a href="admin/otheroutreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
             </td>
             <td>${data.barcode}</td> <!--条码-->
             <td>${data.invcode}</td> <!--存货编码-->
