@@ -138,7 +138,7 @@ function getModelAttrEditableTableOptions_#(pageId)(){
 			cols:{
 				id:{
 						submitAttr:"id",
-					}, 
+					},
 					table_label:{
 						type:"input",
 						required:true,
@@ -309,9 +309,9 @@ function getModelAttrEditableTableOptions_#(pageId)(){
 							changeTranslateUseValueColOptions_#(pageId)(td,trJsonData["translateType"]);
 						}
 					}
-					
-					
-				
+
+
+
 			}
 	};
 	return editableTableOptions;
@@ -723,9 +723,247 @@ var formPreviewPortal_#(pageId) = $("#codegen_form_preview_portal_#(pageId)");
 var tablePreviewPortal_#(pageId) = $("#codegen_table_preview_portal_#(pageId)");
 $(function(){
 	processFormEleMoveEvent();
+	processTableColMoveRankEvent();
 	processFormEleClickEditorEvent();
 });
+var ingDiv = null;
+function insertBeforeCol(){
+	var fromIndex = tablePreviewPortal_#(pageId).currentDragColIndex;
+	var toIndex = tablePreviewPortal_#(pageId).currentDropColIndex;
+	var fromEditModelIndex = tablePreviewPortal_#(pageId).currentDragColEditModeIndex;
+	var toEditModeIndex = tablePreviewPortal_#(pageId).currentDropColEditModeIndex;
+	var attrId = tablePreviewPortal_#(pageId).currentDragTh.data("id");
+	if(attrId){
+		var codeGenId = tablePreviewPortal_#(pageId).data("codegen-id");
+		var datas={"codeGenId":codeGenId,"id":attrId};
+		var nextAttr=tablePreviewPortal_#(pageId).currentDragInTh;
+		if(isOk(nextAttr)){
+			datas["nextId"]=nextAttr.data("id");
+			if (attrId === datas["nextId"]){
+				cancelChangeColSort();
+				return false;
+			}
+		}
+		var prevAttr=tablePreviewPortal_#(pageId).currentDragInTh.prev();
+		if(isOk(prevAttr)){
+			datas["prevId"]=prevAttr.data("id");
+			if (attrId === datas["prevId"]){
+				cancelChangeColSort();
+				return false;
+			}
+		}
 
+		// LayerMsgBox.loading("正在更新顺序...",5000);
+		Ajax.post("admin/codegen/modelattr/moveTableEle",datas,function(res){
+			changeTablePreviewMode(true);
+			// LayerMsgBox.success("操作成功",500,function (){
+			// 	// tablePreviewPortal_#(pageId).currentFixedTableHeader.find("tr").each(function (i,item){
+			// 	// 	var tr = $(this);
+			// 	// 	var fromTh = tr.find("th[data-editmode-index='"+fromEditModelIndex+"']");
+			// 	// 	var toTh = tr.find("th[data-editmode-index='"+toEditModeIndex+"']");
+			// 	// 	fromTh.insertBefore(toTh);
+			// 	// });
+			// 	//
+			// 	// var tbody = tablePreviewPortal_#(pageId).currentMainTable.find("tbody");
+			// 	// tbody.find("tr").each(function (i,item){
+			// 	// 	var tr = $(this);
+			// 	// 	var fromTd = tr.find("td[data-col-index='"+fromIndex+"']");
+			// 	// 	var toTd = tr.find("td[data-col-index='"+toIndex+"']");
+			// 	// 	fromTd.insertBefore(toTd);
+			// 	// });
+			// 	// var jbt = JBoltTableUtil.getInst(tablePreviewPortal_#(pageId).currentMainTable);
+			// 	// jbt.me.processTableColWidthAfterResize(jbt);
+			// 	// cancelChangeColSort();
+			// });
+		},function (){
+			cancelChangeColSort();
+		});
+	}else{
+		LayerMsgBox.alert("组件未绑定data-id",2);
+		cancelChangeColSort();
+	}
+}
+
+function insertAfterCol(){
+	var fromIndex = tablePreviewPortal_#(pageId).currentDragColIndex;
+	var toIndex = tablePreviewPortal_#(pageId).currentDropColIndex;
+	var fromEditModelIndex = tablePreviewPortal_#(pageId).currentDragColEditModeIndex;
+	var toEditModeIndex = tablePreviewPortal_#(pageId).currentDropColEditModeIndex;
+	var attrId = tablePreviewPortal_#(pageId).currentDragTh.data("id");
+	if(attrId){
+		var codeGenId = tablePreviewPortal_#(pageId).data("codegen-id");
+		var datas={"codeGenId":codeGenId,"id":attrId};
+
+		var prevAttr=tablePreviewPortal_#(pageId).currentDragInTh;
+		if(isOk(prevAttr)){
+			datas["prevId"]=prevAttr.data("id");
+			if (attrId === datas["prevId"]){
+				cancelChangeColSort();
+				return false;
+			}
+		}
+
+		var nextAttr=tablePreviewPortal_#(pageId).currentDragInTh.next();
+		if(isOk(nextAttr)){
+			datas["nextId"]=nextAttr.data("id");
+			if (attrId === datas["nextId"]){
+				cancelChangeColSort();
+				return false;
+			}
+		}
+		// LayerMsgBox.loading("正在更新顺序...",5000);
+		Ajax.post("admin/codegen/modelattr/moveTableEle",datas,function(res){
+			changeTablePreviewMode(true);
+		},function (){
+			cancelChangeColSort();
+		});
+	}else{
+		LayerMsgBox.alert("组件未绑定data-id",2);
+		cancelChangeColSort();
+	}
+}
+function cancelChangeColSort(){
+	if (ingDiv){
+		ingDiv.remove();
+		ingDiv=null;
+		$(".jbolt_table_sortable_temp").remove();
+		if (tablePreviewPortal_#(pageId).dragThIng){
+			tablePreviewPortal_#(pageId).css("cursor","auto");
+			if(tablePreviewPortal_#(pageId).currentMainTable){
+				tablePreviewPortal_#(pageId).currentMainTable.find("tbody>tr>td[data-col-index='"+tablePreviewPortal_#(pageId).currentDropColIndex+"']").removeClass("bg-cccccc");
+			}
+			tablePreviewPortal_#(pageId).dragThIng = false;
+			tablePreviewPortal_#(pageId).currentDragTrigger = null;
+			tablePreviewPortal_#(pageId).currentDragTh = null;
+			tablePreviewPortal_#(pageId).currentDragColIndex=null;
+			tablePreviewPortal_#(pageId).currentMainTable = null;
+
+			tablePreviewPortal_#(pageId).currentFixedTableHeader = null;
+
+			tablePreviewPortal_#(pageId).currentDropColIndex=null;
+			tablePreviewPortal_#(pageId).currentDragColEditModeIndex=null;
+			tablePreviewPortal_#(pageId).currentDropColEditModeIndex=null;
+		}
+	}
+}
+
+function changeSortRankHandler(){
+
+}
+function changeTwoCol(){
+	if (ingDiv){
+		var insertDir = ingDiv.insertDir;
+		if (insertDir == "before"){
+			insertBeforeCol();
+		}else if(insertDir == "after"){
+			insertAfterCol();
+		}else{
+			cancelChangeColSort();
+		}
+	}else{
+		cancelChangeColSort();
+	}
+
+}
+
+
+function tablePortalTableAjaxSuccessHandler(table){
+	cancelChangeColSort();
+}
+
+/**
+ * 处理表格动态移动排序事件
+ */
+function processTableColMoveRankEvent(){
+
+	tablePreviewPortal_#(pageId).on("mousedown",".jbolt_table_header>table>thead>tr>th.sortable_th>a.jbolt_drag_trigger",function (e){
+		e.preventDefault();
+		e.stopPropagation();
+		tablePreviewPortal_#(pageId).dragThIng = true;
+		tablePreviewPortal_#(pageId).currentDragTrigger = $(this);
+		tablePreviewPortal_#(pageId).currentDragTh = tablePreviewPortal_#(pageId).currentDragTrigger.closest("th");
+		tablePreviewPortal_#(pageId).currentDragInTh = tablePreviewPortal_#(pageId).currentDragTh;
+		tablePreviewPortal_#(pageId).currentMainTable = tablePreviewPortal_#(pageId).currentDragTh.closest(".jbolt_table_view").find("table.jbolt_main_table");
+		tablePreviewPortal_#(pageId).currentFixedTableHeader = tablePreviewPortal_#(pageId).currentDragTh.closest("thead");
+
+		tablePreviewPortal_#(pageId).currentDragColIndex=tablePreviewPortal_#(pageId).currentDragTh.data("col-index");
+		tablePreviewPortal_#(pageId).currentDropColIndex=tablePreviewPortal_#(pageId).currentDragTh.data("col-index");
+		tablePreviewPortal_#(pageId).currentDragColEditModeIndex=tablePreviewPortal_#(pageId).currentDragTh.data("editmode-index");
+		tablePreviewPortal_#(pageId).currentDropColEditModeIndex=tablePreviewPortal_#(pageId).currentDragTh.data("editmode-index");
+		var height = tablePreviewPortal_#(pageId).currentDragTh.outerHeight();
+		var width = tablePreviewPortal_#(pageId).currentDragTh.data("old-width")||tablePreviewPortal_#(pageId).currentDragTh.data("sort-div-width");
+		tablePreviewPortal_#(pageId).currentDragTh.divWidth=width-1;
+		tablePreviewPortal_#(pageId).currentDragInTh.divWidth=width-1;
+		ingDiv = $("<div class='jbolt_table_sortable_temp' style='width:"+(width-1)+"px;height: "+height+"px;line-height: "+height+"px;'></div>");
+		$("body").append(ingDiv);
+		var offset = tablePreviewPortal_#(pageId).currentDragTh.offset();
+		var top = (offset.top+41)+"px";
+		var left=(offset.left+1)+"px";
+		ingDiv.css({"top":top,"left":left});
+		tablePreviewPortal_#(pageId).css("cursor","move");
+		return false;
+	}).on("mouseover",function(e){
+		if (ingDiv){
+			tablePreviewPortal_#(pageId).css("cursor","move");
+			var x = e.clientX;
+			var oldleft= tablePreviewPortal_#(pageId).currentDragTh.offset().left;
+			var left= tablePreviewPortal_#(pageId).currentDragInTh.offset().left;
+			if (oldleft == left){
+				ingDiv.removeClass("bg-cccccc");
+				ingDiv.insertDir="self";
+				text ="";
+			}else{
+				ingDiv.addClass("bg-cccccc");
+				var center = left+tablePreviewPortal_#(pageId).currentDragInTh.outerWidth()/2;
+				var text="";
+				if (x<=center){
+					ingDiv.insertDir = "before";
+					text = "<span class='text-danger'>"+tablePreviewPortal_#(pageId).currentDragTh.data("text")+"</span>~"+tablePreviewPortal_#(pageId).currentDragInTh.data("text");
+				}else{
+					ingDiv.insertDir = "after";
+					text = tablePreviewPortal_#(pageId).currentDragInTh.data("text")+"~<span class='text-danger'>"+tablePreviewPortal_#(pageId).currentDragTh.data("text")+"</span>";
+				}
+			}
+			ingDiv.html(text);
+		}
+	});
+
+	tablePreviewPortal_#(pageId).on("mouseenter",".jbolt_table_header>table>thead>tr>th.sortable_th",function (e){
+		if(tablePreviewPortal_#(pageId).currentDragInTh){
+			tablePreviewPortal_#(pageId).currentDragInTh.removeClass("bg-cccccc");
+			tablePreviewPortal_#(pageId).currentDragInTh.removeClass("ing");
+			if(tablePreviewPortal_#(pageId).currentMainTable){
+				tablePreviewPortal_#(pageId).currentMainTable.find("tbody>tr>td[data-col-index='"+tablePreviewPortal_#(pageId).currentDropColIndex+"']").removeClass("bg-cccccc");
+			}
+		}
+		tablePreviewPortal_#(pageId).currentDragInTh = $(this);
+		tablePreviewPortal_#(pageId).currentDragInTh.addClass("bg-cccccc");
+		var width = tablePreviewPortal_#(pageId).currentDragInTh.data("old-width")||tablePreviewPortal_#(pageId).currentDragInTh.data("sort-div-width");
+		tablePreviewPortal_#(pageId).currentDragInTh.divWidth=width-1;
+		if (tablePreviewPortal_#(pageId).dragThIng){
+			var left = (tablePreviewPortal_#(pageId).currentDragInTh.offset().left+1)+"px";
+			ingDiv.css({"left":left,"width":((width-1)+"px")});
+			tablePreviewPortal_#(pageId).currentDropColIndex=tablePreviewPortal_#(pageId).currentDragInTh.data("col-index");
+			tablePreviewPortal_#(pageId).currentDropColEditModeIndex=tablePreviewPortal_#(pageId).currentDragInTh.data("editmode-index");
+			tablePreviewPortal_#(pageId).currentDragInTh.addClass("ing");
+			if(tablePreviewPortal_#(pageId).currentMainTable){
+				tablePreviewPortal_#(pageId).currentMainTable.find("tbody>tr>td[data-col-index='"+tablePreviewPortal_#(pageId).currentDropColIndex+"']").addClass("bg-cccccc");
+			}
+		}
+	});
+	$("body").on("mouseup",function (){
+
+		if (ingDiv){
+			tablePreviewPortal_#(pageId).css("cursor","auto");
+			if(tablePreviewPortal_#(pageId).currentMainTable){
+				tablePreviewPortal_#(pageId).currentMainTable.find("tbody>tr>td[data-col-index='"+tablePreviewPortal_#(pageId).currentDropColIndex+"']").removeClass("bg-cccccc");
+			}
+			changeTwoCol();
+		}else{
+			cancelChangeColSort();
+		}
+	});
+}
 function processFormEleMoveEvent(){
 	$("body").on("dragstart","#codegen_form_preview_portal_#(pageId)[data-edit-mode='true'] div.form_control_box div[draggable='true']",function(e){
 		var existEle = formPreviewPortal_#(pageId).find(".jb_draging_ele");
@@ -765,7 +1003,7 @@ function processFormEleMoveEvent(){
 				targetDraggableEle.before(formPreviewPortal_#(pageId).swapEle);
 			}
 		}
-		
+
 	}).on("dragleave","#codegen_form_preview_portal_#(pageId)[data-edit-mode='true'] div.form_control_box",function(e){
 		// 阻止浏览器默认行为
 		e.preventDefault();
@@ -794,7 +1032,7 @@ function processFormEleMoveEvent(){
 					datas["nextId"]=nextAttr.data("id");
 				}
 				LayerMsgBox.loading("正在更新顺序...",5000);
-				Ajax.post("admin/codegen/modelattr/move",datas,function(res){
+				Ajax.post("admin/codegen/modelattr/moveFormEle",datas,function(res){
 					LayerMsgBox.success("操作成功",500);
 				});
 			}else{
@@ -836,9 +1074,9 @@ function changeTablePreviewMode(isEidtMode){
 	tablePreviewPortal_#(pageId).data("edit-mode",isEidtMode).attr("data-edit-mode",isEidtMode);
 	if(isEidtMode){
 		//编辑模式
-		tablePreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/tablePortalEditMode/#(codeGen.id)");
+		tablePreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/tablePortalEditMode/#(codeGen.id)",true);
 	}else{
-		tablePreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/tablePortal/#(codeGen.id)")
+		tablePreviewPortal_#(pageId).ajaxPortal(true,"admin/codegen/tablePortal/#(codeGen.id)",true)
 	}
 }
 
@@ -879,7 +1117,7 @@ function submitFormEleEditor(){
 			});
 		});
 	});
-	
+
 }
 function refreshModelAttrJBoltTable_#(pageId)(){
 	refreshJBoltTable("#code_gen_model_attr_table_#(pageId)");
@@ -896,7 +1134,7 @@ function processFormEleClickEditorEvent(){
 		if(ele.hasClass("edit_form_ele_editor_ing")){
 			return false;
 		}
-		
+
 		if(ele.data("stop-propagation")){
 			ele.data("stop-propagation",false);
 		  return true;
@@ -911,7 +1149,7 @@ function processFormEleClickEditorEvent(){
 			existEle.removeClass("jb_draging_ele");
 			formPreviewPortal_#(pageId).find("#JBoltFormEleEditor").remove();
 		}
-		
+
 		ele.addClass("jb_draging_ele");
 		if(!JBoltFormEleEditor_tpl){
 			JBoltFormEleEditor_tpl = g("JBoltFormEleEditor_tpl").value;
@@ -1168,7 +1406,7 @@ function changeFormControlEleisJBoltInputFilterTable(r,value){
 	if(isOk(formPreviewPortal_#(pageId).editingEle)){
 		var input = formPreviewPortal_#(pageId).editingEle.find("input[data-jboltinput]");
 		input.val("");
-		
+
 		if(value=="true"){
 			input.data("filter-handler","filterTable").removeAttr("readonly");
 		}else{
@@ -1297,4 +1535,25 @@ function updateProjectPath(){
 }
 
 </script>
+#end
+#define css()
+<style>
+	.bg-cccccc{
+		background-color: #cbdaf4!important;
+	}
+	th.bg-cccccc.ing{
+		cursor: move!important;
+	}
+	th.bg-cccccc.ing>a{
+		cursor: move!important;
+	}
+	.jbolt_table_sortable_temp{
+		cursor: move;
+		overflow:hidden;
+		text-align:center;
+		display: inline-block;
+		position:absolute;
+		z-index: 999999999;
+	}
+</style>
 #end

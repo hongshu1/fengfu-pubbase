@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.4.2";
+var jbolt_table_js_version="3.4.3";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -14131,7 +14131,9 @@ function getScrollBarHeight(ele){
 							sameCols.addClass("resizing");
 						}
 					}
-					return false;
+					if(!(e.target.tagName == "A" && e.target.className.indexOf(" jbolt_drag_trigger")!=-1)){
+						return false;
+					}
 				}).on("mouseup",function(e){
 					e.preventDefault();
 					var currentBox=$(this);
