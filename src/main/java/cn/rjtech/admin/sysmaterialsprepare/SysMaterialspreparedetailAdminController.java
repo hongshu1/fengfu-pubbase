@@ -22,6 +22,8 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 
+import java.util.Date;
+
 /**
  * 材料备料表
  *
@@ -95,14 +97,42 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
      */
     public void edit() {
         SysMaterialsprepare sysMaterialsprepare = service.findById(getLong(0));
-
         if (sysMaterialsprepare == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("type", get("type"));
-        set("SysMaterialsprepare", sysMaterialsprepare);
+        MoDoc modoc = moDocS.findFirst("select *   from Mo_MoDoc where iAutoId=?", sysMaterialsprepare.getSourceBillID());
+        Department first1 = department.findFirst("select *   from Bd_Department where iAutoId=?", modoc.getIDepartmentId());
+        SysMaterialspreparedetail mpd = serviceD.findFirst("select *   from T_Sys_MaterialsPrepareDetail where MasID=?", sysMaterialsprepare.getAutoID());
+        Inventory inventory = invent.findFirst("select *   from Bd_Inventory where cInvCode=?", mpd.getInvCode());
+        EquipmentModel equipmentModel = equipmentModelService.findFirst("select *   from Bd_EquipmentModel where iAutoId=?", inventory.getIEquipmentModelId());
+        Workshiftm workshiftm = workshiftmService.findFirst("select *   from Bd_WorkShiftM where iAutoId=?", modoc.getIWorkShiftMid());
 
+        if (null != modoc && null != modoc.getCMoDocNo()) {
+            set("cmodocno", modoc.getCMoDocNo());
+        }
+        if (null != modoc && null != modoc.getDPlanDate()) {
+            set("dplandate", modoc.getDPlanDate());
+        }
+        if (null != modoc && null != modoc.getIQty()) {
+            set("iqty", modoc.getIQty());
+        }
+        if (null != first1 && null != first1.getCDepName()) {
+            set("cdepname", first1.getCDepName());
+        }
+        if (null != equipmentModel && null != equipmentModel.getCEquipmentModelName()) {
+            set("cequipmentmodelname", equipmentModel.getCEquipmentModelName());
+        }
+        if (null != inventory && null != inventory.getCInvCode1()) {
+            set("cinvcode1", inventory.getCInvCode1());
+        }
+        if (null != inventory && null != inventory.getCInvName1()) {
+            set("cinvname1", inventory.getCInvName1());
+        }
+        if (null != workshiftm && null != workshiftm.getCworkshiftname()) {
+            set("cworkshiftname", workshiftm.getCworkshiftname());
+        }
+        set("SysMaterialsprepare", sysMaterialsprepare);
         render("edit.html");
     }
 
@@ -131,29 +161,29 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
         if (null != modoc && null != modoc.getIQty()) {
             set("iqty", modoc.getIQty());
         }
-        if (null != modoc && null != modoc.getIStatus()){
-            if (modoc.getIStatus()==1){
+        if (null != modoc && null != modoc.getIStatus()) {
+            if (modoc.getIStatus() == 1) {
                 set("istatus", "未安排人员");
             }
-            if (modoc.getIStatus()==2){
+            if (modoc.getIStatus() == 2) {
                 set("istatus", "已安排人员");
             }
-            if (modoc.getIStatus()==3){
+            if (modoc.getIStatus() == 3) {
                 set("istatus", "生成备料表");
             }
-            if (modoc.getIStatus()==4){
+            if (modoc.getIStatus() == 4) {
                 set("istatus", "待生产");
             }
-            if (modoc.getIStatus()==5){
+            if (modoc.getIStatus() == 5) {
                 set("istatus", "生产中");
             }
-            if (modoc.getIStatus()==6){
+            if (modoc.getIStatus() == 6) {
                 set("istatus", "已完工");
             }
-            if (modoc.getIStatus()==7){
+            if (modoc.getIStatus() == 7) {
                 set("istatus", "已关闭");
             }
-            if (modoc.getIStatus()==8){
+            if (modoc.getIStatus() == 8) {
                 set("istatus", "已取消");
             }
         }
@@ -172,7 +202,6 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
         if (null != workshiftm && null != workshiftm.getCworkshiftname()) {
             set("cworkshiftname", workshiftm.getCworkshiftname());
         }
-
         set("sysMaterialsprepare", sysMaterialsprepare);
         render("edit1.html");
     }
@@ -223,6 +252,8 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
      * 自动生成
      */
     public void auto() {
+        Date nowDate = new Date();
+        set("dplandate", nowDate);
         render("auto.html");
     }
 
@@ -233,5 +264,13 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
         render("manual.html");
     }
 
-
+    /**
+     * 材料出库单列表明细
+     */
+    public void getMaterialsOutLines() {
+        String cmodocno = get("cmodocno");
+        Kv kv = new Kv();
+        kv.set("cmodocno",cmodocno== null? "" :cmodocno);
+        renderJsonData(service.getMaterialsOutLines(getPageNumber(), getPageSize(), kv));
+    }
 }

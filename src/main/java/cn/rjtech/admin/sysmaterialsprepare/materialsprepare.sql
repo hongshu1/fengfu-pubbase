@@ -73,7 +73,7 @@ WHERE wsm.isDeleted = '0'
   #end
 #end
 
-#sql("getrcvMODetailList")
+#sql("getMaterialsOutLines")
 SELECT mp.AutoID,
        mp.OrganizeCode,
        mp.BillNo,
@@ -104,13 +104,13 @@ SELECT mp.AutoID,
        md.iStatus
 FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.MasID = mp.AutoID
-         LEFT JOIN Mo_MoDoc md ON md.iMoTaskId = mp.SourceBillID
+         LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
          LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
          LEFT JOIN Bd_Department dpm ON dpm.iAutoId = md.iDepartmentId
          LEFT JOIN Bd_WorkShiftM wsm ON wsm.iAutoId = md.iWorkShiftMid
          LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
          LEFT JOIN Bd_WorkRegionM wrm ON wrm.iAutoId = md.iWorkRegionMid
          LEFT JOIN Bd_EquipmentModel emm ON emm.iAutoId = it.iEquipmentModelId
-WHERE mp.BillNo = #(billno)
-  AND md.cMoDocNo=  #(cmodocno)
+WHERE 1 = 1
+  AND md.cMoDocNo=  '#(cmodocno)'
     #end
