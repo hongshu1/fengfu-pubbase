@@ -357,20 +357,22 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     public void getLockDate() {
         //排产纪录id
         Long iWeekScheduleId = getLong("iWeekScheduleId");
-        
-        //排产层级
-        int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
-
-        //TODO:获取当前层级上次排产锁定日期+1
-        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
-        //锁定截止日期
+        //上次锁定截止日期
         Date lockPreDate;
-        if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
-            lockPreDate = apsWeekschedule.getDLockEndTime();
+        if (isOk(iWeekScheduleId)){
+            //排产层级
+            int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
+            //TODO:获取当前层级上次排产锁定日期
+            ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
+            if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
+                lockPreDate = apsWeekschedule.getDLockEndTime();
+            }else {
+                lockPreDate = new Date();
+            }
         }else {
             lockPreDate = new Date();
         }
-
+        //本次默认锁定截止时间戳
         Long lockDate = null;
         for (int i = 1; i <= 7; i++) {
             Calendar calendar = Calendar.getInstance();
@@ -383,9 +385,46 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
                 break;
             }
         }
-
         Map<String,Object> map = new HashMap<>();
         map.put("lockDate",lockDate);
+        renderJsonData(map);
+    }
+    /**
+     * 根据层级获取最近解锁时间
+     */
+    public void getUnLockDate() {
+        //排产纪录id
+        Long iWeekScheduleId = getLong("iWeekScheduleId");
+        //上次锁定截止日期
+        Date lockPreDate;
+        if (isOk(iWeekScheduleId)){
+            //排产层级
+            int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
+            //TODO:获取当前层级上次排产锁定日期
+            ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
+            if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
+                lockPreDate = apsWeekschedule.getDLockEndTime();
+            }else {
+                lockPreDate = new Date();
+            }
+        }else {
+            lockPreDate = new Date();
+        }
+        //本次默认解锁开始日期时间戳
+        Long unLockDate = null;
+        for (int i = 1; i <= 7; i++) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(lockPreDate);
+            calendar.add(Calendar.DATE,-i);//日期-1
+
+            String weekDay = DateUtils.formatDate(calendar.getTime(),"E");
+            if (weekDay.equals("星期日")){
+                unLockDate = calendar.getTime().getTime();
+                break;
+            }
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("unLockDate",unLockDate);
         renderJsonData(map);
     }
 
