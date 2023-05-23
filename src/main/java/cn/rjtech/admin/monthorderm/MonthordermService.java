@@ -12,7 +12,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.Monthorderd;
+import cn.rjtech.model.momdata.MonthOrderD;
 import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -229,7 +229,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     		Record row = list.get(i);
     		if (i == 0) {
     		    // 避免保存不到所有字段的问题
-    		    Set<String> columnNames = TableMapping.me().getTable(Monthorderd.class).getColumnNameSet();
+    		    Set<String> columnNames = TableMapping.me().getTable(MonthOrderD.class).getColumnNameSet();
     		    for (String columnName : columnNames) {
     		        if (null == row.get(columnName)) {
     		            row.set(columnName, null);

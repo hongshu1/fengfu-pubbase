@@ -14,7 +14,7 @@ WHERE wm.iOrgId = #para(iOrgId)
 #if(isenabled)
     AND wm.isEnabled = #para(isenabled)
 #end
-ORDER BY wm.dCreateTime DESC
+ORDER BY wm.cWorkShiftCode ASC
 #end
 
 #sql("getSelect")

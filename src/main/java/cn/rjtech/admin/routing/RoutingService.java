@@ -393,6 +393,10 @@ public class RoutingService extends BaseService<BomMaster> {
 				//
 				inventoryRoutingService.updateEnable(inventoryRouting.getIInventoryId(), IsOkEnum.NO.getValue());
 				inventoryRouting.setIsEnabled(true);
+				invPartService.updateByInvIdIsEffective(inventoryRouting.getIAutoId(), inventoryRouting.getIInventoryId(), IsOkEnum.NO.getValue());
+				// 批量将当前存货的全部失效
+				invPartService.updateByRoutingIdIsEffective(inventoryRouting.getIAutoId(), IsOkEnum.YES.getValue());
+				// 批量更改
 			}
 			inventoryRouting.update();
 			return true;

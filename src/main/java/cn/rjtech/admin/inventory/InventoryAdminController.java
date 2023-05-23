@@ -239,7 +239,7 @@ public class InventoryAdminController extends BaseAdminController {
 				inventoryWorkRegion.setIAutoId(null);
 			}
 
-		Ret ret = service.saveForm(inventory, inventoryAddition, inventoryplan, inventoryMfgInfo, inventorystockconfig, inventoryWorkRegions, null);
+		Ret ret = service.saveForm(inventory, inventoryAddition, inventoryplan, inventoryMfgInfo, inventorystockconfig, inventoryWorkRegions, null, null);
 		inventoryRoutingService.copy(iAutoId,inventory.getIAutoId());
 		renderJson(ret);
 	}

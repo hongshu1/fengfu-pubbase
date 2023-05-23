@@ -161,8 +161,11 @@ public class InvPartService extends BaseService<InvPart> {
 		return delete("DELETE Bd_InvPart WHERE iInventoryRoutingConfigId in ("+ ArrayUtil.join(routingConfigIds, COMMA) +")");
 	}
 	
-	public void update(Long routingId, Long parentInvId, int effective){
-		update("UPDATE Bd_InvPart SET isEffective = ? WHERE iInventoryRoutingId <> ? AND iParentInvId = ?", effective, routingId, parentInvId);
+	public void updateByInvIdIsEffective(Long routingId, Long parentInvId, int effective){
+		update("UPDATE   SET isEffective = ? WHERE iInventoryRoutingId <> ? AND iParentInvId = ?", effective, routingId, parentInvId);
 	}
 	
+	public void updateByRoutingIdIsEffective(Long routingId, int isEffective) {
+		update("update Bd_InvPart SET isEffective = ? WHERE iInventoryRoutingId = ?", isEffective, routingId);
+	}
 }
