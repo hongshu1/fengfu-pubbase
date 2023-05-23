@@ -1319,10 +1319,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         if (notOk(iWeekScheduleId)){
             return fail("排产纪录id不能为空！");
         }
-        //锁定截止日期
-        String lockEndDate = kv.getStr("endDate");
-        if (StringUtils.isBlank(lockEndDate)){
-            return fail("锁定截止日期不能为空！");
+        //解锁开始日期
+        String unLockStartDate = kv.getStr("endDate");
+        if (StringUtils.isBlank(unLockStartDate)){
+            return fail("解锁开始日期不能为空！");
         }
         //排产层级
         int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
@@ -1342,11 +1342,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         }
         String lockStartDate = DateUtils.formatDate(startDate,"yyyy-MM-dd");
         //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-        List<String> scheduDateList = Util.getBetweenDate(lockStartDate,lockEndDate);
+        List<String> scheduDateList = Util.getBetweenDate(lockStartDate,unLockStartDate);
 
 
         //TODO:根据层级及日期获取月周生产计划表数据及部门信息
-        List<Record> apsPlanQtyList = dbTemplate("scheduproductplan.getApsScheduPlanList",Kv.by("level",level).set("startdate",lockStartDate).set("enddate",lockEndDate)).find();
+        List<Record> apsPlanQtyList = dbTemplate("scheduproductplan.getApsScheduPlanList",Kv.by("level",level).set("startdate",lockStartDate).set("enddate",unLockStartDate)).find();
         //key:inv，   value:<yyyy-MM-dd，Qty1S> 计划/1S
         Map<String,Map<String,BigDecimal>> invPlanDate1SMap = new HashMap<>();
         //key:inv，   value:<yyyy-MM-dd，Qty2S> 计划/2S
@@ -1554,7 +1554,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
         tx(() -> {
-            update("UPDATE Aps_WeekSchedule SET dLockEndTime = ? WHERE iAutoId = ? ",DateUtils.parseDate(lockEndDate),iWeekScheduleId);
+            update("UPDATE Aps_WeekSchedule SET dLockEndTime = ? WHERE iAutoId = ? ",DateUtils.parseDate(unLockStartDate),iWeekScheduleId);
             motaskService.batchSave(moTaskList);
             moDocService.batchSave(moDocList);
             return true;
