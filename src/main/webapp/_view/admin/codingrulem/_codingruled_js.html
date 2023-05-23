@@ -1,8 +1,4 @@
 <script>
-    function submitThisForm() {
-        jboltTableSubmit("#jbolt_table_#(pageId)");
-    }
-
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
@@ -14,7 +10,8 @@
                 success: function (res) {
                     if (res.state === "ok") {
                         LayerMsgBox.success("提交成功", 600, function () {
-                            location.href = "/admin/codingrulem/edit/" + res.data.iautoid + "-_jb_rqtype_dialog";
+                            parent.refreshPjaxContainer();
+                            parent.layer.closeAll();
                         });
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
@@ -25,30 +22,93 @@
                 iautoid: {
                     submitAttr: "iautoid",
                 },
-                iseq: {
-                    type: "input_number",
-                    required: true
-                },
                 ccodingtype: {
                     type: "select",
+                    required:true,
                     url: "admin/dictionary/options?key=cCodingType",
                     maxLength: 100,
-                    placeholder: "请输入",
+                    placeholder: "=请选择=",
                     textAttr: "name",
                     valueAttr: "sn",
-                    submitAttr: "ccodingtype"
+                    submitAttr: "ccodingtype",
+                    handler: function (table, td, text, value, trJsonData) {
+                        console.log(value);
+                        var data = {
+                            ilength: '',
+                            ibeginvalue: '',
+                            ccodingtext: '',
+                            ccodingvalue: ''
+                        };
+
+                        // 流水号
+                        if (value === '1') {
+                            data.ccodingtext ='数量';
+                            jboltTableUpdateOtherColumns(table, td.parent(), data, [
+                                {column: 'ccodingvalue', use: 'ccodingvalue', editable: false},
+                                {column: 'ccodingtext', use: 'ccodingtext', editable: false},
+                                {column: 'ilength', use: 'ilength', editable: true},
+                                {column: 'ibeginvalue', use: 'ibeginvalue', editable: false},
+                            ]);
+                        }
+                        //  手工输入
+                        else if (value === '2') {
+                            jboltTableUpdateOtherColumns(table, td.parent(), data, [
+                                {column: 'ccodingvalue', use: 'ccodingvalue', editable: true},
+                                {column: 'ccodingtext', use: 'ccodingtext', editable: false},
+                                {column: 'ilength', use: 'ilength', editable: false},
+                                {column: 'ibeginvalue', use: 'ibeginvalue', editable: false}
+                            ]);
+                        }else{
+                            // 四位年
+                            if (value === '3'){
+                                data.ccodingtext ='yyyy';
+                            }
+                            // 二位年
+                            else if (value === '4'){
+                                data.ccodingtext ='yy';
+                            }// 二位月
+                            else if (value === '5'){
+                                data.ccodingtext ='mm';
+                            }
+                            // 二位日
+                            else if (value === '6'){
+                                data.ccodingtext ='dd';
+                            }
+                            // 不选择全部为不可编辑
+                            jboltTableUpdateOtherColumns(table, td.parent(), data, [
+                                {column: 'ccodingvalue', use: 'ccodingvalue', editable: false},
+                                {column: 'ccodingtext', use: 'ccodingtext', editable: false},
+                                {column: 'ilength', use: 'ilength', editable: false},
+                                {column: 'ibeginvalue', use: 'ibeginvalue', editable: false}
+                            ]);
+                        }
+                    }
                 },
                 ccodingvalue: {
                     type:"input",
+                    rule:"letter"
                 },
                 ilength: {
-                    type:"input",
+                    type: "input_number",
+                    rule: "pint;len<2;",
+                    handler: function (table, td, text, value, trJsonData) {
+                        if (value > '0') {
+                            var data={
+                                ibeginvalue: '1'.padStart(Number(value), '0'),
+                                ccodingtext: '数量',
+                            };
+                            jboltTableUpdateOtherColumns(table, td.parent(), data, [
+                                {column: 'ccodingvalue', use: 'ccodingvalue', editable: false},
+                                {column: 'ccodingtext', use: 'ccodingtext', editable: false},
+                                {column: 'ibeginvalue', use: 'ibeginvalue', editable: false},
+                            ]);
+                        }
+                    }
                 },
                 cseparator: {
                     type:"select",
                     url: "admin/dictionary/options?key=encoding_field_separator",
                     placeholder:"备注",
-                    required: true,
                     textAttr: "name",
                     valueAttr: "sn",
                     submitAttr: "cseparator"
@@ -58,4 +118,33 @@
         };
         return editableTableOptions;
     }
+
+    function cashTicketHandler() {
+        var $cFormTypeSn = $('#codingRulem_cFormTypeSn');
+        if ($cFormTypeSn.val() === '1'){
+            // 显示
+            $("#codingRulem_form_row").show();
+            $("#codingRulem_cBarcodeTypeSn_row").hide();
+            // 设初始值
+            $("#codingRulem_cashTicket").val("");
+        }else if ($cFormTypeSn.val() === '2'){
+            $("#codingRulem_form_row").hide();
+            $("#codingRulem_cBarcodeTypeSn_row").show();
+            $("#codingRulem_cashTicket").val("现品票")
+        }
+    }
+
+    function centerHanage() {
+        var $codingRulemFormICodingType = $('#codingRulem_form_iCodingType');
+        if ($codingRulemFormICodingType.val() === '1'){
+            $('#codingRulem_form_center').show()
+        }else if ($codingRulemFormICodingType.val() === '2'){
+            $('#codingRulem_form_center').hide()
+        }
+    }
+
+    function tableAjaxSuccessHandler(table) {
+        updateCodingDemoCode(table);
+    }
+
 </script>

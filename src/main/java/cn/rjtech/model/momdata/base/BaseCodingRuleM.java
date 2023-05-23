@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -19,11 +18,13 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
     public static final String CORGCODE = "cOrgCode";
     /**组织名称*/
     public static final String CORGNAME = "cOrgName";
-    /**业务对象类型：1. 单据类型 2. 条码号*/
+    /**业务对象类型;1. 单据类型 2. 条码号*/
     public static final String CFORMTYPESN = "cFormTypeSn";
+    /**条码类型;1. 物料现品票 2.工单现品票*/
+    public static final String CBARCODETYPESN = "cBarcodeTypeSn";
     /**表单ID*/
     public static final String IFORMID = "iFormId";
-    /**编码方式: 1. 自动生成编码，允许手工修改 2. 完全手工编码*/
+    /**编码方式;1. 自动生成编码，允许手工修改 2. 完全手工编码*/
     public static final String ICODINGTYPE = "iCodingType";
     /**编码示例*/
     public static final String CDEMO = "cDemo";
@@ -39,7 +40,7 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
     public static final String CUPDATENAME = "cUpdateName";
     /**更新时间*/
     public static final String DUPDATETIME = "dUpdateTime";
-    /**删除状态：0. 未删除 1. 已删除*/
+    /**删除状态;0. 未删除 1. 已删除*/
     public static final String ISDELETED = "IsDeleted";
 	/**
 	 * 主键ID
@@ -103,14 +104,14 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	/**
 	 * 组织名称
 	 */
-	@JBoltField(name="corgname" ,columnName="cOrgName",type="String", remark="组织名称", required=true, maxLength=50, fixed=0, order=4)
+	@JBoltField(name="corgname" ,columnName="cOrgName",type="String", remark="组织名称", required=true, maxLength=40, fixed=0, order=4)
 	@JSONField(name = "corgname")
 	public java.lang.String getCOrgName() {
 		return getStr("cOrgName");
 	}
 
 	/**
-	 * 业务对象类型：1. 单据类型 2. 条码号
+	 * 业务对象类型;1. 单据类型 2. 条码号
 	 */
 	public M setCFormTypeSn(java.lang.String cFormTypeSn) {
 		set("cFormTypeSn", cFormTypeSn);
@@ -118,12 +119,29 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	}
 
 	/**
-	 * 业务对象类型：1. 单据类型 2. 条码号
+	 * 业务对象类型;1. 单据类型 2. 条码号
 	 */
-	@JBoltField(name="cformtypesn" ,columnName="cFormTypeSn",type="String", remark="业务对象类型：1. 单据类型 2. 条码号", required=true, maxLength=10, fixed=0, order=5)
+	@JBoltField(name="cformtypesn" ,columnName="cFormTypeSn",type="String", remark="业务对象类型;1. 单据类型 2. 条码号", required=true, maxLength=10, fixed=0, order=5)
 	@JSONField(name = "cformtypesn")
 	public java.lang.String getCFormTypeSn() {
 		return getStr("cFormTypeSn");
+	}
+
+	/**
+	 * 条码类型;1. 物料现品票 2.工单现品票
+	 */
+	public M setCBarcodeTypeSn(java.lang.String cBarcodeTypeSn) {
+		set("cBarcodeTypeSn", cBarcodeTypeSn);
+		return (M)this;
+	}
+
+	/**
+	 * 条码类型;1. 物料现品票 2.工单现品票
+	 */
+	@JBoltField(name="cbarcodetypesn" ,columnName="cBarcodeTypeSn",type="String", remark="条码类型;1. 物料现品票 2.工单现品票", required=false, maxLength=10, fixed=0, order=6)
+	@JSONField(name = "cbarcodetypesn")
+	public java.lang.String getCBarcodeTypeSn() {
+		return getStr("cBarcodeTypeSn");
 	}
 
 	/**
@@ -137,14 +155,14 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	/**
 	 * 表单ID
 	 */
-	@JBoltField(name="iformid" ,columnName="iFormId",type="Long", remark="表单ID", required=true, maxLength=19, fixed=0, order=6)
+	@JBoltField(name="iformid" ,columnName="iFormId",type="Long", remark="表单ID", required=false, maxLength=19, fixed=0, order=7)
 	@JSONField(name = "iformid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIFormId() {
 		return getLong("iFormId");
 	}
 
 	/**
-	 * 编码方式: 1. 自动生成编码，允许手工修改 2. 完全手工编码
+	 * 编码方式;1. 自动生成编码，允许手工修改 2. 完全手工编码
 	 */
 	public M setICodingType(java.lang.Integer iCodingType) {
 		set("iCodingType", iCodingType);
@@ -152,9 +170,9 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	}
 
 	/**
-	 * 编码方式: 1. 自动生成编码，允许手工修改 2. 完全手工编码
+	 * 编码方式;1. 自动生成编码，允许手工修改 2. 完全手工编码
 	 */
-	@JBoltField(name="icodingtype" ,columnName="iCodingType",type="Integer", remark="编码方式: 1. 自动生成编码，允许手工修改 2. 完全手工编码", required=true, maxLength=10, fixed=0, order=7)
+	@JBoltField(name="icodingtype" ,columnName="iCodingType",type="Integer", remark="编码方式;1. 自动生成编码，允许手工修改 2. 完全手工编码", required=true, maxLength=10, fixed=0, order=8)
 	@JSONField(name = "icodingtype")
 	public java.lang.Integer getICodingType() {
 		return getInt("iCodingType");
@@ -171,7 +189,7 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	/**
 	 * 编码示例
 	 */
-	@JBoltField(name="cdemo" ,columnName="cDemo",type="String", remark="编码示例", required=false, maxLength=100, fixed=0, order=8)
+	@JBoltField(name="cdemo" ,columnName="cDemo",type="String", remark="编码示例", required=false, maxLength=100, fixed=0, order=9)
 	@JSONField(name = "cdemo")
 	public java.lang.String getCDemo() {
 		return getStr("cDemo");
@@ -188,7 +206,7 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	/**
 	 * 创建人ID
 	 */
-	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=9)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=10)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
@@ -205,7 +223,7 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=10)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=60, fixed=0, order=11)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
@@ -222,7 +240,7 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=11)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=12)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
@@ -239,7 +257,7 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	/**
 	 * 更新人ID
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=12)
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=13)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
@@ -256,7 +274,7 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=13)
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=60, fixed=0, order=14)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
@@ -273,14 +291,14 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=14)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=15)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
 	}
 
 	/**
-	 * 删除状态：0. 未删除 1. 已删除
+	 * 删除状态;0. 未删除 1. 已删除
 	 */
 	public M setIsDeleted(java.lang.Boolean IsDeleted) {
 		set("IsDeleted", IsDeleted);
@@ -288,9 +306,9 @@ public abstract class BaseCodingRuleM<M extends BaseCodingRuleM<M>> extends JBol
 	}
 
 	/**
-	 * 删除状态：0. 未删除 1. 已删除
+	 * 删除状态;0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=15)
+	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态;0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=16)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");
