@@ -630,7 +630,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
         return cusOrderSum;
     }
 
-    public Ret approveByMonth(Monthorderm monthorderm) {
+    public Ret approveByMonth(MonthOrderM monthorderm) {
         algorithmSum();
         /*List<Monthorderd> monthorderds = monthorderdService.findByMid(monthorderm.getIAutoId());
 

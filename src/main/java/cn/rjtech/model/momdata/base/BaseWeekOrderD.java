@@ -46,7 +46,7 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
     /**收货地点*/
     public static final String CDISTRICTNAME = "cDistrictName";
     /**计划到货时间*/
-    public static final String CPLANAOGTIME = "cPlanAogTime";
+    public static final String DPLANAOGTIME = "dPlanAogTime";
 	/**
 	 * 主键ID
 	 */
@@ -339,18 +339,18 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 计划到货时间
 	 */
-	public M setCPlanAogTime(java.lang.String cPlanAogTime) {
-		set("cPlanAogTime", cPlanAogTime);
+	public M setCPlanAogTime(java.lang.String dPlanAogTime) {
+		set("dPlanAogTime", dPlanAogTime);
 		return (M)this;
 	}
 
 	/**
 	 * 计划到货时间
 	 */
-	@JBoltField(name="cplanaogtime" ,columnName="cPlanAogTime",type="String", remark="计划到货时间", required=false, maxLength=10, fixed=0, order=18)
-	@JSONField(name = "cplanaogtime")
+	@JBoltField(name="dplanaogtime" ,columnName="dPlanAogTime",type="String", remark="计划到货时间", required=false, maxLength=10, fixed=0, order=18)
+	@JSONField(name = "dplanaogtime")
 	public java.lang.String getCPlanAogTime() {
-		return getStr("cPlanAogTime");
+		return getStr("dPlanAogTime");
 	}
 
 }

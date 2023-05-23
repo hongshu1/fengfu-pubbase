@@ -91,28 +91,31 @@
   });
 
   function getCheckedIds(o) {
-    var datas = jboltTableGetCheckedDatas(o);
+    /*var datas = jboltTableGetCheckedDatas(o);
     if (datas.length > 1) {
       alert("最多选择一行数据");
-    }
+    }*/
+    var datas=getJboltTableCheckedData(o);
     //将选择的数据放到index.html中
-    var data = datas[0];
-    parent.$("#cinvcode").val(data.cinvcode); //存货编码
-    parent.$("#cinvcode1").val(data.cinvcode1);//客户部番
-    parent.$("#cinvname1").val(data.cinvname1);//部品名称
+    // var data = datas[0];
+    parent.$("#cinvcode").val(datas.cinvcode); //存货编码
+    parent.$("#cinvcode1").val(datas.cinvcode1);//客户部番
+    parent.$("#cinvname1").val(datas.cinvname1);//部品名称
 
     //根据存货编码加载现品票，放到index.html的table数据中
-    Ajax.post("admin/patchworkBarcode/datas?cinvcode=" + data.cinvcode, {}, function (ret) {
+    Ajax.post("admin/patchworkBarcode/datas?cinvcode=" + datas.cinvcode, {}, function (ret) {
       if (ret.state === 'ok') {
-        console.log(data);
-        parent.$("#jbolt_Barcodetable_#(pageId)").var(ret.data);
+        if (isOk(ret.data)){
+          var action=parent.DialogUtil.getCurrentTriggerEle();
+          var success=parent.jboltTableInsertRowsByDialogChooser(action,ret.data,'prepend');
+        }
       } else {
         LayerMsgBox.alert(ret.msg, 2);
       }
     });
-    //parent.insertTaleRow(data);
     parent.layer.close(parent.layer.getFrameIndex(window.name));
   }
+
 </script>
 #end
 

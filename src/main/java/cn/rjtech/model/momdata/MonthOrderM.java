@@ -2,7 +2,7 @@ package cn.rjtech.model.momdata;
 
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
-import cn.rjtech.model.momdata.base.BaseMonthorderm;
+import cn.rjtech.model.momdata.base.BaseMonthOrderM;
 
 /**
  * 客户订单-月度计划订单
@@ -10,6 +10,6 @@ import cn.rjtech.model.momdata.base.BaseMonthorderm;
  */
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Co_MonthOrderM" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
-public class Monthorderm extends BaseMonthorderm<Monthorderm> {
+public class MonthOrderM extends BaseMonthOrderM<MonthOrderM> {
 }
 

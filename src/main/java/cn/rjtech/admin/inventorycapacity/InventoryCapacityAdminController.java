@@ -4,10 +4,13 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.workshiftm.WorkshiftmService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InventoryCapacity;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+
 /**
  * 物料班次产能 Controller
  * @ClassName: InventoryCapacityAdminController
@@ -21,7 +24,9 @@ public class InventoryCapacityAdminController extends BaseAdminController {
 
 	@Inject
 	private InventoryCapacityService service;
-
+	@Inject
+	private WorkshiftmService workshiftmService;
+	
    /**
 	* 首页
 	*/
@@ -47,7 +52,7 @@ public class InventoryCapacityAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		InventoryCapacity inventoryCapacity=service.findById(getLong(0)); 
+		InventoryCapacity inventoryCapacity=service.findById(getLong(0));
 		if(inventoryCapacity == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
@@ -84,5 +89,11 @@ public class InventoryCapacityAdminController extends BaseAdminController {
 		renderJson(service.delete(getLong(0)));
 	}
 
-
+	public void findByInvId(@Para(value = "invId") Long invId){
+		renderJsonData(service.findByInvId(invId));
+	}
+	
+	public void getSelect(){
+		renderJsonData(workshiftmService.getSelect());
+	}
 }

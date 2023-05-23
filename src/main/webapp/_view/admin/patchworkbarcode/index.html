@@ -6,9 +6,9 @@
 
     <div class="jbolt_page_content">
       <form onsubmit="return false;" id="patchWorkBarcodeByForm_#(pageId)" action="#(action)" method="post">
-        <div class="form-group row" >
+        <div class="form-group row">
           <label class="col-sm-2 col-form-label" style="right: 95px">相关单号</label>
-          <div class="col-sm-5 input-group" style="right: 100px" >
+          <div class="col-sm-5 input-group" style="right: 100px">
             <input type="text" autocomplete="off" class="form-control" placeholder="" name="barcode" value=""/>
             <div class="input-group-append" style="right: 80px">
               <button onclick="addFunction()" class="btn btn-light" type="button"><i class="fa fa-plus"></i>检索</button>
@@ -24,7 +24,8 @@
                    placeholder="选择数据"/>
             <div class="input-group-append">
               <button class="btn btn-primary" data-dialogbtn data-link-para-ele="#versionId" data-area="1280,600"
-                      data-title="（单选）" data-url="/admin/patchworkBarcode/barcodeSelect"><i
+                      data-jbolt-table-id="jbolt_Barcodetable_#(pageId)" data-title="（单选）"
+                      data-url="/admin/patchworkBarcode/barcodeSelect"><i
                   class="fa fa-search mr-1"></i> 选择
               </button>
             </div>
@@ -65,7 +66,7 @@
         <tr data-id="${data.iautoid}">
           <td>${pageNumber,pageSize,index | rownum}</td>
           <td title="${data.cbarcode}">${data.cbarcode}</td>
-          <td title="${data.qty}">${data.qty}</td>
+          <td title="${data.iqty}">${data.iqty}</td>
         </tr>
         {@/each}
 	    </textarea>
@@ -76,6 +77,7 @@
              data-height="300"
              data-width="auto"
              data-ajax="true"
+             data-editable="true"
              data-url="admin/patchworkBarcode/datas"
              data-column-resize="true"
              data-column-prepend="1:checkbox:true"
@@ -84,7 +86,6 @@
              data-rowtpl="qcsettingreportRowtpl_#(pageId)"
              data-page="itemmasterPage_#(pageId)"
              data-toolbar="qcsettingreport_toolbar_#(pageId)"
-             data-editable-option="getEditableTableOptions_#(pageId)"
              data-pagesize="30"
       >
         <thead>
@@ -92,14 +93,14 @@
         <tr>
           <th data-width="100" data-column="index">序号</th>
           <th data-width="260" data-column="cbarcode">现品票</th>
-          <th data-width="100" data-width="qty">数量</th>
+          <th data-width="100" data-width="iqty">数量</th>
         </tr>
         </thead>
         <tbody>
         </tbody>
       </table>
       <button onclick="submitThisFormPatchWorkBarcode(this)"
-              style="width: 60px;width: 80px;margin: 10px 20px;font-size: 19px" class="btn btn-primary btn-sm">打印
+              style="width: 100px;margin: 10px 20px;font-size: 17px" class="btn btn-primary btn-sm">打印标签
       </button>
     </div>
   </div>
@@ -109,32 +110,34 @@
 <script>
 
   function addFunction() {
-    alert("电脑端暂无扫描功能，请使用新增功能");
+    alert("电脑端暂无扫描功能，请使用选择功能");
   }
 
+  /*
+  * 点击打印标签
+  * */
   function submitThisFormPatchWorkBarcode() {
     var datas = getJboltTableAllDatas('#jbolt_Barcodetable_#(pageId)');
     var cinvcode1 = $('#cinvcode1').val();
     var cinvcode = $('#cinvcode').val();
     var cinvname1 = $('#cinvname1').val();
     LayerMsgBox.loading("正在提交,请稍等...", 30000);
-    Ajax.post('admin/splitBarcode/SubmitForm', {
-      datas: JSON.stringify(datas),
-      cinvcode1,
-      cinvcode,
-      cinvname1
-    }, function (ret) {
-      var json = JSON.parse(ret.data);
-      if (json.code == '200') {
-        LayerMsgBox.alert("打印成功！", 1);
-        //刷新
-        parent.refreshJBoltTable();
-      } else {
-        LayerMsgBox.alert(ret.msg, 2);
-      }
-    });
+    Ajax.post('admin/patchworkBarcode/SubmitForm', {datas: JSON.stringify(datas), cinvcode1, cinvcode, cinvname1},
+        function (ret) {
+          if (ret.state === 'ok') {
+            let printDatas = ret.data;
+            jboltHiprintWebPrint('patchworkbarcode_key', 'url', printDatas +
+                "&&cinvcode1=" + cinvcode1 +
+                "&&cinvcode=" + cinvcode +
+                "&&cinvname1=" + cinvname1);
+            LayerMsgBox.alert("打印成功！", 1);
+            //刷新
+            parent.refreshJBoltTable();
+          } else {
+            LayerMsgBox.alert(ret.msg, 2);
+          }
+        });
   }
-
 
 </script>
 #end

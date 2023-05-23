@@ -113,6 +113,8 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 		weekOrderM.setCUpdateName(JBoltUserKit.getUserName());
 		weekOrderM.setDUpdateTime(new Date());
 		weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+		//订单创建日期
+		weekOrderM.setDOrderDate(new Date());
 		boolean success=weekOrderM.save();
 //		if(success) {
 //			//添加日志

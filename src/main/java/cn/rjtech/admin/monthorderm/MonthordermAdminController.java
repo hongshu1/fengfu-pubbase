@@ -8,7 +8,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Customer;
-import cn.rjtech.model.momdata.Monthorderm;
+import cn.rjtech.model.momdata.MonthOrderM;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -58,7 +58,7 @@ public class MonthordermAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		Monthorderm monthorderm=service.findById(getLong(0)); 
+		MonthOrderM monthorderm=service.findById(getLong(0)); 
 		if(monthorderm == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
@@ -74,14 +74,14 @@ public class MonthordermAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(Monthorderm.class, "monthorderm")));
+		renderJson(service.save(getModel(MonthOrderM.class, "monthorderm")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(Monthorderm.class, "monthorderm")));
+		renderJson(service.update(getModel(MonthOrderM.class, "monthorderm")));
 	}
 
    /**

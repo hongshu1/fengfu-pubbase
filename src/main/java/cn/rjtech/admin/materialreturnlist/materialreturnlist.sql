@@ -121,31 +121,24 @@ WHERE
     #end
     #end
 
+#sql("getSysPODetail")
+select t1.*,t5.cRdName, t3.cDepName,
+       t4.cPTName
+from T_Sys_PUInStore t1
+    LEFT JOIN Bd_Rd_Style t5 ON t1.RdCode = t5.cRdCode
+    LEFT JOIN Bd_Department t3 ON t1.DeptCode = t3.cDepCode
+    LEFT JOIN Bd_PurchaseType t4 ON t1.BillType = t4.iAutoId
 
-
-#sql("moDetailData")
-SELECT *
-FROM V_Sys_MODetail
-WHERE 1 = 1
-    #if(monorow)
-        AND MONoRow like '%#(monorow)%'
-    #end
+where 1 =1
+    #if(billno)
+    and t1.billno = #para(billno)
+#end
+#if(sourcebillno)
+    and t1.sourcebillno = #para(sourcebillno)
+#end
 #end
 
 
-#sql("getrcvMODetailList")
-SELECT *
-FROM V_Sys_MODetail
-WHERE MOId = #(iautoid)
-    #end
-
-#sql("getRDStyleDatas")
-SELECT cRdCode,
-       cRdName
-FROM Bd_Rd_Style
-WHERE cOrgCode = #(OrgCode)
-  AND bRdFlag = #(bRdFlag)
-    #end
 
 
 
