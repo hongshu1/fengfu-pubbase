@@ -1926,5 +1926,10 @@ public class PermissionKey {
 	 * 审批流列表
 	 */
 	public static final String APPROVALM = "approvalm";
+	/**
+	 *  扫码出货
+	 */
+	public static final String SCANCODESHIPMENT = "scancodeshipment";
+
 
 }

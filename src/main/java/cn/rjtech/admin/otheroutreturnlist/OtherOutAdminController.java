@@ -11,6 +11,8 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.OtherOut;
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 出库管理-特殊领料出库 Controller
  * @ClassName: OtherOutAdminController
@@ -37,9 +39,9 @@ public class OtherOutAdminController extends BaseAdminController {
 	 */
 	public void datas() {
 		Kv kv =new Kv();
-		kv.setIfNotNull("selectparam", get("billno"));
-		kv.setIfNotNull("selectparam", get("whname"));
-		kv.setIfNotNull("selectparam", get("deptname"));
+		kv.setIfNotNull("billno", get("billno"));
+		kv.setIfNotNull("deptname", get("deptname"));
+		kv.setIfNotNull("sourcebilltype", get("sourcebilltype"));
 		kv.setIfNotNull("iorderstatus", get("iorderstatus"));
 		kv.setIfNotNull("startdate", get("startdate"));
 		kv.setIfNotNull("enddate", get("enddate"));
@@ -62,6 +64,7 @@ public class OtherOutAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		set("status", get("status"));
 		set("otherOut",otherOut);
 		render("edit.html");
 	}
@@ -94,5 +97,20 @@ public class OtherOutAdminController extends BaseAdminController {
 		renderJson(service.delete(getLong(0)));
 	}
 
+
+	/**
+	 * JBoltTable 可编辑表格整体提交 多表格
+	 */
+	public void submitMulti(String param, String revokeVal ,String autoid) {
+		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal,autoid));
+	}
+
+
+	/**
+	 * 出库明细删除
+	 */
+	public void deleteList() {
+		renderJson(service.deleteList(get(0)));
+	}
 
 }
