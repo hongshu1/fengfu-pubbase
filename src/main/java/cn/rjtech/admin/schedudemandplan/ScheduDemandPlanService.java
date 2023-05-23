@@ -1191,6 +1191,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		String enddate = kv.getStr("enddate");
 		//供应商id数组json
 		String data = kv.getStr("data");
+		if (StringUtils.isBlank(startdate) || StringUtils.isBlank(enddate) || data.equals("[]")){
+			return fail("请先选择保存条件！");
+		}
+
 		JSONArray idJSONArr = JSONArray.parseArray(data);
 		String iVendorIds = "(601";
 		for (int i = 0; i < idJSONArr.size(); i++) {
@@ -1278,6 +1282,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		String enddate = kv.getStr("enddate");
 		//供应商id数组json
 		String data = kv.getStr("data");
+		if (StringUtils.isBlank(startdate) || StringUtils.isBlank(enddate) || data.equals("[]")){
+			return fail("请先选择保存条件！");
+		}
+
 		JSONArray idJSONArr = JSONArray.parseArray(data);
 		String iVendorIds = "(601";
 		for (int i = 0; i < idJSONArr.size(); i++) {

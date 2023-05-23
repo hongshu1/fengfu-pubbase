@@ -3,11 +3,13 @@
  */
 package cn.rjtech.util;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import org.apache.commons.lang3.time.FastDateFormat;
 
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -286,7 +288,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
 	/**
 	 * 获取服务器启动时间
-	 * @param date
+	 * @param
 	 * @return
 	 */
 	public static Date getServerStartDate(){
@@ -330,6 +332,34 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 			}
 		}
 		return new Date[]{beginDate, endDate};
+	}
+
+	/**
+	 * 获取两个日期之间的日期集 (包扩两个日期)
+	 * @param startDateStr yyyy-MM-dd
+	 * @param endDateStr yyyy-MM-dd
+	 * @return List<String>
+	 * @author chentao
+	 */
+	public static List<String> getBetweenDate(String startDateStr, String endDateStr){
+		// 声明保存日期集合
+		List<String> list = new ArrayList<>();
+		// 转化成日期类型
+		Date startDate = DateUtil.parseDate(startDateStr);
+		Date endDate = DateUtil.parseDate(endDateStr);
+		// 用Calendar 进行日期比较判断
+		Calendar calendar = Calendar.getInstance();
+		while (startDate.getTime()<=endDate.getTime()){
+			// 把日期添加到集合
+			list.add(DateUtil.formatDate(startDate));
+			// 设置日期
+			calendar.setTime(startDate);
+			//把日期增加一天
+			calendar.add(Calendar.DATE, 1);
+			// 获取增加后的日期
+			startDate=calendar.getTime();
+		}
+		return list;
 	}
 
 //	public static void main(String[] args) throws ParseException {

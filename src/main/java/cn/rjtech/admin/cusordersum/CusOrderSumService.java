@@ -158,6 +158,10 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
         return null;
     }
 
+    /**
+     * 客户计划汇总计算
+     * @return
+     */
     public Ret algorithmSum() {
         //当前年
         String curYear = DateUtils.getYear();
