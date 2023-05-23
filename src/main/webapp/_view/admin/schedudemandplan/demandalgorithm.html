@@ -236,7 +236,7 @@
                 <span>部品名称:</span>
                 <input style="width:150px;height:20px;" />
             </div>
-            <button class="button">搜索</button>
+            <button class="button" onClick="search()">搜索</button>
             <button class="button">重置</button>
         </div>
     </div>
@@ -266,7 +266,8 @@
             <p class="alert_but"><button id="alert_save">确定</button></p>
             <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
                 <label class="col-form-label" >截止日期：</label>
-                <input type="text" class="form-control" style="display: inline-block; width: 200px" id="laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="layMonth" value="#(layMonth??)">
+<!--                <input type="text" class="form-control" id="laymonth" data-date data-type="month" data-fmt="y年MM月dd" name="layMonth" value="#(layMonth??)">-->
+                <input type="datetime-local" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">
             </div>
         </div>
         <!--预示保存弹框-->
@@ -304,6 +305,29 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
+
+    //搜索
+    function search(){
+        $.ajax({
+            url:`http://localhost:8081/admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=${parms.searchSupplier}&cinvcode='A800135'&cinvcode1='26000-52F-0030'&cinvname1="52F液力变矩器"`,
+            type:'get',
+            dataType:'json',
+            success:function (res){
+                console.log(res)
+                // parms.supplierData=res.data;
+                // for (var i = 0; i < res.data.length; i++) {
+                //     var jsonObj = res.data[i];
+                //     $("#supplier_id").append(`
+                //     <li class="dropdown-item" id="li" onClick='supplierClick("${jsonObj.cvenname}")'
+                //      value='${jsonObj.cvenname}' style="display:flex;"><span style=flex:1;>
+                //      ${jsonObj.cvenname}
+                //      </span></li>`);
+                // }
+            },error: function(error) {
+                console.log(error,"预示保存弹出层");
+            }
+        })
+    }
     //获取当前点击的供应商
     function supplierClick(item) {
         let supplierValue = document.all['supplier'];
@@ -333,12 +357,12 @@
         let index = parms.supplierValueArray.findIndex(v => v==id);
         if (index == -1) {
             parms.supplierValueArray.push(id);
-            for (var i = 0; i < parms.supplierData.length; i++) {
-                if(parms.supplierData[i].iautoid==id){
-                    console.log("9889")
-                    $("#li").append(`<span style="border-radius: 50%;background-color:#ccc;padding:0px 9px;">x</span>`);
-                }
-            }
+            // for (var i = 0; i < parms.supplierData.length; i++) {
+            //     if(parms.supplierData[i].iautoid==id){
+            //         console.log("9889")
+            //         $("#li").append(`<span style="border-radius: 50%;background-color:#ccc;padding:0px 9px;">x</span>`);
+            //     }
+            // }
             console.log(parms.supplierValueArray)
         }
     }
@@ -379,6 +403,7 @@
         supplierData:[],        //所有供应商数据
         supplierValueArray:[],  //存储当前点击选中的供应商
         searchSupplier:"",      //存储需要搜索的供应商
+        openBoxTime:'',         //打开锁定弹框的时间戳
     };
 
     var parmsArr = [Object.assign({},parmsDefault)];
@@ -395,6 +420,7 @@
 
     //初始化表格数据
     function loadInit(){
+        spreadSuspend();//暂停绘制
         //设置全局的列宽行高
         sheet.defaults.colWidth = 80;
         sheet.defaults.rowHeight = 25;
@@ -427,6 +453,7 @@
         parms.activeSheet.setColumnWidth(parms.columnindex+6, 100);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+7, 120);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+8, 150);//设置指定单元格的width
+        spreadResume();// 恢复绘制
     }
 
     //勾选check按钮
@@ -580,12 +607,12 @@
         //每次添加之后往数组内进行存储
         parms.tableData.push(a);
     });
-    //锁定弹出框
+    //计划生成弹出框
     var myAlert = document.getElementById("alert");
     var reg = document.getElementById("content");
     var mClose = document.getElementById("close");
     var mClose_But = document.getElementById("alert_save");
-    //锁定打开弹出层
+    //打开计划生成弹出层
     reg.onclick = function(){
         //防止出现多个弹框
         if(myIndicate.style.display !== "block"){
@@ -607,6 +634,12 @@
             mybg.style.opacity = "0.3";
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
+            const datetimeLocalInput = document.getElementById('datetime-local');
+            const now = new Date();
+            const timestamp = now.getTime();
+            const isoString = new Date(timestamp).toISOString();
+            datetimeLocalInput.value = isoString.slice(0, 16);
+            parms.openBoxTime=isoString.slice(0, 16);
         }
     }
     //弹出层关闭事件
@@ -616,8 +649,8 @@
     }
     //计划生成确定按钮事件
     mClose_But.onclick = function(){
-        var myVal=document.getElementById("laymonth").value;
-        if(myVal!=""){
+        const datetimeLocalInput = document.getElementById('datetime-local');
+        const myVal = datetimeLocalInput.value.substring(0,10);
             let url = "http://localhost:8081/admin/schedudemandplan/apsScheduDemandPlan?endDate=2023-06-30";
             $.ajax({
                 url,
@@ -634,7 +667,6 @@
                     console.log(error);
                 }
             })
-        }
     }
 
     var myIndicate = document.getElementById("indicate_Mode");

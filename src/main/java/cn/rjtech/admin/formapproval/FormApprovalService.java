@@ -365,7 +365,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                             formapprovaldUser.setIFormApprovalId(formApprovalDid);
                                             formapprovaldUser.setISeq(approvaldUser.getISeq());
                                             formapprovaldUser.setIUserId(approvaldUser.getIUserId());
-                                            formapprovaldUser.setIAuditStatus(1);
+                                            formapprovaldUser.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                             formapprovaldUser.setIPersonId(approvaldUser.getIPersonId());
                                             formapprovaldUserList.add(formapprovaldUser);
 
@@ -373,7 +373,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                             flowD.setIFormApprovalFlowMid(flowMId);
                                             flowD.setISeq(approvaldUser.getISeq());
                                             flowD.setIUserId(approvaldUser.getIUserId());
-                                            flowD.setIAuditStatus(1);
+                                            flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                             flowDList.add(flowD);
                                         });
                                         formapprovaldUserService.batchSave(formapprovaldUserList);
@@ -438,7 +438,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                                 flowD.setIFormApprovalFlowMid(flowMId);
                                                 flowD.setISeq(1);
                                                 flowD.setIUserId(iuserid);
-                                                flowD.setIAuditStatus(1);
+                                                flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                                 flowDList.add(flowD);
                                             } else {
                                                 ValidationUtils.error(cpsnname + "该人员还未匹配所属用户名");
@@ -453,7 +453,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                                     flowD.setIFormApprovalFlowMid(flowMId);
                                                     flowD.setISeq(1);
                                                     flowD.setIUserId(idutyuserid1);
-                                                    flowD.setIAuditStatus(1);
+                                                    flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                                     flowDList.add(flowD);
                                                 } else {  // 上级负责人为空
                                                     isNullPerson = true;
@@ -477,7 +477,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                                     flowD.setIFormApprovalFlowMid(flowMId);
                                                     flowD.setISeq(1);
                                                     flowD.setIUserId(iSpecUserId);
-                                                    flowD.setIAuditStatus(1);
+                                                    flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                                     flowDList.add(flowD);
                                                 }
 
@@ -485,7 +485,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                                     FormApprovalFlowD flowD = new FormApprovalFlowD();
                                                     flowD.setIFormApprovalFlowMid(flowMId);
                                                     flowD.setISeq(1);
-                                                    flowD.setIAuditStatus(1);
+                                                    flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                                     flowDList.add(flowD);
                                                 }
                                             }
@@ -507,7 +507,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                             flowD.setIFormApprovalFlowMid(flowMId);
                                             flowD.setISeq(1);
                                             flowD.setIUserId(idutyuserid);
-                                            flowD.setIAuditStatus(1);
+                                            flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                             flowDList.add(flowD);
                                         } else {   //为空
                                             /*
@@ -519,7 +519,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                                 flowD.setIFormApprovalFlowMid(flowMId);
                                                 flowD.setISeq(1);
                                                 flowD.setIUserId(iSpecUserId);
-                                                flowD.setIAuditStatus(1);
+                                                flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                                 flowDList.add(flowD);
                                             }
                                         }
@@ -532,7 +532,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                     flowD.setIFormApprovalFlowMid(flowMId);
                                     flowD.setISeq(1);
                                     flowD.setIUserId(user.getId());
-                                    flowD.setIAuditStatus(1);
+                                    flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                     flowDList.add(flowD);
                                     break;
                                 // 角色
@@ -545,7 +545,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                             FormapprovaldRole formapprovaldRole = new FormapprovaldRole();
                                             formapprovaldRole.setIFormApprovalId(formApprovalDid);
                                             formapprovaldRole.setISeq(approvaldRole.getISeq());
-                                            formapprovaldRole.setIAuditStatus(1);
+                                            formapprovaldRole.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                             formapprovaldRole.setIRoleId(approvaldRole.getIRoleId());
                                             formapprovaldRoleList.add(formapprovaldRole);
                                             List<User> users = getRoles(approvaldRole.getIRoleId());
@@ -555,7 +555,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                                     FormApprovalFlowD flowD1 = new FormApprovalFlowD();
                                                     flowD1.setIUserId(u.getId());
                                                     flowD1.setIFormApprovalFlowMid(flowMId);
-                                                    flowD1.setIAuditStatus(1);
+                                                    flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                                     flowD1.setISeq(1);
                                                     flowDList.add(flowD1);
                                                 });
@@ -1282,5 +1282,9 @@ public class FormApprovalService extends BaseService<FormApproval> {
         
         return update(updateSql) > 0;
     }
+//
+//    public boolean updateWithdraw() {
+//        
+//    }
 
 }
