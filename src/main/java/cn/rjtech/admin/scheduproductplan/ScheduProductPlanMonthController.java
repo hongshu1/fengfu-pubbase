@@ -372,22 +372,24 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         }else {
             lockPreDate = new Date();
         }
-        //本次默认锁定截止时间戳
-        Long lockDate = null;
-        for (int i = 1; i <= 7; i++) {
+        //锁定日期集
+        List<Map> list = new ArrayList<>();
+        int weekNum = 1; //周次
+        for (int i = 1; i <= 70; i++) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(lockPreDate);
             calendar.add(Calendar.DATE,i);//日期+1
 
             String weekDay = DateUtils.formatDate(calendar.getTime(),"E");
             if (weekDay.equals("星期日")){
-                lockDate = calendar.getTime().getTime();
-                break;
+                String lockDate = DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd");
+                Map<String,Object> map = new HashMap<>();
+                map.put("lockDate",lockDate);
+                map.put("weekNum","第"+ weekNum ++ +"周");
+                list.add(map);
             }
         }
-        Map<String,Object> map = new HashMap<>();
-        map.put("lockDate",lockDate);
-        renderJsonData(map);
+        renderJsonData(list);
     }
     /**
      * 根据层级获取最近解锁时间
@@ -410,22 +412,24 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         }else {
             lockPreDate = new Date();
         }
-        //本次默认解锁开始日期时间戳
-        Long unLockDate = null;
-        for (int i = 1; i <= 7; i++) {
+        //解锁日期集
+        List<Map> list = new ArrayList<>();
+        int weekNum = 1; //周次
+        for (int i = 1; i <= 70; i++) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(lockPreDate);
             calendar.add(Calendar.DATE,-i);//日期-1
 
             String weekDay = DateUtils.formatDate(calendar.getTime(),"E");
             if (weekDay.equals("星期日")){
-                unLockDate = calendar.getTime().getTime();
-                break;
+                String lockDate = DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd");
+                Map<String,Object> map = new HashMap<>();
+                map.put("unLockDate",lockDate);
+                map.put("weekNum","第"+ weekNum ++ +"周");
+                list.add(map);
             }
         }
-        Map<String,Object> map = new HashMap<>();
-        map.put("unLockDate",unLockDate);
-        renderJsonData(map);
+        renderJsonData(list);
     }
 
     /**
