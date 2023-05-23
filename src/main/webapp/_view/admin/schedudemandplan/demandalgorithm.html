@@ -13,7 +13,8 @@
         font-size: 0.6rem;
         color: aliceblue;
     }
-    body,p {
+    body,p,ul,li {
+        list-style-type: none;
         margin: 0px;
         padding: 0px;
         font-size: 12px;
@@ -148,6 +149,62 @@
         float: right;
         border-radius: 5px;
     }
+
+    /**/
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-toggle {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        color: #333;
+        width: 120px;
+        font-size: 13px;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1;
+        display: none;
+        min-width: 160px;
+        padding: 8px 0;
+        margin: 2px 0 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    }
+
+    .dropdown-menu li{
+        line-height: 25px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .dropdown-menu.show {
+        display: block;
+    }
+
+    .dropdown-item {
+        display: block;
+        padding: 3px 20px;
+        clear: both;
+        font-weight: 400;
+        color: #333;
+        text-align: inherit;
+        white-space: nowrap;
+        background-color: transparent;
+        border: 0;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f5f5f5;
+    }
 </style>
 #end
 #set(pageId=RandomUtil.random(6))
@@ -161,9 +218,11 @@
         <div class="search">
             <div class="select">
                 <span class="span">供应商名称:</span>
-                <select style="width:150px;height:25px;">
-                    <option value=""></option>
-                </select>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="supplier"></button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="supplier_id">
+                    </ul>
+                </div>
             </div>
             <div class="select">
                 <span>存货编码:</span>
@@ -229,9 +288,10 @@
                     </div>
                     <div style="display: flex;">
                         <label style="margin-left:85px"></label>
-                        <select style="width:260px;height: 30px" id="project_id" onClick='supplierChange()' name="col">
-                            <option>请选择供应商</option>
-                        </select>
+                        <div class="dropdown">
+                            <button class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="col"></button>
+                            <ul class="dropdown-menu" id="project_id"></ul>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -244,41 +304,44 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
-    // function checkAll(){
-    //     //获取id的dom元素
-    //     let Id = document.getElementById('all');
-    //     //获取类名为chBox的dom元素
-    //     let chBox = document.getElementsByClassName('chBox');
-    //     let len = chBox.length;
-    //     for(let i=0;i<len;i++){
-    //         //当全选按钮为true时，全部按钮都为true，否则相反
-    //         if(Id.checked){
-    //             chBox[i].checked=true;
-    //         }else {
-    //             chBox[i].checked=false;
-    //         }
-    //     }
-    // }
-    // //单个按钮的点击事件
-    // function checkOne(){
-    //     let count=0;
-    //     let chBox = document.getElementsByClassName('chBox');
-    //     let len = chBox.length;
-    //     for(let i=0;i<len;i++){
-    //         //记录单选按钮为true的数量
-    //         if(chBox[i].checked){
-    //             count++;
-    //         }
-    //     }
-    //     //当单选按钮都为true时，全选按钮也为true，否则为false
-    //     if(count==len-1){
-    //         document.getElementById('all').checked = true;
-    //         console.log("111")
-    //     }else {
-    //         document.getElementById('all').checked = false;
-    //         console.log("222")
-    //     }
-    // }
+    //获取当前点击的供应商
+    function supplierClick(item) {
+        let supplierValue = document.all['supplier'];
+        supplierValue.innerText = item;
+            parms.searchSupplier=item;
+            console.log(parms.searchSupplier);
+    }
+    //全选按钮事件
+    function checkAll(){
+        //获取id的dom元素
+        let Id = document.getElementById('all');
+        parms.supplierValueArray.length=0;
+        if(Id.checked==true){
+            for (let i = 0; i < parms.supplierData.length; i++) {
+                parms.supplierValueArray.push(parms.supplierData[i].iautoid)
+            }
+            console.log(parms.supplierValueArray);
+        }else{
+            parms.supplierValueArray.length=0;
+            console.log(parms.supplierValueArray);
+        }
+    }
+    //获取当前点击选中的供应商
+    function supplierChange(item,id) {
+        let supplierValue = document.all['col'];
+        supplierValue.innerText = item;
+        let index = parms.supplierValueArray.findIndex(v => v==id);
+        if (index == -1) {
+            parms.supplierValueArray.push(id);
+            for (var i = 0; i < parms.supplierData.length; i++) {
+                if(parms.supplierData[i].iautoid==id){
+                    console.log("9889")
+                    $("#li").append(`<span style="border-radius: 50%;background-color:#ccc;padding:0px 9px;">x</span>`);
+                }
+            }
+            console.log(parms.supplierValueArray)
+        }
+    }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
@@ -290,6 +353,7 @@
     //状态栏
     statusBar.bind(spread);
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
+
 
     var parmsDefault = {
         resourcesList: [],      //资源列表
@@ -312,7 +376,9 @@
         planListRowIndex:3,     //计划排产列表起始行下标
         planListColIndex:7,     //计划排产列表起始列下标
         planGenerator:'',       //保存计划生成日期
+        supplierData:[],        //所有供应商数据
         supplierValueArray:[],  //存储当前点击选中的供应商
+        searchSupplier:"",      //存储需要搜索的供应商
     };
 
     var parmsArr = [Object.assign({},parmsDefault)];
@@ -484,6 +550,25 @@
                 console.log(error);
             }
         })
+        //渲染头部搜索区域供应商数据
+        $.ajax({
+            url:"http://localhost:8081/admin/schedudemandplan/getSupplierList",
+            type:'get',
+            dataType:'json',
+            success:function (res){
+                parms.supplierData=res.data;
+                for (var i = 0; i < res.data.length; i++) {
+                    var jsonObj = res.data[i];
+                    $("#supplier_id").append(`
+                    <li class="dropdown-item" id="li" onClick='supplierClick("${jsonObj.cvenname}")'
+                     value='${jsonObj.cvenname}' style="display:flex;"><span style=flex:1;>
+                     ${jsonObj.cvenname}
+                     </span></li>`);
+                }
+            },error: function(error) {
+                console.log(error,"预示保存弹出层");
+            }
+        })
     }
     //获取表格中输入或修改的值
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
@@ -531,24 +616,25 @@
     }
     //计划生成确定按钮事件
     mClose_But.onclick = function(){
-        myAlert.style.display = "none";
-        mybg.style.display = "none";
         var myVal=document.getElementById("laymonth").value;
-        console.log(myVal);
-        let url = "http://localhost:8081/admin/schedudemandplan/apsScheduDemandPlan?endDate=2023-06-30";
-        $.ajax({
-            url,
-            data:{
-                endDate:myVal
-            },
-            type:'post',
-            dataType:'json',
-            success:function (res){
-                console.log(res);
-            },error: function(error) {
-                console.log(error,"计划生成确定按钮事件");
-            }
-        })
+        if(myVal!=""){
+            let url = "http://localhost:8081/admin/schedudemandplan/apsScheduDemandPlan?endDate=2023-06-30";
+            $.ajax({
+                url,
+                data:{
+                    endDate:myVal
+                },
+                type:'post',
+                dataType:'json',
+                success:function (res){
+                    console.log(res);
+                    myAlert.style.display = "none";
+                    mybg.style.display = "none";
+                },error: function(error) {
+                    console.log(error);
+                }
+            })
+        }
     }
 
     var myIndicate = document.getElementById("indicate_Mode");
@@ -560,6 +646,9 @@
     save.onclick = function() {
         //防止出现多个弹框
         if(myAlert.style.display !== "block"){
+            let startTime = document.getElementById('start-time').value;//获取开始时间
+            let endTime = document.getElementById('end-time').value;//获取结束时间
+            parms.supplierValueArray.length=0;
             myIndicate.style.display = "block";
             myIndicate.style.position = "absolute";
             indicateTitle.innerText = '保存确认';
@@ -579,33 +668,17 @@
             mybg.style.opacity = "0.3";
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
-            let url = "http://localhost:8081/admin/schedudemandplan/getSupplierList";
-            $.ajax({
-                url,
-                type:'get',
-                dataType:'json',
-                success:function (res){
-                    console.log(res);
-                    for (var i = 0; i < res.data.length; i++) {
-                        var jsonObj = res.data[i];
-                        $("#project_id").append(`<option value='${jsonObj.iautoid}'>${jsonObj.cvenname}</option>`);
-                    }
-                },error: function(error) {
-                    console.log(error,"预示保存弹出层");
-                }
-            })
-        }
-    }
-    //获取当前点击选中的供应商
-    function supplierChange() {
-        var supplierValue = document.all['col'].value;
-        let index = parms.supplierValueArray.findIndex(item => item==supplierValue);
-        if (supplierValue!="请选择供应商") {
-            if (index == -1) {
-                parms.supplierValueArray.push(supplierValue);
+
+            for (var i = 0; i < parms.supplierData.length; i++) {
+                var jsonObj = parms.supplierData[i];
+                $("#project_id").append(`
+                    <li class="dropdown-item"  onClick='supplierChange("${jsonObj.cvenname}","${jsonObj.iautoid}")'
+                     value='${jsonObj.cvenname}' style="display:flex;"><span style=flex:1;>${jsonObj.cvenname}</span></li>`);
             }
+
         }
     }
+
     //预示保存确定按钮事件
     function indicateSave(){
         let startTime = document.getElementById('start-time').value.substring(0,10);//获取开始时间
@@ -617,10 +690,14 @@
                     url,
                     type: 'get',
                     dataType: 'json',
-                    success:function (res){
-                        console.log(res,"sssssssssssss");
+                    success: function(res){
+                        console.log(res)
+                        myIndicate.style.display = "none";
+                        startTime="";
+                        endTime="";
+                        parms.supplierValueArray.length=0;
                     },error: function(error) {
-                        console.log(error,"wwwwwwwwwwww");
+                        console.log(error);
                     }
                 })
             }
@@ -629,13 +706,12 @@
     //弹出层关闭事件
     closeNdicate.onclick = function(){
         myIndicate.style.display = "none";
-        myIndicate.style.display = "none";
     }
     //取消按钮事件
     closeIndicate.onclick = function(){
         myIndicate.style.display = "none";
-        myIndicate.style.display = "none";
     }
+
 
 </script>
 #end
