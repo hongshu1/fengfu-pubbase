@@ -500,7 +500,7 @@
     function edit(){
         let url = "http://localhost:8081/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=2023-05-28";
         Ajax.post(url,parms.tableData,(res)=>{
-            console.log(res)
+            console.log(res,'success')
         })
         spreadSuspend();
         var addCol = 100,addRow = 32;
