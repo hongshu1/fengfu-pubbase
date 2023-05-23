@@ -9,11 +9,12 @@ import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Customer;
 import cn.rjtech.model.momdata.MonthOrderM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
  * 月度计划订单 Controller
@@ -108,7 +109,6 @@ public class MonthordermAdminController extends BaseAdminController {
     /**
      * 新增-可编辑表格-批量提交
      */
-    @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
@@ -116,8 +116,26 @@ public class MonthordermAdminController extends BaseAdminController {
 	/**
 	 * 审批
 	 */
-	@Before(Tx.class)
 	public void approve() {
 		renderJson(service.approve(getLong("id")));
 	}
+
+    /**
+     * 提审
+     */
+    public void submit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.validateId(iautoid, "ID");
+        
+        renderJson(service.submit(iautoid));
+    }
+
+    /**
+     * 撤回
+     */
+    public void withdraw(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.validateId(iautoid, "ID");
+
+        renderJson(service.withdraw(iautoid));
+    }
+    
 }
