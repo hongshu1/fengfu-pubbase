@@ -119,3 +119,14 @@ WHERE 1=1
     AND i.iAutoId in (#(sqlids))
 #end
 #end
+
+#sql("getSubList")
+SELECT *
+FROM InventoryClass
+WHERE iInvCGrade = #para(iinvcgrade)
+#if(iinvcgrade > 1)
+    AND cinvccode LIKE concat(#para(cinvccode),'%')
+#end
+ORDER BY
+    cInvCCode
+#end

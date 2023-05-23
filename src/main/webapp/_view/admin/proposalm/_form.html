@@ -1,0 +1,558 @@
+#define css()
+#@formtablecss?()
+#@hiprintcss()
+<style>
+    .chengtop {
+        top: calc(100% - 306px) !important;
+    }
+</style>
+#end
+#set(pageId=RandomUtil.random(6))
+<!-- <div class="jbolt_page_title jb_vheader">
+    <div class="row">
+
+    </div>
+</div> -->
+
+<div class="jbolt_page_content">
+
+    <form onsubmit="return false;" id="proposalmForm_#(pageId)" action="#(action)" method="post">
+
+        <input type="hidden" name="proposalm.iautoid" value="#(proposalm.iautoid??)"/>
+        <input type="hidden" name="proposalm.cdepcode" value="#(proposalm.cdepcode??)">
+        <input type="hidden" name="proposalm.issupplemental" value="#(proposalm.issupplemental??)">
+        <input type="hidden" name="proposalm.csourceproposalno" value="#(proposalm.csourceproposalno)">
+        <input type="hidden" name="proposalm.isourceproposalid" value="#(proposalm.isourceproposalid??)">
+        <input type="hidden" name="proposalm.ifirstsourceproposalid" value="#(proposalm.ifirstsourceproposalid??)">
+        <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.cprojectcode" value="#(proposalm.cprojectcode??)" data-sync-attr="cprojectcode">
+		<!-- 原币无税金额汇总，用于校验是否超预算 -->
+		<input type="hidden" id="imoney" value=""/>
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">申请部门(申請部門)</label>
+            <div class="col">
+                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="#(cdepname??)" readonly id="cdepname" data-sync-attr="cdepname">
+            </div>
+            <label class="col-sm-1 col-form-label">申请人(申請人)</label>
+            <div class="col">
+                <input type="text" autocomplete="off" class="form-control"
+                       data-autocomplete
+                       data-url="admin/hrhiperson/autocompleteWithDept"
+                       data-link-para-ele="#capplypersoncode"
+                       data-sync-ele="capplypersoncode,capplypersonname,cdepcode,cdepname"
+                       data-text-attr="cpsn_name"
+                       data-value-attr="cpsn_num"
+                       data-column-attr="cpsn_num,cpsn_name,cdepcode,cdepname"
+                       data-rule="required" data-tips="请选择申请人" maxlength="50"
+                       #if(proposalm.issupplemental)
+                            disabled
+                       #else
+                            #if(readonly) disabled #end
+                       #end
+                >
+                <input type="hidden" id="capplypersoncode" autocomplete="off" class="form-control" maxlength="100" name="proposalm.capplypersoncode" value="#(proposalm.capplypersoncode??)" data-sync-attr="cpsn_num">
+                <input type="hidden" id="capplypersonname" autocomplete="off" class="form-control" maxlength="100" name="proposalm.capplypersonname" value="#(proposalm.capplypersonname??)" data-sync-attr="cpsn_name">
+                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" value="#(proposalm.cdepcode??)" readonly id="cdepcode" data-sync-attr="cdepcode">
+            </div>
+            <label class="col-sm-offset-4 col-sm-1 col-form-label">申请日期(申請日付)</label>
+            <div class="col-sm-3">
+                <input type="text" autocomplete="off" class="form-control" maxlength="10" value="#date(proposalm.dapplydate??, 'yyyy-MM-dd')" name="proposalm.dapplydate" #(readonly)>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">项目名称(項目名称)</label>
+            <div class="col">
+                <input type="text" autocomplete="off" data-rule="required" class="form-control" maxlength="100" name="proposalm.cprojectname" value="#(proposalm.cprojectname??)" id="cprojectname" data-sync-attr="cprojectname" #(readonly)>
+            </div>
+             <label class="col-sm-1 col-form-label">项目编码(項目コード)</label>
+           <div class="col">
+ <!--                <input type="text" autocomplete="off" class="form-control"
+                       data-autocomplete
+                       data-url="admin/project/autocomplete"
+                       data-link-para-ele="#cprojectcode"
+                       data-sync-ele="cprojectcode,cprojectname"
+                       data-text-attr="cprojectcode"
+                       data-value-attr="cprojectcode"
+                       data-column-attr="cprojectcode,cprojectname"
+                       data-rule="required"
+                       data-tips="请选择项目" maxlength="50" value="#(proposalm.cprojectname??)"
+                       #if(proposalm.issupplemental)
+                            disabled
+                       #else
+                            #if(readonly) disabled #end
+                       #end
+                       >-->
+                <input type="text" readonly id="cprojectcode" autocomplete="off" class="form-control" maxlength="100" name="proposalm.cprojectcode" value="#(proposalm.cprojectcode??)" data-sync-attr="cprojectcode">
+            </div> 
+            <label class="col-sm-1 col-form-label">编号(NO)</label>
+            <div class="col">
+                <input type="text" autocomplete="off" class="form-control" maxlength="10" value="#(proposalm.cproposalno??)" disabled>
+                <input type="hidden" autocomplete="off" class="form-control" maxlength="10" name="proposalm.cproposalno" value="#(proposalm.cproposalno??)">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">目的区分(目的区分)</label>
+            <div class="col">
+                <select class="form-control"
+                        data-rule="select"
+                        data-autoload
+                        data-url="admin/dictionary/options?key=purpose"
+                        data-value-attr="sn"
+                        data-text-attr="name"
+                        data-text="=请选择="
+                        data-select="#(proposalm.cpurposesn??)"
+                        ### 追加禀议，不可编辑，使用隐藏域
+                        #if(proposalm.issupplemental)
+                            disabled
+                        #else
+                            name="proposalm.cpurposesn"
+                            #if(readonly) disabled #end
+                        #end
+                        ></select>
+
+                #if(proposalm.issupplemental)
+                <input type="hidden" name="proposalm.cpurposesn" value="#(proposalm.cpurposesn??)">
+                #end
+            </div>
+            <label class="col-sm-1 col-form-label">类别区分(類別区分)</label>
+            <div class="col">
+                <select class="form-control"
+                		data-select-type="select2"
+                        data-rule="required"
+                        data-autoload
+                        data-url="admin/proposalcategory/treeSelectOptions"
+                        data-value-attr="iautoid"
+                        data-text-attr="ccategoryname"
+                        data-text="=请选择="
+                        data-select="#(proposalm.icategoryid??)"
+						multiple="multiple"
+						data-setvalueto="multipleInput"
+                        ### 追加禀议，不可编辑，使用隐藏域
+                        #if(proposalm.issupplemental)
+                            disabled
+                        #else
+                            #if(readonly) disabled #end
+                        #end
+                ></select>
+                <input type="hidden" id="multipleInput" name="proposalm.icategoryid" value="#(proposalm.icategoryid??)">
+            </div>
+            <label class="col-sm-1 col-form-label is_required">事业计划(事業計画)</label>
+            <div class="col-sm-3">
+             <select class="form-control"
+              data-rule="required"
+              data-autoload
+              data-url="admin/dictionary/options?key=isscheduled"
+              data-value-attr="sn"
+              data-text-attr="name"
+              data-setvalueto="isscheduledMultipleInput"
+              data-text="=请选择="
+              data-select="#(proposalm.isscheduled??)"
+              ### 追加禀议，不可编辑，使用隐藏域
+                    #if(proposalm.issupplemental)
+                        disabled
+                    #else
+                        #if(readonly) disabled #end
+                    #end
+              >
+             </select>
+            </div>
+        </div>
+		<input type="hidden" id="isscheduledMultipleInput" name="proposalm.isscheduled" value="#(proposalm.isscheduled??)">
+        <div class="row">
+
+            <div class="col-4">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">说明(説明)</label>
+                    <div class="col">
+                        <textarea autocomplete="off" class="form-control" maxlength="1000" style="height: #((proposalm.issupplemental?5:4) * 21.75)px"
+                                  name="proposalm.cdesc"
+                          #if(proposalm.issupplemental)
+                            readonly
+                          #else
+                            #(readonly)
+                          #end
+                        >#(proposalm.cdesc??)</textarea>
+                    </div>
+                </div>
+                #if(proposalm.issupplemental??)
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">追加说明(追加説明)</label>
+                    <div class="col">
+                        <textarea autocomplete="off" class="form-control" maxlength="1000" style="height: #((proposalm.issupplemental?5:2) * 21.75)px"
+                                  name="proposalm.csupplementaldesc" #(readonly)
+                        >#(proposalm.csupplementaldesc??)</textarea>
+                    </div>
+                </div>
+                #end
+            </div>
+
+            <div class="col-8">
+
+                ### 追加禀议
+                #if(proposalm.issupplemental??)
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">原申请金额(无税)</label>
+                            <div class="col">
+                            	<input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.sourceinatmoney" value="#(sourceinatmoney??)" disabled>
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="#number(sourceinatmoney??, '#,###.##')" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">原申请金额(含税)</label>
+                            <div class="col">
+                            	<input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.sourceinatsum" value="#(sourceinatsum??)" disabled>
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="#number(sourceinatsum??, '#,###.##')" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">预算总金额(无税)</label>
+                            <div class="col">
+                            	<input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.ibudgetmoney" value="#(proposalm.ibudgetmoney??)" id="ibudgetmoney">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100"  value="" id="ibudgetmoneyshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">预算总金额(含税)</label>
+                            <div class="col">
+                            	<input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.ibudgetsum" value="#(proposalm.ibudgetsum??)" id="ibudgetsum">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="" id="ibudgetsumshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">追加禀议金额(无税)</label>
+                            <div class="col">
+                                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.isupplementalmoney" value="#(proposalm.isupplementalmoney??)">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="" id="isupplementalmoneyshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">追加禀议金额(含税)</label>
+                            <div class="col">
+                                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.isupplementalsum" value="#(proposalm.isupplementalsum??)">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="" id="isupplementalsumshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">累计申请金额(无税)</label>
+                            <div class="col">
+                                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.inatmoney" value="#(proposalm.inatmoney??)" id="inatmoney">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="" id="inatmoneyshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">累计申请金额(含税)</label>
+                            <div class="col">
+                                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.inatsum" value="#(proposalm.inatsum??)" id="inatsum">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="" id="inatsumshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">剩余预算金额(无税)</label>
+                            <div class="col">
+                                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.ibudgetremainmoney" value="#(proposalm.ibudgetremainmoney??)">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="" id="ibudgetremainmoneyshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">剩余预算金额(含税)</label>
+                            <div class="col">
+                                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.ibudgetremainsum" value="#(proposalm.ibudgetremainsum??)">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="" id="ibudgetremainsumshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                #else
+				<!-- 原禀议书申请金额（不含税） -->
+				<input type="hidden" name="proposalm.sourceinatmoney" value="0" disabled>
+				<!-- 原禀议书申请金额（含税） -->
+				<input type="hidden" name="proposalm.sourceinatsum" value="0" disabled>
+				<!-- 追加禀议金额（不含税） -->
+				<input type="hidden" name="proposalm.isupplementalmoney" value="#(proposalm.isupplementalmoney??0)">
+				<!-- 追加禀议金额（含税） -->
+				<input type="hidden" name="proposalm.isupplementalsum" value="#(proposalm.isupplementalsum??0)">
+                <input type="hidden" name="proposalm.ibudgetremainmoney" value="#(proposalm.ibudgetremainmoney??0)">
+                <input type="hidden" name="proposalm.ibudgetremainsum" value="#(proposalm.ibudgetremainsum??0)">
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">申请金额(无税)</label>
+                            <div class="col">
+                                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.inatmoney" value="#(proposalm.inatmoney??)" id="inatmoney">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="" id="inatmoneyshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">申请金额(含税)</label>
+                            <div class="col">
+                                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.inatsum" value="#(proposalm.inatsum??)" id="inatsum">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="" id="inatsumshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">预算总金额(无税)</label>
+                            <div class="col">
+                            	<input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.ibudgetmoney" value="#(proposalm.ibudgetmoney??)" id="ibudgetmoney">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100"  value="" id="ibudgetmoneyshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">预算总金额(含税)</label>
+                            <div class="col">
+                                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.ibudgetsum" value="#(proposalm.ibudgetsum??)" id="ibudgetsum">
+                                <input type="text" autocomplete="off" class="form-control" maxlength="100" value="" id="ibudgetsumshow" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                #end
+            </div>
+        </div>
+
+    </form>
+
+    <div class="jbolt_tab_view jb_vflex">
+
+        <div class="jbolt_tab_links jb_vheader">
+            <a class="jbolt_tab_link active" href="#jbolt_tabcontent1">禀议项目</a>
+            <a class="jbolt_tab_link" href="#jbolt_tabcontent2">附件</a>
+        </div>
+
+        <div class="jbolt_tab_contents jb_vbody">
+
+            <div class="jbolt_tab_content active" id="jbolt_tabcontent1">
+                #include("proposalds.html")
+            </div>
+
+            <div class="jbolt_tab_content" id="jbolt_tabcontent2">
+                ### 禀议书 附件
+                #render("proposald_attachment.html")
+            </div>
+
+        </div>
+
+    </div>
+</div>
+#define js()
+#@hiprintjs()
+<script>
+    var $ibudgetsum = $('input[name="proposalm.ibudgetsum"]');
+
+    #if(readonly??)
+    hideParentLayerDialogBtn(0);
+
+    var hiprintTemplate_#(pageId);
+    $(function () {
+        var tplContentJson;
+        if (#(proposalm.issupplemental))
+        {
+            tplContentJson = #include("../../../assets/printtpl/supplemental_proposalm.json");
+        }else{
+            tplContentJson = #include("../../../assets/printtpl/proposalm.json");
+        }
+
+        hiprintTemplate_#(pageId) = new hiprint.PrintTemplate({
+            template: tplContentJson,
+            settingContainer: '#PrintElementOptionSetting_#(pageId)',
+            paginationContainer: '#hiprint-printPagination_#(pageId)'
+        });
+    });
+    var print = function () {
+        var index = LayerMsgBox.loading('正在获取打印数据...');
+        Ajax.get("admin/proposalm/printData?iautoid=#(proposalm.iautoid??)", function (res) {
+            // 关闭加载层
+            LayerMsgBox.close(index);
+
+            if (res.state === 'ok') {
+                var html = hiprintTemplate_#(pageId).getHtml(res.data.proposalm).html()
+                layer.open({
+                    type: 1,
+                    content: html,
+                    title: '预览',
+                    btn: ['打印', '取消'],
+                    yes: function (layero, index) {
+                        hiprintTemplate_#(pageId).print(res.data.proposalm)
+                    }
+                });
+            } else {
+                LayerMsgBox.error(res.msg);
+            }
+        });
+    };
+
+    // 打印预览
+    addParentLayerDialogBtn("打印预览", "lay_primary", function () {
+        print();
+    });
+    #end
+	function tableSubmitForm(){
+    	 var tables = ["jbolt_table_#(pageId)", "jbolt_table_proposalattachments_#(pageId)"];
+         jboltTableSubmitMulti(tables, "admin/proposalm/saveTableSubmit", function(ret) {
+             if (ret.state === 'ok') {
+                 LayerMsgBox.success("提交成功", 600, function () {
+                     #if(proposalm.iautoid??)
+                         refreshPjaxContainer();
+                     #else
+                         location.href = '/admin/proposalm/edit?iautoid=' + ret.data.iautoid + '&_jb_rqtype_=dialog';
+                     #end
+                 });
+             } else {
+                 LayerMsgBox.alert(ret.msg, 2);
+             }
+         });
+    }
+    function submitThisForm() {
+    	var index = LayerMsgBox.loading('执行中...');
+    	finishEditingCells("#jbolt_table_#(pageId)");
+		//原币无税金额        
+        var imoney = $("#imoney").val();
+        //预算总金额(无税)
+        var ibudgetmoney = $("input[name='proposalm.ibudgetmoney']").val();
+        //所有禀议项目的iprojectcardid,需要查询它们累计生成的禀议书金额
+        var iprojectcardids = "";
+        var allDatas = jboltTableGetAllDatas("jbolt_table_#(pageId)");
+        if(allDatas){
+        	allDatas.forEach((item, index) => {
+            	if(index == 0) iprojectcardids += item.iprojectcardid;
+            	else iprojectcardids += ','+item.iprojectcardid; 
+        	});
+        }
+        //追加禀议新增时，iproprosalmid 取原禀议书的iautoid
+        #(proposalm.ifirstsourceproposalid??)
+        var ifirstsourceproposalid;
+        #if(proposalm.ifirstsourceproposalid??false)
+        	ifirstsourceproposalid = $("input[name='proposalm.ifirstsourceproposalid']").val();
+    	#end
+        var data = {
+        		imoney : imoney,
+        		ibudgetmoney : ibudgetmoney,
+        		iprojectcardids : iprojectcardids
+        		#if(proposalm.ifirstsourceproposalid??false)
+            	,ifirstsourceproposalid : ifirstsourceproposalid
+            	#end
+        };
+    	Ajax.post("admin/proposalm/validateProposalMoneyIsExceed",data,function(res){
+        	if(res.data.state == 'fail'){
+        		LayerMsgBox.confirm("累计禀议金额超预算，是否保存？",function(){
+        			tableSubmitForm();
+        		});
+            }else{
+            	tableSubmitForm();
+            }
+    	});		
+       
+    }
+    // 预算总金额（无税） 修改监听器
+    $('#ibudgetmoney').change(function () {
+    	//预算总金额（无税）
+        var ibudgetmoney = $(this).val();
+    	//累计申请金额（无税）
+    	var inatmoney = $('input[name="proposalm.inatmoney"]').val();
+        // 剩余预算金额（无税）= 预算总金额（无税） - 累计申请金额（无税）
+        var ibudgetremainmoney = (ibudgetmoney - inatmoney).toFixed(2);
+        $('input[name="proposalm.ibudgetremainmoney"]').val(ibudgetremainmoney);
+        $("#ibudgetremainmoneyshow").val(numberFormat(ibudgetremainmoney,2,'.',','));
+        $("#ibudgetmoneyshow").val(numberFormat(ibudgetmoney,2,'.',','));
+        
+    }); 
+ 	//预算总金额（含税） 修改监听器
+    $('#ibudgetsum').change(function () {
+    	//预算总金额（含税）
+        var ibudgetsum = $(this).val();
+    	//累计申请金额（含税）
+    	var inatsum = $('input[name="proposalm.inatsum"]').val();
+        //剩余预算金额（含税）= 预算总金额（含税） - 累计申请金额（含税）
+        var ibudgetremainsum = (ibudgetsum - inatsum).toFixed(2);
+        $('input[name="proposalm.ibudgetremainsum"]').val(ibudgetremainsum);
+        $("#ibudgetremainsumshow").val(numberFormat(ibudgetremainsum,2,'.',','));
+        $("#ibudgetsumshow").val(numberFormat(ibudgetsum,2,'.',','));
+    });
+    //申请金额（无税）或者累计申请金额（无税） ，修改监听：
+    $('input[name="proposalm.inatmoney"]').change(function () {
+        //累计申请金额（无税）
+        var inatmoney = $(this).val();
+		//原禀议金额（无税）
+		var sourceinatmoney = $('input[name="proposalm.sourceinatmoney"]').val();
+		//追加禀议金额（无税） = 累计申请金额（无税） - 原禀议金额（无税）
+		var isupplementalmoney = (inatmoney - sourceinatmoney).toFixed(2);
+        $('input[name="proposalm.isupplementalmoney"]').val(isupplementalmoney);
+        $("#isupplementalmoneyshow").val(numberFormat(isupplementalmoney,2,'.',','));
+        //预算总金额（无税）
+        var ibudgetmoney = $('input[name="proposalm.ibudgetmoney"]').val();
+        //剩余预算金额（无税） = 预算金额（无税） - 累计申请金额（无税）
+        var ibudgetremainmoney = (ibudgetmoney - inatmoney).toFixed(2);
+        $('input[name="proposalm.ibudgetremainmoney"]').val(ibudgetremainmoney);
+        $("#ibudgetremainmoneyshow").val(numberFormat(ibudgetremainmoney,2,'.',','));
+        $("#inatmoneyshow").val(numberFormat(inatmoney,2,'.',','));
+     });
+    //申请金额（含税）或者累计申请金额（含税），修改监听：
+    $('input[name="proposalm.inatsum"]').change(function () {
+        //累计申请金额（含税）
+        var inatsum = $(this).val();
+		//原禀议金额（含税）
+		var sourceinatsum = $('input[name="proposalm.sourceinatsum"]').val();
+		//追加禀议金额（含税） = 累计申请金额（含税） - 原禀议金额（含税）
+		var isupplementalsum = (inatsum - sourceinatsum).toFixed(2);
+        $('input[name="proposalm.isupplementalsum"]').val(isupplementalsum);
+        $("#isupplementalsumshow").val(numberFormat(isupplementalsum,2,'.',','));
+        //预算总金额（含税）
+        var ibudgetsum = $('input[name="proposalm.ibudgetsum"]').val();
+        //剩余预算金额（含税） = 预算金额（含税） - 累计申请金额（含税）
+        var ibudgetremainsum = (ibudgetsum - inatsum).toFixed(2);
+        $('input[name="proposalm.ibudgetremainsum"]').val(ibudgetremainsum);
+        $("#ibudgetremainsumshow").val(numberFormat(ibudgetremainsum,2,'.',','));
+        $("#inatsumshow").val(numberFormat(inatsum,2,'.',','));
+     });
+    
+</script>
+#include("proposalds_tablejs.html")
+### 禀议书 附件 可编辑表格 js
+#render("proposald_attachment_tablejs.html")
+#end
+

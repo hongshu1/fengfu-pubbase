@@ -1,0 +1,86 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto text-left">
+                <form class="form-inline" id="projectForm_#(pageId)" onsubmit="return false;" method="post">
+                    <select class="form-control"
+                            name="cdepcode"
+                            data-select-type="select2"
+                            data-autoload
+                            data-url="admin/u8department/treedatas"
+                            data-text="=部门="
+                            data-text-attr="cdepname"
+                            data-value-attr="cdepcode"
+                            data-width="250"></select>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=项目名称/项目编码=" name="cproject" value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="projectRowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}" >
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.cdepname}</td>
+                <td>${data.cprojectcode}</td>
+                <td>${data.cprojectname}</td>
+                <td>${data.cmemo}</td>
+                <td>${data.icreateby}</td>
+                <td>${data.dcreatetime}</td>
+            </tr>
+            {@/each}
+        </textarea>
+
+        <!-- 工具条 toolbar -->
+<!--        <div class="jbolt_table_toolbar" id="project_toolbar_#(pageId)">
+           <div class="btn-group" role="group" aria-label="btn-group">
+               <button data-openpage="dialog" data-area="80%,80%" data-handler="jboltTablePageToFirst" data-title="新增项目档案" data-url="admin/project/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+               <button data-openpage="dialog" data-area="80%,80%"  data-handler="refreshJBoltTable" data-title="修改项目档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/project/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+               <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/project/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+           </div>
+
+            <div class="clearfix"></div>
+        </div> -->
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               data-url="admin/project/datas"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="projectForm_#(pageId)"
+               data-rowtpl="projectRowtpl_#(pageId)"
+               data-page="projectPage_#(pageId)"
+               data-pagesize="50"
+               data-toolbar="project_toolbar_#(pageId)"
+               data-fixed-columns-left="1,2,3"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150" data-column="cdepcode">部门名称</th>
+                <th data-width="150" data-column="cprojectcode">项目编码</th>
+                <th data-width="150" data-column="cprojectname">项目名称</th>
+                <th data-width="150" data-column="cmemo">备注</th>
+                <th data-width="150" data-column="icreateby">创建人</th>
+                <th data-width="150" data-column="dcreatetime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+#end

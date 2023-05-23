@@ -1,0 +1,141 @@
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="proposaldRowtpl_#(pageId)">
+{@each datas as data,index}
+    <tr data-id="${data.iautoid}" >
+        <td>${pageNumber,pageSize,index | rownum}</td>
+        ### 追加禀议，有此字段
+        #if(proposalm.issupplemental??false)
+            <td>$${data.itype|proposaldType}</td>
+        #end
+        <td>$${data.isourcetype|proposalChooseType}</td>
+        <td>${data.cbudgetno}</td>
+        <td>${data.clowestsubjectname}</td>
+        <td>${data.ibudgetmoney,2|number_format3}</td>
+        <td>${data.ibudgetsum,2|number_format3}</td>
+        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.citemname}</td>
+        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.iquantity,0,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.iquantity,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
+        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.cunit}</td>
+        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.ccurrency}</td>
+        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.iunitprice,2,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.iunitprice,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
+        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.nflat,6,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.nflat,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
+        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.itaxrate,2,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.itaxrate,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
+        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.cvenname}</td>
+        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.ddemanddate|date_ymd}</td>
+        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.cbudgetdepname}</td>
+        <td>${data.itax}</td>
+        <td>${data.imoney}</td>
+        <td>${data.isum}</td>
+        <td>${data.inatunitprice}</td>
+        <td>${data.inattax}</td>
+        <td>${data.inatmoney}</td>
+        <td>${data.inatsum}</td>
+    </tr>
+{@/each}
+</textarea>
+
+#if(!readonly??)
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="proposald_toolbar_#(pageId)">
+    <div class="btn-group" role="group" aria-label="btn-group">
+        #if(proposalm.issupplemental??false)
+        <!-- <button onclick="copySelected(this)" data-btn class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 追加选定</button> -->
+        <button data-openpage="dialog" data-area="100%,100%" data-title="新增项目" data-url="/admin/proposalm/chooseEffectivedExpenseBudgetOrInvestmentPlan?isourceproposalid=#(proposalm.isourceproposalid??)" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增项目</button>
+        <button onclick="supplementalSplitSelected(this)" data-btn class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 拆子项</button>
+        #else
+        <button data-openpage="dialog" data-area="100%,100%" data-title="新增项目" data-url="/admin/proposalm/editProposalmChooseExpenseBudgetOrInvestmentPlan?cdepcode=#(proposalm.cdepcode??)&iprojectcardids=" data-check-handler="editProposalmChooseItemCheckHandler" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增项目</button>
+        <button onclick="editProposalmSplitSelected(this)" data-btn class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 拆子项</button>
+        #end
+        <button onclick="deleteRow(this, true)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+        <!-- <button onclick="jboltTableRefresh(this, '刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button> -->
+    </div>
+    <div class="clearfix"></div>
+</div>
+#end
+
+<table class="jbolt_table jbolt_main_table table-center"
+       id="jbolt_table_#(pageId)"
+       data-jbolttable
+       data-height="fill_box"
+       data-ajax="true"
+       data-width="auto"
+       data-url="admin/proposald/list?iproposalmid=#(proposalm.iautoid??)"
+       data-column-resize="true"
+       data-column-prepend="1:checkbox:true"
+       ###data-conditions-form="proposaldForm_#(pageId)"
+       data-tabledatas="processTableListDatas_#(pageId)"
+       data-rowtpl="proposaldRowtpl_#(pageId)"
+       data-toolbar="proposald_toolbar_#(pageId)"
+       ###data-fixed-columns-left="1,2,3"
+       data-editable="true"
+       data-editable-option="getEditableTableOptions_#(pageId)"
+       #if(!proposalm.iautoid??)
+       data-ajax-success-handler="tableAjaxSuccessHandler_#(pageId)"
+       #end
+>
+    <thead>
+    <tr>
+        <th data-width="60" data-column="index">No.</th>
+        ### 追加禀议，有此字段
+        #if(proposalm.issupplemental??false)
+        <th data-width="90" data-column="itype">类型</th>
+        #end
+		<th data-width="120" data-column="isourcetype">业务类别</th>
+        <th data-width="150" data-column="cbudgetno">预算NO.</th>
+        <th data-width="120" data-column="clowestsubjectname">明细科目</th>
+        <th data-width="130" data-column="ibudgetmoney">预算金额(不含税)</th>
+        <th data-width="120" data-column="ibudgetsum">预算金额(含税)</th>
+        <th data-width="120" data-column="citemname">项目细项名称</th>
+        <th data-width="70" data-column="iquantity">数量</th>
+        <th data-width="70" data-column="cunit">单位</th>
+        <th data-width="100" data-column="ccurrency">币种</th>
+        <th data-width="120" data-column="iunitprice">原币无税单价</th><!--外币金额-->
+        <th data-width="100" data-column="nflat">汇率</th>
+        <th data-width="100" data-column="itaxrate">税率</th>
+        <th data-width="120" data-column="cvencode">预定供货商</th>
+        <th data-width="100" data-column="ddemanddate">需求日</th>
+        <th data-width="120" data-column="cbudgetdepcode">预算对应部门</th>
+        <th data-width="120" data-column="itax">原币税额</th>
+        <th data-width="120" data-column="imoney">原币无税金额</th>
+        <th data-width="120" data-column="isum">原币价税合计</th>
+        <th data-width="120" data-column="inatunitprice">本币无税单价</th>
+        <th data-width="120" data-column="inattax">本币税额</th>
+        <th data-width="120" data-column="inatmoney">本币无税金额</th><!--RMB金额(不含税)-->
+        <th data-width="120" data-column="inatsum">本币价税合计</th><!--申请金额(含税)-->
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <tfoot>
+    <tr>
+        <th></th>
+        <th>合计</th>
+        ### 追加禀议，有此字段
+        #if(proposalm.issupplemental??false)
+        <th></th>
+        #end
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th ></th>
+    </tr>
+    </tfoot>
+</table>

@@ -1,0 +1,224 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto text-left">
+                <form class="form-inline" id="expenseBudgetForm_#(pageId)"   onsubmit="return false;" method="post">
+                    <select class="form-control"
+                		data-select-type="select2"
+                        name="cdepcode"
+                        data-autoload
+                        data-tips="u8部门"
+                        data-url="admin/u8department/treedatas"
+                        data-text="=u8部门="
+                        data-text-attr="cdepname"
+                        data-value-attr="cdepcode"
+                        #if(cdepcode??)
+                        data-select="#(cdepcode??)"
+                        disabled
+                        #end
+                        data-value=""
+                        data-width="200">
+                	</select>
+					<input type="hidden" name="iauditstatus" value="2"/>
+                	<input type="hidden" name="ieffectivestatus" value="2"/>
+                	<input type="hidden" name="isourceproposalid" value="#(isourceproposalid??)"/>
+                	<input type="hidden" name="iprojectcardids" value="#(iprojectcardids??)"/>
+                    <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+     <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_investmentPlanEditForm_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+			<td>${data.cdepname}</td>
+			<td>${data.ibudgetyear}</td>
+			<td>$${data.ibudgettype|BudgetType}</td>
+			<td>${data.cinvestmenttypedesc}</td>
+            <td>${data.cproductline}</td>
+            <td>${data.cmodelinvccode}</td>
+            <td>${data.cparts}</td>
+            <td>${data.careertypedesc}</td>
+            <td>${data.cinvestmentdistinctiondesc}</td>
+			<td>${data.cplanno}</td>
+			<td>${data.citemname}</td>
+            <td>$${data.isimport|isLargeAmountExpense}</td>
+            <td>${data.iquantity}</td>
+            <td>${data.cunit}</td>
+			<td>${data.cassettypedesc}</td>
+			<td>${data.cpurpose}</td>
+			<td>${data.ceffectamount}</td>
+			<td>${data.creclaimyear}</td>
+			<td>${data.clevel}</td>
+			<td>$${data.ispriorreport|isLargeAmountExpense}</td>
+			<td>${data.cpaymentprogressdesc}</td>
+			<td>${data.itaxrate|removeNumberEndZero}</td>
+			<td>${data.cedittypedesc}</td>
+			<td>${data.iitemyear}</td>
+			<td>$${data.isscheduled|isscheduled}</td>
+			<td>${data.iamounttotal|kFormat}</td>
+			<td>${data.cmemo}</td>
+			<td>${data.cperiodprogressdesc1}</td>
+			<td>${data.dperioddate1|date_ym}</td>
+			<td>${data.iamount1}</td>
+			<td>${data.cperiodprogressdesc2}</td>
+			<td>${data.dperioddate2|date_ym}</td>
+			<td>${data.iamount2}</td>
+			<td>${data.cperiodprogressdesc3}</td>
+			<td>${data.dperioddate3|date_ym}</td>
+			<td>${data.iamount3}</td>
+			<td>${data.cperiodprogressdesc4}</td>
+			<td>${data.dperioddate4|date_ym}</td>
+			<td>${data.iamount4}</td>
+			<td>${data.cperiodprogressdesc5}</td>
+			<td>${data.dperioddate5|date_ym}</td>
+			<td>${data.iamount5}</td>
+			<td>${data.cperiodprogressdesc6}</td>
+			<td>${data.dperioddate6|date_ym}</td>
+			<td>${data.iamount6}</td>
+            </tr>
+            {@/each}
+        </script>
+
+        <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+               data-jbolttable
+               id="jbolt_Table_proposal_add_choose_investmentplan"
+               data-ajax="true"
+               data-url="/admin/investmentplanitem/mdatas?iperiod=#(period.iautoid??)"
+               data-column-resize="true"
+               data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+               data-rowtpl="jboltTable_investmentPlanEditForm_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="expenseBudgetForm_#(pageId)"
+               ###data-toolbar="jbolt_table_toolbar_#(pageId)"
+               data-height="500"
+        >
+            <thead class="fw_normal">
+            <tr>
+	            <th data-width="100" data-column="cdepname" rowspan="2">部门</th>
+	            <th data-width="100" data-column="ibudgetyear" rowspan="2">预算年度</th>
+	            <th data-width="100" data-column="ibudgettype" rowspan="2">预算类型</th>
+	            <th data-width="100" data-column="iinvestmenttype" rowspan="2">投资类型</th>
+	            <th data-width="90" data-column="cproductline" rowspan="2">生产线</th>
+	            <th data-width="100" data-column="cmodelinvccode" rowspan="2">机种</th>
+	            <th data-width="100" data-column="cparts" rowspan="2">部品</th>
+	            <th data-width="130" data-column="icareertype" rowspan="2">事业区分</th>
+	            <th data-width="130" data-column="iinvestmentdistinction" rowspan="2">投资区分</th>
+	            <th data-width="150" data-column="cplanno" rowspan="2">投资NO.</th>
+	            <th data-width="130" data-column="citemname" rowspan="2">名称</th>
+	            <th data-width="100" data-column="isimport" rowspan="2">是否进口</th>
+	            <th data-width="25" data-column="iquantity" rowspan="2">数量</th>
+	            <th data-width="25" data-column="cunit" rowspan="2">单位</th>
+	            <th data-width="50" data-column="cassettype" rowspan="2">资产类别</th>
+	            <th data-width="50" data-column="cpurpose" rowspan="2">目的</th>
+	            <th data-width="50" data-column="ceffectamount" rowspan="2">效果金额</th>
+	            <th data-width="50" data-column="creclaimyear" rowspan="2">回收年限</th>
+	            <th data-width="50" data-column="clevel" rowspan="2">等级区分</th>
+	            <th data-width="50" data-column="ispriorreport" rowspan="2">是否需要做事情报告</th>
+	            <th data-width="50" data-column="cpaymentprogress" rowspan="2">实施阶段</th>
+	            <th data-width="50" data-column="itaxrate" rowspan="2">税率(%)</th>
+	            <th data-width="50" data-column="cedittype" rowspan="2">修订区分</th>
+	            <th data-width="50" data-column="iitemyear" rowspan="2">立项年份</th>
+	            <th data-width="50" data-column="isscheduled" rowspan="2">计划类型</th>
+	            <th data-width="50" data-column="iamounttotal" rowspan="2">预算总金额(含税)</th>
+	            <th data-width="50" data-column="cmemo" rowspan="2">备注</th>
+	            <th colspan="3">第一期</th>
+	            <th colspan="3">第二期</th>
+	            <th colspan="3">第三期</th>
+	            <th colspan="3">第四期</th>
+	            <th colspan="3">第五期</th>
+	            <th colspan="3">第六期</th>
+            </tr>
+            <tr>
+            	<th data-width="50" data-column="cperiodprogress1">日程</th>
+            	<th data-width="50" data-column="dperioddate1">日期</th>
+            	<th data-width="50" data-column="iamount1">金额</th>
+            	<th data-width="50" data-column="cperiodprogress2">日程</th>
+            	<th data-width="50" data-column="dperioddate2">日期</th>
+            	<th data-width="50" data-column="iamount2">金额</th>
+            	<th data-width="50" data-column="cperiodprogress3">日程</th>
+            	<th data-width="50" data-column="dperioddate3">日期</th>
+            	<th data-width="50" data-column="iamount3">金额</th>
+            	<th data-width="50" data-column="cperiodprogress4">日程</th>
+            	<th data-width="50" data-column="dperioddate4">日期</th>
+            	<th data-width="50" data-column="iamount4">金额</th>
+            	<th data-width="50" data-column="cperiodprogress5">日程</th>
+            	<th data-width="50" data-column="dperioddate5">日期</th>
+            	<th data-width="50" data-column="iamount5">金额</th>
+            	<th data-width="50" data-column="cperiodprogress6">日程</th>
+            	<th data-width="50" data-column="dperioddate6">日期</th>
+            	<th data-width="50" data-column="iamount6">金额</th>
+            </tr>
+            </thead>
+            <tbody id="datatr1"></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+   /*  function submitThisForm() {
+        var iautoids = jboltTableGetCheckedIds('jbolt_table_#(pageId)');
+        if (iautoids && iautoids.length > 0) {
+
+            var ids = iautoids.join(',');
+
+            #if(cdepcode || iproposalmid)
+                Ajax.post('/admin/proposalm/planData', { iinvestmentplanitemids: ids }, function (ret) {
+                    if (ret.state === 'ok') {
+                        // 追加禀议项目
+                        if (parent.insertRow(ret.data)) {
+                            // 关闭
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        }
+                    } else {
+                        LayerMsgBox.alert(ret.msg, 2);
+                    }
+                });
+            #else
+                // 新增禀议书，选择项目
+                var firstCdepcode;
+                // 获取勾选的记录
+                var rows = jboltTableGetCheckedDatas('jbolt_table_#(pageId)');
+
+                try {
+                    $.each(rows, function (idx, row) {
+                        if (idx === 0) {
+                            firstCdepcode = row.cdepcode;
+                        } else {
+                            if (firstCdepcode !== row.cdepcode) {
+                                throw new Error('选定的部门不同')
+                            }
+                        }
+                    });
+                } catch (e) {
+                    LayerMsgBox.alert(e.message, 2);
+                    return;
+                }
+
+                // 校验勾选的项目是否存在编辑状态的禀议书
+                Ajax.post('/admin/proposalm/checkPlanItem', {cdepcode: firstCdepcode, iinvestmentplanitemids: ids}, function (ret) {
+                    if (ret.state === 'ok') {
+                        // 跳转新增页面
+                        location.href = '/admin/proposalm/addInvestmentPlan?iinvestmentplanitemids=' + ids + '&cdepcode=' + firstCdepcode + '&_jb_rqtype_=dialog';
+                    } else {
+                        LayerMsgBox.alert(ret.msg, 2);
+                    }
+                });
+
+            #end
+        }
+    } */
+
+</script>
+#end

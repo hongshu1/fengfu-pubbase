@@ -1,0 +1,101 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto text-left">
+                <h1>禀议项目</h1>
+            </div>
+            <div class="col">
+                <form class="form-inline" id="proposaldForm_#(pageId)" onsubmit="return false;" method="post">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords" value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="proposaldRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iproposalmid}</td>
+<td>${data.isourceid}</td>
+<td>${data.itype}</td>
+<td>${data.citemname}</td>
+<td>${data.iquantity}</td>
+<td>${data.iprice}</td>
+<td>${data.iapplyamount}</td>
+<td>${data.inatsum}</td>
+<td>${data.cvencode}</td>
+<td>${data.ddemanddate}</td>
+<td>${data.cbudgetdepcode}</td>
+<td>${data.cmemo}</td>
+<td>${data.istatus}</td>
+</tr>
+{@/each}
+</textarea>
+
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="proposald_toolbar_#(pageId)">
+            <div class="btn-group" role="group" aria-label="btn-group">
+                <button data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst" data-title="新增禀议项目" data-url="admin/proposald/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+                <button data-openpage="dialog" data-area="700,800" data-handler="refreshJBoltTable" data-title="修改禀议项目" data-check-handler="jboltTableGetCheckedId" data-url="admin/proposald/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+                <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/proposald/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               data-url="admin/proposald/datas"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="proposaldForm_#(pageId)"
+               data-rowtpl="proposaldRowtpl_#(pageId)"
+               data-page="proposaldPage_#(pageId)"
+               data-pagesize="50"
+               data-toolbar="proposald_toolbar_#(pageId)"
+
+
+               data-fixed-columns-left="1,2,3"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-min-width="150" data-column="iProposalMid">禀议书ID</th>
+                <th data-width="150" data-column="iSourceId">来源ID</th>
+                <th data-width="150" data-column="iType">类型(1.原禀议 2.新增)</th>
+                <th data-width="150" data-column="cItemName">项目细项名称</th>
+                <th data-width="150" data-column="iQuantity">数量</th>
+                <th data-width="150" data-column="iPrice">单价</th>
+                <th data-width="150" data-column="iApplyAmount">申请金额(不含税)</th>
+                <th data-width="150" data-column="iNatSum">申请金额(含税)</th>
+                <th data-width="150" data-column="cVenCode">预定供货商</th>
+                <th data-width="150" data-column="dDemandDate">需求日</th>
+                <th data-width="150" data-column="cBudgetDepCode">预算对应部门</th>
+                <th data-width="150" data-column="cMemo">备注</th>
+                <th data-width="150" data-column="iStatus">申购状态: 0. 未申购 1. 已申购</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+#end
+

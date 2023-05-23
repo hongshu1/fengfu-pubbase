@@ -1,4 +1,4 @@
-package cn.jbolt.admin.wechat.menu;
+package cn.rjtech.admin.wechat.menu;
 
 import cn.jbolt.core.enumutil.JBoltEnum;
 

@@ -367,4 +367,27 @@ public class VendorClassService extends BaseService<VendorClass> {
                     .setMerges(JBoltExcelMerge.create("A", "C", 1, 1, "供应商分类"))
             );
     }
+
+    public List<JsTreeBean> getTreeList() {
+        List<JsTreeBean> treeBeans = new ArrayList<>();
+        // 根节点
+        treeBeans.add(new JsTreeBean(0, "#", "供应商分类档案", true, "root_opened", true));
+        appendSubTree(treeBeans, 1, "0");
+        return treeBeans;
+    }
+    private void appendSubTree(List<JsTreeBean> treeBeans, int grade, String pcode) {
+        for (Record row : getSubList(grade, pcode)) {
+            // 当前节点
+            treeBeans.add(new JsTreeBean(row.getStr("cvccode"), pcode, row.getStr("cvcname") + "(" + row.getStr("cvccode") + ")", row.getBoolean("bvcend") ? "node" : "default", null, true));
+            // 追加子节点
+            if (!row.getBoolean("bvcend")) {
+                appendSubTree(treeBeans, grade + 1, row.getStr("cvccode"));
+            }
+        }
+    }
+    private List<Record> getSubList(int grade, String pcode) {
+        Okv para = Okv.by("ivcgrade", grade)
+                .set("cvccode", pcode);
+        return dbTemplate("vendorclass.getSubList", para).find();
+    }     
 }

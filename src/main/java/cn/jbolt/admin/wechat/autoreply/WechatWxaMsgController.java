@@ -1,4 +1,4 @@
-package cn.jbolt.admin.wechat.autoreply;
+package cn.rjtech.admin.wechat.autoreply;
 
 import com.jfinal.wxaapp.api.WxaMessageApi;
 import com.jfinal.wxaapp.jfinal.WxaMsgController;

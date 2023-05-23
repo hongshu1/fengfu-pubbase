@@ -1,9 +1,9 @@
-package cn.jbolt.admin.wechat.config;
+package cn.rjtech.admin.wechat.config;
 
 import cn.hutool.core.io.FileUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
-import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoType;
+import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoType;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.WechatConfig;

@@ -1,0 +1,517 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page vh-100" data-key="#(pmkey)" id="jbolttable_mspage_#(pageId)">
+    <div class="jbolt_page_title">
+        <form onsubmit="return false;" id="investmentPlanAddForm" action="#(action)" method="post">
+            <div class="form-group row text-left">
+            	<input type="hidden" value="#(periodRc.iautoid)" name="investmentPlan.iperiodid"/>
+                <label class="col-1 col-form-label">部门</label>
+                <div class="col-2">
+                    <select class="form-control"
+                   			id="cdepcodeSelect_#(pageId)"
+                            data-rule="required"
+                            name="investmentPlan.cdepcode"
+                            data-select-type="select2"
+                            data-autoload
+                            data-tips="请选择u8部门"
+                            data-url="admin/u8department/treedatas"
+                            data-text="=请选择u8部门="
+                            data-text-attr="cdepname"
+                            data-value-attr="cdepcode"
+                            data-setvalueto="cdepcode"
+                            data-value=""
+                            data-width="200">
+                    </select>
+                </div>
+                <label class="col-1 col-form-label">预算年度</label>
+                <div class="col-2">
+                    <input id="ibudgetyear_#(pageId)" type="text" style="width:200px" class="form-control" data-rule="required" placeholder="请设置年份" data-tips="请设置年份" maxlength="10"
+                          value="#(periodRc.ibudgetyear)" disabled>
+                    <input type="hidden" name="investmentPlan.ibudgetyear" value="#(periodRc.ibudgetyear)"/>
+                </div>
+                <label class="col-1 col-form-label">预算类型</label>
+                <div class="col-2">
+	                <select class="form-control"
+	                  		data-select-type="select2"
+	                        data-autoload
+	                        data-rule="required"
+	                        data-tips="预算类型"
+	                        data-url="admin/dictionary/options?key=investment_budget_type"
+	                        data-text="=预算类型="
+	                        data-text-attr="name"
+	                        data-value-attr="sn"
+	                        name="investmentPlan.ibudgettype"
+	                        data-value=""
+	                        id="ibudgettype_#(pageId)"
+	                        data-select="#(periodRc.ibudgettype)"
+	                        data-width="200"
+	                        disabled
+	                        >
+	                </select>
+	                <input type="hidden" name="investmentPlan.ibudgettype" value="#(periodRc.ibudgettype)"/>
+                </div>
+                <label class="col-1 col-form-label">备注</label>
+                <div class="col-2">
+                    <input type="text" style="width:200px" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="investmentPlan.cmemo" value="">
+                </div>
+            </div>
+            <input id="tabledatas_#(pageId)" name="tabledatas" type="hidden" value="" />
+        </form>
+    </div>
+	<!-- <div class="jbolt_page_title">
+    	<div class="row">
+			<div class="col-md-auto">
+				<h1><i class="fa fa-file-text-o"></i>投资计划项目</h1>
+			</div>
+		</div>
+	</div> -->
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_investmentPlanAddForm_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+			<td>${data.cinvestmenttypedesc}</td>
+            <td>${data.cproductline}</td>
+            <td>${data.cmodelinvccode}</td>
+            <td>${data.cparts}</td>
+            <td>${data.careertypedesc}</td>
+            <td>${data.cinvestmentdistinctiondesc}</td>
+			<td>${data.cplanno}</td>
+			<td>${data.citemname}</td>
+            <td>$${data.isimport|isLargeAmountExpense}</td>
+            <td>${data.iquantity}</td>
+            <td>${data.cunit}</td>
+			<td>${data.cassettypedesc}</td>
+			<td>${data.cpurpose}</td>
+			<td>${data.ceffectamount}</td>
+			<td>${data.creclaimyear}</td>
+			<td>${data.clevel}</td>
+			<td>$${data.ispriorreport|isLargeAmountExpense}</td>
+			<td>${data.cpaymentprogressdesc}</td>
+			<td>${data.itaxrate|removeNumberEndZero}</td>
+			<td>${data.cedittypedesc}</td>
+			<td>${data.citemtypedesc}</td>
+			<td>${data.iitemyear}</td>
+			<td>${data.cmemo}</td>
+			<td>${data.cperiodprogressdesc1}</td>
+			<td>${data.dperioddate1|date_ym}</td>
+			<td>${data.iamount1}</td>
+			<td>${data.cperiodprogressdesc2}</td>
+			<td>${data.dperioddate2|date_ym}</td>
+			<td>${data.iamount2}</td>
+			<td>${data.cperiodprogressdesc3}</td>
+			<td>${data.dperioddate3|date_ym}</td>
+			<td>${data.iamount3}</td>
+			<td>${data.cperiodprogressdesc4}</td>
+			<td>${data.dperioddate4|date_ym}</td>
+			<td>${data.iamount4}</td>
+			<td>${data.cperiodprogressdesc5}</td>
+			<td>${data.dperioddate5|date_ym}</td>
+			<td>${data.iamount5}</td>
+			<td>${data.cperiodprogressdesc6}</td>
+			<td>${data.dperioddate6|date_ym}</td>
+			<td>${data.iamount6}</td>
+            </tr>
+            {@/each}
+        </script>
+		
+        <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 增行</button>
+                <button onclick="jboltTableRemoveCheckedRow(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                <button data-openpage="dialog" data-check-handler="addExportUnfinishCheckHandler" data-area="100%,100%"  data-title="导入未完成项目"  data-url="admin/investmentplan/importUnfinishInvestmentPlanItem/" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 导入未完成项目</button>
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	            上传 & 导入
+	        	</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+	                <a class="dropdown-item btn btn-outline-primary btn-sm" onclick="investmentPlanAddDatasExport()"><i class="fa fa-file-excel-o mr-2"></i> 导出</a>
+	                <div class="j_upload_file_box "
+		                 data-name="file"
+		                 data-btn-class="dropdown-item btn btn-outline-primary btn-sm"
+		                 data-placeholder="上传导入"
+		                 data-confirm="确认导入数据？"
+		                 data-accept="excel"
+		                 data-maxsize="20480"
+		                 data-handler="uploadFile"
+		                 data-upload-success-handler="uploadHandler"
+		                 data-url="/admin/investmentplan/importTableInvestmentPlanTpl">
+		            </div>
+	            </div>
+	            <a hidden id="investmentPlanAddExportBtn" data-downloadbtn href="admin/investmentplan/exportTableInvestmentPlanDatas" data-form="investmentPlanAddForm" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> 导出</a>
+	            <button onclick="submitThisForm()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 保存</button>
+	            <button data-ajaxbtn data-handler="closeHandler()" data-url="admin/investmentplan/submitAudit/" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
+	            <button onclick="closeHandler()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 关闭</button>
+                <!-- <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button> -->
+            </div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+               data-jbolttable
+               id="jbolt_Table_#(pageId)"
+               data-column-resize="true"
+               data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+               data-rowtpl="jboltTable_investmentPlanAddForm_#(pageId)"
+               data-editable="true"
+               data-editable-option="getEditableTableOptions_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+               data-toolbar="jbolt_table_toolbar_#(pageId)"
+               data-height="fill"
+        >
+            <thead class="fw_normal">
+            <tr>
+	            <th data-width="100" data-column="iinvestmenttype" rowspan="2">投资类型</th>
+	            <th data-width="90" data-column="cproductline" rowspan="2">生产线</th>
+	            <th data-width="100" data-column="cmodelinvccode" rowspan="2">机种</th>
+	            <th data-width="100" data-column="cparts" rowspan="2">部品</th>
+	            <th data-width="130" data-column="icareertype" rowspan="2">事业区分</th>
+	            <th data-width="130" data-column="iinvestmentdistinction" rowspan="2">投资区分</th>
+	            <th data-width="130" data-column="cplanno" rowspan="2">投资NO.</th>
+	            <th data-width="130" data-column="citemname" rowspan="2">名称</th>
+	            <th data-width="100" data-column="isimport" rowspan="2">是否进口</th>
+	            <th data-width="25" data-column="iquantity" rowspan="2">数量</th>
+	            <th data-width="25" data-column="cunit" rowspan="2">单位</th>
+	            <th data-width="50" data-column="cassettype" rowspan="2">资产类别</th>
+	            <th data-width="50" data-column="cpurpose" rowspan="2">目的</th>
+	            <th data-width="50" data-column="ceffectamount" rowspan="2">效果金额</th>
+	            <th data-width="50" data-column="creclaimyear" rowspan="2">回收年限</th>
+	            <th data-width="50" data-column="clevel" rowspan="2">等级区分</th>
+	            <th data-width="50" data-column="ispriorreport" rowspan="2">是否需要做事情报告</th>
+	            <th data-width="50" data-column="cpaymentprogress" rowspan="2">实施阶段</th>
+	            <th data-width="50" data-column="itaxrate" rowspan="2">税率(%)</th>
+	            <th data-width="50" data-column="cedittype" rowspan="2">修订区分</th>
+	            <th data-width="50" data-column="citemtype" rowspan="2">类型</th>
+	            <th data-width="50" data-column="iitemyear" rowspan="2">立项年份</th>
+	            <th data-width="50" data-column="cmemo" rowspan="2">备注</th>
+	            <th colspan="3">第一期</th>
+	            <th colspan="3">第二期</th>
+	            <th colspan="3">第三期</th>
+	            <th colspan="3">第四期</th>
+	            <th colspan="3">第五期</th>
+	            <th colspan="3">第六期</th>
+            </tr>
+            <tr>
+            	<th data-width="50" data-column="cperiodprogress1">日程</th>
+            	<th data-width="50" data-column="dperioddate1">日期</th>
+            	<th data-width="50" data-column="iamount1">金额</th>
+            	<th data-width="50" data-column="cperiodprogress2">日程</th>
+            	<th data-width="50" data-column="dperioddate2">日期</th>
+            	<th data-width="50" data-column="iamount2">金额</th>
+            	<th data-width="50" data-column="cperiodprogress3">日程</th>
+            	<th data-width="50" data-column="dperioddate3">日期</th>
+            	<th data-width="50" data-column="iamount3">金额</th>
+            	<th data-width="50" data-column="cperiodprogress4">日程</th>
+            	<th data-width="50" data-column="dperioddate4">日期</th>
+            	<th data-width="50" data-column="iamount4">金额</th>
+            	<th data-width="50" data-column="cperiodprogress5">日程</th>
+            	<th data-width="50" data-column="dperioddate5">日期</th>
+            	<th data-width="50" data-column="iamount5">金额</th>
+            	<th data-width="50" data-column="cperiodprogress6">日程</th>
+            	<th data-width="50" data-column="dperioddate6">日期</th>
+            	<th data-width="50" data-column="iamount6">金额</th>
+            </tr>
+            </thead>
+            <tbody id="datatr1"></tbody>
+        </table>
+    </div>
+
+</div>
+#end
+#define js()
+<script>
+    /* changeParentLayerDialogOkBtnTitle("保存"); */
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+    function submitThisForm(){
+    	var index = LayerMsgBox.loading('执行中...');
+    	jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+
+    //获得配置参数
+    function getEditableTableOptions_#(pageId)(){
+        var editableTableOptions={
+            trigger:"click",
+            // 初始行数
+            initRowCount:0,
+            // 限制最大数 默认30
+            submit:{
+                withForm:["investmentPlanAddForm"],
+                type:"all",//cell|all
+                //params:{"orderId":3},//携带其他额外参数
+                url:"admin/investmentplan/saveTableByAdd",
+                success:function(res){
+                	LayerMsgBox.success("提交成功",600,function(){
+                        /* parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        window.parent.refreshJBoltTable(); */
+                		location.href = '/admin/investmentplan/edit/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                    });
+                } 
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid"
+                },
+                iinvestmenttype: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=investment_type",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=投资类型=',
+                    required:true
+                },
+                cproductline: {
+                    type:"input",
+                    submitAttr:"cproductline",
+                    maxLength:50
+                },
+                cmodelinvccode: {
+                    type:"input",
+                    submitAttr:"cmodelinvccode",
+                    maxLength:50
+                },
+                cparts: {
+                    type:"input",
+                    submitAttr:"cparts",
+                    maxLength:50
+                },
+                icareertype: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=career_type",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=事业区分=',
+                    required:true
+                },
+                iinvestmentdistinction: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=investment_distinction",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=投资区分=',
+                    required:true
+                },
+                citemname: {
+                    type:"input",
+                    submitAttr:"citemname",
+                    maxLength:50,
+                    required:true
+                },
+                isimport: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=is_import",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=是否进口=',
+                    required:true
+                },
+                iquantity:{
+                    type:"amount",
+                    submitAttr:"iquantity",
+                    rule:"pint",
+                    required:true
+                },
+                cunit: {
+                    type:"input",
+                    submitAttr:"cunit",
+                    maxLength:50
+                },
+                cassettype: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=asset_type",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=资产类别=',
+                    required:true
+                },
+                cpurpose: {
+                    type:"input",
+                    submitAttr:"cpurpose",
+                    maxLength:50
+                },
+                ceffectamount: {
+                    type:"input",
+                    submitAttr:"ceffectamount",
+                    maxLength:50
+                },
+                creclaimyear: {
+                    type:"input",
+                    submitAttr:"creclaimyear",
+                    maxLength:50
+                },
+                clevel: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=level",
+                    valueAttr: 'name',
+                    textAttr: 'name',
+                    placeholder:'=等级区分=',
+                    required:true
+                },
+                ispriorreport: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=is_import",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=是否需要做事前报告=',
+                    required:true
+                },
+                cpaymentprogress: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=payment_progress",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=实施阶段=',
+                    required:true
+                },
+                itaxrate: {
+                    type:"input_number",
+                    submitAttr:"itaxrate",
+                    maxLength: 5,
+                    rule:"pzint",
+                    min:1,
+                    max:100,
+                    placeholder:"=税率=",
+                    required:true
+                },
+                cedittype: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=edit_type",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=修订区分=',
+                    required:true
+                },
+                iitemyear: {
+                    type:"year",
+                    submitAttr:"iitemyear",
+                    maxLength:50
+                },
+                citemtype: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=investment_item_type",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=类型=',
+                    required:true
+                },
+                cmemo: {
+                    type:"input",
+                    submitAttr:"cmemo",
+                    maxLength:50
+                },
+                cperiodprogress1: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=period_progress",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=日程='
+                },
+                dperioddate1:{
+					type:"date"
+				},
+                iamount1:{
+                    type:"amount",
+                    placeholder:'金额'
+                },
+                cperiodprogress2: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=period_progress",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=日程='
+                },
+                dperioddate2:{
+					type:"date"
+				},
+                iamount2:{
+                    type:"amount",
+                    placeholder:'金额'
+                },
+                cperiodprogress3: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=period_progress",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=日程='
+                },
+                dperioddate3:{
+					type:"date"
+				},
+                iamount3:{
+                    type:"amount",
+                    placeholder:'金额'
+                },
+                cperiodprogress4: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=period_progress",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=日程='
+                },
+                dperioddate4:{
+					type:"date"
+				},
+                iamount4:{
+                    type:"amount",
+                    placeholder:'金额'
+                },
+                cperiodprogress5: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=period_progress",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=日程='
+                },
+                dperioddate5:{
+					type:"date"
+				},
+                iamount5:{
+                    type:"amount",
+                    placeholder:'金额'
+                },
+                cperiodprogress6: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=period_progress",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=日程='
+                },
+                dperioddate6:{
+					type:"date"
+				},
+                iamount6:{
+                    type:"amount",
+                    placeholder:'金额'
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+	function addExportUnfinishCheckHandler(ele){
+		var cdepcodeSelect_#(pageId) = $("#cdepcodeSelect_#(pageId)").val();
+		var ibudgetyear_#(pageId) = $("#ibudgetyear_#(pageId)").val();
+		var ibudgettype_#(pageId) = $("#ibudgettype_#(pageId)").val();
+		ele.data("paras",{cdepcode:cdepcodeSelect_#(pageId),ibudgetyear:ibudgetyear_#(pageId),ibudgettype:ibudgettype_#(pageId)})
+		return;
+	}
+    function investmentPlanAddDatasExport(){
+    	var tableDatas_#(pageId) = jboltTableGetAllDatas('#jbolt_Table_#(pageId)');
+		$("#tabledatas_#(pageId)").val(JSON.stringify(tableDatas_#(pageId)));
+		$("#investmentPlanAddExportBtn").click();
+    }
+
+    function insertUnfinishInvestmentPlanItem(datas){
+    	jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
+    }
+
+    function uploadHandler(uploader,type,fileInput,res){
+    	jboltTableClear("#jbolt_Table_#(pageId)");
+    	jboltTableInsertRow('#jbolt_Table_#(pageId)', res.list);
+    }
+    function closeHandler(){
+    	parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+</script>
+
+#end
+

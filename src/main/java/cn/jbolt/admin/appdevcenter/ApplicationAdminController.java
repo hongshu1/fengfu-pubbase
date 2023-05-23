@@ -1,4 +1,4 @@
-package cn.jbolt.admin.appdevcenter;
+package cn.rjtech.admin.appdevcenter;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;

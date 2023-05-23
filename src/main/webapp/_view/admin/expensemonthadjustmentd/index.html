@@ -1,0 +1,91 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto text-left">
+	<h1>费用月度实绩调整明细</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="expenseMonthAdjustmentdForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="expenseMonthAdjustmentdRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iadjustmentmid}</td>
+<td>${data.cdepcode}</td>
+<td>${data.chighestsubjectcode}</td>
+<td>${data.clowestsubjectcode}</td>
+<td>${data.iamount}</td>
+<td>${data.cexplanation}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="expenseMonthAdjustmentd_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="700,800"  data-handler="jboltTablePageToFirst" data-title="新增费用月度实绩调整明细"  data-url="admin/expensemonthadjustmentd/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="700,800"  data-handler="refreshJBoltTable" data-title="修改费用月度实绩调整明细" data-check-handler="jboltTableGetCheckedId" data-url="admin/expensemonthadjustmentd/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/expensemonthadjustmentd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-width="auto"
+data-url="admin/expensemonthadjustmentd/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="expenseMonthAdjustmentdForm_#(pageId)"
+data-rowtpl="expenseMonthAdjustmentdRowtpl_#(pageId)"
+data-page="expenseMonthAdjustmentdPage_#(pageId)"
+data-pagesize="50"
+data-toolbar="expenseMonthAdjustmentd_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+>
+<thead class="fw-normal">
+<tr>
+	<th data-width="60">序号</th>
+	<th data-min-width="150" data-column="iAdjustmentMId">费用月度实绩调整主表ID</th>
+	<th data-width="150" data-column="cDepCode">部门编码</th>
+	<th data-width="150" data-column="cHighestSubjectCode">科目大类</th>
+	<th data-width="150" data-column="cLowestSubjectCode">明细科目</th>
+	<th data-width="150" data-column="iAmount">调整金额</th>
+	<th data-width="150" data-column="cExplanation">调整说明</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+

@@ -1,0 +1,137 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto text-left">
+	<h1>投资计划项目</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="investmentPlanItemForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="investmentPlanItemRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iplanid}</td>
+<td>${data.cplanno}</td>
+<td>${data.iprojectid}</td>
+<td>${data.iinvestmenttype}</td>
+<td>${data.icareertype}</td>
+<td>${data.iinvestmentdistinction}</td>
+<td>${data.cassettype}</td>
+<td>${data.citemname}</td>
+<td><img data-switchbtn data-confirm="确定切换是否进口？" data-value="${data.isimport}"  data-handler="refreshJBoltTable"  data-url="admin/investmentplanitem/toggleIsimport/${data.id}"/></td>
+<td>${data.cproductline}</td>
+<td>${data.cpurpose}</td>
+<td>${data.ceffectamount}</td>
+<td>${data.creclaimyear}</td>
+<td>${data.clevel}</td>
+<td><img data-switchbtn data-confirm="确定切换是否做事前报告？" data-value="${data.ispriorreport}"  data-handler="refreshJBoltTable"  data-url="admin/investmentplanitem/toggleIspriorreport/${data.id}"/></td>
+<td>${data.itotalamountplan}</td>
+<td>${data.itotalamountactual}</td>
+<td>${data.itotalamountdiffreason}</td>
+<td>${data.iyeartotalamountplan}</td>
+<td>${data.iyeartotalamountactual}</td>
+<td>${data.iyeartotalamountdiffreason}</td>
+<td>${data.cmodelinvccode}</td>
+<td>${data.cparts}</td>
+<td>${data.iquantity}</td>
+<td>${data.cunit}</td>
+<td>${data.dcreatetime}</td>
+<td>${data.dupdatetime}</td>
+<td>${data.icreateby}</td>
+<td>${data.iupdateby}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="investmentPlanItem_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="700,800"  data-handler="jboltTablePageToFirst" data-title="新增投资计划项目"  data-url="admin/investmentplanitem/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="700,800"  data-handler="refreshJBoltTable" data-title="修改投资计划项目" data-check-handler="jboltTableGetCheckedId" data-url="admin/investmentplanitem/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/investmentplanitem/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-width="auto"
+data-url="admin/investmentplanitem/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="investmentPlanItemForm_#(pageId)"
+data-rowtpl="investmentPlanItemRowtpl_#(pageId)"
+data-page="investmentPlanItemPage_#(pageId)"
+data-pagesize="50"
+data-toolbar="investmentPlanItem_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+>
+<thead class="fw-normal">
+<tr>
+	<th data-width="60">序号</th>
+	<th data-min-width="150" data-column="iPlanId">投资计划ID</th>
+	<th data-width="150" data-column="cPlanNo">投资计划号</th>
+	<th data-width="150" data-column="iProjectId">项目档案ID</th>
+	<th data-width="150" data-column="iInvestmentType">投资类型</th>
+	<th data-width="150" data-column="iCareerType">事业类型</th>
+	<th data-width="150" data-column="iInvestmentDistinction">投资区分</th>
+	<th data-width="150" data-column="cAssetType">资产类别</th>
+	<th data-width="150" data-column="cItemName">名称</th>
+	<th data-width="150" data-column="isImport">是否进口</th>
+	<th data-width="150" data-column="cProductLine">生产线</th>
+	<th data-width="150" data-column="cPurpose">目的</th>
+	<th data-width="150" data-column="cEffectAmount">效果金额</th>
+	<th data-width="150" data-column="cReclaimYear">回收年限</th>
+	<th data-width="150" data-column="cLevel">等级</th>
+	<th data-width="150" data-column="isPriorReport">是否做事前报告</th>
+	<th data-width="150" data-column="iTotalAmountPlan">项目总金额-计划</th>
+	<th data-width="150" data-column="iTotalAmountActual">项目总金额-实绩/预测/修订</th>
+	<th data-width="150" data-column="iTotalAmountDiffReason">项目总金额-差异原因</th>
+	<th data-width="150" data-column="iYearTotalAmountPlan">2022年总金额-计划</th>
+	<th data-width="150" data-column="iYearTotalAmountActual">2022年总金额-实绩/预测/修订</th>
+	<th data-width="150" data-column="iYearTotalAmountDiffReason">2022年总金额-差异原因</th>
+	<th data-width="150" data-column="cModelInvcCode">机种</th>
+	<th data-width="150" data-column="cParts">部品</th>
+	<th data-width="150" data-column="iQuantity">数量</th>
+	<th data-width="150" data-column="cUnit">单位</th>
+	<th data-width="150" data-column="dCreateTime">创建时间</th>
+	<th data-width="150" data-column="dUpdateTime">更新时间</th>
+	<th data-width="150" data-column="iCreateBy">创建人</th>
+	<th data-width="150" data-column="iUpdateBy">更新人</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+

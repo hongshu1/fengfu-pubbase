@@ -1,4 +1,4 @@
-package cn.jbolt.admin.wechat.article;
+package cn.rjtech.admin.wechat.article;
 
 import cn.jbolt.common.model.WechatArticle;
 import cn.jbolt.core.service.base.JBoltBaseService;

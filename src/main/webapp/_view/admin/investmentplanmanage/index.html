@@ -1,0 +1,157 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+		<div class="col-md-auto text-left">
+			<form class="form-inline" id="investmentPlanForm_#(pageId)"   onsubmit="return false;" method="post">
+				<input type="text" class="form-control"
+                           data-date
+                           data-type="year"
+                           placeholder="=预算年度="
+                           name="ibudgetyear">
+                <select class="form-control"
+                		data-select-type="select2"
+                        name="cdepcode"
+                        data-autoload
+                        data-tips="u8部门"
+                        data-url="admin/u8department/treedatas"
+                        data-text="=u8部门="
+                        data-text-attr="cdepname"
+                        data-value-attr="cdepcode"
+                        data-setvalueto="cdepcode"
+                        data-value=""
+                        data-width="200">
+                </select>
+                <select class="form-control"
+                    		data-select-type="select2"
+                            name="ibudgettype"
+                            data-autoload
+                            data-tips="预算类型"
+                            data-url="admin/dictionary/options?key=investment_budget_type"
+                            data-text="=预算类型="
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-value=""
+                            data-width="200">
+                </select>
+                <select class="form-control"
+                    		data-select-type="select2"
+                            name="ieffectivestatus"
+                            data-autoload
+                            data-tips="生效状态"
+                            data-url="admin/dictionary/options?key=effective_status"
+                            data-text="=生效状态="
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-value=""
+                            data-width="200">
+                </select>                
+                <input name="iauditstatus" type="hidden" value="1,2" />
+				<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="investmentPlanRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cdepcode}</td>
+<td>${data.cdepname}</td>
+<td>$${data.ibudgettype|BudgetType}</td>
+<td>${data.ibudgetyear}</td>
+<td>$${data.iauditstatus|AuditStatus}</td>
+<td>${data.daudittime|date_ymd}</td>
+<td>$${data.ieffectivestatus|EffectiveStatus}</td>
+<td>${data.dcreatetime|date_ymd}</td>
+<td>${data.cusername}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="investmentPlan_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<button data-dialogbtn data-handler="refreshPjaxContainer" data-area="100%,100%" data-title="投资计划详情" data-check-handler="jboltTableGetCheckedId" data-url="admin/investmentplanmanage/detail/" class="btn btn-outline-primary btn-sm"  data-btn="close"><i class="fa fa-edit"></i>详情</button>
+		<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
+                        data-check-handler="getIdIfValid_#(pageId)" data-url="admin/verifyprogress/findprocess?cobjecttype=02&iobjectid="
+                        class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
+        <button data-ajaxbtn data-area="700,400" data-title="生效" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/investmentplanmanage/effect/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 生效</button>
+        <button data-ajaxbtn data-area="700,400" data-title="作废" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/investmentplanmanage/cancle/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 作废</button>
+		<button data-ajaxbtn data-handler="jboltTableRefresh(this)" data-check-handler="jboltTableGetCheckedId" data-url="admin/investmentplan/submitAudit/" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 重启审批流</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+id="jbolt_table_#(pageId)"
+data-ajax="true"
+data-width="auto"
+data-url="admin/investmentplanmanage/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="investmentPlanForm_#(pageId)"
+data-rowtpl="investmentPlanRowtpl_#(pageId)"
+data-page="investmentPlanPage_#(pageId)"
+data-pagesize="50"
+data-toolbar="investmentPlan_toolbar_#(pageId)"
+data-fixed-columns-left="1,2,3"
+data-row-dblclick-active = "true"
+data-row-dblclick-handler = "jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead class="fw-normal">
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="150" data-column="cdepcode">部门编码</th>
+	<th data-width="150" data-column="cdepname">部门名称</th>
+	<th data-width="150" data-column="ibudgettype">预算类型</th>
+	<th data-width="150" data-column="ibudgetyear">预算年份</th>
+	<th data-width="150" data-column="iauditstatus">审核状态</th>
+	<th data-width="150" data-column="daudittime">审核时间</th>
+	<th data-width="150" data-column="ieffectivestatus">生效状态</th>
+	<th data-width="150" data-column="dcreatetime">创建时间</th>
+	<th data-width="150" data-column="cusername">创建人</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+	<script type="text/javascript">
+		function getIdIfValid_#(pageId)(ele) {
+		    var row = jboltTableGetCheckedData(ele);
+		    if (row.iauditstatus > 0 && row.iauditstatus < 3 ) {
+		        return row.iautoid;
+		    }
+		    LayerMsgBox.alert('您选择的记录非审核中的单据！', 2);
+		    return false;
+		}
+	    function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+	    	$(tempTr1).data('url', 'admin/investmentplanmanage/detail/' + rowData.iautoid)
+	    			.data('area', '100%,100%')
+	    			.data('btn', 'close')
+	    			.data('title', '费用预算详情');
+
+	    	DialogUtil.openBy(tempTr1);
+	    }    
+	</script>
+#end

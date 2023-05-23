@@ -48,5 +48,7 @@ public class ExtendUploadFolder extends JBoltUploadFolder {
      */
     public static final String KEEPINGRECORD_DRAWING_IMAGE = "extend" + SEPARATOR + "keepingrecord" + SEPARATOR + "editor";
 
+    public static final String PROPOSAL = "proposal" +  SEPARATOR + "file";
 
+	public static final String PURCHASEM_FILES = "purchasem" + SEPARATOR + "files";
 }

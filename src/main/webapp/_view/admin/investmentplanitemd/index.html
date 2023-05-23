@@ -1,0 +1,288 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto text-left">
+	</div>
+	<div class="col">
+		<form class="form-inline" id="investmentPlanItemdForm_#(pageId)"   onsubmit="return false;" method="post">
+			<select class="form-control"
+					data-select-type="select2"
+					name="cdepcode"
+					data-autoload
+					data-tips="u8部门"
+					data-url="admin/u8department/treedatas"
+					data-text="=u8部门="
+					data-text-attr="cdepname"
+					data-value-attr="cdepcode"
+					data-setvalueto="cdepcode"
+					data-value=""
+					data-width="200">
+			</select>
+			<input type="text" class="form-control"
+				   data-date
+				   data-type="year"
+				   placeholder="=预算年度="
+				   name="ibudgetyear">
+			<select class="form-control"
+					data-select-type="select2"
+					name="ibudgettype"
+					data-autoload
+					data-tips="预算类型"
+					data-url="admin/dictionary/options?key=investment_budget_type"
+					data-text="=预算类型="
+					data-text-attr="name"
+					data-value-attr="sn"
+					data-value=""
+					data-width="200">
+			</select>
+			<select class="form-control"
+					data-url="admin/dictionary/options?key=audit_status"
+					name="iauditstatus"
+					data-text-attr="name"
+					data-value-attr="sn"
+					data-autoload
+					data-text="=审核状态="
+			></select>
+		<input type="text" autocomplete="off"  class="form-control"  placeholder=" ==投资NO==" name="cplanno" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="==项目编码/项目名称==" name="cproject" value="" />
+			<select class="form-control"
+					data-url="admin/dictionary/options?key=investment_type"
+					name="iinvestmenttype"
+					data-text-attr="name"
+					data-value-attr="sn"
+					data-autoload
+					data-text="=投资类型="
+			></select>
+			<select class="form-control"
+					data-url="admin/dictionary/options?key=career_type"
+					name="careertype"
+					data-text-attr="name"
+					data-value-attr="sn"
+					data-autoload
+					data-text="=事业类型="
+			></select>
+			<select class="form-control"
+					data-url="admin/dictionary/options?key=investment_distinction"
+					name="iinvestmentdistinction"
+					data-text-attr="name"
+					data-value-attr="sn"
+					data-autoload
+					data-text="=投资区分="
+			></select>
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="==项目细项名称==" name="citemname" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="investmentPlanItemdRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cdepcode}</td>
+<td>${data.cdepname}</td>
+<td>$${data.ibudgettype|BudgetType}</td>
+<td>${data.ibudgetyear}</td>
+<td>$${data.iauditstatus|auditstate}</td>
+<td>${data.iinvestmenttype == I1 ? '新机种投资':'一般投资'}</td>
+<td>${data.cprojectcode}</td>
+<td>${data.cprojectname}</td>
+<td>${data.cproductline}</td>
+<td>${data.cmodelinvccode}</td>
+<td>${data.cparts}</td>
+<td>$${data.icareertype|careertype}</td>
+<td>$${data.iinvestmentdistinction|investmentdistinction}</td>
+<td>${data.cplanno}</td>
+<td>${data.citemname}</td>
+<td>$${data.isimport|simport}</td>
+<td>${data.iquantity}</td>
+<td>${data.cunit}</td>
+<td>$${data.cassettype |assettype}</td>
+<td>${data.cpurpose}</td>
+<td>${data.ceffectamount}</td>
+<td>${data.creclaimyear}</td>
+<td>${data.clevel}</td>
+<td>$${data.ispriorreport|spriorreport}</td>
+<td>$${data.cpaymentprogress|paymentprogress}</td>
+<td>$${data.itaxrate}</td>
+<td>${data.itotalamountplan}</td>
+<td>${data.itotalamountactual}</td>
+<td>${data.itotalamountdiff}</td>
+<td>${data.itotalamountdiffreason}</td>
+<td>${data.iyeartotalamountplan}</td>
+<td>${data.iyeartotalamountactual}</td>
+<td>${data.iyeartotalamountdiff}</td>
+<td>${data.iyeartotalamountdiffreason}</td>
+<td>$${data.cedittype|edittype}</td>
+<td>${data.cmemo}</td>
+<td>${data.iitemyear}</td>
+<td>$${data.cperiodprogress1|periodprogress}</td>
+<td>${data.dperioddate1}</td>
+<td>${data.iamount1}</td>
+<td>$${data.cperiodprogress2|periodprogress}</td>
+<td>${data.dperioddate2}</td>
+<td>${data.iamount2}</td>
+<td>$${data.cperiodprogress3|periodprogress}</td>
+<td>${data.dperioddate3}</td>
+<td>${data.iamount3}</td>
+<td>$${data.cperiodprogress4|periodprogress}</td>
+<td>${data.dperioddate4}</td>
+<td>${data.iamount4}</td>
+<td>$${data.cperiodprogress5|periodprogress}</td>
+<td>${data.dperioddate5}</td>
+<td>${data.iamount5}</td>
+<td>$${data.cperiodprogress6|periodprogress}</td>
+<td>${data.dperioddate6}</td>
+<td>${data.iamount6}</td>
+
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="investmentPlanItemd_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+<!--		<button data-openpage="dialog" data-area="700,800"  data-handler="jboltTablePageToFirst" data-title="新增投资计划项目明细"  data-url="admin/investmentplanitemd/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>-->
+<!--		<button data-openpage="dialog" data-area="700,800"  data-handler="refreshJBoltTable" data-title="修改投资计划项目明细" data-check-handler="jboltTableGetCheckedId" data-url="admin/investmentplanitemd/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>-->
+<!--		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/investmentplanitemd/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>-->
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+	<div class="btn-group pull-right" role="group" aria-label="btn-group">
+		<a class="btn btn-outline-info" data-openpage="dialog" data-area="70%,70%" href="/admin/investmentplanitemd/dowloadTplPage" data-close-handler="refreshJBoltTable"><i class="fa fa-download"></i> 导出Excel</a>
+		<a  class="btn btn-outline-info" data-openpage="dialog" data-area="100%,100%" href="/admin/investmentplanitemd/dowloadPrint" data-close-handler="refreshJBoltTable" ><i class="fa fa-edit"></i> 打印</a>
+		<!--		<button class="btn btn-outline-info" data-downloadbtn data-check-handler="jboltTableGetCheckedIds" data-url="admin/expensebudgetitemd/download?iautoids="><i class="fa fa-download"></i> 导出Excel</button>-->
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-width="auto"
+data-url="admin/investmentplanitemd/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="investmentPlanItemdForm_#(pageId)"
+data-rowtpl="investmentPlanItemdRowtpl_#(pageId)"
+data-page="investmentPlanItemdPage_#(pageId)"
+data-pagesize="50"
+data-toolbar="investmentPlanItemd_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+>
+<thead class="fw-normal">
+<tr>
+	<th data-width="60" rowspan="3">序号</th>
+	<th data-min-width="150" data-column="cdepcode" rowspan="3">部门编码</th>
+	<th data-width="150" data-column="cdepname" rowspan="3">部门名称</th>
+	<th data-width="150" data-column="ibudgettype" rowspan="3">预算类型</th>
+	<th data-width="150" data-column="ibudgetyear" rowspan="3">预算年度</th>
+	<th data-width="150" data-column="iauditstatus" rowspan="4">审核状态</th>
+	<th colspan="1">投资类型</th>
+	<th data-width="150" data-column="cprojectcode" rowspan="3">项目编码</th>
+	<th data-width="150" data-column="cprojectname" rowspan="3">项目名称</th>
+	<th data-width="150" data-column="cproductline" rowspan="3">生产线</th>
+	<th data-width="150" data-column="cmodelinvccode" rowspan="3">机种</th>
+	<th data-width="150" data-column="cparts" rowspan="3">部品</th>
+	<th colspan="1">事业区分</th>
+	<th colspan="1">投資区分</th>
+	<th colspan="9" >内容</th>
+	<th colspan="1" >等级区分</th>
+	<th data-width="220" data-column="ispriorreport" rowspan="3">是否需要做事前报告("是","否")</th>
+	<th colspan="1" >实施阶段</th>
+	<th data-width="220" data-column="itaxrate" rowspan="3">税率(%)</th>
+	<th colspan="4" >项目总金额（含税）</th>
+	<th colspan="4" >#(now??)年总金额（含税）</th>
+	<th colspan="1" >修订区分</th>
+	<th data-width="220" data-column="cmemo" rowspan="3">备注</th>
+	<th data-column="iitemyear" rowspan="3">立项年份</th>
+	<th colspan="25" >支付计划</th>
+
+
+<tr>
+<th data-min-width="150" data-column="iinvestmenttype" rowspan="3" >一般投资/新机种投资</th>
+<th data-min-width="150" data-column="icareertype" rowspan="3">锻造/马达/变矩器/HOT/COLD/其他</th>
+<th data-min-width="150" data-column="iinvestmentdistinction" rowspan="3" >能力扩大/品质向上/改善合理化/更新/环境改善/其它</th>
+<th data-min-width="150" data-column="cplanno" rowspan="3">投资NO</th>
+<th data-min-width="150" data-column="citemname" rowspan="3" >项目细项名称</th>
+<th  data-min-width="150" data-column="isimport" rowspan="3" >是否进口</th>
+<th  data-min-width="150" data-column="iquantity" rowspan="3" >数量</th>
+<th  data-min-width="150" data-column="cunit" rowspan="3" >单位</th>
+<th  colspan="1"   >资产类别</th>
+<th data-min-width="150" data-column="cpurpose" rowspan="3" >目的</th>
+<th data-min-width="220" data-column="ceffectamount" rowspan="3" >效果金额（折算为一年的金额）</th>
+<th data-min-width="80" data-column="creclaimyear" rowspan="3" >回收年限</th>
+<th data-min-width="80" data-column="clevel" rowspan="3" >(A/B/C)</th>
+<th data-min-width="150" data-column="cpaymentprogress" rowspan="3" >计划/禀议/发注</th>
+<th data-min-width="150" data-column="itotalamountplan" rowspan="3" >计划</th>
+<th data-min-width="150" data-column="itotalamountactual" rowspan="3" >实绩/预测/修订</th>
+<th data-min-width="150" data-column="itotalamountdiff" rowspan="3" >差异</th>
+<th data-min-width="150" data-column="itotalamountdiffreason" rowspan="3" >差异原因</th>
+<th data-min-width="150" data-column="iyeartotalamountplan" rowspan="3" >计划</th>
+<th data-min-width="150" data-column="iyeartotalamountactual" rowspan="3" >实绩/预测/修订</th>
+<th data-min-width="150" data-column="iyeartotalamountdiff" rowspan="3" >差异</th>
+<th data-min-width="150" data-column="iyeartotalamountdiffreason" rowspan="3" >差异原因</th>
+<th data-min-width="150" data-column="cedittype" rowspan="3" >新增/超支/节约/取消/提前/上年延后至本年/本年延后至明年</th>
+	<th colspan="3">第1期</th>
+	<th colspan="3">第2期</th>
+	<th colspan="3">第3期</th>
+	<th colspan="3">第4期</th>
+	<th colspan="3">第5期</th>
+	<th colspan="3">第6期</th>
+</tr>
+<tr>
+	<th data-width="280" data-column="cassettype" >土地/房屋及建筑物/公共设施/生产设备/检验设备/
+		模具/治具/检具/运输设备/办公设备/事务用品/软件/长期待摊</th>
+	<th data-width="80" data-column="cperiodprogress1" >日程</th>
+	<th data-width="80" data-column="dperioddate1" >日期</th>
+	<th data-width="80" data-column="iamount1" >金额</th>
+
+	<th data-width="80" data-column="cperiodprogress2" >日程</th>
+	<th data-width="80" data-column="dperioddate2" >日期</th>
+	<th data-width="80" data-column="iamount2" >金额</th>
+
+	<th data-width="80" data-column="cperiodprogress3" >日程</th>
+	<th data-width="80" data-column="dperioddate3" >日期</th>
+	<th data-width="80" data-column="iamount3" >金额</th>
+
+	<th data-width="80" data-column="cperiodprogress4" >日程</th>
+	<th data-width="80" data-column="dperioddate4" >日期</th>
+	<th data-width="80" data-column="iamount4" >金额</th>
+
+	<th data-width="80" data-column="cperiodprogress5" >日程</th>
+	<th data-width="80" data-column="dperioddate5" >日期</th>
+	<th data-width="80" data-column="iamount5" >金额</th>
+
+	<th data-width="80" data-column="cperiodprogress6" >日程</th>
+	<th data-width="80" data-column="dperioddate6" >日期</th>
+	<th data-width="80" data-column="iamount6" >金额</th>
+
+</tr>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+

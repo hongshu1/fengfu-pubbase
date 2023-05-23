@@ -1,4 +1,4 @@
-package cn.jbolt.admin.devdoc.database;
+package cn.rjtech.admin.devdoc.database;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.config.JBoltConfig;

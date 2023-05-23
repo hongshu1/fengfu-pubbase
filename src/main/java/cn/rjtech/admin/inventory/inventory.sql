@@ -47,3 +47,18 @@ from  Bd_Inventory i
 left join bd_uom u1 on u1.iAutoId = i.iInventoryUomId1
 where i.isEnabled = '1' and i.isDeleted = '0'
 #end
+
+#sql("getInventoryList")
+SELECT inv.cinvcode, inv.cinvname, inv.cinvstd, inv.cinvaddcode, inv.cinvabc, inv.dsdate, inv.cAddress, inv.itaxrate
+FROM Inventory inv
+WHERE 1 = 1
+#if(q)
+    AND (cInvCode like CONCAT ('%', #para(q), '%')
+    OR  cInvName like CONCAT ('%', #para(q), '%')
+    OR  cInvStd like CONCAT ('%', #para(q), '%'))
+#end
+#if(cinvccode)
+ AND cInvCCode LIKE CONCAT (#para(cinvccode), '%')
+#end
+ORDER BY inv.cinvcode ASC
+#end

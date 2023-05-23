@@ -12,11 +12,13 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.admin.vendorclass.VendorClassService;
 import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -310,6 +312,25 @@ public class VendorService extends BaseService<Vendor> {
     public Vendor findByName(String vendorName) {
         return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvenname = ?", vendorName);
     }
+    public Vendor findByCode(String cvencode) {
+        return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvencode = ?", cvencode);
+    }
 
+	public Record getRecprdByCVenCode(String cvencode) {
+		return findFirstRecord(selectSql().eq("cvencode", cvencode).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
+	}
+
+    public List<Record> getVendorList(Kv kv) {
+        return dbTemplate("vendor.getVendorList", kv).find();
+    }
+    public Page<Record> getVendorPaginate(Integer pageNumber,Integer pageSize, Kv kv) {
+        return dbTemplate("vendor.getVendorList", kv).paginate(pageNumber, pageSize);
+    }
+    public List<Record> getAutocompleteList(String q, int limit) {
+        Okv para = Okv.by("q", q)
+                .set("limit", limit);
+
+        return dbTemplate("vendor.getAutocompleteList", para).find();
+    }
 
 }

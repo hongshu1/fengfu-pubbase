@@ -1,0 +1,112 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto text-left">
+            </div>
+            <div class="col">
+                <form class="form-inline" id="subjectForm_#(pageId)" onsubmit="return false;" method="post">
+
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=末级科目 编码/名称=" name="keywords" value=""/>
+
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="subjectRowtpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.ccode}" >
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.ccode}</td>
+            <td>${data.ccode_name}</td>
+        </tr>
+        {@/each}
+        </textarea>
+
+        <!-- 工具条 toolbar -->
+        <!--<div class="jbolt_table_toolbar" id="subject_toolbar_#(pageId)">-->
+        <!--	<div class="btn-group" role="group" aria-label="btn-group">-->
+        <!--		<button data-openpage="dialog" data-area="700,800"  data-handler="jboltTablePageToFirst" data-title="新增科目档案"  data-url="admin/subject/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>-->
+        <!--		<button data-openpage="dialog" data-area="700,800"  data-handler="refreshJBoltTable" data-title="修改科目档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/subject/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>-->
+        <!--		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/subject/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>-->
+        <!--		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>-->
+        <!--	</div>-->
+
+        <!--	<div class="clearfix"></div>-->
+        <!--</div>-->
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               data-url="admin/subjectm/u8MajorSubjectsList?minigrade=1"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="subjectForm_#(pageId)"
+               data-rowtpl="subjectRowtpl_#(pageId)"
+               data-page="subjectPage_#(pageId)"
+               data-pagesize="50"
+               data-toolbar="subject_toolbar_#(pageId)"
+               data-fixed-columns-left="1,2,3"
+               data-menu-option="getJboltTableMenus_#(pageId)"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="300" data-column="ccode">末级科目编码</th>
+                <th data-width="500" data-column="ccode_name">末级科目名称</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+#end
+#define js()
+<script type="text/javascript">
+    function submitThisForm() {
+        let data = jboltTableGetCheckedDatas();
+        if (data) {
+            var ccodeName = "";
+            var ccode = "";
+            for(var i=0;i<data.length;i++){
+                ccodeName += data[i].ccode_name+",";
+                ccode += data[i].ccode+",";
+            }
+            if (ccodeName.length > 0) {
+                ccodeName = ccodeName.substr(0,ccodeName.length - 1);
+                ccode = ccode.substr(0,ccode.length - 1);
+            }
+            parent.selectSubject(ccode,ccodeName);
+        }
+    }
+
+    function getJboltTableMenus_#(pageId)(jboltTable){
+        return {
+            theme:"list",
+            width:400,
+            position:"mouse",//mouse or td
+            menus:[
+                {icon:"fa fa-refresh",text:"刷新",func:function(table,tr,td,trJsonData,inThead,inTbody){
+                        refreshJBoltTable(table);
+                    }},
+                {br:true},
+                {custom:true,tpl:"filterbox_page_tpl"},
+            ]};
+    }
+</script>
+#end
+

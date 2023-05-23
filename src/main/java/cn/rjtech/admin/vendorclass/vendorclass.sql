@@ -35,3 +35,14 @@ WHERE t1.isDeleted = '0'
   AND t1.cvccode = #para(cvccode)
   #end
 #end
+
+#sql("getSubList")
+SELECT *
+FROM VendorClass
+WHERE iVCGrade = #para(ivcgrade)
+#if(ivcgrade > 1)
+    AND cvccode LIKE concat(#para(cvccode),'%')
+#end
+ORDER BY
+    cvccode
+#end

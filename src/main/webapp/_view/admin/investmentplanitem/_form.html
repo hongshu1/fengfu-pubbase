@@ -1,0 +1,239 @@
+
+<div class="jbolt_page_title">
+    <div class="row">
+
+        <div class="col-12 form-inline">
+
+            <div class="col-4">
+                <h3>基础信息</h3>
+            </div>
+
+            <div class="col-8 text-right">
+                ###permission(cn.jbolt._admin.permission.PermissionKey::permissionKeyName)
+                 ###定义权限控制的按钮
+                ###end
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+<form onsubmit="return false;" id="investmentPlanItemForm" action="#(action)" method="post">
+#if(investmentPlanItem.iautoid??)
+	<input type="hidden" name="investmentPlanItem.iautoid" value="#(investmentPlanItem.iautoid??)" />
+#end
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">投资计划ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入投资计划ID" maxlength="19" name="investmentPlanItem.iplanid" value="#(investmentPlanItem.iplanid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">投资计划号</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入投资计划号" maxlength="50" name="investmentPlanItem.cplanno" value="#(investmentPlanItem.cplanno??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目档案ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入项目档案ID" maxlength="19" name="investmentPlanItem.iprojectid" value="#(investmentPlanItem.iprojectid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">投资类型</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入投资类型"  maxlength="10" name="investmentPlanItem.iinvestmenttype" value="#(investmentPlanItem.iinvestmenttype??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">事业类型</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入事业类型"  maxlength="10" name="investmentPlanItem.icareertype" value="#(investmentPlanItem.icareertype??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">投资区分</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入投资区分"  maxlength="10" name="investmentPlanItem.iinvestmentdistinction" value="#(investmentPlanItem.iinvestmentdistinction??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">资产类别</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入资产类别" maxlength="10" name="investmentPlanItem.cassettype" value="#(investmentPlanItem.cassettype??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入名称" maxlength="20" name="investmentPlanItem.citemname" value="#(investmentPlanItem.citemname??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(investmentPlanItem.isimport??)"
+    	data-name="investmentPlanItem.isimport"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否进口</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isimport_true" type="radio" name="investmentPlanItem.isimport" value="true"/>
+					<label for="r_isimport_true">是</label>
+				</div>
+
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isimport_false" type="radio" name="investmentPlanItem.isimport" value="false"/>
+					<label for="r_isimport_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产线</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入生产线" maxlength="100" name="investmentPlanItem.cproductline" value="#(investmentPlanItem.cproductline??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">目的</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入目的" maxlength="100" name="investmentPlanItem.cpurpose" value="#(investmentPlanItem.cpurpose??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">效果金额</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入效果金额" maxlength="100" name="investmentPlanItem.ceffectamount" value="#(investmentPlanItem.ceffectamount??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">回收年限</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置回收年限" data-tips="请设置回收年限" maxlength="100" name="investmentPlanItem.creclaimyear" value="#(investmentPlanItem.creclaimyear??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">等级</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入等级" maxlength="20" name="investmentPlanItem.clevel" value="#(investmentPlanItem.clevel??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(investmentPlanItem.ispriorreport??)"
+    	data-name="investmentPlanItem.ispriorreport"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否做事前报告</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_ispriorreport_true" type="radio" name="investmentPlanItem.ispriorreport" value="true"/>
+					<label for="r_ispriorreport_true">是</label>
+				</div>
+
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_ispriorreport_false" type="radio" name="investmentPlanItem.ispriorreport" value="false"/>
+					<label for="r_ispriorreport_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目总金额-计划</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入项目总金额-计划"  maxlength="30" name="investmentPlanItem.itotalamountplan" value="#(investmentPlanItem.itotalamountplan??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目总金额-实绩/预测/修订</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入项目总金额-实绩/预测/修订"  maxlength="30" name="investmentPlanItem.itotalamountactual" value="#(investmentPlanItem.itotalamountactual??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目总金额-差异原因</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入项目总金额-差异原因" maxlength="100" name="investmentPlanItem.itotalamountdiffreason" value="#(investmentPlanItem.itotalamountdiffreason??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">2022年总金额-计划</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置2022年总金额-计划" data-tips="请设置2022年总金额-计划" maxlength="30" name="investmentPlanItem.iyeartotalamountplan" value="#(investmentPlanItem.iyeartotalamountplan??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">2022年总金额-实绩/预测/修订</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置2022年总金额-实绩/预测/修订" data-tips="请设置2022年总金额-实绩/预测/修订" maxlength="30" name="investmentPlanItem.iyeartotalamountactual" value="#(investmentPlanItem.iyeartotalamountactual??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">2022年总金额-差异原因</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置2022年总金额-差异原因" data-tips="请设置2022年总金额-差异原因" maxlength="100" name="investmentPlanItem.iyeartotalamountdiffreason" value="#(investmentPlanItem.iyeartotalamountdiffreason??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">机种</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入机种" maxlength="60" name="investmentPlanItem.cmodelinvccode" value="#(investmentPlanItem.cmodelinvccode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">部品</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入部品" maxlength="50" name="investmentPlanItem.cparts" value="#(investmentPlanItem.cparts??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入数量"  maxlength="10" name="investmentPlanItem.iquantity" value="#(investmentPlanItem.iquantity??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">单位</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入单位" maxlength="20" name="investmentPlanItem.cunit" value="#(investmentPlanItem.cunit??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="investmentPlanItem.dcreatetime" value="#(investmentPlanItem.dcreatetime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="investmentPlanItem.dupdatetime" value="#(investmentPlanItem.dupdatetime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人" maxlength="19" name="investmentPlanItem.icreateby" value="#(investmentPlanItem.icreateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新人" maxlength="19" name="investmentPlanItem.iupdateby" value="#(investmentPlanItem.iupdateby??)"/>
+		</div>
+	</div>
+</form>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="investmentPlanItemForm")
+#end
+

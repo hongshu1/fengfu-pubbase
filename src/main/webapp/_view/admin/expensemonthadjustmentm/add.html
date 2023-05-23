@@ -1,0 +1,162 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" style="height: 100vh;" data-key="#(pmkey)" data-dontchangeleftnav="true">
+
+    <div class="jbolt_page_title">
+        <form onsubmit="return false;" id="expenseMonthAdjustmentAddForm" action="#(action)" method="post">
+            <div class="form-group row text-left">
+                <label class="col-1 col-form-label">实绩月份</label>
+                <div class="col-2">
+                    <input type="text" data-date data-type="date" autocomplete="off" class="form-control" 
+                    placeholder="请设置实绩月份" data-tips="请设置实绩月份" maxlength="10" name="expenseMonthAdjustmentm.dAdjustDate" value=""/>
+                </div>
+                <label class="col-1 col-form-label">单位</label>
+                <div class="col-2">
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="请输入单位" maxlength="20" name="expenseMonthAdjustmentm.cUnit" value="">
+                </div>
+                <label class="col-1 col-form-label">备注</label>
+                <div class="col-2">
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="100" name="expenseMonthAdjustmentm.cmemo" value="">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_expenseMonthAdjustmentAddForm_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+			<td>${data.cdepname}</td>
+            <td>${data.cdepcode}</td>
+			<td>${data.clowestsubjectname}</td>
+            <td>${data.chighestsubjectname}</td>
+            <td>${data.iamount}</td>
+			<td>${data.cexplanation}</td>
+			<td hidden>${data.chighestsubjectcode}</td>
+			<td hidden>${data.clowestsubjectcode}</td>
+            </tr>
+            {@/each}
+        </script>
+
+        <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 增行</button>
+                <button onclick="jboltTableRemoveCheckedRow(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-trash"></i> 删行</button>
+	            <button onclick="submitThisForm()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 保存</button>
+	            <button onclick="closeHandler()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 关闭</button>
+                <!-- <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button> -->
+            </div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+               data-jbolttable
+               data-column-resize="true"
+               data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+               data-rowtpl="jboltTable_expenseMonthAdjustmentAddForm_#(pageId)"
+               data-editable="true"
+               data-toolbar="jbolt_table_toolbar_#(pageId)"
+               data-editable-option="getEditableTableOptions_#(pageId)"
+               id="jbolt_Table_#(pageId)"
+               data-column-prepend="1:checkbox"
+               data-height="fill"
+        >
+            <thead class="fw_normal">
+            <tr>
+            	<th data-width="100" data-column="cdepname">部门名称</th>
+	            <th data-width="90" data-column="cdepcode">部门编码</th>
+	            <th data-width="100" data-column="clowestsubjectname">明细科目</th>
+	            <th data-width="100" data-column="chighestsubjectname">科目大类</th>
+	            <th data-width="130" data-column="iamount">金额</th>
+	            <th data-width="130" data-column="cexplanation">调整说明</th>
+	            <th hidden data-width="50" data-column="chighestsubjectcode">科目大类编码</th>
+	            <th hidden data-width="50" data-column="clowestsubjectcode">科目明细编码</th>
+            </tr>
+            </thead>
+            <tbody ></tbody>
+        </table>
+    </div>
+
+</div>
+#end
+#define js()
+<script>
+	hideParentLayerDialogBtn(0);
+	hideParentLayerDialogBtn(1);
+	function submitThisForm(){
+		var index = LayerMsgBox.loading('执行中...');
+		jboltTableSubmit("#jbolt_Table_#(pageId)");
+	}
+
+	//获得配置参数
+    function getEditableTableOptions_#(pageId)(){
+        var editableTableOptions={
+            trigger:"click",
+            // 初始行数
+            initRowCount:0,
+            // 限制最大数 默认30
+            //maxRowCount:1,
+            submit:{
+                withForm:["expenseMonthAdjustmentAddForm"],
+                type:"all",//cell|all
+                //params:{"orderId":3},//携带其他额外参数
+                url:"admin/expensemonthadjustmentm/saveTableByAdd",
+                success:function(res){
+                    LayerMsgBox.success("提交成功",600,function(){
+                    	/* parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        window.parent.refreshJBoltTable(); */
+                    	location.href = '/admin/expensemonthadjustmentm/edit/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                    });
+                } 
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid"
+                },
+                cdepname: {
+                    type: "select2",
+                    url: "admin/u8department/treedatas",
+                    valueAttr: "cdepname",
+                    textAttr: "cdepname",
+                    width: 450,
+                    maxLength: 200,
+                    placeholder: "=请选择=",
+                    required: true,
+                    changeColumns: [{column: 'cdepcode', use: 'cdepcode'}]
+                },
+                clowestsubjectname: {
+                    type: "autocomplete",
+                    url: "/admin/subjectm/autocomplete",
+                    columnAttr: "chighestsubjectcode,chighestsubjectname,clowestsubjectcode,clowestsubjectname",
+                    valueAttr: "clowestsubjectname",
+                    textAttr: "clowestsubjectname",
+                    width: 450,
+                    maxLength: 200,
+                    placeholder: "=请选择=",
+                    required: true,
+                    changeColumns: [{column: 'chighestsubjectcode', use: 'chighestsubjectcode'},{column: 'clowestsubjectcode', use: 'clowestsubjectcode'},
+                                    {column: 'chighestsubjectname', use: 'chighestsubjectname'}]
+                },
+                iamount: {
+                    type:"input_number",
+                    placeholder:'金额',
+                    required:true,
+                    rule:"number",
+                    submitAttr:"iamount"
+                },
+                cexplanation: {
+                    type:"input",
+                    submitAttr:"cexplanation",
+                    maxLength:100
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+    function closeHandler(){
+    	parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+</script>
+#end
+

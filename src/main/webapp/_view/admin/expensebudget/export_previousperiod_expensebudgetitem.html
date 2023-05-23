@@ -1,0 +1,129 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" style="height: 100vh;" data-key="#(pmkey)" data-dontchangeleftnav="true">
+    <div class="jbolt_page_title">
+        <form onsubmit="return false;" id="unfinishExpenseBudgetItemForm" action="#(action)" method="post">
+            <div class="form-group row text-left">
+            	<input type="hidden" value="#(previousPeriodItemExpenseBudget.iautoid)" name="previousPeriodItemExpenseBudget.iautoid">
+            	<input type="hidden" value="#(previousPeriodItemExpenseBudget.iperiodid)" name="previousPeriodItemExpenseBudget.iperiodid"/>
+                <label class="col-1 col-form-label">部门</label>
+                <div class="col-2">
+                    <select class="form-control"
+                            data-rule="required"
+                            name="previousPeriodItemExpenseBudget.cdepcode"
+                            data-select-type="select2"
+                            data-autoload
+                            data-tips="请选择u8部门"
+                            data-url="admin/u8department/treedatas"
+                            data-text="=请选择u8部门="
+                            data-text-attr="cdepname"
+                            data-value-attr="cdepcode"
+                            data-setvalueto="cdepcode"
+                            data-value=""
+                            data-width="200"
+                            data-select="#(previousPeriodItemExpenseBudget.cdepcode)"
+                            disabled
+                            >
+                    </select>
+                </div>
+                <label class="col-1 col-form-label">预算年度</label>
+                <div class="col-2">
+                    <input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" autocomplete="off" class="form-control" data-rule="required" placeholder="请设置年份" data-tips="请设置年份" maxlength="10" name="previousPeriodItemExpenseBudget.iBudgetYear"
+                           value="#(previousPeriodItemExpenseBudget.ibudgetyear)" disabled>
+                </div>
+                <label class="col-1 col-form-label">预算类型</label>
+                <div class="col-2">
+	                <select class="form-control"
+	                  		data-select-type="select2"
+	                        name="previousPeriodItemExpenseBudget.iBudgetType"
+	                        data-autoload
+	                        data-rule="required"
+	                        data-tips="预算类型"
+	                        data-url="admin/dictionary/options?key=investment_budget_type"
+	                        data-text="=预算类型="
+	                        data-text-attr="name"
+	                        data-value-attr="sn"
+	                        data-value=""
+	                        data-select="#(previousPeriodItemExpenseBudget.ibudgettype)"
+	                        data-width="200"
+	                        disabled
+	                        >
+	                </select>
+                </div>
+            </div>
+        </form>
+    </div>
+	<div class="jbolt_page_title">
+    	<div class="row">
+			<div class="col-md-auto">
+				<h1><i class="fa fa-file-text-o"></i>费用预算项目</h1>
+			</div>
+		</div>
+	</div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_unfinishExpenseBudgetItemForm_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+            <td>${data.cbudgetno}</td>
+            <td>${data.chighestsubjectname}</td>
+            <td>${data.clowestsubjectname}</td>
+            <td>${data.citemname}</td>
+            <td>${data.careertypename}</td>
+            <td>$${data.islargeamountexpense|isLargeAmountExpense}</td>
+			<td>${data.cuse}</td>
+            <td>${data.cmemo}</td>
+            <td>${data.iprice}</td>
+            <td>${data.cunit}</td>
+			<td hidden>${data.chighestsubjectcode}</td>
+			<td hidden>${data.clowestsubjectcode}</td>
+            </tr>            
+            {@/each}
+        </script>
+
+        <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+               data-jbolttable
+               id="jbolt_Table_#(pageId)"
+               data-ajax="true"
+               data-url="/admin/expensebudget/findPreviousPeriodExpenseBudgetItemDatas?iexpenseid=#(previousPeriodItemExpenseBudget.iautoid)"
+               data-column-resize="true"
+               data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+               data-rowtpl="jboltTable_unfinishExpenseBudgetItemForm_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+               data-height="640"
+        >
+            <thead class="fw_normal">
+            <tr>
+	            <th data-width="120" data-column="cbudgetno" rowspan="3">预算编号</th>
+	            <th data-width="100" data-column="chighestsubjectname" rowspan="3">科目大类</th>
+	            <th data-width="100" data-column="clowestsubjectname" rowspan="3">明细科目</th>
+	            <th data-width="130" data-column="citemname" rowspan="3">名称</th>
+	            <th data-width="130" data-column="careertype" rowspan="3">事业类型</th>
+	            <th data-width="130" data-column="islargeamountexpense" rowspan="3">是否大额费用</th>
+	            <th data-width="130" data-column="cuse" rowspan="3">用途</th>
+	            <th data-width="100" data-column="cmemo" rowspan="3">备注</th>
+	            <th data-width="100" data-column="iprice" rowspan="3">单价</th>
+	            <th data-width="50" data-column="cunit" rowspan="3">单位</th>
+	            <th hidden data-width="50" data-column="chighestsubjectcode" rowspan="3">科目大类编码</th>
+	            <th hidden data-width="50" data-column="clowestsubjectcode" rowspan="3">科目明细编码</th>
+            </tr>
+            </thead>
+            <tbody id="datatr1"></tbody>
+        </table>
+    </div>
+
+</div>
+#end
+#define js()
+<script>
+    function submitThisForm(){
+        var unfinishExpenseBudgetItemCheckedTableDatas = getJboltTableCheckedDatas("#jbolt_Table_#(pageId)");
+        parent.insertUnfinishExpenseBudgetItem(unfinishExpenseBudgetItemCheckedTableDatas);
+        // 关闭当前页面
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+    }
+</script>
+
+#end
+

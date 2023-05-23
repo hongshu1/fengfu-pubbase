@@ -1,4 +1,4 @@
-package cn.jbolt.admin.appdevcenter;
+package cn.rjtech.admin.appdevcenter;
 /**
  * 关联对象bean
  * @ClassName:  LinkTarget   

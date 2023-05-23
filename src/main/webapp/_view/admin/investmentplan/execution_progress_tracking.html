@@ -1,0 +1,175 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page_title">
+	<div class="row">
+		<div class="col-md-auto text-left">
+			<form class="form-inline" id="investmentExecutionProgressTrackingForm_#(pageId)"  onsubmit="return false;" method="post">
+                <select class="form-control"
+                        data-select-type="select2"
+                        name="iservicetype"
+                        data-autoload
+                        data-tips="费用/类型"
+                        data-url="admin/dictionary/options?key=business_type"
+                        data-text="=费用/类型="
+                        data-text-attr="name"
+                        data-value-attr="sn"
+                        data-value=""
+                        data-width="120">
+                </select>			
+				<input type="text" class="form-control"
+                           data-date
+                           data-type="year"
+                           data-rule="required"
+                           placeholder="=预算年度="
+                           name="ibudgetyear">
+<!--                 <select class="form-control"
+                        data-select-type="select2"
+                        name="ibudgettype"
+                        data-autoload
+                        data-tips="预算类型"
+                        data-url="admin/dictionary/options?key=investment_budget_type"
+                        data-text="=预算类型="
+                        data-text-attr="name"
+                        data-value-attr="sn"
+                        data-value=""
+                        data-width="120">
+                </select> -->
+                <select class="form-control"
+                		data-select-type="select2"
+                        name="cdepcode"
+                        data-autoload
+                        data-tips="u8部门"
+                        data-url="admin/u8department/treedatas"
+                        data-text="=u8部门="
+                        data-text-attr="cdepname"
+                        data-value-attr="cdepcode"
+                        data-setvalueto="cdepcode"
+                        data-value=""
+                        data-width="200">
+                </select>
+				<input type="text" autocomplete="off" class="form-control col-md-2" placeholder="=预算No.=" name="ccode" value=""/>
+				<input type="text" autocomplete="off" class="form-control col-md-1" placeholder="=明细科目=" name="clowestsubject" value=""/>				
+				<input type="text" autocomplete="off" class="form-control col-md-1" placeholder="=名称=" name="citemname" value=""/>
+				<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+			</form>
+		</div>
+	</div>
+</div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_rowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+			<td>$${data.finishstatus|finishStatus}</td>
+			<td>${data.cdepname}</td>
+			<td>${data.cdepcode}</td>
+			<td>${data.ccode}</td>
+			<td>${data.clowestsubjectname}</td>
+			<td>${data.citemname}</td>
+			<td>$${data.isscheduled|isscheduled}</td>
+			<td>${data.fullyearbudgetQuantity}</td>
+			<td>${data.fullyearbudgetUnit}</td>
+			<td>${data.fullyearbudgetAmount}</td>
+			<td>${data.nextperiodbudgetQuantity}</td>
+			<td>${data.nextperiodbudgetUnit}</td>
+			<td>${data.nextperiodbudgetAmount}</td>
+			<td>${data.monthplanQuantity}</td>
+			<td>${data.monthplanUnit}</td>
+			<td>${data.monthplanAmount}</td>
+			<td>${data.proposalNatmoney}</td>
+			<td>${data.proposalNatsum}</td>
+			<td>${data.purchaseNatmoney}</td>
+			<td>${data.purchaseNatsum}</td>
+			<td>${data.podetailsNatmoney}</td>
+			<td>${data.podetailsNatsum}</td>
+			<td>${data.contractNatmoney}</td>
+			<td>${data.contractNatsum}</td>
+			<td>${data.diffNatsum}</td>
+			<td>${data.diffratio}</td>
+			<td>${data.rdrecordsnatsum}</td>
+			<td>${data.purbillvouchsNatsum}</td>
+			<td>${data.actualpayamount}</td>
+			<td>${data.payremain}</td>
+            </tr>
+            {@/each}
+        </script>
+
+        <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+               data-jbolttable
+               id="jbolt_Table_#(pageId)"
+               data-autoload="false"
+               data-ajax="true"
+               data-url="/admin/investmentplan/findExecutionProgressTrackingDatas"
+               data-column-resize="true"
+               data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+               data-rowtpl="jboltTable_rowtpl_#(pageId)"
+               data-column-prepend="1:radio:true"
+               data-height="fill"
+               ###data-ajax-success-handler="ajaxSuccessHandler_#(pageId)"
+               data-conditions-form="investmentExecutionProgressTrackingForm_#(pageId)"
+        >
+            <thead class="fw_normal">
+            <tr>
+            	<th data-width="100" data-column="finishstatus" rowspan="2">完结</th>
+            	<th data-width="100" data-column="cdepname" rowspan="2">部门名称</th>
+            	<th data-width="100" data-column="cdepcode" rowspan="2">部门编码</th>
+            	<th data-width="130" data-column="ccode" rowspan="2">预算No.</th>
+            	<th data-width="100" data-column="clowestsubjectname" rowspan="2">明细科目</th>
+            	<th data-width="100" data-column="citemname" rowspan="2">名称</th>
+            	<th data-width="100" data-column="isscheduled" rowspan="2">计划内/外</th>
+	            <th data-width="100" colspan="3">年度预算</th>
+	            <th data-width="100" colspan="3">修订预算</th>
+	           	<th data-width="100" colspan="3">月度实行计划</th>
+	           	<th data-width="100" colspan="2">禀议</th>
+	           	<th data-width="100" colspan="2">申购</th>
+	           	<th data-width="100" colspan="2">发注</th>
+	           	<th data-width="100" colspan="2">合同</th>
+	           	<th data-width="100" colspan="2">差异(申购-禀议)</th>
+	           	<th data-width="100" data-column="RdRecordsNatsum" rowspan="2">入库情况<br/>(含税金额)</th>
+	           	<th data-width="100" data-column="purbillvouchsNatsum" rowspan="2">请款<br/>(含税金额)</th>
+	           	<th data-width="100" colspan="2">付款实绩</th>
+            </tr>
+            <tr>
+            	<th data-width="50" data-column="fullyearbudgetQuantity">数量</th>
+            	<th data-width="50" data-column="fullyearbudgetUnit">单位</th>
+            	<th data-width="50" data-column="fullyearbudgetAmount">不含税金额</th>
+            	<th data-width="50" data-column="nextperiodbudgetQuantity">数量</th>
+            	<th data-width="50" data-column="nextperiodbudgetUnit">单位</th>
+            	<th data-width="50" data-column="nextperiodbudgetAmount">不含税金额</th>
+            	<th data-width="50" data-column="monthplanQuantity">数量</th>
+            	<th data-width="50" data-column="monthplanUnit">单位</th>
+            	<th data-width="50" data-column="monthplanAmount">不含税金额</th>
+            	<th data-width="50" data-column="proposalNatmoney">不含税金额</th>
+            	<th data-width="50" data-column="proposalNatsum">含税金额</th>
+            	<th data-width="50" data-column="purchaseNatmoney">不含税金额</th>
+            	<th data-width="50" data-column="purchaseNatsum">含税金额</th>
+            	<th data-width="50" data-column="podetailsNatmoney">不含税金额</th>
+            	<th data-width="50" data-column="podetailsNatsum">含税金额</th>
+            	<th data-width="50" data-column="contractNatmoney">不含税金额</th>
+            	<th data-width="50" data-column="contractNatsum">含税金额</th>
+            	<th data-width="50" data-column="diffNatsum">含税金额</th>
+            	<th data-width="50" data-column="diffratio">比率</th>
+            	<th data-width="50" data-column="actualpayamount">已付款金额</th>
+            	<th data-width="50" data-column="payremain">余款</th>
+            </tr>
+            </thead>
+            <tbody id="datatr1"></tbody>
+        </table>
+    </div>
+
+</div>
+#end
+#define js()
+<script>
+function ajaxSuccessHandler_#(pageId)(table) {
+	   $('.jbolt_table').tablesMergeCell({
+	      cols: [1,2]
+	   })
+}
+</script>
+
+#end
+

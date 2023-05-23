@@ -1,4 +1,4 @@
-package cn.jbolt.admin.wechat.config;
+package cn.rjtech.admin.wechat.config;
 
 import cn.jbolt.core.service.JBoltWechatConfigService;
 

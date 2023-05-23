@@ -1,0 +1,166 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto text-left">
+                <form class="form-inline" id="expenseBudgetForm_#(pageId)"   onsubmit="return false;" method="post">
+                    <select class="form-control"
+                		data-select-type="select2"
+                        name="cdepcode"
+                        data-autoload
+                        data-tips="u8部门"
+                        data-url="admin/u8department/treedatas"
+                        data-text="=u8部门="
+                        data-text-attr="cdepname"
+                        data-value-attr="cdepcode"
+                        #if(cdepcode??)
+                        data-select="#(cdepcode??)"
+                        disabled
+                        #end
+                        data-value=""
+                        data-width="200">
+                	</select>
+                	<input type="hidden" name="iauditstatus" value="2"/>
+                	<input type="hidden" name="ieffectivestatus" value="2"/>
+                	<input type="hidden" name="isourceproposalid" value="#(isourceproposalid??)"/>
+                	<input type="hidden" name="iprojectcardids" value="#(iprojectcardids??)"/>
+                    <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_expenseBudgetEditForm_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+			<td>${data.cdepname}</td>
+			<td>${data.ibudgetyear}</td>
+			<td>$${data.ibudgettype|BudgetType}</td>
+            <td>${data.cbudgetno}</td>
+            <td>${data.chighestsubjectname}</td>
+            <td>${data.clowestsubjectname}</td>
+            <td>${data.citemname}</td>
+            <td>${data.careertypename}</td>
+            <td>$${data.islargeamountexpense|isLargeAmountExpense}</td>
+			<td>${data.cuse}</td>
+            <td>${data.cmemo}</td>
+            <td>${data.iprice,3|number_format3}</td>
+            <td>${data.cunit}</td>
+			<td>$${data.isscheduled|isscheduled}</td>
+			<td>${data.iamounttotal|kFormat}</td>
+			<td hidden>${data.ihighestsubjectid}</td>
+			<td hidden>${data.ilowestsubjectid}</td>
+			#if(quantityandamountcolumnlist)
+                    #for(quantityandamountcolumn : quantityandamountcolumnlist)
+						<td>${data.#(quantityandamountcolumn.quantitydatacolumn)}</td>
+						<td>${data.#(quantityandamountcolumn.amountdatacolumn),3|number_format3}</td>
+						#if(quantityandamountcolumn.totaldatacolumn)
+							<td>${data.#(quantityandamountcolumn.totaldatacolumn),3|number_format3}</td>
+						#end
+                    #end
+            #end
+            </tr>
+            {@/each}
+        </script>
+
+        <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+               data-jbolttable
+               data-ajax="true"
+               data-column-prepend="1:checkbox"
+               data-url="/admin/expensebudgetitem/mdatas?iperiodid=#(period.iautoid??)"
+               data-column-resize="true"
+               data-conditions-form="expenseBudgetForm_#(pageId)"
+               data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+               data-rowtpl="jboltTable_expenseBudgetEditForm_#(pageId)"
+               ###data-toolbar="jbolt_table_toolbar_#(pageId)"
+               id="jbolt_Table_proposal_add_choose_expensebudget"
+               data-fixed-columns-left="1,2,3,4"
+               data-height="500"
+        >
+            <thead class="fw_normal">
+            <tr>
+	            <th data-width="120" data-column="cdepname" rowspan="3">部门</th>
+	            <th data-width="120" data-column="ibudgetyear" rowspan="3">预算年度</th>
+	            <th data-width="120" data-column="ibudgettype" rowspan="3">预算类型</th>
+	            <th data-width="150" data-column="cbudgetno" rowspan="3">预算编号</th>
+	            <th data-width="100" data-column="chighestsubjectname" rowspan="3">科目大类</th>
+	            <th data-width="100" data-column="clowestsubjectname" rowspan="3">明细科目</th>
+	            <th data-width="130" data-column="citemname" rowspan="3">名称</th>
+	            <th data-width="130" data-column="careertype" rowspan="3">事业类型</th>
+	            <th data-width="130" data-column="islargeamountexpense" rowspan="3">是否大额费用</th>
+	            <th data-width="130" data-column="cuse" rowspan="3">用途</th>
+	            <th data-width="100" data-column="cmemo" rowspan="3">备注</th>
+	            <th data-width="100" data-column="iprice" rowspan="3">单价</th>
+	            <th data-width="50" data-column="cunit" rowspan="3">单位</th>
+	            <th data-width="50" data-column="isscheduled" rowspan="3">计划类型</th>
+	            <th data-width="50" data-column="iAmountTotal" rowspan="3">预算总金额(不含税)</th>
+	            <th hidden data-width="50" data-column="ihighestsubjectid" rowspan="3">科目大类ID</th>
+	            <th hidden data-width="50" data-column="ilowestsubjectid" rowspan="3">科目明细ID</th>
+	            #if(yearcolumntxtlist)
+                    #for(yearcolumntxt : yearcolumntxtlist)
+                    	<th data-width="90" colspan="#(yearcolumntxt.colspan)">#(yearcolumntxt.colname)</th>
+                    	<th data-width="80" data-column="#(yearcolumntxt.totaldatacolumn)" rowspan="3">合计</th>
+                    #end
+                #end
+            </tr>
+            <tr>
+            	#if(monthcolumntxtlist)
+                    #for(monthcolumntxt : monthcolumntxtlist)
+                    	<th colspan="2">#(monthcolumntxt)</th>
+                    #end
+                #end
+            </tr>
+            <tr>
+            	#if(quantityandamountcolumnlist)
+                    #for(quantityandamountcolumn : quantityandamountcolumnlist)
+                    	<th data-width="80" data-column="#(quantityandamountcolumn.quantitydatacolumn)">数量</th>
+                    	<th data-width="80" data-column="#(quantityandamountcolumn.amountdatacolumn)">金额</th>
+                    #end
+                #end
+            </tr>
+            </thead>
+            <!-- <tfoot>
+            		<th></th>
+            		<th>合计</th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th hidden></th>
+            		<th hidden></th>
+            		#if(yearcolumntxtlist)
+	                    #for(yearcolumntxt : yearcolumntxtlist)
+	                   		<th></th>
+	                    #end
+	                #end
+            		#if(quantityandamountcolumnlist)
+            		#for(quantityandamountcolumn : quantityandamountcolumnlist)
+            		<th></th>
+            		<th></th>
+            		#end
+            		#end
+            		<th></th>
+            </tfoot> -->
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+
+</script>
+#end

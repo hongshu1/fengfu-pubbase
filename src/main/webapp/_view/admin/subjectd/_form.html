@@ -1,0 +1,41 @@
+
+<div class="jbolt_page_title">
+    <div class="row">
+
+        <div class="col-12 form-inline">
+
+            <div class="col-4">
+                <h3>基础信息</h3>
+            </div>
+
+            <div class="col-8 text-right">
+                ###permission(cn.jbolt._admin.permission.PermissionKey::permissionKeyName)
+                 ###定义权限控制的按钮
+                ###end
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+<form onsubmit="return false;" id="subjectdForm" action="#(action)" method="post">
+#if(subjectd.iautoid??)
+	<input type="hidden" name="subjectd.iautoid" value="#(subjectd.iautoid??)" />
+#end
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">科目主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入科目主表ID" maxlength="19" name="subjectd.isubjectmid" value="#(subjectd.isubjectmid??)"/>
+		</div>
+	</div>
+</form>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="subjectdForm")
+#end
+

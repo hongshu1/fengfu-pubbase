@@ -1,4 +1,4 @@
-package cn.jbolt.admin.appdevcenter;
+package cn.rjtech.admin.appdevcenter;
 
 import java.util.Collections;
 import java.util.Date;
@@ -11,8 +11,8 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
 import cn.jbolt._admin.user.UserService;
-import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
-import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoType;
+import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoType;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.kit.JBoltUserKit;

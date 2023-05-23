@@ -1,0 +1,125 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h1><i class="jbicon2 jbi-solution"></i>存货档案</h1>
+            </div>
+            <div class="col">
+                <form class="form-inline" onsubmit="return false;" id="chooseInventoryForm_#(pageId)"
+                      action="admin/purchasem/getInventoryAutocomplete" data-pjaxsubmit method="get">
+                    <input type="hidden" name="cinvccode"/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=存货名称/编码/规格=" name="q" value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea id="inventory_table_rowtpl_#(pageId)" class="jb_tpl_box">
+            {@each datas as data,index}
+                <tr data-id="${data.id}" class="datas">
+                    <td>${pageNumber,pageSize,index | rownum}</td>
+                    <td>${data.cinvcode}</td>
+                    <td>${data.cinvname}</td>
+                    <td>${data.cinvaddcode}</td>
+                    <td>${data.cinvabc}</td>
+                    <td>${data.dsdate,'yyyy-MM-dd'|date}</td>
+                    <td>${data.caddress}</td>
+                    <td>${data.itaxrate}</td>
+                </tr>
+            {@/each}
+        </textarea>
+        <div class="jbolt_table_leftbox" style="width:340px;" id="inventory_leftbox_#(pageId)">
+            <div class="jb_header"><i class="fa fa-cubes"></i> <span>存货</span>
+                <div class="pull-right">
+                    <a href="javascript:void(0)" tooltip data-title="刷新" onclick="refreshDeptJsTree_#(pageId)()"><i
+                            class="fa fa-refresh mr-2"></i></a>
+                    [<a href="javascript:void(0);" class="text-primary" onclick="openFun();">展开</a>/<a
+                        href="javascript:void(0);" onclick="closeFun();" class="text-primary">闭合</a>]
+                </div>
+            </div>
+            <div class="jb_body">
+                <div id="invTree_#(pageId)"
+                     data-jstree
+                     data-open-level="1"
+                     data-read-url="admin/purchasem/inventorTree/"
+                     data-change-handler="changeDept_#(pageId)"
+                ></div>
+            </div>
+        </div>
+        <table class="jbolt_table jbolt_main_table table-center thead_font_normal"
+               id="jbolt_table_#(pageId)"
+               data-jbolttable
+               data-width="auto"
+               data-ajax="true"
+               data-url="admin/purchasem/getInventoryPaginate"
+               data-page="chooseInventoryPage_#(pageId)"
+               data-pagesize="50"
+               data-column-prepend="1:checkbox:true"
+               data-rowtpl="inventory_table_rowtpl_#(pageId)"
+               data-conditions-form="chooseInventoryForm_#(pageId)"
+               data-column-resize="true"
+               data-leftbox="inventory_leftbox_#(pageId)">
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="100" data-column="cinvcode">存货编码</th>
+                <th data-width="180" data-column="cinvname">存货名称</th>
+                <th data-width="100" data-column="cinvaddcode">规格型号</th>
+                <th data-width="100" data-column="cinvabc">ABC分类</th>
+                <th data-width="100" data-column="dsdate">启用日期</th>
+                <th data-width="80" data-column="caddress">品牌</th>
+                <th data-width="80" data-column="itaxrate">税率</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+#define js()
+<script>
+    function submitThisForm(callback) {
+        // 获取选中的数据
+        var rowData = jboltTableGetCheckedData();
+        if (rowData) {
+            parent.jboltTableProcessTdByDialogChooser(rowData.cinvcode, rowData.cinvcode, rowData);
+            if (callback) {
+                callback();
+            }
+        }
+    }
+
+    var invTree_#(pageId) = $("#invTree_#(pageId)");
+    var chooseInventoryForm_#(pageId) = $("#chooseInventoryForm_#(pageId)");
+
+    /**
+     * 按分类查询
+     */
+    function changeDept_#(pageId)(tree, treeNode)
+    {
+        chooseInventoryForm_#(pageId).find("[name='cinvccode']").val(treeNode.id);
+        jboltTablePageToFirst(invTree_#(pageId));
+    }
+
+    function refreshDeptJsTree_#(pageId)()
+    {
+        var deptId = chooseInventoryForm_#(pageId).find("input[name='cinvccode']").val();
+        JSTreeUtil.refresh(invTree_#(pageId), deptId ? deptId : 0);
+    }
+
+    // 全部展开
+    function openFun() {
+        invTree_#(pageId).jstree().open_all();
+    }
+
+    // 全部关闭
+    function closeFun() {
+        invTree_#(pageId).jstree().close_all();
+    }
+</script>
+#end

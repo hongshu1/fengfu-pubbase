@@ -1,6 +1,10 @@
 package cn.rjtech.config;
 
+import com.jfinal.aop.Aop;
+
+import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt.core.base.config.JBoltConfig;
+import cn.jbolt.core.model.GlobalConfig;
 
 /**
  * 应用配置
@@ -8,7 +12,7 @@ import cn.jbolt.core.base.config.JBoltConfig;
  * @author Kephon
  */
 public class AppConfig {
-
+	private static final GlobalConfigService GLOBAL_CONFIG_SERVICE = Aop.get(GlobalConfigService.class);
     public static String getU8ApiUrl() {
         return JBoltConfig.prop.get("u8api.url");
     }
@@ -69,6 +73,14 @@ public class AppConfig {
         String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
         //JBoltConfig.prop.get("u8.api.url") + "/api/erp/common/vouchProcessDynamicSubmit"
         return url;
+    }
+    /**
+     * 是否启用审批流
+     */
+    public static Boolean isVerifyProgressEnabled() {
+    	GlobalConfig globalConfig = GLOBAL_CONFIG_SERVICE.getByConfigKey("verify_progress_enabled");
+    	if(globalConfig == null) return true;
+    	return globalConfig.getBoolean("config_value");
     }
 
 }

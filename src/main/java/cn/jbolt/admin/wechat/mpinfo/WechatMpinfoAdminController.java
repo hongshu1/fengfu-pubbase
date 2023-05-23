@@ -1,4 +1,4 @@
-package cn.jbolt.admin.wechat.mpinfo;
+package cn.rjtech.admin.wechat.mpinfo;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -7,7 +7,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.admin.appdevcenter.ApplicationService;
+import cn.rjtech.admin.appdevcenter.ApplicationService;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltApplicationCache;

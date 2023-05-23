@@ -1,4 +1,4 @@
-package cn.jbolt.admin.wechat.autoreply;
+package cn.rjtech.admin.wechat.autoreply;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,8 +33,8 @@ import com.jfinal.weixin.sdk.msg.out.OutVideoMsg;
 import com.jfinal.weixin.sdk.msg.out.OutVoiceMsg;
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.admin.wechat.config.WechatConfigService;
-import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.rjtech.admin.wechat.config.WechatConfigService;
+import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.common.model.WechatAutoreply;
 import cn.jbolt.common.model.WechatKeywords;
 import cn.jbolt.common.model.WechatReplyContent;

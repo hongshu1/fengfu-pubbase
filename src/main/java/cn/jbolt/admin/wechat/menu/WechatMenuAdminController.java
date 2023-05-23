@@ -1,9 +1,9 @@
-package cn.jbolt.admin.wechat.menu;
+package cn.rjtech.admin.wechat.menu;
 
 import com.jfinal.aop.Inject;
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.common.model.WechatMenu;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.enumutil.JBoltEnum;

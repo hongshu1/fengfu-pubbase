@@ -12,6 +12,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.InventoryClass;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Record;
@@ -269,4 +270,27 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 	public List<Record> selectClassList(Kv kv) {
 		return dbTemplate("inventoryclass.list",kv).find();
 	}
+
+    public List<JsTreeBean> getTreeList() {
+        List<JsTreeBean> treeBeans = new ArrayList<>();
+        // 根节点
+        treeBeans.add(new JsTreeBean(0, "#", "存货分类档案", true, "root_opened", true));
+        appendSubTree(treeBeans, 1, "0");
+        return treeBeans;
+    }
+    private void appendSubTree(List<JsTreeBean> treeBeans, int grade, String pcode) {
+        for (Record row : getSubList(grade, pcode)) {
+            // 当前节点
+            treeBeans.add(new JsTreeBean(row.getStr("cinvccode"), pcode, row.getStr("cinvcname") + "(" + row.getStr("cinvccode") + ")", row.getBoolean("binvcend") ? "node" : "default", null, true));
+            // 追加子节点
+            if (!row.getBoolean("binvcend")) {
+                appendSubTree(treeBeans, grade + 1, row.getStr("cinvccode"));
+            }
+        }
+    }
+    private List<Record> getSubList(int grade, String pcode) {
+        Okv para = Okv.by("iinvcgrade", grade)
+                .set("cinvccode", pcode);
+        return dbTemplate("inventoryclass.getSubList", para).find();
+    }
 }

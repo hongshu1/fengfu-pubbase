@@ -1,9 +1,9 @@
 package cn.jbolt.wxa.api;
 
 import cn.jbolt._admin.cache.JBoltWechatUserCache;
-import cn.jbolt.admin.appdevcenter.ApplicationService;
-import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
-import cn.jbolt.admin.wechat.user.WechatUserService;
+import cn.rjtech.admin.appdevcenter.ApplicationService;
+import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.rjtech.admin.wechat.user.WechatUserService;
 import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.core.api.*;
 import cn.jbolt.core.model.Application;

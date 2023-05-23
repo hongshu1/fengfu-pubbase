@@ -25,6 +25,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
 import cn.rjtech.admin.workclass.WorkClassService;
+import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Person;
@@ -334,7 +335,6 @@ public class PersonService extends BaseService<Person> {
    * 数据导入
    */
   public Ret importExcelDatas(List<UploadFile> fileList, Kv para) {
-    String iscover = JBoltStringUtil.isBlank(para.getStr("iscover")) ? "1" : "0";
     int startRow = 2;
     for (UploadFile uploadFile : fileList) {
       StringBuilder errorMsg = new StringBuilder();
@@ -528,5 +528,9 @@ public class PersonService extends BaseService<Person> {
   public Record getpersonByCpsnnum(String cpsnnum) {
     return dbTemplate("person.getpersonByCpsnnum", Kv.by("cpsnnum", cpsnnum)).findFirst();
   }
+
+public Record findFirstByCuserid(Long iuserid) {
+	return findFirstRecord(selectSql().eq("iuserid", iuserid).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
+}
 
 }
