@@ -308,4 +308,9 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         return SUCCESS;
     }
 
+    public Ret withdraw(Long iautoid) {
+        
+        return SUCCESS;
+    }
+    
 }

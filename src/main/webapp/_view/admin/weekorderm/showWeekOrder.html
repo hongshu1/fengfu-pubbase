@@ -151,7 +151,7 @@
 
     //审批
     function approve() {
-        Ajax.get('/admin/weekorderm/approve?iAutoId='+$("input[name='weekOrderM.iAutoId']").val()+"&&mark="+2 , function (ret) {
+        Ajax.get('/admin/weekorderm/approve?ids='+$("input[name='weekOrderM.iAutoId']").val(), function (ret) {
             if (ret.state === 'ok') {
                 // 刷新
                 parent.refreshPjaxContainer();
