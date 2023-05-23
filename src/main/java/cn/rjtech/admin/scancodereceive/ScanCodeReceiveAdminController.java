@@ -13,6 +13,7 @@ import cn.rjtech.model.momdata.SysPureceivedetail;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 
 /**
  * 双单位扫码收货
@@ -139,5 +140,14 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
     public void Whcode() {
         renderJsonData(service.getWhcodeDatas(getKv()));
     }
-    
+
+    /**
+     * 查询双单位条码数据
+     */
+    public void getBarCodeData(){
+        String itemCode = get("itemCode");
+        Kv kv = new Kv();
+        kv.set("itemCode",itemCode);
+        renderJsonData(service.getBarcodeDatas(kv));
+    }
 }
