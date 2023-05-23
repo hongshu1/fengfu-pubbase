@@ -44,12 +44,12 @@ public class ProcessDefectAdminController extends BaseAdminController {
      */
     public void datas() {
         Kv kv = new Kv();
-        kv.setIfNotNull("cDocNo", get("cDocNo"));
-        kv.setIfNotNull("iMoDocId", get("iMoDocId"));
-        kv.setIfNotNull("cInvCode1", get("cInvCode1"));
-        kv.setIfNotNull("cInvName", get("cInvName"));
-        kv.setIfNotNull("cInvCode", get("cInvCode"));
-        kv.setIfNotNull("iStatus", get("iStatus"));
+        kv.setIfNotNull("cdocno", get("cdocno"));
+        kv.setIfNotNull("imodocid", get("imodocid"));
+        kv.setIfNotNull("cinvcode1", get("cinvcode1"));
+        kv.setIfNotNull("cinvname", get("cinvname"));
+        kv.setIfNotNull("cinvcode", get("cinvcode"));
+        kv.setIfNotNull("istatus", get("istatus"));
         kv.setIfNotNull("startdate", get("startdate"));
         kv.setIfNotNull("enddate", get("enddate"));
         renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));

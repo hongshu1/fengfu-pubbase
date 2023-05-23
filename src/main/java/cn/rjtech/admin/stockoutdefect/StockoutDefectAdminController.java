@@ -44,15 +44,15 @@ public class StockoutDefectAdminController extends BaseAdminController {
      */
     public void datas() {
         Okv kv = new Okv();
-        kv.setIfNotNull("cDocNo", get("cDocNo"));
-        kv.setIfNotNull("iMoDocId", get("iMoDocId"));
-        kv.setIfNotNull("cInvCode", get("cInvCode"));
-        kv.setIfNotNull("cInvCode1", get("cInvCode1"));
-        kv.setIfNotNull("cInvName", get("cInvName"));
-        if (isNull(get("iStatus"))) {
-            kv.setIfNotNull("iStatus", get(0));
+        kv.setIfNotNull("cdocno", get("cdocno"));
+        kv.setIfNotNull("imodocid", get("imodocid"));
+        kv.setIfNotNull("cinvcode", get("cinvcode"));
+        kv.setIfNotNull("cinvcode1", get("cinvcode1"));
+        kv.setIfNotNull("cinvname", get("cinvname"));
+        if (isNull(get("istatus"))) {
+            kv.setIfNotNull("istatus", get(0));
         } else {
-            kv.setIfNotNull("iStatus", get("iStatus"));
+            kv.setIfNotNull("istatus", get("istatus"));
         }
         kv.setIfNotNull("startdate", get("startdate"));
         kv.setIfNotNull("enddate", get("enddate"));
