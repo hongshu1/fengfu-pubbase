@@ -29,13 +29,13 @@
                                     <input type="hidden" id="cbarcode1" class="form-control border-none"
                                         readonly="readonly" name="sysscandeliver.billno" placeholder=""
                                         value="#(sysscandeliver.billno??)" />
-                                    <input type="text" data-notnull="true" data-tips="请输入车次号/传票号" id="cbarcode"
-                                        data-with-clearbtn="true" autocomplete="off" class="form-control" disabled
+                                    <input type="text" data-notnull="true" data-tips="请输入车次号/传票号" id="cbarcode" 
+                                        data-with-clearbtn="true" autocomplete="off" class="form-control" disabled 
                                         placeholder="请输入车次号/传票号"
                                         maxlength="40" name="billno" value="#(sysscandeliver.billno??)" />
                                     <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
                                         data-area="80%,80%" data-title="选择数据（单选）" id="supplierButton"
-                                        data-url="/admin/doubleCodeScanningShipment/orderData"><i
+                                        data-url="/admin/scanCodeShipment/orderData"><i
                                             class="fa fa-search mr-1"></i></button>
                                 </div>
                             </div>
@@ -64,7 +64,7 @@
                                         value="#(sysscandeliver.receiveaddress??)" />
                                     <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
                                         data-area="80%,80%" data-title="选择数据（单选）" id="supplierButton"
-                                        data-url="/admin/doubleCodeScanningShipment/orderDatatwo"><i
+                                        data-url="/admin/scanCodeShipment/orderDatatwo"><i
                                             class="fa fa-search mr-1"></i></button>
                                 </div>
                             </div>
@@ -92,10 +92,10 @@
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/sysscandeliverdetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
-                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
+                <a href="admin/sysscandeliverdetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " 
+                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
                 class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-
+   
             </td>
             <!-- <td>${data.whcode}</td>
             <td>${data.whname}</td> -->
@@ -137,8 +137,9 @@
 
     </div>
 
-    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable data-ajax="true"
-        data-url="admin/sysscandeliverdetail/findEditTableDatas"
+    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable
+        #if(sysscandeliver.AutoID??) data-ajax="true"
+        data-url="admin/sysscandeliverdetail/findEditTableDatas" #end
         data-conditions-form="sysscandeliver_#(pageId)"
 
         id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
@@ -180,7 +181,7 @@
                 withForm: ["sysscandeliver_#(pageId)"],
                 name: 'sysscandeliver',
                 type: "all",
-                url: "/admin/doubleCodeScanningShipment/submitAll",
+                url: "/admin/scanCodeShipment/submitAll",
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
                         parent.refreshPjaxContainer();

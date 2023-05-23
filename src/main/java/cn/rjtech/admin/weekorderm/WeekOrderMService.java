@@ -227,58 +227,41 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     }
 
     public List<Record> findByIdToShow(Long id) {
-        Kv kv = Kv.create();
-        kv.set("iAutoId", id);
+        Kv kv = Kv.by("iAutoId", id);
         return dbTemplate("weekorderm.paginateAdminDatas", kv).find();
     }
 
     /**
      * 审批
      */
-    public Ret approve(String iAutoId, Integer mark) {
-        boolean success = false;
-        if (mark == 1) {
-            WeekOrderM weekOrderM = findById(iAutoId);
-            if (weekOrderM == null || notOk(weekOrderM.getIAutoId())) {
-                return fail(JBoltMsg.PARAM_ERROR);
-            }
-            //订单状态：2. 待审批
-            weekOrderM.setIOrderStatus(2);
-            //审核状态： 1. 待审核
-            weekOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            success = weekOrderM.update();
-            if (success) {
-                //添加日志
-                addUpdateSystemLog(weekOrderM.getIAutoId(), JBoltUserKit.getUserId(), weekOrderM.getIAutoId().toString());
-            }
-        } else {
-            List<WeekOrderM> listByIds = getListByIds(iAutoId);
+    public Ret approve(String iAutoId) {
+        List<WeekOrderM> listByIds = getListByIds(iAutoId);
+        ValidationUtils.notEmpty(listByIds, "订单不存在");
 
+        tx(() -> {
             // TODO 由于审批流程暂未开发 先审批提审即通过
-            if (listByIds.size() > 0) {
-                for (WeekOrderM orderM : listByIds) {
-                    if (orderM.getIOrderStatus() != 2) {
-                        return warn("订单：" + orderM.getCOrderNo() + "状态不支持审批操作！");
-                    }
-                    // 订单状态：3. 已审批
-                    orderM.setIOrderStatus(WeekOrderStatusEnum.AUDITTED.getValue());
-                    // 审核状态：2. 审核通过
-                    orderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-                    success = orderM.update();
+            for (WeekOrderM orderM : listByIds) {
+                ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDITED.getValue(), orderM.getIAuditStatus(), String.format("订单号“%s” 非待审批状态", orderM.getCOrderNo()));
+                
+                // 订单状态：3. 已审批
+                orderM.setIOrderStatus(WeekOrderStatusEnum.AUDITTED.getValue());
+                // 审核状态：2. 审核通过
+                orderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
 
-                    if (success) {
-                        //添加日志
-                        addUpdateSystemLog(orderM.getIAutoId(), JBoltUserKit.getUserId(), orderM.getIAutoId().toString());
-                    }
+                List<WeekOrderD> weekOrderds = weekOrderDService.findByMId(orderM.getIAutoId());
+                if (CollUtil.isNotEmpty(weekOrderds)) {
+                    cusOrderSumService.handelWeekOrder(weekOrderds);
+                }
+
+                if (orderM.update()) {
+                    //添加日志
+                    addUpdateSystemLog(orderM.getIAutoId(), JBoltUserKit.getUserId(), orderM.getIAutoId().toString());
                 }
             }
-        }
+            return true;
+        });
 
-        List<WeekOrderD> weekOrderds = weekOrderDService.findByMId(iAutoId);
-        if (CollUtil.isNotEmpty(weekOrderds)) {
-            cusOrderSumService.handelWeekOrder(weekOrderds);
-        }
-        return ret(success);
+        return SUCCESS;
     }
 
     /**

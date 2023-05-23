@@ -1,16 +1,15 @@
-package cn.rjtech.admin.sysscandeliver;
+package cn.rjtech.admin.sysscandeliverone;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysScandeliverdetail;
-import com.jfinal.kit.Kv;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 
 /**
  * 扫码发货明细
@@ -18,14 +17,14 @@ import com.jfinal.kit.Kv;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-22 09:48
  */
-@CheckPermission(PermissionKey.DOUBLECODESCANNINGSHIPMENT)
+@CheckPermission(PermissionKey.SCANCODESHIPMENT)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/sysscandeliverdetail", viewPath = "/_view/admin/sysscandeliverdetail")
-public class SysScandeliverdetailAdminController extends BaseAdminController {
+@Path(value = "/admin/scanCodeShipmentdetail", viewPath = "/_view/admin/sysscandeliverdetail")
+public class SysScandeliverOnedetailAdminController extends BaseAdminController {
 
 	@Inject
-	private SysScandeliverdetailService service;
+	private SysScandeliverOnedetailService service;
    /**
 	* 首页
 	*/
@@ -96,9 +95,6 @@ public class SysScandeliverdetailAdminController extends BaseAdminController {
 
 
 	public void findEditTableDatas(){
-		Kv kv = new Kv();
-		String id = get("sysscandeliver.AutoID");
-		kv.set("id",id==null?' ':id);
-		renderJsonData(service.findEditTableDatas(kv));
+		renderJsonData(service.findEditTableDatas(get("sysscandeliver.AutoID")));
 	}
 }

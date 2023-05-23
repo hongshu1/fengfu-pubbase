@@ -17,28 +17,25 @@ FROM
     Mo_SpecMaterialsRcvM t1
     LEFT JOIN Mo_ProcessDefect t2 ON t2.iIssueId = t1.iAutoId
 WHERE 1 = 1
-    #if(cDocNo)
-  AND t2.cDocNo like '%#(cDocNo)%'
+    #if(cdocno)
+  AND t2.cDocNo like '%#(cdocno)%'
   #end
-    #if(iMoDocId)
-  AND t1.cSpecRcvDocNo like '%#(iMoDocId)%'
+    #if(imodocid)
+  AND t1.cSpecRcvDocNo like '%#(imodocid)%'
   #end
-#if(iRcvDocQcFormMid)
-  AND t2.iRcvDocQcFormMid like '%#(iRcvDocQcFormMid)%'
+#if(cinvcode)
+  AND t3.cInvCode like '%#(cinvcode)%'
   #end
-#if(cInvCode)
-  AND t3.cInvCode like '%#(cInvCode)%'
+#if(cinvcode1)
+  AND t3.cInvCode1 like '%#(cinvcode1)%'
   #end
-#if(cInvCode1)
-  AND t3.cInvCode1 like '%#(cInvCode1)%'
+#if(cinvname)
+  AND t3.cInvName like '%#(cinvname)%'
   #end
-#if(cInvName)
-  AND t3.cInvName like '%#(cInvName)%'
+  #if(istatus != '0' && istatus)
+  AND t2.iStatus = '#(istatus)'
   #end
-  #if(iStatus != '0' && iStatus)
-  AND t2.iStatus = '#(iStatus)'
-  #end
-  #if(iStatus == '0' && iStatus)
+  #if(istatus == '0' && istatus)
   AND t2.iStatus  is null
   #end
 
@@ -87,10 +84,27 @@ FROM
         LEFT JOIN Mo_ProcessDefect t2 ON t2.iIssueId = t1.iAutoId
 WHERE 1 = 1
 
-    #if(selectparam)
-    AND (t2.cDocNo LIKE CONCAT('%',#para(selectparam), '%')
-    OR t1.cSpecRcvDocNo LIKE CONCAT('%', #para(selectparam), '%')
-    #end
+    #if(cdocno)
+  AND t2.cDocNo like '%#(cdocno)%'
+  #end
+    #if(imodocid)
+  AND t1.cSpecRcvDocNo like '%#(imodocid)%'
+  #end
+#if(cinvcode)
+  AND t3.cInvCode like '%#(cinvcode)%'
+  #end
+#if(cinvcode1)
+  AND t3.cInvCode1 like '%#(cinvcode1)%'
+  #end
+#if(cinvname)
+  AND t3.cInvName like '%#(cinvname)%'
+  #end
+  #if(istatus != '0' && istatus)
+  AND t2.iStatus = '#(istatus)'
+  #end
+  #if(istatus == '0' && istatus)
+  AND t2.iStatus  is null
+  #end
 #if(startdate)
     and CONVERT(VARCHAR(10),t2.dUpdateTime,23) >='#(startdate)'
 #end

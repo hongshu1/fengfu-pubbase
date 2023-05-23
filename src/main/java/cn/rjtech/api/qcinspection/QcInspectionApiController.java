@@ -26,18 +26,24 @@ public class QcInspectionApiController extends BaseApiController{
      * 查询主表明细
      * @param pageNumber 页码
      * @param pageSize 每页显示条数
-     * @param selectparam 搜索条件
+     * @param cdocno 巡查单号
+     * @param cchainname 分类
+     * @param cchainno 连锁No
      */
     @ApiDoc(result = QcInspectionVo.class)
     @UnCheck
     public void datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
                       @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
-                      @Para(value = "selectparam") String selectparam,
+                      @Para(value = "cdocno") String cdocno,
+                      @Para(value = "cchainname") String cchainname,
+                      @Para(value = "cchainno") String cchainno,
                       @Para(value = "starttime") String starttime, @Para(value = "endtime") String endtime) {
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
         Kv kv = new Kv();
-        kv.set("selectparam", selectparam);
+        kv.set("cdocno", cdocno);
+        kv.set("cchainname", cchainname);
+        kv.set("cchainno", cchainno);
         kv.set("starttime", starttime);
         kv.set("endtime", endtime);
         renderJBoltApiRet(qcInspectionApiService.getAdminDatas(pageNumber,pageSize,kv));

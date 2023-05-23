@@ -58,8 +58,8 @@ LEFT JOIN Bd_EquipmentModel t4 ON i.iEquipmentModelId = t4.iautoid
 LEFT JOIN Bd_Warehouse wh on wh.cWhCode = a.WhCode
 
 where 1=1
-	#if(id)
-		and a.MasID = #para(id)
+	#if(masid)
+		and a.MasID = #para(masid)
 	#end
 ORDER BY a.ModifyDate DESC
 #end
