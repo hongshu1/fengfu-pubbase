@@ -140,20 +140,12 @@ public class PurchasemService extends BaseService<Purchasem> {
      * @return
      */
     public List<Record> paginateAdminDatas(Kv kv) {
-        // 数据权限过滤
-        /*if (!user.getIsSystemAdmin()) {
-            kv.set("cdepcodes", DataPermissionKit.getAccessCdepCodes(user));
-        }*/
-        Page<Record> pages = dbTemplate(u8SourceConfigName(), "purchasem.paginateAdminDatas", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
+        Page<Record> pages = dbTemplate("purchasem.paginateAdminDatas", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
         ValidationUtils.notNull(pages, JBoltMsg.DATA_NOT_EXIST);
+        for (Record row : pages.getList()) {
+        	row.set("createname", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+		}
         return pages.getList(); 
-        /*return pages.getList().stream().filter(item -> item.getStr("ifirstsourceproposalid") != null).map(record -> {
-            Record records = getMoney(Kv.by("ifirstsourceproposalid", record.get("ifirstsourceproposalid")));
-            if (isOk(records)) {
-                record.setColumns(records);
-            }
-            return record;
-        }).collect(Collectors.toList());*/
     }
 
     /**

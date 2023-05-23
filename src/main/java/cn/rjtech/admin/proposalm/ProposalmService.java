@@ -99,7 +99,7 @@ public class ProposalmService extends BaseService<Proposalm> {
 
         //系统管理员 || 存在权限部门
         para.set("isSystemAdmin", user.getIsSystemAdmin());
-        Page<Record> page = dbTemplate(u8SourceConfigName(), "proposalm.paginateAdminDatas", para.set("iorgid", getOrgId())).paginate(pageNumber, pageSize);
+        Page<Record> page = dbTemplate("proposalm.paginateAdminDatas", para.set("iorgid", getOrgId())).paginate(pageNumber, pageSize);
         if (CollUtil.isNotEmpty(page.getList())) {
             List<Record> purposeList = dictionaryService.getOptionsByTypeKey(DictionaryTypeKeyEnum.PURPOSE.getValue());
             ValidationUtils.notEmpty(purposeList, "缺少目的区分的字典数据");

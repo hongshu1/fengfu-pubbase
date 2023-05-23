@@ -1,7 +1,7 @@
 #sql("paginateAdminDatas")
 SELECT m.*, d.cdepname
-FROM #(getMesDbName()).dbo.PL_Proposalm m
-    left JOIN Department d ON m.cdepcode = d.cdepcode
+FROM PL_Proposalm m
+    left JOIN bd_Department d ON m.cdepcode = d.cdepcode
 WHERE m.iorgid = #para(iorgid)
 
 ### 超级管理员不过滤权限部门

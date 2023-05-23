@@ -1,11 +1,10 @@
 ### 采购管理数据源
 #sql("paginateAdminDatas")
     SELECT pm.*,
-    (SELECT cptname FROM PurchaseType WHERE cptcode = pm.iPurchaseType) AS ipurchasetypename,
-    (SELECT cDepName FROM Department WHERE cDepCode = pm.cdepcode) AS cdepname,
-    (SELECT cpsn_name FROM hr_hi_person WHERE cpsn_num = pm.cPersonCode) AS cpersonname,
-    (SELECT name FROM #(getJBoltDbName()).dbo.jb_user WHERE id = pm.iCreateBy) AS createname
-    FROM #(getMesDbName()).dbo.PL_PurchaseM pm
+    (SELECT cptname FROM bd_PurchaseType WHERE cptcode = pm.iPurchaseType) AS ipurchasetypename,
+    (SELECT cDepName FROM bd_Department WHERE cDepCode = pm.cdepcode) AS cdepname,
+    (SELECT cpsn_name FROM Bd_Person WHERE cpsn_num = pm.cPersonCode) AS cpersonname
+    FROM PL_PurchaseM pm
     WHERE 1 = 1
 #if(iautoid)
     AND pm.iAutoId = #para(iautoid)

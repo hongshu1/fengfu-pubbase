@@ -45,7 +45,7 @@
             <div class="btn-group" role="group" aria-label="btn-group">
                 <!-- 申购单编制按钮 -->
                 #if(purchaseInstrument)
-                #permission(cn.jbolt._admin.permission.PermissionKey::PURCHASE_INSTRUMENT_CHOOSE_PROPOSALM)
+                #permission(PermissionKey.PURCHASE_INSTRUMENT_CHOOSE_PROPOSALM)
                 <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     新增
@@ -58,7 +58,7 @@
                 </div>
                 #end
 
-                #permission(cn.jbolt._admin.permission.PermissionKey::PURCHASE_INSTRUMENT_EDIT)
+                #permission(PermissionKey.PURCHASE_INSTRUMENT_EDIT)
                 <button data-openpage="dialog" data-fs="true" data-handler="refreshJBoltTable"
                         data-title="修改申购单" data-check-handler="updateCheck"
                         data-url="admin/purchasem/instrumentEdit/" class="btn btn-outline-primary btn-sm"><i
@@ -67,7 +67,7 @@
                 </button>
                 #end
 
-                #permission(cn.jbolt._admin.permission.PermissionKey::PURCHASE_INSTRUMENT_SUBMIT)
+                #permission(PermissionKey.PURCHASE_INSTRUMENT_SUBMIT)
                 <button data-ajaxbtn data-handler="refreshJBoltTable"
                         data-check-handler="jboltTableGetCheckedId"
                         data-url="/admin/purchasem/submit?iautoid="
@@ -75,7 +75,7 @@
                 </button>
                 #end
 
-                #permission(cn.jbolt._admin.permission.PermissionKey::PURCHASE_INSTRUMENT_UPLOAD_FILE)
+                #permission(PermissionKey.PURCHASE_INSTRUMENT_UPLOAD_FILE)
                 <button class="btn btn-outline-primary btn-sm" data-openpage="dialog" data-btn="close"
                         data-area="600,400"
                         data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId"
@@ -84,7 +84,7 @@
                 </button>
                 #end
 
-                #permission(cn.jbolt._admin.permission.PermissionKey::PURCHASE_INSTRUMENT_DELETE)
+                #permission(PermissionKey.PURCHASE_INSTRUMENT_DELETE)
                 <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr"
                         data-check-handler="jboltTableGetCheckedIds"
                         data-url="admin/purchasem/instrumentDeleteByIds?ids="
@@ -102,14 +102,14 @@
                         class="fa fa-chain"></i>查看审批
                 </button>
 
-                #permission(cn.jbolt._admin.permission.PermissionKey::PURCHASE_WITHDRAW)
+                #permission(PermissionKey.PURCHASE_WITHDRAW)
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId"
                         data-url="/admin/purchasem/withdraw?iautoid=" data-confirm="确定撤销选中数据？"
                         class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销审批
                 </button>
                 #end
 
-                #permission(cn.jbolt._admin.permission.PermissionKey::PURCHASE_MANAGEMENT_SUMBITPURCHASE)
+                #permission(PermissionKey.PURCHASE_MANAGEMENT_SUMBITPURCHASE)
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId"
                         data-url="admin/purchasem/sumbitPurchase/" class="btn btn-outline-primary btn-sm"><i
                         class="fa fa-edit"></i>
@@ -117,7 +117,7 @@
                 </button>
                 #end
 
-                #permission(cn.jbolt._admin.permission.PermissionKey::PURCHASE_MANAGEMENT_REVOCATIONSUBMIT)
+                #permission(PermissionKey.PURCHASE_MANAGEMENT_REVOCATIONSUBMIT)
                 <button data-ajaxbtn data-handler="refreshJBoltTable"
                         data-check-handler="jboltTableGetCheckedIds" data-url="admin/purchasem/revocationSubmit?ids="
                         data-confirm="确定撤销选中数据？" class="btn btn-outline-primary btn-sm"><i class="fa fa-trash"></i> 撤销采购

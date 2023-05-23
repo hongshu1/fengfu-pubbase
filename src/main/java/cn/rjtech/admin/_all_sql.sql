@@ -598,10 +598,6 @@
 #include("project/project.sql")
 #end
 
-#namespace("project")
-#include("project/project.sql")
-#end
-
 #namespace("exch")
 #include("exch/exch.sql")
 #end

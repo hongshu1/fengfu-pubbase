@@ -4,7 +4,9 @@ import com.jfinal.aop.Aop;
 
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt.core.base.config.JBoltConfig;
+import cn.jbolt.core.db.datasource.JBoltDataSourceUtil;
 import cn.jbolt.core.model.GlobalConfig;
+import cn.rjtech.constants.DataSourceConstants;
 
 /**
  * 应用配置
@@ -13,6 +15,22 @@ import cn.jbolt.core.model.GlobalConfig;
  */
 public class AppConfig {
 	private static final GlobalConfigService GLOBAL_CONFIG_SERVICE = Aop.get(GlobalConfigService.class);
+	
+	
+    /**
+     * 基础库名
+     */
+    public static String getJBoltDbName() {
+        return JBoltDataSourceUtil.me.getJBoltDatasource(DataSourceConstants.MAIN).getDbName();
+    }	
+	
+    /**
+     * MES库名
+     */
+    public static String getMesDbName() {
+        return JBoltDataSourceUtil.me.getJBoltDatasource(DataSourceConstants.MOMDATA).getDbName();
+    }    
+    
     public static String getU8ApiUrl() {
         return JBoltConfig.prop.get("u8api.url");
     }

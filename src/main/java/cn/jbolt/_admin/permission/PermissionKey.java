@@ -1925,6 +1925,11 @@ public class PermissionKey {
 	/**
 	 * 费用预算编制
 	 */
+	public static final String EXPENSE_BUDGET = "expense_budget";
+	
+	/**
+	 * 费用预算编制
+	 */
 	public static final String EXPENSE_BUDGET_FORMULATE = "expense_budget_formulate";
 	
 	/**
@@ -2078,7 +2083,10 @@ public class PermissionKey {
 	 * 投资情况查询表
 	 */
 	public static final String INVESTMENT_PLAN_SITUATION_INDEX = "investment_plan_situation_index";
-	
+	/**
+	 * 禀议管理
+	 */
+	public static final String ADVICE_MANAGEMENT = "advice_management";
 	/**
 	 * 禀议书-提审
 	 */

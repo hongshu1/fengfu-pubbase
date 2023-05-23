@@ -109,11 +109,11 @@
 
             <div class="btn-group" role="group" aria-label="btn-group">
 
-                #permission(cn.jbolt._admin.permission.PermissionKey::PROPOSALM_EDIT)
+                #permission(PermissionKey.PROPOSALM_EDIT)
                 <button data-openpage="dialog" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="修改禀议管理数据" data-check-handler="jboltTableGetCheckedId" data-url="admin/proposalm/edit?readonly=readonly&iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i>查看</button>
                 #end
 
-                #permission(cn.jbolt._admin.permission.PermissionKey::PROPOSALM_WITHDRAW)
+                #permission(PermissionKey.PROPOSALM_WITHDRAW)
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/proposalm/withdraw?iautoid=" data-confirm="确定撤销选中数据？" class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销提交</button>
                 #end
 
@@ -121,7 +121,7 @@
                         data-check-handler="getIdIfValid" data-url="admin/verifyprogress/findprocess?cobjecttype=03&iobjectid="
                         class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
 
-                #permission(cn.jbolt._admin.permission.PermissionKey::PROPOSALM_EFFECT)
+                #permission(PermissionKey.PROPOSALM_EFFECT)
                 <button data-ajaxbtn data-area="700,400" data-title="生效" data-handler="refreshJBoltTable" data-check-handler="effectiveValidate" data-url="/admin/proposalm/effect?iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 生效</button>
                 #end
 
