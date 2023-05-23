@@ -343,9 +343,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
      * 查看计划
      */
     public void getScheduPlanMonthList() {
-        //排产纪录id
-        Long iWeekScheduleId = getLong("iWeekScheduleId");
-        renderJson(service.getScheduPlanMonthList(iWeekScheduleId));
+        renderJson(service.getScheduPlanMonthList(getKv()));
     }
 
     /**

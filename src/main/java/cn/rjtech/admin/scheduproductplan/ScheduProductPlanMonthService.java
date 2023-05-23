@@ -753,6 +753,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int[] invPlan1S = invPlanMap1S.get(inv);
                 int[] invPlan2S = invPlanMap2S.get(inv);
                 int[] invPlan3S = invPlanMap3S.get(inv);
+                BigDecimal qiChuZaiKu = BigDecimal.valueOf(inventory_originalMap.get(inv));
 
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
@@ -760,18 +761,25 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     int month = Integer.parseInt(date.substring(5,7));
                     int day = Integer.parseInt(date.substring(8,10));
 
+                    BigDecimal xuQiu = BigDecimal.valueOf(invPlan[i]);
+                    BigDecimal one = BigDecimal.valueOf(invPlan1S[i]);
+                    BigDecimal two = BigDecimal.valueOf(invPlan2S[i]);
+                    BigDecimal three = BigDecimal.valueOf(invPlan3S[i]);
+                    BigDecimal zaiKu = qiChuZaiKu.add(one).add(two).add(three).subtract(xuQiu);
+
                     ApsWeekscheduledQty scheduledQty = new ApsWeekscheduledQty();
                     scheduledQty.setIWeekScheduleDid(iWeekScheduleDid);
                     scheduledQty.setIYear(year);
                     scheduledQty.setIMonth(month);
                     scheduledQty.setIDate(day);
-                    scheduledQty.setIQty1(BigDecimal.valueOf(invPlan[i]));
-                    scheduledQty.setIQty2(BigDecimal.valueOf(invPlan1S[i]));
-                    scheduledQty.setIQty3(BigDecimal.valueOf(invPlan2S[i]));
-                    scheduledQty.setIQty4(BigDecimal.valueOf(invPlan3S[i]));
-                    scheduledQty.setIQty5(BigDecimal.valueOf(0));
+                    scheduledQty.setIQty1(xuQiu);
+                    scheduledQty.setIQty2(one);
+                    scheduledQty.setIQty3(two);
+                    scheduledQty.setIQty4(three);
+                    scheduledQty.setIQty5(zaiKu);
                     scheduledQty.setIQty6(BigDecimal.valueOf(0));
                     detailsQtyList.add(scheduledQty);
+                    qiChuZaiKu = zaiKu;
                 }
             }
         }
@@ -919,8 +927,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     /**
      * 获取计划
      */
-    public List<Map<String,Object>> getScheduPlanMonthList(Long iWeekScheduleId) {
-
+    public List<Map<String,Object>> getScheduPlanMonthList(Kv kv) {
+        //排产纪录id
+        Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
+        if (notOk(iWeekScheduleId)){
+            return null;
+        }
         //TODO:查询排产开始日期与截止日期
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
         int iLevel = apsWeekschedule.getILevel();
@@ -936,9 +948,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         int lastmonth = Integer.parseInt(DateUtils.formatDate(lastDate,"MM"));
         int lastday = Integer.parseInt(DateUtils.formatDate(lastDate,"dd"));
 
-
+        kv.set("level",iLevel).set("startdate",startDate).set("enddate",endDate);
         //TODO:根据层级及日期获取月周生产计划表数据
-        List<Record> getWeekScheduPlanList = getWeekScheduPlanList(Okv.by("level",iLevel).set("startdate",startDate).set("enddate",endDate));
+        List<Record> getWeekScheduPlanList = getWeekScheduPlanList(kv);
 
         //key:产线id   value:List物料集
         Map<Long,List<String>> workInvListMap = new HashMap<>();
@@ -2025,7 +2037,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return dbTemplate("scheduproductplan.getWeekScheduSumList", okv).find();
     }
 
-    public List<Record> getWeekScheduPlanList(Okv okv){
+    public List<Record> getWeekScheduPlanList(Kv okv){
         return dbTemplate("scheduproductplan.getWeekScheduPlanList", okv).find();
     }
     /**
