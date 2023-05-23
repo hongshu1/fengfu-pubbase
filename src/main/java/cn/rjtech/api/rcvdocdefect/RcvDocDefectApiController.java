@@ -24,21 +24,41 @@ public class RcvDocDefectApiController extends BaseApiController {
 
     /**
      * 查询主表明细
-     * @param pageNumber 页码
-     * @param pageSize 每页显示条数
-     * @param selectparam 搜索条件
+     * @param pageNumber         页码
+     * @param pageSize          每页显示条数
+     * @param cdocno            来料异常单
+     * @param imodocid          检验单号
+     * @param cinvname          部品名称
+     * @param cinvcode          存货编码编码
+     * @param cinvcode1         客户部番
+     * @param istatus           状态
+     * @param startdate         开始时间
+     * @param enddate          结束时间
      */
     @ApiDoc(result = RcvDocDefectVo.class)
     @UnCheck
     public void datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
                       @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
-                         @Para(value = "selectparam") String selectparam,
+                      @Para(value = "cdocno") String cdocno,
+                      @Para(value = "imodocid") String imodocid,
+                      @Para(value = "cinvname") String cinvname,
+                      @Para(value = "cinvcode") String cinvcode,
+                      @Para(value = "cinvcode1") String cinvcode1,
+                      @Para(value = "istatus") String istatus,
                       @Para(value = "startdate") String startdate,
                       @Para(value = "enddate") String enddate) {
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
-        
-        renderJBoltApiRet(rcvDocDefectApiService.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam).set("startdate",startdate).set("enddate",enddate)));
+        Kv kv = new Kv();
+        kv.set("cdocno", cdocno);
+        kv.set("imodocid", imodocid);
+        kv.set("cinvname", cinvname);
+        kv.set("cinvcode", cinvcode);
+        kv.set("cinvcode1", cinvcode1);
+        kv.set("istatus", istatus);
+        kv.set("startdate", startdate);
+        kv.set("enddate", enddate);
+        renderJBoltApiRet(rcvDocDefectApiService.getAdminDatas(pageNumber,pageSize,kv));
     }
 
     /**

@@ -8,6 +8,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapprovaldrole.FormapprovaldRoleService;
 import cn.rjtech.admin.formapprovalduser.FormapprovaldUserService;
 import cn.rjtech.admin.formapprovalflowd.FormApprovalFlowDService;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -315,15 +316,14 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
                         int size = flowDList.size();
                         List<FormApprovalFlowD> flowDS = new ArrayList<>();
 
-                        for (int i = 0; i < saveModelList.size(); i++) {
-                            FormapprovaldUser approvaldUser = saveModelList.get(i);
-                            approvaldUser.setIAuditStatus(1);
+                        for (FormapprovaldUser approvaldUser : saveModelList) {
+                            approvaldUser.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                             approvaldUser.setIFormApprovalId(iApprovalDid);
                             FormApprovalFlowD flowD = new FormApprovalFlowD();
                             flowD.setIFormApprovalFlowMid(flowMid);
                             flowD.setISeq(++size);
                             flowD.setIUserId(approvaldUser.getIUserId());
-                            flowD.setIAuditStatus(1);
+                            flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                             flowDS.add(flowD);
                         }
                         formapprovaldUserService.batchSave(saveModelList,saveModelList.size());

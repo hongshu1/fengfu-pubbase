@@ -402,6 +402,29 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> {
 		rcvdocqcformmservice.save(rcvDocQcFormM);
 	}
 
+	/**
+	 * 获取双单位条码数据
+	 * @return
+	 */
+	public List<Record> getBarcodeDatas(Kv kv) {
 
+		String itemCode = kv.getStr("itemCode");
+		System.out.println("itemCode==="+itemCode);
+		Record firstRecord = findFirstRecord("select t2.cInvCode as beforeCode, t3.cInvCode as afterCode\n" +
+				"from Bd_InventoryChange t1\n" +
+				"         left join Bd_Inventory t2 on t1.iBeforeInventoryId = t2.iAutoId\n" +
+				"         left join Bd_Inventory t3 on t1.iAfterInventoryId = t3.iAutoId\n" +
+				"where t2.cInvCode = '" + itemCode + "'");
+
+		if (firstRecord!=null){
+			String aftercode = firstRecord.getStr("aftercode");
+			String orgCode = getOrgCode();
+			kv.set("q",aftercode);
+			kv.set("orgCode",orgCode);
+			kv.set("limit",1);
+			return dbTemplate("scancodereceive.getBarcodeDatas",kv).find();
+		}
+		return null;
+	}
 
 }

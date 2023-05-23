@@ -514,3 +514,11 @@
 #include("momaterialsscansum/momaterialsscansum.sql")
 #end
 
+#namespace("sysscandeliver")
+#include("sysscandeliver/sysscandeliver.sql")
+#end
+
+#namespace("sysscandeliverone")
+#include("sysscandeliverone/sysscandeliverone.sql")
+#end
+

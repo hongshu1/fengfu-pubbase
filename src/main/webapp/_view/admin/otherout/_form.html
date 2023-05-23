@@ -13,6 +13,8 @@
 	#if(otherOut.autoid??)
 	<input type="hidden" id="otherOutautoid" name="otherOut.autoid" value="#(otherOut.autoid??)" />
 	#end
+	<input type="hidden" name="otherOut.sourcebilltype" value="#(otherOut.sourcebilltype??)" />
+	<input type="hidden" name="otherOut.type" value="#(otherOut.type??)" />
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">领料单号：</label>
 		<div class="col-sm-2 col-form-label">
@@ -98,7 +100,7 @@
 
 	function submitAllTables_#(pageId)(ele){
 		var action = getRealJqueryObject(ele);
-debugger
+
 		var id = action.data("id");
 		var autoid = $("#otherOutautoid").val();
 		var value = action.data("value");

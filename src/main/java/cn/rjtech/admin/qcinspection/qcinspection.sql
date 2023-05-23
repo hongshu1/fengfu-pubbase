@@ -48,11 +48,17 @@ FROM
     PL_QcInspection t1
 WHERE 1 = 1
 
-    #if(selectparam)
-    AND (t1.cChainNo LIKE CONCAT('%',#para(selectparam), '%')
-    OR t1.cChainName LIKE CONCAT('%', #para(selectparam), '%')
-    OR t1.InspectionNo LIKE CONCAT('%', #para(selectparam), '%'))
-    #end
+    #if(cchainno)
+  AND t1.cChainNo like '%#(cchainno)%'
+  #end
+  #if(cchainname)
+  AND t1.cChainName like '%#(cchainname)%'
+  #end
+  #if(cdocno)
+  AND t1.InspectionNo like '%#(cdocno)%'
+  #end
+
+
 #if(starttime)
     and CONVERT(VARCHAR(10),t1.dUpdateTime,23) >='#(starttime)'
 #end

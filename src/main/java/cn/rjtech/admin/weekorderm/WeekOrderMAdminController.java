@@ -9,9 +9,11 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.WeekOrderM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 
@@ -141,8 +143,10 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
-    public void deleteByIds() {
-        renderJson(service.deleteByIdS(get("ids")));
+    public void deleteByIds(@Para(value = "ids") String ids) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+        
+        renderJson(service.deleteByIdS(ids));
     }
 
     /**
@@ -155,12 +159,10 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 审批
      */
-    public void approve(String iAutoId, Integer mark) {
-        if (StringUtils.isEmpty(iAutoId)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.approve(iAutoId, mark));
+    public void approve(String ids) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+        
+        renderJson(service.approve(ids));
     }
 
     /**
