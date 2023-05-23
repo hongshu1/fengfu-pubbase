@@ -5,12 +5,15 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.apsweekschedule.ApsWeekscheduleService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.ApsAnnualplanm;
+import cn.rjtech.model.momdata.ApsWeekschedule;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
@@ -31,6 +34,8 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
 
     @Inject
     private ScheduProductPlanMonthService service;
+    @Inject
+    private ApsWeekscheduleService apsWeekscheduleService;
 
     public void planmonth() {
         render("planmonth.html");
@@ -343,9 +348,45 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
      * 查看计划
      */
     public void getScheduPlanMonthList() {
+        renderJson(service.getScheduPlanMonthList(getKv()));
+    }
+
+    /**
+     * 根据层级获取最近锁定时间
+     */
+    public void getLockDate() {
         //排产纪录id
         Long iWeekScheduleId = getLong("iWeekScheduleId");
-        renderJson(service.getScheduPlanMonthList(iWeekScheduleId));
+        
+        //排产层级
+        int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
+
+        //TODO:获取当前层级上次排产锁定日期+1
+        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
+        //锁定截止日期
+        Date lockPreDate;
+        if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
+            lockPreDate = apsWeekschedule.getDLockEndTime();
+        }else {
+            lockPreDate = new Date();
+        }
+
+        Long lockDate = null;
+        for (int i = 1; i <= 7; i++) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(lockPreDate);
+            calendar.add(Calendar.DATE,i);//日期+1
+
+            String weekDay = DateUtils.formatDate(calendar.getTime(),"E");
+            if (weekDay.equals("星期日")){
+                lockDate = calendar.getTime().getTime();
+                break;
+            }
+        }
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("lockDate",lockDate);
+        renderJsonData(map);
     }
 
     /**
@@ -353,6 +394,12 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
      */
     public void lockScheduPlan() {
         renderJson(service.lockScheduPlan(getKv()));
+    }
+    /**
+     * 解锁计划
+     */
+    public void unLockScheduPlan() {
+        renderJson(service.unLockScheduPlan(getKv()));
     }
 
 

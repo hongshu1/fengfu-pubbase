@@ -513,6 +513,18 @@ FROM Aps_WeekScheduleDetails AS a
          LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId AND e.isDeleted = 0
 WHERE a.isDeleted = '0'
   AND a.iLevel = #para(level)
+    #if(cworkname)
+        AND e.cWorkName LIKE CONCAT('%', #para(cworkname), '%')
+    #end
+    #if(cinvcode)
+        AND c.cInvCode LIKE CONCAT('%', #para(cinvcode), '%')
+    #end
+    #if(cinvcode1)
+        AND c.cInvCode1 LIKE CONCAT('%', #para(cinvcode1), '%')
+    #end
+    #if(cinvname1)
+        AND c.cInvName1 LIKE CONCAT('%', #para(cinvname1), '%')
+    #end
   AND
       (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
       ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )

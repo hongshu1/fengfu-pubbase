@@ -60,6 +60,13 @@ where 1=1
 
 #sql("paginateAdminDatas")
 SELECT
+        AuditState =
+        CASE
+            WHEN t1.Status=1 THEN '已保存'
+            WHEN t1.Status=2 THEN '待审批'
+            WHEN t1.Status=7 THEN '关闭'
+            WHEN t1.Status=5 THEN '已出库'
+            WHEN t1.Status=3 THEN '已审批 /未完成' END,
       t1.*,
       t4.cDepName
 FROM
