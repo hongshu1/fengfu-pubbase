@@ -159,12 +159,10 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 审批
      */
-    public void approve(String iAutoId, Integer mark) {
-        if (StringUtils.isEmpty(iAutoId)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.approve(iAutoId, mark));
+    public void approve(String ids) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+        
+        renderJson(service.approve(ids));
     }
 
     /**
