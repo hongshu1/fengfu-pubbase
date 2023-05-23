@@ -375,7 +375,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         //锁定日期集
         List<Map> list = new ArrayList<>();
         int weekNum = 1; //周次
-        for (int i = 1; i <= 70; i++) {
+        for (int i = 1; i <= 35; i++) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(lockPreDate);
             calendar.add(Calendar.DATE,i);//日期+1
@@ -415,7 +415,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         //解锁日期集
         List<Map> list = new ArrayList<>();
         int weekNum = 1; //周次
-        for (int i = 1; i <= 70; i++) {
+        for (int i = 1; i <= 35; i++) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(lockPreDate);
             calendar.add(Calendar.DATE,-i);//日期-1
