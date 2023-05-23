@@ -137,7 +137,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
         ValidationUtils.validateIntGt0(status, "审批状态");
 
-        renderJson(service.approve(formAutoId, formSn, status));
+        renderJson(service.approve(formAutoId, formSn, status, () -> null));
     }
     
 }
