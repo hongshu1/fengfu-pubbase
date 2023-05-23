@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.autoreply;
+package cn.jbolt.admin.wechat.autoreply;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import com.jfinal.core.JFinal;
 import com.jfinal.kit.Ret;
 import com.jfinal.upload.UploadFile;
 
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.common.model.WechatAutoreply;
 import cn.jbolt.common.model.WechatReplyContent;

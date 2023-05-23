@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.autoreply;
+package cn.jbolt.admin.wechat.autoreply;
 
 import java.util.Date;
 
@@ -9,7 +9,7 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.common.model.WechatAutoreply;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.config.JBoltConfig;

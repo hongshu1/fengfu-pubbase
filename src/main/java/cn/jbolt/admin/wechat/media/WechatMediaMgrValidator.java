@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.media;
+package cn.jbolt.admin.wechat.media;
 
 import com.jfinal.core.Controller;
 

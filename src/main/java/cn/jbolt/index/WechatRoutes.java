@@ -2,8 +2,8 @@ package cn.jbolt.index;
 
 import com.jfinal.config.Routes;
 
-import cn.rjtech.admin.wechat.autoreply.WechatMsgController;
-import cn.rjtech.admin.wechat.autoreply.WechatWxaMsgController;
+import cn.jbolt.admin.wechat.autoreply.WechatMsgController;
+import cn.jbolt.admin.wechat.autoreply.WechatWxaMsgController;
 /**
  * 微信公众平台前端配置
  * @ClassName:  WechatRoutes   

@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.mpinfo;
+package cn.jbolt.admin.wechat.mpinfo;
 
 import java.util.Date;
 
@@ -8,14 +8,14 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
-import cn.rjtech.admin.appdevcenter.ApplicationService;
-import cn.rjtech.admin.appdevcenter.ApplicationType;
-import cn.rjtech.admin.appdevcenter.JBoltAppLinkTarget;
-import cn.rjtech.admin.wechat.autoreply.WechatAutoReplyService;
-import cn.rjtech.admin.wechat.config.WechatConfigService;
-import cn.rjtech.admin.wechat.media.WechatMediaService;
-import cn.rjtech.admin.wechat.menu.WechatMenuService;
-import cn.rjtech.admin.wechat.user.WechatUserService;
+import cn.jbolt.admin.appdevcenter.ApplicationService;
+import cn.jbolt.admin.appdevcenter.ApplicationType;
+import cn.jbolt.admin.appdevcenter.JBoltAppLinkTarget;
+import cn.jbolt.admin.wechat.autoreply.WechatAutoReplyService;
+import cn.jbolt.admin.wechat.config.WechatConfigService;
+import cn.jbolt.admin.wechat.media.WechatMediaService;
+import cn.jbolt.admin.wechat.menu.WechatMenuService;
+import cn.jbolt.admin.wechat.user.WechatUserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.kit.JBoltUserKit;

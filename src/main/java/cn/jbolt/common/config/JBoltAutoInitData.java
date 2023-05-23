@@ -12,7 +12,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.permission.PermissionService;
 import cn.jbolt._admin.user.UserService;
-import cn.rjtech.admin.appdevcenter.ApplicationService;
+import cn.jbolt.admin.appdevcenter.ApplicationService;
 import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.model.User;
 

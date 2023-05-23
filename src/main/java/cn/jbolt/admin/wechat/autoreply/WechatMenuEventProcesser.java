@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.autoreply;
+package cn.jbolt.admin.wechat.autoreply;
 
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.StrKit;

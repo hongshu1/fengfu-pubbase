@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.autoreply;
+package cn.jbolt.admin.wechat.autoreply;
 
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.StrKit;
@@ -14,8 +14,8 @@ import com.jfinal.weixin.sdk.msg.in.event.InQrCodeEvent;
 import com.jfinal.weixin.sdk.msg.out.OutMsg;
 import com.jfinal.weixin.sdk.msg.out.OutTextMsg;
 
-import cn.rjtech.admin.wechat.config.WechatConfigService;
-import cn.rjtech.admin.wechat.user.WechatUserService;
+import cn.jbolt.admin.wechat.config.WechatConfigService;
+import cn.jbolt.admin.wechat.user.WechatUserService;
 import cn.jbolt.core.base.config.JBoltConfig;
 
 /**

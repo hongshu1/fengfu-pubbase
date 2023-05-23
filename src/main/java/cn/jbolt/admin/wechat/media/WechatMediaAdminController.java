@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.media;
+package cn.jbolt.admin.wechat.media;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,8 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.rjtech.admin.wechat.config.WechatConfigService;
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.jbolt.admin.wechat.config.WechatConfigService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.common.model.WechatMedia;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.JBoltPageSize;

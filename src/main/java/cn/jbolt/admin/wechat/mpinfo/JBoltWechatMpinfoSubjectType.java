@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.mpinfo;
+package cn.jbolt.admin.wechat.mpinfo;
 
 import cn.jbolt.core.enumutil.JBoltEnum;
 

@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.autoreply;
+package cn.jbolt.admin.wechat.autoreply;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +9,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.common.model.WechatAutoreply;
 import cn.jbolt.common.model.WechatKeywords;
 import cn.jbolt.core.base.JBoltMsg;

@@ -1,6 +1,6 @@
 package cn.jbolt._admin.cache;
 
-import cn.rjtech.admin.wechat.autoreply.WechatReplyContentService;
+import cn.jbolt.admin.wechat.autoreply.WechatReplyContentService;
 import cn.jbolt.common.model.WechatReplyContent;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.cache.JBoltCache;

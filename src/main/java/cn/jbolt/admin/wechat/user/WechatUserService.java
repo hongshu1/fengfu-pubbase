@@ -1,12 +1,12 @@
-package cn.rjtech.admin.wechat.user;
+package cn.jbolt.admin.wechat.user;
 
 import cn.jbolt._admin.cache.JBoltWechatUserCache;
 import cn.jbolt.core.api.JBoltApiKit;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt._admin.user.UserService;
-import cn.rjtech.admin.appdevcenter.ApplicationService;
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoType;
+import cn.jbolt.admin.appdevcenter.ApplicationService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoType;
 import cn.jbolt.common.model.WechatUser;
 import cn.jbolt.core.api.JBoltApiBindUserBean;
 import cn.jbolt.core.api.JBoltApiRet;

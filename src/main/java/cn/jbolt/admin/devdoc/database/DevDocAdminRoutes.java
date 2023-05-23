@@ -1,4 +1,4 @@
-package cn.rjtech.admin.devdoc.database;
+package cn.jbolt.admin.devdoc.database;
 
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.config.Routes;

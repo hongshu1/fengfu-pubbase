@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.user;
+package cn.jbolt.admin.wechat.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +7,8 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoType;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoType;
 import cn.jbolt.core.base.JBoltPageSize;
 import cn.jbolt.core.bean.Option;
 import cn.jbolt.core.bean.OptionBean;

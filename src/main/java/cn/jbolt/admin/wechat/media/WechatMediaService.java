@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.media;
+package cn.jbolt.admin.wechat.media;
 
 import java.io.File;
 import java.io.InputStream;
@@ -25,8 +25,8 @@ import com.jfinal.weixin.sdk.utils.IOUtils;
 
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
-import cn.rjtech.admin.wechat.config.WechatConfigService;
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.jbolt.admin.wechat.config.WechatConfigService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.common.model.WechatMedia;
 import cn.jbolt.core.base.JBoltMsg;

@@ -1,4 +1,4 @@
-package cn.rjtech.admin.wechat.menu;
+package cn.jbolt.admin.wechat.menu;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.MenuApi;
 
-import cn.rjtech.admin.wechat.config.WechatConfigService;
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.jbolt.admin.wechat.config.WechatConfigService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.common.model.WechatMenu;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.config.JBoltConfig;

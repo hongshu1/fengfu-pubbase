@@ -1,9 +1,9 @@
-package cn.rjtech.admin.wechat.user;
+package cn.jbolt.admin.wechat.user;
 
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 
-import cn.rjtech.admin.wechat.mpinfo.WechatMpinfoService;
+import cn.jbolt.admin.wechat.mpinfo.WechatMpinfoService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.model.WechatMpinfo;
 import cn.jbolt.core.para.JBoltValidator;
