@@ -22,7 +22,7 @@ import com.jfinal.kit.Okv;
 
 import com.jfinal.plugin.activerecord.Record;
 
-
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -78,8 +78,8 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 查看
 	 */
 	public void details() {
-		edit();
-		/*MoDoc moDoc=service.findById(getLong(0));
+		//edit();
+		MoDoc moDoc=service.findById(getLong(0));
 		if(moDoc == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
@@ -96,7 +96,7 @@ public class MoDocAdminController extends BaseAdminController {
 		HashMap<String, String> stringStringHashMap = service.getJob(getLong(0));
 		set("productionTasks",stringStringHashMap);
 		// 拼上 科系名称,存货编码,客户部番,部品名称,生产单位,规格,产线名称,班次名称,工艺路线名称
-		render("_detailsform.html");*/
+		render("_detailsform.html");
 	}
 
 	public void delete(){
@@ -107,7 +107,9 @@ public class MoDocAdminController extends BaseAdminController {
 		}
 		renderJson(service.updateStatus(moDoc));
 	}
-
+	public  void  checkmaterialpage(){
+		render("checkmaterialpage.html");
+	}
 
 
 	/**
