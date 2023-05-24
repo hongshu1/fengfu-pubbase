@@ -127,3 +127,11 @@ from PL_StockoutQcFormM t1
          LEFT JOIN Bd_Customer t3 ON t3.iAutoId = t1.iCustomerId
 where t1.iAutoId = '#(iautoid)'
     #end
+
+
+#sql("containerPrintData")
+SELECT t1.* FROM PL_StockoutDefect t1 WHERE 1=1
+    #if(ids)
+      AND t1.iAutoId  in (#(ids))
+    #end
+#end

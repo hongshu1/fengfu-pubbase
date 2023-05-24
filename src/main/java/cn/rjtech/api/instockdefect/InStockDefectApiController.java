@@ -119,6 +119,19 @@ public class InStockDefectApiController extends BaseApiController {
 
 
 
+    /**
+     * 打印二维码
+     * @param ids   异常品id 可多个
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void QRCode(@Para(value = "ids") Long ids) {
+        Kv kv = new Kv();
+        kv.set("ids", ids);
+        renderJBoltApiRet(inStockDefectApiService.QRCode(kv));
+    }
+
+
 
 
 }

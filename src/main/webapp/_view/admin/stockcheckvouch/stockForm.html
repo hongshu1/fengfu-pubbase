@@ -173,14 +173,15 @@
     addParentLayerDialogBtn("保存记录", "lay_success", function () {
       //获取选中表格数据
       var para = jboltTableGetCheckedDatas('#stock__table_#(pageId)');
-      Ajax.post('admin/stockcheckvouch/saveCheckVouchDetails', {"datas": JSON.stringify(para)}, function (ret) {
+      Ajax.post('admin/stockcheckvouchdetail/adjust', {"datas": JSON.stringify(para)}, function (ret) {
         refreshPjaxContainer()
       });
     });
   });
 
   //条码明细
-  function getEditableTableOptions_#(pageId)(){
+  function getEditableTableOptions_#(pageId)()
+  {
     var editableTableOptions = {
       trigger: "click",
       //初始行数

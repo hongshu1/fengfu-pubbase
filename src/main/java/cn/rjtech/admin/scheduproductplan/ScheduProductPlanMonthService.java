@@ -1374,7 +1374,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * 月周计划汇总
      */
     public List<Record> getApsMonthPlanSumPage(int pageNumber, int pageSize, Kv kv) {
-        List<Record> scheduProductPlanMonthList = new ArrayList<>();
+        List<Record> dataList = new ArrayList<>();
 
         String startDate = kv.getStr("startdate");
         String endDate = kv.getStr("enddate");
@@ -1443,7 +1443,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(inv);
 
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyMap,null);
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyMap,null);
 
                 /*Record planRecord = new Record();
                 planRecord.set("cInvCode",inv);
@@ -1493,18 +1493,18 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         Page<Record> page = new Page<>();
         page.setPageNumber(pageNumber);
         page.setPageSize(pageSize);
-        int num = (int) Math.ceil(scheduProductPlanMonthList.size() / 15);
+        int num = (int) Math.ceil(dataList.size() / 15);
         page.setTotalPage(num);
-        page.setTotalRow(scheduProductPlanMonthList.size());
-        page.setList(scheduProductPlanMonthList);
+        page.setTotalRow(dataList.size());
+        page.setList(dataList);
 
-        return scheduProductPlanMonthList;
+        return dataList;
     }
     /**
      * 月周人数汇总
      */
     public List<Record> getApsMonthPeopleSumPage(int pageNumber, int pageSize, Kv kv) {
-        List<Record> scheduProductPeopleMonthList = new ArrayList<>();
+        List<Record> dataList = new ArrayList<>();
 
         String startDate = kv.getStr("startdate");
         String endDate = kv.getStr("enddate");
@@ -1639,19 +1639,19 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     planRecord.set("qty"+seq,qty);
                 }
 
-                scheduProductPeopleMonthList.add(planRecord);
+                dataList.add(planRecord);
             }
         }
 
         Page<Record> page = new Page<>();
         page.setPageNumber(pageNumber);
         page.setPageSize(pageSize);
-        int num = (int) Math.ceil(scheduProductPeopleMonthList.size() / 15);
+        int num = (int) Math.ceil(dataList.size() / 15);
         page.setTotalPage(num);
-        page.setTotalRow(scheduProductPeopleMonthList.size());
-        page.setList(scheduProductPeopleMonthList);
+        page.setTotalRow(dataList.size());
+        page.setList(dataList);
 
-        return scheduProductPeopleMonthList;
+        return dataList;
     }
 
 
@@ -1662,7 +1662,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * 生产计划及实绩管理
      */
     public List<Record> getApsPlanAndActualPage(int pageNumber, int pageSize, Kv kv) {
-        List<Record> scheduProductPlanMonthList = new ArrayList<>();
+        List<Record> dataList = new ArrayList<>();
 
         String startDate = kv.getStr("startdate");
         String endDate = kv.getStr("enddate");
@@ -1876,61 +1876,61 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 //key:yyyy-MM-dd   value:qty  计划使用
                 Map<String,BigDecimal> dateQtyPPMap = invPlanDatePPMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyPPMap,"计划使用");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyPPMap,"计划使用");
 
                 //key:yyyy-MM-dd   value:qty  计划/1S
                 Map<String,BigDecimal> dateQty1SMap = invPlanDate1SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQty1SMap,"计划/1S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQty1SMap,"计划/1S");
 
                 //key:yyyy-MM-dd   value:qty  计划/2S
                 Map<String,BigDecimal> dateQty2SMap = invPlanDate2SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQty2SMap,"计划/2S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQty2SMap,"计划/2S");
 
                 //key:yyyy-MM-dd   value:qty  计划/3S
                 Map<String,BigDecimal> dateQty3SMap = invPlanDate3SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQty3SMap,"计划/3S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQty3SMap,"计划/3S");
 
                 //key:yyyy-MM-dd   value:qty  实绩/1S
                 Map<String,BigDecimal> dateQtyActual1SMap = invActualDate1SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActual1SMap,"实绩/1S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyActual1SMap,"实绩/1S");
 
                 //key:yyyy-MM-dd   value:qty  实绩/2S
                 Map<String,BigDecimal> dateQtyActual2SMap = invActualDate2SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActual2SMap,"实绩/2S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyActual2SMap,"实绩/2S");
 
                 //key:yyyy-MM-dd   value:qty  实绩/3S
                 Map<String,BigDecimal> dateQtyActual3SMap = invActualDate3SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActual3SMap,"实绩/3S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyActual3SMap,"实绩/3S");
 
                 //key:yyyy-MM-dd   value:qty  计划汇总
                 Map<String,BigDecimal> dateQtyPlanSUMMap = invPlanDateSUMMap.get(inv);
                 //key:yyyy-MM-dd   value:qty  实绩汇总
                 Map<String,BigDecimal> dateQtyActualSUMMap = invActualDateSUMMap.get(inv);
                 //数据处理 行转列并赋值 实绩汇总-计划汇总(合计差异)
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActualSUMMap,dateQtyPlanSUMMap,"合计差异");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyActualSUMMap,dateQtyPlanSUMMap,"合计差异");
 
                 //key:yyyy-MM-dd   value:qty  计划在库
                 Map<String,BigDecimal> dateQtyZKMap = invPlanDateZKMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyZKMap,"计划在库");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyZKMap,"计划在库");
             }
         }
 
         Page<Record> page = new Page<>();
         page.setPageNumber(pageNumber);
         page.setPageSize(pageSize);
-        int num = (int) Math.ceil(scheduProductPlanMonthList.size() / 15);
+        int num = (int) Math.ceil(dataList.size() / 15);
         page.setTotalPage(num);
-        page.setTotalRow(scheduProductPlanMonthList.size());
-        page.setList(scheduProductPlanMonthList);
+        page.setTotalRow(dataList.size());
+        page.setList(dataList);
 
-        return scheduProductPlanMonthList;
+        return dataList;
     }
 
     /**

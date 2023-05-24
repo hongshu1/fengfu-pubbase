@@ -127,3 +127,11 @@ WHERE
 #end
 order by t2.dUpdateTime desc
     #end
+
+
+#sql("containerPrintData")
+SELECT t1.* FROM PL_RcvDocDefect t1 WHERE 1=1
+    #if(ids)
+      AND t1.iAutoId  in (#(ids))
+    #end
+#end

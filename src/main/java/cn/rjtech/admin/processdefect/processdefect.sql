@@ -114,3 +114,10 @@ WHERE 1 = 1
 order by t2.dUpdateTime desc
     #end
 
+
+#sql("containerPrintData")
+SELECT t1.* FROM Mo_ProcessDefect t1 WHERE 1=1
+    #if(ids)
+      AND t1.iAutoId  in (#(ids))
+    #end
+#end

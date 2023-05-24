@@ -41,7 +41,7 @@
 				<td>${data.colname}</td>
 
 				#for(datetr:collist)
-				<td>${data.#(datetr)}</td>
+				<td>${data.#(datetr),0|number_format}</td>
 				#end
 			</tr>
 			{@/each}

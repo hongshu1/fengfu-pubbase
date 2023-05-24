@@ -49,7 +49,7 @@
 	<a class="jbolt_table_delbtn" href="admin/materialDeliveryList/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
 	 {@/if}
 </td>
-<td>${data.state|iOrderStatus}</td>
+<td>${data.auditstate}</td>
 <td>${data.billno}</td>
 <td>${data.sourcebilldid}</td><!--ERP单据号-->
 <td>${data.billdate}</td>
@@ -61,7 +61,7 @@
 <td>${data.cdepname}</td><!--部门名称-->
 <td>${data.billtype}</td>
 <td>${data.cvenname}</td><!--委外商-->
-<td>${data.auditdate}</td><!--审批日期-->
+<td>${data.auditdate}</td><!--审核日期-->
 <td>${data.memo}</td><!--备注-->
 <td>${data.createperson}</td>
 <td>${data.createdate}</td>
@@ -73,8 +73,8 @@
 <div class="jbolt_table_toolbar" id="materialsOut_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
 		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增出库管理-材料出库单列表"  data-url="admin/materialDeliveryList/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/materialDeliveryList/approve?mark=2&&iAutoId=" data-confirm="确定审批选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审批</button>
-		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/materialDeliveryList/NoApprove?ids=" data-confirm="确定反审批选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审批</button>
+		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/materialDeliveryList/approve?mark=2&&iAutoId=" data-confirm="确定审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审核</button>
+		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/materialDeliveryList/NoApprove?ids=" data-confirm="确定反审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审核</button>
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/materialDeliveryList/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
 	</div>
 
@@ -120,7 +120,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 	<th data-width="150" data-column="DeptName">部门名称</th>
 	<th data-width="150" data-column="BillType">业务类型</th>
 	<th data-width="150" data-column="VenCode">委外商</th>
-	<th data-width="150" data-column="AuditDate">审批日期</th>
+	<th data-width="150" data-column="AuditDate">审核日期</th>
 	<th data-width="150" data-column="Memo">备注</th>
 	<th data-width="150" data-column="CreatePerson">创建人</th>
 	<th data-width="150" data-column="CreateDate">创建时间</th>
