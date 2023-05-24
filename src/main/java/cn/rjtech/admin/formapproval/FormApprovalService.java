@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.interfaces.ICallbackFunc;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
@@ -28,6 +29,7 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -239,7 +241,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         Record formData = findFirstRecord("select * from " + formSn + " where iAutoId = ? ", formAutoId);
         ValidationUtils.notNull(formData, "单据不存在");
         ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
-        
+
         // 单据审核状态
         AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(formData.getInt(IAUDITSTATUS));
         // 允许提审的状态校验
@@ -250,7 +252,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             default:
                 return fail(String.format("当前状态“%s”，不可提交审核", auditStatusEnum.getText()));
         }
-        
+
         // 单据创建人
         Long icreateby = formData.getLong("icreateby");
         // 提审人跟单据创建人要是同一个用户
@@ -263,7 +265,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         if (ObjUtil.isNull(auditFormConfig)) {
             return fail("该类型单据未配置审核/审批流程或是审核/审批设置未启用！");
         }
-        
+
         tx(() -> {
 
             // 根据审批类型进行处理
@@ -624,14 +626,54 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     /**
+     * 状态审批
+     */
+    public void approveByStatus(String formSn, Long formAutoId, ICallbackFunc preApprove, ICallbackFunc postApprove) {
+        Record formData = Db.use(dataSourceConfigName()).findFirst("SELECT * FROM " + formSn + " WHERE iautoid = ? ", formAutoId);
+        ValidationUtils.notNull(formData, "单据不存在");
+        ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+        ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“审批通过”按钮");
+        ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
+
+        String msg = preApprove.execute();
+        ValidationUtils.assertBlank(msg, msg);
+        
+        // 更新审核通过
+        ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审批状态失败");
+
+        msg = postApprove.execute();
+        ValidationUtils.assertBlank(msg, msg);
+    }
+
+    /**
+     * 状态审批
+     */
+    public void rejectByStatus(String formSn, Long formAutoId, ICallbackFunc preReject, ICallbackFunc postReject) {
+        Record formData = Db.use(dataSourceConfigName()).findFirst("SELECT * FROM " + formSn + " WHERE iautoid = ? ", formAutoId);
+        ValidationUtils.notNull(formData, "单据不存在");
+        ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+        ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不能操作“审批不通过”");
+        ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
+
+        String msg = preReject.execute();
+        ValidationUtils.assertBlank(msg, msg);
+
+        // 更新审核通过
+        ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审批状态失败");
+
+        msg = postReject.execute();
+        ValidationUtils.assertBlank(msg, msg);
+    }
+
+    /**
      * 审批
      */
     public Ret approve(Long formAutoId, String formSn, int status) {
-        Date now = new Date();
-
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
+
+        Date now = new Date();
         
         Long mid = formApproval.getIAutoId();
 
@@ -998,15 +1040,15 @@ public class FormApprovalService extends BaseService<FormApproval> {
         Long formAutoId = kv.getLong("formAutoId");
         Integer status = kv.getInt("status");
         Boolean judge = kv.getBoolean("judge");
-        
+
         ValidationUtils.notNull(formAutoId, "参数异常,请保存单据后刷新重试！");
-        
+
         Date now = new Date();
 
         // 查出单据对应的审批流配置
         FormApproval approval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(approval, "单据未提交审批！");
-        
+
         Long mid = approval.getIAutoId();
 
         // 流程主表数据
@@ -1014,7 +1056,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         Map<Long, FormApprovalFlowM> flowMMap = flowmList.stream().collect(
                 Collectors.toMap(FormApprovalFlowM::getIApprovalDid, Function.identity(), (key1, key2) -> key2)
         );
-        
+
         User user = JBoltUserKit.getUser();
         Long userId = user.getId();
 
@@ -1037,7 +1079,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
 //		if (size > 0){}
         listByMid.forEach(formApprovalD -> {
-            
+
             // 已是按iSeq的asc顺序遍历
             Long Did = formApprovalD.getIAutoId();
             // 审批节点的审批状态
@@ -1052,7 +1094,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             Integer iSkipOn = formApprovalD.getISkipOn();
 
             // 节点待审批
-            if (iStatus == 1) { 
+            if (iStatus == 1) {
 
                 /*
                  * 单据流程主表
@@ -1208,7 +1250,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     formApprovalD.setDAuditTime(now);
                     formApprovalD.update(); //保存
 
-                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId,AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
+                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
 
                     approval.setIsDeleted(false);
                     approval.update();  //保存
@@ -1255,7 +1297,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
     public FormApproval findByFormAutoId(Long formAutoId) {
         return findFirst("select * from Bd_FormApproval where iFormObjectId = ? AND isDeleted = '0' ", formAutoId);
     }
-
+    
     /**
      * 更新提审状态
      */
@@ -1279,12 +1321,56 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 .set(DAUDITTIME, now)
                 .eq(IAUTOID, formAutoId)
                 .eq(IAUDITSTATUS, iBeforeStatus);
-        
+
         return update(updateSql) > 0;
     }
-//
-//    public boolean updateWithdraw() {
-//        
-//    }
+
+    /**
+     * 更新撤销审核
+     */
+    public boolean updateWithdraw(String formSn, long formAutoId) {
+        Sql updateSql = updateSql().update(formSn)
+                .set(IAUDITSTATUS, AuditStatusEnum.NOT_AUDIT.getValue())
+                .eq(IAUTOID, formAutoId)
+                .eq(IAUDITSTATUS, AuditStatusEnum.AWAIT_AUDIT.getValue());
+
+        return update(updateSql) > 0;
+    }
+
+    /**
+     * 撤销审核，支持逻辑校验处理
+     *
+     * @param formSn       表名
+     * @param formAutoId   单据ID
+     * @param preWithdraw  撤回前校验
+     * @param postWithdraw 更新之后的其他逻辑处理
+     */
+    public void withdraw(String formSn, long formAutoId, ICallbackFunc preWithdraw, ICallbackFunc postWithdraw) {
+        Record formData = Db.use(dataSourceConfigName()).findFirst("SELECT * FROM " + formSn + " WHERE iautoid = ? ", formAutoId);
+        ValidationUtils.notNull(formData, "单据不存在");
+        ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+        ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS), "非待审核状态");
+
+        switch (AuditWayEnum.toEnum(formData.getInt(IAUDITWAY))) {
+            // 状态审批
+            case STATUS:
+                // 更新前校验
+                String msg = preWithdraw.execute();
+                ValidationUtils.assertBlank(msg, msg);
+
+                // 执行状态更新
+                ValidationUtils.isTrue(updateWithdraw(formSn, formAutoId), "更新撤回失败");
+
+                // 更新后业务处理
+                msg = postWithdraw.execute();
+                ValidationUtils.assertBlank(msg, msg);
+            //  审批流
+            case FLOW:
+
+                break;
+            default:
+                break;
+        }
+    }
 
 }

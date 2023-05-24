@@ -120,4 +120,16 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
     public List<Record> options1() {
         return dbTemplate("materialsprepare.findColumns1", Kv.of("isenabled", "1")).find();
     }
+
+    /**
+     * 材料出库单列表 明细
+     * @param pageNumber
+     * @param pageSize
+     * @param kv
+     * @return
+     */
+    public Page<Record> getMaterialsOutLines(int pageNumber, int pageSize, Kv kv){
+        return dbTemplate("materialsprepare.getMaterialsOutLines",kv).paginate(pageNumber, pageSize);
+
+    }
 }

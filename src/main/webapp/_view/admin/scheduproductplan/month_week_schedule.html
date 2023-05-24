@@ -161,7 +161,7 @@
                     <button>数据导入</button>
                     <button>保存层级</button>
                     <button>计划使用刷新</button>
-                    <button id="content">锁定</button>
+                    <button id="content" onClick="lock()">锁定</button>
                     <button onClick="unLock()">解锁</button>
                 </div>
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
@@ -185,13 +185,16 @@
                 <form>
                     <div class="form-group row" style="margin-top: 20px;display: flex;margin-bottom: 0px">
                         <span style="display:block;line-height: 25px;margin-left: 15px">截止日期：</span>
-                        <input type="datetime-local" id="datetime-local" name="datetime-local">
+<!--                        <input type="datetime-local" id="datetime-local" name="datetime-local">-->
+                        <select id="mySelect" style="width:180px">
+                            <option value="">请选择</option>
+                        </select>
                     </div>
                 </form>
             </div>
             <div style="text-indent: 1.5rem">
                 <span>周次：</span>
-                <span>第二周</span>
+                <span id="weekNum">第二周</span>
             </div>
             <p class="alert_but"><button id="close_but">取消</button><button onClick="save()">确定</button></p>
         </div>
@@ -234,6 +237,7 @@
         planListRowIndex:3,     //计划排产列表起始行下标
         planListColIndex:7,     //计划排产列表起始列下标
         openBoxTime:'',         //打开锁定弹框的时间戳
+        getLockDate:[],         //存储锁定计划的全部截止日期
     };
     var parmsArr = [Object.assign({},parmsDefault)];
     //添加属性
@@ -250,6 +254,10 @@
     // var rowCount = sheet.getRowCount();//获取行数
 
     //初始化表格数据
+    /**
+     * 初始化产线数据
+     * @param loadInit
+     */
     function loadInit(){
         //设置全局的列宽行高
         sheet.defaults.colWidth = 80;
@@ -291,7 +299,12 @@
         spread.resumeCalcService(); //开启计算服务
         spread.resumePaint(); //恢复绘制
     }
-    //获取接口返回的日期数据
+    /**
+     * 获取接口返回的日期数据
+     * @param initDate
+     * @param parms 自定义对象，用户接收数据
+     * @param sheet 当前活动表单
+     */
     function initDate(parms,sheet) {
         let url = "http://localhost:8081/admin/scheduproductplanmonth/getTableHead";
         //获取接口数据
@@ -326,7 +339,15 @@
             spreadResume();// 恢复绘制
         });
     }
-    //初始化产线数据
+
+    //设置表单保护，单元格不可编辑
+    // $("#content").click(function() {
+    //
+    // })
+    /**
+     * 初始化产线数据
+     * @param initData
+     */
     function initData(){
         let url = "http://localhost:8081/admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=1659809519734398976&level=1&endDate=2023-06-21";
         $.ajax({
@@ -450,54 +471,67 @@
                 dataType:'json',
                 success:function (res){
                     console.log(res)
-                    const datetimeLocalInput = document.getElementById('datetime-local');
-                    var now = new Date();
-                    let dates = parseFloat(res.data.lockDate);//转为数字类型
-                    const isoString = new Date(dates).toISOString();
-                    datetimeLocalInput.value = isoString.slice(0, 16);
-                    parms.openBoxTime=isoString.slice(0, 16);
+                    parms.getLockDate = res.data;
+                    const weekNum = document.getElementById('weekNum');
+                    weekNum.innerText = parms.getLockDate[0].weekNum;
+                    var options = "";
+                    for (var i = 0; i < res.data.length; i++) {
+                        options += "<option value='" + res.data[i].lockDate + "'>" + res.data[i].lockDate + "</option>";
+                    }
+                    $("#mySelect").html(options);
                 },error: function(error) {
                     console.log(error);
                 }
             })
-            // //解锁日期
-            // let url = "http://localhost:8081/admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=1659809519734398976";
-            // $.ajax({
-            //     url,
-            //     type:'post',
-            //     dataType:'json',
-            //     success:function (res){
-            //         console.log(res)
-            //         const datetimeLocalInput = document.getElementById('datetime-local');
-            //         var now = new Date();
-            //         let dates = parseFloat(res.data.unLockDate);//转为数字类型
-            //         const isoString = new Date(dates).toISOString();
-            //         datetimeLocalInput.value = isoString.slice(0, 16);
-            //         parms.openBoxTime=isoString.slice(0, 16);
-            //     },error: function(error) {
-            //         console.log(error);
-            //     }
-            // })
         }
     }
-    //锁定确定按钮事件
+    //获取用户点击锁定的截止日期
+    const selectElement = document.getElementById('mySelect');
+    selectElement.addEventListener('change', function() {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const selectedValue = selectedOption.value;
+        const selectedText = selectedOption.text;
+        const weekNum = document.getElementById('weekNum');
+        if(alertTitle.innerText == "锁定计划"){
+            const text = parms.getLockDate.find(item=>item.lockDate==selectedValue);
+            weekNum.innerText = text.weekNum;
+        }else{
+            const text = parms.getLockDate.find(item=>item.unLockDate==selectedValue);
+            weekNum.innerText = text.weekNum;
+        }
+    });
+    //
+    /**
+     * 锁定确定按钮事件
+     * @param save
+     */
     function save(){
-        // const now = new Date();
-        // const dayOfWeek = now.getDay(); // 获取当前星期几，0表示星期天，1表示星期一
-        // const daysLeftInWeek = 7 - dayOfWeek; // 当前星期还剩几天
-        // const daysUntilSunday = dayOfWeek === 0 ? 7 : 7 - dayOfWeek; // 距离下个星期天还差几天
-        // const timestamp = Date.parse(startTime);
-        // const oneDay = 24 * 60 * 60 * 1000; // 拿到一天的毫秒数
-        const datetimeLocalInput = document.getElementById('datetime-local');
+        const datetimeLocalInput = document.getElementById('mySelect');
         const myVal = datetimeLocalInput.value.substring(0,10);
         console.log(myVal)
-        let url = `http://localhost:8081/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`;
+        let url = alertTitle.innerText == "锁定计划"?`http://localhost:8081/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`
+            :`http://localhost:8081/admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`;
         $.ajax({
             url,
             type:'post',
             dataType:'json',
             success:function (res){
-                console.log(res)
+                myAlert.style.display = "none";
+                mybg.style.display = "none";
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 7; j++) {
+                        // 修改sheet默认locked为false
+                        var defaultStyle = new GC.Spread.Sheets.Style();
+                        defaultStyle.locked = false;
+                        sheet.setDefaultStyle(defaultStyle, GC.Spread.Sheets.SheetArea.viewport);//设置第1行不可编辑
+                        var style = new GC.Spread.Sheets.Style();
+                        style.locked = true;
+                        style.backColor = "yellow";
+                        sheet.setStyle(i+4, j+9, style);
+                        // 设置表单保护
+                        sheet.options.isProtected = true;
+                    }
+                }
             },error: function(error) {
                 console.log(error);
             }
@@ -513,6 +547,10 @@
         myAlert.style.display = "none";
         mybg.style.display = "none";
     }
+    /**
+     * 解锁计划
+     * @param unLock
+     */
     function unLock(){
         myAlert.style.display = "block";
         alertTitle.innerText = "解锁计划";
@@ -533,6 +571,24 @@
         mybg.style.opacity = "0.3";
         document.body.appendChild(mybg);
         document.body.style.overflow = "hidden";
+        let url = "http://localhost:8081/admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=1659809519734398976";
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                parms.getLockDate = res.data;
+                let weekNum = document.getElementById('weekNum');
+                weekNum.innerText = parms.getLockDate[0].weekNum;
+                var options = "";
+                for (var i = 0; i < res.data.length; i++) {
+                    options += "<option value='" + res.data[i].unLockDate + "'>" + res.data[i].unLockDate + "</option>";
+                }
+                $("#mySelect").html(options);
+            },error: function(error) {
+                console.log(error);
+            }
+        })
     }
     //测试向后端发送数据
     function edit(){

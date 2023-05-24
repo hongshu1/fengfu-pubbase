@@ -1,5 +1,7 @@
 package cn.rjtech.admin.codingruled;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
@@ -7,13 +9,16 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.form.FormService;
+import cn.rjtech.enums.CodingDTypeEnum;
 import cn.rjtech.model.momdata.CodingRuleD;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,6 +53,10 @@ public class CodingRuleDService extends BaseService<CodingRuleD> {
      * @param icodingrulemid 类型： 1. 手工输入 2. 流水号 3. 手工输入 4. 2位年 5. 2位月 6. 2位日
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Long icodingrulemid) {
+        
+        if (ObjectUtil.isNull(icodingrulemid)){
+            return emptyPage(pageSize);
+        }
         //创建sql对象
         Sql sql = selectSql().page(pageNumber, pageSize);
         //sql条件处理
@@ -57,7 +66,20 @@ public class CodingRuleDService extends BaseService<CodingRuleD> {
         Page<Record> paginates = paginateRecord(sql);
         List<Record> list = paginates.getList();
         list.forEach(row -> {
+            String codingType = row.getStr("ccodingtype");
+            if (codingType.equals(CodingDTypeEnum.serialNumberType.getValue())){
+                row.set("ccodingtext","数量");
+            }else if (codingType.equals(CodingDTypeEnum.yearType.getValue())){
+                row.set("ccodingtext","yyyy");
+            }else if (codingType.equals(CodingDTypeEnum.year2Type.getValue())){
+                row.set("ccodingtext","yy");
+            }else if (codingType.equals(CodingDTypeEnum.monthType.getValue())){
+                row.set("ccodingtext","mm");
+            }else if (codingType.equals(CodingDTypeEnum.dateType.getValue())){
+                row.set("ccodingtext","dd");
+            }
             row.set("cseparatorname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.encoding_field_separator.name(), row.getStr("cseparator")));
+            row.set("ccodingtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.cCodingType.name(), codingType));
         });
         return paginates;
     }
@@ -126,5 +148,56 @@ public class CodingRuleDService extends BaseService<CodingRuleD> {
     public void deleteByMultiIds(String ids) {
         delete("DELETE FROM Bd_CodingRuleD WHERE iautoid IN (" + ids + ")");
     }
-
+    
+    
+    public List<CodingRuleD> createCodingRuleList(Long codingRuleMid, List<Record> recordList){
+        if (CollUtil.isEmpty(recordList)){
+            return null;
+        }
+        List<CodingRuleD> codingRuleDList = new ArrayList<>();
+        for (Record record :recordList){
+            Long id = record.getLong(CodingRuleD.IAUTOID);
+            String cCodingType = record.getStr(CodingRuleD.CCODINGTYPE);
+            CodingDTypeEnum codingDTypeEnum = CodingDTypeEnum.toEnum(cCodingType);
+            ValidationUtils.notNull(codingDTypeEnum, "未知编码配置细表类型");
+            // 流水号
+            CodingDTypeEnum serialNumberType = CodingDTypeEnum.serialNumberType;
+            CodingDTypeEnum inputType = CodingDTypeEnum.inputType;
+            CodingRuleD codingRuleD =null;
+            
+            String cCodingValue = record.getStr(CodingRuleD.CCODINGVALUE);
+            String iBeginValue = record.getStr(CodingRuleD.IBEGINVALUE);
+            String cSeparator = record.getStr(CodingRuleD.CSEPARATOR);
+            Integer iLength = record.getInt(CodingRuleD.ILENGTH);
+            Integer iseq = record.getInt(CodingRuleD.ISEQ);
+            switch (codingDTypeEnum){
+                case serialNumberType:
+                    codingRuleD = create(id, codingRuleMid, iBeginValue, iLength, iseq, cCodingType, null, cSeparator);
+                    break;
+                case inputType:
+                    codingRuleD =  create(id, codingRuleMid, null, null, iseq, cCodingType, cCodingValue, cSeparator);
+                    break;
+                default:
+                    codingRuleD = create(id, codingRuleMid, null, null, iseq, cCodingType, null, cSeparator);
+                    break;
+            }
+            codingRuleDList.add(codingRuleD);
+        }
+        return codingRuleDList;
+    }
+    
+    public CodingRuleD create(Long id, Long iCodingRuleMid, String iBeginValue, Integer iLength, Integer seq, String cCodingType, String cCodingValue, String cSeparator){
+        CodingRuleD codingRuleD = new CodingRuleD();
+        if (ObjectUtil.isNotNull(id)){
+            codingRuleD.setIAutoId(id);
+        }
+        codingRuleD.setICodingRuleMid(iCodingRuleMid);
+        codingRuleD.setCCodingType(cCodingType);
+        codingRuleD.setCCodingValue(cCodingValue);
+        codingRuleD.setIBeginValue(iBeginValue);
+        codingRuleD.setILength(iLength);
+        codingRuleD.setISeq(seq);
+        codingRuleD.setCSeparator(cSeparator);
+        return codingRuleD;
+    }
 }

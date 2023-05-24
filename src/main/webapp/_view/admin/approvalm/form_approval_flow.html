@@ -1,9 +1,4 @@
-<!--
-<div class="jbolt_page_content">
-	####include("/_view/admin/approvalm/form_approval_flow.html",formAutoId=monthorderm.iAutoId,btnNeed=1)
-</div>
--->
-
+#if(formAutoId??0 > 0)
 <div class="jbolt_page_content" style="height: 430px">
 
     <div class="row">
@@ -38,47 +33,73 @@
 
 </div>
 
+#define js()
 <script>
+
+    var action
+    var index;
+    var para;
+    
     /**
      * 提交审批
      */
     function judgeType_#(pageId)(ele) {
-        var action = getRealJqueryObject(ele);
-        var formSn = action.data("formsn");
-        var formAutoId = action.data("formautoid");
-        var index = LayerMsgBox.loading('执行中...');
-        Ajax.post("/admin/formapproval/judgeType",{"formSn":formSn,"formAutoId":formAutoId},function (res) {
+        action = getRealJqueryObject(ele);
+        
+        index = LayerMsgBox.loading('执行中...');
+
+        para = {
+            formSn: action.data("formsn"),
+            formAutoId: action.data("formautoid")
+        }
+
+        Ajax.post("/admin/formapproval/judgeType", para, function (ret) {
             LayerMsgBox.close(index);
-            LayerMsgBox.success(res.msg,1500,function () {
-                parent.refreshPjaxContainer();
-                parent.layer.closeAll();
-            })
-        },function (err) {
+            
+            if (ret.state === 'ok') {
+                LayerMsgBox.success(ret.msg, 1500, function () {
+                    parent.refreshPjaxContainer();
+                    parent.layer.closeAll();
+                });
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        }, function (err) {
             LayerMsgBox.close(index);
-            // LayerMsgBox.error(err.msg,2000);
-        })
+        });
     }
 
     /**
      * 审批/审核
      */
     function approveT_#(pageId)(ele) {
-        var action = getRealJqueryObject(ele);
-        var formSn = action.data("formsn");
-        var formAutoId = action.data("formautoid");
-        var status = action.data("status");
-        var index = LayerMsgBox.loading('执行中...');
-        Ajax.post("/admin/formapproval/approve",{"formSn":formSn,"formAutoId":formAutoId,"status":status},function (res) {
-            LayerMsgBox.close(index);
-            LayerMsgBox.success(res.msg,1500,function () {
-                parent.refreshPjaxContainer();
-                parent.layer.closeAll();
-            })
-        },function (err) {
-            LayerMsgBox.close(index);
-            // LayerMsgBox.error(err.msg,2000);
-        })
+        action = getRealJqueryObject(ele);
+        
+        index = LayerMsgBox.loading('执行中...');
 
+        para = {
+            formSn: action.data("formsn"),
+            formAutoId: action.data("formautoid"),
+            status: action.data("status")
+        };
+        
+        Ajax.post("/admin/formapproval/approve", para, function (ret) {
+            LayerMsgBox.close(index);
+
+            if (ret.state === 'ok') {
+                LayerMsgBox.success(ret.msg, 1500, function () {
+                    parent.refreshPjaxContainer();
+                    parent.layer.closeAll();
+                });
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        }, function (err) {
+            LayerMsgBox.close(index);
+        });
     }
 </script>
+#end
+#else
 
+#end

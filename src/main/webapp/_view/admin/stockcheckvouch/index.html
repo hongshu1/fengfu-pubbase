@@ -57,12 +57,16 @@
     <!-- 定义JBoltTable使用的数据渲染模板 -->
     <textarea class="jb_tpl_box" id="StockCheckVouch_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iautoid}">
+<tr data-id="${data.autoid}">
   <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
-    {@if data.state == '0'}
+    <a href="admin/stockcheckvouch/keepCheckVouch/${data.autoid}" data-area="98%,98%" tooltip data-title="继续盘点"
+           data-handler="refreshJBoltTable" data-dialog-title="继续盘点" class="jbolt_table_editbtn">继续盘点</a>
+    <a href="admin/stockcheckvouch/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
+       data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+    <!--{@if data.state == '0'}
     <a href="admin/purchaseReceiptList/keepCheckVouch/${data.autoid}" data-area="100%,100%" tooltip data-title="继续盘点"
-       data-handler="refreshJBoltTable" data-dialog-title="继续盘点此库存盘点单" class="jbolt_table_editbtn">继续盘点</a>
+       data-handler="refreshJBoltTable" data-dialog-title="继续盘点" class="jbolt_table_editbtn">继续盘点</a>
     <a href="admin/stockcheckvouch/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
        data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
     {@/if}
@@ -75,33 +79,21 @@
     {@if data.state == '2'}
     <a href="admin/purchaseReceiptList/onlysee/${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
        data-handler="refreshJBoltTable" data-dialog-title="查看库存盘点单" class="jbolt_table_editbtn">查看</a>
-    {@/if}
+    {@/if}-->
   </td>
   <td title="${data.whcode}">${data.whcode}</td>
-  <td title="${data.whname}">${data.whname}</td>
+  <td title="${data.cwhname}">${data.cwhname}</td>
   <td title="${data.billno}">${data.billno}</td>
   <td title="${data.checktype}">${data.checktype}</td>
-  <td title="">${data.}</td>
-  <td title="">${data.}</td>
-  <td title="">${data.}</td>
-  <td title="">${data.}</td>
-  <td title="">${data.}</td>
-  <td title="">${data.}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="">${data.modifydate}</td>
   <td title="${data.checkperson}">${data.checkperson}</td>
   <td title="${data.memo}">${data.memo}</td>
   <td title="${data.modifydate}">${data.modifydate}</td>
-
-<td>
-	{@if data.isDeleted}
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/stockcheckvouch/edit/${data.id}" data-area="800,600"
-     data-title="查看盘点单"><i class="fa fa-eye"></i></a>
-	{@else}
-	<a class="jbolt_table_editbtn" href="admin/stockcheckvouch/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600"
-     data-title="编辑盘点单"><i class="fa fa-edit"></i></a>
-	{@/if}
-	<a class="jbolt_table_delbtn" href="admin/stockcheckvouch/${data.isDeleted?'realDelete':'delete'}/${data.id}"
-     data-handler="refreshJBoltTable"><i class="fa fa-remove c-danger"></i></a>
-</td>
 </tr>
 {@/each}
 </textarea>
@@ -132,9 +124,9 @@
       <thead>
       <tr>
         <th data-width="60" data-column="index">序号</th>
-        <th data-width="120">操作</th>
+        <th data-width="150">操作</th>
         <th data-width="100" data-column="WhCode">仓库编码</th>
-        <th data-width="100" data-column="WhName">仓库名称</th>
+        <th data-width="100" data-column="cWhName">仓库名称</th>
         <th data-width="150" data-column="BillNo">盘点单号</th>
         <th data-width="150" data-column="CheckType">盘点方式</th>
         <th data-width="150" data-column="">应盘料品</th>
@@ -145,7 +137,6 @@
         <th data-width="150" data-column="">盘点状态</th>
         <th data-width="150" data-column="CheckPerson">盘点人</th>
         <th data-width="150" data-column="Memo">盘点备注</th>
-        <th data-width="150" data-column="ModifyPerson">更新人</th>
         <th data-width="150" data-column="ModifyDate">盘点时间</th>
       </tr>
       </thead>
