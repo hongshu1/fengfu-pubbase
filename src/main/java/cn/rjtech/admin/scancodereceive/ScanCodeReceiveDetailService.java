@@ -134,7 +134,6 @@ public class ScanCodeReceiveDetailService extends BaseService<SysPureceivedetail
     }
 
     public List<Record> findEditTableDatas(Kv para) {
-        ValidationUtils.notNull(para.getLong("masid"), JBoltMsg.PARAM_ERROR);
         List<Record> records = dbTemplate("scancodereceive.dList", para).find();
 
         return records;

@@ -11,7 +11,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
@@ -19,6 +19,7 @@
                         #if(sysPureceive.AutoID??)
                         <input type="hidden" name="sysPureceive.AutoID" value="#(sysPureceive.AutoID??)" />
                         #end
+                        <input type="hidden" name="sysPureceive.Type" value="PUReceiveSpecial"/>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -105,12 +106,15 @@
             <td>
                 <a href="admin/scancodereceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
             </td>
+            <td>${data.combination}</td>
+            <td>${data.barcodetype}</td>
             <td>${data.sourcebillno}</td>
             <td>${data.barcode}</td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
             <td>${data.plandate}</td>
+            <td>${data.uom}</td>
             <td>${data.qtys}</td>
             <td>${data.qty}</td>
             <td>${data.whcode}</td>
@@ -118,7 +122,7 @@
         </tr>
         {@/each}
     </script>
-    
+
     <div class="jbolt_table_toolbar" id="sysPureceive_toolbar_#(pageId)">
         <div class="col-md-4">
             <div class="form-group row">
@@ -141,28 +145,40 @@
 
     </div>
 
-    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable 
-           #if(sysPureceive.AutoID??)
-            data-ajax="true" data-url="admin/scancodereceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" 
-           #end
-        id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
-        data-rowtpl="sysPureceive_tpl_#(pageId)" data-toolbar="sysPureceive_toolbar_#(pageId)" data-editable="true"
-        data-page="sysPureceive_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton_#(pageId)">
+    <table class="jbolt_table thead_font_normal table-bordered table-center"
+           id="jbolt_Table_#(pageId)"
+           data-jbolttable
+           data-ajax-success-handler="tableDataSuccess()"
+           data-width="auto"
+           data-height="fill"
+           data-ajax="true"
+           data-page="sysPureceive_tpl_#(pageId)"
+           data-column-prepend="1:checkbox:true"
+           data-toolbar="sysPureceive_toolbar_#(pageId)"
+           data-url="admin/scancodereceivedetail/findEditTableDatas"
+           data-conditions-form="sysPureceive_#(pageId)"
+           data-rowtpl="sysPureceive_tpl_#(pageId)"
+           data-column-resize="true"
+           data-editable="true"
+           data-editable-option="getJBoltTableEditableColsOpton_#(pageId)">
         <thead>
-            <tr>
-                <th data-width="60">序号</th>
-                <th data-width="150">操作</th>
-                <th data-width="100" data-column="sourcebillno">订单编号</th>
-                <th data-width="100" data-column="barcode">现品票</th>
-                <th data-width="150" data-column="cinvcode">存货编码</th>
-                <th data-width="150" data-column="cinvcode1">客户部番</th>
-                <th data-width="150" data-column="cinvname1">部品名称</th>
-                <th data-width="100" data-column="planDate">计划到货日期</th>
-                <th data-width="100" data-column="qtys">数量</th>
-                <th data-width="100" data-column="qty">实收数量</th>
-                <th data-width="100" data-column="whcode">入库库区</th>
-                <th data-width="100" data-column="isinitial" data-editable="false">是否初物</th>
-            </tr>
+        <tr>
+            <th data-width="60">序号</th>
+            <th data-width="150">操作</th>
+            <th data-width="100" data-column="combination">组号</th>
+            <th data-width="100" data-column="barcodetype">类型</th>
+            <th data-width="100" data-column="sourcebillno">订单编号</th>
+            <th data-width="100" data-column="barcode">现品票</th>
+            <th data-width="150" data-column="cinvcode">存货编码</th>
+            <th data-width="150" data-column="cinvcode1">客户部番</th>
+            <th data-width="150" data-column="cinvname1">部品名称</th>
+            <th data-width="100" data-column="planDate">计划到货日期</th>
+            <th data-width="100" data-column="uom">主计量单位</th>
+            <th data-width="100" data-column="qtys">数量</th>
+            <th data-width="100" data-column="qty">实收数量</th>
+            <th data-width="100" data-column="whcode">入库库区</th>
+            <th data-width="100" data-column="isinitial" data-editable="false">是否初物</th>
+        </tr>
         </thead>
     </table>
 
@@ -171,13 +187,17 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-    
+
+    function tableDataSuccess() {
+
+    }
+
     function save() {
         jboltTableSubmit("#jbolt_Table_#(pageId)");
     }
-    
+
     var $operationType = $("#operationType");
-    
+
     function submitThisForm() {
         $operationType.val("submit");
         jboltTableSubmit("#jbolt_Table_#(pageId)");
@@ -186,6 +206,7 @@
 
     function getJBoltTableEditableColsOpton_#(pageId)() {
         var editableTableOptions = {
+            trigger: "click",
             submit: {
                 withForm: ["sysPureceive_#(pageId)"],
                 name: 'sysPureceive',
@@ -223,6 +244,12 @@
                     header: '仓库编码,仓库名称',
                     changeColumns: [{ column: "whcode", use: "whcode" }]
                 },
+                combination:{
+                    submitAttr:"Combination"
+                },
+                barcodetype:{
+                    submitAttr:"BarcodeType"
+                },
                 barcode: { //条码
                     maxLength: 100,
                     required: true,
@@ -251,13 +278,27 @@
                         {column: "sourcebillnorow", use: "sourcebillnorow"},
                         {column: "sourcebillid", use: "sourcebillid"},
                         {column: "qtys", use: "qty"}
-                    ]
+                    ],
+                    handler:function(table,td,text,value,trJsonData){
+                        var cinvcode = trJsonData.cinvcode;
+                        console.log('cinvcode',cinvcode)
+                        Ajax.post("admin/scancodereceive/getBarCodeData",{"itemCode":cinvcode},function (res) {
+                            console.log('res',res)
+                            jboltTableInsertRowAfterChecked(table,res.data,true,true,true);
+                        })
+
+                        console.log('table',table)
+                        console.log('td',td)
+                        console.log('text',text)
+                        console.log('value',value)
+                        console.log('trJsonData',trJsonData)
+                    }
                 },
             }
         };
         return editableTableOptions;
     }
-    
+
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();

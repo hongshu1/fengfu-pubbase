@@ -130,12 +130,8 @@ public class SysScandeliverdetailService extends BaseService<SysScandeliverdetai
 		*/
 		return null;
 	}
-	public List<Record> findEditTableDatas(String autoid) {
-		System.out.println(autoid);
-		ValidationUtils.notNull(autoid, JBoltMsg.PARAM_ERROR);
-		Kv para = new Kv();
-		para.set("masid",autoid);
-		List<Record> records = dbTemplate("sysscandeliver.dList", para).find();
+	public List<Record> findEditTableDatas(Kv kv) {
+		List<Record> records = dbTemplate("sysscandeliver.dList", kv).find();
 		return records;
 	}
 

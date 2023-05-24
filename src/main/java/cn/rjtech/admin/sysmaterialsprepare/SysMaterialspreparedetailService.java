@@ -1,5 +1,6 @@
 package cn.rjtech.admin.sysmaterialsprepare;
 
+import cn.rjtech.model.momdata.SysMaterialspreparedetail;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -122,4 +123,6 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
     public List<Record> options1() {
         return dbTemplate("materialsprepare.findColumns1", Kv.of("isenabled", "1")).find();
     }
+
+
 }

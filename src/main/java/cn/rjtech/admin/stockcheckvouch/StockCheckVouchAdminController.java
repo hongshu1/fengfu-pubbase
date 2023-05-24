@@ -138,4 +138,22 @@ public class StockCheckVouchAdminController extends BaseAdminController {
         render("onlysee.html");
     }
 
+    /*
+     * 导出选中
+     * */
+    public void exportExcelByIds() {
+        String ids = get("ids");
+        if (notOk(ids)) {
+            renderJsonFail("未选择有效数据，无法导出");
+            return;
+        }
+    }
+
+    /*
+     * 导出全部
+     * */
+    public void exportExcelAll() {
+
+    }
+
 }

@@ -5,42 +5,47 @@
     #end
 
     <div class="row">
+
         <div class="col">
             <div class="form-group row">
                 <div class="col">
                     <label class="col-sm-1 col-form-label"></label>
-                    <button onclick="submitThisForm()" class="btn btn-success btn-sm" data-jbolt-table-id="jbolt_Table_"><i class="fa fa-refresh"></i> 保存</button>
-                    <button onclick="submitThisForm()" class="btn btn-success btn-sm" data-jbolt-table-id="jbolt_Table_"><i class="fa fa-refresh"></i> 保存</button>
+                    <button onclick="getSubmitThisForm()" class="btn btn-success btn-sm" data-jbolt-table-id="jbolt_Table_"><i class="fa fa-refresh"></i> 保存</button>
+<!--                    <button onclick="submitThisForm()" class="btn btn-success btn-sm" data-jbolt-table-id="jbolt_Table_"><i class="fa fa-refresh"></i> 保存</button>-->
                 </div>
             </div>
+
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">业务对象类型</label>
-                <div class="col">
+                <label class="col-sm-1 col-form-label">业务对象类型</label>
+                <div class="col-2">
                     <select class="form-control"
+                            id="codingRulem_cFormTypeSn"
                             name="codingRuleM.cFormTypeSn"
                             data-autoload
                             data-rule="required"
                             data-url="admin/dictionary/options?key=business_type"
                             data-value-attr="sn"
                             data-text-attr="name"
-                            data-text="=请选择="
+                            data-default="1"
+                            onchange="cashTicketHandler()"
                             data-select="#(codingRuleM.cFormTypeSn??)">
                     </select>
                 </div>
             </div>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">表单名称</label>
-                <div class="col-10">
-                    <input type="hidden" name="codingRuleM.iFormId" value="#(codingRuleM.iFormId??)" id="iFormId">
 
-                    <select class="form-control"
-                            data-rule="select"
+            <div class="form-group row" id="codingRulem_form_row">
+                <label class="col-sm-1 col-form-label is_required">表单名称</label>
+                <div class="col-2">
+                    <input type="hidden" name="codingRuleM.iFormId" value="#(codingRuleM.iFormId??)" id="codingRulem_formId">
+
+                    <select class="form-control" id="codingRulem_formName"
                             data-select-type="select2"
                             data-select="#(codingRuleM.iFormId??)"
                             data-autoload
                             data-url="admin/formcategory/treeDatas"
                             data-onlyleaf="true"
-                            data-setvalueto="iFormId"
+                            data-setvalueto="codingRulem_formId"
+                            data-sync-ele="#codingRulem_cashTicket"
                             data-text-attr="cname"
                             data-value-attr="iautoid"
                             data-text="=表单名称="
@@ -49,26 +54,56 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">test2</label>
-                <div class="col-10">
-                    <output type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                           placeholder="请输入test2示例" maxlength="40" name=""
-                           value="#(codingRuleM.iFormId??)"/>
+            <!--<div class="form-group row" id="codingRulem_form_row">
+                <label class="col-sm-1 col-form-label">表单名称</label>
+                <div class="col-2 input-group">
+                    <input id="codingRulem_formName" type="text" readonly="readonly" data-rule="required"  autocomplete="off"
+                           class="form-control"
+                           placeholder="" maxlength="30"
+                           value="#(qcFormName??)">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
+                                data-area="90%,90%"  data-title="选择数据（单选）"
+                                id="qcButton" #if(type=="edit") disabled #end
+                                data-url="/admin/inventoryqcform/chooseFormData"><i
+                                class="fa fa-search mr-1"></i></button>
+                    </div>
+                    <input id="codingRulem_formId" type="hidden" class="form-control"
+                           name="codingRuleM.iFormId"
+                           data-value-attr="formId"
+                           placeholder="检验表格ID" readonly="readonly" value="#(codingRuleM.iFormId??)" />
+                </div>
+            </div>-->
+
+            <div class="form-group row" id="codingRulem_cBarcodeTypeSn_row">
+                <label class="col-sm-1 col-form-label is_required">条码类型</label>
+                <div class="col-2">
+                    <select class="form-control" data-url="admin/dictionary/options?key=cash_ticket_type" required="true"
+                            name="codingRuleM.cBarcodeTypeSn" data-autoload data-value-attr="sn" data-default="1"
+                            data-select="#(codingRuleM.cBarcodeTypeSn??)"></select>
                 </div>
             </div>
 
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">编码方式</label>
-                <div class="col">
+                <label class="col-sm-1 col-form-label">编码字段名称</label>
+                <div class="col-2">
+                    <input readonly type="text" name="cashTicketName" data-sync-attr="ccreatename" autocomplete="off" class="form-control"  id="codingRulem_cashTicket">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">编码方式</label>
+                <div class="col-2">
                     <select class="form-control"
+                            id="codingRulem_form_iCodingType"
                             name="codingRuleM.iCodingType"
                             data-autoload
                             data-rule="required"
                             data-url="admin/dictionary/options?key=iCoding_type"
                             data-value-attr="sn"
                             data-text-attr="name"
-                            data-text="=请选择="
+                            onchange="centerHanage()"
+                            data-default="1"
                             data-select="#(codingRuleM.iCodingType??)">
                     </select>
                 </div>
@@ -76,22 +111,32 @@
 
         </div>
     </div>
+    <input type="hidden" name="codingRuleM.cDemo"  value="#(codingRuleM.cDemo??)">
 </form>
 
-<div class="form-group row">
-    <label class="col-sm-1 col-form-label" style="left: 20px;">详情配置</label><br>
-    <div class="col-11" style="left: 17px;">
-        <div class="jbolt_page_content">
-            #include("codingruled.html")
+<div id="codingRulem_form_center">
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">详情配置</label><br>
+        <div class="col-10">
+            <div class="jbolt_page_content">
+                #include("codingruled.html")
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">编码</label>
+        <div class="col-10">
+            <div id="codingRulem_formCode"></div>
         </div>
     </div>
 
-</div>
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">编码示例</label>
+    <div class="form-group row">
+    <label class="col-sm-1 col-form-label">编码示例</label>
     <div class="col-10">
-        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-               placeholder="请输入编码示例" maxlength="40" name="codingRuleM.cDemo"
+        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" id="codingRulem_formcDemo"
+               placeholder="请输入编码示例" maxlength="40" name="codingRuleM_cDemo" readonly
                value="#(codingRuleM.cDemo??)"/>
     </div>
 </div>
@@ -99,11 +144,140 @@
 
 #define js()
 #include("_codingruled_js.html")
+#include("/_view/_admin/common/_formjs.html",formId="CodingRuleM_Form")
 <script>
+    function getSubmitThisForm() {
+        var formData = formToJson('#CodingRuleM_Form');
+        // 表单名称
+        var cFormTypeSn = formData['codingRuleM.cFormTypeSn']
+        var iFormId = formData['codingRuleM.iFormId'];
+        if (cFormTypeSn === '1' && (!iFormId)){
+            LayerMsgBox.error('请选择表单！！！');
+            return
+        }
+        var cashTicketName = formData['cashTicketName']
+        if (cFormTypeSn === '1' &&　(!cashTicketName)){
+            LayerMsgBox.error('选择的表单没有配置编码字段！！！');
+            return
+        }
 
-    console.log(#json(codingRuleM))
+        // 编码方式
+        if (formData['codingRuleM.iCodingType'] === '1'){
+            batchSetIseqColumns('#jbolt_table_coding_#(pageId)');
+            updateCodingDemoCode('#jbolt_table_coding_#(pageId)');
+            var datas = getJboltTableAllDatas('#jbolt_table_coding_#(pageId)');
+            checkData(datas);
+        }
+        jboltTableSubmit("#jbolt_table_coding_#(pageId)");
+    }
 
+    function checkData(datas) {
+
+        if (!datas){
+            LayerMsgBox.error('请添加配置编码规则数据行');
+            return
+        }
+        // 判断是存在流水号
+        var flag = true;
+        debugger
+        for (var i=0; i<datas.length; i++){
+            var row = datas[i];
+            if (!row.ccodingtype){
+                LayerMsgBox.error('请选择类型');
+                return
+            }
+            if (row.ccodingtype === '1'){
+                flag = false;
+            }
+            if ((!row.ilength) && row.ccodingtype === '1'){
+                LayerMsgBox.error('选择流水号类型时，长度不能为空');
+                return
+            }
+            if ((!row.ccodingvalue) && row.ccodingtype === '2'){
+                LayerMsgBox.error('选择手工输入类型时，设置值不能为空');
+                return
+            }
+        }
+        if (flag){
+            LayerMsgBox.error('编码配置规则类型必须含有以为流水号类型');
+            return
+        }
+        // $.each(datas, function (index, row) {
+        //
+        // })
+    }
+
+    function batchSetIseqColumns(tableEle,dontExeValueChangeHandler){
+        var table=getJBoltTable(tableEle);
+        if(isOk(table)){
+            var jboltTable=table.jboltTable("inst");
+            if(jboltTable){
+                jboltTable.me.processEditingTds(jboltTable);
+                var trs = jboltTable.tbody.find("tr[data-index]");
+                var seq = Number(0);
+                if(isOk(trs)){
+                    var tr;
+                    trs.each(function(){
+                        tr=$(this);
+                        seq = Number(10+seq);
+                        jboltTable.me.setCell(jboltTable,tr,'iseq',seq,seq,dontExeValueChangeHandler);
+                    });
+                    return;
+                }
+                return;
+            }
+        }
+        LayerMsgBox.alert("表格组件配置异常",2);
+    }
+
+    function updateCodingDemoCode(table) {
+        var datas = jboltTableGetAllDatas(table);
+        if (!datas){
+            return
+        }
+        var codeHtml = '';
+        // 创建一个新的Date对象，表示当前时间
+        const currentDate = new Date();
+        // 获取年份(yyyy)
+        const year = currentDate.getFullYear();
+        var codingRulemCode = '';
+        $.each(datas, function (idx, row) {
+            var str = '';
+            // 分隔符
+            var cseparator = row.cseparator;
+            // 流水号
+            if (row.ccodingtype == 1) {
+                str = row.ibeginvalue;
+            } else if (row.ccodingtype == 2){  //  手工输入
+                str = row.ccodingvalue;
+            }else if (row.ccodingtype == 3){
+                str = year;
+            }else if (row.ccodingtype == 4){
+                var yy = year.toString().slice(-2)
+                str = yy.padStart(2, '0');
+            }else if (row.ccodingtype == 5){
+                // 获取月份(mm)，需要加1，因为getMonth()方法返回的是0-11代表1月-12月
+                const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+                str = month;
+            }else if (row.ccodingtype == 6){
+                // 获取日期(dd)
+                const date = String(currentDate.getDate()).padStart(2, '0');
+                str = date;
+            }
+
+            codeHtml+='<span class="col-md-1" style="width:120px">' + str + '</span>';
+            if (cseparator === '1'){
+                str+=' ';
+            } else if (cseparator){
+                str+=cseparator;
+            }
+            codingRulemCode+=str;
+        });
+
+        $('#codingRulem_formCode').html(codeHtml);
+        $('input[name="codingRuleM.cDemo"]').val(codingRulemCode);
+        $('input[name="codingRuleM_cDemo"]').val(codingRulemCode);
+    }
 </script>
-<!--#include("/_view/_admin/common/_formjs.html",formId="CodingRuleM_Form")-->
 #end
 

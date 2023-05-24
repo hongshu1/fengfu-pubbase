@@ -8,13 +8,11 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" ><i class="fa fa-refresh"></i> 保存</button>
-                        #if(monthorderm.iAutoId??)
-                        <button onclick="submitApproveMonth()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
-                        #else
-                        <button onclick="submitApproveMonth()" disabled class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
-                        #end
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
+                        
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", iautoid=monthorderm.iautoid??0)
+                        
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
             </div>
@@ -24,7 +22,10 @@
     
 </div>
 
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId??0, formSn="Co_MonthOrderM", btnNeed=1)
+### 新增之后，并且为审核流
+#if(monthorderm.iautoid?? && monthorderm.iauditway == 2)
+#render("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM", btnNeed=1)
+#end
 
 <div class="jbolt_page_content">
 
@@ -95,8 +96,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">月份</label>
                                     <div class="col-9">
-                                        <select class="form-control" data-autoload name="monthorderm.iMonth"
-                                                data-select="#datetime(monthorderm.iMonth??DateUtil.getNow(),'M')">
+                                        <select class="form-control" data-autoload name="monthorderm.iMonth" data-select="#datetime(monthorderm.iMonth??DateUtil.getNow(),'M')">
                                             <option value="">=月份=</option>
                                             <option value="1">1月</option>
                                             <option value="2">2月</option>
@@ -173,11 +173,8 @@
     
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-
-            <button onclick="jboltTableRemoveCheckedRow(this, true, false)"
-                    data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
-                <i class="fa fa-trash"></i> 删除行</button>
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
+            <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除行</button>
 
             <div class="j_upload_file_box"
                  data-name="file"
