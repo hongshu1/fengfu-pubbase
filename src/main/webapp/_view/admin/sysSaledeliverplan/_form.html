@@ -29,7 +29,8 @@
                                     <div class="col-9">
                                         <input type="text" data-notnull="true" data-tips="请输入发货单号" disabled
                                             data-with-clearbtn="true" autocomplete="off" class="form-control"
-                                            placeholder="请输入发货单号" maxlength="40" value="#(syssaledeliverplan.billno??)" />
+                                            placeholder="请输入发货单号" maxlength="40"
+                                            value="#(syssaledeliverplan.billno??)" />
                                     </div>
                                 </div>
                             </div>
@@ -160,6 +161,7 @@
                                     <label class="col-sm-3 col-form-label">发货地址</label>
                                     <div class="col-9">
                                         <input type="text" class="form-control" data-autocomplete
+                                            data-link-para-ele="#cunameiautoid"
                                             data-url="admin/salesShipmentList/customeraddr" data-rule="required"
                                             data-hidden-input="cdistrictcode" data-text-attr="cdistrictname"
                                             data-column-attr="cdistrictcode,cdistrictname" placeholder="请选择发货地址"
@@ -423,7 +425,7 @@
                     valueAttr: "whcode",//选择赋值的字段
                     columnAttr: "whcode,whname",//下来看的时候显示哪些字段
                     header: '仓库编码,仓库名称',
-                    changeColumns: [{ column: "whcode", use: "whcode" },{ column: "whname", use: "whname" }]
+                    changeColumns: [{ column: "whcode", use: "whcode" }, { column: "whname", use: "whname" }]
                 },
                 barcode: { //条码
                     maxLength: 100,
