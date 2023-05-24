@@ -54,7 +54,7 @@ public class ProjectService extends BaseService<Project> {
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
 		para.set("iorgid",getOrgId());
-		Page<Record> paginate = dbTemplate(u8SourceConfigName(), "project.paginateAdminDatas", para).paginate(pageNumber, pageSize);
+		Page<Record> paginate = dbTemplate("project.paginateAdminDatas", para).paginate(pageNumber, pageSize);
 		for (Record record : paginate.getList()) {
 			record.set("icreateby",JBoltUserCache.me.getUserName(record.getLong("icreateby")));
 		}
@@ -166,13 +166,6 @@ public class ProjectService extends BaseService<Project> {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
-	/**
-	 * 查询u8部门
-	 * @return
-	 */
-	public List<Record> u8DepartmentList(Kv para) {
-		return  dbTemplate(u8SourceConfigName(), "project.u8DepartmentList", para).find();
-	}
 	/**
 	 * 查询u8存货编码
 	 */

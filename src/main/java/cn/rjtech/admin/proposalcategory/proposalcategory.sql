@@ -1,5 +1,5 @@
 #sql("downPaginateAdminDatas")
-select * from #(getMesDbName()).dbo.Bas_ProposalCategory
+select * from Bas_ProposalCategory
 where
 1=1
     and  iPid = #para(typeId)
@@ -9,7 +9,7 @@ where
 #end
 
 #sql("paginateAdminDatas")
-select * from #(getMesDbName()).dbo.Bas_ProposalCategory
+select * from Bas_ProposalCategory
 where
     1=1 and  iPid = 0
     #if(keywords)
@@ -18,7 +18,7 @@ where
 #end
 
 #sql("numberSelect")
-select * from #(getMesDbName()).dbo.Bas_ProposalCategory
+select * from Bas_ProposalCategory
 where 1=1
- and iPid = (select iAutoId from #(getMesDbName()).dbo.Bas_ProposalCategory  where  cCategoryCode = #(cCategoryCode) )
+ and iPid = (select iAutoId from Bas_ProposalCategory  where  cCategoryCode = #(cCategoryCode) )
 #end

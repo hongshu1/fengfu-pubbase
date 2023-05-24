@@ -719,7 +719,7 @@ public class ProposalmAdminController extends BaseAdminController {
     /**
      * 禀议明细数据首页
      */
-    @CheckPermission(PermissionKey.PROPOSAL_DETAIL)
+    @CheckPermission(PermissionKey.STATISTIC_ANALYSIS_PROPOSAL_DETAIL)
     public void detailIndex() {
         render("detail.html");
     }
@@ -727,7 +727,7 @@ public class ProposalmAdminController extends BaseAdminController {
     /**
      * 禀议明细数据
      */
-    @CheckPermission(PermissionKey.PROPOSAL_DETAIL)
+    @UnCheck
     public void detaiDatas() {
         renderJsonData(service.paginateDetails(getPageNumber(), getPageSize(), getKv()));
     }

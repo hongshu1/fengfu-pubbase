@@ -13,13 +13,9 @@ order by iseq asc
 
 #sql("indexdata")
 select
-u.name as createname,
-u2.name as updatename,
 bm.*
 from
 bd_barcodeencodingm bm
-left join #(getJBoltDbName()).dbo.jb_user u on u.id=bm.icreateby
-left join #(getJBoltDbName()).dbo.jb_user u2 on u2.id=bm.iupdateby
 where bm.corgcode=#para(corgcode)
 order by  dcreatetime desc
 #end

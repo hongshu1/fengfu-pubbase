@@ -13,6 +13,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -76,6 +77,8 @@ public class BarcodeencodingmService extends BaseService<Barcodeencodingm> {
         List<Record> list = paginate.getList();
         for (Record record : list) {
             record.set("citemname", ItemEnum.toEnum(record.getStr("citem")).getText());
+            record.set("createname", JBoltUserCache.me.getUserName(record.getLong("icreateby")));
+            record.set("updatename", JBoltUserCache.me.getUserName(record.getLong("iupdateby")));
         }
         return paginate;
     }

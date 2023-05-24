@@ -2120,11 +2120,6 @@ public class PermissionKey {
 	 */
 	public static final String PROPOSALM_EFFECT = "proposalm_effect";
 	
-	
-	/**
-	 * 禀议明细-导出
-	 */
-	public static final String PROPOSAL_DETAIL_EXPORT = "proposal_detail_export";
 	/**
 	 * 新增-参考禀议书
 	 */
@@ -2174,6 +2169,10 @@ public class PermissionKey {
 	public static final String PROPOSALM_PRINTDATA = "PROPOSALM_PRINTDATA";
 	
 	/**
+	 * 禀议系统-基础设置
+	 */
+	public static final String BASISARCHIVES = "basisarchives";
+	/**
 	 * 追加项目首页
 	 */
 	public static final String APPEND_ITEM = "append_item";
@@ -2222,10 +2221,6 @@ public class PermissionKey {
 	 */
 	public static final String PROPOSALM = "proposalm";
 	/**
-	 * 禀议明细表
-	 */
-	public static final String PROPOSAL_DETAIL = "proposal_detail";
-	/**
 	 * 申购单管理
 	 */
 	public static final String PURCHASE_MANAGEMENT = "purchase_management";
@@ -2237,4 +2232,22 @@ public class PermissionKey {
 	 * 统计分析
 	 */
 	public static final String STATISTIC_ANALYSIS = "statistic_analysis";
+	/**
+	 * 统计分析-禀议明细表
+	 */
+	public static final String STATISTIC_ANALYSIS_PROPOSAL_DETAIL = "statistic_analysis_proposal_detail";
+	/**
+	 * 统计分析-禀议明细表导出
+	 */
+	public static final String PROPOSAL_DETAIL_EXPORT = "proposal_detail_export";
+	
+	/**
+	 * 统计分析-费用预算明细
+	 */
+	public static final String STATISTIC_ANALYSIS_EXPENSEBUDGETITEMD = "statistic_analysis_expensebudgetitemd";
+	
+	/**
+	 * 统计分析-投资计划明细
+	 */
+	public static final String STATISTIC_ANALYSIS_INVESTMENTPLANITEMD = "statistic_analysis_investmentplanitemd";
 }

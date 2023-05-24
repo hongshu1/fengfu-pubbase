@@ -87,14 +87,6 @@ public class ProjectAdminController extends BaseAdminController {
     }
 
     /**
-     * U8部门
-     */
-    @UnCheck
-    public void u8DepartmentList() {
-        renderJsonData(service.u8DepartmentList(getKv()));
-    }
-
-    /**
      * 存货编码
      */
     @UnCheck
