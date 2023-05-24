@@ -150,6 +150,7 @@ function getIdIfValid_#(pageId)(ele) {
 }
 function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
 	$(tempTr1).data('url', 'admin/expensebudgetmanage/detail/' + rowData.iautoid)
+			.data('offset', '0.2,0')
 			.data('area', '100%,100%')
 			.data('title', '费用预算详情');
 

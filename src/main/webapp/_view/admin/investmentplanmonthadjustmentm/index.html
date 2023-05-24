@@ -91,6 +91,7 @@ data-row-dblclick-handler = "jbolt_table_dblclickhandler_#(pageId)"
 <script type="text/javascript">
 function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
 	$(tempTr1).data('url', 'admin/investmentplanmonthadjustmentm/edit/' + rowData.iautoid)
+			.data('offset', '0.2,0')
 			.data('area', '100%,100%')
 			.data('title', '投资月度实绩详情');
 	DialogUtil.openBy(tempTr1);

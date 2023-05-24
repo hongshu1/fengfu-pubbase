@@ -51,15 +51,15 @@
                     新增
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" data-openpage="dialog" data-area="100%,100%"
+                    <a class="dropdown-item" data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%"
                        href="/admin/purchasem/chooseProposalm" data-close-handler="refreshJBoltTable">参照禀议书</a>
-                    <a class="dropdown-item" data-openpage="dialog" data-area="100%,100%" href="/admin/purchasem/choosePeriod"
+                    <a class="dropdown-item" data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%" href="/admin/purchasem/choosePeriod"
                        data-close-handler="refreshJBoltTable">参照预算</a>
                 </div>
                 #end
 
                 #permission(PermissionKey.PURCHASE_INSTRUMENT_EDIT)
-                <button data-openpage="dialog" data-fs="true" data-handler="refreshJBoltTable"
+                <button data-openpage="dialog" data-offset="0.2,0" data-fs="true" data-handler="refreshJBoltTable"
                         data-title="修改申购单" data-check-handler="updateCheck"
                         data-url="admin/purchasem/instrumentEdit/" class="btn btn-outline-primary btn-sm"><i
                         class="fa fa-edit"></i>
@@ -95,7 +95,7 @@
 
                 <!-- 申购单管理按钮 -->
                 #if(purchaseManagement)
-                <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
+                <button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
                         data-check-handler="getIdIfValid"
                         data-url="admin/verifyprogress/findprocess?cobjecttype=04&iobjectid="
                         class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i
@@ -127,7 +127,7 @@
                 #end
 
                 <!-- 公共按钮 -->
-                <button data-openpage="dialog" data-btn="close" data-fs="true" data-handler="refreshJBoltTable"
+                <button data-openpage="dialog" data-btn="close" data-offset="0.2,0" data-fs="true" data-handler="refreshJBoltTable"
                         data-title="详情" data-check-handler="jboltTableGetCheckedId"
                         data-url="admin/purchasem/details/" class="btn btn-outline-primary btn-sm">
                     <i class="fa fa-search"></i> 详情
@@ -212,6 +212,7 @@
     function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData)
     {
         $(tempTr1).data('url', 'admin/purchasem/details/' + rowData.iautoid)
+        	.data('offset', '0.2,0')
             .data('area', '100%,100%')
             .data('btn','close')
             .data('title', '申购单');

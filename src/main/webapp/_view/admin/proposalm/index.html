@@ -112,7 +112,7 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 <!--                    <a class="dropdown-item" data-openpage="dialog" data-area="100%,100%" href="/admin/proposalm/chooseExpenseBudget" data-close-handler="refreshJBoltTable">参照费用预算</a>-->
 <!--                    <a class="dropdown-item" data-openpage="dialog" data-area="100%,100%" href="/admin/proposalm/chooseInvestmentPlan" data-close-handler="refreshJBoltTable">参照投资计划</a>-->
-                    <a class="dropdown-item" data-openpage="dialog" data-area="100%,100%" href="/admin/proposalm/choosePeriod" data-close-handler="refreshJBoltTable">参照预算/投资</a>
+                    <a class="dropdown-item" data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%" href="/admin/proposalm/choosePeriod" data-close-handler="refreshJBoltTable">参照预算/投资</a>
                 </div>
             </div>
             #end
@@ -121,11 +121,11 @@
 
                 ### 追加禀议
                 #permission(PermissionKey.PROPOSALM_SAVE)
-                <button data-openpage="dialog" data-area="100%,100%" data-handler="refreshJBoltTable" data-check-handler="checkIsSupplemental" data-url="/admin/proposalm/addProposalM?iproposalmid=" data-confirm="确定按选中禀议书，进行追加禀议？" class="btn btn-outline-primary btn-sm"><i class="fa fa-anchor"></i> 追加禀议</button>
+                <button data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-check-handler="checkIsSupplemental" data-url="/admin/proposalm/addProposalM?iproposalmid=" data-confirm="确定按选中禀议书，进行追加禀议？" class="btn btn-outline-primary btn-sm"><i class="fa fa-anchor"></i> 追加禀议</button>
                 #end
 
                 #permission(PermissionKey.PROPOSALM_EDIT)
-                <button data-openpage="dialog" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="修改禀议管理数据" data-check-handler="jboltTableGetCheckedId" data-url="admin/proposalm/edit?iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i> 修改</button>
+                <button data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="修改禀议管理数据" data-check-handler="jboltTableGetCheckedId" data-url="admin/proposalm/edit?iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i> 修改</button>
                 #end
 
                 #permission(PermissionKey.PROPOSALM_SUBMIT)
@@ -140,7 +140,7 @@
                 </div>
                 #end
 
-                <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
+                <button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
                         data-check-handler="getIdIfValid" data-url="admin/verifyprogress/findprocess?cobjecttype=03&iobjectid="
                         class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
 
@@ -204,6 +204,7 @@
 <script>
     function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
         $(tempTr1).data('url', '/admin/proposalm/edit?iautoid=' + rowData.iautoid)
+        	.data('offset', '0.2,0')
             .data('area', '100%,100%')
             .data('title', '禀议书')
             .data('btn', '保存,关闭');

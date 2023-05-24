@@ -110,14 +110,14 @@
             <div class="btn-group" role="group" aria-label="btn-group">
 
                 #permission(PermissionKey.PROPOSALM_EDIT)
-                <button data-openpage="dialog" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="修改禀议管理数据" data-check-handler="jboltTableGetCheckedId" data-url="admin/proposalm/edit?readonly=readonly&iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i>查看</button>
+                <button data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="修改禀议管理数据" data-check-handler="jboltTableGetCheckedId" data-url="admin/proposalm/edit?readonly=readonly&iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i>查看</button>
                 #end
 
                 #permission(PermissionKey.PROPOSALM_WITHDRAW)
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/proposalm/withdraw?iautoid=" data-confirm="确定撤销选中数据？" class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销提交</button>
                 #end
 
-                <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
+                <button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
                         data-check-handler="getIdIfValid" data-url="admin/verifyprogress/findprocess?cobjecttype=03&iobjectid="
                         class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
 
@@ -183,6 +183,7 @@
         console.log(JSON.stringify(rowData));
 
         $(tempTr1).data('url', '/admin/proposalm/edit?readonly=readonly&iautoid=' + rowData.iautoid)
+        	.data('offset', '0.2,0')
             .data('area', '100%,100%')
             .data('title', '禀议书')
             .data('btn', '保存,关闭');
