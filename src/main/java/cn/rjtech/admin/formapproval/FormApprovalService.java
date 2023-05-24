@@ -632,6 +632,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         Record formData = Db.use(dataSourceConfigName()).findFirst("SELECT * FROM " + formSn + " WHERE iautoid = ? ", formAutoId);
         ValidationUtils.notNull(formData, "单据不存在");
         ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+        ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“审批通过”按钮");
         ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
 
         String msg = preApprove.execute();
@@ -651,6 +652,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         Record formData = Db.use(dataSourceConfigName()).findFirst("SELECT * FROM " + formSn + " WHERE iautoid = ? ", formAutoId);
         ValidationUtils.notNull(formData, "单据不存在");
         ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+        ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不能操作“审批不通过”");
         ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
 
         String msg = preReject.execute();
@@ -666,7 +668,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 审批
      */
-    public Ret approve(Long formAutoId, String formSn, int status, ICallbackFunc callback) {
+    public Ret approve(Long formAutoId, String formSn, int status) {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
