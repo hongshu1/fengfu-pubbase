@@ -69,6 +69,13 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="stockoutDefect_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
+		<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">打印二维码</button>
+			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+				<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint_#(pageId)('check')"><i class="fa fa-download"></i> 打印勾选行</button>
+				<button class="btn dropdown-item" onclick="containerPrint_#(pageId)('page')"><i class="fa fa-download"></i> 打印当前页</button>
+			</div>
+		</div>
 <!--		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/stockoutdefect/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>-->
 	</div>
 
@@ -125,16 +132,34 @@ data-row-dblclick-active="true"
 
 #define js()
 <script type="text/javascript">
+	// 打印
+	function containerPrint_#(pageId)(mark) {
+		let rows;
+		if (mark == 'check') {
+			rows = jboltTableGetCheckedDatas();
+			if (rows == null) {
+				return;
+			}
+		} else {
+			rows = jboltTableGetAllDatas();
+		}
 
-	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-		console.log(JSON.stringify(rowData));
+		let code = [];
+		var k=0;
+		for (let i in rows) {
+			k++;
+			let rowdata = rows[i];
+			var ccode = rowdata.iautoid;
+			var istatus = rowdata.istatus;
+			var cdocno = rowdata.cdocno;
+			if (istatus != 2){
+				LayerMsgBox.error("第"+k+"行["+cdocno+"]异常单,请审核再打印！！！",3000);
+				return false;
+			}
 
-		$(tempTr1).data('url', '/admin/admin/StockoutDefect/edit/' + rowData.iautoid)
-			.data('area', '1200,800')
-			.data('title', '出库异常记录')
-			.data('btn', '保存,关闭');
-
-		DialogUtil.openBy(tempTr1);
+			code.push(ccode);
+		}
+		jboltHiprintWebPrint('doc_defect', 'url', 'admin/stockoutdefect/QRCode?ids=' + code.join(",") + "&&mark=" + mark);
 	}
 </script>
 #end

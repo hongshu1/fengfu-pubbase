@@ -11,8 +11,11 @@ import cn.rjtech.model.momdata.StockoutDefect;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
+
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 
 /**
  * 出库异常记录 Controller
@@ -156,13 +159,10 @@ public class StockoutDefectAdminController extends BaseAdminController {
     /**
      * 生成二维码
      */
-    public void erm() {
-        StockoutDefect stockoutDefect = service.findById(getLong(0));
-        if (stockoutDefect == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        renderQrCode(stockoutDefect.getCDocNo(), 500, 600);
+    public void QRCode() {
+        Kv kv = new Kv();
+        kv.setIfNotNull("ids", get("ids"));
+        renderJsonData(service.getQRCodeCheck(kv));
     }
 
 }

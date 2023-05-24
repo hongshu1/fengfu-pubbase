@@ -145,13 +145,11 @@ public class ProcessDefectAdminController extends BaseAdminController {
     /**
      * 生成二维码
      */
-    public void erm() {
-        ProcessDefect processDefect = service.findById(getLong(0));
-        if (processDefect == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        renderQrCode(processDefect.getCDocNo(), 500, 600);
+    public void QRCode() {
+        Kv kv = new Kv();
+        kv.setIfNotNull("ids", get("ids"));
+        renderJsonData(service.getQRCodeCheck(kv));
     }
+
 
 }
