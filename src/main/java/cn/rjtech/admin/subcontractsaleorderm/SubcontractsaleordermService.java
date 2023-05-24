@@ -17,8 +17,10 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.Subcontractsaleorderd;
-import cn.rjtech.model.momdata.Subcontractsaleorderm;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
+import cn.rjtech.enums.SubcontractSaleOrderStatusEnum;
+import cn.rjtech.model.momdata.SubcontractSaleOrderM;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -38,9 +40,9 @@ import java.util.Set;
  * @author: RJ
  * @date: 2023-04-12 18:57
  */
-public class SubcontractsaleordermService extends BaseService<Subcontractsaleorderm> {
+public class SubcontractsaleordermService extends BaseService<SubcontractSaleOrderM> {
 
-    private final Subcontractsaleorderm dao = new Subcontractsaleorderm().dao();
+    private final SubcontractSaleOrderM dao = new SubcontractSaleOrderM().dao();
     @Inject
     private SubcontractsaleorderdService subcontractsaleorderdService;
     @Inject
@@ -49,7 +51,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     private CusOrderSumService cusOrderSumService;
 
     @Override
-    protected Subcontractsaleorderm dao() {
+    protected SubcontractSaleOrderM dao() {
         return dao;
     }
 
@@ -71,7 +73,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 保存
      */
-    public Ret save(Subcontractsaleorderm subcontractsaleorderm) {
+    public Ret save(SubcontractSaleOrderM subcontractsaleorderm) {
         if (subcontractsaleorderm == null || isOk(subcontractsaleorderm.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
@@ -87,12 +89,12 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 更新
      */
-    public Ret update(Subcontractsaleorderm subcontractsaleorderm) {
+    public Ret update(SubcontractSaleOrderM subcontractsaleorderm) {
         if (subcontractsaleorderm == null || notOk(subcontractsaleorderm.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         // 更新时需要判断数据存在
-        Subcontractsaleorderm dbSubcontractsaleorderm = findById(subcontractsaleorderm.getIAutoId());
+        SubcontractSaleOrderM dbSubcontractsaleorderm = findById(subcontractsaleorderm.getIAutoId());
         if (dbSubcontractsaleorderm == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
@@ -126,7 +128,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param kv                    携带额外参数一般用不上
      */
     @Override
-    protected String afterDelete(Subcontractsaleorderm subcontractsaleorderm, Kv kv) {
+    protected String afterDelete(SubcontractSaleOrderM subcontractsaleorderm, Kv kv) {
         //addDeleteSystemLog(subcontractsaleorderm.getIautoid(), JBoltUserKit.getUserId(),subcontractsaleorderm.getName());
         return null;
     }
@@ -138,7 +140,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param kv                    携带额外参数一般用不上
      */
     @Override
-    public String checkCanDelete(Subcontractsaleorderm subcontractsaleorderm, Kv kv) {
+    public String checkCanDelete(SubcontractSaleOrderM subcontractsaleorderm, Kv kv) {
         //如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
         return checkInUse(subcontractsaleorderm, kv);
     }
@@ -166,7 +168,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param kv                    携带额外参数一般用不上
      */
     @Override
-    public String checkCanToggle(Subcontractsaleorderm subcontractsaleorderm, String column, Kv kv) {
+    public String checkCanToggle(SubcontractSaleOrderM subcontractsaleorderm, String column, Kv kv) {
         //没有问题就返回null  有问题就返回提示string 字符串
         return null;
     }
@@ -175,7 +177,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * toggle操作执行后的回调处理
      */
     @Override
-    protected String afterToggleBoolean(Subcontractsaleorderm subcontractsaleorderm, String column, Kv kv) {
+    protected String afterToggleBoolean(SubcontractSaleOrderM subcontractsaleorderm, String column, Kv kv) {
         //addUpdateSystemLog(subcontractsaleorderm.getIautoid(), JBoltUserKit.getUserId(), subcontractsaleorderm.getName(),"的字段["+column+"]值:"+subcontractsaleorderm.get(column))
         return null;
     }
@@ -187,7 +189,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param kv                    携带额外参数一般用不上
      */
     @Override
-    public String checkInUse(Subcontractsaleorderm subcontractsaleorderm, Kv kv) {
+    public String checkInUse(SubcontractSaleOrderM subcontractsaleorderm, Kv kv) {
         //这里用来覆盖 检测Subcontractsaleorderm是否被其它表引用
         return null;
     }
@@ -196,7 +198,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * 执行JBoltTable表格整体提交
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-        Subcontractsaleorderm subcontractsaleorderm = jBoltTable.getFormModel(Subcontractsaleorderm.class, "subcontractsaleorderm");
+        SubcontractSaleOrderM subcontractsaleorderm = jBoltTable.getFormModel(SubcontractSaleOrderM.class, "subcontractsaleorderm");
         User user = JBoltUserKit.getUser();
         Date now = new Date();
         tx(() -> {
@@ -226,7 +228,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     }
 
     //可编辑表格提交-新增数据
-    private void saveTableSubmitDatas(JBoltTable jBoltTable, Subcontractsaleorderm subcontractsaleorderm) {
+    private void saveTableSubmitDatas(JBoltTable jBoltTable, SubcontractSaleOrderM subcontractsaleorderm) {
         List<Record> list = jBoltTable.getSaveRecordList();
         if (CollUtil.isEmpty(list)) {
             return;
@@ -235,7 +237,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
             Record row = list.get(i);
             if (i == 0) {
                 // 避免保存不到所有字段的问题
-                Set<String> columnNames = TableMapping.me().getTable(Subcontractsaleorderm.class).getColumnNameSet();
+                Set<String> columnNames = TableMapping.me().getTable(SubcontractSaleOrderM.class).getColumnNameSet();
                 for (String columnName : columnNames) {
                     if (null == row.get(columnName)) {
                         row.set(columnName, null);
@@ -253,7 +255,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     }
 
     //可编辑表格提交-修改数据
-    private void updateTableSubmitDatas(JBoltTable jBoltTable, Subcontractsaleorderm subcontractsaleorderm) {
+    private void updateTableSubmitDatas(JBoltTable jBoltTable, SubcontractSaleOrderM subcontractsaleorderm) {
         List<Record> list = jBoltTable.getUpdateRecordList();
         if (CollUtil.isEmpty(list)) {
             return;
@@ -277,11 +279,26 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         }
     }
 
-    public void handleCusOrderBySubcontract(Subcontractsaleorderm subcontractsaleorderm) {
-        List<Subcontractsaleorderd> subcontractsaleorderds = subcontractsaleorderdService.findByMid(subcontractsaleorderm);
-        if (subcontractsaleorderds.size() > 0) {
-            cusOrderSumService.handelSubcontractsaleorderd(subcontractsaleorderm, subcontractsaleorderds);
-        }
+    public Ret approve(Long iautoid) {
+        SubcontractSaleOrderM subcontractsaleorderm = findById(iautoid);
+        ValidationUtils.notNull(subcontractsaleorderm, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(!subcontractsaleorderm.getIsDeleted(), "记录已被删除");
+        ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), subcontractsaleorderm.getIAuditStatus(), "状态不合法");
+        ValidationUtils.equals(AuditWayEnum.STATUS.getValue(), subcontractsaleorderm.getIAuditWay(), "审批流审批的单据，禁止通过“审批通过”进行操作");
+
+        tx(() -> {
+
+            subcontractsaleorderm.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+            subcontractsaleorderm.setIOrderStatus(SubcontractSaleOrderStatusEnum.AUDITTED.getValue());
+
+            ValidationUtils.isTrue(subcontractsaleorderm.update(), ErrorMsg.UPDATE_FAILED);
+
+            cusOrderSumService.algorithmSum();
+            
+            return true;
+        });
+        
+        return SUCCESS;
     }
     
 }

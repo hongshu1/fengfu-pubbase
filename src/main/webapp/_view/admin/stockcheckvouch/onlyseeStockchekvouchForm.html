@@ -9,19 +9,6 @@
 </div>
 
 <div class="jbolt_page_content">
-  <div class="row">
-    <div class="col-10 text-left">
-      <form class="form-inline text-left" onsubmit="return false;" id="tockchekvouchForm" action="#(action)" method="post">
-        <input hidden id='stockcheckvouchdid' name="stockcheckvouchdid">
-        <input hidden id='whcode' name="whcode" value="#(stockcheckvouch.whcode)">
-        <input type="text" autocomplete="off" class="form-control" placeholder="=条码=" name="barcode" value=""/>
-        <button type="submit" class="btn btn-light" id="dTable"><i class="fa fa-search"></i> 查询</button>
-
-      </form>
-    </div>
-  </div>
-</div>
-<div class="jbolt_page_content">
   <!-- JBoltTable的数据模板定义-->
   <textarea class="jb_tpl_box" id="stock_#(pageId)">
 		{@each datas as data,index}
@@ -61,7 +48,6 @@
          data-rowtpl="stock_#(pageId)"
          data-toolbar="stock_toolbar_#(pageId)"
          data-page="PuDeliveryDetailPage_#(pageId)"
-         data-editable-option="currentstock_Barcode_#(pageId)"
          data-editable="true"
   >
     <thead>
@@ -85,11 +71,38 @@
     </tbody>
   </table>
 
-  <div class="form-group row" style="margin-top: 20px">
-    <label class="col-sm-2 col-form-label" style="margin-right: 150px">盘点备注</label>
-    <div class="col" style="right: 150px">
-      <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"
-             placeholder="请输入备注" maxlength="255" name="memo" value="#(memo??)" />
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 100px">盘点备注：</label>
+    <div class="col-sm-2 col-form-label" style="right: 100px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(stockcheckvouch.memo??)"/>
+    </div>
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 200px">盘点人：</label>
+    <div class="col-sm-2 col-form-label" style="right: 200px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(cpsn_name??)"/>
+    </div>
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 300px">提交时间：</label>
+    <div class="col-sm-2 col-form-label" style="right: 300px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(stockcheckvouch.createdate??)"/>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 100px">审核操作：</label>
+    <div class="col-sm-2 col-form-label" style="right: 100px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(stockcheckvouch.state??)"/>
+    </div>
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 200px">审核人：</label>
+    <div class="col-sm-2 col-form-label" style="right: 200px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(modifyperson??)"/>
+    </div>
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 300px">审核时间：</label>
+    <div class="col-sm-2 col-form-label" style="right: 300px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(stockcheckvouch.modifydate??)"/>
     </div>
   </div>
 
