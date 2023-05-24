@@ -4,23 +4,20 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
 	<div class="jbolt_page_title">
 		<div class="row">
-			<!--<div class="col-md-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产计划及实绩管理</h1></div>-->
+			<!--<div class="col-md-auto"><h1><i class="jbicon2 jbi-appstore"></i>物料需求计划汇总</h1></div>-->
 			<div class="col">
 				<form class="form-inline" id="apsAnnualplanmFormsum_#(pageId)"   onsubmit="return false;" method="post">
+					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
+					<span style="margin-top: 5px">至</span>
+					<input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" id="enddate" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
 
 					<input type="text" class="form-control" data-with-clearbtn="true" placeholder="供应商名称" id="cvenname" name="cvenname" value="#(cvenname??)" />
 					<input type="text" class="form-control" placeholder="存货编码" id="cinvcode" name="cinvcode" value="#(cinvcode??)" />
 					<input type="text" class="form-control" placeholder="客户部番" id="cinvcode1" name="cinvcode1" value="#(cinvcode1??)" />
 					<input type="text" class="form-control" placeholder="部品名称" id="cinvname1" name="cinvname1" value="#(cinvname1??)" />
 
-
-					<input type="text" hidden class="form-control" placeholder="主表id" id="idemandplanmid" name="idemandplanmid" value="#(idemandplanmid??)" />
-					<input type="text" hidden data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
-					<span hidden style="margin-top: 5px">至</span>
-					<input type="text" hidden data-date class="form-control" placeholder="结束日期" maxlength="20" id="enddate" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
-
-					<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-					<button type="button" onclick="clearDemandPlandFormBtn(this)" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+					<button type="submit" onclick="selectDemendPlanSumBtn(this)" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+					<button type="button" onclick="clearDemendPlanSumBtn(this)" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 				</form>
 			</div>
 			<div class="col-md-auto">
@@ -68,7 +65,7 @@
 			   data-jbolttable
 			   data-ajax="true"
 			   data-conditions-form="apsAnnualplanmFormsum_#(pageId)"
-			   data-url="admin/schedudemandplan/getMrpDemandPlanDPage"
+			   data-url="admin/schedudemandplan/getDemandPlanSumPage"
 			   id="jbolt_Table_#(pageId)"
 			   data-column-resize="true"
 			   data-tfoot-fixed="true"
@@ -114,18 +111,19 @@
 #define js()
 <script type="text/javascript">
 
-	/*function selectDemandForecastdBtn(ele){
-		let idemandforecastmid = $("#idemandforecastmid").val();
+	function selectDemendPlanSumBtn(ele){
 		let startdate = $("#startdate").val();
 		let enddate = $("#enddate").val();
 		let cvenname = $("#cvenname").val();
 		let cinvcode = $("#cinvcode").val();
 		let cinvcode1 = $("#cinvcode1").val();
 		let cinvname1 = $("#cinvname1").val();
-		JBoltTabUtil.currentTabGo(`admin/schedudemandplan/demandforecastd`,
+		JBoltTabUtil.currentTabGo(`admin/schedudemandplan/demandplansumview`,
 				{"startdate":startdate,"enddate":enddate,"cvenname":cvenname,"cinvcode":cinvcode,"cinvcode1":cinvcode1,"cinvname1":cinvname1});
-	}*/
-	function clearDemandPlandFormBtn(ele){
+	}
+	function clearDemendPlanSumBtn(ele){
+		$("#startdate").val('');
+		$("#enddate").val('');
 		$("#cvenname").val('');
 		$("#cinvcode").val('');
 		$("#cinvcode1").val('');
