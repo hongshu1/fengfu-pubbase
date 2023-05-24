@@ -40,11 +40,6 @@ public class StockoutDefectApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS;
     }
 
-    public String stockoutDefectId(Long id){
-        ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
-        StockoutDefect byId = stockoutDefectService.findById(id);
-        String cDocNo = byId.getCDocNo();
-        return cDocNo;
-    }
+
 
 }

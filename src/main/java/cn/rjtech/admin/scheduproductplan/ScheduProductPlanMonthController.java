@@ -52,7 +52,245 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         render("planyearparm.html");
     }
 
+    /**
+     * 数据源
+     */
+    public void datas() {
+        renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+    }
 
+    /**
+     * 新增
+     */
+    public void add() {
+        render("add.html");
+    }
+
+    /**
+     * 编辑
+     */
+    public void edit() {
+        ApsAnnualplanm apsAnnualplanm=service.findById(getLong(0));
+        if(apsAnnualplanm == null){
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        set("apsAnnualplanm",apsAnnualplanm);
+        render("edit.html");
+    }
+
+    /**
+     * 更新
+     */
+    public void update() {
+        renderJson(service.update(getModel(ApsAnnualplanm.class, "apsAnnualplanm")));
+    }
+
+    /**
+     * 批量删除
+     */
+    public void deleteByIds() {
+        renderJson(service.deleteByBatchIds(get("ids")));
+    }
+
+    /**
+     * 删除
+     */
+    public void delete() {
+        renderJson(service.delete(getLong(0)));
+    }
+
+    /**
+     * 切换toggleIsDeleted
+     */
+    public void toggleIsDeleted() {
+        renderJson(service.toggleIsDeleted(getLong(0)));
+    }
+
+
+    //-----------------------------------------------------------------月周生产计划排产-----------------------------------------------
+
+
+    public void getApsWeekscheduleList() {
+        renderJsonData(service.getApsWeekscheduleList());
+    }
+
+    /**
+     * 作成计划
+     */
+    public void scheduPlanMonth() {
+        //排产层级
+        int level = getInt("level");
+        //截止日期
+        String endDate = get("endDate");
+        renderJsonData(service.scheduPlanMonth(level,endDate));
+    }
+
+
+    /**
+     * 查看计划
+     */
+    public void getScheduPlanMonthList() {
+        renderJson(service.getScheduPlanMonthList(getKv()));
+    }
+
+    /**
+     * 根据层级获取最近锁定时间
+     */
+    public void getLockDate() {
+        //排产纪录id
+        Long iWeekScheduleId = getLong("iWeekScheduleId");
+        //上次锁定截止日期
+        Date lockPreDate;
+        if (isOk(iWeekScheduleId)){
+            //排产层级
+            int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
+            //TODO:获取当前层级上次排产锁定日期
+            ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
+            if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
+                lockPreDate = apsWeekschedule.getDLockEndTime();
+            }else {
+                lockPreDate = new Date();
+            }
+        }else {
+            lockPreDate = new Date();
+        }
+        //锁定日期集
+        List<Map> list = new ArrayList<>();
+        int weekNum = 1; //周次
+        for (int i = 1; i <= 35; i++) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(lockPreDate);
+            calendar.add(Calendar.DATE,i);//日期+1
+
+            String weekDay = DateUtils.formatDate(calendar.getTime(),"E");
+            if (weekDay.equals("星期日")){
+                String lockDate = DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd");
+                Map<String,Object> map = new HashMap<>();
+                map.put("lockDate",lockDate);
+                map.put("weekNum","第"+ weekNum ++ +"周");
+                list.add(map);
+            }
+        }
+        renderJsonData(list);
+    }
+    /**
+     * 根据层级获取最近解锁时间
+     */
+    public void getUnLockDate() {
+        //排产纪录id
+        Long iWeekScheduleId = getLong("iWeekScheduleId");
+        //上次锁定截止日期
+        Date lockPreDate;
+        if (isOk(iWeekScheduleId)){
+            //排产层级
+            int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
+            //TODO:获取当前层级上次排产锁定日期
+            ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
+            if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
+                lockPreDate = apsWeekschedule.getDLockEndTime();
+            }else {
+                lockPreDate = new Date();
+            }
+        }else {
+            lockPreDate = new Date();
+        }
+        //解锁日期集
+        List<Map> list = new ArrayList<>();
+        int weekNum = 1; //周次
+        for (int i = 1; i <= 35; i++) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(lockPreDate);
+            calendar.add(Calendar.DATE,-i);//日期-1
+
+            String weekDay = DateUtils.formatDate(calendar.getTime(),"E");
+            if (weekDay.equals("星期日")){
+                String lockDate = DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd");
+                Map<String,Object> map = new HashMap<>();
+                map.put("unLockDate",lockDate);
+                map.put("weekNum","第"+ weekNum ++ +"周");
+                list.add(map);
+            }
+        }
+        renderJsonData(list);
+    }
+
+    /**
+     * 锁定计划
+     */
+    public void lockScheduPlan() {
+        renderJson(service.lockScheduPlan(getKv()));
+    }
+    /**
+     * 解锁计划
+     */
+    public void unLockScheduPlan() {
+        renderJson(service.unLockScheduPlan(getKv()));
+    }
+
+
+    /**
+     * 获取表格表头日期展示
+     */
+    public void getTableHead() {
+        String startDate = get("startDate");
+        String endDate = get("endDate");
+
+        LocalDate localDate = LocalDate.now();
+        if (StringUtils.isBlank(startDate)){
+            startDate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
+        }
+        if (StringUtils.isBlank(endDate)){
+            endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
+        }
+
+        List<String> namelist = new ArrayList<>();
+        List<String> weeklist = new ArrayList<>();
+        if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)){
+            //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+            List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
+            //页面顶部colspan列  key:2023年1月  value:colspan="13"
+            Map<String,Integer> yearMonthMap = new HashMap<>();
+            for (String s : scheduDateList) {
+                String year = s.substring(0, 4);
+                int month = Integer.parseInt(s.substring(5, 7));
+                String yearMonth = year + "年" + month + "月";
+                if (yearMonthMap.containsKey(yearMonth)) {
+                    int count = yearMonthMap.get(yearMonth);
+                    yearMonthMap.put(yearMonth, count + 1);
+                } else {
+                    yearMonthMap.put(yearMonth, 2);
+                }
+            }
+
+            List<String> name2listStr = new ArrayList<>();
+            for (int i = 0; i < scheduDateList.size(); i++) {
+                String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
+                String weekType = "";
+                if (weekDay.equals("星期一")){weekType = "Mon";}
+                if (weekDay.equals("星期二")){weekType = "Tue";}
+                if (weekDay.equals("星期三")){weekType = "Wed";}
+                if (weekDay.equals("星期四")){weekType = "Thu";}
+                if (weekDay.equals("星期五")){weekType = "Fri";}
+                if (weekDay.equals("星期六")){weekType = "Sat";}
+                if (weekDay.equals("星期日")){weekType = "Sun";}
+
+                int day = Integer.parseInt(scheduDateList.get(i).substring(8));
+
+                namelist.add(day+"日");
+                weeklist.add(weekType);
+            }
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("day",namelist);
+        map.put("week",weeklist);
+
+        renderJsonData(map);
+    }
+
+
+
+    //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------
 
     public void planmonthsum() {
         String startdate = get("startdate");
@@ -161,6 +399,20 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         render("planmonthsum.html");
     }
 
+    /**
+     * 获取月周生产计划汇总
+     */
+    public void getApsMonthPlanSumPage() {
+        int active = getInt("active");
+        if (active == 1){
+            renderJsonData(service.getApsMonthPlanSumPage(getPageNumber(),getPageSize(),getKv()));
+        }else {
+            renderJsonData(service.getApsMonthPeopleSumPage(getPageNumber(),getPageSize(),getKv()));
+        }
+    }
+
+
+    //-----------------------------------------------------------------生产计划及实绩管理-----------------------------------------------
 
     public void planandactualview() {
         String startdate = get("startdate");
@@ -268,220 +520,6 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         set("colname2list", name2list);
         render("planandactual.html");
     }
-
-    /**
-     * 数据源
-     */
-    public void datas() {
-        renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
-    }
-
-    /**
-     * 新增
-     */
-    public void add() {
-        render("add.html");
-    }
-
-    /**
-     * 编辑
-     */
-    public void edit() {
-        ApsAnnualplanm apsAnnualplanm=service.findById(getLong(0));
-        if(apsAnnualplanm == null){
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        set("apsAnnualplanm",apsAnnualplanm);
-        render("edit.html");
-    }
-
-    /**
-     * 更新
-     */
-    public void update() {
-        renderJson(service.update(getModel(ApsAnnualplanm.class, "apsAnnualplanm")));
-    }
-
-    /**
-     * 批量删除
-     */
-    public void deleteByIds() {
-        renderJson(service.deleteByBatchIds(get("ids")));
-    }
-
-    /**
-     * 删除
-     */
-    public void delete() {
-        renderJson(service.delete(getLong(0)));
-    }
-
-    /**
-     * 切换toggleIsDeleted
-     */
-    public void toggleIsDeleted() {
-        renderJson(service.toggleIsDeleted(getLong(0)));
-    }
-
-
-    //-----------------------------------------------------------------月周生产计划排产-----------------------------------------------
-
-
-    public void getApsWeekscheduleList() {
-        renderJsonData(service.getApsWeekscheduleList());
-    }
-
-    /**
-     * 作成计划
-     */
-    public void scheduPlanMonth() {
-        //排产层级
-        int level = 1;
-        //截止日期
-        String endDate = "2023-06-21";
-        renderJsonData(service.scheduPlanMonth(level,endDate));
-    }
-
-
-    /**
-     * 查看计划
-     */
-    public void getScheduPlanMonthList() {
-        renderJson(service.getScheduPlanMonthList(getKv()));
-    }
-
-    /**
-     * 根据层级获取最近锁定时间
-     */
-    public void getLockDate() {
-        //排产纪录id
-        Long iWeekScheduleId = getLong("iWeekScheduleId");
-        
-        //排产层级
-        int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
-
-        //TODO:获取当前层级上次排产锁定日期+1
-        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
-        //锁定截止日期
-        Date lockPreDate;
-        if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
-            lockPreDate = apsWeekschedule.getDLockEndTime();
-        }else {
-            lockPreDate = new Date();
-        }
-
-        Long lockDate = null;
-        for (int i = 1; i <= 7; i++) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(lockPreDate);
-            calendar.add(Calendar.DATE,i);//日期+1
-
-            String weekDay = DateUtils.formatDate(calendar.getTime(),"E");
-            if (weekDay.equals("星期日")){
-                lockDate = calendar.getTime().getTime();
-                break;
-            }
-        }
-
-        Map<String,Object> map = new HashMap<>();
-        map.put("lockDate",lockDate);
-        renderJsonData(map);
-    }
-
-    /**
-     * 锁定计划
-     */
-    public void lockScheduPlan() {
-        renderJson(service.lockScheduPlan(getKv()));
-    }
-    /**
-     * 解锁计划
-     */
-    public void unLockScheduPlan() {
-        renderJson(service.unLockScheduPlan(getKv()));
-    }
-
-
-    /**
-     * 获取表格表头日期展示
-     */
-    public void getTableHead() {
-        String startDate = get("startDate");
-        String endDate = get("endDate");
-
-        LocalDate localDate = LocalDate.now();
-        if (StringUtils.isBlank(startDate)){
-            startDate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
-        }
-        if (StringUtils.isBlank(endDate)){
-            endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
-        }
-
-        List<String> namelist = new ArrayList<>();
-        List<String> weeklist = new ArrayList<>();
-        if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)){
-            //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
-            List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
-            //页面顶部colspan列  key:2023年1月  value:colspan="13"
-            Map<String,Integer> yearMonthMap = new HashMap<>();
-            for (String s : scheduDateList) {
-                String year = s.substring(0, 4);
-                int month = Integer.parseInt(s.substring(5, 7));
-                String yearMonth = year + "年" + month + "月";
-                if (yearMonthMap.containsKey(yearMonth)) {
-                    int count = yearMonthMap.get(yearMonth);
-                    yearMonthMap.put(yearMonth, count + 1);
-                } else {
-                    yearMonthMap.put(yearMonth, 2);
-                }
-            }
-
-            List<String> name2listStr = new ArrayList<>();
-            for (int i = 0; i < scheduDateList.size(); i++) {
-                String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
-                String weekType = "";
-                if (weekDay.equals("星期一")){weekType = "Mon";}
-                if (weekDay.equals("星期二")){weekType = "Tue";}
-                if (weekDay.equals("星期三")){weekType = "Wed";}
-                if (weekDay.equals("星期四")){weekType = "Thu";}
-                if (weekDay.equals("星期五")){weekType = "Fri";}
-                if (weekDay.equals("星期六")){weekType = "Sat";}
-                if (weekDay.equals("星期日")){weekType = "Sun";}
-
-                int day = Integer.parseInt(scheduDateList.get(i).substring(8));
-
-                namelist.add(day+"日");
-                weeklist.add(weekType);
-            }
-        }
-        Map<String,Object> map = new HashMap<>();
-        map.put("day",namelist);
-        map.put("week",weeklist);
-
-        renderJsonData(map);
-    }
-
-
-
-    //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------
-
-
-    /**
-     * 获取月周生产计划汇总
-     */
-    public void getApsMonthPlanSumPage() {
-        int active = getInt("active");
-        if (active == 1){
-            renderJsonData(service.getApsMonthPlanSumPage(getPageNumber(),getPageSize(),getKv()));
-        }else {
-            renderJsonData(service.getApsMonthPeopleSumPage(getPageNumber(),getPageSize(),getKv()));
-        }
-    }
-
-
-    //-----------------------------------------------------------------生产计划及实绩管理-----------------------------------------------
-
 
     /**
      * 获取生产计划及实绩管理

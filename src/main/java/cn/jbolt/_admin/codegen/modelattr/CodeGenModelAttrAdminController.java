@@ -143,17 +143,28 @@ public class CodeGenModelAttrAdminController extends JBoltBaseController {
 	}
 	
 	/**
-	 * 移动位置交换位置
+	 * 移动表单位置交换位置
 	 * @param codeGenId
 	 * @param id
 	 * @param prevId
 	 * @param nextId
 	 */
 	@Before(Tx.class)
-	public void move(Long codeGenId,Long id,Long prevId,Long nextId) {
-		renderJson(service.move(codeGenId,id,prevId,nextId));
+	public void moveFormEle(Long codeGenId,Long id,Long prevId,Long nextId) {
+		renderJson(service.moveFormEle(codeGenId,id,prevId,nextId));
 	}
-	
+	/**
+	 * 移动表格位置交换位置
+	 * @param codeGenId
+	 * @param id
+	 * @param prevId
+	 * @param nextId
+	 */
+	@Before(Tx.class)
+	public void moveTableEle(Long codeGenId,Long id,Long prevId,Long nextId) {
+		renderJson(service.moveTableEle(codeGenId,id,prevId,nextId));
+	}
+
 	/**
 	 * 重新同步字段
 	 */

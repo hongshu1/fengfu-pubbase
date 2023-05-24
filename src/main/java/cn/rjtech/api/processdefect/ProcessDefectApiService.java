@@ -40,11 +40,5 @@ public class ProcessDefectApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS;
     }
 
-    public String processdefectId(Long id){
-        ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
-        ProcessDefect byId = processDefectService.findById(id);
-        String cDocNo = byId.getCDocNo();
-        return cDocNo;
-    }
 
 }

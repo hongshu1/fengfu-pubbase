@@ -1,0 +1,110 @@
+<div class="jbolt_page_title" >
+  <div class="row">
+    <div class="col-md-auto" style="margin-top: 30px">
+      <h5>条码明细</h5>
+    </div>
+    <div class="col-md-auto">
+    </div>
+  </div>
+</div>
+
+<div class="jbolt_page_content">
+  <!-- JBoltTable的数据模板定义-->
+  <textarea class="jb_tpl_box" id="stock_#(pageId)">
+		{@each datas as data,index}
+    <tr data-id="${data.autoid}">
+      <td>${pageNumber,pageSize,index | rownum}</td>
+      <td title="">${data.careaname}</td>
+      <td title="">${data.cinvcode}</td>
+			<td title="">${data.cinvcode1}</td>
+			<td title="">${data.cinvname}</td>
+			<td title="">${data.cinvstd}</td>
+			<td title="">${data.unitname}</td>
+			<td title="">${data.realqty2}</td>
+			<td title="">${data.qty}</td>
+			<td title="">${data.adjustqty2}</td>
+			<td title="">${data.barcode}</td>
+			<td title="">${data.batch}</td>
+			<td title="">${data.createdate}</td>
+		{@/each}
+	</textarea>
+  <!-- 工具条 toolbar -->
+  <div class="jbolt_table_toolbar" id="stock_toolbar_#(pageId)">
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <table class="jbolt_table jbolt_main_table table-center"
+         id="stock__table_#(pageId)"
+         data-jbolttable
+         data-height="250"
+         data-ajax="true"
+         data-width="auto"
+         data-url="admin/stockcheckvouch/datas"
+         data-column-resize="true"
+         data-column-prepend="1:checkbox:true"
+         data-conditions-form="tockchekvouchForm"
+         data-rowtpl="stock_#(pageId)"
+         data-toolbar="stock_toolbar_#(pageId)"
+         data-page="PuDeliveryDetailPage_#(pageId)"
+         data-editable="true"
+  >
+    <thead>
+    <tr>
+      <th data-width="30" data-min-width="60" data-column="index">序号</th>
+      <th data-width="150" data-column="careaname">库区名称</th>
+      <th data-width="150" data-column="cinvcode">存货编码</th>
+      <th data-width="150" data-column="cinvcode">存货编码</th>
+      <th data-width="150" data-column="cInvCode1">客户部番</th>
+      <th data-width="150" data-column="cInvName1">部品名称</th>
+      <th data-width="150" data-column="cinvstd">规格</th>
+      <th data-width="110" data-column="unitname">主计量单位</th>
+      <th data-width="110" data-column="qty">数量</th>
+      <th data-width="110" data-column="realqty2">实盘数量</th>
+      <th data-width="150" data-column="barcode">现品票</th>
+      <th data-width="150" data-column="batch">批次号</th>
+      <th data-width="150" data-column="createdate">生产日期</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 100px">盘点备注：</label>
+    <div class="col-sm-2 col-form-label" style="right: 100px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(memo??)"/>
+    </div>
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 200px">盘点人：</label>
+    <div class="col-sm-2 col-form-label" style="right: 200px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(checkperson??)"/>
+    </div>
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 300px">提交时间：</label>
+    <div class="col-sm-2 col-form-label" style="right: 300px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(createdate??)"/>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 100px">审核操作：</label>
+    <div class="col-sm-2 col-form-label" style="right: 100px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(memo??)"/>
+    </div>
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 200px">审核人：</label>
+    <div class="col-sm-2 col-form-label" style="right: 200px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(checkperson??)"/>
+    </div>
+    <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 300px">审核时间：</label>
+    <div class="col-sm-2 col-form-label" style="right: 300px">
+      <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
+             placeholder="" value="#(createdate??)"/>
+    </div>
+  </div>
+
+</div>
+

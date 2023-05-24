@@ -10,6 +10,8 @@ import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.SysScandeliverdetail;
+import com.jfinal.kit.Kv;
+
 /**
  * 扫码发货明细
  * @ClassName: SysScandeliverdetailAdminController
@@ -94,6 +96,9 @@ public class SysScandeliverdetailAdminController extends BaseAdminController {
 
 
 	public void findEditTableDatas(){
-		renderJsonData(service.findEditTableDatas(get("sysscandeliver.AutoID")));
+		Kv kv = new Kv();
+		String id = get("sysscandeliver.AutoID");
+		kv.set("id",id==null?' ':id);
+		renderJsonData(service.findEditTableDatas(kv));
 	}
 }

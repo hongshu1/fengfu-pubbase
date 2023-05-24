@@ -1,16 +1,19 @@
 package cn.rjtech.admin.weekorderm;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -30,12 +33,15 @@ import java.util.List;
  * @date: 2023-04-10 14:37
  */
 public class WeekOrderMService extends BaseService<WeekOrderM> {
+    
     private final WeekOrderM dao = new WeekOrderM().dao();
 
     @Inject
     private WeekOrderDService weekOrderDService;
     @Inject
     private CusOrderSumService cusOrderSumService;
+    @Inject
+    private FormApprovalService formApprovalService;
 
     @Override
     protected WeekOrderM dao() {
@@ -55,136 +61,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
      */
     public Object getAdminDatas(int pageNumber, int pageSize, Kv kv) {
         return dbTemplate("weekorderm.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
-    }
-
-    /**
-     * @param jBoltTable 前端保存数据
-     */
-    public Ret save(JBoltTable jBoltTable) {
-        //参数判空
-        if (jBoltTable == null || jBoltTable.isBlank()) {
-            return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
-        }
-
-        WeekOrderM weekOrderM = jBoltTable.getFormModel(WeekOrderM.class, "weekOrderM");
-        String approve = jBoltTable.getForm().getString("approve");
-        if (weekOrderM == null || isOk(weekOrderM.getIAutoId())) {
-            return fail(JBoltMsg.PARAM_ERROR);
-        }
-
-        //主表保存
-        saveContant(weekOrderM, approve);
-
-        if (null != jBoltTable.getSave()) {
-            return updateWeekOrderDs("save", jBoltTable, weekOrderM);
-        }
-        return SUCCESS;
-    }
-
-    /**
-     * 主表保存
-     */
-    private void saveContant(WeekOrderM weekOrderM, String approve) {
-        //主表新增页审核
-        if ("approve".equals(approve)) {
-            //审核状态：1. 待审核
-            weekOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            //订单状态：2. 待审批
-            weekOrderM.setIOrderStatus(2);
-        } else {
-            //保存
-            //审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-            weekOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-            //订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
-            weekOrderM.setIOrderStatus(1);
-        }
-
-        Date now = new Date();
-
-        //组织信息
-        weekOrderM.setIOrgId(getOrgId());
-        weekOrderM.setCOrgCode(getOrgCode());
-        weekOrderM.setCOrgName(getOrgName());
-        //创建信息
-        weekOrderM.setCCreateName(JBoltUserKit.getUserName());
-        weekOrderM.setDCreateTime(now);
-        weekOrderM.setICreateBy(JBoltUserKit.getUserId());
-        //更新信息
-        weekOrderM.setCUpdateName(JBoltUserKit.getUserName());
-        weekOrderM.setDUpdateTime(now);
-        weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-        //订单创建日期
-        weekOrderM.setDOrderDate(now);
-        boolean success = weekOrderM.save();
-//		if(success) {
-//			//添加日志
-//			addSaveSystemLog(weekOrderM.getIAutoId(), JBoltUserKit.getUserId(), weekOrderM.getIAutoId().toString());
-//		}
-    }
-
-    /**
-     * 更新
-     */
-    public Ret update(JBoltTable jBoltTable) {
-        WeekOrderM weekOrderM = jBoltTable.getFormModel(WeekOrderM.class, "weekOrderM");
-        if (weekOrderM == null || null == weekOrderM.getIAutoId()) {
-            return fail(JBoltMsg.PARAM_ERROR);
-        }
-        //更新时需要判断数据存在
-        WeekOrderM dbWeekOrderM = findById(weekOrderM.getIAutoId());
-        if (dbWeekOrderM == null) {
-            return fail(JBoltMsg.DATA_NOT_EXIST);
-        }
-        //if(existsName(weekOrderM.getName(), weekOrderM.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-
-        //更新信息
-        weekOrderM.setCUpdateName(JBoltUserKit.getUserName());
-        weekOrderM.setDUpdateTime(new Date());
-        weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-        boolean success = weekOrderM.update();
-        if (success) {
-            //添加日志
-            addUpdateSystemLog(weekOrderM.getIAutoId(), JBoltUserKit.getUserId(), weekOrderM.getIAutoId().toString());
-        }
-
-        if (null != jBoltTable.getSave()) {
-            return updateWeekOrderDs("save", jBoltTable, weekOrderM);
-        } else if (null != jBoltTable.getUpdate()) {
-            return updateWeekOrderDs("update", jBoltTable, weekOrderM);
-        }
-        return ret(success);
-    }
-
-    /**
-     * 周间客户订单详情表处理
-     *
-     * @param mark       标记
-     * @param jBoltTable 收到的数据
-     * @param weekOrderM 主表信息
-     */
-    private Ret updateWeekOrderDs(String mark, JBoltTable jBoltTable, WeekOrderM weekOrderM) {
-        List<WeekOrderD> weekOrderDs;
-        switch (mark) {
-            // 修改
-            case "edit":
-                weekOrderDs = jBoltTable.getUpdateModelList(WeekOrderD.class);
-
-                weekOrderDService.batchUpdate(weekOrderDs);
-                break;
-            // 保存
-            case "save":
-                weekOrderDs = jBoltTable.getSaveModelList(WeekOrderD.class);
-                for (WeekOrderD weekOrderD : weekOrderDs) {
-                    // 主表id
-                    weekOrderD.setIWeekOrderMid(weekOrderM.getIAutoId());
-                    weekOrderD.setIsDeleted(false);
-                }
-
-                weekOrderDService.batchSave(weekOrderDs);
-            default:
-                break;
-        }
-        return SUCCESS;
     }
 
     /**
@@ -226,11 +102,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         return dbTemplate("weekorderm.weekOrderMData", Okv.by("iWeekOrderMid", iWeekOrderMid)).find();
     }
 
-    public List<Record> findByIdToShow(Long id) {
-        Kv kv = Kv.by("iAutoId", id);
-        return dbTemplate("weekorderm.paginateAdminDatas", kv).find();
-    }
-
     /**
      * 审批
      */
@@ -239,24 +110,18 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         ValidationUtils.notEmpty(listByIds, "订单不存在");
 
         tx(() -> {
-            // TODO 由于审批流程暂未开发 先审批提审即通过
+            
             for (WeekOrderM orderM : listByIds) {
-                ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDITED.getValue(), orderM.getIAuditStatus(), String.format("订单号“%s” 非待审批状态", orderM.getCOrderNo()));
-                
-                // 订单状态：3. 已审批
-                orderM.setIOrderStatus(WeekOrderStatusEnum.AUDITTED.getValue());
-                // 审核状态：2. 审核通过
-                orderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
 
-                List<WeekOrderD> weekOrderds = weekOrderDService.findByMId(orderM.getIAutoId());
-                if (CollUtil.isNotEmpty(weekOrderds)) {
-                    cusOrderSumService.handelWeekOrder(weekOrderds);
-                }
+                formApprovalService.approveByStatus(table(), orderM.getIAutoId(), () -> null, () -> {
+                    
+                    ValidationUtils.isTrue(updateIorderStatus(orderM.getIAutoId(), WeekOrderStatusEnum.AUDITTED.getValue(), orderM.getIOrderStatus()), String.format("当前订单状态 %s, 审批通过失败", WeekOrderStatusEnum.toEnum(orderM.getIOrderStatus()).getText()));
+                    
+                    cusOrderSumService.algorithmSum();
+                    
+                    return null;
+                });
 
-                if (orderM.update()) {
-                    //添加日志
-                    addUpdateSystemLog(orderM.getIAutoId(), JBoltUserKit.getUserId(), orderM.getIAutoId().toString());
-                }
             }
             return true;
         });
@@ -267,17 +132,29 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     /**
      * 撤回
      */
-    public Ret recall(String iAutoId) {
-        if (notOk(iAutoId)) {
-            return fail(JBoltMsg.PARAM_ERROR);
-        }
+    public Ret withdraw(Long iAutoId) {
         WeekOrderM weekOrderM = findById(iAutoId);
-        //订单状态：2. 待审批
-        weekOrderM.setIOrderStatus(1);
-        //审核状态： 1. 待审核
-        weekOrderM.setIAuditStatus(0);
-        boolean result = weekOrderM.update();
-        return ret(result);
+
+        tx(() -> {
+
+            formApprovalService.withdraw(table(), weekOrderM.getIAutoId(), () -> null, () -> {
+
+                // 订单状态：2. 待审批
+                weekOrderM.setIOrderStatus(WeekOrderStatusEnum.SAVED.getValue());
+                weekOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+
+                ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
+
+                cusOrderSumService.algorithmSum();
+
+                return null;
+            });
+
+            return true;
+        });
+        
+        
+        return SUCCESS;
     }
 
     /**
@@ -313,18 +190,125 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     /**
      * 批量反审批
      */
-    public Ret NoApprove(String ids) {
-        // 数据同步暂未开发 现只修改状态
-        for (WeekOrderM weekOrderM : getListByIds(ids)) {
-            ValidationUtils.equals(WeekOrderStatusEnum.AUDITTED.getValue(), weekOrderM.getIOrderStatus(), "订单状态“已审批”的才能进行反审批操作！");
+    public Ret reject(String ids) {
+        tx(() -> {
+            // 数据同步暂未开发 现只修改状态
+            for (WeekOrderM weekOrderM : getListByIds(ids)) {
 
-            // 审核状态：1. 待审核
-            weekOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            // 订单状态： 2. 待审批
-            weekOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDITED.getValue());
-            weekOrderM.update();
-        }
+                formApprovalService.rejectByStatus(table(), weekOrderM.getIAutoId(), () -> null, () -> {
+                    
+                    cusOrderSumService.algorithmSum();
+
+                    return null;
+                });
+                
+            }
+            return true;
+        });
         return SUCCESS;
     }
 
+    public Ret submit(Long iautoid) {
+        tx(() -> {
+
+            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+            
+            // 更新订单的状态
+            ValidationUtils.isTrue(updateIorderStatus(iautoid, WeekOrderStatusEnum.AWAIT_AUDITED.getValue(), WeekOrderStatusEnum.SAVED.getValue()), ErrorMsg.UPDATE_FAILED);
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    private boolean updateIorderStatus(long iautoid, int iAfterStatus, int iBeforeStatus) {
+        return update("UPDATE Co_WeekOrderM SET iOrderStatus = ? WHERE iAutoId = ? AND iOrderStatus = ? ", iAfterStatus, iautoid, iBeforeStatus) > 0;
+    }
+
+    public Ret saveTableSubmit(JBoltTable jBoltTable) {
+        ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.isTrue(jBoltTable.isNotBlank(), JBoltMsg.PARAM_ERROR);
+
+        WeekOrderM weekOrderM = jBoltTable.getFormModel(WeekOrderM.class, "weekOrderM");
+        ValidationUtils.notNull(weekOrderM, JBoltMsg.PARAM_ERROR);
+
+        Date now = new Date();
+
+        tx(() -> {
+            
+            // 新增
+            if (ObjUtil.isNull(weekOrderM)) {
+                doSave(weekOrderM, jBoltTable, now);
+            } else {
+                doUpdate(weekOrderM, jBoltTable, now);
+            }
+
+            return true;
+        });
+        
+        return SUCCESS;
+    }
+
+    private void doSave(WeekOrderM weekOrderM, JBoltTable jBoltTable, Date now) {
+        weekOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+        weekOrderM.setIOrderStatus(WeekOrderStatusEnum.SAVED.getValue());
+
+        // 组织信息
+        weekOrderM.setIOrgId(getOrgId());
+        weekOrderM.setCOrgCode(getOrgCode());
+        weekOrderM.setCOrgName(getOrgName());
+        // 创建信息
+        weekOrderM.setCCreateName(JBoltUserKit.getUserName());
+        weekOrderM.setDCreateTime(now);
+        weekOrderM.setICreateBy(JBoltUserKit.getUserId());
+        // 更新信息
+        weekOrderM.setCUpdateName(JBoltUserKit.getUserName());
+        weekOrderM.setDUpdateTime(now);
+        weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+        // 订单创建日期
+        weekOrderM.setDOrderDate(now);
+        weekOrderM.save();
+
+        // 保存明细
+        List<Record> save = jBoltTable.getSaveRecordList();
+        ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
+        
+        saveDs(save, weekOrderM.getIAutoId());
+    }
+
+    private void doUpdate(WeekOrderM weekOrderM, JBoltTable jBoltTable, Date now) {
+        // 更新时需要判断数据存在
+        WeekOrderM dbWeekOrderM = findById(weekOrderM.getIAutoId());
+        ValidationUtils.notNull(dbWeekOrderM, JBoltMsg.DATA_NOT_EXIST);
+
+        // 更新信息
+        weekOrderM.setCUpdateName(JBoltUserKit.getUserName());
+        weekOrderM.setDUpdateTime(now);
+        weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+        ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
+
+        List<Record> save = jBoltTable.getSaveRecordList();
+        if (CollUtil.isNotEmpty(save)) {
+            saveDs(save, weekOrderM.getIAutoId());
+        }
+
+        updateDs(jBoltTable.getUpdateRecordList());
+    }
+
+    private void saveDs(List<Record> save, long iweekordermid) {
+        for (Record row : save) {
+            row.set("IWeekOrderMid", iweekordermid)
+                    .set("iautoid", JBoltSnowflakeKit.me.nextId())
+                    .set("isdeleted", ZERO_STR);
+        }
+        weekOrderDService.batchSaveRecords(save);
+    }
+
+    private void updateDs(List<Record> update) {
+        if (CollUtil.isNotEmpty(update)) {
+            weekOrderDService.batchUpdateRecords(update);
+        }
+    }
+    
 }

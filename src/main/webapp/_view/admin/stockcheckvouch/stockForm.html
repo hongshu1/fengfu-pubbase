@@ -1,4 +1,3 @@
-#set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_title">
   <div class="row">
     <div class="col-md-auto">
@@ -10,35 +9,37 @@
 
 <div class="jbolt_page_content">
   <div class="row">
-    <div class="col-10 text-left">
-      <form class="form-inline text-left" onsubmit="return false;" id="stockForm" action="#(action)" method="post">
-        #if(stockCheckVouch.iautoid??)
-        <input type="hidden" name="stockCheckVouch.iautoid" value="#(stockCheckVouch.iautoid??)"/>
+    <div class="col">
+      <form class="form-inline" onsubmit="return false;" id="stockForm" action="#(action)" method="post">
+        #if(stockcheckvouch.autoid??)
+        <input type="hidden" name="stockcheckvouch.autoid" value="#(stockcheckvouch.autoid??)"/>
         #end
         <select class="form-control"
                 data-autoload
-                name="warehouseShelves.iwarehouseareaid"
+                data-width="150px"
+                name="iwarehouseareaid"
                 multiple
                 data-select-type="select2"
                 data-tips="选择库区"
                 data-url="admin/warehousearea/list?isdeleted=0"
                 data-text="=选择库区="
-                data-text-attr="careacode,careaname"
+                data-value-attr="careacode"
+                data-text-attr="careaname"
                 data-value=""
-                data-value-attr="iautoid"
-                data-select="#(warehouseShelves.iwarehouseareaid??)">
+                data-select="#(iwarehouseareaid??)">
         </select>
-<!--        <input type="text" autocomplete="off" class="form-control" placeholder="=库位名称=" name="posname" value=""/>-->
+        <!--        <input type="text" autocomplete="off" class="form-control" placeholder="=库位名称=" name="posname" value=""/>-->
         <input type="text" autocomplete="off" class="form-control" placeholder="=盘点状态=" name="state" value=""/>
         <select class="form-control"
                 name="iInventoryClassId"
+                data-width="140px"
                 data-rule="required"
                 data-autoload
                 data-url="admin/inventoryclass/options"
                 data-select-type="select2"
                 data-text="=上级分类="
                 data-select="#(iInventoryClassId??)"
-                data-value-attr="iautoid"
+                data-value-attr="autoid"
                 data-text-attr="cinvcname"
         ></select>
         <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
@@ -55,7 +56,7 @@
   <!-- JBoltTable的数据模板定义-->
   <textarea class="jb_tpl_box" id="fhRowtpl_#(pageId)">
 		{@each datas as data,index}
-     <tr data-id="${data.iautoid}" onclick="masterTableTrTriggerShowSlaveExt(this,'${data.iautoid}')">
+     <tr data-id="${data.autoid}" onclick="masterTableTrTriggerShowSlaveExt(this,'${data.autoid}')">
       <td>${pageNumber,pageSize,index | rownum}</td>
 			<td>${data.posname}</td>
       <td>${data.cInvCCode}</td>
@@ -76,9 +77,17 @@
   <!-- 工具条 toolbar -->
   <div class="jbolt_table_toolbar" id="fh_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-      <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
-              data-url="/admin/stockcheckvouchdetail/deleteByIds?ids=" data-confirm="确定删除选中数据？"
-              class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除
+      <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+      </button>
+      <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+        <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                data-url="admin/stockcheckvouch/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
+        </button>
+        <button class="btn dropdown-item" data-downloadbtn data-url="admin/stockcheckvouch/exportExcelAll"
+                data-form="teamForm_#(pageId)"><i class="fa fa-download"></i> 导出全部
+        </button>
+      </div>
       </button>
     </div>
     <div class="clearfix"></div>
@@ -90,16 +99,17 @@
          data-height="250"
          data-ajax="true"
          data-width="auto"
-         data-url="admin/stockcheckvouch/invDatas?masid=#(stockCheckVouch.iautoid)"
+         data-url="admin/stockcheckvouch/datas?masid=#(stockcheckvouch.autoid??)"
          data-column-resize="true"
-         data-column-prepend="1:radio:true"
+         data-column-prepend="1:checkbox:true"
          data-conditions-form="stockForm"
          data-rowtpl="fhRowtpl_#(pageId)"
          data-toolbar="fh_toolbar_#(pageId)"
+         data-page="stockFormPage_#(pageId)"
          data-editable-option="getEditableTableOptions_#(pageId)"
          data-editable="true"
   >
-    <thead class="thead-blue">
+    <thead>
     <tr>
       <th data-width="30" data-min-width="60" data-column="index">序号</th>
       <th data-width="150" data-column="posname">库区名称</th>
@@ -122,7 +132,6 @@
   </table>
 </div>
 #include("tockchekvouchForm.html")
-
 #define js()
 <script>
   function submitThisForm() {
@@ -133,7 +142,6 @@
   var stockcheckvouchdid = $('#stockcheckvouchdid');
   // 避免触发重复点击行事件的处理
   var clicked = false;
-
   $(function () {
     hideParentLayerDialogBtn(0);
     //完成盘点的按钮，保存在主表
@@ -149,7 +157,7 @@
       var data = {
         datas: JSON.stringify(datas),
         barcode: JSON.stringify(barcode)
-      }
+      };
 
       Ajax.post('admin/stockcheckvouch/saveSubmit', data, function (ret) {
         var json = JSON.parse(ret.data);
@@ -165,10 +173,9 @@
     addParentLayerDialogBtn("保存记录", "lay_success", function () {
       //获取选中表格数据
       var para = jboltTableGetCheckedDatas('#stock__table_#(pageId)');
-      Ajax.post('admin/stockcheckvouchdetail/adjust', {"datas": JSON.stringify(para)}, function (ret) {
+      Ajax.post('admin/stockcheckvouch/saveCheckVouchDetails', {"datas": JSON.stringify(para)}, function (ret) {
         refreshPjaxContainer()
-      });;
-
+      });
     });
   });
 
@@ -181,7 +188,7 @@
       submit: {
         withForm: ["stockForm"],
         type: "all",//cell|all
-        url: "admin/pudeliverydetail/saveTableSubmit",
+        url: "admin/stockcheckvouch/saveTableSubmit",
         success: function (res) {
           if (res.state === 'ok') {
             LayerMsgBox.success("提交成功", 600, function () {
@@ -273,11 +280,11 @@
     return editableTableOptions;
   }
 
-  function masterTableTrTriggerShowSlaveExt(ele, iautoid) {
+  function masterTableTrTriggerShowSlaveExt(ele, autoid) {
     if (!clicked) {
       clicked = true;
 
-      stockcheckvouchdid.val(iautoid);
+      stockcheckvouchdid.val(autoid);
       // 清空表格数据（再加载）
       jboltTableClear('#stock__table_#(pageId)');
 

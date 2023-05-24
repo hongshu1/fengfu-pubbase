@@ -343,7 +343,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	}
 	@Override
 	public String checkCanToggle(CodeGenModelAttr attr, String column, Kv kv) {
-		if(attr.getCodeGenId().intValue() != kv.getInt("code_gen_id")) {
+		if(!attr.getCodeGenId().equals(kv.getLong("code_gen_id"))) {
 			return JBoltMsg.PARAM_ERROR;
 		}
 		return null;
@@ -549,16 +549,15 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return find(selectSql().eq("code_gen_id", codeGenId).asc("sort_rank_inform").eq("is_form_ele", TRUE));
 	}
-
 	/**
-	 * 移动交换位置顺序
+	 * 移动表格交换位置顺序
 	 * @param codeGenId
 	 * @param id
 	 * @param prevId
 	 * @param nextId
 	 * @return
 	 */
-	public Ret move(Long codeGenId, Long id, Long prevId, Long nextId) {
+	public Ret moveTableEle(Long codeGenId, Long id, Long prevId, Long nextId) {
 		if(notOk(codeGenId)||notOk(id)) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
@@ -570,7 +569,50 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		if(attr == null) {
 			return fail(JBoltMsg.DATA_NOT_EXIST);
 		}
-		if(attr.getCodeGenId().intValue() != codeGenId.intValue()) {
+		if(!attr.getCodeGenId().equals(codeGenId)) {
+			return fail(JBoltMsg.PARAM_ERROR+"指定操作的数据与指定的codeGenId不匹配");
+		}
+		int count = getCount(Okv.by("code_gen_id", codeGenId).set("is_table_col",TRUE));
+		if(count == 1) {
+			attr.setSortRankInform(1);
+			boolean success = attr.update();
+			return ret(success);
+		}
+		if(notOk(prevId) && notOk(nextId)) {
+			return fail("此表数据字段不止一个 prevId和nextId至少传一个");
+		}
+		//有前无后 说明是挪到最后一个
+		if(isOk(prevId) && notOk(nextId)) {
+			return moveToTableEnd(codeGenId,attr,count);
+		}
+		//有后无前 说明是挪到第一个
+		if(notOk(prevId) && isOk(nextId)) {
+			return moveToTableStart(codeGenId,attr);
+		}
+		//有前有后 中间了
+		return moveToTableCenter(codeGenId,attr,prevId);
+	}
+	/**
+	 * 移动表单交换位置顺序
+	 * @param codeGenId
+	 * @param id
+	 * @param prevId
+	 * @param nextId
+	 * @return
+	 */
+	public Ret moveFormEle(Long codeGenId, Long id, Long prevId, Long nextId) {
+		if(notOk(codeGenId)||notOk(id)) {
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		CodeGen codeGen = codeGenService.findById(codeGenId);
+		if(codeGen == null) {
+			return fail(JBoltMsg.PARAM_ERROR +",codeGenId错误");
+		}
+		CodeGenModelAttr attr = findById(id);
+		if(attr == null) {
+			return fail(JBoltMsg.DATA_NOT_EXIST);
+		}
+		if(!attr.getCodeGenId().equals(codeGenId)) {
 			return fail(JBoltMsg.PARAM_ERROR+"指定操作的数据与指定的codeGenId不匹配");
 		}
 		int count = getCount(Okv.by("code_gen_id", codeGenId).set("is_form_ele",TRUE));
@@ -584,17 +626,17 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		//有前无后 说明是挪到最后一个
 		if(isOk(prevId) && notOk(nextId)) {
-			return moveToEnd(codeGenId,attr,count);
+			return moveToFormEnd(codeGenId,attr,count);
 		}
 		//有后无前 说明是挪到第一个
 		if(notOk(prevId) && isOk(nextId)) {
-			return moveToStart(codeGenId,attr);
+			return moveToFormStart(codeGenId,attr);
 		}
 		//有前有后 中间了
-		return moveToCenter(codeGenId,attr,prevId);
+		return moveToFormCenter(codeGenId,attr,prevId);
 	}
 
-	private Ret moveToCenter(Long codeGenId, CodeGenModelAttr attr, Long prevId) {
+	private Ret moveToFormCenter(Long codeGenId, CodeGenModelAttr attr, Long prevId) {
 		List<CodeGenModelAttr> attrs = getCodeGenModelAttrsForSortRankInform(codeGenId, attr.getId());
 		if(isOk(attrs)) {
 			CodeGenModelAttr prevAttr = findById(prevId);
@@ -605,7 +647,7 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			for(int i=0;i<attrs.size();i++){
 				atr = attrs.get(i);
 				atr.setSortRankInform(i+1);
-				if(atr.getId().intValue() == prevId.intValue()) {
+				if(atr.getId().equals(prevId)) {
 					attr.setSortRankInform(i+2);
 					attrs.add(i+1,attr);
 					i=i+1;
@@ -615,13 +657,35 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return SUCCESS;
 	}
+
+	private Ret moveToTableCenter(Long codeGenId, CodeGenModelAttr attr, Long prevId) {
+		List<CodeGenModelAttr> attrs = getCodeGenModelAttrsForSortRankInTable(codeGenId, attr.getId());
+		if(isOk(attrs)) {
+			CodeGenModelAttr prevAttr = findById(prevId);
+			if(prevAttr == null) {
+				return fail("参数指定prevId 找不到数据");
+			}
+			CodeGenModelAttr atr;
+			for(int i=0;i<attrs.size();i++){
+				atr = attrs.get(i);
+				atr.setSortRankIntable(i+1);
+				if(atr.getId().equals(prevId)) {
+					attr.setSortRankIntable(i+2);
+					attrs.add(i+1,attr);
+					i=i+1;
+				}
+			}
+			batchUpdate(attrs);
+		}
+		return SUCCESS;
+	}
 	/**
-	 * 移动位置到开头
+	 * 移动位置到开头 form
 	 * @param codeGenId
 	 * @param attr
 	 * @return
 	 */
-	private Ret moveToStart(Long codeGenId, CodeGenModelAttr attr) {
+	private Ret moveToFormStart(Long codeGenId, CodeGenModelAttr attr) {
 		attr.setSortRankInform(1);
 		boolean success = attr.update();
 		if(!success) {
@@ -640,13 +704,37 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	}
 
 	/**
-	 * 移动到结尾
+	 * 移动位置到开头 table
+	 * @param codeGenId
+	 * @param attr
+	 * @return
+	 */
+	private Ret moveToTableStart(Long codeGenId, CodeGenModelAttr attr) {
+		attr.setSortRankIntable(1);
+		boolean success = attr.update();
+		if(!success) {
+			return fail("调整表格列排序[移动到最前]出现异常，调整失败");
+		}
+		List<CodeGenModelAttr> attrs = getCodeGenModelAttrsForSortRankInTable(codeGenId, attr.getId());
+		if(isOk(attrs)) {
+			int rank = 2;
+			for(CodeGenModelAttr atr:attrs) {
+				atr.setSortRankIntable(rank);
+				rank++;
+			}
+			batchUpdate(attrs);
+		}
+		return SUCCESS;
+	}
+
+	/**
+	 * 移动到form结尾
 	 * @param codeGenId
 	 * @param attr
 	 * @param count
 	 * @return
 	 */
-	private Ret moveToEnd(Long codeGenId, CodeGenModelAttr attr,int count) {
+	private Ret moveToFormEnd(Long codeGenId, CodeGenModelAttr attr,int count) {
 		attr.setSortRankInform(count);
 		boolean success = attr.update();
 		if(!success) {
@@ -663,6 +751,31 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		}
 		return SUCCESS;
 	}
+
+	/**
+	 * 移动到form结尾
+	 * @param codeGenId
+	 * @param attr
+	 * @param count
+	 * @return
+	 */
+	private Ret moveToTableEnd(Long codeGenId, CodeGenModelAttr attr,int count) {
+		attr.setSortRankIntable(count);
+		boolean success = attr.update();
+		if(!success) {
+			return fail("调整表格列排序[移动到最后]出现异常，调整失败");
+		}
+		List<CodeGenModelAttr> attrs = getCodeGenModelAttrsForSortRankInTable(codeGenId, attr.getId());
+		if(isOk(attrs)) {
+			int rank = 1;
+			for(CodeGenModelAttr atr:attrs) {
+				atr.setSortRankIntable(rank);
+				rank++;
+			}
+			batchUpdate(attrs);
+		}
+		return SUCCESS;
+	}
 	/**
 	 * 获取到除了排除ID之外的 一个表的字段列表数据
 	 * @param codeGenId
@@ -671,6 +784,16 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	 */
 	private List<CodeGenModelAttr> getCodeGenModelAttrsForSortRankInform(Long codeGenId,Long excludeId){
 		return find(selectSql().select("id","sort_rank_inform").eq("code_gen_id", codeGenId).eq("is_form_ele", TRUE).notEqId(excludeId).orderBySortRank("sort_rank_inform"));
+	}
+
+	/**
+	 * 获取到除了排除ID之外的 一个表的字段列表数据 表里
+	 * @param codeGenId
+	 * @param excludeId
+	 * @return
+	 */
+	private List<CodeGenModelAttr> getCodeGenModelAttrsForSortRankInTable(Long codeGenId,Long excludeId){
+		return find(selectSql().select("id","sort_rank_intable").eq("code_gen_id", codeGenId).eq("is_table_col", TRUE).notEqId(excludeId).orderBySortRank("sort_rank_intable"));
 	}
 	/**
 	 * 初始化表单元素排序
