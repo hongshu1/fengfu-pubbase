@@ -1,0 +1,134 @@
+<div class="jbolt_page_title">
+  <div class="row">
+    <div class="col-md-auto">
+    </div>
+    <div class="col-md-auto">
+    </div>
+  </div>
+</div>
+
+<div class="jbolt_page_content">
+  <div class="row">
+    <div class="col">
+      <form class="form-inline" onsubmit="return false;" id="stockForm" action="#(action)" method="post">
+        #if(stockcheckvouch.autoid??)
+        <input type="hidden" name="stockcheckvouch.autoid" value="#(stockcheckvouch.autoid??)"/>
+        #end
+        <label>盘点单据：#(stockcheckvouch.billno??)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+        <label>仓库名称：#(cwhname??)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+        <label>库位名称：#(careaname??)</label>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="jbolt_page_content">
+
+  <!-- JBoltTable的数据模板定义-->
+  <textarea class="jb_tpl_box" id="fhRowtpl_#(pageId)">
+		{@each datas as data,index}
+     <tr data-id="${data.autoid}" onclick="masterTableTrTriggerShowSlaveExt(this,'${data.autoid}')">
+      <td>${pageNumber,pageSize,index | rownum}</td>
+			<td>${data.posname}</td>
+      <td>${data.cInvCCode}</td>
+			<td>${data.cInvCName}</td>
+			<td>${data.cinvcode}</td>
+      <td>${data.cInvCode1}</td>
+      <td>${data.cInvName1}</td>
+			<td>${data.invstd}</td>
+      <td>${data.unitname}</td>
+      <td>${data.qty}</td>
+			<td>${data.totalrealqty}</td>
+			<td>${data.qty, 2|number_format}</td>
+			<td>${data.isiqc1}</td>
+			<td>${data.status}</td>
+		</tr>
+		{@/each}
+	</textarea>
+  <!-- 工具条 toolbar -->
+  <div class="jbolt_table_toolbar" id="fh_toolbar_#(pageId)">
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+      <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+      </button>
+      <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+        <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                data-url="admin/stockcheckvouch/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
+        </button>
+        <button class="btn dropdown-item" data-downloadbtn data-url="admin/stockcheckvouch/exportExcelAll"
+                data-form="teamForm_#(pageId)"><i class="fa fa-download"></i> 导出全部
+        </button>
+      </div>
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <table class="jbolt_table jbolt_main_table table-center"
+         id="jbolt_table_#(pageId)"
+         data-jbolttable
+         data-height="250"
+         data-ajax="true"
+         data-width="auto"
+         data-url="admin/stockcheckvouch/datas?masid=#(stockcheckvouch.autoid??)"
+         data-column-resize="true"
+         data-column-prepend="1:checkbox:true"
+         data-conditions-form="stockForm"
+         data-rowtpl="fhRowtpl_#(pageId)"
+         data-toolbar="fh_toolbar_#(pageId)"
+         data-page="stockFormPage_#(pageId)"
+
+         data-editable="true"
+  >
+    <thead>
+    <tr>
+      <th data-width="30" data-min-width="60" data-column="index">序号</th>
+      <th data-width="150" data-column="posname">库区名称</th>
+      <th data-width="150" data-column="cInvCCode">存货分类编码</th>
+      <th data-width="150" data-column="cInvCName">存货分类名称</th>
+      <th data-width="150" data-column="cinvcode">存货编码</th>
+      <th data-width="150" data-column="cInvCode1">客户部番</th>
+      <th data-width="150" data-column="cInvName1">部品名称</th>
+      <th data-width="150" data-column="invstd">规格</th>
+      <th data-width="110" data-column="unitname">主计量单位</th>
+      <th data-width="110" data-column="qty">库存数量</th>
+      <th data-width="110" data-column="totalrealqty">盘点数量</th>
+      <th data-width="110" data-column="qty">库存数量</th>
+      <th data-width="130" data-column="isiqc1">盈亏数量</th>
+      <th data-width="110" data-column="status">盘点状态</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+#include("onlyseeStockchekvouchForm.html")
+#define js()
+<script>
+  function submitThisForm() {
+    jboltTableSubmit('#jbolt_table_#(pageId)');
+  }
+
+  // 子表查询表单
+  var stockcheckvouchdid = $('#stockcheckvouchdid');
+  // 避免触发重复点击行事件的处理
+  var clicked = false;
+  $(function () {
+    hideParentLayerDialogBtn(0);
+  });
+
+  function masterTableTrTriggerShowSlaveExt(ele, autoid) {
+    if (!clicked) {
+      clicked = true;
+
+      stockcheckvouchdid.val(autoid);
+      // 清空表格数据（再加载）
+      jboltTableClear('#stock__table_#(pageId)');
+
+      $("#dTable").click();
+      clicked = false;
+    }
+  }
+
+</script>
+#end
+

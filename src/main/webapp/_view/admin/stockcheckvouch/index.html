@@ -60,24 +60,22 @@
 <tr data-id="${data.autoid}">
   <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
-    <a href="admin/stockcheckvouch/keepCheckVouch/${data.autoid}" data-area="98%,98%" tooltip data-title="继续盘点"
-           data-handler="refreshJBoltTable" data-dialog-title="继续盘点" class="jbolt_table_editbtn">继续盘点</a>
-    <a href="admin/stockcheckvouch/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
-       data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+  <a href="admin/stockcheckvouch/onlysee/${data.autoid}" data-area="98%,98%" tooltip data-title="查看"
+   data-handler="refreshJBoltTable" data-dialog-title="查看库存盘点单" class="jbolt_table_editbtn">查看</a>
     <!--{@if data.state == '0'}
-    <a href="admin/purchaseReceiptList/keepCheckVouch/${data.autoid}" data-area="100%,100%" tooltip data-title="继续盘点"
+    <a href="admin/stockcheckvouch/keepCheckVouch/${data.autoid}" data-area="98%,98%" tooltip data-title="继续盘点"
        data-handler="refreshJBoltTable" data-dialog-title="继续盘点" class="jbolt_table_editbtn">继续盘点</a>
     <a href="admin/stockcheckvouch/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
        data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
     {@/if}
     {@if data.state == '1'}
-    <a href="admin/purchaseReceiptList/keepCheckVouch/${data.autoid}" data-area="100%,100%" tooltip data-title="审核"
-       data-handler="refreshJBoltTable" data-dialog-title="编辑库存盘点单" class="jbolt_table_editbtn">审核</a>
-    <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
+    <a href="admin/stockcheckvouch/keepCheckVouch/${data.autoid}" data-area="98%,98%" tooltip data-title="审核"
+       data-handler="refreshJBoltTable" data-dialog-title="审核库存盘点单" class="jbolt_table_editbtn">审核</a>
+    <a href="admin/stockcheckvouch/edit/${data.autoid}" data-area="98%,98%" tooltip data-title="编辑"
        data-handler="refreshJBoltTable" data-dialog-title="编辑库存盘点单" class="jbolt_table_editbtn">编辑</a>
     {@/if}
     {@if data.state == '2'}
-    <a href="admin/purchaseReceiptList/onlysee/${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
+    <a href="admin/stockcheckvouch/onlysee/${data.autoid}" data-area="98%,98%" tooltip data-title="查看"
        data-handler="refreshJBoltTable" data-dialog-title="查看库存盘点单" class="jbolt_table_editbtn">查看</a>
     {@/if}-->
   </td>
@@ -91,7 +89,7 @@
   <td title="">${data.modifydate}</td>
   <td title="">${data.modifydate}</td>
   <td title="">${data.modifydate}</td>
-  <td title="${data.checkperson}">${data.checkperson}</td>
+  <td title="${data.cpsn_name}">${data.cpsn_name}</td>
   <td title="${data.memo}">${data.memo}</td>
   <td title="${data.modifydate}">${data.modifydate}</td>
 </tr>
@@ -135,7 +133,7 @@
         <th data-width="150" data-column="">盘盈料品</th>
         <th data-width="150" data-column="">盘亏料品</th>
         <th data-width="150" data-column="">盘点状态</th>
-        <th data-width="150" data-column="CheckPerson">盘点人</th>
+        <th data-width="150" data-column="cPsn_Name">盘点人</th>
         <th data-width="150" data-column="Memo">盘点备注</th>
         <th data-width="150" data-column="ModifyDate">盘点时间</th>
       </tr>
