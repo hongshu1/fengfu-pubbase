@@ -9,6 +9,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -1068,7 +1069,55 @@ public class InventoryService extends BaseService<Inventory> {
 	 * @param cInvAddCode
 	 */
 	public Inventory findBycInvAddCode(String cInvAddCode){
-		return findFirst("SELECT * FROM Bd_Inventory WHERE cInvCode1 = ? OR cInvAddCode1 = ?", cInvAddCode, cInvAddCode);
+		if (StrUtil.isBlank(cInvAddCode)){
+			return null;
+		}
+		return findFirst("SELECT TOP 1 * FROM Bd_Inventory WHERE ISNULL(cInvCode1, '') = ? OR ISNULL(cInvAddCode1, '') = ?", cInvAddCode, cInvAddCode);
+	}
+	
+	public Inventory findBycInvAddCode(String cInvCode1, String cInvAddCode){
+		if (StrUtil.isBlank(cInvAddCode) && StrUtil.isBlank(cInvCode1)){
+			return null;
+		}
+		String sqlStr = "SELECT TOP 1 * FROM Bd_Inventory WHERE ";
+		
+		if(StrUtil.isNotBlank(cInvCode1)){
+			sqlStr += " ISNULL(cInvCode1, '') = '"+cInvCode1 +"'";
+		}
+		if (StrUtil.isBlank(cInvCode1) && StrUtil.isNotBlank(cInvAddCode)){
+			sqlStr += " ISNULL(cInvAddCode1, '') = '"+cInvAddCode +"'";
+		}else if (StrUtil.isNotBlank(cInvCode1) && StrUtil.isNotBlank(cInvAddCode)){
+			sqlStr += " OR ISNULL(cInvAddCode1, '') = '"+cInvAddCode +"'";
+		}
+		return findFirst(sqlStr);
+	}
+	
+	/**
+	 * 根据客户部番或UG部番 模糊查找存货
+	 * @param cInvAddCode
+	 */
+	public Inventory findBlurBycInvAddCode(String cInvAddCode){
+		if (StrUtil.isBlank(cInvAddCode)){
+			return null;
+		}
+		return findFirst("SELECT TOP 1 * FROM Bd_Inventory WHERE ISNULL(cInvCode1, '') like concat('%',?,'%')  OR ISNULL(cInvAddCode1, '') like concat('%',?,'%')", cInvAddCode, cInvAddCode);
+	}
+	
+	public Inventory findBlurBycInvAddCode(String cInvCode1, String cInvAddCode){
+		if (StrUtil.isBlank(cInvAddCode) && StrUtil.isBlank(cInvCode1)){
+			return null;
+		}
+		String sqlStr = "SELECT TOP 1 * FROM Bd_Inventory WHERE ";
+		
+		if(StrUtil.isNotBlank(cInvCode1)){
+			sqlStr += " ISNULL(cInvCode1, '') like concat('%','"+cInvCode1+"','%')";
+		}
+		if (StrUtil.isBlank(cInvCode1) && StrUtil.isNotBlank(cInvAddCode)){
+			sqlStr += " ISNULL(cInvAddCode1, '') like concat('%','"+cInvAddCode+"','%')";
+		}else if (StrUtil.isNotBlank(cInvCode1) && StrUtil.isNotBlank(cInvAddCode)){
+			sqlStr += " OR ISNULL(cInvAddCode1, '') like concat('%','"+cInvAddCode+"','%')";
+		}
+		return findFirst(sqlStr);
 	}
 
     public Ret batchFetch(String column, String values) {
