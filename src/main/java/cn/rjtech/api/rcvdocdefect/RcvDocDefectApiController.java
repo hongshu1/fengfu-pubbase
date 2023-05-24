@@ -107,21 +107,6 @@ public class RcvDocDefectApiController extends BaseApiController {
         renderJBoltApiRet(rcvDocDefectApiService.update(kv));
     }
 
-    /**
-     * 二维码
-     * @param iautoid     来料异常品ID
-     * @param width       宽
-     * @param height      高
-     */
-    @ApiDoc(result = NullDataResult.class)
-    @UnCheck
-    public void qrcode(
-            @Para(value = "width", defaultValue = "200") Integer width,
-            @Para(value = "height", defaultValue = "200") Integer height,
-            @Para(value = "iautoid") Long iautoid){
-        String code = rcvDocDefectApiService.rcvDocDefectId(iautoid);
-        renderQrCode(code, width, height);
-    }
 
 
 }

@@ -1487,6 +1487,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		if (StringUtils.isNotBlank(colName)){
 			planRecord.set("colName",colName);
 		}
+		dateQtyMap = dateQtyMap != null ? dateQtyMap : new HashMap<>();
 
 		//key:yyyy-MM   value:qtySum
 		Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
@@ -1630,6 +1631,301 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 	//-----------------------------------------------------------------物料需求计划汇总-----------------------------------------------
 
+
+
+	/**
+	 * 生产计划及实绩管理
+	 */
+	public List<Record> getApsPlanAndActualPage(int pageNumber, int pageSize, Kv kv) {
+		List<Record> scheduProductPlanMonthList = new ArrayList<>();
+
+		String startDate = kv.getStr("startdate");
+		String endDate = kv.getStr("enddate");
+		if (notOk(startDate) || notOk(endDate)){
+			ValidationUtils.error("开始日期-结束日期不能为空！");
+		}
+		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+		List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
+
+		pageSize = pageSize * 15;
+
+		//TODO:根据日期及条件获取月周生产计划表数据
+		Page<Record> recordPage = dbTemplate("scheduproductplan.getApsMonthPlanList",kv).paginate(pageNumber,pageSize);
+		List<Record> apsPlanQtyList = recordPage.getList();
+
+		//key:inv，   value:<yyyy-MM-dd，QtyPP> 计划使用
+		Map<String,Map<String,BigDecimal>> invPlanDatePPMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，Qty1S> 计划/1S
+		Map<String,Map<String,BigDecimal>> invPlanDate1SMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，Qty2S> 计划/2S
+		Map<String,Map<String,BigDecimal>> invPlanDate2SMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，Qty3S> 计划/3S
+		Map<String,Map<String,BigDecimal>> invPlanDate3SMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，QtyZK> 计划在库
+		Map<String,Map<String,BigDecimal>> invPlanDateZKMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，QtySUM> 计划汇总
+		Map<String,Map<String,BigDecimal>> invPlanDateSUMMap = new HashMap<>();
+		//key:产线id   value:List物料集
+		Map<Long,List<String>> workInvListMap = new HashMap<>();
+		//key:inv   value:info
+		Map<String,Record> invInfoMap = new HashMap<>();
+		//本次排产物料id集
+		String idsJoin = "(";
+		List<Long> idList = new ArrayList<>();
+		for (Record record : apsPlanQtyList){
+			Long iWorkRegionMid = record.getLong("iWorkRegionMid");
+			Long invId = record.getLong("invId");
+			String cInvCode = record.getStr("cInvCode");
+			String iYear = record.getStr("iYear");
+			int iMonth = record.getInt("iMonth");
+			int iDate = record.getInt("iDate");
+			BigDecimal QtyPP = record.getBigDecimal("QtyPP");
+			BigDecimal Qty1S = record.getBigDecimal("Qty1S");
+			BigDecimal Qty2S = record.getBigDecimal("Qty2S");
+			BigDecimal Qty3S = record.getBigDecimal("Qty3S");
+			BigDecimal QtyZK = record.getBigDecimal("QtyZK");
+			BigDecimal QtySUM = record.getBigDecimal("QtySUM");
+			//yyyy-MM-dd
+			String dateKey = iYear;
+			dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+			dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+
+			if (workInvListMap.containsKey(iWorkRegionMid)){
+				List<String> list = workInvListMap.get(iWorkRegionMid);
+				if (!list.contains(cInvCode)){
+					list.add(cInvCode);
+				}
+			}else {
+				List<String> list = new ArrayList<>();
+				list.add(cInvCode);
+				workInvListMap.put(iWorkRegionMid,list);
+			}
+
+			if (invPlanDatePPMap.containsKey(cInvCode)){
+				//key:yyyy-MM-dd   value:QtyPP
+				Map<String,BigDecimal> dateQtyPPMap = invPlanDatePPMap.get(cInvCode);
+				dateQtyPPMap.put(dateKey,QtyPP);
+
+				//key:yyyy-MM-dd   value:Qty1S
+				Map<String,BigDecimal> dateQty1SMap = invPlanDate1SMap.get(cInvCode);
+				dateQty1SMap.put(dateKey,Qty1S);
+
+				//key:yyyy-MM-dd   value:Qty2S
+				Map<String,BigDecimal> dateQty2SMap = invPlanDate2SMap.get(cInvCode);
+				dateQty2SMap.put(dateKey,Qty2S);
+
+				//key:yyyy-MM-dd   value:Qty3S
+				Map<String,BigDecimal> dateQty3SMap = invPlanDate3SMap.get(cInvCode);
+				dateQty3SMap.put(dateKey,Qty3S);
+
+				//key:yyyy-MM-dd   value:QtyZK
+				Map<String,BigDecimal> dateQtyZKMap = invPlanDateZKMap.get(cInvCode);
+				dateQtyZKMap.put(dateKey,QtyZK);
+
+				//key:yyyy-MM-dd   value:QtySUM
+				Map<String,BigDecimal> dateQtySUMMap = invPlanDateSUMMap.get(cInvCode);
+				dateQtySUMMap.put(dateKey,QtySUM);
+			}else {
+				//key:yyyy-MM-dd   value:QtyPP
+				Map<String,BigDecimal> dateQtyPPMap = new HashMap<>();
+				dateQtyPPMap.put(dateKey,QtyPP);
+				invPlanDatePPMap.put(cInvCode,dateQtyPPMap);
+
+				//key:yyyy-MM-dd   value:Qty1S
+				Map<String,BigDecimal> dateQty1SMap = new HashMap<>();
+				dateQty1SMap.put(dateKey,Qty1S);
+				invPlanDate1SMap.put(cInvCode,dateQty1SMap);
+
+				//key:yyyy-MM-dd   value:Qty2S
+				Map<String,BigDecimal> dateQty2SMap = new HashMap<>();
+				dateQty2SMap.put(dateKey,Qty2S);
+				invPlanDate2SMap.put(cInvCode,dateQty2SMap);
+
+				//key:yyyy-MM-dd   value:Qty3S
+				Map<String,BigDecimal> dateQty3SMap = new HashMap<>();
+				dateQty3SMap.put(dateKey,Qty3S);
+				invPlanDate3SMap.put(cInvCode,dateQty3SMap);
+
+				//key:yyyy-MM-dd   value:QtyZK
+				Map<String,BigDecimal> dateQtyZKMap = new HashMap<>();
+				dateQtyZKMap.put(dateKey,QtyZK);
+				invPlanDateZKMap.put(cInvCode,dateQtyZKMap);
+
+				//key:yyyy-MM-dd   value:QtySUM
+				Map<String,BigDecimal> dateQtySUMMap = new HashMap<>();
+				dateQtySUMMap.put(dateKey,QtySUM);
+				invPlanDateSUMMap.put(cInvCode,dateQtySUMMap);
+			}
+			invInfoMap.put(cInvCode,record);
+			if (!idList.contains(invId)){
+				idsJoin = idsJoin + invId + ",";
+				idList.add(invId);
+			}
+		}
+		idsJoin = idsJoin + "601)";
+
+
+		//TODO:根据物料集及日期及条件获取APS下发的计划工单实绩数(三个班次 已完工数)
+		List<Record> actualList = dbTemplate("scheduproductplan.getMoDocMonthActualList",Kv.by("ids",idsJoin).set("startdate",startDate).set("enddate",endDate)).find();
+		//key:inv，   value:<yyyy-MM-dd，Qty1S> 实绩/1S
+		Map<String,Map<String,BigDecimal>> invActualDate1SMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，Qty2S> 实绩/2S
+		Map<String,Map<String,BigDecimal>> invActualDate2SMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，Qty3S> 实绩/3S
+		Map<String,Map<String,BigDecimal>> invActualDate3SMap = new HashMap<>();
+		for (Record record : actualList){
+			String cInvCode = record.getStr("cInvCode");
+			String cWorkShiftCode = record.getStr("cWorkShiftCode");
+			String dPlanDate = DateUtils.formatDate(record.getDate("dPlanDate"),"yyyy-MM-dd");
+			BigDecimal iCompQty = record.getBigDecimal("iCompQty");
+			// 实绩/1S
+			if (cWorkShiftCode.contains("1S")){
+				if (invActualDate1SMap.containsKey(cInvCode)){
+					//key:yyyy-MM-dd   value:Qty1S
+					Map<String,BigDecimal> dateQty1SMap = invActualDate1SMap.get(cInvCode);
+					dateQty1SMap.put(dPlanDate,iCompQty);
+				}else {
+					//key:yyyy-MM-dd   value:Qty1S
+					Map<String,BigDecimal> dateQty1SMap = new HashMap<>();
+					dateQty1SMap.put(dPlanDate,iCompQty);
+					invActualDate1SMap.put(cInvCode,dateQty1SMap);
+				}
+			}
+			// 实绩/2S
+			if (cWorkShiftCode.contains("2S")){
+				if (invActualDate2SMap.containsKey(cInvCode)){
+					//key:yyyy-MM-dd   value:Qty2S
+					Map<String,BigDecimal> dateQty3SMap = invActualDate2SMap.get(cInvCode);
+					dateQty3SMap.put(dPlanDate,iCompQty);
+				}else {
+					//key:yyyy-MM-dd   value:Qty2S
+					Map<String,BigDecimal> dateQty2SMap = new HashMap<>();
+					dateQty2SMap.put(dPlanDate,iCompQty);
+					invActualDate2SMap.put(cInvCode,dateQty2SMap);
+				}
+			}
+			// 实绩/3S
+			if (cWorkShiftCode.contains("3S")){
+				if (invActualDate3SMap.containsKey(cInvCode)){
+					//key:yyyy-MM-dd   value:Qty3S
+					Map<String,BigDecimal> dateQty3SMap = invActualDate3SMap.get(cInvCode);
+					dateQty3SMap.put(dPlanDate,iCompQty);
+				}else {
+					//key:yyyy-MM-dd   value:Qty3S
+					Map<String,BigDecimal> dateQty3SMap = new HashMap<>();
+					dateQty3SMap.put(dPlanDate,iCompQty);
+					invActualDate3SMap.put(cInvCode,dateQty3SMap);
+				}
+			}
+		}
+
+		//TODO:根据物料集及日期及条件获取APS下发的计划工单实绩数(三个班次汇总 已完工数)
+		List<Record> actualSumList = dbTemplate("scheduproductplan.getMoDocMonthActualSumList",Kv.by("ids",idsJoin).set("startdate",startDate).set("enddate",endDate)).find();
+		//key:inv，   value:<yyyy-MM-dd，QtySUM> 实绩汇总
+		Map<String,Map<String,BigDecimal>> invActualDateSUMMap = new HashMap<>();
+		for (Record record : actualSumList){
+			String cInvCode = record.getStr("cInvCode");
+			String dPlanDate = DateUtils.formatDate(record.getDate("dPlanDate"),"yyyy-MM-dd");
+			BigDecimal CompQtySUM = record.getBigDecimal("CompQtySUM");
+
+			if (invActualDateSUMMap.containsKey(cInvCode)){
+				//key:yyyy-MM-dd   value:QtySUM
+				Map<String,BigDecimal> dateQtySUMMap = invActualDateSUMMap.get(cInvCode);
+				dateQtySUMMap.put(dPlanDate,CompQtySUM);
+			}else {
+				//key:yyyy-MM-dd   value:QtySUM
+				Map<String,BigDecimal> dateQtySUMMap = new HashMap<>();
+				dateQtySUMMap.put(dPlanDate,CompQtySUM);
+				invActualDateSUMMap.put(cInvCode,dateQtySUMMap);
+			}
+		}
+
+
+		//对产线逐个处理
+		for (Long key : workInvListMap.keySet()) {
+			List<String> recordList = workInvListMap.get(key);
+			for (String inv : recordList){
+				//inv信息
+				Record invInfo = invInfoMap.get(inv);
+
+				//key:yyyy-MM-dd   value:qty  计划使用
+				Map<String,BigDecimal> dateQtyPPMap = invPlanDatePPMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyPPMap,"计划使用");
+
+				//key:yyyy-MM-dd   value:qty  计划/1S
+				Map<String,BigDecimal> dateQty1SMap = invPlanDate1SMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQty1SMap,"计划/1S");
+
+				//key:yyyy-MM-dd   value:qty  计划/2S
+				Map<String,BigDecimal> dateQty2SMap = invPlanDate2SMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQty2SMap,"计划/2S");
+
+				//key:yyyy-MM-dd   value:qty  计划/3S
+				Map<String,BigDecimal> dateQty3SMap = invPlanDate3SMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQty3SMap,"计划/3S");
+
+				//key:yyyy-MM-dd   value:qty  实绩/1S
+				Map<String,BigDecimal> dateQtyActual1SMap = invActualDate1SMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActual1SMap,"实绩/1S");
+
+				//key:yyyy-MM-dd   value:qty  实绩/2S
+				Map<String,BigDecimal> dateQtyActual2SMap = invActualDate2SMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActual2SMap,"实绩/2S");
+
+				//key:yyyy-MM-dd   value:qty  实绩/3S
+				Map<String,BigDecimal> dateQtyActual3SMap = invActualDate3SMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActual3SMap,"实绩/3S");
+
+				//key:yyyy-MM-dd   value:qty  计划汇总
+				Map<String,BigDecimal> dateQtyPlanSUMMap = invPlanDateSUMMap.get(inv);
+				//key:yyyy-MM-dd   value:qty  实绩汇总
+				Map<String,BigDecimal> dateQtyActualSUMMap = invActualDateSUMMap.get(inv);
+				//数据处理 行转列并赋值 实绩汇总-计划汇总(合计差异)
+				//scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActualSUMMap,dateQtyPlanSUMMap,"合计差异");
+
+				//key:yyyy-MM-dd   value:qty  计划在库
+				Map<String,BigDecimal> dateQtyZKMap = invPlanDateZKMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyZKMap,"计划在库");
+			}
+		}
+
+		Record planRecord = new Record();
+		planRecord.set("cInvCode","物料编码");
+		planRecord.set("cInvCode1","存货");
+		planRecord.set("cInvName1","部番");
+		planRecord.set("cWorkName","产线");
+		planRecord.set("colName","计划使用");
+		planRecord.set("qty1",1);
+		planRecord.set("qty2",2);
+		planRecord.set("qty3",3);
+		planRecord.set("qty4",4);
+		planRecord.set("qty5",5);
+		planRecord.set("qty6",6);
+		planRecord.set("qty7",7);
+		planRecord.set("qty8",8);
+		planRecord.set("qty9",9);
+		planRecord.set("qty10",10);
+
+
+		scheduProductPlanMonthList.add(planRecord);
+
+		Page<Record> page = new Page<>();
+		page.setPageNumber(recordPage.getPageNumber());
+		page.setPageSize(recordPage.getPageSize() / 15);
+		page.setTotalPage(recordPage.getTotalPage());
+		page.setTotalRow(recordPage.getTotalRow() /15);
+		page.setList(scheduProductPlanMonthList);
+
+		return scheduProductPlanMonthList;
+	}
 
 
 }
