@@ -47,6 +47,8 @@
 				<exclude>assets/js/jbolt-wechat-menu.js</exclude>
 				<exclude>assets/js/login.js</exclude>
 				<exclude>assets/js/relogin.js</exclude>
+				<exclude>assets/js/docs/**</exclude>
+				<exclude>assets/plugins/jbolt-table/docs/**</exclude>
 				<exclude>assets/plugins/jbolt-table/jbolt-table.js</exclude>
 				<exclude>assets/plugins/jbolt-table/jbolt-table.css</exclude>
 			</excludes>
