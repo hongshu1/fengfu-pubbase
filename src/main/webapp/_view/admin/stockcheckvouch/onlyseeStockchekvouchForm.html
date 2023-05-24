@@ -41,7 +41,7 @@
          data-height="250"
          data-ajax="true"
          data-width="auto"
-         data-url="admin/stockcheckvouch/datas"
+         data-url="admin/stockcheckvouch/findDetailVouchDatas?autoid=#(stockcheckvouchdid??)"
          data-column-resize="true"
          data-column-prepend="1:checkbox:true"
          data-conditions-form="tockchekvouchForm"
@@ -75,34 +75,34 @@
     <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 100px">盘点备注：</label>
     <div class="col-sm-2 col-form-label" style="right: 100px">
       <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
-             placeholder="" value="#(memo??)"/>
+             placeholder="" value="#(stockcheckvouch.memo??)"/>
     </div>
     <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 200px">盘点人：</label>
     <div class="col-sm-2 col-form-label" style="right: 200px">
       <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
-             placeholder="" value="#(checkperson??)"/>
+             placeholder="" value="#(cpsn_name??)"/>
     </div>
     <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 300px">提交时间：</label>
     <div class="col-sm-2 col-form-label" style="right: 300px">
       <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
-             placeholder="" value="#(createdate??)"/>
+             placeholder="" value="#(stockcheckvouch.createdate??)"/>
     </div>
   </div>
   <div class="form-group row">
     <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 100px">审核操作：</label>
     <div class="col-sm-2 col-form-label" style="right: 100px">
       <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
-             placeholder="" value="#(memo??)"/>
+             placeholder="" value="#(stockcheckvouch.state??)"/>
     </div>
     <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 200px">审核人：</label>
     <div class="col-sm-2 col-form-label" style="right: 200px">
       <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
-             placeholder="" value="#(checkperson??)"/>
+             placeholder="" value="#(modifyperson??)"/>
     </div>
     <label class="col-sm-2 col-form-label" style="margin-top: 7px;right: 300px">审核时间：</label>
     <div class="col-sm-2 col-form-label" style="right: 300px">
       <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"
-             placeholder="" value="#(createdate??)"/>
+             placeholder="" value="#(stockcheckvouch.modifydate??)"/>
     </div>
   </div>
 

@@ -11,8 +11,9 @@
 <div class="jbolt_page_content">
   <div class="row">
     <div class="col-10 text-left">
+      <input hidden id='stockcheckvouchdid' name="stockcheckvouchdid">
       <!--<form class="form-inline text-left" onsubmit="return false;" id="tockchekvouchForm" action="#(action)" method="post">
-        <input hidden id='stockcheckvouchdid' name="stockcheckvouchdid">
+
         <input hidden id='whcode' name="whcode" value="#(stockcheckvouch.whcode)">
         <input type="text" autocomplete="off" class="form-control" placeholder="=条码=" name="barcode" value=""/>
         <button type="submit" class="btn btn-light" id="dTable"><i class="fa fa-search"></i> 查询</button>
@@ -54,7 +55,7 @@
          data-height="250"
          data-ajax="true"
          data-width="auto"
-         data-url="admin/stockcheckvouch/datas"
+         data-url="admin/stockcheckvouch/findDetailVouchDatas?autoid=#(stockcheckvouchdid??)"
          data-column-resize="true"
          data-column-prepend="1:checkbox:true"
          data-conditions-form="tockchekvouchForm"

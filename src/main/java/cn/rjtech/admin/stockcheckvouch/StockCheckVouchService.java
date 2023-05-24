@@ -196,13 +196,33 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
     /*
      * 加载继续盘点页面的数据
      * */
-    public List<Record> keepCheckVouchDatas() {
-        return null;
+    public Page<Record> keepCheckVouchDatas(Kv kv) {
+        kv.set("orgId", getOrgId());
+        Page<Record> paginate = dbTemplate("stockcheckvouch.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
+        return paginate;
+    }
+    /*
+     * 加载下半段table的数据
+     * */
+    public Page<Record> findDetailVouchDatas(Kv kv) {
+        kv.set("orgId", getOrgId());
+        Page<Record> paginate = dbTemplate("stockcheckvouch.details", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
+        return paginate;
     }
 
     public List<Record> findAll(String sortColumn, String sortType, Kv kv) {
         kv.set("orgId", getOrgId());
         return dbTemplate("stockcheckvouch.list", kv.set("sortColumn", sortColumn).set("sortType", sortType)).find();
+    }
+
+    public List<Record> findThreeParamsByAutoid(Kv kv) {
+        List<Record> recordList = dbTemplate("stockcheckvouch.findBillboAndWhnameAndcAreaNameByAutoid", kv).find();
+        return recordList;
+    }
+
+    public List<Record> list(Kv kv) {
+        List<Record> recordList = dbTemplate("stockcheckvouch.list", kv).find();
+        return recordList;
     }
 
     /**
