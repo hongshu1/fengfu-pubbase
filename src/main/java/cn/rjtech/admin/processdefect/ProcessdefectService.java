@@ -292,5 +292,14 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 		return map;
 	}
 
+	/**
+	 * 打印数据
+	 * @param kv 参数
+	 * @return
+	 */
+	public Object getQRCodeCheck(Kv kv) {
+		return dbTemplate("processdefect.containerPrintData",kv).find();
+	}
+
 
 }

@@ -131,28 +131,34 @@
 <!--<script src="${ctxStatic}/jquery-ui-1.12.1.custom/jquery-ui.min.js" type="text/javascript"></script>-->
 
 <script type="text/javascript">
-
-	var selectDate = ['2021-02-01','2021-02-02','2021-02-03'];
-	function initDatePicker(selectDate){
-		let nowYear = $('#year').val();
-		for (let i = 0; i < 12; i++) {
-			let _selectDate = deepClone(selectDate);
-			$('#calendar_'+(i+1)).DatePicker({
-				flat: true,
-				date: [],
-				current: new Date(nowYear+'-'+(i+1)),
-				format: 'Y-m-d',
-				calendars: 1,
-				mode: 'multiple',
-				onChange: function(date) {
-					for (let j = 0; j < 12; j++) {
-						$('#calendar_'+(j+1)).DatePickerSetDate(deepClone(date), false);
-					}
-				},
-			});
-		}
+	window.onload = function() {
+		location.reload();
 	}
-	initDatePicker(selectDate);
+	$(document).ready(function(){
+		var selectDate = ['2021-02-01','2021-02-02','2021-02-03'];
+		function initDatePicker(selectDate){
+			let nowYear = $('#year').val();
+			for (let i = 0; i < 12; i++) {
+				let _selectDate = deepClone(selectDate);
+				$('#calendar_'+(i+1)).DatePicker({
+					flat: true,
+					date: [],
+					current: new Date(nowYear+'-'+(i+1)),
+					format: 'Y-m-d',
+					calendars: 1,
+					mode: 'multiple',
+					onChange: function(date) {
+						for (let j = 0; j < 12; j++) {
+							$('#calendar_'+(j+1)).DatePickerSetDate(deepClone(date), false);
+						}
+					},
+				});
+			}
+		}
+		initDatePicker(selectDate);
+	})
+
+
 
 	/*查询*/
 	$('#query').click(function () {

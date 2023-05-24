@@ -11,6 +11,7 @@ import cn.rjtech.model.momdata.InStockDefect;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 /**
@@ -140,13 +141,11 @@ public class InStockDefectAdminController extends BaseAdminController {
     /**
      * 生成二维码
      */
-    public void erm() {
-        InStockDefect inStockDefect = service.findById(getLong(0));
-        if (inStockDefect == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        renderQrCode(inStockDefect.getCDocNo(), 200, 200);
+    public void QRCode() {
+        Kv kv = new Kv();
+        kv.setIfNotNull("ids", get("ids"));
+        renderJsonData(service.getQRCodeCheck(kv));
     }
+
 
 }

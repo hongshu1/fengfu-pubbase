@@ -117,6 +117,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 				// TODO 可能需要补充校验组织账套权限
 				// TODO 存在关联使用时，校验是否仍在使用
 
+//				otherOut.getStatus()
 				//删除行数据
 				otherOutDetailService.deleteByBatchIds(autoId);
 				ValidationUtils.isTrue(otherOut.delete(), JBoltMsg.FAIL);

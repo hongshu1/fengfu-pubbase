@@ -836,19 +836,16 @@ public class BomMasterService extends BaseService<BomMaster> {
 		record.set(BomMaster.CCOMMONPARTMEMO, commonPartMemo);
 		
 		String invCode1 = getCellRangeValue(invCode1CellRange.getFlattenedCells());
-		
-		String cInvAddCode1 = getStringCellValue(cInvAddCode1Cell);
-		
 		// 根据客户部番
-		if (StrUtil.isNotBlank(invCode1) || StrUtil.isNotBlank(cInvAddCode1)){
-			inventory = inventoryService.findBycInvAddCode(invCode1, cInvAddCode1);
+		if (StrUtil.isNotBlank(invCode1)){
+			inventory = inventoryService.findBycInvAddCode(invCode1);
 		}
-		
-		if (ObjectUtil.isNull(inventory)){
-			inventory = inventoryService.findBlurBycInvAddCode(invCode1, cInvAddCode1);
+		String cInvAddCode1 = getStringCellValue(cInvAddCode1Cell);
+		if (StrUtil.isNotBlank(cInvAddCode1)){
+			inventory = inventoryService.findBycInvAddCode(invCode1);
 		}
 		// 赋值存货id
-		if (ObjectUtil.isNotNull(inventory)){
+		if (inventory != null){
 			record.set(BomMaster.IINVENTORYID, inventory.getIAutoId());
 		}
 		return record;
@@ -955,15 +952,13 @@ public class BomMasterService extends BaseService<BomMaster> {
 					continue;
 				}
 				buildLastRow(sheet, row,rowRecord);
-				
 				int perIndexOf = list.lastIndexOf(perCacheRecord);
-				
 				if (perIndexOf > -1){
 					Record record = list.get(perIndexOf);
 					record.setColumns(rowRecord);
-					// 匹配存货编码
-					setInventory(record);
 				}
+				// 匹配存货
+				
 				perCacheRecord = null;
 				continue;
 			}
@@ -1033,6 +1028,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 	}
 	
 	private void buildLastRow(XSSFSheet sheet, XSSFRow row, Record record){
+		
 		// 部品名称
 		CellRange<XSSFCell> cInvName1CellRange = createCellRange(sheet, new CellRangeAddress(row.getRowNum(), row.getRowNum(), 7, 8));
 		record.set(BomCompare.CINVNAME1, getCellRangeValue(cInvName1CellRange.getFlattenedCells()));
@@ -1111,17 +1107,14 @@ public class BomMasterService extends BaseService<BomMaster> {
 		String cInvAddCode1 = record.getStr(BomCompare.CINVADDCODE1);
 		Inventory inventory = null;
 		// 部品 通过客户部番跟UG部番查找
-		if (StrUtil.isNotBlank(cInvCode1) || StrUtil.isNotBlank(cInvAddCode1)){
-			inventory = inventoryService.findBycInvAddCode(cInvCode1, cInvAddCode1);
+		if (StrUtil.isNotBlank(cInvCode1)){
+			inventory = inventoryService.findBycInvAddCode(cInvCode1);
 		}
-		
-		// 模糊查找
-		if (ObjectUtil.isNull(inventory)){
-			inventory = inventoryService.findBlurBycInvAddCode(cInvCode1, cInvAddCode1);
+		if (StrUtil.isNotBlank(cInvAddCode1)){
+			inventory = inventoryService.findBycInvAddCode(cInvAddCode1);
 		}
-		
 		// 部品id
-		if (ObjectUtil.isNotNull(inventory)){
+		if (inventory != null){
 			record.set(BomCompare.INVITEMID, inventory.getIAutoId());
 			record.set(BomCompare.INVITEMCODE, inventory.getCInvCode());
 			record.set(BomCompare.CINVNAME, inventory.getCInvName());
@@ -1161,18 +1154,12 @@ public class BomMasterService extends BaseService<BomMaster> {
 				if (originalFlag){
 					String originItem = prefixStr.concat(endStr);
 					Inventory originalInventory = inventoryService.findBycInvAddCode(originItem);
-					if (ObjectUtil.isNull(originalInventory)){
-						originalInventory = inventoryService.findBlurBycInvAddCode(originItem);
-					}
 					setItemRecord(record, originalInventory, 0);
 				}
 				boolean slicingFlag = StrUtil.isNotBlank(slicingStd);
 				if (originalFlag && slicingFlag){
 					String slicingItem = prefixStr.concat(asterisk).concat(slicingStd);
 					Inventory slicingInventory = inventoryService.findBycInvAddCode(slicingItem.concat(endStr));
-					if(ObjectUtil.isNull(slicingInventory)){
-						slicingInventory = inventoryService.findBlurBycInvAddCode(slicingItem.concat(endStr));
-					}
 					setItemRecord(record, slicingInventory, 1);
 				}
 				
@@ -1180,9 +1167,6 @@ public class BomMasterService extends BaseService<BomMaster> {
 					// 材质 厚度*宽度*长度
 					String blankingItem = prefixStr.concat(asterisk).concat(slicingStd).concat(asterisk).concat(blankingStd);
 					Inventory blankingInventory = inventoryService.findBycInvAddCode(blankingItem);
-					if (ObjectUtil.isNull(blankingInventory)){
-						blankingInventory = inventoryService.findBycInvAddCode(blankingItem);
-					}
 					setItemRecord(record, blankingInventory, 2);
 				}
 				break;
@@ -1406,7 +1390,6 @@ public class BomMasterService extends BaseService<BomMaster> {
 	 * @return
 	 */
 	public String upgradeVersion(String bomVersion){
-		
 		return bomVersion.concat("1");
 	}
 	

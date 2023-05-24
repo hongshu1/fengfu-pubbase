@@ -326,4 +326,13 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 		return map;
 	}
 
+	/**
+	 * 打印数据
+	 * @param kv 参数
+	 * @return
+	 */
+	public Object getQRCodeCheck(Kv kv) {
+		return dbTemplate("stockoutdefect.containerPrintData",kv).find();
+	}
+
 }

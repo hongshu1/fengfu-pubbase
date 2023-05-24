@@ -4,7 +4,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.Subcontractsaleorderd;
-import cn.rjtech.model.momdata.SubcontractSaleOrderM;
+import cn.rjtech.model.momdata.Subcontractsaleorderm;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -173,7 +173,7 @@ public class SubcontractsaleorderdService extends BaseService<Subcontractsaleord
 		return dbTemplate("subcontractsaleorderd.findEditTableDatas",para).find();
 	}
 
-	public List<Subcontractsaleorderd> findByMid(SubcontractSaleOrderM subcontractsaleorderm) {
+	public List<Subcontractsaleorderd> findByMid(Subcontractsaleorderm subcontractsaleorderm) {
 		return find(selectSql().eq("iSubcontractSaleOrderMid", subcontractsaleorderm.getIAutoId()).eq("IsDeleted", 0));
 	}
 }

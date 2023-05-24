@@ -387,13 +387,15 @@ public class ScheduDemandPlanController extends BaseAdminController {
 
 	//-----------------------------------------------------------------物料需求计划汇总-----------------------------------------------
 
-	public void demandplansumview() {
+
+	public void planandactualview() {
 		String startdate = get("startdate");
 		String enddate = get("enddate");
-		String cvenname = get("cvenname");
+		String cworkname = get("cworkname");
 		String cinvcode = get("cinvcode");
 		String cinvcode1 = get("cinvcode1");
 		String cinvname1 = get("cinvname1");
+		String active = get("active");
 
 		LocalDate localDate = LocalDate.now();
 		if (StringUtils.isBlank(startdate)){
@@ -402,12 +404,14 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		if (StringUtils.isBlank(enddate)){
 			enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
 		}
+
 		set("startdate",startdate);
 		set("enddate",enddate);
-		set("cvenname",cvenname);
+		set("cworkname",cworkname);
 		set("cinvcode",cinvcode);
 		set("cinvcode1",cinvcode1);
 		set("cinvname1",cinvname1);
+		set("active", isOk(active) ? active : 1);
 
 		List<String> collist = new ArrayList<>();
 		List<String> namelist = new ArrayList<>();
@@ -488,13 +492,13 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		set("colnamelist", namelist);
 		set("weeklist", weeklist);
 		set("colname2list", name2list);
-		render("demandplansum.html");
+		render("planandactual.html");
 	}
 
 	/**
-	 * 获取物料需求计划汇总
+	 * 获取生产计划及实绩管理
 	 */
-	public void getDemandPlanSumPage() {
-		renderJsonData(service.getDemandPlanSumPage(getPageNumber(),getPageSize(),getKv()));
+	public void getApsPlanAndActualPage() {
+		renderJsonData(service.getApsPlanAndActualPage(getPageNumber(),getPageSize(),getKv()));
 	}
 }

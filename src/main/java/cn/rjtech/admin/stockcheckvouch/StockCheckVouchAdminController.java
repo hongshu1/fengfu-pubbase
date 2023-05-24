@@ -2,7 +2,6 @@ package cn.rjtech.admin.stockcheckvouch;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -12,7 +11,6 @@ import cn.rjtech.model.momdata.StockCheckVouch;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
 
 /**
  * 盘点单
@@ -60,19 +58,10 @@ public class StockCheckVouchAdminController extends BaseAdminController {
     }
 
     /*
-     * 完成盘点
+     * 保存整体表单
      * */
     public void saveSubmit() {
         renderJson(service.saveSubmit(getKv()));
-    }
-
-    /*
-     * 保存记录
-     * */
-    public void saveCheckVouchDetails(JBoltPara jBoltPara) {
-        JBoltPara jBoltPara1 = jBoltPara;
-        Kv kv = getKv();
-        renderJson(service.saveCheckVouchDetails(getKv()));
     }
 
     /*
@@ -147,33 +136,6 @@ public class StockCheckVouchAdminController extends BaseAdminController {
         }
         set("stockcheckvouch", stockCheckVouch);
         render("onlysee.html");
-    }
-
-    /*
-     * 跳转到审核页面
-     * */
-    public void audit() {
-        StockCheckVouch stockCheckVouch = service.findById(getLong(0));
-        if (stockCheckVouch == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        set("stockcheckvouch", stockCheckVouch);
-        render("audit.html");
-    }
-
-    /*
-     * 驳回
-     * */
-    public void reject() {
-        renderJson(service.reject(getKv()));
-    }
-
-    /*
-    * 审核通过
-    * */
-    public void approveAudit() {
-        renderJson(service.approveAudit(getKv()));
     }
 
     /*

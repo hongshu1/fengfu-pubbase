@@ -40,5 +40,10 @@ public class ProcessDefectApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS;
     }
 
+    public JBoltApiRet QRCode(Kv kv) {
+        processDefectService.getQRCodeCheck(kv);
+        return JBoltApiRet.API_SUCCESS;
+    }
+
 
 }
