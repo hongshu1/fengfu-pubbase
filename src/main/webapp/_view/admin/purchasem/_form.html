@@ -40,7 +40,8 @@
             <div class="col-2">
                 <select class="form-control" data-rule="required" name="purchasem.ispurchased" data-autoload #if(details??) disabled #end
 						data-text="=类型=" data-value-attr="sn"
-                        data-select="#(purchasem.ispurchased??'0')">
+                        data-select="#(purchasem.ispurchased??)">
+                        <option value="">请选择</option>
                         <option value="1">是</option>
                         <option value="0">否</option>
                 </select>
@@ -94,7 +95,7 @@
             <div class="col-2">
             	<input type="hidden" id="ialreadypurchasenatmoney" class="form-control" value="#(purchasem.ialreadypurchasenatmoney??)"/> <!-- 禀议书已申购金额(本币无税) -->
                 <input type="hidden" id="iproposalnatmoney" class="form-control" value="#(purchasem.iproposalnatmoney??)"/>
-                <input type="text" class="form-control" disabled="disabled" value="#(purchasem.iproposalnatmoney??)"/>  
+                <input type="text" id="iproposalnatmoneyshow" class="form-control" disabled="disabled" value=""/>  
             </div>
             <label class="col-sm-1 col-form-label">禀议项目累计申购金额(稟議項目累計申請購買金額)</label>
             <div class="col-2">
@@ -111,7 +112,7 @@
             <label class="col-sm-1 col-form-label">预算金额(予算金額)</label>
             <div class="col-2 ">
                 <input type="hidden" class="form-control" value="#(purchasem.ibudgetmoney??)" id="ibudgetmoney"/>
-                <input type="text" class="form-control" value="#(purchasem.ibudgetmoney??)" disabled/>
+                <input type="text" class="form-control" value="#(purchasem.ibudgetmoney??)" id="ibudgetmoneyshow" disabled/>
             </div>
             <label class="col-sm-1 col-form-label">预算累计申购金额(予算累計申請購買金額)</label>
             <div class="col-2">
@@ -298,11 +299,6 @@
                         tofixed:2,
                         removezero:true,
                         formula:"iprice*nflat",
-                    }, {
-                        dir: "v",
-                        tofixed: 2,
-                        removezero: true,
-                        formula: "sum"
                     }]
                 },
               	//本币税额
@@ -533,6 +529,7 @@
         $("#itotalpurchasenatmoneyshow").val(numberFormat(itotalpurchasenatmoney,2,'.',','));
         //禀议书金额(本币无税)
         var iproposalnatmoney = $("#iproposalnatmoney").val();
+        $("#iproposalnatmoneyshow").val(numberFormat(iproposalnatmoney,2,'.',','));
         //剩余禀议金额(本币无税)=禀议书金额(本币无税) - 累计申购金额(本币无税)
         var iremainproposalnatmoney = (parseFloat(iproposalnatmoney) - parseFloat(itotalpurchasenatmoney)).toFixed(2);
         $("#iremainproposalnatmoney").val(iremainproposalnatmoney);
@@ -545,6 +542,7 @@
         $("#ibudgettotalpurchasemoneyshow").val(numberFormat(ibudgettotalpurchasemoney,2,'.',','));
         //预算金额(本币无税)
         var ibudgetmoney = $("#ibudgetmoney").val();
+        $("#ibudgetmoneyshow").val(numberFormat(ibudgetmoney,2,'.',','));
         //剩余预算金额(本币无税)=预算金额(本币无税) - 预算累计申购金额(本币无税)
         var iremainbudgetmoney = (parseFloat(ibudgetmoney) - parseFloat(ibudgettotalpurchasemoney)).toFixed(2);
         $("#iremainbudgetmoney").val(iremainbudgetmoney);

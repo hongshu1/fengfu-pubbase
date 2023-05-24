@@ -15,6 +15,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
@@ -133,10 +134,15 @@ public class PurchasemAdminController extends BaseAdminController {
      */
     @UnCheck
     public void details() {
-        set("purchasem", service.getPurchasemByIautoid(useIfPresent(getLong(0))));
+    	Record rc = service.getPurchasemByIautoid(useIfPresent(getLong(0)));
+        set("purchasem", rc);
         // 控制详情页面对子表数据的操作
         set("details", true);
-        render("details.html");
+        Integer ireftype = rc.getInt("ireftype");
+        if(ObjectUtil.equal(PurchaseRefTypeEnum.PROPOSAL.getValue(), ireftype))
+        	render("details.html");
+        else
+        	render("ref_budget_form.html");
     }
 
     /**
@@ -171,14 +177,6 @@ public class PurchasemAdminController extends BaseAdminController {
         renderJson(service.withdraw(getLong("iautoid")));
     }
 
-    /**
-     * 参照预算
-     */
-/*    public void chooseExpenseBudget() {
-        set("noiniautoids", get("noiniautoids"));
-        set("additem", get("additem"));
-        render("choose_expensebudget.html");
-    }*/
     /**
      * 参考费用预算或者投资计划按钮点击选择期间页面
      * */

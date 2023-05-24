@@ -68,7 +68,7 @@
 <div class="jbolt_table_toolbar" id="expenseBudget_toolbar_#(pageId)">
 	<div class="btn-group" role="group" aria-label="btn-group">
 		<button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-close-handler="refreshJBoltTable" data-title="新增费用预算" data-url="/admin/expensebudget/choosePeriodPage" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
-		<button data-openpage="dialog" data-area="100%,100%"  data-handler="refreshJBoltTable" data-title="费用预算详情" data-check-handler="jboltTableGetCheckedId" data-url="admin/expensebudget/edit/" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i> 详情</button>
+		<button data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%"  data-handler="refreshJBoltTable" data-title="费用预算详情" data-check-handler="jboltTableGetCheckedId" data-url="admin/expensebudget/edit/" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i> 详情</button>
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/expensebudget/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 删除</button>
 		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="admin/expensebudget/submitAudit/" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
 		<button onclick="expenseBudgetIndexExportClick()" class="btn btn-outline-primary btn-sm" ><i class="fa fa-file-excel-o"></i> 导出</button>

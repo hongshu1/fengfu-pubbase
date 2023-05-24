@@ -43,7 +43,8 @@
             <div class="col-2">
                 <select class="form-control" data-rule="required" name="purchasem.ispurchased" data-autoload #if(details??) disabled #end
                         data-text="=类型=" data-value-attr="sn"
-                        data-select="#(purchasem.ispurchased??'0')">
+                        data-select="#(purchasem.ispurchased??)">
+                        <option value="">请选择</option>
 						<option value="1">是</option>
                         <option value="0">否</option>                        
                 </select>
@@ -431,11 +432,6 @@
                         tofixed:2,
                         removezero:true,
                         formula:"iprice*nflat",
-                    }, {
-                        dir: "v",
-                        tofixed: 2,
-                        removezero: true,
-                        formula: "sum"
                     }]
                 },
               	//本币税额

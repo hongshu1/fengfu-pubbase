@@ -78,8 +78,8 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="investmentPlan_toolbar_#(pageId)">
 	<div class="btn-group" role="group" aria-label="btn-group">
-		<button data-dialogbtn data-handler="refreshPjaxContainer" data-area="100%,100%" data-title="投资计划详情" data-check-handler="jboltTableGetCheckedId" data-url="admin/investmentplanmanage/detail/" class="btn btn-outline-primary btn-sm"  data-btn="close"><i class="fa fa-edit"></i>详情</button>
-		<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
+		<button data-dialogbtn data-handler="refreshPjaxContainer" data-offset="0.2,0" data-area="100%,100%" data-title="投资计划详情" data-check-handler="jboltTableGetCheckedId" data-url="admin/investmentplanmanage/detail/" class="btn btn-outline-primary btn-sm"  data-btn="close"><i class="fa fa-edit"></i>详情</button>
+		<button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
                         data-check-handler="getIdIfValid_#(pageId)" data-url="admin/verifyprogress/findprocess?cobjecttype=02&iobjectid="
                         class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
         <button data-ajaxbtn data-area="700,400" data-title="生效" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/investmentplanmanage/effect/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 生效</button>
