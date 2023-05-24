@@ -148,4 +148,14 @@ public class MoMaterialsscansumService extends BaseService<MoMaterialsscansum> {
 				.leftJoin();*/
 		return  dbTemplate("momaterialsscansum.findAll",kv).find();
 	}
+
+	/**
+	 * 通过现票获取存货信息
+	 * @param barcode
+	 * @return
+	 */
+	public Record  getBarcode(String barcode){
+		return  dbTemplate("momaterialsscansum.findByBarcode",
+				Kv.create().set("barcode",barcode)).findFirst();
+	}
 }

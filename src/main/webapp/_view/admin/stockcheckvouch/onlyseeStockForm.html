@@ -13,6 +13,7 @@
       <form class="form-inline" onsubmit="return false;" id="stockForm" action="#(action)" method="post">
         #if(stockcheckvouch.autoid??)
         <input type="hidden" name="stockcheckvouch.autoid" value="#(stockcheckvouch.autoid??)"/>
+        <input type="text" name="stockcheckvouch.checktype" value="#(stockcheckvouch.checktype??)"/>
         #end
         <label>盘点单据：#(stockcheckvouch.billno??)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
         <label>仓库名称：#(cwhname??)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
@@ -28,19 +29,24 @@
 		{@each datas as data,index}
      <tr data-id="${data.autoid}" onclick="masterTableTrTriggerShowSlaveExt(this,'${data.autoid}')">
       <td>${pageNumber,pageSize,index | rownum}</td>
-			<td>${data.posname}</td>
-      <td>${data.cInvCCode}</td>
-			<td>${data.cInvCName}</td>
+			<td>${data.careaname}</td>
+      <td>${data.cinvccode}</td>
+			<td>${data.cinvcname}</td>
 			<td>${data.cinvcode}</td>
-      <td>${data.cInvCode1}</td>
-      <td>${data.cInvName1}</td>
+      <td>${data.cinvcode1}</td>
+      <td>${data.cinvname1}</td>
 			<td>${data.invstd}</td>
       <td>${data.unitname}</td>
-      <td>${data.qty}</td>
+      <td>${data.qty, 2|number_format}</td>
 			<td>${data.totalrealqty}</td>
-			<td>${data.qty, 2|number_format}</td>
 			<td>${data.isiqc1}</td>
-			<td>${data.state}</td>
+			<td>
+        {@if data.totalrealqty !=''}
+        <span>已盘点</span>
+        {@else if data.totalrealqty ==''}
+        <span>未盘点</span>
+        {/@if}
+      </td>
 		</tr>
 		{@/each}
 	</textarea>
@@ -76,7 +82,6 @@
          data-rowtpl="fhRowtpl_#(pageId)"
          data-toolbar="fh_toolbar_#(pageId)"
          data-page="stockFormPage_#(pageId)"
-
          data-editable="true"
   >
     <thead>
@@ -90,10 +95,13 @@
       <th data-width="150" data-column="cInvName1">部品名称</th>
       <th data-width="150" data-column="invstd">规格</th>
       <th data-width="110" data-column="unitname">主计量单位</th>
+      #if(stockcheckvouch.checktype=='0')
       <th data-width="110" data-column="qty">库存数量</th>
+      #end
       <th data-width="110" data-column="totalrealqty">盘点数量</th>
-      <th data-width="110" data-column="qty">库存数量</th>
+      #if(stockcheckvouch.checktype=='0')
       <th data-width="130" data-column="isiqc1">盈亏数量</th>
+      #end
       <th data-width="110" data-column="state">盘点状态</th>
     </tr>
     </thead>

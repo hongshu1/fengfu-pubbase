@@ -131,7 +131,9 @@
 <!--<script src="${ctxStatic}/jquery-ui-1.12.1.custom/jquery-ui.min.js" type="text/javascript"></script>-->
 
 <script type="text/javascript">
-
+	window.onload = function() {
+		location.reload();
+	}
 	var selectDate = ['2021-02-01','2021-02-02','2021-02-03'];
 	function initDatePicker(selectDate){
 		let nowYear = $('#year').val();

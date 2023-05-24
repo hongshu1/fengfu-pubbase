@@ -415,6 +415,43 @@
                         }
                     }
                 }
+                // 遍历数据，设置单元格的 locked 属性
+                var rowCount = sheet.getRowCount(); // 获取行数
+                var columnCount = sheet.getColumnCount(); // 获取列数
+
+                for (var i = 0; i < rowCount; i++) {
+                    for (var j = 0; j < columnCount; j++) {
+                        var cell = sheet.getCell(i, j); // 获取单元格
+                        cell.locked(true); // 设置单元格为锁定状态
+                    }
+                }
+                let a = sheet.getRange(0, 0, sheet.getRowCount(), sheet.getColumnCount());
+                console.log(a)
+                // forEach(function (cell) {
+                //     cell.locked(true);
+                // });
+                // for (var i = 0; i < res.length; i++) {
+                //     for (let j = 0; j <res[i].day.length ; j++) {
+                //         var row = res[i].day[j];
+                //             if (row.lock == true){
+                //                 // 修改sheet默认locked为false
+                //                 //         var defaultStyle = new GC.Spread.Sheets.Style();
+                //                 //         defaultStyle.locked = false;
+                //                 //         sheet.setDefaultStyle(defaultStyle, GC.Spread.Sheets.SheetArea.viewport);//设置第1行不可编辑
+                //                 //         var style = new GC.Spread.Sheets.Style();
+                //                 //         style.locked = true;
+                //                 //         style.backColor = "#F0F0F0";
+                //                 //         sheet.setStyle(i+3, j+9, style);
+                //                 //         // 设置表单保护
+                //                 //         sheet.options.isProtected = true;
+                //
+                //                 var cell = sheet.getCell(i+3, j+9).locked(true);
+                //                 console.log(cell)
+                //                 // 设置单元格的值
+                //                 // sheet.setValue(i, sheet.getColIndex(3), row[rowKey]);
+                //             }
+                //     }
+                // }
                 spreadResume();// 恢复绘制
             },error: function() {
                 console.log('error')

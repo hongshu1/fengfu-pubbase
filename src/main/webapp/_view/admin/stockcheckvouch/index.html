@@ -82,7 +82,14 @@
   <td title="${data.whcode}">${data.whcode}</td>
   <td title="${data.cwhname}">${data.cwhname}</td>
   <td title="${data.billno}">${data.billno}</td>
-  <td title="${data.checktype}">${data.checktype}</td>
+  <td title="${data.checktype}">
+    {@if data.checktype =='0'}
+    <span>明盘</span>
+    {@/if}
+    {@if data.checktype =='1'}
+    <span>暗盘</span>
+    {@/if}
+  </td>
   <td title="">${data.modifydate}</td>
   <td title="">${data.modifydate}</td>
   <td title="">${data.modifydate}</td>
