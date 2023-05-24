@@ -7,7 +7,7 @@
             <!--<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>编码规则配置</h1></div>-->
             <div class="col">
                 <form class="form-inline" id="CodingRuleM_form_#(pageId)">
-                    
+
                     <!--<input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords" value=""/>-->
                     <select class="form-control" name="cFormTypeSn"
                             data-autoload
@@ -25,7 +25,7 @@
                            placeholder="请输入业务字段"
                            maxlength="40"
                            name="cOrgName" />
-                    
+
                     <select class="form-control" name="iCodingType"
                             data-autoload
                             data-url="admin/dictionary/options?key=iCoding_type"
@@ -34,30 +34,30 @@
                             data-value=""
                             data-value-attr="sn"
                     ></select>
-                    
+
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
                     <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 
                 </form>
             </div>
-            
+
             <div class="col-sm-auto text-right">
                 <button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/codingrulem/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增系统配置-编码规则"><i class="fa fa-plus"></i></button>
                 <button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
             </div>
-            
+
         </div>
     </div>
-    
+
     <div class="jbolt_page_content">
-        
+
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="CodingRuleM_tpl_#(pageId)">
             {@each datas as data,index}
             <tr data-id="${data.iautoid}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
                 <td>
-                    <a class="jbolt_table_editbtn" href="admin/codingrulem/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="1500,1300" data-title="编辑">编辑</a>
+                    <a class="jbolt_table_editbtn" data-btn="no"  href="admin/codingrulem/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="编辑">编辑</a>
                     <a class="jbolt_table_delbtn" href="admin/codingrulem/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable">删除</a>
                 </td>
                 <td>${data.cformtypename}</td>
@@ -69,16 +69,16 @@
             </tr>
             {@/each}
         </textarea>
-        
+
         <div class="jbolt_table_toolbar" id="CodingRuleM_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增系统配置-编码规则" data-url="admin/codingrulem/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
-                <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑系统配置-编码规则" data-check-handler="jboltTableGetCheckedId" data-url="admin/codingrulem/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+                <button data-dialogbtn data-area="100%,100%" data-btn="no" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增系统配置-编码规则" data-url="admin/codingrulem/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-area="100%,100%" data-btn="no" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑系统配置-编码规则" data-check-handler="jboltTableGetCheckedId" data-url="admin/codingrulem/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/codingrulem/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
             </div>
         </div>
-        
+
         <table class="jbolt_table jbolt_main_table  table-center "
                data-jbolttable
                data-width="auto"

@@ -1,0 +1,274 @@
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+                                class="fa fa-refresh"></i> 保存</button>
+                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批
+                        </button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 关闭
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form onsubmit="return false;" id="sysscandeliver_#(pageId)" action="#(action)" method="post">
+                        #if(sysscandeliver.AutoID??)
+                        <input type="hidden" name="sysscandeliver.AutoID" value="#(sysscandeliver.AutoID??)" />
+                        #end
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">车次号/传票号</label>
+                                    <input type="hidden" id="cbarcode1" class="form-control border-none"
+                                        readonly="readonly" name="sysscandeliver.billno" placeholder=""
+                                        value="#(sysscandeliver.billno??)" />
+                                    <input type="text" data-notnull="true" data-tips="请输入车次号/传票号" id="cbarcode" 
+                                        data-with-clearbtn="true" autocomplete="off" class="form-control" disabled 
+                                        placeholder="请输入车次号/传票号"
+                                        maxlength="40" name="billno" value="#(sysscandeliver.billno??)" />
+                                    <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
+                                        data-area="80%,80%" data-title="选择数据（单选）" id="supplierButton"
+                                        data-url="/admin/scanCodeShipment/orderData"><i
+                                            class="fa fa-search mr-1"></i></button>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">客户名称</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true" data-tips="请输客户名称" id="ccusname"
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control" disabled
+                                            placeholder="请输客户名称" maxlength="40" name="ccusname" value="#(ccusname??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">客户位置</label>
+                                    <input type="hidden" id="cdistrictcode" class="form-control border-none"
+                                        readonly="readonly" name="sysscandeliver.ReceiveAddress" placeholder=""
+                                        value="#(sysscandeliver.receiveaddress??)" />
+                                    <input type="text" data-notnull="true" data-tips="请输入客户位置" id="cdistrictname"
+                                        data-with-clearbtn="true" autocomplete="off" class="form-control" disabled
+                                        placeholder="请输入客户位置" maxlength="40" name="sysscandeliver.cdistrictname"
+                                        value="#(sysscandeliver.receiveaddress??)" />
+                                    <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
+                                        data-area="80%,80%" data-title="选择数据（单选）" id="supplierButton"
+                                        data-url="/admin/scanCodeShipment/orderDatatwo"><i
+                                            class="fa fa-search mr-1"></i></button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">仓库名称</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true" data-tips="请输仓库名称" disabled
+                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                            id="cwhname" placeholder="请输仓库名称" maxlength="40" name="cwhname"
+                                            value="#(cwhname??)" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jbolt_page_content">
+    <script type="text/template" id="sysscandeliver_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.autoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a href="admin/sysscandeliverdetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " 
+                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
+                class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+   
+            </td>
+            <!-- <td>${data.whcode}</td>
+            <td>${data.whname}</td> -->
+            <td>${data.cusbarcode}</td>
+            <td>${data.barcode}</td>
+            <td>${data.ccontainercode}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.qty}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.inventorycuomname}</td>
+
+        </tr>
+        {@/each}
+    </script>
+    <div class="jbolt_table_toolbar" id="sysscandeliver_toolbar_#(pageId)">
+        <div class="col-md-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">现品票扫码</label>
+                <div class="col-9">
+                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
+                        autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
+                        name="sysscandeliver.warehousingNo" value="#(sysscandeliver.warehousingNo??)" />
+                </div>
+            </div>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">搜索</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysscandeliverdetail/deleteByIds?ids="
+                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
+        </div>
+
+    </div>
+
+    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable
+        #if(sysscandeliver.AutoID??) data-ajax="true"
+        data-url="admin/sysscandeliverdetail/findEditTableDatas" #end
+        data-conditions-form="sysscandeliver_#(pageId)"
+
+        id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
+        data-rowtpl="sysscandeliver_tpl_#(pageId)" data-toolbar="sysscandeliver_toolbar_#(pageId)" data-editable="true"
+        data-page="sysscandeliver_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
+        <thead class="fw_normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150">操作</th>
+                <!-- <th data-width="100" data-column="whcode">入库库区</th>
+                <th data-width="100" data-column="whname">仓库名称</th> -->
+                <th data-width="100" data-column="cusbarcode">客户传票号</th>
+                <th data-width="100" data-column="barcode">现品票</th>
+                <th data-width="100" data-column="ccontainercode">容器编码</th>
+                <th data-width="100" data-column="cinvcode">存货编码</th>
+                <th data-width="100" data-column="cinvcode1">客户部番</th>
+                <th data-width="100" data-column="cinvname1">部品名称</th>
+                <th data-width="100" data-column="qty">数量</th>
+                <th data-width="100" data-column="cinvstd">规格型号</th>
+                <th data-width="100" data-column="inventorycuomname">主计量单位</th>
+
+            </tr>
+        </thead>
+    </table>
+
+</div>
+#define js()
+<script>
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+    function submitThisForm() {
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+
+    function getJBoltTableEditableColsOpton() {
+        var editableTableOptions = {
+
+            submit: {
+                withForm: ["sysscandeliver_#(pageId)"],
+                name: 'sysscandeliver',
+                type: "all",
+                url: "/admin/scanCodeShipment/submitAll",
+                success: function (res) {
+                    LayerMsgBox.success("提交成功", 600, function () {
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
+                    });
+                }
+            },
+            cols: {
+                AutoID: {
+                    submitAttr: "AutoID",
+                },
+                sourcebillno: {
+                    type: "input",//类型
+                    placeholder: "订单编号", //输入提示，里面
+                    tooltip: "订单编号",//输入提示，上方
+                },
+                spotticket: {
+                    type: "input",//类型
+                    placeholder: "现品票", //输入提示，里面
+                    tooltip: "现品票",//输入提示，上方
+                },
+                whcode: {
+                    placeholder: "仓库", //输入提示，里面
+                    tooltip: "仓库",//输入提示，上方
+                    type: "autocomplete",
+                    //目前供应商都是空的无法过滤
+
+                    url: "admin/SysEnumeration/wareHouse",
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "请选择仓库编码",
+                    textAttr: "whcode",
+                    width: 500,
+                    valueAttr: "whcode",//选择赋值的字段
+                    columnAttr: "whcode,whname",//下来看的时候显示哪些字段
+                    header: '仓库编码,仓库名称',
+                    changeColumns: [{ column: "whcode", use: "whcode" }, { column: "whname", use: "whname" }]
+                },
+                barcode: { //条码
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "=请选择=",
+                    type: "autocomplete",
+                    url: "admin/otherout/barcodeDatas",
+                    textAttr: "barcode",
+                    width: 800,
+                    sync: "",
+                    valueAttr: "barcode",
+                    columnAttr: "barcode,cinvcode,cinvdddcode,cinvname,cinvstd,inventorycuomname,qty,cequipmentmodelname",
+                    header: '现品票,存货编码,存货代码,存货名称,规格型号,主计量单位,数量,所属机型',
+                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
+                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
+                    { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
+                    { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
+                    { column: "sourcebillno", use: "sourcebillno" }, { column: "sourcebilldid", use: "sourcebilldid" },
+                    { column: "sourcebillnorow", use: "sourcebillnorow" }, { column: "sourcebillid", use: "sourcebillid" }, { column: "cinvdddcode", use: "cinvdddcode" },
+                    { column: "cinvname", use: "cinvname" }, { column: "inventorycuomname", use: "inventorycuomname" },
+                    { column: "sourcebillid", use: "sourcebillid" }, { column: "qty", use: "qty" }]
+
+                },
+            }
+        };
+        return editableTableOptions;
+    }
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+    /**
+    * 获得选中的供应商数据
+    * @param data
+    */
+    function setChooseDialogSelectResultFromSupplier(data) {
+        console.log(data)
+        $("#ccusname").val(data.ccusname);
+        $("#cbarcode").val(data.cbarcode);
+        $("#cbarcode1").val(data.cbarcode);
+
+    }
+    function setChooseDialogSelectResultFromSuppliertwo(data) {
+        console.log(data)
+        $("#cdistrictcode").val(data.cdistrictcode);
+        $("#cdistrictname").val(data.cdistrictname);
+        $("#cwhname").val(data.cwhname);
+
+    }
+
+</script>
+#end

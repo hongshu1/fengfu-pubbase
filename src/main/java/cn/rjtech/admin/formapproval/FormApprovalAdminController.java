@@ -5,10 +5,11 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.FormApproval;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
+import com.jfinal.core.paragetter.Para;
 
 /**
  * 表单审批流 Controller
@@ -110,27 +111,33 @@ public class FormApprovalAdminController extends BaseAdminController {
 
     /**
      * 判断走审核还是审批
+     *
+     * @param formSn     表单编码
+     * @param formAutoId 单据ID
      */
-    public void judgeType() {
-        String formSn = get("formSn"); //表单编码
-        String formAutoId = get("formAutoId"); //单据ID
-        Kv kv = new Kv();
-        kv.set("formSn", formSn);
-        kv.set("formAutoId", formAutoId);
-        renderJson(service.judgeType(kv));
+    public void judgeType(@Para(value = "formSn") String formSn,
+                          @Para(value = "formAutoId") Long formAutoId) {
+        ValidationUtils.notBlank(formSn, "缺少表单编码");
+        ValidationUtils.validateId(formAutoId, "单据ID");
+
+        renderJson(service.judgeType(formSn, formAutoId));
     }
 
     /**
      * 审批
+     *
+     * @param formAutoId 单据ID
+     * @param formSn     表单编码
+     * @param status     审批状态
      */
-    public void approve() {
-        String formAutoId = get("formAutoId"); //单据ID
-        String formSn = get("formSn");
-        Integer status = getInt("status");
-        Kv kv = new Kv();
-        kv.set("formAutoId", formAutoId);
-        kv.set("formSn", formSn);
-        kv.set("status", status);
-        renderJson(service.approve(kv));
+    public void approve(@Para(value = "formAutoId") Long formAutoId,
+                        @Para(value = "formSn") String formSn,
+                        @Para(value = "status") Integer status) {
+        ValidationUtils.validateId(formAutoId, "单据ID");
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        ValidationUtils.validateIntGt0(status, "审批状态");
+
+        renderJson(service.approve(formAutoId, formSn, status, () -> null));
     }
+    
 }
