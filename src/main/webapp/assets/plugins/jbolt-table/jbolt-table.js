@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.4.2";
+var jbolt_table_js_version="3.4.4";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 function clearJBoltCurrentEditableAndKeyEventTable(){
@@ -2442,13 +2442,13 @@ function jboltTableInsertRow(ele,data,keepId,dontProcessChange,forceTrChange){
 }
 
 /**
- * Tbody最后append数据行
- * @param ele
- * @param data
- * @param keepId
- * @param dontProcessChange
- * @param forceTrChange
- * @param theTr
+ * Tbody最后append数据行 指定了theTr 就在theTr 后
+ * @param ele                可以找到表格的属性、元素等
+ * @param data               json数据
+ * @param keepId             是否保留数据里的ID
+ * @param dontProcessChange  不处理tr td标红处理
+ * @param forceTrChange      强制tr标红 dontProcessChange不是true才有效
+ * @param theTr              强制指定tr
  * @returns
  */
 function jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange,theTr){
@@ -2486,12 +2486,41 @@ function jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange,the
 }
 
 /**
- * tbody最前添加数据行
+ * 在指定的tr前插入
+ * @param ele                  可以找到表格的属性、元素等
+ * @param theTr                强制指定在哪个tr前插入
+ * @param data                 数据
+ * @param keepId               是否保留数据里的ID
+ * @param dontProcessChange    不处理tr td标红处理
+ * @param forceTrChange        强制tr标红 dontProcessChange不是true才有效
+ * @returns {boolean|*|boolean}
+ */
+function jboltTableInsertBeforeRow(ele,theTr,data,keepId,dontProcessChange,forceTrChange){
+	return jboltTablePrependRow(ele,data,keepId,dontProcessChange,forceTrChange,theTr);
+}
+
+/**
+ * 在指定的tr后插入
+ * @param ele                  可以找到表格的属性、元素等
+ * @param theTr                强制指定在哪个tr后插入
+ * @param data                 数据
+ * @param keepId               是否保留数据里的ID
+ * @param dontProcessChange    不处理tr td标红处理
+ * @param forceTrChange        强制tr标红 dontProcessChange不是true才有效
+ * @returns {boolean|*|boolean}
+ */
+function jboltTableInsertAfterRow(ele,theTr,data,keepId,dontProcessChange,forceTrChange){
+	return jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange,theTr);
+}
+
+/**
+ * tbody最前添加数据行 如果指定了theTr 就在theTr前插入
  * @param ele                可以找到表格的属性、元素等
+ * @param data               json数据
  * @param keepId             是否保留数据里的ID
  * @param dontProcessChange  不处理tr td标红处理
  * @param forceTrChange      强制tr标红 dontProcessChange不是true才有效
- * @param theTr      强制指定tr
+ * @param theTr              强制指定tr
  * @returns
  */
 function jboltTablePrependRow(ele,data,keepId,dontProcessChange,forceTrChange,theTr){
@@ -14131,7 +14160,9 @@ function getScrollBarHeight(ele){
 							sameCols.addClass("resizing");
 						}
 					}
-					return false;
+					if(!(e.target.tagName == "A" && e.target.className.indexOf(" jbolt_drag_trigger")!=-1)){
+						return false;
+					}
 				}).on("mouseup",function(e){
 					e.preventDefault();
 					var currentBox=$(this);
