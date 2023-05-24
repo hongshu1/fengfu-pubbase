@@ -36,13 +36,4 @@ public class InStockDefectApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS;
     }
 
-
-    public String inStockDefectId(Long id){
-        ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
-        InStockDefect byId = inStockDefectService.findById(id);
-        String cDocNo = byId.getCDocNo();
-        return cDocNo;
-    }
-
-
 }
