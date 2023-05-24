@@ -9,6 +9,7 @@ import com.jfinal.core.paragetter.Para;
 import io.github.yedaxia.apidocs.ApiDoc;
 
 /**
+ * @Description 通用接口
  * @Author：XLL
  * @Date:2023/5/13 16:58
  * @Version:1.0
@@ -26,5 +27,4 @@ public class GeneralApiController extends BaseApiController {
   public void options(@Para(value = "key") String key) {
     renderJsonData(JBoltDictionaryCache.me.getListByTypeKey(key, true));
   }
-
 }

@@ -17,7 +17,8 @@ SELECT md.iAutoId,
     bi.cInvName1, ### 部品名称
     bd.cDepName, ### 部门
     wr.cWorkName,  ### 产线名称
-    ws.cWorkShiftName ### 班次名称
+    ws.cWorkShiftName, ### 班次名称
+    md.dCreateTime
 FROM dbo.Mo_MoDoc AS md
          LEFT JOIN
      dbo.Bd_Inventory AS bi
@@ -86,7 +87,7 @@ WHERE 1 = 1
     #if(iWorkRegionMid)
   AND md.iWorkRegionMid = #para(iWorkRegionMid)
     #end
-order by  md.iAutoId  desc
+order by md.dCreateTime desc, md.iAutoId  desc
     #end
 
     #sql("getJob")
