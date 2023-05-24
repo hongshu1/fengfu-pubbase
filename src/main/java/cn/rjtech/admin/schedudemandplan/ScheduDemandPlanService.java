@@ -373,7 +373,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	public Ret refreshBOM(List<String> masInvIdList) {
 		//查出全部BOM主表集合 父级物料
 		List<BomMaster> bomMasterList = bomMasterService.find("SELECT iAutoId,iInventoryId FROM Bd_BOMMaster WHERE isDeleted = '0' AND isEffective = 1 " +
-				                                                   "AND iInventoryId IN (" + CollUtil.join(masInvIdList, COMMA) + ") ");
+				"AND iInventoryId IN (" + CollUtil.join(masInvIdList, COMMA) + ") ");
 		//查询子级物料相关信息
 		List<Record> bomCompareList = dbTemplate("schedudemandplan.selectBOMCompare").find();
 		List<BOMCompareDTO> bomCompareDTOList = new ArrayList<>();
@@ -585,8 +585,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		}
 
 		//TODO: 判断该件是否为内作件：
-				//是则找出该件层级的排产截止日期，小于等于截止日期取月周计划，大于截止日期则取客户计划+(父级qty*用量)。
-				//否则直接取父级qty*用量。
+		//是则找出该件层级的排产截止日期，小于等于截止日期取月周计划，大于截止日期则取客户计划+(父级qty*用量)。
+		//否则直接取父级qty*用量。
 		for (ScheduDemandTempDTO invInfo : groupInList){
 			Long invId = invInfo.getInvId();
 			String cInvCode = invInfo.getInvCode();
@@ -1743,8 +1743,6 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			}
 		}
 		invIds = invIds + "601)";
-
-
 
 
 		//TODO:获取当前物料集的父级与用量   key: inv   value:<pinv,Record>

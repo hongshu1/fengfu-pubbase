@@ -386,9 +386,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 
 
 	//-----------------------------------------------------------------物料需求计划汇总-----------------------------------------------
-
-
-	public void planandactualview() {
+	public void demandplansumview() {
 		String startdate = get("startdate");
 		String enddate = get("enddate");
 		String cworkname = get("cworkname");
@@ -492,13 +490,13 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		set("colnamelist", namelist);
 		set("weeklist", weeklist);
 		set("colname2list", name2list);
-		render("planandactual.html");
+		render("demandplansum.html");
 	}
 
 	/**
 	 * 获取生产计划及实绩管理
 	 */
-	public void getApsPlanAndActualPage() {
-		renderJsonData(service.getApsPlanAndActualPage(getPageNumber(),getPageSize(),getKv()));
+	public void getDemandPlanSumPage() {
+		renderJsonData(service.getDemandPlanSumPage(getPageNumber(),getPageSize(),getKv()));
 	}
 }
