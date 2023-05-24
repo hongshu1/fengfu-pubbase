@@ -494,7 +494,7 @@ public class PurchasemAdminController extends BaseAdminController {
     /**
      * 参照禀议书表格提交-新增/修改提交申购单
      */
-    @CheckPermission(PermissionKey.PURCHASE_INSTRUMENT_SAVETABLESUBMIT)
+    @UnCheck
     public void saveTableSubmit() {
         renderJsonData(service.saveTableSubmit(getJBoltTable()));
     }

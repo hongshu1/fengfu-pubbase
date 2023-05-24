@@ -2131,10 +2131,6 @@ public class PermissionKey {
 	public static final String PURCHASE_INSTRUMENT_CHOOSE_PROPOSALM = "purchase_instrument_choose_proposalm";
 
 	/**
-	 * 新增/修改提交申购单
-	 */
-	public static final String PURCHASE_INSTRUMENT_SAVETABLESUBMIT = "purchase_instrument_savetablesubmit";
-	/**
 	 * 删除
 	 */
 	public static final String PURCHASE_INSTRUMENT_DELETE = "purchase_instrument_delete";
@@ -2237,4 +2233,8 @@ public class PermissionKey {
 	 * 申购单编制
 	 */
 	public static final String PURCHASE_INSTRUMENT = "purchase_instrument";
+	/**
+	 * 统计分析
+	 */
+	public static final String STATISTIC_ANALYSIS = "statistic_analysis";
 }
