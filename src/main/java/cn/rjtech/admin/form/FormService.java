@@ -195,7 +195,7 @@ public class FormService extends BaseService<Form> {
 
     public List<Record> getTreeDatas(long iformcategoryid) {
         Sql sql = selectSql()
-                .select("iautoid, " + iformcategoryid + " AS ipid, cformcode AS ccode, cformname AS cname")
+                .select("iautoid, " + iformcategoryid + " AS ipid, cformcode AS ccode, cformname AS cname, cCode as fieldcode")
                 .eq(Form.ISDELETED, ZERO_STR)
                 .eq(Form.IFORMCATEGORYID, iformcategoryid);
 

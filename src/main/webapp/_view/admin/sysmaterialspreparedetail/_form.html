@@ -29,7 +29,7 @@
                                            class="form-control" placeholder=""
                                            maxlength="40" name="moPickItemM.BillNo"
                                            readonly
-                                           value="#(sysMaterialsprepare.BillNo??)"/>
+                                           value="#(SysMaterialsprepare.BillNo??)"/>
                                 </div>
                             </div>
                         </div>
@@ -43,7 +43,7 @@
                                            class="form-control" placeholder=""
                                            maxlength="40" name="moPickItemM.cMoDocNo"
                                            readonly
-                                           value="#(sysMaterialsprepare.cMoDocNo??)"/>
+                                           value="#(cmodocno??)"/>
                                 </div>
                             </div>
                         </div>
@@ -57,7 +57,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.cInvName1"
                                            readonly
-                                           value="#(sysMaterialsprepare.cInvName1??)"/>
+                                           value="#(cdepname??)"/>
                                 </div>
                             </div>
                         </div>
@@ -71,7 +71,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.iEquipmentModelId"
                                            readonly
-                                           value="#(sysMaterialsprepare.iEquipmentModelId??)"/>
+                                           value="#(cequipmentmodelname??)"/>
                                 </div>
                             </div>
                         </div>
@@ -85,13 +85,13 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.cInvCode1"
                                            readonly
-                                           value="#(sysMaterialsprepare.cInvCode1??)"/>
+                                           value="#(cinvcode1??)"/>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">部门名称：</label>
+                                <label class="col-sm-2 col-form-label">部品名称：</label>
                                 <div class="col-10">
                                     <input type="text" data-rule="required" data-notnull="false"
                                            data-tips=""
@@ -99,7 +99,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.cDepName"
                                            readonly
-                                           value="#(sysMaterialsprepare.cDepName??)"/>
+                                           value="#(cinvname1??)"/>
                                 </div>
                             </div>
                         </div>
@@ -113,13 +113,13 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.dPlanDate"
                                            readonly
-                                           value="#(sysMaterialsprepare.dPlanDate??)"/>
+                                           value="#(dplandate??)"/>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">生产批次：</label>
+                                <label class="col-sm-2 col-form-label">生产班次：</label>
                                 <div class="col-10">
                                     <input type="text" data-rule="required" data-notnull="false"
                                            data-tips=""
@@ -127,7 +127,7 @@
                                            class="form-control"
                                            placeholder="" maxlength="40" name="moPickItemM.cBatch"
                                            readonly
-                                           value="#(sysMaterialsprepare.cBatch??)"/>
+                                           value="#(cworkshiftname??)"/>
                                 </div>
                             </div>
                         </div>
@@ -160,7 +160,7 @@
        data-width="fill"
        data-height="65%"
        data-ajax="true"
-       data-url="admin/sysmaterialspreparedetail/datas?cmodocno=#(sysMaterialsprepare.cMoDocNo??)"
+       data-url="admin/sysmaterialspreparedetail/getMaterialsOutLines?cmodocno=#(cmodocno??)"
        data-rowtpl="MoPickItemM_tpl_#(pageId)"
        data-copy-to-excel="false"
        data-page="MoPickItemM_page"

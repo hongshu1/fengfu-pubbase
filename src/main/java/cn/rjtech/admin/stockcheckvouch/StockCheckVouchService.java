@@ -1,5 +1,6 @@
 package cn.rjtech.admin.stockcheckvouch;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,9 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.StockCheckVouch;
@@ -89,16 +93,20 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
     public Ret addFormSave(Kv kv) {
         StockCheckVouch stockCheckVouch = new StockCheckVouch();
         saveStockCheckVouchModel(stockCheckVouch, kv);
-        Ret ret = save(stockCheckVouch);
-        return ret;
+        boolean save = stockCheckVouch.save();
+        return ret(save);
     }
 
+    /*
+    * 主表传参
+    * */
     public void saveStockCheckVouchModel(StockCheckVouch stockCheckVouch, Kv kv) {
         Date date = new Date();
         String userName = JBoltUserKit.getUserName();
         stockCheckVouch.setOrganizeCode(getOrgCode());
         stockCheckVouch.setCheckType(kv.getStr("checktype"));
-        stockCheckVouch.setBillNo("");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddhhmmss");
+        stockCheckVouch.setBillNo(sdf.format(date)); //todo 等编码规则配置功能做好了，通过编码规则生成
         stockCheckVouch.setBillDate(date.toString());
         stockCheckVouch.setCheckPerson(kv.getStr("checkperson"));
         stockCheckVouch.setWhCode(kv.getStr("whcode"));
@@ -159,6 +167,44 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
      * */
     public List<Record> keepCheckVouchDatas() {
         return null;
+    }
+
+    public List<Record> findAll(String sortColumn, String sortType, Kv kv){
+        kv.set("orgId", getOrgId());
+        return dbTemplate("stockcheckvouch.list", kv.set("sortColumn", sortColumn).set("sortType", sortType)).find();
+    }
+
+    /**
+     * 生成要导出的Excel
+     * @return
+     */
+    public JBoltExcel exportExcel(List<Record> datas) {
+        return JBoltExcel
+            //创建
+            .create()
+            //设置工作表
+            .setSheets(
+                //设置工作表 列映射 顺序 标题名称
+                JBoltExcelSheet
+                    .create()
+                    //表头映射关系
+                    .setHeaders(1,
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20)
+                    )
+                    //设置导出的数据源 来自于数据库查询出来的Model List
+                    .setRecordDatas(2,datas)
+            );
     }
 
 }
