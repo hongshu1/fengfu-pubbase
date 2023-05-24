@@ -16,6 +16,7 @@ import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.enums.SourceTypeEnum;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
@@ -82,7 +83,8 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     public void add(@Para(value = "beginDate") String beginDate,
                     @Para(value = "endDate") String endDate,
                     @Para(value = "iVendorId") String iVendorId,
-                    @Para(value = "processType") Integer processType) {
+                    @Para(value = "processType") Integer processType,
+                    @Para(value = "iSourceType") Integer iSourceType) {
 
         Vendor vendor = vendorService.findById(iVendorId);
         Record record = new Record();
@@ -90,20 +92,31 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         record.set(Vendor.CVENNAME, vendor.getCVenName());
         record.set(PurchaseOrderM.DBEGINDATE, beginDate);
         record.set(PurchaseOrderM.DENDDATE, endDate);
-        setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType));
+        setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType, iSourceType));
         set("purchaseOrderM", record);
+        if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == iSourceType){
+            render("blan_add.html");
+            return;
+        }
         render("add.html");
     }
 
     public void checkData(@Para(value = "beginDate") String beginDate,
                           @Para(value = "endDate") String endDate,
                           @Para(value = "iVendorId") String iVendorId,
-                          @Para(value = "processType") Integer processType) {
+                          @Para(value = "processType") Integer processType,
+                          @Para(value = "iSourceType") Integer iSourceType) {
         ValidationUtils.notBlank(beginDate, "请选择日期范围");
         ValidationUtils.notBlank(endDate, "请选择日期范围");
         ValidationUtils.notBlank(iVendorId, "请选择供应商");
-        List<Record> list = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
-        ValidationUtils.notEmpty(list, "该时间范围未找到该供应商所需求物料");
+     
+        ValidationUtils.notNull(iSourceType, "缺少来源类型");
+        SourceTypeEnum sourceTypeEnum = SourceTypeEnum.toEnum(iSourceType);
+        ValidationUtils.notNull(sourceTypeEnum, "未知来源类型");
+        if (SourceTypeEnum.MATERIAL_PLAN_TYPE.getValue() == iSourceType){
+            List<Record> list = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
+            ValidationUtils.notEmpty(list, "该时间范围未找到该供应商所需求物料");
+        }
         ok();
     }
 
@@ -182,6 +195,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
      * 新增作成页面
      */
     public void consummate() {
+        keepPara();
         render("consummate.html");
     }
 
@@ -282,5 +296,9 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 
     public void findPurchaseOrderDBatchVersion() {
         renderJsonData(purchaseOrderDBatchVersionService.findByPurchaseOrderMid(getPageNumber(), getPageSize(), getKv()));
+    }
+    
+    public void saveSubmit(){
+        renderJson(service.saveSubmit(getJBoltTable()));
     }
 }
