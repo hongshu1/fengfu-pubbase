@@ -36,4 +36,9 @@ public class InStockDefectApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS;
     }
 
+    public JBoltApiRet QRCode(Kv kv) {
+        inStockDefectService.getQRCodeCheck(kv);
+        return JBoltApiRet.API_SUCCESS;
+    }
+
 }

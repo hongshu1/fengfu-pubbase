@@ -112,3 +112,11 @@ WHERE
 ORDER BY
     t2.dUpdateTime DESC
 #end
+
+
+#sql("containerPrintData")
+SELECT t1.* FROM PL_InStockDefect t1 WHERE 1=1
+    #if(ids)
+      AND t1.iAutoId  in (#(ids))
+    #end
+#end

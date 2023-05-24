@@ -13,9 +13,6 @@ import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.AuditWayEnum;
-import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.model.momdata.MonthOrderD;
 import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.util.ValidationUtils;
@@ -278,27 +275,19 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 	 * 审批
 	 */
 	public Ret approve(Long id) {
-        ValidationUtils.validateId(id, JBoltMsg.PARAM_ERROR);
-        
 		MonthOrderM monthorderm = findById(id);
-        ValidationUtils.notNull(monthorderm, JBoltMsg.DATA_NOT_EXIST);
-        ValidationUtils.isTrue(!monthorderm.getIsDeleted(), "已被删除");
-        ValidationUtils.equals(AuditWayEnum.STATUS.getValue(), monthorderm.getIAuditWay(), "审批流审核的单据不支持此操作");
-        ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), monthorderm.getIAuditStatus(), "非待审核状态");
-        
-        // 2. 审核通过
-        monthorderm.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+
+        //2. 审核通过
+        monthorderm.setIAuditStatus(2);
         // 3. 已审批
-        monthorderm.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-        
+        monthorderm.setIOrderStatus(3);
         monthorderm.setIUpdateBy(JBoltUserKit.getUserId());
         monthorderm.setCUpdateName(JBoltUserKit.getUserName());
         monthorderm.setDUpdateTime(new Date());
         monthorderm.update();
 
-        cusOrderSumService.algorithmSum();
-
-        return SUCCESS;
+        //审批通过生成客户计划汇总
+        return cusOrderSumService.approveByMonth(monthorderm);
     }
 
     /**

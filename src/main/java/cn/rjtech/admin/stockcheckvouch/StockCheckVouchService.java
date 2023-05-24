@@ -14,11 +14,8 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.stockcheckvouchdetail.StockcheckvouchdetailService;
 import cn.rjtech.model.momdata.StockCheckVouch;
-import cn.rjtech.model.momdata.Stockcheckvouchdetail;
 
-import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -44,9 +41,6 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
-
-    @Inject
-    private StockcheckvouchdetailService stockcheckvouchdetailService;//盘点单明细表
 
     /**
      * 后台管理数据查询
@@ -94,17 +88,6 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
     }
 
     /*
-     * 保存记录
-     * */
-    public Ret saveCheckVouchDetails(Kv kv) {
-        StockCheckVouch stockCheckVouch = findById(kv.get("autoid"));
-        Stockcheckvouchdetail stockcheckvouchdetail = new Stockcheckvouchdetail();
-        stockcheckvouchdetailService.saveDetailModel(stockcheckvouchdetail, stockCheckVouch);
-        boolean save = stockcheckvouchdetail.save();
-        return ret(save);
-    }
-
-    /*
      * 新增
      * */
     public Ret addFormSave(Kv kv) {
@@ -115,14 +98,14 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
     }
 
     /*
-     * 主表传参
-     * */
+    * 主表传参
+    * */
     public void saveStockCheckVouchModel(StockCheckVouch stockCheckVouch, Kv kv) {
         Date date = new Date();
         String userName = JBoltUserKit.getUserName();
         stockCheckVouch.setOrganizeCode(getOrgCode());
         stockCheckVouch.setCheckType(kv.getStr("checktype"));
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddhhmmss");
         stockCheckVouch.setBillNo(sdf.format(date)); //todo 等编码规则配置功能做好了，通过编码规则生成
         stockCheckVouch.setBillDate(date.toString());
         stockCheckVouch.setCheckPerson(kv.getStr("checkperson"));
@@ -132,20 +115,6 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
         stockCheckVouch.setModifyPerson(userName);
         stockCheckVouch.setModifyDate(date);
         stockCheckVouch.setAutoid(JBoltSnowflakeKit.me.nextId());
-    }
-
-    /*
-     * 驳回
-     * */
-    public Ret reject(Kv kv) {
-        return ret(true);
-    }
-
-    /*
-     * 审核通过
-     * */
-    public Ret approveAudit(Kv kv) {
-        return ret(true);
     }
 
     /**
@@ -196,37 +165,18 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
     /*
      * 加载继续盘点页面的数据
      * */
-    public Page<Record> keepCheckVouchDatas(Kv kv) {
-        kv.set("orgId", getOrgId());
-        Page<Record> paginate = dbTemplate("stockcheckvouch.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
-        return paginate;
-    }
-    /*
-     * 加载下半段table的数据
-     * */
-    public Page<Record> findDetailVouchDatas(Kv kv) {
-        kv.set("orgId", getOrgId());
-        Page<Record> paginate = dbTemplate("stockcheckvouch.details", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
-        return paginate;
+    public List<Record> keepCheckVouchDatas() {
+        return null;
     }
 
-    public List<Record> findAll(String sortColumn, String sortType, Kv kv) {
+    public List<Record> findAll(String sortColumn, String sortType, Kv kv){
         kv.set("orgId", getOrgId());
         return dbTemplate("stockcheckvouch.list", kv.set("sortColumn", sortColumn).set("sortType", sortType)).find();
     }
 
-    public List<Record> findThreeParamsByAutoid(Kv kv) {
-        List<Record> recordList = dbTemplate("stockcheckvouch.findBillboAndWhnameAndcAreaNameByAutoid", kv).find();
-        return recordList;
-    }
-
-    public List<Record> list(Kv kv) {
-        List<Record> recordList = dbTemplate("stockcheckvouch.list", kv).find();
-        return recordList;
-    }
-
     /**
      * 生成要导出的Excel
+     * @return
      */
     public JBoltExcel exportExcel(List<Record> datas) {
         return JBoltExcel
@@ -239,21 +189,21 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
                     .create()
                     //表头映射关系
                     .setHeaders(1,
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20),
-                        JBoltExcelHeader.create("", "", 20)
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20),
+                        JBoltExcelHeader.create("","", 20)
                     )
                     //设置导出的数据源 来自于数据库查询出来的Model List
-                    .setRecordDatas(2, datas)
+                    .setRecordDatas(2,datas)
             );
     }
 

@@ -40,6 +40,12 @@ public class StockoutDefectApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS;
     }
 
+    public JBoltApiRet QRCode(Kv kv) {
+        stockoutDefectService.getQRCodeCheck(kv);
+        return JBoltApiRet.API_SUCCESS;
+    }
+
+
 
 
 }

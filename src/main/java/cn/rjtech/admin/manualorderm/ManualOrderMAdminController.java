@@ -9,14 +9,12 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.ManualOrderM;
-import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 
 import java.util.Date;
 
@@ -89,10 +87,20 @@ public class ManualOrderMAdminController extends BaseAdminController {
     /**
      * 审核
      */
-    public void audit(@Para(value = "id") Long id) {
-        ValidationUtils.validateId(id, "id");
-        
-        renderJson(service.approve(id));
+    public void audit() {
+        ManualOrderM manualOrderM = service.findById(getLong("id"));
+        if (manualOrderM == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        manualOrderM.setIAuditStatus(2);
+        manualOrderM.setIOrderStatus(3);
+        Ret stockoutQcFormM = service.createStockoutQcFormM(manualOrderM.getICustomerId(), manualOrderM.getIAutoId());
+        service.handleCusOrderByManual(manualOrderM);
+        if (stockoutQcFormM.isFail())
+            renderJson(stockoutQcFormM);
+        else
+            renderJson(service.update(manualOrderM));
     }
 
     /**
@@ -105,8 +113,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
             return;
         }
         manualOrderM.setIOrderStatus(1);
-        ValidationUtils.isTrue(manualOrderM.update(), ErrorMsg.UPDATE_FAILED);
-        renderJsonSuccess();
+        renderJson(service.update(manualOrderM));
     }
 
     /**
@@ -119,8 +126,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
             return;
         }
         manualOrderM.setIOrderStatus(6);
-        ValidationUtils.isTrue(manualOrderM.update(), ErrorMsg.UPDATE_FAILED);
-        renderJsonSuccess();
+        renderJson(service.update(manualOrderM));
     }
 
     /**
@@ -135,6 +141,13 @@ public class ManualOrderMAdminController extends BaseAdminController {
         set("manualOrderM", manualOrderM);
         set("view", 1);
         render("edit.html");
+    }
+
+    /**
+     * 更新
+     */
+    public void update() {
+        renderJson(service.update(getModel(ManualOrderM.class, "manualOrderM")));
     }
 
     /**

@@ -166,9 +166,13 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
      * 获取地址下拉 Bd_CustomerAddr
      */
     public void customeraddr() {
-        Kv kv = getKv();
-        String cunameiautoid = get("cunameiautoid");
         renderJsonData(service.customeraddr(getKv()));
+//        String icustomerid = get("icustomerid");
+//        if (null == icustomerid || "".equals(icustomerid)) {
+//            renderJsonData(customeraddrservice.findAll());
+//        } else {
+//            renderJsonData(customeraddrservice.find("select * from Bd_CustomerAddr where iCustomerId=?", icustomerid));
+//        }
     }
 
 
@@ -180,7 +184,7 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
      */
     public void rdstyle() {
         renderJsonData(service.rdstyle(getKv()));
-
+//        renderJsonData(rdstyleservice.find("select * from Bd_Rd_Style where bRdFlag = '0'"));
     }
 
 

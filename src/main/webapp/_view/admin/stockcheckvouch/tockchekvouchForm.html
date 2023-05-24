@@ -1,6 +1,6 @@
 <div class="jbolt_page_title" >
   <div class="row">
-    <div class="col-md-auto" style="margin-top: 30px">
+    <div class="col-md-auto">
       <h5>条码明细</h5>
     </div>
     <div class="col-md-auto">
@@ -27,18 +27,17 @@
 		{@each datas as data,index}
     <tr data-id="${data.autoid}">
       <td>${pageNumber,pageSize,index | rownum}</td>
-      <td title="">${data.careaname}</td>
-      <td title="">${data.cinvcode}</td>
-			<td title="">${data.cinvcode1}</td>
-			<td title="">${data.cinvname}</td>
-			<td title="">${data.cinvstd}</td>
-			<td title="">${data.unitname}</td>
-			<td title="">${data.realqty2}</td>
-			<td title="">${data.qty}</td>
-			<td title="">${data.adjustqty2}</td>
-			<td title="">${data.barcode}</td>
-			<td title="">${data.batch}</td>
-			<td title="">${data.createdate}</td>
+      <td>${data.invcode}</td>
+			<td>${data.invname}</td>
+			<td>${data.invstd}</td>
+			<td>${data.unitname}</td>
+			<td>${data.realqty2}</td>
+			<td>${data.qty}</td>
+			<td>${data.adjustqty2}</td>
+			<td>${data.barcode}</td>
+			<td>${data.batch}</td>
+			<td>${data.createdate}</td>
+		</tr>
 		{@/each}
 	</textarea>
   <!-- 工具条 toolbar -->
@@ -54,7 +53,7 @@
          data-height="250"
          data-ajax="true"
          data-width="auto"
-         data-url="admin/stockcheckvouch/findDetailVouchDatas?autoid=#(stockcheckvouchdid??)"
+         data-url="admin/stockcheckvouch/datas"
          data-column-resize="true"
          data-column-prepend="1:checkbox:true"
          data-conditions-form="tockchekvouchForm"
@@ -67,18 +66,18 @@
     <thead>
     <tr>
       <th data-width="30" data-min-width="60" data-column="index">序号</th>
-      <th data-width="150" data-column="careaname">库区名称</th>
+      <th data-width="150" data-column="posname">库区名称</th>
       <th data-width="150" data-column="cinvcode">存货编码</th>
       <th data-width="150" data-column="cinvcode">存货编码</th>
       <th data-width="150" data-column="cInvCode1">客户部番</th>
       <th data-width="150" data-column="cInvName1">部品名称</th>
-      <th data-width="150" data-column="cinvstd">规格</th>
+      <th data-width="150" data-column="invstd">规格</th>
       <th data-width="110" data-column="unitname">主计量单位</th>
       <th data-width="110" data-column="qty">数量</th>
       <th data-width="110" data-column="realqty2">实盘数量</th>
-      <th data-width="150" data-column="barcode">现品票</th>
-      <th data-width="150" data-column="batch">批次号</th>
-      <th data-width="150" data-column="createdate">生产日期</th>
+      <th data-width="320" data-column="barcode">现品票</th>
+      <th data-width="110" data-column="batch">批次号</th>
+      <th data-width="200" data-column="createdate">生产日期</th>
     </tr>
     </thead>
     <tbody>

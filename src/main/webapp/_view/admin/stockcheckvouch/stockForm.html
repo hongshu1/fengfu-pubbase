@@ -99,7 +99,7 @@
          data-height="250"
          data-ajax="true"
          data-width="auto"
-         data-url="admin/stockcheckvouch/keepCheckVouchDatas?autoid=#(stockcheckvouch.autoid??)"
+         data-url="admin/stockcheckvouch/datas?masid=#(stockcheckvouch.autoid??)"
          data-column-resize="true"
          data-column-prepend="1:checkbox:true"
          data-conditions-form="stockForm"
@@ -173,14 +173,15 @@
     addParentLayerDialogBtn("保存记录", "lay_success", function () {
       //获取选中表格数据
       var para = jboltTableGetCheckedDatas('#stock__table_#(pageId)');
-      Ajax.post('admin/stockcheckvouch/saveCheckVouchDetails', {"datas": JSON.stringify(para)}, function (ret) {
+      Ajax.post('admin/stockcheckvouchdetail/adjust', {"datas": JSON.stringify(para)}, function (ret) {
         refreshPjaxContainer()
       });
     });
   });
 
   //条码明细
-  function getEditableTableOptions_#(pageId)(){
+  function getEditableTableOptions_#(pageId)()
+  {
     var editableTableOptions = {
       trigger: "click",
       //初始行数

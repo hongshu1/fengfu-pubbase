@@ -9,13 +9,12 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Customer;
-import cn.rjtech.model.momdata.SubcontractSaleOrderM;
-import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.model.momdata.Subcontractsaleorderm;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
  * 委外销售订单主表 Controller
@@ -60,7 +59,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        SubcontractSaleOrderM subcontractsaleorderm = service.findById(getLong(0));
+        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong(0));
         if (subcontractsaleorderm == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -77,14 +76,14 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
      * 保存
      */
     public void save() {
-        renderJson(service.save(getModel(SubcontractSaleOrderM.class, "subcontractsaleorderm")));
+        renderJson(service.save(getModel(Subcontractsaleorderm.class, "subcontractsaleorderm")));
     }
 
     /**
      * 更新
      */
     public void update() {
-        renderJson(service.update(getModel(SubcontractSaleOrderM.class, "subcontractsaleorderm")));
+        renderJson(service.update(getModel(Subcontractsaleorderm.class, "subcontractsaleorderm")));
     }
 
     /**
@@ -111,6 +110,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     /**
      * 新增-可编辑表格-批量提交
      */
+    @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
@@ -118,10 +118,16 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     /**
      * 审批
      */
-    public void approve(@Para(value = "id") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "id");
-        
-        renderJson(service.approve(iautoid));
+    public void approve() {
+        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong("id"));
+        if (subcontractsaleorderm == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        subcontractsaleorderm.setIAuditStatus(2);
+        subcontractsaleorderm.setIOrderStatus(3);
+        service.handleCusOrderBySubcontract(subcontractsaleorderm);
+        renderJson(subcontractsaleorderm.update());
     }
 
 }

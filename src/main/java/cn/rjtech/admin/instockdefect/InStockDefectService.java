@@ -313,4 +313,12 @@ public class InStockDefectService extends BaseService<InStockDefect> {
         return findFirst("SELECT * FROM PL_InStockDefect WHERE iInStockQcFormMid = ?", iInStockQcFormMid);
     }
 
+    /**
+     * 打印数据
+     * @param kv 参数
+     * @return
+     */
+    public Object getQRCodeCheck(Kv kv) {
+        return dbTemplate("instockdefect.containerPrintData",kv).find();
+    }
 }

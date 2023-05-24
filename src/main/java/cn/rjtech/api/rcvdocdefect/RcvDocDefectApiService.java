@@ -38,5 +38,9 @@ public class RcvDocDefectApiService extends JBoltApiBaseService {
     }
 
 
+    public JBoltApiRet QRCode(Kv kv) {
+        rcvDocDefectService.getQRCodeCheck(kv);
+        return JBoltApiRet.API_SUCCESS;
+    }
 
 }
