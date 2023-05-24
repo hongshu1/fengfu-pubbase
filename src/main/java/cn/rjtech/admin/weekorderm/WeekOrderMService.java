@@ -13,7 +13,6 @@ import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
@@ -115,22 +114,11 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             
             for (WeekOrderM orderM : listByIds) {
 
-                switch (AuditWayEnum.toEnum(orderM.getInt(IAUDITWAY))) {
-                    case STATUS:
-                        formApprovalService.approveByStatus(table(), orderM.getIAutoId(), () -> null, () -> null);
-                        
-                        List<WeekOrderD> weekOrderds = weekOrderDService.findByMId(orderM.getIAutoId());
-                        if (CollUtil.isNotEmpty(weekOrderds)) {
-                            cusOrderSumService.handelWeekOrder(weekOrderds);
-                        }
-                        break;
-                    case FLOW:
-                        Ret ret = formApprovalService.approve(orderM.getIAutoId(), table(), AuditStatusEnum.APPROVED.getValue(), null);
-                        ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-                        
-                        break;
-                    default:
-                        break;
+                formApprovalService.approveByStatus(table(), orderM.getIAutoId(), () -> null, () -> null);
+
+                List<WeekOrderD> weekOrderds = weekOrderDService.findByMId(orderM.getIAutoId());
+                if (CollUtil.isNotEmpty(weekOrderds)) {
+                    cusOrderSumService.handelWeekOrder(weekOrderds);
                 }
 
             }
@@ -209,25 +197,14 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             // 数据同步暂未开发 现只修改状态
             for (WeekOrderM weekOrderM : getListByIds(ids)) {
 
-                switch (AuditWayEnum.toEnum(weekOrderM.getInt(IAUDITWAY))) {
-                    case STATUS:
-                        formApprovalService.rejectByStatus(table(), weekOrderM.getIAutoId(), () -> null, () -> {
-                            List<WeekOrderD> weekOrderds = weekOrderDService.findByMId(weekOrderM.getIAutoId());
-                            if (CollUtil.isNotEmpty(weekOrderds)) {
-                                cusOrderSumService.handelWeekOrder(weekOrderds);
-                            }
-                            
-                            return null;
-                        });
-                        break;
-                    case FLOW:
-                        Ret ret = formApprovalService.approve(weekOrderM.getIAutoId(), table(), AuditStatusEnum.REJECTED.getValue(), null);
-                        ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+                formApprovalService.rejectByStatus(table(), weekOrderM.getIAutoId(), () -> null, () -> {
+                    List<WeekOrderD> weekOrderds = weekOrderDService.findByMId(weekOrderM.getIAutoId());
+                    if (CollUtil.isNotEmpty(weekOrderds)) {
+                        cusOrderSumService.handelWeekOrder(weekOrderds);
+                    }
 
-                        break;
-                    default:
-                        break;
-                }
+                    return null;
+                });
                 
             }
             return true;

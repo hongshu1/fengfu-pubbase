@@ -46,6 +46,7 @@
 	{@if data.istatus==1}
 		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
 	{@else if data.istatus==2}
+	    <a href="common/qrcode?code=${data.cdocno}" data-photobtn tooltip data-title="点击查看二维码"><i style="font-size:20px;" class="fa fa-qrcode"></i></a>
 		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
 	{@else}
 		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="检验"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">异常品记录</a>
@@ -69,7 +70,7 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="processDefect_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="二维码出库异常记录" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/processdefect/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>
+<!--		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="二维码出库异常记录" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/processdefect/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>-->
 	</div>
 
 	<div class="clearfix"></div>

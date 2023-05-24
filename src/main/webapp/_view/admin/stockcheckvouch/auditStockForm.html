@@ -14,39 +14,9 @@
         #if(stockcheckvouch.autoid??)
         <input type="hidden" name="stockcheckvouch.autoid" value="#(stockcheckvouch.autoid??)"/>
         #end
-        <select class="form-control"
-                data-autoload
-                data-width="150px"
-                name="iwarehouseareaid"
-                multiple
-                data-select-type="select2"
-                data-tips="选择库区"
-                data-url="admin/warehousearea/list?isdeleted=0"
-                data-text="=选择库区="
-                data-value-attr="careacode"
-                data-text-attr="careaname"
-                data-value=""
-                data-select="#(iwarehouseareaid??)">
-        </select>
-        <!--        <input type="text" autocomplete="off" class="form-control" placeholder="=库位名称=" name="posname" value=""/>-->
-        <input type="text" autocomplete="off" class="form-control" placeholder="=盘点状态=" name="state" value=""/>
-        <select class="form-control"
-                name="iInventoryClassId"
-                data-width="140px"
-                data-rule="required"
-                data-autoload
-                data-url="admin/inventoryclass/options"
-                data-select-type="select2"
-                data-text="=上级分类="
-                data-select="#(iInventoryClassId??)"
-                data-value-attr="autoid"
-                data-text-attr="cinvcname"
-        ></select>
-        <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
-        <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
-        <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
-        <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
-        <button type="reset" class="btn btn-light"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+        <label>盘点单据：#(stockcheckvouch.billno??)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+        <label>仓库名称：#(cwhname??)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+        <label>库位名称：#(careaname??)</label>
       </form>
     </div>
   </div>
@@ -131,7 +101,7 @@
     </tbody>
   </table>
 </div>
-#include("tockchekvouchForm.html")
+#include("auditStockchekvouchForm.html")
 #define js()
 <script>
   function submitThisForm() {
@@ -145,7 +115,7 @@
   $(function () {
     hideParentLayerDialogBtn(0);
     //完成盘点的按钮，保存在主表
-    addParentLayerDialogBtn("完成盘点", "lay_success", function (data) {
+    addParentLayerDialogBtn("驳回", "lay_success", function (data) {
       //获取选中表格数据
       var datas = jboltTableGetCheckedDatas('#jbolt_table_#(pageId)', null, true);
       var barcode = jboltTableGetCheckedDatas('#stock_table_#(pageId)', null, true); //tockchekvouchform.html的tableid
@@ -159,21 +129,22 @@
         barcode: JSON.stringify(barcode)
       };
 
-      Ajax.post('admin/stockcheckvouch/saveSubmit', data, function (ret) {
+      Ajax.post('admin/stockcheckvouch/reject', data, function (ret) {
         var json = JSON.parse(ret.data);
         if (ret.state == "ok") {
-          LayerMsgBox.success("操作成功", 500);
+          LayerMsgBox.success("驳回成功", 500);
           parent.refreshJBoltTable();
           parent.layer.close(parent.layer.getFrameIndex(window.name));
         }
       });
 
     });
-    //保存记录按钮，保存在条码明细
-    addParentLayerDialogBtn("保存记录", "lay_success", function () {
+    //审核通过
+    addParentLayerDialogBtn("审核通过", "lay_success", function () {
       //获取选中表格数据
+      let stockcheckvouchdid = $("#stockcheckvouchdid").val();
       var para = jboltTableGetCheckedDatas('#stock__table_#(pageId)');
-      Ajax.post('admin/stockcheckvouch/saveCheckVouchDetails', {"datas": JSON.stringify(para)}, function (ret) {
+      Ajax.post('admin/stockcheckvouch/approveAudit', {"datas": JSON.stringify(para), "stockcheckvouchdid" : stockcheckvouchdid}, function (ret) {
         refreshPjaxContainer()
       });
     });
@@ -186,9 +157,9 @@
       //初始行数
       initRowCount: 0,
       submit: {
-        withForm: ["stockForm"],
+        withForm: ["auditStockForm"],
         type: "all",//cell|all
-        url: "admin/stockcheckvouch/saveTableSubmit",
+        url: "admin/stockcheckvouch/approve",
         success: function (res) {
           if (res.state === 'ok') {
             LayerMsgBox.success("提交成功", 600, function () {
@@ -229,16 +200,16 @@
     return editableTableOptions;
   }
 
-  //获取条码明细页面的table
+  //审核通过
   function currentstock_Barcode_#(pageId)(){
     var editableTableOptions = {
       trigger: "click",
       //初始行数
       initRowCount: 0,
       submit: {
-        withForm: ["tockchekvouchForm"],
+        withForm: ["auditStockchekvouchForm"],
         type: "all",//cell|all
-        url: "admin/pudeliverydetail/saveTableSubmit",
+        url: "admin/stockcheckvouch/approveAudit",
         success: function (res) {
           if (res.state === 'ok') {
             LayerMsgBox.success("提交成功", 600, function () {

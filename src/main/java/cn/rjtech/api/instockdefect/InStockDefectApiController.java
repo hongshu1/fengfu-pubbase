@@ -4,6 +4,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.base.controller.BaseApiController;
+import cn.rjtech.config.AppConfig;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockdefect.InStockDefect;
 import cn.rjtech.util.ValidationUtils;
@@ -12,7 +13,10 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import io.github.yedaxia.apidocs.ApiDoc;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 在库异常品管理api接口
@@ -114,23 +118,6 @@ public class InStockDefectApiController extends BaseApiController {
     }
 
 
-    /**
-     * 二维码
-     * @param iautoid     来料异常品ID
-     * @param width       宽
-     * @param height      高
-     */
-    @ApiDoc(result = NullDataResult.class)
-    @UnCheck
-    public void qrcode(
-                       @Para(value = "width", defaultValue = "200") Integer width,
-                       @Para(value = "height", defaultValue = "200") Integer height,
-                       @Para(value = "iautoid") Long iautoid){
-         ValidationUtils.notNull(iautoid, "缺少参数iautoid");
-         String code = inStockDefectApiService.inStockDefectId(iautoid);
-         ValidationUtils.notBlank(code, "缺少参数code");
-         renderQrCode(code, width, height);
-    }
 
 
 
