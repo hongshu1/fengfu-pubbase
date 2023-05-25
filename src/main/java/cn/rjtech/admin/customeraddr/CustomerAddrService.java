@@ -8,6 +8,7 @@ import cn.rjtech.model.momdata.CustomerAddr;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class CustomerAddrService extends BaseService<CustomerAddr> {
 	}
 
 	public List<CustomerAddr> list(Long icustomermid){
-		return find("SELECT * FROM Bd_CustomerAddr WHERE iCustomerId = ?", icustomermid);
+		return find("SELECT * FROM Bd_CustomerAddr t1 LEFT JOIN Bd_Warehouse t2 ON t2.iAutoId = t1.iWarehouseId WHERE iCustomerId = ?", icustomermid);
 	}
 
 	/**
@@ -167,5 +168,8 @@ public class CustomerAddrService extends BaseService<CustomerAddr> {
 		delete("DELETE FROM Bd_CustomerAddr WHERE iAutoId IN (" + ArrayUtil.join(deletes, COMMA) + ") ");
 	}
 
+	public List<Record> getwareHouseDatas(Kv kv) {
+		return dbTemplate( "customeraddr.wareHouse", kv).find();
+	}
 
 }

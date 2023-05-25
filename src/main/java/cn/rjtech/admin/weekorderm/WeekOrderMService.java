@@ -14,7 +14,6 @@ import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -116,10 +115,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 
                 formApprovalService.approveByStatus(table(), orderM.getIAutoId(), () -> null, () -> null);
 
-                List<WeekOrderD> weekOrderds = weekOrderDService.findByMId(orderM.getIAutoId());
-                if (CollUtil.isNotEmpty(weekOrderds)) {
-                    cusOrderSumService.handelWeekOrder(weekOrderds);
-                }
+                cusOrderSumService.algorithmSum();
 
             }
             return true;
@@ -144,17 +140,13 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 
                 ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
 
-                List<WeekOrderD> weekOrderds = weekOrderDService.findByMId(weekOrderM.getIAutoId());
-                if (CollUtil.isNotEmpty(weekOrderds)) {
-                    cusOrderSumService.handelWeekOrder(weekOrderds);
-                }
-
+                cusOrderSumService.algorithmSum();
+                
                 return null;
             });
 
             return true;
         });
-        
         
         return SUCCESS;
     }
@@ -198,10 +190,8 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             for (WeekOrderM weekOrderM : getListByIds(ids)) {
 
                 formApprovalService.rejectByStatus(table(), weekOrderM.getIAutoId(), () -> null, () -> {
-                    List<WeekOrderD> weekOrderds = weekOrderDService.findByMId(weekOrderM.getIAutoId());
-                    if (CollUtil.isNotEmpty(weekOrderds)) {
-                        cusOrderSumService.handelWeekOrder(weekOrderds);
-                    }
+                    
+                    cusOrderSumService.algorithmSum();
 
                     return null;
                 });

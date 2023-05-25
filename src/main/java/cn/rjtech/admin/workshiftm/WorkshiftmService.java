@@ -14,10 +14,12 @@ import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.workshiftd.WorkshiftdService;
 import cn.rjtech.model.momdata.Workshiftd;
 import cn.rjtech.model.momdata.Workshiftm;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -48,6 +50,8 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
 	@Inject
 	private WorkshiftdService workshiftdService;
 
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingdService;
 	/**
 	 * 后台管理分页查询
 	 */
@@ -263,32 +267,10 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
 
 	public Ret importExcelData(File file) {
 		StringBuilder errorMsg=new StringBuilder();
-		JBoltExcel jBoltExcel=JBoltExcel
-				//从excel文件创建JBoltExcel实例
-				.from(file)
-				//设置工作表信息
-				.setSheets(
-						JBoltExcelSheet.create("sheet1")
-								//设置列映射 顺序 标题名称
-								.setHeaders(
-										JBoltExcelHeader.create("cworkshiftcode","班次编码"),
-										JBoltExcelHeader.create("cworkshiftname","班次名称"),
-										JBoltExcelHeader.create("dstarttime","出勤开始时间"),
-										JBoltExcelHeader.create("dendtime","出勤结束时间"),
-										JBoltExcelHeader.create("itype","类型"),
-										JBoltExcelHeader.create("dstarttimed","开始时间"),
-										JBoltExcelHeader.create("dendtimed","结束时间"),
-										JBoltExcelHeader.create("cmemo","备注")
-								)
-								//特殊数据转换器
-								.setDataChangeHandler((data,index) ->{
-
-								})
-								//从第三行开始读取
-								.setDataStartRow(3)
-				);
-		//从指定的sheet工作表里读取数据
-		List<Record> models = JBoltExcelUtil.readRecords(jBoltExcel, "sheet1", true, errorMsg);
+		//使用字段配置维护
+		Object modelss =  cusFieldsMappingdService.getImportDatas(file, "生产班次").get("data");
+		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(modelss,"HH:mm");
+		List<Workshiftm> models = JSON.parseArray(docInfoRelaStrings, Workshiftm.class);
 		if(notOk(models)) {
 			if(errorMsg.length()>0) {
 				return fail(errorMsg.toString());
@@ -304,7 +286,7 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
 			Date now = new Date();
 			Set<Kv> workshiftmsSet = new HashSet<>();
 			//处理主表数据
-			for(Record p:models){
+			for(Workshiftm p:models){
 				ValidationUtils.notNull(p.getStr("cworkshiftcode"), "编码为空！");
 				ValidationUtils.notNull(p.getStr("cworkshiftname"), "名称为空！");
 				ValidationUtils.notNull(p.getStr("dstarttime"), "出勤开始时间为空！");
@@ -324,13 +306,17 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
 						.setIcreateby(JBoltUserKit.getUserId())
 						.setCcreatename(JBoltUserKit.getUserName())
 						.setDcreatetime(now)
+						.setIsenabled(true)
+						.setIupdateby(JBoltUserKit.getUserId())
+						.setCupdatename(JBoltUserKit.getUserName())
+						.setDupdatetime(now)
 						.setCorgcode(getOrgCode())
 						.setCorgname(getOrgName())
 						.setIorgid(getOrgId());
 				workshiftmList.add(workshiftm);
 
 				//处理细表
-				for(Record p:models){
+				for(Workshiftm p:models){
 					if(isOk(p.getStr("itype")) && p.getStr("cworkshiftcode").equals(workshiftm.getCworkshiftcode())){
 						Workshiftd workshiftd = new Workshiftd();
 						workshiftd.setIworkshiftmid(workshiftm.getIautoid())

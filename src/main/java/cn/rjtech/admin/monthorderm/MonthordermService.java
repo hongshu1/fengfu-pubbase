@@ -286,8 +286,10 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         monthorderm.setDUpdateTime(new Date());
         monthorderm.update();
 
+        cusOrderSumService.algorithmSum();
+
         //审批通过生成客户计划汇总
-        return cusOrderSumService.approveByMonth(monthorderm);
+        return SUCCESS;
     }
 
     /**
