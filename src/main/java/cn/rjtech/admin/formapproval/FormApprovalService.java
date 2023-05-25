@@ -637,7 +637,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
         String msg = preApprove.execute();
         ValidationUtils.assertBlank(msg, msg);
-        
+
         // 更新审核通过
         ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审批状态失败");
 
@@ -674,7 +674,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
 
         Date now = new Date();
-        
+
         Long mid = formApproval.getIAutoId();
 
         // 提审人
@@ -1032,264 +1032,6 @@ public class FormApprovalService extends BaseService<FormApproval> {
         }
     }
 
-    /**
-     * 审批
-     */
-    public Ret approveNode(Kv kv) {
-        String formSn = kv.getStr("formSn");
-        Long formAutoId = kv.getLong("formAutoId");
-        Integer status = kv.getInt("status");
-        Boolean judge = kv.getBoolean("judge");
-
-        ValidationUtils.notNull(formAutoId, "参数异常,请保存单据后刷新重试！");
-
-        Date now = new Date();
-
-        // 查出单据对应的审批流配置
-        FormApproval approval = findByFormAutoId(formAutoId);
-        ValidationUtils.notNull(approval, "单据未提交审批！");
-
-        Long mid = approval.getIAutoId();
-
-        // 流程主表数据
-        List<FormApprovalFlowM> flowmList = flowMService.find("select * from Bd_FormApprovalFlowM where iApprovalId = ? ", mid);
-        Map<Long, FormApprovalFlowM> flowMMap = flowmList.stream().collect(
-                Collectors.toMap(FormApprovalFlowM::getIApprovalDid, Function.identity(), (key1, key2) -> key2)
-        );
-
-        User user = JBoltUserKit.getUser();
-        Long userId = user.getId();
-
-        /*
-         * 1、按顺序查出审批节点
-         * 2、先判断该节点是否已通过，标识为 节点审批状态IStatus为2
-         * 3、若该节点未通过，查看节点 作具体审批判断
-         */
-        List<FormApprovalD> listByMid = formApprovalDService.findListByMid(mid);
-        int size = listByMid.size();
-
-        /*
-         * 单据节点集合
-         * 单据流程主表集合
-         * 单据流程行表集合
-         */
-        List<FormApprovalD> dList = new ArrayList<>();
-        List<FormApprovalFlowM> approvalFlowmList = new ArrayList<>();
-        List<FormApprovalFlowD> approvalFlowDList = new ArrayList<>();
-
-//		if (size > 0){}
-        listByMid.forEach(formApprovalD -> {
-
-            // 已是按iSeq的asc顺序遍历
-            Long Did = formApprovalD.getIAutoId();
-            // 审批节点的审批状态
-            Integer iStatus = formApprovalD.getIStatus();
-            // 审批节点定义的审批方式
-            Integer iType = formApprovalD.getIType();
-            // 审批节点的顺序
-            Integer iSeq = formApprovalD.getISeq();
-            // 多人审批的方式
-            Integer iApprovalWay = formApprovalD.getIApprovalWay();
-            // 当审批人为空 1、自动通过 2、指定人
-            Integer iSkipOn = formApprovalD.getISkipOn();
-
-            // 节点待审批
-            if (iStatus == 1) {
-
-                /*
-                 * 单据流程主表
-                 * 判断状态是否审核已通过
-                 * 若通过 更新该节点状态为已通过 退出当前节点 到下一节点
-                 * 否则
-                 * 找出流程及所有该节点的审批人
-                 */
-                FormApprovalFlowM flowM = flowMMap.get(Did);
-                Long FMid = flowM.getIAutoId();
-                Integer miAuditStatus = flowM.getIAuditStatus();
-                if (miAuditStatus == 2) {
-                    formApprovalD.setIStatus(status);
-                    formApprovalD.setDAuditTime(now);
-                    dList.add(formApprovalD);
-                    return;
-                } else {
-                    List<FormApprovalFlowD> flowDList = flowDService.find("select * from Bd_FormApprovalFlowD where iFormApprovalFlowMid = " + FMid + " order by iSeq asc");
-
-                    // 过滤出未审核的人员
-                    List<FormApprovalFlowD> collect = flowDList.stream().filter(f -> Objects.equals(f.getIAuditStatus(), 1)).collect(Collectors.toList());
-
-                    /*
-                     * 若有审批人
-                     * 判断审批方式 1、依次审批 2、会签（所有人同意  3、或签（一人即可
-                     *
-                     * 若没有未审核的人
-                     * 1、判断是审批人为空 自动通过 (没必要判断）
-                     * 若1为否 说明该节点已通过
-                     */
-                    int collectSize = collect.size();
-                    if (collectSize > 0) {
-
-                        switch (iApprovalWay) {
-                            case 1:
-                                FormApprovalFlowD flowD = collect.get(0);
-                                if (Objects.equals(flowD.getIUserId(), userId)) {
-                                    flowD.setIAuditStatus(2);
-
-                                }
-                                break;
-                            case 2:
-
-                                break;
-                            case 3:
-                                break;
-                            default:
-                                break;
-                        }
-
-                        collect.forEach(formApprovalFlowD -> {
-
-                        });
-                    } else {
-						/*if (Objects.equals(1,iSkipOn)){
-						}*/
-
-                        flowM.setIAuditStatus(2);
-                        approvalFlowmList.add(flowM);
-
-                        formApprovalD.setIStatus(status);
-                        formApprovalD.setDAuditTime(now);
-                        dList.add(formApprovalD);
-                    }
-                }
-
-                // 审批人设置
-                switch (iType) {
-                    // 指定人员
-                    case 1:
-                        // 根据asc顺序找出该节点的所有人
-                        List<FormapprovaldUser> userList = formapprovaldUserService.findByDid(Did);
-                        // 过滤出 人员信息的审批顺序与审批状态
-                        Map<Integer, Integer> iSeqAndStatusMap = userList.stream().collect(
-                                Collectors.toMap(FormapprovaldUser::getISeq, FormapprovaldUser::getIAuditStatus, (key1, key2) -> key2)
-                        );
-                        // 找出符合当前审批人
-                        Optional<FormapprovaldUser> first = userList.stream().filter(formapprovaldUser -> userId.equals(formapprovaldUser.getIUserId())).findFirst();
-                        /*
-                         * 若 该节点审批人为空已在提交审批判断该节点审批状态
-                         * 逻辑闭环
-                         * 所以不存在说明该审批人不存在该节点
-                         */
-                        ValidationUtils.isTrue(first.isPresent(), "上一审批人还未审批");
-                        // 依次审批
-                        if (iApprovalWay == 1) {
-                            // 当前审批人
-                            FormapprovaldUser formapprovaldUser = first.get();
-                            // 当前审批人顺序
-                            Integer userISeq = formapprovaldUser.getISeq();
-                            // 如果不是第一个 需判断上一审批人审批状态
-                            if (userISeq > 1) {
-                                Integer upSeq = userISeq - 1;
-                                Integer upStatus = iSeqAndStatusMap.get(upSeq);
-                                ValidationUtils.isTrue((upStatus == 2 || upStatus == 3), "上一审批人还未审批");
-                                ValidationUtils.isTrue(upStatus == 3, "上一审批人审批不通过，该单据已不通过");
-                            }
-
-                            /*
-                             * start
-                             * 当前审批人审批
-                             */
-                            formapprovaldUser.setIAuditStatus(status);
-                            formapprovaldUser.setDAuditTime(now);
-                            formapprovaldUser.update();  //保存
-
-                            /*
-                             * 记录具体审批人信息
-                             */
-                            FormapprovaldPerson formapprovaldPerson = new FormapprovaldPerson();
-                            formapprovaldPerson.setIApprovalDid(Did);
-                            formapprovaldPerson.setIUserId(userId);
-                            formapprovaldPerson.setIAuditStatus(status);
-                            formapprovaldPerson.setIAuuditTime(now);
-                            formapprovaldPerson.save();
-
-                            /*
-                             * 判断当前审批人是否最后一个审批人
-                             * 若 作为最后审批人 则  该节点结束 节点审批状态更新
-                             */
-                            if (userISeq == userList.size()) {
-                                formApprovalD.setIStatus(status);
-                                formApprovalD.setDAuditTime(now);
-                                formApprovalD.update(); //保存
-                            }
-
-                        } else if (iApprovalWay == 2) {  //会签
-
-
-                        } else {  // 或签
-
-                        }
-
-                        break;
-                    case 2:
-
-                        break;
-                    case 3:
-
-                        break;
-                    default:
-                        break;
-                }
-
-                /*
-                 * 需判断status==3 不通过
-                 * 则 该节点 不通过
-                 * 则为整张单据不通过 iAuditStatus=3不通过
-                 * 审批流结束
-                 */
-                if (status == 3) {
-                    formApprovalD.setIStatus(status);
-                    formApprovalD.setDAuditTime(now);
-                    formApprovalD.update(); //保存
-
-                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
-
-                    approval.setIsDeleted(false);
-                    approval.update();  //保存
-                } else {  //通过
-                    /*
-                     * 判断各个节点的状态 整条审批流是否完成 更新单据状态
-                     */
-                    // 查询该审批流所有已审批的节点
-                    List<FormApprovalD> formApprovalDS = formApprovalDService.find("select * from Bd_FormApprovalD where iFormApprovalId = '" + mid + "' and iStatus = 2");
-                    /*
-                     * 若该审批流 已审批的节点数==所有节点数
-                     * 说明该审批流结束 该单据审批通过
-                     */
-                    if (formApprovalDS.size() == size) {
-                        ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
-                    } else {
-                        /*
-                         * 若还没结束 判断审批流基础配置的高级设置
-                         * isSkippedOnDuplicate 1为是: 审批流程中审批人重复出现时，只需审批一次其余自定通过
-                         *  每个当前审批人 找到 下个审批人是否出现在之前审批过程中 是则找到的下一个审批人通过
-                         */
-                        if (approval.getIsSkippedOnDuplicate()) {
-
-                        }
-                    }
-                }
-
-            } else if (iStatus == 2) { //节点审批通过
-
-            } else if (iStatus == 3) { //节点审批不通过
-
-            } else {
-
-            }
-
-        });
-
-        return SUCCESS;
-    }
 
     /**
      * 通过formAutoId 单据ID查出单据对应审批流配置
@@ -1297,7 +1039,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
     public FormApproval findByFormAutoId(Long formAutoId) {
         return findFirst("select * from Bd_FormApproval where iFormObjectId = ? AND isDeleted = '0' ", formAutoId);
     }
-    
+
     /**
      * 更新提审状态
      */

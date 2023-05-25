@@ -47,7 +47,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
     private InventoryService inventoryService;
     @Inject
     private InventoryQcFormService inventoryQcFormService;
-
     @Inject
     private CusOrderSumService cusOrderSumService;
 
@@ -66,8 +65,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
      *
      * @param pageNumber 第几页
      * @param pageSize   每页几条数据
-     * @param kv
-     * @return
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
         return dbTemplate("manualorderm.list", kv).paginate(pageNumber, pageSize);
@@ -75,9 +72,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 
     /**
      * 保存
-     *
-     * @param manualOrderM
-     * @return
      */
     public Ret save(ManualOrderM manualOrderM) {
         if (manualOrderM == null || isOk(manualOrderM.getIAutoId())) {
@@ -98,9 +92,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 
     /**
      * 设置参数
-     *
-     * @param manualOrderM
-     * @return
      */
     private ManualOrderM setManualOrderM(ManualOrderM manualOrderM) {
         manualOrderM.setCOrgCode(getOrgCode());
@@ -146,7 +137,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
      *
      * @param manualOrderM 要删除的model
      * @param kv           携带额外参数一般用不上
-     * @return
      */
     @Override
     protected String afterDelete(ManualOrderM manualOrderM, Kv kv) {
@@ -159,7 +149,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
      *
      * @param manualOrderM model
      * @param kv           携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkInUse(ManualOrderM manualOrderM, Kv kv) {
@@ -169,10 +158,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 
     /**
      * 保存
-     *
-     * @param manualOrderM
-     * @param jBoltTable
-     * @return
      */
     public Ret saveForm(ManualOrderM manualOrderM, JBoltTable jBoltTable) {
         AtomicReference<Ret> res = new AtomicReference<>();
@@ -215,11 +200,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 
     /**
      * 批量生成
-     *
-     * @param kv
-     * @param status
-     * @param conformtos
-     * @return
      */
     public Ret batchHandle(Kv kv, int status, int[] conformtos) {
         List<Record> records = getDatasByIds(kv);
@@ -250,8 +230,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
 
     /**
      * 生成出货检
-     *
-     * @param icustomerid
      */
     public Ret createStockoutQcFormM(Long icustomerid, Long iautoid) {
         try {
@@ -332,7 +310,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
                 record.set("isdeleted", 1);
                 updateRecord(record);
             }
-            //batchUpdateRecords(records);
         }
         return SUCCESS;
     }
@@ -352,11 +329,4 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
         return dbTemplate("manualorderm.getDatasByIds", kv).find();
     }
 
-    public void handleCusOrderByManual(ManualOrderM manualOrderM) {
-        List<ManualOrderD> manualOrderDS = manualOrderDService.findByMid(manualOrderM);
-        if (manualOrderDS.size() > 0) {
-            cusOrderSumService.handelManualOrder(manualOrderM, manualOrderDS);
-        }
-    }
-    
 }

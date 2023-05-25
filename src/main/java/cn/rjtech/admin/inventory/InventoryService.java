@@ -1070,7 +1070,11 @@ public class InventoryService extends BaseService<Inventory> {
 	public Inventory findBycInvAddCode(String cInvAddCode){
 		return findFirst("SELECT * FROM Bd_Inventory WHERE cInvCode1 = ? OR cInvAddCode1 = ?", cInvAddCode, cInvAddCode);
 	}
-
+	
+	public Inventory findBycInvCode(String cInvCode){
+		return findFirst("SELECT top 1 * FROM Bd_Inventory WHERE cInvCode = ?", cInvCode);
+	}
+	
     public Ret batchFetch(String column, String values) {
         List<Record> inventories = findByColumnsAndValues(column, values);
         return successWithData(inventories);

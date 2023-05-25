@@ -3,6 +3,7 @@ package cn.rjtech.routes;
 import cn.rjtech.api.instockdefect.InStockDefectApiController;
 import cn.rjtech.api.instockqcformm.InStockQcFormMApiController;
 import cn.rjtech.api.modoc.ModocApiController;
+import cn.rjtech.api.momaterialsscansum.MoMaterialsscansumApiController;
 import cn.rjtech.api.nfcswipecard.NfcSwipeCardApiController;
 import cn.rjtech.api.org.OrgApiController;
 import cn.rjtech.api.processdefect.ProcessDefectApiController;
@@ -43,6 +44,7 @@ public class ApiRoutes extends Routes {
     this.add("/api/stockoutdefect", StockoutDefectApiController.class);
     this.add("/api/qcinspection", QcInspectionApiController.class);
     this.add("/api/workregionm", WorkRegionmApiController.class);//产线
+    this.add("/api/momaterialsscansum", MoMaterialsscansumApiController.class);//齐料检查
 
 
   }
