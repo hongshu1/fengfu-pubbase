@@ -5,8 +5,11 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.cdistrictcode}</td>
             <td>${data.cdistrictname}</td>
-            <td>${data.ideliveryadvance}</td>
             <td>${data.csearchcode}</td>
+            <td>${data.ideliveryadvance}</td>
+            <td>${data.cplancode}</td>
+            <td>${data.shippedway}</td>
+            <td>${data.cwhname}</td>
             <td>${data.ccontactcode}</td>
             <td>${data.ccontactname}</td>
 
@@ -23,6 +26,7 @@
             <td>${data.cemail}</td>
             <td><img data-switchbtn data-value="${data.isenabled?data.isenabled:false}" data-handler="switchEditableTd"/></td>
 <!--            <td>${data.isenabled}</td>-->
+            <td style="display: none">${data.iwarehouseid}</td>
         </tr>
     {@/each}
 </textarea>
@@ -64,8 +68,11 @@
                         <th data-width="60" data-column="index">序号</th>
                         <th data-width="100" data-column="cdistrictcode">位置编码</th>
                         <th data-width="100" data-column="cdistrictname">位置名称</th>
-                        <th data-width="100" data-column="ideliveryadvance">发货提前期</th>
                         <th data-width="100" data-column="csearchcode">搜索码</th>
+                        <th data-width="100" data-column="ideliveryadvance">发货提前期</th>
+                        <th data-width="100" data-column="cplancode">计划代码</th>
+                        <th data-width="100" data-column="shippedway">发运方式</th>
+                        <th data-width="100" data-column="cwhname">发货仓库</th>
                         <th data-width="120" data-column="ccontactcode">联系人编码</th>
                         <th data-width="120" data-column="ccontactname">联系人姓名</th>
                         <th data-width="120" data-column="ccountry">国家/地区</th>
@@ -110,13 +117,42 @@
                     type: "input",
                     placeholder: "=位置名称="
                 },
+                csearchcode: {
+                    type: "input",
+                    placeholder: "=搜索码="
+                },
                 ideliveryadvance: {
                     type: "input",
                     placeholder: "=提前期="
                 },
-                csearchcode: {
+                cplancode: {
                     type: "input",
-                    placeholder: "=搜索码="
+                    placeholder: "=计划代码="
+                },
+                shippedway:{  //发运方式
+                    type:"select",
+                    url:"admin/dictionary/options?key=shipped_type",
+                    maxLength:100,
+                    placeholder: "=发运方式=",
+                    textAttr: "name",
+                    valueAttr:"sn",
+                },
+                cwhname: {
+                    placeholder: "仓库", //输入提示，里面
+                    tooltip: "仓库",//输入提示，上方
+                    type: "autocomplete",
+                    //目前供应商都是空的无法过滤
+                    url: "admin/customeraddr/wareHouse",
+                    maxLength: 100,
+                    textAttr: "cwhname",
+                    width: 500,
+                    valueAttr: "iautoid",//选择赋值的字段
+                    columnAttr: "cwhcode,cwhname",//下来看的时候显示哪些字段
+                    header: '仓库编码,仓库名称',
+                    changeColumns:[{column: "iwarehouseid", use: "iautoid"}]
+                },
+                iwarehouseid: {
+                    submitAttr: "iwarehouseid"
                 },
                 ccontactcode: {
                     type: "input",

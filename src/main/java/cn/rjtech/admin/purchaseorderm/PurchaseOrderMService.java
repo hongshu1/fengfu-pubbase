@@ -1,5 +1,6 @@
 package cn.rjtech.admin.purchaseorderm;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
@@ -12,6 +13,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
@@ -21,10 +23,7 @@ import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionServ
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderref.PurchaseOrderRefService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
-import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.CompleteTypeEnum;
-import cn.rjtech.enums.OrderGenTypeEnum;
-import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.ValidationUtils;
@@ -95,7 +94,6 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		changeData(page.getList());
 		return page;
 	}
-
 	
 	private void changeData(List<Record> list){
 		if (CollectionUtil.isEmpty(list)){
@@ -273,26 +271,17 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		return calendar;
 	}
 	
-	public Map<String, Object> getDateMap(String beginDate, String endDate, String iVendorId, Integer processType){
-		
-		// 主表获取存货数据 table--value
-		List<Record> vendorDateList = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
-		// 细表获取存货数量
-		List<Record> demandPlanDList = demandPlanDService.findByDemandPlanMList(beginDate, endDate, iVendorId, processType);
-		// 记录每一个存货中存在多个物料到货计划
-		Map<Long, List<PurchaseOrderRef>> puOrderRefMap = demandPlanDService.getPuOrderRefByInvId(demandPlanDList);
-		// 按存货编码汇总
-		Map<Long, Map<String, BigDecimal>> demandPlanDMap = demandPlanDService.getDemandPlanDMap(demandPlanDList, DemandPlanM.IINVENTORYID);
-		
+	public Map<String, Object> getDateMap(String beginDate, String endDate, String iVendorId, Integer processType, Integer iSourceType){
 		Map<String, Object> repMap = new HashMap<>();
 		// 获取所有日期集合
 		Map<String, Integer> calendarMap = getCalendarMap(DateUtil.parseDate(beginDate), DateUtil.parseDate(endDate));
-		// 设置到货计划明细数量
-		demandPlanMService.setVendorDateList(OrderGenTypeEnum.PURCHASE_GEN.getValue(), vendorDateList, demandPlanDMap, calendarMap, puOrderRefMap);
-		
 		// 第一层：年月
 		// 第二层：日
-		Map<String, List<Integer>> dateMap = new HashMap<>();
+		Map<String, List<Integer>> dateMap = new TreeMap<>();
+		
+		List<Record> dateMonthHeadList = new ArrayList<>();
+		List<Record> dateHeadList = new ArrayList<>();
+		// 日期：月份
 		for (String dateStr : calendarMap.keySet()){
 			// yyyy-MM-dd
 			DateTime dateTime = DateUtil.parse(dateStr, DatePattern.NORM_DATE_PATTERN);
@@ -305,9 +294,44 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			Collections.sort(monthDays);
 			dateMap.put(YMKey, monthDays);
 		}
-		repMap.put("tableHeadMap", dateMap);
-		repMap.put("tableData", vendorDateList);
-		repMap.put("tableDataStr", JSONObject.toJSONString(vendorDateList));
+		// 日期：天数
+		for (String dateStr :dateMap.keySet()){
+			Record record = new Record();
+			List<Integer> list = dateMap.get(dateStr);
+			record.set("size", list.size()+1);
+			record.set("dateStr", dateStr);
+			for (Integer date : list){
+				String str = date+ "日";
+				Record dateRecord = new Record();
+				dateRecord.set("fieldName", str);
+				dateRecord.set("dateStr", dateStr.concat(str));
+				dateHeadList.add(dateRecord);
+			}
+			Record sum = new Record();
+			sum.set("fieldName", "合计");
+			dateHeadList.add(sum);
+			record.set("datelist", list);
+			dateMonthHeadList.add(record);
+		}
+		
+		// 物料到货计划 才回去返查 到货计划明细
+		if (SourceTypeEnum.MATERIAL_PLAN_TYPE.getValue() == iSourceType){
+			// 主表获取存货数据 table--value
+			List<Record> vendorDateList = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
+			// 细表获取存货数量
+			List<Record> demandPlanDList = demandPlanDService.findByDemandPlanMList(beginDate, endDate, iVendorId, processType);
+			// 记录每一个存货中存在多个物料到货计划
+			Map<Long, List<PurchaseOrderRef>> puOrderRefMap = demandPlanDService.getPuOrderRefByInvId(demandPlanDList);
+			// 按存货编码汇总
+			Map<Long, Map<String, BigDecimal>> demandPlanDMap = demandPlanDService.getDemandPlanDMap(demandPlanDList, DemandPlanM.IINVENTORYID);
+			// 设置到货计划明细数量
+			demandPlanMService.setVendorDateList(OrderGenTypeEnum.PURCHASE_GEN.getValue(), vendorDateList, demandPlanDMap, calendarMap, puOrderRefMap);
+			// 设置
+			repMap.put("tableData", vendorDateList);
+			repMap.put("tableDataStr", JSONObject.toJSONString(vendorDateList));
+		}
+		repMap.put("monthHeadList", dateMonthHeadList);
+		repMap.put("dateHeadList", dateHeadList);
 		return repMap;
 	}
 	
@@ -821,6 +845,59 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
 		purchaseOrderM.setHideInvalid(isHide);
 		purchaseOrderM.update();
+		return SUCCESS;
+	}
+	
+	public Ret saveSubmit(JBoltTable jBoltTable) {
+		List<Record> saveRecordList = jBoltTable.getSaveRecordList();
+		PurchaseOrderM purchaseOrderM = createPurchaseOrderM(jBoltTable.getForm());
+		ValidationUtils.notEmpty(saveRecordList, JBoltMsg.JBOLTTABLE_IS_BLANK);
+		JSONObject params = jBoltTable.getParams();
+		Integer type = params.getInteger("type");
+		params.getInteger("");
+		List<PurchaseOrderD> purchaseOrderDList = new ArrayList<>();
+		List<PurchaseorderdQty> purchaseOrderQtyList = new ArrayList<>();
+		List<Long> vendorAdIds = saveRecordList.stream().map(record -> record.getLong(PurchaseOrderD.IVENDORADDRID)).collect(Collectors.toList());
+		List<VendorAddr> vendorAddrList = vendorAddrService.findByIds(vendorAdIds);
+		Map<Long, VendorAddr> vendorAddrMap = vendorAddrList.stream().collect(Collectors.toMap(VendorAddr::getIAutoId, vendorAddr -> vendorAddr));
+		for (Record record : saveRecordList){
+			Integer isPresent = record.getInt(PurchaseOrderD.ISPRESENT);
+			
+			VendorAddr vendorAddr = vendorAddrMap.get(record.getLong(PurchaseOrderD.IVENDORADDRID));
+			ValidationUtils.notNull(vendorAddr, "供应商地址不存在");
+			PurchaseOrderD purchaseOrderD = purchaseOrderDService.create(purchaseOrderM.getIAutoId(), record.getLong(PurchaseOrderD.IVENDORADDRID),
+					record.getLong(PurchaseOrderD.IINVENTORYID), vendorAddr.getCDistrictName(),
+					record.getStr(PurchaseOrderD.CMEMO), IsOkEnum.toEnum(isPresent).getText());
+			purchaseOrderDList.add(purchaseOrderD);
+			String[] columnNames = record.getColumnNames();
+			for (String columnName : columnNames){
+				if (columnName.contains("日")){
+					DateTime dateTime = DateUtil.parseDate(columnName);
+					String yearStr = DateUtil.format(dateTime, DatePattern.NORM_YEAR_PATTERN);
+					String monthStr = DateUtil.format(dateTime, "MM");
+					String dayStr = DateUtil.format(dateTime, "dd");
+					BigDecimal qty = record.getBigDecimal(columnName);
+					PurchaseorderdQty purchaseorderdQty = purchaseorderdQtyService.create(purchaseOrderD.getIAutoId(),
+							Integer.parseInt(yearStr),
+							Integer.parseInt(monthStr),
+							Integer.parseInt(dayStr),
+							qty);
+					purchaseOrderQtyList.add(purchaseorderdQty);
+				}
+			}
+		}
+		tx(()->{
+			purchaseOrderM.setCOrderNo(generateCGCode());
+			purchaseOrderM.setDOrderDate(DateUtil.date());
+			if (CollUtil.isNotEmpty(purchaseOrderDList)){
+				purchaseOrderDService.batchSave(purchaseOrderDList, 500);
+			}
+			if (CollUtil.isNotEmpty(purchaseOrderQtyList)){
+				purchaseorderdQtyService.batchSave(purchaseOrderQtyList, 500);
+			}
+			purchaseOrderM.save();
+			return true;
+		});
 		return SUCCESS;
 	}
 }

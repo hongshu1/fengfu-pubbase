@@ -125,6 +125,12 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 		return purchaseorderdQty;
 	}
 	
+	public PurchaseorderdQty create(Long purchaseOrderDId, int year, int month, int day, BigDecimal qty){
+		PurchaseorderdQty purchaseorderdQty = createPurchaseorderdQty(year, month, day, qty);
+		purchaseorderdQty.setIPurchaseOrderDid(purchaseOrderDId);
+		return purchaseorderdQty;
+	}
+	
 	public List<PurchaseorderdQty> getPurchaseorderdQty(Long purchaseOrderDId, JSONArray purchaseorderdQtyJsonArray){
 		List<PurchaseorderdQty> list = new ArrayList<>();
 		if (CollectionUtil.isEmpty(purchaseorderdQtyJsonArray)){
@@ -132,13 +138,13 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 		}
 		for (int i=0; i<purchaseorderdQtyJsonArray.size(); i++){
 			JSONObject jsonObject = purchaseorderdQtyJsonArray.getJSONObject(i);
-			PurchaseorderdQty purchaseOrderdQty = createPurchaseorderdQty(
+			PurchaseorderdQty purchaseOrderdQty = create(
+					purchaseOrderDId,
 					jsonObject.getIntValue(PurchaseorderdQty.IYEAR.toLowerCase()),
 					jsonObject.getIntValue(PurchaseorderdQty.IMONTH.toLowerCase()),
 					jsonObject.getIntValue(PurchaseorderdQty.IDATE.toLowerCase()),
 					jsonObject.getBigDecimal(PurchaseorderdQty.IQTY.toLowerCase())
 					);
-			purchaseOrderdQty.setIPurchaseOrderDid(purchaseOrderDId);
 			list.add(purchaseOrderdQty);
 		}
 		return list;

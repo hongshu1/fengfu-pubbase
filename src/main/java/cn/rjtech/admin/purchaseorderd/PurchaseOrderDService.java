@@ -140,17 +140,25 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 	}
 	
 	public PurchaseOrderD createPurchaseOrderD(Long purchaseOrderMid, JSONObject jsonObject){
-        PurchaseOrderD purchaseOrderD = new PurchaseOrderD();
-        purchaseOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
-        purchaseOrderD.setIPurchaseOrderMid(purchaseOrderMid);
-        purchaseOrderD.setIVendorAddrId(jsonObject.getLong(purchaseOrderD.IVENDORADDRID.toLowerCase()));
-        purchaseOrderD.setCAddress(jsonObject.getString(purchaseOrderD.CADDRESS.toLowerCase()));
-        purchaseOrderD.setCMemo(jsonObject.getString(purchaseOrderD.CMEMO.toLowerCase()));
-        purchaseOrderD.setIsPresent(jsonObject.getBoolean(purchaseOrderD.ISPRESENT.toLowerCase()));
-        purchaseOrderD.setIsDeleted(false);
-        purchaseOrderD.setIInventoryId(jsonObject.getLong(purchaseOrderD.IINVENTORYID.toLowerCase()));
-        purchaseOrderD.setISum(jsonObject.getBigDecimal(purchaseOrderD.ISUM.toLowerCase()));
-        return purchaseOrderD;
+		Long iVendorAddrId = jsonObject.getLong(PurchaseOrderD.IVENDORADDRID.toLowerCase());
+		String cAddress = jsonObject.getString(PurchaseOrderD.CADDRESS.toLowerCase());
+		String cMemo = jsonObject.getString(PurchaseOrderD.CMEMO.toLowerCase());
+		Boolean isPresent = jsonObject.getBoolean(PurchaseOrderD.ISPRESENT.toLowerCase());
+		Long iInventoryId = jsonObject.getLong(PurchaseOrderD.IINVENTORYID.toLowerCase());
+		return create(purchaseOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, isPresent);
+	}
+	
+	public PurchaseOrderD create(Long purchaseOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, boolean isPresent){
+		PurchaseOrderD purchaseOrderD = new PurchaseOrderD();
+		purchaseOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		purchaseOrderD.setIPurchaseOrderMid(purchaseOrderMid);
+		purchaseOrderD.setIVendorAddrId(iVendorAddrId);
+		purchaseOrderD.setIInventoryId(iInventoryId);
+		purchaseOrderD.setIsDeleted(false);
+		purchaseOrderD.setIsPresent(isPresent);
+		purchaseOrderD.setCMemo(cMemo);
+		purchaseOrderD.setCAddress(cAddress);
+		return purchaseOrderD;
 	}
 	
 	public int removeByPurchaseOrderMId(Long purchaseOrderMId){

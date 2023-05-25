@@ -49,9 +49,9 @@
         var $form = $('#PurchaseOrderM_form_#(pageId)');
         if (FormChecker.check($form)) {
             var formData = formToJson($form);
-            Ajax.post("admin/purchaseorderm/checkData",{iVendorId: formData.iVendorId, beginDate: formData.begindate, endDate: formData.enddate, processType: 3}, function (res) {
+            Ajax.post("admin/purchaseorderm/checkData",{iVendorId: formData.iVendorId, beginDate: formData.begindate, endDate: formData.enddate, processType: 3, iSourceType: '#(iSourceType)'}, function (res) {
                 if (res.state=='ok'){
-                    location.href = '/admin/purchaseorderm/add?processType=3&iVendorId=' + formData.iVendorId + '&beginDate=' + formData.begindate + '&endDate=' + formData.enddate + '&_jb_rqtype_=dialog';
+                    location.href = '/admin/purchaseorderm/add?iSourceType=#(iSourceType)&processType=3&iVendorId=' + formData.iVendorId + '&beginDate=' + formData.begindate + '&endDate=' + formData.enddate + '&_jb_rqtype_=dialog';
                 }
             });
         }
