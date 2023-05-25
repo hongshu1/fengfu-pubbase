@@ -111,6 +111,26 @@
         border-radius: 5px;
         float: right;
     }
+/*    */
+    .popup-layer{
+        border: 1px solid rgba(215, 215, 215, 1);
+        background-color:#fff;
+        width: 560px;
+        padding: 20px;
+        z-index: 1000;
+        position: absolute;
+        display: none;
+    }
+    .popup-confirm{
+        margin-bottom: 20px;
+    }
+    #popup_table{
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    #popup_table tr{
+        height: 40px;
+    }
 </style>
 #end
 
@@ -124,12 +144,6 @@
         <!-- 头部标题结束 -->
         <!-- 搜索工具类开始 -->
         <div class="search">
-<!--            <div class="select">-->
-<!--                <span class="span">排产层级:</span>-->
-<!--                <select style="width:150px;height:25px;">-->
-<!--                    <option value=""></option>-->
-<!--                </select>-->
-<!--            </div>-->
             <div class="select">
                 <span>产线名称:</span>
                 <input style="width:150px;height:20px;" />
@@ -156,7 +170,7 @@
             <div id="table-tool">
                 <!-- 表格工具开始 -->
                 <div class="but_box">
-                    <button onClick="edit()">排产</button>
+                    <button onClick="openPopup()">排产</button>
                     <button>数据导出</button>
                     <button>数据导入</button>
                     <button>保存层级</button>
@@ -168,16 +182,7 @@
                 <div id="ss" class="spread-container"></div>
                 <div id="statusBar" class="gc-statusbar"></div>
             </div>
-
         </div>
-<!--        <div id="production">-->
-<!--            <p class="production_title"><span id="production_close">X</span></p>-->
-<!--            <p class="production_but"><button id="production_save">确定</button></p>-->
-<!--            <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">-->
-<!--                <label class="col-form-label" >截止日期：</label>-->
-<!--                <input type="datetime-local" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">-->
-<!--            </div>-->
-<!--        </div>-->
         <!--锁定弹框-->
         <div id="alert">
             <p class="alert_title"><span id="title"></span><span id="close">X</span></p>
@@ -185,7 +190,6 @@
                 <form>
                     <div class="form-group row" style="margin-top: 20px;display: flex;margin-bottom: 0px">
                         <span style="display:block;line-height: 25px;margin-left: 15px">截止日期：</span>
-<!--                        <input type="datetime-local" id="datetime-local" name="datetime-local">-->
                         <select id="mySelect" style="width:180px">
                             <option value="">请选择</option>
                         </select>
@@ -198,6 +202,47 @@
             </div>
             <p class="alert_but"><button id="close_but">取消</button><button onClick="save()">确定</button></p>
         </div>
+        <!-- 排产弹出层 -->
+        <div class="popup-layer">
+            <!-- 确定按钮 -->
+            <div style="width: 100%;margin-bottom: 20px;">
+                <button class="button" onclick="savePopup()">确定</button>
+                <button class="button" onclick="closePopup()">取消</button>
+            </div>
+            <!-- 表格 -->
+            <div style="display: flex">
+                <p style="float: left;width: 70px">已排层级：</p>
+                <table border width="100%" id="popup_table">
+                    <thead>
+                    <tr>
+                        <th>排产层级</th>
+                        <th>排场截止时间</th>
+                        <th>锁定截止时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="layer_tr"></tbody>
+                </table>
+            </div>
+            <!-- 下拉框 -->
+            <div class="popup-select">
+                <div>
+                    <label for="deadline">截止日期：</label>
+                    <input type="datetime-local" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">
+                </div>
+                <div>
+                    <label for="level">排产层级：</label>
+                    <select id="level">
+                        <option value="1">层级1</option>
+                        <option value="2">层级2</option>
+                        <option value="3">层级3</option>
+                        <option value="4">层级4</option>
+                        <option value="5">层级5</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!--排产弹出框结束-->
     </div>
 </div>
 #end
@@ -205,6 +250,107 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
+    //定义公共接口
+    const Api = 'http://localhost:8081/';
+    window.onload=function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        if(id!=null){
+            console.log(parseFloat(id));
+            loadInit();
+            initDate();
+            initData();
+        }
+    }
+     /**
+     * 打开弹出层
+     * @param openPopup
+     */
+    function openPopup() {
+        var popup = document.querySelector('.popup-layer');
+        popup.style.display = 'block';
+        popup.style.position = "absolute";
+        popup.style.top = "50%";
+        popup.style.left = "50%";
+        popup.style.marginTop = "-75px";
+        popup.style.marginLeft = "-150px";
+        mybgs = document.createElement("div");
+        mybgs.setAttribute("id", "mybgs");
+        mybgs.style.background = "#000";
+        mybgs.style.width = "100%";
+        mybgs.style.height = "100%";
+        mybgs.style.position = "absolute";
+        mybgs.style.top = "0";
+        mybgs.style.left = "0";
+        mybgs.style.zIndex = "500";
+        mybgs.style.opacity = "0.3";
+        document.body.appendChild(mybgs);
+        document.body.style.overflow = "hidden";
+         let url = Api+"admin/scheduproductplanmonth/getApsWeekscheduleList";
+         $.ajax({
+             url,
+             type:'post',
+             dataType:'json',
+             success:function (res){
+                 console.log(res,'已排层级展示')
+                 parms.dschedulebeginData = res.data;
+                 var str = "";
+                 for (var i = 0; i < res.data.length; i++) {
+                     str += `<tr>
+                                <td>${res.data[i].ilevel}</td>
+                                <td>${res.data[i].dscheduleendtime}</td>
+                                <td>${res.data[i].dlockendtime==undefined?'':res.data[i].dlockendtime}</td>
+                                <td width='130px'>
+                                  <span onClick='search(${res.data[i].iautoid})' style="margin-right:10px;cursor: pointer;color: #0000FF;">查看</span>
+                                  <span style="margin-right:10px;cursor: pointer;color: #0000FF;">编辑</span>
+                                  <span style="cursor: pointer;color: #0000FF;">删除</span>
+                                 </td>
+                               </tr>`;
+                 }
+                 $("#layer_tr").html(str);
+             },error: function(error) {
+                 console.log(error);
+             }
+         })
+    }
+    //排场确定事件
+    function savePopup(){
+        //获取用户选择的时间
+        const datetimeLocalInput = document.getElementById('datetime-local');
+        const myVal = datetimeLocalInput.value.substring(0,10);
+        const level = document.getElementById('level').value;
+        console.log(level)
+        let url = Api+`admin/scheduproductplanmonth/scheduPlanMonth?level=${level}&endDate=${myVal}`;
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                if(res.data.msg=="操作成功"){
+                    loadInit(parms);
+                    initDate(parms,sheet);
+                    initData();
+                    closePopup();//隐藏弹出层
+                }
+            },error: function(error) {
+                console.log(error);
+            }
+        })
+    }
+    //表格数据查看
+    function search(id){
+        console.log(id)
+        window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&id=${id}`);
+    }
+    /**
+     * 关闭弹出层
+     * @param closePopup
+     */
+    function closePopup() {
+        var popup = document.querySelector('.popup-layer');
+        popup.style.display = 'none';
+        mybgs.style.display = "none";
+    }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
@@ -238,22 +384,19 @@
         planListColIndex:7,     //计划排产列表起始列下标
         openBoxTime:'',         //打开锁定弹框的时间戳
         getLockDate:[],         //存储锁定计划的全部截止日期
+        dschedulebeginData:[],  //已排层级展示数据
     };
     var parmsArr = [Object.assign({},parmsDefault)];
     //添加属性
     parmsArr[0]['spread'] = spread;
     parmsArr[0]['activeSheet'] = spread.getSheet(0);//获取指定的表单
     var parms = parmsArr[0];
-    loadInit(parms);
-    initDate(parms,sheet);
-    initData();
     //设置全局表单的背景颜色
     spread.options.grayAreaBackColor = '#fff';
 
     // var colCount = sheet.getColumnCount(GC.Spread.Sheets.SheetArea.viewport);//获取列数
     // var rowCount = sheet.getRowCount();//获取行数
 
-    //初始化表格数据
     /**
      * 初始化产线数据
      * @param loadInit
@@ -302,11 +445,9 @@
     /**
      * 获取接口返回的日期数据
      * @param initDate
-     * @param parms 自定义对象，用户接收数据
-     * @param sheet 当前活动表单
      */
-    function initDate(parms,sheet) {
-        let url = "http://localhost:8081/admin/scheduproductplanmonth/getTableHead";
+    function initDate() {
+        let url = Api+"admin/scheduproductplanmonth/getTableHead";
         //获取接口数据
         Ajax.get(url,(res)=>{
             spreadSuspend();//暂停绘制
@@ -346,7 +487,7 @@
      * @param initData
      */
     function initData(){
-        let url = "http://localhost:8081/admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=1659809519734398976&level=1&endDate=2023-06-21";
+        let url = Api+"admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=1659809519734398976&level=1&endDate=2023-06-21";
         $.ajax({
             url,
             type:'get',
@@ -425,32 +566,6 @@
                         cell.locked(true); // 设置单元格为锁定状态
                     }
                 }
-
-                // forEach(function (cell) {
-                //     cell.locked(true);
-                // });
-                // for (var i = 0; i < res.length; i++) {
-                //     for (let j = 0; j <res[i].day.length ; j++) {
-                //         var row = res[i].day[j];
-                //             if (row.lock == true){
-                //                 // 修改sheet默认locked为false
-                //                 //         var defaultStyle = new GC.Spread.Sheets.Style();
-                //                 //         defaultStyle.locked = false;
-                //                 //         sheet.setDefaultStyle(defaultStyle, GC.Spread.Sheets.SheetArea.viewport);//设置第1行不可编辑
-                //                 //         var style = new GC.Spread.Sheets.Style();
-                //                 //         style.locked = true;
-                //                 //         style.backColor = "#F0F0F0";
-                //                 //         sheet.setStyle(i+3, j+9, style);
-                //                 //         // 设置表单保护
-                //                 //         sheet.options.isProtected = true;
-                //
-                //                 var cell = sheet.getCell(i+3, j+9).locked(true);
-                //                 console.log(cell)
-                //                 // 设置单元格的值
-                //                 // sheet.setValue(i, sheet.getColIndex(3), row[rowKey]);
-                //             }
-                //     }
-                // }
                 spreadResume();// 恢复绘制
             },error: function() {
                 console.log('error')
@@ -498,7 +613,7 @@
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
             //锁定截止日期
-            let url = "http://localhost:8081/admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=1659809519734398976";
+            let url = Api+"admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=1659809519734398976";
             $.ajax({
                 url,
                 type:'post',
@@ -543,8 +658,8 @@
         const datetimeLocalInput = document.getElementById('mySelect');
         const myVal = datetimeLocalInput.value.substring(0,10);
         console.log(myVal)
-        let url = alertTitle.innerText == "锁定计划"?`http://localhost:8081/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`
-            :`http://localhost:8081/admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`;
+        let url = alertTitle.innerText == "锁定计划"?Api+`admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`
+            :Api+`admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`;
         $.ajax({
             url,
             type:'post',
@@ -606,7 +721,7 @@
         mybg.style.opacity = "0.3";
         document.body.appendChild(mybg);
         document.body.style.overflow = "hidden";
-        let url = "http://localhost:8081/admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=1659809519734398976";
+        let url = Api+"admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=1659809519734398976";
         $.ajax({
             url,
             type:'post',
@@ -627,7 +742,7 @@
     }
     //测试向后端发送数据
     function edit(){
-        let url = "http://localhost:8081/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=2023-05-28";
+        let url = Api+"admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=2023-05-28";
         $.ajax({
             url,
             type:'post',
