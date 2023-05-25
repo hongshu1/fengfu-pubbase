@@ -30,19 +30,18 @@ SELECT mp.AutoID,
        it.cInvStd,
        emm.cEquipmentModelName,
        CASE md.iStatus WHEN '2' THEN '已安排人员' END AS iStatus,
-       mpd.Qty * md.iQty AS totalQty
+       mpd.Qty * md.iQty                              AS totalQty
 FROM T_Sys_MaterialsPrepare mp
-    LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.MasID = mp.AutoID
-    LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
-    LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
-    LEFT JOIN Bd_Department dpm ON dpm.iAutoId = md.iDepartmentId
-    LEFT JOIN Bd_WorkShiftM wsm ON wsm.iAutoId = md.iWorkShiftMid
-    LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
-    LEFT JOIN Bd_WorkRegionM wrm ON wrm.iAutoId = md.iWorkRegionMid
-    LEFT JOIN Bd_EquipmentModel emm ON emm.iAutoId = it.iEquipmentModelId
-     WHERE 1 = 1
-     AND md.iStatus = 2
-  #if(billno)
+         LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.MasID = mp.AutoID
+         LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
+         LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
+         LEFT JOIN Bd_Department dpm ON dpm.iAutoId = md.iDepartmentId
+         LEFT JOIN Bd_WorkShiftM wsm ON wsm.iAutoId = md.iWorkShiftMid
+         LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
+         LEFT JOIN Bd_WorkRegionM wrm ON wrm.iAutoId = md.iWorkRegionMid
+         LEFT JOIN Bd_EquipmentModel emm ON emm.iAutoId = it.iEquipmentModelId
+WHERE 1 = 1
+  AND md.iStatus = 2 #if(billno)
   AND BillNo = #para(billno)
   #end
   #if(cmodocno)
@@ -77,8 +76,7 @@ WHERE wrm.isDeleted = '0' #if(isenabled)
 #sql("findColumns1")
 SELECT *
 FROM Bd_WorkShiftM wsm
-WHERE wsm.isDeleted = '0'
-  #if(isenabled)
+WHERE wsm.isDeleted = '0' #if(isenabled)
   AND wsm.isenabled = #para(isenabled)
   #end
 #end
@@ -123,5 +121,38 @@ FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN Bd_EquipmentModel emm ON emm.iAutoId = it.iEquipmentModelId
 WHERE 1 = 1
   AND md.iStatus = 2
-  AND md.cMoDocNo=  '#(cmodocno)'
+  AND md.cMoDocNo = '#(cmodocno)' #end
+
+
+#sql("Auto")
+SELECT md.iAutoId,
+       md.dPlanDate,
+       md.cMoDocNo,
+       md.iQty,
+       dpm.cDepName,
+       wsm.cWorkShiftName,
+       wrm.cWorkName,
+       it.cInvCode,
+       it.cInvCode1,
+       it.cInvName1,
+       uom.cUomName
+FROM Mo_MoDoc md
+         LEFT JOIN Bd_Department dpm ON dpm.iAutoId = md.iDepartmentId
+         LEFT JOIN Bd_WorkShiftM wsm ON wsm.iAutoId = md.iWorkShiftMid
+         LEFT JOIN Bd_Inventory it ON it.iAutoId = md.iInventoryId
+         LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
+         LEFT JOIN Bd_WorkRegionM wrm ON wrm.iAutoId = md.iWorkRegionMid
+WHERE 1 = 1
+  AND md.iStatus = 2
+  #if(dplandate)
+  AND dPlanDate = #para(dplandate)
+  #end
+  #if(startTime)
+  AND dPlanDate >= #para(startTime)
+  #end
+  #if(endTime)
+  AND dPlanDate <= #para(endTime)
+  #end
+ORDER BY md.dPlanDate DESC
     #end
+

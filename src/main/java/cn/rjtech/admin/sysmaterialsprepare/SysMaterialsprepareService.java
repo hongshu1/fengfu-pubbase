@@ -1,14 +1,22 @@
 package cn.rjtech.admin.sysmaterialsprepare;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.SysMaterialsprepare;
+import cn.rjtech.model.momdata.SysOtherin;
+import cn.rjtech.model.momdata.SysOtherindetail;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,7 +62,6 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         if (sysMaterialsprepare == null || isOk(sysMaterialsprepare.getAutoID())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        //if(existsName(sysMaterialsprepare.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = sysMaterialsprepare.save();
         if (success) {
             //添加日志
@@ -130,6 +137,12 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
      */
     public Page<Record> getMaterialsOutLines(int pageNumber, int pageSize, Kv kv){
         return dbTemplate("materialsprepare.getMaterialsOutLines",kv).paginate(pageNumber, pageSize);
-
     }
+
+    public Page<Record> getAdminDatasForauto(int pageNumber, int pageSize, Kv kv) {
+        Page<Record> paginate = dbTemplate("materialsprepare.Auto", kv).paginate(pageNumber, pageSize);
+        return paginate;
+    }
+
+
 }

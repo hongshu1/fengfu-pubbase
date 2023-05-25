@@ -5,22 +5,17 @@
     <div class="jbolt_page_title">
         <div class="row">
             <div class="col">
-                <div class="card" style="margin-bottom: 5px">
-                    <div class="card-body">
-                        <div class="col">
-                            <button data-check-handler="jboltTableGetCheckedId"
-                                    data-dialogbtn data-area="100%,100%"
-                                    data-handler="refreshJBoltTable"
-                                    id="toolbar_editBtn_#(pageId)"
-                                    data-title="备料一览表详情"
-                                    data-url="admin/sysmaterialspreparedetail/"
-                                    class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 生成备料单
-                            </button>
-                            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                                    class="fa fa-window-maximize"></i> 关闭
-                            </button>
-                        </div>
-                    </div>
+                <div class="jbolt_table_toolbar" id="MoPickItemM_toolbar_#(pageId)">
+                    <button data-check-handler="jboltTableGetCheckedId"
+                            data-dialogbtn data-area="100%,100%"
+                            data-handler=""
+                            id="toolbar_editBtn_#(pageId)"
+                            data-url="admin/sysmaterialspreparedetail/autoMake/?iautoid="
+                            class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 生成备料单
+                    </button>
+                    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                            class="fa fa-window-maximize"></i> 关闭
+                    </button>
                 </div>
                 <div class="card">
                     <div class="card-body">
@@ -44,14 +39,14 @@
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.autoid}">
+<tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.dplandate}</td>
 <td>${data.cmodocno}</td>
 <td>${data.cdepname}</td>
 <td>${data.cworkname}</td>
 <td>${data.cworkshiftname}</td>
-<td>${data.invcode}</td>
+<td>${data.cinvcode}</td>
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
 <td>${data.cuomname}</td>
@@ -65,7 +60,7 @@
                data-height="100%"
                data-ajax="true"
                data-conditions-form="MoPickItemM_form_#(pageId)"
-               data-url="admin/sysmaterialspreparedetail/datas"
+               data-url="admin/sysmaterialspreparedetail/datasForauto"
                data-rowtpl="MoPickItemM_tpl_#(pageId)"
                data-copy-to-excel="false"
                data-page="MoPickItemM_page"

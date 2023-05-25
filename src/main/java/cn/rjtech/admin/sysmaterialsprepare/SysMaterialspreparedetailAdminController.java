@@ -18,9 +18,11 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import org.apache.commons.lang.RandomStringUtils;
 
 import java.util.Date;
 
@@ -270,7 +272,24 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
     public void getMaterialsOutLines() {
         String cmodocno = get("cmodocno");
         Kv kv = new Kv();
-        kv.set("cmodocno",cmodocno== null? "" :cmodocno);
+        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
         renderJsonData(service.getMaterialsOutLines(getPageNumber(), getPageSize(), kv));
+    }
+
+//    public void autoMake() {
+//        String iautoid = get("iautoid");
+//        String randomNum = RandomStringUtils.randomNumeric(5);
+//        Date date = new Date();
+//        String billno = date + "-" + randomNum;
+//        SysMaterialsprepare sysMaterialsprepare = service.findFirst("select *   from T_Sys_MaterialsPrepare where SourceBillID=?", iautoid);
+//        System.out.println(sysMaterialsprepare.get("OrganizeCode").toString());
+//        Ret update = service.update(sysMaterialsprepare);
+//    }
+
+    /**
+     * 数据源
+     */
+    public void datasForauto() {
+        renderJsonData(service.getAdminDatasForauto(getPageNumber(), getPageSize(), getKv()));
     }
 }
