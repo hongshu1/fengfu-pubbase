@@ -108,22 +108,18 @@ public class StockoutDefectApiController extends BaseApiController {
         renderJBoltApiRet(stockoutDefectApiService.update(kv));
     }
 
+
     /**
-     * 二维码
-     * @param iautoid     来料异常品ID
-     * @param width       宽
-     * @param height      高
+     * 打印二维码
+     * @param ids    异常品id 可多个
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void qrcode(
-            @Para(value = "width", defaultValue = "200") Integer width,
-            @Para(value = "height", defaultValue = "200") Integer height,
-            @Para(value = "iautoid") Long iautoid){
-        ValidationUtils.notNull(iautoid, "缺少参数iautoid");
-        String code = stockoutDefectApiService.stockoutDefectId(iautoid);
-        ValidationUtils.notBlank(code, "缺少参数code");
-        renderQrCode(code, width, height);
+    public void QRCode(@Para(value = "ids") Long ids) {
+        Kv kv = new Kv();
+        kv.set("ids", ids);
+        renderJBoltApiRet(stockoutDefectApiService.QRCode(kv));
     }
+
 
 }

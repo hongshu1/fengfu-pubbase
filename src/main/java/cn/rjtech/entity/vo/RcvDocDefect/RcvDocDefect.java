@@ -78,6 +78,11 @@ public class RcvDocDefect implements Serializable {
      */
     private Boolean isfirsttime;
 
+    /**
+     * 不良项目
+     */
+    private Boolean cBadnessSns;
+
 
     /**
      * 处置区分
@@ -102,6 +107,14 @@ public class RcvDocDefect implements Serializable {
      * 更新时间
      */
     private Date dupdatetime;
+
+    public Boolean getcBadnessSns() {
+        return cBadnessSns;
+    }
+
+    public void setcBadnessSns(Boolean cBadnessSns) {
+        this.cBadnessSns = cBadnessSns;
+    }
 
     public Long getIautoid() {
         return iautoid;

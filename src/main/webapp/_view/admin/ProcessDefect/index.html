@@ -46,6 +46,7 @@
 	{@if data.istatus==1}
 		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
 	{@else if data.istatus==2}
+	    <a href="common/qrcode?code=${data.cdocno}" data-photobtn tooltip data-title="点击查看二维码"><i style="font-size:20px;" class="fa fa-qrcode"></i></a>
 		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
 	{@else}
 		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="检验"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">异常品记录</a>
@@ -69,7 +70,14 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="processDefect_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="二维码出库异常记录" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/processdefect/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>
+		<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">打印二维码</button>
+			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+				<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint_#(pageId)('check')"><i class="fa fa-download"></i> 打印勾选行</button>
+				<button class="btn dropdown-item" onclick="containerPrint_#(pageId)('page')"><i class="fa fa-download"></i> 打印当前页</button>
+			</div>
+		</div>
+		<!--		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="二维码出库异常记录" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/processdefect/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>-->
 	</div>
 
 	<div class="clearfix"></div>
@@ -127,15 +135,34 @@ data-row-dblclick-active="true"
 #define js()
 <script type="text/javascript">
 
-	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-		console.log(JSON.stringify(rowData));
 
-		$(tempTr1).data('url', '/admin/admin/ProcessDefect/edit/' + rowData.iautoid)
-			.data('area', '1200,800')
-			.data('title', '制程异常品记录')
-			.data('btn', '保存,关闭');
+	// 打印
+	function containerPrint_#(pageId)(mark) {
+		let rows;
+		if (mark == 'check') {
+			rows = jboltTableGetCheckedDatas();
+			if (rows == null) {
+				return;
+			}
+		} else {
+			rows = jboltTableGetAllDatas();
+		}
 
-		DialogUtil.openBy(tempTr1);
+		var k=0;
+		let code = [];
+		for (let i in rows) {
+			k++;
+			let rowdata = rows[i];
+			var ccode = rowdata.iautoid;
+			var istatus = rowdata.istatus;
+			var cdocno = rowdata.cdocno;
+			if (istatus != 2){
+				LayerMsgBox.error("第"+k+"行["+cdocno+"]异常单,请审核再打印！！！",3000);
+				return false;
+			}
+			code.push(ccode);
+		}
+		jboltHiprintWebPrint('doc_defect', 'url', 'admin/processdefect/QRCode?ids=' + code.join(",") + "&&mark=" + mark);
 	}
 </script>
 #end

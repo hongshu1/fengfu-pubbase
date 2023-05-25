@@ -589,6 +589,13 @@ WHERE a.isDeleted = '0'
         END AS NVARCHAR(30)) ) <= #para(enddate)
 #end
 
+#sql("getMotaskByEndDateList")
+###查询任务工单表结束日期 > 解锁开始日期&&未审核数据
+SELECT iAutoId,dBeginDate,dEndDate
+FROM Mo_MoTask
+WHERE iAuditStatus = 0
+  AND CONVERT(VARCHAR(10),dEndDate,120) > #para(unlockstartdate)
+#end
 
 ###---------------------------------------------------------月周生产计划汇总---------------------
 

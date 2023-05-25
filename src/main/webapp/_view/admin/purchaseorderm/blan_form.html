@@ -153,6 +153,31 @@
 </form>
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 
+<textarea class="jb_tpl_box" id="puraseOrder_tpl_1">
+    {@each datas as data,index}
+        <tr data-id="${data.id}">
+            <td hidden> ${data.iinventoryid}</td>
+            <td>${pageNumber,pageSize,index | rownum}</td>
+             <td>
+                <a tabindex="-1" class="ml-1 " href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash text-danger">删除</i></a>
+            </td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.cuomname}</td>
+            <td>${data.ipkgqty}</td>
+            <td>${data.ispresent}</td>
+            <td>${data.cmemo}</td>
+            <td>${data.ivendoraddrid}</td>
+            #for(day: dateHeadList)
+                <td></td>
+            #end
+        </tr>
+    {@/each}
+</textarea>
+
+
 <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
@@ -168,6 +193,7 @@
        data-height="fill"
        data-copy-to-excel="false"
        data-column-resize="true"
+       data-rowtpl="puraseOrder_tpl_1"
        data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
        data-column-prepend="1:checkbox:true:false:false"
        data-editable="true"
@@ -186,61 +212,21 @@
         <th data-width="150" rowspan="2" data-column="ipurchaseuomid">采购单位</th>
         <th data-width="150" rowspan="2" data-column="ipkgqty">包装数量</th>
         <th data-width="100" rowspan="2" data-column="ispresent">是否赠品</th>
-        <th data-width="150" rowspan="2" data-column="cMemo">备注</th>
+        <th data-width="150" rowspan="2" data-column="cmemo">备注</th>
         <th data-width="200" rowspan="2" data-column="ivendoraddrid" class="is_required">供应商地址</th>
         <!--   显示日期 -->
         #for(dateHead:monthHeadList)
-            <th data-width="80" colspan="#(dateHead.size)">#(dateHead.dateStr)</th>
+        <th data-width="80" colspan="#(dateHead.size)">#(dateHead.dateStr)</th>
         #end
     </tr>
 
     <tr>
         #for(day: dateHeadList)
-          <th data-width="80" data-column="#(day)">#(day)</th>
+        <th data-width="80" data-column="#(day.dateStr)">#(day.fieldName)</th>
         #end
     </tr>
     </thead>
     <tbody>
-        #for(data:tableData)
-            <tr>
-                <td hidden><input name="iInventoryId" autocomplete="off" class="form-control" value="#(data.iinventoryid)"></td>
-                <td>#(for.index+1)</td>
-                <td>
-                    <a tabindex="-1" class="ml-1 " href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash text-danger">删除</i></a>
-                </td>
-                <td>#(data.cinvcode??)</td>
-                <td>#(data.cinvcode1??)</td>
-                <td>#(data.cinvname1??)</td>
-
-                <td>#(data.cinvstd??)</td>
-                <td>#(data.cuomname??)</td>
-                <td>
-                    #(data.ipkgqty??)
-                </td>
-                <td>#boolToStr(data.ispresent?? == 1,"是","否")</td>
-                <td>
-                    <input type="text" data-with-clearbtn="true" name="cMemo" autocomplete="off" class="form-control"
-                           maxlength="200"/>
-                </td>
-                <td>
-                    <select class="form-control"
-                            data-autoload
-                            data-url="admin/purchaseorderm/findByiVendorId?vendorId=#(purchaseOrderM.iVendorId??)"
-                            data-select-type="select"
-                            data-text="==请选择=="
-                            data-value=""
-                            name="iVendorAddrId"
-                            data-select="#(data.ivendoraddrid??)"
-                            data-text-attr="cdistrictname"
-                            data-value-attr="iautoid"
-                    >
-                    </select>
-                </td>
-                #for(qty:data.arr??)
-                 <td>#(qty)</td>
-                #end
-            </tr>
-        #end
     </tbody>
 </table>
 #define js()
@@ -252,13 +238,74 @@
             initRowCount:0,
             //插入数据时默认属性值
             //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            submit:{
+                 withForm:["PurchaseOrderM_Form"],
+                type:"all",//cell|all
+                params:{"type":'0'},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                url:"/admin/purchaseorderm/saveSubmit",
+                success:function(res){
+                    LayerMsgBox.success("提交成功",600,function(){
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
+                    });
+                },
+            },
             cols:{
                 id:{
                     submitAttr:"id",
                 },
                 index:{
                     submitAttr: "index"
-                }
+                },
+                cinventorycode: {
+                    type: "autocomplete",
+                    url: "admin/inventory/autocomplete",
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "请选择",
+                    textAttr: "cinvcode",
+                    width: 500,
+                    valueAttr: "cinvcode",
+                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
+                    header:'存货编码,客户部番,部品名称,规格,库存主单位',
+                    changeColumns:[
+                        {column: "cinvcode", use: "cinvcode"},
+                        {column: "cinvcode1", use: "cinvcode1"},
+                        {column: "cinvname1", use: "cinvname1"},
+                        {column: "cinvstd", use: "cinvstd"},
+                        {column: "cuomname", use: "cuomname"},
+                        {column: "iinventoryid", use: "iautoid"},
+                        {column: "ipkgqty", use: "ipkgqty"},
+                        {column: "ispresent", use: "isgavepresent"},
+                    ]
+                },
+                ivendoraddrid:{
+
+                    type:"select",
+                    required:true,
+                    url:"admin/purchaseorderm/findByiVendorId?vendorId=#(purchaseOrderM.iVendorId??)",
+                    valueAttr:"iautoid",
+                    textAttr:"cdistrictname"
+                },
+                cmemo:{
+                    type: "input"
+                },
+                #for(day: dateHeadList)
+                    #if(day.dateStr)
+                    '#(day.dateStr)':{
+                            type: "amount",
+                            placeholder: '数量',
+                            summary: [{
+                            dir: "v",
+                            tofixed: 2,
+                            roundtag: "round",
+                            removezero: true,
+                            formula: "sum"
+                        }]
+                    },
+                    #end
+                #end
             }
         };
         return editableTableOptions;
@@ -301,24 +348,14 @@
             if (!FormChecker.check("#PurchaseOrderM_Form")){
                 return;
             }
-            var data = getTableData();
+            var data = getJboltTableAllDatas('#PurchaseOrderM_Table_');
             if (!data || data.length ==0){
                 LayerMsgBox.alert("表格数据不能为空",2);
                 return;
             }
-            LayerMsgBox.loading();
-            var formData = formToJson('#PurchaseOrderM_Form');
-            Ajax.post('/admin/purchaseorderm/submit', {
-                formData: JSON.stringify(formData),
-                tableData: '#(tableDataStr)',
-                invTableData: JSON.stringify(data),
-                type: '0'
-            },  function(ret) {
-                LayerMsgBox.success(ret.msg, 1000, function () {
-                    parent.LayerMsgBox.closeAll();
-                    parent.refreshPjaxContainer();
-                });
-            });
+            if (jboltTableGetSubmitData("#PurchaseOrderM_Table_")){
+                jboltTableSubmit("#PurchaseOrderM_Table_");
+            }
         });
     #end
 </script>

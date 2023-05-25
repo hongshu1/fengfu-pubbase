@@ -107,6 +107,13 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 				// TODO 可能需要补充校验组织账套权限
 				// TODO 存在关联使用时，校验是否仍在使用
 
+				Integer[] state = {2,3};
+				for (int i = 0; i < state.length; i++) {
+					System.out.println(state[i]);
+					if (state[i] ==materialsOut.getState()){
+						ValidationUtils.isTrue(false, "审核中、已审核的记录不允许删除,修改！！！");
+					}
+				}
 				//删除行数据
 				materialsOutDetailService.deleteByBatchIds(autoId);
 				ValidationUtils.isTrue(materialsOut.delete(), JBoltMsg.FAIL);

@@ -305,67 +305,6 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
-
-    //搜索
-    function search(){
-        $.ajax({
-            url:`http://localhost:8081/admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=${parms.searchSupplier}&cinvcode='A800135'&cinvcode1='26000-52F-0030'&cinvname1="52F液力变矩器"`,
-            type:'get',
-            dataType:'json',
-            success:function (res){
-                console.log(res)
-                // parms.supplierData=res.data;
-                // for (var i = 0; i < res.data.length; i++) {
-                //     var jsonObj = res.data[i];
-                //     $("#supplier_id").append(`
-                //     <li class="dropdown-item" id="li" onClick='supplierClick("${jsonObj.cvenname}")'
-                //      value='${jsonObj.cvenname}' style="display:flex;"><span style=flex:1;>
-                //      ${jsonObj.cvenname}
-                //      </span></li>`);
-                // }
-            },error: function(error) {
-                console.log(error,"预示保存弹出层");
-            }
-        })
-    }
-    //获取当前点击的供应商
-    function supplierClick(item) {
-        let supplierValue = document.all['supplier'];
-        supplierValue.innerText = item;
-            parms.searchSupplier=item;
-            console.log(parms.searchSupplier);
-    }
-    //全选按钮事件
-    function checkAll(){
-        //获取id的dom元素
-        let Id = document.getElementById('all');
-        parms.supplierValueArray.length=0;
-        if(Id.checked==true){
-            for (let i = 0; i < parms.supplierData.length; i++) {
-                parms.supplierValueArray.push(parms.supplierData[i].iautoid)
-            }
-            console.log(parms.supplierValueArray);
-        }else{
-            parms.supplierValueArray.length=0;
-            console.log(parms.supplierValueArray);
-        }
-    }
-    //获取当前点击选中的供应商
-    function supplierChange(item,id) {
-        let supplierValue = document.all['col'];
-        supplierValue.innerText = item;
-        let index = parms.supplierValueArray.findIndex(v => v==id);
-        if (index == -1) {
-            parms.supplierValueArray.push(id);
-            // for (var i = 0; i < parms.supplierData.length; i++) {
-            //     if(parms.supplierData[i].iautoid==id){
-            //         console.log("9889")
-            //         $("#li").append(`<span style="border-radius: 50%;background-color:#ccc;padding:0px 9px;">x</span>`);
-            //     }
-            // }
-            console.log(parms.supplierValueArray)
-        }
-    }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
@@ -417,8 +356,10 @@
 
     //设置全局表单的背景颜色
     spread.options.grayAreaBackColor = '#fff';
-
-    //初始化表格数据
+    /**
+     * 初始化表格数据
+     * @param loadInit
+     */
     function loadInit(){
         spreadSuspend();//暂停绘制
         //设置全局的列宽行高
@@ -469,8 +410,12 @@
         spread.resumeCalcService(); //开启计算服务
         spread.resumePaint(); //恢复绘制
     }
-
-    //获取接口返回的日期数据渲染
+    /**
+     * 获取接口返回的日期数据渲染
+     * @param initDate
+     * @param parms 自定义对象，用于接收数据
+     * @param sheet 当前活动表单
+     */
     function initDate(parms,sheet) {
         let url = "http://localhost:8081/admin/scheduproductplanmonth/getTableHead";
         //获取接口数据
@@ -509,8 +454,10 @@
             spreadResume();// 恢复绘制
         });
     }
-
-    //渲染表格数据
+    /**
+     * 渲染表格数据
+     * @param initData
+     */
     function initData(){
         let url = "http://localhost:8081/admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=&cinvcode=&cinvcode1=&cinvname1=";
         $.ajax({
@@ -711,7 +658,11 @@
         }
     }
 
-    //预示保存确定按钮事件
+    //
+    /**
+     * 预示保存确定按钮事件
+     * @param indicateSave
+     */
     function indicateSave(){
         let startTime = document.getElementById('start-time').value.substring(0,10);//获取开始时间
         let endTime = document.getElementById('end-time').value.substring(0,10);//获取结束时间
@@ -743,7 +694,81 @@
     closeIndicate.onclick = function(){
         myIndicate.style.display = "none";
     }
-
-
+    /**
+     * 搜索
+     * @param search
+     */
+    function search(){
+        $.ajax({
+            url:`http://localhost:8081/admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=${parms.searchSupplier}&cinvcode='A800135'&cinvcode1='26000-52F-0030'&cinvname1="52F液力变矩器"`,
+            type:'get',
+            dataType:'json',
+            success:function (res){
+                console.log(res)
+                // parms.supplierData=res.data;
+                // for (var i = 0; i < res.data.length; i++) {
+                //     var jsonObj = res.data[i];
+                //     $("#supplier_id").append(`
+                //     <li class="dropdown-item" id="li" onClick='supplierClick("${jsonObj.cvenname}")'
+                //      value='${jsonObj.cvenname}' style="display:flex;"><span style=flex:1;>
+                //      ${jsonObj.cvenname}
+                //      </span></li>`);
+                // }
+            },error: function(error) {
+                console.log(error,"预示保存弹出层");
+            }
+        })
+    }
+    /**
+     * 获取当前点击的供应商
+     * @param supplierClick
+     * @param item 当前点击选中的供应商名称
+     */
+    function supplierClick(item) {
+        let supplierValue = document.all['supplier'];
+        supplierValue.innerText = item;
+        parms.searchSupplier=item;
+        console.log(parms.searchSupplier);
+    }
+    /**
+     * 全选按钮事件
+     * @param checkAll
+     */
+    function checkAll(){
+        //获取id的dom元素
+        let Id = document.getElementById('all');
+        parms.supplierValueArray.length=0;
+        if(Id.checked==true){
+            for (let i = 0; i < parms.supplierData.length; i++) {
+                parms.supplierValueArray.push(parms.supplierData[i].iautoid)
+            }
+            console.log(parms.supplierValueArray);
+        }else{
+            parms.supplierValueArray.length=0;
+            console.log(parms.supplierValueArray);
+        }
+    }
+    //
+    /**
+     * 存储用户点击选中的供应商
+     * @param supplierChange
+     * @param item 当前点击选中的供应商
+     * @param id id
+     */
+    function supplierChange(item,id) {
+        let supplierValue = document.all['col'];
+        supplierValue.innerText = item;
+        let index = parms.supplierValueArray.findIndex(v => v==id);
+        if (index == -1) {
+            parms.supplierValueArray.push(id);
+            // for (var i = 0; i < parms.supplierData.length; i++) {
+            //     if(parms.supplierData[i].iautoid==id){
+            //         console.log("9889")
+            //         $("#li").append(`<span style="border-radius: 50%;background-color:#ccc;padding:0px 9px;">x</span>`);
+            //     }
+            // }
+            console.log(parms.supplierValueArray)
+        }
+    }
 </script>
 #end
