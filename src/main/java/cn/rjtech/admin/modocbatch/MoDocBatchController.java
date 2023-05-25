@@ -122,4 +122,12 @@ public class MoDocBatchController extends BaseAdminController {
         renderJson(service.save(getModel(MoMotask.class, "moMotask")));
     }
 
+    /**
+     * 人员编辑
+     */
+    public void personEdit() {
+        keepPara();
+        render("person_edit.html");
+    }
+
 }
