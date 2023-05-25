@@ -300,4 +300,8 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
     public Object getPrintDataCheck(Kv kv) {
         return dbTemplate("warehousearea.containerPrintData", kv).find();
     }
+
+    public List<Record> options(Kv kv){
+        return dbTemplate("warehousearea.options", kv).find();
+    }
 }

@@ -589,6 +589,24 @@ WHERE a.isDeleted = '0'
         END AS NVARCHAR(30)) ) <= #para(enddate)
 #end
 
+#sql("getInvRoutingList")
+###根据工艺路线id集查询各存货工艺路线
+SELECT b.cInvCode,a.*
+FROM Bd_InventoryRouting AS a
+         LEFT JOIN Bd_Inventory AS b ON a.iInventoryId = b.iAutoId
+WHERE a.iAutoId IN #(ids)
+#end
+
+#sql("getInvRoutingConfigList")
+###根据工艺路线id集查询各存货工艺路线配置
+SELECT *
+FROM Bd_InventoryRoutingConfig
+WHERE isEnabled = 1
+  AND iInventoryRoutingId IN #(ids)
+#end
+
+
+
 #sql("getMotaskByEndDateList")
 ###查询任务工单表结束日期 > 解锁开始日期&&未审核数据
 SELECT iAutoId,dBeginDate,dEndDate

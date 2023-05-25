@@ -1,5 +1,6 @@
 package cn.rjtech.api.modoc;
 
+import cn.jbolt.core.api.OpenAPI;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.modoc.ModocApiPageVo;
@@ -66,6 +67,7 @@ public class ModocApiController extends BaseApiController {
    */
   @ApiDoc(result = ModocApiPageVo.class)
   @UnCheck
+  @OpenAPI
   public void page(@Para(value = "page") Integer page,
                    @Para(value = "pageSize") Integer pageSize,
                    @Para(value = "cmodocno") String cmodocno,

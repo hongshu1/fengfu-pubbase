@@ -25,6 +25,7 @@ import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -56,7 +57,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
     private AnnualOrderDService annualOrderDService;
     @Inject
     private AnnualorderdQtyService annualorderdQtyService;
-
     //月度计划Service
     @Inject
     private MonthorderdService monthorderdService;
@@ -75,7 +75,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
      * @param pageSize   每页几条数据
      * @param keywords   关键词
      * @param iType      类型：1. 客户计划 2. 客户订单 3. 计划使用
-     * @return
      */
     public Page<CusOrderSum> getAdminDatas(int pageNumber, int pageSize, String keywords, Integer iType) {
         //创建sql对象
@@ -91,9 +90,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 
     /**
      * 保存
-     *
-     * @param cusOrderSum
-     * @return
      */
     public Ret save(CusOrderSum cusOrderSum) {
         if (cusOrderSum == null || isOk(cusOrderSum.getIAutoId())) {
@@ -110,9 +106,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 
     /**
      * 更新
-     *
-     * @param cusOrderSum
-     * @return
      */
     public Ret update(CusOrderSum cusOrderSum) {
         if (cusOrderSum == null || notOk(cusOrderSum.getIAutoId())) {
@@ -137,7 +130,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
      *
      * @param cusOrderSum 要删除的model
      * @param kv          携带额外参数一般用不上
-     * @return
      */
     @Override
     protected String afterDelete(CusOrderSum cusOrderSum, Kv kv) {
@@ -150,7 +142,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
      *
      * @param cusOrderSum model
      * @param kv          携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkInUse(CusOrderSum cusOrderSum, Kv kv) {
@@ -160,7 +151,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 
     /**
      * 客户计划汇总计算
-     * @return
      */
     public Ret algorithmSum() {
         //当前年
@@ -573,7 +563,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
                             if (null != customerWorkDays) {
                                 workDay = customerWorkDays.get("iMonth" + annualorderdQty.getIMonth() + "Days");
                             }
-                            BigDecimal divide = annualorderdQty.getIQty().divide(new BigDecimal(workDay), BigDecimal.ROUND_HALF_UP);
+                            BigDecimal divide = annualorderdQty.getIQty().divide(new BigDecimal(workDay), RoundingMode.HALF_UP);
                             for (int i = 1; i <= 31; i++) {
                                 cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
                                 cusOrderSum.setIDate(i);
@@ -600,7 +590,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
                     //月
                     cusOrderSum.setIMonth(annualorderdQty.getIMonth());
                     Integer workDay = customerWorkDays.get("iMonth" + annualorderdQty.getIMonth() + "Days");
-                    BigDecimal divide = annualorderdQty.getIQty().divide(new BigDecimal(workDay), BigDecimal.ROUND_HALF_UP);
+                    BigDecimal divide = annualorderdQty.getIQty().divide(new BigDecimal(workDay), RoundingMode.HALF_UP);
                     for (int i = 1; i <= 31; i++) {
                         cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
                         cusOrderSum.setIDate(i);
@@ -634,53 +624,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
         return cusOrderSum;
     }
 
-    public Ret approveByMonth(MonthOrderM monthorderm) {
-        algorithmSum();
-        /*List<Monthorderd> monthorderds = monthorderdService.findByMid(monthorderm.getIAutoId());
-
-        CusOrderSum cusOrderSum = createCusOrderSum();
-        cusOrderSum.setIYear(monthorderm.getIYear());
-        cusOrderSum.setIMonth(monthorderm.getIMonth());
-
-        for (Monthorderd monthorderd : monthorderds) {
-            List<CusOrderSum> cusOrderSums = find(selectSql().eq("iYear", monthorderm.getIYear())
-                    .eq("iMonth", monthorderm.getIMonth())
-                    .eq("iInventoryId", monthorderd.getIInventoryId())
-                    .orderBy("iDate", "asc"));
-            int size = cusOrderSums.size();
-            if (size > 0) {
-                int b = size + 1;
-                for (CusOrderSum orderSum : cusOrderSums) {
-                    orderSum.setIQty1(monthorderd.get("iQty" + orderSum.getIDate()));
-                    orderSum.setIUpdateBy(JBoltUserKit.getUserId());
-                    orderSum.setCUpdateName(JBoltUserKit.getUserName());
-                    orderSum.setDUpdateTime(new Date());
-                    orderSum.update();
-                    if (size < 31) {
-                        for (int i = b; 31 - size > 0; i++) {
-                            cusOrderSum.setIInventoryId(monthorderd.getIInventoryId());
-                            cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
-                            cusOrderSum.setIDate(i);
-                            cusOrderSum.setIQty1(monthorderd.get("iQty" + i));
-                            cusOrderSum.save();
-                            size++;
-                        }
-                    }
-                }
-            } else {
-                cusOrderSum.setIInventoryId(monthorderd.getIInventoryId());
-                for (int i = 1; i <= 31; i++) {
-                    cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
-                    cusOrderSum.setIDate(i);
-                    cusOrderSum.setIQty1(monthorderd.get("iQty" + i));
-                    cusOrderSum.save();
-                }
-            }
-        }*/
-
-        return SUCCESS;
-    }
-
     public Object findCusOrderSum(Integer pageNumber, Integer pageSize, Kv para) throws ParseException {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
@@ -702,7 +645,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
             String str = sdf.format(calendar.getTime());
             String[] strArr = str.split("-");
             months.add(strArr[1]);
-            if (strArr[1].equals("12")) {
+            if ("12".equals(strArr[1])) {
                 dateMap.put(strArr[0], StringUtils.join(months, COMMA));
                 months.clear();
 
@@ -739,109 +682,9 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
         return pageData;
     }
 
-    /**
-     * 周间客户订单审批通过触发客户计划汇总-客户订单
-     *
-     * @param weekOrderDS
-     */
-    public void handelWeekOrder(List<WeekOrderD> weekOrderDS) {
-        algorithmSum();
-        /*//周间遍历
-        for (WeekOrderD weekOrderD : weekOrderDS) {
-            Date dPlanAogDate = weekOrderD.getDPlanAogDate();
-            //年月日
-            int year = dPlanAogDate.getYear() + 1900;
-            int month = dPlanAogDate.getMonth();
-            int date = dPlanAogDate.getDate();
-            CusOrderSum cusOrderSum = findDistinctByInYMD(weekOrderD.getIInventoryId(), year, month, date);
-			*//*CusOrderSum cusOrderSum = findFirst(selectSql().eq("iInventoryId", weekOrderD.getIInventoryId())
-					.eq("iYear", year).eq("iMonth", month).eq("iDate", date));*//*
-            if (null != cusOrderSum) {
-                BigDecimal iQty2 = cusOrderSum.getIQty2();
-                if (iQty2 != null) {
-                    cusOrderSum.setIQty2(cusOrderSum.getIQty2().add(new BigDecimal(weekOrderD.getIQty())));
-                } else {
-                    cusOrderSum.setIQty2(new BigDecimal(weekOrderD.getIQty()));
-                }
-                //更新信息
-                cusOrderSum.setIUpdateBy(JBoltUserKit.getUserId());
-                cusOrderSum.setCUpdateName(JBoltUserKit.getUserName());
-                cusOrderSum.setDUpdateTime(new Date());
-                cusOrderSum.update();
-            } else {
-                cusOrderSum = createCusOrderSum();
-                cusOrderSum.setIYear(year);
-                cusOrderSum.setIMonth(month);
-                cusOrderSum.setIDate(date);
-                cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
-
-                cusOrderSum.setIInventoryId(weekOrderD.getIInventoryId());
-                cusOrderSum.setIQty2(new BigDecimal(weekOrderD.getIQty()));
-                cusOrderSum.save();
-            }
-        }*/
-    }
-
     private CusOrderSum findDistinctByInYMD(Long iInventoryId, int year, int month, int date) {
         return findFirst(selectSql().eq("iInventoryId", iInventoryId)
                 .eq("iYear", year).eq("iMonth", month).eq("iDate", date));
-    }
-
-    /**
-     * 手配订单审批通过触发客户计划汇总-客户订单
-     *
-     * @param manualOrderDS
-     */
-    public void handelManualOrder(ManualOrderM manualOrderM, List<ManualOrderD> manualOrderDS) {
-        algorithmSum();
-        /*for (ManualOrderD manualOrderD : manualOrderDS) {
-            List<CusOrderSum> cusOrderSums = find(selectSql().eq("iInventoryId", manualOrderD.getIInventoryId())
-                    .eq("iYear", manualOrderM.getIYear()).eq("iMonth", manualOrderM.getIMonth()).orderBy(OrderBy.asc("iDate")));
-
-            CusOrderSum cusOrderSum = createCusOrderSum();
-            cusOrderSum.setIYear(manualOrderM.getIYear());
-            cusOrderSum.setIMonth(manualOrderM.getIMonth());
-
-            boolean mark = true;
-            for (int i = 1; i <= 31; i++) {
-                BigDecimal IQty = manualOrderD.get("IQty" + i);
-                if (null != IQty) {
-                    if (cusOrderSums.size() > 0) {
-                        for (CusOrderSum orderSum : cusOrderSums) {
-                            if (orderSum.getIDate() == i) {
-                                BigDecimal iQty = manualOrderD.get("IQty" + orderSum.getIDate());
-                                BigDecimal iQty2 = orderSum.getIQty2();
-                                if (iQty2 != null && null != iQty) {
-                                    orderSum.setIQty2(orderSum.getIQty2().add(iQty));
-                                } else {
-                                    orderSum.setIQty2(iQty);
-                                }
-                                //更新信息
-                                orderSum.setIUpdateBy(JBoltUserKit.getUserId());
-                                orderSum.setCUpdateName(JBoltUserKit.getUserName());
-                                orderSum.setDUpdateTime(new Date());
-                                orderSum.update();
-                                mark = false;
-                            }
-                        }
-                        if (mark) {
-                            cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
-                            cusOrderSum.setIDate(i);
-                            cusOrderSum.setIQty2(IQty);
-                            cusOrderSum.setIInventoryId(manualOrderD.getIInventoryId());
-                            cusOrderSum.save();
-                        }
-                    } else {
-                        cusOrderSum.setIAutoId(JBoltSnowflakeKit.me.nextId());
-                        cusOrderSum.setIDate(i);
-                        cusOrderSum.setIQty2(IQty);
-                        cusOrderSum.setIInventoryId(manualOrderD.getIInventoryId());
-                        cusOrderSum.save();
-
-                    }
-                }
-            }
-        }*/
     }
 
     public void handelSubcontractsaleorderd(Subcontractsaleorderm subcontractsaleorderm, List<Subcontractsaleorderd> subcontractsaleorderds) {

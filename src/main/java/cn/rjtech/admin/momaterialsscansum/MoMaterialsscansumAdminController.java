@@ -58,7 +58,7 @@ public class MoMaterialsscansumAdminController extends BaseAdminController {
 	}
 
   /**
-	* 保存
+	* s
 	*/
 	public void save() {
 		renderJson(service.save(getModel(MoMaterialsscansum.class, "moMaterialsscansum")));
@@ -83,6 +83,11 @@ public class MoMaterialsscansumAdminController extends BaseAdminController {
 	*/
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
+	}
+
+
+	public void getBarcode(String barcode){
+		renderJson(service.getBarcode(barcode));
 	}
 
 
