@@ -12,6 +12,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 
 /**
  * 客户档案-联系地址
@@ -95,6 +96,17 @@ public class CustomerAddrAdminController extends BaseAdminController {
      */
     public void toggleIsenabled() {
         renderJson(service.toggleIsenabled(getLong(0)));
+    }
+
+    /**
+     *  仓库试图数据源
+     */
+    public void wareHouse() {
+        String OrgCode = getOrgCode();
+        Kv kv = new Kv();
+        kv.setIfNotNull("orgCode", OrgCode);
+        kv.setIfNotNull("q", get("q"));
+        renderJsonData(service.getwareHouseDatas(kv));
     }
 
 
