@@ -7,36 +7,26 @@
             <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产备料</h1></div>
             <div class="col-sm-auto">
                 <form class="form-inline" id="SysMaterialsprepare_form_#(pageId)">
-                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期"
-                           maxlength="20"
-                           name="startTime" value=""/>
-                    <span>至</span>
-                    <input type="text" data-date class="form-control ml-2" placeholder="截止日期"
-                           maxlength="20"
-                           name="endTime" value=""/>
-                    <select class="form-control"
-                            name="cworkcode"
-                            data-autoload
-                            data-url="admin/productionMaterial/options"
-                            data-select-type="select2"
-                            data-text="=产线名称="
-                            data-value=""
-                            data-value-attr="cworkcode"
-                            data-text-attr="cworkname"
-                            data-select="#(cWorkName??)"></select>
-                    <select class="form-control"
-                            name="cworkshiftcode"
-                            data-autoload
-                            data-url="admin/productionMaterial/options1"
-                            data-select-type="select2"
-                            data-text="=班次名称="
-                            data-value=""
-                            data-value-attr="cworkshiftcode"
-                            data-text-attr="cworkshiftname"
-                            data-select="#(cWorkShiftName??)"></select>
-                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询
+                    <input type="text" class="form-control ml-2" placeholder="备料单号"
+                           maxlength="40"
+                           name="billno"
+                           value=""
+                           data-dialogbtn data-area="100%,100%"
+                           data-handler="jboltTablePageToFirst"
+                           id="billno"
+                           data-title="选择备料单"
+                           data-url="admin/productionMaterial/formD"
+                           readonly
+                           style="background-color: white"
+                    />
+                    <input type="text" class="form-control ml-2" placeholder="现品票扫码"
+                           maxlength="40"
+                           name=""
+                           value=""
+                    />
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索
                     </button>
-                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置
+                    <button type="reset" class="btn btn-outline-secondary"> 重置
                     </button>
                     <button type="submit" class="btn btn-outline-secondary"> 提交备料
                     </button>
@@ -58,35 +48,32 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>
-	<a class="jbolt_table_editbtn" href="admin/productionMaterial/edit/${data.AutoID}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑材料备料表"><i class="fa fa-edit">备料</i></a>
-</td>
-<td>${data.statename}</td>
-<td>${data.auditperson}</td>
-<td>${data.imotaskid}</td>
-<td>${data.idepartmentid}</td>
-<td>${data.iworkshiftmid}</td>
-<td>${data.dplandate}</td>
+<td>${data.billno}</td>
+<td>${data.cmodocno}</td>
 <td>${data.invcode}</td>
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
-<td>${data.organizecode}</td>
-<td>${data.organizecode}</td>
+<td>${data.cinvstd}</td>
+<td>${data.cuomname}</td>
+<td>${data.出库仓库}</td>
+<td>${data.出库库区}</td>
+<td>${data.totalqty}</td>
+<td>${data.已备料数量}</td>
 <td>${data.qty}</td>
-<td>${data.organizecode}</td>
+<td>${data.可用批次号}</td>
 </tr>
 {@/each}
 </textarea>
         <div class="jbolt_table_toolbar" id="SysMaterialsprepare_toolbar_#(pageId)">
-            工单明细
+            物料明细
         </div>
         <table class="jbolt_table jbolt_main_table  table-center"
                data-jbolttable
                data-width="fill"
-               data-height="60%"
+               data-height="55%"
                data-ajax="true"
                data-conditions-form="SysMaterialsprepare_form_#(pageId)"
-               data-url="admin/productionMaterial/datas?pageSize=10"
+               data-url="admin/sysmaterialspreparedetail/datas?pageSize=10"
                data-rowtpl="SysMaterialsprepare_tpl_#(pageId)"
                data-copy-to-excel="false"
                data-page="SysMaterialsprepare_page"
@@ -95,21 +82,20 @@
         >
             <thead class="fw-normal">
             <tr>
-                <th data-width="60" data-column="index">序号</th>
-                <th data-width="150" data-column="AutoID">操作</th>
-                <th data-width="150" data-column="OrganizeCode">状态</th>
-                <th data-width="150" data-column="BillNo">备料单号</th>
-                <th data-width="150" data-column="BillType">工单号</th>
-                <th data-width="150" data-column="BillDate">生产部门</th>
-                <th data-width="150" data-column="AuditPerson">生产班次</th>
-                <th data-width="150" data-column="AuditDate">计划日期</th>
-                <th data-width="150" data-column="CreatePerson">存货编码</th>
-                <th data-min-width="150" data-column="CreateDate">客户部番</th>
-                <th data-width="150" data-column="ModifyPerson">部品名称</th>
-                <th data-min-width="150" data-column="ModifyDate">库存单位</th>
-                <th data-width="150">需求数量</th>
-                <th data-width="150">已备料数量</th>
-                <th data-width="150">扫描数量</th>
+                <th data-width="60" data-column="">序号</th>
+                <th data-width="150" data-column="">备料单号</th>
+                <th data-width="150" data-column="">工单号</th>
+                <th data-width="150" data-column="">存货编码</th>
+                <th data-width="150" data-column="">客户部番</th>
+                <th data-width="150" data-column="">部品名称</th>
+                <th data-width="150" data-column="">规格</th>
+                <th data-width="150" data-column="">主计量单位</th>
+                <th data-width="150" data-column="">出库仓库</th>
+                <th data-min-width="150" data-column="">出库库区</th>
+                <th data-width="150" data-column="">需求数量</th>
+                <th data-min-width="150" data-column="">已备料数量</th>
+                <th data-min-width="150" data-column="">扫描数量</th>
+                <th data-min-width="150" data-column="">可用批次号</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -119,16 +105,15 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.auditdate}</td>
-<td>${data.auditperson}</td>
-<td>${data.billdate}</td>
-<td>${data.billno}</td>
-<td>${data.billtype}</td>
-<td>${data.createdate}</td>
-<td>${data.createperson}</td>
-<td>${data.modifydate}</td>
-<td>${data.modifyperson}</td>
-<td>${data.organizecode}</td>
+<td>${data.现品票}</td>
+<td>${data.存货编码}</td>
+<td>${data.客户部番}</td>
+<td>${data.部品名称}</td>
+<td>${data.规格}</td>
+<td>${data.主计量单位}</td>
+<td>${data.数量}</td>
+<td>${data.批次号}</td>
+<td>${data.生产日期}</td>
 </tr>
 {@/each}
 </textarea>
@@ -136,14 +121,10 @@
                 <div class="row">
 
                     <div class="col-auto">
-                        <form class="form-inline" id="SysOtherin_form_#(pageId)" >
+                        <form class="form-inline" id="SysOtherin_form_#(pageId)">
                             <div style="margin-right: 30px">
-                                <label>备料明细</label>
+                                <label>条码明细</label>
                             </div>
-                            <input type="text" autocomplete="off" class="form-control" placeholder="现品票扫码"
-                                   name="warehousingNo"
-                                   value=""/>
-                            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
                         </form>
                     </div>
                 </div>
@@ -162,17 +143,16 @@
             >
                 <thead class="fw-normal">
                 <tr>
-                    <th data-width="60" data-column="index">序号</th>
-                    <th data-width="150" data-column="AutoID">工单号</th>
-                    <th data-width="150" data-column="OrganizeCode">现品票</th>
-                    <th data-width="150" data-column="BillNo">存货编码</th>
-                    <th data-width="150" data-column="BillType">客户部番</th>
-                    <th data-width="150" data-column="BillDate">部品名称</th>
-                    <th data-width="150" data-column="AuditPerson">规格</th>
-                    <th data-width="150" data-column="AuditDate">库存单位</th>
-                    <th data-width="150" data-column="CreatePerson">数量</th>
-                    <th data-min-width="150" data-column="CreateDate">出库仓库</th>
-                    <th data-width="150" data-column="ModifyPerson">出库库区</th>
+                    <th data-width="60" data-column="">序号</th>
+                    <th data-width="150" data-column="">现品票</th>
+                    <th data-width="150" data-column="">存货编码</th>
+                    <th data-width="150" data-column="">客户部番</th>
+                    <th data-width="150" data-column="">部品名称</th>
+                    <th data-width="150" data-column="">规格</th>
+                    <th data-width="150" data-column="">主计量单位</th>
+                    <th data-width="150" data-column="">数量</th>
+                    <th data-min-width="150" data-column="">批次号</th>
+                    <th data-width="150" data-column="">生产日期</th>
                 </tr>
                 </thead>
                 <tbody></tbody>

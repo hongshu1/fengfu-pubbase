@@ -97,5 +97,11 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
         renderJsonData(service.options1());
     }
 
+    public void formD() {
+        render("_form1.html");
+    }
 
+    public void datasNull() {
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
+    }
 }

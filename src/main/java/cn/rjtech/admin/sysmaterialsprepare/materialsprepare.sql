@@ -21,13 +21,16 @@ SELECT mp.AutoID,
        it.cInvName1,
        dpm.cDepName,
        wsm.cWorkShiftName,
+       wsm.cWorkShiftCode,
        md.dPlanDate,
        uom.cUomName,
        md.iQty,
        wrm.cWorkName,
+       wrm.cWorkCode,
        it.cInvStd,
        emm.cEquipmentModelName,
-       md.iStatus
+       CASE md.iStatus WHEN '2' THEN '已安排人员' END AS iStatus,
+       mpd.Qty * md.iQty AS totalQty
 FROM T_Sys_MaterialsPrepare mp
     LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.MasID = mp.AutoID
     LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
@@ -38,6 +41,7 @@ FROM T_Sys_MaterialsPrepare mp
     LEFT JOIN Bd_WorkRegionM wrm ON wrm.iAutoId = md.iWorkRegionMid
     LEFT JOIN Bd_EquipmentModel emm ON emm.iAutoId = it.iEquipmentModelId
      WHERE 1 = 1
+     AND md.iStatus = 2
   #if(billno)
   AND BillNo = #para(billno)
   #end
@@ -52,6 +56,12 @@ FROM T_Sys_MaterialsPrepare mp
   #end
   #if(dplandate)
   AND dPlanDate = #para(dplandate)
+  #end
+  #if(cworkshiftcode)
+  AND cWorkShiftCode = #para(cworkshiftcode)
+  #end
+  #if(cworkcode)
+  AND cWorkCode = #para(cworkcode)
   #end
 ORDER BY mp.CreateDate DESC
     #end
@@ -101,7 +111,7 @@ SELECT mp.AutoID,
        wrm.cWorkName,
        it.cInvStd,
        emm.cEquipmentModelName,
-       md.iStatus
+       CASE md.iStatus WHEN '2' THEN '已安排人员' END AS iStatus
 FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.MasID = mp.AutoID
          LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
@@ -112,5 +122,6 @@ FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN Bd_WorkRegionM wrm ON wrm.iAutoId = md.iWorkRegionMid
          LEFT JOIN Bd_EquipmentModel emm ON emm.iAutoId = it.iEquipmentModelId
 WHERE 1 = 1
+  AND md.iStatus = 2
   AND md.cMoDocNo=  '#(cmodocno)'
     #end
