@@ -847,11 +847,12 @@ public class BomMasterService extends BaseService<BomMaster> {
 		if (StrUtil.isNotBlank(cInvCode)){
 			inventory = inventoryService.findBycInvCode(cInvCode);
 		}
-		
 		// 赋值存货id
 		if (inventory != null){
 			record.set(BomMaster.IINVENTORYID, inventory.getIAutoId());
-			record.set(BomMaster.IINVENTORYID, inventory.getCInvCode1());
+			record.set(Inventory.IWEIGHT, inventory.getIWeight());
+			record.set(BomMaster.INVCODE1, inventory.getCInvCode1());
+			record.set(BomMaster.INVADDCODE1, inventory.getCInvAddCode1());
 		}
 		return record;
 	}
@@ -961,8 +962,6 @@ public class BomMasterService extends BaseService<BomMaster> {
 				if (perIndexOf > -1){
 					Record record = list.get(perIndexOf);
 					record.setColumns(rowRecord);
-					// 匹配存货编码
-					setInventory(record);
 				}
 				perCacheRecord = null;
 				continue;
@@ -1044,6 +1043,8 @@ public class BomMasterService extends BaseService<BomMaster> {
 		// 备注
 		XSSFCell cMeCell = row.getCell(27);
 		record.set(BomCompare.CMEMO, getStringCellValue(cMeCell));
+		// 匹配存货编码
+		setInventory(record);
 	}
 	
 	private void buildLastRow(XSSFSheet sheet, XSSFRow row, Record record){
@@ -1175,16 +1176,19 @@ public class BomMasterService extends BaseService<BomMaster> {
 			case 0:
 				record.set(BomCompare.ORIGINALITEMID, inventory.getIAutoId());
 				record.set(BomCompare.ORIGINALITEMCODE, inventory.getCInvCode());
+				record.set(BomCompare.ORIGINALSTD, inventory.getCInvStd());
 				record.set(BomCompare.ORIGINALINVNAME, inventory.getCInvName());
 				break;
 			case 1:
 				record.set(BomCompare.SLICINGINVITEMID, inventory.getIAutoId());
 				record.set(BomCompare.SLICINGINVITEMCODE, inventory.getCInvCode());
+				record.set(BomCompare.SLICINGSTD, inventory.getCInvStd());
 				record.set(BomCompare.SLICINGINVNAME, inventory.getCInvName());
 				break;
 			case 2:
 				record.set(BomCompare.BLANKINGITEMID, inventory.getIAutoId());
 				record.set(BomCompare.BLANKINGITEMCODE, inventory.getCInvCode());
+				record.set(BomCompare.BLANKINGSTD, inventory.getCInvStd());
 				record.set(BomCompare.BLANKINGINVNAME, inventory.getCInvName());
 				break;
 		}
