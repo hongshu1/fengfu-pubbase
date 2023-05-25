@@ -38,7 +38,8 @@
 			</div>
 			<div class="col-md-auto">
 				<div class="btn-group" role="group" aria-label="btn-group">
-					<a id="addid" onclick="addDatas()"   data-area="80%,80%"   data-title="新增一级科目"   data-handler="refreshJBoltTable"   class="jbolt_table_editbtn btn btn-outline-info btn-sm"><i class="fa fa-plus">新增一级科目</i></a>
+					<!-- <a id="addid" onclick="addDatas()"   data-area="80%,80%"   data-title="新增一级科目"   data-handler="refreshJBoltTable"   class="jbolt_table_editbtn btn btn-outline-info btn-sm"><i class="fa fa-plus">新增一级科目</i></a> -->
+					<button data-openpage="dialog" data-area="80%,80%" data-handler="refreshJBoltTable" data-check-handler="addBeforeHandler" data-title="新增一级科目" data-url="admin/subjectm/add/" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增一级科目</button>
 					<button onclick="enable(1)"  data-title="版本启用"  class="btn btn-outline-primary btn-sm" ><i class="fa  "></i> 启用</button>
 					<button onclick="enable(0)"  data-title="版本停用"  class="btn btn-outline-info btn-sm" ><i class="fa "></i> 停用</button>
 					<button onclick="copyDatas()"  data-title="复制数据"  class="btn btn-outline-info btn-sm" ><i class="fa "></i> 复制</button>
@@ -130,7 +131,11 @@ $(function(){});
 		let s = 'admin/subjectm/add/0-1?cversion='+value;
 		value1.setAttribute('href', s);
 	}
-
+	function addBeforeHandler(ele){
+		var cversion = document.getElementById("cversion").value;
+		ele.data("paras",{cversion:cversion});
+		return "0-1";
+	}
 	function enable(data){
 		var keywords = $("input[name='keywords']").val();
 		var cversion = $("input[name='cversion']").val();
