@@ -80,17 +80,20 @@ public class PersonService extends BaseService<Person> {
      * 后台管理分页查询
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
-        para.set("iorgid", getOrgId());
+        para.set("iorgid", getOrgId())
+                .set("corgcode", getOrgCode());
+        
         Boolean isenabled = para.getBoolean("isenabled");
-        //是否启用boolean转char
-        String isenabledStr = isenabled == null ? null : (isenabled ? "1" : "0");
-        para.set("isenabled", isenabledStr);
+        // 是否启用boolean转char
+        para.set("isenabled", isenabled == null ? null : (isenabled ? "1" : "0"));
+        
         Page<Record> pageList = dbTemplate("person.paginateAdminDatas", para).paginate(pageNumber, pageSize);
+        
         for (Record row : pageList.getList()) {
-            row.set("cdepname", deptService.findNameBySn(row.getStr("cdept_num")));
             row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("iuserid")));
             row.set("sysworkage", calcSysworkage(row.getDate("dhiredate")));
         }
+        
         return pageList;
     }
 
