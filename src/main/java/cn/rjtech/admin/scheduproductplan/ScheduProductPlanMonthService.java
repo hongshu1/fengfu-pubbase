@@ -12,6 +12,7 @@ import cn.rjtech.admin.apsweekschedule.ApsWeekscheduleService;
 import cn.rjtech.admin.apsweekscheduledetails.ApsWeekscheduledetailsService;
 import cn.rjtech.admin.apsweekscheduledqty.ApsWeekscheduledQtyService;
 import cn.rjtech.admin.calendar.CalendarService;
+import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.momotask.MoMotaskService;
 import cn.rjtech.model.momdata.*;
@@ -676,7 +677,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int[] capabilityArrar = new int[3];
                 List<Record> capacityList = invCapacityListMap.get(inv) != null ? invCapacityListMap.get(inv) : new ArrayList<>();
                 for (int i = 0; i < capacityList.size(); i++) {
-                    String cWorkShiftCode = capacityList.get(i).getStr("capacityList");
+                    String cWorkShiftCode = capacityList.get(i).getStr("capacityList") != null ? capacityList.get(i).getStr("capacityList") : "";
                     int iCapacity = capacityList.get(i).getInt("iCapacity");
                     if (cWorkShiftCode.contains("1S")){
                         capabilityArrar[0] = iCapacity;
@@ -1084,6 +1085,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return dataList;
     }
 
+    @Inject
+    private InventoryRoutingConfigService inventoryRoutingConfigService;
 
     /**
      * 锁定计划
@@ -1134,11 +1137,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         Map<String,Record> invInfoMap = new HashMap<>();
         //本次排产物料id集
         String idsJoin = "(";
+        //本次排产物料工艺路线id集
+        String routingIdsJoin = "(";
         List<Long> idList = new ArrayList<>();
         for (Record record : apsPlanQtyList){
             Long iDepId = record.getLong("iDepId");
             Long invId = record.getLong("invId");
             String cInvCode = record.getStr("cInvCode");
+            Long iInventoryRoutingId = record.getLong("iInventoryRoutingId");//存货工艺路线
             String iYear = record.getStr("iYear");
             int iMonth = record.getInt("iMonth");
             int iDate = record.getInt("iDate");
@@ -1193,9 +1199,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             if (!idList.contains(invId)){
                 idsJoin = idsJoin + invId + ",";
                 idList.add(invId);
+                if (isOk(iInventoryRoutingId)){
+                    routingIdsJoin = routingIdsJoin + iInventoryRoutingId + ",";
+                }
             }
         }
         idsJoin = idsJoin + "601)";
+        routingIdsJoin = routingIdsJoin + "601)";
 
 
         //TODO:周分类
@@ -1234,10 +1244,37 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
 
+        //TODO:根据工艺路线id集查询各存货工艺路线
+        List<Record> invRoutingList = dbTemplate("scheduproductplan.getInvRoutingList",Kv.by("ids",routingIdsJoin)).find();
+        //key:inv    value:record
+        Map<String,Record> invRoutingMap = new HashMap<>();
+        for (Record record : invRoutingList){
+            String cInvCode = record.getStr("cInvCode");
+            invRoutingMap.put(cInvCode,record);
+        }
+        //TODO:根据工艺路线id集查询各存货工艺路线配置
+        List<InventoryRoutingConfig> getInvRoutingConfigList = inventoryRoutingConfigService.daoTemplate("scheduproductplan.getInvRoutingConfigList",Kv.by("ids",routingIdsJoin)).find();
+        //key:invRoutingId    value:List<InventoryRoutingConfig>
+        Map<Long,List<InventoryRoutingConfig>> invRoutingConfigListMap = new HashMap<>();
+        for (InventoryRoutingConfig invRoutingConfig : getInvRoutingConfigList){
+            Long iInventoryRoutingId = invRoutingConfig.getIInventoryRoutingId();
+            if (invRoutingConfigListMap.containsKey(iInventoryRoutingId)){
+                List<InventoryRoutingConfig> list = invRoutingConfigListMap.get(iInventoryRoutingId);
+                list.add(invRoutingConfig);
+            }else {
+                List<InventoryRoutingConfig> list = new ArrayList<>();
+                list.add(invRoutingConfig);
+                invRoutingConfigListMap.put(iInventoryRoutingId,list);
+            }
+        }
+
+
         //任务单
         List<MoMotask> moTaskList = new ArrayList<>();
         //工单
         List<MoDoc> moDocList = new ArrayList<>();
+
+        List<MoMorouting> moMoroutingList = new ArrayList<>();
 
         Long userId = JBoltUserKit.getUserId();
         String userName = JBoltUserKit.getUserName();
@@ -1283,6 +1320,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 for (String inv : recordList){
                     //inv信息
                     Record invInfo = invInfoMap.get(inv);
+                    Long iInventoryRoutingId = invInfo.getLong("iInventoryRoutingId");
+                    //工艺路线
+                    Record invRouting = invRoutingMap.get(inv);
+                    //工艺路线配置
+                    List<InventoryRoutingConfig> invRoutingConfigList = invRoutingConfigListMap.get(iInventoryRoutingId);
+
                     //key:yyyy-MM-dd   value:qty1S
                     Map<String,BigDecimal> dateQtyMap = invPlanDate1SMap.get(inv);
                     //班次ID 1S
@@ -1290,10 +1333,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
                     Long invId = invInfo.getLong("invId");
                     Long iWorkRegionMid = invInfo.getLong("iWorkRegionMid");
-                    Long iInventoryRoutingId = invInfo.getLong("iInventoryRoutingId");
                     String cRoutingName = invInfo.getStr("cRoutingName");
                     String cVersion = invInfo.getStr("cVersion");
-
                     for (String date : dateList){
                         Date dPlanDate = DateUtils.parseDate(date);
                         int year = Integer.parseInt(date.substring(0,4));
@@ -1304,8 +1345,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                             //任务单号
                             String planNo2 = momDataFuncService.getNextRouteNo(1L, "MOD"+dateStr, 3);
 
+                            Long moDocId = JBoltSnowflakeKit.me.nextId();
                             MoDoc moDoc = new MoDoc();
-                            moDoc.setIAutoId(JBoltSnowflakeKit.me.nextId());
+                            moDoc.setIAutoId(moDocId);
                             moDoc.setIType(1);
                             moDoc.setIMoTaskId(taskId);
                             moDoc.setIWorkRegionMid(iWorkRegionMid);
@@ -1323,6 +1365,24 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                             moDoc.setCRoutingName(cRoutingName);
                             moDoc.setCVersion(cVersion);
                             moDocList.add(moDoc);
+
+                            if (invRouting != null){
+                                Long moRoutingId = JBoltSnowflakeKit.me.nextId();
+                                MoMorouting moMorouting = new MoMorouting();
+                                moMorouting.setIAutoId(moRoutingId);
+                                moMorouting.setIMoDocId(moDocId);
+                                moMorouting.setIInventoryRoutingId(iInventoryRoutingId);
+                                moMorouting.setIInventoryId(invId);
+                                moMorouting.setCRoutingName(invRouting.getStr("cRoutingName"));
+                                moMorouting.setCVersion(invRouting.getStr("cVersion"));
+                                moMorouting.setIFinishedRate(invRouting.getBigDecimal("iFinishedRate"));
+                                moMorouting.setCRequirement(invRouting.getStr("cRequirement"));
+                                moMorouting.setCMemo(invRouting.getStr("cMemo"));
+                                moMoroutingList.add(moMorouting);
+
+
+
+                            }
                         }
                     }
                 }
