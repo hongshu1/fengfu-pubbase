@@ -17,7 +17,6 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.Subcontractsaleorderd;
 import cn.rjtech.model.momdata.Subcontractsaleorderm;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -274,13 +273,6 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         }
         for (Object id : ids) {
             subcontractsaleorderdService.deleteById(id);
-        }
-    }
-
-    public void handleCusOrderBySubcontract(Subcontractsaleorderm subcontractsaleorderm) {
-        List<Subcontractsaleorderd> subcontractsaleorderds = subcontractsaleorderdService.findByMid(subcontractsaleorderm);
-        if (subcontractsaleorderds.size() > 0) {
-            cusOrderSumService.handelSubcontractsaleorderd(subcontractsaleorderm, subcontractsaleorderds);
         }
     }
     

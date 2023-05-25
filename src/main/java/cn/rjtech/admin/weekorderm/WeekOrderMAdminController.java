@@ -93,7 +93,25 @@ public class WeekOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 审批
+     * 提审
+     */
+    public void submit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.validateId(iautoid, "id");
+
+        renderJson(service.submit(iautoid));
+    }
+
+    /**
+     * 撤回已提审
+     */
+    public void withdraw(Long iAutoId) {
+        ValidationUtils.validateId(iAutoId, "iAutoId");
+
+        renderJson(service.withdraw(iAutoId));
+    }
+
+    /**
+     * 审批通过
      */
     public void approve(String ids) {
         ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
@@ -102,7 +120,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 反审批
+     * 审批不通过
      */
     public void reject(String ids) {
         if (StringUtils.isEmpty(ids)) {
@@ -110,15 +128,6 @@ public class WeekOrderMAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.reject(ids));
-    }
-
-    /**
-     * 撤回
-     */
-    public void withdraw(Long iAutoId) {
-        ValidationUtils.validateId(iAutoId, "iAutoId");
-        
-        renderJson(service.withdraw(iAutoId));
     }
 
     /**
@@ -130,15 +139,6 @@ public class WeekOrderMAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.closeWeekOrder(iAutoId));
-    }
-
-    /**
-     * 提审
-     */
-    public void submit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "id");
-        
-        renderJson(service.submit(iautoid));
     }
 
 }
