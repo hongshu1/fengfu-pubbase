@@ -1,0 +1,146 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.barcode}</td> <!--条码-->
+            <td>${data.invcode}</td> <!--存货编码-->
+            <td>${data.cinvcode1}</td> <!--客户部番-->
+            <td>${data.cinvname1}</td> <!--部品名称-->
+            <td>${data.cinvstd}</td> <!--规格-->
+            <td>${data.cuomname}</td> <!--主计量单位iinventoryuomid1-->
+            <td>${data.qty}</td> <!--数量-->
+            <td>${data.cinvccode}</td> <!--项目大类编码-->
+            <td>${data.cinvcname}</td> <!--项目大类名称-->
+            <td  style="display: none">${data.sourcebilltype}</td> <!--来源单据类型-->
+            <td  style="display: none">${data.sourcebillnorow}</td> <!--来源单号+行号-->
+            <td  style="display: none">${data.sourcebillid}</td> <!--来源单据ID-->
+            <td  style="display: none">${data.sourcebilldid}</td> <!--来源单据Did-->
+        </tr>
+    {@/each}
+</textarea>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="btn-group">
+          <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
+        <!--    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
+                   maxlength="50" name="cinvaddcode" value="#(cinvaddcode??)"/>-->
+          <!--  <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>
+            <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>-->
+          </form>
+        </div>
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)">
+          <div class="" role="group" aria-label="btn-group">
+              <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+              <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+
+        <!---->
+        <table class="jbolt_table jbolt_main_table table-center"
+               id="jbolt_table_inventory_split_#(pageId)"
+               data-jbolttable
+               data-height="200"
+               data-ajax="true"
+               data-column-resize="true"
+               data-url="admin/otherout/getOtherOutLines?autoid=#(otherOut.autoid??)"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="inventoryForm_#(pageId)"
+               data-rowtpl="inventorySplit_tpl_#(pageId)"
+               data-toolbar="inventory_split_toolbar_#(pageId)"
+               data-editable="true"
+               data-editable-option="getEditableTableOptions_split_#(pageId)">
+          <thead class="fw-normal">
+          <tr>
+            <th data-width="60" data-column="index">序号</th>
+            <th data-width="180" data-column="barcode">现品票</th>
+              <th data-width="150" data-column="invcode">存货编码</th>
+              <th data-width="150" data-column="cinvcode1">客户部番</th>
+              <th data-width="150" data-column="cinvname1">部品名称</th>
+              <th data-width="150" data-column="cinvstd">规格</th>
+              <th data-width="100" data-column="cuomclassname">库存主单位</th>
+            <th data-width="150" data-column="qty">数量</th><!--iInventoryUomId1-->
+            <th data-width="150" data-column="cinvccode">项目大类编码</th>
+            <th data-width="150" data-column="cinvcname">项目大类名称</th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  /*去后端执行提交功能*/
+  function getEditableTableOptions_split_#(pageId)(){
+      var editableTableOptions={
+          //初始行数
+          // initRowCount:10,
+          //限制最大数 默认30
+          maxRowCount:1000,
+          trigger:"click",
+          submit:{
+              withForm: ["otherOutForm"],
+              type:"multi",//cell|all|multi
+              name:"table2"
+          },
+      cols: {
+        iautoid: {
+          submitAttr: "iautoid",
+        },
+          barcode: { //条码
+              maxLength: 100,
+              placeholder: "=请选择=",
+              type:"autocomplete",
+              url: "admin/otherout/barcodeDatas",
+              textAttr: "barcode",
+              width: 800,
+              sync:"" ,
+              valueAttr: "barcode",
+              columnAttr: "barcode,cinvcode,cinvcode1,cinvname1,cinvstd,inventorycuomname,qty,cinvccode,cinvcname",
+              header:'条码,存货编码,客户部番,部品名称,规格型号,库存主单位,数量,项目大类编码,项目大类名称',
+              changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
+                  {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
+                  {column: "cinvccode", use: "cinvccode"},{column: "cinvcname", use: "cinvcname"},{column: "qty", use: "qty"},
+                  {column: "cuomclassname", use: "cuomclassname"},{column: "iinventoryid", use: "iautoid"}
+              ]
+
+          },
+          invcode: {
+              type: "autocomplete",
+              url: "admin/otherout/autocomplete",
+              maxLength: 100,
+              placeholder: "=请选择=",
+              textAttr: "cinvcode",
+              width: 800,
+              valueAttr: "cinvcode",
+              columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomclassname,cinvccode,cinvcname",
+              header:'存货编码,客户部番,部品名称,规格型号,库存主单位,项目大类编码,项目大类名称',
+              changeColumns:[{column: "invcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
+                  {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
+                  {column: "cinvccode", use: "cinvccode"},{column: "cinvcname", use: "cinvcname"},
+                  {column: "cuomclassname", use: "cuomclassname"},{column: "iinventoryid", use: "iautoid"}
+              ]
+          },
+          qty: {
+              type:"amount",
+              placeholder:'数量',
+              required:true,
+              summary:[{
+                  dir:"v",
+                  tofixed:2,
+                  roundtag:"round",
+                  removezero:true,
+                  formula:"sum"
+              }]
+          },
+      }
+    };
+    return editableTableOptions;
+  }
+</script>
