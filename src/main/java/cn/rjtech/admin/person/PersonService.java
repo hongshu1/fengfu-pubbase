@@ -82,13 +82,11 @@ public class PersonService extends BaseService<Person> {
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
         para.set("iorgid", getOrgId())
                 .set("corgcode", getOrgCode());
-        
+
         Boolean isenabled = para.getBoolean("isenabled");
         // 是否启用boolean转char
         para.set("isenabled", isenabled == null ? null : (isenabled ? "1" : "0"));
-        
         Page<Record> pageList = dbTemplate("person.paginateAdminDatas", para).paginate(pageNumber, pageSize);
-        
         for (Record row : pageList.getList()) {
             row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("iuserid")));
             row.set("sysworkage", calcSysworkage(row.getDate("dhiredate")));

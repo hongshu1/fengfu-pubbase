@@ -94,7 +94,6 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		changeData(page.getList());
 		return page;
 	}
-
 	
 	private void changeData(List<Record> list){
 		if (CollectionUtil.isEmpty(list)){
@@ -855,6 +854,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		ValidationUtils.notEmpty(saveRecordList, JBoltMsg.JBOLTTABLE_IS_BLANK);
 		JSONObject params = jBoltTable.getParams();
 		Integer type = params.getInteger("type");
+		params.getInteger("");
 		List<PurchaseOrderD> purchaseOrderDList = new ArrayList<>();
 		List<PurchaseorderdQty> purchaseOrderQtyList = new ArrayList<>();
 		List<Long> vendorAdIds = saveRecordList.stream().map(record -> record.getLong(PurchaseOrderD.IVENDORADDRID)).collect(Collectors.toList());

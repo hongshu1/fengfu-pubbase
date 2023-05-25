@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -73,6 +72,8 @@ public abstract class BasePurchaseOrderM<M extends BasePurchaseOrderM<M>> extend
     public static final String IAUDITWAY = "iAuditWay";
     /**提审时间*/
     public static final String DSUBMITTIME = "dSubmitTime";
+    /**来源类型：1. 空白采购 2. 物料到货计划*/
+    public static final String ITYPE = "iType";
 	/**
 	 * 主键ID
 	 */
@@ -322,7 +323,7 @@ public abstract class BasePurchaseOrderM<M extends BasePurchaseOrderM<M>> extend
 	/**
 	 * 汇率
 	 */
-	@JBoltField(name="iexchangerate" ,columnName="iExchangeRate",type="BigDecimal", remark="汇率", required=false, maxLength=10, fixed=6, order=15)
+	@JBoltField(name="iexchangerate" ,columnName="iExchangeRate",type="BigDecimal", remark="汇率", required=true, maxLength=10, fixed=6, order=15)
 	@JSONField(name = "iexchangerate")
 	public java.math.BigDecimal getIExchangeRate() {
 		return getBigDecimal("iExchangeRate");
@@ -598,6 +599,23 @@ public abstract class BasePurchaseOrderM<M extends BasePurchaseOrderM<M>> extend
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
+	}
+
+	/**
+	 * 来源类型：1. 空白采购 2. 物料到货计划
+	 */
+	public M setIType(java.lang.Integer iType) {
+		set("iType", iType);
+		return (M)this;
+	}
+
+	/**
+	 * 来源类型：1. 空白采购 2. 物料到货计划
+	 */
+	@JBoltField(name="itype" ,columnName="iType",type="Integer", remark="来源类型：1. 空白采购 2. 物料到货计划", required=true, maxLength=10, fixed=0, order=32)
+	@JSONField(name = "itype")
+	public java.lang.Integer getIType() {
+		return getInt("iType");
 	}
 
 }

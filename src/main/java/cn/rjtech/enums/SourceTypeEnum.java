@@ -6,7 +6,7 @@ public enum SourceTypeEnum {
     /**
      * 枚举列表
      */
-    MATERIAL_PLAN_TYPE(0, "物料到货计划"),
+    MATERIAL_PLAN_TYPE(2, "物料到货计划"),
     BLANK_PURCHASE_TYPE(1, "空白采购");
     
     private static final Map<Integer, SourceTypeEnum> SOURCE_TYPE_ENUM_MAP = new HashMap<>();
