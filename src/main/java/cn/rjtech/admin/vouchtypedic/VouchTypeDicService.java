@@ -66,7 +66,7 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
         // 单据类型
         vouchTypeDic.setCVTChName(JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.VouchType.name(), vouchTypeDic.getCVTID()));
         // 单据业务
-        vouchTypeDic.setCBTChName(JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.cbtchname.name(), vouchTypeDic.getCVBTID()));
+        vouchTypeDic.setCBTChName(JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.cbtchname.name(), vouchTypeDic.getCBTID()));
 
         Date now = new Date();
 
