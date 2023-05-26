@@ -115,6 +115,10 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         renderJsonData(service.getApsWeekscheduleList());
     }
 
+    public void deleteApsWeekschedule() {
+        renderJson(service.deleteApsWeekschedule(getKv()));
+    }
+
     /**
      * 作成计划
      */
