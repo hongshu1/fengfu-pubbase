@@ -1,0 +1,121 @@
+<form onsubmit="return false;" id="SysMaterialsprepare_Form" action="#(action)" method="post">
+  #if(sysMaterialsprepare.AutoID??)
+  <input type="hidden" name="sysMaterialsprepare.AutoID" value="#(sysMaterialsprepare.AutoID??)"/>
+  #end
+  <div class="row">
+    <div class="col">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">AutoID</label>
+        <div class="col-10">
+          <input type="text" data-rule="required" data-notnull="true" data-tips="请输入AutoID"
+                 data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入AutoID"
+                 maxlength="40" name="sysMaterialsprepare.AutoID" value="#(sysMaterialsprepare.AutoID??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">组织代码</label>
+        <div class="col-10">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="请输入组织代码" maxlength="40" name="sysMaterialsprepare.OrganizeCode"
+                 value="#(sysMaterialsprepare.OrganizeCode??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">单号</label>
+        <div class="col-10">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="请输入单号" maxlength="40" name="sysMaterialsprepare.BillNo"
+                 value="#(sysMaterialsprepare.BillNo??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">单据类型;MO 生产订单 SoDeliver销售发货单</label>
+        <div class="col-10">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="请输入单据类型;MO 生产订单  SoDeliver销售发货单" maxlength="40"
+                 name="sysMaterialsprepare.BillType" value="#(sysMaterialsprepare.BillType??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">单据日期</label>
+        <div class="col-10">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="请输入单据日期" maxlength="40" name="sysMaterialsprepare.BillDate"
+                 value="#(sysMaterialsprepare.BillDate??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">审核人</label>
+        <div class="col-10">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="请输入审核人" maxlength="40" name="sysMaterialsprepare.AuditPerson"
+                 value="#(sysMaterialsprepare.AuditPerson??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">审核日期</label>
+        <div class="col-10">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="请输入审核日期" maxlength="40" name="sysMaterialsprepare.AuditDate"
+                 value="#(sysMaterialsprepare.AuditDate??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">创建人</label>
+        <div class="col-10">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="请输入创建人" maxlength="40" name="sysMaterialsprepare.CreatePerson"
+                 value="#(sysMaterialsprepare.CreatePerson??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">创建时间</label>
+        <div class="col-10">
+          <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd"
+                 readonly="readonly" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="请输入创建时间" maxlength="20" name="sysMaterialsprepare.CreateDate"
+                 value="#datetime(sysMaterialsprepare.CreateDate??,'yyyy-MM-dd')"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">更新人</label>
+        <div class="col-10">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="请输入更新人" maxlength="40" name="sysMaterialsprepare.ModifyPerson"
+                 value="#(sysMaterialsprepare.ModifyPerson??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">更新时间</label>
+        <div class="col-10">
+          <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd"
+                 readonly="readonly" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="请输入更新时间" maxlength="20" name="sysMaterialsprepare.ModifyDate"
+                 value="#datetime(sysMaterialsprepare.ModifyDate??,'yyyy-MM-dd')"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">SourceBillNo</label>
+        <div class="col-10">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="SourceBillNo" maxlength="40" name="sysMaterialsprepare.SourceBillNo"
+                 value="#(sysMaterialsprepare.SourceBillNo??)"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">SourceBillID</label>
+        <div class="col-10">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                 placeholder="SourceBillID" maxlength="40" name="sysMaterialsprepare.SourceBillID"
+                 value="#(sysMaterialsprepare.SourceBillID??)"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="SysMaterialsprepare_Form")
+#end
+

@@ -29,23 +29,32 @@ SELECT mp.AutoID,
        wrm.cWorkCode,
        it.cInvStd,
        emm.cEquipmentModelName,
-       CASE md.iStatus WHEN '2' THEN '已安排人员' END AS iStatus,
-       mpd.Qty * md.iQty                              AS totalQty
+       md.iStatus,
+       mpd.Qty * md.iQty AS totalQty
 FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.MasID = mp.AutoID
          LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
-         LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
+         LEFT JOIN Bd_Inventory it ON it.iAutoId = md.iInventoryId
          LEFT JOIN Bd_Department dpm ON dpm.iAutoId = md.iDepartmentId
          LEFT JOIN Bd_WorkShiftM wsm ON wsm.iAutoId = md.iWorkShiftMid
          LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
          LEFT JOIN Bd_WorkRegionM wrm ON wrm.iAutoId = md.iWorkRegionMid
          LEFT JOIN Bd_EquipmentModel emm ON emm.iAutoId = it.iEquipmentModelId
 WHERE 1 = 1
-  AND md.iStatus = 2 #if(billno)
+  #if(billno)
   AND BillNo = #para(billno)
   #end
   #if(cmodocno)
   AND cMoDocNo = #para(cmodocno)
+  #end
+  #if(invcode)
+  AND InvCode = #para(invcode)
+  #end
+  #if(cinvcode1)
+  AND cInvCode1 = #para(cinvcode1)
+  #end
+  #if(cinvname1)
+  AND cInvName1 = #para(cinvname1)
   #end
   #if(startTime)
   AND dPlanDate >= #para(startTime)

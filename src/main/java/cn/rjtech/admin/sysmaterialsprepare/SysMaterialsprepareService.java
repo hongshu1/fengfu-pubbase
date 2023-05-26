@@ -3,18 +3,24 @@ package cn.rjtech.admin.sysmaterialsprepare;
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.model.momdata.SysMaterialsprepare;
-import cn.rjtech.model.momdata.SysOtherin;
-import cn.rjtech.model.momdata.SysOtherindetail;
+import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +33,15 @@ import java.util.List;
  * @date: 2023-05-12 18:28
  */
 public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare> {
+    @Inject
+    private SysMaterialspreparedetailService1 serviceD;
+
+    @Inject
+    private InventoryService invent;
+
+    @Inject
+    private MoDocService moDocS;
+
     private final SysMaterialsprepare dao = new SysMaterialsprepare().dao();
 
     @Override
@@ -44,7 +59,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
      *
      * @param pageNumber 第几页
      * @param pageSize   每页几条数据
-     * @param   ;MO 生产订单  SoDeliver销售发货单
+     * @param ;MO        生产订单  SoDeliver销售发货单
      * @return
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
@@ -130,13 +145,14 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 
     /**
      * 材料出库单列表 明细
+     *
      * @param pageNumber
      * @param pageSize
      * @param kv
      * @return
      */
-    public Page<Record> getMaterialsOutLines(int pageNumber, int pageSize, Kv kv){
-        return dbTemplate("materialsprepare.getMaterialsOutLines",kv).paginate(pageNumber, pageSize);
+    public Page<Record> getMaterialsOutLines(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("materialsprepare.getMaterialsOutLines", kv).paginate(pageNumber, pageSize);
     }
 
     public Page<Record> getAdminDatasForauto(int pageNumber, int pageSize, Kv kv) {
@@ -144,5 +160,59 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         return paginate;
     }
 
+    public Ret submitByJBoltTable(String sourcebillid, MoDoc modoc) {
+        SysMaterialsprepare sysMaterialsprepare = new SysMaterialsprepare();
+        SysMaterialspreparedetail sysMaterialspreparedetail = new SysMaterialspreparedetail();
+        String billNo = BillNoUtils.getcDocNo(getOrgId(), "QTCK", 5);
+        Date nowDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String date = sdf.format(nowDate);
+        User user = JBoltUserKit.getUser();
+        tx(() -> {
+            sysMaterialsprepare.setBillNo(billNo);
+            sysMaterialsprepare.setBillDate(date);
+            sysMaterialsprepare.setSourceBillID(sourcebillid);
+            sysMaterialsprepare.setCreatePerson(user.getName());
+            sysMaterialsprepare.setCreateDate(nowDate);
+            sysMaterialsprepare.setOrganizeCode(getOrgCode());
+            sysMaterialsprepare.setSourceBillNo(modoc.getCMoDocNo());
+            // 主表新增
+            ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
+            // 从表的操作
+            // 获取保存数据（执行保存，通过 getSaveRecordList）
+            saveTableSubmitDatas(sysMaterialsprepare, nowDate, modoc);
+            changeiStatues(modoc);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    // 可编辑表格提交-新增数据
+    private void saveTableSubmitDatas(SysMaterialsprepare sysMaterialsprepare, Date nowDate, MoDoc modoc) {
+        SysMaterialspreparedetail sysMaterialspreparedetail = new SysMaterialspreparedetail();
+        sysMaterialspreparedetail.setMasID(Long.valueOf(sysMaterialsprepare.getAutoID()));
+        sysMaterialspreparedetail.setModifyPerson(JBoltUserKit.getUser().getName());
+        sysMaterialspreparedetail.setModifyDate(nowDate);
+        sysMaterialspreparedetail.setCreateDate(nowDate);
+        sysMaterialspreparedetail.setCreatePerson(JBoltUserKit.getUser().getName());
+//        sysMaterialspreparedetail.setBarcode();
+        sysMaterialspreparedetail.setInvCode(invent.findFirst("select *   from Bd_Inventory where iAutoId=?", modoc.getIInventoryId()).getCInvCode());
+//        sysMaterialspreparedetail.setQty();
+//        sysMaterialspreparedetail.setSourceBillType();
+//        sysMaterialspreparedetail.setSourceBillNo();
+//        sysMaterialspreparedetail.setSourceBillDid();
+//        sysMaterialspreparedetail.setSourceBillID();
+//        sysMaterialspreparedetail.setSourceBillNoRow();
+//        sysMaterialspreparedetail.setMemo();
+//        sysMaterialspreparedetail.setPackRate();
+//        sysMaterialspreparedetail.setNum();
+//        sysMaterialspreparedetail.setPosCode();
+        serviceD.save(sysMaterialspreparedetail);
+    }
+
+    private void changeiStatues(MoDoc modoc) {
+        modoc.setIStatus(3);
+        moDocS.update(modoc);
+    }
 
 }
