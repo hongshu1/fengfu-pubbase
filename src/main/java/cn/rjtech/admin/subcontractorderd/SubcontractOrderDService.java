@@ -8,6 +8,8 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.enums.BoolCharEnum;
+import cn.rjtech.model.momdata.PurchaseOrderD;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.SubcontractOrderD;
 import com.alibaba.fastjson.JSONObject;
@@ -140,15 +142,31 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 	
 	public SubcontractOrderD createSubcontractOrderD(Long iSubcontractOrderMid, JSONObject jsonObject){
 		SubcontractOrderD subcontractOrderD = new SubcontractOrderD();
+		Long iVendorAddrId = jsonObject.getLong(SubcontractOrderD.IVENDORADDRID.toLowerCase());
+		String cAddress = jsonObject.getString(SubcontractOrderD.CADDRESS.toLowerCase());
+		String cMemo = jsonObject.getString(SubcontractOrderD.CMEMO.toLowerCase());
+		Boolean isPresent = jsonObject.getBoolean(SubcontractOrderD.ISPRESENT.toLowerCase());
+		Long iInventoryId = jsonObject.getLong(SubcontractOrderD.IINVENTORYID.toLowerCase());
+		create(iSubcontractOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, isPresent);
+		return subcontractOrderD;
+	}
+	
+	public SubcontractOrderD create(Long iSubcontractOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, boolean isPresent){
+		SubcontractOrderD subcontractOrderD = new SubcontractOrderD();
 		subcontractOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		subcontractOrderD.setISubcontractOrderMid(iSubcontractOrderMid);
-		subcontractOrderD.setIVendorAddrId(jsonObject.getLong(SubcontractOrderD.IVENDORADDRID.toLowerCase()));
-		subcontractOrderD.setCAddress(jsonObject.getString(SubcontractOrderD.CADDRESS.toLowerCase()));
-		subcontractOrderD.setCMemo(jsonObject.getString(SubcontractOrderD.CMEMO.toLowerCase()));
-		subcontractOrderD.setIsPresent(jsonObject.getBoolean(SubcontractOrderD.ISPRESENT.toLowerCase()));
+		subcontractOrderD.setIVendorAddrId(iVendorAddrId);
+		subcontractOrderD.setIInventoryId(iInventoryId);
 		subcontractOrderD.setIsDeleted(false);
-		subcontractOrderD.setIInventoryId(jsonObject.getLong(SubcontractOrderD.IINVENTORYID.toLowerCase()));
-		subcontractOrderD.setISum(jsonObject.getBigDecimal(SubcontractOrderD.ISUM.toLowerCase()));
+		subcontractOrderD.setIsPresent(isPresent);
+		subcontractOrderD.setCMemo(cMemo);
+		subcontractOrderD.setCAddress(cAddress);
+		return subcontractOrderD;
+	}
+	
+	public SubcontractOrderD create(Long id, Long iSubcontractOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, boolean isPresent) {
+		SubcontractOrderD subcontractOrderD = create(iSubcontractOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, isPresent);
+		subcontractOrderD.setIAutoId(id);
 		return subcontractOrderD;
 	}
 	
@@ -165,24 +183,27 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 		return dbTemplate("subcontractorderd.findAll", Okv.by(SubcontractOrderD.ISUBCONTRACTORDERMID, purchaseOrderMId)).find();
 	}
 	
-	public void setSubcontractDList(Map<String, Integer> calendarMap, Map<Long, Map<String, BigDecimal>>  subcontractOrderdQtyMap, List<Record> subcontractOrderDList){
+	/**
+	 *
+	 * @param subcontractOrderDList
+	 * @param dateMap
+	 * @param subcontractOrderdQtyMap
+	 * @param ymQtyMap
+	 */
+	public void setSubcontractDList(List<Record> subcontractOrderDList, Map<String, Record> dateMap, Map<Long, Map<String, BigDecimal>>  subcontractOrderdQtyMap, Map<String, BigDecimal> ymQtyMap){
 		// 同一种的存货编码需要汇总在一起。
 		// 将日期设值。
 		for (Record record : subcontractOrderDList){
 			// 存货id（原存货id）
 			Long invId = record.getLong(SubcontractOrderD.IINVENTORYID);
-			
-			BigDecimal[] arr = new BigDecimal[calendarMap.keySet().size()];
+			String[] arr = new String[dateMap.keySet().size()];
 			record.set(PurchaseOrderM.ARR, arr);
 			// 存货编码为key，可以获取存货编码下 所有日期范围的值
 			if (!subcontractOrderdQtyMap.containsKey(invId)){
 				continue;
 			}
-			
 			// 当前日期下的数量
 			Map<String, BigDecimal> dateQtyMap = subcontractOrderdQtyMap.get(invId);
-			// 统计合计数量
-			BigDecimal amount = BigDecimal.ZERO;
 			
 			for (String dateStr : dateQtyMap.keySet()){
 				// 原数量
@@ -190,20 +211,36 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 				// yyyyMMdd
 				DateTime dateTime = DateUtil.parse(dateStr, DatePattern.PURE_DATE_FORMAT);
 				// yyyy-MM-dd
-				String formatDateStr = DateUtil.format(dateTime, DatePattern.NORM_DATE_PATTERN);
-				// 当前日期存在，则取值
-				if (calendarMap.containsKey(formatDateStr)){
-					Integer index = calendarMap.get(formatDateStr);
-					arr[index] = qty;
-					// 转换率，默认为1
-					// 判断当前存货是否存在物料转换
-					// 统计数量汇总
-					amount = amount.add(qty);
+				String formatDateStr = DateUtil.format(dateTime, DatePattern.CHINESE_DATE_PATTERN);
+				// 当前日期存在，则取值 2023年06月04日
+				if (dateMap.containsKey(formatDateStr)){
+					setQty(dateMap.get(formatDateStr), arr, qty);
 				}
 			}
-			record.set(SubcontractOrderD.ISUM, amount);
 			
+			// 统计合计
+			for (String str: ymQtyMap.keySet()){
+				String ymStr = str.split("_")[0];
+				String inventoryId = str.split("_")[1];
+				if (dateMap.containsKey(ymStr) && invId.equals(Long.valueOf(inventoryId))){
+					setQty(dateMap.get(ymStr), arr, ymQtyMap.get(str));
+				}
+			}
+			
+			String isPresent = record.getStr(SubcontractOrderD.ISPRESENT);
+			record.set("isPresentStr", BoolCharEnum.toEnum(isPresent).getText());
 		}
 	}
-
+	
+	public void setQty(Record dateRecord, String[] arr, BigDecimal qty){
+		Integer index = dateRecord.getInt(PurchaseOrderM.INDEX);
+		arr[index] = qty.stripTrailingZeros().toPlainString();
+	}
+	
+	public Ret deleteByIds(Object[] ids){
+		for (Object id : ids){
+			updateColumn(id, PurchaseOrderD.ISDELETED, BoolCharEnum.YES.getValue());
+		}
+		return SUCCESS;
+	}
 }

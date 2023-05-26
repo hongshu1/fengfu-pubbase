@@ -366,6 +366,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	}
 	
 	public Map<String, Object> getDateMap(PurchaseOrderM purchaseOrderM){
+		
 		Map<String, Object> repMap = new HashMap<>();
 		Map<String, List<Record>> listMap = setDate(DateUtil.formatDate(purchaseOrderM.getDBeginDate()), DateUtil.formatDate(purchaseOrderM.getDEndDate()));
 		if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == purchaseOrderM.getIType()){
@@ -373,10 +374,9 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			repMap.put("tableData", purchaseOrderDList);
 			repMap.put("tableDataStr", JSONObject.toJSONString(purchaseOrderDList));
 		}
+		
 		repMap.put("monthHeadList", listMap.get(PurchaseOrderM.MONTHFIELD));
 		repMap.put("dateHeadList", listMap.get(PurchaseOrderM.DATEFIELD));
-		
-		
 		return repMap;
 	}
 	
