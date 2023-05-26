@@ -4,12 +4,29 @@
       <div class="card">
         <div class="card-body">
           <div class="col">
-            <button onclick="importForm('#(iautoid??)')" class="btn btn-info btn-sm"><i
-                class="fa fa-window-maximize"></i> 数据导入
-            </button>
-            <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+            <div class="btn-group dropdown">
+              <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+              </button>
+              <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                <a data-downloadbtn href="/admin/warehousebeginofperiod/downloadTpl" class="btn dropdown-item"><i
+                    class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+                <div class="j_upload_file_box"
+                     data-name="file"
+                     data-btn-class="btn dropdown-item"
+                     data-placeholder="上传导入"
+                     data-confirm="确认导入数据？"
+                     data-accept="excel"
+                     data-maxsize="20480"
+                     data-handler="uploadFile"
+                     data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                     data-url="/admin/warehousebeginofperiod/importExcel">
+                </div>
+              </div>
+            </div>
+            <!--<button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
                 class="fa fa-refresh"></i> 保存
-            </button>
+            </button>-->
             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
                 class="fa fa-close"></i> 关闭
             </button>
@@ -107,7 +124,7 @@
             </div>
             <div class="col-2" style="right: 35px;">
               <button type="button" class="btn btn-outline-secondary" id="createButton" name="createButton"
-                      onclick="createButton(this)">生成
+                      onclick="submitThisForm()">生成
               </button>
             </div>
             <div class="col-2" style="margin-top: 8px;right: 75px;">
@@ -132,6 +149,9 @@
   hideParentLayerDialogBtn(0);
   hideParentLayerDialogBtn(1);
 
+  /*
+  * 生成
+  * */
   function submitThisForm() {
     jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");
   }
@@ -173,7 +193,7 @@
           type: "autocomplete",
           url: "admin/warehousearea/options",
           maxLength: 100,
-          required: true,
+          required: false,
           placeholder: "=请选择库区编码=",
           textAttr: "careacode",
           width: 200,
@@ -205,7 +225,7 @@
           type: "autocomplete",
           url: "admin/vendor/options",
           maxLength: 100,
-          required: true,
+          required: false,
           placeholder: "=请选择库区编码=",
           textAttr: "cvencode",
           width: 300,
@@ -256,24 +276,6 @@
   }
 
   /**
-   * 数据导入
-   * @param iautoid
-   */
-  function importForm(iautoid) {
-
-    var para = {};
-
-    Ajax.post('/admin/warehousebeginofperiod/importForm', para, function (ret) {
-      if (ret.state === 'ok') {
-        parent.LayerMsgBox.closeAll();
-        parent.refreshPjaxContainer();
-      } else {
-        LayerMsgBox.alert(ret.msg, 2);
-      }
-    });
-  }
-
-  /**
    * 删除选中的行
    * @param ele
    * @param confirm
@@ -312,13 +314,6 @@
     alert("点击打印");
   }
 
-  /*
-  * 生成按钮
-  * */
-  function createButton(o) {
-    alert("点击生成");
-  }
-  
   /*
   * 重置
   * */
