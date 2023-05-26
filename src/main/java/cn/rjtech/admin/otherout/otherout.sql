@@ -89,7 +89,10 @@ WHERE 1 = 1
 #if(enddate)
     and CONVERT(VARCHAR(10),t1.ModifyDate,23) <='#(enddate)'
 #end
-order by t1.ModifyDate desc
+#if(sourcebilldid)
+    and   AND t1.SourceBillDid = #para(sourcebilldid)
+#end
+order by t1.CreateDate desc,t1.BillNo desc
     #end
 
 

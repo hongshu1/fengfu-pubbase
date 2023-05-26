@@ -1,0 +1,33 @@
+<form onsubmit="return false;" id="moMaterialsreturndForm" action="#(action)" method="post">
+<input type="hidden" name="moMaterialsreturnd.iautoid" value="#(moMaterialsreturnd.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产退料单ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入生产退料单ID" maxlength="19" name="moMaterialsreturnd.imaterialsreturnmid" value="#(moMaterialsreturnd.imaterialsreturnmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产工单ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入生产工单ID" maxlength="19" name="moMaterialsreturnd.imodocid" value="#(moMaterialsreturnd.imodocid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="moMaterialsreturnd.iinventoryid" value="#(moMaterialsreturnd.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入数量"  maxlength="18" name="moMaterialsreturnd.iqty" value="#(moMaterialsreturnd.iqty??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="moMaterialsreturndForm")
+#end
+

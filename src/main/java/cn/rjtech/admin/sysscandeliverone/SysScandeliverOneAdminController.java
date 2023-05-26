@@ -18,13 +18,14 @@ import java.util.List;
 
 /**
  * (双)扫码发货
+ *
  * @ClassName: SysScandeliverAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-22 09:47
  */
-@CheckPermission(PermissionKey.SCANCODESHIPMENT)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
+@CheckPermission(PermissionKey.SCAN_CODE_SHIPMENT)
 @Path(value = "/admin/scanCodeShipment", viewPath = "/_view/admin/sysscandeliverone")
 public class SysScandeliverOneAdminController extends BaseAdminController {
 

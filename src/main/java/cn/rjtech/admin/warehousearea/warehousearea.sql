@@ -52,3 +52,12 @@ WHERE  wa.isDeleted = 0
 ORDER BY
 wa.dCreateTime DESC
 #end
+
+#sql("options")
+SELECT
+	wa.cAreaCode,wa.cAreaName,wa.iWarehouseId
+FROM
+	Bd_Warehouse_Area wa
+where wa.isEnabled = '1' and wa.isDeleted = '0'
+order by wa.dUpdateTime desc
+#end

@@ -148,4 +148,8 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
 		renderJsonData(service.getPrintDataCheck(getKv()));
 	}
 
+	public void options(){
+		renderJsonData(service.options(getKv()));
+	}
+
 }

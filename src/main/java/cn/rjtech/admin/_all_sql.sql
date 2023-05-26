@@ -522,3 +522,7 @@
 #include("sysscandeliverone/sysscandeliverone.sql")
 #end
 
+#namespace("warehousebeginofperiod")
+#include("warehousebeginofperiod/warehousebeginofperiod.sql")
+#end
+
