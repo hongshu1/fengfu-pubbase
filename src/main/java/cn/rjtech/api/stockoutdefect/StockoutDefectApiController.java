@@ -68,8 +68,6 @@ public class StockoutDefectApiController extends BaseApiController {
     public void addlist(@Para(value = "iautoid") Long iautoid,
                     @Para(value = "stockoutqcformmid") Long stockoutqcformmid,
                     @Para(value = "type") String type) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(stockoutqcformmid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(stockoutDefectApiService.add(iautoid, stockoutqcformmid, type));
     }
 

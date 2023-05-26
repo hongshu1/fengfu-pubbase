@@ -1,10 +1,8 @@
 package cn.rjtech.admin.sysscandeliverone;
 
-import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysScandeliverdetail;
 import com.jfinal.aop.Before;
@@ -13,12 +11,12 @@ import com.jfinal.core.Path;
 
 /**
  * 扫码发货明细
+ *
  * @ClassName: SysScandeliverdetailAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-22 09:48
  */
-@CheckPermission(PermissionKey.SCANCODESHIPMENT)
-@UnCheckIfSystemAdmin
+@UnCheck
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/scanCodeShipmentdetail", viewPath = "/_view/admin/sysscandeliverdetail")
 public class SysScandeliverOnedetailAdminController extends BaseAdminController {

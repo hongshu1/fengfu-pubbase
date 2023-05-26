@@ -605,6 +605,34 @@ WHERE isEnabled = 1
   AND iInventoryRoutingId IN #(ids)
 #end
 
+#sql("getInvRoutingConfigOperationList")
+###根据工艺路线配置id集查询各工艺工序
+SELECT *
+FROM Bd_InventoryRoutingConfig_Operation
+WHERE iInventoryRoutingConfigId IN #(ids)
+#end
+
+#sql("getInvRoutingConfigEquipmentList")
+###根据工艺路线配置id集查询各工艺设备
+SELECT *
+FROM Bd_InventoryRoutingEquipment
+WHERE iInventoryRoutingConfigId IN #(ids)
+#end
+
+#sql("getInvRoutingConfigInvcList")
+###根据工艺路线配置id集查询各工艺物料
+SELECT *
+FROM Bd_InventoryRoutingInvc
+WHERE iInventoryRoutingConfigId IN #(ids)
+#end
+
+#sql("getInvRoutingConfigSopList")
+###根据工艺路线配置id集查询各工艺作业指导书
+SELECT *
+FROM Bd_InventoryRoutingSop
+WHERE isEnabled = 1
+  AND iInventoryRoutingConfigId IN #(ids)
+#end
 
 
 #sql("getMotaskByEndDateList")
