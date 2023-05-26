@@ -355,7 +355,7 @@ headBox内容自行填写
 #end
 <th data-width="60" data-column="index">序号</th>
 #for(col:cols)
-	<th #if(editMode??)data-editmode-index="#(for.index)"#end  data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" data-column="#(col.colName)">#(col.tableLabel?? col.attrName)[#(col.sortRankIntable)]</th>
+	<th #if(editMode??)data-editmode-index="#(for.index)"#end  data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" data-column="#(col.colName)">#(col.tableLabel?? col.attrName)#if(editMode??)[#(col.sortRankIntable)]#end </th>
 #end
 #if(codeGen.isShowOptcol??)<th data-width="#(codeGen.tableOptcolWidth?? 70)">操作</th>#end
 </tr>
