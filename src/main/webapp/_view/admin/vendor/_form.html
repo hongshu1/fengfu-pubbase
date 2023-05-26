@@ -83,16 +83,17 @@
               name="cvenpperson"
               data-select-type="select2"
               data-tips="专管业务员"
-              data-url="admin/vendor/options"
+              data-url="admin/approvald/selectPerson"
               data-text="=专管业务员="
               data-value=""
-              data-value-attr="id"
+              data-text-attr="cpsnname"
+              data-value-attr="ipersonid"
               data-select="#(vendor.cvenpperson??)">
       </select>
     </div>
   </div>
 
-  <div class="form-group row" >
+  <div class="form-group row">
     <label class="col-sm-1 col-form-label">发展日期</label>
     <div class="col-2">
       <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"
@@ -102,55 +103,61 @@
 
     <label class="col-sm-1 col-form-label">默认委外仓</label>
     <div class="col-2">
-        <select class="form-control"
-                data-autoload
-                name="comwhcode"
-                data-select-type="select2"
-                data-url="admin/warehouse/options"
-                data-tips="默认委外仓"
-                data-text="=默认委外仓="
-                data-value=""
-                data-text-attr="cwhname"
-                data-value-attr="cwhcode"
-                data-select="#(vendor.comwhcode??)">
-        </select>
-      </div>
+      <select class="form-control"
+              data-autoload
+              name="comwhcode"
+              data-select-type="select2"
+              data-url="admin/warehouse/options"
+              data-tips="默认委外仓"
+              data-text="=默认委外仓="
+              data-value=""
+              data-text-attr="cwhname"
+              data-value-attr="cwhcode"
+              data-select="#(vendor.comwhcode??)">
+      </select>
+    </div>
 
     <label class="col-sm-1 col-form-label">币种</label>
     <div class="col-2">
-      <select class="form-control" data-select-type="select2" data-url="admin/dictionary/options?key=ccurrency" name="ccurrency" data-autoload
+      <select class="form-control" data-select-type="select2" data-url="admin/dictionary/options?key=ccurrency" name="ccurrency"
+              data-autoload
               data-text="=请选择=" data-value-attr="sn" data-value="" data-select="#(vendor.cCurrency??)"></select>
     </div>
 
     <label class="col-sm-1 col-form-label">税率</label>
     <div class="col-2">
-      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="税率，通常2位小数"
+      <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="税率，通常2位小数"
              maxlength="40" name="itaxrate" value="#(vendor.itaxrate??)"/>
     </div>
   </div>
 
   <!--data-hidden-input="xxx"-->
-  <div class="form-group row col-6"
-       data-checkbox
-       data-rule="checkbox"
-       data-label="供应商属性"
-       data-default=""
-       data-url="admin/dictionary/options?key=vendor_cproperty"
-       data-value-attr="sn"
-       data-text-attr="cproperty"
-       data-inline="true"
-       data-value="#(vendor.cproperty??)"
-       data-name="cproperty">
-  </div>
-
   <div class="form-group row">
-  <label class="col-sm-1 col-form-label">联系地址</label>
-  <div class="col-11">
-    <div class="jbolt_page_content">
-      #render("_table_split.html")
+    <input type="hidden" id="cproperty2" name="cproperty2" value="#(vendor.cproperty??)"/>
+    <div class="form-group row col-6"
+         data-name="cproperty"
+         data-hidden-input="cproperty2"
+         data-checkbox
+         data-rule="checkbox"
+         data-label="供应商属性"
+         data-default=""
+         data-url="admin/dictionary/options?key=vendor_cproperty"
+         data-value-attr="sn"
+         data-text-attr="cproperty"
+         data-inline="true"
+         data-value="#(vendor.cproperty??)">
     </div>
   </div>
-</div>
+
+
+  <div class="form-group row">
+    <label class="col-sm-1 col-form-label">联系地址</label>
+    <div class="col-11">
+      <div class="jbolt_page_content">
+        #render("_table_split.html")
+      </div>
+    </div>
+  </div>
 
   <div class="form-group row"
        data-radio
@@ -184,7 +191,7 @@
 #define js()
 <script>
   //设置checkbox单选功能
-  function setCheckBox(obj){
+  function setCheckBox(obj) {
     var cproperty = document.forms[0].cproperty;
     for (var i = 0; i < cproperty.length; i++) {
       cproperty[i].checked = false;
@@ -193,6 +200,16 @@
   }
 
   function submitThisForm() {
+    let serializeArray = $("#Vendor_Form").serializeArray();
+    let cpropertyList = serializeArray.filter((ele) => {
+      return ele.name == 'cproperty';
+    });
+    var cpropertyValue = "";
+    for (let i = 0; i < cpropertyList.length; i++) {
+      cpropertyValue += cpropertyList[i].value + ",";
+    }
+    let cproperty = cpropertyValue.substring(0, cpropertyValue.lastIndexOf(','));
+    $('#cproperty').val(cproperty);
     jboltTableSubmit('#jbolt_table_vendoradd_split_#(pageId)');
   }
 

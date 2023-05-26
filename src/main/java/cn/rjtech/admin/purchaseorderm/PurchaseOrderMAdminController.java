@@ -9,6 +9,7 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
+import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
 import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionService;
@@ -62,6 +63,8 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     private PurchaseOrderDBatchService purchaseOrderDBatchService;
     @Inject
     private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
+    @Inject
+    private InventoryChangeService inventoryChangeService;
 
     /**
      * 首页
@@ -93,9 +96,10 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         record.set(PurchaseOrderM.DBEGINDATE, beginDate);
         record.set(PurchaseOrderM.DENDDATE, endDate);
         setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType, iSourceType));
+        record.set(PurchaseOrderM.ITYPE, iSourceType);
         set("purchaseOrderM", record);
         if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == iSourceType){
-            render("blan_add.html");
+            render("blank_add.html");
             return;
         }
         render("add.html");
@@ -147,8 +151,13 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         if (StrUtil.isNotBlank(isView)) {
             set("isView", 1);
         }
+        
         set("purchaseOrderM", purchaseOrderM);
         setAttrs(service.getDateMap(purchaseOrderM));
+        if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == purchaseOrderM.getIType()){
+            render("blank_edit.html");
+            return;
+        }
         render("edit.html");
     }
 
@@ -276,8 +285,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     public void batchDel(@Para(value = "ids") String ids) {
         renderJsonData(service.batchDel(ids));
     }
-
-
+    
     public void findPurchaseOrderDBatch() {
         renderJsonData(purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv()));
     }
@@ -301,4 +309,21 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     public void saveSubmit(){
         renderJson(service.saveSubmit(getJBoltTable()));
     }
+    
+    public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId){
+        renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
+    }
+    
+    public void inventory_dialog_index(){
+        keepPara();
+        render("inventory_dialog_index.html");
+    }
+    
+    /**
+     * 默认给1-100个数据
+     */
+    public void inventoryPage() {
+        renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
+    }
+    
 }
