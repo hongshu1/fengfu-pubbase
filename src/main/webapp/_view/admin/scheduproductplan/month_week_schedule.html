@@ -116,9 +116,11 @@
         border: 1px solid rgba(215, 215, 215, 1);
         background-color:#fff;
         width: 560px;
+        height: 400px;
         padding: 20px;
         z-index: 1000;
         position: absolute;
+        overflow-y: scroll;
         display: none;
     }
     .popup-confirm{
@@ -130,6 +132,41 @@
     }
     #popup_table tr{
         height: 40px;
+    }
+/*  消息提示框  */
+    #message-box {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        text-align: center;
+    }
+
+    .message {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        animation: slide-in 0.3s ease-out;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    @keyframes slide-in {
+        from {
+            transform: translateY(-100%);
+        }
+        to {
+            transform: translateY(0);
+        }
     }
 </style>
 #end
@@ -146,21 +183,21 @@
         <div class="search">
             <div class="select">
                 <span>产线名称:</span>
-                <input style="width:150px;height:20px;" />
+                <input style="width:150px;height:20px;" id="cworkname"/>
             </div>
             <div class="select">
                 <span>存货编码:</span>
-                <input style="width:150px;height:20px;" />
+                <input style="width:150px;height:20px;" id="cinvcode"/>
             </div>
             <div class="select">
                 <span>客户部番:</span>
-                <input style="width:150px;height:20px;" />
+                <input style="width:150px;height:20px;" id="cinvcode1"/>
             </div>
             <div class="select">
                 <span>部品名称:</span>
-                <input style="width:150px;height:20px;" />
+                <input style="width:150px;height:20px;" id="cinvname1"/>
             </div>
-            <button class="button">搜索</button>
+            <button class="button" onClick="search()">搜索</button>
             <button class="button">重置</button>
         </div>
     </div>
@@ -203,7 +240,7 @@
             <p class="alert_but"><button id="close_but">取消</button><button onClick="save()">确定</button></p>
         </div>
         <!-- 排产弹出层 -->
-        <div class="popup-layer">
+        <div class="popup-layer" id="popup-layer">
             <!-- 确定按钮 -->
             <div style="width: 100%;margin-bottom: 20px;">
                 <button class="button" onclick="savePopup()">确定</button>
@@ -243,6 +280,14 @@
             </div>
         </div>
         <!--排产弹出框结束-->
+        <!--消息提示框开始-->
+        <div id="message-box" class="hidden">
+            <div class="message">
+                <p>提示</p>
+                <p id="msg"></p>
+            </div>
+        </div>
+        <!--消息提示框结束-->
     </div>
 </div>
 #end
@@ -250,18 +295,43 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
-    //定义公共接口
+    /**
+     * @param Api 公共接口
+     */
     const Api = 'http://localhost:8081/';
+    /**
+     * @param urlParams 获取跳转携带的参数
+     * @param id 跳转携带的id
+     */
     window.onload=function () {
         const urlParams = new URLSearchParams(window.location.search);
-        const id = urlParams.get('id');
-        if(id!=null){
-            console.log(parseFloat(id));
+        const iWeekScheduleId = urlParams.get('iWeekScheduleId');
+        const ilevel = urlParams.get('level');
+        if(iWeekScheduleId!=null){
             loadInit();
             initDate();
-            initData();
+            parms.id=iWeekScheduleId;
+            parms.level=ilevel;
+            initData(iWeekScheduleId,ilevel);
         }
     }
+    const messageBox = document.getElementById('message-box');
+    function showMessage(text) {
+        const msg = document.getElementById('msg');
+        msg.innerText = text;
+        messageBox.classList.remove('hidden');
+        setTimeout(hideMessage, 1000); // 1秒后自动隐藏
+    }
+    function hideMessage() {
+        messageBox.classList.add('hidden');
+    }
+    const myTable = document.getElementById('popup_table');
+    const tableContainer = document.getElementById('popup-layer');
+    // 添加滚动事件处理程序
+    tableContainer.addEventListener('scroll', function() {
+        // 获取表头元素
+        const tableHeader = myTable.querySelector('thead');
+    });
      /**
      * 打开弹出层
      * @param openPopup
@@ -270,7 +340,7 @@
         var popup = document.querySelector('.popup-layer');
         popup.style.display = 'block';
         popup.style.position = "absolute";
-        popup.style.top = "50%";
+        popup.style.top = "35%";
         popup.style.left = "50%";
         popup.style.marginTop = "-75px";
         popup.style.marginLeft = "-150px";
@@ -292,18 +362,19 @@
              type:'post',
              dataType:'json',
              success:function (res){
-                 console.log(res,'已排层级展示')
+                 console.log(res)
                  parms.dschedulebeginData = res.data;
                  var str = "";
                  for (var i = 0; i < res.data.length; i++) {
+                     console.log(res.data[i].iautoid)
                      str += `<tr>
                                 <td>${res.data[i].ilevel}</td>
                                 <td>${res.data[i].dscheduleendtime}</td>
                                 <td>${res.data[i].dlockendtime==undefined?'':res.data[i].dlockendtime}</td>
                                 <td width='130px'>
-                                  <span onClick='search(${res.data[i].iautoid})' style="margin-right:10px;cursor: pointer;color: #0000FF;">查看</span>
+                                  <span onClick='levelSearch(${i},${res.data[i].ilevel})' style="margin-right:10px;cursor: pointer;color: #0000FF;">查看</span>
                                   <span style="margin-right:10px;cursor: pointer;color: #0000FF;">编辑</span>
-                                  <span style="cursor: pointer;color: #0000FF;">删除</span>
+                                  <span onClick='levelDelete(${i})'style="cursor: pointer;color: #0000FF;">删除</span>
                                  </td>
                                </tr>`;
                  }
@@ -313,13 +384,59 @@
              }
          })
     }
+    //表格数据查看
+    function levelSearch(index,ilevel){
+        let id = parms.dschedulebeginData[index].iautoid;
+        window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&iWeekScheduleId=${id}&level=${ilevel}`);
+    }
+    //删除表格数据
+    function levelDelete(index){
+        let id = parms.dschedulebeginData[index].iautoid;
+        let url = Api+`admin/scheduproductplanmonth/deleteApsWeekschedule?iWeekScheduleId=${id}`;
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                if(res.data.msg=="操作成功"){
+                    openPopup();
+                }
+                showMessage(res.data.msg);
+            },error: function(error) {
+                console.log(error);
+            }
+        })
+    }
+    /**
+     * 搜索事件
+     * @param search
+     * @param searchData 搜索需携带参数
+     */
+    let searchData={
+        cworkname:'',
+        cinvcode:'',
+        cinvcode1:'',
+        cinvname1:'',
+    }
+    function search(){
+        const cworkname = document.getElementById('cworkname').value;
+        const cinvcode = document.getElementById('cinvcode').value;
+        const cinvcode1 = document.getElementById('cinvcode1').value;
+        const cinvname1 = document.getElementById('cinvname1').value;
+        searchData={
+            cworkname,
+            cinvcode,
+            cinvcode1,
+            cinvname1
+        }
+        initData(parms.id,parms.level);
+    }
     //排场确定事件
     function savePopup(){
         //获取用户选择的时间
         const datetimeLocalInput = document.getElementById('datetime-local');
         const myVal = datetimeLocalInput.value.substring(0,10);
         const level = document.getElementById('level').value;
-        console.log(level)
         let url = Api+`admin/scheduproductplanmonth/scheduPlanMonth?level=${level}&endDate=${myVal}`;
         $.ajax({
             url,
@@ -332,15 +449,11 @@
                     initData();
                     closePopup();//隐藏弹出层
                 }
+                showMessage(res.data.msg);
             },error: function(error) {
                 console.log(error);
             }
         })
-    }
-    //表格数据查看
-    function search(id){
-        console.log(id)
-        window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&id=${id}`);
     }
     /**
      * 关闭弹出层
@@ -363,6 +476,8 @@
     statusBar.bind(spread);
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
     var parmsDefault = {
+        id:null,                //全局公共id
+        level:'',               //排场层级
         resourcesList: [],      //资源列表
         RowCount:500,           //一列多少单元格
         ColumnCount:41,         //一行多少单元格
@@ -393,7 +508,18 @@
     var parms = parmsArr[0];
     //设置全局表单的背景颜色
     spread.options.grayAreaBackColor = '#fff';
-
+    //勾选check按钮
+    // sheet.getCell(0, 0	).value(1);
+    /*工作簿暂停活性*/
+    function spreadSuspend() {
+        spread.suspendPaint(); //渲染前失活(提升性能)
+        spread.suspendCalcService(); //暂停计算服务
+    }
+    /*工作簿开启活性*/
+    function spreadResume() {
+        spread.resumeCalcService(); //开启计算服务
+        spread.resumePaint(); //恢复绘制
+    }
     // var colCount = sheet.getColumnCount(GC.Spread.Sheets.SheetArea.viewport);//获取列数
     // var rowCount = sheet.getRowCount();//获取行数
 
@@ -429,18 +555,6 @@
         parms.activeSheet.addSpan(0,6,3,1);
         parms.activeSheet.setColumnWidth(parms.columnindex+6, 150);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+8, 70);//设置指定单元格的width
-    }
-    //勾选check按钮
-    // sheet.getCell(0, 0	).value(1);
-    /*工作簿暂停活性*/
-    function spreadSuspend() {
-        spread.suspendPaint(); //渲染前失活(提升性能)
-        spread.suspendCalcService(); //暂停计算服务
-    }
-    /*工作簿开启活性*/
-    function spreadResume() {
-        spread.resumeCalcService(); //开启计算服务
-        spread.resumePaint(); //恢复绘制
     }
     /**
      * 获取接口返回的日期数据
@@ -486,45 +600,44 @@
      * 初始化产线数据
      * @param initData
      */
-    function initData(){
-        let url = Api+"admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=1659809519734398976&level=1&endDate=2023-06-21";
+    function initData(id,ilevel){
+        let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=${id}&level=${ilevel}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`;
         $.ajax({
             url,
-            type:'get',
-            dataType:'json',
-            success:function (res){
-                console.log(res)
+            type: 'get',
+            dataType: 'json',
+            success: function (res) {
                 spreadSuspend();//暂停绘制
                 let rowIndex = 3;
-                let colIndex=0;
-                for (let i = 0; i <res.length; i++) {
+                let colIndex = 0;
+                for (let i = 0; i < res.length; i++) {
                     //定义多选按钮
                     var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();
                     parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
-                    sheet.addSpan(rowIndex,colIndex,6,1);
+                    sheet.addSpan(rowIndex, colIndex, 6, 1);
                     //序号
-                    sheet.setValue(rowIndex, 1+colIndex,i);
-                    parms.activeSheet.addSpan(rowIndex,1+colIndex,6,1);
+                    sheet.setValue(rowIndex, 1 + colIndex, i);
+                    parms.activeSheet.addSpan(rowIndex, 1 + colIndex, 6, 1);
                     //排产层级
-                    sheet.setValue(rowIndex, 2+colIndex,res[i].iPsLevel);
-                    parms.activeSheet.addSpan(rowIndex,2+colIndex,6,1);
+                    sheet.setValue(rowIndex, 2 + colIndex, res[i].iPsLevel);
+                    parms.activeSheet.addSpan(rowIndex, 2 + colIndex, 6, 1);
                     //产线名称
-                    sheet.setValue(rowIndex, 3+colIndex,res[i].cWorkName);
-                    parms.activeSheet.addSpan(rowIndex,3+colIndex,6,1);
-                    parms.activeSheet.setColumnWidth(3+colIndex, 120);//设置指定单元格的width
+                    sheet.setValue(rowIndex, 3 + colIndex, res[i].cWorkName);
+                    parms.activeSheet.addSpan(rowIndex, 3 + colIndex, 6, 1);
+                    parms.activeSheet.setColumnWidth(3 + colIndex, 120);//设置指定单元格的width
                     //存货编码
-                    sheet.setValue(rowIndex, 4+colIndex,res[i].cInvCode);
-                    parms.activeSheet.addSpan(rowIndex,4+colIndex,6,1);
-                    parms.activeSheet.setColumnWidth(4+colIndex, 120);//设置指定单元格的width
+                    sheet.setValue(rowIndex, 4 + colIndex, res[i].cInvCode);
+                    parms.activeSheet.addSpan(rowIndex, 4 + colIndex, 6, 1);
+                    parms.activeSheet.setColumnWidth(4 + colIndex, 120);//设置指定单元格的width
                     //客户部番
-                    sheet.setValue(rowIndex, 5+colIndex,res[i].cInvName1);
-                    parms.activeSheet.addSpan(rowIndex,5+colIndex,6,1);
-                    parms.activeSheet.setColumnWidth(5+colIndex, 180);//设置指定单元格的width
+                    sheet.setValue(rowIndex, 5 + colIndex, res[i].cInvCode1);
+                    parms.activeSheet.addSpan(rowIndex, 5 + colIndex, 6, 1);
+                    parms.activeSheet.setColumnWidth(5 + colIndex, 180);//设置指定单元格的width
                     //部品名称
-                    sheet.setValue(rowIndex, 6+colIndex,res[i].cInvCode);
-                    parms.activeSheet.addSpan(rowIndex,6+colIndex,6,1);
-                    parms.activeSheet.setColumnWidth(6+colIndex, 100);//设置指定单元格的width
-                    rowIndex+=6;
+                    sheet.setValue(rowIndex, 6 + colIndex, res[i].cInvName1);
+                    parms.activeSheet.addSpan(rowIndex, 6 + colIndex, 6, 1);
+                    parms.activeSheet.setColumnWidth(6 + colIndex, 100);//设置指定单元格的width
+                    rowIndex += 6;
 
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
                     parms.activeSheet.setColumnWidth(parms.planListRowIndex, 70);//设置指定单元格的width
@@ -539,35 +652,25 @@
                     let zaikuCol = 8;
                     //渲染计划数据
                     for (var j = 0; j < res[i].day.length; j++) {
-                        if(i==0){
-                            sheet.setValue(shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
-                            sheet.setValue(1+shiyongRow,shiyongCol+j,res[i].day[j].one);
-                            sheet.setValue(2+shiyongRow,shiyongCol+j,res[i].day[j].two);
-                            sheet.setValue(3+shiyongRow,shiyongCol+j,res[i].day[j].three);
-                            sheet.setValue(4+shiyongRow,zaikuCol,res[i].day[j].zaiku);
-                            sheet.setValue(5+shiyongRow,shiyongCol+j,res[i].day[j].tianshu);
-                        }else{
-                            sheet.setValue(6*i+shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
-                            sheet.setValue(6*i+shiyongRow+1,shiyongCol+j,res[i].day[j].one);
-                            sheet.setValue(6*i+shiyongRow+2,shiyongCol+j,res[i].day[j].two);
-                            sheet.setValue(6*i+shiyongRow+3,shiyongCol+j,res[i].day[j].three);
-                            sheet.setValue(6*i+shiyongRow+4,zaikuCol,res[i].day[j].zaiku);
-                            sheet.setValue(6*i+shiyongRow+5,shiyongCol+j,res[i].day[j].tianshu);
+                        if (i == 0) {
+                            sheet.setValue(shiyongRow, shiyongCol + j, res[i].day[j].shiyong);
+                            sheet.setValue(1 + shiyongRow, shiyongCol + j, res[i].day[j].one);
+                            sheet.setValue(2 + shiyongRow, shiyongCol + j, res[i].day[j].two);
+                            sheet.setValue(3 + shiyongRow, shiyongCol + j, res[i].day[j].three);
+                            sheet.setValue(4 + shiyongRow, zaikuCol, res[i].day[j].zaiku);
+                            sheet.setValue(5 + shiyongRow, shiyongCol + j, res[i].day[j].tianshu);
+                        } else {
+                            sheet.setValue(6 * i + shiyongRow, shiyongCol + j, res[i].day[j].shiyong);
+                            sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, res[i].day[j].one);
+                            sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, res[i].day[j].two);
+                            sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, res[i].day[j].three);
+                            sheet.setValue(6 * i + shiyongRow + 4, zaikuCol, res[i].day[j].zaiku);
+                            sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, res[i].day[j].tianshu);
                         }
                     }
                 }
-                // 遍历数据，设置单元格的 locked 属性
-                var rowCount = sheet.getRowCount(); // 获取行数
-                var columnCount = sheet.getColumnCount(); // 获取列数
-
-                for (var i = 0; i < rowCount; i++) {
-                    for (var j = 0; j < columnCount; j++) {
-                        var cell = sheet.getCell(i, j); // 获取单元格
-                        cell.locked(true); // 设置单元格为锁定状态
-                    }
-                }
                 spreadResume();// 恢复绘制
-            },error: function() {
+            }, error: function () {
                 console.log('error')
             }
         })

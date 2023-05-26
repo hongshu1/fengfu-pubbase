@@ -1,0 +1,154 @@
+#@adminLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+    <div class="row">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" href="javascript:void(0)" id="nav-base-tab_one"
+                   onclick="selectChangeMaterial(null)">未扫描现品票</a>
+                <a class="nav-item nav-link" href="javascript:void(0)" id="nav-base-tab_two"
+                   onclick="selectChangeMaterial(1)">已扫描现品票</a>
+                <!--<a class="nav-item nav-link" href="javascript:void(0)" id="nav-base-tab_three"
+                   onclick="selectChangeMaterial(2)">已完成</a>-->
+
+            </div>
+        </nav>
+    </div>
+    <div class="jbolt_page_title" style="margin-top: 20px">
+        <div class="row">
+
+            <div class="col">
+                <form class="form-inline text-left" id="moallocateformesForm_#(pageId)" onsubmit="return false;" method="post">
+                    <input type="hidden" id="states" name="state" value="" />
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="" value=""/>
+
+
+
+
+
+
+
+
+
+                    <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 搜索</button>
+
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="fhRowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.billno}</td>
+                <td>${data.cwhname}</td>
+                <td>${data.whclass}</td>
+                <td>${data.sourcebillno}</td>
+                <td>${data.mono}</td>
+                <td>${data.coperationname}</td>
+                <td>${data.dplandate}</td>
+                <td>${data.数量}</td>
+
+
+
+
+
+
+            </tr>
+            {@/each}
+        </script>
+        <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)" >
+            <div class="btn-group" role="group" aria-label="btn-group">
+
+
+
+                <div class="btn-group dropdown">
+                    <button type="submit"  onclick="submitThisForm()" class="btn btn-primary btn-sm"><i class="fa fa-save"></i>保存</button>
+
+                    <button onclick="closeHandler()" class="btn btn-danger btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+
+                </div>
+
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+        <div class="jbolt_table_view">
+            <div class="jbolt_table_box">
+                <div class="jbolt_table_body">
+
+                    <table class="jbolt_table jbolt_main_table table_striped thead_font_normal table-center"
+                           data-jbolttable
+                           data-ajax="true"
+                           data-column-prepend="1:checkbox:true"
+                           data-column-resize="true"
+                           data-url="admin/modoc/datas"
+                           data-conditions-form="moallocateformesForm_#(pageId)"
+                           data-rowtpl="fhRowtpl_#(pageId)"
+                           data-toolbar="jbolt_table_toolbar_#(pageId)"
+                           data-page="moallocateformesPage_#(pageId)"
+                           data-row-dblclick-active="true"
+                           data-row-dblclick-handler="moallocateformesDblclick"
+
+                    >
+                        <thead class="thead-blue">
+                        <tr>
+                            <th data-width="100" data-column="index">序号</th>
+                            <th data-width="150" data-column="">存货编码</th>
+                            <th data-width="150" data-column="">客户部署</th>
+                            <th data-width="150" data-column="">部品名称</th>
+                            <th data-width="150" data-column="">规格</th>
+                            <th data-width="150" data-column="">主计量单位</th>
+                            <th data-width="150" data-column="">现品票</th>
+                            <th data-width="150" data-column="">现品票数量</th>
+                            <th data-width="150" data-column="">耗用数量</th>
+
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+#end
+#define js()
+<script>
+    //tab切换
+    hideParentLayerDialogBtn(0);
+    function selectChangeMaterial(ss) {
+
+        $("#states").val(ss);
+
+        $('#moallocateformesForm_#(pageId)').submit();
+
+
+    }
+    function moallocateformesDblclick(table,tr,trId,rowDta){
+        $(tr).data('url','admin/moallocateformes/edit?billno='+rowDta.billno).data('area','100%,100%').data('title','详情').data('btn','close');
+        DialogUtil.openBy(tr);
+    }
+
+    function handleChange() {
+        var obj = document.getElementById('whclass'); // 定位id
+        var index = obj.selectedIndex; // 选中索引
+        var value = obj.options[index].value; // 选中值
+        //alert(value);
+    }
+    function closeHandler(){
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+</script>
+#end

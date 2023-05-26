@@ -1,7 +1,7 @@
 package cn.rjtech.admin.momaterialsscansum;
 
 
-import cn.jbolt.core.db.sql.Sql;
+
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.moroutingcinve.MoMoroutinginvcService;
@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 制造工单齐料汇总  Service
+ * 制造工单-齐料汇总  Service
  * @ClassName: MoMaterialsscansumService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-22 15:46

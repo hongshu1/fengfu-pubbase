@@ -1,6 +1,8 @@
 package cn.rjtech.admin.scheduproductplan;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -374,6 +376,35 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return dbTemplate("scheduproductplan.getApsWeekscheduleList").find();
     }
 
+    public Ret deleteApsWeekschedule(Kv kv) {
+        //排产纪录id
+        Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
+        if (notOk(iWeekScheduleId)){
+            return fail("排产纪录不能为空！");
+        }
+        tx(() -> {
+            ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleEndTime,dLockEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
+            ApsWeekscheduledetails apsWeekscheduledetails = apsWeekscheduledetailsService.findFirst("SELECT iAutoId FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ",iWeekScheduleId);
+            if (apsWeekschedule.getDLockEndTime() == null){
+                delete("DELETE FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
+                delete("DELETE FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ",iWeekScheduleId);
+                if (apsWeekscheduledetails != null){
+                    delete("DELETE FROM Aps_WeekScheduleD_Qty WHERE iWeekScheduleDid = ? ",apsWeekscheduledetails.getIAutoId());
+                }
+            }else {
+                update("UPDATE Aps_WeekSchedule SET dScheduleEndTime = ? WHERE iAutoId = ? ",apsWeekschedule.getDLockEndTime(),iWeekScheduleId);
+                if (apsWeekscheduledetails != null){
+                    delete("DELETE FROM Aps_WeekScheduleD_Qty WHERE " +
+                            "CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )\n" +
+                            "ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )\n" +
+                            "ELSE CAST(iDate AS NVARCHAR(30) )\n" +
+                            "END AS NVARCHAR(30)) ) > ? AND iWeekScheduleDid = ? ",DateUtils.formatDate(apsWeekschedule.getDLockEndTime(),"yyyy-MM-dd"),apsWeekscheduledetails.getIAutoId());
+                }
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
 
     /**
      * 月周度生产计划逻辑处理
