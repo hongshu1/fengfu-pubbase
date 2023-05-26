@@ -1,0 +1,106 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>基础档案-单据业务类型字典</h1></div>
+	<div class="col">
+	<form class="form-inline" id="VouchTypeDic_form_#(pageId)">
+<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入单据类型中文名" maxlength="40" name="cVTChName" />
+<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入业务类型中文名" maxlength="40" name="cBTChName" />
+		<div class="btn-group text-center mx-1">
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/vouchtypedic/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增基础档案-单据业务类型字典"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="VouchTypeDic_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iOrgId}</td>
+<td>${data.cOrgCode}</td>
+<td>${data.cOrgName}</td>
+<td>${data.cVBTID}</td>
+<td>${data.cVTChName}</td>
+<td>${data.cBTID}</td>
+<td>${data.cBTChName}</td>
+<td>${data.iAccType}</td>
+<td>${data.cBTDemo}</td>
+<td>${data.cSerial}</td>
+<td>${data.LocaleID}</td>
+<td>${data.cCreateName}</td>
+<td>${data.dCreateTime}</td>
+<td>${data.cUpdateName}</td>
+<td>${data.dUpdateTime}</td>
+<td>
+	<a class="jbolt_table_delbtn" href="admin/vouchtypedic/delete/${data.iAutoId}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="vouchtypeDic_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增基础档案-单据业务类型字典" data-url="admin/vouchtypedic/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑基础档案-单据业务类型字典" data-check-handler="jboltTableGetCheckedId" data-url="admin/vouchtypedic/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/vouchtypedic/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="VouchTypeDic_form_#(pageId)"
+	   data-url="admin/vouchtypedic/datas"
+	   data-rowtpl="VouchTypeDic_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="VouchTypeDic_page"
+	   data-toolbar="VouchTypeDic_toolbar_#(pageId)"
+	   data-column-prepend="1:checkbox:true:false:false"
+>
+<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th  data-width="100" data-column="iOrgId">组织ID[1]</th>
+	<th  data-width="150" data-column="cOrgCode">组织编码[2]</th>
+	<th  data-width="150" data-column="cOrgName">组织名称[3]</th>
+	<th  data-width="150" data-column="cVBTID">单据业务类型ID[4]</th>
+	<th  data-width="150" data-column="cVTChName">单据类型中文名[5]</th>
+	<th  data-width="150" data-column="cBTID">业务类型ID[6]</th>
+	<th  data-width="150" data-column="cBTChName">业务类型中文名[7]</th>
+	<th  data-width="100" data-column="iAccType">账套类型[8]</th>
+	<th  data-width="150" data-column="cBTDemo">（业务类型）备注[9]</th>
+	<th  data-width="150" data-column="cSerial">序号[10]</th>
+	<th  data-width="150" data-column="LocaleID">语言ID，zh-CN(简体中文)[11]</th>
+	<th  data-width="150" data-column="cCreateName">创建人名称[12]</th>
+	<th  data-min-width="160" data-column="dCreateTime">创建时间[13]</th>
+	<th  data-width="150" data-column="cUpdateName">更新人名称[14]</th>
+	<th  data-min-width="160" data-column="dUpdateTime">更新时间[15]</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
