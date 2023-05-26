@@ -226,15 +226,15 @@
             </div>
             <div class="select">
                 <span>存货编码:</span>
-                <input style="width:150px;height:20px;" />
+                <input style="width:150px;height:20px;" id="cinvcode"/>
             </div>
             <div class="select">
                 <span>客户部番:</span>
-                <input style="width:150px;height:20px;" />
+                <input style="width:150px;height:20px;" id="cinvcode1"/>
             </div>
             <div class="select">
                 <span>部品名称:</span>
-                <input style="width:150px;height:20px;" />
+                <input style="width:150px;height:20px;" id="cinvname1"/>
             </div>
             <button class="button" onClick="search()">搜索</button>
             <button class="button">重置</button>
@@ -305,6 +305,12 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
+    /**
+     * @param Api 公共接口
+     */
+    var Api = 'http://localhost:8081/';
+
+
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
@@ -417,7 +423,7 @@
      * @param sheet 当前活动表单
      */
     function initDate(parms,sheet) {
-        let url = "http://localhost:8081/admin/scheduproductplanmonth/getTableHead";
+        let url = Api+"admin/scheduproductplanmonth/getTableHead";
         //获取接口数据
         Ajax.get(url,(res)=>{
             spreadSuspend();//暂停绘制
@@ -455,11 +461,33 @@
         });
     }
     /**
+     * 搜索
+     * @param search
+     */
+    var searchData={
+        cworkname:'',
+        cinvcode:'',
+        cinvcode1:'',
+        cinvname1:'',
+    }
+    function search(){
+        const cinvcode = document.getElementById('cinvcode').value;
+        const cinvcode1 = document.getElementById('cinvcode1').value;
+        const cinvname1 = document.getElementById('cinvname1').value;
+        searchData={
+            cinvcode,
+            cinvcode1,
+            cinvname1
+        }
+        initData();
+    }
+    /**
      * 渲染表格数据
      * @param initData
      */
     function initData(){
-        let url = "http://localhost:8081/admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=&cinvcode=&cinvcode1=&cinvname1=";
+        // let url = Api+`admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=${searchData.cvenname}&cinvcode=&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`;
+        let url = Api+`admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=&cinvcode=&cinvcode1=&cinvname1=`;
         $.ajax({
             url,
             type:'get',
@@ -526,7 +554,7 @@
         })
         //渲染头部搜索区域供应商数据
         $.ajax({
-            url:"http://localhost:8081/admin/schedudemandplan/getSupplierList",
+            url:Api+"admin/schedudemandplan/getSupplierList",
             type:'get',
             dataType:'json',
             success:function (res){
@@ -598,7 +626,7 @@
     mClose_But.onclick = function(){
         const datetimeLocalInput = document.getElementById('datetime-local');
         const myVal = datetimeLocalInput.value.substring(0,10);
-            let url = "http://localhost:8081/admin/schedudemandplan/apsScheduDemandPlan?endDate=2023-06-30";
+            let url =Api+"admin/schedudemandplan/apsScheduDemandPlan?endDate=2023-06-30";
             $.ajax({
                 url,
                 data:{
@@ -668,7 +696,7 @@
         let endTime = document.getElementById('end-time').value.substring(0,10);//获取结束时间
         if(startTime!=""&&endTime!=""){
             if(parms.supplierValueArray.length!=0){
-                let url = `http://localhost:8081/admin/schedudemandplan/saveForetell?startdate=${startTime}&enddate=${endTime}&data=${JSON.stringify(parms.supplierValueArray)}`
+                let url = Api+`admin/schedudemandplan/saveForetell?startdate=${startTime}&enddate=${endTime}&data=${JSON.stringify(parms.supplierValueArray)}`
                 $.ajax({
                     url,
                     type: 'get',
@@ -694,31 +722,7 @@
     closeIndicate.onclick = function(){
         myIndicate.style.display = "none";
     }
-    /**
-     * 搜索
-     * @param search
-     */
-    function search(){
-        $.ajax({
-            url:`http://localhost:8081/admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=${parms.searchSupplier}&cinvcode='A800135'&cinvcode1='26000-52F-0030'&cinvname1="52F液力变矩器"`,
-            type:'get',
-            dataType:'json',
-            success:function (res){
-                console.log(res)
-                // parms.supplierData=res.data;
-                // for (var i = 0; i < res.data.length; i++) {
-                //     var jsonObj = res.data[i];
-                //     $("#supplier_id").append(`
-                //     <li class="dropdown-item" id="li" onClick='supplierClick("${jsonObj.cvenname}")'
-                //      value='${jsonObj.cvenname}' style="display:flex;"><span style=flex:1;>
-                //      ${jsonObj.cvenname}
-                //      </span></li>`);
-                // }
-            },error: function(error) {
-                console.log(error,"预示保存弹出层");
-            }
-        })
-    }
+
     /**
      * 获取当前点击的供应商
      * @param supplierClick
@@ -728,7 +732,7 @@
         let supplierValue = document.all['supplier'];
         supplierValue.innerText = item;
         parms.searchSupplier=item;
-        console.log(parms.searchSupplier);
+        console.log(parms.searchSupplier,'5555555');
     }
     /**
      * 全选按钮事件

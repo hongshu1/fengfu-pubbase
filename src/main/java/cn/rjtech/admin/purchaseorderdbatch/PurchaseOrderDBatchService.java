@@ -223,10 +223,10 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
 				Integer year = purchaseOrderdQty.getIYear();
 				Integer month = purchaseOrderdQty.getIMonth();
 				Integer date = purchaseOrderdQty.getIDate();
-				if (yearStr.equals(String.valueOf(year)) && monthStr.equals(String.valueOf(month)) && dateStr.equals(String.valueOf(date))){
+				if (Integer.valueOf(yearStr).equals(year) && Integer.valueOf(monthStr).equals(month) && Integer.valueOf(dateStr).equals(date)){
 					// 总数量 - 更改的数量
-					BigDecimal num = purchaseOrderdQty.getIQty().subtract(orderDBatch.getIQty().subtract(qty));
-					purchaseOrderdQty.setIQty(num);
+//					BigDecimal num = purchaseOrderdQty.getIQty().subtract(orderDBatch.getIQty().subtract(qty));
+					purchaseOrderdQty.setIQty(qty);
 					purchaseOrderdQty.update();
 				}
 			}

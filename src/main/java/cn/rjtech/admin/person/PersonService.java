@@ -22,15 +22,14 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
 import cn.rjtech.admin.workclass.WorkClassService;
 import cn.rjtech.enums.SourceEnum;
-import cn.rjtech.model.momdata.Equipment;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.PersonEquipment;
-import cn.rjtech.model.momdata.Workclass;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -67,7 +66,8 @@ public class PersonService extends BaseService<Person> {
     private DictionaryService dictionaryService;
     @Inject
     private PersonEquipmentService personEquipmentService;
-
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingdService;
 
     private final Person dao = new Person().dao();
 
@@ -335,44 +335,14 @@ public class PersonService extends BaseService<Person> {
      * 数据导入
      */
     public Ret importExcelDatas(List<UploadFile> fileList, Kv para) {
-        String iscover = JBoltStringUtil.isBlank(para.getStr("iscover")) ? "1" : "0";
         int startRow = 2;
         for (UploadFile uploadFile : fileList) {
             StringBuilder errorMsg = new StringBuilder();
-            JBoltExcel excel = JBoltExcel
-                    // 从excel文件创建JBoltExcel实例
-                    .from(uploadFile.getFile())
-                    // 设置工作表信息
-                    .setSheets(
-                            JBoltExcelSheet.create("Sheet1")
-                                    // 设置列映射 顺序 标题名称
-                                    .setHeaders(1,
-                                            JBoltExcelHeader.create("indexnum", "序号"),
-                                            JBoltExcelHeader.create("iuserid", "所属用户名"),
-                                            JBoltExcelHeader.create("cpsnnum", "人员编码"),
-                                            JBoltExcelHeader.create("cpsnname", "姓名"),
-                                            JBoltExcelHeader.create("vidno", "证件号码"),
-                                            JBoltExcelHeader.create("isex", "性别"),
-                                            JBoltExcelHeader.create("rpersontype", "人员类别"),
-                                            JBoltExcelHeader.create("cpsnmobilephone", "手机号"),
-                                            JBoltExcelHeader.create("jobnumber", "工号"),
-                                            JBoltExcelHeader.create("cecardno", "电子卡号"),
-                                            JBoltExcelHeader.create("cdeptnum", "所属部门编码"),
-                                            JBoltExcelHeader.create("remploystate", "在职状态"),
-                                            JBoltExcelHeader.create("dhiredate", "入职日期"),
-                                            JBoltExcelHeader.create("iworkclassid", "所属工种"),
-                                            JBoltExcelHeader.create("dbirthdate", "出生日期"),
-                                            JBoltExcelHeader.create("cpsnemail", "邮箱"),
-                                            JBoltExcelHeader.create("isenabled", "是否启用"),
-                                            JBoltExcelHeader.create("cmemo", "备注"),
-                                            JBoltExcelHeader.create("cequipmentcode", "人员设备")
-                                    )
-                                    // 从第三行开始读取
-                                    .setDataStartRow(startRow)
-                    );
+            //使用字段配置维护
+            Object modelss =  cusFieldsMappingdService.getImportDatas(uploadFile.getFile(), "人员档案").get("data");
+            String docInfoRelaStrings= JSON.toJSONString(modelss);
+            List<Person> rows = JSON.parseArray(docInfoRelaStrings, Person.class);
 
-            // 从指定的sheet工作表里读取数据
-            List<Record> rows = JBoltExcelUtil.readRecords(excel, 0, true, errorMsg);
             if (notOk(rows)) {
                 if (errorMsg.length() > 0) {
                     return fail(errorMsg.toString());
@@ -400,11 +370,11 @@ public class PersonService extends BaseService<Person> {
     /**
      * 导入功能-校验每行数据的有效性：非空 ，数字等
      */
-    public void constructPersonModelCheckDatasEffectiveColumnByExcelDatas(List<Record> excelRecordList, StringBuilder errorMsg, int startRow) {
+    public void constructPersonModelCheckDatasEffectiveColumnByExcelDatas(List<Person> excelRecordList, StringBuilder errorMsg, int startRow) {
         if (CollUtil.isEmpty(excelRecordList)) return;
-        for (Record excelRecord : excelRecordList) {
-            String cpsnNum = excelRecord.getStr("cpsnnum");
-            String cpsnName = excelRecord.getStr("cpsnname");
+        for (Person excelRecord : excelRecordList) {
+            String cpsnNum = excelRecord.getStr("cpsn_num");
+            String cpsnName = excelRecord.getStr("cpsn_name");
             if (JBoltStringUtil.isBlank(cpsnNum)) errorMsg.append("第").append(startRow).append("行,[人员编码]为空,请检查!<br/>");
             if (JBoltStringUtil.isBlank(cpsnName)) errorMsg.append("第").append(startRow).append("行,[姓名]为空,请检查!<br/>");
             try {
@@ -424,19 +394,20 @@ public class PersonService extends BaseService<Person> {
     /**
      * 导入功能-构造model
      */
-    public void constructPersonModelByExcelDatas(List<Record> excelRecordList, List<Person> personList, List<PersonEquipment> personEquipmentList) {
+    public void constructPersonModelByExcelDatas(List<Person> excelRecordList, List<Person> personList, List<PersonEquipment> personEquipmentList) {
         if (CollUtil.isEmpty(excelRecordList)) return;
-        for (Record excelRecord : excelRecordList) {
+        for (Person excelRecord : excelRecordList) {
             Person person = new Person();
             Long personId = JBoltSnowflakeKit.me.nextId();
             person.setIAutoId(personId);
             String username = excelRecord.getStr("iuserid");
             User user = userService.getUserByUserName(username);
             if (user != null) person.setIUserId(user.getId());
-            person.setCpsnNum(excelRecord.getStr("cpsnnum"));
-            person.setCpsnName(excelRecord.getStr("cpsnname"));
+            person.setCpsnNum(excelRecord.getStr("cpsn_num"));
+            person.setCpsnName(excelRecord.getStr("cpsn_name"));
             person.setVIDNo(excelRecord.getStr("vidno"));
-            String isexStr = excelRecord.getStr("isex");
+            //借用字段名
+            String isexStr = excelRecord.getStr("natruetype");
             Integer isex = JBoltStringUtil.isBlank(isexStr) ? null : ("男".equals(isexStr) ? 1 : 2);
             person.setISex(isex);
             //获取封装的事业类型的字典
@@ -451,7 +422,7 @@ public class PersonService extends BaseService<Person> {
             Record remploystateDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.job_type.name());
             String remploystate = excelRecord.getStr("remploystate");
             remploystate = JBoltStringUtil.isNotBlank(remploystate) ? remploystateDictionaryRecord.getStr(remploystate) : remploystate;
-            person.setVIDNo(remploystate);
+            person.setREmployState(remploystate);
             person.setDHireDate(excelRecord.getDate("dhiredate"));
             String cWorkClassCode = excelRecord.getStr("iworkclassid");
             Workclass workClass = workClassService.findModelByCode(cWorkClassCode);
@@ -459,7 +430,7 @@ public class PersonService extends BaseService<Person> {
             person.setDBirthDate(excelRecord.getStr("dbirthdate"));
             person.setCPsnEmail(excelRecord.getStr("cpsnemail"));
             String isenabled = excelRecord.getStr("isenabled");
-            person.setIsEnabled(Objects.equals(isenabled, "是"));
+            person.setIsEnabled(Objects.equals(isenabled, "1"));
             person.setCMemo(excelRecord.getStr("cmemo"));
             person.setIOrgId(getOrgId());
             person.setCOrgCode(getOrgCode());
@@ -474,7 +445,8 @@ public class PersonService extends BaseService<Person> {
             person.setCUpdateName(loginUser.getName());
             person.setISource(SourceEnum.MES.getValue());
             personList.add(person);
-            String cequipmentcodes = excelRecord.getStr("cequipmentcode");
+            //借用字段
+            String cequipmentcodes = excelRecord.getStr("cregion");
             if (JBoltStringUtil.isBlank(cequipmentcodes)) return;
             for (String cequipmentcode : cequipmentcodes.split(",")) {
                 Equipment equipment = equipmentService.findModelByCode(cequipmentcode);

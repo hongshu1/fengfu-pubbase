@@ -1,11 +1,13 @@
 package cn.rjtech.admin.equipmentmodel;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.EquipmentModel;
 import cn.rjtech.util.ValidationUtils;
@@ -17,6 +19,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -97,24 +100,35 @@ public class EquipmentModelAdminController extends BaseAdminController {
         render("import_excel.html");
     }
 
+//    /**
+//     * 下载导入模板
+//     */
+//    public void downloadTpl() {
+//        renderBytesToExcelXlsFile(service.getImportExcelTpl().setFileName("物料建模-机型档案导入模板"));
+//    }
+
     /**
-     * 下载导入模板
+     * Excel模板下载
      */
-    public void downloadTpl() {
-        renderBytesToExcelXlsFile(service.getImportExcelTpl().setFileName("物料建模-机型档案导入模板"));
+    @SuppressWarnings("unchecked")
+    public void downloadTpl() throws Exception {
+        renderJxls("equipmentmodel_import.xlsx", Kv.by("rows", null), "机型档案导入模板.xlsx");
     }
 
     /**
      * 执行导入excel
      */
     public void importExcel() {
-        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.IMPORT_EXCEL_TEMP_FOLDER);
-        UploadFile file = getFile("file", uploadPath);
-        if (notExcel(file)) {
-            renderJsonFail("请上传excel文件");
-            return;
-        }
-        renderJson(service.importExcel(file.getFile()));
+
+        UploadFile uploadFile = getFile("file");
+        ValidationUtils.notNull(uploadFile, "上传文件不能为空");
+        File file = uploadFile.getFile();
+        List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+        // 截取最后一个“.”之前的文件名，作为导入格式名
+        String cformatName = list.get(0);
+        String extension = list.get(1);
+        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+        renderJson(service.importExcel(file, cformatName));
     }
 
     /**

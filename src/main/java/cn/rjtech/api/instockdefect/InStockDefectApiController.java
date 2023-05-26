@@ -77,9 +77,7 @@ public class InStockDefectApiController extends BaseApiController {
     @UnCheck
     public void addlist(@Para(value = "iautoid") Long iautoid,
                     @Para(value = "iinstockqcformmid") Long iinstockqcformmid,
-                    @Para(value = "type", defaultValue = "0") String type) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(iinstockqcformmid, JBoltMsg.PARAM_ERROR);
+                        @Para(value = "type") String type) {
         renderJBoltApiRet(inStockDefectApiService.add(iautoid, iinstockqcformmid, type));
     }
 
