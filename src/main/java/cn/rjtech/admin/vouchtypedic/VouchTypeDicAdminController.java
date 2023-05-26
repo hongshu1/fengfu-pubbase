@@ -1,17 +1,18 @@
 package cn.rjtech.admin.vouchtypedic;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.VouchTypeDic;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+
 /**
  * 基础档案-单据业务类型字典
+ *
  * @ClassName: VouchTypeDicAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-25 16:32
@@ -21,68 +22,69 @@ import cn.rjtech.model.momdata.VouchTypeDic;
 @Path(value = "/admin/vouchtypedic", viewPath = "/_view/admin/vouchtypedic")
 public class VouchTypeDicAdminController extends BaseAdminController {
 
-	@Inject
-	private VouchTypeDicService service;
-   /**
-	* 首页
-	*/
-	public void index() {
-		render("index.html");
-	}
-   /**
-	* 数据源
-	*/
-	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("cVTChName"), get("cBTChName")));
-	}
+    @Inject
+    private VouchTypeDicService service;
 
-   /**
-	* 新增
-	*/
-	public void add() {
-		render("add.html");
-	}
+    /**
+     * 首页
+     */
+    public void index() {
+        render("index.html");
+    }
 
-   /**
-	* 保存
-	*/
-	public void save() {
-		renderJson(service.save(getModel(VouchTypeDic.class, "vouchTypeDic")));
-	}
+    /**
+     * 数据源
+     */
+    public void datas() {
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("cVTChName"), get("cBTChName")));
+    }
 
-   /**
-	* 编辑
-	*/
-	public void edit() {
-		VouchTypeDic vouchTypeDic=service.findById(getLong(0));
-		if(vouchTypeDic == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		set("vouchTypeDic",vouchTypeDic);
-		render("edit.html");
-	}
+    /**
+     * 新增
+     */
+    public void add() {
+        render("add.html");
+    }
 
-   /**
-	* 更新
-	*/
-	public void update() {
-		renderJson(service.update(getModel(VouchTypeDic.class, "vouchTypeDic")));
-	}
+    /**
+     * 保存
+     */
+    public void save() {
+        renderJson(service.save(getModel(VouchTypeDic.class, "vouchTypeDic")));
+    }
 
-   /**
-	* 批量删除
-	*/
-	public void deleteByIds() {
-		renderJson(service.deleteByIds(get("ids")));
-	}
+    /**
+     * 编辑
+     */
+    public void edit() {
+        VouchTypeDic vouchTypeDic = service.findById(getLong(0));
+        if (vouchTypeDic == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        set("vouchTypeDic", vouchTypeDic);
+        render("edit.html");
+    }
 
-   /**
-	* 删除
-	*/
-	public void delete() {
-		renderJson(service.deleteById(getLong(0)));
-	}
+    /**
+     * 更新
+     */
+    public void update() {
+        renderJson(service.update(getModel(VouchTypeDic.class, "vouchTypeDic")));
+    }
 
+    /**
+     * 批量删除
+     */
+    public void deleteByIds() {
+        renderJson(service.deleteByIds(get("ids")));
+    }
+
+    /**
+     * 删除
+     */
+    public void delete() {
+        renderJson(service.deleteById(getLong(0)));
+    }
 
 }

@@ -18,7 +18,7 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
     public static final String CORGCODE = "cOrgCode";
     /**组织名称*/
     public static final String CORGNAME = "cOrgName";
-    /**单据业务类型ID*/
+    /**单据业务类型*/
     public static final String CVBTID = "cVBTID";
     /**单据类型ID*/
     public static final String CVTID = "cVTID";
@@ -34,8 +34,12 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
     public static final String CBTDEMO = "cBTDemo";
     /**序号*/
     public static final String CSERIAL = "cSerial";
-    /**语言ID，zh-CN(简体中文)*/
+    /**语言ID;zh-CN(简体中文)*/
     public static final String LOCALEID = "LocaleID";
+    /**来源类型;1. MES 2. U8*/
+    public static final String ISOURCE = "iSource";
+    /**来源ID*/
+    public static final String ISOURCEID = "iSourceId";
     /**创建人ID*/
     public static final String ICREATEBY = "iCreateBy";
     /**创建人名称*/
@@ -48,8 +52,8 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
     public static final String CUPDATENAME = "cUpdateName";
     /**更新时间*/
     public static final String DUPDATETIME = "dUpdateTime";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "IsDeleted";
+    /**删除状态;0. 未删除 1. 已删除*/
+    public static final String ISDELETED = "isDeleted";
 	/**
 	 * 主键ID
 	 */
@@ -112,14 +116,14 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	/**
 	 * 组织名称
 	 */
-	@JBoltField(name="corgname" ,columnName="cOrgName",type="String", remark="组织名称", required=true, maxLength=50, fixed=0, order=4)
+	@JBoltField(name="corgname" ,columnName="cOrgName",type="String", remark="组织名称", required=true, maxLength=40, fixed=0, order=4)
 	@JSONField(name = "corgname")
 	public java.lang.String getCOrgName() {
 		return getStr("cOrgName");
 	}
 
 	/**
-	 * 单据业务类型ID
+	 * 单据业务类型
 	 */
 	public M setCVBTID(java.lang.String cVBTID) {
 		set("cVBTID", cVBTID);
@@ -127,9 +131,9 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	}
 
 	/**
-	 * 单据业务类型ID
+	 * 单据业务类型
 	 */
-	@JBoltField(name="cvbtid" ,columnName="cVBTID",type="String", remark="单据业务类型ID", required=true, maxLength=4, fixed=0, order=5)
+	@JBoltField(name="cvbtid" ,columnName="cVBTID",type="String", remark="单据业务类型", required=false, maxLength=4, fixed=0, order=5)
 	@JSONField(name = "cvbtid")
 	public java.lang.String getCVBTID() {
 		return getStr("cVBTID");
@@ -197,7 +201,7 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	/**
 	 * 业务类型中文名
 	 */
-	@JBoltField(name="cbtchname" ,columnName="cBTChName",type="String", remark="业务类型中文名", required=false, maxLength=100, fixed=0, order=9)
+	@JBoltField(name="cbtchname" ,columnName="cBTChName",type="String", remark="业务类型中文名", required=false, maxLength=255, fixed=0, order=9)
 	@JSONField(name = "cbtchname")
 	public java.lang.String getCBTChName() {
 		return getStr("cBTChName");
@@ -206,7 +210,7 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	/**
 	 * 账套类型
 	 */
-	public M setIAccType(java.lang.Short iAccType) {
+	public M setIAccType(java.lang.String iAccType) {
 		set("iAccType", iAccType);
 		return (M)this;
 	}
@@ -214,10 +218,10 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	/**
 	 * 账套类型
 	 */
-	@JBoltField(name="iacctype" ,columnName="iAccType",type="", remark="账套类型", required=true, maxLength=5, fixed=0, order=10)
+	@JBoltField(name="iacctype" ,columnName="iAccType",type="String", remark="账套类型", required=true, maxLength=255, fixed=0, order=10)
 	@JSONField(name = "iacctype")
-	public java.lang.Short getIAccType() {
-		return getShort("iAccType");
+	public java.lang.String getIAccType() {
+		return getStr("iAccType");
 	}
 
 	/**
@@ -255,7 +259,7 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	}
 
 	/**
-	 * 语言ID，zh-CN(简体中文)
+	 * 语言ID;zh-CN(简体中文)
 	 */
 	public M setLocaleID(java.lang.String LocaleID) {
 		set("LocaleID", LocaleID);
@@ -263,12 +267,46 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	}
 
 	/**
-	 * 语言ID，zh-CN(简体中文)
+	 * 语言ID;zh-CN(简体中文)
 	 */
-	@JBoltField(name="localeid" ,columnName="LocaleID",type="String", remark="语言ID，zh-CN(简体中文)", required=true, maxLength=32, fixed=0, order=13)
+	@JBoltField(name="localeid" ,columnName="LocaleID",type="String", remark="语言ID;zh-CN(简体中文)", required=false, maxLength=32, fixed=0, order=13)
 	@JSONField(name = "localeid")
 	public java.lang.String getLocaleID() {
 		return getStr("LocaleID");
+	}
+
+	/**
+	 * 来源类型;1. MES 2. U8
+	 */
+	public M setISource(java.lang.Integer iSource) {
+		set("iSource", iSource);
+		return (M)this;
+	}
+
+	/**
+	 * 来源类型;1. MES 2. U8
+	 */
+	@JBoltField(name="isource" ,columnName="iSource",type="Integer", remark="来源类型;1. MES 2. U8", required=true, maxLength=10, fixed=0, order=14)
+	@JSONField(name = "isource")
+	public java.lang.Integer getISource() {
+		return getInt("iSource");
+	}
+
+	/**
+	 * 来源ID
+	 */
+	public M setISourceId(java.lang.String iSourceId) {
+		set("iSourceId", iSourceId);
+		return (M)this;
+	}
+
+	/**
+	 * 来源ID
+	 */
+	@JBoltField(name="isourceid" ,columnName="iSourceId",type="String", remark="来源ID", required=false, maxLength=32, fixed=0, order=15)
+	@JSONField(name = "isourceid")
+	public java.lang.String getISourceId() {
+		return getStr("iSourceId");
 	}
 
 	/**
@@ -282,7 +320,7 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	/**
 	 * 创建人ID
 	 */
-	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=14)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=16)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
@@ -299,7 +337,7 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=15)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=40, fixed=0, order=17)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
@@ -316,7 +354,7 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=16)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=18)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
@@ -333,7 +371,7 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	/**
 	 * 更新人ID
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=17)
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=19)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
@@ -350,7 +388,7 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=18)
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=40, fixed=0, order=20)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
@@ -367,27 +405,27 @@ public abstract class BaseVouchTypeDic<M extends BaseVouchTypeDic<M>> extends JB
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=19)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=21)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
 	}
 
 	/**
-	 * 删除状态：0. 未删除 1. 已删除
+	 * 删除状态;0. 未删除 1. 已删除
 	 */
-	public M setIsDeleted(java.lang.Boolean IsDeleted) {
-		set("IsDeleted", IsDeleted);
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
 		return (M)this;
 	}
 
 	/**
-	 * 删除状态：0. 未删除 1. 已删除
+	 * 删除状态;0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=20)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态;0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=22)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("IsDeleted");
+		return getBoolean("isDeleted");
 	}
 
 }
