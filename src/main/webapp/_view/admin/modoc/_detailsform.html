@@ -114,7 +114,7 @@
                     <label class="col-sm-3 col-form-label">生产单位</label>
                     <div class="col">
                         <input id="cin" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                               placeholder="" maxlength="18" data-value-attr=""
+                               placeholder="" maxlength="18" data-value-attr="" value="#(moDoc.manufactureuom??)"
                                readonly="readonly"
                         />
                     </div>
@@ -126,7 +126,7 @@
                     <label class="col-sm-3 col-form-label">规格</label>
                     <div class="col">
                         <input id="cin2" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                               placeholder="" maxlength="18" data-value-attr=""
+                               placeholder="" maxlength="18" data-value-attr="" value="#(moDoc.cinvstd??)"
                                readonly="readonly"
                         />
                     </div>
@@ -223,7 +223,7 @@
                     <div class="col">
                         <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
                               placeholder="" maxlength="18" name="" readonly="readonly"
-                               value=""/>
+                               value="#(moDoc.croutingname??)"/>
                     </div>
                 </div>
             </div>

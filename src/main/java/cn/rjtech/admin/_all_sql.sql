@@ -518,3 +518,9 @@
 #include("warehousebeginofperiod/warehousebeginofperiod.sql")
 #end
 
+#namespace("moroutingconfigoperation")
+#include("moroutingconfigoperation/moroutingconfigoperation.sql")
+#end
+
+
+

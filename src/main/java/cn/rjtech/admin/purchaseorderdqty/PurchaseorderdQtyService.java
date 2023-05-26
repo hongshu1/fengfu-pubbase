@@ -157,4 +157,17 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 	public List<PurchaseorderdQty> findByPurchaseOrderDId(Long purchaseOrderDId){
 		return find("SELECT * FROM PS_PurchaseOrderD_Qty WHERE iPurchaseOrderDid = ?", purchaseOrderDId);
 	}
+	
+	public int delByPurchaseOrderDId(Long purchaseOrderDId){
+		Sql sql = deleteSql().eq(PurchaseorderdQty.IPURCHASEORDERDID, purchaseOrderDId);
+		return delete(sql);
+	}
+	
+	public int delete(Long purchaseOrderDId, int year, int month, int date){
+		Sql sql = deleteSql().eq(PurchaseorderdQty.IPURCHASEORDERDID, purchaseOrderDId);
+		sql.eq(PurchaseorderdQty.IYEAR, year);
+		sql.eq(PurchaseorderdQty.IMONTH, month);
+		sql.eq(PurchaseorderdQty.IDATE, date);
+		return delete(sql);
+	}
 }

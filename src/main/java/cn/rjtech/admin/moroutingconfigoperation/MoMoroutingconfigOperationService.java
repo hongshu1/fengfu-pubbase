@@ -1,12 +1,17 @@
 package cn.rjtech.admin.moroutingconfigoperation;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.MoMoroutingconfigOperation;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 制造工单-存货工艺配置工序 Service
  * @ClassName: MoMoroutingconfigOperationService
@@ -121,6 +126,10 @@ public class MoMoroutingconfigOperationService extends BaseService<MoMoroutingco
 	@Override
 	protected int systemLogTargetType() {
 		return ProjectSystemLogTargetType.NONE.getValue();
+	}
+
+    public List<Record> dataList(Kv kv){
+		return dbTemplate("moroutingconfigoperation.findOperationList",kv).find();
 	}
 
 }

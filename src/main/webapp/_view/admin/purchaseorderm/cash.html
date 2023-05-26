@@ -165,7 +165,7 @@
     <nav>
         <div class="nav nav-tabs" id="nav-tab_#(jboltTabId)" role="tablist">
             <a class="nav-item nav-link active" id="nav-base-tab_one" data-toggle="tab" href="#tab-one" role="tab" aria-controls="tab-one" aria-selected="true">订货清单</a>
-            <a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false" onclick="refreshJBoltTable('#PurchaseOrderM_Table3_#(pageId)')">传票更改清单</a>
+            <a class="nav-item nav-link" id="nav-base-tab_two" data-toggle="tab" href="#tab-two" role="tab" aria-controls="tab-two" aria-selected="false">传票更改清单</a>
         </div>
     </nav>
     <div class="tab-content" style="padding: 0px 1rem">
@@ -191,6 +191,10 @@
     // 隐藏第一个按钮
     hideParentLayerDialogBtn(0);
 
+    function refreshTable(tableId) {
+        refreshJBoltTable("#PurchaseOrderM_Table31_#(pageId)");
+    }
+
     function removeRow(ele) {
         var flag = jboltTableRemoveRow(ele);
         if (flag){
@@ -212,7 +216,7 @@
         },  function(ret) {
                 if (ret.state == 'ok'){
                     index = 0;
-                    jboltTableRefresh();
+                    refreshPjaxContainer();
                 }
         });
     }
