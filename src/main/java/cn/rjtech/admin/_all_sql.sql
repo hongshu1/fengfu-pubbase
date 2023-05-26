@@ -84,10 +84,6 @@
 #include("workshiftm/workshiftm.sql")
 #end
 
-#namespace("monthweekproductionschedule")
-#include("monthweekproductionschedule/monthweekproductionschedule.sql")
-#end
-
 #namespace("workregionm")
 #include("workregionm/workregionm.sql")
 #end
@@ -179,10 +175,6 @@
 
 #namespace("customeraddr")
 #include("customeraddr/customeraddr.sql")
-#end
-
-#namespace("descflexfielddef")
-#include("descflexfielddef/descflexfielddef.sql")
 #end
 
 #namespace("fitemss97")

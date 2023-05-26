@@ -3,10 +3,6 @@ package cn.rjtech.base.service;
 import cn.jbolt.core.kit.OrgAccessKit;
 import cn.jbolt.core.model.base.JBoltBaseModel;
 import cn.jbolt.core.service.base.JBoltBaseService;
-import cn.rjtech.admin.descflexfielddef.DescflexfielddefService;
-import com.jfinal.aop.Inject;
-import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 基础服务
@@ -14,17 +10,6 @@ import com.jfinal.plugin.activerecord.Record;
  * @author Kephon
  */
 public abstract class BaseService<M extends JBoltBaseModel<M>> extends JBoltBaseService<M> {
-
-    @Inject
-    protected DescflexfielddefService descflexfielddefService;
-
-    protected void tableDescflexfielddefDataSave(Long iautoid, Record record) {
-        descflexfielddefService.tableDataSave(iautoid, record);
-    }
-
-    protected void tableDescflexfielddefDataSave(Long iautoid, Kv kv) {
-        descflexfielddefService.tableDataSave(iautoid, kv);
-    }
 
     /**
      * 获取登录的组织ID
