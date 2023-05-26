@@ -1,0 +1,162 @@
+<div class="jbolt_page_title">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="col">
+            <button onclick="printtpl('#(iautoid??)')" class="btn btn-info btn-sm"><i
+                class="fa fa-window-maximize"></i> 打印
+            </button>
+            <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-success btn-sm"><i
+                class="fa fa-remove"></i> 删除
+            </button>
+            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                class="fa fa-close"></i> 关闭
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<textarea class="jb_tpl_box" id="warehousebeginForm_tpl_#(pageId)">
+  {@each datas as data,index}
+    <tr data-id="${data.iautoid}">
+      <td>${pageNumber,pageSize,index | rownum}</td>
+      <td title="${data.cinvcode}">${data.cinvcode}</td>
+      <td title="${data.cinvcode1}">${data.cinvcode1}</td>
+      <td title="${data.cinvname1}">${data.cinvname1}</td>
+      <td title="${data.cinvstd}">${data.cinvstd}</td>
+      <td title="${data.cuomname}">${data.cuomname}</td>
+      <td title="${data.cvencode}">${data.cvencode}</td>
+      <td title="${data.cvenname}">${data.cvenname}</td>
+      <td title="${data.ipkgqty}">${data.ipkgqty}</td>
+      <td title="${data.cbarcode}">${data.cbarcode}</td>
+      <td title="${data.qty}">${data.qty}</td>
+      <td title="${data.batch}">${data.batch}</td>
+      <td title="${data.createdate}">${data.createdate}</td>
+      <td title="${data.printtepl}">${data.printtepl}</td>
+      <td title="${data.createperson}">${data.createperson}</td>
+      <td title="${data.createtime}">${data.createtime}</td>
+    </tr>
+  {@/each}
+</textarea>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <table class="jbolt_table jbolt_main_table  table-center"
+               id="warehousebeginform_TableId_#(pageId)"
+               data-jbolttable
+               data-ajax="true"
+               data-url="admin/warehousebeginofperiod/findDetails"
+               data-height="300"
+               data-column-resize="true"
+               data-conditions-form="warehousebeginformtable_form_#(pageId)"
+               data-page="warehousebeginform_page_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+               data-rowtpl="warehousebeginForm_tpl_#(pageId)"
+               data-toolbar="warehousebeginform_toolbar_#(pageId)"
+               data-editable="true">
+          <thead>
+          <tr>
+            <th data-width="30px">序号</th>
+            <th data-width="150" data-column="cinvcode">存货编码</th>
+            <th data-width="150" data-column="cinvcode1">客户部番</th>
+            <th data-width="100" data-column="cinvname1">部品名称</th>
+            <th data-width="100" data-column="cinvstd">规格</th>
+            <th data-width="150" data-column="cuomname">主计量单位</th>
+            <th data-width="150" data-column="cvencode">供应商编码</th>
+            <th data-width="150" data-column="cvenname">供应商名称</th>
+            <th data-width="150" data-column="ipkgqty" title="包装数量">包装数量</th>
+            <th data-width="150" data-column="cbarcode">条码号</th>
+            <th data-width="100" data-column="qty">数量</th>
+            <th data-width="100" data-column="batch">批次号</th>
+            <th data-width="150" data-column="createdate">生产日期</th>
+            <th data-width="150" data-column="printtepl" title="">标签打印模板</th>
+            <th data-width="120" data-column="createperson">创建人</th>
+            <th data-width="150" data-column="createtime">创建时间</th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+#define js()
+<script>
+  hideParentLayerDialogBtn(0);
+  hideParentLayerDialogBtn(1);
+
+  /*
+  * 关闭
+  * */
+  function closeHandler() {
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+    window.parent.refreshJBoltTable();
+  }
+
+  /**
+   * 打印
+   * @param iautoid
+   */
+  function printtpl(iautoid) {
+
+    var para = {};
+
+    Ajax.post('/admin/warehousebeginofperiod/printtpl', para, function (ret) {
+      if (ret.state === 'ok') {
+        parent.LayerMsgBox.closeAll();
+        parent.refreshPjaxContainer();
+      } else {
+        LayerMsgBox.alert(ret.msg, 2);
+      }
+    });
+  }
+
+  /**
+   * 删除选中的行
+   * @param ele
+   * @param confirm
+   * @param callback
+   * @returns
+   */
+  function jboltTableRemoveCheckedRow(ele, confirm, callback) {
+    var action = getRealJqueryObject(ele);
+    if (isOk(action)) {
+      var success = checkMasterTableId(action);
+      if (!success) {
+        return false;
+      }
+    }
+    var isCheckedNone = jboltTableIsCheckedNone(ele);
+    if (isCheckedNone) {
+      LayerMsgBox.alert("请至少选择一行数据", 2);
+    } else {
+      var ids = jboltTableGetCheckedIds(ele, true);
+      if (ids) {
+        LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？", function () {
+          removeJBoltTableCheckedTr(ele, false, callback);
+        });
+      } else {
+        removeJBoltTableCheckedTr(ele, confirm, callback);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  /*
+  * 打印按钮
+  * */
+  function printButton() {
+    alert("点击打印");
+  }
+
+</script>
+<!--#include("/_view/_admin/common/_formjs.html",formId="warehouseAreaForm")-->
+#end
+

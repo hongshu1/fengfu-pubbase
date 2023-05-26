@@ -57,7 +57,10 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-  <td>操作</td>
+  <td>
+    <a tooltip title="条码明细" href="admin/warehousebeginofperiod/detail" data-scroll="yes"
+       data-handler="refreshJBoltTable" data-title="条码明细" data-area="95%,95%" class="jbolt_table_editbtn">条码明细</a>
+  </td>
   <td title="${data.cwhcode}">${data.cwhcode}</td>
   <td title="${data.cwhname}">${data.cwhname}</td>
   <td title="${data.careacode}">${data.careacode}</td>
@@ -94,7 +97,8 @@
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
         </button>
         <div class="dropdown-menu" aria-labelledby="importMenuButton">
-          <a data-downloadbtn href="/admin/spotcheckparam/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+          <a data-downloadbtn href="/admin/spotcheckparam/downloadTpl" class="btn dropdown-item"><i
+              class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
           <div class="j_upload_file_box"
                data-name="file"
                data-btn-class="btn dropdown-item"

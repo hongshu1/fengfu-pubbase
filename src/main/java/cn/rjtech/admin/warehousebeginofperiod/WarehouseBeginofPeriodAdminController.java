@@ -34,18 +34,28 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     }
 
     /**
-     * 新增
+     * 新增期初库存
      */
     public void add() {
         render("add.html");
     }
 
+    /*
+     * 新增期初条码
+     * */
     public void addBarcode() {
         render("addBarcode.html");
     }
 
+    /*
+     * 条码明细
+     * */
+    public void detail() {
+        render("detail.html");
+    }
+
     /**
-     * 数据眼
+     * 数据源
      */
     public void datas() {
         renderJsonData(service.datas(getPageNumber(), getPageSize(), getKv()));
