@@ -257,10 +257,7 @@ public class BomMasterAdminController extends BaseAdminController {
         keepPara();
         render("inventory_dialog_index.html");
     }
-
-    /**
-     * 默认给1-100个数据
-     */
+    
     public void inventoryPage() {
         renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
     }

@@ -3,6 +3,7 @@
     #if(purchaseOrderM.iautoid??)
     <input type="hidden" name="iAutoId" value="#(purchaseOrderM.iautoid??)"/>
     #end
+    <input type="hidden" name="iType" value="#(purchaseOrderM.itype??)"/>
     <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dbegindate??)"/>
     <input type="hidden" name="dEndDate" value="#(purchaseOrderM.denddate??)"/>
     <div class="row">
@@ -17,6 +18,7 @@
                             data-url="admin/dictionary/options?key=purchase_business_type"
                             data-select-type="select"
                             data-text="==请选择=="
+                            data-select="#(purchaseOrderM.ibustype??)"
                             data-text-attr="iautoid"
                             data-value-attr="sn">
                     </select>
@@ -31,6 +33,7 @@
                             data-rule="required"
                             data-url="admin/purchaseorderm/findPurchaseType"
                             data-select-type="select"
+                            data-select="#(purchaseOrderM.ipurchasetypeid??)"
                             data-text="==请选择=="
                             data-value-attr="iautoid"
                             data-text-attr="cptname">
@@ -40,7 +43,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">业务员</label>
                 <div class="col-6">
-                    <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(workregionm.ipersonid??)" />
+                    <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(purchaseOrderM.idutyuserid??)" />
                     <input type="text" autocomplete="off" value="#(personname??)" class="form-control"
                            placeholder="==请选择人员=="
                            data-rule="required"
@@ -63,6 +66,7 @@
                             data-url="admin/purchaseorderm/findForeignCurrencyAll"
                             data-select-type="select"
                             data-text="==请选择=="
+                            data-select="#(purchaseOrderM.ccurrency??)"
                             data-value=""
                             data-value-attr="cexch_name"
                             data-text-attr="cexch_name">
@@ -75,14 +79,14 @@
                 <label class="col-sm-3 col-form-label">订单日期</label>
                 <div class="col-6">
                     <input type="text" readonly data-notnull="true" autocomplete="off" class="form-control" maxlength="20" name="dOrderDate"
-                           value="#datetime(purchaseOrderM.dOrderDate??,'yyyy-MM-dd')"/>
+                           value="#datetime(purchaseOrderM.dorderdate??,'yyyy-MM-dd')"/>
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">供应商名称</label>
                 <div class="col-6">
-                    <input hidden type="text" name="iVendorId" value="#(purchaseOrderM.iVendorId??)">
-                    <input readonly type="text" autocomplete="off" class="form-control" value="#(purchaseOrderM.cVenName??)">
+                    <input hidden type="text" name="iVendorId" value="#(purchaseOrderM.ivendorid??)">
+                    <input readonly type="text" autocomplete="off" class="form-control" value="#(purchaseOrderM.cvenname??)">
                 </div>
             </div>
             <div class="form-group row">
@@ -90,7 +94,7 @@
                 <div class="col-6">
                     <input type="text" autocomplete="off" class="form-control" data-rule="pnumber"  data-notnull="false"
                            placeholder="请输入税率" maxlength="40" name="iTaxRate"
-                           value="#(purchaseOrderM.iTaxRate??)"/>
+                           value="#(purchaseOrderM.itaxrate??)"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -98,7 +102,7 @@
                 <div class="col-6">
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="pnumber"
                            placeholder="请输入汇率" maxlength="40" name="iExchangeRate"
-                           value="#(purchaseOrderM.iExchangeRate??)"/>
+                           value="#(purchaseOrderM.iexchangerate??)"/>
                 </div>
             </div>
         </div>
@@ -107,7 +111,7 @@
                 <label class="col-sm-3 col-form-label">订单编号</label>
                 <div class="col-6">
                     <input type="text" data-notnull="true" data-tips="请输入订单编号" autocomplete="off" class="form-control"
-                           placeholder="请输入订单编号" maxlength="40" name="cOrderNo"  readonly="readonly" value="#(purchaseOrderM.cOrderNo??)"/>
+                           placeholder="请输入订单编号" maxlength="40" name="cOrderNo"  readonly="readonly" value="#(purchaseOrderM.corderno??)"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -123,7 +127,7 @@
                             data-value=""
                             data-value-attr="iautoid"
                             data-text-attr="cdepname"
-                            data-select="#(workregionm.idepid??)">
+                            data-select="#(purchaseOrderM.idepartmentid??)">
                     </select>
                 </div>
             </div>
@@ -135,6 +139,7 @@
                             data-rule="required"
                             data-url="admin/dictionary/options?key=purchase_coping_type"
                             data-select-type="select"
+                            data-select="#(purchaseOrderM.ipayabletype??)"
                             data-text="==请选择=="
                             data-text-attr="name"
                             data-value-attr="sn">
@@ -155,7 +160,7 @@
 
 <textarea class="jb_tpl_box" id="puraseOrder_tpl_1">
     {@each datas as data,index}
-        <tr data-id="${data.id}">
+        <tr data-id="${data.iautoid}">
             <td hidden> ${data.iinventoryid}</td>
             <td>${pageNumber,pageSize,index | rownum}</td>
              <td>
@@ -167,12 +172,22 @@
             <td>${data.cinvstd}</td>
             <td>${data.cuomname}</td>
             <td>${data.ipkgqty}</td>
-            <td>${data.ispresent}</td>
+            <td>${data.ispresentstr}</td>
             <td>${data.cmemo}</td>
-            <td>${data.ivendoraddrid}</td>
-            #for(day: dateHeadList)
-                <td></td>
-            #end
+            <td>${data.caddress}</td>
+             {@if data.arr}
+                {@each data.arr as day,dayIndex}
+                    {@if day>0}
+                        <td>${day}</td>
+                    {@else}
+                        <td></td>
+                    {@/if}
+                {@/each}
+              {@else}
+                #for(day: dateHeadList)
+                    <td></td>
+                #end
+             {@/if}
         </tr>
     {@/each}
 </textarea>
@@ -189,6 +204,10 @@
 <table class="jbolt_table jbolt_main_table  table-center "
        id="PurchaseOrderM_Table_"
        data-jbolttable
+       #if(purchaseOrderM.iautoid??)
+        data-ajax="true"
+       data-url="admin/purchaseorderm/findPurchaseOrderD?purchaseOrderMId=#(purchaseOrderM.iautoid??)"
+       #end
        data-width="fill"
        data-height="fill"
        data-copy-to-excel="false"
@@ -201,15 +220,15 @@
 >
     <thead>
     <tr>
-        <th hidden rowspan="2">存货id</th>
+        <th hidden rowspan="2" data-column="iinventoryid">存货id</th>
         <th data-width="60"  rowspan="2" data-column="index">序号</th>
         <th data-width="80"  rowspan="2">操作</th>
-        <th data-width="150" rowspan="2" data-column="cinventorycode">存货编码</th>
+        <th data-width="150" rowspan="2" data-column="cinvcode">存货编码</th>
         <th data-width="150" rowspan="2" data-column="cinvcode1">客户部番</th>
         <th data-width="150" rowspan="2" data-column="cinvname1">部品名称</th>
 
         <th data-width="150" rowspan="2" data-column="cinvstd">规格</th>
-        <th data-width="150" rowspan="2" data-column="ipurchaseuomid">采购单位</th>
+        <th data-width="150" rowspan="2" data-column="cuomname">采购单位</th>
         <th data-width="150" rowspan="2" data-column="ipkgqty">包装数量</th>
         <th data-width="100" rowspan="2" data-column="ispresent">是否赠品</th>
         <th data-width="150" rowspan="2" data-column="cmemo">备注</th>
@@ -255,29 +274,30 @@
                 id:{
                     submitAttr:"id",
                 },
-                index:{
-                    submitAttr: "index"
+                iinventoryid:{
+                    submitAttr: "iinventoryid"
                 },
-                cinventorycode: {
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
-                    maxLength: 100,
-                    required: true,
-                    placeholder: "请选择",
-                    textAttr: "cinvcode",
-                    width: 500,
-                    valueAttr: "cinvcode",
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
-                    header:'存货编码,客户部番,部品名称,规格,库存主单位',
+                cinvcode: {
+                    type:"dialogbtn",
+                    required:true,
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/purchaseorderm/inventory_dialog_index",
+                        jbt_link_ele_id:"iautoid,cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
+                        area:"80%,80%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
                     changeColumns:[
                         {column: "cinvcode", use: "cinvcode"},
                         {column: "cinvcode1", use: "cinvcode1"},
                         {column: "cinvname1", use: "cinvname1"},
                         {column: "cinvstd", use: "cinvstd"},
                         {column: "cuomname", use: "cuomname"},
-                        {column: "iinventoryid", use: "iautoid"},
+                        {column: "iinventoryid", use: "iinventoryid"},
                         {column: "ipkgqty", use: "ipkgqty"},
-                        {column: "ispresent", use: "isgavepresent"},
+                        {column: "ispresent", use: "ispresent"}
                     ]
                 },
                 ivendoraddrid:{
@@ -292,7 +312,7 @@
                     type: "input"
                 },
                 #for(day: dateHeadList)
-                    #if(day.dateStr)
+                    #if(day.isEditFieldName)
                     '#(day.dateStr)':{
                             type: "amount",
                             placeholder: '数量',
