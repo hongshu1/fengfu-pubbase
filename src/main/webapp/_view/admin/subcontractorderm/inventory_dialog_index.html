@@ -20,22 +20,22 @@
 	<div class="jbolt_page_content">
 		<!-- JBoltTable的数据模板定义-->
 		<textarea class="jb_tpl_box" id="inventorydialogRowtpl_#(pageId)">
-		{@each datas as data,index}
-			<tr data-id="${data.itemid}" >
-				<td>${pageNumber,pageSize,index | rownum}</td>
-				<td>${data.cinvcode}</td>
-				<td>${data.cinvname}</td>
-				<td>${data.cinvcode1}</td>
-				<td>${data.cinvname1}</td>
-				<td>${data.cinvstd}</td>
-				<td>${data.purchaseuomname}</td>
-				<td>${data.ipkgqty}</td>
-				<td>${data.ispresent ==0?'否': '是'}</td>
-				<td>
-					<a tooltip href="javascript:void(0)" onclick="checkThis('${data.itemid}', '${data.cinvcode}', '${data.cinvname}', '${data.cinvname1}', '${data.cinvstd}', '${data.ipkgqty}', '${data.ispresent}', '${data.cinvcode1}', '${data.purchaseuomname}')"   class="jbolt_table_btn">选择</a>
-				</td>
-			</tr>
-		{@/each}
+			{@each datas as data,index}
+					<tr data-id="${data.itemid}" >
+					<td>${pageNumber,pageSize,index | rownum}</td>
+					<td>${data.cinvcode}</td>
+					<td>${data.cinvname}</td>
+					<td>${data.cinvcode1}</td>
+					<td>${data.cinvname1}</td>
+					<td>${data.cinvstd}</td>
+					<td>${data.purchaseuomname}</td>
+					<td>${data.ipkgqty}</td>
+					<td>${data.ispresent ==0?'否': '是'}</td>
+					<td>
+						<a tooltip href="javascript:void(0)" onclick="checkThis('${data.itemid}', '${data.cinvcode}', '${data.cinvname}', '${data.cinvname1}', '${data.cinvstd}', '${data.ipkgqty}', '${data.ispresent}', '${data.cinvcode1}', '${data.purchaseuomname}')"   class="jbolt_table_btn">选择</a>
+					</td>
+				</tr>
+			{@/each}
 		</textarea>
 		<!-- 工具条 toolbar -->
 		<table class="jbolt_table jbolt_main_table table-center"

@@ -156,8 +156,8 @@
     </div>
     </div>
 </form>
-<!-- 定义JBoltTable使用的数据渲染模板 -->
 
+<!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="puraseOrder_tpl_1">
     {@each datas as data,index}
         <tr data-id="${data.iautoid}">
@@ -192,20 +192,19 @@
     {@/each}
 </textarea>
 
-
 <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
         <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
         </button>
     </div>
-
 </div>
+
 <table class="jbolt_table jbolt_main_table  table-center "
        id="PurchaseOrderM_Table_"
        data-jbolttable
        #if(purchaseOrderM.iautoid??)
-        data-ajax="true"
+       data-ajax="true"
        data-url="admin/purchaseorderm/findPurchaseOrderD?purchaseOrderMId=#(purchaseOrderM.iautoid??)"
        #end
        data-width="fill"
@@ -329,35 +328,6 @@
             }
         };
         return editableTableOptions;
-    }
-
-    function getTableData() {
-        var bomMaster_complete = $("#PurchaseOrderM_Table_");
-        var rows = [];
-        bomMaster_complete.children("tbody").children("tr").each(function () {
-            var row = {};
-            // 获取input标签 class属性还有form-control
-            $(this).find('td').each(function () {
-                var inputs = $(this).find("input[class*='form-control']");
-                getField(row, inputs);
-                var selects = $(this).find("select[class='form-control']");
-                getField(row, selects);
-
-            })
-            rows.push(row);
-        })
-        return rows;
-    };
-
-
-    function getField(row, labels) {
-        if (labels && labels.length > 0) {
-            $.each(labels, function (idx, v) {
-                if (v.name && v.name !== '' && v.value) {
-                    row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
-                }
-            });
-        }
     }
 
     // 隐藏第一个按钮
