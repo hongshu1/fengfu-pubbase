@@ -15,6 +15,7 @@ import cn.jbolt._admin.permission.PermissionAdminController;
 import cn.jbolt._admin.post.PostAdminController;
 import cn.jbolt._admin.qiniu.QiniuAdminController;
 import cn.jbolt._admin.qiniu.QiniuBucketAdminController;
+import cn.jbolt._admin.redis.RedisAdminController;
 import cn.jbolt._admin.role.RoleAdminController;
 import cn.jbolt._admin.rolepermission.RolePermissionAdminController;
 import cn.jbolt._admin.sensitiveword.SensitiveWordAdminController;
@@ -70,7 +71,7 @@ public class AdminRoutes extends Routes {
 		this.add("/admin/qiniu", QiniuAdminController.class,"/qiniu");
 		this.add("/admin/qiniu/bucket", QiniuBucketAdminController.class,"/qiniu/bucket");
 		this.add("/admin/sensitiveword", SensitiveWordAdminController.class,"/sensitiveword");
-		this.scan("cn.jbolt._admin");
+		this.add("/admin/redis", RedisAdminController.class);
 	}
 
 }
