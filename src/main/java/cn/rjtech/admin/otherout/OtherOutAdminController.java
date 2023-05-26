@@ -47,6 +47,7 @@ public class OtherOutAdminController extends BaseAdminController {
 		kv.setIfNotNull("iorderstatus", get("iorderstatus"));
 		kv.setIfNotNull("startdate", get("startdate"));
 		kv.setIfNotNull("enddate", get("enddate"));
+		kv.setIfNotNull("sourcebilldid", get("sourcedilldid"));//来源单号ID
 		renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), kv));
 
 	}

@@ -13,8 +13,18 @@ import cn.rjtech.admin.apsweekscheduledetails.ApsWeekscheduledetailsService;
 import cn.rjtech.admin.apsweekscheduledqty.ApsWeekscheduledQtyService;
 import cn.rjtech.admin.calendar.CalendarService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
+import cn.rjtech.admin.inventoryroutingconfigoperation.InventoryroutingconfigOperationService;
+import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentService;
+import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
+import cn.rjtech.admin.inventoryroutingsop.InventoryRoutingSopService;
 import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.momoroutingsop.MoMoroutingsopService;
 import cn.rjtech.admin.momotask.MoMotaskService;
+import cn.rjtech.admin.morouting.MoMoroutingService;
+import cn.rjtech.admin.moroutingcinve.MoMoroutinginvcService;
+import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
+import cn.rjtech.admin.moroutingconfigequipment.MoMoroutingequipmentService;
+import cn.rjtech.admin.moroutingconfigoperation.MoMoroutingconfigOperationService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
@@ -79,7 +89,28 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     private MoMotaskService motaskService;
     @Inject
     private MoDocService moDocService;
-
+    @Inject
+    private InventoryRoutingConfigService inventoryRoutingConfigService;
+    @Inject
+    private InventoryroutingconfigOperationService inventoryroutingconfigOperationService;
+    @Inject
+    private InventoryRoutingEquipmentService inventoryRoutingEquipmentService;
+    @Inject
+    private InventoryRoutingInvcService inventoryRoutingInvcService;
+    @Inject
+    private InventoryRoutingSopService inventoryRoutingSopService;
+    @Inject
+    private MoMoroutingService moMoroutingService;
+    @Inject
+    private MoMoroutingconfigService moMoroutingconfigService;
+    @Inject
+    private MoMoroutingconfigOperationService moMoroutingconfigOperationService;
+    @Inject
+    private MoMoroutingequipmentService moMoroutingequipmentService;
+    @Inject
+    private MoMoroutinginvcService moMoroutinginvcService;
+    @Inject
+    private MoMoroutingsopService moMoroutingsopService;
 
     /**
      * 后台管理分页查询
@@ -1085,9 +1116,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return dataList;
     }
 
-    @Inject
-    private InventoryRoutingConfigService inventoryRoutingConfigService;
-
     /**
      * 锁定计划
      */
@@ -1256,6 +1284,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         List<InventoryRoutingConfig> getInvRoutingConfigList = inventoryRoutingConfigService.daoTemplate("scheduproductplan.getInvRoutingConfigList",Kv.by("ids",routingIdsJoin)).find();
         //key:invRoutingId    value:List<InventoryRoutingConfig>
         Map<Long,List<InventoryRoutingConfig>> invRoutingConfigListMap = new HashMap<>();
+        String routingConfigIds = "(";
         for (InventoryRoutingConfig invRoutingConfig : getInvRoutingConfigList){
             Long iInventoryRoutingId = invRoutingConfig.getIInventoryRoutingId();
             if (invRoutingConfigListMap.containsKey(iInventoryRoutingId)){
@@ -1266,6 +1295,69 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 list.add(invRoutingConfig);
                 invRoutingConfigListMap.put(iInventoryRoutingId,list);
             }
+            Long iAutoId = invRoutingConfig.getIAutoId();
+            routingConfigIds = routingConfigIds + iAutoId + ",";
+        }
+        routingConfigIds = routingConfigIds + "601)";
+        //TODO:根据工艺路线配置id集查询各工艺工序
+        List<InventoryroutingconfigOperation> getInvRoutingConfigOperationList = inventoryroutingconfigOperationService.daoTemplate("scheduproductplan.getInvRoutingConfigOperationList",Kv.by("ids",routingConfigIds)).find();
+        //key:invRoutingConfigId    value:List<InventoryroutingconfigOperation>
+        Map<Long,List<InventoryroutingconfigOperation>> invRoutingConfigOperationListMap = new HashMap<>();
+        for (InventoryroutingconfigOperation entity : getInvRoutingConfigOperationList){
+            Long iInventoryRoutingConfigId = entity.getIInventoryRoutingConfigId();
+            if (invRoutingConfigOperationListMap.containsKey(iInventoryRoutingConfigId)){
+                List<InventoryroutingconfigOperation> list = invRoutingConfigOperationListMap.get(iInventoryRoutingConfigId);
+                list.add(entity);
+            }else {
+                List<InventoryroutingconfigOperation> list = new ArrayList<>();
+                list.add(entity);
+                invRoutingConfigOperationListMap.put(iInventoryRoutingConfigId,list);
+            }
+        }
+        //TODO:根据工艺路线配置id集查询各工艺设备
+        List<InventoryRoutingEquipment> getInvRoutingConfigEquipmentList = inventoryRoutingEquipmentService.daoTemplate("scheduproductplan.getInvRoutingConfigEquipmentList",Kv.by("ids",routingConfigIds)).find();
+        //key:invRoutingConfigId    value:List<InventoryRoutingEquipment>
+        Map<Long,List<InventoryRoutingEquipment>> invRoutingConfigEquipmentListMap = new HashMap<>();
+        for (InventoryRoutingEquipment entity : getInvRoutingConfigEquipmentList){
+            Long iInventoryRoutingConfigId = entity.getIInventoryRoutingConfigId();
+            if (invRoutingConfigEquipmentListMap.containsKey(iInventoryRoutingConfigId)){
+                List<InventoryRoutingEquipment> list = invRoutingConfigEquipmentListMap.get(iInventoryRoutingConfigId);
+                list.add(entity);
+            }else {
+                List<InventoryRoutingEquipment> list = new ArrayList<>();
+                list.add(entity);
+                invRoutingConfigEquipmentListMap.put(iInventoryRoutingConfigId,list);
+            }
+        }
+        //TODO:根据工艺路线配置id集查询各工艺物料
+        List<InventoryRoutingInvc> getInvRoutingConfigInvcList = inventoryRoutingInvcService.daoTemplate("scheduproductplan.getInvRoutingConfigInvcList",Kv.by("ids",routingConfigIds)).find();
+        //key:invRoutingConfigId    value:List<InventoryRoutingInvc>
+        Map<Long,List<InventoryRoutingInvc>> invRoutingConfigInvcListMap = new HashMap<>();
+        for (InventoryRoutingInvc entity : getInvRoutingConfigInvcList){
+            Long iInventoryRoutingConfigId = entity.getIInventoryRoutingConfigId();
+            if (invRoutingConfigInvcListMap.containsKey(iInventoryRoutingConfigId)){
+                List<InventoryRoutingInvc> list = invRoutingConfigInvcListMap.get(iInventoryRoutingConfigId);
+                list.add(entity);
+            }else {
+                List<InventoryRoutingInvc> list = new ArrayList<>();
+                list.add(entity);
+                invRoutingConfigInvcListMap.put(iInventoryRoutingConfigId,list);
+            }
+        }
+        //TODO:根据工艺路线配置id集查询各工艺作业指导书
+        List<InventoryRoutingSop> getInvRoutingConfigSopList = inventoryRoutingSopService.daoTemplate("scheduproductplan.getInvRoutingConfigSopList",Kv.by("ids",routingConfigIds)).find();
+        //key:invRoutingConfigId    value:List<InventoryRoutingSop>
+        Map<Long,List<InventoryRoutingSop>> invRoutingConfigSopListMap = new HashMap<>();
+        for (InventoryRoutingSop entity : getInvRoutingConfigSopList){
+            Long iInventoryRoutingConfigId = entity.getIInventoryRoutingConfigId();
+            if (invRoutingConfigSopListMap.containsKey(iInventoryRoutingConfigId)){
+                List<InventoryRoutingSop> list = invRoutingConfigSopListMap.get(iInventoryRoutingConfigId);
+                list.add(entity);
+            }else {
+                List<InventoryRoutingSop> list = new ArrayList<>();
+                list.add(entity);
+                invRoutingConfigSopListMap.put(iInventoryRoutingConfigId,list);
+            }
         }
 
 
@@ -1275,6 +1367,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         List<MoDoc> moDocList = new ArrayList<>();
 
         List<MoMorouting> moMoroutingList = new ArrayList<>();
+        List<MoMoroutingconfig> moMoroutingConfigList = new ArrayList<>();
+        List<MoMoroutingconfigOperation> moMoroutingconfigOperationList = new ArrayList<>();
+        List<MoMoroutingequipment> moMoroutingequipmentList = new ArrayList<>();
+        List<MoMoroutinginvc> moMoroutinginvcList = new ArrayList<>();
+        List<MoMoroutingsop> moMoroutingsopList = new ArrayList<>();
 
         Long userId = JBoltUserKit.getUserId();
         String userName = JBoltUserKit.getUserName();
@@ -1324,9 +1421,55 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     //工艺路线
                     Record invRouting = invRoutingMap.get(inv);
                     //工艺路线配置
-                    List<InventoryRoutingConfig> invRoutingConfigList = invRoutingConfigListMap.get(iInventoryRoutingId);
+                    List<InventoryRoutingConfig> invRoutingConfigList = invRoutingConfigListMap.get(iInventoryRoutingId) != null ? invRoutingConfigListMap.get(iInventoryRoutingId) : new ArrayList<>();
 
-                    //key:yyyy-MM-dd   value:qty1S
+                    addOrder(inv,invInfo,dateList,dateStr,userId,userName,nowDate,
+                            taskId,deptId,iInventoryRoutingId,invRouting,
+                            invPlanDate1SMap,
+                            invCapacity1SMap,
+                            invRoutingConfigList,
+                            invRoutingConfigOperationListMap,
+                            invRoutingConfigEquipmentListMap,
+                            invRoutingConfigInvcListMap,
+                            invRoutingConfigSopListMap,
+                            moDocList,moMoroutingList,
+                            moMoroutingConfigList,
+                            moMoroutingconfigOperationList,
+                            moMoroutingequipmentList,
+                            moMoroutinginvcList,
+                            moMoroutingsopList);
+                    addOrder(inv,invInfo,dateList,dateStr,userId,userName,nowDate,
+                            taskId,deptId,iInventoryRoutingId,invRouting,
+                            invPlanDate2SMap,
+                            invCapacity2SMap,
+                            invRoutingConfigList,
+                            invRoutingConfigOperationListMap,
+                            invRoutingConfigEquipmentListMap,
+                            invRoutingConfigInvcListMap,
+                            invRoutingConfigSopListMap,
+                            moDocList,moMoroutingList,
+                            moMoroutingConfigList,
+                            moMoroutingconfigOperationList,
+                            moMoroutingequipmentList,
+                            moMoroutinginvcList,
+                            moMoroutingsopList);
+                    addOrder(inv,invInfo,dateList,dateStr,userId,userName,nowDate,
+                            taskId,deptId,iInventoryRoutingId,invRouting,
+                            invPlanDate3SMap,
+                            invCapacity3SMap,
+                            invRoutingConfigList,
+                            invRoutingConfigOperationListMap,
+                            invRoutingConfigEquipmentListMap,
+                            invRoutingConfigInvcListMap,
+                            invRoutingConfigSopListMap,
+                            moDocList,moMoroutingList,
+                            moMoroutingConfigList,
+                            moMoroutingconfigOperationList,
+                            moMoroutingequipmentList,
+                            moMoroutinginvcList,
+                            moMoroutingsopList);
+
+                    /*//key:yyyy-MM-dd   value:qty1S
                     Map<String,BigDecimal> dateQtyMap = invPlanDate1SMap.get(inv);
                     //班次ID 1S
                     Long iWorkShiftMid = invCapacity1SMap.get(inv);
@@ -1366,6 +1509,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                             moDoc.setCVersion(cVersion);
                             moDocList.add(moDoc);
 
+                            //工艺路线
                             if (invRouting != null){
                                 Long moRoutingId = JBoltSnowflakeKit.me.nextId();
                                 MoMorouting moMorouting = new MoMorouting();
@@ -1380,11 +1524,88 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                                 moMorouting.setCMemo(invRouting.getStr("cMemo"));
                                 moMoroutingList.add(moMorouting);
 
+                                //工艺路线配置
+                                for (InventoryRoutingConfig invRoutingConfig : invRoutingConfigList){
+                                    Long moRoutingConfigId = JBoltSnowflakeKit.me.nextId();
+                                    MoMoroutingconfig moMoroutingconfig = new MoMoroutingconfig();
+                                    moMoroutingconfig.setIAutoId(moRoutingConfigId);
+                                    moMoroutingconfig.setIMoRoutingId(moRoutingId);
+                                    moMoroutingconfig.setIInventoryRoutingId(iInventoryRoutingId);
+                                    moMoroutingconfig.setISeq(invRoutingConfig.getISeq());
+                                    moMoroutingconfig.setCMergedSeq(invRoutingConfig.getCMergedSeq());
+                                    moMoroutingconfig.setCOperationName(invRoutingConfig.getCOperationName());
+                                    moMoroutingconfig.setIType(invRoutingConfig.getIType());
+                                    moMoroutingconfig.setIRsInventoryId(invRoutingConfig.getIRsInventoryId());
+                                    moMoroutingconfig.setCProductSn(invRoutingConfig.getCProductSn());
+                                    moMoroutingconfig.setCProductTechSn(invRoutingConfig.getCProductTechSn());
+                                    moMoroutingconfig.setIMergedNum(invRoutingConfig.getIMergedNum());
+                                    moMoroutingconfig.setIMergeRate(invRoutingConfig.getIMergeRate());
+                                    moMoroutingconfig.setIMergeSecs(invRoutingConfig.getIMergeSecs());
+                                    moMoroutingconfig.setISecs(invRoutingConfig.getISecs());
+                                    moMoroutingconfig.setCMemo(invRoutingConfig.getCMemo());
+                                    moMoroutingconfig.setICreateBy(userId);
+                                    moMoroutingconfig.setCCreateName(userName);
+                                    moMoroutingconfig.setDCreateTime(nowDate);
+                                    moMoroutingConfigList.add(moMoroutingconfig);
 
-
+                                    //工艺工序
+                                    List<InventoryroutingconfigOperation> invRoutingConfigOperationList = invRoutingConfigOperationListMap.get(invRoutingConfig.getIAutoId());
+                                    if (invRoutingConfigOperationList != null){
+                                        for (InventoryroutingconfigOperation invOperation : invRoutingConfigOperationList){
+                                            MoMoroutingconfigOperation moMoroutingconfigOperation = new MoMoroutingconfigOperation();
+                                            moMoroutingconfigOperation.setIMoInventoryRoutingId(moRoutingConfigId);
+                                            moMoroutingconfigOperation.setIInventoryRoutingConfigId(invOperation.getIInventoryRoutingConfigId());
+                                            moMoroutingconfigOperation.setIOperationId(invOperation.getIOperationId());
+                                            moMoroutingconfigOperationList.add(moMoroutingconfigOperation);
+                                        }
+                                    }
+                                    //工艺设备
+                                    List<InventoryRoutingEquipment> invRoutingConfigEquipmentList = invRoutingConfigEquipmentListMap.get(invRoutingConfig.getIAutoId());
+                                    if (invRoutingConfigEquipmentList != null){
+                                        for (InventoryRoutingEquipment invEquipment : invRoutingConfigEquipmentList){
+                                            MoMoroutingequipment moMoroutingconfigEquipment = new MoMoroutingequipment();
+                                            moMoroutingconfigEquipment.setIMoRoutingConfigId(moRoutingConfigId);
+                                            moMoroutingconfigEquipment.setIEquipmentId(invEquipment.getIEquipmentId());
+                                            moMoroutingequipmentList.add(moMoroutingconfigEquipment);
+                                        }
+                                    }
+                                    //工艺物料
+                                    List<InventoryRoutingInvc> invRoutingConfigInvcList = invRoutingConfigInvcListMap.get(invRoutingConfig.getIAutoId());
+                                    if (invRoutingConfigInvcList != null){
+                                        for (InventoryRoutingInvc invInvc : invRoutingConfigInvcList){
+                                            MoMoroutinginvc moMoroutinginvc = new MoMoroutinginvc();
+                                            moMoroutinginvc.setIMoRoutingConfigId(moRoutingConfigId);
+                                            moMoroutinginvc.setIInventoryRoutingConfigId(invInvc.getIInventoryRoutingConfigId());
+                                            moMoroutinginvc.setIInventoryId(invInvc.getIInventoryId());
+                                            moMoroutinginvc.setIUsageUOM(invInvc.getIUsageUOM());
+                                            moMoroutinginvc.setCMemo(invInvc.getCMemo());
+                                            moMoroutinginvc.setICreateBy(userId);
+                                            moMoroutinginvc.setCCreateName(userName);
+                                            moMoroutinginvc.setDCreateTime(nowDate);
+                                            moMoroutinginvcList.add(moMoroutinginvc);
+                                        }
+                                    }
+                                    //工艺作业指导书
+                                    List<InventoryRoutingSop> invRoutingConfigSopList = invRoutingConfigSopListMap.get(invRoutingConfig.getIAutoId());
+                                    if (invRoutingConfigSopList != null){
+                                        for (InventoryRoutingSop invSop : invRoutingConfigSopList){
+                                            MoMoroutingsop moMoroutingsop = new MoMoroutingsop();
+                                            moMoroutingsop.setIMoRoutingConfigId(moRoutingConfigId);
+                                            moMoroutingsop.setIInventoryRoutingConfigId(invSop.getIInventoryRoutingConfigId());
+                                            moMoroutingsop.setCName(invSop.getCName());
+                                            moMoroutingsop.setCPath(invSop.getCPath());
+                                            moMoroutingsop.setCSuffix(invSop.getCSuffix());
+                                            moMoroutingsop.setISize(invSop.getISize());
+                                            moMoroutingsop.setIVersion(invSop.getIVersion());
+                                            moMoroutingsop.setDFromDate(invSop.getDFromDate());
+                                            moMoroutingsop.setDToDate(invSop.getDToDate());
+                                            moMoroutingsopList.add(moMoroutingsop);
+                                        }
+                                    }
+                                }
                             }
                         }
-                    }
+                    }*/
                 }
             }
         }
@@ -1392,9 +1613,169 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             update("UPDATE Aps_WeekSchedule SET dLockEndTime = ? WHERE iAutoId = ? ",DateUtils.parseDate(lockEndDate),iWeekScheduleId);
             motaskService.batchSave(moTaskList);
             moDocService.batchSave(moDocList);
+
+            moMoroutingService.batchSave(moMoroutingList);
+            moMoroutingconfigService.batchSave(moMoroutingConfigList);
+            moMoroutingconfigOperationService.batchSave(moMoroutingconfigOperationList);
+            moMoroutingequipmentService.batchSave(moMoroutingequipmentList);
+            moMoroutinginvcService.batchSave(moMoroutinginvcList);
+            moMoroutingsopService.batchSave(moMoroutingsopList);
             return true;
         });
         return SUCCESS;
+    }
+    public void addOrder(String inv,Record invInfo,List<String> dateList,String dateStr,Long userId,String userName,Date nowDate,
+                         Long taskId,Long deptId,Long iInventoryRoutingId,Record invRouting,
+                         Map<String,Map<String,BigDecimal>> invPlanDate1SMap,
+                         Map<String,Long> invCapacity1SMap,
+                         List<InventoryRoutingConfig> invRoutingConfigList,
+                         Map<Long,List<InventoryroutingconfigOperation>> invRoutingConfigOperationListMap,
+                         Map<Long,List<InventoryRoutingEquipment>> invRoutingConfigEquipmentListMap,
+                         Map<Long,List<InventoryRoutingInvc>> invRoutingConfigInvcListMap,
+                         Map<Long,List<InventoryRoutingSop>> invRoutingConfigSopListMap,
+                         List<MoDoc> moDocList,List<MoMorouting> moMoroutingList,
+                         List<MoMoroutingconfig> moMoroutingConfigList,
+                         List<MoMoroutingconfigOperation> moMoroutingconfigOperationList,
+                         List<MoMoroutingequipment> moMoroutingequipmentList,
+                         List<MoMoroutinginvc> moMoroutinginvcList,
+                         List<MoMoroutingsop> moMoroutingsopList){
+        //key:yyyy-MM-dd   value:qty1S
+        Map<String,BigDecimal> dateQtyMap = invPlanDate1SMap.get(inv);
+        //班次ID 1S
+        Long iWorkShiftMid = invCapacity1SMap.get(inv);
+
+        Long invId = invInfo.getLong("invId");
+        Long iWorkRegionMid = invInfo.getLong("iWorkRegionMid");
+        String cRoutingName = invInfo.getStr("cRoutingName");
+        String cVersion = invInfo.getStr("cVersion");
+        for (String date : dateList){
+            Date dPlanDate = DateUtils.parseDate(date);
+            int year = Integer.parseInt(date.substring(0,4));
+            int month = Integer.parseInt(date.substring(5,7));
+            int day = Integer.parseInt(date.substring(8,10));
+            BigDecimal qty = dateQtyMap.get(date);
+            if (qty != null && (qty.compareTo(BigDecimal.ZERO) > 0)){
+                //任务单号
+                String planNo2 = momDataFuncService.getNextRouteNo(1L, "MOD"+dateStr, 3);
+
+                Long moDocId = JBoltSnowflakeKit.me.nextId();
+                MoDoc moDoc = new MoDoc();
+                moDoc.setIAutoId(moDocId);
+                moDoc.setIType(1);
+                moDoc.setIMoTaskId(taskId);
+                moDoc.setIWorkRegionMid(iWorkRegionMid);
+                moDoc.setIInventoryId(invId);
+                moDoc.setCMoDocNo(planNo2);
+                moDoc.setDPlanDate(dPlanDate);
+                moDoc.setIYear(year);
+                moDoc.setIMonth(month);
+                moDoc.setIDate(day);
+                moDoc.setIDepartmentId(deptId);
+                moDoc.setIWorkShiftMid(iWorkShiftMid);
+                moDoc.setIQty(qty);
+                moDoc.setIStatus(1);
+                moDoc.setIInventoryRouting(iInventoryRoutingId);
+                moDoc.setCRoutingName(cRoutingName);
+                moDoc.setCVersion(cVersion);
+                moDocList.add(moDoc);
+
+                //工艺路线
+                if (invRouting != null){
+                    Long moRoutingId = JBoltSnowflakeKit.me.nextId();
+                    MoMorouting moMorouting = new MoMorouting();
+                    moMorouting.setIAutoId(moRoutingId);
+                    moMorouting.setIMoDocId(moDocId);
+                    moMorouting.setIInventoryRoutingId(iInventoryRoutingId);
+                    moMorouting.setIInventoryId(invId);
+                    moMorouting.setCRoutingName(invRouting.getStr("cRoutingName"));
+                    moMorouting.setCVersion(invRouting.getStr("cVersion"));
+                    moMorouting.setIFinishedRate(invRouting.getBigDecimal("iFinishedRate"));
+                    moMorouting.setCRequirement(invRouting.getStr("cRequirement"));
+                    moMorouting.setCMemo(invRouting.getStr("cMemo"));
+                    moMoroutingList.add(moMorouting);
+
+                    //工艺路线配置
+                    for (InventoryRoutingConfig invRoutingConfig : invRoutingConfigList){
+                        Long moRoutingConfigId = JBoltSnowflakeKit.me.nextId();
+                        MoMoroutingconfig moMoroutingconfig = new MoMoroutingconfig();
+                        moMoroutingconfig.setIAutoId(moRoutingConfigId);
+                        moMoroutingconfig.setIMoRoutingId(moRoutingId);
+                        moMoroutingconfig.setIInventoryRoutingId(iInventoryRoutingId);
+                        moMoroutingconfig.setISeq(invRoutingConfig.getISeq());
+                        moMoroutingconfig.setCMergedSeq(invRoutingConfig.getCMergedSeq());
+                        moMoroutingconfig.setCOperationName(invRoutingConfig.getCOperationName());
+                        moMoroutingconfig.setIType(invRoutingConfig.getIType());
+                        moMoroutingconfig.setIRsInventoryId(invRoutingConfig.getIRsInventoryId());
+                        moMoroutingconfig.setCProductSn(invRoutingConfig.getCProductSn());
+                        moMoroutingconfig.setCProductTechSn(invRoutingConfig.getCProductTechSn());
+                        moMoroutingconfig.setIMergedNum(invRoutingConfig.getIMergedNum());
+                        moMoroutingconfig.setIMergeRate(invRoutingConfig.getIMergeRate());
+                        moMoroutingconfig.setIMergeSecs(invRoutingConfig.getIMergeSecs());
+                        moMoroutingconfig.setISecs(invRoutingConfig.getISecs());
+                        moMoroutingconfig.setCMemo(invRoutingConfig.getCMemo());
+                        moMoroutingconfig.setICreateBy(userId);
+                        moMoroutingconfig.setCCreateName(userName);
+                        moMoroutingconfig.setDCreateTime(nowDate);
+                        moMoroutingConfigList.add(moMoroutingconfig);
+
+                        //工艺工序
+                        List<InventoryroutingconfigOperation> invRoutingConfigOperationList = invRoutingConfigOperationListMap.get(invRoutingConfig.getIAutoId());
+                        if (invRoutingConfigOperationList != null){
+                            for (InventoryroutingconfigOperation invOperation : invRoutingConfigOperationList){
+                                MoMoroutingconfigOperation moMoroutingconfigOperation = new MoMoroutingconfigOperation();
+                                moMoroutingconfigOperation.setIMoInventoryRoutingId(moRoutingConfigId);
+                                moMoroutingconfigOperation.setIInventoryRoutingConfigId(invOperation.getIInventoryRoutingConfigId());
+                                moMoroutingconfigOperation.setIOperationId(invOperation.getIOperationId());
+                                moMoroutingconfigOperationList.add(moMoroutingconfigOperation);
+                            }
+                        }
+                        //工艺设备
+                        List<InventoryRoutingEquipment> invRoutingConfigEquipmentList = invRoutingConfigEquipmentListMap.get(invRoutingConfig.getIAutoId());
+                        if (invRoutingConfigEquipmentList != null){
+                            for (InventoryRoutingEquipment invEquipment : invRoutingConfigEquipmentList){
+                                MoMoroutingequipment moMoroutingconfigEquipment = new MoMoroutingequipment();
+                                moMoroutingconfigEquipment.setIMoRoutingConfigId(moRoutingConfigId);
+                                moMoroutingconfigEquipment.setIEquipmentId(invEquipment.getIEquipmentId());
+                                moMoroutingequipmentList.add(moMoroutingconfigEquipment);
+                            }
+                        }
+                        //工艺物料
+                        List<InventoryRoutingInvc> invRoutingConfigInvcList = invRoutingConfigInvcListMap.get(invRoutingConfig.getIAutoId());
+                        if (invRoutingConfigInvcList != null){
+                            for (InventoryRoutingInvc invInvc : invRoutingConfigInvcList){
+                                MoMoroutinginvc moMoroutinginvc = new MoMoroutinginvc();
+                                moMoroutinginvc.setIMoRoutingConfigId(moRoutingConfigId);
+                                moMoroutinginvc.setIInventoryRoutingConfigId(invInvc.getIInventoryRoutingConfigId());
+                                moMoroutinginvc.setIInventoryId(invInvc.getIInventoryId());
+                                moMoroutinginvc.setIUsageUOM(invInvc.getIUsageUOM());
+                                moMoroutinginvc.setCMemo(invInvc.getCMemo());
+                                moMoroutinginvc.setICreateBy(userId);
+                                moMoroutinginvc.setCCreateName(userName);
+                                moMoroutinginvc.setDCreateTime(nowDate);
+                                moMoroutinginvcList.add(moMoroutinginvc);
+                            }
+                        }
+                        //工艺作业指导书
+                        List<InventoryRoutingSop> invRoutingConfigSopList = invRoutingConfigSopListMap.get(invRoutingConfig.getIAutoId());
+                        if (invRoutingConfigSopList != null){
+                            for (InventoryRoutingSop invSop : invRoutingConfigSopList){
+                                MoMoroutingsop moMoroutingsop = new MoMoroutingsop();
+                                moMoroutingsop.setIMoRoutingConfigId(moRoutingConfigId);
+                                moMoroutingsop.setIInventoryRoutingConfigId(invSop.getIInventoryRoutingConfigId());
+                                moMoroutingsop.setCName(invSop.getCName());
+                                moMoroutingsop.setCPath(invSop.getCPath());
+                                moMoroutingsop.setCSuffix(invSop.getCSuffix());
+                                moMoroutingsop.setISize(invSop.getISize());
+                                moMoroutingsop.setIVersion(invSop.getIVersion());
+                                moMoroutingsop.setDFromDate(invSop.getDFromDate());
+                                moMoroutingsop.setDToDate(invSop.getDToDate());
+                                moMoroutingsopList.add(moMoroutingsop);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     /**
      * 解锁计划

@@ -386,42 +386,6 @@ public class PermissionKey {
 	 */
 	public static final String INVENTORYSPOTCHECKFORM = "inventoryspotcheckform";
 	/**
-	 * 检验配置
-	 */
-	public static final String QC_SETTING = "qc_setting";
-	/**
-	 * 检验参数
-	 */
-	public static final String PARAMETER = "parameter";
-	/**
-	 * 检验标准
-	 */
-	public static final String BASIS = "basis";
-	/**
-	 * 专用检验标准
-	 */
-	public static final String RANGEBASIS = "rangebasis";
-	/**
-	 * 巡检检验
-	 */
-	public static final String PATROLRECORD = "patrolrecord";
-	/**
-	 * 专检检验
-	 */
-	public static final String SPECIAL_INSPECTION = "special_inspection";
-	/**
-	 * 强度检验
-	 */
-	public static final String STRENGTH_INSPECTION = "strength_inspection";
-	/**
-	 * 首中末检验
-	 */
-	public static final String FIRST_CENTRE_LAST = "first_centre_last";
-	/**
-	 * 模具首检任务
-	 */
-	public static final String MOULDSFIRSTDOC = "mouldsfirstdoc";
-	/**
 	 * 编辑
 	 */
 	public static final String WAREHOUSE_EDIT = "warehouse_edit";
@@ -462,10 +426,6 @@ public class PermissionKey {
 	 */
 	public static final String BUS_OBJECT = "bus_object";
 	/**
-	 * 检验标准文件
-	 */
-	public static final String BASISDRAWING = "basisdrawing";
-	/**
 	 * 生产派工单明细
 	 */
 	public static final String ASSIGNORDERCHILDINV = "assignorderchildinv";
@@ -473,30 +433,6 @@ public class PermissionKey {
 	 * 客户档案明细
 	 */
 	public static final String CUSTOMERD = "customerd";
-	/**
-	 * 分类
-	 */
-	public static final String PARAMETERCLASS = "parameterclass";
-	/**
-	 * 巡检记录参数
-	 */
-	public static final String PATROLRECORDPARAMETER = "patrolrecordparameter";
-	/**
-	 * 巡检记录不良细表
-	 */
-	public static final String PATROLRECORDSCRAPD = "patrolrecordscrapd";
-	/**
-	 * 巡检记录不良主表
-	 */
-	public static final String PATROLRECORDSCRAPM = "patrolrecordscrapm";
-	/**
-	 * 检验配置制程检验报工
-	 */
-	public static final String QCSETTINGREPORT = "qcsettingreport";
-	/**
-	 * 检验适用标准关联
-	 */
-	public static final String RANGEBASISLINE = "rangebasisline";
 	/**
 	 * 返修工单工艺
 	 */
@@ -746,10 +682,6 @@ public class PermissionKey {
 	 */
 	public static final String INVENTORYSPOTCHECKFORM_IMPORT = "inventoryspotcheckform_import";
 	/**
-	 * 首末检验记录文件
-	 */
-	public static final String FIRSTLASTRECORDDRAWING = "firstlastrecorddrawing";
-	/**
 	 * 收料管理
 	 */
 	public static final String SL = "sl";
@@ -850,69 +782,9 @@ public class PermissionKey {
 	 */
 	public static final String TRANSFERIN = "transferin";
 	/**
-	 * 新增
-	 */
-	public static final String QC_SETTING_ADD = "qc_setting_add";
-	/**
-	 * 编辑
-	 */
-	public static final String QC_SETTING_EDIT = "qc_setting_edit";
-	/**
-	 * 删除
-	 */
-	public static final String QC_SETTING_DELETE = "qc_setting_delete";
-	/**
 	 * 设备报修
 	 */
 	public static final String API_REPAIRAPPLYRECORD = "api_repairapplyrecord";
-	/**
-	 * 新增
-	 */
-	public static final String PARAMETER_ADD = "parameter_add";
-	/**
-	 * 编辑
-	 */
-	public static final String PARAMETER_EDIT = "parameter_edit";
-	/**
-	 * 删除
-	 */
-	public static final String PARAMETER_DELETE = "parameter_delete";
-	/**
-	 * 新增
-	 */
-	public static final String BASIS_ADD = "basis_add";
-	/**
-	 * 编辑
-	 */
-	public static final String BASIS_EDIT = "basis_edit";
-	/**
-	 * 删除
-	 */
-	public static final String BASIS_DELETE = "basis_delete";
-	/**
-	 * 新增
-	 */
-	public static final String RANGEBASIS_ADD = "rangebasis_add";
-	/**
-	 * 新增
-	 */
-	public static final String PATROLRECORD_ADD = "patrolrecord_add";
-	/**
-	 * 导出
-	 */
-	public static final String SPECIAL_INSPECTION_EXPORT = "special_inspection_export";
-	/**
-	 * 导出
-	 */
-	public static final String STRENGTH_INSPECTION_EXPORT = "strength_inspection_export";
-	/**
-	 * 导出
-	 */
-	public static final String FIRST_CENTRE_LAST_EXPORT = "first_centre_last_export";
-	/**
-	 * 导出
-	 */
-	public static final String MOULDSFIRSTDOC_EXPORT = "mouldsfirstdoc_export";
 	/**
 	 * 设备维修请购单
 	 */
@@ -942,10 +814,6 @@ public class PermissionKey {
 	 */
 	public static final String PURCHASORDER = "purchasorder";
 	/**
-	 * 首末检验单(来源工单派工)
-	 */
-	public static final String FIRSTLASTDOC = "firstlastdoc";
-	/**
 	 * 生产备料单
 	 */
 	public static final String MOPICKLIST = "mopicklist";
@@ -974,10 +842,6 @@ public class PermissionKey {
 	 */
 	public static final String PLSHIFTWORKGROUPD = "plshiftworkgroupd";
 	/**
-	 * 检验标准配置
-	 */
-	public static final String BASISLINE1 = "basisline1";
-	/**
 	 * 位置档案
 	 */
 	public static final String LOCLISTCN = "loclistcn";
@@ -989,10 +853,6 @@ public class PermissionKey {
 	 * 敏感词词库
 	 */
 	public static final String SENSITIVE_WORD = "sensitive_word";
-	/**
-	 * 首末检验记录
-	 */
-	public static final String FIRSTLASTRECORD = "firstlastrecord";
 	/**
 	 * 派工工位记录
 	 */
@@ -1006,10 +866,6 @@ public class PermissionKey {
 	 */
 	public static final String PERMISSION_BTN = "permission_btn";
 	/**
-	 * 首末检验记录参数
-	 */
-	public static final String FIRSTLASTRECORDPARAMETER = "firstlastrecordparameter";
-	/**
 	 * 打印设置
 	 */
 	public static final String PRINTSETTING = "printsetting";
@@ -1021,10 +877,6 @@ public class PermissionKey {
 	 * U9同步数据时间配置
 	 */
 	public static final String U9DATASSYNCTASKRECORD = "u9datassynctaskrecord";
-	/**
-	 * 完工检验单
-	 */
-	public static final String FINISHDOC = "finishdoc";
 	/**
 	 * 委外发料行
 	 */
@@ -1073,26 +925,6 @@ public class PermissionKey {
 	 * 合框
 	 */
 	public static final String HK = "hk";
-	/**
-	 * 新增
-	 */
-	public static final String FINISHDOC_ADD = "finishdoc_add";
-	/**
-	 * 编辑
-	 */
-	public static final String FINISHDOC_EDIT = "finishdoc_edit";
-	/**
-	 * 删除
-	 */
-	public static final String FINISHDOC_DELETE = "finishdoc_delete";
-	/**
-	 * 导入
-	 */
-	public static final String PARAMETER_IMPORT = "parameter_import";
-	/**
-	 * 通用检验标准
-	 */
-	public static final String RANGEBASIS1 = "rangebasis1";
 	/**
 	 * 生产计划分析
 	 */
@@ -1378,9 +1210,9 @@ public class PermissionKey {
 	 */
 	public static final String WAREHOUSE_REPORT = "warehouse_report";
 	/**
-	 * 盘点单
+	 * 库存盘点
 	 */
-	public static final String STOCKCHECKVUCH = "stockcheckvouch";
+	public static final String STOCKCHECKVOUCH = "stockcheckvouch";
 	/**
 	 * 制程异常品记录
 	 */
@@ -1485,15 +1317,10 @@ public class PermissionKey {
 	 * 特殊领料单列表
 	 */
 	public static final String OTHEROUT = "otherout";
-
 	/**
-	 * 特殊领料单出库
+	 * 仓库期初
 	 */
-	public static final String OTHER_OUT_RETURN_LIST = "other_out_return_list";
-	/**
-	 * 条码生成
-	 */
-	public static final String GENERATION_BARCODE = "generation_barcode";
+	public static final String WAREHOUSEBEGINOFPERIOD = "warehousebeginofperiod";
 	/**
 	 * 拆分条码
 	 */
@@ -1594,6 +1421,134 @@ public class PermissionKey {
 	 * 月周排产记录时间
 	 */
 	public static final String APS_WEEK_SCHEDULE = "aps_week_schedule";
+	/**
+	 * 特殊领料出库
+	 */
+	public static final String OTHER_OUT_RETURN_LIST = "other_out_return_list";
+	/**
+	 * 项目档案
+	 */
+	public static final String PROJECT = "project";
+	/**
+	 * 禀议类别区分
+	 */
+	public static final String PROPOSALCATEGORY = "proposalcategory";
+	/**
+	 * 期间管理
+	 */
+	public static final String PERIOD = "period";
+	/**
+	 * 科目对照表
+	 */
+	public static final String SUBJECTM = "subjectm";
+	/**
+	 * 预算编制
+	 */
+	public static final String EXPENSE_BUDGET = "expense_budget";
+	/**
+	 * 费用预算编制
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE = "expense_budget_formulate";
+	/**
+	 * 费用预算管理
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE = "expense_budget_manage";
+	/**
+	 * 费用月度实绩调整
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM = "expense_month_adjustmentm";
+	/**
+	 * 投资计划编制
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE = "investment_plan_formulate";
+	/**
+	 * 投资计划管理
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE = "investment_plan_manage";
+	/**
+	 * 投资月度实绩管理
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM = "investment_month_adjustmentm";
+	/**
+	 * 追加项目
+	 */
+	public static final String APPEND_ITEM = "append_item";
+	/**
+	 * 禀议管理
+	 */
+	public static final String ADVICE_MANAGEMENT = "advice_management";
+	/**
+	 * 禀议书编制
+	 */
+	public static final String PROPOSALM = "proposalm";
+	/**
+	 * 禀议书管理
+	 */
+	public static final String PROPOSALM_AUDIT_INDEX = "proposalm_audit_index";
+	/**
+	 * 申购单编制
+	 */
+	public static final String PURCHASE_INSTRUMENT = "purchase_instrument";
+	/**
+	 * 申购单管理
+	 */
+	public static final String PURCHASE_MANAGEMENT = "purchase_management";
+	/**
+	 * 统计分析
+	 */
+	public static final String STATISTIC_ANALYSIS = "statistic_analysis";
+	/**
+	 * 物料需求计划汇总
+	 */
+	public static final String DEMAND_PLANSUM = "demand_plansum";
+	/**
+	 * 禀议明细表
+	 */
+	public static final String STATISTIC_ANALYSIS_PROPOSAL_DETAIL = "statistic_analysis_proposal_detail";
+	/**
+	 * 费用预算明细
+	 */
+	public static final String STATISTIC_ANALYSIS_EXPENSEBUDGETITEMD = "statistic_analysis_expensebudgetitemd";
+	/**
+	 * 投资计划明细
+	 */
+	public static final String STATISTIC_ANALYSIS_INVESTMENTPLANITEMD = "statistic_analysis_investmentplanitemd";
+	/**
+	 * 执行进度跟踪
+	 */
+	public static final String EXECUTION_PROGRESS_TRACKING = "execution_progress_tracking";
+	/**
+	 * 费用预算差异管理
+	 */
+	public static final String EXPENSE_BUDGET_DIFFERENCES = "expense_budget_differences";
+	/**
+	 * 费用预算期间对比
+	 */
+	public static final String EXPENSEBUDGET_CONTRAST = "expensebudget_contrast";
+	/**
+	 * 投资预实差异管理表
+	 */
+	public static final String INVESTMENT_BUDGET_ACTUAL_DIFFERENCE = "investment_budget_actual_difference";
+	/**
+	 * 投资汇总表
+	 */
+	public static final String INVESTMENT_PLAN_SUMMARY = "investment_plan_summary";
+	/**
+	 * 投资情况查询表
+	 */
+	public static final String INVESTMENT_PLAN_SITUATION_INDEX = "investment_plan_situation_index";
+	/**
+	 * 基础设置
+	 */
+	public static final String BASISARCHIVES = "basisarchives";
+	/**
+	 * 编码规则
+	 */
+	public static final String BARCODEENCODINGM = "barcodeencodingm";
+	/**
+	 * 单据业务类型
+	 */
+	public static final String VOUCHTYPEDIC = "vouchtypedic";
 	/**
 	 * 新增
 	 */
@@ -1927,9 +1882,195 @@ public class PermissionKey {
 	 */
 	public static final String APPROVALM = "approvalm";
 	/**
-	 *  扫码出货
+	 * 新增
 	 */
-	public static final String SCANCODESHIPMENT = "scancodeshipment";
-
-
+	public static final String EXPENSE_BUDGET_FORMULATE_ADD = "expense_budget_formulate_add";
+	/**
+	 * 修改
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE_EDIT = "expense_budget_formulate_edit";
+	/**
+	 * 删除
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE_DELETE = "expense_budget_formulate_delete";
+	/**
+	 * 导出
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE_EXPORT = "expense_budget_formulate_export";
+	/**
+	 * 提交审核
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE_SUBMITAUDIT = "expense_budget_formulate_submitaudit";
+	/**
+	 * 新增
+	 */
+	public static final String PROPOSALM_SAVE = "proposalm_save";
+	/**
+	 * 修改
+	 */
+	public static final String PROPOSALM_EDIT = "proposalm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PROPOSALM_DELETE = "proposalm_delete";
+	/**
+	 * 查看
+	 */
+	public static final String PROPOSALM_VIEW = "proposalm_view";
+	/**
+	 * 提审
+	 */
+	public static final String PROPOSALM_SUBMIT = "proposalm_submit";
+	/**
+	 * 撤销提审
+	 */
+	public static final String PROPOSALM_WITHDRAW = "proposalm_withdraw";
+	/**
+	 * 详情
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_DETAIL = "expense_budget_manage_detail";
+	/**
+	 * 生效
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_EFFECT = "expense_budget_manage_effect";
+	/**
+	 * 失效
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_UNEFFECT = "expense_budget_manage_uneffect";
+	/**
+	 * 新增
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM_ADD = "expense_month_adjustmentm_add";
+	/**
+	 * 修改
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM_EDIT = "expense_month_adjustmentm_edit";
+	/**
+	 * 生效
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM_EFFECT = "expense_month_adjustmentm_effect";
+	/**
+	 * 撤销
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM_UNEFFECT = "expense_month_adjustmentm_uneffect";
+	/**
+	 * 删除
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM_DELETE = "expense_month_adjustmentm_delete";
+	/**
+	 * 新增
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE_ADD = "investment_plan_formulate_add";
+	/**
+	 * 修改
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE_EDIT = "investment_plan_formulate_edit";
+	/**
+	 * 删除
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE_DELETE = "investment_plan_formulate_delete";
+	/**
+	 * 导出
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE_EXPORT = "investment_plan_formulate_export";
+	/**
+	 * 提交审核
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE_SUBMITAUDIT = "investment_plan_formulate_submitaudit";
+	/**
+	 * 详情
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_DETAIL = "investment_plan_manage_detail";
+	/**
+	 * 生效
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_EFFECT = "investment_plan_manage_effect";
+	/**
+	 * 失效
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_UNEFFECT = "investment_plan_manage_uneffect";
+	/**
+	 * 新增
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM_ADD = "investment_month_adjustmentm_add";
+	/**
+	 * 详情
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM_EDIT = "investment_month_adjustmentm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM_DELETE = "investment_month_adjustmentm_delete";
+	/**
+	 * 生效
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM_EFFECT = "investment_month_adjustmentm_effect";
+	/**
+	 * 撤销
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM_UNEFFECT = "investment_month_adjustmentm_uneffect";
+	/**
+	 * 新增
+	 */
+	public static final String APPEND_ITEM_ADD = "append_item_add";
+	/**
+	 * 修改
+	 */
+	public static final String APPEND_ITEM_EDIT = "append_item_edit";
+	/**
+	 * 删除
+	 */
+	public static final String APPEND_ITEM_DELETE = "append_item_delete";
+	/**
+	 * 生效
+	 */
+	public static final String APPEND_ITEM_EFFECT = "append_item_effect";
+	/**
+	 * 撤销
+	 */
+	public static final String APPEND_ITEM_UNEFFECT = "append_item_uneffect";
+	/**
+	 * 生效
+	 */
+	public static final String PROPOSALM_EFFECT = "proposalm_effect";
+	/**
+	 * 新增-参考禀议书
+	 */
+	public static final String PURCHASE_INSTRUMENT_CHOOSE_PROPOSALM = "purchase_instrument_choose_proposalm";
+	/**
+	 * 编辑
+	 */
+	public static final String PURCHASE_INSTRUMENT_EDIT = "purchase_instrument_edit";
+	/**
+	 * 提交审核
+	 */
+	public static final String PURCHASE_INSTRUMENT_SUBMIT = "purchase_instrument_submit";
+	/**
+	 * 上传附件
+	 */
+	public static final String PURCHASE_INSTRUMENT_UPLOAD_FILE = "purchase_instrument_upload_file";
+	/**
+	 * 删除
+	 */
+	public static final String PURCHASE_INSTRUMENT_DELETE = "purchase_instrument_delete";
+	/**
+	 * 撤销审核
+	 */
+	public static final String PURCHASE_WITHDRAW = "purchase_withdraw";
+	/**
+	 * 撤销提交
+	 */
+	public static final String PURCHASE_MANAGEMENT_REVOCATIONSUBMIT = "purchase_management_revocationsubmit";
+	/**
+	 * 提交采购
+	 */
+	public static final String PURCHASE_MANAGEMENT_SUMBITPURCHASE = "purchase_management_sumbitpurchase";
+	/**
+	 * 导出
+	 */
+	public static final String PROPOSAL_DETAIL_EXPORT = "proposal_detail_export";
+	/**
+	 * 导出
+	 */
+	public static final String EXECUTION_PROGRESS_TRACKING_EXPORT = "execution_progress_tracking_export";
 }

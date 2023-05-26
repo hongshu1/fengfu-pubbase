@@ -1,0 +1,135 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+               <!-- <h1>出库管理-特殊领料单列表</h1>-->
+            </div>
+            <div class="col">
+                <form class="form-inline" id="otherOutForm_#(pageId)"   onsubmit="return false;" method="post">
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=领料单号=" name="billno" value="" />
+
+
+                    <select style="width:150px" class="form-control"
+                            data-autoload
+                            data-text="=状态="
+                            name="iorderstatus"
+                    >
+                        <option value="">=状态=</option>
+                        <option value="1">已保存</option>
+                        <option value="2">待审批</option>
+                        <option value="3">已审批 /未完成</option>
+                        <option value="7">已完成</option>
+                    </select>
+
+                    <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="otherOutRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.autoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a class="jbolt_table_editbtn" href="admin/modoc/othermaterialedit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="特殊领料单列表详情">查看</i></a>
+	 {@if data.status == '1'||data.status == '4'}
+	<a class="jbolt_table_editbtn" href="admin/modoc/othermaterialedit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑特殊领料单列表">编辑</i></a>
+	 {@else if data.status == '2'}
+	<a class="jbolt_table_delbtn" href="admin/modoc/othermaterialapprove?mark=2&&iAutoId=${data.autoid}"  data-confirm="确定审批此选项？"  data-fs="true" data-handler="refreshJBoltTable"  data-title="审批特殊领料单列表">审批</i></a>
+	<a class="jbolt_table_delbtn" href="admin/modoc/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
+	 {@else if data.status == '3'}
+	<a class="jbolt_table_delbtn" href="admin/modoc/closeWeekOrder?iAutoId=${data.autoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" >关闭</i></a>
+	 {@/if}
+</td>
+<td>${data.auditstate}</td>
+
+<td>${data.billno}</td>
+
+<td>${data.billdate}</td>
+<td>${data.cdepname}</td>
+<td>${data.处置意见}</td>
+<td>${data.memo}</td>
+<td>${data.createperson}</td>
+<td>${data.createdate}</td>
+
+</tr>
+{@/each}
+</textarea>
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="otherOut_toolbar_#(pageId)">
+            <div class="" role="group" aria-label="btn-group">
+                <button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="特殊领料单-新增"  data-url="admin/modoc/othermaterialadd" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+
+                <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/otherout/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
+
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+
+
+
+        <table class="jbolt_table jbolt_main_table table-center hover_info"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="admin/otherout/datas"
+               data-column-resize="true"
+               data-row-click-active="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="otherOutForm_#(pageId)"
+               data-rowtpl="otherOutRowtpl_#(pageId)"
+               data-page="otherOutPage_#(pageId)"
+               data-toolbar="otherOut_toolbar_#(pageId)"
+
+
+
+
+               data-fixed-columns-left="1,2,3"
+               data-fixed-columns-right="-1"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150">操作</th>
+                <th data-width="100">状态</th>
+
+                <th data-width="150" data-column="BillNo">领料单号</th>
+
+                <th data-width="150" data-column="BillDate">需求日期</th>
+                <th data-width="150" data-column="DeptCode">生产部门</th>
+                <th data-width="150" data-column="DeptCode">处置意见</th>
+                <th data-width="150" data-column="DeptCode">要求原因分析</th>
+                <th data-width="150" data-column="CreatePerson">创建人</th>
+                <th data-width="150" data-column="CreateDate">创建时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+
+
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+
+
+</script>
+#end
