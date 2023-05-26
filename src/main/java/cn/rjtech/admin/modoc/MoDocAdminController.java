@@ -8,7 +8,9 @@ import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentServic
 import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.inventoryroutingsop.InventoryRoutingSopService;
 import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
+import cn.rjtech.admin.otherout.OtherOutService;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.BillNoUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -21,8 +23,10 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 
 import com.jfinal.plugin.activerecord.Record;
+import org.apache.commons.lang3.StringUtils;
 
-
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -52,6 +56,9 @@ public class MoDocAdminController extends BaseAdminController {
 	@Inject
 	private InventoryRoutingInvcService inventoryRoutingInvcService; //物料建模-物料
 
+	@Inject
+	private OtherOutService otherOutService;//特殊领料单
+
 
 	/**
 	 * 首页
@@ -78,8 +85,8 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 查看
 	 */
 	public void details() {
-		edit();
-		/*MoDoc moDoc=service.findById(getLong(0));
+		//edit();
+		MoDoc moDoc=service.findById(getLong(0));
 		if(moDoc == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
@@ -96,7 +103,7 @@ public class MoDocAdminController extends BaseAdminController {
 		HashMap<String, String> stringStringHashMap = service.getJob(getLong(0));
 		set("productionTasks",stringStringHashMap);
 		// 拼上 科系名称,存货编码,客户部番,部品名称,生产单位,规格,产线名称,班次名称,工艺路线名称
-		render("_detailsform.html");*/
+		render("_detailsform.html");
 	}
 
 	public void delete(){
@@ -107,7 +114,9 @@ public class MoDocAdminController extends BaseAdminController {
 		}
 		renderJson(service.updateStatus(moDoc));
 	}
-
+	public  void  checkmaterialpage(){
+		render("checkmaterialpage.html");
+	}
 
 
 	/**
@@ -346,4 +355,73 @@ public class MoDocAdminController extends BaseAdminController {
 		}
 	}
 
+	/**
+	 * 特殊领料界面
+	 */
+       public void  othermaterialindex(){
+		set("imdocid",getLong("imdocid"));
+		render("other_dialog_index.html");
+	   }
+	/**
+	 * 特殊领料界面-新增
+	 */
+	public void  othermaterialadd(){
+		OtherOut otherOut = new OtherOut();
+		String billNo = BillNoUtils.getcDocNo(getOrgId(), "LLD", 5);
+		Date nowDate = new Date();
+		otherOut.setBillNo(billNo);
+		otherOut.setBillDate(nowDate);
+		otherOut.setSourceBillType("生产工单");
+		otherOut.setType("OtherOutMES");
+		set("otherOut",otherOut);
+
+		set("imdocid",getLong("imdocid"));
+		render("other_dialog_add.html");
+	}
+	/**
+	 * 特殊领料界面-编辑
+	 */
+	public void  othermaterialedit(){
+		OtherOut otherOut=otherOutService.findById(getLong(0));
+		if(otherOut == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("otherOut",otherOut);
+		set("type", get("type"));
+		render("edit.html");
+		set("imdocid",getLong("imdocid"));
+		render("other_dialog_edit.html");
+	}
+	/**
+	 * 特殊领料界面-审批
+	 */
+	public void othermaterialapprove(String iAutoId,Integer mark) {
+		if (StringUtils.isEmpty(iAutoId)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		renderJson(otherOutService.approve(iAutoId,mark));
+	}
+	/**
+	 * 特殊领料界面-手动关闭
+	 */
+	public void closeWeekOrder(String iAutoId) {
+		if (StringUtils.isEmpty(iAutoId)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		renderJson(otherOutService.closeWeekOrder(iAutoId));
+	}
+
+	/**
+	 * 特殊领料界面-撤回
+	 */
+	public void recall(String iAutoId) {
+		if (StringUtils.isEmpty(iAutoId)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		renderJson(otherOutService.recall(iAutoId));
+	}
 }

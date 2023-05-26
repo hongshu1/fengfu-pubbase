@@ -4,7 +4,6 @@ import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
-import jdk.internal.dynalink.beans.StaticClass;
 
 /**
  * 客户订单-委外销售订单主表

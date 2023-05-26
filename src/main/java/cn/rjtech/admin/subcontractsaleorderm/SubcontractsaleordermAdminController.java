@@ -6,15 +6,19 @@ import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.SubcontractSaleOrderStatusEnum;
 import cn.rjtech.model.momdata.Customer;
 import cn.rjtech.model.momdata.Subcontractsaleorderm;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
  * 委外销售订单主表 Controller
@@ -33,6 +37,8 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     private CustomerService customerService;
     @Inject
     private SubcontractsaleordermService service;
+    @Inject
+    private CusOrderSumService cusOrderSumService;
 
     /**
      * 首页
@@ -101,16 +107,8 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     }
 
     /**
-     * 切换toggleIsDeleted
-     */
-    public void toggleIsDeleted() {
-        renderJson(service.toggleIsDeleted(getLong(0)));
-    }
-
-    /**
      * 新增-可编辑表格-批量提交
      */
-    @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
@@ -124,10 +122,14 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        subcontractsaleorderm.setIAuditStatus(2);
-        subcontractsaleorderm.setIOrderStatus(3);
-        service.handleCusOrderBySubcontract(subcontractsaleorderm);
-        renderJson(subcontractsaleorderm.update());
+        
+        subcontractsaleorderm.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+        subcontractsaleorderm.setIOrderStatus(SubcontractSaleOrderStatusEnum.AUDITTED.getValue());
+        ValidationUtils.isTrue(subcontractsaleorderm.update(), ErrorMsg.UPDATE_FAILED);
+        
+        cusOrderSumService.algorithmSum();
+        
+        renderJsonSuccess();
     }
 
 }
