@@ -197,4 +197,10 @@ public class SubjectmAdminController extends BaseAdminController {
 		renderJsonData(service.copyDatas(getKv()));
 	}
 	
+	
+	@UnCheck
+	public void u8SubjectAutocomplete() {
+		renderJsonData(service.u8SubjectAutocomplete(get("q"), getInt("limit", 10)));
+	}
+	
 }

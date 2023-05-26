@@ -169,14 +169,12 @@ public class SubjectmService extends BaseService<Subjectm> {
 			if (CollUtil.isNotEmpty(byPid)) {
 				return fail("存在下级科目不可选择末级科目");
 			}
-		}else {
-				//不是末级查询明细数据并删除
-				//处理细表数据
-				List<Subjectd> subjectdList = subjectdService.findBySubjectMId(subjectm.getIautoid());
-				for (Subjectd subjectd : subjectdList) {
-					subjectd.delete();
-				}
-
+		}
+		//不是末级查询明细数据并删除
+		//处理细表数据
+		List<Subjectd> subjectdList = subjectdService.findBySubjectMId(subjectm.getIautoid());
+		for (Subjectd subjectd : subjectdList) {
+			subjectd.delete();
 		}
 
 		//基础数据
@@ -592,4 +590,8 @@ public class SubjectmService extends BaseService<Subjectm> {
 	 Subjectm first = findFirst("select max(Clevel) as Clevel  from Bas_SubjectM  where iparentid=?", pid);
 	 return new Record().set("clevel",first.getClevel());
  }
+ 
+	public List<Record> u8SubjectAutocomplete(String keyword, Integer limit) {
+		return dbTemplate(u8SourceConfigName(),"subjectm.u8SubjectAutocomplete",Kv.by("keyword", keyword).set("limit",limit)).find();
+	}
 }

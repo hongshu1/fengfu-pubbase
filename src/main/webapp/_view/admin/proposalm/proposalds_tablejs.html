@@ -282,73 +282,6 @@
         // 插入默认数据
     	jboltTableInsertRow('#jbolt_table_#(pageId)', datas);
     }
-    /**
-     * 插入表格数据（非追加）
-     */
-    function insertRow(data) {
-        // 校验当前表格是否已经存在指定的预算号项目
-        var rows = jboltTableGetAllDatas('#jbolt_table_#(pageId)');
-
-        try {
-            if (rows && rows.length > 0) {
-                $.each(rows, function (idx, row) {
-                    $.each(data, function (i, r) {
-                        if (row.cbudgetno === r.cbudgetno) {
-                            throw new Error('已经存在该预算号的项目');
-                        }
-                    });
-                });
-            }
-
-            jboltTableInsertRow('#jbolt_table_#(pageId)', data);
-
-            updateBudgetSum();
-            return true;
-        } catch (e) {
-            LayerMsgBox.alert(e.message, 2);
-            return false;
-        }
-    }
-
-    /**
-     * 追加选定项目
-     */
- /*    function copySelected(ele) {
-        // 获取选中行
-        var rowData = jboltTableGetCheckedData(ele);
-        if (rowData) {
-            console.log(JSON.stringify(rowData));
-
-            // 只能复制原禀议
-            if (rowData.itype === 2) {
-                LayerMsgBox.alert('只能追加原禀议项目', 2);
-                return false;
-            }
-
-            // 检查追加的项目 是否已存在
-            var rows = jboltTableGetAllDatas(ele);
-            console.log('rows: ' + JSON.stringify(rows));
-
-            try {
-                $.each(rows, function (idx, row) {
-                    if (rowData.isourceid === row.isourceid && row.itype === 2) {
-                        throw new Error('已经存在追加项');
-                    }
-                });
-            } catch (e) {
-                LayerMsgBox.alert(e.message, 2);
-                return false;
-            }
-
-            // 修改为新增项
-            rowData.itype = 2;
-
-            console.log(JSON.stringify(rowData));
-
-            jboltTableInsertRow(ele, rowData, false);
-        }
-        return false;
-    } */
 
     //判定是否能拆子项：能拆子项目的判定逻辑：1.是否子项为否（即勾选行为父项）， 2.是否子项为是并且同一个预算编号只有勾选行这一个子项 
     function validateIsCanSubItem(rowData,ele){
@@ -580,37 +513,6 @@
         return false;
     }
 
-    /**
-     * 更新预算汇总
-     */
-    function updateBudgetSum() {
-        // 获取所有行，汇总预算总金额
-        var rows = jboltTableGetAllDatas('#jbolt_table_#(pageId)');
-
-        // 预算总金额（无税）
-        var ibudgetmoney = 0;
-
-        $.each(rows, function (idx, row) {
-            ibudgetmoney += row.ibudgetmoney;
-        });
-
-        // 设置预算总金额（无税）
-        $('input[name="proposalm.ibudgetmoney"]').val(ibudgetmoney);
-
-        // 预算总金额（含税）
-        var ibudgetsum = (ibudgetmoney * (1 + #globalConfig(MesConfigKey.TAX_RATE))).toFixed(2);
-        // 设置预算总金额（含税）
-        $('input[name="proposalm.ibudgetsum"]').val(ibudgetsum);
-
-        // 申请金额（含税）
-        var inatsum = $('input[name="proposalm.inatsum"]').val();
-        // 剩余预算金额（含税）
-        var ibudgetremainsum = ibudgetsum - inatsum;
-
-        console.log('ibudgetremainsum: ' + ibudgetremainsum);
-
-        $('input[name="proposalm.ibudgetremainsum"]').val(ibudgetremainsum);
-    }
     //编制禀议书界面新增项目前的触发事件：拼接表格中所有的预算编号的iprojectcardid,在选择项目时排除这些项目
 	function editProposalmChooseItemCheckHandler(ele){
 		var allTableDatas = jboltTableGetAllDatas(ele);

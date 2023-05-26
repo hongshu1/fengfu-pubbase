@@ -100,3 +100,17 @@ select max(Cversion) as Cversion from Bas_SubjectM
 #sql("getMaxDatas")
 select * from Bas_SubjectM where Cversion=#para(cversion)
 #end
+
+#sql("u8SubjectAutocomplete")
+select #if(limit) top #(limit) #end
+    c.ccode,c.ccode_name
+from code c
+where
+    1=1
+  and iyear in ((select top 1 max(iyear)   from code))
+  and bend =1
+  #if(keywords)
+  	and (ccode like concat('%',#para(keywords),'%') or ccode_name like concat('%',#para(keywords),'%'))
+  #end
+order by c.ccode
+#end
