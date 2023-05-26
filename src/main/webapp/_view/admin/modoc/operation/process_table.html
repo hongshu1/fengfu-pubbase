@@ -1,0 +1,183 @@
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="itemroutingconfigRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+    <td hidden>${data.iinventoryid}</td>
+    <td>${data.iseq}</td>
+    <td data-value="${data.coperationname}">${data.coperationname}</td>
+
+    <td>
+        {@if data.invcs == undefined}
+           <span></span>
+       {@else}
+           <span><i class="fa fa-cog"></i>已选${data.invcs}个</span>
+        {@/if}
+    </td>
+
+    <td>
+        {@if data.equipments}
+            <span><i class="fa fa-cog"></i>已选${data.equipments}个</span>
+        {@else}
+            <span></span>
+        {@/if}
+    </td>
+
+    {@if data.drawings}
+        <td><span><i class="fa fa-cog"></i>已选${data.drawings}个</span></td>
+    {@else}
+        <td><span></span></td>
+    {@/if}
+
+    {@if data.imergednum > 0}
+        <td><span><i class="fa fa-cog"></i>请选${data.iMergedNum}个人</span></td>
+    {@else}
+        <td data-editable= flase>不可选</td>
+    {@/if}
+
+    <td></td>
+
+</tr>
+{@/each}
+</textarea>
+
+<h5>工艺路线信息</h5>
+
+<table class="jbolt_table jbolt_main_table table-center"
+       id="itemroutingconfigid_#(pageId)"
+       data-jbolttable
+       data-height="62%"
+       data-autoload="false"
+       data-url="admin/inventoryroutingconfig/list"
+       data-column-resize="true"
+       data-ajax="true"
+       data-column-prepend="1:checkbox:true"
+       data-rowtpl="itemroutingconfigRowtpl_#(pageId)"
+       data-editable="true"
+       data-editable-option="getEditableTableOptionsModocFirst"
+>
+    <thead>
+    <tr>
+        <th data-width="120" data-column="iinventoryid" hidden>工艺档案id</th>
+        <th data-width="80" data-column="iseq">工序号</th>
+        <th data-width="160" data-column="coperationname">工序名称</th>
+        <th data-width="120" data-column="invcs">所需物料集</th>
+        <th data-width="120" data-column="equipments">所需设备集</th>
+        <th data-width="120" data-column="drawings">作业指导书</th>
+        <th data-width="120" data-column="configperson">生产人员</th>
+        <th data-width="120" data-column="configpersonids">生产人员ID</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<script>
+    function  reqTableDate(requrl){
+        if(!requrl){
+            return;
+        }
+        $.ajax({
+            url: requrl,
+            type: 'GET',
+            success: function (ret) {
+                if (ret.state === 'ok') {
+                    var data = ret.data;
+
+                    jboltTableClear('#itemroutingconfigid_#(pageId)');
+
+                    jboltTableInsertRow('#itemroutingconfigid_#(pageId)', data, false, false, true);
+                    // console.log(jboltTableGetSubmitData('#itemroutingconfigid_#(pageId)'));
+                }
+            },
+            error: function (error) {
+
+            }
+        });
+    }
+    function getItemValue() {
+        let  itemidValue = $('#itemid').val();
+        return itemidValue;
+    }
+
+    function getEditableTableOptionsModocFirst(){
+        var imdocid=$("#iMoDocId").val();
+        var editableTableOptions1={
+            trigger:"click",
+            initRowCount:0,
+            maxRowCount:30,
+            keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+            submit:{
+                withForm: ["moDocForm_#(pageId)"],
+                name: 'docForm',
+                type:"all",//cell|all
+                //params:{"orderId":3},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                url:"/admin/modoc/saveDoc?rowid=",
+                success:function(res){
+                    LayerMsgBox.success("提交成功",600,function(){
+                        //parent.refreshPjaxContainer();
+                        parent.refreshJBoltTable()
+                        parent.layer.closeAll();
+                    });
+                }
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols:{
+                autoid: {
+                    submitAttr: "iautoid"
+                },
+                invcs: {  //所需物料集
+                    type: "dialogbtn",
+                    placeholder: "设置物料集",
+                    linkColumn: 'iautoid',
+                    dialog: {
+                        url: "admin/modoc/invc_dialog_index?iinventoryid=" + getItemValue()+"&imdocid="+ imdocid,
+                        area: "80%,80%",
+                        title: "工序物料集",
+                        btn: "确定,关闭"
+                    }
+                },
+                equipments: {  //所需设备集
+                    type: "dialogbtn",
+                    placeholder: "工序设备集",
+                    linkColumn: 'iautoid',
+                    dialog: {
+                        url: "admin/modoc/equipment_dialog_index?imdocid="+imdocid,
+                        area: "80%,80%",
+                        title: "选择设备",
+                        btn: "确定,关闭"
+                    }
+                },
+                drawings: {  //工艺文件
+                    type: "dialogbtn",
+                    placeholder: "工艺文件",
+                    linkColumn: 'iautoid',
+                    dialog: {
+                        url: "admin/modoc/drawing_dialog_index?imdocid="+imdocid,
+                        area: "80%,80%",
+                        title: "工艺文件",
+                        btn: "确定,关闭"
+                    }
+                },
+                configperson: {
+                    type: "input",
+                    placeholder: "人员维护",
+                    linkColumn: 'configpersonids,iautoid',
+                    readOnly: true,
+                    dialog: {
+                        url: "admin/modoc/personoperationdialog?imdocid="+imdocid,
+                        area: "95%,95%",
+                        title: "选择人员",
+                        btn: "确定,关闭"
+                    }
+                },
+                configpersonids: {
+                    type: "dialogbtn",
+                    placeholder: "人员维护",
+                    linkColumn: 'configperson'
+                }
+            }
+        };
+        return editableTableOptions1;
+    }
+</script>

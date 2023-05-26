@@ -46,7 +46,7 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/modoc/details/${data.iautoid}" data-area="1600,800"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+	<a href="admin/modoc/details/${data.iautoid}" data-area="1600,800"  tooltip data-title="制造工单详情"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
 	<!--<a href="admin/modoc/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="现品票"  data-handler="refreshJBoltTable" data-dialog-title="现品票" class="jbolt_table_editbtn">现品票</a>-->
        {@if data.istatus < 4}
      <button data-openpage="dialog"  data-handler="jboltTablePageToFirst"

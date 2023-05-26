@@ -7,8 +7,10 @@ import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
 import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentService;
 import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.inventoryroutingsop.InventoryRoutingSopService;
+import cn.rjtech.admin.morouting.MoMoroutingService;
 import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
 import cn.rjtech.admin.otherout.OtherOutService;
+import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
 import com.jfinal.aop.Before;
@@ -59,6 +61,12 @@ public class MoDocAdminController extends BaseAdminController {
 	@Inject
 	private OtherOutService otherOutService;//特殊领料单
 
+	@Inject
+	private UomService uomService; //单位
+
+	@Inject
+	private MoMoroutingService moMoroutingService; //工艺路线
+
 
 	/**
 	 * 首页
@@ -93,9 +101,24 @@ public class MoDocAdminController extends BaseAdminController {
 		}
 		Record moRecod=moDoc.toRecord();
 		if(isOk(moDoc.getIInventoryId())){
+			//存货
 			Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
 			if(inventory!=null){
-			  moRecod.set("cinvcode",inventory.getCInvCode());
+			  moRecod.set("cinvcode",inventory.getCInvCode());//料品编码
+			  moRecod.set("cinvcode1",inventory.getCInvCode1());//客户部番
+			  moRecod.set("cinvname1",inventory.getCInvName1());//部品名称
+				Uom uom=uomService.findFirst(Okv.create().
+						setIfNotNull(Uom.IAUTOID,inventory.getICostUomId()),Uom.IAUTOID,"desc");
+				if(uom!=null) {
+					moRecod.set("manufactureuom", uom.getCUomName());//生产单位
+				}
+				moRecod.set("cinvstd",inventory.getCInvStd());//规格
+
+			}
+			//工艺路线
+			MoMorouting moMorouting=moMoroutingService.findByImdocId(moDoc.getIAutoId());
+			if(moMorouting!=null){
+				moRecod.set("croutingname",moMorouting.getCRoutingName());//工艺路线名称
 			}
 		}
 		set("moDoc",moRecod);

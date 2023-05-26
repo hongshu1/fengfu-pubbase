@@ -1,0 +1,70 @@
+<form onsubmit="return false;" id="VouchTypeDic_Form" action="#(action)" method="post">
+    
+    #if(vouchTypeDic.iAutoId??)
+    <input type="hidden" name="vouchTypeDic.iAutoId" value="#(vouchTypeDic.iAutoId??)"/>
+    #end
+    
+    <div class="row">
+        <div class="col">
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">单据业务类型</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入单据业务类型" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入单据业务类型" maxlength="40" name="vouchTypeDic.cvbtid" value="#(vouchTypeDic.cvbtid??)"/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">单据类型中文名</label>
+                <div class="col-10">
+                    <select class="form-control"
+                            data-autoload
+                            name="vouchTypeDic.cvtid"
+                            data-url="admin/dictionary/options?key=VouchType"
+                            data-value-attr="sn"
+                            data-text-attr="name"
+                            data-text="=请选择="
+                            data-select="#(vouchtypedic.cvtid??)">
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">业务类型中文名</label>
+                <div class="col-10">
+                    <select class="form-control"
+                            data-autoload
+                            name="vouchTypeDic.cbtid"
+                            data-url="admin/dictionary/options?key=cbtchname"
+                            data-value-attr="sn"
+                            data-text-attr="name"
+                            data-text="=请选择="
+                            data-select="#(vouchtypedic.cbtid??)">
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">（业务类型）备注</label>
+                <div class="col-10">
+                    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入（业务类型）备注" maxlength="200" name="vouchTypeDic.cbtdemo">#(vouchTypeDic.cbtdemo??)</textarea>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">序号</label>
+                <div class="col-10">
+                    <input type="text" data-notnull="true" data-tips="请输入序号" data-with-clearbtn="true" autocomplete="off" placeholder="请输入序号" class="form-control" maxlength="40" name="vouchTypeDic.cserial" value="#(vouchTypeDic.cserial??)"/>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="VouchTypeDic_Form")
+#end
+

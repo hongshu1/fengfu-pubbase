@@ -10,7 +10,7 @@ import com.jfinal.core.Path;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoMaterialsscansum;
 /**
- * 制造工单齐料汇总  Controller
+ * 制造工单-齐料汇总  Controller
  * @ClassName: MoMaterialsscansumAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-22 15:46

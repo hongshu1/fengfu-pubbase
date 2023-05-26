@@ -84,5 +84,14 @@ public class MoMoroutingconfigOperationAdminController extends BaseAdminControll
 		renderJson(service.delete(getLong(0)));
 	}
 
+	/**
+	 * 工单工序查询
+	 */
+	public  void dataList(){
+		renderJson(service.dataList(getKv()));
+	}
+
+
+
 
 }

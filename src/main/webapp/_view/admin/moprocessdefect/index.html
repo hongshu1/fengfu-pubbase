@@ -1,0 +1,172 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>制程异常品记录</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="processDefectForm_#(pageId)"   onsubmit="return false;" method="post">
+		<!--	<input type="text" autocomplete="off"  class="form-control"  placeholder="=异常品单号=" name="cdocno" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=工单号=" name="imodocid" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=客户部番=" name="cinvcode" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=存货编码编码=" name="cinvcode1" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=部品名称=" name="cinvname" value="" />-->
+			<select style="width:150px" class="form-control"
+					data-autoload
+					data-text="=状态="
+					name="istatus"
+			>
+				<option value="">=状态=</option>
+				<option value="0">待记录</option>
+				<option value="1">待判定</option>
+				<option value="2">已完成</option>
+			</select>
+			<!--<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=开始时间=" name="startdate" data-tips="开始时间" maxlength="23" value="">
+			<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=结束时间=" name="enddate" data-tips="结束时间" maxlength="23" value="">-->
+
+			<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="processDefectRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+	<td>
+	{@if data.istatus==1}
+		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
+	{@else if data.istatus==2}
+	    <a href="common/qrcode?code=${data.cdocno}" data-photobtn tooltip data-title="点击查看二维码"><i style="font-size:20px;" class="fa fa-qrcode"></i></a>
+		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+	{@else}
+		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="检验"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">异常品记录</a>
+	{@/if}
+</td>
+<td>${data.istatus=='1'?'待判定':data.istatus=='2'?'已完成':'待记录'}</td>
+<td>${data.cdocno}</td>
+<td>${data.imodocid}</td>
+<td>存货编码</td>
+<td>部品名称</td>
+<td>客户部番</td>
+<td>${data.processname}</td>
+<td>${data.idqqty}</td>
+<td>${data.capproach=='1'?'返修':'报废'}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="processDefect_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+			<!--<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">打印二维码</button>-->
+			<button data-openpage="dialog"  data-handler="jboltTablePageToFirst"
+					data-title="新增记录" data-url="admin/moprocessdefect/add" data-fs="true"  class="btn btn-outline-primary btn-sm"><i
+					class="fa fa-plus"></i> 新增
+			</button>
+			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+				<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint_#(pageId)('check')"><i class="fa fa-download"></i> 打印勾选行</button>
+				<button class="btn dropdown-item" onclick="containerPrint_#(pageId)('page')"><i class="fa fa-download"></i> 打印当前页</button>
+			</div>
+		</div>
+		<!--		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="二维码出库异常记录" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/processdefect/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>-->
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/processdefect/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="processDefectForm_#(pageId)"
+data-rowtpl="processDefectRowtpl_#(pageId)"
+data-page="processDefectPage_#(pageId)"
+data-toolbar="processDefect_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+data-fixed-columns-right="-1"
+data-row-dblclick-active="true"
+>
+<thead>
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="200">操作</th>
+	<th data-width="100" data-column="iStatus">状态</th>
+	<th data-width="150" data-column="cDocNo">异常品单号</th>
+	<th data-width="150" data-column="iMoDocId">工单号</th>
+	<th data-width="150" data-column="iInventoryId">存货编码</th>
+	<th data-width="150" data-column="cInvName">部品名称</th>
+	<th data-width="150" data-column="cInvCode">客户部番</th>
+	<th data-width="150" data-column="ProcessName">工序名称</th>
+	<th data-width="150" data-column="iDqQty">不良数量</th>
+	<th data-width="150" data-column="cApproach">处置区分</th>
+	<th data-width="150" data-column="iQcUserId">检验人</th>
+	<th data-width="150" data-column="dQcTime">检验时间</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+
+	// 打印
+	function containerPrint_#(pageId)(mark) {
+		let rows;
+		if (mark == 'check') {
+			rows = jboltTableGetCheckedDatas();
+			if (rows == null) {
+				return;
+			}
+		} else {
+			rows = jboltTableGetAllDatas();
+		}
+
+		var k=0;
+		let code = [];
+		for (let i in rows) {
+			k++;
+			let rowdata = rows[i];
+			var ccode = rowdata.iautoid;
+			var istatus = rowdata.istatus;
+			var cdocno = rowdata.cdocno;
+			if (istatus != 2){
+				LayerMsgBox.error("第"+k+"行["+cdocno+"]异常单,请审核再打印！！！",3000);
+				return false;
+			}
+			code.push(ccode);
+		}
+		jboltHiprintWebPrint('doc_defect', 'url', 'admin/processdefect/QRCode?ids=' + code.join(",") + "&&mark=" + mark);
+	}
+</script>
+#end
