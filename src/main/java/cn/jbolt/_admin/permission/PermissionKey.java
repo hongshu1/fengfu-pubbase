@@ -174,7 +174,7 @@ public class PermissionKey {
 	 */
 	public static final String  SYSTEMMGR = " systemmgr";
 	/**
-	 * 组织管理
+	 * 组织账套
 	 */
 	public static final String ORGMGR = "orgmgr";
 	/**
@@ -254,10 +254,6 @@ public class PermissionKey {
 	 */
 	public static final String WORKREGIONM = "workregionm";
 	/**
-	 * APS高级排程
-	 */
-	public static final String SCHEDULED_APS = "scheduled_aps";
-	/**
 	 * 往来单位
 	 */
 	public static final String SUPPLIER_CUSTOMER = "supplier_customer";
@@ -270,10 +266,6 @@ public class PermissionKey {
 	 */
 	public static final String VENDORCLASS = "vendorclass";
 	/**
-	 * APS计划排程
-	 */
-	public static final String SCHEDUBASEPLAN = "schedubaseplan";
-	/**
 	 * 物料建模
 	 */
 	public static final String MATERIAL = "material";
@@ -281,10 +273,6 @@ public class PermissionKey {
 	 * 计量单位
 	 */
 	public static final String UOMCLASS = "uomclass";
-	/**
-	 * U9生产计划
-	 */
-	public static final String SCHEDUSOURCEORDER = "schedusourceorder";
 	/**
 	 * 仓库建模
 	 */
@@ -457,22 +445,6 @@ public class PermissionKey {
 	 * 报工记录隔离
 	 */
 	public static final String ROUTEREPORTSEPARATEM = "routereportseparatem";
-	/**
-	 * 排程资源表
-	 */
-	public static final String SCHEDUBASEPLANEQUIPCODE = "schedubaseplanequipcode";
-	/**
-	 * 排程物料临时表
-	 */
-	public static final String SCHEDUBASETEMP = "schedubasetemp";
-	/**
-	 * APS排程锁定
-	 */
-	public static final String SCHEDURELATIONLOCK = "schedurelationlock";
-	/**
-	 * APS排程来源
-	 */
-	public static final String SCHEDUSOURCE = "schedusource";
 	/**
 	 * 片料加工余料
 	 */
@@ -686,25 +658,9 @@ public class PermissionKey {
 	 */
 	public static final String SL = "sl";
 	/**
-	 * 编辑
-	 */
-	public static final String SCHEDUSOURCEORDER_EDIT = "schedusourceorder_edit";
-	/**
 	 * 发料管理
 	 */
 	public static final String FL = "fl";
-	/**
-	 * 导入
-	 */
-	public static final String SCHEDUSOURCEORDER_IMPORT = "schedusourceorder_import";
-	/**
-	 * u9生产计划同步
-	 */
-	public static final String SCHEDUSOURCEORDER_U9_SYNC = "schedusourceorder_u9_sync";
-	/**
-	 * 排程计划同步
-	 */
-	public static final String SCHEDUSOURCEORDER_SCHEDULE_SYNC = "schedusourceorder_schedule_sync";
 	/**
 	 * 卷料采购入库
 	 */
@@ -810,10 +766,6 @@ public class PermissionKey {
 	 */
 	public static final String ROUTEREPORT = "routereport";
 	/**
-	 * APS采购发行
-	 */
-	public static final String PURCHASORDER = "purchasorder";
-	/**
 	 * 生产备料单
 	 */
 	public static final String MOPICKLIST = "mopicklist";
@@ -898,10 +850,6 @@ public class PermissionKey {
 	 */
 	public static final String WORKREGIONM_IMPORT = "workregionm_import";
 	/**
-	 * 出货计划分析
-	 */
-	public static final String SCHEDUSOURCEAPPORTION = "schedusourceapportion";
-	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD1 = "warehouse_add1";
@@ -926,10 +874,6 @@ public class PermissionKey {
 	 */
 	public static final String HK = "hk";
 	/**
-	 * 生产计划分析
-	 */
-	public static final String SCHEDUSOURCEAPPORTIONU9 = "schedusourceapportionu9";
-	/**
 	 * 来料检验单
 	 */
 	public static final String RCVDOCQCFORMM = "rcvdocqcformm";
@@ -949,10 +893,6 @@ public class PermissionKey {
 	 * 生产计划管理
 	 */
 	public static final String PRODUCTION_PLAN = "production_plan";
-	/**
-	 * 月周生产计划排产
-	 */
-	public static final String MONTHLY_AND_WEEKLY_PRODUCTION_SCHEDULE = "monthly_and_weekly_production_schedule";
 	/**
 	 * 生产计划及实绩管理
 	 */
@@ -977,10 +917,6 @@ public class PermissionKey {
 	 * 机型档案
 	 */
 	public static final String EQUIPMENT_MODEL = "equipment_model";
-	/**
-	 * 客户档案-联系地址
-	 */
-	public static final String ADMIN_CUSTOMERADDR = "ADMIN_CUSTOMERADDR";
 	/**
 	 * 部门档案
 	 */
@@ -1078,17 +1014,9 @@ public class PermissionKey {
 	 */
 	public static final String ADMIN_INVENTORYQCFORM = "ADMIN_INVENTORYQCFORM";
 	/**
-	 * 实体扩展字段
-	 */
-	public static final String DESCFLEXFIELDDEF = "descflexfielddef";
-	/**
 	 * 容器分类
 	 */
 	public static final String CONTAINERCLASS = "containerclass";
-	/**
-	 * 拓展字段值
-	 */
-	public static final String DESCFLEXSEGVALUESETVALUE = "descflexsegvaluesetvalue";
 	/**
 	 * 平板端管理
 	 */
@@ -1142,7 +1070,7 @@ public class PermissionKey {
 	 */
 	public static final String CUSORDER_SUM = "cusorder_sum";
 	/**
-	 * 月周生产计划排产2
+	 * 月周生产计划排产
 	 */
 	public static final String SCHEDUPRODUCTPLANMONTH = "scheduproductplanmonth";
 	/**
@@ -1361,18 +1289,6 @@ public class PermissionKey {
 	 * 形态转换单从表
 	 */
 	public static final String FORMCONVERSIONLIST1 = "formConversionList1";
-	/**
-	 * 生产订单-备料单明细
-	 */
-	public static final String ADMIN_MOPICKITEMD = "ADMIN_MOPICKITEMD";
-	/**
-	 * 生产订单-备料单存货现品票明细
-	 */
-	public static final String ADMIN_MOPICKITEMDBATCH = "ADMIN_MOPICKITEMDBATCH";
-	/**
-	 * 生产订单-备料单主表
-	 */
-	public static final String ADMIN_MOPICKITEMM = "ADMIN_MOPICKITEMM";
 	/**
 	 * 采购入库单列表
 	 */

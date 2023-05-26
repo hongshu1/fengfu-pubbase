@@ -1,4 +1,4 @@
-package cn.rjtech.admin.momaterialsscansum;
+package cn.rjtech.admin.momaterialscanusedlog;
 
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -8,20 +8,20 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.MoMaterialsscansum;
+import cn.rjtech.model.momdata.MoMaterialscanusedlogd;
 /**
- * 制造工单-齐料汇总  Controller
- * @ClassName: MoMaterialsscansumAdminController
+ * 制造工单-材料耗用明细 Controller
+ * @ClassName: MoMaterialscanusedlogdAdminController
  * @author: 佛山市瑞杰科技有限公司
- * @date: 2023-05-22 15:46
+ * @date: 2023-05-26 09:36
  */
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/momaterialsscansum", viewPath = "/_view/admin/momaterialsscansum")
-public class MoMaterialsscansumAdminController extends BaseAdminController {
+@Path(value = "/admin/momaterialscanusedlogd", viewPath = "/_view/admin/momaterialscanusedlogd")
+public class MoMaterialscanusedlogdAdminController extends BaseAdminController {
 
 	@Inject
-	private MoMaterialsscansumService service;
+	private MoMaterialscanusedlogdService service;
 
    /**
 	* 首页
@@ -34,7 +34,7 @@ public class MoMaterialsscansumAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
+		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
 	}
 
    /**
@@ -48,27 +48,27 @@ public class MoMaterialsscansumAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		MoMaterialsscansum moMaterialsscansum=service.findById(getLong(0)); 
-		if(moMaterialsscansum == null){
+		MoMaterialscanusedlogd moMaterialscanusedlogd=service.findById(getLong(0)); 
+		if(moMaterialscanusedlogd == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("moMaterialsscansum",moMaterialsscansum);
+		set("moMaterialscanusedlogd",moMaterialscanusedlogd);
 		render("edit.html");
 	}
 
   /**
-	* s
+	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(MoMaterialsscansum.class, "moMaterialsscansum")));
+		renderJson(service.save(getModel(MoMaterialscanusedlogd.class, "moMaterialscanusedlogd")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(MoMaterialsscansum.class, "moMaterialsscansum")));
+		renderJson(service.update(getModel(MoMaterialscanusedlogd.class, "moMaterialscanusedlogd")));
 	}
 
    /**
@@ -84,12 +84,6 @@ public class MoMaterialsscansumAdminController extends BaseAdminController {
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
-
-
-	public void getBarcode(String barcode){
-		renderJson(service.getBarcode(barcode));
-	}
-
 
 
 }
