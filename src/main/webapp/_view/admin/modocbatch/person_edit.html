@@ -1,4 +1,5 @@
 #@jboltLayout()
+
 #define css()
 <link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
 <style>
@@ -42,6 +43,7 @@
     /* 下拉框文字样式 */
     .select {
         margin-right: 15px;
+        display: flex;
     }
 
     .span {
@@ -92,6 +94,10 @@
         padding: 7px 0px;
         text-indent: 0.8rem
     }
+    .span{
+        display: inline-block;
+        line-height: 25px;
+    }
     #alert .alert_title span:nth-child(1){
         flex: 1;
     }
@@ -111,32 +117,12 @@
         border-radius: 5px;
         float: right;
     }
-/*    */
-    .popup-layer{
-        border: 1px solid rgba(215, 215, 215, 1);
-        background-color:#fff;
-        width: 560px;
-        padding: 20px;
-        z-index: 1000;
-        position: absolute;
-        display: none;
-    }
-    .popup-confirm{
-        margin-bottom: 20px;
-    }
-    #popup_table{
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    #popup_table tr{
-        height: 40px;
-    }
 </style>
 #end
 
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page">
     <div class="jbolt_page_title">
         <nav>
             <p class="nav_title">月周生产计划</p>
@@ -145,23 +131,21 @@
         <!-- 搜索工具类开始 -->
         <div class="search">
             <div class="select">
-                <span>产线名称:</span>
-                <input style="width:150px;height:20px;" id="cworkname"/>
+                <span class="span">日期：</span>
+                <select style="width:150px;height:25px;">
+                    <option value=""></option>
+                </select>
+                <p style="width:20px;"></p>
+                <select style="width:150px;height:25px;">
+                    <option value=""></option>
+                </select>
             </div>
             <div class="select">
-                <span>存货编码:</span>
-                <input style="width:150px;height:20px;" id="cinvcode"/>
+                <span class="span">生产部门：</span>
+                <select style="width:150px;height:25px;">
+                    <option value=""></option>
+                </select>
             </div>
-            <div class="select">
-                <span>客户部番:</span>
-                <input style="width:150px;height:20px;" id="cinvcode1"/>
-            </div>
-            <div class="select">
-                <span>部品名称:</span>
-                <input style="width:150px;height:20px;" id="cinvname1"/>
-            </div>
-            <button class="button" onClick="search()">搜索</button>
-            <button class="button">重置</button>
         </div>
     </div>
     <div class="jbolt_page_content">
@@ -170,13 +154,11 @@
             <div id="table-tool">
                 <!-- 表格工具开始 -->
                 <div class="but_box">
-                    <button onClick="openPopup()">排产</button>
+                    <button onClick="edit()">排产</button>
                     <button>数据导出</button>
                     <button>数据导入</button>
-                    <button>保存层级</button>
-                    <button>计划使用刷新</button>
-                    <button id="content" onClick="lock()">锁定</button>
-                    <button onClick="unLock()">解锁</button>
+                    <button>保存</button>
+                    <button>提交审批</button>
                 </div>
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
                 <div id="ss" class="spread-container"></div>
@@ -202,187 +184,14 @@
             </div>
             <p class="alert_but"><button id="close_but">取消</button><button onClick="save()">确定</button></p>
         </div>
-        <!-- 排产弹出层 -->
-        <div class="popup-layer">
-            <!-- 确定按钮 -->
-            <div style="width: 100%;margin-bottom: 20px;">
-                <button class="button" onclick="savePopup()">确定</button>
-                <button class="button" onclick="closePopup()">取消</button>
-            </div>
-            <!-- 表格 -->
-            <div style="display: flex">
-                <p style="float: left;width: 70px">已排层级：</p>
-                <table border width="100%" id="popup_table">
-                    <thead>
-                    <tr>
-                        <th>排产层级</th>
-                        <th>排场截止时间</th>
-                        <th>锁定截止时间</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody id="layer_tr"></tbody>
-                </table>
-            </div>
-            <!-- 下拉框 -->
-            <div class="popup-select">
-                <div>
-                    <label for="deadline">截止日期：</label>
-                    <input type="datetime-local" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">
-                </div>
-                <div>
-                    <label for="level">排产层级：</label>
-                    <select id="level">
-                        <option value="1">层级1</option>
-                        <option value="2">层级2</option>
-                        <option value="3">层级3</option>
-                        <option value="4">层级4</option>
-                        <option value="5">层级5</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <!--排产弹出框结束-->
     </div>
 </div>
+
 #end
 
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
 <script type="text/javascript">
-    /**
-     * @param Api 公共接口
-     */
-    const Api = 'http://localhost:8081/';
-    /**
-     * @param urlParams 获取跳转携带的参数
-     * @param id 跳转携带的id
-     */
-    // window.onload=function () {
-    //     const urlParams = new URLSearchParams(window.location.search);
-    //     const iWeekScheduleId = urlParams.get('iWeekScheduleId');
-    //     const ilevel = urlParams.get('level');
-    //     console.log(iWeekScheduleId,'id');
-    //     if(iWeekScheduleId!=null){
-    //         loadInit();
-    //         initDate();
-    //         initData(iWeekScheduleId,ilevel);
-    //     }
-    // }
-    //表格数据查看
-    function levelSearch(iautoid,ilevel){
-        console.log(iautoid,'查看');
-        window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&iWeekScheduleId=${iautoid}&level=${ilevel}`);
-    }
-    /**
-     * 搜索事件
-     * @param search
-     * @param searchData 搜索需携带参数
-     */
-    let searchData={
-        cworkname:'',
-        cinvcode:'',
-        cinvcode1:'',
-        cinvname1:''
-    }
-    function search(){
-        const cworkname = document.getElementById('cworkname').value;
-        const cinvcode = document.getElementById('cinvcode').value;
-        const cinvcode1 = document.getElementById('cinvcode1').value;
-        const cinvname1 = document.getElementById('cinvname1').value;
-        searchData={
-            cworkname,
-            cinvcode,
-            cinvcode1,
-            cinvname1
-        }
-        initData();
-    }
-     /**
-     * 打开弹出层
-     * @param openPopup
-     */
-    function openPopup() {
-        var popup = document.querySelector('.popup-layer');
-        popup.style.display = 'block';
-        popup.style.position = "absolute";
-        popup.style.top = "50%";
-        popup.style.left = "50%";
-        popup.style.marginTop = "-75px";
-        popup.style.marginLeft = "-150px";
-        mybgs = document.createElement("div");
-        mybgs.setAttribute("id", "mybgs");
-        mybgs.style.background = "#000";
-        mybgs.style.width = "100%";
-        mybgs.style.height = "100%";
-        mybgs.style.position = "absolute";
-        mybgs.style.top = "0";
-        mybgs.style.left = "0";
-        mybgs.style.zIndex = "500";
-        mybgs.style.opacity = "0.3";
-        document.body.appendChild(mybgs);
-        document.body.style.overflow = "hidden";
-         let url = Api+"admin/scheduproductplanmonth/getApsWeekscheduleList";
-         $.ajax({
-             url,
-             type:'post',
-             dataType:'json',
-             success:function (res){
-                 console.log(res)
-                 // parms.dschedulebeginData = res.data;
-                 var str = "";
-                 for (var i = 0; i < res.data.length; i++) {
-                     console.log(res.data[i].iautoid)
-                     str += `<tr>
-                                <td>${res.data[i].ilevel}</td>
-                                <td>${res.data[i].dscheduleendtime}</td>
-                                <td>${res.data[i].dlockendtime==undefined?'':res.data[i].dlockendtime}</td>
-                                <td width='130px'>
-                                  <span onClick='levelSearch(${res.data[i].iautoid},${res.data[i].ilevel})' style="margin-right:10px;cursor: pointer;color: #0000FF;">查看</span>
-                                  <span style="margin-right:10px;cursor: pointer;color: #0000FF;">编辑</span>
-                                  <span style="cursor: pointer;color: #0000FF;">删除</span>
-                                 </td>
-                               </tr>`;
-                 }
-                 $("#layer_tr").html(str);
-             },error: function(error) {
-                 console.log(error);
-             }
-         })
-    }
-    //排场确定事件
-    function savePopup(){
-        //获取用户选择的时间
-        const datetimeLocalInput = document.getElementById('datetime-local');
-        const myVal = datetimeLocalInput.value.substring(0,10);
-        const level = document.getElementById('level').value;
-        console.log(level)
-        let url = Api+`admin/scheduproductplanmonth/scheduPlanMonth?level=${level}&endDate=${myVal}`;
-        $.ajax({
-            url,
-            type:'post',
-            dataType:'json',
-            success:function (res){
-                if(res.data.msg=="操作成功"){
-                    loadInit(parms);
-                    initDate(parms,sheet);
-                    initData();
-                    closePopup();//隐藏弹出层
-                }
-            },error: function(error) {
-                console.log(error);
-            }
-        })
-    }
-    /**
-     * 关闭弹出层
-     * @param closePopup
-     */
-    function closePopup() {
-        var popup = document.querySelector('.popup-layer');
-        popup.style.display = 'none';
-        mybgs.style.display = "none";
-    }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
@@ -416,30 +225,17 @@
         planListColIndex:7,     //计划排产列表起始列下标
         openBoxTime:'',         //打开锁定弹框的时间戳
         getLockDate:[],         //存储锁定计划的全部截止日期
-        dschedulebeginData:[],  //已排层级展示数据
     };
     var parmsArr = [Object.assign({},parmsDefault)];
     //添加属性
     parmsArr[0]['spread'] = spread;
     parmsArr[0]['activeSheet'] = spread.getSheet(0);//获取指定的表单
     var parms = parmsArr[0];
+    loadInit(parms);
+    initDate(parms,sheet);
+    initData();
     //设置全局表单的背景颜色
     spread.options.grayAreaBackColor = '#fff';
-    //勾选check按钮
-    // sheet.getCell(0, 0	).value(1);
-    /*工作簿暂停活性*/
-    function spreadSuspend() {
-        spread.suspendPaint(); //渲染前失活(提升性能)
-        spread.suspendCalcService(); //暂停计算服务
-    }
-    /*工作簿开启活性*/
-    function spreadResume() {
-        spread.resumeCalcService(); //开启计算服务
-        spread.resumePaint(); //恢复绘制
-    }
-    // var colCount = sheet.getColumnCount(GC.Spread.Sheets.SheetArea.viewport);//获取列数
-    // var rowCount = sheet.getRowCount();//获取行数
-
     /**
      * 初始化产线数据
      * @param loadInit
@@ -473,12 +269,26 @@
         parms.activeSheet.setColumnWidth(parms.columnindex+6, 150);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+8, 70);//设置指定单元格的width
     }
+    //勾选check按钮
+    // sheet.getCell(0, 0	).value(1);
+    /*工作簿暂停活性*/
+    function spreadSuspend() {
+        spread.suspendPaint(); //渲染前失活(提升性能)
+        spread.suspendCalcService(); //暂停计算服务
+    }
+    /*工作簿开启活性*/
+    function spreadResume() {
+        spread.resumeCalcService(); //开启计算服务
+        spread.resumePaint(); //恢复绘制
+    }
     /**
      * 获取接口返回的日期数据
      * @param initDate
+     * @param parms 自定义对象，用户接收数据
+     * @param sheet 当前活动表单
      */
-    function initDate() {
-        let url = Api+"admin/scheduproductplanmonth/getTableHead";
+    function initDate(parms,sheet) {
+        let url = "/admin/scheduproductplanmonth/getTableHead";
         //获取接口数据
         Ajax.get(url,(res)=>{
             spreadSuspend();//暂停绘制
@@ -504,12 +314,6 @@
             style3Sun.foreColor = '#000';
             style3Sun.backColor = "#00FFFF";
             parms.activeSheet.conditionalFormats.addSpecificTextRule(GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,'Sun',style3Sun,[new GC.Spread.Sheets.Range(2, 14, 1, 31)]);
-            // //设置边框线
-            // var border = new GC.Spread.Sheets.LineBorder
-            // border.color = "#000";
-            // border.style = GC.Spread.Sheets.LineStyle.thin;
-            // var cell = sheet.getCell(2, 14, GC.Spread.Sheets.SheetArea.viewport);
-            // cell.setBorder(new GC.Spread.Sheets.LineBorder("#D0D7E5",GC.Spread.Sheets.LineStyle.thick), { all:true });
             spreadResume();// 恢复绘制
         });
     }
@@ -517,80 +321,81 @@
      * 初始化产线数据
      * @param initData
      */
-    function initData(id,ilevel){
-            let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=${id}&level=${ilevel}`;
-            $.ajax({
-                url,
-                type: 'get',
-                dataType: 'json',
-                success: function (res) {
-                    spreadSuspend();//暂停绘制
-                    let rowIndex = 3;
-                    let colIndex = 0;
-                    for (let i = 0; i < res.length; i++) {
-                        //定义多选按钮
-                        var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();
-                        parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
-                        sheet.addSpan(rowIndex, colIndex, 6, 1);
-                        //序号
-                        sheet.setValue(rowIndex, 1 + colIndex, i);
-                        parms.activeSheet.addSpan(rowIndex, 1 + colIndex, 6, 1);
-                        //排产层级
-                        sheet.setValue(rowIndex, 2 + colIndex, res[i].iPsLevel);
-                        parms.activeSheet.addSpan(rowIndex, 2 + colIndex, 6, 1);
-                        //产线名称
-                        sheet.setValue(rowIndex, 3 + colIndex, res[i].cWorkName);
-                        parms.activeSheet.addSpan(rowIndex, 3 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(3 + colIndex, 120);//设置指定单元格的width
-                        //存货编码
-                        sheet.setValue(rowIndex, 4 + colIndex, res[i].cInvCode);
-                        parms.activeSheet.addSpan(rowIndex, 4 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(4 + colIndex, 120);//设置指定单元格的width
-                        //客户部番
-                        sheet.setValue(rowIndex, 5 + colIndex, res[i].cInvName1);
-                        parms.activeSheet.addSpan(rowIndex, 5 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(5 + colIndex, 180);//设置指定单元格的width
-                        //部品名称
-                        sheet.setValue(rowIndex, 6 + colIndex, res[i].cInvCode);
-                        parms.activeSheet.addSpan(rowIndex, 6 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(6 + colIndex, 100);//设置指定单元格的width
-                        rowIndex += 6;
+    function initData(){
+        let url = "/admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=1659809519734398976&level=1&endDate=2023-06-21";
+        $.ajax({
+            url,
+            type:'get',
+            dataType:'json',
+            success:function (res){
+                console.log(res)
+                spreadSuspend();//暂停绘制
+                let rowIndex = 3;
+                let colIndex=0;
+                for (let i = 0; i <res.length; i++) {
+                    //定义多选按钮
+                    var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();
+                    parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
+                    sheet.addSpan(rowIndex,colIndex,6,1);
+                    //序号
+                    sheet.setValue(rowIndex, 1+colIndex,i);
+                    parms.activeSheet.addSpan(rowIndex,1+colIndex,6,1);
+                    //排产层级
+                    sheet.setValue(rowIndex, 2+colIndex,res[i].iPsLevel);
+                    parms.activeSheet.addSpan(rowIndex,2+colIndex,6,1);
+                    //产线名称
+                    sheet.setValue(rowIndex, 3+colIndex,res[i].cWorkName);
+                    parms.activeSheet.addSpan(rowIndex,3+colIndex,6,1);
+                    parms.activeSheet.setColumnWidth(3+colIndex, 120);//设置指定单元格的width
+                    //存货编码
+                    sheet.setValue(rowIndex, 4+colIndex,res[i].cInvCode);
+                    parms.activeSheet.addSpan(rowIndex,4+colIndex,6,1);
+                    parms.activeSheet.setColumnWidth(4+colIndex, 120);//设置指定单元格的width
+                    //客户部番
+                    sheet.setValue(rowIndex, 5+colIndex,res[i].cInvName1);
+                    parms.activeSheet.addSpan(rowIndex,5+colIndex,6,1);
+                    parms.activeSheet.setColumnWidth(5+colIndex, 180);//设置指定单元格的width
+                    //部品名称
+                    sheet.setValue(rowIndex, 6+colIndex,res[i].cInvCode);
+                    parms.activeSheet.addSpan(rowIndex,6+colIndex,6,1);
+                    parms.activeSheet.setColumnWidth(6+colIndex, 100);//设置指定单元格的width
+                    rowIndex+=6;
 
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
-                        parms.activeSheet.setColumnWidth(parms.planListRowIndex, 70);//设置指定单元格的width
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/1S");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/2S");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/3S");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划在库");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("在库天数");
-                        //日计划排版
-                        let shiyongRow = 3;//计划使用行下标
-                        let shiyongCol = 9;
-                        let zaikuCol = 8;
-                        //渲染计划数据
-                        for (var j = 0; j < res[i].day.length; j++) {
-                            if (i == 0) {
-                                sheet.setValue(shiyongRow, shiyongCol + j, res[i].day[j].shiyong);
-                                sheet.setValue(1 + shiyongRow, shiyongCol + j, res[i].day[j].one);
-                                sheet.setValue(2 + shiyongRow, shiyongCol + j, res[i].day[j].two);
-                                sheet.setValue(3 + shiyongRow, shiyongCol + j, res[i].day[j].three);
-                                sheet.setValue(4 + shiyongRow, zaikuCol, res[i].day[j].zaiku);
-                                sheet.setValue(5 + shiyongRow, shiyongCol + j, res[i].day[j].tianshu);
-                            } else {
-                                sheet.setValue(6 * i + shiyongRow, shiyongCol + j, res[i].day[j].shiyong);
-                                sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, res[i].day[j].one);
-                                sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, res[i].day[j].two);
-                                sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, res[i].day[j].three);
-                                sheet.setValue(6 * i + shiyongRow + 4, zaikuCol, res[i].day[j].zaiku);
-                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, res[i].day[j].tianshu);
-                            }
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
+                    parms.activeSheet.setColumnWidth(parms.planListRowIndex, 70);//设置指定单元格的width
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/1S");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/2S");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/3S");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划在库");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("在库天数");
+                    //日计划排版
+                    let shiyongRow = 3;//计划使用行下标
+                    let shiyongCol = 9;
+                    let zaikuCol = 8;
+                    //渲染计划数据
+                    for (var j = 0; j < res[i].day.length; j++) {
+                        if(i==0){
+                            sheet.setValue(shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
+                            sheet.setValue(1+shiyongRow,shiyongCol+j,res[i].day[j].one);
+                            sheet.setValue(2+shiyongRow,shiyongCol+j,res[i].day[j].two);
+                            sheet.setValue(3+shiyongRow,shiyongCol+j,res[i].day[j].three);
+                            sheet.setValue(4+shiyongRow,zaikuCol,res[i].day[j].zaiku);
+                            sheet.setValue(5+shiyongRow,shiyongCol+j,res[i].day[j].tianshu);
+                        }else{
+                            sheet.setValue(6*i+shiyongRow,shiyongCol+j,res[i].day[j].shiyong);
+                            sheet.setValue(6*i+shiyongRow+1,shiyongCol+j,res[i].day[j].one);
+                            sheet.setValue(6*i+shiyongRow+2,shiyongCol+j,res[i].day[j].two);
+                            sheet.setValue(6*i+shiyongRow+3,shiyongCol+j,res[i].day[j].three);
+                            sheet.setValue(6*i+shiyongRow+4,zaikuCol,res[i].day[j].zaiku);
+                            sheet.setValue(6*i+shiyongRow+5,shiyongCol+j,res[i].day[j].tianshu);
                         }
                     }
-                    spreadResume();// 恢复绘制
-                }, error: function () {
-                    console.log('error')
                 }
-            })
+                spreadResume();// 恢复绘制
+            },error: function() {
+                console.log('error')
+            }
+        })
     }
     //获取表格中输入或修改的值
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
@@ -633,7 +438,7 @@
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
             //锁定截止日期
-            let url = Api+"admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=1659809519734398976";
+            let url = "/admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=1659809519734398976";
             $.ajax({
                 url,
                 type:'post',
@@ -678,8 +483,8 @@
         const datetimeLocalInput = document.getElementById('mySelect');
         const myVal = datetimeLocalInput.value.substring(0,10);
         console.log(myVal)
-        let url = alertTitle.innerText == "锁定计划"?Api+`admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`
-            :Api+`admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`;
+        let url = alertTitle.innerText == "锁定计划"?`/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`
+            :`/admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`;
         $.ajax({
             url,
             type:'post',
@@ -741,7 +546,7 @@
         mybg.style.opacity = "0.3";
         document.body.appendChild(mybg);
         document.body.style.overflow = "hidden";
-        let url = Api+"admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=1659809519734398976";
+        let url = "/admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=1659809519734398976";
         $.ajax({
             url,
             type:'post',
@@ -762,7 +567,7 @@
     }
     //测试向后端发送数据
     function edit(){
-        let url = Api+"admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=2023-05-28";
+        let url = "/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=2023-05-28";
         $.ajax({
             url,
             type:'post',
