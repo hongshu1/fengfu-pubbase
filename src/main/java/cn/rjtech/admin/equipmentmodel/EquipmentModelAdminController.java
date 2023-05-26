@@ -97,11 +97,19 @@ public class EquipmentModelAdminController extends BaseAdminController {
         render("import_excel.html");
     }
 
+//    /**
+//     * 下载导入模板
+//     */
+//    public void downloadTpl() {
+//        renderBytesToExcelXlsFile(service.getImportExcelTpl().setFileName("物料建模-机型档案导入模板"));
+//    }
+
     /**
-     * 下载导入模板
+     * Excel模板下载
      */
-    public void downloadTpl() {
-        renderBytesToExcelXlsFile(service.getImportExcelTpl().setFileName("物料建模-机型档案导入模板"));
+    @SuppressWarnings("unchecked")
+    public void downloadTpl() throws Exception {
+        renderJxls("equipmentmodel_import.xlsx", Kv.by("rows", null), "机型档案导入模板.xlsx");
     }
 
     /**

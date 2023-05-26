@@ -1546,6 +1546,10 @@ public class PermissionKey {
 	 */
 	public static final String BARCODEENCODINGM = "barcodeencodingm";
 	/**
+	 * 单据业务类型
+	 */
+	public static final String VOUCHTYPEDIC = "vouchtypedic";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
