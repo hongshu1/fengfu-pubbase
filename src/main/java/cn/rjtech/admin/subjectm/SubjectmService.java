@@ -592,6 +592,6 @@ public class SubjectmService extends BaseService<Subjectm> {
  }
  
 	public List<Record> u8SubjectAutocomplete(String keyword, Integer limit) {
-		return dbTemplate(u8SourceConfigName(),"subjectm.u8SubjectAutocomplete",Kv.by("keyword", keyword).set("limit",limit)).find();
+		return dbTemplate(u8SourceConfigName(),"subjectm.u8SubjectAutocomplete",Kv.by("keywords", keyword).set("limit",limit)).find();
 	}
 }
