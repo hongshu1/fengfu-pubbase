@@ -42,9 +42,9 @@
         var $form = $('#SubcontractOrderM_form_#(pageId)');
         if (FormChecker.check($form)) {
             var formData = formToJson($form);
-            Ajax.post("admin/subcontractorderm/checkData",{iVendorId: formData.iVendorId, beginDate: formData.begindate, endDate: formData.enddate, processType: 2}, function (res) {
+            Ajax.post("admin/subcontractorderm/checkData",{iVendorId: formData.iVendorId, beginDate: formData.begindate, endDate: formData.enddate, processType: 2, iSourceType: '#(iSourceType)'}, function (res) {
                 if (res.state=='ok'){
-                    location.href = '/admin/subcontractorderm/add?processType=2&iVendorId=' + formData.iVendorId + '&beginDate=' + formData.begindate + '&endDate=' + formData.enddate + '&_jb_rqtype_=dialog';
+                    location.href = '/admin/subcontractorderm/add?iSourceType=#(iSourceType)&processType=2&iVendorId=' + formData.iVendorId + '&beginDate=' + formData.begindate + '&endDate=' + formData.enddate + '&_jb_rqtype_=dialog';
                 }
             });
         }

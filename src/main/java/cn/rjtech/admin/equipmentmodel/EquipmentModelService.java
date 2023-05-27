@@ -164,10 +164,10 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 	 * @param file
 	 * @return
 	 */
-	public Ret importExcel(File file) {
+	public Ret importExcel(File file, String cformatName) {
 		StringBuilder errorMsg=new StringBuilder();
 		//使用字段配置维护
-		Object importData =  cusFieldsMappingdService.getImportDatas(file, "机型档案").get("data");
+		Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
 //		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(importData,"HH:mm");
 		String docInfoRelaStrings= JSON.toJSONString(importData);
 		List<EquipmentModel> equipmentModels = JSON.parseArray(docInfoRelaStrings, EquipmentModel.class);

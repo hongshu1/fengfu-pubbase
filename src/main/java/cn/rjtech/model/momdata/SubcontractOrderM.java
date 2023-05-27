@@ -23,5 +23,29 @@ public class SubcontractOrderM extends BaseSubcontractOrderM<SubcontractOrderM> 
     public static final String PAYABLETYPETEXT = "payableTypeText";
     
     public static final String BUSTYPETEXT = "busTypeText";
+    // 月份集合字段
+    public static final String MONTHFIELD = "monthField";
+    // 日期集合字段
+    public static final String DATEFIELD = "dateField";
+    // 判断可编辑表格是否能编辑
+    public static final String ISEDITFIELDNAME = "isEditFieldName";
+    // table column名称
+    public static final String FIELDNAME = "fieldName";
+    // 日期下标（每个日期及合计的下标）
+    public static final String INDEX = "index";
+    // 日期格式
+    public static final String DATESTR = "dateStr";
+    // 记录每月加合计的总长
+    public static final String SIZE = "size";
+    
+    private boolean isAdd;
+    
+    public boolean isAdd() {
+        return isAdd;
+    }
+    
+    public void setAdd(boolean add) {
+        isAdd = add;
+    }
 }
 

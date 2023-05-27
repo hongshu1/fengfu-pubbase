@@ -4,13 +4,10 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -26,6 +23,7 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import java.io.File;
 import java.util.*;
@@ -265,10 +263,10 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
 		return SUCCESS;
 	}
 
-	public Ret importExcelData(File file) {
+	public Ret importExcelData(File file,String cformatname) {
 		StringBuilder errorMsg=new StringBuilder();
 		//使用字段配置维护
-		Object modelss =  cusFieldsMappingdService.getImportDatas(file, "生产班次").get("data");
+		Object modelss =  cusFieldsMappingdService.getImportDatas(file, cformatname).get("data");
 		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(modelss,"HH:mm");
 		List<Workshiftm> models = JSON.parseArray(docInfoRelaStrings, Workshiftm.class);
 		if(notOk(models)) {

@@ -7,6 +7,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.OrgAccessKit;
 import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -457,7 +458,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
     }
 
     @SuppressWarnings("unchecked")
-    public Map vouchProcessSubmit(Kv k){
+    public Kv vouchProcessSubmit(Kv k){
         CaseInsensitiveMap<String, Object> kv = new CaseInsensitiveMap<String, Object>(k);
         String sourceJson = k.toJson();
 
@@ -496,7 +497,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
             ValidationUtils.notEmpty(mainData, "detail没有数据");
 
-            Map plugeReturnMap = ListUtils.dealWithReturnData(preAllocate);
+            Map<String, Object> plugeReturnMap = ListUtils.dealWithReturnData(preAllocate);
 
             String type = plugeReturnMap.get("type").toString();
             // List<Record> list = findInfoFlag(type)
@@ -523,11 +524,10 @@ public class ColumsmapService extends BaseService<Columsmap> {
                 );//通过配置表的groupseq分组
 
                 Set<Object> groupSeqs = new TreeSet<>(groupProcessDatas.keySet());
-                Iterator<Object> groupId = groupSeqs.iterator();
 
-                while (groupId.hasNext()) {
+                for (Object groupSeq : groupSeqs) {
                     // 取出分组中的流程
-                    List<Record> processBusList = groupProcessDatas.get(groupId.next());
+                    List<Record> processBusList = groupProcessDatas.get(groupSeq);
 
                     for (int i = 0; i < processBusList.size(); i++) {
                         Record processBusMap = processBusList.get(i);
@@ -547,7 +547,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                             // ---------------------------------------------------------
                             try {
                                 txInErp(erpDbAlias, erpDBName, vouchType, vouchBusinessID, orgApp, processBusMap, dataConversion, userApp, processBusPre, type, plugeReturnMap, result, mainData, detailData, extData, sourceJson, now);
-                                if (result.containsKey("isBreak") && result.getInt("isBreak") == 1){
+                                if (result.containsKey("isBreak") && result.getInt("isBreak") == 1) {
                                     break;
                                 }
                             } catch (Exception e) {
@@ -1051,7 +1051,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
         return processFlag;
     }
 
-    public Map vouchProcessDynamicSubmit(Kv k) {
+    public Kv vouchProcessDynamicSubmit(Kv k) {
         CaseInsensitiveMap<String, Object> kv = new CaseInsensitiveMap<String, Object>(k);
         
         String SourceJson = k.toJson();
@@ -1059,9 +1059,16 @@ public class ColumsmapService extends BaseService<Columsmap> {
         Kv result = Kv.create();
         
         Date now = new Date();
-        
-        Organize orgApp = organizeService.getOrgByCode((String) kv.get("organizecode"));
 
+        String organizecode = (String) kv.get("organizecode");
+        
+        Organize orgApp = organizeService.getOrgByCode(organizecode);
+        ValidationUtils.notNull(orgApp, "组织不存在");
+        
+        OrgAccessKit.setOrgCode(organizecode);
+        OrgAccessKit.setOrgId(orgApp.getId());
+        OrgAccessKit.setU8DbAlias(U8DataSourceKit.ME.use(organizecode));
+        
         // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
         String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
         
@@ -1091,7 +1098,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
             JSONArray extData = (JSONArray) kv.get("extdata");
             //判断主数据是否有数据
             ValidationUtils.isTrue(mainData.size() > 0, "detail没有数据");
-            Map plugeReturnMap = ListUtils.dealWithReturnData(preAllocate);
+            Map<String, Object> plugeReturnMap = ListUtils.dealWithReturnData(preAllocate);
             String type = plugeReturnMap.get("type").toString();
             List<Record> list = findInfoFlag(type);
             String synergyTag = list.get(0).getStr("synergytag");
@@ -1148,7 +1155,9 @@ public class ColumsmapService extends BaseService<Columsmap> {
                                     break;
                                 }
                             } catch (Exception e) {
+                                e.printStackTrace();
                                 LOG.error(e.getLocalizedMessage());
+                                result.set("message", e.getLocalizedMessage());
                                 // 这里不打印异常信息，处理回滚外层事务
                                 return false;
                             }
