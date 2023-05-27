@@ -10,6 +10,9 @@ import cn.rjtech.model.momdata.RdStyle;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 /**
  * 收发类别 Controller
@@ -155,6 +158,14 @@ public class RdStyleAdminController extends BaseAdminController {
      */
     public void getPurchaseType() {
         renderJsonData(service.getPurchaseType(true, true));
+    }
+    //收类别编码
+    public void options(){
+     renderJsonData(service.getCvrrcodeType("收","0"));
+    }
+    //发类别编码
+    public void options1(){
+        renderJsonData(service.getCvrscodeType("发","0"));
     }
 
 }

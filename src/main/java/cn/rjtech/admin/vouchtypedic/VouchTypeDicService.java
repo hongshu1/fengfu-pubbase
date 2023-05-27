@@ -7,8 +7,10 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.VouchTypeDic;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -69,7 +71,13 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
         vouchTypeDic.setCBTChName(JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.cbtchname.name(), vouchTypeDic.getCBTID()));
 
         Date now = new Date();
+        String CVBTID = vouchTypeDic.getCVTID()+vouchTypeDic.getCBTID();
 
+        VouchTypeDic vouchTypeDic1 = selectNotCvbtId(CVBTID);
+        if (isOk(vouchTypeDic1)){
+            ValidationUtils.error(ErrorMsg.SAVE_FAILED);
+        }
+        vouchTypeDic.setCVBTID(CVBTID);
         vouchTypeDic.setICreateBy(JBoltUserKit.getUserId());
         vouchTypeDic.setCCreateName(JBoltUserKit.getUserName());
         vouchTypeDic.setDCreateTime(now);
@@ -87,6 +95,11 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
         return ret(success);
     }
 
+    private VouchTypeDic selectNotCvbtId(String cvbtid) {
+        Kv para=Kv.by("cvbtid",cvbtid);
+        return daoTemplate("vouchtypedic.selectNotCvbtId",para).findFirst();
+    }
+
     /**
      * 更新
      */
@@ -99,7 +112,17 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
         if (dbVouchTypeDic == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
-        //if(existsName(vouchTypeDic.getName(), vouchTypeDic.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+        // 单据类型
+        vouchTypeDic.setCVTChName(JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.VouchType.name(), vouchTypeDic.getCVTID()));
+        // 单据业务
+        vouchTypeDic.setCBTChName(JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.cbtchname.name(), vouchTypeDic.getCBTID()));
+        String CVBTID = vouchTypeDic.getCVTID()+vouchTypeDic.getCBTID();
+
+        Date now =new Date();
+        vouchTypeDic.setCVBTID(CVBTID);
+        vouchTypeDic.setIUpdateBy(JBoltUserKit.getUserId());
+        vouchTypeDic.setCUpdateName(JBoltUserKit.getUserName());
+        vouchTypeDic.setDUpdateTime(now);
         boolean success = vouchTypeDic.update();
         if (success) {
             //添加日志
@@ -107,6 +130,7 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
         }
         return ret(success);
     }
+
 
     /**
      * 删除数据后执行的回调
