@@ -3,14 +3,13 @@ package cn.rjtech.admin.customerclass;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.model.momdata.CustomerClass;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -34,7 +33,8 @@ public class CustomerClassService extends BaseService<CustomerClass> {
 	protected CustomerClass dao() {
 		return dao;
 	}
-
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingdService;
 	/**
 	 * 后台管理分页查询
 	 */
@@ -231,42 +231,13 @@ public class CustomerClassService extends BaseService<CustomerClass> {
 		return this.convertToModelTree(customerclassList, "iAutoId", "iPid", (p) -> this.notOk(p.getIPid()));
 	}
 
-	public Ret importExcelData(File file) {
+	public Ret importExcelData(File file, String cformatName) {
 		StringBuilder errorMsg=new StringBuilder();
-		JBoltExcel jBoltExcel=JBoltExcel
-				//从excel文件创建JBoltExcel实例
-				.from(file)
-				//设置工作表信息
-				.setSheets(
-						JBoltExcelSheet.create("sheet1")
-								//设置列映射 顺序 标题名称
-								.setHeaders(
-										JBoltExcelHeader.create("ccode","编码"),
-										JBoltExcelHeader.create("cname","名称"),
-										JBoltExcelHeader.create("ipid","上级分类")
-								)
-								//特殊数据转换器
-								.setDataChangeHandler((data,index) ->{
-									CustomerClass customerclass = findFirst(Okv.by("cCCCode", data.get("ipid")),
-											"iautoid", "desc");
-									if(customerclass!=null){
-										data.change("ipid", customerclass.getIAutoId());
-									}else{
-										data.change("ipid", 0);
-									}
-
-									data.change("icreateby", JBoltUserKit.getUserId());
-									data.change("ccreatename",JBoltUserKit.getUserName());
-
-									data.change("iorgid",1);
-									data.change("corgcode",1);
-									data.change("corgname", 1L);
-								})
-								//从第三行开始读取
-								.setDataStartRow(3)
-				);
+		//使用字段配置维护
+		Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
+		String docInfoRelaStrings= JSON.toJSONString(importData);
+		List<CustomerClass> models = JSON.parseArray(docInfoRelaStrings, CustomerClass.class);
 		//从指定的sheet工作表里读取数据
-		List<CustomerClass> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", CustomerClass.class, errorMsg);
 		if(notOk(models)) {
 			if(errorMsg.length()>0) {
 				return fail(errorMsg.toString());
@@ -278,6 +249,21 @@ public class CustomerClassService extends BaseService<CustomerClass> {
 		if(models.size()>0){
 			Date now = new Date();
 			for(CustomerClass p:models){
+				CustomerClass customerclass = findFirst(Okv.by("cCCCode", p.getCUpdateName()),
+						"iautoid", "desc");
+				if(customerclass!=null){
+					p.setIPid(customerclass.getIAutoId());
+				}else{
+					p.setIPid(0L);
+				}
+				p.setICreateBy(JBoltUserKit.getUserId());
+				p.setCCreateName(JBoltUserKit.getUserName());
+				p.setIOrgId(getOrgId());
+				p.setCOrgCode(getOrgCode());
+				p.setCOrgName(getOrgName());
+				p.setIUpdateBy(JBoltUserKit.getUserId());
+				p.setCUpdateName(JBoltUserKit.getUserName());
+				p.setDUpdateTime(now);
 				p.setDCreateTime(now);
 				if(notOk(p.getCCCCode())){
 					return fail("编码不能为空");
@@ -301,6 +287,21 @@ public class CustomerClassService extends BaseService<CustomerClass> {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL);
 		}
 		return SUCCESS;
+	}
+
+	/**
+	 * 创建工段档案信息预处理
+	 */
+	public void saveWorkRegionMHandle(CustomerClass workregionm, Long userId, Date date, String username, Long orgId, String orgCode, String orgName) {
+		workregionm.setICreateBy(userId);
+		workregionm.setDCreateTime(date);
+		workregionm.setCCreateName(username);
+		workregionm.setIOrgId(orgId);
+		workregionm.setCOrgCode(orgCode);
+		workregionm.setCOrgName(orgName);
+		workregionm.setIUpdateBy(userId);
+		workregionm.setDUpdateTime(date);
+		workregionm.setCUpdateName(username);
 	}
 
 }
