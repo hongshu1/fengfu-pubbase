@@ -1,27 +1,35 @@
 package cn.rjtech.admin.sysotherin;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.common.CommonController;
+import cn.rjtech.common.columsmap.ColumsmapService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysOtherin;
 import cn.rjtech.model.momdata.SysOtherindetail;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
+import cn.smallbun.screw.core.util.CollectionUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.json.JSONArray;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 其它入库单
@@ -39,6 +47,9 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 
     @Inject
     private SysOtherindetailService sysotherindetailservice;
+
+    @Inject
+    private PersonService personservice;
 
     @Override
     protected int systemLogTargetType() {
@@ -244,6 +255,11 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 
         }
         sysotherindetailservice.batchUpdate(systailsList);
+
+        // 测试调用接口
+        System.out.println("```````````````````````````````"+ new Date());
+        Ret ret = pushU8(sysotherin, systailsList);
+        System.out.println("```````````````````````````````"+ret);
     }
 
     // 可编辑表格提交-删除数据
@@ -253,4 +269,95 @@ public class SysOtherinService extends BaseService<SysOtherin> {
         sysotherindetailservice.deleteByIds(ids);
 
     }
+
+
+    //推送u8数据接口
+    public Ret pushU8(SysOtherin sysotherin,List<SysOtherindetail> sysotherindetail) {
+        if(!CollectionUtils.isNotEmpty(sysotherindetail)){
+            return Ret.ok().msg("数据不能为空");
+        }
+
+        User user = JBoltUserKit.getUser();
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("userCode",user.getUsername());
+        data.put("organizeCode",this.getdeptid());
+        data.put("token","");
+
+        JSONObject preallocate = new JSONObject();
+
+
+        preallocate.set("userCode",user.getUsername());
+        preallocate.set("organizeCode",this.getdeptid());
+        preallocate.set("CreatePerson",user.getId());
+        preallocate.set("CreatePersonName",user.getName());
+        preallocate.set("loginDate",DateUtil.format(new Date(), "yyyy-MM-dd"));
+        preallocate.set("tag","OtherIn");
+        preallocate.set("type","OtherIn");
+
+        data.put("PreAllocate",preallocate);
+
+        JSONArray maindata = new JSONArray();
+        sysotherindetail.stream().forEach(s -> {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.set("invstd","");
+            jsonObject.set("iwhcode",s.getPosCode());
+            jsonObject.set("barcodeqty","");
+            jsonObject.set("defwhcode",sysotherin.getWhcode());
+            jsonObject.set("organizecode",this.getdeptid());
+            jsonObject.set("invname","");
+            jsonObject.set("index","1");
+            jsonObject.set("vt_id","");
+            jsonObject.set("defwhname","");
+            jsonObject.set("billDate",DateUtil.format(s.getCreateDate(), "yyyy-MM-dd"));
+            jsonObject.set("invcode",s.getInvCode());
+            jsonObject.set("userCode",user.getUsername());
+            jsonObject.set("iswhpos","1");
+            jsonObject.set("defposcode","");
+            jsonObject.set("ispack","0");
+            jsonObject.set("qty",s.getQty());
+            jsonObject.set("iposcode","");
+            jsonObject.set("Tag","OtherIn");
+            jsonObject.set("barcode",s.getBarcode());
+            jsonObject.set("IDeptCode","");
+            jsonObject.set("IDeptName","");
+            jsonObject.set("IRdType","101");
+            jsonObject.set("IRdName","其他入库");
+            jsonObject.set("IRdCode","101");
+
+            maindata.put(jsonObject);
+        });
+        data.put("MainData",maindata);
+
+        //            请求头
+        Map<String, String> header = new HashMap<>(5);
+        header.put("Content-Type", "application/json");
+        String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
+
+        try {
+            String post = HttpApiUtils.httpHutoolPost(url, data, header);
+            com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
+            if (isOk(post)) {
+                if ("201".equals(jsonObject.getString("code"))) {
+                    return Ret.ok().setOk().data(jsonObject);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return Ret.msg("上传u8失败");
+    }
+
+
+    //通过当前登录人名称获取部门id
+    public String getdeptid(){
+        String dept = "001";
+        User user = JBoltUserKit.getUser();
+        Person person = personservice.findFirstByUserId(user.getId());
+        if(null != person && "".equals(person)){
+            dept = person.getCOrgCode();
+        }
+        return dept;
+    }
+
 }

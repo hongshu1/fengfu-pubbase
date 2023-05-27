@@ -116,9 +116,11 @@
         border: 1px solid rgba(215, 215, 215, 1);
         background-color:#fff;
         width: 560px;
+        height: 400px;
         padding: 20px;
         z-index: 1000;
         position: absolute;
+        overflow-y: scroll;
         display: none;
     }
     .popup-confirm{
@@ -130,6 +132,41 @@
     }
     #popup_table tr{
         height: 40px;
+    }
+/*  消息提示框  */
+    #message-box {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        text-align: center;
+    }
+
+    .message {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        animation: slide-in 0.3s ease-out;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    @keyframes slide-in {
+        from {
+            transform: translateY(-100%);
+        }
+        to {
+            transform: translateY(0);
+        }
     }
 </style>
 #end
@@ -203,7 +240,7 @@
             <p class="alert_but"><button id="close_but">取消</button><button onClick="save()">确定</button></p>
         </div>
         <!-- 排产弹出层 -->
-        <div class="popup-layer">
+        <div class="popup-layer" id="popup-layer">
             <!-- 确定按钮 -->
             <div style="width: 100%;margin-bottom: 20px;">
                 <button class="button" onclick="savePopup()">确定</button>
@@ -243,6 +280,14 @@
             </div>
         </div>
         <!--排产弹出框结束-->
+        <!--消息提示框开始-->
+        <div id="message-box" class="hidden">
+            <div class="message">
+                <p>提示</p>
+                <p id="msg"></p>
+            </div>
+        </div>
+        <!--消息提示框结束-->
     </div>
 </div>
 #end
@@ -258,130 +303,17 @@
      * @param urlParams 获取跳转携带的参数
      * @param id 跳转携带的id
      */
-    // window.onload=function () {
-    //     const urlParams = new URLSearchParams(window.location.search);
-    //     const iWeekScheduleId = urlParams.get('iWeekScheduleId');
-    //     const ilevel = urlParams.get('level');
-    //     console.log(iWeekScheduleId,'id');
-    //     if(iWeekScheduleId!=null){
-    //         loadInit();
-    //         initDate();
-    //         initData(iWeekScheduleId,ilevel);
-    //     }
-    // }
-    //表格数据查看
-    function levelSearch(iautoid,ilevel){
-        console.log(iautoid,'查看');
-        window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&iWeekScheduleId=${iautoid}&level=${ilevel}`);
-    }
-    /**
-     * 搜索事件
-     * @param search
-     * @param searchData 搜索需携带参数
-     */
-    let searchData={
-        cworkname:'',
-        cinvcode:'',
-        cinvcode1:'',
-        cinvname1:''
-    }
-    function search(){
-        const cworkname = document.getElementById('cworkname').value;
-        const cinvcode = document.getElementById('cinvcode').value;
-        const cinvcode1 = document.getElementById('cinvcode1').value;
-        const cinvname1 = document.getElementById('cinvname1').value;
-        searchData={
-            cworkname,
-            cinvcode,
-            cinvcode1,
-            cinvname1
+    window.onload=function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const iWeekScheduleId = urlParams.get('iWeekScheduleId');
+        const ilevel = urlParams.get('level');
+        if(iWeekScheduleId!=null){
+            loadInit();
+            initDate();
+            parms.id=iWeekScheduleId;
+            parms.level=ilevel;
+            initData(iWeekScheduleId,ilevel);
         }
-        initData();
-    }
-     /**
-     * 打开弹出层
-     * @param openPopup
-     */
-    function openPopup() {
-        var popup = document.querySelector('.popup-layer');
-        popup.style.display = 'block';
-        popup.style.position = "absolute";
-        popup.style.top = "50%";
-        popup.style.left = "50%";
-        popup.style.marginTop = "-75px";
-        popup.style.marginLeft = "-150px";
-        mybgs = document.createElement("div");
-        mybgs.setAttribute("id", "mybgs");
-        mybgs.style.background = "#000";
-        mybgs.style.width = "100%";
-        mybgs.style.height = "100%";
-        mybgs.style.position = "absolute";
-        mybgs.style.top = "0";
-        mybgs.style.left = "0";
-        mybgs.style.zIndex = "500";
-        mybgs.style.opacity = "0.3";
-        document.body.appendChild(mybgs);
-        document.body.style.overflow = "hidden";
-         let url = Api+"admin/scheduproductplanmonth/getApsWeekscheduleList";
-         $.ajax({
-             url,
-             type:'post',
-             dataType:'json',
-             success:function (res){
-                 console.log(res)
-                 // parms.dschedulebeginData = res.data;
-                 var str = "";
-                 for (var i = 0; i < res.data.length; i++) {
-                     console.log(res.data[i].iautoid)
-                     str += `<tr>
-                                <td>${res.data[i].ilevel}</td>
-                                <td>${res.data[i].dscheduleendtime}</td>
-                                <td>${res.data[i].dlockendtime==undefined?'':res.data[i].dlockendtime}</td>
-                                <td width='130px'>
-                                  <span onClick='levelSearch(${res.data[i].iautoid},${res.data[i].ilevel})' style="margin-right:10px;cursor: pointer;color: #0000FF;">查看</span>
-                                  <span style="margin-right:10px;cursor: pointer;color: #0000FF;">编辑</span>
-                                  <span style="cursor: pointer;color: #0000FF;">删除</span>
-                                 </td>
-                               </tr>`;
-                 }
-                 $("#layer_tr").html(str);
-             },error: function(error) {
-                 console.log(error);
-             }
-         })
-    }
-    //排场确定事件
-    function savePopup(){
-        //获取用户选择的时间
-        const datetimeLocalInput = document.getElementById('datetime-local');
-        const myVal = datetimeLocalInput.value.substring(0,10);
-        const level = document.getElementById('level').value;
-        console.log(level)
-        let url = Api+`admin/scheduproductplanmonth/scheduPlanMonth?level=${level}&endDate=${myVal}`;
-        $.ajax({
-            url,
-            type:'post',
-            dataType:'json',
-            success:function (res){
-                if(res.data.msg=="操作成功"){
-                    loadInit(parms);
-                    initDate(parms,sheet);
-                    initData();
-                    closePopup();//隐藏弹出层
-                }
-            },error: function(error) {
-                console.log(error);
-            }
-        })
-    }
-    /**
-     * 关闭弹出层
-     * @param closePopup
-     */
-    function closePopup() {
-        var popup = document.querySelector('.popup-layer');
-        popup.style.display = 'none';
-        mybgs.style.display = "none";
     }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     //设置状态栏
@@ -395,6 +327,8 @@
     statusBar.bind(spread);
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
     var parmsDefault = {
+        id:null,                //全局公共id
+        level:'',               //排场层级
         resourcesList: [],      //资源列表
         RowCount:500,           //一列多少单元格
         ColumnCount:41,         //一行多少单元格
@@ -518,79 +452,216 @@
      * @param initData
      */
     function initData(id,ilevel){
-            let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=${id}&level=${ilevel}`;
-            $.ajax({
-                url,
-                type: 'get',
-                dataType: 'json',
-                success: function (res) {
-                    spreadSuspend();//暂停绘制
-                    let rowIndex = 3;
-                    let colIndex = 0;
-                    for (let i = 0; i < res.length; i++) {
-                        //定义多选按钮
-                        var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();
-                        parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
-                        sheet.addSpan(rowIndex, colIndex, 6, 1);
-                        //序号
-                        sheet.setValue(rowIndex, 1 + colIndex, i);
-                        parms.activeSheet.addSpan(rowIndex, 1 + colIndex, 6, 1);
-                        //排产层级
-                        sheet.setValue(rowIndex, 2 + colIndex, res[i].iPsLevel);
-                        parms.activeSheet.addSpan(rowIndex, 2 + colIndex, 6, 1);
-                        //产线名称
-                        sheet.setValue(rowIndex, 3 + colIndex, res[i].cWorkName);
-                        parms.activeSheet.addSpan(rowIndex, 3 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(3 + colIndex, 120);//设置指定单元格的width
-                        //存货编码
-                        sheet.setValue(rowIndex, 4 + colIndex, res[i].cInvCode);
-                        parms.activeSheet.addSpan(rowIndex, 4 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(4 + colIndex, 120);//设置指定单元格的width
-                        //客户部番
-                        sheet.setValue(rowIndex, 5 + colIndex, res[i].cInvName1);
-                        parms.activeSheet.addSpan(rowIndex, 5 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(5 + colIndex, 180);//设置指定单元格的width
-                        //部品名称
-                        sheet.setValue(rowIndex, 6 + colIndex, res[i].cInvCode);
-                        parms.activeSheet.addSpan(rowIndex, 6 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(6 + colIndex, 100);//设置指定单元格的width
-                        rowIndex += 6;
+        let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=${id}&level=${ilevel}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`;
+        $.ajax({
+            url,
+            type: 'get',
+            dataType: 'json',
+            success: function (res) {
+                spreadSuspend();//暂停绘制
+                let rowIndex = 3;
+                let colIndex = 0;
+                for (let i = 0; i < res.length; i++) {
+                    //定义多选按钮
+                    var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();
+                    parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
+                    sheet.addSpan(rowIndex, colIndex, 6, 1);
+                    //序号
+                    sheet.setValue(rowIndex, 1 + colIndex, i);
+                    parms.activeSheet.addSpan(rowIndex, 1 + colIndex, 6, 1);
+                    //排产层级
+                    sheet.setValue(rowIndex, 2 + colIndex, res[i].iPsLevel);
+                    parms.activeSheet.addSpan(rowIndex, 2 + colIndex, 6, 1);
+                    //产线名称
+                    sheet.setValue(rowIndex, 3 + colIndex, res[i].cWorkName);
+                    parms.activeSheet.addSpan(rowIndex, 3 + colIndex, 6, 1);
+                    parms.activeSheet.setColumnWidth(3 + colIndex, 120);//设置指定单元格的width
+                    //存货编码
+                    sheet.setValue(rowIndex, 4 + colIndex, res[i].cInvCode);
+                    parms.activeSheet.addSpan(rowIndex, 4 + colIndex, 6, 1);
+                    parms.activeSheet.setColumnWidth(4 + colIndex, 120);//设置指定单元格的width
+                    //客户部番
+                    sheet.setValue(rowIndex, 5 + colIndex, res[i].cInvCode1);
+                    parms.activeSheet.addSpan(rowIndex, 5 + colIndex, 6, 1);
+                    parms.activeSheet.setColumnWidth(5 + colIndex, 180);//设置指定单元格的width
+                    //部品名称
+                    sheet.setValue(rowIndex, 6 + colIndex, res[i].cInvName1);
+                    parms.activeSheet.addSpan(rowIndex, 6 + colIndex, 6, 1);
+                    parms.activeSheet.setColumnWidth(6 + colIndex, 100);//设置指定单元格的width
+                    rowIndex += 6;
 
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
-                        parms.activeSheet.setColumnWidth(parms.planListRowIndex, 70);//设置指定单元格的width
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/1S");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/2S");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/3S");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划在库");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("在库天数");
-                        //日计划排版
-                        let shiyongRow = 3;//计划使用行下标
-                        let shiyongCol = 9;
-                        let zaikuCol = 8;
-                        //渲染计划数据
-                        for (var j = 0; j < res[i].day.length; j++) {
-                            if (i == 0) {
-                                sheet.setValue(shiyongRow, shiyongCol + j, res[i].day[j].shiyong);
-                                sheet.setValue(1 + shiyongRow, shiyongCol + j, res[i].day[j].one);
-                                sheet.setValue(2 + shiyongRow, shiyongCol + j, res[i].day[j].two);
-                                sheet.setValue(3 + shiyongRow, shiyongCol + j, res[i].day[j].three);
-                                sheet.setValue(4 + shiyongRow, zaikuCol, res[i].day[j].zaiku);
-                                sheet.setValue(5 + shiyongRow, shiyongCol + j, res[i].day[j].tianshu);
-                            } else {
-                                sheet.setValue(6 * i + shiyongRow, shiyongCol + j, res[i].day[j].shiyong);
-                                sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, res[i].day[j].one);
-                                sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, res[i].day[j].two);
-                                sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, res[i].day[j].three);
-                                sheet.setValue(6 * i + shiyongRow + 4, zaikuCol, res[i].day[j].zaiku);
-                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, res[i].day[j].tianshu);
-                            }
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
+                    parms.activeSheet.setColumnWidth(parms.planListRowIndex, 70);//设置指定单元格的width
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/1S");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/2S");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/3S");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划在库");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("在库天数");
+                    //日计划排版
+                    let shiyongRow = 3;//计划使用行下标
+                    let shiyongCol = 9;
+                    let zaikuCol = 8;
+                    //渲染计划数据
+                    for (var j = 0; j < res[i].day.length; j++) {
+                        if (i == 0) {
+                            sheet.setValue(shiyongRow, shiyongCol + j, res[i].day[j].shiyong);
+                            sheet.setValue(1 + shiyongRow, shiyongCol + j, res[i].day[j].one);
+                            sheet.setValue(2 + shiyongRow, shiyongCol + j, res[i].day[j].two);
+                            sheet.setValue(3 + shiyongRow, shiyongCol + j, res[i].day[j].three);
+                            sheet.setValue(4 + shiyongRow, zaikuCol, res[i].day[j].zaiku);
+                            sheet.setValue(5 + shiyongRow, shiyongCol + j, res[i].day[j].tianshu);
+                        } else {
+                            sheet.setValue(6 * i + shiyongRow, shiyongCol + j, res[i].day[j].shiyong);
+                            sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, res[i].day[j].one);
+                            sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, res[i].day[j].two);
+                            sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, res[i].day[j].three);
+                            sheet.setValue(6 * i + shiyongRow + 4, zaikuCol, res[i].day[j].zaiku);
+                            sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, res[i].day[j].tianshu);
                         }
                     }
-                    spreadResume();// 恢复绘制
-                }, error: function () {
-                    console.log('error')
                 }
-            })
+                spreadResume();// 恢复绘制
+            }, error: function () {
+                console.log('error')
+            }
+        })
+    }
+    const myTable = document.getElementById('popup_table');
+    const tableContainer = document.getElementById('popup-layer');
+    // 添加滚动事件处理程序
+    tableContainer.addEventListener('scroll', function() {
+        // 获取表头元素
+        const tableHeader = myTable.querySelector('thead');
+    });
+    /**
+     * 打开弹出层
+     * @param openPopup
+     */
+    function openPopup() {
+        var popup = document.querySelector('.popup-layer');
+        popup.style.display = 'block';
+        popup.style.position = "absolute";
+        popup.style.top = "35%";
+        popup.style.left = "50%";
+        popup.style.marginTop = "-75px";
+        popup.style.marginLeft = "-150px";
+        mybgs = document.createElement("div");
+        mybgs.setAttribute("id", "mybgs");
+        mybgs.style.background = "#000";
+        mybgs.style.width = "100%";
+        mybgs.style.height = "100%";
+        mybgs.style.position = "absolute";
+        mybgs.style.top = "0";
+        mybgs.style.left = "0";
+        mybgs.style.zIndex = "500";
+        mybgs.style.opacity = "0.3";
+        document.body.appendChild(mybgs);
+        document.body.style.overflow = "hidden";
+        let url = Api+"admin/scheduproductplanmonth/getApsWeekscheduleList";
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                parms.dschedulebeginData = res.data;
+                var str = "";
+                for (var i = 0; i < res.data.length; i++) {
+                    str += `<tr>
+                                <td>${res.data[i].ilevel}</td>
+                                <td>${res.data[i].dscheduleendtime}</td>
+                                <td>${res.data[i].dlockendtime==undefined?'':res.data[i].dlockendtime}</td>
+                                <td width='130px'>
+                                  <span onClick='levelSearch(${i},${res.data[i].ilevel})' style="margin-right:10px;cursor: pointer;color: #0000FF;">查看</span>
+                                  <span style="margin-right:10px;cursor: pointer;color: #0000FF;">编辑</span>
+                                  <span onClick='levelDelete(${i})'style="cursor: pointer;color: #0000FF;">删除</span>
+                                 </td>
+                               </tr>`;
+                }
+                $("#layer_tr").html(str);
+            },error: function(error) {
+                console.log(error);
+            }
+        })
+    }
+    //表格数据查看
+    function levelSearch(index,ilevel){
+        let id = parms.dschedulebeginData[index].iautoid;
+        window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&iWeekScheduleId=${id}&level=${ilevel}`);
+    }
+    //删除表格数据
+    function levelDelete(index){
+        let id = parms.dschedulebeginData[index].iautoid;
+        let url = Api+`admin/scheduproductplanmonth/deleteApsWeekschedule?iWeekScheduleId=${id}`;
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                if(res.msg=="操作成功"){
+                    closePopup();//隐藏弹出层
+                }
+                showMessage(res.msg);
+            },error: function(error) {
+                console.log(error);
+            }
+        })
+    }
+    /**
+     * 搜索事件
+     * @param search
+     * @param searchData 搜索需携带参数
+     */
+    let searchData={
+        cworkname:'',
+        cinvcode:'',
+        cinvcode1:'',
+        cinvname1:'',
+    }
+    function search(){
+        const cworkname = document.getElementById('cworkname').value;
+        const cinvcode = document.getElementById('cinvcode').value;
+        const cinvcode1 = document.getElementById('cinvcode1').value;
+        const cinvname1 = document.getElementById('cinvname1').value;
+        searchData={
+            cworkname,
+            cinvcode,
+            cinvcode1,
+            cinvname1
+        }
+        initData(parms.id,parms.level);
+    }
+    //排场确定事件
+    function savePopup(){
+        //获取用户选择的时间
+        const datetimeLocalInput = document.getElementById('datetime-local');
+        const myVal = datetimeLocalInput.value.substring(0,10);
+        const level = document.getElementById('level').value;
+        let url = Api+`admin/scheduproductplanmonth/scheduPlanMonth?level=${level}&endDate=${myVal}`;
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                if(res.data.msg=="操作成功"){
+                    loadInit(parms);
+                    initDate(parms,sheet);
+                    initData();
+                    closePopup();//隐藏弹出层
+                }
+                showMessage(res.data.msg);
+            },error: function(error) {
+                console.log(error);
+            }
+        })
+    }
+    /**
+     * 关闭弹出层
+     * @param closePopup
+     */
+    function closePopup() {
+        var popup = document.querySelector('.popup-layer');
+        popup.style.display = 'none';
+        mybgs.style.display = "none";
     }
     //获取表格中输入或修改的值
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
@@ -601,7 +672,6 @@
         }
         //每次添加之后往数组内进行存储
         parms.tableData.push(a);
-        console.log(parms.tableData,'获取表格中输入或修改的值');
     });
     //锁定弹出框
     var myAlert = document.getElementById("alert");
@@ -677,7 +747,6 @@
     function save(){
         const datetimeLocalInput = document.getElementById('mySelect');
         const myVal = datetimeLocalInput.value.substring(0,10);
-        console.log(myVal)
         let url = alertTitle.innerText == "锁定计划"?Api+`admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`
             :Api+`admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`;
         $.ajax({
@@ -784,6 +853,23 @@
         parms.RowCount=col;
         parms.ColumnCount=row;
         spreadResume();
+    }
+    const messageBox = document.getElementById('message-box');
+    /**
+     * @param showMessage 消息提示框显示
+     * @param text 要显示的内容
+     */
+    function showMessage(text) {
+        const msg = document.getElementById('msg');
+        msg.innerText = text;
+        messageBox.classList.remove('hidden');
+        setTimeout(hideMessage, 1000); // 1秒后自动隐藏
+    }
+    /**
+     * @param showMessage 消息提示框隐藏
+     */
+    function hideMessage() {
+        messageBox.classList.add('hidden');
     }
 </script>
 #end

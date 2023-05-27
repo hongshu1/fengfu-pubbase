@@ -38,10 +38,12 @@ WHERE
 order by #(sortColumn) #(sortType)
     #end
     #end
-    #sql("inventoryAutocomplete")
+#sql("inventoryAutocomplete")
 SELECT
     inv.iAutoId as itemId,
     inv.iweight,
+    inv.isGavePresent as ispresent,
+    inv.iPkgQty as iPkgQty,
     inv.cInvAddCode1,
     inv.cInvName,
     inv.cInvStd,
@@ -51,6 +53,7 @@ SELECT
     inv.cInvName2 AS cInvName2,
     inv.iEquipmentModelId,
     uom.cUomName,
+    puom.cUomName as purchaseUomName,
     inv.iCustomerMId,
     ven.iAutoId AS venid,
     ven.cVenCode,
@@ -59,12 +62,13 @@ SELECT
 FROM
     Bd_Inventory inv
         LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iInventoryUomId1
+        LEFT JOIN Bd_Uom puom ON uom.iAutoId = inv.iPurchaseUomId
         LEFT JOIN Bd_InventoryStockConfig invstock ON invstock.iInventoryId = inv.iAutoId
         LEFT JOIN Bd_Vendor ven ON ven.iAutoId = invstock.iVendorId
         left join Bd_EquipmentModel t2 on inv.iEquipmentModelId = t2.iAutoId
 WHERE
         1 = 1
-    #if(q)
+        #if(q)
             AND (inv.cInvCode LIKE CONCAT('%', #para(q), '%') OR inv.cInvCode1 LIKE CONCAT('%', #para(q), '%') OR inv.cInvName1 LIKE CONCAT('%', #para(q), '%'))
 	    #end
 	    #if(itemId)
@@ -86,7 +90,6 @@ WHERE
 	        AND ven.cVenName LIKE CONCAT('%', #para(cVenName), '%')
 	    #end
 #end
-
 
 #sql("inventoryAutocompleteNew")
 SELECT

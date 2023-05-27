@@ -518,3 +518,14 @@
 #include("warehousebeginofperiod/warehousebeginofperiod.sql")
 #end
 
+#namespace("moroutingconfigoperation")
+#include("moroutingconfigoperation/moroutingconfigoperation.sql")
+#end
+
+#namespace("vouchtypedic")
+#include("vouchtypedic/vouchtypedic.sql")
+#end
+
+#namespace("rdstyle")
+#include("rdstyle/rdstyle.sql")
+#end

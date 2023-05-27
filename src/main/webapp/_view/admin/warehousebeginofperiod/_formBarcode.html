@@ -4,12 +4,29 @@
       <div class="card">
         <div class="card-body">
           <div class="col">
-            <button onclick="importForm('#(iautoid??)')" class="btn btn-info btn-sm"><i
-                class="fa fa-window-maximize"></i> 数据导入
-            </button>
-            <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+            <div class="btn-group dropdown">
+              <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+              </button>
+              <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                <a data-downloadbtn href="/admin/warehousebeginofperiod/downloadTpl" class="btn dropdown-item"><i
+                    class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+                <div class="j_upload_file_box"
+                     data-name="file"
+                     data-btn-class="btn dropdown-item"
+                     data-placeholder="上传导入"
+                     data-confirm="确认导入数据？"
+                     data-accept="excel"
+                     data-maxsize="20480"
+                     data-handler="uploadFile"
+                     data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                     data-url="/admin/warehousebeginofperiod/importExcel">
+                </div>
+              </div>
+            </div>
+            <!--<button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
                 class="fa fa-refresh"></i> 保存
-            </button>
+            </button>-->
             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
                 class="fa fa-close"></i> 关闭
             </button>
@@ -173,7 +190,7 @@
           type: "autocomplete",
           url: "admin/warehousearea/options",
           maxLength: 100,
-          required: true,
+          required: false,
           placeholder: "=请选择库区编码=",
           textAttr: "careacode",
           width: 200,
@@ -205,7 +222,7 @@
           type: "autocomplete",
           url: "admin/vendor/options",
           maxLength: 100,
-          required: true,
+          required: false,
           placeholder: "=请选择库区编码=",
           textAttr: "cvencode",
           width: 300,
@@ -220,12 +237,19 @@
           placeholder: "批次号",
           tooltip: "批次号",
         },
+        cbarcode:{
+          required:true,
+          type: "amount",//类型
+          placeholder: "条码号",
+          tooltip: "条码号",
+        },
         createdate: {
           type: "date",//类型
           placeholder: "生产日期",
           tooltip: "生产日期",
         },
         generatedStockQty: {
+          required:true,
           type: "input_number",//类型
           placeholder: "=生成条码库存数量=",
           tooltip: "=生成条码库存数量=",
@@ -253,24 +277,6 @@
   function closeHandler() {
     parent.layer.close(parent.layer.getFrameIndex(window.name));
     window.parent.refreshJBoltTable();
-  }
-
-  /**
-   * 数据导入
-   * @param iautoid
-   */
-  function importForm(iautoid) {
-
-    var para = {};
-
-    Ajax.post('/admin/warehousebeginofperiod/importForm', para, function (ret) {
-      if (ret.state === 'ok') {
-        parent.LayerMsgBox.closeAll();
-        parent.refreshPjaxContainer();
-      } else {
-        LayerMsgBox.alert(ret.msg, 2);
-      }
-    });
   }
 
   /**

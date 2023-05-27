@@ -11,7 +11,7 @@ SELECT
 	b.isPresent,
 	b.iVendorAddrId,
 	b.cAddress,
-	b.iSum,
+
 	b.cMemo
 FROM
 	PS_SubcontractOrderD b

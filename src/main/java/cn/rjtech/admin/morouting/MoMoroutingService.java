@@ -5,6 +5,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.MoMorouting;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 /**
@@ -71,4 +72,13 @@ public class MoMoroutingService extends BaseService<MoMorouting> {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
+	/***
+	 * 通过工单查找工艺路线
+	 * @param iAutoId
+	 * @return
+	 */
+
+	public MoMorouting findByImdocId(Long iAutoId) {
+		return  findFirst(Okv.create().setIfNotNull(MoMorouting.IMODOCID,iAutoId),MoMorouting.IAUTOID,"desc");
+	}
 }

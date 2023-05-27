@@ -6,7 +6,7 @@
 		<div class="row">
 			<div class="col">
 				<form class="form-inline  text-left" id="SubcontractOrderM_form_#(pageId)">
-                    
+
 					<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单编号" maxlength="40" name="cOrderNo"/>
 
 					<input data-autocomplete
@@ -26,13 +26,13 @@
 							data-value=""
 							data-value-attr="sn">
 					</select>
-                    
+
 					<span>到货日期：</span>
-                    
+
 					<input id="dEnableDate" type="text" placeholder="开始日期" class="form-control" data-date name="startDate" value="">
 					至
 					<input id="dDisableDate" type="text" placeholder="结束日期" class="form-control" data-done-handler="checkme" data-date name="endDate" value="">
-                    
+
 					<button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
 					<button type="reset" class="btn btn-outline-secondary"><i class="fa text-reset"></i> 重置</button>
 				</form>
@@ -44,7 +44,7 @@
 		</div>
 	</div>
 	<div class="jbolt_page_content">
-        
+
 		<!-- 定义JBoltTable使用的数据渲染模板 -->
 		<textarea class="jb_tpl_box" id="SubcontractOrderM_tpl_#(pageId)">
         {@each datas as data,index}
@@ -52,7 +52,7 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 <a class="text-info mr-1" data-openpage="dialog" href="admin/subcontractorderm/edit/${data.iautoid}?isView=1" data-area="90%,90%" data-title="查看">查看</a>
-            
+
                 {@if data.iorderstatus == 1 || data.iorderstatus == 4}
                     <a class="jbolt_table_delbtn" data-ajaxbtn href="admin/subcontractorderm/arraignment/${data.iautoid}" data-handler='refreshJBoltTable' tooltip data-confirm='确定要执行此操作？' data-title="审批">审批</a>
                     <a class="jbolt_table_editbtn" href="admin/subcontractorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="90%,90%" data-title="编辑委外订单">编辑</a>
@@ -66,7 +66,7 @@
                     <a class="text-info mr-1" data-openpage="dialog" href="admin/subcontractorderm/cash/${data.iautoid}" data-area="90%,90%" data-title="现品票明细">现品票明细</a>
                     <a data-ajaxbtn href="admin/subcontractorderm/close/${data.iautoid}" data-handler='refreshJBoltTable' tooltip data-confirm='确定要执行此操作？' data-title="关闭">关闭</a>
                 {@/if}
-            
+
             </td>
             <td>${data.aduitstatustext}</td>
             <td>${data.corderno}</td>
@@ -98,7 +98,10 @@
 				<!--                        data-check-handler="jboltTableGetCheckedId" data-url="admin/subcontractorderm/edit/"-->
 				<!--                        class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑-->
 				<!--                </button>-->
-
+				<button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst" id="purchase_add#(pageId)"
+						data-title="新增空白采购" data-url="admin/subcontractorderm/consummate?iSourceType=1"
+						class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增空白采购
+				</button>
 				<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
 						id="toolbar_deleteBtn_#(pageId)" data-url="admin/subcontractorderm/batchDel?ids="
 						data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除

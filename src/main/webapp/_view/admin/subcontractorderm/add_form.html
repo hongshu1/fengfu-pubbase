@@ -5,6 +5,7 @@
     #end
     <input type="hidden" name="dBeginDate" value="#(subcontractOrderM.dbegindate??)"/>
     <input type="hidden" name="dEndDate" value="#(subcontractOrderM.denddate??)"/>
+    <input type="hidden" name="iType" value="#(subcontractOrderM.itype??)"/>
     <div class="row">
 
         <div class="col">
@@ -82,7 +83,7 @@
                 <label class="col-sm-3 col-form-label">供应商名称</label>
                 <div class="col-6">
                     <input hidden type="text" name="iVendorId" value="#(subcontractOrderM.iVendorId??)">
-                    <input readonly type="text" autocomplete="off" class="form-control" value="#(subcontractOrderM.cVenName??)">
+                    <input readonly type="text" autocomplete="off" class="form-control" value="#(cVenName??)">
                 </div>
             </div>
             <div class="form-group row">
@@ -187,7 +188,7 @@
         <th data-width="150" rowspan="2" data-column="iPkgQty">包装数量</th>
         <th data-width="100" rowspan="2" data-column="isPresent">是否赠品</th>
         <th data-width="150" rowspan="2" data-column="cMemo">备注</th>
-        <th data-width="200" rowspan="2" data-column="iVendorAddrId" class="is_required">供应商地址</th>
+        <th data-width="200" rowspan="2" data-column="iVendorAddrId" class="is_required">到货地点</th>
         <!--   显示日期 -->
         #for(key:tableHeadMap.keySet())
             <th data-width="80" colspan="#(tableHeadMap.get(key).size())">#(key)</th>
@@ -300,7 +301,7 @@
     // 隐藏第一个按钮
     hideParentLayerDialogBtn(0);
 
-    #if(view??0 !=1)
+    #if(isView??0 !=1)
         addParentLayerDialogBtn("保存","lay_success",function(){
             if (!FormChecker.check("#subcontractOrderM_Form")){
                 return;

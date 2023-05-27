@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -19,14 +18,16 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
     public static final String CORGCODE = "cOrgCode";
     /**组织名称*/
     public static final String CORGNAME = "cOrgName";
-    /**来源：1. MES 2. U8*/
-    public static final String ISOURCE = "iSource";
-    /**来源ID*/
-    public static final String ISOURCEID = "iSourceId";
+    /**业务类型*/
+    public static final String CVBTID = "cVBTID";
     /**收类别编码*/
     public static final String CVRRCODE = "cVRRCode";
     /**发类别编码*/
     public static final String CVRSCODE = "cVRSCode";
+    /**来源;1. MES 2. U8*/
+    public static final String ISOURCE = "iSource";
+    /**来源ID*/
+    public static final String ISOURCEID = "iSourceId";
     /**创建人ID*/
     public static final String ICREATEBY = "iCreateBy";
     /**创建人名称*/
@@ -39,7 +40,7 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
     public static final String CUPDATENAME = "cUpdateName";
     /**更新时间*/
     public static final String DUPDATETIME = "dUpdateTime";
-    /**删除状态：0. 未删除 1. 已删除*/
+    /**删除状态;0. 未删除 1. 已删除*/
     public static final String ISDELETED = "IsDeleted";
 	/**
 	 * 主键ID
@@ -103,44 +104,27 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
 	/**
 	 * 组织名称
 	 */
-	@JBoltField(name="corgname" ,columnName="cOrgName",type="String", remark="组织名称", required=true, maxLength=50, fixed=0, order=4)
+	@JBoltField(name="corgname" ,columnName="cOrgName",type="String", remark="组织名称", required=true, maxLength=40, fixed=0, order=4)
 	@JSONField(name = "corgname")
 	public java.lang.String getCOrgName() {
 		return getStr("cOrgName");
 	}
 
 	/**
-	 * 来源：1. MES 2. U8
+	 * 业务类型
 	 */
-	public M setISource(java.lang.Integer iSource) {
-		set("iSource", iSource);
+	public M setCVBTID(java.lang.String cVBTID) {
+		set("cVBTID", cVBTID);
 		return (M)this;
 	}
 
 	/**
-	 * 来源：1. MES 2. U8
+	 * 业务类型
 	 */
-	@JBoltField(name="isource" ,columnName="iSource",type="Integer", remark="来源：1. MES 2. U8", required=true, maxLength=10, fixed=0, order=5)
-	@JSONField(name = "isource")
-	public java.lang.Integer getISource() {
-		return getInt("iSource");
-	}
-
-	/**
-	 * 来源ID
-	 */
-	public M setISourceId(java.lang.String iSourceId) {
-		set("iSourceId", iSourceId);
-		return (M)this;
-	}
-
-	/**
-	 * 来源ID
-	 */
-	@JBoltField(name="isourceid" ,columnName="iSourceId",type="String", remark="来源ID", required=false, maxLength=32, fixed=0, order=6)
-	@JSONField(name = "isourceid")
-	public java.lang.String getISourceId() {
-		return getStr("iSourceId");
+	@JBoltField(name="cvbtid" ,columnName="cVBTID",type="String", remark="业务类型", required=true, maxLength=4, fixed=0, order=5)
+	@JSONField(name = "cvbtid")
+	public java.lang.String getCVBTID() {
+		return getStr("cVBTID");
 	}
 
 	/**
@@ -154,7 +138,7 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
 	/**
 	 * 收类别编码
 	 */
-	@JBoltField(name="cvrrcode" ,columnName="cVRRCode",type="String", remark="收类别编码", required=false, maxLength=5, fixed=0, order=7)
+	@JBoltField(name="cvrrcode" ,columnName="cVRRCode",type="String", remark="收类别编码", required=false, maxLength=5, fixed=0, order=6)
 	@JSONField(name = "cvrrcode")
 	public java.lang.String getCVRRCode() {
 		return getStr("cVRRCode");
@@ -171,10 +155,44 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
 	/**
 	 * 发类别编码
 	 */
-	@JBoltField(name="cvrscode" ,columnName="cVRSCode",type="String", remark="发类别编码", required=false, maxLength=5, fixed=0, order=8)
+	@JBoltField(name="cvrscode" ,columnName="cVRSCode",type="String", remark="发类别编码", required=false, maxLength=5, fixed=0, order=7)
 	@JSONField(name = "cvrscode")
 	public java.lang.String getCVRSCode() {
 		return getStr("cVRSCode");
+	}
+
+	/**
+	 * 来源;1. MES 2. U8
+	 */
+	public M setISource(java.lang.Integer iSource) {
+		set("iSource", iSource);
+		return (M)this;
+	}
+
+	/**
+	 * 来源;1. MES 2. U8
+	 */
+	@JBoltField(name="isource" ,columnName="iSource",type="Integer", remark="来源;1. MES 2. U8", required=true, maxLength=10, fixed=0, order=8)
+	@JSONField(name = "isource")
+	public java.lang.Integer getISource() {
+		return getInt("iSource");
+	}
+
+	/**
+	 * 来源ID
+	 */
+	public M setISourceId(java.lang.String iSourceId) {
+		set("iSourceId", iSourceId);
+		return (M)this;
+	}
+
+	/**
+	 * 来源ID
+	 */
+	@JBoltField(name="isourceid" ,columnName="iSourceId",type="String", remark="来源ID", required=false, maxLength=32, fixed=0, order=9)
+	@JSONField(name = "isourceid")
+	public java.lang.String getISourceId() {
+		return getStr("iSourceId");
 	}
 
 	/**
@@ -188,7 +206,7 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
 	/**
 	 * 创建人ID
 	 */
-	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=9)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=10)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
@@ -205,7 +223,7 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=10)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=60, fixed=0, order=11)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
@@ -222,7 +240,7 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=11)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=12)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
@@ -239,7 +257,7 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
 	/**
 	 * 更新人ID
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=12)
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=13)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
@@ -256,7 +274,7 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=50, fixed=0, order=13)
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=60, fixed=0, order=14)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
@@ -273,14 +291,14 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=14)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=15)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
 	}
 
 	/**
-	 * 删除状态：0. 未删除 1. 已删除
+	 * 删除状态;0. 未删除 1. 已删除
 	 */
 	public M setIsDeleted(java.lang.Boolean IsDeleted) {
 		set("IsDeleted", IsDeleted);
@@ -288,9 +306,9 @@ public abstract class BaseVouchRdContrapose<M extends BaseVouchRdContrapose<M>> 
 	}
 
 	/**
-	 * 删除状态：0. 未删除 1. 已删除
+	 * 删除状态;0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=15)
+	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态;0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=16)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");

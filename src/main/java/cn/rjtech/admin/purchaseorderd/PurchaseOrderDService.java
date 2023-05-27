@@ -8,6 +8,7 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.enums.BoolCharEnum;
 import cn.rjtech.model.momdata.PurchaseOrderD;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import com.alibaba.fastjson.JSONObject;
@@ -161,6 +162,12 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		return purchaseOrderD;
 	}
 	
+	public PurchaseOrderD create(Long id, Long purchaseOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, boolean isPresent) {
+		PurchaseOrderD purchaseOrderD = create(purchaseOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, isPresent);
+		purchaseOrderD.setIAutoId(id);
+		return purchaseOrderD;
+	}
+	
 	public int removeByPurchaseOrderMId(Long purchaseOrderMId){
 	    return update("update PS_PurchaseOrderD set isDeleted=1 where iPurchaseOrderMid = ?", purchaseOrderMId);
     }
@@ -174,43 +181,55 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		return dbTemplate("purchaseorderd.findAll", Okv.by(PurchaseOrderD.IPURCHASEORDERMID, purchaseOrderMId)).find();
 	}
 	
-	public void setPurchaseOrderDList(Map<String, Integer> calendarMap, Map<Long, Map<String, BigDecimal>>  purchaseOrderdQtyMap, List<Record> purchaseOrderDList){
+	public void setPurchaseOrderDList(List<Record> purchaseOrderDList, Map<String, Record> dateMap, Map<Long, Map<String, BigDecimal>>  purchaseOrderdQtyMap, Map<String, BigDecimal> ymQtyMap){
 		// 同一种的存货编码需要汇总在一起。
 		// 将日期设值。
 		for (Record record : purchaseOrderDList){
 			// 存货id（原存货id）
 			Long invId = record.getLong(PurchaseOrderD.IINVENTORYID);
-			
-			BigDecimal[] arr = new BigDecimal[calendarMap.keySet().size()];
+			String[] arr = new String[dateMap.keySet().size()];
 			record.set(PurchaseOrderM.ARR, arr);
 			// 存货编码为key，可以获取存货编码下 所有日期范围的值
 			if (!purchaseOrderdQtyMap.containsKey(invId)){
 				continue;
 			}
-			
 			// 当前日期下的数量
 			Map<String, BigDecimal> dateQtyMap = purchaseOrderdQtyMap.get(invId);
-			// 统计合计数量
-			BigDecimal amount = BigDecimal.ZERO;
-			
 			for (String dateStr : dateQtyMap.keySet()){
 				// 原数量
 				BigDecimal qty = dateQtyMap.get(dateStr);
 				// yyyyMMdd
 				DateTime dateTime = DateUtil.parse(dateStr, DatePattern.PURE_DATE_FORMAT);
-				// yyyy-MM-dd
-				String formatDateStr = DateUtil.format(dateTime, DatePattern.NORM_DATE_PATTERN);
-				// 当前日期存在，则取值
-				if (calendarMap.containsKey(formatDateStr)){
-					Integer index = calendarMap.get(formatDateStr);
-					arr[index] = qty;
-					// 统计数量汇总
-					amount = amount.add(qty);
-					
+				// yyyy年MM月dd日
+				String formatDateStr = DateUtil.format(dateTime, DatePattern.CHINESE_DATE_PATTERN);
+				// 当前日期存在，则取值 2023年06月04日
+				if (dateMap.containsKey(formatDateStr)){
+					setQty(dateMap.get(formatDateStr), arr, qty);
+				}
+			}
+			// 统计合计
+			for (String key: ymQtyMap.keySet()){
+				String ymStr = key.split("_")[0];
+				String inventoryId = key.split("_")[1];
+				if (dateMap.containsKey(ymStr) && invId.equals(Long.valueOf(inventoryId))){
+					setQty(dateMap.get(ymStr), arr, ymQtyMap.get(key));
 				}
 			}
 			
-			record.set(PurchaseOrderD.ISUM, amount);
+			String isPresent = record.getStr(PurchaseOrderD.ISPRESENT);
+			record.set("isPresentStr", BoolCharEnum.toEnum(isPresent).getText());
 		}
+	}
+	
+	public void setQty(Record dateRecord, String[] arr, BigDecimal qty){
+		Integer index = dateRecord.getInt(PurchaseOrderM.INDEX);
+		arr[index] = qty.stripTrailingZeros().toPlainString();
+	}
+	
+	public Ret deleteByIds(Object[] ids){
+		for (Object id : ids){
+			updateColumn(id, PurchaseOrderD.ISDELETED, BoolCharEnum.YES.getValue());
+		}
+		return SUCCESS;
 	}
 }

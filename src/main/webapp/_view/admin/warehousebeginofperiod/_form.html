@@ -4,12 +4,29 @@
       <div class="card">
         <div class="card-body">
           <div class="col">
-            <button onclick="importForm('#(iautoid??)')" class="btn btn-info btn-sm"><i
-                class="fa fa-window-maximize"></i> 数据导入
-            </button>
-            <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+            <div class="btn-group dropdown">
+              <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+              </button>
+              <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                <a data-downloadbtn href="/admin/warehousebeginofperiod/downloadTpl" class="btn dropdown-item"><i
+                    class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+                <div class="j_upload_file_box"
+                     data-name="file"
+                     data-btn-class="btn dropdown-item"
+                     data-placeholder="上传导入"
+                     data-confirm="确认导入数据？"
+                     data-accept="excel"
+                     data-maxsize="20480"
+                     data-handler="uploadFile"
+                     data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                     data-url="/admin/warehousebeginofperiod/importExcel">
+                </div>
+              </div>
+            </div>
+            <!--<button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
                 class="fa fa-refresh"></i> 保存
-            </button>
+            </button>-->
             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
                 class="fa fa-close"></i> 关闭
             </button>
@@ -75,21 +92,21 @@
           <tr>
             <th data-width="30px">序号</th>
             <th data-width="150" data-column="cwhcode">仓库编码</th>
-            <th data-width="100" data-column="cwhname">仓库名称</th>
+            <th data-width="150" data-column="cwhname">仓库名称</th>
             <th data-width="150" data-column="careacode">库区编码</th>
             <th data-width="150" data-column="careaname">库区名称</th>
             <th data-width="150" data-column="cinvcode">存货编码</th>
-            <th data-width="150" data-column="cinvcode1">客户部番</th>
-            <th data-width="100" data-column="cinvname1">部品名称</th>
+            <th data-width="180" data-column="cinvcode1">客户部番</th>
+            <th data-width="180" data-column="cinvname1">部品名称</th>
             <th data-width="100" data-column="cinvstd">规格</th>
-            <th data-width="150" data-column="cuomname">主计量单位</th>
+            <th data-width="120" data-column="cuomname">主计量单位</th>
             <th data-width="150" data-column="cvencode">供应商编码</th>
             <th data-width="150" data-column="cvenname">供应商名称</th>
-            <th data-width="150" data-column="stockQty" title="">期初库存数量</th>
-            <th data-width="180" data-column="unGeneratedStockQty" title="">未生成条码库存数量</th>
-            <th data-width="180" data-column="generatedStockQty" title="">生成条码库存数量</th>
-            <th data-width="150" data-column="ipkgqty">包装数量</th>
-            <th data-width="100" data-column="batch">批次号</th>
+            <th data-width="150" data-column="qty" title="">期初库存数量</th>
+            <th data-width="150" data-column="availableqty" title="">未生成条码库存数量</th>
+            <th data-width="150" data-column="availablenum" title="">生成条码库存数量</th>
+            <th data-width="130" data-column="ipkgqty">包装数量</th>
+            <th data-width="150" data-column="batch">批次号</th>
             <th data-width="150" data-column="createdate">生产日期</th>
             <th data-width="150" data-column="printtepl" title="">标签打印模板</th>
           </tr>
@@ -107,11 +124,11 @@
             </div>
             <div class="col-2" style="right: 35px;">
               <button type="button" class="btn btn-outline-secondary" id="createButton" name="createButton"
-                      onclick="createButton(this)">生成
+                      onclick="submitThisForm()">生成
               </button>
             </div>
             <div class="col-2" style="margin-top: 8px;right: 75px;">
-              <input id="autoprint" type="checkbox" name="autoprint" value="#(autoprint??)"/><span>自动打印</span>
+              <input id="autoprint" type="checkbox" name="autoprint" value="#(cwhcode??)"/><span>自动打印</span>
             </div>
             <div class="col-3" style="right: 95px;">
               <button type="button" class="btn btn-outline-secondary" id="printButton" name="printButton"
@@ -132,6 +149,9 @@
   hideParentLayerDialogBtn(0);
   hideParentLayerDialogBtn(1);
 
+  /*
+  * 生成
+  * */
   function submitThisForm() {
     jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");
   }
@@ -160,23 +180,24 @@
           required: true,
           placeholder: "=请选择仓库编码=",
           type: "autocomplete",
-          url: "admin/warehouse/options",
+          url: "admin/warehousebeginofperiod/whoptions",
           textAttr: "cwhcode",
           width: 300,
           valueAttr: "cwhcode",
-          columnAttr: "cwhcode,cwhname",
+          columnAttr: "whcode,whname",
           header: '仓库编码,仓库名称',
-          changeColumns: [{column: "cwhcode", use: "cwhcode"},
-            {column: "cwhname", use: "cwhname"}]
+          changeColumns: [{column: "cwhcode", use: "whcode"},
+            {column: "cwhname", use: "whname"}]
         },
         careacode: { //库区编码
           type: "autocomplete",
           url: "admin/warehousearea/options",
           maxLength: 100,
-          required: true,
+          required: false,
           placeholder: "=请选择库区编码=",
           textAttr: "careacode",
           width: 200,
+          linkColumn:"cwhcode",
           valueAttr: "careacode",
           columnAttr: "careacode,careaname",
           header: '库区编码,库区名称',
@@ -205,7 +226,7 @@
           type: "autocomplete",
           url: "admin/vendor/options",
           maxLength: 100,
-          required: true,
+          required: false,
           placeholder: "=请选择库区编码=",
           textAttr: "cvencode",
           width: 300,
@@ -226,16 +247,11 @@
           tooltip: "生产日期",
         },
         generatedStockQty: {
+          required: true,
           type: "input_number",//类型
           placeholder: "=生成条码库存数量=",
           tooltip: "=生成条码库存数量=",
         },
-        /*iPkgQty:{
-          required: true,
-          type:"input",
-          placeholder: "包装数量",
-          tooltip: "包装数量",
-        },*/
         printtepl: { //标签打印模板
           required: true,
           type: "select",//类型
@@ -253,24 +269,6 @@
   function closeHandler() {
     parent.layer.close(parent.layer.getFrameIndex(window.name));
     window.parent.refreshJBoltTable();
-  }
-
-  /**
-   * 数据导入
-   * @param iautoid
-   */
-  function importForm(iautoid) {
-
-    var para = {};
-
-    Ajax.post('/admin/warehousebeginofperiod/importForm', para, function (ret) {
-      if (ret.state === 'ok') {
-        parent.LayerMsgBox.closeAll();
-        parent.refreshPjaxContainer();
-      } else {
-        LayerMsgBox.alert(ret.msg, 2);
-      }
-    });
   }
 
   /**
@@ -312,13 +310,6 @@
     alert("点击打印");
   }
 
-  /*
-  * 生成按钮
-  * */
-  function createButton(o) {
-    alert("点击生成");
-  }
-  
   /*
   * 重置
   * */

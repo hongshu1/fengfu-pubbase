@@ -210,10 +210,10 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
 				Integer year = subcontractorderdQty.getIYear();
 				Integer month = subcontractorderdQty.getIMonth();
 				Integer date = subcontractorderdQty.getIDate();
-				if (yearStr.equals(String.valueOf(year)) && monthStr.equals(String.valueOf(month)) && dateStr.equals(String.valueOf(date))){
+				if (Integer.valueOf(yearStr).equals(year) && Integer.valueOf(monthStr).equals(month) && Integer.valueOf(dateStr).equals(date)){
 					// 总数量 - 更改的数量
-					BigDecimal num = subcontractorderdQty.getIQty().subtract(orderDBatch.getIQty().subtract(qty));
-					subcontractorderdQty.setIQty(num);
+//					BigDecimal num = subcontractorderdQty.getIQty().subtract(orderDBatch.getIQty().subtract(qty));
+					subcontractorderdQty.setIQty(qty);
 					subcontractorderdQty.update();
 				}
 			}

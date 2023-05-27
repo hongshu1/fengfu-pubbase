@@ -1,0 +1,65 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+<div class="jbolt_page_content">
+#include("_form.html")
+</div>
+</div>
+#end
+#define js()
+<script>
+    /// if(isOk('#(type??)')){
+    hideParentLayerDialogBtn(1);
+    //}
+    function submitForm(){
+        LayerMsgBox.confirm("确认保存此数据?",function(){
+            // submitThisForms();
+            submitThisForms("admin/processdefect/updateprocessDefect");
+
+        });
+    }
+    function submitForms(){
+        LayerMsgBox.confirm("确认提交此数据?",function(){
+            // submitThisForms();
+            submitThisForms("admin/processdefect/subprocessDefect");
+
+        });
+    }
+
+
+
+    function  submitThisForms(url){
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            //contentType: "application/json; charset=utf-8",
+            data:$('#processDefectForm').serialize(),//传送的数据
+            success: function (data) {//执行成功
+                if(data.state=="ok"){
+
+                        LayerMsgBox.success("保存成功",300,function(){
+                            parent.refreshJBoltTable();
+                        })
+
+                }else{
+                    LayerMsgBox.alert(data.msg,2);
+
+                }
+            },
+            error: function () {//执行失败
+                LayerMsgBox.alert("网络通讯异常",2);
+
+            },
+            complete: function (data) { //不管成功还是失败后
+
+            }
+        });
+    }
+    function closeHandler(){
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="processDefectForm")
+#end

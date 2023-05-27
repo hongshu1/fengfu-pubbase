@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -69,10 +68,12 @@ public abstract class BaseSubcontractOrderM<M extends BaseSubcontractOrderM<M>> 
     public static final String DBEGINDATE = "dBeginDate";
     /**结束日期*/
     public static final String DENDDATE = "dEndDate";
-    /**审批方式：1. 审批状态 2. 审批流*/
+    /**审批方式：0. 未定义 1. 审批状态 2. 审批流*/
     public static final String IAUDITWAY = "iAuditWay";
     /**提审时间*/
     public static final String DSUBMITTIME = "dSubmitTime";
+    /**来源类型：1. 空白采购 2. 物料到货计划*/
+    public static final String ITYPE = "iType";
 	/**
 	 * 主键ID
 	 */
@@ -567,7 +568,7 @@ public abstract class BaseSubcontractOrderM<M extends BaseSubcontractOrderM<M>> 
 	}
 
 	/**
-	 * 审批方式：1. 审批状态 2. 审批流
+	 * 审批方式：0. 未定义 1. 审批状态 2. 审批流
 	 */
 	public M setIAuditWay(java.lang.Integer iAuditWay) {
 		set("iAuditWay", iAuditWay);
@@ -575,9 +576,9 @@ public abstract class BaseSubcontractOrderM<M extends BaseSubcontractOrderM<M>> 
 	}
 
 	/**
-	 * 审批方式：1. 审批状态 2. 审批流
+	 * 审批方式：0. 未定义 1. 审批状态 2. 审批流
 	 */
-	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审批状态 2. 审批流", required=false, maxLength=10, fixed=0, order=30)
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：0. 未定义 1. 审批状态 2. 审批流", required=true, maxLength=10, fixed=0, order=30)
 	@JSONField(name = "iauditway")
 	public java.lang.Integer getIAuditWay() {
 		return getInt("iAuditWay");
@@ -598,6 +599,23 @@ public abstract class BaseSubcontractOrderM<M extends BaseSubcontractOrderM<M>> 
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
+	}
+
+	/**
+	 * 来源类型：1. 空白采购 2. 物料到货计划
+	 */
+	public M setIType(java.lang.Integer iType) {
+		set("iType", iType);
+		return (M)this;
+	}
+
+	/**
+	 * 来源类型：1. 空白采购 2. 物料到货计划
+	 */
+	@JBoltField(name="itype" ,columnName="iType",type="Integer", remark="来源类型：1. 空白采购 2. 物料到货计划", required=true, maxLength=10, fixed=0, order=32)
+	@JSONField(name = "itype")
+	public java.lang.Integer getIType() {
+		return getInt("iType");
 	}
 
 }

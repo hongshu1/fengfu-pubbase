@@ -1,8 +1,9 @@
 #set(pageId=RandomUtil.random(6))
 <form onsubmit="return false;" id="PurchaseOrderM_Form" action="#(action)" method="post">
-    #if(purchaseOrderM.iAutoId??)
+    #if(purchaseOrderM.iautoid??)
     <input type="hidden" name="iAutoId" value="#(purchaseOrderM.iautoid??)"/>
     #end
+    <input type="hidden" name="iType" value="#(purchaseOrderM.itype??)"/>
     <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dbegindate??)"/>
     <input type="hidden" name="dEndDate" value="#(purchaseOrderM.denddate??)"/>
     <div class="row">
@@ -16,8 +17,8 @@
                             data-rule="required"
                             data-url="admin/dictionary/options?key=purchase_business_type"
                             data-select-type="select"
-                            data-select="#(purchaseOrderM.ibustype??)"
                             data-text="==请选择=="
+                            data-select="#(purchaseOrderM.ibustype??)"
                             data-text-attr="iautoid"
                             data-value-attr="sn">
                     </select>
@@ -64,8 +65,8 @@
                             data-rule="required"
                             data-url="admin/purchaseorderm/findForeignCurrencyAll"
                             data-select-type="select"
-                            data-select="#(purchaseOrderM.ccurrency??)"
                             data-text="==请选择=="
+                            data-select="#(purchaseOrderM.ccurrency??)"
                             data-value=""
                             data-value-attr="cexch_name"
                             data-text-attr="cexch_name">
@@ -84,15 +85,15 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">供应商名称</label>
                 <div class="col-6">
-                    <input hidden type="text"  name="iVendorId" value="#(purchaseOrderM.ivendorid??)">
+                    <input hidden type="text" name="iVendorId" value="#(purchaseOrderM.ivendorid??)">
                     <input readonly type="text" autocomplete="off" class="form-control" value="#(cVenName??)">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">税率</label>
                 <div class="col-6">
-                    <input type="text" autocomplete="off" class="form-control"
-                           placeholder="请输入税率" maxlength="40" name="iTaxRate" data-rule="pnumber" data-notnull="false"
+                    <input type="text" autocomplete="off" class="form-control" data-rule="pnumber"  data-notnull="false"
+                           placeholder="请输入税率" maxlength="40" name="iTaxRate"
                            value="#(purchaseOrderM.itaxrate??)"/>
                 </div>
             </div>
@@ -148,29 +149,69 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">备注</label>
                 <div class="col-6">
-                    <textarea class="form-control" style="height:80px"  placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="cMemo">#(purchaseOrderM.cmemo??)</textarea>
+                    <textarea class="form-control" style="height:80px"  placeholder="请输入备注" data-tips="请输入备注"  maxlength="200" name="cMemo">#(purchaseOrderM.cMemo??)</textarea>
                 </div>
             </div>
         </div>
     </div>
     </div>
 </form>
+
 <!-- 定义JBoltTable使用的数据渲染模板 -->
-#if(isView??0 !=1)
+<textarea class="jb_tpl_box" id="puraseOrder_tpl_1">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td hidden> ${data.iinventoryid}</td>
+            <td>${pageNumber,pageSize,index | rownum}</td>
+             <td>
+                <a tabindex="-1" class="ml-1 " href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash text-danger">删除</i></a>
+            </td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.cuomname}</td>
+            <td>${data.ipkgqty}</td>
+            <td>${data.ispresentstr}</td>
+            <td>${data.cmemo}</td>
+            <td>${data.caddress}</td>
+             {@if data.arr}
+                {@each data.arr as day,dayIndex}
+                    {@if day>0}
+                        <td>${day}</td>
+                    {@else}
+                        <td></td>
+                    {@/if}
+                {@/each}
+              {@else}
+                #for(day: dateHeadList)
+                    <td></td>
+                #end
+             {@/if}
+        </tr>
+    {@/each}
+</textarea>
+
 <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
         <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
         </button>
     </div>
 </div>
-#end
+
 <table class="jbolt_table jbolt_main_table  table-center "
        id="PurchaseOrderM_Table_"
        data-jbolttable
+       #if(purchaseOrderM.iautoid??)
+       data-ajax="true"
+       data-url="admin/purchaseorderm/findPurchaseOrderD?purchaseOrderMId=#(purchaseOrderM.iautoid??)"
+       #end
        data-width="fill"
        data-height="fill"
        data-copy-to-excel="false"
        data-column-resize="true"
+       data-rowtpl="puraseOrder_tpl_1"
        data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
        data-column-prepend="1:checkbox:true:false:false"
        data-editable="true"
@@ -178,81 +219,32 @@
 >
     <thead>
     <tr>
-        <th hidden rowspan="2">存货id</th>
+        <th hidden rowspan="2" data-column="iinventoryid">存货id</th>
         <th data-width="60"  rowspan="2" data-column="index">序号</th>
-        #if(isView??0 !=1)
-            <th data-width="80"  rowspan="2">操作</th>
-        #end
-        <th data-width="150" rowspan="2" data-column="cInventoryCode">存货编码</th>
-        <th data-width="150" rowspan="2" data-column="cInvCode1">客户部番</th>
-        <th data-width="150" rowspan="2" data-column="cInvName1">部品名称</th>
+        <th data-width="80"  rowspan="2">操作</th>
+        <th data-width="150" rowspan="2" data-column="cinvcode">存货编码</th>
+        <th data-width="150" rowspan="2" data-column="cinvcode1">客户部番</th>
+        <th data-width="150" rowspan="2" data-column="cinvname1">部品名称</th>
 
-        <th data-width="150" rowspan="2" data-column="cInvStd">规格</th>
-        <th data-width="150" rowspan="2" data-column="iPurchaseUomId">采购单位</th>
-        <th data-width="150" rowspan="2" data-column="iPkgQty">包装数量</th>
-        <th data-width="100" rowspan="2" data-column="isPresent">是否赠品</th>
-        <th data-width="150" rowspan="2" data-column="cMemo">备注</th>
-        <th data-width="200" rowspan="2" data-column="iVendorAddrId" class="is_required">供应商地址</th>
+        <th data-width="150" rowspan="2" data-column="cinvstd">规格</th>
+        <th data-width="150" rowspan="2" data-column="cuomname">采购单位</th>
+        <th data-width="150" rowspan="2" data-column="ipkgqty">包装数量</th>
+        <th data-width="100" rowspan="2" data-column="ispresent">是否赠品</th>
+        <th data-width="150" rowspan="2" data-column="cmemo">备注</th>
+        <th data-width="200" rowspan="2" data-column="ivendoraddrid" class="is_required">到货地点</th>
         <!--   显示日期 -->
-        #for(key:tableHeadMap.keySet())
-            <th data-width="80" colspan="#(tableHeadMap.get(key).size())">#(key)</th>
-
+        #for(dateHead:monthHeadList)
+        <th data-width="80" colspan="#(dateHead.size)">#(dateHead.dateStr)</th>
         #end
     </tr>
 
     <tr>
-        #for(data:tableHeadMap.keySet())
-            #for(day: tableHeadMap.get(data))
-              <th data-width="80" data-column="#(day)">#(day)</th>
-            #end
+        #for(day: dateHeadList)
+        <th data-width="80" data-column="#(day.dateStr)">#(day.fieldName)</th>
         #end
-        <th data-width="80">合计</th>
     </tr>
     </thead>
     <tbody>
-        #for(data:tableData)
-            <tr>
-                <td hidden><input name="iInventoryId" autocomplete="off" class="form-control" value="#(data.iinventoryid)"></td>
-                <td>#(for.index+1)</td>
-                #if(isView??0 !=1)
-                    <td>
-                        <a tabindex="-1" class="ml-1 " href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash text-danger">删除</i></a>
-                    </td>
-                #end
-                <td>#(data.cinvcode??)</td>
-                <td>#(data.cinvcode1??)</td>
-                <td>#(data.cinvname1??)</td>
-
-                <td>#(data.cinvstd??)</td>
-                <td>#(data.cuomname??)</td>
-                <td>
-                    #(data.ipkgqty??)
-                </td>
-                <td>#boolToStr(data.ispresent?? == 1,"是","否")</td>
-                <td>
-                    <input type="text" data-with-clearbtn="true" name="cMemo" autocomplete="off" class="form-control" value="#(data.cmemo??)"
-                           maxlength="200"/>
-                </td>
-                <td>
-                    <select class="form-control"
-                            data-autoload
-                            data-url="admin/purchaseorderm/findByiVendorId?vendorId=#(purchaseOrderM.iVendorId??)"
-                            data-select-type="select"
-                            data-text="==请选择=="
-                            data-value=""
-                            name="iVendorAddrId"
-                            data-select="#(data.ivendoraddrid??)"
-                            data-text-attr="cdistrictname"
-                            data-value-attr="iautoid"
-                    >
-                    </select>
-                </td>
-                #for(qty:data.arr??)
-                 <td>#(qty)</td>
-                #end
-                <td>#(data.isum??)</td>
-            </tr>
-        #end
     </tbody>
 </table>
 #define js()
@@ -264,45 +256,78 @@
             initRowCount:0,
             //插入数据时默认属性值
             //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            submit:{
+                 withForm:["PurchaseOrderM_Form"],
+                type:"all",//cell|all
+                params:{"type":'0'},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                url:"/admin/purchaseorderm/saveSubmit",
+                success:function(res){
+                    LayerMsgBox.success("提交成功",600,function(){
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
+                    });
+                },
+            },
             cols:{
                 id:{
                     submitAttr:"id",
                 },
-                index:{
-                    submitAttr: "index"
-                }
+                iinventoryid:{
+                    submitAttr: "iinventoryid"
+                },
+                cinvcode: {
+                    type:"dialogbtn",
+                    required:true,
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/purchaseorderm/inventory_dialog_index",
+                        jbt_link_ele_id:"iautoid,cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
+                        area:"80%,80%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
+                    changeColumns:[
+                        {column: "cinvcode", use: "cinvcode"},
+                        {column: "cinvcode1", use: "cinvcode1"},
+                        {column: "cinvname1", use: "cinvname1"},
+                        {column: "cinvstd", use: "cinvstd"},
+                        {column: "cuomname", use: "cuomname"},
+                        {column: "iinventoryid", use: "iinventoryid"},
+                        {column: "ipkgqty", use: "ipkgqty"},
+                        {column: "ispresent", use: "ispresent"}
+                    ]
+                },
+                ivendoraddrid:{
+
+                    type:"select",
+                    required:true,
+                    url:"admin/purchaseorderm/findByiVendorId?vendorId=#(purchaseOrderM.iVendorId??)",
+                    valueAttr:"iautoid",
+                    textAttr:"cdistrictname"
+                },
+                cmemo:{
+                    type: "input"
+                },
+                #for(day: dateHeadList)
+                    #if(day.isEditFieldName)
+                    '#(day.dateStr)':{
+                            type: "amount",
+                            placeholder: '数量',
+                            summary: [{
+                            dir: "v",
+                            tofixed: 2,
+                            roundtag: "round",
+                            removezero: true,
+                            formula: "sum"
+                        }]
+                    },
+                    #end
+                #end
             }
         };
         return editableTableOptions;
-    }
-
-    function getTableData() {
-        var bomMaster_complete = $("#PurchaseOrderM_Table_");
-        var rows = [];
-        bomMaster_complete.children("tbody").children("tr").each(function () {
-            var row = {};
-            // 获取input标签 class属性还有form-control
-            $(this).find('td').each(function () {
-                var inputs = $(this).find("input[class*='form-control']");
-                getField(row, inputs);
-                var selects = $(this).find("select[class='form-control']");
-                getField(row, selects);
-
-            })
-            rows.push(row);
-        })
-        return rows;
-    };
-
-
-    function getField(row, labels) {
-        if (labels && labels.length > 0) {
-            $.each(labels, function (idx, v) {
-                if (v.name && v.name !== '' && v.value) {
-                    row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
-                }
-            });
-        }
     }
 
     // 隐藏第一个按钮
@@ -313,24 +338,14 @@
             if (!FormChecker.check("#PurchaseOrderM_Form")){
                 return;
             }
-            var data = getTableData();
+            var data = getJboltTableAllDatas('#PurchaseOrderM_Table_');
             if (!data || data.length ==0){
                 LayerMsgBox.alert("表格数据不能为空",2);
                 return;
             }
-            LayerMsgBox.loading();
-            var formData = formToJson('#PurchaseOrderM_Form');
-            Ajax.post('/admin/purchaseorderm/submit', {
-                formData: JSON.stringify(formData),
-                tableData: '#(tableDataStr)',
-                invTableData: JSON.stringify(data),
-                type: '1'
-            },  function(ret) {
-                LayerMsgBox.success(ret.msg, 1000, function () {
-                    parent.LayerMsgBox.closeAll();
-                    parent.refreshPjaxContainer();
-                });
-            });
+            if (jboltTableGetSubmitData("#PurchaseOrderM_Table_")){
+                jboltTableSubmit("#PurchaseOrderM_Table_");
+            }
         });
     #end
 </script>

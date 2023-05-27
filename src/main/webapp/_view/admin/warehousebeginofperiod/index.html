@@ -12,7 +12,6 @@
 
           <select class="form-control"
                   name="cinvccode"
-                  data-rule="required"
                   data-autoload
                   data-url="admin/inventoryclass/options"
                   data-select-type="select2"
@@ -22,7 +21,7 @@
                   data-select="#(cinvccode??)"></select>
 
           <select class="form-control"
-                  name="otherOut.whcode"
+                  name="whcode"
                   data-autoload
                   data-url="admin/SysEnumeration/wareHouse"
                   data-select-type="select2"
@@ -30,7 +29,7 @@
                   data-value=""
                   data-value-attr="whcode"
                   data-text-attr="whname"
-                  data-select="#(otherOut.whcode??)"></select>
+                  data-select="#(whcode??)"></select>
 
           <select class="form-control"
                   data-autoload
@@ -57,21 +56,24 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-  <td>操作</td>
-  <td title="${data.cwhcode}">${data.cwhcode}</td>
-  <td title="${data.cwhname}">${data.cwhname}</td>
+  <td>
+    <a tooltip title="条码明细" href="admin/warehousebeginofperiod/detail" data-scroll="yes"
+       data-handler="refreshJBoltTable" data-title="条码明细" data-area="95%,95%" class="jbolt_table_editbtn">条码明细</a>
+  </td>
+  <td title="${data.whcode}">${data.whcode}</td>
+  <td title="${data.whname}">${data.whname}</td>
   <td title="${data.careacode}">${data.careacode}</td>
   <td title="${data.careaname}">${data.careaname}</td>
   <td title="${data.cinvcname}">${data.cinvcname}</td>
-  <td title="${data.cinvcode}">${data.cinvcode}</td>
+  <td title="${data.invcode}">${data.invcode}</td>
   <td title="${data.cinvcode1}">${data.cinvcode1}</td>
   <td title="${data.cinvname1}">${data.cinvname1}</td>
   <td title="${data.cinvstd}">${data.cinvstd}</td>
   <td title="${data.cuomname}">${data.cuomname}</td>
-  <td title="${data.stockqty}">${data.stockqty}</td>
-  <td title="${data.ungeneratedstockqty}">${data.ungeneratedstockqty}</td>
-  <td title="${data.generatedstockqty}">${data.generatedstockqty}</td>
-  <td title="${data.usebarcodes}">${data.usebarcodes}</td>
+  <td title="${data.qty}">${data.qty, 2|number_format}</td>
+  <td title="${data.availableqty}">${data.availableqty, 2|number_format}</td>
+  <td title="${data.availablenum}">${data.availablenum, 2|number_format}</td>
+  <td title="${data.num}">${data.num, 2|number_format}</td>
 </tr>
 {@/each}
 </textarea>
@@ -89,26 +91,6 @@
           新增期初条码
         </button>
       </div>
-      <div class="btn-group dropdown">
-        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
-        </button>
-        <div class="dropdown-menu" aria-labelledby="importMenuButton">
-          <a data-downloadbtn href="/admin/spotcheckparam/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
-          <div class="j_upload_file_box"
-               data-name="file"
-               data-btn-class="btn dropdown-item"
-               data-placeholder="上传导入"
-               data-confirm="确认导入数据？"
-               data-accept="excel"
-               data-maxsize="20480"
-               data-handler="uploadFile"
-               data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-               data-url="/admin/spotcheckparam/importExcel">
-          </div>
-        </div>
-      </div>
-
     </div>
 
     <table class="jbolt_table jbolt_main_table  table-center"
@@ -127,20 +109,20 @@
       <tr>
         <th data-width="60" data-column="index">序号</th>
         <th data-width="150">操作</th>
-        <th data-width="120" data-column="cWhCode">仓库编码</th>
-        <th data-width="100" data-column="cWhName">仓库名称</th>
-        <th data-width="100" data-column="cAreaCode">库区编码</th>
+        <th data-width="120" data-column="WhCode">仓库编码</th>
+        <th data-width="150" data-column="WhName">仓库名称</th>
+        <th data-width="150" data-column="cAreaCode">库区编码</th>
         <th data-width="150" data-column="cAreaName">库区名称</th>
         <th data-width="150" data-column="cInvCName">存货分类名称</th>
-        <th data-width="150" data-column="cInvCode">存货编码</th>
-        <th data-width="150" data-column="cInvCode1">客户部番</th>
-        <th data-width="150" data-column="cInvName1">部品名称</th>
+        <th data-width="150" data-column="InvCode">存货编码</th>
+        <th data-width="180" data-column="cInvCode1">客户部番</th>
+        <th data-width="180" data-column="cInvName1">部品名称</th>
         <th data-width="150" data-column="cInvStd">规格</th>
-        <th data-width="150" data-column="cUomName">主计量单位</th>
-        <th data-width="150" data-column="stockQty" title="期初库存数量">期初库存数量</th>
-        <th data-width="150" data-column="unGeneratedStockQty" title="未生成条码库存数量">未生成条码库存数量</th>
-        <th data-min-width="160" data-column="generatedStockQty" title="已生成条码库存数量">已生成条码库存数量</th>
-        <th data-width="100" data-column="useBarcodes" title="可用条码数">可用条码数</th>
+        <th data-width="120" data-column="cUomName">主计量单位</th>
+        <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>
+        <th data-width="150" data-column="availableqty" title="未生成条码库存数量">未生成条码库存数量</th>
+        <th data-min-width="160" data-column="availablenum" title="已生成条码库存数量">已生成条码库存数量</th>
+        <th data-width="100" data-column="num" title="可用条码数">可用条码数</th>
       </tr>
       </thead>
       <tbody></tbody>

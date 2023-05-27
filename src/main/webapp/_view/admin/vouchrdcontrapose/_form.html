@@ -3,13 +3,31 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">收类别编码</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off"  class="form-control"  placeholder="请输入收类别编码" maxlength="5" name="vouchRdContrapose.cvrrcode" value="#(vouchRdContrapose.cvrrcode??)"/>
+			<select class="form-control"
+					data-rule="required"
+					data-autoload
+					name="vouchRdContrapose.cvrrcode"
+					data-url="admin/rdstyle/options"
+					data-value-attr="cvrrcode"
+					data-text-attr="vrrname"
+				   	data-text="=选择收发类别="
+				   	data-select="#(vouchRdContrapose.cvrrcode??)">
+			</select>
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">发类别编码</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off"  class="form-control"  placeholder="请输入发类别编码" maxlength="5" name="vouchRdContrapose.cvrscode" value="#(vouchRdContrapose.cvrscode??)"/>
+			<select class="form-control"
+					data-rule="required"
+					data-autoload
+					name="vouchRdContrapose.cvrscode"
+					data-url="admin/rdstyle/options1"
+					data-value-attr="cvrscode"
+					data-text-attr="vrsname"
+					data-text="=选择收发类别="
+					data-select="#(vouchRdContrapose.cvrscode??)">
+			</select>
 		</div>
 	</div>
 </form>
