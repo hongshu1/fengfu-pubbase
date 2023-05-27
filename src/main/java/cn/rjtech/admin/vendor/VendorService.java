@@ -201,10 +201,16 @@ public class VendorService extends BaseService<Vendor> {
                 }
                 Record record = vendorClassService.findRecordByCVCCode(vendor.getCVCCode());
                 vendor.setIVendorClassId(record != null ? record.get("iautoid") : new Long(0));
-                //表头保存
-                Ret retVendor = save(vendor);
-                if (retVendor.isFail()) {
-                    return retVendor;
+                Vendor checkVendorIsBlank = findById(fromRecord.get("iautoid"));
+                if (null== checkVendorIsBlank){
+                    //表头保存
+                    Ret retVendor = save(vendor);
+                    if (retVendor.isFail()) {
+                        return retVendor;
+                    }
+                }else {
+                    vendor.setIAutoId(fromRecord.getLong("iautoid"));
+                    update(vendor);
                 }
                 //表单保存
                 for (VendorAddr vendorAddr : vendorAddrs) {
