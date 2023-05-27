@@ -1,183 +1,238 @@
-<form onsubmit="return false;" id="processDefectForm" action="#(action)" method="post">
-<input type="hidden" name="processDefect.iautoid" value="#(processDefect.iautoid??)" />
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="processDefect.iorgid" value="#(processDefect.iorgid??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织编码</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="40" name="processDefect.corgcode" value="#(processDefect.corgcode??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="50" name="processDefect.corgname" value="#(processDefect.corgname??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">领料单ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入领料单ID" maxlength="19" name="processDefect.iissueid" value="#(processDefect.iissueid??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">生产工单ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入生产工单ID" maxlength="19" name="processDefect.imodocid" value="#(processDefect.imodocid??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">生产部门ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入生产部门ID" maxlength="19" name="processDefect.idepartmentid" value="#(processDefect.idepartmentid??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">需求日期</label>
-		<div class="col">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置需求日期" data-tips="请设置需求日期" maxlength="10" name="processDefect.ddemanddate" value="#(processDefect.ddemanddate??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">状态：1. 已保存 2. 待审批 3. 已审批</label>
-		<div class="col input-group">
-			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="processDefect.istatus" data-refresh="true"  data-rule="select"  data-tips="请选择状态：1. 已保存 2. 待审批 3. 已审批" data-text="=请选择="  data-value="1" data-select="#( processDefect.istatus ??)"></select>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建人ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人ID" maxlength="19" name="processDefect.icreateby" value="#(processDefect.icreateby??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建人名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="50" name="processDefect.ccreatename" value="#(processDefect.ccreatename??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建时间</label>
-		<div class="col">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="processDefect.dcreatetime" value="#(processDefect.dcreatetime??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新人ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人ID" maxlength="19" name="processDefect.iupdateby" value="#(processDefect.iupdateby??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新人名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人名称" maxlength="50" name="processDefect.cupdatename" value="#(processDefect.cupdatename??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新时间</label>
-		<div class="col">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="processDefect.dupdatetime" value="#(processDefect.dupdatetime??)"/>
-		</div>
-	</div>
-    <div class="form-group row"
-    	data-radio
-    	data-rule="radio"
-    	data-value="#(processDefect.isdeleted??)"
-    	data-name="processDefect.isdeleted"
-    	data-default="options_first"
-    	data-width="col-sm-2,col"
-		>
-			<label class="col-sm-2 col-form-label" >删除状态：0. 未删除 1. 已删除</label>
-			<div class="col"  style="padding-top: 1px;">
-				<div class="radio radio-primary  radio-inline">
-					<input  id="r_isdeleted_true" type="radio" name="processDefect.isdeleted" value="true"/>
-					<label for="r_isdeleted_true">是</label>
+
+<div class="jbolt_page">
+	<div class="jbolt_page_content">
+		<form onsubmit="return false;" id="processDefectForm"  action="" method="post">
+			<button type="submit" onclick="submitForm()"  class="btn btn-primary btn-sm"><i class="fa fa-save"></i>保存</button>
+			<button onclick="submitForms()" class="btn btn-warning btn-sm"><i class="fa fa-check"></i>提交</button>
+			<button onclick="closeHandler()" class="btn btn-danger btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+			<input type="hidden" name="iautoid" value="#(processDefect.iautoid??)" />
+			<h5>工单信息</h5>
+			<hr/>
+			<div class="form-group row">
+				<input type="hidden"  placeholder="领料单ID" name="iissueid" value="#(specMaterialsRcvM.iAutoid??)"/>
+				<input type="hidden"  placeholder="生产工单ID" name="processDefect.imodocid" value="#(moDoc.iautoid??)"/>
+				<input type="hidden"  placeholder="生产部门ID" name="processDefect.idepartmentid" value="#(moDoc.idepartmentid??)"/>
+				<input type="hidden"  placeholder="需求日期" name="ddemanddate" value="#(specMaterialsRcvM.ddemanddate??)"/>
+				<input type="hidden"  placeholder="" name="processDefect.iinventoryid" value="#(moDoc.iinventoryid??)"/>
+
+
+
+				<!--    <label class="col-sm-2 col-form-label">异常品单号：</label>
+                    <div class="col-sm-2 col-form-label">
+                        #(processDefect.cdocno??)
+                    </div>-->
+				<label class="col-sm-2 col-form-label">工单号：</label>
+				<div class="col-sm-2 col-form-label">
+					#(moDoc.cmodocno??)
 				</div>
-				
-				<div class="radio radio-primary  radio-inline">
-					<input  id="r_isdeleted_false" type="radio" name="processDefect.isdeleted" value="false"/>
-					<label for="r_isdeleted_false">否</label>
+				<label class="col-sm-2 col-form-label">客户部番：</label>
+				<div class="col-sm-2 col-form-label">
+					#(moDoc.cnvcode1??)
+				</div>
+				<label class="col-sm-2 col-form-label">部品名称：</label>
+				<div class="col-sm-2 col-form-label">
+					#(moDoc.cinvname1??)
 				</div>
 			</div>
-		</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">处置区分</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入处置区分" maxlength="50" name="processDefect.capproach" value="#(processDefect.capproach??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">不良数量</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入不良数量"  maxlength="18" name="processDefect.idqqty" value="#(processDefect.idqqty??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">责任区：1. 本工序 2. 其他</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入责任区：1. 本工序 2. 其他"  maxlength="10" name="processDefect.iresptype" value="#(processDefect.iresptype??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">不良项目，字典编码，多个“,”分隔</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入不良项目，字典编码，多个“,”分隔" maxlength="200" name="processDefect.cbadnesssns" value="#(processDefect.cbadnesssns??)"/>
-		</div>
-	</div>
-    <div class="form-group row"
-    	data-radio
-    	data-rule="radio"
-    	data-value="#(processDefect.isfirsttime??)"
-    	data-name="processDefect.isfirsttime"
-    	data-default="options_first"
-    	data-width="col-sm-2,col"
-		>
-			<label class="col-sm-2 col-form-label" >再首发：1.首发 2.再发</label>
-			<div class="col"  style="padding-top: 1px;">
-				<div class="radio radio-primary  radio-inline">
-					<input  id="r_isfirsttime_true" type="radio" name="processDefect.isfirsttime" value="true"/>
-					<label for="r_isfirsttime_true">是</label>
+			<div class="form-group row">
+
+				<label class="col-sm-2 col-form-label">存货编码：</label>
+				<div class="col-sm-2 col-form-label">
+					#(moDoc.cinvcode??)
 				</div>
-				
-				<div class="radio radio-primary  radio-inline">
-					<input  id="r_isfirsttime_false" type="radio" name="processDefect.isfirsttime" value="false"/>
-					<label for="r_isfirsttime_false">否</label>
+				<label class="col-sm-2 col-form-label">计划日期：</label>
+				<div class="col-sm-2 col-form-label">
+					#date(moDoc.dplandate??,'yyyy-MM-dd')
+				</div>
+				<label class="col-sm-2 col-form-label">产线：</label>
+				<div class="col-sm-2 col-form-label">
+					#(moDoc.cworkname??)
+				</div>
+
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">班次：</label>
+				<div class="col-sm-2 col-form-label">
+					#(moDoc.cworkshiftname??)
+				</div>
+				<label class="col-sm-2 col-form-label">计划数量：</label>
+				<div class="col-sm-2 col-form-label">
+					#(moDoc.iqty??)
+				</div>
+				<label class="col-sm-2 col-form-label">完工数量：</label>
+				<div class="col-sm-2 col-form-label">
+					#(moDoc.icompqty??)
+				</div>
+				<label class="col-sm-2 col-form-label">差异数量：</label>
+				<div class="col-sm-2 col-form-label">
+					#(moDoc.cyqty??)
+				</div>
+
+
+			</div>
+			<!--     <div class="form-group row">
+                     <label class="col-sm-2 col-form-label">不良数量：</label>
+                     <div class="col-sm-2 col-form-label">
+                         #(processDefect.idqqty??)
+                     </div>
+                     <label class="col-sm-2 col-form-label">创建时间：</label>
+                     <div class="col-sm-2 col-form-label">
+                         #(processDefect.dcreatetime??)
+                     </div>
+                     <label class="col-sm-2 col-form-label">创建人：</label>
+                     <div class="col-sm-2 col-form-label">
+                         #(processDefect.ccreatename??)
+                     </div>
+                 </div>-->
+
+
+			<h5>异常品记录信息</h5>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">异常单号：</label>
+				<div class="col-sm-2 col-form-label">
+					<input type="text" class="form-control border-none"  name="processDefect.cdocno"  placeholder="" value="#(processDefect.cdocno??)" readonly="readonly"/>
+				</div>
+				<label class="col-sm-2 col-form-label">工序名称：</label>
+				<div class="col-sm-2 col-form-label">
+					<input type="hidden" id="coperationname" name="processDefect.coperationname" value="#(processDefect.coperationname??)"/>
+					<select class="form-control border-none"
+							data-autoload
+							id=""
+							data-url="admin/moroutingconfigoperation/dataList?imdocid=#(imdocid??)"
+							data-select-type="select"
+							name="processDefect.ioperationid"
+							data-refresh="true"
+							###data-rule="select"
+							data-notnull="true"
+							data-tips="请选择工序"
+							data-text="=请选择="
+							data-value=""
+							data-value-attr="ioperationid"
+							data-text-attr="coperationname"
+							data-name="coperationname"
+							data-select="#(processDefect.ioperationid??)"
+					></select>
+					<!-- <input type="text" class="form-control border-none" name="processname"  placeholder="" value="#(processDefect.processname??)"/>-->
+				</div>
+				<label class="col-sm-2 col-form-label">不良数量：</label>
+				<div class="col-sm-2 col-form-label">
+					<input type="text" class="form-control border-none"  data-rule="true"  name="processDefect.idqqty"  placeholder="" value="#(processDefect.idqqty??)"/>
 				</div>
 			</div>
-		</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">不良内容描述</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入不良内容描述" maxlength="500" name="processDefect.cdesc" value="#(processDefect.cdesc??)"/>
-		</div>
+			<div class="form-group row">
+				<input type="hidden" id="cbadnesssns" name="processDefect.cbadnesssns" value="#(processDefect.cbadnesssns??)"/>
+				<label class="col-sm-2 col-form-label">不良项目：</label>
+				<div class="col-sm-8 col-form-label">
+					<div class="form-group row"
+						 data-hidden-input="cbadnesssns"
+						 data-checkbox
+						 data-rule="checkbox"
+						 data-default=""
+						 data-url="admin/dictionary/options?key=cBadnessSns"
+						 data-value-attr="name"
+						 data-text-attr="cbadnesssns"
+						 data-inline="true"
+						 data-value="#(processDefect.cbadnesssns??)"
+						 data-name="cbadnesssns">
+					</div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">首再发：</label>
+				<div class="col-sm-8 col-form-label">
+					<div class="form-group row"
+						 data-radio
+						 data-rule="radio"
+						 data-value="#(processDefect.isfirsttime??)"
+						 data-name="processDefect.isfirsttime"
+						 data-default="true">
+						<div class="col"  style="padding-top: 1px;">
+							<div class="radio radio-primary  radio-inline">
+								<input  id="renabletrue1" type="radio" name="processDefect.isfirsttime"   value="1"/>
+								<label for="renabletrue1">首发</label>
+							</div>
+
+							<div class="radio radio-primary  radio-inline">
+								<input  id="renablefalse2" type="radio" name="processDefect.isfirsttime"   value="2"/>
+								<label for="renablefalse2">再发</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">责任区：</label>
+				<div class="col-sm-8 col-form-label">
+					<div class="form-group row"
+						 data-radio
+						 data-rule="radio"
+						 data-value="#(processDefect.iresptype??)"
+						 data-name="processDefect.iresptype"
+						 data-default="true">
+						<div class="col"  style="padding-top: 1px;">
+							<div class="radio radio-primary  radio-inline">
+								<input  id="renabletrue" type="radio" name="processDefect.iresptype"   value="1"/>
+								<label for="renabletrue">本工序</label>
+							</div>
+
+							<div class="radio radio-primary  radio-inline">
+								<input  id="renablefalse" type="radio" name="processDefect.iresptype"   value="2"/>
+								<label for="renablefalse">其他</label>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">不良内容描述</label>
+				<div class="col">
+					<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入不良内容描述" maxlength="500" name="processDefect.cdesc" value="#(processDefect.cdesc??)"/>
+				</div>
+			</div>
+
+
+			<!--   <div class="form-group row">
+                   <label class="col-sm-2 col-form-label">创建时间：</label>
+                   <div class="col-sm-2 col-form-label">
+                       <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#date((processDefect.dcreatetime??),'yyyy-MM-dd HH:mm:ss')"/>
+                   </div>
+                   <label class="col-sm-2 col-form-label">创建人：</label>
+                   <div class="col-sm-2 col-form-label">
+                       <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(processDefect.ccreatename??)"/>
+                   </div>
+               </div>-->
+
+			<!--            <h5>异常品判定信息</h5>-->
+			<!--            <div class="form-group row">-->
+			<!--                <label class="col-sm-2 col-form-label">处置区分：</label>-->
+			<!--                <div class="col-sm-8 col-form-label">-->
+			<!--                    <div class="form-group row"-->
+			<!--                         data-radio-->
+			<!--                         data-rule="radio"-->
+			<!--                         data-value="#(processDefect.capproach??)"-->
+			<!--                         data-name="processDefect.capproach"-->
+			<!--                         data-default="true">-->
+			<!--                        <div class="col"  style="padding-top: 1px;">-->
+			<!--                            <div class="radio radio-primary  radio-inline">-->
+			<!--                                <input  id="capproachtrue1" type="radio" name="processDefect.capproach"   value="1"/>-->
+			<!--                                <label for="capproachtrue1">返修</label>-->
+			<!--                            </div>-->
+
+			<!--                            <div class="radio radio-primary  radio-inline">-->
+			<!--                                <input  id="capproachfalse1" type="radio" name="processDefect.capproach"   value="0"/>-->
+			<!--                                <label for="capproachfalse1">报废</label>-->
+			<!--                            </div>-->
+			<!--                        </div>-->
+			<!--                    </div>-->
+			<!--                </div>-->
+			<!--            </div>-->
+
+			<inpu>
+		</form>
 	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">工序名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入工序名称" maxlength="50" name="processDefect.processname" value="#(processDefect.processname??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">存货ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="processDefect.iinventoryid" value="#(processDefect.iinventoryid??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">存货ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="processDefect.cdocno" value="#(processDefect.cdocno??)"/>
-		</div>
-	</div>
-</form>
-#define js()
-<script>
-</script>
-#include("/_view/_admin/common/_formjs.html",formId="processDefectForm")
-#end
+</div>
+
 
