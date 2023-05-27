@@ -1,5 +1,6 @@
 package cn.rjtech.admin.momotask;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.JBoltDictionaryService;
@@ -394,14 +395,103 @@ public class MoMotaskService extends BaseService<MoMotask> {
    * @return
    */
   public List<Record> getModocStaffEditorDatas(Kv kv) {
+    //TODO:根据taskid获取本次docId
+    List<Record> docIdList = findRecords("SELECT * FROM Mo_MoDoc WHERE iMoTaskId = ? ",kv.get("taskid"));
+    //key:iworkregionmid+iinventoryid  value:modocid
+    Map<String,String> modocidMap = new HashMap<>();
+    List<String> modocids = new ArrayList<>();
+    for (Record record : docIdList){
+      String modocid = record.getStr("iAutoId");
+      String iWorkRegionMid = record.getStr("iWorkRegionMid");
+      String iInventoryId = record.getStr("iInventoryId");
+      modocidMap.put(iWorkRegionMid+iInventoryId,modocid);
+      modocids.add(modocid);
+    }
+    //TODO:modocids集查询
+    List<Record> getRoutingConfigList = findRecord("SELECT DISTINCT\n" +
+            "\tmoconfig.iAutoId,\n" +
+            "\tmoconfig.iType,\n" +
+            "\trouting.iMoDocId\n" +
+            "FROM\n" +
+            "\tMo_MoRoutingConfig moconfig \n" +
+            "\tLEFT JOIN Mo_MoRouting as routing ON moconfig.iMoRoutingId = routing.iAutoId\n" +
+            "WHERE\n" +
+            "\tmoconfig.iMoRoutingId IN ( SELECT iAutoId FROM Mo_MoRouting WHERE iMoDocId IN (" + CollUtil.join(modocids, ",") + "))");
+    //key:modocid  value:List<String>
+    Map<String,List<Record>> getMoroutingconfigDatasMap = new HashMap<>();
+    List<String> configIds = new ArrayList<>();
+    for (Record record : getRoutingConfigList) {
+      String modocid = record.getStr("iMoDocId");
+      if (getMoroutingconfigDatasMap.containsKey(modocid)){
+        List<Record> list = getMoroutingconfigDatasMap.get(modocid);
+        list.add(record);
+      }else {
+        List<Record> list = new ArrayList<>();
+        list.add(record);
+        getMoroutingconfigDatasMap.put(modocid,list);
+      }
+      String iAutoId = record.getStr("iAutoId");
+      configIds.add(iAutoId);
+    }
+    //TODO:
+    List<Record> recordsa1List = findRecord("\tSELECT  DISTINCT\n" +
+            "    moment.iEquipmentId,\n" +
+            "\tment.cEquipmentName,\n" +
+            "\tmoment.iMoRoutingConfigId\n" +
+            "FROM\n" +
+            "\tMo_MoRoutingEquipment moment\n" +
+            "\tLEFT JOIN Bd_Equipment ment ON moment.iEquipmentId= ment.iAutoId\n" +
+            "WHERE\n" +
+            "\tmoment.iMoRoutingConfigId IN (" + CollUtil.join(configIds, ",") + ")");
+    //key:moconfigid  value:List<String>
+    Map<String,List<Record>> recordsa1ListMap = new HashMap<>();
+    for (Record record : recordsa1List) {
+      String moconfigid = record.getStr("iMoRoutingConfigId");
+      if (recordsa1ListMap.containsKey(moconfigid)){
+        List<Record> list = recordsa1ListMap.get(moconfigid);
+        list.add(record);
+      }else {
+        List<Record> list = new ArrayList<>();
+        list.add(record);
+        recordsa1ListMap.put(moconfigid,list);
+      }
+    }
+
+    //TODO:
+    List<Record> recordsa2List = findRecord("\tSELECT  DISTINCT\n" +
+            "    operation.iOperationId,\n" +
+            "\tbdop.cOperationName,operation.iMoInventoryRoutingConfigId\n" +
+            "FROM\n" +
+            "\tMo_MoRoutingConfig_Operation operation\n" +
+            "\tLEFT JOIN Bd_Operation bdop ON operation.iOperationId= bdop.iAutoId\n" +
+            "WHERE\n" +
+            "\toperation.iMoInventoryRoutingConfigId IN (" + CollUtil.join(configIds, ",") + ")");
+    //key:moconfigid  value:List<String>
+    Map<String,List<Record>> recordsa2ListMap = new HashMap<>();
+    for (Record record : recordsa2List) {
+      String moconfigid = record.getStr("iMoInventoryRoutingConfigId");
+      if (recordsa2ListMap.containsKey(moconfigid)){
+        List<Record> list = recordsa2ListMap.get(moconfigid);
+        list.add(record);
+      }else {
+        List<Record> list = new ArrayList<>();
+        list.add(record);
+        recordsa2ListMap.put(moconfigid,list);
+      }
+    }
+
+
     //获取产线名称，存货编码。。。
     List<Record> records = dbTemplate("modocbatch.getModocDatas", kv).find();
     //根据制造工单任务ID获取年月日数据信息
     List<Record> records1 = dbTemplate("modocbatch.getModocDateDatas", kv).find();
     for (Record record : records) {
-      String modocid = dbTemplate("modocbatch.getModocid", Kv.by("taskid", kv.getStr("taskid")).
-          set("iworkregionmid", record.getStr("iworkregionmid")).set("iinventoryid", record.getStr("iinventoryid"))).queryStr();
-      List<Record> records2 = dbTemplate("modocbatch.getMoroutingconfigDatas", Kv.by("modocid", modocid)).find();
+      /*String modocid = dbTemplate("modocbatch.getModocid", Kv.by("taskid", kv.getStr("taskid")).
+          set("iworkregionmid", record.getStr("iworkregionmid")).set("iinventoryid", record.getStr("iinventoryid"))).queryStr();*/
+      String modocid = modocidMap.get(record.getStr("iworkregionmid") + record.getStr("iinventoryid"));
+
+      //List<Record> records2 = dbTemplate("modocbatch.getMoroutingconfigDatas", Kv.by("modocid", modocid)).find();
+      List<Record> records2 = getMoroutingconfigDatasMap.get(modocid) != null ? getMoroutingconfigDatasMap.get(modocid) : new ArrayList<>();
       if (records2.size() > 0) {
         List<Record> records3 = new ArrayList<>();
         for (int i = 0; i < (records2.size() + 4); i++) {
@@ -410,7 +500,9 @@ public class MoMotaskService extends BaseService<MoMotask> {
           String ioperationid = "";
           if (i < records2.size()) {
             if (records2.get(i).getStr("itype") != null) {
-              List<Record> recordsa1 = dbTemplate("modocbatch.getMoequipmentDatas", Kv.by("moconfigid", records2.get(i).getStr("iautoid"))).find();
+
+              //List<Record> recordsa1 = dbTemplate("modocbatch.getMoequipmentDatas", Kv.by("moconfigid", records2.get(i).getStr("iautoid"))).find();
+              List<Record> recordsa1 = recordsa1ListMap.get(records2.get(i).getStr("iautoid")) != null ? recordsa1ListMap.get(records2.get(i).getStr("iautoid")) : new ArrayList<>();
               StringBuilder sa1 = new StringBuilder();
               StringBuilder sa2 = new StringBuilder();
               for (Record recorda1 : recordsa1) {
@@ -422,7 +514,9 @@ public class MoMotaskService extends BaseService<MoMotask> {
 
               StringBuilder sb1 = new StringBuilder();
               StringBuilder sb2 = new StringBuilder();
-              List<Record> recordsb1 = dbTemplate("modocbatch.getMooperationDatas", Kv.by("moconfigid", records2.get(i).getStr("iautoid"))).find();
+
+              List<Record> recordsb1 = recordsa2ListMap.get(records2.get(i).getStr("iautoid")) != null ? recordsa2ListMap.get(records2.get(i).getStr("iautoid")) : new ArrayList<>();
+              //dbTemplate("modocbatch.getMooperationDatas", Kv.by("moconfigid", records2.get(i).getStr("iautoid"))).find();
               for (Record recordb1 : recordsb1) {
                 sb1.append(recordb1.getStr("coperationname") != null ? recordb1.getStr("coperationname") : "").append("/");
                 sb2.append(recordb1.getStr("ioperationid") != null ? recordb1.getStr("ioperationid") : "").append(",");
@@ -439,26 +533,150 @@ public class MoMotaskService extends BaseService<MoMotask> {
             recordDats.set("coperationname", null);
             recordDats.set("cequipmentname", null);
           }
+
+
+          List<Record> list1 = findRecords("SELECT DISTINCT doc.iYear,doc.iMonth,doc.iDate,doc.iWorkShiftMid,doc.iAutoId\n" +
+                                                "FROM Mo_MoDoc doc WHERE doc.iMoTaskId = ? ",kv.get("taskid"));
+          //key:iYear+iMonth+iDate+iWorkShiftMid  value:modocid
+          Map<String,String> map1 = new HashMap<>();
+          List<String> modocidList = new ArrayList<>();
+          for (Record record1 : list1){
+            String iYear = record1.getStr("iYear");
+            String iMonth = record1.getStr("iMonth");
+            String iDate = record1.getStr("iDate");
+            String iWorkShiftMid = record1.getStr("iWorkShiftMid");
+            String modocid1 = record1.getStr("iAutoId");
+            map1.put(iYear+iMonth+iDate+iWorkShiftMid,modocid1);
+            modocidList.add(modocid);
+          }
+
+          List<Record> list2 = findRecord("\tSELECT DISTINCT\n" +
+                  "\tdoc.iAutoId,\n" +
+                  "\tbdperson.cPsn_Num psnnum,\n" +
+                  "\tbdperson.cPsn_Name psnname\n" +
+                  "FROM\n" +
+                  "\tMo_MoDoc doc\n" +
+                  "\tLEFT JOIN Mo_MoRouting routing ON routing.iMoDocId= doc.iAutoId\n" +
+                  "\tLEFT JOIN Mo_MoRoutingConfig config ON config.iMoRoutingId= routing.iAutoId\n" +
+                  "\tLEFT JOIN Mo_MoRoutingConfig_Person moperson ON moperson.iMoRoutingConfigId= config.iAutoId\n" +
+                  "\tLEFT JOIN Bd_Person bdperson ON moperson.iPersonId= bdperson.iAutoId\n" +
+                  "WHERE\n" +
+                  "    doc.iAutoId IN (" + CollUtil.join(modocidList, ",") + ")");
+          //key:modocid1  value:List<String>
+          Map<String,List<Record>> map2 = new HashMap<>();
+          for (Record record2 : list2) {
+            String iAutoId = record2.getStr("iAutoId");
+            if (map2.containsKey(iAutoId)){
+              List<Record> list = map2.get(iAutoId);
+              list.add(record2);
+            }else {
+              List<Record> list = new ArrayList<>();
+              list.add(record2);
+              map2.put(iAutoId,list);
+            }
+          }
+
+          List<Record> list3 = findRecord("SELECT iAutoId, cMoDocNo FROM Mo_MoDoc WHERE iAutoId IN (" + CollUtil.join(modocidList, ",") + ")");
+          //key:modocid1  value:cMoDocNo
+          Map<String,List<Record>> map3 = new HashMap<>();
+          for (Record record3 : list3) {
+            String iAutoId = record3.getStr("iAutoId");
+            Record record1 = new Record();
+            record1.set("cMoDocNo",record3.getStr("cMoDocNo"));
+            if (map3.containsKey(iAutoId)){
+              List<Record> list = map3.get(iAutoId);
+              list.add(record1);
+            }else {
+              List<Record> list = new ArrayList<>();
+              list.add(record1);
+              map3.put(iAutoId,list);
+            }
+          }
+
+          List<Record> list4 = findRecord("SELECT iAutoId, iQty FROM Mo_MoDoc WHERE iAutoId IN (" + CollUtil.join(modocidList, ",") + ")");
+          //key:modocid1  value:cMoDocNo
+          Map<String,List<Record>> map4 = new HashMap<>();
+          for (Record record3 : list4) {
+            String iAutoId = record3.getStr("iAutoId");
+            Record record1 = new Record();
+            record1.set("iQty",record3.getBigDecimal("iQty"));
+            if (map4.containsKey(iAutoId)){
+              List<Record> list = map4.get(iAutoId);
+              list.add(record1);
+            }else {
+              List<Record> list = new ArrayList<>();
+              list.add(record1);
+              map4.put(iAutoId,list);
+            }
+          }
+
+          List<Record> list5 = findRecord("SELECT iAutoId, iPersonNum FROM Mo_MoDoc WHERE iAutoId IN (" + CollUtil.join(modocidList, ",") + ")");
+          //key:modocid1  value:cMoDocNo
+          Map<String,List<Record>> map5 = new HashMap<>();
+          for (Record record3 : list5) {
+            String iAutoId = record3.getStr("iAutoId");
+            Record record1 = new Record();
+            record1.set("iPersonNum",record3.getBigDecimal("iPersonNum"));
+            if (map5.containsKey(iAutoId)){
+              List<Record> list = map5.get(iAutoId);
+              list.add(record1);
+            }else {
+              List<Record> list = new ArrayList<>();
+              list.add(record1);
+              map5.put(iAutoId,list);
+            }
+          }
+
+          List<Record> list6 = findRecord("SELECT DISTINCT\n" +
+                  "\tmodoc.iAutoId,modoc.iDutyPersonId,\n" +
+                  "\tperson.cPsn_Name\n" +
+                  "FROM\n" +
+                  "\tMo_MoDoc modoc\n" +
+                  "\tLEFT JOIN Bd_Person person ON modoc.iDutyPersonId= person.iAutoId\n" +
+                  "WHERE\n" +
+                  "\tmodoc.iAutoId IN (" + CollUtil.join(modocidList, ",") + ")");
+          //key:modocid1  value:cMoDocNo
+          Map<String,List<Record>> map6 = new HashMap<>();
+          for (Record record3 : list6) {
+            String iAutoId = record3.getStr("iAutoId");
+            Record record1 = new Record();
+            record1.set("iDutyPersonId",record3.getBigDecimal("iDutyPersonId"));
+            record1.set("cPsn_Name",record3.getBigDecimal("cPsn_Name"));
+            if (map6.containsKey(iAutoId)){
+              List<Record> list = map6.get(iAutoId);
+              list.add(record1);
+            }else {
+              List<Record> list = new ArrayList<>();
+              list.add(record1);
+              map6.put(iAutoId,list);
+            }
+          }
+
+
           for (Record record1 : records1) {
+            String year = record1.getStr("iyear");
+            String imonth = record1.getStr("imonth");
+            String idate = record1.getStr("idate");
+            String iworkshiftmid = record1.getStr("iworkshiftmid");
             Kv kv1 = Kv.by("iyear", record1.getStr("iyear")).
                 set("imonth", record1.getStr("imonth")).set("idate", record1.getStr("idate")).
                 set("iworkshiftmid", record1.getStr("iworkshiftmid")).set("taskid", kv.getStr("taskid"));
-            String modocid1 = dbTemplate("modocbatch.getModocidBydates", kv1).queryStr();
+            String modocid1 = map1.get(year+imonth+idate+iworkshiftmid);//dbTemplate("modocbatch.getModocidBydates", kv1).queryStr();
             if (i < records2.size()) {
               //读取人员数据
-              List<Record> records4 = dbTemplate("modocbatch.getModocpersonnelDatas", Kv.by("docid", modocid1)).find();
+              List<Record> records4 = map2.get(modocid1);//dbTemplate("modocbatch.getModocpersonnelDatas", Kv.by("docid", modocid1)).find();
               recordDats.set("personnel", records4);
             } else if (i == (records2.size())) {
-              List<Record> records4 = dbTemplate("modocbatch.getModocnoByid", Kv.by("docid", modocid1)).find();
+              List<Record> records4 = map3.get(modocid1);//dbTemplate("modocbatch.getModocnoByid", Kv.by("docid", modocid1)).find();
               recordDats.set("personnel", records4);
             } else if (i == (records2.size() + 1)) {
-              List<Record> records4 = dbTemplate("modocbatch.getModociqtyByid", Kv.by("docid", modocid1)).find();
+              List<Record> records4 = map4.get(modocid1);//dbTemplate("modocbatch.getModociqtyByid", Kv.by("docid", modocid1)).find();
               recordDats.set("personnel", records4);
             } else if (i == (records2.size() + 2)) {
-              List<Record> records4 = dbTemplate("modocbatch.getModocpernumByid", Kv.by("docid", modocid1)).find();
+              List<Record> records4 = map5.get(modocid1);//dbTemplate("modocbatch.getModocpernumByid", Kv.by("docid", modocid1)).find();
               recordDats.set("personnel", records4);
             } else if (i == (records2.size() + 3)) {
-              List<Record> records4 = dbTemplate("modocbatch.getModocpersonByid", Kv.by("docid", modocid1)).find();
+              List<Record> records4 = map6.get(modocid1);//dbTemplate("modocbatch.getModocpersonByid", Kv.by("docid", modocid1)).find();
               recordDats.set("personnel", records4);
             }
           }
