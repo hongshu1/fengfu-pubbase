@@ -126,8 +126,9 @@
 
     <label class="col-sm-1 col-form-label">税率</label>
     <div class="col-2">
-      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入税率"
-             maxlength="40" name="itaxrate" value="#(vendor.itaxrate??)" data-rule="pnumber"/>
+      <input type="number"  data-with-clearbtn="true" autocomplete="off"
+             class="form-control" placeholder="请输入税率" maxlength="40" name="itaxrate"
+             value="#(vendor.itaxrate??)" data-rule="money"/>
     </div>
   </div>
 
