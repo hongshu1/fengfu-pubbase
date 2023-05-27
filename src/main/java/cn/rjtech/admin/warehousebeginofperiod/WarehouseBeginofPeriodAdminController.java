@@ -109,4 +109,11 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     public void printtpl() {
         renderJsonData(service.printtpl(getLong(0)));
     }
+
+    /*
+    * 期初库存的仓库编码
+    * */
+    public void whoptions(){
+        renderJsonData(service.whoptions());
+    }
 }
