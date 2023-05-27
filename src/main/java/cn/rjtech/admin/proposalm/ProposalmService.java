@@ -312,7 +312,7 @@ public class ProposalmService extends BaseService<Proposalm> {
             ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), dbProposalm.getIauditstatus(), "当前单据非可编辑状态");
             // 更新主表
             tx(() -> {
-                dbProposalm._setAttrs(proposalm.keep("iautoid", "capplypersoncode", "capplypersonname", "cprojectcode", "cprojectname", "cpurposesn", "icategoryid", "isscheduled", "cdesc", "inatmoney", "inatsum", "ibudgetmoney", "ibudgetsum", "isupplementalmoney", "isupplementalsum", "csupplementaldesc"))
+                dbProposalm._setAttrs(proposalm.keep("iautoid","cdepcode", "capplypersoncode", "capplypersonname", "cprojectcode", "cprojectname", "cpurposesn", "icategoryid", "isscheduled", "cdesc", "inatmoney", "inatsum", "ibudgetmoney", "ibudgetsum", "isupplementalmoney", "isupplementalsum", "csupplementaldesc"))
                         .setIupdateby(user.getId())
                         .setDupdatetime(now);
 

@@ -49,8 +49,8 @@ where i.isEnabled = '1' and i.isDeleted = '0'
 #end
 
 #sql("getInventoryList")
-SELECT inv.cinvcode, inv.cinvname, inv.cinvstd, inv.cinvaddcode, inv.cinvabc, inv.dsdate, inv.cAddress, inv.itaxrate
-FROM Inventory inv
+SELECT inv.cinvcode, inv.cinvname, inv.cinvstd, inv.cinvaddcode, inv.cAddress, inv.itaxrate
+FROM bd_Inventory inv
 WHERE 1 = 1
 #if(q)
     AND (cInvCode like CONCAT ('%', #para(q), '%')

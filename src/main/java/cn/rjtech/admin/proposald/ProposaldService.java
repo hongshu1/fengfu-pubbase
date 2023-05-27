@@ -39,18 +39,7 @@ public class ProposaldService extends BaseService<Proposald> {
      * 后台管理分页查询
      */
     public List<Record> getList(Kv para) {
-    	List<Record> list = dbTemplate(u8SourceConfigName(), "proposald.getList", para).find();
-    	/*if(CollUtil.isNotEmpty(list)){
-	    	for (Record record : list) {
-	    		if(record.getInt("isourcetype") == ProposalmSourceTypeEnum.EXPENSE_BUDGET.getValue()){
-	    			record.set("ibudgetmoney", record.getBigDecimal("ibudgetmoney"));
-	    			record.set("ibudgetsum", expenseBudgetItemdService.getAmountSum(record.getLong("isourceid")));
-	    		}else if(record.getInt("isourcetype") == ProposalmSourceTypeEnum.INVESTMENT_PLAN.getValue()){
-	    			record.set("ibudgetmoney", expenseBudgetItemdService.getAmountSum(record.getLong("isourceid")));
-	    		}
-	    			
-			}
-    	}*/
+    	List<Record> list = dbTemplate("proposald.getList", para).find();
     	return list;
     }
 

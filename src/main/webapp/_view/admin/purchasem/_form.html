@@ -58,7 +58,7 @@
                 <input type="text" autocomplete="off" class="form-control"
                        data-autocomplete
                        data-link-para-ele="#cdepcodelink"
-                       data-url="admin/hrhiperson/autocompleteWithDept"
+                       data-url="admin/person/autocompleteWithDept"
                        data-width="800"
                        data-sync-ele="cpersoncode,cdepcode,cdepname"
                        data-text-attr="cpsn_name"
@@ -176,15 +176,14 @@
                     required: true,
                     url: "admin/purchasem/getInventoryAutocomplete",
                     // 同步设置存货名称, 规格信号, 单位等一些关联数据
-                    header: "存货编码,存货名称,规格型号,单位,品牌,税率",
-                    columnAttr: "cinvcode,cinvname,cinvstd,ccomunitname,caddress,itaxrate",
+                    header: "存货编码,存货名称,规格型号,品牌,税率",
+                    columnAttr: "cinvcode,cinvname,cinvstd,caddress,itaxrate",
                     valueAttr: "cinvcode",
                     textAttr: "cinvcode",
                     width: 600,
                     placeholder: "=请选择=",
                     changeColumns: [{column: 'cinvname', use: 'cinvname'},
                         {column: 'cinvstd', use: 'cinvstd'},
-                        {column: 'cunit', use: 'ccomunitname'},
                         {column: 'caddress', use: 'caddress'},
                         {column: 'itaxrate', use: 'itaxrate'}],
                     dialog: {

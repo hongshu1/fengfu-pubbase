@@ -48,7 +48,7 @@ SELECT
  top #(limit)
 #end
 v.*
-FROM Vendor v
+FROM bd_Vendor v
 WHERE  1 = 1
     #if(q)
         AND  (

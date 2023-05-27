@@ -36,13 +36,14 @@
             <div class="col">
                 <input type="text" autocomplete="off" class="form-control"
                        data-autocomplete
-                       data-url="admin/hrhiperson/autocompleteWithDept"
+                       data-url="admin/person/autocompleteWithDept"
                        data-link-para-ele="#capplypersoncode"
                        data-sync-ele="capplypersoncode,capplypersonname,cdepcode,cdepname"
                        data-text-attr="cpsn_name"
                        data-value-attr="cpsn_num"
                        data-column-attr="cpsn_num,cpsn_name,cdepcode,cdepname"
                        data-rule="required" data-tips="请选择申请人" maxlength="50"
+                       value="#(proposalm.capplypersonname??)"
                        #if(proposalm.issupplemental)
                             disabled
                        #else
@@ -51,7 +52,7 @@
                 >
                 <input type="hidden" id="capplypersoncode" autocomplete="off" class="form-control" maxlength="100" name="proposalm.capplypersoncode" value="#(proposalm.capplypersoncode??)" data-sync-attr="cpsn_num">
                 <input type="hidden" id="capplypersonname" autocomplete="off" class="form-control" maxlength="100" name="proposalm.capplypersonname" value="#(proposalm.capplypersonname??)" data-sync-attr="cpsn_name">
-                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" value="#(proposalm.cdepcode??)" readonly id="cdepcode" data-sync-attr="cdepcode">
+                <input type="hidden" autocomplete="off" class="form-control" maxlength="100" name="proposalm.cdepcode" value="#(proposalm.cdepcode??)"  id="cdepcode" data-sync-attr="cdepcode">
             </div>
             <label class="col-sm-offset-4 col-sm-1 col-form-label">申请日期(申請日付)</label>
             <div class="col-sm-3">

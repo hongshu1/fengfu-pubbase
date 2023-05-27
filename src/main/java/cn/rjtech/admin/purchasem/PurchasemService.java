@@ -47,7 +47,6 @@ import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
-import cn.rjtech.admin.hrhiperson.HrHiPersonService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryclass.InventoryClassService;
 import cn.rjtech.admin.period.PeriodService;
@@ -104,8 +103,6 @@ public class PurchasemService extends BaseService<Purchasem> {
     private PurchaseTypeService purchaseTypeService;
     @Inject
     private DepartmentService departmentService;
-    @Inject
-    private HrHiPersonService hrHiPersonService;
     @Inject
     private ProjectCardService projectCardService;
     @Inject
@@ -410,8 +407,6 @@ public class PurchasemService extends BaseService<Purchasem> {
      */
     public Record getPurchasemByIautoid(Long iautoid) {
         Record record = details(Kv.by("iautoid", iautoid));
-       /* record.set("cpersonname", hrHiPersonService.findByPersoncode(record.get("cpersoncode")).get("cpersonname"));
-        record.set("cdepname",departmentService.getCdepName(record.get("cdepcode")));*/
         // 设置金额
         Long ifirstsourceproposalid = record.get("ifirstsourceproposalid");
         if (isOk(record) && notNull(ifirstsourceproposalid)) {
@@ -665,7 +660,7 @@ public class PurchasemService extends BaseService<Purchasem> {
         // 系统管理员 || 存在权限部门
         para.set("isSystemAdmin", user.getIsSystemAdmin())
         .set("iorgid", getOrgId());
-        List<Record> list = dbTemplate(u8SourceConfigName(), "purchasem.chooseProposalmDatas", para.set("iorgid", getOrgId())).find();
+        List<Record> list = dbTemplate("purchasem.chooseProposalmDatas", para.set("iorgid", getOrgId())).find();
         if (CollUtil.isEmpty(list)) return null;
         List<Record> purposeList = dictionaryService.getOptionsByTypeKey(DictionaryTypeKeyEnum.PURPOSE.getValue());
         ValidationUtils.notEmpty(purposeList, "缺少目的区分的字典数据");
@@ -694,7 +689,7 @@ public class PurchasemService extends BaseService<Purchasem> {
      * 参照禀议书界面-禀议书项目数据查询
      * */
 	public List<Record> chooseProposalmDatasDetail(Kv para) {
-		List<Record> list = dbTemplate(u8SourceConfigName(), "purchasem.chooseProposalmDatasDetail", para).find();
+		List<Record> list = dbTemplate("purchasem.chooseProposalmDatasDetail", para).find();
 		return list;
 	}
 	/**

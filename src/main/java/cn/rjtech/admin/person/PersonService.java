@@ -34,6 +34,7 @@ import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -529,8 +530,11 @@ public class PersonService extends BaseService<Person> {
     return dbTemplate("person.getpersonByCpsnnum", Kv.by("cpsnnum", cpsnnum)).findFirst();
   }
 
-public Record findFirstByCuserid(Long iuserid) {
-	return findFirstRecord(selectSql().eq("iuserid", iuserid).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
-}
-
+	public Record findFirstByCuserid(Long iuserid) {
+		return findFirstRecord(selectSql().eq("iuserid", iuserid).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
+	}
+	
+	public List<Record> getAutocompleteListWithDept(String cdepcode,String q, Integer limit) {
+	    return dbTemplate("person.getAutocompleteListWithDept", Okv.by("q", q).set("limit", limit).set("cdepcode", cdepcode)).find();
+	}
 }
