@@ -258,6 +258,26 @@
                     {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "qtys", use: "qty"}]
 
                 },
+                cinvcode:{
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "=请选择=",
+                    type: "autocomplete",
+                    url: "admin/otherout/barcodeDatas",
+                    textAttr: "barcode",
+                    width: 800,
+                    sync: "",
+                    valueAttr: "barcode",
+                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,cuomclassname,cinvccode,cinvcname,sourcebilltype",
+                    header: '订单编号,条码,存货编码,客户部番,部品名称,规格型号,库存主单位,项目大类编码,项目大类名称',
+                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
+                        { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
+                        { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
+                        { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
+                        {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "qtys", use: "qty"}]
+
+                },
             }
         };
         return editableTableOptions;
