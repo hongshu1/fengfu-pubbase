@@ -5,6 +5,7 @@ import cn.jbolt._admin.dictionary.DictionaryAdminController;
 import cn.jbolt._admin.dictionary.DictionaryTypeAdminController;
 import cn.jbolt._admin.globalconfig.GlobalConfigAdminController;
 import cn.jbolt._admin.globalconfig.GlobalConfigTypeAdminController;
+import cn.jbolt._admin.hiprint.HiprintAdminController;
 import cn.jbolt._admin.loginlog.LoginLogAdminController;
 import cn.jbolt._admin.monitor.ServerMonitorAdminController;
 import cn.jbolt._admin.msgcenter.JBoltMsgCenterAdminController;
@@ -72,6 +73,7 @@ public class AdminRoutes extends Routes {
 		this.add("/admin/qiniu/bucket", QiniuBucketAdminController.class,"/qiniu/bucket");
 		this.add("/admin/sensitiveword", SensitiveWordAdminController.class,"/sensitiveword");
 		this.add("/admin/redis", RedisAdminController.class);
+		this.add("/admin/hiprint", HiprintAdminController.class,"/hiprint");
 	}
 
 }
