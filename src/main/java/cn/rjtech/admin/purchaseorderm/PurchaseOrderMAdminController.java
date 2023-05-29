@@ -90,14 +90,29 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
                     @Para(value = "iSourceType") Integer iSourceType) {
 
         Vendor vendor = vendorService.findById(iVendorId);
+        ValidationUtils.notNull(vendor, "供应商记录不存在");
         Record record = new Record();
-        record.set(PurchaseOrderM.IVENDORID, vendor.getIAutoId());
-        record.set(Vendor.CVENNAME, vendor.getCVenName());
-        record.set(PurchaseOrderM.DBEGINDATE, beginDate);
-        record.set(PurchaseOrderM.DENDDATE, endDate);
         setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType, iSourceType));
         record.set(PurchaseOrderM.ITYPE, iSourceType);
+        record.set(PurchaseOrderM.IVENDORID, vendor.getIAutoId());
+        record.set(PurchaseOrderM.DBEGINDATE, beginDate);
+        record.set(PurchaseOrderM.DENDDATE, endDate);
+    
+        if (ObjectUtil.isNotNull(vendor.getITaxRate())){
+            record.set(PurchaseOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());
+        }
+        
+        record.set(PurchaseOrderM.CCURRENCY, vendor.getCCurrency());
+        record.set(PurchaseOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
+        Person person = personService.findById(vendor.getIDutyPersonId());
+        if (ObjectUtil.isNotNull(person)) {
+            set("personname", person.getCpsnName());
+        }
+        record.set(PurchaseOrderM.IDEPARTMENTID, vendor.getCVenDepart());
+        // 带出供应商下的业务员，币种，税率
         set("purchaseOrderM", record);
+    
+        set(Vendor.CVENNAME, vendor.getCVenName());
         if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == iSourceType){
             render("blank_add.html");
             return;
@@ -151,7 +166,12 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         if (StrUtil.isNotBlank(isView)) {
             set("isView", 1);
         }
-        
+        if (ObjectUtil.isNotNull(purchaseOrderM.getITaxRate())){
+            purchaseOrderM.setITaxRate( purchaseOrderM.getITaxRate().stripTrailingZeros());
+        }
+        if (ObjectUtil.isNotNull(purchaseOrderM.getIExchangeRate())){
+            purchaseOrderM.setIExchangeRate( purchaseOrderM.getIExchangeRate().stripTrailingZeros());
+        }
         set("purchaseOrderM", purchaseOrderM);
         setAttrs(service.getDateMap(purchaseOrderM));
         if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == purchaseOrderM.getIType()){

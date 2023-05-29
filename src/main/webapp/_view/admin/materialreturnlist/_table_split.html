@@ -14,9 +14,9 @@
     <td>${data.cinvstd}</td>
     <td>品牌</td>
     <td>${data.ipurchaseuomid}</td>
-    <td>${data.iqty}</td>
-    <td>${data.refundqty}</td>
+    <td>${data.qty}</td>
     <td>${data.memo}</td>
+    <td hidden>${data.iqty}</td>
   </tr>
     {@/each}
 </textarea>
@@ -72,8 +72,8 @@
               <th data-width="100" data-column="pingpai">品牌</th>
               <th data-width="100" data-column="ipurchaseuomid">采购单位</th>
               <th data-width="100" data-column="qty">现存数</th>
-              <th data-width="100" data-column="refund_qty">退货数量</th>
               <th data-width="100" data-column="memo">备注</th>
+              <th hidden data-width="100" data-column="qtys"></th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -116,7 +116,7 @@
                   {column: "cinvname1", use: "cinvname1"},
                   {column: "cinvstd", use: "cinvstd"},
                   {column: "pingpai", use: "cinvname1"},
-                  {column: "qty", use: "qty"},
+                  {column: "iqty", use: "qty"},
                   {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
 
           },
@@ -137,7 +137,7 @@
                   {column: "cinvname1", use: "cinvname1"},
                   {column: "cinvstd", use: "cinvstd"},
                   {column: "pingpai", use: "cinvname1"},
-                  {column: "qty", use: "qty"},
+                  {column: "iqty", use: "qty"},
                   {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
           },
           /*        ipurchaseuomid: {
@@ -145,33 +145,28 @@
                     placeholder: "采购单位",
                     tooltip: "采购单位",
                   },*/
-          refund_qty: {
+          qty: {
               type:"input",
               submitAttr:"qty",
+              required:true,
               handler:function (table,td,text,value,jsonData) {
-                  var qty =  jsonData.qty;
-                  console.log(qty);
-                  let refundqty = (typeof +value === 'number' && !isNaN(value))?value:0;
-                  console.log('退货数量===>',refundqty);
-                  if (refundqty > 0){
-                      showFormEleErrorStyle(td,"请输入大于或等于0的数量！！！");
+                  let iqty =  jsonData.iqty;
+                  console.log(iqty);
+                  let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
+                  console.log('退货数量===>',qty);
+                  if (qty > 0){
+                      showFormEleErrorStyle(td,"请输入小于或等于0的数量！！！");
                       return false;
                   }
-                  let cha =  qty + refundqty;
-                  if (cha > 0){
-                      showFormEleErrorStyle(td,"可退数量为"+qty+",退货数量已超出！！！");
+                  let cha = iqty- (qty);
+                  if (cha > iqty*2){
+                      showFormEleErrorStyle(td,"可退数量为"+iqty+",退货数量已超出！！！");
                       return false;
                   }
               }
           },
-          qty: {
-              summary:[{
-                  dir:"v",
-                  tofixed:2,
-                  roundtag:"round",
-                  removezero:true,
-                  formula:"sum"
-              }]
+          qtys: {
+              submitAttr:"qtys",
           },
           memo: {
               type:"input",
@@ -188,7 +183,6 @@
    * @returns {boolean}
    */
   function checkTds(){
-      debugger;
       //执行item表格 每一个修改了的行里是否有必填的没有填写
       var trs=$("#Puinstoreform_TableId_#(pageId)").find("tr[data-changed='true']");
       if(isOk(trs)){
@@ -196,6 +190,7 @@
           trs.each(function(){
               tempTr=$(this);
               tds=tempTr.find("td[data-changed='true'][class='is-invalid']");
+              console.log(tds)
               if(isOk(tds)){
                   hasInvalid = true;
                   count++;

@@ -984,7 +984,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 							purchaseorderdQtyService.delete(purchaseOrderD.getIAutoId(), purchaseorderdQty.getIYear(), purchaseorderdQty.getIMonth(), purchaseorderdQty.getIDate());
 							break;
 					}
-					purchaseOrderQtyList.add(purchaseorderdQty);
+					if (qty.compareTo(BigDecimal.ZERO) > 0)
+						purchaseOrderQtyList.add(purchaseorderdQty);
 				}
 			}
 		}

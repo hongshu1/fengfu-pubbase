@@ -170,12 +170,12 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	 * 整单退货出库单列表明细
 	 */
 	public void getmaterialLines() {
-		String autoid = get("puinstore.autoid");
+		String autoid = get("autoid");
 		String OrgCode = getOrgCode();
 		Kv kv = new Kv();
 		kv.set("autoid",autoid== null? "" :autoid);
 		kv.set("OrgCode",OrgCode);
-		renderJsonData(service.getmaterialReturnListLines(getPageNumber(), getPageSize(), kv));
+		renderJsonData(service.getmaterialLines(getPageNumber(), getPageSize(), kv));
 	}
 
 
