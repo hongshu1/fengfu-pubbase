@@ -81,12 +81,25 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 		Vendor vendor = vendorService.findById(iVendorId);
 		Record record = new Record();
 		record.set(SubcontractOrderM.IVENDORID, vendor.getIAutoId());
-		record.set(Vendor.CVENNAME, vendor.getCVenName());
 		record.set(SubcontractOrderM.DBEGINDATE, beginDate);
 		record.set(SubcontractOrderM.DENDDATE, endDate);
-		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType, iSourceType));
+		
+		if (ObjectUtil.isNotNull(vendor.getITaxRate())){
+			record.set(SubcontractOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());
+		}
+		
+		record.set(SubcontractOrderM.CCURRENCY, vendor.getCCurrency());
+		record.set(SubcontractOrderM.IDEPARTMENTID, vendor.getCVenDepart());
+		record.set(SubcontractOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
+		
+		Person person = personService.findById(vendor.getIDutyPersonId());
+		if (ObjectUtil.isNotNull(person)){
+			set("personname",person.getCpsnName());
+		}
 		set("subcontractOrderM", record);
 		record.set(SubcontractOrderM.ITYPE, iSourceType);
+		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType, iSourceType));
+		
 		if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == iSourceType){
 			render("blank_add.html");
 			return;
@@ -129,6 +142,12 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 		set(Vendor.CVENNAME, vendor.getCVenName());
 		if (StrUtil.isNotBlank(isView)){
 			set("isView", 1);
+		}
+		if (ObjectUtil.isNotNull(subcontractOrderM.getITaxRate())){
+			subcontractOrderM.setITaxRate( subcontractOrderM.getITaxRate().stripTrailingZeros());
+		}
+		if (ObjectUtil.isNotNull(subcontractOrderM.getIExchangeRate())){
+			subcontractOrderM.setIExchangeRate( subcontractOrderM.getIExchangeRate().stripTrailingZeros());
 		}
 		set("subcontractOrderM",subcontractOrderM);
 		setAttrs(service.getDateMap(subcontractOrderM));

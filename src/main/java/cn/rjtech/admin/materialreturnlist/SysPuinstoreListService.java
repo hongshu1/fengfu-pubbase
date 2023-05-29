@@ -21,6 +21,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -249,6 +250,24 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
 				}
 
+
+
+//				if (updateRecordList != null) {
+//					for (int i = 0; i < updateRecordList.size(); i++) {
+//						k++;
+//						Record record = updateRecordList.get(i);
+//						Integer qty = record.getInt("qty");
+//						Integer qtys = record.getInt("qtys");
+//						//整单退货判断
+//						Integer cha1 = qty- (qtys);
+//						if (cha1 > qty*2){
+//							ValidationUtils.isTrue(false, "第" + k + "行退货数量超出现存数（" + qtys + "）！！！");
+//						}else{
+//							ValidationUtils.isTrue(false, "第" + k + "行现存数未输入！！！");
+//						}
+//					}
+//				}
+
 				if (puinstore.getAutoID() == null && "save".equals(revokeVal)) {
 //					保存
 //					订单状态：1=已保存，2=待审核，3=已审核
@@ -276,10 +295,49 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 			// 获取待保存数据 执行保存
 			if (jBoltTable.saveIsNotBlank()) {
 				List<SysPuinstoredetail> lines = jBoltTable.getSaveModelList(SysPuinstoredetail.class);
-
+				//判断物料退货数量
+				List<Record> jBoltTableSaveRecordList = jBoltTable.getSaveRecordList();
+				int k = 0;
+				if (jBoltTableSaveRecordList != null) {
+					for (int i = 0; i < jBoltTableSaveRecordList.size(); i++) {
+						k++;
+						Record record = jBoltTableSaveRecordList.get(i);
+						if (isNull(record.get("masid"))){
+							//输入数量
+							BigDecimal qty = record.getBigDecimal("qty");
+							//当前单行数量
+							BigDecimal iqty = record.getBigDecimal("iqty");
+							BigDecimal a=new BigDecimal(2);
+							double cha = qty.subtract(iqty).doubleValue();
+							double value = iqty.multiply(a).doubleValue();
+							//物料退货判断
+							if (value + cha < 0){
+								ValidationUtils.isTrue(false, "第" + k + "行退货数量超出现存数（" + iqty + "）！！！");
+							}
+						}else {
+							//输入数量
+							BigDecimal qty = record.getBigDecimal("qty");
+							//当前单行数量
+							BigDecimal qtys = record.getBigDecimal("qtys");
+							//判断条件
+							BigDecimal a=new BigDecimal(2);
+							double cha = qty.subtract(qtys).doubleValue();
+							double value = qtys.multiply(a).doubleValue();
+							//整单退货判断
+							if (value + cha < 0){
+								ValidationUtils.isTrue(false, "第" + k + "行退货数量超出现存数（" + qtys + "）！！！");
+							}
+						}
+					}
+				}
 				String finalHeaderId = headerId;
 				lines.forEach(otherOutDetail -> {
-					otherOutDetail.setMasID(finalHeaderId);
+					Object qtys = otherOutDetail.get("qty");
+					System.out.println(qtys);
+
+					if (otherOutDetail.getMasID()==null){
+						otherOutDetail.setMasID(finalHeaderId);
+					}
 					otherOutDetail.setCreateDate(nowDate);
 					otherOutDetail.setCreatePerson(userName);
 					otherOutDetail.setModifyDate(nowDate);
@@ -386,6 +444,16 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	 */
 	public Page<Record> getmaterialReturnListLines(int pageNumber, int pageSize, Kv kv){
 		return dbTemplate("materialreturnlist.getmaterialReturnListLines",kv).paginate(pageNumber, pageSize);
+
+	}/**
+	 * 材料出库单列表 明细
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param kv
+	 * @return
+	 */
+	public Page<Record> getmaterialLines(int pageNumber, int pageSize, Kv kv){
+		return dbTemplate("materialreturnlist.getmaterialLines",kv).paginate(pageNumber, pageSize);
 
 	}
 

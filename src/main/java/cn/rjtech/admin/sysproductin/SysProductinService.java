@@ -1,7 +1,9 @@
 package cn.rjtech.admin.sysproductin;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -9,20 +11,22 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.SysProductin;
-import cn.rjtech.model.momdata.SysProductindetail;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
+import cn.smallbun.screw.core.util.CollectionUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.json.JSONArray;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 产成品入库单
@@ -37,6 +41,9 @@ public class SysProductinService extends BaseService<SysProductin> {
     protected SysProductin dao() {
         return dao;
     }
+
+    @Inject
+    private PersonService personservice;
 
     @Inject
     private SysProductindetailService sysproductindetailservice;
@@ -267,6 +274,11 @@ public class SysProductinService extends BaseService<SysProductin> {
 
         }
         sysproductindetailservice.batchUpdate(sysproductindetail);
+
+        // 测试调用接口
+        System.out.println("```````````````````````````````"+ new Date());
+        Ret ret = pushU8(sysotherin, sysproductindetail);
+        System.out.println(new Date()+"```````````````````````````````"+ret);
     }
 
     // 可编辑表格提交-删除数据
@@ -293,4 +305,103 @@ public class SysProductinService extends BaseService<SysProductin> {
         kv.set("username", username);
         return dbTemplate("sysproductin.selectname", kv).findFirst();
     }
+
+
+
+    //推送u8数据接口
+    public Ret pushU8(SysProductin sysproductin, List<SysProductindetail> sysproductindetail) {
+        if(!CollectionUtils.isNotEmpty(sysproductindetail)){
+            return Ret.ok().msg("数据不能为空");
+        }
+
+        User user = JBoltUserKit.getUser();
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("userCode",user.getUsername());
+        data.put("organizeCode",this.getdeptid());
+        data.put("token","");
+
+        JSONObject preallocate = new JSONObject();
+
+
+        preallocate.set("userCode",user.getUsername());
+        preallocate.set("organizeCode",this.getdeptid());
+        preallocate.set("CreatePerson",user.getId());
+        preallocate.set("CreatePersonName",user.getName());
+        preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
+        preallocate.set("tag","ProductionIn");
+        preallocate.set("type","ProductionIn");
+
+        data.put("PreAllocate",preallocate);
+
+        JSONArray maindata = new JSONArray();
+        sysproductindetail.stream().forEach(s -> {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.set("Tag","ProductionIn");
+            jsonObject.set("BillDate",sysproductin.getBillDate());
+            jsonObject.set("organizecode",this.getdeptid());
+            jsonObject.set("iwhcode",sysproductin.getWhcode());
+            jsonObject.set("iposcode",s.getPosCode());
+            jsonObject.set("iposname","");
+            jsonObject.set("ispack","0");
+            jsonObject.set("iswhpos","0");
+            jsonObject.set("index","1");
+            jsonObject.set("packrate","1");
+            jsonObject.set("barcode",s.getBarcode());
+            jsonObject.set("batch","");
+            jsonObject.set("sourcebillnorow","");
+            jsonObject.set("sourcebillrowno",s.getSourceBIllNoRow());
+            jsonObject.set("sourcebillno",s.getSourceBillNo());
+            jsonObject.set("sourcebilltype",s.getSourceBillType());
+            jsonObject.set("sourcebillqty","");
+            jsonObject.set("sourcebilldid",s.getSourceBillDid());
+            jsonObject.set("invcode",s.getInvCode());
+            jsonObject.set("invname","1");
+            jsonObject.set("invstd","");
+            jsonObject.set("qty",s.getQty());
+            jsonObject.set("noreceivedqty","");
+            jsonObject.set("receivedqty","");
+            jsonObject.set("vencode",sysproductin.getVenCode());
+            jsonObject.set("encodingname","产成品条码");
+            jsonObject.set("encodingcode","ProductionBarCode");
+            jsonObject.set("IDeptCode",this.getdeptid());
+            jsonObject.set("IRdType","101");
+            jsonObject.set("IRdName","生产入库");
+            jsonObject.set("IRdCode","101");
+
+            maindata.put(jsonObject);
+        });
+        data.put("MainData",maindata);
+
+        //            请求头
+        Map<String, String> header = new HashMap<>(5);
+        header.put("Content-Type", "application/json");
+        String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
+
+        try {
+            String post = HttpApiUtils.httpHutoolPost(url, data, header);
+            com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
+            if (isOk(post)) {
+                if ("201".equals(jsonObject.getString("code"))) {
+                    return Ret.ok().setOk().data(jsonObject);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return Ret.msg("上传u8失败");
+    }
+
+
+    //通过当前登录人名称获取部门id
+    public String getdeptid(){
+        String dept = "001";
+        User user = JBoltUserKit.getUser();
+        Person person = personservice.findFirstByUserId(user.getId());
+        if(null != person && "".equals(person)){
+            dept = person.getCOrgCode();
+        }
+        return dept;
+    }
+
 }
