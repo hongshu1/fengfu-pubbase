@@ -385,7 +385,7 @@ public class PurchasemService extends BaseService<Purchasem> {
      * @return
      */
     public Record details(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "purchasem.paginateAdminDatas", kv).findFirst();
+        return dbTemplate("purchasem.paginateAdminDatas", kv).findFirst();
     }
 
     /**
