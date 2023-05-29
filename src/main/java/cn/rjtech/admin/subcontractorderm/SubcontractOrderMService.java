@@ -997,6 +997,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 							subcontractorderdQtyService.delete(subcontractOrderD.getIAutoId(), subcontractorderdQty.getIYear(), subcontractorderdQty.getIMonth(), subcontractorderdQty.getIDate());
 							break;
 					}
+					if (qty.compareTo(BigDecimal.ZERO)>0)
 					subcontractorderdQtyList.add(subcontractorderdQty);
 				}
 			}

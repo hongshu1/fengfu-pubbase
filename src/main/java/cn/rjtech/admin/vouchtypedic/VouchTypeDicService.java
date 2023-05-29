@@ -14,8 +14,10 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 基础档案-单据业务类型字典
@@ -75,7 +77,7 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
 
         VouchTypeDic vouchTypeDic1 = selectNotCvbtId(CVBTID);
         if (isOk(vouchTypeDic1)){
-            ValidationUtils.error(ErrorMsg.SAVE_FAILED);
+            ValidationUtils.error("添加失败，单据业务类型已存在");
         }
         vouchTypeDic.setCVBTID(CVBTID);
         vouchTypeDic.setICreateBy(JBoltUserKit.getUserId());
@@ -112,6 +114,14 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
         if (dbVouchTypeDic == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
+
+        String cvbtid = vouchTypeDic.getCVTID()+vouchTypeDic.getCBTID();
+        List<Record> list = selectListCvbtid();
+        for (Record row : list) {
+            if (row.get("cvbtid").equals(cvbtid)){
+                ValidationUtils.error("修改失败，单据业务类型已存在");
+            }
+        }
         // 单据类型
         vouchTypeDic.setCVTChName(JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.VouchType.name(), vouchTypeDic.getCVTID()));
         // 单据业务
@@ -129,6 +139,10 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
             //addUpdateSystemLog(vouchTypeDic.getIAutoId(), JBoltUserKit.getUserId(), vouchTypeDic.getName());
         }
         return ret(success);
+    }
+
+    private List<Record> selectListCvbtid() {
+        return dbTemplate("vouchtypedic.selectListCvbtid").find();
     }
 
 
@@ -156,4 +170,7 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
         return null;
     }
 
+    public List<Record> getCvbtId() {
+        return dbTemplate("vouchtypedic.selectListCvbtid").find();
+    }
 }

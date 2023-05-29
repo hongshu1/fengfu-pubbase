@@ -87,4 +87,9 @@ public class VouchTypeDicAdminController extends BaseAdminController {
         renderJson(service.deleteById(getLong(0)));
     }
 
+
+    public void options(){
+    renderJsonData(service.getCvbtId());
+    }
+
 }
