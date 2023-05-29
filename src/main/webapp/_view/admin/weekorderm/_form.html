@@ -1,207 +1,354 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_title">
-	<div class="row">
-		<div class="col-12">
-			<div class="card">
-				<div class="card-body">
-					<div class="col" >
-						<button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
-
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/weekorderm", iautoid=weekOrderM.iautoid??0, iauditstatus=weekOrderM.iauditstatus??0, iauditway=weekOrderM.iauditway??0)
-                        
-						<button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
-					</div>
-				</div>
-			</div>
-		</div>
-        
-		<div class="col-12">
-			<div class="card">
-				<div class="card-body">
-					<form onsubmit="return false;" id="WeekOrderM_Form" action="#(action)" method="post">
-                        
-						#if(weekOrderM.iAutoId??)
-						<input type="hidden" name="weekOrderM.iAutoId" value="#(weekOrderM.iautoid??)" />
-						#end
-                        
-						<div class="row">
-							<div class="col-md-5">
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">订单号</label>
-									<div class="col-8">
-										<input type="text" data-rule="required" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control"  maxlength="40" name="weekOrderM.cOrderNo" value="#(weekOrderM.corderno??)"/>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-5">
-								<div class="form-group row">
-									<input type="hidden" name="weekOrderM.icustomerid" value="#(weekOrderM.icustomerid??)" id="icustomerid" data-sync-attr="iautoid" />
-									<input type="hidden" name="icustomermid" value="#(weekOrderM.icustomerid??)" id="icustomerid2" data-sync-attr="iautoid"/>
-
-									<label class="col-sm-2 col-form-label">客户名称</label>
-									<div class="col-8">
-										<input type="text" class="form-control"
-											   data-autocomplete
-											   data-url="admin/customer/autocomplete"
-											   data-rule="required"
-                                               data-sync-ele="#icustomerid,icustomerid2"
-											   data-text-attr="ccusname"
-											   data-value-attr="iautoid"
-											   data-column-attr="ccuscode,ccusname"
-											   placeholder="请选择"
-											   data-tips="请选择"
-											   data-header="客户编码,客户名称"
-											   maxlength="40"
-											   value="#(weekOrderM.ccusname??)">
-									</div>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
+    <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="row">
-                    <div class="col-sm-auto">
-                        <h5>表头拓展字段</h5>
-                    </div>
-                </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">拓展字段</label>
-                                <div class="col-8">
-                                    <input type="text" data-tips="" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="" maxlength="40" name="weekOrderM.cDefine5" value="#(weekOrderM.cDefine5??)"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">拓展字段</label>
-                                <div class="col-8">
-                                    <input type="text" data-tips="" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="" maxlength="40" name="weekOrderM.cDefine6" value="#(weekOrderM.cDefine6??)"/>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col">
+                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
+
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/weekorderm",
+                        iautoid=weekOrderM.iautoid??0, iauditstatus=weekOrderM.iauditstatus??0,
+                        iauditway=weekOrderM.iauditway??0)
+
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
             </div>
         </div>
-	</div>
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form onsubmit="return false;" id="WeekOrderM_Form" action="#(action)" method="post">
+
+                        #if(weekOrderM.iAutoId??)
+                        <input type="hidden" name="weekOrderM.iAutoId" value="#(weekOrderM.iautoid??)"/>
+                        #end
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">订单号</label>
+                                    <div class="col-8">
+                                        <input type="text" data-rule="required" data-tips="请输入订单号"
+                                               data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                               maxlength="40" name="weekOrderM.cOrderNo"
+                                               value="#(weekOrderM.corderno??)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">订单日期</label>
+                                    <div class="col-8">
+                                        <input type="text" readonly data-notnull="true" autocomplete="off"
+                                               class="form-control" maxlength="20" name="weekOrderM.dOrderDate"
+                                               data-rule="required"
+                                               value="#datetime(weekOrderM.dOrderDate??DateUtil.getNow(),'yyyy-MM-dd')"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">业务类型</label>
+                                    <div class="col-8 col-form-label">
+                                        <select class="form-control" name="weekOrderM.ibustype"
+                                                data-autoload
+                                                data-url="admin/dictionary/options?key=null"
+                                                data-select-type="select"
+                                                data-text="=业务类型="
+                                                data-value=""
+                                                data-value-attr="sn"
+                                                value="#(weekOrderM.ibustype??)"
+                                        ></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">销售类型</label>
+                                    <div class="col-8">
+                                        <select class="form-control" data-tips="请选择销售类型"
+                                                data-url="admin/dictionary/options?key=sale_type"
+                                                name="weekOrderM.isaletypeid" data-autoload data-text="=请选择销售类型="
+                                                data-value-attr="sn" data-value=""
+                                                data-select="#(weekOrderM.isaletypeid??)"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <input type="hidden" name="weekOrderM.icustomerid"
+                                           value="#(weekOrderM.icustomerid??)" id="icustomerid"
+                                           data-sync-attr="iautoid"/>
+                                    <input type="hidden" name="icustomermid" value="#(weekOrderM.icustomerid??)"
+                                           id="icustomerid2" data-sync-attr="iautoid"/>
+                                    <label class="col-sm-3 col-form-label">客户名称</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control"
+                                               data-autocomplete
+                                               data-url="admin/customer/autocomplete"
+                                               data-rule="required"
+                                               data-sync-ele="#icustomerid,icustomerid2"
+                                               data-text-attr="ccusname"
+                                               data-value-attr="iautoid"
+                                               data-column-attr="ccuscode,ccusname"
+                                               placeholder="请选择"
+                                               data-tips="请选择"
+                                               data-header="客户编码,客户名称"
+                                               maxlength="40"
+                                               value="#(weekOrderM.ccusname??)">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">付款条件</label>
+                                    <div class="col-8">
+                                        <input type="text" data-with-clearbtn="true" autocomplete="off"
+                                               class="form-control" placeholder="请输入付款条件" maxlength="100"
+                                               name="weekOrderM.cPaymentTerm"
+                                               value="#(weekOrderM.cPaymentTerm??)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">销售部门</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control" data-autocomplete
+                                               data-url="admin/salesShipmentList/department" data-rule="required"
+                                               data-hidden-input="cdepcode" data-text-attr="cdepname"
+                                               data-column-attr="cdepcode,cdepname" placeholder="请选销售部门"
+                                               data-tips="请选销售部门"
+                                               data-header="销售部门编码,销售部门名称" maxlength="40" value="#(cdepname??)">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">业务员</label>
+                                    <div class="col-8">
+                                        <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId"
+                                               value="#(weekOrderM.iDutyUserId??)"/>
+                                        <input type="text" autocomplete="off" value="#(personname??)"
+                                               class="form-control"
+                                               placeholder="==请选择人员=="
+                                               data-rule="required"
+                                               data-jboltinput
+                                               data-width="600"
+                                               data-height="450"
+                                               data-refresh="true"
+                                               data-hidden-input="ipersonid_#(pageId)"
+                                               data-load-type="ajaxportal"
+                                               data-url="admin/workregionm/personTable"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">税率</label>
+                                    <div class="col-8">
+                                        <input type="text" autocomplete="off" class="form-control" data-rule="money"
+                                               data-notnull="false"
+                                               placeholder="请输入税率" maxlength="40" name="iTaxRate"
+                                               value="#(weekOrderM.iTaxRate??)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">币种</label>
+                                    <div class="col-8">
+                                        <select class="form-control"
+                                                data-autoload
+                                                name="customerm.ccurrency"
+                                                data-select-type="select"
+                                                data-rule="select"
+                                                data-tips="请选择"
+                                                data-url="admin/dictionary/options?key=ccurrency"
+                                                data-text="=请选择数据分类="
+                                                data-value=""
+                                                data-value-attr="sn"
+                                                data-select="#(customerm.ccurrency??)">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">汇率</label>
+                                    <div class="col-8">
+                                        <input type="text" data-with-clearbtn="true" autocomplete="off"
+                                               class="form-control" data-rule="money_4"
+                                               placeholder="请输入汇率" maxlength="40" name="iExchangeRate"
+                                               value="#(weekOrderM.iExchangeRate??)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">备注</label>
+                                    <div class="col-8">
+                                            <textarea class="form-control" style="height:80px" placeholder="请输入备注"
+                                                      data-tips="请输入备注" maxlength="200" name="cMemo">#(weekOrderM.cMemo??)</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">拓展字段</label>
+                                    <div class="col-8">
+                                        <input type="text" data-tips="" data-with-clearbtn="true" autocomplete="off"
+                                               class="form-control" placeholder="" maxlength="40"
+                                               name="weekOrderM.cDefine5"
+                                               value="#(weekOrderM.cDefine5??)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">拓展字段</label>
+                                    <div class="col-8">
+                                        <input type="text" data-tips="" data-with-clearbtn="true" autocomplete="off"
+                                               class="form-control" placeholder="" maxlength="40"
+                                               name="weekOrderM.cDefine6"
+                                               value="#(weekOrderM.cDefine6??)"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 
 <div class="jbolt_page_content">
-    
-	<script type="text/template" id="jboltTable_demotpl_#(pageId)">
-		{@each datas as data,index}
-		<tr data-id="${data.iautoid}">
-			<td>${pageNumber,pageSize,index | rownum}</td>
-			<td>
-				<a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
-			</td>
-			<td>${data.cdistrictname}</td>
-			<td>${data.cplancode}</td>
-			<td>${data.cinvcode}</td>
-			<td>${data.cinvcode1}</td>
-			<td>${data.cinvname1}</td>
-			<!--<td>${data.cinvstd}</td>-->
 
-			<td>${data.iqty}</td>
-			<!--<td>${data.isalesuomid}</td>-->
+    <script type="text/template" id="jboltTable_demotpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
+                   data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+            </td>
+            <td>${data.cdistrictname}</td>
+            <td>${data.cplancode}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <!--<td>${data.cinvstd}</td>-->
 
-			<td>${data.dplanaogdate}</td>
-			<td>${data.cplanaogtime}</td>
-			<td>${data.ccode}</td>
-			<td>${data.cversion}</td>
-			<td>${data.cmemo}</td>
-		</tr>
-		{@/each}
-	</script>
+            <td>${data.iqty}</td>
+            <!--<td>${data.isalesuomid}</td>-->
 
-	<div class="jbolt_table_toolbar" id="WeekOrderM_toolbar_#(pageId)">
-		<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-			<button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
-			<button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除行</button>
+            <td>${data.dplanaogdate}</td>
+            <td>${data.cplanaogtime}</td>
+            <td>${data.ccode}</td>
+            <td>${data.cversion}</td>
+            <td>${data.cmemo}</td>
+        </tr>
+        {@/each}
+    </script>
 
-			<div class="j_upload_file_box"
-				 data-name="file"
-				 data-btn-class="btn dropdown-item"
-				 data-placeholder="上传导入"
-				 data-form="WeekOrderM_Form"
-				 data-confirm="确认导入数据？"
-				 data-accept="excel"
-				 data-maxsize="20480"
-				 data-handler="uploadFile"
-				 data-upload-success-handler="uploadHandler"
-				 data-url="/admin/dataimport/importExcelData">
-			</div>
-		</div>
-	</div>
+    <div class="jbolt_table_toolbar" id="WeekOrderM_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
+            <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？"
+                    class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除行
+            </button>
 
-	<table class="jbolt_table thead_font_normal table-bordered table-center"
+            <div class="j_upload_file_box"
+                 data-name="file"
+                 data-btn-class="btn dropdown-item"
+                 data-placeholder="上传导入"
+                 data-form="WeekOrderM_Form"
+                 data-confirm="确认导入数据？"
+                 data-accept="excel"
+                 data-maxsize="20480"
+                 data-handler="uploadFile"
+                 data-upload-success-handler="uploadHandler"
+                 data-url="/admin/dataimport/importExcelData">
+            </div>
+        </div>
+    </div>
+
+    <table class="jbolt_table thead_font_normal table-bordered table-center"
            id="jbolt_Table_#(pageId)"
-		   data-jbolttable
-		   #if(weekOrderM.iAutoId??)
-		   data-ajax="true"
-		   data-url="admin/weekorderd/datas?iWeekOrderMid=#(weekOrderM.iAutoId??)"
-		   #end
-		   data-column-resize="true"
-		   data-tfoot-fixed="true"
-		   data-column-prepend="1:checkbox"
-		   data-rowtpl="jboltTable_demotpl_#(pageId)"
-		   data-toolbar="WeekOrderM_toolbar_#(pageId)"
-		   data-editable="true"
-		   data-editable-option="getEditableTableOptions_#(pageId)"
-		   data-height="180%"
-	>
-		<thead>
-		<tr>
-			<th data-width="60" data-column="index">序号</th>
-			<th data-width="150">操作</th>
-			<th data-width="100" data-column="cdistrictname">收货地点</th>
-			<th data-width="100" data-column="cplancode">计划代码</th>
-			<th data-width="100" data-column="cinvcode">存货编码</th>
-			<th data-width="100" data-column="cdefine1">客户部番</th>
-			<th data-width="100" data-column="cdefine2">部品名称</th>
-			<!--<th data-width="100" data-column="cinvstd">规格</th>-->
-			<th data-width="100" data-column="iqty">数量</th>
-			<!--<th data-width="100" data-column="cdefine4">销售单位</th>-->
-			<th data-width="160" data-column="dplanaogdate">计划到货日期</th>
-			<th data-width="160" data-column="cplanaogtime">计划到货时间</th>
-			<th data-width="100" data-column="ccode">传票号</th>
-			<th data-width="150" data-column="cversion">版本号</th>
-			<th data-width="150" data-column="cmemo">备注</th>
-		</tr>
-		</thead>
-	</table>
+           data-jbolttable
+           #if(weekOrderM.iAutoId??)
+           data-ajax="true"
+           data-url="admin/weekorderd/datas?iWeekOrderMid=#(weekOrderM.iAutoId??)"
+           #end
+           data-column-resize="true"
+           data-tfoot-fixed="true"
+           data-column-prepend="1:checkbox"
+           data-rowtpl="jboltTable_demotpl_#(pageId)"
+           data-toolbar="WeekOrderM_toolbar_#(pageId)"
+           data-editable="true"
+           data-editable-option="getEditableTableOptions_#(pageId)"
+           data-height="180%"
+    >
+        <thead>
+        <tr>
+            <th data-width="60" data-column="index">序号</th>
+            <th data-width="150">操作</th>
+            <th data-width="100" data-column="cdistrictname">收货地点</th>
+            <th data-width="100" data-column="cplancode">计划代码</th>
+            <th data-width="100" data-column="cinvcode">存货编码</th>
+            <th data-width="100" data-column="cdefine1">客户部番</th>
+            <th data-width="100" data-column="cdefine2">部品名称</th>
+            <!--<th data-width="100" data-column="cinvstd">规格</th>-->
+            <th data-width="100" data-column="iqty">数量</th>
+            <!--<th data-width="100" data-column="cdefine4">销售单位</th>-->
+            <th data-width="160" data-column="dplanaogdate">计划到货日期</th>
+            <th data-width="160" data-column="cplanaogtime">计划到货时间</th>
+            <th data-width="100" data-column="ccode">传票号</th>
+            <th data-width="150" data-column="cversion">版本号</th>
+            <th data-width="150" data-column="cmemo">备注</th>
+        </tr>
+        </thead>
+    </table>
 </div>
 #define js()
 <script>
-	hideParentLayerDialogBtn();
+    hideParentLayerDialogBtn();
 
-	//获得配置参数
-	function getEditableTableOptions_#(pageId)() {
-		var editableTableOptions = {
-			submit: {
-				withForm: ["WeekOrderM_Form"],
-				name: 'WeekOrderMForm',
-				type: "all",
+    //获得配置参数
+    function getEditableTableOptions_
+
+    #(pageId)()
+    {
+        var editableTableOptions = {
+            submit: {
+                withForm: ["WeekOrderM_Form"],
+                name: 'WeekOrderMForm',
+                type: "all",
                 url: "/admin/weekorderm/save",
-				success: function (res) {
-					LayerMsgBox.success("提交成功", 600, function () {
-						parent.refreshPjaxContainer();
-						parent.layer.closeAll();
-					});
-				}
-			},
+                success: function (res) {
+                    LayerMsgBox.success("提交成功", 600, function () {
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
+                    });
+                }
+            },
             maxRowCount: 9999,
-			cols: {
-				iautoid: {
-					submitAttr: "iautoid",
-				},
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid",
+                },
                 cdistrictname: {
                     type: "select",
                     linkPara: 'input[name="icustomermid"]',
@@ -211,115 +358,115 @@
                     placeholder: "=请选择=",
                     required: true
                 },
-				cplancode: {
-					type:"input",
-					placeholder:'计划代码'
-				},
-				cinvcode: {
-					type:"autocomplete",
-					url: "admin/inventory/autocomplete",
-					maxLength: 100,
-					required: true,
-					placeholder: "请选择",
-					textAttr: "cinvcode",
-					limit: 10,
-					width: 500,
-					valueAttr: "cinvcode",
-					columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,isalesuomid",
-					header:'存货编码,客户部番,部品名称,规格,销售单位',
-					changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cdefine1", use: "cinvcode1"},
-						{column: "cdefine2", use: "cinvname1"},{column: "cdefine3", use: "cinvstd"},
-						{column: "cdefine4", use: "isalesuomid"},{column: "iInventoryId", use: "iautoid"}]
-				},
-				cdefine1: {
-					type:"text",
-					placeholder:'客户部番',
-					valueAttr: "cinvcode1",
-				},
-				cdefine2: {
-					type:"text",
-					placeholder:'部品名称',
-					valueAttr: "cinvname1",
-				},
-				cdefine3: {
-					type:"text",
-					placeholder:'规格',
-					valueAttr: "cinvstd",
-				},
-				iqty: {
-					type:"amount",
-					placeholder:'数量',
-					required:true,
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				cdefine4: {
-					type:"text",
-					placeholder:'销售单位',
-					valueAttr: "isalesuomid",
-				},
-				dplanaogdate: {
-					type:"date",
-					placeholder:'计划到货日期',
-					required: true,
-				},
+                cplancode: {
+                    type: "input",
+                    placeholder: '计划代码'
+                },
+                cinvcode: {
+                    type: "autocomplete",
+                    url: "admin/inventory/autocomplete",
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "请选择",
+                    textAttr: "cinvcode",
+                    limit: 10,
+                    width: 500,
+                    valueAttr: "cinvcode",
+                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,isalesuomid",
+                    header: '存货编码,客户部番,部品名称,规格,销售单位',
+                    changeColumns: [{column: "cinvcode", use: "cinvcode"}, {column: "cdefine1", use: "cinvcode1"},
+                        {column: "cdefine2", use: "cinvname1"}, {column: "cdefine3", use: "cinvstd"},
+                        {column: "cdefine4", use: "isalesuomid"}, {column: "iInventoryId", use: "iautoid"}]
+                },
+                cdefine1: {
+                    type: "text",
+                    placeholder: '客户部番',
+                    valueAttr: "cinvcode1",
+                },
+                cdefine2: {
+                    type: "text",
+                    placeholder: '部品名称',
+                    valueAttr: "cinvname1",
+                },
+                cdefine3: {
+                    type: "text",
+                    placeholder: '规格',
+                    valueAttr: "cinvstd",
+                },
+                iqty: {
+                    type: "amount",
+                    placeholder: '数量',
+                    required: true,
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                cdefine4: {
+                    type: "text",
+                    placeholder: '销售单位',
+                    valueAttr: "isalesuomid",
+                },
+                dplanaogdate: {
+                    type: "date",
+                    placeholder: '计划到货日期',
+                    required: true,
+                },
                 cplanaogtime: {
                     type: "time",
                     placeholder: '计划到货时间',
                     required: true,
                 },
-				ccode: {
-					type:"input",
-					placeholder:'传票号',
-					required: true,
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				cversion: {
-					type:"input",
-					placeholder:'版本号',
-					required: true,
-					summary:[{
-						dir:"v",
-						tofixed:2,
-						roundtag:"round",
-						removezero:true,
-						formula:"sum"
-					}]
-				},
-				cmemo: {
-					type:"input",
-					placeholder:'备注'
-				}
-			}
-		};
-		return editableTableOptions;
-	}
-    
-	function uploadHandler(uploader, type, fileInput, res) {
-		jboltTableClear("#jbolt_Table_#(pageId)");
+                ccode: {
+                    type: "input",
+                    placeholder: '传票号',
+                    required: true,
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                cversion: {
+                    type: "input",
+                    placeholder: '版本号',
+                    required: true,
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                cmemo: {
+                    type: "input",
+                    placeholder: '备注'
+                }
+            }
+        };
+        return editableTableOptions;
+    }
 
-		var data = res.data;
+    function uploadHandler(uploader, type, fileInput, res) {
+        jboltTableClear("#jbolt_Table_#(pageId)");
 
-		if (!data || data.length === 0) {
-			LayerMsgBox.alert('导入数据不能为空', 2);
-			return;
-		}
-		var arr = [];
+        var data = res.data;
 
-        let reg =  /([\u4e00-\u9fa5]|[\ufe30-\uffa0])/;
-        
-		$.each(data, function (idx, row) {
+        if (!data || data.length === 0) {
+            LayerMsgBox.alert('导入数据不能为空', 2);
+            return;
+        }
+        var arr = [];
+
+        let reg = /([\u4e00-\u9fa5]|[\ufe30-\uffa0])/;
+
+        $.each(data, function (idx, row) {
             $.each(row, function (k, v) {
                 if (reg.test(k)) {
                     delete row[k];
@@ -334,103 +481,103 @@
                 }
 
             });
-			if (row.cinvcode1) {
-				arr.push(row.cinvcode1);
-			}
-		});
+            if (row.cinvcode1) {
+                arr.push(row.cinvcode1);
+            }
+        });
 
-		var para = {
-			cinvcode1: arr.join(',')
-		};
+        var para = {
+            cinvcode1: arr.join(',')
+        };
 
-		var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
+        var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
 
-		Ajax.post('admin/inventory/fetchByCinvcode1s', para, function (ret) {
+        Ajax.post('admin/inventory/fetchByCinvcode1s', para, function (ret) {
 
-			LayerMsgBox.close(index);
+            LayerMsgBox.close(index);
 
-			if (ret.state === 'ok') {
+            if (ret.state === 'ok') {
 
-				// 导入行数据
-				$.each(data, function (idx, r) {
+                // 导入行数据
+                $.each(data, function (idx, r) {
 
-					// 存货数据
-					$.each(ret.data, function (idx, row) {
-						console.log(row)
+                    // 存货数据
+                    $.each(ret.data, function (idx, row) {
+                        console.log(row)
 
-						if (r.cinvcode1 === row.cinvcode1) {
-							if (row.cnt === 0) {
-								r.error = '部品番号不存在！';
-							} else if (row.cnt === 1) {
-								r.iinventoryid = row.iautoid;
-								r.cinvcode = row.cinvcode;
-								r.cinvname1 = row.cinvname1;
-								r.cinvstd = row.cinvstd;
-								r.cuomname = row.cuomname;
-							} else {
-								r.error = '存在' + row.cnt + '条匹配的存货记录，请手工选择存货！';
-							}
-						}
+                        if (r.cinvcode1 === row.cinvcode1) {
+                            if (row.cnt === 0) {
+                                r.error = '部品番号不存在！';
+                            } else if (row.cnt === 1) {
+                                r.iinventoryid = row.iautoid;
+                                r.cinvcode = row.cinvcode;
+                                r.cinvname1 = row.cinvname1;
+                                r.cinvstd = row.cinvstd;
+                                r.cuomname = row.cuomname;
+                            } else {
+                                r.error = '存在' + row.cnt + '条匹配的存货记录，请手工选择存货！';
+                            }
+                        }
 
-					});
+                    });
 
-					if (!r.error) {
-						if (r.cinvcode1 && !r.iinventoryid) {
-							r.error = '部品番号缺少对应存货！';
-						}
-					}
+                    if (!r.error) {
+                        if (r.cinvcode1 && !r.iinventoryid) {
+                            r.error = '部品番号缺少对应存货！';
+                        }
+                    }
 
-					// 数量精度处理
-					$.each(r, function (key, val) {
-						if (key.startsWith('iqty')) {
-							var iqty = parseFloat(val);
-							iqty = parseFloat(iqty);
-							r[key] = iqty.toFixed(0);
-						}
-					});
+                    // 数量精度处理
+                    $.each(r, function (key, val) {
+                        if (key.startsWith('iqty')) {
+                            var iqty = parseFloat(val);
+                            iqty = parseFloat(iqty);
+                            r[key] = iqty.toFixed(0);
+                        }
+                    });
 
-				});
+                });
 
-				jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
-			} else {
-				LayerMsgBox.alert(ret.msg, 2);
-			}
-		}, function () {
-			LayerMsgBox.close(index);
-		});
-	}
+                jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        }, function () {
+            LayerMsgBox.close(index);
+        });
+    }
 
-	function submitThisForm(){
-		console.log("......执行");
-		jboltTableSubmit("#jbolt_Table_#(pageId)");
-	}
+    function submitThisForm() {
+        console.log("......执行");
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
 
     var $approve = $('#approve');
-    
-	function approveByAdd(){
-        $approve.val("approve");
-		console.log($approve.val());
-		submitThisForm();
-	}
 
-	function closeHandler(){
-		parent.layer.close(parent.layer.getFrameIndex(window.name));
-		window.parent.refreshJBoltTable();
-	}
-	
-	function submitApproveWeek() {
-		Ajax.get('/admin/weekorderm/approve?ids='+$("input[name='weekOrderM.iAutoId']").val() , function (ret) {
-			if (ret.state === 'ok') {
-				// 刷新
-				parent.refreshPjaxContainer();
-				// 关闭
-				parent.layer.close(parent.layer.getFrameIndex(window.name));
-			} else {
-				LayerMsgBox.success();
-			}
-		});
-	}
-    
+    function approveByAdd() {
+        $approve.val("approve");
+        console.log($approve.val());
+        submitThisForm();
+    }
+
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+    function submitApproveWeek() {
+        Ajax.get('/admin/weekorderm/approve?ids=' + $("input[name='weekOrderM.iAutoId']").val(), function (ret) {
+            if (ret.state === 'ok') {
+                // 刷新
+                parent.refreshPjaxContainer();
+                // 关闭
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
+            } else {
+                LayerMsgBox.success();
+            }
+        });
+    }
+
 </script>
 #end
 
