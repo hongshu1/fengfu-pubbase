@@ -1,8 +1,11 @@
 package cn.rjtech.admin.materialreturnlist;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.SystemLog;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
@@ -12,9 +15,13 @@ import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
+import cn.rjtech.model.momdata.SysProductindetail;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -22,9 +29,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -236,9 +241,19 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 		tx(()->{
 			String headerId = null;
+			String whcode = null;
+			Record detailByParam = null;
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
 				SysPuinstore puinstore = jBoltTable.getFormModel(SysPuinstore.class,"puinstore");
+				Record record = jBoltTable.getFormRecord();
+				whcode = record.get("whcode");//仓库
+				Kv kv = new Kv();
+				kv.set("billno",puinstore.get("billno"));
+				kv.set("sourcebillno",puinstore.get("sourcebillno"));
+
+				detailByParam = sysPuinstoreService.findSysPODetailByParam(kv);
+
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
 					if (puinstore.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
@@ -250,23 +265,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
 				}
 
-
-
-//				if (updateRecordList != null) {
-//					for (int i = 0; i < updateRecordList.size(); i++) {
-//						k++;
-//						Record record = updateRecordList.get(i);
-//						Integer qty = record.getInt("qty");
-//						Integer qtys = record.getInt("qtys");
-//						//整单退货判断
-//						Integer cha1 = qty- (qtys);
-//						if (cha1 > qty*2){
-//							ValidationUtils.isTrue(false, "第" + k + "行退货数量超出现存数（" + qtys + "）！！！");
-//						}else{
-//							ValidationUtils.isTrue(false, "第" + k + "行现存数未输入！！！");
-//						}
-//					}
-//				}
 
 				if (puinstore.getAutoID() == null && "save".equals(revokeVal)) {
 //					保存
@@ -331,17 +329,22 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					}
 				}
 				String finalHeaderId = headerId;
-				lines.forEach(otherOutDetail -> {
-					Object qtys = otherOutDetail.get("qty");
+				String finalWhcodes = whcode;
+				Record finalDetailByParam = detailByParam;
+				lines.forEach(materialsOutDetail -> {
+					Object qtys = materialsOutDetail.get("qty");
 					System.out.println(qtys);
 
-					if (otherOutDetail.getMasID()==null){
-						otherOutDetail.setMasID(finalHeaderId);
-					}
-					otherOutDetail.setCreateDate(nowDate);
-					otherOutDetail.setCreatePerson(userName);
-					otherOutDetail.setModifyDate(nowDate);
-					otherOutDetail.setModifyPerson(userName);
+					materialsOutDetail.setSourceBillType(finalDetailByParam.get("sourcebilltype"));//采购PO  委外OM（采购类型）
+					materialsOutDetail.setSourceBillNo(finalDetailByParam.getStr("sourcebillno")); //来源单号（订单号）
+					materialsOutDetail.setSourceBillID(finalDetailByParam.getStr("sourcebillid")); //来源单据ID(订单id)
+					materialsOutDetail.setSourceBillDid(finalDetailByParam.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
+					materialsOutDetail.setRowNo(lines.indexOf(materialsOutDetail)+1); //来源单据单行;
+					materialsOutDetail.setWhcode(finalWhcodes);
+					materialsOutDetail.setCreateDate(nowDate);
+					materialsOutDetail.setCreatePerson(userName);
+					materialsOutDetail.setModifyDate(nowDate);
+					materialsOutDetail.setModifyPerson(userName);
 				});
 				syspuinstoredetailservice.batchSave(lines);
 			}
@@ -349,11 +352,21 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 			if (jBoltTable.updateIsNotBlank()) {
 				List<SysPuinstoredetail> lines = jBoltTable.getUpdateModelList(SysPuinstoredetail.class);
 
+				String finalHeaderId = headerId;
+				String finalWhcodes1 = whcode;
+				Record finalDetailByParam = detailByParam;
 				lines.forEach(materialsOutDetail -> {
+					materialsOutDetail.setWhcode(finalWhcodes1);
+					materialsOutDetail.setSourceBillType(finalDetailByParam.get("sourcebilltype"));//采购PO  委外OM（采购类型）
+					materialsOutDetail.setSourceBillNo(finalDetailByParam.getStr("sourcebillno")); //来源单号（订单号）
+					materialsOutDetail.setSourceBillID(finalDetailByParam.getStr("sourcebillid")); //来源单据ID(订单id)
+					materialsOutDetail.setSourceBillDid(finalDetailByParam.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
+					materialsOutDetail.setRowNo(lines.indexOf(materialsOutDetail)+1); //来源单据单行;
 					materialsOutDetail.setModifyDate(nowDate);
 					materialsOutDetail.setModifyPerson(userName);
 				});
 				syspuinstoredetailservice.batchUpdate(lines);
+				Ret ret = pushU8(finalHeaderId);
 			}
 			// 获取待删除数据 执行删除
 			if (jBoltTable.deleteIsNotBlank()) {
@@ -436,6 +449,16 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	}
 
 	/**
+	 * 查看所有材料出库单列表 明细
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param kv
+	 * @return
+	 */
+	public Page<Record> getmaterialReturnLists(int pageNumber, int pageSize, Kv kv){
+		return dbTemplate("materialreturnlist.getmaterialReturnLists",kv).paginate(pageNumber, pageSize);
+
+	}/**
 	 * 材料出库单列表 明细
 	 * @param pageNumber
 	 * @param pageSize
@@ -445,7 +468,9 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	public Page<Record> getmaterialReturnListLines(int pageNumber, int pageSize, Kv kv){
 		return dbTemplate("materialreturnlist.getmaterialReturnListLines",kv).paginate(pageNumber, pageSize);
 
-	}/**
+	}
+
+	/**
 	 * 材料出库单列表 明细
 	 * @param pageNumber
 	 * @param pageSize
@@ -462,6 +487,128 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	 * */
 	public Page<Record> getSysPODetail(Kv kv, int size, int PageSize) {
 		return dbTemplate("materialreturnlist.getSysPODetail", kv).paginate(size, PageSize);
+	}
+
+
+
+	public Ret pushU8(String id) {
+		List<Record> list = findRecord("select " + "t1.BillDate,\n" + "t2.BillNo,\n" + "t2.BillRowNo,\n" + "t1.CusCode,\n" + "t2.Barcode,\n" + "t1.CreatePerson,\n" + "t2.InvCode,\n" + "t2.WhCode as IWhCode,\n" + "t2.DeliveryQty,\n" + "t2.Price,\n" + "t1.OrganizeCode \n" + "from " + "T_Sys_SOReturn t1, " + "T_Sys_SOReturnDetail t2\n" + "where t1.AutoID = t2.MasID and MasID = '" + id + "'");
+
+		if (list.size() > 0) {
+//          接口参数
+			User user = JBoltUserKit.getUser();
+			String url = "http://localhost:8081/api/erp/common/vouchProcessDynamicSubmit";
+			String userCode = user.getUsername();
+			Long userId = user.getId();
+			String type = "PUInStore";
+			Record record1 = list.get(0);
+			String organizecode = record1.get("organizecode");
+			String nowDate = DateUtil.format(new Date(), "yyyy-MM-dd");
+
+			JSONObject preAllocate = new JSONObject();
+			preAllocate.put("userCode",userCode);
+			preAllocate.put("organizeCode",organizecode);
+			preAllocate.put("CreatePerson",userId);
+			preAllocate.put("CreatePersonName",user.getName());
+			preAllocate.put("loginDate", nowDate);
+			preAllocate.put("tag",type);
+			preAllocate.put("type",type);
+			JSONArray mainData = new JSONArray();
+			list.forEach(record -> {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("IsWhpos", record.get("iswhpos"));
+				jsonObject.put("iwhcode", record.get("iwhcode"));
+				jsonObject.put("InvName", record.get("invname"));
+				jsonObject.put("VenCode", record.get("vencode"));
+				jsonObject.put("Qty", record.get("qty"));
+				jsonObject.put("organizeCode", organizecode);
+				jsonObject.put("InvCode", record.get("invcode"));
+				jsonObject.put("Num", "0");
+				jsonObject.put("index", "1");
+				jsonObject.put("PackRate", "0");
+				jsonObject.put("ISsurplusqty", record.get("false"));
+				jsonObject.put("CreatePerson", userCode);
+				jsonObject.put("BarCode", record.get("spotTicket"));
+				jsonObject.put("BillNo", record.get("billno"));
+				jsonObject.put("BillID", record.get("1000000003"));
+				jsonObject.put("BillNoRow", record.get("PO23050601-1"));
+				jsonObject.put("BillDate", record.get("billdate"));
+				jsonObject.put("BillDid", record.get("1000000003"));
+				jsonObject.put("sourceBillNo", record.get("sourcebillno"));
+				jsonObject.put("sourceBillDid", record.get("sourcebilldid"));
+				jsonObject.put("sourceBillID", record.get("sourcebillid"));
+				jsonObject.put("sourceBillType", record.get("sourcebilltype"));
+				jsonObject.put("SourceBillNoRow", record.get("sourcebillnorow"));
+				jsonObject.put("tag", type);
+				jsonObject.put("IcRdCode", record.get("rdcode"));
+				jsonObject.put("iposcode", record.get("poscode"));
+				mainData.add(jsonObject);
+
+			});
+
+//            参数装载
+			Map<String, Object> data = new HashMap<>();
+			data.put("organizeCode", organizecode);
+			data.put("userCode", userCode);
+			data.put("PreAllocate", preAllocate);
+			data.put("MainData", mainData);
+
+//            请求头
+			Map<String, String> header = new HashMap<>(5);
+			header.put("Content-Type", "application/json");
+
+
+			SystemLog systemLog = new SystemLog();
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("<span class='text-danger'>[销售退回处理单推U9操作]</span>");
+//            stringBuilder.append("<span class='text-primary'>[url="+url+"]</span>");
+//            stringBuilder.append("<span class='text-danger'>[参数={"+JSONObject.toJSONString(data)+"}]</span>");
+			systemLog.setType(2);
+			systemLog.setCreateTime(new Date());
+			systemLog.setUserId(JBoltUserKit.getUserId());
+			systemLog.setUserName(JBoltUserKit.getUserUserName());
+			systemLog.setOpenType(1);
+			systemLog.setTargetId(1L);
+			systemLog.setTargetType(1);
+			Ret ret = new Ret();
+			try {
+				String post = HttpApiUtils.httpHutoolPost(url, data, header);
+				if (isOk(post)) {
+					JSONObject parseObject = JSONObject.parseObject(post);
+					stringBuilder.append("<span class='text-primary'>[成功返回参数=").append(post).append("]</span>");
+					String code = parseObject.getString("code");
+					String msg = parseObject.getString("message");
+
+					LOG.info("data====" + data);
+					if ("200".equals(code)) {
+						String[] s = msg.split(",");
+						String bill = s[0];
+						LOG.info("s===>" + bill);
+						LOG.info("data====" + data);
+
+						int update = update("update T_Sys_SOReturn set U9BillNo = '" + bill + "', status = '2' where" + " AutoID " + "= " + "'" + id + "'");
+
+						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+								"推送数据失败," + "失败原因" + msg);
+					}
+					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
+				} else {
+					stringBuilder.append("<span class='text-primary'>[失败返回参数=").append(post).append("]</span>");
+					return fail("请求失败");
+				}
+			} catch (Exception e) {
+				stringBuilder.append("<span class='text-primary'>[失败异常=").append(e.getMessage()).append("]</span>");
+				e.printStackTrace();
+			} finally {
+				systemLog.setTitle(stringBuilder.toString());
+				systemLog.save();
+			}
+			return fail("请求失败");
+		} else {
+			ValidationUtils.error("查无此单");
+		}
+
+		return SUCCESS;
 	}
 
 }
