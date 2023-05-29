@@ -39,10 +39,7 @@ WHERE t1.isDeleted = '0'
 #sql("getSubList")
 SELECT *
 FROM Bd_VendorClass
-WHERE iVCGrade = #para(ivcgrade)
-#if(ivcgrade > 1)
-    AND cvccode LIKE concat(#para(cvccode),'%')
-#end
+WHERE ipid = #para(pid)
 ORDER BY
     cvccode
 #end

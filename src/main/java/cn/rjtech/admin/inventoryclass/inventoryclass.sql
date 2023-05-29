@@ -122,11 +122,8 @@ WHERE 1=1
 
 #sql("getSubList")
 SELECT *
-FROM InventoryClass
-WHERE iInvCGrade = #para(iinvcgrade)
-#if(iinvcgrade > 1)
-    AND cinvccode LIKE concat(#para(cinvccode),'%')
-#end
+FROM bd_InventoryClass
+WHERE ipid = #para(pid)
 ORDER BY
     cInvCCode
 #end

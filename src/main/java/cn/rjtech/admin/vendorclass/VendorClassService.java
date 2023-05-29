@@ -1,5 +1,6 @@
 package cn.rjtech.admin.vendorclass;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
@@ -372,22 +373,21 @@ public class VendorClassService extends BaseService<VendorClass> {
         List<JsTreeBean> treeBeans = new ArrayList<>();
         // 根节点
         treeBeans.add(new JsTreeBean(0, "#", "供应商分类档案", true, "root_opened", true));
-        appendSubTree(treeBeans, 1, "0");
+        appendSubTree(treeBeans,0L);
         return treeBeans;
     }
-    private void appendSubTree(List<JsTreeBean> treeBeans, int grade, String pcode) {
-        for (Record row : getSubList(grade, pcode)) {
+    private void appendSubTree(List<JsTreeBean> treeBeans, Long pid) {
+    	List<Record> subList = getSubList(pid);
+    	if(CollUtil.isEmpty(subList)) return;
+        for (Record row : subList) {
             // 当前节点
-            treeBeans.add(new JsTreeBean(row.getStr("cvccode"), pcode, row.getStr("cvcname") + "(" + row.getStr("cvccode") + ")", row.getBoolean("bvcend") ? "node" : "default", null, true));
+            treeBeans.add(new JsTreeBean(row.getStr("cvccode"), pid, row.getStr("cvcname") + "(" + row.getStr("cvccode") + ")","default", null, true));
             // 追加子节点
-            if (!row.getBoolean("bvcend")) {
-                appendSubTree(treeBeans, grade + 1, row.getStr("cvccode"));
-            }
+            appendSubTree(treeBeans,row.getLong("iautoid"));
         }
     }
-    private List<Record> getSubList(int grade, String pcode) {
-        Okv para = Okv.by("ivcgrade", grade)
-                .set("cvccode", pcode);
+    private List<Record> getSubList(Long pid) {
+        Okv para = Okv.by("pid", pid);
         return dbTemplate("vendorclass.getSubList", para).find();
     }     
 }
