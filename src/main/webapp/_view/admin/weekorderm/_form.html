@@ -51,17 +51,16 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row">
+                                    <input type="hidden" name="weekOrderM.ibustype"
+                                           value="#(weekOrderM.ibustype??)" id="cwhcode"
+                                           data-value-attr="cwhcode" />
                                     <label class="col-sm-3 col-form-label">业务类型</label>
                                     <div class="col-8 col-form-label">
-                                        <select class="form-control" name="weekOrderM.ibustype"
-                                                data-autoload
-                                                data-url="admin/dictionary/options?key=null"
-                                                data-select-type="select"
-                                                data-text="=业务类型="
-                                                data-value=""
-                                                data-value-attr="sn"
-                                                value="#(weekOrderM.ibustype??)"
-                                        ></select>
+                                        <input type="text" class="form-control" data-autocomplete
+                                               data-url="admin/productInList/getWarehouse" data-rule="required"
+                                               data-hidden-input="cwhcode" data-text-attr="cwhname"
+                                               data-column-attr="cwhcode,cwhname" placeholder="请选择业务类型" data-tips="请选择业务类型"
+                                               data-header="业务类型编码,业务类型" maxlength="40" value="#(cwhname??)">
                                     </div>
                                 </div>
                             </div>
@@ -118,9 +117,12 @@
                             <div class="col-md-3">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">销售部门</label>
+                                    <input type="hidden" name="weekOrderM.iDepartmentId"
+                                           value="#(weekOrderM.iDepartmentId??)" id="cdepcode"
+                                           data-value-attr="iautoid" />
                                     <div class="col-8">
                                         <input type="text" class="form-control" data-autocomplete
-                                               data-url="admin/salesShipmentList/department" data-rule="required"
+                                               data-url="admin/salesShipmentList/department"
                                                data-hidden-input="cdepcode" data-text-attr="cdepname"
                                                data-column-attr="cdepcode,cdepname" placeholder="请选销售部门"
                                                data-tips="请选销售部门"
@@ -132,12 +134,11 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">业务员</label>
                                     <div class="col-8">
-                                        <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId"
-                                               value="#(weekOrderM.iDutyUserId??)"/>
+                                        <input type="hidden" id="ipersonid_#(pageId)" name="weekOrderM.ibuspersonid"
+                                               value="#(weekOrderM.ibuspersonid??)"/>
                                         <input type="text" autocomplete="off" value="#(personname??)"
                                                class="form-control"
                                                placeholder="==请选择人员=="
-                                               data-rule="required"
                                                data-jboltinput
                                                data-width="600"
                                                data-height="450"
@@ -157,7 +158,7 @@
                                     <div class="col-8">
                                         <input type="text" autocomplete="off" class="form-control" data-rule="money"
                                                data-notnull="false"
-                                               placeholder="请输入税率" maxlength="40" name="iTaxRate"
+                                               placeholder="请输入税率" maxlength="40" name="weekOrderM.iTaxRate"
                                                value="#(weekOrderM.iTaxRate??)"/>
                                     </div>
                                 </div>
@@ -168,7 +169,8 @@
                                     <div class="col-8">
                                         <select class="form-control"
                                                 data-autoload
-                                                name="customerm.ccurrency"
+                                                data-notnull="false"
+                                                name="weekOrderM.cCurrency"
                                                 data-select-type="select"
                                                 data-rule="select"
                                                 data-tips="请选择"
@@ -176,7 +178,7 @@
                                                 data-text="=请选择数据分类="
                                                 data-value=""
                                                 data-value-attr="sn"
-                                                data-select="#(customerm.ccurrency??)">
+                                                data-select="#(weekOrderM.ccurrency??)">
                                         </select>
                                     </div>
                                 </div>
@@ -187,7 +189,8 @@
                                     <div class="col-8">
                                         <input type="text" data-with-clearbtn="true" autocomplete="off"
                                                class="form-control" data-rule="money_4"
-                                               placeholder="请输入汇率" maxlength="40" name="iExchangeRate"
+                                               data-notnull="false"
+                                               placeholder="请输入汇率" maxlength="40" name="weekOrderM.iExchangeRate"
                                                value="#(weekOrderM.iExchangeRate??)"/>
                                     </div>
                                 </div>
@@ -197,7 +200,7 @@
                                     <label class="col-sm-3 col-form-label">备注</label>
                                     <div class="col-8">
                                             <textarea class="form-control" style="height:80px" placeholder="请输入备注"
-                                                      data-tips="请输入备注" maxlength="200" name="cMemo">#(weekOrderM.cMemo??)</textarea>
+                                                      data-tips="请输入备注" maxlength="200" name="weekOrderM.cMemo">#(weekOrderM.cMemo??)</textarea>
                                     </div>
                                 </div>
                             </div>
