@@ -101,11 +101,16 @@ public class MoMaterialscanusedlogmAdminController extends BaseAdminController {
 	}
 
 	/**
-	 * 获取备料现品票明细
+	 * 获取备料现品票明细（未扫描）
 	 */
 	public void getMaterialsPrepareList(){
-		renderJson(service.getMaterialsPrepareList(getKv()));
+		renderJsonData(service.getMaterialsPrepareList(getPageNumber(),getPageSize(),getKv()));
 	}
-
+	/**
+	 * 获取备料现品票明细（已扫描）
+	 */
+	public void getMoMaterialscanusedlogList(){
+		renderJsonData(service.getMoMaterialscanusedlogList(getPageNumber(),getPageSize(),getKv()));
+	}
 
 }
