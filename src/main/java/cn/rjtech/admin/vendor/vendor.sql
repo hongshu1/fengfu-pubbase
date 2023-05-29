@@ -63,15 +63,3 @@ WHERE  1 = 1
         AND v.cvccode = #para(cvccode)
     #end
 #end
-
-#sql("getAutocompleteList")
-SELECT TOP #(limit) *
-FROM Bd_Vendor
-WHERE 1=1 and isdeleted = 0 and isenabled = 0
-    #if(q)
-        AND (
-            cvencode LIKE CONCAT('%', #para(q), '%') OR
-            cvenname LIKE CONCAT('%', #para(q), '%')
-        )
-    #end
-#end
