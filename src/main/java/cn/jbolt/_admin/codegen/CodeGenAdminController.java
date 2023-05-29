@@ -185,6 +185,9 @@ public class CodeGenAdminController extends JBoltBaseController {
 	public void add() {
 		set("isSubTable", false);
 		set("projectPath",FileUtil.normalize(System.getProperty("user.dir")));
+		CodeGen lastEnable = service.getLastEnableCodeGen();
+		set("lastMainJavaPackage",lastEnable.getMainJavaPackage());
+		set("lastModelPackage",lastEnable.getModelPackage());
 		render("add.html");
 	}
 	/**
@@ -334,14 +337,34 @@ public class CodeGenAdminController extends JBoltBaseController {
 	 * keycache column数据源
 	 */
 	public void keyCacheColumns() {
-		renderJsonData(codeGenModelAttrService.getKeyCacheColumnsAutocomplete(getLong(0),null,getInt("limit",10),get("q")));
+		renderJsonData(codeGenModelAttrService.getKeyCacheColumnsAutocomplete(getLong(0),null,getInt("limit"),get("q")));
+	}
+	/**
+	 * autocomplete接口匹配 column数据源
+	 */
+	public void autocompleteColumns() {
+		renderJsonData(codeGenModelAttrService.getAutocompleteColumns(getLong(0)));
+	}
+
+	/**
+	 * options接口 text column数据源
+	 */
+	public void optionsTextColumns() {
+		renderJsonData(codeGenModelAttrService.getOptionsTextColumnsAutocomplete(getLong(0),null,getInt("limit"),get("q")));
+	}
+
+	/**
+	 * options接口 value column数据源
+	 */
+	public void optionsValueColumns() {
+		renderJsonData(codeGenModelAttrService.getOptionsValueColumnsAutocomplete(getLong(0),null,getInt("limit"),get("q")));
 	}
 
 	/**
 	 * keycache bindColumn数据源
 	 */
 	public void keyCacheBindColumns() {
-		renderJsonData(codeGenModelAttrService.getKeyCacheColumnsAutocomplete(getLong("id"),get("column"),getInt("limit",10),get("q")));
+		renderJsonData(codeGenModelAttrService.getKeyCacheColumnsAutocomplete(getLong("id"),get("column"),getInt("limit"),get("q")));
 	}
 
 	/**

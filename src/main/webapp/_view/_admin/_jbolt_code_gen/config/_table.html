@@ -1,8 +1,14 @@
 <div class="row h-100 mx-0">
-	<div class="col-4 h-100">
+	<div class="col-4 h-100 card_left_box">
 		<div class="card jb_vflex">
-			<div class="card-header jb_vheader_card">表格设置
-			<button onclick="ajaxSubmitForm('codeGenTableForm',function(res){changeTablePreviewMode(false);})" class="btn btn-primary btn-sm float-right"><i class="fa fa-save"></i> 保存配置</button>
+			<div class=" toggleCardOpenBtn d-none">
+				<button class="btn btn-outline-primary btn-sm" onclick="toggleTableSetCard(this)" tooltip data-title="恢复"><i class="fa fa-arrow-right"></i></button>
+				<div class="title text-primary">表格设置</div>
+			</div>
+			<div class="card-header jb_vheader_card"><span class="title">
+				<button class="btn btn-outline-primary btn-sm toggleCardCloseBtn" onclick="toggleTableSetCard(this)" tooltip data-title="收缩到左侧"><i class="fa fa-arrow-left"></i></button>
+				<i class="fa fa-cogs mr-1"></i>表格设置</span>
+				<button onclick="ajaxSubmitForm('codeGenTableForm',function(res){changeTablePreviewMode(false);})" class="btn btn-primary btn-sm float-right"><i class="fa fa-save"></i> 保存配置</button>
 			</div>
 			<div class="card-body jb_vbody">
 			<form class="form h-100" onsubmit="return false;" id="codeGenTableForm" action="admin/codegen/updateBase" method="post">
@@ -1042,7 +1048,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-8 h-100">
+	<div class="col h-100">
 		<div class="card jb_vflex">
 			<div class="card-header jb_vheader_card">
 				<span class="d-inline-block mr-5"><i class="fa fa-eye mr-1"></i>表格预览</span>
