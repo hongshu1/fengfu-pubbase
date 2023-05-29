@@ -1,16 +1,24 @@
 package cn.rjtech.admin.sysassem;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.SysAssem;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+
+import java.util.List;
+
 /**
  * 组装拆卸及形态转换单
  * @ClassName: SysAssemAdminController
@@ -25,7 +33,11 @@ public class SysAssemAdminController extends BaseAdminController {
 
 	@Inject
 	private SysAssemService service;
-   /**
+
+	@Inject
+	private DepartmentService departmentservice;
+
+	/**
 	* 首页
 	*/
 	public void index() {
@@ -61,6 +73,31 @@ public class SysAssemAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		//todo 待优化
+		Kv kv = new Kv();
+		kv.set("id",sysAssem.getBillType());
+		List<Record> getdictionary = service.getdictionary(kv);
+		if(!ArrayUtil.isEmpty(getdictionary)){
+			set("zhname",getdictionary.get(0).get("name")==null ? "":getdictionary.get(0).get("name"));
+		}
+
+		Kv kv1 = new Kv();
+		kv1.set("crdcode",sysAssem.getIRdCode());
+		List<Record> style = service.style(kv1);
+		if(!ArrayUtil.isEmpty(style)){
+			set("rkname",style.get(0).get("crdname"));
+		}
+
+		Kv kv2 = new Kv();
+		kv2.set("crdcode",sysAssem.getORdCode());
+		List<Record> style1 = service.style(kv2);
+		if(!ArrayUtil.isEmpty(style1)){
+			set("ckname",style1.get(0).get("crdname"));
+		}
+
+		Department first1 = departmentservice.findFirst("select * from Bd_Department where cDepCode =?", sysAssem.getDeptCode());
+		set("cdepname",first1.getCDepName());
+
 		set("sysAssem",sysAssem);
 		render("edit.html");
 	}
