@@ -35,7 +35,7 @@
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <form id="form_#(pageId)">
                 <input hidden name="isEffective" id="isEnabled_#(pageId)" value="#(subcontractOrderM.hideinvalid??'0'=='1'?true:false)">
-                <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(subcontractOrderM.hideinvalid??'0'=='1'?true:false)"/>已失效隐藏
+                <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(subcontractOrderM.hideinvalid??'0'=='1'?true:false)" data-text="已失效显示:已失效隐藏"/>
             </form>
         </div>
     </div>
