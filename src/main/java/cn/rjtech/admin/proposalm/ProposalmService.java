@@ -366,7 +366,7 @@ public class ProposalmService extends BaseService<Proposalm> {
     		Proposalm firstProposalm = findById(ifirstsourceproposalid);
     		ValidationUtils.notNull(firstProposalm, "初始禀议书为空,生成追加禀议书No.失败!");
     		String cfirstsourceproposalno = firstProposalm.getCproposalno();
-    		cProposalNo = BillNoUtils.genRouterecordNo(getOrgId(), cfirstsourceproposalno + "-", false, 2);
+    		cProposalNo = BillNoUtils.genProposalSystemNo(getOrgId(), cfirstsourceproposalno + "-", false, 2);
     	}else{
     		cProposalNo = barcodeencodingmService.genCode(Kv.by("iautoid", iautoid), ItemEnum.PROPOSAL.getValue());
     	}

@@ -310,7 +310,7 @@ public class BarcodeencodingmService extends BaseService<Barcodeencodingm> {
             	Integer ibillnolen = record.getInt("ibillnolen");
                 // 流水号
                 int billNolength =  ibillnolen == null ? 4 : ibillnolen;
-                code = new StringBuilder(BillNoUtils.genRouterecordNo(getOrgId(), code.toString(), false, billNolength));
+                code = new StringBuilder(BillNoUtils.genProposalSystemNo(getOrgId(), code.toString(), false, billNolength));
             }
         }
         String barcodeStr = code.toString().trim();
