@@ -71,6 +71,10 @@
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
                 </button>
             </div>
+            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                    id="side_toolbar_editBtn_#(pageId)" data-url="admin/salesDeliveryList/pushu?ids="
+                    data-confirm="确定提交选中数据？" class="btn btn-outline-danger"> 提交u8
+            </button>
         </div>
         <table class="jbolt_table jbolt_main_table  table-center "
                data-jbolttable

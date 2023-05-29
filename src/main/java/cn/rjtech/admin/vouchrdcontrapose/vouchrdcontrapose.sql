@@ -18,3 +18,7 @@
 		and vc.iorgid = #para(iorgid)
 	#end		
 #end
+
+#sql("getCvrrName")
+ select cRdName from Bd_Rd_Style where cRdCode=#para(cvrrcode)
+ #end

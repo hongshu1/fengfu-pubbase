@@ -24,12 +24,11 @@ FROM
     T_Sys_PUInStore t11
         LEFT JOIN Bd_Vendor t2 ON t11.VenCode = t2.cVenCode
         LEFT JOIN Bd_Department t3 ON t11.DeptCode = t3.cDepCode
-        LEFT JOIN Bd_PurchaseType t4 ON t11.BillType = t4.iAutoId
+        LEFT JOIN Bd_PurchaseType t4 ON t11.BillType = t4.cRdCode
         LEFT JOIN Bd_Rd_Style t5 ON t11.RdCode = t5.cRdCode
         LEFT JOIN T_Sys_PUInStoreDetail t22 ON  t11.AutoID = t22.MasID
         LEFT JOIN Bd_Warehouse t6 ON t22.Whcode = t6.cWhCode
 WHERE 1 = 1
-  AND  t22.qty <0
     #if(deptcode)
   AND  t3.cDepName like '%#(deptcode)%'
     #end
@@ -76,21 +75,28 @@ order by t11.ModifyDate desc
 #sql("getmaterialReturnListLines")
 SELECT
     t4.iQty,
-    i.*,
-    t2.Qty AS refundQty,
-    t2.AutoID,
-    t2.MasID,
+    t2.Qty AS qtys,
     t2.Memo,
+    t2.MasID,
     t2.spotTicket,
+    t2.Whcode,
+    t2.SourceBillDid,
+    t2.SourceBillNoRow,
+    t2.SourceBillType,
+    t2.SourceBillNo,
     u.cUomClassName,
     t3.cInvCCode,
-    t3.cInvCName
+    t3.cInvCName,
+    i.cInvCode,
+    i.cInvName,
+    i.cInvCode1,
+    i.cInvName1
 FROM
     T_Sys_PUInStore t1,
     T_Sys_PUInStoreDetail t2
         LEFT JOIN (
         SELECT
-            iAutoId,
+            iAutoId as PoId,
             iPurchaseOrderDid,
             iinventoryId,
             cBarcode,
@@ -100,7 +106,7 @@ FROM
         FROM
             PS_PurchaseOrderDBatch UNION ALL
         SELECT
-            iAutoId,
+            iAutoId as PoId,
             iSubcontractOrderDid,
             iinventoryId,
             cBarcode,
@@ -115,6 +121,8 @@ FROM
         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
 WHERE
         t1.AutoID = t2.MasID
+  AND ( SELECT SUM ( Qty ) FROM T_Sys_PUInStoreDetail WHERE t1.AutoID = MasID AND spotTicket = t2.spotTicket ) > 0
+  AND t2.Qty > 0
   AND  t1.AutoID = '#(autoid)'
     #if(OrgCode)
         AND t1.OrganizeCode = #para(OrgCode)
@@ -122,20 +130,108 @@ WHERE
     #end
 
 #sql("getSysPODetail")
-select t1.*,t5.cRdName, t3.cDepName,
+select t1.AutoID,
+       t1.BillNo,
+       t1.SourceBillNo,
+       t1.RdCode,
+       t1.BillDate,
+       t5.cRdName,
+       t3.cDepName,
        t4.cPTName
 from T_Sys_PUInStore t1
+    LEFT JOIN T_Sys_PUInStoreDetail t2 ON t1.AutoID = t2.MasID
     LEFT JOIN Bd_Rd_Style t5 ON t1.RdCode = t5.cRdCode
     LEFT JOIN Bd_Department t3 ON t1.DeptCode = t3.cDepCode
     LEFT JOIN Bd_PurchaseType t4 ON t1.BillType = t4.iAutoId
 
 where 1 =1
+    AND t2.Qty > 0
     #if(billno)
-    and t1.billno = #para(billno)
-#end
-#if(sourcebillno)
-    and t1.sourcebillno = #para(sourcebillno)
-#end
+        AND t1.billno = #para(billno)
+    #end
+    #if(sourcebillno)
+        AND t1.sourcebillno = #para(sourcebillno)
+    #end
+
+GROUP BY
+    t1.RdCode,
+    t1.AutoID,
+    t1.BillNo,
+    t1.BillDate,
+    t1.SourceBillNo,
+    t5.cRdName,
+    t3.cDepName,
+    t4.cPTName
+    #end
+
+
+
+#sql("getmaterialLines")
+SELECT (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE t1.AutoID = MasID AND spotTicket = t2.spotTicket) AS qtys,
+       t2.Memo,
+       t2.MasID,
+       t2.spotTicket,
+       t2.Whcode,
+       t2.SourceBillDid,
+       t2.SourceBillNoRow,
+       t2.SourceBillType,
+       t2.SourceBillNo,
+       u.cUomClassName,
+       t3.cInvCCode,
+       t3.cInvCName,
+       i.cInvCode,
+       i.cInvName,
+       i.cInvCode1,
+       i.cInvName1
+FROM T_Sys_PUInStore t1,
+     T_Sys_PUInStoreDetail t2
+         LEFT JOIN (
+         SELECT iAutoId AS PoId,
+                iPurchaseOrderDid,
+                iinventoryId,
+                cBarcode,
+                iQty,
+                cSourceld,
+                cSourceBarcode
+         FROM PS_PurchaseOrderDBatch
+         UNION ALL
+         SELECT iAutoId AS PoId,
+                iSubcontractOrderDid,
+                iinventoryId,
+                cBarcode,
+                iQty,
+                cSourceld,
+                cSourceBarcode
+         FROM PS_SubcontractOrderDBatch
+     ) t4 ON t2.spotTicket = t4.cbarcode
+         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
+         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
+         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
+WHERE
+        t1.AutoID = t2.MasID
+  AND t1.AutoID = '#(autoid)'
+  AND ISNULL((SELECT SUM (Qty) FROM T_Sys_PUInStoreDetail WHERE t1.AutoID = MasID
+  AND spotTicket =t2.spotTicket ), 0)> 0
+    #if(OrgCode)
+  AND t1.OrganizeCode = #para(OrgCode)
+    #end
+GROUP BY
+    t1.AutoID,
+    t2.Memo,
+    t2.MasID,
+    t2.spotTicket,
+    t2.Whcode,
+    t2.SourceBillDid,
+    t2.SourceBillNoRow,
+    t2.SourceBillType,
+    t2.SourceBillNo,
+    u.cUomClassName,
+    t3.cInvCCode,
+    t3.cInvCName,
+    i.cInvCode,
+    i.cInvName,
+    i.cInvCode1,
+    i.cInvName1
 #end
 
 

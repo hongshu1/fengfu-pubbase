@@ -32,12 +32,13 @@ public class VouchRdContraposeService extends BaseService<VouchRdContrapose> {
 	 * 后台管理分页查询
 	 * @param pageNumber
 	 * @param pageSize
-	 * @param keywords
+	 * @param
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
 		para.set("iorgid",getOrgId());
 		return dbTemplate("vouchrdcontrapose.paginateAdminDatas",para).paginate(pageNumber, pageSize);
+
 	}
 
 	/**
@@ -54,6 +55,10 @@ public class VouchRdContraposeService extends BaseService<VouchRdContrapose> {
 		vouchRdContrapose.setIOrgId(getOrgId());
 		vouchRdContrapose.setCOrgCode(getOrgCode());
 		vouchRdContrapose.setCOrgName(getOrgName());
+		vouchRdContrapose.setCVRRCode(vouchRdContrapose.getCVRRCode());
+		vouchRdContrapose.setCVBTID("1");
+//		String cvrrName = getCvrrName(vouchRdContrapose.getCVRRCode());
+		vouchRdContrapose.setCVRSCode(vouchRdContrapose.getCVRSCode());
 		vouchRdContrapose.setISource(SourceEnum.MES.getValue());
 		vouchRdContrapose.setIsDeleted(false);
 		vouchRdContrapose.setICreateBy(user.getId());
@@ -68,6 +73,12 @@ public class VouchRdContraposeService extends BaseService<VouchRdContrapose> {
 			//addSaveSystemLog(vouchRdContrapose.getIautoid(), JBoltUserKit.getUserId(), vouchRdContrapose.getName());
 		}
 		return ret(success);
+	}
+
+	private String getCvrrName(String cvrrCode) {
+		Kv para=Kv.by("cvrrcode",cvrrCode);
+		return dbTemplate("vouchrdcontrapose.getCvrrName",para).queryStr();
+
 	}
 
 	/**

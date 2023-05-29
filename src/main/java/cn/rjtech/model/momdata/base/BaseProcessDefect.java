@@ -55,12 +55,18 @@ public abstract class BaseProcessDefect<M extends BaseProcessDefect<M>> extends 
     public static final String ISFIRSTTIME = "isFirstTime";
     /**不良内容描述*/
     public static final String CDESC = "cDesc";
-    /**工序名称*/
-    public static final String PROCESSNAME = "ProcessName";
+
+
     /**存货ID*/
     public static final String IINVENTORYID = "iInventoryId";
     /**异常品单号*/
     public static final String CDOCNO = "cDocNo";
+	/**工序ID*/
+	public static final String PROCESSNAME = "iOperationId";
+	/**工序名称*/
+	public static final String COPERATIONNAME = "cOperationName";
+
+
 	/**
 	 * 主键ID
 	 */
@@ -435,22 +441,7 @@ public abstract class BaseProcessDefect<M extends BaseProcessDefect<M>> extends 
 		return getStr("cDesc");
 	}
 
-	/**
-	 * 工序名称
-	 */
-	public M setProcessName(java.lang.String ProcessName) {
-		set("ProcessName", ProcessName);
-		return (M)this;
-	}
 
-	/**
-	 * 工序名称
-	 */
-	@JBoltField(name="processname" ,columnName="ProcessName",type="String", remark="工序名称", required=true, maxLength=50, fixed=0, order=23)
-	@JSONField(name = "processname")
-	public java.lang.String getProcessName() {
-		return getStr("ProcessName");
-	}
 
 	/**
 	 * 存货ID
@@ -484,6 +475,39 @@ public abstract class BaseProcessDefect<M extends BaseProcessDefect<M>> extends 
 	@JSONField(name = "cdocno")
 	public java.lang.String getCDocNo() {
 		return getStr("cDocNo");
+	}
+
+	/**
+	 * 工序ID
+	 */
+	public M setIOperationId(java.lang.Long iOperationId) {
+		set("iOperationId", iOperationId);
+		return (M)this;
+	}
+
+	/**
+	 * 工序ID
+	 */
+	@JBoltField(name="ioperationid" ,columnName="iOperationId",type="Long", remark="工序ID", required=true, maxLength=19, fixed=0, order=4)
+	@JSONField(name = "ioperationid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIOperationId() {
+		return getLong("iOperationId");
+	}
+
+	/**
+	 * 工序名称
+	 */
+	public M setCoperationname(String coperationname) {
+		set("cOperationName", coperationname);
+		return (M)this;
+	}
+
+	/**
+	 * 工序名称
+	 */
+	@JBoltField(name="coperationname" ,columnName="cOperationName",type="String", remark="工序名称", required=true, maxLength=255, fixed=0, order=3)
+	public String getCoperationname() {
+		return getStr("cOperationName");
 	}
 
 }

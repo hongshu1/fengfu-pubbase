@@ -63,10 +63,19 @@ public class AppConfig {
     }
 
     /**
-     * U8推单地址(推送采购入库单到U8系统)
+     * U8推单地址(推送采购入库单到U8系统)，web层用的
      */
     public static String getVouchProcessDynamicSubmitUrl() {
         String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
+        //JBoltConfig.prop.get("u8.api.url") + "/api/erp/common/vouchProcessDynamicSubmit"
+        return url;
+    }
+
+    /**
+     * U8推单地址(推送采购入库单到U8系统)，api接口用的
+     */
+    public static String getVouchProcessDynamicSubmitUrlToApi() {
+        String url = "http://localhost:8081/api/erp/common/vouchProcessDynamicSubmit";
         //JBoltConfig.prop.get("u8.api.url") + "/api/erp/common/vouchProcessDynamicSubmit"
         return url;
     }

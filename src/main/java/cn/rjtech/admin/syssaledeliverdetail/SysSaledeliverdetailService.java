@@ -3,11 +3,15 @@ package cn.rjtech.admin.syssaledeliverdetail;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.SysSaledeliverdetail;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 /**
  * 销售出库明细
@@ -105,6 +109,11 @@ public class SysSaledeliverdetailService extends BaseService<SysSaledeliverdetai
     public String checkInUse(SysSaledeliverdetail sysSaledeliverdetail, Kv kv) {
         // 这里用来覆盖 检测是否被其它表引用
         return null;
+    }
+
+    public List<SysSaledeliverdetail> getpushudetail(Kv kv) {
+        List<SysSaledeliverdetail> datas = daoTemplate("sysSaleDeliver.pushudetail",kv).find();
+        return datas;
     }
 
 }

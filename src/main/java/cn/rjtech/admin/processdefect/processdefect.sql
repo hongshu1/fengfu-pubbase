@@ -4,24 +4,36 @@ SELECT
     t1.iMoDocId ,
     t1.iDepartmentId,
     t1.cSpecRcvDocNo,
-    t1.dDemandDate,
+    t2.dDemandDate, ### 需求日期
     t2.iStatus,
     t2.iAutoId,
     t2.cDocNo,
-    t2.ProcessName,
+    o.cOperationName as ProcessName, ###工序名称
     t2.iDqQty,
     t2.cApproach,
     t2.cCreateName,
-    t2.dCreateTime
+    t2.dCreateTime,
+    m.cMoDocNo, ### 工单号
+    bi.cInvCode, ### 存货编码
+    bi.cInvCode1, ### 客户部番
+    bi.cInvName1, ### 部品名称
+    bd.cDepName  ### 生产部门
 FROM
-    Mo_SpecMaterialsRcvM t1
-    LEFT JOIN Mo_ProcessDefect t2 ON t2.iIssueId = t1.iAutoId
-WHERE 1 = 1
+    Mo_ProcessDefect t2
+    LEFT  JOIN Mo_MoDoc m on t2.imodocid=m.iAutoId
+    LEFT JOIN Mo_SpecMaterialsRcvM t1 ON t2.iIssueId = t1.iAutoId
+    LEFT  JOIN  Bd_Operation  o on t2.iOperationId=o.iAutoId
+    LEFT  JOIN  Bd_Inventory bi on  t2.iInventoryId = bi.iAutoId
+    LEFT JOIN  Bd_Department bd ON t2.iDepartmentId = bd.iAutoId
+WHERE 1 = 1 and t2.IsDeleted=0
     #if(cdocno)
   AND t2.cDocNo like '%#(cdocno)%'
   #end
     #if(imodocid)
-  AND t1.cSpecRcvDocNo like '%#(imodocid)%'
+  AND t2.iMoDocId=#para(imodocid) ###工单ID
+  #end
+    #if(cmodocno)
+  AND m.cMoDocNo LIKE CONCAT ( '%', #para(cmodocno), '%' )  ###工单号
   #end
 #if(cinvcode)
   AND t3.cInvCode like '%#(cinvcode)%'
@@ -40,12 +52,15 @@ WHERE 1 = 1
   #end
 
 #if(startdate)
-    and CONVERT(VARCHAR(10),t2.dUpdateTime,23) >='#(startdate)'
+    and CONVERT(VARCHAR(10),t2.dCreateTime,23) >='#(startdate)'
 #end
 #if(enddate)
-    and CONVERT(VARCHAR(10),t2.dUpdateTime,23) <='#(enddate)'
+    and CONVERT(VARCHAR(10),t2.dCreateTime,23) <='#(enddate)'
 #end
-order by t2.dUpdateTime desc
+#if(idepartmentid)
+  AND  md.iDepartmentId =#para(idepartmentid)
+    #end
+order by t2.dCreateTime desc,t2.iAutoId desc
     #end
 
 

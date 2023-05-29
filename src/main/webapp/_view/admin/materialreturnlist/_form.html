@@ -1,3 +1,4 @@
+#@hiprintcss()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
     <div style="text-align: center; font-size: 24px; color: red">采购入库单</div>
@@ -165,6 +166,7 @@
 		</form>
     </div>
 </div>
+#@hiprintjs()
 #define js()
 <script>
     hideParentLayerDialogBtn();
@@ -172,7 +174,6 @@
 
     function submitAllTables_#(pageId)(ele){
         var action = getRealJqueryObject(ele);
-        debugger;
         var id = action.data("id");
         var value = action.data("value");
         var tables = ["Puinstoreform_TableId_#(pageId)"];
@@ -212,6 +213,5 @@
         $("#billno").val(data.billno);
     }
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="PuinstoreForm")
 #end
 
