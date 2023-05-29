@@ -165,6 +165,8 @@ SELECT it.cInvCode,
        uom.cUomName,
        md.iQty,
        iri.iUsageUOM,
+       wh.cWhName,
+       wa.cAreaName,
        md.iQty * iri.iUsageUOM AS totalQty
 FROM Mo_MoDoc md
 LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting=ir.iAutoId
@@ -172,6 +174,8 @@ LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId=irc.iInventoryRoutingId
 LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId=iri.iInventoryRoutingConfigId
 LEFT JOIN Bd_Inventory it ON iri.iInventoryId=it.iAutoId
 LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1=uom.iAutoId
+LEFT JOIN Bd_Warehouse wh ON it.cBarcode=wh.cBarCode
+LEFT JOIN Bd_Warehouse_Area wa ON wh.iAutoId=wa.iWarehouseId
 WHERE 1 = 1
   AND md.cMoDocNo = '#(cmodocno)' #end
 

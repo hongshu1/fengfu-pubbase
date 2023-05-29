@@ -222,16 +222,16 @@
 </td>
 <td>${data.cinvcode}</td>
 <td>${data.cinvcode1}</td>
-<td>${data.cdepname}</td>
+<td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
-<td>${data.iInventoryUomId1}</td>
-<td>${data.iplanqty}</td>
-<td>${data.iWarehouseId}</td>
-<td>${data.iWarehouseAreaId}</td>
-<td>${data.iQty}</td>
-<td>${data.iRemainQty}</td>
-<td>${data.cAvailableBatch}</td>
-<td>${data.scannedname}</td>
+<td>${data.cuomname}</td>
+<td>${data.totalqty}</td>
+<td>${data.cwhname}</td>
+<td>${data.careaname}</td>
+<td>${data.已备料数量}</td>
+<td>${data.剩余备料数量}</td>
+<td>${data.可用批次号}</td>
+<td>${data.齐料扫码检查}</td>
 </tr>
 {@/each}
 </textarea>
@@ -245,7 +245,7 @@
        data-width="fill"
        data-height="43%"
        data-ajax="true"
-       data-url="admin/sysmaterialspreparedetail/getMaterialsOutLines?cmodocno=#(cmodocno??)"
+       data-url="admin/sysmaterialspreparedetail/getMaterialsOutLines1?cmodocno=#(cmodocno??)"
        data-rowtpl="MoPickItemM_tpl_#(pageId)"
        data-copy-to-excel="false"
        data-page="MoPickItemM_page"

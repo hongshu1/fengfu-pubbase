@@ -47,6 +47,8 @@ public abstract class BaseSysMaterialspreparedetail<M extends BaseSysMaterialspr
     public static final String MODIFYPERSON = "ModifyPerson";
     /**更新时间*/
     public static final String MODIFYDATE = "ModifyDate";
+	/**状态：1=已扫描，0=未扫描*/
+	public static final String STATE = "State";
 	/**
 	 * AutoID
 	 */
@@ -351,6 +353,23 @@ public abstract class BaseSysMaterialspreparedetail<M extends BaseSysMaterialspr
 	@JSONField(name = "modifydate")
 	public java.util.Date getModifyDate() {
 		return getDate("ModifyDate");
+	}
+
+	/**
+	 * 状态：1=已扫描，0=未扫描
+	 */
+	public M setState(java.lang.String State) {
+		set("State", State);
+		return (M)this;
+	}
+
+	/**
+	 * 状态：1=已扫描，0=未扫描
+	 */
+	@JBoltField(name="state" ,columnName="State",type="String", remark="状态", required=false, maxLength=30, fixed=0, order=19)
+	@JSONField(name = "state")
+	public java.lang.String getState() {
+		return getStr("State");
 	}
 
 }
